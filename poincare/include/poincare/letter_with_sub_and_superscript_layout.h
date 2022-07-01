@@ -22,11 +22,11 @@ public:
 
 protected:
   // LayoutNode
-  static constexpr KDCoordinate k_margin = 3;
-  static constexpr KDCoordinate k_symbolHeight = 16;
-  static constexpr KDCoordinate k_symbolBaseline = 11;
-  static constexpr KDCoordinate k_symbolWidth = 12;
-  static constexpr KDCoordinate k_symbolWidthWithMargins = k_symbolWidth + 2 * k_margin;
+  constexpr static KDCoordinate k_margin = 3;
+  constexpr static KDCoordinate k_symbolHeight = 16;
+  constexpr static KDCoordinate k_symbolBaseline = 11;
+  constexpr static KDCoordinate k_symbolWidth = 12;
+  constexpr static KDCoordinate k_symbolWidthWithMargins = k_symbolWidth + 2 * k_margin;
   KDSize computeSize() override;
   KDCoordinate computeBaseline() override;
   KDPoint positionOfChild(LayoutNode * child) override;

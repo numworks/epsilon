@@ -16,7 +16,7 @@ typedef ::Calculation::Calculation::NumberOfSignificantDigits NumberOfSignifican
 using namespace Poincare;
 using namespace Calculation;
 
-static constexpr int calculationBufferSize = 10 * (sizeof(::Calculation::Calculation) + ::Calculation::Calculation::k_numberOfExpressions * ::Constant::MaxSerializedExpressionSize + sizeof(::Calculation::Calculation *));
+constexpr static int calculationBufferSize = 10 * (sizeof(::Calculation::Calculation) + ::Calculation::Calculation::k_numberOfExpressions * ::Constant::MaxSerializedExpressionSize + sizeof(::Calculation::Calculation *));
 char calculationBuffer[calculationBufferSize];
 
 
@@ -496,7 +496,7 @@ QUIZ_CASE(calculation_additional_results) {
   assertMainCalculationOutputIs("i→z", "i", &globalContext, &store);
   assertCalculationAdditionalResultTypeIs("z+1", AdditionalInformationType::Complex, &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("z.exp").destroy();
-    
+
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
   assertCalculationAdditionalResultTypeIs("√(-1)", AdditionalInformationType::Complex, &globalContext, &store);
 }

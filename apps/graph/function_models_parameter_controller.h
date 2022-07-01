@@ -40,15 +40,15 @@ private:
   static_assert(k_indexOfInequationModel < k_indexOfConicModel, "These models are assumed to be in this order.");
 
   constexpr static int k_numberOfModels = k_indexOfPolarModel + 1;
-  static constexpr const char * k_models[k_numberOfModels] = {
+  constexpr static const char * k_models[k_numberOfModels] = {
     "", "f(x)=x", "x+y+1=0", "x+y≤0", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "f(θ)=cos(θ)"
   };
-  static constexpr const char * k_implicitModelWhenForbidden = "y=x-1";
-  static constexpr const char * k_inequationModelWhenForbidden = "y≤x";
+  constexpr static const char * k_implicitModelWhenForbidden = "y=x-1";
+  constexpr static const char * k_inequationModelWhenForbidden = "y≤x";
   constexpr static size_t k_maxSizeOfNamedModel = 26;
   // Expression cells
   constexpr static int k_numberOfExpressionCells = k_numberOfModels-1;
-  static constexpr I18n::Message k_modelDescriptions[k_numberOfExpressionCells] = {
+  constexpr static I18n::Message k_modelDescriptions[k_numberOfExpressionCells] = {
     I18n::Message::CartesianNamedTemplate, I18n::Message::LineType, I18n::Message::InequationType, I18n::Message::ConicNamedTemplate, I18n::Message::ParametricType, I18n::Message::PolarType
   };
   Escher::StackViewController * stackController() const;

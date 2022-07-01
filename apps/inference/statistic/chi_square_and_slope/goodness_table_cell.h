@@ -25,7 +25,7 @@ public:
 
 private:
   static_assert(GoodnessTest::k_maxNumberOfColumns == DoubleColumnTableCell::k_maxNumberOfColumns, "GoodnessTest is not adjusted to the DoubleColumnTableCell");
-  static constexpr I18n::Message k_columnHeaders[GoodnessTest::k_maxNumberOfColumns] = {I18n::Message::Observed, I18n::Message::Expected};
+  constexpr static I18n::Message k_columnHeaders[GoodnessTest::k_maxNumberOfColumns] = {I18n::Message::Observed, I18n::Message::Expected};
 
   // ClearColumnHelper
   int fillColumnName(int column, char * buffer) override;

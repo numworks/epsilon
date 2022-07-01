@@ -50,10 +50,10 @@ public:
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   void showLastSequence();
 private:
-  static constexpr KDCoordinate k_minTitleColumnWidth = 65;
-  static constexpr KDCoordinate k_functionTitleSumOfMargins = 25;
-  static constexpr KDCoordinate k_expressionCellVerticalMargin = 3;
-  static constexpr int k_maxNumberOfRows = 3*Shared::SequenceStore::k_maxNumberOfSequences;
+  constexpr static KDCoordinate k_minTitleColumnWidth = 65;
+  constexpr static KDCoordinate k_functionTitleSumOfMargins = 25;
+  constexpr static KDCoordinate k_expressionCellVerticalMargin = 3;
+  constexpr static int k_maxNumberOfRows = 3*Shared::SequenceStore::k_maxNumberOfSequences;
   void computeTitlesColumnWidth(bool forceMax = false);
   void resetMemoizationForIndex(int index) override;
   void shiftMemoization(bool newCellIsUnder) override;

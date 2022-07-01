@@ -35,12 +35,12 @@ public:
   int detailsNumberOfSections() const;
   void setRecord(Ion::Storage::Record record);
 private:
-  static constexpr size_t k_lineDetailsSections = 3;
-  static constexpr size_t k_circleDetailsSections = 3;
-  static constexpr size_t k_ellipseDetailsSections = 6;
-  static constexpr size_t k_parabolaDetailsSections = 3;
-  static constexpr size_t k_hyperbolaDetailsSections = 6;
-  static constexpr int k_numberOfDataPoints = 7; // max + 1 for plot type
+  constexpr static size_t k_lineDetailsSections = 3;
+  constexpr static size_t k_circleDetailsSections = 3;
+  constexpr static size_t k_ellipseDetailsSections = 6;
+  constexpr static size_t k_parabolaDetailsSections = 3;
+  constexpr static size_t k_hyperbolaDetailsSections = 6;
+  constexpr static int k_numberOfDataPoints = 7; // max + 1 for plot type
   // Return record's Continuous Function pointer
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
   // Title of given section in ContinuousFunction's detail menu

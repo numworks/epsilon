@@ -24,7 +24,7 @@ protected:
   }
   int controlChecksum() const override;
 private:
-  static constexpr int k_addedCellType = 2;
+  constexpr static int k_addedCellType = 2;
   // At root depth, there are additional rows to display.
   int addedCellsAtRoot() const { return m_messageTreeModel == rootModel() ? m_numberOfAddedCells : 0; }
   bool selectAddedCell(int selectedRow);

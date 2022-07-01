@@ -26,7 +26,7 @@ class ContinuousFunction : public Function {
 public:
   /* ContinuousFunction */
 
-  static constexpr int k_maxDefaultNameSize = sizeof("f99");
+  constexpr static int k_maxDefaultNameSize = sizeof("f99");
 
   // Create a record with baseName
   static ContinuousFunction NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName = nullptr);
@@ -45,14 +45,14 @@ public:
     Outside   //  >0   #| |#    #|#       #      -
   };
 
-  static constexpr size_t k_numberOfSymbolTypes = 3;
+  constexpr static size_t k_numberOfSymbolTypes = 3;
   enum class SymbolType : uint8_t {
     Theta = 0,
     T,
     X
   };
 
-  static constexpr size_t k_numberOfPlotTypes = 22;
+  constexpr static size_t k_numberOfPlotTypes = 22;
   enum class PlotType : uint8_t {
     Cartesian = 0,
     CartesianParabola,
@@ -232,17 +232,17 @@ public:
   ContinuousFunctionCache * cache() const { return m_cache; }
   void setCache(ContinuousFunctionCache * v) { m_cache = v; }
   void didBecomeInactive() override { m_cache = nullptr; }
-  static constexpr char k_unnamedRecordFirstChar = '?';
-  static constexpr CodePoint k_cartesianSymbol = 'x';
-  static constexpr CodePoint k_parametricSymbol = 't';
-  static constexpr CodePoint k_polarSymbol = UCodePointGreekSmallLetterTheta;
+  constexpr static char k_unnamedRecordFirstChar = '?';
+  constexpr static CodePoint k_cartesianSymbol = 'x';
+  constexpr static CodePoint k_parametricSymbol = 't';
+  constexpr static CodePoint k_polarSymbol = UCodePointGreekSmallLetterTheta;
 private:
-  static constexpr char k_ordinateName[2] = "y";
-  static constexpr CodePoint k_ordinateCodePoint = k_ordinateName[0];
-  static constexpr CodePoint k_unnamedExpressionSymbol = k_cartesianSymbol;
-  static constexpr float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
+  constexpr static char k_ordinateName[2] = "y";
+  constexpr static CodePoint k_ordinateCodePoint = k_ordinateName[0];
+  constexpr static CodePoint k_unnamedExpressionSymbol = k_cartesianSymbol;
+  constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   // Units are not handled in the graph app. The default unit does not matters
-  static constexpr Poincare::Preferences::UnitFormat k_defaultUnitFormat = Poincare::Preferences::UnitFormat::Metric;
+  constexpr static Poincare::Preferences::UnitFormat k_defaultUnitFormat = Poincare::Preferences::UnitFormat::Metric;
 
   /* Context */
 

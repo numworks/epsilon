@@ -14,11 +14,11 @@ namespace Poincare {
 
 class Zoom {
 public:
-  static constexpr float k_defaultHalfRange = 10.f;
-  static constexpr float k_smallUnitMantissa = 1.f;
-  static constexpr float k_mediumUnitMantissa = 2.f;
-  static constexpr float k_largeUnitMantissa = 5.f;
-  static constexpr float k_minimalRangeLength = 1e-4f;
+  constexpr static float k_defaultHalfRange = 10.f;
+  constexpr static float k_smallUnitMantissa = 1.f;
+  constexpr static float k_mediumUnitMantissa = 2.f;
+  constexpr static float k_largeUnitMantissa = 5.f;
+  constexpr static float k_minimalRangeLength = 1e-4f;
 
   typedef SolverHelper<float>::ValueAtAbscissa ValueAtAbscissa;
 
@@ -51,19 +51,19 @@ public:
   static void SetZoom(float ratio, float xCenter, float yCenter, float * xMin, float * xMax, float * yMin, float * yMax);
 
 private:
-  static constexpr int k_peakNumberOfPointsOfInterest = 6;
-  static constexpr int k_sampleSize = Ion::Display::Width / 4;
-  static constexpr float k_maximalDistance = 1e5f;
-  static constexpr float k_minimalDistance = 1e-2f;
-  static constexpr float k_asymptoteThreshold = 2e-1f;
-  static constexpr float k_explosionThreshold = 1e1f;
-  static constexpr float k_stepFactor = 1.09f;
-  static constexpr float k_breathingRoom = 0.3f;
-  static constexpr float k_forceXAxisThreshold = 0.2f;
-  static constexpr float k_maxRatioBetweenPointsOfInterest = 100.f;
+  constexpr static int k_peakNumberOfPointsOfInterest = 6;
+  constexpr static int k_sampleSize = Ion::Display::Width / 4;
+  constexpr static float k_maximalDistance = 1e5f;
+  constexpr static float k_minimalDistance = 1e-2f;
+  constexpr static float k_asymptoteThreshold = 2e-1f;
+  constexpr static float k_explosionThreshold = 1e1f;
+  constexpr static float k_stepFactor = 1.09f;
+  constexpr static float k_breathingRoom = 0.3f;
+  constexpr static float k_forceXAxisThreshold = 0.2f;
+  constexpr static float k_maxRatioBetweenPointsOfInterest = 100.f;
   /* Chosen so that the overflow of e^x around x=100 would not overshadow
    * points in [-10,10]. */
-  static constexpr float k_maxRatioBetweenBoundsAndPointsOfInterest = 10.f;
+  constexpr static float k_maxRatioBetweenBoundsAndPointsOfInterest = 10.f;
 
   enum class PointOfInterest : uint8_t {
     None,

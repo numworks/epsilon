@@ -8,7 +8,7 @@ namespace Escher {
 
 class BufferTextView : public TextView {
 public:
-  static constexpr size_t k_maxNumberOfChar = 256;
+  constexpr static size_t k_maxNumberOfChar = 256;
   BufferTextView(const KDFont * font = KDFont::LargeFont,
                  float horizontalAlignment = KDContext::k_alignLeft,
                  float verticalAlignment = KDContext::k_alignCenter,

@@ -38,7 +38,7 @@ void App::Snapshot::reset() {
   m_userPreferences = UserPreferences();
 }
 
-static constexpr App::Descriptor sDescriptor;
+constexpr static App::Descriptor sDescriptor;
 
 const App::Descriptor * App::Snapshot::descriptor() const {
   return &sDescriptor;

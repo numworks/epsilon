@@ -7,7 +7,7 @@
 namespace Ion {
 namespace Events {
 
-static constexpr size_t sharedExternalTextBufferSize = sizeof(SDL_TextInputEvent::text);
+constexpr static size_t sharedExternalTextBufferSize = sizeof(SDL_TextInputEvent::text);
 char * sharedExternalTextBuffer();
 
 }

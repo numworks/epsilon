@@ -294,7 +294,7 @@ bool MenuController::textFieldShouldFinishEditing(TextField * textField, Ion::Ev
 
 bool MenuController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
   const char * newName;
-  static constexpr int bufferSize = Script::k_defaultScriptNameMaxSize + 1 + ScriptStore::k_scriptExtensionLength; //"script99" + "." + "py"
+  constexpr static int bufferSize = Script::k_defaultScriptNameMaxSize + 1 + ScriptStore::k_scriptExtensionLength; //"script99" + "." + "py"
   char numberedDefaultName[bufferSize];
 
   if (strlen(text) > 1 + strlen(ScriptStore::k_scriptExtension)) {

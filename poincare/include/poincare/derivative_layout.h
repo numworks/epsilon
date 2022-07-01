@@ -36,9 +36,9 @@ protected:
 
 private:
   // diff(f(x), x, a)
-  static constexpr int k_derivandLayoutIndex = 0;
-  static constexpr int k_variableLayoutIndex = 1;
-  static constexpr int k_abscissaLayoutIndex = 2;
+  constexpr static int k_derivandLayoutIndex = 0;
+  constexpr static int k_variableLayoutIndex = 1;
+  constexpr static int k_abscissaLayoutIndex = 2;
   LayoutNode * derivandLayout() { return childAtIndex(k_derivandLayoutIndex); }
   LayoutNode * variableLayout() { return childAtIndex(k_variableLayoutIndex); }
   LayoutNode * abscissaLayout() { return childAtIndex(k_abscissaLayoutIndex); }
@@ -51,9 +51,9 @@ private:
 
   void setVariableSlot(bool fractionSlot, bool * shouldRecomputeLayout);
 
-  static constexpr KDCoordinate k_dxHorizontalMargin = 2;
-  static constexpr KDCoordinate k_barHorizontalMargin = 2;
-  static constexpr KDCoordinate k_barWidth = 1;
+  constexpr static KDCoordinate k_dxHorizontalMargin = 2;
+  constexpr static KDCoordinate k_barHorizontalMargin = 2;
+  constexpr static KDCoordinate k_barWidth = 1;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
  /* There are two slots for the variable name: the Fraction and the Assignment slots.

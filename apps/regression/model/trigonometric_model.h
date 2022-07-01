@@ -16,7 +16,7 @@ public:
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return k_numberOfCoefficients; }
 private:
-  static constexpr int k_numberOfCoefficients = 4;
+  constexpr static int k_numberOfCoefficients = 4;
   void specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const override;
   void uniformizeCoefficientsFromFit(double * modelCoefficients) const override;
   Poincare::Expression expression(double * modelCoefficients) override;

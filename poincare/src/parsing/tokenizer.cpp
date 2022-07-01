@@ -348,9 +348,9 @@ Token Tokenizer::popToken() {
     return Token(Token::Bang);
   }
   if (c == '%') {
-    static constexpr CodePoint k_percentAdditionNextCodePoints[] = {
+    constexpr static CodePoint k_percentAdditionNextCodePoints[] = {
         0, ')', '+', ',', '-', '<', '=', '>', ']', '}', UCodePointRightSystemParenthesis, UCodePointRightwardsArrow };
-    static constexpr int codePointsTotal = sizeof(k_percentAdditionNextCodePoints) / sizeof(CodePoint);
+    constexpr static int codePointsTotal = sizeof(k_percentAdditionNextCodePoints) / sizeof(CodePoint);
     CodePoint nc = nextCodePoint([](CodePoint, CodePoint) { return false; }, c, nullptr);
     for (int i = 0; i < codePointsTotal; i++) {
       if (nc == k_percentAdditionNextCodePoints[i]) {

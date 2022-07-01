@@ -9,17 +9,17 @@ namespace Poincare {
 const DistributionMethod * DistributionMethod::Get(Type type) {
   switch (type) {
   case Type::CDF:
-    static constexpr CDFMethod cdf;
+    constexpr static CDFMethod cdf;
     return &cdf;
   case Type::PDF:
-    static constexpr PDFMethod pdf;
+    constexpr static PDFMethod pdf;
     return &pdf;
   case Type::Inverse:
-    static constexpr InverseMethod inverse;
+    constexpr static InverseMethod inverse;
     return &inverse;
   default:
     assert(type == Type::CDFRange);
-    static constexpr CDFRangeMethod cdfRange;
+    constexpr static CDFRangeMethod cdfRange;
     return &cdfRange;
   }
 }

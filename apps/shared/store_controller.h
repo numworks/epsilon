@@ -46,14 +46,14 @@ public:
   int fillColumnName(int columnIndex, char * buffer) override { return fillColumnNameFromStore(columnIndex, buffer); }
 
 protected:
-  static constexpr KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) * 7 + 2*Escher::Metric::SmallCellMargin + Escher::Metric::TableSeparatorThickness; // KDFont::SmallFont->glyphSize().width() = 7
+  constexpr static KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) * 7 + 2*Escher::Metric::SmallCellMargin + Escher::Metric::TableSeparatorThickness; // KDFont::SmallFont->glyphSize().width() = 7
 
   constexpr static int k_maxNumberOfDisplayableRows = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight)/k_cellHeight + 2;
   constexpr static int k_maxNumberOfDisplayableColumns = Ion::Display::Width/k_cellWidth + 2;
   constexpr static int k_maxNumberOfEditableCells = k_maxNumberOfDisplayableRows * k_maxNumberOfDisplayableColumns;
   constexpr static int k_numberOfTitleCells = 4;
-  static constexpr int k_titleCellType = 0;
-  static constexpr int k_editableCellType = 1;
+  constexpr static int k_titleCellType = 0;
+  constexpr static int k_editableCellType = 1;
 
   virtual bool deleteCellValue(int series, int col, int row);
   Escher::StackViewController * stackController() const override;

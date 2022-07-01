@@ -12,10 +12,10 @@ public:
   void setData(const char * data);
   void layoutSubviews(bool force = false) override;
 private:
-  static constexpr KDCoordinate k_outlineThickness = 1;
-  static constexpr KDCoordinate k_charPatternWidth = 11;
-  static constexpr KDCoordinate k_stringOffset = 3;
-  static constexpr KDColor k_borderColor = KDColorRed;
+  constexpr static KDCoordinate k_outlineThickness = 1;
+  constexpr static KDCoordinate k_charPatternWidth = 11;
+  constexpr static KDCoordinate k_stringOffset = 3;
+  constexpr static KDColor k_borderColor = KDColorRed;
   void updateModuleWidth();
   int checksum() const;
   void drawQuietZoneAt(KDContext * ctx, KDCoordinate * x) const;

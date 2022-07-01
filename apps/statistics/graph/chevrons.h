@@ -7,8 +7,8 @@ namespace Statistics {
 
 class Chevrons {
 public:
-  static constexpr KDCoordinate k_chevronHeight = 8;
-  static constexpr KDCoordinate k_chevronWidth = 10;
+  constexpr static KDCoordinate k_chevronHeight = 8;
+  constexpr static KDCoordinate k_chevronWidth = 10;
   static const uint8_t DownChevronMask[k_chevronHeight][k_chevronWidth];
   static const uint8_t UpChevronMask[k_chevronHeight][k_chevronWidth];
 };

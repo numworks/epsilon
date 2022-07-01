@@ -11,14 +11,14 @@ namespace Layout {
 
 #if !EPSILON_SDL_SCREEN_ONLY
 
-static constexpr int backgroundWidth = 1160;
-static constexpr int backgroundHeight = 2220;
+constexpr static int backgroundWidth = 1160;
+constexpr static int backgroundHeight = 2220;
 
-static constexpr float X(int x) { return static_cast<float>(x)/static_cast<float>(backgroundWidth); }
-static constexpr float Y(int y) { return static_cast<float>(y)/static_cast<float>(backgroundHeight); }
+constexpr static float X(int x) { return static_cast<float>(x)/static_cast<float>(backgroundWidth); }
+constexpr static float Y(int y) { return static_cast<float>(y)/static_cast<float>(backgroundHeight); }
 
-static constexpr SDL_FRect areaOfInterest = {X(110), Y(30), X(940), Y(2150)};
-static constexpr SDL_FRect screenRect = {X(192), Y(191), X(776), Y(582)};
+constexpr static SDL_FRect areaOfInterest = {X(110), Y(30), X(940), Y(2150)};
+constexpr static SDL_FRect screenRect = {X(192), Y(191), X(776), Y(582)};
 
 static SDL_Rect sFrame;
 
@@ -101,8 +101,8 @@ public:
     LargeSquircle,
     NumberOfShapes
   };
-  static constexpr size_t NumberOfShapes = (size_t)Shape::NumberOfShapes;
-  static constexpr const char * assetName[KeyLayout::NumberOfShapes] = {
+  constexpr static size_t NumberOfShapes = (size_t)Shape::NumberOfShapes;
+  constexpr static const char * assetName[KeyLayout::NumberOfShapes] = {
     "horizontal_arrow.png",
     "vertical_arrow.png",
     "round.png",
@@ -123,7 +123,7 @@ private:
 
 constexpr const char * const KeyLayout::assetName[KeyLayout::NumberOfShapes];
 
-static constexpr KeyLayout sKeyLayouts[Keyboard::NumberOfValidKeys] = {
+constexpr static KeyLayout sKeyLayouts[Keyboard::NumberOfValidKeys] = {
   KeyLayout(195, 1029, KeyLayout::Shape::HorizontalArrow), // A1, Left
   KeyLayout(273, 948, KeyLayout::Shape::VerticalArrow), // A2, Up
   KeyLayout(273, 1108, KeyLayout::Shape::VerticalArrow), // A3, Down

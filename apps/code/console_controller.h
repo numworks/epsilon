@@ -77,14 +77,14 @@ public:
   }
 #endif
 private:
-  static constexpr const char * k_importCommand1 = "from ";
-  static constexpr const char * k_importCommand2 = " import *";
-  static constexpr size_t k_maxImportCommandSize = 5 + 9 + Escher::TextField::maxBufferSize(); // strlen(k_importCommand1) + strlen(k_importCommand2) + TextField::maxBufferSize()
-  static constexpr int k_lineCellType = 0;
-  static constexpr int k_editCellType = 1;
-  static constexpr int k_numberOfLineCells = (Ion::Display::Height - Escher::Metric::TitleBarHeight) / 14 + 2; // 14 = KDFont::SmallFont->glyphSize().height()
+  constexpr static const char * k_importCommand1 = "from ";
+  constexpr static const char * k_importCommand2 = " import *";
+  constexpr static size_t k_maxImportCommandSize = 5 + 9 + Escher::TextField::maxBufferSize(); // strlen(k_importCommand1) + strlen(k_importCommand2) + TextField::maxBufferSize()
+  constexpr static int k_lineCellType = 0;
+  constexpr static int k_editCellType = 1;
+  constexpr static int k_numberOfLineCells = (Ion::Display::Height - Escher::Metric::TitleBarHeight) / 14 + 2; // 14 = KDFont::SmallFont->glyphSize().height()
   // k_numberOfLineCells = (240 - 18)/14 ~ 15.9. The 0.1 cell can be above and below the 15 other cells so we add +2 cells.
-  static constexpr int k_outputAccumulationBufferSize = 100;
+  constexpr static int k_outputAccumulationBufferSize = 100;
   bool isDisplayingViewController();
   void reloadData(bool isEditing);
   void flushOutputAccumulationBufferToStore();

@@ -13,8 +13,8 @@ namespace Code {
 
 class ScriptStore : public MicroPython::ScriptProvider {
 public:
-  static constexpr char k_scriptExtension[] = "py";
-  static constexpr size_t k_scriptExtensionLength = 2;
+  constexpr static char k_scriptExtension[] = "py";
+  constexpr static size_t k_scriptExtensionLength = 2;
 
   // Storage information
   static bool ScriptNameIsFree(const char * baseName);
@@ -51,7 +51,7 @@ private:
    * be able to store a Script with default name and its extension, the
    * importation status (1 char), the default content "from math import *\n"
    * (20 char) and 10 char of free space. */
-  static constexpr int k_fullFreeSpaceSizeLimit = sizeof(Ion::Storage::FileSystem::record_size_t)+Script::k_defaultScriptNameMaxSize+k_scriptExtensionLength+1+20+10;
+  constexpr static int k_fullFreeSpaceSizeLimit = sizeof(Ion::Storage::FileSystem::record_size_t)+Script::k_defaultScriptNameMaxSize+k_scriptExtensionLength+1+20+10;
 
   Ion::Storage::Record::ErrorStatus addScriptFromTemplate(const ScriptTemplate * scriptTemplate) {
     return Script::Create(scriptTemplate->name(), scriptTemplate->content());

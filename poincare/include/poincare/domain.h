@@ -24,11 +24,11 @@ public:
     OpenUnitSegment = 1 << 9,
   };
 
-  static constexpr Type k_nonZero = static_cast<Type>(NStar | RStar | RPlusStar | LeftOpenUnitSegment | OpenUnitSegment);
-  static constexpr Type k_finite = static_cast<Type>(UnitSegment | LeftOpenUnitSegment | OpenUnitSegment);
-  static constexpr Type k_onlyIntegers = static_cast<Type>(N | NStar);
-  static constexpr Type k_onlyNegative = static_cast<Type>(RMinus);
-  static constexpr Type k_onlyPositive = static_cast<Type>(N | NStar | RPlus | RPlusStar | UnitSegment | LeftOpenUnitSegment | OpenUnitSegment);
+  constexpr static Type k_nonZero = static_cast<Type>(NStar | RStar | RPlusStar | LeftOpenUnitSegment | OpenUnitSegment);
+  constexpr static Type k_finite = static_cast<Type>(UnitSegment | LeftOpenUnitSegment | OpenUnitSegment);
+  constexpr static Type k_onlyIntegers = static_cast<Type>(N | NStar);
+  constexpr static Type k_onlyNegative = static_cast<Type>(RMinus);
+  constexpr static Type k_onlyPositive = static_cast<Type>(N | NStar | RPlus | RPlusStar | UnitSegment | LeftOpenUnitSegment | OpenUnitSegment);
 
   template<typename T> static bool Contains(T value, Type type) {
     if (std::isnan(value)) {

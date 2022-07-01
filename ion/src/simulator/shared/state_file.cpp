@@ -8,14 +8,14 @@ namespace Ion {
 namespace Simulator {
 namespace StateFile {
 
-static constexpr const char * sHeader = "NWSF";
-static constexpr int sHeaderLength = 4;
-static constexpr int sVersionLength = 8;
-static constexpr const char * sWildcardVersion = "**.**.**";
-static constexpr int sFormatVersionLength = 1;
-static constexpr uint8_t sLatestFormatVersion = 1;
-static constexpr int sLanguageLength = Ion::Events::Journal::k_languageSize-1;
-static constexpr const char * sWildcardLanguage = "**";
+constexpr static const char * sHeader = "NWSF";
+constexpr static int sHeaderLength = 4;
+constexpr static int sVersionLength = 8;
+constexpr static const char * sWildcardVersion = "**.**.**";
+constexpr static int sFormatVersionLength = 1;
+constexpr static uint8_t sLatestFormatVersion = 1;
+constexpr static int sLanguageLength = Ion::Events::Journal::k_languageSize-1;
+constexpr static const char * sWildcardLanguage = "**";
 
 /* File format:
  * Format version 0xFF (latest) :

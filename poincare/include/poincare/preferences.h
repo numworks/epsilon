@@ -58,7 +58,7 @@ public:
     Portuguese = 5,
     Undefined = 6, // Undefined must be the last ExamMode.
   };
-  static constexpr int k_numberOfExamModes = 6;
+  constexpr static int k_numberOfExamModes = 6;
   static_assert(static_cast<int>(ExamMode::IBTest) == 3, "Preferences::ExamMode::IBTest != 3 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
   static_assert(static_cast<int>(ExamMode::PressToTest) == 4, "Preferences::ExamMode::PressToTest != 4 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
   static_assert(k_numberOfExamModes == static_cast<int>(ExamMode::Undefined), "Preferences::ExamMode::Undefined should be last but the number of exam modes does not match.");
@@ -83,7 +83,7 @@ public:
   } PressToTestParams;
   static_assert(sizeof(PressToTestParams) == sizeof(uint8_t), "PressToTestParams can have 8 params at most");
   /* By default, a PressToTestParams has all parameters set to false. */
-  static constexpr PressToTestParams k_inactivePressToTest = PressToTestParams({0});
+  constexpr static PressToTestParams k_inactivePressToTest = PressToTestParams({0});
 
   Preferences();
   static Preferences * sharedPreferences();
@@ -115,8 +115,8 @@ public:
   bool sumIsForbidden() const;
   bool exactResultsAreForbidden() const;
 private:
-  static constexpr int k_pressToTestParamsPersistingByteIndex = 0;
-  static constexpr int k_examModePersistingByteIndex = 1;
+  constexpr static int k_pressToTestParamsPersistingByteIndex = 0;
+  constexpr static int k_examModePersistingByteIndex = 1;
   static_assert(k_examModePersistingByteIndex == 1, "k_examModePersistingByteIndex != 1 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
 
   void updateExamModeFromPersistingBytesIfNeeded() const;

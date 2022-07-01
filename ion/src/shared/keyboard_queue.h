@@ -7,7 +7,7 @@
 namespace Ion {
 namespace Keyboard {
 
-static constexpr size_t k_maximalNumberOfStates = 5;
+constexpr static size_t k_maximalNumberOfStates = 5;
 
 class Queue : public RingBuffer<Ion::Keyboard::State, k_maximalNumberOfStates> {
 public:

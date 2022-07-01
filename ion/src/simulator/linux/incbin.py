@@ -56,7 +56,7 @@ def print_header(files, path):
     f.write("  unsigned char * m_start;\n")
     f.write("  unsigned char * m_end;\n")
     f.write("};\n\n")
-    f.write("static constexpr ResourceMap resources_addresses[] = {\n")
+    f.write("constexpr static ResourceMap resources_addresses[] = {\n")
     for asset in files:
         print_mapping(f, asset)
 

@@ -41,7 +41,7 @@ private:
       constexpr static int k_numberOfLegends = 3;
       constexpr static int k_numberOfTokens = 6;
       constexpr static KDCoordinate k_tokenWidth = 10;
-      static constexpr KDColor BackgroundColor() { return BannerView::BackgroundColor(); }
+      constexpr static KDColor BackgroundColor() { return BannerView::BackgroundColor(); }
       void layoutSubviews(bool force = false) override;
       int numberOfSubviews() const override;
       Escher::View * subviewAtIndex(int index) override;

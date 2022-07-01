@@ -28,8 +28,8 @@ public:
     Logistic        = 11,
     Median          = 12,
   };
-  static constexpr int k_numberOfModels = 13;
-  static constexpr int k_maxNumberOfCoefficients = 5; // This has to verify: k_maxNumberOfCoefficients < Matrix::k_maxNumberOfCoefficients
+  constexpr static int k_numberOfModels = 13;
+  constexpr static int k_maxNumberOfCoefficients = 5; // This has to verify: k_maxNumberOfCoefficients < Matrix::k_maxNumberOfCoefficients
   virtual Poincare::Layout layout() = 0;
 
   Poincare::Expression simplifiedExpression(double * modelCoefficients, Poincare::Context * context);
@@ -52,13 +52,13 @@ private:
   virtual double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const = 0;
 
   // Levenberg-Marquardt
-  static constexpr double k_maxIterations = 300;
-  static constexpr double k_maxMatrixInversionFixIterations = 10;
-  static constexpr double k_initialLambda = 0.001;
-  static constexpr double k_lambdaFactor = 10;
-  static constexpr double k_chi2ChangeCondition = 0.001;
-  static constexpr double k_initialCoefficientValue = 1.0;
-  static constexpr int k_consecutiveSmallChi2ChangesLimit = 10;
+  constexpr static double k_maxIterations = 300;
+  constexpr static double k_maxMatrixInversionFixIterations = 10;
+  constexpr static double k_initialLambda = 0.001;
+  constexpr static double k_lambdaFactor = 10;
+  constexpr static double k_chi2ChangeCondition = 0.001;
+  constexpr static double k_initialCoefficientValue = 1.0;
+  constexpr static int k_consecutiveSmallChi2ChangesLimit = 10;
   void fitLevenbergMarquardt(Store * store, int series, double * modelCoefficients, Poincare::Context * context);
   double chi2(Store * store, int series, double * modelCoefficients) const;
   double alphaPrimeCoefficient(Store * store, int series, double * modelCoefficients, int k, int l, double lambda) const;

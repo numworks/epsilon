@@ -34,7 +34,7 @@ private:
     Escher::BufferTextView m_lcdDataStateView;
     Escher::BufferTextView m_lcdNumberPixelFailuresView;
   };
-  static constexpr int k_errorLimit = 0;
+  constexpr static int k_errorLimit = 0;
   void runTest();
   bool m_testSuccessful;
   ContentView m_view;

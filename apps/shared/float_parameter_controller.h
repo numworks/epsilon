@@ -29,8 +29,8 @@ public:
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 
 protected:
-  static constexpr int k_parameterCellType = 0;
-  static constexpr int k_buttonCellType = 1;
+  constexpr static int k_parameterCellType = 0;
+  constexpr static int k_buttonCellType = 1;
 
   enum class InfinityTolerance {
     None,

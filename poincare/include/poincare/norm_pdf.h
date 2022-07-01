@@ -8,7 +8,7 @@ namespace Poincare {
 
 class NormPDFNode final : public NormalDistributionFunctionNode  {
 public:
-  static constexpr char k_functionName[] = "normpdf";
+  constexpr static char k_functionName[] = "normpdf";
 
   // TreeNode
   size_t size() const override { return sizeof(NormPDFNode); }

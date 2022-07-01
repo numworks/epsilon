@@ -49,7 +49,7 @@ int ConstantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  static constexpr size_t bufferSize = 10; // TODO: optimize buffer size
+  constexpr static size_t bufferSize = 10; // TODO: optimize buffer size
   char buffer[bufferSize];
   return LayoutHelper::StringLayoutOfSerialization(Constant(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }

@@ -40,7 +40,7 @@ public:
   LeastCommonMultiple(const LeastCommonMultipleNode * n) : NAryExpression(n) {}
   static LeastCommonMultiple Builder(const Tuple & children = {}) { return TreeHandle::NAryBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(convert(children)); }
   // Using a -2 as numberOfChildren to allow 2 or more children when parsing
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("lcm", -2, &UntypedBuilderMultipleChildren<LeastCommonMultiple>);
+  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("lcm", -2, &UntypedBuilderMultipleChildren<LeastCommonMultiple>);
 
   // Expression
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);

@@ -28,7 +28,7 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override { activeViewController()->viewDidDisappear(); }
 private:
-  static constexpr size_t k_maxNumberOfViewController = 4;
+  constexpr static size_t k_maxNumberOfViewController = 4;
   AlternateViewDelegate * m_delegate;
   ViewController * m_viewControllers[k_maxNumberOfViewController];
 };

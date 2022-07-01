@@ -12,7 +12,7 @@ class ContinuousFunction;
 
 class ContinuousFunctionCache {
 public:
-  static constexpr int k_numberOfAvailableCaches = 2;
+  constexpr static int k_numberOfAvailableCaches = 2;
 
   static void PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep);
 
@@ -36,16 +36,16 @@ private:
   #if __EMSCRIPTEN__
   /* Emscripten cannot represent a NaN literal with custom bit pattern in
    * NaN-canonicalizing JS engines. We use a magic number instead. */
-  static constexpr IntFloat k_sNAN = IntFloat{ .f = -1.7014118346e+38 };
+  constexpr static IntFloat k_sNAN = IntFloat{ .f = -1.7014118346e+38 };
   #else
   /* We can't use a regular quiet NAN as it can often be an actual function
    * value. Using an union, we create a signaling NAN instead.
    * 0x7fa00000 corresponds to std::numeric_limits<float>::signaling_NaN() */
-  static constexpr IntFloat k_sNAN = IntFloat{ .i = 0x7fa00000 };
+  constexpr static IntFloat k_sNAN = IntFloat{ .i = 0x7fa00000 };
   #endif
   /* The size of the cache is chosen to optimize the display of cartesian
    * functions */
-  static constexpr int k_sizeOfCache = Ion::Display::Width;
+  constexpr static int k_sizeOfCache = Ion::Display::Width;
   /* We need a certain amount of tolerance since we try to evaluate the
    * equality of floats. But the value has to be chosen carefully. Too high of
    * a tolerance causes false positives, which lead to errors in curves
@@ -54,7 +54,7 @@ private:
    *
    * The value 128*FLT_EPSILON has been found to be the lowest for which all
    * indices verify indexForParameter(tMin + index * tStep) = index. */
-  static constexpr float k_cacheHitTolerance = 128.0f * FLT_EPSILON;
+  constexpr static float k_cacheHitTolerance = 128.0f * FLT_EPSILON;
 
   void invalidateBetween(int iInf, int iSup);
   void setRange(ContinuousFunction * function, float tMin, float tStep);

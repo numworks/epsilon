@@ -65,7 +65,7 @@ public:
 
   VariableBoxController * variableBoxController() { return &m_variableBoxController; }
 
-  static constexpr size_t k_pythonHeapSize = 65536; // 64KiB
+  constexpr static size_t k_pythonHeapSize = 65536; // 64KiB
 
 private:
   App(Snapshot * snapshot);
@@ -97,7 +97,7 @@ private:
     assert(static_cast<void *>(m_pythonHeap + k_pythonHeapSize) <= static_cast<void *>(Poincare::TreePool::sharedPool() + sizeof(Poincare::TreePool)));
     return m_pythonHeap;
   }
-  static constexpr int k_pythonHeapExtensionSize = k_pythonHeapSize - sizeof(Poincare::TreePool);
+  constexpr static int k_pythonHeapExtensionSize = k_pythonHeapSize - sizeof(Poincare::TreePool);
   char m_pythonHeap[k_pythonHeapExtensionSize];
 #else
   char * pythonHeap() { return m_pythonHeap; }

@@ -34,8 +34,8 @@ protected:
 private:
   /* In practice, no menus display more than 7 cells at the time. Reducing this
    * value might reduce binary size at the cost of performances. */
-  static constexpr int k_memoizedCellsCount = 7;
-  static constexpr int k_resetMemoizedValue = -1;
+  constexpr static int k_memoizedCellsCount = 7;
+  constexpr static int k_resetMemoizedValue = -1;
   int getMemoizedIndex(int index);
   void setMemoizationIndex(int index);
   void shiftMemoization(bool lowerIndex);

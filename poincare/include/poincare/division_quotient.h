@@ -8,7 +8,7 @@ namespace Poincare {
 
 class DivisionQuotientNode final : public ExpressionNode {
 public:
-  static constexpr char k_functionName[] = "quo";
+  constexpr static char k_functionName[] = "quo";
 
   // TreeNode
   size_t size() const override { return sizeof(DivisionQuotientNode); }

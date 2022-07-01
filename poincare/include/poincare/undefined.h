@@ -52,7 +52,7 @@ public:
   constexpr static const char * Name() {
     return "undef";
   }
-  static constexpr int NameSize() {
+  constexpr static int NameSize() {
     return 6;
   }
 };

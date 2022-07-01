@@ -402,7 +402,7 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
    * If the cursor is in an argument field, and the variable is well nested and
    * defined, the variable will be inserted into the given buffer. Otherwise,
    * the (improved or not) defaultXNTCodePoint is inserted. */
-  static constexpr struct { const char *name; char xnt; } sFunctions[] = {
+  constexpr static struct { const char *name; char xnt; } sFunctions[] = {
     { Poincare::Derivative::s_functionHelper.name(), Poincare::Derivative::k_defaultXNTChar },
     { Poincare::Integral::s_functionHelper.name(), Poincare::Integral::k_defaultXNTChar },
     { Poincare::Product::s_functionHelper.name(), Poincare::Product::k_defaultXNTChar },

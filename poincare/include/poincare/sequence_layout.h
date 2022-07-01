@@ -45,8 +45,8 @@ protected:
   LayoutNode * upperBoundLayout() { return childAtIndex(3); }
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 private:
-  static constexpr int k_argumentLayoutIndex = 0;
-  static constexpr int k_variableLayoutIndex = 1;
+  constexpr static int k_argumentLayoutIndex = 0;
+  constexpr static int k_variableLayoutIndex = 1;
   KDCoordinate completeLowerBoundX();
   KDCoordinate subscriptBaseline();
 };

@@ -19,7 +19,7 @@ App * App::Snapshot::unpack(Escher::Container * container) {
   return new (container->currentAppBuffer()) App(this);
 }
 
-static constexpr App::Descriptor sDescriptor;
+constexpr static App::Descriptor sDescriptor;
 
 const App::Descriptor * App::Snapshot::descriptor() const {
   return &sDescriptor;

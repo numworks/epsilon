@@ -264,7 +264,7 @@ QUIZ_CASE(poincare_simplification_constants) {
 void assert_parsed_unit_simplify_to_with_prefixes(const Unit::Representative * representative) {
   int numberOfPrefixes;
   const Unit::Prefix * prefixes;
-  static constexpr size_t bufferSize = 12;
+  constexpr static size_t bufferSize = 12;
   char buffer[bufferSize] = "1×";
   if (representative->isOutputPrefixable()) {
     numberOfPrefixes = Unit::Prefix::k_numberOfPrefixes;

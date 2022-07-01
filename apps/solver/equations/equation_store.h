@@ -77,13 +77,13 @@ public:
 
   void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) override;
 
-  static constexpr int k_maxNumberOfExactSolutions = Poincare::Expression::k_maxNumberOfVariables > Poincare::Expression::k_maxPolynomialDegree + 1? Poincare::Expression::k_maxNumberOfVariables : Poincare::Expression::k_maxPolynomialDegree + 1;
-  static constexpr int k_maxNumberOfApproximateSolutions = 10;
+  constexpr static int k_maxNumberOfExactSolutions = Poincare::Expression::k_maxNumberOfVariables > Poincare::Expression::k_maxPolynomialDegree + 1? Poincare::Expression::k_maxNumberOfVariables : Poincare::Expression::k_maxPolynomialDegree + 1;
+  constexpr static int k_maxNumberOfApproximateSolutions = 10;
   bool m_hasMoreThanMaxNumberOfApproximateSolution;
-  static constexpr int k_maxNumberOfSolutions = k_maxNumberOfExactSolutions > k_maxNumberOfApproximateSolutions ? k_maxNumberOfExactSolutions : k_maxNumberOfApproximateSolutions;
+  constexpr static int k_maxNumberOfSolutions = k_maxNumberOfExactSolutions > k_maxNumberOfApproximateSolutions ? k_maxNumberOfExactSolutions : k_maxNumberOfApproximateSolutions;
 private:
-  static constexpr double k_precision = 0.01;
-  static constexpr int k_maxNumberOfEquations = Poincare::Expression::k_maxNumberOfVariables; // Enable the same number of equations as the number of unknown variables
+  constexpr static double k_precision = 0.01;
+  constexpr static int k_maxNumberOfEquations = Poincare::Expression::k_maxNumberOfVariables; // Enable the same number of equations as the number of unknown variables
 
   // ExpressionModelStore
   int maxNumberOfMemoizedModels() const override { return k_maxNumberOfEquations; }

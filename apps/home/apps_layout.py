@@ -64,7 +64,7 @@ def print_implementation(implementation, data):
     f.write(" * for the nth app in the Home menu. */\n\n")
 
     for i in range(len(styles)):
-        f.write("static constexpr int " + styles[i] + "AppsPermutation[] = {\n")
+        f.write("constexpr static int " + styles[i] + "AppsPermutation[] = {\n")
         f.write("  0,\n")
         for j in permutations[i]:
             f.write("  " + str(j) + ",\n")

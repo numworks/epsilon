@@ -8,8 +8,8 @@ namespace Shared {
 
 namespace ColorNames {
 
-static constexpr int Count = 8;
-static constexpr KDColor Colors[Count] = {
+constexpr static int Count = 8;
+constexpr static KDColor Colors[Count] = {
   Escher::Palette::Red,
   Escher::Palette::Blue,
   Escher::Palette::Green,
@@ -19,7 +19,7 @@ static constexpr KDColor Colors[Count] = {
   Escher::Palette::Pink,
   Escher::Palette::Orange
 };
-static constexpr I18n::Message Messages[Count] = {
+constexpr static I18n::Message Messages[Count] = {
   I18n::Message::ColorRed,
   I18n::Message::ColorBlue,
   I18n::Message::ColorGreen,

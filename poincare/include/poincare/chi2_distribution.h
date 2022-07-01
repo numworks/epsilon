@@ -30,8 +30,8 @@ public:
   static bool ExpressionKIsOK(bool * result, const Expression &k, Context * context);
   bool expressionParametersAreOK(bool * result, const Expression * parameters, Context * context) const override { return ExpressionKIsOK(result, parameters[0], context); }
 private:
-  static constexpr int k_maxRegularizedGammaIterations = 1000;
-  static constexpr double k_regularizedGammaPrecision = DBL_EPSILON;
+  constexpr static int k_maxRegularizedGammaIterations = 1000;
+  constexpr static double k_regularizedGammaPrecision = DBL_EPSILON;
   template<typename T> static bool KIsOK(T k);
 };
 

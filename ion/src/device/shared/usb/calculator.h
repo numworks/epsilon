@@ -136,12 +136,12 @@ protected:
   bool processSetupInRequest(SetupPacket * request, uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) override;
 
 private:
-  static constexpr uint8_t k_bConfigurationValue = 1;
-  static constexpr uint8_t k_dfuFlashInterfaceAlternateSetting = 0;
-  static constexpr uint8_t k_dfuSRAMInterfaceAlternateSetting = 1;
-  static constexpr uint8_t k_webUSBVendorCode = 1;
-  static constexpr uint8_t k_webUSBLandingPageIndex = 1;
-  static constexpr uint8_t k_microsoftOSVendorCode = 2;
+  constexpr static uint8_t k_bConfigurationValue = 1;
+  constexpr static uint8_t k_dfuFlashInterfaceAlternateSetting = 0;
+  constexpr static uint8_t k_dfuSRAMInterfaceAlternateSetting = 1;
+  constexpr static uint8_t k_webUSBVendorCode = 1;
+  constexpr static uint8_t k_webUSBLandingPageIndex = 1;
+  constexpr static uint8_t k_microsoftOSVendorCode = 2;
 
   // WebUSB and MicrosoftOSDescriptor commands
   bool getURLCommand(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength);

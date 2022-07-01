@@ -45,13 +45,13 @@ public:
     return &m_intervalParameterSelectorController;
   }
 private:
-  static constexpr KDCoordinate k_abscissaCellWidth = k_cellWidth + Escher::Metric::TableSeparatorThickness;
-  static constexpr KDCoordinate k_parametricCellWidth = (2*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)+3) * 7 + 2*Escher::Metric::SmallCellMargin; // The largest cell is holding "(-1.234567E-123;-1.234567E-123)" and KDFont::SmallFont->glyphSize().width() = 7
-  static constexpr size_t k_maxNumberOfSymbolTypes = Shared::ContinuousFunction::k_numberOfSymbolTypes;
-  static constexpr int k_maxNumberOfDisplayableFunctions = 4;
-  static constexpr int k_maxNumberOfDisplayableSymbolTypes = 2;
-  static constexpr int k_maxNumberOfDisplayableAbscissaCells = k_maxNumberOfDisplayableSymbolTypes * k_maxNumberOfDisplayableRows;
-  static constexpr int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableFunctions * k_maxNumberOfDisplayableRows;
+  constexpr static KDCoordinate k_abscissaCellWidth = k_cellWidth + Escher::Metric::TableSeparatorThickness;
+  constexpr static KDCoordinate k_parametricCellWidth = (2*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)+3) * 7 + 2*Escher::Metric::SmallCellMargin; // The largest cell is holding "(-1.234567E-123;-1.234567E-123)" and KDFont::SmallFont->glyphSize().width() = 7
+  constexpr static size_t k_maxNumberOfSymbolTypes = Shared::ContinuousFunction::k_numberOfSymbolTypes;
+  constexpr static int k_maxNumberOfDisplayableFunctions = 4;
+  constexpr static int k_maxNumberOfDisplayableSymbolTypes = 2;
+  constexpr static int k_maxNumberOfDisplayableAbscissaCells = k_maxNumberOfDisplayableSymbolTypes * k_maxNumberOfDisplayableRows;
+  constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableFunctions * k_maxNumberOfDisplayableRows;
 
   // Values controller
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
@@ -77,7 +77,7 @@ private:
   Shared::ContinuousFunction::SymbolType symbolTypeAtColumn(int * i) const;
 
   // Function evaluation memoization
-  static constexpr int k_valuesCellBufferSize = 2*Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)+3; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
+  constexpr static int k_valuesCellBufferSize = 2*Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)+3; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
   char * memoizedBufferAtIndex(int i) override {
     assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
     return m_memoizedBuffer[i];

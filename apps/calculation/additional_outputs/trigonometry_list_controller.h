@@ -14,7 +14,7 @@ public:
     m_graphCell(&m_model) {}
   void setExpression(Poincare::Expression e) override;
 private:
-  static constexpr char k_symbol[] = "θ";
+  constexpr static char k_symbol[] = "θ";
   const char * symbol() const override { return k_symbol; }
   Escher::HighlightCell * illustrationCell() override { return &m_graphCell; }
   TrigonometryGraphCell m_graphCell;

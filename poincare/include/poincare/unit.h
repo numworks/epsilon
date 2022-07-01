@@ -32,12 +32,12 @@ class Unit;
 
 class UnitNode final : public ExpressionNode {
 public:
-  static constexpr int k_numberOfBaseUnits = 7;
+  constexpr static int k_numberOfBaseUnits = 7;
 
   class Prefix {
     friend class Unit;
   public:
-    static constexpr int k_numberOfPrefixes = 13;
+    constexpr static int k_numberOfPrefixes = 13;
     static const Prefix * Prefixes();
     static const Prefix * EmptyPrefix();
     const char * symbol() const { return m_symbol; }
@@ -94,7 +94,7 @@ public:
       LongScale,
       All,
     };
-    static constexpr int k_numberOfDimensions = 24;
+    constexpr static int k_numberOfDimensions = 24;
     static const Representative * const * DefaultRepresentatives();
     static const Representative * RepresentativeForDimension(Vector<int> vector);
     constexpr Representative(const char * rootSymbol, const char * ratioExpression, double ratio, Prefixable inputPrefixable, Prefixable outputPrefixable) :
@@ -218,8 +218,8 @@ public:
     bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const override;
   private:
-    static constexpr double k_celsiusOrigin = 273.15;
-    static constexpr double k_fahrenheitOrigin = 459.67;
+    constexpr static double k_celsiusOrigin = 273.15;
+    constexpr static double k_fahrenheitOrigin = 459.67;
     using Representative::Representative;
   };
 
@@ -515,7 +515,7 @@ public:
    * time at execution. As such, their constructor are private and can only be
    * accessed by their friend class Unit. */
   typedef UnitNode::Prefix Prefix;
-  static constexpr const Prefix k_prefixes[Prefix::k_numberOfPrefixes] = {
+  constexpr static const Prefix k_prefixes[Prefix::k_numberOfPrefixes] = {
     Prefix("p", -12),
     Prefix("n", -9),
     Prefix("μ", -6),
@@ -533,7 +533,7 @@ public:
   typedef UnitNode::Representative Representative;
   typedef Representative::Prefixable Prefixable;
   typedef UnitNode::TimeRepresentative TimeRepresentative;
-  static constexpr const TimeRepresentative k_timeRepresentatives[] = {
+  constexpr static const TimeRepresentative k_timeRepresentatives[] = {
     TimeRepresentative("s", DEFINE_TWICE(1.), Prefixable::All, Prefixable::NegativeLongScale),
     TimeRepresentative("min", DEFINE_TWICE(60.), Prefixable::None, Prefixable::None),
     TimeRepresentative("h", DEFINE_TWICE(3600.), Prefixable::None, Prefixable::None),
@@ -543,7 +543,7 @@ public:
     TimeRepresentative("year", DEFINE_TWICE(31557600.), Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::DistanceRepresentative DistanceRepresentative;
-  static constexpr const DistanceRepresentative k_distanceRepresentatives[] = {
+  constexpr static const DistanceRepresentative k_distanceRepresentatives[] = {
     DistanceRepresentative("m", DEFINE_TWICE(1.), Prefixable::All, Prefixable::NegativeAndKilo),
     DistanceRepresentative("au", DEFINE_TWICE(149597870700.), Prefixable::None, Prefixable::None),
     DistanceRepresentative("ly", DEFINE_TWICE(299792458.*31557600.), Prefixable::None, Prefixable::None),
@@ -554,7 +554,7 @@ public:
     DistanceRepresentative("mi", DEFINE_TWICE(63360*0.0254), Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::MassRepresentative MassRepresentative;
-  static constexpr const MassRepresentative k_massRepresentatives[] = {
+  constexpr static const MassRepresentative k_massRepresentatives[] = {
     MassRepresentative("g", DEFINE_TWICE(1.), Prefixable::All, Prefixable::NegativeAndKilo),
     MassRepresentative("t", DEFINE_TWICE(1000.), Prefixable::PositiveLongScale, Prefixable::PositiveLongScale),
     MassRepresentative("Da", "1/(6.02214076ᴇ26)", 1/(6.02214076e26), Prefixable::All, Prefixable::All),
@@ -564,59 +564,59 @@ public:
     MassRepresentative("lgtn", DEFINE_TWICE(2240*16*0.028349523125), Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::CurrentRepresentative CurrentRepresentative;
-  static constexpr const CurrentRepresentative k_currentRepresentatives[] = { CurrentRepresentative("A", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const CurrentRepresentative k_currentRepresentatives[] = { CurrentRepresentative("A", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::TemperatureRepresentative TemperatureRepresentative;
-  static constexpr const TemperatureRepresentative k_temperatureRepresentatives[] = {
+  constexpr static const TemperatureRepresentative k_temperatureRepresentatives[] = {
     TemperatureRepresentative("K", DEFINE_TWICE(1.), Prefixable::All, Prefixable::None),
     TemperatureRepresentative("°C", DEFINE_TWICE(1.), Prefixable::None, Prefixable::None),
     TemperatureRepresentative("°F", DEFINE_TWICE(5./9.), Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::AmountOfSubstanceRepresentative AmountOfSubstanceRepresentative;
-  static constexpr const AmountOfSubstanceRepresentative k_amountOfSubstanceRepresentatives[] = { AmountOfSubstanceRepresentative("mol", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const AmountOfSubstanceRepresentative k_amountOfSubstanceRepresentatives[] = { AmountOfSubstanceRepresentative("mol", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::LuminousIntensityRepresentative LuminousIntensityRepresentative;
-  static constexpr const LuminousIntensityRepresentative k_luminousIntensityRepresentatives[] = { LuminousIntensityRepresentative("cd", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const LuminousIntensityRepresentative k_luminousIntensityRepresentatives[] = { LuminousIntensityRepresentative("cd", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::FrequencyRepresentative FrequencyRepresentative;
-  static constexpr const FrequencyRepresentative k_frequencyRepresentatives[] = { FrequencyRepresentative("Hz", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const FrequencyRepresentative k_frequencyRepresentatives[] = { FrequencyRepresentative("Hz", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::ForceRepresentative ForceRepresentative;
-  static constexpr const ForceRepresentative k_forceRepresentatives[] = { ForceRepresentative("N", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const ForceRepresentative k_forceRepresentatives[] = { ForceRepresentative("N", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::PressureRepresentative PressureRepresentative;
-  static constexpr const PressureRepresentative k_pressureRepresentatives[] = {
+  constexpr static const PressureRepresentative k_pressureRepresentatives[] = {
     PressureRepresentative("Pa", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale),
     PressureRepresentative("bar", DEFINE_TWICE(100000.), Prefixable::All, Prefixable::LongScale),
     PressureRepresentative("atm", DEFINE_TWICE(101325.), Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::EnergyRepresentative EnergyRepresentative;
-  static constexpr const EnergyRepresentative k_energyRepresentatives[] = {
+  constexpr static const EnergyRepresentative k_energyRepresentatives[] = {
     EnergyRepresentative("J", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale),
     EnergyRepresentative("eV", "1.602176634ᴇ-19", 1.602176634e-19, Prefixable::All, Prefixable::LongScale),
   };
   typedef UnitNode::PowerRepresentative PowerRepresentative;
-  static constexpr const PowerRepresentative k_powerRepresentatives[] = { PowerRepresentative("W", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const PowerRepresentative k_powerRepresentatives[] = { PowerRepresentative("W", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::ElectricChargeRepresentative ElectricChargeRepresentative;
-  static constexpr const ElectricChargeRepresentative k_electricChargeRepresentatives[] = { ElectricChargeRepresentative("C", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const ElectricChargeRepresentative k_electricChargeRepresentatives[] = { ElectricChargeRepresentative("C", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::ElectricPotentialRepresentative ElectricPotentialRepresentative;
-  static constexpr const ElectricPotentialRepresentative k_electricPotentialRepresentatives[] = { ElectricPotentialRepresentative("V", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const ElectricPotentialRepresentative k_electricPotentialRepresentatives[] = { ElectricPotentialRepresentative("V", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::ElectricCapacitanceRepresentative ElectricCapacitanceRepresentative;
-  static constexpr const ElectricCapacitanceRepresentative k_electricCapacitanceRepresentatives[] = { ElectricCapacitanceRepresentative("F", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const ElectricCapacitanceRepresentative k_electricCapacitanceRepresentatives[] = { ElectricCapacitanceRepresentative("F", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::ElectricResistanceRepresentative ElectricResistanceRepresentative;
-  static constexpr const ElectricResistanceRepresentative k_electricResistanceRepresentatives[] = { ElectricResistanceRepresentative("Ω", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const ElectricResistanceRepresentative k_electricResistanceRepresentatives[] = { ElectricResistanceRepresentative("Ω", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::ElectricConductanceRepresentative ElectricConductanceRepresentative;
-  static constexpr const ElectricConductanceRepresentative k_electricConductanceRepresentatives[] = { ElectricConductanceRepresentative("S", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const ElectricConductanceRepresentative k_electricConductanceRepresentatives[] = { ElectricConductanceRepresentative("S", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::MagneticFluxRepresentative MagneticFluxRepresentative;
-  static constexpr const MagneticFluxRepresentative k_magneticFluxRepresentatives[] = { MagneticFluxRepresentative("Wb", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const MagneticFluxRepresentative k_magneticFluxRepresentatives[] = { MagneticFluxRepresentative("Wb", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::MagneticFieldRepresentative MagneticFieldRepresentative;
-  static constexpr const MagneticFieldRepresentative k_magneticFieldRepresentatives[] = { MagneticFieldRepresentative("T", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const MagneticFieldRepresentative k_magneticFieldRepresentatives[] = { MagneticFieldRepresentative("T", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::InductanceRepresentative InductanceRepresentative;
-  static constexpr const InductanceRepresentative k_inductanceRepresentatives[] = { InductanceRepresentative("H", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const InductanceRepresentative k_inductanceRepresentatives[] = { InductanceRepresentative("H", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::CatalyticActivityRepresentative CatalyticActivityRepresentative;
-  static constexpr const CatalyticActivityRepresentative k_catalyticActivityRepresentatives[] = { CatalyticActivityRepresentative("kat", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
+  constexpr static const CatalyticActivityRepresentative k_catalyticActivityRepresentatives[] = { CatalyticActivityRepresentative("kat", DEFINE_TWICE(1.), Prefixable::All, Prefixable::LongScale) };
   typedef UnitNode::SurfaceRepresentative SurfaceRepresentative;
-  static constexpr const SurfaceRepresentative k_surfaceRepresentatives[] = {
+  constexpr static const SurfaceRepresentative k_surfaceRepresentatives[] = {
     SurfaceRepresentative("ha", DEFINE_TWICE(10000.), Prefixable::None, Prefixable::None),
     SurfaceRepresentative("acre", DEFINE_TWICE(4046.8564224), Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::VolumeRepresentative VolumeRepresentative;
-  static constexpr const VolumeRepresentative k_volumeRepresentatives[] = {
+  constexpr static const VolumeRepresentative k_volumeRepresentatives[] = {
     VolumeRepresentative("L", DEFINE_TWICE(0.001), Prefixable::All, Prefixable::Negative),
     VolumeRepresentative("tsp", DEFINE_TWICE(0.00000492892159375), Prefixable::None, Prefixable::None),
     VolumeRepresentative("tbsp", DEFINE_TWICE(3*0.00000492892159375), Prefixable::None, Prefixable::None),
@@ -628,63 +628,63 @@ public:
   };
 
   /* Define access points to some prefixes and representatives. */
-  static constexpr int k_emptyPrefixIndex = 6;
+  constexpr static int k_emptyPrefixIndex = 6;
   static_assert(k_prefixes[k_emptyPrefixIndex].m_exponent == 0, "Index for the Empty Prefix is incorrect.");
-  static constexpr int k_kiloPrefixIndex = 9;
+  constexpr static int k_kiloPrefixIndex = 9;
   static_assert(k_prefixes[k_kiloPrefixIndex].m_exponent == 3, "Index for the Kilo Prefix is incorrect.");
-  static constexpr int k_secondRepresentativeIndex = 0;
+  constexpr static int k_secondRepresentativeIndex = 0;
   static_assert(strings_equal(k_timeRepresentatives[k_secondRepresentativeIndex].m_rootSymbol, "s"), "Index for the Second Representative is incorrect.");
-  static constexpr int k_minuteRepresentativeIndex = 1;
+  constexpr static int k_minuteRepresentativeIndex = 1;
   static_assert(strings_equal(k_timeRepresentatives[k_minuteRepresentativeIndex].m_rootSymbol, "min"), "Index for the Minute Representative is incorrect.");
-  static constexpr int k_hourRepresentativeIndex = 2;
+  constexpr static int k_hourRepresentativeIndex = 2;
   static_assert(strings_equal(k_timeRepresentatives[k_hourRepresentativeIndex].m_rootSymbol, "h"), "Index for the Hour Representative is incorrect.");
-  static constexpr int k_dayRepresentativeIndex = 3;
+  constexpr static int k_dayRepresentativeIndex = 3;
   static_assert(strings_equal(k_timeRepresentatives[k_dayRepresentativeIndex].m_rootSymbol, "day"), "Index for the Day Representative is incorrect.");
-  static constexpr int k_monthRepresentativeIndex = 5;
+  constexpr static int k_monthRepresentativeIndex = 5;
   static_assert(strings_equal(k_timeRepresentatives[k_monthRepresentativeIndex].m_rootSymbol, "month"), "Index for the Month Representative is incorrect.");
-  static constexpr int k_yearRepresentativeIndex = 6;
+  constexpr static int k_yearRepresentativeIndex = 6;
   static_assert(strings_equal(k_timeRepresentatives[k_yearRepresentativeIndex].m_rootSymbol, "year"), "Index for the Year Representative is incorrect.");
-  static constexpr int k_meterRepresentativeIndex = 0;
+  constexpr static int k_meterRepresentativeIndex = 0;
   static_assert(strings_equal(k_distanceRepresentatives[k_meterRepresentativeIndex].m_rootSymbol, "m"), "Index for the Meter Representative is incorrect.");
-  static constexpr int k_inchRepresentativeIndex = 4;
+  constexpr static int k_inchRepresentativeIndex = 4;
   static_assert(strings_equal(k_distanceRepresentatives[k_inchRepresentativeIndex].m_rootSymbol, "in"), "Index for the Inch Representative is incorrect.");
-  static constexpr int k_footRepresentativeIndex = 5;
+  constexpr static int k_footRepresentativeIndex = 5;
   static_assert(strings_equal(k_distanceRepresentatives[k_footRepresentativeIndex].m_rootSymbol, "ft"), "Index for the Foot Representative is incorrect.");
-  static constexpr int k_yardRepresentativeIndex = 6;
+  constexpr static int k_yardRepresentativeIndex = 6;
   static_assert(strings_equal(k_distanceRepresentatives[k_yardRepresentativeIndex].m_rootSymbol, "yd"), "Index for the Yard Representative is incorrect.");
-  static constexpr int k_mileRepresentativeIndex = 7;
+  constexpr static int k_mileRepresentativeIndex = 7;
   static_assert(strings_equal(k_distanceRepresentatives[k_mileRepresentativeIndex].m_rootSymbol, "mi"), "Index for the Mile Representative is incorrect.");
-  static constexpr int k_ounceRepresentativeIndex = 3;
+  constexpr static int k_ounceRepresentativeIndex = 3;
   static_assert(strings_equal(k_massRepresentatives[k_ounceRepresentativeIndex].m_rootSymbol, "oz"), "Index for the Ounce Representative is incorrect.");
-  static constexpr int k_poundRepresentativeIndex = 4;
+  constexpr static int k_poundRepresentativeIndex = 4;
   static_assert(strings_equal(k_massRepresentatives[k_poundRepresentativeIndex].m_rootSymbol, "lb"), "Index for the Pound Representative is incorrect.");
-  static constexpr int k_shortTonRepresentativeIndex = 5;
+  constexpr static int k_shortTonRepresentativeIndex = 5;
   static_assert(strings_equal(k_massRepresentatives[k_shortTonRepresentativeIndex].m_rootSymbol, "shtn"), "Index for the Short Ton Representative is incorrect.");
-  static constexpr int k_kelvinRepresentativeIndex = 0;
+  constexpr static int k_kelvinRepresentativeIndex = 0;
   static_assert(strings_equal(k_temperatureRepresentatives[k_kelvinRepresentativeIndex].m_rootSymbol, "K"), "Index for the Kelvin Representative is incorrect.");
-  static constexpr int k_celsiusRepresentativeIndex = 1;
+  constexpr static int k_celsiusRepresentativeIndex = 1;
   static_assert(strings_equal(k_temperatureRepresentatives[k_celsiusRepresentativeIndex].m_rootSymbol, "°C"), "Index for the Celsius Representative is incorrect.");
-  static constexpr int k_fahrenheitRepresentativeIndex = 2;
+  constexpr static int k_fahrenheitRepresentativeIndex = 2;
   static_assert(strings_equal(k_temperatureRepresentatives[k_fahrenheitRepresentativeIndex].m_rootSymbol, "°F"), "Index for the Fahrenheit Representative is incorrect.");
-  static constexpr int k_jouleRepresentativeIndex = 0;
+  constexpr static int k_jouleRepresentativeIndex = 0;
   static_assert(strings_equal(k_energyRepresentatives[k_jouleRepresentativeIndex].m_rootSymbol, "J"), "Index for the Joule Representative is incorrect.");
-  static constexpr int k_electronVoltRepresentativeIndex = 1;
+  constexpr static int k_electronVoltRepresentativeIndex = 1;
   static_assert(strings_equal(k_energyRepresentatives[k_electronVoltRepresentativeIndex].m_rootSymbol, "eV"), "Index for the Electron Volt Representative is incorrect.");
-  static constexpr int k_wattRepresentativeIndex = 0;
+  constexpr static int k_wattRepresentativeIndex = 0;
   static_assert(strings_equal(k_powerRepresentatives[k_wattRepresentativeIndex].m_rootSymbol, "W"), "Index for the Watt Representative is incorrect.");
-  static constexpr int k_hectareRepresentativeIndex = 0;
+  constexpr static int k_hectareRepresentativeIndex = 0;
   static_assert(strings_equal(k_surfaceRepresentatives[k_hectareRepresentativeIndex].m_rootSymbol, "ha"), "Index for the Hectare Representative is incorrect.");
-  static constexpr int k_acreRepresentativeIndex = 1;
+  constexpr static int k_acreRepresentativeIndex = 1;
   static_assert(strings_equal(k_surfaceRepresentatives[k_acreRepresentativeIndex].m_rootSymbol, "acre"), "Index for the Acre Representative is incorrect.");
-  static constexpr int k_literRepresentativeIndex = 0;
+  constexpr static int k_literRepresentativeIndex = 0;
   static_assert(strings_equal(k_volumeRepresentatives[k_literRepresentativeIndex].m_rootSymbol, "L"), "Index for the Liter Representative is incorrect.");
-  static constexpr int k_cupRepresentativeIndex = 4;
+  constexpr static int k_cupRepresentativeIndex = 4;
   static_assert(strings_equal(k_volumeRepresentatives[k_cupRepresentativeIndex].m_rootSymbol, "cup"), "Index for the Cup Representative is incorrect.");
-  static constexpr int k_pintRepresentativeIndex = 5;
+  constexpr static int k_pintRepresentativeIndex = 5;
   static_assert(strings_equal(k_volumeRepresentatives[k_pintRepresentativeIndex].m_rootSymbol, "pt"), "Index for the Pint Representative is incorrect.");
-  static constexpr int k_quartRepresentativeIndex = 6;
+  constexpr static int k_quartRepresentativeIndex = 6;
   static_assert(strings_equal(k_volumeRepresentatives[k_quartRepresentativeIndex].m_rootSymbol, "qt"), "Index for the Quart Representative is incorrect.");
-  static constexpr int k_gallonRepresentativeIndex = 7;
+  constexpr static int k_gallonRepresentativeIndex = 7;
   static_assert(strings_equal(k_volumeRepresentatives[k_gallonRepresentativeIndex].m_rootSymbol, "gal"), "Index for the Gallon Representative is incorrect.");
 
   Unit(const UnitNode * node) : Expression(node) {}

@@ -10,7 +10,7 @@ namespace Code {
 
 class Script : public Ion::Storage::Record {
 public:
-  static constexpr int k_defaultScriptNameMaxSize = 6 + 2 + 1;
+  constexpr static int k_defaultScriptNameMaxSize = 6 + 2 + 1;
   /* 6 = strlen("script")
    * 2 = max length of integers between 1 and 99
    * 1 = null-terminating char */
@@ -35,7 +35,7 @@ public:
   size_t usedSize() const { return contentSize() - (strlen(content()) + 1); };
 private:
   // Default script names are chosen between script1 and script99
-  static constexpr int k_maxNumberOfDefaultScriptNames = 99;
+  constexpr static int k_maxNumberOfDefaultScriptNames = 99;
 
   class Status {
   public:
@@ -61,9 +61,9 @@ private:
     bool autoImportation() const { return getBit(k_autoImportationBit); }
     void setAutoImportation(bool v) { setBit(k_autoImportationBit, v); }
   private:
-    static constexpr uint8_t k_autoImportationBit = 0;
-    static constexpr uint8_t k_fetchedForVariableBoxBit = 6;
-    static constexpr uint8_t k_fetchedFromConsoleBit = 7;
+    constexpr static uint8_t k_autoImportationBit = 0;
+    constexpr static uint8_t k_fetchedForVariableBoxBit = 6;
+    constexpr static uint8_t k_fetchedFromConsoleBit = 7;
     void setBit(uint8_t i, bool value) { m_status = (m_status & ~(1 << i)) | (value << i); }
     bool getBit(uint8_t i) const { return (m_status >> i) & 1; }
     uint8_t m_status;

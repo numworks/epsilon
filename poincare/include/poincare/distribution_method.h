@@ -15,8 +15,8 @@ public:
   Inverse,
   };
 
-  static constexpr int k_maxNumberOfParameters = 2;
-  static constexpr int numberOfParameters(Type f) {
+  constexpr static int k_maxNumberOfParameters = 2;
+  constexpr static int numberOfParameters(Type f) {
     switch(f) {
     case Type::PDF:
     case Type::CDF:

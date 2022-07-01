@@ -38,7 +38,7 @@ public:
 
 private:
   // Very large limit, so that records id in name can't exceed two chars.
-  static constexpr int k_maxNumberOfModels = 100;
+  constexpr static int k_maxNumberOfModels = 100;
   constexpr static int k_maxNumberOfMemoizedModels = 10;
   static bool isFunctionActiveInTable(Shared::ExpressionModelHandle * model, void * context) {
     // An active function must be defined

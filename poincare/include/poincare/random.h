@@ -8,7 +8,7 @@ namespace Poincare {
 
 class RandomNode final : public ExpressionNode  {
 public:
-  static constexpr char k_functionName[] = "random";
+  constexpr static char k_functionName[] = "random";
 
   // TreeNode
   size_t size() const override { return sizeof(RandomNode); }
@@ -44,7 +44,7 @@ friend class RandomNode;
 public:
   using ExpressionBuilder::ExpressionBuilder;
   static Expression UntypedBuilder(Expression children) { assert(children.type() == ExpressionNode::Type::List); return Builder(); }
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("random", 0, &UntypedBuilder);
+  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("random", 0, &UntypedBuilder);
 
   template<typename T> static T random();
 };

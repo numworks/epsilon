@@ -5,8 +5,8 @@ namespace Code {
 
 bool Script::DefaultName(char buffer[], size_t bufferSize) {
   assert(bufferSize >= k_defaultScriptNameMaxSize);
-  static constexpr char k_defaultScriptName[] = "script";
-  static constexpr int k_defaultScriptNameLength = sizeof(k_defaultScriptName) - 1;
+  constexpr static char k_defaultScriptName[] = "script";
+  constexpr static int k_defaultScriptNameLength = sizeof(k_defaultScriptName) - 1;
   strlcpy(buffer, k_defaultScriptName, bufferSize);
   const char * const extensions[1] = { ScriptStore::k_scriptExtension };
   return Ion::Storage::FileSystem::sharedFileSystem()->firstAvailableNameFromPrefix(buffer, k_defaultScriptNameLength, bufferSize, extensions, 1, k_maxNumberOfDefaultScriptNames) > k_defaultScriptNameLength;

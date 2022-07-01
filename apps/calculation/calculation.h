@@ -22,7 +22,7 @@ class CalculationStore;
 class Calculation {
 friend CalculationStore;
 public:
-  static constexpr int k_numberOfExpressions = 4;
+  constexpr static int k_numberOfExpressions = 4;
   enum class EqualSign : uint8_t {
     Unknown,
     Approximation,
@@ -51,7 +51,7 @@ public:
    * calculations instead of clearing less space, then fail to serialize, clear
    * more space, fail to serialize, clear more space, etc., until reaching
    * sufficient free space. */
-  static constexpr int k_minimalSize = sizeof(uint8_t) + 2*sizeof(KDCoordinate) + sizeof(uint8_t) + k_numberOfExpressions*Constant::MaxSerializedExpressionSize;
+  constexpr static int k_minimalSize = sizeof(uint8_t) + 2*sizeof(KDCoordinate) + sizeof(uint8_t) + k_numberOfExpressions*Constant::MaxSerializedExpressionSize;
 
   Calculation() :
     m_displayOutput(DisplayOutput::Unknown),
@@ -96,8 +96,8 @@ public:
   // Additional Information
   AdditionalInformationType additionalInformationType();
 private:
-  static constexpr KDCoordinate k_heightComputationFailureHeight = 50;
-  static constexpr const char * k_maximalIntegerWithAdditionalInformation = "10000000000000000";
+  constexpr static KDCoordinate k_heightComputationFailureHeight = 50;
+  constexpr static const char * k_maximalIntegerWithAdditionalInformation = "10000000000000000";
 
   void setHeights(KDCoordinate height, KDCoordinate expandedHeight);
 

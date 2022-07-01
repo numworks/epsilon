@@ -13,7 +13,7 @@ namespace Shared {
 
 class ZoomCurveViewController : public Escher::ViewController {
 public:
-  static constexpr float k_zoomOutRatio = 3.f / 2.f;
+  constexpr static float k_zoomOutRatio = 3.f / 2.f;
 
   ZoomCurveViewController(Escher::Responder * parentResponder) : Escher::ViewController(parentResponder) {}
   Escher::View * view() override { return curveView(); }

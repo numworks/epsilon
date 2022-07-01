@@ -60,7 +60,7 @@ protected:
   CodePoint m_codePoint;
 
 private:
-  static constexpr const int k_middleDotWidth = 5;
+  constexpr static const int k_middleDotWidth = 5;
   void render(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   bool isMultiplicationCodePoint() const;
 };

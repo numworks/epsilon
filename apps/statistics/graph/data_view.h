@@ -10,7 +10,7 @@ namespace Statistics {
 
 class DataView : public Escher::View {
 public:
-  static constexpr int k_defaultSelectedIndex = 0;
+  constexpr static int k_defaultSelectedIndex = 0;
 
   DataView() : m_displayBanner(false) {}
   virtual Shared::CurveView * curveViewForSeries(int series) = 0;

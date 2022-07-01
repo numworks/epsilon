@@ -39,7 +39,7 @@ bool readPNG(unsigned char * start, size_t size, unsigned char ** bitmapData, un
     png_destroy_read_struct(&png, NULL, NULL);
     return false;
   }
-  static constexpr size_t k_pngSignatureLength = 8;
+  constexpr static size_t k_pngSignatureLength = 8;
   if (png_sig_cmp((png_const_bytep)start, 0, k_pngSignatureLength) != 0) {
     // Corrupted PNG
     return false;
@@ -102,8 +102,8 @@ bool readJPG(const unsigned char * start, size_t size, unsigned char ** bitmapDa
 }
 
 SDL_Texture * loadImage(SDL_Renderer * renderer, const char * identifier) {
-  static constexpr const char * jpgExtension = ".jpg";
-  static constexpr const char * pngExtension = ".png";
+  constexpr static const char * jpgExtension = ".jpg";
+  constexpr static const char * pngExtension = ".png";
 
   unsigned char * assetStart = nullptr;
   unsigned long assertSize = 0;

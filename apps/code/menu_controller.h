@@ -71,12 +71,12 @@ public:
   }
 
 private:
-  static constexpr int k_maxNumberOfDisplayableScriptCells = 5; // = 240/50
-  static constexpr int k_parametersColumnWidth = Escher::Metric::EllipsisCellWidth;
-  static constexpr int AddScriptCellType = 0;
-  static constexpr int ScriptCellType = 1;
-  static constexpr int ScriptParameterCellType = 2;
-  static constexpr int EmptyCellType = 3;
+  constexpr static int k_maxNumberOfDisplayableScriptCells = 5; // = 240/50
+  constexpr static int k_parametersColumnWidth = Escher::Metric::EllipsisCellWidth;
+  constexpr static int AddScriptCellType = 0;
+  constexpr static int ScriptCellType = 1;
+  constexpr static int ScriptParameterCellType = 2;
+  constexpr static int EmptyCellType = 3;
   void addScript();
   void configureScript();
   void editScriptAtIndex(int scriptIndex);

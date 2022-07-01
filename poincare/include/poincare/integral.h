@@ -75,8 +75,8 @@ public:
   static Integral Builder(Expression child0, Symbol child1, Expression child2, Expression child3) { return TreeHandle::FixedArityBuilder<Integral, IntegralNode>({child0, child1, child2, child3}); }
   static Expression UntypedBuilder(Expression children);
 
-  static constexpr Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("int", 4, &UntypedBuilder);
-  static constexpr char k_defaultXNTChar = 'x';
+  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("int", 4, &UntypedBuilder);
+  constexpr static char k_defaultXNTChar = 'x';
 
   // Expression
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);

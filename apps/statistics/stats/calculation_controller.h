@@ -36,25 +36,25 @@ public:
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
 private:
-  static constexpr int k_fixedMaxNumberOfRows = 16;
-  static constexpr int k_numberOfCalculationCells = 3 * k_maxNumberOfDisplayableRows;
-  static constexpr int k_numberOfSeriesTitleCells = 3;
-  static constexpr int k_numberOfCalculationTitleCells = k_maxNumberOfDisplayableRows;
-  static constexpr int k_numberOfHeaderColumns = 2; // Title & Symbol
+  constexpr static int k_fixedMaxNumberOfRows = 16;
+  constexpr static int k_numberOfCalculationCells = 3 * k_maxNumberOfDisplayableRows;
+  constexpr static int k_numberOfSeriesTitleCells = 3;
+  constexpr static int k_numberOfCalculationTitleCells = k_maxNumberOfDisplayableRows;
+  constexpr static int k_numberOfHeaderColumns = 2; // Title & Symbol
 
-  static constexpr int k_calculationTitleCellType = 0;
-  static constexpr int k_calculationSymbolCellType = 1;
-  static constexpr int k_calculationModeTitleCellType = 2;
-  static constexpr int k_calculationModeSymbolCellType = 3;
-  static constexpr int k_calculationCellType = 4;
-  static constexpr int k_seriesTitleCellType = 5;
-  static constexpr int k_hideableCellType = 6;
-  static constexpr KDCoordinate k_calculationTitleCellWidth = Escher::Metric::SmallFontCellWidth(k_titleNumberOfChars, Escher::Metric::CellVerticalElementMargin);
-  static constexpr KDCoordinate CalculationSymbolCellWidth(int maxChars) { return Escher::Metric::SmallFontCellWidth(maxChars, Escher::Metric::CellVerticalElementMargin); }
+  constexpr static int k_calculationTitleCellType = 0;
+  constexpr static int k_calculationSymbolCellType = 1;
+  constexpr static int k_calculationModeTitleCellType = 2;
+  constexpr static int k_calculationModeSymbolCellType = 3;
+  constexpr static int k_calculationCellType = 4;
+  constexpr static int k_seriesTitleCellType = 5;
+  constexpr static int k_hideableCellType = 6;
+  constexpr static KDCoordinate k_calculationTitleCellWidth = Escher::Metric::SmallFontCellWidth(k_titleNumberOfChars, Escher::Metric::CellVerticalElementMargin);
+  constexpr static KDCoordinate CalculationSymbolCellWidth(int maxChars) { return Escher::Metric::SmallFontCellWidth(maxChars, Escher::Metric::CellVerticalElementMargin); }
   /* Margins from EvenOddCell::layoutSubviews (and derived classes
    * implementations) must be accounted for here, along with the separator
    * width from SeparatorEvenOddBufferTextCell. */
-  static constexpr KDCoordinate k_calculationCellWidth = Escher::Metric::SmallFontCellWidth(Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits), Escher::EvenOddCell::k_horizontalMargin) + Escher::EvenOddCell::k_separatorWidth;
+  constexpr static KDCoordinate k_calculationCellWidth = Escher::Metric::SmallFontCellWidth(Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits), Escher::EvenOddCell::k_horizontalMargin) + Escher::EvenOddCell::k_separatorWidth;
 
   typedef struct {
     I18n::Message title;

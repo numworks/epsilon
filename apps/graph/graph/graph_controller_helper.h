@@ -15,7 +15,7 @@ protected:
   void reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record);
   virtual BannerView * bannerView() = 0;
 private:
-  static constexpr double k_definitionDomainDivisor = 96.0;
+  constexpr static double k_definitionDomainDivisor = 96.0;
   virtual void jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) {}
 };
 

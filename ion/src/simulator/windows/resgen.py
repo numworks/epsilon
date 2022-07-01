@@ -31,7 +31,7 @@ def print_mapping_header(f):
     f.write("  const char * m_identifier;\n")
     f.write("  int m_id;\n")
     f.write("};\n\n")
-    f.write("static constexpr ResourceID resourcesIdentifiers[] = {\n")
+    f.write("constexpr static ResourceID resourcesIdentifiers[] = {\n")
 
 def print_mapping_footer(f):
     f.write("};\n\n")

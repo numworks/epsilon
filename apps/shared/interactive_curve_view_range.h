@@ -25,7 +25,7 @@ public:
     m_zoomNormalize(false)
   {}
 
-  static constexpr float NormalYXRatio() { return NormalizedYHalfRange(1.f) / NormalizedXHalfRange(1.f); }
+  constexpr static float NormalYXRatio() { return NormalizedYHalfRange(1.f) / NormalizedXHalfRange(1.f); }
   /* The method isOrthonormal takes the loss of significance when changing the
    * ratio into account. */
   bool isOrthonormal() const;

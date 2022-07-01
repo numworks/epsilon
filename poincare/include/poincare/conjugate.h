@@ -8,7 +8,7 @@ namespace Poincare {
 
 class ConjugateNode /*final*/ : public ExpressionNode  {
 public:
-  static constexpr char k_functionName[] = "conj";
+  constexpr static char k_functionName[] = "conj";
 
   // TreeNode
   size_t size() const override { return sizeof(ConjugateNode); }

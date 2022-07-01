@@ -7,13 +7,13 @@ class KDColor {
 public:
   constexpr KDColor() : m_value(0) {}
   // FIXME: This should not be needed, and is probably wasting CPU cycles
-  static constexpr KDColor RGB16(uint16_t rgb) {
+  constexpr static KDColor RGB16(uint16_t rgb) {
     return KDColor(rgb);
   }
-  static constexpr KDColor RGB24(uint32_t rgb) {
+  constexpr static KDColor RGB24(uint32_t rgb) {
     return KDColor(((rgb&0xF80000)>>8)|((rgb&0x00FC00)>>5)|((rgb&0x0000F8)>>3));
   }
-  static constexpr KDColor RGB888(uint8_t r, uint8_t g, uint8_t b) {
+  constexpr static KDColor RGB888(uint8_t r, uint8_t g, uint8_t b) {
     return KDColor((r>>3)<<11 | (g>>2) << 5 | (b>>3));
   }
   uint8_t red() const {
@@ -49,7 +49,7 @@ private:
    * the original value. For example, to expand 0b101010 from 6 to 8 bits we
    * would append the first two bits (0b10), resulting in 0b10101010. This way,
    * full blacks remain black, and full whites remain whites. Yay, contrast! */
-  static constexpr uint8_t expand(uint8_t s, uint8_t nBits) {
+  constexpr static uint8_t expand(uint8_t s, uint8_t nBits) {
     return
     (s << (8-nBits)) // Normal, zero-padded shifted value
     |

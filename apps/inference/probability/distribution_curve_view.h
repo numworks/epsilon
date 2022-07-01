@@ -27,7 +27,7 @@ class DistributionCurveView : public Shared::CurveView {
  private:
   static float EvaluateAtAbscissa(float abscissa, void * model, void * context);
   static Poincare::Coordinate2D<float> EvaluateXYAtAbscissa(float abscissa, void * model, void * context);
-  static constexpr KDColor k_backgroundColor = Escher::Palette::WallScreen;
+  constexpr static KDColor k_backgroundColor = Escher::Palette::WallScreen;
   void drawStandardNormal(KDContext * ctx, KDRect rect, float colorLowerBound, float colorUpperBound) const;
   char m_labels[k_maxNumberOfXLabels][k_labelBufferMaxSize];
   Distribution * m_distribution;

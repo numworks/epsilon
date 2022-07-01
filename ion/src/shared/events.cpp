@@ -29,7 +29,7 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha, bool lock) {
   // shift-X -> X
   // alpha-X -> X
   // shift-alpha-X -> alpha-X -> X
-  assert((int)key >= 0 && (int)key < Keyboard::NumberOfKeys);
+  assert(static_cast<int>(key) >= 0 && static_cast<int>(key) < Keyboard::NumberOfKeys);
   m_id = Events::None.m_id;
 
   int noFallbackOffsets[] = {k_plainEventsOffset};
@@ -47,7 +47,7 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha, bool lock) {
     m_id = offset + (int)key;
   } while (offset > k_plainEventsOffset && !s_dataForEvent[m_id].isDefined() && m_id < k_specialEventsOffset);
 
-  //If we press percent in alphalock, change to backspace
+  // If we press percent in alphalock, change to backspace
   if (m_id == static_cast<uint8_t>(Ion::Events::Percent) && lock){
     m_id = static_cast<uint8_t>(Ion::Events::Backspace);
   }
@@ -97,11 +97,11 @@ Event sharedGetEvent(int * timeout) {
     }
 
     bool lock = isLockActive();
-    uint64_t keysSeenTransitionningFromUpToDown;
+    uint64_t keysSeenTransitioningFromUpToDown;
     Keyboard::State state;
     while ((state = Keyboard::popState()) != Keyboard::State(-1)) {
       sCurrentKeyboardState = state;
-      keysSeenTransitionningFromUpToDown = state & sKeysSeenUp;
+      keysSeenTransitioningFromUpToDown = state & sKeysSeenUp;
       sKeysSeenUp = ~state;
 
       if (wasShiftReleased(state)) {
@@ -111,7 +111,7 @@ Event sharedGetEvent(int * timeout) {
         return Event::PlainKey(Keyboard::Key::Alpha);
       }
 
-      if (keysSeenTransitionningFromUpToDown != 0) {
+      if (keysSeenTransitioningFromUpToDown != 0) {
         sEventIsRepeating = false;
         resetLongPress();
         /* The key that triggered the event corresponds to the first non-zero bit
@@ -119,7 +119,7 @@ Event sharedGetEvent(int * timeout) {
          * processors have an instruction (ARM thumb uses CLZ).
          * Unfortunately there's no way to express this in standard C, so we have
          * to resort to using a builtin function. */
-        Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitionningFromUpToDown));
+        Keyboard::Key key = (Keyboard::Key)(63-__builtin_clzll(keysSeenTransitioningFromUpToDown));
         didPressNewKey();
         sLastEventShift = isShiftActive();
         sLastEventAlpha = isAlphaActive();
@@ -154,7 +154,7 @@ Event sharedGetEvent(int * timeout) {
 
     int elapsedTime = Ion::Timing::millis() - startTime;
 
-    /* At this point, we know that keysSeenTransitionningFromUpToDown has
+    /* At this point, we know that keysSeenTransitioningFromUpToDown has
      * always been zero. In other words, no new key has been pressed. */
     if (elapsedTime >= delayForRepeat) {
       assert(isRepeatableEvent);

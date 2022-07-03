@@ -162,6 +162,34 @@ double Store::mean(int series) const {
   return sum(series)/sumOfOccurrences(series);
 }
 
+double Store::geometricMean(int series) const {
+  double geometricMean = 1;
+  int numberOfCoefficients = 0;
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = 0; k < numberOfPairs; k++) {
+    if (m_data[series][0][k] <= 0) {
+      return NAN;
+    }
+    geometricMean *= std::pow(m_data[series][0][k], m_data[series][1][k]);
+    numberOfCoefficients += m_data[series][1][k];
+  }
+  return std::pow(geometricMean, 1.0/numberOfCoefficients);
+}
+
+double Store::harmonicMean(int series) const {
+  double harmonicMean = 0;
+  int numberOfCoefficients = 0;
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = 0; k < numberOfPairs; k++) {
+    if (m_data[series][0][k] <= 0) {
+      return NAN;
+    }
+    harmonicMean += m_data[series][1][k]/m_data[series][0][k];
+    numberOfCoefficients += m_data[series][1][k];
+  }
+  return numberOfCoefficients/harmonicMean;
+}
+
 double Store::variance(int series) const {
   /* We use the Var(X) = E[(X-E[X])^2] definition instead of Var(X) = E[X^2] - E[X]^2
    * to ensure a positive result and to minimize rounding errors */
@@ -215,6 +243,22 @@ double Store::thirdQuartile(int series) const {
 
 double Store::quartileRange(int series) const {
   return thirdQuartile(series)-firstQuartile(series);
+}
+
+double Store::mode(int series) const {
+  double modeValue = NAN;
+  double numberOfRepeats = 0;
+  int numberOfPairs = numberOfPairsOfSeries(series);
+  for (int k = 0; k < numberOfPairs; k++) {
+    if (m_data[series][1][k] > numberOfRepeats) {
+        modeValue = m_data[series][0][k];
+        numberOfRepeats = m_data[series][1][k];
+    }
+    else if (m_data[series][1][k] == numberOfRepeats) {
+      modeValue = NAN;
+    }
+  }
+  return modeValue;
 }
 
 double Store::median(int series) const {

@@ -35,12 +35,15 @@ public:
   double minValue(int series) const;
   double range(int series) const;
   double mean(int series) const;
+  double geometricMean(int series) const;
+  double harmonicMean(int series) const;
   double variance(int series) const;
   double standardDeviation(int series) const;
   double sampleStandardDeviation(int series) const;
   double firstQuartile(int series) const;
   double thirdQuartile(int series) const;
   double quartileRange(int series) const;
+  double mode(int series) const;
   double median(int series) const;
   double sum(int series) const;
   double squaredValueSum(int series) const;

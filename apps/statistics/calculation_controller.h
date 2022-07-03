@@ -43,7 +43,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 private:
-  static constexpr int k_totalNumberOfRows = 15;
+  static constexpr int k_totalNumberOfRows = 18;
   static constexpr int k_maxNumberOfDisplayableRows = 11;
   static constexpr int k_numberOfCalculationCells = 3 * k_maxNumberOfDisplayableRows;
   static constexpr int k_numberOfSeriesTitleCells = 3;

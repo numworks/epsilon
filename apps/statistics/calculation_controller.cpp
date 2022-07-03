@@ -79,12 +79,15 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       I18n::Message::Maximum,
       I18n::Message::Range,
       I18n::Message::Mean,
+      I18n::Message::GeometricMean,
+      I18n::Message::HarmonicMean,
       I18n::Message::StandardDeviationSigma,
       I18n::Message::Deviation,
       I18n::Message::FirstQuartile,
       I18n::Message::ThirdQuartile,
       I18n::Message::Median,
       I18n::Message::InterquartileRange,
+      I18n::Message::StatisticsMode,
       I18n::Message::SumValues,
       I18n::Message::SumSquareValues,
       I18n::Message::SampleStandardDeviationS};
@@ -94,8 +97,8 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
   // Display a calculation cell
   CalculPointer calculationMethods[k_totalNumberOfRows] = {&Store::sumOfOccurrences, &Store::minValue,
-    &Store::maxValue, &Store::range, &Store::mean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
-    &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
+    &Store::maxValue, &Store::range, &Store::mean, &Store::geometricMean, &Store::harmonicMean, &Store::standardDeviation, &Store::variance, &Store::firstQuartile,
+    &Store::thirdQuartile, &Store::median, &Store::quartileRange, &Store::mode, &Store::sum, &Store::squaredValueSum, &Store::sampleStandardDeviation};
   int seriesIndex = m_store->indexOfKthNonEmptySeries(i-1);
   double calculation = (m_store->*calculationMethods[j-1])(seriesIndex);
   EvenOddBufferTextCell * calculationCell = static_cast<EvenOddBufferTextCell *>(cell);

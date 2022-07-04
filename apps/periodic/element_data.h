@@ -2,12 +2,18 @@
 #define PERIODIC_ELEMENT_DATA
 
 #include <apps/i18n.h>
+#include <math.h>
 #include <stdint.h>
 
 namespace Periodic {
 
 class ElementData {
 public:
+  constexpr static double k_unknown = NAN;
+  /* Greatest known number of mass is 272, well below 65536. */
+  constexpr static uint16_t k_AUnknown = static_cast<uint16_t>(-1);
+  constexpr static double k_affinityUnstable = INFINITY;
+
   enum class Group : uint8_t {
     Alkali,
     AlkalineEarth,

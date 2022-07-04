@@ -98,7 +98,7 @@ public:
 
   constexpr static ConstantNode::ConstantInfo k_constants[] = {
     ConstantNode::ConstantInfo("i", 0),
-    ConstantNode::ConstantInfo("\01\02π\00\01\02pi\00", 1, M_PI),
+    ConstantNode::ConstantInfo("\01\02π\00\02pi\00", 1, M_PI),
     ConstantNode::ConstantInfo("e", 2, M_E),
     ConstantNode::ConstantInfo("_c", 3, 299792458.0, "_m/_s"),
     ConstantNode::ConstantInfo("_e", 3, 1.602176634e-19, "_C"),

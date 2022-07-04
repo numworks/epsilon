@@ -2,19 +2,31 @@
 #include <string.h>
 #include <assert.h>
 
-bool Name::isAliasOf(const char * name, int nameLen) const {
+int compareNonNullTerminatedStringWithNullTerminated(const char * nonNullTerminatedName, size_t nonNullTerminatedNameLength, const char * nullTerminatedName) {
+  /* Compare similarly to strcmp */
+  int diff = strncmp(nonNullTerminatedName, nullTerminatedName, nonNullTerminatedNameLength);
+  return (diff != 0) ? diff : strcmp("", nullTerminatedName + nonNullTerminatedNameLength);
+}
+
+int Name::comparedWith(const char * name, int nameLen) const {
   if (!hasAliases()) {
-    return nameLen == strlen(m_formattedNamesList) && strncmp(name, m_formattedNamesList, nameLen) == 0;
+    return compareNonNullTerminatedStringWithNullTerminated(name, nameLen, m_formattedNamesList);
   }
+  int maxValueOfComparison = 0;
   const char * nameInList = parseNextName(m_formattedNamesList);
+  assert(nameInList != nullptr);
   while (nameInList != nullptr) {
-    if (nameLen == strlen(nameInList) && strncmp(name, nameInList, nameLen) == 0) {
-      return true;
+    int tempValueOfComparison = compareNonNullTerminatedStringWithNullTerminated(name, nameLen, nameInList);
+    if (tempValueOfComparison == 0) {
+      return 0;
+    }
+    if (maxValueOfComparison < tempValueOfComparison || maxValueOfComparison == 0) {
+      maxValueOfComparison = tempValueOfComparison;
     }
     nameInList = nameInList + strlen(nameInList) + 1; // skip the terminating 0
     nameInList = parseNextName(nameInList);
   }
-  return false;
+  return maxValueOfComparison;
 }
 
 const char * Name::parseNextName(const char * currentPositionInNamesList) const {

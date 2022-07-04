@@ -6,7 +6,7 @@ namespace Poincare {
 const Expression::FunctionHelper * const * ParsingHelper::GetReservedFunction(const char * name, size_t nameLength) {
   const Expression::FunctionHelper * const * reservedFunction = s_reservedFunctions;
   while (reservedFunction < s_reservedFunctionsUpperBound) {
-    int nameDifference = Token::CompareNonNullTerminatedName(name, nameLength, (**reservedFunction).name());
+    int nameDifference = (**reservedFunction).name().comparedWith(name, nameLength);
     if (nameDifference == 0) {
       return reservedFunction;
     }

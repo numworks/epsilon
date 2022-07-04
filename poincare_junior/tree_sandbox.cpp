@@ -61,28 +61,6 @@ TypeTreeBlock * TreeSandbox::copyTreeFromAddress(const void * address, size_t si
   return copiedTree;
 }
 
-#if POINCARE_TREE_LOG
-void TreeSandbox::flatLog(std::ostream & stream) {
-  stream << "<TreeSandbox format=\"flat\" size=\"" << m_numberOfBlocks << "\">";
-  for (TypeTreeBlock * block : allNodes()) {
-    block->log(stream, false);
-  }
-  stream << "</TreePool>";
-  stream << std::endl;
-}
-
-void TreeSandbox::treeLog(std::ostream & stream, bool verbose) {
-  stream << "<TreePool format=\"tree\" size=\"" << m_numberOfBlocks << "\">";
-  for (TypeTreeBlock * tree : trees()) {
-    tree->log(stream, true, 1, verbose);
-  }
-  stream << std::endl;
-  stream << "</TreePool>";
-  stream << std::endl;
-}
-
-#endif
-
 bool TreeSandbox::checkForEnoughSpace(size_t numberOfRequiredBlock) {
   if (m_numberOfBlocks + numberOfRequiredBlock > m_size) {
     if (!TreeCache::sharedCache()->resetCache(true)) {

@@ -89,7 +89,7 @@ enum class BlockType : uint8_t {
 };
 
 class TreeBlock {
-friend class TreeSandbox;
+friend class TreePool;
 public:
   constexpr TreeBlock(uint8_t content = 0) : m_content(content) {}
   bool operator!=(const TreeBlock& b) { return b.m_content != m_content; }

@@ -105,8 +105,8 @@ int main() {
 
   // Reducing
   int treeId = cache->storeLastTree();
-  std::cout << "-------- CACHE --------" << std::endl;
-  //printTreePool(cache);
+  std::cout << "\n\n-------- CACHE --------" << std::endl;
+  cache->treeLog(std::cout);
 
 #if 0
   cache->copyTreeForEditing(treeId);

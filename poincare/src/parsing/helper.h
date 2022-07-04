@@ -44,7 +44,20 @@ private:
      *
      * Example:
      * { acos, arccos } -> take acos as reference for position
-     * { asin, arcsin } -> take arcsin as reference for position */
+     * { asin, arcsin } -> take arcsin as reference for position
+     *
+     * =======================
+     * WARNING: For now all function aliases that can be used in a country
+     * can also be used in other languages. If it was no more the case, this
+     * implementation would be deprecated.
+     *
+     * Ex:
+     * if "sen = sin" is understood in PT but not in EN:
+     * When parsing "sign", the name comparison with { "sen", "sin" } occurs
+     * before the comparison with "sign". But if "sen" was skipped, the
+     * comparison would only be between "sin" and "sign" which is < 0.
+     * So the iteration through the list would stop and not recognize "sign".
+     * */
     &AbsoluteValue::s_functionHelper,
     &ArcCosine::s_functionHelper, // acos
     &HyperbolicArcCosine::s_functionHelper,
@@ -114,9 +127,9 @@ private:
     &MatrixReducedRowEchelonForm::s_functionHelper,
     &ListSampleStandardDeviation::s_functionHelper,
     &Secant::s_functionHelper,
+    &Sine::s_functionHelper, // sen, sin
     &ListSequence::s_functionHelper,
     &SignFunction::s_functionHelper,
-    &Sine::s_functionHelper,
     &HyperbolicSine::s_functionHelper,
     &ListSort::s_functionHelper,
     &ListStandardDeviation::s_functionHelper,

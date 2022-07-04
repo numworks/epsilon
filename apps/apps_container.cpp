@@ -225,6 +225,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   return didProcessEvent || alphaLockWantsRedraw;
 }
 
+// List of keys that are used to switch between apps, in order of app to go (eg. 0 : First App, 1 : Second App, 2 : Third App, ...)
 static constexpr Ion::Events::Event switch_events[] = {
     Ion::Events::ShiftSeven, Ion::Events::ShiftEight, Ion::Events::ShiftNine,
     Ion::Events::ShiftFour, Ion::Events::ShiftFive, Ion::Events::ShiftSix,
@@ -236,14 +237,17 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBPlug) {
     if (Ion::USB::isPlugged()) {
+      // If the exam mode is enabled, we ask to disable it, else, we enable USB
       if (GlobalPreferences::sharedGlobalPreferences()->isInExamMode()) {
         displayExamModePopUp(GlobalPreferences::ExamMode::Off);
         window()->redraw();
       } else {
         Ion::USB::enable();
       }
+      // Update brightness when USB is plugged
       Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
     } else {
+      // If the USB isn't plugged in USBPlug event, we disable USB
       Ion::USB::disable();
     }
     return true;
@@ -274,20 +278,38 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     return true;
   }
 
+  // Add Shift + Ans shortcut to go to the previous app
+  if (event == Ion::Events::ShiftAns) {
+    switchTo(appSnapshotAtIndex(m_lastAppIndex));
+    return true;
+  }
+
+  // If the event is the OnOff key, we suspend the calculator.
   if (event == Ion::Events::OnOff) {
     suspend(true);
     return true;
   }
+  // If the event is a brightness event, we update the brightness according to the event.
   if (event == Ion::Events::BrightnessPlus || event == Ion::Events::BrightnessMinus) {
       int delta = Ion::Backlight::MaxBrightness/GlobalPreferences::NumberOfBrightnessStates;
       int NumberOfStepsPerShortcut = GlobalPreferences::sharedGlobalPreferences()->brightnessShortcut();
       int direction = (event == Ion::Events::BrightnessPlus) ? NumberOfStepsPerShortcut*delta : -delta*NumberOfStepsPerShortcut;
       GlobalPreferences::sharedGlobalPreferences()->setBrightnessLevel(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel()+direction);
   }
+  // Else, the event was not processed.
   return false;
 }
 
 bool AppsContainer::switchTo(App::Snapshot * snapshot) {
+  // Get app index of the snapshot
+  int m_appIndexToSwitch = appIndexFromSnapshot(snapshot);
+  // If the app is home, skip app index saving
+  if (m_appIndexToSwitch != 0) {
+    // Save last app index
+    m_lastAppIndex = m_currentAppIndex;
+    // Save current app index
+    m_currentAppIndex = m_appIndexToSwitch;
+  }
   if (s_activeApp && snapshot != s_activeApp->snapshot()) {
     resetShiftAlphaStatus();
   }

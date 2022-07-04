@@ -1,4 +1,5 @@
 #include <iostream>
+#include <poincare_junior/handle.h>
 #include <poincare_junior/tree_cache.h>
 #include <poincare_junior/tree_sandbox.h>
 
@@ -11,7 +12,7 @@ using namespace Poincare;
  *
  * */
 
-void printLinearPool(TreePool * pool) {
+/*void printLinearPool(TreePool * pool) {
   TreeBlock * b = pool->firstBlock();
   while (b < pool->lastBlock()) {
     std::cout << b->log() << std::endl;
@@ -42,7 +43,7 @@ void printTreePool(TreePool * pool) {
     b = printTreePoolRec(b, 0);
     std::cout << "------------------------------------------------------------------------------" << std::endl;
   }
-}
+}*/
 
 #if 0
 void deepReduce(TreeBlock * block) {
@@ -61,7 +62,7 @@ void deepReduce(TreeBlock * block) {
   } else {
     assert(blockType == BlockType::Multiplication);
     result = valueA * valueB;
-  } 
+  }
   for (TreeBlock * child : block->directChildren()) {
     child
   }
@@ -70,45 +71,42 @@ void deepReduce(TreeBlock * block) {
 /*
  * void deepReduce(TreeBlock * block) {
  BlockType blockType = block->type();
- if (blockType == BlockType::Integer) {
- return;
- }
  for (TreeBlock * child : block->directChildren()) {
  deepReduce(child);
  }
  block->expression()->reduce();
  }
+
+ 
  * */
 
 #endif
 
 int main() {
-  // "1 * 2 + 3";
+  // "1 * 2 + 3 + 4";
   // Parsing
   TreeCache * cache = TreeCache::sharedCache();
   TreeSandbox * sandbox = cache->sandbox();
-  sandbox->pushBlock(AdditionBlock());
-  sandbox->pushBlock(MultiplicationBlock());
-  sandbox->pushBlock(IntegerBlock());
-  sandbox->pushBlock(TreeBlock(1));
-  sandbox->pushBlock(IntegerBlock());
-  sandbox->pushBlock(TreeBlock(2));
-  sandbox->pushBlock(IntegerBlock());
-  sandbox->pushBlock(TreeBlock(3));
+  Addition::NodeBuilder(sandbox, 3);
+  Multiplication::NodeBuilder(sandbox, 2);
+  Integer::NodeBuilder(sandbox, 1);
+  Integer::NodeBuilder(sandbox, 2);
+  Integer::NodeBuilder(sandbox, 3);
+  Integer::NodeBuilder(sandbox, 4);
 
   std::cout << "-------- SANDBOX --------" << std::endl;
-  printTreePool(sandbox);
+  sandbox->treeLog(std::cout);
 
   std::cout << "-------- BACKWARD SCAN --------" << std::endl;
-  TreeBlock * root = sandbox->firstBlock();
-  for (TreeBlock * subTree : root->backwardsDirectSubtrees()) {
-    std::cout << subTree->log() << std::endl;
+  TypeTreeBlock * root = sandbox->firstBlock();
+  for (TypeTreeBlock * subTree : root->backwardsDirectChildren()) {
+    subTree->log(std::cout);
   }
 
   // Reducing
   int treeId = cache->storeLastTree();
   std::cout << "-------- CACHE --------" << std::endl;
-  printTreePool(cache);
+  //printTreePool(cache);
 
 #if 0
   cache->copyTreeForEditing(treeId);
@@ -141,3 +139,5 @@ int main() {
   printTreePool(cache);
 #endif
 }
+
+//StackPointer given to all arguments indicating where to play

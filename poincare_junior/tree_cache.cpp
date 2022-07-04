@@ -9,7 +9,7 @@ TreeCache * TreeCache::sharedCache() {
   return &s_cache;
 }
 
-TreeBlock * TreeCache::treeForIdentifier(int id) {
+TypeTreeBlock * TreeCache::treeForIdentifier(int id) {
   if (id >= m_nextIdentifier) {
     return nullptr;
   }
@@ -18,7 +18,7 @@ TreeBlock * TreeCache::treeForIdentifier(int id) {
 
 int TreeCache::storeLastTree() {
   assert(m_nextIdentifier < k_maxNumberOfCachedTrees);
-  TreeBlock * block = lastBlock();
+  TypeTreeBlock * block = lastBlock();
   m_cachedTree[m_nextIdentifier++] = block;
   size_t numberOfCachedBlocks = lastBlock() - firstBlock();
   m_sandbox = TreeSandbox(lastBlock(), k_maxNumberOfBlocks - numberOfCachedBlocks);
@@ -29,8 +29,8 @@ TreeCache::Error TreeCache::copyTreeForEditing(int id) {
   if (m_nextIdentifier <= id) {
     return Error::UninitializedIdentifier;
   }
-  size_t treeSize = m_cachedTree[id]->nextTree() - m_cachedTree[id];
-  TreeBlock * copiedTree = m_cachedTree[id];
+  size_t treeSize = m_cachedTree[id]->nextSibling() - m_cachedTree[id];
+  TypeTreeBlock * copiedTree = m_cachedTree[id];
   if (m_sandbox.size() < treeSize) {
     bool reset = resetCache(false);
     assert(reset); // the tree was at least already cached
@@ -41,7 +41,7 @@ TreeCache::Error TreeCache::copyTreeForEditing(int id) {
 }
 
 TreeCache::TreeCache() :
-  m_sandbox(&m_pool[0], k_maxNumberOfBlocks),
+  m_sandbox(static_cast<TypeTreeBlock *>(&m_pool[0]), k_maxNumberOfBlocks),
   m_nextIdentifier(0)
 {
 }
@@ -53,7 +53,7 @@ bool TreeCache::resetCache(bool preserveSandbox) {
     return false;
   }
   m_nextIdentifier = 0;
-  int nbOfSanboxBlocks = preserveSandbox ? m_sandbox.lastBlock() - m_sandbox.firstBlock() : 0;
+  int nbOfSanboxBlocks = preserveSandbox ? m_sandbox.lastBlock() - static_cast<TreeBlock *>(m_sandbox.firstBlock()) : 0;
   if (preserveSandbox) {
     memmove(m_pool, m_sandbox.firstBlock(), nbOfSanboxBlocks * sizeof(TreeBlock));
   }

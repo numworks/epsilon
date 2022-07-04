@@ -19,7 +19,7 @@ public:
 
   static TreeCache * sharedCache();
 
-  TreeBlock * treeForIdentifier(int id);
+  TypeTreeBlock * treeForIdentifier(int id);
   int storeLastTree();
   Error copyTreeForEditing(int id);
 
@@ -31,13 +31,13 @@ private:
   constexpr static int k_maxNumberOfCachedTrees = 32;
 
   TreeCache();
-  TreeBlock * firstBlock() override { return m_nextIdentifier == 0 ? nullptr : &m_pool[0]; }
-  TreeBlock * lastBlock() override { return m_nextIdentifier == 0 ? &m_pool[0] : m_cachedTree[m_nextIdentifier - 1]->nextTree(); }
+  TypeTreeBlock * firstBlock() override { return m_nextIdentifier == 0 ? nullptr : static_cast<TypeTreeBlock *>(&m_pool[0]); }
+  TypeTreeBlock * lastBlock() override { return m_nextIdentifier == 0 ? static_cast<TypeTreeBlock *>(&m_pool[0]) : m_cachedTree[m_nextIdentifier - 1]->nextSibling(); }
 
   TreeSandbox m_sandbox;
   TreeBlock m_pool[k_maxNumberOfBlocks];
   int m_nextIdentifier;
-  TreeBlock * m_cachedTree[k_maxNumberOfCachedTrees];
+  TypeTreeBlock * m_cachedTree[k_maxNumberOfCachedTrees];
 };
 
 }

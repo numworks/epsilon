@@ -167,7 +167,7 @@ void Store::updateSeriesValidity(int series) {
 bool Store::columnIsIntegersOnly(int series, int column) const {
   for (int i = 0; i < numberOfPairsOfSeries(series); i++) {
     double freq = get(series, column, i);
-    if (std::fabs(freq - std::round(freq)) > DBL_EPSILON) {
+    if (std::fabs(freq - std::round(freq)) > DBL_EPSILON || (freq != 0.0 && std::fabs(freq) <= DBL_EPSILON)) {
       return false;
     }
   }

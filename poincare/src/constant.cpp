@@ -75,32 +75,33 @@ bool ConstantNode::derivate(const ReductionContext& reductionContext, Symbol sym
 }
 
 ConstantNode::ConstantInfo ConstantNode::constantInfo() const {
-  for (ConstantNode::ConstantInfo info : Constant::k_constants) {
-    if (strcmp(info.name(), m_name) == 0) {
-      return info;
-    }
-  }
-  return ConstantInfo("", -1);
+  return Constant::ConstantInfoFromName(m_name, strlen(m_name));
 }
 
 bool ConstantNode::isConstant(const char * constantName, ConstantInfo info) const {
   if (info.name() == nullptr) {
     info = constantInfo();
   }
-  return strcmp(info.name(), constantName) == 0;
+  return info.name().isEquivalentTo(constantName, strlen(constantName));
 }
 
 bool Constant::IsConstant(const char * name, size_t length) {
   for (ConstantNode::ConstantInfo info : Constant::k_constants) {
-    size_t constantLength = strlen(info.name());
-    if (length < constantLength) {
-     continue;
-    }
-    if (strncmp(info.name(), name, length) == 0) {
+    if (info.name().isEquivalentTo(name, length)) {
       return true;
     }
   }
   return false;
+}
+
+ConstantNode::ConstantInfo Constant::ConstantInfoFromName(const char * name, int length) {
+  assert(IsConstant(name, length));
+  for (ConstantNode::ConstantInfo info : Constant::k_constants) {
+    if (info.name().isEquivalentTo(name, length)) {
+      return info;
+    }
+  }
+  return ConstantNode::ConstantInfo("", -1);
 }
 
 Expression Constant::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {

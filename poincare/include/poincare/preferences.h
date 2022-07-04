@@ -1,6 +1,7 @@
 #ifndef POINCARE_PREFERENCES_H
 #define POINCARE_PREFERENCES_H
 
+#include <assert.h>
 #include <stdint.h>
 
 namespace Poincare {
@@ -64,7 +65,8 @@ public:
   };
   enum class NamingConvention : uint8_t {
     WorldWide = 0,
-    Portugal = 1
+    Portugal = 1,
+    NumberOfNamingConvention = 2 // used for size of enum. Do not set as preference.
   };
   constexpr static int k_numberOfExamModes = 6;
   static_assert(static_cast<int>(ExamMode::IBTest) == 3, "Preferences::ExamMode::IBTest != 3 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
@@ -110,7 +112,10 @@ public:
   bool mixedFractionsAreEnabled() const { return m_mixedFractionsAreEnabled; }
   void enableMixedFractions(MixedFractions enable) { m_mixedFractionsAreEnabled = static_cast<bool>(enable); }
   NamingConvention namingConvention() const { return m_namingConvention; }
-  void setNamingConvention(NamingConvention namingConvention) { m_namingConvention = namingConvention;}
+  void setNamingConvention(NamingConvention namingConvention) {
+    assert(namingConvention != NamingConvention::NumberOfNamingConvention);
+    m_namingConvention = namingConvention;
+  }
 
   static_assert((int8_t)Preferences::ExamMode::Off == 0 && (int8_t)Preferences::ExamMode::Unknown < 0, "Preferences::isInExamMode() relies on exam modes order");
   bool isInExamMode() const { return (int8_t)examMode() > 0; }

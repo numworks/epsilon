@@ -11,7 +11,7 @@ namespace Poincare {
 class ArcTangentNode final : public ExpressionNode {
 friend class ArcCotangentNode;
 public:
-  constexpr static char k_functionName[] = "\01\02arctan\00\01\02atan\00";
+  constexpr static char k_functionName[] = "\01\02arctan\00\02atan\00";
 
   // TreeNode
   size_t size() const override { return sizeof(ArcTangentNode); }

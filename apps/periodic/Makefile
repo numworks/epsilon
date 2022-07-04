@@ -3,6 +3,7 @@ app_headers += apps/periodic/app.h
 
 app_periodic_src = $(addprefix apps/periodic/,\
   app.cpp \
+  elements_data_base.cpp \
 )
 
 apps_src += $(app_periodic_src)

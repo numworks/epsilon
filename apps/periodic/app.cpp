@@ -1,4 +1,5 @@
 #include "app.h"
+#include "elements_data_base.h"
 #include "../apps_container.h"
 #include "../settings/settings_icon.h"
 #include <apps/i18n.h>
@@ -37,7 +38,7 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 
 void App::PlaceholderController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, Escher::Palette::WallScreen);
-  ctx->drawString("Under construction", rect.topLeft().translatedBy(KDPoint(20,20)), KDFont::Size::Large, KDColorBlack, Escher::Palette::WallScreen);
+  ctx->drawString(I18n::translate(ElementsDataBase::Name(1)), rect.topLeft().translatedBy(KDPoint(20,20)), KDFont::Size::Large, KDColorBlack, Escher::Palette::WallScreen);
 }
 
 // App

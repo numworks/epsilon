@@ -32,9 +32,9 @@ public:
 
   bool operator==(const Event & other) const { return (m_id == other.m_id); }
   bool operator!=(const Event & other) const { return (m_id != other.m_id); }
-  // Return the length of the copied text (and not the size)
   bool isKeyboardEvent() const { return m_id < k_specialEventsOffset; }
   bool isSpecialEvent() const { return m_id >= k_specialEventsOffset; }
+  // Return the length of the copied text (and not the size)
   const char * text() const;
 #ifndef NDEBUG
   const char * name() const;
@@ -90,7 +90,8 @@ constexpr Event Right = Event::PlainKey(Keyboard::Key::Right);
 constexpr Event OK    = Event::PlainKey(Keyboard::Key::OK);
 constexpr Event Back  = Event::PlainKey(Keyboard::Key::Back);
 
-// The Home event is only used on simulators, as they cannot handle preemption.
+/* The Home event is only used on simulators, as they cannot handle preemption.
+ */
 constexpr Event Home  = Event::PlainKey(Keyboard::Key::Home);
 constexpr Event OnOff = Event::PlainKey(Keyboard::Key::OnOff);
 

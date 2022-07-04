@@ -78,9 +78,10 @@ constexpr int RowActivationDelay = 10; // us
 /* The two following values are approximately in tenth of milliseconds. We can
  * hardly get a more precise value since they are used by timers which are
  * dependent on the varying board frequency. */
-/* Both are set to 15ms, which allows for 30 keypress/release cycles per second,
- * likely the maximal useful speed one can hope on a calculator. */
-constexpr int DebouncingDelay = 150;
+/* They're respectivelly set to 11ms and 15 ms, which allows for approximately
+ * 45 keypress/release cycles per second, likely the maximal useful speed one
+ * can hope on a calculator. */
+constexpr int DebouncingDelay = 110;
 constexpr int PollDelay = 150;
 
 }

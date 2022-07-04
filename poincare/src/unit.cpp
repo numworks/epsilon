@@ -305,7 +305,7 @@ bool UnitNode::Representative::canParseWithEquivalents(const char * symbol, size
     size_t rootSymbolLength = strlen(rootSymbol.mainName());
     int potentialPrefixLength = length - rootSymbolLength;
     if (potentialPrefixLength >= 0
-     && rootSymbol.isEquivalentTo(symbol + potentialPrefixLength, rootSymbolLength)
+     && rootSymbol.isAliasOf(symbol + potentialPrefixLength, rootSymbolLength)
      && candidate[i].canParse(symbol, potentialPrefixLength, prefix)) {
       *representative = (candidate + i);
       return true;

@@ -2,7 +2,7 @@
 #include <string.h>
 #include <assert.h>
 
-bool Name::isEquivalentTo(const char * name, int nameLen) const {
+bool Name::isAliasOf(const char * name, int nameLen) const {
   if (!hasAliases()) {
     return nameLen == strlen(m_formattedNamesList) && strncmp(name, m_formattedNamesList, nameLen) == 0;
   }

@@ -8,7 +8,7 @@ public:
   constexpr operator const char *() const { return m_formattedNamesList; }
 
   const char * mainName() const { return hasAliases() ? parseMainName() : m_formattedNamesList; }
-  bool isEquivalentTo(const char * name, int nameLen) const;
+  bool isAliasOf(const char * name, int nameLen) const;
 
   constexpr static char k_headerStart = '\01';
   constexpr static char k_stringStart = '\02';

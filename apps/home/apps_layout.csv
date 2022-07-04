@@ -1,5 +1,5 @@
-Default,calculation,graph,code,statistics,inference,solver,sequence,regression,settings
-Variant1,calculation,graph,solver,statistics,inference,regression,sequence,code,settings
-Variant2,calculation,graph,solver,regression,sequence,inference,statistics,code,settings
-Variant3,calculation,graph,solver,statistics,inference,sequence,regression,code,settings
-Variant4,calculation,graph,solver,statistics,regression,inference,sequence,code,settings
+Default,calculation,graph,code,statistics,inference,solver,sequence,regression,periodic,settings
+Variant1,calculation,graph,solver,statistics,inference,regression,sequence,code,periodic,settings
+Variant2,calculation,graph,solver,regression,sequence,inference,statistics,code,periodic,settings
+Variant3,calculation,graph,solver,statistics,inference,sequence,regression,code,periodic,settings
+Variant4,calculation,graph,solver,statistics,regression,inference,sequence,code,periodic,settings

@@ -2,6 +2,7 @@
 #define POINCARE_CONSTANT_H
 
 #include <poincare/symbol_abstract.h>
+#include <poincare/name.h>
 
 namespace Poincare {
 
@@ -42,13 +43,13 @@ public:
   class ConstantInfo {
   public:
     constexpr ConstantInfo() : m_name(nullptr), m_unit(nullptr), m_value(NAN), m_comparisonRank(0) {}
-    constexpr ConstantInfo(const char * name, int comparisonRank, double value = NAN, const char * unit = nullptr) : m_name(name), m_unit(unit), m_value(value), m_comparisonRank(comparisonRank) {}
-    const char * name() const { return m_name; }
+    constexpr ConstantInfo(Name name, int comparisonRank, double value = NAN, const char * unit = nullptr) : m_name(name), m_unit(unit), m_value(value), m_comparisonRank(comparisonRank) {}
+    const Name name() const { return m_name; }
     const char * unit() const { return m_unit; }
     double value() const { return m_value; }
     int comparisonRank() const { return m_comparisonRank; }
   private:
-    const char * m_name;
+    Name m_name;
     const char * m_unit;
     double m_value;
     int m_comparisonRank;
@@ -74,11 +75,13 @@ private:
 };
 
 class Constant final : public SymbolAbstract {
+friend class ConstantNode;
 public:
   Constant(const ConstantNode * node) : SymbolAbstract(node) {}
   static Constant Builder(const char * name, int length) {
     assert(Constant::IsConstant(name, length));
-    return SymbolAbstract::Builder<Constant, ConstantNode>(name, length);
+    const char * mainName = Constant::MainConstantName(name, length);
+    return SymbolAbstract::Builder<Constant, ConstantNode>(mainName, strlen(mainName));
   }
   static Constant Builder(const char * name) {
     assert(Constant::IsConstant(name, strlen(name)));
@@ -95,7 +98,7 @@ public:
 
   constexpr static ConstantNode::ConstantInfo k_constants[] = {
     ConstantNode::ConstantInfo("i", 0),
-    ConstantNode::ConstantInfo("π", 1, M_PI),
+    ConstantNode::ConstantInfo("\01\02π\00\01\02pi\00", 1, M_PI),
     ConstantNode::ConstantInfo("e", 2, M_E),
     ConstantNode::ConstantInfo("_c", 3, 299792458.0, "_m/_s"),
     ConstantNode::ConstantInfo("_e", 3, 1.602176634e-19, "_C"),
@@ -113,6 +116,9 @@ public:
   };
 
 private:
+  static const char * MainConstantName(const char * name, int length) { return ConstantInfoFromName(name, length).name().mainName(); }
+  static ConstantNode::ConstantInfo ConstantInfoFromName(const char * name, int length);
+
   ConstantNode::ConstantInfo constantInfo() const { return node()->constantInfo(); }
   ConstantNode * node() const { return static_cast<ConstantNode *>(Expression::node()); }
 };

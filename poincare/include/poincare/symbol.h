@@ -58,14 +58,12 @@ class Symbol final : public SymbolAbstract {
   friend class Expression;
   friend class SymbolNode;
 public:
-  constexpr static int k_ansLength = 3;
-  constexpr static char k_ans[k_ansLength+1] = "Ans";
-  constexpr static char k_ansLowerCase[k_ansLength+1] = "ans";
+  constexpr static Name k_ansName = "\01\02Ans\00\01\02ans\00";
 
   Symbol(const SymbolNode * node = nullptr) : SymbolAbstract(node) {}
   static Symbol Builder(const char * name, int length) { return SymbolAbstract::Builder<Symbol, SymbolNode>(name, length); }
   static Symbol Builder(CodePoint name);
-  static Symbol Ans() { return Symbol::Builder(k_ans, k_ansLength); }
+  static Symbol Ans() { return Symbol::Builder(k_ansName.mainName(), strlen(k_ansName.mainName())); }
 
   // Symbol properties
   bool isSystemSymbol() const { return node()->isUnknown(); }

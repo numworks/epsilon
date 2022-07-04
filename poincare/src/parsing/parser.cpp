@@ -494,17 +494,9 @@ void Parser::parseSequence(Expression & leftHandSide, const char * name, Token::
 
 void Parser::parseSpecialIdentifier(Expression & leftHandSide, Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  if (m_currentToken.compareTo(Symbol::k_ans) == 0 || m_currentToken.compareTo(Symbol::k_ansLowerCase) == 0) {
-    leftHandSide = Symbol::Ans();
-  } else if (m_currentToken.compareTo(Infinity::Name()) == 0) {
-    leftHandSide = Infinity::Builder(false);
-  } else if (m_currentToken.compareTo(Undefined::Name()) == 0) {
-    leftHandSide = Undefined::Builder();
-  } else {
-    assert(m_currentToken.compareTo(Nonreal::Name()) == 0);
-    leftHandSide = Nonreal::Builder();
-  }
+  leftHandSide = ParsingHelper::GetIdentifierBuilder(m_currentToken.text(), m_currentToken.length())();
   isThereImplicitMultiplication();
+  return;
 }
 
 void Parser::parseCustomIdentifier(Expression & leftHandSide, Token::Type stoppingType) {

@@ -17,19 +17,25 @@ public:
   static bool IsSpecialIdentifierName(const char * name, size_t nameLength);
   static bool IsParameteredExpression(const Expression::FunctionHelper * helper);
 
-private:
-  constexpr static const char * s_specialIdentifierNames[] = {
-    /* This MUST be ordered according to name otherwise IsSpecialIdentifier
-     * won't work properly. */
-    Symbol::k_ans,
-    Symbol::k_ansLowerCase,
-    Infinity::Name(),
-    Nonreal::Name(),
-    Undefined::Name()
-  };
-  constexpr static int k_numberOfSpecialIdentifiers = sizeof(s_specialIdentifierNames) / sizeof(const char *);
+  // This must be called with an identifier name
+  typedef Expression (*IdentifierBuilder) ();
+  static const IdentifierBuilder GetIdentifierBuilder(const char * name, size_t nameLength);
 
-   // The array of reserved functions' helpers
+private:
+  // The array of special identifiers
+  struct SpecialIdentifier {
+    Name identifierName;
+    IdentifierBuilder identifierBuilder;
+  };
+  constexpr static SpecialIdentifier s_specialIdentifiers[] = {
+    {Symbol::k_ansName, [] {return static_cast<Expression>(Symbol::Ans());}},
+    {Infinity::Name(), [] {return static_cast<Expression>(Infinity::Builder(false));}},
+    {Nonreal::Name(), [] {return static_cast<Expression>(Nonreal::Builder());}},
+    {Undefined::Name(), [] {return static_cast<Expression>(Undefined::Builder());}}
+  };
+  constexpr static int k_numberOfSpecialIdentifiers = sizeof(s_specialIdentifiers) / sizeof(SpecialIdentifier);
+
+  // The array of reserved functions' helpers
   constexpr static const Expression::FunctionHelper * s_reservedFunctions[] = {
     /* This MUST be ordered according to name, and then by numberOfChildren
      * otherwise GetReservedFunction won't work properly.

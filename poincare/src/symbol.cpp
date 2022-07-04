@@ -16,9 +16,6 @@
 
 namespace Poincare {
 
-constexpr char Symbol::k_ans[];
-constexpr char Symbol::k_ansLowerCase[];
-
 SymbolNode::SymbolNode(const char * newName, int length) : SymbolAbstractNode() {
   strlcpy(const_cast<char*>(name()), newName, length+1);
 }

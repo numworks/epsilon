@@ -16,11 +16,11 @@ namespace Poincare {
 int ArcSineNode::numberOfChildren() const { return ArcSine::s_functionHelper.numberOfChildren(); }
 
 Layout ArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ArcSine(this), floatDisplayMode, numberOfSignificantDigits, ArcSine::s_functionHelper.name());
+  return LayoutHelper::Prefix(ArcSine(this), floatDisplayMode, numberOfSignificantDigits, ArcSine::s_functionHelper.name().mainName());
 }
 
 int ArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSine::s_functionHelper.name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSine::s_functionHelper.name().mainName());
 }
 
 Expression ArcSineNode::shallowReduce(const ReductionContext& reductionContext) {

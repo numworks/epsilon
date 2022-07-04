@@ -39,17 +39,22 @@ private:
   constexpr static const Expression::FunctionHelper * s_reservedFunctions[] = {
     /* This MUST be ordered according to name, and then by numberOfChildren
      * otherwise GetReservedFunction won't work properly.
-     * (name = s_functionHelper.name()) */
+     * If the function has multiple aliases, take the first alias
+     * in alphabetical order to choose position in list.
+     *
+     * Example:
+     * { acos, arccos } -> take acos as reference for position
+     * { asin, arcsin } -> take arcsin as reference for position */
     &AbsoluteValue::s_functionHelper,
-    &ArcCosine::s_functionHelper,
+    &ArcCosine::s_functionHelper, // acos
     &HyperbolicArcCosine::s_functionHelper,
     &ArcCotangent::s_functionHelper,
     &ArcCosecant::s_functionHelper,
+    &ArcSine::s_functionHelper, // arcsin
+    &ArcTangent::s_functionHelper, // arctan
     &ComplexArgument::s_functionHelper,
     &ArcSecant::s_functionHelper,
-    &ArcSine::s_functionHelper,
     &HyperbolicArcSine::s_functionHelper,
-    &ArcTangent::s_functionHelper,
     &HyperbolicArcTangent::s_functionHelper,
     &BinomCDF::s_functionHelper,
     &BinomialCoefficient::s_functionHelper,
@@ -128,8 +133,7 @@ private:
     &SquareRoot::s_functionHelper,
   };
 
-constexpr static const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));
-
+  constexpr static const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));
 };
 
 }

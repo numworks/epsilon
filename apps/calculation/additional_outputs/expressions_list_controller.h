@@ -28,14 +28,15 @@ public:
 protected:
   constexpr static int k_maxNumberOfRows = 5;
   int textAtIndex(char * buffer, size_t bufferSize, int index) override;
+  Poincare::Layout getLayoutFromExpression(Poincare::Expression e, Poincare::Context * context, Poincare::Preferences * preferences);
   Poincare::Expression m_expression;
   // Memoization of layouts
   mutable Poincare::Layout m_layouts[k_maxNumberOfRows];
+  Escher::ExpressionTableCellWithMessage m_cells[k_maxNumberOfRows];
 private:
   Poincare::Layout layoutAtIndex(int index);
   virtual I18n::Message messageAtIndex(int index) = 0;
   // Cells
-  Escher::ExpressionTableCellWithMessage m_cells[k_maxNumberOfRows];
 };
 
 

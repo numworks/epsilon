@@ -1,20 +1,25 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_VECTOR_LIST_CONTROLLER_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_VECTOR_LIST_CONTROLLER_H
 
-#include "expressions_list_controller.h"
+#include "vector_graph_cell.h"
+#include "vector_model.h"
+#include "illustrated_expressions_list_controller.h"
 
 namespace Calculation {
 
-class VectorListController : public ExpressionsListController {
+class VectorListController : public IllustratedExpressionsListController {
 public:
   VectorListController(EditExpressionController * editExpressionController) :
-    ExpressionsListController(editExpressionController) {}
-
+    IllustratedExpressionsListController(editExpressionController),
+    m_graphCell(&m_model) {}
   void setExpression(Poincare::Expression e) override;
-
 private:
+  static constexpr char k_symbol[] = "θ";
+  const char * symbol() const override { return k_symbol; }
+  Escher::HighlightCell * illustrationCell() override { return &m_graphCell; }
+  VectorGraphCell m_graphCell;
+  VectorModel m_model;
   I18n::Message messageAtIndex(int index) override;
-  Poincare::Layout getLayoutFromExpression(Poincare::Expression e, Poincare::Context * context, Poincare::Preferences * preferences);
   // Map from cell index to message index
   constexpr static int k_maxNumberOfOutputRows = 3;
   int m_indexMessageMap[k_maxNumberOfOutputRows];

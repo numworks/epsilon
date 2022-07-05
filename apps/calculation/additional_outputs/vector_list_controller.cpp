@@ -50,7 +50,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
   assert(m_expression.type() == ExpressionNode::Type::Matrix);
   Matrix &vector = static_cast<Matrix &>(m_expression);
   assert(vector.numberOfColumns() == 1 || vector.numberOfRows() == 1);
-  bool isColumn = (vector.numberOfColumns() == 1);
+  bool isColumn = (vector.numberOfRows() != 1);
   bool is2D = (isColumn ? vector.numberOfRows() : vector.numberOfColumns()) == 2;
   size_t index = 0;
   size_t messageIndex = 0;
@@ -74,35 +74,31 @@ void VectorListController::setExpression(Poincare::Expression e) {
     }
     if (is2D) {
       // 3. Angle with x-axis
-      Expression x = static_cast<Matrix &>(normalized).matrixChild(0, 0);
-      Expression y = static_cast<Matrix &>(normalized).matrixChild(isColumn ? 0 : 1, isColumn ? 1 : 0);
+      Expression x = static_cast<Matrix &>(vector).matrixChild(0, 0);
+      Expression y = static_cast<Matrix &>(vector).matrixChild(isColumn ? 1 : 0, isColumn ? 0 : 1);
+      float xApproximation = x.approximateToScalar<float>(context, preferences->complexFormat(), preferences->angleUnit());
+      float yApproximation = y.approximateToScalar<float>(context, preferences->complexFormat(), preferences->angleUnit());
+      m_model.setVectorX(xApproximation);
+      m_model.setVectorY(yApproximation);
+      illustrationCell()->reloadCell();
+      x = static_cast<Matrix &>(normalized).matrixChild(0, 0);
+      y = static_cast<Matrix &>(normalized).matrixChild(isColumn ? 1 : 0, isColumn ? 0 : 1);
+      setShowIllustration(xApproximation != 0.f || yApproximation != 0.f);
       Expression angle = ArcCosine::Builder(x);
       if (y.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
         angle = Subtraction::Builder(Poincare::Constant::Builder("π"), angle);
       }
       m_indexMessageMap[index] = messageIndex++;
       m_layouts[index++] = HorizontalLayout::Builder(LayoutHelper::String("θ = "),getLayoutFromExpression(angle, context, preferences));
+    } else {
+      setShowIllustration(false);
     }
+  } else {
+    setShowIllustration(false);
   }
 
   // Reset complex format as before
   preferences->setComplexFormat(currentComplexFormat);
-}
-
-Poincare::Layout VectorListController::getLayoutFromExpression(Expression e, Context * context, Poincare::Preferences * preferences) {
-  assert(!e.isUninitialized());
-  // Simplify or approximate expression
-  Expression approximateExpression;
-  Expression simplifiedExpression;
-  e.cloneAndSimplifyAndApproximate(&simplifiedExpression, &approximateExpression, context,
-    preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
-    ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  // simplify might have been interrupted, in which case we use approximate
-  if (simplifiedExpression.isUninitialized()) {
-    assert(!approximateExpression.isUninitialized());
-    return Shared::PoincareHelpers::CreateLayout(approximateExpression);
-  }
-  return Shared::PoincareHelpers::CreateLayout(simplifiedExpression);
 }
 
 I18n::Message VectorListController::messageAtIndex(int index) {

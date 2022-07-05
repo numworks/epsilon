@@ -96,6 +96,7 @@ protected:
     Large
   };
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Tiny) const;
+  void drawArc(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, float radius, KDColor color, bool thick = true) const;
 
   /* 'drawArrow' draws the edge of an arrow pointing to (x,y) with the
    * orientation (dx,dy).
@@ -120,7 +121,7 @@ protected:
    *  l = pixelArrowWith
    *  tanAngle = tan(angle) = l/2L
    */
-  void drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, float arrowWidth, float tanAngle = 1.0f/3.0f) const;
+  void drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, float arrowWidth, bool thick = true, float tanAngle = 1.0f/3.0f) const;
   void drawGrid(KDContext * ctx, KDRect rect) const;
   void drawAxes(KDContext * ctx, KDRect rect) const;
   void drawAxis(KDContext * ctx, KDRect rect, Axis axis) const { drawLine(ctx, rect, axis, 0.0f, KDColorBlack, 1); }

@@ -492,6 +492,9 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeIs("1+i", AdditionalInformationType::Complex, &globalContext, &store);
   assertCalculationAdditionalResultTypeIs("sin(π)", AdditionalInformationType::Trigonometry, &globalContext, &store);
   assertCalculationAdditionalResultTypeIs("sin(iπ)", AdditionalInformationType::Complex, &globalContext, &store);
+  assertCalculationAdditionalResultTypeIs("[[1]]", AdditionalInformationType::Vector, &globalContext, &store);
+  assertCalculationAdditionalResultTypeIs("[[1,1]]", AdditionalInformationType::Vector, &globalContext, &store);
+  assertCalculationAdditionalResultTypeIs("[[1][2][3]]", AdditionalInformationType::Vector, &globalContext, &store);
   assertCalculationAdditionalResultTypeIs("transpose(identity(2))", AdditionalInformationType::Matrix, &globalContext, &store);
   assertCalculationAdditionalResultTypeIs("[[cos(π/3),-sin(π/3)][sin(π/3),cos(π/3)]]", AdditionalInformationType::Matrix, &globalContext, &store);
   assertCalculationAdditionalResultTypeIs("√(-1)", AdditionalInformationType::None, &globalContext, &store);

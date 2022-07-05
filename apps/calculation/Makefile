@@ -13,6 +13,7 @@ app_calculation_src = $(addprefix apps/calculation/,\
   additional_outputs/complex_list_controller.cpp \
   additional_outputs/expression_with_equal_sign_view.cpp \
   additional_outputs/expressions_list_controller.cpp \
+  additional_outputs/illustrated_expressions_list_controller.cpp \
   additional_outputs/illustrated_list_controller.cpp \
   additional_outputs/illustration_cell.cpp \
   additional_outputs/integer_list_controller.cpp \
@@ -24,7 +25,9 @@ app_calculation_src = $(addprefix apps/calculation/,\
   additional_outputs/trigonometry_list_controller.cpp \
   additional_outputs/trigonometry_model.cpp \
   additional_outputs/unit_list_controller.cpp \
+  additional_outputs/vector_graph_cell.cpp \
   additional_outputs/vector_list_controller.cpp \
+  additional_outputs/vector_model.cpp \
   app.cpp \
   edit_expression_controller.cpp \
   expression_field.cpp \

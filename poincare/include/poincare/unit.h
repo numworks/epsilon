@@ -618,7 +618,7 @@ public:
   };
   typedef UnitNode::VolumeRepresentative VolumeRepresentative;
   constexpr static const VolumeRepresentative k_volumeRepresentatives[] = {
-    VolumeRepresentative("\01\02L\00\02l\00", DEFINE_TWICE(0.001), Prefixable::All, Prefixable::Negative),
+    VolumeRepresentative(NamesWithAlias::k_litersName, DEFINE_TWICE(0.001), Prefixable::All, Prefixable::Negative),
     VolumeRepresentative("tsp", DEFINE_TWICE(0.00000492892159375), Prefixable::None, Prefixable::None),
     VolumeRepresentative("tbsp", DEFINE_TWICE(3*0.00000492892159375), Prefixable::None, Prefixable::None),
     VolumeRepresentative("floz", DEFINE_TWICE(0.0000295735295625), Prefixable::None, Prefixable::None),
@@ -678,7 +678,7 @@ public:
   constexpr static int k_acreRepresentativeIndex = 1;
   static_assert(strings_equal(k_surfaceRepresentatives[k_acreRepresentativeIndex].m_rootSymbol, "acre"), "Index for the Acre Representative is incorrect.");
   constexpr static int k_literRepresentativeIndex = 0;
-  static_assert(strings_equal(k_volumeRepresentatives[k_literRepresentativeIndex].m_rootSymbol, "\01\02L\00\02l\00"), "Index for the Liter Representative is incorrect.");
+  static_assert(strings_equal(k_volumeRepresentatives[k_literRepresentativeIndex].m_rootSymbol, NamesWithAlias::k_litersName), "Index for the Liter Representative is incorrect.");
   constexpr static int k_cupRepresentativeIndex = 4;
   static_assert(strings_equal(k_volumeRepresentatives[k_cupRepresentativeIndex].m_rootSymbol, "cup"), "Index for the Cup Representative is incorrect.");
   constexpr static int k_pintRepresentativeIndex = 5;

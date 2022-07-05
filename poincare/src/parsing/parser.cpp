@@ -104,6 +104,12 @@ bool Parser::popTokenIfType(Token::Type type) {
 bool Parser::nextTokenHasPrecedenceOver(Token::Type stoppingType) {
   Token::Type nextTokenType = (m_pendingImplicitMultiplication) ? Token::ImplicitTimes : m_nextToken.type();
   if (m_waitingSlashForMixedFraction && nextTokenType == Token::Type::Slash) {
+    /* When parsing a mixed fraction, we cannot parse until a token type
+     * with lower precedence than slash, but we still need not to stop on the
+     * middle slash.
+     * Ex:
+     * 1 2/3/4 = (1 2/3)/4
+     * 1 2/3^2 = (1 2/3)^2 */
     m_waitingSlashForMixedFraction = false;
     return true;
   }

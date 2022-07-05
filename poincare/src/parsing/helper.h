@@ -13,9 +13,11 @@ public:
    * whether a token corresponds to an entry. The constexpr static
    * s_reservedFunctionsUpperBound marks the end of the array. */
   static const Expression::FunctionHelper * const * GetReservedFunction(const char * name, size_t nameLength);
+  static const Expression::FunctionHelper * const * GetInverseFunction(const char * name, size_t nameLength);
   static const Expression::FunctionHelper * const * ReservedFunctionsUpperBound() { return s_reservedFunctionsUpperBound; }
   static bool IsSpecialIdentifierName(const char * name, size_t nameLength);
   static bool IsParameteredExpression(const Expression::FunctionHelper * helper);
+  static bool IsSquarableFunction(const Expression::FunctionHelper * helper);
 
   // This must be called with an identifier name
   typedef Expression (*IdentifierBuilder) ();
@@ -149,6 +151,16 @@ private:
   };
 
   constexpr static const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));
+
+  // The array of functions that can be aliases to f^-1
+  struct FunctionMapping { const Expression::FunctionHelper * mainFunction; const Expression::FunctionHelper * inverseFunction; };
+  constexpr static const FunctionMapping s_inverses[] = {
+    {&Cosine::s_functionHelper, &ArcCosine::s_functionHelper},
+    {&Sine::s_functionHelper, &ArcSine::s_functionHelper},
+    {&Tangent::s_functionHelper, &ArcTangent::s_functionHelper},
+  };
+  constexpr static int k_numberOfInverses = sizeof(s_inverses) / sizeof(FunctionMapping);
+  constexpr static FunctionMapping const * s_inverseFunctionsUpperBound = s_inverses + (k_numberOfInverses);
 };
 
 }

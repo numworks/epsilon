@@ -9,7 +9,7 @@ namespace Poincare {
 
 class DivisionRemainderNode final : public ExpressionNode {
 public:
-  constexpr static char k_functionName[] = "rem";
+  constexpr static Name k_functionName = "rem";
 
   // TreeNode
   size_t size() const override { return sizeof(DivisionRemainderNode); }

@@ -10,7 +10,7 @@ namespace Poincare {
 
 class LogarithmNode final : public ExpressionNode {
 public:
-  constexpr static char k_functionName[] = "log";
+  constexpr static Name k_functionName = "log";
 
   // TreeNode
   size_t size() const override { return sizeof(LogarithmNode); }

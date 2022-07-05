@@ -26,14 +26,18 @@ all:
 	$(call command_check,$(EMCC))
 	@ rm -rf output/all_official
 	@ mkdir -p output/all_official
-	@ echo "BUILD_FIRMWARE    DEVICE N0110"
-	@ $(MAKE) clean
-	@ $(MAKE) epsilon.onboarding.dfu
-	@ cp output/release/device/n0110/epsilon/epsilon.onboarding.dfu output/all_official/epsilon.device.n0110.dfu
 	@ echo "BUILD_FIRMWARE    DEVICE N0100"
 	@ $(MAKE) MODEL=n0100 clean
 	@ $(MAKE) MODEL=n0100 epsilon.onboarding.dfu
 	@ cp output/release/device/n0100/epsilon/epsilon.onboarding.dfu output/all_official/epsilon.device.n0100.dfu
+	@ echo "BUILD_FIRMWARE    DEVICE N0110"
+	@ $(MAKE) clean
+	@ $(MAKE) epsilon.onboarding.dfu
+	@ cp output/release/device/n0110/epsilon/epsilon.onboarding.dfu output/all_official/epsilon.device.n0110.dfu
+	@ echo "BUILD_FIRMWARE    DEVICE N0120"
+	@ $(MAKE) clean
+	@ $(MAKE) MODEL=n0120 epsilon.onboarding.dfu
+	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.dfu output/all_official/epsilon.device.n0120.dfu
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB ZIP"
 	@ $(MAKE) PLATFORM=simulator TARGET=web clean
 	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.zip

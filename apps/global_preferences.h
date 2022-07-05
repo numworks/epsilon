@@ -27,6 +27,7 @@ public:
   CountryPreferences::ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return preferences().listsStatsOrderInToolbox(); }
   Poincare::Preferences::MixedFractions mixedFractions() const { return preferences().mixedFractions(); }
   int sequencesInitialRank() const;
+  Poincare::Preferences::NamingConvention namingConvention() const { return preferences().namingConvention(); }
 
   const char * openIntervalChar(bool left) const {
     /* This should be done by country instead of language. However, some

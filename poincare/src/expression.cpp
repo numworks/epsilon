@@ -78,6 +78,16 @@ bool Expression::isRationalOne() const {
   return type() == ExpressionNode::Type::Rational && convert<const Rational>().isOne();
 }
 
+bool Expression::isOne() const {
+  return isRationalOne() || (type() == ExpressionNode::Type::BasedInteger && convert<const BasedInteger>().integer().isOne());
+}
+
+bool Expression::isMinusOne() const {
+  return (type() == ExpressionNode::Type::BasedInteger && convert<const BasedInteger>().integer().isMinusOne())
+      || (type() == ExpressionNode::Type::Opposite && childAtIndex(0).isOne())
+      || (type() == ExpressionNode::Type::Rational && convert<const Rational>().isMinusOne());
+}
+
 bool Expression::recursivelyMatches(ExpressionTernaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols, void * auxiliary) const {
   RecursiveSearchResult testResult = test(*this, context, auxiliary);
   if (testResult == RecursiveSearchResult::Yes) {

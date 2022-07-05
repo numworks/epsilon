@@ -174,6 +174,8 @@ public:
   bool allChildrenAreUndefined();
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalOne() const;
+  bool isOne() const;
+  bool isMinusOne() const;
   bool isRandom() const { return node()->isRandom(); }
   bool isParameteredExpression() const { return node()->isParameteredExpression(); }
   bool isBasedIntegerCappedBy(const char * integerString) const;

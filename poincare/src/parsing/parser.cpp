@@ -407,7 +407,7 @@ void Parser::parseReservedFunction(Expression & leftHandSide, Token::Type stoppi
 }
 
 void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper) {
-  const char * name = (**functionHelper).name();
+  Name name = (**functionHelper).name();
   if (strcmp(name, "log") == 0 && popTokenIfType(Token::LeftBrace)) {
     // Special case for the log function (e.g. "log{2}(8)")
     Expression base = parseUntil(Token::RightBrace);
@@ -425,6 +425,52 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
     }
     return;
   }
+
+  // Parse cos^-1(x) and cos^2(x)
+  Token::Type endDelimiterOfPower;
+  bool hasCaret = false;
+  bool squareFunction = false;
+  if (popTokenIfType(Token::CaretWithParenthesis)) {
+    hasCaret = true;
+    endDelimiterOfPower = Token::RightSystemParenthesis;
+  } else if (popTokenIfType(Token::Caret)) {
+    hasCaret = true;
+    endDelimiterOfPower = Token::RightParenthesis;
+    if (!popTokenIfType(Token::LeftParenthesis)) {
+      m_status = Status::Error; // Exponent should be parenthesed
+      return;
+    }
+  }
+  if (hasCaret) {
+    Expression base = parseUntil(endDelimiterOfPower);
+    if (m_status != Status::Progress) {
+    } else if (!popTokenIfType(endDelimiterOfPower)) {
+      m_status = Status::Error;
+      return;
+    } else if (base.isMinusOne()) {
+      // Detect cos^-1(x)
+      const char * mainName = name.mainName();
+      functionHelper = ParsingHelper::GetInverseFunction(mainName, strlen(mainName));
+      if (!functionHelper) {
+        m_status = Status::Error; // This function has no inverse
+        return;
+      }
+      name = (**functionHelper).name();
+    } else if (base.type() == ExpressionNode::Type::BasedInteger
+              && static_cast<BasedInteger &>(base).base() == Integer::Base::Decimal
+              && static_cast<BasedInteger &>(base).integer().isTwo()) {
+      // Detect cos^2(x)
+      if (!ParsingHelper::IsSquarableFunction(*functionHelper)) {
+        m_status = Status::Error; // This function can't be squared
+        return;
+      }
+      squareFunction = true;
+    } else {
+      m_status = Status::Error; // This function has no inverse
+      return;
+    }
+  }
+
 
   Expression parameters;
   if (m_context && ParsingHelper::IsParameteredExpression(*functionHelper)) {
@@ -476,6 +522,9 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Incorrect parameter type or too few args
     return;
+  }
+  if (squareFunction) {
+    leftHandSide = Power::Builder(leftHandSide, Rational::Builder(2));
   }
 }
 

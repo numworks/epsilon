@@ -2,6 +2,7 @@
 #define PERIODIC_APP_H
 
 #include "elements_view_data_source.h"
+#include "main_controller.h"
 #include "../shared/text_field_delegate_app.h"
 #include "../shared/shared_app.h"
 
@@ -30,23 +31,7 @@ public:
 private:
   App(Snapshot * snapshot);
 
-  // TODO Remove
-  class PlaceholderController : public Escher::ViewController {
-  public:
-    using Escher::ViewController::ViewController;
-    const char * title() override { return "Placeholder"; }
-    Escher::View * view() override { return &m_view; }
-
-  private:
-    class ContentView : public Escher::View {
-    public:
-      void drawRect(KDContext * ctx, KDRect rect) const;
-    };
-
-    ContentView m_view;
-  };
-
-  PlaceholderController m_controller;
+  MainController m_mainController;
 };
 
 }

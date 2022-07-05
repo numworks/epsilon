@@ -36,7 +36,7 @@ public:
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
 private:
-  static constexpr int k_fixedMaxNumberOfRows = 16;
+  static constexpr int k_fixedMaxNumberOfRows = 17;
   static constexpr int k_numberOfCalculationCells = 3 * k_maxNumberOfDisplayableRows;
   static constexpr int k_numberOfSeriesTitleCells = 3;
   static constexpr int k_numberOfCalculationTitleCells = k_maxNumberOfDisplayableRows;

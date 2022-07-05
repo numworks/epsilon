@@ -374,6 +374,10 @@ QUIZ_CASE(poincare_parsing_units) {
   assert_parsed_expression_is("π_km", Multiplication::Builder(Constant::Builder("π"), kilometer));
   assert_parsed_expression_is("_s_km", Multiplication::Builder(second, kilometer));
   assert_parsed_expression_is("3_s", Multiplication::Builder(BasedInteger::Builder(3), second));
+
+  // "l" is alias for "L"
+  Expression liter = Expression::Parse("_L", nullptr);
+  assert_parsed_expression_is("_l", liter);
 }
 
 QUIZ_CASE(poincare_parsing_identifiers) {
@@ -397,22 +401,43 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("ans", Symbol::Builder("Ans", 3));
   assert_parsed_expression_is("i", Constant::Builder("i"));
   assert_parsed_expression_is("π", Constant::Builder("π"));
+  assert_parsed_expression_is("pi", Constant::Builder("π"));
   assert_parsed_expression_is("e", Constant::Builder("e"));
   assert_parsed_expression_is(Infinity::Name(), Infinity::Builder(false));
   assert_parsed_expression_is("+inf", Infinity::Builder(false));
   assert_parsed_expression_is(Undefined::Name(), Undefined::Builder());
 
   // Reserved functions
+  assert_parsed_expression_is("arccos(1)", ArcCosine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("acos(1)", ArcCosine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("bgcos(1)", ArcCosine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("arcosh(1)", HyperbolicArcCosine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("acosh(1)", HyperbolicArcCosine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("arccot(1)", ArcCotangent::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("acot(1)", ArcCotangent::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("bgcot(1)", ArcCotangent::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("arccosec(1)", ArcCosecant::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("arccsc(1)", ArcCosecant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("acsc(1)", ArcCosecant::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("acosec(1)", ArcCosecant::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("bgcosec(1)", ArcCosecant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("abs(1)", AbsoluteValue::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("arg(1)", ComplexArgument::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("asec(1)", ArcSecant::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("arcsec(1)", ArcSecant::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("bgsec(1)", ArcSecant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("asin(1)", ArcSine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("asen(1)", ArcSine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("arcsen(1)", ArcSine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("arcsin(1)", ArcSine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("asinh(1)", HyperbolicArcSine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("arsinh(1)", HyperbolicArcSine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("arsenh(1)", HyperbolicArcSine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("arctan(1)", ArcTangent::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("atan(1)", ArcTangent::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("bgtan(1)", ArcTangent::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("arctg(1)", ArcTangent::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("artanh(1)", HyperbolicArcTangent::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("atanh(1)", HyperbolicArcTangent::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("binomial(2,1)", BinomialCoefficient::Builder(BasedInteger::Builder(2),BasedInteger::Builder(1)));
   assert_parsed_expression_is("ceil(1)", Ceiling::Builder(BasedInteger::Builder(1)));
@@ -425,10 +450,12 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("dim(1)", Dimension::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("conj(1)", Conjugate::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("cot(1)", Cotangent::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("cotg(1)", Cotangent::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("det(1)", Determinant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("dot(1,1)", VectorDot::Builder(BasedInteger::Builder(1),BasedInteger::Builder(1)));
   assert_parsed_expression_is("cos(1)", Cosine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("cosh(1)", HyperbolicCosine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("cosec(1)", Cosecant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("csc(1)", Cosecant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("factor(1)", Factor::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("floor(1)", Floor::Builder(BasedInteger::Builder(1)));
@@ -465,12 +492,15 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("rref(1)", MatrixReducedRowEchelonForm::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("sec(1)", Secant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("sin(1)", Sine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("sen(1)", Sine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("sign(1)", SignFunction::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("sinh(1)", HyperbolicSine::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("senh(1)", HyperbolicSine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("sum(1,n,2,3)", Sum::Builder(BasedInteger::Builder(1),Symbol::Builder("n",1),BasedInteger::Builder(2),BasedInteger::Builder(3)));
   assert_text_not_parsable("sum(1,2,3,4)");
   assert_text_not_parsable("sum(1,_s,3,4)");
   assert_parsed_expression_is("tan(1)", Tangent::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("tg(1)", Tangent::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("tanh(1)", HyperbolicTangent::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("trace(1)", MatrixTrace::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("transpose(1)", MatrixTranspose::Builder(BasedInteger::Builder(1)));

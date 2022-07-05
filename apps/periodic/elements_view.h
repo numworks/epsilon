@@ -14,8 +14,8 @@ public:
 
 private:
   constexpr static KDCoordinate k_tableTopMargin = 22;
-  constexpr static KDCoordinate k_tableLeftMargin = 6;
-  constexpr static KDCoordinate k_cellSize = 17;
+  constexpr static KDCoordinate k_tableLeftMargin = 7;
+  constexpr static KDCoordinate k_cellSize = 16;
   constexpr static KDCoordinate k_cellMargin = 1;
   constexpr static KDCoordinate k_lanthanideTopMargin = 5;
   constexpr static KDColor k_backgroundColor = KDColorWhite;

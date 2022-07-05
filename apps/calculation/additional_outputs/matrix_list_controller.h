@@ -14,7 +14,6 @@ public:
 
 private:
   I18n::Message messageAtIndex(int index) override;
-  Poincare::Layout getLayoutFromExpression(Poincare::Expression e, Poincare::Context * context, Poincare::Preferences * preferences);
   // Map from cell index to message index
   constexpr static int k_maxNumberOfOutputRows = 5;
   int m_indexMessageMap[k_maxNumberOfOutputRows];

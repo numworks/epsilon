@@ -85,4 +85,20 @@ int ExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, int
   return m_layouts[index].serializeParsedExpression(buffer, bufferSize, App::app()->localContext());
 }
 
+Poincare::Layout ExpressionsListController::getLayoutFromExpression(Expression e, Context * context, Poincare::Preferences * preferences) {
+  assert(!e.isUninitialized());
+  // Simplify or approximate expression
+  Expression approximateExpression;
+  Expression simplifiedExpression;
+  e.cloneAndSimplifyAndApproximate(&simplifiedExpression, &approximateExpression, context,
+    preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
+    ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  // simplify might have been interrupted, in which case we use approximate
+  if (simplifiedExpression.isUninitialized()) {
+    assert(!approximateExpression.isUninitialized());
+    return Shared::PoincareHelpers::CreateLayout(approximateExpression, context);
+  }
+  return Shared::PoincareHelpers::CreateLayout(simplifiedExpression, context);
+}
+
 }

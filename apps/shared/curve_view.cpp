@@ -520,8 +520,38 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
   }
 }
 
+void CurveView::drawArc(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, float radius, KDColor color, bool thick) const {
+  float previousT = NAN;
+  float t = NAN;
+  float previousX = NAN;
+  float x = NAN;
+  float previousY = NAN;
+  float y = NAN;
+  int i = 0;
+  bool isLastSegment = false;
+  do {
+    previousT = t;
+    t = tStart + (i++) * tStep;
+    if (t <= tStart) {
+      t = tStart + FLT_EPSILON;
+    }
+    if (t >= tEnd) {
+      t = tEnd - FLT_EPSILON;
+      isLastSegment = true;
+    }
+    if (previousT == t) {
+      // No need to draw segment. Happens when tStep << tStart .
+      continue;
+    }
+    previousX = x;
+    previousY = y;
+    x = floatToPixel(Axis::Horizontal, std::cos(t) * radius);
+    y = floatToPixel(Axis::Vertical, std::sin(t) * radius);
+    straightJoinDots(ctx, rect, x, y, previousX, previousY, color, thick);
+  } while (!isLastSegment);
+}
 
-void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, float arrowWidth, float tanAngle) const {
+void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float dx, float dy, KDColor color, float arrowWidth, bool thick, float tanAngle) const {
   assert(tanAngle >= 0.0f);
   if (std::fabs(dx) < FLT_EPSILON && std::fabs(dy) < FLT_EPSILON) {
     // We can't draw an arrow without any orientation
@@ -579,8 +609,8 @@ void CurveView::drawArrow(KDContext * ctx, KDRect rect, float x, float y, float 
   float arrow2xPixel = bxPixel - dxArrowPixel;
   float arrow2yPixel = byPixel + dyArrowPixel;
 
-  straightJoinDots(ctx, rect, xPixel, yPixel, arrow1xPixel, arrow1yPixel, color, true);
-  straightJoinDots(ctx, rect, xPixel, yPixel, arrow2xPixel, arrow2yPixel, color, true);
+  straightJoinDots(ctx, rect, xPixel, yPixel, arrow1xPixel, arrow1yPixel, color, thick);
+  straightJoinDots(ctx, rect, xPixel, yPixel, arrow2xPixel, arrow2yPixel, color, thick);
 }
 
 void CurveView::drawGrid(KDContext * ctx, KDRect rect) const {

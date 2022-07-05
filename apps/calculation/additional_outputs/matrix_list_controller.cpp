@@ -80,22 +80,6 @@ void MatrixListController::setExpression(Poincare::Expression e) {
   preferences->setComplexFormat(currentComplexFormat);
 }
 
-Poincare::Layout MatrixListController::getLayoutFromExpression(Expression e, Context * context, Poincare::Preferences * preferences) {
-  assert(!e.isUninitialized());
-  // Simplify or approximate expression
-  Expression approximateExpression;
-  Expression simplifiedExpression;
-  e.cloneAndSimplifyAndApproximate(&simplifiedExpression, &approximateExpression, context,
-    preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
-    ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  // simplify might have been interrupted, in which case we use approximate
-  if (simplifiedExpression.isUninitialized()) {
-    assert(!approximateExpression.isUninitialized());
-    return Shared::PoincareHelpers::CreateLayout(approximateExpression, context);
-  }
-  return Shared::PoincareHelpers::CreateLayout(simplifiedExpression, context);
-}
-
 I18n::Message MatrixListController::messageAtIndex(int index) {
   // Message index is mapped in setExpression because it depends on the Matrix.
   assert(index < k_maxNumberOfOutputRows && index >=0);

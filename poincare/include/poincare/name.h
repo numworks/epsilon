@@ -68,11 +68,9 @@ public:
    * of this. */
   int comparedWith(const char * name, int nameLen) const;
 
-
 private:
   constexpr static char k_headerStart = '\01';
   constexpr static char k_stringStart = '\02';
-
   constexpr static struct { Preferences::NamingConvention namingConvention; char identifier; } k_identifiersForNamingConvention[] = {
     { Preferences::NamingConvention::Portugal, 'P' }
   };
@@ -89,6 +87,35 @@ private:
 
   const char * m_formattedNamesList;
 };
+
+namespace NamesWithAlias {
+  // Special identifiers
+  constexpr static Name k_ansName = "\01\02Ans\00\02ans\00";
+  // Constants
+  constexpr static Name k_piName = "\01\02π\00\02pi\00";
+  // Units
+  constexpr static Name k_litersName = "\01\02L\00\02l\00";
+  // Trigo
+  constexpr static Name k_sinName = "\01P1\02sin\00\02sen\00";
+  constexpr static Name k_tanName = "\01P1\02tan\00\02tg\00";
+  // Inverse trigo
+  constexpr static Name k_acosName = "\01\02arccos\00\02acos\00\02bgcos\00";
+  constexpr static Name k_asinName = "\01P1\02arcsin\00\02arcsen\00\02asin\00\02bgsin\00";
+  constexpr static Name k_atanName = "\01P1\02arctan\00\02arctg\00\02atan\00\02bgtan\00";
+  // Advanced trigo
+  constexpr static Name k_cosecName = "\01\02cosec\00\02csc\00";
+  constexpr static Name k_cotName = "\01\02cot\00\02cotg\00";
+  // Inverse advanced trigo
+  constexpr static Name k_acosecName = "\01\02arccosec\00\02acosec\00\02bgcosec\00\02arccsc\00\02acsc\00";
+  constexpr static Name k_asecName = "\01\02arcsec\00\02asec\00\02bgsec\00";
+  constexpr static Name k_acotName = "\01\02arccot\00\02acot\00\02bgcot\00";
+  // Hyperbolic trigo
+  constexpr static Name k_sinhName = "\01P1\02sinh\00\02senh\00";
+  // Inverse hyperbolic trigo
+  constexpr static Name k_acoshName = "\01\02arcosh\00\02acosh\00";
+  constexpr static Name k_asinhName = "\01P1\02arsinh\00\02arsenh\00\02asinh\00";
+  constexpr static Name k_atanhName = "\01\02artanh\00\02atanh\00";
+}
 
 }
 #endif

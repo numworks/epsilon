@@ -68,15 +68,10 @@ public:
    * of this. */
   int comparedWith(const char * name, int nameLen) const;
 
-  constexpr static char k_headerStart = '\01';
-  constexpr static char k_stringStart = '\02';
 
 private:
-  bool hasAliases() const { return m_formattedNamesList[0] == k_headerStart; }
-  const char * nextNameOfList(const char * currentPositionInNamesList) const;
-  const char * firstNameOfList() const;
-  const char * mainNameOfList(Preferences::NamingConvention namingConvention) const;
-  int indexOfMain(Preferences::NamingConvention namingConventionr) const;
+  constexpr static char k_headerStart = '\01';
+  constexpr static char k_stringStart = '\02';
 
   constexpr static struct { Preferences::NamingConvention namingConvention; char identifier; } k_identifiersForNamingConvention[] = {
     { Preferences::NamingConvention::Portugal, 'P' }
@@ -85,6 +80,12 @@ private:
   // + 1 for WorldWide which does not need an identifier
   static_assert(k_numberOfNamingConvention + 1 == static_cast<int>(Preferences::NamingConvention::NumberOfNamingConvention), "Number of naming convention and their identifiers mismatch in name.h");
   static char IdentifierForNamingConvention(Poincare::Preferences::NamingConvention namingConvention);
+
+  bool hasAliases() const { return m_formattedNamesList[0] == k_headerStart; }
+  const char * nextNameOfList(const char * currentPositionInNamesList) const;
+  const char * firstNameOfList() const;
+  const char * mainNameOfList(Preferences::NamingConvention namingConvention) const;
+  int indexOfMain(Preferences::NamingConvention namingConventionr) const;
 
   const char * m_formattedNamesList;
 };

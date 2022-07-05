@@ -141,7 +141,7 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
     return;
   }
   leftHandSide = m_currentToken.expression();
-  if(generateMixedFractionIfNeeded(leftHandSide)) {
+  if (generateMixedFractionIfNeeded(leftHandSide)) {
     return;
   }
   if (m_nextToken.isNumber() // No implicit multiplication between two numbers
@@ -705,14 +705,19 @@ void Parser::parseList(Expression & leftHandSide, Token::Type stoppingType) {
 
 bool IsIntegerBaseTenOrEmptyExpression(Expression e) {
   return (e.type() == ExpressionNode::Type::BasedInteger
-          && static_cast<BasedInteger &>(e).base() == Integer::Base::Decimal)
-        || e.type() == ExpressionNode::Type::EmptyExpression;
+            && static_cast<BasedInteger &>(e).base() == Integer::Base::Decimal)
+          || e.type() == ExpressionNode::Type::EmptyExpression;
 }
 bool Parser::generateMixedFractionIfNeeded(Expression & leftHandSide) {
   if (m_context && !Preferences::sharedPreferences()->mixedFractionsAreEnabled()) {
-    /* If m_context == nullptr, the expression has already been parsed and
-     * and can be a mixed fraction inputed earlier with a different
-     * country preferences. So we parse it as mixed fraction. */
+    /* If m_context == nullptr, the expression has already been parsed.
+     * We do not escape here because we want to parse it the same way it was
+     * parsed the first time.
+     * It can for example be a mixed fraction inputed earlier with a different
+     * country preference.
+     * There is no risk of confusion with a multiplication since a parsed
+     * multiplication between an integer and a fraction will be beautified
+     * by adding a multiplication symbol between the two. */
     return false;
   }
   Token storedNextToken;

@@ -4,6 +4,7 @@
 namespace Periodic {
 
 ElementsViewDataSource::ColorPair ElementsViewDataSource::colorPairForElement(AtomicNumber z) const {
+  /* TODO Some elements may appear grey depending on m_textFilter. */
   switch (m_coloring) {
   case Coloring::Groups:
     return colorPairForGroup(ElementsDataBase::Group(z));

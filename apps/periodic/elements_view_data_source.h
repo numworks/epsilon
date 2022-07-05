@@ -21,6 +21,7 @@ public:
 
   ElementsViewDataSource() : m_selectedElement(1), m_coloring(Coloring::Groups), m_textFilter(nullptr) {}
 
+  AtomicNumber selectedElement() const { return m_selectedElement; }
   void setSelectedElement(AtomicNumber z) { m_selectedElement = z; }
   void setColoring(Coloring coloring) { m_coloring = coloring; }
   void setTextFilter(const char * filter) { m_textFilter = filter; }

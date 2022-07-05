@@ -139,6 +139,6 @@ QUIZ_CASE(poincare_dependency_multiplication) {
 }
 
 QUIZ_CASE(poincare_dependency_trigonometry) {
-  assert_expression_simplify_to_with_dependencies("atan(1/x)", "\u0012π×sign(x)-2×atan(x)\u0013/2", {"1/x"});
+  assert_expression_simplify_to_with_dependencies("arctan(1/x)", "\u0012π×sign(x)-2×arctan(x)\u0013/2", {"1/x"});
 
 }

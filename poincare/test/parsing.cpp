@@ -429,7 +429,6 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("arcsec(1)", ArcSecant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("bgsec(1)", ArcSecant::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("asin(1)", ArcSine::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("asen(1)", ArcSine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("arcsen(1)", ArcSine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("arcsin(1)", ArcSine::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("asinh(1)", HyperbolicArcSine::Builder(BasedInteger::Builder(1)));

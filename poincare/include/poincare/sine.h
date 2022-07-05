@@ -9,7 +9,7 @@ namespace Poincare {
 
 class SineNode final : public ExpressionNode {
 public:
-  constexpr static char k_functionName[] = "\01P1\02sin\00\02sen\00";
+  constexpr static Name k_functionName = "\01P1\02sin\00\02sen\00";
 
   // TreeNode
   size_t size() const override { return sizeof(SineNode); }

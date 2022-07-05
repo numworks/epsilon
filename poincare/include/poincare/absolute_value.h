@@ -9,7 +9,7 @@ namespace Poincare {
 
 class AbsoluteValueNode final : public ExpressionNode {
 public:
-  constexpr static char k_functionName[] = "abs";
+  constexpr static Name k_functionName = "abs";
 
   // TreeNode
   size_t size() const override { return sizeof(AbsoluteValueNode); }

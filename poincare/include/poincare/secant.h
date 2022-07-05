@@ -8,7 +8,7 @@ namespace Poincare {
 
 class SecantNode final : public ExpressionNode {
 public:
-  constexpr static char k_functionName[] = "sec";
+  constexpr static Name k_functionName = "sec";
 
   // TreeNode
   size_t size() const override { return sizeof(SecantNode); }

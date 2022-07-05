@@ -7,7 +7,7 @@ namespace Poincare {
 
 class MatrixInverseNode final : public ExpressionNode {
 public:
-  constexpr static char k_functionName[] = "inverse";
+  constexpr static Name k_functionName = "inverse";
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixInverseNode); }

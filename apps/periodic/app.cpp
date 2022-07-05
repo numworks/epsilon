@@ -33,18 +33,10 @@ const App::Descriptor * App::Snapshot::descriptor() const {
   return &s_descriptor;
 }
 
-// TODO Remove
-// App::PlaceholderController::ContentView
-
-void App::PlaceholderController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, Escher::Palette::WallScreen);
-  ctx->drawString(I18n::translate(ElementsDataBase::Name(1)), rect.topLeft().translatedBy(KDPoint(20,20)), KDFont::Size::Large, KDColorBlack, Escher::Palette::WallScreen);
-}
-
 // App
 App::App(Snapshot * snapshot) :
-  Shared::TextFieldDelegateApp(snapshot, &m_controller),
-  m_controller(&m_modalViewController)
+  Shared::TextFieldDelegateApp(snapshot, &m_mainController),
+  m_mainController(&m_modalViewController, snapshot->elementsViewDataSource())
 {}
 
 }

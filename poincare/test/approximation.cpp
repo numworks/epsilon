@@ -1343,6 +1343,8 @@ QUIZ_CASE(poincare_approximation_lists_functions) {
 QUIZ_CASE(poincare_approximation_mixed_fraction) {
   assert_expression_approximates_to_scalar<double>("1 1/2", 1.5);
   assert_expression_approximates_to_scalar<double>("-1 1/2", -1.5);
+  assert_expression_approximates_to_scalar<double>("1\u00121/2\u0013", 1.5);
+  assert_expression_approximates_to_scalar<double>("1\u00121/2\u0013", 0.5, Degree, Cartesian, Preferences::MixedFractions::Disabled);
 }
 
 template<typename T>

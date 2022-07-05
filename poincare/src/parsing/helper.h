@@ -46,6 +46,8 @@ private:
      * { acos, arccos } -> take acos as reference for position
      * { asin, arcsin } -> take arcsin as reference for position
      *
+     * The // at the end of each line indicates the first name in alphabetical
+     * order
      * =======================
      * WARNING: For now all function aliases that can be used in a country
      * can also be used in other languages. If it was no more the case, this
@@ -60,25 +62,25 @@ private:
      * */
     &AbsoluteValue::s_functionHelper,
     &ArcCosine::s_functionHelper, // acos
-    &HyperbolicArcCosine::s_functionHelper,
-    &ArcCotangent::s_functionHelper,
-    &ArcCosecant::s_functionHelper,
-    &ArcSine::s_functionHelper, // arcsin
+    &ArcCosecant::s_functionHelper, // acosec
+    &HyperbolicArcCosine::s_functionHelper, // acosh
+    &ArcCotangent::s_functionHelper, // acot
+    &ArcSecant::s_functionHelper, // arcsec
+    &ArcSine::s_functionHelper, // arcsen
     &ArcTangent::s_functionHelper, // arctan
-    &ComplexArgument::s_functionHelper,
-    &ArcSecant::s_functionHelper,
-    &HyperbolicArcSine::s_functionHelper,
-    &HyperbolicArcTangent::s_functionHelper,
+    &ComplexArgument::s_functionHelper, // arg
+    &HyperbolicArcSine::s_functionHelper, // arsenh
+    &HyperbolicArcTangent::s_functionHelper, // artanh
     &BinomCDF::s_functionHelper,
     &BinomialCoefficient::s_functionHelper,
     &BinomPDF::s_functionHelper,
     &Ceiling::s_functionHelper,
     &Conjugate::s_functionHelper,
     &Cosine::s_functionHelper,
+    &Cosecant::s_functionHelper, // cosec
     &HyperbolicCosine::s_functionHelper,
-    &Cotangent::s_functionHelper,
+    &Cotangent::s_functionHelper, // cot
     &VectorCross::s_functionHelper,
-    &Cosecant::s_functionHelper,
     &Dependency::s_functionHelper,
     &Determinant::s_functionHelper,
     &Derivative::s_functionHelperFirstOrder,
@@ -127,15 +129,15 @@ private:
     &MatrixReducedRowEchelonForm::s_functionHelper,
     &ListSampleStandardDeviation::s_functionHelper,
     &Secant::s_functionHelper,
-    &Sine::s_functionHelper, // sen, sin
+    &Sine::s_functionHelper, // sen
+    &HyperbolicSine::s_functionHelper, // senh
     &ListSequence::s_functionHelper,
     &SignFunction::s_functionHelper,
-    &HyperbolicSine::s_functionHelper,
     &ListSort::s_functionHelper,
     &ListStandardDeviation::s_functionHelper,
     &ListSum::s_functionHelper,
     &Sum::s_functionHelper,
-    &Tangent::s_functionHelper,
+    &Tangent::s_functionHelper, // tan
     &HyperbolicTangent::s_functionHelper,
     &StudentCDF::s_functionHelper,
     &StudentCDFRange::s_functionHelper,

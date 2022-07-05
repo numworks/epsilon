@@ -58,7 +58,7 @@ class Symbol final : public SymbolAbstract {
   friend class Expression;
   friend class SymbolNode;
 public:
-  constexpr static Name k_ansName = "\01\02Ans\00\02ans\00";
+  constexpr static Name k_ansName = NamesWithAlias::k_ansName;
 
   Symbol(const SymbolNode * node = nullptr) : SymbolAbstract(node) {}
   static Symbol Builder(const char * name, int length) { return SymbolAbstract::Builder<Symbol, SymbolNode>(name, length); }

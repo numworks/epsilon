@@ -15,9 +15,7 @@ int Name::comparedWith(const char * name, int nameLen) const {
     return compareNonNullTerminatedStringWithNullTerminated(name, nameLen, m_formattedNamesList);
   }
   int maxValueOfComparison = 0;
-  const char * nameInList = firstNameOfList();
-  assert(nameInList[0] != 0);
-  while (nameInList) { // if name = nullptr, it's the end of the list
+  for (const char * nameInList : *this) {
     int tempValueOfComparison = compareNonNullTerminatedStringWithNullTerminated(name, nameLen, nameInList);
     if (tempValueOfComparison == 0) {
       return 0;
@@ -25,13 +23,25 @@ int Name::comparedWith(const char * name, int nameLen) const {
     if (maxValueOfComparison < tempValueOfComparison || maxValueOfComparison == 0) {
       maxValueOfComparison = tempValueOfComparison;
     }
-    nameInList = nextNameOfList(nameInList);
   }
   return maxValueOfComparison;
 }
 
-const char * Name::nextNameOfList(const char * currentPositionInNamesList) const {
-  assert(hasAliases());
+const char * Name::firstName() const {
+  if (!hasAliases()) {
+    return m_formattedNamesList;
+  }
+  const char * result = m_formattedNamesList;
+  while (result[0] != k_stringStart) {
+    result++;
+  }
+  return result + 1;
+}
+
+const char * Name::nextName(const char * currentPositionInNamesList) const {
+  if (!hasAliases()) {
+    return nullptr;
+  }
   assert(strlen(currentPositionInNamesList) != 0);
   const char * beginningOfNextName = currentPositionInNamesList + strlen(currentPositionInNamesList) + 1;
   if (beginningOfNextName[0] != k_stringStart) {
@@ -40,17 +50,23 @@ const char * Name::nextNameOfList(const char * currentPositionInNamesList) const
   return beginningOfNextName + 1; // Skip string start char
 }
 
-const char * Name::mainNameOfList(Poincare::Preferences::NamingConvention namingConvention) const {
-   assert(hasAliases());
-   int mainIndex = indexOfMain(namingConvention);
-   const char * result = firstNameOfList(); // skip header
-   int currentIndex = 0;
-   while (currentIndex < mainIndex) {
-    result = nextNameOfList(result);
+const char * Name::mainName(Poincare::Preferences::NamingConvention namingConvention) const {
+  if (!hasAliases()) {
+    return m_formattedNamesList;
+  }
+  int mainIndex = indexOfMain(namingConvention);
+  const char * result; // skip header
+  int currentIndex = 0;
+  for (const char * currentName : *this) {
+    result = currentName;
     currentIndex++;
-   }
-   assert(strlen(result) != 0);
-   return result;
+    if (currentIndex >= mainIndex) {
+      break;
+    }
+  }
+  assert(result != nullptr);
+  assert(strlen(result) != 0);
+  return result;
 }
 
 int Name::indexOfMain(Poincare::Preferences::NamingConvention namingConvention) const {
@@ -67,15 +83,6 @@ int Name::indexOfMain(Poincare::Preferences::NamingConvention namingConvention) 
     currentHeaderPosition += 2;
   }
   return 0;
-}
-
-const char * Name::firstNameOfList() const {
-  assert(hasAliases());
-  const char * result = m_formattedNamesList;
-  while (result[0] != k_stringStart) {
-    result++;
-  }
-  return result + 1;
 }
 
 char Name::IdentifierForNamingConvention(Poincare::Preferences::NamingConvention namingConvention) {

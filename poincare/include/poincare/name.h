@@ -60,13 +60,37 @@ public:
   constexpr Name(const char * formattedNamesList) : m_formattedNamesList(formattedNamesList) {}
   constexpr operator const char *() const { return m_formattedNamesList; }
 
-  const char * mainName() const { return hasAliases() ? mainNameOfList(Preferences::sharedPreferences()->namingConvention()) : m_formattedNamesList; }
+  const char * mainName() const { return mainName(Preferences::sharedPreferences()->namingConvention()); }
   bool isAliasOf(const char * name, int nameLen) const { return comparedWith(name, nameLen) == 0; }
 
   /* Return 0 if name is alias of this,
    * else, return the max difference value between name and the aliases
    * of this. */
   int comparedWith(const char * name, int nameLen) const;
+
+  /* You can iterate through the names list with syntax:
+   * for (const char * alias : name ) {} */
+  template <typename T>
+  class Iterator {
+  public:
+    Iterator(T name, const char * firstName) : m_name(name), m_currentName(firstName) {}
+    const char * operator*() { return m_currentName; }
+    Iterator & operator++() {
+      m_currentName = m_name.nextName(m_currentName);
+      return *this;
+    }
+    bool operator!=(const Iterator& it) const { return (m_currentName != it.m_currentName); }
+  protected:
+    T m_name;
+    const char * m_currentName;
+  };
+
+  Iterator<Name> begin() const {
+    return Iterator<Name>(*this, firstName());
+  }
+  Iterator<Name> end() const {
+    return Iterator<Name>(*this, nullptr);
+  }
 
 private:
   constexpr static char k_headerStart = '\01';
@@ -80,9 +104,10 @@ private:
   static char IdentifierForNamingConvention(Poincare::Preferences::NamingConvention namingConvention);
 
   bool hasAliases() const { return m_formattedNamesList[0] == k_headerStart; }
-  const char * nextNameOfList(const char * currentPositionInNamesList) const;
-  const char * firstNameOfList() const;
-  const char * mainNameOfList(Preferences::NamingConvention namingConvention) const;
+  const char * firstName() const;
+  // Returns nullptr if there is no next name
+  const char * nextName(const char * currentPositionInNamesList) const;
+  const char * mainName(Preferences::NamingConvention namingConvention) const;
   int indexOfMain(Preferences::NamingConvention namingConventionr) const;
 
   const char * m_formattedNamesList;

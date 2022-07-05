@@ -16,6 +16,27 @@ void ElementsView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 }
 
+bool ElementsView::moveCursorHorizontally(bool right) {
+  AtomicNumber oldZ = m_dataSource->selectedElement();
+  AtomicNumber newZ = oldZ + (right ? 1 : -1);
+  if (newZ < 1 || newZ > ElementsDataBase::k_numberOfElements) {
+    return false;
+  }
+  return moveCursorAndDirtyRect(cellForElement(oldZ), cellForElement(newZ));
+}
+
+bool ElementsView::moveCursorVertically(bool down) {
+  AtomicNumber oldZ = m_dataSource->selectedElement();
+  size_t oldCell = cellForElement(oldZ);
+  if (down && oldCell < k_numberOfCells - k_numberOfColumns) {
+    return moveCursorAndDirtyRect(oldCell, oldCell + k_numberOfColumns);
+  }
+  if (!down && oldCell >= k_numberOfColumns) {
+    return moveCursorAndDirtyRect(oldCell, oldCell - k_numberOfColumns);
+  }
+  return false;
+}
+
 AtomicNumber ElementsView::elementInCell(size_t cellIndex) const {
   assert(cellIndex < k_numberOfCells);
   constexpr AtomicNumber k_elementsLayout[k_numberOfCells] = {
@@ -30,6 +51,21 @@ AtomicNumber ElementsView::elementInCell(size_t cellIndex) const {
      0,   0,   0,  89,  90,  91,  92,  93,  94,  95,  96,  97,  98,  99, 100, 101, 102, 103,
   };
   return k_elementsLayout[cellIndex];
+}
+
+size_t ElementsView::cellForElement(AtomicNumber z) const {
+  /* TODO This could be replaced by a simple array, similar to elementInCell.
+   * The array would be much faster ; check if it takes too much space. */
+  assert(1 <= z && z <= ElementsDataBase::k_numberOfElements);
+  size_t cell = 0;
+  while (elementInCell(cell) != z) {
+    cell++;
+    /* We know by construction that all elements are in the table, and as such
+     * that the loop will finish eventually. We thus gain some time by not
+     * performing bound checking on cell. */
+    assert(cell < k_numberOfCells);
+  }
+  return cell;
 }
 
 KDRect ElementsView::rectForCell(size_t cellIndex) const {
@@ -66,6 +102,17 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx,
   KDSize symbolSize = KDFont::Font(KDFont::Size::Small)->stringSize(symbol);
   KDPoint textOrigin(cell.x() + (cell.width() - symbolSize.width()) / 2, cell.y() + (cell.height() - symbolSize.height()) / 2 + 1);
   ctx->drawString(symbol, textOrigin, KDFont::Size::Small, colors.fg(), colors.bg());
+}
+
+bool ElementsView::moveCursorAndDirtyRect(size_t oldCell, size_t newCell) {
+  AtomicNumber newZ = elementInCell(newCell);
+  if (newZ == k_noElement || newZ == m_dataSource->selectedElement()) {
+    return false;
+  }
+  markRectAsDirty(rectWithMargins(rectForCell(oldCell)));
+  markRectAsDirty(rectWithMargins(rectForCell(newCell)));
+  m_dataSource->setSelectedElement(newZ);
+  return true;
 }
 
 }

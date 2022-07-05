@@ -10,7 +10,11 @@ class MainController : public Escher::ViewController {
 public:
   MainController(Escher::Responder * parentResponder, ElementsViewDataSource * dataSource) : ViewController(parentResponder), m_elementsView(dataSource) {}
 
+  // Escher::ViewController
   Escher::View * view() override { return &m_elementsView; }
+
+  // Escher::Responder
+  bool handleEvent(Ion::Events::Event e) override;
 
 private:
   ElementsView m_elementsView;

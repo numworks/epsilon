@@ -24,7 +24,7 @@ AppsContainer * AppsContainer::sharedAppsContainer() {
 AppsContainer::AppsContainer() :
   Container(),
   m_firstUSBEnumeration(true),
-  m_DFUWasInterruptedBySuspend(false),
+  m_restartDFU(false),
   m_examPopUpController(this),
   m_promptController(k_promptMessages, k_promptColors, k_promptNumberOfMessages)
 {
@@ -79,11 +79,11 @@ MathVariableBoxController * AppsContainer::variableBoxController() {
 }
 
 void AppsContainer::startDFU() {
-  if (m_DFUWasInterruptedBySuspend) {
+  if (m_restartDFU) {
     // USB was unplugged during sleep
     if (!Ion::USB::isPlugged()) {
-      m_DFUWasInterruptedBySuspend = false;
-      switchToBuiltinApp(m_activeSnapshotBeforeDFU);
+      m_restartDFU = false;
+      switchToBuiltinApp(m_previousSnapshot);
       return;
     }
     Ion::USB::enable();
@@ -94,7 +94,7 @@ void AppsContainer::startDFU() {
     }
     Ion::Keyboard::popState();
   }
-  m_DFUWasInterruptedBySuspend = false;
+  m_restartDFU = false;
   Ion::USB::DFU();
   Ion::Keyboard::scan();
   // If OnOff was responsible for the DFU abort, enter suspend mode
@@ -105,11 +105,11 @@ void AppsContainer::startDFU() {
   if (shouldSuspend) {
     Ion::Power::suspend(true);
     // Ion::Keyboard::popState();
-    m_DFUWasInterruptedBySuspend = true;
+    m_restartDFU = true;
     return;
   }
   // Back key pressed, leaving USB app
-  switchToBuiltinApp(m_activeSnapshotBeforeDFU);
+  switchToBuiltinApp(m_previousSnapshot);
 }
 
 void AppsContainer::didSuspend() {
@@ -128,8 +128,7 @@ void AppsContainer::didSuspend() {
   Ion::Backlight::setBrightness(globalPreferences->brightnessLevel());
   m_backlightDimmingTimer.reset();
   window()->redraw(true);
-  if (m_DFUWasInterruptedBySuspend) {
-    // If OnOff was pressed during Ion::USB::DFU, we try to restart it.
+  if (m_restartDFU) {
     startDFU();
   }
 }
@@ -168,7 +167,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
         // Warning: if the window is dirtied, you need to call window()->redraw()
         window()->redraw();
       } else {
-        m_activeSnapshotBeforeDFU = (s_activeApp == nullptr ? appSnapshotAtIndex(0) : s_activeApp->snapshot());
+        m_previousSnapshot = (s_activeApp == nullptr ? appSnapshotAtIndex(0) : s_activeApp->snapshot());
         /* Just after a software update, the battery timer does not have time to
          * fire before the calculator enters DFU mode. As the DFU mode blocks the
          * event loop, we update the battery state "manually" here.

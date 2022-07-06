@@ -2,13 +2,14 @@
 #define PERIODIC_ELEMENTS_VIEW_H
 
 #include "elements_view_data_source.h"
+#include "single_element_view.h"
 #include <escher/view.h>
 
 namespace Periodic {
 
 class ElementsView : public Escher::View {
 public:
-  ElementsView(ElementsViewDataSource * dataSource) : m_dataSource(dataSource) {}
+  ElementsView(ElementsViewDataSource * dataSource) : m_singleElementView(dataSource), m_dataSource(dataSource) {}
 
   // Escher::View
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -28,6 +29,11 @@ private:
   constexpr static size_t k_numberOfCells = k_numberOfColumns * k_numberOfRows;
   constexpr static AtomicNumber k_noElement = 0;
 
+  // Escher::View
+  int numberOfSubviews() const override { return 1; }
+  Escher::View * subviewAtIndex(int i) override{ assert(i == 0); return &m_singleElementView; }
+  void layoutSubviews(bool force = false) override { m_singleElementView.setFrame(singleElementViewFrame(), true); }
+
   AtomicNumber elementInCell(size_t cellIndex) const;
   size_t cellForElement(AtomicNumber z) const;
   /* rectForCell returns the rect for the colored part of the cell, without
@@ -37,7 +43,9 @@ private:
   KDRect rectWithMargins(KDRect rect) const { return KDRect(rect.x() - k_cellMargin, rect.y() - k_cellMargin, rect.width() + 2 * k_cellSize, rect.height() + 2 * k_cellMargin); }
   void drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx, KDRect rect) const;
   bool moveCursorAndDirtyRect(size_t oldCell, size_t newCell);
+  KDRect singleElementViewFrame() const;
 
+  SingleElementView m_singleElementView;
   ElementsViewDataSource * m_dataSource;
 };
 

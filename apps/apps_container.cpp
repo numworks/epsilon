@@ -24,7 +24,6 @@ AppsContainer * AppsContainer::sharedAppsContainer() {
 AppsContainer::AppsContainer() :
   Container(),
   m_firstUSBEnumeration(true),
-  m_restartDFU(false),
   m_examPopUpController(this),
   m_promptController(k_promptMessages, k_promptColors, k_promptNumberOfMessages)
 {
@@ -78,41 +77,7 @@ MathVariableBoxController * AppsContainer::variableBoxController() {
   return &m_variableBoxController;
 }
 
-void AppsContainer::startDFU() {
-  if (m_restartDFU) {
-    // USB was unplugged during sleep
-    if (!Ion::USB::isPlugged()) {
-      m_restartDFU = false;
-      switchToBuiltinApp(m_previousSnapshot);
-      return;
-    }
-    Ion::USB::enable();
-    /* As we are resuming just after sleep, the OnOff key is still pressed
-     * and would interrupt DFU instantly so we wait for its release */
-    while (Ion::Keyboard::scan().keyDown(Ion::Keyboard::Key::OnOff)) {
-      Ion::Timing::msleep(10); // Debouncing
-    }
-    Ion::Keyboard::popState();
-  }
-  m_restartDFU = false;
-  Ion::USB::DFU();
-  Ion::Keyboard::scan();
-  // If OnOff was responsible for the DFU abort, enter suspend mode
-  bool shouldSuspend = Ion::Keyboard::popState().keyDown(Ion::Keyboard::Key::OnOff);
-  // Update LED when exiting DFU mode
-  Ion::LED::updateColorWithPlugAndCharge();
-
-  if (shouldSuspend) {
-    Ion::Power::suspend(true);
-    // Ion::Keyboard::popState();
-    m_restartDFU = true;
-    return;
-  }
-  // Back key pressed, leaving USB app
-  switchToBuiltinApp(m_previousSnapshot);
-}
-
-void AppsContainer::didSuspend() {
+void AppsContainer::didSuspend(bool checkIfOnOffKeyReleased) {
   resetShiftAlphaStatus();
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   // Display the prompt if it has a message to display
@@ -128,9 +93,6 @@ void AppsContainer::didSuspend() {
   Ion::Backlight::setBrightness(globalPreferences->brightnessLevel());
   m_backlightDimmingTimer.reset();
   window()->redraw(true);
-  if (m_restartDFU) {
-    startDFU();
-  }
 }
 
 bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
@@ -157,7 +119,6 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   return didProcessEvent || alphaLockWantsRedraw;
 }
 
-
 bool AppsContainer::processEvent(Ion::Events::Event event) {
   // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBEnumeration) {
@@ -167,7 +128,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
         // Warning: if the window is dirtied, you need to call window()->redraw()
         window()->redraw();
       } else {
-        m_previousSnapshot = (s_activeApp == nullptr ? appSnapshotAtIndex(0) : s_activeApp->snapshot());
+        App::Snapshot * activeSnapshot = (s_activeApp == nullptr ? appSnapshotAtIndex(0) : s_activeApp->snapshot());
         /* Just after a software update, the battery timer does not have time to
          * fire before the calculator enters DFU mode. As the DFU mode blocks the
          * event loop, we update the battery state "manually" here.
@@ -175,7 +136,10 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
          * pictogram. */
         updateBatteryState();
         switchToBuiltinApp(usbConnectedAppSnapshot());
-        startDFU();
+        Ion::USB::DFU();
+        // Update LED when exiting DFU mode
+        Ion::LED::updateColorWithPlugAndCharge();
+        switchToBuiltinApp(activeSnapshot);
       }
       m_firstUSBEnumeration = false;
       return true;
@@ -204,7 +168,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::OnOff) {
-    didSuspend();
+    didSuspend(true);
     return true;
   }
   return false;

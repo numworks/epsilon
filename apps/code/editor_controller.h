@@ -30,6 +30,7 @@ public:
   TELEMETRY_ID("Editor");
 
   /* TextAreaDelegate */
+  void textAreaDidReceiveNoneXNTEvent() override;
   bool textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) override;
 
   /* InputEventHandlerDelegate */

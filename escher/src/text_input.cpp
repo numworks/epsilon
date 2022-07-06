@@ -170,15 +170,13 @@ void TextInput::setAlignment(float horizontalAlignment, float verticalAlignment)
   contentView()->setAlignment(horizontalAlignment, verticalAlignment);
 }
 
-bool TextInput::insertTextAtLocation(const char * text, char * location) {
-  if (contentView()->insertTextAtLocation(text, location)) {
-    /* We layout the scrollable view before scrolling to cursor because the
-     * content size might have changed. */
-    layoutSubviews();
-    scrollToCursor();
-    return true;
-  }
-  return false;
+void TextInput::insertTextAtLocation(const char * text, char * location, int textLength) {
+  assert(contentView()->isAbleToInsertTextAt(textLength, location, false));
+  contentView()->insertTextAtLocation(text, location, textLength);
+  /* We layout the scrollable view before scrolling to cursor because the
+    * content size might have changed. */
+  layoutSubviews();
+  scrollToCursor();
 }
 
 bool TextInput::removeEndOfLine() {

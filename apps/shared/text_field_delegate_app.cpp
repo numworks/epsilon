@@ -72,10 +72,12 @@ bool TextFieldDelegateApp::fieldDidReceiveEvent(EditableField * field, Responder
     if (XNTCanBeOverriden()) {
       xnt = field->XNTCodePoint(xnt);
     }
+    bool shouldRemoveLastCharacter = false;
+    xnt = AppsContainer::sharedAppsContainer()->XNT(xnt, &shouldRemoveLastCharacter);
     size_t length = UTF8Decoder::CodePointToChars(xnt, buffer, bufferSize);
     assert(length < bufferSize - 1);
     buffer[length] = 0;
-    return field->handleEventWithText(buffer);
+    return field->handleEventWithText(buffer, false, false, shouldRemoveLastCharacter);
   }
   return false;
 }

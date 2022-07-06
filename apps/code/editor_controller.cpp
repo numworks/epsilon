@@ -5,6 +5,7 @@
 #include <escher/metric.h>
 #include <ion.h>
 #include "../global_preferences.h"
+#include <apps/apps_container.h>
 
 using namespace Shared;
 
@@ -72,6 +73,10 @@ void EditorController::viewDidDisappear() {
   m_menuController->scriptContentEditionDidFinish();
 }
 
+void EditorController::textAreaDidReceiveNoneXNTEvent() {
+  AppsContainer::sharedAppsContainer()->resetXNT();
+}
+
 bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) {
   if (App::app()->textInputDidReceiveEvent(textArea, event)) {
     return true;
@@ -81,7 +86,6 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
     return true;
   }
 
-  
   if (event == Ion::Events::Backspace && textArea->selectionIsEmpty()) {
     /* If the cursor is on the left of the text of a line, backspace one
      * indentation space at a time. */

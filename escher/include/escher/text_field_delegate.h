@@ -7,6 +7,7 @@ class TextField;
 
 class TextFieldDelegate {
 public:
+  virtual void textFieldDidReceiveNoneXNTEvent() {};
   virtual bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) = 0;
   virtual bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) = 0;
   virtual bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) { return false; }

@@ -27,12 +27,14 @@ public:
   void abortEditionAndDismiss();
 
   /* TextFieldDelegate */
+  void textFieldDidReceiveNoneXNTEvent() override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(TextField * textField) override;
 
   /* LayoutFieldDelegate */
+  void layoutFieldDidReceiveNoneXNTEvent() override;
   bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;

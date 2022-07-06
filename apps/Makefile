@@ -60,6 +60,7 @@ apps_src += $(addprefix apps/,\
   suspend_timer.cpp \
   timer_manager.cpp \
   title_bar_view.cpp \
+  xnt_loop.cpp \
 )
 
 tests_src += $(addprefix apps/,\

@@ -119,14 +119,23 @@ void TextField::ContentView::reinitDraftTextBuffer() {
   setCursorLocation(s_draftTextBuffer);
 }
 
-bool TextField::ContentView::insertTextAtLocation(const char * text, char * location, int textLen) {
+bool TextField::ContentView::isAbleToInsertTextAt(int textLength, const char * location, bool shouldRemoveLastCharacter) const {
+  int removedCharacters = 0;
+  if (shouldRemoveLastCharacter) {
+    UTF8Decoder decoder(s_draftTextBuffer, location);
+    const char * previousGlyphPos = decoder.previousGlyphPosition();
+    assert(previousGlyphPos != nullptr);
+    removedCharacters = location - previousGlyphPos;
+  }
+  return m_currentDraftTextLength + textLength - removedCharacters < m_draftTextBufferSize && textLength != 0;
+}
+
+void TextField::ContentView::insertTextAtLocation(const char * text, char * location, int textLen) {
   assert(m_isEditing);
 
   size_t textLength = textLen < 0 ? strlen(text) : (size_t)textLen;
   // TODO when paste fails because of a too big message, create a pop-up
-  if (m_currentDraftTextLength + textLength >= m_draftTextBufferSize || textLength == 0) {
-    return false;
-  }
+  assert(isAbleToInsertTextAt(textLength, location, false));
 
   memmove(location + textLength, location, (s_draftTextBuffer + m_currentDraftTextLength + 1) - location);
 
@@ -139,7 +148,6 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
   m_currentDraftTextLength += copySize-1; // Do no count the null-termination
 
   reloadRectFromPosition(m_horizontalAlignment == 0.0f ? location : s_draftTextBuffer);
-  return true;
 }
 
 KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
@@ -416,6 +424,9 @@ CodePoint TextField::XNTCodePoint(CodePoint defaultXNTCodePoint) {
 
 bool TextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
+  if (event != Ion::Events::XNT) {
+    m_delegate->textFieldDidReceiveNoneXNTEvent();
+  }
   size_t previousTextLength = strlen(text());
   bool didHandleEvent = false;
   if (privateHandleMoveEvent(event)) {
@@ -486,7 +497,7 @@ bool TextField::privateHandleSelectEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool TextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText) {
+bool TextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText, bool shouldRemoveLastCharacter) {
   size_t previousTextLength = strlen(text());
 
   if (!isEditing()) {
@@ -518,7 +529,13 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
     // Replace System parentheses (used to keep layout tree structure) by normal parentheses
     Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer);
 
-    if (insertTextAtLocation(buffer, const_cast<char *>(cursorLocation()))) {
+    int textLength = strlen(buffer);
+    if (contentView()->isAbleToInsertTextAt(textLength, cursorLocation(), shouldRemoveLastCharacter)) {
+      if (shouldRemoveLastCharacter) {
+        removePreviousGlyph();
+      }
+
+      insertTextAtLocation(buffer, const_cast<char *>(cursorLocation()), textLength);
       /* The cursor position depends on the text as we sometimes want to position
        * the cursor at the end of the text and sometimes after the first
        * parenthesis. */

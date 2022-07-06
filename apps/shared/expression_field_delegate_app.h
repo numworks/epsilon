@@ -9,6 +9,7 @@ namespace Shared {
 class ExpressionFieldDelegateApp : public TextFieldDelegateApp, public LayoutFieldDelegate {
 public:
   virtual ~ExpressionFieldDelegateApp() = default;
+  void layoutFieldDidReceiveNoneXNTEvent() override { AppsContainer::sharedAppsContainer()->resetXNT(); }
   bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) override;
 protected:

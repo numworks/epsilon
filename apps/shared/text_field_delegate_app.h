@@ -5,6 +5,7 @@
 #include "input_event_handler_delegate_app.h"
 #include <escher/text_field_delegate.h>
 #include <apps/i18n.h>
+#include "../apps_container.h"
 
 class EditableField;
 
@@ -16,6 +17,7 @@ public:
   Poincare::Context * localContext() override;
   virtual bool XNTCanBeOverriden() const { return true; }
   virtual CodePoint XNT() { return 'x'; }
+  virtual void textFieldDidReceiveNoneXNTEvent() override { AppsContainer::sharedAppsContainer()->resetXNT(); }
   bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
   bool isAcceptableText(const char * text);

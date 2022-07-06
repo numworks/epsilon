@@ -5,6 +5,7 @@ class TextArea;
 
 class TextAreaDelegate {
 public:
+  virtual void textAreaDidReceiveNoneXNTEvent() {};
   virtual bool textAreaDidReceiveEvent(TextArea * textArea, Ion::Events::Event event) = 0;
 };
 

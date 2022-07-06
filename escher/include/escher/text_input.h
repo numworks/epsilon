@@ -49,7 +49,8 @@ protected:
 
     // Virtual text get/add/remove
     virtual const char * text() const = 0;
-    virtual bool insertTextAtLocation(const char * text, char * location, int textLength = -1) = 0;
+    virtual bool isAbleToInsertTextAt(int textLength, const char * location, bool shouldRemoveLastCharacter) const = 0;
+    virtual void insertTextAtLocation(const char * text, char * location, int textLength) = 0;
     virtual bool removePreviousGlyph() = 0;
     virtual bool removeEndOfLine() = 0;
 
@@ -92,7 +93,7 @@ protected:
   /* If the text to be appended is too long to be added without overflowing the
    * buffer, nothing is done (not even adding few letters from the text to reach
    * the maximum buffer capacity) and false is returned. */
-  bool insertTextAtLocation(const char * textBuffer, char * location);
+  void insertTextAtLocation(const char * textBuffer, char * location, int textLength);
   bool removeEndOfLine();
   ContentView * contentView() {
     return const_cast<ContentView *>(nonEditableContentView());

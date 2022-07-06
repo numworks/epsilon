@@ -58,6 +58,14 @@ bool InputViewController::textFieldDidAbortEditing(TextField * textField) {
   return true;
 }
 
+void InputViewController::textFieldDidReceiveNoneXNTEvent() {
+  m_textFieldDelegate->textFieldDidReceiveNoneXNTEvent();
+}
+
+void InputViewController::layoutFieldDidReceiveNoneXNTEvent() {
+  m_layoutFieldDelegate->layoutFieldDidReceiveNoneXNTEvent();
+}
+
 bool InputViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   return m_textFieldDelegate->textFieldDidReceiveEvent(textField, event);
 }

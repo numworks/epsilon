@@ -16,7 +16,7 @@ public:
   TextArea(Responder * parentResponder, View * contentView, const KDFont * font = KDFont::LargeFont);
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextAreaDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
   bool handleEvent(Ion::Events::Event event) override;
-  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false, bool shouldRemoveLastCharacter = false) override;
   void setText(char * textBuffer, size_t textBufferSize);
 
 protected:
@@ -120,7 +120,8 @@ protected:
     const char * editedText() const override { return m_text.text(); }
     size_t editedTextLength() const override { return m_text.textLength(); }
     const Text * getText() const { return &m_text; }
-    bool insertTextAtLocation(const char * text, char * location, int textLength = -1) override;
+    bool isAbleToInsertTextAt(int textLength, const char * location, bool shouldRemoveLastCharacter) const override;
+    void insertTextAtLocation(const char * text, char * location, int textLength = -1) override;
     void moveCursorGeo(int deltaX, int deltaY);
     bool removePreviousGlyph() override;
     bool removeEndOfLine() override;

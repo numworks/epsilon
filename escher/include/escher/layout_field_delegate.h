@@ -9,6 +9,7 @@ class LayoutField;
 
 class LayoutFieldDelegate : public ContextProvider{
 public:
+  virtual void layoutFieldDidReceiveNoneXNTEvent() {};
   virtual bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) = 0;
   virtual bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) = 0;
   virtual bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) { return false; }

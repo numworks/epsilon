@@ -18,6 +18,7 @@
 #include "shared/global_context.h"
 #include "clock_timer.h"
 #include "on_boarding/prompt_controller.h"
+#include "xnt_loop.h"
 
 #include <ion/events.h>
 
@@ -48,6 +49,8 @@ public:
   void displayExamModePopUp(GlobalPreferences::ExamMode mode);
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
+  CodePoint XNT(CodePoint defaultXNT, bool * shouldRemoveLastCharacter) { m_XNTLoop.XNT(defaultXNT, shouldRemoveLastCharacter); }
+  void resetXNT() { m_XNTLoop.reset(); }
   OnBoarding::PromptController * promptController();
   void redrawWindow(bool force = false);
   void activateExamMode(GlobalPreferences::ExamMode examMode);
@@ -85,6 +88,7 @@ private:
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;
   USB::App::Snapshot m_usbConnectedSnapshot;
+  XNTLoop m_XNTLoop;
 };
 
 #endif

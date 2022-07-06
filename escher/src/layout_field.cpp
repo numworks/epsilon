@@ -355,7 +355,7 @@ void LayoutField::reload(KDSize previousSize) {
   markRectAsDirty(bounds());
 }
 
-bool LayoutField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
+bool LayoutField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText, bool shouldRemoveLastCharacter) {
   /* The text here can be:
    * - the result of a key pressed, such as "," or "cos(•)"
    * - the text added after a toolbox selection
@@ -417,6 +417,9 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >= k_maxNumberOfLayouts) {
       return true;
     }
+    if (shouldRemoveLastCharacter) {
+      cursor->performBackspace();
+    }
     insertLayoutAtCursor(resultLayout, resultExpression, forceCursorRightOfText);
   }
   return true;
@@ -431,6 +434,9 @@ bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
 }
 
 bool LayoutField::handleEvent(Ion::Events::Event event) {
+  if (m_delegate && event != Ion::Events::XNT) {
+    m_delegate->layoutFieldDidReceiveNoneXNTEvent();
+  }
   bool didHandleEvent = false;
   KDSize previousSize = minimalSizeForOptimalDisplay();
   bool shouldRecomputeLayout = m_contentView.cursor()->showEmptyLayoutIfNeeded();

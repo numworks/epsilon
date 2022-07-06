@@ -129,9 +129,10 @@ VariableBoxController * App::variableBoxForInputEventHandler(InputEventHandler *
 }
 
 bool App::textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::Event event) {
-  const char * pythonText = Helpers::PythonTextForEvent(event);
-  if (pythonText != nullptr) {
-    textInput->handleEventWithText(pythonText);
+  bool shouldRemoveLastCharacter = false;
+  char buffer[CodePoint::MaxCodePointCharLength + 1];
+  if (Helpers::PythonTextForEvent(event, buffer, &shouldRemoveLastCharacter)) {
+    textInput->handleEventWithText(buffer, false, false, shouldRemoveLastCharacter);
     return true;
   }
   return false;

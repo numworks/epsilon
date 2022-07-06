@@ -34,7 +34,7 @@ public:
   void setText(const char * text);
   void setEditing(bool isEditing) override { m_contentView.setEditing(isEditing); }
   CodePoint XNTCodePoint(CodePoint defaultXNTCodePoint) override;
-  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
+  bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false, bool shouldRemoveLastCharacter = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   constexpr static int maxBufferSize() {
      return ContentView::k_maxBufferSize;
@@ -71,10 +71,11 @@ protected:
     void reinitDraftTextBuffer();
     void setDraftTextBufferSize(size_t size) { assert(size <= k_maxBufferSize); m_draftTextBufferSize = size; }
     size_t draftTextBufferSize() const { return m_draftTextBufferSize; }
+    bool isAbleToInsertTextAt(int textLength, const char * location, bool shouldRemoveLastCharacter) const override;
     /* If the text to be appended is too long to be added without overflowing the
      * buffer, nothing is done (not even adding few letters from the text to reach
      * the maximum buffer capacity) and false is returned. */
-    bool insertTextAtLocation(const char * text, char * location, int textLength = -1) override;
+    void insertTextAtLocation(const char * text, char * location, int textLength = -1) override;
     KDSize minimalSizeForOptimalDisplay() const override;
     bool removePreviousGlyph() override;
     bool removeEndOfLine() override;

@@ -7,6 +7,7 @@ app_periodic_src = $(addprefix apps/periodic/,\
   elements_view.cpp \
   elements_view_data_source.cpp \
   main_controller.cpp \
+  single_element_view.cpp \
 )
 
 apps_src += $(app_periodic_src)

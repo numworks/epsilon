@@ -132,6 +132,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   return didProcessEvent || alphaLockWantsRedraw;
 }
 
+
 bool AppsContainer::processEvent(Ion::Events::Event event) {
   // Warning: if the window is dirtied, you need to call window()->redraw()
   if (event == Ion::Events::USBEnumeration) {

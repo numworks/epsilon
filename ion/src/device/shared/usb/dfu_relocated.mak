@@ -24,7 +24,6 @@ ion_device_dfu_deps_src += $(addprefix ion/src/device/shared/drivers/, \
   flash.cpp \
   internal_flash.cpp \
   serial_number.cpp \
-  usb_exit_condition.cpp \
 )
 
 ion_device_dfu_binary_src += $(ion_device_usb_src) $(ion_device_dfu_deps_src)

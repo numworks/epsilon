@@ -1,4 +1,3 @@
-#include <ion/events.h>
 #include <ion/usb.h>
 #include <drivers/usb.h>
 #include <kernel/drivers/keyboard.h>
@@ -17,6 +16,10 @@ bool isPlugged() {
 namespace Ion {
 namespace Device {
 namespace USB {
+
+bool shouldInterruptDFU() {
+  return Keyboard::columnIsActive(Keyboard::columnForKey(Ion::Keyboard::Key::Back));
+}
 
 const char * stringDescriptor() {
   return Config::InterfaceFlashStringDescriptor;

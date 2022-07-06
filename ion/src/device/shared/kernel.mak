@@ -44,7 +44,6 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   timing.cpp \
   trampoline.cpp:-n0100 \
   usb.cpp \
-  usb_exit_condition.cpp \
   usb_gpio_n0100.cpp:+n0100 \
   usb_gpio_n0110.cpp:+n0110 \
   usb_gpio_n0120.cpp:+n0120 \

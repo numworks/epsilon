@@ -1,4 +1,3 @@
-#include <ion/events.h>
 #include <ion/usb.h>
 
 namespace Ion {
@@ -18,8 +17,7 @@ bool isEnumerated() {
 void clearEnumerationInterrupt() {
 }
 
-Events::Event DFU() {
-  return Events::None;
+void DFU() {
 }
 
 /* To be able to fully emulate plugged states and events on simulator, we take

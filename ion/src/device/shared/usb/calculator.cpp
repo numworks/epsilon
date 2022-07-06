@@ -8,28 +8,23 @@ namespace Ion {
 namespace Device {
 namespace USB {
 
-Events::Event Calculator::PollAndReset() {
+void Calculator::PollAndReset() {
   /* Don't use Ion::serialNumber to avoid any data section in the relocatable
    * dfu. */
   char serialNumber[Ion::k_serialNumberLength+1];
   SerialNumber::copy(serialNumber);
   Calculator c(serialNumber, USB::stringDescriptor());
-  Events::Event stopDfu;
-  while (Ion::USB::isPlugged() && !c.isSoftDisconnected()
-         && !((stopDfu=USB::shouldInterruptDFU()) != Events::None && !c.isErasingAndWriting())) {
+
+  while (Ion::USB::isPlugged() && !c.isSoftDisconnected() && !(USB::shouldInterruptDFU() && !c.isErasingAndWriting())) {
     c.poll();
   }
 
-  if (stopDfu != Events::None) {
-    return stopDfu;
-  }
   if (!c.isSoftDisconnected()) {
     c.detach();
   }
   if (c.resetOnDisconnect()) {
     c.leave(c.addressPointer());
   }
-  return Events::None;
 }
 
 Descriptor * Calculator::descriptor(uint8_t type, uint8_t index) {

@@ -69,14 +69,7 @@ inline uint64_t ValidKeys(uint64_t state) {
   return state & 0x1F7DF7FFFFF0FF;
 }
 
-/* TODO: 100 us seems to work, but wasn't really calculated. However, 10 us was
- * not enough on N0100 models: the row activation was dodgy. Consequently, on
- * n0100, we can interrupt the DFU application only with one key (Back) because
- * activating other rows would take too much time and break the DFU synchrone
- * protocole.
- */
-constexpr int RowActivationDelay = 100; // us
-constexpr int DebouncingDelay = 10; // Empirical value
+constexpr int DebouncingDelay = Clocks::Config::AHBLowFrequencyPrescaler * 28;
 constexpr int PollDelay = Clocks::Config::AHBLowFrequencyPrescaler * 100;
 
 }

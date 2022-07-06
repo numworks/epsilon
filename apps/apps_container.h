@@ -50,6 +50,7 @@ public:
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
   OnBoarding::PromptController * promptController();
   void redrawWindow();
+  void startDFU();
   void activateExamMode(Poincare::Preferences::ExamMode examMode);
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
@@ -62,7 +63,6 @@ private:
   Escher::Window * window() override;
   int numberOfContainerTimers() override;
   Escher::Timer * containerTimerAtIndex(int i) override;
-  bool startDFU();
   bool processEvent(Ion::Events::Event event);
   void resetShiftAlphaStatus();
   bool updateAlphaLock();
@@ -72,6 +72,8 @@ private:
   static const KDColor k_promptColors[];
   static const int k_promptNumberOfMessages;
   bool m_firstUSBEnumeration;
+  bool m_DFUWasInterruptedBySuspend;
+  Escher::App::Snapshot * m_activeSnapshotBeforeDFU;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
   Shared::GlobalContext m_globalContext;

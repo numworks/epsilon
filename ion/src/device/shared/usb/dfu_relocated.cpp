@@ -2,7 +2,6 @@
 #include <drivers/board.h>
 #include <drivers/cache.h>
 #include <drivers/usb.h>
-#include <ion/events.h>
 #include <ion/usb.h>
 #include <assert.h>
 #include <string.h>
@@ -14,9 +13,9 @@ extern char _dfu_bootloader_flash_end;
 namespace Ion {
 namespace USB {
 
-typedef Events::Event (*PollFunctionPointer)();
+typedef void (*PollFunctionPointer)();
 
-Events::Event DFU() {
+void DFU() {
   /* DFU transfers can serve two purposes:
    *  - Transfering RAM data between the machine and a host, e.g. Python scripts
    *  - Upgrading the flash memory to perform a software update
@@ -39,12 +38,12 @@ Events::Event DFU() {
   assert(&_process_stack_end == (void *)(Device::Board::Config::UserlandSRAMOrigin + Device::Board::Config::UserlandSRAMLength - Device::Board::Config::UserlandStackLength));
 
   /* 2- Verify there is enough free space on the stack to copy the DFU code. */
-  Events::Event abortReason;
+
   char foo;
   char * stackPointer = &foo;
   if (dfu_bootloader_ram_start + dfu_bootloader_size > stackPointer) {
     // There is not enough room on the stack to copy the DFU bootloader.
-    return Events::None;
+    return;
   }
 
   /* 3- Copy the DFU bootloader from Flash to RAM. */
@@ -59,6 +58,7 @@ Events::Event DFU() {
    * Clean the building system in order to get rid of the comment. */
   // Device::Cache::cleanDCache();
 
+  // Configure the kernel to avoid interrupting DFU protocole except on Back key
   Device::USB::willExecuteDFU();
 
   /* 4- Jump to DFU bootloader code. We made sure in the linker script that the
@@ -75,13 +75,12 @@ Events::Event DFU() {
    *        add-symbol-file ion/src/device/usb/dfu.elf 0x20038000
    */
 
-  abortReason = dfu_bootloader_entry();
+  dfu_bootloader_entry();
 
   Device::USB::didExecuteDFU();
 
   /* 5- That's all. The DFU bootloader on the stack is now dead code that will
    * be overwritten when the stack grows. */
-  return abortReason;
 }
 
 }

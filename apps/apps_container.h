@@ -71,9 +71,9 @@ private:
   static const I18n::Message k_promptMessages[];
   static const KDColor k_promptColors[];
   static const int k_promptNumberOfMessages;
+  bool m_restartDFU;
   bool m_firstUSBEnumeration;
-  bool m_DFUWasInterruptedBySuspend;
-  Escher::App::Snapshot * m_activeSnapshotBeforeDFU;
+  Escher::App::Snapshot * m_previousSnapshot;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
   Shared::GlobalContext m_globalContext;

@@ -38,7 +38,6 @@ ion_device_bench_src += $(addprefix ion/src/device/shared/drivers/, \
   power_standby_n0120.cpp:+n0120 \
   power_stm32f.cpp:-n0120 \
   power_stm32h.cpp:+n0120 \
-  power_suspend.cpp \
   reset.cpp \
   rtc.cpp:+n0120 \
   serial_number.cpp \

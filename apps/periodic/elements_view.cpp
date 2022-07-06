@@ -112,7 +112,20 @@ bool ElementsView::moveCursorAndDirtyRect(size_t oldCell, size_t newCell) {
   markRectAsDirty(rectWithMargins(rectForCell(oldCell)));
   markRectAsDirty(rectWithMargins(rectForCell(newCell)));
   m_dataSource->setSelectedElement(newZ);
+  layoutSubviews();
   return true;
+}
+
+KDRect ElementsView::singleElementViewFrame() const {
+  constexpr size_t k_firstColumnUnderSubview = 2;
+  constexpr size_t k_lastColumnUnderSubview = 11;
+  constexpr size_t k_firstRowAfterSubview = 3;
+  return KDRect(
+    k_tableLeftMargin + k_firstColumnUnderSubview * (k_cellSize + k_cellMargin),
+    0,
+    (k_lastColumnUnderSubview - k_firstColumnUnderSubview + 1) * (k_cellSize + k_cellMargin) - k_cellMargin,
+    k_tableTopMargin + k_firstRowAfterSubview * (k_cellSize + k_cellMargin) - k_cellMargin
+  );
 }
 
 }

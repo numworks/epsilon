@@ -2,7 +2,7 @@
 #define POINCARE_CONSTANT_H
 
 #include <poincare/symbol_abstract.h>
-#include <poincare/name.h>
+#include <poincare/aliases_list.h>
 
 namespace Poincare {
 
@@ -42,14 +42,14 @@ public:
   /* Constant properties */
   class ConstantInfo {
   public:
-    constexpr ConstantInfo() : m_name(nullptr), m_unit(nullptr), m_value(NAN), m_comparisonRank(0) {}
-    constexpr ConstantInfo(Name name, int comparisonRank, double value = NAN, const char * unit = nullptr) : m_name(name), m_unit(unit), m_value(value), m_comparisonRank(comparisonRank) {}
-    const Name name() const { return m_name; }
+    constexpr ConstantInfo() : m_aliasesList(nullptr), m_unit(nullptr), m_value(NAN), m_comparisonRank(0) {}
+    constexpr ConstantInfo(AliasesList aliasesList, int comparisonRank, double value = NAN, const char * unit = nullptr) : m_aliasesList(aliasesList), m_unit(unit), m_value(value), m_comparisonRank(comparisonRank) {}
+    const AliasesList aliasesList() const { return m_aliasesList; }
     const char * unit() const { return m_unit; }
     double value() const { return m_value; }
     int comparisonRank() const { return m_comparisonRank; }
   private:
-    Name m_name;
+    AliasesList m_aliasesList;
     const char * m_unit;
     double m_value;
     int m_comparisonRank;
@@ -80,7 +80,7 @@ public:
   Constant(const ConstantNode * node) : SymbolAbstract(node) {}
   static Constant Builder(const char * name, int length) {
     assert(Constant::IsConstant(name, length));
-    const char * mainName = Constant::MainConstantName(name, length);
+    const char * mainName = ConstantInfoFromName(name, length).aliasesList().mainName();
     return SymbolAbstract::Builder<Constant, ConstantNode>(mainName, strlen(mainName));
   }
   static Constant Builder(const char * name) {
@@ -116,7 +116,6 @@ public:
   };
 
 private:
-  static const char * MainConstantName(const char * name, int length) { return ConstantInfoFromName(name, length).name().mainName(); }
   static ConstantNode::ConstantInfo ConstantInfoFromName(const char * name, int length);
 
   ConstantNode::ConstantInfo constantInfo() const { return node()->constantInfo(); }

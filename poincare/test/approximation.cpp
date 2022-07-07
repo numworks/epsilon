@@ -233,7 +233,7 @@ QUIZ_CASE(poincare_approximation_constant) {
   assert_expression_approximates_to<double>("π", "3.1415926535898");
   assert_expression_approximates_to<float>("e", "2.718282");
   for (ConstantNode::ConstantInfo info : Constant::k_constants) {
-    for (const char * constantNameAlias : info.name()) {
+    for (const char * constantNameAlias : info.aliasesList()) {
       if (strcmp(constantNameAlias, "i") == 0) {
         assert_expression_approximates_to<float>("i", "i");
         assert_expression_approximates_to<double>("i", "i");

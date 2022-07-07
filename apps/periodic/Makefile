@@ -4,9 +4,9 @@ app_headers += apps/periodic/app.h
 app_periodic_src = $(addprefix apps/periodic/,\
   app.cpp \
   banner_view.cpp \
+  coloring.cpp \
   elements_data_base.cpp \
   elements_view.cpp \
-  elements_view_data_source.cpp \
   main_controller.cpp \
   single_element_view.cpp \
 )

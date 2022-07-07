@@ -17,7 +17,7 @@ void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
 
 void BannerView::layoutSubviews(bool force) {
   AtomicNumber z = m_dataSource->selectedElement();
-  m_dotView.setColor(m_dataSource->colorPairForElement(z).fg());
+  m_dotView.setColor(m_dataSource->coloring()->colorPairForElement(z).fg());
   m_dotView.setFrame(KDRect(k_dotLeftMargin, (bounds().height() - k_dotDiameter) / 2, k_dotDiameter, k_dotDiameter), true);
 }
 

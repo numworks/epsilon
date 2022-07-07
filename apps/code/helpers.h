@@ -6,7 +6,7 @@
 namespace Code {
 namespace Helpers {
 
-bool PythonTextForEvent(Ion::Events::Event event, char * buffer, bool * shouldRemoveLastCharacter);
+const char * PythonTextForEvent(Ion::Events::Event event);
 
 }
 }

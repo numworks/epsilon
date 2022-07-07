@@ -49,7 +49,7 @@ public:
   void displayExamModePopUp(GlobalPreferences::ExamMode mode);
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
-  CodePoint XNT(CodePoint defaultXNT, bool * shouldRemoveLastCharacter) { m_XNTLoop.XNT(defaultXNT, shouldRemoveLastCharacter); }
+  CodePoint XNT(CodePoint defaultXNT, bool * shouldRemoveLastCharacter) { return m_XNTLoop.XNT(defaultXNT, shouldRemoveLastCharacter); }
   void resetXNT() { m_XNTLoop.reset(); }
   OnBoarding::PromptController * promptController();
   void redrawWindow(bool force = false);

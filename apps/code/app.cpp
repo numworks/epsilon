@@ -3,6 +3,7 @@
 #include <apps/i18n.h>
 #include "helpers.h"
 #include <ion/unicode/utf8_helper.h>
+#include <apps/apps_container.h>
 
 namespace Code {
 
@@ -129,10 +130,19 @@ VariableBoxController * App::variableBoxForInputEventHandler(InputEventHandler *
 }
 
 bool App::textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::Event event) {
-  bool shouldRemoveLastCharacter = false;
-  char buffer[CodePoint::MaxCodePointCharLength + 1];
-  if (Helpers::PythonTextForEvent(event, buffer, &shouldRemoveLastCharacter)) {
-    textInput->handleEventWithText(buffer, false, false, shouldRemoveLastCharacter);
+  if (event == Ion::Events::XNT) {
+    int bufferSize = CodePoint::MaxCodePointCharLength + 1;
+    char buffer[bufferSize];
+    bool shouldRemoveLastCharacter = false;
+    CodePoint codePoint = AppsContainer::sharedAppsContainer()->XNT('x', &shouldRemoveLastCharacter);
+    UTF8Decoder::CodePointToChars(codePoint, buffer, bufferSize);
+    buffer[UTF8Decoder::CharSizeOfCodePoint(codePoint)] = 0;
+    textInput->handleEventWithText(const_cast<char *>(buffer), false, false, shouldRemoveLastCharacter);
+    return true;
+  }
+  const char * pythonText = Helpers::PythonTextForEvent(event);
+  if (pythonText != nullptr) {
+    textInput->handleEventWithText(pythonText);
     return true;
   }
   return false;

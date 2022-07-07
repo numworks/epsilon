@@ -39,7 +39,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
      * fixed distance t along the line, the actual x-axis distance needed is
      * t' = t * cos(θ) with θ the angle between the line and the x-axis.
      * We also have tan(θ) = (s * t) / t = s
-     * As a result, t' = t * cos(tan(s)) = t / sqrt(1 + s^2) */
+     * As a result, t' = t * cos(atan(s)) = t / sqrt(1 + s^2) */
     scrollSpeedFactor /= std::sqrt(1.0 + slope*slope);
     // Add a sqrt(2) factor so that y=x isn't slowed down
     scrollSpeedFactor *= std::sqrt(2.0);

@@ -95,7 +95,7 @@ public:
       LongScale,
       All,
     };
-    constexpr static int k_numberOfDimensions = 24;
+    constexpr static int k_numberOfDimensions = 25;
     static const Representative * const * DefaultRepresentatives();
     static const Representative * RepresentativeForDimension(Vector<int> vector);
     constexpr Representative(AliasesList rootSymbol, const char * ratioExpression, double ratio, Prefixable inputPrefixable, Prefixable outputPrefixable) :
@@ -174,6 +174,19 @@ public:
     const Representative * standardRepresentative(double value, double exponent, const ExpressionNode::ReductionContext& reductionContext, const Prefix * * prefix) const override;
     bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return unitFormat == Preferences::UnitFormat::Imperial; }
     int setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const override;
+  private:
+    using Representative::Representative;
+  };
+
+  class AngleRepresentative : public Representative {
+    friend class Unit;
+  public:
+    constexpr static AngleRepresentative Default() { return AngleRepresentative(nullptr, nullptr, NAN, Prefixable::None, Prefixable::None); }
+    const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
+    int numberOfRepresentatives() const override { return 5; }
+    const Representative * representativesOfSameDimension() const override;
+    bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
+    const Representative * standardRepresentative(double value, double exponent, const ExpressionNode::ReductionContext& reductionContext, const Prefix * * prefix) const override;
   private:
     using Representative::Representative;
   };
@@ -554,6 +567,14 @@ public:
     DistanceRepresentative("yd", DEFINE_TWICE(36*0.0254), Prefixable::None, Prefixable::None),
     DistanceRepresentative("mi", DEFINE_TWICE(63360*0.0254), Prefixable::None, Prefixable::None),
   };
+  typedef UnitNode::AngleRepresentative AngleRepresentative;
+  static constexpr const AngleRepresentative k_angleRepresentatives[] = {
+    AngleRepresentative("rad", DEFINE_TWICE(1.), Prefixable::None, Prefixable::None),
+    AngleRepresentative("°", "π/180", M_PI/180, Prefixable::None, Prefixable::None),
+    AngleRepresentative("'", "π/10800", M_PI/10800, Prefixable::None, Prefixable::None),
+    AngleRepresentative("\"", "π/648000", M_PI/648000, Prefixable::None, Prefixable::None),
+    AngleRepresentative("gon", "π/200", M_PI/200, Prefixable::None, Prefixable::None),
+  };
   typedef UnitNode::MassRepresentative MassRepresentative;
   constexpr static const MassRepresentative k_massRepresentatives[] = {
     MassRepresentative("g", DEFINE_TWICE(1.), Prefixable::All, Prefixable::NegativeAndKilo),
@@ -655,6 +676,16 @@ public:
   static_assert(strings_equal(k_distanceRepresentatives[k_yardRepresentativeIndex].m_rootSymbols, "yd"), "Index for the Yard Representative is incorrect.");
   constexpr static int k_mileRepresentativeIndex = 7;
   static_assert(strings_equal(k_distanceRepresentatives[k_mileRepresentativeIndex].m_rootSymbols, "mi"), "Index for the Mile Representative is incorrect.");
+  constexpr static int k_radianRepresentativeIndex = 0;
+  static_assert(strings_equal(k_angleRepresentatives[k_radianRepresentativeIndex].m_rootSymbols, "rad"), "Index for the Radian Representative is incorrect.");
+  constexpr static int k_degreeRepresentativeIndex = 1;
+  static_assert(strings_equal(k_angleRepresentatives[k_degreeRepresentativeIndex].m_rootSymbols, "°"), "Index for the Degree Representative is incorrect.");
+  constexpr static int k_arcMinuteRepresentativeIndex = 2;
+  static_assert(strings_equal(k_angleRepresentatives[k_arcMinuteRepresentativeIndex].m_rootSymbols, "'"), "Index for the ArcMinute Representative is incorrect.");
+  constexpr static int k_arcSecondRepresentativeIndex = 3;
+  static_assert(strings_equal(k_angleRepresentatives[k_arcSecondRepresentativeIndex].m_rootSymbols, "\""), "Index for the ArcSecond Representative is incorrect.");
+  constexpr static int k_gradianRepresentativeIndex = 4;
+  static_assert(strings_equal(k_angleRepresentatives[k_gradianRepresentativeIndex].m_rootSymbols, "gon"), "Index for the Gradian Representative is incorrect.");
   constexpr static int k_ounceRepresentativeIndex = 3;
   static_assert(strings_equal(k_massRepresentatives[k_ounceRepresentativeIndex].m_rootSymbols, "oz"), "Index for the Ounce Representative is incorrect.");
   constexpr static int k_poundRepresentativeIndex = 4;

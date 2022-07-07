@@ -1,7 +1,8 @@
 #include "graph_controller_helper.h"
-#include "../../shared/function_banner_delegate.h"
 #include "../app.h"
-#include "../../shared/poincare_helpers.h"
+#include <apps/shared/function_banner_delegate.h>
+#include <apps/shared/poincare_helpers.h>
+#include <poincare/ieee754.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 #include <algorithm>
@@ -11,7 +12,7 @@ using namespace Poincare;
 
 namespace Graph {
 
-bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, int scrollSpeed, int * subCurveIndex) {
+bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, float pixelWidth, int scrollSpeed, int * subCurveIndex) {
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
   double tCursorPosition = cursor->t();
   double t = tCursorPosition;
@@ -61,8 +62,19 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   // Cursor's default horizontal movement
   t += dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
 
-  // If possible, round t so that f(x) matches f evaluated at displayed x
-  t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, context, Preferences::sharedPreferences()->numberOfSignificantDigits(), 0.05 * step, true);
+  // Use a pixel width as a margin, ensuring t mostly stays at the same pixel
+  if (tCursorPosition != 0 && (dir < 0 != tCursorPosition < 0) && std::fabs(t) < pixelWidth) {
+    // Round t to 0 if it is going into that direction, and is close enough
+    t = 0.0;
+  } else {
+    // Round t to a simpler value, displayed at the same index
+    double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(pixelWidth));
+    t = magnitude * std::round(t / magnitude);
+    // Also round t so that f(x) matches f evaluated at displayed x
+    t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, context, Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
+  }
+  // t must have changed
+  assert(tCursorPosition != t);
 
   t = std::max(tMin, std::min(tMax, t));
   int subCurveIndexValue = subCurveIndex == nullptr ? 0 : *subCurveIndex;

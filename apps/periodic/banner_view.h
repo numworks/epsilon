@@ -21,7 +21,7 @@ public:
 
 private:
   constexpr static KDColor k_legendColor = Escher::Palette::GrayVeryDark;
-  constexpr static KDColor k_backgroundColor = Palette::SystemGreyLight;
+  constexpr static KDColor k_backgroundColor = Palette::SystemGrayLight;
   constexpr static KDCoordinate k_dotLeftMargin = 16;
   constexpr static KDCoordinate k_dotDiameter = 8;
   constexpr static KDCoordinate k_bannerHeight = 25;

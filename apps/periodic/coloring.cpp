@@ -68,7 +68,7 @@ Coloring::ColorPair GroupsColoring::colorPairForElement(AtomicNumber z) const {
     ColorPair(Palette::ElementRedDark, Palette::ElementRedLight),
     ColorPair(Palette::ElementGrassDark, Palette::ElementGrassLight),
     ColorPair(Palette::ElementPurpleDark, Palette::ElementPurpleLight),
-    ColorPair(Palette::ElementGreyDark, Palette::ElementGreyLight),
+    ColorPair(Palette::ElementGrayDark, Palette::ElementGrayLight),
   };
   ElementData::Group group = ElementsDataBase::Group(z);
   assert(static_cast<uint8_t>(group) < sizeof(k_colors) / sizeof(k_colors[0]));

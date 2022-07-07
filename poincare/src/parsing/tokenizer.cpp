@@ -166,7 +166,7 @@ Token::Type Tokenizer::stringTokenType(const char * string, size_t length) {
   if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
     return Token::ReservedFunction;
   }
-  if (m_encounteredRightwardsArrow || m_context == nullptr || stringIsACodePointFollowedByNumbers(string, length) ||m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
+  if (m_parseAsAssignment || m_context == nullptr || stringIsACodePointFollowedByNumbers(string, length) ||m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
     return Token::CustomIdentifier;
   }
   return Token::Undefined;
@@ -359,6 +359,10 @@ Token Tokenizer::popToken() {
     }
     return Token(Token::PercentSimple);
   }
+  if (('<' <= c && '>' >= c) || c == UCodePointInferiorEqual || c == UCodePointSuperiorEqual) {
+    // After the = in `f(x)=xy`, we need to parse `xy` in the classic way.
+    m_parseAsAssignment = false;
+  }
   if (c == '=') {
     return Token(Token::Equal);
   }
@@ -369,6 +373,7 @@ Token Tokenizer::popToken() {
     return Token(Token::Superior);
   }
   if (c == UCodePointSuperiorEqual) {
+    m_parseAsAssignment = false;
     return Token(Token::SuperiorEqual);
   }
   if (c == '<') {
@@ -401,7 +406,7 @@ Token Tokenizer::popToken() {
     return Token(Token::Empty);
   }
   if (c == UCodePointRightwardsArrow) {
-    m_encounteredRightwardsArrow = true;
+    m_parseAsAssignment = true;
     return Token(Token::RightwardsArrow);
   }
   if (c == 0) {

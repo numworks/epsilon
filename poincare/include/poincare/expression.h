@@ -157,7 +157,7 @@ public:
   /* Constructor & Destructor */
   Expression() : TreeHandle() {}
   Expression clone() const;
-  static Expression Parse(char const * string, Context * context, bool addMissingParenthesis = true);
+  static Expression Parse(char const * string, Context * context, bool addMissingParenthesis = true, bool parseAsAssignment = false);
   static Expression ExpressionFromAddress(const void * address, size_t size);
 
   /* Hierarchy */

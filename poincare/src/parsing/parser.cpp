@@ -304,10 +304,7 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
   /* Right part of the RightwardsArrow are either a Symbol, a Function or units.
    * Even undefined function "plouf(x)" should be interpreted as function and
    * not as a multiplication. This is done by removing the context temporarily */
-  Context * ctx = m_context;
-  m_context = nullptr;
   Expression rightHandSide = parseUntil(stoppingType);
-  m_context = ctx;
   if (m_status != Status::Progress) {
     return;
   }
@@ -570,7 +567,7 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
    * If there is no context, f(x) is always parsed as a function and u{n} as
    * a sequence*/
   Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
-  if (m_context != nullptr) {
+  if (m_context != nullptr && !m_tokenizer.shouldParseAsAssignment()) {
     idType = m_context->expressionTypeForIdentifier(name, length);
     if (idType != Context::SymbolAbstractType::Function && idType != Context::SymbolAbstractType::Sequence && idType != Context::SymbolAbstractType::List) {
       leftHandSide = Symbol::Builder(name, length);

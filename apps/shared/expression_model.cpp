@@ -172,11 +172,16 @@ Poincare::Expression ExpressionModel::buildExpressionFromText(const char * c, Co
   if (c && *c != 0) {
     // Compute the expression to store, without replacing symbols
     expressionToStore = Expression::Parse(c, context);
-    if (!expressionToStore.isUninitialized() && symbol != 0) {
-      expressionToStore = expressionToStore.replaceSymbolWithExpression(Symbol::Builder(symbol), Symbol::Builder(UCodePointUnknown));
-    }
+    expressionToStore = ReplaceSymbolWithUnknown(expressionToStore, symbol);
   }
   return expressionToStore;
+}
+
+Poincare::Expression ExpressionModel::ReplaceSymbolWithUnknown(Poincare::Expression e, CodePoint symbol) {
+  if (!e.isUninitialized() && symbol != 0) {
+    return e.replaceSymbolWithExpression(Symbol::Builder(symbol), Symbol::Builder(UCodePointUnknown));
+  }
+  return e;
 }
 
 }

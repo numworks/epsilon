@@ -1,6 +1,4 @@
-#include <poincare/name.h>
-#include <string.h>
-#include <assert.h>
+#include <poincare/aliases_list.h>
 
 namespace Poincare {
 
@@ -10,9 +8,9 @@ int compareNonNullTerminatedStringWithNullTerminated(const char * nonNullTermina
   return (diff != 0) ? diff : strcmp("", nullTerminatedName + nonNullTerminatedNameLength);
 }
 
-int Name::comparedWith(const char * name, int nameLen) const {
-  if (!hasAliases()) {
-    return compareNonNullTerminatedStringWithNullTerminated(name, nameLen, m_formattedNamesList);
+int AliasesList::maxDifferenceWith(const char * name, int nameLen) const {
+  if (!hasMultipleNames()) {
+    return compareNonNullTerminatedStringWithNullTerminated(name, nameLen, m_formattedAliasesList);
   }
   int maxValueOfComparison = 0;
   for (const char * nameInList : *this) {
@@ -27,19 +25,19 @@ int Name::comparedWith(const char * name, int nameLen) const {
   return maxValueOfComparison;
 }
 
-const char * Name::firstName() const {
-  if (!hasAliases()) {
-    return m_formattedNamesList;
+const char * AliasesList::firstName() const {
+  if (!hasMultipleNames()) {
+    return m_formattedAliasesList;
   }
-  const char * result = m_formattedNamesList;
+  const char * result = m_formattedAliasesList;
   while (result[0] != k_stringStart) {
     result++;
   }
   return result + 1;
 }
 
-const char * Name::nextName(const char * currentPositionInNamesList) const {
-  if (!hasAliases()) {
+const char * AliasesList::nextName(const char * currentPositionInNamesList) const {
+  if (!hasMultipleNames()) {
     return nullptr;
   }
   assert(strlen(currentPositionInNamesList) != 0);
@@ -50,9 +48,9 @@ const char * Name::nextName(const char * currentPositionInNamesList) const {
   return beginningOfNextName + 1; // Skip string start char
 }
 
-const char * Name::mainName(Poincare::Preferences::NamingConvention namingConvention) const {
-  if (!hasAliases()) {
-    return m_formattedNamesList;
+const char * AliasesList::mainName(Poincare::Preferences::NamingConvention namingConvention) const {
+  if (!hasMultipleNames()) {
+    return m_formattedAliasesList;
   }
   int mainIndex = indexOfMain(namingConvention);
   const char * result; // skip header
@@ -69,13 +67,13 @@ const char * Name::mainName(Poincare::Preferences::NamingConvention namingConven
   return result;
 }
 
-int Name::indexOfMain(Poincare::Preferences::NamingConvention namingConvention) const {
-  assert(hasAliases());
+int AliasesList::indexOfMain(Poincare::Preferences::NamingConvention namingConvention) const {
+  assert(hasMultipleNames());
   if (namingConvention == Preferences::NamingConvention::WorldWide) {
     return 0;
   }
   char conventionIdentifier = IdentifierForNamingConvention(namingConvention);
-  const char * currentHeaderPosition = m_formattedNamesList + 1;
+  const char * currentHeaderPosition = m_formattedAliasesList + 1;
   while (currentHeaderPosition[0] != k_stringStart) {
     if (currentHeaderPosition[0] == conventionIdentifier) {
       return currentHeaderPosition[1] - '0'; // The index follows the identifier
@@ -85,7 +83,7 @@ int Name::indexOfMain(Poincare::Preferences::NamingConvention namingConvention) 
   return 0;
 }
 
-char Name::IdentifierForNamingConvention(Poincare::Preferences::NamingConvention namingConvention) {
+char AliasesList::IdentifierForNamingConvention(Poincare::Preferences::NamingConvention namingConvention) {
   for (int i = 0; i < k_numberOfNamingConvention; i++) {
     if (k_identifiersForNamingConvention[i].namingConvention == namingConvention) {
       return k_identifiersForNamingConvention[i].identifier;

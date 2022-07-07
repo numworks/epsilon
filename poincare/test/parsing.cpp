@@ -333,7 +333,7 @@ QUIZ_CASE(poincare_parse_lists) {
 
 QUIZ_CASE(poincare_parsing_constants) {
   for (ConstantNode::ConstantInfo info : Constant::k_constants) {
-    for (const char * constantNameAlias : info.name()) {
+    for (const char * constantNameAlias : info.aliasesList()) {
       assert_tokenizes_as_constant(constantNameAlias);
     }
   }

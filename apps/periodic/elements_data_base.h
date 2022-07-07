@@ -30,6 +30,11 @@ public:
   static ElementData::Block Block(AtomicNumber z) { return DataForElement(z)->block(); }
   static size_t ElectronConfiguration(AtomicNumber z, char * buffer, size_t bufferSize);
 
+  static const char * MolarMassUnit() { return "g/mol"; }
+  static const char * ElectronegativityUnit() { return ""; }
+  static const char * TemperatureUnit() { return "°C"; }
+  static const char * RadiusUnit() { return "pm"; }
+
 private:
   static const ElementData * DataForElement(AtomicNumber z);
 };

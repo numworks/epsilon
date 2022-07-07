@@ -51,10 +51,10 @@ void assert_text_not_parsable(const char * text) {
   quiz_assert_print_if_failure(result.isUninitialized(), text);
 }
 
-void assert_parsed_expression_is(const char * expression, Poincare::Expression r, bool addParentheses = false, Preferences::MixedFractions mixedFractionsParameter = Preferences::MixedFractions::Enabled) {
+void assert_parsed_expression_is(const char * expression, Poincare::Expression r, bool addParentheses = false, bool parseAsAssignment = false, Preferences::MixedFractions mixedFractionsParameter = Preferences::MixedFractions::Enabled) {
   Shared::GlobalContext context;
   Preferences::sharedPreferences()->enableMixedFractions(mixedFractionsParameter);
-  Expression e = parse_expression(expression, &context, addParentheses);
+  Expression e = parse_expression(expression, &context, addParentheses, parseAsAssignment);
   quiz_assert_print_if_failure(e.isIdenticalTo(r), expression);
 }
 
@@ -646,4 +646,9 @@ QUIZ_CASE(poincare_parse_mixed_fraction) {
  assert_parsed_expression_is("1\u00122/3\u0013\u00122/3\u0013", Multiplication::Builder(MixedFraction::Builder(BasedInteger::Builder(1), Division::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))), Division::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))));
  assert_parsed_expression_is("1\u0012e/3\u0013", Multiplication::Builder(BasedInteger::Builder(1),Division::Builder(Constant::Builder("e"), BasedInteger::Builder(3))));
  assert_parsed_expression_is("1\u00122.5/3\u0013", Multiplication::Builder(BasedInteger::Builder(1),Division::Builder(Decimal::Builder(2.5), BasedInteger::Builder(3))));
+}
+
+QUIZ_CASE(poincare_parse_function_assignment) {
+  assert_parsed_expression_is("f(x)=xy", Equal::Builder(Multiplication::Builder(Symbol::Builder("f", 1), Parenthesis::Builder(Symbol::Builder("x", 1))), Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("y", 1))));
+  assert_parsed_expression_is("f(x)=xy", Equal::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)), Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("y", 1))), false, true);
 }

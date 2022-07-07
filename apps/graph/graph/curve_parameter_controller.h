@@ -35,22 +35,24 @@ private:
   }
   static constexpr int k_parameterCellType = 0;
   static constexpr int k_calculationCellType = 1;
+  static constexpr int k_maxNumberOfParameters = 3;
+  static constexpr int k_preimageIndex = 1;
+  static constexpr int k_derivativeIndex = 2;
   bool editableParameter(int index);
   int typeAtIndex(int index) override;
   int numberOfParameters() const { return function()->numberOfCurveParameters() + shouldDisplayDerivative(); }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 
-  GraphController * m_graphController;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
-  Shared::InteractiveCurveViewRange * m_graphRange;
-  Shared::CurveViewCursor * m_cursor;
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool shouldDisplayCalculation() const;
   bool shouldDisplayDerivative() const;
   bool isDerivative(int index) const;
   int cellIndex(int visibleCellIndex) const;
-  static constexpr int k_maxNumberOfParameters = 3;
+  GraphController * m_graphController;
+  Shared::InteractiveCurveViewRange * m_graphRange;
+  Shared::CurveViewCursor * m_cursor;
   PreimageGraphController m_preimageGraphController;
   Escher::BufferTableCellWithEditableText m_parameterCells[k_maxNumberOfParameters];
   Escher::MessageTableCellWithChevron m_calculationCell;

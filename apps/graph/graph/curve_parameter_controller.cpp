@@ -51,14 +51,15 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell, int 
   if (isDerivative(index)) {
     m_parameterCells[index].setEditable(false);
   }
-  if (index == 1 || (isDerivative(index))) {
+  if (index == k_preimageIndex || (isDerivative(index))) {
     // The parameter requires a custom name built from the function name
     assert(function()->plotType() == ContinuousFunction::PlotType::Cartesian);
     constexpr size_t bufferSize = BufferTextView::k_maxNumberOfChar;
     char buffer[bufferSize];
-    if (index == 1) {
+    if (index == k_preimageIndex) {
       function()->nameWithArgument(buffer, bufferSize);
     } else {
+      assert(index == k_derivativeIndex);
       function()->derivativeNameWithArgument(buffer, bufferSize);
     }
     m_parameterCells[index].setLabelText(buffer);
@@ -141,7 +142,7 @@ bool CurveParameterController::editableParameter(int index) {
 
 int CurveParameterController::numberOfRows() const {
   return numberOfParameters() + shouldDisplayCalculation();
-};
+}
 
 void CurveParameterController::viewWillAppear() {
   m_preimageGraphController.setImage(m_cursor->y());
@@ -159,7 +160,7 @@ bool CurveParameterController::shouldDisplayDerivative() const {
 }
 
 bool CurveParameterController::isDerivative(int index) const {
-  return shouldDisplayDerivative() && index == 2;
+  return shouldDisplayDerivative() && index == k_derivativeIndex;
 }
 
 }

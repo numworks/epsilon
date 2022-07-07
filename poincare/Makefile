@@ -206,6 +206,7 @@ poincare_src += $(addprefix poincare/src/,\
 
 poincare_src += $(addprefix poincare/src/parsing/,\
   parser.cpp \
+  identifier_tokenizer.cpp \
   helper.cpp \
   tokenizer.cpp \
 )

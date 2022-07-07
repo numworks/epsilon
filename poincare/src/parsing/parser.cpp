@@ -503,7 +503,7 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
   if ((**functionHelper).minNumberOfChildren() >= 0) {
     while (numberOfParameters > (**functionHelper).maxNumberOfChildren()) {
       functionHelper++;
-      if (!(functionHelper < ParsingHelper::ReservedFunctionsUpperBound() && strcmp(name, (**functionHelper).name()) == 0)) {
+      if (functionHelper >= ParsingHelper::ReservedFunctionsUpperBound() || !(**functionHelper).name().isSameNameAs(name)) {
         m_status = Status::Error; // Too many parameters provided.
         return;
       }

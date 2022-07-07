@@ -40,7 +40,7 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
       return true;
     }
     // Step 2: Parsing
-    Poincare::Expression e = Poincare::Expression::Parse(buffer, layoutField->context());
+    Poincare::Expression e = Poincare::Expression::Parse(buffer, layoutField->context(), true, shouldParseFieldAsAssignment());
     if (e.isUninitialized()) {
       // Unparsable expression
       displayWarning(I18n::Message::SyntaxError);

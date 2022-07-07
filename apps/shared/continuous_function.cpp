@@ -892,19 +892,20 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
    * valid named left expression and the symbol will be extracted, either the
    * symbol should be the default symbol used in unnamed expressions. */
   assert(symbol == k_unnamedExpressionSymbol);
-  Expression noContextExpression;
+  Expression expressionToStore;
+  bool isFunctionAssignment = false;
   // if c = "", we want to reinit the Expression
   if (c && *c != 0) {
-    /* Compute the expression to store, without replacing symbols. No context is
-     * given so that any unknown function name is parsed as function. */
-    noContextExpression = Expression::Parse(c, nullptr);
-    if (noContextExpression.isUninitialized()) {
-      return noContextExpression;
+    /* Parse the expression to store as possible function assignment. */
+    expressionToStore = Expression::Parse(c, context, true, true);
+    if (expressionToStore.isUninitialized()) {
+      return expressionToStore;
     }
     // Check if the equation is of the form f(x)=...
-    ExpressionNode::Type comparisonType = noContextExpression.type();
-    if (ComparisonOperator::IsComparisonOperatorType(comparisonType) && isValidNamedLeftExpression(noContextExpression.childAtIndex(0), comparisonType)) {
-      Expression functionSymbol = noContextExpression.childAtIndex(0).childAtIndex(0);
+    ExpressionNode::Type comparisonType = expressionToStore.type();
+    if (ComparisonOperator::IsComparisonOperatorType(comparisonType) && isValidNamedLeftExpression(expressionToStore.childAtIndex(0), comparisonType)) {
+      isFunctionAssignment = true;
+      Expression functionSymbol = expressionToStore.childAtIndex(0).childAtIndex(0);
       // Extract the CodePoint function's symbol. We know it is either x, t or θ
       assert(functionSymbol.type() == ExpressionNode::Type::Symbol);
       // Override the symbol so that it can be replaced in the right expression
@@ -916,16 +917,14 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
         assert((functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))));
         symbol = k_polarSymbol;
       }
-    } else {
-      // Fall back on default ExpressionModel::buildExpressionFromText behavior
-      noContextExpression = Expression();
     }
   }
-  Expression expressionToStore = ExpressionModel::buildExpressionFromText(c, symbol, context);
-  if (!noContextExpression.isUninitialized() && !expressionToStore.isUninitialized()) {
-    assert(Poincare::ComparisonOperator::IsComparisonOperatorType(expressionToStore.type()));
-    // Preserve the new function and its symbol
-    expressionToStore.replaceChildAtIndexInPlace(0, noContextExpression.childAtIndex(0));
+  if (isFunctionAssignment) {
+    // Do not replace symbol in f(x)=
+    ExpressionModel::ReplaceSymbolWithUnknown(expressionToStore.childAtIndex(1), symbol);
+  } else {
+    // Fallback on normal parsing
+    expressionToStore = ExpressionModel::buildExpressionFromText(c, symbol, context);
   }
   return expressionToStore;
 }

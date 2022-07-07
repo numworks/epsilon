@@ -14,6 +14,7 @@ public:
   bool isAcceptableExpression(const Poincare::Expression expression) override;
 protected:
   ExpressionFieldDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
+  virtual bool shouldParseFieldAsAssignment() { return false; }
 };
 
 }

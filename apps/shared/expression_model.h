@@ -25,6 +25,7 @@ public:
 protected:
   // Setters helper
   virtual Poincare::Expression buildExpressionFromText(const char * c, CodePoint symbol = 0, Poincare::Context * context = nullptr) const;
+  static Poincare::Expression ReplaceSymbolWithUnknown(Poincare::Expression e, CodePoint symbol);
   mutable Poincare::Expression m_expression;
   mutable Poincare::Layout m_layout;
   bool isCircularlyDefined(const Ion::Storage::Record * record, Poincare::Context * context) const;

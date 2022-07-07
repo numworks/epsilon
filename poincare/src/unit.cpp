@@ -16,6 +16,7 @@ namespace Poincare {
 constexpr const UnitNode::Prefix Unit::k_prefixes[];
 constexpr const UnitNode::TimeRepresentative Unit::k_timeRepresentatives[];
 constexpr const UnitNode::DistanceRepresentative Unit::k_distanceRepresentatives[];
+constexpr const UnitNode::AngleRepresentative Unit::k_angleRepresentatives[];
 constexpr const UnitNode::MassRepresentative Unit::k_massRepresentatives[];
 constexpr const UnitNode::CurrentRepresentative Unit::k_currentRepresentatives[];
 constexpr const UnitNode::TemperatureRepresentative Unit::k_temperatureRepresentatives[];
@@ -52,6 +53,11 @@ constexpr const int
   Unit::k_footRepresentativeIndex,
   Unit::k_yardRepresentativeIndex,
   Unit::k_mileRepresentativeIndex,
+  Unit::k_radianRepresentativeIndex,
+  Unit::k_degreeRepresentativeIndex,
+  Unit::k_arcMinuteRepresentativeIndex,
+  Unit::k_arcSecondRepresentativeIndex,
+  Unit::k_gradianRepresentativeIndex,
   Unit::k_ounceRepresentativeIndex,
   Unit::k_poundRepresentativeIndex,
   Unit::k_shortTonRepresentativeIndex,
@@ -193,6 +199,7 @@ const UnitNode::Representative * const * UnitNode::Representative::DefaultRepres
   constexpr static const Representative * defaultRepresentatives[k_numberOfDimensions] = {
     Unit::k_timeRepresentatives,
     Unit::k_distanceRepresentatives,
+    Unit::k_angleRepresentatives,
     Unit::k_massRepresentatives,
     Unit::k_currentRepresentatives,
     Unit::k_temperatureRepresentatives,
@@ -412,6 +419,7 @@ const UnitNode::Prefix * UnitNode::Representative::findBestPrefix(double value, 
 // UnitNode::___Representative
 const UnitNode::Representative * UnitNode::TimeRepresentative::representativesOfSameDimension() const { return Unit::k_timeRepresentatives; }
 const UnitNode::Representative * UnitNode::DistanceRepresentative::representativesOfSameDimension() const { return Unit::k_distanceRepresentatives; }
+const UnitNode::Representative * UnitNode::AngleRepresentative::representativesOfSameDimension() const { return Unit::k_angleRepresentatives; }
 const UnitNode::Representative * UnitNode::MassRepresentative::representativesOfSameDimension() const { return Unit::k_massRepresentatives; }
 const UnitNode::Representative * UnitNode::CurrentRepresentative::representativesOfSameDimension() const { return Unit::k_currentRepresentatives; }
 const UnitNode::Representative * UnitNode::TemperatureRepresentative::representativesOfSameDimension() const { return Unit::k_temperatureRepresentatives; }
@@ -470,6 +478,10 @@ int UnitNode::DistanceRepresentative::setAdditionalExpressions(double value, Exp
   };
   dest[0] = Unit::BuildSplit(value, splitUnits, sizeof(splitUnits)/sizeof(Unit), reductionContext);
   return 1;
+}
+
+const UnitNode::Representative * UnitNode::AngleRepresentative::standardRepresentative(double value, double exponent, const ExpressionNode::ReductionContext& reductionContext, const Prefix * * prefix) const {
+  return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), numberOfRepresentatives(), prefix);
 }
 
 const UnitNode::Prefix * UnitNode::MassRepresentative::basePrefix() const {

@@ -79,15 +79,15 @@ ConstantNode::ConstantInfo ConstantNode::constantInfo() const {
 }
 
 bool ConstantNode::isConstant(const char * constantName, ConstantInfo info) const {
-  if (info.name() == nullptr) {
+  if (info.aliasesList() == nullptr) {
     info = constantInfo();
   }
-  return info.name().isAliasOf(constantName, strlen(constantName));
+  return info.aliasesList().contains(constantName, strlen(constantName));
 }
 
 bool Constant::IsConstant(const char * name, size_t length) {
   for (ConstantNode::ConstantInfo info : Constant::k_constants) {
-    if (info.name().isAliasOf(name, length)) {
+    if (info.aliasesList().contains(name, length)) {
       return true;
     }
   }
@@ -97,7 +97,7 @@ bool Constant::IsConstant(const char * name, size_t length) {
 ConstantNode::ConstantInfo Constant::ConstantInfoFromName(const char * name, int length) {
   assert(IsConstant(name, length));
   for (ConstantNode::ConstantInfo info : Constant::k_constants) {
-    if (info.name().isAliasOf(name, length)) {
+    if (info.aliasesList().contains(name, length)) {
       return info;
     }
   }

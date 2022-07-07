@@ -82,7 +82,7 @@ KDRect ElementsView::rectForCell(size_t cellIndex) const {
 }
 
 void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx, KDRect rect) const {
-  ElementsViewDataSource::ColorPair colors = m_dataSource->colorPairForElement(z);
+  Coloring::ColorPair colors = m_dataSource->coloring()->colorPairForElement(z);
 
   ctx->fillRect(cell.intersectedWith(rect), colors.bg());
 

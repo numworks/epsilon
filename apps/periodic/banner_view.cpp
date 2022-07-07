@@ -19,7 +19,7 @@ void BannerView::DotView::setColor(KDColor color) {
 // BannerView
 
 void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(KDRect(0, 0, bounds().width(), k_borderHeight), Palette::SystemGreyDark);
+  ctx->fillRect(KDRect(0, 0, bounds().width(), k_borderHeight), Palette::SystemGrayDark);
   ctx->fillRect(KDRect(0, k_borderHeight, bounds().width(), k_bannerHeight), k_backgroundColor);
 }
 

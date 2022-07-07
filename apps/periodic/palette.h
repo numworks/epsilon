@@ -14,8 +14,8 @@ constexpr KDColor ElementGrassDark = KDColor::RGB24(0x354a38);
 constexpr KDColor ElementGrassLight = KDColor::RGB24(0xc7ffc8);
 constexpr KDColor ElementGreenDark = KDColor::RGB24(0x405937);
 constexpr KDColor ElementGreenLight = KDColor::RGB24(0xd1f5d0);
-constexpr KDColor ElementGreyDark = KDColor::RGB24(0x5b5b5b);
-constexpr KDColor ElementGreyLight = KDColor::RGB24(0xe5e5e5);
+constexpr KDColor ElementGrayDark = KDColor::RGB24(0x5b5b5b);
+constexpr KDColor ElementGrayLight = KDColor::RGB24(0xe5e5e5);
 constexpr KDColor ElementOrangeDark = KDColor::RGB24(0xb06f00);
 constexpr KDColor ElementOrangeLight = KDColor::RGB24(0xffe4b6);
 constexpr KDColor ElementPinkDark = KDColor::RGB24(0x6e3c5d);
@@ -29,9 +29,9 @@ constexpr KDColor ElementTurquoiseLight = KDColor::RGB24(0xc9f7ff);
 constexpr KDColor ElementYellowDark = KDColor::RGB24(0x907a02);
 constexpr KDColor ElementYellowLight = KDColor::RGB24(0xfff7cf);
 
-constexpr KDColor SystemGreyLight = KDColor::RGB24(0xf6f6f6);
-constexpr KDColor SystemGreyDark = KDColor::RGB24(0xdedade);
-constexpr KDColor SystemGreyBluish = KDColor::RGB24(0xd5d6e6);
+constexpr KDColor SystemGrayLight = KDColor::RGB24(0xf6f6f6);
+constexpr KDColor SystemGrayDark = KDColor::RGB24(0xdedade);
+constexpr KDColor SystemGrayBluish = KDColor::RGB24(0xd5d6e6);
 
 }
 }

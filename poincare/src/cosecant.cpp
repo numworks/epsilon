@@ -22,11 +22,11 @@ Complex<T> CosecantNode::computeOnComplex(const std::complex<T> c, Preferences::
 }
 
 Layout CosecantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Cosecant(this), floatDisplayMode, numberOfSignificantDigits, Cosecant::s_functionHelper.name());
+  return LayoutHelper::Prefix(Cosecant(this), floatDisplayMode, numberOfSignificantDigits, Cosecant::s_functionHelper.aliasesList().mainName());
 }
 
 int CosecantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Cosecant::s_functionHelper.name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Cosecant::s_functionHelper.aliasesList().mainName());
 }
 
 Expression CosecantNode::shallowReduce(const ReductionContext& reductionContext) {

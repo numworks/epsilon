@@ -7,7 +7,7 @@ namespace Poincare {
 
 class ListMinimumNode : public ExpressionNode {
 public:
-  constexpr static Name k_functionName = "min";
+  constexpr static AliasesList k_functionName = "min";
   size_t size() const override { return sizeof(ListMinimumNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

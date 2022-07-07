@@ -7,7 +7,7 @@ namespace Poincare {
 
 class MatrixIdentityNode final : public ExpressionNode {
 public:
-  constexpr static Name k_functionName = "identity";
+  constexpr static AliasesList k_functionName = "identity";
 
   // TreeNode
   size_t size() const override { return sizeof(MatrixIdentityNode); }

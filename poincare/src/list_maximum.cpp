@@ -11,11 +11,11 @@ int ListMaximumNode::numberOfChildren() const {
 }
 
 int ListMaximumNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListMaximum::s_functionHelper.name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListMaximum::s_functionHelper.aliasesList().mainName());
 }
 
 Layout ListMaximumNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ListMaximum(this), floatDisplayMode, numberOfSignificantDigits, ListMaximum::s_functionHelper.name());
+  return LayoutHelper::Prefix(ListMaximum(this), floatDisplayMode, numberOfSignificantDigits, ListMaximum::s_functionHelper.aliasesList().mainName());
 }
 
 Expression ListMaximumNode::shallowReduce(const ReductionContext& reductionContext) {

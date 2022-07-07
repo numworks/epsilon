@@ -7,11 +7,11 @@
 namespace Poincare {
 
 Layout HyperbolicArcSineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(HyperbolicArcSine(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicArcSine::s_functionHelper.name());
+  return LayoutHelper::Prefix(HyperbolicArcSine(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicArcSine::s_functionHelper.aliasesList().mainName());
 }
 
 int HyperbolicArcSineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, HyperbolicArcSine::s_functionHelper.name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, HyperbolicArcSine::s_functionHelper.aliasesList().mainName());
 }
 
 template<typename T>

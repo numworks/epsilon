@@ -7,7 +7,7 @@ namespace Poincare {
 
 class NthRootNode final : public ExpressionNode  {
 public:
-  constexpr static Name k_functionName = "root";
+  constexpr static AliasesList k_functionName = "root";
   // ExpressionNode
   Type type() const override { return Type::NthRoot; }
 

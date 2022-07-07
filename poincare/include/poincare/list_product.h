@@ -7,7 +7,7 @@ namespace Poincare {
 
 class ListProductNode : public ExpressionNode {
 public:
-  constexpr static Name k_functionName = "prod";
+  constexpr static AliasesList k_functionName = "prod";
   size_t size() const override { return sizeof(ListProductNode); }
   int numberOfChildren() const override;
 #if POINCARE_TREE_LOG

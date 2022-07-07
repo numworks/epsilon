@@ -21,7 +21,7 @@ bool DependencyNode::derivate(const ReductionContext& reductionContext, Symbol s
 }
 
 int DependencyNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Dependency::s_functionHelper.name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Dependency::s_functionHelper.aliasesList().mainName());
 }
 
 template<typename T> Evaluation<T> DependencyNode::templatedApproximate(const ApproximationContext& approximationContext) const {

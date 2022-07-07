@@ -5,7 +5,7 @@
 namespace Poincare {
 
 int LetterAWithSubAndSuperscriptLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.name(), true);
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.aliasesList().mainName(), true);
 }
 
 void LetterAWithSubAndSuperscriptLayoutNode::renderLetter(KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {

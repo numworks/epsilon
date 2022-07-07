@@ -8,7 +8,7 @@ namespace Poincare {
 
 class BinomialCoefficientNode final : public ExpressionNode {
 public:
-  constexpr static Name k_functionName = "binomial";
+  constexpr static AliasesList k_functionName = "binomial";
 
   // TreeNode
   size_t size() const override { return sizeof(BinomialCoefficientNode); }

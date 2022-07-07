@@ -8,7 +8,7 @@ namespace Poincare {
 
 class ImaginaryPartNode final : public ExpressionNode  {
 public:
-  constexpr static Name k_functionName = "im";
+  constexpr static AliasesList k_functionName = "im";
 
   // TreeNode
   size_t size() const override { return sizeof(ImaginaryPartNode); }

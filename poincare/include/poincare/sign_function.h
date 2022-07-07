@@ -8,7 +8,7 @@ namespace Poincare {
 
 class SignFunctionNode final : public ExpressionNode  {
 public:
-  constexpr static Name k_functionName = "sign";
+  constexpr static AliasesList k_functionName = "sign";
 
   // TreeNode
   size_t size() const override { return sizeof(SignFunctionNode); }

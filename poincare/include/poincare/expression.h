@@ -3,7 +3,7 @@
 
 #include <poincare/coordinate_2D.h>
 #include <poincare/tree_handle.h>
-#include <poincare/name.h>
+#include <poincare/aliases_list.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/expression_node.h>
@@ -339,29 +339,29 @@ public:
    * It is used in particular by the parser. */
   class FunctionHelper {
   public:
-    constexpr FunctionHelper(Name name, const int minNumberOfChildren, const int maxNumberOfChildren, Expression (* const builder)(Expression)) :
-      m_name(name),
+    constexpr FunctionHelper(AliasesList aliasesList, const int minNumberOfChildren, const int maxNumberOfChildren, Expression (* const builder)(Expression)) :
+      m_aliasesList(aliasesList),
       m_minNumberOfChildren(minNumberOfChildren),
       m_maxNumberOfChildren(maxNumberOfChildren),
       m_untypedBuilder(builder),
       m_initializer(nullptr),
       m_size(0) {}
-    constexpr FunctionHelper(Name name, const int numberOfChildren, Expression (* const builder)(Expression)) :
-      FunctionHelper(name, numberOfChildren, numberOfChildren, builder) {}
-    constexpr FunctionHelper(Name name, const int minNumberOfChildren, const int maxNumberOfChildren, TreeNode::Initializer initializer, size_t size) :
-      m_name(name),
+    constexpr FunctionHelper(AliasesList aliasesList, const int numberOfChildren, Expression (* const builder)(Expression)) :
+      FunctionHelper(aliasesList, numberOfChildren, numberOfChildren, builder) {}
+    constexpr FunctionHelper(AliasesList aliasesList, const int minNumberOfChildren, const int maxNumberOfChildren, TreeNode::Initializer initializer, size_t size) :
+      m_aliasesList(aliasesList),
       m_minNumberOfChildren(minNumberOfChildren),
       m_maxNumberOfChildren(maxNumberOfChildren),
       m_untypedBuilder(nullptr),
       m_initializer(initializer),
       m_size(size) {}
-    constexpr Name name() const { return m_name; }
+    constexpr AliasesList aliasesList() const { return m_aliasesList; }
     int minNumberOfChildren() const { return m_minNumberOfChildren; }
     int maxNumberOfChildren() const { return m_maxNumberOfChildren; }
     int numberOfChildren() const { assert(m_minNumberOfChildren == m_maxNumberOfChildren); return m_minNumberOfChildren; }
     Expression build(Expression children) const;
   private:
-    Name m_name;
+    AliasesList m_aliasesList;
     const int m_minNumberOfChildren;
     const int m_maxNumberOfChildren;
     Expression (* const m_untypedBuilder)(Expression children);

@@ -8,7 +8,7 @@ namespace Poincare {
 
 class InvBinomNode final : public BinomialDistributionFunctionNode  {
 public:
-  constexpr static Name k_functionName = "invbinom";
+  constexpr static AliasesList k_functionName = "invbinom";
 
   // TreeNode
   size_t size() const override { return sizeof(InvBinomNode); }

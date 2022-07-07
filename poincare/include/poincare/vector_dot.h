@@ -7,7 +7,7 @@ namespace Poincare {
 
 class VectorDotNode final : public ExpressionNode {
 public:
-  constexpr static Name k_functionName = "dot";
+  constexpr static AliasesList k_functionName = "dot";
 
   // TreeNode
   size_t size() const override { return sizeof(VectorDotNode); }

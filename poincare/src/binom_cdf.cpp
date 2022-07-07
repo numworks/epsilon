@@ -10,11 +10,11 @@ namespace Poincare {
 int BinomCDFNode::numberOfChildren() const { return BinomCDF::s_functionHelper.numberOfChildren(); }
 
 Layout BinomCDFNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(BinomCDF(this), floatDisplayMode, numberOfSignificantDigits, BinomCDF::s_functionHelper.name());
+  return LayoutHelper::Prefix(BinomCDF(this), floatDisplayMode, numberOfSignificantDigits, BinomCDF::s_functionHelper.aliasesList().mainName());
 }
 
 int BinomCDFNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomCDF::s_functionHelper.name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomCDF::s_functionHelper.aliasesList().mainName());
 }
 
 template<typename T>

@@ -407,8 +407,8 @@ void Parser::parseReservedFunction(Expression & leftHandSide, Token::Type stoppi
 }
 
 void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper) {
-  Name name = (**functionHelper).name();
-  if (strcmp(name, "log") == 0 && popTokenIfType(Token::LeftBrace)) {
+  AliasesList aliasesList = (**functionHelper).aliasesList();
+  if (aliasesList.contains("log") && popTokenIfType(Token::LeftBrace)) {
     // Special case for the log function (e.g. "log{2}(8)")
     Expression base = parseUntil(Token::RightBrace);
     if (m_status != Status::Progress) {
@@ -449,13 +449,13 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
       return;
     } else if (base.isMinusOne()) {
       // Detect cos^-1(x)
-      const char * mainName = name.mainName();
+      const char * mainName = aliasesList.mainName();
       functionHelper = ParsingHelper::GetInverseFunction(mainName, strlen(mainName));
       if (!functionHelper) {
         m_status = Status::Error; // This function has no inverse
         return;
       }
-      name = (**functionHelper).name();
+      aliasesList = (**functionHelper).aliasesList();
     } else if (base.type() == ExpressionNode::Type::BasedInteger
               && static_cast<BasedInteger &>(base).base() == Integer::Base::Decimal
               && static_cast<BasedInteger &>(base).integer().isTwo()) {
@@ -503,7 +503,7 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
   if ((**functionHelper).minNumberOfChildren() >= 0) {
     while (numberOfParameters > (**functionHelper).maxNumberOfChildren()) {
       functionHelper++;
-      if (functionHelper >= ParsingHelper::ReservedFunctionsUpperBound() || !(**functionHelper).name().isSameNameAs(name)) {
+      if (functionHelper >= ParsingHelper::ReservedFunctionsUpperBound() || !(**functionHelper).aliasesList().isEquivalentTo(aliasesList)) {
         m_status = Status::Error; // Too many parameters provided.
         return;
       }

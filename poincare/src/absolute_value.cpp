@@ -22,7 +22,7 @@ Layout AbsoluteValueNode::createLayout(Preferences::PrintFloatMode floatDisplayM
 }
 
 int AbsoluteValueNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, AbsoluteValue::s_functionHelper.name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, AbsoluteValue::s_functionHelper.aliasesList().mainName());
 }
 
 Expression AbsoluteValueNode::shallowReduce(const ReductionContext& reductionContext) {

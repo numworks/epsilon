@@ -62,6 +62,7 @@ public:
 
   const char * mainName() const { return mainName(Preferences::sharedPreferences()->namingConvention()); }
   bool isAliasOf(const char * name, int nameLen) const { return comparedWith(name, nameLen) == 0; }
+  bool isSameNameAs(Name otherName) { return strcmp(mainName(), otherName.mainName()) == 0; }
 
   /* Return 0 if name is alias of this,
    * else, return the max difference value between name and the aliases

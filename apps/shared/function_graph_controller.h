@@ -65,7 +65,7 @@ private:
   /* These two methods are likely to point to the same object but they are
    * separated to avoid diamond inheritance */
   virtual Escher::ViewController * curveParameterController() = 0;
-  virtual WithRecord * curveParameterControllerRecord() = 0;
+  virtual WithRecord * curveParameterControllerWithRecord() = 0;
 
   // InteractiveCurveViewController
   bool moveCursorVertically(int direction) override;

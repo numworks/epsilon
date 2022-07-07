@@ -8,7 +8,7 @@ namespace Poincare {
 
 class FracPartNode final : public ExpressionNode  {
 public:
-  constexpr static Name k_functionName = "frac";
+  constexpr static AliasesList k_functionName = "frac";
 
   // TreeNode
   size_t size() const override { return sizeof(FracPartNode); }

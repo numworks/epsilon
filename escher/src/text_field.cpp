@@ -5,6 +5,7 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <layout_events.h>
+#include <poincare/aliases_list.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/derivative.h>
 #include <poincare/integral.h>
@@ -402,11 +403,11 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
    * If the cursor is in an argument field, and the variable is well nested and
    * defined, the variable will be inserted into the given buffer. Otherwise,
    * the (improved or not) defaultXNTCodePoint is inserted. */
-  constexpr static struct { const char *name; char xnt; } sFunctions[] = {
-    { Poincare::Derivative::s_functionHelper.name(), Poincare::Derivative::k_defaultXNTChar },
-    { Poincare::Integral::s_functionHelper.name(), Poincare::Integral::k_defaultXNTChar },
-    { Poincare::Product::s_functionHelper.name(), Poincare::Product::k_defaultXNTChar },
-    { Poincare::Sum::s_functionHelper.name(), Poincare::Sum::k_defaultXNTChar }
+  constexpr static struct { Poincare::AliasesList aliasesList; char xnt; } sFunctions[] = {
+    { Poincare::Derivative::s_functionHelper.aliasesList(), Poincare::Derivative::k_defaultXNTChar },
+    { Poincare::Integral::s_functionHelper.aliasesList(), Poincare::Integral::k_defaultXNTChar },
+    { Poincare::Product::s_functionHelper.aliasesList(), Poincare::Product::k_defaultXNTChar },
+    { Poincare::Sum::s_functionHelper.aliasesList(), Poincare::Sum::k_defaultXNTChar }
   };
   if (!isEditing()) {
     reinitDraftTextBuffer();
@@ -447,7 +448,7 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
         location = functionDecoder.stringPosition();
         // Identify one of the functions
         for (size_t i = 0; i < sizeof(sFunctions)/sizeof(sFunctions[0]); i++) {
-          const char * name = sFunctions[i].name;
+          const char * name = sFunctions[i].aliasesList.mainName();
           size_t length = strlen(name);
           if ((location >= text + length) && memcmp(&text[(location - text) - length], name, length) == 0) {
             functionFound = true;

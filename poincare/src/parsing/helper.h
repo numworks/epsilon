@@ -26,7 +26,7 @@ public:
 private:
   // The array of special identifiers
   struct SpecialIdentifier {
-    Name identifierName;
+    AliasesList identifierAliasesList;
     IdentifierBuilder identifierBuilder;
   };
   constexpr static SpecialIdentifier s_specialIdentifiers[] = {

@@ -8,7 +8,7 @@ namespace Poincare {
 
 class NormCDFNode final : public NormalDistributionFunctionNode  {
 public:
-  constexpr static Name k_functionName = "normcdf";
+  constexpr static AliasesList k_functionName = "normcdf";
 
   // TreeNode
   size_t size() const override { return sizeof(NormCDFNode); }

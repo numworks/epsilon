@@ -8,7 +8,7 @@ namespace Poincare {
 
 class InvNormNode final : public NormalDistributionFunctionNode  {
 public:
-  constexpr static Name k_functionName = "invnorm";
+  constexpr static AliasesList k_functionName = "invnorm";
 
   // TreeNode
   size_t size() const override { return sizeof(InvNormNode); }

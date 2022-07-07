@@ -6,7 +6,7 @@ namespace Poincare {
 const Expression::FunctionHelper * const * ParsingHelper::GetReservedFunction(const char * name, size_t nameLength) {
   const Expression::FunctionHelper * const * reservedFunction = s_reservedFunctions;
   while (reservedFunction < s_reservedFunctionsUpperBound) {
-    int nameDifference = (**reservedFunction).name().comparedWith(name, nameLength);
+    int nameDifference = (**reservedFunction).aliasesList().maxDifferenceWith(name, nameLength);
     if (nameDifference == 0) {
       return reservedFunction;
     }
@@ -21,7 +21,7 @@ const Expression::FunctionHelper * const * ParsingHelper::GetReservedFunction(co
 const Expression::FunctionHelper * const * ParsingHelper::GetInverseFunction(const char * name, size_t nameLength) {
   const FunctionMapping * functionMapping = s_inverses;
   while (functionMapping < s_inverseFunctionsUpperBound) {
-    int nameDifference = ((*functionMapping).mainFunction)->name().comparedWith(name, nameLength);
+    int nameDifference = ((*functionMapping).mainFunction)->aliasesList().maxDifferenceWith(name, nameLength);
     if (nameDifference == 0) {
       return &(*functionMapping).inverseFunction;
     }
@@ -35,7 +35,7 @@ const Expression::FunctionHelper * const * ParsingHelper::GetInverseFunction(con
 
 bool ParsingHelper::IsSpecialIdentifierName(const char * name, size_t nameLength) {
   for (int i = 0; i < k_numberOfSpecialIdentifiers; i++) {
-    if (s_specialIdentifiers[i].identifierName.isAliasOf(name, nameLength)) {
+    if (s_specialIdentifiers[i].identifierAliasesList.contains(name, nameLength)) {
       return true;
     }
   }
@@ -75,7 +75,7 @@ bool ParsingHelper::IsSquarableFunction(const Expression::FunctionHelper * helpe
 
 const ParsingHelper::IdentifierBuilder ParsingHelper::GetIdentifierBuilder(const char * name, size_t nameLength) {
   for (int i = 0; i < k_numberOfSpecialIdentifiers; i++) {
-    if (s_specialIdentifiers[i].identifierName.isAliasOf(name, nameLength)) {
+    if (s_specialIdentifiers[i].identifierAliasesList.contains(name, nameLength)) {
       return s_specialIdentifiers[i].identifierBuilder;
     }
   }

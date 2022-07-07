@@ -8,7 +8,7 @@ namespace Poincare {
 
 class FloorNode /*final*/ : public ExpressionNode {
 public:
-  constexpr static Name k_functionName = "floor";
+  constexpr static AliasesList k_functionName = "floor";
 
   // TreeNode
   size_t size() const override { return sizeof(FloorNode); }

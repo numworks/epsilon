@@ -20,7 +20,7 @@ Layout FloorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int
 }
 
 int FloorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Floor::s_functionHelper.name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Floor::s_functionHelper.aliasesList().mainName());
 }
 
 template<typename T>

@@ -158,7 +158,7 @@ void IntegralLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 }
 
 int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.name(), true);
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.aliasesList().mainName(), true);
 }
 
 Layout IntegralLayoutNode::XNTLayout(int childIndex) const {

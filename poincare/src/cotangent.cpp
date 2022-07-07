@@ -24,11 +24,11 @@ Complex<T> CotangentNode::computeOnComplex(const std::complex<T> c, Preferences:
 }
 
 Layout CotangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Cotangent(this), floatDisplayMode, numberOfSignificantDigits, Cotangent::s_functionHelper.name());
+  return LayoutHelper::Prefix(Cotangent(this), floatDisplayMode, numberOfSignificantDigits, Cotangent::s_functionHelper.aliasesList().mainName());
 }
 
 int CotangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Cotangent::s_functionHelper.name());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Cotangent::s_functionHelper.aliasesList().mainName());
 }
 
 Expression CotangentNode::shallowReduce(const ReductionContext& reductionContext) {

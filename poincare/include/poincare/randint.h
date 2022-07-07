@@ -9,7 +9,7 @@ namespace Poincare {
 class RandintNode /*final*/ : public ExpressionNode  {
   friend class Randint;
 public:
-  constexpr static Name k_functionName = "randint";
+  constexpr static AliasesList k_functionName = "randint";
 
   // TreeNode
   size_t size() const override { return sizeof(RandintNode); }

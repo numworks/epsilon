@@ -36,7 +36,7 @@ private:
     void drawRect(KDContext * ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override { return KDSize(k_dotDiameter, k_dotDiameter); }
 
-    void setColor(KDColor color) { m_color = color; }
+    void setColor(KDColor color);
 
   private:
     KDColor m_color;

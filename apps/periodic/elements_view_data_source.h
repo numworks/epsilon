@@ -10,6 +10,7 @@ namespace Periodic {
 class ElementsViewDataSource {
 public:
   constexpr static GroupsColoring ColorByGroups;
+  constexpr static AtomicNumber k_noElement = 0;
 
   ElementsViewDataSource() : m_coloring(&ColorByGroups), m_textFilter(nullptr), m_selectedElement(1) {}
 

@@ -27,7 +27,6 @@ private:
   constexpr static size_t k_numberOfColumns = 18;
   constexpr static size_t k_numberOfRows = 9;
   constexpr static size_t k_numberOfCells = k_numberOfColumns * k_numberOfRows;
-  constexpr static AtomicNumber k_noElement = 0;
 
   // Escher::View
   int numberOfSubviews() const override { return 1; }

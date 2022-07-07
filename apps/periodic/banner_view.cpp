@@ -9,6 +9,13 @@ void BannerView::DotView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillAntialiasedCircle(KDPointZero, k_dotDiameter / 2, m_color, k_backgroundColor);
 }
 
+void BannerView::DotView::setColor(KDColor color) {
+  if (color != m_color) {
+    markRectAsDirty(bounds());
+    m_color = color;
+  }
+}
+
 // BannerView
 
 void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -25,16 +32,22 @@ Escher::View * BannerView::subviewAtIndex(int index) {
 }
 
 void BannerView::layoutSubviews(bool force) {
-  AtomicNumber z = m_dataSource->selectedElement();
-  m_dotView.setColor(m_dataSource->coloring()->colorPairForElement(z).fg());
-  KDRect dotRect = KDRect(k_dotLeftMargin, (bounds().height() - k_dotDiameter) / 2, k_dotDiameter, k_dotDiameter);
-  m_dotView.setFrame(dotRect, true);
+  KDCoordinate x = k_dotLeftMargin;
 
-  m_textView.setFrame(KDRect(dotRect.x() + dotRect.width() + k_dotLegendMargin, k_borderHeight, bounds().width() - dotRect.width(), k_bannerHeight), force);
+  AtomicNumber z = m_dataSource->selectedElement();
+  if (z != ElementsViewDataSource::k_noElement) {
+    KDRect dotRect = KDRect(x, (bounds().height() - k_dotDiameter) / 2, k_dotDiameter, k_dotDiameter);
+    m_dotView.setFrame(dotRect, force);
+    m_dotView.setColor(m_dataSource->coloring()->colorPairForElement(z).fg());
+    x += dotRect.width() + k_dotLegendMargin;
+  } else {
+    m_dotView.setFrame(KDRectZero, force);
+  }
+
+  m_textView.setFrame(KDRect(x, k_borderHeight, bounds().width() - x, k_bannerHeight), force);
   char buffer[Escher::BufferTextView::k_maxNumberOfChar];
   m_dataSource->coloring()->setLegendForElement(z, buffer, Escher::BufferTextView::k_maxNumberOfChar);
   m_textView.setText(buffer);
-
 }
 
 }

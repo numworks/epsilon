@@ -44,20 +44,20 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && row == 0)) {
     static ViewController * controllers[] = {&m_preimageParameterController, &m_intersectionGraphController, &m_maximumGraphController, &m_minimumGraphController, &m_rootGraphController, &m_tangentGraphController, &m_integralGraphController};
     int displayIntersection = shouldDisplayIntersection();
-    if (row == k_intersectionRow + displayIntersection) {
+    if (row == k_derivativeRowIndex + displayIntersection) {
       m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
       m_selectableTableView.reloadData();
       return true;
-    } else if (row > k_intersectionRow + displayIntersection) {
+    } else if (row > k_derivativeRowIndex + displayIntersection) {
       row--;
     }
     int indexController = row == 0 ? 0 : row + !displayIntersection;
     ViewController * controller = controllers[indexController];
     if (row == 0) {
       m_preimageParameterController.setRecord(m_record);
-    } else if (row == k_intersectionRow + displayIntersection) {
+    } else if (row == k_derivativeRowIndex + displayIntersection) {
       m_tangentGraphController.setRecord(m_record);
-    } else if (row == k_intersectionRow + displayIntersection + 1) {
+    } else if (row == k_derivativeRowIndex + displayIntersection + 1) {
       m_integralGraphController.setRecord(m_record);
     } else {
       static_cast<CalculationGraphController *>(controller)->setRecord(m_record);

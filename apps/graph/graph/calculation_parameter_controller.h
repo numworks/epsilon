@@ -30,7 +30,7 @@ public:
 
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int index) override { return index == 0 ? k_preImageCellType : index == (4 + shouldDisplayIntersection()) ? k_derivativeCellType : k_defaultCellType; }
+  int typeAtIndex(int index) override { return index == 0 ? k_preImageCellType : index == (k_derivativeRowIndex + shouldDisplayIntersection()) ? k_derivativeCellType : k_defaultCellType; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setRecord(Ion::Storage::Record record);
 private:
@@ -40,7 +40,7 @@ private:
   constexpr static int k_defaultCellType = 0;
   constexpr static int k_derivativeCellType = 1;
   constexpr static int k_preImageCellType = 2;
-  constexpr static int k_intersectionRow = 4;
+  constexpr static int k_derivativeRowIndex = 4;
   Escher::MessageTableCell m_cells[k_totalNumberOfReusableCells];
   Ion::Storage::Record m_record;
   GraphController * m_graphController;

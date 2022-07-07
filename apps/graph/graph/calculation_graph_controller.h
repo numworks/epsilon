@@ -15,8 +15,8 @@ class CalculationGraphController : public Shared::SimpleInteractiveCurveViewCont
 public:
   CalculationGraphController(Escher::Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, I18n::Message defaultMessage);
   bool handleEvent(Ion::Events::Event event) override;
+  bool handleEnter() override;
   void viewWillAppear() override;
-  void viewDidDisappear() override;
   void setRecord(Ion::Storage::Record record);
 protected:
   float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(bannerView()->minimalSizeForOptimalDisplay().height()); }

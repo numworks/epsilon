@@ -6,7 +6,7 @@ void ElementsView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, k_backgroundColor);
   for (int i = 0; i < k_numberOfCells; i++) {
     AtomicNumber z = elementInCell(i);
-    if (z == k_noElement) {
+    if (z == ElementsViewDataSource::k_noElement) {
       continue;
     }
     KDRect cell = rectForCell(i);
@@ -38,7 +38,9 @@ bool ElementsView::moveCursorVertically(bool down) {
 }
 
 AtomicNumber ElementsView::elementInCell(size_t cellIndex) const {
-  assert(cellIndex < k_numberOfCells);
+  if (cellIndex >= k_numberOfCells) {
+    return ElementsViewDataSource::k_noElement;
+  }
   constexpr AtomicNumber k_elementsLayout[k_numberOfCells] = {
      1,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   2,
      3,   4,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   5,   6,   7,   8,   9,  10,
@@ -69,6 +71,9 @@ size_t ElementsView::cellForElement(AtomicNumber z) const {
 }
 
 KDRect ElementsView::rectForCell(size_t cellIndex) const {
+  if (cellIndex >= k_numberOfCells) {
+    return KDRectZero;
+  }
   size_t row = cellIndex / k_numberOfColumns;
   assert(row < k_numberOfRows);
   size_t col = cellIndex % k_numberOfColumns;
@@ -82,6 +87,7 @@ KDRect ElementsView::rectForCell(size_t cellIndex) const {
 }
 
 void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx, KDRect rect) const {
+  assert(z != ElementsViewDataSource::k_noElement);
   Coloring::ColorPair colors = m_dataSource->coloring()->colorPairForElement(z);
 
   ctx->fillRect(cell.intersectedWith(rect), colors.bg());
@@ -106,7 +112,7 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx,
 
 bool ElementsView::moveCursorAndDirtyRect(size_t oldCell, size_t newCell) {
   AtomicNumber newZ = elementInCell(newCell);
-  if (newZ == k_noElement || newZ == m_dataSource->selectedElement()) {
+  if (newZ == ElementsViewDataSource::k_noElement || newZ == m_dataSource->selectedElement()) {
     return false;
   }
   markRectAsDirty(rectWithMargins(rectForCell(oldCell)));
@@ -117,6 +123,9 @@ bool ElementsView::moveCursorAndDirtyRect(size_t oldCell, size_t newCell) {
 }
 
 KDRect ElementsView::singleElementViewFrame() const {
+  if (m_dataSource->selectedElement() == ElementsViewDataSource::k_noElement) {
+    return KDRectZero;
+  }
   constexpr size_t k_firstColumnUnderSubview = 2;
   constexpr size_t k_lastColumnUnderSubview = 11;
   constexpr size_t k_firstRowAfterSubview = 3;

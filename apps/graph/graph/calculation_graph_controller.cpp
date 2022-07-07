@@ -28,6 +28,17 @@ bool CalculationGraphController::handleEvent(Ion::Events::Event event) {
   return SimpleInteractiveCurveViewController::handleEvent(event);
 }
 
+bool CalculationGraphController::handleEnter() {
+  /* When leaving calculation, the displayed precision might get better than the
+   * calculation one, highlighting precision errors. To prevent that, cursor is
+   * moved to the value displayed on the banner. */
+  double t = m_cursor->t();
+  t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, App::app()->localContext(), numberOfSignificantDigits(), curveView()->pixelWidth());
+  Coordinate2D<double> xy = App::app()->functionStore()->modelForRecord(m_record)->evaluateXYAtParameter(t, App::app()->localContext());
+  m_cursor->moveTo(t, xy.x1(), xy.x2());
+  return Shared::SimpleInteractiveCurveViewController::handleEnter();
+}
+
 void CalculationGraphController::viewWillAppear() {
   Shared::SimpleInteractiveCurveViewController::viewWillAppear();
   assert(!m_record.isNull());
@@ -45,19 +56,6 @@ void CalculationGraphController::viewWillAppear() {
     m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   }
   m_graphView->reload();
-}
-
-void CalculationGraphController::viewDidDisappear() {
-  /* When leaving calculation, the displayed precision might get better than the
-   * calculation one, highlighting precision errors. To prevent that, cursor is
-   * moved to the value displayed on the banner. */
-  double t = m_cursor->t();
-  t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, App::app()->localContext(), numberOfSignificantDigits(), curveView()->pixelWidth());
-  Coordinate2D<double> xy = App::app()->functionStore()->modelForRecord(m_record)->evaluateXYAtParameter(t, App::app()->localContext());
-  m_cursor->moveTo(t, xy.x1(), xy.x2());
-  // Reload default banner view to update displayed cursor values
-  CalculationGraphController::reloadBannerView();
-  return Shared::SimpleInteractiveCurveViewController::viewDidDisappear();
 }
 
 void CalculationGraphController::setRecord(Ion::Storage::Record record) {

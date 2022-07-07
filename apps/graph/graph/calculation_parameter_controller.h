@@ -40,6 +40,7 @@ private:
   constexpr static int k_defaultCellType = 0;
   constexpr static int k_derivativeCellType = 1;
   constexpr static int k_preImageCellType = 2;
+  constexpr static int k_intersectionRow = 4;
   Escher::MessageTableCell m_cells[k_totalNumberOfReusableCells];
   Ion::Storage::Record m_record;
   GraphController * m_graphController;

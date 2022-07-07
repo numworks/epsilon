@@ -3,7 +3,9 @@
 
 #include "elements_view_data_source.h"
 #include <escher/buffer_text_view.h>
+#include <escher/ellipsis_view.h>
 #include <escher/palette.h>
+#include <escher/solid_color_view.h>
 #include <escher/view.h>
 #include <ion/display.h>
 
@@ -11,7 +13,7 @@ namespace Periodic {
 
 class BannerView : public Escher::View {
 public:
-  BannerView(ElementsViewDataSource * dataSource) : m_textView(KDFont::Size::Small, KDContext::k_alignLeft, KDContext::k_alignCenter, k_legendColor, k_backgroundColor), m_dataSource(dataSource) {}
+  BannerView(ElementsViewDataSource * dataSource) : m_textView(KDFont::Size::Small, KDContext::k_alignLeft, KDContext::k_alignCenter, k_legendColor, k_backgroundColor), m_button(k_backgroundColor), m_dataSource(dataSource) {}
 
   // Escher::View
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -27,6 +29,7 @@ private:
   constexpr static KDCoordinate k_bannerHeight = 25;
   constexpr static KDCoordinate k_borderHeight = 1;
   constexpr static KDCoordinate k_dotLegendMargin = 12;
+  constexpr static KDCoordinate k_buttonWidth = 37;
 
   class DotView : public Escher::View {
   public:
@@ -42,12 +45,23 @@ private:
     KDColor m_color;
   };
 
-  int numberOfSubviews() const override { return 2; }
+  class EllipsisButton : public Escher::SolidColorView {
+  public:
+    using Escher::SolidColorView::SolidColorView;
+  private:
+    int numberOfSubviews() const override { return 1; }
+    Escher::View * subviewAtIndex(int index) override { return &m_ellipsisView; }
+    void layoutSubviews(bool force = false) override { m_ellipsisView.setFrame(bounds(), force); }
+    Escher::EllipsisView m_ellipsisView;
+  };
+
+  int numberOfSubviews() const override { return 3; }
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
   DotView m_dotView;
   Escher::BufferTextView m_textView;
+  EllipsisButton m_button;
   ElementsViewDataSource * m_dataSource;
 };
 

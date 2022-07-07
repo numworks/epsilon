@@ -24,25 +24,35 @@ void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 Escher::View * BannerView::subviewAtIndex(int index) {
-  if (index == 0) {
+  switch (index) {
+  case 0:
+    return &m_dotView;
+  case 1:
     return &m_textView;
+  default:
+    assert(index == 2);
+    return &m_button;
   }
-  assert(index == 1);
-  return &m_dotView;
 }
 
 void BannerView::layoutSubviews(bool force) {
   KDCoordinate x = k_dotLeftMargin;
 
   AtomicNumber z = m_dataSource->selectedElement();
+  KDColor buttonColor;
   if (z != ElementsViewDataSource::k_noElement) {
     KDRect dotRect = KDRect(x, (bounds().height() - k_dotDiameter) / 2, k_dotDiameter, k_dotDiameter);
     m_dotView.setFrame(dotRect, force);
     m_dotView.setColor(m_dataSource->coloring()->colorPairForElement(z).fg());
     x += dotRect.width() + k_dotLegendMargin;
+    buttonColor = k_backgroundColor;
   } else {
     m_dotView.setFrame(KDRectZero, force);
+    buttonColor = Palette::SystemGrayBluish;
   }
+
+  m_button.setFrame(KDRect(bounds().width() - k_buttonWidth, k_borderHeight, k_buttonWidth, k_bannerHeight), force);
+  m_button.setColor(buttonColor);
 
   m_textView.setFrame(KDRect(x, k_borderHeight, bounds().width() - x, k_bannerHeight), force);
   char buffer[Escher::BufferTextView::k_maxNumberOfChar];

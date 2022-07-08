@@ -208,6 +208,8 @@ I18n::Message PressToTestController::SubLabelAtIndex(int i) {
       return I18n::Message::PressToTestStatDiagnosticsDescription;
     case I18n::Message::PressToTestVectors:
       return I18n::Message::PressToTestVectorsDescription;
+    case I18n::Message::PressToTestImplicitPlots:
+      return I18n::Message::PressToTestImplicitPlotsDescription;
     default:
       return I18n::Message::Default;
   }

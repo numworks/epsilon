@@ -4,7 +4,7 @@
 using namespace Poincare;
 using namespace Escher;
 
-namespace Shared {
+namespace Sequence {
 
 SequenceTitleCell::SequenceTitleCell(KDFont::Size font) :
   Shared::FunctionTitleCell(Orientation::VerticalIndicator),

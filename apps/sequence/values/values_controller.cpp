@@ -60,7 +60,7 @@ int ValuesController::fillColumnName(int columnIndex, char * buffer) {
 
 void ValuesController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   if (typeAtLocation(columnIndex,0) == k_functionTitleCellType) {
-    Shared::SequenceTitleCell * myCell = static_cast<Shared::SequenceTitleCell *>(cell);
+    SequenceTitleCell * myCell = static_cast<SequenceTitleCell *>(cell);
     Shared::Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(columnIndex));
     myCell->setLayout(sequence->nameLayout());
     // TODO : Ensure small layout sometimes, setfont ? En tout cas jpp

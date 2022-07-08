@@ -1,11 +1,11 @@
-#ifndef APPS_SHARED_SEQUENCE_TITLE_CELL_H
-#define APPS_SHARED_SEQUENCE_TITLE_CELL_H
+#ifndef APPS_SEQUENCE_SEQUENCE_TITLE_CELL_H
+#define APPS_SEQUENCE_SEQUENCE_TITLE_CELL_H
 
 #include <escher/even_odd_expression_cell.h>
-#include "../shared/function_title_cell.h"
+#include <apps/shared/function_title_cell.h>
 #include <poincare/code_point_layout.h>
 
-namespace Shared {
+namespace Sequence {
 
 class SequenceTitleCell : public Shared::FunctionTitleCell {
 public:

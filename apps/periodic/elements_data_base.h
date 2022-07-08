@@ -13,6 +13,9 @@ typedef uint8_t AtomicNumber;
 class ElementsDataBase {
 public:
   constexpr static uint8_t k_numberOfElements = 118;
+  constexpr static AtomicNumber k_noElement = 0;
+
+  static bool IsElement(AtomicNumber z) { return z > k_noElement && z <= k_numberOfElements; }
 
   static double MolarMass(AtomicNumber z) { return DataForElement(z)->molarMass(); }
   static double Electronegativity(AtomicNumber z) { return DataForElement(z)->electronegativity(); }

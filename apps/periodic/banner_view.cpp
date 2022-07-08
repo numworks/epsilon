@@ -42,7 +42,7 @@ void BannerView::layoutSubviews(bool force) {
 
   AtomicNumber z = dataSource->selectedElement();
   KDColor buttonColor;
-  if (z != ElementsViewDataSource::k_noElement) {
+  if (z != ElementsDataBase::k_noElement) {
     KDRect dotRect = KDRect(x, (bounds().height() - k_dotDiameter) / 2, k_dotDiameter, k_dotDiameter);
     m_dotView.setFrame(dotRect, force);
     m_dotView.setColor(dataSource->coloring()->colorPairForElement(z).fg());

@@ -30,7 +30,7 @@ void MainController::selectedElementHasChanged(AtomicNumber oldZ) {
 bool MainController::handleEvent(Ion::Events::Event e) {
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   AtomicNumber z = dataSource->selectedElement();
-  if (z == ElementsViewDataSource::k_noElement) {
+  if (!ElementsDataBase::IsElement(z)) {
     return false;
   }
   AtomicNumber newZ = z;

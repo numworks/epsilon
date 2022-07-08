@@ -133,7 +133,7 @@ constexpr static ElementData k_elementsData[ElementsDataBase::k_numberOfElements
 };
 
 const ElementData * ElementsDataBase::DataForElement(AtomicNumber z) {
-  assert(z >= 1 && z <= k_numberOfElements);
+  assert(IsElement(z));
   return k_elementsData + (z - 1);
 }
 

@@ -6,6 +6,7 @@
 #include <apps/shared/text_field_delegate_app.h>
 #include <apps/shared/shared_app.h>
 #include <escher/container.h>
+#include <escher/stack_view_controller.h>
 
 namespace Periodic {
 
@@ -36,6 +37,7 @@ public:
 private:
   App(Snapshot * snapshot);
 
+  Escher::StackViewController m_stackController;
   MainController m_mainController;
 };
 

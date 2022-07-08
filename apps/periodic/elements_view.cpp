@@ -8,7 +8,7 @@ void ElementsView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, k_backgroundColor);
   for (int i = 0; i < TableLayout::k_numberOfCells; i++) {
     AtomicNumber z = TableLayout::ElementInCell(i);
-    if (z == ElementsViewDataSource::k_noElement) {
+    if (!ElementsDataBase::IsElement(z)) {
       continue;
     }
     KDRect cell = RectForCell(i);
@@ -42,7 +42,7 @@ KDRect ElementsView::RectForCell(size_t cellIndex) {
 }
 
 void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx, KDRect rect) const {
-  assert(z != ElementsViewDataSource::k_noElement);
+  assert(ElementsDataBase::IsElement(z));
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   Coloring::ColorPair colors = dataSource->coloring()->colorPairForElement(z);
 
@@ -67,7 +67,7 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx,
 }
 
 KDRect ElementsView::singleElementViewFrame() const {
-  if (App::app()->elementsViewDataSource()->selectedElement() == ElementsViewDataSource::k_noElement) {
+  if (App::app()->elementsViewDataSource()->selectedElement() == ElementsDataBase::k_noElement) {
     return KDRectZero;
   }
   constexpr size_t k_firstColumnUnderSubview = 2;
@@ -82,7 +82,7 @@ KDRect ElementsView::singleElementViewFrame() const {
 }
 
 void ElementsView::dirtyElement(AtomicNumber z) {
-  if (1 <= z && z <= ElementsDataBase::k_numberOfElements) {
+  if (ElementsDataBase::IsElement(z)) {
     size_t cell = TableLayout::CellForElement(z);
     markRectAsDirty(RectWithMargins(RectForCell(cell)));
   }

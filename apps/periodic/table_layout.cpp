@@ -15,14 +15,14 @@ AtomicNumber TableLayout::NextElement(AtomicNumber z, Direction direction) {
   size_t col, row;
   PositionForElement(z, &col, &row);
   AtomicNumber newZ = ElementInCell(col + (row + rowStep) * k_numberOfColumns);
-  if (newZ == ElementsViewDataSource::k_noElement && direction == Direction::DecreasingRow) {
+  if (!ElementsDataBase::IsElement(newZ) && direction == Direction::DecreasingRow) {
     return z;
   }
   return newZ;
 }
 
 void TableLayout::PositionForElement(AtomicNumber z, size_t * column, size_t * row) {
-  assert(1 <= z && z <= ElementsDataBase::k_numberOfElements);
+  assert(ElementsDataBase::IsElement(z));
   assert(column && row);
   PositionForCell(CellForElement(z), column, row);
 }
@@ -37,7 +37,7 @@ void TableLayout::PositionForCell(size_t cell, size_t * column, size_t * row) {
 
 AtomicNumber TableLayout::ElementInCell(size_t cellIndex) {
   if (cellIndex >= k_numberOfCells) {
-    return ElementsViewDataSource::k_noElement;
+    return ElementsDataBase::k_noElement;
   }
   constexpr AtomicNumber k_elementsLayout[k_numberOfCells] = {
      1,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   2,

@@ -16,14 +16,14 @@ void Coloring::setLegendForElement(AtomicNumber z, char * buffer, size_t bufferS
 // ContinuousColoring
 
 Coloring::ColorPair ContinuousColoring::colorPairForElement(AtomicNumber z) const {
-  assert(z != ElementsViewDataSource::k_noElement);
+  assert(ElementsDataBase::IsElement(z));
   ColorPair min = minimalColors();
   ColorPair max = maximalColors();
   return ColorPair(blendAlphaForContinuousParameter(z), min.fg(), max.fg(), min.bg(), max.bg());
 }
 
 size_t ContinuousColoring::legendContentForElement(AtomicNumber z, char * buffer, size_t bufferSize) const {
-  if (z == ElementsViewDataSource::k_noElement) {
+  if (!ElementsDataBase::IsElement(z)) {
     return 0;
   }
   buffer[0] = ' ';
@@ -43,7 +43,7 @@ size_t ContinuousColoring::legendContentForElement(AtomicNumber z, char * buffer
 uint8_t ContinuousColoring::blendAlphaForContinuousParameter(AtomicNumber z) const {
   /* FIXME We will recompute alpha for each element when redrawing the whole
    * table. We could memoize the sorted indexes to speed up the process. */
-  assert(z != ElementsViewDataSource::k_noElement);
+  assert(ElementsDataBase::IsElement(z));
   float numberOfLowerValues = 0;
   double v = parameter(z);
   for (AtomicNumber z2 = 1; z2 <= ElementsDataBase::k_numberOfElements; z2++) {
@@ -76,7 +76,7 @@ Coloring::ColorPair GroupsColoring::colorPairForElement(AtomicNumber z) const {
 }
 
 I18n::Message GroupsColoring::titleForElement(AtomicNumber z) const {
-  if (z == ElementsViewDataSource::k_noElement) {
+  if (!ElementsDataBase::IsElement(z)) {
     return I18n::Message::GroupOfElementsTitle;
   }
   constexpr I18n::Message k_titles[] = {

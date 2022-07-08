@@ -452,6 +452,19 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
   return true;
 }
 
+void HorizontalLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
+  // Fill the selection background
+  HorizontalLayout thisLayout = HorizontalLayout(this);
+  bool childrenAreSelected = selectionStart != nullptr && selectionEnd != nullptr
+    && !selectionStart->isUninitialized() && !selectionEnd->isUninitialized()
+    && thisLayout.hasChild(*selectionStart);
+  if (childrenAreSelected) {
+    assert(thisLayout.hasChild(*selectionEnd));
+    KDRect selectionRectangle = HorizontalLayout(this).relativeSelectionRect(selectionStart, selectionEnd, font);
+    ctx->fillRect(selectionRectangle.translatedBy(p), selectionColor);
+  }
+}
+
 // HorizontalLayout
 
 void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index, bool removeEmptyChildren, LayoutCursor * cursor) {

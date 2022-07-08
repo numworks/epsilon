@@ -37,6 +37,7 @@ private:
   };
 
   ContentView m_view;
+  AtomicNumber m_previousElement;
 };
 
 }

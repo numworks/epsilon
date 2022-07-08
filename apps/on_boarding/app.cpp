@@ -33,7 +33,10 @@ void App::didBecomeActive(Window * window) {
   // Disable spinner
   Ion::Events::setSpinner(false);
   // Force a core reset to exit
-  Ion::Power::selectStandbyMode(true);
+  if (!Poincare::Preferences::sharedPreferences()->isInExamMode()) {
+    // Forbid standby in exam mode since it disables the led
+    Ion::Power::selectStandbyMode(true);
+  }
 }
 
 }

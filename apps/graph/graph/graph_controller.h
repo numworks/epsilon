@@ -1,6 +1,7 @@
 #ifndef GRAPH_GRAPH_CONTROLLER_H
 #define GRAPH_GRAPH_CONTROLLER_H
 
+#include "apps/shared/with_record.h"
 #include "graph_view.h"
 #include "graph_controller_helper.h"
 #include "banner_view.h"
@@ -42,7 +43,7 @@ private:
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   GraphView * functionGraphView() override { return &m_view; }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
-  CurveParameterController * curveParameterControllerWithRecord() override { return &m_curveParameterController; }
+  Shared::WithRecord * curveParameterControllerWithRecord() override { return &m_curveParameterController; }
   FunctionSelectionController * curveSelectionController() const override { return const_cast<FunctionSelectionController *>(&m_functionSelectionController); }
   ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   bool defaultRangeIsNormalized() const override;

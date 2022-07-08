@@ -1,6 +1,7 @@
 #ifndef SEQUENCE_GRAPH_CONTROLLER_H
 #define SEQUENCE_GRAPH_CONTROLLER_H
 
+#include "apps/shared/with_record.h"
 #include "graph_view.h"
 #include "../../shared/xy_banner_view.h"
 #include "curve_parameter_controller.h"
@@ -40,7 +41,7 @@ private:
   Shared::SequenceStore * functionStore() const override { return static_cast<Shared::SequenceStore *>(Shared::FunctionGraphController::functionStore()); }
   GraphView * functionGraphView() override { return &m_view; }
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
-  CurveParameterController * curveParameterControllerWithRecord() override { return &m_curveParameterController; }
+  Shared::WithRecord * curveParameterControllerWithRecord() override { return &m_curveParameterController; }
   SequenceSelectionController * curveSelectionController() const override { return const_cast<SequenceSelectionController *>(&m_sequenceSelectionController); }
   Shared::CursorView m_cursorView;
   Shared::XYBannerView m_bannerView;

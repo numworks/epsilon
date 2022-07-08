@@ -41,8 +41,6 @@ public:
   Expression parse();
   Status getStatus() const { return m_status; }
 
-  static bool IsReservedName(const char * name, size_t nameLength);
-
 private:
   Expression parseUntil(Token::Type stoppingType);
 

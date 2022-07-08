@@ -17,11 +17,6 @@ Expression Parser::parse() {
   return Expression();
 }
 
-bool Parser::IsReservedName(const char * name, size_t nameLength) {
-  return ParsingHelper::GetReservedFunction(name, nameLength) != nullptr
-    || ParsingHelper::IsSpecialIdentifierName(name, nameLength);
-}
-
 // Private
 
 Expression Parser::parseUntil(Token::Type stoppingType) {
@@ -309,9 +304,6 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
     m_status = Status::Error; // Left-hand side missing.
     return;
   }
-  // At this point, m_currentToken is Token::RightwardsArrow.
-  const char * tokenName = m_nextToken.text();
-  size_t tokenNameLength = m_nextToken.length();
   /* Right part of the RightwardsArrow are either a Symbol, a Function or units.
    * Even undefined function "plouf(x)" should be interpreted as function and
    * not as a multiplication. This is done by removing the context temporarily */
@@ -324,8 +316,7 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
   if (m_nextToken.is(Token::EndOfStream) &&
       (rightHandSide.type() == ExpressionNode::Type::Symbol
        || (rightHandSide.type() == ExpressionNode::Type::Function
-         && rightHandSide.childAtIndex(0).type() == ExpressionNode::Type::Symbol)) &&
-      !IsReservedName(tokenName, tokenNameLength)) {
+         && rightHandSide.childAtIndex(0).type() == ExpressionNode::Type::Symbol))) {
     leftHandSide = Store::Builder(leftHandSide, static_cast<SymbolAbstract&>(rightHandSide));
     return;
   }

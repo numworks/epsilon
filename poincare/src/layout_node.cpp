@@ -22,7 +22,7 @@ bool LayoutNode::isIdenticalTo(Layout l) {
 
 void LayoutNode::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   bool isSelected = selectionStart != nullptr && selectionEnd != nullptr
-    && !selectionStart->isUninitialized() && !selectionStart->isUninitialized()
+    && !selectionStart->isUninitialized() && !selectionEnd->isUninitialized()
     && reinterpret_cast<char *>(this) >= reinterpret_cast<char *>(selectionStart->node())
     && reinterpret_cast<char *>(this) <= reinterpret_cast<char *>(selectionEnd->node());
   selectionStart = isSelected ? nullptr : selectionStart;

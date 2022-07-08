@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <escher/metric.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/matrix_layout.h>
 #include <poincare/symbol_abstract.h>
 
 using namespace Shared;
@@ -96,15 +97,30 @@ bool ListController::layoutRepresentsPolarFunction(Poincare::Layout l) const {
   return !match.isUninitialized();
 }
 
-bool ListController::completeEquation(InputEventHandler * equationField, bool polarFunction) {
+/* Return true if given layout contains a Matrix of correct dimensions as first
+ * child. Note: A more precise detection would require an expression reduction
+ * to distinguish:
+ * - sum(1,t,0,100) : Cartesian
+ * - norm([[4][5]]) : Cartesian
+ * - 31*[[4][5]]*10 : Parametric */
+bool ListController::layoutRepresentsParametricFunction(Poincare::Layout l) const {
+  if (l.type() == Poincare::LayoutNode::Type::HorizontalLayout) {
+    l = l.childAtIndex(0);
+  }
+  if (l.type() != Poincare::LayoutNode::Type::MatrixLayout) {
+    return false;
+  }
+  Poincare::MatrixLayout m = static_cast<Poincare::MatrixLayout &>(l);
+  return m.numberOfColumns() == 1 && m.numberOfRows() == 2;
+}
+
+bool ListController::completeEquation(InputEventHandler * equationField, CodePoint symbol) {
   // Retrieve the edited function
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
   if (f->isNull() || f->plotType() == ContinuousFunction::PlotType::Undefined) {
     // Function is new or undefined, complete the equation with a default name
     constexpr size_t k_bufferSize = Shared::ContinuousFunction::k_maxDefaultNameSize + sizeof("(θ)=") - 1;
     char buffer[k_bufferSize];
-    // If layout represents a polar function, use θ as symbol
-    CodePoint symbol = polarFunction ? ContinuousFunction::k_polarSymbol : ContinuousFunction::k_cartesianSymbol;
     // Insert "f(x)=", with f the default function name and x the symbol
     fillWithDefaultFunctionEquation(buffer, k_bufferSize, &m_modelsParameterController, symbol);
     return equationField->handleEventWithText(buffer);
@@ -128,8 +144,14 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutRepresentsAnEquation(layoutField->layout())) {
       layoutField->putCursorLeftOfLayout();
+      CodePoint symbol = layoutRepresentsPolarFunction(layoutField->layout())
+                             ? ContinuousFunction::k_polarSymbol
+                             : (layoutRepresentsParametricFunction(
+                                    layoutField->layout())
+                                    ? ContinuousFunction::k_parametricSymbol
+                                    : ContinuousFunction::k_cartesianSymbol);
       // Inserted Layout must be an equation
-      if (!completeEquation(layoutField, layoutRepresentsPolarFunction(layoutField->layout()))) {
+      if (!completeEquation(layoutField, symbol)) {
         layoutField->putCursorRightOfLayout();
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
         return true;
@@ -155,6 +177,12 @@ bool ListController::textRepresentsPolarFunction(const char * text) const {
   return UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, ContinuousFunction::k_polarSymbol), ContinuousFunction::k_polarSymbol);
 }
 
+// See ListController::layoutRepresentsParametricFunction comment.
+bool ListController::textRepresentsParametricFunction(const char * text) const {
+  // Only catch very basic parametric expressions, even if dimension is invalid.
+  return text[0] == '[';
+}
+
 // TODO: factorize with solver
 bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
@@ -162,7 +190,12 @@ bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events
     if (!textRepresentsAnEquation(text)) {
       // Inserted text must be an equation
       textField->setCursorLocation(text);
-      if (!completeEquation(textField, textRepresentsPolarFunction(text))) {
+      CodePoint symbol = textRepresentsPolarFunction(text)
+                             ? ContinuousFunction::k_polarSymbol
+                             : (textRepresentsParametricFunction(text)
+                                    ? ContinuousFunction::k_parametricSymbol
+                                    : ContinuousFunction::k_cartesianSymbol);
+      if (!completeEquation(textField, symbol)) {
         textField->setCursorLocation(text + strlen(text));
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
         return true;

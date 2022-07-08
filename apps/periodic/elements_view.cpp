@@ -1,4 +1,5 @@
 #include "elements_view.h"
+#include "app.h"
 
 namespace Periodic {
 
@@ -17,7 +18,7 @@ void ElementsView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 bool ElementsView::moveCursorHorizontally(bool right) {
-  AtomicNumber oldZ = m_dataSource->selectedElement();
+  AtomicNumber oldZ = App::app()->elementsViewDataSource()->selectedElement();
   AtomicNumber newZ = oldZ + (right ? 1 : -1);
   if (newZ < 1 || newZ > ElementsDataBase::k_numberOfElements) {
     return false;
@@ -26,7 +27,7 @@ bool ElementsView::moveCursorHorizontally(bool right) {
 }
 
 bool ElementsView::moveCursorVertically(bool down) {
-  AtomicNumber oldZ = m_dataSource->selectedElement();
+  AtomicNumber oldZ = App::app()->elementsViewDataSource()->selectedElement();
   size_t oldCell = cellForElement(oldZ);
   if (down && oldCell < k_numberOfCells - k_numberOfColumns) {
     return moveCursorAndDirtyRect(oldCell, oldCell + k_numberOfColumns);
@@ -88,11 +89,12 @@ KDRect ElementsView::rectForCell(size_t cellIndex) const {
 
 void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx, KDRect rect) const {
   assert(z != ElementsViewDataSource::k_noElement);
-  Coloring::ColorPair colors = m_dataSource->coloring()->colorPairForElement(z);
+  ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+  Coloring::ColorPair colors = dataSource->coloring()->colorPairForElement(z);
 
   ctx->fillRect(cell.intersectedWith(rect), colors.bg());
 
-  if (z == m_dataSource->selectedElement()) {
+  if (z == dataSource->selectedElement()) {
     KDRect margins[4] = {
       KDRect(cell.x() - k_cellMargin, cell.y() - k_cellMargin, cell.width() + 2 * k_cellMargin, k_cellMargin), // Top
       KDRect(cell.x() - k_cellMargin, cell.y() + cell.height(), cell.width() + 2 * k_cellMargin, k_cellMargin), // Bottom
@@ -111,19 +113,20 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx,
 }
 
 bool ElementsView::moveCursorAndDirtyRect(size_t oldCell, size_t newCell) {
+  ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   AtomicNumber newZ = elementInCell(newCell);
-  if (newZ == ElementsViewDataSource::k_noElement || newZ == m_dataSource->selectedElement()) {
+  if (newZ == ElementsViewDataSource::k_noElement || newZ == dataSource->selectedElement()) {
     return false;
   }
   markRectAsDirty(rectWithMargins(rectForCell(oldCell)));
   markRectAsDirty(rectWithMargins(rectForCell(newCell)));
-  m_dataSource->setSelectedElement(newZ);
+  dataSource->setSelectedElement(newZ);
   layoutSubviews();
   return true;
 }
 
 KDRect ElementsView::singleElementViewFrame() const {
-  if (m_dataSource->selectedElement() == ElementsViewDataSource::k_noElement) {
+  if (App::app()->elementsViewDataSource()->selectedElement() == ElementsViewDataSource::k_noElement) {
     return KDRectZero;
   }
   constexpr size_t k_firstColumnUnderSubview = 2;

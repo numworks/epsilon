@@ -1,4 +1,5 @@
 #include "single_element_view.h"
+#include "app.h"
 #include <poincare/print_int.h>
 
 namespace Periodic {
@@ -6,9 +7,10 @@ namespace Periodic {
 void SingleElementView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(bounds(), k_backgroundColor);
 
-  AtomicNumber z = m_dataSource->selectedElement();
+  ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+  AtomicNumber z = dataSource->selectedElement();
   assert(1 <= z && z <= ElementsDataBase::k_numberOfElements);
-  Coloring::ColorPair colors = m_dataSource->coloring()->colorPairForElement(z);
+  Coloring::ColorPair colors = dataSource->coloring()->colorPairForElement(z);
   KDRect cell(k_outerMargin + k_borderSize, bounds().height() - k_outerMargin - k_borderSize - k_cellSize, k_cellSize, k_cellSize);
   ctx->fillRect(cell, colors.bg());
 

@@ -15,14 +15,12 @@ namespace Poincare {
 
 class Tokenizer {
 public:
-  Tokenizer(const char * text, Context * * parserContext, bool parseAsAssignment = false) :
+  Tokenizer(const char * text, Context * * parserContext) :
     m_parserContext(parserContext),
     m_decoder(text),
-    m_identifierTokenizer(),
-    m_parseAsAssignment(parseAsAssignment) {}
-  Token popToken();
-
-  bool shouldParseAsAssignment() { return m_parseAsAssignment; }
+    m_identifierTokenizer()
+  {}
+  Token popToken(bool tokenizeForAssignment = false);
 
   // Rewind tokenizer
   const char * currentPosition() { return m_decoder.stringPosition(); }
@@ -47,11 +45,6 @@ private:
   Context * * m_parserContext;
   UTF8Decoder m_decoder;
   IdentifierTokenizer m_identifierTokenizer;
-  /* We need this bool to ensure that we can set multiplie-chars variable in
-   * the storage. 5->abc should NOT be parsed as 5->a*b*c.
-   * Also some expressions like f(x)=x should not be parsed as f*(x)=x
-   * */
-  bool m_parseAsAssignment;
 };
 
 }

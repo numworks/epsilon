@@ -115,7 +115,7 @@ Token Tokenizer::popNumber() {
   return result;
 }
 
-Token Tokenizer::popToken() {
+Token Tokenizer::popToken(bool tokenizeForAssignment) {
   if (m_identifierTokenizer.canStillPop()) {
     // Popping an implicit multiplication between identifiers
     return m_identifierTokenizer.popIdentifier();
@@ -158,7 +158,7 @@ Token Tokenizer::popToken() {
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder.previousCodePoint();
     assert(!m_identifierTokenizer.canStillPop()); // assert we're done with previous tokenization
-    m_identifierTokenizer.startTokenization(m_decoder.stringPosition(), popIdentifier(), m_parseAsAssignment ? nullptr : *m_parserContext);
+    m_identifierTokenizer.startTokenization(m_decoder.stringPosition(), popIdentifier(), tokenizeForAssignment ? nullptr : *m_parserContext);
     return m_identifierTokenizer.popIdentifier();
   }
   if ('(' <= c && c <= '/') {
@@ -209,10 +209,6 @@ Token Tokenizer::popToken() {
     }
     return Token(Token::PercentSimple);
   }
-  if (('<' <= c && '>' >= c) || c == UCodePointInferiorEqual || c == UCodePointSuperiorEqual) {
-    // After the = in `f(x)=xy`, we need to parse `xy` in the classic way.
-    m_parseAsAssignment = false;
-  }
   if (c == '=') {
     return Token(Token::Equal);
   }
@@ -223,7 +219,6 @@ Token Tokenizer::popToken() {
     return Token(Token::Superior);
   }
   if (c == UCodePointSuperiorEqual) {
-    m_parseAsAssignment = false;
     return Token(Token::SuperiorEqual);
   }
   if (c == '<') {
@@ -256,7 +251,6 @@ Token Tokenizer::popToken() {
     return Token(Token::Empty);
   }
   if (c == UCodePointRightwardsArrow) {
-    m_parseAsAssignment = true;
     return Token(Token::RightwardsArrow);
   }
   if (c == 0) {

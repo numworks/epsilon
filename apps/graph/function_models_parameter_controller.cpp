@@ -123,7 +123,7 @@ void FunctionModelsParameterController::willDisplayCellForIndex(Escher::Highligh
     int expressionCellIndex = getModelIndex(index) - reusableCellCount(k_emptyModelCellType);
     Escher::ExpressionTableCellWithMessage * modelCell = static_cast<Escher::ExpressionTableCellWithMessage *>(cell);
     modelCell->setLayout(m_layouts[expressionCellIndex]);
-    modelCell->setSubLabelMessage(k_modelDescriptions[expressionCellIndex]);
+    modelCell->setSubLabelMessage(ExamModeConfiguration::implicitPlotsAreForbidden() ? I18n::Message::Default : k_modelDescriptions[expressionCellIndex]);
   } else {
     assert(cell == reusableCell(index, type));
   }

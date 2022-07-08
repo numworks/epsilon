@@ -78,18 +78,23 @@ void Parser::popToken() {
     m_pendingImplicitMultiplication = false;
   } else {
     m_currentToken = m_nextToken;
-    /* Change the m_parseForAssignment in two cases :
+    /* change the parsingMethod in two cases :
      * - if token = rightwardsArrow, set it to true
      *   (we're starting an assignment of type ...->f(x))
      * - if token is comparison operator, set it to false
      *   (we're ending an assignment of type f(x)=... ) */
-    m_parseForAssignment = m_currentToken.type() == Token::RightwardsArrow || (m_parseForAssignment && !m_currentToken.isComparisonOperator());
+    if (m_currentToken.type() == Token::RightwardsArrow) {
+      m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Assignment);
+    }
+    if (m_currentToken.isComparisonOperator()) {
+      m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
+    }
     if (m_currentToken.is(Token::EndOfStream)) {
       /* Avoid reading out of buffer (calling popToken would read the character
        * after EndOfStream) */
       m_status = Status::Error; // Expression misses a rightHandSide
     } else {
-      m_nextToken = m_tokenizer.popToken(m_parseForAssignment);
+      m_nextToken = m_tokenizer.popToken();
     }
   }
 }
@@ -477,16 +482,16 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
 
 
   Expression parameters;
-  if (m_context && ParsingHelper::IsParameteredExpression(*functionHelper)) {
+  if (m_parsingContext.context() && ParsingHelper::IsParameteredExpression(*functionHelper)) {
     /* We must make sure that the parameter is parsed as a single variable. */
     const char * parameterText;
     size_t parameterLength;
     if (ParameteredExpression::ParameterText(m_currentToken.text() + m_currentToken.length() + 1, &parameterText, &parameterLength)) {
-      Context * oldContext = m_context;
-      VariableContext parameterContext(Symbol::Builder(parameterText, parameterLength), m_context);
-      m_context = &parameterContext;
+      Context * oldContext = m_parsingContext.context();
+      VariableContext parameterContext(Symbol::Builder(parameterText, parameterLength), oldContext);
+      m_parsingContext.setContext(&parameterContext);
       parameters = parseFunctionParameters();
-      m_context = oldContext;
+      m_parsingContext.setContext(oldContext);
     } else {
       parameters = parseFunctionParameters();
     }
@@ -571,8 +576,8 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
    * If there is no context, f(x) is always parsed as a function and u{n} as
    * a sequence*/
   Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
-  if (m_context != nullptr && !m_parseForAssignment) {
-    idType = m_context->expressionTypeForIdentifier(name, length);
+  if (m_parsingContext.context() && m_parsingContext.parsingMethod() != ParsingContext::ParsingMethod::Assignment) {
+    idType = m_parsingContext.context()->expressionTypeForIdentifier(name, length);
     if (idType != Context::SymbolAbstractType::Function && idType != Context::SymbolAbstractType::Sequence && idType != Context::SymbolAbstractType::List) {
       leftHandSide = Symbol::Builder(name, length);
       return;
@@ -774,7 +779,7 @@ bool IsIntegerBaseTenOrEmptyExpression(Expression e) {
           || e.type() == ExpressionNode::Type::EmptyExpression;
 }
 bool Parser::generateMixedFractionIfNeeded(Expression & leftHandSide) {
-  if (m_context && !Preferences::sharedPreferences()->mixedFractionsAreEnabled()) {
+  if (m_parsingContext.context() && !Preferences::sharedPreferences()->mixedFractionsAreEnabled()) {
     /* If m_context == nullptr, the expression has already been parsed.
      * We do not escape here because we want to parse it the same way it was
      * parsed the first time.

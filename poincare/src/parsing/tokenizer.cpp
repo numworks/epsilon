@@ -115,7 +115,7 @@ Token Tokenizer::popNumber() {
   return result;
 }
 
-Token Tokenizer::popToken(bool tokenizeForAssignment) {
+Token Tokenizer::popToken() {
   if (m_identifierTokenizer.canStillPop()) {
     // Popping an implicit multiplication between identifiers
     return m_identifierTokenizer.popIdentifier();
@@ -158,7 +158,7 @@ Token Tokenizer::popToken(bool tokenizeForAssignment) {
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder.previousCodePoint();
     assert(!m_identifierTokenizer.canStillPop()); // assert we're done with previous tokenization
-    m_identifierTokenizer.startTokenization(m_decoder.stringPosition(), popIdentifier(), tokenizeForAssignment ? nullptr : *m_parserContext);
+    m_identifierTokenizer.startTokenization(m_decoder.stringPosition(), popIdentifier());
     return m_identifierTokenizer.popIdentifier();
   }
   if ('(' <= c && c <= '/') {

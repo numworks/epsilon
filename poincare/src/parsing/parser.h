@@ -8,6 +8,7 @@
  *   an efficient but less readable shunting-yard parser. */
 
 #include "tokenizer.h"
+#include "parsing_context.h"
 
 namespace Poincare {
 
@@ -28,14 +29,14 @@ public:
    * but the parser will set parseForAssignment = false when it encounters a "=".
    * (so that f(x)=xy is parsed as f(x)=x*y, and not as f*(x)=x*y or as f(x)=xy) */
   Parser(const char * text, Context * context, bool parseForAssignment = false) :
-    m_context(context),
+    m_parsingContext(context, parseForAssignment ? ParsingContext::ParsingMethod::Assignment : ParsingContext::ParsingMethod::Classic),
     m_status(Status::Progress),
-    m_tokenizer(text, &m_context),
+    m_tokenizer(text, &m_parsingContext),
     m_currentToken(Token(Token::Undefined)),
-    m_nextToken(m_tokenizer.popToken(parseForAssignment)),
+    m_nextToken(m_tokenizer.popToken()),
     m_pendingImplicitMultiplication(false),
-    m_waitingSlashForMixedFraction(false),
-    m_parseForAssignment(parseForAssignment) {}
+    m_waitingSlashForMixedFraction(false)
+  {}
 
   Expression parse();
   Status getStatus() const { return m_status; }
@@ -97,7 +98,7 @@ private:
   void rememberCurrentParsingPosition(Token * storedCurrentToken, Token * storedNextToken, const char ** tokenizerPosition);
   void restorePreviousParsingPosition(Token storedCurrentToken, Token storedNextToken, const char * tokenizerPosition);
   // Data members
-  Context * m_context;
+  ParsingContext m_parsingContext;
   Status m_status;
     /* m_status is initialized to Status::Progress,
      * is changed to Status::Error if the Parser encounters an error,
@@ -107,11 +108,6 @@ private:
   Token m_nextToken;
   bool m_pendingImplicitMultiplication;
   bool m_waitingSlashForMixedFraction;
-  /* We need this bool to ensure that we can set multiplie-chars variable in
-   * the storage. 5->abc should NOT be parsed as 5->a*b*c.
-   * Also some expressions like f(x)=x should not be parsed as f*(x)=x
-   * */
-  bool m_parseForAssignment;
 };
 
 }

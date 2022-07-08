@@ -51,8 +51,7 @@ Token IdentifierTokenizer::popRightMostIdentifier(const char * * currentStringEn
   }
   int tokenLength = *currentStringEnd - tokenStart;
   *currentStringEnd = tokenStart;
-  if (tokenType == Token::Unit) {
-    assert(tokenStart[0] == '_');
+  if (tokenType == Token::Unit && tokenStart[0] == '_') {
     // Skip the '_'
     tokenStart += 1;
     tokenLength -= 1;
@@ -91,11 +90,17 @@ Token::Type IdentifierTokenizer::stringTokenType(const char * string, size_t len
   if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
     return Token::ReservedFunction;
   }
+  if (m_context && m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
+    return Token::CustomIdentifier;
+  }
+  if (Unit::CanParse(string, length, nullptr, nullptr)) {
+    return Token::Unit;
+  }
   if (UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + length)) {
     // CustomIdentifiers can't contain '°'
     return Token::Undefined;
   }
-  if (m_context == nullptr || stringIsACodePointFollowedByNumbers(string, length) || m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
+  if (m_context == nullptr || stringIsACodePointFollowedByNumbers(string, length)) {
     return Token::CustomIdentifier;
   }
   return Token::Undefined;

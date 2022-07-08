@@ -187,6 +187,15 @@ void ListController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(selectableTableView());
 }
 
+KDCoordinate ListController::expressionRowHeight(int j) {
+  if (typeAtIndex(j) == k_addNewModelType) {
+    return Shared::FunctionListController::expressionRowHeight(j);
+  }
+  FunctionCell tempCell;
+  willDisplayCellForIndex(&tempCell, j);
+  return tempCell.minimalSizeForOptimalDisplay().height();
+}
+
 bool ListController::handleEvent(Ion::Events::Event event) {
   // Here we handle an additional parameter column, within FunctionCell's button
   if (selectedRow() >= 0 && selectedRow() <= numberOfRows() && !isAddEmptyRow(selectedRow())) {

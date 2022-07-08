@@ -69,10 +69,11 @@ void FunctionCell::setHighlighted(bool highlight) {
 KDSize FunctionCell::minimalSizeForOptimalDisplay() const {
   KDCoordinate expressionHeight =
       m_expressionView.minimalSizeForOptimalDisplay().height();
-  KDCoordinate messageHeight =
-      m_messageTextView.minimalSizeForOptimalDisplay().height();
-  KDCoordinate minimalHeight = k_margin + expressionHeight + k_messageMargin +
-                               messageHeight + k_margin;
+  KDCoordinate minimalHeight = k_margin + expressionHeight + k_margin;
+  if (displayPlotType()) {
+    KDCoordinate messageHeight = m_messageTextView.minimalSizeForOptimalDisplay().height();
+    minimalHeight += k_messageMargin + messageHeight;
+  }
   KDCoordinate parameterHeight =
       m_ellipsisView.minimalSizeForOptimalDisplay().height();
   if (parameterHeight > minimalHeight) {
@@ -90,7 +91,9 @@ void FunctionCell::updateBackgrounds() {
   m_expressionBackground = m_parameterSelected ? defaultColor : selectedColor;
   // Expression View and Message Text View share the same background
   m_expressionView.setBackgroundColor(m_expressionBackground);
-  m_messageTextView.setBackgroundColor(m_expressionBackground);
+  if (displayPlotType()) {
+    m_messageTextView.setBackgroundColor(m_expressionBackground);
+  }
 }
 
 void FunctionCell::setParameterSelected(bool selected) {
@@ -107,7 +110,7 @@ View * FunctionCell::subviewAtIndex(int index) {
     case 1:
       return &m_ellipsisView;
     default:
-      assert(index == 2);
+      assert(index == 2 && displayPlotType());
       return &m_messageTextView;
   }
 }
@@ -120,15 +123,16 @@ void FunctionCell::layoutSubviews(bool force) {
   KDCoordinate rightMargin = k_margin + k_parametersColumnWidth;
   KDCoordinate expressionHeight =
       m_expressionView.minimalSizeForOptimalDisplay().height();
-  KDCoordinate messageHeight =
-      m_messageTextView.minimalSizeForOptimalDisplay().height();
   KDCoordinate availableWidth = bounds().width() - leftMargin - rightMargin;
   m_expressionView.setFrame(
       KDRect(leftMargin, k_margin, availableWidth, expressionHeight), force);
-  m_messageTextView.setFrame(
-      KDRect(leftMargin, bounds().height() - k_margin - messageHeight,
-             availableWidth, messageHeight),
-      force);
+  if (displayPlotType()) {
+    KDCoordinate messageHeight = m_messageTextView.minimalSizeForOptimalDisplay().height();
+    m_messageTextView.setFrame(
+        KDRect(leftMargin, bounds().height() - k_margin - messageHeight,
+               availableWidth, messageHeight),
+        force);
+  }
 }
 
 }  // namespace Graph

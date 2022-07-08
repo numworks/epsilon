@@ -1,6 +1,7 @@
 #include "list_controller.h"
 #include "../app.h"
 #include <apps/i18n.h>
+#include <apps/exam_mode_configuration.h>
 #include <assert.h>
 #include <escher/metric.h>
 #include <poincare/code_point_layout.h>
@@ -260,7 +261,7 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int j) {
   FunctionCell * functionCell = static_cast<FunctionCell *>(cell);
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   functionCell->setLayout(f->layout());
-  functionCell->setMessage(f->plotTypeMessage());
+  functionCell->setMessage(ExamModeConfiguration::implicitPlotsAreForbidden() ? I18n::Message::Default : f->plotTypeMessage());
   KDColor functionColor = f->isActive() ? f->color() : Palette::GrayDark;
   functionCell->setColor(functionColor);
   KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;

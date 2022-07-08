@@ -2,6 +2,7 @@
 #define GRAPH_LIST_LIST_PARAM_CONTROLLER_H
 
 #include <apps/shared/list_parameter_controller.h>
+#include <apps/exam_mode_configuration.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell_with_chevron_and_buffer.h>
 #include "details_parameter_controller.h"
@@ -26,7 +27,7 @@ private:
   constexpr static int k_domainCellType = k_detailsCellType + 1;
   bool handleEnterOnRow(int rowIndex) override;
   bool rightEventIsEnterOnType(int type) override;
-  bool displayDetails() const { return m_detailsParameterController.detailsNumberOfSections() > 0; }
+  bool displayDetails() const { return !ExamModeConfiguration::implicitPlotsAreForbidden() && m_detailsParameterController.detailsNumberOfSections() > 0; }
   bool displayDomain() const { return m_domainParameterController.isVisible() > 0; }
   Escher::MessageTableCellWithChevronAndMessage m_detailsCell;
   Escher::MessageTableCellWithChevronAndBuffer m_functionDomain;

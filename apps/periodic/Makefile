@@ -5,6 +5,7 @@ app_periodic_src = $(addprefix apps/periodic/,\
   app.cpp \
   banner_view.cpp \
   coloring.cpp \
+  coloring_choice_controller.cpp \
   elements_data_base.cpp \
   elements_view.cpp \
   elements_view_data_source.cpp \

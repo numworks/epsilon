@@ -2,13 +2,13 @@
 #define SEQUENCE_LIST_CONTROLLER_H
 
 #include <escher/table_view_data_source.h>
-#include "../../shared/sequence_title_cell.h"
-#include "../../shared/sequence_store.h"
-#include "../../shared/function_expression_cell.h"
-#include "../../shared/function_list_controller.h"
-#include "../../shared/input_event_handler_delegate.h"
-#include "../../shared/layout_field_delegate.h"
-#include "../../shared/text_field_delegate.h"
+#include "../sequence_title_cell.h"
+#include <apps/shared/sequence_store.h>
+#include <apps/shared/function_expression_cell.h>
+#include <apps/shared/function_list_controller.h>
+#include <apps/shared/input_event_handler_delegate.h>
+#include <apps/shared/layout_field_delegate.h>
+#include <apps/shared/text_field_delegate.h>
 #include "list_parameter_controller.h"
 #include "sequence_toolbox.h"
 #include "type_parameter_controller.h"
@@ -84,7 +84,7 @@ private:
   KDCoordinate nameWidth(int nameLength) const;
   Escher::SelectableTableView m_selectableTableView;
   Escher::EvenOddCell m_emptyCell;
-  Shared::SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
+  SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;

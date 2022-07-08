@@ -1,9 +1,9 @@
 #ifndef SEQUENCE_VALUES_CONTROLLER_H
 #define SEQUENCE_VALUES_CONTROLLER_H
 
-#include "../../shared/sequence_store.h"
-#include "../../shared/sequence_title_cell.h"
-#include "../../shared/values_controller.h"
+#include <apps/shared/sequence_store.h>
+#include <apps/shared/values_controller.h>
+#include "../sequence_title_cell.h"
 #include "interval_parameter_controller.h"
 
 namespace Sequence {
@@ -77,7 +77,7 @@ private:
     assert (j >= 0 && j < abscissaTitleCellsCount());
     return &m_abscissaTitleCell;
   }
-  Shared::SequenceTitleCell * functionTitleCells(int j) override {
+  SequenceTitleCell * functionTitleCells(int j) override {
     assert(j >= 0 && j < k_maxNumberOfDisplayableSequences);
     return &m_sequenceTitleCells[j];
   }
@@ -91,7 +91,7 @@ private:
 
   Escher::SelectableTableView m_selectableTableView;
   Shared::PrefacedTableView m_prefacedView;
-  Shared::SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];
+  SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];
   Escher::EvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];
   Escher::EvenOddMessageTextCell m_abscissaTitleCell;
   Escher::EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfDisplayableRows];

@@ -85,7 +85,6 @@ app_shared_src = $(addprefix apps/shared/,\
   sequence_cache_context.cpp \
   sequence_context.cpp \
   sequence_store.cpp \
-  sequence_title_cell.cpp \
   shared_app.cpp \
   simple_interactive_curve_view_controller.cpp \
   single_range_controller.cpp \

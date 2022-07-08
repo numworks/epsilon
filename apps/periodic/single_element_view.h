@@ -8,8 +8,6 @@ namespace Periodic {
 
 class SingleElementView : public Escher::View {
 public:
-  SingleElementView(const ElementsViewDataSource * dataSource) : m_dataSource(dataSource) {}
-
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
 private:
@@ -21,8 +19,6 @@ private:
   constexpr static KDCoordinate k_ZVerticalOffset = 6;
   constexpr static KDCoordinate k_AVerticalOffset = 9;
   constexpr static KDCoordinate k_nameVerticalOffset = 2;
-
-  const ElementsViewDataSource * m_dataSource;
 };
 
 }

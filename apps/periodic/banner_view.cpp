@@ -1,4 +1,5 @@
 #include "banner_view.h"
+#include "app.h"
 #include <assert.h>
 
 namespace Periodic {
@@ -36,14 +37,15 @@ Escher::View * BannerView::subviewAtIndex(int index) {
 }
 
 void BannerView::layoutSubviews(bool force) {
+  ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   KDCoordinate x = k_dotLeftMargin;
 
-  AtomicNumber z = m_dataSource->selectedElement();
+  AtomicNumber z = dataSource->selectedElement();
   KDColor buttonColor;
   if (z != ElementsViewDataSource::k_noElement) {
     KDRect dotRect = KDRect(x, (bounds().height() - k_dotDiameter) / 2, k_dotDiameter, k_dotDiameter);
     m_dotView.setFrame(dotRect, force);
-    m_dotView.setColor(m_dataSource->coloring()->colorPairForElement(z).fg());
+    m_dotView.setColor(dataSource->coloring()->colorPairForElement(z).fg());
     x += dotRect.width() + k_dotLegendMargin;
     buttonColor = k_backgroundColor;
   } else {
@@ -56,7 +58,7 @@ void BannerView::layoutSubviews(bool force) {
 
   m_textView.setFrame(KDRect(x, k_borderHeight, bounds().width() - x, k_bannerHeight), force);
   char buffer[Escher::BufferTextView::k_maxNumberOfChar];
-  m_dataSource->coloring()->setLegendForElement(z, buffer, Escher::BufferTextView::k_maxNumberOfChar);
+  dataSource->coloring()->setLegendForElement(z, buffer, Escher::BufferTextView::k_maxNumberOfChar);
   m_textView.setText(buffer);
 }
 

@@ -36,7 +36,7 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 // App
 App::App(Snapshot * snapshot) :
   Shared::TextFieldDelegateApp(snapshot, &m_mainController),
-  m_mainController(&m_modalViewController, snapshot->elementsViewDataSource())
+  m_mainController(&m_modalViewController)
 {}
 
 }

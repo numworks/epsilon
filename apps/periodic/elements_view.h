@@ -9,8 +9,6 @@ namespace Periodic {
 
 class ElementsView : public Escher::View {
 public:
-  ElementsView(ElementsViewDataSource * dataSource) : m_singleElementView(dataSource), m_dataSource(dataSource) {}
-
   // Escher::View
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
@@ -45,7 +43,6 @@ private:
   KDRect singleElementViewFrame() const;
 
   SingleElementView m_singleElementView;
-  ElementsViewDataSource * m_dataSource;
 };
 
 }

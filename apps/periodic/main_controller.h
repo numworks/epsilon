@@ -9,7 +9,7 @@ namespace Periodic {
 
 class MainController : public Escher::ViewController {
 public:
-  MainController(Escher::Responder * parentResponder, ElementsViewDataSource * dataSource) : ViewController(parentResponder), m_view(dataSource) {}
+  MainController(Escher::Responder * parentResponder) : ViewController(parentResponder) {}
 
   // Escher::ViewController
   Escher::View * view() override { return &m_view; }
@@ -20,7 +20,6 @@ public:
 private:
   class ContentView : public Escher::View {
   public:
-    ContentView(ElementsViewDataSource * dataSource) : m_elementsView(dataSource), m_bannerView(dataSource) {}
     ElementsView * elementsView() { return &m_elementsView; }
     BannerView * bannerView() { return &m_bannerView; }
 

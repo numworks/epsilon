@@ -13,7 +13,7 @@ namespace Periodic {
 
 class BannerView : public Escher::View {
 public:
-  BannerView(ElementsViewDataSource * dataSource) : m_textView(KDFont::Size::Small, KDContext::k_alignLeft, KDContext::k_alignCenter, k_legendColor, k_backgroundColor), m_button(k_backgroundColor), m_dataSource(dataSource) {}
+  BannerView() : m_textView(KDFont::Size::Small, KDContext::k_alignLeft, KDContext::k_alignCenter, k_legendColor, k_backgroundColor), m_button(k_backgroundColor) {}
 
   // Escher::View
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -62,7 +62,6 @@ private:
   DotView m_dotView;
   Escher::BufferTextView m_textView;
   EllipsisButton m_button;
-  ElementsViewDataSource * m_dataSource;
 };
 
 }

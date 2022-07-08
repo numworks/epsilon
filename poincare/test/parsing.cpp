@@ -9,7 +9,8 @@
 using namespace Poincare;
 
 void assert_tokenizes_as(const Token::Type * tokenTypes, const char * string) {
-  Tokenizer tokenizer(string, nullptr);
+  Context * context = nullptr;
+  Tokenizer tokenizer(string, &context);
   while (true) {
     Token token = tokenizer.popToken();
     quiz_assert_print_if_failure(token.type() == *tokenTypes, string);

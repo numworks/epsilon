@@ -49,10 +49,12 @@ private:
   void fillWithDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController, CodePoint Symbol) const;
   bool layoutRepresentsAnEquation(Poincare::Layout l) const;
   bool layoutRepresentsPolarFunction(Poincare::Layout l) const;
+  bool layoutRepresentsParametricFunction(Poincare::Layout l) const;
   bool textRepresentsAnEquation(const char * text) const;
   bool textRepresentsPolarFunction(const char * text) const;
+  bool textRepresentsParametricFunction(const char * text) const;
   // Complete the equationField with a valid left equation side
-  bool completeEquation(Escher::InputEventHandler * equationField, bool polarFunction);
+  bool completeEquation(Escher::InputEventHandler * equationField, CodePoint symbol);
   KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override {
     return ListViewDataSource::cumulatedHeightFromIndex(j);
   }

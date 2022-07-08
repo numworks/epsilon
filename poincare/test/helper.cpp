@@ -80,8 +80,8 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   quiz_assert_print_if_failure(test, information);
 }
 
-Poincare::Expression parse_expression(const char * expression, Context * context, bool addParentheses, bool parseAsAssignment) {
-  Expression result = Expression::Parse(expression, context, addParentheses, parseAsAssignment);
+Poincare::Expression parse_expression(const char * expression, Context * context, bool addParentheses, bool parseForAssignment) {
+  Expression result = Expression::Parse(expression, context, addParentheses, parseForAssignment);
   quiz_assert_print_if_failure(!result.isUninitialized(), expression);
   return result;
 }

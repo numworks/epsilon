@@ -52,10 +52,10 @@ void assert_text_not_parsable(const char * text) {
   quiz_assert_print_if_failure(result.isUninitialized(), text);
 }
 
-void assert_parsed_expression_is(const char * expression, Poincare::Expression r, bool addParentheses = false, bool parseAsAssignment = false, Preferences::MixedFractions mixedFractionsParameter = Preferences::MixedFractions::Enabled) {
+void assert_parsed_expression_is(const char * expression, Poincare::Expression r, bool addParentheses = false, bool parseForAssignment = false, Preferences::MixedFractions mixedFractionsParameter = Preferences::MixedFractions::Enabled) {
   Shared::GlobalContext context;
   Preferences::sharedPreferences()->enableMixedFractions(mixedFractionsParameter);
-  Expression e = parse_expression(expression, &context, addParentheses, parseAsAssignment);
+  Expression e = parse_expression(expression, &context, addParentheses, parseForAssignment);
   quiz_assert_print_if_failure(e.isIdenticalTo(r), expression);
 }
 

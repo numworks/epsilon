@@ -35,6 +35,7 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   // ExpressionModelListController
+  KDCoordinate expressionRowHeight(int j) override;
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   // Make methods public
   void editExpression(Ion::Events::Event event) override { return Shared::FunctionListController::editExpression(event); }

@@ -29,7 +29,7 @@ int MixedFractionNode::serialize(char * buffer, int bufferSize, Preferences::Pri
 template <typename T> Evaluation<T> MixedFractionNode::templateApproximate(const ApproximationContext& approximationContext) const {
   Evaluation<T> integerPart = childAtIndex(0)->approximate(T(), approximationContext);
   Evaluation<T> fractionPart = childAtIndex(1)->approximate(T(), approximationContext);
-  if (integerPart.type() != EvaluationNode<T>::Type::Complex || integerPart.type() != EvaluationNode<T>::Type::Complex) {
+  if (integerPart.type() != EvaluationNode<T>::Type::Complex || fractionPart.type() != EvaluationNode<T>::Type::Complex) {
     return Complex<T>::Undefined();
   }
   T evaluatedIntegerPart = integerPart.toScalar();

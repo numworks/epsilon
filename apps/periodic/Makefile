@@ -7,8 +7,10 @@ app_periodic_src = $(addprefix apps/periodic/,\
   coloring.cpp \
   elements_data_base.cpp \
   elements_view.cpp \
+  elements_view_data_source.cpp \
   main_controller.cpp \
   single_element_view.cpp \
+  table_layout.cpp \
 )
 
 apps_src += $(app_periodic_src)

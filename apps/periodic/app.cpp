@@ -1,7 +1,7 @@
 #include "app.h"
 #include "elements_data_base.h"
-#include "../apps_container.h"
-#include "../settings/settings_icon.h"
+#include <apps/apps_container.h>
+#include <apps/settings/settings_icon.h> /* TODO */
 #include <apps/i18n.h>
 #include <escher/palette.h>
 
@@ -37,6 +37,8 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 App::App(Snapshot * snapshot) :
   Shared::TextFieldDelegateApp(snapshot, &m_mainController),
   m_mainController(&m_modalViewController)
-{}
+{
+  snapshot->elementsViewDataSource()->setDelegate(&m_mainController);
+}
 
 }

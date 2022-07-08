@@ -1,4 +1,6 @@
 #include "main_controller.h"
+#include "app.h"
+#include "table_layout.h"
 
 namespace Periodic {
 
@@ -20,21 +22,29 @@ void MainController::ContentView::layoutSubviews(bool force) {
 
 // MainController
 
+void MainController::selectedElementHasChanged(AtomicNumber oldZ) {
+  m_view.bannerView()->reload();
+  m_view.elementsView()->cursorMoved(oldZ);
+}
+
 bool MainController::handleEvent(Ion::Events::Event e) {
-  bool cursorMoved = false;
+  ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+  AtomicNumber z = dataSource->selectedElement();
+  if (z == ElementsViewDataSource::k_noElement) {
+    return false;
+  }
+  AtomicNumber newZ = z;
   if (e == Ion::Events::Up) {
-    cursorMoved = m_view.elementsView()->moveCursorVertically(false);
+    newZ = TableLayout::NextElement(z, TableLayout::Direction::DecreasingRow);
   } else if (e == Ion::Events::Down) {
-    cursorMoved = m_view.elementsView()->moveCursorVertically(true);
+    newZ = TableLayout::NextElement(z, TableLayout::Direction::IncreasingRow);
   } else if (e == Ion::Events::Left) {
-    cursorMoved = m_view.elementsView()->moveCursorHorizontally(false);
+    newZ = TableLayout::NextElement(z, TableLayout::Direction::DecreasingZ);
   } else if (e == Ion::Events::Right) {
-    cursorMoved = m_view.elementsView()->moveCursorHorizontally(true);
+    newZ = TableLayout::NextElement(z, TableLayout::Direction::IncreasingZ);
   }
-  if (cursorMoved) {
-    m_view.bannerView()->reload();
-  }
-  return cursorMoved;
+  dataSource->setSelectedElement(newZ);
+  return newZ != z;
 }
 
 }

@@ -65,11 +65,10 @@ class IdentifierTokenizer {
 public:
   IdentifierTokenizer() : m_stringStart(nullptr) {}
 
-  void startTokenization(const char * string, size_t length, Context * context, bool parseAsAssignment) {
+  void startTokenization(const char * string, size_t length, Context * context) {
     m_stringStart = string;
     m_stringEnd = string + length;
     m_context = context;
-    m_parseAsAssignment = parseAsAssignment;
     m_numberOfIdentifiers = 0;
   }
 
@@ -86,7 +85,6 @@ private:
   const char * m_stringStart;
   const char * m_stringEnd;
   Context * m_context;
-  bool m_parseAsAssignment;
   Token m_identifiersList[k_maxNumberOfIdentifiersInList];
   int m_numberOfIdentifiers;
 };

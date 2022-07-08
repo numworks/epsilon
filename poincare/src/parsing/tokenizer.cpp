@@ -184,7 +184,7 @@ Token Tokenizer::popToken() {
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder.previousCodePoint();
     assert(!m_identifierTokenizer.canStillPop()); // assert we're done with previous tokenization
-    m_identifierTokenizer.startTokenization(m_decoder.stringPosition(), popIdentifier(), *m_parserContext, m_parseAsAssignment);
+    m_identifierTokenizer.startTokenization(m_decoder.stringPosition(), popIdentifier(), m_parseAsAssignment ? nullptr : *m_parserContext);
     return m_identifierTokenizer.popIdentifier();
   }
   if ('(' <= c && c <= '/') {

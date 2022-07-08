@@ -79,7 +79,7 @@ Token::Type IdentifierTokenizer::stringTokenType(const char * string, size_t len
   if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
     return Token::ReservedFunction;
   }
-  if (m_parseAsAssignment || m_context == nullptr || stringIsACodePointFollowedByNumbers(string, length) || m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
+  if (m_context == nullptr || stringIsACodePointFollowedByNumbers(string, length) || m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
     return Token::CustomIdentifier;
   }
   return Token::Undefined;

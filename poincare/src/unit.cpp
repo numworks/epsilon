@@ -678,11 +678,12 @@ Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
 }
 
 int UnitNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  assert(bufferSize >= 0);
-  int underscoreLength = std::min<int>(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
-  buffer += underscoreLength;
-  bufferSize -= underscoreLength;
-  return underscoreLength + m_representative->serialize(buffer, bufferSize, m_prefix);
+  /* assert(bufferSize >= 0);
+   * int underscoreLength = std::min<int>(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
+   * buffer += underscoreLength;
+   * bufferSize -= underscoreLength;
+   * return underscoreLength + m_representative->serialize(buffer, bufferSize, m_prefix); */
+  return m_representative->serialize(buffer, bufferSize, m_prefix);
 }
 
 int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {

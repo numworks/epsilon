@@ -15,7 +15,8 @@ AtomicNumber TableLayout::NextElement(AtomicNumber z, Direction direction) {
   size_t col, row;
   PositionForElement(z, &col, &row);
   AtomicNumber newZ = ElementInCell(col + (row + rowStep) * k_numberOfColumns);
-  if (!ElementsDataBase::IsElement(newZ) && direction == Direction::DecreasingRow) {
+  constexpr size_t k_firstRowForDeselection = 6;
+  if (!ElementsDataBase::IsElement(newZ) && (direction == Direction::DecreasingRow || row < k_firstRowForDeselection)) {
     return z;
   }
   return newZ;

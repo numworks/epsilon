@@ -49,7 +49,8 @@ public:
 
 private:
   // View
-  int numberOfSubviews() const override { return 3; }
+  bool displayPlotType() const { return m_messageTextView.text() != nullptr && m_messageTextView.text()[0] != 0; }
+  int numberOfSubviews() const override { return 2 + displayPlotType(); }
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 

@@ -1,6 +1,7 @@
 #ifndef POINCARE_PARSING_IDENTIFIER_TOKENIZER_H
 #define POINCARE_PARSING_IDENTIFIER_TOKENIZER_H
 
+#include "parsing_context.h"
 #include "token.h"
 
 /* Identifiers can be ReservedFunctions, SpecialIdentifiers,
@@ -63,12 +64,11 @@ namespace Poincare {
 
 class IdentifierTokenizer {
 public:
-  IdentifierTokenizer() : m_stringStart(nullptr) {}
+  IdentifierTokenizer(ParsingContext * parsingContext) : m_parsingContext(parsingContext), m_stringStart(nullptr) {}
 
-  void startTokenization(const char * string, size_t length, Context * context) {
+  void startTokenization(const char * string, size_t length) {
     m_stringStart = string;
     m_stringEnd = string + length;
-    m_context = context;
     m_numberOfIdentifiers = 0;
   }
 
@@ -82,9 +82,9 @@ private:
   Token popRightMostIdentifier(const char * * currentStringEnd);
   Token::Type stringTokenType(const char * string, size_t length) const;
 
+  ParsingContext * m_parsingContext;
   const char * m_stringStart;
   const char * m_stringEnd;
-  Context * m_context;
   Token m_identifiersList[k_maxNumberOfIdentifiersInList];
   int m_numberOfIdentifiers;
 };

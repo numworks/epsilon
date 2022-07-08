@@ -15,12 +15,11 @@ namespace Poincare {
 
 class Tokenizer {
 public:
-  Tokenizer(const char * text, Context * * parserContext) :
-    m_parserContext(parserContext),
+  Tokenizer(const char * text, ParsingContext * parsingContext) :
     m_decoder(text),
-    m_identifierTokenizer()
+    m_identifierTokenizer(parsingContext)
   {}
-  Token popToken(bool tokenizeForAssignment = false);
+  Token popToken();
 
   // Rewind tokenizer
   const char * currentPosition() { return m_decoder.stringPosition(); }
@@ -42,7 +41,6 @@ private:
   size_t popIdentifier();
   Token popNumber();
 
-  Context * * m_parserContext;
   UTF8Decoder m_decoder;
   IdentifierTokenizer m_identifierTokenizer;
 };

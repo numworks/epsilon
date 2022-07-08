@@ -90,7 +90,7 @@ Token::Type IdentifierTokenizer::stringTokenType(const char * string, size_t len
   if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
     return Token::ReservedFunction;
   }
-  if (m_context && m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
+  if (m_parsingContext->context() && m_parsingContext->context()->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
     return Token::CustomIdentifier;
   }
   if (Unit::CanParse(string, length, nullptr, nullptr)) {
@@ -100,7 +100,7 @@ Token::Type IdentifierTokenizer::stringTokenType(const char * string, size_t len
     // CustomIdentifiers can't contain '°'
     return Token::Undefined;
   }
-  if (m_context == nullptr || stringIsACodePointFollowedByNumbers(string, length)) {
+  if (m_parsingContext->context() == nullptr || m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment || stringIsACodePointFollowedByNumbers(string, length)) {
     return Token::CustomIdentifier;
   }
   return Token::Undefined;

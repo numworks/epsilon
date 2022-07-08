@@ -35,6 +35,10 @@ bool MainController::handleEvent(Ion::Events::Event e) {
       dataSource->setSelectedElement(m_previousElement);
       return true;
     }
+    if (e == Ion::Events::OK || e == Ion::Events::EXE) {
+      stackOpenPage(&m_coloringController);
+      return true;
+    }
     return false;
   }
   AtomicNumber newZ = z;

@@ -33,11 +33,11 @@ private:
     Shared::WithRecord::setRecord(record);
     m_preimageGraphController.setRecord(record);
   }
-  static constexpr int k_parameterCellType = 0;
-  static constexpr int k_calculationCellType = 1;
-  static constexpr int k_maxNumberOfParameters = 3;
-  static constexpr int k_preimageIndex = 1;
-  static constexpr int k_derivativeIndex = 2;
+  constexpr static int k_parameterCellType = 0;
+  constexpr static int k_calculationCellType = 1;
+  constexpr static int k_maxNumberOfParameters = 3;
+  constexpr static int k_preimageIndex = 1;
+  constexpr static int k_derivativeIndex = 2;
   bool editableParameter(int index);
   int typeAtIndex(int index) override;
   int numberOfParameters() const { return function()->numberOfCurveParameters() + shouldDisplayDerivative(); }

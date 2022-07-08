@@ -38,16 +38,12 @@ size_t Tokenizer::popWhile(PopTest popTest, CodePoint context) {
   return length;
 }
 
-bool Tokenizer::ShouldAddCodePointToIdentifier(const CodePoint c, const CodePoint context) {
-  return c.isDecimalDigit() || c.isLatinLetter() || c == UCodePointSystem || (c != UCodePointNull && c == context) || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
+bool Tokenizer::ShouldAddCodePointToIdentifier(const CodePoint c) {
+  return c.isDecimalDigit() || c.isLatinLetter() || c == UCodePointSystem || c == '_' || c == UCodePointDegreeSign || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
 }
 
 size_t Tokenizer::popIdentifier() {
-  return popWhile(ShouldAddCodePointToIdentifier, '_');
-}
-
-size_t Tokenizer::popUnitOrConstant() {
-  return popWhile(ShouldAddCodePointToIdentifier, UCodePointDegreeSign);
+  return popWhile([](CodePoint c, CodePoint context){ return ShouldAddCodePointToIdentifier(c); });
 }
 
 size_t Tokenizer::popDigits() {
@@ -146,26 +142,6 @@ Token Tokenizer::popToken() {
     result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c));
     return result;
   }
-  if (c == '_') {
-    /* For now, unit/constants symbols must be prefixed with an underscore.
-     * Otherwise, common custom identifiers would be systematically parsed as
-     * units (for instance, A and g).
-     * TODO The Context of the Parser might be used to decide whether a symbol
-     * as 'A' should be parsed as a custom identifier, if 'A' already exists in
-     * the context, or as a unit if not.
-     */
-    Token result(Token::Unit);
-    size_t tokenLength = popUnitOrConstant() + 1;
-    if (Constant::IsConstant(start, tokenLength)) {
-      // If it's a constant, keep '_' at the beginning.
-      result.setType(Token::Constant);
-      result.setString(start, tokenLength);
-    } else {
-      // If it's an unit, remove '_' at the beginning.
-      result.setString(start + 1, tokenLength - 1);
-    }
-    return result;
-  }
   if (c == '"') {
     Token result(Token::CustomIdentifier);
     result.setString(start, popIdentifier() + 2);
@@ -177,9 +153,7 @@ Token Tokenizer::popToken() {
     return result;
   }
 
-  if (c.isLatinLetter() ||
-      c.isGreekCapitalLetter() ||
-      c.isGreekSmallLetter()) // Greek small letter pi is matched earlier
+  if (ShouldAddCodePointToIdentifier(c))
   {
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder.previousCodePoint();

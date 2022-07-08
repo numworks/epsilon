@@ -307,7 +307,9 @@ bool UnitNode::Representative::canParseWithEquivalents(const char * symbol, size
       if (potentialPrefixLength >= 0
       && strncmp(rootSymbolAlias, symbol + potentialPrefixLength, rootSymbolLength) == 0
       && candidate[i].canParse(symbol, potentialPrefixLength, prefix)) {
-        *representative = (candidate + i);
+        if (representative) {
+          *representative = (candidate + i);
+        }
         return true;
       }
     }
@@ -317,7 +319,9 @@ bool UnitNode::Representative::canParseWithEquivalents(const char * symbol, size
 
 bool UnitNode::Representative::canParse(const char * symbol, size_t length, const Prefix * * prefix) const {
   if (!isInputPrefixable()) {
-    *prefix = Prefix::EmptyPrefix();
+    if (prefix) {
+      *prefix = Prefix::EmptyPrefix();
+    }
     return length == 0;
   }
   for (size_t i = 0; i < Prefix::k_numberOfPrefixes; i++) {
@@ -327,7 +331,9 @@ bool UnitNode::Representative::canParse(const char * symbol, size_t length, cons
      && canPrefix(pre, true)
      && strncmp(symbol, prefixSymbol, length) == 0)
     {
-      *prefix = pre;
+      if (prefix) {
+        *prefix = pre;
+      }
       return true;
     }
   }

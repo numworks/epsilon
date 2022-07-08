@@ -4,7 +4,7 @@
 #include "token.h"
 
 /* Identifiers can be ReservedFunctions, SpecialIdentifiers,
-* CustomIdentifiers or Constants.
+* CustomIdentifiers, Units or Constants.
 * When tokenizing a string, the tokenizer will pop identifiers depending on
 * the context.
 * foobar(x) will be tokenized as f*o*o*b*a*r*(x) by default, but if foo is
@@ -79,7 +79,7 @@ private:
   constexpr static int k_maxNumberOfIdentifiersInList = 10;
 
   void fillIdentifiersList();
-  Token popRightMostIdentifier(const char * currentStringEnd);
+  Token popRightMostIdentifier(const char * * currentStringEnd);
   Token::Type stringTokenType(const char * string, size_t length) const;
 
   const char * m_stringStart;

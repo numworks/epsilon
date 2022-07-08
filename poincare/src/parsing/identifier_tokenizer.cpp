@@ -1,5 +1,6 @@
 #include "identifier_tokenizer.h"
 #include <ion/unicode/utf8_decoder.h>
+#include <ion/unicode/utf8_helper.h>
 #include <poincare/constant.h>
 #include "helper.h"
 
@@ -27,8 +28,7 @@ void IdentifierTokenizer::fillIdentifiersList() {
        * list of token. */
       m_numberOfIdentifiers = 0;
     }
-    Token rightMostToken = popRightMostIdentifier(currentStringEnd);
-    currentStringEnd -= rightMostToken.length();
+    Token rightMostToken = popRightMostIdentifier(&currentStringEnd);
     m_identifiersList[m_numberOfIdentifiers] = rightMostToken;
     m_numberOfIdentifiers++;
   }
@@ -36,24 +36,29 @@ void IdentifierTokenizer::fillIdentifiersList() {
   m_stringStart = rightMostParsedToken.text() + rightMostParsedToken.length();
 }
 
-Token IdentifierTokenizer::popRightMostIdentifier(const char * currentStringEnd) {
+Token IdentifierTokenizer::popRightMostIdentifier(const char * * currentStringEnd) {
   const char * tokenStart = m_stringStart;
   UTF8Decoder decoder(tokenStart);
   Token::Type tokenType = Token::Undefined;
   /* Find the right-most identifier by trying to parse 'abcd', then 'bcd',
    * then 'cd' and then 'd' until you find a defined identifier. */
   const char * nextTokenStart = tokenStart;
-  while (tokenType == Token::Undefined && nextTokenStart < currentStringEnd) {
+  while (tokenType == Token::Undefined && nextTokenStart < *currentStringEnd) {
     tokenStart = nextTokenStart;
-    tokenType = stringTokenType(tokenStart, currentStringEnd - tokenStart);
+    tokenType = stringTokenType(tokenStart, *currentStringEnd - tokenStart);
     decoder.nextCodePoint();
     nextTokenStart = decoder.stringPosition();
   }
-  if (tokenType == Token::Undefined) {
-    tokenType = Token::CustomIdentifier;
+  int tokenLength = *currentStringEnd - tokenStart;
+  *currentStringEnd = tokenStart;
+  if (tokenType == Token::Unit) {
+    assert(tokenStart[0] == '_');
+    // Skip the '_'
+    tokenStart += 1;
+    tokenLength -= 1;
   }
   Token result(tokenType);
-  result.setString(tokenStart, currentStringEnd - tokenStart);
+  result.setString(tokenStart, tokenLength);
   return result;
 }
 
@@ -76,14 +81,24 @@ Token::Type IdentifierTokenizer::stringTokenType(const char * string, size_t len
   if (Constant::IsConstant(string, length)) {
     return Token::Constant;
   }
+  if (string[0] == '_') {
+    if (Unit::CanParse(string + 1, length - 1, nullptr, nullptr)) {
+      return Token::Unit;
+    }
+    // Only constants and units can be prefixed with a '_'
+    return Token::Undefined;
+  }
   if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
     return Token::ReservedFunction;
+  }
+  if (UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + length)) {
+    // CustomIdentifiers can't contain '°'
+    return Token::Undefined;
   }
   if (m_context == nullptr || stringIsACodePointFollowedByNumbers(string, length) || m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
     return Token::CustomIdentifier;
   }
   return Token::Undefined;
 }
-
 
 }

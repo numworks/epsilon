@@ -10,7 +10,15 @@ namespace Periodic {
 
 class ElementsViewDataSource {
 public:
+  constexpr static size_t k_numberOfColorings = 8;
   constexpr static GroupsColoring ColorByGroups;
+  constexpr static BlocksColoring ColorByBlocks;
+  constexpr static MetalsColoring ColorByMetals;
+  constexpr static MassColoring ColorByMass;
+  constexpr static ElectronegativityColoring ColorByElectronegativity;
+  constexpr static MeltingPointColoring ColorByMeltingPoint;
+  constexpr static BoilingPointColoring ColorByBoilingPoint;
+  constexpr static RadiusColoring ColorByRadius;
 
   ElementsViewDataSource() : m_delegate(nullptr), m_coloring(&ColorByGroups), m_textFilter(nullptr), m_selectedElement(1) {}
 

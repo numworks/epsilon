@@ -78,18 +78,18 @@ void Parser::popToken() {
     m_pendingImplicitMultiplication = false;
   } else {
     m_currentToken = m_nextToken;
-    /* Change the m_parseAsAssignment in two cases :
+    /* Change the m_parseForAssignment in two cases :
      * - if token = rightwardsArrow, set it to true
      *   (we're starting an assignment of type ...->f(x))
      * - if token is comparison operator, set it to false
      *   (we're ending an assignment of type f(x)=... ) */
-    m_parseAsAssignment = m_currentToken.type() == Token::RightwardsArrow || (m_parseAsAssignment && !m_currentToken.isComparisonOperator());
+    m_parseForAssignment = m_currentToken.type() == Token::RightwardsArrow || (m_parseForAssignment && !m_currentToken.isComparisonOperator());
     if (m_currentToken.is(Token::EndOfStream)) {
       /* Avoid reading out of buffer (calling popToken would read the character
        * after EndOfStream) */
       m_status = Status::Error; // Expression misses a rightHandSide
     } else {
-      m_nextToken = m_tokenizer.popToken(m_parseAsAssignment);
+      m_nextToken = m_tokenizer.popToken(m_parseForAssignment);
     }
   }
 }
@@ -571,7 +571,7 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
    * If there is no context, f(x) is always parsed as a function and u{n} as
    * a sequence*/
   Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
-  if (m_context != nullptr && !m_parseAsAssignment) {
+  if (m_context != nullptr && !m_parseForAssignment) {
     idType = m_context->expressionTypeForIdentifier(name, length);
     if (idType != Context::SymbolAbstractType::Function && idType != Context::SymbolAbstractType::Sequence && idType != Context::SymbolAbstractType::List) {
       leftHandSide = Symbol::Builder(name, length);

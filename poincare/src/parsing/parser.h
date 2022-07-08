@@ -23,16 +23,19 @@ public:
    * Setting the context to nullptr remove some ambiguous cases like:
    * - f(x) will always be parsed as f(x) and not f*(x)
    * - u{n} will always be parsed as u_n and not u*{n}
-   * - abc will always be parsed as abc and not a*b*c */
-  Parser(const char * text, Context * context, bool parseAsAssignment = false) :
+   * - abc will always be parsed as abc and not a*b*c
+   * The same is true if you set parseForAssignment = true
+   * but the parser will set parseForAssignment = false when it encounters a "=".
+   * (so that f(x)=xy is parsed as f(x)=x*y, and not as f*(x)=x*y or as f(x)=xy) */
+  Parser(const char * text, Context * context, bool parseForAssignment = false) :
     m_context(context),
     m_status(Status::Progress),
     m_tokenizer(text, &m_context),
     m_currentToken(Token(Token::Undefined)),
-    m_nextToken(m_tokenizer.popToken(parseAsAssignment)),
+    m_nextToken(m_tokenizer.popToken(parseForAssignment)),
     m_pendingImplicitMultiplication(false),
     m_waitingSlashForMixedFraction(false),
-    m_parseAsAssignment(parseAsAssignment) {}
+    m_parseForAssignment(parseForAssignment) {}
 
   Expression parse();
   Status getStatus() const { return m_status; }
@@ -108,7 +111,7 @@ private:
    * the storage. 5->abc should NOT be parsed as 5->a*b*c.
    * Also some expressions like f(x)=x should not be parsed as f*(x)=x
    * */
-  bool m_parseAsAssignment;
+  bool m_parseForAssignment;
 };
 
 }

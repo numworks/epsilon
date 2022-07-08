@@ -33,7 +33,7 @@ public:
   }
 private:
   typedef bool (*PopTest)(CodePoint c, CodePoint context);
-  static bool ShouldAddCodePointToIdentifier(const CodePoint c, const CodePoint context);
+  static bool ShouldAddCodePointToIdentifier(const CodePoint c);
   const CodePoint nextCodePoint(PopTest popTest, CodePoint context = UCodePointNull, bool * testResult = nullptr);
   bool canPopCodePoint(const CodePoint c);
   size_t popWhile(PopTest popTest, CodePoint context = UCodePointNull);

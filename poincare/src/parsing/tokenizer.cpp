@@ -42,137 +42,7 @@ bool Tokenizer::ShouldAddCodePointToIdentifier(const CodePoint c, const CodePoin
   return c.isDecimalDigit() || c.isLatinLetter() || c == UCodePointSystem || (c != UCodePointNull && c == context) || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
 }
 
-bool stringIsACodePointFollowedByNumbers(const char * string, int length) {
-  UTF8Decoder tempDecoder(string);
-  tempDecoder.nextCodePoint();
-  while (tempDecoder.stringPosition() < string + length) {
-    CodePoint c = tempDecoder.nextCodePoint();
-    if (!c.isDecimalDigit()) {
-      return false;
-    }
-  }
-  return true;
-}
-
-/* Identifiers can be ReservedFunctions, SpecialIdentifiers or
- * CustomIdentifiers.
- * When tokenizing a string, the tokenizer will pop identifiers depending on
- * the context.
- * foobar(x) will be tokenized as f*o*o*b*a*r*(x) by default, but if foo is
- * defined as a variable and bar as a function in the context, it will be
- * parsed as foo*bar(x).
- *
- * This is a right-to-eager tokenizer.
- * When parsing abc, we'll first consider abc, then bc, then c.
- * This behavior is a convenient way to give precedence to function over symbols
- *
- * -- EXAMPLES --
- * Original state :
- * The following symbols are defined: ab, bacos azfoo and foobar.
- * acos and cos are reserved functions.
- *
- * Expected results :
- *       Input  |  Desired parsed result
- *---------------------------------------------------------------------------
- *         xyz  |  x*y*z, and not xyz
- *       "xyz"  |  xyz and not xyz
- *       3→xyz  |  3→xyz, and not 3→x*y*z
- *          ab  |  ab and not a*b, because ab is defined
- *     acos(x)  |  acos(x) and not a*cos(x)
- *    bacos(x)  |  bacos(x) and not b*acos(x), because bacos is defined
- * azfoobar(x)  |  a*z*foobar(x) and not azfoo*b*a*r*(x)
- *        x2y   |  x2*y (letter followed by numbers are always in the same
- *                 identifier)
- *        x2y   |  x2y if x2y is defined
- *
- * TODO : handle combined code points? For now combining code points will
- * trigger a syntax error.
- * */
-Token Tokenizer::popIdentifier() {
-  const char * start = m_decoder.stringPosition();
-  Token result(Token::Undefined);
-  size_t currentStringLen = popWhile(ShouldAddCodePointToIdentifier, '_');
-  // You want to pop the left-most identifier of the string.
-  while (currentStringLen > 0) {
-    const char * currentStringEnd = start + currentStringLen;
-    UTF8Decoder tempDecoder(start);
-    const char * tokenStart = start;
-    const char * nextTokenStart = start;
-    Token::Type tokenType = Token::Undefined;
-    /* Find the right-most identifier by trying to parse 'abcd', then 'bcd',
-     * then 'cd' and then 'd' until you find a defined identifier. */
-    while (tokenType == Token::Undefined && nextTokenStart < currentStringEnd) {
-      tokenStart = nextTokenStart;
-      tokenType = stringTokenType(tokenStart, currentStringEnd - tokenStart);
-      tempDecoder.nextCodePoint();
-      nextTokenStart = tempDecoder.stringPosition();
-    }
-    if (tokenStart == start) {
-      /* If you reach this point, it means that the right-most identifier is
-       * also the left-most one, which is the identifier you want to pop.
-       * */
-      if (tokenType == Token::Undefined) {
-        tokenType = Token::CustomIdentifier;
-      }
-      Token result(tokenType);
-      result.setString(start, currentStringLen);
-      // Set the decoder to the end of the popped identifier.
-      m_decoder.setPosition(start + currentStringLen);
-      return result;
-    }
-    /* If the left-most identifier was not yet found, reparse the string
-     * without the right-most identifier you found.
-     * So if you found 'd' at the right of 'abcd', restart with 'abc'.
-     * */
-    size_t newStringLen = tokenStart - start;
-    assert(newStringLen < currentStringLen);
-    currentStringLen = newStringLen;
-  }
-  assert(false);
-  return Token(Token::Undefined);
-}
-
-/* This method determines whether a string is a reserved function name,
- * a special identifier name or a custom identifier name.
- *
- * WARNING : You should only parse with nullptr if the string is a serialized
- * expression !
- * If the context is nullptr, we assume that the string is a
- * serialized expression and that any string is a customIdentifier.
- * This is to ensure that already parsed Expressions that have been then
- * serialized are correctly reparsed even without a context.
- *
- * This is used for instance in the calculation history, where the context
- * might have changed between the time when an expression was entered and the
- * time it is displayed in the history. We do not save each calculation context
- * in the history.
- *
- * Example : xy(5) will be tokenized as x*y*(5) if the context exists
- * but doesn't contain any variable.
- * It will be then serialized as "x×y×(5)" so when it is parsed again,
- * the tokenizer doesn't need a context to see that it is not a function.
- * On the other hand, if a function is stored in ab, ab(5) will be
- * tokenized as ab(5), and then serialized as "ab(5)".
- * When it is parsed again without any context, the tokenizer must not
- * turn "ab(5)" into "a*b*(5)".
- * */
-Token::Type Tokenizer::stringTokenType(const char * string, size_t length) {
-  if (ParsingHelper::IsSpecialIdentifierName(string, length)) {
-    return Token::SpecialIdentifier;
-  }
-  if (Constant::IsConstant(string, length)) {
-    return Token::Constant;
-  }
-  if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
-    return Token::ReservedFunction;
-  }
-  if (m_parseAsAssignment || m_context == nullptr || stringIsACodePointFollowedByNumbers(string, length) ||m_context->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
-    return Token::CustomIdentifier;
-  }
-  return Token::Undefined;
-}
-
-size_t Tokenizer::popForcedCustomIdentifier() {
+size_t Tokenizer::popIdentifier() {
   return popWhile(ShouldAddCodePointToIdentifier, '_');
 }
 
@@ -250,6 +120,10 @@ Token Tokenizer::popNumber() {
 }
 
 Token Tokenizer::popToken() {
+  if (m_identifierTokenizer.canStillPop()) {
+    // Popping an implicit multiplication between identifiers
+    return m_identifierTokenizer.popIdentifier();
+  }
   // Skip whitespaces
   while (canPopCodePoint(' ')) {}
 
@@ -294,7 +168,7 @@ Token Tokenizer::popToken() {
   }
   if (c == '"') {
     Token result(Token::CustomIdentifier);
-    result.setString(start, popForcedCustomIdentifier() + 2);
+    result.setString(start, popIdentifier() + 2);
     // The +2 for the two ""
     if (m_decoder.stringPosition()[0] != '"') {
       return Token(Token::Undefined);
@@ -309,7 +183,9 @@ Token Tokenizer::popToken() {
   {
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder.previousCodePoint();
-    return popIdentifier();
+    assert(!m_identifierTokenizer.canStillPop()); // assert we're done with previous tokenization
+    m_identifierTokenizer.startTokenization(m_decoder.stringPosition(), popIdentifier(), *m_parserContext, m_parseAsAssignment);
+    return m_identifierTokenizer.popIdentifier();
   }
   if ('(' <= c && c <= '/') {
     /* Those code points form a contiguous range in the utf-8 code points set,

@@ -65,14 +65,13 @@ class IdentifierTokenizer {
 public:
   IdentifierTokenizer() : m_stringStart(nullptr) {}
 
-  IdentifierTokenizer(const char * string, size_t length, Context * context, bool parseAsAssignment) :
-    m_stringStart(string),
-    m_stringEnd(string + length),
-    m_context(context),
-    m_parseAsAssignment(parseAsAssignment),
-    m_identifiersList{},
-    m_numberOfIdentifiers(0)
-  {}
+  void startTokenization(const char * string, size_t length, Context * context, bool parseAsAssignment) {
+    m_stringStart = string;
+    m_stringEnd = string + length;
+    m_context = context;
+    m_parseAsAssignment = parseAsAssignment;
+    m_numberOfIdentifiers = 0;
+  }
 
   bool canStillPop() { return m_stringStart && (m_numberOfIdentifiers != 0 || m_stringStart < m_stringEnd); }
   Token popIdentifier();

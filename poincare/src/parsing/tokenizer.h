@@ -9,17 +9,19 @@
 
 #include <ion/unicode/utf8_decoder.h>
 #include "token.h"
+#include "identifier_tokenizer.h"
 
 namespace Poincare {
 
 class Tokenizer {
 public:
-  Tokenizer(const char * text, Context * context, bool parseAsAssignment = false) :
-    m_context(context),
+  Tokenizer(const char * text, Context * * parserContext, bool parseAsAssignment = false) :
+    m_parserContext(parserContext),
     m_decoder(text),
+    m_identifierTokenizer(),
     m_parseAsAssignment(parseAsAssignment) {}
   Token popToken();
-  void setContext(Context * context) { m_context = context; }
+
   bool shouldParseAsAssignment() { return m_parseAsAssignment; }
 
   // Rewind tokenizer
@@ -39,14 +41,12 @@ private:
   size_t popBinaryDigits();
   size_t popHexadecimalDigits();
   size_t popUnitOrConstant();
-  Token popIdentifier();
-  size_t popForcedCustomIdentifier();
+  size_t popIdentifier();
   Token popNumber();
-  /* TODO: Put the algorithm of recognizing identifiers in parser.
-   * When doing so, move m_parseAsAssignment too. */
-  Token::Type stringTokenType(const char * string, size_t length);
-  Context * m_context;
+
+  Context * * m_parserContext;
   UTF8Decoder m_decoder;
+  IdentifierTokenizer m_identifierTokenizer;
   /* We need this bool to ensure that we can set multiplie-chars variable in
    * the storage. 5->abc should NOT be parsed as 5->a*b*c.
    * Also some expressions like f(x)=x should not be parsed as f*(x)=x

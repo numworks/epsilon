@@ -479,10 +479,8 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
       Context * oldContext = m_context;
       VariableContext parameterContext(Symbol::Builder(parameterText, parameterLength), m_context);
       m_context = &parameterContext;
-      m_tokenizer.setContext(m_context);
       parameters = parseFunctionParameters();
       m_context = oldContext;
-      m_tokenizer.setContext(m_context);
     } else {
       parameters = parseFunctionParameters();
     }

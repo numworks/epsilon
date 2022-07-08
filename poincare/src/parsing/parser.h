@@ -27,7 +27,7 @@ public:
   Parser(const char * text, Context * context, bool parseAsAssignment = false) :
     m_context(context),
     m_status(Status::Progress),
-    m_tokenizer(text, context, parseAsAssignment),
+    m_tokenizer(text, &m_context, parseAsAssignment),
     m_currentToken(Token(Token::Undefined)),
     m_nextToken(m_tokenizer.popToken()),
     m_pendingImplicitMultiplication(false),

@@ -27,11 +27,12 @@ public:
   Parser(const char * text, Context * context, bool parseAsAssignment = false) :
     m_context(context),
     m_status(Status::Progress),
-    m_tokenizer(text, &m_context, parseAsAssignment),
+    m_tokenizer(text, &m_context),
     m_currentToken(Token(Token::Undefined)),
-    m_nextToken(m_tokenizer.popToken()),
+    m_nextToken(m_tokenizer.popToken(parseAsAssignment)),
     m_pendingImplicitMultiplication(false),
-    m_waitingSlashForMixedFraction(false) {}
+    m_waitingSlashForMixedFraction(false),
+    m_parseAsAssignment(parseAsAssignment) {}
 
   Expression parse();
   Status getStatus() const { return m_status; }
@@ -103,6 +104,11 @@ private:
   Token m_nextToken;
   bool m_pendingImplicitMultiplication;
   bool m_waitingSlashForMixedFraction;
+  /* We need this bool to ensure that we can set multiplie-chars variable in
+   * the storage. 5->abc should NOT be parsed as 5->a*b*c.
+   * Also some expressions like f(x)=x should not be parsed as f*(x)=x
+   * */
+  bool m_parseAsAssignment;
 };
 
 }

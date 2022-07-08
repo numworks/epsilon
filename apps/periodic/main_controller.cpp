@@ -31,6 +31,10 @@ bool MainController::handleEvent(Ion::Events::Event e) {
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   AtomicNumber z = dataSource->selectedElement();
   if (!ElementsDataBase::IsElement(z)) {
+    if (e == Ion::Events::Up) {
+      dataSource->setSelectedElement(m_previousElement);
+      return true;
+    }
     return false;
   }
   AtomicNumber newZ = z;
@@ -43,6 +47,7 @@ bool MainController::handleEvent(Ion::Events::Event e) {
   } else if (e == Ion::Events::Right) {
     newZ = TableLayout::NextElement(z, TableLayout::Direction::IncreasingZ);
   }
+  m_previousElement = z;
   dataSource->setSelectedElement(newZ);
   return newZ != z;
 }

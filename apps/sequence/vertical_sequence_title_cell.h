@@ -7,6 +7,8 @@ namespace Sequence {
 
 class VerticalSequenceTitleCell : public SequenceTitleCell {
 public:
+  constexpr static KDFont::Size k_font = KDFont::Size::Large;
+
   VerticalSequenceTitleCell();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void connectColorIndicator(bool status) { m_connectColorIndicator = status; }

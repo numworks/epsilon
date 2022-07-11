@@ -16,18 +16,20 @@ public:
   void setText(const char * textContent);
   void setFont(KDFont::Size font) { m_bufferTextView.setFont(font); }
   void setHorizontalAlignment(const float alignment) { return m_bufferTextView.setAlignment(alignment, k_verticalAlignment); }
-  KDFont::Size font() const override { return m_bufferTextView.font(); }
   const char * text() const override {
     return m_bufferTextView.text();
   }
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
+
 protected:
   KDRect bufferTextViewFrame() const;
   Escher::EvenOddBufferTextCell * bufferTextView() { return &m_bufferTextView; }
+
 private:
   constexpr static float k_verticalAlignment = KDContext::k_alignCenter;
+
   Escher::EvenOddBufferTextCell m_bufferTextView;
 };
 

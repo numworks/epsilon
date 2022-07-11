@@ -9,18 +9,16 @@ namespace Sequence {
 
 class SequenceTitleCell : public Shared::FunctionTitleCell {
 public:
-  SequenceTitleCell(KDFont::Size font = KDFont::Size::Large);
+  SequenceTitleCell(KDFont::Size font = KDFont::Size::Small);
   void setLayout(Poincare::Layout layout);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
-  KDFont::Size font() const override {
-    return m_titleTextView.font();
-  }
   Poincare::Layout layout() const override {
     return m_titleTextView.layout();
   }
   void reloadCell() override;
+
 protected:
   void layoutSubviews(bool force = false) override;
 

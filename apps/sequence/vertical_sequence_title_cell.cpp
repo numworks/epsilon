@@ -5,7 +5,7 @@
 namespace Sequence {
 
 VerticalSequenceTitleCell::VerticalSequenceTitleCell() :
-    SequenceTitleCell(Shared::FunctionTitleCell::Orientation::VerticalIndicator),
+    SequenceTitleCell(),
     m_connectColorIndicator(false)
 {
   /* We do not care here about the vertical alignment, it will be set properly

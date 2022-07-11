@@ -6,8 +6,8 @@ using namespace Escher;
 
 namespace Sequence {
 
-SequenceTitleCell::SequenceTitleCell(Shared::FunctionTitleCell::Orientation orientation, KDFont::Size font) :
-  Shared::FunctionTitleCell(orientation),
+SequenceTitleCell::SequenceTitleCell(KDFont::Size font) :
+  Shared::FunctionTitleCell(),
   m_titleTextView(k_horizontalOrientationAlignment, k_horizontalOrientationAlignment, KDColorBlack, KDColorWhite, font)
 {
   m_titleTextView.setRightMargin(3);

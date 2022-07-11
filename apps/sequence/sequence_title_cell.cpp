@@ -8,13 +8,9 @@ namespace Sequence {
 
 SequenceTitleCell::SequenceTitleCell(KDFont::Size font) :
   Shared::FunctionTitleCell(),
-  m_titleTextView(k_horizontalOrientationAlignment, k_horizontalOrientationAlignment, KDColorBlack, KDColorWhite, font)
+  m_titleTextView(k_alignment, k_alignment, KDColorBlack, KDColorWhite, font)
 {
   m_titleTextView.setRightMargin(3);
-}
-
-void SequenceTitleCell::setLayout(Poincare::Layout layout) {
-  m_titleTextView.setLayout(layout);
 }
 
 void SequenceTitleCell::setHighlighted(bool highlight) {
@@ -40,10 +36,6 @@ void SequenceTitleCell::reloadCell() {
   }
   m_titleTextView.reloadCell();
   FunctionTitleCell::reloadCell();
-}
-
-int SequenceTitleCell::numberOfSubviews() const {
-  return 1;
 }
 
 View * SequenceTitleCell::subviewAtIndex(int index) {

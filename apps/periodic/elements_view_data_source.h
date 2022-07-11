@@ -1,7 +1,7 @@
 #ifndef PERIODIC_ELEMENTS_VIEW_DATA_SOURCE_H
 #define PERIODIC_ELEMENTS_VIEW_DATA_SOURCE_H
 
-#include "coloring.h"
+#include "display_type.h"
 #include "elements_data_base.h"
 #include "elements_view_delegate.h"
 #include "palette.h"
@@ -10,28 +10,28 @@ namespace Periodic {
 
 class ElementsViewDataSource {
 public:
-  constexpr static size_t k_numberOfColorings = 8;
-  constexpr static GroupsColoring ColorByGroups;
-  constexpr static BlocksColoring ColorByBlocks;
-  constexpr static MetalsColoring ColorByMetals;
-  constexpr static MassColoring ColorByMass;
-  constexpr static ElectronegativityColoring ColorByElectronegativity;
-  constexpr static MeltingPointColoring ColorByMeltingPoint;
-  constexpr static BoilingPointColoring ColorByBoilingPoint;
-  constexpr static RadiusColoring ColorByRadius;
+  constexpr static size_t k_numberOfDisplayTypes = 8;
+  constexpr static GroupsDisplayType ColorByGroups;
+  constexpr static BlocksDisplayType ColorByBlocks;
+  constexpr static MetalsDisplayType ColorByMetals;
+  constexpr static MassDisplayType ColorByMass;
+  constexpr static ElectronegativityDisplayType ColorByElectronegativity;
+  constexpr static MeltingPointDisplayType ColorByMeltingPoint;
+  constexpr static BoilingPointDisplayType ColorByBoilingPoint;
+  constexpr static RadiusDisplayType ColorByRadius;
 
-  ElementsViewDataSource() : m_delegate(nullptr), m_coloring(&ColorByGroups), m_textFilter(nullptr), m_selectedElement(1) {}
+  ElementsViewDataSource() : m_delegate(nullptr), m_displayType(&ColorByGroups), m_textFilter(nullptr), m_selectedElement(1) {}
 
   void setDelegate(ElementsViewDelegate * delegate) { m_delegate = delegate; }
   AtomicNumber selectedElement() const { return m_selectedElement; }
   void setSelectedElement(AtomicNumber z);
-  const Coloring * coloring() const { return m_coloring; }
-  void setColoring(const Coloring * coloring) { m_coloring = coloring; }
+  const DisplayType * displayType() const { return m_displayType; }
+  void setDisplayType(const DisplayType * displayType) { m_displayType = displayType; }
   void setTextFilter(const char * filter) { m_textFilter = filter; }
 
 private:
   ElementsViewDelegate * m_delegate;
-  const Coloring * m_coloring;
+  const DisplayType * m_displayType;
   const char * m_textFilter;
   AtomicNumber m_selectedElement;
 };

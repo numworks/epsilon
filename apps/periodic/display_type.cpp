@@ -1,28 +1,28 @@
-#include "coloring.h"
+#include "display_type.h"
 #include "elements_view_data_source.h"
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 
 namespace Periodic {
 
-// Coloring
+// DisplayType
 
-void Coloring::setLegendForElement(AtomicNumber z, char * buffer, size_t bufferSize) const {
+void DisplayType::setLegendForElement(AtomicNumber z, char * buffer, size_t bufferSize) const {
   int numberOfChars = strlcpy(buffer, I18n::translate(titleForElement(z)), bufferSize);
   numberOfChars += legendContentForElement(z, buffer + numberOfChars, bufferSize - numberOfChars);
   assert(numberOfChars < bufferSize - 1);
 }
 
-// ContinuousColoring
+// ContinuousDisplayType
 
-Coloring::ColorPair ContinuousColoring::colorPairForElement(AtomicNumber z) const {
+DisplayType::ColorPair ContinuousDisplayType::colorPairForElement(AtomicNumber z) const {
   assert(ElementsDataBase::IsElement(z));
   ColorPair min = minimalColors();
   ColorPair max = maximalColors();
   return ColorPair(blendAlphaForContinuousParameter(z), min.fg(), max.fg(), min.bg(), max.bg());
 }
 
-size_t ContinuousColoring::legendContentForElement(AtomicNumber z, char * buffer, size_t bufferSize) const {
+size_t ContinuousDisplayType::legendContentForElement(AtomicNumber z, char * buffer, size_t bufferSize) const {
   if (!ElementsDataBase::IsElement(z)) {
     return 0;
   }
@@ -40,7 +40,7 @@ size_t ContinuousColoring::legendContentForElement(AtomicNumber z, char * buffer
   return numberOfChars;
 }
 
-uint8_t ContinuousColoring::blendAlphaForContinuousParameter(AtomicNumber z) const {
+uint8_t ContinuousDisplayType::blendAlphaForContinuousParameter(AtomicNumber z) const {
   /* FIXME We will recompute alpha for each element when redrawing the whole
    * table. We could memoize the sorted indexes to speed up the process. */
   assert(ElementsDataBase::IsElement(z));
@@ -54,9 +54,9 @@ uint8_t ContinuousColoring::blendAlphaForContinuousParameter(AtomicNumber z) con
   return static_cast<uint8_t>(numberOfLowerValues / (ElementsDataBase::k_numberOfElements - 1.f) * ((1 << 8) - 1.f));
 }
 
-// GroupsColoring
+// GroupsDisplayType
 
-Coloring::ColorPair GroupsColoring::colorPairForElement(AtomicNumber z) const {
+DisplayType::ColorPair GroupsDisplayType::colorPairForElement(AtomicNumber z) const {
   constexpr ColorPair k_colors[] = {
     ColorPair(Palette::ElementOrangeDark, Palette::ElementOrangeLight),
     ColorPair(Palette::ElementCeladonDark, Palette::ElementCeladonLight),
@@ -75,7 +75,7 @@ Coloring::ColorPair GroupsColoring::colorPairForElement(AtomicNumber z) const {
   return k_colors[static_cast<uint8_t>(group)];
 }
 
-I18n::Message GroupsColoring::titleForElement(AtomicNumber z) const {
+I18n::Message GroupsDisplayType::titleForElement(AtomicNumber z) const {
   if (!ElementsDataBase::IsElement(z)) {
     return I18n::Message::GroupOfElementsTitle;
   }

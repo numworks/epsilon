@@ -2,7 +2,7 @@
 #define PERIODIC_MAIN_CONTROLLER_H
 
 #include "banner_view.h"
-#include "coloring_choice_controller.h"
+#include "display_type_controller.h"
 #include "elements_view.h"
 #include "elements_view_delegate.h"
 #include <escher/stack_view_controller.h>
@@ -11,7 +11,7 @@ namespace Periodic {
 
 class MainController : public Escher::ViewController, public ElementsViewDelegate {
 public:
-  MainController(Escher::StackViewController * parentResponder) : ViewController(parentResponder), m_coloringController(parentResponder) {}
+  MainController(Escher::StackViewController * parentResponder) : ViewController(parentResponder), m_displayTypeController(parentResponder) {}
 
   // Escher::ViewController
   Escher::View * view() override { return &m_view; }
@@ -37,7 +37,7 @@ private:
     BannerView m_bannerView;
   };
 
-  ColoringChoiceController m_coloringController;
+  DisplayTypeController m_displayTypeController;
   ContentView m_view;
   AtomicNumber m_previousElement;
 };

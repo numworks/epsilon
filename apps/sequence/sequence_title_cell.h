@@ -9,12 +9,11 @@ namespace Sequence {
 
 class SequenceTitleCell : public Shared::FunctionTitleCell {
 public:
-  SequenceTitleCell(KDFont::Size font = KDFont::Size::Large);
+  SequenceTitleCell(Shared::FunctionTitleCell::Orientation orientation = Shared::FunctionTitleCell::Orientation::HorizontalIndicator, KDFont::Size font = KDFont::Size::Large);
   void setLayout(Poincare::Layout layout);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
-  void setOrientation(Orientation orientation) override;
   KDFont::Size font() const override {
     return m_titleTextView.font();
   }

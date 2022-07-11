@@ -6,11 +6,6 @@ using namespace Escher;
 
 namespace Shared {
 
-void FunctionTitleCell::setOrientation(Orientation orientation) {
-  m_orientation = orientation;
-  reloadCell();
-}
-
 void FunctionTitleCell::setColor(KDColor color) {
   m_functionColor = color;
   reloadCell();

@@ -38,7 +38,6 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   }, this), k_font)
 {
   for (int i = 0; i < k_maxNumberOfDisplayableFunctions; i++) {
-    m_functionTitleCells[i].setOrientation(FunctionTitleCell::Orientation::HorizontalIndicator);
     m_functionTitleCells[i].setFont(KDFont::Size::Small);
   }
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);

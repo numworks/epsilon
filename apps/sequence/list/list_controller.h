@@ -2,7 +2,7 @@
 #define SEQUENCE_LIST_CONTROLLER_H
 
 #include <escher/table_view_data_source.h>
-#include "../sequence_title_cell.h"
+#include "../vertical_sequence_title_cell.h"
 #include <apps/shared/sequence_store.h>
 #include <apps/shared/function_expression_cell.h>
 #include <apps/shared/function_list_controller.h>
@@ -84,7 +84,7 @@ private:
   KDCoordinate nameWidth(int nameLength) const;
   Escher::SelectableTableView m_selectableTableView;
   Escher::EvenOddCell m_emptyCell;
-  SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
+  VerticalSequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
   Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;

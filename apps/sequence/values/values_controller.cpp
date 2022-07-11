@@ -27,9 +27,6 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
     return true;
   }, this), k_font)
 {
-  for (int i = 0; i < k_maxNumberOfDisplayableSequences; i++) {
-    m_sequenceTitleCells[i].setOrientation(Shared::FunctionTitleCell::Orientation::HorizontalIndicator);
-  }
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
   setDefaultStartEndMessages();
 }

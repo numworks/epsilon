@@ -9,7 +9,7 @@ namespace Shared {
 
 class BufferFunctionTitleCell : public FunctionTitleCell {
 public:
-  BufferFunctionTitleCell(Orientation orientation = Orientation::VerticalIndicator, KDFont::Size font = KDFont::Size::Large);
+  BufferFunctionTitleCell(KDFont::Size font = KDFont::Size::Large);
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;

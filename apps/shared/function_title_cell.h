@@ -12,14 +12,13 @@ public:
     HorizontalIndicator,
     VerticalIndicator
   };
-  FunctionTitleCell(Orientation orientation = Orientation::VerticalIndicator) :
+  FunctionTitleCell(Orientation orientation = Orientation::HorizontalIndicator) :
     EvenOddCell(),
     m_orientation(orientation),
     m_baseline(-1),
     m_functionColor(KDColorBlack),
     m_connectColorIndicator(false)
   {}
-  virtual void setOrientation(Orientation orientation);
   virtual void setColor(KDColor color);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void setBaseline(KDCoordinate baseline);
@@ -30,7 +29,7 @@ protected:
   constexpr static KDCoordinate k_colorIndicatorThickness = 2;
   KDRect subviewFrame() const;
   float verticalAlignment() const;
-  Orientation m_orientation;
+  const Orientation m_orientation;
   KDCoordinate m_baseline;
 private:
   constexpr static KDCoordinate k_equalWidthWithMargins = 10; // Ad hoc value

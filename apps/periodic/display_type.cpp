@@ -22,6 +22,20 @@ DisplayType::ColorPair ContinuousDisplayType::colorPairForElement(AtomicNumber z
   return ColorPair(blendAlphaForContinuousParameter(z), min.fg(), max.fg(), min.bg(), max.bg());
 }
 
+size_t ContinuousDisplayType::printValueWithUnitForElement(AtomicNumber z, char * buffer, size_t bufferSize) const {
+  assert(ElementsDataBase::IsElement(z));
+
+  size_t numberOfChars = Shared::PoincareHelpers::ConvertFloatToText(parameter(z), buffer, bufferSize, Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
+
+  if (unit() && unit()[0] != '\0') {
+    buffer[numberOfChars++] = ' ';
+    numberOfChars += strlcpy(buffer + numberOfChars, unit(), bufferSize - numberOfChars);
+  }
+
+  assert(numberOfChars < bufferSize - 1);
+  return numberOfChars;
+}
+
 size_t ContinuousDisplayType::legendContentForElement(AtomicNumber z, char * buffer, size_t bufferSize) const {
   if (!ElementsDataBase::IsElement(z)) {
     return 0;
@@ -31,13 +45,7 @@ size_t ContinuousDisplayType::legendContentForElement(AtomicNumber z, char * buf
   buffer[2] = ' ';
   int numberOfChars = 3;
 
-  numberOfChars += Shared::PoincareHelpers::ConvertFloatToText(parameter(z), buffer + numberOfChars, bufferSize - numberOfChars, Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits());
-
-  buffer[numberOfChars++] = ' ';
-
-  numberOfChars += strlcpy(buffer + numberOfChars, unit(), bufferSize - numberOfChars);
-  assert(numberOfChars < bufferSize - 1);
-  return numberOfChars;
+  return printValueWithUnitForElement(z, buffer + numberOfChars, bufferSize - numberOfChars);
 }
 
 uint8_t ContinuousDisplayType::blendAlphaForContinuousParameter(AtomicNumber z) const {
@@ -95,6 +103,19 @@ I18n::Message GroupsDisplayType::titleForElement(AtomicNumber z) const {
   ElementData::Group group = ElementsDataBase::Group(z);
   assert(static_cast<uint8_t>(group) < sizeof(k_titles) / sizeof(k_titles[0]));
   return k_titles[static_cast<uint8_t>(group)];
+}
+
+// StatesDisplayType
+
+I18n::Message StatesDisplayType::titleForElement(AtomicNumber z) const {
+  constexpr I18n::Message k_titles[] = {
+    I18n::Message::StateSolid,
+    I18n::Message::StateLiquid,
+    I18n::Message::StateGas
+  };
+  ElementData::PhysicalState state = ElementsDataBase::PhysicalState(z);
+  assert(static_cast<uint8_t>(state) < sizeof(k_titles) / sizeof(k_titles[0]));
+  return k_titles[static_cast<uint8_t>(state)];
 }
 
 }

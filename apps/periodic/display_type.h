@@ -22,23 +22,24 @@ public:
     KDColor m_bg;
   };
 
-  virtual ColorPair colorPairForElement(AtomicNumber z) const = 0;
+  virtual ColorPair colorPairForElement(AtomicNumber z) const { return ColorPair(); }
   void setLegendForElement(AtomicNumber z, char * buffer, size_t bufferSize) const;
 
 protected:
-  virtual I18n::Message titleForElement(AtomicNumber z) const = 0;
+  virtual I18n::Message titleForElement(AtomicNumber z) const { return I18n::Message::Default; }
   virtual size_t legendContentForElement(AtomicNumber z, char * buffer, size_t bufferSize) const { return buffer[0] = 0; }
 };
 
 class ContinuousDisplayType : public DisplayType {
 public:
   ColorPair colorPairForElement(AtomicNumber z) const override;
+  size_t printValueWithUnitForElement(AtomicNumber z, char * buffer, size_t bufferSize) const;
 
 protected:
   size_t legendContentForElement(AtomicNumber z, char * buffer, size_t bufferSize) const override;
   virtual double parameter(AtomicNumber z) const = 0;
-  virtual ColorPair minimalColors() const = 0;
-  virtual ColorPair maximalColors() const = 0;
+  virtual ColorPair minimalColors() const { return ColorPair(); }
+  virtual ColorPair maximalColors() const { return ColorPair(); }
   virtual const char * unit() const = 0;
 
 private:
@@ -46,58 +47,65 @@ private:
 };
 
 class GroupsDisplayType : public DisplayType {
+public:
   ColorPair colorPairForElement(AtomicNumber z) const override;
   I18n::Message titleForElement(AtomicNumber z) const override;
 };
 
 class BlocksDisplayType : public DisplayType {
-  ColorPair colorPairForElement(AtomicNumber z) const override { return ColorPair(); }
-  I18n::Message titleForElement(AtomicNumber z) const override { return I18n::Message::Default; }
 };
 
 class MetalsDisplayType : public DisplayType {
-  ColorPair colorPairForElement(AtomicNumber z) const override { return ColorPair(); }
-  I18n::Message titleForElement(AtomicNumber z) const override { return I18n::Message::Default; }
+};
+
+class StatesDisplayType : public DisplayType {
+public:
+  I18n::Message titleForElement(AtomicNumber z) const override;
 };
 
 class MassDisplayType : public ContinuousDisplayType {
-  I18n::Message titleForElement(AtomicNumber z) const override { return I18n::Message::Default; }
+  virtual I18n::Message titleForElement(AtomicNumber z) const override { return I18n::Message::MassTitle; }
   double parameter(AtomicNumber z) const override { return ElementsDataBase::MolarMass(z); }
-  ColorPair minimalColors() const override { return ColorPair(); }
-  ColorPair maximalColors() const override { return ColorPair(); }
   const char * unit() const override { return ElementsDataBase::MolarMassUnit(); };
 };
 
 class ElectronegativityDisplayType : public ContinuousDisplayType {
-  I18n::Message titleForElement(AtomicNumber z) const override { return I18n::Message::Default; }
+  virtual I18n::Message titleForElement(AtomicNumber z) const override { return I18n::Message::ElectronegativityTitle; }
   double parameter(AtomicNumber z) const override { return ElementsDataBase::Electronegativity(z); }
-  ColorPair minimalColors() const override { return ColorPair(); }
-  ColorPair maximalColors() const override { return ColorPair(); }
   const char * unit() const override { return ElementsDataBase::ElectronegativityUnit(); };
 };
 
 class MeltingPointDisplayType : public ContinuousDisplayType {
-  I18n::Message titleForElement(AtomicNumber z) const override { return I18n::Message::Default; }
+  virtual I18n::Message titleForElement(AtomicNumber z) const override { return I18n::Message::MeltingPointTitle; }
   double parameter(AtomicNumber z) const override { return ElementsDataBase::MeltingPoint(z); }
-  ColorPair minimalColors() const override { return ColorPair(); }
-  ColorPair maximalColors() const override { return ColorPair(); }
   const char * unit() const override { return ElementsDataBase::TemperatureUnit(); };
 };
 
 class BoilingPointDisplayType : public ContinuousDisplayType {
-  I18n::Message titleForElement(AtomicNumber z) const override { return I18n::Message::Default; }
+  virtual I18n::Message titleForElement(AtomicNumber z) const override { return I18n::Message::BoilingPointTitle; }
   double parameter(AtomicNumber z) const override { return ElementsDataBase::BoilingPoint(z); }
-  ColorPair minimalColors() const override { return ColorPair(); }
-  ColorPair maximalColors() const override { return ColorPair(); }
   const char * unit() const override { return ElementsDataBase::TemperatureUnit(); };
 };
 
 class RadiusDisplayType : public ContinuousDisplayType {
-  I18n::Message titleForElement(AtomicNumber z) const override { return I18n::Message::Default; }
+  virtual I18n::Message titleForElement(AtomicNumber z) const override { return I18n::Message::RadiusTitle; }
   double parameter(AtomicNumber z) const override { return ElementsDataBase::Radius(z); }
-  ColorPair minimalColors() const override { return ColorPair(); }
-  ColorPair maximalColors() const override { return ColorPair(); }
   const char * unit() const override { return ElementsDataBase::RadiusUnit(); };
+};
+
+class DensityDisplayType : public ContinuousDisplayType {
+  double parameter(AtomicNumber z) const override { return ElementsDataBase::Density(z); }
+  const char * unit() const override { return ElementsDataBase::DensityUnit(); };
+};
+
+class AffinityDisplayType : public ContinuousDisplayType {
+  double parameter(AtomicNumber z) const override { return ElementsDataBase::Affinity(z); }
+  const char * unit() const override { return ElementsDataBase::EnergyUnit(); };
+};
+
+class IonisationDisplayType : public ContinuousDisplayType {
+  double parameter(AtomicNumber z) const override { return ElementsDataBase::EnergyOfIonisation(z); }
+  const char * unit() const override { return ElementsDataBase::EnergyUnit(); };
 };
 
 }

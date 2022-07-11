@@ -14,11 +14,15 @@ public:
   constexpr static GroupsDisplayType ColorByGroups;
   constexpr static BlocksDisplayType ColorByBlocks;
   constexpr static MetalsDisplayType ColorByMetals;
+  constexpr static StatesDisplayType ColorByStates;
   constexpr static MassDisplayType ColorByMass;
   constexpr static ElectronegativityDisplayType ColorByElectronegativity;
   constexpr static MeltingPointDisplayType ColorByMeltingPoint;
   constexpr static BoilingPointDisplayType ColorByBoilingPoint;
   constexpr static RadiusDisplayType ColorByRadius;
+  constexpr static DensityDisplayType ColorByDensity;
+  constexpr static AffinityDisplayType ColorByAffinity;
+  constexpr static IonisationDisplayType ColorByIonisation;
 
   ElementsViewDataSource() : m_delegate(nullptr), m_displayType(&ColorByGroups), m_textFilter(nullptr), m_selectedElement(1) {}
 

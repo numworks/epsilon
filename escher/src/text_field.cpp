@@ -485,8 +485,8 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
   /* Step 2 : Locate variable text */
   if (functionFound && !cursorInVariableField) {
     const char * parameterText;
-    size_t parameterLength;
-    if (Poincare::ParameteredExpression::ParameterText(locationOfCursor, &parameterText, &parameterLength)) {
+    size_t parameterLength = bufferLength + 1;
+    if (Poincare::ParameteredExpression::ParameterText(locationOfCursor, &parameterText, &parameterLength) && bufferLength >= parameterLength) {
       memcpy(buffer, parameterText, parameterLength);
       return parameterLength;
     }

@@ -36,7 +36,7 @@ bool MainController::handleEvent(Ion::Events::Event e) {
       return true;
     }
     if (e == Ion::Events::OK || e == Ion::Events::EXE) {
-      stackOpenPage(&m_coloringController);
+      stackOpenPage(&m_displayTypeController);
       return true;
     }
     return false;

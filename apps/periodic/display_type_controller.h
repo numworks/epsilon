@@ -1,5 +1,5 @@
-#ifndef PERIODIC_COLORING_CHOICE_CONTROLLER_H
-#define PERIODIC_COLORING_CHOICE_CONTROLLER_H
+#ifndef PERIODIC_DISPLAY_TYPE_CONTROLLER_H
+#define PERIODIC_DISPLAY_TYPE_CONTROLLER_H
 
 #include "elements_view_data_source.h"
 #include <escher/message_table_cell.h>
@@ -8,16 +8,16 @@
 
 namespace Periodic {
 
-class ColoringChoiceController : public Escher::SelectableListViewController<Escher::SimpleListViewDataSource> {
+class DisplayTypeController : public Escher::SelectableListViewController<Escher::SimpleListViewDataSource> {
 public:
-  ColoringChoiceController(Escher::StackViewController * stackController);
+  DisplayTypeController(Escher::StackViewController * stackController);
 
   // Escher::Responder
   bool handleEvent(Ion::Events::Event e) override;
   void didBecomeFirstResponder() override { Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView); }
 
   // Escher::ViewController
-  const char * title() override { return I18n::translate(I18n::Message::ColoringChoiceTitle); }
+  const char * title() override { return I18n::translate(I18n::Message::DisplayTypeTitle); }
   void viewWillAppear() override;
 
   // Escher::SelectableListViewController
@@ -32,9 +32,9 @@ public:
 
 
 private:
-  constexpr static size_t k_numberOfRows = ElementsViewDataSource::k_numberOfColorings;
+  constexpr static size_t k_numberOfRows = ElementsViewDataSource::k_numberOfDisplayTypes;
   constexpr static size_t k_numberOfCells = 7;
-  constexpr static const Coloring * k_colorings[k_numberOfRows] = {
+  constexpr static const DisplayType * k_displayTypes[k_numberOfRows] = {
     &ElementsViewDataSource::ColorByGroups,
     &ElementsViewDataSource::ColorByBlocks,
     &ElementsViewDataSource::ColorByMetals,

@@ -44,7 +44,7 @@ KDRect ElementsView::RectForCell(size_t cellIndex) {
 void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx, KDRect rect) const {
   assert(ElementsDataBase::IsElement(z));
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
-  Coloring::ColorPair colors = dataSource->coloring()->colorPairForElement(z);
+  DisplayType::ColorPair colors = dataSource->displayType()->colorPairForElement(z);
 
   ctx->fillRect(cell.intersectedWith(rect), colors.bg());
 

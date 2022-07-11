@@ -1,11 +1,11 @@
-#include "coloring_choice_controller.h"
+#include "display_type_controller.h"
 #include "app.h"
 
 using namespace Escher;
 
 namespace Periodic {
 
-ColoringChoiceController::ColoringChoiceController(StackViewController * stackController) :
+DisplayTypeController::DisplayTypeController(StackViewController * stackController) :
   SelectableListViewController(stackController)
 {
   for (MessageTableCell & cell : m_cells) {
@@ -15,27 +15,27 @@ ColoringChoiceController::ColoringChoiceController(StackViewController * stackCo
   }
 }
 
-void ColoringChoiceController::viewWillAppear() {
-  size_t coloringIndex = 0;
-  const Coloring * currentColoring = App::app()->elementsViewDataSource()->coloring();
-  while (k_colorings[coloringIndex] != currentColoring) {
-    coloringIndex++;
-    assert(coloringIndex < k_numberOfRows);
+void DisplayTypeController::viewWillAppear() {
+  size_t displayTypeIndex = 0;
+  const DisplayType * currentDisplayType = App::app()->elementsViewDataSource()->displayType();
+  while (k_displayTypes[displayTypeIndex] != currentDisplayType) {
+    displayTypeIndex++;
+    assert(displayTypeIndex < k_numberOfRows);
   }
-  selectCellAtLocation(0, coloringIndex);
+  selectCellAtLocation(0, displayTypeIndex);
 }
 
-bool ColoringChoiceController::handleEvent(Ion::Events::Event e) {
+bool DisplayTypeController::handleEvent(Ion::Events::Event e) {
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
     int index = selectedRow();
-    App::app()->elementsViewDataSource()->setColoring(k_colorings[index]);
+    App::app()->elementsViewDataSource()->setDisplayType(k_displayTypes[index]);
     stackViewController()->pop();
     return true;
   }
   return SelectableListViewController::handleEvent(e);
 }
 
-void ColoringChoiceController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void DisplayTypeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(cell - static_cast<HighlightCell *>(m_cells) < k_numberOfCells * sizeof(m_cells[0]));
   MessageTableCell * messageCell = static_cast<MessageTableCell *>(cell);
   constexpr I18n::Message k_messages[k_numberOfRows] = {

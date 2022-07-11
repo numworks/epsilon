@@ -13,6 +13,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
 private:
+  constexpr static KDCoordinate k_verticalColorIndicatorThickness = k_colorIndicatorThickness + 1;
   constexpr static KDCoordinate k_equalWidthWithMargins = 10;  // Ad hoc value
   constexpr static float k_horizontalAlignment = 0.9f;
 

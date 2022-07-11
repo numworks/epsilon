@@ -171,9 +171,11 @@ bool HomogeneityTest::validateInputs() {
     return false;
   }
   /* - No value should be undef
-   * - Neither a whole row nor a whole column should be null. */
+   * - Neither a whole row nor a whole column should be null.
+   * - The whole population should not be null. */
   bool nullRow[k_maxNumberOfRows];
   bool nullColumn[k_maxNumberOfColumns];
+  double total = 0.;
   for (int col = 0; col < max.col; col++) {
     // Init nullColumn array
     nullColumn[col] = true;
@@ -183,6 +185,7 @@ bool HomogeneityTest::validateInputs() {
     nullRow[row] = true;
     for (int col = 0; col < max.col; col++) {
       double value = parameterAtPosition(row, col);
+      total += value;
       nullRow[row] = nullRow[row] && std::fabs(value) < DBL_MIN;
       nullColumn[col] = nullColumn[col] && std::fabs(value) < DBL_MIN;
       if (std::isnan(value)) {
@@ -201,7 +204,7 @@ bool HomogeneityTest::validateInputs() {
     }
 
   }
-  return true;
+  return std::fabs(total) >= DBL_MIN;
 }
 
 }  // namespace Inference

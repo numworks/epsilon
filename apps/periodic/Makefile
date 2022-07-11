@@ -11,6 +11,7 @@ app_periodic_src = $(addprefix apps/periodic/,\
   elements_view_data_source.cpp \
   main_controller.cpp \
   single_element_view.cpp \
+  table_cells.cpp \
   table_layout.cpp \
 )
 

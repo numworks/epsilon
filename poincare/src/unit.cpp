@@ -668,22 +668,29 @@ Expression UnitNode::removeUnit(Expression * unit) {
   return Unit(this).removeUnit(unit);
 }
 
-Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   /* TODO: compute the bufferSize more precisely... So far the longest unit is
    * "month" of size 6 but later, we might add unicode to represent ohm or µ
    * which would change the required size?*/
   constexpr static size_t bufferSize = 10;
   char buffer[bufferSize];
-  return LayoutHelper::StringLayoutOfSerialization(Unit(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  char * string = buffer;
+  int stringLen = serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  if (!context || context->expressionTypeForIdentifier(buffer+1, strlen(buffer)-1) == Context::SymbolAbstractType::None) {
+    // If the unit is not a defined variable, do not display the '_'
+    assert(string[0] = '_');
+    string++;
+    stringLen--;
+  }
+  return LayoutHelper::StringToStringLayout(string, stringLen);
 }
 
 int UnitNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  /* assert(bufferSize >= 0);
-   * int underscoreLength = std::min<int>(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
-   * buffer += underscoreLength;
-   * bufferSize -= underscoreLength;
-   * return underscoreLength + m_representative->serialize(buffer, bufferSize, m_prefix); */
-  return m_representative->serialize(buffer, bufferSize, m_prefix);
+  assert(bufferSize >= 0);
+  int underscoreLength = std::min<int>(strlcpy(buffer, "_", bufferSize), bufferSize - 1);
+  buffer += underscoreLength;
+  bufferSize -= underscoreLength;
+  return underscoreLength + m_representative->serialize(buffer, bufferSize, m_prefix);
 }
 
 int UnitNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
@@ -729,6 +736,10 @@ Unit Unit::Builder(const Unit::Representative * representative, const Prefix * p
 }
 
 bool Unit::CanParse(const char * symbol, size_t length, const Unit::Representative * * representative, const Unit::Prefix * * prefix) {
+  if (symbol[0] == '_') {
+    symbol++;
+    length--;
+  }
   for (int i = 0; i < Representative::k_numberOfDimensions; i++) {
     if (Representative::DefaultRepresentatives()[i]->canParseWithEquivalents(symbol, length, representative, prefix)) {
       return true;

@@ -51,11 +51,6 @@ Token IdentifierTokenizer::popRightMostIdentifier(const char * * currentStringEn
   }
   int tokenLength = *currentStringEnd - tokenStart;
   *currentStringEnd = tokenStart;
-  if (tokenType == Token::Unit && tokenStart[0] == '_') {
-    // Skip the '_'
-    tokenStart += 1;
-    tokenLength -= 1;
-  }
   Token result(tokenType);
   result.setString(tokenStart, tokenLength);
   return result;
@@ -95,18 +90,19 @@ Token::Type IdentifierTokenizer::stringTokenType(const char * string, size_t len
      * be understood as the unit and not the variable. */
     return Token::Unit;
   }
-  if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment
-      || (m_parsingContext->context()
-        && m_parsingContext->context()->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None)) {
+  bool hasDegreeSign = UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + length);
+  if (!hasDegreeSign // CustomIdentifiers can't contain '°'
+      && (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment
+        || m_parsingContext->context() == nullptr
+        || m_parsingContext->context()->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None)) {
     return Token::CustomIdentifier;
   }
   if (m_parsingContext->parsingMethod() != ParsingContext::ParsingMethod::UnitConversion && Unit::CanParse(string, length, nullptr, nullptr)) {
-    /* If not unit conversion, if "m" has been or is being assigned by the user
+    /* If not unit conversion and "m" has been or is being assigned by the user
      * it's understood as a variable before being understood as a unit */
     return Token::Unit;
   }
-  if (!UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + length) // CustomIdentifiers can't contain '°'
-      && (m_parsingContext->context() == nullptr || stringIsACodePointFollowedByNumbers(string, length))) {
+  if (!hasDegreeSign && stringIsACodePointFollowedByNumbers(string, length)) {
     return Token::CustomIdentifier;
   }
   return Token::Undefined;

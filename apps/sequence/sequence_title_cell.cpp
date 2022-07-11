@@ -6,22 +6,18 @@ using namespace Escher;
 
 namespace Sequence {
 
-SequenceTitleCell::SequenceTitleCell(KDFont::Size font) :
-  Shared::FunctionTitleCell(Orientation::VerticalIndicator),
+SequenceTitleCell::SequenceTitleCell(Shared::FunctionTitleCell::Orientation orientation, KDFont::Size font) :
+  Shared::FunctionTitleCell(orientation),
   m_titleTextView(k_verticalOrientationHorizontalAlignment, k_horizontalOrientationAlignment, KDColorBlack, KDColorWhite, font)
 {
   m_titleTextView.setRightMargin(3);
-}
-
-void SequenceTitleCell::setOrientation(Orientation orientation) {
-  if (orientation == Orientation::VerticalIndicator) {
+  if (m_orientation == Orientation::VerticalIndicator) {
     /* We do not care here about the vertical alignment, it will be set properly
      * in layoutSubviews */
     m_titleTextView.setAlignment(k_verticalOrientationHorizontalAlignment, k_verticalOrientationHorizontalAlignment);
   } else {
     m_titleTextView.setAlignment(k_horizontalOrientationAlignment, k_horizontalOrientationAlignment);
   }
-  FunctionTitleCell::setOrientation(orientation);
 }
 
 void SequenceTitleCell::setLayout(Poincare::Layout layout) {

@@ -9,7 +9,7 @@ namespace Shared {
 class StoreTitleCell : public BufferFunctionTitleCell, public Separable {
 public:
   StoreTitleCell() :
-    BufferFunctionTitleCell(Orientation::HorizontalIndicator, KDFont::Size::Small),
+    BufferFunctionTitleCell(KDFont::Size::Small),
     Separable()
   {}
   void drawRect(KDContext * ctx, KDRect rect) const override;

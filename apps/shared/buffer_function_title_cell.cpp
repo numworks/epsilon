@@ -5,8 +5,8 @@ using namespace Escher;
 
 namespace Shared {
 
-BufferFunctionTitleCell::BufferFunctionTitleCell(Orientation orientation, KDFont::Size font) :
-  FunctionTitleCell(orientation),
+BufferFunctionTitleCell::BufferFunctionTitleCell(KDFont::Size font) :
+  FunctionTitleCell(),
   m_bufferTextView(font, KDContext::k_alignCenter, k_verticalAlignment)
 {
 }
@@ -45,9 +45,6 @@ void BufferFunctionTitleCell::layoutSubviews(bool force) {
 
 KDRect BufferFunctionTitleCell::bufferTextViewFrame() const {
   KDRect textFrame(0, k_colorIndicatorThickness, bounds().width(), bounds().height() - k_colorIndicatorThickness);
-  if (m_orientation == Orientation::VerticalIndicator){
-    textFrame = KDRect(k_colorIndicatorThickness, 0, bounds().width() - k_colorIndicatorThickness-k_separatorThickness, bounds().height()-k_separatorThickness);
-  }
   return textFrame;
 }
 

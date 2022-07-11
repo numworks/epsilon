@@ -370,7 +370,7 @@ HighlightCell * ListController::functionCells(int index) {
 
 void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   assert(j>=0 && j < k_maxNumberOfRows);
-  SequenceTitleCell * myCell = static_cast<SequenceTitleCell *>(cell);
+  VerticalSequenceTitleCell * myCell = static_cast<VerticalSequenceTitleCell *>(cell);
   // Update the corresponding expression cell to get its baseline
   willDisplayExpressionCellAtIndex(m_selectableTableView.cellAtLocation(1, j), j);
   myCell->setBaseline(baseline(j));

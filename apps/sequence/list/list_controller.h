@@ -2,7 +2,6 @@
 #define SEQUENCE_LIST_CONTROLLER_H
 
 #include <escher/table_view_data_source.h>
-#include "../vertical_sequence_title_cell.h"
 #include <apps/shared/sequence_store.h>
 #include <apps/shared/function_expression_cell.h>
 #include <apps/shared/function_list_controller.h>
@@ -12,6 +11,7 @@
 #include "list_parameter_controller.h"
 #include "sequence_toolbox.h"
 #include "type_parameter_controller.h"
+#include "vertical_sequence_title_cell.h"
 
 namespace Sequence {
 

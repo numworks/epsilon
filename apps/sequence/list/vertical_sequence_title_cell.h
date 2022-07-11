@@ -1,7 +1,7 @@
 #ifndef APPS_SEQUENCE_VERTICAL_SEQUENCE_TITLE_CELL_H
 #define APPS_SEQUENCE_VERTICAL_SEQUENCE_TITLE_CELL_H
 
-#include "sequence_title_cell.h"
+#include "../sequence_title_cell.h"
 
 namespace Sequence {
 

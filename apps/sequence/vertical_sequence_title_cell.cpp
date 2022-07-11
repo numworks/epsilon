@@ -5,7 +5,7 @@
 namespace Sequence {
 
 VerticalSequenceTitleCell::VerticalSequenceTitleCell() :
-    SequenceTitleCell(),
+    SequenceTitleCell(k_font),
     m_connectColorIndicator(false)
 {
   /* We do not care here about the vertical alignment, it will be set properly
@@ -23,8 +23,8 @@ void VerticalSequenceTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw some background
   ctx->fillRect(KDRect(bounds().width() - k_equalWidthWithMargins, 0, k_equalWidthWithMargins, bounds().height() - k_separatorThickness), backgroundColor);
   // Draw '='
-  KDPoint p = KDPoint(bounds().width() - k_equalWidthWithMargins, m_baseline - KDFont::Font(font())->glyphSize().height()/2 - 1); // -1 is visually needed
-  ctx->drawString("=", p, font(), m_functionColor, backgroundColor);
+  KDPoint p = KDPoint(bounds().width() - k_equalWidthWithMargins, m_baseline - KDFont::Font(k_font)->glyphSize().height()/2 - 1); // -1 is visually needed
+  ctx->drawString("=", p, k_font, m_functionColor, backgroundColor);
 }
 
 KDRect VerticalSequenceTitleCell::subviewFrame() const {
@@ -42,7 +42,7 @@ float VerticalSequenceTitleCell::verticalAlignment() const {
 
 float VerticalSequenceTitleCell::verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const {
   Poincare::Layout l = layout();
-  return ((float)(expressionBaseline - l.baseline(font()))) / ((float)rowHeight - l.layoutSize(font()).height());
+  return ((float)(expressionBaseline - l.baseline(k_font))) / ((float)rowHeight - l.layoutSize(k_font).height());
 }
 
 }  // namespace Sequence

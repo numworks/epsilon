@@ -358,7 +358,7 @@ int ListController::maxNumberOfDisplayableRows() {
   return k_maxNumberOfRows;
 }
 
-FunctionTitleCell * ListController::titleCells(int index) {
+HighlightCell * ListController::titleCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return &m_sequenceTitleCells[index];
 }
@@ -512,7 +512,7 @@ SequenceStore * ListController::modelStore() {
 
 KDCoordinate ListController::nameWidth(int nameLength) const {
   assert(nameLength >= 0);
-  return nameLength * KDFont::Font(const_cast<ListController *>(this)->titleCells(0)->font())->glyphSize().width();
+  return nameLength * KDFont::Font(VerticalSequenceTitleCell::k_font)->glyphSize().width();
 }
 
 void ListController::showLastSequence() {

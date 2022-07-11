@@ -61,7 +61,7 @@ private:
   bool editInitialConditionOfSelectedRecordWithText(const char * text, bool firstInitialCondition);
   ListParameterController * parameterController() override;
   int maxNumberOfDisplayableRows() override;
-  Shared::FunctionTitleCell * titleCells(int index);
+  Escher::HighlightCell * titleCells(int index);
   Escher::HighlightCell * functionCells(int index) override;
   void willDisplayTitleCellAtIndex(Escher::HighlightCell * cell, int j);
   void willDisplayExpressionCellAtIndex(Escher::HighlightCell * cell, int j) override;

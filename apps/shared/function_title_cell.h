@@ -8,13 +8,8 @@ namespace Shared {
 
 class FunctionTitleCell : public Escher::EvenOddCell {
 public:
-  enum class Orientation {
-    HorizontalIndicator,
-    VerticalIndicator
-  };
-  FunctionTitleCell(Orientation orientation = Orientation::HorizontalIndicator) :
+  FunctionTitleCell() :
     EvenOddCell(),
-    m_orientation(orientation),
     m_baseline(-1),
     m_functionColor(KDColorBlack)
   {}
@@ -26,7 +21,6 @@ protected:
   constexpr static KDCoordinate k_separatorThickness = Escher::Metric::CellSeparatorThickness;
   constexpr static KDCoordinate k_colorIndicatorThickness = 2;
   virtual KDRect subviewFrame() const;
-  const Orientation m_orientation;
   KDCoordinate m_baseline;
   KDColor m_functionColor;
 };

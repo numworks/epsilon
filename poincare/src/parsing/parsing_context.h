@@ -10,7 +10,7 @@ public:
   enum class ParsingMethod {
     Classic,
     Assignment,
-    UnitConvert
+    UnitConversion
   };
 
   ParsingContext(Context * context, ParsingContext::ParsingMethod parsingMethod) : m_context(context), m_parsingMethod(parsingMethod) {}

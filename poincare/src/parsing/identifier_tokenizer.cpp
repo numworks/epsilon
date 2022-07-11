@@ -90,17 +90,23 @@ Token::Type IdentifierTokenizer::stringTokenType(const char * string, size_t len
   if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
     return Token::ReservedFunction;
   }
-  if (m_parsingContext->context() && m_parsingContext->context()->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None) {
-    return Token::CustomIdentifier;
-  }
-  if (Unit::CanParse(string, length, nullptr, nullptr)) {
+  if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::UnitConversion && Unit::CanParse(string, length, nullptr, nullptr)) {
+    /* When parsing for unit conversion, the identifier "m" should always
+     * be understood as the unit and not the variable. */
     return Token::Unit;
   }
-  if (UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + length)) {
-    // CustomIdentifiers can't contain '°'
-    return Token::Undefined;
+  if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment
+      || (m_parsingContext->context()
+        && m_parsingContext->context()->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None)) {
+    return Token::CustomIdentifier;
   }
-  if (m_parsingContext->context() == nullptr || m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment || stringIsACodePointFollowedByNumbers(string, length)) {
+  if (m_parsingContext->parsingMethod() != ParsingContext::ParsingMethod::UnitConversion && Unit::CanParse(string, length, nullptr, nullptr)) {
+    /* If not unit conversion, if "m" has been or is being assigned by the user
+     * it's understood as a variable before being understood as a unit */
+    return Token::Unit;
+  }
+  if (!UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + length) // CustomIdentifiers can't contain '°'
+      && (m_parsingContext->context() == nullptr || stringIsACodePointFollowedByNumbers(string, length))) {
     return Token::CustomIdentifier;
   }
   return Token::Undefined;

@@ -9,6 +9,39 @@
 namespace Poincare {
 
 Expression Parser::parse() {
+  /* If the string contains an arrow, try to parse as unit conversion first.
+   * We have to do this here because the parsing of the leftSide and the one
+   * of the rightSide are both impacted by the fact that it is a unitConversion
+   *
+   * Example: if you stored 5 in the variable m, "3m" is understood as "3*5"
+   * in the expression "3m->x", but it's understood as "3 meters" in the
+   * expression "3m->km".
+   *
+   * If the parsing of unit conversion fails, retry with classic parsing method
+   * */
+  if (UTF8Helper::HasCodePoint(m_tokenizer.currentPosition(), UCodePointRightwardsArrow) && m_parsingContext.parsingMethod() != ParsingContext::ParsingMethod::Assignment) {
+    m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::UnitConversion);
+    const char * startingPosition;
+    rememberCurrentParsingPosition(&startingPosition);
+    Expression result = initializeFirstTokenAndParseUntilEnd();
+    if (m_status == Status::Success) {
+      return result;
+    }
+    // Failed to parse as unit conversion
+    restorePreviousParsingPosition(startingPosition);
+    m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
+    m_status = Status::Progress;
+  }
+  Expression result = initializeFirstTokenAndParseUntilEnd();
+  if (m_status == Status::Success) {
+    return result;
+  }
+  return Expression();
+}
+
+Expression Parser::initializeFirstTokenAndParseUntilEnd() {
+  assert(m_nextToken.type() == Token::Undefined);
+  m_nextToken = m_tokenizer.popToken();
   Expression result = parseUntil(Token::EndOfStream);
   if (m_status == Status::Progress) {
     m_status = Status::Success;
@@ -16,7 +49,6 @@ Expression Parser::parse() {
   }
   return Expression();
 }
-
 // Private
 
 Expression Parser::parseUntil(Token::Type stoppingType) {
@@ -74,11 +106,13 @@ void Parser::popToken() {
   } else {
     m_currentToken = m_nextToken;
     /* change the parsingMethod in two cases :
-     * - if token = rightwardsArrow, set it to true
+     * - if token = rightwardsArrow, set it to true if it's not unitConversion
      *   (we're starting an assignment of type ...->f(x))
      * - if token is comparison operator, set it to false
-     *   (we're ending an assignment of type f(x)=... ) */
-    if (m_currentToken.type() == Token::RightwardsArrow) {
+     *   (we're ending an assignment of type f(x)=... )
+     * The parsingMethod must be changed now because it impacts
+     * the way the next token will be popped. */
+    if (m_currentToken.type() == Token::RightwardsArrow && m_parsingContext.parsingMethod() != ParsingContext::ParsingMethod::UnitConversion) {
       m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Assignment);
     }
     if (m_currentToken.isComparisonOperator()) {
@@ -304,15 +338,44 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
     m_status = Status::Error; // Left-hand side missing.
     return;
   }
-  /* Right part of the RightwardsArrow are either a Symbol, a Function or units.
+  /* Rightwards arrow can either be UnitConvert or Store.
+   * The expression 3a->m is a store of 3*a into the variable m
+   * The expression 3mm->m is a unit conversion of 3mm into meters
+   *
+   * When the text contains a RightwardsArrow, we always first parse as
+   * unit conversion (see Parser::parse()) to be sure not to misinterpret
+   * units as variables (see IdentifierTokenizer::stringTokenType()).
+   *
+   * The expression is a unit conversion if the left side has units and the
+   * rightside has ONLY units.
+   *
+   * If it fails, the whole string is reparsed, in a normal way. The arrow
+   * we'll be interpreted as assignment.
+   *
    * Even undefined function "plouf(x)" should be interpreted as function and
-   * not as a multiplication. This is done by removing the context temporarily */
+   * not as a multiplication. This is done by setting the parsingMethod to
+   * Assignment (see Parser::popToken()) */
+
   Expression rightHandSide = parseUntil(stoppingType);
   if (m_status != Status::Progress) {
     return;
   }
 
-  // Pattern : "-> a" or "-> f(x)" Try parsing a store
+  if (m_parsingContext.parsingMethod() == ParsingContext::ParsingMethod::UnitConversion) {
+    if (!m_nextToken.is(Token::EndOfStream)
+      || rightHandSide.isUninitialized()
+      || !rightHandSide.isOnlyUnits()
+      || !leftHandSide.hasUnit()) {
+      /* UnitConvert expect a unit on the right and an expression with units
+       * on the left */
+      m_status = Status::Error;
+      return;
+    }
+    leftHandSide = UnitConvert::Builder(leftHandSide, rightHandSide);
+    return;
+  }
+
+  assert(m_parsingContext.parsingMethod() == ParsingContext::ParsingMethod::Assignment);
   if (m_nextToken.is(Token::EndOfStream) &&
       (rightHandSide.type() == ExpressionNode::Type::Symbol
        || (rightHandSide.type() == ExpressionNode::Type::Function
@@ -320,12 +383,7 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
     leftHandSide = Store::Builder(leftHandSide, static_cast<SymbolAbstract&>(rightHandSide));
     return;
   }
-  // Try parsing a unit convert
-  if (!m_nextToken.is(Token::EndOfStream) || rightHandSide.isUninitialized() || rightHandSide.type() == ExpressionNode::Type::Store || rightHandSide.type() == ExpressionNode::Type::UnitConvert || ComparisonOperator::IsComparisonOperatorType(rightHandSide.type())) {
-    m_status = Status::Error; // UnitConvert expect a unit on the right.
-    return;
-  }
-  leftHandSide = UnitConvert::Builder(leftHandSide, rightHandSide);
+  m_status = Status::Error; // Can't parse as UnitConversion or Store
 }
 
 bool Parser::parseBinaryOperator(const Expression & leftHandSide, Expression & rightHandSide, Token::Type stoppingType) {
@@ -784,7 +842,7 @@ bool Parser::generateMixedFractionIfNeeded(Expression & leftHandSide) {
   Token storedNextToken;
   Token storedCurrentToken;
   const char * tokenizerPosition;
-  rememberCurrentParsingPosition(&storedCurrentToken, &storedNextToken, &tokenizerPosition);
+  rememberCurrentParsingPosition(&tokenizerPosition, &storedCurrentToken, &storedNextToken);
   // Check for mixed fraction. There is a mixed fraction if :
   if (IsIntegerBaseTenOrEmptyExpression(leftHandSide)
       // The next token is either a number, a system parenthesis or empty
@@ -800,16 +858,20 @@ bool Parser::generateMixedFractionIfNeeded(Expression & leftHandSide) {
       return true;
     }
   }
-  restorePreviousParsingPosition(storedCurrentToken, storedNextToken, tokenizerPosition);
+  restorePreviousParsingPosition(tokenizerPosition, storedCurrentToken, storedNextToken);
   return false;
 }
 
-void Parser::rememberCurrentParsingPosition(Token * storedCurrentToken, Token * storedNextToken, const char ** tokenizerPosition) {
-  *storedCurrentToken = m_currentToken;
-  *storedNextToken = m_nextToken;
+void Parser::rememberCurrentParsingPosition(const char ** tokenizerPosition, Token * storedCurrentToken, Token * storedNextToken) {
+  if (storedCurrentToken) {
+    *storedCurrentToken = m_currentToken;
+  }
+  if (storedNextToken) {
+    *storedNextToken = m_nextToken;
+  }
   *tokenizerPosition = m_tokenizer.currentPosition();
 }
-void Parser::restorePreviousParsingPosition(Token storedCurrentToken, Token storedNextToken, const char * tokenizerPosition) {
+void Parser::restorePreviousParsingPosition(const char * tokenizerPosition, Token storedCurrentToken, Token storedNextToken) {
   m_tokenizer.goToPreviousPosition(tokenizerPosition);
   m_currentToken = storedCurrentToken;
   m_nextToken = storedNextToken;

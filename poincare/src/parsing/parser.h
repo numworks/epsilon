@@ -33,7 +33,7 @@ public:
     m_status(Status::Progress),
     m_tokenizer(text, &m_parsingContext),
     m_currentToken(Token(Token::Undefined)),
-    m_nextToken(m_tokenizer.popToken()),
+    m_nextToken(Token(Token::Undefined)),
     m_pendingImplicitMultiplication(false),
     m_waitingSlashForMixedFraction(false)
   {}
@@ -43,6 +43,7 @@ public:
 
 private:
   Expression parseUntil(Token::Type stoppingType);
+  Expression initializeFirstTokenAndParseUntilEnd();
 
   // Methods on Tokens
   void popToken();
@@ -93,8 +94,8 @@ private:
   void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
   bool generateMixedFractionIfNeeded(Expression & leftHandSide);
   // Allows you to rewind to previous position
-  void rememberCurrentParsingPosition(Token * storedCurrentToken, Token * storedNextToken, const char ** tokenizerPosition);
-  void restorePreviousParsingPosition(Token storedCurrentToken, Token storedNextToken, const char * tokenizerPosition);
+  void rememberCurrentParsingPosition(const char ** tokenizerPosition, Token * storedCurrentToken = nullptr, Token * storedNextToken = nullptr);
+  void restorePreviousParsingPosition(const char * tokenizerPosition, Token storedCurrentToken = Token(Token::Undefined), Token storedNextToken = Token(Token::Undefined));
   // Data members
   ParsingContext m_parsingContext;
   Status m_status;

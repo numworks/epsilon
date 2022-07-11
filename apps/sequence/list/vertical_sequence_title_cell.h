@@ -19,7 +19,6 @@ private:
   KDRect subviewFrame() const override;
   void layoutSubviews(bool force = false) override;
   float verticalAlignment() const;
-  float verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const;
 };
 
 }  // namespace Sequence

@@ -31,12 +31,12 @@ void VerticalSequenceTitleCell::layoutSubviews(bool force) {
 }
 
 float VerticalSequenceTitleCell::verticalAlignment() const {
-  return std::max(0.0f, std::min(1.0f, m_baseline < 0 ? KDContext::k_alignCenter : verticalAlignmentGivenExpressionBaselineAndRowHeight(m_baseline, subviewFrame().height())));
-}
-
-float VerticalSequenceTitleCell::verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const {
+  if (m_baseline < 0) {
+    return KDContext::k_alignCenter;
+  }
   Poincare::Layout l = layout();
-  return ((float)(expressionBaseline - l.baseline(k_font))) / ((float)rowHeight - l.layoutSize(k_font).height());
+  float alignment = static_cast<float>(m_baseline - l.baseline(k_font)) / static_cast<float>(subviewFrame().height() - l.layoutSize(k_font).height());
+  return std::max(0.0f, std::min(1.0f, alignment));
 }
 
 }  // namespace Sequence

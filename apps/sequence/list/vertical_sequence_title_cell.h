@@ -15,7 +15,7 @@ public:
 
 private:
   constexpr static KDCoordinate k_equalWidthWithMargins = 10;  // Ad hoc value
-  constexpr static float k_verticalOrientationHorizontalAlignment = 0.9f;
+  constexpr static float k_horizontalAlignment = 0.9f;
 
   KDRect subviewFrame() const override;
   void layoutSubviews(bool force = false) override;

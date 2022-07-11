@@ -10,7 +10,7 @@ namespace Sequence {
 class SequenceTitleCell : public Shared::FunctionTitleCell {
 public:
   SequenceTitleCell(KDFont::Size font = KDFont::Size::Small);
-  void setLayout(Poincare::Layout layout);
+  void setLayout(Poincare::Layout layout) { m_titleTextView.setLayout(layout); }
   void setEven(bool even) override;
   void setHighlighted(bool highlight) override;
   void setColor(KDColor color) override;
@@ -24,9 +24,9 @@ protected:
 
   Escher::EvenOddExpressionCell m_titleTextView;
 private:
-  constexpr static float k_horizontalOrientationAlignment = KDContext::k_alignCenter;
+  constexpr static float k_alignment = KDContext::k_alignCenter;
 
-  int numberOfSubviews() const override;
+  int numberOfSubviews() const override { return 1; }
   Escher::View * subviewAtIndex(int index) override;
 };
 

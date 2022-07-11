@@ -10,7 +10,7 @@ VerticalSequenceTitleCell::VerticalSequenceTitleCell() :
 {
   /* We do not care here about the vertical alignment, it will be set properly
    * in layoutSubviews */
-  m_titleTextView.setAlignment(k_verticalOrientationHorizontalAlignment, k_verticalOrientationHorizontalAlignment);
+  m_titleTextView.setAlignment(k_horizontalAlignment, 0.0f);
 }
 
 void VerticalSequenceTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
@@ -32,7 +32,7 @@ KDRect VerticalSequenceTitleCell::subviewFrame() const {
 }
 
 void VerticalSequenceTitleCell::layoutSubviews(bool force) {
-  m_titleTextView.setAlignment(k_verticalOrientationHorizontalAlignment, verticalAlignment());
+  m_titleTextView.setAlignment(k_horizontalAlignment, verticalAlignment());
   SequenceTitleCell::layoutSubviews(force);
 }
 

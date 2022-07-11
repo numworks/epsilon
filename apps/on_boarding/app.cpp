@@ -1,5 +1,6 @@
 #include "app.h"
 #include "../apps_container.h"
+#include "apps/exam_mode_configuration.h"
 #include <assert.h>
 
 using namespace Escher;
@@ -33,8 +34,8 @@ void App::didBecomeActive(Window * window) {
   // Disable spinner
   Ion::Events::setSpinner(false);
   // Force a core reset to exit
-  if (!Poincare::Preferences::sharedPreferences()->isInExamMode()) {
-    // Forbid standby in exam mode since it disables the led
+  if (!(Poincare::Preferences::sharedPreferences()->isInExamMode() && ExamModeConfiguration::examModeColor(Poincare::Preferences::sharedPreferences()->examMode()) != KDColorBlack)) {
+    // Forbid standby in exam mode with led since it disables the led
     Ion::Power::selectStandbyMode(true);
   }
 }

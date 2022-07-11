@@ -177,7 +177,7 @@ bool GraphOptionsController::displayR2Cell() const {
 }
 
 bool GraphOptionsController::displayResidualPlotCell() const {
-  return m_store->seriesRegressionType(m_graphController->selectedSeriesIndex()) == Regression::Model::Type::Linear && displayRegressionEquationCell();
+  return displayRegressionEquationCell();
 }
 
 }

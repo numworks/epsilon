@@ -61,6 +61,11 @@ double LinearRegressionStore::columnProductSum(int series, bool lnOfSeries) cons
   return result;
 }
 
+double LinearRegressionStore::defaultValue(int series, int i, int j) const {
+  assert(series >= 0 && series < k_numberOfSeries);
+  return (i == 0 && j > 1) ? 2 * get(series, i, j-1) - get(series, i, j-2) : 0.0;
+}
+
 double LinearRegressionStore::meanOfColumn(int series, int i, bool lnOfSeries) const {
   return createDatasetFromColumn(series, i, lnOfSeries).mean();
 }

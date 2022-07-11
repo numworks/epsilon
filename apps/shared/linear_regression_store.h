@@ -26,6 +26,7 @@ public:
     assert(strlen(k_columnNames[column]) == 1);
     return k_columnNames[column][0];
   }
+  double defaultValue(int series, int i, int j) const override;
 
   // Calculation
   double doubleCastedNumberOfPairsOfSeries(int series) const;

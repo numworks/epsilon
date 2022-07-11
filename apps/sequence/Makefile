@@ -8,7 +8,6 @@ app_sequence_test_src = $(addprefix apps/sequence/,\
 app_sequence_src = $(addprefix apps/sequence/,\
   app.cpp \
   sequence_title_cell.cpp \
-  vertical_sequence_title_cell.cpp \
   graph/curve_parameter_controller.cpp \
   graph/curve_view_range.cpp \
   graph/go_to_parameter_controller.cpp \
@@ -19,6 +18,7 @@ app_sequence_src = $(addprefix apps/sequence/,\
   list/list_parameter_controller.cpp \
   list/sequence_toolbox.cpp \
   list/type_parameter_controller.cpp \
+  list/vertical_sequence_title_cell.cpp \
   values/interval_parameter_controller.cpp \
   values/values_controller.cpp \
 )

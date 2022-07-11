@@ -12,8 +12,6 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;
-private:
-  constexpr static KDCoordinate k_separatorThickness = Escher::Metric::CellSeparatorThickness;
 };
 
 }

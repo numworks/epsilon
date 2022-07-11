@@ -11,7 +11,6 @@ public:
 
   VerticalSequenceTitleCell();
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void connectColorIndicator(bool status) { m_connectColorIndicator = status; }
 
 private:
   constexpr static KDCoordinate k_equalWidthWithMargins = 10;  // Ad hoc value
@@ -21,8 +20,6 @@ private:
   void layoutSubviews(bool force = false) override;
   float verticalAlignment() const;
   float verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const;
-
-  bool m_connectColorIndicator;
 };
 
 }  // namespace Sequence

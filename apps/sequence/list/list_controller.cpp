@@ -386,8 +386,6 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
   if (sequenceDefinitionForRow(j) == 2) {
     myCell->setLayout(sequence->secondInitialConditionName());
   }
-  // All cells except the last of each sequence should connect to the cell below
-  myCell->connectColorIndicator(sequenceDefinitionForRow(j) + 1 < sequence->numberOfElements());
   // Set the color
   KDColor nameColor = sequence->isActive() ? sequence->color() : Palette::GrayDark;
   myCell->setColor(nameColor);

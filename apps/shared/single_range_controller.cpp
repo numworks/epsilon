@@ -14,7 +14,6 @@ SingleRangeController::SingleRangeController(Responder * parentResponder, InputE
   m_confirmPopUpController(confirmPopUpController)
 {
   for (int i = 0; i < k_numberOfTextCells; i++) {
-    m_boundsCells[i].setController(this);
     m_boundsCells[i].setParentResponder(&m_selectableTableView);
     m_boundsCells[i].setDelegates(inputEventHandlerDelegate, this);
   }
@@ -48,11 +47,8 @@ void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell
     return;
   }
   if (type == k_parameterCellType) {
-    LockableEditableCell * castedCell = static_cast<LockableEditableCell *>(cell);
+    Escher::MessageTableCellWithEditableText * castedCell = static_cast<Escher::MessageTableCellWithEditableText *>(cell);
     castedCell->setMessage(index == 1 ? I18n::Message::Minimum : I18n::Message::Maximum);
-    KDColor color = autoStatus() ? Palette::GrayDark : KDColorBlack;
-    castedCell->setTextColor(color);
-    castedCell->textField()->setTextColor(color);
   }
   FloatParameterController<float>::willDisplayCellForIndex(cell, index);
 }
@@ -68,36 +64,40 @@ bool SingleRangeController::handleEvent(Ion::Events::Event event) {
   }
   if (selectedRow() == 0 && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     // Update auto status
-    m_autoParam = !m_autoParam;
-    if (m_autoParam) {
-      if (m_editXRange ? m_range->xAuto() : m_range->yAuto()) {
-        // Parameters are already computed in m_range
-        extractParameters();
-      } else {
-        /* Create and update a temporary InteractiveCurveViewRange to recompute
-         * parameters. */
-        Shared::InteractiveCurveViewRange tempRange(*m_range);
-        if (m_editXRange) {
-          tempRange.setXAuto(m_autoParam);
-        } else {
-          tempRange.setYAuto(m_autoParam);
-        }
-        tempRange.computeRanges();
-        m_rangeParam.setMin(m_editXRange ? tempRange.xMin() : tempRange.yMin());
-        m_rangeParam.setMax(m_editXRange ? tempRange.xMax() : tempRange.yMax());
-        if (m_editXRange) {
-          /* The y range has been updated too and must be stored for
-           * confirmParameters. */
-          m_secondaryRangeParam.setMin(tempRange.yMin());
-          m_secondaryRangeParam.setMax(tempRange.yMax());
-        }
-      }
-    }
-    resetMemoization();
-    m_selectableTableView.reloadData();
+    setAutoStatus(!m_autoParam);
     return true;
   }
   return FloatParameterController<float>::handleEvent(event);
+}
+
+void SingleRangeController::setAutoStatus(bool autoParam) {
+  m_autoParam = autoParam;
+  if (m_autoParam) {
+    if (m_editXRange ? m_range->xAuto() : m_range->yAuto()) {
+      // Parameters are already computed in m_range
+      extractParameters();
+    } else {
+      /* Create and update a temporary InteractiveCurveViewRange to recompute
+       * parameters. */
+      Shared::InteractiveCurveViewRange tempRange(*m_range);
+      if (m_editXRange) {
+        tempRange.setXAuto(m_autoParam);
+      } else {
+        tempRange.setYAuto(m_autoParam);
+      }
+      tempRange.computeRanges();
+      m_rangeParam.setMin(m_editXRange ? tempRange.xMin() : tempRange.yMin());
+      m_rangeParam.setMax(m_editXRange ? tempRange.xMax() : tempRange.yMax());
+      if (m_editXRange) {
+        /* The y range has been updated too and must be stored for
+         * confirmParameters. */
+        m_secondaryRangeParam.setMin(tempRange.yMin());
+        m_secondaryRangeParam.setMax(tempRange.yMax());
+      }
+    }
+  }
+  resetMemoization();
+  m_selectableTableView.reloadData();
 }
 
 void SingleRangeController::setEditXRange(bool editXRange) {
@@ -187,10 +187,9 @@ void SingleRangeController::buttonAction() {
   FloatParameterController<float>::buttonAction();
 }
 
-// SingleRangeController::LockableEditableCell
-
-Responder * SingleRangeController::LockableEditableCell::responder() {
-  return m_controller->autoStatus() ? nullptr : this;
+bool SingleRangeController::textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) {
+  setAutoStatus(false);
+  return FloatParameterController<float>::textFieldDidFinishEditing(textField, text, event);
 }
 
 }

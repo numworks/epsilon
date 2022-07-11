@@ -27,21 +27,15 @@ public:
 
   bool editXRange() const { return m_editXRange; }
   void setEditXRange(bool editXRange);
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
 
 private:
   constexpr static int k_numberOfTextCells = 2;
   constexpr static int k_autoCellType = 2;
   static_assert(k_autoCellType != FloatParameterController<float>::k_parameterCellType && k_autoCellType != FloatParameterController<float>::k_buttonCellType, "k_autoCellType value already taken.");
 
-  class LockableEditableCell : public Escher::MessageTableCellWithEditableText {
-  public:
-    Escher::Responder * responder() override;
-    void setController(SingleRangeController * controller) { m_controller = controller; }
-  private:
-    SingleRangeController * m_controller;
-  };
-
   bool autoStatus() const { return m_autoParam; }
+  void setAutoStatus(bool autoParam);
   float parameterAtIndex(int index) override;
   int reusableParameterCellCount(int type) override { return k_numberOfTextCells; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
@@ -52,7 +46,7 @@ private:
   void buttonAction() override;
 
   Escher::MessageTableCellWithSwitch m_autoCell;
-  LockableEditableCell m_boundsCells[k_numberOfTextCells];
+  Escher::MessageTableCellWithEditableText m_boundsCells[k_numberOfTextCells];
   InteractiveCurveViewRange * m_range;
   Shared::MessagePopUpController * m_confirmPopUpController;
   Range1D m_rangeParam;

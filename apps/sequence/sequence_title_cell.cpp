@@ -8,16 +8,9 @@ namespace Sequence {
 
 SequenceTitleCell::SequenceTitleCell(Shared::FunctionTitleCell::Orientation orientation, KDFont::Size font) :
   Shared::FunctionTitleCell(orientation),
-  m_titleTextView(k_verticalOrientationHorizontalAlignment, k_horizontalOrientationAlignment, KDColorBlack, KDColorWhite, font)
+  m_titleTextView(k_horizontalOrientationAlignment, k_horizontalOrientationAlignment, KDColorBlack, KDColorWhite, font)
 {
   m_titleTextView.setRightMargin(3);
-  if (m_orientation == Orientation::VerticalIndicator) {
-    /* We do not care here about the vertical alignment, it will be set properly
-     * in layoutSubviews */
-    m_titleTextView.setAlignment(k_verticalOrientationHorizontalAlignment, k_verticalOrientationHorizontalAlignment);
-  } else {
-    m_titleTextView.setAlignment(k_horizontalOrientationAlignment, k_horizontalOrientationAlignment);
-  }
 }
 
 void SequenceTitleCell::setLayout(Poincare::Layout layout) {
@@ -60,16 +53,7 @@ View * SequenceTitleCell::subviewAtIndex(int index) {
 
 void SequenceTitleCell::layoutSubviews(bool force) {
   assert(TreeNode::IsValidIdentifier(layout().identifier()));
-  if (m_orientation == Orientation::VerticalIndicator) {
-    m_titleTextView.setAlignment(k_verticalOrientationHorizontalAlignment, verticalAlignment());
-  }
   m_titleTextView.setFrame(subviewFrame(), force);
-}
-
-float SequenceTitleCell::verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const {
-  assert(m_orientation == Orientation::VerticalIndicator);
-  Layout l = layout();
-  return ((float)(expressionBaseline - l.baseline(font())))/((float)rowHeight-l.layoutSize(font()).height());
 }
 
 }

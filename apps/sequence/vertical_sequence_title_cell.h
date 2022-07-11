@@ -5,15 +5,24 @@
 
 namespace Sequence {
 
-/* This class only purpose is to default the orientation to vertical.
- * TODO : Since it is the only place a vertical orientation is used, it could
- * be worth to move all vertical orientation specific code here. */
-
 class VerticalSequenceTitleCell : public SequenceTitleCell {
 public:
-  VerticalSequenceTitleCell() : SequenceTitleCell(Shared::FunctionTitleCell::Orientation::VerticalIndicator) {}
+  VerticalSequenceTitleCell();
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void connectColorIndicator(bool status) { m_connectColorIndicator = status; }
+
+private:
+  constexpr static KDCoordinate k_equalWidthWithMargins = 10;  // Ad hoc value
+  constexpr static float k_verticalOrientationHorizontalAlignment = 0.9f;
+
+  KDRect subviewFrame() const override;
+  void layoutSubviews(bool force = false) override;
+  float verticalAlignment() const;
+  float verticalAlignmentGivenExpressionBaselineAndRowHeight(KDCoordinate expressionBaseline, KDCoordinate rowHeight) const;
+
+  bool m_connectColorIndicator;
 };
 
-}
+}  // namespace Sequence
 
 #endif

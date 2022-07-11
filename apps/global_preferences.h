@@ -29,7 +29,7 @@ public:
      * messages have intervals. The toolbox would have to contain buffers
      * instead of messages to apply the correct interval. We decided that for
      * now that it's a language preference only. */
-    return I18n::translate(left ? I18n::Message::LeftInterval : I18n::Message::RightInterval);
+    return I18n::translate(left ? I18n::Message::OpenLeftInterval : I18n::Message::OpenRightInterval);
   }
 
   bool showPopUp() const { return m_showPopUp; }

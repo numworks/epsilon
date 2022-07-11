@@ -13,7 +13,7 @@ VerticalSequenceTitleCell::VerticalSequenceTitleCell() : SequenceTitleCell(k_fon
 void VerticalSequenceTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor backgroundColor = m_even ? KDColorWhite : Escher::Palette::WallScreen;
   // Draw the color indicator
-  ctx->fillRect(KDRect(0, 0, k_colorIndicatorThickness, bounds().height()), m_functionColor);
+  ctx->fillRect(KDRect(0, 0, k_verticalColorIndicatorThickness, bounds().height()), m_functionColor);
   // Draw some background
   ctx->fillRect(KDRect(bounds().width() - k_equalWidthWithMargins, 0, k_equalWidthWithMargins, bounds().height()), backgroundColor);
   // Draw '='
@@ -22,7 +22,7 @@ void VerticalSequenceTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 KDRect VerticalSequenceTitleCell::subviewFrame() const {
-  return KDRect(k_colorIndicatorThickness, 0, bounds().width() - k_colorIndicatorThickness - k_equalWidthWithMargins, bounds().height());
+  return KDRect(k_verticalColorIndicatorThickness, 0, bounds().width() - k_verticalColorIndicatorThickness - k_equalWidthWithMargins, bounds().height());
 }
 
 void VerticalSequenceTitleCell::layoutSubviews(bool force) {

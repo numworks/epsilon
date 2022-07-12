@@ -37,7 +37,7 @@ public:
   static const char * ElectronegativityUnit() { return ""; }
   static const char * TemperatureUnit() { return "°C"; }
   static const char * RadiusUnit() { return "pm"; }
-  static const char * DensityUnit() { return "kg/m^3"; }
+  static const char * DensityUnit() { return "g/cm^3"; }
   static const char * EnergyUnit() { return "kJ/mol"; }
 
 private:

@@ -149,9 +149,9 @@ void DetailsListController::willDisplayCellForIndex(HighlightCell * cell, int in
       MessageTableCellWithMessageWithExpressionWithSeparator * typedCell = static_cast<MessageTableCellWithMessageWithExpressionWithSeparator *>(cell);
       typedCell->setSeparatorPosition(true);
       typedCell->innerCell()->setMessage(I18n::Message::DetailsConfigurationSymbol);
-      typedCell->innerCell()->setSubLabelMessage(I18n::Message::DetailsConfigurationLegend);
-      // TODO
-      typedCell->innerCell()->setAccessoryLayout(Layout());
+      // typedCell->innerCell()->setSubLabelMessage(I18n::Message::DetailsConfigurationLegend);
+      typedCell->innerCell()->setSubLabelMessage(I18n::Message::Default);
+      typedCell->innerCell()->setAccessoryLayout(ElementsDataBase::ElectronConfiguration(z));
     }
     return;
 

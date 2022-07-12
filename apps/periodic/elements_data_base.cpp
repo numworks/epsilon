@@ -1,7 +1,74 @@
 #include "elements_data_base.h"
+#include <poincare/code_point_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/integer.h>
+#include <poincare/layout_helper.h>
+#include <poincare/vertical_offset_layout.h>
 #include <assert.h>
 
+using namespace Poincare;
+
 namespace Periodic {
+
+Layout ElementsDataBase::ElectronConfiguration(AtomicNumber z) {
+  constexpr int k_nMax = 7;
+  constexpr int k_lMax = 4;
+  constexpr char k_lSymbols[k_lMax] = { 's', 'p', 'd', 'f' };
+  constexpr AtomicNumber k_nobles[] = { 10, 18, 36, 54, 86 };
+  constexpr size_t k_numberOfNobles = sizeof(k_nobles) / sizeof(k_nobles[0]);
+
+  int conf[k_nMax * k_lMax];
+  for (int i = 0; i < k_nMax * k_lMax; i++) {
+    conf[i] = 0;
+  }
+
+  int previousNoble = -1;
+  for (int g = k_numberOfNobles - 1; g >= 0; g--) {
+    if (k_nobles[g] < z) {
+      previousNoble = g;
+      break;
+    }
+  }
+
+  HorizontalLayout res = HorizontalLayout::Builder();
+  int electrons = z;
+  int n = 0, l = 0;
+  if (previousNoble >= 0) {
+    electrons -= k_nobles[previousNoble];
+    l = 0;
+    n = previousNoble + 2;
+    res.addOrMergeChildAtIndex(HorizontalLayout::Builder(CodePointLayout::Builder('['), LayoutHelper::String(Symbol(k_nobles[previousNoble])) ,CodePointLayout::Builder(']')), 0, false);
+  }
+  while (electrons > 0) {
+    int index = n * k_lMax + l;
+    int maxPop = 2 * (2 * l + 1);
+    int pop = maxPop > electrons ? electrons : maxPop;
+    electrons -= pop;
+    conf[index] = pop;
+    /* Subshells are filled in order of increasing n+l then increasing n. */
+    if (l > 0) {
+      l--;
+      n++;
+    } else {
+      l = (n + 1) / 2;
+      n += 1 - l;
+    }
+  }
+
+  /* Subshells are displayed in order of increasing n, then increasing l. */
+  for (n = 0; n < k_nMax; n++) {
+    for (l = 0; l < k_lMax; l++) {
+      int index = n * k_lMax + l;
+      if (l > n || conf[index] == 0) {
+        continue;
+      }
+      Layout term = HorizontalLayout::Builder(Integer(n + 1).createLayout(), CodePointLayout::Builder(k_lSymbols[l]), VerticalOffsetLayout::Builder(Integer(conf[index]).createLayout(), VerticalOffsetLayoutNode::Position::Superscript));
+      res.addOrMergeChildAtIndex(term, res.numberOfChildren(), false);
+    }
+  }
+
+  return std::move(res);
+}
 
 /* Shortucts some types and constants to make the table slightly readable. */
 static constexpr double k_unknown = ElementData::k_unknown;

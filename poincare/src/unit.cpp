@@ -676,7 +676,9 @@ Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
   char buffer[bufferSize];
   char * string = buffer;
   int stringLen = serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
-  if (!context || context->expressionTypeForIdentifier(buffer+1, strlen(buffer)-1) == Context::SymbolAbstractType::None) {
+  if (!context
+     || (context->canRemoveUnderscoreToUnits()
+         && context->expressionTypeForIdentifier(buffer+1, strlen(buffer)-1) == Context::SymbolAbstractType::None)) {
     // If the unit is not a defined variable, do not display the '_'
     assert(string[0] = '_');
     string++;

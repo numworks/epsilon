@@ -25,6 +25,7 @@ public:
   const Expression expressionForSymbolAbstract(const SymbolAbstract & symbol, bool clone);
   virtual bool setExpressionForSymbolAbstract(const Expression & expression, const SymbolAbstract & symbol) = 0;
   virtual void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) {}
+  virtual bool canRemoveUnderscoreToUnits() const { return true; }
 protected:
   /* This is used by the ContextWithParent to pass itself to its parent.
    * When getting the expression for a sequences in GlobalContext, you need

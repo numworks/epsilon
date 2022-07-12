@@ -2,6 +2,7 @@
 #define PERIODIC_ELEMENTS_DATA_BASE
 
 #include "element_data.h"
+#include <poincare/layout.h>
 #include <stddef.h>
 
 namespace Periodic {
@@ -31,7 +32,7 @@ public:
   static ElementData::Group Group(AtomicNumber z) { return DataForElement(z)->group(); }
   static ElementData::PhysicalState PhysicalState(AtomicNumber z) { return DataForElement(z)->physicalState(); }
   static ElementData::Block Block(AtomicNumber z) { return DataForElement(z)->block(); }
-  static size_t ElectronConfiguration(AtomicNumber z, char * buffer, size_t bufferSize);
+  static Poincare::Layout ElectronConfiguration(AtomicNumber z);
 
   static const char * MolarMassUnit() { return "g/mol"; }
   static const char * ElectronegativityUnit() { return ""; }

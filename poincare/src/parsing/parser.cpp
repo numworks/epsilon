@@ -102,7 +102,7 @@ Expression Parser::initializeFirstTokenAndParseUntilEnd() {
 }
 // Private
 
-Expression Parser::parseUntil(Token::Type stoppingType) {
+Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide) {
   typedef void (Parser::*TokenParser)(Expression & leftHandSide, Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
     &Parser::parseUnexpected,      // Token::EndOfStream
@@ -142,7 +142,6 @@ Expression Parser::parseUntil(Token::Type stoppingType) {
     &Parser::parseCustomIdentifier, // Token::CustomIdentifier
     &Parser::parseUnexpected       // Token::Undefined
   };
-  Expression leftHandSide;
   do {
     popToken();
     (this->*(tokenParsers[m_currentToken.type()]))(leftHandSide, stoppingType);
@@ -633,11 +632,11 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, Token::Type stoppi
   assert(leftHandSide.isUninitialized());
   const char * name = m_currentToken.text();
   size_t length = m_currentToken.length();
-  privateParseCustomIdentifier(leftHandSide, name, length);
+  privateParseCustomIdentifier(leftHandSide, name, length, stoppingType);
   isThereImplicitMultiplication();
 }
 
-void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length) {
+void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length, Token::Type stoppingType) {
   if (length >= SymbolAbstract::k_maxNameSize) {
     m_status = Status::Error; // Identifier name too long.
     return;
@@ -714,6 +713,26 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
   if (!popTokenIfType(correspondingRightParenthesis)) {
     m_status = Status::Error;
     return;
+  }
+  if (m_parsingContext.parsingMethod() == ParsingContext::ParsingMethod::Assignment
+      && result.type() == ExpressionNode::Type::Function
+      && parameter.type() == ExpressionNode::Type::Symbol
+      && m_nextToken.isComparisonOperator()) {
+    /* Stop parsing for assignment to ensure that, frow now on xy is
+      * understood as x*y */
+    m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
+    if (m_parsingContext.context()) {
+      /* Set the parameter in the context to ensure that f(t)=t is not
+       * understood as f(t)=1_t
+       * If we decide that functions can be assigned with any parameter,
+       * this will ensure that f(abc)=abc is understood like f(x)=x
+       */
+      VariableContext functionAssignmentContext(static_cast<Symbol &>(parameter), m_parsingContext.context());
+      m_parsingContext.setContext(&functionAssignmentContext);
+      // We have to parseUntil here so that we do not lose the functionAssignmentContext pointer.
+      leftHandSide = parseUntil(stoppingType, result);
+      return;
+    }
   }
   leftHandSide = result;
 }

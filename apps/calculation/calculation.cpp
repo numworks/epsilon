@@ -97,7 +97,7 @@ Layout Calculation::createInputLayout() {
   if (ExceptionRun(ecp)) {
     Expression e = input();
     if (!e.isUninitialized()) {
-      return e.createLayout(Preferences::PrintFloatMode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
+      return e.createLayout(Preferences::PrintFloatMode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits, App::app()->localContext());
     }
   }
   return Layout();
@@ -108,7 +108,7 @@ Layout Calculation::createExactOutputLayout(bool * couldNotCreateExactLayout) {
   if (ExceptionRun(ecp)) {
     Expression e = exactOutput();
     if (!e.isUninitialized()) {
-      return e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits);
+      return e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, PrintFloat::k_numberOfStoredSignificantDigits, App::app()->localContext());
     }
   }
   *couldNotCreateExactLayout = true;
@@ -120,7 +120,7 @@ Layout Calculation::createApproximateOutputLayout(bool * couldNotCreateApproxima
   if (ExceptionRun(ecp)) {
     Expression e = approximateOutput(NumberOfSignificantDigits::UserDefined);
     if (!e.isUninitialized()) {
-      return PoincareHelpers::CreateLayout(e);
+      return PoincareHelpers::CreateLayout(e, App::app()->localContext());
     }
   }
   *couldNotCreateApproximateLayout = true;

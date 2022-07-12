@@ -18,7 +18,7 @@ Expression MatrixInverseNode::shallowReduce(const ReductionContext& reductionCon
 }
 
 Layout MatrixInverseNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(MatrixInverse(this), floatDisplayMode, numberOfSignificantDigits, MatrixInverse::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(MatrixInverse(this), floatDisplayMode, numberOfSignificantDigits, MatrixInverse::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int MatrixInverseNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

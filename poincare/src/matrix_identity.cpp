@@ -19,7 +19,7 @@ Expression MatrixIdentityNode::shallowReduce(const ReductionContext& reductionCo
 }
 
 Layout MatrixIdentityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(MatrixIdentity(this), floatDisplayMode, numberOfSignificantDigits, MatrixIdentity::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(MatrixIdentity(this), floatDisplayMode, numberOfSignificantDigits, MatrixIdentity::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int MatrixIdentityNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

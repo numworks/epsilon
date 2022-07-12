@@ -21,7 +21,7 @@ Complex<T> ArcCosecantNode::computeOnComplex(const std::complex<T> c, Preference
 }
 
 Layout ArcCosecantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(ArcCosecant(this), floatDisplayMode, numberOfSignificantDigits, ArcCosecant::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(ArcCosecant(this), floatDisplayMode, numberOfSignificantDigits, ArcCosecant::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int ArcCosecantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

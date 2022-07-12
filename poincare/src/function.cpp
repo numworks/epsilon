@@ -50,7 +50,7 @@ int FunctionNode::getVariables(Context * context, isVariableTest isVariable, cha
 }
 
 Layout FunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(Function(this), floatDisplayMode, numberOfSignificantDigits, name());
+  return LayoutHelper::Prefix(Function(this), floatDisplayMode, numberOfSignificantDigits, name(), context);
 }
 
 int FunctionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

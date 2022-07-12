@@ -38,8 +38,8 @@ void RationalListController::setExpression(Poincare::Expression e) {
   Integer denominator = extractInteger(div.childAtIndex(1));
 
   int index = 0;
-  m_layouts[index++] = PoincareHelpers::CreateLayout(Integer::CreateMixedFraction(numerator, denominator));
-  m_layouts[index++] = PoincareHelpers::CreateLayout(Integer::CreateEuclideanDivision(numerator, denominator));
+  m_layouts[index++] = PoincareHelpers::CreateLayout(Integer::CreateMixedFraction(numerator, denominator), App::app()->localContext());
+  m_layouts[index++] = PoincareHelpers::CreateLayout(Integer::CreateEuclideanDivision(numerator, denominator), App::app()->localContext());
 }
 
 I18n::Message RationalListController::messageAtIndex(int index) {

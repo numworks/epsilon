@@ -8,7 +8,7 @@
 namespace Poincare {
 
 Layout HyperbolicTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(HyperbolicTangent(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicTangent::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(HyperbolicTangent(this), floatDisplayMode, numberOfSignificantDigits, HyperbolicTangent::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int HyperbolicTangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

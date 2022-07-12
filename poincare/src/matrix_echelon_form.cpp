@@ -14,7 +14,7 @@ Expression MatrixEchelonFormNode::shallowReduce(const ReductionContext& reductio
 }
 
 Layout MatrixEchelonFormNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(MatrixEchelonForm(this), floatDisplayMode, numberOfSignificantDigits, functionHelperName());
+  return LayoutHelper::Prefix(MatrixEchelonForm(this), floatDisplayMode, numberOfSignificantDigits, functionHelperName(), context);
 }
 
 int MatrixEchelonFormNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

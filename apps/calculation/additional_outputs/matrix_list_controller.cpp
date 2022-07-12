@@ -91,9 +91,9 @@ Poincare::Layout MatrixListController::getLayoutFromExpression(Expression e, Con
   // simplify might have been interrupted, in which case we use approximate
   if (simplifiedExpression.isUninitialized()) {
     assert(!approximateExpression.isUninitialized());
-    return Shared::PoincareHelpers::CreateLayout(approximateExpression);
+    return Shared::PoincareHelpers::CreateLayout(approximateExpression, context);
   }
-  return Shared::PoincareHelpers::CreateLayout(simplifiedExpression);
+  return Shared::PoincareHelpers::CreateLayout(simplifiedExpression, context);
 }
 
 I18n::Message MatrixListController::messageAtIndex(int index) {

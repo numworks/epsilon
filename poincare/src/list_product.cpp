@@ -15,7 +15,7 @@ int ListProductNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 Layout ListProductNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(ListProduct(this), floatDisplayMode, numberOfSignificantDigits, ListProduct::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(ListProduct(this), floatDisplayMode, numberOfSignificantDigits, ListProduct::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 Expression ListProductNode::shallowReduce(const ReductionContext& reductionContext) {

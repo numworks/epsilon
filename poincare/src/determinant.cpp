@@ -17,7 +17,7 @@ namespace Poincare {
 int DeterminantNode::numberOfChildren() const { return Determinant::s_functionHelper.numberOfChildren(); }
 
 Layout DeterminantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(Determinant(this), floatDisplayMode, numberOfSignificantDigits, Determinant::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(Determinant(this), floatDisplayMode, numberOfSignificantDigits, Determinant::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int DeterminantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

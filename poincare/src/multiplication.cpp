@@ -260,6 +260,7 @@ Layout  MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDispla
     floatDisplayMode,
     numberOfSignificantDigits,
     string,
+    context,
     [](Expression left, Expression right) {
       bool rightIsUnit = right.type() == ExpressionNode::Type::Unit || (right.type() == ExpressionNode::Type::Power && right.childAtIndex(0).type() == ExpressionNode::Type::Unit);
       return rightIsUnit && operatorSymbolBetween(left.rightLayoutShape(), right.leftLayoutShape()) == 0;

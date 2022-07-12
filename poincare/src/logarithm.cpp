@@ -31,7 +31,7 @@ Layout LogarithmNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context)
       );
   }
-  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Logarithm::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Logarithm::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int LogarithmNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

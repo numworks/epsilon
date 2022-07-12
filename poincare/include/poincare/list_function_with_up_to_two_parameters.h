@@ -34,7 +34,7 @@ private:
     return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, functionName());
   }
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override {
-    return LayoutHelper::Prefix(Expression(this), floatDisplayMode, numberOfSignificantDigits, functionName());
+    return LayoutHelper::Prefix(Expression(this), floatDisplayMode, numberOfSignificantDigits, functionName(), context);
   }
   bool m_hasTwoChildren;
 };

@@ -156,7 +156,7 @@ void assert_layout_serialize_to(Poincare::Layout layout, const char * serializat
 }
 
 void assert_expression_layouts_as(Poincare::Expression expression, Poincare::Layout layout) {
-  Layout l = expression.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
+  Layout l = expression.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits, nullptr);
   quiz_assert(l.isIdenticalTo(layout));
 }
 

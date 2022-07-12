@@ -51,7 +51,7 @@ int AdditionNode::getPolynomialCoefficients(Context * context, const char * symb
 // Layout
 
 Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, "+");
+  return LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, "+", context);
 }
 
 int AdditionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -9,7 +9,7 @@ namespace Poincare {
 int NormPDFNode::numberOfChildren() const { return NormPDF::s_functionHelper.numberOfChildren(); }
 
 Layout NormPDFNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(NormPDF(this), floatDisplayMode, numberOfSignificantDigits, NormPDF::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(NormPDF(this), floatDisplayMode, numberOfSignificantDigits, NormPDF::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int NormPDFNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

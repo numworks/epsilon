@@ -29,7 +29,7 @@ QUIZ_CASE(poincare_expression_to_layout) {
 }
 
 void assert_expression_layouts_and_serializes_to(Expression expression, const char * serialization) {
-  Layout layout = expression.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
+  Layout layout = expression.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits, nullptr);
   assert_layout_serialize_to(layout, serialization);
 }
 
@@ -120,11 +120,11 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   // 2_m·3_m
   assert_expression_layouts_and_serializes_to(
       Multiplication::Builder(Rational::Builder(2), Unit::Builder(Unit::k_distanceRepresentatives + Unit::k_meterRepresentativeIndex, UnitNode::Prefix::EmptyPrefix()), Rational::Builder(3), Unit::Builder(Unit::k_distanceRepresentatives + Unit::k_meterRepresentativeIndex, UnitNode::Prefix::EmptyPrefix())),
-      "2_m·3_m");
+      "2m·3m");
   // 2_m×3.5_m
   assert_expression_layouts_and_serializes_to(
       Multiplication::Builder(Rational::Builder(2), Unit::Builder(Unit::k_distanceRepresentatives + Unit::k_meterRepresentativeIndex, UnitNode::Prefix::EmptyPrefix()), Float<double>::Builder(3.5), Unit::Builder(Unit::k_distanceRepresentatives + Unit::k_meterRepresentativeIndex, UnitNode::Prefix::EmptyPrefix())),
-      "2_m×3.5_m");
+      "2m×3.5m");
 }
 
 void assert_parsed_expression_layout_serialize_to_self(const char * expressionLayout) {

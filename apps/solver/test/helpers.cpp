@@ -6,6 +6,7 @@
 #include <limits.h>
 #include <cmath>
 #include "../equations/equation_store.h"
+#include "../solver_context.h"
 
 #include "helpers.h"
 
@@ -17,18 +18,19 @@ using namespace Poincare;
 template <typename T>
 void solve_and_process_error(std::initializer_list<const char *> equations, T && lambda) {
   Shared::GlobalContext globalContext;
+  SolverContext solverContext(&globalContext);
   EquationStore equationStore;
   for (const char * equation : equations) {
     Ion::Storage::Record::ErrorStatus err = equationStore.addEmptyModel();
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None, equation);
     Ion::Storage::Record record = equationStore.recordAtIndex(equationStore.numberOfModels()-1);
     Shared::ExpiringPointer<Equation> model = equationStore.modelForRecord(record);
-    err = model->setContent(equation, &globalContext);
+    err = model->setContent(equation, &solverContext);
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None, equation);
   }
   bool replaceFunctionsButNotSymbols = false;
   equationStore.tidyDownstreamPoolFrom();
-  EquationStore::Error err = equationStore.exactSolve(&globalContext, &replaceFunctionsButNotSymbols);
+  EquationStore::Error err = equationStore.exactSolve(&solverContext, &replaceFunctionsButNotSymbols);
   lambda(&equationStore, err);
   equationStore.removeAll();
 }
@@ -59,6 +61,7 @@ void assert_solves_to_infinite_solutions(std::initializer_list<const char *> equ
 void assert_solves_to(std::initializer_list<const char *> equations, std::initializer_list<const char *> solutions) {
   solve_and(equations, [solutions](EquationStore * store){
     Shared::GlobalContext globalContext;
+    SolverContext solverContext(&globalContext);
     int i = 0;
     for (const char * solution : solutions) {
       // Solutions are specified under the form "foo=bar"
@@ -93,14 +96,14 @@ void assert_solves_to(std::initializer_list<const char *> equations, std::initia
        * a const char * we need to add parentheses that are not necessary when
        * creating an expression from a layout. */
 
-      Expression expectedExpression = Expression::Parse(expectedValue, &globalContext, false);
+      Expression expectedExpression = Expression::Parse(expectedValue, &solverContext, false);
       quiz_assert(!expectedExpression.isUninitialized());
 
       Layout obtainedLayout = store->exactSolutionLayoutAtIndex(i, true);
       constexpr int bufferSize = 200;
       char obtainedLayoutBuffer[bufferSize];
       obtainedLayout.serializeForParsing(obtainedLayoutBuffer, bufferSize);
-      Expression obtainedExpression = Expression::Parse(obtainedLayoutBuffer, &globalContext, false);
+      Expression obtainedExpression = Expression::Parse(obtainedLayoutBuffer, &solverContext, false);
       quiz_assert(expectedExpression.isIdenticalToWithoutParentheses(obtainedExpression));
 
       i++;
@@ -112,10 +115,11 @@ void assert_solves_to(std::initializer_list<const char *> equations, std::initia
 void assert_solves_numerically_to(const char * equation, double min, double max, std::initializer_list<double> solutions, const char * variable) {
   solve_and_process_error({equation},[min,max,solutions,variable](EquationStore * store, EquationStore::Error e){
     Shared::GlobalContext globalContext;
+    SolverContext solverContext(&globalContext);
     quiz_assert(e == RequireApproximateSolution);
     store->setIntervalBound(0, min);
     store->setIntervalBound(1, max);
-    store->approximateSolve(&globalContext, false);
+    store->approximateSolve(&solverContext, false);
 
     quiz_assert(strcmp(store->variableAtIndex(0), variable)== 0);
     int i = 0;
@@ -146,9 +150,10 @@ void set(const char * variable, const char * value) {
   strlcat(buffer, variable, sizeof(buffer));
 
   Shared::GlobalContext globalContext;
+  SolverContext solverContext(&globalContext);
   Expression::ParseAndSimplify(
     buffer,
-    &globalContext,
+    &solverContext,
     Preferences::sharedPreferences()->complexFormat(),
     Preferences::sharedPreferences()->angleUnit(),
     GlobalPreferences::sharedGlobalPreferences()->unitFormat()

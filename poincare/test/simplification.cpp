@@ -136,20 +136,20 @@ QUIZ_CASE(poincare_simplification_addition) {
   assert_parsed_expression_simplify_to("1+2", "3");
   assert_parsed_expression_simplify_to("1+2+3+4+5+6+7", "28");
   assert_parsed_expression_simplify_to("(0+0)", "0");
-  assert_parsed_expression_simplify_to("1+2+3+4+5+A+6+7", "A+28");
-  assert_parsed_expression_simplify_to("1+A+2+B+3", "A+B+6");
+  assert_parsed_expression_simplify_to("1+2+3+4+5+M+6+7", "M+28");
+  assert_parsed_expression_simplify_to("1+M+2+P+3", "M+P+6");
   assert_parsed_expression_simplify_to("-2+6", "4");
   assert_parsed_expression_simplify_to("-2-6", "-8");
-  assert_parsed_expression_simplify_to("-A", "-A");
-  assert_parsed_expression_simplify_to("A-A", "dep\u0014(0,{A})");
+  assert_parsed_expression_simplify_to("-M", "-M");
+  assert_parsed_expression_simplify_to("M-M", "dep\u0014(0,{M})");
   assert_parsed_expression_simplify_to("-5π+3π", "-2×π");
-  assert_parsed_expression_simplify_to("1-3+A-5+2A-4A", "-A-7");
-  assert_parsed_expression_simplify_to("A+B-A-B", "dep\u0014(0,{B,A})");
-  assert_parsed_expression_simplify_to("A+B+(-1)×A+(-1)×B", "dep\u0014(0,{A,B})");
+  assert_parsed_expression_simplify_to("1-3+M-5+2M-4M", "-M-7");
+  assert_parsed_expression_simplify_to("M+P-M-P", "dep\u0014(0,{P,M})");
+  assert_parsed_expression_simplify_to("M+P+(-1)×M+(-1)×P", "dep\u0014(0,{M,P})");
   assert_parsed_expression_simplify_to("2+13cos(2)-23cos(2)", "-10×cos(2)+2");
   assert_parsed_expression_simplify_to("1+1+ln(2)+(5+3×2)/9-4/7+1/98", "\u0012882×ln(2)+2347\u0013/882");
   assert_parsed_expression_simplify_to("1+2+0+cos(2)", "cos(2)+3");
-  assert_parsed_expression_simplify_to("A-A+2cos(2)+B-B-cos(2)", "dep\u0014(cos(2),{A,B})");
+  assert_parsed_expression_simplify_to("M-M+2cos(2)+P-P-cos(2)", "dep\u0014(cos(2),{M,P})");
   assert_parsed_expression_simplify_to("x+3+π+2×x", "3×x+π+3");
   assert_parsed_expression_simplify_to("1/(x+1)+1/(π+2)", "\u0012x+π+3\u0013/\u0012π×x+2×x+π+2\u0013");
   assert_parsed_expression_simplify_to("1/x^2+1/(x^2×π)", "\u0012π+1\u0013/\u0012π×x^2\u0013");
@@ -172,12 +172,12 @@ QUIZ_CASE(poincare_simplification_addition) {
 
 QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("undef×x", "undef");
-  assert_parsed_expression_simplify_to("0×x+B", "dep\u0014(B,{x})");
+  assert_parsed_expression_simplify_to("0×x+P", "dep\u0014(P,{x})");
   assert_parsed_expression_simplify_to("0×x×0×32×cos(3)", "dep\u0014(0,{x})");
-  assert_parsed_expression_simplify_to("3×A^4×B^x×B^2×(A^2+2)×2×1.2", "\u001236×A^6×B^\u0012x+2\u0013+72×A^4×B^\u0012x+2\u0013\u0013/5");
-  assert_parsed_expression_simplify_to("A×(B+C)×(D+3)", "A×B×D+A×C×D+3×A×B+3×A×C");
-  assert_parsed_expression_simplify_to("A/B", "A/B");
-  assert_parsed_expression_simplify_to("(1/2)×A/B", "A/\u00122×B\u0013");
+  assert_parsed_expression_simplify_to("3×M^4×P^x×P^2×(M^2+2)×2×1.2", "\u001236×M^6×P^\u0012x+2\u0013+72×M^4×P^\u0012x+2\u0013\u0013/5");
+  assert_parsed_expression_simplify_to("M×(P+Q)×(X+3)", "M×P×X+M×Q×X+3×M×P+3×M×Q");
+  assert_parsed_expression_simplify_to("M/P", "M/P");
+  assert_parsed_expression_simplify_to("(1/2)×M/P", "M/\u00122×P\u0013");
   assert_parsed_expression_simplify_to("1+2+3+4+5+6", "21");
   assert_parsed_expression_simplify_to("1-2+3-4+5-6", "-3");
   assert_parsed_expression_simplify_to("987654321123456789×998877665544332211", "986545842648570754445552922919330479");
@@ -199,16 +199,16 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("(1/2)^-1", "2");
   assert_parsed_expression_simplify_to("√(2)×√(3)", "√(6)");
   assert_parsed_expression_simplify_to("2×2^π", "2×2^π");
-  assert_parsed_expression_simplify_to("A^3×B×A^(-3)", "dep\u0014(B,{1/A^3})");
-  assert_parsed_expression_simplify_to("A^3×A^(-3)", "dep\u0014(1,{1/A^3})");
+  assert_parsed_expression_simplify_to("M^3×P×M^(-3)", "dep\u0014(P,{1/M^3})");
+  assert_parsed_expression_simplify_to("M^3×M^(-3)", "dep\u0014(1,{1/M^3})");
   assert_parsed_expression_simplify_to("2^π×(1/2)^π", "1");
   assert_parsed_expression_simplify_to("(x+1)×(x+2)", "x^2+3×x+2");
   assert_parsed_expression_simplify_to("(x+1)×(x-1)", "x^2-1");
   assert_parsed_expression_simplify_to("11π/(22π+11π)", "1/3");
   assert_parsed_expression_simplify_to("11/(22π+11π)", "1/\u00123×π\u0013");
   assert_parsed_expression_simplify_to("-11/(22π+11π)", "-1/\u00123×π\u0013");
-  assert_parsed_expression_simplify_to("A^2×B×A^(-2)×B^(-2)", "dep\u0014(1/B,{1/A^2})");
-  assert_parsed_expression_simplify_to("A^(-1)×B^(-1)", "1/\u0012A×B\u0013");
+  assert_parsed_expression_simplify_to("M^2×P×M^(-2)×P^(-2)", "dep\u0014(1/P,{1/M^2})");
+  assert_parsed_expression_simplify_to("M^(-1)×P^(-1)", "1/\u0012M×P\u0013");
   assert_parsed_expression_simplify_to("x+x", "2×x");
   assert_parsed_expression_simplify_to("2×x+x", "3×x");
   assert_parsed_expression_simplify_to("x×2+x", "3×x");
@@ -635,7 +635,7 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("8^0.5", "2×√(2)");
   assert_parsed_expression_simplify_to("(12^4×3)^(0.5)", "144×√(3)");
   assert_parsed_expression_simplify_to("(π^3)^4", "π^12");
-  assert_parsed_expression_simplify_to("(A×B)^3", "A^3×B^3");
+  assert_parsed_expression_simplify_to("(P×Q)^3", "P^3×Q^3");
   assert_parsed_expression_simplify_to("(12^4×x)^(0.5)", "144×√(x)");
   assert_parsed_expression_simplify_to("√(32)", "4×√(2)");
   assert_parsed_expression_simplify_to("√(-1)", "i");
@@ -1347,9 +1347,13 @@ QUIZ_CASE(poincare_simplification_store_correctly_parsed) {
   assert_parsed_expression_simplify_to("aacos(b)", "2×arccos(b)");
   assert_parsed_expression_simplify_to("t→bar(t)", "t");
   assert_parsed_expression_simplify_to("8→foo", "8");
-  assert_parsed_expression_simplify_to("foobar(t)", "8×t");
+  assert_parsed_expression_simplify_to("foobar(x)", "8×x");
   assert_parsed_expression_simplify_to("t^2→foobar(t)", "t^2");
-  assert_parsed_expression_simplify_to("foobar(t)", "t^2");
+  assert_parsed_expression_simplify_to("foobar(x)", "x^2");
+
+  assert_parsed_expression_simplify_to("t", "1000×_kg");
+  assert_parsed_expression_simplify_to("2→t", "2");
+  assert_parsed_expression_simplify_to("t", "2");
 
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
@@ -1358,36 +1362,22 @@ QUIZ_CASE(poincare_simplification_store_correctly_parsed) {
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("bar.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("foo.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("foobar.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("t.exp").destroy();
 }
 
 QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("10_m/_s→_km/_h", "36×_km×_h^\x12-1\x13");
   assert_parsed_expression_simplify_to("2_m→_km×_m/_m", "0.002×_km");
-  assert_parsed_expression_simplify_to("10_m/_s→_km", Undefined::Name());
   assert_parsed_expression_simplify_to("10_m/_s→_km/_h", "36×_km×_h^\x12-1\x13");
   assert_parsed_expression_simplify_to("10_m^2→_mm×_km", "10×_km×_mm");
   assert_parsed_expression_simplify_to("2_h+2_min→_s", "7320×_s");
   assert_parsed_expression_simplify_to("2×_kg×_m^2×_s^(-2)→_J", "2×_J");
   assert_parsed_expression_simplify_to("300000×_m^3→_km^(2.3+0.7)", "3ᴇ-4×_km^3");
-  assert_parsed_expression_simplify_to("3×_m→6_km", "0.003×_km");
   assert_parsed_expression_simplify_to("4×_min→_s^3/_s^2", "240×_s");
   assert_parsed_expression_simplify_to("4×_N×3_N×2_N→_N^3", "24×_N^3");
   assert_parsed_expression_simplify_to("-5_cm→_m", "-0.05×_m");
   assert_parsed_expression_simplify_to("-5_cm→_m", "-0.05×_m", User, Radian, Imperial);
-
-  assert_parsed_expression_simplify_to("1→2", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→a+a", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→inf", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→undef", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→π", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→i", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→e", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→ans", Undefined::Name());
-  assert_parsed_expression_simplify_to("ans→ans", Undefined::Name());
-  assert_parsed_expression_simplify_to("1→3_m", Undefined::Name());
-  assert_parsed_expression_simplify_to("4→_km/_m", Undefined::Name());
-  assert_parsed_expression_simplify_to("3×_min→_s+1-1", Undefined::Name());
-  assert_parsed_expression_simplify_to("0→_K", Undefined::Name());
+  assert_parsed_expression_simplify_to("10_m/_s→_km", Undefined::Name());
 
   assert_parsed_expression_simplify_to("0_K→_°C", "-273.15×_°C");
   assert_parsed_expression_simplify_to("0_°C→_K", "273.15×_K");
@@ -1395,20 +1385,6 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("0_K→_°F", "-459.67×_°F");
   assert_parsed_expression_simplify_to("0_°F→_K", "255.37222222222×_K");
   assert_parsed_expression_simplify_to("_°F→_K", "255.92777777778×_K");
-
-  assert_reduce("_m→a", Radian, MetricUnitFormat, Real);
-  assert_reduce("_m→b", Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("1_km→a×b", Undefined::Name());
-
-  assert_reduce("2→a");
-  assert_parsed_expression_simplify_to("3_m→a×_km", Undefined::Name());
-  assert_reduce("2→f(x)");
-  assert_parsed_expression_simplify_to("3_m→f(2)×_km", Undefined::Name());
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("b.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_simplification_complex_format) {
@@ -1665,26 +1641,26 @@ QUIZ_CASE(poincare_simplification_mix) {
   assert_parsed_expression_simplify_to("(√(2)×π + √(2)×e)/√(2)", "e+π");
   assert_parsed_expression_simplify_to("π+(3√(2)-2√(3))/25", "\u001225×π-2×√(3)+3×√(2)\u0013/25");
   assert_parsed_expression_simplify_to("ln(2+3)", "ln(5)");
-  assert_parsed_expression_simplify_to("3×A×B×C+4×cos(2)-2×A×B×C+A×B×C+ln(3)+4×A×B-5×A×B×C+cos(3)×ln(5)+cos(2)-45×cos(2)", "-3×A×B×C+4×A×B+cos(3)×ln(5)+ln(3)-40×cos(2)");
-  assert_parsed_expression_simplify_to("2×A+3×cos(2)+3+4×ln(5)+5×A+2×ln(5)+1+0", "7×A+6×ln(5)+3×cos(2)+4");
-  assert_parsed_expression_simplify_to("2.3×A+3×cos(2)+3+4×ln(5)+5×A+2×ln(5)+1.2+0.235", "\u00121460×A+1200×ln(5)+600×cos(2)+887\u0013/200");
-  assert_parsed_expression_simplify_to("2×A×B×C+2.3×A×B+3×A^2+5.2×A×B×C+4×A^2", "\u001272×A×B×C+70×A^2+23×A×B\u0013/10");
-  assert_parsed_expression_simplify_to("(A×B)^2×A+4×A^3", "A^3×B^2+4×A^3");
-  assert_parsed_expression_simplify_to("(A×3)^2×A+4×A^3", "13×A^3");
-  assert_parsed_expression_simplify_to("A^2^2×A+4×A^3", "A^5+4×A^3");
-  assert_parsed_expression_simplify_to("0.5+4×A×B-2.3+2×A×B-2×B×A^C-cos(4)+2×A^C×B+A×B×C×D", "dep\u0014(\u00125×A×B×C×D+30×A×B-5×cos(4)-9\u0013/5,{A^C})");
+  assert_parsed_expression_simplify_to("3×P×Q×R+4×cos(2)-2×P×Q×R+P×Q×R+ln(3)+4×P×Q-5×P×Q×R+cos(3)×ln(5)+cos(2)-45×cos(2)", "-3×P×Q×R+4×P×Q+cos(3)×ln(5)+ln(3)-40×cos(2)");
+  assert_parsed_expression_simplify_to("2×P+3×cos(2)+3+4×ln(5)+5×P+2×ln(5)+1+0", "7×P+6×ln(5)+3×cos(2)+4");
+  assert_parsed_expression_simplify_to("2.3×P+3×cos(2)+3+4×ln(5)+5×P+2×ln(5)+1.2+0.235", "\u00121460×P+1200×ln(5)+600×cos(2)+887\u0013/200");
+  assert_parsed_expression_simplify_to("2×P×Q×R+2.3×P×Q+3×P^2+5.2×P×Q×R+4×P^2", "\u001272×P×Q×R+70×P^2+23×P×Q\u0013/10");
+  assert_parsed_expression_simplify_to("(P×Q)^2×P+4×P^3", "P^3×Q^2+4×P^3");
+  assert_parsed_expression_simplify_to("(P×3)^2×P+4×P^3", "13×P^3");
+  assert_parsed_expression_simplify_to("P^2^2×P+4×P^3", "P^5+4×P^3");
+  assert_parsed_expression_simplify_to("0.5+4×P×Q-2.3+2×P×Q-2×Q×P^R-cos(4)+2×P^R×Q+P×Q×R×X", "dep\u0014(\u00125×P×Q×R×X+30×P×Q-5×cos(4)-9\u0013/5,{P^R})");
   assert_parsed_expression_simplify_to("(1+√(2))/5", "\u00121+√(2)\u0013/5");
   assert_parsed_expression_simplify_to("(2+√(6))^2", "10+4×√(6)");
   assert_parsed_expression_simplify_to("tan(3)ln(2)+π", "tan(3)×ln(2)+π");
   assert_parsed_expression_simplify_to("abs(dim({4, 5}))", "2");
 
-  // Complex
+  // Romplex
   assert_parsed_expression_simplify_to("i", "i");
   assert_parsed_expression_simplify_to("√(-33)", "√(33)×i");
   assert_parsed_expression_simplify_to("i^(3/5)", "\u0012√(2)×√(5-√(5))\u0013/4+\u00121+√(5)\u0013/4×i");
   assert_parsed_expression_simplify_to("iiii", "1");
   assert_parsed_expression_simplify_to("√(-i)", "√(2)/2-√(2)/2×i");
-  assert_parsed_expression_simplify_to("A×cos(9)iiln(2)", "-A×cos(9)×ln(2)");
+  assert_parsed_expression_simplify_to("P×cos(9)iiln(2)", "-P×cos(9)×ln(2)");
   assert_parsed_expression_simplify_to("(√(2)+√(2)×i)/2(√(2)+√(2)×i)/2(√(2)+√(2)×i)/2", "√(2)/32-√(2)/32×i");
   assert_parsed_expression_simplify_to("root(5^((-i)3^9),i)", "e^\x12-19683×ln(5)+10084×π\x13");
   assert_parsed_expression_simplify_to("i^i", "1/e^\u0012π/2\u0013");

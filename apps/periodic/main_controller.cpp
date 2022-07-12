@@ -25,6 +25,7 @@ void MainController::ContentView::layoutSubviews(bool force) {
 void MainController::selectedElementHasChanged(AtomicNumber oldZ) {
   m_view.bannerView()->reload();
   m_view.elementsView()->cursorMoved(oldZ);
+  m_detailsController.resetMemoization();
 }
 
 bool MainController::handleEvent(Ion::Events::Event e) {

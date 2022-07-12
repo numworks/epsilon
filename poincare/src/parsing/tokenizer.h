@@ -23,8 +23,14 @@ public:
 
   // Rewind tokenizer
   const char * currentPosition() { return m_decoder.stringPosition(); }
-  void goToPreviousPosition(const char * position) {
-    if (position < m_decoder.stringPosition()) {
+  void goToPosition(const char * position) {
+    /* WARNING:
+     * Sometimes the decoder will be one char after the null terminating zero.
+     * The following condition should prevent ASAN issues. */
+    const char * currentPos = currentPosition();
+    if (position < currentPos
+        || (position > currentPos
+            && position <= currentPos + strlen(currentPos))) {
       m_decoder.setPosition(position);
     }
   }

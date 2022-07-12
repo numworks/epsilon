@@ -43,6 +43,7 @@ public:
 
 private:
   Expression parseUntil(Token::Type stoppingType);
+  Expression parseExpressionWithRightwardsArrow(const char * rightwardsArrowPosition);
   Expression initializeFirstTokenAndParseUntilEnd();
 
   // Methods on Tokens

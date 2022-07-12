@@ -1,12 +1,13 @@
 #ifndef SEQUENCE_LIST_CONTROLLER_H
 #define SEQUENCE_LIST_CONTROLLER_H
 
-#include <escher/table_view_data_source.h>
+#include <apps/i18n.h>
 #include <apps/shared/sequence_store.h>
 #include <apps/shared/function_list_controller.h>
 #include <apps/shared/input_event_handler_delegate.h>
 #include <apps/shared/layout_field_delegate.h>
 #include <apps/shared/text_field_delegate.h>
+#include <escher/table_view_data_source.h>
 #include "list_parameter_controller.h"
 #include "sequence_toolbox.h"
 #include "type_parameter_controller.h"
@@ -17,7 +18,7 @@ namespace Sequence {
 class ListController : public Shared::FunctionListController, public Shared::InputEventHandlerDelegate, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate, public Escher::TableViewDataSource {
 public:
   ListController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Escher::ButtonRowController * footer);
-  const char * title() override;
+  const char * title() override { return I18n::translate(I18n::Message::SequenceTab); }
   int numberOfExpressionRows() const override;
   KDCoordinate expressionRowHeight(int j) override;
   Escher::Toolbox * toolboxForInputEventHandler(Escher::InputEventHandler * handler) override;
@@ -36,7 +37,7 @@ public:
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   int typeAtLocation(int i, int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
+  int reusableCellCount(int type) override { return type > k_expressionCellType ? 1 : maxNumberOfDisplayableRows(); }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   /* Responder */
   void didBecomeFirstResponder() override;
@@ -49,17 +50,29 @@ public:
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   void showLastSequence();
 private:
-  constexpr static KDFont::Size k_font = KDFont::Size::Large;
+  /* Cell types */
+  constexpr static int k_titleCellType = 0;
+  constexpr static int k_expressionCellType = k_titleCellType + 1;
+  constexpr static int k_emptyRowCellType = k_expressionCellType + 1;
+  constexpr static int k_addModelCellType = k_emptyRowCellType + 1;
+  /* Model definitions */
+  constexpr static int k_otherDefinition = -1;
+  constexpr static int k_sequenceDefinition = 0;
+  constexpr static int k_firstInitialCondition = k_sequenceDefinition + 1;
+  constexpr static int k_secondInitialCondition = k_firstInitialCondition + 1;
+  /* Width and margins */
   constexpr static KDCoordinate k_minTitleColumnWidth = 65;
   constexpr static KDCoordinate k_functionTitleSumOfMargins = 25;
   constexpr static KDCoordinate k_expressionCellVerticalMargin = 3;
+  /* Row numbers */
   constexpr static int k_maxNumberOfRows = 3*Shared::SequenceStore::k_maxNumberOfSequences;
+
   void computeTitlesColumnWidth(bool forceMax = false);
   void resetMemoizationForIndex(int index) override;
   void shiftMemoization(bool newCellIsUnder) override;
   bool editInitialConditionOfSelectedRecordWithText(const char * text, bool firstInitialCondition);
-  ListParameterController * parameterController() override;
-  int maxNumberOfDisplayableRows() override;
+  ListParameterController * parameterController() override { return &m_parameterController; }
+  int maxNumberOfDisplayableRows() override { return k_maxNumberOfRows; }
   Escher::HighlightCell * titleCells(int index);
   Escher::HighlightCell * functionCells(int index) override;
   void willDisplayTitleCellAtIndex(Escher::HighlightCell * cell, int j);
@@ -81,6 +94,7 @@ private:
   bool removeModelRow(Ion::Storage::Record record) override;
   Shared::SequenceStore * modelStore() override;
   KDCoordinate nameWidth(int nameLength) const;
+
   Escher::SelectableTableView m_selectableTableView;
   Escher::EvenOddCell m_emptyCell;
   VerticalSequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];

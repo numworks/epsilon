@@ -14,6 +14,7 @@ class ExpressionModelListController : public Escher::ViewController, public Esch
 public:
   ExpressionModelListController(Escher::Responder * parentResponder, I18n::Message text);
 protected:
+  constexpr static KDFont::Size k_font = KDFont::Size::Large;
   constexpr static KDCoordinate k_expressionMargin = 5;
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
@@ -60,7 +61,6 @@ protected:
   Escher::EvenOddMessageTextCell m_addNewModel;
 private:
   // Memoization
-  constexpr static KDFont::Size k_font = KDFont::Size::Large;
   constexpr static int k_resetedMemoizedValue = -1;
   void resetMemoization();
 

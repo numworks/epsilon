@@ -164,7 +164,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
   // Memoize layouts
   for (size_t i = 0; i < k_maxNumberOfExpressionCells; i++) {
     if (!expressions[i].isUninitialized()) {
-      m_layouts[i] = Shared::PoincareHelpers::CreateLayout(expressions[i]);
+      m_layouts[i] = Shared::PoincareHelpers::CreateLayout(expressions[i], App::app()->localContext());
     }
   }
 

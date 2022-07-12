@@ -105,7 +105,7 @@ Layout ExpressionModel::layout(const Storage::Record * record, CodePoint symbol)
     if (!clone.isUninitialized() && symbol != 0) {
       clone = clone.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
     }
-    m_layout = PoincareHelpers::CreateLayout(clone);
+    m_layout = PoincareHelpers::CreateLayout(clone, AppsContainer::activeApp()->localContext());
     if (m_layout.isUninitialized()) {
       m_layout = HorizontalLayout::Builder();
     }

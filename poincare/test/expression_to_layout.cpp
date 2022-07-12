@@ -6,7 +6,7 @@ using namespace Poincare;
 
 void assert_parsed_expression_layouts_to(const char * expression, Layout l) {
   Expression e = parse_expression(expression, nullptr, true);
-  Layout el = e.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
+  Layout el = e.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits, nullptr);
   quiz_assert_print_if_failure(el.isIdenticalTo(l), expression);
 }
 
@@ -129,7 +129,7 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
 
 void assert_parsed_expression_layout_serialize_to_self(const char * expressionLayout) {
   Expression e = parse_expression(expressionLayout, nullptr, true);
-  Layout el = e.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits);
+  Layout el = e.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits, nullptr);
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
   el.serializeForParsing(buffer, bufferSize);

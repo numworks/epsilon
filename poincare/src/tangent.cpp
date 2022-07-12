@@ -16,7 +16,7 @@ namespace Poincare {
 int TangentNode::numberOfChildren() const { return Tangent::s_functionHelper.numberOfChildren(); }
 
 Layout TangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(Tangent(this), floatDisplayMode, numberOfSignificantDigits, Tangent::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(Tangent(this), floatDisplayMode, numberOfSignificantDigits, Tangent::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int TangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

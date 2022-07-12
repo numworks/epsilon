@@ -19,7 +19,7 @@ namespace Poincare {
 int FactorNode::numberOfChildren() const { return Factor::s_functionHelper.numberOfChildren(); }
 
 Layout FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -19,7 +19,7 @@ Expression MixedFractionNode::shallowReduce(const ReductionContext& reductionCon
 }
 
 Layout MixedFractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Infix(MixedFraction(this), floatDisplayMode, numberOfSignificantDigits, "");
+  return LayoutHelper::Infix(MixedFraction(this), floatDisplayMode, numberOfSignificantDigits, "", context);
 }
 
 int MixedFractionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -160,7 +160,7 @@ void FormulaTemplateMenuController::computeUninitializedLayouts() {
       continue;
     }
     Poincare::Expression e = templateExpressionForCell(static_cast<Cell>(i));
-    m_layouts[i - 1] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Preferences::ShortNumberOfSignificantDigits);
+    m_layouts[i - 1] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Preferences::ShortNumberOfSignificantDigits, Container::activeApp()->localContext());
   }
 }
 

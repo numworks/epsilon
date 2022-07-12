@@ -41,12 +41,12 @@ void FunctionToolbox::setAddedCellsContent(AddedCellsContent content) {
     }
     break;
   case AddedCellsContent::NegativeInfinity:
-    m_addedCellLayout[0] = Infinity::Builder(true).createLayout(pref->displayMode(), pref->numberOfSignificantDigits());
+    m_addedCellLayout[0] = Infinity::Builder(true).createLayout(pref->displayMode(), pref->numberOfSignificantDigits(), Container::activeApp()->localContext());
     m_addedCellLayout[1] = Layout();
     break;
   default:
     assert(content == AddedCellsContent::PositiveInfinity);
-    m_addedCellLayout[0] = Infinity::Builder(false).createLayout(pref->displayMode(), pref->numberOfSignificantDigits());
+    m_addedCellLayout[0] = Infinity::Builder(false).createLayout(pref->displayMode(), pref->numberOfSignificantDigits(), Container::activeApp()->localContext());
     m_addedCellLayout[1] = Layout();
     break;
   }

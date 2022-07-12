@@ -15,7 +15,7 @@ int ListMinimumNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 Layout ListMinimumNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(ListMinimum(this), floatDisplayMode, numberOfSignificantDigits, ListMinimum::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(ListMinimum(this), floatDisplayMode, numberOfSignificantDigits, ListMinimum::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 Expression ListMinimumNode::shallowReduce(const ReductionContext& reductionContext) {

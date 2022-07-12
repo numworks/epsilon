@@ -12,13 +12,13 @@
 
 namespace Poincare {
 
-Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, OperatorTest forbidOperator) {
+Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context, OperatorTest forbidOperator) {
   HorizontalLayout result = HorizontalLayout::Builder();
   const size_t operatorLength = strlen(operatorName);
   const int numberOfChildren = expression.numberOfChildren();
   assert(numberOfChildren > 1);
   for (int i = 0; i < numberOfChildren; i++) {
-    Layout childLayout = expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits, false, true);
+    Layout childLayout = expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits, context, false, true);
 
     if (i > 0) {
       /* Handle the operator */
@@ -37,7 +37,7 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
   return std::move(result);
 }
 
-Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName) {
+Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context) {
   HorizontalLayout result = HorizontalLayout::Builder();
   // Add the operator name.
   result.addOrMergeChildAtIndex(String(operatorName, strlen(operatorName)), 0, true);
@@ -49,7 +49,7 @@ Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFlo
     if (i > 0) {
       args.addChildAtIndex(CodePointLayout::Builder(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
     }
-    args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits, false, true), args.numberOfChildren(), true);
+    args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits, context, false, true), args.numberOfChildren(), true);
   }
   // Add the parenthesed arguments.
   result.addOrMergeChildAtIndex(Parentheses(args, false), result.numberOfChildren(), true);

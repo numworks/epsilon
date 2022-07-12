@@ -290,8 +290,8 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
         error = Error::EquationUndefined;
         continue;
       }
-      m_exactSolutionExactLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutions[i]);
-      m_exactSolutionApproximateLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutionsApproximations[i]);
+      m_exactSolutionExactLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutions[i], context);
+      m_exactSolutionApproximateLayouts[solutionIndex] = PoincareHelpers::CreateLayout(exactSolutionsApproximations[i], context);
       // Check for identity between exact and approximate layouts
       char exactBuffer[::Constant::MaxSerializedExpressionSize];
       char approximateBuffer[::Constant::MaxSerializedExpressionSize];

@@ -24,7 +24,7 @@ Complex<T> CotangentNode::computeOnComplex(const std::complex<T> c, Preferences:
 }
 
 Layout CotangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(Cotangent(this), floatDisplayMode, numberOfSignificantDigits, Cotangent::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(Cotangent(this), floatDisplayMode, numberOfSignificantDigits, Cotangent::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int CotangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

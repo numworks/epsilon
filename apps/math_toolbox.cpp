@@ -610,7 +610,7 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
         Expression resultExpression = Expression::Parse(text, nullptr);
         if (!resultExpression.isUninitialized()) {
           // The text is parsable, we create its layout an insert it.
-          resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+          resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits, Container::activeApp()->localContext());
         } else {
           // UnitConversionCommandWithArg uses undefined units
           assert(messageTree->label() == I18n::Message::UnitConversionCommandWithArg);

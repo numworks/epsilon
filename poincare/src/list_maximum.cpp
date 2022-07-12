@@ -15,7 +15,7 @@ int ListMaximumNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 Layout ListMaximumNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(ListMaximum(this), floatDisplayMode, numberOfSignificantDigits, ListMaximum::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(ListMaximum(this), floatDisplayMode, numberOfSignificantDigits, ListMaximum::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 Expression ListMaximumNode::shallowReduce(const ReductionContext& reductionContext) {

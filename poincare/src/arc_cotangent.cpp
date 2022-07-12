@@ -20,7 +20,7 @@ Complex<T> ArcCotangentNode::computeOnComplex(const std::complex<T> c, Preferenc
 }
 
 Layout ArcCotangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(ArcCotangent(this), floatDisplayMode, numberOfSignificantDigits, ArcCotangent::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(ArcCotangent(this), floatDisplayMode, numberOfSignificantDigits, ArcCotangent::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int ArcCotangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

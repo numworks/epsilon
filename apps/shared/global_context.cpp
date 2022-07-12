@@ -1,4 +1,5 @@
 #include "global_context.h"
+#include <apps/apps_container.h>
 #include "continuous_function.h"
 #include "sequence.h"
 #include "sequence_context.h"
@@ -32,9 +33,9 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
     || record.hasExtension(Ion::Storage::lisExtension)
     || record.hasExtension(Ion::Storage::matExtension))
   {
-    return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record));
+    return PoincareHelpers::CreateLayout(ExpressionForActualSymbol(record), AppsContainer::activeApp()->localContext());
   } else if (record.hasExtension(Ion::Storage::funcExtension)) {
-    return PoincareHelpers::CreateLayout(ExpressionForFunction(Symbol::Builder(ContinuousFunction(record).symbol()), record));
+    return PoincareHelpers::CreateLayout(ExpressionForFunction(Symbol::Builder(ContinuousFunction(record).symbol()), record), AppsContainer::activeApp()->localContext());
   } else {
     assert(record.hasExtension(Ion::Storage::seqExtension));
     return Sequence(record).layout();

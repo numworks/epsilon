@@ -9,7 +9,7 @@ namespace Poincare {
 int BinomPDFNode::numberOfChildren() const { return BinomPDF::s_functionHelper.numberOfChildren(); }
 
 Layout BinomPDFNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(BinomPDF(this), floatDisplayMode, numberOfSignificantDigits, BinomPDF::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(BinomPDF(this), floatDisplayMode, numberOfSignificantDigits, BinomPDF::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int BinomPDFNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

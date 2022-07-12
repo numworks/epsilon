@@ -18,7 +18,7 @@ Expression DimensionNode::shallowReduce(const ReductionContext& reductionContext
 }
 
 Layout DimensionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(Dimension(this), floatDisplayMode, numberOfSignificantDigits, Dimension::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(Dimension(this), floatDisplayMode, numberOfSignificantDigits, Dimension::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int DimensionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

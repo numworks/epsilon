@@ -14,7 +14,7 @@ int ListSumNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloa
 }
 
 Layout ListSumNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(ListSum(this), floatDisplayMode, numberOfSignificantDigits, ListSum::s_functionHelper.aliasesList().mainAlias());
+  return LayoutHelper::Prefix(ListSum(this), floatDisplayMode, numberOfSignificantDigits, ListSum::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 Expression ListSumNode::shallowReduce(const ReductionContext& reductionContext) {

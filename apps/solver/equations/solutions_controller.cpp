@@ -266,7 +266,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
       // It's a user variable row, get values of the solutions or discriminant
       ScrollableTwoExpressionsCell * valueCell = static_cast<ScrollableTwoExpressionsCell *>(cell);
       const char * symbol = m_equationStore->userVariableAtIndex(j - rowOfUserVariablesMessage - 1);
-      Poincare::Layout layout = PoincareHelpers::CreateLayout(App::app()->localContext()->expressionForSymbolAbstract(Poincare::Symbol::Builder(symbol, strlen(symbol)), false));
+      Poincare::Layout layout = PoincareHelpers::CreateLayout(App::app()->localContext()->expressionForSymbolAbstract(Poincare::Symbol::Builder(symbol, strlen(symbol)), false), App::app()->localContext());
       valueCell->setLayouts(Poincare::Layout(), layout);
     }
   }
@@ -295,7 +295,7 @@ KDCoordinate SolutionsController::rowHeight(int j) {
   }
   // TODO: memoize user symbols if too slow
   const char * symbol = m_equationStore->userVariableAtIndex(j - rowOfUserVariablesMessage - 1);
-  Poincare::Layout layout = PoincareHelpers::CreateLayout(App::app()->localContext()->expressionForSymbolAbstract(Poincare::Symbol::Builder(symbol, strlen(symbol)), false));
+  Poincare::Layout layout = PoincareHelpers::CreateLayout(App::app()->localContext()->expressionForSymbolAbstract(Poincare::Symbol::Builder(symbol, strlen(symbol)), false), App::app()->localContext());
   return layout.layoutSize(k_solutionsFont).height() + 2 * Metric::CommonSmallMargin;
 }
 

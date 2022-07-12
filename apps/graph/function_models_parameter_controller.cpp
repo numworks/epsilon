@@ -5,6 +5,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/preferences.h>
 #include <assert.h>
+#include <apps/apps_container.h>
 #include "../shared/global_context.h"
 #include "../shared/continuous_function.h"
 #include "app.h"
@@ -30,7 +31,7 @@ FunctionModelsParameterController::FunctionModelsParameterController(Responder *
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     Poincare::Expression e = Expression::Parse(modelAtIndex(i+1), nullptr); // No context needed
-    m_layouts[i] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Preferences::ShortNumberOfSignificantDigits);
+    m_layouts[i] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Preferences::ShortNumberOfSignificantDigits, AppsContainer::sharedAppsContainer()->globalContext());
     m_modelCells[i].setParentResponder(&m_selectableTableView);
   }
 }

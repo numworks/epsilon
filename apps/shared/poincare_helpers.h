@@ -10,9 +10,9 @@ namespace Shared {
 
 namespace PoincareHelpers {
 
-inline Poincare::Layout CreateLayout(const Poincare::Expression e)  {
+inline Poincare::Layout CreateLayout(const Poincare::Expression e, Poincare::Context * context)  {
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
-  return e.createLayout(preferences->displayMode(), preferences->numberOfSignificantDigits());
+  return e.createLayout(preferences->displayMode(), preferences->numberOfSignificantDigits(), context);
 }
 
 template <class T>

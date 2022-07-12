@@ -380,7 +380,13 @@ QUIZ_CASE(poincare_parsing_units) {
 
   // "l" is alias for "L"
   Expression liter = Expression::Parse("_L", nullptr);
+  assert_parsed_expression_is("l", liter);
   assert_parsed_expression_is("_l", liter);
+
+  assert_parsed_expression_is("kmπ", Multiplication::Builder(kilometer, Constant::Builder("π")));
+  assert_parsed_expression_is("πkm", Multiplication::Builder(Constant::Builder("π"), kilometer));
+  assert_parsed_expression_is("skm", Multiplication::Builder(second, kilometer));
+  assert_parsed_expression_is("3s", Multiplication::Builder(BasedInteger::Builder(3), second));
 }
 
 QUIZ_CASE(poincare_parsing_identifiers) {
@@ -559,10 +565,15 @@ QUIZ_CASE(poincare_parsing_identifiers) {
 }
 
 QUIZ_CASE(poincare_parsing_parse_store) {
+  Expression ton = Expression::Parse("_t", nullptr);
   assert_parsed_expression_is("1→a", Store::Builder(BasedInteger::Builder(1),Symbol::Builder("a",1)));
+  assert_parsed_expression_is("t→a", Store::Builder(ton, Symbol::Builder("a",1)));
+  assert_parsed_expression_is("1→g", Store::Builder(BasedInteger::Builder(1),Symbol::Builder("g",1)));
   assert_parsed_expression_is("1→f(x)", Store::Builder(BasedInteger::Builder(1),Function::Builder("f",1,Symbol::Builder("x",1))));
   assert_parsed_expression_is("x→f(x)", Store::Builder(Symbol::Builder("x",1),Function::Builder("f",1,Symbol::Builder("x",1))));
   assert_parsed_expression_is("n→f(x)", Store::Builder(Symbol::Builder("n",1),Function::Builder("f",1,Symbol::Builder("x",1))));
+  assert_parsed_expression_is("t→f(t)", Store::Builder(Symbol::Builder("t",1),Function::Builder("f",1,Symbol::Builder("t",1))));
+  assert_parsed_expression_is("t→f(x)", Store::Builder(ton, Function::Builder("f",1,Symbol::Builder("t",1))));
   Expression m0[] = {Symbol::Builder('x')};
   assert_parsed_expression_is("[[x]]→f(x)", Store::Builder(BuildMatrix(1,1,m0), Function::Builder("f", 1, Symbol::Builder('x'))));
   assert_text_not_parsable("a→b→c");
@@ -577,10 +588,34 @@ QUIZ_CASE(poincare_parsing_parse_store) {
 }
 
 QUIZ_CASE(poincare_parsing_parse_unit_convert) {
-  Expression meter = Expression::Parse("_m", nullptr);
-  assert_parsed_expression_is("1→_m", UnitConvert::Builder(BasedInteger::Builder(1), meter));
-  Expression kilometer = Expression::Parse("_km", nullptr);
-  assert_parsed_expression_is("1→_m/_km", UnitConvert::Builder(BasedInteger::Builder(1), Division::Builder(meter, kilometer)));
+  Expression ton = Expression::Parse("_t", nullptr);
+  Expression kilogram = Expression::Parse("_kg", nullptr);
+  assert_parsed_expression_is("3t→kg", UnitConvert::Builder(Multiplication::Builder(BasedInteger::Builder(3), ton), kilogram));
+  assert_parsed_expression_is("3t→kg^2", UnitConvert::Builder(Multiplication::Builder(BasedInteger::Builder(3), ton), Power::Builder(kilogram, BasedInteger::Builder(2))));
+  assert_text_not_parsable("1→_m");
+  assert_text_not_parsable("2t→3kg");
+  assert_text_not_parsable("1→2");
+  assert_text_not_parsable("1→a+a");
+  assert_text_not_parsable("1→inf");
+  assert_text_not_parsable("1→undef");
+  assert_text_not_parsable("1→π");
+  assert_text_not_parsable("1→i");
+  assert_text_not_parsable("1→e");
+  assert_text_not_parsable("1→3_m");
+  assert_text_not_parsable("4→_km/_m");
+  assert_text_not_parsable("3×_min→_s+1-1");
+  assert_text_not_parsable("0→_K");
+  assert_reduce("_m→a", Radian, MetricUnitFormat, Real);
+  assert_reduce("_m→b", Radian, MetricUnitFormat, Real);
+  assert_text_not_parsable("1_km→a×b");
+  assert_reduce("2→a");
+  assert_text_not_parsable("3_m→a×_km");
+  assert_reduce("2→f(x)");
+  assert_text_not_parsable("3_m→f(2)×_km");
+  // Clean the storage for other tests
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("b.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(poincare_parsing_implicit_multiplication) {

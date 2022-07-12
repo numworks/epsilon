@@ -410,12 +410,16 @@ void assert_expression_has_variables(const char * expression, const char * varia
 }
 
 QUIZ_CASE(poincare_properties_get_variables) {
+  /* Warning: Theses tests are weird because you need to avoid a lot of
+  * reserved identifiers like:
+  * - e and i
+  * - m, g, h, A which are units and can be parsed without '_' now. */
   const char * variableBuffer1[] = {"x","y",""};
   assert_expression_has_variables("x+y", variableBuffer1, 2);
-  const char * variableBuffer2[] = {"x","y","z","t",""};
-  assert_expression_has_variables("x+y+z+2×t", variableBuffer2, 4);
-  const char * variableBuffer3[] = {"a","x","y","k","A", ""};
-  assert_expression_has_variables("a+x^2+2×y+k!×A", variableBuffer3, 5);
+  const char * variableBuffer2[] = {"x","y","z","w",""};
+  assert_expression_has_variables("x+y+z+2×w", variableBuffer2, 4);
+  const char * variableBuffer3[] = {"a","x","y","k","B", ""};
+  assert_expression_has_variables("a+x^2+2×y+k!×B", variableBuffer3, 5);
   assert_reduce("x→BABA");
   assert_reduce("y→abab");
   const char * variableBuffer4[] = {"BABA","abab", ""};
@@ -425,7 +429,7 @@ QUIZ_CASE(poincare_properties_get_variables) {
   assert_expression_has_variables("BBBBBB", variableBuffer5, 1);
   const char * variableBuffer6[] = {""};
   assert_expression_has_variables("a+b+c+d+f+g+h+j+k+l+m+n+o+p+q+r+s+t+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo", variableBuffer6, -1);
-  assert_expression_has_variables("a+b+c+d+f+g+h", variableBuffer6, -1);
+  assert_expression_has_variables("a+b+c+d+f+j+k", variableBuffer6, -1);
   // f: x → 1+πx+x^2+toto
   assert_reduce("1+π×x+x^2+\"toto\"→f(x)");
   const char * variableBuffer7[] = {"\"tata\"","\"toto\"", ""};
@@ -437,8 +441,8 @@ QUIZ_CASE(poincare_properties_get_variables) {
 
   const char * variableBuffer8[] = {"y", ""};
   assert_expression_has_variables("diff(3x,x,0)y-2", variableBuffer8, 1);
-  const char * variableBuffer9[] = {"a", "b", "c", "d", "g", "f"};
-  assert_expression_has_variables("a+b+c+d+g+f", variableBuffer9, 6);
+  const char * variableBuffer9[] = {"a", "b", "c", "d", "f", "j"};
+  assert_expression_has_variables("a+b+c+d+f+j", variableBuffer9, 6);
 
   const char * variableBuffer10[] = {"c", "z", "a", "b", ""};
   assert_expression_has_variables("int(c×x×z, x, a, b)", variableBuffer10, 4);

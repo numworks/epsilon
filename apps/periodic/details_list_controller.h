@@ -3,12 +3,13 @@
 
 #include "table_cells.h"
 #include <escher/selectable_list_view_controller.h>
+#include <escher/stack_view_controller.h>
 
 namespace Periodic {
 
 class DetailsListController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
-  DetailsListController(Escher::Responder * parentResponder) : Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(parentResponder) {}
+  DetailsListController(Escher::StackViewController * parentResponder) : Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>(parentResponder) {}
 
   // Escher::Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -55,6 +56,8 @@ private:
     Ionisation,
     NumberOfRows
   };
+
+  Escher::StackViewController * stackViewController() const { return static_cast<Escher::StackViewController *>(parentResponder()); }
 
   Escher::MessageTableCellWithMessageWithBuffer m_bufferCells[k_numberOfBufferCells];
   MessageTableCellWithMessageWithBufferWithSeparator m_separatorBufferCells[k_numberOfSeparatorBufferCells];

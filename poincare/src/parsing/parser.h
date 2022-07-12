@@ -42,7 +42,7 @@ public:
   Status getStatus() const { return m_status; }
 
 private:
-  Expression parseUntil(Token::Type stoppingType);
+  Expression parseUntil(Token::Type stoppingType, Expression leftHandSide = Expression());
   Expression parseExpressionWithRightwardsArrow(const char * rightwardsArrowPosition);
   Expression initializeFirstTokenAndParseUntilEnd();
 
@@ -90,7 +90,7 @@ private:
   Expression parseFunctionParameters();
   Expression parseCommaSeparatedList();
   void privateParseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper);
-  void privateParseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length);
+  void privateParseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length, Token::Type stoppingType);
   void parseSequence(Expression & leftHandSide, const char * name, Token::Type rightDelimiter);
   void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
   bool generateMixedFractionIfNeeded(Expression & leftHandSide);

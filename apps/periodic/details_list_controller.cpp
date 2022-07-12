@@ -90,7 +90,7 @@ void fillBufferCellWithInteger(MessageTableCellWithMessageWithBuffer * cell, I18
   fillBufferCell(cell, label, sublabel, buffer);
 }
 
-void fillLayoutTitleCell(ExpressionTableCellWithMessageWithBuffer * cell, char symbol, I18n::Message symbolSubscript, I18n::Message sublabel, const char * accessory) {
+void fillLayoutTitleCell(InertExpressionTableCell * cell, char symbol, I18n::Message symbolSubscript, I18n::Message sublabel, const char * accessory) {
   Layout layout = HorizontalLayout::Builder(CodePointLayout::Builder(symbol), VerticalOffsetLayout::Builder(StringLayout::Builder(I18n::translate(symbolSubscript)), VerticalOffsetLayoutNode::Position::Subscript));
   cell->setLayout(layout);
   cell->setSubLabelMessage(sublabel);
@@ -151,12 +151,12 @@ void DetailsListController::willDisplayCellForIndex(HighlightCell * cell, int in
 
   case Row::MeltingPoint:
     ElementsViewDataSource::ColorByMeltingPoint.printValueWithUnitForElement(z, buffer, bufferSize);
-    fillLayoutTitleCell(static_cast<ExpressionTableCellWithMessageWithBuffer *>(cell), 'T', I18n::Message::DetailsMeltingPointSubscript, I18n::Message::DetailsMeltingPointLegend, buffer);
+    fillLayoutTitleCell(static_cast<InertExpressionTableCell *>(cell), 'T', I18n::Message::DetailsMeltingPointSubscript, I18n::Message::DetailsMeltingPointLegend, buffer);
     return;
 
   case Row::BoilingPoint:
     ElementsViewDataSource::ColorByBoilingPoint.printValueWithUnitForElement(z, buffer, bufferSize);
-    fillLayoutTitleCell(static_cast<ExpressionTableCellWithMessageWithBuffer *>(cell), 'T', I18n::Message::DetailsBoilingPointSubscript, I18n::Message::DetailsBoilingPointLegend, buffer);
+    fillLayoutTitleCell(static_cast<InertExpressionTableCell *>(cell), 'T', I18n::Message::DetailsBoilingPointSubscript, I18n::Message::DetailsBoilingPointLegend, buffer);
     return;
 
   case Row::Density:
@@ -179,12 +179,12 @@ void DetailsListController::willDisplayCellForIndex(HighlightCell * cell, int in
 
   case Row::Affinity:
     ElementsViewDataSource::ColorByAffinity.printValueWithUnitForElement(z, buffer, bufferSize);
-    fillLayoutTitleCell(static_cast<ExpressionTableCellWithMessageWithBuffer *>(cell), 'E', I18n::Message::DetailsAffinitySubscript, I18n::Message::DetailsAffinityLegend, buffer);
+    fillLayoutTitleCell(static_cast<InertExpressionTableCell *>(cell), 'E', I18n::Message::DetailsAffinitySubscript, I18n::Message::DetailsAffinityLegend, buffer);
     return;
 
   case Row::Ionisation:
     ElementsViewDataSource::ColorByIonisation.printValueWithUnitForElement(z, buffer, bufferSize);
-    fillLayoutTitleCell(static_cast<ExpressionTableCellWithMessageWithBuffer *>(cell), 'E', I18n::Message::DetailsIonisationSubscript, I18n::Message::DetailsIonisationLegend, buffer);
+    fillLayoutTitleCell(static_cast<InertExpressionTableCell *>(cell), 'E', I18n::Message::DetailsIonisationSubscript, I18n::Message::DetailsIonisationLegend, buffer);
     return;
 
   default:
@@ -207,7 +207,7 @@ KDCoordinate DetailsListController::nonMemoizedRowHeight(int j) {
     }
   case k_layoutTitleCellType:
     {
-      ExpressionTableCellWithMessageWithBuffer tempCell;
+      InertExpressionTableCell tempCell;
       return heightForCellAtIndexWithWidthInit(&tempCell, j);
     }
   default:

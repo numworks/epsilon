@@ -2,7 +2,6 @@
 #define PERIODIC_DETAILS_LIST_CONTROLLER
 
 #include "table_cells.h"
-#include <escher/expression_table_cell_with_message_with_buffer.h>
 #include <escher/selectable_list_view_controller.h>
 
 namespace Periodic {
@@ -56,7 +55,7 @@ private:
 
   Escher::MessageTableCellWithMessageWithBuffer m_bufferCells[k_numberOfBufferCells];
   MessageTableCellWithMessageWithBufferWithSeparator m_separatorBufferCells[k_numberOfSeparatorBufferCells];
-  Escher::ExpressionTableCellWithMessageWithBuffer m_layoutTitleCells[k_numberOfLayoutTitleCells];
+  InertExpressionTableCell m_layoutTitleCells[k_numberOfLayoutTitleCells];
   MessageTableCellWithMessageWithExpressionWithSeparator m_separatorLayoutCells[k_numberOfSeparatorLayoutCells];
 };
 

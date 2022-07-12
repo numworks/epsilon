@@ -5,20 +5,21 @@
 namespace Periodic {
 
 void SingleElementView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), k_backgroundColor);
+  ctx->fillRect(bounds(), m_backgroundColor);
 
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   AtomicNumber z = dataSource->selectedElement();
   assert(ElementsDataBase::IsElement(z));
   DisplayType::ColorPair colors = dataSource->displayType()->colorPairForElement(z);
-  KDRect cell(k_outerMargin + k_borderSize, bounds().height() - k_outerMargin - k_borderSize - k_cellSize, k_cellSize, k_cellSize);
-  ctx->fillRect(cell, colors.bg());
+
+  KDRect bgRect((bounds().width() - k_totalSize) / 2 + k_borderSize, (bounds().height() - k_totalSize) / 2 + k_borderSize, k_cellSize, k_cellSize);
+  ctx->fillRect(bgRect, colors.bg());
 
   KDRect borders[4] = {
-    KDRect(cell.x() - k_borderSize, cell.y() - k_borderSize, cell.width() + 2 * k_borderSize, k_borderSize), // Top
-    KDRect(cell.x() - k_borderSize, cell.y() + cell.height(), cell.width() + 2 * k_borderSize, k_borderSize), // Bottom
-    KDRect(cell.x() - k_borderSize, cell.y(), k_borderSize, cell.height()), // Left
-    KDRect(cell.x() + cell.width(), cell.y(), k_borderSize, cell.height()), // Right
+    KDRect(bgRect.x() - k_borderSize, bgRect.y() - k_borderSize, k_totalSize, k_borderSize), // Top
+    KDRect(bgRect.x() - k_borderSize, bgRect.y() + k_cellSize, k_totalSize, k_borderSize), // Bottom
+    KDRect(bgRect.x() - k_borderSize, bgRect.y(), k_borderSize, k_cellSize), // Left
+    KDRect(bgRect.x() + bgRect.width(), bgRect.y(), k_borderSize, k_cellSize), // Right
   };
   for (KDRect r : borders) {
     ctx->fillRect(r, colors.fg());
@@ -49,18 +50,10 @@ void SingleElementView::drawRect(KDContext * ctx, KDRect rect) const {
     symbolXOffset += aSize.width();
   }
 
-  KDPoint symbolOrigin(cell.x() + (k_cellSize - symbolSize.width() + symbolXOffset) / 2, cell.y() + (k_cellSize - symbolSize.height()) / 2);
+  KDPoint symbolOrigin(bgRect.x() + (k_cellSize - symbolSize.width() + symbolXOffset) / 2, bgRect.y() + (k_cellSize - symbolSize.height()) / 2);
   ctx->drawString(symbol, symbolOrigin, KDFont::Size::Large, colors.fg(), colors.bg());
   ctx->drawString(zBuffer, KDPoint(symbolOrigin.x() - zSize.width() - k_symbolZAMargin, symbolOrigin.y() + symbolSize.height() - k_ZVerticalOffset), KDFont::Size::Small, colors.fg(), colors.bg());
   ctx->drawString(aBuffer, KDPoint(symbolOrigin.x() - aSize.width() - k_symbolZAMargin, symbolOrigin.y() - aSize.height() + k_AVerticalOffset), KDFont::Size::Small, colors.fg(), colors.bg());
-
-  const char * name = I18n::translate(ElementsDataBase::Name(z));
-  KDSize nameSize = KDFont::Font(KDFont::Size::Small)->stringSize(name);
-  KDPoint nameOrigin(
-    (cell.x() + cell.width() + k_borderSize + bounds().width() - nameSize.width()) / 2,
-    symbolOrigin.y() + k_nameVerticalOffset
-  );
-  ctx->drawString(name, nameOrigin, KDFont::Size::Small, colors.fg(), k_backgroundColor);
 }
 
 }

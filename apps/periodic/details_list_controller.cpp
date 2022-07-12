@@ -12,6 +12,14 @@ using namespace Poincare;
 
 namespace Periodic {
 
+DetailsListController::DetailsListController(StackViewController * parentResponder) :
+  ViewController(parentResponder),
+  m_selectableTableView(this, this, this, &m_view),
+  m_topElementView(Escher::Palette::WallScreen),
+  m_bottomMessageView(KDFont::Size::Small, I18n::Message::ElementsDataConditions, KDContext::k_alignCenter, KDContext::k_alignCenter, Escher::Palette::GrayDark, Escher::Palette::WallScreen),
+  m_view(&m_selectableTableView, this, &m_topElementView, &m_bottomMessageView)
+{}
+
 bool DetailsListController::handleEvent(Ion::Events::Event e) {
   if (e == Ion::Events::Plus || e == Ion::Events::Minus) {
     int step = e == Ion::Events::Plus ? 1 : -1;
@@ -26,12 +34,12 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
     stack->push(this);
     return true;
   }
-  return SelectableListViewController::handleEvent(e);
+  return false;
 }
 
 void DetailsListController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  m_selectableTableView.reloadData(true, true);
+  m_view.reload();
 }
 
 const char * DetailsListController::title() {
@@ -107,7 +115,7 @@ void fillBufferCellWithInteger(MessageTableCellWithMessageWithBuffer * cell, I18
 }
 
 void fillLayoutTitleCell(InertExpressionTableCell * cell, char symbol, I18n::Message symbolSubscript, I18n::Message sublabel, const char * accessory) {
-  Layout layout = HorizontalLayout::Builder(CodePointLayout::Builder(symbol), VerticalOffsetLayout::Builder(StringLayout::Builder(I18n::translate(symbolSubscript)), VerticalOffsetLayoutNode::Position::Subscript));
+  Layout layout = Poincare::HorizontalLayout::Builder(CodePointLayout::Builder(symbol), VerticalOffsetLayout::Builder(StringLayout::Builder(I18n::translate(symbolSubscript)), VerticalOffsetLayoutNode::Position::Subscript));
   cell->setLayout(layout);
   cell->setSubLabelMessage(sublabel);
   cell->setAccessoryText(accessory);
@@ -193,7 +201,7 @@ void DetailsListController::willDisplayCellForIndex(HighlightCell * cell, int in
       Layout layout = LayoutHelper::StringToCodePointsLayout(buffer, length);
       assert(layout.type() == LayoutNode::Type::HorizontalLayout);
       int n = layout.numberOfChildren();
-      static_cast<HorizontalLayout &>(layout).addOrMergeChildAtIndex(VerticalOffsetLayout::Builder(CodePointLayout::Builder('3'), VerticalOffsetLayoutNode::Position::Superscript), n, false);
+      static_cast<Poincare::HorizontalLayout &>(layout).addOrMergeChildAtIndex(VerticalOffsetLayout::Builder(CodePointLayout::Builder('3'), VerticalOffsetLayoutNode::Position::Superscript), n, false);
       typedCell->innerCell()->setAccessoryLayout(layout);
     }
     return;

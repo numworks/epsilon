@@ -4,6 +4,11 @@
 
 namespace Periodic {
 
+ElementsView::ElementsView() :
+  m_singleElementView(KDColorWhite),
+  m_nameView(KDFont::Size::Small, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter)
+{}
+
 void ElementsView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, k_backgroundColor);
   for (int i = 0; i < TableLayout::k_numberOfCells; i++) {
@@ -41,6 +46,49 @@ KDRect ElementsView::RectForCell(size_t cellIndex) {
   return KDRect(x, y, k_cellSize, k_cellSize);
 }
 
+KDRect ElementsView::SingleElementViewFrame() const {
+  constexpr size_t k_firstColumnUnderSubview = 2;
+  constexpr size_t k_lastColumnUnderSubview = 11;
+  constexpr size_t k_firstRowAfterSubview = 3;
+  return KDRect(
+    k_tableLeftMargin + k_firstColumnUnderSubview * (k_cellSize + k_cellMargin),
+    0,
+    (k_lastColumnUnderSubview - k_firstColumnUnderSubview + 1) * (k_cellSize + k_cellMargin) - k_cellMargin,
+    k_tableTopMargin + k_firstRowAfterSubview * (k_cellSize + k_cellMargin) - k_cellMargin
+  );
+}
+
+Escher::View * ElementsView::subviewAtIndex(int index) {
+  if (index == 0) {
+    return &m_singleElementView;
+  }
+  assert(index == 1);
+  return &m_nameView;
+}
+
+void ElementsView::layoutSubviews(bool force) {
+  ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+  AtomicNumber z = dataSource->selectedElement();
+  if (!ElementsDataBase::IsElement(z)) {
+    m_singleElementView.setFrame(KDRectZero, force);
+    m_nameView.setFrame(KDRectZero, force);
+    return;
+  }
+
+  KDRect zoomedRect = SingleElementViewFrame();
+  KDSize cellSize = m_singleElementView.minimalSizeForOptimalDisplay();
+  KDRect cellRect(KDPoint(zoomedRect.x() + k_zoomedViewMargin, zoomedRect.y() + zoomedRect.height() - k_zoomedViewMargin - cellSize.height()), cellSize);
+  m_singleElementView.setFrame(cellRect, true);
+
+  m_nameView.setMessage(ElementsDataBase::Name(z));
+  m_nameView.setTextColor(dataSource->displayType()->colorPairForElement(z).fg());
+  KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
+  m_nameView.setFrame(KDRect(KDPoint(
+          cellRect.x() + (zoomedRect.width() + cellRect.width() - k_zoomedViewMargin - nameSize.width()) / 2,
+          cellRect.y() + (cellRect.height() - nameSize.height()) / 2), nameSize)
+      , true);
+}
+
 void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx, KDRect rect) const {
   assert(ElementsDataBase::IsElement(z));
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
@@ -64,21 +112,6 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx,
   KDSize symbolSize = KDFont::Font(KDFont::Size::Small)->stringSize(symbol);
   KDPoint textOrigin(cell.x() + (cell.width() - symbolSize.width()) / 2, cell.y() + (cell.height() - symbolSize.height()) / 2 + 1);
   ctx->drawString(symbol, textOrigin, KDFont::Size::Small, colors.fg(), colors.bg());
-}
-
-KDRect ElementsView::singleElementViewFrame() const {
-  if (App::app()->elementsViewDataSource()->selectedElement() == ElementsDataBase::k_noElement) {
-    return KDRectZero;
-  }
-  constexpr size_t k_firstColumnUnderSubview = 2;
-  constexpr size_t k_lastColumnUnderSubview = 11;
-  constexpr size_t k_firstRowAfterSubview = 3;
-  return KDRect(
-    k_tableLeftMargin + k_firstColumnUnderSubview * (k_cellSize + k_cellMargin),
-    0,
-    (k_lastColumnUnderSubview - k_firstColumnUnderSubview + 1) * (k_cellSize + k_cellMargin) - k_cellMargin,
-    k_tableTopMargin + k_firstRowAfterSubview * (k_cellSize + k_cellMargin) - k_cellMargin
-  );
 }
 
 void ElementsView::dirtyElement(AtomicNumber z) {

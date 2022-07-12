@@ -8,17 +8,20 @@ namespace Periodic {
 
 class SingleElementView : public Escher::View {
 public:
+  SingleElementView(KDColor backgroundColor) : m_backgroundColor(backgroundColor) {}
+
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  KDSize minimalSizeForOptimalDisplay() const override { return KDSize(k_totalSize, k_totalSize); }
 
 private:
-  constexpr static KDColor k_backgroundColor = KDColorWhite;
-  constexpr static KDCoordinate k_cellSize = 48;
+  constexpr static KDCoordinate k_cellSize = 46;
   constexpr static KDCoordinate k_borderSize = 2;
-  constexpr static KDCoordinate k_outerMargin = 11;
+  constexpr static KDCoordinate k_totalSize = k_cellSize + 2 * k_borderSize;
   constexpr static KDCoordinate k_symbolZAMargin = 1;
   constexpr static KDCoordinate k_ZVerticalOffset = 6;
   constexpr static KDCoordinate k_AVerticalOffset = 9;
-  constexpr static KDCoordinate k_nameVerticalOffset = 2;
+
+  KDColor m_backgroundColor;
 };
 
 }

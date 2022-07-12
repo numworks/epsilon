@@ -49,7 +49,7 @@ int FunctionNode::getVariables(Context * context, isVariableTest isVariable, cha
   return e.node()->getVariables(context, isVariable, variables, maxSizeVariable, nextVariableIndex);
 }
 
-Layout FunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout FunctionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(Function(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

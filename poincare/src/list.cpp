@@ -29,13 +29,13 @@ int ListNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMo
   return writtenChars;
 }
 
-Layout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   HorizontalLayout result = HorizontalLayout::Builder(LeftCurlyBraceLayout::Builder(), RightCurlyBraceLayout::Builder());
   if (m_numberOfChildren > 1) {
     Layout elementsLayout = LayoutHelper::Infix(List(this), floatDisplayMode, numberOfSignificantDigits, ",");
     result.addOrMergeChildAtIndex(elementsLayout, 1, true);
   } else if (m_numberOfChildren == 1) {
-    result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 1, true);
+    result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 1, true);
   }
   return std::move(result);
 }

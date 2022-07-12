@@ -35,7 +35,7 @@ public:
   void setNegative(bool negative) override { assert(!negative); }
 
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
 
   // Approximation
   Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return Complex<float>::Builder(templatedApproximate<float>()); }

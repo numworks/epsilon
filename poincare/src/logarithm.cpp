@@ -24,11 +24,11 @@
 
 namespace Poincare {
 
-Layout LogarithmNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout LogarithmNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   if (m_hasTwoChildren) {
     return LayoutHelper::Logarithm(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits)
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context)
       );
   }
   return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Logarithm::s_functionHelper.aliasesList().mainAlias());

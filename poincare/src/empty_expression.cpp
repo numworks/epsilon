@@ -9,7 +9,7 @@ int EmptyExpressionNode::serialize(char * buffer, int bufferSize, Preferences::P
   return SerializationHelper::CodePoint(buffer, bufferSize, UCodePointEmpty);
 }
 
-Layout EmptyExpressionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout EmptyExpressionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return EmptyLayout::Builder();
 }
 

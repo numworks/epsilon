@@ -19,7 +19,7 @@ Complex<T> ArcCotangentNode::computeOnComplex(const std::complex<T> c, Preferenc
   return ArcTangentNode::computeOnComplex<T>(std::complex<T>(1) / c, complexFormat, angleUnit);
 }
 
-Layout ArcCotangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout ArcCotangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(ArcCotangent(this), floatDisplayMode, numberOfSignificantDigits, ArcCotangent::s_functionHelper.aliasesList().mainAlias());
 }
 

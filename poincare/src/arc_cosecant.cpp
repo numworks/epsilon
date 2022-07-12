@@ -20,7 +20,7 @@ Complex<T> ArcCosecantNode::computeOnComplex(const std::complex<T> c, Preference
   return ArcSineNode::computeOnComplex<T>(std::complex<T>(1) / c, complexFormat, angleUnit);
 }
 
-Layout ArcCosecantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout ArcCosecantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(ArcCosecant(this), floatDisplayMode, numberOfSignificantDigits, ArcCosecant::s_functionHelper.aliasesList().mainAlias());
 }
 

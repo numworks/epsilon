@@ -8,7 +8,7 @@ namespace Poincare {
 
 constexpr Expression::FunctionHelper GreatCommonDivisor::s_functionHelper;
 
-Layout GreatCommonDivisorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout GreatCommonDivisorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(GreatCommonDivisor(this), floatDisplayMode, numberOfSignificantDigits, GreatCommonDivisor::s_functionHelper.aliasesList().mainAlias());
 }
 

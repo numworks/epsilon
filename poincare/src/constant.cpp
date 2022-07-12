@@ -48,7 +48,7 @@ int ConstantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
   return SymbolAbstractNode::serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
 
-Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   constexpr static size_t bufferSize = 10; // TODO: optimize buffer size
   char buffer[bufferSize];
   return LayoutHelper::StringLayoutOfSerialization(Constant(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);

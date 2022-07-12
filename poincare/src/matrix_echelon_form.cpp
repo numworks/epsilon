@@ -13,7 +13,7 @@ Expression MatrixEchelonFormNode::shallowReduce(const ReductionContext& reductio
   return MatrixEchelonForm(this).shallowReduce(reductionContext);
 }
 
-Layout MatrixEchelonFormNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout MatrixEchelonFormNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(MatrixEchelonForm(this), floatDisplayMode, numberOfSignificantDigits, functionHelperName());
 }
 

@@ -48,7 +48,7 @@ public:
 private:
 
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
   CodePoint operatorSymbol() const;
 
   // Serialize

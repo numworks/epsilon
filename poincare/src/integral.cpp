@@ -32,12 +32,12 @@ int IntegralNode::polynomialDegree(Context * context, const char * symbolName) c
   return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
-Layout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout IntegralNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return IntegralLayout::Builder(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(3)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+      childAtIndex(3)->createLayout(floatDisplayMode, numberOfSignificantDigits, context));
 }
 
 int IntegralNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

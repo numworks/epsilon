@@ -20,23 +20,23 @@ ExpressionNode::Type ListAccessNode<2>::type() const {
 }
 
 template<>
-Layout ListAccessNode<1>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout ListAccessNode<1>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 0, true);
-  result.addOrMergeChildAtIndex(childAtIndex(k_listChildIndex)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
+  result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), false), 0, true);
+  result.addOrMergeChildAtIndex(childAtIndex(k_listChildIndex)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0, true);
   return std::move(result);
 }
 
 template<>
-Layout ListAccessNode<2>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout ListAccessNode<2>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   HorizontalLayout parameters = HorizontalLayout::Builder();
-  parameters.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
+  parameters.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0, true);
   parameters.addOrMergeChildAtIndex(CodePointLayout::Builder(','), 0, true);
-  parameters.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
+  parameters.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0, true);
 
   HorizontalLayout result = HorizontalLayout::Builder();
   result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(parameters, false), 0, true);
-  result.addOrMergeChildAtIndex(childAtIndex(k_listChildIndex)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, true);
+  result.addOrMergeChildAtIndex(childAtIndex(k_listChildIndex)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0, true);
   return std::move(result);
 }
 

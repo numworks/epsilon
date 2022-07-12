@@ -52,7 +52,7 @@ private:
   constexpr static int k_maxApproximatePowerMatrix = 1000;
 
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
 
   // Serialize
   bool childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const override;

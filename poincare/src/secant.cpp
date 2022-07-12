@@ -21,7 +21,7 @@ Complex<T> SecantNode::computeOnComplex(const std::complex<T> c, Preferences::Co
   return Complex<T>::Builder(std::complex<T>(1) / denominator);
 }
 
-Layout SecantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout SecantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(Secant(this), floatDisplayMode, numberOfSignificantDigits, Secant::s_functionHelper.aliasesList().mainAlias());
 }
 

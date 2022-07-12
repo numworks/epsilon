@@ -11,7 +11,7 @@ namespace Poincare {
 
 int InvNormNode::numberOfChildren() const { return InvNorm::s_functionHelper.numberOfChildren(); }
 
-Layout InvNormNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout InvNormNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(InvNorm(this), floatDisplayMode, numberOfSignificantDigits, InvNorm::s_functionHelper.aliasesList().mainAlias());
 }
 

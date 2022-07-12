@@ -25,7 +25,7 @@ int FloatNode<T>::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 template<typename T>
-Layout FloatNode<T>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout FloatNode<T>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   char buffer[PrintFloat::k_maxFloatCharSize];
   int numberOfChars = serialize(buffer, PrintFloat::k_maxFloatCharSize, floatDisplayMode, numberOfSignificantDigits);
   return LayoutHelper::String(buffer, numberOfChars);

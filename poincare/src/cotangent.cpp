@@ -23,7 +23,7 @@ Complex<T> CotangentNode::computeOnComplex(const std::complex<T> c, Preferences:
   return Complex<T>::Builder(numerator / denominator);
 }
 
-Layout CotangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout CotangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(Cotangent(this), floatDisplayMode, numberOfSignificantDigits, Cotangent::s_functionHelper.aliasesList().mainAlias());
 }
 

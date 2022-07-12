@@ -18,7 +18,7 @@ Expression MixedFractionNode::shallowReduce(const ReductionContext& reductionCon
   return MixedFraction(this).shallowReduce(reductionContext);
 }
 
-Layout MixedFractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout MixedFractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Infix(MixedFraction(this), floatDisplayMode, numberOfSignificantDigits, "");
 }
 

@@ -6,13 +6,13 @@
 
 namespace Poincare {
 
-Layout ComparisonOperatorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout ComparisonOperatorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
+  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0, false);
   Layout operatorLayout = CodePointLayout::Builder(comparisonCodePoint());
   operatorLayout.setMargin(true);
   result.addChildAtIndex(operatorLayout, result.numberOfChildren(), result.numberOfChildren(), nullptr);
-  Layout secondChildLayout = childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits);
+  Layout secondChildLayout = childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
   secondChildLayout.setMargin(true);
   result.addOrMergeChildAtIndex(secondChildLayout, result.numberOfChildren(), false);
   return std::move(result);

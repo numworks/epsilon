@@ -264,7 +264,7 @@ public:
   bool containsSameDependency(const Expression e, const ExpressionNode::ReductionContext& reductionContext) const;
 
   /* Layout Helper */
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool stripMarginStyle = false, bool nested = false) const;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context, bool stripMarginStyle = false, bool nested = false) const;
   ExpressionNode::LayoutShape leftLayoutShape() const { return node()->leftLayoutShape(); }
   ExpressionNode::LayoutShape rightLayoutShape() const { return node()->rightLayoutShape(); }
 

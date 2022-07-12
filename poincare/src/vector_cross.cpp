@@ -14,7 +14,7 @@ Expression VectorCrossNode::shallowReduce(const ReductionContext& reductionConte
   return VectorCross(this).shallowReduce(reductionContext);
 }
 
-Layout VectorCrossNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout VectorCrossNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(VectorCross(this), floatDisplayMode, numberOfSignificantDigits, VectorCross::s_functionHelper.aliasesList().mainAlias());
 }
 

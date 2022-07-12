@@ -15,7 +15,7 @@ int UndefinedNode::polynomialDegree(Context * context, const char * symbolName) 
   return -1;
 }
 
-Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout UndefinedNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::String(Undefined::Name(), Undefined::NameSize()-1);
 }
 
@@ -34,4 +34,3 @@ template<typename T> Evaluation<T> UndefinedNode::templatedApproximate() const {
 template Evaluation<float> UndefinedNode::templatedApproximate() const;
 template Evaluation<double> UndefinedNode::templatedApproximate() const;
 }
-

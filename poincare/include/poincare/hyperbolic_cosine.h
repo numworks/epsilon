@@ -24,7 +24,7 @@ private:
   // Simplification
   Expression imageOfNotableValue() const override { return Rational::Builder(1); }
   // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) override;

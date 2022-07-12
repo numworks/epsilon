@@ -57,9 +57,9 @@ Complex<T> FactorialNode::computeOnComplex(const std::complex<T> c, Preferences:
   return Complex<T>::Builder(std::round(result));
 }
 
-Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout FactorialNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
+  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0, false);
   int childrenCount = result.numberOfChildren();
   result.addChildAtIndex(CodePointLayout::Builder('!'), childrenCount, childrenCount, nullptr);
   return std::move(result);

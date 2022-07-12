@@ -17,7 +17,7 @@ Expression MatrixTraceNode::shallowReduce(const ReductionContext& reductionConte
   return MatrixTrace(this).shallowReduce(reductionContext);
 }
 
-Layout MatrixTraceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout MatrixTraceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(MatrixTrace(this), floatDisplayMode, numberOfSignificantDigits, MatrixTrace::s_functionHelper.aliasesList().mainAlias());
 }
 

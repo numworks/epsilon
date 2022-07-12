@@ -97,7 +97,9 @@ Token::Type IdentifierTokenizer::stringTokenType(const char * string, size_t len
         || m_parsingContext->context()->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None)) {
     return Token::CustomIdentifier;
   }
-  if (m_parsingContext->parsingMethod() != ParsingContext::ParsingMethod::UnitConversion && Unit::CanParse(string, length, nullptr, nullptr)) {
+  if (m_parsingContext->parsingMethod() != ParsingContext::ParsingMethod::UnitConversion
+      && m_parsingContext->context()->canRemoveUnderscoreToUnits()
+      && Unit::CanParse(string, length, nullptr, nullptr)) {
     /* If not unit conversion and "m" has been or is being assigned by the user
      * it's understood as a variable before being understood as a unit */
     return Token::Unit;

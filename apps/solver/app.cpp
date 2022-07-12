@@ -1,5 +1,6 @@
 #include "app.h"
 #include <apps/i18n.h>
+#include <apps/apps_container.h>
 #include <apps/exam_mode_configuration.h>
 #include "solver_icon.h"
 #include <poincare/comparison_operator.h>
@@ -65,7 +66,8 @@ App::App(Snapshot * snapshot) :
       this
     ),
   m_stackViewController(&m_inputViewController, &m_menuController, StackViewController::Style::GrayGradation),
-  m_inputViewController(&m_modalViewController, &m_stackViewController, this, &m_listController, &m_listController)
+  m_inputViewController(&m_modalViewController, &m_stackViewController, this, &m_listController, &m_listController),
+  m_context(AppsContainer::sharedAppsContainer()->globalContext())
 {}
 
 void App::didBecomeActive(Escher::Window * windows) {

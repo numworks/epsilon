@@ -14,6 +14,7 @@
 #include "finance/interest_controller.h"
 #include "finance/interest_menu_controller.h"
 #include "finance/finance_result_controller.h"
+#include "solver_context.h"
 
 namespace Solver {
 
@@ -59,6 +60,7 @@ public:
   int numberOfSubApps() const override { return static_cast<int>(Snapshot::SubApp::NumberOfSubApps); }
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
+  Poincare::Context * localContext() override { return &m_context; }
   void didBecomeActive(Escher::Window * window) override;
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   EquationStore * equationStore() { return snapshot()->equationStore(); }
@@ -88,6 +90,7 @@ private:
   Shared::MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
   Escher::InputViewController m_inputViewController;
+  SolverContext m_context;
 };
 
 }  // namespace Solver

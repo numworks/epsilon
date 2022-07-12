@@ -14,6 +14,9 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
+  // Escher::ViewController
+  const char * title() override;
+
   // Escher::TableViewDataSource
   int numberOfRows() const override { return static_cast<int>(Row::NumberOfRows); }
   Escher::HighlightCell * reusableCell(int index, int type) override;

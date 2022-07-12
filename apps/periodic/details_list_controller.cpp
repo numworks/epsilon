@@ -22,6 +22,10 @@ void DetailsListController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
+const char * DetailsListController::title() {
+  return I18n::translate(ElementsDataBase::Name(App::app()->elementsViewDataSource()->selectedElement()));
+}
+
 HighlightCell * DetailsListController::reusableCell(int index, int type) {
   switch (type) {
   case k_bufferCellType:

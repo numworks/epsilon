@@ -19,7 +19,7 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
 
 void DetailsListController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
-  Container::activeApp()->setFirstResponder(&m_selectableTableView);
+  m_selectableTableView.reloadData(true, true);
 }
 
 const char * DetailsListController::title() {

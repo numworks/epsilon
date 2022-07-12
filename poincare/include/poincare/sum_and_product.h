@@ -11,7 +11,7 @@ class SumAndProductNode : public ParameteredExpressionNode {
 public:
   int numberOfChildren() const override { return 4; }
 private:
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
   virtual Layout createSumAndProductLayout(Layout argumentLayout, Layout symbolLayout, Layout subscriptLayout, Layout superscriptLayout) const = 0;
   // Simplication
   Expression shallowReduce(const ReductionContext& reductionContext) override;

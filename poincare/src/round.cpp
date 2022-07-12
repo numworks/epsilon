@@ -13,7 +13,7 @@ namespace Poincare {
 
 int RoundNode::numberOfChildren() const { return Round::s_functionHelper.numberOfChildren(); }
 
-Layout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, Round::s_functionHelper.aliasesList().mainAlias());
 }
 

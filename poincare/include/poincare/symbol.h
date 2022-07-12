@@ -32,7 +32,7 @@ public:
    * already been replaced if it should have been.*/
 
   /* Layout */
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
 
   /* Simplification */
   Expression shallowReduce(const ReductionContext& reductionContext) override;

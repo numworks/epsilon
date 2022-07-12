@@ -49,12 +49,12 @@ bool OppositeNode::childAtIndexNeedsUserParentheses(const Expression & child, in
   return child.isOfType({Type::Addition, Type::Subtraction, Type::Opposite});
 }
 
-Layout OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout OppositeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   HorizontalLayout result = HorizontalLayout::Builder(CodePointLayout::Builder('-'));
   if (childAtIndex(0)->isOfType({Type::Opposite, Type::Power})) {
-    result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), false), 1, false);
+    result.addOrMergeChildAtIndex(LayoutHelper::Parentheses(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), false), 1, false);
   } else {
-    result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 1, false);
+    result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 1, false);
   }
   return std::move(result);
 }

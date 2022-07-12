@@ -31,10 +31,10 @@ int DivisionNode::polynomialDegree(Context * context, const char * symbolName) c
   return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
-Layout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   const ExpressionNode * numerator = childAtIndex(0);
   const ExpressionNode * denominator = childAtIndex(1);
-  return FractionLayout::Builder(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits));
+  return FractionLayout::Builder(numerator->createLayout(floatDisplayMode, numberOfSignificantDigits, context), denominator->createLayout(floatDisplayMode, numberOfSignificantDigits, context));
 }
 
 bool DivisionNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {

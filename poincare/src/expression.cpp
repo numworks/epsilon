@@ -629,11 +629,11 @@ static void stripMargin(Layout l) {
   }
 }
 
-Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool stripMarginStyle, bool nested) const {
+Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context, bool stripMarginStyle, bool nested) const {
   if (isUninitialized()) {
     return Layout();
   }
-  Layout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits);
+  Layout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
   assert(!l.isUninitialized());
   if (stripMarginStyle
    || !(nested || hasStringWithThousandSeparator(l))) {

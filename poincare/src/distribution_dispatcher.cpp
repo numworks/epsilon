@@ -29,7 +29,7 @@ constexpr Expression::FunctionHelper GeomCDFRange::s_functionHelper;
 constexpr Expression::FunctionHelper GeomPDF::s_functionHelper;
 constexpr Expression::FunctionHelper InvGeom::s_functionHelper;
 
-Layout DistributionDispatcherNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout DistributionDispatcherNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(DistributionDispatcher(this), floatDisplayMode, numberOfSignificantDigits, name());
 }
 

@@ -67,7 +67,7 @@ int SymbolNode::getVariables(Context * context, isVariableTest isVariable, char 
   return nextVariableIndex;
 }
 
-Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout SymbolNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   assert(!isUnknown());
   return LayoutHelper::String(m_name, strlen(m_name));
 }

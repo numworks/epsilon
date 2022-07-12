@@ -9,7 +9,7 @@ namespace Poincare {
 
 int BinomCDFNode::numberOfChildren() const { return BinomCDF::s_functionHelper.numberOfChildren(); }
 
-Layout BinomCDFNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout BinomCDFNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(BinomCDF(this), floatDisplayMode, numberOfSignificantDigits, BinomCDF::s_functionHelper.aliasesList().mainAlias());
 }
 

@@ -18,7 +18,7 @@ Expression MatrixIdentityNode::shallowReduce(const ReductionContext& reductionCo
   return MatrixIdentity(this).shallowReduce(reductionContext);
 }
 
-Layout MatrixIdentityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout MatrixIdentityNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(MatrixIdentity(this), floatDisplayMode, numberOfSignificantDigits, MatrixIdentity::s_functionHelper.aliasesList().mainAlias());
 }
 

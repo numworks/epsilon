@@ -38,8 +38,8 @@ int SequenceNode::simplificationOrderSameType(const ExpressionNode * e, bool asc
   return delta;
 }
 
-Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  Layout rank = childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits);
+Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
+  Layout rank = childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
   return HorizontalLayout::Builder(
     CodePointLayout::Builder(name()[0]),
     VerticalOffsetLayout::Builder(rank, VerticalOffsetLayoutNode::Position::Subscript));

@@ -86,12 +86,12 @@ bool PercentSimpleNode::childNeedsSystemParenthesesAtSerialization(const TreeNod
   return SerializationHelper::PostfixChildNeedsSystemParenthesesAtSerialization(child);
 }
 
-Layout PercentSimpleNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout PercentSimpleNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
   HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
+  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0, false);
   int childrenCount = result.numberOfChildren();
-  childrenCount = createSecondChildLayout(&result, childrenCount, floatDisplayMode, numberOfSignificantDigits);
+  childrenCount = createSecondChildLayout(&result, childrenCount, floatDisplayMode, numberOfSignificantDigits, context);
   result.addChildAtIndex(CodePointLayout::Builder('%'), childrenCount, childrenCount, nullptr);
   return std::move(result);
 }
@@ -149,13 +149,13 @@ ExpressionNode::NullStatus PercentAdditionNode::nullStatus(Context * context) co
 
 // PercentSimpleNode
 
-int PercentAdditionNode::createSecondChildLayout(Poincare::HorizontalLayout * result, int childrenCount, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int PercentAdditionNode::createSecondChildLayout(Poincare::HorizontalLayout * result, int childrenCount, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   // If second element is an Opposite, there is already the - operator
   if (childAtIndex(1)->type() != ExpressionNode::Type::Opposite) {
     result->addChildAtIndex(CodePointLayout::Builder('+'), childrenCount, childrenCount, nullptr);
     childrenCount++;
   }
-  result->addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), childrenCount, false);
+  result->addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), childrenCount, false);
   return result->numberOfChildren();
 }
 

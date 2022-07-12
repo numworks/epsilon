@@ -8,7 +8,7 @@ namespace Poincare {
 
 int NormCDFRangeNode::numberOfChildren() const { return NormCDFRange::s_functionHelper.numberOfChildren(); }
 
-Layout NormCDFRangeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout NormCDFRangeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(NormCDFRange(this), floatDisplayMode, numberOfSignificantDigits, NormCDFRange::s_functionHelper.aliasesList().mainAlias());
 }
 

@@ -13,11 +13,11 @@ int RightwardsArrowExpressionNode::serialize(char * buffer, int bufferSize, Pref
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, string);
 }
 
-Layout RightwardsArrowExpressionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout RightwardsArrowExpressionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   HorizontalLayout result = HorizontalLayout::Builder();
-  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits), 0, false);
+  result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0, false);
   result.addChildAtIndex(CodePointLayout::Builder(UCodePointRightwardsArrow), result.numberOfChildren(), result.numberOfChildren(), nullptr);
-  result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits), result.numberOfChildren(), false);
+  result.addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), result.numberOfChildren(), false);
   return std::move(result);
 }
 

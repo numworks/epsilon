@@ -17,13 +17,13 @@ namespace Poincare {
 
 int PermuteCoefficientNode::numberOfChildren() const { return PermuteCoefficient::s_functionHelper.numberOfChildren(); }
 
-Layout PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   if (Preferences::sharedPreferences()->combinatoricSymbols() == Preferences::CombinatoricSymbols::Default) {
     return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.aliasesList().mainAlias());
   } else {
     return LetterAWithSubAndSuperscriptLayout::Builder(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context));
   }
 }
 

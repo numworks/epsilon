@@ -93,7 +93,7 @@ int RationalNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 // Layout
 
-Layout RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout RationalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   Layout numeratorLayout = signedNumerator().createLayout();
   if (isInteger()) {
     return numeratorLayout;

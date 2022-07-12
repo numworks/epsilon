@@ -21,7 +21,7 @@ Complex<T> CosecantNode::computeOnComplex(const std::complex<T> c, Preferences::
   return Complex<T>::Builder(std::complex<T>(1) / denominator);
 }
 
-Layout CosecantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout CosecantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(Cosecant(this), floatDisplayMode, numberOfSignificantDigits, Cosecant::s_functionHelper.aliasesList().mainAlias());
 }
 

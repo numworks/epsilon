@@ -11,7 +11,7 @@ namespace Poincare {
 
 int RealPartNode::numberOfChildren() const { return RealPart::s_functionHelper.numberOfChildren(); }
 
-Layout RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.aliasesList().mainAlias());
 }
 

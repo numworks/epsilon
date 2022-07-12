@@ -38,7 +38,7 @@ bool SubtractionNode::childAtIndexNeedsUserParentheses(const Expression & child,
   return child.isOfType({Type::Subtraction, Type::Opposite, Type::Addition});
 }
 
-Layout SubtractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout SubtractionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Infix(Subtraction(this), floatDisplayMode, numberOfSignificantDigits, "-");
 }
 

@@ -55,7 +55,7 @@ int BasedIntegerNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 
 // Layout
 
-Layout BasedIntegerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout BasedIntegerNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return integer().createLayout(m_base);
 }
 

@@ -306,7 +306,7 @@ public:
   virtual int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const;
 
   /* Layout Helper */
-  virtual Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const = 0;
+  virtual Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const = 0;
 
   /* Evaluation Helper */
   typedef float SinglePrecision;

@@ -15,7 +15,7 @@ Expression MatrixTransposeNode::shallowReduce(const ReductionContext& reductionC
   return MatrixTranspose(this).shallowReduce(reductionContext);
 }
 
-Layout MatrixTransposeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout MatrixTransposeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(MatrixTranspose(this), floatDisplayMode, numberOfSignificantDigits, MatrixTranspose::s_functionHelper.aliasesList().mainAlias());
 }
 

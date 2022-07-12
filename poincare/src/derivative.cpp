@@ -32,18 +32,18 @@ int DerivativeNode::polynomialDegree(Context * context, const char * symbolName)
   return ExpressionNode::polynomialDegree(context, symbolName);
 }
 
-Layout DerivativeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout DerivativeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   if (isFirstOrder()) {
     return FirstOrderDerivativeLayout::Builder(
-        childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-        childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-        childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+        childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+        childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+        childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits, context));
   }
   return HigherOrderDerivativeLayout::Builder(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(3)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+      childAtIndex(3)->createLayout(floatDisplayMode, numberOfSignificantDigits, context));
 }
 
 int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

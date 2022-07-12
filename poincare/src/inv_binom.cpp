@@ -11,7 +11,7 @@ namespace Poincare {
 
 int InvBinomNode::numberOfChildren() const { return InvBinom::s_functionHelper.numberOfChildren(); }
 
-Layout InvBinomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout InvBinomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(InvBinom(this), floatDisplayMode, numberOfSignificantDigits, InvBinom::s_functionHelper.aliasesList().mainAlias());
 }
 

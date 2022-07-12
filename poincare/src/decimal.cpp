@@ -118,7 +118,7 @@ Expression DecimalNode::shallowBeautify(const ReductionContext& reductionContext
   return Decimal(this).shallowBeautify();
 }
 
-Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);
   Layout res = LayoutHelper::String(buffer, numberOfChars);

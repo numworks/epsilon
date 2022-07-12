@@ -20,11 +20,11 @@ Expression ListSequenceNode::shallowReduce(const ReductionContext& reductionCont
   return ListSequence(this).shallowReduce(reductionContext);
 }
 
-Layout ListSequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+Layout ListSequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return ListSequenceLayout::Builder(
-      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+      childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context),
+      childAtIndex(2)->createLayout(floatDisplayMode, numberOfSignificantDigits, context));
 }
 
 int ListSequenceNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -22,7 +22,7 @@ private:
 
 class MessageTableCellWithMessageWithExpression : public Escher::MessageTableCellWithMessage {
 public:
-  MessageTableCellWithMessageWithExpression(I18n::Message message = I18n::Message::Default);
+  MessageTableCellWithMessageWithExpression(I18n::Message message = I18n::Message::Default) : Escher::MessageTableCellWithMessage(message) {}
 
   const Escher::View * accessoryView() const override { return &m_accessoryView; }
   void setHighlighted(bool highlight) override;

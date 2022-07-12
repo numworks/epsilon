@@ -141,7 +141,12 @@ void DetailsListController::willDisplayCellForIndex(HighlightCell * cell, int in
     return;
 
   case Row::Group:
-    fillBufferCell(static_cast<MessageTableCellWithMessageWithBufferWithSeparator *>(cell)->innerCell(), I18n::Message::DetailsGroupsLegend, I18n::Message::Default, I18n::translate(ElementsViewDataSource::ColorByGroups.titleForElement(z)));
+    {
+      MessageTableCellWithMessageWithBuffer * typedCell = static_cast<MessageTableCellWithMessageWithBufferWithSeparator *>(cell)->innerCell();
+      GroupsDisplayType displayType = ElementsViewDataSource::ColorByGroups;
+      typedCell->setAccessoryTextColor(displayType.colorPairForElement(z).fg());
+      fillBufferCell(typedCell, I18n::Message::DetailsGroupsLegend, I18n::Message::Default, I18n::translate(displayType.titleForElement(z)));
+    }
     return;
 
   case Row::Radius:

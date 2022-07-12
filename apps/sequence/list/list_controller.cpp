@@ -22,6 +22,7 @@ ListController::ListController(Responder * parentResponder, Escher::InputEventHa
 {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_expressionCells[i].setLeftMargin(k_expressionMargin);
+    m_expressionCells[i].setRightMargin(0);
   }
   /* m_memoizedCellBaseline is not initialized by the call to
    * resetMemoizationForIndex in ExpressionModelListController's
@@ -392,7 +393,7 @@ void ListController::willDisplayTitleCellAtIndex(HighlightCell * cell, int j) {
 }
 
 void ListController::willDisplayExpressionCellAtIndex(HighlightCell * cell, int j) {
-  FunctionExpressionCell * myCell = static_cast<FunctionExpressionCell *>(cell);
+  Escher::EvenOddExpressionCell * myCell = static_cast<Escher::EvenOddExpressionCell *>(cell);
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(j));
   Shared::Sequence * sequence = modelStore()->modelForRecord(record);
   if (sequenceDefinitionForRow(j) == 0) {
@@ -481,7 +482,7 @@ KDCoordinate ListController::baseline(int j) {
 
 KDCoordinate ListController::privateBaseline(int j) const {
   assert(j >= 0 && j < const_cast<ListController *>(this)->numberOfExpressionRows());
-  FunctionExpressionCell * cell = static_cast<Shared::FunctionExpressionCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
+  Escher::EvenOddExpressionCell * cell = static_cast<Escher::EvenOddExpressionCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
   Poincare::Layout layout = cell->layout();
   if (layout.isUninitialized()) {
     return -1; // Baseline < 0 triggers default behaviour (centered alignment)

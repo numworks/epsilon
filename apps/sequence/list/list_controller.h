@@ -3,7 +3,6 @@
 
 #include <escher/table_view_data_source.h>
 #include <apps/shared/sequence_store.h>
-#include <apps/shared/function_expression_cell.h>
 #include <apps/shared/function_list_controller.h>
 #include <apps/shared/input_event_handler_delegate.h>
 #include <apps/shared/layout_field_delegate.h>
@@ -85,7 +84,7 @@ private:
   Escher::SelectableTableView m_selectableTableView;
   Escher::EvenOddCell m_emptyCell;
   VerticalSequenceTitleCell m_sequenceTitleCells[k_maxNumberOfRows];
-  Shared::FunctionExpressionCell m_expressionCells[k_maxNumberOfRows];
+  Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
   ListParameterController m_parameterController;
   TypeParameterController m_typeParameterController;
   Escher::StackViewController m_typeStackController;

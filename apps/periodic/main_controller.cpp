@@ -30,6 +30,7 @@ void MainController::selectedElementHasChanged(AtomicNumber oldZ) {
 bool MainController::handleEvent(Ion::Events::Event e) {
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   AtomicNumber z = dataSource->selectedElement();
+
   if (!ElementsDataBase::IsElement(z)) {
     if (e == Ion::Events::Up) {
       dataSource->setSelectedElement(m_previousElement);
@@ -41,6 +42,12 @@ bool MainController::handleEvent(Ion::Events::Event e) {
     }
     return false;
   }
+
+  if (e == Ion::Events::OK || e == Ion::Events::EXE) {
+    stackOpenPage(&m_detailsController);
+    return true;
+  }
+
   AtomicNumber newZ = z;
   if (e == Ion::Events::Up) {
     newZ = TableLayout::NextElement(z, TableLayout::Direction::DecreasingRow);

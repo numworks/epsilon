@@ -12,8 +12,16 @@ FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * graphRange,
   m_highlightedStart(NAN),
   m_highlightedEnd(NAN),
   m_shouldColorHighlighted(false),
+  m_functionsInterrupted(0),
   m_context(nullptr)
 {
+}
+
+void FunctionGraphView::reload(bool resetInterrupted, bool force) {
+  if (force || resetInterrupted) {
+    resetCurvesInterrupted();
+  }
+  LabeledCurveView::reload(resetInterrupted, force);
 }
 
 void FunctionGraphView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -77,5 +85,25 @@ void FunctionGraphView::reloadBetweenBounds(float start, float end) {
   markRectAsDirty(dirtyZone);
 }
 
+bool FunctionGraphView::allFunctionsInterrupted(int numberOfFunctions) const {
+  /* The number of functions displayed at the same time is theoretically unbounded, but we only store the status of 32 functions. */
+  if (numberOfFunctions <= 0 || static_cast<size_t>(numberOfFunctions) > 8 * sizeof(m_functionsInterrupted)) {
+    return false;
+  }
+  return m_functionsInterrupted == static_cast<uint32_t>((1 << numberOfFunctions) - 1);
+}
+
+bool FunctionGraphView::functionWasInterrupted(int index) const {
+  if (index < 0 || static_cast<size_t>(index) >= 8 * sizeof(m_functionsInterrupted)) {
+    return false;
+  }
+  return (1 << index) & m_functionsInterrupted;
+}
+
+void FunctionGraphView::setFunctionInterrupted(int index) const {
+  if (index >= 0 && static_cast<size_t>(index) < 8 * sizeof(m_functionsInterrupted)) {
+    m_functionsInterrupted |= 1 << index;
+  }
+}
 
 }

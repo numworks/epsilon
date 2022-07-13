@@ -676,9 +676,32 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
         m_expression = Undefined::Builder();
         return m_expression;
       }
+    } else {
+      /* m_expression is resulting of a simplification with the target
+      * SystemForAnalysis. But SystemForApproximation can be
+      * sometimes way simpler than the one from SystemForAnalysis.
+      * For example (x+9)^6 is fully developped in SystemForAnalysis,
+      * which results in approximation inaccuracy.
+      * On the other hand, the expression (x+1)^2-x^2-2x-1 should be developped
+      * so that we understand that it's equal to zero, and is better handled
+      * by SystemForAnalysis.
+      * To solve this problem, we try to simplify both ways and compare the number
+      * of nodes of each expression. We take the one that has the less node.
+      * This is not ideal because an expression with less node does not always
+      * mean a simpler expression, but it's a good compromise for now. */
+      PlotType computedPlotType; // useless here.
+      Expression resultForApproximation = expressionEquation(record, context, &computedPlotType);
+      if (!resultForApproximation.isUninitialized()) {
+        PoincareHelpers::CloneAndReduce(
+            &resultForApproximation,
+            context,
+            ExpressionNode::ReductionTarget::SystemForApproximation,
+            ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+        if (resultForApproximation.numberOfDescendants(true) < m_expression.numberOfDescendants(true)) {
+          m_expression = resultForApproximation;
+        }
+      }
     }
-    // Reduce m_expression to optimize approximations
-    PoincareHelpers::CloneAndReduce(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   }
   return m_expression;
 }

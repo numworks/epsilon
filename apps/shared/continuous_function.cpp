@@ -182,13 +182,14 @@ int ContinuousFunction::printValue(double cursorT, double cursorX, double cursor
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Context * context) {
   setCache(nullptr);
+  bool wasAlongX = isAlongX();
   /* About to set the content, the symbol does not matter here yet. We don't use
    * ExpressionModelHandle::setContent implementation to avoid calling symbol()
    * and any unnecessary plot type update at this point. See comment in
    * ContinuousFunction::Model::buildExpressionFromText. */
   Ion::Storage::Record::ErrorStatus error = editableModel()->setContent(this, c, context, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
-    updateModel(context);
+    updateModel(context, wasAlongX);
     error = m_model.renameRecordIfNeeded(this, c, context, symbol());
   }
   return error;
@@ -312,16 +313,14 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, dou
   }
 }
 
-void ContinuousFunction::updateModel(Context * context) {
-  // Do not call isAlongX() if model has already been resetted
-  bool previousAlongXStatus = (m_model.plotType() == PlotType::Unknown) || isAlongX();
+void ContinuousFunction::updateModel(Context * context, bool wasAlongX) {
   setCache(nullptr);
   // Reset model's plot type. expressionReducedForAnalysis() will update plotType
   m_model.resetPlotType();
   expressionReducedForAnalysis(context);
   assert(m_model.plotType() != PlotType::Unknown);
-  if (previousAlongXStatus != isAlongX() || !canHaveCustomDomain()) {
-    // The definition's domain must be resetted.
+  if (wasAlongX != isAlongX() || !canHaveCustomDomain()) {
+    // The definition's domain must be reset.
     setTMin(!isAlongX() ? 0.0 : -INFINITY);
     setTMax(!isAlongX() ? 2.0 * Trigonometry::PiInAngleUnit(AngleUnit())
                         : INFINITY);

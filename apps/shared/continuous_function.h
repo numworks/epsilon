@@ -170,7 +170,7 @@ public:
     return m_model.originalEquation(record, symbol());
   }
   // Update plotType as well as tMin and tMax values.
-  void updateModel(Poincare::Context * context);
+  void updateModel(Poincare::Context * context, bool wasAlongX);
 
   /* Evaluation */
 

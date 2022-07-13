@@ -63,7 +63,7 @@ private:
   /* Width and margins */
   constexpr static KDCoordinate k_minTitleColumnWidth = 65;
   constexpr static KDCoordinate k_functionTitleSumOfMargins = 25;
-  constexpr static KDCoordinate k_expressionCellVerticalMargin = 3;
+  constexpr static KDCoordinate k_expressionCellVerticalMargin = Escher::Metric::BigCellMargin;
   /* Row numbers */
   constexpr static int k_maxNumberOfRows = 3*Shared::SequenceStore::k_maxNumberOfSequences;
 

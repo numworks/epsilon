@@ -71,6 +71,9 @@ bool SingleRangeController::handleEvent(Ion::Events::Event event) {
 }
 
 void SingleRangeController::setAutoStatus(bool autoParam) {
+  if (m_autoParam == autoParam) {
+    return;
+  }
   m_autoParam = autoParam;
   if (m_autoParam) {
     if (m_editXRange ? m_range->xAuto() : m_range->yAuto()) {

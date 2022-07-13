@@ -31,13 +31,10 @@ TreeCache::Error TreeCache::copyTreeForEditing(int id) {
   }
   size_t treeSize = m_cachedTree[id]->nextSibling() - m_cachedTree[id];
   TypeTreeBlock * copiedTree = m_cachedTree[id];
-  if (m_sandbox.size() < treeSize) {
-    bool reset = resetCache(false);
-    assert(reset); // the tree was at least already cached
+  if (m_sandbox.copyTreeFromAddress(copiedTree, treeSize)) {
+    return Error::None;
   }
-  memmove(lastBlock(), copiedTree, treeSize * sizeof(TreeBlock));
-  m_sandbox.setNumberOfBlocks(treeSize);
-  return Error::None;
+  return Error::TreeIsTooBigForSandbox;
 }
 
 TreeCache::TreeCache() :

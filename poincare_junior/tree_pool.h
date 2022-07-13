@@ -40,7 +40,7 @@ protected:
     TypeTreeBlock * m_block;
     int m_numberOfBlocks;
   };
-  Nodes allNodes() { return Nodes(firstBlock(), lastBlock() - static_cast<TreeBlock *>(firstBlock())); }
+  Nodes allNodes();
 
   class Trees final {
   public:
@@ -59,7 +59,7 @@ protected:
     TypeTreeBlock * m_block;
     int m_numberOfBlocks;
   };
-  Trees trees() { return Trees(firstBlock(), lastBlock() - static_cast<TreeBlock *>(firstBlock())); }
+  Trees trees();
 };
 
 }

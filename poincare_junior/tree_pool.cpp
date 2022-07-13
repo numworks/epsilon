@@ -24,4 +24,18 @@ void TreePool::treeLog(std::ostream & stream, bool verbose) {
 
 #endif
 
+TreePool::Nodes TreePool::allNodes() {
+  if (firstBlock() == nullptr) {
+    return Nodes(nullptr, 0);
+  }
+  return Nodes(firstBlock(), lastBlock() - static_cast<TreeBlock *>(firstBlock()));
+}
+
+TreePool::Trees TreePool::trees() {
+  if (firstBlock() == nullptr) {
+    return Trees(nullptr, 0);
+  }
+  return Trees(firstBlock(), lastBlock() - static_cast<TreeBlock *>(firstBlock()));
+}
+
 }

@@ -82,11 +82,24 @@ void deepReduce(TreeBlock * block) {
 
 #endif
 
-int main() {
-  // "1 * 2 + 3 + 4";
-  // Parsing
+void print() {
   TreeCache * cache = TreeCache::sharedCache();
   TreeSandbox * sandbox = cache->sandbox();
+
+  std::cout << "\n-------- CACHE --------" << std::endl;
+  cache->treeLog(std::cout);
+
+  std::cout << "\n-------- SANDBOX --------" << std::endl;
+  sandbox->treeLog(std::cout);
+
+}
+
+int main() {
+  TreeCache * cache = TreeCache::sharedCache();
+  TreeSandbox * sandbox = cache->sandbox();
+
+  // "1 * 2 + 3 + 4";
+  // Parsing
   Addition::NodeBuilder(sandbox, 3);
   Multiplication::NodeBuilder(sandbox, 2);
   Integer::NodeBuilder(sandbox, 1);
@@ -94,8 +107,7 @@ int main() {
   Integer::NodeBuilder(sandbox, 3);
   Integer::NodeBuilder(sandbox, 4);
 
-  std::cout << "-------- SANDBOX --------" << std::endl;
-  sandbox->treeLog(std::cout);
+  print();
 
   std::cout << "-------- BACKWARD SCAN --------" << std::endl;
   TypeTreeBlock * root = sandbox->firstBlock();
@@ -103,13 +115,14 @@ int main() {
     subTree->log(std::cout);
   }
 
-  // Reducing
+  // Storing
   int treeId = cache->storeLastTree();
-  std::cout << "\n\n-------- CACHE --------" << std::endl;
-  cache->treeLog(std::cout);
+  print();
+
+  cache->copyTreeForEditing(treeId);
+  print();
 
 #if 0
-  cache->copyTreeForEditing(treeId);
   std::cout << "Edited Tree which has overflowed" << std::endl;
   printTreePool(cache->sandbox());
   std::cout << "Cache Tree" << std::endl;

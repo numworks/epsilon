@@ -13,8 +13,9 @@ namespace Poincare {
 class TreeCache final : public TreePool {
 public:
   enum class Error {
+    None,
     UninitializedIdentifier,
-    None
+    TreeIsTooBigForSandbox,
   };
 
   static TreeCache * sharedCache();

@@ -17,13 +17,13 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   /* A dot is drawn at every step where step is larger than 1
    * and than a pixel's width. */
   const int step = std::ceil(pixelWidth());
+  float rectXMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+  rectXMin = rectXMin < 0 ? 0 : rectXMin;
+  float rectXMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
   int numberOfActiveFunctions = m_sequenceStore->numberOfActiveFunctions();
   for (int i = 0; i < numberOfActiveFunctions; i++) {
     Ion::Storage::Record record = m_sequenceStore->activeRecordAtIndex(i);
-    Shared::Sequence * s = m_sequenceStore->modelForRecord(record);;
-    float rectXMin = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
-    rectXMin = rectXMin < 0 ? 0 : rectXMin;
-    float rectXMax = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
+    Shared::Sequence * s = m_sequenceStore->modelForRecord(record);
     for (int x = rectXMin; x < rectXMax; x += step) {
       float y = s->evaluateXYAtParameter((float)x, context()).x2();
       if (std::isnan(y)) {

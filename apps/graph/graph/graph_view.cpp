@@ -13,7 +13,6 @@ namespace Graph {
 GraphView::GraphView(InteractiveCurveViewRange * graphRange,
   CurveViewCursor * cursor, Shared::BannerView * bannerView, CursorView * cursorView) :
   FunctionGraphView(graphRange, cursor, bannerView, cursorView),
-  m_functionsInterrupted(0),
   m_tangent(false)
 {
 }
@@ -22,9 +21,6 @@ void GraphView::reload(bool resetInterrupted, bool force) {
   if (m_tangent) {
     KDRect dirtyZone(KDRect(0, 0, bounds().width(), bounds().height()-m_bannerView->bounds().height()));
     markRectAsDirty(dirtyZone);
-  }
-  if (force || resetInterrupted) {
-    m_functionsInterrupted = 0;
   }
   return FunctionGraphView::reload(resetInterrupted, force);
 }
@@ -231,27 +227,6 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       f->tidyDownstreamPoolFrom();
       m_context->tidyDownstreamPoolFrom();
     }
-  }
-}
-
-bool GraphView::allFunctionsInterrupted(int numberOfFunctions) const {
-  /* The number of functions displayed at the same time is theoretically unbounded, but we only store the status of 32 functions. */
-  if (numberOfFunctions <= 0 || static_cast<size_t>(numberOfFunctions) > 8 * sizeof(m_functionsInterrupted)) {
-    return false;
-  }
-  return m_functionsInterrupted == static_cast<uint32_t>((1 << numberOfFunctions) - 1);
-}
-
-bool GraphView::functionWasInterrupted(int index) const {
-  if (index < 0 || static_cast<size_t>(index) >= 8 * sizeof(m_functionsInterrupted)) {
-    return false;
-  }
-  return (1 << index) & m_functionsInterrupted;
-}
-
-void GraphView::setFunctionInterrupted(int index) const {
-  if (index >= 0 && static_cast<size_t>(index) < 8 * sizeof(m_functionsInterrupted)) {
-    m_functionsInterrupted |= 1 << index;
   }
 }
 

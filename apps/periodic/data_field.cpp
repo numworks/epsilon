@@ -5,6 +5,7 @@
 #include <poincare/float.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/multiplication.h>
+#include <poincare/undefined.h>
 #include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
@@ -28,13 +29,21 @@ bool DoubleDataField::hasDouble(AtomicNumber z) const {
 
 Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   assert(hasDouble(z));
-  Expression value = Float<double>::Builder(getDouble(z));
-  Expression unit = Expression::Parse(fieldUnit(), nullptr);
   Preferences::PrintFloatMode floatDisplayMode = Preferences::sharedPreferences()->displayMode();
-  if (unit.isUninitialized()) {
-    return value.createLayout(floatDisplayMode, significantDigits, nullptr);
+  double v = getDouble(z);
+  if (!std::isfinite(v)) {
+    return Undefined::Builder().createLayout(floatDisplayMode, significantDigits, nullptr);
   }
-  return Multiplication::Builder(value, unit).createLayout(floatDisplayMode, significantDigits, nullptr);
+  Layout value = Float<double>::Builder(getDouble(z)).createLayout(floatDisplayMode, significantDigits, nullptr);
+  Layout unit = fieldUnit();
+  if (unit.isUninitialized()) {
+    return value;
+  }
+  HorizontalLayout res = HorizontalLayout::Builder();
+  res.addOrMergeChildAtIndex(value, 0, false);
+  res.addOrMergeChildAtIndex(CodePointLayout::Builder(' '), res.numberOfChildren(), false);
+  res.addOrMergeChildAtIndex(unit, res.numberOfChildren(), false);
+  return std::move(res);
 }
 
 DataField::ColorPair DoubleDataField::getColors(AtomicNumber z) const {
@@ -245,10 +254,22 @@ double DensityDataField::getDouble(AtomicNumber z) const {
   return ElementsDataBase::Density(z);
 }
 
+Layout DensityDataField::fieldUnit() const {
+  return HorizontalLayout::Builder(LayoutHelper::String("_g/_cm"), VerticalOffsetLayout::Builder(CodePointLayout::Builder('3'), VerticalOffsetLayoutNode::Position::Superscript));
+}
+
 // AffinityDataField
 
 double AffinityDataField::getDouble(AtomicNumber z) const {
   return ElementsDataBase::Affinity(z);
+}
+
+Layout AffinityDataField::getLayout(AtomicNumber z, int significantDigits) const {
+  assert(std::isinf(ElementData::k_affinityUnstable));
+  if (std::isinf(getDouble(z))) {
+    return LayoutHelper::String("Unstable");
+  }
+  return DoubleDataFieldWithSubscriptSymbol::getLayout(z, significantDigits);
 }
 
 // IonisationDataField

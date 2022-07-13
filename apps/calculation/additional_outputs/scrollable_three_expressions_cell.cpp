@@ -75,7 +75,7 @@ KDCoordinate ScrollableThreeExpressionsCell::Height(Calculation * calculation, P
   KDRect rightFrame = KDRectZero;
   cell.subviewFrames(&leftFrame, &centerFrame, &approximateSignFrame, &rightFrame);
   KDRect unionedFrame = leftFrame.unionedWith(centerFrame).unionedWith(rightFrame);
-  return unionedFrame.height() + 2 * ScrollableThreeExpressionsView::k_margin;
+  return unionedFrame.height();
 }
 
 void ScrollableThreeExpressionsCell::didBecomeFirstResponder() {

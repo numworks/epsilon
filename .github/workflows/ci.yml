@@ -98,7 +98,6 @@ jobs:
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
       - run: brew install numworks/tap/epsilon-sdk
-      - run: pip3 install lz4 pypng stringcase # TODO: should be part of brew formula
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator
       - run: make PLATFORM=simulator epsilon.app
@@ -113,7 +112,6 @@ jobs:
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
       - run: brew install numworks/tap/epsilon-sdk
-      - run: pip3 install lz4 pypng stringcase # TODO: should be part of brew formula
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.ipa

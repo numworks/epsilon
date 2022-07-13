@@ -18,9 +18,10 @@ GraphController::GraphController(Responder * parentResponder, Escher::InputEvent
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(sequenceStore, graphRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(graphRange),
-  m_curveParameterController(inputEventHandlerDelegate, this, graphRange, m_cursor),
+  m_curveParameterController(inputEventHandlerDelegate, this, &m_cobwebController, graphRange, m_cursor),
   m_sequenceSelectionController(this),
   m_termSumController(this, inputEventHandlerDelegate, &m_view, graphRange, m_cursor),
+  m_cobwebController(this, inputEventHandlerDelegate, this, &m_view, graphRange, m_cursor, &m_bannerView, &m_cursorView, sequenceStore),
   m_sequenceStore(sequenceStore)
 {
   m_graphRange->setDelegate(this);
@@ -58,12 +59,16 @@ bool GraphController::textFieldDidFinishEditing(AbstractTextField * textField, c
     return false;
   }
   floatBody = std::fmax(0, std::round(floatBody));
-  double y = xyValues(selectedCurveRelativePosition(), floatBody, myApp->localContext()).x2();
-  m_cursor->moveTo(floatBody, floatBody, y);
+  moveToRank(floatBody);
+  return true;
+}
+
+void GraphController::moveToRank(int n) {
+  double y = xyValues(selectedCurveRelativePosition(), n, textFieldDelegateApp()->localContext()).x2();
+  m_cursor->moveTo(n, n, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   reloadBannerView();
   m_view.reload();
-  return true;
 }
 
 Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(int j) const {

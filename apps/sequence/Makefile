@@ -7,6 +7,8 @@ app_sequence_test_src = $(addprefix apps/sequence/,\
 
 app_sequence_src = $(addprefix apps/sequence/,\
   app.cpp \
+  graph/cobweb_controller.cpp \
+  graph/cobweb_graph_view.cpp \
   graph/curve_parameter_controller.cpp \
   graph/curve_view_range.cpp \
   graph/go_to_parameter_controller.cpp \

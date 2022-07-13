@@ -158,7 +158,9 @@ Token Tokenizer::popToken() {
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder.previousCodePoint();
     assert(!m_identifierTokenizer.canStillPop()); // assert we're done with previous tokenization
-    m_identifierTokenizer.startTokenization(m_decoder.stringPosition(), popIdentifier());
+    const char * startOfIdentifier = m_decoder.stringPosition();
+    int identifierLength = popIdentifier();
+    m_identifierTokenizer.startTokenization(startOfIdentifier, identifierLength);
     return m_identifierTokenizer.popIdentifier();
   }
   if ('(' <= c && c <= '/') {

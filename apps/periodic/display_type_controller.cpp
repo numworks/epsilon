@@ -16,19 +16,19 @@ DisplayTypeController::DisplayTypeController(StackViewController * stackControll
 }
 
 void DisplayTypeController::viewWillAppear() {
-  size_t displayTypeIndex = 0;
-  const DisplayType * currentDisplayType = App::app()->elementsViewDataSource()->displayType();
-  while (k_displayTypes[displayTypeIndex] != currentDisplayType) {
-    displayTypeIndex++;
-    assert(displayTypeIndex < k_numberOfRows);
+  size_t fieldIndex = 0;
+  const DataField * currentField = App::app()->elementsViewDataSource()->field();
+  while (k_fields[fieldIndex] != currentField) {
+    fieldIndex++;
+    assert(fieldIndex < k_numberOfRows);
   }
-  selectCellAtLocation(0, displayTypeIndex);
+  selectCellAtLocation(0, fieldIndex);
 }
 
 bool DisplayTypeController::handleEvent(Ion::Events::Event e) {
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
     int index = selectedRow();
-    App::app()->elementsViewDataSource()->setDisplayType(k_displayTypes[index]);
+    App::app()->elementsViewDataSource()->setField(k_fields[index]);
     stackViewController()->pop();
     return true;
   }
@@ -38,17 +38,7 @@ bool DisplayTypeController::handleEvent(Ion::Events::Event e) {
 void DisplayTypeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(cell - static_cast<HighlightCell *>(m_cells) < k_numberOfCells * sizeof(m_cells[0]));
   MessageTableCell * messageCell = static_cast<MessageTableCell *>(cell);
-  constexpr I18n::Message k_messages[k_numberOfRows] = {
-    I18n::Message::GroupOfElementsTitle,
-    I18n::Message::BlocksOfElementsTitle,
-    I18n::Message::MetalsTitle,
-    I18n::Message::MassTitle,
-    I18n::Message::ElectronegativityTitle,
-    I18n::Message::MeltingPointTitle,
-    I18n::Message::BoilingPointTitle,
-    I18n::Message::RadiusTitle,
-  };
-  messageCell->setMessage(k_messages[index]);
+  messageCell->setMessage(k_fields[index]->fieldLegend());
 }
 
 }

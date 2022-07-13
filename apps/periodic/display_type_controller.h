@@ -32,17 +32,17 @@ public:
 
 
 private:
-  constexpr static size_t k_numberOfRows = ElementsViewDataSource::k_numberOfDisplayTypes;
+  constexpr static size_t k_numberOfRows = 8;
   constexpr static size_t k_numberOfCells = 7;
-  constexpr static const DisplayType * k_displayTypes[k_numberOfRows] = {
-    &ElementsViewDataSource::ColorByGroups,
-    &ElementsViewDataSource::ColorByBlocks,
-    &ElementsViewDataSource::ColorByMetals,
-    &ElementsViewDataSource::ColorByMass,
-    &ElementsViewDataSource::ColorByElectronegativity,
-    &ElementsViewDataSource::ColorByMeltingPoint,
-    &ElementsViewDataSource::ColorByBoilingPoint,
-    &ElementsViewDataSource::ColorByRadius,
+  constexpr static const DataField * k_fields[k_numberOfRows] = {
+    &ElementsDataBase::GroupField,
+    &ElementsDataBase::BlockField,
+    &ElementsDataBase::MetalField,
+    &ElementsDataBase::MassField,
+    &ElementsDataBase::ElectronegativityField,
+    &ElementsDataBase::MeltingPointField,
+    &ElementsDataBase::BoilingPointField,
+    &ElementsDataBase::RadiusField,
   };
 
   Escher::StackViewController * stackViewController() const { return static_cast<Escher::StackViewController *>(parentResponder()); }

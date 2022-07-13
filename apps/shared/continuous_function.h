@@ -266,8 +266,8 @@ private:
   /* Expressions */
 
   // Return the expression representing the equation for computations
-  Poincare::Expression expressionEquation(Poincare::Context * context) const  {
-    return m_model.expressionEquation(this, context);
+  Poincare::Expression expressionReducedForAnalysis(Poincare::Context * context) const  {
+    return m_model.expressionReducedForAnalysis(this, context);
   }
   // Return reduced curve expression derivative
   Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
@@ -323,12 +323,15 @@ private:
         m_plotType(PlotType::Unknown) {}
     // Return the expression to plot.
     Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
+    // Return the expression reduced, and computes plotType
+    Poincare::Expression expressionReducedForAnalysis(const Ion::Storage::Record * record, Poincare::Context * context) const;
     // Return the expression of the named function (right side of the equal)
     Poincare::Expression expressionClone(const Ion::Storage::Record * record) const override;
     // Return the entire expression that the user inputted. Replace symbols.
     Poincare::Expression originalEquation(const Ion::Storage::Record * record, CodePoint symbol) const;
-    // Return the expression representing the equation
-    Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context) const;
+    // Return the expression representing the equation (without "f(x)=")
+    Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context, PlotType * computedPlotType) const;
+
     // Return the derivative of the expression to plot.
     Poincare::Expression expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
     // Rename the record if needed. Record pointer might get corrupted.

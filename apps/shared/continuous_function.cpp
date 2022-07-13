@@ -78,7 +78,7 @@ ContinuousFunction::AreaType ContinuousFunction::areaType() const {
 ContinuousFunction::PlotType ContinuousFunction::plotType() const {
   if (m_model.plotType() == PlotType::Unknown) {
     // Computing the expression equation will update the unknown plot type.
-    expressionEquation(Escher::Container::activeApp()->localContext());
+    expressionReducedForAnalysis(Escher::Container::activeApp()->localContext());
   }
   assert(m_model.plotType() != PlotType::Unknown);
   return m_model.plotType();
@@ -264,7 +264,7 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
 
 Conic ContinuousFunction::getConicParameters(Context * context) const {
   assert(isConic());
-  return Conic(expressionEquation(context), context, k_unknownName);
+  return Conic(expressionReducedForAnalysis(context), context, k_unknownName);
 }
 
 int ContinuousFunction::numberOfCurveParameters() const {
@@ -316,9 +316,9 @@ void ContinuousFunction::udpateModel(Context * context) {
   // Do not call isAlongX() if model has already been resetted
   bool previousAlongXStatus = (m_model.plotType() == PlotType::Unknown) || isAlongX();
   setCache(nullptr);
-  // Reset model's plot type. expressionEquation() will update plotType
+  // Reset model's plot type. expressionReducedForAnalysis() will update plotType
   m_model.resetPlotType();
-  expressionEquation(context);
+  expressionReducedForAnalysis(context);
   assert(m_model.plotType() != PlotType::Unknown);
   if (previousAlongXStatus != isAlongX() || !canHaveCustomDomain()) {
     // The definition's domain must be resetted.
@@ -626,7 +626,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
   // m_expression might already be memmoized.
   if (m_expression.isUninitialized()) {
     // Retrieve the expression equation's expression.
-    m_expression = expressionEquation(record, context);
+    m_expression = expressionReducedForAnalysis(record, context);
     m_numberOfSubCurves = 1;
     if (record->fullName() == nullptr || record->fullName()[0] == k_unnamedRecordFirstChar) {
       /* Function isn't named, m_expression currently is an expression in y or x
@@ -683,6 +683,27 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
   return m_expression;
 }
 
+Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(const Ion::Storage::Record * record, Poincare::Context * context) const {
+  PlotType computedPlotType;
+  Expression result = expressionEquation(record, context, &computedPlotType);
+  if (!result.isUndefined()) {
+    PoincareHelpers::CloneAndReduce(
+        &result,
+        context,
+        ExpressionNode::ReductionTarget::SystemForAnalysis,
+        ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol); // Symbols have already been replaced.
+  } else {
+    computedPlotType = PlotType::Undefined;
+  }
+  if (plotType() == PlotType::Unknown) {
+    m_plotType = computedPlotType;
+    // Use the computed equation to update the plot type.
+    updatePlotType(record, result, context);
+  }
+  return result;
+}
+
+
 Expression ContinuousFunction::Model::expressionClone(const Ion::Storage::Record * record) const {
   assert(record->fullName() != nullptr && record->fullName()[0] != k_unnamedRecordFirstChar);
   Expression e = ExpressionModel::expressionClone(record);
@@ -713,23 +734,24 @@ bool isValidNamedLeftExpression(const Expression e, ExpressionNode::Type equatio
                  || functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_parametricSymbol))));
 }
 
-Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context) const {
+Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context, PlotType * computedPlotType) const {
   Expression result = ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
-    m_plotType = PlotType::Undefined;
     return Undefined::Builder();
   }
-  PlotType computedPlotType = PlotType::Unknown;
-  ExpressionNode::Type computedEquationType = result.type();
-  if (!ComparisonOperator::IsComparisonOperatorType(computedEquationType)) {
+  PlotType tempPlotType = PlotType::Unknown;
+  ExpressionNode::Type equationType = result.type();
+  if (plotType() == PlotType::Unknown) {
+    m_equationType = equationType;
+  }
+  if (!ComparisonOperator::IsComparisonOperatorType(equationType)) {
     // Happens when the inputted text is too long and "f(x)=" can't be inserted
-    m_plotType = PlotType::Undefined;
     return Undefined::Builder();
   }
   bool isUnnamedFunction = true;
   Expression leftExpression = result.childAtIndex(0);
 
-  if (isValidNamedLeftExpression(leftExpression, computedEquationType)) {
+  if (isValidNamedLeftExpression(leftExpression, equationType)) {
     // Ensure that function name is either record's name, or free
     assert(record->fullName() != nullptr);
     const char * functionName = static_cast<Poincare::Function&>(leftExpression).name();
@@ -740,12 +762,12 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
       Expression functionSymbol = leftExpression.childAtIndex(0);
       // Set the model's plot type.
       if (functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))) {
-        computedPlotType = PlotType::Parametric;
+        tempPlotType = PlotType::Parametric;
       } else if (functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
-        computedPlotType = PlotType::Cartesian;
+        tempPlotType = PlotType::Cartesian;
       } else {
         assert((functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))));
-        computedPlotType = PlotType::Polar;
+        tempPlotType = PlotType::Polar;
       }
       result = result.childAtIndex(1);
       isUnnamedFunction = false;
@@ -754,6 +776,9 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
        * Replace the symbol. */
       leftExpression.replaceChildAtIndexInPlace(0, Symbol::Builder(UCodePointUnknown));
     }
+  }
+  if (computedPlotType) {
+    *computedPlotType = tempPlotType;
   }
   if (isUnnamedFunction) {
     result = Subtraction::Builder(leftExpression, result.childAtIndex(1));
@@ -767,24 +792,11 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   // Replace all defined symbols and functions to extract symbols
   result = Expression::ExpressionWithoutSymbols(result, context);
   if (result.isUninitialized()) {
-    // result was Circularly defined, make it Undefined for the next steps.
-    result = Undefined::Builder();
+    // result was Circularly defined
+    return Undefined::Builder();
   }
-  PoincareHelpers::CloneAndReduce(
-      &result, context, ExpressionNode::ReductionTarget::SystemForAnalysis,
-      ExpressionNode::SymbolicComputation::
-          ReplaceAllDefinedSymbolsWithDefinition);
-
-  assert(!result.isUninitialized());
   if (isUnnamedFunction) {
     result = result.replaceSymbolWithExpression(Symbol::Builder(UCodePointTemporaryUnknown), Symbol::Builder(k_ordinateCodePoint));
-  }
-
-  if (plotType() == PlotType::Unknown) {
-    m_plotType = computedPlotType;
-    m_equationType = computedEquationType;
-    // Use the computed equation to update the plot type.
-    updatePlotType(record, result, context);
   }
   assert(!result.isUninitialized());
   return result;

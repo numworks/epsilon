@@ -188,7 +188,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
    * ContinuousFunction::Model::buildExpressionFromText. */
   Ion::Storage::Record::ErrorStatus error = editableModel()->setContent(this, c, context, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
-    udpateModel(context);
+    updateModel(context);
     error = m_model.renameRecordIfNeeded(this, c, context, symbol());
   }
   return error;
@@ -312,7 +312,7 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, dou
   }
 }
 
-void ContinuousFunction::udpateModel(Context * context) {
+void ContinuousFunction::updateModel(Context * context) {
   // Do not call isAlongX() if model has already been resetted
   bool previousAlongXStatus = (m_model.plotType() == PlotType::Unknown) || isAlongX();
   setCache(nullptr);

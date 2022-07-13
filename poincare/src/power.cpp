@@ -1525,7 +1525,7 @@ Expression Power::CreateComplexExponent(const Expression & r, const ExpressionNo
   const Constant iComplex = Constant::Builder("i");
   const Constant pi = Constant::Builder("π");
   Expression op = Multiplication::Builder(pi, r).shallowReduce(reductionContext, false);
-  Cosine cos = Cosine(op).shallowReduce(reductionContext, false);;
+  Cosine cos = Cosine(op).shallowReduce(reductionContext, false);
   Sine sin = Sine(op).shallowReduce(reductionContext, false);
   Expression m = Multiplication::Builder(iComplex, sin);
   Expression a = Addition::Builder(cos, m);

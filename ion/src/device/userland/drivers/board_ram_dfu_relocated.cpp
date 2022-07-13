@@ -14,7 +14,7 @@ uint32_t writableSRAMStartAddress() {
 }
 
 uint32_t writableSRAMEndAddress() {
-  return Config::UserlandSRAMOrigin + Config::UserlandSRAMLength - Config::UserlandStackLength;;
+  return Config::UserlandSRAMOrigin + Config::UserlandSRAMLength - Config::UserlandStackLength;
 }
 
 }

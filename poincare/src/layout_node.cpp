@@ -47,7 +47,7 @@ KDPoint LayoutNode::absoluteOrigin(KDFont::Size font) {
     m_flags.m_positioned = true;
     m_flags.m_positionFontSize = font;
   }
-  return m_frame.origin().translatedBy(KDPoint(leftMargin(), 0));;
+  return m_frame.origin().translatedBy(KDPoint(leftMargin(), 0));
 }
 
 KDSize LayoutNode::layoutSize(KDFont::Size font) {

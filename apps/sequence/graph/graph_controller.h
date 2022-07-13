@@ -7,6 +7,7 @@
 #include "curve_parameter_controller.h"
 #include "curve_view_range.h"
 #include "term_sum_controller.h"
+#include "cobweb_controller.h"
 #include "../../shared/function_graph_controller.h"
 #include "../../shared/round_cursor_view.h"
 #include "../../shared/sequence_store.h"
@@ -22,6 +23,7 @@ public:
   // InteractiveCurveViewRangeDelegate
   float interestingXMin() const override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
+  void moveToRank(int n);
 private:
   class SequenceSelectionController : public Shared::FunctionGraphController::FunctionSelectionController {
   public:
@@ -51,6 +53,7 @@ private:
   CurveParameterController m_curveParameterController;
   SequenceSelectionController m_sequenceSelectionController;
   TermSumController m_termSumController;
+  CobwebController m_cobwebController;
   Shared::SequenceStore * m_sequenceStore;
   float m_smallestRank;
 };

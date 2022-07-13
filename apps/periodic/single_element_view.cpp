@@ -10,7 +10,7 @@ void SingleElementView::drawRect(KDContext * ctx, KDRect rect) const {
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   AtomicNumber z = dataSource->selectedElement();
   assert(ElementsDataBase::IsElement(z));
-  DisplayType::ColorPair colors = dataSource->displayType()->colorPairForElement(z);
+  DataField::ColorPair colors = dataSource->field()->getColors(z);
 
   KDRect bgRect((bounds().width() - k_totalSize) / 2 + k_borderSize, (bounds().height() - k_totalSize) / 2 + k_borderSize, k_cellSize, k_cellSize);
   ctx->fillRect(bgRect, colors.bg());

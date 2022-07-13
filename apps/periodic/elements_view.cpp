@@ -81,7 +81,7 @@ void ElementsView::layoutSubviews(bool force) {
   m_singleElementView.setFrame(cellRect, true);
 
   m_nameView.setMessage(ElementsDataBase::Name(z));
-  m_nameView.setTextColor(dataSource->displayType()->colorPairForElement(z).fg());
+  m_nameView.setTextColor(dataSource->field()->getColors(z).fg());
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
   m_nameView.setFrame(KDRect(KDPoint(
           cellRect.x() + (zoomedRect.width() + cellRect.width() - k_zoomedViewMargin - nameSize.width()) / 2,
@@ -92,7 +92,7 @@ void ElementsView::layoutSubviews(bool force) {
 void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx, KDRect rect) const {
   assert(ElementsDataBase::IsElement(z));
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
-  DisplayType::ColorPair colors = dataSource->displayType()->colorPairForElement(z);
+  DataField::ColorPair colors = dataSource->field()->getColors(z);
 
   ctx->fillRect(cell.intersectedWith(rect), colors.bg());
 

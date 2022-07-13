@@ -4,15 +4,15 @@ app_headers += apps/periodic/app.h
 app_periodic_src = $(addprefix apps/periodic/,\
   app.cpp \
   banner_view.cpp \
+  data_field.cpp \
   details_list_controller.cpp \
-  display_type.cpp \
   display_type_controller.cpp \
   elements_data_base.cpp \
   elements_view.cpp \
   elements_view_data_source.cpp \
   main_controller.cpp \
+  physical_quantity_cell.cpp \
   single_element_view.cpp \
-  table_cells.cpp \
   table_layout.cpp \
 )
 

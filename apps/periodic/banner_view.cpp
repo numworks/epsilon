@@ -45,7 +45,7 @@ void BannerView::layoutSubviews(bool force) {
   if (z != ElementsDataBase::k_noElement) {
     KDRect dotRect = KDRect(x, (bounds().height() - k_dotDiameter) / 2, k_dotDiameter, k_dotDiameter);
     m_dotView.setFrame(dotRect, force);
-    m_dotView.setColor(dataSource->displayType()->colorPairForElement(z).fg());
+    m_dotView.setColor(dataSource->field()->getColors(z).fg());
     x += dotRect.width() + k_dotLegendMargin;
     buttonColor = k_backgroundColor;
   } else {
@@ -56,10 +56,19 @@ void BannerView::layoutSubviews(bool force) {
   m_button.setFrame(KDRect(bounds().width() - k_buttonWidth, k_borderHeight, k_buttonWidth, k_bannerHeight), force);
   m_button.setColor(buttonColor);
 
+  I18n::Message legendMessage = dataSource->field()->getMessage(z);
+  if (legendMessage != I18n::Message::Default) {
+    m_textView.setText(I18n::translate(legendMessage));
+  } else {
+    m_textView.setText(I18n::translate(dataSource->field()->fieldLegend()));
+    if (dataSource->field()->hasDouble(z)) {
+      m_textView.appendText(" : ");
+      char buffer[Escher::BufferTextView::k_maxNumberOfChar];
+      dataSource->field()->getLayout(z).serializeParsedExpression(buffer, Escher::BufferTextView::k_maxNumberOfChar, nullptr);
+      m_textView.appendText(buffer);
+    }
+  }
   m_textView.setFrame(KDRect(x, k_borderHeight, bounds().width() - x, k_bannerHeight), force);
-  char buffer[Escher::BufferTextView::k_maxNumberOfChar];
-  dataSource->displayType()->setLegendForElement(z, buffer, Escher::BufferTextView::k_maxNumberOfChar);
-  m_textView.setText(buffer);
 }
 
 }

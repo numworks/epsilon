@@ -1,5 +1,6 @@
 #include "details_list_controller.h"
 #include "app.h"
+#include <escher/clipboard.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
@@ -34,6 +35,19 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
     stack->push(this);
     return true;
   }
+
+  if (e == Ion::Events::Copy) {
+    constexpr size_t size = Escher::Clipboard::k_bufferSize;
+    char buffer[size];
+    int index = selectedRow();
+    Layout l = DataFieldForRow(index)->getLayout(App::app()->elementsViewDataSource()->selectedElement(), PrintFloat::k_numberOfStoredSignificantDigits);
+    int length = l.serializeForParsing(buffer, size);
+    assert(length < size);
+    (void)length;
+    Escher::Clipboard::sharedClipboard()->store(buffer);
+    return true;
+  }
+
   return false;
 }
 

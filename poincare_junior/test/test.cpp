@@ -12,39 +12,6 @@ using namespace Poincare;
  *
  * */
 
-/*void printLinearPool(TreePool * pool) {
-  TreeBlock * b = pool->firstBlock();
-  while (b < pool->lastBlock()) {
-    std::cout << b->log() << std::endl;
-    b = b->nextBlock();
-  }
-}
-
-void printIndentation(int deep) {
-  for (int k = 0; k < deep + 1; k++) {
-    std::cout << "\t";
-  }
-}
-
-TreeBlock * printTreePoolRec(TreeBlock * block, int deep) {
-  std::cout << block->log() << std::endl;
-  for (TreeBlock * child : block->directSubtrees()) {
-    printIndentation(deep);
-    printTreePoolRec(child, deep + 1);
-  }
-  return block->nextTree();
-}
-
-void printTreePool(TreePool * pool) {
-  TreeBlock * b = pool->firstBlock();
-  int counter = 0;
-  while (b && b < pool->lastBlock()) {
-    std::cout << "---------------------------------- Tree n° " << counter++ << "----------------------------------" << std::endl;
-    b = printTreePoolRec(b, 0);
-    std::cout << "------------------------------------------------------------------------------" << std::endl;
-  }
-}*/
-
 #if 0
 void deepReduce(TreeBlock * block) {
   BlockType blockType = block->type();
@@ -91,7 +58,6 @@ void print() {
 
   std::cout << "\n-------- SANDBOX --------" << std::endl;
   sandbox->treeLog(std::cout);
-
 }
 
 int main() {
@@ -100,12 +66,12 @@ int main() {
 
   // "1 * 2 + 3 + 4";
   // Parsing
-  Addition::NodeBuilder(sandbox, 3);
-  Multiplication::NodeBuilder(sandbox, 2);
-  Integer::NodeBuilder(sandbox, 1);
-  Integer::NodeBuilder(sandbox, 2);
-  Integer::NodeBuilder(sandbox, 3);
-  Integer::NodeBuilder(sandbox, 4);
+  Addition::PushNode(sandbox, 3);
+  Multiplication::PushNode(sandbox, 2);
+  Integer::PushNode(sandbox, 1);
+  Integer::PushNode(sandbox, 2);
+  Integer::PushNode(sandbox, 3);
+  Integer::PushNode(sandbox, 4);
 
   print();
 

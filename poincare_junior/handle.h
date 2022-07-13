@@ -42,7 +42,7 @@ public:
 #endif
   size_t nodeSize() const override;
   int value() const;
-  static Integer NodeBuilder(TreeSandbox * sandbox, int value);
+  static Integer PushNode(TreeSandbox * sandbox, int value);
 private:
   constexpr static size_t k_minimalNumberOfNodes = 4;
   constexpr static size_t k_maxValue = 1 << 8;
@@ -60,7 +60,7 @@ public:
 protected:
   int privateNumberOfChildren(BlockType headType) const;
 
-  static TypeTreeBlock * NodeBuilder(TreeSandbox * sandbox, int numberOfChildren, TypeTreeBlock headBlock, TypeTreeBlock tailBlock);
+  static TypeTreeBlock * PushNode(TreeSandbox * sandbox, int numberOfChildren, TypeTreeBlock headBlock, TypeTreeBlock tailBlock);
 };
 
 class Addition final : public NAry {
@@ -71,7 +71,7 @@ public:
 #endif
   int numberOfChildren() const override;
 
-  static Addition NodeBuilder(TreeSandbox * sandbox, int numberOfChildren);
+  static Addition PushNode(TreeSandbox * sandbox, int numberOfChildren);
 };
 
 class Multiplication final : public NAry {
@@ -82,7 +82,7 @@ public:
 #endif
   int numberOfChildren() const override;
 
-  static Multiplication NodeBuilder(TreeSandbox * sandbox, int numberOfChildren);
+  static Multiplication PushNode(TreeSandbox * sandbox, int numberOfChildren);
 };
 
 union HandleBuffer {

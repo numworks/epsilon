@@ -67,7 +67,7 @@ int Integer::value() const {
   return value;
 }
 
-Integer Integer::NodeBuilder(TreeSandbox * sandbox, int value) {
+Integer Integer::PushNode(TreeSandbox * sandbox, int value) {
   TreeBlock * addressOfIntegerBlock = sandbox->lastBlock();
   sandbox->pushBlock(IntegerHeadBlock());
   // Temporary node size
@@ -98,7 +98,7 @@ int NAry::privateNumberOfChildren(BlockType headType) const {
   return static_cast<ValueTreeBlock *>(numberOfChildrenBlock)->value();
 }
 
-TypeTreeBlock * NAry::NodeBuilder(TreeSandbox * sandbox, int numberOfChildren, TypeTreeBlock headBlock, TypeTreeBlock tailBlock) {
+TypeTreeBlock * NAry::PushNode(TreeSandbox * sandbox, int numberOfChildren, TypeTreeBlock headBlock, TypeTreeBlock tailBlock) {
   TreeBlock * addressOfNAryBlock = sandbox->lastBlock();
   sandbox->pushBlock(headBlock);
   sandbox->pushBlock(ValueTreeBlock(numberOfChildren));
@@ -108,8 +108,8 @@ TypeTreeBlock * NAry::NodeBuilder(TreeSandbox * sandbox, int numberOfChildren, T
 
 /* Addition */
 
-Addition Addition::NodeBuilder(TreeSandbox * sandbox, int numberOfChildren) {
-  return Addition(NAry::NodeBuilder(sandbox, numberOfChildren, AdditionHeadBlock(), AdditionTailBlock()));
+Addition Addition::PushNode(TreeSandbox * sandbox, int numberOfChildren) {
+  return Addition(NAry::PushNode(sandbox, numberOfChildren, AdditionHeadBlock(), AdditionTailBlock()));
 }
 
 int Addition::numberOfChildren() const {
@@ -118,8 +118,8 @@ int Addition::numberOfChildren() const {
 
 /* Multiplication */
 
-Multiplication Multiplication::NodeBuilder(TreeSandbox * sandbox, int numberOfChildren) {
-  return Multiplication(NAry::NodeBuilder(sandbox, numberOfChildren, MultiplicationHeadBlock(), MultiplicationTailBlock()));
+Multiplication Multiplication::PushNode(TreeSandbox * sandbox, int numberOfChildren) {
+  return Multiplication(NAry::PushNode(sandbox, numberOfChildren, MultiplicationHeadBlock(), MultiplicationTailBlock()));
 }
 
 int Multiplication::numberOfChildren() const {

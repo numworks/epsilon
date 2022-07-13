@@ -64,7 +64,7 @@ void BannerView::layoutSubviews(bool force) {
     if (dataSource->field()->hasDouble(z)) {
       m_textView.appendText(" : ");
       char buffer[Escher::BufferTextView::k_maxNumberOfChar];
-      dataSource->field()->getLayout(z).serializeParsedExpression(buffer, Escher::BufferTextView::k_maxNumberOfChar, nullptr);
+      dataSource->field()->getLayout(z).serializeForParsing(buffer, Escher::BufferTextView::k_maxNumberOfChar);
       m_textView.appendText(buffer);
     }
   }

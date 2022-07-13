@@ -34,7 +34,7 @@ bool Interface::getStatus(uint8_t * transferBuffer, uint16_t * transferBufferLen
 }
 
 bool Interface::getInterface(uint8_t * transferBuffer, uint16_t * transferBufferLength, uint16_t transferBufferMaxLength) {
-  *transferBufferLength = minUint16T(1, transferBufferMaxLength);;
+  *transferBufferLength = minUint16T(1, transferBufferMaxLength);
   if (*transferBufferLength > 0) {
     transferBuffer[0] = getActiveInterfaceAlternative();
   }

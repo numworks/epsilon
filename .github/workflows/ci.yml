@@ -35,11 +35,6 @@ jobs:
       - run: make MODEL=n0110 userland.A.elf userland.B.elf userland.test.A.elf userland.test.B.elf userland.onboarding.beta.A.elf userland.onboarding.update.A.elf
       - run: make MODEL=n0110 flasher.dfu
       - run: make MODEL=n0110 bench.ram.dfu
-      - uses: actions/upload-artifact@master
-        if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
-        with:
-          name: epsilon-n0110.dfu
-          path: output/release/device/n0110/epsilon.dfu
   n0120:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
@@ -51,11 +46,6 @@ jobs:
       - run: make MODEL=n0120 userland.A.elf userland.B.elf userland.test.A.elf userland.test.B.elf userland.onboarding.beta.A.elf userland.onboarding.update.A.elf
       - run: make MODEL=n0120 flasher.dfu
       - run: make MODEL=n0120 bench.ram.dfu
-      - uses: actions/upload-artifact@master
-        if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
-        with:
-          name: epsilon-n0120.dfu
-          path: output/release/device/n0120/epsilon.dfu
   windows:
     runs-on: windows-latest
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}

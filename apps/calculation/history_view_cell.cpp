@@ -240,8 +240,14 @@ void HistoryViewCell::resetMemoization() {
 }
 
 void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, Poincare::Context * context, bool canChangeDisplayOutput) {
+  if (m_calculationExpanded != expanded) {
+    // Change expanded if needed
+    m_calculationExpanded = expanded && calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle;
+    m_scrollableOutputView.setDisplayCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || m_calculationExpanded);
+  }
+
   uint32_t newCalculationCRC = Ion::crc32Byte((const uint8_t *)calculation, ((char *)calculation->next()) - ((char *) calculation));
-  if (newCalculationCRC == m_calculationCRC32 && m_calculationExpanded == expanded) {
+  if (newCalculationCRC == m_calculationCRC32) {
     return;
   }
 
@@ -250,7 +256,6 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, P
 
   // Memoization
   m_calculationCRC32 = newCalculationCRC;
-  m_calculationExpanded = expanded && calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximateToggle;
   m_calculationAdditionInformation = calculation->additionalInformationType();
   m_inputView.setLayout(calculation->createInputLayout());
 

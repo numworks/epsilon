@@ -6,10 +6,14 @@
 namespace Poincare {
 
 class TreeSandbox;
+union HandleBuffer;
 
 class Handle {
 public:
-  static Handle * CreateFromBlock(const TypeTreeBlock * treeBlock);
+  template <typename T>
+  static T Create(const TypeTreeBlock * treeBlock);
+  // TODO: Use expiring pointers
+  static Handle * CreateHandle(const TypeTreeBlock * treeBlock);
 
   Handle(const TypeTreeBlock * treeBlock = nullptr) : m_typeTreeBlock(const_cast<TypeTreeBlock *>(treeBlock)) {}
   virtual ~Handle() = default;

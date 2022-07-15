@@ -5,6 +5,7 @@
 namespace Poincare {
 
 HandleBuffer::HandleBuffer() {
+  // TODO: explain the need of dynamic allocation
   new (&m_ghost) Ghost();
 }
 
@@ -12,28 +13,34 @@ HandleBuffer::~HandleBuffer() {
   (&m_handle)->~Handle();
 }
 
-Handle * Handle::CreateFromBlock(const TypeTreeBlock * treeBlock) {
-  static HandleBuffer s_handle;
-  (&s_handle.m_handle)->~Handle();
+template <typename T>
+T Handle::Create(const TypeTreeBlock * treeBlock) {
+  return T(treeBlock);
+}
+
+Handle * Handle::CreateHandle(const TypeTreeBlock * treeBlock) {
+  static HandleBuffer s_handleBuffer;
+  (&s_handleBuffer.m_handle)->~Handle();
   switch (treeBlock->type()) {
     case BlockType::Ghost:
-      new (&s_handle.m_ghost) Ghost(treeBlock);
-      return &s_handle.m_ghost;
+      new (&s_handleBuffer.m_ghost) Ghost(treeBlock);
+      return &s_handleBuffer.m_ghost;
     case BlockType::AdditionHead:
     case BlockType::AdditionTail:
-      new (&s_handle.m_addition) Addition(treeBlock);
-      return &s_handle.m_addition;
+      new (&s_handleBuffer.m_addition) Addition(treeBlock);
+      return &s_handleBuffer.m_addition;
     case BlockType::MultiplicationHead:
     case BlockType::MultiplicationTail:
-      new (&s_handle.m_multiplication) Multiplication(treeBlock);
-      return &s_handle.m_multiplication;
+      new (&s_handleBuffer.m_multiplication) Multiplication(treeBlock);
+      return &s_handleBuffer.m_multiplication;
     case BlockType::IntegerHead:
     case BlockType::IntegerTail:
-      new (&s_handle.m_integer) Integer(treeBlock);
-      return &s_handle.m_integer;
+      new (&s_handleBuffer.m_integer) Integer(treeBlock);
+      return &s_handleBuffer.m_integer;
     default:
       assert(false);
   }
+  return nullptr;
 }
 
 /* Integer */

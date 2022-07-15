@@ -60,6 +60,13 @@ void print() {
   sandbox->treeLog(std::cout);
 }
 
+void intermediaryPrint() {
+  TreeSandbox * sandbox = TreeCache::sharedCache()->sandbox();
+
+  std::cout << "\n-------- INCOMPLETE SANDBOX --------" << std::endl;
+  sandbox->flatLog(std::cout);
+}
+
 int main() {
   TreeCache * cache = TreeCache::sharedCache();
   TreeSandbox * sandbox = cache->sandbox();

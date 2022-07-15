@@ -13,7 +13,7 @@ void TypeTreeBlock::log(std::ostream & stream, bool recursive, int indentation, 
     stream << "  ";
   }
   stream << "<";
-  Handle * h = Handle::CreateFromBlock(this);
+  Handle * h = Handle::CreateHandle(this);
   h->logNodeName(stream);
   if (verbose) {
     stream << " size=\"" << h->nodeSize() << "\"";
@@ -44,7 +44,7 @@ void TypeTreeBlock::log(std::ostream & stream, bool recursive, int indentation, 
 #endif
 
 TypeTreeBlock * TypeTreeBlock::nextNode() {
-  return this + Handle::CreateFromBlock(this)->nodeSize();
+  return this + Handle::CreateHandle(this)->nodeSize();
 }
 
 TypeTreeBlock * TypeTreeBlock::previousNode(const TreeBlock * firstBlock) {
@@ -52,7 +52,7 @@ TypeTreeBlock * TypeTreeBlock::previousNode(const TreeBlock * firstBlock) {
     return nullptr;
   }
   TypeTreeBlock * block = static_cast<TypeTreeBlock *>(previousBlock());
-  return this - Handle::CreateFromBlock(block)->nodeSize();
+  return this - Handle::CreateHandle(block)->nodeSize();
 }
 
 TypeTreeBlock * TypeTreeBlock::nextSibling() {
@@ -99,7 +99,7 @@ TypeTreeBlock * TypeTreeBlock::root(const TreeBlock * firstBlock) {
 }
 
 int TypeTreeBlock::numberOfChildren() const {
-  return Handle::CreateFromBlock(this)->numberOfChildren();
+  return Handle::CreateHandle(this)->numberOfChildren();
 }
 
 int TypeTreeBlock::numberOfDescendants(bool includeSelf) const {

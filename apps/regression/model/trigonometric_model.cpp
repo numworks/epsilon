@@ -73,37 +73,119 @@ double TrigonometricModel::partialDerivate(double * modelCoefficients, int deriv
   return radian * a * std::cos(radian * (b * x + c));
 }
 
+// If (x2, y2) was an extremum, update xExtremum and yExtremum
+bool checkExtremum(double x2, double y2, int lastExtremum, double * xExtremum, double * yExtremum) {
+  assert(lastExtremum >= 2);
+  if (lastExtremum != 2) {
+    return false;
+  }
+  *xExtremum = x2;
+  *yExtremum = y2;
+  return true;
+}
+
+// If lower < higher, update xMinMax and yMinMax with x and y
+void updateMinMax(double lower, double higher, double x, double y, double * xMinMax, double * yMinMax) {
+  if (lower < higher) {
+    *xMinMax = x;
+    *yMinMax = y;
+  }
+}
+
+/* This methods finds two consecutive extrema. The conditions are:
+ * - minimum extrema: x(i) having y(i-2) > y(i-1) > y(i) < y(i+1) < y(i+2)
+ * - maximum extrema: x(i) having y(i-2) < y(i-1) < y(i) > y(i+1) > y(i+2)
+ * If one isn't found, return series min and max */
+void findExtrema(double * xMinExtremum, double * xMaxExtremum, double * yMinExtremum, double * yMaxExtremum, Store * store, int series) {
+  int numberOfPairs = store->numberOfPairsOfSeries(series);
+  assert(numberOfPairs >= 3);
+  // Compute values at index 0 and 1
+  double x2 = store->get(series, 0, 0);
+  double y2 = store->get(series, 1, 0);
+  double x1 = store->get(series, 0, 1);
+  double y1 = store->get(series, 1, 1);
+  double xMin, yMin, xMax, yMax, x0, y0;
+  yMin = yMax = y2;
+  xMin = xMax = x2;
+  // Initialize last extrema so that the first two pairs cannot be one
+  int lastMinExtremum, lastMaxExtremum;
+  lastMinExtremum = lastMaxExtremum = 3;
+  bool foundMin, foundMax;
+  foundMin = foundMax = false;
+  for (int i = 2; i < numberOfPairs; i++) {
+    x0 = store->get(series, 0, i);
+    y0 = store->get(series, 1, i);
+    if (y2 < y1 && y1 < y0) {
+      // Check if (x2, y2) was a minimum extrema (y4 > y3 > y2 < y1 < y0)
+      foundMin = checkExtremum(x2, y2, lastMinExtremum, xMinExtremum, yMinExtremum);
+      // (x0, y0) could be a maximum extrema, override the last candidate
+      lastMaxExtremum = 0;
+    } else if (y2 > y1 && y1 > y0) {
+      // Check if (x2, y2) was a maximum extrema (y4 < y3 < y2 > y1 > y0)
+      foundMax = checkExtremum(x2, y2, lastMaxExtremum, xMaxExtremum, yMaxExtremum);
+      // (x0, y0) could be a minimum extrema, override the last candidate
+      lastMinExtremum = 0;
+    }
+    if (foundMin && foundMax) {
+      return; // Two extremum have been found
+    }
+    lastMinExtremum++;
+    lastMaxExtremum++;
+    // Shift down values
+    x2 = x1;
+    y2 = y1;
+    x1 = x0;
+    y1 = y0;
+    // Compute max and min in case an extremum isn't identified
+    updateMinMax(y2, yMin, x2, y2, &xMin, &yMin);
+    updateMinMax(yMax, y2, x2, y2, &xMax, &yMax);
+  }
+  // Finish computing min and max.
+  updateMinMax(y1, yMin, x1, y1, &xMin, &yMin);
+  updateMinMax(yMax, y1, x1, y1, &xMax, &yMax);
+  updateMinMax(y0, yMin, x0, y0, &xMin, &yMin);
+  updateMinMax(yMax, y0, x0, y0, &xMax, &yMax);
+  // At least one extremum is missing, fall back on series min and max
+  *xMinExtremum = xMin;
+  *yMinExtremum = yMin;
+  *xMaxExtremum = xMax;
+  *yMaxExtremum = yMax;
+}
+
 void TrigonometricModel::specializedInitCoefficientsForFit(double * modelCoefficients, double defaultValue, Store * store, int series) const {
   assert(store != nullptr && series >= 0 && series < Store::k_numberOfSeries && store->seriesIsValid(series));
-  /* We try a better initialization than the default value. We hope that this
-   * will improve the gradient descent to find correct coefficients.
-   *
-   * Init the "amplitude" coefficient. We take twice the standard deviation,
-   * because for a normal law, this interval contains 99.73% of the values. We
-   * do not take half of the amplitude of the series, because this would be too
-   * dependent on outliers. */
-  modelCoefficients[0] = 3.0*store->standardDeviationOfColumn(series, 1);
-  // Init the "y delta" coefficient
-  modelCoefficients[k_numberOfCoefficients - 1] = store->meanOfColumn(series, 1);
-  // Init the b coefficient
-  double rangeX = store->maxValueOfColumn(series, 0) - store->minValueOfColumn(series, 0);
+  /* With trigonometric model, a good fit heavily depends on good starting
+   * parameters. We try to find two successive extrema, and from them deduce the
+   * amplitude, period, y-delta and phase.
+   * Since we look for "good" extrema (having the 2 previous/next values
+   * smaller/bigger), this should be pretty resilient to outliers as long as
+   * there are enough data points.
+   * As a downside, data that should not be fitted as trigonometric could be
+   * very off and suboptimal. */
+  double xMin, xMax, yMin, yMax;
+  findExtrema(&xMin, &xMax, &yMin, &yMax, store, series);
+  // Init the "amplitude" coefficient a
+  modelCoefficients[0] = (yMax - yMin) / 2.0;
+  // Init the "period" coefficient b
   double piInAngleUnit = Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit());
-  if (rangeX > 0) {
-    /* b/2π represents the frequency of the sine (in radians). Instead of
-     * initializing it to 0, we use the inverse of X series' range as an order
-     * of magnitude for it. It can help avoiding a regression that overfits the
-     * data with a very high frequency. This period also depends on the
-     * angleUnit. We take it into account so that it doesn't impact the result
-     * (although coefficients b and c depends on the angleUnit). */
-    modelCoefficients[1] = (2.0 * piInAngleUnit) / rangeX;
+  double period = 2.0 * std::fabs(xMax - xMin);
+  if (period > 0) {
+    /* b/(2*piInAngleUnit) is the frequency of the sine.
+     * With two successive extrema, we have the period, so we initialize b
+     * so that b*period = 2*piInAngleUnit . This helps preventing an overfitting
+     * regression with an excessive frequency. */
+    modelCoefficients[1] = (2.0 * piInAngleUnit) / period;
   } else {
-    // Coefficient b must not depend on angleUnit.
+    /* Without period, fall back on default value, taking into account the
+     * angleUnit to ensure consistent result across different angle units. */
     modelCoefficients[1] = defaultValue * piInAngleUnit;
   }
-  /* No shift is assumed, coefficient c is set to 0.
-   * If it were to be non-null, angleUnit must be taken into account.
-   * modelCoefficients[2] = initialCValue * piInAngleUnit; */
-  modelCoefficients[2] = 0.0;
+  // Init the "Phase" coefficient c
+  /* Choose c so that sin(b * xMax + c) is maximal. It must depend on the angle
+   * unit */
+  modelCoefficients[2] = piInAngleUnit/2 - modelCoefficients[1] * xMax;
+  // Init the "y-delta" coefficient d
+  modelCoefficients[k_numberOfCoefficients - 1] = (yMax + yMin) / 2.0;
 }
 
 void TrigonometricModel::uniformizeCoefficientsFromFit(double * modelCoefficients) const {

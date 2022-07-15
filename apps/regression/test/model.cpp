@@ -274,6 +274,16 @@ QUIZ_CASE(trigonometric_regression2) {
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
 }
 
+QUIZ_CASE(trigonometric_regression3) {
+  double r2 = 0.9983;
+  double x[] = {1,  2,  3,  4,  5,  6};
+  double y[] = {8, 13, 21, 36, 47, 53};
+  double coefficients[] = {22.55, 0.5955, -2.180, 30.86};
+  int numberOfPoints = sizeof(x) / sizeof(double);
+  assert(sizeof(y) == sizeof(double) * numberOfPoints);
+
+  assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
+}
 
 QUIZ_CASE(logistic_regression) {
   /* This data was generated without the random error, otherwise it did not pass

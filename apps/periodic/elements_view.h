@@ -29,7 +29,7 @@ private:
   /* rectForCell returns the rect for the colored part of the cell, without
    * its border. This avoid redrawing cells just because their border overlaps
    * a dirty cell. */
-  static KDRect RectForCell(size_t cellIndex);
+  static KDRect RectForCell(uint8_t cellIndex);
   static KDRect RectWithMargins(KDRect rect) { return KDRect(rect.x() - k_cellMargin, rect.y() - k_cellMargin, rect.width() + 2 * k_cellSize, rect.height() + 2 * k_cellMargin); }
   KDRect SingleElementViewFrame() const;
 

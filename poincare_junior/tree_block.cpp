@@ -30,6 +30,7 @@ void TypeTreeBlock::log(std::ostream & stream, bool recursive, int indentation, 
     }
   }
   if (tagIsClosed) {
+    h = Handle::CreateHandle(this);
     stream << "\n";
     for (int i = 0; i < indentation; ++i) {
       stream << "  ";

@@ -11,14 +11,12 @@ ElementsView::ElementsView() :
 {}
 
 void ElementsView::drawRect(KDContext * ctx, KDRect rect) const {
+  /* Only draw the whole background when the view appears. This prevents
+   * blinking when moving the cursor around. */
   ctx->fillRect(rect.containsRect(bounds()) ? rect : SingleElementViewFrame(), k_backgroundColor);
 
-  for (size_t i = 0; i < TableLayout::k_numberOfCells; i++) {
-    AtomicNumber z = TableLayout::ElementInCell(i);
-    if (!ElementsDataBase::IsElement(z)) {
-      continue;
-    }
-    KDRect cell = RectForCell(i);
+  for (AtomicNumber z = 1; z <= ElementsDataBase::k_numberOfElements; z++) {
+    KDRect cell = RectForCell(TableLayout::CellForElement(z));
     if (cell.intersects(rect)) {
       drawElementCell(z, cell, ctx, rect);
     }
@@ -43,11 +41,11 @@ void ElementsView::cursorMoved(AtomicNumber oldZ) {
   layoutSubviews();
 }
 
-KDRect ElementsView::RectForCell(size_t cellIndex) {
+KDRect ElementsView::RectForCell(uint8_t cellIndex) {
   if (cellIndex >= TableLayout::k_numberOfCells) {
     return KDRectZero;
   }
-  size_t col, row;
+  uint8_t col, row;
   TableLayout::PositionForCell(cellIndex, &col, &row);
   KDCoordinate x = k_tableLeftMargin + col * (k_cellSize + k_cellMargin);
   KDCoordinate y = k_tableTopMargin + row * (k_cellSize + k_cellMargin);

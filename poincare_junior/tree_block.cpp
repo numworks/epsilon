@@ -22,12 +22,12 @@ void TypeTreeBlock::log(std::ostream & stream, bool recursive, int indentation, 
   h->logAttributes(stream);
   bool tagIsClosed = false;
   if (recursive) {
-    for (TypeTreeBlock * child : directChildren()) {
+    for (IndexedTypeTreeBlock child : directChildren()) {
       if (!tagIsClosed) {
         stream << ">";
         tagIsClosed = true;
       }
-      child->log(stream, recursive, indentation + 1, verbose);
+      child.m_block->log(stream, recursive, indentation + 1, verbose);
     }
   }
   if (tagIsClosed) {
@@ -116,10 +116,9 @@ int TypeTreeBlock::numberOfDescendants(bool includeSelf) const {
 }
 
 TypeTreeBlock * TypeTreeBlock::childAtIndex(int i) const {
-  int currentChildIndex = 0;
-  for (TypeTreeBlock * c : directChildren()) {
-    if (currentChildIndex++ == i) {
-      return c;
+  for (IndexedTypeTreeBlock indexedChild : directChildren()) {
+    if (indexedChild.m_index == i) {
+      return indexedChild.m_block;
     }
   }
   return nullptr;
@@ -147,8 +146,8 @@ int TypeTreeBlock::indexInParent(const TreeBlock * firstBlock) const {
 }
 
 bool TypeTreeBlock::hasChild(const TypeTreeBlock * child) const {
-  for (TypeTreeBlock * c : directChildren()) {
-    if (child == c) {
+  for (IndexedTypeTreeBlock indexedChild : directChildren()) {
+    if (child == indexedChild.m_block) {
       return true;
     }
   }
@@ -171,8 +170,8 @@ bool TypeTreeBlock::hasSibling(const TreeBlock * firstBlock, const TypeTreeBlock
   if (p == nullptr) {
     return false;
   }
-  for (TypeTreeBlock * block : p->directChildren()) {
-    if (block == sibling) {
+  for (IndexedTypeTreeBlock indexedBlock : p->directChildren()) {
+    if (indexedBlock.m_block == sibling) {
       return true;
     }
   }
@@ -197,18 +196,16 @@ TypeTreeBlock * TypeTreeBlock::BackwardsDirect::Iterator::Memoizer::childAtIndex
 }
 
 void TypeTreeBlock::BackwardsDirect::Iterator::Memoizer::memoizeUntilIndex(int i) {
-  int counter = 0;
-  for (TypeTreeBlock * block : m_block->directChildren()) {
-    m_children[counter % k_maxNumberOfMemoizedSubtrees] = block;
-    counter++;
-    if (counter == i) {
+  for (IndexedTypeTreeBlock indexedBlock : m_block->directChildren()) {
+    m_children[indexedBlock.m_index % k_maxNumberOfMemoizedSubtrees] = indexedBlock.m_block;
+    if (indexedBlock.m_index + 1 == i) {
       break;
     }
   }
   if (i < k_maxNumberOfMemoizedSubtrees) {
     m_firstMemoizedSubtreeIndex = 0;
   } else {
-    m_firstMemoizedSubtreeIndex = counter % k_maxNumberOfMemoizedSubtrees;
+    m_firstMemoizedSubtreeIndex = std::min(i, m_block->numberOfChildren()) % k_maxNumberOfMemoizedSubtrees;
   }
 }
 

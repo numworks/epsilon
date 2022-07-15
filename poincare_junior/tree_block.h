@@ -88,6 +88,13 @@ enum class BlockType : uint8_t {
   MultiplicationTail
 };
 
+class TypeTreeBlock;
+
+struct IndexedTypeTreeBlock {
+  TypeTreeBlock * m_block;
+  int m_index;
+};
+
 class TreeBlock {
 friend class TreePool;
 public:
@@ -101,16 +108,6 @@ public:
   TreeBlock * previousNthBlock(int i) { return this - i * sizeof(TreeBlock); }
 
 protected:
-  template <typename T>
-  class Iterator {
-  public:
-    Iterator(const T * block) : m_block(const_cast<T *>(block)) {}
-    T * operator*() { return m_block; }
-    bool operator!=(const Iterator& it) const { return (m_block != it.m_block); }
-  protected:
-    T * m_block;
-  };
-
   uint8_t m_content;
 };
 
@@ -152,16 +149,21 @@ public:
   class ForwardDirect final {
   public:
     ForwardDirect(TypeTreeBlock * block) : m_block(block) {}
-    class Iterator : public TreeBlock::Iterator<TypeTreeBlock> {
+    class Iterator {
     public:
-      using TreeBlock::Iterator<TypeTreeBlock>::Iterator;
+      Iterator(const TypeTreeBlock * block, int index) : m_indexedBlock({.m_block = const_cast<TypeTreeBlock *>(block), .m_index = index}) {}
+      IndexedTypeTreeBlock operator*() { return m_indexedBlock; }
+      bool operator!=(const Iterator& it) const { return (m_indexedBlock.m_index != it.m_indexedBlock.m_index); }
       Iterator & operator++() {
-        this->m_block = static_cast<TypeTreeBlock *>(this->m_block)->nextSibling();
+        m_indexedBlock.m_block = m_indexedBlock.m_block->nextSibling();
+        m_indexedBlock.m_index++;
         return *this;
       }
+    private:
+      IndexedTypeTreeBlock m_indexedBlock;
     };
-    Iterator begin() const { return Iterator(m_block->nextNode()); }
-    Iterator end() const { return Iterator(m_block->nextSibling()); }
+    Iterator begin() const { return Iterator(m_block->nextNode(), 0); }
+    Iterator end() const { return Iterator(nullptr, m_block->numberOfChildren()); }
   private:
     TypeTreeBlock * m_block;
   };

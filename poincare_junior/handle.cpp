@@ -133,29 +133,25 @@ int Multiplication::numberOfChildren() const {
 }
 
 Handle Multiplication::distributeOverAddition(TreeSandbox * sandbox) {
-  for (TypeTreeBlock * subTree : m_typeTreeBlock->directChildren()) {
-    int additionIndexInMultiplication = 0;
-    if (subTree->type() == BlockType::AdditionHead) {
+  for (IndexedTypeTreeBlock indexedSubTree : m_typeTreeBlock->directChildren()) {
+    if (indexedSubTree.m_block->type() == BlockType::AdditionHead) {
       // Create new addition that will be filled in the following loop
-      Addition newAddition = Addition::PushNode(sandbox, Handle::Create<Addition>(subTree).numberOfChildren());
-      int childIndexInAddition = 0;
-      for (TypeTreeBlock * additionChild : subTree->directChildren()) {
+      Addition newAddition = Addition::PushNode(sandbox, Handle::Create<Addition>(indexedSubTree.m_block).numberOfChildren());
+      for (IndexedTypeTreeBlock indexedAdditionChild : indexedSubTree.m_block->directChildren()) {
         // Create a multiplication
         TypeTreeBlock * multiplicationCopy = sandbox->copyTreeFromAddress(m_typeTreeBlock);
         // Find the addition to be replaced
-        TypeTreeBlock * additionCopy = multiplicationCopy->childAtIndex(additionIndexInMultiplication);
+        TypeTreeBlock * additionCopy = multiplicationCopy->childAtIndex(indexedSubTree.m_index);
         // Duplicate addition child
-        TypeTreeBlock * additionChildCopy = additionCopy->childAtIndex(childIndexInAddition);
+        TypeTreeBlock * additionChildCopy = additionCopy->childAtIndex(indexedAdditionChild.m_index);
         // Replace addition per its child
         sandbox->replaceTree(additionCopy, additionChildCopy);
         assert(multiplicationCopy->type() == BlockType::MultiplicationHead);
         Handle::Create<Multiplication>(multiplicationCopy).distributeOverAddition(sandbox);
-        childIndexInAddition++;
       }
       sandbox->replaceTree(m_typeTreeBlock, newAddition.typeTreeBlock());
       return newAddition;
     }
-    additionIndexInMultiplication++;
   }
   return *this;
 }

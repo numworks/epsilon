@@ -20,15 +20,24 @@ public:
   void treeLog(std::ostream & stream, bool verbose = true);
   __attribute__((__used__)) void log() { treeLog(std::cout, false); }
   __attribute__((__used__)) void verboseLog() { treeLog(std::cout, true); }
-#endif
 
 protected:
+
+  class AbstractIterator {
+  public:
+    AbstractIterator(const TypeTreeBlock * block) : m_block(const_cast<TypeTreeBlock *>(block)) {}
+    TypeTreeBlock * operator*() { return m_block; }
+    bool operator!=(const AbstractIterator& it) const { return (m_block != it.m_block); }
+  protected:
+    TypeTreeBlock * m_block;
+  };
+
   class Nodes final {
   public:
     Nodes(TypeTreeBlock * block, int numberOfBlocks) : m_block(block), m_numberOfBlocks(numberOfBlocks) {}
-    class Iterator : public TypeTreeBlock::Iterator<TypeTreeBlock> {
+    class Iterator : public AbstractIterator {
     public:
-      using TypeTreeBlock::Iterator<TypeTreeBlock>::Iterator;
+      using AbstractIterator::AbstractIterator;
       Iterator & operator++() {
         m_block = m_block->nextNode();
         return *this;
@@ -45,9 +54,9 @@ protected:
   class Trees final {
   public:
     Trees(TypeTreeBlock * block, int numberOfBlocks) : m_block(block), m_numberOfBlocks(numberOfBlocks) {}
-    class Iterator : public TypeTreeBlock::Iterator<TypeTreeBlock> {
+    class Iterator : public AbstractIterator {
     public:
-      using TypeTreeBlock::Iterator<TypeTreeBlock>::Iterator;
+      using AbstractIterator::AbstractIterator;
       Iterator & operator++() {
         m_block = m_block->nextSibling();
         return *this;
@@ -60,6 +69,7 @@ protected:
     int m_numberOfBlocks;
   };
   Trees trees();
+#endif
 };
 
 }

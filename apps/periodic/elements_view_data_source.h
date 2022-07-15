@@ -15,7 +15,7 @@ public:
   AtomicNumber selectedElement() const { return m_selectedElement; }
   void setSelectedElement(AtomicNumber z);
   const DataField * field() const { return m_field; }
-  void setField(const DataField * field) { m_field = field; }
+  void setField(const DataField * field);
   void setTextFilter(const char * filter) { m_textFilter = filter; }
 
 private:

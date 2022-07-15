@@ -22,6 +22,7 @@ public:
 
   // ElementsViewDelegate
   void selectedElementHasChanged(AtomicNumber oldZ) override;
+  void activeDataFieldHasChanged() override;
 
 private:
   class ContentView : public Escher::View {

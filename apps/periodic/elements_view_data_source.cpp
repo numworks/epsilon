@@ -12,4 +12,11 @@ void ElementsViewDataSource::setSelectedElement(AtomicNumber z) {
   }
 }
 
+void ElementsViewDataSource::setField(const DataField * field) {
+  if (field != m_field) {
+    m_field = field;
+    m_delegate->activeDataFieldHasChanged();
+  }
+}
+
 }

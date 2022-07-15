@@ -28,6 +28,10 @@ void MainController::selectedElementHasChanged(AtomicNumber oldZ) {
   m_detailsController.resetMemoization();
 }
 
+void MainController::activeDataFieldHasChanged() {
+  m_view.bannerView()->reload();
+}
+
 bool MainController::handleEvent(Ion::Events::Event e) {
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   AtomicNumber z = dataSource->selectedElement();

@@ -52,17 +52,17 @@ void print() {
   TreeCache * cache = TreeCache::sharedCache();
   TreeSandbox * sandbox = cache->sandbox();
 
-  std::cout << "\n-------- CACHE --------" << std::endl;
+  std::cout << "\n========= CACHE =========" << std::endl;
   cache->treeLog(std::cout);
 
-  std::cout << "\n-------- SANDBOX --------" << std::endl;
+  std::cout << "\n========= SANDBOX =========" << std::endl;
   sandbox->treeLog(std::cout);
 }
 
 void intermediaryPrint() {
   TreeSandbox * sandbox = TreeCache::sharedCache()->sandbox();
 
-  std::cout << "\n-------- INCOMPLETE SANDBOX --------" << std::endl;
+  std::cout << "\n========= INCOMPLETE SANDBOX =========" << std::endl;
   sandbox->flatLog(std::cout);
 }
 
@@ -70,7 +70,7 @@ int main() {
   TreeCache * cache = TreeCache::sharedCache();
   TreeSandbox * sandbox = cache->sandbox();
 
-  std::cout << "-------- Create (1 + 2) * 3 * 4 --------" << std::endl;
+  std::cout << "\n---------------- Create (1 + 2) * 3 * 4 ----------------" << std::endl;
   Multiplication::PushNode(sandbox, 3);
   Addition::PushNode(sandbox, 2);
   Integer::PushNode(sandbox, 1);
@@ -80,22 +80,22 @@ int main() {
 
   print();
 
-  std::cout << "-------- BACKWARD SCAN --------" << std::endl;
+  std::cout << "\n---------------- Scan children backward ----------------" << std::endl;
   TypeTreeBlock * root = sandbox->firstBlock();
   for (TypeTreeBlock * subTree : root->backwardsDirectChildren()) {
     subTree->log(std::cout);
   }
 
-  std::cout << "-------- Store (1+2)*3*4 --------" << std::endl;
+  std::cout << "\n---------------- Store (1+2)*3*4 ----------------" << std::endl;
   int treeId = cache->storeLastTree();
   print();
 
-  std::cout << "-------- Copy (1+2)*3*4 --------" << std::endl;
+  std::cout << "\n---------------- Edit (1+2)*3*4 ----------------" << std::endl;
   cache->copyTreeForEditing(treeId);
   print();
 
 
-  std::cout << "-------- Develop (1+2)*3*4 --------" << std::endl;
+  std::cout << "\n---------------- Develop (1+2)*3*4 ----------------" << std::endl;
   root = sandbox->firstBlock();
   assert(root->type() == BlockType::MultiplicationHead);
   Multiplication m = Handle::Create<Multiplication>(root);
@@ -133,4 +133,16 @@ int main() {
 #endif
 }
 
-//StackPointer given to all arguments indicating where to play
+//StackPointer given to all arguments indicating where to play: why? The sandbox remembers its end?
+#if 0
+
+projection to internal expression (remove ln, /, -...)
+basic_simplication
+expand_trig
+contract_trig
+expand_transcendantal
+contract_transcendantal
+polynomial_simplification
+--> expand + normalize
+-->polynomial_interpretation_with_grobner_basis
+#endif

@@ -45,8 +45,14 @@ void TreeSandbox::popTree() {
 
 void TreeSandbox::replaceTree(TypeTreeBlock * previousBlock, TypeTreeBlock * newBlock) {
   size_t newTreeSize = newBlock->treeSize();
-  moveBlocks(previousBlock, newBlock, newTreeSize);
   size_t previousTreeSize = previousBlock->treeSize();
+  // previousBlock can't be a subtree of newBlock
+  assert(!(previousBlock >= newBlock && previousBlock < newBlock + newTreeSize));
+  if (newBlock >= previousBlock && newBlock < previousBlock + previousTreeSize) {
+    // newBlock can be a subtree of previousBlock but previousTreeSize has to be adjusted
+    previousTreeSize -= newTreeSize;
+  }
+  moveBlocks(previousBlock, newBlock, newTreeSize);
   removeBlocks(previousBlock + newTreeSize, previousTreeSize);
 }
 

@@ -39,10 +39,12 @@ private:
   void layoutSubviews(bool force = false) override;
 
   void drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx, KDRect rect) const;
+  void drawElementBorder(AtomicNumber z, KDColor color, KDContext * ctx, KDRect rect) const;
   void dirtyElement(AtomicNumber z);
 
   SingleElementView m_singleElementView;
   Escher::MessageTextView m_nameView;
+  AtomicNumber m_previousSelection;
 };
 
 }

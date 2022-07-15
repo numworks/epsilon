@@ -29,7 +29,11 @@ bool TreeSandbox::pushTree(TypeTreeBlock * block) {
   if (!checkForEnoughSpace(treeSize)) {
     return false;
   }
-  moveBlocks(m_firstBlock + m_numberOfBlocks, block, block->treeSize());
+  while (treeSize > 0) {
+    pushBlock(*block);
+    block++;
+    treeSize--;
+  }
   return true;
 }
 

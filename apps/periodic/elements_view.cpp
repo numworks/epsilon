@@ -6,11 +6,13 @@ namespace Periodic {
 
 ElementsView::ElementsView() :
   m_singleElementView(KDColorWhite),
-  m_nameView(KDFont::Size::Small, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter)
+  m_nameView(KDFont::Size::Small, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter),
+  m_previousSelection(ElementsDataBase::k_noElement)
 {}
 
 void ElementsView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, k_backgroundColor);
+  ctx->fillRect(rect.containsRect(bounds()) ? rect : SingleElementViewFrame(), k_backgroundColor);
+
   for (size_t i = 0; i < TableLayout::k_numberOfCells; i++) {
     AtomicNumber z = TableLayout::ElementInCell(i);
     if (!ElementsDataBase::IsElement(z)) {
@@ -21,11 +23,21 @@ void ElementsView::drawRect(KDContext * ctx, KDRect rect) const {
       drawElementCell(z, cell, ctx, rect);
     }
   }
+
+  ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+  AtomicNumber selection = dataSource->selectedElement();
+  if (ElementsDataBase::IsElement(m_previousSelection) && m_previousSelection != selection) {
+    drawElementBorder(m_previousSelection, k_backgroundColor, ctx, rect);
+  }
+  if (ElementsDataBase::IsElement(selection)) {
+    drawElementBorder(selection, dataSource->field()->getColors(selection).fg(), ctx, rect);
+  }
 }
 
 void ElementsView::cursorMoved(AtomicNumber oldZ) {
   AtomicNumber newZ = App::app()->elementsViewDataSource()->selectedElement();
   assert(oldZ != newZ);
+  m_previousSelection = oldZ;
   dirtyElement(oldZ);
   dirtyElement(newZ);
   layoutSubviews();
@@ -96,22 +108,24 @@ void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx,
 
   ctx->fillRect(cell.intersectedWith(rect), colors.bg());
 
-  if (z == dataSource->selectedElement()) {
-    KDRect margins[4] = {
-      KDRect(cell.x() - k_cellMargin, cell.y() - k_cellMargin, cell.width() + 2 * k_cellMargin, k_cellMargin), // Top
-      KDRect(cell.x() - k_cellMargin, cell.y() + cell.height(), cell.width() + 2 * k_cellMargin, k_cellMargin), // Bottom
-      KDRect(cell.x() - k_cellMargin, cell.y(), k_cellMargin, cell.height()), // Left
-      KDRect(cell.x() + cell.width(), cell.y(), k_cellMargin, cell.height()), // Right
-    };
-    for (KDRect r : margins) {
-      ctx->fillRect(r.intersectedWith(rect), colors.fg());
-    }
-  }
-
   const char * symbol = ElementsDataBase::Symbol(z);
   KDSize symbolSize = KDFont::Font(KDFont::Size::Small)->stringSize(symbol);
   KDPoint textOrigin(cell.x() + (cell.width() - symbolSize.width()) / 2, cell.y() + (cell.height() - symbolSize.height()) / 2 + 1);
   ctx->drawString(symbol, textOrigin, KDFont::Size::Small, colors.fg(), colors.bg());
+}
+
+void ElementsView::drawElementBorder(AtomicNumber z, KDColor color, KDContext * ctx, KDRect rect) const {
+  assert(ElementsDataBase::IsElement(z));
+  KDRect cell = RectForCell(TableLayout::CellForElement(z));
+  KDRect margins[4] = {
+    KDRect(cell.x() - k_cellMargin, cell.y() - k_cellMargin, cell.width() + 2 * k_cellMargin, k_cellMargin), // Top
+    KDRect(cell.x() - k_cellMargin, cell.y() + cell.height(), cell.width() + 2 * k_cellMargin, k_cellMargin), // Bottom
+    KDRect(cell.x() - k_cellMargin, cell.y(), k_cellMargin, cell.height()), // Left
+    KDRect(cell.x() + cell.width(), cell.y(), k_cellMargin, cell.height()), // Right
+  };
+  for (KDRect r : margins) {
+    ctx->fillRect(r.intersectedWith(rect), color);
+  }
 }
 
 void ElementsView::dirtyElement(AtomicNumber z) {

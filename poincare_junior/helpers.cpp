@@ -32,7 +32,7 @@ size_t Gcd(size_t a, size_t b) {
 }
 
 
-bool Rotate(uint32_t * dst, uint32_t * src, size_t len) {
+bool Rotate(uint8_t * dst, uint8_t * src, size_t len) {
   /* This method "rotates" an array to insert data at src with length len at
    * address dst.
    *
@@ -64,14 +64,14 @@ bool Rotate(uint32_t * dst, uint32_t * src, size_t len) {
   size_t dstAddressOffset = dst < src ? len : dst - len - src;
 
   // We need the limit addresses of the data that will change
-  uint32_t * insertionZoneStart = dst < src ? dst : src;
-  uint32_t * insertionZoneEnd = dst < src ? src + len - 1 : dst - 1;
+  uint8_t * insertionZoneStart = dst < src ? dst : src;
+  uint8_t * insertionZoneEnd = dst < src ? src + len - 1 : dst - 1;
 
-  uint32_t * cycleStartAddress;
-  uint32_t * moveSrcAddress;
-  uint32_t * moveDstAddress;
-  uint32_t tmpData;
-  uint32_t nextTmpData;
+  uint8_t * cycleStartAddress;
+  uint8_t * moveSrcAddress;
+  uint8_t * moveDstAddress;
+  uint8_t tmpData;
+  uint8_t nextTmpData;
 
   for (size_t i = 0; i < numberOfCycles; i++) {
     // Set the cycle starting source

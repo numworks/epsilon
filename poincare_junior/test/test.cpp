@@ -44,7 +44,6 @@ void deepReduce(TreeBlock * block) {
  block->expression()->reduce();
  }
 
- 
  * */
 
 #endif

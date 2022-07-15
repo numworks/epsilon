@@ -13,7 +13,7 @@ typedef bool (*Compare) (int i, int j, void * context, int numberOfElements);
 
 size_t AlignedSize(size_t realSize, size_t alignment);
 size_t Gcd(size_t a, size_t b);
-bool Rotate(uint32_t * dst, uint32_t * src, size_t len);
+bool Rotate(uint8_t * dst, uint8_t * src, size_t len);
 void Sort(Swap swap, Compare compare, void * context, int numberOfElements);
 int ExtremumIndex(Compare compare, void * context, int numberOfElements, bool minimum);
 bool FloatIsGreater(float xI, float xJ, bool nanIsGreatest);

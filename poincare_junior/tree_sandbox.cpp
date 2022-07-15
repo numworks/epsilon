@@ -72,9 +72,9 @@ bool TreeSandbox::checkForEnoughSpace(size_t numberOfRequiredBlock) {
 }
 
 void TreeSandbox::moveBlocks(TreeBlock * destination, TreeBlock * source, size_t numberOfTreeBlocks) {
-  uint32_t * src = reinterpret_cast<uint32_t *>(source);
-  uint32_t * dst = reinterpret_cast<uint32_t *>(destination);
-  size_t len = numberOfTreeBlocks * sizeof(TreeBlock) / sizeof(uint32_t);
+  uint8_t * src = reinterpret_cast<uint8_t *>(source);
+  uint8_t * dst = reinterpret_cast<uint8_t *>(destination);
+  size_t len = numberOfTreeBlocks * sizeof(TreeBlock);
   Helpers::Rotate(dst, src, len);
 }
 

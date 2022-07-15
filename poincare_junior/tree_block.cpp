@@ -17,6 +17,7 @@ void TypeTreeBlock::log(std::ostream & stream, bool recursive, int indentation, 
   h->logNodeName(stream);
   if (verbose) {
     stream << " size=\"" << h->nodeSize() << "\"";
+    stream << " address=\"" << this << "\"";
   }
   h->logAttributes(stream);
   bool tagIsClosed = false;

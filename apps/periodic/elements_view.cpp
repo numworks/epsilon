@@ -11,7 +11,7 @@ ElementsView::ElementsView() :
 
 void ElementsView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, k_backgroundColor);
-  for (int i = 0; i < TableLayout::k_numberOfCells; i++) {
+  for (size_t i = 0; i < TableLayout::k_numberOfCells; i++) {
     AtomicNumber z = TableLayout::ElementInCell(i);
     if (!ElementsDataBase::IsElement(z)) {
       continue;

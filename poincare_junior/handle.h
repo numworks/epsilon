@@ -31,6 +31,7 @@ protected:
   TypeTreeBlock * m_typeTreeBlock;
 };
 
+#if GHOST_REQUIRED
 class Ghost final : public Handle {
 public:
   using Handle::Handle;
@@ -38,6 +39,7 @@ public:
   void logNodeName(std::ostream & stream) const override { stream << "Ghost"; }
 #endif
 };
+#endif
 
 class Integer final : public Handle {
 public:
@@ -100,13 +102,17 @@ public:
   ~HandleBuffer();
 private:
   Handle m_handle;
+#if GHOST_REQUIRED
   Ghost m_ghost;
+#endif
   Integer m_integer;
   Addition m_addition;
   Multiplication m_multiplication;
 };
 
+#if GHOST_REQUIRED
 static_assert(sizeof(Handle) == sizeof(Ghost));
+#endif
 static_assert(sizeof(Handle) == sizeof(Integer));
 static_assert(sizeof(Handle) == sizeof(Addition));
 static_assert(sizeof(Handle) == sizeof(Multiplication));

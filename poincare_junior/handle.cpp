@@ -6,7 +6,11 @@ namespace Poincare {
 
 HandleBuffer::HandleBuffer() {
   // TODO: explain the need of dynamic allocation
+#if GHOST_REQUIRED
   new (&m_ghost) Ghost();
+#else
+  new (&m_integer) Integer();
+#endif
 }
 
 HandleBuffer::~HandleBuffer() {
@@ -22,9 +26,11 @@ Handle * Handle::CreateHandle(const TypeTreeBlock * treeBlock) {
   static HandleBuffer s_handleBuffer;
   (&s_handleBuffer.m_handle)->~Handle();
   switch (treeBlock->type()) {
+#if GHOST_REQUIRED
     case BlockType::Ghost:
       new (&s_handleBuffer.m_ghost) Ghost(treeBlock);
       return &s_handleBuffer.m_ghost;
+#endif
     case BlockType::AdditionHead:
     case BlockType::AdditionTail:
       new (&s_handleBuffer.m_addition) Addition(treeBlock);

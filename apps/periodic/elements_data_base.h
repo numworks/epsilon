@@ -10,21 +10,21 @@ namespace Periodic {
 class ElementsDataBase {
 public:
   /* Available data fields */
-  constexpr static ZDataField ZField;
-  constexpr static ADataField AField;
-  constexpr static ConfigurationDataField ConfigurationField;
-  constexpr static GroupDataField GroupField;
-  constexpr static BlockDataField BlockField;
-  constexpr static MetalDataField MetalField;
-  constexpr static StateDataField StateField;
-  constexpr static MassDataField MassField;
-  constexpr static ElectronegativityDataField ElectronegativityField;
-  constexpr static RadiusDataField RadiusField;
-  constexpr static MeltingPointDataField MeltingPointField;
-  constexpr static BoilingPointDataField BoilingPointField;
-  constexpr static DensityDataField DensityField;
-  constexpr static AffinityDataField AffinityField;
-  constexpr static IonisationDataField IonisationField;
+  constexpr static ZDataField ZField = ZDataField();
+  constexpr static ADataField AField = ADataField();
+  constexpr static ConfigurationDataField ConfigurationField = ConfigurationDataField();
+  constexpr static GroupDataField GroupField = GroupDataField();
+  constexpr static BlockDataField BlockField = BlockDataField();
+  constexpr static MetalDataField MetalField = MetalDataField();
+  constexpr static StateDataField StateField = StateDataField();
+  constexpr static MassDataField MassField = MassDataField();
+  constexpr static ElectronegativityDataField ElectronegativityField = ElectronegativityDataField();
+  constexpr static RadiusDataField RadiusField = RadiusDataField();
+  constexpr static MeltingPointDataField MeltingPointField = MeltingPointDataField();
+  constexpr static BoilingPointDataField BoilingPointField = BoilingPointDataField();
+  constexpr static DensityDataField DensityField = DensityDataField();
+  constexpr static AffinityDataField AffinityField = AffinityDataField();
+  constexpr static IonisationDataField IonisationField = IonisationDataField();
 
   constexpr static uint8_t k_numberOfElements = 118;
   constexpr static AtomicNumber k_noElement = 0;

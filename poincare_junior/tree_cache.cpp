@@ -29,9 +29,8 @@ TreeCache::Error TreeCache::copyTreeForEditing(int id) {
   if (m_nextIdentifier <= id) {
     return Error::UninitializedIdentifier;
   }
-  size_t treeSize = m_cachedTree[id]->nextSibling() - m_cachedTree[id];
   TypeTreeBlock * copiedTree = m_cachedTree[id];
-  if (m_sandbox.copyTreeFromAddress(copiedTree, treeSize)) {
+  if (m_sandbox.copyTreeFromAddress(copiedTree)) {
     return Error::None;
   }
   return Error::TreeIsTooBigForSandbox;

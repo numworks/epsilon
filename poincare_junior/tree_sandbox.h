@@ -28,7 +28,7 @@ public:
   void replaceTree(TypeTreeBlock * previousBlock, TypeTreeBlock * newBlock);
   void moveTree(TreeBlock * destination, TypeTreeBlock * source);
 
-  TypeTreeBlock * copyTreeFromAddress(const void * address, size_t size);
+  TypeTreeBlock * copyTreeFromAddress(const void * address);
 
   TypeTreeBlock * firstBlock() override { return m_firstBlock; }
   TreeBlock * lastBlock() override { return m_firstBlock + m_numberOfBlocks; }

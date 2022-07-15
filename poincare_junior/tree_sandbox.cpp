@@ -50,14 +50,15 @@ void TreeSandbox::moveTree(TreeBlock * destination, TypeTreeBlock * source) {
   moveBlocks(destination, source, source->treeSize());
 }
 
-TypeTreeBlock * TreeSandbox::copyTreeFromAddress(const void * address, size_t size) {
-  size_t sizeOfTreeInBlocks = size/sizeof(TreeBlock);
-  if (!checkForEnoughSpace(sizeOfTreeInBlocks)) {
+TypeTreeBlock * TreeSandbox::copyTreeFromAddress(const void * address) {
+  size_t size = reinterpret_cast<const TypeTreeBlock *>(address)->treeSize();
+  if (!checkForEnoughSpace(size)) {
+    // TODO: rollback somewhere
     return nullptr;
   }
   TypeTreeBlock * copiedTree = static_cast<TypeTreeBlock *>(lastBlock());
-  memcpy(copiedTree, address, size);
-  m_numberOfBlocks += sizeOfTreeInBlocks;
+  memcpy(copiedTree, address, size * sizeof(TreeBlock));
+  m_numberOfBlocks += size;
   return copiedTree;
 }
 

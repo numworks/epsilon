@@ -113,6 +113,16 @@ int TypeTreeBlock::numberOfDescendants(bool includeSelf) const {
   return result;
 }
 
+TypeTreeBlock * TypeTreeBlock::childAtIndex(int i) const {
+  int currentChildIndex = 0;
+  for (TypeTreeBlock * c : directChildren()) {
+    if (currentChildIndex++ == i) {
+      return c;
+    }
+  }
+  return nullptr;
+}
+
 int TypeTreeBlock::indexOfChild(const TypeTreeBlock * child) const {
   assert(child != nullptr);
   int childrenCount = numberOfChildren();

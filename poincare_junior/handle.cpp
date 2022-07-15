@@ -54,8 +54,7 @@ size_t Integer::nodeSize() const {
 }
 
 size_t Integer::nodeSize(NextStep step) const {
-  size_t size = k_minimalNumberOfNodes;
-  return 4 + static_cast<ValueTreeBlock *>((m_typeTreeBlock->*step)())->value();
+  return k_minimalNumberOfNodes + static_cast<ValueTreeBlock *>((m_typeTreeBlock->*step)())->value();
 }
 
 int Integer::value() const {

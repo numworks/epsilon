@@ -18,6 +18,8 @@ public:
   Handle(const TypeTreeBlock * treeBlock = nullptr) : m_typeTreeBlock(const_cast<TypeTreeBlock *>(treeBlock)) {}
   virtual ~Handle() = default;
 
+  TypeTreeBlock * typeTreeBlock() { return m_typeTreeBlock; }
+
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const {}
   virtual void logAttributes(std::ostream & stream) const {}
@@ -87,6 +89,8 @@ public:
   int numberOfChildren() const override;
 
   static Multiplication PushNode(TreeSandbox * sandbox, int numberOfChildren);
+
+  Handle distributeOverAddition(TreeSandbox * sandbox);
 };
 
 union HandleBuffer {

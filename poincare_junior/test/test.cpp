@@ -70,10 +70,9 @@ int main() {
   TreeCache * cache = TreeCache::sharedCache();
   TreeSandbox * sandbox = cache->sandbox();
 
-  // "1 * 2 + 3 + 4";
-  // Parsing
-  Addition::PushNode(sandbox, 3);
-  Multiplication::PushNode(sandbox, 2);
+  std::cout << "-------- Create (1 + 2) * 3 * 4 --------" << std::endl;
+  Multiplication::PushNode(sandbox, 3);
+  Addition::PushNode(sandbox, 2);
   Integer::PushNode(sandbox, 1);
   Integer::PushNode(sandbox, 2);
   Integer::PushNode(sandbox, 3);
@@ -87,11 +86,20 @@ int main() {
     subTree->log(std::cout);
   }
 
-  // Storing
+  std::cout << "-------- Store (1+2)*3*4 --------" << std::endl;
   int treeId = cache->storeLastTree();
   print();
 
+  std::cout << "-------- Copy (1+2)*3*4 --------" << std::endl;
   cache->copyTreeForEditing(treeId);
+  print();
+
+
+  std::cout << "-------- Develop (1+2)*3*4 --------" << std::endl;
+  root = sandbox->firstBlock();
+  assert(root->type() == BlockType::MultiplicationHead);
+  Multiplication m = Handle::Create<Multiplication>(root);
+  Handle h = m.distributeOverAddition(sandbox);
   print();
 
 #if 0

@@ -132,4 +132,32 @@ int Multiplication::numberOfChildren() const {
   return privateNumberOfChildren(BlockType::MultiplicationHead);
 }
 
+Handle Multiplication::distributeOverAddition(TreeSandbox * sandbox) {
+  for (TypeTreeBlock * subTree : m_typeTreeBlock->directChildren()) {
+    int additionIndexInMultiplication = 0;
+    if (subTree->type() == BlockType::AdditionHead) {
+      // Create new addition that will be filled in the following loop
+      Addition newAddition = Addition::PushNode(sandbox, Handle::Create<Addition>(subTree).numberOfChildren());
+      int childIndexInAddition = 0;
+      for (TypeTreeBlock * additionChild : subTree->directChildren()) {
+        // Create a multiplication
+        TypeTreeBlock * multiplicationCopy = sandbox->copyTreeFromAddress(m_typeTreeBlock);
+        // Find the addition to be replaced
+        TypeTreeBlock * additionCopy = multiplicationCopy->childAtIndex(additionIndexInMultiplication);
+        // Duplicate addition child
+        TypeTreeBlock * additionChildCopy = additionCopy->childAtIndex(childIndexInAddition);
+        // Replace addition per its child
+        sandbox->replaceTree(additionCopy, additionChildCopy);
+        assert(multiplicationCopy->type() == BlockType::MultiplicationHead);
+        Handle::Create<Multiplication>(multiplicationCopy).distributeOverAddition(sandbox);
+        childIndexInAddition++;
+      }
+      sandbox->replaceTree(m_typeTreeBlock, newAddition.typeTreeBlock());
+      return newAddition;
+    }
+    additionIndexInMultiplication++;
+  }
+  return *this;
+}
+
 }

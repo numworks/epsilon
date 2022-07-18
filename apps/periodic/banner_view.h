@@ -6,6 +6,7 @@
 #include <escher/ellipsis_view.h>
 #include <escher/palette.h>
 #include <escher/solid_color_view.h>
+#include <escher/text_field.h>
 #include <escher/view.h>
 #include <ion/display.h>
 
@@ -13,13 +14,15 @@ namespace Periodic {
 
 class BannerView : public Escher::View {
 public:
-  BannerView() : m_textView(KDFont::Size::Small, KDContext::k_alignLeft, KDContext::k_alignCenter, k_legendColor, k_backgroundColor), m_button(k_backgroundColor) {}
+  BannerView(Escher::Responder * textFieldParent, Escher::TextFieldDelegate * textFieldDelegate);
 
   // Escher::View
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override { return KDSize(Ion::Display::Width, k_bannerHeight + k_borderHeight); }
 
-  void reload() { layoutSubviews(); }
+  void reload();
+  void dirtyRect() { markRectAsDirty(bounds()); }
+  Escher::TextField * textField() { return &m_textField; }
 
 private:
   constexpr static KDColor k_legendColor = Escher::Palette::GrayVeryDark;
@@ -55,10 +58,12 @@ private:
     Escher::EllipsisView m_ellipsisView;
   };
 
-  int numberOfSubviews() const override { return 3; }
+  int numberOfSubviews() const override { return displayTextField() ? 1 : 3; }
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
+  bool displayTextField() const { return m_textField.isEditing(); }
 
+  Escher::TextField m_textField;
   DotView m_dotView;
   Escher::BufferTextView m_textView;
   EllipsisButton m_button;

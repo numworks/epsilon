@@ -10,23 +10,33 @@
 
 namespace Periodic {
 
-class MainController : public Escher::ViewController, public ElementsViewDelegate {
+class MainController : public Escher::ViewController, public ElementsViewDelegate, public Escher::TextFieldDelegate {
 public:
-  MainController(Escher::StackViewController * parentResponder) : ViewController(parentResponder), m_detailsController(parentResponder), m_displayTypeController(parentResponder) {}
+  MainController(Escher::StackViewController * parentResponder);
 
   // Escher::ViewController
   Escher::View * view() override { return &m_view; }
 
   // Escher::Responder
+  void didBecomeFirstResponder() override { Escher::Container::activeApp()->setFirstResponder(m_view.bannerView()->textField()); }
   bool handleEvent(Ion::Events::Event e) override;
 
   // ElementsViewDelegate
   void selectedElementHasChanged(AtomicNumber oldZ) override;
   void activeDataFieldHasChanged() override;
 
+  // Escher::TextFieldDelegate
+  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
+  void textFieldDidStartEditing(Escher::TextField * textField) override;
+  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(Escher::TextField * textField) override;
+
 private:
   class ContentView : public Escher::View {
   public:
+    ContentView(MainController * mainController) : m_bannerView(mainController, mainController) {}
+
     ElementsView * elementsView() { return &m_elementsView; }
     BannerView * bannerView() { return &m_bannerView; }
 

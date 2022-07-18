@@ -60,6 +60,12 @@ void TreeSandbox::moveTree(TreeBlock * destination, TypeTreeBlock * source) {
   moveBlocks(destination, source, source->treeSize());
 }
 
+void TreeSandbox::removeBlocks(TreeBlock * address, size_t numberOfTreeBlocks) {
+  size_t numberOfBlocksAfterRemoved = m_numberOfBlocks - (address - static_cast<TreeBlock *>(m_firstBlock)) - numberOfTreeBlocks;
+  moveBlocks(address, address + numberOfTreeBlocks, numberOfBlocksAfterRemoved);
+  m_numberOfBlocks -= numberOfTreeBlocks;
+}
+
 TypeTreeBlock * TreeSandbox::copyTreeFromAddress(const void * address) {
   size_t size = reinterpret_cast<const TypeTreeBlock *>(address)->treeSize();
   if (!checkForEnoughSpace(size)) {
@@ -87,12 +93,6 @@ void TreeSandbox::moveBlocks(TreeBlock * destination, TreeBlock * source, size_t
   uint8_t * dst = reinterpret_cast<uint8_t *>(destination);
   size_t len = numberOfTreeBlocks * sizeof(TreeBlock);
   Helpers::Rotate(dst, src, len);
-}
-
-void TreeSandbox::removeBlocks(TreeBlock * address, size_t numberOfTreeBlocks) {
-  size_t numberOfBlocksAfterRemoved = m_numberOfBlocks - (address - static_cast<TreeBlock *>(m_firstBlock)) - numberOfTreeBlocks;
-  moveBlocks(address, address + numberOfTreeBlocks, numberOfBlocksAfterRemoved);
-  m_numberOfBlocks -= numberOfTreeBlocks;
 }
 
 void TreeSandbox::freePoolFromNode(TreeBlock * firstBlockToDiscard) {

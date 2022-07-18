@@ -6,6 +6,7 @@
 namespace Poincare {
 
 class TreeSandbox;
+class InternalHandle;
 union HandleBuffer;
 
 class Handle {
@@ -20,6 +21,8 @@ public:
 
   TypeTreeBlock * typeTreeBlock() { return m_typeTreeBlock; }
 
+  virtual void basicReduction(TreeSandbox * sandbox) {}
+
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const {}
   virtual void logAttributes(std::ostream & stream) const {}
@@ -31,19 +34,47 @@ protected:
   TypeTreeBlock * m_typeTreeBlock;
 };
 
-#if GHOST_REQUIRED
-class Ghost final : public Handle {
+class Subtraction final : public Handle {
 public:
   using Handle::Handle;
+#if POINCARE_TREE_LOG
+  void logNodeName(std::ostream & stream) const override { stream << "Subtraction"; }
+#endif
+  int numberOfChildren() const override { return 2; }
+  static Subtraction PushNode(TreeSandbox * sandbox);
+  void basicReduction(TreeSandbox * sandbox) override;
+};
+
+class Division final : public Handle {
+public:
+  using Handle::Handle;
+#if POINCARE_TREE_LOG
+  void logNodeName(std::ostream & stream) const override { stream << "Division"; }
+#endif
+  int numberOfChildren() const override { return 2; }
+  static Division PushNode(TreeSandbox * sandbox);
+  void basicReduction(TreeSandbox * sandbox) override;
+};
+
+class InternalHandle : public Handle {
+public:
+  using Handle::Handle;
+  virtual Handle * shallowBeautify() { return this; }
+};
+
+#if GHOST_REQUIRED
+class Ghost final : public InternalHandle {
+public:
+  using InternalHandle::InternalHandle;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Ghost"; }
 #endif
 };
 #endif
 
-class Integer final : public Handle {
+class Integer final : public InternalHandle {
 public:
-  using Handle::Handle;
+  using InternalHandle::InternalHandle;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Integer"; }
   void logAttributes(std::ostream & stream) const override;
@@ -57,9 +88,9 @@ private:
   size_t nodeSize(NextStep step) const;
 };
 
-class NAry : public Handle {
+class NAry : public InternalHandle {
 public:
-  using Handle::Handle;
+  using InternalHandle::InternalHandle;
 #if POINCARE_TREE_LOG
   void logAttributes(std::ostream & stream) const override;
 #endif
@@ -95,6 +126,16 @@ public:
   Handle distributeOverAddition(TreeSandbox * sandbox);
 };
 
+class Power final : public InternalHandle {
+public:
+  using InternalHandle::InternalHandle;
+#if POINCARE_TREE_LOG
+  void logNodeName(std::ostream & stream) const override { stream << "Power"; }
+#endif
+  int numberOfChildren() const override { return 2; }
+  static Power PushNode(TreeSandbox * sandbox);
+};
+
 union HandleBuffer {
 friend class Handle;
 public:
@@ -108,6 +149,9 @@ private:
   Integer m_integer;
   Addition m_addition;
   Multiplication m_multiplication;
+  Subtraction m_subtraction;
+  Division m_division;
+  Power m_power;
 };
 
 #if GHOST_REQUIRED
@@ -116,6 +160,9 @@ static_assert(sizeof(Handle) == sizeof(Ghost));
 static_assert(sizeof(Handle) == sizeof(Integer));
 static_assert(sizeof(Handle) == sizeof(Addition));
 static_assert(sizeof(Handle) == sizeof(Multiplication));
+static_assert(sizeof(Handle) == sizeof(Subtraction));
+static_assert(sizeof(Handle) == sizeof(Division));
+static_assert(sizeof(Handle) == sizeof(Power));
 
 }
 

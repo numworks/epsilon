@@ -20,13 +20,14 @@ public:
     m_size(size)
   {}
 
-  bool pushBlock(TreeBlock block);
+  TreeBlock * pushBlock(TreeBlock block);
   void popBlock();
   void replaceBlock(TreeBlock * previousBlock, TreeBlock newBlock);
   bool pushTree(TypeTreeBlock * block);
   void popTree();
   void replaceTree(TypeTreeBlock * previousBlock, TypeTreeBlock * newBlock);
   void moveTree(TreeBlock * destination, TypeTreeBlock * source);
+  void removeBlocks(TreeBlock * address, size_t numberOfTreeBlocks);
 
   TypeTreeBlock * copyTreeFromAddress(const void * address);
 
@@ -41,7 +42,6 @@ private:
   // Pool memory
   bool checkForEnoughSpace(size_t numberOfRequiredBlock);
   void moveBlocks(TreeBlock * destination, TreeBlock * source, size_t numberOfTreeBlocks);
-  void removeBlocks(TreeBlock * address, size_t numberOfTreeBlocks);
   void freePoolFromNode(TreeBlock * firstBlockToDiscard);
 
   TypeTreeBlock * m_firstBlock;

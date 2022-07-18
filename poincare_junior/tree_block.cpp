@@ -67,6 +67,13 @@ TypeTreeBlock * TypeTreeBlock::nextSibling() {
   return result->nextNode();
 }
 
+void TypeTreeBlock::recursivelyApply(TreeSandbox * sandbox, ShallowMethod shallowMethod) {
+  for (IndexedTypeTreeBlock indexedChild : directChildren()) {
+    indexedChild.m_block->recursivelyApply(sandbox, shallowMethod);
+  }
+  (Handle::CreateHandle(this)->*shallowMethod)(sandbox);
+}
+
 TypeTreeBlock * TypeTreeBlock::previousRelative(const TreeBlock * firstBlock, bool parent) {
   TypeTreeBlock * currentNode = this;
   TypeTreeBlock * closestSibling = nullptr;

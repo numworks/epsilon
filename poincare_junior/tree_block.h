@@ -85,10 +85,16 @@ enum class BlockType : uint8_t {
   AdditionHead,
   AdditionTail,
   MultiplicationHead,
-  MultiplicationTail
+  MultiplicationTail,
+  Subtraction,
+  Division,
+  Power
 };
 
+class TreeSandbox;
 class TypeTreeBlock;
+class Handle;
+typedef void (Handle::*ShallowMethod)(TreeSandbox * sandbox);
 
 struct IndexedTypeTreeBlock {
   TypeTreeBlock * m_block;
@@ -217,6 +223,9 @@ public:
 
   BlockType type() const { return static_cast<BlockType>(m_content); }
 
+  // Recursive helper
+  void recursivelyApply(TreeSandbox * sandbox, ShallowMethod shallowMethod);
+
 private:
   TypeTreeBlock * previousRelative(const TreeBlock * firstBlock, bool parent);
   bool isGhost() const { return type() == BlockType::Ghost; }
@@ -238,6 +247,9 @@ constexpr static TypeTreeBlock MultiplicationHeadBlock() { return TypeTreeBlock(
 constexpr static TypeTreeBlock MultiplicationTailBlock() { return TypeTreeBlock(BlockType::MultiplicationTail); }
 constexpr static TypeTreeBlock IntegerHeadBlock() { return TypeTreeBlock(BlockType::IntegerHead); }
 constexpr static TypeTreeBlock IntegerTailBlock() { return TypeTreeBlock(BlockType::IntegerTail); }
+constexpr static TypeTreeBlock SubtractionBlock() { return TypeTreeBlock(BlockType::Subtraction); }
+constexpr static TypeTreeBlock DivisionBlock() { return TypeTreeBlock(BlockType::Division); }
+constexpr static TypeTreeBlock PowerBlock() { return TypeTreeBlock(BlockType::Power); }
 
 /*
  * Build pseudo virtuality

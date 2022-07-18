@@ -43,10 +43,51 @@ Handle * Handle::CreateHandle(const TypeTreeBlock * treeBlock) {
     case BlockType::IntegerTail:
       new (&s_handleBuffer.m_integer) Integer(treeBlock);
       return &s_handleBuffer.m_integer;
+    case BlockType::Subtraction:
+      new (&s_handleBuffer.m_subtraction) Subtraction(treeBlock);
+      return &s_handleBuffer.m_subtraction;
+    case BlockType::Division:
+      new (&s_handleBuffer.m_division) Division(treeBlock);
+      return &s_handleBuffer.m_division;
+    case BlockType::Power:
+      new (&s_handleBuffer.m_power) Power(treeBlock);
+      return &s_handleBuffer.m_power;
     default:
       assert(false);
   }
   return nullptr;
+}
+
+/* Subtraction  */
+
+Subtraction Subtraction::PushNode(TreeSandbox * sandbox) {
+  return Subtraction(static_cast<TypeTreeBlock *>(sandbox->pushBlock(SubtractionBlock())));
+}
+
+void Subtraction::basicReduction(TreeSandbox * sandbox) {
+  Addition newAddition = Addition::PushNode(sandbox, 2);
+  sandbox->moveTree(m_typeTreeBlock->nextNode(), static_cast<TypeTreeBlock *>(sandbox->lastBlock()));
+  Multiplication::PushNode(sandbox, 2);
+  Integer::PushNode(sandbox, -1);
+  sandbox->moveTree(m_typeTreeBlock->nextNode(), static_cast<TypeTreeBlock *>(sandbox->lastBlock()));
+  sandbox->removeBlocks(m_typeTreeBlock, nodeSize());
+  sandbox->moveTree(m_typeTreeBlock, newAddition.typeTreeBlock());
+}
+
+/* Division */
+
+Division Division::PushNode(TreeSandbox * sandbox) {
+  return Division(static_cast<TypeTreeBlock *>(sandbox->pushBlock(DivisionBlock())));
+}
+
+void Division::basicReduction(TreeSandbox * sandbox) {
+  Multiplication newMultiplication = Multiplication::PushNode(sandbox, 2);
+  sandbox->moveTree(m_typeTreeBlock->nextNode(), static_cast<TypeTreeBlock *>(sandbox->lastBlock()));
+  Power::PushNode(sandbox);
+  sandbox->moveTree(m_typeTreeBlock->nextNode(), static_cast<TypeTreeBlock *>(sandbox->lastBlock()));
+  Integer::PushNode(sandbox, 1); // TODO: implement negative number
+  sandbox->removeBlocks(m_typeTreeBlock, nodeSize());
+  sandbox->moveTree(m_typeTreeBlock, newMultiplication.typeTreeBlock());
 }
 
 /* Integer */
@@ -160,6 +201,12 @@ Handle Multiplication::distributeOverAddition(TreeSandbox * sandbox) {
     }
   }
   return *this;
+}
+
+/* Power */
+
+Power Power::PushNode(TreeSandbox * sandbox) {
+  return Power(static_cast<TypeTreeBlock *>((sandbox->pushBlock(PowerBlock()))));
 }
 
 }

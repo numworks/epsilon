@@ -104,9 +104,12 @@ void findExtrema(double * xMinExtremum, double * xMaxExtremum, double * yMinExtr
   double y2 = store->get(series, 1, 0);
   double x1 = store->get(series, 0, 1);
   double y1 = store->get(series, 1, 1);
+  // Compute max and min in case an extremum isn't identified
   double xMin, yMin, xMax, yMax, x0, y0;
   yMin = yMax = y2;
   xMin = xMax = x2;
+  updateMinMax(y1, yMin, x1, y1, &xMin, &yMin);
+  updateMinMax(yMax, y1, x1, y1, &xMax, &yMax);
   // Initialize last extrema so that the first two pairs cannot be one
   int lastMinExtremum, lastMaxExtremum;
   lastMinExtremum = lastMaxExtremum = 3;
@@ -136,15 +139,10 @@ void findExtrema(double * xMinExtremum, double * xMaxExtremum, double * yMinExtr
     y2 = y1;
     x1 = x0;
     y1 = y0;
-    // Compute max and min in case an extremum isn't identified
-    updateMinMax(y2, yMin, x2, y2, &xMin, &yMin);
-    updateMinMax(yMax, y2, x2, y2, &xMax, &yMax);
+    // Update max and min
+    updateMinMax(y0, yMin, x0, y0, &xMin, &yMin);
+    updateMinMax(yMax, y0, x0, y0, &xMax, &yMax);
   }
-  // Finish computing min and max.
-  updateMinMax(y1, yMin, x1, y1, &xMin, &yMin);
-  updateMinMax(yMax, y1, x1, y1, &xMax, &yMax);
-  updateMinMax(y0, yMin, x0, y0, &xMin, &yMin);
-  updateMinMax(yMax, y0, x0, y0, &xMax, &yMax);
   // At least one extremum is missing, fall back on series min and max
   *xMinExtremum = xMin;
   *yMinExtremum = yMin;

@@ -287,8 +287,8 @@ QUIZ_CASE(trigonometric_regression3) {
 
 QUIZ_CASE(trigonometric_regression4) {
   double r2 = 1.0;
-  // The regression fails with more than 33 data points
-  constexpr int numberOfPoints = 33;
+  // The regression fails with more than 89 data points
+  constexpr int numberOfPoints = 89;
   double x[numberOfPoints];
   double y[numberOfPoints];
   for (int i = 0; i < numberOfPoints; i++) {

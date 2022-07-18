@@ -120,14 +120,18 @@ void findExtrema(double * xMinExtremum, double * xMaxExtremum, double * yMinExtr
     y0 = store->get(series, 1, i);
     if (y2 < y1 && y1 < y0) {
       // Check if (x2, y2) was a minimum extrema (y4 > y3 > y2 < y1 < y0)
-      foundMin = checkExtremum(x2, y2, lastMinExtremum, xMinExtremum, yMinExtremum);
+      foundMin = foundMin || checkExtremum(x2, y2, lastMinExtremum, xMinExtremum, yMinExtremum);
       // (x0, y0) could be a maximum extrema, override the last candidate
       lastMaxExtremum = 0;
+      // Unless we found a minimum extrema, reset foundMax to false
+      foundMax = foundMax && foundMin;
     } else if (y2 > y1 && y1 > y0) {
       // Check if (x2, y2) was a maximum extrema (y4 < y3 < y2 > y1 > y0)
-      foundMax = checkExtremum(x2, y2, lastMaxExtremum, xMaxExtremum, yMaxExtremum);
+      foundMax = foundMax || checkExtremum(x2, y2, lastMaxExtremum, xMaxExtremum, yMaxExtremum);
       // (x0, y0) could be a minimum extrema, override the last candidate
       lastMinExtremum = 0;
+      // Unless we found a maximum extrema, reset foundMin to false
+      foundMin = foundMin && foundMax;
     }
     if (foundMin && foundMax) {
       return; // Two extremum have been found

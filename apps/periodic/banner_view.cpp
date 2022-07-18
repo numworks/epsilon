@@ -19,12 +19,30 @@ void BannerView::DotView::setColor(KDColor color) {
 
 // BannerView
 
+BannerView::BannerView(Escher::Responder * textFieldParent, Escher::TextFieldDelegate * textFieldDelegate) :
+  m_textField(textFieldParent, nullptr, Escher::TextField::maxBufferSize(), Escher::TextField::maxBufferSize(), nullptr, textFieldDelegate),
+  m_textView(KDFont::Size::Small, KDContext::k_alignLeft, KDContext::k_alignCenter, k_legendColor, k_backgroundColor),
+  m_button(k_backgroundColor)
+{}
+
 void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, 0, bounds().width(), k_borderHeight), Palette::SystemGrayDark);
   ctx->fillRect(KDRect(0, k_borderHeight, bounds().width(), k_bannerHeight), k_backgroundColor);
 }
 
+void BannerView::reload() {
+  if (!(displayTextField() || m_textField.bounds().isEmpty())) {
+    /* Text field will disappear, we need to redraw the full background */
+    markRectAsDirty(bounds());
+  }
+  layoutSubviews();
+}
+
 Escher::View * BannerView::subviewAtIndex(int index) {
+  if (displayTextField()) {
+    assert(index == 0);
+    return &m_textField;
+  }
   switch (index) {
   case 0:
     return &m_dotView;
@@ -37,6 +55,12 @@ Escher::View * BannerView::subviewAtIndex(int index) {
 }
 
 void BannerView::layoutSubviews(bool force) {
+  if (displayTextField()) {
+    m_textField.setFrame(KDRect(0, k_borderHeight, bounds().width(), bounds().height() - k_borderHeight), force);
+    return;
+  }
+  m_textField.setFrame(KDRectZero, force);
+
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   KDCoordinate x = k_dotLeftMargin;
 

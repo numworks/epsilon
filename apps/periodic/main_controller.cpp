@@ -22,6 +22,13 @@ void MainController::ContentView::layoutSubviews(bool force) {
 
 // MainController
 
+MainController::MainController(Escher::StackViewController * parentResponder) :
+  ViewController(parentResponder),
+  m_detailsController(parentResponder),
+  m_displayTypeController(parentResponder),
+  m_view(this)
+{}
+
 void MainController::selectedElementHasChanged(AtomicNumber oldZ) {
   m_view.bannerView()->reload();
   m_view.elementsView()->cursorMoved(oldZ);
@@ -66,6 +73,33 @@ bool MainController::handleEvent(Ion::Events::Event e) {
   m_previousElement = z;
   dataSource->setSelectedElement(newZ);
   return newZ != z;
+}
+
+void MainController::textFieldDidStartEditing(Escher::TextField * textField) {
+  /* Changing the selected element will reload the banner. */
+  App::app()->elementsViewDataSource()->setSelectedElement(ElementsDataBase::k_noElement);
+}
+
+bool MainController::textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) {
+  return event == Ion::Events::OK || event == Ion::Events::EXE;
+}
+
+bool MainController::textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) {
+  if (!m_view.bannerView()->textField()->isEditing() && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
+    /* OK should not start the edition */
+    return handleEvent(event);
+  }
+  return false;
+}
+
+bool MainController::textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) {
+  App::app()->elementsViewDataSource()->setSelectedElement(1);
+  return true;
+}
+
+bool MainController::textFieldDidAbortEditing(Escher::TextField * textField) {
+  m_view.bannerView()->reload();
+  return false;
 }
 
 }

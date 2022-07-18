@@ -102,6 +102,21 @@ int main() {
   Handle h = m.distributeOverAddition(sandbox);
   print();
 
+  std::cout << "\n---------------- Store developped 1*3*4+2*3*4 ----------------" << std::endl;
+  treeId = cache->storeLastTree();
+  print();
+
+  std::cout << "\n---------------- Create 1-2/3 ----------------" << std::endl;
+  Subtraction subtraction = Subtraction::PushNode(sandbox);
+  Integer::PushNode(sandbox, 1);
+  Division::PushNode(sandbox);
+  Integer::PushNode(sandbox, 2);
+  Integer::PushNode(sandbox, 3);
+  print();
+
+  std::cout << "\n---------------- Projection to internal nodes 1-2/3 ----------------" << std::endl;
+  subtraction.typeTreeBlock()->recursivelyApply(sandbox, &Handle::basicReduction);
+  print();
 #if 0
   std::cout << "Edited Tree which has overflowed" << std::endl;
   printTreePool(cache->sandbox());

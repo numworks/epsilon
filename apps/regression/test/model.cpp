@@ -287,7 +287,10 @@ QUIZ_CASE(trigonometric_regression3) {
 
 QUIZ_CASE(trigonometric_regression4) {
   double r2 = 1.0;
-  // The regression fails with more than 89 data points
+  /* The regression fails with more than 89 data points. This happens because
+   * the estimated frequency used to initialize coefficients is slightly off.
+   * With more and more values, this error gets more and more important. At one
+   * point, we are then unable to properly fit the curve. */
   constexpr int numberOfPoints = 89;
   double x[numberOfPoints];
   double y[numberOfPoints];

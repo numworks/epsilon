@@ -285,6 +285,21 @@ QUIZ_CASE(trigonometric_regression3) {
   assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
 }
 
+QUIZ_CASE(trigonometric_regression4) {
+  double r2 = 1.0;
+  // The regression fails with more than 33 data points
+  constexpr int numberOfPoints = 33;
+  double x[numberOfPoints];
+  double y[numberOfPoints];
+  for (int i = 0; i < numberOfPoints; i++) {
+    x[i] = static_cast<double>(i);
+    y[i] = std::sin(static_cast<double>(i));
+  }
+  double coefficients[] = {1.0, 1.0, 0.0, 0.0};
+
+  assert_trigonometric_regression_is(x, y, numberOfPoints, coefficients, r2, Poincare::Preferences::AngleUnit::Radian);
+}
+
 QUIZ_CASE(logistic_regression) {
   /* This data was generated without the random error, otherwise it did not pass
    * the test. */

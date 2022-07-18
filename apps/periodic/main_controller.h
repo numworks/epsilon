@@ -22,7 +22,7 @@ public:
   bool handleEvent(Ion::Events::Event e) override;
 
   // ElementsViewDelegate
-  void selectedElementHasChanged(AtomicNumber oldZ) override;
+  void selectedElementHasChanged() override;
   void activeDataFieldHasChanged() override;
 
   // Escher::TextFieldDelegate
@@ -52,7 +52,6 @@ private:
   DetailsListController m_detailsController;
   DisplayTypeController m_displayTypeController;
   ContentView m_view;
-  AtomicNumber m_previousElement;
 };
 
 }

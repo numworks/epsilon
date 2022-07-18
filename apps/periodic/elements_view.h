@@ -15,7 +15,7 @@ public:
   // Escher::View
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
-  void cursorMoved(AtomicNumber oldZ);
+  void cursorMoved();
 
 private:
   constexpr static KDCoordinate k_tableTopMargin = 22;
@@ -44,7 +44,6 @@ private:
 
   SingleElementView m_singleElementView;
   Escher::MessageTextView m_nameView;
-  AtomicNumber m_previousSelection;
 };
 
 }

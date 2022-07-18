@@ -29,9 +29,9 @@ MainController::MainController(Escher::StackViewController * parentResponder) :
   m_view(this)
 {}
 
-void MainController::selectedElementHasChanged(AtomicNumber oldZ) {
+void MainController::selectedElementHasChanged() {
   m_view.bannerView()->reload();
-  m_view.elementsView()->cursorMoved(oldZ);
+  m_view.elementsView()->cursorMoved();
   m_detailsController.resetMemoization();
 }
 
@@ -45,7 +45,7 @@ bool MainController::handleEvent(Ion::Events::Event e) {
 
   if (!ElementsDataBase::IsElement(z)) {
     if (e == Ion::Events::Up) {
-      dataSource->setSelectedElement(m_previousElement);
+      dataSource->setSelectedElement(dataSource->previousElement());
       return true;
     }
     if (e == Ion::Events::OK || e == Ion::Events::EXE) {
@@ -70,7 +70,6 @@ bool MainController::handleEvent(Ion::Events::Event e) {
   } else if (e == Ion::Events::Right) {
     newZ = TableLayout::NextElement(z, TableLayout::Direction::IncreasingZ);
   }
-  m_previousElement = z;
   dataSource->setSelectedElement(newZ);
   return newZ != z;
 }
@@ -98,7 +97,8 @@ bool MainController::textFieldDidFinishEditing(Escher::TextField * textField, co
 }
 
 bool MainController::textFieldDidAbortEditing(Escher::TextField * textField) {
-  m_view.bannerView()->reload();
+  ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+  dataSource->setSelectedElement(dataSource->previousElement());
   return false;
 }
 

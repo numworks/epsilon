@@ -31,16 +31,13 @@ Handle * Handle::CreateHandle(const TypeTreeBlock * treeBlock) {
       new (&s_handleBuffer.m_ghost) Ghost(treeBlock);
       return &s_handleBuffer.m_ghost;
 #endif
-    case BlockType::AdditionHead:
-    case BlockType::AdditionTail:
+    case BlockType::Addition:
       new (&s_handleBuffer.m_addition) Addition(treeBlock);
       return &s_handleBuffer.m_addition;
-    case BlockType::MultiplicationHead:
-    case BlockType::MultiplicationTail:
+    case BlockType::Multiplication:
       new (&s_handleBuffer.m_multiplication) Multiplication(treeBlock);
       return &s_handleBuffer.m_multiplication;
-    case BlockType::IntegerHead:
-    case BlockType::IntegerTail:
+    case BlockType::Integer:
       new (&s_handleBuffer.m_integer) Integer(treeBlock);
       return &s_handleBuffer.m_integer;
     case BlockType::Subtraction:
@@ -96,8 +93,8 @@ void Integer::logAttributes(std::ostream & stream) const {
   stream << " value=\"" << value() << "\"";
 }
 
-size_t Integer::nodeSize() const {
-  return m_typeTreeBlock->type() == BlockType::IntegerHead ? nodeSize(&TreeBlock::nextBlock) : nodeSize(&TreeBlock::previousBlock);
+size_t Integer::nodeSize(bool head) const {
+  return head ? nodeSize(&TreeBlock::nextBlock) : nodeSize(&TreeBlock::previousBlock);
 }
 
 size_t Integer::nodeSize(NextStep step) const {
@@ -107,11 +104,7 @@ size_t Integer::nodeSize(NextStep step) const {
 int Integer::value() const {
   int value = 0;
   TreeBlock * digitBlock;
-  if (m_typeTreeBlock->type() == BlockType::IntegerHead) {
-     digitBlock = m_typeTreeBlock->nextNthBlock(2);
-  } else {
-    digitBlock = m_typeTreeBlock->previousNthBlock(nodeSize() + 1 + 2);
-  }
+  digitBlock = m_typeTreeBlock->nextNthBlock(2);
   ValueTreeBlock * valueBlock = static_cast<ValueTreeBlock *>(digitBlock);
   for (size_t i = 0; i < nodeSize() - k_minimalNumberOfNodes; i++) {
     value += valueBlock->value();
@@ -121,7 +114,7 @@ int Integer::value() const {
 }
 
 Integer Integer::PushNode(TreeSandbox * sandbox, int value) {
-  TypeTreeBlock * integerFirstBlock = static_cast<TypeTreeBlock *>(sandbox->pushBlock(IntegerHeadBlock()));
+  TypeTreeBlock * integerFirstBlock = static_cast<TypeTreeBlock *>(sandbox->pushBlock(IntegerBlock()));
   // Temporary node size
   size_t nodeSize = 0;
   TreeBlock * addressOfNodeSizeBlock = sandbox->lastBlock();
@@ -133,7 +126,7 @@ Integer Integer::PushNode(TreeSandbox * sandbox, int value) {
     nodeSize++;
   }
   sandbox->pushBlock(ValueTreeBlock(nodeSize));
-  sandbox->pushBlock(IntegerTailBlock());
+  sandbox->pushBlock(IntegerBlock());
   // Replace temporary node size
   sandbox->replaceBlock(addressOfNodeSizeBlock, ValueTreeBlock(nodeSize));
   return Integer(static_cast<TypeTreeBlock *>(integerFirstBlock));
@@ -150,36 +143,36 @@ int NAry::privateNumberOfChildren(BlockType headType) const {
   return static_cast<ValueTreeBlock *>(numberOfChildrenBlock)->value();
 }
 
-TypeTreeBlock * NAry::PushNode(TreeSandbox * sandbox, int numberOfChildren, TypeTreeBlock headBlock, TypeTreeBlock tailBlock) {
-  TypeTreeBlock * addressOfNAryBlock = static_cast<TypeTreeBlock *>(sandbox->pushBlock(headBlock));
+TypeTreeBlock * NAry::PushNode(TreeSandbox * sandbox, int numberOfChildren, TypeTreeBlock blockType) {
+  TypeTreeBlock * addressOfNAryBlock = static_cast<TypeTreeBlock *>(sandbox->pushBlock(blockType));
   sandbox->pushBlock(ValueTreeBlock(numberOfChildren));
-  sandbox->pushBlock(tailBlock);
+  sandbox->pushBlock(blockType);
   return static_cast<TypeTreeBlock *>(addressOfNAryBlock);
 }
 
 /* Addition */
 
 Addition Addition::PushNode(TreeSandbox * sandbox, int numberOfChildren) {
-  return Addition(NAry::PushNode(sandbox, numberOfChildren, AdditionHeadBlock(), AdditionTailBlock()));
+  return Addition(NAry::PushNode(sandbox, numberOfChildren, AdditionBlock()));
 }
 
 int Addition::numberOfChildren() const {
-  return privateNumberOfChildren(BlockType::AdditionHead);
+  return privateNumberOfChildren(BlockType::Addition);
 }
 
 /* Multiplication */
 
 Multiplication Multiplication::PushNode(TreeSandbox * sandbox, int numberOfChildren) {
-  return Multiplication(NAry::PushNode(sandbox, numberOfChildren, MultiplicationHeadBlock(), MultiplicationTailBlock()));
+  return Multiplication(NAry::PushNode(sandbox, numberOfChildren, MultiplicationBlock()));
 }
 
 int Multiplication::numberOfChildren() const {
-  return privateNumberOfChildren(BlockType::MultiplicationHead);
+  return privateNumberOfChildren(BlockType::Multiplication);
 }
 
 Handle Multiplication::distributeOverAddition(TreeSandbox * sandbox) {
   for (IndexedTypeTreeBlock indexedSubTree : m_typeTreeBlock->directChildren()) {
-    if (indexedSubTree.m_block->type() == BlockType::AdditionHead) {
+    if (indexedSubTree.m_block->type() == BlockType::Addition) {
       // Create new addition that will be filled in the following loop
       Addition newAddition = Addition::PushNode(sandbox, Handle::Create<Addition>(indexedSubTree.m_block).numberOfChildren());
       for (IndexedTypeTreeBlock indexedAdditionChild : indexedSubTree.m_block->directChildren()) {
@@ -191,7 +184,7 @@ Handle Multiplication::distributeOverAddition(TreeSandbox * sandbox) {
         TypeTreeBlock * additionChildCopy = additionCopy->childAtIndex(indexedAdditionChild.m_index);
         // Replace addition per its child
         sandbox->replaceTree(additionCopy, additionChildCopy);
-        assert(multiplicationCopy->type() == BlockType::MultiplicationHead);
+        assert(multiplicationCopy->type() == BlockType::Multiplication);
         Handle::Create<Multiplication>(multiplicationCopy).distributeOverAddition(sandbox);
       }
       sandbox->replaceTree(m_typeTreeBlock, newAddition.typeTreeBlock());

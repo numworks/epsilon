@@ -97,7 +97,7 @@ int main() {
 
   std::cout << "\n---------------- Develop (1+2)*3*4 ----------------" << std::endl;
   root = sandbox->firstBlock();
-  assert(root->type() == BlockType::MultiplicationHead);
+  assert(root->type() == BlockType::Multiplication);
   Multiplication m = Handle::Create<Multiplication>(root);
   Handle h = m.distributeOverAddition(sandbox);
   print();

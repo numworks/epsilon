@@ -76,16 +76,11 @@ constexpr static int ByteAlignment = sizeof(AlignedNodeBuffer);
 
 enum class BlockType : uint8_t {
   Ghost = 0,
-  IntegerHead,
-  IntegerTail,
-  IntegerShortHead,
-  IntegerShortTail,
-  FloatHead,
-  FloatTail,
-  AdditionHead,
-  AdditionTail,
-  MultiplicationHead,
-  MultiplicationTail,
+  Integer,
+  IntegerShort,
+  Float,
+  Addition,
+  Multiplication,
   Subtraction,
   Division,
   Power
@@ -241,12 +236,9 @@ static_assert(sizeof(TreeBlock) == 1);
 static_assert(sizeof(ValueTreeBlock) == sizeof(TreeBlock));
 static_assert(sizeof(TypeTreeBlock) == sizeof(TreeBlock));
 
-constexpr static TypeTreeBlock AdditionHeadBlock() { return TypeTreeBlock(BlockType::AdditionHead); }
-constexpr static TypeTreeBlock AdditionTailBlock() { return TypeTreeBlock(BlockType::AdditionTail); }
-constexpr static TypeTreeBlock MultiplicationHeadBlock() { return TypeTreeBlock(BlockType::MultiplicationHead); }
-constexpr static TypeTreeBlock MultiplicationTailBlock() { return TypeTreeBlock(BlockType::MultiplicationTail); }
-constexpr static TypeTreeBlock IntegerHeadBlock() { return TypeTreeBlock(BlockType::IntegerHead); }
-constexpr static TypeTreeBlock IntegerTailBlock() { return TypeTreeBlock(BlockType::IntegerTail); }
+constexpr static TypeTreeBlock AdditionBlock() { return TypeTreeBlock(BlockType::Addition); }
+constexpr static TypeTreeBlock MultiplicationBlock() { return TypeTreeBlock(BlockType::Multiplication); }
+constexpr static TypeTreeBlock IntegerBlock() { return TypeTreeBlock(BlockType::Integer); }
 constexpr static TypeTreeBlock SubtractionBlock() { return TypeTreeBlock(BlockType::Subtraction); }
 constexpr static TypeTreeBlock DivisionBlock() { return TypeTreeBlock(BlockType::Division); }
 constexpr static TypeTreeBlock PowerBlock() { return TypeTreeBlock(BlockType::Power); }

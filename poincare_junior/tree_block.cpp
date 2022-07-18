@@ -54,7 +54,7 @@ TypeTreeBlock * TypeTreeBlock::previousNode(const TreeBlock * firstBlock) {
     return nullptr;
   }
   TypeTreeBlock * block = static_cast<TypeTreeBlock *>(previousBlock());
-  return this - Handle::CreateHandle(block)->nodeSize();
+  return this - Handle::CreateHandle(block)->nodeSize(false);
 }
 
 TypeTreeBlock * TypeTreeBlock::nextSibling() {

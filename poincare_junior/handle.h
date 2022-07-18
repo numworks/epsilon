@@ -27,7 +27,7 @@ public:
   virtual void logNodeName(std::ostream & stream) const {}
   virtual void logAttributes(std::ostream & stream) const {}
 #endif
-  virtual size_t nodeSize() const { return 1; } // Should it be virtual?
+  virtual size_t nodeSize(bool head = true) const { return 1; } // Should it be virtual?
   virtual int numberOfChildren() const { return 0; } // Should it be virtual
 
 protected:
@@ -79,7 +79,7 @@ public:
   void logNodeName(std::ostream & stream) const override { stream << "Integer"; }
   void logAttributes(std::ostream & stream) const override;
 #endif
-  size_t nodeSize() const override;
+  size_t nodeSize(bool head = true) const override;
   int value() const;
   static Integer PushNode(TreeSandbox * sandbox, int value);
 private:
@@ -94,12 +94,12 @@ public:
 #if POINCARE_TREE_LOG
   void logAttributes(std::ostream & stream) const override;
 #endif
-  size_t nodeSize() const override { return 3; }
+  size_t nodeSize(bool head = true) const override { return 3; }
 
 protected:
   int privateNumberOfChildren(BlockType headType) const;
 
-  static TypeTreeBlock * PushNode(TreeSandbox * sandbox, int numberOfChildren, TypeTreeBlock headBlock, TypeTreeBlock tailBlock);
+  static TypeTreeBlock * PushNode(TreeSandbox * sandbox, int numberOfChildren, TypeTreeBlock blockType);
 };
 
 class Addition final : public NAry {

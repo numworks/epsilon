@@ -5,14 +5,14 @@
 
 namespace Poincare {
 
-bool TreeSandbox::pushBlock(TreeBlock block) {
+TreeBlock * TreeSandbox::pushBlock(TreeBlock block) {
   if (!checkForEnoughSpace(1)) {
-    return false;
+    return nullptr;
   }
   assert(m_numberOfBlocks < m_size);
   *lastBlock() = block;
   m_numberOfBlocks++;
-  return true;
+  return lastBlock() - 1;
 }
 
 void TreeSandbox::popBlock() {

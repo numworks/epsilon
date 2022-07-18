@@ -121,8 +121,7 @@ int Integer::value() const {
 }
 
 Integer Integer::PushNode(TreeSandbox * sandbox, int value) {
-  TreeBlock * addressOfIntegerBlock = sandbox->lastBlock();
-  sandbox->pushBlock(IntegerHeadBlock());
+  TypeTreeBlock * integerFirstBlock = static_cast<TypeTreeBlock *>(sandbox->pushBlock(IntegerHeadBlock()));
   // Temporary node size
   size_t nodeSize = 0;
   TreeBlock * addressOfNodeSizeBlock = sandbox->lastBlock();
@@ -137,7 +136,7 @@ Integer Integer::PushNode(TreeSandbox * sandbox, int value) {
   sandbox->pushBlock(IntegerTailBlock());
   // Replace temporary node size
   sandbox->replaceBlock(addressOfNodeSizeBlock, ValueTreeBlock(nodeSize));
-  return Integer(static_cast<TypeTreeBlock *>(addressOfIntegerBlock));
+  return Integer(static_cast<TypeTreeBlock *>(integerFirstBlock));
 }
 
 /* NAry */
@@ -152,8 +151,7 @@ int NAry::privateNumberOfChildren(BlockType headType) const {
 }
 
 TypeTreeBlock * NAry::PushNode(TreeSandbox * sandbox, int numberOfChildren, TypeTreeBlock headBlock, TypeTreeBlock tailBlock) {
-  TreeBlock * addressOfNAryBlock = sandbox->lastBlock();
-  sandbox->pushBlock(headBlock);
+  TypeTreeBlock * addressOfNAryBlock = static_cast<TypeTreeBlock *>(sandbox->pushBlock(headBlock));
   sandbox->pushBlock(ValueTreeBlock(numberOfChildren));
   sandbox->pushBlock(tailBlock);
   return static_cast<TypeTreeBlock *>(addressOfNAryBlock);

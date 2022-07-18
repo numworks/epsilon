@@ -21,7 +21,7 @@ void HomogeneityTest::setGraphTitle(char * buffer, size_t bufferSize) const {
 }
 
 bool HomogeneityTest::authorizedParameterAtIndex(double p, int i) const {
-  if (i < numberOfValuePairs() && p < 0.0) {
+  if (i < numberOfStatisticParameters() && p < 0.0) {
     // Frequencies should be >= 0
     return false;
   }

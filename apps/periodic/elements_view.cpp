@@ -6,8 +6,7 @@ namespace Periodic {
 
 ElementsView::ElementsView() :
   m_singleElementView(KDColorWhite),
-  m_nameView(KDFont::Size::Small, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter),
-  m_previousSelection(ElementsDataBase::k_noElement)
+  m_nameView(KDFont::Size::Small, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter)
 {}
 
 void ElementsView::drawRect(KDContext * ctx, KDRect rect) const {
@@ -24,18 +23,19 @@ void ElementsView::drawRect(KDContext * ctx, KDRect rect) const {
 
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   AtomicNumber selection = dataSource->selectedElement();
-  if (ElementsDataBase::IsElement(m_previousSelection) && m_previousSelection != selection) {
-    drawElementBorder(m_previousSelection, k_backgroundColor, ctx, rect);
+  AtomicNumber previousSelection = dataSource->previousElement();
+  if (ElementsDataBase::IsElement(previousSelection) && previousSelection != selection) {
+    drawElementBorder(previousSelection, k_backgroundColor, ctx, rect);
   }
   if (ElementsDataBase::IsElement(selection)) {
     drawElementBorder(selection, dataSource->field()->getColors(selection).fg(), ctx, rect);
   }
 }
 
-void ElementsView::cursorMoved(AtomicNumber oldZ) {
+void ElementsView::cursorMoved() {
   AtomicNumber newZ = App::app()->elementsViewDataSource()->selectedElement();
+  AtomicNumber oldZ = App::app()->elementsViewDataSource()->previousElement();
   assert(oldZ != newZ);
-  m_previousSelection = oldZ;
   dirtyElement(oldZ);
   dirtyElement(newZ);
   layoutSubviews();

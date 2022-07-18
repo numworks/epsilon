@@ -7,7 +7,7 @@ namespace Periodic {
 
 class ElementsViewDelegate {
 public:
-  virtual void selectedElementHasChanged(AtomicNumber oldZ) = 0;
+  virtual void selectedElementHasChanged() = 0;
   virtual void activeDataFieldHasChanged() = 0;
 };
 

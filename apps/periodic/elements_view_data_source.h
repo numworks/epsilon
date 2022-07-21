@@ -21,8 +21,11 @@ public:
   /* Returns colors given by the data field, or default colors if the element
    * does not match the filter. */
   DataField::ColorPair filteredColors(AtomicNumber z) const;
+  AtomicNumber firstMatchingElement() const;
 
 private:
+  bool elementMatchesFilter(AtomicNumber z) const;
+
   ElementsViewDelegate * m_delegate;
   const DataField * m_field;
   const char * m_textFilter;

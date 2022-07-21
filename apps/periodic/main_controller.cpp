@@ -95,8 +95,8 @@ bool MainController::textFieldDidReceiveEvent(Escher::TextField * textField, Ion
 
 bool MainController::textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) {
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+  dataSource->setSelectedElement(dataSource->firstMatchingElement());
   dataSource->setTextFilter(nullptr);
-  dataSource->setSelectedElement(1);
   return true;
 }
 

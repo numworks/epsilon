@@ -21,22 +21,31 @@ void ElementsViewDataSource::setField(const DataField * field) {
 }
 
 DataField::ColorPair ElementsViewDataSource::filteredColors(AtomicNumber z) const {
-  const char * name = I18n::translate(ElementsDataBase::Name(z));
+  return elementMatchesFilter(z) ? m_field->getColors(z) : DataField::ColorPair(KDColorBlack, Palette::SystemGrayDark);
+}
+
+AtomicNumber ElementsViewDataSource::firstMatchingElement() const {
+  for (AtomicNumber z = 1; z <= ElementsDataBase::k_numberOfElements; z++) {
+    if (elementMatchesFilter(z)) {
+      return z;
+    }
+  }
+  return 1;
+}
+
+bool ElementsViewDataSource::elementMatchesFilter(AtomicNumber z) const {
+  if (!m_textFilter
+   || UTF8Helper::IsPrefixCaseInsensitiveNoCombining(m_textFilter, I18n::translate(ElementsDataBase::Name(z)))
+   || UTF8Helper::IsPrefixCaseInsensitiveNoCombining(m_textFilter, ElementsDataBase::Symbol(z)))
+  {
+    return true;
+  }
+
   constexpr size_t k_maxZSize = 4;
   char zBuffer[k_maxZSize];
   int zLength = Poincare::PrintInt::Left(z, zBuffer, k_maxZSize);
   zBuffer[zLength] = '\0';
-
-  if (!m_textFilter
-   || UTF8Helper::IsPrefixCaseInsensitiveNoCombining(m_textFilter, name)
-   || UTF8Helper::IsPrefixCaseInsensitiveNoCombining(m_textFilter, ElementsDataBase::Symbol(z))
-   || UTF8Helper::IsPrefixCaseInsensitiveNoCombining(m_textFilter, zBuffer))
-  {
-    return m_field->getColors(z);
-  }
-
-  return DataField::ColorPair(KDColorBlack, Palette::SystemGrayDark);
-
+  return UTF8Helper::IsPrefixCaseInsensitiveNoCombining(m_textFilter, zBuffer);
 }
 
 }

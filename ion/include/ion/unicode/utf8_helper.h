@@ -131,6 +131,10 @@ const char * EndOfWord(const char * word);
 // On a line, count number of glyphs before and after locations
 void CountGlyphsInLine(const char * text, int * before, int * after, const char * beforeLocation, const char *afterLocation = nullptr);
 
-};
+/* Returns whether the first string is prefix to the second.
+ * Considers e, E and é as the same character. */
+bool IsPrefixCaseInsensitiveNoCombining(const char * prefix, const char * text);
+
+}
 
 #endif

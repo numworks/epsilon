@@ -21,7 +21,6 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override { return KDSize(Ion::Display::Width, k_bannerHeight + k_borderHeight); }
 
   void reload();
-  void dirtyRect() { markRectAsDirty(bounds()); }
   Escher::TextField * textField() { return &m_textField; }
 
 private:

@@ -360,3 +360,20 @@ QUIZ_CASE(ion_utf8_helper_end_of_word) {
   assert_end_of_word_is(test_sentence + 3, test_sentence + 6);
   assert_end_of_word_is(test_sentence + 8, test_sentence + 10);
 }
+
+void assert_is_prefix(const char * a, const char * b) {
+  quiz_assert(UTF8Helper::IsPrefixCaseInsensitiveNoCombining(a, b));
+}
+
+void assert_is_not_prefix(const char * a, const char * b) {
+  quiz_assert(!UTF8Helper::IsPrefixCaseInsensitiveNoCombining(a, b));
+}
+
+QUIZ_CASE(ion_utf8_helper_is_prefix) {
+  assert_is_prefix("pre", "prefix");
+  assert_is_prefix("calc", "CALCULATOR");
+  assert_is_prefix("he", "Hélium");
+  assert_is_not_prefix("prefix", "pre");
+  assert_is_not_prefix("cla", "CALCULATOR");
+  assert_is_not_prefix("ha", "hélium");
+}

@@ -511,4 +511,29 @@ void CountGlyphsInLine(const char * text, int * before, int * after, const char 
   UTF8Helper::PerformAtCodePoints(afterLocation, UCodePointLineFeed, nullptr, countGlyph, after, 0, 0, UCodePointLineFeed);
 }
 
+bool IsPrefixCaseInsensitiveNoCombining(const char * a, const char * b) {
+  UTF8Decoder aDecoder(a);
+  UTF8Decoder bDecoder(b);
+  CodePoint a0 = aDecoder.nextCodePoint(), b0 = bDecoder.nextCodePoint();
+  while (a0 != UCodePointNull) {
+    if (a0.isCombining()) {
+      a0 = aDecoder.nextCodePoint();
+    } else if (b0.isCombining()) {
+      b0 = bDecoder.nextCodePoint();
+    } else {
+      if (a0.isLatinSmallLetter() && b0.isLatinCapitalLetter()) {
+        a0 = a0.getChar() - 'a' + 'A';
+      } else if (b0.isLatinSmallLetter() && a0.isLatinCapitalLetter()) {
+        b0 = b0.getChar() - 'a' + 'A';
+      }
+      if (a0 != b0) {
+        return false;
+      }
+      a0 = aDecoder.nextCodePoint();
+      b0 = bDecoder.nextCodePoint();
+    }
+  }
+  return true;
+}
+
 }

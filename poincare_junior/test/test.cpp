@@ -98,8 +98,7 @@ int main() {
   std::cout << "\n---------------- Develop (1+2)*3*4 ----------------" << std::endl;
   root = sandbox->firstBlock();
   assert(root->type() == BlockType::Multiplication);
-  Multiplication m = Handle::Create<Multiplication>(root);
-  Handle h = m.distributeOverAddition(sandbox);
+  Multiplication::DistributeOverAddition(root, sandbox);
   print();
 
   std::cout << "\n---------------- Store developped 1*3*4+2*3*4 ----------------" << std::endl;
@@ -107,7 +106,7 @@ int main() {
   print();
 
   std::cout << "\n---------------- Create 1-2/3 ----------------" << std::endl;
-  Subtraction subtraction = Subtraction::PushNode(sandbox);
+  TypeTreeBlock * subtraction = Subtraction::PushNode(sandbox);
   Integer::PushNode(sandbox, 1);
   Division::PushNode(sandbox);
   Integer::PushNode(sandbox, 2);
@@ -115,7 +114,7 @@ int main() {
   print();
 
   std::cout << "\n---------------- Projection to internal nodes 1-2/3 ----------------" << std::endl;
-  subtraction.typeTreeBlock()->recursivelyApply(sandbox, &Handle::basicReduction);
+  subtraction->recursivelyApply(sandbox, &TypeTreeBlock::basicReduction);
   print();
 #if 0
   std::cout << "Edited Tree which has overflowed" << std::endl;

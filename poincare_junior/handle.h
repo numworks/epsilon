@@ -1,59 +1,74 @@
 #ifndef POINCARE_HANDLE_H
 #define POINCARE_HANDLE_H
 
-#include "tree_block.h"
+#define POINCARE_TREE_LOG 1
+#if POINCARE_TREE_LOG
+#include <ostream>
+#endif
+
+#include <stdint.h>
+#include <stddef.h>
 
 namespace Poincare {
 
+class TreeBlock;
 class TreeSandbox;
+class TypeTreeBlock;
 class InternalHandle;
-union HandleBuffer;
+
+typedef TreeBlock * (TreeBlock::*NextStep)();
+typedef TreeBlock * (TreeBlock::*NextNthStep)(int i);
+
+#if POINCARE_TREE_LOG
+typedef void (*LogNameFunction)(std::ostream &);
+typedef void (*LogAttributeFunction)(const TypeTreeBlock *, std::ostream &);
+typedef struct LogTreeBlockVTable {
+  LogNameFunction m_logName;
+  LogAttributeFunction m_logAttribute;
+} LogTreeBlockVTable;
+#endif
+typedef void (*TreeFunction)(TypeTreeBlock *, TreeSandbox *);
+typedef size_t (*NodeSizeFunction)(const TypeTreeBlock *, bool);
+typedef int (*NumberOfChildrenFunction)(const TypeTreeBlock *);
+typedef struct TreeBlockVTable {
+  TreeFunction m_basicReduction;
+  NodeSizeFunction m_nodeSize;
+  NumberOfChildrenFunction m_numberOfChildren;
+} TreeBlockVTable;
 
 class Handle {
 public:
-  template <typename T>
-  static T Create(const TypeTreeBlock * treeBlock);
-  // TODO: Use expiring pointers
-  static Handle * CreateHandle(const TypeTreeBlock * treeBlock);
-
-  Handle(const TypeTreeBlock * treeBlock = nullptr) : m_typeTreeBlock(const_cast<TypeTreeBlock *>(treeBlock)) {}
-  virtual ~Handle() = default;
-
-  TypeTreeBlock * typeTreeBlock() { return m_typeTreeBlock; }
-
-  virtual void basicReduction(TreeSandbox * sandbox) {}
-
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream & stream) const {}
-  virtual void logAttributes(std::ostream & stream) const {}
+  static void LogNodeName(std::ostream & stream) {}
+  static void LogAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream) {}
 #endif
-  virtual size_t nodeSize(bool head = true) const { return 1; } // Should it be virtual?
-  virtual int numberOfChildren() const { return 0; } // Should it be virtual
-
-protected:
-  TypeTreeBlock * m_typeTreeBlock;
+  static void BasicReduction(TypeTreeBlock * treeBlock, TreeSandbox * sandbox) {}
+  static size_t NodeSize(const TypeTreeBlock * treeBlock, bool head = true) { return 1; }
+  static int NumberOfChildren(const TypeTreeBlock * treeBlock) { return 0; }
 };
 
 class Subtraction final : public Handle {
 public:
-  using Handle::Handle;
+  static TypeTreeBlock * PushNode(TreeSandbox * sandbox);
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override { stream << "Subtraction"; }
+  static void LogNodeName(std::ostream & stream) { stream << "Subtraction"; }
+  constexpr static LogTreeBlockVTable s_logVTable = {&LogNodeName, &Handle::LogAttributes};
 #endif
-  int numberOfChildren() const override { return 2; }
-  static Subtraction PushNode(TreeSandbox * sandbox);
-  void basicReduction(TreeSandbox * sandbox) override;
+  static int NumberOfChildren(const TypeTreeBlock * treeBlock) { return 2; }
+  static void BasicReduction(TypeTreeBlock * treeBlock, TreeSandbox * sandbox);
+  constexpr static TreeBlockVTable s_vTable = {&BasicReduction, &Handle::NodeSize, &NumberOfChildren};
 };
 
 class Division final : public Handle {
 public:
-  using Handle::Handle;
+  static TypeTreeBlock * PushNode(TreeSandbox * sandbox);
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override { stream << "Division"; }
+  static void LogNodeName(std::ostream & stream) { stream << "Division"; }
+  constexpr static LogTreeBlockVTable s_logVTable = {&LogNodeName, &Handle::LogAttributes};
 #endif
-  int numberOfChildren() const override { return 2; }
-  static Division PushNode(TreeSandbox * sandbox);
-  void basicReduction(TreeSandbox * sandbox) override;
+  static int NumberOfChildren(const TypeTreeBlock * treeBlock) { return 2; }
+  static void BasicReduction(TypeTreeBlock * treeBlock, TreeSandbox * sandbox);
+  constexpr static TreeBlockVTable s_vTable = {&BasicReduction, &Handle::NodeSize, &NumberOfChildren};
 };
 
 class InternalHandle : public Handle {
@@ -67,102 +82,76 @@ class Ghost final : public InternalHandle {
 public:
   using InternalHandle::InternalHandle;
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override { stream << "Ghost"; }
+  static void LogNodeName(std::ostream & stream) { stream << "Ghost"; }
+  constexpr static LogTreeBlockVTable s_logVTable = {&LogNodeName, &Handle::LogAttributes};
 #endif
+  constexpr static TreeBlockVTable s_vTable = {&Handle::BasicReduction, &Handle::NodeSize, &Handle::NumberOfChildren};
 };
 #endif
 
 class Integer final : public InternalHandle {
 public:
-  using InternalHandle::InternalHandle;
+  static TypeTreeBlock * PushNode(TreeSandbox * sandbox, int value);
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override { stream << "Integer"; }
-  void logAttributes(std::ostream & stream) const override;
+  static void LogNodeName(std::ostream & stream) { stream << "Integer"; }
+  static void LogAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream);
+  constexpr static LogTreeBlockVTable s_logVTable = {&LogNodeName, &LogAttributes};
 #endif
-  size_t nodeSize(bool head = true) const override;
-  int value() const;
-  static Integer PushNode(TreeSandbox * sandbox, int value);
+  static size_t NodeSize(const TypeTreeBlock * typeTreeBlock, bool head = true);
+  static int Value(const TypeTreeBlock * treeBlock);
+  constexpr static TreeBlockVTable s_vTable = {&Handle::BasicReduction, &NodeSize, &Handle::NumberOfChildren};
+
 private:
   constexpr static size_t k_minimalNumberOfNodes = 4;
   constexpr static size_t k_maxValue = 1 << 8;
-  size_t nodeSize(NextStep step) const;
+  static size_t NodeSize(const TypeTreeBlock * typeTreeBlock, NextStep step);
 };
 
 class NAry : public InternalHandle {
 public:
-  using InternalHandle::InternalHandle;
 #if POINCARE_TREE_LOG
-  void logAttributes(std::ostream & stream) const override;
+  static void LogAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream);
 #endif
-  size_t nodeSize(bool head = true) const override { return 3; }
+  static int NumberOfChildren(const TypeTreeBlock * treeBlock);
+  static size_t NodeSize(const TypeTreeBlock * typeTreeBlock, bool head = true) { return 3; }
 
 protected:
-  int privateNumberOfChildren(BlockType headType) const;
-
   static TypeTreeBlock * PushNode(TreeSandbox * sandbox, int numberOfChildren, TypeTreeBlock blockType);
 };
 
 class Addition final : public NAry {
 public:
-  using NAry::NAry;
+  static TypeTreeBlock * PushNode(TreeSandbox * sandbox, int numberOfChildren);
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override { stream << "Addition"; }
+  static void LogNodeName(std::ostream & stream) { stream << "Addition"; }
+  constexpr static LogTreeBlockVTable s_logVTable = {&LogNodeName, &LogAttributes};
 #endif
-  int numberOfChildren() const override;
-
-  static Addition PushNode(TreeSandbox * sandbox, int numberOfChildren);
+  constexpr static TreeBlockVTable s_vTable = {&Handle::BasicReduction, &NodeSize, &NumberOfChildren};
 };
 
 class Multiplication final : public NAry {
 public:
-  using NAry::NAry;
+  static TypeTreeBlock * PushNode(TreeSandbox * sandbox, int numberOfChildren);
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override { stream << "Multiplication"; }
+  static void LogNodeName(std::ostream & stream) { stream << "Multiplication"; }
+  constexpr static LogTreeBlockVTable s_logVTable = {&LogNodeName, &LogAttributes};
 #endif
-  int numberOfChildren() const override;
 
-  static Multiplication PushNode(TreeSandbox * sandbox, int numberOfChildren);
+  constexpr static TreeBlockVTable s_vTable = {&Handle::BasicReduction, &NodeSize, &NumberOfChildren};
 
-  Handle distributeOverAddition(TreeSandbox * sandbox);
+  static TypeTreeBlock * DistributeOverAddition(TypeTreeBlock * treeBlock, TreeSandbox * sandbox);
 };
 
 class Power final : public InternalHandle {
 public:
-  using InternalHandle::InternalHandle;
+  static TypeTreeBlock * PushNode(TreeSandbox * sandbox);
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override { stream << "Power"; }
+  static void LogNodeName(std::ostream & stream) { stream << "Power"; }
+  constexpr static LogTreeBlockVTable s_logVTable = {&LogNodeName, &Handle::LogAttributes};
 #endif
-  int numberOfChildren() const override { return 2; }
-  static Power PushNode(TreeSandbox * sandbox);
+  static int NumberOfChildren(const TypeTreeBlock * treeBlock) { return 2; }
+  constexpr static TreeBlockVTable s_vTable = {&Handle::BasicReduction, &Handle::NodeSize, &NumberOfChildren};
 };
-
-union HandleBuffer {
-friend class Handle;
-public:
-  HandleBuffer();
-  ~HandleBuffer();
-private:
-  Handle m_handle;
-#if GHOST_REQUIRED
-  Ghost m_ghost;
-#endif
-  Integer m_integer;
-  Addition m_addition;
-  Multiplication m_multiplication;
-  Subtraction m_subtraction;
-  Division m_division;
-  Power m_power;
-};
-
-#if GHOST_REQUIRED
-static_assert(sizeof(Handle) == sizeof(Ghost));
-#endif
-static_assert(sizeof(Handle) == sizeof(Integer));
-static_assert(sizeof(Handle) == sizeof(Addition));
-static_assert(sizeof(Handle) == sizeof(Multiplication));
-static_assert(sizeof(Handle) == sizeof(Subtraction));
-static_assert(sizeof(Handle) == sizeof(Division));
-static_assert(sizeof(Handle) == sizeof(Power));
 
 }
 

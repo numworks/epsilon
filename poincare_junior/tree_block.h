@@ -1,13 +1,7 @@
 #ifndef POINCARE_TREE_BLOCK_H
 #define POINCARE_TREE_BLOCK_H
 
-#define POINCARE_TREE_LOG 1
-#if POINCARE_TREE_LOG
-#include <ostream>
-#endif
-
-#include <stdint.h>
-#include <stddef.h>
+#include "handle.h"
 
 /* 3 options to sequentially store expressions:
  * Let's take the example 4294967298 + cos(3)
@@ -75,7 +69,9 @@ typedef uint32_t AlignedNodeBuffer;
 constexpr static int ByteAlignment = sizeof(AlignedNodeBuffer);
 
 enum class BlockType : uint8_t {
-  Ghost = 0,
+#if GHOST_REQUIRED
+  Ghost,
+#endif
   Integer,
   IntegerShort,
   Float,
@@ -88,13 +84,12 @@ enum class BlockType : uint8_t {
 
 class TreeSandbox;
 class TypeTreeBlock;
-class Handle;
-typedef void (Handle::*ShallowMethod)(TreeSandbox * sandbox);
 
 struct IndexedTypeTreeBlock {
   TypeTreeBlock * m_block;
   int m_index;
 };
+typedef void (TypeTreeBlock::*InPlaceTreeFunction)(TreeSandbox *);
 
 class TreeBlock {
 friend class TreePool;
@@ -112,9 +107,6 @@ protected:
   uint8_t m_content;
 };
 
-typedef TreeBlock * (TreeBlock::*NextStep)();
-typedef TreeBlock * (TreeBlock::*NextNthStep)(int i);
-
 class TypeTreeBlock : public TreeBlock {
 public:
   constexpr TypeTreeBlock(BlockType content) : TreeBlock(static_cast<uint8_t>(content)) {}
@@ -130,13 +122,11 @@ public:
   TypeTreeBlock * previousSibling(const TreeBlock * firstBlock);
 
   // Sizes
-  size_t nodeSize() const { return const_cast<TypeTreeBlock *>(this)->nextNode() - this; }
   size_t treeSize() const { return const_cast<TypeTreeBlock *>(this)->nextSibling() - this; }
 
   // Node Hierarchy
   TypeTreeBlock * parent(const TreeBlock * firstBlock);
   TypeTreeBlock * root(const TreeBlock * firstBlock);
-  int numberOfChildren() const;
   //void incrementNumberOfChildren(int increment = 1);
   //void eraseNumberOfChildren();
   int numberOfDescendants(bool includeSelf) const;
@@ -146,6 +136,43 @@ public:
   bool hasChild(const TypeTreeBlock * child) const;
   bool hasAncestor(const TreeBlock * firstBlock, const TypeTreeBlock * node, bool includeSelf) const;
   bool hasSibling(const TreeBlock * firstBlock, const TypeTreeBlock * e) const;
+
+  // Virtuality
+#if POINCARE_TREE_LOG
+  constexpr static LogTreeBlockVTable s_logVTable[] = {
+    // Order has to be the same as TypeTreeBlock
+#if GHOST_REQUIRED
+    Ghost::s_logVTable,
+#endif
+    Integer::s_logVTable,
+    Integer::s_logVTable, // IntegerShort
+    Integer::s_logVTable, // Float
+    Addition::s_logVTable,
+    Multiplication::s_logVTable,
+    Subtraction::s_logVTable,
+    Division::s_logVTable,
+    Power::s_logVTable
+  };
+  void logNodeName(std::ostream & stream) const { (*s_logVTable[m_content].m_logName)(stream); }
+  void logAttributes(std::ostream & stream) const { (*s_logVTable[m_content].m_logAttribute)(this, stream); }
+#endif
+  constexpr static TreeBlockVTable s_vTable[] = {
+    // Order has to be the same as TypeTreeBlock
+#if GHOST_REQUIRED
+    Ghost::s_vTable,
+#endif
+    Integer::s_vTable,
+    Integer::s_vTable, // IntegerShort
+    Integer::s_vTable, // Float
+    Addition::s_vTable,
+    Multiplication::s_vTable,
+    Subtraction::s_vTable,
+    Division::s_vTable,
+    Power::s_vTable
+  };
+  void basicReduction(TreeSandbox * sandbox) { (*s_vTable[m_content].m_basicReduction)(this, sandbox); }
+  size_t nodeSize(bool head = true) const { return  (*s_vTable[m_content].m_nodeSize)(this, head); } // Should it be virtual?
+  int numberOfChildren() const { return  (*s_vTable[m_content].m_numberOfChildren)(this); } // Should it be virtual
 
   class ForwardDirect final {
   public:
@@ -219,11 +246,13 @@ public:
   BlockType type() const { return static_cast<BlockType>(m_content); }
 
   // Recursive helper
-  void recursivelyApply(TreeSandbox * sandbox, ShallowMethod shallowMethod);
+  void recursivelyApply(TreeSandbox * sandbox, InPlaceTreeFunction treeFunction);
 
 private:
   TypeTreeBlock * previousRelative(const TreeBlock * firstBlock, bool parent);
+#if GHOST_REQUIRED
   bool isGhost() const { return type() == BlockType::Ghost; }
+#endif
 };
 
 class ValueTreeBlock : public TreeBlock {

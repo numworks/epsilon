@@ -4,7 +4,7 @@ namespace Poincare {
 
 #if POINCARE_TREE_LOG
 void TreePool::flatLog(std::ostream & stream) {
-  stream << "<TreeSandbox format=\"flat\" size=\"" << lastBlock() - static_cast<TreeBlock *>(firstBlock()) << "\">";
+  stream << "<TreeSandbox format=\"flat\" size=\"" << fullSize()  << "\">";
   for (TypeTreeBlock * block : allNodes()) {
     block->log(stream, false);
   }
@@ -13,7 +13,7 @@ void TreePool::flatLog(std::ostream & stream) {
 }
 
 void TreePool::treeLog(std::ostream & stream, bool verbose) {
-  stream << "<TreePool format=\"tree\" size=\"" << lastBlock() - static_cast<TreeBlock *>(firstBlock()) << "\">";
+  stream << "<TreePool format=\"tree\" size=\"" << fullSize() << "\">";
   for (TypeTreeBlock * tree : trees()) {
     tree->log(stream, true, 1, verbose);
   }

@@ -13,13 +13,12 @@ void TypeTreeBlock::log(std::ostream & stream, bool recursive, int indentation, 
     stream << "  ";
   }
   stream << "<";
-  Handle * h = Handle::CreateHandle(this);
-  h->logNodeName(stream);
+  logNodeName(stream);
   if (verbose) {
-    stream << " size=\"" << h->nodeSize() << "\"";
+    stream << " size=\"" << nodeSize() << "\"";
     stream << " address=\"" << this << "\"";
   }
-  h->logAttributes(stream);
+  logAttributes(stream);
   bool tagIsClosed = false;
   if (recursive) {
     for (IndexedTypeTreeBlock child : directChildren()) {
@@ -31,13 +30,12 @@ void TypeTreeBlock::log(std::ostream & stream, bool recursive, int indentation, 
     }
   }
   if (tagIsClosed) {
-    h = Handle::CreateHandle(this);
     stream << "\n";
     for (int i = 0; i < indentation; ++i) {
       stream << "  ";
     }
     stream << "</";
-    h->logNodeName(stream);
+    logNodeName(stream);
     stream << ">";
   } else {
     stream << "/>";
@@ -46,7 +44,7 @@ void TypeTreeBlock::log(std::ostream & stream, bool recursive, int indentation, 
 #endif
 
 TypeTreeBlock * TypeTreeBlock::nextNode() {
-  return this + Handle::CreateHandle(this)->nodeSize();
+  return this + nodeSize();
 }
 
 TypeTreeBlock * TypeTreeBlock::previousNode(const TreeBlock * firstBlock) {
@@ -54,7 +52,7 @@ TypeTreeBlock * TypeTreeBlock::previousNode(const TreeBlock * firstBlock) {
     return nullptr;
   }
   TypeTreeBlock * block = static_cast<TypeTreeBlock *>(previousBlock());
-  return this - Handle::CreateHandle(block)->nodeSize(false);
+  return this - block->nodeSize(false);
 }
 
 TypeTreeBlock * TypeTreeBlock::nextSibling() {
@@ -67,11 +65,11 @@ TypeTreeBlock * TypeTreeBlock::nextSibling() {
   return result->nextNode();
 }
 
-void TypeTreeBlock::recursivelyApply(TreeSandbox * sandbox, ShallowMethod shallowMethod) {
+void TypeTreeBlock::recursivelyApply(TreeSandbox * sandbox, InPlaceTreeFunction treeFunction) {
   for (IndexedTypeTreeBlock indexedChild : directChildren()) {
-    indexedChild.m_block->recursivelyApply(sandbox, shallowMethod);
+    indexedChild.m_block->recursivelyApply(sandbox, treeFunction);
   }
-  (Handle::CreateHandle(this)->*shallowMethod)(sandbox);
+  (this->*treeFunction)(sandbox);
 }
 
 TypeTreeBlock * TypeTreeBlock::previousRelative(const TreeBlock * firstBlock, bool parent) {
@@ -105,10 +103,6 @@ TypeTreeBlock * TypeTreeBlock::root(const TreeBlock * firstBlock) {
     ancestor = ancestor->parent(firstBlock);
   } while (ancestor != nullptr);
   return ancestor;
-}
-
-int TypeTreeBlock::numberOfChildren() const {
-  return Handle::CreateHandle(this)->numberOfChildren();
 }
 
 int TypeTreeBlock::numberOfDescendants(bool includeSelf) const {

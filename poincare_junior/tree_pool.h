@@ -14,6 +14,7 @@ public:
 
   virtual TypeTreeBlock * firstBlock() = 0;
   virtual TreeBlock * lastBlock() = 0;
+  size_t fullSize() { return firstBlock() ? lastBlock() - static_cast<TreeBlock *>(firstBlock()) : 0; }
 
 #if POINCARE_TREE_LOG
   void flatLog(std::ostream & stream);

@@ -26,7 +26,7 @@ public:
   bool pushTree(TypeTreeBlock * block);
   void popTree();
   void replaceTree(TypeTreeBlock * previousBlock, TypeTreeBlock * newBlock);
-  void moveTree(TreeBlock * destination, TypeTreeBlock * source);
+  void moveTree(TreeBlock * destination, TypeTreeBlock * source, size_t * sourceSize = nullptr);
   void removeBlocks(TreeBlock * address, size_t numberOfTreeBlocks);
 
   TypeTreeBlock * copyTreeFromAddress(const void * address);

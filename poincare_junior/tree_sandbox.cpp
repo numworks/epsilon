@@ -56,8 +56,9 @@ void TreeSandbox::replaceTree(TypeTreeBlock * previousBlock, TypeTreeBlock * new
   removeBlocks(previousBlock + newTreeSize, previousTreeSize);
 }
 
-void TreeSandbox::moveTree(TreeBlock * destination, TypeTreeBlock * source) {
-  moveBlocks(destination, source, source->treeSize());
+void TreeSandbox::moveTree(TreeBlock * destination, TypeTreeBlock * source, size_t * treeSize) {
+  size_t size = treeSize ? *treeSize : source->treeSize();
+  moveBlocks(destination, source, size);
 }
 
 void TreeSandbox::removeBlocks(TreeBlock * address, size_t numberOfTreeBlocks) {

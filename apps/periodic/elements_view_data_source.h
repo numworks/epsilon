@@ -18,6 +18,9 @@ public:
   const DataField * field() const { return m_field; }
   void setField(const DataField * field);
   void setTextFilter(const char * filter) { m_textFilter = filter; }
+  /* Returns colors given by the data field, or default colors if the element
+   * does not match the filter. */
+  DataField::ColorPair filteredColors(AtomicNumber z) const;
 
 private:
   ElementsViewDelegate * m_delegate;

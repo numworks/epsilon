@@ -31,6 +31,7 @@ public:
   bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(Escher::TextField * textField) override;
+  bool textFieldDidHandleEvent(Escher::TextField * textField, bool returnValue, bool textSizeDidChange) override;
 
 private:
   class ContentView : public Escher::View {

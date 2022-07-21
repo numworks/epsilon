@@ -16,6 +16,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
   void cursorMoved();
+  void reload() { markRectAsDirty(bounds()); }
 
 private:
   constexpr static KDCoordinate k_tableTopMargin = 22;

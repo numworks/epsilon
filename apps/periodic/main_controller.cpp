@@ -77,8 +77,12 @@ bool MainController::handleEvent(Ion::Events::Event e) {
 void MainController::textFieldDidStartEditing(Escher::TextField * textField) {
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   dataSource->setTextFilter(m_view.bannerView()->textField()->text());
-  /* Changing the selected element will reload the banner. */
-  dataSource->setSelectedElement(ElementsDataBase::k_noElement);
+  if (ElementsDataBase::IsElement(dataSource->selectedElement())) {
+    /* Changing the selected element will reload the banner. */
+    dataSource->setSelectedElement(ElementsDataBase::k_noElement);
+  } else {
+    m_view.bannerView()->reload();
+  }
 }
 
 bool MainController::textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) {

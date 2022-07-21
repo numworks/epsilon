@@ -108,7 +108,7 @@ bool MainController::textFieldDidAbortEditing(Escher::TextField * textField) {
 }
 
 bool MainController::textFieldDidHandleEvent(Escher::TextField * textField, bool returnValue, bool textSizeDidChange) {
-  if (returnValue) {
+  if (textSizeDidChange) {
     m_view.elementsView()->reload();
   }
   return returnValue;

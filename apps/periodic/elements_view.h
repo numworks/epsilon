@@ -17,6 +17,7 @@ public:
 
   void cursorMoved();
   void reload() { markRectAsDirty(bounds()); }
+  void dirtyBackground() { m_redrawBackground = true; }
 
 private:
   constexpr static KDCoordinate k_tableTopMargin = 22;
@@ -45,6 +46,7 @@ private:
 
   SingleElementView m_singleElementView;
   Escher::MessageTextView m_nameView;
+  mutable bool m_redrawBackground;
 };
 
 }

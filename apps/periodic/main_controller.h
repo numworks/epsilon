@@ -16,6 +16,7 @@ public:
 
   // Escher::ViewController
   Escher::View * view() override { return &m_view; }
+  void viewWillAppear() override { m_view.elementsView()->dirtyBackground(); }
 
   // Escher::Responder
   void didBecomeFirstResponder() override { Escher::Container::activeApp()->setFirstResponder(m_view.bannerView()->textField()); }

@@ -6,13 +6,19 @@ namespace Periodic {
 
 ElementsView::ElementsView() :
   m_singleElementView(KDColorWhite),
-  m_nameView(KDFont::Size::Small, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter)
+  m_nameView(KDFont::Size::Small, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter),
+  m_redrawBackground(true)
 {}
 
 void ElementsView::drawRect(KDContext * ctx, KDRect rect) const {
   /* Only draw the whole background when the view appears. This prevents
    * blinking when moving the cursor around. */
-  ctx->fillRect(rect.containsRect(bounds()) ? rect : SingleElementViewFrame(), k_backgroundColor);
+  if (m_redrawBackground) {
+    ctx->fillRect(rect, k_backgroundColor);
+    m_redrawBackground = false;
+  } else {
+    ctx->fillRect(SingleElementViewFrame(), k_backgroundColor);
+  }
 
   for (AtomicNumber z = 1; z <= ElementsDataBase::k_numberOfElements; z++) {
     KDRect cell = RectForCell(TableLayout::CellForElement(z));

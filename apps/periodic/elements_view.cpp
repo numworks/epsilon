@@ -102,7 +102,7 @@ void ElementsView::layoutSubviews(bool force) {
 void ElementsView::drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx, KDRect rect) const {
   assert(ElementsDataBase::IsElement(z));
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
-  DataField::ColorPair colors = dataSource->field()->getColors(z);
+  DataField::ColorPair colors = dataSource->filteredColors(z);
 
   ctx->fillRect(cell.intersectedWith(rect), colors.bg());
 

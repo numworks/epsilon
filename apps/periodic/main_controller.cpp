@@ -75,8 +75,10 @@ bool MainController::handleEvent(Ion::Events::Event e) {
 }
 
 void MainController::textFieldDidStartEditing(Escher::TextField * textField) {
+  ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+  dataSource->setTextFilter(m_view.bannerView()->textField()->text());
   /* Changing the selected element will reload the banner. */
-  App::app()->elementsViewDataSource()->setSelectedElement(ElementsDataBase::k_noElement);
+  dataSource->setSelectedElement(ElementsDataBase::k_noElement);
 }
 
 bool MainController::textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) {
@@ -92,14 +94,24 @@ bool MainController::textFieldDidReceiveEvent(Escher::TextField * textField, Ion
 }
 
 bool MainController::textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) {
-  App::app()->elementsViewDataSource()->setSelectedElement(1);
+  ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+  dataSource->setTextFilter(nullptr);
+  dataSource->setSelectedElement(1);
   return true;
 }
 
 bool MainController::textFieldDidAbortEditing(Escher::TextField * textField) {
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+  dataSource->setTextFilter(nullptr);
   dataSource->setSelectedElement(dataSource->previousElement());
   return false;
+}
+
+bool MainController::textFieldDidHandleEvent(Escher::TextField * textField, bool returnValue, bool textSizeDidChange) {
+  if (returnValue) {
+    m_view.elementsView()->reload();
+  }
+  return returnValue;
 }
 
 }

@@ -24,23 +24,39 @@ DataField::ColorPair ElementsViewDataSource::filteredColors(AtomicNumber z) cons
   return elementMatchesFilter(z) ? m_field->getColors(z) : DataField::ColorPair(KDColorBlack, Palette::SystemGrayDark);
 }
 
-AtomicNumber ElementsViewDataSource::firstMatchingElement() const {
+const char * ElementsViewDataSource::suggestedElementName() {
+  m_searchResult = ElementsDataBase::k_noElement;
   for (AtomicNumber z = 1; z <= ElementsDataBase::k_numberOfElements; z++) {
-    if (elementMatchesFilter(z)) {
-      return z;
+    if (elementNameMatchesFilter(z)) {
+      m_searchResult = z;
+      return I18n::translate(ElementsDataBase::Name(z));
+    }
+    if ((elementSymbolMatchesFilter(z) || (elementNumberMatchesFilter(z))) && !ElementsDataBase::IsElement(m_searchResult)) {
+      m_searchResult = z;
     }
   }
-  return 1;
+  return nullptr;
 }
 
 bool ElementsViewDataSource::elementMatchesFilter(AtomicNumber z) const {
-  if (!m_textFilter
-   || UTF8Helper::IsPrefixCaseInsensitiveNoCombining(m_textFilter, I18n::translate(ElementsDataBase::Name(z)))
-   || UTF8Helper::IsPrefixCaseInsensitiveNoCombining(m_textFilter, ElementsDataBase::Symbol(z)))
-  {
-    return true;
-  }
+  return !m_textFilter
+      || elementSymbolMatchesFilter(z)
+      || elementNameMatchesFilter(z)
+      || elementNumberMatchesFilter(z);
+}
 
+bool ElementsViewDataSource::elementNameMatchesFilter(AtomicNumber z) const {
+  assert(m_textFilter);
+  return UTF8Helper::IsPrefixCaseInsensitiveNoCombining(m_textFilter, I18n::translate(ElementsDataBase::Name(z)));
+}
+
+bool ElementsViewDataSource::elementSymbolMatchesFilter(AtomicNumber z) const {
+  assert(m_textFilter);
+  return UTF8Helper::IsPrefixCaseInsensitiveNoCombining(m_textFilter, ElementsDataBase::Symbol(z));
+}
+
+bool ElementsViewDataSource::elementNumberMatchesFilter(AtomicNumber z) const {
+  assert(m_textFilter);
   constexpr size_t k_maxZSize = 4;
   char zBuffer[k_maxZSize];
   int zLength = Poincare::PrintInt::Left(z, zBuffer, k_maxZSize);

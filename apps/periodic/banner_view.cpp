@@ -20,7 +20,7 @@ void BannerView::DotView::setColor(KDColor color) {
 // BannerView
 
 BannerView::BannerView(Escher::Responder * textFieldParent, Escher::TextFieldDelegate * textFieldDelegate) :
-  m_textField(textFieldParent, nullptr, Escher::TextField::maxBufferSize(), Escher::TextField::maxBufferSize(), nullptr, textFieldDelegate),
+  m_textField(textFieldParent, nullptr, textFieldDelegate),
   m_textView(KDFont::Size::Small, KDContext::k_alignLeft, KDContext::k_alignCenter, k_legendColor, k_backgroundColor),
   m_button(k_backgroundColor)
 {}

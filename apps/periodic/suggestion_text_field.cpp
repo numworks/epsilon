@@ -23,6 +23,11 @@ KDSize SuggestionTextField::ContentView::minimalSizeForOptimalDisplay() const {
   return m_suggestion ? KDSize(size.width() + KDFont::Font(m_font)->stringSize(m_suggestion).width(), size.height()) : size;
 }
 
+void SuggestionTextField::ContentView::setSuggestion(const char * suggestion) {
+  m_suggestion = suggestion;
+  markRectAsDirty(bounds());
+}
+
 // SuggestionTextField
 
 SuggestionTextField::SuggestionTextField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) :

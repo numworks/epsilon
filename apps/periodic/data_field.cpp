@@ -46,6 +46,9 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
 }
 
 DataField::ColorPair DoubleDataField::getColors(AtomicNumber z) const {
+  if (!std::isfinite(getDouble(z))) {
+    return ColorPair(Palette::ElementGrayDark, Palette::ElementGrayLight);
+  }
   ColorPair min = minColors();
   ColorPair max = maxColors();
   return ColorPair(blendAlphaForContinuousParameter(z), min.fg(), max.fg(), min.bg(), max.bg());

@@ -90,7 +90,18 @@ bool MainController::textFieldShouldFinishEditing(Escher::AbstractTextField * te
 }
 
 bool MainController::textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) {
-  if (!m_view.bannerView()->textField()->isEditing() && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
+  if (textField->isEditing()) {
+    if (event == Ion::Events::Up || event == Ion::Events::Down) {
+      ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+      SuggestionTextField * suggestionTextField = m_view.bannerView()->textField();
+      const char * suggestion = dataSource->cycleSuggestion(event == Ion::Events::Down);
+      if (suggestion) {
+        suggestion += suggestionTextField->draftTextLength();
+      }
+      suggestionTextField->setSuggestion(suggestion);
+      return true;
+    }
+  } else if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* OK should not start the edition */
     return handleEvent(event);
   }

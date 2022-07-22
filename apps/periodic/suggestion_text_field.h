@@ -20,7 +20,7 @@ private:
     void drawRect(KDContext * ctx, KDRect rect) const override;
     KDSize minimalSizeForOptimalDisplay() const override;
 
-    void setSuggestion(const char * suggestion) { m_suggestion = suggestion; }
+    void setSuggestion(const char * suggestion);
 
   private:
     const char * m_suggestion;

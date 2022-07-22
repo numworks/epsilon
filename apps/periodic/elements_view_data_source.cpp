@@ -38,6 +38,20 @@ const char * ElementsViewDataSource::suggestedElementName() {
   return nullptr;
 }
 
+const char * ElementsViewDataSource::cycleSuggestion(bool goingDown) {
+  if (!(ElementsDataBase::IsElement(m_searchResult) && elementNameMatchesFilter(m_searchResult))) {
+    return nullptr;
+  }
+  for (int i = 1; i < ElementsDataBase::k_numberOfElements; i++) {
+    AtomicNumber z = (m_searchResult + (goingDown ? i : -i) - 1 + ElementsDataBase::k_numberOfElements) % ElementsDataBase::k_numberOfElements + 1;
+    if (elementNameMatchesFilter(z)) {
+      m_searchResult = z;
+      break;
+    }
+  }
+  return I18n::translate(ElementsDataBase::Name(m_searchResult));
+}
+
 bool ElementsViewDataSource::elementMatchesFilter(AtomicNumber z) const {
   return !m_textFilter
       || elementSymbolMatchesFilter(z)

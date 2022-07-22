@@ -21,8 +21,9 @@ public:
   /* Returns colors given by the data field, or default colors if the element
    * does not match the filter. */
   DataField::ColorPair filteredColors(AtomicNumber z) const;
-  const char * suggestedElementName();
   AtomicNumber elementSearchResult() const { return m_searchResult; }
+  const char * suggestedElementName();
+  const char * cycleSuggestion(bool goingDown);
 
 private:
   bool elementMatchesFilter(AtomicNumber z) const;

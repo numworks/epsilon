@@ -36,4 +36,10 @@ SuggestionTextField::SuggestionTextField(Responder * parentResponder, InputEvent
   m_contentView(nullptr, maxBufferSize(), maxBufferSize(), KDFont::Size::Large, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite)
 {}
 
+void SuggestionTextField::commitSuggestion() {
+  if (m_contentView.suggestion()) {
+    setText(m_contentView.suggestion());
+  }
+}
+
 }

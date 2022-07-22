@@ -104,6 +104,11 @@ bool MainController::textFieldDidReceiveEvent(Escher::AbstractTextField * textFi
       m_view.bannerView()->textField()->setSuggestion(dataSource->cycleSuggestion(event == Ion::Events::Down));
       return true;
     }
+    if (event == Ion::Events::Right && textField->cursorLocation() == textField->text() + textField->draftTextLength()) {
+      /* Commit to suggested text on Right press. */
+      m_view.bannerView()->textField()->commitSuggestion();
+      return true;
+    }
   } else if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* OK should not start the edition */
     return handleEvent(event);

@@ -2,11 +2,11 @@
 #define PERIODIC_BANNER_VIEW_H
 
 #include "elements_view_data_source.h"
+#include "suggestion_text_field.h"
 #include <escher/buffer_text_view.h>
 #include <escher/ellipsis_view.h>
 #include <escher/palette.h>
 #include <escher/solid_color_view.h>
-#include <escher/text_field.h>
 #include <escher/view.h>
 #include <ion/display.h>
 
@@ -21,7 +21,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override { return KDSize(Ion::Display::Width, k_bannerHeight + k_borderHeight); }
 
   void reload();
-  Escher::TextField * textField() { return &m_textField; }
+  SuggestionTextField * textField() { return &m_textField; }
 
 private:
   constexpr static KDColor k_legendColor = Escher::Palette::GrayVeryDark;
@@ -62,7 +62,7 @@ private:
   void layoutSubviews(bool force = false) override;
   bool displayTextField() const { return m_textField.isEditing(); }
 
-  Escher::TextField m_textField;
+  SuggestionTextField m_textField;
   DotView m_dotView;
   Escher::BufferTextView m_textView;
   EllipsisButton m_button;

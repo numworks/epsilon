@@ -96,9 +96,11 @@ protected:
     void willModifyTextBuffer();
     void didModifyTextBuffer();
 
+  protected:
+    KDRect glyphFrameAtPosition(const char * buffer, const char * position) const override;
+
   private:
     void layoutSubviews(bool force = false) override;
-    KDRect glyphFrameAtPosition(const char * buffer, const char * position) const override;
 
     char * m_textBuffer;
     size_t m_textBufferSize;

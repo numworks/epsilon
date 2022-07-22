@@ -13,6 +13,7 @@ app_periodic_src = $(addprefix apps/periodic/,\
   main_controller.cpp \
   physical_quantity_cell.cpp \
   single_element_view.cpp \
+  suggestion_text_field.cpp \
   table_layout.cpp \
 )
 

@@ -473,7 +473,7 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
 }
 
 void Parser::parseSequence(Expression & leftHandSide, const char * name, Token::Type rightDelimiter) {
-  assert(m_nextToken.type() == (rightDelimiter == Token::RightBrace) ? Token::LeftBrace : Token::LeftParenthesis);
+  assert(m_nextToken.type() == ((rightDelimiter == Token::RightBrace) ? Token::LeftBrace : Token::LeftParenthesis));
   popToken(); // Pop the left delimiter
   Expression rank = parseUntil(rightDelimiter);
   if (m_status != Status::Progress) {

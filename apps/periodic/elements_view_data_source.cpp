@@ -4,6 +4,15 @@
 
 namespace Periodic {
 
+ElementsViewDataSource::ElementsViewDataSource(const DataField * field, AtomicNumber selectedElement, AtomicNumber previousElement, ElementsViewDelegate * delegate) :
+  m_delegate(delegate),
+  m_field(field),
+  m_textFilter(nullptr),
+  m_selectedElement(selectedElement),
+  m_previousElement(previousElement),
+  m_searchResult(ElementsDataBase::k_noElement)
+{}
+
 void ElementsViewDataSource::setSelectedElement(AtomicNumber z) {
   if (z != m_selectedElement) {
     assert(m_delegate);

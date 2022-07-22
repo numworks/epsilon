@@ -24,6 +24,13 @@ const Escher::Image * App::Descriptor::icon() const {
 
 // App::Snapshot
 
+App::Snapshot::Snapshot() :
+  m_field(&ElementsDataBase::GroupField),
+  m_selectedElement(1),
+  m_previousElement(ElementsDataBase::k_noElement)
+{}
+
+
 App * App::Snapshot::unpack(Escher::Container * container) {
   return new (container->currentAppBuffer()) App(this);
 }
@@ -37,9 +44,8 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 App::App(Snapshot * snapshot) :
   Shared::TextFieldDelegateApp(snapshot, &m_stackController),
   m_stackController(&m_modalViewController, &m_mainController, Escher::StackViewController::Style::WhiteUniform),
-  m_mainController(&m_stackController)
-{
-  snapshot->elementsViewDataSource()->setDelegate(&m_mainController);
-}
+  m_mainController(&m_stackController),
+  m_dataSource(snapshot->field(), snapshot->selectedElement(), snapshot->previousElement(), &m_mainController)
+{}
 
 }

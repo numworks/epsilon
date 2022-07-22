@@ -9,9 +9,8 @@ namespace Periodic {
 
 class ElementsViewDataSource {
 public:
-  ElementsViewDataSource() : m_delegate(nullptr), m_field(&ElementsDataBase::GroupField), m_textFilter(nullptr), m_selectedElement(1), m_previousElement(ElementsDataBase::k_noElement), m_searchResult(ElementsDataBase::k_noElement) {}
+  ElementsViewDataSource(const DataField * field, AtomicNumber selectedElement, AtomicNumber previousElement, ElementsViewDelegate * delegate);
 
-  void setDelegate(ElementsViewDelegate * delegate) { m_delegate = delegate; }
   AtomicNumber selectedElement() const { return m_selectedElement; }
   AtomicNumber previousElement() const { return m_previousElement; }
   void setSelectedElement(AtomicNumber z);

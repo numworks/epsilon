@@ -21,24 +21,32 @@ public:
 
   class Snapshot : public Shared::SharedApp::Snapshot {
   public:
+    Snapshot();
+
     App * unpack(Escher::Container * container) override;
     const Descriptor * descriptor() const override;
-    ElementsViewDataSource * elementsViewDataSource() { return &m_dataSource; }
+
+    const DataField * field() const { return m_field; }
+    AtomicNumber selectedElement() const { return m_selectedElement; }
+    AtomicNumber previousElement() const { return m_previousElement; }
 
   private:
-    ElementsViewDataSource m_dataSource;
+    const DataField * m_field;
+    AtomicNumber m_selectedElement;
+    AtomicNumber m_previousElement;
   };
   TELEMETRY_ID("PeriodicTable");
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
 
-  ElementsViewDataSource * elementsViewDataSource() const { return static_cast<Snapshot *>(snapshot())->elementsViewDataSource(); }
+  ElementsViewDataSource * elementsViewDataSource() { return &m_dataSource; }
 
 private:
   App(Snapshot * snapshot);
 
   Escher::StackViewController m_stackController;
   MainController m_mainController;
+  ElementsViewDataSource m_dataSource;
 };
 
 }

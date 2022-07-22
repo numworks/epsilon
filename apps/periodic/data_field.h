@@ -1,6 +1,7 @@
 #ifndef PERIODIC_DATA_FIELD
 #define PERIODIC_DATA_FIELD
 
+#include "palette.h"
 #include <apps/i18n.h>
 #include <poincare/integer.h>
 #include <poincare/layout_helper.h>
@@ -141,6 +142,8 @@ public:
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicElectronegativitySymbol; }
   double getDouble(AtomicNumber z) const override;
   Poincare::Layout fieldUnit() const override { return Poincare::Layout(); }
+  ColorPair minColors() const override { return ColorPair(Palette::ElementRedDark, Palette::ElementRedLight); }
+  ColorPair maxColors() const override { return ColorPair(Palette::ElementGreenDark, Palette::ElementGreenLight); }
 };
 
 class RadiusDataField : public DoubleDataField {

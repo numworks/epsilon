@@ -99,7 +99,11 @@ bool MainController::textFieldDidReceiveEvent(Escher::AbstractTextField * textFi
 
 bool MainController::textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
-  dataSource->setSelectedElement(dataSource->firstMatchingElement());
+  AtomicNumber match = dataSource->elementSearchResult();
+  if (!ElementsDataBase::IsElement(match)) {
+    match = 1;
+  }
+  dataSource->setSelectedElement(match);
   dataSource->setTextFilter(nullptr);
   return true;
 }
@@ -113,6 +117,16 @@ bool MainController::textFieldDidAbortEditing(Escher::AbstractTextField * textFi
 
 bool MainController::textFieldDidHandleEvent(Escher::AbstractTextField * textField, bool returnValue, bool textSizeDidChange) {
   if (textSizeDidChange) {
+    if (textField->isEditing()) {
+      /* Update suggestion text */
+      ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+      SuggestionTextField * suggestionTextField = m_view.bannerView()->textField();
+      const char * suggestion = dataSource->suggestedElementName();
+      if (suggestion) {
+        suggestion += suggestionTextField->draftTextLength();
+      }
+      suggestionTextField->setSuggestion(suggestion);
+    }
     m_view.elementsView()->reload();
   }
   return returnValue;

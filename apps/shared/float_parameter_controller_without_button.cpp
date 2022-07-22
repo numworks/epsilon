@@ -83,14 +83,14 @@ KDCoordinate FloatParameterControllerWithoutButton<T,M>::nonMemoizedRowHeight(in
 }
 
 template<typename T, typename M>
-bool FloatParameterControllerWithoutButton<T,M>::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+bool FloatParameterControllerWithoutButton<T,M>::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   return (event == Ion::Events::Down && selectedRow() < numberOfRows()-1)
       || (event == Ion::Events::Up && selectedRow() > 0)
       || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
 template<typename T, typename M>
-bool FloatParameterControllerWithoutButton<T,M>::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool FloatParameterControllerWithoutButton<T,M>::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   T floatBody;
   int row = selectedRow();
   InfinityTolerance infTolerance = infinityAllowanceForRow(row);

@@ -287,12 +287,12 @@ void MenuController::tableViewDidChangeSelection(SelectableTableView * t, int pr
   }
 }
 
-bool MenuController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+bool MenuController::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE
     || event == Ion::Events::Down || event == Ion::Events::Up;
 }
 
-bool MenuController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool MenuController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   const char * newName;
   constexpr static int bufferSize = Script::k_defaultScriptNameMaxSize + 1 + ScriptStore::k_scriptExtensionLength; //"script99" + "." + "py"
   char numberedDefaultName[bufferSize];
@@ -343,7 +343,7 @@ bool MenuController::textFieldDidFinishEditing(TextField * textField, const char
   return false;
 }
 
-bool MenuController::textFieldDidHandleEvent(TextField * textField, bool returnValue, bool textSizeDidChange) {
+bool MenuController::textFieldDidHandleEvent(AbstractTextField * textField, bool returnValue, bool textSizeDidChange) {
   int scriptExtensionLength = 1 + strlen(ScriptStore::k_scriptExtension);
   if (textField->isEditing()) {
     const char * maxPointerLocation = textField->text() + textField->draftTextLength() - scriptExtensionLength;
@@ -383,7 +383,7 @@ void MenuController::updateAddScriptRowDisplay() {
   m_selectableTableView.reloadData();
 }
 
-bool MenuController::privateTextFieldDidAbortEditing(TextField * textField, bool menuControllerStaysInResponderChain) {
+bool MenuController::privateTextFieldDidAbortEditing(AbstractTextField * textField, bool menuControllerStaysInResponderChain) {
   /* If menuControllerStaysInResponderChain is false, we do not want to use
    * methods that might call setFirstResponder, because we might be in the
    * middle of another setFirstResponder call. */

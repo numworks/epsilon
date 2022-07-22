@@ -131,11 +131,11 @@ InputCategoricalController::InputCategoricalController(
   m_innerSignificanceCell.setSubLabelMessage(I18n::Message::SignificanceLevel);
 }
 
-bool InputCategoricalController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+bool InputCategoricalController::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Up || event == Ion::Events::Down;
 }
 
-bool InputCategoricalController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool InputCategoricalController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   // Parse and check significance level
   double p;
   if (textFieldDelegateApp()->hasUndefinedValue(text, &p, false, false)) {
@@ -175,7 +175,7 @@ HighlightCell * InputCategoricalController::reusableCell(int index, int type) {
   }
 }
 
-bool InputCategoricalController::handleEditedValue(int i, double p, TextField * textField, Ion::Events::Event event) {
+bool InputCategoricalController::handleEditedValue(int i, double p, AbstractTextField * textField, Ion::Events::Event event) {
   if (!m_statistic->authorizedParameterAtIndex(p, i)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;

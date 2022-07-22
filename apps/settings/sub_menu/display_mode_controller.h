@@ -16,8 +16,8 @@ public:
   int reusableCellCount(int type) override;
   int typeAtIndex(int index) override { return (index == numberOfRows() - 1) ? k_significantDigitsType : k_resultFormatType; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 private:
   constexpr static int k_resultFormatType = 0;
   constexpr static int k_significantDigitsType = 1;

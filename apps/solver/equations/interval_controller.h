@@ -22,7 +22,7 @@ private:
   void buttonAction() override;
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
   class ContentView : public Escher::View {
   public:
     ContentView(Escher::SelectableTableView * selectableTableView);

@@ -22,11 +22,11 @@ public:
   bool shouldHideSublabel() override { return singleRowMode() && textField()->isEditing(); }
 
   // ChainedTextFieldDelegate
-  void textFieldDidStartEditing(TextField * textField) override;
-  bool textFieldDidFinishEditing(TextField * textField,
+  void textFieldDidStartEditing(AbstractTextField * textField) override;
+  bool textFieldDidFinishEditing(AbstractTextField * textField,
                                  const char * text,
                                  Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(TextField * textField) override;
+  bool textFieldDidAbortEditing(AbstractTextField * textField) override;
 
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate,
                     TextFieldDelegate * textFieldDelegate) override;

@@ -50,7 +50,7 @@ float GraphController::interestingXMin() const {
   return nmin;
 }
 
-bool GraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool GraphController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
   double floatBody;
   if (myApp->hasUndefinedValue(text, &floatBody)) {

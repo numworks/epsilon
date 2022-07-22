@@ -37,11 +37,11 @@ public:
   void setHighlighted(bool highlight) override;
   bool shouldHideSublabel() override { return singleRowMode() && m_textField.isEditing(); }
 
-  void textFieldDidStartEditing(Escher::TextField * textField) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField,
+  void textFieldDidStartEditing(Escher::AbstractTextField * textField) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField,
                                  const char * text,
                                  Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(Escher::TextField * textField) override;
+  bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
 
   void setDelegates(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                     Escher::TextFieldDelegate * textFieldDelegate);

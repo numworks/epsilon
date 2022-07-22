@@ -42,7 +42,7 @@ private:
   int typeAtIndex(int index) override;
   int numberOfParameters() const { return function()->numberOfCurveParameters() + shouldDisplayDerivative(); }
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
   bool confirmParameterAtIndex(int parameterIndex, double f);

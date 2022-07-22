@@ -90,7 +90,7 @@ EditableCategoricalTableCell::EditableCategoricalTableCell(Escher::Responder * p
   m_selectableTableView.setBottomMargin(k_bottomMargin);
 }
 
-bool EditableCategoricalTableCell::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+bool EditableCategoricalTableCell::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE ||
          (event == Ion::Events::Right &&
           m_selectableTableView.selectedColumn() < tableViewDataSource()->numberOfColumns() - 1) ||
@@ -100,7 +100,7 @@ bool EditableCategoricalTableCell::textFieldShouldFinishEditing(TextField * text
          (event == Ion::Events::Up && m_selectableTableView.selectedRow() > 0);
 }
 
-bool EditableCategoricalTableCell::textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) {
+bool EditableCategoricalTableCell::textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   double p;
   if (textFieldDelegateApp()->hasUndefinedValue(text, &p, false, false)) {
     return false;

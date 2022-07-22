@@ -15,8 +15,8 @@ class ColumnParameterController;
 class EditableCellTableViewController : public TabTableController , public RegularTableViewDataSource, public TextFieldDelegate, public ClearColumnHelper {
 public:
   EditableCellTableViewController(Responder * parentResponder);
-  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
   int numberOfRows() const override;
   void willDisplayCellAtLocationWithDisplayMode(Escher::HighlightCell * cell, int i, int j, Poincare::Preferences::PrintFloatMode mode);

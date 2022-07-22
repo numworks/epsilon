@@ -17,19 +17,19 @@
 #include <algorithm>
 
 namespace Escher {
-static char s_draftTextBuffer[TextField::maxBufferSize()];
+static char s_draftTextBuffer[AbstractTextField::maxBufferSize()];
 
-/* TextField::ContentView */
+/* AbstractTextField::ContentView */
 
-TextField::ContentView::ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
+AbstractTextField::ContentView::ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   TextInput::ContentView(font, horizontalAlignment, verticalAlignment),
-  m_isEditing(false),
   m_textBuffer(textBuffer),
   m_textBufferSize(textBufferSize),
   m_draftTextBufferSize(draftTextBufferSize),
   m_currentDraftTextLength(0),
   m_textColor(textColor),
-  m_backgroundColor(backgroundColor)
+  m_backgroundColor(backgroundColor),
+  m_isEditing(false)
 {
   if (textBuffer == nullptr) {
     m_textBuffer = s_draftTextBuffer;
@@ -39,17 +39,17 @@ TextField::ContentView::ContentView(char * textBuffer, size_t textBufferSize, si
   reinitDraftTextBuffer();
 }
 
-void TextField::ContentView::setBackgroundColor(KDColor backgroundColor) {
+void AbstractTextField::ContentView::setBackgroundColor(KDColor backgroundColor) {
   m_backgroundColor = backgroundColor;
   markRectAsDirty(bounds());
 }
 
-void TextField::ContentView::setTextColor(KDColor textColor) {
+void AbstractTextField::ContentView::setTextColor(KDColor textColor) {
   m_textColor = textColor;
   markRectAsDirty(bounds());
 }
 
-void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
+void AbstractTextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   KDColor backgroundColor = m_backgroundColor;
   if (m_isEditing) {
     backgroundColor = KDColorWhite;
@@ -72,15 +72,15 @@ void TextField::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 }
 
-const char * TextField::ContentView::text() const {
+const char * AbstractTextField::ContentView::text() const {
   return const_cast<const char *>(m_isEditing ? s_draftTextBuffer : m_textBuffer);
 }
 
-const char * TextField::ContentView::editedText() const {
+const char * AbstractTextField::ContentView::editedText() const {
   return s_draftTextBuffer;
 }
 
-void TextField::ContentView::setText(const char * text) {
+void AbstractTextField::ContentView::setText(const char * text) {
   size_t textRealLength = strlen(text);
   size_t maxBufferSize = m_textBufferSize;
   char * buffer = m_textBuffer;
@@ -104,7 +104,7 @@ void TextField::ContentView::setText(const char * text) {
   markRectAsDirty(bounds());
 }
 
-void TextField::ContentView::setEditing(bool isEditing) {
+void AbstractTextField::ContentView::setEditing(bool isEditing) {
   if (m_isEditing == isEditing) {
     return;
   }
@@ -120,7 +120,7 @@ void TextField::ContentView::setEditing(bool isEditing) {
   layoutSubviews();
 }
 
-void TextField::ContentView::reinitDraftTextBuffer() {
+void AbstractTextField::ContentView::reinitDraftTextBuffer() {
   /* We first need to clear the buffer, otherwise setCursorLocation might do
    * various operations on a buffer with maybe non-initialized content, such as
    * stringSize, etc. Those operation might be perilous on non-UTF8 content. */
@@ -129,7 +129,7 @@ void TextField::ContentView::reinitDraftTextBuffer() {
   setCursorLocation(s_draftTextBuffer);
 }
 
-bool TextField::ContentView::insertTextAtLocation(const char * text, char * location, int textLen) {
+bool AbstractTextField::ContentView::insertTextAtLocation(const char * text, char * location, int textLen) {
   assert(m_isEditing);
 
   size_t textLength = textLen < 0 ? strlen(text) : (size_t)textLen;
@@ -152,7 +152,7 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
   return true;
 }
 
-KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
+KDSize AbstractTextField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize stringSize = KDFont::Font(m_font)->stringSize(text());
   assert(stringSize.height() == KDFont::GlyphHeight(m_font));
   if (m_isEditing) {
@@ -161,7 +161,7 @@ KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
   return stringSize;
 }
 
-bool TextField::ContentView::removePreviousGlyph() {
+bool AbstractTextField::ContentView::removePreviousGlyph() {
   assert(m_isEditing);
 
   if (m_horizontalAlignment > 0.0f) {
@@ -190,7 +190,7 @@ bool TextField::ContentView::removePreviousGlyph() {
   return true;
 }
 
-bool TextField::ContentView::removeEndOfLine() {
+bool AbstractTextField::ContentView::removeEndOfLine() {
   assert(m_isEditing);
   size_t lengthToCursor = (size_t)(cursorLocation() - s_draftTextBuffer);
   if (m_currentDraftTextLength == lengthToCursor) {
@@ -203,21 +203,21 @@ bool TextField::ContentView::removeEndOfLine() {
   return true;
 }
 
-void TextField::ContentView::willModifyTextBuffer() {
+void AbstractTextField::ContentView::willModifyTextBuffer() {
   assert(m_isEditing);
   /* This method should be called when the buffer is modified outside the
    * content view, for instance from the textfield directly. */
   reloadRectFromPosition(s_draftTextBuffer);
 }
 
-void TextField::ContentView::didModifyTextBuffer() {
+void AbstractTextField::ContentView::didModifyTextBuffer() {
   /* This method should be called when the buffer is modified outside the
    * content view, for instance from the textfield directly. */
   m_currentDraftTextLength = strlen(s_draftTextBuffer);
   layoutSubviews();
 }
 
-size_t TextField::ContentView::deleteSelection() {
+size_t AbstractTextField::ContentView::deleteSelection() {
   assert(!selectionIsEmpty());
   assert(m_isEditing);
   size_t removedLength = m_selectionEnd - m_selectionStart;
@@ -231,7 +231,7 @@ size_t TextField::ContentView::deleteSelection() {
   return removedLength;
 }
 
-void TextField::ContentView::layoutSubviews(bool force) {
+void AbstractTextField::ContentView::layoutSubviews(bool force) {
   if (!m_isEditing) {
     m_cursorView.setFrame(KDRectZero, force);
     return;
@@ -239,7 +239,7 @@ void TextField::ContentView::layoutSubviews(bool force) {
   TextInput::ContentView::layoutSubviews(force);
 }
 
-KDRect TextField::ContentView::glyphFrameAtPosition(const char * buffer, const char * position) const {
+KDRect AbstractTextField::ContentView::glyphFrameAtPosition(const char * buffer, const char * position) const {
   assert(buffer != nullptr && position != nullptr);
   assert(position >= buffer);
   KDSize glyphSize = KDFont::GlyphSize(m_font);
@@ -252,56 +252,52 @@ KDRect TextField::ContentView::glyphFrameAtPosition(const char * buffer, const c
       glyphSize);
 }
 
-/* TextField */
+/* AbstractTextField */
 
-TextField::TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize,
-    InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, KDFont::Size font,
-    float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
-  TextInput(parentResponder, &m_contentView),
+AbstractTextField::AbstractTextField(Responder * parentResponder, View * contentView, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) :
+  TextInput(parentResponder, contentView),
   EditableField(inputEventHandlerDelegate),
-  m_contentView(textBuffer, textBufferSize, draftTextBufferSize, font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
   m_delegate(delegate)
-{
-}
+{}
 
-void TextField::setBackgroundColor(KDColor backgroundColor) {
+void AbstractTextField::setBackgroundColor(KDColor backgroundColor) {
   ScrollView::setBackgroundColor(backgroundColor);
-  m_contentView.setBackgroundColor(backgroundColor);
+  contentView()->setBackgroundColor(backgroundColor);
 }
 
-void TextField::setTextColor(KDColor textColor) {
-  m_contentView.setTextColor(textColor);
+void AbstractTextField::setTextColor(KDColor textColor) {
+  contentView()->setTextColor(textColor);
 }
 
-void TextField::setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate,
+void AbstractTextField::setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate,
                              TextFieldDelegate * delegate) {
   m_inputEventHandlerDelegate = inputEventHandlerDelegate;
   m_delegate = delegate;
 }
 
-void TextField::setInputEventHandlerDelegate(
+void AbstractTextField::setInputEventHandlerDelegate(
     InputEventHandlerDelegate * inputEventHandlerDelegate) {
   m_inputEventHandlerDelegate = inputEventHandlerDelegate;
 }
 
-bool TextField::isEditing() const {
-  return m_contentView.isEditing();
+bool AbstractTextField::isEditing() const {
+  return contentView()->isEditing();
 }
 
-size_t TextField::draftTextLength() const {
+size_t AbstractTextField::draftTextLength() const {
   assert(isEditing());
-  return m_contentView.editedTextLength();
+  return contentView()->editedTextLength();
 }
 
-void TextField::setText(const char * text) {
+void AbstractTextField::setText(const char * text) {
   reloadScroll();
-  m_contentView.setText(text);
+  contentView()->setText(text);
   /* Set the cursor location here and not in ContentView::setText so that
    * TextInput::willSetCursorLocation is called. */
-  setCursorLocation(m_contentView.editedText()+strlen(text));
+  setCursorLocation(contentView()->editedText()+strlen(text));
 }
 
-bool TextField::privateHandleEvent(Ion::Events::Event event) {
+bool AbstractTextField::privateHandleEvent(Ion::Events::Event event) {
   // Handle Toolbox or Var event
   if (handleBoxEvent(event)) {
     if (!isEditing()) {
@@ -325,7 +321,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
      * does not fail, it will save the editedText in a model and reload the
      * content of the textfield buffer using the very same model - that has
      * been updated. */
-    if (m_delegate->textFieldDidFinishEditing(this, m_contentView.editedText(), event)) {
+    if (m_delegate->textFieldDidFinishEditing(this, contentView()->editedText(), event)) {
       // Clean draft text for next use
       reinitDraftTextBuffer();
       resetSelection();
@@ -348,7 +344,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace && isEditing()) {
-    if (m_contentView.selectionIsEmpty()) {
+    if (contentView()->selectionIsEmpty()) {
       return removePreviousGlyph();
     }
     deleteSelection();
@@ -363,7 +359,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {
-    if (!m_contentView.selectionIsEmpty()) {
+    if (!contentView()->selectionIsEmpty()) {
       deleteSelection();
     } else if (!removeEndOfLine()) {
       removeWholeText();
@@ -372,7 +368,7 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
     if (storeInClipboard() && event == Ion::Events::Cut) {
-      if (!m_contentView.selectionIsEmpty()) {
+      if (!contentView()->selectionIsEmpty()) {
         deleteSelection();
       } else {
         removeWholeText();
@@ -383,8 +379,8 @@ bool TextField::privateHandleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void TextField::removePreviousGlyphIfRepetition(bool defaultXNTHasChanged) {
-  if (!defaultXNTHasChanged && Ion::Events::repetitionFactor() > 0 && isEditing() && m_contentView.selectionIsEmpty()) {
+void AbstractTextField::removePreviousGlyphIfRepetition(bool defaultXNTHasChanged) {
+  if (!defaultXNTHasChanged && Ion::Events::repetitionFactor() > 0 && isEditing() && contentView()->selectionIsEmpty()) {
     // Since XNT is cycling on simple glyphs, remove the last inserted one
     bool success = removePreviousGlyph();
     assert(success);
@@ -395,7 +391,7 @@ void TextField::removePreviousGlyphIfRepetition(bool defaultXNTHasChanged) {
 }
 
 // TODO : Handle cycling with non-default layouts.
-size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, size_t bufferLength) {
+size_t AbstractTextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, size_t bufferLength) {
   /* If cursor is in one of the following functions, and everything before the
    * cursor is correctly nested, the default XNTCodePoint will be improved.
    * These functions all have the following structure :
@@ -416,7 +412,7 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
   }
   bool defaultXNTHasChanged = false;
   const char * text = this->text();
-  assert(text == m_contentView.editedText());
+  assert(text == contentView()->editedText());
   const char * locationOfCursor = cursorLocation();
   // Step 1 : Identify the function the cursor is in
   UTF8Decoder functionDecoder(text, locationOfCursor);
@@ -496,7 +492,7 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
   return UTF8Decoder::CodePointToChars(defaultXNTCodePoint, buffer, bufferLength);
 }
 
-bool TextField::addXNTCodePoint(CodePoint xnt) {
+bool AbstractTextField::addXNTCodePoint(CodePoint xnt) {
   constexpr int bufferSize = Poincare::SymbolAbstract::k_maxNameSize;
   char buffer[bufferSize];
   size_t length = insertXNTChars(xnt, buffer, bufferSize - 1);
@@ -506,7 +502,7 @@ bool TextField::addXNTCodePoint(CodePoint xnt) {
   return handleEventWithText(buffer, false, true);
 }
 
-bool TextField::handleEvent(Ion::Events::Event event) {
+bool AbstractTextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
   size_t previousTextLength = strlen(text());
   bool didHandleEvent = false;
@@ -519,7 +515,7 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);
   } else if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
-    const char * previousText = m_contentView.text();
+    const char * previousText = contentView()->text();
     setEditing(true);
     m_delegate->textFieldDidStartEditing(this);
     setText(previousText);
@@ -537,14 +533,14 @@ bool TextField::handleEvent(Ion::Events::Event event) {
   return m_delegate->textFieldDidHandleEvent(this, didHandleEvent, strlen(text()) != previousTextLength);
 }
 
-void TextField::scrollToCursor() {
+void AbstractTextField::scrollToCursor() {
   if (!isEditing()) {
     return;
   }
   return TextInput::scrollToCursor();
 }
 
-bool TextField::shouldFinishEditing(Ion::Events::Event event) {
+bool AbstractTextField::shouldFinishEditing(Ion::Events::Event event) {
   if (m_delegate->textFieldShouldFinishEditing(this, event)) {
     resetSelection();
     return true;
@@ -552,13 +548,13 @@ bool TextField::shouldFinishEditing(Ion::Events::Event event) {
   return false;
 }
 
-bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
+bool AbstractTextField::privateHandleMoveEvent(Ion::Events::Event event) {
   if (!isEditing()) {
     return false;
   }
-  const char * draftBuffer = m_contentView.editedText();
+  const char * draftBuffer = contentView()->editedText();
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
-    if (!m_contentView.selectionIsEmpty()) {
+    if (!contentView()->selectionIsEmpty()) {
       resetSelection();
       return true;
     }
@@ -572,7 +568,7 @@ bool TextField::privateHandleMoveEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool TextField::privateHandleSelectEvent(Ion::Events::Event event) {
+bool AbstractTextField::privateHandleSelectEvent(Ion::Events::Event event) {
   if (!isEditing()) {
     return false;
   }
@@ -583,7 +579,7 @@ bool TextField::privateHandleSelectEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool TextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText) {
+bool AbstractTextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText) {
   size_t previousTextLength = strlen(text());
 
   if (!isEditing()) {
@@ -601,7 +597,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
 
   if (eventText[0] != 0) {
     // Remove the Empty code points
-    constexpr int bufferSize = TextField::maxBufferSize();
+    constexpr int bufferSize = AbstractTextField::maxBufferSize();
     char buffer[bufferSize];
     {
       CodePoint c[] = {UCodePointEmpty, '\n'};
@@ -632,7 +628,7 @@ bool TextField::handleEventWithText(const char * eventText, bool indentation, bo
   return m_delegate->textFieldDidHandleEvent(this, true, strlen(text()) != previousTextLength);
 }
 
-void TextField::removeWholeText() {
+void AbstractTextField::removeWholeText() {
   reinitDraftTextBuffer();
   resetSelection();
   markRectAsDirty(bounds());
@@ -640,16 +636,25 @@ void TextField::removeWholeText() {
   reloadScroll();
 }
 
-bool TextField::storeInClipboard() const {
+bool AbstractTextField::storeInClipboard() const {
   if (!isEditing()) {
     Clipboard::sharedClipboard()->store(text());
     return true;
-  } else if (!m_contentView.selectionIsEmpty()) {
-    const char * start = m_contentView.selectionStart();
-    Clipboard::sharedClipboard()->store(start, m_contentView.selectionEnd() - start);
+  } else if (!contentView()->selectionIsEmpty()) {
+    const char * start = contentView()->selectionStart();
+    Clipboard::sharedClipboard()->store(start, contentView()->selectionEnd() - start);
     return true;
   }
   return false;
 }
+
+/* TextField */
+
+TextField::TextField(Responder * parentResponder, char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize,
+    InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, KDFont::Size font,
+    float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
+  AbstractTextField(parentResponder, &m_contentView, inputEventHandlerDelegate, delegate),
+  m_contentView(textBuffer, textBufferSize, draftTextBufferSize, font, horizontalAlignment, verticalAlignment, textColor, backgroundColor)
+{}
 
 }

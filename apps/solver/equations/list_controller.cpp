@@ -121,7 +121,7 @@ bool layoutRepresentsAnEquality(Poincare::Layout l) {
 }
 
 // TODO factorize with Graph?
-bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     const char * text = textField->text();
     if (!textRepresentsAnEquality(text)) {
@@ -152,7 +152,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
   return false;
 }
 
-bool ListController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool ListController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   reloadButtonMessage();
   return true;
 }

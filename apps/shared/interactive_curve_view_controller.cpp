@@ -171,7 +171,7 @@ void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirs
   }
 }
 
-bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool InteractiveCurveViewController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   double floatBody;
   if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
     return false;
@@ -183,7 +183,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(TextField * textF
   return true;
 }
 
-bool InteractiveCurveViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+bool InteractiveCurveViewController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   if ((event == Ion::Events::Plus || event == Ion::Events::Minus || event == Ion::Events::Toolbox) && !textField->isEditing()) {
     return handleEvent(event);
   }

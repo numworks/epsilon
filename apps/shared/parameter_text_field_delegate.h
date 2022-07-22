@@ -10,7 +10,7 @@ namespace Shared {
 
 class ParameterTextFieldDelegate : public TextFieldDelegate {
 public:
-  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
 };
 
 }

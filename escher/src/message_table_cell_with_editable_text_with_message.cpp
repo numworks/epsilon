@@ -27,14 +27,14 @@ void MessageTableCellWithEditableTextWithMessage::setHighlighted(bool highlight)
   m_subLabelView.setBackgroundColor(defaultBackgroundColor());
 }
 
-void MessageTableCellWithEditableTextWithMessage::textFieldDidStartEditing(TextField * textField) {
+void MessageTableCellWithEditableTextWithMessage::textFieldDidStartEditing(AbstractTextField * textField) {
   // Relayout to hide sublabel
   layoutSubviews();
   ChainedTextFieldDelegate::textFieldDidStartEditing(textField);
 }
 
 bool MessageTableCellWithEditableTextWithMessage::textFieldDidFinishEditing(
-    TextField * textField,
+    AbstractTextField * textField,
     const char * text,
     Ion::Events::Event event) {
   bool success = ChainedTextFieldDelegate::textFieldDidFinishEditing(textField, text, event);
@@ -45,7 +45,7 @@ bool MessageTableCellWithEditableTextWithMessage::textFieldDidFinishEditing(
   return success;
 }
 
-bool MessageTableCellWithEditableTextWithMessage::textFieldDidAbortEditing(TextField * textField) {
+bool MessageTableCellWithEditableTextWithMessage::textFieldDidAbortEditing(AbstractTextField * textField) {
   // Relayout to show sublabel
   layoutSubviews();
   return ChainedTextFieldDelegate::textFieldDidAbortEditing(textField);

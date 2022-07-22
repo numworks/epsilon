@@ -20,11 +20,11 @@ CodePoint TextFieldDelegateApp::XNT() {
   return ContinuousFunction::k_cartesianSymbol;
 }
 
-bool TextFieldDelegateApp::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+bool TextFieldDelegateApp::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   return isFinishingEvent(event);
 }
 
-bool TextFieldDelegateApp::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+bool TextFieldDelegateApp::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     if (!isAcceptableText(textField->text())) {
       return true;

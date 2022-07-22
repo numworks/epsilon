@@ -184,7 +184,7 @@ bool ListController::textRepresentsParametricFunction(const char * text) const {
 }
 
 // TODO: factorize with solver
-bool ListController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     const char * text = textField->text();
     if (!textRepresentsAnEquation(text)) {

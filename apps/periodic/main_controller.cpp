@@ -74,7 +74,7 @@ bool MainController::handleEvent(Ion::Events::Event e) {
   return newZ != z;
 }
 
-void MainController::textFieldDidStartEditing(Escher::TextField * textField) {
+void MainController::textFieldDidStartEditing(Escher::AbstractTextField * textField) {
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   dataSource->setTextFilter(m_view.bannerView()->textField()->text());
   if (ElementsDataBase::IsElement(dataSource->selectedElement())) {
@@ -85,11 +85,11 @@ void MainController::textFieldDidStartEditing(Escher::TextField * textField) {
   }
 }
 
-bool MainController::textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) {
+bool MainController::textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
-bool MainController::textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) {
+bool MainController::textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) {
   if (!m_view.bannerView()->textField()->isEditing() && (event == Ion::Events::OK || event == Ion::Events::EXE)) {
     /* OK should not start the edition */
     return handleEvent(event);
@@ -97,21 +97,21 @@ bool MainController::textFieldDidReceiveEvent(Escher::TextField * textField, Ion
   return false;
 }
 
-bool MainController::textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) {
+bool MainController::textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   dataSource->setSelectedElement(dataSource->firstMatchingElement());
   dataSource->setTextFilter(nullptr);
   return true;
 }
 
-bool MainController::textFieldDidAbortEditing(Escher::TextField * textField) {
+bool MainController::textFieldDidAbortEditing(Escher::AbstractTextField * textField) {
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   dataSource->setTextFilter(nullptr);
   dataSource->setSelectedElement(dataSource->previousElement());
   return false;
 }
 
-bool MainController::textFieldDidHandleEvent(Escher::TextField * textField, bool returnValue, bool textSizeDidChange) {
+bool MainController::textFieldDidHandleEvent(Escher::AbstractTextField * textField, bool returnValue, bool textSizeDidChange) {
   if (textSizeDidChange) {
     m_view.elementsView()->reload();
   }

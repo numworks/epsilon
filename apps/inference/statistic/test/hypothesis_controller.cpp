@@ -61,7 +61,7 @@ bool HypothesisController::handleEvent(Ion::Events::Event event) {
 
 // TextFieldDelegate
 
-bool HypothesisController::textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) {
+bool HypothesisController::textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) {
   if (selectedRow() == 0 && m_test->significanceTestType() == SignificanceTestType::Slope) {
     /* Shortcut the edition of Test t for slope hypothesis by catching the event
      * before being given to the textfield. */
@@ -82,12 +82,12 @@ bool HypothesisController::textFieldDidReceiveEvent(Escher::TextField * textFiel
   return false;
 };
 
-bool HypothesisController::textFieldShouldFinishEditing(Escher::TextField * textField,
+bool HypothesisController::textFieldShouldFinishEditing(Escher::AbstractTextField * textField,
                                                                      Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
-bool HypothesisController::textFieldDidFinishEditing(Escher::TextField * textField,
+bool HypothesisController::textFieldDidFinishEditing(Escher::AbstractTextField * textField,
                                                                   const char * text,
                                                                   Ion::Events::Event event) {
   double h0 = Shared::PoincareHelpers::ApproximateToScalar<double>(
@@ -105,7 +105,7 @@ bool HypothesisController::textFieldDidFinishEditing(Escher::TextField * textFie
   return true;
 }
 
-bool HypothesisController::textFieldDidAbortEditing(TextField * textField) {
+bool HypothesisController::textFieldDidAbortEditing(AbstractTextField * textField) {
   // Reload params to add "p=..."
   loadHypothesisParam();
   return true;

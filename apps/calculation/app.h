@@ -39,7 +39,7 @@ public:
     return static_cast<App *>(Escher::Container::activeApp());
   }
   TELEMETRY_ID("Calculation");
-  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   // TextFieldDelegateApp
   bool isAcceptableExpression(const Poincare::Expression expression) override;

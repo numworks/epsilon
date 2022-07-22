@@ -37,14 +37,14 @@ void ExpressionCellWithEditableTextWithMessage::setHighlighted(bool highlight) {
 }
 
 void ExpressionCellWithEditableTextWithMessage::textFieldDidStartEditing(
-    Escher::TextField * textField) {
+    Escher::AbstractTextField * textField) {
   // Relayout to hide sublabel
   layoutSubviews();
   ChainedTextFieldDelegate::textFieldDidStartEditing(textField);
 }
 
 bool ExpressionCellWithEditableTextWithMessage::textFieldDidFinishEditing(
-    Escher::TextField * textField,
+    Escher::AbstractTextField * textField,
     const char * text,
     Ion::Events::Event event) {
   bool success = ChainedTextFieldDelegate::textFieldDidFinishEditing(textField, text, event);
@@ -56,7 +56,7 @@ bool ExpressionCellWithEditableTextWithMessage::textFieldDidFinishEditing(
 }
 
 bool ExpressionCellWithEditableTextWithMessage::textFieldDidAbortEditing(
-    Escher::TextField * textField) {
+    Escher::AbstractTextField * textField) {
   // Relayout to show sublabel
   layoutSubviews();
   return ChainedTextFieldDelegate::textFieldDidAbortEditing(textField);

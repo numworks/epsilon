@@ -27,7 +27,7 @@ public:
 
   bool editXRange() const { return m_editXRange; }
   void setEditXRange(bool editXRange);
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
 private:
   constexpr static int k_numberOfTextCells = 2;

@@ -5,11 +5,11 @@ using namespace Escher;
 
 namespace Shared {
 
-bool TextFieldDelegate::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+bool TextFieldDelegate::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   return textFieldDelegateApp()->textFieldShouldFinishEditing(textField, event);
 }
 
-bool TextFieldDelegate::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
+bool TextFieldDelegate::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
 }
 

@@ -23,11 +23,11 @@ const char * ListParameterController::title() {
   return I18n::translate(I18n::Message::SequenceOptions);
 }
 
-bool ListParameterController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+bool ListParameterController::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   return event == Ion::Events::Down || event == Ion::Events::Up || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
-bool ListParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool ListParameterController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   double floatBody;
   if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
     return false;

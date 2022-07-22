@@ -311,13 +311,13 @@ void ConsoleController::tableViewDidChangeSelectionAndDidScroll(SelectableTableV
   }
 }
 
-bool ConsoleController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+bool ConsoleController::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   assert(textField->isEditing());
   return (textField->draftTextLength() > 0
       && (event == Ion::Events::OK || event == Ion::Events::EXE));
 }
 
-bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+bool ConsoleController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   if (m_inputRunLoopActive
       && (event == Ion::Events::Up
         || event == Ion::Events::OK
@@ -338,7 +338,7 @@ bool ConsoleController::textFieldDidReceiveEvent(TextField * textField, Ion::Eve
   return App::app()->textInputDidReceiveEvent(textField, event);
 }
 
-bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool ConsoleController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   if (m_inputRunLoopActive) {
     m_inputRunLoopActive = false;
     return false;
@@ -351,7 +351,7 @@ bool ConsoleController::textFieldDidFinishEditing(TextField * textField, const c
   return true;
 }
 
-bool ConsoleController::textFieldDidAbortEditing(TextField * textField) {
+bool ConsoleController::textFieldDidAbortEditing(AbstractTextField * textField) {
   if (m_inputRunLoopActive) {
     m_inputRunLoopActive = false;
   } else {

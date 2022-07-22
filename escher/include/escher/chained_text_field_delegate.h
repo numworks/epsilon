@@ -12,16 +12,16 @@ public:
   ChainedTextFieldDelegate(TextFieldDelegate * parentDelegate) : m_parentDelegate(parentDelegate) {}
   void setTextFieldDelegate(TextFieldDelegate * delegate) { m_parentDelegate = delegate; }
 
-  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(TextField * textField,
+  bool textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(AbstractTextField * textField,
                                  const char * text,
                                  Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(TextField * textField) override;
-  bool textFieldDidHandleEvent(TextField * textField,
+  bool textFieldDidAbortEditing(AbstractTextField * textField) override;
+  bool textFieldDidHandleEvent(AbstractTextField * textField,
                                bool returnValue,
                                bool textSizeDidChange) override;
-  void textFieldDidStartEditing(TextField * textField) override;
+  void textFieldDidStartEditing(AbstractTextField * textField) override;
 
 private:
   TextFieldDelegate * m_parentDelegate;

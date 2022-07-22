@@ -97,7 +97,7 @@ void SumGraphController::setRecord(Ion::Storage::Record record) {
   m_record = record;
 }
 
-bool SumGraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool SumGraphController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   double floatBody;
   if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
     return false;

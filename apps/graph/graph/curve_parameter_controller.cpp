@@ -97,7 +97,7 @@ bool CurveParameterController::confirmParameterAtIndex(int parameterIndex, doubl
   return true;
 }
 
-bool CurveParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool CurveParameterController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   int index = selectedRow();
   if (!FloatParameterControllerWithoutButton::textFieldDidFinishEditing(textField, text, event)) {
     return false;

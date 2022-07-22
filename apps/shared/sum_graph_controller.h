@@ -20,7 +20,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("Sum");
   void setRecord(Ion::Storage::Record record);
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 protected:
   virtual bool moveCursorHorizontallyToPosition(double position);
   enum class Step {

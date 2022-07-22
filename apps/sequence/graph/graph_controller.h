@@ -21,7 +21,7 @@ public:
   TermSumController * termSumController() { return &m_termSumController; }
   // InteractiveCurveViewRangeDelegate
   float interestingXMin() const override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 private:
   class SequenceSelectionController : public Shared::FunctionGraphController::FunctionSelectionController {
   public:

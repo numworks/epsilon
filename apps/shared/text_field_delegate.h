@@ -9,8 +9,8 @@ namespace Shared {
 
 class TextFieldDelegate : public Escher::TextFieldDelegate {
 public:
-  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
 protected:
   TextFieldDelegateApp * textFieldDelegateApp() const {
     return static_cast<TextFieldDelegateApp *>(Escher::Container::activeApp());

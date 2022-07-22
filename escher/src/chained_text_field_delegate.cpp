@@ -2,29 +2,29 @@
 
 namespace Escher {
 
-bool ChainedTextFieldDelegate::textFieldShouldFinishEditing(TextField * textField,
+bool ChainedTextFieldDelegate::textFieldShouldFinishEditing(AbstractTextField * textField,
                                                             Ion::Events::Event event) {
   return m_parentDelegate ? m_parentDelegate->textFieldShouldFinishEditing(textField, event)
                           : false;
 }
 
-bool ChainedTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField,
+bool ChainedTextFieldDelegate::textFieldDidReceiveEvent(AbstractTextField * textField,
                                                         Ion::Events::Event event) {
   return m_parentDelegate ? m_parentDelegate->textFieldDidReceiveEvent(textField, event) : false;
 }
 
-bool ChainedTextFieldDelegate::textFieldDidFinishEditing(TextField * textField,
+bool ChainedTextFieldDelegate::textFieldDidFinishEditing(AbstractTextField * textField,
                                                          const char * text,
                                                          Ion::Events::Event event) {
   return m_parentDelegate ? m_parentDelegate->textFieldDidFinishEditing(textField, text, event)
                           : false;
 }
 
-bool ChainedTextFieldDelegate::textFieldDidAbortEditing(TextField * textField) {
+bool ChainedTextFieldDelegate::textFieldDidAbortEditing(AbstractTextField * textField) {
   return m_parentDelegate ? m_parentDelegate->textFieldDidAbortEditing(textField) : false;
 }
 
-bool ChainedTextFieldDelegate::textFieldDidHandleEvent(TextField * textField,
+bool ChainedTextFieldDelegate::textFieldDidHandleEvent(AbstractTextField * textField,
                                                        bool returnValue,
                                                        bool textSizeDidChange) {
   return m_parentDelegate
@@ -32,7 +32,7 @@ bool ChainedTextFieldDelegate::textFieldDidHandleEvent(TextField * textField,
              : false;
 }
 
-void ChainedTextFieldDelegate::textFieldDidStartEditing(TextField * textField) {
+void ChainedTextFieldDelegate::textFieldDidStartEditing(AbstractTextField * textField) {
   if (m_parentDelegate) {
     m_parentDelegate->textFieldDidStartEditing(textField);
   }

@@ -31,7 +31,7 @@ private:
   bool isCellEditing(Escher::HighlightCell * cell, int index) override;
   void setTextInCell(Escher::HighlightCell * cell, const char * text, int index) override;
 
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
   class ContentView : public Escher::View {
   public:
     ContentView(Escher::SelectableTableView * selectableTableView);

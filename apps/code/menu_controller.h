@@ -55,13 +55,13 @@ public:
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   /* TextFieldDelegate */
-  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override { return false; }
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(Escher::TextField * textField) override {
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override { return false; }
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override {
     return privateTextFieldDidAbortEditing(textField, true);
   }
-  bool textFieldDidHandleEvent(Escher::TextField * textField, bool returnValue, bool textSizeDidChange) override;
+  bool textFieldDidHandleEvent(Escher::AbstractTextField * textField, bool returnValue, bool textSizeDidChange) override;
 
   /* ButtonRowDelegate */
   int numberOfButtons(Escher::ButtonRowController::Position position) const override { return 1; }
@@ -82,7 +82,7 @@ private:
   void editScriptAtIndex(int scriptIndex);
   void numberedDefaultScriptName(char * buffer);
   void updateAddScriptRowDisplay();
-  bool privateTextFieldDidAbortEditing(Escher::TextField * textField, bool menuControllerStaysInResponderChain);
+  bool privateTextFieldDidAbortEditing(Escher::AbstractTextField * textField, bool menuControllerStaysInResponderChain);
   ScriptStore * m_scriptStore;
   ScriptNameCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
   Escher::EvenOddCellWithEllipsis m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];

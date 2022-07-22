@@ -38,8 +38,8 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
 
   virtual bool openMenuForCurveAtIndex(int index) = 0;
   void moveCursorAndCenterIfNeeded(double t);

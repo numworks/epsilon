@@ -30,7 +30,7 @@ public:
   // LayoutFieldDelegate
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   // TextFieldDelegate
-  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
   // Responder
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;

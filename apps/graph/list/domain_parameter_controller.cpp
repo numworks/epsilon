@@ -59,7 +59,7 @@ void DomainParameterController::willDisplayCellForIndex(HighlightCell * cell, in
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-bool DomainParameterController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+bool DomainParameterController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   /* Set the right additional cells in the toolbox. Ideally, we would like to
    * update the toolbox in textFieldDidStartEditing, but if the edition is
    * started by pressing the Toolbox key, textFieldDidStartEditing will be
@@ -72,7 +72,7 @@ bool DomainParameterController::textFieldDidReceiveEvent(TextField * textField, 
   return !(function()->isAlongX() && textFieldShouldFinishEditing(textField, event) && textField->text()[0] == '\0') && FloatParameterController<float>::textFieldDidReceiveEvent(textField, event);
 }
 
-bool DomainParameterController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool DomainParameterController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   switchToolboxContent(textField, false);
   if (text[0] == '\0') {
     if (textField == m_domainCells[0].textField()) {
@@ -85,7 +85,7 @@ bool DomainParameterController::textFieldDidFinishEditing(TextField * textField,
   return FloatParameterController<float>::textFieldDidFinishEditing(textField, text, event);
 }
 
-bool DomainParameterController::textFieldDidAbortEditing(TextField * textField) {
+bool DomainParameterController::textFieldDidAbortEditing(AbstractTextField * textField) {
   switchToolboxContent(textField, false);
   return false;
 }
@@ -161,7 +161,7 @@ FloatParameterController<float>::InfinityTolerance DomainParameterController::in
   return FloatParameterController<float>::InfinityTolerance::None;
 }
 
-void DomainParameterController::switchToolboxContent(Escher::TextField * textField, bool setSpecificContent) {
+void DomainParameterController::switchToolboxContent(Escher::AbstractTextField * textField, bool setSpecificContent) {
   assert(textField == m_domainCells[0].textField() || textField == m_domainCells[1].textField());
   FunctionToolbox::AddedCellsContent content;
   if (setSpecificContent) {

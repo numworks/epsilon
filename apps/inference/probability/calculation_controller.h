@@ -56,12 +56,12 @@ public:
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   /* TextField delegate */
-  bool textFieldDidHandleEvent(Escher::TextField * textField,
+  bool textFieldDidHandleEvent(Escher::AbstractTextField * textField,
                                bool returnValue,
                                bool textSizeDidChange) override;
-  bool textFieldShouldFinishEditing(Escher::TextField * textField,
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField,
                                     Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField,
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField,
                                  const char * text,
                                  Ion::Events::Event event) override;
 

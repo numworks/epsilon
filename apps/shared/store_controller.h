@@ -23,7 +23,7 @@ public:
   TELEMETRY_ID("Store");
 
   //TextFieldDelegate
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
   // TableViewDataSource
   int numberOfColumns() const override;

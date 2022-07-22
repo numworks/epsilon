@@ -73,7 +73,7 @@ void EditExpressionController::viewWillAppear() {
   m_historyController->viewWillAppear();
 }
 
-bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
+bool EditExpressionController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   bool shouldDuplicateLastCalculation = textField->isEditing() && textField->shouldFinishEditing(event) && textField->draftTextLength() == 0;
   if (inputViewDidReceiveEvent(event, shouldDuplicateLastCalculation)) {
     return true;
@@ -81,11 +81,11 @@ bool EditExpressionController::textFieldDidReceiveEvent(::TextField * textField,
   return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
 }
 
-bool EditExpressionController::textFieldDidFinishEditing(::TextField * textField, const char * text, Ion::Events::Event event) {
+bool EditExpressionController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   return inputViewDidFinishEditing(text, nullptr);
 }
 
-bool EditExpressionController::textFieldDidAbortEditing(::TextField * textField) {
+bool EditExpressionController::textFieldDidAbortEditing(AbstractTextField * textField) {
   return inputViewDidAbortEditing(textField->text());
 }
 

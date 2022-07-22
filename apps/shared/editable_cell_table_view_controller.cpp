@@ -19,7 +19,7 @@ EditableCellTableViewController::EditableCellTableViewController(Responder * par
   TabTableController(parentResponder)
 {}
 
-bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+bool EditableCellTableViewController::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)
      || (event == Ion::Events::Down && selectedRow() < numberOfRows())
      || (event == Ion::Events::Up && selectedRow() > 0)
@@ -27,7 +27,7 @@ bool EditableCellTableViewController::textFieldShouldFinishEditing(TextField * t
      || (event == Ion::Events::Left && textField->cursorLocation() == textField->draftTextBuffer() && selectedColumn() > 0);
 }
 
-bool EditableCellTableViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool EditableCellTableViewController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   double floatBody;
   if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
     return false;

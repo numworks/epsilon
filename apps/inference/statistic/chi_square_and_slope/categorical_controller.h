@@ -62,8 +62,8 @@ public:
   InputCategoricalController(Escher::StackViewController * parent, Escher::ViewController * resultsController, Statistic * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
 
   // TextFieldDelegate
-  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
   // Responder
   void didEnterResponderChain(Responder * previousResponder) override;
@@ -83,7 +83,7 @@ protected:
   EditableCategoricalTableCell * categoricalTableCell() override = 0;
   virtual int indexOfSignificanceCell() const = 0;
   int indexOfNextCell() const override { return indexOfSignificanceCell() + 1; }
-  bool handleEditedValue(int i, double p, Escher::TextField * textField, Ion::Events::Event event);
+  bool handleEditedValue(int i, double p, Escher::AbstractTextField * textField, Ion::Events::Event event);
   virtual int indexOfEditedParameterAtIndex(int index) const {
     if (index == indexOfSignificanceCell()) {
       return m_statistic->indexOfThreshold();

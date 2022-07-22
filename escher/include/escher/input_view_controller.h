@@ -29,10 +29,10 @@ public:
   void abortEditionAndDismiss();
 
   /* TextFieldDelegate */
-  bool textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(TextField * textField) override;
+  bool textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(AbstractTextField * textField) override;
 
   /* LayoutFieldDelegate */
   bool layoutFieldShouldFinishEditing(LayoutField * layoutField, Ion::Events::Event event) override;

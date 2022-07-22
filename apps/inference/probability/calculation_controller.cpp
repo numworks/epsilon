@@ -166,7 +166,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
 }
 
-bool CalculationController::textFieldDidHandleEvent(::TextField * textField,
+bool CalculationController::textFieldDidHandleEvent(::AbstractTextField * textField,
                                                     bool returnValue,
                                                     bool textSizeDidChange) {
   if (returnValue && textSizeDidChange) {
@@ -181,7 +181,7 @@ bool CalculationController::textFieldDidHandleEvent(::TextField * textField,
   return returnValue;
 }
 
-bool CalculationController::textFieldShouldFinishEditing(TextField * textField,
+bool CalculationController::textFieldShouldFinishEditing(AbstractTextField * textField,
                                                          Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event) ||
          (event == Ion::Events::Right &&
@@ -190,7 +190,7 @@ bool CalculationController::textFieldShouldFinishEditing(TextField * textField,
          (event == Ion::Events::Left && textField->cursorLocation() == textField->text());
 }
 
-bool CalculationController::textFieldDidFinishEditing(TextField * textField,
+bool CalculationController::textFieldDidFinishEditing(AbstractTextField * textField,
                                                       const char * text,
                                                       Ion::Events::Event event) {
   assert(selectedColumn() != 0);

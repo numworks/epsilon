@@ -49,7 +49,7 @@ App::App(Snapshot * snapshot) :
 {
 }
 
-bool App::textFieldDidReceiveEvent(::TextField * textField, Ion::Events::Event event) {
+bool App::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event) && textField->text()[0] == 0) {
     return true;
   }

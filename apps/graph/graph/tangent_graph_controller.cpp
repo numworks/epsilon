@@ -41,7 +41,7 @@ void TangentGraphController::didBecomeFirstResponder() {
   }
 }
 
-bool TangentGraphController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool TangentGraphController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
   double floatBody;
   if (myApp->hasUndefinedValue(text, &floatBody)) {

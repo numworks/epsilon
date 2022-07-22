@@ -17,7 +17,7 @@ GoodnessTableCell::GoodnessTableCell(Responder * parentResponder, DynamicSizeTab
   }
 }
 
-bool GoodnessTableCell::textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) {
+bool GoodnessTableCell::textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   int previousDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
   if (EditableCategoricalTableCell::textFieldDidFinishEditing(textField, text, event)) {
     int newDegreeOfFreedom = statistic()->computeDegreesOfFreedom();

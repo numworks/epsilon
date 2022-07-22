@@ -42,11 +42,11 @@ void InputViewController::abortEditionAndDismiss() {
   dismissModalViewController();
 }
 
-bool InputViewController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+bool InputViewController::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
-bool InputViewController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool InputViewController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   if (inputViewDidFinishEditing()) {
     m_textFieldDelegate->textFieldDidFinishEditing(textField, text, event);
     return true;
@@ -54,13 +54,13 @@ bool InputViewController::textFieldDidFinishEditing(TextField * textField, const
   return false;
 }
 
-bool InputViewController::textFieldDidAbortEditing(TextField * textField) {
+bool InputViewController::textFieldDidAbortEditing(AbstractTextField * textField) {
   inputViewDidAbortEditing();
   m_textFieldDelegate->textFieldDidAbortEditing(textField);
   return true;
 }
 
-bool InputViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+bool InputViewController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   return m_textFieldDelegate->textFieldDidReceiveEvent(textField, event);
 }
 

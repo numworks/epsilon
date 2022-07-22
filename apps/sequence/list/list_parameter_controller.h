@@ -22,8 +22,8 @@ public:
   ListParameterController(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ListController * list);
   const char * title() override;
 
-  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // MemoizedListViewDataSource

@@ -32,9 +32,9 @@ public:
   void memoizeInput();
 
   /* TextFieldDelegate */
-  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(Escher::TextField * textField) override;
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
 
   /* LayoutFieldDelegate */
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;

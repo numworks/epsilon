@@ -37,13 +37,13 @@ public:
   int numberOfRows() const override { return 3; }
   static bool ButtonAction(void * c, void * s);
 
-  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
-  bool textFieldShouldFinishEditing(Escher::TextField * textField,
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField,
                                     Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField,
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField,
                                  const char * text,
                                  Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(Escher::TextField * textField) override;
+  bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
 
   // Escher::DropdownCallback
   void onDropdownSelected(int selectedRow) override;

@@ -27,12 +27,12 @@ public:
   void activeDataFieldHasChanged() override;
 
   // Escher::TextFieldDelegate
-  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
-  void textFieldDidStartEditing(Escher::TextField * textField) override;
-  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::TextField * textField, const char * text, Ion::Events::Event event) override;
-  bool textFieldDidAbortEditing(Escher::TextField * textField) override;
-  bool textFieldDidHandleEvent(Escher::TextField * textField, bool returnValue, bool textSizeDidChange) override;
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  void textFieldDidStartEditing(Escher::AbstractTextField * textField) override;
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
+  bool textFieldDidHandleEvent(Escher::AbstractTextField * textField, bool returnValue, bool textSizeDidChange) override;
 
 private:
   class ContentView : public Escher::View {

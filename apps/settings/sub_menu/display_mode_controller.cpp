@@ -57,12 +57,12 @@ void DisplayModeController::willDisplayCellForIndex(HighlightCell * cell, int in
   PreferencesController::willDisplayCellForIndex(cell, index);
 }
 
-bool DisplayModeController::textFieldShouldFinishEditing(TextField * textField, Ion::Events::Event event) {
+bool DisplayModeController::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   return (event == Ion::Events::Up && selectedRow() > 0)
      || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
-bool DisplayModeController::textFieldDidFinishEditing(TextField * textField, const char * text, Ion::Events::Event event) {
+bool DisplayModeController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   double floatBody;
   if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
     return false;

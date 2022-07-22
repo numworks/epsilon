@@ -142,7 +142,7 @@ bool ParametersController::setParameterAtIndex(int parameterIndex, double f) {
   return true;
 }
 
-bool ParametersController::textFieldDidFinishEditing(TextField * textField,
+bool ParametersController::textFieldDidFinishEditing(AbstractTextField * textField,
                                                      const char * text,
                                                      Ion::Events::Event event) {
   if (FloatParameterController::textFieldDidFinishEditing(textField, text, event)) {

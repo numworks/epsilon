@@ -15,7 +15,7 @@ bool SimpleInteractiveCurveViewController::handleEvent(Ion::Events::Event event)
   return ZoomCurveViewController::handleEvent(event);
 }
 
-bool SimpleInteractiveCurveViewController::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+bool SimpleInteractiveCurveViewController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !textField->isEditing()) {
     return handleEnter();
   }

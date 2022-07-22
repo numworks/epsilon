@@ -5,7 +5,7 @@ using namespace Escher;
 
 namespace Shared {
 
-bool ParameterTextFieldDelegate::textFieldDidReceiveEvent(TextField * textField, Ion::Events::Event event) {
+bool ParameterTextFieldDelegate::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   if (event == Ion::Events::Backspace && !textField->isEditing()) {
     textField->reinitDraftTextBuffer();
     textField->setEditing(true);

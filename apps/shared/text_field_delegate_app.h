@@ -14,8 +14,8 @@ public:
   virtual ~TextFieldDelegateApp() = default;
   Poincare::Context * localContext() override;
   virtual CodePoint XNT();
-  bool textFieldShouldFinishEditing(Escher::TextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidReceiveEvent(Escher::TextField * textField, Ion::Events::Event event) override;
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
   bool isAcceptableText(const char * text);
   template<typename T>
   bool hasUndefinedValue(const char * text, T * value, bool enablePlusInfinity = false, bool enableMinusInfinity = false);

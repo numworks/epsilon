@@ -117,33 +117,40 @@ bool MainController::textFieldDidReceiveEvent(Escher::AbstractTextField * textFi
 }
 
 bool MainController::textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) {
-  ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
-  AtomicNumber match = dataSource->elementSearchResult();
+  AtomicNumber match = App::app()->elementsViewDataSource()->elementSearchResult();
   if (!ElementsDataBase::IsElement(match)) {
     match = 1;
   }
-  dataSource->setSelectedElement(match);
-  dataSource->setTextFilter(nullptr);
+  endElementSearch(match);
   return true;
 }
 
 bool MainController::textFieldDidAbortEditing(Escher::AbstractTextField * textField) {
-  ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
-  dataSource->setTextFilter(nullptr);
-  dataSource->setSelectedElement(dataSource->previousElement());
+  endElementSearch(App::app()->elementsViewDataSource()->previousElement());
   return false;
 }
 
 bool MainController::textFieldDidHandleEvent(Escher::AbstractTextField * textField, bool returnValue, bool textSizeDidChange) {
   if (textSizeDidChange) {
     if (textField->isEditing()) {
-      /* Update suggestion text */
-      ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
-      m_view.bannerView()->textField()->setSuggestion(dataSource->suggestedElementName());
+      if (textField->draftTextLength() == 0) {
+        textField->setEditing(false);
+        endElementSearch(App::app()->elementsViewDataSource()->previousElement());
+      } else {
+        /* Update suggestion text */
+        ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+        m_view.bannerView()->textField()->setSuggestion(dataSource->suggestedElementName());
+      }
     }
     m_view.elementsView()->reload();
   }
   return returnValue;
+}
+
+void MainController::endElementSearch(AtomicNumber z) {
+  ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+  dataSource->setSelectedElement(z);
+  dataSource->setTextFilter(nullptr);
 }
 
 }

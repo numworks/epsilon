@@ -76,6 +76,11 @@ Layout DoubleDataFieldWithSubscriptSymbol::fieldSymbolLayout() const {
 // ADataField
 
 Layout ADataField::getLayout(AtomicNumber z, int) const {
+  uint16_t a = ElementsDataBase::NumberOfMass(z);
+  if (a == ElementData::k_AUnknown) {
+    Preferences::PrintFloatMode floatDisplayMode = Preferences::sharedPreferences()->displayMode();
+    return Undefined::Builder().createLayout(floatDisplayMode, k_defaultSignificantDigits, nullptr);
+  }
   return Integer(ElementsDataBase::NumberOfMass(z)).createLayout();
 }
 

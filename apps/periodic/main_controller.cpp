@@ -40,6 +40,14 @@ void MainController::activeDataFieldHasChanged() {
 }
 
 bool MainController::handleEvent(Ion::Events::Event e) {
+  if (e == Ion::Events::OnOff) {
+    /* ElementsView only redraws its background when appearing to avoid
+     * blinking. Powering down will discard the background so we need to flag
+     * it for redraw. */
+    m_view.elementsView()->dirtyBackground();
+    return false;
+  }
+
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   AtomicNumber z = dataSource->selectedElement();
 

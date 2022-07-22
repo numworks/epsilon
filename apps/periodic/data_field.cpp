@@ -1,6 +1,5 @@
 #include "data_field.h"
 #include "elements_data_base.h"
-#include "palette.h"
 #include <poincare/code_point_layout.h>
 #include <poincare/float.h>
 #include <poincare/horizontal_layout.h>

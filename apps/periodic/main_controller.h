@@ -51,6 +51,8 @@ private:
     BannerView m_bannerView;
   };
 
+  void endElementSearch(AtomicNumber z);
+
   DetailsListController m_detailsController;
   DisplayTypeController m_displayTypeController;
   ContentView m_view;

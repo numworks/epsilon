@@ -101,12 +101,7 @@ bool MainController::textFieldDidReceiveEvent(Escher::AbstractTextField * textFi
   if (textField->isEditing()) {
     if (event == Ion::Events::Up || event == Ion::Events::Down) {
       ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
-      SuggestionTextField * suggestionTextField = m_view.bannerView()->textField();
-      const char * suggestion = dataSource->cycleSuggestion(event == Ion::Events::Down);
-      if (suggestion) {
-        suggestion += suggestionTextField->draftTextLength();
-      }
-      suggestionTextField->setSuggestion(suggestion);
+      m_view.bannerView()->textField()->setSuggestion(dataSource->cycleSuggestion(event == Ion::Events::Down));
       return true;
     }
   } else if (event == Ion::Events::OK || event == Ion::Events::EXE) {
@@ -139,12 +134,7 @@ bool MainController::textFieldDidHandleEvent(Escher::AbstractTextField * textFie
     if (textField->isEditing()) {
       /* Update suggestion text */
       ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
-      SuggestionTextField * suggestionTextField = m_view.bannerView()->textField();
-      const char * suggestion = dataSource->suggestedElementName();
-      if (suggestion) {
-        suggestion += suggestionTextField->draftTextLength();
-      }
-      suggestionTextField->setSuggestion(suggestion);
+      m_view.bannerView()->textField()->setSuggestion(dataSource->suggestedElementName());
     }
     m_view.elementsView()->reload();
   }

@@ -1,12 +1,6 @@
 #include "details_list_controller.h"
 #include "app.h"
 #include <escher/clipboard.h>
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/layout_helper.h>
-#include <poincare/print_int.h>
-#include <poincare/string_layout.h>
-#include <poincare/vertical_offset_layout.h>
 
 using namespace Escher;
 using namespace Poincare;

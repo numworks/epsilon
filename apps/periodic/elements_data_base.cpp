@@ -1,9 +1,4 @@
 #include "elements_data_base.h"
-#include <poincare/code_point_layout.h>
-#include <poincare/horizontal_layout.h>
-#include <poincare/integer.h>
-#include <poincare/layout_helper.h>
-#include <poincare/vertical_offset_layout.h>
 #include <assert.h>
 
 using namespace Poincare;

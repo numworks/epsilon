@@ -18,6 +18,7 @@ void TrigonometryListController::setExpression(Poincare::Expression e) {
   VariableContext context = illustratedListContext();
 
   // Fill calculation store
+  m_calculationStore.push("tan(θ)", &context, CalculationHeight);
   m_calculationStore.push("sin(θ)", &context, CalculationHeight);
   m_calculationStore.push("cos(θ)", &context, CalculationHeight);
   m_calculationStore.push("θ", &context, CalculationHeight);
@@ -29,6 +30,13 @@ void TrigonometryListController::setExpression(Poincare::Expression e) {
   assert(unit.isUninitialized() || static_cast<Unit &>(unit).representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector());
   float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(copy, &context);
   m_model.setAngle(angle);
+}
+
+KDCoordinate TrigonometryListController::nonMemoizedRowHeight(int j) {
+  if (typeAtIndex(j) == k_illustrationCellType) {
+    return k_illustrationHeight;
+  }
+  return IllustratedListController::nonMemoizedRowHeight(j);
 }
 
 }

@@ -31,7 +31,7 @@ private:
    * - On the Y axis, the available pixel height is
    *   IllustratedListController::k_illustrationHeight
    */
-  float yHalfRange() const { return IllustratedListController::k_illustrationHeight*k_xHalfRange/(Ion::Display::Width - Escher::Metric::PopUpRightMargin - Escher::Metric::PopUpLeftMargin); }
+  float yHalfRange() const;
 
   float m_angle;
 };

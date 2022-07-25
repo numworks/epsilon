@@ -47,7 +47,7 @@ public:
     double boilingPoint,
     double density,
     double affinity,
-    double energyOfIonisation,
+    double energyOfIonization,
     Group group,
     PhysicalState physicalState,
     Block block
@@ -59,7 +59,7 @@ public:
     m_boilingPoint(boilingPoint),
     m_density(density),
     m_affinity(affinity),
-    m_energyOfIonisation(energyOfIonisation),
+    m_energyOfIonization(energyOfIonization),
     m_symbol(symbol),
     m_name(name),
     m_numberOfMass(numberOfMass),
@@ -75,7 +75,7 @@ public:
   double boilingPoint() const { return m_boilingPoint; }
   double density() const { return m_density; }
   double affinity() const { return m_affinity; }
-  double energyOfIonisation() const { return m_energyOfIonisation; }
+  double energyOfIonization() const { return m_energyOfIonization; }
   const char * symbol() const { return m_symbol; }
   I18n::Message name() const { return m_name; }
   uint16_t numberOfMass() const { return m_numberOfMass; }
@@ -91,7 +91,7 @@ private:
   double m_boilingPoint;
   double m_density;
   double m_affinity;
-  double m_energyOfIonisation;
+  double m_energyOfIonization;
   const char * m_symbol;
   I18n::Message m_name;
   uint16_t m_numberOfMass;

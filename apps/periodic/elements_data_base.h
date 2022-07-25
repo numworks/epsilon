@@ -24,7 +24,7 @@ public:
   constexpr static BoilingPointDataField BoilingPointField = BoilingPointDataField();
   constexpr static DensityDataField DensityField = DensityDataField();
   constexpr static AffinityDataField AffinityField = AffinityDataField();
-  constexpr static IonisationDataField IonisationField = IonisationDataField();
+  constexpr static IonizationDataField IonizationField = IonizationDataField();
 
   constexpr static uint8_t k_numberOfElements = 118;
   constexpr static AtomicNumber k_noElement = 0;
@@ -39,7 +39,7 @@ public:
   static double BoilingPoint(AtomicNumber z) { return DataForElement(z)->boilingPoint(); }
   static double Density(AtomicNumber z) { return DataForElement(z)->density(); }
   static double Affinity(AtomicNumber z) { return DataForElement(z)->affinity(); }
-  static double EnergyOfIonisation(AtomicNumber z) { return DataForElement(z)->energyOfIonisation(); }
+  static double EnergyOfIonization(AtomicNumber z) { return DataForElement(z)->energyOfIonization(); }
   static const char * Symbol(AtomicNumber z) { return DataForElement(z)->symbol(); }
   static I18n::Message Name(AtomicNumber z) { return DataForElement(z)->name(); }
   static uint16_t NumberOfMass(AtomicNumber z) { return DataForElement(z)->numberOfMass(); }

@@ -1,36 +1,47 @@
 #include "elements_view_data_source.h"
+#include "app.h"
 #include <poincare/print_int.h>
 #include <assert.h>
 
 namespace Periodic {
 
-ElementsViewDataSource::ElementsViewDataSource(const DataField * field, AtomicNumber selectedElement, AtomicNumber previousElement, ElementsViewDelegate * delegate) :
+ElementsViewDataSource::ElementsViewDataSource(ElementsViewDelegate * delegate) :
   m_delegate(delegate),
-  m_field(field),
   m_textFilter(nullptr),
-  m_selectedElement(selectedElement),
-  m_previousElement(previousElement),
   m_searchResult(ElementsDataBase::k_noElement)
 {}
 
+AtomicNumber ElementsViewDataSource::selectedElement() const {
+  return App::app()->snapshot()->selectedElement();
+}
+
+AtomicNumber ElementsViewDataSource::previousElement() const {
+  return App::app()->snapshot()->previousElement();
+}
+
 void ElementsViewDataSource::setSelectedElement(AtomicNumber z) {
-  if (z != m_selectedElement) {
+  if (z != selectedElement()) {
     assert(m_delegate);
-    m_previousElement = m_selectedElement;
-    m_selectedElement = z;
+    App::Snapshot * snapshot = App::app()->snapshot();
+    snapshot->setPreviousElement(selectedElement());
+    snapshot->setSelectedElement(z);
     m_delegate->selectedElementHasChanged();
   }
 }
 
-void ElementsViewDataSource::setField(const DataField * field) {
-  if (field != m_field) {
-    m_field = field;
+const DataField * ElementsViewDataSource::field() const {
+  return App::app()->snapshot()->field();
+}
+
+void ElementsViewDataSource::setField(const DataField * dataField) {
+  if (dataField != field()) {
+    App::app()->snapshot()->setField(dataField);
     m_delegate->activeDataFieldHasChanged();
   }
 }
 
 DataField::ColorPair ElementsViewDataSource::filteredColors(AtomicNumber z) const {
-  return elementMatchesFilter(z) ? m_field->getColors(z) : DataField::ColorPair(KDColorBlack, Palette::SystemGrayDark);
+  return elementMatchesFilter(z) ? field()->getColors(z) : DataField::ColorPair(KDColorBlack, Palette::SystemGrayDark);
 }
 
 const char * ElementsViewDataSource::suggestedElementName() {

@@ -27,8 +27,11 @@ public:
     const Descriptor * descriptor() const override;
 
     const DataField * field() const { return m_field; }
+    void setField(const DataField * field) { m_field = field; }
     AtomicNumber selectedElement() const { return m_selectedElement; }
+    void setSelectedElement(AtomicNumber selectedElement) { m_selectedElement = selectedElement; }
     AtomicNumber previousElement() const { return m_previousElement; }
+    void setPreviousElement(AtomicNumber previousElement) { m_previousElement = previousElement; }
 
   private:
     const DataField * m_field;
@@ -39,6 +42,7 @@ public:
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
 
+  Snapshot * snapshot() { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   ElementsViewDataSource * elementsViewDataSource() { return &m_dataSource; }
 
 private:

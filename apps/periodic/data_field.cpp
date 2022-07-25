@@ -279,10 +279,10 @@ Layout AffinityDataField::getLayout(AtomicNumber z, int significantDigits) const
   return DoubleDataFieldWithSubscriptSymbol::getLayout(z, significantDigits);
 }
 
-// IonisationDataField
+// IonizationDataField
 
-double IonisationDataField::getDouble(AtomicNumber z) const {
-  return ElementsDataBase::EnergyOfIonisation(z);
+double IonizationDataField::getDouble(AtomicNumber z) const {
+  return ElementsDataBase::EnergyOfIonization(z);
 }
 
 }

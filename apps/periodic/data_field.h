@@ -190,13 +190,13 @@ public:
   I18n::Message fieldSubscript() const override { return I18n::Message::PeriodicAffinitySubscript; }
 };
 
-class IonisationDataField : public DoubleDataFieldWithSubscriptSymbol {
+class IonizationDataField : public DoubleDataFieldWithSubscriptSymbol {
 public:
-  I18n::Message fieldLegend() const override { return I18n::Message::PeriodicIonisationLegend; }
-  I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicIonisationSymbol; }
+  I18n::Message fieldLegend() const override { return I18n::Message::PeriodicIonizationLegend; }
+  I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicIonizationSymbol; }
   double getDouble(AtomicNumber z) const override;
   Poincare::Layout fieldUnit() const override { return Poincare::LayoutHelper::String("_kJ/_mol"); }
-  I18n::Message fieldSubscript() const override { return I18n::Message::PeriodicIonisationSubscript; }
+  I18n::Message fieldSubscript() const override { return I18n::Message::PeriodicIonizationSubscript; }
 };
 
 

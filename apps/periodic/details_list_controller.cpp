@@ -136,7 +136,7 @@ const DataField * DetailsListController::DataFieldForRow(int row) {
     &ElementsDataBase::BoilingPointField,
     &ElementsDataBase::DensityField,
     &ElementsDataBase::AffinityField,
-    &ElementsDataBase::IonisationField,
+    &ElementsDataBase::IonizationField,
   };
   assert(row < k_numberOfRows);
   return k_fields[row];

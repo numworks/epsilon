@@ -7,11 +7,11 @@
 #include <poincare/layout_helper.h>
 #include <stddef.h>
 
+namespace Periodic {
+
 /* Methods taking an AtomicNumber expect a number from 1 to 118 (i.e. 1-based
  * numbering). */
 typedef uint8_t AtomicNumber;
-
-namespace Periodic {
 
 // Abstract data fields
 

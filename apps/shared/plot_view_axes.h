@@ -50,6 +50,15 @@ private:
   void drawGridLines(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis parallel, bool boldGrid) const;
 };
 
+class WithPolarGrid {
+protected:
+  void drawGrid(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
+
+private:
+  constexpr static KDColor k_boldColor = Escher::Palette::GrayMiddle;
+  constexpr static KDColor k_lightColor = Escher::Palette::GrayBright;
+};
+
 class NoAxis {
 public:
   void drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis) const {}
@@ -126,7 +135,7 @@ typedef LabeledAxis<AbstractLabeledAxis::k_maxNumberOfYLabels> VerticalLabeledAx
  * PlotView */
 
 typedef Axes<NoGrid, NoAxis, NoAxis> NoAxes;
-typedef Axes<WithGrid, SimpleAxis, SimpleAxis> TwoUnlabeledAxes;
+typedef Axes<WithPolarGrid, SimpleAxis, SimpleAxis> TwoUnlabeledAxes;
 typedef Axes<NoGrid, HorizontalLabeledAxis, NoAxis> LabeledXAxis;
 typedef Axes<WithGrid, HorizontalLabeledAxis, VerticalLabeledAxis> TwoLabeledAxes;
 

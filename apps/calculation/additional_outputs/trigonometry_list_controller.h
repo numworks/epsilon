@@ -13,6 +13,8 @@ public:
     IllustratedListController(editExpressionController),
     m_graphCell(&m_model) {}
   void setExpression(Poincare::Expression e) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override;
+  constexpr static KDCoordinate k_illustrationHeight = 105;
 private:
   constexpr static char k_symbol[] = "θ";
   const char * symbol() const override { return k_symbol; }

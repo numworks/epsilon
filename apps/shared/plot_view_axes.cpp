@@ -1,4 +1,5 @@
 #include "plot_view_axes.h"
+#include <poincare/print.h>
 #include <limits.h>
 #include <cmath>
 
@@ -38,6 +39,67 @@ void WithGrid::drawGridLines(const AbstractPlotView * plotView, KDContext * ctx,
     plotView->drawStraightSegment(ctx, rect, parallel, i * step, -INFINITY, INFINITY, color);
   }
 }
+
+// WithPolarGrid
+
+void WithPolarGrid::drawGrid(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+  constexpr float minimumGraduationDistanceToCenter = 60;
+  constexpr int angleStepInDegree = 15;
+  // The widest label is of length 4 : '360°'
+  const int graduationHorizontalMargin = KDFont::GlyphWidth(KDFont::Size::Small) * 4 / 2;
+  const int graduationVerticalMargin = KDFont::GlyphHeight(KDFont::Size::Small) / 2;
+  constexpr int bufferSize = sizeof("360°");
+  char buffer[bufferSize];
+  float xMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.left() + graduationHorizontalMargin);
+  float xMax = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.right() - graduationHorizontalMargin);
+  float yMin = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, rect.bottom() - graduationVerticalMargin);
+  float yMax = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, rect.top() + graduationVerticalMargin);
+  float length = 2.f * std::max({-xMin, xMax, -yMin, yMax});
+  for (int angle = 0; angle <= 360; angle += angleStepInDegree) {
+    float angleRadian = angle *  M_PI / 180.f;
+    float cos = std::cos(angleRadian);
+    float sin = std::sin(angleRadian);
+    bool shouldHaveGraduation = angle % (2 * angleStepInDegree) == 0;
+    // drawSegment(ctx, rect, 0.f, 0.f, length * cos, length * sin, shouldHaveGraduation ? k_boldColor : k_lightColor, false);
+    KDPoint from = KDPoint(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, 0.f), plotView->floatToPixel(AbstractPlotView::Axis::Vertical, 0.f));
+    KDPoint to = KDPoint(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, length * cos), plotView->floatToPixel(AbstractPlotView::Axis::Vertical, length * sin));
+    if (angle % 90) {
+      ctx->drawAntialiasedLine(from, to, shouldHaveGraduation ? k_boldColor : k_lightColor, KDColorWhite);
+    }
+    if (!shouldHaveGraduation) {
+      continue;
+    }
+    Poincare::Print::CustomPrintf(buffer, bufferSize, "%i°", angle);
+    // Compute the position of the label
+    float x, y;
+    AbstractPlotView::RelativePosition verticalRelativePosition = AbstractPlotView::RelativePosition::There;
+    AbstractPlotView::RelativePosition horizontalRelativePosition = AbstractPlotView::RelativePosition::There;
+    float xQuadrant = cos >= 0 ? xMax : xMin;
+    float yQuadrant = sin >= 0 ? yMax : yMin;
+    if (std::abs(cos)*std::abs(yQuadrant) > std::abs(sin)*std::abs(xQuadrant)) {
+      float marginToRemove = AbstractPlotView::k_labelMargin * plotView->pixelHeight();//LengthToFloatLength(AbstractPlotView::Axis::Vertical, k_labelMargin);
+      x = xQuadrant;
+      y = xQuadrant * sin/cos + (angle == 360 ? 0 : -marginToRemove);
+      if (angle % 180 == 0) {
+        // Since the axis is black, we need to draw the graduation under or on top of it
+        verticalRelativePosition = angle == 360 ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::After;
+      }
+    } else {
+      x = std::copysign(yQuadrant * cos/sin, cos);
+      y = yQuadrant;
+      if (angle == 90) {
+        horizontalRelativePosition = AbstractPlotView::RelativePosition::After;
+      }
+    }
+    // TODO: update condition for non-orthonormal axes
+    if (x*x + y*y > std::pow(minimumGraduationDistanceToCenter * plotView->pixelWidth(), 2)) {//plotView->pixelLengthToFloatLength(AbstractPlotView::Axis::Horizontal, minimumGraduationDistanceToCenter),2)) {
+      plotView->drawLabel(ctx, rect, buffer, {x, y}, horizontalRelativePosition, verticalRelativePosition, k_boldColor);
+    }
+    /* TODO: don't print labels if the origin is off-screen and they end up on
+     * the other side */
+  }
+}
+
 
 // SimpleAxis
 

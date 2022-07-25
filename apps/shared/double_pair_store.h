@@ -79,7 +79,6 @@ public:
   void sortColumn(int series, int column, bool delayUpdate = false);
   void sortIndexByColumn(uint8_t * sortedIndex, int series, int column, int startIndex, int endIndex) const;
   double sumOfColumn(int series, int i, bool lnOfSeries = false) const;
-  bool seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const;
 
   /* WARNING: This checksum is too slow. Avoid using it if you can.
   * Use it if you want to check that the list was modified outside this object

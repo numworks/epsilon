@@ -7,13 +7,7 @@ namespace Periodic {
 
 DisplayTypeController::DisplayTypeController(StackViewController * stackController) :
   SelectableListViewController(stackController)
-{
-  for (MessageTableCell & cell : m_cells) {
-    cell.setTextColor(KDColorBlack);
-    cell.setBackgroundColor(KDColorWhite);
-    cell.setMessageFont(KDFont::Size::Large);
-  }
-}
+{}
 
 void DisplayTypeController::viewWillAppear() {
   size_t fieldIndex = 0;

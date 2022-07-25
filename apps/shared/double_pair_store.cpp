@@ -302,28 +302,6 @@ double DoublePairStore::sumOfColumn(int series, int i, bool lnOfSeries) const {
   return result;
 }
 
-bool DoublePairStore::seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const {
-  assert(series >= 0 && series < k_numberOfSeries);
-  int count = 0;
-  for (int j = 0; j < numberOfPairsOfSeries(series); j++) {
-    if (count >= i) {
-      return true;
-    }
-    double currentAbsissa = get(series, 0, j);
-    bool firstOccurence = true;
-    for (int k = 0; k < j; k++) {
-      if (get(series, 0, k) == currentAbsissa) {
-        firstOccurence = false;
-        break;
-      }
-    }
-    if (firstOccurence) {
-      count++;
-    }
-  }
-  return count >= i;
-}
-
 uint32_t DoublePairStore::storeChecksum() const {
   uint32_t checkSumPerSeries[k_numberOfSeries];
   for (int i = 0; i < k_numberOfSeries; i++) {

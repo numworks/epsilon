@@ -63,6 +63,7 @@ public:
   double yValueForXValue(int series, double x, Poincare::Context * globalContext);
   double xValueForYValue(int series, double y, Poincare::Context * globalContext);
   double residualAtIndexForSeries(int series, int index, Poincare::Context * globalContext);
+  bool seriesNumberOfAbscissaeGreaterOrEqualTo(int series, int i) const;
 
   // To speed up computation during drawings, float is returned.
   float maxValueOfColumn(int series, int i) const;

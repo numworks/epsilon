@@ -1,7 +1,6 @@
 #ifndef SHARED_MENU_CONTROLLER_H
 #define SHARED_MENU_CONTROLLER_H
 
-#include <escher/centering_view.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
@@ -25,14 +24,11 @@ public:
   void stackOpenPage(Escher::ViewController * nextPage) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  Escher::View * view() override { return &m_contentView; }
   int numberOfRows() const override { return m_delegate->numberOfSubApps(); }
 
 private:
   Escher::ViewController * m_controllers[k_menuControllerMaxNumberOfCells];
   MenuControllerDelegate * m_delegate;
-
-  Escher::CenteringView m_contentView;
 };
 
 }  // namespace Shared

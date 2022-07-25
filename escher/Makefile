@@ -15,7 +15,6 @@ escher_src += $(addprefix escher/src/,\
   buffer_table_cell.cpp \
   buffer_table_cell_with_message.cpp \
   buffer_table_cell_with_editable_text.cpp \
-  centering_view.cpp \
   cell_with_margins.cpp \
   chained_text_field_delegate.cpp \
   chevron_view.cpp \

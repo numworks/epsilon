@@ -9,13 +9,13 @@ namespace Periodic {
 
 class ElementsViewDataSource {
 public:
-  ElementsViewDataSource(const DataField * field, AtomicNumber selectedElement, AtomicNumber previousElement, ElementsViewDelegate * delegate);
+  ElementsViewDataSource(ElementsViewDelegate * delegate);
 
-  AtomicNumber selectedElement() const { return m_selectedElement; }
-  AtomicNumber previousElement() const { return m_previousElement; }
+  AtomicNumber selectedElement() const;
+  AtomicNumber previousElement() const;
   void setSelectedElement(AtomicNumber z);
-  const DataField * field() const { return m_field; }
-  void setField(const DataField * field);
+  const DataField * field() const;
+  void setField(const DataField * dataField);
   void setTextFilter(const char * filter) { m_textFilter = filter; }
   /* Returns colors given by the data field, or default colors if the element
    * does not match the filter. */
@@ -31,10 +31,7 @@ private:
   bool elementNumberMatchesFilter(AtomicNumber z) const;
 
   ElementsViewDelegate * m_delegate;
-  const DataField * m_field;
   const char * m_textFilter;
-  AtomicNumber m_selectedElement;
-  AtomicNumber m_previousElement;
   AtomicNumber m_searchResult;
 };
 

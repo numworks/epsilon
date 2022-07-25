@@ -10,7 +10,7 @@
 
 namespace Shared {
 
-constexpr int k_maxNumberOfCells = 3;
+constexpr int k_menuControllerMaxNumberOfCells = 3;
 
 class MenuControllerDelegate {
 public:
@@ -19,7 +19,7 @@ public:
   virtual int numberOfSubApps() const = 0;
 };
 
-class MenuController : public Escher::SelectableCellListPage<Escher::SubappCell, k_maxNumberOfCells, Escher::MemoizedListViewDataSource> {
+class MenuController : public Escher::SelectableCellListPage<Escher::SubappCell, k_menuControllerMaxNumberOfCells, Escher::MemoizedListViewDataSource> {
 public:
   MenuController(Escher::StackViewController * parentResponder, std::initializer_list<Escher::ViewController *> controllers, std::initializer_list<std::initializer_list<I18n::Message>> messages, std::initializer_list<const Escher::Image *> images, MenuControllerDelegate * delegate);
   void stackOpenPage(Escher::ViewController * nextPage) override;
@@ -29,7 +29,7 @@ public:
   int numberOfRows() const override { return m_delegate->numberOfSubApps(); }
 
 private:
-  Escher::ViewController * m_controllers[k_maxNumberOfCells];
+  Escher::ViewController * m_controllers[k_menuControllerMaxNumberOfCells];
   MenuControllerDelegate * m_delegate;
 
   Escher::CenteringView m_contentView;

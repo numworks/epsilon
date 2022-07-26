@@ -53,7 +53,7 @@ float AbstractPlotView::pixelToFloat(Axis axis, KDCoordinate p) const {
   return (axis == Axis::Horizontal) ? m_range->xMin() + p * pixelWidth() : m_range->yMax() - p * pixelHeight();
 }
 
-void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness, KDCoordinate dashSize) const {
+void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness, KDCoordinate dashSize, bool inBottomRightAngle) const {
   float pLength = pixelLength(parallel);
   float fmin = rangeMin(parallel) - pLength, fmax = rangeMax(parallel) + pLength;
   min = std::clamp(min, fmin, fmax);
@@ -65,13 +65,31 @@ void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis pa
   if (a > b) {
     std::swap(a, b);
   }
-  if (dashSize <= 0) {
+  if (inBottomRightAngle) {
+    /* Thick lines are always drawn below or to the right of the given
+     * coordinates. A bottom/right corner made from a thick horizontal line
+     * ending in (x,y) and a thick vertical line going up from (x,y) will
+     * therefore look like this :
+     *       (y) …
+     *        O  O
+     * (x) O  O  O
+     *  …  O  O
+     * We need to add a pixel in (x+1, y+1) by adding the thickness to the end. */
+    b += thickness - 1;
+  }
+  if (dashSize <= 0 || 2 * dashSize > b - a) {
     dashSize = b - a;
+    KDRect lineRect = (parallel == Axis::Horizontal) ? KDRect(a, p, dashSize, thickness) :  KDRect(p, a, thickness, dashSize);
+    ctx->fillRect(lineRect, color);
+    return;
   }
   if (dashSize == 0) {
     return;
   }
-  for (KDCoordinate i = a; i < b; i += 2 * dashSize) {
+  int numberOfDashes = (b - a + 1) / (2 * dashSize);
+  float interval = static_cast<float>(b - a + 1 - dashSize) / static_cast<float>(numberOfDashes);
+  for (int d = 0; d <= numberOfDashes; d++) {
+    int i = std::round(interval * d) + a;
     KDRect rectangle = parallel == Axis::Horizontal ? KDRect(i, p, dashSize, thickness) : KDRect(p, i, thickness, dashSize);
     ctx->fillRect(rectangle.intersectedWith(rect), color);
   }

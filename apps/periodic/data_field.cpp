@@ -115,7 +115,7 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z, int) const {
   if (previousNoble >= 0) {
     electrons -= k_nobles[previousNoble];
     n = previousNoble + 3;
-    res.addOrMergeChildAtIndex(HorizontalLayout::Builder(CodePointLayout::Builder('['), LayoutHelper::String(ElementsDataBase::Symbol(k_nobles[previousNoble])) ,CodePointLayout::Builder(']')), 0, false);
+    res.addOrMergeChildAtIndex(HorizontalLayout::Builder(CodePointLayout::Builder('['), LayoutHelper::String(ElementsDataBase::Symbol(k_nobles[previousNoble])), CodePointLayout::Builder(']')), 0, false);
   }
   while (electrons > 0) {
     int index = (n - 1) * k_lMax + l;
@@ -205,7 +205,6 @@ I18n::Message BlockDataField::protectedGetMessage(AtomicNumber z) const {
 }
 
 // MetalDataField
-
 
 I18n::Message MetalDataField::protectedGetMessage(AtomicNumber z) const {
   if (DeferToGroupDataField(z)) {

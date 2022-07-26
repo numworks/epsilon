@@ -109,8 +109,8 @@ I18n::Message VectorListController::messageAtIndex(int index) {
   // Message index is mapped in setExpression because it depends on the Matrix.
   assert(index < k_maxNumberOfOutputRows && index >=0);
   I18n::Message messages[k_maxNumberOfOutputRows] = {
-    I18n::Message::AdditionalNormVector,
-    I18n::Message::NormalizedVector,
+    I18n::Message::NormVector,
+    I18n::Message::UnitVector,
     I18n::Message::AngleWithFirstAxis,
   };
   return messages[m_indexMessageMap[index]];

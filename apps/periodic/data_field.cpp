@@ -55,8 +55,8 @@ DataField::ColorPair DoubleDataField::getColors(AtomicNumber z) const {
 }
 
 uint8_t DoubleDataField::blendAlphaForContinuousParameter(AtomicNumber z) const {
-  /* FIXME We will recompute alpha for each element when redrawing the whole
-   * table. We could memoize the sorted indexes to speed up the process. */
+  /* When drawing the whole table, the sorting order will be computed for each
+   * element. This is still fast enough to not affect the display. */
   assert(ElementsDataBase::IsElement(z));
   float numberOfLowerValues = 0;
   double v = getDouble(z);
@@ -65,7 +65,7 @@ uint8_t DoubleDataField::blendAlphaForContinuousParameter(AtomicNumber z) const 
       numberOfLowerValues++;
     }
   }
-  return static_cast<uint8_t>(numberOfLowerValues / (ElementsDataBase::k_numberOfElements - 1.f) * ((1 << 8) - 1.f));
+  return static_cast<uint8_t>(numberOfLowerValues * ((1 << 8) - 1.f) / (ElementsDataBase::k_numberOfElements - 1.f));
 }
 
 // DoubleDataFieldWithSubscriptSymbol

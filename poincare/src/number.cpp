@@ -48,7 +48,7 @@ Number Number::ParseNumber(const char * integralPart, size_t integralLength, con
   // Integer
   if (exponentLength == 0 && decimalLength == 0) {
     Integer i(integralPart, integralLength, false);
-    if (i.isNotParsable()) {
+    if (i.isNotParsable(integralLength)) {
       return Number::FloatNumber(i.approximate<double>());
     } else {
       return BasedInteger::Builder(i, Integer::Base::Decimal);

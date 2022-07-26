@@ -10,7 +10,12 @@ namespace Poincare {
 
 class DerivativeLayoutNode : public LayoutNode {
 public:
-  DerivativeLayoutNode() : LayoutNode(), m_variableChildInFractionSlot(true) {}
+  enum class VariableSlot : bool {
+    Fraction,
+    Assignment
+  };
+
+  DerivativeLayoutNode() : LayoutNode(), m_variableSlot(VariableSlot::Fraction) {}
 
   // LayoutNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override;
@@ -48,7 +53,7 @@ protected:
   KDCoordinate fractionBarWidth(KDFont::Size font);
   KDCoordinate parenthesesWidth(KDFont::Size font);
 
-  void setVariableSlot(bool fractionSlot, bool * shouldRecomputeLayout);
+  void setVariableSlot(VariableSlot variableSlot, bool * shouldRecomputeLayout);
 
   constexpr static KDCoordinate k_dxHorizontalMargin = 2;
   constexpr static KDCoordinate k_barHorizontalMargin = 2;
@@ -57,7 +62,7 @@ protected:
 
  /* There are two slots for the variable name: the Fraction and the Assignment slots.
   * This member is used to make the two copies of the variable name interactive while storing the variable name only once. */
-  bool m_variableChildInFractionSlot;
+  VariableSlot m_variableSlot;
 };
 
 class FirstOrderDerivativeLayoutNode final : public DerivativeLayoutNode {

@@ -48,13 +48,29 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
   int rank = m_sequence->initialRank();
   float x = m_sequence->evaluateXYAtParameter(static_cast<float>(rank), context).x2();
   float y = 0.f;
+  float uOfX = m_sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
+  /* We need to detect bottom-right corners made by a vertical and an horizontal
+   * segment : they can happen in two cases.
+   *
+   * We are on the line in (x,y) going down to the curve in (x,u(x)) and then
+   * left to the line in (u(x),u(x)). We could be tempted to use y=x but not
+   * assuming this also deals with the case when we started on the x-axis.
+   *
+   * We are on the curve in (x,u(x)) moving horizontally to the right to the
+   * line into (u(x),u(x)) and then up to the curve in (u((x),u(u(x))).
+   */
+  bool cornerCurveToLine = false;
+  bool cornerLineToCurve = false;
   for (int i = 0; i < m_step; i++) {
     rank++;
-    float uOfX = m_sequence->evaluateXYAtParameter(static_cast<float>(rank), context).x2();
-    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color(), k_thickness, k_dashSize);
+    cornerCurveToLine = x>uOfX && y>uOfX;
+    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color(), k_thickness, k_dashSize, cornerCurveToLine || cornerLineToCurve);
     y = uOfX;
-    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color(), k_thickness, k_dashSize);
+    float uOfuOfX = m_sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
+    cornerLineToCurve = x<uOfX && y<uOfuOfX;
+    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color(), k_thickness, k_dashSize, cornerCurveToLine || cornerLineToCurve);
     x = uOfX;
+    uOfX = uOfuOfX;
   }
   if (m_step) {
     plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark, k_thickness, k_dashSize);

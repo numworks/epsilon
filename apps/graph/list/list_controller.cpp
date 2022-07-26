@@ -104,7 +104,7 @@ bool ListController::layoutRepresentsPolarFunction(Poincare::Layout l) const {
  * - norm([[4][5]]) : Cartesian
  * - 31*[[4][5]]*10 : Parametric */
 bool ListController::layoutRepresentsParametricFunction(Poincare::Layout l) const {
-  if (l.type() == Poincare::LayoutNode::Type::HorizontalLayout) {
+  if (l.type() == Poincare::LayoutNode::Type::HorizontalLayout && l.numberOfChildren() > 0) {
     l = l.childAtIndex(0);
   }
   if (l.type() != Poincare::LayoutNode::Type::MatrixLayout) {

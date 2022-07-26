@@ -24,6 +24,7 @@ public:
   int polynomialDegree(Context * context, const char * symbolName) const override;
 
 private:
+  bool isFirstOrder() const { return Expression::IsOne(Expression(childAtIndex(numberOfChildren() - 1))); }
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

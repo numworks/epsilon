@@ -20,6 +20,8 @@ private:
   constexpr static KDCoordinate k_symbolZAMargin = 1;
   constexpr static KDCoordinate k_ZVerticalOffset = 6;
   constexpr static KDCoordinate k_AVerticalOffset = 9;
+  constexpr static KDFont::Size k_symbolFont = KDFont::Size::Large;
+  constexpr static KDFont::Size k_numbersFont = KDFont::Size::Small;
 
   KDColor m_backgroundColor;
 };

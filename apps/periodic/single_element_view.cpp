@@ -27,13 +27,13 @@ void SingleElementView::drawRect(KDContext * ctx, KDRect rect) const {
 
   const char * symbol = ElementsDataBase::Symbol(z);
   KDCoordinate symbolXOffset = k_symbolZAMargin;
-  KDSize symbolSize = KDFont::Font(KDFont::Size::Large)->stringSize(symbol);
+  KDSize symbolSize = KDFont::Font(k_symbolFont)->stringSize(symbol);
 
   constexpr size_t k_bufferSize = 4;
   char zBuffer[k_bufferSize];
   int zLength = Poincare::PrintInt::Left(z, zBuffer, k_bufferSize - 1);
   zBuffer[zLength] = '\0';
-  KDSize zSize = KDFont::Font(KDFont::Size::Small)->stringSize(zBuffer);
+  KDSize zSize = KDFont::Font(k_numbersFont)->stringSize(zBuffer);
 
   uint16_t a = ElementsDataBase::NumberOfMass(z);
   char aBuffer[k_bufferSize];
@@ -45,15 +45,15 @@ void SingleElementView::drawRect(KDContext * ctx, KDRect rect) const {
     assert(a < 1000);
     int aLength = Poincare::PrintInt::Left(a, aBuffer, k_bufferSize - 1);
     aBuffer[aLength] = '\0';
-    aSize = KDFont::Font(KDFont::Size::Small)->stringSize(aBuffer);
+    aSize = KDFont::Font(k_numbersFont)->stringSize(aBuffer);
     assert(aSize.width() >= zSize.width()); // since A >= Z
     symbolXOffset += aSize.width();
   }
 
   KDPoint symbolOrigin(bgRect.x() + (k_cellSize - symbolSize.width() - symbolXOffset) / 2 + symbolXOffset, bgRect.y() + (k_cellSize - symbolSize.height()) / 2);
-  ctx->drawString(symbol, symbolOrigin, KDFont::Size::Large, colors.fg(), colors.bg());
-  ctx->drawString(zBuffer, KDPoint(symbolOrigin.x() - zSize.width() - k_symbolZAMargin, symbolOrigin.y() + symbolSize.height() - k_ZVerticalOffset), KDFont::Size::Small, colors.fg(), colors.bg());
-  ctx->drawString(aBuffer, KDPoint(symbolOrigin.x() - aSize.width() - k_symbolZAMargin, symbolOrigin.y() - aSize.height() + k_AVerticalOffset), KDFont::Size::Small, colors.fg(), colors.bg());
+  ctx->drawString(symbol, symbolOrigin, k_symbolFont, colors.fg(), colors.bg());
+  ctx->drawString(zBuffer, KDPoint(symbolOrigin.x() - zSize.width() - k_symbolZAMargin, symbolOrigin.y() + symbolSize.height() - k_ZVerticalOffset), k_numbersFont, colors.fg(), colors.bg());
+  ctx->drawString(aBuffer, KDPoint(symbolOrigin.x() - aSize.width() - k_symbolZAMargin, symbolOrigin.y() - aSize.height() + k_AVerticalOffset), k_numbersFont, colors.fg(), colors.bg());
 }
 
 }

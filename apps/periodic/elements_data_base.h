@@ -47,13 +47,6 @@ public:
   static ElementData::PhysicalState PhysicalState(AtomicNumber z) { return DataForElement(z)->physicalState(); }
   static ElementData::Block Block(AtomicNumber z) { return DataForElement(z)->block(); }
 
-  static const char * MolarMassUnit() { return "g/mol"; }
-  static const char * ElectronegativityUnit() { return ""; }
-  static const char * TemperatureUnit() { return "°C"; }
-  static const char * RadiusUnit() { return "pm"; }
-  static const char * DensityUnit() { return "g/cm^3"; }
-  static const char * EnergyUnit() { return "kJ/mol"; }
-
 private:
   static const ElementData * DataForElement(AtomicNumber z);
 };

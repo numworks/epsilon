@@ -49,7 +49,7 @@ protected:
 
 class EnumDataField : public DataField {
 public:
-  Poincare::Layout getLayout(AtomicNumber z, int significantDigits) const { return Poincare::LayoutHelper::String(I18n::translate(getMessage(z))); }
+  Poincare::Layout getLayout(AtomicNumber z, int significantDigits = k_defaultSignificantDigits) const override { return Poincare::LayoutHelper::String(I18n::translate(getMessage(z))); }
 };
 
 class DoubleDataField : public DataField {
@@ -118,14 +118,12 @@ public:
   I18n::Message fieldLegend() const override { return I18n::Message::PeriodicMetalLegend; }
   I18n::Message protectedGetMessage(AtomicNumber z) const override;
   // TODO ColorPair getColors(AtomicNumber z) const override;
-
 };
 
 class StateDataField : public EnumDataField {
 public:
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicStateSymbol; }
   I18n::Message protectedGetMessage(AtomicNumber z) const override;
-  // TODO ColorPair getColors(AtomicNumber z) const override;
 };
 
 class MassDataField : public DoubleDataField {

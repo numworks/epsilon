@@ -37,12 +37,7 @@ private:
   Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
   template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
-  template<typename T> Evaluation<T> templatedApproximateWithValueForArgumentAndOrder(T evaluationArgument, int order, const ApproximationContext& approximationContext) const;
-  template<typename T> T firstChildScalarValueForArgumentAtLowerOrder(T evaluationArgument, int order, const ApproximationContext& approximationContext) const {
-    assert(order > 0);
-    T value = templatedApproximateWithValueForArgumentAndOrder<T>(evaluationArgument, order - 1, approximationContext).toScalar();
-    return value;
-  }
+  template<typename T> T scalarApproximateWithValueForArgumentAndOrder(T evaluationArgument, int order, const ApproximationContext& approximationContext) const;
   template<typename T> T growthRateAroundAbscissa(T x, T h, int order, const ApproximationContext& approximationContext) const;
   template<typename T> T riddersApproximation(int order, const ApproximationContext& approximationContext, T x, T h, T * error) const;
   // TODO: Change coefficients?

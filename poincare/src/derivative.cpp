@@ -88,21 +88,21 @@ Evaluation<T> DerivativeNode::templatedApproximate(const ApproximationContext& a
   if (std::isnan(evaluationArgument)) {
     return Complex<T>::RealUndefined();
   }
-  return templatedApproximateWithValueForArgumentAndOrder<T>(evaluationArgument, order, approximationContext);
+  return Complex<T>::Builder(scalarApproximateWithValueForArgumentAndOrder<T>(evaluationArgument, order, approximationContext));
 }
 
 
 template<typename T>
-Evaluation<T> DerivativeNode::templatedApproximateWithValueForArgumentAndOrder(T evaluationArgument, int order, const ApproximationContext& approximationContext) const {
+T DerivativeNode::scalarApproximateWithValueForArgumentAndOrder(T evaluationArgument, int order, const ApproximationContext& approximationContext) const {
   /* TODO : Reduction is mapped on list, but not approximation.
   * Find a smart way of doing it. */
   assert(order >= 0);
   if (order == 0) {
-    return Complex<T>::Builder(firstChildScalarValueForArgument(evaluationArgument, approximationContext));
+    return firstChildScalarValueForArgument(evaluationArgument, approximationContext);
   }
-  T functionValue = firstChildScalarValueForArgumentAtLowerOrder(evaluationArgument, order, approximationContext);
+  T functionValue = scalarApproximateWithValueForArgumentAndOrder(evaluationArgument, order - 1, approximationContext);
   if (std::isnan(functionValue)) {
-    return Complex<T>::RealUndefined();
+    return NAN;
   }
 
   T error = sizeof(T) == sizeof(double) ? DBL_MAX : FLT_MAX;
@@ -125,13 +125,13 @@ Evaluation<T> DerivativeNode::templatedApproximateWithValueForArgumentAndOrder(T
    * reach (2e-11, 3e-11) or (1e-12, 2e-14) for expected 0 results, with floats
    * as well as with doubles. */
   if (std::isnan(error) || (std::fabs(error) > k_minSignificantError && std::fabs(error) > std::fabs(result) * k_maxErrorRateOnApproximation)) {
-    return Complex<T>::RealUndefined();
+    return NAN;
   }
   // Round and amplify error to a power of 10
   T roundedError = static_cast<T>(100.0) * std::pow(static_cast<T>(10.0), IEEE754<T>::exponentBase10(error));
   if (error == static_cast<T>(0.0) || std::round(result/roundedError) == result/roundedError) {
     // Return result if error is negligible
-    return Complex<T>::Builder(result);
+    return result;
   }
   /* Round down the result, to remove precision depending on roundedError. The
    * higher the error is to the result, the lesser the output will have
@@ -139,13 +139,13 @@ Evaluation<T> DerivativeNode::templatedApproximateWithValueForArgumentAndOrder(T
    * - if result  >> roundedError , almost no loss of precision
    * - if result  ~= error, precision reduced to 1 significant number
    * - if result*2 < error, 0 is returned  */
-  return Complex<T>::Builder(std::round(result/roundedError)*roundedError);
+  return std::round(result/roundedError)*roundedError;
 }
 
 template<typename T>
 T DerivativeNode::growthRateAroundAbscissa(T x, T h, int order, const ApproximationContext& approximationContext) const {
-  T expressionPlus = firstChildScalarValueForArgumentAtLowerOrder(x+h, order, approximationContext);
-  T expressionMinus = firstChildScalarValueForArgumentAtLowerOrder(x-h, order, approximationContext);
+  T expressionPlus = scalarApproximateWithValueForArgumentAndOrder(x+h, order - 1, approximationContext);
+  T expressionMinus = scalarApproximateWithValueForArgumentAndOrder(x-h, order - 1, approximationContext);
   return (expressionPlus - expressionMinus)/(h+h);
 }
 

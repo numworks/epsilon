@@ -3,13 +3,22 @@
 namespace Regression {
 
 void ResidualPlotRange::calibrate(double xMin, double xMax, double yMin, double yMax, KDCoordinate height, KDCoordinate bannerHeight) {
-  if (std::fabs(yMax - yMin) < FLT_EPSILON) {
-    assert(std::fabs(yMax) < FLT_EPSILON);
-    yMax = 1.0;
-    yMin = -1.0;
+  assert(xMax >= xMin && yMax >= yMin);
+  /* Handle cases where limits are too close or equal. They are shifted by both
+   * k_minFloat (impactful on very small values) and abs(xMax)*k_relativeMargin
+   * (impactful on large values) in order to properly display them. */
+  if (xMax - xMin < Shared::Range1D::k_minFloat) {
+    // Proportional model handles datasets with a single abscissa value
+    double shift = std::abs(xMax) * k_relativeMargin + Shared::Range1D::k_minFloat;
+    xMax += shift;
+    xMin -= shift;
   }
-  assert(xMax > xMin && yMax > yMin);
-
+  if (yMax - yMin < Shared::Range1D::k_minFloat) {
+    // In addition to proportional models, residuals could also be very close
+    double shift = std::abs(yMax) * k_relativeMargin + Shared::Range1D::k_minFloat;
+    yMax += shift;
+    yMin -= shift;
+  }
   double xOffset = (xMax - xMin) * k_relativeMargin;
   protectedSetXMin(xMin - xOffset, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, false);
   protectedSetXMax(xMax + xOffset, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, true);

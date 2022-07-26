@@ -648,15 +648,29 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
               ReplaceAllDefinedSymbolsWithDefinition);
       assert(isVertical || degree == yDegree);
       if (degree == 1) {
-        Polynomial::LinearPolynomialRoots(coefficients[1], coefficients[0],
-                                          &m_expression, context,
-                                          ComplexFormat(), AngleUnit());
+        Polynomial::LinearPolynomialRoots(
+          coefficients[1],
+          coefficients[0],
+          &m_expression,
+          context,
+          ComplexFormat(),
+          AngleUnit(),
+          false);
       } else if (degree == 2) {
         // Equation is of degree 2, each root is a subcurve to plot.
         Expression root1, root2, delta;
         int solutions = Polynomial::QuadraticPolynomialRoots(
-            coefficients[2], coefficients[1], coefficients[0], &root1, &root2,
-            &delta, context, ComplexFormat(), AngleUnit());
+            coefficients[2],
+            coefficients[1],
+            coefficients[0],
+            &root1,
+            &root2,
+            &delta,
+            context,
+            ComplexFormat(),
+            AngleUnit(),
+            false,
+            false);
         if (solutions <= 1) {
           m_expression = root1;
         } else {

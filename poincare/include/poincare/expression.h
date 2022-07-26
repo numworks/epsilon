@@ -292,6 +292,7 @@ public:
   Expression cloneAndDeepReduceWithSystemCheckpoint(ExpressionNode::ReductionContext * reductionContext, bool * reduceFailure) const;
   // TODO: reduceAndRemoveUnit should be private but we need to make poincare/text/helper.h a class to be able to friend it
   Expression reduceAndRemoveUnit(const ExpressionNode::ReductionContext& reductionContext, Expression * Unit);
+  Expression cloneAndReduceOrSimplify(const ExpressionNode::ReductionContext& reductionContext, bool beautify) { return beautify ? cloneAndSimplify(reductionContext) : cloneAndReduce(reductionContext); }
   /* WARNING: this must be called only on expressions that:
    *  - are reduced.
    *  - have a known sign. (sign() != Sign::Unknown) */

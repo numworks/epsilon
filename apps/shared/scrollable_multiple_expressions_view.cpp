@@ -139,7 +139,7 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::subviewFrames(KDRec
 
   // Layout left view
   KDCoordinate currentWidth = 0;
-  if (leftExpressionView()) {
+  if (leftExpressionView() && !leftExpressionView()->layout().isUninitialized()) {
     assert(leftFrame != nullptr);
     *leftFrame = KDRect(currentWidth, viewBaseline - leftBaseline, leftSize);
     currentWidth += leftSize.width() + AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
@@ -196,8 +196,12 @@ KDSize AbstractScrollableMultipleExpressionsView::ContentCell::privateMinimalSiz
     height = std::max(height, centerSize.height());
   }
 
-  KDSize rightSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
-  width += rightSize.width();
+  KDSize rightSize = KDSizeZero;
+  if (!m_rightExpressionView.layout().isUninitialized()) {
+    rightSize = m_rightExpressionView.minimalSizeForOptimalDisplay();
+    width += rightSize.width();
+  }
+
   height = std::max(height, rightSize.height());
 
   return KDSize(width, height);

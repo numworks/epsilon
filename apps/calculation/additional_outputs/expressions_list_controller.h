@@ -3,13 +3,14 @@
 
 #include <poincare/expression.h>
 #include <apps/i18n.h>
+#include "scrollable_three_expressions_cell_with_message.h"
 #include "list_controller.h"
 
 namespace Calculation {
 
 class ExpressionsListController : public ListController {
 public:
-  ExpressionsListController(EditExpressionController * editExpressionController);
+  ExpressionsListController(EditExpressionController * editExpressionController, Escher::SelectableTableViewDelegate * delegate = nullptr);
 
   // Responder
   void viewDidDisappear() override;
@@ -32,9 +33,10 @@ protected:
   Poincare::Expression m_expression;
   // Memoization of layouts
   mutable Poincare::Layout m_layouts[k_maxNumberOfRows];
-  Escher::ExpressionTableCellWithMessage m_cells[k_maxNumberOfRows];
+  mutable Poincare::Layout m_exactLayouts[k_maxNumberOfRows];
+  mutable Poincare::Layout m_approximatedLayouts[k_maxNumberOfRows];
+  ScrollableThreeExpressionsCellWithMessage m_cells[k_maxNumberOfRows];
 private:
-  Poincare::Layout layoutAtIndex(int index);
   virtual I18n::Message messageAtIndex(int index) = 0;
   // Cells
 };

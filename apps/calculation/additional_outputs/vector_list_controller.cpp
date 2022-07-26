@@ -58,7 +58,9 @@ void VectorListController::setExpression(Poincare::Expression e) {
   // 1. Vector norm
   Expression norm = VectorNorm::Builder(m_expression).cloneAndReduce(reductionContext);
   m_indexMessageMap[index] = messageIndex++;
-  m_layouts[index++] = getLayoutFromExpression(norm, context, preferences);
+  m_exactLayouts[index] = getLayoutFromExpression(norm, context, preferences);
+  m_approximatedLayouts[index] = getLayoutFromExpression(norm.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit()), context, preferences);
+  index++;
 
   // We can't determine it if norm is null
   // TODO: Handle ExpressionNode::NullStatus::Unknown
@@ -89,7 +91,9 @@ void VectorListController::setExpression(Poincare::Expression e) {
         angle = Subtraction::Builder(Poincare::Constant::Builder("π"), angle);
       }
       m_indexMessageMap[index] = messageIndex++;
-      m_layouts[index++] = HorizontalLayout::Builder(LayoutHelper::String("θ = "),getLayoutFromExpression(angle, context, preferences));
+      m_layouts[index] = LayoutHelper::String("θ");
+      m_approximatedLayouts[index] = getLayoutFromExpression(angle, context, preferences);
+      index++;
     } else {
       setShowIllustration(false);
     }

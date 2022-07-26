@@ -4,6 +4,7 @@
 #include "../../shared/scrollable_multiple_expressions_view.h"
 #include "../calculation.h"
 #include "expression_with_equal_sign_view.h"
+#include <poincare/layout.h>
 #include <escher/table_cell.h>
 
 namespace Calculation {
@@ -22,13 +23,29 @@ public:
   void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame) {
     return m_contentCell.subviewFrames(leftFrame, centerFrame, approximateSignFrame, rightFrame);
   }
+  void setShowEqual(bool showEqual) {
+    m_contentCell.setShowEqual(showEqual);
+  }
+  SubviewPosition leftMostPosition() {
+    if (!m_contentCell.m_leftExpressionView.layout().isUninitialized()) {
+      return  SubviewPosition::Left;
+    } else if (displayCenter()) {
+      return SubviewPosition::Center;
+    }
+    return SubviewPosition::Right;
+  }
 private:
   class ContentCell : public Shared::AbstractScrollableMultipleExpressionsView::ContentCell {
+    friend ScrollableThreeExpressionsView;
   public:
     using Shared::AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell;
     KDColor backgroundColor() const override { return KDColorWhite; }
     void setEven(bool even) override { return; }
     Escher::ExpressionView * leftExpressionView() const override { return const_cast<ExpressionWithEqualSignView *>(&m_leftExpressionView); }
+    void setShowEqual(bool showEqual) {
+      m_leftExpressionView.setShowEqual(showEqual);
+    }
+
   private:
     ExpressionWithEqualSignView m_leftExpressionView;
   };
@@ -47,6 +64,7 @@ public:
 
   // Cell
   Poincare::Layout layout() const override { return m_view.layout(); }
+  void setLayouts(Poincare::Layout leftLayout, Poincare::Layout centerLayout, Poincare::Layout rightLayout);
 
   // Responder cell
   Escher::Responder * responder() override {

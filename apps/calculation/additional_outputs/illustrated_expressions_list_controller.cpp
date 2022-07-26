@@ -1,4 +1,5 @@
-#include "apps/calculation/additional_outputs/expressions_list_controller.h"
+#include "expressions_list_controller.h"
+#include "scrollable_three_expressions_cell_with_message.h"
 #include "illustrated_expressions_list_controller.h"
 #include <poincare/exception_checkpoint.h>
 #include <poincare/symbol.h>
@@ -10,7 +11,7 @@ using namespace Escher;
 namespace Calculation {
 
 IllustratedExpressionsListController::IllustratedExpressionsListController(EditExpressionController * editExpressionController) :
-  ExpressionsListController(editExpressionController)
+  ExpressionsListController(editExpressionController, this)
 {
 }
 
@@ -43,7 +44,7 @@ KDCoordinate IllustratedExpressionsListController::nonMemoizedRowHeight(int j) {
   if (typeAtIndex(j) == k_illustrationCellType) {
     return k_illustrationHeight;
   }
-  ExpressionTableCellWithMessage tempCell;
+  ScrollableThreeExpressionsCellWithMessage tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, j);
 }
 

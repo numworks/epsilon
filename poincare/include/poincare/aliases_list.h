@@ -8,11 +8,6 @@
 /* This class is used to handle name's aliases for reserved functions, units
  * and constants.
  *
- * === ACCESS NAME AND ALIASES ===
- * To access the main name, use AliasesList::mainName
- * To know if a name is an alias of another, use AliasesList::contains
- * To iterate through aliases, use for (const char * name : AliasesList)
- *
  * === SIMPLE NAMES WITHOUT ALIAS ===
  * If a name has no alias, the AliasesList object is equivalent to the string of
  * the name.
@@ -27,8 +22,12 @@
  *
  * Example:
  * arccos and acos are aliases for the arccos function.
- * aliasesList = "\01\02arccos\00\02acos\00"
- * (here the header is empty).
+ * |\01|…|\02|a|r|c|c|o|s|\00|\02|a|c|o|s|\00|\00|
+ *  ^header start         ^end of alias 1
+ *        ^start of alias 1                   ^end of aliases list
+ *
+ * === ITERATE THROUGH ALIASES LIST ===
+ * Use "for (const char * name : AliasesList)"
  *
  * === MAIN NAME ===
  * The main name is the name outputted by the calculator. For example, the main

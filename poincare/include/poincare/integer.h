@@ -124,7 +124,7 @@ public:
    * be created during any Poincare computation (evaluation, reduction, solving
    * of equations, etc.)
    */
-  bool isNotParsable() const { return isOverflow() || NumberOfBase10DigitsWithoutSign(*this) > k_maxNumberOfParsedDigitsBase10; }
+  bool isNotParsable(int numberOfBase10Digits) const { return isOverflow() || numberOfBase10Digits > k_maxNumberOfParsedDigitsBase10; }
   static int NumberOfBase10DigitsWithoutSign(const Integer & i);
   bool isOne() const { return (numberOfDigits() == 1 && digit(0) == 1 && !m_negative); };
   bool isTwo() const { return (numberOfDigits() == 1 && digit(0) == 2 && !m_negative); };

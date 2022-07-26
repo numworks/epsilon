@@ -281,12 +281,12 @@ void AbstractTextField::setInputEventHandlerDelegate(
 }
 
 bool AbstractTextField::isEditing() const {
-  return contentView()->isEditing();
+  return nonEditableContentView()->isEditing();
 }
 
 size_t AbstractTextField::draftTextLength() const {
   assert(isEditing());
-  return contentView()->editedTextLength();
+  return nonEditableContentView()->editedTextLength();
 }
 
 void AbstractTextField::setText(const char * text) {
@@ -640,9 +640,9 @@ bool AbstractTextField::storeInClipboard() const {
   if (!isEditing()) {
     Clipboard::sharedClipboard()->store(text());
     return true;
-  } else if (!contentView()->selectionIsEmpty()) {
-    const char * start = contentView()->selectionStart();
-    Clipboard::sharedClipboard()->store(start, contentView()->selectionEnd() - start);
+  } else if (!nonEditableContentView()->selectionIsEmpty()) {
+    const char * start = nonEditableContentView()->selectionStart();
+    Clipboard::sharedClipboard()->store(start, nonEditableContentView()->selectionEnd() - start);
     return true;
   }
   return false;

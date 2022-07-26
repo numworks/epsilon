@@ -44,12 +44,12 @@ public:
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);
   void setInputEventHandlerDelegate(InputEventHandlerDelegate * inputEventHandlerDelegate);
   void setText(const char * text);
-  char * draftTextBuffer() const { return const_cast<char *>(contentView()->editedText()); }
-  size_t draftTextBufferSize() const { return contentView()->draftTextBufferSize(); }
+  char * draftTextBuffer() const { return const_cast<char *>(nonEditableContentView()->editedText()); }
+  size_t draftTextBufferSize() const { return nonEditableContentView()->draftTextBufferSize(); }
   size_t draftTextLength() const;
   void setDraftTextBufferSize(size_t size) { contentView()->setDraftTextBufferSize(size); }
   void reinitDraftTextBuffer() { contentView()->reinitDraftTextBuffer(); }
-  KDFont::Size font() const { return contentView()->font(); }
+  KDFont::Size font() const { return nonEditableContentView()->font(); }
   void setTextColor(KDColor textColor);
   size_t insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, size_t bufferLength);
 
@@ -112,7 +112,7 @@ protected:
   };
 
   const ContentView * nonEditableContentView() const override = 0;
-  ContentView * contentView() const { return const_cast<ContentView *>(nonEditableContentView()); }
+  ContentView * contentView() { return const_cast<ContentView *>(nonEditableContentView()); }
 
 private:
   virtual void removeWholeText();

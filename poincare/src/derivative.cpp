@@ -251,7 +251,11 @@ Expression Derivative::shallowReduce(const ExpressionNode::ReductionContext& red
       reducedDerivative = reducedDerivative.childAtIndex(0);
     }
     replaceChildAtIndexInPlace(0, reducedDerivative);
-    currentDerivationOrder--;
+    if (Expression::IsZero(reducedDerivative)) {
+      currentDerivationOrder = 0;
+    } else {
+      currentDerivationOrder--;
+    }
     /* Updates the value of derivand, because derivate may call
      * replaceWithInplace on it. */
     derivand = childAtIndex(0);

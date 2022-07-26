@@ -117,7 +117,10 @@ class MetalDataField : public EnumDataField {
 public:
   I18n::Message fieldLegend() const override { return I18n::Message::PeriodicMetalLegend; }
   I18n::Message protectedGetMessage(AtomicNumber z) const override;
-  // TODO ColorPair getColors(AtomicNumber z) const override;
+  ColorPair getColors(AtomicNumber z) const override;
+
+private:
+  static bool DeferToGroupDataField(AtomicNumber z);
 };
 
 class StateDataField : public EnumDataField {

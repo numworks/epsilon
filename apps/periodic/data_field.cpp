@@ -152,25 +152,6 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z, int) const {
 
 // GroupDataField
 
-DataField::ColorPair GroupDataField::getColors(AtomicNumber z) const {
-  constexpr ColorPair k_colors[] = {
-    ColorPair(Palette::ElementOrangeDark, Palette::ElementOrangeLight),
-    ColorPair(Palette::ElementCeladonDark, Palette::ElementCeladonLight),
-    ColorPair(Palette::ElementBlueDark, Palette::ElementBlueLight),
-    ColorPair(Palette::ElementYellowDark, Palette::ElementYellowLight),
-    ColorPair(Palette::ElementPinkDark, Palette::ElementPinkLight),
-    ColorPair(Palette::ElementGreenDark, Palette::ElementGreenLight),
-    ColorPair(Palette::ElementTurquoiseDark, Palette::ElementTurquoiseLight),
-    ColorPair(Palette::ElementRedDark, Palette::ElementRedLight),
-    ColorPair(Palette::ElementGrassDark, Palette::ElementGrassLight),
-    ColorPair(Palette::ElementPurpleDark, Palette::ElementPurpleLight),
-    ColorPair(Palette::ElementGrayDark, Palette::ElementGrayLight),
-  };
-  ElementData::Group group = ElementsDataBase::Group(z);
-  assert(static_cast<uint8_t>(group) < sizeof(k_colors) / sizeof(k_colors[0]));
-  return k_colors[static_cast<uint8_t>(group)];
-}
-
 I18n::Message GroupDataField::protectedGetMessage(AtomicNumber z) const {
   constexpr I18n::Message k_titles[] = {
     I18n::Message::PeriodicGroupAlkali,
@@ -190,6 +171,25 @@ I18n::Message GroupDataField::protectedGetMessage(AtomicNumber z) const {
   return k_titles[static_cast<uint8_t>(group)];
 }
 
+DataField::ColorPair GroupDataField::getColors(AtomicNumber z) const {
+  constexpr ColorPair k_colors[] = {
+    ColorPair(Palette::ElementOrangeDark, Palette::ElementOrangeLight),
+    ColorPair(Palette::ElementCeladonDark, Palette::ElementCeladonLight),
+    ColorPair(Palette::ElementBlueDark, Palette::ElementBlueLight),
+    ColorPair(Palette::ElementYellowDark, Palette::ElementYellowLight),
+    ColorPair(Palette::ElementPinkDark, Palette::ElementPinkLight),
+    ColorPair(Palette::ElementGreenDark, Palette::ElementGreenLight),
+    ColorPair(Palette::ElementTurquoiseDark, Palette::ElementTurquoiseLight),
+    ColorPair(Palette::ElementRedDark, Palette::ElementRedLight),
+    ColorPair(Palette::ElementGrassDark, Palette::ElementGrassLight),
+    ColorPair(Palette::ElementPurpleDark, Palette::ElementPurpleLight),
+    ColorPair(Palette::ElementGrayDark, Palette::ElementGrayLight),
+  };
+  ElementData::Group group = ElementsDataBase::Group(z);
+  assert(static_cast<uint8_t>(group) < sizeof(k_colors) / sizeof(k_colors[0]));
+  return k_colors[static_cast<uint8_t>(group)];
+}
+
 // BlockDataField
 
 I18n::Message BlockDataField::protectedGetMessage(AtomicNumber z) const {
@@ -206,11 +206,23 @@ I18n::Message BlockDataField::protectedGetMessage(AtomicNumber z) const {
 
 // MetalDataField
 
+
 I18n::Message MetalDataField::protectedGetMessage(AtomicNumber z) const {
-  if (ElementsDataBase::IsMetal(z)) {
+  if (DeferToGroupDataField(z)) {
     return ElementsDataBase::GroupField.protectedGetMessage(z);
   }
   return I18n::Message::PeriodicGroupNonmetal;
+}
+
+DataField::ColorPair MetalDataField::getColors(AtomicNumber z) const {
+  if (DeferToGroupDataField(z)) {
+    return ElementsDataBase::GroupField.getColors(z);
+  }
+  return ColorPair(Palette::ElementRedDark, Palette::ElementRedLight);
+}
+
+bool MetalDataField::DeferToGroupDataField(AtomicNumber z) {
+  return ElementsDataBase::IsMetal(z) || ElementsDataBase::Group(z) == ElementData::Group::Unidentified;
 }
 
 // StateDataField

@@ -219,13 +219,10 @@ Expression Derivative::shallowReduce(const ExpressionNode::ReductionContext& red
   int derivationOrder;
   bool orderIsSymbol;
   bool orderIsInteger = SimplificationHelper::extractIntegerChildAtIndex(*this, numberOfChildren() - 1, &derivationOrder, &orderIsSymbol);
-  if (!orderIsInteger) {
-    return replaceWithUndefinedInPlace();
-  }
   if (orderIsSymbol) {
     return *this;
   }
-  if (derivationOrder < 0) {
+  if (!orderIsInteger || derivationOrder < 0) {
     return replaceWithUndefinedInPlace();
   }
 

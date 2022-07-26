@@ -240,9 +240,7 @@ Expression Derivative::shallowReduce(const ExpressionNode::ReductionContext& red
   /* Since derivand is a child to the derivative node, it can be replaced in
    * place without derivate having to return the derivative. */
   while (currentDerivationOrder > 0 && derivand.derivate(reductionContext, symbol, symbolValue)) {
-    /* Updates the value of derivand, because derivate may call
-     * replaceWithInplace on it.
-     * We need to reduce the derivand here before replacing the symbol : the
+    /* We need to reduce the derivand here before replacing the symbol: the
      * general formulas used during the derivation process can create some nodes
      * that are not defined for some values (e.g. log), but that would disappear
      * at reduction. */
@@ -257,6 +255,8 @@ Expression Derivative::shallowReduce(const ExpressionNode::ReductionContext& red
     }
     replaceChildAtIndexInPlace(0, reducedDerivative);
     currentDerivationOrder--;
+    /* Updates the value of derivand, because derivate may call
+     * replaceWithInplace on it. */
     derivand = childAtIndex(0);
   }
   Dependency d = Dependency::Builder(childAtIndex(0), l);

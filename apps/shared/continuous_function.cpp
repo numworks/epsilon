@@ -689,8 +689,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
       * of nodes of each expression. We take the one that has the less node.
       * This is not ideal because an expression with less node does not always
       * mean a simpler expression, but it's a good compromise for now. */
-      PlotType computedPlotType; // useless here.
-      Expression resultForApproximation = expressionEquation(record, context, &computedPlotType);
+      Expression resultForApproximation = expressionEquation(record, context, nullptr);
       if (!resultForApproximation.isUninitialized()) {
         PoincareHelpers::CloneAndReduce(
             &resultForApproximation,

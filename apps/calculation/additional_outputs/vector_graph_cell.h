@@ -12,6 +12,8 @@ public:
   VectorGraphView(VectorModel * model);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
+  constexpr static float k_arrowSizeInPixels = 8;
+  constexpr static float k_labelRatio = 0.26;
   VectorModel * m_model;
 };
 

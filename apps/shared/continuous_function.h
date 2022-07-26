@@ -329,9 +329,9 @@ private:
     Poincare::Expression expressionClone(const Ion::Storage::Record * record) const override;
     // Return the entire expression that the user inputted. Replace symbols.
     Poincare::Expression originalEquation(const Ion::Storage::Record * record, CodePoint symbol) const;
-    // Return the expression representing the equation (without "f(x)=")
+    /* Return the expression representing the equation
+     * (turns "f(x)=xy" into "xy" and "xy=a" into "xy-a") */
     Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context, PlotType * computedPlotType) const;
-
     // Return the derivative of the expression to plot.
     Poincare::Expression expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
     // Rename the record if needed. Record pointer might get corrupted.

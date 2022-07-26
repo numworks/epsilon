@@ -107,6 +107,7 @@ bool MainController::textFieldDidReceiveEvent(Escher::AbstractTextField * textFi
     if (event == Ion::Events::Right && textField->cursorLocation() == textField->text() + textField->draftTextLength()) {
       /* Commit to suggested text on Right press. */
       m_view.bannerView()->textField()->commitSuggestion();
+      m_view.elementsView()->reload();
       return true;
     }
   } else if (event == Ion::Events::OK || event == Ion::Events::EXE) {

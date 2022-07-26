@@ -10,11 +10,15 @@ namespace PlotPolicy {
 // WithGrid
 
 void WithGrid::drawGrid(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
-  drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical);
-  drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal);
+  drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical, false);
+  drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal, false);
+  drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical, true);
+  drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal, true);
 }
 
-void WithGrid::drawGridLines(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis parallel) const {
+void WithGrid::drawGridLines(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis parallel, bool boldGrid) const {
+  KDColor color = boldGrid ? k_boldColor : k_lightColor;
+  bool oddIndexes = !boldGrid;
   assert(plotView);
   float min, max, step;
   CurveViewRange * range = plotView->range();
@@ -28,9 +32,10 @@ void WithGrid::drawGridLines(const AbstractPlotView * plotView, KDContext * ctx,
     step = range->xGridUnit();
   }
 
+  int iMin = min / step;
   int iMax = max / step;
-  for (int i = min / step; i <= iMax; i++) {
-    plotView->drawStraightSegment(ctx, rect, parallel, i * step, -INFINITY, INFINITY, i % 2 == 0 ? k_boldColor : k_lightColor);
+  for (int i = iMin + ((iMin % 2 == 0) == oddIndexes); i <= iMax; i += 2) {
+    plotView->drawStraightSegment(ctx, rect, parallel, i * step, -INFINITY, INFINITY, color);
   }
 }
 

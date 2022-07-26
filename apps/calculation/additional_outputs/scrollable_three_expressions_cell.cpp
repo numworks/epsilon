@@ -78,13 +78,18 @@ KDCoordinate ScrollableThreeExpressionsCell::Height(Calculation * calculation, P
   return unionedFrame.height();
 }
 
+void ScrollableThreeExpressionsCell::setLayouts(Poincare::Layout leftLayout, Poincare::Layout centerLayout, Poincare::Layout rightLayout) {
+  m_view.setLayouts(leftLayout, centerLayout, rightLayout);
+  m_view.setShowEqual(!centerLayout.isUninitialized() || !rightLayout.isUninitialized());
+}
+
 void ScrollableThreeExpressionsCell::didBecomeFirstResponder() {
   reinitSelection();
   Container::activeApp()->setFirstResponder(&m_view);
 }
 
 void ScrollableThreeExpressionsCell::reinitSelection() {
-  m_view.setSelectedSubviewPosition(ScrollableThreeExpressionsView::SubviewPosition::Left);
+  m_view.setSelectedSubviewPosition(m_view.leftMostPosition());
   m_view.reloadScroll();
 }
 

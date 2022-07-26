@@ -26,7 +26,7 @@ public:
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
-  constexpr static KDCoordinate k_illustrationHeight = 120;
+  constexpr static KDCoordinate k_illustrationHeight = 105;
 protected:
   constexpr static uint8_t k_illustrationCellType = 0;
   constexpr static uint8_t k_expressionCellType = 1;

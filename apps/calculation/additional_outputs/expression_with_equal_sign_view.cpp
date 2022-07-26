@@ -6,7 +6,13 @@ using namespace Escher;
 namespace Calculation {
 
 KDSize ExpressionWithEqualSignView::minimalSizeForOptimalDisplay() const {
+  if (m_layout.isUninitialized()) {
+    return KDSizeZero;
+  }
   KDSize expressionSize = ExpressionView::minimalSizeForOptimalDisplay();
+  if (!m_showEqual) {
+    return expressionSize;
+  }
   KDSize equalSize = m_equalSign.minimalSizeForOptimalDisplay();
   return KDSize(expressionSize.width() + equalSize.width() + Metric::CommonLargeMargin, expressionSize.height());
 }
@@ -30,7 +36,11 @@ void ExpressionWithEqualSignView::layoutSubviews(bool force) {
   KDSize expressionSize = ExpressionView::minimalSizeForOptimalDisplay();
   KDSize equalSize = m_equalSign.minimalSizeForOptimalDisplay();
   KDCoordinate expressionBaseline = layout().baseline(k_font);
-  m_equalSign.setFrame(KDRect(expressionSize.width() + Metric::CommonLargeMargin, expressionBaseline - equalSize.height()/2, equalSize), force);
+  if (!m_showEqual) {
+    m_equalSign.setFrame(KDRectZero, force);
+  } else {
+    m_equalSign.setFrame(KDRect(expressionSize.width() + Metric::CommonLargeMargin, expressionBaseline - equalSize.height()/2, equalSize), force);
+  }
 }
 
 }

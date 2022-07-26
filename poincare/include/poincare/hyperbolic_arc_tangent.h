@@ -8,7 +8,7 @@ namespace Poincare {
 
 class HyperbolicArcTangentNode final : public HyperbolicTrigonometricFunctionNode {
 public:
-  constexpr static AliasesList k_functionName = NamesWithAlias::k_atanhName;
+  constexpr static AliasesList k_functionName = AliasesLists::k_atanhAliases;
 
   // TreeNode
   size_t size() const override { return sizeof(HyperbolicArcTangentNode); }

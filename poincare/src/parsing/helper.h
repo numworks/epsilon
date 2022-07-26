@@ -30,7 +30,7 @@ private:
     IdentifierBuilder identifierBuilder;
   };
   constexpr static SpecialIdentifier s_specialIdentifiers[] = {
-    {Symbol::k_ansName, [] {return static_cast<Expression>(Symbol::Ans());}},
+    {Symbol::k_ansAliases, [] {return static_cast<Expression>(Symbol::Ans());}},
     {Infinity::Name(), [] {return static_cast<Expression>(Infinity::Builder(false));}},
     {Nonreal::Name(), [] {return static_cast<Expression>(Nonreal::Builder());}},
     {Undefined::Name(), [] {return static_cast<Expression>(Undefined::Builder());}}

@@ -21,11 +21,11 @@ Complex<T> ArcSecantNode::computeOnComplex(const std::complex<T> c, Preferences:
 }
 
 Layout ArcSecantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ArcSecant(this), floatDisplayMode, numberOfSignificantDigits, ArcSecant::s_functionHelper.aliasesList().mainName());
+  return LayoutHelper::Prefix(ArcSecant(this), floatDisplayMode, numberOfSignificantDigits, ArcSecant::s_functionHelper.aliasesList().mainAlias());
 }
 
 int ArcSecantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSecant::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcSecant::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression ArcSecantNode::shallowReduce(const ReductionContext& reductionContext) {

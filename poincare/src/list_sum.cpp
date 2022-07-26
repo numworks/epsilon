@@ -10,11 +10,11 @@ int ListSumNode::numberOfChildren() const {
 }
 
 int ListSumNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListSum::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListSum::s_functionHelper.aliasesList().mainAlias());
 }
 
 Layout ListSumNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ListSum(this), floatDisplayMode, numberOfSignificantDigits, ListSum::s_functionHelper.aliasesList().mainName());
+  return LayoutHelper::Prefix(ListSum(this), floatDisplayMode, numberOfSignificantDigits, ListSum::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression ListSumNode::shallowReduce(const ReductionContext& reductionContext) {

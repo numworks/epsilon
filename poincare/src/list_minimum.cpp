@@ -11,11 +11,11 @@ int ListMinimumNode::numberOfChildren() const {
 }
 
 int ListMinimumNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListMinimum::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ListMinimum::s_functionHelper.aliasesList().mainAlias());
 }
 
 Layout ListMinimumNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ListMinimum(this), floatDisplayMode, numberOfSignificantDigits, ListMinimum::s_functionHelper.aliasesList().mainName());
+  return LayoutHelper::Prefix(ListMinimum(this), floatDisplayMode, numberOfSignificantDigits, ListMinimum::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression ListMinimumNode::shallowReduce(const ReductionContext& reductionContext) {

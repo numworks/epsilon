@@ -449,8 +449,8 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
       return;
     } else if (base.isMinusOne()) {
       // Detect cos^-1(x)
-      const char * mainName = aliasesList.mainName();
-      functionHelper = ParsingHelper::GetInverseFunction(mainName, strlen(mainName));
+      const char * mainAlias = aliasesList.mainAlias();
+      functionHelper = ParsingHelper::GetInverseFunction(mainAlias, strlen(mainAlias));
       if (!functionHelper) {
         m_status = Status::Error; // This function has no inverse
         return;

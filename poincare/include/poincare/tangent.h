@@ -8,7 +8,7 @@ namespace Poincare {
 
 class TangentNode final : public ExpressionNode {
 public:
-  constexpr static AliasesList k_functionName = NamesWithAlias::k_tanName;
+  constexpr static AliasesList k_functionName = AliasesLists::k_tanAliases;
 
   // TreeNode
   size_t size() const override { return sizeof(TangentNode); }

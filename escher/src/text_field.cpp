@@ -448,7 +448,7 @@ size_t TextField::insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, s
         location = functionDecoder.stringPosition();
         // Identify one of the functions
         for (size_t i = 0; i < sizeof(sFunctions)/sizeof(sFunctions[0]); i++) {
-          const char * name = sFunctions[i].aliasesList.mainName();
+          const char * name = sFunctions[i].aliasesList.mainAlias();
           size_t length = strlen(name);
           if ((location >= text + length) && memcmp(&text[(location - text) - length], name, length) == 0) {
             functionFound = true;

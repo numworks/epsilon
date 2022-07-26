@@ -8,7 +8,7 @@ namespace Poincare {
 
 class ArcCosecantNode final : public ExpressionNode {
 public:
-  constexpr static AliasesList k_functionName = NamesWithAlias::k_acosecName;
+  constexpr static AliasesList k_functionName = AliasesLists::k_acosecAliases;
 
   // TreeNode
   size_t size() const override { return sizeof(ArcCosecantNode); }

@@ -12,11 +12,11 @@ namespace Poincare {
 int InvBinomNode::numberOfChildren() const { return InvBinom::s_functionHelper.numberOfChildren(); }
 
 Layout InvBinomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(InvBinom(this), floatDisplayMode, numberOfSignificantDigits, InvBinom::s_functionHelper.aliasesList().mainName());
+  return LayoutHelper::Prefix(InvBinom(this), floatDisplayMode, numberOfSignificantDigits, InvBinom::s_functionHelper.aliasesList().mainAlias());
 }
 
 int InvBinomNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, InvBinom::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, InvBinom::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression InvBinomNode::shallowReduce(const ReductionContext& reductionContext) {

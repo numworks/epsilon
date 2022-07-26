@@ -20,7 +20,7 @@ Layout CeilingNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
 }
 
 int CeilingNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Ceiling::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Ceiling::s_functionHelper.aliasesList().mainAlias());
 }
 
 template<typename T>

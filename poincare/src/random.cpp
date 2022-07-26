@@ -11,11 +11,11 @@ namespace Poincare {
 int RandomNode::numberOfChildren() const { return Random::s_functionHelper.numberOfChildren(); }
 
 Layout RandomNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Random(this), floatDisplayMode, numberOfSignificantDigits, Random::s_functionHelper.aliasesList().mainName());
+  return LayoutHelper::Prefix(Random(this), floatDisplayMode, numberOfSignificantDigits, Random::s_functionHelper.aliasesList().mainAlias());
 }
 
 int RandomNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Random::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Random::s_functionHelper.aliasesList().mainAlias());
 }
 
 template <typename T> Evaluation<T> RandomNode::templateApproximate() const {

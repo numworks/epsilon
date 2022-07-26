@@ -16,7 +16,7 @@ public:
   Type type() const override { return Type::FloorLayout; }
 
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Floor::s_functionHelper.aliasesList().mainName(), true);
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Floor::s_functionHelper.aliasesList().mainAlias(), true);
   }
 
   // TreeNode

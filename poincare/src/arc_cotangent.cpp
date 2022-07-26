@@ -20,11 +20,11 @@ Complex<T> ArcCotangentNode::computeOnComplex(const std::complex<T> c, Preferenc
 }
 
 Layout ArcCotangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ArcCotangent(this), floatDisplayMode, numberOfSignificantDigits, ArcCotangent::s_functionHelper.aliasesList().mainName());
+  return LayoutHelper::Prefix(ArcCotangent(this), floatDisplayMode, numberOfSignificantDigits, ArcCotangent::s_functionHelper.aliasesList().mainAlias());
 }
 
 int ArcCotangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcCotangent::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcCotangent::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression ArcCotangentNode::shallowReduce(const ReductionContext& reductionContext) {

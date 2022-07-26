@@ -15,11 +15,11 @@ namespace Poincare {
 int ArcTangentNode::numberOfChildren() const { return ArcTangent::s_functionHelper.numberOfChildren(); }
 
 Layout ArcTangentNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ArcTangent(this), floatDisplayMode, numberOfSignificantDigits, ArcTangent::s_functionHelper.aliasesList().mainName());
+  return LayoutHelper::Prefix(ArcTangent(this), floatDisplayMode, numberOfSignificantDigits, ArcTangent::s_functionHelper.aliasesList().mainAlias());
 }
 
 int ArcTangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcTangent::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcTangent::s_functionHelper.aliasesList().mainAlias());
 }
 
 template<typename T>

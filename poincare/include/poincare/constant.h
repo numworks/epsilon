@@ -80,8 +80,8 @@ public:
   Constant(const ConstantNode * node) : SymbolAbstract(node) {}
   static Constant Builder(const char * name, int length) {
     assert(Constant::IsConstant(name, length));
-    const char * mainName = ConstantInfoFromName(name, length).aliasesList().mainName();
-    return SymbolAbstract::Builder<Constant, ConstantNode>(mainName, strlen(mainName));
+    const char * mainAlias = ConstantInfoFromName(name, length).aliasesList().mainAlias();
+    return SymbolAbstract::Builder<Constant, ConstantNode>(mainAlias, strlen(mainAlias));
   }
   static Constant Builder(const char * name) {
     assert(Constant::IsConstant(name, strlen(name)));
@@ -98,7 +98,7 @@ public:
 
   constexpr static ConstantNode::ConstantInfo k_constants[] = {
     ConstantNode::ConstantInfo("i", 0),
-    ConstantNode::ConstantInfo(NamesWithAlias::k_piName, 1, M_PI),
+    ConstantNode::ConstantInfo(AliasesLists::k_piAliases, 1, M_PI),
     ConstantNode::ConstantInfo("e", 2, M_E),
     ConstantNode::ConstantInfo("_c", 3, 299792458.0, "_m/_s"),
     ConstantNode::ConstantInfo("_e", 3, 1.602176634e-19, "_C"),

@@ -12,11 +12,11 @@ namespace Poincare {
 int RealPartNode::numberOfChildren() const { return RealPart::s_functionHelper.numberOfChildren(); }
 
 Layout RealPartNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.aliasesList().mainName());
+  return LayoutHelper::Prefix(RealPart(this), floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.aliasesList().mainAlias());
 }
 
 int RealPartNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, RealPart::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression RealPartNode::shallowReduce(const ReductionContext& reductionContext) {

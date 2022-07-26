@@ -2,19 +2,19 @@
 
 namespace Poincare {
 
-int compareNonNullTerminatedStringWithNullTerminated(const char * nonNullTerminatedName, size_t nonNullTerminatedNameLength, const char * nullTerminatedName) {
+int compareNonNullTerminatedStringWithNullTerminated(const char * nonNullTerminatedAlias, size_t nonNullTerminatedAliasLength, const char * nullTerminatedAlias) {
   /* Compare similarly to strcmp */
-  int diff = strncmp(nonNullTerminatedName, nullTerminatedName, nonNullTerminatedNameLength);
-  return (diff != 0) ? diff : strcmp("", nullTerminatedName + nonNullTerminatedNameLength);
+  int diff = strncmp(nonNullTerminatedAlias, nullTerminatedAlias, nonNullTerminatedAliasLength);
+  return (diff != 0) ? diff : strcmp("", nullTerminatedAlias + nonNullTerminatedAliasLength);
 }
 
-int AliasesList::maxDifferenceWith(const char * name, int nameLen) const {
-  if (!hasMultipleNames()) {
-    return compareNonNullTerminatedStringWithNullTerminated(name, nameLen, m_formattedAliasesList);
+int AliasesList::maxDifferenceWith(const char * alias, int aliasLen) const {
+  if (!hasMultipleAliases()) {
+    return compareNonNullTerminatedStringWithNullTerminated(alias, aliasLen, m_formattedAliasesList);
   }
   int maxValueOfComparison = 0;
-  for (const char * nameInList : *this) {
-    int tempValueOfComparison = compareNonNullTerminatedStringWithNullTerminated(name, nameLen, nameInList);
+  for (const char * aliasInList : *this) {
+    int tempValueOfComparison = compareNonNullTerminatedStringWithNullTerminated(alias, aliasLen, aliasInList);
     if (tempValueOfComparison == 0) {
       return 0;
     }
@@ -25,8 +25,8 @@ int AliasesList::maxDifferenceWith(const char * name, int nameLen) const {
   return maxValueOfComparison;
 }
 
-const char * AliasesList::firstName() const {
-  if (!hasMultipleNames()) {
+const char * AliasesList::firstAlias() const {
+  if (!hasMultipleAliases()) {
     return m_formattedAliasesList;
   }
   const char * result = m_formattedAliasesList;
@@ -36,27 +36,27 @@ const char * AliasesList::firstName() const {
   return result + 1;
 }
 
-const char * AliasesList::nextName(const char * currentPositionInNamesList) const {
-  if (!hasMultipleNames()) {
+const char * AliasesList::nextAlias(const char * currentPositionInAliasesList) const {
+  if (!hasMultipleAliases()) {
     return nullptr;
   }
-  assert(strlen(currentPositionInNamesList) != 0);
-  const char * beginningOfNextName = currentPositionInNamesList + strlen(currentPositionInNamesList) + 1;
-  if (beginningOfNextName[0] != k_stringStart) {
+  assert(strlen(currentPositionInAliasesList) != 0);
+  const char * beginningOfNextAlias = currentPositionInAliasesList + strlen(currentPositionInAliasesList) + 1;
+  if (beginningOfNextAlias[0] != k_stringStart) {
     return nullptr; // End of list
   }
-  return beginningOfNextName + 1; // Skip string start char
+  return beginningOfNextAlias + 1; // Skip string start char
 }
 
-const char * AliasesList::mainName(Poincare::Preferences::NamingConvention namingConvention) const {
-  if (!hasMultipleNames()) {
+const char * AliasesList::mainAlias(Poincare::Preferences::NamingConvention namingConvention) const {
+  if (!hasMultipleAliases()) {
     return m_formattedAliasesList;
   }
-  int mainIndex = indexOfMain(namingConvention);
+  int mainIndex = mainAliasIndex(namingConvention);
   const char * result; // skip header
   int currentIndex = 0;
-  for (const char * currentName : *this) {
-    result = currentName;
+  for (const char * currentAlias : *this) {
+    result = currentAlias;
     currentIndex++;
     if (currentIndex >= mainIndex) {
       break;
@@ -67,8 +67,8 @@ const char * AliasesList::mainName(Poincare::Preferences::NamingConvention namin
   return result;
 }
 
-int AliasesList::indexOfMain(Poincare::Preferences::NamingConvention namingConvention) const {
-  assert(hasMultipleNames());
+int AliasesList::mainAliasIndex(Poincare::Preferences::NamingConvention namingConvention) const {
+  assert(hasMultipleAliases());
   if (namingConvention == Preferences::NamingConvention::WorldWide) {
     return 0;
   }

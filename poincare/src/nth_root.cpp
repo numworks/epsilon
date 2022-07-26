@@ -26,7 +26,7 @@ Layout NthRootNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, i
 }
 
 int NthRootNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression NthRootNode::shallowReduce(const ReductionContext& reductionContext) {

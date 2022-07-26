@@ -9,11 +9,11 @@ namespace Poincare {
 int NormCDFRangeNode::numberOfChildren() const { return NormCDFRange::s_functionHelper.numberOfChildren(); }
 
 Layout NormCDFRangeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(NormCDFRange(this), floatDisplayMode, numberOfSignificantDigits, NormCDFRange::s_functionHelper.aliasesList().mainName());
+  return LayoutHelper::Prefix(NormCDFRange(this), floatDisplayMode, numberOfSignificantDigits, NormCDFRange::s_functionHelper.aliasesList().mainAlias());
 }
 
 int NormCDFRangeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NormCDFRange::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NormCDFRange::s_functionHelper.aliasesList().mainAlias());
 }
 
 template<typename T>

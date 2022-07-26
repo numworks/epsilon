@@ -31,11 +31,11 @@ Layout LogarithmNode::createLayout(Preferences::PrintFloatMode floatDisplayMode,
       childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits)
       );
   }
-  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Logarithm::s_functionHelper.aliasesList().mainName());
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Logarithm::s_functionHelper.aliasesList().mainAlias());
 }
 
 int LogarithmNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Logarithm::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Logarithm::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression LogarithmNode::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {

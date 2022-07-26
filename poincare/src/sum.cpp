@@ -18,7 +18,7 @@ Layout SumNode::createSumAndProductLayout(Layout argumentLayout, Layout symbolLa
 }
 
 int SumNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sum::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Sum::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression Sum::UntypedBuilder(Expression children) {

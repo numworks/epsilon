@@ -19,11 +19,11 @@ namespace Poincare {
 int FactorNode::numberOfChildren() const { return Factor::s_functionHelper.numberOfChildren(); }
 
 Layout FactorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.aliasesList().mainName());
+  return LayoutHelper::Prefix(Factor(this), floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.aliasesList().mainAlias());
 }
 
 int FactorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Factor::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression FactorNode::shallowReduce(const ReductionContext& reductionContext) {

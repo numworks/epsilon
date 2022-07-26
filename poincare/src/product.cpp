@@ -18,7 +18,7 @@ Layout ProductNode::createSumAndProductLayout(Layout argumentLayout, Layout symb
 }
 
 int ProductNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Product::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Product::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression Product::UntypedBuilder(Expression children) {

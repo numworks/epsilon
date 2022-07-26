@@ -11,7 +11,7 @@ namespace Poincare {
 class ArcTangentNode final : public ExpressionNode {
 friend class ArcCotangentNode;
 public:
-  constexpr static AliasesList k_functionName = NamesWithAlias::k_atanName;
+  constexpr static AliasesList k_functionName = AliasesLists::k_atanAliases;
 
   // TreeNode
   size_t size() const override { return sizeof(ArcTangentNode); }

@@ -72,7 +72,7 @@ void BinomialCoefficientLayoutNode::moveCursorDown(LayoutCursor * cursor, bool *
 }
 
 int BinomialCoefficientLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomialCoefficient::s_functionHelper.aliasesList().mainName(), true);
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomialCoefficient::s_functionHelper.aliasesList().mainAlias(), true);
 }
 
 KDSize BinomialCoefficientLayoutNode::computeSize(KDFont::Size font) {

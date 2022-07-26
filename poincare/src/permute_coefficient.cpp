@@ -19,7 +19,7 @@ int PermuteCoefficientNode::numberOfChildren() const { return PermuteCoefficient
 
 Layout PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   if (Preferences::sharedPreferences()->combinatoricSymbols() == Preferences::CombinatoricSymbols::Default) {
-    return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.aliasesList().mainName());
+    return LayoutHelper::Prefix(PermuteCoefficient(this), floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.aliasesList().mainAlias());
   } else {
     return LetterAWithSubAndSuperscriptLayout::Builder(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
@@ -28,7 +28,7 @@ Layout PermuteCoefficientNode::createLayout(Preferences::PrintFloatMode floatDis
 }
 
 int PermuteCoefficientNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, PermuteCoefficient::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression PermuteCoefficientNode::shallowReduce(const ReductionContext& reductionContext) {

@@ -17,11 +17,11 @@ namespace Poincare {
 int ArcCosineNode::numberOfChildren() const { return ArcCosine::s_functionHelper.numberOfChildren(); }
 
 Layout ArcCosineNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(ArcCosine(this), floatDisplayMode, numberOfSignificantDigits, ArcCosine::s_functionHelper.aliasesList().mainName());
+  return LayoutHelper::Prefix(ArcCosine(this), floatDisplayMode, numberOfSignificantDigits, ArcCosine::s_functionHelper.aliasesList().mainAlias());
 }
 
 int ArcCosineNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcCosine::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, ArcCosine::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression ArcCosineNode::shallowReduce(const ReductionContext& reductionContext) {

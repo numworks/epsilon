@@ -9,11 +9,11 @@ namespace Poincare {
 int BinomPDFNode::numberOfChildren() const { return BinomPDF::s_functionHelper.numberOfChildren(); }
 
 Layout BinomPDFNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(BinomPDF(this), floatDisplayMode, numberOfSignificantDigits, BinomPDF::s_functionHelper.aliasesList().mainName());
+  return LayoutHelper::Prefix(BinomPDF(this), floatDisplayMode, numberOfSignificantDigits, BinomPDF::s_functionHelper.aliasesList().mainAlias());
 }
 
 int BinomPDFNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomPDF::s_functionHelper.aliasesList().mainName());
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomPDF::s_functionHelper.aliasesList().mainAlias());
 }
 
 template<typename T>

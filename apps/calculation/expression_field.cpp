@@ -14,7 +14,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Ans) {
-    handleEventWithText(Poincare::Symbol::k_ansName.mainName());
+    handleEventWithText(Poincare::Symbol::k_ansAliases.mainAlias());
     return true;
   }
   if (isEditing() && isEmpty() &&
@@ -23,12 +23,12 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
        event == Ion::Events::Power ||
        event == Ion::Events::Square ||
        event == Ion::Events::Sto)) {
-    handleEventWithText(Poincare::Symbol::k_ansName.mainName());
+    handleEventWithText(Poincare::Symbol::k_ansAliases.mainAlias());
   }
   if (event == Ion::Events::Minus
       && isEditing()
       && fieldContainsSingleMinusSymbol()) {
-    setText(Poincare::Symbol::k_ansName.mainName());
+    setText(Poincare::Symbol::k_ansAliases.mainAlias());
     // The 'minus' symbol will be addded by ExpressionField::handleEvent
   }
   if (event == Ion::Events::Division
@@ -38,7 +38,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
      */
     DivisionCycleStep currentDivisionCycleStep = currentStepOfDivisionCycling();
     if (currentDivisionCycleStep == DivisionCycleStep::MixedFraction || currentDivisionCycleStep == DivisionCycleStep::Start) {
-      setText(Poincare::Symbol::k_ansName.mainName());
+      setText(Poincare::Symbol::k_ansAliases.mainAlias());
     } else if (currentDivisionCycleStep == DivisionCycleStep::AnsDivided) {
       setText("");
     } else if (currentDivisionCycleStep == DivisionCycleStep::EmptyFraction) {

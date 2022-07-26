@@ -90,7 +90,12 @@ private:
 class HigherOrderDerivativeLayoutNode final : public DerivativeLayoutNode {
   // diff(f(x), x, a, n)
 public:
-  HigherOrderDerivativeLayoutNode() : DerivativeLayoutNode(), m_orderInDenominator(true) {}
+  enum class OrderSlot : bool {
+    Numerator,
+    Denominator
+  };
+
+  HigherOrderDerivativeLayoutNode() : DerivativeLayoutNode(), m_orderSlot(OrderSlot::Denominator) {}
   // LayoutNode
   Type type() const override { return Type::HigherOrderDerivativeLayout; }
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) override;
@@ -121,11 +126,12 @@ private:
 
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
-  void setOrderSlot(bool denominator, bool * shouldRecomputeLayout);
+  void setOrderSlot(OrderSlot orderSlot, bool * shouldRecomputeLayout);
+
   /* There are two slots for the order of the derivative: the numerator and
    * the denominator slots. This member is used to make the two copies of the
    * order interactive while storing the order only once. */
-  bool m_orderInDenominator;
+  OrderSlot m_orderSlot;
 };
 
 class FirstOrderDerivativeLayout final : public LayoutThreeChildren<FirstOrderDerivativeLayout, FirstOrderDerivativeLayoutNode> {

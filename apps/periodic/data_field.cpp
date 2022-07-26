@@ -111,37 +111,38 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z, int) const {
 
   HorizontalLayout res = HorizontalLayout::Builder();
   int electrons = z;
-  int n = 0, l = 0;
+  int n = 1, l = 0;
   if (previousNoble >= 0) {
     electrons -= k_nobles[previousNoble];
-    l = 0;
-    n = previousNoble + 2;
+    n = previousNoble + 3;
     res.addOrMergeChildAtIndex(HorizontalLayout::Builder(CodePointLayout::Builder('['), LayoutHelper::String(ElementsDataBase::Symbol(k_nobles[previousNoble])) ,CodePointLayout::Builder(']')), 0, false);
   }
   while (electrons > 0) {
-    int index = n * k_lMax + l;
+    int index = (n - 1) * k_lMax + l;
     int maxPop = 2 * (2 * l + 1);
     int pop = maxPop > electrons ? electrons : maxPop;
     electrons -= pop;
     conf[index] = pop;
     /* Subshells are filled in order of increasing n+l then increasing n. */
     if (l > 0) {
+      /* 4p (n=4, l=1) -> 5s (n=5, l=0) */
       l--;
       n++;
     } else {
-      l = (n + 1) / 2;
+      /* 5s (n=5, l=0) -> 4d (n=4, l=2) */
+      l = n / 2;
       n += 1 - l;
     }
   }
 
   /* Subshells are displayed in order of increasing n, then increasing l. */
-  for (n = 0; n < k_nMax; n++) {
-    for (l = 0; l < k_lMax; l++) {
-      int index = n * k_lMax + l;
-      if (l > n || conf[index] == 0) {
+  for (n = 1; n <= k_nMax; n++) {
+    for (l = 0; l < k_lMax && l < n; l++) {
+      int index = (n - 1) * k_lMax + l;
+      if (conf[index] == 0) {
         continue;
       }
-      Layout term = HorizontalLayout::Builder(Integer(n + 1).createLayout(), CodePointLayout::Builder(k_lSymbols[l]), VerticalOffsetLayout::Builder(Integer(conf[index]).createLayout(), VerticalOffsetLayoutNode::Position::Superscript));
+      Layout term = HorizontalLayout::Builder(Integer(n).createLayout(), CodePointLayout::Builder(k_lSymbols[l]), VerticalOffsetLayout::Builder(Integer(conf[index]).createLayout(), VerticalOffsetLayoutNode::Position::Superscript));
       res.addOrMergeChildAtIndex(term, res.numberOfChildren(), false);
     }
   }

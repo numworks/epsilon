@@ -33,7 +33,7 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   if (!std::isfinite(v)) {
     return Undefined::Builder().createLayout(floatDisplayMode, significantDigits, nullptr);
   }
-  Layout value = Float<double>::Builder(getDouble(z)).createLayout(floatDisplayMode, significantDigits, nullptr);
+  Layout value = Float<double>::Builder(v).createLayout(floatDisplayMode, significantDigits, nullptr);
   Layout unit = fieldUnit();
   if (unit.isUninitialized()) {
     return value;

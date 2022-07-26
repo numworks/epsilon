@@ -50,7 +50,7 @@ void SingleElementView::drawRect(KDContext * ctx, KDRect rect) const {
     symbolXOffset += aSize.width();
   }
 
-  KDPoint symbolOrigin(bgRect.x() + (k_cellSize - symbolSize.width() + symbolXOffset) / 2, bgRect.y() + (k_cellSize - symbolSize.height()) / 2);
+  KDPoint symbolOrigin(bgRect.x() + (k_cellSize - symbolSize.width() - symbolXOffset) / 2 + symbolXOffset, bgRect.y() + (k_cellSize - symbolSize.height()) / 2);
   ctx->drawString(symbol, symbolOrigin, KDFont::Size::Large, colors.fg(), colors.bg());
   ctx->drawString(zBuffer, KDPoint(symbolOrigin.x() - zSize.width() - k_symbolZAMargin, symbolOrigin.y() + symbolSize.height() - k_ZVerticalOffset), KDFont::Size::Small, colors.fg(), colors.bg());
   ctx->drawString(aBuffer, KDPoint(symbolOrigin.x() - aSize.width() - k_symbolZAMargin, symbolOrigin.y() - aSize.height() + k_AVerticalOffset), KDFont::Size::Small, colors.fg(), colors.bg());

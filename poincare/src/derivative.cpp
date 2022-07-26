@@ -226,10 +226,10 @@ Expression Derivative::shallowReduce(const ExpressionNode::ReductionContext& red
     return replaceWithUndefinedInPlace();
   }
 
-  List l = List::Builder();
+  List listOfDependencies = List::Builder();
   Expression derivand = childAtIndex(0);
   if (derivand.type() == ExpressionNode::Type::Dependency) {
-    static_cast<Dependency &>(derivand).extractDependencies(l);
+    static_cast<Dependency &>(derivand).extractDependencies(listOfDependencies);
     derivand = childAtIndex(0);
   }
   Symbol symbol = childAtIndex(1).convert<Symbol>();
@@ -259,22 +259,24 @@ Expression Derivative::shallowReduce(const ExpressionNode::ReductionContext& red
      * replaceWithInplace on it. */
     derivand = childAtIndex(0);
   }
-  Dependency d = Dependency::Builder(childAtIndex(0), l);
   if (currentDerivationOrder < derivationOrder) {
     // Do not add a dependecy if nothing was derivated.
-    d.addDependency(derivandAsDependency);
+    listOfDependencies.addChildAtIndexInPlace(derivandAsDependency, listOfDependencies.numberOfChildren(), listOfDependencies.numberOfChildren());
   }
   if (currentDerivationOrder == 0) {
     /* Deep reduces the child, because derivate may not preserve its reduced
      * status. */
+    Dependency d = Dependency::Builder(childAtIndex(0), listOfDependencies);
     Expression result = d.replaceSymbolWithExpression(symbol, symbolValue);
     replaceWithInPlace(result);
     return result.deepReduce(reductionContext);
   }
   // If derivation fails, we still need to decrease the derivation order according to what was already done.
   replaceChildAtIndexInPlace(numberOfChildren() - 1, Rational::Builder(currentDerivationOrder));
-  replaceChildAtIndexInPlace(0, d);
-  return *this;
+  Dependency d = Dependency::Builder(Undefined::Builder(), listOfDependencies);
+  replaceWithInPlace(d);
+  d.replaceChildAtIndexInPlace(0, *this);
+  return d.shallowReduce(reductionContext);
 }
 
 void Derivative::DerivateUnaryFunction(Expression function, Symbol symbol, Expression symbolValue, const ExpressionNode::ReductionContext& reductionContext) {

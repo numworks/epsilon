@@ -100,7 +100,7 @@ void ElementsView::layoutSubviews(bool force) {
   m_nameView.setTextColor(dataSource->field()->getColors(z).fg());
   KDSize nameSize = m_nameView.minimalSizeForOptimalDisplay();
   m_nameView.setFrame(KDRect(KDPoint(
-          cellRect.x() + (zoomedRect.width() + cellRect.width() - k_zoomedViewMargin - nameSize.width()) / 2,
+          cellRect.x() + cellRect.width() + (zoomedRect.width() - cellRect.width() - k_zoomedViewMargin - nameSize.width()) / 2,
           cellRect.y() + (cellRect.height() - nameSize.height()) / 2), nameSize)
       , true);
 }

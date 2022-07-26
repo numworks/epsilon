@@ -29,10 +29,6 @@ constexpr KDColor ElementTurquoiseLight = KDColor::RGB24(0xc9f7ff);
 constexpr KDColor ElementYellowDark = KDColor::RGB24(0x907a02);
 constexpr KDColor ElementYellowLight = KDColor::RGB24(0xfff7cf);
 
-constexpr KDColor SystemGrayLight = KDColor::RGB24(0xf6f6f6);
-constexpr KDColor SystemGrayDark = KDColor::RGB24(0xdedade);
-constexpr KDColor SystemGrayBluish = KDColor::RGB24(0xd5d6e6);
-
 }
 }
 

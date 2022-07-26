@@ -41,7 +41,7 @@ void ElementsViewDataSource::setField(const DataField * dataField) {
 }
 
 DataField::ColorPair ElementsViewDataSource::filteredColors(AtomicNumber z) const {
-  return elementMatchesFilter(z) ? field()->getColors(z) : DataField::ColorPair(KDColorBlack, Palette::SystemGrayDark);
+  return elementMatchesFilter(z) ? field()->getColors(z) : DataField::ColorPair(KDColorBlack, Escher::Palette::GrayMiddle);
 }
 
 const char * ElementsViewDataSource::suggestedElementName() {

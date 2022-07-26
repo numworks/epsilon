@@ -28,7 +28,7 @@ BannerView::BannerView(Escher::Responder * textFieldParent, Escher::TextFieldDel
 }
 
 void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(KDRect(0, 0, bounds().width(), k_borderHeight), Palette::SystemGrayDark);
+  ctx->fillRect(KDRect(0, 0, bounds().width(), k_borderHeight), k_borderColor);
   ctx->fillRect(KDRect(0, k_borderHeight, bounds().width(), k_bannerHeight), k_backgroundColor);
 }
 
@@ -76,7 +76,7 @@ void BannerView::layoutSubviews(bool force) {
     buttonColor = k_backgroundColor;
   } else {
     m_dotView.setFrame(KDRectZero, force);
-    buttonColor = Palette::SystemGrayBluish;
+    buttonColor = k_selectedButtonColor;
   }
 
   m_button.setFrame(KDRect(bounds().width() - k_buttonWidth, k_borderHeight, k_buttonWidth, k_bannerHeight), force);

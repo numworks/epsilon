@@ -3,6 +3,8 @@
 #include "../../shared/poincare_helpers.h"
 #include "poincare/expression.h"
 #include "poincare/layout_helper.h"
+#include "poincare/multiplication.h"
+#include "poincare/rational.h"
 #include <apps/global_preferences.h>
 #include <poincare/arc_cosine.h>
 #include <poincare/constant.h>
@@ -69,11 +71,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
     m_indexMessageMap[index] = messageIndex++;
     Expression normalized = Division::Builder(m_expression, norm).cloneAndReduce(reductionContext);
     assert(normalized.type() == ExpressionNode::Type::Matrix);
-    if (isColumn) {
-      m_layouts[index++] = HorizontalLayout::Builder(getLayoutFromExpression(MatrixTranspose::Builder(normalized), context, preferences), VerticalOffsetLayout::Builder(CodePointLayout::Builder('T'), VerticalOffsetLayoutNode::Position::Superscript));
-    } else {
-      m_layouts[index++] = getLayoutFromExpression(normalized, context, preferences);
-    }
+    m_layouts[index++] = getLayoutFromExpression(normalized, context, preferences);
     if (is2D) {
       // 3. Angle with x-axis
       Expression x = static_cast<Matrix &>(vector).matrixChild(0, 0);
@@ -88,7 +86,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
       setShowIllustration(xApproximation != 0.f || yApproximation != 0.f);
       Expression angle = ArcCosine::Builder(x);
       if (y.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
-        angle = Subtraction::Builder(Poincare::Constant::Builder("π"), angle);
+        angle = Subtraction::Builder(Multiplication::Builder(Rational::Builder(2), Poincare::Constant::Builder("π")), angle);
       }
       m_indexMessageMap[index] = messageIndex++;
       m_layouts[index] = LayoutHelper::String("θ");

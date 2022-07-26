@@ -96,6 +96,9 @@ public:
   I18n::Message fieldLegend() const override { return I18n::Message::PeriodicConfigurationLegend; }
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicConfigurationSymbol; }
   Poincare::Layout getLayout(AtomicNumber z, int significantDigits) const override;
+
+private:
+  static int DisplacedElectrons(AtomicNumber z, int * n, int * l);
 };
 
 class GroupDataField : public EnumDataField {

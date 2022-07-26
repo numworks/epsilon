@@ -89,6 +89,24 @@ Layout ADataField::getLayout(AtomicNumber z, int) const {
 
 // ConfigurationDataField
 
+int maxPopulation(int l) {
+  return 2 * (2 * l + 1);
+}
+
+void nextSubshell(int * n, int * l) {
+  assert(n && l && *n >= 1 && *l >= 0 && *l < *n);
+  /* Subshells are filled in order of increasing n+l then increasing n. */
+  if (*l > 0) {
+    /* 4p (n=4, l=1) -> 5s (n=5, l=0) */
+    *l = *l - 1;
+    *n = *n + 1;
+  } else {
+    /* 5s (n=5, l=0) -> 4d (n=4, l=2) */
+    *l = *n / 2;
+    *n = *n + 1 - *l;
+  }
+}
+
 Layout ConfigurationDataField::getLayout(AtomicNumber z, int) const {
   constexpr int k_nMax = 7;
   constexpr int k_lMax = 4;
@@ -119,20 +137,26 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z, int) const {
   }
   while (electrons > 0) {
     int index = (n - 1) * k_lMax + l;
-    int maxPop = 2 * (2 * l + 1);
+    int maxPop = maxPopulation(l);
     int pop = maxPop > electrons ? electrons : maxPop;
     electrons -= pop;
     conf[index] = pop;
-    /* Subshells are filled in order of increasing n+l then increasing n. */
-    if (l > 0) {
-      /* 4p (n=4, l=1) -> 5s (n=5, l=0) */
-      l--;
-      n++;
-    } else {
-      /* 5s (n=5, l=0) -> 4d (n=4, l=2) */
-      l = n / 2;
-      n += 1 - l;
-    }
+    nextSubshell(&n, &l);
+  }
+
+  /* Some elements have irregular configurations */
+  int nD = -1, lD = -1;
+  int numberOfDisplacedElectrons = DisplacedElectrons(z, &nD, &lD);
+  if (numberOfDisplacedElectrons > 0) {
+    size_t fromIndex = (nD - 1) * k_lMax + lD;
+    size_t toIndex;
+    do {
+      nextSubshell(&nD, &lD);
+      toIndex = (nD - 1) * k_lMax + lD;
+    } while (conf[toIndex] == maxPopulation(lD));
+    assert(conf[fromIndex] >= numberOfDisplacedElectrons);
+    conf[fromIndex] -= numberOfDisplacedElectrons;
+    conf[toIndex] += numberOfDisplacedElectrons;
   }
 
   /* Subshells are displayed in order of increasing n, then increasing l. */
@@ -148,6 +172,60 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z, int) const {
   }
 
   return std::move(res);
+}
+
+int ConfigurationDataField::DisplacedElectrons(AtomicNumber z, int * n, int * l) {
+  assert(n && l);
+  switch (z) {
+  case 24:
+  case 28:
+  case 29:
+    // 4s
+    *n = 4;
+    *l = 0;
+    break;
+  case 41:
+  case 42:
+  case 44:
+  case 45:
+  case 46:
+  case 47:
+    // 5s
+    *n = 5;
+    *l = 0;
+    break;
+  case 57:
+  case 58:
+  case 64:
+    // 4f
+    *n = 4;
+    *l = 3;
+    break;
+  case 78:
+  case 79:
+    // 6s
+    *n = 6;
+    *l = 0;
+    break;
+  case 89:
+  case 90:
+  case 91:
+  case 92:
+  case 93:
+  case 96:
+    // 5f
+    *n = 5;
+    *l = 3;
+    break;
+  case 103:
+    // 6d
+    *n = 6;
+    *l = 2;
+    break;
+  default:
+    return 0;
+  }
+  return z == 46 || z == 90 ? 2 : 1;
 }
 
 // GroupDataField

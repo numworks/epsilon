@@ -389,6 +389,7 @@ T Integer::approximate() const {
 // Properties
 
 int Integer::NumberOfBase10DigitsWithoutSign(const Integer & i) {
+  // TODO: This method should be optimized because udiv is a costly function
   assert(!i.isOverflow());
   int numberOfDigits = 1;
   Integer base(10);

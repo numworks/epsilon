@@ -174,6 +174,11 @@ void HigherOrderDerivativeLayoutNode::moveCursorDown(LayoutCursor * cursor, bool
     orderLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
     return;
   }
+  if (cursor->layoutNode() == orderLayout() && m_orderSlot == OrderSlot::Denominator) {
+    setVariableSlot(VariableSlot::Fraction, shouldRecomputeLayout);
+    variableLayout()->moveCursorDownInDescendants(cursor, shouldRecomputeLayout);
+    return;
+  }
   DerivativeLayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 

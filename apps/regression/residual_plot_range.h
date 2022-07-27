@@ -12,6 +12,8 @@ public:
   void calibrate(double xMin, double xMax, double yMin, double yMax, KDCoordinate height, KDCoordinate bannerHeight);
 private:
   static constexpr double k_relativeMargin = 0.1;
+
+  void stretchRangeIfTooClose(double * min, double * max) const;
 };
 
 }

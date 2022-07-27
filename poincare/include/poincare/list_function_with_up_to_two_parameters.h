@@ -13,8 +13,9 @@ public:
 
   int numberOfChildren() const override { return m_hasTwoChildren ? 2 : 1; }
   void setNumberOfChildren(int numberOfChildren) override {
-    assert(numberOfChildren >= 1 && numberOfChildren <= 2);
-    m_hasTwoChildren = numberOfChildren == 2;
+    if (numberOfChildren == 1 || numberOfChildren <= 2) {
+      m_hasTwoChildren = numberOfChildren == 2;
+    }
   }
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }

@@ -18,11 +18,7 @@ public:
   int numberOfChildren() const override {
     return m_numberOfChildren < 0 ? 0 : m_numberOfChildren;
   }
-  void incrementNumberOfChildren(int increment = 1) override {
-    assert(!isUndefined() && m_numberOfChildren + increment >= 0);
-    m_numberOfChildren+= increment;
-  }
-  void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
+  void setNumberOfChildren(int numberOfChildren) override { m_numberOfChildren = numberOfChildren; }
   void setUndefined() {
     m_numberOfChildren = -1;
   }
@@ -84,4 +80,3 @@ private:
 }
 
 #endif
-

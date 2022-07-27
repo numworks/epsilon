@@ -43,9 +43,11 @@ public:
   size_t size() const override { return sizeof(GridLayoutNode); }
   void didChangeArity(int newNumberOfChildren) override { return Array::didChangeNumberOfChildren(newNumberOfChildren); }
   int numberOfChildren() const override { return m_numberOfRows * m_numberOfColumns; }
-  void eraseNumberOfChildren() override {
-    m_numberOfRows = 0;
-    m_numberOfColumns = 0;
+  void setNumberOfChildren(int numberOfChildren) override {
+    if (numberOfChildren == 0) { // Used to erase children
+      m_numberOfRows = 0;
+      m_numberOfColumns = 0;
+    }
   }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {

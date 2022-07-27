@@ -3,6 +3,7 @@
 #include "../shared/utils.h"
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/trigonometry.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -128,9 +129,14 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           vc = &m_complexController;
         } else if (additionalInformations.trigonometry) {
           vc = &m_trigonometryController;
-          // Find which of the input or output is the cosine/sine
-          ExpressionNode::Type t = e.type();
-          e = t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine ? e : calculationAtIndex(focusRow)->input();
+          // Find the angle
+          Expression focusInput = focusCalculation->input();
+          if (Trigonometry::isDirectTrigonometryFunction(e)) {
+            e = e.childAtIndex(0);
+          } else if (Trigonometry::isDirectTrigonometryFunction(focusInput)) {
+            e = focusInput.childAtIndex(0);
+          }
+          // else input or output is inverse trigonometric function use e as is
         } else if (additionalInformations.function) {
           e = focusCalculation->input();
           vc = &m_functionController;

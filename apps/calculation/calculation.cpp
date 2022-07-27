@@ -11,6 +11,7 @@
 #include <poincare/undefined.h>
 #include <poincare/unit.h>
 #include <poincare/nonreal.h>
+#include <poincare/trigonometry.h>
 #include <string.h>
 #include <cmath>
 #include <algorithm>
@@ -244,14 +245,20 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   if (i.isUninitialized() || o.isUninitialized() || i.type() == ExpressionNode::Type::Store || o.type() == ExpressionNode::Type::List || a.isUndefined()) {
     return AdditionalInformations {};
   }
-  /* Trigonometry additional results are displayed if either input or output is a sin or a cos. Indeed, we want to capture both cases:
+  /* Trigonometry additional results are displayed if either input or output is
+   * a direct or inverse trigonometric function. Indeed, we want to capture both
+   * cases:
+   *
    * - > input: cos(60)
    *   > output: 1/2
    * - > input: 2cos(2) - cos(2)
    *   > output: cos(2)
    * However if the result is complex, it is treated as a complex result instead
    */
-  if (!isComplex && (i.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine}) || o.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine}))) {
+  if (!isComplex && (Trigonometry::isDirectTrigonometryFunction(i)
+                  || Trigonometry::isInverseTrigonometryFunction(i)
+                  || Trigonometry::isDirectTrigonometryFunction(o)
+                  || Trigonometry::isInverseTrigonometryFunction(o))) {
     return AdditionalInformations {.trigonometry = true};
   }
   if (o.hasUnit()) {

@@ -90,9 +90,8 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
   if (j < 0 || j >= dataSource()->numberOfRows()) {
     return false;
   }
-  unhighlightSelectedCell();
-  int previousX = selectedColumn();
-  int previousY = selectedRow();
+  int previousColumn = selectedColumn();
+  int previousRow = selectedRow();
   selectColumn(i);
   selectRow(j);
 
@@ -101,27 +100,35 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
    *   ExpressionModelListController needs to update its memoized cell before
    *   being able to scroll;
    * - after scrolling: for instance, the calculation history table might
-   *   change its cell content when selected (outup toggling, ellipsis toggling)
+   *   change its cell content when selected (output toggling, ellipsis toggling)
    *   and thus need to access the right used cell - which is defined only
    *   after scrolling.
    */
 
   if (m_delegate) {
-    m_delegate->tableViewDidChangeSelection(this, previousX, previousY, withinTemporarySelection);
+    m_delegate->tableViewDidChangeSelection(this, previousColumn, previousRow, withinTemporarySelection);
+    if (selectedColumn() == previousColumn && selectedRow() == previousRow) {
+      return false;
+    }
   }
 
-  if (selectedRow() >= 0 && (previousX != selectedColumn() || previousY != selectedRow())) {
+  if (selectedRow() >= 0) {
     scrollToCell(selectedColumn(), selectedRow());
   }
 
   if (m_delegate) {
-    m_delegate->tableViewDidChangeSelectionAndDidScroll(this, previousX, previousY, withinTemporarySelection);
+    m_delegate->tableViewDidChangeSelectionAndDidScroll(this, previousColumn, previousRow, withinTemporarySelection);
+  }
+
+  HighlightCell * previousCell = cellAtLocation(previousColumn, previousRow);
+  if (previousCell) {
+    previousCell->setHighlighted(false);
   }
 
   HighlightCell * cell = selectedCell();
   if (cell) {
     // Update first responder
-    if ((i != previousX || j != previousY) && setFirstResponder) {
+    if ((selectedColumn() != previousColumn || selectedRow() != previousRow) && setFirstResponder) {
       Container::activeApp()->setFirstResponder(cell->responder() ? cell->responder() : this);
     }
   }

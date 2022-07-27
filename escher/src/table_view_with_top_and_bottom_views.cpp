@@ -11,6 +11,10 @@ TableViewWithTopAndBottomViews::TableViewWithTopAndBottomViews(SelectableTableVi
   m_bottomView(bottomView)
 {}
 
+void TableViewWithTopAndBottomViews::drawRect(KDContext * ctx, KDRect rect) const {
+  ctx->fillRect(rect, Palette::WallScreen);
+}
+
 View * TableViewWithTopAndBottomViews::subviewAtIndex(int i) {
   assert(i < numberOfSubviews());
   i += (m_topView == nullptr);
@@ -75,7 +79,7 @@ KDRect TableViewWithTopAndBottomViews::tableFrame(KDCoordinate * yOffset) const 
     KDCoordinate h = m_table->bounds().height() + *yOffset;
     *yOffset = 0;
     if (m_topView) {
-      h = std::max<KDCoordinate>(h, bounds().height() - m_topView->minimalSizeForOptimalDisplay().height());
+      h = std::max<KDCoordinate>(h, bounds().height() - m_topView->minimalSizeForOptimalDisplay().height() - k_outerVerticalMargin);
     }
     return KDRect(0, bounds().height() - h, bounds().width(), h);
   }
@@ -85,7 +89,7 @@ KDRect TableViewWithTopAndBottomViews::tableFrame(KDCoordinate * yOffset) const 
     /* Bottom of the table can fit on screen. Assume the table starts from the
      * top of the screen. */
     if (m_bottomView) {
-      KDCoordinate bottomViewTop = bounds().height() - m_bottomView->minimalSizeForOptimalDisplay().height();
+      KDCoordinate bottomViewTop = bounds().height() - m_bottomView->minimalSizeForOptimalDisplay().height() - k_outerVerticalMargin;
       if (bottom < bottomViewTop) {
         *yOffset -= bottomViewTop - bottom;
         bottom = bottomViewTop;

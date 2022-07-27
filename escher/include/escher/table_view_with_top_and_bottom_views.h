@@ -19,6 +19,7 @@ public:
   TableViewWithTopAndBottomViews(SelectableTableView * table, TableViewDataSource * tableDataSource, View * topView, View * bottomView = nullptr);
 
   /* View */
+  void drawRect(KDContext * ctx, KDRect rect) const override;
   int numberOfSubviews() const override { return (m_topView != nullptr) + 1 + (m_bottomView != nullptr); }
   View * subviewAtIndex(int i) override;
   void layoutSubviews(bool force = false) override;
@@ -31,6 +32,8 @@ public:
   void setBottomView(View * view) { m_bottomView = view; }
 
 private:
+  constexpr static KDCoordinate k_outerVerticalMargin = Metric::TableSeparatorThickness;
+
   KDRect tableFrame(KDCoordinate * yOffset) const;
 
   TableViewDataSource * m_tableDataSource;

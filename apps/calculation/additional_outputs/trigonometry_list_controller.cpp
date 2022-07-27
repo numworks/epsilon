@@ -13,7 +13,7 @@ constexpr char TrigonometryListController::k_symbol[];
 
 void TrigonometryListController::setExpression(Poincare::Expression e) {
   assert(e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Sine);
-  IllustratedListController::setExpression(e.childAtIndex(0));
+  IllustratedListController::setExpression(e);
 
   VariableContext context = illustratedListContext();
 

@@ -1,7 +1,7 @@
 #include <kandinsky/ion_context.h>
 #include <ion/display.h>
 
-KDIonContext * KDIonContext::sharedContext() {
+KDIonContext * KDIonContext::SharedContext() {
   static KDIonContext context;
   return &context;
 }
@@ -24,12 +24,12 @@ void KDIonContext::pullRect(KDRect rect, KDColor * pixels) {
   Ion::Display::pullRect(rect, pixels);
 }
 
-void KDIonContext::putchar(char c) {
+void KDIonContext::Putchar(char c) {
   static KDPoint cursor = KDPointZero;
   char text[2] = {c, 0};
   if (cursor.y() > Ion::Display::Height - KDFont::GlyphHeight(KDFont::Size::Large)) {
-    sharedContext()->pushRectUniform(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), KDColorWhite);
+    SharedContext()->pushRectUniform(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), KDColorWhite);
     cursor = KDPoint(cursor.x(), 0);
   }
-  cursor = sharedContext()->drawString(text, cursor);
+  cursor = SharedContext()->drawString(text, cursor);
 }

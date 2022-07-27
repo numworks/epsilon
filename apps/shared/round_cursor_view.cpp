@@ -69,7 +69,7 @@ bool RoundCursorView::eraseCursorIfPossible() {
   }
   // Erase the cursor
   KDColor cursorWorkingBuffer[k_cursorSize * k_cursorSize];
-  KDContext * ctx = KDIonContext::sharedContext();
+  KDContext * ctx = KDIonContext::SharedContext();
   ctx->setOrigin(absoluteOrigin());
   ctx->setClippingRect(currentFrame);
   KDSize cursorSize = KDSize(k_cursorSize, k_cursorSize);

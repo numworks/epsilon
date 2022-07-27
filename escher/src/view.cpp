@@ -49,7 +49,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
     KDPoint absOrigin = absoluteOrigin();
     KDRect absRect = rectNeedingRedraw.translatedBy(absOrigin);
     KDRect absClippingRect = absoluteVisibleFrame().intersectedWith(absRect);
-    KDContext * ctx = KDIonContext::sharedContext();
+    KDContext * ctx = KDIonContext::SharedContext();
     ctx->setOrigin(absOrigin);
     ctx->setClippingRect(absClippingRect);
     this->drawRect(ctx, rectNeedingRedraw);

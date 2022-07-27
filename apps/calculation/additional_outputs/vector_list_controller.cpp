@@ -60,8 +60,13 @@ void VectorListController::setExpression(Poincare::Expression e) {
   // 1. Vector norm
   Expression norm = VectorNorm::Builder(m_expression).cloneAndReduce(reductionContext);
   m_indexMessageMap[index] = messageIndex++;
-  m_exactLayouts[index] = getLayoutFromExpression(norm, context, preferences);
-  m_approximatedLayouts[index] = getLayoutFromExpression(norm.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit()), context, preferences);
+  Layout exact = getLayoutFromExpression(norm, context, preferences);
+  Expression approximatedNorm = norm.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit());
+  Layout approximated =  getLayoutFromExpression(approximatedNorm, context, preferences);
+  if (!approximated.isIdenticalTo(exact)) {
+    m_exactLayouts[index] = exact;
+  }
+  m_approximatedLayouts[index] = approximated;
   index++;
 
   // We can't determine it if norm is null

@@ -48,11 +48,11 @@ const char * AliasesList::nextAlias(const char * currentPositionInAliasesList) c
   return beginningOfNextAlias + 1; // Skip string start char
 }
 
-const char * AliasesList::mainAlias(Poincare::Preferences::NamingConvention namingConvention) const {
+const char * AliasesList::mainAlias(Poincare::Preferences::NamingConventionForAliases namingConventionForAliases) const {
   if (!hasMultipleAliases()) {
     return m_formattedAliasesList;
   }
-  int mainIndex = mainAliasIndex(namingConvention);
+  int mainIndex = mainAliasIndex(namingConventionForAliases);
   const char * result; // skip header
   int currentIndex = 0;
   for (const char * currentAlias : *this) {
@@ -67,12 +67,12 @@ const char * AliasesList::mainAlias(Poincare::Preferences::NamingConvention nami
   return result;
 }
 
-int AliasesList::mainAliasIndex(Poincare::Preferences::NamingConvention namingConvention) const {
+int AliasesList::mainAliasIndex(Poincare::Preferences::NamingConventionForAliases namingConventionForAliases) const {
   assert(hasMultipleAliases());
-  if (namingConvention == Preferences::NamingConvention::WorldWide) {
+  if (namingConventionForAliases == Preferences::NamingConventionForAliases::WorldWide) {
     return 0;
   }
-  char conventionIdentifier = IdentifierForNamingConvention(namingConvention);
+  char conventionIdentifier = IdentifierForNamingConventionForAliases(namingConventionForAliases);
   const char * currentHeaderPosition = m_formattedAliasesList + 1;
   while (currentHeaderPosition[0] != k_stringStart) {
     if (currentHeaderPosition[0] == conventionIdentifier) {
@@ -83,14 +83,14 @@ int AliasesList::mainAliasIndex(Poincare::Preferences::NamingConvention namingCo
   return 0;
 }
 
-char AliasesList::IdentifierForNamingConvention(Poincare::Preferences::NamingConvention namingConvention) {
-  for (int i = 0; i < k_numberOfNamingConvention; i++) {
-    if (k_identifiersForNamingConvention[i].namingConvention == namingConvention) {
-      return k_identifiersForNamingConvention[i].identifier;
+char AliasesList::IdentifierForNamingConventionForAliases(Poincare::Preferences::NamingConventionForAliases namingConventionForAliases) {
+  for (int i = 0; i < k_numberOfNamingConventionForAliases; i++) {
+    if (k_identifiersForNamingConventionForAliases[i].namingConventionForAliases == namingConventionForAliases) {
+      return k_identifiersForNamingConventionForAliases[i].identifier;
     }
   }
   assert(false);
-  return k_identifiersForNamingConvention[0].identifier; // silence compiler
+  return k_identifiersForNamingConventionForAliases[0].identifier; // silence compiler
 }
 
 }

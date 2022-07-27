@@ -75,7 +75,7 @@ public:
     ListsStatsOrderInToolbox listsStatsOrderInToolbox,
     SequencesInitialRank sequencesInitialRank,
     Poincare::Preferences::MixedFractions mixedFractions,
-    Poincare::Preferences::NamingConvention namingConvention
+    Poincare::Preferences::NamingConventionForAliases namingConventionForAliases
     ) :
     m_availableExamModes(availableExamModes),
     m_homeAppsLayout(homeAppsLayout),
@@ -90,7 +90,7 @@ public:
     m_listsStatsOrderInToolbox(listsStatsOrderInToolbox),
     m_sequencesInitialRank(sequencesInitialRank),
     m_mixedFractions(mixedFractions),
-    m_namingConvention(namingConvention)
+    m_namingConventionForAliases(namingConventionForAliases)
   {}
 
   constexpr AvailableExamModes availableExamModes() const { return m_availableExamModes; }
@@ -106,7 +106,7 @@ public:
   constexpr ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return m_listsStatsOrderInToolbox; }
   constexpr SequencesInitialRank sequencesInitialRank() const { return m_sequencesInitialRank; }
   constexpr Poincare::Preferences::MixedFractions mixedFractions() const { return m_mixedFractions; }
-  constexpr Poincare::Preferences::NamingConvention namingConvention() const { return m_namingConvention; }
+  constexpr Poincare::Preferences::NamingConventionForAliases namingConventionForAliases() const { return m_namingConventionForAliases; }
 
 private:
   const AvailableExamModes m_availableExamModes;
@@ -122,7 +122,7 @@ private:
   const ListsStatsOrderInToolbox m_listsStatsOrderInToolbox;
   const SequencesInitialRank m_sequencesInitialRank;
   const Poincare::Preferences::MixedFractions m_mixedFractions;
-  const Poincare::Preferences::NamingConvention m_namingConvention;
+  const Poincare::Preferences::NamingConventionForAliases m_namingConventionForAliases;
 };
 
 #endif

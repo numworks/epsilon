@@ -39,7 +39,7 @@
  * To specify an other main alias for a country, the header must contain
  * 1 char of the country identifier + 1 char for the main alias index in
  * the list. These country identifiers are stored in the constexpr
- * k_identifiersForNamingConvention.
+ * k_identifiersForNamingConventionForAliases.
  *
  * Example:
  * The header "P1" means that the portugal main alias is at index 1 of the list.
@@ -56,7 +56,7 @@ public:
   constexpr AliasesList(const char * formattedAliasesList) : m_formattedAliasesList(formattedAliasesList) {}
   constexpr operator const char *() const { return m_formattedAliasesList; }
 
-  const char * mainAlias() const { return mainAlias(Preferences::sharedPreferences()->namingConvention()); }
+  const char * mainAlias() const { return mainAlias(Preferences::sharedPreferences()->namingConventionForAliases()); }
   bool contains(const char * alias, int aliasLen = -1) const { return maxDifferenceWith(alias, aliasLen > -1 ? aliasLen : strlen(alias)) == 0; }
   bool isEquivalentTo(AliasesList otherList) { return strcmp(mainAlias(), otherList.mainAlias()) == 0; }
 
@@ -92,20 +92,20 @@ public:
 private:
   constexpr static char k_headerStart = '\01';
   constexpr static char k_stringStart = '\02';
-  constexpr static struct { Preferences::NamingConvention namingConvention; char identifier; } k_identifiersForNamingConvention[] = {
-    { Preferences::NamingConvention::Portugal, 'P' }
+  constexpr static struct { Preferences::NamingConventionForAliases namingConventionForAliases; char identifier; } k_identifiersForNamingConventionForAliases[] = {
+    { Preferences::NamingConventionForAliases::Portugal, 'P' }
   };
-  constexpr static int k_numberOfNamingConvention = sizeof(k_identifiersForNamingConvention) / sizeof(k_identifiersForNamingConvention[0]);
+  constexpr static int k_numberOfNamingConventionForAliases = sizeof(k_identifiersForNamingConventionForAliases) / sizeof(k_identifiersForNamingConventionForAliases[0]);
   // + 1 for WorldWide which does not need an identifier
-  static_assert(k_numberOfNamingConvention + 1 == static_cast<int>(Preferences::NamingConvention::NumberOfNamingConvention), "Number of naming convention and their identifiers mismatch in aliases_list.h");
-  static char IdentifierForNamingConvention(Poincare::Preferences::NamingConvention namingConvention);
+  static_assert(k_numberOfNamingConventionForAliases + 1 == static_cast<int>(Preferences::NamingConventionForAliases::NumberOfNamingConventionsForAliases), "Number of naming convention and their identifiers mismatch in aliases_list.h");
+  static char IdentifierForNamingConventionForAliases(Poincare::Preferences::NamingConventionForAliases namingConventionForAliases);
 
   bool hasMultipleAliases() const { return m_formattedAliasesList[0] == k_headerStart; }
   const char * firstAlias() const;
   // Returns nullptr if there is no next name
   const char * nextAlias(const char * currentPositionInAliasesList) const;
-  const char * mainAlias(Preferences::NamingConvention namingConvention) const;
-  int mainAliasIndex(Preferences::NamingConvention namingConvention) const;
+  const char * mainAlias(Preferences::NamingConventionForAliases namingConventionForAliases) const;
+  int mainAliasIndex(Preferences::NamingConventionForAliases namingConventionForAliases) const;
 
   const char * m_formattedAliasesList;
 };

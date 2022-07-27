@@ -1,11 +1,11 @@
 #ifndef POINCARE_LIST_STANDARD_DEVIATION_H
 #define POINCARE_LIST_STANDARD_DEVIATION_H
 
-#include <poincare/list_two_parameters_function_node.h>
+#include <poincare/list_function_with_up_to_two_parameters.h>
 
 namespace Poincare {
 
-class ListStandardDeviationNode : public ListTwoParametersFunctionNode {
+class ListStandardDeviationNode : public ListFunctionWithUpToTwoParametersNode {
 public:
   constexpr static const char k_functionName[] = "stddev";
   const char * functionName() const override { return k_functionName; }

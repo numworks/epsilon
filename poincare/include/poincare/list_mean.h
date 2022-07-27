@@ -1,11 +1,11 @@
 #ifndef POINCARE_LIST_MEAN_H
 #define POINCARE_LIST_MEAN_H
 
-#include <poincare/list_two_parameters_function_node.h>
+#include <poincare/list_function_with_up_to_two_parameters.h>
 
 namespace Poincare {
 
-class ListMeanNode : public ListTwoParametersFunctionNode {
+class ListMeanNode : public ListFunctionWithUpToTwoParametersNode {
 public:
   constexpr static char k_functionName[] = "mean";
   const char * functionName() const override { return k_functionName; }

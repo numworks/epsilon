@@ -27,7 +27,7 @@ Expression ListMean::shallowReduce(const ExpressionNode::ReductionContext& reduc
   int n = numberOfChildren();
   assert(n == 1 || n == 2);
   Expression children[2];
-  if (!static_cast<ListTwoParametersFunctionNode *>(node())->getChildrenIfNonEmptyList(children)) {
+  if (!static_cast<ListFunctionWithUpToTwoParametersNode *>(node())->getChildrenIfNonEmptyList(children)) {
     return replaceWithUndefinedInPlace();
   }
   // All weights need to be positive.

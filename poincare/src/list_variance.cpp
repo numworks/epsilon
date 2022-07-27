@@ -27,7 +27,7 @@ Expression ListVariance::shallowReduce(const ExpressionNode::ReductionContext& r
   int n = numberOfChildren();
   assert(n == 1 || n == 2);
   Expression children[2];
-  if (!static_cast<ListTwoParametersFunctionNode *>(node())->getChildrenIfNonEmptyList(children)) {
+  if (!static_cast<ListFunctionWithUpToTwoParametersNode *>(node())->getChildrenIfNonEmptyList(children)) {
     return replaceWithUndefinedInPlace();
   }
   Expression m = ListMean::Builder(children[0].clone(), children[1].clone());

@@ -9,7 +9,7 @@ char readChar() {
 }
 
 void writeChar(char c) {
-  KDIonContext::putchar(c);
+  KDIonContext::Putchar(c);
 }
 
 bool transmissionDone() {

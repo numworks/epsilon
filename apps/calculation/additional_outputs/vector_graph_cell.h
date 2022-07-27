@@ -13,7 +13,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static float k_arrowSizeInPixels = 8;
-  constexpr static float k_labelRatio = 0.26;
+  constexpr static float k_labelDistanceInPixels = 30;
   VectorModel * m_model;
 };
 

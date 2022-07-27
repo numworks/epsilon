@@ -27,17 +27,15 @@
  *  ^header start         ^end of alias 1
  *        ^start of alias 1                   ^end of aliases list
  *
- * === ITERATE THROUGH ALIASES LIST ===
- * Use "for (const char * alias : AliasesList)"
- *
  * === MAIN ALIAS ===
  * The main alias is the name outputted by the calculator. For example, the main
  * alias of "pi" is "π".
+ *
+ * === HEADER ===
  * By default, the main alias is the first of the list, but in some cases, the
  * main alias can be specific to a country (ex: "sen" for "sin" in PT).
  * The header contains information on what is the main alias for each country.
  *
- * === HEADER ===
  * To specify an other main alias for a country, the header must contain
  * 1 char of the country identifier + 1 char for the main alias index in
  * the list. These country identifiers are stored in the constexpr

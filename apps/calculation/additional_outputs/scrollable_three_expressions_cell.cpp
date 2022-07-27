@@ -92,11 +92,6 @@ void ScrollableThreeExpressionsCell::setLayouts(Poincare::Layout leftLayout, Poi
   m_view.setShowEqual(!centerLayout.isUninitialized() || !rightLayout.isUninitialized());
 }
 
-void ScrollableThreeExpressionsCell::setLayouts(Poincare::Layout leftLayout, Poincare::Layout centerLayout, Poincare::Layout rightLayout) {
-  m_view.setLayouts(leftLayout, centerLayout, rightLayout);
-  m_view.setShowEqual(!centerLayout.isUninitialized() || !rightLayout.isUninitialized());
-}
-
 void ScrollableThreeExpressionsCell::didBecomeFirstResponder() {
   reinitSelection();
   Container::activeApp()->setFirstResponder(&m_view);

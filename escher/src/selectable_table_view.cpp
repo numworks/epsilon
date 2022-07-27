@@ -110,7 +110,7 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
     m_delegate->tableViewDidChangeSelection(this, previousX, previousY, withinTemporarySelection);
   }
 
-  if (selectedRow() >= 0) {
+  if (selectedRow() >= 0 && (previousX != selectedColumn() || previousY != selectedRow())) {
     scrollToCell(selectedColumn(), selectedRow());
   }
 

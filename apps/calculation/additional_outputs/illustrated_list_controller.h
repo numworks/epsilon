@@ -27,6 +27,7 @@ public:
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // IllustratedListController
   void setExpression(Poincare::Expression e) override;

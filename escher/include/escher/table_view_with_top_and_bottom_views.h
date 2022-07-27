@@ -32,7 +32,7 @@ public:
   void setBottomView(View * view) { m_bottomView = view; }
 
 private:
-  constexpr static KDCoordinate k_outerVerticalMargin = Metric::TableSeparatorThickness;
+  constexpr static KDCoordinate k_verticalMargin = Metric::TableSeparatorThickness;
 
   KDRect tableFrame(KDCoordinate * yOffset) const;
 

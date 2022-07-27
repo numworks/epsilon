@@ -10,6 +10,10 @@ char readChar() {
 void writeChar(char c) {
 }
 
+bool clear() {
+  return false;
+}
+
 bool transmissionDone() {
   return true;
 }

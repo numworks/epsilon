@@ -24,15 +24,20 @@ void KDIonContext::pullRect(KDRect rect, KDColor * pixels) {
   Ion::Display::pullRect(rect, pixels);
 }
 
+static KDPoint s_cursor = KDPointZero;
+
 void KDIonContext::Putchar(char c) {
-  static KDPoint cursor = KDPointZero;
   char text[2] = {c, 0};
-  if (cursor.x() > Ion::Display::Width - KDFont::GlyphWidth(KDFont::Size::Large)) {
-    cursor = SharedContext()->drawString("\n", cursor);
+  if (s_cursor.x() > Ion::Display::Width - KDFont::GlyphWidth(KDFont::Size::Large)) {
+    s_cursor = SharedContext()->drawString("\n", s_cursor);
   }
-  if (cursor.y() > Ion::Display::Height - KDFont::GlyphHeight(KDFont::Size::Large)) {
-    SharedContext()->pushRectUniform(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), KDColorWhite);
-    cursor = KDPoint(cursor.x(), 0);
+  if (s_cursor.y() > Ion::Display::Height - KDFont::GlyphHeight(KDFont::Size::Large)) {
+    Clear(KDPoint(s_cursor.x(), 0));
   }
-  cursor = SharedContext()->drawString(text, cursor);
+  s_cursor = SharedContext()->drawString(text, s_cursor);
+}
+
+void KDIonContext::Clear(KDPoint newCursorPosition) {
+  SharedContext()->pushRectUniform(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), KDColorWhite);
+  s_cursor = newCursorPosition;
 }

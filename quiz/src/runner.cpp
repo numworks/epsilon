@@ -10,9 +10,30 @@ void quiz_print(const char * message) {
   Ion::Console::writeLine(message);
 }
 
+bool quiz_print_clear() {
+  return Ion::Console::clear();
+}
+
 static inline void ion_main_inner(const char * testFilter) {
   int i = 0;
   int time = Ion::Timing::millis();
+  int totalCases = 0;
+
+  // First pass to count the number of quiz cases
+  while (quiz_cases[i] != NULL) {
+    i++;
+#ifndef PLATFORM_DEVICE
+    if (testFilter && strstr(quiz_case_names[i], testFilter) != quiz_case_names[i]) {
+      continue;
+    }
+#endif
+    totalCases++;
+  }
+
+  // Second pass to test quiz cases
+  char buffer[30];
+  i = 0;
+  int caseIndex = 0;
   while (quiz_cases[i] != NULL) {
 #ifndef PLATFORM_DEVICE
     if (testFilter && strstr(quiz_case_names[i], testFilter) != quiz_case_names[i]) {
@@ -20,7 +41,13 @@ static inline void ion_main_inner(const char * testFilter) {
       continue;
     }
 #endif
+    caseIndex++;
     QuizCase c = quiz_cases[i];
+    if (quiz_print_clear()) {
+      // Avoid cluttering the display if it can't be cleared
+      Poincare::Print::customPrintf(buffer, 30, "TEST: %i/%i", caseIndex, totalCases);
+      quiz_print(buffer);
+    }
     quiz_print(quiz_case_names[i]);
     int initialPoolSize = Poincare::TreePool::sharedPool()->numberOfNodes();
     quiz_assert(initialPoolSize == 0);
@@ -29,7 +56,13 @@ static inline void ion_main_inner(const char * testFilter) {
     quiz_assert(initialPoolSize == currentPoolSize);
     i++;
   }
-  quiz_print("ALL TESTS FINISHED");
+  quiz_print_clear();
+
+  // Display test results
+  Poincare::Print::customPrintf(buffer, 30, "ALL %i TESTS FINISHED", caseIndex);
+  quiz_print(buffer);
+
+  // Display test duration
   time = Ion::Timing::millis() - time;
   char timeString[30];
   Poincare::Print::customPrintf(timeString, 30, "DURATION: %i ms", time);

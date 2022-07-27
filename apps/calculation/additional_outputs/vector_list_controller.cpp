@@ -83,8 +83,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
       Expression y = static_cast<Matrix &>(vector).matrixChild(isColumn ? 1 : 0, isColumn ? 0 : 1);
       float xApproximation = x.approximateToScalar<float>(context, preferences->complexFormat(), preferences->angleUnit());
       float yApproximation = y.approximateToScalar<float>(context, preferences->complexFormat(), preferences->angleUnit());
-      m_model.setVectorX(xApproximation);
-      m_model.setVectorY(yApproximation);
+      m_model.setVector(xApproximation, yApproximation);
       illustrationCell()->reloadCell();
       x = static_cast<Matrix &>(normalized).matrixChild(0, 0);
       y = static_cast<Matrix &>(normalized).matrixChild(isColumn ? 1 : 0, isColumn ? 0 : 1);

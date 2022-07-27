@@ -449,6 +449,10 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
   if (m_status != Status::Progress) {
     return;
   }
+  /* The following lines are there because some functions have the same name
+   * but not same number of parameters.
+   * This is currently only useful for "sum" which can be sum({1,2,3}) or
+   * sum(1/k, k, 1, n) */
   int numberOfParameters = parameters.numberOfChildren();
   if ((**functionHelper).minNumberOfChildren() >= 0) {
     while (numberOfParameters > (**functionHelper).maxNumberOfChildren()) {

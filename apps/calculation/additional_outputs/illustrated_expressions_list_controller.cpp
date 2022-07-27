@@ -61,7 +61,13 @@ void IllustratedExpressionsListController::tableViewDidChangeSelection(Selectabl
   }
   // Forbid selecting Illustration cell
   if (t->selectedRow() == 0 && showIllustration()) {
-    t->selectCellAtLocation(0, 1);
+    t->selectRow(1);
+  }
+}
+
+void IllustratedExpressionsListController::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection) {
+    return;
   }
   /* But scroll to the top when we select the first
    * ScrollableThreeExpressionsCell in order display the

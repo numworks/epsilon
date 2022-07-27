@@ -21,7 +21,7 @@ public:
   }
 
   T * elementAtIndex(int index) {
-    assert(index >= 0 && index < length());
+    assert(index >= 0 && index < static_cast<int>(length()));
     return &m_stack[(m_start + index) % N];
   }
 

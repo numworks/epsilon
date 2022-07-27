@@ -45,8 +45,6 @@ class Expression : public TreeHandle {
   friend class Cosine;
   friend class Cotangent;
   friend class Decimal;
-  friend class DefaultParameter;
-  friend class DefaultParameterNode;
   friend class Dependency;
   friend class Derivative;
   friend class Determinant;
@@ -238,9 +236,6 @@ public:
   constexpr static int k_maxNumberOfPolynomialCoefficients = k_maxPolynomialDegree+1;
   int getPolynomialReducedCoefficients(const char * symbolName, Expression coefficients[], Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) const;
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) { return node()->replaceSymbolWithExpression(symbol, expression); }
-
-  /* Default parameter */
-  bool canTakeDefaultParameterAtIndex(int i) { return node()->canTakeDefaultParameterAtIndex(i); }
 
   /* Units */
   Expression removeUnit(Expression * unit) { return node()->removeUnit(unit); }

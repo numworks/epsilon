@@ -2,7 +2,6 @@
 #define POINCARE_RANDINT_H
 
 #include <poincare/expression.h>
-#include <poincare/default_parameter.h>
 #include <poincare/rational.h>
 
 namespace Poincare {

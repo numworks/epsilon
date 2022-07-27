@@ -88,8 +88,7 @@ public:
   // Serialization
   // Return the number of chars written, without the null-terminating char.
   virtual int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const { assert(false); return 0; }
-  // TODO: Remove when serialization is only on Layouts
-  virtual bool skipAtSerialization() const { return false; }
+
   /* When serializing, we turn a tree into a string. In order not to lose
    * structure information, we sometimes need to add system parentheses (that
    * are invisible when turning the string back into a tree).

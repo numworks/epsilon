@@ -7,7 +7,6 @@
 #include <poincare/comparison_operator.h>
 #include <poincare/constant.h>
 #include <poincare/decimal.h>
-#include <poincare/default_parameter.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/ghost.h>

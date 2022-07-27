@@ -37,6 +37,8 @@ private:
   };
   constexpr static int k_numberOfSpecialIdentifiers = sizeof(s_specialIdentifiers) / sizeof(SpecialIdentifier);
 
+  static int SpecialIdentifierIndexForName(const char * name, size_t nameLength);
+
   // The array of reserved functions' helpers
   constexpr static const Expression::FunctionHelper * s_reservedFunctions[] = {
     /* This MUST be ordered according to name, and then by numberOfChildren

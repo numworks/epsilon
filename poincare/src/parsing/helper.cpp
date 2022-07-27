@@ -34,12 +34,7 @@ const Expression::FunctionHelper * const * ParsingHelper::GetInverseFunction(con
 }
 
 bool ParsingHelper::IsSpecialIdentifierName(const char * name, size_t nameLength) {
-  for (int i = 0; i < k_numberOfSpecialIdentifiers; i++) {
-    if (s_specialIdentifiers[i].identifierAliasesList.contains(name, nameLength)) {
-      return true;
-    }
-  }
-  return false;
+  return SpecialIdentifierIndexForName(name, nameLength) >= 0;
 }
 
 bool ParsingHelper::IsParameteredExpression(const Expression::FunctionHelper * helper) {
@@ -74,13 +69,18 @@ bool ParsingHelper::IsSquarableFunction(const Expression::FunctionHelper * helpe
 }
 
 const ParsingHelper::IdentifierBuilder ParsingHelper::GetIdentifierBuilder(const char * name, size_t nameLength) {
+  int identifierIndex = SpecialIdentifierIndexForName(name, nameLength);
+  assert(identifierIndex >= 0);
+  return s_specialIdentifiers[identifierIndex].identifierBuilder;
+}
+
+int ParsingHelper::SpecialIdentifierIndexForName(const char * name, size_t nameLength) {
   for (int i = 0; i < k_numberOfSpecialIdentifiers; i++) {
     if (s_specialIdentifiers[i].identifierAliasesList.contains(name, nameLength)) {
-      return s_specialIdentifiers[i].identifierBuilder;
+      return i;
     }
   }
-  assert(false);
-  return s_specialIdentifiers[0].identifierBuilder; // silence compiler
+  return -1;
 }
 
 }

@@ -63,7 +63,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   t += dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
 
   // Use a pixel width as a margin, ensuring t mostly stays at the same pixel
-  if (tCursorPosition != 0 && (dir < 0 != tCursorPosition < 0) && std::fabs(t) < pixelWidth) {
+  if (tCursorPosition != 0 && ((dir < 0) != (tCursorPosition < 0)) && std::fabs(t) < pixelWidth) {
     // Round t to 0 if it is going into that direction, and is close enough
     t = 0.0;
   } else {

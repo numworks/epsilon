@@ -22,9 +22,9 @@ template<typename T> Evaluation<T> ListStandardDeviationNode::templatedApproxima
 
 Expression ListStandardDeviation::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   int n = numberOfChildren();
-  assert(n == 2);
+  assert(n == 1 || n == 2);
   Expression children[2];
-  if (!SimplificationHelper::getChildrenIfNonEmptyList(*this, children)) {
+  if (!static_cast<ListTwoParametersFunctionNode *>(node())->getChildrenIfNonEmptyList(children)) {
     return replaceWithUndefinedInPlace();
   }
   ListVariance var = ListVariance::Builder(children[0], children[1]);

@@ -46,7 +46,6 @@ public:
    * children reduced */
   static Expression distributeReductionOverLists(Expression e, const ExpressionNode::ReductionContext& reductionContext);
 
-  static bool getChildrenIfNonEmptyList(Expression e, Expression memoizedChildren[]);
   // Returns true if the child is a symbol or an integer.
   static bool extractIntegerChildAtIndex(Expression e, int integerChildIndex, int * integerChildReturnValue, bool * isSymbolReturnValue);
 

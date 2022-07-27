@@ -40,11 +40,7 @@ public:
   // TreeNode
   size_t size() const override { return sizeof(HorizontalLayoutNode); }
   int numberOfChildren() const override { return m_numberOfChildren; }
-  void incrementNumberOfChildren(int increment = 1) override {
-    assert(m_numberOfChildren + increment >= 0);
-    m_numberOfChildren+= increment;
-  }
-  void eraseNumberOfChildren() override { m_numberOfChildren = 0; }
+  void setNumberOfChildren(int numberOfChildren) override { m_numberOfChildren = numberOfChildren; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "HorizontalLayout";

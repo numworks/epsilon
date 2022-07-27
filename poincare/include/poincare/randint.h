@@ -24,8 +24,9 @@ public:
   Type type() const override { return Type::Randint; }
 
   void setNumberOfChildren(int numberOfChildren) override {
-    assert(numberOfChildren >= 1 && numberOfChildren <= 2);
-    m_hasTwoChildren = numberOfChildren == 2;
+    if (numberOfChildren == 1 || numberOfChildren == 2) {
+      m_hasTwoChildren = numberOfChildren == 2;
+    }
   }
 
 private:

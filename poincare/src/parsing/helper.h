@@ -78,7 +78,6 @@ private:
     &InvStudent::s_functionHelper,
     &LeastCommonMultiple::s_functionHelper,
     &NaperianLogarithm::s_functionHelper,
-    &CommonLogarithm::s_functionHelper,
     &Logarithm::s_functionHelper,
     &ListMaximum::s_functionHelper,
     &ListMean::s_functionHelper,

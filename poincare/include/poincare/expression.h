@@ -32,7 +32,6 @@ class Expression : public TreeHandle {
   friend class BasedInteger;
   friend class BinomialCoefficient;
   friend class Ceiling;
-  friend class CommonLogarithm;
   friend class ComparisonOperator;
   template<typename T>
   friend class ComplexNode;
@@ -140,7 +139,6 @@ class Expression : public TreeHandle {
   friend class ExpressionNode;
   friend class FunctionNode;
   friend class IntegralNode;
-  template<int T>
   friend class LogarithmNode;
   friend class MatrixNode;
   friend class NaperianLogarithmNode;

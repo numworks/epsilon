@@ -445,7 +445,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_text_not_parsable("lcm(1)");
   assert_text_not_parsable("lcm()");
   assert_parsed_expression_is("ln(1)", NaperianLogarithm::Builder(BasedInteger::Builder(1)));
-  assert_parsed_expression_is("log(1)", CommonLogarithm::Builder(BasedInteger::Builder(1)));
+  assert_parsed_expression_is("log(1)", Logarithm::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("log(1,2)", Logarithm::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("log{2}(1)", Logarithm::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("permute(2,1)", PermuteCoefficient::Builder(BasedInteger::Builder(2),BasedInteger::Builder(1)));
@@ -564,7 +564,7 @@ QUIZ_CASE(poincare_parsing_adding_missing_parentheses) {
   assert_parsed_expression_with_user_parentheses_is("2×-3", Multiplication::Builder(BasedInteger::Builder(2), Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(3)))));
   assert_parsed_expression_with_user_parentheses_is("--2", Opposite::Builder(Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(2)))));
   assert_parsed_expression_with_user_parentheses_is("\u00122/3\u0013^2", Power::Builder(Parenthesis::Builder(Division::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))), BasedInteger::Builder(2)));
-  assert_parsed_expression_with_user_parentheses_is("log(1+-2)", CommonLogarithm::Builder(Addition::Builder(BasedInteger::Builder(1),Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(2))))));
+  assert_parsed_expression_with_user_parentheses_is("log(1+-2)", Logarithm::Builder(Addition::Builder(BasedInteger::Builder(1),Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(2))))));
 
   // Conjugate expressions
   assert_parsed_expression_with_user_parentheses_is("conj(-3)+2", Addition::Builder(Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(3))), BasedInteger::Builder(2)));

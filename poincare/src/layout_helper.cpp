@@ -45,16 +45,11 @@ Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFlo
   // Create the layout of arguments separated by commas.
   HorizontalLayout args = HorizontalLayout::Builder();
   const int numberOfChildren = expression.numberOfChildren();
-  bool firstChildHasBeenCreated = false;
   for (int i = 0; i < numberOfChildren; i++) {
-    if (expression.childAtIndex(i).type() == ExpressionNode::Type::DefaultParameter) {
-      continue;
-    }
-    if (firstChildHasBeenCreated) {
+    if (i > 0) {
       args.addChildAtIndex(CodePointLayout::Builder(','), args.numberOfChildren(), args.numberOfChildren(), nullptr);
     }
     args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits, false, true), args.numberOfChildren(), true);
-    firstChildHasBeenCreated = true;
   }
   // Add the parenthesed arguments.
   result.addOrMergeChildAtIndex(Parentheses(args, false), result.numberOfChildren(), true);

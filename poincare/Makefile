@@ -89,7 +89,6 @@ poincare_src += $(addprefix poincare/src/,\
   cosine.cpp \
   cotangent.cpp \
   decimal.cpp \
-  default_parameter.cpp \
   dependency.cpp \
   derivative.cpp \
   determinant.cpp \

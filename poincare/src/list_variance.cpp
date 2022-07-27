@@ -1,6 +1,5 @@
 #include <poincare/list_variance.h>
 #include <poincare/addition.h>
-#include <poincare/default_parameter.h>
 #include <poincare/list_mean.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>

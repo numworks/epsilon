@@ -135,15 +135,9 @@ int InfixPrefix(
     int lastIndex = lastChildIndex < 0 ? childrenCount - 1 : lastChildIndex;
     assert(firstChildIndex <= lastIndex);
 
-    bool firstChildHasBeenCreated = false;
-
     // Write the children, separated with commas or the operator
     for (int i = firstChildIndex; i <= lastIndex; i++) {
-      // TODO: Remove when serialization is only on Layouts
-      if (node->childAtIndex(i)->skipAtSerialization()) {
-      continue;
-      }
-      if (firstChildHasBeenCreated) {
+      if (i != firstChildIndex) {
         // Write the operator or the comma
         numberOfChar += prefix ?
           SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, ',') :
@@ -181,7 +175,6 @@ int InfixPrefix(
           return bufferSize - 1;
         }
       }
-      firstChildHasBeenCreated = true;
     }
   }
 

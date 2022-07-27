@@ -141,8 +141,6 @@ public:
     MatrixReducedRowEchelonForm,
     VectorCross,
     Matrix,
-
-    DefaultParameter,
     EmptyExpression
   };
 
@@ -347,10 +345,6 @@ public:
   };
   virtual LayoutShape leftLayoutShape() const = 0;
   virtual LayoutShape rightLayoutShape() const { return leftLayoutShape(); }
-
-  /* Default parameter */
-  virtual bool canTakeDefaultParameterAtIndex(int i) const { return false; }
-  virtual Expression defaultParameterAtIndex(int i) const;
 
   /* Hierarchy */
   virtual void setNumberOfChildren(int numberOfChildren) {}

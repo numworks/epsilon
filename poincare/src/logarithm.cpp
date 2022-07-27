@@ -24,81 +24,42 @@
 
 namespace Poincare {
 
-template<>
-int LogarithmNode<1>::numberOfChildren() const { return CommonLogarithm::s_functionHelper.numberOfChildren(); }
-
-template<>
-int LogarithmNode<2>::numberOfChildren() const { return Logarithm::s_functionHelper.numberOfChildren(); }
-
-template<>
-Layout LogarithmNode<1>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, CommonLogarithm::s_functionHelper.name());
-}
-
-template<>
-Layout LogarithmNode<2>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return LayoutHelper::Logarithm(
+Layout LogarithmNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  if (m_hasTwoChildren) {
+    return LayoutHelper::Logarithm(
       childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits),
-      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits));
+      childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits)
+      );
+  }
+  return LayoutHelper::Prefix(this, floatDisplayMode, numberOfSignificantDigits, Logarithm::s_functionHelper.name());
 }
 
-template<int T>
-int LogarithmNode<T>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, T == 1 ? CommonLogarithm::s_functionHelper.name() : Logarithm::s_functionHelper.name());
+int LogarithmNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Logarithm::s_functionHelper.name());
 }
 
-template<>
-Expression LogarithmNode<1>::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  return CommonLogarithm(this).shallowReduce(reductionContext);
-}
-
-template<>
-Expression LogarithmNode<2>::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression LogarithmNode::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   return Logarithm(this).shallowReduce(reductionContext);
 }
 
-template <>
-bool LogarithmNode<2>::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+bool LogarithmNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+  assert(numberOfChildren() == 2); // One child logarithm disappears at reduction.
   return Logarithm(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-template <>
-Expression LogarithmNode<2>::unaryFunctionDifferential(const ReductionContext& reductionContext) {
+Expression LogarithmNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
+  assert(numberOfChildren() == 2); // One child logarithm disappears at reduction.
   return Logarithm(this).unaryFunctionDifferential(reductionContext);
 }
 
-/* Those two methods will not be called, as CommonLogarithm disappears in
- * reduction */
-template <>
-bool LogarithmNode<1>::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
-  assert(false);
-  return false;
-}
-
-template <>
-Expression LogarithmNode<1>::unaryFunctionDifferential(const ReductionContext& reductionContext) {
-  assert(false);
-  return Expression();
-}
-/**/
-
-template<>
-Expression LogarithmNode<1>::shallowBeautify(const ReductionContext& reductionContext) {
-  return CommonLogarithm(this);
-}
-
-template<>
-Expression LogarithmNode<2>::shallowBeautify(const ReductionContext& reductionContext) {
+Expression LogarithmNode::shallowBeautify(const ReductionContext& reductionContext) {
   return Logarithm(this).shallowBeautify();
 }
 
-template<>
-template<typename U> Evaluation<U> LogarithmNode<1>::templatedApproximate(const ApproximationContext& approximationContext) const {
-  return ApproximationHelper::MapOneChild<U>(this, approximationContext, computeOnComplex<U>);
-}
-
-template<>
-template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(const ApproximationContext& approximationContext) const {
+template<typename U> Evaluation<U> LogarithmNode::templatedApproximate(const ApproximationContext& approximationContext) const {
+  if (numberOfChildren() == 1) {
+    return ApproximationHelper::MapOneChild<U>(this, approximationContext, computeOnComplex<U>);
+  }
   Evaluation<U> n = childAtIndex(1)->approximate(U(), approximationContext);
   if (Poincare::Preferences::sharedPreferences()->basedLogarithmIsForbidden()
       && n.toScalar() != static_cast<U>(10.0)
@@ -121,6 +82,7 @@ template<typename U> Evaluation<U> LogarithmNode<2>::templatedApproximate(const 
 }
 
 void Logarithm::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
+  assert(numberOfChildren() == 2);
   /* We reduce the base first because of the case log(x1^y, x2) with x1 == x2.
    * When reducing x1^y, we want to be able to compare x1 of x2 so x2 need to be
    * reduced first. */
@@ -128,26 +90,12 @@ void Logarithm::deepReduceChildren(const ExpressionNode::ReductionContext& reduc
   childAtIndex(0).deepReduce(reductionContext);
 }
 
-Expression CommonLogarithm::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  {
-    Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        reductionContext,
-        SimplificationHelper::UnitReduction::BanUnits,
-        SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
-        SimplificationHelper::ListReduction::DistributeOverLists
-    );
-    if (!e.isUninitialized()) {
-      return e;
-    }
-  }
-  Expression c = childAtIndex(0);
-  Logarithm log = Logarithm::Builder(childAtIndex(0), Rational::Builder(10));
-  replaceWithInPlace(log);
-  return log.shallowReduce(reductionContext);
-}
-
 Expression Logarithm::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+  if (numberOfChildren() == 1) {
+    Logarithm log = Logarithm::Builder(childAtIndex(0), Rational::Builder(10));
+    replaceWithInPlace(log);
+    return log.shallowReduce(reductionContext);
+  }
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
@@ -267,6 +215,7 @@ Expression Logarithm::shallowReduce(const ExpressionNode::ReductionContext& redu
 }
 
 Expression Logarithm::simpleShallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+  assert(numberOfChildren() == 2);
   Expression c = childAtIndex(0);
   Expression b = childAtIndex(1);
 
@@ -299,6 +248,7 @@ Expression Logarithm::simpleShallowReduce(const ExpressionNode::ReductionContext
 }
 
 bool Logarithm::parentIsAPowerOfSameBase() const {
+  assert(numberOfChildren() == 2);
   // We look for expressions of types e^ln(x) or e^(ln(x)) where ln is this
   Expression parentExpression = parent();
   Expression logGroup = *this;
@@ -334,6 +284,7 @@ Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base
 }
 
 bool Logarithm::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+  assert(numberOfChildren() == 2);
   /* We do nothing if the base is a function of the derivation variable, as the
    * log is then not an unary function anymore.
    * TODO : Check whether we want to deal with the case log(..., f(x)). */
@@ -345,6 +296,7 @@ bool Logarithm::derivate(const ExpressionNode::ReductionContext& reductionContex
 }
 
 Expression Logarithm::unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext) {
+  assert(numberOfChildren() == 2);
   /* log(x, b)` = (ln(x)/ln(b))`
    *            = 1 / (x * ln(b))
    */
@@ -352,6 +304,7 @@ Expression Logarithm::unaryFunctionDifferential(const ExpressionNode::ReductionC
 }
 
 Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, const ExpressionNode::ReductionContext& reductionContext) {
+  assert(numberOfChildren() == 2);
   assert(!i.isZero());
   assert(!i.isNegative());
   Arithmetic arithmetic;
@@ -386,7 +339,9 @@ Expression Logarithm::splitLogarithmInteger(Integer i, bool isDenominator, const
 }
 
 Expression Logarithm::shallowBeautify() {
-  assert(numberOfChildren() == 2);
+  if (numberOfChildren() == 1) {
+    return *this;
+  }
   Constant e = Constant::Builder("e");
   if (childAtIndex(1).isIdenticalTo(e)) {
     NaperianLogarithm np = NaperianLogarithm::Builder(childAtIndex(0));
@@ -395,18 +350,14 @@ Expression Logarithm::shallowBeautify() {
   }
   Rational ten = Rational::Builder(10);
   if (childAtIndex(1).isIdenticalTo(ten)) {
-    CommonLogarithm l = CommonLogarithm::Builder(childAtIndex(0));
+    Logarithm l = Logarithm::Builder(childAtIndex(0));
     replaceWithInPlace(l);
     return std::move(l);
   }
   return *this;
 }
 
-template Evaluation<float> LogarithmNode<1>::templatedApproximate<float>(const ApproximationContext&) const;
-template Evaluation<double> LogarithmNode<1>::templatedApproximate<double>(const ApproximationContext&) const;
-template Evaluation<float> LogarithmNode<2>::templatedApproximate<float>(const ApproximationContext&) const;
-template Evaluation<double> LogarithmNode<2>::templatedApproximate<double>(const ApproximationContext&) const;
-template int LogarithmNode<1>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
-template int LogarithmNode<2>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
+template Evaluation<float> LogarithmNode::templatedApproximate<float>(const ApproximationContext&) const;
+template Evaluation<double> LogarithmNode::templatedApproximate<double>(const ApproximationContext&) const;
 
 }

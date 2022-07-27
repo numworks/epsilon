@@ -8,14 +8,18 @@
 
 namespace Poincare {
 
-template<int T>
 class LogarithmNode final : public ExpressionNode {
 public:
   constexpr static char k_functionName[] = "log";
 
   // TreeNode
   size_t size() const override { return sizeof(LogarithmNode); }
-  int numberOfChildren() const override;
+  int numberOfChildren() const override { return m_hasTwoChildren ? 2 : 1; }
+  void setNumberOfChildren(int numberOfChildren) override{
+    if (numberOfChildren == 1 || numberOfChildren == 2) {
+      m_hasTwoChildren = numberOfChildren == 2;
+    }
+  }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "Logarithm";
@@ -48,11 +52,13 @@ public:
   Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
   template<typename U> Evaluation<U> templatedApproximate(const ApproximationContext& approximationContext) const;
+private:
+  bool m_hasTwoChildren;
 };
 
-class Logarithm final : public ExpressionTwoChildren<Logarithm, LogarithmNode<2>> {
+class Logarithm final : public ExpressionBuilder<Logarithm, LogarithmNode, 1, 2> {
   friend class ExpressionNode;
-  friend class LogarithmNode<2>;
+  friend class LogarithmNode;
 public:
   using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
@@ -66,12 +72,6 @@ private:
   Integer simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base, Addition & a, bool isDenominator);
   Expression splitLogarithmInteger(Integer i, bool isDenominator, const ExpressionNode::ReductionContext& reductionContext);
   bool parentIsAPowerOfSameBase() const;
-};
-
-class CommonLogarithm : public ExpressionOneChild<CommonLogarithm, LogarithmNode<1>> {
-public:
-  using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

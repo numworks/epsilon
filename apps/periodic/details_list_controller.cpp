@@ -46,7 +46,9 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
 }
 
 void DetailsListController::didBecomeFirstResponder() {
-  selectCellAtLocation(0, 0);
+  if (selectedRow() < 0) {
+    selectCellAtLocation(0, 0);
+  }
   m_view.reload();
 }
 

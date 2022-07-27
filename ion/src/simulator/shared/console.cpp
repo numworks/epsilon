@@ -19,6 +19,11 @@ void writeChar(char c) {
   fflush(stdout);
 }
 
+bool clear() {
+  // No screen is expected to be cleared on simulator
+  return false;
+}
+
 bool transmissionDone() {
   return true;
 }

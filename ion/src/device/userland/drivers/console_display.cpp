@@ -12,6 +12,11 @@ void writeChar(char c) {
   KDIonContext::Putchar(c);
 }
 
+bool clear() {
+  KDIonContext::Clear();
+  return true;
+}
+
 bool transmissionDone() {
   return true;
 }

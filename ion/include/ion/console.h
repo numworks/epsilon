@@ -5,6 +5,8 @@ namespace Ion {
 namespace Console {
 
 void writeChar(char c);
+// Return true if the screen could be cleared
+bool clear();
 char readChar();
 
 // The lines are NULL-terminated

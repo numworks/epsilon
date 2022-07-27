@@ -349,7 +349,7 @@ public:
 
   /* Hierarchy */
   ExpressionNode * childAtIndex(int i) const { return static_cast<ExpressionNode *>(TreeNode::childAtIndex(i)); }
-#ifndef NDEBUG
+#if ASSERTIONS
   virtual void setChildrenInPlace(Expression other);
 #else
   void setChildrenInPlace(Expression other);

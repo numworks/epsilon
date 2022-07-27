@@ -17,11 +17,11 @@ $(dfu_targets): DFUFLAGS += --custom
 $(dfu_targets): NO_BOOTLOADER = $(findstring noboot,$@)
 
 $(dfu_targets): $(BUILD_DIR)/%.dfu: | $(BUILD_DIR)/.
-	$(if $(findstring noboot,$@),,$(MAKE) FIRMWARE_COMPONENT=bootloader DEBUG=0 bootloader.elf)
-	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.A.elf
-	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.B.elf
-	$(MAKE) FIRMWARE_COMPONENT=userland userland$(USERLAND_STEM).A.elf
-	$(MAKE) FIRMWARE_COMPONENT=userland userland$(USERLAND_STEM).B.elf
+	$(if $(findstring noboot,$@),,$(MAKE) FIRMWARE_COMPONENT=bootloader DEBUG=0 ASSERTIONS=$(BOOTLOADER_ASSERTIONS) bootloader.elf)
+	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 ASSERTIONS=$(KERNEL_ASSERTIONS) kernel.A.elf
+	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 ASSERTIONS=$(KERNEL_ASSERTIONS) kernel.B.elf
+	$(MAKE) FIRMWARE_COMPONENT=userland ASSERTIONS=$(USERLAND_ASSERTIONS) userland$(USERLAND_STEM).A.elf
+	$(MAKE) FIRMWARE_COMPONENT=userland ASSERTIONS=$(USERLAND_ASSERTIONS) userland$(USERLAND_STEM).B.elf
 	$(PYTHON) build/device/elf2dfu.py $(DFUFLAGS) -i \
 	  $(if $(findstring noboot,$@),,$(subst $(FIRMWARE_COMPONENT),bootloader,$(subst debug,release,$(BUILD_DIR)))/bootloader.elf) \
 	  $(subst $(FIRMWARE_COMPONENT),userland,$(BUILD_DIR))/userland$(USERLAND_STEM).A.elf \

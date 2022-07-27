@@ -22,12 +22,12 @@ public:
   static TreePool * sharedPool() { assert(SharedStaticPool != nullptr); return SharedStaticPool; }
   static void RegisterPool(TreePool * pool) { assert(SharedStaticPool == nullptr); SharedStaticPool = pool; }
   static void Lock() {
-#ifndef NDEBUG
+#if ASSERTIONS
     s_treePoolLocked = true;
 #endif
   }
   static void Unlock() {
-#ifndef NDEBUG
+#if ASSERTIONS
     s_treePoolLocked = false;
 #endif
  }
@@ -69,7 +69,7 @@ private:
   constexpr static int k_maxNodeOffset = BufferSize/ByteAlignment;
 
   static TreePool * SharedStaticPool;
-#ifndef NDEBUG
+#ifdef ASSERTIONS
   static bool s_treePoolLocked;
 #endif
 

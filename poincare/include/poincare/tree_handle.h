@@ -69,7 +69,7 @@ public:
   size_t sizeOfNode() const { return node()->size(); }
   void * addressInPool() const { return reinterpret_cast<void *>(node()); }
 
-#ifndef NDEBUG
+#if ASSERTIONS
   bool isGhost() const { return node()->isGhost(); }
 #endif
   bool isUninitialized() const { return m_identifier == TreeNode::NoNodeIdentifier; }

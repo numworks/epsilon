@@ -7,7 +7,7 @@ namespace Poincare {
 
 class NAryExpressionNode : public ExpressionNode { // TODO: VariableArityExpressionNode?
 public:
-#ifndef NDEBUG
+#if ASSERTIONS
   void setChildrenInPlace(Expression other) override { assert(false); }
 #endif
 

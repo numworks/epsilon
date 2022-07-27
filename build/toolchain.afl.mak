@@ -7,9 +7,12 @@ ifeq ($(ASAN),1)
 export AFL_USE_ASAN = 1
 endif
 
-# Prevent NDEBUG from being defined since we will always want assertions to run
-# when the code is being fuzzed
-SFLAGS := $(filter-out -DNDEBUG,$(SFLAGS))
+# Always use assertions when the code is being fuzzed
+ASSERTIONS = 1
+
+ifeq ($(ASSERTIONS),0)
+$(error ASSERTIONS=0 is useless with afl toolchain: assertions won't be handled.)
+endif
 
 ifeq ($(DEBUG),1)
 $(error DEBUG=1 is unnecessary with afl toolchain: assertions are handled anyway but the build won't be optimized.)

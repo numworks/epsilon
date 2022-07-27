@@ -79,7 +79,8 @@ KDRect TableViewWithTopAndBottomViews::tableFrame(KDCoordinate * yOffset) const 
     KDCoordinate h = m_table->bounds().height() + *yOffset;
     *yOffset = 0;
     if (m_topView) {
-      h = std::max<KDCoordinate>(h, bounds().height() - m_topView->minimalSizeForOptimalDisplay().height() - k_outerVerticalMargin);
+      m_table->setTopMargin(k_verticalMargin);
+      h = std::max<KDCoordinate>(h, bounds().height() - m_topView->minimalSizeForOptimalDisplay().height() - k_verticalMargin);
     }
     return KDRect(0, bounds().height() - h, bounds().width(), h);
   }
@@ -89,7 +90,10 @@ KDRect TableViewWithTopAndBottomViews::tableFrame(KDCoordinate * yOffset) const 
     /* Bottom of the table can fit on screen. Assume the table starts from the
      * top of the screen. */
     if (m_bottomView) {
-      KDCoordinate bottomViewTop = bounds().height() - m_bottomView->minimalSizeForOptimalDisplay().height() - k_outerVerticalMargin;
+      m_table->setBottomMargin(k_verticalMargin);
+      /* Margin has changed, recompute bottom */
+      bottom =  m_table->minimalSizeForOptimalDisplay().height() - *yOffset;
+      KDCoordinate bottomViewTop = bounds().height() - m_bottomView->minimalSizeForOptimalDisplay().height() - k_verticalMargin;
       if (bottom < bottomViewTop) {
         *yOffset -= bottomViewTop - bottom;
         bottom = bottomViewTop;
@@ -99,6 +103,8 @@ KDRect TableViewWithTopAndBottomViews::tableFrame(KDCoordinate * yOffset) const 
   }
 
   /* Neither top nor bottom view is visible. */
+  m_table->setTopMargin(Metric::CommonTopMargin);
+  m_table->setBottomMargin(Metric::CommonBottomMargin);
   return bounds();
 }
 

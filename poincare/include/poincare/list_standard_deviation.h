@@ -26,7 +26,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
 };
 
-class ListStandardDeviation : public ExpressionTwoChildren<ListStandardDeviation, ListStandardDeviationNode> {
+class ListStandardDeviation : public ExpressionBuilder<ListStandardDeviation, ListStandardDeviationNode, 1, 2> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);

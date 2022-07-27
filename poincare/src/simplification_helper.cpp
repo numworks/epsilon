@@ -219,17 +219,6 @@ Expression SimplificationHelper::bubbleUpDependencies(Expression e, const Expres
   return Expression();
 }
 
-bool SimplificationHelper::getChildrenIfNonEmptyList(Expression e, Expression memoizedChildren[]) {
-  int n = e.numberOfChildren();
-  for (int i = 0; i < n; i++) {
-    memoizedChildren[i] = e.childAtIndex(i);
-    if (memoizedChildren[i].type() != ExpressionNode::Type::List || memoizedChildren[i].numberOfChildren() == 0) {
-      return false;
-    }
-  }
-  return true;
-}
-
 bool SimplificationHelper::extractIntegerChildAtIndex(Expression e, int integerChildIndex, int * integerChildReturnValue, bool * isSymbolReturnValue) {
   assert(e.numberOfChildren() > integerChildIndex);
   Expression child = e.childAtIndex(integerChildIndex);

@@ -19,6 +19,8 @@ SFLAGS += -Os
 SFLAGS += -DNDEBUG
 endif
 
+SFLAGS += -DASSERTIONS=$(ASSERTIONS)
+
 ifeq ($(ASAN),1)
 SFLAGS += -fsanitize=address
 LDFLAGS += -fsanitize=address

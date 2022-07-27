@@ -55,7 +55,7 @@ public:
   size_t deepSize(int realNumberOfChildren) const;
 
   // Ghost
-#ifndef NDEBUG
+#if ASSERTIONS
   virtual bool isGhost() const { return false; }
 #endif
 

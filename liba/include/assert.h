@@ -3,10 +3,10 @@
 
 #include "private/macros.h"
 
-#ifdef NDEBUG
-#define assert(e) ((void)0)
-#else
+#if ASSERTIONS
 #define assert(e)  ((void) ((e) ? ((void)0) : __assert(#e, __FILE__, __LINE__)))
+#else
+#define assert(e) ((void)0)
 #endif
 
 LIBA_BEGIN_DECLS

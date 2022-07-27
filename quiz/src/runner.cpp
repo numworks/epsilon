@@ -21,12 +21,13 @@ static inline void ion_main_inner(const char * testFilter) {
 
   // First pass to count the number of quiz cases
   while (quiz_cases[i] != NULL) {
-    i++;
 #ifndef PLATFORM_DEVICE
     if (testFilter && strstr(quiz_case_names[i], testFilter) != quiz_case_names[i]) {
+      i++;
       continue;
     }
 #endif
+    i++;
     totalCases++;
   }
 
@@ -41,6 +42,7 @@ static inline void ion_main_inner(const char * testFilter) {
       continue;
     }
 #endif
+    i++;
     caseIndex++;
     QuizCase c = quiz_cases[i];
     if (quiz_print_clear()) {
@@ -54,7 +56,6 @@ static inline void ion_main_inner(const char * testFilter) {
     c();
     int currentPoolSize = Poincare::TreePool::sharedPool()->numberOfNodes();
     quiz_assert(initialPoolSize == currentPoolSize);
-    i++;
   }
   quiz_print_clear();
 

@@ -211,14 +211,15 @@ TreeHandle TreeHandle::Builder() {
   return TreeHandle::BuildWithGhostChildren(node);
 }
 
-TreeHandle TreeHandle::Builder(TreeNode::Initializer initializer, size_t size) {
+TreeHandle TreeHandle::Builder(TreeNode::Initializer initializer, size_t size, int numberOfChildren) {
   void * bufferNode = TreePool::sharedPool()->alloc(size);
   TreeNode * node = initializer(bufferNode);
+  node->setNumberOfChildren(numberOfChildren);
   return TreeHandle::BuildWithGhostChildren(node);
 }
 
 TreeHandle TreeHandle::BuilderWithChildren(TreeNode::Initializer initializer, size_t size, const Tuple & children) {
-  TreeHandle h = Builder(initializer, size);
+  TreeHandle h = Builder(initializer, size, children.size());
   size_t i = 0;
   for (TreeHandle child : children) {
     h.replaceChildAtIndexInPlace(i++, child);

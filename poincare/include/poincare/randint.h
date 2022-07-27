@@ -14,7 +14,7 @@ public:
 
   // TreeNode
   size_t size() const override { return sizeof(RandintNode); }
-  int numberOfChildren() const override;
+  int numberOfChildren() const override { return m_hasTwoChildren ? 2 : 1; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "Randint";
@@ -24,13 +24,9 @@ public:
   // Properties
   Type type() const override { return Type::Randint; }
 
-  // ExpressionNode
-  bool canTakeDefaultParameterAtIndex(int i) const override {
-    return i == 0;
-  }
-  Expression defaultParameterAtIndex(int i) const override {
-    assert(canTakeDefaultParameterAtIndex(i));
-    return Rational::Builder(0);
+  void setNumberOfChildren(int numberOfChildren) override {
+    assert(numberOfChildren >= 1 && numberOfChildren <= 2);
+    m_hasTwoChildren = numberOfChildren == 2;
   }
 
 private:
@@ -50,20 +46,14 @@ private:
 
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+  bool m_hasTwoChildren;
 };
 
-class Randint final : public ExpressionTwoChildren<Randint, RandintNode> {
+class Randint final : public ExpressionBuilder<Randint,RandintNode,1,2> {
 friend class RandintNode;
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  static Expression OneChildUntypedBuilder(Expression children) {
-    assert(children.numberOfChildren() == 1);
-    return Builder(DefaultParameter::Builder(), children.childAtIndex(0));
-  }
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
-
-  constexpr static Expression::FunctionHelper s_functionHelperOneChild = Expression::FunctionHelper(RandintNode::k_functionName, 1, &OneChildUntypedBuilder);
-
 };
 
 

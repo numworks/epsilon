@@ -18,8 +18,6 @@ extern "C" {
 
 namespace Poincare {
 
-int RandintNode::numberOfChildren() const { return Randint::s_functionHelper.numberOfChildren(); }
-
 Layout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return LayoutHelper::Prefix(Randint(this), floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.name());
 }
@@ -33,8 +31,16 @@ Expression RandintNode::shallowReduce(const ReductionContext& reductionContext) 
 }
 
 template <typename T> Evaluation<T> RandintNode::templateApproximate(const ApproximationContext& approximationContext, bool * inputIsUndefined) const {
-  Evaluation<T> aInput = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> bInput = childAtIndex(1)->approximate(T(), approximationContext);
+  Evaluation<T> aInput; Evaluation<T> bInput;
+  if (numberOfChildren() == 1) {
+    aInput = Complex<T>::Builder(0.0);
+    bInput = childAtIndex(0)->approximate(T(), approximationContext);
+  } else {
+    assert(numberOfChildren() == 2);
+    aInput = childAtIndex(0)->approximate(T(), approximationContext);
+    bInput = childAtIndex(1)->approximate(T(), approximationContext);
+  }
+
   if (inputIsUndefined) {
     *inputIsUndefined = aInput.isUndefined() || bInput.isUndefined();
   }
@@ -42,9 +48,15 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(const Appro
       this,
       approximationContext,
       [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
-        assert(numberOfComplexes == 2);
-        T a = ComplexNode<T>::ToScalar(c[0]);
-        T b = ComplexNode<T>::ToScalar(c[1]);
+        T a; T b;
+        if (numberOfComplexes == 1) {
+          a = 0.0;
+          b = ComplexNode<T>::ToScalar(c[0]);
+        } else {
+          assert(numberOfComplexes == 2);
+          a = ComplexNode<T>::ToScalar(c[0]);
+          b = ComplexNode<T>::ToScalar(c[1]);
+        }
         /* randint is undefined if:
          * - one of the bounds is NAN or INF
          * - the last bound is lesser than the first one

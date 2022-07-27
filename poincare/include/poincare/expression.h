@@ -343,24 +343,36 @@ public:
    * It is used in particular by the parser. */
   class FunctionHelper {
   public:
-    constexpr FunctionHelper(const char * name, const int numberOfChildren, Expression (* const builder)(Expression)) :
+    constexpr FunctionHelper(const char * name, const int minNumberOfChildren, const int maxNumberOfChildren, Expression (* const builder)(Expression)) :
       m_name(name),
-      m_numberOfChildren(numberOfChildren),
+      m_minNumberOfChildren(minNumberOfChildren),
+      m_maxNumberOfChildren(maxNumberOfChildren),
       m_untypedBuilder(builder),
       m_initializer(nullptr),
       m_size(0) {}
-    constexpr FunctionHelper(const char * name, const int numberOfChildren, TreeNode::Initializer initializer, size_t size) :
+    constexpr FunctionHelper(const char * name, const int numberOfChildren, Expression (* const builder)(Expression)) :
       m_name(name),
-      m_numberOfChildren(numberOfChildren),
+      m_minNumberOfChildren(numberOfChildren),
+      m_maxNumberOfChildren(numberOfChildren),
+      m_untypedBuilder(builder),
+      m_initializer(nullptr),
+      m_size(0) {}
+    constexpr FunctionHelper(const char * name, const int minNumberOfChildren, const int maxNumberOfChildren, TreeNode::Initializer initializer, size_t size) :
+      m_name(name),
+      m_minNumberOfChildren(minNumberOfChildren),
+      m_maxNumberOfChildren(maxNumberOfChildren),
       m_untypedBuilder(nullptr),
       m_initializer(initializer),
       m_size(size) {}
     constexpr const char * name() const { return m_name; }
-    int numberOfChildren() const { return m_numberOfChildren; }
+    int minNumberOfChildren() const { return m_minNumberOfChildren; }
+    int maxNumberOfChildren() const { return m_maxNumberOfChildren; }
+    int numberOfChildren() const { assert(m_minNumberOfChildren == m_maxNumberOfChildren); return m_minNumberOfChildren; }
     Expression build(Expression children) const;
   private:
     const char * m_name;
-    const int m_numberOfChildren;
+    const int m_minNumberOfChildren;
+    const int m_maxNumberOfChildren;
     Expression (* const m_untypedBuilder)(Expression children);
     TreeNode::Initializer m_initializer;
     const size_t m_size;
@@ -525,7 +537,7 @@ private:
 };
 
 // Helper to create the expression associated to a node
-template<typename T, typename U, int N, typename Parent>
+template<typename T, typename U, int Nmin, int Nmax, typename Parent = Expression>
 class ExpressionBuilder : public Parent {
 public:
 #ifndef PLATFORM_DEVICE
@@ -533,38 +545,43 @@ public:
 #endif
   ExpressionBuilder(const U * n) : Parent(n) {}
   static T Builder() {
-    static_assert(N == 0);
+    static_assert(Nmin <= 0 && Nmax >= 0);
     TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {});
-    return static_cast<T&>(h);
+    T expression = static_cast<T&>(h);
+    return expression;
   }
   static T Builder(Expression child) {
-    static_assert(N == 1);
+    static_assert(Nmin <= 1 && Nmax >= 1);
     TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child});
-    return static_cast<T&>(h);
+    T expression = static_cast<T&>(h);
+    return expression;
   }
   static T Builder(Expression child1, Expression child2) {
-    static_assert(N == 2);
+    static_assert(Nmin <= 2 && Nmax >= 2);
     TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child1, child2});
-    return static_cast<T&>(h);
+    T expression = static_cast<T&>(h);
+    return expression;
   }
   static T Builder(Expression child1, Expression child2, Expression child3) {
-    static_assert(N == 3);
+    static_assert(Nmin <= 3 && Nmax >= 3);
     TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child1, child2, child3});
-    return static_cast<T&>(h);
+    T expression = static_cast<T&>(h);
+    return expression;
   }
   static T Builder(Expression child1, Expression child2, Expression child3, Expression child4) {
-    static_assert(N == 4);
+    static_assert(Nmin <= 4 && Nmax >= 4);
     TreeHandle h = TreeHandle::BuilderWithChildren(Initializer<U>, sizeof(U), {child1, child2, child3, child4});
-    return static_cast<T&>(h);
+    T expression = static_cast<T&>(h);
+    return expression;
   }
-  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper(U::k_functionName, N, Initializer<U>, sizeof(U));
+  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper(U::k_functionName, Nmin, Nmax, Initializer<U>, sizeof(U));
 };
 
-template<typename T, typename U, typename P = Expression> using ExpressionNoChildren = ExpressionBuilder<T,U,0,P>;
-template<typename T, typename U, typename P = Expression> using ExpressionOneChild = ExpressionBuilder<T,U,1,P>;
-template<typename T, typename U, typename P = Expression> using ExpressionTwoChildren = ExpressionBuilder<T,U,2,P>;
-template<typename T, typename U, typename P = Expression> using ExpressionThreeChildren = ExpressionBuilder<T,U,3,P>;
-template<typename T, typename U, typename P = Expression> using ExpressionFourChildren = ExpressionBuilder<T,U,4,P>;
+template<typename T, typename U, typename P = Expression> using ExpressionNoChildren = ExpressionBuilder<T,U,0,0,P>;
+template<typename T, typename U, typename P = Expression> using ExpressionOneChild = ExpressionBuilder<T,U,1,1,P>;
+template<typename T, typename U, typename P = Expression> using ExpressionTwoChildren = ExpressionBuilder<T,U,2,2,P>;
+template<typename T, typename U, typename P = Expression> using ExpressionThreeChildren = ExpressionBuilder<T,U,3,3,P>;
+template<typename T, typename U, typename P = Expression> using ExpressionFourChildren = ExpressionBuilder<T,U,4,4,P>;
 }
 
 #endif

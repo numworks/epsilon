@@ -69,6 +69,7 @@ public:
   TreeNode * parent() const;
   TreeNode * root();
   virtual int numberOfChildren() const = 0;
+  virtual void setNumberOfChildren(int numberOfChildren) {} // This is used for building nodes which have variable number of children like Randint
   virtual void incrementNumberOfChildren(int increment = 1) {} // Do no put an assert(false), we need this method for instance in GridLayout::removeRow
   virtual void eraseNumberOfChildren() {}
   int numberOfDescendants(bool includeSelf) const;

@@ -450,8 +450,8 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
     return;
   }
   int numberOfParameters = parameters.numberOfChildren();
-  if ((**functionHelper).numberOfChildren() >= 0) {
-    while (numberOfParameters > (**functionHelper).numberOfChildren()) {
+  if ((**functionHelper).minNumberOfChildren() >= 0) {
+    while (numberOfParameters > (**functionHelper).maxNumberOfChildren()) {
       functionHelper++;
       if (!(functionHelper < ParsingHelper::ReservedFunctionsUpperBound() && strcmp(name, (**functionHelper).name()) == 0)) {
         m_status = Status::Error; // Too many parameters provided.
@@ -460,7 +460,7 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
     }
   }
 
-  int functionHelperNumberOfChildren = (**functionHelper).numberOfChildren();
+  int functionHelperNumberOfChildren = (**functionHelper).maxNumberOfChildren();
   if (functionHelperNumberOfChildren < 0 && numberOfParameters < abs(functionHelperNumberOfChildren)) {
     /* FunctionHelpers with negative numberOfChildren value expect any number of
      * children greater than this value (in absolute). */

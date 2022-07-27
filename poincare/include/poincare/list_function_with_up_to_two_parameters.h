@@ -1,5 +1,5 @@
-#ifndef POINCARE_LIST_TWO_PARAMETERS_FUNCTION_H
-#define POINCARE_LIST_TWO_PARAMETERS_FUNCTION_H
+#ifndef POINCARE_LIST_FUNCTION_WITH_UP_TO_TWO_PARAMETERS_H
+#define POINCARE_LIST_FUNCTION_WITH_UP_TO_TWO_PARAMETERS_H
 
 #include <poincare/list.h>
 #include <poincare/serialization_helper.h>
@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class ListTwoParametersFunctionNode : public ExpressionNode {
+class ListFunctionWithUpToTwoParametersNode : public ExpressionNode {
 public:
   virtual const char * functionName() const = 0;
 

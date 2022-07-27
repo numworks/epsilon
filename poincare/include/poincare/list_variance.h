@@ -1,11 +1,11 @@
 #ifndef POINCARE_LIST_VARIANCE_H
 #define POINCARE_LIST_VARIANCE_H
 
-#include <poincare/list_two_parameters_function_node.h>
+#include <poincare/list_function_with_up_to_two_parameters.h>
 
 namespace Poincare {
 
-class ListVarianceNode : public ListTwoParametersFunctionNode {
+class ListVarianceNode : public ListFunctionWithUpToTwoParametersNode {
 public:
   constexpr static const char k_functionName[] = "var";
   const char * functionName() const override { return k_functionName; }

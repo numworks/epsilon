@@ -24,7 +24,7 @@ Expression ListStandardDeviation::shallowReduce(const ExpressionNode::ReductionC
   int n = numberOfChildren();
   assert(n == 1 || n == 2);
   Expression children[2];
-  if (!static_cast<ListTwoParametersFunctionNode *>(node())->getChildrenIfNonEmptyList(children)) {
+  if (!static_cast<ListFunctionWithUpToTwoParametersNode *>(node())->getChildrenIfNonEmptyList(children)) {
     return replaceWithUndefinedInPlace();
   }
   ListVariance var = ListVariance::Builder(children[0], children[1]);

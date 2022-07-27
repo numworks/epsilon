@@ -27,7 +27,7 @@ void VectorGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   bool labelOnLine = std::abs(angle) < M_PI/30.f || std::abs(M_PI - angle) < M_PI/30.f;
   drawLabel(ctx, rect, k_labelRatio * length * std::cos(angle/2), k_labelRatio * length * std::sin(angle/2), "θ", Palette::GrayDark, CurveView::RelativePosition::None, labelOnLine ? CurveView::RelativePosition::Before : CurveView::RelativePosition::None);
   // Draw the arc
-  drawArc(ctx, rect, 0.0f, angle, M_PI/30.0f, VectorModel::k_arcRatio * length, Palette::GrayDark, false);
+  drawArc(ctx, rect, 0.0f, angle, M_PI/30.0f, pixelLengthToFloatLength(Axis::Horizontal, m_model->arcRadiusInPixels()), Palette::GrayDark, false);
   // Draw the arrow
   drawSegment(ctx, rect, 0., 0., m_model->vectorX(), m_model->vectorY(), Palette::Red, false);
   drawArrow(ctx, rect, x, y, x, y, Palette::Red, m_model->ratio() * k_arrowSizeInPixels, false);

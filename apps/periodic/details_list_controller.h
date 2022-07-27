@@ -37,8 +37,8 @@ private:
   constexpr static int k_normalCellType = 0;
   constexpr static int k_separatorCellType = 1;
   constexpr static size_t k_numberOfRows = 13;
-  constexpr static size_t k_numberOfNormalCells = 8;
-  constexpr static size_t k_numberOfSeparatorCells = 5;
+  constexpr static size_t k_numberOfNormalCells = 4;
+  constexpr static size_t k_numberOfSeparatorCells = 4;
 
   const DataField * DataFieldForRow(int row);
 

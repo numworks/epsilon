@@ -81,6 +81,7 @@ public:
   bool hasAncestor(TreeHandle t, bool includeSelf) const { return node()->hasAncestor(t.node(), includeSelf); }
   TreeHandle commonAncestorWith(TreeHandle t) const;
   int numberOfChildren() const { return node()->numberOfChildren(); }
+  void setNumberOfChildren(int numberOfChildren) { node()->setNumberOfChildren(numberOfChildren); }
   int indexOfChild(TreeHandle t) const;
   TreeHandle parent() const;
   TreeHandle childAtIndex(int i) const;
@@ -112,7 +113,7 @@ public:
 
   typedef std::initializer_list<TreeHandle> Tuple;
 
-  static TreeHandle Builder(TreeNode::Initializer initializer, size_t size);
+  static TreeHandle Builder(TreeNode::Initializer initializer, size_t size, int numberOfChildren = -1);
   static TreeHandle BuilderWithChildren(TreeNode::Initializer initializer, size_t size, const Tuple & children);
 
 protected:

@@ -1181,20 +1181,10 @@ Coordinate2D<double> Expression::nextIntersection(const char * symbol, double st
 
 static Expression maker(Expression children, int nbChildren, TreeNode::Initializer initializer, size_t size) {
   assert(children.type() == ExpressionNode::Type::List);
-  TreeHandle handle = TreeHandle::Builder(initializer, size);
+  TreeHandle handle = TreeHandle::Builder(initializer, size, nbChildren);
   Expression result = static_cast<Expression &>(handle);
-  int numberOfDefinedChildren = children.numberOfChildren();
-  for (int i = numberOfDefinedChildren; i < nbChildren; i++) {
-    if (!result.canTakeDefaultParameterAtIndex(i)) {
-      return Expression();
-    }
-  }
   for (size_t i = 0; i < static_cast<size_t>(nbChildren); i++) {
-    if (i >= numberOfDefinedChildren) {
-      result.replaceChildAtIndexInPlace(i, DefaultParameter::Builder());
-    } else {
-      result.replaceChildAtIndexInPlace(i, children.childAtIndex(i));
-    }
+    result.replaceChildAtIndexInPlace(i, children.childAtIndex(i));
   }
   return result;
 }
@@ -1203,7 +1193,9 @@ Expression Expression::FunctionHelper::build(Expression children) const {
   if (m_untypedBuilder) {
     return (*m_untypedBuilder)(children);
   }
-  return maker(children, m_numberOfChildren, m_initializer, m_size);
+  int numberOfChildren = children.numberOfChildren();
+  assert(numberOfChildren >= m_minNumberOfChildren && numberOfChildren <= m_maxNumberOfChildren);
+  return maker(children, numberOfChildren, m_initializer, m_size);
 }
 
 

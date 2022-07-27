@@ -99,6 +99,7 @@ void DetailsListController::willDisplayCellForIndex(HighlightCell * cell, int in
     /* The "Group of element" full legend is used in the display selector, but
      * not in the details card. */
     sublabel = dataField->fieldLegend();
+    typedCell->setAccessoryColor(KDColorBlack);
   }
 
   typedCell->setSubLabelMessage(sublabel);

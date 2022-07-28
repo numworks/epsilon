@@ -520,7 +520,8 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
   }
 }
 
-void CurveView::drawArc(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, float radius, KDColor color, bool thick) const {
+void CurveView::drawArc(KDContext * ctx, KDRect rect, float tStart, float tEnd, float radius, KDColor color, bool thick) const {
+  assert(radius > 0.f);
   float previousT = NAN;
   float t = NAN;
   float previousX = NAN;
@@ -529,6 +530,10 @@ void CurveView::drawArc(KDContext * ctx, KDRect rect, const float tStart, float 
   float y = NAN;
   int i = 0;
   bool isLastSegment = false;
+  // Choose tStep to match the expected length of a single segment in pixels
+  const float segmentLengthInPixels = 2.f; // Ad hoc
+  // 2π * length / perimeter where perimeter = 2π * radius in pixels
+  const float tStep = segmentLengthInPixels / floatLengthToPixelLength(Axis::Horizontal, radius);
   do {
     previousT = t;
     t = tStart + (i++) * tStep;

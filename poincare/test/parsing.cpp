@@ -572,8 +572,10 @@ QUIZ_CASE(poincare_parsing_parse_store) {
   assert_parsed_expression_is("1→f(x)", Store::Builder(BasedInteger::Builder(1),Function::Builder("f",1,Symbol::Builder("x",1))));
   assert_parsed_expression_is("x→f(x)", Store::Builder(Symbol::Builder("x",1),Function::Builder("f",1,Symbol::Builder("x",1))));
   assert_parsed_expression_is("n→f(x)", Store::Builder(Symbol::Builder("n",1),Function::Builder("f",1,Symbol::Builder("x",1))));
+  assert_parsed_expression_is("ab→f(ab)", Store::Builder(Symbol::Builder("ab",2),Function::Builder("f",1,Symbol::Builder("ab",2))));
+  assert_parsed_expression_is("ab→f(x)", Store::Builder(Multiplication::Builder(Symbol::Builder("a",1), Symbol::Builder("b",1)),Function::Builder("f",1,Symbol::Builder("x",1))));
   assert_parsed_expression_is("t→f(t)", Store::Builder(Symbol::Builder("t",1),Function::Builder("f",1,Symbol::Builder("t",1))));
-  assert_parsed_expression_is("t→f(x)", Store::Builder(ton, Function::Builder("f",1,Symbol::Builder("t",1))));
+  assert_parsed_expression_is("t→f(x)", Store::Builder(ton, Function::Builder("f",1,Symbol::Builder("x",1))));
   Expression m0[] = {Symbol::Builder('x')};
   assert_parsed_expression_is("[[x]]→f(x)", Store::Builder(BuildMatrix(1,1,m0), Function::Builder("f", 1, Symbol::Builder('x'))));
   assert_text_not_parsable("a→b→c");

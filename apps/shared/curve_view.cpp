@@ -532,8 +532,9 @@ void CurveView::drawArc(KDContext * ctx, KDRect rect, float tStart, float tEnd, 
   bool isLastSegment = false;
   // Choose tStep to match the expected length of a single segment in pixels
   const float segmentLengthInPixels = 2.f; // Ad hoc
+  const float radiusInPixel = std::max(floatLengthToPixelLength(Axis::Horizontal, radius), floatLengthToPixelLength(Axis::Vertical, radius));
   // 2π * length / perimeter where perimeter = 2π * radius in pixels
-  const float tStep = segmentLengthInPixels / floatLengthToPixelLength(Axis::Horizontal, radius);
+  const float tStep = segmentLengthInPixels / radiusInPixel;
   do {
     previousT = t;
     t = tStart + (i++) * tStep;

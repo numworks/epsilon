@@ -7,10 +7,13 @@ namespace Poincare {
 
 class ParsingContext {
 public:
+  /* We do not always understand identifiers like m or abc the same way.
+   * This enum values are used by the IdentifierTokenizer to know how to
+   * handle some ambiguous cases. */
   enum class ParsingMethod {
     Classic,
-    Assignment,
-    UnitConversion
+    Assignment, // f(x) is understood as a function and not f*(x). abc is understood as abc and not a*b*c
+    UnitConversion // 3m is understood as 3meters even if there is a value stored in the variable m
   };
 
   ParsingContext(Context * context, ParsingContext::ParsingMethod parsingMethod) : m_context(context), m_parsingMethod(parsingMethod) {}

@@ -9,8 +9,8 @@
 * When tokenizing a string, the tokenizer will pop identifiers depending on
 * the context.
 * foobar(x) will be tokenized as f*o*o*b*a*r*(x) by default, but if foo is
-* defined as a variable and bar as a function in the context, it will be
-* parsed as foo*bar(x).
+* defined as a variable and bar defined as a function in the context, it will
+* be parsed as foo*bar(x).
 *
 * This is a right-to-eager tokenizer.
 * When parsing abc, we'll first consider abc, then bc, then c.
@@ -25,7 +25,7 @@
 *       Input  |  Desired parsed result
 *---------------------------------------------------------------------------
 *         xyz  |  x*y*z, and not xyz
-*       "xyz"  |  xyz and not xyz
+*       "xyz"  |  xyz and not x*y*z
 *       3→xyz  |  3→xyz, and not 3→x*y*z
 *          ab  |  ab and not a*b, because ab is defined
 *     acos(x)  |  acos(x) and not a*cos(x)
@@ -76,7 +76,7 @@ public:
   Token popIdentifier();
 
 private:
-  constexpr static int k_maxNumberOfIdentifiersInList = 10;
+  constexpr static int k_maxNumberOfIdentifiersInList = 10; // Used for m_identfiersList
 
   void fillIdentifiersList();
   Token popRightMostIdentifier(const char * * currentStringEnd);
@@ -85,6 +85,13 @@ private:
   ParsingContext * m_parsingContext;
   const char * m_stringStart;
   const char * m_stringEnd;
+  /* This list is used to memoize the identifiers we already parsed.
+   * Ex: When parsing abc, we first turn it into ab*c and store "c",
+   * then a*b*c and store "b" and "a". This is useful because we pop
+   * tokens from left to right, so when we pop "a", we don't need to
+   * reparse later to pop "b" and "c".
+   * This has a limited size though so it won't memoize every token for
+   * long strings. */
   Token m_identifiersList[k_maxNumberOfIdentifiersInList];
   int m_numberOfIdentifiers;
 };

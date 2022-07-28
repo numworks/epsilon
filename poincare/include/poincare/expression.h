@@ -183,6 +183,7 @@ public:
   bool isAlternativeFormOfRationalNumber() const;
   bool hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, float * returnRealPart = nullptr, float * returnImagPart = nullptr) const;
   bool isCombinationOfUnits() const { return node()->isCombinationOfUnits(); }
+  bool canBeDiscontinuous(Context * context) const;
   template <typename T> bool isDiscontinuousBetweenValuesForSymbol(const char * symbol, T x1, T x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   /* recursivelyMatches will test each node recursively with the function
    * provided as argument. If the result is Yes, it will stop searching and
@@ -213,6 +214,7 @@ public:
   static bool IsMatrix(const Expression e, Context * context);
   static bool IsInfinity(const Expression e, Context * context);
   static bool IsPercent(const Expression e, Context * context);
+  static bool IsDiscontinuous(const Expression e, Context * context);
   /* polynomialDegree returns:
    * - (-1) if the expression is not a polynomial
    * - the degree of the polynomial otherwise */

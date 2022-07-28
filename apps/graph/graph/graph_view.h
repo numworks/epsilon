@@ -32,6 +32,7 @@ public:
   void setAreaHighlightColor(bool highlightColor) override {};
 
 private:
+  static bool FonctionIsDiscontinuousBetweenFloatValues(float x1, float x2, void * model, void * context);
   bool m_tangent;
 };
 

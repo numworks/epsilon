@@ -30,7 +30,7 @@ public:
     const char * currentPos = currentPosition();
     if (position < currentPos
         || (position > currentPos
-            && position <= currentPos + strlen(currentPos))) {
+            && *(position - 1) != 0)) {
       m_decoder.setPosition(position);
     }
   }

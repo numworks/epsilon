@@ -145,6 +145,7 @@ public:
    * If intersections are implemented for verticalLines, isActiveInTable might
    * need a change. */
   bool isIntersectable() const { return isActiveInTable() && !(plotType() == PlotType::Polar || plotType() == PlotType::Parametric); }
+  bool isDiscontinuousBetweenFloatValues(float x1, float x2, Poincare::Context * context) const;
   // Compute line parameters (slope and intercept) from ContinuousFunction
   void getLineParameters(double * slope, double * intercept, Poincare::Context * context) const;
   // Compute conic parameters from ContinuousFunction

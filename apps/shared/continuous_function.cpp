@@ -236,6 +236,12 @@ bool ContinuousFunction::isNamed() const {
   return recordFullName != nullptr && recordFullName[0] != k_unnamedRecordFirstChar;
 }
 
+bool ContinuousFunction::isDiscontinuousBetweenFloatValues(float x1, float x2, Poincare::Context * context) const {
+  Expression equation = expressionReduced(context);
+  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
+  return equation.isDiscontinuousBetweenValuesForSymbol<float>(k_unknownName, x1, x2, context, preferences->complexFormat(), preferences->angleUnit());
+}
+
 void ContinuousFunction::getLineParameters(double * slope, double * intercept, Context * context) const {
   assert(plotType() == PlotType::Line);
   Expression equation = expressionReduced(context);

@@ -21,7 +21,7 @@ void TrigonometryGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw the circle
   drawCurve(ctx, rect, 0.0f, 2.0f*M_PI, M_PI/180.0f, [](float t, void * model, void * context) {
       return Poincare::Coordinate2D<float>(std::cos(t), std::sin(t));
-    }, nullptr, nullptr, true, Palette::GrayDark, false);
+    }, nullptr, nullptr, true, Palette::GrayDark, CurveView::DefaultEvaluateDiscontinuityBetweenFloatValues, false);
   // Draw dashed segment to indicate sine and cosine
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, c, 0.0f, s, Palette::Red, 1, 3);
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, s, 0.0f, c, Palette::Red, 1, 3);

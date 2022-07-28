@@ -646,7 +646,7 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 
 constexpr static int k_maxNumberOfIterations = 10;
 
-void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, KDColor colorOfFill, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaPattern, Axis axis) const {
+void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, EvaluateDiscontinuityBetweenFloatValues evaluateDiscontinuityBetweenValues, bool thick, bool colorUnderCurve, KDColor colorOfFill, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaPattern, Axis axis) const {
   /* ContinuousFunction caching relies on a consistent tStart and tStep. These
    * values shouldn't be altered here. */
   float previousT = NAN;
@@ -692,11 +692,11 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, floa
         drawHorizontalOrVerticalSegment(ctx, rect, secondaryAxis, mainCoordinate, lowerBound, upperBound, colorOfFill, 1, 1, areaPattern);
       }
     }
-    stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation, dashedCurve, stampNumber);
+    stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, previousT, previousX, previousY, t, x, y, color, thick, k_maxNumberOfIterations, xyDoubleEvaluation, dashedCurve, stampNumber, evaluateDiscontinuityBetweenValues);
   } while (!isLastSegment);
 }
 
-void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float tMin, float tMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, bool thick, bool colorUnderCurve, KDColor colorOfFill, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaPattern, float cachedTStep, Axis axis) const {
+void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float tMin, float tMax, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, KDColor color, EvaluateDiscontinuityBetweenFloatValues evaluateDiscontinuityBetweenValues, bool thick, bool colorUnderCurve, KDColor colorOfFill, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaPattern, float cachedTStep, Axis axis) const {
   float tStart = tMin;
   float tStep = cachedTStep;
   KDCoordinate pixelMin = axis == Axis::Horizontal ? rect.left() - k_externRectMargin : rect.bottom() + k_externRectMargin;
@@ -717,7 +717,7 @@ void CurveView::drawCartesianCurve(KDContext * ctx, KDRect rect, float tMin, flo
   if (std::isinf(tStart) || std::isinf(tEnd) || tStart > tEnd) {
     return;
   }
-  drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, true, color, thick, colorUnderCurve, colorOfFill, colorLowerBound, colorUpperBound, xyDoubleEvaluation, dashedCurve, xyAreaBound, shouldColorAreaWhenNan, areaPattern, axis);
+  drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, true, color, evaluateDiscontinuityBetweenValues, thick, colorUnderCurve, colorOfFill, colorLowerBound, colorUpperBound, xyDoubleEvaluation, dashedCurve, xyAreaBound, shouldColorAreaWhenNan, areaPattern, axis);
 }
 
 static float polarThetaFromCoordinates(float x, float y, Preferences::AngleUnit angleUnit) {
@@ -725,7 +725,7 @@ static float polarThetaFromCoordinates(float x, float y, Preferences::AngleUnit 
   return Trigonometry::ConvertRadianToAngleUnit<float>(std::arg(std::complex<float>(x,y)), angleUnit).real();
 }
 
-void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation) const {
+void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float tEnd, float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, EvaluateDiscontinuityBetweenFloatValues evaluateDiscontinuityBetweenValues, bool thick, bool colorUnderCurve, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation) const {
   // Compute rect limits
   float rectLeft = pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectRight = pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
@@ -744,7 +744,7 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
   if (cancelOptimization || (rectUp > 0.0f && rectDown < 0.0f && rectLeft < 0.0f)) {
     if (cancelOptimization || rectRight > 0.0f) {
       // Origin is inside rect, tStart and tEnd cannot be optimized
-      return drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, color, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
+      return drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, evaluateDiscontinuityBetweenValues, thick, colorUnderCurve, color, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
     }
     // Rect view overlaps the abscissa, on the left of the origin.
     rectOverlapsNegativeAbscissaAxis = true;
@@ -801,7 +801,7 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
    * overlap (at tStart+5*tStep). Optimization is useless.
    * If tStep < piInAngleUnit - (tMax - tMin), situation B cannot happen. */
   if (tStep >= piInAngleUnit - tMax + tMin) {
-    return drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, color, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
+    return drawCurve(ctx, rect, tStart, tEnd, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, evaluateDiscontinuityBetweenValues, thick, colorUnderCurve, color, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
   }
 
   /* The number of segments to draw can be reduced by drawing curve on intervals
@@ -831,7 +831,7 @@ void CurveView::drawPolarCurve(KDContext * ctx, KDRect rect, float tStart, float
       tCache2 = std::min(tStart + tStep * j, tEnd);
 
       assert(tCache1 <= tCache2);
-      drawCurve(ctx, rect, tCache1, tCache2, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, thick, colorUnderCurve, color, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
+      drawCurve(ctx, rect, tCache1, tCache2, tStep, xyFloatEvaluation, model, context, drawStraightLinesEarly, color, evaluateDiscontinuityBetweenValues, thick, colorUnderCurve, color, colorLowerBound, colorUpperBound, xyDoubleEvaluation);
     }
     thetaOffset += piInAngleUnit;
   }
@@ -888,7 +888,7 @@ static bool pointInBoundingBox(float x1, float y1, float x2, float y2, float xC,
       && ((y1 < yC && yC < y2) || (y2 < yC && yC < y1) || (y2 == yC && yC == y1));
 }
 
-int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, int stampNumber) const {
+int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, int stampNumber, EvaluateDiscontinuityBetweenFloatValues evaluateDiscontinuityBetweenValues, bool canBeDiscontinuous) const {
   const bool isFirstDot = std::isnan(t);
   const bool isLeftDotValid = !(
       std::isnan(x) || std::isinf(x) ||
@@ -904,11 +904,12 @@ int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamete
     return stampNumber;
   }
   KDCoordinate circleDiameter = thick ? thickCircleDiameter : thinCircleDiameter;
+  bool isDiscontinuousBetweenTandS = canBeDiscontinuous && evaluateDiscontinuityBetweenValues(t, s, model, context);
   if (isRightDotValid) {
     const float deltaX = pxf - puf;
     const float deltaY = pyf - pvf;
     if (isFirstDot // First dot has to be stamped
-       || (!isLeftDotValid && maxNumberOfRecursion <= 0) // Last step of the recursion with an undefined left dot: we stamp the last right dot
+       || ((!isLeftDotValid || isDiscontinuousBetweenTandS) && maxNumberOfRecursion <= 0) // Last step of the recursion with an undefined left dot or a discontinuous function : we stamp the last right dot
        || (isLeftDotValid && deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f)) { // the dots are already close enough
       // the dots are already joined
       /* We need to be sure that the point is not an artifact caused by error
@@ -929,7 +930,7 @@ int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamete
   Coordinate2D<float> cxy = xyFloatEvaluation(ct, model, context);
   float cx = cxy.x1();
   float cy = cxy.x2();
-  if ((drawStraightLinesEarly || maxNumberOfRecursion <= 0) && isRightDotValid && isLeftDotValid &&
+  if (!isDiscontinuousBetweenTandS && (drawStraightLinesEarly || maxNumberOfRecursion <= 0) && isRightDotValid && isLeftDotValid &&
       pointInBoundingBox(x, y, u, v, cx, cy)) {
     /* As the middle dot is between the two dots, we assume that we
      * can draw a 'straight' line between the two */
@@ -968,8 +969,11 @@ int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamete
       nextMaxNumberOfRecursion--;
     }
 
-    stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation, dashedCurve, stampNumber);
-    stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation, dashedCurve, stampNumber);
+    /* Pass isDiscontinuousBetweenTandS so that discontinuity is not recomputed
+     * between t and ct, and ct and s, if the model is already continuous
+     * between t and s. */
+    stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation, dashedCurve, stampNumber, evaluateDiscontinuityBetweenValues, isDiscontinuousBetweenTandS);
+    stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation, dashedCurve, stampNumber, evaluateDiscontinuityBetweenValues, isDiscontinuousBetweenTandS);
   }
   return stampNumber;
 }

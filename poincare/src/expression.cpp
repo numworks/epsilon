@@ -239,6 +239,17 @@ bool Expression::IsPercent(const Expression e, Context * context) {
   return e.type() == ExpressionNode::Type::PercentSimple || e.type() == ExpressionNode::Type::PercentAddition;
 }
 
+bool Expression::IsDiscontinuous(const Expression e, Context * context) {
+  return e.type() == ExpressionNode::Type::Random
+      || e.type() == ExpressionNode::Type::Randint
+      || ((e.type() == ExpressionNode::Type::Floor
+          || e.type() == ExpressionNode::Type::Round
+          || e.type() == ExpressionNode::Type::Ceiling)
+        && e.recursivelyMatches([](const Expression e, Context * context) {
+            return e.type() == ExpressionNode::Type::Symbol;
+          }, context));
+}
+
 bool containsVariables(const Expression e, char * variables, int maxVariableSize) {
   if (e.type() == ExpressionNode::Type::Symbol) {
     int index = 0;
@@ -361,6 +372,10 @@ bool Expression::hasDefinedComplexApproximation(Context * context, Preferences::
   return true;
 }
 
+bool Expression::canBeDiscontinuous(Context * context) const {
+  return recursivelyMatches(IsDiscontinuous, context);
+}
+
 template <typename T>
 bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, T x1, T x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   if (type() == ExpressionNode::Type::Randint || type() == ExpressionNode::Type::Random) {
@@ -377,6 +392,7 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, T x1
   }
   return false;
 }
+
 
 bool Expression::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return node()->derivate(reductionContext, symbol, symbolValue);

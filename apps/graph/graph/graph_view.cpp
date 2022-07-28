@@ -88,7 +88,10 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         ContinuousFunctionCache::ComputeNonCartesianSteps(&tStepNonCartesian, &tCacheStep, tmax, tmin);
       }
       ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
-
+      /* We check if e can be discontinuous to avoid recomputing discontinuity
+       * at each drawn dot of the curve when we are sure that the function
+       * can never be discontinuous. */
+      CurveView::EvaluateDiscontinuityBetweenFloatValues discontinuityEvaluation = e.canBeDiscontinuous(context()) ? FonctionIsDiscontinuousBetweenFloatValues : CurveView::DefaultEvaluateDiscontinuityBetweenFloatValues;
       if (type == ContinuousFunction::PlotType::Polar) {
         // Polar
         assert(!std::isnan(tStepNonCartesian));
@@ -96,7 +99,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
-          }, f.operator->(), context(), false, f->color());
+          }, f.operator->(), context(), false, f->color(), discontinuityEvaluation);
       } else if (type == ContinuousFunction::PlotType::Parametric) {
         assert(!std::isnan(tStepNonCartesian));
         // Parametric
@@ -104,7 +107,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             ContinuousFunction * f = (ContinuousFunction *)model;
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
-          }, f.operator->(), context(), false, f->color());
+          }, f.operator->(), context(), false, f->color(), discontinuityEvaluation);
       } else if (f->hasVerticalLines() && area == ContinuousFunction::AreaType::None) {
         // Optimize plot by only drawing the expected segment.
         float minOrdinate = pixelToFloat(axis, rectMax);
@@ -172,7 +175,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         bool isIntegral = f->color() && area == ContinuousFunction::AreaType::None;
         // 2 - Draw the first curve
         drawCartesianCurve(ctx, rect, tCacheMin, tmax, xyFloatEvaluation,
-                           f.operator->(), context(), f->color(), true,
+                           f.operator->(), context(), f->color(), discontinuityEvaluation, true,
                            record == m_selectedRecord, f->color(), m_highlightedStart,
                            m_highlightedEnd, xyDoubleEvaluation,
                            f->drawDottedCurve(), xyAreaBound,
@@ -200,7 +203,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           // 3 - Draw the second curve
           drawCartesianCurve(
               ctx, rect, tCacheMin, tmax, xyFloatEvaluation, f.operator->(),
-              context(), f->color(), true, record == m_selectedRecord,
+              context(), f->color(), discontinuityEvaluation, true, record == m_selectedRecord,
               f->color(), m_highlightedStart, m_highlightedEnd, xyDoubleEvaluation,
               f->drawDottedCurve(), xyAreaBound, shouldColorAreaWhenNan,
               1 << areaIndex, tCacheStep, axis);
@@ -229,5 +232,9 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
     }
   }
 }
+
+bool GraphView::FonctionIsDiscontinuousBetweenFloatValues(float x1, float x2, void * model, void * context) {
+    return static_cast<ContinuousFunction *>(model)->isDiscontinuousBetweenFloatValues(x1, x2, static_cast<Poincare::Context *>(context));
+ }
 
 }

@@ -21,7 +21,7 @@ public:
   };
 
   /* Set the context to nullptr if the expression has already been parsed
-   * Setting the context to nullptr remove some ambiguous cases like:
+   * Setting the context to nullptr removes some ambiguous cases like:
    * - f(x) will always be parsed as f(x) and not f*(x)
    * - u{n} will always be parsed as u_n and not u*{n}
    * - abc will always be parsed as abc and not a*b*c

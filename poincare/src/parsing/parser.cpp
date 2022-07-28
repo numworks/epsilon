@@ -37,7 +37,7 @@ Expression Parser::parseExpressionWithRightwardsArrow(const char * rightwardsArr
    * not as a multiplication. This is done by setting the parsingMethod to
    * Assignment (see Parser::popToken())
    *
-   * We parse right side befor left to ensure that:
+   * We parse right side before left to ensure that:
    * - 4m->f(m) is understood as 4x->f(x)
    *   but 4m->x is understood as 4meters->x
    * - abc->f(abc) is understood as x->f(x)
@@ -69,7 +69,7 @@ Expression Parser::parseExpressionWithRightwardsArrow(const char * rightwardsArr
     m_status = Status::Progress;
     m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
     EmptyContext tempContext = EmptyContext();
-    VariableContext assignmentContext("", &tempContext); // This is just instatiated before the condition so that the pointer is not lost.
+    VariableContext assignmentContext("", &tempContext); // This is instatiated outside the condition so that the pointer is not lost.
     if (rightHandSide.type() ==  ExpressionNode::Type::Function && m_parsingContext.context()) {
       /* If assigning a function, set the function parameter in the context
        * for parsing leftHandSide.
@@ -719,7 +719,10 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
       && parameter.type() == ExpressionNode::Type::Symbol
       && m_nextToken.isComparisonOperator()) {
     /* Stop parsing for assignment to ensure that, frow now on xy is
-      * understood as x*y */
+     * understood as x*y.
+     * For example, "func(x) = xy" -> left of the =, we parse for assignment so
+     * "func" is NOT understood as "f*u*n*c", but after the equal we want "xy"
+     * to be understood as "x*y" */
     m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
     if (m_parsingContext.context()) {
       /* Set the parameter in the context to ensure that f(t)=t is not

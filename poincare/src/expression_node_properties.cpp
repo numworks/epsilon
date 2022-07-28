@@ -16,20 +16,20 @@ bool ExpressionNode::isRandom() const { return isOfType({Type::Random, Type::Ran
 
 bool ExpressionNode::isParameteredExpression() const { return isOfType({Type::Derivative, Type::Integral, Type::ListSequence, Type::Sum, Type::Product}); }
 
-bool ExpressionNode::isOnlyUnits() const {
+bool ExpressionNode::isCombinationOfUnits() const {
   if (type() == Type::Unit) {
     return true;
   }
   if (isOfType({Type::Multiplication, Type::Division})) {
     for (ExpressionNode * child : children()) {
-      if (!child->isOnlyUnits()) {
+      if (!child->isCombinationOfUnits()) {
         return false;
       }
     }
     return true;
   }
   if (type() == Type::Power) {
-    return childAtIndex(0)->isOnlyUnits();
+    return childAtIndex(0)->isCombinationOfUnits();
   }
   return false;
 }

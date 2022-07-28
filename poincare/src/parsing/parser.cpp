@@ -399,7 +399,7 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
 
   if (!m_nextToken.is(Token::EndOfStream)
     || rightHandSide.isUninitialized()
-    || !rightHandSide.isOnlyUnits()
+    || !rightHandSide.isCombinationOfUnits()
     || !leftHandSide.hasUnit()) {
     /* UnitConvert expect a unit on the right and an expression with units
       * on the left */

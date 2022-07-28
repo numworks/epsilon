@@ -9,11 +9,11 @@ namespace Calculation {
 
 class VectorGraphView : public Shared::LabeledCurveView {
 public:
-  VectorGraphView(VectorModel * model);
+  VectorGraphView(VectorModel * model) : LabeledCurveView(model), m_model(model) {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  constexpr static float k_arcRadiusInPixels = 24; // Ad hoc
 private:
-  constexpr static float k_arrowSizeInPixels = 8;
-  constexpr static float k_labelDistanceInPixels = 30;
+  constexpr static float k_arrowSizeInPixels = 8; // Ad hoc
   VectorModel * m_model;
 };
 

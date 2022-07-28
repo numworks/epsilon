@@ -10,11 +10,6 @@ using namespace Escher;
 
 namespace Calculation {
 
-IllustratedExpressionsListController::IllustratedExpressionsListController(EditExpressionController * editExpressionController) :
-  ExpressionsListController(editExpressionController, this)
-{
-}
-
 void IllustratedExpressionsListController::didEnterResponderChain(Responder * previousFirstResponder) {
   selectCellAtLocation(0, showIllustration());
 }
@@ -24,7 +19,7 @@ int IllustratedExpressionsListController::numberOfRows() const {
 }
 
 int IllustratedExpressionsListController::reusableCellCount(int type) {
-  assert(type < 2);
+  assert(type == k_illustrationCellType || type == k_expressionCellType);
   if (type == k_illustrationCellType) {
     return 1;
   }
@@ -32,7 +27,7 @@ int IllustratedExpressionsListController::reusableCellCount(int type) {
 }
 
 HighlightCell * IllustratedExpressionsListController::reusableCell(int index, int type) {
-  assert(type < 2);
+  assert(type == k_illustrationCellType || type == k_expressionCellType);
   assert(index >= 0);
   if (type == k_illustrationCellType) {
     return illustrationCell();

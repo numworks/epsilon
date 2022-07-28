@@ -133,10 +133,11 @@ namespace AliasesLists {
   constexpr static AliasesList k_acotAliases = "\01\02arccot\00\02acot\00\02bgcot\00";
   // Hyperbolic trigo
   constexpr static AliasesList k_sinhAliases = "\01P1\02sinh\00\02senh\00";
+  constexpr static AliasesList k_tanhAliases = "\01P1\02tanh\00\02tgh\00";
   // Inverse hyperbolic trigo
   constexpr static AliasesList k_acoshAliases = "\01\02arcosh\00\02acosh\00";
   constexpr static AliasesList k_asinhAliases = "\01P1\02arsinh\00\02arsenh\00\02asinh\00";
-  constexpr static AliasesList k_atanhAliases = "\01\02artanh\00\02atanh\00";
+  constexpr static AliasesList k_atanhAliases = "\01P1\02artanh\00\02artgh\00\02atanh\00";
 }
 
 }

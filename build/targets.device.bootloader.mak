@@ -1,5 +1,7 @@
 HANDY_TARGETS += bootloader
 
+ASSERTIONS = $(DEVELOPMENT)
+
 # stack protector
 SFLAGS += -fstack-protector-strong
 

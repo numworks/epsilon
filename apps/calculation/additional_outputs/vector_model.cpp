@@ -1,13 +1,8 @@
 #include "vector_model.h"
+#include "vector_graph_cell.h"
 #include <algorithm>
 
 namespace Calculation {
-
-VectorModel::VectorModel() :
-  Shared::MemoizedCurveViewRange(),
-  m_vector{NAN, NAN}
-{
-}
 
 void VectorModel::setVector(float x, float y) {
   m_vector[0] = x;
@@ -26,8 +21,8 @@ void VectorModel::recomputeViewRange() {
 
   /* When the vector points downward, we need to keep space around the origin
    * for the arc which extends on the other side of the vector. */
-  float arcHorizontalMargin = x > 0 && y < 0 && !verticallyCapped ? k_arcRadiusInPixels * ratio : 0.f;
-  float arcVerticalMargin = y < 0 && verticallyCapped ? k_arcRadiusInPixels * ratio : 0.f;
+  float arcHorizontalMargin = x > 0 && y < 0 && !verticallyCapped ? VectorGraphView::k_arcRadiusInPixels * ratio : 0.f;
+  float arcVerticalMargin = y < 0 && verticallyCapped ? VectorGraphView::k_arcRadiusInPixels * ratio : 0.f;
 
   width += arcHorizontalMargin;
   height += arcVerticalMargin;

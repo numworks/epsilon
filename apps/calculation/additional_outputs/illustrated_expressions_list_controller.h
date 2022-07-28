@@ -10,7 +10,8 @@ namespace Calculation {
 
 class IllustratedExpressionsListController : public ExpressionsListController, public Escher::SelectableTableViewDelegate {
 public:
-  IllustratedExpressionsListController(EditExpressionController * editExpressionController);
+  IllustratedExpressionsListController(EditExpressionController * editExpressionController) :
+    ExpressionsListController(editExpressionController, this) {}
 
   // Responder
   void didEnterResponderChain(Responder * previousFirstResponder) override;
@@ -27,6 +28,9 @@ public:
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
+  /* Since we can't focus the illustration, we need to keep its height small
+   * enough for a sufficient part of the first expressionCell to be visible when
+   * the focus is there and the table view scrolled at the top. */
   constexpr static KDCoordinate k_illustrationHeight = 120;
 protected:
   constexpr static uint8_t k_illustrationCellType = 0;

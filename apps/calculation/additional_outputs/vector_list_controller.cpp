@@ -49,10 +49,12 @@ void VectorListController::setExpression(Poincare::Expression e) {
     ExpressionNode::ReductionTarget::SystemForApproximation,
     ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
 
+  setShowIllustration(false);
+
   assert(m_expression.type() == ExpressionNode::Type::Matrix);
-  Matrix &vector = static_cast<Matrix &>(m_expression);
+  Matrix vector = static_cast<Matrix &>(m_expression);
   assert(vector.numberOfColumns() == 1 || vector.numberOfRows() == 1);
-  bool isColumn = (vector.numberOfRows() != 1);
+  bool isColumn = (vector.numberOfColumns() == 1);
   bool is2D = (isColumn ? vector.numberOfRows() : vector.numberOfColumns()) == 2;
   size_t index = 0;
   size_t messageIndex = 0;
@@ -63,15 +65,11 @@ void VectorListController::setExpression(Poincare::Expression e) {
   Layout exact = getLayoutFromExpression(norm, context, preferences);
   Expression approximatedNorm = norm.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit());
   Layout approximated =  getLayoutFromExpression(approximatedNorm, context, preferences);
-  if (!approximated.isIdenticalTo(exact)) {
-    m_exactLayouts[index] = exact;
-  }
+  m_exactLayouts[index] = approximated.isIdenticalTo(exact) ? Layout() : exact;
   m_approximatedLayouts[index] = approximated;
   index++;
 
-  // We can't determine it if norm is null
-  // TODO: Handle ExpressionNode::NullStatus::Unknown
-  if (!norm.isUndefined() && norm.nullStatus(context) != ExpressionNode::NullStatus::Null) {
+  if (!norm.isUndefined() && approximatedNorm.nullStatus(context) == ExpressionNode::NullStatus::NonNull) {
     // 2. Normalized vector
     m_indexMessageMap[index] = messageIndex++;
     Expression normalized = Division::Builder(m_expression, norm).cloneAndReduce(reductionContext);
@@ -96,11 +94,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
       m_layouts[index] = LayoutHelper::String("θ");
       m_approximatedLayouts[index] = getLayoutFromExpression(angle, context, preferences);
       index++;
-    } else {
-      setShowIllustration(false);
     }
-  } else {
-    setShowIllustration(false);
   }
 
   // Reset complex format as before

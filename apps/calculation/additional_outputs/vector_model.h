@@ -8,13 +8,15 @@ namespace Calculation {
 
 class VectorModel : public Shared::MemoizedCurveViewRange {
 public:
-  VectorModel();
+  VectorModel():
+    Shared::MemoizedCurveViewRange(),
+    m_vector{NAN, NAN} {}
+
   void setVector(float x, float y);
   float vectorX() const { return m_vector[0]; }
   float vectorY() const { return m_vector[1]; }
-  float arcRadiusInPixels() const { return k_arcRadiusInPixels; }
 private:
-  constexpr static float k_arcRadiusInPixels = 24;
+  // Margin used to separate the drawings from the curve view's border
   constexpr static int k_marginInPixels = 12;
   constexpr static int k_width = Ion::Display::Width - Escher::Metric::PopUpRightMargin - Escher::Metric::PopUpLeftMargin - 2 * k_marginInPixels;
   constexpr static int k_height = IllustratedExpressionsListController::k_illustrationHeight - 2 * k_marginInPixels;

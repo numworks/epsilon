@@ -58,7 +58,7 @@ const char * AliasesList::mainAlias(Poincare::Preferences::NamingConventionForAl
   for (const char * currentAlias : *this) {
     result = currentAlias;
     currentIndex++;
-    if (currentIndex >= mainIndex) {
+    if (currentIndex > mainIndex) {
       break;
     }
   }

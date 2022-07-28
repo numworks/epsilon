@@ -263,7 +263,7 @@ public:
   bool isNumber() const;
   bool isRandom() const;
   bool isParameteredExpression() const;
-  bool isOnlyUnits() const;
+  bool isCombinationOfUnits() const;
   /* childAtIndexNeedsUserParentheses checks if parentheses are required by mathematical rules:
    * +(2,-1) --> 2+(-1)
    * *(+(2,1),3) --> (2+1)*3

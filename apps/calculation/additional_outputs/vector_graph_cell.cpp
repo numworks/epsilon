@@ -31,7 +31,7 @@ void VectorGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   float labelDistance = pixelLengthToFloatLength(Axis::Horizontal, labelDistanceInPixels);
   drawLabel(ctx, rect, labelDistance * std::cos(angle/2), labelDistance * std::sin(angle/2), "θ", Palette::GrayDark, CurveView::RelativePosition::None, labelTooCloseFromArrow ? CurveView::RelativePosition::Before : CurveView::RelativePosition::None);
   // Draw arc
-  drawArc(ctx, rect, 0.0f, angle, smallAngle, pixelLengthToFloatLength(Axis::Horizontal, k_arcRadiusInPixels), Palette::GrayDark, false);
+  drawArc(ctx, rect, 0.0f, angle, pixelLengthToFloatLength(Axis::Horizontal, k_arcRadiusInPixels), Palette::GrayDark, false);
   // Draw arrow
   drawSegment(ctx, rect, 0., 0., x, y, Palette::Red, false);
   drawArrow(ctx, rect, x, y, x, y, Palette::Red, pixelLengthToFloatLength(Axis::Horizontal, k_arrowSizeInPixels), false);

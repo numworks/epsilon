@@ -96,7 +96,7 @@ protected:
     Large
   };
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Tiny) const;
-  void drawArc(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, float radius, KDColor color, bool thick = true) const;
+  void drawArc(KDContext * ctx, KDRect rect, float tStart, float tEnd, float radius, KDColor color, bool thick = true) const;
 
   /* 'drawArrow' draws the edge of an arrow pointing to (x,y) with the
    * orientation (dx,dy).

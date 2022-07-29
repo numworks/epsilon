@@ -11,8 +11,6 @@
 
 namespace Poincare {
 
-int RoundNode::numberOfChildren() const { return Round::s_functionHelper.numberOfChildren(); }
-
 Layout RoundNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   return LayoutHelper::Prefix(Round(this), floatDisplayMode, numberOfSignificantDigits, Round::s_functionHelper.aliasesList().mainAlias(), context);
 }
@@ -31,20 +29,25 @@ Evaluation<T> RoundNode::templatedApproximate(const ApproximationContext& approx
       this,
       approximationContext,
       [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
-        assert(numberOfComplexes == 2);
+        assert(numberOfComplexes == 2 || numberOfComplexes == 1);
         T f1 = ComplexNode<T>::ToScalar(c[0]);
-        T f2 = ComplexNode<T>::ToScalar(c[1]);
+        T f2;
+        if (numberOfComplexes == 1) {
+          f2 = 0.0;
+        } else {
+          f2 = ComplexNode<T>::ToScalar(c[1]);
+        }
         if (std::isnan(f2) || f2 != std::round(f2)) {
           return Complex<T>::RealUndefined();
-          }
-          T err = std::pow(10, std::floor(f2));
-          return Complex<T>::Builder(std::round(f1*err)/err);
+        }
+        T err = std::pow(10, std::floor(f2));
+        return Complex<T>::Builder(std::round(f1*err)/err);
       });
 }
 
 Expression Round::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   {
-    if (childAtIndex(1).hasUnit()) {
+    if (numberOfChildren() == 2 && childAtIndex(1).hasUnit()) {
       // Number of digits cannot have units
       return replaceWithUndefinedInPlace();
     }
@@ -59,11 +62,17 @@ Expression Round::shallowReduce(const ExpressionNode::ReductionContext& reductio
       return e;
     }
   }
+  Expression secondChild;
+  if (numberOfChildren() == 1) {
+    secondChild = Rational::Builder(0);
+  } else {
+    secondChild = childAtIndex(1);
+  }
   /* We reduce only round(Rational, Rational). We do not reduce
    * round(Float, Float) which is equivalent to what is done in approximate. */
-  if (childAtIndex(0).type() == ExpressionNode::Type::Rational && childAtIndex(1).type() == ExpressionNode::Type::Rational) {
+  if (childAtIndex(0).type() == ExpressionNode::Type::Rational && secondChild.type() == ExpressionNode::Type::Rational) {
     Rational r1 = childAtIndex(0).convert<Rational>();
-    Rational r2 = childAtIndex(1).convert<Rational>();
+    Rational r2 = secondChild.convert<Rational>();
     if (!r2.isInteger()) {
       return replaceWithUndefinedInPlace();
     }

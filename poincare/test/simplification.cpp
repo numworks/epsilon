@@ -887,6 +887,8 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("round(4.9,0)", "5");
   assert_parsed_expression_simplify_to("round(12.9,-1)", "10");
   assert_parsed_expression_simplify_to("round(12.9,-2)", "0");
+  assert_parsed_expression_simplify_to("round(4.235)", "4");
+  assert_parsed_expression_simplify_to("round(0.235)", "0");
   assert_parsed_expression_simplify_to("sign(-23)", "-1");
   assert_parsed_expression_simplify_to("sign(-i)", "sign(-i)");
   assert_parsed_expression_simplify_to("sign(0)", "0");

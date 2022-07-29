@@ -60,7 +60,7 @@ private:
   constexpr static KDCoordinate k_marginHeight = 3;
   constexpr static KDCoordinate k_lineThickness = 1;
   KDCoordinate height(KDFont::Size font) const { return KDFont::GlyphHeight(font) - 2 * k_marginHeight; }
-  KDCoordinate width(KDFont::Size font) const { return KDFont::GlyphSize(font).width() - 2 * k_marginWidth; }
+  KDCoordinate width(KDFont::Size font) const { return KDFont::GlyphWidth(font) - 2 * k_marginWidth; }
 
   // LayoutNode
   void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) override;

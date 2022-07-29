@@ -179,7 +179,7 @@ void CurveView::computeLabels(Axis axis) {
     int labelMaxGlyphLength = labelMaxGlyphLengthSize();
     if (axis == Axis::Horizontal) {
       float pixelsPerLabel = std::max(0.0f, ((float)Ion::Display::Width)/((float)axisLabelsCount) - k_labelMargin);
-      labelMaxGlyphLength = std::min<int>(labelMaxGlyphLengthSize(), pixelsPerLabel/KDFont::GlyphSize(k_font).width());
+      labelMaxGlyphLength = std::min<int>(labelMaxGlyphLengthSize(), pixelsPerLabel/KDFont::GlyphWidth(k_font));
     }
 
     if (labelValue < step && labelValue > -step) {
@@ -294,7 +294,7 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
   if (axis == Axis::Horizontal) {
     floatingLabels = floatingHorizontalLabels;
   } else {
-    KDCoordinate minimalHorizontalPosition = graduationOnly ? 0 : k_labelMargin + KDFont::GlyphSize(k_font).width() * 3; // We want do display at least 3 characters left of the Y axis
+    KDCoordinate minimalHorizontalPosition = graduationOnly ? 0 : k_labelMargin + KDFont::GlyphWidth(k_font) * 3; // We want do display at least 3 characters left of the Y axis
     if (horizontalCoordinate < minimalHorizontalPosition) {
       floatingLabels = FloatingPosition::Min;
     } else if (max(Axis::Horizontal) < 0.0f) {

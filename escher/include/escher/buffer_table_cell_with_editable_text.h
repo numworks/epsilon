@@ -29,7 +29,7 @@ public:
   KDCoordinate accessoryMinimalWidthOverridden() const override {
     return Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
                Poincare::Preferences::ShortNumberOfSignificantDigits + 1)
-               * KDFont::GlyphSize(m_textField.font()).width()
+               * KDFont::GlyphWidth(m_textField.font())
            + TextCursorView::k_width;
   }
   virtual void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate,

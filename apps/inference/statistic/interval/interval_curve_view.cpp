@@ -117,7 +117,7 @@ void IntervalCurveView::drawIntervalLabelAndGraduation(KDContext * ctx) const {
   float upperBound = m_interval->estimate() + m_interval->marginOfError();
   float spaceBetweenBounds = floatToPixel(Axis::Horizontal, upperBound) - floatToPixel(Axis::Horizontal, lowerBound);
   // Align labels left and right if they would overlap
-  bool realignLabels = spaceBetweenBounds <= k_labelBufferMaxGlyphLength * KDFont::GlyphSize(KDFont::Size::Small).width();
+  bool realignLabels = spaceBetweenBounds <= k_labelBufferMaxGlyphLength * KDFont::GlyphWidth(KDFont::Size::Small);
   char buffer[k_labelBufferMaxSize];
   convertFloatToText(lowerBound, buffer, k_labelBufferMaxSize);
   drawLabelAndGraduationAtPosition(ctx, lowerBound, buffer, realignLabels ? RelativePosition::Before : RelativePosition::None);

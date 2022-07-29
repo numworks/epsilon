@@ -9,7 +9,7 @@ namespace Shared {
 
 class BannerView : public Escher::View {
 public:
-  // Ion::Display::Width / KDFont::GlyphSize(KDFont::Size::Small).width()
+  // Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small)
   constexpr static float k_maxLengthDisplayed = 45;
 
   static KDCoordinate HeightGivenNumberOfLines(int linesCount);

@@ -88,7 +88,7 @@ void CalculationCell::layoutSubviews(bool force) {
 
 KDCoordinate CalculationCell::calculationCellWidth() const {
   KDCoordinate calculationCellWidth = m_calculation.minimalSizeForOptimalDisplay().width();
-  KDCoordinate glyphWidth = KDFont::GlyphSize(KDFont::Size::Large).width();
+  KDCoordinate glyphWidth = KDFont::GlyphWidth(KDFont::Size::Large);
   KDCoordinate minTextFieldWidth = 4 * glyphWidth + TextCursorView::k_width;
   KDCoordinate maxTextFieldWidth = 14 * glyphWidth + TextCursorView::k_width;
   return std::min(maxTextFieldWidth, std::max(minTextFieldWidth, calculationCellWidth));

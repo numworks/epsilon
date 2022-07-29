@@ -344,12 +344,7 @@ public:
       m_initializer(nullptr),
       m_size(0) {}
     constexpr FunctionHelper(const char * name, const int numberOfChildren, Expression (* const builder)(Expression)) :
-      m_name(name),
-      m_minNumberOfChildren(numberOfChildren),
-      m_maxNumberOfChildren(numberOfChildren),
-      m_untypedBuilder(builder),
-      m_initializer(nullptr),
-      m_size(0) {}
+      FunctionHelper(name, numberOfChildren, numberOfChildren, builder) {}
     constexpr FunctionHelper(const char * name, const int minNumberOfChildren, const int maxNumberOfChildren, TreeNode::Initializer initializer, size_t size) :
       m_name(name),
       m_minNumberOfChildren(minNumberOfChildren),

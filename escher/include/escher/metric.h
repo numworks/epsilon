@@ -2,6 +2,7 @@
 #define ESCHER_METRIC_H
 
 #include <kandinsky/coordinate.h>
+#include <kandinsky/font.h>
 
 namespace Escher {
 
@@ -54,9 +55,7 @@ public:
   constexpr static KDCoordinate TitleBarHeight = 18;
 
   constexpr static KDCoordinate SmallFontCellWidth(int numberOfChars, KDCoordinate margin) {
-    /* KDFont::GlyphWidth(KDFont::Size::Small) = 7
-     * TODO: Replace 7 by a constexpr */
-    return numberOfChars * 7 + 2 * margin;
+    return numberOfChars * KDFont::GlyphWidth(KDFont::Size::Small) + 2 * margin;
   }
 };
 

@@ -11,6 +11,9 @@ namespace Inference {
 
 class ZoomHintView : public Escher::View {
 public:
+  constexpr static KDFont::Size k_legendFont = KDFont::Size::Small;
+  constexpr static KDCoordinate k_legendHeight = 2 * Escher::Metric::BannerTextMargin + KDFont::GlyphHeight(k_legendFont);
+
   ZoomHintView();
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
@@ -18,7 +21,6 @@ private:
   constexpr static int k_numberOfLegends = 2;
   constexpr static int k_numberOfTokens = 2;
   constexpr static KDCoordinate k_tokenWidth = 10;
-  constexpr static KDCoordinate k_legendHeight = 2 * Escher::Metric::BannerTextMargin + 14; // KDFont::GlyphHeight(k_legendFont) = 14
   constexpr static  KDColor BackgroundColor() { return Shared::BannerView::BackgroundColor(); }
   void layoutSubviews(bool force = false) override;
   int numberOfSubviews() const override;

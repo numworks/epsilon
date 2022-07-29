@@ -8,7 +8,7 @@ ZoomHintView::ZoomHintView()
 {
   I18n::Message messages[k_numberOfLegends] = {I18n::Message::ToZoom, I18n::Message::Or};
   for (int i = 0; i < k_numberOfLegends; i++) {
-    m_legends[i].setFont(KDFont::Size::Small);
+    m_legends[i].setFont(k_legendFont);
     m_legends[i].setMessage(messages[i]);
     m_legends[i].setBackgroundColor(BackgroundColor());
     m_legends[i].setAlignment(KDContext::k_alignCenter, KDContext::k_alignCenter);

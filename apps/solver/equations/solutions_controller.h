@@ -97,9 +97,13 @@ private:
   constexpr static int k_messageCellType = 4;
   constexpr static int k_emptyCellType = 5;
 
+  // Fonts
+  constexpr static KDFont::Size k_deltaFont = KDFont::Size::Small;
+  constexpr static KDFont::Size k_solutionsFont = KDFont::Size::Large;
+
   // Heights and widths
   constexpr static KDCoordinate k_defaultCellHeight = 20;
-  constexpr static int k_symbolCellWidth = 10 * (Poincare::SymbolAbstract::k_maxNameSize - 1 + 2) + 2 * Escher::EvenOddBufferTextCell::k_horizontalMargin; // We concatenate symbol name with a number of at most 2 digits and KDFont::GlyphWidth(KDFont::Size::Large) = 10
+  constexpr static int k_symbolCellWidth = KDFont::GlyphWidth(k_solutionsFont) * (Poincare::SymbolAbstract::k_maxNameSize - 1 + 2) + 2 * Escher::EvenOddBufferTextCell::k_horizontalMargin; // We concatenate symbol name with a number of at most 2 digits
   constexpr static int k_valueCellWidth = 190;
 
   // Number of cells
@@ -113,10 +117,6 @@ private:
   constexpr static int k_numberOfApproximateValueCells = 1 + (k_maxNumberOfVisibleCells < EquationStore::k_maxNumberOfApproximateSolutions ? k_maxNumberOfVisibleCells : EquationStore::k_maxNumberOfApproximateSolutions);
   constexpr static int k_numberOfMessageCells = 2;
   constexpr static int k_numberOfEmptyCells = 2;
-
-  // Fonts
-  constexpr static KDFont::Size k_deltaFont = KDFont::Size::Small;
-  constexpr static KDFont::Size k_solutionsFont = KDFont::Size::Large;
 
   bool usedUserVariables() const { return m_equationStore->userVariablesUsed(); }
   int userVariablesMessageRow() const;

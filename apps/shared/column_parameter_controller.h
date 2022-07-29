@@ -9,7 +9,7 @@ namespace Shared {
 
 class ColumnParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
-  constexpr static int k_titleBufferSize = Ion::Display::Width / 7; // KDFont::GlyphWidth(KDFont::Size::Small) = 7
+  constexpr static int k_titleBufferSize = Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
   ColumnParameterController(Escher::Responder * parentResponder) :
     SelectableListViewController(parentResponder),
     m_columnIndex(-1)

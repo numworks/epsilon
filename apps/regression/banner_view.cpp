@@ -1,6 +1,7 @@
 #include "banner_view.h"
 #include <apps/i18n.h>
 #include <assert.h>
+#include <kandinsky/font.h>
 
 using namespace Escher;
 
@@ -11,8 +12,8 @@ BannerView::BannerView(
     InputEventHandlerDelegate * inputEventHandlerDelegate,
     TextFieldDelegate * textFieldDelegate) :
   Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
-  m_otherView(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-  m_dataNotSuitableView(Font(), I18n::Message::DataNotSuitableForRegression, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_otherView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_dataNotSuitableView(k_font, I18n::Message::DataNotSuitableForRegression, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_displayOtherView(false),
   m_otherViewIsFirst(false),
   m_displayDataNotSuitable(false)

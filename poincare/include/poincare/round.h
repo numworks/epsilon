@@ -2,17 +2,17 @@
 #define POINCARE_ROUND_H
 
 #include <poincare/expression.h>
+#include <poincare/expression_node_with_up_to_two_children.h>
 #include <poincare/evaluation.h>
 
 namespace Poincare {
 
-class RoundNode final : public ExpressionNode  {
+class RoundNode final : public ExpressionNodeWithUpToTwoChildren  {
 public:
   constexpr static AliasesList k_functionName = "round";
 
   // TreeNode
   size_t size() const override { return sizeof(RoundNode); }
-  int numberOfChildren() const override;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "Round";
@@ -37,7 +37,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
 };
 
-class Round final : public ExpressionTwoChildren<Round, RoundNode> {
+class Round final : public ExpressionUpToTwoChildren<Round, RoundNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);

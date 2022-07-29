@@ -537,6 +537,8 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximates_to<float>("round(2.3246,3)", "2.325");
   assert_expression_approximates_to<double>("round(2.3245,3)", "2.325");
+  assert_expression_approximates_to<float>("round(2.3245)", "2");
+  assert_expression_approximates_to<double>("round(2.3245)", "2");
 
   assert_expression_approximates_to<float>("6!", "720");
   assert_expression_approximates_to<double>("6!", "720");

@@ -347,7 +347,6 @@ public:
   virtual LayoutShape rightLayoutShape() const { return leftLayoutShape(); }
 
   /* Hierarchy */
-  virtual void setNumberOfChildren(int numberOfChildren) {}
   ExpressionNode * childAtIndex(int i) const { return static_cast<ExpressionNode *>(TreeNode::childAtIndex(i)); }
 #if ASSERTIONS
   virtual void setChildrenInPlace(Expression other);

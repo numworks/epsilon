@@ -32,12 +32,12 @@ bool StringLayoutNode::protectedIsIdenticalTo(Layout l) {
 
 // Sizing and positioning
 KDSize StringLayoutNode::computeSize(KDFont::Size font) {
-  KDSize glyph = KDFont::Font(font)->glyphSize();
+  KDSize glyph = KDFont::GlyphSize(font);
   return KDSize(UTF8Helper::StringGlyphLength(m_string) * glyph.width() + numberOfThousandsSeparators() * Escher::Metric::ThousandsSeparatorWidth, glyph.height());
 }
 
 KDCoordinate StringLayoutNode::computeBaseline(KDFont::Size font) {
-  return KDFont::Font(font)->glyphSize().height() / 2;
+  return KDFont::GlyphSize(font).height() / 2;
 }
 
 void StringLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {

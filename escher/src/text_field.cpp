@@ -154,7 +154,7 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
 
 KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize stringSize = KDFont::Font(m_font)->stringSize(text());
-  assert(stringSize.height() == KDFont::Font(m_font)->glyphSize().height());
+  assert(stringSize.height() == KDFont::GlyphSize(m_font).height());
   if (m_isEditing) {
     return KDSize(stringSize.width() + m_cursorView.minimalSizeForOptimalDisplay().width(), stringSize.height());
   }
@@ -242,7 +242,7 @@ void TextField::ContentView::layoutSubviews(bool force) {
 KDRect TextField::ContentView::glyphFrameAtPosition(const char * buffer, const char * position) const {
   assert(buffer != nullptr && position != nullptr);
   assert(position >= buffer);
-  KDSize glyphSize = KDFont::Font(m_font)->glyphSize();
+  KDSize glyphSize = KDFont::GlyphSize(m_font);
   KDCoordinate cursorWidth = m_cursorView.minimalSizeForOptimalDisplay().width();
   KDCoordinate horizontalOffset = m_horizontalAlignment == 0.0f ? 0.0f :
     m_horizontalAlignment * (m_frame.width() - KDFont::Font(m_font)->stringSize(buffer).width() - cursorWidth);

@@ -37,7 +37,7 @@ void PromptController::MessageViewWithSkip::layoutSubviews(bool force) {
   // Layout the "skip (OK)"
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
-  KDCoordinate textHeight = KDFont::Font(KDFont::Size::Small)->glyphSize().height();
+  KDCoordinate textHeight = KDFont::GlyphSize(KDFont::Size::Small).height();
   KDSize okSize = m_okView.minimalSizeForOptimalDisplay();
   m_skipView.setFrame(KDRect(0, height-k_bottomMargin-textHeight, width-okSize.width()-k_okMargin-k_skipMargin, textHeight), force);
   m_okView.setFrame(KDRect(width - okSize.width()-k_okMargin, height-okSize.height()-k_okMargin, okSize), force);

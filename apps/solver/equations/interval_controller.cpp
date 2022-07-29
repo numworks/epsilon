@@ -37,7 +37,7 @@ View * IntervalController::ContentView::subviewAtIndex(int index) {
 }
 
 void IntervalController::ContentView::layoutSubviews(bool force) {
-  KDCoordinate textHeight = KDFont::Font(KDFont::Size::Small)->glyphSize().height();
+  KDCoordinate textHeight = KDFont::GlyphSize(KDFont::Size::Small).height();
   m_instructions0.setFrame(KDRect(0, k_topMargin/2-textHeight, bounds().width(), textHeight), force);
   m_instructions1.setFrame(KDRect(0, k_topMargin/2, bounds().width(), textHeight), force);
   m_selectableTableView->setFrame(KDRect(0, k_topMargin, bounds().width(),  bounds().height()-k_topMargin), force);

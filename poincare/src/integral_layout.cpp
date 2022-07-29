@@ -407,7 +407,7 @@ void IntegralLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, K
   ctx->blendRectWithMask(bottomSymbolFrame, expressionColor, (const uint8_t *)bottomSymbolPixel, (KDColor *)workingBuffer);
 
   // Render "d"
-  KDPoint dPosition = p.translatedBy(positionOfChild(integrandLayout(), font)).translatedBy(KDPoint(integrandSize.width() + k_differentialHorizontalMargin, integrandLayout()->baseline(font) - KDFont::Font(font)->glyphSize().height()/2));
+  KDPoint dPosition = p.translatedBy(positionOfChild(integrandLayout(), font)).translatedBy(KDPoint(integrandSize.width() + k_differentialHorizontalMargin, integrandLayout()->baseline(font) - KDFont::GlyphSize(font).height()/2));
   ctx->drawString("d", dPosition, font, expressionColor, backgroundColor);
 }
 

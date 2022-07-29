@@ -75,7 +75,7 @@ Event getEvent(int * timeout) {
     ctx->setClippingRect(KDRect(0,0,Ion::Display::Width,Ion::Display::Height));
     ctx->fillRect(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColorWhite);
     KDFont::Size font = KDFont::Size::Large;
-    int line_height = KDFont::Font(font)->glyphSize().height();
+    int line_height = KDFont::GlyphSize(font).height();
     for (int i = 0; i < numberOfScenari; i++) {
       constexpr int bufferLength = 50;
       char buffer[bufferLength];

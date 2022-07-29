@@ -64,7 +64,7 @@ void EditorView::GutterView::drawRect(KDContext * ctx, KDRect rect) const {
 
   ctx->fillRect(rect, backgroundColor);
 
-  KDSize glyphSize = KDFont::Font(m_font)->glyphSize();
+  KDSize glyphSize = KDFont::GlyphSize(m_font);
 
   KDCoordinate firstLine = m_offset / glyphSize.height();
   KDCoordinate firstLinePixelOffset = m_offset - firstLine * glyphSize.height();
@@ -104,7 +104,7 @@ void EditorView::GutterView::setOffset(KDCoordinate offset) {
 
 KDSize EditorView::GutterView::minimalSizeForOptimalDisplay() const {
   int numberOfChars = 2; // TODO: Could be computed
-  return KDSize(2 * k_margin + numberOfChars * KDFont::Font(m_font)->glyphSize().width(), 0);
+  return KDSize(2 * k_margin + numberOfChars * KDFont::GlyphSize(m_font).width(), 0);
 }
 
 }

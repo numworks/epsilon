@@ -67,7 +67,7 @@ private:
   ExpressionCellWithSublabelAndDropdown m_ha;
   Shared::ButtonWithSeparator m_next;
 
-  constexpr static int k_titleBufferSize = Ion::Display::Width / 7; // KDFont::Font(KDFont::Size::Small)->glyphSize().width() = 7
+  constexpr static int k_titleBufferSize = Ion::Display::Width / 7; // KDFont::GlyphSize(KDFont::Size::Small).width() = 7
   char m_titleBuffer[k_titleBufferSize];
   Test * m_test;
 };

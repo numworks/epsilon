@@ -23,7 +23,7 @@ KDPoint KDContext::alignAndDrawString(const char * text, KDPoint p, KDSize frame
   assert(textSize.width() <= frame.width() && textSize.height() <= frame.height());
   // We ceil vertical alignment to prefer shifting down than up.
   KDPoint origin(p.x(), p.y() + std::ceil(verticalAlignment * (frame.height() - textSize.height())));
-  KDSize lineFrame = KDSize(frame.width(), KDFont::Font(font)->glyphSize().height());
+  KDSize lineFrame = KDSize(frame.width(), KDFont::GlyphSize(font).height());
 
   UTF8Decoder decoder(text);
   const char * startLine = text;
@@ -47,7 +47,7 @@ KDPoint KDContext::alignAndDrawString(const char * text, KDPoint p, KDSize frame
 
 KDPoint KDContext::drawString(const char * text, KDPoint p, KDFont::Size font, KDColor textColor, KDColor backgroundColor, int maxByteLength) {
   KDPoint position = p;
-  KDSize glyphSize = KDFont::Font(font)->glyphSize();
+  KDSize glyphSize = KDFont::GlyphSize(font);
   KDFont::RenderPalette palette = KDFont::Font(font)->renderPalette(textColor, backgroundColor);
   KDFont::GlyphBuffer glyphBuffer;
 

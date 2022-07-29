@@ -19,7 +19,7 @@ public:
 private:
   constexpr static int k_legendMarginRight = 10;
   constexpr static int k_legendMarginTop = 10;
-  constexpr static KDCoordinate k_zoomHintHeight = 2 * Escher::Metric::BannerTextMargin + 14; // KDFont::Font(k_legendFont)->glyphSize().height() = 14
+  constexpr static KDCoordinate k_zoomHintHeight = 2 * Escher::Metric::BannerTextMargin + 14; // KDFont::GlyphSize(k_legendFont).height() = 14
 
   int numberOfSubviews() const override { return 3; }
   void layoutSubviews(bool force = false) override;

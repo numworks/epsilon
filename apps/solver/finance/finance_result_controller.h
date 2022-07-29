@@ -25,7 +25,7 @@ public:
   Escher::View * view() override { return &m_contentView; }
 
 private:
-  constexpr static int k_titleBufferSize = 1 + Ion::Display::Width / 7; // KDFont::Font(KDFont::Size::Small)->glyphSize().width() = 7
+  constexpr static int k_titleBufferSize = 1 + Ion::Display::Width / 7; // KDFont::GlyphSize(KDFont::Size::Small).width() = 7
   char m_titleBuffer[k_titleBufferSize];
 
   Escher::MessageTextView m_messageView;

@@ -263,7 +263,7 @@ View * ScrollView::ArrowDecorator::indicatorAtIndex(int index) {
 
 KDRect ScrollView::ArrowDecorator::layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force, ScrollViewDelegate * delegate) {
   // There is no need to dirty the rects
-  KDSize arrowSize = KDFont::Font(KDFont::Size::Large)->glyphSize();
+  KDSize arrowSize = KDFont::GlyphSize(KDFont::Size::Large);
   KDCoordinate topArrowFrameBreadth = arrowSize.height() * m_topArrow.update(0 < offset.y());
   KDCoordinate rightArrowFrameBreadth = arrowSize.width() * m_rightArrow.update(offset.x() + frame.width() < content.width());
   KDCoordinate bottomArrowFrameBreadth = arrowSize.height() * m_bottomArrow.update(offset.y() + frame.height() < content.height());

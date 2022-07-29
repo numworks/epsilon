@@ -42,6 +42,7 @@ private:
   constexpr static int k_maxNumberOfDisplayedRows = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
   constexpr static int k_numberOfMenuRows = static_cast<int>(Page::sizeOfEnum) - 1;
   constexpr static KDCoordinate k_leafMargin = 20;
+  constexpr static KDFont::Size k_subLabelFont = KDFont::Size::Small;
   Escher::ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;
   Escher::MessageTableCellWithChevron * nodeCellAtIndex(int index) override;
   I18n::Message subTitle() override;

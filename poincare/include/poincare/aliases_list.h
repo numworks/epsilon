@@ -1,5 +1,5 @@
-#ifndef POINCARE_NAME_H
-#define POINCARE_NAME_H
+#ifndef POINCARE_ALIASES_LIST_H
+#define POINCARE_ALIASES_LIST_H
 
 #include <poincare/preferences.h>
 #include <assert.h>

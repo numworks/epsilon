@@ -8,10 +8,21 @@ void IntervalGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, m_frame.height() - k_conclusionViewHeight, m_frame.width(), k_conclusionViewHeight), Escher::Palette::WallScreen);
 }
 
-void IntervalGraphView::reload(double center, double marginOfError) {
-  m_conclusionView.setInterval(center, marginOfError);
+void IntervalGraphView::reload(bool resetSelectedInterval, bool force) {
+  if (resetSelectedInterval) {
+    m_curveView.resetSelectedInterval();
+  }
+  float estimate; float marginOfError;
+  m_curveView.selectedIntervalEstimateAndMarginOfError(&estimate, &marginOfError);
+  m_conclusionView.setInterval(estimate, marginOfError);
   layoutSubviews();
-  m_curveView.reload();
+  m_curveView.reload(false, force);
+  m_conclusionView.reload();
+}
+
+void IntervalGraphView::selectAdjacentInterval(bool goUp) {
+  m_curveView.selectAdjacentInterval(goUp);
+  reload(false, true);
 }
 
 void IntervalGraphView::layoutSubviews(bool force) {
@@ -29,4 +40,3 @@ Escher::View * IntervalGraphView::subviewAtIndex(int i) {
 }
 
 }  // namespace Inference
-

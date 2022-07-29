@@ -9,6 +9,22 @@ void IntervalCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   drawInterval(ctx, rect);
 }
 
+void IntervalCurveView::resetSelectedInterval() {
+  m_selectedIntervalIndex = Interval::MainDisplayedIntervalThresholdIndex(m_interval->threshold());
+}
+
+void IntervalCurveView::selectedIntervalEstimateAndMarginOfError(float * estimate, float * marginOfError) {
+  float mainThreshold = m_interval->threshold();
+  // Temporarily set the interval to compute the selected one
+  m_interval->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(m_interval->threshold(), m_selectedIntervalIndex));
+  m_interval->compute();
+  *estimate = m_interval->estimate();
+  *marginOfError = m_interval->marginOfError();
+  // Restore initial threshold and interval
+  m_interval->setThreshold(mainThreshold);
+  m_interval->compute();
+}
+
 // Draw the main interval along side with 3 other significant intervals.
 void IntervalCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
   /* Distribute the Interval::k_numberOfDisplayedIntervals intervals between top of rect and axis:
@@ -29,12 +45,11 @@ void IntervalCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
   // The main interval is the confidence level the user inputted
   float estimate = m_interval->estimate();
   float mainThreshold = m_interval->threshold();
-  int mainThresholdIndex = Interval::MainDisplayedIntervalThresholdIndex(mainThreshold);
   // Draw each intervals
   for (int i = 0; i < Interval::k_numberOfDisplayedIntervals; i++) {
     float verticalPosition = top - (top - bot) * (i + 1) / (Interval::k_numberOfDisplayedIntervals + 1);
     float threshold = Interval::DisplayedIntervalThresholdAtIndex(mainThreshold, i);
-    bool isMainInterval = (i == mainThresholdIndex);
+    bool isMainInterval = (i == m_selectedIntervalIndex);
     // Temporarily set the interval to compute the margin of error
     m_interval->setThreshold(threshold);
     m_interval->compute();
@@ -70,14 +85,15 @@ void IntervalCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
     drawGraduationAtPosition(ctx, intervalLeftBound, verticalPosition,
                              intervalColor, k_intervalBoundHalfHeight,
                              intervalThickness);
+    if (isMainInterval) {
+      // Draw label and graduations
+      drawIntervalLabelAndGraduation(ctx);
+    }
   }
 
   // Restore initial threshold and interval
   m_interval->setThreshold(mainThreshold);
   m_interval->compute();
-
-  // Draw label and graduations
-  drawIntervalLabelAndGraduation(ctx);
 }
 
 void IntervalCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx, float position, const char * text, RelativePosition horizontalPosition) const {

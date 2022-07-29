@@ -11,6 +11,7 @@ public:
   const View * subLabelView() const override { return &m_subLabelExpressionView; }
   void setHighlighted(bool highlight) override;
   void setSubLabelLayout(Poincare::Layout l);
+  void setSubLabelFont(KDFont::Size font) { m_subLabelExpressionView.setFont(font); }
   void didBecomeFirstResponder() override;
   void reloadScroll() override { m_subLabelExpressionView.reloadScroll(); }
 private:

@@ -28,6 +28,7 @@ MathVariableBoxController::MathVariableBoxController() :
 {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_leafCells[i].setParentResponder(&m_selectableTableView);
+    m_leafCells[i].setSubLabelFont(k_subLabelFont);
   }
 }
 

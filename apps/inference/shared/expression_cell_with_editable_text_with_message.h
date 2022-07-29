@@ -30,7 +30,7 @@ public:
     // TODO this is redundant with MessageTableCellWithEditableText
     return Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
                Poincare::Preferences::ShortNumberOfSignificantDigits + 1) *
-               KDFont::Font(m_textField.font())->glyphSize().width() +
+               KDFont::GlyphSize(m_textField.font()).width() +
            Escher::TextCursorView::k_width;
   }
   void setAccessoryText(const char * text);

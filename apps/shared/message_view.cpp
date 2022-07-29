@@ -33,7 +33,7 @@ void MessageView::layoutSubviews(bool force) {
   }
   KDCoordinate width = bounds().width();
   KDCoordinate titleHeight = m_messageTextViews[0].minimalSizeForOptimalDisplay().height();
-  KDCoordinate textHeight = KDFont::Font(KDFont::Size::Small)->glyphSize().height();
+  KDCoordinate textHeight = KDFont::GlyphSize(KDFont::Size::Small).height();
   m_messageTextViews[0].setFrame(KDRect(0, k_titleMargin, width, titleHeight), force);
   for (uint8_t i = 1; i < m_numberOfMessages; i++) {
     m_messageTextViews[i].setFrame(KDRect(0, k_paragraphHeight + (i-1) * textHeight, width, textHeight), force);

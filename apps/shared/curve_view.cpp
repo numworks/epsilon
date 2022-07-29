@@ -179,7 +179,7 @@ void CurveView::computeLabels(Axis axis) {
     int labelMaxGlyphLength = labelMaxGlyphLengthSize();
     if (axis == Axis::Horizontal) {
       float pixelsPerLabel = std::max(0.0f, ((float)Ion::Display::Width)/((float)axisLabelsCount) - k_labelMargin);
-      labelMaxGlyphLength = std::min<int>(labelMaxGlyphLengthSize(), pixelsPerLabel/KDFont::Font(k_font)->glyphSize().width());
+      labelMaxGlyphLength = std::min<int>(labelMaxGlyphLengthSize(), pixelsPerLabel/KDFont::GlyphSize(k_font).width());
     }
 
     if (labelValue < step && labelValue > -step) {
@@ -283,7 +283,7 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
   /* If the axis is not visible, draw floating labels on the edge of the screen.
    * The X axis floating status is needed when drawing both axes labels. */
   FloatingPosition floatingHorizontalLabels = FloatingPosition::None;
-  KDCoordinate maximalVerticalPosition = graduationOnly ? viewHeight : viewHeight - KDFont::Font(k_font)->glyphSize().height() - k_labelMargin;
+  KDCoordinate maximalVerticalPosition = graduationOnly ? viewHeight : viewHeight - KDFont::GlyphSize(k_font).height() - k_labelMargin;
   if (verticalCoordinate > maximalVerticalPosition) {
     floatingHorizontalLabels = FloatingPosition::Max;
   } else if (max(Axis::Vertical) < 0.0f) {
@@ -294,7 +294,7 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
   if (axis == Axis::Horizontal) {
     floatingLabels = floatingHorizontalLabels;
   } else {
-    KDCoordinate minimalHorizontalPosition = graduationOnly ? 0 : k_labelMargin + KDFont::Font(k_font)->glyphSize().width() * 3; // We want do display at least 3 characters left of the Y axis
+    KDCoordinate minimalHorizontalPosition = graduationOnly ? 0 : k_labelMargin + KDFont::GlyphSize(k_font).width() * 3; // We want do display at least 3 characters left of the Y axis
     if (horizontalCoordinate < minimalHorizontalPosition) {
       floatingLabels = FloatingPosition::Min;
     } else if (max(Axis::Horizontal) < 0.0f) {
@@ -316,7 +316,7 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
   if (axis == Axis::Vertical) {
     /* Do not draw an extremal vertical label if it collides with the horizontal
      * labels */
-    int horizontalLabelsMargin = KDFont::Font(k_font)->glyphSize().height() * 2;
+    int horizontalLabelsMargin = KDFont::GlyphSize(k_font).height() * 2;
     if (floatingHorizontalLabels == FloatingPosition::Min
         && maxLabelPixelPosition < horizontalLabelsMargin) {
       maxDrawnLabel--;
@@ -378,7 +378,7 @@ void CurveView::drawLabelsAndGraduations(KDContext * ctx, KDRect rect, Axis axis
         if (floatingLabels == FloatingPosition::Min) {
           position = KDPoint(position.x(), k_labelMargin);
         } else if (floatingLabels == FloatingPosition::Max) {
-          position = KDPoint(position.x(), viewHeight - KDFont::Font(k_font)->glyphSize().height() - k_labelMargin);
+          position = KDPoint(position.x(), viewHeight - KDFont::GlyphSize(k_font).height() - k_labelMargin);
         }
       } else {
         position = positionLabel(horizontalCoordinate, labelPosition, textSize, RelativePosition::Before, RelativePosition::None);
@@ -1090,7 +1090,7 @@ void CurveView::layoutSubviews(bool force) {
     KDRect oldFrame = m_bannerView->bounds();
     m_bannerView->setFrame(bannerFrame(), force);
     if (!(m_bannerView->bounds() == oldFrame)) {
-      const KDCoordinate dirtyHeight = std::max(oldFrame.height(), m_bannerView->bounds().height()) + KDFont::Font(k_font)->glyphSize().height() + 2 * k_labelMargin;
+      const KDCoordinate dirtyHeight = std::max(oldFrame.height(), m_bannerView->bounds().height()) + KDFont::GlyphSize(k_font).height() + 2 * k_labelMargin;
       markRectAsDirty(KDRect(0, bounds().height() - dirtyHeight, bounds().width(), dirtyHeight));
     }
   }

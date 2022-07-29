@@ -38,7 +38,7 @@ KDSize CalculationCell::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_text.minimalSizeForOptimalDisplay();
   return KDSize(2 * k_margin + textSize.width() + calculationCellWidth() +
                     2 * Escher::Metric::CellSeparatorThickness,
-                KDFont::Font(KDFont::Size::Large)->glyphSize().height());
+                KDFont::GlyphSize(KDFont::Size::Large).height());
 }
 
 void CalculationCell::drawRect(KDContext * ctx, KDRect rect) const {
@@ -88,7 +88,7 @@ void CalculationCell::layoutSubviews(bool force) {
 
 KDCoordinate CalculationCell::calculationCellWidth() const {
   KDCoordinate calculationCellWidth = m_calculation.minimalSizeForOptimalDisplay().width();
-  KDCoordinate glyphWidth = KDFont::Font(KDFont::Size::Large)->glyphSize().width();
+  KDCoordinate glyphWidth = KDFont::GlyphSize(KDFont::Size::Large).width();
   KDCoordinate minTextFieldWidth = 4 * glyphWidth + TextCursorView::k_width;
   KDCoordinate maxTextFieldWidth = 14 * glyphWidth + TextCursorView::k_width;
   return std::min(maxTextFieldWidth, std::max(minTextFieldWidth, calculationCellWidth));

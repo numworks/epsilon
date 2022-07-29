@@ -59,8 +59,8 @@ private:
   constexpr static KDCoordinate k_marginWidth = 1;
   constexpr static KDCoordinate k_marginHeight = 3;
   constexpr static KDCoordinate k_lineThickness = 1;
-  KDCoordinate height(KDFont::Size font) const { return KDFont::Font(font)->glyphSize().height() - 2 * k_marginHeight; }
-  KDCoordinate width(KDFont::Size font) const { return KDFont::Font(font)->glyphSize().width() - 2 * k_marginWidth; }
+  KDCoordinate height(KDFont::Size font) const { return KDFont::GlyphSize(font).height() - 2 * k_marginHeight; }
+  KDCoordinate width(KDFont::Size font) const { return KDFont::GlyphSize(font).width() - 2 * k_marginWidth; }
 
   // LayoutNode
   void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) override;

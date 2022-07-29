@@ -47,7 +47,7 @@ View * SelectableViewWithMessages::subviewAtIndex(int index) {
 
 void SelectableViewWithMessages::layoutSubviews(bool force) {
   // Prioritize text position
-  KDCoordinate textHeight = KDFont::Font(KDFont::Size::Small)->glyphSize().height();
+  KDCoordinate textHeight = KDFont::GlyphSize(KDFont::Size::Small).height();
   KDCoordinate defOrigin = std::max<KDCoordinate>(
     bounds().height() - Metric::CommonBottomMargin - m_numberOfMessages*textHeight,
     Metric::CommonBottomMargin + k_minSelectableTableViewHeight + Metric::CommonBottomMargin);

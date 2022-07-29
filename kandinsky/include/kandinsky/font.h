@@ -98,7 +98,6 @@ public:
   RenderPalette renderPalette(KDColor textColor, KDColor backgroundColor) const {
     return RenderPalette::Gradient(textColor, backgroundColor);
   }
-  KDSize glyphSize() const { return m_glyphSize; }
 
   constexpr KDFont(KDCoordinate glyphWidth,
                    KDCoordinate glyphHeight,

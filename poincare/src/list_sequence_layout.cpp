@@ -140,7 +140,7 @@ void ListSequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size fon
   RightCurlyBraceLayoutNode::RenderWithChildHeight(functionSize.height(), ctx, rightBracePosition.translatedBy(p), expressionColor, backgroundColor);
 
   // Draw k≤...
-  KDPoint inferiorEqualPosition = KDPoint(positionOfVariable(font).x() + variableLayout()->layoutSize(font).width(), variableSlotBaseline(font) - KDFont::Font(font)->glyphSize().height() / 2);
+  KDPoint inferiorEqualPosition = KDPoint(positionOfVariable(font).x() + variableLayout()->layoutSize(font).width(), variableSlotBaseline(font) - KDFont::GlyphSize(font).height() / 2);
   ctx->drawString("≤", inferiorEqualPosition.translatedBy(p), font, expressionColor, backgroundColor);
 }
 

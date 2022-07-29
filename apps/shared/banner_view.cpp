@@ -5,13 +5,13 @@
 namespace Shared {
 
 KDCoordinate BannerView::HeightGivenNumberOfLines(int linesCount) {
-  return LineSpacing + (KDFont::Font(Font())->glyphSize().height() + LineSpacing) * linesCount;
+  return LineSpacing + (KDFont::GlyphSize(Font()).height() + LineSpacing) * linesCount;
 }
 
 void BannerView::drawRect(KDContext * ctx, KDRect rect) const {
   assert(!bounds().isEmpty());
   const KDCoordinate frameHeight = bounds().height();
-  const KDCoordinate lineHeight = KDFont::Font(Font())->glyphSize().height() + LineSpacing;
+  const KDCoordinate lineHeight = KDFont::GlyphSize(Font()).height() + LineSpacing;
   const KDCoordinate lineWidth = m_frame.width();
   for (KDCoordinate y = 0; y < frameHeight; y += lineHeight) {
     ctx->fillRect(KDRect(0, y, lineWidth, LineSpacing), BackgroundColor());

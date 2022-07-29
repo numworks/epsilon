@@ -188,7 +188,8 @@ void writeFontSourceFile(const char * fontSourceFilename, const char * fontName,
   fprintf(fontFile, "static_assert(glyphWidth * glyphHeight <= KDFont::k_maxGlyphPixelCount, \"Header's replicated value is erroneous.\");\n\n");
 
   // glyphDataOffset
-  fprintf(fontFile, "constexpr static uint16_t glyphDataOffset[%d] = {", NumberOfCodePoints + 1);
+  fprintf(fontFile, "constexpr static KDCoordinate numberOfCodePoints = %d;\n", NumberOfCodePoints);
+  fprintf(fontFile, "constexpr static uint16_t glyphDataOffset[numberOfCodePoints + 1] = {");
   prettyPrintArray(fontFile, 80, 2, glyphDataOffset, glyphDataOffsetLength);
   fprintf(fontFile, "};\n\n");
 

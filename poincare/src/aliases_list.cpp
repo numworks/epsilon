@@ -43,6 +43,7 @@ const char * AliasesList::nextAlias(const char * currentPositionInAliasesList) c
   assert(strlen(currentPositionInAliasesList) != 0);
   const char * beginningOfNextAlias = currentPositionInAliasesList + strlen(currentPositionInAliasesList) + 1;
   if (beginningOfNextAlias[0] != k_stringStart) {
+    assert(beginningOfNextAlias[0] == 0);
     return nullptr; // End of list
   }
   return beginningOfNextAlias + 1; // Skip string start char

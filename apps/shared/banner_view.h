@@ -4,22 +4,22 @@
 #include <escher/metric.h>
 #include <escher/view.h>
 #include <escher/palette.h>
+#include <ion.h>
 
 namespace Shared {
 
 class BannerView : public Escher::View {
 public:
-  // Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small)
-  constexpr static float k_maxLengthDisplayed = 45;
+  constexpr static KDFont::Size k_font = KDFont::Size::Small;
+  constexpr static KDColor TextColor() { return KDColorBlack; }
+  constexpr static KDColor BackgroundColor() { return Escher::Palette::GrayMiddle; }
+  constexpr static float k_maxLengthDisplayed = Ion::Display::Width / KDFont::GlyphWidth(k_font);
 
   static KDCoordinate HeightGivenNumberOfLines(int linesCount);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   KDCoordinate minimalHeightForOptimalDisplayGivenWidth(KDCoordinate width) const;
   void reload() { layoutSubviews(); }
-  constexpr static KDFont::Size Font() { return KDFont::Size::Small; }
-  constexpr static KDColor TextColor() { return KDColorBlack; }
-  constexpr static KDColor BackgroundColor() { return Escher::Palette::GrayMiddle; }
 
 protected:
   class LabelledView : public Escher::View {
@@ -40,7 +40,7 @@ protected:
 
 private:
   constexpr static KDCoordinate LineSpacing = Escher::Metric::BannerTextMargin;
-  constexpr static KDCoordinate k_minimalSpaceBetweenSubviews = 14; // Width of '  ' in SmallFont
+  constexpr static KDCoordinate k_minimalSpaceBetweenSubviews = 2 * KDFont::GlyphWidth(k_font); // Width of '  '
   int numberOfSubviews() const override = 0;
   View * subviewAtIndex(int index) override = 0;
   void layoutSubviews(bool force = false) override;

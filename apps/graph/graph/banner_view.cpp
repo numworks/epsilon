@@ -12,10 +12,10 @@ BannerView::BannerView(
   TextFieldDelegate * textFieldDelegate
 ) :
   Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
-  m_derivativeView(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-  m_tangentEquationView(Font(), I18n::Message::LinearRegressionFormula, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-  m_aView(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-  m_bView(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_derivativeView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_tangentEquationView(k_font, I18n::Message::LinearRegressionFormula, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_aView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_bView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_numberOfSubviews(Shared::XYBannerView::k_numberOfSubviews)
 {
 }

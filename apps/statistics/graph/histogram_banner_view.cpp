@@ -7,10 +7,10 @@ using namespace Escher;
 namespace Statistics {
 
 HistogramBannerView::HistogramBannerView() :
-    m_seriesName(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-    m_intervalBuffer(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-    m_frequencyBuffer(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
-    m_relativeFrequencyBuffer(Font(), KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()) {
+    m_seriesName(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+    m_intervalBuffer(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+    m_frequencyBuffer(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+    m_relativeFrequencyBuffer(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()) {
 }
 
 View * HistogramBannerView::subviewAtIndex(int index) {

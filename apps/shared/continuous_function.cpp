@@ -1,6 +1,6 @@
 #include "continuous_function.h"
 #include <apps/exam_mode_configuration.h>
-#include <escher/container.h>
+#include <apps/apps_container.h>
 #include <escher/palette.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
@@ -78,7 +78,7 @@ ContinuousFunction::AreaType ContinuousFunction::areaType() const {
 ContinuousFunction::PlotType ContinuousFunction::plotType() const {
   if (m_model.plotType() == PlotType::Unknown) {
     // Computing the expression equation will update the unknown plot type.
-    expressionReducedForAnalysis(Escher::Container::activeApp()->localContext());
+    expressionReducedForAnalysis(AppsContainer::sharedAppsContainer()->globalContext());
   }
   assert(m_model.plotType() != PlotType::Unknown);
   return m_model.plotType();

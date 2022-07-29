@@ -491,7 +491,7 @@ SequenceStore * ListController::modelStore() {
 
 KDCoordinate ListController::nameWidth(int nameLength) const {
   assert(nameLength >= 0);
-  return nameLength * KDFont::GlyphSize(VerticalSequenceTitleCell::k_font).width();
+  return nameLength * KDFont::GlyphWidth(VerticalSequenceTitleCell::k_font);
 }
 
 void ListController::showLastSequence() {

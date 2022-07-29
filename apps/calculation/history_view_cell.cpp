@@ -280,7 +280,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, P
     KDCoordinate maxVisibleWidth = Ion::Display::Width - (
         m_scrollableOutputView.leftMargin()
       + m_scrollableOutputView.rightMargin()
-      + 2 * KDFont::GlyphSize(m_scrollableOutputView.font()).width()); // > arrow and = sign
+      + 2 * KDFont::GlyphWidth(m_scrollableOutputView.font())); // > arrow and = sign
     if (canChangeDisplayOutput
      && calculation->displayOutput(context) == ::Calculation::Calculation::DisplayOutput::ExactAndApproximate
      && exactOutputLayout.layoutSize(m_scrollableOutputView.font()).width() > maxVisibleWidth)

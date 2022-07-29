@@ -104,7 +104,7 @@ void EditorView::GutterView::setOffset(KDCoordinate offset) {
 
 KDSize EditorView::GutterView::minimalSizeForOptimalDisplay() const {
   int numberOfChars = 2; // TODO: Could be computed
-  return KDSize(2 * k_margin + numberOfChars * KDFont::GlyphSize(m_font).width(), 0);
+  return KDSize(2 * k_margin + numberOfChars * KDFont::GlyphWidth(m_font), 0);
 }
 
 }

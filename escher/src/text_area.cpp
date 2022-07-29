@@ -540,7 +540,7 @@ KDSize TextArea::ContentView::minimalSizeForOptimalDisplay() const {
   return KDSize(
     /* We take into account the space required to draw a cursor at the end of
      * line by adding glyphSize.width() to the width. */
-    span.width() + KDFont::GlyphSize(m_font).width(),
+    span.width() + KDFont::GlyphWidth(m_font),
     span.height()
   );
 }

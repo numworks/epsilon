@@ -259,7 +259,7 @@ void SumGraphController::LegendView::layoutSubviews(Step step, bool force) {
   }
 
   KDRect frame = (step == Step::Result) ? KDRectZero : KDRect(
-    2 * KDFont::GlyphSize(KDFont::Size::Small).width(),
+    2 * KDFont::GlyphWidth(KDFont::Size::Small),
     k_symbolHeightMargin + k_sigmaHeight/2 - (step == Step::SecondParameter) * editableZoneHeight(),
     editableZoneWidth(), editableZoneHeight()
   );

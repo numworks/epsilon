@@ -189,7 +189,7 @@ void Turtle::write(const char * string) {
   KDCoordinate headOffsetY = k_invertedYAxisCoefficient * headOffsetLength * std::sin(m_heading * k_headingScale);
   KDPoint headOffset(headOffsetX, headOffsetY);
   KDPoint head(-k_iconHeadSize, -k_iconHeadSize);
-  KDPoint stringOffset = KDPoint(0,-KDFont::GlyphSize(k_font).height());
+  KDPoint stringOffset = KDPoint(0,-KDFont::GlyphHeight(k_font));
   ctx->drawString(string, position().translatedBy(headOffset).translatedBy(head).translatedBy(stringOffset));
   draw(true);
 }

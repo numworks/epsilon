@@ -463,7 +463,7 @@ KDSize TextArea::Text::span(KDFont::Size const font) const {
     }
     numberOfLines++;
   }
-  return KDSize(width, numberOfLines * KDFont::GlyphSize(font).height());
+  return KDSize(width, numberOfLines * KDFont::GlyphHeight(font));
 }
 
 /* TextArea::ContentView */

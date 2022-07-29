@@ -78,7 +78,7 @@ View * PopUpController::ContentView::subviewAtIndex(int index) {
 void PopUpController::ContentView::layoutSubviews(bool force) {
   KDCoordinate height = bounds().height();
   KDCoordinate width = bounds().width();
-  KDCoordinate textHeight = KDFont::GlyphSize(KDFont::Size::Small).height();
+  KDCoordinate textHeight = KDFont::GlyphHeight(KDFont::Size::Small);
   KDCoordinate detailTextHeight = m_detailTextView->minimalSizeForOptimalDisplay().height();
 
   m_warningTextView.setFrame(KDRect(0, k_topMargin, width, textHeight), force);

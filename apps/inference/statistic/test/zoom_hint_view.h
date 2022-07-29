@@ -18,7 +18,7 @@ private:
   constexpr static int k_numberOfLegends = 2;
   constexpr static int k_numberOfTokens = 2;
   constexpr static KDCoordinate k_tokenWidth = 10;
-  constexpr static KDCoordinate k_legendHeight = 2 * Escher::Metric::BannerTextMargin + 14; // KDFont::GlyphSize(k_legendFont).height() = 14
+  constexpr static KDCoordinate k_legendHeight = 2 * Escher::Metric::BannerTextMargin + 14; // KDFont::GlyphHeight(k_legendFont) = 14
   constexpr static  KDColor BackgroundColor() { return Shared::BannerView::BackgroundColor(); }
   void layoutSubviews(bool force = false) override;
   int numberOfSubviews() const override;

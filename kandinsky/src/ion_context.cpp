@@ -27,7 +27,7 @@ void KDIonContext::pullRect(KDRect rect, KDColor * pixels) {
 void KDIonContext::putchar(char c) {
   static KDPoint cursor = KDPointZero;
   char text[2] = {c, 0};
-  if (cursor.y() > Ion::Display::Height - KDFont::GlyphSize(KDFont::Size::Large).height()) {
+  if (cursor.y() > Ion::Display::Height - KDFont::GlyphHeight(KDFont::Size::Large)) {
     sharedContext()->pushRectUniform(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), KDColorWhite);
     cursor = KDPoint(cursor.x(), 0);
   }

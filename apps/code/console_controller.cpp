@@ -240,7 +240,7 @@ int ConsoleController::numberOfRows() const {
 }
 
 KDCoordinate ConsoleController::rowHeight(int j) {
-  return KDFont::GlyphSize(GlobalPreferences::sharedGlobalPreferences()->font()).height();
+  return KDFont::GlyphHeight(GlobalPreferences::sharedGlobalPreferences()->font());
 }
 
 KDCoordinate ConsoleController::cumulatedHeightFromIndex(int j) {

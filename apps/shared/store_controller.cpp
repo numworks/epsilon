@@ -33,6 +33,19 @@ bool StoreController::textFieldDidFinishEditing(AbstractTextField * textField, c
   assert(selectedRow() != 0);
   int series = m_store->seriesAtColumn(selectedColumn());
   bool wasSeriesValid = m_store->seriesIsValid(series);
+  if (text[0] == 0) { // If text = "", delete the cell
+    bool didDeleteRow = false;
+    if (handleDeleteEvent(&didDeleteRow)) {
+      if (event != Ion::Events::EXE && event != Ion::Events::OK && (!didDeleteRow || event != Ion::Events::Down)) {
+        /* Handle Up, Down, Left and Right events
+         * Do nothing if down was pressed and the row is deleted since
+         * it already selects the next row. */
+        selectableTableView()->handleEvent(event);
+      }
+      return true;
+    }
+    return false;
+  }
   bool result = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
   if (wasSeriesValid != m_store->seriesIsValid(series)) {
     // Series changed validity, series' cells have changed color.
@@ -121,30 +134,40 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   if (EditableCellTableViewController::handleEvent(event)) {
     return true;
   }
-  int i = selectedColumn();
-  int j = selectedRow();
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
     assert(selectedRow() == -1);
     Container::activeApp()->setFirstResponder(tabController());
     return true;
   }
-  assert(i >= 0 && i < numberOfColumns());
-  int series = m_store->seriesAtColumn(i);
   if (event == Ion::Events::Backspace) {
-    assert(j >= 0);
-    if (j == 0 || j > numberOfElementsInColumn(i)) {
-      return false;
-    }
-    if (deleteCellValue(series, i, j)) {
-      // A row has been deleted
-      selectableTableView()->reloadData();
-    } else {
-      reloadSeriesVisibleCells(series);
-    }
-    return true;
+    return handleDeleteEvent();
   }
   return false;
+}
+
+bool StoreController::handleDeleteEvent(bool * didDeleteRow) {
+  int i = selectedColumn();
+  int j = selectedRow();
+  assert(i >= 0 && i < numberOfColumns());
+  int series = m_store->seriesAtColumn(i);
+  assert(j >= 0);
+  if (j == 0 || j > numberOfElementsInColumn(i)) {
+    return false;
+  }
+  if (deleteCellValue(series, i, j)) {
+    // A row has been deleted
+    if (didDeleteRow) {
+      *didDeleteRow = true;
+    }
+    selectableTableView()->reloadData();
+  } else {
+    if (didDeleteRow) {
+      *didDeleteRow = false;
+    }
+    reloadSeriesVisibleCells(series);
+  }
+  return true;
 }
 
 void StoreController::didBecomeFirstResponder() {

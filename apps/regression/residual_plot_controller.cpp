@@ -1,4 +1,5 @@
 #include "residual_plot_controller.h"
+#include <escher/stack_view_controller.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 #include <assert.h>

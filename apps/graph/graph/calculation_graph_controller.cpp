@@ -1,6 +1,6 @@
 #include "calculation_graph_controller.h"
 #include "../app.h"
-#include "../../apps_container.h"
+#include <apps/apps_container_helper.h>
 #include <escher/clipboard.h>
 
 using namespace Shared;
@@ -64,7 +64,7 @@ void CalculationGraphController::setRecord(Ion::Storage::Record record) {
 }
 
 void CalculationGraphController::reloadBannerView() {
-  reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), AppsContainer::sharedAppsContainer()->globalContext());
+  reloadBannerViewForCursorOnFunction(m_cursor, m_record, functionStore(), AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
 
 Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAbscissa(double start, int direction) {

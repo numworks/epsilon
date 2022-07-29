@@ -1,6 +1,7 @@
 #include "app.h"
 #include "regression_icon.h"
-#include "../apps_container.h"
+#include <apps/apps_container.h>
+#include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
 
 using namespace Shared;
@@ -48,7 +49,7 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 
 App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
-  m_store(AppsContainer::sharedAppsContainer()->globalContext(), snapshot->regressionTypes()),
+  m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(), snapshot->regressionTypes()),
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, &m_store),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),

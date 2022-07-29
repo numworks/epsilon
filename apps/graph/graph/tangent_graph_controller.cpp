@@ -1,6 +1,6 @@
 #include "tangent_graph_controller.h"
 #include "../app.h"
-#include "../../apps_container.h"
+#include <apps/apps_container_helper.h>
 #include "../../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
 #include <poincare/print.h>
@@ -66,7 +66,7 @@ void TangentGraphController::reloadBannerView() {
   if (m_record.isNull()) {
     return;
   }
-  FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, Shared::FunctionApp::app()->functionStore(), AppsContainer::sharedAppsContainer()->globalContext());
+  FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, Shared::FunctionApp::app()->functionStore(), AppsContainerHelper::sharedAppsContainerGlobalContext());
   GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];

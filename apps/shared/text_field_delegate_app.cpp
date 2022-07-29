@@ -1,6 +1,6 @@
 #include "text_field_delegate_app.h"
 #include "continuous_function.h"
-#include <apps/apps_container.h>
+#include <apps/apps_container_helper.h>
 #include <apps/constant.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/comparison_operator.h>
@@ -13,7 +13,7 @@ using namespace Poincare;
 namespace Shared {
 
 Context * TextFieldDelegateApp::localContext() {
-  return AppsContainer::sharedAppsContainer()->globalContext();
+  return AppsContainerHelper::sharedAppsContainerGlobalContext();
 }
 
 CodePoint TextFieldDelegateApp::XNT() {

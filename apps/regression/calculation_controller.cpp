@@ -1,5 +1,5 @@
 #include "calculation_controller.h"
-#include <apps/apps_container.h>
+#include <apps/apps_container_helper.h>
 #include <apps/exam_mode_configuration.h>
 #include <apps/shared/editable_cell_table_view_controller.h>
 #include <apps/shared/poincare_helpers.h>
@@ -223,7 +223,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     assert(j > numberOfRowsBeforeCoefficients);
     int maxNumberCoefficients = maxNumberOfCoefficients();
 
-    Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();
+    Poincare::Context * globContext = AppsContainerHelper::sharedAppsContainerGlobalContext();
     if (!m_store->coefficientsAreDefined(seriesNumber, globContext)) {
       // Put dashes if regression is not defined
       bufferCell->setText(I18n::translate(I18n::Message::Dash));

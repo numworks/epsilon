@@ -1,6 +1,6 @@
 #include "test_controller.h"
 
-#include <apps/apps_container.h>
+#include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/container.h>
@@ -84,7 +84,7 @@ bool TestController::handleEvent(Ion::Events::Event event) {
       controller = m_categoricalController;
     }
     assert(controller != nullptr);
-    if (m_statistic->initializeSignificanceTest(testType, AppsContainer::sharedAppsContainer()->globalContext())) {
+    if (m_statistic->initializeSignificanceTest(testType, AppsContainerHelper::sharedAppsContainerGlobalContext())) {
       controller->selectRow(0);
     }
     stackOpenPage(controller);

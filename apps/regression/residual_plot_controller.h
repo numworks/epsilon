@@ -2,7 +2,7 @@
 #define REGRESSION_RESIDUAL_PLOT_CONTROLLER_H
 
 #include <escher/view_controller.h>
-#include <apps/apps_container.h>
+#include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
 #include <apps/shared/memoized_curve_view_range.h>
 #include <apps/shared/curve_view_cursor.h>
@@ -19,7 +19,7 @@ public:
   ResidualPlotController(Escher::Responder * parentResponder, Store * store);
   void setSeries(int series);
   double xAtIndex(int index) const { return m_store->get(m_selectedSeriesIndex, 0, index); }
-  double yAtIndex(int index) const { return m_store->residualAtIndexForSeries(m_selectedSeriesIndex, index, AppsContainer::sharedAppsContainer()->globalContext()); }
+  double yAtIndex(int index) const { return m_store->residualAtIndexForSeries(m_selectedSeriesIndex, index, AppsContainerHelper::sharedAppsContainerGlobalContext()); }
   KDColor selectedSeriesColor() const { return Store::colorOfSeriesAtIndex(m_selectedSeriesIndex); }
   int numberOfResidualDots() const { return m_store->numberOfPairsOfSeries(m_selectedSeriesIndex); }
 

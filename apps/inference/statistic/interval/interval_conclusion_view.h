@@ -13,6 +13,7 @@ class IntervalConclusionView : public Escher::BufferTextView {
 public:
   IntervalConclusionView();
   void setInterval(double center, double marginOfError);
+  void reload() { markRectAsDirty(bounds()); }
 };
 
 }  // namespace Inference

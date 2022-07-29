@@ -11,8 +11,8 @@ class IntervalGraphView : public Escher::View {
 public:
   IntervalGraphView(Interval * interval) : m_curveView(interval) {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void reload(double center, double marginOfError);
-
+  void reload(bool resetSelectedInterval, bool force = false);
+  void selectAdjacentInterval(bool goUp);
 private:
   constexpr static int k_conclusionViewHeight = 50;
 
@@ -27,4 +27,3 @@ private:
 }  // namespace Inference
 
 #endif /* INFERENCE_STATISTIC_INTERVAL_GRAPH_VIEW_H */
-

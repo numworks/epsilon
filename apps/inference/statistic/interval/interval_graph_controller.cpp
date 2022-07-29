@@ -21,7 +21,7 @@ const char * IntervalGraphController::title() {
 
 void IntervalGraphController::didBecomeFirstResponder() {
   m_interval->computeCurveViewRange();
-  m_graphView.reload(m_interval->estimate(), m_interval->marginOfError());
+  m_graphView.reload(true);
 }
 
 bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
@@ -32,6 +32,10 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
         m_interval->estimate() - m_interval->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
         m_interval->estimate() + m_interval->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     Escher::Clipboard::sharedClipboard()->store(copyBuffer, strlen(copyBuffer));
+    return true;
+  }
+  if (event == Ion::Events::Up || event == Ion::Events::Down) {
+    m_graphView.selectAdjacentInterval(event == Ion::Events::Up);
     return true;
   }
   return false;

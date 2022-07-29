@@ -3,47 +3,6 @@
 
 #include "handle.h"
 
-/* 3 options to sequentially store expressions:
- * Let's take the example 4294967298 + cos(3)
- * (keeping in mind that 4294967298 = 2^32 + 2)
- *
- * () represents nodes
- * [] represents blocks
- * Trees are derived from parsing
- *
- * - option A
- *   Nodes have variable sizes that are computed dynamically
- *   ( + 2 ) (int 1 2) (cos ) (int 3)
- * - option B
- *   Nodes are composed of several blocks, the head blocks have always their
- *   first bit set 0 and the tail blocks have their first bit set to 1 (drawn by ^)
- *   ([+][^2])([int][^1][^2])([cos])([int][^3])
- * - option C
- *   Nodes are composed of several blocks. Block types and length are indicated as head and tail.
- *   ([+][2][+])([int][2][1][2][2][int])([cos])([int_short][3])
- *
- *   Comparison:
- *   +------------------+-----------------+------------------|-----------------+
- *   |                  | Option A        | Option B         | Option C        |
- *   |------------------+-----------------+------------------|-----------------|
- *   | Compacity        | ✓               | ✓                | x               |
- *   |                  |                 | 1 bit/block lost | Meta blocks for |
- *   |                  |                 |                  | nodes of size>1 |
- *   |------------------+-----------------+------------------|-----------------|
- *   | Parent retrieve  | x               | ✓                | ✓               |
- *   |                  | Has to scan the | Backward scan    | Backward scan   |
- *   |                  | whole pool      |                  |                 |
- *   |------------------+-----------------+------------------|-----------------|
- *   | Value extraction | ✓               | x                | ✓               |
- *   |                  | Maybe align     | Requires masks   | Maybe align     |
- *   |                  | float/double    |                  | float/double    |
- *   +------------------+-----------------+------------------+-----------------+
- *
- * Optional optimizations:
- * - Align float and double by letting empty blocks
- * - Create special type for common integer INT_ONE or INT_SHORT
- *
- */
 
 namespace Poincare {
 
@@ -54,19 +13,6 @@ namespace Poincare {
  * A node can also be composed of a single block:
  * [COSINE]
  */
-
-#if __EMSCRIPTEN__
-/* Emscripten memory representation assumes loads and stores are aligned.
- * Because the TreePool buffer is going to store double values, Node addresses
- * have to be aligned on 8 bytes (provided that emscripten addresses are 8 bytes
- * long which ensures that v-tables are also aligned). */
-typedef uint64_t AlignedNodeBuffer;
-#else
-/* Memory copies are done quicker on 4 bytes aligned data. We force the TreePool
- * to allocate 4-byte aligned range to leverage this. */
-typedef uint32_t AlignedNodeBuffer;
-#endif
-constexpr static int ByteAlignment = sizeof(AlignedNodeBuffer);
 
 enum class BlockType : uint8_t {
 #if GHOST_REQUIRED
@@ -89,6 +35,7 @@ struct IndexedTypeTreeBlock {
   TypeTreeBlock * m_block;
   int m_index;
 };
+
 typedef void (TypeTreeBlock::*InPlaceTreeFunction)(TreeSandbox *);
 
 class TreeBlock {
@@ -127,8 +74,6 @@ public:
   // Node Hierarchy
   TypeTreeBlock * parent(const TreeBlock * firstBlock);
   TypeTreeBlock * root(const TreeBlock * firstBlock);
-  //void incrementNumberOfChildren(int increment = 1);
-  //void eraseNumberOfChildren();
   int numberOfDescendants(bool includeSelf) const;
   TypeTreeBlock * childAtIndex(int i) const;
   int indexOfChild(const TypeTreeBlock * child) const;
@@ -271,15 +216,6 @@ constexpr static TypeTreeBlock IntegerBlock() { return TypeTreeBlock(BlockType::
 constexpr static TypeTreeBlock SubtractionBlock() { return TypeTreeBlock(BlockType::Subtraction); }
 constexpr static TypeTreeBlock DivisionBlock() { return TypeTreeBlock(BlockType::Division); }
 constexpr static TypeTreeBlock PowerBlock() { return TypeTreeBlock(BlockType::Power); }
-
-/*
- * Build pseudo virtuality
- * block --> pointer (switch on type) --> virtual Expression * (static s_expression)
- *
- * class Expression {
-public:
-  virtual int reduce??
-};*/
 
 }
 

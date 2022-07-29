@@ -7,11 +7,6 @@
 
 namespace Poincare {
 
-/* Which API do we want?
- * void insertTreeBefore(Tree * block)
- * void pushCopyOfTree(TreeBlock * block)
- * */
-
 class TreeSandbox final : public TreePool {
 public:
   TreeSandbox(TypeTreeBlock * firstBlock, size_t size, int numberOfBlocks = 0) :

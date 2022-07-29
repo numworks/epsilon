@@ -14,7 +14,6 @@ namespace Poincare {
 class TreeBlock;
 class TreeSandbox;
 class TypeTreeBlock;
-class InternalHandle;
 
 typedef TreeBlock * (TreeBlock::*NextStep)();
 typedef TreeBlock * (TreeBlock::*NextNthStep)(int i);
@@ -30,11 +29,23 @@ typedef struct LogTreeBlockVTable {
 typedef void (*TreeFunction)(TypeTreeBlock *, TreeSandbox *);
 typedef size_t (*NodeSizeFunction)(const TypeTreeBlock *, bool);
 typedef int (*NumberOfChildrenFunction)(const TypeTreeBlock *);
+
 typedef struct TreeBlockVTable {
+  constexpr TreeBlockVTable(TreeFunction basicReduction, NodeSizeFunction nodeSize, NumberOfChildrenFunction numberOfChildren) :
+    m_basicReduction(basicReduction),
+    m_nodeSize(nodeSize),
+    m_numberOfChildren(numberOfChildren) {}
   TreeFunction m_basicReduction;
   NodeSizeFunction m_nodeSize;
   NumberOfChildrenFunction m_numberOfChildren;
 } TreeBlockVTable;
+
+typedef struct InternalTreeBlockVTable : TreeBlockVTable {
+  constexpr InternalTreeBlockVTable(TreeFunction basicReduction, NodeSizeFunction nodeSize, NumberOfChildrenFunction numberOfChildren, TreeFunction beautify) :
+    TreeBlockVTable(basicReduction, nodeSize, numberOfChildren),
+    m_beautify(beautify) {}
+  TreeFunction m_beautify;
+} InternalTreeBlockVTable;
 
 class Handle {
 public:
@@ -74,7 +85,7 @@ public:
 class InternalHandle : public Handle {
 public:
   using Handle::Handle;
-  virtual Handle * shallowBeautify() { return this; }
+  static void Beautify(TypeTreeBlock * treeBlock, TreeSandbox * sandbox) {}
 };
 
 #if GHOST_REQUIRED
@@ -85,7 +96,7 @@ public:
   static void LogNodeName(std::ostream & stream) { stream << "Ghost"; }
   constexpr static LogTreeBlockVTable s_logVTable = {&LogNodeName, &Handle::LogAttributes};
 #endif
-  constexpr static TreeBlockVTable s_vTable = {&Handle::BasicReduction, &Handle::NodeSize, &Handle::NumberOfChildren};
+  constexpr static InternalTreeBlockVTable s_vTable = {&Handle::BasicReduction, &Handle::NodeSize, &Handle::NumberOfChildren, &InternalHandle::Beautify};
 };
 #endif
 
@@ -99,7 +110,7 @@ public:
 #endif
   static size_t NodeSize(const TypeTreeBlock * typeTreeBlock, bool head = true);
   static int Value(const TypeTreeBlock * treeBlock);
-  constexpr static TreeBlockVTable s_vTable = {&Handle::BasicReduction, &NodeSize, &Handle::NumberOfChildren};
+  constexpr static InternalTreeBlockVTable s_vTable = {&Handle::BasicReduction, &NodeSize, &Handle::NumberOfChildren, &InternalHandle::Beautify};
 
 private:
   constexpr static size_t k_minimalNumberOfNodes = 4;
@@ -126,7 +137,7 @@ public:
   static void LogNodeName(std::ostream & stream) { stream << "Addition"; }
   constexpr static LogTreeBlockVTable s_logVTable = {&LogNodeName, &LogAttributes};
 #endif
-  constexpr static TreeBlockVTable s_vTable = {&Handle::BasicReduction, &NodeSize, &NumberOfChildren};
+  constexpr static InternalTreeBlockVTable s_vTable = {&Handle::BasicReduction, &NodeSize, &NumberOfChildren, &InternalHandle::Beautify};
 };
 
 class Multiplication final : public NAry {
@@ -137,7 +148,7 @@ public:
   constexpr static LogTreeBlockVTable s_logVTable = {&LogNodeName, &LogAttributes};
 #endif
 
-  constexpr static TreeBlockVTable s_vTable = {&Handle::BasicReduction, &NodeSize, &NumberOfChildren};
+  constexpr static InternalTreeBlockVTable s_vTable = {&Handle::BasicReduction, &NodeSize, &NumberOfChildren, &InternalHandle::Beautify};
 
   static TypeTreeBlock * DistributeOverAddition(TypeTreeBlock * treeBlock, TreeSandbox * sandbox);
 };
@@ -150,7 +161,7 @@ public:
   constexpr static LogTreeBlockVTable s_logVTable = {&LogNodeName, &Handle::LogAttributes};
 #endif
   static int NumberOfChildren(const TypeTreeBlock * treeBlock) { return 2; }
-  constexpr static TreeBlockVTable s_vTable = {&Handle::BasicReduction, &Handle::NodeSize, &NumberOfChildren};
+  constexpr static InternalTreeBlockVTable s_vTable = {&Handle::BasicReduction, &Handle::NodeSize, &NumberOfChildren, &InternalHandle::Beautify};
 };
 
 }

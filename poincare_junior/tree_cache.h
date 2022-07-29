@@ -6,10 +6,6 @@
 
 namespace Poincare {
 
-/*
- * Ref-counter or LRU ?
- * */
-
 class TreeCache final : public TreePool {
 public:
   enum class Error {

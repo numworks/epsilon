@@ -145,7 +145,7 @@ TypeTreeBlock * Multiplication::DistributeOverAddition(TypeTreeBlock * treeBlock
         TypeTreeBlock * multiplicationCopy = sandbox->copyTreeFromAddress(treeBlock);
         // Find the addition to be replaced
         TypeTreeBlock * additionCopy = multiplicationCopy->childAtIndex(indexedSubTree.m_index);
-        // Duplicate addition child
+        // Find addition child to replace with
         TypeTreeBlock * additionChildCopy = additionCopy->childAtIndex(indexedAdditionChild.m_index);
         // Replace addition per its child
         sandbox->replaceTree(additionCopy, additionChildCopy);

@@ -1,6 +1,6 @@
 #include "app.h"
 #include "graph_controller.h"
-#include "../apps_container.h"
+#include <apps/apps_container_helper.h>
 #include "../shared/function_banner_delegate.h"
 #include "../shared/poincare_helpers.h"
 #include <poincare/preferences.h>
@@ -85,7 +85,7 @@ void GraphController::setAbscissaInputAsFirstResponder() {
 }
 
 Poincare::Context * GraphController::globalContext() const {
-  return AppsContainer::sharedAppsContainer()->globalContext();
+  return AppsContainerHelper::sharedAppsContainerGlobalContext();
 }
 
 void GraphController::computeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic) {

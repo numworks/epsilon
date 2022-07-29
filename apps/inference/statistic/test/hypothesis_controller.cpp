@@ -1,6 +1,6 @@
 #include "hypothesis_controller.h"
-
 #include <apps/apps_container.h>
+#include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
 #include <escher/input_event_handler_delegate.h>
 #include <escher/invocation.h>
@@ -92,7 +92,7 @@ bool HypothesisController::textFieldDidFinishEditing(Escher::TextField * textFie
                                                                   Ion::Events::Event event) {
   double h0 = Shared::PoincareHelpers::ApproximateToScalar<double>(
       text,
-      AppsContainer::sharedAppsContainer()->globalContext());
+      AppsContainerHelper::sharedAppsContainerGlobalContext());
   // Check
   if (std::isnan(h0) || !m_test->isValidH0(h0)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);

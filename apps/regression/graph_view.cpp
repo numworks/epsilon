@@ -1,6 +1,6 @@
 #include "graph_view.h"
 #include "model/model.h"
-#include <apps/apps_container.h>
+#include <apps/apps_container_helper.h>
 #include <poincare/context.h>
 #include <assert.h>
 
@@ -20,7 +20,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   drawGrid(ctx, rect);
   drawAxes(ctx, rect);
   simpleDrawBothAxesLabels(ctx, rect);
-  Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();
+  Poincare::Context * globContext = AppsContainerHelper::sharedAppsContainerGlobalContext();
   for (size_t series = 0; series < Store::k_numberOfSeries; series++) {
     if (m_store->seriesIsValid(series)) {
       assert(series < Palette::numberOfDataColors());

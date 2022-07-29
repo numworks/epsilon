@@ -1,6 +1,6 @@
 #include "go_to_parameter_controller.h"
 #include "graph_controller.h"
-#include "../apps_container.h"
+#include <apps/apps_container_helper.h>
 #include <assert.h>
 #include <float.h>
 #include <cmath>
@@ -42,7 +42,7 @@ double GoToParameterController::extractParameterAtIndex(int index) {
 bool GoToParameterController::confirmParameterAtIndex(int parameterIndex, double f) {
   assert(parameterIndex == 0);
   int series = m_graphController->selectedSeriesIndex();
-  Poincare::Context * globContext = AppsContainer::sharedAppsContainer()->globalContext();
+  Poincare::Context * globContext = AppsContainerHelper::sharedAppsContainerGlobalContext();
   double unknown = m_xPrediction ?
     m_store->yValueForXValue(series, f, globContext) :
     m_store->xValueForYValue(series, f, globContext);

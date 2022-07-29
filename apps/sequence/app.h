@@ -11,7 +11,7 @@
 #include "../shared/function_app.h"
 #include "../shared/interval.h"
 #include "../shared/global_context.h"
-#include "../apps_container.h"
+#include <apps/apps_container_helper.h>
 
 namespace Sequence {
 
@@ -29,7 +29,7 @@ public:
     App * unpack(Escher::Container * container) override;
     void reset() override;
     const Descriptor * descriptor() const override;
-    Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainer::sharedAppsContainer()->globalContext())->sequenceStore(); }
+    Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceStore(); }
     CurveViewRange * graphRange() { return &m_graphRange; }
     Shared::Interval * interval() { return &m_interval; }
     bool intervalModifiedByUser() { return m_intervalModifiedByUser; }
@@ -51,8 +51,8 @@ public:
   // NestedMenuController * variableBoxForInputEventHandler(InputEventHandler * textInput) override;
   CodePoint XNT() override { return 'n'; }
   Escher::NestedMenuController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
-  Shared::SequenceContext * localContext() override { return static_cast<Shared::GlobalContext *>(AppsContainer::sharedAppsContainer()->globalContext())->sequenceContext(); }
-  Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainer::sharedAppsContainer()->globalContext())->sequenceStore(); }
+  Shared::SequenceContext * localContext() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceContext(); }
+  Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceStore(); }
   Shared::Interval * interval() { return snapshot()->interval(); }
   ValuesController * valuesController() override {
     return &m_valuesController;

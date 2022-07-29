@@ -14,6 +14,7 @@ $(foreach i,${EPSILON_APPS},$(eval include apps/$(i)/Makefile))
 apps_src += $(addprefix apps/,\
   alternate_empty_nested_menu_controller.cpp \
   apps_container.cpp \
+  apps_container_helper.cpp \
   apps_container_launch_default.cpp:-onboarding \
   apps_container_launch_on_boarding.cpp:+onboarding \
   apps_container_prompt_beta.cpp:+beta \

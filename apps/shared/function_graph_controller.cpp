@@ -1,7 +1,7 @@
 #include "function_graph_controller.h"
 #include "function_app.h"
 #include "poincare_helpers.h"
-#include "../apps_container.h"
+#include <apps/apps_container_helper.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/layout_helper.h>
 #include <assert.h>
@@ -84,7 +84,7 @@ void FunctionGraphController::FunctionSelectionController::willDisplayCellForInd
 void FunctionGraphController::reloadBannerView() {
   assert(functionStore()->numberOfActiveFunctions() > 0);
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), AppsContainer::sharedAppsContainer()->globalContext());
+  reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
 
 double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {

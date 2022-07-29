@@ -42,6 +42,7 @@ apps_src += $(addprefix apps/,\
 )
 
 tests_src += $(addprefix apps/,\
+  apps_container_helper_tests.cpp \
   exam_mode_configuration.cpp \
 )
 

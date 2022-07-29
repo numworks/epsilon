@@ -2,18 +2,18 @@
 #define POINCARE_RANDINT_H
 
 #include <poincare/expression.h>
+#include <poincare/expression_node_with_up_to_two_children.h>
 #include <poincare/rational.h>
 
 namespace Poincare {
 
-class RandintNode /*final*/ : public ExpressionNode  {
+class RandintNode /*final*/ : public ExpressionNodeWithUpToTwoChildren  {
   friend class Randint;
 public:
   constexpr static AliasesList k_functionName = "randint";
 
   // TreeNode
   size_t size() const override { return sizeof(RandintNode); }
-  int numberOfChildren() const override { return m_hasTwoChildren ? 2 : 1; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "Randint";
@@ -22,12 +22,6 @@ public:
 
   // Properties
   Type type() const override { return Type::Randint; }
-
-  void setNumberOfChildren(int numberOfChildren) override {
-    if (numberOfChildren == 1 || numberOfChildren == 2) {
-      m_hasTwoChildren = numberOfChildren == 2;
-    }
-  }
 
 private:
   // Layout
@@ -46,10 +40,9 @@ private:
 
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
-  bool m_hasTwoChildren;
 };
 
-class Randint final : public ExpressionBuilder<Randint,RandintNode,1,2> {
+class Randint final : public ExpressionUpToTwoChildren<Randint,RandintNode> {
 friend class RandintNode;
 public:
   using ExpressionBuilder::ExpressionBuilder;

@@ -2,24 +2,19 @@
 #define POINCARE_LOGARITHM_H
 
 #include <poincare/expression.h>
+#include <poincare/expression_node_with_up_to_two_children.h>
 #include <poincare/integer.h>
 #include <poincare/addition.h>
 #include <poincare/complex.h>
 
 namespace Poincare {
 
-class LogarithmNode final : public ExpressionNode {
+class LogarithmNode final : public ExpressionNodeWithUpToTwoChildren {
 public:
   constexpr static AliasesList k_functionName = "log";
 
   // TreeNode
   size_t size() const override { return sizeof(LogarithmNode); }
-  int numberOfChildren() const override { return m_hasTwoChildren ? 2 : 1; }
-  void setNumberOfChildren(int numberOfChildren) override{
-    if (numberOfChildren == 1 || numberOfChildren == 2) {
-      m_hasTwoChildren = numberOfChildren == 2;
-    }
-  }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "Logarithm";
@@ -52,11 +47,9 @@ public:
   Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
   template<typename U> Evaluation<U> templatedApproximate(const ApproximationContext& approximationContext) const;
-private:
-  bool m_hasTwoChildren;
 };
 
-class Logarithm final : public ExpressionBuilder<Logarithm, LogarithmNode, 1, 2> {
+class Logarithm final : public ExpressionUpToTwoChildren<Logarithm, LogarithmNode> {
   friend class ExpressionNode;
   friend class LogarithmNode;
 public:

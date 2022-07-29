@@ -572,6 +572,7 @@ public:
 template<typename T, typename U, typename P = Expression> using ExpressionNoChildren = ExpressionBuilder<T,U,0,0,P>;
 template<typename T, typename U, typename P = Expression> using ExpressionOneChild = ExpressionBuilder<T,U,1,1,P>;
 template<typename T, typename U, typename P = Expression> using ExpressionTwoChildren = ExpressionBuilder<T,U,2,2,P>;
+template<typename T, typename U, typename P = Expression> using ExpressionUpToTwoChildren = ExpressionBuilder<T,U,1,2,P>;
 template<typename T, typename U, typename P = Expression> using ExpressionThreeChildren = ExpressionBuilder<T,U,3,3,P>;
 template<typename T, typename U, typename P = Expression> using ExpressionFourChildren = ExpressionBuilder<T,U,4,4,P>;
 }

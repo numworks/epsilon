@@ -26,7 +26,7 @@ private:
   template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
 };
 
-class ListMean : public ExpressionBuilder<ListMean, ListMeanNode, 1, 2> {
+class ListMean : public ExpressionUpToTwoChildren<ListMean, ListMeanNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);

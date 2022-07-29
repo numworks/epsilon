@@ -58,7 +58,7 @@ void ModalViewEmptyController::ModalViewEmptyView::layoutSubviews(bool force) {
   const bool hasExpression = hasExpressionView();
   KDCoordinate width = bounds().width() - 2 * k_separatorThickness;
   KDCoordinate height = bounds().height() - 2 * k_separatorThickness;
-  KDCoordinate textHeight = KDFont::GlyphSize(k_font).height();
+  KDCoordinate textHeight = KDFont::GlyphHeight(k_font);
   KDCoordinate layoutHeight = hasExpression ? expressionView()->minimalSizeForOptimalDisplay().height() : 0;
   KDCoordinate margin = (height - numberOfMessageViews * textHeight - layoutHeight) / 2;
   if (hasExpression) {

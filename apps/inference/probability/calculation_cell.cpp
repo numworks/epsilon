@@ -38,7 +38,7 @@ KDSize CalculationCell::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_text.minimalSizeForOptimalDisplay();
   return KDSize(2 * k_margin + textSize.width() + calculationCellWidth() +
                     2 * Escher::Metric::CellSeparatorThickness,
-                KDFont::GlyphSize(KDFont::Size::Large).height());
+                KDFont::GlyphHeight(KDFont::Size::Large));
 }
 
 void CalculationCell::drawRect(KDContext * ctx, KDRect rect) const {

@@ -64,7 +64,7 @@ private:
     constexpr static KDCoordinate k_legendHeight = 35;
     constexpr static KDFont::Size k_font = KDFont::Size::Small;
     static KDCoordinate editableZoneWidth() { return 12*KDFont::GlyphSize(k_font).width(); }
-    static KDCoordinate editableZoneHeight() { return KDFont::GlyphSize(k_font).height(); }
+    static KDCoordinate editableZoneHeight() { return KDFont::GlyphHeight(k_font); }
     constexpr static KDCoordinate k_symbolHeightMargin = 8;
     constexpr static KDCoordinate k_sigmaHeight = 18;
     int numberOfSubviews() const override { return 3; }

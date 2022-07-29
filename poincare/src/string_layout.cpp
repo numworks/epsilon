@@ -37,7 +37,7 @@ KDSize StringLayoutNode::computeSize(KDFont::Size font) {
 }
 
 KDCoordinate StringLayoutNode::computeBaseline(KDFont::Size font) {
-  return KDFont::GlyphSize(font).height() / 2;
+  return KDFont::GlyphHeight(font) / 2;
 }
 
 void StringLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {

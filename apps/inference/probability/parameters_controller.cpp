@@ -37,7 +37,7 @@ View * ParametersController::ContentView::subviewAtIndex(int index) {
 }
 
 void ParametersController::ContentView::layoutSubviews(bool force) {
-  KDCoordinate titleHeight = KDFont::GlyphSize(KDFont::Size::Small).height() + k_titleMargin;
+  KDCoordinate titleHeight = KDFont::GlyphHeight(KDFont::Size::Small) + k_titleMargin;
   m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
   /* SelectableTableView must be given a width before computing height. */
   m_selectableTableView->initSize(bounds());

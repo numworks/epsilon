@@ -154,7 +154,7 @@ bool TextField::ContentView::insertTextAtLocation(const char * text, char * loca
 
 KDSize TextField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize stringSize = KDFont::Font(m_font)->stringSize(text());
-  assert(stringSize.height() == KDFont::GlyphSize(m_font).height());
+  assert(stringSize.height() == KDFont::GlyphHeight(m_font));
   if (m_isEditing) {
     return KDSize(stringSize.width() + m_cursorView.minimalSizeForOptimalDisplay().width(), stringSize.height());
   }

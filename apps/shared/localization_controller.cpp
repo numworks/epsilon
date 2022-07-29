@@ -68,14 +68,14 @@ void LocalizationController::ContentView::layoutSubviews(bool force) {
 }
 
 KDCoordinate LocalizationController::ContentView::layoutTitleSubview(bool force, KDCoordinate verticalOrigin) {
-  KDCoordinate titleHeight = KDFont::GlyphSize(m_countryTitleMessage.font()).height();
+  KDCoordinate titleHeight = KDFont::GlyphHeight(m_countryTitleMessage.font());
   m_countryTitleMessage.setFrame(KDRect(0, verticalOrigin, bounds().width(), titleHeight), force);
   return verticalOrigin + titleHeight;
 }
 
 KDCoordinate LocalizationController::ContentView::layoutWarningSubview(bool force, KDCoordinate verticalOrigin) {
   assert(k_numberOfCountryWarningLines > 0);
-  KDCoordinate textHeight = KDFont::GlyphSize(m_countryWarningLines[0].font()).height();
+  KDCoordinate textHeight = KDFont::GlyphHeight(m_countryWarningLines[0].font());
   for (int i = 0; i < k_numberOfCountryWarningLines; i++) {
     m_countryWarningLines[i].setFrame(KDRect(0, verticalOrigin, bounds().width(), textHeight), force);
     verticalOrigin += textHeight;

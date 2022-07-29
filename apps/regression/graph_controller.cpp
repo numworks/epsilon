@@ -131,7 +131,7 @@ KDCoordinate GraphController::SeriesSelectionController::rowHeight(int j) {
   if (j < 0 || j >= numberOfRows()) {
     return 0;
   }
-  return KDFont::GlyphSize(KDFont::Size::Large).height() + Metric::CellTopMargin + Metric::CellBottomMargin;
+  return KDFont::GlyphHeight(KDFont::Size::Large) + Metric::CellTopMargin + Metric::CellBottomMargin;
 }
 
 void GraphController::SeriesSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {

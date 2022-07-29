@@ -76,7 +76,7 @@ View * SolutionsController::ContentView::subviewAtIndex(int index) {
 
 void SolutionsController::ContentView::layoutSubviews(bool force) {
   if (m_displayWarningMoreSolutions) {
-    KDCoordinate textHeight = KDFont::GlyphSize(k_warningMessageFont).height();
+    KDCoordinate textHeight = KDFont::GlyphHeight(k_warningMessageFont);
     KDCoordinate topMargin;
     // Empty warning messages are handled to center both single or double lines
     KDCoordinate warningMessage0Height = m_warningMessageView0.text()[0] == 0 ? 0 : textHeight;

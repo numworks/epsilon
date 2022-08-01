@@ -3,9 +3,10 @@
  *
  * It can also print a PNG file showing how each glyph has been rendered.
  *
- * Usage: rasterizer font_file glyph_width glyph_height font_name output_cpp output_png
+ * Usage: rasterizer fontFile requestedGlyphWidth requestedGlyphHeight packedGlyphWidth
+ *                   packedGlyphHeight fontName outputH outputCpp sharedFontPath outputPng
  * -> Generates a .png image with the font rasterized
- * -> Generates a .c file with the content of the font */
+ * -> Generates a .c and a .h files with the content of the font */
 
 #ifndef KANDINSKY_FONTS_RASTERIZER_H
 #define KANDINSKY_FONTS_RASTERIZER_H

@@ -68,9 +68,8 @@ int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
 }
 
 KDCoordinate ValuesController::rowHeight(int j) {
-  // TODO: Properly compute height
   if (j == selectedRow() && typeAtLocation(selectedColumn(), j) == k_exactValueCellType) {
-    return 50;
+    return m_exactValueCell.minimalSizeForOptimalDisplay().height();
   }
   return Shared::ValuesController::rowHeight(j);
 }

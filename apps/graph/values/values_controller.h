@@ -5,6 +5,7 @@
 #include "../../shared/buffer_function_title_cell.h"
 #include "../../shared/hideable_even_odd_buffer_text_cell.h"
 #include "../../shared/interval_parameter_controller.h"
+#include "../../shared/scrollable_two_expressions_cell.h"
 #include "../../shared/store_cell.h"
 #include "../../shared/values_controller.h"
 #include "abscissa_title_cell.h"
@@ -22,8 +23,14 @@ public:
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;
   int indexFromCumulatedWidth(KDCoordinate offsetX) override;
+  KDCoordinate rowHeight(int j) override;
+  KDCoordinate cumulatedHeightFromIndex(int j) override;
+  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
+
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override { return type == k_exactValueCellType ? &m_exactValueCell : Shared::ValuesController::reusableCell(index, type); }
   int typeAtLocation(int i, int j) override;
+  int reusableCellCount(int type) override { return type == k_exactValueCellType ? 1 : Shared::ValuesController::reusableCellCount(type); }
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
@@ -45,6 +52,7 @@ public:
     return &m_intervalParameterSelectorController;
   }
 private:
+  constexpr static int k_exactValueCellType = k_notEditableValueCellType + 1;
   constexpr static KDCoordinate k_abscissaCellWidth = k_cellWidth + Escher::Metric::TableSeparatorThickness;
   constexpr static KDCoordinate k_parametricCellWidth = (2*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)+3) * KDFont::GlyphWidth(KDFont::Size::Small) + 2*Escher::Metric::SmallCellMargin; // The largest cell is holding "(-1.234567E-123;-1.234567E-123)"
   constexpr static size_t k_maxNumberOfSymbolTypes = Shared::ContinuousFunction::k_numberOfSymbolTypes;
@@ -67,6 +75,7 @@ private:
   Ion::Storage::Record recordAtColumn(int i, bool * isDerivative);
   ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::ValuesController::functionStore()); }
   Shared::Interval * intervalAtColumn(int columnIndex) override;
+  Shared::ExpiringPointer<Shared::ContinuousFunction> functionAtIndex(int column, int row, double * abscissa, bool * isDerivative);
 
   // Number of columns
   int numberOfColumnsForAbscissaColumn(int column) override;
@@ -89,7 +98,8 @@ private:
    * on the number of different plot types in the table. */
   int valuesColumnForAbsoluteColumn(int column) override;
   int absoluteColumnForValuesColumn(int column) override;
-  void fillMemoizedBuffer(int i, int j, int index) override;
+  void fillMemoizedBuffer(int column, int row, int index) override;
+  Poincare::Layout exactValueLayout(int column, int row);
 
   // Parameter controllers
   Shared::ColumnParameterController * functionParameterController() override;
@@ -131,6 +141,8 @@ private:
   Shared::HideableEvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];
   AbscissaTitleCell m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
   Shared::StoreCell m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
+  // TODO: Create a special non selectable scrollable two expressions cell
+  Shared::ScrollableTwoExpressionsCell m_exactValueCell;
   FunctionParameterController m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;
   IntervalParameterSelectorController m_intervalParameterSelectorController;

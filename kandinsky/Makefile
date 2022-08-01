@@ -64,12 +64,14 @@ $(call rule_for, \
   RASTER, \
   kandinsky/fonts/$(1).cpp, \
   kandinsky/fonts/$(1).ttf $$(RASTERIZER), \
-  $$(RASTERIZER) $$< $(2) $(2) $(3) $(4) $(1) $$@ $$(dir $$@)/codepoint_to_glyph_index.cpp $(if $(HAS_LIBPNG),$$(basename $$@).png), \
+  $$(RASTERIZER) $$< $(2) $(2) $(3) $(4) $(1) $$(dir $$@)/$(1).h $$@ $$(dir $$@)/codepoint_to_glyph_index.cpp $(if $(HAS_LIBPNG),$$(basename $$@).png), \
   global \
 )
 # codepoint_to_glyph_index.cpp is generated as an aside by the rasterizer
 # we tell make that it can be built with an empty recipe as long as the font is built
 $(BUILD_DIR)/kandinsky/fonts/codepoint_to_glyph_index.cpp: $(BUILD_DIR)/kandinsky/fonts/$(1).cpp
+$(BUILD_DIR)/kandinsky/fonts/$(1).h: $(BUILD_DIR)/kandinsky/fonts/$(1).cpp
+kandinsky_deps += $(BUILD_DIR)/kandinsky/fonts/$(1).h
 endef
 
 $(eval $(call raster_font,SmallFont,12,7,14))

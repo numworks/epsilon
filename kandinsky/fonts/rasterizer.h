@@ -40,6 +40,8 @@ int writeCodePointToGlyphTableFiles(const char * cppFilename, int grayscaleBitsP
 void generateGlyphData(FT_Face face, uint16_t * glyphDataOffset, int * glyphDataOffsetLength,
                        uint8_t * glyphData, int sizeOfGlyphData, int * glyphDataLength,
                        int glyphWidth, int glyphHeight, int maxAboveBaseline, int grayscaleBitsPerPixel);
+void writeFontHeaderFile(const char * fontHeaderFilename, const char * fontName, int glyphWidth,
+                     int glyphHeight);
 void writeFontSourceFile(const char * fontSourceFilename, const char * fontName, int glyphWidth,
                      int glyphHeight, uint16_t * glyphDataOffset, int glyphDataOffsetLength,
                      uint8_t * glyphData, int glyphDataLength, int grayscaleBitsPerPixel,

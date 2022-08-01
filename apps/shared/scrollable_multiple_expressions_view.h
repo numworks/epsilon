@@ -45,16 +45,17 @@ public:
 protected:
   class ContentCell : public Escher::EvenOddCell {
   public:
-    constexpr static KDFont::Size k_font = KDFont::Size::Large;
-
-    static KDCoordinate StandardApproximateViewAndMarginsSize();
-    ContentCell();
+    ContentCell(KDFont::Size font = KDFont::Size::Large);
     KDColor backgroundColor() const override;
     void setHighlighted(bool highlight) override;
     void setEven(bool even) override;
     void reloadTextColor();
     KDSize minimalSizeForOptimalDisplay() const override;
     KDSize minimalSizeForOptimalDisplayFullSize() const;
+    KDFont::Size font() const {
+      assert(m_rightExpressionView.font() == m_centeredExpressionView.font());
+      return m_rightExpressionView.font();
+    }
     virtual Escher::ExpressionView * leftExpressionView() const { return nullptr; }
     Escher::ExpressionView * rightExpressionView() {
       return &m_rightExpressionView;
@@ -95,8 +96,11 @@ protected:
 
 class ScrollableTwoExpressionsView : public AbstractScrollableMultipleExpressionsView {
 public:
-  ScrollableTwoExpressionsView(Escher::Responder * parentResponder) : AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell) {
+  ScrollableTwoExpressionsView(Escher::Responder * parentResponder, KDFont::Size font = KDFont::Size::Large) :
+    AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell),
+    m_contentCell(font) {
     setMargins(
+      // TODO: Do not add these margins in graph's values controller
         Escher::Metric::CommonSmallMargin,
         Escher::Metric::CommonLargeMargin,
         Escher::Metric::CommonSmallMargin,
@@ -104,7 +108,7 @@ public:
     );
   }
   KDSize minimalSizeForOptimalDisplayFullSize() const;
-  KDFont::Size font() const { return ContentCell::k_font; }
+  KDFont::Size font() const { return m_contentCell.font(); }
 private:
   ContentCell *  contentCell() override { return &m_contentCell; };
   const ContentCell *  constContentCell() const override { return &m_contentCell; };

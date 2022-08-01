@@ -7,8 +7,8 @@ namespace Shared {
 
 class ScrollableTwoExpressionsCell : public Escher::EvenOddCell, public Escher::Responder {
 public:
-  ScrollableTwoExpressionsCell(Escher::Responder * parentResponder = nullptr);
-  void setLayouts(Poincare::Layout approximateLayout, Poincare::Layout exactLayout);
+  ScrollableTwoExpressionsCell(Escher::Responder * parentResponder = nullptr, KDFont::Size font = KDFont::Size::Large);
+  void setLayouts(Poincare::Layout exactLayout, Poincare::Layout approximateLayout);
   void setEqualMessage(I18n::Message equalSignMessage) {
     return m_view.setEqualMessage(equalSignMessage);
   }

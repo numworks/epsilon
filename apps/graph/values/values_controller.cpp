@@ -1,6 +1,8 @@
 #include "values_controller.h"
 #include <assert.h>
 #include <escher/clipboard.h>
+#include <poincare/decimal.h>
+#include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include "../../shared/poincare_helpers.h"
 #include "../../constant.h"
@@ -18,6 +20,7 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   Shared::ValuesController(parentResponder, header),
   m_selectableTableView(this),
   m_prefacedView(0, this, &m_selectableTableView, this, this),
+  m_exactValueCell(&m_selectableTableView, KDFont::Size::Small),
   m_functionParameterController(this),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_derivativeParameterController(this),
@@ -64,6 +67,22 @@ int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
   return TableViewDataSource::indexFromCumulatedWidth(offsetX);
 }
 
+KDCoordinate ValuesController::rowHeight(int j) {
+  // TODO: Properly compute height
+  if (j == selectedRow() && typeAtLocation(selectedColumn(), j) == k_exactValueCellType) {
+    return 50;
+  }
+  return Shared::ValuesController::rowHeight(j);
+}
+
+KDCoordinate ValuesController::cumulatedHeightFromIndex(int j) {
+  return TableViewDataSource::cumulatedHeightFromIndex(j);
+}
+
+int ValuesController::indexFromCumulatedHeight(KDCoordinate offsetX) {
+  return TableViewDataSource::indexFromCumulatedHeight(offsetX);
+}
+
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   // Handle hidden cells
   int typeAtLoc = typeAtLocation(i,j);
@@ -73,6 +92,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
   const int numberOfElementsInCol = numberOfElementsInColumn(i);
   if (j > numberOfElementsInCol + 1) {
+    assert(typeAtLoc != k_exactValueCellType);
     if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
       Shared::Hideable * hideableCell = hideableCellFromType(cell, typeAtLoc);
       hideableCell->setHide(true);
@@ -91,7 +111,15 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     }
     return;
   }
-
+  if (typeAtLoc == k_exactValueCellType) {
+    // TODO: Compute exact layout of derivative
+    // TODO: Do not display exact layout if equal to approximate layout
+    ScrollableTwoExpressionsCell * exactCell = static_cast<ScrollableTwoExpressionsCell *>(cell);
+    char * approximateResult = memoizedBufferForCell(i, j);
+    Poincare::Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult);
+    Poincare::Layout exactLayout = exactValueLayout(i, j);
+    exactCell->setLayouts(exactLayout, approximateLayout);
+  }
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
 }
 
@@ -136,8 +164,10 @@ void ValuesController::setTitleCellStyle(HighlightCell * cell, int columnIndex) 
 }
 
 int ValuesController::typeAtLocation(int i, int j) {
+  bool isSelectedCell = i == selectedColumn() && j == selectedRow();
   symbolTypeAtColumn(&i);
-  return Shared::ValuesController::typeAtLocation(i, j);
+  int type = Shared::ValuesController::typeAtLocation(i, j);
+  return type == k_notEditableValueCellType && isSelectedCell && j <= numberOfElementsInColumn(i) ? k_exactValueCellType : type;
 }
 
 // SelectableTableViewDelegate
@@ -151,6 +181,9 @@ void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int 
   const int numberOfElementsInCol = numberOfElementsInColumn(i);
   if (j > 1 + numberOfElementsInCol) {
     selectCellAtLocation(i, 1 + numberOfElementsInCol);
+  }
+  if (typeAtLocation(i, j) == k_exactValueCellType || typeAtLocation(previousSelectedCellX, previousSelectedCellY) == k_notEditableValueCellType) {
+   t->reloadData(true, false);
   }
 }
 
@@ -227,6 +260,12 @@ Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
   return App::app()->intervalForSymbolType(symbolTypeAtColumn(&columnIndex));
 }
 
+Shared::ExpiringPointer<ContinuousFunction> ValuesController::functionAtIndex(int column, int row, double * abscissa, bool * isDerivative) {
+  *abscissa = intervalAtColumn(column)->element(row-1); // Subtract the title row from row to get the element index
+  Ion::Storage::Record record = recordAtColumn(column, isDerivative);
+  return functionStore()->modelForRecord(record);
+}
+
 // Number of columns
 
 int ValuesController::numberOfColumnsForAbscissaColumn(int column) {
@@ -285,12 +324,11 @@ int ValuesController::absoluteColumnForValuesColumn(int column) {
 }
 
 void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
-  double abscissa = intervalAtColumn(column)->element(row-1); // Subtract the title row from row to get the element index
-  bool isDerivative = false;
   double evaluationX = NAN;
   double evaluationY = NAN;
-  Ion::Storage::Record record = recordAtColumn(column, &isDerivative);
-  Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
+  double abscissa;
+  bool isDerivative = false;
+  Shared::ExpiringPointer<ContinuousFunction> function = functionAtIndex(column, row, &abscissa, &isDerivative);
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   bool isParametric = function->symbolType() == ContinuousFunction::SymbolType::T;
   if (isDerivative) {
@@ -318,6 +356,19 @@ void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
     buffer[numberOfChar++] = ')';
     buffer[numberOfChar] = 0;
   }
+}
+
+Poincare::Layout ValuesController::exactValueLayout(int column, int row) {
+  double abscissa;
+  bool isDerivative = false;
+  Shared::ExpiringPointer<ContinuousFunction> function = functionAtIndex(column, row, &abscissa, &isDerivative);
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
+  Poincare::Expression e = function->expressionReduced(context);
+  Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
+  Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
+  abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
+  PoincareHelpers::CloneAndSimplify(&e, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
+  return e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, context);
 }
 
 // Parameter controllers

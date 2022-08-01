@@ -8,11 +8,11 @@ using namespace Poincare;
 
 namespace Shared {
 
-AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell() :
-  m_rightExpressionView(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, k_font),
-  m_approximateSign(k_font, k_defaultApproximateMessage, KDContext::k_alignCenter,
+AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell(KDFont::Size font) :
+  m_rightExpressionView(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, font),
+  m_approximateSign(font, k_defaultApproximateMessage, KDContext::k_alignCenter,
                     KDContext::k_alignCenter, Palette::GrayVeryDark),
-  m_centeredExpressionView(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, k_font),
+  m_centeredExpressionView(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, font),
   m_selectedSubviewPosition(SubviewPosition::Center),
   m_displayCenter(true)
 {
@@ -108,7 +108,7 @@ KDCoordinate AbstractScrollableMultipleExpressionsView::ContentCell::baseline(KD
   }
 
   // Center view
-  KDCoordinate centerViewBaseline = displayCenter() ? m_centeredExpressionView.layout().baseline(k_font) : 0;
+  KDCoordinate centerViewBaseline = displayCenter() ? m_centeredExpressionView.layout().baseline(font()) : 0;
   if (centerBaseline != nullptr) {
     *centerBaseline = centerViewBaseline;
   }
@@ -116,7 +116,7 @@ KDCoordinate AbstractScrollableMultipleExpressionsView::ContentCell::baseline(KD
   // Right view
   KDCoordinate rightViewBaseline = m_rightExpressionView.layout().isUninitialized() ?
     0 :
-    m_rightExpressionView.layout().baseline(k_font);
+    m_rightExpressionView.layout().baseline(font());
   if (rightBaseline != nullptr) {
     *rightBaseline = rightViewBaseline;
   }

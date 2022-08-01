@@ -56,7 +56,7 @@ protected:
   constexpr static int k_abscissaTitleCellType = 0;
   constexpr static int k_functionTitleCellType = 1;
   constexpr static int k_editableValueCellType = 2;
-  constexpr static int k_notEditableValueCellType = 3;
+  constexpr static int k_notEditableValueCellType = 3; // Must be last for Graph::ValuesController
   constexpr static int k_maxNumberOfDisplayableRows = 10;
 
   // EditableCellTableViewController
@@ -92,6 +92,8 @@ protected:
   void resetMemoization();
   virtual char * memoizedBufferAtIndex(int i) = 0;
   virtual int numberOfMemoizedColumn() = 0;
+  // Coordinates of memoizedBufferForCell refer to the absolute table
+  char * memoizedBufferForCell(int i, int j);
 
   ColumnParameterController * columnParameterController() override;
   virtual PrefacedTableView * prefacedView() = 0;
@@ -121,8 +123,6 @@ private:
   int valuesRowForAbsoluteRow(int row) { return row - 1; } // Subtract the title row
   virtual int absoluteColumnForValuesColumn(int column) { return column + 1; } // Add the abscissa column
   int absoluteRowForValuesRow(int row) { return row + 1; } // Add the title row
-  // Coordinates of memoizedBufferForCell refer to the absolute table
-  char * memoizedBufferForCell(int i, int j);
   virtual int valuesCellBufferSize() const = 0;
   // Coordinates of fillMemoizedBuffer refer to the absolute table but the index
   // refers to the memoized table

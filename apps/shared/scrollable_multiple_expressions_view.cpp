@@ -8,13 +8,14 @@ using namespace Poincare;
 
 namespace Shared {
 
-AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell(KDFont::Size font) :
+AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell(float horizontalAlignment, KDFont::Size font) :
   m_rightExpressionView(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, font),
   m_approximateSign(font, k_defaultApproximateMessage, KDContext::k_alignCenter,
                     KDContext::k_alignCenter, Palette::GrayVeryDark),
   m_centeredExpressionView(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, font),
   m_selectedSubviewPosition(SubviewPosition::Center),
-  m_displayCenter(true)
+  m_displayCenter(true),
+  m_horizontalAlignment(horizontalAlignment)
 {
 }
 
@@ -157,6 +158,23 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::subviewFrames(KDRec
   // Layout right expression
   assert(rightFrame != nullptr);
   *rightFrame = KDRect(currentWidth, viewBaseline - rightBaseline, rightSize);
+  currentWidth += rightSize.width();
+
+  /* Handle horizontal alignment right, left or center. Vertical alignment
+   * could be handled here too but there is no use for implementing it
+   * for now. */
+  if (currentWidth < m_frame.width()) {
+    KDCoordinate horizontalOffset = currentWidth < bounds().width() ? std::round((bounds().width() - currentWidth) * m_horizontalAlignment) : 0;
+    KDPoint offset = KDPoint(horizontalOffset, 0);
+    *rightFrame = rightFrame->translatedBy(offset);
+    if (leftExpressionView()) {
+      *leftFrame = leftFrame->translatedBy(offset);
+    }
+    if (displayCenter()) {
+      *centerFrame = centerFrame->translatedBy(offset);
+      *approximateSignFrame = approximateSignFrame->translatedBy(offset);
+    }
+  }
 }
 
 KDSize AbstractScrollableMultipleExpressionsView::ContentCell::privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const {

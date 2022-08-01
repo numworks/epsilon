@@ -41,7 +41,7 @@ public:
 protected:
   class ContentCell : public Escher::EvenOddCell {
   public:
-    ContentCell(KDFont::Size font = KDFont::Size::Large);
+    ContentCell(float horizontalAlignment = KDContext::k_alignLeft, KDFont::Size font = KDFont::Size::Large);
     KDColor backgroundColor() const override;
     void setHighlighted(bool highlight) override;
     void setEven(bool even) override;
@@ -85,6 +85,7 @@ protected:
     SubviewPosition m_selectedSubviewPosition;
     bool m_displayCenter;
     bool m_displayableCenter;
+    float m_horizontalAlignment;
   };
   virtual ContentCell * contentCell() = 0;
   virtual const ContentCell * constContentCell() const = 0;
@@ -92,9 +93,9 @@ protected:
 
 class ScrollableTwoExpressionsView : public AbstractScrollableMultipleExpressionsView {
 public:
-  ScrollableTwoExpressionsView(Escher::Responder * parentResponder, KDFont::Size font = KDFont::Size::Large) :
+  ScrollableTwoExpressionsView(Escher::Responder * parentResponder, float horizontalAlignment = KDContext::k_alignLeft, KDFont::Size font = KDFont::Size::Large) :
     AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell),
-    m_contentCell(font) {
+    m_contentCell(horizontalAlignment, font) {
     setMargins(
       // TODO: Do not add these margins in graph's values controller
         Escher::Metric::CommonSmallMargin,

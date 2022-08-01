@@ -19,6 +19,7 @@ public:
     return this;
   }
   Poincare::Layout layout() const override { return m_view.layout(); }
+  KDSize minimalSizeForOptimalDisplay() const override { return m_view.minimalSizeForOptimalDisplay(); }
   void didBecomeFirstResponder() override;
   void reinitSelection();
 private:

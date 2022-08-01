@@ -196,6 +196,8 @@ public:
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
   // Approximate derivative at x, on given sub curve if there is one
   double approximateDerivative(double x, Poincare::Context * context, int subCurveIndex = 0) const;
+  // Return reduced curve expression derivative
+  Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
 
   /* tMin and tMax */
 
@@ -269,8 +271,6 @@ private:
   Poincare::Expression expressionReducedForAnalysis(Poincare::Context * context) const  {
     return m_model.expressionReducedForAnalysis(this, context);
   }
-  // Return reduced curve expression derivative
-  Poincare::Expression expressionDerivateReduced(Poincare::Context * context) const { return m_model.expressionDerivateReduced(this, context); }
 
   /* Evaluation */
 

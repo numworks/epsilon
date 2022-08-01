@@ -4,6 +4,9 @@ userland_src += $(ion_device_userland_src) $(liba_src) $(kandinsky_src) $(escher
 
 userland_test_src += $(ion_device_userland_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src) $(apps_tests_src) $(tests_src) $(runner_src)
 
+# Ensure kandinsky fonts are generated first
+$(call object_for,$(userland_src)): $(kandinsky_deps)
+
 userland_targets = $(addprefix $(BUILD_DIR)/,$(addsuffix .$(EXE),$(userland_target_variants)))
 
 USERLAND_LDFLAGS += -Lion/src/$(PLATFORM)/userland/flash -Lion/src/$(PLATFORM)/userland/flash/$(MODEL)

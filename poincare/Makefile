@@ -248,7 +248,7 @@ tests_src += $(addprefix poincare/test/,\
 )
 
 poincare_bench_src = $(addprefix poincare/src/,\
-  exception_checkpoint.cpp \
+  exception_checkpoint_dummy.cpp \
   helpers.cpp \
   init.cpp \
   integer.cpp \

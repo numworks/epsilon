@@ -8,7 +8,6 @@
 class AppsContainerHelper {
 public:
   static Shared::GlobalContext * sharedAppsContainerGlobalContext();
-
 };
 
 #endif

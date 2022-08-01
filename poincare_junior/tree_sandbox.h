@@ -15,6 +15,10 @@ public:
     m_size(size)
   {}
 
+  typedef void (*TreeEditor)(TypeTreeBlock * tree, TreeSandbox * sandbox);
+  bool execute(TypeTreeBlock * address, TreeEditor action);
+  bool execute(int treeId, TreeEditor action);
+
   TreeBlock * pushBlock(TreeBlock block);
   void popBlock();
   void replaceBlock(TreeBlock * previousBlock, TreeBlock newBlock);

@@ -14,7 +14,9 @@ poincare_junior_src += $(addprefix poincare_junior/,\
   tree_cache.o \
   tree_pool.o \
   tree_sandbox.o \
-  test/test.o \
+  test/elementary_tree_manipulations.o \
+  test/main.o \
+  test/sandbox_overflow.o \
 )
 
 junior.elf: $(poincare_junior_src)

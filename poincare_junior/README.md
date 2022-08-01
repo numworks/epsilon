@@ -18,6 +18,23 @@ We still have to decide which cache algorithm we choose: LRU, ref-counter, FIFO,
 
 Because they're lifetime is unknown, we use FrozenExpression to interact with them. FrozenExpression is the combination of a potentially cached expression id and a function to rebuild the expression from some data if the expression has been removed from cache.
 
+Another decision to make is who is responsible for emptying the cache and restarting the interrupted process.
+
+Attempt 1:
+When trying to push on sandbox the block that overflows, the sandbox automatically empty the cache, copy the whole sandbox upstream and repush the block.
+--> This means that tree block addresses might become invalid without any notice in tree-manipulating function...
+
+Attempt 2:
+When trying to push the overflowing block on the sandbox, it raises an exception. All entry points of Poincaré are wrapted by an handler doing:
+void cacheHandler(action) {
+  if (setCheckpoint) {
+    action()
+  } else {
+    cache->removeLastUsedTrees();
+    action();
+  }
+}
+
 ### TreeSandbox
 
 The sandbox contain the expression that is being edited.

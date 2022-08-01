@@ -25,24 +25,13 @@ int TreeCache::storeLastTree() {
   return m_nextIdentifier - 1;
 }
 
-TreeCache::Error TreeCache::copyTreeForEditing(int id) {
-  if (m_nextIdentifier <= id) {
-    return Error::UninitializedIdentifier;
-  }
-  TypeTreeBlock * copiedTree = m_cachedTree[id];
-  if (m_sandbox.copyTreeFromAddress(copiedTree)) {
-    return Error::None;
-  }
-  return Error::TreeIsTooBigForSandbox;
-}
-
 TreeCache::TreeCache() :
   m_sandbox(static_cast<TypeTreeBlock *>(&m_pool[0]), k_maxNumberOfBlocks),
   m_nextIdentifier(0)
 {
 }
 
-bool TreeCache::resetCache(bool preserveSandbox) {
+bool TreeCache::reset(bool preserveSandbox) {
   if (m_nextIdentifier == 0) {
     // The cache has already been emptied
     // TODO: trigger an exception checkpoint?
@@ -55,7 +44,6 @@ bool TreeCache::resetCache(bool preserveSandbox) {
   }
   // Redefine sandbox without overriding its content since we might need it
   m_sandbox = TreeSandbox(lastBlock(), k_maxNumberOfBlocks, nbOfSanboxBlocks);
-  m_sandbox.setNumberOfBlocks(nbOfSanboxBlocks);
   return true;
 }
 

@@ -5,6 +5,35 @@
 
 namespace Poincare {
 
+bool TreeSandbox::execute(TypeTreeBlock * address, TreeEditor action) {
+start_execute:
+  if (true) {//if (setCheckpoint()) { // TODO
+    TypeTreeBlock * tree = copyTreeFromAddress(address);
+
+    if (!tree) {
+      // TODO remove once LRU is implemented
+      return false;
+    }
+
+    action(tree, this);
+    return true;
+  } else {
+    // TODO: don't delete last called treeForIdentifier otherwise can't copyTreeFromAddress if in cache...
+    if (!TreeCache::sharedCache()->reset(true)) {
+      return false;
+    }
+    goto start_execute;
+  }
+}
+
+bool TreeSandbox::execute(int treeId, TreeEditor action) {
+  TypeTreeBlock * tree = TreeCache::sharedCache()->treeForIdentifier(treeId);
+  if (!tree) {
+    return false;
+  }
+  return execute(tree, action);
+}
+
 TreeBlock * TreeSandbox::pushBlock(TreeBlock block) {
   if (!checkForEnoughSpace(1)) {
     return nullptr;
@@ -70,7 +99,6 @@ void TreeSandbox::removeBlocks(TreeBlock * address, size_t numberOfTreeBlocks) {
 TypeTreeBlock * TreeSandbox::copyTreeFromAddress(const void * address) {
   size_t size = reinterpret_cast<const TypeTreeBlock *>(address)->treeSize();
   if (!checkForEnoughSpace(size)) {
-    // TODO: rollback somewhere
     return nullptr;
   }
   TypeTreeBlock * copiedTree = static_cast<TypeTreeBlock *>(lastBlock());
@@ -81,10 +109,8 @@ TypeTreeBlock * TreeSandbox::copyTreeFromAddress(const void * address) {
 
 bool TreeSandbox::checkForEnoughSpace(size_t numberOfRequiredBlock) {
   if (m_numberOfBlocks + numberOfRequiredBlock > m_size) {
-    if (!TreeCache::sharedCache()->resetCache(true)) {
-      return false;
-    }
-    return m_numberOfBlocks + numberOfRequiredBlock <= m_size;
+    // TODO raise sandbox memory full error
+    return false;
   }
   return true;
 }

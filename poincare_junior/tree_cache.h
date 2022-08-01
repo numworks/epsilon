@@ -8,23 +8,16 @@ namespace Poincare {
 
 class TreeCache final : public TreePool {
 public:
-  enum class Error {
-    None,
-    UninitializedIdentifier,
-    TreeIsTooBigForSandbox,
-  };
-
   static TreeCache * sharedCache();
 
   TypeTreeBlock * treeForIdentifier(int id);
   int storeLastTree();
-  Error copyTreeForEditing(int id);
 
   TreeSandbox * sandbox() { return &m_sandbox; }
-  bool resetCache(bool preserveSandbox);
+  bool reset(bool preserveSandbox);
 
-private:
   constexpr static int k_maxNumberOfBlocks = 512;
+private:
   constexpr static int k_maxNumberOfCachedTrees = 32;
 
   TreeCache();

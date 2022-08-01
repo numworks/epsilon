@@ -93,6 +93,9 @@ include build/targets.mak
 
 all_src = $(apps_src) $(escher_src) $(ion_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(runner_src) $(ion_device_flasher_src) $(ion_device_bench_src) $(tests_src)
 
+# Ensure kandinsky fonts are generated first
+$(call object_for,$(all_src)): $(kandinsky_deps)
+
 # kernel_obj are added separately since they require variants resolution
 all_objs = $(call object_for,$(all_src)) $(kernel_obj)
 .SECONDARY: $(all_objs)

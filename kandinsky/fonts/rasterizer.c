@@ -12,20 +12,20 @@ int main(int argc, char * argv[]) {
 
   FT_Library library;
   FT_Face face;
-  char * font_file = argv[1];
+  char * fontFile = argv[1];
   int requestedGlyphWidth = atoi(argv[2]);
   int requestedGlyphHeight = atoi(argv[3]);
-  int packed_glyph_width = atoi(argv[4]);
-  int packed_glyphHeight = atoi(argv[5]);
-  char * font_name = argv[6];
-  char * output_h = argv[7];
-  char * output_cpp = argv[8];
+  int packedGlyphWidth = atoi(argv[4]);
+  int packedGlyphHeight = atoi(argv[5]);
+  char * fontName = argv[6];
+  char * outputH = argv[7];
+  char * outputCpp = argv[8];
   char * sharedFontPath = argv[9];
 #ifdef GENERATE_PNG
-  char * output_png = argv[10];
+  char * outputPng = argv[10];
 #endif
 
-  initTTF(&library, &face, font_file, requestedGlyphWidth, requestedGlyphHeight);
+  initTTF(&library, &face, fontFile, requestedGlyphWidth, requestedGlyphHeight);
 
   int maxWidth = 0;
   int maxAboveBaseline = 0;
@@ -35,7 +35,7 @@ int main(int argc, char * argv[]) {
 
   int glyphWidth = maxWidth;
   int glyphHeight = maxAboveBaseline + maxBelowBaseline;
-  checkGlyphDimensions(glyphWidth, packed_glyph_width, glyphHeight, packed_glyphHeight);
+  checkGlyphDimensions(glyphWidth, packedGlyphWidth, glyphHeight, packedGlyphHeight);
 
   int glyphDataOffsetLength = 0, glyphDataLength = 0;
   uint16_t * glyphDataOffset = (uint16_t *)malloc((NumberOfCodePoints + 1) * sizeof(uint16_t *));
@@ -48,13 +48,13 @@ int main(int argc, char * argv[]) {
   generateGlyphData(face, glyphDataOffset, &glyphDataOffsetLength, glyphData, glyphDataBufferSize,
                     &glyphDataLength, glyphWidth, glyphHeight, maxAboveBaseline,
                     k_grayscaleBitsPerPixel);
-  writeFontHeaderFile(output_h, font_name, glyphWidth, glyphHeight);
-  writeFontSourceFile(output_cpp, font_name, glyphWidth, glyphHeight, glyphDataOffset,
+  writeFontHeaderFile(outputH, fontName, glyphWidth, glyphHeight);
+  writeFontSourceFile(outputCpp, fontName, glyphWidth, glyphHeight, glyphDataOffset,
                       glyphDataOffsetLength, glyphData, glyphDataLength, k_grayscaleBitsPerPixel,
                       numberOfCodePointsPairs);
 
 #if GENERATE_PNG
-  storeRenderedGlyphsImage(output_png, face, glyphWidth, glyphHeight, maxAboveBaseline);
+  storeRenderedGlyphsImage(outputPng, face, glyphWidth, glyphHeight, maxAboveBaseline);
 #endif
 
   return 0;
@@ -68,23 +68,23 @@ void checkInputs(int argc, char * argv[]) {
   if (argc != expectedNumberOfArguments) {
 #ifdef GENERATE_PNG
     fprintf(stderr,
-            "Usage: %s font_file glyphWidth glyphHeight font_name font_h font_cpp codepoint_to_glyph_index_cpp "
-            "output_png\n",
+            "Usage: %s fontFile requestedGlyphWidth requestedGlyphHeight packedGlyphWidth packedGlyphHeight fontName outputH outputCpp sharedFontPath outputPng\n",
             argv[0]);
 #else
-    fprintf(stderr, "Usage: %s font_file glyphWidth glyphHeight font_name font_h font_cpp codepoint_to_glyph_index_cpp\n", argv[0]);
+    fprintf(stderr, "Usage: %s fontFile requestedGlyphWidth requestedGlyphHeight packedGlyphWidth packedGlyphHeight fontName outputH outputCpp sharedFontPath\n",
+            argv[0]);
 #endif
-    fprintf(stderr, "  font_file: Path of the font file to load\n");
-    fprintf(stderr, "  glyphWidth: Width of bitmap glyphs, in pixels\n");
-    fprintf(stderr, "  glyphHeight: Height of bitmap glyphs, in pixels\n");
-    fprintf(stderr, "  packed_glyph_width: Minimal glyph width in pixels. Pass 0 if unsure.\n");
-    fprintf(stderr, "  packed_glyphHeight: Minimal glyph height in pixels. Pass 0 if unsure.\n");
-    fprintf(stderr, "  font_name: name of the loaded font\n");
-    fprintf(stderr, "  font_h: Name of the generated C header file\n");
-    fprintf(stderr, "  font_cpp: Name of the generated C source file\n");
-    fprintf(stderr, "  codepoint_to_glyph_index_cpp: Name of the generated shared C source file\n");
+    fprintf(stderr, "  fontFile: Path of the font file to load\n");
+    fprintf(stderr, "  requestedGlyphWidth: Width of bitmap glyphs, in pixels\n");
+    fprintf(stderr, "  requestedGlyphHeight: Height of bitmap glyphs, in pixels\n");
+    fprintf(stderr, "  packedGlyphWidth: Minimal glyph width in pixels. Pass 0 if unsure.\n");
+    fprintf(stderr, "  packedGlyphHeight: Minimal glyph height in pixels. Pass 0 if unsure.\n");
+    fprintf(stderr, "  fontName: name of the loaded font\n");
+    fprintf(stderr, "  outputH: Name of the generated C header file\n");
+    fprintf(stderr, "  outputCpp: Name of the generated C source file\n");
+    fprintf(stderr, "  sharedFontPath: Name of the generated shared C codepoint to glyph index source file\n");
 #ifdef GENERATE_PNG
-    fprintf(stderr, "  output_png: Name of the generated PNG file\n");
+    fprintf(stderr, "  outputPng: Name of the generated PNG file\n");
 #endif
     exit(1);
   }
@@ -96,11 +96,11 @@ void checkInputs(int argc, char * argv[]) {
   }
 }
 
-void initTTF(FT_Library * library, FT_Face * face, const char * font_file, int requestedGlyphWidth,
+void initTTF(FT_Library * library, FT_Face * face, const char * fontFile, int requestedGlyphWidth,
              int requestedGlyphHeight) {
   ENSURE(!FT_Init_FreeType(library), "Initializing library");
   // 0 means we're picking the first face in the provided file
-  ENSURE(!FT_New_Face(*library, font_file, 0, face), "Loading font file %s", font_file);
+  ENSURE(!FT_New_Face(*library, fontFile, 0, face), "Loading font file %s", fontFile);
   ENSURE(!FT_Set_Pixel_Sizes(*face, requestedGlyphWidth, requestedGlyphHeight),
          "Setting face pixel size to %dx%d", requestedGlyphWidth, requestedGlyphHeight);
 }
@@ -136,7 +136,7 @@ void checkGlyphDimensions(int glyphWidth, int requestedGlyphWidth, int glyphHeig
            "Expecting a packed glyph height of %d but got %d instead", requestedGlyphHeight,
            glyphHeight);
   } else {
-    printf("Computed packed_glyphHeight = %d\n", glyphHeight);
+    printf("Computed packedGlyphHeight = %d\n", glyphHeight);
   }
 }
 

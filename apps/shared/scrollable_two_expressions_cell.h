@@ -20,6 +20,7 @@ public:
   }
   Poincare::Layout layout() const override { return m_view.layout(); }
   KDSize minimalSizeForOptimalDisplay() const override { return m_view.minimalSizeForOptimalDisplay(); }
+  void setInnerMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left) { m_view.setMargins(top, right, bottom, left); }
   void didBecomeFirstResponder() override;
   void reinitSelection();
 private:

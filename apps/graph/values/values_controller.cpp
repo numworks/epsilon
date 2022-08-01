@@ -43,6 +43,8 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   for (int i = 0; i < k_maxNumberOfDisplayableFunctions; i++) {
     m_functionTitleCells[i].setFont(KDFont::Size::Small);
   }
+  KDCoordinate innerMargin = Escher::EvenOddCell::k_horizontalMargin;
+  m_exactValueCell.setInnerMargins(innerMargin + 1, innerMargin, innerMargin + 1, innerMargin); // TODO: Factorize margin computation with EvenOddCells
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
 }
 

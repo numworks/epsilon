@@ -7,9 +7,9 @@ using namespace Poincare;
 
 namespace Shared {
 
-ScrollableTwoExpressionsCell::ScrollableTwoExpressionsCell(Responder * parentResponder, KDFont::Size font) :
+ScrollableTwoExpressionsCell::ScrollableTwoExpressionsCell(Responder * parentResponder, float horizontalAlignment, KDFont::Size font) :
   Responder(parentResponder),
-  m_view(this, font)
+  m_view(this, horizontalAlignment, font)
 {
 }
 

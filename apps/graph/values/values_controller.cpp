@@ -20,7 +20,7 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   Shared::ValuesController(parentResponder, header),
   m_selectableTableView(this),
   m_prefacedView(0, this, &m_selectableTableView, this, this),
-  m_exactValueCell(&m_selectableTableView, KDFont::Size::Small),
+  m_exactValueCell(&m_selectableTableView, KDContext::k_alignRight, KDFont::Size::Small),
   m_functionParameterController(this),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_derivativeParameterController(this),

@@ -1,5 +1,7 @@
 #include <apps/apps_container_helper.h>
 
 Shared::GlobalContext * AppsContainerHelper::sharedAppsContainerGlobalContext()  {
-  return nullptr;
+  // Define a single shared GlobalContext
+  static Shared::GlobalContext s_globalContext;
+  return &s_globalContext;
 }

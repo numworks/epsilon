@@ -202,10 +202,6 @@ View * AbstractScrollableMultipleExpressionsView::ContentCell::subviewAtIndex(in
   return views[index - leftIsVisible];
 }
 
-KDCoordinate AbstractScrollableMultipleExpressionsView::ContentCell::StandardApproximateViewAndMarginsSize() {
-   return 2 * AbstractScrollableMultipleExpressionsView::k_horizontalMargin + KDFont::Font(k_font)->stringSize(I18n::translate(k_defaultApproximateMessage)).width();
-}
-
 void AbstractScrollableMultipleExpressionsView::ContentCell::layoutSubviews(bool force) {
   if (bounds().width() <= 0 || bounds().height() <= 0) {
     // TODO Make this behaviour in a non-virtual layoutSublviews, and all layout subviews should become privateLayoutSubviews

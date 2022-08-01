@@ -19,10 +19,6 @@ public:
     Right = 2
   };
 
-  static KDCoordinate StandardApproximateViewAndMarginsSize() {
-    return ContentCell::StandardApproximateViewAndMarginsSize();
-  }
-
   AbstractScrollableMultipleExpressionsView(Responder * parentResponder, View * contentCell);
   Escher::EvenOddCell * evenOddCell() {
     return contentCell();

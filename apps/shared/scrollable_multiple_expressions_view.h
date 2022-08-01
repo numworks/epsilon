@@ -97,7 +97,6 @@ public:
     AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell),
     m_contentCell(horizontalAlignment, font) {
     setMargins(
-      // TODO: Do not add these margins in graph's values controller
         Escher::Metric::CommonSmallMargin,
         Escher::Metric::CommonLargeMargin,
         Escher::Metric::CommonSmallMargin,

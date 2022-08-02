@@ -181,11 +181,6 @@ KDSize AbstractScrollableMultipleExpressionsView::ContentCell::privateMinimalSiz
   KDCoordinate width = 0;
   KDCoordinate height = 0;
 
-  // Compute baselines
-  KDCoordinate leftBaseline = 0;
-  KDCoordinate centerBaseline = 0;
-  KDCoordinate rightBaseline = 0;
-
   KDSize leftSize = KDSizeZero;
   if (leftExpressionView() && !leftExpressionView()->layout().isUninitialized()) {
     leftSize = leftExpressionView()->minimalSizeForOptimalDisplay();

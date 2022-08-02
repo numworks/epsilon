@@ -1,5 +1,7 @@
 #include "poincare_helpers.h"
+#include <apps/exam_mode_configuration.h>
 
+using namespace Poincare;
 namespace Shared {
 
 namespace PoincareHelpers {
@@ -18,8 +20,37 @@ T ValueOfFloatAsDisplayed(T t, int precision, Poincare::Context * context) {
   return ApproximateToScalar<T>(buffer, context);
 }
 
+bool shouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context) {
+    // Exact output with remaining dependency are not displayed to avoid 2 ≈ undef
+  return exactOutput.type() == ExpressionNode::Type::Dependency
+    // Lists or Matrices with only nonreal/undefined children
+    || (exactOutput.isOfType({ExpressionNode::Type::List, ExpressionNode::Type::Matrix}) && exactOutput.allChildrenAreUndefined())
+    // Force all outputs to be ApproximateOnly if required by the exam mode configuration
+    || ExamModeConfiguration::exactExpressionIsForbidden(exactOutput)
+    /* If the input contains the following types, we only display the
+      * approximate output. */
+    || input.recursivelyMatches(
+      [](const Expression e, Context * c) {
+        return e.isOfType({
+          ExpressionNode::Type::ConstantPhysics,
+          ExpressionNode::Type::Randint,
+          ExpressionNode::Type::Random,
+          ExpressionNode::Type::Unit,
+          ExpressionNode::Type::Round,
+          ExpressionNode::Type::FracPart,
+          ExpressionNode::Type::Integral,
+          ExpressionNode::Type::Product,
+          ExpressionNode::Type::Sum,
+          ExpressionNode::Type::Derivative,
+          ExpressionNode::Type::Sequence,
+          ExpressionNode::Type::DistributionDispatcher,
+        });
+      }, context);
+}
+
 template float ValueOfFloatAsDisplayed<float>(float t, int precision, Poincare::Context * context);
 template double ValueOfFloatAsDisplayed<double>(double t, int precision, Poincare::Context * context);
+
 }
 
 }

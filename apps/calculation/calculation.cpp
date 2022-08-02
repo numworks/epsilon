@@ -161,31 +161,8 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
        * equal */
    || (strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0
     && strcmp(inputText(), exactOutputText()) == 0)
-      // Exact output with remaining dependency are not displayed to avoid 2 ≈ undef
-   || outputExp.type() == ExpressionNode::Type::Dependency
-      // Lists or Matrices with only nonreal/undefined children
-   || (outputExp.isOfType({ExpressionNode::Type::List, ExpressionNode::Type::Matrix}) && outputExp.allChildrenAreUndefined())
-      // Force all outputs to be ApproximateOnly if required by the exam mode configuration
-   || ExamModeConfiguration::exactExpressionIsForbidden(outputExp)
-      /* If the input contains the following types, we only display the
-       * approximate output. */
-   || inputExp.recursivelyMatches(
-        [](const Expression e, Context * c) {
-          return e.isOfType({
-            ExpressionNode::Type::ConstantPhysics,
-            ExpressionNode::Type::Randint,
-            ExpressionNode::Type::Random,
-            ExpressionNode::Type::Unit,
-            ExpressionNode::Type::Round,
-            ExpressionNode::Type::FracPart,
-            ExpressionNode::Type::Integral,
-            ExpressionNode::Type::Product,
-            ExpressionNode::Type::Sum,
-            ExpressionNode::Type::Derivative,
-            ExpressionNode::Type::Sequence,
-	    ExpressionNode::Type::DistributionDispatcher,
-          });
-        }, context))
+      // All other conditions are factorized within PoincareHelpers
+   || PoincareHelpers::shouldOnlyDisplayApproximation(inputExp, outputExp, context))
   {
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (inputExp.recursivelyMatches(Expression::IsApproximate, context)

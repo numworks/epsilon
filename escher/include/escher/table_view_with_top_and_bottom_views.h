@@ -20,7 +20,7 @@ public:
 
   /* View */
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  int numberOfSubviews() const override { return (m_topView != nullptr) + 1 + (m_bottomView != nullptr); }
+  int numberOfSubviews() const override { return (m_topView != nullptr) + 2 + (m_bottomView != nullptr); }
   View * subviewAtIndex(int i) override;
   void layoutSubviews(bool force = false) override;
 
@@ -36,6 +36,7 @@ private:
 
   KDRect tableFrame(KDCoordinate * yOffset) const;
 
+  ScrollViewVerticalBar m_scrollBar;
   TableViewDataSource * m_tableDataSource;
   View * m_topView;
   SelectableTableView * m_table;

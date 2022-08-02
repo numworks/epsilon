@@ -52,6 +52,7 @@ public:
 
   class BarDecorator : public Decorator {
   public:
+    constexpr static KDCoordinate k_barsFrameBreadth = Metric::CommonRightMargin;
     using Decorator::Decorator;
     void setVerticalMargins(KDCoordinate top, KDCoordinate bottom) override { m_verticalBar.setMargins(top, bottom); }
     int numberOfIndicators() const override { return 2; }
@@ -62,7 +63,6 @@ public:
   private:
     ScrollViewVerticalBar m_verticalBar;
     ScrollViewHorizontalBar m_horizontalBar;
-    constexpr static KDCoordinate k_barsFrameBreadth = Metric::CommonRightMargin;
   };
 
   class ArrowDecorator : public Decorator {

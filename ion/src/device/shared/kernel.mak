@@ -23,6 +23,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   cache.cpp:-n0100 \
   crc32.cpp \
   display.cpp \
+  display_image.cpp:+n0100 \
   flash.cpp:+n0100 \
   flash_privileged.cpp:-n0100 \
   flash_unprivileged.cpp:-n0100 \
@@ -50,3 +51,5 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   usb_unprivileged.cpp \
   wakeup.cpp \
 )
+
+$(eval $(call requires_compressed_png,ion/src/device/shared/drivers/display_image.cpp,ion/src/device/shared/drivers/logo_image,ion_device_kernel_src,n0100))

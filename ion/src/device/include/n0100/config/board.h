@@ -27,7 +27,10 @@ constexpr uint32_t InternalFlashOrigin = 0x08000000;
 constexpr uint32_t InternalFlashLength = 0x100000; // 1MiB
 constexpr uint32_t SmallestFlashSectorLength = 0x4000; // 16KiB
 
-constexpr uint32_t KernelLength = SmallestFlashSectorLength;
+/* KernelLength could be down-sized to one single SmallestFlashSectorLength if
+ * the logo.png was moved to userland. However, this would mean sharing the
+ * display driver code with the userland. */
+constexpr uint32_t KernelLength = 2 * SmallestFlashSectorLength;
 constexpr uint32_t KernelVirtualOrigin = InternalFlashOrigin;
 
 constexpr uint32_t ExtraDataLength = 0;

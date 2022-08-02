@@ -18,6 +18,12 @@ public:
     // Ordered from lower to higher precedence to make Parser's job easier
     EndOfStream = 0, // Must be the first
     RightwardsArrow,
+    Nor,
+    Xor,
+    Or,
+    Nand,
+    And,
+    Not,
     Equal,
     Superior,
     SuperiorEqual,

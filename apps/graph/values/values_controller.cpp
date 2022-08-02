@@ -180,8 +180,10 @@ void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int 
       /* Set the Layout in the exact cell now so that height is correctly
        * computed when reloading data. */
       char * approximateResult = memoizedBufferForCell(i, j);
-      Poincare::Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult);
-      Poincare::Layout exactLayout = exactValueLayout(i, j);
+      /* Make both layouts editable (with CodePointLayouts rather than
+       * StringLayouts) so that they can be properly compared. */
+      Poincare::Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult).makeEditable();
+      Poincare::Layout exactLayout = exactValueLayout(i, j).makeEditable();
       m_exactValueCell.setDisplayCenter(!(exactLayout.isUninitialized() || exactLayout.isIdenticalTo(approximateLayout)));
       m_exactValueCell.setLayouts(exactLayout, approximateLayout);
     } else { // exact cell was previously selected.

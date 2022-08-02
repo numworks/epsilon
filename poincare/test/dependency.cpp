@@ -106,9 +106,8 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
    * expression that are nevertheless undefined. */
   assert_reduce("1→f(x)");
   assert_expression_simplify_to_with_dependencies("f(a)", "1", {"a"});
-  assert_reduce("sum(1/n,n,0,5)→a"); // a = undef
-  assert_expression_simplify_to_with_dependencies("f(a)", "1", {"sum(1/n,n,0,5)"});
-  assert_expression_approximates_to<float>("f(a)", "undef");
+  assert_expression_simplify_to_with_dependencies("f(sum(1/n,n,0,5))", "1", {"sum(1/n,n,0,5)"});
+  assert_expression_approximates_to<float>("f(sum(1/n,n,0,5))", "undef");
 
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();

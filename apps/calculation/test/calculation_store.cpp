@@ -231,9 +231,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("binompdf(2,3,0.5)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "0.375", "0.375", &globalContext, &store);
 
   // Exact output that have dependencies are not displayed
-  assertCalculationIs("sum(1/k,k,0,5)→a", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "sum(1/k,k,0,5)", "undef", "undef", &globalContext, &store);
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown, "2", "2", "2", &globalContext, &store);
-  assertCalculationIs("f(a)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "dep\U00000014(2,{sum(1/k,k,0,5)})", "undef", "undef", &globalContext, &store);
+  assertCalculationIs("f(sum(1/k,k,0,5))", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "dep\U00000014(2,{sum(1/k,k,0,5)})", "undef", "undef", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 

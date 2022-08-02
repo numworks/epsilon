@@ -159,9 +159,13 @@ const Expression GlobalContext::expressionForSequence(const SymbolAbstract & sym
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord, Context * context) {
-  Expression reducedExpression = expression.clone();
-  PoincareHelpers::CloneAndSimplify(&reducedExpression, context, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  ExpressionNode::Type type = reducedExpression.type();
+  Expression expressionToStore = expression;
+  PoincareHelpers::CloneAndSimplify(&expressionToStore, context, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  if (!expressionToStore.hasUnit() // If an expression has units, it's already approximated during beautification
+    && PoincareHelpers::shouldOnlyDisplayApproximation(expression, expressionToStore, context)) { // Do not store exact derivative, etc.
+    expressionToStore = PoincareHelpers::Approximate<double>(expressionToStore, context);
+  }
+  ExpressionNode::Type type = expressionToStore.type();
   const char * extension;
   if (type == ExpressionNode::Type::List) {
     extension = Ion::Storage::lisExtension;
@@ -172,7 +176,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
   }
   /* If there is another record competing with this one for its name,
   * it is destroyed directly in Storage, through the record_name_verifier. */
-  return Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension(symbol.name(), extension, reducedExpression.addressInPool(), reducedExpression.size(), true);
+  return Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension(symbol.name(), extension, expressionToStore.addressInPool(), expressionToStore.size(), true);
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const Expression & expressionToStore, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {

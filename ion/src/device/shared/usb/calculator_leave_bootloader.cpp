@@ -1,6 +1,6 @@
 #include <config/board.h>
-#include <bootloader/drivers/board.h>
-#include <drivers/reset.h>
+#include <drivers/board.h>
+#include <shared-core/drivers/reset.h>
 #include <shared/usb/calculator.h>
 
 namespace Ion {

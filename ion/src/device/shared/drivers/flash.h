@@ -1,7 +1,7 @@
-#ifndef ION_DEVICE_SHARED_FLASH_PRIVILEGED_H
-#define ION_DEVICE_SHARED_FLASH_PRIVILEGED_H
+#ifndef ION_DEVICE_CORE_SHARED_FLASH_PRIVILEGED_H
+#define ION_DEVICE_CORE_SHARED_FLASH_PRIVILEGED_H
 
-#include "flash_unprivileged.h"
+#include <shared/drivers/flash_unprivileged.h>
 #include <stddef.h>
 
 namespace Ion {

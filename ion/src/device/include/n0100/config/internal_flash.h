@@ -1,8 +1,7 @@
 #ifndef ION_DEVICE_N0100_CONFIG_INTERNAL_FLASH_H
 #define ION_DEVICE_N0100_CONFIG_INTERNAL_FLASH_H
 
-#include <config/board.h>
-#include <regs/regs.h>
+#include <stdint.h>
 
 namespace Ion {
 namespace Device {
@@ -19,11 +18,6 @@ constexpr static uint32_t SectorAddresses[NumberOfSectors+1] = {
   0x08080000, 0x080A0000, 0x080C0000, 0x080E0000,
   0x08100000
 };
-
-/* The Device is powered by a 2.8V LDO. This allows us to perform writes to the
- * Flash 32 bits at once. */
-constexpr Regs::FLASH::CR::PSIZE MemoryAccessWidth = Regs::FLASH::CR::PSIZE::X32;
-typedef uint32_t MemoryAccessType;
 
 }
 }

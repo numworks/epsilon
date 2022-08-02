@@ -1,7 +1,7 @@
-#include <ion/display.h>
+#include <drivers/display.h>
+#include <drivers/svcall.h>
 #include <kandinsky/ion_context.h>
-#include <userland/drivers/display.h>
-#include <userland/drivers/svcall.h>
+#include <ion/display.h>
 
 namespace Ion {
 namespace Display {

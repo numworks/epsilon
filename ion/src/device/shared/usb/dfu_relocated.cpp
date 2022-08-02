@@ -1,6 +1,5 @@
 #include <config/board.h>
 #include <drivers/board.h>
-#include <drivers/cache.h>
 #include <drivers/usb.h>
 #include <ion/usb.h>
 #include <assert.h>

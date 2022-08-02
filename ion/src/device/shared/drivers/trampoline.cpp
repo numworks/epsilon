@@ -1,5 +1,5 @@
-#include <shared/drivers/trampoline.h>
 #include <config/board.h>
+#include <shared/drivers/trampoline.h>
 #include <string.h>
 
 namespace Ion {

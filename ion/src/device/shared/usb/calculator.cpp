@@ -2,7 +2,6 @@
 #include <shared/drivers/serial_number.h>
 #include <ion.h>
 #include <ion/usb.h>
-#include <shared/drivers/usb.h>
 
 namespace Ion {
 namespace Device {

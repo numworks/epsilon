@@ -1,5 +1,5 @@
-#include <userland/drivers/reset.h>
-#include <userland/drivers/svcall.h>
+#include <drivers/reset.h>
+#include <drivers/svcall.h>
 
 namespace Ion {
 namespace Reset {

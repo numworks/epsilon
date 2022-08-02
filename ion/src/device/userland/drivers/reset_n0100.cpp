@@ -1,4 +1,4 @@
-#include <regs/regs.h>
+#include <regs/cortex.h>
 
 namespace Ion {
 namespace Reset {

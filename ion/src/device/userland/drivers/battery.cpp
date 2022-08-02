@@ -1,6 +1,5 @@
+#include <drivers/svcall.h>
 #include <ion/battery.h>
-#include <ion/battery.h>
-#include <userland/drivers/svcall.h>
 
 namespace Ion {
 namespace Battery {

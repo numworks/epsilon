@@ -1,7 +1,7 @@
 #include <config/board.h>
-#include <drivers/board.h>
-#include <drivers/kernel_header.h>
 #include <shared/boot/isr.h>
+#include <shared/drivers/board_shared.h>
+#include <shared/drivers/kernel_header.h>
 
 namespace Ion {
 namespace Device {

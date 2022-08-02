@@ -1,6 +1,6 @@
 #include <config/board.h>
-#include <drivers/board.h>
-#include <drivers/kernel_header.h>
+#include <shared/drivers/board_shared.h>
+#include <shared/drivers/kernel_header.h>
 
 extern "C" {
   extern char _persisting_bytes_buffer_start;

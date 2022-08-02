@@ -71,7 +71,7 @@ int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
 
 KDCoordinate ValuesController::rowHeight(int j) {
   if (j == selectedRow() && typeAtLocation(selectedColumn(), j) == k_exactValueCellType) {
-    return m_exactValueCell.minimalSizeForOptimalDisplay().height();
+    return std::max(m_exactValueCell.minimalSizeForOptimalDisplay().height(), Shared::ValuesController::rowHeight(j));
   }
   return Shared::ValuesController::rowHeight(j);
 }
@@ -111,14 +111,6 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
       hideableCellFromType(cell, typeAtLoc)->reinit();
     }
     return;
-  }
-  if (typeAtLoc == k_exactValueCellType) {
-    ScrollableTwoExpressionsCell * exactCell = static_cast<ScrollableTwoExpressionsCell *>(cell);
-    char * approximateResult = memoizedBufferForCell(i, j);
-    Poincare::Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult);
-    Poincare::Layout exactLayout = exactValueLayout(i, j);
-    exactCell->setDisplayCenter(!(exactLayout.isUninitialized() || exactLayout.isIdenticalTo(approximateLayout)));
-    exactCell->setLayouts(exactLayout, approximateLayout);
   }
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
 }
@@ -182,8 +174,20 @@ void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int 
   if (j > 1 + numberOfElementsInCol) {
     selectCellAtLocation(i, 1 + numberOfElementsInCol);
   }
-  if (typeAtLocation(i, j) == k_exactValueCellType || typeAtLocation(previousSelectedCellX, previousSelectedCellY) == k_notEditableValueCellType) {
-   t->reloadData(true, false);
+  int selectedCellType = typeAtLocation(i, j);
+  if (selectedCellType == k_exactValueCellType || typeAtLocation(previousSelectedCellX, previousSelectedCellY) == k_notEditableValueCellType) {
+    if (selectedCellType == k_exactValueCellType) {
+      /* Set the Layout in the exact cell now so that height is correctly
+       * computed when reloading data. */
+      char * approximateResult = memoizedBufferForCell(i, j);
+      Poincare::Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult);
+      Poincare::Layout exactLayout = exactValueLayout(i, j);
+      m_exactValueCell.setDisplayCenter(!(exactLayout.isUninitialized() || exactLayout.isIdenticalTo(approximateLayout)));
+      m_exactValueCell.setLayouts(exactLayout, approximateLayout);
+    } else { // exact cell was previously selected.
+      m_exactValueCell.setLayouts(Layout(), Layout());
+    }
+    t->reloadData(true, false);
   }
 }
 

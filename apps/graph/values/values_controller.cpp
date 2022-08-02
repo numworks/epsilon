@@ -187,6 +187,7 @@ void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int 
     } else { // exact cell was previously selected.
       m_exactValueCell.setLayouts(Layout(), Layout());
     }
+    // Set false to the second paramater so that the table is not deselected
     t->reloadData(true, false);
   }
 }

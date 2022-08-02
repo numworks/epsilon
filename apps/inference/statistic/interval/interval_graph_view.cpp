@@ -12,7 +12,7 @@ void IntervalGraphView::reload(bool resetSelectedInterval, bool force) {
   if (resetSelectedInterval) {
     m_curveView.resetSelectedInterval();
   }
-  float estimate; float marginOfError;
+  float estimate, marginOfError;
   m_curveView.selectedIntervalEstimateAndMarginOfError(&estimate, &marginOfError);
   m_conclusionView.setInterval(estimate, marginOfError);
   layoutSubviews();

@@ -117,7 +117,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     char * approximateResult = memoizedBufferForCell(i, j);
     Poincare::Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult);
     Poincare::Layout exactLayout = exactValueLayout(i, j);
-    exactCell->setDisplayCenter(!exactLayout.isIdenticalTo(approximateLayout));
+    exactCell->setDisplayCenter(!(exactLayout.isUninitialized() || exactLayout.isIdenticalTo(approximateLayout)));
     exactCell->setLayouts(exactLayout, approximateLayout);
   }
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
@@ -363,12 +363,10 @@ Poincare::Layout ValuesController::exactValueLayout(int column, int row) {
   bool isDerivative = false;
   Shared::ExpiringPointer<ContinuousFunction> function = functionAtIndex(column, row, &abscissa, &isDerivative);
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  Poincare::Expression e;
   if (isDerivative) {
-    e = function->expressionDerivateReduced(context);
-  } else {
-    e = function->expressionReduced(context);
+    return Layout(); // Do not compute exact derivative
   }
+  Poincare::Expression e = function->expressionReduced(context);
   Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
   Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
   abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));

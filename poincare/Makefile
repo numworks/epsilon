@@ -140,6 +140,7 @@ poincare_src += $(addprefix poincare/src/,\
   list_sum.cpp \
   list_variance.cpp \
   logarithm.cpp \
+  logical_operator.cpp \
   matrix.cpp \
   matrix_complex.cpp \
   matrix_echelon_form.cpp \

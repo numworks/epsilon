@@ -1,10 +1,10 @@
+#include <algorithm>
 #include "endpoint0.h"
-#include <string.h>
-#include <regs/regs.h>
 #include "device.h"
 #include "interface.h"
 #include "request_recipient.h"
-#include <algorithm>
+#include <shared/regs/otg.h>
+#include <string.h>
 
 namespace Ion {
 namespace Device {

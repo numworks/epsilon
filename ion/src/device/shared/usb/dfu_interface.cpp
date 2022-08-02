@@ -1,6 +1,6 @@
 #include "dfu_interface.h"
-#include <drivers/board.h>
-#include <drivers/flash_privileged.h>
+#include <shared/drivers/board_shared.h>
+#include <shared/drivers/flash.h>
 #include <ion/timing.h>
 #include <string.h>
 

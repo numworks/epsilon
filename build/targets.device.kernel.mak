@@ -5,5 +5,5 @@ $(call object_for,$(kernel_src)): $(kandinsky_deps)
 
 ASSERTIONS = $(DEVELOPMENT)
 
-KERNEL_LDFLAGS = -Lion/src/$(PLATFORM)/kernel/flash -Lion/src/$(PLATFORM)/kernel/flash/$(MODEL)
-KERNEL_LDDEPS += ion/src/$(PLATFORM)/kernel/flash/kernel_shared.ld ion/src/$(PLATFORM)/kernel/flash/$(MODEL)/canary.ld ion/src/$(PLATFORM)/kernel/flash/$(MODEL)/prologue.ld
+KERNEL_LDFLAGS = -Lion/src/$(PLATFORM)/epsilon-core/device/kernel/flash -Lion/src/$(PLATFORM)/epsilon-core/device/kernel/flash/$(MODEL)
+KERNEL_LDDEPS += ion/src/$(PLATFORM)/epsilon-core/device/kernel/flash/kernel_shared.ld ion/src/$(PLATFORM)/epsilon-core/device/kernel/flash/$(MODEL)/canary.ld ion/src/$(PLATFORM)/epsilon-core/device/kernel/flash/$(MODEL)/prologue.ld

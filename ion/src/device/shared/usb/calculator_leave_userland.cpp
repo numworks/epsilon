@@ -1,10 +1,10 @@
-#include <ion/external_apps.h>
 #include <config/board.h>
+#include <drivers/board.h>
+#include <drivers/reset.h>
+#include <ion/external_apps.h>
 #include <shared/drivers/usb.h>
 #include <shared/drivers/userland_header.h>
 #include <shared/usb/calculator.h>
-#include <userland/drivers/board.h>
-#include <userland/drivers/reset.h>
 
 extern "C" {
 extern char _external_apps_flash_start;

@@ -1,7 +1,7 @@
 #ifndef REGS_OTG_H
 #define REGS_OTG_H
 
-#include "register.h"
+#include <shared/regs/register.h>
 #include <config/otg.h>
 
 namespace Ion {

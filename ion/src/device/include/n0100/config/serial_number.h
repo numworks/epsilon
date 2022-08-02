@@ -1,7 +1,7 @@
 #ifndef ION_DEVICE_N0100_CONFIG_SERIAL_NUMBER_H
 #define ION_DEVICE_N0100_CONFIG_SERIAL_NUMBER_H
 
-#include <regs/regs.h>
+#include <stdint.h>
 
 namespace Ion {
 namespace Device {

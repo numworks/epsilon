@@ -141,7 +141,6 @@ private:
   Shared::HideableEvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];
   AbscissaTitleCell m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
   Shared::StoreCell m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
-  // TODO: Create a special non selectable scrollable two expressions cell
   Shared::ScrollableTwoExpressionsCell m_exactValueCell;
   FunctionParameterController m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;

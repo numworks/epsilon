@@ -1319,6 +1319,8 @@ QUIZ_CASE(poincare_simplification_store) {
   assert_parsed_expression_simplify_to("1+2→x", "3");
   assert_parsed_expression_simplify_to("0.1+0.2→x", "3/10");
   assert_parsed_expression_simplify_to("a→x", Undefined::Name());
+  assert_parsed_expression_simplify_to("diff(ln(x),x,4)→x", "0.25"); // Do not store exact derivative
+
 
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();

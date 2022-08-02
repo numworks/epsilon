@@ -9,7 +9,9 @@ TableViewWithTopAndBottomViews::TableViewWithTopAndBottomViews(SelectableTableVi
   m_topView(topView),
   m_table(table),
   m_bottomView(bottomView)
-{}
+{
+  m_table->setDecoratorType(ScrollView::Decorator::Type::None);
+}
 
 void TableViewWithTopAndBottomViews::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(rect, Palette::WallScreen);
@@ -18,15 +20,18 @@ void TableViewWithTopAndBottomViews::drawRect(KDContext * ctx, KDRect rect) cons
 View * TableViewWithTopAndBottomViews::subviewAtIndex(int i) {
   assert(i < numberOfSubviews());
   i += (m_topView == nullptr);
-  switch (i) {
-  case 0:
+  if (i == 0) {
     return m_topView;
-  case 1:
+  }
+  if (i == 1) {
     return m_table;
-  default:
-    assert(i == 2);
+  }
+  i += (m_bottomView == nullptr);
+  if (i == 2) {
     return m_bottomView;
   }
+  assert(i == 3);
+  return &m_scrollBar;
 }
 
 void TableViewWithTopAndBottomViews::layoutSubviews(bool force) {
@@ -39,13 +44,25 @@ void TableViewWithTopAndBottomViews::layoutSubviews(bool force) {
   KDRect tableRect = tableFrame(&yOffset);
   m_table->setFrame(tableRect, force);
   m_table->setContentOffset(KDPoint(offset.x(), yOffset));
+
+  KDCoordinate topHeight = 0;
+  KDCoordinate tableHeight = m_table->minimalSizeForOptimalDisplay().height();
+  KDCoordinate bottomHeight = 0;
+  KDCoordinate topOrigin = tableRect.y();
+
   if (m_topView) {
-    KDCoordinate topHeight = m_topView->minimalSizeForOptimalDisplay().height();
-    m_topView->setFrame(KDRect(0, tableRect.y() - topHeight, bounds().width(), topHeight), force);
+    topHeight = m_topView->minimalSizeForOptimalDisplay().height();
+    topOrigin = tableRect.y() - topHeight;
+    m_topView->setFrame(KDRect(0, topOrigin, bounds().width(), topHeight), force);
   }
   if (m_bottomView) {
-    m_bottomView->setFrame(KDRect(0, tableRect.y() + tableRect.height(), bounds().width(), m_bottomView->minimalSizeForOptimalDisplay().height()), force);
+    bottomHeight = m_bottomView->minimalSizeForOptimalDisplay().height();
+    m_bottomView->setFrame(KDRect(0, tableRect.y() + tableRect.height(), bounds().width(), bottomHeight), force);
   }
+
+  m_scrollBar.update(topHeight + tableHeight + bottomHeight, m_table->contentOffset().y() - topOrigin, bounds().height());
+  constexpr KDCoordinate barWidth = ScrollView::BarDecorator::k_barsFrameBreadth;
+  m_scrollBar.setFrame(KDRect(bounds().width() - barWidth, 0, barWidth, bounds().height()), force);
 }
 
 void TableViewWithTopAndBottomViews::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {

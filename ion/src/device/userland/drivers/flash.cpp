@@ -1,5 +1,5 @@
-#include <shared/drivers/flash_privileged.h>
-#include <userland/drivers/svcall.h>
+#include <drivers/svcall.h>
+#include <shared/drivers/flash.h>
 
 namespace Ion {
 namespace Device {

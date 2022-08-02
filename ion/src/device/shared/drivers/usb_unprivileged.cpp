@@ -1,5 +1,5 @@
-#include <drivers/usb.h>
-#include <regs/regs.h>
+#include <ion/usb.h>
+#include <shared/regs/otg.h>
 
 using namespace Ion::Device::Regs;
 

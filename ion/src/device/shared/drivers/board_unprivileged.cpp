@@ -1,5 +1,5 @@
-#include <drivers/board.h>
-#include <drivers/userland_header.h>
+#include <shared/drivers/board_shared.h>
+#include <shared/drivers/userland_header.h>
 
 namespace Ion {
 namespace Device {

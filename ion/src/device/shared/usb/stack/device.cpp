@@ -1,7 +1,6 @@
 #include "device.h"
 #include <config/internal_flash.h>
-#include <drivers/reset.h>
-#include <regs/regs.h>
+#include <shared/regs/otg.h>
 
 namespace Ion {
 namespace Device {

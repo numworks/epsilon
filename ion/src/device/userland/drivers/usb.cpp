@@ -1,6 +1,6 @@
-#include <userland/drivers/board.h>
-#include <userland/drivers/svcall.h>
+#include <shared/drivers/board_shared.h>
 #include <shared/drivers/usb.h>
+#include <drivers/svcall.h>
 
 namespace Ion {
 namespace Device {

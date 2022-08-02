@@ -2,7 +2,6 @@
 #include <ion.h>
 #include <config/board.h>
 #include <shared/boot/rt0.h>
-#include <shared/drivers/board.h>
 #include <shared/drivers/usb.h>
 
 extern "C" {

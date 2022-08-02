@@ -1,6 +1,8 @@
 #include <ion/usb.h>
 #include <drivers/usb.h>
-#include <kernel/drivers/keyboard.h>
+#warning This is a dependency of N0100 userland to epsilon-cor
+#include <shared-core/drivers/keyboard.h>
+#include <shared-core/drivers/usb.h>
 
 namespace Ion {
 namespace USB {

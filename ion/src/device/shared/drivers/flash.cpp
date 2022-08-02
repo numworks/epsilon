@@ -1,8 +1,6 @@
+#include <config/board.h>
 #include <config/internal_flash.h>
-#include <shared/drivers/flash_privileged.h>
 #include <shared/drivers/flash_unprivileged.h>
-#include <shared/drivers/internal_flash.h>
-#include <regs/regs.h>
 
 namespace Ion {
 namespace Device {
@@ -25,37 +23,12 @@ bool IncludesAddress(uint32_t address) {
   return address >= Board::Config::InternalFlashOrigin && address <= Board::Config::InternalFlashOrigin + Board::Config::InternalFlashLength;
 }
 
-using namespace Regs;
-
 bool ForbiddenSector(int i) {
   return i < 0 || i > InternalFlash::Config::NumberOfSectors;
 }
 
 bool MassEraseEnable() {
   return true;
-}
-
-void MassErase() {
-  if (MassEraseEnable()) {
-    InternalFlash::MassErase();
-  }
-}
-
-bool EraseSector(int i) {
-  if (ForbiddenSector(i)) {
-    return false;
-  }
-  InternalFlash::EraseSector(i);
-  return true;
-}
-
-bool WriteMemory(uint8_t * destination, const uint8_t * source, size_t length) {
-  uint32_t address = reinterpret_cast<uint32_t>(destination);
-  if (Board::Config::InternalFlashOrigin <= address && address < Board::Config::InternalFlashOrigin + Board::Config::InternalFlashLength) {
-    InternalFlash::WriteMemory(destination, source, length);
-    return true;
-  }
-  return false;
 }
 
 }

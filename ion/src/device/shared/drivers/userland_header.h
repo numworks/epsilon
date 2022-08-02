@@ -1,8 +1,8 @@
 #ifndef ION_DEVICE_SHARED_USERLAND_HEADER_H
 #define ION_DEVICE_SHARED_USERLAND_HEADER_H
 
-#include "kernel_header.h"
 #include <assert.h>
+#include "kernel_header.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>

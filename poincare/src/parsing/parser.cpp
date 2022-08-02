@@ -107,6 +107,12 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
   constexpr static TokenParser tokenParsers[] = {
     &Parser::parseUnexpected,      // Token::EndOfStream
     &Parser::parseRightwardsArrow, // Token::RightwardsArrow
+    &Parser::parseNorOperator,     // Token::Nor
+    &Parser::parseXorOperator,     // Token::Xor
+    &Parser::parseOrOperator,      // Token::Or
+    &Parser::parseNandOperator,    // Token::Nand
+    &Parser::parseAndOperator,     // Token::And
+    &Parser::parseNotOperator,     // Token::Not
     &Parser::parseEqual,           // Token::Equal
     &Parser::parseSuperior,        // Token::Superior
     &Parser::parseSuperiorEqual,   // Token::SuperiorEqual
@@ -431,6 +437,44 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
   }
   leftHandSide = UnitConvert::Builder(leftHandSide, rightHandSide);
   return;
+}
+
+void Parser::parseNotOperator(Expression & leftHandSide, Token::Type stoppingType) {
+  if (!leftHandSide.isUninitialized()) {
+    m_status = Status::Error; // Left-hand side should be empty
+    return;
+  }
+  Expression rightHandSide = parseUntil(std::max(stoppingType, Token::Not));
+  if (m_status != Status::Progress) {
+    return;
+  }
+  if (rightHandSide.isUninitialized()) {
+    m_status = Status::Error;
+    return;
+  }
+  leftHandSide = NotOperator::Builder(rightHandSide);
+}
+
+void Parser::parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType operatorType, Expression & leftHandSide, Token::Type stoppingType) {
+  if (leftHandSide.isUninitialized()) {
+    m_status = Status::Error; // Left-hand side missing.
+    return;
+  }
+  Token::Type newStoppingType;
+  if (operatorType == BinaryLogicalOperatorNode::OperatorType::And || operatorType == BinaryLogicalOperatorNode::OperatorType::Nand) {
+    newStoppingType = Token::And;
+  } else {
+    newStoppingType = Token::Or;
+  }
+  Expression rightHandSide = parseUntil(std::max(stoppingType, newStoppingType));
+  if (m_status != Status::Progress) {
+    return;
+  }
+  if (rightHandSide.isUninitialized()) {
+    m_status = Status::Error;
+    return;
+  }
+  leftHandSide = BinaryLogicalOperator::Builder(leftHandSide, rightHandSide, operatorType);
 }
 
 bool Parser::parseBinaryOperator(const Expression & leftHandSide, Expression & rightHandSide, Token::Type stoppingType) {

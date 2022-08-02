@@ -50,6 +50,8 @@ public:
     Symbol,
     Store,
     UnitConvert,
+    NotOperator,
+    BinaryLogicalOperator,
     Equal,
     Superior,
     Inferior,

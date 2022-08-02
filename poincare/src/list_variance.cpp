@@ -24,8 +24,7 @@ template<typename T> Evaluation<T> ListVarianceNode::templatedApproximate(const 
 
 Expression ListVariance::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   /* var(L) = mean(L^2) - mean(L)^2 */
-  int n = numberOfChildren();
-  assert(n == 1 || n == 2);
+  assert(numberOfChildren() == 1 || numberOfChildren() == 2);
   Expression children[2];
   if (!static_cast<ListFunctionWithUpToTwoParametersNode *>(node())->getChildrenIfNonEmptyList(children)) {
     return replaceWithUndefinedInPlace();

@@ -113,11 +113,11 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     return;
   }
   if (typeAtLoc == k_exactValueCellType) {
-    // TODO: Do not display exact layout if equal to approximate layout
     ScrollableTwoExpressionsCell * exactCell = static_cast<ScrollableTwoExpressionsCell *>(cell);
     char * approximateResult = memoizedBufferForCell(i, j);
     Poincare::Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult);
     Poincare::Layout exactLayout = exactValueLayout(i, j);
+    exactCell->setDisplayCenter(!exactLayout.isIdenticalTo(approximateLayout));
     exactCell->setLayouts(exactLayout, approximateLayout);
   }
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);

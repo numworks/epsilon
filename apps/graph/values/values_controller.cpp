@@ -180,11 +180,14 @@ void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int 
       /* Set the Layout in the exact cell now so that height is correctly
        * computed when reloading data. */
       char * approximateResult = memoizedBufferForCell(i, j);
-      /* Make both layouts editable (with CodePointLayouts rather than
-       * StringLayouts) so that they can be properly compared. */
-      Poincare::Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult).makeEditable();
-      Poincare::Layout exactLayout = exactValueLayout(i, j).makeEditable();
-      m_exactValueCell.setDisplayCenter(!(exactLayout.isUninitialized() || exactLayout.isIdenticalTo(approximateLayout)));
+      Poincare::Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult);
+      Poincare::Layout exactLayout = exactValueLayout(i, j);
+      m_exactValueCell.setDisplayCenter(
+        !(exactLayout.isUninitialized()
+        /* Make both layouts editable (with CodePointLayouts rather than
+        * StringLayouts) so that they can be properly compared. */
+        || exactLayout.makeEditable().isIdenticalTo(approximateLayout.makeEditable()))
+      );
       m_exactValueCell.setLayouts(exactLayout, approximateLayout);
     } else { // exact cell was previously selected.
       m_exactValueCell.setLayouts(Layout(), Layout());
@@ -378,6 +381,9 @@ Poincare::Layout ValuesController::exactValueLayout(int column, int row) {
   Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
   abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
   PoincareHelpers::CloneAndSimplify(&e, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
+  if (PoincareHelpers::shouldOnlyDisplayApproximation(function->expressionClone(), e, context)) {
+    return Layout(); // Do not show exact expressions in certain cases
+  }
   return e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, context);
 }
 

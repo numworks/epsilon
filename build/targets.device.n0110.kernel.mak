@@ -1,1 +1,1 @@
-include build/targets.device.dual_slots.kernel.mak
+include build/targets.device.kernel.mak

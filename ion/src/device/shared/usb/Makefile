@@ -2,15 +2,13 @@
 
 ion_device_usb_src += $(addprefix ion/src/device/shared/usb/, \
   calculator.cpp \
-  calculator_leave_bootloader.cpp:+leavebootloader,-n0100 \
-  calculator_leave_n0100.cpp:+n0100 \
+  calculator_leave_bootloader.cpp:+leavebootloader \
   calculator_leave_flasher_n0110.cpp:-leavebootloader,-leaveuserland,+n0110 \
   calculator_leave_flasher_n0120.cpp:-leavebootloader,-leaveuserland,+n0120 \
-  calculator_leave_reset.cpp:+leaveuserland,-n0100,-allow3rdparty \
-  calculator_leave_userland.cpp:+leaveuserland,-n0100,+allow3rdparty \
+  calculator_leave_reset.cpp:+leaveuserland,-allow3rdparty \
+  calculator_leave_userland.cpp:+leaveuserland,+allow3rdparty \
   dfu_interface.cpp \
-  dfu_relocated.cpp:+n0100 \
-  dfu_xip.cpp:-n0100 \
+  dfu_xip.cpp \
 )
 
 ion_device_usb_src += $(addprefix ion/src/device/shared/usb/stack/, \
@@ -38,9 +36,5 @@ ion_device_usb_src += $(addprefix ion/src/device/shared/usb/stack/descriptor/, \
   url_descriptor.cpp \
   webusb_platform_descriptor.cpp \
 )
-
-ifeq ($(MODEL),n0100)
-include ion/src/device/shared/usb/dfu_relocated.mak
-endif
 
 ion_device_dfu_src += $(ion_device_usb_src)

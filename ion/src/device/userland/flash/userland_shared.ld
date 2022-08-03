@@ -60,11 +60,18 @@ SECTIONS {
   } >SRAM AT> FLASH_USERLAND
 
   .signature : {
-    INCLUDE signature.ld
+    FILL(0xFF);
+    /* We write the last byte of the signature with a default value to make
+     * sure the userland size takes into account the signature. */
+    . += SignatureLength - 1;
+    BYTE(0xFF)
   } >FLASH_USERLAND
 
   .external_apps : {
-    INCLUDE external_apps.ld
+    . = ALIGN(64K);
+    _external_apps_flash_start = .;
+    . = (ORIGIN(FLASH_USERLAND) + LENGTH(FLASH_USERLAND));
+    _external_apps_flash_end = .;
   } >FLASH_USERLAND
 
   .bss : {

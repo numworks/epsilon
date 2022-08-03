@@ -9,22 +9,19 @@ namespace Escher {
 TableCell::TableCell() :
   Bordered(),
   HighlightCell()
-{
+{}
+
+void TableCell::drawRect(KDContext * ctx, KDRect rect) const {
+  KDColor backColor = isHighlighted() ? Palette::Select : backgroundColor();
+  drawInnerRect(ctx, bounds(), backColor);
+  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
 }
 
-int TableCell::numberOfSubviews() const {
-  return (labelView() != nullptr) + (subLabelView()!= nullptr) + (accessoryView()!= nullptr);
-}
-
-View * TableCell::subviewAtIndex(int index) {
-  if (index == 0) {
-    return const_cast<View *>(labelView());
-  }
-  if (index == 1 && subLabelView() != nullptr) {
-    return  const_cast<View *>(subLabelView());
-  }
-  assert(index == 2 || (index == 1 && subLabelView() == nullptr));
-  return  const_cast<View *>(accessoryView());
+KDSize TableCell::minimalSizeForOptimalDisplay() const {
+  // TableCell's available width is necessary to compute its minimal height.
+  KDCoordinate expectedWidth = m_frame.width();
+  assert(expectedWidth > 0);
+  return KDSize(expectedWidth, minimalHeightForOptimalDisplay(accessoryMinimalWidthOverridden(), expectedWidth));
 }
 
 KDCoordinate TableCell::minimalHeightForOptimalDisplay(KDCoordinate minAccessoryWidth, KDCoordinate width) const {
@@ -43,14 +40,22 @@ KDCoordinate TableCell::minimalHeightForOptimalDisplay(KDCoordinate minAccessory
   return k_separatorThickness + Metric::CellTopMargin + contentHeight + Metric::CellBottomMargin;
 }
 
-KDSize TableCell::minimalSizeForOptimalDisplay() const {
-  // TableCell's available width is necessary to compute its minimal height.
-  KDCoordinate expectedWidth = m_frame.width();
-  assert(expectedWidth > 0);
-  return KDSize(expectedWidth, minimalHeightForOptimalDisplay(accessoryMinimalWidthOverridden(), expectedWidth));
+int TableCell::numberOfSubviews() const {
+  return (labelView() != nullptr) + (subLabelView()!= nullptr) + (accessoryView()!= nullptr);
 }
 
-KDCoordinate cropIfOverflow(KDCoordinate value, KDCoordinate max) {
+View * TableCell::subviewAtIndex(int index) {
+  if (index == 0) {
+    return const_cast<View *>(labelView());
+  }
+  if (index == 1 && subLabelView() != nullptr) {
+    return  const_cast<View *>(subLabelView());
+  }
+  assert(index == 2 || (index == 1 && subLabelView() == nullptr));
+  return  const_cast<View *>(accessoryView());
+}
+
+static KDCoordinate cropIfOverflow(KDCoordinate value, KDCoordinate max) {
   return std::min(max, value);
 }
 
@@ -178,12 +183,6 @@ bool TableCell::singleRowMode(KDCoordinate width,
                    sublabelView == nullptr || labelSize.width() == 0 ||
                    subLabelSize.width() == 0;
   return singleRow;
-}
-
-void TableCell::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor backColor = isHighlighted() ? Palette::Select : backgroundColor();
-  drawInnerRect(ctx, bounds(), backColor);
-  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
 }
 
 KDRect TableCell::setFrameIfViewExists(View * v, KDRect rect, bool force) {

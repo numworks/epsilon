@@ -1,7 +1,6 @@
 #include "identifier_tokenizer.h"
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
-#include <poincare/constant.h>
 #include "helper.h"
 
 namespace Poincare {

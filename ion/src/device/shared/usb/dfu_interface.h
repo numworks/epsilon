@@ -127,11 +127,6 @@ private:
     uint8_t m_bState; // Current state of the device
   };
 
-  /* The Flash and SRAM addresses are in flash.ld. However, dfu_interface is
-   * linked with dfu.ld, so we cannot access the values. */
-  constexpr static uint32_t k_sramStartAddress = 0x20000000;
-  constexpr static uint32_t k_sramEndAddress = 0x20040000;
-
   constexpr static uint32_t k_nullAddress = 0xFFFFFFFF;
 
   // Download and upload

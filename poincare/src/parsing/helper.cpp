@@ -37,6 +37,37 @@ bool ParsingHelper::IsSpecialIdentifierName(const char * name, size_t nameLength
   return SpecialIdentifierIndexForName(name, nameLength) >= 0;
 }
 
+bool ParsingHelper::IsLogicalOperator(const char * name, size_t nameLength, Token::Type * returnType) {
+  // TODO: Factorize non null terminated comparison with AliasesList
+  if (strncmp(name, NotOperatorNode::k_name, nameLength) == 0 && *(NotOperatorNode::k_name + nameLength + 1) == 0) {
+    *returnType = Token::Not;
+    return true;
+  }
+  BinaryLogicalOperatorNode::OperatorType operatorType;
+  if (BinaryLogicalOperatorNode::IsBinaryLogicalOperator(name, nameLength, &operatorType)) {
+    switch (operatorType) {
+    case BinaryLogicalOperatorNode::OperatorType::And:
+      *returnType = Token::And;
+      break;
+    case BinaryLogicalOperatorNode::OperatorType::Or:
+      *returnType = Token::Or;
+      break;
+    case BinaryLogicalOperatorNode::OperatorType::Xor:
+      *returnType = Token::Xor;
+      break;
+    case BinaryLogicalOperatorNode::OperatorType::Nand:
+      *returnType = Token::Nand;
+      break;
+    default:
+      assert(operatorType == BinaryLogicalOperatorNode::OperatorType::Nor);
+      *returnType = Token::Nor;
+    }
+    return true;
+  }
+  return false;
+}
+
+
 bool ParsingHelper::IsParameteredExpression(const Expression::FunctionHelper * helper) {
   return helper == &Derivative::s_functionHelper
       || helper == &Derivative::s_functionHelperFirstOrder

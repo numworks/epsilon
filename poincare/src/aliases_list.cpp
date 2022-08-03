@@ -1,20 +1,15 @@
 #include <poincare/aliases_list.h>
+#include <ion/unicode/utf8_helper.h>
 
 namespace Poincare {
 
-int compareNonNullTerminatedStringWithNullTerminated(const char * nonNullTerminatedAlias, size_t nonNullTerminatedAliasLength, const char * nullTerminatedAlias) {
-  /* Compare similarly to strcmp */
-  int diff = strncmp(nonNullTerminatedAlias, nullTerminatedAlias, nonNullTerminatedAliasLength);
-  return (diff != 0) ? diff : strcmp("", nullTerminatedAlias + nonNullTerminatedAliasLength);
-}
-
 int AliasesList::maxDifferenceWith(const char * alias, int aliasLen) const {
   if (!hasMultipleAliases()) {
-    return compareNonNullTerminatedStringWithNullTerminated(alias, aliasLen, m_formattedAliasesList);
+    return UTF8Helper::compareNonNullTerminatedStringWithNullTerminated(alias, aliasLen, m_formattedAliasesList);
   }
   int maxValueOfComparison = 0;
   for (const char * aliasInList : *this) {
-    int tempValueOfComparison = compareNonNullTerminatedStringWithNullTerminated(alias, aliasLen, aliasInList);
+    int tempValueOfComparison = UTF8Helper::compareNonNullTerminatedStringWithNullTerminated(alias, aliasLen, aliasInList);
     if (tempValueOfComparison == 0) {
       return 0;
     }

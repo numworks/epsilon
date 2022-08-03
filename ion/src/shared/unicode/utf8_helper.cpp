@@ -95,6 +95,11 @@ const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft, con
   return codePointPointer;
 }
 
+int compareNonNullTerminatedStringWithNullTerminated(const char * nonNullTerminatedString, size_t nonNullTerminatedStringLength, const char * nullTerminatedString) {
+  int diff = strncmp(nonNullTerminatedString, nullTerminatedString, nonNullTerminatedStringLength);
+  return (diff != 0) ? diff : strcmp("", nullTerminatedString + nonNullTerminatedStringLength);
+}
+
 bool CopyAndRemoveCodePoints(char * dst, size_t dstSize, const char * src, CodePoint * codePoints, int numberOfCodePoints) {
   UTF8Decoder decoder(src);
   CodePoint codePoint = decoder.nextCodePoint();

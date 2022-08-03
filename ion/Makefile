@@ -6,13 +6,6 @@ endif
 
 SFLAGS += -Iion/include -DKD_CONFIG_H=1
 
-ifndef ION_KEYBOARD_LAYOUT
-  $(error platform.mak should define ION_KEYBOARD_LAYOUT)
-endif
-SFLAGS += -Iion/include/ion/keyboard/$(ION_KEYBOARD_LAYOUT)
-SFLAGS += -Iion/include/ion/keyboard/
-ion_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
-
 include ion/image/Makefile
 include ion/src/$(PLATFORM)/Makefile
 -include ion/test/$(PLATFORM)/Makefile
@@ -26,6 +19,7 @@ ion_src += $(addprefix ion/src/shared/, \
   events_modifier.cpp \
   keyboard.cpp \
   keyboard_queue.cpp \
+  layout_events.cpp \
   stack_position.cpp \
   storage/file_system.cpp \
   storage/record_name_verifier.cpp \
@@ -40,6 +34,7 @@ ion_src += $(addprefix ion/src/shared/, \
 ion_device_bench_src += $(addprefix ion/src/shared/, \
   console_line.cpp \
   decompress.cpp \
+  layout_events.cpp \
   unicode/code_point.cpp\
   unicode/utf8_decoder.cpp \
   unicode/utf8_helper.cpp \
@@ -54,6 +49,7 @@ ion_device_kernel_src += $(addprefix ion/src/shared/, \
   events_modifier.cpp \
   keyboard.cpp \
   keyboard_queue.cpp \
+  layout_events.cpp \
 )
 
 ion_device_kernel_src += ion/src/external/lz4/lz4.c
@@ -75,10 +71,8 @@ ion_device_userland_src += $(addprefix ion/src/shared/, \
   unicode/utf8_helper.cpp\
 )
 
-ion_device_bench_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
-ion_device_kernel_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
 ifeq ($(ESCHER_LOG_EVENTS_NAME),1)
-ion_device_userland_src += ion/src/shared/keyboard/$(ION_KEYBOARD_LAYOUT)/layout_events.cpp
+ion_device_userland_src += ion/src/shared/layout_events.cpp
 endif
 ion_device_userland_src += ion/src/external/lz4/lz4.c:+consoledisplay
 

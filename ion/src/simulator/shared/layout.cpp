@@ -132,7 +132,7 @@ static constexpr KeyLayout sKeyLayouts[Keyboard::NumberOfValidKeys] = {
   KeyLayout(963, 1029, KeyLayout::Shape::Round), // A6, Back
 
   KeyLayout(580, 958, KeyLayout::Shape::LargeSquircle), // B1, Home
-  KeyLayout(580, 1094, KeyLayout::Shape::LargeSquircle), // B2, Power
+  KeyLayout(580, 1094, KeyLayout::Shape::LargeSquircle), // B3, Power
 
   KeyLayout(198, 1253, KeyLayout::Shape::SmallSquircle), // C1, Shift
   KeyLayout(352, 1253, KeyLayout::Shape::SmallSquircle), // C2, Alpha

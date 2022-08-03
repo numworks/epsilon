@@ -49,8 +49,8 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   virtual bool giveAccessoryAllWidth() const { return false; }
+  KDCoordinate minimalHeightForOptimalDisplay(KDCoordinate minAccessoryWidth, KDCoordinate width) const;
 
-  static KDCoordinate minimalHeightForOptimalDisplay(const View * label, const View * subLabel, const View * accessory, KDCoordinate minAccessoryWidth, KDCoordinate width);
   constexpr static KDCoordinate k_minimalLargeFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + KDFont::GlyphHeight(KDFont::Size::Large) + Metric::CellTopMargin;
   constexpr static KDCoordinate k_minimalSmallFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + KDFont::GlyphHeight(KDFont::Size::Small) + Metric::CellTopMargin;
 protected:

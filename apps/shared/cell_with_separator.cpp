@@ -44,16 +44,8 @@ KDSize CellWithSeparator::minimalSizeForOptimalDisplay() const {
   // Available width is necessary to compute it minimal height.
   KDCoordinate expectedWidth = m_frame.width();
   assert(expectedWidth > 0);
-  return KDSize(
-    expectedWidth,
-    TableCell::minimalHeightForOptimalDisplay(
-      constCell()->labelView(),
-      constCell()->subLabelView(),
-      constCell()->accessoryView(),
-      constCell()->accessoryView()->minimalSizeForOptimalDisplay().width(),
-      expectedWidth
-    ) + k_margin + Metric::CellSeparatorThickness
-  );
+  KDCoordinate constCellHeight = constCell()->minimalHeightForOptimalDisplay(constCell()->accessoryView()->minimalSizeForOptimalDisplay().width(), expectedWidth);
+  return KDSize(expectedWidth, constCellHeight + k_margin + Metric::CellSeparatorThickness);
 }
 
 }

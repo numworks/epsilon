@@ -2,6 +2,7 @@
 #define POINCARE_PARSING_HELPER_H
 
 #include <poincare_expressions.h>
+#include "token.h"
 
 namespace Poincare {
 
@@ -16,6 +17,7 @@ public:
   static const Expression::FunctionHelper * const * GetInverseFunction(const char * name, size_t nameLength);
   static const Expression::FunctionHelper * const * ReservedFunctionsUpperBound() { return s_reservedFunctionsUpperBound; }
   static bool IsSpecialIdentifierName(const char * name, size_t nameLength);
+  static bool IsLogicalOperator(const char * name, size_t nameLength, Token::Type * returnType);
   static bool IsParameteredExpression(const Expression::FunctionHelper * helper);
   // True if f^2(x) = f(x)^2 (ex: cos^2(x) = cos(x)^2 but ln^2(x) != ln(x)^2)
   static bool IsSquarableFunction(const Expression::FunctionHelper * helper);

@@ -75,6 +75,10 @@ Token::Type IdentifierTokenizer::stringTokenType(const char * string, size_t len
   if (Constant::IsConstant(string, length)) {
     return Token::Constant;
   }
+  Token::Type logicalOperatorType;
+  if (ParsingHelper::IsLogicalOperator(string, length, &logicalOperatorType)) {
+    return logicalOperatorType;
+  }
   if (string[0] == '_') {
     if (Unit::CanParse(string + 1, length - 1, nullptr, nullptr)) {
       return Token::Unit;

@@ -1,5 +1,6 @@
 #include "data_field.h"
 #include "elements_data_base.h"
+#include <apps/apps_container.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/float.h>
 #include <poincare/horizontal_layout.h>
@@ -26,6 +27,19 @@ bool DoubleDataField::hasDouble(AtomicNumber z) const {
   return ElementsDataBase::IsElement(z);
 }
 
+static Layout replaceFractionWithSlash(Layout l) {
+  assert(!l.isUninitialized());
+  if (l.type() != LayoutNode::Type::FractionLayout) {
+    return l;
+  }
+  HorizontalLayout h = HorizontalLayout::Builder();
+  h.addOrMergeChildAtIndex(l.childAtIndex(0), 0, false);
+  int n = h.numberOfChildren();
+  h.addOrMergeChildAtIndex(CodePointLayout::Builder('/'), n, false);
+  h.addOrMergeChildAtIndex(l.childAtIndex(1), n + 1, false);
+  return std::move(h);
+}
+
 Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   assert(hasDouble(z));
   Preferences::PrintFloatMode floatDisplayMode = Preferences::sharedPreferences()->displayMode();
@@ -33,11 +47,16 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   if (!std::isfinite(v)) {
     return Undefined::Builder().createLayout(floatDisplayMode, significantDigits, nullptr);
   }
+
   Layout value = Float<double>::Builder(v).createLayout(floatDisplayMode, significantDigits, nullptr);
-  Layout unit = fieldUnit();
+  /* Check the global context to know whether units need an underscore. */
+  Context * globalContext = AppsContainer::sharedAppsContainer()->globalContext();
+  Layout unit = Expression::Parse(rawUnit(), globalContext).createLayout(floatDisplayMode, significantDigits, globalContext);
   if (unit.isUninitialized()) {
     return value;
   }
+  unit = replaceFractionWithSlash(unit);
+
   HorizontalLayout res = HorizontalLayout::Builder();
   res.addOrMergeChildAtIndex(value, 0, false);
   res.addOrMergeChildAtIndex(CodePointLayout::Builder(' '), res.numberOfChildren(), false);
@@ -349,10 +368,6 @@ double BoilingPointDataField::getDouble(AtomicNumber z) const {
 
 double DensityDataField::getDouble(AtomicNumber z) const {
   return ElementsDataBase::Density(z);
-}
-
-Layout DensityDataField::fieldUnit() const {
-  return HorizontalLayout::Builder(LayoutHelper::String("_g/_cm"), VerticalOffsetLayout::Builder(CodePointLayout::Builder('3'), VerticalOffsetLayoutNode::Position::Superscript));
 }
 
 // AffinityDataField

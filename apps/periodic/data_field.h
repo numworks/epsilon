@@ -59,9 +59,7 @@ public:
   ColorPair getColors(AtomicNumber z) const override;
 
 private:
-  /* Units must be created by hand as we want to mix inline division with
-   * superscripts for density. */
-  virtual Poincare::Layout fieldUnit() const = 0;
+  virtual const char * rawUnit() const = 0;
   virtual ColorPair minColors() const { return ColorPair(); }
   virtual ColorPair maxColors() const { return ColorPair(); }
   uint8_t blendAlphaForContinuousParameter(AtomicNumber z) const;
@@ -137,7 +135,7 @@ public:
   I18n::Message fieldLegend() const override { return I18n::Message::PeriodicMassLegend; }
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicMassSymbol; }
   double getDouble(AtomicNumber z) const override;
-  Poincare::Layout fieldUnit() const override { return Poincare::LayoutHelper::String("_g/_mol"); }
+  const char * rawUnit() const override { return "_g/_mol"; }
 };
 
 class ElectronegativityDataField : public DoubleDataField {
@@ -145,7 +143,7 @@ public:
   I18n::Message fieldLegend() const override { return I18n::Message::PeriodicElectronegativityLegend; }
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicElectronegativitySymbol; }
   double getDouble(AtomicNumber z) const override;
-  Poincare::Layout fieldUnit() const override { return Poincare::Layout(); }
+  const char * rawUnit() const override { return ""; }
   ColorPair minColors() const override { return ColorPair(Palette::ElementRedDark, Palette::ElementRedLight); }
   ColorPair maxColors() const override { return ColorPair(Palette::ElementGreenDark, Palette::ElementGreenLight); }
 };
@@ -155,7 +153,7 @@ public:
   I18n::Message fieldLegend() const override { return I18n::Message::PeriodicRadiusLegend; }
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicRadiusSymbol; }
   double getDouble(AtomicNumber z) const override;
-  Poincare::Layout fieldUnit() const override { return Poincare::LayoutHelper::String("_pm"); }
+  const char * rawUnit() const override { return "_pm"; }
 };
 
 class MeltingPointDataField : public DoubleDataFieldWithSubscriptSymbol {
@@ -163,7 +161,7 @@ public:
   I18n::Message fieldLegend() const override { return I18n::Message::PeriodicMeltingPointLegend; }
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicMeltingPointSymbol; }
   double getDouble(AtomicNumber z) const override;
-  Poincare::Layout fieldUnit() const override { return Poincare::LayoutHelper::String("_°C"); }
+  const char * rawUnit() const override { return "_°C"; }
   I18n::Message fieldSubscript() const override { return I18n::Message::PeriodicMeltingPointSubscript; }
 };
 
@@ -172,7 +170,7 @@ public:
   I18n::Message fieldLegend() const override { return I18n::Message::PeriodicBoilingPointLegend; }
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicBoilingPointSymbol; }
   double getDouble(AtomicNumber z) const override;
-  Poincare::Layout fieldUnit() const override { return Poincare::LayoutHelper::String("_°C"); }
+  const char * rawUnit() const override { return "_°C"; }
   I18n::Message fieldSubscript() const override { return I18n::Message::PeriodicBoilingPointSubscript; }
 };
 
@@ -181,7 +179,7 @@ public:
   I18n::Message fieldLegend() const override { return I18n::Message::PeriodicDensityLegend; }
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicDensitySymbol; }
   double getDouble(AtomicNumber z) const override;
-  Poincare::Layout fieldUnit() const override;
+  const char * rawUnit() const override { return "_g/_cm^3"; }
 };
 
 class AffinityDataField : public DoubleDataFieldWithSubscriptSymbol {
@@ -190,7 +188,7 @@ public:
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicAffinitySymbol; }
   double getDouble(AtomicNumber z) const override;
   Poincare::Layout getLayout(AtomicNumber z, int significantDigits = k_defaultSignificantDigits) const override;
-  Poincare::Layout fieldUnit() const override { return Poincare::LayoutHelper::String("_kJ/_mol"); }
+  const char * rawUnit() const override { return "_kJ/_mol"; }
   I18n::Message fieldSubscript() const override { return I18n::Message::PeriodicAffinitySubscript; }
 };
 
@@ -199,7 +197,7 @@ public:
   I18n::Message fieldLegend() const override { return I18n::Message::PeriodicIonizationLegend; }
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicIonizationSymbol; }
   double getDouble(AtomicNumber z) const override;
-  Poincare::Layout fieldUnit() const override { return Poincare::LayoutHelper::String("_kJ/_mol"); }
+  const char * rawUnit() const override { return "_kJ/_mol"; }
   I18n::Message fieldSubscript() const override { return I18n::Message::PeriodicIonizationSubscript; }
 };
 

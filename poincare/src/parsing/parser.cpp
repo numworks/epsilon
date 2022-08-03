@@ -391,8 +391,16 @@ void Parser::parseComparisonOperator(Expression & leftHandSide, Token::Type stop
   Token::Type tokenType = m_currentToken.type();
   // If parsing for assignment, the equal has a lower precedence than logical operators
   stoppingType = tokenType == Token::AssignmentEqual ? Token::AssignmentEqual : Token::InferiorEqual;
+  assert(stoppingType >= tokenType);
   if (parseBinaryOperator(leftHandSide, rightHandSide, stoppingType)) {
-    leftHandSide = BuildForToken(tokenType, leftHandSide, rightHandSide);
+    if (ComparisonOperator::IsComparisonOperatorType(leftHandSide.type())) {
+      // "1<x<2" == "1<x and x<2"
+      // TODO: Make ComparisonOperatorNode n-ary
+      Expression rightOfComparison = leftHandSide.childAtIndex(1).clone();
+      leftHandSide = BinaryLogicalOperator::Builder(leftHandSide, BuildForToken(tokenType, rightOfComparison, rightHandSide), BinaryLogicalOperatorNode::OperatorType::And);
+    } else {
+      leftHandSide = BuildForToken(tokenType, leftHandSide, rightHandSide);
+    }
   }
 }
 

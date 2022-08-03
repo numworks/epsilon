@@ -200,8 +200,15 @@ Token Tokenizer::popToken() {
     return Token(Token::SouthEastArrow);
   case '%':
     return Token(Token::Percent);
-  case '=':
+  case '=': {
+    if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment) {
+      /* Change precedence of equal when assigning a function.
+       * This ensures that "f(x) = x and 1" is parsed as
+       * "f(x) = (x and 1)" and not "(f(x) = x) and 1" */
+      return Token(Token::AssignmentEqual);
+    }
     return Token(Token::Equal);
+  }
   case '>': {
     if (canPopCodePoint('=')) {
       return Token(Token::SuperiorEqual);

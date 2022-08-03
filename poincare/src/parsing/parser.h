@@ -75,11 +75,7 @@ private:
   void parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseCaret(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseCaretWithParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseComparisonOperator(Token::Equal, leftHandSide, stoppingType); }
-  void parseSuperior(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseComparisonOperator(Token::Superior, leftHandSide, stoppingType); }
-  void parseSuperiorEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseComparisonOperator(Token::SuperiorEqual, leftHandSide, stoppingType); }
-  void parseInferior(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseComparisonOperator(Token::Inferior, leftHandSide, stoppingType); }
-  void parseInferiorEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseComparisonOperator(Token::InferiorEqual, leftHandSide, stoppingType); }
+  void parseComparisonOperator(Expression & leftHandSide, Token::Type stoppingType);
   void parseNotOperator(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseAndOperator(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::And, leftHandSide, stoppingType); }
   void parseNandOperator(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Nand, leftHandSide, stoppingType); }
@@ -96,7 +92,6 @@ private:
   // Parsing helpers
   void privateParsePlusAndMinus(Expression & leftHandSide, bool plus, Token::Type stoppingType = (Token::Type)0);
   void privateParseEastArrow(Expression & leftHandSide, bool north, Token::Type stoppingType = (Token::Type)0);
-  void parseComparisonOperator(Token::Type tokenType, Expression & leftHandSide, Token::Type stoppingType);
   void parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType operatorType, Expression & leftHandSide, Token::Type stoppingType);
   bool parseBinaryOperator(const Expression & leftHandSide, Expression & rightHandSide, Token::Type stoppingType);
   Expression parseVector();

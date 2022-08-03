@@ -17,7 +17,8 @@ class Tokenizer {
 public:
   Tokenizer(const char * text, ParsingContext * parsingContext) :
     m_decoder(text),
-    m_identifierTokenizer(parsingContext)
+    m_identifierTokenizer(parsingContext),
+    m_parsingContext(parsingContext)
   {}
   Token popToken();
 
@@ -49,6 +50,7 @@ private:
 
   UTF8Decoder m_decoder;
   IdentifierTokenizer m_identifierTokenizer;
+  ParsingContext * m_parsingContext;
 };
 
 }

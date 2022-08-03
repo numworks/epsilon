@@ -82,7 +82,7 @@ Token::Type IdentifierTokenizer::stringTokenType(const char * string, size_t len
     // Only constants and units can be prefixed with a '_'
     return Token::Undefined;
   }
-  if (UTF8Helper::compareNonNullTerminatedStringWithNullTerminated(string, length, ListMinimum::s_functionHelper.aliasesList().mainAlias()) == 0) {
+  if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(string, length, ListMinimum::s_functionHelper.aliasesList().mainAlias()) == 0) {
     /* Special case for "min".
      * min() = minimum(), min = minute.
      * We handle this now so that min is never understood as a CustomIdentifier

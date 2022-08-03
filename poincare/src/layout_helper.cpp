@@ -26,7 +26,6 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
        && !(forbidOperator && forbidOperator(expression.childAtIndex(i - 1), expression.childAtIndex(i))))
       {
         Layout operatorLayout = String(operatorName, operatorLength);
-        assert(operatorLayout.type() == LayoutNode::Type::CodePointLayout);
         operatorLayout.setMargin(true);
         result.addOrMergeChildAtIndex(operatorLayout, result.numberOfChildren(), true);
       }

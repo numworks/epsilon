@@ -27,6 +27,19 @@ bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expres
     || (exactOutput.isOfType({ExpressionNode::Type::List, ExpressionNode::Type::Matrix}) && exactOutput.allChildrenAreUndefined())
     // Force all outputs to be ApproximateOnly if required by the exam mode configuration
     || ExamModeConfiguration::exactExpressionIsForbidden(exactOutput)
+      /* If the output contains the following types, we only display the
+       * approximate output. (this can occur for pi > 3 for example, since
+       * it's handle by approximation and not by reduction) */
+   || exactOutput.recursivelyMatches(
+        [](const Expression e, Context * c) {
+          return e.isOfType({
+            ExpressionNode::Type::Equal,
+            ExpressionNode::Type::InferiorEqual,
+            ExpressionNode::Type::SuperiorEqual,
+            ExpressionNode::Type::Inferior,
+            ExpressionNode::Type::Superior
+          });
+        }, context)
     /* If the input contains the following types, we only display the
       * approximate output. */
     || input.recursivelyMatches(

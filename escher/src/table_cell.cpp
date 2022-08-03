@@ -1,8 +1,8 @@
 #include <escher/table_cell.h>
 #include <escher/palette.h>
 #include <escher/metric.h>
-#include <algorithm>
 #include <ion/display.h>
+#include <algorithm>
 
 namespace Escher {
 
@@ -27,41 +27,31 @@ View * TableCell::subviewAtIndex(int index) {
   return  const_cast<View *>(accessoryView());
 }
 
-KDCoordinate TableCell::minimalHeightForOptimalDisplay(const View * label, const View * subLabel, const View * accessory, KDCoordinate minAccessoryWidth, KDCoordinate width) {
-  KDSize labelSize = label ? label->minimalSizeForOptimalDisplay() : KDSizeZero;
-  KDSize subLabelSize = subLabel ? subLabel->minimalSizeForOptimalDisplay() : KDSizeZero;
-  KDSize accessorySize = accessory ? accessory->minimalSizeForOptimalDisplay() : KDSizeZero;
-  KDCoordinate accessoryWidth =
-      std::max(accessorySize.width(), minAccessoryWidth);
+KDCoordinate TableCell::minimalHeightForOptimalDisplay(KDCoordinate minAccessoryWidth, KDCoordinate width) const {
+  KDSize labelSize = labelView() ? labelView()->minimalSizeForOptimalDisplay() : KDSizeZero;
+  KDSize subLabelSize = subLabelView() ? subLabelView()->minimalSizeForOptimalDisplay() : KDSizeZero;
+  KDSize accessorySize = accessoryView() ? accessoryView()->minimalSizeForOptimalDisplay() : KDSizeZero;
 
-  bool singleRow = singleRowMode(width, label, subLabel, accessoryWidth);
+  KDCoordinate accessoryWidth = std::max(accessorySize.width(), minAccessoryWidth);
+  bool singleRow = singleRowMode(width, labelView(), subLabelView(), accessoryWidth);
+  bool alignLabelAccessory = shouldAlignLabelAndAccessory() && 2 * k_separatorThickness + Metric::CellLeftMargin + Metric::CellRightMargin + subLabelSize.width() + Metric::CellHorizontalElementMargin + accessoryWidth > width;
 
-  KDCoordinate labelHeight = labelSize.height();
-  KDCoordinate subLabelHeight = subLabelSize.height();
-  // Compute minimal Height for Label and subLabel
-  KDCoordinate labelsHeight =
-      singleRow ? std::max(labelHeight, subLabelHeight)
-                : labelHeight + Metric::CellVerticalElementMargin + subLabelHeight;
-  /* Space required for bottom separator is not accounted for as it overlaps
-   * with neighbor cells. It is added to the frame in TableView, and exploited
-   * when layouting subviews. */
-  return k_separatorThickness + Metric::CellTopMargin + std::max(labelsHeight, accessorySize.height()) + Metric::CellBottomMargin;
+  KDCoordinate contentHeight = singleRow ? std::max(labelSize.height(), std::max(subLabelSize.height(), accessorySize.height()))
+                                         : alignLabelAccessory ? subLabelSize.height() + Metric::CellVerticalElementMargin + std::max(labelSize.height(), accessorySize.height())
+                                                               : std::max<KDCoordinate>(labelSize.height() + subLabelSize.height() + Metric::CellVerticalElementMargin, accessorySize.height());
+
+  return k_separatorThickness + Metric::CellTopMargin + contentHeight + Metric::CellBottomMargin;
 }
 
 KDSize TableCell::minimalSizeForOptimalDisplay() const {
   // TableCell's available width is necessary to compute its minimal height.
   KDCoordinate expectedWidth = m_frame.width();
   assert(expectedWidth > 0);
-  return KDSize(expectedWidth,
-                minimalHeightForOptimalDisplay(labelView(),
-                                               subLabelView(),
-                                               accessoryView(),
-                                               accessoryMinimalWidthOverridden(),
-                                               expectedWidth));
+  return KDSize(expectedWidth, minimalHeightForOptimalDisplay(accessoryMinimalWidthOverridden(), expectedWidth));
 }
 
 KDCoordinate cropIfOverflow(KDCoordinate value, KDCoordinate max) {
-  return std::min<KDCoordinate>(max, value);
+  return std::min(max, value);
 }
 
 void TableCell::layoutSubviews(bool force) {
@@ -133,19 +123,20 @@ void TableCell::layoutSubviews(bool force) {
       accessoryRect = KDRect(xEnd - accessoryWidth, accessoryY, accessoryWidth, accessoryHeight);
     }
   } else {  // Two rows
-    labelRect = KDRect(x, y, labelWidth, labelHeight);
-    /* Even if sublabel should be aligned to the right, we want it aligned left
-     * in a two row configuration. */
-    subLabelRect = KDRect(x, y + labelHeight + Metric::CellVerticalElementMargin, subLabelWidth, subLabelHeight);
-    KDCoordinate accessoryY = y + (shouldAlignLabelAndAccessory() ? 0 : (height - accessoryHeight) / 2);
-    if (giveAccessoryAllWidth()) {
-      KDCoordinate maxX =
-          leftOffset + Metric::CellVerticalElementMargin +
-          (shouldAlignLabelAndAccessory() ? labelWidth : std::max(labelWidth, subLabelWidth));
-      accessoryRect = KDRect(maxX, accessoryY, xEnd - maxX, accessoryHeight);
+    KDCoordinate firstRowHeight, firstColumnWidth, accessoryRowHeight;
+    if (shouldAlignLabelAndAccessory() && subLabelWidth + Metric::CellHorizontalElementMargin + accessoryWidth > width) {
+      firstRowHeight = std::max(labelHeight, accessoryHeight);
+      firstColumnWidth = labelWidth;
+      accessoryRowHeight = firstRowHeight;
     } else {
-      accessoryRect = KDRect(xEnd - accessoryWidth, accessoryY, accessoryWidth, accessoryHeight);
+      firstRowHeight = labelHeight;
+      firstColumnWidth = std::max(labelWidth, subLabelWidth);
+      accessoryRowHeight = height;
     }
+    KDCoordinate accessoryX = giveAccessoryAllWidth() ? leftOffset + Metric::CellHorizontalElementMargin + firstColumnWidth : xEnd - accessoryWidth;
+    labelRect = KDRect(x, y + (firstRowHeight - labelHeight) / 2, labelWidth, labelHeight);
+    subLabelRect = KDRect(x, y + firstRowHeight + Metric::CellVerticalElementMargin, subLabelWidth, subLabelHeight);
+    accessoryRect = KDRect(accessoryX, y + (accessoryRowHeight - accessoryHeight) / 2, xEnd - accessoryX, accessoryHeight);
   }
 
   // Set frames

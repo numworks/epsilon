@@ -12,8 +12,8 @@ $(call object_for,$(userland_src)): $(kandinsky_deps)
 
 userland_targets = $(addprefix $(BUILD_DIR)/,$(addsuffix .$(EXE),$(userland_target_variants)))
 
-USERLAND_LDFLAGS += -Lion/src/$(PLATFORM)/userland/flash -Lion/src/$(PLATFORM)/userland/flash/$(MODEL)
-USERLAND_LDDEPS += ion/src/$(PLATFORM)/userland/flash/userland_shared.ld ion/src/$(PLATFORM)/userland/flash/$(MODEL)/signature.ld ion/src/$(PLATFORM)/userland/flash/$(MODEL)/external_apps.ld
+USERLAND_LDFLAGS += -Lion/src/$(PLATFORM)/userland/flash
+USERLAND_LDDEPS += ion/src/$(PLATFORM)/userland/flash/userland_shared.ld
 
 define rule_for_flavored_userland
 $(1): $$(call flavored_object_for, \

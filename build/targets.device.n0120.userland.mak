@@ -1,1 +1,1 @@
-include build/targets.device.dual_slots.userland.mak
+include build/targets.device.userland.mak

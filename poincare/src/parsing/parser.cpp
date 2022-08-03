@@ -105,49 +105,49 @@ Expression Parser::initializeFirstTokenAndParseUntilEnd() {
 Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide) {
   typedef void (Parser::*TokenParser)(Expression & leftHandSide, Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
-    &Parser::parseUnexpected,      // Token::EndOfStream
-    &Parser::parseUnexpected,      // Token::RightSystemParenthesis
-    &Parser::parseUnexpected,      // Token::RightBracket
-    &Parser::parseUnexpected,      // Token::RightParenthesis
-    &Parser::parseUnexpected,      // Token::RightBrace
-    &Parser::parseUnexpected,      // Token::Comma
-    &Parser::parseRightwardsArrow, // Token::RightwardsArrow
-    &Parser::parseNorOperator,     // Token::Nor
-    &Parser::parseXorOperator,     // Token::Xor
-    &Parser::parseOrOperator,      // Token::Or
-    &Parser::parseNandOperator,    // Token::Nand
-    &Parser::parseAndOperator,     // Token::And
-    &Parser::parseNotOperator,     // Token::Not
-    &Parser::parseEqual,           // Token::Equal
-    &Parser::parseSuperior,        // Token::Superior
-    &Parser::parseSuperiorEqual,   // Token::SuperiorEqual
-    &Parser::parseInferior,        // Token::Inferior
-    &Parser::parseInferiorEqual,   // Token::InferiorEqual
-    &Parser::parseNorthEastArrow,  // Token::NorthEastArrow
-    &Parser::parseSouthEastArrow,  // Token::SouthEastArrow
-    &Parser::parsePlus,            // Token::Plus
-    &Parser::parseMinus,           // Token::Minus
-    &Parser::parseTimes,           // Token::Times
-    &Parser::parseSlash,           // Token::Slash
-    &Parser::parseImplicitTimes,   // Token::ImplicitTimes
-    &Parser::parsePercent,         // Token::Percent
-    &Parser::parseCaret,           // Token::Power
-    &Parser::parseBang,            // Token::Bang
+    &Parser::parseUnexpected,           // Token::EndOfStream
+    &Parser::parseUnexpected,           // Token::RightSystemParenthesis
+    &Parser::parseUnexpected,           // Token::RightBracket
+    &Parser::parseUnexpected,           // Token::RightParenthesis
+    &Parser::parseUnexpected,           // Token::RightBrace
+    &Parser::parseUnexpected,           // Token::Comma
+    &Parser::parseRightwardsArrow,      // Token::RightwardsArrow
+    &Parser::parseNorOperator,          // Token::Nor
+    &Parser::parseXorOperator,          // Token::Xor
+    &Parser::parseOrOperator,           // Token::Or
+    &Parser::parseNandOperator,         // Token::Nand
+    &Parser::parseAndOperator,          // Token::And
+    &Parser::parseNotOperator,          // Token::Not
+    &Parser::parseComparisonOperator,   // Token::Equal
+    &Parser::parseComparisonOperator,   // Token::Superior
+    &Parser::parseComparisonOperator,   // Token::SuperiorEqual
+    &Parser::parseComparisonOperator,   // Token::Inferior
+    &Parser::parseComparisonOperator,   // Token::InferiorEqual
+    &Parser::parseNorthEastArrow,       // Token::NorthEastArrow
+    &Parser::parseSouthEastArrow,       // Token::SouthEastArrow
+    &Parser::parsePlus,                 // Token::Plus
+    &Parser::parseMinus,                // Token::Minus
+    &Parser::parseTimes,                // Token::Times
+    &Parser::parseSlash,                // Token::Slash
+    &Parser::parseImplicitTimes,        // Token::ImplicitTimes
+    &Parser::parsePercent,              // Token::Percent
+    &Parser::parseCaret,                // Token::Power
+    &Parser::parseBang,                 // Token::Bang
     &Parser::parseCaretWithParenthesis, // Token::CaretWithParenthesis
-    &Parser::parseMatrix,          // Token::LeftBracket
-    &Parser::parseLeftParenthesis, // Token::LeftParenthesis
-    &Parser::parseList,            // Token::LeftBrace
-    &Parser::parseLeftSystemParenthesis, // Token::LeftSystemParenthesis
-    &Parser::parseEmpty,           // Token::Empty
-    &Parser::parseConstant,        // Token::Constant
-    &Parser::parseNumber,          // Token::Number
-    &Parser::parseNumber,          // Token::BinaryNumber
-    &Parser::parseNumber,          // Token::HexadecimalNumber
-    &Parser::parseUnit,            // Token::Unit
-    &Parser::parseReservedFunction,// Token::ReservedFunction
-    &Parser::parseSpecialIdentifier, // Token::SpecialIdentifier
-    &Parser::parseCustomIdentifier, // Token::CustomIdentifier
-    &Parser::parseUnexpected       // Token::Undefined
+    &Parser::parseMatrix,               // Token::LeftBracket
+    &Parser::parseLeftParenthesis,      // Token::LeftParenthesis
+    &Parser::parseList,                 // Token::LeftBrace
+    &Parser::parseLeftSystemParenthesis,// Token::LeftSystemParenthesis
+    &Parser::parseEmpty,                // Token::Empty
+    &Parser::parseConstant,             // Token::Constant
+    &Parser::parseNumber,               // Token::Number
+    &Parser::parseNumber,               // Token::BinaryNumber
+    &Parser::parseNumber,               // Token::HexadecimalNumber
+    &Parser::parseUnit,                 // Token::Unit
+    &Parser::parseReservedFunction,     // Token::ReservedFunction
+    &Parser::parseSpecialIdentifier,    // Token::SpecialIdentifier
+    &Parser::parseCustomIdentifier,     // Token::CustomIdentifier
+    &Parser::parseUnexpected            // Token::Undefined
   };
   do {
     popToken();
@@ -368,6 +368,7 @@ void Parser::parseCaretWithParenthesis(Expression & leftHandSide, Token::Type st
 Expression BuildForToken(Token::Type tokenType, Expression & leftHandSide, Expression & rightHandSide) {
   switch (tokenType) {
   case Token::Equal:
+  case Token::AssignmentEqual:
     return Equal::Builder(leftHandSide, rightHandSide);
   case Token::Superior:
     return Superior::Builder(leftHandSide, rightHandSide);
@@ -381,13 +382,16 @@ Expression BuildForToken(Token::Type tokenType, Expression & leftHandSide, Expre
   }
 }
 
-void Parser::parseComparisonOperator(Token::Type tokenType, Expression & leftHandSide, Token::Type stoppingType) {
+void Parser::parseComparisonOperator(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Comparison operator must have a left operand
     return;
   }
   Expression rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::InferiorEqual)) {
+  Token::Type tokenType = m_currentToken.type();
+  // If parsing for assignment, the equal has a lower precedence than logical operators
+  stoppingType = tokenType == Token::AssignmentEqual ? Token::AssignmentEqual : Token::InferiorEqual;
+  if (parseBinaryOperator(leftHandSide, rightHandSide, stoppingType)) {
     leftHandSide = BuildForToken(tokenType, leftHandSide, rightHandSide);
   }
 }

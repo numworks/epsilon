@@ -388,14 +388,7 @@ void Parser::parseComparisonOperator(Token::Type tokenType, Expression & leftHan
   }
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::InferiorEqual)) {
-    /* We parse until finding a token of lesser precedence than InferiorEqual.
-     * The next token is thus either EndOfStream, RightwardsArrow or another
-     * operator. */
     leftHandSide = BuildForToken(tokenType, leftHandSide, rightHandSide);
-  }
-  if (!m_nextToken.is(Token::EndOfStream)) {
-    m_status = Status::Error; // Operator should be top-most expression in Tree
-    return;
   }
 }
 

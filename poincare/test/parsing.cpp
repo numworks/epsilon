@@ -342,6 +342,7 @@ QUIZ_CASE(poincare_parsing_constants) {
 
 QUIZ_CASE(poincare_parsing_units) {
   // Units
+  Shared::GlobalContext context;
   for (int i = 0; i < Unit::Representative::k_numberOfDimensions; i++) {
     const Unit::Representative * dim = Unit::Representative::DefaultRepresentatives()[i];
     for (int j = 0; j < dim->numberOfRepresentatives(); j++) {
@@ -351,11 +352,15 @@ QUIZ_CASE(poincare_parsing_units) {
       Unit::Builder(rep, Unit::Prefix::EmptyPrefix()).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
       Expression unit = parse_expression(buffer, nullptr, false);
       quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
+      unit = parse_expression(buffer + 1, &context, false); // Try without '_'. This need a context or everything without '_' is understood as variable.
+      quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
       if (rep->isInputPrefixable()) {
         for (size_t i = 0; i < Unit::Prefix::k_numberOfPrefixes; i++) {
           const Unit::Prefix * pre = Unit::Prefix::Prefixes();
           Unit::Builder(rep, pre).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
           Expression unit = parse_expression(buffer, nullptr, false);
+          quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
+          unit = parse_expression(buffer, &context, false); // Try without '_'. This need a context or everything without '_' is understood as variable.
           quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
         }
       }
@@ -586,6 +591,8 @@ QUIZ_CASE(poincare_parsing_parse_store) {
   assert_text_not_parsable("1→\1"); // UnknownX
   assert_text_not_parsable("1→\2"); // UnknownN
   assert_text_not_parsable("1→acos");
+  assert_text_not_parsable("x→tan(x)");
+  assert_text_not_parsable("3→min");
   assert_text_not_parsable("1→f(f)");
 }
 

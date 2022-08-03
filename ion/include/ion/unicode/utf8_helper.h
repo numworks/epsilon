@@ -38,7 +38,7 @@ bool HasCodePoint(const char * s, CodePoint c, const char * stoppingPosition = n
 const char * NotCodePointSearch(const char * s, CodePoint c, bool goingLeft = false, const char * initialPosition = nullptr);
 
 // Compare similarly to strcmp
-int compareNonNullTerminatedStringWithNullTerminated(const char * nonNullTerminatedString, size_t nonNullTerminatedStringLength, const char * nullTerminatedString);
+int CompareNonNullTerminatedStringWithNullTerminated(const char * nonNullTerminatedString, size_t nonNullTerminatedStringLength, const char * nullTerminatedString);
 
 /* Copy src into dst while removing all code points in codePoints. Ensure null-
  * termination of dst. */

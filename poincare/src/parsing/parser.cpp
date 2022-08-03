@@ -730,10 +730,12 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
        * If we decide that functions can be assigned with any parameter,
        * this will ensure that f(abc)=abc is understood like f(x)=x
        */
+      Context * previousContext = m_parsingContext.context();
       VariableContext functionAssignmentContext(static_cast<Symbol &>(parameter), m_parsingContext.context());
       m_parsingContext.setContext(&functionAssignmentContext);
       // We have to parseUntil here so that we do not lose the functionAssignmentContext pointer.
       leftHandSide = parseUntil(stoppingType, result);
+      m_parsingContext.setContext(previousContext);
       return;
     }
   }

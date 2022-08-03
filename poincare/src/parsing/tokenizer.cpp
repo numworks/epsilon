@@ -1,9 +1,6 @@
 #include "tokenizer.h"
 #include "helper.h"
 #include "parser.h"
-#include <poincare/based_integer.h>
-#include <poincare/constant.h>
-#include <poincare/number.h>
 
 namespace Poincare {
 

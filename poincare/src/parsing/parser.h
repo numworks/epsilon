@@ -7,9 +7,10 @@
  * and
  *   an efficient but less readable shunting-yard parser. */
 
+#include "helper.h"
 #include "tokenizer.h"
 #include "parsing_context.h"
-#include <poincare/logical_operator.h>
+
 
 namespace Poincare {
 

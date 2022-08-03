@@ -17,6 +17,11 @@ public:
   enum Type {
     // Ordered from lower to higher precedence to make Parser's job easier
     EndOfStream = 0, // Must be the first
+    RightSystemParenthesis,
+    RightBracket,
+    RightParenthesis,
+    RightBrace,
+    Comma,
     RightwardsArrow,
     Nor,
     Xor,
@@ -29,11 +34,6 @@ public:
     SuperiorEqual,
     Inferior,
     InferiorEqual,
-    RightSystemParenthesis,
-    RightBracket,
-    RightParenthesis,
-    RightBrace,
-    Comma,
     NorthEastArrow,
     SouthEastArrow,
     Plus,

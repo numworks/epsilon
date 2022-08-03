@@ -82,6 +82,13 @@ Token::Type IdentifierTokenizer::stringTokenType(const char * string, size_t len
     // Only constants and units can be prefixed with a '_'
     return Token::Undefined;
   }
+  if (strncmp(string, ListMinimum::s_functionHelper.aliasesList().mainAlias(), length) == 0) {
+    /* Special case for "min".
+     * min() = minimum(), min = minute.
+     * We handle this now so that min is never understood as a CustomIdentifier
+     * (3->min is not allowed, just like 3->cos) */
+    return *(string + length) == '(' ? Token::ReservedFunction : Token::Unit;
+  }
   if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
     return Token::ReservedFunction;
   }

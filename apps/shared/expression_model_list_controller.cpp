@@ -4,7 +4,7 @@
 #include <escher/even_odd_expression_cell.h>
 #include <escher/selectable_table_view.h>
 #include <ion/events.h>
-#include <layout_events.h>
+#include <ion/keyboard/layout_events.h>
 #include <poincare/symbol.h>
 #include <algorithm>
 

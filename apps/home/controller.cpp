@@ -3,7 +3,7 @@
 #include <apps/home/apps_layout.h>
 #include "../apps_container.h"
 #include "../exam_mode_configuration.h"
-#include <layout_events.h>
+#include <ion/keyboard/layout_events.h>
 #include <poincare/preferences.h>
 
 extern "C" {

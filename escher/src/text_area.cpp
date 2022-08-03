@@ -4,7 +4,7 @@
 #include <ion/events.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
-#include <layout_events.h>
+#include <ion/keyboard/layout_events.h>
 #include <poincare/serialization_helper.h>
 
 #include <stddef.h>

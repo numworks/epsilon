@@ -1,7 +1,7 @@
 #include <escher/layout_field.h>
 #include <escher/clipboard.h>
 #include <escher/text_field.h>
-#include <layout_events.h>
+#include <ion/keyboard/layout_events.h>
 #include <poincare/expression.h>
 #include <poincare/empty_layout.h>
 #include <poincare/horizontal_layout.h>

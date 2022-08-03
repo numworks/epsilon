@@ -1,12 +1,12 @@
-#ifndef ION_KEYBOARD_LAYOUT_B2_LAYOUT_H
-#define ION_KEYBOARD_LAYOUT_B2_LAYOUT_H
+#ifndef ION_KEYBOARD_LAYOUT_LAYOUT_H
+#define ION_KEYBOARD_LAYOUT_LAYOUT_H
 
 namespace Ion {
 namespace Keyboard {
 
 enum class Key : uint8_t {
   Left=0,  Up=1,     Down=2,    Right=3,           OK=4,              Back=5,
-  Home=6,  OnOff=7,  /*B3= 8,   B4=9,            B5=10,             B6=11, */
+  Home=6,  /*B2=7,*/ OnOff=8,   /*B4=9,            B5=10,             B6=11, */
   Shift=12,Alpha=13, XNT=14,    Var=15,            Toolbox=16,        Backspace=17,
   Exp=18,  Ln=19,    Log=20,    Imaginary=21,      Comma=22,          Power=23,
   Sine=24, Cosine=25,Tangent=26,Pi=27,             Sqrt=28,           Square=29,

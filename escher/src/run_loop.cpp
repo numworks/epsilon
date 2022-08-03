@@ -3,7 +3,7 @@
 #include <assert.h>
 #if ESCHER_LOG_EVENTS_NAME
 #include <ion/console.h>
-#include <layout_events.h>
+#include <ion/keyboard/layout_events.h>
 #endif
 
 namespace Escher {

@@ -2,7 +2,7 @@
 #include "events_modifier.h"
 #include <ion/keyboard.h>
 #include <ion/timing.h>
-#include <layout_events.h>
+#include <ion/keyboard/layout_events.h>
 #include <limits.h>
 #include <algorithm>
 #include <string.h>

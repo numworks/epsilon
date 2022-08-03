@@ -9,7 +9,7 @@
 #include <ion/src/shared/keyboard_queue.h>
 #include <assert.h>
 #include <algorithm>
-#include <layout_events.h>
+#include <ion/keyboard/layout_events.h>
 
 #if ESCHER_LOG_EVENTS_NAME
 #include <ion/console.h>

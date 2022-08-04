@@ -53,6 +53,7 @@ public:
     NotOperator,
     BinaryLogicalOperator,
     Equal,
+    NotEqual,
     Superior,
     Inferior,
     SuperiorEqual,

@@ -146,13 +146,14 @@ CodePoint ContinuousFunction::symbol() const {
   }
 }
 
-static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 1 == static_cast<uint8_t>(ExpressionNode::Type::Superior), "equationType() relies on this type order");
-static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 2 == static_cast<uint8_t>(ExpressionNode::Type::Inferior), "equationType() relies on this type order");
-static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 3 == static_cast<uint8_t>(ExpressionNode::Type::SuperiorEqual), "equationType() relies on this type order");
-static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 4 == static_cast<uint8_t>(ExpressionNode::Type::InferiorEqual), "equationType() relies on this type order");
+static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 1 == static_cast<uint8_t>(ExpressionNode::Type::NotEqual), "equationType() relies on this type order");
+static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 2 == static_cast<uint8_t>(ExpressionNode::Type::Superior), "equationType() relies on this type order");
+static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 3 == static_cast<uint8_t>(ExpressionNode::Type::Inferior), "equationType() relies on this type order");
+static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 4 == static_cast<uint8_t>(ExpressionNode::Type::SuperiorEqual), "equationType() relies on this type order");
+static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 5 == static_cast<uint8_t>(ExpressionNode::Type::InferiorEqual), "equationType() relies on this type order");
 
 CodePoint ContinuousFunction::equationSymbol() const {
-  constexpr static CodePoint k_equationSymbols[] = { '=', '>', '<', UCodePointSuperiorEqual, UCodePointInferiorEqual};
+  constexpr static CodePoint k_equationSymbols[] = { '=', UCodePointNotEqual, '>', '<', UCodePointSuperiorEqual, UCodePointInferiorEqual};
   return k_equationSymbols[static_cast<uint8_t>(equationType()) - static_cast<uint8_t>(ExpressionNode::Type::Equal)];
 }
 

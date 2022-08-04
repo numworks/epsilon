@@ -37,8 +37,7 @@ bool ParsingHelper::IsSpecialIdentifierName(const char * name, size_t nameLength
 }
 
 bool ParsingHelper::IsLogicalOperator(const char * name, size_t nameLength, Token::Type * returnType) {
-  // TODO: Factorize non null terminated comparison with AliasesList
-  if (strncmp(name, NotOperatorNode::k_name, nameLength) == 0 && *(NotOperatorNode::k_name + nameLength + 1) == 0) {
+  if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(name, nameLength, NotOperatorNode::k_name) == 0) {
     *returnType = Token::Not;
     return true;
   }

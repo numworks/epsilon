@@ -10,9 +10,14 @@ public:
   template<typename T> static bool IsApproximativelyNotZero(T x);
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
-    stream << operatorName();
+    stream << "LogicalOperator";
   }
+void logAttributes(std::ostream & stream) const override{
+  stream << " operator=\"" << operatorName();
+}
 #endif
+protected:
+  constexpr static int k_sizeOfNameBuffer = 4 + 2 + 1; // "nand" + 2*" " + nullTermination
   virtual const char * operatorName() const = 0;
 private:
   LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::BoundaryPunctuation; };
@@ -26,8 +31,9 @@ public:
   size_t size() const override { return sizeof(NotOperatorNode); }
   Type type() const override { return Type::NotOperator; }
   int numberOfChildren() const override { return 1; }
-  const char * operatorName() const override { return k_name; }
 private:
+  const char * operatorName() const override { return k_name; }
+
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
@@ -70,7 +76,6 @@ public:
   int numberOfChildren() const override { return 2; }
 
   void setOperatorType(OperatorType type) { m_typeOfOperator = type; }
-  const char * operatorName() const override;
   bool evaluate(bool a, bool b) const;
 
 private:
@@ -87,6 +92,8 @@ private:
     {OperatorType::Nor, "nor"}
   };
   static_assert(sizeof(k_operatorNames) / sizeof(OperatorName) == k_numberOfOperators, "Wrong number of binary logical operators");
+
+  const char * operatorName() const override;
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;

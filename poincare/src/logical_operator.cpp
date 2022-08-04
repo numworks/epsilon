@@ -4,9 +4,21 @@
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
+#include <ion/unicode/utf8_helper.h>
 #include <cmath>
 
 namespace Poincare {
+
+void fillBufferWithStartingAndEndingSpace(char * nameBuffer, int sizeOfBuffer, const char * operatorName, bool startingSpace) {
+  int currentIndex = 0;
+  if (startingSpace) {
+    nameBuffer[0] = ' ';
+    currentIndex++;
+  }
+  currentIndex += strlcpy(nameBuffer + currentIndex, operatorName, sizeOfBuffer - currentIndex);
+  nameBuffer[currentIndex] = ' ';
+  nameBuffer[currentIndex + 1] = 0;
+}
 
 template<typename T>
 bool LogicalOperatorNode::IsApproximativelyNotZero(T x) {
@@ -16,11 +28,15 @@ bool LogicalOperatorNode::IsApproximativelyNotZero(T x) {
 // Not Operator
 
 Layout NotOperatorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(NotOperator(this), floatDisplayMode, numberOfSignificantDigits, k_name, context);
+  char nameBuffer[k_sizeOfNameBuffer];
+  fillBufferWithStartingAndEndingSpace(nameBuffer, k_sizeOfNameBuffer, operatorName(), false);
+  return LayoutHelper::Prefix(NotOperator(this), floatDisplayMode, numberOfSignificantDigits, nameBuffer, context);
 }
 
 int NotOperatorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, k_name);
+  char nameBuffer[k_sizeOfNameBuffer];
+  fillBufferWithStartingAndEndingSpace(nameBuffer, k_sizeOfNameBuffer, operatorName(), false);
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, nameBuffer);
 }
 
 template<typename T>
@@ -66,7 +82,7 @@ Expression NotOperator::shallowReduce(const ExpressionNode::ReductionContext& re
 
 bool BinaryLogicalOperatorNode::IsBinaryLogicalOperator(const char * name, int nameLength, OperatorType * type) {
   for (int i = 0; i < k_numberOfOperators; i++) {
-    if (strncmp(name, k_operatorNames[i].name, nameLength + 1) == 0) {
+    if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(name, nameLength, k_operatorNames[i].name) == 0) {
       if (type) {
         *type = k_operatorNames[i].type;
       }
@@ -106,11 +122,15 @@ bool BinaryLogicalOperatorNode::evaluate(bool a, bool b) const {
 }
 
 Layout BinaryLogicalOperatorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Infix(BinaryLogicalOperator(this), floatDisplayMode, numberOfSignificantDigits, operatorName(), context);
+  char nameBuffer[k_sizeOfNameBuffer];
+  fillBufferWithStartingAndEndingSpace(nameBuffer, k_sizeOfNameBuffer, operatorName(), true);
+  return LayoutHelper::Infix(BinaryLogicalOperator(this), floatDisplayMode, numberOfSignificantDigits, nameBuffer, context);
 }
 
 int BinaryLogicalOperatorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, operatorName());
+  char nameBuffer[k_sizeOfNameBuffer];
+  fillBufferWithStartingAndEndingSpace(nameBuffer, k_sizeOfNameBuffer, operatorName(), true);
+  return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, nameBuffer);
 }
 
 template<typename T>

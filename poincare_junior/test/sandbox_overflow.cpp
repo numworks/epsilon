@@ -15,12 +15,11 @@ void testOverflowTreeSandbox(TreeCache * cache, TreeSandbox * sandbox) {
   int treeId = cache->storeLastTree();
   print();
 
-  std::cout << "\n---------------- Fill cache with copies until full" << std::endl;
+  std::cout << "\n---------------- Fill cache with copies until cache is emptied and initial tree disappear" << std::endl;
   bool executed;
   do {
     executed = sandbox->execute(treeId, [](TypeTreeBlock *, TreeSandbox * sandbox) {});
     cache->storeLastTree();
     print();
   } while (executed);
-    print();
 }

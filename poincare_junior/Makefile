@@ -8,6 +8,7 @@ include build/platform.$(PLATFORM).mak
 include build/toolchain.$(TOOLCHAIN).mak
 
 poincare_junior_src += $(addprefix poincare_junior/,\
+  exception_checkpoint.o \
   helpers.o \
   handle.o \
   tree_block.o \

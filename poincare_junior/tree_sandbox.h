@@ -15,6 +15,8 @@ public:
     m_size(size)
   {}
 
+  void reset() { m_numberOfBlocks = 0; }
+
   typedef void (*TreeEditor)(TypeTreeBlock * tree, TreeSandbox * sandbox);
   bool execute(TypeTreeBlock * address, TreeEditor action);
   bool execute(int treeId, TreeEditor action);

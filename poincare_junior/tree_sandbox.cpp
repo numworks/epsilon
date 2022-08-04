@@ -1,7 +1,8 @@
-#include "tree_cache.h"
-#include "helpers.h"
-#include "tree_sandbox.h"
 #include <assert.h>
+#include "exception_checkpoint.h"
+#include "helpers.h"
+#include "tree_cache.h"
+#include "tree_sandbox.h"
 
 namespace Poincare {
 
@@ -88,7 +89,7 @@ TypeTreeBlock * TreeSandbox::copyTreeFromAddress(const void * address) {
 
 bool TreeSandbox::checkForEnoughSpace(size_t numberOfRequiredBlock) {
   if (m_numberOfBlocks + numberOfRequiredBlock > m_size) {
-    // TODO raise sandbox memory full error
+    ExceptionCheckpoint::Raise();
     return false;
   }
   return true;
@@ -106,16 +107,18 @@ void TreeSandbox::freePoolFromNode(TreeBlock * firstBlockToDiscard) {
 }
 
 bool TreeSandbox::privateExecuteAction(TreeEditor action, TypeTreeBlock * address, int treeId) {
+  ExceptionCheckpoint checkpoint;
 start_execute:
-  if (true) {//if (setCheckpoint()) { // TODO
-    if (!address) {
+  if (ExceptionRun(checkpoint)) {
+    TypeTreeBlock * treeAddress = address;
+    if (!treeAddress) {
       assert(treeId >= 0);
-      address = TreeCache::sharedCache()->treeForIdentifier(treeId);
-      if (!address) {
+      treeAddress = TreeCache::sharedCache()->treeForIdentifier(treeId);
+      if (!treeAddress) {
         return false;
       }
     }
-    TypeTreeBlock * tree = copyTreeFromAddress(address);
+    TypeTreeBlock * tree = copyTreeFromAddress(treeAddress);
     if (!tree) {
       return false;
     }

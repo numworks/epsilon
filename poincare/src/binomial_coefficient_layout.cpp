@@ -96,7 +96,7 @@ void BinomialCoefficientLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 }
 
 int BinomialCoefficientLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomialCoefficient::s_functionHelper.aliasesList().mainAlias(), true);
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomialCoefficient::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::TypeOfParenthesis::System);
 }
 
 KDSize BinomialCoefficientLayoutNode::computeSize(KDFont::Size font) {

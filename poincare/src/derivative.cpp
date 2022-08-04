@@ -48,7 +48,7 @@ Layout DerivativeNode::createLayout(Preferences::PrintFloatMode floatDisplayMode
 
 int DerivativeNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   int lastChildIndex = isFirstOrder() ? numberOfChildren() - 2 : numberOfChildren() - 1;
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.aliasesList().mainAlias(), false, lastChildIndex);
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Derivative::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::TypeOfParenthesis::Classic, lastChildIndex);
 }
 
 Expression DerivativeNode::shallowReduce(const ReductionContext& reductionContext) {

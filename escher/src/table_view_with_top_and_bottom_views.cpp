@@ -90,9 +90,34 @@ void TableViewWithTopAndBottomViews::reload() {
 
 KDRect TableViewWithTopAndBottomViews::tableFrame(KDCoordinate * yOffset) const {
   assert(yOffset);
+  /* This function is called after the inner table view has scrolled. We update
+   * its size and offset to maintain the illusion the three view are part of a
+   * seamless scroll. */
+
   if (*yOffset + m_table->bounds().height() <= bounds().height()) {
-    /* Top of the table can fit on screen. Assume the table goes all the way to
-     * the bottom of the screen. */
+    /* Top of the table can fit on screen. Increase the size and set the offset
+     * to zero. Doing so will move the top of the table and the top view, but
+     * not the table content. We make sure to not leave more space above the
+     * table than necessary to display the top view.
+     * - Old frame, after scroll:
+     *   +--------------------------+
+     *   |                          |
+     *   |  **********************  |   ^
+     *   |  * 1)  Hidden content *  |   | m_table->contentOffset().y()
+     *   |  +--------------------+  | ^ v
+     *   |  | 3)       Old table |  | |
+     *   |  | 4)           frame |  | | m_table->bounds().height()
+     *   +--------------------------+ v
+     * - New frame:
+     *   +--------------------------+
+     *   |                          |
+     *   |  +--------------------+  |
+     *   |  | 1)                 |  |
+     *   |  | 2)       New table |  |
+     *   |  | 3)           frame |  |
+     *   |  | 4)                 |  |
+     *   +--------------------------+
+     */
     KDCoordinate h = m_table->bounds().height() + *yOffset;
     *yOffset = 0;
     if (m_topView) {
@@ -102,14 +127,42 @@ KDRect TableViewWithTopAndBottomViews::tableFrame(KDCoordinate * yOffset) const 
     return KDRect(0, bounds().height() - h, bounds().width(), h);
   }
 
-  KDCoordinate bottom =  m_table->minimalSizeForOptimalDisplay().height() - *yOffset;
+  KDCoordinate fullTableHeight = m_table->minimalSizeForOptimalDisplay().height();
+  /* It is assumed that both top and bottom view cannot appear at the same
+   * time. It is the case in all current use cases. */
+  assert(fullTableHeight > bounds().height());
+  KDCoordinate bottom = fullTableHeight - *yOffset;
+
   if (bottom <= bounds().height()) {
-    /* Bottom of the table can fit on screen. Assume the table starts from the
-     * top of the screen. */
+    /* Bottom of the table can fit on screen. Increase the size to push down
+     * the bottom view.
+     * - Old frame, after scroll:
+     *      +--------------------+       ^ ^
+     *      |                    |       | | m_table->contentOffset().y()
+     *      |                    |       | |
+     *   +--------------------------+ ^  | v
+     *   |  | 4)       Old table |  | |  |
+     *   |  | 5)           frame |  | | m_table->bounds().height()
+     *   |  +--------------------+  | v  |
+     *   |  * 7)  Hidden content *  |    | m_table->minimalSizeForOptimalDisplay().height()
+     *   |  **********************  |    v
+     *   |                          |
+     *   +--------------------------+
+     * - New frame:
+     *   +--------------------------+
+     *   |  | 4)                 |  |
+     *   |  | 5)       New table |  |
+     *   |  | 6)           frame |  |
+     *   |  | 7)                 |  |
+     *   |  +--------------------+  |
+     *   |                          |
+     *   +--------------------------+
+     */
+
     if (m_bottomView) {
       m_table->setBottomMargin(k_verticalMargin);
       /* Margin has changed, recompute bottom */
-      bottom =  m_table->minimalSizeForOptimalDisplay().height() - *yOffset;
+      bottom = m_table->minimalSizeForOptimalDisplay().height() - *yOffset;
       KDCoordinate bottomViewTop = bounds().height() - m_bottomView->minimalSizeForOptimalDisplay().height() - k_verticalMargin;
       if (bottom < bottomViewTop) {
         *yOffset -= bottomViewTop - bottom;

@@ -43,6 +43,6 @@ private:
   View * m_bottomView;
 };
 
-}  // namespace Escher
+} // namespace Escher
 
 #endif /* ESCHER_TABLE_VIEW_WITH_TOP_AND_BOTTOM_VIEWS_H */

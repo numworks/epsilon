@@ -19,11 +19,11 @@ void SubappCell::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void SubappCell::setHighlighted(bool highlighted) {
-  KDColor backgroundColor = highlighted ? Palette::Select : KDColorWhite;
+  HighlightCell::setHighlighted(highlighted);
+  KDColor backgroundColor = defaultBackgroundColor();
   m_icon.setBackgroundColor(backgroundColor);
   m_title.setBackgroundColor(backgroundColor);
   m_subTitle.setBackgroundColor(backgroundColor);
-  HighlightCell::setHighlighted(highlighted);
 }
 
 View * SubappCell::subviewAtIndex(int i) {

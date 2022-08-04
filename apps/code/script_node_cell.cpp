@@ -34,7 +34,7 @@ const View * ScriptNodeCell::subLabelView() const {
 
 void ScriptNodeCell::setHighlighted(bool highlight) {
   TableCell::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = defaultBackgroundColor();
   m_labelView.setBackgroundColor(backgroundColor);
   m_subLabelView.setBackgroundColor(backgroundColor);
 }

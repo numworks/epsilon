@@ -155,6 +155,7 @@ uint32_t CodePoints[] = {
   0x221a,  // √ // SQUARE ROOT
   0x222b,  // ∫ // INTEGRAL
   0x2248,  // ≈ // ALMOST EQUAL TO
+  0x2260,  // ≠ // NOT EQUAL
   0x2264,  // ≤ // LESS-THAN OR EQUAL TO
   0x2265,  // ≥ // GREATER-THAN OR EQUAL TO
   0x27E8,  // ⟨ // LEFT ANGLE BRACKET

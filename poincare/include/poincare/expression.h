@@ -79,6 +79,7 @@ class Expression : public TreeHandle {
   friend class ListFunctionWithOneOrTwoParametersNode;
   friend class ListVariance;
   friend class Logarithm;
+  friend class LogicalOperatorNode;
   friend class Matrix;
   friend class MatrixIdentity;
   friend class MatrixInverse;

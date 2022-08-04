@@ -25,6 +25,23 @@ bool LogicalOperatorNode::IsApproximativelyNotZero(T x) {
   return x != 0.0 && std::fabs(x) >= Float<T>::EpsilonLax();
 }
 
+int LogicalOperatorNode::LogicalOperatorTypePrecedence(const ExpressionNode * operatorExpression) {
+  if (operatorExpression->type() == Type::NotOperator) {
+    return 2;
+  }
+  if (operatorExpression->type() == Type::BinaryLogicalOperator) {
+    const BinaryLogicalOperatorNode * binaryOperatorExpression = static_cast<const BinaryLogicalOperatorNode *>(operatorExpression);
+    BinaryLogicalOperatorNode::OperatorType operatorType = binaryOperatorExpression->operatorType();
+    return operatorType == BinaryLogicalOperatorNode::OperatorType::And || operatorType == BinaryLogicalOperatorNode::OperatorType::Nand ? 1 : 0;
+  }
+  return -1;
+}
+
+bool LogicalOperatorNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
+  int childPrecedence = LogicalOperatorTypePrecedence(child.node());
+  return childPrecedence != -1 && childPrecedence != LogicalOperatorTypePrecedence(this);
+}
+
 // Not Operator
 
 Layout NotOperatorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {

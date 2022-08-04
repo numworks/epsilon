@@ -8,6 +8,9 @@ namespace Poincare {
 class LogicalOperatorNode : public ExpressionNode {
 public:
   template<typename T> static bool IsApproximativelyNotZero(T x);
+  // not: 2, (and, nand): 1, (or, xor, nor): 0. -1 if not a logical operator type.
+  static int LogicalOperatorTypePrecedence(const ExpressionNode * operatorExpression);
+
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "LogicalOperator";
@@ -21,6 +24,7 @@ protected:
   virtual const char * operatorName() const = 0;
 private:
   LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::BoundaryPunctuation; };
+  bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 };
 
 // Not Operator
@@ -31,6 +35,7 @@ public:
   size_t size() const override { return sizeof(NotOperatorNode); }
   Type type() const override { return Type::NotOperator; }
   int numberOfChildren() const override { return 1; }
+
 private:
   const char * operatorName() const override { return k_name; }
 
@@ -75,6 +80,7 @@ public:
   size_t size() const override { return sizeof(BinaryLogicalOperatorNode); }
   int numberOfChildren() const override { return 2; }
 
+  OperatorType operatorType() const { return m_typeOfOperator; }
   void setOperatorType(OperatorType type) { m_typeOfOperator = type; }
   bool evaluate(bool a, bool b) const;
 

@@ -62,7 +62,7 @@ void PopUpController::ContentView::setSelectedButton(int selectedButton) {
 }
 
 int PopUpController::ContentView::selectedButton() {
-  return m_cancelButton.isHighlighted() ? 0 : 1;
+  return Container::activeApp()->firstResponder() == &m_cancelButton ? 0 : 1;
 }
 
 int PopUpController::ContentView::numberOfSubviews() const {

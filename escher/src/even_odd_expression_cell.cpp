@@ -14,7 +14,7 @@ EvenOddExpressionCell::EvenOddExpressionCell(float horizontalAlignment, float ve
 }
 
 void EvenOddExpressionCell::setHighlighted(bool highlight) {
-  if (highlight != EvenOddCell::isHighlighted()) {
+  if (highlight != isHighlighted()) {
     EvenOddCell::setHighlighted(highlight);
     m_expressionView.setBackgroundColor(backgroundColor());
   }

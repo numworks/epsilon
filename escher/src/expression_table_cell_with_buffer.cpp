@@ -19,8 +19,7 @@ const char * ExpressionTableCellWithBuffer::subLabelText() {
 
 void ExpressionTableCellWithBuffer::setHighlighted(bool highlight) {
   ExpressionTableCell::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
-  m_subLabelView.setBackgroundColor(backgroundColor);
+  m_subLabelView.setBackgroundColor(defaultBackgroundColor());
 }
 
 }

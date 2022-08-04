@@ -24,8 +24,7 @@ void MessageTableCellWithEditableTextWithMessage::setSubLabelMessage(I18n::Messa
 
 void MessageTableCellWithEditableTextWithMessage::setHighlighted(bool highlight) {
   MessageTableCellWithEditableText::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
-  m_subLabelView.setBackgroundColor(backgroundColor);
+  m_subLabelView.setBackgroundColor(defaultBackgroundColor());
 }
 
 void MessageTableCellWithEditableTextWithMessage::textFieldDidStartEditing(TextField * textField) {

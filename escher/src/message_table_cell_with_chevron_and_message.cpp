@@ -11,8 +11,7 @@ MessageTableCellWithChevronAndMessage::MessageTableCellWithChevronAndMessage(I18
 
 void MessageTableCellWithChevronAndMessage::setHighlighted(bool highlight) {
   MessageTableCellWithChevron::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
-  m_subtitleView.setBackgroundColor(backgroundColor);
+  m_subtitleView.setBackgroundColor(defaultBackgroundColor());
 }
 
 void MessageTableCellWithChevronAndMessage::setSubtitle(I18n::Message text) {

@@ -60,7 +60,7 @@ void FunctionCell::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void FunctionCell::setHighlighted(bool highlight) {
-  if (highlight != EvenOddCell::isHighlighted()) {
+  if (highlight != isHighlighted()) {
     EvenOddCell::setHighlighted(highlight);
     updateBackgrounds();
   }

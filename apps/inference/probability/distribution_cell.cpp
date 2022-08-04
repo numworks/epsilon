@@ -13,7 +13,7 @@ DistributionCell::DistributionCell() :
 
 void DistributionCell::reloadCell() {
   HighlightCell::reloadCell();
-  KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = defaultBackgroundColor();
   m_messageView.setBackgroundColor(backgroundColor);
   m_iconView.setBackgroundColor(backgroundColor);
 }

@@ -11,8 +11,7 @@ MessageTableCellWithExpression::MessageTableCellWithExpression(I18n::Message mes
 
 void MessageTableCellWithExpression::setHighlighted(bool highlight) {
   MessageTableCell::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
-  m_subtitleView.setBackgroundColor(backgroundColor);
+  m_subtitleView.setBackgroundColor(defaultBackgroundColor());
 }
 
 void MessageTableCellWithExpression::setLayout(Poincare::Layout layout) {

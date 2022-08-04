@@ -16,8 +16,7 @@ void MessageTableCellWithMessageWithBuffer::setAccessoryText(const char * textBo
 
 void MessageTableCellWithMessageWithBuffer::setHighlighted(bool highlight) {
   MessageTableCellWithMessage::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
-  m_accessoryView.setBackgroundColor(backgroundColor);
+  m_accessoryView.setBackgroundColor(defaultBackgroundColor());
 }
 
 }

@@ -11,8 +11,7 @@ MessageTableCellWithChevronAndBuffer::MessageTableCellWithChevronAndBuffer() :
 
 void MessageTableCellWithChevronAndBuffer::setHighlighted(bool highlight) {
   MessageTableCellWithChevron::setHighlighted(highlight);
-  KDColor backgroundColor = isHighlighted()? Palette::Select : KDColorWhite;
-  m_subLabelView.setBackgroundColor(backgroundColor);
+  m_subLabelView.setBackgroundColor(defaultBackgroundColor());
 }
 
 void MessageTableCellWithChevronAndBuffer::setSubLabelText(const char * textBody) {

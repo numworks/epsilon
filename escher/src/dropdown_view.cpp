@@ -57,7 +57,7 @@ View * PopupItemView::subviewAtIndex(int i) {
 }
 
 void PopupItemView::drawRect(KDContext * ctx, KDRect rect) const {
-  KDColor backgroundColor = isHighlighted() ? Palette::Select : KDColorWhite;
+  KDColor backgroundColor = defaultBackgroundColor();
   drawInnerRect(ctx, bounds(), backgroundColor);
   // When popping, the cell has no borders
   KDColor borderColor = m_isPoppingUp     ? backgroundColor

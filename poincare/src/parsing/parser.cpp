@@ -119,6 +119,7 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
     &Parser::parseAndOperator,          // Token::And
     &Parser::parseNotOperator,          // Token::Not
     &Parser::parseComparisonOperator,   // Token::Equal
+    &Parser::parseComparisonOperator,   // Token::NotEqual
     &Parser::parseComparisonOperator,   // Token::Superior
     &Parser::parseComparisonOperator,   // Token::SuperiorEqual
     &Parser::parseComparisonOperator,   // Token::Inferior
@@ -370,6 +371,8 @@ Expression BuildForToken(Token::Type tokenType, Expression & leftHandSide, Expre
   case Token::Equal:
   case Token::AssignmentEqual:
     return Equal::Builder(leftHandSide, rightHandSide);
+  case Token::NotEqual:
+    return NotEqual::Builder(leftHandSide, rightHandSide);
   case Token::Superior:
     return Superior::Builder(leftHandSide, rightHandSide);
   case Token::SuperiorEqual:

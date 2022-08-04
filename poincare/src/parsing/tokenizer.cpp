@@ -192,8 +192,12 @@ Token Tokenizer::popToken() {
     }
     return Token(Token::Caret);
   }
-  case '!':
+  case '!': {
+    if (canPopCodePoint('=')) {
+      return Token(Token::NotEqual);
+    }
     return Token(Token::Bang);
+  }
   case UCodePointNorthEastArrow:
     return Token(Token::NorthEastArrow);
   case UCodePointSouthEastArrow:
@@ -209,6 +213,8 @@ Token Tokenizer::popToken() {
     }
     return Token(Token::Equal);
   }
+  case UCodePointNotEqual:
+    return Token(Token::NotEqual);
   case '>': {
     if (canPopCodePoint('=')) {
       return Token(Token::SuperiorEqual);

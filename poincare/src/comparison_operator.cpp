@@ -75,6 +75,7 @@ bool ComparisonOperator::IsComparisonOperatorType(ExpressionNode::Type type) {
   case ExpressionNode::Type::SuperiorEqual:
   case ExpressionNode::Type::Inferior:
   case ExpressionNode::Type::InferiorEqual:
+  case ExpressionNode::Type::NotEqual:
     return true;
   default:
     return false;
@@ -107,6 +108,9 @@ ComparisonOperator::TrinaryBoolean ComparisonOperator::TrinaryTruthValue(Express
   assert(chidlrenAreEqual == TrinaryBoolean::False);
   if (type == ExpressionNode::Type::Equal) {
     return TrinaryBoolean::False;
+  }
+  if (type == ExpressionNode::Type::NotEqual) {
+    return TrinaryBoolean::True;
   }
   if (leftChildIsGreater == TrinaryBoolean::Unknown) {
     return TrinaryBoolean::Unknown;

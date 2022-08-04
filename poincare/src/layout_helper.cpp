@@ -36,7 +36,7 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
   return std::move(result);
 }
 
-Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context) {
+Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context, bool addParenthesese) {
   HorizontalLayout result = HorizontalLayout::Builder();
   // Add the operator name.
   result.addOrMergeChildAtIndex(String(operatorName, strlen(operatorName)), 0, true);
@@ -50,8 +50,12 @@ Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFlo
     }
     args.addOrMergeChildAtIndex(expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits, context, false, true), args.numberOfChildren(), true);
   }
-  // Add the parenthesed arguments.
-  result.addOrMergeChildAtIndex(Parentheses(args, false), result.numberOfChildren(), true);
+  Layout argsResult = args;
+  if (addParenthesese) {
+    // Add the parenthesed arguments.
+    argsResult = Parentheses(args, false);
+  }
+  result.addOrMergeChildAtIndex(argsResult, result.numberOfChildren(), true);
   return std::move(result);
 }
 

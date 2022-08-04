@@ -16,7 +16,7 @@ namespace LayoutHelper {
   /* Expression to Layout */
   typedef bool (*OperatorTest)(Expression left, Expression right);
   Layout Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context, OperatorTest forbidOperator = nullptr);
-  Layout Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context);
+  Layout Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context, bool addParenthesese = true);
 
   /* Create special layouts */
   Layout Parentheses(Layout layout, bool cloneLayout);

@@ -30,7 +30,7 @@ bool LogicalOperatorNode::IsApproximativelyNotZero(T x) {
 Layout NotOperatorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   char nameBuffer[k_sizeOfNameBuffer];
   fillBufferWithStartingAndEndingSpace(nameBuffer, k_sizeOfNameBuffer, operatorName(), false);
-  return LayoutHelper::Prefix(NotOperator(this), floatDisplayMode, numberOfSignificantDigits, nameBuffer, context);
+  return LayoutHelper::Prefix(NotOperator(this), floatDisplayMode, numberOfSignificantDigits, nameBuffer, context, false);
 }
 
 int NotOperatorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

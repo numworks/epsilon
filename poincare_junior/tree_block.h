@@ -62,6 +62,8 @@ public:
   void log(std::ostream & stream, bool recursive = true, int indentation = 0, bool verbose = true);
 #endif
 
+  void copyTo(TreeBlock * address);
+
   // Block Navigation
   TypeTreeBlock * nextNode();
   TypeTreeBlock * previousNode(const TreeBlock * firstBlock);

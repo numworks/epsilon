@@ -47,6 +47,10 @@ TypeTreeBlock * TypeTreeBlock::nextNode() {
   return this + nodeSize();
 }
 
+void TypeTreeBlock::copyTo(TreeBlock * address) {
+  memcpy(address, this, treeSize());
+}
+
 TypeTreeBlock * TypeTreeBlock::previousNode(const TreeBlock * firstBlock) {
   if (this == firstBlock) {
     return nullptr;

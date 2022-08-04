@@ -46,7 +46,7 @@ Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 }
 
 int SequenceNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  int result = SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name(), false, -1, true);
+  int result = SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, name(), SerializationHelper::TypeOfParenthesis::Braces);
   return result;
 }
 

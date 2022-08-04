@@ -6,32 +6,11 @@
 namespace Poincare {
 
 bool TreeSandbox::execute(TypeTreeBlock * address, TreeEditor action) {
-start_execute:
-  if (true) {//if (setCheckpoint()) { // TODO
-    TypeTreeBlock * tree = copyTreeFromAddress(address);
-
-    if (!tree) {
-      // TODO remove once LRU is implemented
-      return false;
-    }
-
-    action(tree, this);
-    return true;
-  } else {
-    // TODO: don't delete last called treeForIdentifier otherwise can't copyTreeFromAddress if in cache...
-    if (!TreeCache::sharedCache()->reset(true)) {
-      return false;
-    }
-    goto start_execute;
-  }
+  return privateExecuteAction(action, address);
 }
 
 bool TreeSandbox::execute(int treeId, TreeEditor action) {
-  TypeTreeBlock * tree = TreeCache::sharedCache()->treeForIdentifier(treeId);
-  if (!tree) {
-    return false;
-  }
-  return execute(tree, action);
+  return privateExecuteAction(action, nullptr, treeId);
 }
 
 TreeBlock * TreeSandbox::pushBlock(TreeBlock block) {
@@ -126,5 +105,29 @@ void TreeSandbox::freePoolFromNode(TreeBlock * firstBlockToDiscard) {
   m_numberOfBlocks = firstBlockToDiscard - static_cast<TreeBlock *>(m_firstBlock);
 }
 
+bool TreeSandbox::privateExecuteAction(TreeEditor action, TypeTreeBlock * address, int treeId) {
+start_execute:
+  if (true) {//if (setCheckpoint()) { // TODO
+    if (!address) {
+      assert(treeId >= 0);
+      address = TreeCache::sharedCache()->treeForIdentifier(treeId);
+      if (!address) {
+        return false;
+      }
+    }
+    TypeTreeBlock * tree = copyTreeFromAddress(address);
+    if (!tree) {
+      return false;
+    }
+    action(tree, this);
+    return true;
+  } else {
+    // TODO: don't delete last called treeForIdentifier otherwise can't copyTreeFromAddress if in cache...
+    if (!TreeCache::sharedCache()->reset(true)) {
+      return false;
+    }
+    goto start_execute;
+  }
+}
 
 }

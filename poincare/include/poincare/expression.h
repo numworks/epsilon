@@ -33,6 +33,7 @@ class Expression : public TreeHandle {
   friend class BasedInteger;
   friend class BinomialCoefficient;
   friend class Ceiling;
+  friend class Comparison;
   friend class ComparisonOperator;
   template<typename T>
   friend class ComplexNode;

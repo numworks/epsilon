@@ -79,6 +79,7 @@ poincare_src += $(addprefix poincare/src/,\
   based_integer.cpp \
   binomial_coefficient.cpp \
   ceiling.cpp \
+  comparison.cpp \
   comparison_operator.cpp \
   complex.cpp \
   complex_argument.cpp \

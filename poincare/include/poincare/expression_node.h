@@ -52,6 +52,7 @@ public:
     UnitConvert,
     NotOperator,
     BinaryLogicalOperator,
+    Comparison,
     Equal,
     NotEqual,
     Superior,

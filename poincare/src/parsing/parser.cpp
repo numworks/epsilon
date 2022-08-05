@@ -111,6 +111,7 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
     &Parser::parseUnexpected,           // Token::RightParenthesis
     &Parser::parseUnexpected,           // Token::RightBrace
     &Parser::parseUnexpected,           // Token::Comma
+    &Parser::parseAssigmentEqual,       // Token::AssignmentEqual
     &Parser::parseRightwardsArrow,      // Token::RightwardsArrow
     &Parser::parseNorOperator,          // Token::Nor
     &Parser::parseXorOperator,          // Token::Xor
@@ -118,12 +119,7 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
     &Parser::parseNandOperator,         // Token::Nand
     &Parser::parseAndOperator,          // Token::And
     &Parser::parseNotOperator,          // Token::Not
-    &Parser::parseComparisonOperator,   // Token::Equal
-    &Parser::parseComparisonOperator,   // Token::NotEqual
-    &Parser::parseComparisonOperator,   // Token::Superior
-    &Parser::parseComparisonOperator,   // Token::SuperiorEqual
-    &Parser::parseComparisonOperator,   // Token::Inferior
-    &Parser::parseComparisonOperator,   // Token::InferiorEqual
+    &Parser::parseComparisonOperator,   // Token::ComparisonOperator
     &Parser::parseNorthEastArrow,       // Token::NorthEastArrow
     &Parser::parseSouthEastArrow,       // Token::SouthEastArrow
     &Parser::parsePlus,                 // Token::Plus
@@ -366,44 +362,33 @@ void Parser::parseCaretWithParenthesis(Expression & leftHandSide, Token::Type st
   isThereImplicitMultiplication();
 }
 
-Expression BuildForToken(Token::Type tokenType, Expression & leftHandSide, Expression & rightHandSide) {
-  switch (tokenType) {
-  case Token::Equal:
-  case Token::AssignmentEqual:
-    return Equal::Builder(leftHandSide, rightHandSide);
-  case Token::NotEqual:
-    return NotEqual::Builder(leftHandSide, rightHandSide);
-  case Token::Superior:
-    return Superior::Builder(leftHandSide, rightHandSide);
-  case Token::SuperiorEqual:
-    return SuperiorEqual::Builder(leftHandSide, rightHandSide);
-  case Token::Inferior:
-    return Inferior::Builder(leftHandSide, rightHandSide);
-  default:
-    assert(tokenType == Token::InferiorEqual);
-    return InferiorEqual::Builder(leftHandSide, rightHandSide);
-  }
-}
-
 void Parser::parseComparisonOperator(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Comparison operator must have a left operand
     return;
   }
   Expression rightHandSide;
-  Token::Type tokenType = m_currentToken.type();
-  // If parsing for assignment, the equal has a lower precedence than logical operators
-  stoppingType = tokenType == Token::AssignmentEqual ? Token::AssignmentEqual : Token::InferiorEqual;
-  assert(stoppingType >= tokenType);
-  if (parseBinaryOperator(leftHandSide, rightHandSide, stoppingType)) {
-    if (ComparisonOperator::IsComparisonOperatorType(leftHandSide.type())) {
-      // "1<x<2" == "1<x and x<2"
-      // TODO: Make ComparisonOperatorNode n-ary
-      Expression rightOfComparison = leftHandSide.childAtIndex(1).clone();
-      leftHandSide = BinaryLogicalOperator::Builder(leftHandSide, BuildForToken(tokenType, rightOfComparison, rightHandSide), BinaryLogicalOperatorNode::OperatorType::And);
+  ComparisonNode::OperatorType operatorType;
+  assert(ComparisonNode::IsComparisonOperatorString(m_currentToken.text(), m_currentToken.length(), nullptr));
+  ComparisonNode::IsComparisonOperatorString(m_currentToken.text(), m_currentToken.length(), &operatorType);
+  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::ComparisonOperator)) {
+    if (leftHandSide.type() == ExpressionNode::Type::Comparison) {
+      Comparison leftComparison = static_cast<Comparison&>(leftHandSide);
+      leftHandSide = leftComparison.addComparison(operatorType, rightHandSide);
     } else {
-      leftHandSide = BuildForToken(tokenType, leftHandSide, rightHandSide);
+      leftHandSide = Comparison::Builder(leftHandSide, operatorType, rightHandSide);
     }
+  }
+}
+
+void Parser::parseAssigmentEqual(Expression & leftHandSide, Token::Type stoppingType) {
+  if (leftHandSide.isUninitialized()) {
+    m_status = Status::Error; // Comparison operator must have a left operand
+    return;
+  }
+  Expression rightHandSide;
+  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::AssignmentEqual)) {
+    leftHandSide = Comparison::Builder(leftHandSide, ComparisonNode::OperatorType::Equal, rightHandSide);
   }
 }
 
@@ -779,7 +764,7 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
   if (m_parsingContext.parsingMethod() == ParsingContext::ParsingMethod::Assignment
       && result.type() == ExpressionNode::Type::Function
       && parameter.type() == ExpressionNode::Type::Symbol
-      && m_nextToken.isComparisonOperator()) {
+      && m_nextToken.type() == Token::AssignmentEqual) {
     /* Stop parsing for assignment to ensure that, frow now on xy is
      * understood as x*y.
      * For example, "func(x) = xy" -> left of the =, we parse for assignment so

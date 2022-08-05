@@ -75,7 +75,8 @@ private:
   void parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseCaret(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseCaretWithParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseComparisonOperator(Expression & leftHandSide, Token::Type stoppingType);
+  void parseComparisonOperator(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseAssigmentEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseNotOperator(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseAndOperator(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::And, leftHandSide, stoppingType); }
   void parseNandOperator(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Nand, leftHandSide, stoppingType); }

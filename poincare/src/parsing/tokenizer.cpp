@@ -178,6 +178,22 @@ Token Tokenizer::popToken() {
     assert(c != '.');
     return Token(typeForCodePoint[c - '(']);
   }
+  if (c == '=' && m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment) {
+    /* Change precedence of equal when assigning a function.
+     * This ensures that "f(x) = x and 1" is parsed as
+     * "f(x) = (x and 1)" and not "(f(x) = x) and 1" */
+    return Token(Token::AssignmentEqual);
+  }
+  if (ComparisonNode::IsComparisonOperatorCodePoint(c)) {
+    Token result(Token::ComparisonOperator);
+    size_t sizeOfOperator = UTF8Decoder::CharSizeOfCodePoint(c);
+    if ((c == '<' || c == '>') && canPopCodePoint('=')) {
+      // Pop '=' if '<=' or '>='
+      sizeOfOperator += UTF8Decoder::CharSizeOfCodePoint('=');
+    }
+    result.setString(start, sizeOfOperator);
+    return result;
+  }
   switch (c) {
   case UCodePointMultiplicationSign:
   case UCodePointMiddleDot:
@@ -194,7 +210,9 @@ Token Tokenizer::popToken() {
   }
   case '!': {
     if (canPopCodePoint('=')) {
-      return Token(Token::NotEqual);
+      Token result(Token::ComparisonOperator);
+      result.setString(start, UTF8Decoder::CharSizeOfCodePoint('!') + UTF8Decoder::CharSizeOfCodePoint('='));
+      return result;
     }
     return Token(Token::Bang);
   }
@@ -204,33 +222,6 @@ Token Tokenizer::popToken() {
     return Token(Token::SouthEastArrow);
   case '%':
     return Token(Token::Percent);
-  case '=': {
-    if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment) {
-      /* Change precedence of equal when assigning a function.
-       * This ensures that "f(x) = x and 1" is parsed as
-       * "f(x) = (x and 1)" and not "(f(x) = x) and 1" */
-      return Token(Token::AssignmentEqual);
-    }
-    return Token(Token::Equal);
-  }
-  case UCodePointNotEqual:
-    return Token(Token::NotEqual);
-  case '>': {
-    if (canPopCodePoint('=')) {
-      return Token(Token::SuperiorEqual);
-    }
-    return Token(Token::Superior);
-  }
-  case UCodePointSuperiorEqual:
-    return Token(Token::SuperiorEqual);
-  case '<': {
-    if (canPopCodePoint('=')) {
-      return Token(Token::InferiorEqual);
-    }
-    return Token(Token::Inferior);
-  }
-  case UCodePointInferiorEqual:
-    return Token(Token::InferiorEqual);
   case '[':
     return Token(Token::LeftBracket);
   case ']':

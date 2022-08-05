@@ -24,6 +24,7 @@ public:
   };
   static CodePoint ComparisonCodePoint(OperatorType type);
   static bool IsComparisonOperatorCodePoint(CodePoint c, OperatorType * returnType = nullptr);
+  static bool IsComparisonOperatorString(const char * s, size_t length, OperatorType * returnType = nullptr);
   static OperatorType Opposite(OperatorType type);
 
   // TODO: TrinaryBooleans will be moved out of this class in a few commits

@@ -6,10 +6,10 @@
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
 #include <poincare/addition.h>
+#include <poincare/comparison.h>
 #include <poincare/division.h>
 #include <poincare/division_quotient.h>
 #include <poincare/division_remainder.h>
-#include <poincare/equal.h>
 #include <poincare/mixed_fraction.h>
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
@@ -707,7 +707,7 @@ IntegerDivision Integer::udiv(const Integer & numerator, const Integer & denomin
 Expression Integer::CreateEuclideanDivision(const Integer & num, const Integer & denom) {
   Expression quo = DivisionQuotient::Reduce(num, denom);
   Expression rem = DivisionRemainder::Reduce(num, denom);
-  Expression e = Equal::Builder(Rational::Builder(num), Addition::Builder(Multiplication::Builder(Rational::Builder(denom), quo), rem));
+  Expression e = Comparison::Builder(Rational::Builder(num), ComparisonNode::OperatorType::Equal, Addition::Builder(Multiplication::Builder(Rational::Builder(denom), quo), rem));
   ExpressionNode::ReductionContext defaultReductionContext = ExpressionNode::ReductionContext(nullptr, Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   e = e.deepBeautify(defaultReductionContext);
   return e;

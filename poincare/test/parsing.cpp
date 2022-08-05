@@ -199,7 +199,7 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_parsed_expression_is("(1/2/3)", Parenthesis::Builder(Division::Builder(Division::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)),BasedInteger::Builder(3))));
   assert_parsed_expression_is("1^2", Power::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("1^2^3", Power::Builder(BasedInteger::Builder(1),Power::Builder(BasedInteger::Builder(2),BasedInteger::Builder(3))));
-  assert_parsed_expression_is("1=2", Equal::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
+  assert_parsed_expression_is("1=2", Comparison::Builder(BasedInteger::Builder(1), ComparisonNode::OperatorType::Equal, BasedInteger::Builder(2)));
   assert_text_not_parsable("=5");
   assert_text_not_parsable("1=2=3");
   assert_parsed_expression_is("-1", Opposite::Builder(BasedInteger::Builder(1)));
@@ -674,8 +674,8 @@ QUIZ_CASE(poincare_parse_mixed_fraction) {
 }
 
 QUIZ_CASE(poincare_parse_function_assignment) {
-  assert_parsed_expression_is("f(x)=xy", Equal::Builder(Multiplication::Builder(Symbol::Builder("f", 1), Parenthesis::Builder(Symbol::Builder("x", 1))), Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("y", 1))));
-  assert_parsed_expression_is("f(x)=xy", Equal::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)), Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("y", 1))), false, true);
+  assert_parsed_expression_is("f(x)=xy", Comparison::Builder(Multiplication::Builder(Symbol::Builder("f", 1), Parenthesis::Builder(Symbol::Builder("x", 1))), ComparisonNode::OperatorType::Equal, Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("y", 1))));
+  assert_parsed_expression_is("f(x)=xy", Comparison::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)), ComparisonNode::OperatorType::Equal, Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("y", 1))), false, true);
 }
 
 QUIZ_CASE(poincare_parsing_east_arrows) {

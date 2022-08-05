@@ -1,7 +1,6 @@
 #include "parser.h"
 #include "helper.h"
 #include <ion/unicode/utf8_decoder.h>
-#include <poincare/comparison_operator.h>
 #include <poincare/empty_context.h>
 #include <utility>
 #include <algorithm>

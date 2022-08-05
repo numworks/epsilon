@@ -4,7 +4,6 @@
 #include <apps/exam_mode_configuration.h>
 #include <apps/global_preferences.h>
 #include <limits.h>
-
 #include <poincare/addition.h>
 #include <poincare/constant.h>
 #include <poincare/division.h>

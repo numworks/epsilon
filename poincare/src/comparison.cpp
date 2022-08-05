@@ -43,6 +43,34 @@ bool ComparisonNode::IsComparisonOperatorCodePoint(CodePoint c, OperatorType * r
   return false;
 }
 
+bool ComparisonNode::IsComparisonOperatorString(const char * s, size_t length, OperatorType * returnType) {
+  UTF8Decoder decoder(s);
+  CodePoint operatorCodePoint = decoder.nextCodePoint();
+  size_t lengthOfOperator = UTF8Decoder::CharSizeOfCodePoint(operatorCodePoint);
+  if (lengthOfOperator < length) {
+    CodePoint secondOperatorCodePoint = decoder.nextCodePoint();
+    lengthOfOperator += UTF8Decoder::CharSizeOfCodePoint(secondOperatorCodePoint);
+    if (secondOperatorCodePoint == '=') {
+      switch (operatorCodePoint) {
+      case '!':
+        operatorCodePoint = UCodePointNotEqual;
+        break;
+      case '>':
+        operatorCodePoint = UCodePointSuperiorEqual;
+        break;
+      case '<':
+        operatorCodePoint = UCodePointInferiorEqual;
+        break;
+      }
+    }
+  }
+  if (lengthOfOperator == length) {
+    return IsComparisonOperatorCodePoint(operatorCodePoint, returnType);
+  }
+  return false;
+}
+
+
 ComparisonNode::OperatorType ComparisonNode::Opposite(OperatorType type) {
   switch (type) {
   case OperatorType::Superior:

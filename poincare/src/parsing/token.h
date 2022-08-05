@@ -30,12 +30,7 @@ public:
     Nand,
     And,
     Not,
-    Equal,
-    NotEqual,
-    Superior,
-    SuperiorEqual,
-    Inferior,
-    InferiorEqual,
+    ComparisonOperator,
     NorthEastArrow,
     SouthEastArrow,
     Plus,
@@ -73,7 +68,6 @@ public:
   void setType(Type t) { m_type = t; }
   bool is(Type t) const { return m_type == t; }
   bool isNumber() const { return m_type == Type::Number || m_type == Type::BinaryNumber || m_type == HexadecimalNumber; }
-  bool isComparisonOperator() const { return m_type == Type::Equal || m_type == Type::AssignmentEqual || m_type == Type::NotEqual || m_type == Type::Superior || m_type == Type::SuperiorEqual || m_type == Type::Inferior || m_type == Type::InferiorEqual; }
   bool isEndOfStream() const { return is(Type::EndOfStream); }
 
   Expression expression() const { return m_expression; }

@@ -1,5 +1,4 @@
 #include <poincare/simplification_helper.h>
-#include <poincare/comparison_operator.h>
 #include <poincare/dependency.h>
 #include <poincare/expression_node.h>
 #include <poincare/expression.h>
@@ -191,7 +190,7 @@ Expression SimplificationHelper::distributeReductionOverLists(Expression e, cons
 
 Expression SimplificationHelper::bubbleUpDependencies(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
   assert(e.type() != ExpressionNode::Type::Store);
-  if (ComparisonOperator::IsComparisonOperatorType(e.type())) {
+  if (e.type() == ExpressionNode::Type::Comparison) {
     return Expression();
   }
   List dependencies = List::Builder();

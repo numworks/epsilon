@@ -4,7 +4,6 @@
 #include <poincare/addition.h>
 #include <poincare/based_integer.h>
 #include <poincare/code_point_layout.h>
-#include <poincare/comparison_operator.h>
 #include <poincare/constant.h>
 #include <poincare/decimal.h>
 #include <poincare/dependency.h>

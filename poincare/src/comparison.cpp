@@ -7,6 +7,7 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/subtraction.h>
+#include <ion/unicode/utf8_decoder.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -97,6 +98,22 @@ static size_t SizeOfComparisonNode(int numberOfOperators) {
 size_t ComparisonNode::size() const {
   return SizeOfComparisonNode(numberOfOperators());
 }
+
+#if POINCARE_TREE_LOG
+void ComparisonNode::logAttributes(std::ostream & stream) const {
+  stream << " operators=\"";
+  int nOperators = numberOfOperators();
+  constexpr static size_t maxLengthOfOperator = UTF8Decoder::CharSizeOfCodePoint(UCodePointInferiorEqual);
+  char buffer[maxLengthOfOperator + 1];
+  for(int i = 0; i < nOperators; i++ ) {
+    CodePoint c = ComparisonCodePoint(m_operatorsList[i]);
+    UTF8Decoder::CodePointToChars(c, buffer, maxLengthOfOperator);
+    buffer[UTF8Decoder::CharSizeOfCodePoint(c)] = 0;
+    stream << " " << buffer;
+  }
+  stream << " \"";
+}
+#endif
 
 Layout ComparisonNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   HorizontalLayout result = HorizontalLayout::Builder();

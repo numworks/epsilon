@@ -45,6 +45,7 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "Comparison";
   }
+  void logAttributes(std::ostream & stream) const override;
 #endif
 
   OperatorType operatorAtIndex(int i) { assert(i < numberOfOperators() && i >= 0); return m_operatorsList[i]; }

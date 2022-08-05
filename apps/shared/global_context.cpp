@@ -5,7 +5,6 @@
 #include "sequence_context.h"
 #include "poincare_helpers.h"
 #include <poincare/rational.h>
-#include <poincare/equal.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/function.h>
@@ -194,7 +193,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const 
     }
     recordToSet = newModel;
   }
-  Poincare::Expression equation = Poincare::Equal::Builder(symbol.clone(), expressionToStore);
+  Poincare::Expression equation = Poincare::Comparison::Builder(symbol.clone(), ComparisonNode::OperatorType::Equal, expressionToStore);
   ContinuousFunction model = ContinuousFunction(recordToSet);
   bool wasAlongXorY = model.isAlongXOrY();
   error = model.setExpressionContent(equation);

@@ -2,8 +2,8 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/constant.h>
+#include <poincare/comparison.h>
 #include <poincare/empty_context.h>
-#include <poincare/equal.h>
 #include <poincare/undefined.h>
 #include <poincare/nonreal.h>
 #include <poincare/rational.h>
@@ -44,9 +44,9 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
         contextToUse))
   {
     returnedExpression = Undefined::Builder();
-  } else if (expressionRed.type() == ExpressionNode::Type::Equal) {
+  } else if (ComparisonNode::IsSimpleEquality(expressionRed)) {
     Preferences * preferences = Preferences::sharedPreferences();
-    returnedExpression = static_cast<const Equal&>(expressionRed).standardEquation(contextToUse, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), preferences->angleUnit(),  GlobalPreferences::sharedGlobalPreferences()->unitFormat(), reductionTarget);
+    returnedExpression = static_cast<const Comparison&>(expressionRed).standardEquation(contextToUse, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), preferences->angleUnit(),  GlobalPreferences::sharedGlobalPreferences()->unitFormat(), reductionTarget);
   } else {
     assert(expressionRed.type() == ExpressionNode::Type::Rational && static_cast<const Rational&>(expressionRed).isOne());
     // The equality was reduced which means the equality was always true.

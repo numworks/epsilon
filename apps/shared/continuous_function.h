@@ -14,6 +14,7 @@
 #include "range_1D.h"
 #include <apps/i18n.h>
 #include <poincare/conic.h>
+#include <poincare/comparison.h>
 #include <poincare/preferences.h>
 #include <poincare/symbol_abstract.h>
 
@@ -95,7 +96,7 @@ public:
   // Return the type of area to draw
   AreaType areaType() const;
   // Return the equation's symbol
-  Poincare::ExpressionNode::Type equationType() const { return m_model.equationType(); }
+  Poincare::ComparisonNode::OperatorType equationType() const { return m_model.equationType(); }
   // Return ContinuousFunction's PlotType. Recompute if Unknown can't be handled
   PlotType plotType() const;
   // Return ContinuousFunction's SymbolType
@@ -124,7 +125,7 @@ public:
   /* Properties */
 
   // Wether the ContinuousFunction can have a custom domain of definition.
-  bool canHaveCustomDomain() const { return !isAlongY() && equationType() == Poincare::ExpressionNode::Type::Equal; }
+  bool canHaveCustomDomain() const { return !isAlongY() && equationType() == Poincare::ComparisonNode::OperatorType::Equal; }
   // Wether or not we can display the derivative
   bool canDisplayDerivative() const { return isActiveInTable() && isAlongXOrY(); }
   // Wether to draw a dotted or solid line (Strict inequalities).
@@ -327,7 +328,7 @@ private:
     Model() :
         ExpressionModel(),
         m_numberOfSubCurves(0),
-        m_equationType(Poincare::ExpressionNode::Type::Equal),
+        m_equationType(Poincare::ComparisonNode::OperatorType::Equal),
         m_plotType(PlotType::Unknown) {}
     // Return the expression to plot.
     Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
@@ -351,7 +352,7 @@ private:
     // m_numberOfSubCurves getter
     int numberOfSubCurves() const { return m_numberOfSubCurves; }
     // m_equationType getter
-    Poincare::ExpressionNode::Type equationType() const { return m_equationType; }
+    Poincare::ComparisonNode::OperatorType equationType() const { return m_equationType; }
     // m_plotType getter
     PlotType plotType() const { return m_plotType; }
     // Reset m_plotType to Unknown type
@@ -369,7 +370,7 @@ private:
     // Return size of the record's expression
     size_t expressionSize(const Ion::Storage::Record * record) const override;
     mutable int m_numberOfSubCurves;
-    mutable Poincare::ExpressionNode::Type m_equationType;
+    mutable Poincare::ComparisonNode::OperatorType m_equationType;
     mutable PlotType m_plotType;
     mutable Poincare::Expression m_expressionDerivate;
   };

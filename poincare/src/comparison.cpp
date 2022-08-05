@@ -85,6 +85,22 @@ ComparisonNode::OperatorType ComparisonNode::Opposite(OperatorType type) {
   }
 }
 
+bool ComparisonNode::IsSimpleComparison(Expression e, OperatorType * operatorType) {
+  if (e.type() != Type::Comparison || e.numberOfChildren() != 2) {
+    return false;
+  }
+  if (operatorType) {
+    Comparison comparison = static_cast<Comparison &>(e);
+    *operatorType = comparison.operatorAtIndex(0);
+  }
+  return true;
+}
+
+bool ComparisonNode::IsSimpleComparisonWithOperator(Expression e, OperatorType operatorType) {
+  OperatorType operatorTypeOfE;
+  return IsSimpleComparison(e, &operatorTypeOfE) && operatorTypeOfE == operatorType;
+}
+
 ComparisonNode::TrinaryBoolean ComparisonNode::TrinaryTruthValue(OperatorType type, TrinaryBoolean chidlrenAreEqual, TrinaryBoolean leftChildIsGreater) {
   if (chidlrenAreEqual == TrinaryBoolean::Unknown) {
     return TrinaryBoolean::Unknown;
@@ -295,6 +311,14 @@ Expression Comparison::shallowReduce(const ExpressionNode::ReductionContext& red
   Expression result = Rational::Builder(1);
   replaceWithInPlace(result);
   return result;
+}
+
+Expression Comparison::standardEquation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::ReductionTarget reductionTarget) const {
+  if (numberOfChildren() != 2) {
+    return Expression();
+  }
+  Expression sub = Subtraction::Builder(childAtIndex(0).clone(), childAtIndex(1).clone());
+  return sub.cloneAndReduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, reductionTarget));
 }
 
 }

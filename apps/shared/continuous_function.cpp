@@ -14,7 +14,6 @@
 #include <poincare/symbol_abstract.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/trigonometry.h>
-#include <poincare/comparison_operator.h>
 #include <poincare/derivative.h>
 #include <poincare/print.h>
 #include "poincare_helpers.h"
@@ -59,19 +58,19 @@ I18n::Message ContinuousFunction::MessageForSymbolType(SymbolType symbolType) {
 }
 
 ContinuousFunction::AreaType ContinuousFunction::areaType() const {
-  ExpressionNode::Type eqType = equationType();
+  ComparisonNode::OperatorType eqType = equationType();
   PlotType type = plotType();
-  if (IsPlotTypeInactive(type) || eqType == ExpressionNode::Type::Equal) {
+  if (IsPlotTypeInactive(type) || eqType == ComparisonNode::OperatorType::Equal) {
     return AreaType::None;
   }
   assert(type <= PlotType::Other);
   // To draw y^2>a, the area plotted should be Outside and not Above.
   bool inequationIsLinear = type <= PlotType::VerticalLine;
   assert(numberOfSubCurves() == 1 || !inequationIsLinear);
-  if (eqType == ExpressionNode::Type::Inferior || eqType == ExpressionNode::Type::InferiorEqual) {
+  if (eqType == ComparisonNode::OperatorType::Inferior || eqType == ComparisonNode::OperatorType::InferiorEqual) {
     return inequationIsLinear ? AreaType::Below : AreaType::Inside;
   }
-  assert(eqType == ExpressionNode::Type::Superior || eqType == ExpressionNode::Type::SuperiorEqual);
+  assert(eqType == ComparisonNode::OperatorType::Superior || eqType == ComparisonNode::OperatorType::SuperiorEqual);
   return inequationIsLinear ? AreaType::Above : AreaType::Outside;
 }
 
@@ -102,7 +101,7 @@ ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
 
 I18n::Message ContinuousFunction::plotTypeMessage() const {
   PlotType type = plotType();
-  if (!IsPlotTypeInactive(type) && equationType() != ExpressionNode::Type::Equal) {
+  if (!IsPlotTypeInactive(type) && equationType() != ComparisonNode::OperatorType::Equal) {
     // Whichever the plot type, InequationType describes the function
     return I18n::Message::InequationType;
   }
@@ -146,15 +145,8 @@ CodePoint ContinuousFunction::symbol() const {
   }
 }
 
-static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 1 == static_cast<uint8_t>(ExpressionNode::Type::NotEqual), "equationType() relies on this type order");
-static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 2 == static_cast<uint8_t>(ExpressionNode::Type::Superior), "equationType() relies on this type order");
-static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 3 == static_cast<uint8_t>(ExpressionNode::Type::Inferior), "equationType() relies on this type order");
-static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 4 == static_cast<uint8_t>(ExpressionNode::Type::SuperiorEqual), "equationType() relies on this type order");
-static_assert(static_cast<uint8_t>(ExpressionNode::Type::Equal) + 5 == static_cast<uint8_t>(ExpressionNode::Type::InferiorEqual), "equationType() relies on this type order");
-
 CodePoint ContinuousFunction::equationSymbol() const {
-  constexpr static CodePoint k_equationSymbols[] = { '=', UCodePointNotEqual, '>', '<', UCodePointSuperiorEqual, UCodePointInferiorEqual};
-  return k_equationSymbols[static_cast<uint8_t>(equationType()) - static_cast<uint8_t>(ExpressionNode::Type::Equal)];
+  return ComparisonNode::ComparisonCodePoint(equationType());
 }
 
 int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
@@ -203,15 +195,15 @@ void ContinuousFunction::tidyDownstreamPoolFrom(char * treePoolCursor) const {
 }
 
 bool ContinuousFunction::drawDottedCurve() const {
-  ExpressionNode::Type eqType = equationType();
-  return eqType == ExpressionNode::Type::Superior || eqType == ExpressionNode::Type::Inferior;
+  ComparisonNode::OperatorType eqType = equationType();
+  return eqType == ComparisonNode::OperatorType::Superior || eqType == ComparisonNode::OperatorType::Inferior;
 }
 
 bool ContinuousFunction::isActiveInTable() const {
   /* In addition to isActive(), a function must not be an inequality, must not
    * have any vertical lines and must always plot with a single subcurve. */
   static_assert(PlotType::CartesianAlongY > PlotType::HorizontalLine, "CartesianAlongY shouldn't be active in table.");
-  return equationType() == Poincare::ExpressionNode::Type::Equal
+  return equationType() == ComparisonNode::OperatorType::Equal
          && (plotType() <= PlotType::HorizontalLine
              || plotType() == PlotType::Polar
              || plotType() == PlotType::Parametric)
@@ -769,15 +761,15 @@ Expression ContinuousFunction::Model::originalEquation(const Ion::Storage::Recor
   return unknownSymbolEquation.replaceSymbolWithExpression(Symbol::Builder(UCodePointUnknown), Symbol::Builder(symbol));
 }
 
-bool isValidNamedLeftExpression(const Expression e, ExpressionNode::Type equationType) {
+bool isValidNamedLeftExpression(const Expression e, ComparisonNode::OperatorType equationType) {
   /* Examples of valid named expression : f(x)= or f(x)< or f(θ)= or f(t)=
    * Examples of invalid named expression : cos(x)= or f(θ)< or f(t)<  */
-  if (e.type() != ExpressionNode::Type::Function) {
+  if (e.type() != ExpressionNode::Type::Function || equationType == ComparisonNode::OperatorType::NotEqual) {
     return false;
   }
   Expression functionSymbol = e.childAtIndex(0);
   return functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_cartesianSymbol))
-         || (equationType == ExpressionNode::Type::Equal
+         || (equationType == ComparisonNode::OperatorType::Equal
              && (functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_polarSymbol))
                  || functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_parametricSymbol))));
 }
@@ -788,13 +780,14 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
     return Undefined::Builder();
   }
   PlotType tempPlotType = PlotType::Unknown;
-  ExpressionNode::Type equationType = result.type();
-  if (plotType() == PlotType::Unknown) {
-    m_equationType = equationType;
-  }
-  if (!ComparisonOperator::IsComparisonOperatorType(equationType)) {
-    // Happens when the inputted text is too long and "f(x)=" can't be inserted
+  ComparisonNode::OperatorType equationType;
+  if (!ComparisonNode::IsSimpleComparison(result, &equationType) || equationType == ComparisonNode::OperatorType::NotEqual) {
+    /* Happens when the inputted text is too long and "f(x)=" can't be inserted
+     * or when inputting amiguous equations like "x+y>2>y" */
     return Undefined::Builder();
+  }
+ if (plotType() == PlotType::Unknown) {
+    m_equationType = equationType;
   }
   bool isUnnamedFunction = true;
   Expression leftExpression = result.childAtIndex(0);
@@ -873,10 +866,10 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
   Expression newExpression = originalEquation(record, symbol);
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
   if (record->hasExtension(Ion::Storage::funcExtension)) {
+    ComparisonNode::OperatorType newOperatorType;
     if (!newExpression.isUninitialized()
-        && ComparisonOperator::IsComparisonOperatorType(newExpression.type())
-        && isValidNamedLeftExpression(newExpression.childAtIndex(0),
-                                      newExpression.type())) {
+        && ComparisonNode::IsSimpleComparison(newExpression, &newOperatorType)
+        && isValidNamedLeftExpression(newExpression.childAtIndex(0), newOperatorType)) {
       Expression function = newExpression.childAtIndex(0);
       error = Ion::Storage::Record::SetBaseNameWithExtension(record, static_cast<SymbolAbstract&>(function).name(), Ion::Storage::funcExtension);
       if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
@@ -914,8 +907,9 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
       return expressionToStore;
     }
     // Check if the equation is of the form f(x)=...
-    ExpressionNode::Type comparisonType = expressionToStore.type();
-    if (ComparisonOperator::IsComparisonOperatorType(comparisonType) && isValidNamedLeftExpression(expressionToStore.childAtIndex(0), comparisonType)) {
+    ComparisonNode::OperatorType comparisonType;
+    if (ComparisonNode::IsSimpleComparison(expressionToStore, &comparisonType)
+      && isValidNamedLeftExpression(expressionToStore.childAtIndex(0), comparisonType)) {
       isFunctionAssignment = true;
       Expression functionSymbol = expressionToStore.childAtIndex(0).childAtIndex(0);
       // Extract the CodePoint function's symbol. We know it is either x, t or θ
@@ -944,7 +938,7 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
 void ContinuousFunction::Model::tidyDownstreamPoolFrom(char * treePoolCursor) const {
   if (treePoolCursor == nullptr || m_expressionDerivate.isDownstreamOf(treePoolCursor)) {
     m_numberOfSubCurves = 0;
-    m_equationType = ExpressionNode::Type::Equal;
+    m_equationType = ComparisonNode::OperatorType::Equal;
     m_plotType = PlotType::Unknown;
     m_expressionDerivate = Expression();
   }
@@ -975,11 +969,11 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
   int xDeg = equation.polynomialDegree(context, k_unknownName);
 
   // Inequations : equation symbol has been updated when parsing the equation
-  ExpressionNode::Type modelEquationType = equationType();
+  ComparisonNode::OperatorType modelEquationType = equationType();
 
   if (modelPlotType == PlotType::Parametric || modelPlotType == PlotType::Polar || modelPlotType == PlotType::Cartesian) {
     // There should be no y symbol. Inequations are handled on cartesians only
-    if (yDeg > 0 || (modelEquationType != ExpressionNode::Type::Equal && modelPlotType != PlotType::Cartesian)) {
+    if (yDeg > 0 || (modelEquationType != ComparisonNode::OperatorType::Equal && modelPlotType != PlotType::Cartesian)) {
       // We distinguish the Unhandled type so that x/θ/t symbol is preserved.
       switch (modelPlotType) {
       case PlotType::Parametric:
@@ -993,7 +987,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
         return;
       }
     }
-    if (ExamModeConfiguration::inequalityGraphingIsForbidden() && modelEquationType != ExpressionNode::Type::Equal) {
+    if (ExamModeConfiguration::inequalityGraphingIsForbidden() && modelEquationType != ComparisonNode::OperatorType::Equal) {
       m_plotType = PlotType::Disabled;
       return;
     }
@@ -1034,7 +1028,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
     return;
   }
 
-  if (modelEquationType != ExpressionNode::Type::Equal) {
+  if (modelEquationType != ComparisonNode::OperatorType::Equal) {
     if (highestCoefficientSign == ExpressionNode::Sign::Unknown || (yDeg == 2 && xDeg == -1)) {
       /* Are unhandled equation with :
        * - An unknown highest coefficient sign: sign must be strict and constant
@@ -1048,7 +1042,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
     }
     if (highestCoefficientSign == ExpressionNode::Sign::Negative) {
       // Oppose the comparison operator
-      m_equationType = ComparisonOperator::Opposite(modelEquationType);
+      m_equationType = ComparisonNode::Opposite(modelEquationType);
     }
   }
 
@@ -1177,7 +1171,7 @@ bool ContinuousFunction::Model::IsExplicitEquation(const Expression equation, Co
   /* An equation is explicit if it is a comparison between the given symbol and
    * something that does not depend on it. For example, using 'y' symbol:
    * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */
-  return ComparisonOperator::IsComparisonOperatorType(equation.type())
+  return equation.type() == ExpressionNode::Type::Comparison
          && equation.childAtIndex(0).isIdenticalTo(Symbol::Builder(symbol))
          && !equation.childAtIndex(1).hasExpression(
              [](const Expression e, const void * context) {

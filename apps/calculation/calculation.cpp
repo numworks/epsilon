@@ -233,12 +233,12 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType() 
    * created complexes in Complex mode and then switched back to Real mode. */
   Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), a, nullptr);
   bool isComplex = a.hasDefinedComplexApproximation(nullptr, complexFormat, preferences->angleUnit());
-  /* Special case for Equal and Store:
-   * Equal/Store nodes have to be at the root of the expression, which prevents
-   * from creating new expressions with equal/store node as a child. We don't
+  /* Special case for Store:
+   * Store nodes have to be at the root of the expression, which prevents
+   * from creating new expressions with store node as a child. We don't
    * return any additional outputs for them to avoid bothering with special
    * cases. */
-  if (i.isUninitialized() || o.isUninitialized() || i.type() == ExpressionNode::Type::Equal || i.type() == ExpressionNode::Type::Store || a.type() == ExpressionNode::Type::Undefined) {
+  if (i.isUninitialized() || o.isUninitialized() || i.type() == ExpressionNode::Type::Store || a.type() == ExpressionNode::Type::Undefined) {
     return AdditionalInformationType::None;
   }
   /* Trigonometry additional results are displayed if either input or output is a sin or a cos. Indeed, we want to capture both cases:

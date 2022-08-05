@@ -3,7 +3,6 @@
 #include "poincare_helpers.h"
 #include "function.h"
 #include <ion/unicode/utf8_helper.h>
-#include <poincare/comparison_operator.h>
 #include <poincare/function.h>
 #include <poincare/symbol.h>
 #include <apps/apps_container.h>

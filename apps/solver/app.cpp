@@ -3,7 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/exam_mode_configuration.h>
 #include "solver_icon.h"
-#include <poincare/comparison_operator.h>
+#include <poincare/comparison.h>
 #include <poincare/preferences.h>
 
 using namespace Shared;
@@ -50,9 +50,8 @@ App::App(Snapshot * snapshot) :
 bool App::isAcceptableExpression(const Poincare::Expression exp) {
   /* Complete ExpressionFieldDelegateApp acceptable conditions by only accepting
    * the Equal OperatorType. */
-  return ExpressionFieldDelegateApp::isAcceptableExpression(exp) && (
-    exp.type() == Poincare::ExpressionNode::Type::Equal
-    || !Poincare::ComparisonOperator::IsComparisonOperatorType(exp.type()));
+  return ExpressionFieldDelegateApp::isAcceptableExpression(exp)
+         && Poincare::ComparisonNode::IsSimpleEquality(exp);
 }
 
 }

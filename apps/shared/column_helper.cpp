@@ -2,6 +2,7 @@
 #include "column_parameter_controller.h"
 #include "poincare_helpers.h"
 #include <escher/container.h>
+#include <poincare/comparison.h>
 #include <poincare/print.h>
 
 using namespace Escher;
@@ -117,7 +118,7 @@ bool StoreColumnHelper::createExpressionForFillingColumnWithFormula(const char *
 bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
   int columnToFill = store()->relativeColumnIndex(referencedColumn());
   int seriesToFill = store()->seriesAtColumn(referencedColumn());
-  if (formula.type() == ExpressionNode::Type::Equal) {
+  if (ComparisonNode::IsSimpleEquality(formula)) {
     bool isValidEquality = false;
     Expression leftOfEqual = formula.childAtIndex(0);
     if (leftOfEqual.type() == ExpressionNode::Type::Symbol) {

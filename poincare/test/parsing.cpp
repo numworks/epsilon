@@ -201,7 +201,6 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_parsed_expression_is("1^2^3", Power::Builder(BasedInteger::Builder(1),Power::Builder(BasedInteger::Builder(2),BasedInteger::Builder(3))));
   assert_parsed_expression_is("1=2", Comparison::Builder(BasedInteger::Builder(1), ComparisonNode::OperatorType::Equal, BasedInteger::Builder(2)));
   assert_text_not_parsable("=5");
-  assert_text_not_parsable("1=2=3");
   assert_parsed_expression_is("-1", Opposite::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("(-1)", Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(1))));
   assert_parsed_expression_is("1-2", Subtraction::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));

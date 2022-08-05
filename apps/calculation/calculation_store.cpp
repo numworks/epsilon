@@ -261,13 +261,12 @@ Expression CalculationStore::ansExpression(Context * context) {
   if (exactOutput.isUninitialized() || input.isUninitialized()) {
     return defaultAns;
   }
-  /* Special case: the exact output is a Store/Equal expression.
-   * Store/Equal expression can only be at the root of an expression.
-   * To avoid turning 'ans->A' in '2->A->A' or '2=A->A' (which cannot be
-   * parsed), ans is replaced by the approximation output when any Store or
-   * Equal expression appears. */
-  bool exactOutputInvolvesStoreEqual = exactOutput.type() == ExpressionNode::Type::Store || exactOutput.type() == ExpressionNode::Type::Equal;
-  if (input.recursivelyMatches(Expression::IsApproximate, context) || exactOutputInvolvesStoreEqual) {
+  /* Special case: the exact output is a Store expression.
+   * Store expression can only be at the root of an expression.
+   * To avoid turning 'ans->A' in '2->A->A' ans is replaced by
+   * the approximation output when any Store expression appears. */
+  bool exactOutputInvolvesStore = exactOutput.type() == ExpressionNode::Type::Store;
+  if (input.recursivelyMatches(Expression::IsApproximate, context) || exactOutputInvolvesStore) {
     Expression approximate = mostRecentCalculation->approximateOutput(Calculation::NumberOfSignificantDigits::Maximal);
     if (approximate.isUninitialized()) {
       return defaultAns;

@@ -27,6 +27,10 @@ public:
   static bool IsComparisonOperatorString(const char * s, size_t length, OperatorType * returnType = nullptr);
   static OperatorType Opposite(OperatorType type);
 
+  static bool IsSimpleComparison(Expression e, OperatorType * returnType = nullptr);
+  static bool IsSimpleComparisonWithOperator(Expression e, OperatorType operatorType);
+  static bool IsSimpleEquality(Expression e) { return IsSimpleComparisonWithOperator(e, OperatorType::Equal); }
+
   // TODO: TrinaryBooleans will be moved out of this class in a few commits
   enum class TrinaryBoolean : uint8_t {
     False = 0,
@@ -82,9 +86,8 @@ public:
   Comparison addComparison(ComparisonNode::OperatorType operatorType, Expression child);
 
   Expression shallowReduce(const ExpressionNode::ReductionContext& ReductionContext);
-
-  bool isEqualityWithTwoChildren() const { return numberOfChildren() == 2 && node()->operatorAtIndex(0) == ComparisonNode::OperatorType::Equal; }
-
+  Expression standardEquation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::ReductionTarget reductionTarget) const;
+  ComparisonNode::OperatorType operatorAtIndex(int i) const { return node()->operatorAtIndex(i); }
 private:
   ComparisonNode * node() const { return static_cast<ComparisonNode *>(Expression::node()); }
 };

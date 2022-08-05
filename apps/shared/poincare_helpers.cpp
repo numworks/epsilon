@@ -33,11 +33,7 @@ bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expres
    || exactOutput.recursivelyMatches(
         [](const Expression e, Context * c) {
           return e.isOfType({
-            ExpressionNode::Type::Equal,
-            ExpressionNode::Type::InferiorEqual,
-            ExpressionNode::Type::SuperiorEqual,
-            ExpressionNode::Type::Inferior,
-            ExpressionNode::Type::Superior
+            ExpressionNode::Type::Comparison
           });
         }, context)
     /* If the input contains the following types, we only display the

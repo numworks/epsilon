@@ -3,7 +3,6 @@
 #include <apps/apps_container_helper.h>
 #include <apps/constant.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/comparison_operator.h>
 #include <cmath>
 #include <string.h>
 
@@ -97,8 +96,8 @@ bool TextFieldDelegateApp::isFinishingEvent(Ion::Events::Event event) {
 }
 
 bool TextFieldDelegateApp::isAcceptableExpression(const Expression exp) {
-  // Most TextFieldDelegateApps shouldn't accept Store or ComparisonOperators.
-  return !(exp.isUninitialized() || exp.type() == ExpressionNode::Type::Store || ComparisonOperator::IsComparisonOperatorType(exp.type()));
+  // Most TextFieldDelegateApps shouldn't accept Store.
+  return !(exp.isUninitialized() || exp.type() == ExpressionNode::Type::Store);
 }
 
 bool TextFieldDelegateApp::ExpressionCanBeSerialized(const Expression expression, bool replaceAns, Expression ansExpression, Context * context) {

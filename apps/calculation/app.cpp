@@ -1,7 +1,6 @@
 #include "app.h"
 #include "calculation_icon.h"
 #include <apps/i18n.h>
-#include <poincare/comparison_operator.h>
 #include <poincare/symbol.h>
 
 using namespace Poincare;

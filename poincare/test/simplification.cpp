@@ -2032,6 +2032,40 @@ QUIZ_CASE(poincare_simplification_mixed_fraction) {
   assert_parsed_expression_simplify_to("-1 2/3", "-5/3");
 }
 
+QUIZ_CASE(poincare_simplification_comparison_operators) {
+  assert_parsed_expression_simplify_to("3 < 4", "1");
+  assert_parsed_expression_simplify_to("3 < 3", "0");
+  assert_parsed_expression_simplify_to("3 < 2", "0");
+
+  assert_parsed_expression_simplify_to("3 <= 4", "1");
+  assert_parsed_expression_simplify_to("3 <= 3", "1");
+  assert_parsed_expression_simplify_to("3 <= 2", "0");
+
+  assert_parsed_expression_simplify_to("3 > 4", "0");
+  assert_parsed_expression_simplify_to("3 > 3", "0");
+  assert_parsed_expression_simplify_to("3 > 2", "1");
+
+  assert_parsed_expression_simplify_to("3 >= 4", "0");
+  assert_parsed_expression_simplify_to("3 >= 3", "1");
+  assert_parsed_expression_simplify_to("3 >= 2", "1");
+
+  assert_parsed_expression_simplify_to("3 = 4", "0");
+  assert_parsed_expression_simplify_to("3 = 3", "1");
+  assert_parsed_expression_simplify_to("3 = 2", "0");
+
+  assert_parsed_expression_simplify_to("3 != 4", "1");
+  assert_parsed_expression_simplify_to("3 != 3", "0");
+  assert_parsed_expression_simplify_to("3 != 2", "1");
+
+  assert_parsed_expression_simplify_to("undef = 2", Undefined::Name());
+  assert_parsed_expression_simplify_to("undef != 2", Undefined::Name());
+
+  assert_parsed_expression_simplify_to("3 + i < 1 + 2i", "3+i<1+2×i"); // Can't decide
+  assert_parsed_expression_simplify_to("3 + i < 1 + i", "0");
+  assert_parsed_expression_simplify_to("3 + i = 3 + i", "1");
+  assert_parsed_expression_simplify_to("[[0, 0]] < [[1, 1]]", Undefined::Name());
+}
+
 typedef bool (*BoolCompare) (bool a, bool b);
 static void testLogicalOperatorTruthTable(const char * operatorString, BoolCompare evaluationFunction) {
   constexpr static int bufferSize = 9; // 9 == strlen("1 nand 0") + 1
@@ -2070,6 +2104,14 @@ QUIZ_CASE(poincare_simplification_logical_operators) {
   assert_parsed_expression_simplify_to("(1 xor 1) and 0", "0");
 
   assert_parsed_expression_simplify_to("1 xor {0,1,0,1}", "{1,0,1,0}");
+
+  assert_parsed_expression_simplify_to("3 > 2 and 2 = 2", "1");
+  assert_parsed_expression_simplify_to("1 = 2 and 1 ", "0");
+  assert_parsed_expression_simplify_to("1 = (2 and 1) ", "1");
+  assert_parsed_expression_simplify_to("1 and 2 = 1 ", "0");
+  assert_parsed_expression_simplify_to("(1 and 2) = 1 ", "1");
+  assert_parsed_expression_simplify_to("not 2 = 1", "1");
+  assert_parsed_expression_simplify_to("(not 2) = 1", "0");
 
   assert_parsed_expression_simplify_to("1 and [[-5,2]]", Undefined::Name());
   assert_parsed_expression_simplify_to("1 or undef", Undefined::Name());

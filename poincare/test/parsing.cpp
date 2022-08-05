@@ -253,7 +253,6 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_text_not_parsable("[[t0000000[");
   assert_text_not_parsable("0→x=0");
   assert_text_not_parsable("0→3=0");
-  assert_text_not_parsable("0=0→x");
   assert_text_not_parsable("1ᴇ2ᴇ3");
   assert_text_not_parsable("0b001112");
   assert_text_not_parsable("0x123G");

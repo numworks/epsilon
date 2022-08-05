@@ -93,19 +93,6 @@ void UTF8Decoder::setPosition(const char * position) {
   m_stringPosition = position;
 }
 
-size_t UTF8Decoder::CharSizeOfCodePoint(CodePoint c) {
-  if (c <= 0x7F) {
-    return 1;
-  }
-  if (c <= 0x7FF) {
-    return 2;
-  }
-  if (c <= 0xFFFF) {
-    return 3;
-  }
-  return 4;
-}
-
 size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, size_t bufferLength) {
   size_t i = 0;
   size_t charCount = CharSizeOfCodePoint(c);

@@ -10,7 +10,7 @@ TreeCache * TreeCache::sharedCache() {
 }
 
 TypeTreeBlock * TreeCache::treeForIdentifier(int id) {
-  if (id >= m_nextIdentifier) {
+  if (id < 0 || id >= m_nextIdentifier) {
     return nullptr;
   }
   return m_cachedTree[id];
@@ -20,6 +20,9 @@ int TreeCache::storeLastTree() {
   assert(m_nextIdentifier < k_maxNumberOfCachedTrees);
   if (m_sandbox.numberOfBlocks() == 0) {
     return -1;
+  }
+  if (m_nextIdentifier >= k_maxNumberOfBlocks) {
+    reset(true);
   }
   TypeTreeBlock * block = lastBlock();
   m_cachedTree[m_nextIdentifier++] = block;

@@ -17,10 +17,6 @@ public:
 
   void reset() { m_numberOfBlocks = 0; }
 
-  typedef void (*TreeEditor)(TypeTreeBlock * tree, TreeSandbox * sandbox);
-  bool execute(TypeTreeBlock * address, TreeEditor action);
-  bool execute(int treeId, TreeEditor action);
-
   TreeBlock * pushBlock(TreeBlock block);
   void popBlock();
   void replaceBlock(TreeBlock * previousBlock, TreeBlock newBlock);
@@ -45,7 +41,6 @@ private:
   bool checkForEnoughSpace(size_t numberOfRequiredBlock);
   void moveBlocks(TreeBlock * destination, TreeBlock * source, size_t numberOfTreeBlocks);
   void freePoolFromNode(TreeBlock * firstBlockToDiscard);
-  bool privateExecuteAction(TreeEditor action, TypeTreeBlock * address, int treeId = -1);
 
   TypeTreeBlock * m_firstBlock;
   int m_numberOfBlocks;

@@ -3,7 +3,6 @@
 
 #include "handle.h"
 
-
 namespace Poincare {
 
 /* A block is a byte-long object containing either a type or some value.

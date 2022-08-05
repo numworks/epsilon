@@ -21,12 +21,10 @@ void testOverflowTreeSandbox(TreeCache * cache, TreeSandbox * sandbox) {
   int treeId = initCache(cache, sandbox);
 
   std::cout << "\n---------------- Fill cache with copies until cache is emptied and initial tree disappear" << std::endl;
-  bool executed;
   do {
-    executed = sandbox->execute(treeId, [](TypeTreeBlock *, TreeSandbox * sandbox) {});
-    cache->storeLastTree();
+    treeId = cache->execute(treeId, [](TypeTreeBlock *, TreeSandbox * sandbox) {});
     print();
-  } while (executed);
+  } while (treeId >= 0);
 
   // TEST 2
   treeId = initCache(cache, sandbox);
@@ -37,13 +35,12 @@ void testOverflowTreeSandbox(TreeCache * cache, TreeSandbox * sandbox) {
   tree->copyTo(buffer);
   int maxNumberOfTreesInCache = TreeCache::k_maxNumberOfBlocks/tree->treeSize() - 1;
   for (int i = 0; i < maxNumberOfTreesInCache; i++) {
-    sandbox->execute(static_cast<TypeTreeBlock *>(buffer), [](TypeTreeBlock *, TreeSandbox * sandbox) {});
-    cache->storeLastTree();
+    cache->execute(static_cast<TypeTreeBlock *>(buffer), [](TypeTreeBlock *, TreeSandbox * sandbox) {});
   }
   print();
 
 
   std::cout << "\n---------------- Edit another tree triggering a cache flush" << std::endl;
-  sandbox->execute(static_cast<TypeTreeBlock *>(buffer), [](TypeTreeBlock *, TreeSandbox * sandbox) {});
+  cache->execute(static_cast<TypeTreeBlock *>(buffer), [](TypeTreeBlock *, TreeSandbox * sandbox) {});
   print();
 }

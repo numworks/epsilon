@@ -6,14 +6,6 @@
 
 namespace Poincare {
 
-bool TreeSandbox::execute(TypeTreeBlock * address, TreeEditor action) {
-  return privateExecuteAction(action, address);
-}
-
-bool TreeSandbox::execute(int treeId, TreeEditor action) {
-  return privateExecuteAction(action, nullptr, treeId);
-}
-
 TreeBlock * TreeSandbox::pushBlock(TreeBlock block) {
   if (!checkForEnoughSpace(1)) {
     return nullptr;
@@ -104,33 +96,6 @@ void TreeSandbox::moveBlocks(TreeBlock * destination, TreeBlock * source, size_t
 
 void TreeSandbox::freePoolFromNode(TreeBlock * firstBlockToDiscard) {
   m_numberOfBlocks = firstBlockToDiscard - static_cast<TreeBlock *>(m_firstBlock);
-}
-
-bool TreeSandbox::privateExecuteAction(TreeEditor action, TypeTreeBlock * address, int treeId) {
-  ExceptionCheckpoint checkpoint;
-start_execute:
-  if (ExceptionRun(checkpoint)) {
-    TypeTreeBlock * treeAddress = address;
-    if (!treeAddress) {
-      assert(treeId >= 0);
-      treeAddress = TreeCache::sharedCache()->treeForIdentifier(treeId);
-      if (!treeAddress) {
-        return false;
-      }
-    }
-    TypeTreeBlock * tree = copyTreeFromAddress(treeAddress);
-    if (!tree) {
-      return false;
-    }
-    action(tree, this);
-    return true;
-  } else {
-    // TODO: don't delete last called treeForIdentifier otherwise can't copyTreeFromAddress if in cache...
-    if (!TreeCache::sharedCache()->reset(true)) {
-      return false;
-    }
-    goto start_execute;
-  }
 }
 
 }

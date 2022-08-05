@@ -1,6 +1,7 @@
-#include "tree_cache.h"
 #include <assert.h>
+#include "exception_checkpoint.h"
 #include <string.h>
+#include "tree_cache.h"
 
 namespace Poincare {
 
@@ -31,12 +32,6 @@ int TreeCache::storeLastTree() {
   return m_nextIdentifier - 1;
 }
 
-TreeCache::TreeCache() :
-  m_sandbox(static_cast<TypeTreeBlock *>(&m_pool[0]), k_maxNumberOfBlocks),
-  m_nextIdentifier(0)
-{
-}
-
 bool TreeCache::reset(bool preserveSandbox) {
   if (m_nextIdentifier == 0) {
     // The cache has already been emptied
@@ -51,6 +46,47 @@ bool TreeCache::reset(bool preserveSandbox) {
   // Redefine sandbox without overriding its content since we might need it
   m_sandbox = TreeSandbox(lastBlock(), k_maxNumberOfBlocks, nbOfSanboxBlocks);
   return true;
+}
+
+int TreeCache::execute(TypeTreeBlock * address, TreeEditor action) {
+  return privateExecuteAction(action, address);
+}
+
+int TreeCache::execute(int treeId, TreeEditor action) {
+  return privateExecuteAction(action, nullptr, treeId);
+}
+
+int TreeCache::privateExecuteAction(TreeEditor action, TypeTreeBlock * address, int treeId) {
+  ExceptionCheckpoint checkpoint;
+start_execute:
+  if (ExceptionRun(checkpoint)) {
+    TypeTreeBlock * treeAddress = address;
+    if (!treeAddress) {
+      assert(treeId >= 0);
+      treeAddress =treeForIdentifier(treeId);
+      if (!treeAddress) {
+        return -1;
+      }
+    }
+    TypeTreeBlock * tree = sandbox()->copyTreeFromAddress(treeAddress);
+    if (!tree) {
+      return false;
+    }
+    action(tree, sandbox());
+    return storeLastTree();
+  } else {
+    // TODO: don't delete last called treeForIdentifier otherwise can't copyTreeFromAddress if in cache...
+    if (!reset(true)) {
+      return -1;
+    }
+    goto start_execute;
+  }
+}
+
+TreeCache::TreeCache() :
+  m_sandbox(static_cast<TypeTreeBlock *>(&m_pool[0]), k_maxNumberOfBlocks),
+  m_nextIdentifier(0)
+{
 }
 
 }

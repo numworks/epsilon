@@ -516,6 +516,18 @@ constexpr ToolboxMessageTree listsChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::Operations, listsOperationsChildren)
 };
 
+constexpr ToolboxMessageTree logicChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::LessOrEqual, I18n::Message::LessOrEqualText),
+  ToolboxMessageTree::Leaf(I18n::Message::GreaterOrEqual, I18n::Message::GreaterOrEqualText),
+  ToolboxMessageTree::Leaf(I18n::Message::NotEqual, I18n::Message::NotEqualText),
+  ToolboxMessageTree::Leaf(I18n::Message::AndCommand, I18n::Message::Empty, false, I18n::Message::AndCommandWithSpaces),
+  ToolboxMessageTree::Leaf(I18n::Message::OrCommand, I18n::Message::OrMessage, false, I18n::Message::OrCommandWithSpaces),
+  ToolboxMessageTree::Leaf(I18n::Message::NotCommand, I18n::Message::Empty, false, I18n::Message::NotCommandWithSpaces),
+  ToolboxMessageTree::Leaf(I18n::Message::XorCommand, I18n::Message::XorMessage, false, I18n::Message::XorCommandWithSpaces),
+  ToolboxMessageTree::Leaf(I18n::Message::NorCommand, I18n::Message::NorMessage, false, I18n::Message::NorCommandWithSpaces),
+  ToolboxMessageTree::Leaf(I18n::Message::NandCommand, I18n::Message::NandMessage, false, I18n::Message::NandCommandWithSpaces)
+};
+
 constexpr ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AbsCommandWithArg, I18n::Message::AbsoluteValue),
   ToolboxMessageTree::Leaf(I18n::Message::RootCommandWithArg, I18n::Message::NthRoot),
@@ -528,7 +540,8 @@ constexpr ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::Lists,listsChildren),
   ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticFork, true),
   ToolboxMessageTree::Node(I18n::Message::Trigonometry, trigonometryChildren),
-  ToolboxMessageTree::Node(I18n::Message::DecimalNumbers, decimalNumbersChildren)
+  ToolboxMessageTree::Node(I18n::Message::DecimalNumbers, decimalNumbersChildren),
+  ToolboxMessageTree::Node(I18n::Message::Logics, logicChildren)
 };
 
 constexpr ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);
@@ -611,9 +624,6 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
         if (!resultExpression.isUninitialized()) {
           // The text is parsable, we create its layout an insert it.
           resultLayout = resultExpression.createLayout(Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::PrintFloat::k_numberOfStoredSignificantDigits, Container::activeApp()->localContext());
-        } else {
-          // UnitConversionCommandWithArg uses undefined units
-          assert(messageTree->label() == I18n::Message::UnitConversionCommandWithArg);
         }
       }
     }

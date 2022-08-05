@@ -48,31 +48,14 @@ bool TreeCache::reset(bool preserveSandbox) {
   return true;
 }
 
-int TreeCache::execute(TypeTreeBlock * address, TreeEditor action) {
-  return privateExecuteAction(action, address);
-}
-
-int TreeCache::execute(int treeId, TreeEditor action) {
-  return privateExecuteAction(action, nullptr, treeId);
-}
-
-int TreeCache::privateExecuteAction(TreeEditor action, TypeTreeBlock * address, int treeId) {
+int TreeCache::execute(ActionWithContext action, void * subAction, void * data) {
   ExceptionCheckpoint checkpoint;
 start_execute:
   if (ExceptionRun(checkpoint)) {
-    TypeTreeBlock * treeAddress = address;
-    if (!treeAddress) {
-      assert(treeId >= 0);
-      treeAddress =treeForIdentifier(treeId);
-      if (!treeAddress) {
-        return -1;
-      }
+    bool success = action(subAction, data);
+    if (!success) {
+      return -1;
     }
-    TypeTreeBlock * tree = sandbox()->copyTreeFromAddress(treeAddress);
-    if (!tree) {
-      return false;
-    }
-    action(tree);
     return storeLastTree();
   } else {
     // TODO: don't delete last called treeForIdentifier otherwise can't copyTreeFromAddress if in cache...

@@ -16,9 +16,8 @@ public:
   TreeSandbox * sandbox() { return &m_sandbox; }
   bool reset(bool preserveSandbox);
 
-  typedef void (*TreeEditor)(TypeTreeBlock * tree);
-  int execute(TypeTreeBlock * address, TreeEditor action);
-  int execute(int treeId, TreeEditor action);
+  typedef bool (*ActionWithContext)(void * subAction, void * data);
+  int execute(ActionWithContext action, void * subAction, void * data);
 
   constexpr static int k_maxNumberOfBlocks = 512;
 private:
@@ -27,7 +26,6 @@ private:
   TreeCache();
   TypeTreeBlock * firstBlock() override { return m_nextIdentifier == 0 ? nullptr : static_cast<TypeTreeBlock *>(&m_pool[0]); }
   TypeTreeBlock * lastBlock() override { return m_nextIdentifier == 0 ? static_cast<TypeTreeBlock *>(&m_pool[0]) : m_cachedTree[m_nextIdentifier - 1]->nextSibling(); }
-  int privateExecuteAction(TreeEditor action, TypeTreeBlock * address, int treeId = -1);
 
   TreeSandbox m_sandbox;
   TreeBlock m_pool[k_maxNumberOfBlocks];

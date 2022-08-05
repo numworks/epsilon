@@ -1,8 +1,9 @@
 #include "print.h"
+#include <poincare_junior/cached_tree.h>
 
 using namespace Poincare;
 
-int initCache(TreeCache * cache) {
+bool createTree() {
   std::cout << "\n---------------- Store (1 + 2) * 3 * 4 in cache ----------------" << std::endl;
   Multiplication::PushNode(3);
   Addition::PushNode(2);
@@ -11,36 +12,35 @@ int initCache(TreeCache * cache) {
   Integer::PushNode(3);
   Integer::PushNode(4);
 
-  int treeId = cache->storeLastTree();
+  return true;
+}
+
+void createTreeInCache() {
+  CachedTree tree(createTree);
+  // Force instantiation in cache
+  tree.send(
+    [](TypeTreeBlock * tree, void * resultAddress) {},
+    nullptr
+  );
   print();
-  return treeId;
 }
 
 void testOverflowTreeSandbox(TreeCache * cache) {
   // TEST 1
-  int treeId = initCache(cache);
-
-  std::cout << "\n---------------- Fill cache with copies until cache is emptied and initial tree disappear" << std::endl;
-  do {
-    treeId = cache->execute(treeId, [](TypeTreeBlock *) {});
-    print();
-  } while (treeId >= 0);
-
-  // TEST 2
-  treeId = initCache(cache);
-
   std::cout << "\n---------------- Fill cache with copies until almost full" << std::endl;
-  TypeTreeBlock * tree = cache->treeForIdentifier(treeId);
-  TreeBlock buffer[100];
-  tree->copyTo(buffer);
-  int maxNumberOfTreesInCache = TreeCache::k_maxNumberOfBlocks/tree->treeSize() - 1;
+  CachedTree tree(createTree);
+  int treeSize;
+  tree.send(
+    [](TypeTreeBlock * tree, void * resultAddress) {
+      *static_cast<int *>(resultAddress) = tree->treeSize();
+    },
+    &treeSize
+  );
+  int maxNumberOfTreesInCache = TreeCache::k_maxNumberOfBlocks/treeSize - 1;
   for (int i = 0; i < maxNumberOfTreesInCache; i++) {
-    cache->execute(static_cast<TypeTreeBlock *>(buffer), [](TypeTreeBlock *) {});
+    createTreeInCache();
   }
-  print();
-
 
   std::cout << "\n---------------- Edit another tree triggering a cache flush" << std::endl;
-  cache->execute(static_cast<TypeTreeBlock *>(buffer), [](TypeTreeBlock *) {});
-  print();
+  createTreeInCache();
 }

@@ -29,7 +29,6 @@ public:
   void removeBlocks(TreeBlock * address, size_t numberOfTreeBlocks);
 
   TypeTreeBlock * copyTreeFromAddress(const void * address);
-  void copyTreeToAddress(const void * address);
 
   TypeTreeBlock * firstBlock() override { return m_firstBlock; }
   TreeBlock * lastBlock() override { return m_firstBlock + m_numberOfBlocks; }

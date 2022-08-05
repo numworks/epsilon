@@ -2064,6 +2064,10 @@ QUIZ_CASE(poincare_simplification_comparison_operators) {
   assert_parsed_expression_simplify_to("3 + i < 1 + i", "0");
   assert_parsed_expression_simplify_to("3 + i = 3 + i", "1");
   assert_parsed_expression_simplify_to("[[0, 0]] < [[1, 1]]", Undefined::Name());
+
+  assert_parsed_expression_simplify_to("3 > 2 >= 1 = 4 - 3 != 6", "1");
+  assert_parsed_expression_simplify_to("3 < 2 >= 1 = 4 - 3 != 6", "0");
+  assert_parsed_expression_simplify_to("3 > 2 >= 1 = 4 / 0", Undefined::Name());
 }
 
 typedef bool (*BoolCompare) (bool a, bool b);

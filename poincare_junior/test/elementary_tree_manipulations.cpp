@@ -4,12 +4,12 @@ using namespace Poincare;
 
 void elementaryTreeManipulation(TreeCache * cache, TreeSandbox * sandbox) {
   std::cout << "\n---------------- Create (1 + 2) * 3 * 4 ----------------" << std::endl;
-  Multiplication::PushNode(sandbox, 3);
-  Addition::PushNode(sandbox, 2);
-  Integer::PushNode(sandbox, 1);
-  Integer::PushNode(sandbox, 2);
-  Integer::PushNode(sandbox, 3);
-  Integer::PushNode(sandbox, 4);
+  Multiplication::PushNode(3);
+  Addition::PushNode(2);
+  Integer::PushNode(1);
+  Integer::PushNode(2);
+  Integer::PushNode(3);
+  Integer::PushNode(4);
 
   print();
 
@@ -31,7 +31,7 @@ void elementaryTreeManipulation(TreeCache * cache, TreeSandbox * sandbox) {
   std::cout << "\n---------------- Develop (1+2)*3*4 ----------------" << std::endl;
   root = sandbox->firstBlock();
   assert(root->type() == BlockType::Multiplication);
-  Multiplication::DistributeOverAddition(root, sandbox);
+  Multiplication::DistributeOverAddition(root);
   print();
 
   std::cout << "\n---------------- Store developped 1*3*4+2*3*4 ----------------" << std::endl;
@@ -39,14 +39,14 @@ void elementaryTreeManipulation(TreeCache * cache, TreeSandbox * sandbox) {
   print();
 
   std::cout << "\n---------------- Create 1-2/3 ----------------" << std::endl;
-  TypeTreeBlock * subtraction = Subtraction::PushNode(sandbox);
-  Integer::PushNode(sandbox, 1);
-  Division::PushNode(sandbox);
-  Integer::PushNode(sandbox, 2);
-  Integer::PushNode(sandbox, 3);
+  TypeTreeBlock * subtraction = Subtraction::PushNode();
+  Integer::PushNode(1);
+  Division::PushNode();
+  Integer::PushNode(2);
+  Integer::PushNode(3);
   print();
 
   std::cout << "\n---------------- Projection to internal nodes 1-2/3 ----------------" << std::endl;
-  subtraction->recursivelyApply(sandbox, &TypeTreeBlock::basicReduction);
+  subtraction->recursivelyApply(&TypeTreeBlock::basicReduction);
   print();
 }

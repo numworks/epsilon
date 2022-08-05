@@ -2,7 +2,7 @@
 #include "print.h"
 
 int elementaryTreeManipulation(TreeCache * cache, TreeSandbox * sandbox);
-int testOverflowTreeSandbox(TreeCache * cache, TreeSandbox * sandbox);
+int testOverflowTreeSandbox(TreeCache * cache);
 
 int main() {
   TreeCache * cache = TreeCache::sharedCache();
@@ -13,7 +13,7 @@ int main() {
   cache->reset(false);
 
   std::cout << "\n\n TEST OVERFLOW TREE SANDBOX \n" << std::endl;
-  testOverflowTreeSandbox(cache, sandbox);
+  testOverflowTreeSandbox(cache);
   cache->reset(false);
 
   intermediaryPrint();

@@ -72,7 +72,7 @@ start_execute:
     if (!tree) {
       return false;
     }
-    action(tree, sandbox());
+    action(tree);
     return storeLastTree();
   } else {
     // TODO: don't delete last called treeForIdentifier otherwise can't copyTreeFromAddress if in cache...

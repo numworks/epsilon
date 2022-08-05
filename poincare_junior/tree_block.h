@@ -35,7 +35,7 @@ struct IndexedTypeTreeBlock {
   int m_index;
 };
 
-typedef void (TypeTreeBlock::*InPlaceTreeFunction)(TreeSandbox *);
+typedef void (TypeTreeBlock::*InPlaceTreeFunction)();
 
 class TreeBlock {
 friend class TreePool;
@@ -116,7 +116,7 @@ public:
     Division::s_vTable,
     Power::s_vTable
   };
-  void basicReduction(TreeSandbox * sandbox) { (*s_vTable[m_content].m_basicReduction)(this, sandbox); }
+  void basicReduction() { (*s_vTable[m_content].m_basicReduction)(this); }
   size_t nodeSize(bool head = true) const { return  (*s_vTable[m_content].m_nodeSize)(this, head); } // Should it be virtual?
   int numberOfChildren() const { return  (*s_vTable[m_content].m_numberOfChildren)(this); } // Should it be virtual
 
@@ -192,7 +192,7 @@ public:
   BlockType type() const { return static_cast<BlockType>(m_content); }
 
   // Recursive helper
-  void recursivelyApply(TreeSandbox * sandbox, InPlaceTreeFunction treeFunction);
+  void recursivelyApply(InPlaceTreeFunction treeFunction);
 
 private:
   TypeTreeBlock * previousRelative(const TreeBlock * firstBlock, bool parent);

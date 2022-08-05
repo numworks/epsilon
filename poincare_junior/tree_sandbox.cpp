@@ -6,6 +6,9 @@
 
 namespace Poincare {
 
+TreeSandbox * TreeSandbox::sharedSandbox() {
+  return TreeCache::sharedCache()->sandbox();
+}
 TreeBlock * TreeSandbox::pushBlock(TreeBlock block) {
   if (!checkForEnoughSpace(1)) {
     return nullptr;

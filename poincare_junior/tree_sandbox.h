@@ -15,6 +15,8 @@ public:
     m_size(size)
   {}
 
+  static TreeSandbox * sharedSandbox();
+
   void reset() { m_numberOfBlocks = 0; }
 
   TreeBlock * pushBlock(TreeBlock block);

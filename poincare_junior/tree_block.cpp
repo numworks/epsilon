@@ -69,11 +69,11 @@ TypeTreeBlock * TypeTreeBlock::nextSibling() {
   return result->nextNode();
 }
 
-void TypeTreeBlock::recursivelyApply(TreeSandbox * sandbox, InPlaceTreeFunction treeFunction) {
+void TypeTreeBlock::recursivelyApply(InPlaceTreeFunction treeFunction) {
   for (IndexedTypeTreeBlock indexedChild : directChildren()) {
-    indexedChild.m_block->recursivelyApply(sandbox, treeFunction);
+    indexedChild.m_block->recursivelyApply(treeFunction);
   }
-  (this->*treeFunction)(sandbox);
+  (this->*treeFunction)();
 }
 
 TypeTreeBlock * TypeTreeBlock::previousRelative(const TreeBlock * firstBlock, bool parent) {

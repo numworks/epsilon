@@ -16,7 +16,7 @@ public:
   TreeSandbox * sandbox() { return &m_sandbox; }
   bool reset(bool preserveSandbox);
 
-  typedef void (*TreeEditor)(TypeTreeBlock * tree, TreeSandbox * sandbox);
+  typedef void (*TreeEditor)(TypeTreeBlock * tree);
   int execute(TypeTreeBlock * address, TreeEditor action);
   int execute(int treeId, TreeEditor action);
 

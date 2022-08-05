@@ -2031,3 +2031,47 @@ QUIZ_CASE(poincare_simplification_mixed_fraction) {
   assert_parsed_expression_simplify_to("1 2/3", "5/3");
   assert_parsed_expression_simplify_to("-1 2/3", "-5/3");
 }
+
+typedef bool (*BoolCompare) (bool a, bool b);
+static void testLogicalOperatorTruthTable(const char * operatorString, BoolCompare evaluationFunction) {
+  constexpr static int bufferSize = 9; // 9 == strlen("1 nand 0") + 1
+  int operatorLength = strlen(operatorString);
+  assert(operatorLength <= 4);
+  char buffer[bufferSize];
+  buffer[1] = ' ';
+  strlcpy(buffer + 2, operatorString, operatorLength + 1);
+  buffer[2 + operatorLength] = ' ';
+  buffer[4 + operatorLength] = 0;
+  for (int a = 0; a <= 1; a++) {
+    buffer[0] = '0' + a;
+    for (int b = 0; b <= 1; b++) {
+      buffer[3 + operatorLength] = '0' + b;
+      const char * truthString = evaluationFunction(static_cast<bool>(a), static_cast<bool>(b)) ? "1" : "0";
+      assert_parsed_expression_simplify_to(buffer, truthString);
+    }
+  }
+}
+
+QUIZ_CASE(poincare_simplification_logical_operators) {
+  assert_parsed_expression_simplify_to("not 1", "0");
+  assert_parsed_expression_simplify_to("not 0", "1");
+  testLogicalOperatorTruthTable("and", [](bool a, bool b) { return a && b; });
+  testLogicalOperatorTruthTable("or", [](bool a, bool b) { return a || b; });
+  testLogicalOperatorTruthTable("xor", [](bool a, bool b) { return a != b; });
+  testLogicalOperatorTruthTable("nor", [](bool a, bool b) { return !(a || b); });
+  testLogicalOperatorTruthTable("nand", [](bool a, bool b) { return !(a && b); });
+
+  assert_parsed_expression_simplify_to("3 and -5.2", "1");
+  assert_parsed_expression_simplify_to("not 0 and 0", "0");
+  assert_parsed_expression_simplify_to("not (0 and 0)", "1");
+  assert_parsed_expression_simplify_to("1 or 0 xor 1", "0");
+  assert_parsed_expression_simplify_to("1 or (0 xor 1)", "1");
+  assert_parsed_expression_simplify_to("1 xor 1 and 0", "1");
+  assert_parsed_expression_simplify_to("(1 xor 1) and 0", "0");
+
+  assert_parsed_expression_simplify_to("1 xor {0,1,0,1}", "{1,0,1,0}");
+
+  assert_parsed_expression_simplify_to("1 and [[-5,2]]", Undefined::Name());
+  assert_parsed_expression_simplify_to("1 or undef", Undefined::Name());
+  assert_parsed_expression_simplify_to("not undef", Undefined::Name());
+}

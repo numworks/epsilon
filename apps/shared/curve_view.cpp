@@ -886,8 +886,8 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvalu
 }
 
 static bool pointInBoundingBox(float x1, float y1, float x2, float y2, float xC, float yC) {
-  return ((x1 < xC && xC < x2) || (x2 < xC && xC < x1) || (x2 == xC && xC == x1))
-      && ((y1 < yC && yC < y2) || (y2 < yC && yC < y1) || (y2 == yC && yC == y1));
+  return ((x1 <= xC && xC <= x2) || (x2 <= xC && xC <= x1))
+      && ((y1 <= yC && yC <= y2) || (y2 <= yC && yC <= y1));
 }
 
 int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, int stampNumber, EvaluateDiscontinuityBetweenFloatValues evaluateDiscontinuityBetweenValues, bool canBeDiscontinuous) const {

@@ -112,6 +112,7 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
     }
   }
 
+  HighlightCell * previousCell = cellAtLocation(previousColumn, previousRow);
   if (selectedRow() >= 0) {
     scrollToCell(selectedColumn(), selectedRow());
   }
@@ -120,7 +121,6 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
     m_delegate->tableViewDidChangeSelectionAndDidScroll(this, previousColumn, previousRow, withinTemporarySelection);
   }
 
-  HighlightCell * previousCell = cellAtLocation(previousColumn, previousRow);
   if (previousCell) {
     previousCell->setHighlighted(false);
   }

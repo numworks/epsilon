@@ -26,8 +26,7 @@ void VectorGraphView::drawRect(KDContext * ctx, KDRect rect) const {
   // Is the label on or to close of the arrow ?
   bool labelTooCloseFromArrow = std::abs(angle) < smallAngle || std::abs(M_PI - angle) < smallAngle;
   // Put the label near the arc with a bit of space
-  // TODO: use constexpr for font size
-  const float labelDistanceInPixels = k_arcRadiusInPixels + KDFont::Font(KDFont::Size::Small)->glyphSize().width();
+  constexpr float labelDistanceInPixels = k_arcRadiusInPixels + KDFont::GlyphWidth(KDFont::Size::Small);
   float labelDistance = pixelLengthToFloatLength(Axis::Horizontal, labelDistanceInPixels);
   drawLabel(ctx, rect, labelDistance * std::cos(angle/2), labelDistance * std::sin(angle/2), "θ", Palette::GrayDark, CurveView::RelativePosition::None, labelTooCloseFromArrow ? CurveView::RelativePosition::Before : CurveView::RelativePosition::None);
   // Draw arc

@@ -645,6 +645,8 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 #endif
 
 constexpr static int k_maxNumberOfIterations = 10;
+// Above 3, N110 just take forever to draw discontinuous curves like f(x)=random()
+constexpr static int k_maxNumberOfIterationsForDiscontinuousFunctions = 3;
 
 void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, EvaluateDiscontinuityBetweenFloatValues evaluateDiscontinuityBetweenValues, bool thick, bool colorUnderCurve, KDColor colorOfFill, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaPattern, Axis axis) const {
   /* ContinuousFunction caching relies on a consistent tStart and tStep. These
@@ -905,6 +907,10 @@ int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamete
   }
   KDCoordinate circleDiameter = thick ? thickCircleDiameter : thinCircleDiameter;
   bool isDiscontinuousBetweenTandS = canBeDiscontinuous && evaluateDiscontinuityBetweenValues(t, s, model, context);
+  if (isDiscontinuousBetweenTandS && maxNumberOfRecursion == k_maxNumberOfIterations) {
+    maxNumberOfRecursion = k_maxNumberOfIterationsForDiscontinuousFunctions;
+  }
+  assert(!isDiscontinuousBetweenTandS || maxNumberOfRecursion <= k_maxNumberOfIterationsForDiscontinuousFunctions);
   if (isRightDotValid) {
     const float deltaX = pxf - puf;
     const float deltaY = pyf - pvf;

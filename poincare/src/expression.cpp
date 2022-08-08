@@ -361,6 +361,23 @@ bool Expression::hasDefinedComplexApproximation(Context * context, Preferences::
   return true;
 }
 
+template <typename T>
+bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, T x1, T x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  if (type() == ExpressionNode::Type::Randint || type() == ExpressionNode::Type::Random) {
+    return true;
+  }
+  if (type() == ExpressionNode::Type::Ceiling || type() == ExpressionNode::Type::Floor || type() == ExpressionNode::Type::Round) {
+    return approximateWithValueForSymbol<T>(symbol, x1, context, complexFormat, angleUnit) != approximateWithValueForSymbol<T>(symbol, x2, context, complexFormat, angleUnit);
+  }
+  const int childrenCount = numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
+    if (childAtIndex(i).isDiscontinuousBetweenValuesForSymbol(symbol, x1, x2, context, complexFormat, angleUnit)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 bool Expression::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return node()->derivate(reductionContext, symbol, symbolValue);
 }
@@ -1253,5 +1270,8 @@ template Evaluation<double> Expression::approximateToEvaluation(Context * contex
 
 template float Expression::approximateWithValueForSymbol(const char * symbol, float x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 template double Expression::approximateWithValueForSymbol(const char * symbol, double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+
+template bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, double x1, double x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+template bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, float x1, float x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
 }

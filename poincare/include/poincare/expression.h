@@ -183,7 +183,7 @@ public:
   bool isAlternativeFormOfRationalNumber() const;
   bool hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, float * returnRealPart = nullptr, float * returnImagPart = nullptr) const;
   bool isCombinationOfUnits() const { return node()->isCombinationOfUnits(); }
-
+  template <typename T> bool isDiscontinuousBetweenValuesForSymbol(const char * symbol, T x1, T x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   /* recursivelyMatches will test each node recursively with the function
    * provided as argument. If the result is Yes, it will stop searching and
    * return true. If the result is Maybe, it will continue searching for a Yes

@@ -112,7 +112,7 @@ template<typename T> ListComplex<T> ElementWiseOnLists(const ListComplex<T> l1, 
 
 constexpr static int k_maxNumberOfParametersForMap = 4;
 
-template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, ComplexesCompute<T> compute, bool mapOnList, void * context) {
+template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, ComplexesCompute<T> compute, BooleansCompute<T> booleansCompute, bool mapOnList, void * context) {
 
   Evaluation<T> evaluationArray[k_maxNumberOfParametersForMap];
   int numberOfParameters = expression->numberOfChildren();
@@ -140,38 +140,67 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
   }
 
   std::complex<T> complexesArray[k_maxNumberOfParametersForMap];
+  bool booleansArray[k_maxNumberOfParametersForMap];
+  bool isBooleanEvaluation = evaluationArray[0].type() == EvaluationNode<T>::Type::ListComplex ? evaluationArray[0].childAtIndex(0).type() == EvaluationNode<T>::Type::BooleanEvaluation : evaluationArray[0].type() == EvaluationNode<T>::Type::BooleanEvaluation;
   if (listLength == Expression::k_noList) {
     for (int i = 0; i < numberOfParameters; i++) {
-      assert(evaluationArray[i].type() == EvaluationNode<T>::Type::Complex);
-      complexesArray[i] = evaluationArray[i].complexAtIndex(0);
+      assert(evaluationArray[i].type() == EvaluationNode<T>::Type::Complex || evaluationArray[i].type() == EvaluationNode<T>::Type::BooleanEvaluation);
+      if ((evaluationArray[i].type() == EvaluationNode<T>::Type::BooleanEvaluation) != isBooleanEvaluation) {
+        return Complex<T>::Undefined();
+      }
+      if (isBooleanEvaluation) {
+        booleansArray[i] = static_cast<BooleanEvaluation<T> &>(evaluationArray[i]).value();
+      } else {
+        complexesArray[i] = evaluationArray[i].complexAtIndex(0);
+      }
     }
-    return compute(complexesArray, numberOfParameters, approximationContext.complexFormat(), approximationContext.angleUnit(), context);
+    return isBooleanEvaluation ? booleansCompute(booleansArray, numberOfParameters, context) : compute(complexesArray, numberOfParameters, approximationContext.complexFormat(), approximationContext.angleUnit(), context);
   }
   ListComplex<T> resultList = ListComplex<T>::Builder();
   for (int k = 0; k < listLength; k++) {
     for (int i = 0; i < numberOfParameters; i++) {
-      if (evaluationArray[i].type() == EvaluationNode<T>::Type::Complex) {
-        complexesArray[i] = evaluationArray[i].complexAtIndex(0);
+      Evaluation<T> currentChild;
+      if (evaluationArray[i].type() == EvaluationNode<T>::Type::ListComplex) {
+        currentChild = evaluationArray[i].childAtIndex(k);
       } else {
-        assert(evaluationArray[i].type() == EvaluationNode<T>::Type::ListComplex);
-        complexesArray[i] = evaluationArray[i].complexAtIndex(k);
+        currentChild = evaluationArray[i];
+      }
+      if ((currentChild.type() == EvaluationNode<T>::Type::BooleanEvaluation) != isBooleanEvaluation) {
+        return Complex<T>::Undefined();
+      }
+      if (currentChild.type() == EvaluationNode<T>::Type::Complex) {
+        complexesArray[i] = currentChild.complexAtIndex(0);
+      } else {
+        assert(currentChild.type() == EvaluationNode<T>::Type::BooleanEvaluation);
+        booleansArray[i] = static_cast<BooleanEvaluation<T>&>(currentChild).value();
       }
     }
-    resultList.addChildAtIndexInPlace(compute(complexesArray, numberOfParameters, approximationContext.complexFormat(), approximationContext.angleUnit(), context), k, k);
+    if (isBooleanEvaluation) {
+      resultList.addChildAtIndexInPlace(booleansCompute(booleansArray, numberOfParameters, context), k, k);
+    } else {
+      resultList.addChildAtIndexInPlace(compute(complexesArray, numberOfParameters, approximationContext.complexFormat(), approximationContext.angleUnit(), context), k, k);
+    }
   }
   return std::move(resultList);
 }
 
-template<typename T> Evaluation<T> ApproximationHelper::MapOneChild(const ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, ComplexCompute<T> compute, bool mapOnList) {
+template<typename T> Evaluation<T> ApproximationHelper::MapOneChild(const ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, ComplexCompute<T> compute, BooleanCompute<T> booleanCompute, bool mapOnList) {
   assert(expression->numberOfChildren() == 1);
+  void * context[] = {reinterpret_cast<void *>(compute), reinterpret_cast<void *>(booleanCompute)};
   return Map<T>(expression,
       approximationContext,
       [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * context) {
         assert(numberOfComplexes == 1);
-        return reinterpret_cast<ComplexCompute<T>>(context)(c[0], complexFormat, angleUnit);
+        void * * listOfContext = reinterpret_cast<void * *>(context);
+        return reinterpret_cast<ComplexCompute<T>>(listOfContext[0])(c[0], complexFormat, angleUnit);
+      },
+      [] (const bool * b, int numberOfBooleans, void * context) {
+        assert(numberOfBooleans == 1);
+        void * * listOfContext = reinterpret_cast<void * *>(context);
+        return reinterpret_cast<BooleanCompute<T>>(listOfContext[1])(b[0]);
       },
       mapOnList,
-      reinterpret_cast<void *>(compute));
+      reinterpret_cast<void *>(context));
 }
 
 template<typename T> Evaluation<T> ApproximationHelper::Reduce(
@@ -184,6 +213,9 @@ template<typename T> Evaluation<T> ApproximationHelper::Reduce(
     MatrixAndMatrixReduction<T> computeOnMatrices,
     bool mapOnList
     ) {
+  if (eval1.type() == EvaluationNode<T>::Type::BooleanEvaluation || eval2.type() == EvaluationNode<T>::Type::BooleanEvaluation) {
+    return Complex<T>::Undefined();
+  }
   // If element is complex
   if (eval1.type() == EvaluationNode<T>::Type::Complex) {
     if (eval2.type() == EvaluationNode<T>::Type::Complex) {
@@ -276,11 +308,11 @@ template uint32_t Poincare::ApproximationHelper::PositiveIntegerApproximationIfP
 template std::complex<float> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<float>(std::complex<float>,std::complex<float>,std::complex<float>,bool);
 template std::complex<double> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<double>(std::complex<double>,std::complex<double>,std::complex<double>,bool);
 
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexesCompute<float> compute, bool mapOnList, void * context);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexesCompute<double> compute, bool mapOnList, void * context);
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexesCompute<float> compute, Poincare::ApproximationHelper::BooleansCompute<float> booleansCompute, bool mapOnList, void * context);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexesCompute<double> compute, Poincare::ApproximationHelper::BooleansCompute<double> booleansCompute, bool mapOnList, void * context);
 
-template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexCompute<float> compute, bool mapOnList);
-template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexCompute<double> compute, bool mapOnList);
+template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexCompute<float> compute,  Poincare::ApproximationHelper::BooleanCompute<float> booleanCompute, bool mapOnList);
+template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapOneChild(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexCompute<double> compute, Poincare::ApproximationHelper::BooleanCompute<double> booleanCompute, bool mapOnList);
 
 template Poincare::Evaluation<float> Poincare::ApproximationHelper::MapReduce<float>(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, Poincare::ApproximationHelper::ReductionFunction<float> reductionFunction);
 template Poincare::Evaluation<double> Poincare::ApproximationHelper::MapReduce<double>(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, Poincare::ApproximationHelper::ReductionFunction<double> reductionFunction);

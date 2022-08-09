@@ -2,6 +2,7 @@
 #define POINCARE_APPROXIMATION_HELPER_H
 
 #include <poincare/complex.h>
+#include <poincare/boolean.h>
 #include <poincare/list_complex.h>
 #include <poincare/matrix_complex.h>
 #include <poincare/expression_node.h>
@@ -17,11 +18,15 @@ namespace ApproximationHelper {
 
   // Map on mutliple children
   template <typename T> using ComplexesCompute = Complex<T>(*)(const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * context);
-template<typename T> Evaluation<T> Map(const ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, ComplexesCompute<T> compute, bool mapOnList = true, void * context = nullptr);
+  template <typename T> using BooleansCompute = Evaluation<T>(*)(const bool * b, int numberOfBooleans, void * context);
+  template <typename T> Evaluation<T> UndefinedOnBooleans(const bool * b, int numberOfBooleans, void * context) { return Complex<T>::Undefined(); }
+  template<typename T> Evaluation<T> Map(const ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, ComplexesCompute<T> compute, BooleansCompute<T> booleansCompute = UndefinedOnBooleans, bool mapOnList = true, void * context = nullptr);
 
   // Map on one child
   template <typename T> using ComplexCompute = Complex<T>(*)(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit);
-  template<typename T> Evaluation<T> MapOneChild(const ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, ComplexCompute<T> compute, bool mapOnList = true);
+  template <typename T> using BooleanCompute = Evaluation<T>(*)(const bool b);
+  template <typename T> Evaluation<T> UndefinedOnBoolean(const bool b) { return Complex<T>::Undefined(); }
+  template<typename T> Evaluation<T> MapOneChild(const ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, ComplexCompute<T> compute, BooleanCompute<T> booleanCompute = UndefinedOnBoolean, bool mapOnList = true);
 
   // Lambda computation function
   template <typename T> using ComplexAndComplexReduction = Complex<T>(*)(const std::complex<T> c1, const std::complex<T> c2, Preferences::ComplexFormat complexFormat);
@@ -54,6 +59,7 @@ template<typename T> Evaluation<T> Map(const ExpressionNode * expression, const 
   // Lambda reduction function (by default you should use Reduce).
   template <typename T> using ReductionFunction = Evaluation<T>(*)(Evaluation<T> eval1, Evaluation<T> eval2, Preferences::ComplexFormat complexFormat);
 
+  // For now, MapReduce is always undef on booleans
   template<typename T> Evaluation<T> MapReduce(
       const ExpressionNode * expression,
       const ExpressionNode::ApproximationContext& approximationContext,

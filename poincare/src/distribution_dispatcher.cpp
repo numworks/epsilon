@@ -129,6 +129,7 @@ Evaluation<T> DistributionDispatcherNode::templatedApproximate(const Approximati
       const Distribution * distribution = Distribution::Get(self->m_distributionType);
       return Complex<T>::Builder(function->EvaluateAtAbscissa(abscissa, distribution, parameters));
     },
+    ApproximationHelper::UndefinedOnBooleans,
     true,
     static_cast<void*>(const_cast<DistributionDispatcherNode *>(this))
     );

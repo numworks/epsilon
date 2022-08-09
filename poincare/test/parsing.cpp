@@ -363,7 +363,8 @@ QUIZ_CASE(poincare_parsing_units) {
       Unit::Builder(rep, Unit::Prefix::EmptyPrefix()).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
       Expression unit = parse_expression(buffer, nullptr, false);
       quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
-      unit = parse_expression(buffer + 1, &context, false); // Try without '_'. This need a context or everything without '_' is understood as variable.
+      // Try without '_'. This need a context or everything without '_' is understood as variable.
+      unit = parse_expression(buffer + 1, &context, false);
       quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
       if (rep->isInputPrefixable()) {
         for (size_t i = 0; i < Unit::Prefix::k_numberOfPrefixes; i++) {
@@ -371,7 +372,8 @@ QUIZ_CASE(poincare_parsing_units) {
           Unit::Builder(rep, pre).serialize(buffer, bufferSize, Preferences::PrintFloatMode::Decimal, Preferences::VeryShortNumberOfSignificantDigits);
           Expression unit = parse_expression(buffer, nullptr, false);
           quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
-          unit = parse_expression(buffer, &context, false); // Try without '_'. This need a context or everything without '_' is understood as variable.
+          // Try without '_'. This need a context or everything without '_' is understood as variable.
+          unit = parse_expression(buffer, &context, false);
           quiz_assert_print_if_failure(unit.type() == ExpressionNode::Type::Unit, "Should be parsed as a Unit");
         }
       }

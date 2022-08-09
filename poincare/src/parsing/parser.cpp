@@ -69,7 +69,8 @@ Expression Parser::parseExpressionWithRightwardsArrow(const char * rightwardsArr
     m_status = Status::Progress;
     m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
     EmptyContext tempContext = EmptyContext();
-    VariableContext assignmentContext("", &tempContext); // This is instatiated outside the condition so that the pointer is not lost.
+    // This is instatiated outside the condition so that the pointer is not lost.
+    VariableContext assignmentContext("", &tempContext);
     if (rightHandSide.type() ==  ExpressionNode::Type::Function && m_parsingContext.context()) {
       /* If assigning a function, set the function parameter in the context
        * for parsing leftHandSide.

@@ -61,7 +61,8 @@ private:
   uint16_t writePacket(const void * buffer, uint16_t length);
 
   bool m_forceNAK;
-  int m_bufferOffset; // When sending large data stored in the buffer, the offset keeps tracks of which data packet should be sent next.
+  // When sending large data stored in the buffer, the offset keeps tracks of which data packet should be sent next.
+  int m_bufferOffset;
   uint16_t m_transferBufferLength;
   uint16_t m_receivedPacketSize;
   bool m_zeroLengthPacketNeeded;

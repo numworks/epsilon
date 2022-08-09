@@ -40,7 +40,8 @@ void assert_variables_are(const char * script, const size_t nameToCompleteOffset
         &addParentheses,
         i,
         &index);
-    quiz_assert(i == index); // If false, the autocompletion has cycled: there are not as many results as expected
+    // If false, the autocompletion has cycled: there are not as many results as expected
+    quiz_assert(i == index);
     quiz_assert(strncmp(*(expectedVariables + i), autocompletionI - nameToCompleteLength, textToInsertLength + nameToCompleteLength) == 0);
     index++;
   }

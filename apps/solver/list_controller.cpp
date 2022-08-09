@@ -21,7 +21,8 @@ ListController::ListController(Responder * parentResponder, EquationStore * equa
   m_modelsParameterController(this, equationStore, this),
   m_modelsStackController(nullptr, &m_modelsParameterController, StackViewController::Style::PurpleWhite)
 {
-  m_addNewModel.setAlignment(0.3f, KDContext::k_alignCenter); // (EquationListView::k_braceTotalWidth+k_expressionMargin) / (Ion::Display::Width-m_addNewModel.text().size()) = (30+5)/(320-200)
+  // (EquationListView::k_braceTotalWidth+k_expressionMargin) / (Ion::Display::Width-m_addNewModel.text().size()) = (30+5)/(320-200)
+  m_addNewModel.setAlignment(0.3f, KDContext::k_alignCenter);
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_expressionCells[i].setLeftMargin(EquationListView::k_braceTotalWidth+k_expressionMargin);
     m_expressionCells[i].setEven(true);

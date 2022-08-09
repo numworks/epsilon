@@ -132,7 +132,8 @@ bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
     ColumnParameters * parameters = columnParameters();
     if (controller != nullptr) {
       parameters->initializeColumnParameters(); // Always initialize before pushing
-      controller->selectRow(0); // Reset here because we want to stay on the same row if we come from a submenu
+      // Reset here because we want to stay on the same row if we come from a submenu
+      controller->selectRow(0);
       stackController()->push(controller);
     }
     return true;

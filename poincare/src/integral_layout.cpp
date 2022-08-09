@@ -228,80 +228,82 @@ KDCoordinate IntegralLayoutNode::boundMaxHeight(BoundPosition position, KDFont::
   return max;
 }
 
+// clang-format off
 /*
-Window configuration explained :
-Vertical margins and offsets
-+-----------------------------------------------------------------+
-|                                                |                |
-|                                        k_boundVerticalMargin    |
-|                                                |                |
-|                                       +------------------+      |
-|                                       | upperBoundHeight |      |
-|                                       +------------------+      |
-|             +++       |                        |                |
-|            +++   k_symbolHeight     k_integrandVerticalMargin   |
-|           +++         |                        |                |
-|                                                                 |
-|           |||                                                   |
-|           |||                                                   |
-|           |||                                                   |
-|           |||                                                   |
-|           |||         centralArgumentHeight                     |
-|           |||                                                   |
-|           |||                                                   |
-|           |||                                                   |
-|           |||                                                   |
-|           |||                                                   |
-|                                                                 |
-|           +++         |                      |                  |
-|          +++    k_symbolHeight     k_integrandVerticalMargin    |
-|         +++           |                      |                  |
-|                                     +------------------+        |
-|                                     | lowerBoundHeight |        |
-|                                     +------------------+        |
-|                                              |                  |
-|                                      k_boundVerticalMargin      |
-|                                              |                  |
-+-----------------------------------------------------------------+
-
-Horizontal margins and offsets
-+-------------------------------------------------------------------------------------------------------+
-|                                                                                                       |                                                                                                |
-|           |             |                       |+---------------+|                           |       |
-|           |k_symbolWidth|k_boundHorizontalMargin||upperBoundWidth||k_integrandHorizontalMargin|       |
-|           |             |                       |+---------------+|                           |       |
-|                      ***                                                                              |
-|                    ***                                                                                |
-|                  ***                                                                          |       |
-|                ***                                                                                    |
-|              ***                                                                                      |
-|            ***                                                                                |       |
-|            |||                                                                                        |
-|            |||                                                                                        |
-|            |||                                                                                |       |
-|            |||                                                                                        |
-|            |||                                                                                 x dx   |
-|            |||                                                                                        |
-|            |||                                                                                |       |
-|            |||                                                                                        |
-|            |||                                                                                        |
-|            |||                                                                                |       |
-|            |||                                                                                        |
-|            |||                                                                                        |
-|            ***                                                                                |       |
-|          ***                                                                                          |
-|        ***                                                                                            |
-|      ***                                                                                      |       |
-|    ***                                                                                                |
-|  ***                                                                                                  |
-| |             |         |                       |+---------------+|                           |       |
-| |k_symbolWidth|    a    |k_boundHorizontalMargin||lowerBoundWidth||k_integrandHorizontalMargin|       |
-| |             |         |                       |+---------------+|                           |       |
-|                                                                                                       |
-+-------------------------------------------------------------------------------------------------------+
-||| = k_lineThickness
-a = k_symbolWidth - k_lineThickness
-*/
+ * Window configuration explained :
+ * Vertical margins and offsets
+ * +-----------------------------------------------------------------+
+ * |                                                |                |
+ * |                                        k_boundVerticalMargin    |
+ * |                                                |                |
+ * |                                       +------------------+      |
+ * |                                       | upperBoundHeight |      |
+ * |                                       +------------------+      |
+ * |             +++       |                        |                |
+ * |            +++   k_symbolHeight     k_integrandVerticalMargin   |
+ * |           +++         |                        |                |
+ * |                                                                 |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |           |||         centralArgumentHeight                     |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |           |||                                                   |
+ * |                                                                 |
+ * |           +++         |                      |                  |
+ * |          +++    k_symbolHeight     k_integrandVerticalMargin    |
+ * |         +++           |                      |                  |
+ * |                                     +------------------+        |
+ * |                                     | lowerBoundHeight |        |
+ * |                                     +------------------+        |
+ * |                                              |                  |
+ * |                                      k_boundVerticalMargin      |
+ * |                                              |                  |
+ * +-----------------------------------------------------------------+
+ *
+ * Horizontal margins and offsets
+ * +-------------------------------------------------------------------------------------------------------+
+ * |                                                                                                       |                                                                                                |
+ * |           |             |                       |+---------------+|                           |       |
+ * |           |k_symbolWidth|k_boundHorizontalMargin||upperBoundWidth||k_integrandHorizontalMargin|       |
+ * |           |             |                       |+---------------+|                           |       |
+ * |                      ***                                                                              |
+ * |                    ***                                                                                |
+ * |                  ***                                                                          |       |
+ * |                ***                                                                                    |
+ * |              ***                                                                                      |
+ * |            ***                                                                                |       |
+ * |            |||                                                                                        |
+ * |            |||                                                                                        |
+ * |            |||                                                                                |       |
+ * |            |||                                                                                        |
+ * |            |||                                                                                 x dx   |
+ * |            |||                                                                                        |
+ * |            |||                                                                                |       |
+ * |            |||                                                                                        |
+ * |            |||                                                                                        |
+ * |            |||                                                                                |       |
+ * |            |||                                                                                        |
+ * |            |||                                                                                        |
+ * |            ***                                                                                |       |
+ * |          ***                                                                                          |
+ * |        ***                                                                                            |
+ * |      ***                                                                                      |       |
+ * |    ***                                                                                                |
+ * |  ***                                                                                                  |
+ * | |             |         |                       |+---------------+|                           |       |
+ * | |k_symbolWidth|    a    |k_boundHorizontalMargin||lowerBoundWidth||k_integrandHorizontalMargin|       |
+ * | |             |         |                       |+---------------+|                           |       |
+ * |                                                                                                       |
+ * +-------------------------------------------------------------------------------------------------------+
+ * ||| = k_lineThickness
+ * a = k_symbolWidth - k_lineThickness
+ */
+// clang-format on
 
 KDSize IntegralLayoutNode::computeSize(KDFont::Size font) {
   KDSize dSize = KDFont::Font(font)->stringSize("d");

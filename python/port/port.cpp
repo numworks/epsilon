@@ -298,7 +298,8 @@ void gc_collect_regs_and_stack(void) {
      *                               registers
      *                             <----------->
      * STACK <-  ...|  |  |  |  |  |--|--|--|--|  |  |  |  |  |  |
-     *                             ^sp                           ^python_stack_top
+     *                             ^                             ^
+     *                             sp                      python_stack_top
      * */
 
     stackLengthInByte = (uintptr_t)python_stack_top - sp;

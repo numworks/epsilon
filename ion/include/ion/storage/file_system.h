@@ -10,10 +10,12 @@
 
 namespace Ion {
 
+// clang-format off
 /* Storage : | Magic |             Record1                 |            Record2                  | ... | Magic |
  *           | Magic | Size1(uint16_t) | FullName1 | Body1 | Size2(uint16_t) | FullName2 | Body2 | ... | Magic |
  *
  * A record's fullName is baseName.extension. */
+// clang-format on
 
 namespace Storage {
 

@@ -334,7 +334,8 @@ QUIZ_CASE(ion_utf8_helper_string_glyph_length) {
   assert_string_glyph_length_is("1ᴇ3", -1, 3);
   assert_string_glyph_length_is("∑∫i", -1, 3);
   assert_string_glyph_length_is("123", 2, 2);
-  uint8_t testString[] = {'a', 'b', 'c', 0b11111111, 0b11111111, 0}; // Malformed utf-8 string
+  // Malformed utf-8 string
+  uint8_t testString[] = {'a', 'b', 'c', 0b11111111, 0b11111111, 0};
   assert_string_glyph_length_is((const char *)testString, 3, 3);
 }
 

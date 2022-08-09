@@ -471,7 +471,8 @@ Expression Addition::shallowReduce(ReductionContext reductionContext) {
    *   We can bubble up ComplexCartesian nodes. */
   if (allChildrenAreReal(reductionContext.context(), reductionContext.shouldCheckMatrices()) == 0) {
     /* We turn (a+ib)+(c+id) into (a+c)+i(c+d)*/
-    Addition imag = Addition::Builder(); // we store all imaginary parts in 'imag'
+    // we store all imaginary parts in 'imag'
+    Addition imag = Addition::Builder();
     Addition real = *this; // we store all real parts in 'real'
     i = numberOfChildren() - 1;
     while (i >= 0) {
@@ -609,7 +610,8 @@ Expression Addition::factorizeOnCommonDenominator(ReductionContext reductionCont
 
   /* Step 2: Create the numerator. We start with this being a/b+c/d+e/b and we
    * want to create numerator = a/b*b*d + c/d*b*d + e/b*b*d = a*d + c*b + e*d */
-  assert(reductionContext.target() ==  ReductionTarget::User); // Else, before, the algorithm used User target -> put back ?
+  // Else, before, the algorithm used User target -> put back ?
+  assert(reductionContext.target() == ReductionTarget::User);
   Addition numerator = Addition::Builder();
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {

@@ -116,7 +116,8 @@ void CodePointLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, 
     return;
   }
   // General case
-  constexpr int bufferSize = sizeof(CodePoint)/sizeof(char) + 1; // Null-terminating char
+  // Null-terminating char
+  constexpr int bufferSize = sizeof(CodePoint)/sizeof(char) + 1;
   char buffer[bufferSize];
   SerializationHelper::CodePoint(buffer, bufferSize, m_codePoint);
   ctx->drawString(buffer, p, font, expressionColor, backgroundColor);

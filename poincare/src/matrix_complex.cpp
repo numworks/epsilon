@@ -65,7 +65,8 @@ std::complex<T> MatrixComplexNode<T>::determinant() const {
   std::complex<T> operandsCopy[Matrix::k_maxNumberOfChildren];
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
-    operandsCopy[i] = complexAtIndex(i); // Returns complex<T>(NAN, NAN) if Node type is not Complex
+    // Returns complex<T>(NAN, NAN) if Node type is not Complex
+    operandsCopy[i] = complexAtIndex(i);
   }
   std::complex<T> determinant = std::complex<T>(1);
   Matrix::ArrayRowCanonize(operandsCopy, m_numberOfRows, m_numberOfColumns, &determinant);
@@ -117,7 +118,8 @@ MatrixComplex<T> MatrixComplexNode<T>::ref(bool reduced) const {
   std::complex<T> operandsCopy[Matrix::k_maxNumberOfChildren];
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
-    operandsCopy[i] = complexAtIndex(i); // Returns complex<T>(NAN, NAN) if Node type is not Complex
+    // Returns complex<T>(NAN, NAN) if Node type is not Complex
+    operandsCopy[i] = complexAtIndex(i);
   }
   /* Reduced row echelon form is also called row canonical form. To compute the
    * row echelon form (non reduced one), fewer steps are required. */

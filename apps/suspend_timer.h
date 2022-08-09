@@ -7,7 +7,8 @@ class SuspendTimer : public Escher::Timer {
 public:
   SuspendTimer();
 private:
-  constexpr static int k_idleBeforeSuspendDuration = 5*60*1000; // In miliseconds
+  // In miliseconds
+  constexpr static int k_idleBeforeSuspendDuration = 5*60*1000;
   bool fire() override;
 };
 

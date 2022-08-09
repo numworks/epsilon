@@ -80,7 +80,8 @@ Event getEvent(int * timeout) {
       constexpr int bufferLength = 50;
       char buffer[bufferLength];
       Poincare::PrintInt::Left(timings[i], buffer, bufferLength);
-      //buffer[50-1-3] = 0; // convert from ms to s without generating _udivmoddi4 (long long division)
+      // convert from ms to s without generating _udivmoddi4 (long long division)
+      // buffer[50-1-3] = 0;
       ctx->drawString(scenarios[i].name(), KDPoint(0, line_y), font);
       ctx->drawString(buffer, KDPoint(200, line_y), font);
       line_y += line_height;

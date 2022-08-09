@@ -25,7 +25,8 @@ public:
     return &m_listView;
   }
   constexpr static KDCoordinate k_margin = 10;
-  constexpr static KDCoordinate k_braceTotalWidth = 30;//2*k_margin+BraceView::k_braceWidth;
+  //2*k_margin+BraceView::k_braceWidth;
+  constexpr static KDCoordinate k_braceTotalWidth = 30;
   void layoutSubviews(bool force = false) override;
 private:
   int numberOfSubviews() const override;

@@ -710,7 +710,8 @@ Expression Power::shallowReduce(ReductionContext reductionContext) {
     Expression thisRef = *this;
     replaceWithInPlace(m);
     m.addChildAtIndexInPlace(thisRef, 1, 1);
-    thisRef.shallowReduce(reductionContext); // In case thisRef = x^(linear combination of logs)
+    // In case thisRef = x^(linear combination of logs)
+    thisRef.shallowReduce(reductionContext);
     return m.shallowReduce(reductionContext);
   }
 

@@ -12,7 +12,8 @@ public:
   const char * parameterNameAtIndex(int index) const override { return index == 0 ? "d1" : "d2"; }
   bool authorizedParameterAtIndex(double x, int index) const override;
 private:
-  constexpr static double k_maxParameter = 144.0; // The display works badly for d1 = d2 > 144.
+  // The display works badly for d1 = d2 > 144.
+  constexpr static double k_maxParameter = 144.0;
   constexpr static float k_defaultMax = 3.0f;
   enum ParamsOrder { D1, D2 };
   Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override;

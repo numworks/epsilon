@@ -656,7 +656,8 @@ void VariableBoxController::loadCurrentVariablesInScript(const char * scriptCont
           }
         }
         assert(beginningLineIndex == line);
-        const char * tokenInText = beginningLine + lex->tok_column - 1; // tok_column starts at 1, not 0
+        // tok_column starts at 1, not 0
+        const char * tokenInText = beginningLine + lex->tok_column - 1;
         assert(strncmp(tokenInText, lex->vstr.buf, nameLength) == 0);
 
         ScriptNode::Type nodeType = (defToken || *(tokenInText + nameLength) == '(')? ScriptNode::Type::WithParentheses : ScriptNode::Type::WithoutParentheses;

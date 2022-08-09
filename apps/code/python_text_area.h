@@ -63,7 +63,8 @@ protected:
   };
 private:
   void removeAutocompletion();
-  void removeAutocompletionText(); // Just removes the suggested text, not the autocompletion mode
+  // Just removes the suggested text, not the autocompletion mode
+  void removeAutocompletionText();
   void addAutocompletion(int index = 0);
   // Assumes the var box is already loaded
   bool addAutocompletionTextAtIndex(int nextIndex, int * currentIndexToUpdate = nullptr);

@@ -25,7 +25,8 @@ float InteractiveCurveViewRangeDelegate::DefaultAddMargin(float x, float range, 
    */
   float topMarginRatio = isVertical ? top : right;
   float bottomMarginRatio = isVertical ? bottom : left;
-  assert(topMarginRatio + bottomMarginRatio < 1); // Assertion so that the formula is correct
+  // Assertion so that the formula is correct
+  assert(topMarginRatio + bottomMarginRatio < 1);
   float ratioDenominator = 1 - bottomMarginRatio - topMarginRatio;
   float ratio = isMin ? -bottomMarginRatio : topMarginRatio;
   /* We want to add slightly more than the required margin, so that

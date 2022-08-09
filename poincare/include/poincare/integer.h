@@ -159,8 +159,10 @@ public:
 
   constexpr static int k_maxNumberOfDigits = 32;
 private:
-  constexpr static int k_maxNumberOfDigitsBase10 = 309; // 1E308 < (2^32)^k_maxNumberOfDigits < 1E309
-  constexpr static int k_maxNumberOfParsedDigitsBase10 = 30; // the screen is 30 digits large.
+  // 1E308 < (2^32)^k_maxNumberOfDigits < 1E309
+  constexpr static int k_maxNumberOfDigitsBase10 = 309;
+  // the screen is 30 digits large.
+  constexpr static int k_maxNumberOfParsedDigitsBase10 = 30;
   constexpr static int k_maxExtractableInteger = INT_MAX;
 
   // Constructors

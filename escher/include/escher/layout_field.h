@@ -81,7 +81,8 @@ private:
   public:
     ContentView(KDFont::Size font);
     bool isEditing() const { return m_isEditing; }
-    bool setEditing(bool isEditing); // returns True if LayoutField should reload
+    // returns True if LayoutField should reload
+    bool setEditing(bool isEditing);
     void setBackgroundColor(KDColor c) { m_expressionView.setBackgroundColor(c); }
     void setCursor(Poincare::LayoutCursor cursor) { m_cursor = cursor; }
     void cursorPositionChanged() { layoutCursorSubview(false); }

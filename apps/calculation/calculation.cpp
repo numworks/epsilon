@@ -39,7 +39,8 @@ bool Calculation::operator==(const Calculation& c) {
 Calculation * Calculation::next() const {
   const char * result = reinterpret_cast<const char *>(this) + sizeof(Calculation);
   for (int i = 0; i < k_numberOfExpressions; i++) {
-    result = result + strlen(result) + 1; // Pass inputText, exactOutputText, ApproximateOutputText x2
+    // Pass inputText, exactOutputText, ApproximateOutputText x2
+    result = result + strlen(result) + 1;
   }
   return reinterpret_cast<Calculation *>(const_cast<char *>(result));
 }

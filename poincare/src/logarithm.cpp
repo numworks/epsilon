@@ -43,12 +43,14 @@ Expression LogarithmNode::shallowReduce(const ReductionContext& reductionContext
 }
 
 bool LogarithmNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
-  assert(numberOfChildren() == 2); // One child logarithm disappears at reduction.
+  // One child logarithm disappears at reduction.
+  assert(numberOfChildren() == 2);
   return Logarithm(this).derivate(reductionContext, symbol, symbolValue);
 }
 
 Expression LogarithmNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {
-  assert(numberOfChildren() == 2); // One child logarithm disappears at reduction.
+  // One child logarithm disappears at reduction.
+  assert(numberOfChildren() == 2);
   return Logarithm(this).unaryFunctionDifferential(reductionContext);
 }
 

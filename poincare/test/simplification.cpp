@@ -497,8 +497,10 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_kg×_m^(-1)×_s^(-1)", "1×_Pa×_s"); // Dynamic viscosity
   // Gray/Sievert _J×_kg^\u0012-1\u0013
   assert_parsed_expression_simplify_to("_m^2×_s^(-2)", "1×_m^2×_s^\u0012-2\u0013");
-  assert_parsed_expression_simplify_to("_m^2×_kg×_s^(-1)", "1×_J×_s"); // Angular momentum _N×_m×_s
-  assert_parsed_expression_simplify_to("_m^(-1)×_kg×_s^(-2)", "1×_Pa"); // Energy density _J×_m^-3
+  // Angular momentum _N×_m×_s
+  assert_parsed_expression_simplify_to("_m^2×_kg×_s^(-1)", "1×_J×_s");
+  // Energy density _J×_m^-3
+  assert_parsed_expression_simplify_to("_m^(-1)×_kg×_s^(-2)", "1×_Pa");
   // Spectral power _W×_m^-1
   assert_parsed_expression_simplify_to("_m×_kg×_s^(-3)", "1×_N×_s^\u0012-1\u0013");
   // Compressibility
@@ -509,7 +511,8 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_m^(-2)×_s×_A", "1×_C×_m^\u0012-2\u0013");
   // Exposure
   assert_parsed_expression_simplify_to("_kg^(-1)×_s×_A", "1×_C×_kg^\u0012-1\u0013");
-  assert_parsed_expression_simplify_to("_kg×_m^3×_s^(-3)×_A^(-2)", "1×_Ω×_m"); // Electrical resistivity
+  // Electrical resistivity
+  assert_parsed_expression_simplify_to("_kg×_m^3×_s^(-3)×_A^(-2)", "1×_Ω×_m");
   // Dipole moment
   assert_parsed_expression_simplify_to("_m^(-1)×_s×_A", "1×_C×_m^\u0012-1\u0013");
   // Electron mobility _m^2×_V^-1×_s^-1
@@ -973,7 +976,8 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   // -- sin/cos -> tan
   assert_parsed_expression_simplify_to("sin(x)/cos(x)", "tan(x)");
   assert_parsed_expression_simplify_to("cos(x)/sin(x)", "cot(x)");
-  assert_parsed_expression_simplify_to("1/tan(x)", "1/tan(x)"); // 1/tan = cot if tan(x) != undef
+  // 1/tan = cot if tan(x) != undef
+  assert_parsed_expression_simplify_to("1/tan(x)", "1/tan(x)");
   assert_parsed_expression_simplify_to("sin(x)×π/cos(x)", "π×tan(x)");
   assert_parsed_expression_simplify_to("sin(x)/(π×cos(x))", "tan(x)/π");
   assert_parsed_expression_simplify_to("1×tan(2)×tan(5)", "tan(2)×tan(5)");
@@ -1093,7 +1097,8 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("tan(180045)", "1", User, Degree);
   assert_parsed_expression_simplify_to("tan(-60)", "-√(3)", User, Degree);
   assert_parsed_expression_simplify_to("tan(tan(tan(tan(9))))", "tan(tan(tan(tan(9))))");
-  assert_parsed_expression_simplify_to("1/tan(2)", "cot(2)"); // 1/tan = cot if tan(x) != undef
+  // 1/tan = cot if tan(x) != undef
+  assert_parsed_expression_simplify_to("1/tan(2)", "cot(2)");
   assert_parsed_expression_simplify_to("tan(3)*sin(3)/cos(3)", "tan(3)^2");
   // -- acos
   assert_parsed_expression_simplify_to("acos(-1/2)", "\u00122×π\u0013/3");
@@ -1719,7 +1724,8 @@ QUIZ_CASE(poincare_simplification_mix) {
   // TODO: for this to work, we must know the sign of cos(9)
   //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), 9)", "ln(6)×log(cos(9), 9)");
   assert_parsed_expression_simplify_to("(((√(6)-√(2))/4)/((√(6)+√(2))/4))+1", "3-√(3)");
-  assert_parsed_expression_simplify_to("1/√(i) × (√(2)-i×√(2))", "-2×i"); // TODO: get rid of complex at denominator?
+  // TODO: get rid of complex at denominator?
+  assert_parsed_expression_simplify_to("1/√(i) × (√(2)-i×√(2))", "-2×i");
   assert_expression_simplifies_approximates_to<double>("abs(√(300000.0003^23))", "9.702740901018ᴇ62", Degree, MetricUnitFormat, Cartesian, 13);
 }
 

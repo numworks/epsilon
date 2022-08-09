@@ -1098,7 +1098,8 @@ void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, const Re
   // pi^2*pi^3 -> pi^(2+3) -> pi^5
   Expression s = Addition::Builder(CreateExponent(childAtIndex(i)), CreateExponent(e));
   // Step 2: Create the new Power
-  Expression p = Power::Builder(Base(childAtIndex(i).clone()), s); // pi^2*pi^-2 -> pi^0 -> 1
+  // pi^2*pi^-2 -> pi^0 -> 1
+  Expression p = Power::Builder(Base(childAtIndex(i).clone()), s);
   s.shallowReduce(reductionContext);
 
   if (!dependenciesCreatedDuringReduction.isUninitialized()) {
@@ -1276,7 +1277,8 @@ Expression Multiplication::distributeOnOperandAtIndex(int i, const ReductionCont
     m.shallowReduce(reductionContext);
   }
   replaceWithInPlace(a);
-  return a.shallowReduce(reductionContext); // Order terms, put under a common denominator if needed
+  // Order terms, put under a common denominator if needed
+  return a.shallowReduce(reductionContext);
 }
 
 void Multiplication::addMissingFactors(Expression factor, const ReductionContext& reductionContext) {

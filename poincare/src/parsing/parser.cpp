@@ -910,7 +910,8 @@ Expression Parser::parseFunctionParameters() {
     return Expression();
   }
   if (!popTokenIfType(correspondingRightParenthesis)) {
-    m_status = Status::Error; // Right parenthesis missing or wrong type of right parenthesis
+    // Right parenthesis missing or wrong type of right parenthesis
+    m_status = Status::Error;
     return Expression();
   }
   return commaSeparatedList;

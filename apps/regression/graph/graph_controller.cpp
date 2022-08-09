@@ -338,7 +338,8 @@ bool GraphController::moveCursorVertically(int direction) {
       double y = m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex);
       m_cursor->moveTo(x, x, y);
     }
-    Container::activeApp()->setFirstResponder(this); // abscissa input must resolve first responder
+    // abscissa input must resolve first responder
+    Container::activeApp()->setFirstResponder(this);
     return true;
   }
 

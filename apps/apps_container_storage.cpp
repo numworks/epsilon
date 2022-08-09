@@ -12,7 +12,8 @@
 #error Missing snapshot count
 #endif
 
-constexpr int k_numberOfCommonApps = 1+APPS_CONTAINER_SNAPSHOT_COUNT; // Take the Home app into account
+// Take the Home app into account
+constexpr int k_numberOfCommonApps = 1+APPS_CONTAINER_SNAPSHOT_COUNT;
 
 OMG::GlobalBox<AppsContainerStorage> AppsContainerStorage::sharedAppsContainerStorage;
 

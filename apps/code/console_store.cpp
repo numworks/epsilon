@@ -93,7 +93,8 @@ int ConsoleStore::deleteCommandAndResultsAtIndex(int index) {
 const char * ConsoleStore::push(const char marker, const char * text) {
   size_t textLength = strlen(text);
   if (ConsoleLine::sizeOfConsoleLine(textLength) > k_historySize - 1) {
-    textLength = k_historySize - 1 - 1 - 1; // Marker, null termination and null marker.
+    // Marker, null termination and null marker.
+    textLength = k_historySize - 1 - 1 - 1;
   }
   size_t i = indexOfNullMarker();
   // If needed, make room for the text we want to push.

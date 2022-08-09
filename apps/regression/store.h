@@ -75,7 +75,8 @@ private:
   void resetMemoization();
   Model * regressionModel(int index);
 
-  Model::Type * m_regressionTypes; // This is a table of size k_numberOfSeries.
+  // This is a table of size k_numberOfSeries.
+  Model::Type * m_regressionTypes;
   NoneModel m_noneModel;
   LinearModel m_linearAxpbModel;
   ProportionalModel m_proportionalModel;

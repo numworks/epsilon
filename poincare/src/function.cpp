@@ -59,7 +59,8 @@ int FunctionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Expression FunctionNode::shallowReduce(const ReductionContext& reductionContext) {
-  return Function(this).shallowReduce(reductionContext); // This uses Symbol::shallowReduce
+  // This uses Symbol::shallowReduce
+  return Function(this).shallowReduce(reductionContext);
 }
 
 bool FunctionNode::involvesCircularity(Context * context, int maxDepth, const char * * visitedFunctions, int numberOfVisitedFunctions) {

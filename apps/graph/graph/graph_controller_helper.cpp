@@ -30,7 +30,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     return true;
   }
   Poincare::Context * context = App::app()->localContext();
-  function = App::app()->functionStore()->modelForRecord(record); // Reload the expiring pointer
+  // Reload the expiring pointer
+  function = App::app()->functionStore()->modelForRecord(record);
   double dir = (direction > 0 ? 1.0 : -1.0);
 
   bool specialConicCursorMove = false;

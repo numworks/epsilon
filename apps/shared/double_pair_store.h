@@ -16,13 +16,16 @@ class DoublePairStorePreferences;
 
 class DoublePairStore {
 public:
-  constexpr static int k_columnNamesLength = 2; // 1 char for prefix, 1 char for index
+  // 1 char for prefix, 1 char for index
+  constexpr static int k_columnNamesLength = 2;
   constexpr static int k_numberOfSeries = 3;
   constexpr static int k_numberOfColumnsPerSeries = 2;
   constexpr static uint8_t k_maxNumberOfPairs = 100;
-  constexpr static const char * k_regressionColumNames[] = {"X", "Y"}; // Must be 1 char long or change the name-related methods.
+  // Must be 1 char long or change the name-related methods.
+  constexpr static const char * k_regressionColumNames[] = {"X", "Y"};
   static_assert(sizeof(k_regressionColumNames) / sizeof(char *) == k_numberOfColumnsPerSeries, "Number of columns per series does not match number of column names in Regression.");
-  constexpr static const char * k_statisticsColumNames[] = {"V", "N"}; // Must be 1 char long or change the name-related methods.
+  // Must be 1 char long or change the name-related methods.
+  constexpr static const char * k_statisticsColumNames[] = {"V", "N"};
   static_assert(sizeof(k_statisticsColumNames) / sizeof(char *) == k_numberOfColumnsPerSeries, "Number of columns per series does not match number of column names in Statistics.");
 
   DoublePairStore(GlobalContext * context, DoublePairStorePreferences * preferences);
@@ -37,7 +40,8 @@ public:
 
   // Column name
   virtual char columnNamePrefixAtIndex(int column) const = 0;
-  int fillColumnName(int series, int column, char * buffer) const; // Fills 3 chars in the buffer (2 chars for name + null terminate)
+  // Fills 3 chars in the buffer (2 chars for name + null terminate)
+  int fillColumnName(int series, int column, char * buffer) const;
   bool isColumnName(const char * name, int nameLen, int * returnSeries = nullptr, int * returnColumn = nullptr);
 
   // Get and set data

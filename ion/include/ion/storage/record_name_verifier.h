@@ -93,8 +93,10 @@ private:
     int numberOfElements;
   } ReservedNamesArray;
 
-  constexpr static int k_maxNumberOfRestrictiveExtensions = 5; // This can be changed if you need more restrictive extensions
-  constexpr static int k_maxNumberOfReservedNamesArrays = 3; // This can be changed if you need more reserved names arrays
+  // This can be changed if you need more restrictive extensions
+  constexpr static int k_maxNumberOfRestrictiveExtensions = 5;
+  // This can be changed if you need more reserved names arrays
+  constexpr static int k_maxNumberOfReservedNamesArrays = 3;
 
   int precedenceScoreOfExtension(const char * extension) const;
   bool isNameReservedForExtension(const char * name, int nameLength, const char * extension) const;

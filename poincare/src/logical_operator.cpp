@@ -1,5 +1,7 @@
 #include <poincare/logical_operator.h>
+#include <poincare/approximation_helper.h>
 #include <poincare/boolean.h>
+#include <poincare/complex.h>
 #include <poincare/float.h>
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
@@ -54,12 +56,16 @@ int NotOperatorNode::serialize(char * buffer, int bufferSize, Preferences::Print
 
 template<typename T>
 Evaluation<T> NotOperatorNode::templatedApproximate(const ApproximationContext& approximationContext) const {
-  // TODO: Map over lists
-  Evaluation<T> child = childAtIndex(0)->approximate(T(), approximationContext);
-  if (child.type() != EvaluationNode<T>::Type::BooleanEvaluation) {
-    return Complex<T>::Builder(NAN);
-  }
-  return BooleanEvaluation<T>::Builder(!(static_cast<BooleanEvaluation<T>&>(child).value()));
+  return
+    ApproximationHelper::MapOneChild<T>(
+      this,
+      approximationContext,
+      [](const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) { return Complex<T>::Undefined(); },
+      [](const bool b) {
+        Evaluation<T> result = BooleanEvaluation<T>::Builder(!b);
+        return result;
+      }
+    );
 }
 
 Expression NotOperatorNode::shallowReduce(const ReductionContext& reductionContext) {
@@ -150,13 +156,19 @@ int BinaryLogicalOperatorNode::serialize(char * buffer, int bufferSize, Preferen
 
 template<typename T>
 Evaluation<T> BinaryLogicalOperatorNode::templatedApproximate(const ApproximationContext& approximationContext) const {
-  // TODO: Map over lists
-  Evaluation<T> firstChild = childAtIndex(0)->approximate(T(), approximationContext);
-  Evaluation<T> secondChild = childAtIndex(1)->approximate(T(), approximationContext);
-  if (firstChild.type() != EvaluationNode<T>::Type::BooleanEvaluation || secondChild.type() != EvaluationNode<T>::Type::BooleanEvaluation) {
-    return Complex<T>::Builder(NAN);
-  }
-  return BooleanEvaluation<T>::Builder(evaluate(static_cast<BooleanEvaluation<T>&>(firstChild).value(), static_cast<BooleanEvaluation<T>&>(secondChild).value()));
+  return
+    ApproximationHelper::Map<T>(
+      this,
+      approximationContext,
+      [](const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * context) { return Complex<T>::Undefined(); },
+      [](const bool * b, int numberOfBooleans, void * context) {
+        assert(numberOfBooleans == 2);
+        Evaluation<T> result = BooleanEvaluation<T>::Builder(static_cast<BinaryLogicalOperatorNode *>(context)->evaluate(b[0], b[1]));
+        return result;
+      },
+      true,
+      reinterpret_cast<void *>(const_cast<BinaryLogicalOperatorNode *>(this))
+    );
 }
 
 Expression BinaryLogicalOperatorNode::shallowReduce(const ReductionContext& reductionContext) {

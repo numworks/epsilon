@@ -24,7 +24,7 @@ Expression ListComplexNode<T>::complexToExpression(Preferences::Preferences::Com
   int i = 0;
   for (EvaluationNode<T> * c : this->children()) {
     Expression childExpression = Undefined::Builder();
-    if (c->type() == EvaluationNode<T>::Type::Complex) {
+    if (c->type() == EvaluationNode<T>::Type::Complex || c->type() == EvaluationNode<T>::Type::BooleanEvaluation) {
       childExpression = c->complexToExpression(complexFormat);
     }
     list.addChildAtIndexInPlace(childExpression, i, i);
@@ -36,7 +36,7 @@ Expression ListComplexNode<T>::complexToExpression(Preferences::Preferences::Com
 template<typename T>
 void ListComplex<T>::addChildAtIndexInPlace(Evaluation<T> t, int index, int currentNumberOfChildren) {
   assert(!node()->isUndefined());
-  if (t.type() != EvaluationNode<T>::Type::Complex) {
+  if (t.type() != EvaluationNode<T>::Type::Complex && t.type() != EvaluationNode<T>::Type::BooleanEvaluation) {
     t = Complex<T>::Undefined();
   }
   Evaluation<T>::addChildAtIndexInPlace(t, index, currentNumberOfChildren);

@@ -1,6 +1,6 @@
 StatsAppCapital = "STATISTIEK"
 Histogram = "Histogram"
-BoxAndWhiskers = "Box"
+BoxAndWhiskers = "Boxplot"
 Values = "Waarden %s"
 Frequencies = "Frequenties %s"
 Frequency = "Frequentie"

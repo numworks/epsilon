@@ -526,6 +526,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("transpose(1)", MatrixTranspose::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("√(1)", SquareRoot::Builder(BasedInteger::Builder(1)));
   assert_text_not_parsable("cos(1,2)");
+  assert_text_not_parsable("quo()");
   assert_text_not_parsable("log(1,2,3)");
   assert_text_not_parsable("sinh^\u0012-1\u0013(2)");
 

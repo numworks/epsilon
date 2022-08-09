@@ -30,6 +30,7 @@ public:
     Uninitialized = 0,
     Undefined = 1,
     Nonreal,
+    Boolean,
     Rational,
     BasedInteger,
     MixedFraction,

@@ -1,4 +1,5 @@
 #include <poincare/logical_operator.h>
+#include <poincare/boolean.h>
 #include <poincare/float.h>
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
@@ -18,11 +19,6 @@ void fillBufferWithStartingAndEndingSpace(char * nameBuffer, int sizeOfBuffer, c
   currentIndex += strlcpy(nameBuffer + currentIndex, operatorName, sizeOfBuffer - currentIndex);
   nameBuffer[currentIndex] = ' ';
   nameBuffer[currentIndex + 1] = 0;
-}
-
-template<typename T>
-bool LogicalOperatorNode::IsApproximativelyNotZero(T x) {
-  return x != 0.0 && std::fabs(x) >= Float<T>::EpsilonLax();
 }
 
 int LogicalOperatorNode::LogicalOperatorTypePrecedence(const ExpressionNode * operatorExpression) {
@@ -59,11 +55,11 @@ int NotOperatorNode::serialize(char * buffer, int bufferSize, Preferences::Print
 template<typename T>
 Evaluation<T> NotOperatorNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   // TODO: Map over lists
-  T childToScalar = childAtIndex(0)->approximate(T(), approximationContext).toScalar();
-  if (std::isnan(childToScalar)) {
+  Evaluation<T> child = childAtIndex(0)->approximate(T(), approximationContext);
+  if (child.type() != EvaluationNode<T>::Type::BooleanEvaluation) {
     return Complex<T>::Builder(NAN);
   }
-  return IsApproximativelyNotZero(childToScalar) ? Complex<T>::Builder(0.0) : Complex<T>::Builder(1.0);
+  return BooleanEvaluation<T>::Builder(!(static_cast<BooleanEvaluation<T>&>(child).value()));
 }
 
 Expression NotOperatorNode::shallowReduce(const ReductionContext& reductionContext) {
@@ -83,13 +79,15 @@ Expression NotOperator::shallowReduce(const ExpressionNode::ReductionContext& re
       return e;
     }
   }
-  // TODO: This behaviour is inconsistent with approximation.
-  // 3kg is true here and undef in approximation. Same for 1+i.
-  ExpressionNode::NullStatus childNullStatus = childAtIndex(0).nullStatus(reductionContext.context());
-  if (childNullStatus == ExpressionNode::NullStatus::Unknown) {
+  Expression child = childAtIndex(0);
+  if (!child.hasBooleanValue()) {
+    return replaceWithUndefinedInPlace();
+  }
+  if (child.type() != ExpressionNode::Type::Boolean) {
+    // Let approximation handle this
     return *this;
   }
-  Expression result = childNullStatus == ExpressionNode::NullStatus::NonNull ? Rational::Builder(0) : Rational::Builder(1);
+  Expression result = Boolean::Builder(!static_cast<Boolean &>(child).value());
   replaceWithInPlace(result);
   return result;
 }
@@ -153,12 +151,12 @@ int BinaryLogicalOperatorNode::serialize(char * buffer, int bufferSize, Preferen
 template<typename T>
 Evaluation<T> BinaryLogicalOperatorNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   // TODO: Map over lists
-  T firstChild = childAtIndex(0)->approximate(T(), approximationContext).toScalar();
-  T secondChild = childAtIndex(1)->approximate(T(), approximationContext).toScalar();
-  if (std::isnan(firstChild) || std::isnan(secondChild)) {
+  Evaluation<T> firstChild = childAtIndex(0)->approximate(T(), approximationContext);
+  Evaluation<T> secondChild = childAtIndex(1)->approximate(T(), approximationContext);
+  if (firstChild.type() != EvaluationNode<T>::Type::BooleanEvaluation || secondChild.type() != EvaluationNode<T>::Type::BooleanEvaluation) {
     return Complex<T>::Builder(NAN);
   }
-  return evaluate(IsApproximativelyNotZero(firstChild), IsApproximativelyNotZero(secondChild)) ? Complex<T>::Builder(1.0) : Complex<T>::Builder(0.0);
+  return BooleanEvaluation<T>::Builder(evaluate(static_cast<BooleanEvaluation<T>&>(firstChild).value(), static_cast<BooleanEvaluation<T>&>(secondChild).value()));
 }
 
 Expression BinaryLogicalOperatorNode::shallowReduce(const ReductionContext& reductionContext) {
@@ -178,15 +176,18 @@ Expression BinaryLogicalOperator::shallowReduce(const ExpressionNode::ReductionC
       return e;
     }
   }
-  // TODO: This behaviour is inconsistent with approximation.
-  // 3kg is true here and undef in approximation. Same for 1+i.
-  ExpressionNode::NullStatus firstChildNullStatus = childAtIndex(0).nullStatus(reductionContext.context());
-  ExpressionNode::NullStatus secondChildNullStatus = childAtIndex(1).nullStatus(reductionContext.context());
-  if (firstChildNullStatus == ExpressionNode::NullStatus::Unknown || secondChildNullStatus == ExpressionNode::NullStatus::Unknown) {
+  Expression leftChild = childAtIndex(0);
+  Expression rightChild = childAtIndex(1);
+  if (!leftChild.hasBooleanValue() || !rightChild.hasBooleanValue()) {
+    return replaceWithUndefinedInPlace();
+  }
+  if (leftChild.type() != ExpressionNode::Type::Boolean || rightChild.type() != ExpressionNode::Type::Boolean) {
+    // Let approximation handle this
     return *this;
   }
-  bool booleanResult = static_cast<BinaryLogicalOperatorNode *>(node())->evaluate(firstChildNullStatus == ExpressionNode::NullStatus::NonNull, secondChildNullStatus == ExpressionNode::NullStatus::NonNull);
-  Expression result = booleanResult ? Rational::Builder(1) : Rational::Builder(0);
+  bool leftValue = static_cast<Boolean &>(leftChild).value();
+  bool rightValue = static_cast<Boolean &>(rightChild).value();
+  Expression result = Boolean::Builder(static_cast<BinaryLogicalOperatorNode *>(node())->evaluate(leftValue, rightValue));
   replaceWithInPlace(result);
   return result;
 }

@@ -405,6 +405,12 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, floa
   return false;
 }
 
+bool Expression::hasBooleanValue() const {
+  return type() == ExpressionNode::Type::Boolean
+         || type() == ExpressionNode::Type::Comparison
+         || type() == ExpressionNode::Type::NotOperator
+         || type() == ExpressionNode::Type::BinaryLogicalOperator;
+}
 
 bool Expression::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return node()->derivate(reductionContext, symbol, symbolValue);

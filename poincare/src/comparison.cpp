@@ -1,4 +1,5 @@
 #include <poincare/comparison.h>
+#include <poincare/boolean.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/float.h>
 #include <poincare/horizontal_layout.h>
@@ -223,14 +224,14 @@ Evaluation<T> ComparisonNode::templatedApproximate(const ApproximationContext& a
     TrinaryBoolean truthValue = TrinaryTruthValue(m_operatorsList[i - 1], chidlrenAreEqual, leftChildIsGreater);
     switch (truthValue) {
     case TrinaryBoolean::False:
-      return Complex<T>::Builder(0.0);
+      return BooleanEvaluation<T>::Builder(false);
     case TrinaryBoolean::Unknown:
       return Complex<T>::Undefined();
     default:
       assert(truthValue == TrinaryBoolean::True);
     }
   }
-  return Complex<T>::Builder(1.0);
+  return BooleanEvaluation<T>::Builder(true);
 }
 
 Expression ComparisonNode::shallowReduce(const ReductionContext& reductionContext) {
@@ -288,12 +289,12 @@ Expression Comparison::shallowReduce(const ExpressionNode::ReductionContext& red
       return *this; // Let approximation decide
     }
     if (comparison == TrinaryBoolean::False) {
-      Expression result = Rational::Builder(0);
+      Expression result = Boolean::Builder(false);
       replaceWithInPlace(result);
       return result;
     }
   }
-  Expression result = Rational::Builder(1);
+  Expression result = Boolean::Builder(true);
   replaceWithInPlace(result);
   return result;
 }

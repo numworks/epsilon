@@ -82,6 +82,8 @@ private:
 namespace AliasesLists {
   // Special identifiers
   constexpr static AliasesList k_ansAliases = "\01Ans\00ans\00";
+  constexpr static AliasesList k_trueAliases = "\01True\00true\00";
+  constexpr static AliasesList k_falseAliases = "\01False\00false\00";
   // Constants
   constexpr static AliasesList k_piAliases = "\01π\00pi\00";
   // Units

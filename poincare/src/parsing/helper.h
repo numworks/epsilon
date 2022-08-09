@@ -34,8 +34,10 @@ private:
   };
   constexpr static SpecialIdentifier s_specialIdentifiers[] = {
     {Symbol::k_ansAliases, [] {return static_cast<Expression>(Symbol::Ans());}},
+    {BooleanNode::k_falseAliases, [] {return static_cast<Expression>(Boolean::Builder(false));}},
     {Infinity::Name(), [] {return static_cast<Expression>(Infinity::Builder(false));}},
     {Nonreal::Name(), [] {return static_cast<Expression>(Nonreal::Builder());}},
+    {BooleanNode::k_trueAliases, [] {return static_cast<Expression>(Boolean::Builder(true));}},
     {Undefined::Name(), [] {return static_cast<Expression>(Undefined::Builder());}}
   };
   constexpr static int k_numberOfSpecialIdentifiers = sizeof(s_specialIdentifiers) / sizeof(SpecialIdentifier);

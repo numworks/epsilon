@@ -2,6 +2,7 @@
 #define ION_RING_BUFFER_H
 
 #include <assert.h>
+#include <stddef.h>
 
 namespace Ion {
 

@@ -67,6 +67,7 @@ Expression Calculation::exactOutput() {
 }
 
 Expression Calculation::approximateOutput(NumberOfSignificantDigits numberOfSignificantDigits) {
+  // clang-format off
   /* Warning:
    * Since quite old versions of Epsilon, the Expression 'exp' was used to be
    * approximated again to ensure its content was in the expected form - a
@@ -96,6 +97,7 @@ Expression Calculation::approximateOutput(NumberOfSignificantDigits numberOfSign
    *  |--------------------------------------------------------------------------------------|
    *
    */
+  // clang-format on
   return Expression::Parse(approximateOutputText(numberOfSignificantDigits), nullptr);
 }
 

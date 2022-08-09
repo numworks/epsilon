@@ -27,8 +27,10 @@ namespace USB {
 class Calculator : public Device {
 public:
   static void PollAndReset()
-    __attribute__((section(".dfu_entry_point"))) // Needed to pinpoint this symbol in the linker script
-    __attribute__((used)) // Make sure this symbol is not discarded at link time
+    // Needed to pinpoint this symbol in the linker script
+    __attribute__((section(".dfu_entry_point")))
+    // Make sure this symbol is not discarded at link time
+    __attribute__((used))
     ;
   Calculator(const char * serialNumber, const char * stringDescriptor) :
     Device(&m_dfuInterface),
@@ -42,9 +44,11 @@ public:
         0x0483, // idVendor
         0xA291, // idProduct
         Config::BCDDevice, // bcdDevice: Device Release Number
-        1,      // iManufacturer: Index of the manufacturer name string, see m_descriptor
+        1,      /* iManufacturer: Index of the manufacturer name string, see
+                 * m_descriptor */
         2,      // iProduct: Index of the product name string, see m_descriptor
-        3,      // iSerialNumber: Index of the SerialNumber string, see m_descriptor
+        3,      /* iSerialNumber: Index of the SerialNumber string, see
+                 * m_descriptor */
         1),     // bNumConfigurations
     m_dfuFunctionalDescriptor(
         0b0011, /* bmAttributes:
@@ -61,35 +65,42 @@ public:
         0,      /* wDetachTimeOut: Time, in milliseconds, that the device in APP
                  * mode will wait after receipt of the DFU_DETACH request before
                  * switching to DFU mode. It does not apply to the calculator.*/
-        2048,   // wTransferSize: Maximum number of bytes that the device can accept per control-write transaction
+        2048,   /* wTransferSize: Maximum number of bytes that the device can
+                 * accept per control-write transaction */
         0x0100),// bcdDFUVersion
     m_interfaceFlashDescriptor(
         0,      // bInterfaceNumber
         k_dfuFlashInterfaceAlternateSetting,      // bAlternateSetting
         0,      // bNumEndpoints: Other than endpoint 0
-        0xFE,   // bInterfaceClass: DFU (https://www.usb.org/defined-class-codes)
+        0xFE,   /* bInterfaceClass: DFU
+                 * (https://www.usb.org/defined-class-codes) */
         1,      // bInterfaceSubClass: DFU
-        2,      // bInterfaceProtocol: DFU Mode (not DFU Runtime, which would be 1)
+        2,      /* bInterfaceProtocol: DFU Mode (not DFU Runtime, which would be
+                 * 1) */
         4,      // iInterface: Index of the Interface string, see m_descriptor
         &m_interfaceSRAMDescriptor),
     m_interfaceSRAMDescriptor(
         0,      // bInterfaceNumber
         k_dfuSRAMInterfaceAlternateSetting,      // bAlternateSetting
         0,      // bNumEndpoints: Other than endpoint 0
-        0xFE,   // bInterfaceClass: DFU (http://www.usb.org/developers/defined_class)
+        0xFE,   /* bInterfaceClass: DFU
+                 * (http://www.usb.org/developers/defined_class) */
         1,      // bInterfaceSubClass: DFU
-        2,      // bInterfaceProtocol: DFU Mode (not DFU Runtime, which would be 1)
+        2,      /* bInterfaceProtocol: DFU Mode (not DFU Runtime, which would be
+                 * 1) */
         5,      // iInterface: Index of the Interface string, see m_descriptor
         &m_dfuFunctionalDescriptor),
     m_configurationDescriptor(
-        m_configurationDescriptor.BLength() + m_interfaceFlashDescriptor.BLength() + m_interfaceSRAMDescriptor.BLength() + m_dfuFunctionalDescriptor.BLength(), // wTotalLength
+        // wTotalLength
+        m_configurationDescriptor.BLength() + m_interfaceFlashDescriptor.BLength() + m_interfaceSRAMDescriptor.BLength() + m_dfuFunctionalDescriptor.BLength(),
         1,      // bNumInterfaces
         k_bConfigurationValue, // bConfigurationValue
         0,      // iConfiguration: No string descriptor for the configuration
         0x80,   /* bmAttributes:
                  * Bit 7: Reserved, set to 1
                  * Bit 6: Self Powered
-                 * Bit 5: Remote Wakeup (allows the device to wake up the host when the host is in suspend)
+                 * Bit 5: Remote Wakeup (allows the device to wake up the host
+                 *        when the host is in suspend)
                  * Bit 4..0: Reserved, set to 0 */
         0x32,   // bMaxPower: half of the Maximum Power Consumption
         &m_interfaceFlashDescriptor),
@@ -97,14 +108,16 @@ public:
         k_webUSBVendorCode,
         k_webUSBLandingPageIndex),
     m_bosDescriptor(
-        m_bosDescriptor.BLength() + m_webUSBPlatformDescriptor.BLength(), // wTotalLength
+        // wTotalLength
+        m_bosDescriptor.BLength() + m_webUSBPlatformDescriptor.BLength(),
         1,      // bNumDeviceCapabilities
         &m_webUSBPlatformDescriptor),
     m_manufacturerStringDescriptor("NumWorks"),
     m_productStringDescriptor("NumWorks Calculator"),
     m_serialNumberStringDescriptor(serialNumber),
     m_interfaceFlashStringDescriptor(stringDescriptor),
-    m_interfaceSRAMStringDescriptor(Config::InterfaceSRAMStringDescriptor), // See note at the end of the file
+    // See note at the end of the file
+    m_interfaceSRAMStringDescriptor(Config::InterfaceSRAMStringDescriptor),
     m_microsoftOSStringDescriptor(k_microsoftOSVendorCode),
     m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS, "my.numworks.com"),
     m_extendedCompatIdDescriptor("WINUSB"),
@@ -185,8 +198,8 @@ private:
  * ● Maximum of 2 digits for the number of sectors
  * ● *: For separator between number of sectors and sector size
  * ● Maximum 3 digits for sector size between 0 and 999
- * ● 1 digit for the sector size multiplier. Valid entries are: B (byte), K (Kilo),
- *   M (Mega)
+ * ● 1 digit for the sector size multiplier. Valid entries are: B (byte),
+ *   K (Kilo), M (Mega)
  * ● 1 digit for the sector type as follows:
  * – a (0x41): Readable
  * – b (0x42): Erasable

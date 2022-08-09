@@ -7,7 +7,7 @@
 #include <stddef.h>
 
 namespace Calculation {
-
+// clang-format off
 /*
   To optimize the storage space, we use one big buffer for all calculations.
   The calculations are stored one after another while pointers to the end of each
@@ -30,6 +30,7 @@ m_buffer        p3              p2              p1              p0              
 
 a = pointerArea()
 */
+// clang-format on
 
 class CalculationStore {
 public:

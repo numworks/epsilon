@@ -10,7 +10,7 @@ namespace Calculation {
 
 class CalculationStore;
 
-
+// clang-format off
 /* A calculation is:
  *  |     uint8_t   |KDCoordinate|  KDCoordinate  |  uint8_t  |   ...     |      ...       |         ...           |          ...          |
  *  |m_displayOutput|  m_height  |m_expandedHeight|m_equalSign|m_inputText|m_exactOuputText|m_approximateOuputText1|m_approximateOuputText2|
@@ -18,6 +18,7 @@ class CalculationStore;
  *                                                                                            significant digits      significant digits
  *
  * */
+// clang-format on
 
 class Calculation {
 friend CalculationStore;

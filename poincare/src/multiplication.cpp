@@ -153,6 +153,7 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
   return result;
 }
 
+// clang-format off
 /* Operative symbol between two expressions depends on the layout shape on the
  * left and the right of the operator:
  *
@@ -178,6 +179,7 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
  *
  * Two Units are separated by a •, Unit on the left is treated according to its type
  * */
+// clang-format on
 
 MultiplicationNode::MultiplicationSymbol MultiplicationNode::OperatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNode::LayoutShape right) {
   if (left == ExpressionNode::LayoutShape::Default || right == ExpressionNode::LayoutShape::Default || right == ExpressionNode::LayoutShape::Brace) {

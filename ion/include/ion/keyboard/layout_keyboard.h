@@ -4,6 +4,7 @@
 namespace Ion {
 namespace Keyboard {
 
+// clang-format off
 enum class Key : uint8_t {
   Left=0,  Up=1,     Down=2,    Right=3,           OK=4,              Back=5,
   Home=6,  /*B2=7,*/ OnOff=8,   /*B4=9,            B5=10,             B6=11, */
@@ -16,6 +17,7 @@ enum class Key : uint8_t {
   Zero=48, Dot=49,   EE=50,     Ans=51,            EXE=52,             // I6=53,
   None = 54
 };
+// clang-format on
 
 }
 }

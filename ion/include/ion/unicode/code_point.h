@@ -42,6 +42,7 @@ private:
   uint32_t m_code;
 };
 
+// clang-format off
 constexpr static CodePoint UCodePointNull                          = 0x0;
 
 // 0x1 and 0x2 are not used, so we can use them for another purpose
@@ -90,5 +91,6 @@ constexpr static CodePoint UCodePointSuperiorEqual                 = 0x2265;  //
 constexpr static CodePoint UCodePointLeftAngleBracket              = 0x27E8;  // ⟨
 constexpr static CodePoint UCodePointRightAngleBracket             = 0x27E9;  // ⟩
 constexpr static CodePoint UCodePointReplacement                   = 0xFFFD;  // �
+// clang-format on
 
 #endif

@@ -36,6 +36,7 @@ constexpr uint32_t BootloaderLength = InternalFlashLength - PseudoOTPLength - Tr
 constexpr uint32_t PseudoOTPOrigin = BootloaderOrigin + BootloaderLength;
 constexpr uint32_t TrampolineOrigin = PseudoOTPOrigin + PseudoOTPLength;
 
+// clang-format off
 /* External flash
  *
  * ||                                                    EXTERNAL fLASH (8mIb)                                                         ||
@@ -57,6 +58,7 @@ constexpr uint32_t TrampolineOrigin = PseudoOTPOrigin + PseudoOTPLength;
  * [https://www.st.com/content/ccc/resource/technical/document/programming_manual/6c/3a/cb/e7/e4/ea/44/9b/DM00046982.pdf/files/DM00046982.pdf/jcr:content/translations/en.DM00046982.pdf]
  * Therefore, its is also relocated in sRAM at booting.
  */
+// clang-format on
 
 constexpr uint32_t ExternalFlashOrigin = 0x90000000;
 constexpr uint32_t ExternalFlashLength = 0x800000; // 8MiB

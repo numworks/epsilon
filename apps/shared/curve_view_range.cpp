@@ -34,6 +34,7 @@ float CurveViewRange::computeGridUnit(float minNumberOfUnits, float maxNumberOfU
   }
   return a*std::pow(10.0f,b);
 
+  // clang-format off
   /* Proof of the algorithm:
    *
    * We want to find gridUnit = a*10^b, with a in {1; 2; 5} and b an integer
@@ -117,6 +118,7 @@ float CurveViewRange::computeGridUnit(float minNumberOfUnits, float maxNumberOfU
    *           E1^--------------------^E2                                      <- shift by log10(2) = 0.3
    *
    * */
+  // clang-format on
 }
 
 }

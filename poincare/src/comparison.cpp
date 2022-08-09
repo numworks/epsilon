@@ -261,11 +261,12 @@ Comparison Comparison::addComparison(ComparisonNode::OperatorType operatorType, 
   return static_cast<Comparison &>(h);
 }
 
-Expression Comparison::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Comparison::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
+        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::KeepUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

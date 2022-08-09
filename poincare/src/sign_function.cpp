@@ -53,10 +53,11 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
         &reductionContext,
+        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::KeepUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists
-        );
+    );
     if (!e.isUninitialized()) {
       return e;
     }

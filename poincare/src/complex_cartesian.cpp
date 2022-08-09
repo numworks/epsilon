@@ -65,6 +65,7 @@ Expression ComplexCartesian::shallowReduce(ExpressionNode::ReductionContext redu
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
         &reductionContext,
+        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

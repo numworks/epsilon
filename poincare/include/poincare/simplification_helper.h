@@ -26,6 +26,11 @@ public:
     DistributeOverLists
   };
 
+  enum class BooleanReduction : bool {
+    DefinedOnBooleans = 0,
+    UndefinedOnBooleans
+  };
+
   static void defaultDeepReduceChildren(Expression e, const ExpressionNode::ReductionContext& reductionContext);
   // DeepBeautify children and add parentheses if needed.
   static void deepBeautifyChildren(Expression e, const ExpressionNode::ReductionContext& reductionContext);
@@ -36,8 +41,9 @@ public:
    * Step 3. Apply the unit reduction depending on parameter
    * Step 4. Apply the matrix reduction depending on parameter
    * Step 5. Apply the list reduction depending on parameter
-   * (Steps 3, 4 and 5 do nothing if parameter = 0) */
-  static Expression defaultShallowReduce(Expression e,  ExpressionNode::ReductionContext * reductionContext, UnitReduction unitParameter = UnitReduction::KeepUnits, MatrixReduction matrixParameter = MatrixReduction::DefinedOnMatrix, ListReduction listParameter = ListReduction::DoNotDistributeOverLists);
+   * Step 6. Apply the boolean reduction depending on parameter
+   * (Steps 3, 4, 5 and 6 do nothing if parameter = 0) */
+  static Expression defaultShallowReduce(Expression e, ExpressionNode::ReductionContext * reductionContext, BooleanReduction booleanParameter = BooleanReduction::DefinedOnBooleans, UnitReduction unitParameter = UnitReduction::KeepUnits, MatrixReduction matrixParameter = MatrixReduction::DefinedOnMatrix, ListReduction listParameter = ListReduction::DoNotDistributeOverLists);
 
   // This will shallowReduce the resulting expression.
   static Expression bubbleUpDependencies(Expression e, const ExpressionNode::ReductionContext& reductionContext);
@@ -62,8 +68,8 @@ private:
    * Otherwise returns uninitialized handle. */
   static Expression shallowReduceKeepingUnitsFromFirstChild(Expression e, const ExpressionNode::ReductionContext& reductionContext);
 
+  static Expression undefinedOnBooleans(Expression e);
   static Expression undefinedOnMatrix(Expression e, ExpressionNode::ReductionContext * reductionContext);
-
 };
 }
 

@@ -42,6 +42,7 @@ Expression MatrixTranspose::shallowReduce(ExpressionNode::ReductionContext reduc
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
         &reductionContext,
+        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

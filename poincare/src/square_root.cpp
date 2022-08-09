@@ -113,10 +113,11 @@ Expression SquareRoot::shallowReduce(ExpressionNode::ReductionContext reductionC
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
         &reductionContext,
+        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::KeepUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists
-        );
+    );
     if (!e.isUninitialized()) {
       return e;
     }

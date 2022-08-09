@@ -79,7 +79,7 @@ public:
   static Comparison Builder(Expression child0, ComparisonNode::OperatorType operatorType, Expression child1);
   Comparison addComparison(ComparisonNode::OperatorType operatorType, Expression child);
 
-  Expression shallowReduce(const ExpressionNode::ReductionContext& ReductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext ReductionContext);
   Expression standardEquation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::ReductionTarget reductionTarget) const;
   ComparisonNode::OperatorType operatorAtIndex(int i) const { return node()->operatorAtIndex(i); }
 private:

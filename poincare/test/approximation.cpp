@@ -356,10 +356,12 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("ceil(0.2)", "1");
   assert_expression_approximates_to<double>("ceil(0.2)", "1");
 
-  assert_expression_approximates_to<float>("det([[1,23,3][4,5,6][7,8,9]])", "126", Degree, MetricUnitFormat, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
+  // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
+  assert_expression_approximates_to<float>("det([[1,23,3][4,5,6][7,8,9]])", "126", Degree, MetricUnitFormat, Cartesian, 6);
   assert_expression_approximates_to<double>("det([[1,23,3][4,5,6][7,8,9]])", "126");
 
-  assert_expression_approximates_to<float>("det([[i,23-2i,3×i][4+i,5×i,6][7,8×i+2,9]])", "126-231×i", Degree, MetricUnitFormat, Cartesian, 6); // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
+  // FIXME: the determinant computation is not precised enough to be displayed with 7 significant digits
+  assert_expression_approximates_to<float>("det([[i,23-2i,3×i][4+i,5×i,6][7,8×i+2,9]])", "126-231×i", Degree, MetricUnitFormat, Cartesian, 6);
   assert_expression_approximates_to<double>("det([[i,23-2i,3×i][4+i,5×i,6][7,8×i+2,9]])", "126-231×i");
 
   assert_expression_approximates_to<float>("floor(2.3)", "2");
@@ -1219,7 +1221,8 @@ QUIZ_CASE(poincare_approximation_complex_format) {
   assert_expression_approximates_to<double>("√(-1)×√(-1)", "nonreal", Radian, MetricUnitFormat, Real);
   assert_expression_approximates_to<double>("ln(-2)", "nonreal", Radian, MetricUnitFormat, Real);
   // Power/Root approximates to the first REAL root in Real mode
-  assert_expression_simplifies_approximates_to<double>("(-8)^(1/3)", "-2", Radian, MetricUnitFormat, Real); // Power have to be simplified first in order to spot the right form c^(p/q) with p, q integers
+  // Power have to be simplified first in order to spot the right form c^(p/q) with p, q integers
+  assert_expression_simplifies_approximates_to<double>("(-8)^(1/3)", "-2", Radian, MetricUnitFormat, Real);
   assert_expression_approximates_to<double>("root(-8,3)", "-2", Radian, MetricUnitFormat, Real); // Root approximates to the first REAL root in Real mode
   assert_expression_approximates_to<double>("8^(1/3)", "2", Radian, MetricUnitFormat, Real);
   assert_expression_simplifies_approximates_to<float>("(-8)^(2/3)", "4", Radian, MetricUnitFormat, Real); // Power have to be simplified first (cf previous comment)

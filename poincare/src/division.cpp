@@ -95,7 +95,8 @@ Expression Division::shallowReduce(ReductionContext reductionContext) {
   }
   Expression p = Power::Builder(childAtIndex(1), Rational::Builder(-1));
   Multiplication m = Multiplication::Builder(childAtIndex(0), p);
-  p.shallowReduce(reductionContext); // For instance: Division::Builder(2,1). p would be 1^(-1) which can be simplified
+  // For instance: Division::Builder(2,1). p would be 1^(-1) which can be simplified
+  p.shallowReduce(reductionContext);
   replaceWithInPlace(m);
   return m.shallowReduce(reductionContext);
 }

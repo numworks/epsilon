@@ -190,7 +190,8 @@ void HistoryViewCell::layoutSubviews(bool force) {
   KDRect outputFrame = KDRectZero;
   computeSubviewFrames(frameBounds.width(), frameBounds.height(), &ellipsisFrame, &inputFrame, &outputFrame);
 
-  m_ellipsis.setFrame(ellipsisFrame, force); // Required even if ellipsisFrame is KDRectZero, to mark previous rect as dirty
+  // Required even if ellipsisFrame is KDRectZero, to mark previous rect as dirty
+  m_ellipsis.setFrame(ellipsisFrame, force);
   m_inputView.setFrame(inputFrame,force);
   m_scrollableOutputView.setFrame(outputFrame, force);
 }

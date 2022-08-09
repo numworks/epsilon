@@ -1,6 +1,8 @@
 #ifndef ION_KEYBOARD_EVENT_DATA_H
 #define ION_KEYBOARD_EVENT_DATA_H
 
+#include <stddef.h>
+
 namespace Ion {
 namespace Events {
 

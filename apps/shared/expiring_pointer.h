@@ -1,6 +1,8 @@
 #ifndef SHARED_EXPIRING_POINTER_H
 #define SHARED_EXPIRING_POINTER_H
 
+#include <assert.h>
+
 namespace Shared {
 
 template <class T>

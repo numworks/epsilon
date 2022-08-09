@@ -297,7 +297,8 @@ Expression ContinuousFunction::sumBetweenBounds(double start, double end, Contex
   assert(properties().isCartesian());
   start = std::max<double>(start, tMin());
   end = std::min<double>(end, tMax());
-  return Integral::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknown), Float<double>::Builder(start), Float<double>::Builder(end)); // Integral takes ownership of args
+  // Integral takes ownership of args
+  return Integral::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknown), Float<double>::Builder(start), Float<double>::Builder(end));
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */

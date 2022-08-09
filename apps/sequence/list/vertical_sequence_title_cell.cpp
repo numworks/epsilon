@@ -20,7 +20,8 @@ void VerticalSequenceTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw some background
   ctx->fillRect(KDRect(bounds().width() - k_equalWidthWithMargins, 0, k_equalWidthWithMargins, bounds().height()), backgroundColor);
   // Draw '='
-  KDPoint p = KDPoint(bounds().width() - k_equalWidthWithMargins, m_baseline - KDFont::GlyphHeight(k_font)/2 - 1); // -1 is visually needed
+  // -1 is visually needed
+  KDPoint p = KDPoint(bounds().width() - k_equalWidthWithMargins, m_baseline - KDFont::GlyphHeight(k_font)/2 - 1);
   ctx->drawString("=", p, k_font, m_functionColor, backgroundColor);
 }
 

@@ -199,7 +199,8 @@ T IntegralNode::integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIn
 template<typename T>
 IntegralNode::DetailedResult<T> IntegralNode::tanhSinhQuadrature(int level, AlternativeIntegrand alternativeIntegrand, const ApproximationContext& approximationContext) const {
   T h = 2.0;
-  T result = M_PI_2 * integrandNearBound(0.0, 1.0, alternativeIntegrand, approximationContext); // j=0
+  // j=0
+  T result = M_PI_2 * integrandNearBound(0.0, 1.0, alternativeIntegrand, approximationContext);
   int j = 1;
   T sn2 = 0, sn1 = 0;
   T maxWjFj = 0;

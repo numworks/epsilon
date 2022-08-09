@@ -17,7 +17,8 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 private:
   constexpr static int k_numberOfAdditionalColors = 4;
-  constexpr static KDColor k_colors[k_numberOfAdditionalColors] = {KDColorRed, KDColorBlue, KDColorGreen, KDColorWhite}; // KDColorBlack is the first color, set in the constructor
+  // KDColorBlack is the first color, set in the constructor
+  constexpr static KDColor k_colors[k_numberOfAdditionalColors] = {KDColorRed, KDColorBlue, KDColorGreen, KDColorWhite};
   int m_colorIndex;
   Escher::SolidColorView m_view;
 };

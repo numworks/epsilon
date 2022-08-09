@@ -434,7 +434,8 @@ QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
-  assertCalculationIs("int((e^(-x))-x^(0.5), x, 0, 3)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store); // Tests a bug with symbolic computation
+  // Tests a bug with symbolic computation
+  assertCalculationIs("int((e^(-x))-x^(0.5), x, 0, 3)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("int(x,x,0,2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "2", "2", &globalContext, &store);
   assertCalculationIs("sum(x,x,0,2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "3", "3", &globalContext, &store);
   assertCalculationIs("product(x,x,1,2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "2", "2", &globalContext, &store);

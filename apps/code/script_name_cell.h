@@ -34,7 +34,8 @@ public:
   void didBecomeFirstResponder() override;
 
 private:
-  constexpr static size_t k_extensionLength = 1+ScriptStore::k_scriptExtensionLength; // '.' + "py"
+  // '.' + "py"
+  constexpr static size_t k_extensionLength = 1+ScriptStore::k_scriptExtensionLength;
   constexpr static KDCoordinate k_leftMargin = Escher::Metric::CommonLargeMargin;
 
   void updateSubviewsBackgroundAfterChangingState() override;

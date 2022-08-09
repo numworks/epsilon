@@ -462,45 +462,76 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_m-_m", "0×_m");
 
   /* Usual physical quantities */
-  assert_parsed_expression_simplify_to("_A×_s×_m^(-3)", "1×_C×_m^\u0012-3\u0013"); // Charge density
-  assert_parsed_expression_simplify_to("_kg×_m×_s^(-3)×_K^(-1)", "1×_N×_K^\u0012-1\u0013×_s^\u0012-1\u0013"); // Thermal conductivity _W×_m^-1×_K^-1
-  assert_parsed_expression_simplify_to("_K×_kg^(-1)×_m^(-2)×_s^3", "1×_W^\u0012-1\u0013×_K"); // Thermal resistance
-  assert_parsed_expression_simplify_to("_kg×_m×_s^(-3)×_A^(-1)", "1×_V×_m^\u0012-1\u0013"); // Electrical field
+  // Charge density
+  assert_parsed_expression_simplify_to("_A×_s×_m^(-3)", "1×_C×_m^\u0012-3\u0013");
+  // Thermal conductivity _W×_m^-1×_K^-1
+  assert_parsed_expression_simplify_to("_kg×_m×_s^(-3)×_K^(-1)", "1×_N×_K^\u0012-1\u0013×_s^\u0012-1\u0013");
+  // Thermal resistance
+  assert_parsed_expression_simplify_to("_K×_kg^(-1)×_m^(-2)×_s^3", "1×_W^\u0012-1\u0013×_K");
+  // Electrical field
+  assert_parsed_expression_simplify_to("_kg×_m×_s^(-3)×_A^(-1)", "1×_V×_m^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-1)", "1×_J×_s"); // Action
-  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_K^(-1)", "1×_J×_K^\u0012-1\u0013"); // Entropy | Heat capacity
-  assert_parsed_expression_simplify_to("_m^2×_s^(-2)×_K^(-1)", "1×_K^\u0012-1\u0013×_m^2×_s^\u0012-2\u0013"); // Specific heat capacity _J×_K^-1×_kg^-1
-  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_K^(-1)×_mol^(-1)", "1×_J×_mol^\u0012-1\u0013×_K^\u0012-1\u0013"); // Molar heat capacity
-  assert_parsed_expression_simplify_to("_kg×_m^(-1)×_s^(-2)×_K^(-1)", "1×_Pa×_K^\u0012-1\u0013"); // Volumetric heat capacity _J×_K^-1×_m^-3
-  assert_parsed_expression_simplify_to("_kg×_s^(-3)×_K^(-1)", "1×_K^\u0012-1\u0013×_kg×_s^\u0012-3\u0013"); // Heat transfer coefficient _W×_m^-2×_K^-1
-  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-3)×_K^(-1)", "1×_W×_K^\u0012-1\u0013"); // Thermal conductivity
-  assert_parsed_expression_simplify_to("_kg^(-1)×_m^(-3)×_s^3×_A^2", "1×_Ω^\u0012-1\u0013×_m^\u0012-1\u0013"); // Electrical conductivity _S×_m^-1
-  assert_parsed_expression_simplify_to("_kg×_s^(-2)", "1×_kg×_s^\u0012-2\u0013"); // Stiffness _N×_m^-1
-  assert_parsed_expression_simplify_to("_kg×_m^(-1)×_s^(-3)", "1×_Pa×_s^\u0012-1\u0013"); // Power density _W×_m^-3
+  // Entropy | Heat capacity
+  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_K^(-1)", "1×_J×_K^\u0012-1\u0013");
+  // Specific heat capacity _J×_K^-1×_kg^-1
+  assert_parsed_expression_simplify_to("_m^2×_s^(-2)×_K^(-1)", "1×_K^\u0012-1\u0013×_m^2×_s^\u0012-2\u0013");
+  // Molar heat capacity
+  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-2)×_K^(-1)×_mol^(-1)", "1×_J×_mol^\u0012-1\u0013×_K^\u0012-1\u0013");
+  // Volumetric heat capacity _J×_K^-1×_m^-3
+  assert_parsed_expression_simplify_to("_kg×_m^(-1)×_s^(-2)×_K^(-1)", "1×_Pa×_K^\u0012-1\u0013");
+  // Heat transfer coefficient _W×_m^-2×_K^-1
+  assert_parsed_expression_simplify_to("_kg×_s^(-3)×_K^(-1)", "1×_K^\u0012-1\u0013×_kg×_s^\u0012-3\u0013");
+  // Thermal conductivity
+  assert_parsed_expression_simplify_to("_kg×_m^2×_s^(-3)×_K^(-1)", "1×_W×_K^\u0012-1\u0013");
+  // Electrical conductivity _S×_m^-1
+  assert_parsed_expression_simplify_to("_kg^(-1)×_m^(-3)×_s^3×_A^2", "1×_Ω^\u0012-1\u0013×_m^\u0012-1\u0013");
+  // Stiffness _N×_m^-1
+  assert_parsed_expression_simplify_to("_kg×_s^(-2)", "1×_kg×_s^\u0012-2\u0013");
+  // Power density _W×_m^-3
+  assert_parsed_expression_simplify_to("_kg×_m^(-1)×_s^(-3)", "1×_Pa×_s^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("_kg×_m^3×_s^(-3)×_A^(-1)", "1×_V×_m"); // Electric flux
-  assert_parsed_expression_simplify_to("_K×_kg^(-1)×_s^(3)", "1×_K×_kg^\u0012-1\u0013×_s^3"); // Superficial thermal resistance _m^2×_K×_W^-1
-  assert_parsed_expression_simplify_to("_kg^(-1)×_m^(-2)×_s^2", "1×_J^\u0012-1\u0013"); // Thermodynamic beta
+  // Superficial thermal resistance _m^2×_K×_W^-1
+  assert_parsed_expression_simplify_to("_K×_kg^(-1)×_s^(3)", "1×_K×_kg^\u0012-1\u0013×_s^3");
+  // Thermodynamic beta
+  assert_parsed_expression_simplify_to("_kg^(-1)×_m^(-2)×_s^2", "1×_J^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("_kg×_m^(-1)×_s^(-1)", "1×_Pa×_s"); // Dynamic viscosity
-  assert_parsed_expression_simplify_to("_m^2×_s^(-2)", "1×_m^2×_s^\u0012-2\u0013"); // Gray/Sievert _J×_kg^\u0012-1\u0013
+  // Gray/Sievert _J×_kg^\u0012-1\u0013
+  assert_parsed_expression_simplify_to("_m^2×_s^(-2)", "1×_m^2×_s^\u0012-2\u0013");
   assert_parsed_expression_simplify_to("_m^2×_kg×_s^(-1)", "1×_J×_s"); // Angular momentum _N×_m×_s
   assert_parsed_expression_simplify_to("_m^(-1)×_kg×_s^(-2)", "1×_Pa"); // Energy density _J×_m^-3
-  assert_parsed_expression_simplify_to("_m×_kg×_s^(-3)", "1×_N×_s^\u0012-1\u0013"); // Spectral power _W×_m^-1
-  assert_parsed_expression_simplify_to("_m×_kg^(-1)×_s^2", "1×_Pa^\u0012-1\u0013"); // Compressibility
-  assert_parsed_expression_simplify_to("_kg^(-1)×_s^3×_A^2×_mol^(-1)", "1×_Ω^\u0012-1\u0013×_mol^\u0012-1\u0013×_m^2"); // Molar conductivity _S×_m^2×_mol^-1
-  assert_parsed_expression_simplify_to("_m^(-2)×_s×_A", "1×_C×_m^\u0012-2\u0013"); // Polarization density
-  assert_parsed_expression_simplify_to("_kg^(-1)×_s×_A", "1×_C×_kg^\u0012-1\u0013"); // Exposure
+  // Spectral power _W×_m^-1
+  assert_parsed_expression_simplify_to("_m×_kg×_s^(-3)", "1×_N×_s^\u0012-1\u0013");
+  // Compressibility
+  assert_parsed_expression_simplify_to("_m×_kg^(-1)×_s^2", "1×_Pa^\u0012-1\u0013");
+  // Molar conductivity _S×_m^2×_mol^-1
+  assert_parsed_expression_simplify_to("_kg^(-1)×_s^3×_A^2×_mol^(-1)", "1×_Ω^\u0012-1\u0013×_mol^\u0012-1\u0013×_m^2");
+  // Polarization density
+  assert_parsed_expression_simplify_to("_m^(-2)×_s×_A", "1×_C×_m^\u0012-2\u0013");
+  // Exposure
+  assert_parsed_expression_simplify_to("_kg^(-1)×_s×_A", "1×_C×_kg^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("_kg×_m^3×_s^(-3)×_A^(-2)", "1×_Ω×_m"); // Electrical resistivity
-  assert_parsed_expression_simplify_to("_m^(-1)×_s×_A", "1×_C×_m^\u0012-1\u0013"); // Dipole moment
-  assert_parsed_expression_simplify_to("_kg^(-1)×_s^2×_A", "1×_T^\u0012-1\u0013"); // Electron mobility _m^2×_V^-1×_s^-1
-  assert_parsed_expression_simplify_to("_m^(-2)×_kg^(-1)×_s^2×_A^2", "1×_H^\u0012-1\u0013"); // Magnetic reluctance
-  assert_parsed_expression_simplify_to("_m×_kg×_s^(-2)×_A^(-1)", "1×_N×_A^\u0012-1\u0013"); // Magnetic vector potential _Wb×_m^-1 and Magnetic rigidity _T×_m
-  assert_parsed_expression_simplify_to("_m^3×_kg×_s^(-2)×_A^(-1)", "1×_Wb×_m"); // Magnetic moment
-  assert_parsed_expression_simplify_to("_m^(-1)×_kg^(-1)×_s^2×_A^2", "1×_N^\u0012-1\u0013×_A^2"); // Magnetic susceptibility _H^-1×_m
+  // Dipole moment
+  assert_parsed_expression_simplify_to("_m^(-1)×_s×_A", "1×_C×_m^\u0012-1\u0013");
+  // Electron mobility _m^2×_V^-1×_s^-1
+  assert_parsed_expression_simplify_to("_kg^(-1)×_s^2×_A", "1×_T^\u0012-1\u0013");
+  // Magnetic reluctance
+  assert_parsed_expression_simplify_to("_m^(-2)×_kg^(-1)×_s^2×_A^2", "1×_H^\u0012-1\u0013");
+  // Magnetic vector potential _Wb×_m^-1 and Magnetic rigidity _T×_m
+  assert_parsed_expression_simplify_to("_m×_kg×_s^(-2)×_A^(-1)", "1×_N×_A^\u0012-1\u0013");
+  // Magnetic moment
+  assert_parsed_expression_simplify_to("_m^3×_kg×_s^(-2)×_A^(-1)", "1×_Wb×_m");
+  // Magnetic susceptibility _H^-1×_m
+  assert_parsed_expression_simplify_to("_m^(-1)×_kg^(-1)×_s^2×_A^2", "1×_N^\u0012-1\u0013×_A^2");
 
   // Physical constants
-  assert_parsed_expression_simplify_to("_kg^(-1)×_m^3×_s^(-2)", "1×_kg^\u0012-1\u0013×_m^3×_s^\u0012-2\u0013"); // Gravitational constant G _N×_m^2×_kg^-2
-  assert_parsed_expression_simplify_to("_kg×_m×_s^(-2)×_A^(-2)", "1×_N×_A^\u0012-2\u0013"); // Vacuum electric permittivity µ0 _H×_m^-1
-  assert_parsed_expression_simplify_to("_A^2×_s^4×_kg^(-1)×_m^(-3)", "1×_F×_m^\u0012-1\u0013"); // Vacuum magnetic permeability 𝝴0
-  assert_parsed_expression_simplify_to("_kg×_s^(-3)×_K^(-4)", "1×_K^\u0012-4\u0013×_kg×_s^\u0012-3\u0013"); // Stefan–Boltzmann constant _W×_m^-2×_K^-4
+  // Gravitational constant G _N×_m^2×_kg^-2
+  assert_parsed_expression_simplify_to("_kg^(-1)×_m^3×_s^(-2)", "1×_kg^\u0012-1\u0013×_m^3×_s^\u0012-2\u0013");
+  // Vacuum electric permittivity µ0 _H×_m^-1
+  assert_parsed_expression_simplify_to("_kg×_m×_s^(-2)×_A^(-2)", "1×_N×_A^\u0012-2\u0013");
+  // Vacuum magnetic permeability 𝝴0
+  assert_parsed_expression_simplify_to("_A^2×_s^4×_kg^(-1)×_m^(-3)", "1×_F×_m^\u0012-1\u0013");
+  // Stefan–Boltzmann constant _W×_m^-2×_K^-4
+  assert_parsed_expression_simplify_to("_kg×_s^(-3)×_K^(-4)", "1×_K^\u0012-4\u0013×_kg×_s^\u0012-3\u0013");
 
   /* Keep SI units for 0, infinity float results, Remove unit for undefined
    * expression */
@@ -1128,7 +1159,8 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("atan(-1.2)", "-arctan(6/5)");
   assert_parsed_expression_simplify_to("atan(tan(2/3))", "2/3");
   assert_parsed_expression_simplify_to("tan(atan(2/3))", "2/3");
-  assert_parsed_expression_simplify_to("atan(sin(2/3)/cos(2/3))", "2/3", SystemForAnalysis); // If target != User, sin/cos is not reduced to tan(x)
+  // If target != User, sin/cos is not reduced to tan(x)
+  assert_parsed_expression_simplify_to("atan(sin(2/3)/cos(2/3))", "2/3", SystemForAnalysis);
   assert_parsed_expression_simplify_to("tan(atan(5/2))", "5/2");
   assert_parsed_expression_simplify_to("atan(tan(5/2))", "\u0012-2×π+5\u0013/2");
   assert_parsed_expression_simplify_to("atan(tan(-π/7))", "-π/7");
@@ -1682,8 +1714,10 @@ QUIZ_CASE(poincare_simplification_mix) {
   assert_parsed_expression_simplify_to("x+i/(1+i×√(x))", "\u0012x^\u00123/2\u0013×i+x+i\u0013/\u0012√(x)×i+1\u0013");
   assert_parsed_expression_simplify_to("√(√(√(√(√(√(i))))))", "√(√(√(√(√(√(i))))))");
 
-  //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), cos(9))", "ln(2)+ln(3)"); // TODO: for this to work, we must know the sign of cos(9)
-  //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), 9)", "ln(6)×log(cos(9), 9)"); // TODO: for this to work, we must know the sign of cos(9)
+  // TODO: for this to work, we must know the sign of cos(9)
+  //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), cos(9))", "ln(2)+ln(3)");
+  // TODO: for this to work, we must know the sign of cos(9)
+  //assert_parsed_expression_simplify_to("log(cos(9)^ln(6), 9)", "ln(6)×log(cos(9), 9)");
   assert_parsed_expression_simplify_to("(((√(6)-√(2))/4)/((√(6)+√(2))/4))+1", "3-√(3)");
   assert_parsed_expression_simplify_to("1/√(i) × (√(2)-i×√(2))", "-2×i"); // TODO: get rid of complex at denominator?
   assert_expression_simplifies_approximates_to<double>("abs(√(300000.0003^23))", "9.702740901018ᴇ62", Degree, MetricUnitFormat, Cartesian, 13);
@@ -1826,7 +1860,8 @@ QUIZ_CASE(poincare_probability) {
   assert_parsed_expression_simplify_to("invnorm(0.5,2,3)", "2");
   assert_parsed_expression_simplify_to("invnorm(1,2,3)", Infinity::Name());
   assert_parsed_expression_simplify_to("invnorm(1.3,2,3)", "undef");
-  assert_parsed_expression_simplify_to("invnorm(3/4,2,random())", "invnorm(3/4,2,random())"); // random can be 0
+  // random can be 0
+  assert_parsed_expression_simplify_to("invnorm(3/4,2,random())", "invnorm(3/4,2,random())");
   assert_parsed_expression_simplify_to("invnorm(0.5,2,0)", Undefined::Name());
   assert_parsed_expression_simplify_to("invnorm(0.5,2,-1)", Undefined::Name());
   assert_parsed_expression_simplify_to("normcdf(2,0,1)", "normcdf(2,0,1)");

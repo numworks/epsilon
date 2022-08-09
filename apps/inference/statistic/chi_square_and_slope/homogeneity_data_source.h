@@ -34,9 +34,12 @@ public:
   bool unselectTopLeftCell(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY);
 
   constexpr static int k_columnWidth = 82;
-  constexpr static int k_numberOfReusableColumns = std::min(Ion::Display::Width / k_columnWidth + 2, HomogeneityTest::k_maxNumberOfColumns + 1); // 5 - we take into account the potential "Total" column
-  constexpr static int k_maxNumberOfReusableRows = std::min(CategoricalTableViewDataSource::k_maxNumberOfReusableRows, HomogeneityTest::k_maxNumberOfRows + 1); // std::min(12, 9 + 1) - we take into account the potential "Total" row
-  constexpr static int k_numberOfReusableCells = k_maxNumberOfReusableRows * k_numberOfReusableColumns; // 5 * 10
+  // 5 - we take into account the potential "Total" column
+  constexpr static int k_numberOfReusableColumns = std::min(Ion::Display::Width / k_columnWidth + 2, HomogeneityTest::k_maxNumberOfColumns + 1);
+  // std::min(12, 9 + 1) - we take into account the potential "Total" row
+  constexpr static int k_maxNumberOfReusableRows = std::min(CategoricalTableViewDataSource::k_maxNumberOfReusableRows, HomogeneityTest::k_maxNumberOfRows + 1);
+  // 5 * 10
+  constexpr static int k_numberOfReusableCells = k_maxNumberOfReusableRows * k_numberOfReusableColumns;
 
 protected:
   constexpr static int k_maxNumberOfColumns = HomogeneityTest::k_maxNumberOfColumns;

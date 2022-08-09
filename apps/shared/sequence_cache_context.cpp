@@ -68,13 +68,15 @@ template<typename T>
 int SequenceCacheContext<T>::nameIndexForSymbol(const Poincare::Symbol & symbol) {
   assert(symbol.name()[0] >= 'u' && symbol.name()[0] <= 'w'); //  [u|v|w]
   char name = symbol.name()[0];
-  assert(name >= SequenceStore::k_sequenceNames[0][0] && name <= SequenceStore::k_sequenceNames[SequenceStore::k_maxNumberOfSequences-1][0]); // u, v or w
+  // u, v or w
+  assert(name >= SequenceStore::k_sequenceNames[0][0] && name <= SequenceStore::k_sequenceNames[SequenceStore::k_maxNumberOfSequences-1][0]);
   return name - 'u';
 }
 
 template<typename T>
 int SequenceCacheContext<T>::rankIndexForSymbol(const Poincare::Symbol & symbol) {
-  assert(strcmp(symbol.name()+1, "(n)") == 0 || strcmp(symbol.name()+1, "(n+1)") == 0); // u(n) or u(n+1)
+  // u(n) or u(n+1)
+  assert(strcmp(symbol.name()+1, "(n)") == 0 || strcmp(symbol.name()+1, "(n+1)") == 0);
   if (symbol.name()[3] == ')') { // (n)
     return 0;
   }

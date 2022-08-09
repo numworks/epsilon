@@ -56,7 +56,8 @@ public:
   void updateCoefficients(int series, Poincare::Context * globalContext);
   double * coefficientsForSeries(int series, Poincare::Context * globalContext);
   bool coefficientsAreDefined(int series, Poincare::Context * globalContext);
-  double determinationCoefficientForSeries(int series, Poincare::Context * globalContext); // R2
+  // R2
+  double determinationCoefficientForSeries(int series, Poincare::Context * globalContext);
   double yValueForXValue(int series, double x, Poincare::Context * globalContext);
   double xValueForYValue(int series, double y, Poincare::Context * globalContext);
   double residualAtIndexForSeries(int series, int index, Poincare::Context * globalContext);

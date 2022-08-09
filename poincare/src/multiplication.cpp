@@ -1095,7 +1095,8 @@ void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, const Re
   /* This function replace the child at index i by its factorization with e. e
    * and childAtIndex(i) are supposed to have a common base. */
   // Step 1: Find the new exponent
-  Expression s = Addition::Builder(CreateExponent(childAtIndex(i)), CreateExponent(e)); // pi^2*pi^3 -> pi^(2+3) -> pi^5
+  // pi^2*pi^3 -> pi^(2+3) -> pi^5
+  Expression s = Addition::Builder(CreateExponent(childAtIndex(i)), CreateExponent(e));
   // Step 2: Create the new Power
   Expression p = Power::Builder(Base(childAtIndex(i).clone()), s); // pi^2*pi^-2 -> pi^0 -> 1
   s.shallowReduce(reductionContext);

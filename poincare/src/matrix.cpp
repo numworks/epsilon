@@ -620,7 +620,8 @@ Expression Matrix::computeInverseOrDeterminant(bool computeDeterminant, const Re
     Matrix inverse = Matrix::Builder();
     for (int i = 0; i < dim; i++) {
       for (int j = 0; j < dim; j++) {
-        inverse.addChildAtIndexInPlace(matrixAI.matrixChild(i, j+dim), i*dim+j, i*dim+j); // We can steal matrixAI's children
+        // We can steal matrixAI's children
+        inverse.addChildAtIndexInPlace(matrixAI.matrixChild(i, j+dim), i*dim+j, i*dim+j);
       }
     }
     inverse.setDimensions(dim, dim);

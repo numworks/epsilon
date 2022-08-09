@@ -66,7 +66,8 @@ Escher::HighlightCell * DynamicCellsDataSource<T,N>::cell(int i) {
   return &m_cells[i];
 }
 
-static_assert(k_homogeneityTableNumberOfReusableHeaderCells == HomogeneityTableDataSource::k_numberOfReusableColumns + HomogeneityTableDataSource::k_maxNumberOfReusableRows - 1, "k_homogeneityTableNumberOfReusableHeaderCells should be updated with HomogeneityTableDataSource::k_numberOfReusableColumns and HomogeneityTableDataSource::k_maxNumberOfReusableRows"); // -1 takes the hidden top left cell into account
+// -1 takes the hidden top left cell into account
+static_assert(k_homogeneityTableNumberOfReusableHeaderCells == HomogeneityTableDataSource::k_numberOfReusableColumns + HomogeneityTableDataSource::k_maxNumberOfReusableRows - 1, "k_homogeneityTableNumberOfReusableHeaderCells should be updated with HomogeneityTableDataSource::k_numberOfReusableColumns and HomogeneityTableDataSource::k_maxNumberOfReusableRows");
 static_assert(k_homogeneityTableNumberOfReusableInnerCells == HomogeneityTableDataSource::k_numberOfReusableCells, "k_homogeneityTableNumberOfReusableHeaderCells should be updated with HomogeneityTableDataSource::k_numberOfReusableCells");
 static_assert(k_doubleColumnTableNumberOfReusableCells == GoodnessTableCell::k_numberOfReusableCells, "k_doubleColumnTableNumberOfReusableCells should be updated with GoodnessTableCell::k_numberOfReusableCells");
 static_assert(k_doubleColumnTableNumberOfReusableCells == SlopeTableCell::k_numberOfReusableCells, "k_doubleColumnTableNumberOfReusableCells should be updated with SlopeTableCell::k_numberOfReusableCells");

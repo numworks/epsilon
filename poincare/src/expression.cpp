@@ -120,7 +120,8 @@ bool Expression::recursivelyMatches(ExpressionTrinaryTest test, Context * contex
   if (t == ExpressionNode::Type::Symbol || t == ExpressionNode::Type::Function) {
     assert(replaceSymbols == SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition
         || replaceSymbols == SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
-        || replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol); // We need only those cases for now
+        // We need only those cases for now
+        || replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol);
 
     if (replaceSymbols == SymbolicComputation::DoNotReplaceAnySymbol
         || (replaceSymbols == SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions

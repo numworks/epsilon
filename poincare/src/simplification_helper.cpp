@@ -1,4 +1,5 @@
 #include <poincare/simplification_helper.h>
+#include <poincare/boolean.h>
 #include <poincare/dependency.h>
 #include <poincare/expression_node.h>
 #include <poincare/expression.h>
@@ -55,7 +56,7 @@ Expression SimplificationHelper::defaultShallowReduce(Expression e,  ExpressionN
   if (!res.isUninitialized()) {
     return res;
   }
-  // Step4. Hande matrices
+  // Step4. Handle matrices
   if (matrixParameter == MatrixReduction::UndefinedOnMatrix) {
     res = undefinedOnMatrix(e, reductionContext);
     if (!res.isUninitialized()) {

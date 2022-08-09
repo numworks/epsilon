@@ -184,6 +184,8 @@ public:
    * discontinuous. */
   bool involvesDiscontinuousFunction(Context * context) const;
   bool isDiscontinuousBetweenValuesForSymbol(const char * symbol, float x1, float x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  bool hasBooleanValue() const;
+
   /* recursivelyMatches will test each node recursively with the function
    * provided as argument. If the result is Yes, it will stop searching and
    * return true. If the result is Maybe, it will continue searching for a Yes

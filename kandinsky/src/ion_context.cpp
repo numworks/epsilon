@@ -38,6 +38,10 @@ void KDIonContext::Putchar(char c) {
 }
 
 void KDIonContext::Clear(KDPoint newCursorPosition) {
-  SharedContext()->pushRectUniform(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), KDColorWhite);
+  KDRect screen(0, 0, Ion::Display::Width, Ion::Display::Height);
+  KDIonContext * ctx = SharedContext();
+  ctx->setOrigin(KDPointZero);
+  ctx->setClippingRect(screen);
+  ctx->pushRectUniform(screen, KDColorWhite);
   s_cursor = newCursorPosition;
 }

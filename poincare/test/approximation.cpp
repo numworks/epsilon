@@ -1370,5 +1370,14 @@ QUIZ_CASE(poincare_approximation_floor_ceil_integer) {
   }
 }
 
+QUIZ_CASE(poincare_approximation_booleans) {
+  assert_expression_approximates_to<float>("True and 3<π", "True");
+  assert_expression_approximates_to<float>("3>π or False", "False");
+  assert_expression_approximates_to<float>("not({3<π, 3>π})", "{False,True}");
+
+  assert_expression_approximates_to<float>("2 and 3", Undefined::Name());
+  assert_expression_approximates_to<float>("True + 3", Undefined::Name());
+}
+
 template void assert_expression_approximates_to_scalar(const char * expression, float approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, Preferences::MixedFractions mixedFractionsParameter);
 template void assert_expression_approximates_to_scalar(const char * expression, double approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, Preferences::MixedFractions mixedFractionsParameter);

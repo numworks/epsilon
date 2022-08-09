@@ -2032,92 +2032,112 @@ QUIZ_CASE(poincare_simplification_mixed_fraction) {
   assert_parsed_expression_simplify_to("-1 2/3", "-5/3");
 }
 
+QUIZ_CASE(poincare_simplification_booleans) {
+  assert_parsed_expression_simplify_to("true", "True");
+  assert_parsed_expression_simplify_to("false", "False");
+  assert_parsed_expression_simplify_to("True + False", Undefined::Name());
+  assert_parsed_expression_simplify_to("2True", Undefined::Name());
+  assert_parsed_expression_simplify_to("False^3", Undefined::Name());
+}
+
 QUIZ_CASE(poincare_simplification_comparison_operators) {
-  assert_parsed_expression_simplify_to("3 < 4", "1");
-  assert_parsed_expression_simplify_to("3 < 3", "0");
-  assert_parsed_expression_simplify_to("3 < 2", "0");
+  assert_parsed_expression_simplify_to("3 < 4", "True");
+  assert_parsed_expression_simplify_to("3 < 3", "False");
+  assert_parsed_expression_simplify_to("3 < 2", "False");
 
-  assert_parsed_expression_simplify_to("3 <= 4", "1");
-  assert_parsed_expression_simplify_to("3 <= 3", "1");
-  assert_parsed_expression_simplify_to("3 <= 2", "0");
+  assert_parsed_expression_simplify_to("3 <= 4", "True");
+  assert_parsed_expression_simplify_to("3 <= 3", "True");
+  assert_parsed_expression_simplify_to("3 <= 2", "False");
 
-  assert_parsed_expression_simplify_to("3 > 4", "0");
-  assert_parsed_expression_simplify_to("3 > 3", "0");
-  assert_parsed_expression_simplify_to("3 > 2", "1");
+  assert_parsed_expression_simplify_to("3 > 4", "False");
+  assert_parsed_expression_simplify_to("3 > 3", "False");
+  assert_parsed_expression_simplify_to("3 > 2", "True");
 
-  assert_parsed_expression_simplify_to("3 >= 4", "0");
-  assert_parsed_expression_simplify_to("3 >= 3", "1");
-  assert_parsed_expression_simplify_to("3 >= 2", "1");
+  assert_parsed_expression_simplify_to("3 >= 4", "False");
+  assert_parsed_expression_simplify_to("3 >= 3", "True");
+  assert_parsed_expression_simplify_to("3 >= 2", "True");
 
-  assert_parsed_expression_simplify_to("3 = 4", "0");
-  assert_parsed_expression_simplify_to("3 = 3", "1");
-  assert_parsed_expression_simplify_to("3 = 2", "0");
+  assert_parsed_expression_simplify_to("3 = 4", "False");
+  assert_parsed_expression_simplify_to("3 = 3", "True");
+  assert_parsed_expression_simplify_to("3 = 2", "False");
 
-  assert_parsed_expression_simplify_to("3 != 4", "1");
-  assert_parsed_expression_simplify_to("3 != 3", "0");
-  assert_parsed_expression_simplify_to("3 != 2", "1");
+  assert_parsed_expression_simplify_to("3 != 4", "True");
+  assert_parsed_expression_simplify_to("3 != 3", "False");
+  assert_parsed_expression_simplify_to("3 != 2", "True");
 
   assert_parsed_expression_simplify_to("undef = 2", Undefined::Name());
   assert_parsed_expression_simplify_to("undef != 2", Undefined::Name());
 
   assert_parsed_expression_simplify_to("3 + i < 1 + 2i", "3+i<1+2×i"); // Can't decide
-  assert_parsed_expression_simplify_to("3 + i < 1 + i", "0");
-  assert_parsed_expression_simplify_to("3 + i = 3 + i", "1");
+  assert_parsed_expression_simplify_to("3 + i < 1 + i", "False");
+  assert_parsed_expression_simplify_to("3 + i = 3 + i", "True");
   assert_parsed_expression_simplify_to("[[0, 0]] < [[1, 1]]", Undefined::Name());
 
-  assert_parsed_expression_simplify_to("3 > 2 >= 1 = 4 - 3 != 6", "1");
-  assert_parsed_expression_simplify_to("3 < 2 >= 1 = 4 - 3 != 6", "0");
+  assert_parsed_expression_simplify_to("3 > 2 >= 1 = 4 - 3 != 6", "True");
+  assert_parsed_expression_simplify_to("3 < 2 >= 1 = 4 - 3 != 6", "False");
   assert_parsed_expression_simplify_to("3 > 2 >= 1 = 4 / 0", Undefined::Name());
+
+  assert_parsed_expression_simplify_to("3=3+3<4", "False");
+  assert_parsed_expression_simplify_to("(3=3)+(3<4)", Undefined::Name());
+  assert_parsed_expression_simplify_to("ln(3=5)", Undefined::Name());
 }
 
 typedef bool (*BoolCompare) (bool a, bool b);
 static void testLogicalOperatorTruthTable(const char * operatorString, BoolCompare evaluationFunction) {
-  constexpr static int bufferSize = 9; // 9 == strlen("1 nand 0") + 1
+  constexpr static int bufferSize = 17; // 9 == strlen("False nand False") + 1
+  char buffer[bufferSize];
   int operatorLength = strlen(operatorString);
   assert(operatorLength <= 4);
-  char buffer[bufferSize];
-  buffer[1] = ' ';
-  strlcpy(buffer + 2, operatorString, operatorLength + 1);
-  buffer[2 + operatorLength] = ' ';
-  buffer[4 + operatorLength] = 0;
+  // Test truth table
   for (int a = 0; a <= 1; a++) {
-    buffer[0] = '0' + a;
+    const char * aString = a == 1 ? BooleanNode::k_trueAliases.mainAlias() : BooleanNode::k_falseAliases.mainAlias();
+    int length = strlcpy(buffer, aString, strlen(aString) + 1);
+    buffer[length] = ' ';
+    length++;
+    length += strlcpy(buffer + length, operatorString, operatorLength + 1);
+    buffer[length] = ' ';
+    length++;
     for (int b = 0; b <= 1; b++) {
-      buffer[3 + operatorLength] = '0' + b;
-      const char * truthString = evaluationFunction(static_cast<bool>(a), static_cast<bool>(b)) ? "1" : "0";
+      const char * bString = b == 1 ? BooleanNode::k_trueAliases.mainAlias() : BooleanNode::k_falseAliases.mainAlias();
+      strlcpy(buffer + length, bString, strlen(bString) + 1);
+      const char * truthString = evaluationFunction(static_cast<bool>(a), static_cast<bool>(b)) ? BooleanNode::k_trueAliases.mainAlias() : BooleanNode::k_falseAliases.mainAlias();
       assert_parsed_expression_simplify_to(buffer, truthString);
     }
   }
+  // Test undefined on numbers
+  const char * numberString = "1";
+  int length = strlcpy(buffer, numberString, strlen(numberString) + 1);
+  buffer[length] = ' ';
+  length++;
+  length += strlcpy(buffer + length, operatorString, operatorLength + 1);
+  buffer[length] = ' ';
+  length++;
+  strlcpy(buffer + length, numberString, strlen(numberString) + 1);
+  assert_parsed_expression_simplify_to(buffer, Undefined::Name());
 }
 
 QUIZ_CASE(poincare_simplification_logical_operators) {
-  assert_parsed_expression_simplify_to("not 1", "0");
-  assert_parsed_expression_simplify_to("not 0", "1");
+  assert_parsed_expression_simplify_to("not True", "False");
+  assert_parsed_expression_simplify_to("not False", "True");
   testLogicalOperatorTruthTable("and", [](bool a, bool b) { return a && b; });
   testLogicalOperatorTruthTable("or", [](bool a, bool b) { return a || b; });
   testLogicalOperatorTruthTable("xor", [](bool a, bool b) { return a != b; });
   testLogicalOperatorTruthTable("nor", [](bool a, bool b) { return !(a || b); });
   testLogicalOperatorTruthTable("nand", [](bool a, bool b) { return !(a && b); });
 
-  assert_parsed_expression_simplify_to("3 and -5.2", "1");
-  assert_parsed_expression_simplify_to("not 0 and 0", "0");
-  assert_parsed_expression_simplify_to("not (0 and 0)", "1");
-  assert_parsed_expression_simplify_to("1 or 0 xor 1", "0");
-  assert_parsed_expression_simplify_to("1 or (0 xor 1)", "1");
-  assert_parsed_expression_simplify_to("1 xor 1 and 0", "1");
-  assert_parsed_expression_simplify_to("(1 xor 1) and 0", "0");
+  assert_parsed_expression_simplify_to("not False and False", "False");
+  assert_parsed_expression_simplify_to("not (False and False)", "True");
+  assert_parsed_expression_simplify_to("True or False xor True", "False");
+  assert_parsed_expression_simplify_to("True or (False xor True)", "True");
+  assert_parsed_expression_simplify_to("True xor True and False", "True");
+  assert_parsed_expression_simplify_to("(True xor True) and False", "False");
 
-  assert_parsed_expression_simplify_to("1 xor {0,1,0,1}", "{1,0,1,0}");
+  assert_parsed_expression_simplify_to("True xor {False,True,False,True}", "{True,False,True,False}");
 
-  assert_parsed_expression_simplify_to("3 > 2 and 2 = 2", "1");
-  assert_parsed_expression_simplify_to("1 = 2 and 1 ", "0");
-  assert_parsed_expression_simplify_to("1 = (2 and 1) ", "1");
-  assert_parsed_expression_simplify_to("1 and 2 = 1 ", "0");
-  assert_parsed_expression_simplify_to("(1 and 2) = 1 ", "1");
-  assert_parsed_expression_simplify_to("not 2 = 1", "1");
-  assert_parsed_expression_simplify_to("(not 2) = 1", "0");
-
-  assert_parsed_expression_simplify_to("1 and [[-5,2]]", Undefined::Name());
-  assert_parsed_expression_simplify_to("1 or undef", Undefined::Name());
+  assert_parsed_expression_simplify_to("True and -5.2", Undefined::Name());
+  assert_parsed_expression_simplify_to("True and [[-5,2]]", Undefined::Name());
+  assert_parsed_expression_simplify_to("True or undef", Undefined::Name());
   assert_parsed_expression_simplify_to("not undef", Undefined::Name());
+  assert_parsed_expression_simplify_to("True and 2 = 2 ", "True");
+  assert_parsed_expression_simplify_to("(True and 2) = 2", Undefined::Name());
 }

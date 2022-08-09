@@ -163,6 +163,6 @@ private:
   bool m_selectedModel;
 };
 
-}  // namespace Finance
+}
 
-#endif /* FINANCE_DATA_H */
+#endif

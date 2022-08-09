@@ -180,4 +180,4 @@ void StackViewController::dismissPotentialModal() {
   }
 }
 
-}  // namespace Escher
+}

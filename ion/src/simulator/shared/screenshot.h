@@ -21,7 +21,7 @@ private:
   bool m_eachStep;
 };
 
-}  // namespace Simulator
-}  // namespace Ion
+}
+}
 
-#endif /* COMPARE_SCREENSHOT_H */
+#endif

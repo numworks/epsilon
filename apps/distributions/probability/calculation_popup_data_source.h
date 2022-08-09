@@ -27,6 +27,6 @@ private:
   Distribution * m_distribution;
 };
 
-}  // namespace Distributions
+}
 
-#endif /* DISTRIBUTIONS_PROBABILITY_CALCULATION_POPUP_DATA_SOURCE_H */
+#endif

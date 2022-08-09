@@ -21,6 +21,6 @@ public:
   );
 };
 
-}  // namespace Statistics
+}
 
-#endif /* STATISTICS_PLOT_RANGE_H */
+#endif

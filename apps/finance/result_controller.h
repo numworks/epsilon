@@ -31,6 +31,6 @@ private:
   Escher::TableViewWithTopAndBottomViews m_contentView;
 };
 
-}  // namespace Finance
+}
 
-#endif /* FINANCE_RESULT_CONTROLLER_H */
+#endif

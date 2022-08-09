@@ -55,4 +55,4 @@ void NormalProbabilityController::computeYBounds(float * yMin, float *yMax) cons
   *yMax = -*yMin;
 }
 
-}  // namespace Statistics
+}

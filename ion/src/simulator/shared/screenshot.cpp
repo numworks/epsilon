@@ -102,5 +102,5 @@ Screenshot * Screenshot::commandlineScreenshot() {
   return &s_commandlineScreenshot;
 }
 
-}  // namespace Simulator
-}  // namespace Ion
+}
+}

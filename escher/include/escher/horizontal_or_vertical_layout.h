@@ -75,6 +75,6 @@ private:
   }
 };
 
-}  // namespace Escher
+}
 
-#endif /* ESCHER_HORIZONTAL_OR_VERTICAL_LAYOUT_H */
+#endif

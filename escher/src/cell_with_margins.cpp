@@ -32,4 +32,4 @@ void CellWithMargins::layoutSubviews(bool force) {
   m_innerCell->setFrame(KDRect(Metric::CommonMargin, 0, width - 2 * Metric::CommonMargin, height), force);
 }
 
-}  // namespace Escher
+}

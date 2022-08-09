@@ -79,6 +79,6 @@ private:
   virtual I18n::Message resultMessage() const = 0;
 };
 
-}  // namespace Statistics
+}
 
-#endif /* STATISTICS_PLOT_CONTROLLER_H */
+#endif

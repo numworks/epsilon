@@ -31,7 +31,7 @@ private:
   MenuControllerDelegate * m_delegate;
 };
 
-}  // namespace Shared
+}
 
-#endif /* SHARED_MENU_CONTROLLER_H */
+#endif
 

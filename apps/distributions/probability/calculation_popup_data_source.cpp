@@ -25,4 +25,4 @@ int CalculationPopupDataSource::numberOfRows() const {
   return k_numberOfImages - m_distribution->isContinuous();
 }
 
-}  // namespace Distributions
+}

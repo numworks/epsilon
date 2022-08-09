@@ -136,6 +136,6 @@ void shutdown() {
   SDL_Quit();
 }
 
-}  // namespace Window
-}  // namespace Simulator
-}  // namespace Ion
+}
+}
+}

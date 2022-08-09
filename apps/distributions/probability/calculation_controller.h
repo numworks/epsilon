@@ -104,6 +104,6 @@ private:
   char m_titleBuffer[k_titleBufferSize];
 };
 
-}  // namespace Distributions
+}
 
 #endif

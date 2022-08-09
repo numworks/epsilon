@@ -29,6 +29,6 @@ private:
   GraphView m_selectedGraphView;
 };
 
-}  // namespace Statistics
+}
 
-#endif /* STATISTICS_GRAPH_VIEW_MODEL_H */
+#endif

@@ -34,6 +34,6 @@ private:
   InterestController * m_interestController;
 };
 
-}  // namespace Finance
+}
 
-#endif /* FINANCE_SIMPLE_INTEREST_MENU_CONTROLLER_H */
+#endif

@@ -35,6 +35,6 @@ protected:
   MessageTextView m_subLabelView;
 };
 
-}  // namespace Escher
+}
 
 #endif

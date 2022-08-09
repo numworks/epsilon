@@ -746,4 +746,4 @@ template Coordinate2D<float> ContinuousFunction::privateEvaluateXYAtParameter<fl
 template Coordinate2D<double> ContinuousFunction::privateEvaluateXYAtParameter<double>(double, Context *, int) const;
 
 
-} // namespace Graph
+}

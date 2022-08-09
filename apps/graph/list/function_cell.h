@@ -64,6 +64,6 @@ private:
   bool m_parameterSelected;
 };
 
-}  // namespace Graph
+}
 
 #endif

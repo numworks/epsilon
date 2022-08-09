@@ -17,6 +17,6 @@ private:
   bool m_displayImage;
 };
 
-}  // namespace Settings
+}
 
 #endif

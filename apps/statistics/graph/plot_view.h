@@ -40,6 +40,6 @@ protected:
   PlotBannerView * m_bannerView;
 };
 
-}  // namespace Statistics
+}
 
-#endif /* STATISTICS_PLOT_VIEW_H */
+#endif

@@ -11,6 +11,6 @@ public:
   virtual void reloadCell() = 0;
 };
 
-}  // namespace Escher
+}
 
-#endif /* ESCHER_CELL_WITH_TEXTFIELD_H */
+#endif

@@ -42,4 +42,4 @@ private:
 
 }
 
-#endif /* DISTRIBUTIONS_PROBABILITY_PARAMETERS_CONTROLLER_H */
+#endif

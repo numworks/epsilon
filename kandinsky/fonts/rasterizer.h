@@ -86,4 +86,4 @@ void drawAllGlyphsInImage(FT_Face face, image_t * bitmap_image, int gridWidth, i
 void writeImageToPNGFile(image_t * image, const char * filename);
 #endif
 
-#endif /* KANDINSKY_FONTS_RASTERIZER_H */
+#endif

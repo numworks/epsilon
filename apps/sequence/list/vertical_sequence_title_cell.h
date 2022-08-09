@@ -23,6 +23,6 @@ private:
   float verticalAlignment() const;
 };
 
-}  // namespace Sequence
+}
 
 #endif

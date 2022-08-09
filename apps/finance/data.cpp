@@ -259,4 +259,4 @@ void Data::reset() {
   m_simpleInterestData.resetValues();
 }
 
-}  // namespace Finance
+}

@@ -26,6 +26,6 @@ private:
   InterestMenuController * m_interestMenuController;
 };
 
-}  // namespace Finance
+}
 
-#endif /* FINANCE_MENU_CONTROLLER_H */
+#endif

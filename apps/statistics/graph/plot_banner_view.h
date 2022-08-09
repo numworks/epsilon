@@ -22,6 +22,6 @@ private:
   Escher::BufferTextView m_result;
 };
 
-}  // namespace Statistics
+}
 
-#endif /* STATISTICS_PLOT_BANNER_VIEW_H */
+#endif

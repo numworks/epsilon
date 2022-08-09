@@ -12,6 +12,6 @@ protected:
   Ion::Storage::Record m_record;
 };
 
-} // namespace Shared
+}
 
 #endif

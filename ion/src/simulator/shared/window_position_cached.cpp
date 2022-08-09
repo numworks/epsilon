@@ -47,6 +47,6 @@ void willShutdown(SDL_Window * window) {
   cacheWindowPosition(window);
 }
 
-}  // namespace Window
-}  // namespace Simulator
-}  // namespace Ion
+}
+}
+}

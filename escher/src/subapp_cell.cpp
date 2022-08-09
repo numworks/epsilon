@@ -89,4 +89,4 @@ void SubappCell::setMessages(I18n::Message title, I18n::Message subTitle) {
   m_subTitle.setMessage(subTitle);
 }
 
-}  // namespace Escher
+}

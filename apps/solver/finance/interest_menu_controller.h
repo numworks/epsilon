@@ -1,6 +1,7 @@
 #ifndef SOLVER_SIMPLE_INTEREST_MENU_CONTROLLER_H
 #define SOLVER_SIMPLE_INTEREST_MENU_CONTROLLER_H
 
+#include <escher/memoized_list_view_data_source.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
@@ -15,7 +16,7 @@ namespace Solver {
 
 constexpr int k_numberOfInterestCells = InterestData::k_maxNumberOfUnknowns;
 
-class InterestMenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfInterestCells, Escher::RegularListViewDataSource> {
+class InterestMenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfInterestCells, Escher::MemoizedListViewDataSource> {
 public:
   InterestMenuController(Escher::StackViewController * parentResponder, InterestController * interestController, InterestData * data);
   void didBecomeFirstResponder() override;
@@ -24,6 +25,7 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; }
   Escher::View * view() override { return &m_contentView; }
   int numberOfRows() const override { return m_data->numberOfUnknowns(); }
+
 private:
   uint8_t paramaterAtIndex(int index) const;
 

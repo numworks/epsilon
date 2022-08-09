@@ -693,25 +693,25 @@ QUIZ_CASE(poincare_parsing_east_arrows) {
 }
 
 QUIZ_CASE(poincare_parse_logic) {
- assert_parsed_expression_is("1 and 0", BinaryLogicalOperator::Builder(BasedInteger::Builder(1), BasedInteger::Builder(0), BinaryLogicalOperatorNode::OperatorType::And));
- assert_parsed_expression_is("1 or 0", BinaryLogicalOperator::Builder(BasedInteger::Builder(1), BasedInteger::Builder(0), BinaryLogicalOperatorNode::OperatorType::Or));
- assert_parsed_expression_is("1 xor 0", BinaryLogicalOperator::Builder(BasedInteger::Builder(1), BasedInteger::Builder(0), BinaryLogicalOperatorNode::OperatorType::Xor));
- assert_parsed_expression_is("1 nor 0", BinaryLogicalOperator::Builder(BasedInteger::Builder(1), BasedInteger::Builder(0), BinaryLogicalOperatorNode::OperatorType::Nor));
- assert_parsed_expression_is("1 nand 0", BinaryLogicalOperator::Builder(BasedInteger::Builder(1), BasedInteger::Builder(0), BinaryLogicalOperatorNode::OperatorType::Nand));
- assert_parsed_expression_is("not 1", NotOperator::Builder(BasedInteger::Builder(1)));
+ assert_parsed_expression_is("True and False", BinaryLogicalOperator::Builder(Boolean::Builder(true), Boolean::Builder(false), BinaryLogicalOperatorNode::OperatorType::And));
+ assert_parsed_expression_is("True or False", BinaryLogicalOperator::Builder(Boolean::Builder(true), Boolean::Builder(false), BinaryLogicalOperatorNode::OperatorType::Or));
+ assert_parsed_expression_is("True xor False", BinaryLogicalOperator::Builder(Boolean::Builder(true), Boolean::Builder(false), BinaryLogicalOperatorNode::OperatorType::Xor));
+ assert_parsed_expression_is("True nor False", BinaryLogicalOperator::Builder(Boolean::Builder(true), Boolean::Builder(false), BinaryLogicalOperatorNode::OperatorType::Nor));
+ assert_parsed_expression_is("True nand False", BinaryLogicalOperator::Builder(Boolean::Builder(true), Boolean::Builder(false), BinaryLogicalOperatorNode::OperatorType::Nand));
+ assert_parsed_expression_is("not True", NotOperator::Builder(Boolean::Builder(true)));
  assert_text_not_parsable("not");
  assert_text_not_parsable("and");
- assert_text_not_parsable("or 1");
+ assert_text_not_parsable("or True");
  assert_text_not_parsable("nor");
  assert_text_not_parsable("xor");
- assert_text_not_parsable("1 nand");
- assert_text_not_parsable("1 and or 0");
- assert_text_not_parsable("1 not 1");
+ assert_text_not_parsable("True nand");
+ assert_text_not_parsable("True and or False");
+ assert_text_not_parsable("True not True");
  // Operator prioritiy
- assert_parsed_expression_is("not 1 and 0", BinaryLogicalOperator::Builder(NotOperator::Builder(BasedInteger::Builder(1)), BasedInteger::Builder(0), BinaryLogicalOperatorNode::OperatorType::And));
- assert_parsed_expression_is("1 and 0 or 1", BinaryLogicalOperator::Builder(BinaryLogicalOperator::Builder(BasedInteger::Builder(1), BasedInteger::Builder(0), BinaryLogicalOperatorNode::OperatorType::And), BasedInteger::Builder(1), BinaryLogicalOperatorNode::OperatorType::Or));
- assert_parsed_expression_is("1 or 0 and 1", BinaryLogicalOperator::Builder(BasedInteger::Builder(1), BinaryLogicalOperator::Builder(BasedInteger::Builder(0), BasedInteger::Builder(1), BinaryLogicalOperatorNode::OperatorType::And), BinaryLogicalOperatorNode::OperatorType::Or));
- assert_parsed_expression_is("1 nor 0 and 1", BinaryLogicalOperator::Builder(BasedInteger::Builder(1), BinaryLogicalOperator::Builder(BasedInteger::Builder(0), BasedInteger::Builder(1), BinaryLogicalOperatorNode::OperatorType::And), BinaryLogicalOperatorNode::OperatorType::Nor));
- assert_parsed_expression_is("1 xor 0 and 1", BinaryLogicalOperator::Builder(BasedInteger::Builder(1), BinaryLogicalOperator::Builder(BasedInteger::Builder(0), BasedInteger::Builder(1), BinaryLogicalOperatorNode::OperatorType::And), BinaryLogicalOperatorNode::OperatorType::Xor));
- assert_parsed_expression_is("1 or 0 nand 1", BinaryLogicalOperator::Builder(BasedInteger::Builder(1), BinaryLogicalOperator::Builder(BasedInteger::Builder(0), BasedInteger::Builder(1), BinaryLogicalOperatorNode::OperatorType::Nand), BinaryLogicalOperatorNode::OperatorType::Or));
+ assert_parsed_expression_is("not True and False", BinaryLogicalOperator::Builder(NotOperator::Builder(Boolean::Builder(true)), Boolean::Builder(false), BinaryLogicalOperatorNode::OperatorType::And));
+ assert_parsed_expression_is("True and False or True", BinaryLogicalOperator::Builder(BinaryLogicalOperator::Builder(Boolean::Builder(true), Boolean::Builder(false), BinaryLogicalOperatorNode::OperatorType::And), Boolean::Builder(true), BinaryLogicalOperatorNode::OperatorType::Or));
+ assert_parsed_expression_is("True or False and True", BinaryLogicalOperator::Builder(Boolean::Builder(true), BinaryLogicalOperator::Builder(Boolean::Builder(false), Boolean::Builder(true), BinaryLogicalOperatorNode::OperatorType::And), BinaryLogicalOperatorNode::OperatorType::Or));
+ assert_parsed_expression_is("True nor False and True", BinaryLogicalOperator::Builder(Boolean::Builder(true), BinaryLogicalOperator::Builder(Boolean::Builder(false), Boolean::Builder(true), BinaryLogicalOperatorNode::OperatorType::And), BinaryLogicalOperatorNode::OperatorType::Nor));
+ assert_parsed_expression_is("True xor False and True", BinaryLogicalOperator::Builder(Boolean::Builder(true), BinaryLogicalOperator::Builder(Boolean::Builder(false), Boolean::Builder(true), BinaryLogicalOperatorNode::OperatorType::And), BinaryLogicalOperatorNode::OperatorType::Xor));
+ assert_parsed_expression_is("True or False nand True", BinaryLogicalOperator::Builder(Boolean::Builder(true), BinaryLogicalOperator::Builder(Boolean::Builder(false), Boolean::Builder(true), BinaryLogicalOperatorNode::OperatorType::Nand), BinaryLogicalOperatorNode::OperatorType::Or));
 }

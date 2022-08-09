@@ -26,7 +26,8 @@ void PreferencesController::didBecomeFirstResponder() {
 bool PreferencesController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* Generic behaviour of preference menu*/
-    assert(m_messageTreeModel->label() != I18n::Message::DisplayMode || selectedRow() != numberOfRows()-1); // In that case, events OK and EXE are handled by the cell
+    // In that case, events OK and EXE are handled by the cell
+    assert(m_messageTreeModel->label() != I18n::Message::DisplayMode || selectedRow() != numberOfRows()-1);
     setPreferenceWithValueIndex(m_messageTreeModel->label(), selectedRow());
     AppsContainer::sharedAppsContainer()->refreshPreferences();
     StackViewController * stack = stackController();

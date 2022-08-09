@@ -225,7 +225,8 @@ int FindUpperAndLowerReferenceValues(double inputValue, Expression orderedSIUnit
   int referenceIndex;
   int upperIndex = -1;
   for (referenceIndex = 0; referenceIndex < static_cast<int>(k_referenceTables[referenceTableIndex].tableLength); referenceIndex++) {
-    assert(referenceIndex == 0 || referenceTable[referenceIndex].value > referenceTable[referenceIndex - 1].value); // This checks if table is sorted (in case of value wrongly added to table).
+    // This checks if table is sorted (in case of value wrongly added to table).
+    assert(referenceIndex == 0 || referenceTable[referenceIndex].value > referenceTable[referenceIndex - 1].value);
     if (referenceTable[referenceIndex].value >= inputValue) {
       upperIndex = referenceIndex;
       break;

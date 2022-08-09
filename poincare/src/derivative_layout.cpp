@@ -77,7 +77,8 @@ void HigherOrderDerivativeLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool
 }
 
 void DerivativeLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  assert(cursor->layoutNode() != variableLayout() || m_variableSlot == VariableSlot::Assignment); // This is handled by child classes
+  // This is handled by child classes
+  assert(cursor->layoutNode() != variableLayout() || m_variableSlot == VariableSlot::Assignment);
   if (cursor->layoutNode() == derivandLayout()) {
     assert(cursor->position() == LayoutCursor::Position::Right);
     setVariableSlot(VariableSlot::Assignment, shouldRecomputeLayout);

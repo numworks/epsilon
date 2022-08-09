@@ -29,7 +29,8 @@ public:
   static Expression shallowReduceAdvancedFunction(Expression & e, ReductionContext reductionContext);
   static Expression shallowReduceInverseAdvancedFunction(Expression & e, ReductionContext reductionContext);
   static Expression replaceWithAdvancedFunction(Expression & e, Expression & denominator);
-  static Expression table(const Expression e, ExpressionNode::Type type,  const ReductionContext& reductionContext); // , Function f, bool inverse
+  // , Function f, bool inverse
+  static Expression table(const Expression e, ExpressionNode::Type type,  const ReductionContext& reductionContext);
   template <typename T> static std::complex<T> ConvertToRadian(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   template <typename T> static std::complex<T> ConvertRadianToAngleUnit(const std::complex<T> c, Preferences::AngleUnit angleUnit);
 

@@ -65,7 +65,8 @@ private:
   void removeAutocompletion();
   void removeAutocompletionText(); // Just removes the suggested text, not the autocompletion mode
   void addAutocompletion(int index = 0);
-  bool addAutocompletionTextAtIndex(int nextIndex, int * currentIndexToUpdate = nullptr); // Assumes the var box is already loaded
+  // Assumes the var box is already loaded
+  bool addAutocompletionTextAtIndex(int nextIndex, int * currentIndexToUpdate = nullptr);
   void cycleAutocompletion(bool downwards);
   void acceptAutocompletion(bool moveCursorToEndOfAutocompletion);
   const ContentView * nonEditableContentView() const override { return &m_contentView; }

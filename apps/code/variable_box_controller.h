@@ -46,7 +46,8 @@ private:
   constexpr static size_t k_maxNumberOfDisplayedSubtitles = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(SubtitleCell::k_subtitleRowHeight + Escher::TableCell::k_minimalSmallFontCellHeight, Escher::Metric::PopUpTopMargin);
   constexpr static size_t k_totalBuiltinNodesCount = 107;
   constexpr static size_t k_maxOtherScriptNodesCount = 32; // Chosen without particular reasons
-  constexpr static size_t k_maxScriptNodesCount = k_maxOtherScriptNodesCount + k_totalBuiltinNodesCount + k_maxOtherScriptNodesCount; // CurrentScriptOrigin + BuiltinsOrigin + ImportedOrigin
+  // CurrentScriptOrigin + BuiltinsOrigin + ImportedOrigin
+  constexpr static size_t k_maxScriptNodesCount = k_maxOtherScriptNodesCount + k_totalBuiltinNodesCount + k_maxOtherScriptNodesCount;
   constexpr static uint8_t k_maxOrigins = 10; // currentScriptOrigin + builtinsOrigin + 8 importedOrigins max
   constexpr static uint8_t k_subtitleCellType = k_nodeCellType; // We don't care as it is not selectable
   constexpr static uint8_t k_itemCellType = k_leafCellType; // So that upper class NestedMenuController knows it's a leaf

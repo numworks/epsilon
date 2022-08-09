@@ -106,7 +106,8 @@ void StoreController::setTitleCellStyle(HighlightCell * cell, int columnIndex) {
   int seriesIndex = m_store->seriesAtColumn(columnIndex);
   int realColumnIndex = m_store->relativeColumnIndex(columnIndex);
   Shared::StoreTitleCell * myCell = static_cast<Shared::StoreTitleCell *>(cell);
-  myCell->setColor(!m_store->seriesIsActive(seriesIndex) ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex)); // TODO Share GrayDark with graph/list_controller
+  // TODO Share GrayDark with graph/list_controller
+  myCell->setColor(!m_store->seriesIsActive(seriesIndex) ? Palette::GrayDark : DoublePairStore::colorOfSeriesAtIndex(seriesIndex));
   myCell->setSeparatorLeft(columnIndex > 0 && ( realColumnIndex == 0));
 }
 

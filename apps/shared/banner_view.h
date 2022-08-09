@@ -40,7 +40,8 @@ protected:
 
 private:
   constexpr static KDCoordinate LineSpacing = Escher::Metric::BannerTextMargin;
-  constexpr static KDCoordinate k_minimalSpaceBetweenSubviews = 2 * KDFont::GlyphWidth(k_font); // Width of '  '
+  // Width of '  '
+  constexpr static KDCoordinate k_minimalSpaceBetweenSubviews = 2 * KDFont::GlyphWidth(k_font);
   int numberOfSubviews() const override = 0;
   View * subviewAtIndex(int index) override = 0;
   void layoutSubviews(bool force = false) override;

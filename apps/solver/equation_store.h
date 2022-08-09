@@ -83,7 +83,8 @@ public:
   constexpr static int k_maxNumberOfSolutions = k_maxNumberOfExactSolutions > k_maxNumberOfApproximateSolutions ? k_maxNumberOfExactSolutions : k_maxNumberOfApproximateSolutions;
 private:
   constexpr static double k_precision = 0.01;
-  constexpr static int k_maxNumberOfEquations = Poincare::Expression::k_maxNumberOfVariables; // Enable the same number of equations as the number of unknown variables
+  // Enable the same number of equations as the number of unknown variables
+  constexpr static int k_maxNumberOfEquations = Poincare::Expression::k_maxNumberOfVariables;
 
   // ExpressionModelStore
   int maxNumberOfMemoizedModels() const override { return k_maxNumberOfEquations; }

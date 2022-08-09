@@ -112,7 +112,8 @@ private:
   // Simplification
   static Expression PowerRationalRational(Rational base, Rational index, const ReductionContext& reductionContext);
   static Expression PowerIntegerRational(Integer base, Rational index, const ReductionContext& reductionContext);
-  static Expression CreateComplexExponent(const Expression & r, const ReductionContext& reductionContext); // Returns e^(i*pi*r)
+  // Returns e^(i*pi*r)
+  static Expression CreateComplexExponent(const Expression & r, const ReductionContext& reductionContext);
   static bool RationalExponentShouldNotBeReduced(const Rational & b, const Rational & r);
   static bool IsLogarithmOfBase(const Expression e, const Expression base);
   static Expression ReduceLogarithmLinearCombination(const ReductionContext& reductionContext, Expression linearCombination, const Expression baseOfLogarithmToReduce);

@@ -41,7 +41,8 @@ class TreeNode {
   friend class TreePool;
 public:
   constexpr static uint16_t NoNodeIdentifier = -2;
-  constexpr static uint16_t OverflowIdentifier = TreeNode::NoNodeIdentifier + 1; // Used for Integer
+  // Used for Integer
+  constexpr static uint16_t OverflowIdentifier = TreeNode::NoNodeIdentifier + 1;
 
   // Constructor and destructor
   virtual ~TreeNode() {}

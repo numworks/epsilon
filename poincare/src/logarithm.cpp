@@ -284,7 +284,8 @@ Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base
   IntegerDivision div = Integer::Division(i, base);
   while (!div.quotient.isOverflow() && div.remainder.isZero()) {
     i = div.quotient;
-    a.addChildAtIndexInPlace(isDenominator ? Rational::Builder(-1) : Rational::Builder(1), a.numberOfChildren(), a.numberOfChildren()); // a++
+    // a++
+    a.addChildAtIndexInPlace(isDenominator ? Rational::Builder(-1) : Rational::Builder(1), a.numberOfChildren(), a.numberOfChildren());
     div = Integer::Division(i, base);
   }
   return i;

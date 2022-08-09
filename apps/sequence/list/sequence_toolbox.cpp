@@ -102,7 +102,8 @@ int SequenceToolbox::controlChecksum() const {
 bool SequenceToolbox::selectAddedCell(int selectedRow){
   constexpr int bufferSize = 10;
   char buffer[bufferSize];
-  m_addedCellLayout[selectedRow].serializeParsedExpression(buffer, bufferSize, nullptr); // No need of context here
+  // No need of context here
+  m_addedCellLayout[selectedRow].serializeParsedExpression(buffer, bufferSize, nullptr);
   sender()->handleEventWithText(buffer);
   Container::activeApp()->modalViewController()->dismissModal();
   return true;

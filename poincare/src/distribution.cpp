@@ -95,7 +95,8 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
         const Distribution * distribution = static_cast<const Distribution *>(pack[0]);
         const double * proba = static_cast<const double *>(pack[1]);
         const double * parameters = static_cast<const double *>(pack[2]);
-        return distribution->cumulativeDistributiveFunctionAtAbscissa(x, parameters) - *proba; // This needs to be an increasing function
+        // This needs to be an increasing function
+        return distribution->cumulativeDistributiveFunctionAtAbscissa(x, parameters) - *proba;
       },
       pack);
   /* Either no result was found, the precision is ok or the result was outside

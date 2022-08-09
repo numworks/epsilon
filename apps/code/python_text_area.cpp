@@ -515,7 +515,8 @@ bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex, int * currentIn
   // The variable box should be loaded at this point
   const char * autocompletionTokenBeginning = nullptr;
   const char * autocompletionLocation = const_cast<char *>(cursorLocation());
-  AutocompletionType type = autocompletionType(autocompletionLocation, &autocompletionTokenBeginning); // Done to get autocompletionTokenBeginning
+  // Done to get autocompletionTokenBeginning
+  AutocompletionType type = autocompletionType(autocompletionLocation, &autocompletionTokenBeginning);
   if (type == AutocompletionType::NoIdentifier) {
     // Python encountered an uncaught exception
     return false;

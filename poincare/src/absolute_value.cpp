@@ -38,10 +38,11 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
         &reductionContext,
+        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::ExtractUnitsOfFirstChild,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists
-        );
+    );
     if (!e.isUninitialized()) {
       return e;
     }

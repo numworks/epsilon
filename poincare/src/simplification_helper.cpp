@@ -27,7 +27,6 @@ void SimplificationHelper::deepBeautifyChildren(Expression e, const ExpressionNo
   }
 }
 
-
 void SimplificationHelper::defaultDeepReduceChildren(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
   const int childrenCount = e.numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
@@ -36,7 +35,7 @@ void SimplificationHelper::defaultDeepReduceChildren(Expression e, const Express
   }
 }
 
-Expression SimplificationHelper::defaultShallowReduce(Expression e,  ExpressionNode::ReductionContext * reductionContext, UnitReduction unitParameter, MatrixReduction matrixParameter, ListReduction listParameter) {
+Expression SimplificationHelper::defaultShallowReduce(Expression e, ExpressionNode::ReductionContext * reductionContext,  BooleanReduction booleanParameter, UnitReduction unitParameter, MatrixReduction matrixParameter, ListReduction listParameter) {
   // Step1. Shallow reduce undefined
   Expression res = shallowReduceUndefined(e);
   if (!res.isUninitialized()) {
@@ -66,6 +65,16 @@ Expression SimplificationHelper::defaultShallowReduce(Expression e,  ExpressionN
   // Step5. Handle lists
   if (listParameter == ListReduction::DistributeOverLists) {
     res = distributeReductionOverLists(e, *reductionContext);
+    if (!res.isUninitialized()) {
+      return res;
+    }
+  }
+  // Step6. Handle booleans
+  if (booleanParameter == BooleanReduction::UndefinedOnBooleans) {
+    res = undefinedOnBooleans(e);
+    if (!res.isUninitialized()) {
+      return res;
+    }
   }
   return res;
 }
@@ -138,6 +147,16 @@ Expression SimplificationHelper::undefinedOnMatrix(Expression e, ExpressionNode:
     }
   }
   reductionContext->setCheckMatrices(false);
+  return Expression();
+}
+
+Expression SimplificationHelper::undefinedOnBooleans(Expression e) {
+  int n = e.numberOfChildren();
+  for (int i = 0; i < n ; i ++) {
+    if (e.childAtIndex(i).hasBooleanValue()) {
+      return e.replaceWithUndefinedInPlace();
+    }
+  }
   return Expression();
 }
 

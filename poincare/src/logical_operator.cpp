@@ -72,11 +72,12 @@ Expression NotOperatorNode::shallowReduce(const ReductionContext& reductionConte
   return NotOperator(this).shallowReduce(reductionContext);
 }
 
-Expression NotOperator::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression NotOperator::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
+        SimplificationHelper::BooleanReduction::DefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists
@@ -175,11 +176,12 @@ Expression BinaryLogicalOperatorNode::shallowReduce(const ReductionContext& redu
   return BinaryLogicalOperator(this).shallowReduce(reductionContext);
 }
 
-Expression BinaryLogicalOperator::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression BinaryLogicalOperator::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
+        SimplificationHelper::BooleanReduction::DefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

@@ -454,10 +454,11 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
         &reductionContext,
+        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::KeepUnits,
         SimplificationHelper::MatrixReduction::DefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists
-        );
+    );
     if (!e.isUninitialized()) {
       return e;
     }

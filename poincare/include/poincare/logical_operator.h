@@ -58,7 +58,7 @@ private:
 class NotOperator : public ExpressionOneChild<NotOperator, NotOperatorNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 // Binary Logical Operator
@@ -123,7 +123,7 @@ class BinaryLogicalOperator : public Expression {
 public:
   BinaryLogicalOperator(const BinaryLogicalOperatorNode * n) : Expression(n) {}
   static BinaryLogicalOperator Builder(Expression firstChild, Expression secondChild, BinaryLogicalOperatorNode::OperatorType type);
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

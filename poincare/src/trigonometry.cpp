@@ -155,6 +155,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
     Expression eReduced = SimplificationHelper::defaultShallowReduce(
         e,
         &reductionContext,
+        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists
@@ -338,6 +339,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, Expression
     Expression eReduced = SimplificationHelper::defaultShallowReduce(
         e,
         &reductionContext,
+        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

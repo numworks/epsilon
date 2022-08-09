@@ -83,7 +83,7 @@ template<typename T> Complex<T> DivisionNode::computeOnComplex(const std::comple
 // Division
 Expression Division::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
+    Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext, SimplificationHelper::BooleanReduction::UndefinedOnBooleans);
     if (!e.isUninitialized()) {
       return e;
     }

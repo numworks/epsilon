@@ -22,4 +22,4 @@ void HighlightImageCell::layoutSubviews(bool force) {
   m_contentView.setFrame(bounds(), force);
 }
 
-}  // namespace Escher
+}

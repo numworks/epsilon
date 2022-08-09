@@ -177,4 +177,4 @@ void FrequencyController::computeYBounds(float * yMin, float *yMax) const {
   *yMax = 100.0f;
 }
 
-}  // namespace Statistics
+}

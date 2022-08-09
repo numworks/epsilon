@@ -23,4 +23,4 @@ void PressToTestSwitch::setHighlighted(bool highlighted) {
   }
 }
 
-}  // namespace Settings
+}

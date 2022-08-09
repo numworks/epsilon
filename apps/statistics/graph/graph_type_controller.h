@@ -39,6 +39,6 @@ private:
   GraphViewModel * m_graphViewModel;
 };
 
-}  // namespace Statistics
+}
 
-#endif /* STATISTICS_GRAPH_TYPE_CONTROLLER_H */
+#endif

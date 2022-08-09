@@ -58,4 +58,4 @@ void MessageTableCellWithEditableTextWithMessage::setDelegates(
   ChainedTextFieldDelegate::setTextFieldDelegate(textFieldDelegate);
 }
 
-}  // namespace Escher
+}

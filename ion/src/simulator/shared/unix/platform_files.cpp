@@ -12,6 +12,6 @@ const char * filePathInTempDir(const char * filename) {
   return path;
 }
 
-}  // namespace Platform
-}  // namespace Simulator
-}  // namespace Ion
+}
+}
+}

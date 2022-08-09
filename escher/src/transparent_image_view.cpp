@@ -47,4 +47,4 @@ void TransparentImageView::blendInPlace(KDColor * colorBuffer, uint8_t * alphaBu
   }
 }
 
-}  // namespace Escher
+}

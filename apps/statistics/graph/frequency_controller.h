@@ -54,6 +54,6 @@ private:
   Shared::ToggleableRingRoundCursorView m_cursorView;
 };
 
-}  // namespace Statistics
+}
 
-#endif /* STATISTICS_FREQUENCY_CONTROLLER_H */
+#endif

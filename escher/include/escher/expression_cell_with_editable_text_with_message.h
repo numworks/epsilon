@@ -51,6 +51,6 @@ private:
   Escher::TextField m_textField;
 };
 
-}  // namespace Escher
+}
 
-#endif /* ESCHER_EXPRESSION_CELL_WITH_EDITABLE_TEXT_WITH_MESSAGE_H */
+#endif

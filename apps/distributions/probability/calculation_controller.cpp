@@ -248,4 +248,4 @@ void CalculationController::updateTitle() {
   }
 }
 
-}  // namespace Distributions
+}

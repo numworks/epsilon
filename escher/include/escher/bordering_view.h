@@ -19,6 +19,6 @@ private:
   View * m_contentView;
 };
 
-}  // namespace Escher
+}
 
-#endif /* ESCHER_BORDERING_VIEW_H */
+#endif

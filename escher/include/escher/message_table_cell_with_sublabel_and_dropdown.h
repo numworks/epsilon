@@ -37,6 +37,6 @@ private:
   Dropdown m_dropdown;
 };
 
-}  // namespace Escher
+}
 
-#endif /* ESCHER_EXPRESSION_CELL_WITH_SUBLABEL_AND_DROPDOWN_H */
+#endif

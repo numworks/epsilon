@@ -39,4 +39,4 @@ protected:
 
 }
 
-#endif /* DISTRIBUTIONS_MODELS_CALCULATION_CALCULATION_H */
+#endif

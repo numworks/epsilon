@@ -29,6 +29,6 @@ private:
   EditableTextCell m_editableCell;
 };
 
-}  // namespace Escher
+}
 
 #endif

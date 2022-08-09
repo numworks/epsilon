@@ -35,6 +35,6 @@ private:
   bool m_isResponder;
 };
 
-}  // namespace Distributions
+}
 
-#endif /* DISTRIBUTIONS_PROBABILITY_CALCULATION_CELL_H */
+#endif

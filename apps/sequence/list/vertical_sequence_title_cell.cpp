@@ -43,4 +43,4 @@ float VerticalSequenceTitleCell::verticalAlignment() const {
   return std::max(0.0f, std::min(1.0f, alignment));
 }
 
-}  // namespace Sequence
+}

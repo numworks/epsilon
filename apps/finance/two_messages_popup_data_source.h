@@ -35,6 +35,6 @@ private:
   Escher::BufferTextHighlightCell m_cells[k_numberOfRows];
 };
 
-}  // namespace Finance
+}
 
-#endif /* FINANCE_TWO_MESSAGE_POPUP_DATA_SOURCE_H */
+#endif

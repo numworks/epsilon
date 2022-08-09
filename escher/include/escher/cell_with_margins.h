@@ -30,7 +30,7 @@ private:
   HighlightCell * m_innerCell;
 };
 
-}  // namespace Escher
+}
 
-#endif /* ESCHER_CELL_WITH_TEXTFIELD_H */
+#endif
 

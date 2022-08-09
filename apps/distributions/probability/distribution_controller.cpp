@@ -96,4 +96,4 @@ void DistributionController::setDistributionAccordingToIndex(int index) {
   }
 }
 
-}  // namespace Distributions
+}

@@ -22,6 +22,6 @@ protected:
   const Image * m_image;
 };
 
-}  // namespace Escher
+}
 
 #endif

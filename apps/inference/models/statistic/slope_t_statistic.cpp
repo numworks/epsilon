@@ -33,5 +33,4 @@ double SlopeTStatistic::computeStandardError() const {
   return OMG::LaxToZero(SE);
 }
 
-
 }

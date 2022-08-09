@@ -123,4 +123,4 @@ void FunctionCell::layoutSubviews(bool force) {
   }
 }
 
-}  // namespace Graph
+}

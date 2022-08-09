@@ -16,6 +16,6 @@ private:
   KDColor m_backgroundColor;
 };
 
-}  // namespace Escher
+}
 
-#endif /* ESCHER_TRANSPARENT_IMAGE_VIEW_H */
+#endif

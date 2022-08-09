@@ -127,6 +127,6 @@ private:
   CoordinateType coordinateType() const override { return CoordinateType::Parametric; }
 };
 
-}  // namespace Poincare
+}
 
 #endif

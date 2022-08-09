@@ -117,4 +117,4 @@ void ParametersController::buttonAction() {
   stackOpenPage(m_calculationController);
 }
 
-}  // namespace Distributions
+}

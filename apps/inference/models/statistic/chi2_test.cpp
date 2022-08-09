@@ -47,4 +47,4 @@ bool Chi2Test::authorizedParameterAtIndex(double p, int i) const {
   return Inference::authorizedParameterAtIndex(p, i);
 }
 
-} // namespace Inference
+}

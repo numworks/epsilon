@@ -67,6 +67,6 @@ private:
   SolverContext m_context;
 };
 
-}  // namespace Solver
+}
 
-#endif /* SOLVER_APP_H */
+#endif

@@ -23,6 +23,6 @@ private:
   BufferTextView m_textView;
 };
 
-}  // namespace Escher
+}
 
-#endif /* ESCHER_TEXT_HIGHLIGHT_VIEW_H */
+#endif

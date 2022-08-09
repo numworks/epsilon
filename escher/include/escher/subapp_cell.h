@@ -34,6 +34,6 @@ private:
   ChevronView m_chevron;
 };
 
-}  // namespace Escher
+}
 
-#endif /* ESCHER_SUBAPP_CELL_H */
+#endif

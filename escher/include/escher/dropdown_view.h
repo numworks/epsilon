@@ -117,6 +117,6 @@ private:
   DropdownPopupController m_popup;
 };
 
-}  // namespace Escher
+}
 
-#endif /* ESCHER_DROPDOWN_VIEW_H */
+#endif

@@ -217,4 +217,4 @@ void Dropdown::close() {
   m_popup.close();
 }
 
-}  // namespace Escher
+}

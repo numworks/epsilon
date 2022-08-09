@@ -68,4 +68,4 @@ void ExpressionCellWithEditableTextWithMessage::setDelegates(
   ChainedTextFieldDelegate::setTextFieldDelegate(textFieldDelegate);
 }
 
-}  // namespace Escher
+}

@@ -26,4 +26,4 @@ void DistributionCell::setImage(const Image * image) {
   m_iconView.setImage(image);
 }
 
-}  // namespace Distributions
+}

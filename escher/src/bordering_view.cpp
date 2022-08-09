@@ -20,4 +20,4 @@ void BorderingView::layoutSubviews(bool force) {
   m_contentView->setFrame(KDRect(k_separatorThickness, k_separatorThickness, contentSize), force);
 }
 
-}  // namespace Escher
+}

@@ -32,6 +32,6 @@ private:
   Escher::ChevronView m_chevronView;
 };
 
-}  // namespace Distributions
+}
 
-#endif /* DISTRIBUTIONS_PROBABILITY_DISTRIBUTION_CELL_H */
+#endif

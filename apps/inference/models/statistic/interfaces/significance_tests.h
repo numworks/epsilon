@@ -198,4 +198,4 @@ private:
 
 }
 
-#endif // INFERENCE_MODELS_STATISTIC_INTERFACES_TESTS_H
+#endif

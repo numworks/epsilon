@@ -24,6 +24,6 @@ private:
   TransparentImageView m_contentView;
 };
 
-}  // namespace Escher
+}
 
-#endif /* ESCHER_HIGHLIGHT_IMAGE_CELL_H */
+#endif

@@ -94,4 +94,4 @@ KDCoordinate CalculationCell::calculationCellWidth() const {
   return std::min(maxTextFieldWidth, std::max(minTextFieldWidth, calculationCellWidth));
 }
 
-}  // namespace Distributions
+}

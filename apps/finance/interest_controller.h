@@ -60,6 +60,6 @@ private:
   ResultController * m_resultController;
 };
 
-}  // namespace Finance
+}
 
-#endif /* FINANCE_SIMPLE_INTEREST_CONTROLLER_H */
+#endif

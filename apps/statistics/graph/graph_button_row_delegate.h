@@ -53,6 +53,6 @@ private:
   Escher::AbstractButtonCell m_typeButton;
 };
 
-}  // namespace Statistics
+}
 
-#endif /* STATISTICS_GRAPH_BUTTON_ROW_DELEGATE_H */
+#endif

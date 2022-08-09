@@ -29,5 +29,5 @@ private:
   KDCoordinate m_horizontalMargins;
 };
 
-}  // namespace Shared
+}
 #endif

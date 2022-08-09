@@ -50,6 +50,6 @@ private:
   Shared::RingCursorView m_cursorView;
 };
 
-}  // namespace Statistics
+}
 
-#endif /* STATISTICS_NORMAL_PROBABILITY_CONTROLLER_H */
+#endif

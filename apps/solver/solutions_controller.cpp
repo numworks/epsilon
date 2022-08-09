@@ -219,7 +219,8 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
       deltaCell->setLayout(m_equationStore->degree() == 2 ? m_delta2Layout : m_delta3Layout);
     } else {
       EvenOddBufferTextCell * symbolCell = static_cast<EvenOddBufferTextCell *>(cell);
-      char bufferSymbol[Poincare::SymbolAbstract::k_maxNameSize+2]; // Holds at maximum the variable name + 2 digits (for 10)
+      // Holds at maximum the variable name + 2 digits (for 10)
+      char bufferSymbol[Poincare::SymbolAbstract::k_maxNameSize+2];
       if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
         // It's a solution row, get symbol name
         if (m_equationStore->type() == EquationStore::Type::LinearSystem) {

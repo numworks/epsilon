@@ -42,7 +42,8 @@ protected:
    * layout is always possessed by a controller which only gives a pointer to
    * the expression view (without cloning it). The named controller is then
    * responsible for freeing the expression layout when required. */
-  mutable Poincare::Layout m_layout; // TODO find better way to have minimalSizeForOptimalDisplay const
+  // TODO find better way to have minimalSizeForOptimalDisplay const
+  mutable Poincare::Layout m_layout;
   KDColor m_textColor;
   KDColor m_backgroundColor;
   Poincare::Layout * m_selectionStart;

@@ -109,7 +109,8 @@ Expression PermuteCoefficient::shallowReduce(ReductionContext reductionContext) 
     return *this;
   }
   Integer result(1);
-  int clippedK = k.extractedInt(); // Authorized because k < n < k_maxNValue
+  // Authorized because k < n < k_maxNValue
+  int clippedK = k.extractedInt();
   for (int i = 0; i < clippedK; i++) {
     Integer factor = Integer::Subtraction(n, Integer(i));
     result = Integer::Multiplication(result, factor);

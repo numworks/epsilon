@@ -24,12 +24,14 @@ const char * BigOverflowedIntegerString() {
 }
 
 const char * MaxParsedIntegerString() {
-  static const char * s = "999999999999999999999999999999"; // 10^k_maxNumberOfParsedDigitsBase10 - 1
+  // 10^k_maxNumberOfParsedDigitsBase10 - 1
+  static const char * s = "999999999999999999999999999999";
   return s;
 }
 
 const char * ApproximatedParsedIntegerString() {
-  static const char * s = "1000000000000000000000000000000"; // 10^k_maxNumberOfParsedDigitsBase10
+  // 10^k_maxNumberOfParsedDigitsBase10
+  static const char * s = "1000000000000000000000000000000";
   return s;
 }
 

@@ -357,7 +357,8 @@ bool MenuController::privateTextFieldDidAbortEditing(AbstractTextField * textFie
     /* Because we use the numbered default name, the name should not be
      * already taken. Plus, the script could be added only if the storage has
      * enough available space to add a script named 'script99.py' */
-    (void) error; // Silence the "variable unused" warning if assertions are not enabled
+    // Silence the "variable unused" warning if assertions are not enabled
+    (void) error;
     assert(error == Script::ErrorStatus::None);
     if (menuControllerStaysInResponderChain) {
       updateAddScriptRowDisplay();

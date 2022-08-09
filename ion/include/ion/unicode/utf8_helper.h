@@ -105,7 +105,8 @@ const char * PerformAtCodePoints(
     const char * initialPosition = nullptr,
     const char * stoppingPosition = nullptr);
 
-CodePoint PreviousCodePoint(const char * buffer, const char * location); // returns 0 if location == buffer
+// returns 0 if location == buffer
+CodePoint PreviousCodePoint(const char * buffer, const char * location);
 CodePoint CodePointAtLocation(const char * location);
 bool PreviousCodePointIs(const char * buffer, const char * location, CodePoint c);
 bool CodePointIs(const char * location, CodePoint c);

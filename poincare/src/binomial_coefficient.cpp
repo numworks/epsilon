@@ -136,7 +136,8 @@ Expression BinomialCoefficient::shallowReduce(ReductionContext reductionContext)
   Integer kBis = Integer::Subtraction(n, k);
   // Take advantage of symmetry if n >= k
   k = !n.isLowerThan(k) && kBis.isLowerThan(k) ? kBis : k;
-  int clippedK = k.extractedInt(); // Authorized because k < k_maxNValue
+  // Authorized because k < k_maxNValue
+  int clippedK = k.extractedInt();
   for (int i = 0; i < clippedK; i++) {
     Integer nMinusI = Integer::Subtraction(n, Integer(i));
     Integer kMinusI = Integer::Subtraction(k, Integer(i));

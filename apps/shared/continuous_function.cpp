@@ -481,7 +481,8 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(con
         &result,
         context,
         ReductionTarget::SystemForAnalysis,
-        SymbolicComputation::DoNotReplaceAnySymbol, // Symbols have already been replaced.
+        // Symbols have already been replaced.
+        SymbolicComputation::DoNotReplaceAnySymbol,
         PoincareHelpers::k_defaultUnitConversion,
         &preferences, false);
   }

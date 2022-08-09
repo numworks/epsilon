@@ -685,7 +685,8 @@ bool MathToolbox::selectLeaf(int selectedRow) {
 
   // Translate the message
   const char * text = I18n::translate(messageTree->insertedText());
-  char textToInsert[k_maxMessageSize]; // Has to be in the same scope as handleEventWithText
+  // Has to be in the same scope as handleEventWithText
+  char textToInsert[k_maxMessageSize];
   if (messageTree->stripInsertedText()) {
     int maxTextToInsertLength = strlen(text) + 1;
     assert(maxTextToInsertLength <= k_maxMessageSize);

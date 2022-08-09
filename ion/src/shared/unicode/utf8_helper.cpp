@@ -138,7 +138,8 @@ bool CopyAndRemoveCodePoints(char * dst, size_t dstSize, const char * src, CodeP
 }
 
 void RemoveCodePoint(char * buffer, CodePoint c, const char * * pointerToUpdate, const char * stoppingPosition) {
-  constexpr int patternMaxSize = CodePoint::MaxCodePointCharLength + 1; // +1 for null terminating char
+  // +1 for null terminating char
+  constexpr int patternMaxSize = CodePoint::MaxCodePointCharLength + 1;
   char pattern[patternMaxSize];
   int codePointCharSize = UTF8Decoder::CodePointToChars(c, pattern, patternMaxSize - 1);
   assert(codePointCharSize < patternMaxSize);
@@ -400,7 +401,8 @@ int RemovePreviousGlyph(const char * text, char * location, CodePoint * c) {
   do {
     *iterator = *(iterator + shiftedSize);
     iterator++;
-  } while (*(iterator - 1) != 0); // Stop shifting after writing a null terminating char.
+    // Stop shifting after writing a null terminating char.
+  } while (*(iterator - 1) != 0);
 
   return shiftedSize;
 }

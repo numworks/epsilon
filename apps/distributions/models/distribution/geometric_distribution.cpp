@@ -23,7 +23,8 @@ float GeometricDistribution::computeXMax() const {
 }
 
 float GeometricDistribution::computeYMax() const {
-  float result = evaluateAtAbscissa(1.0); // Tha distribution is max for x == 1
+  // Tha distribution is max for x == 1
+  float result = evaluateAtAbscissa(1.0);
   return result * (1.0f + k_displayTopMarginRatio);
 }
 

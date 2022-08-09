@@ -53,7 +53,8 @@ constexpr static CodePoint UCodePointLineFeed                      = 0xa;
 constexpr static CodePoint UCodePointCarriageReturn                = 0xd;
 
 // 0x11 to 0x15 are not used, so we can use them for another purpose
-constexpr static CodePoint UCodePointEmpty                         = 0x11; // Used to be parsed into EmptyExpression
+// Used to be parsed into EmptyExpression
+constexpr static CodePoint UCodePointEmpty                         = 0x11;
 /* Code points \x12 to \x14 are used to serialize expressions. UCodePointSystem
  * in particular is used to mark the next token in the parsed string as
  * reserved by the system. This allows generating arbitrary system tokens

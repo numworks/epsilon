@@ -69,8 +69,10 @@ public:
   KDRect movedTo(KDPoint p) const;
   bool intersects(const KDRect & other) const;
   KDRect intersectedWith(const KDRect & other) const;
-  KDRect unionedWith(const KDRect & other) const; // Returns the smallest rectangle containing r1 and r2
-  KDRect differencedWith(const KDRect & other) const; // Returns the smallest rectangle containing r1\r2
+  // Returns the smallest rectangle containing r1 and r2
+  KDRect unionedWith(const KDRect & other) const;
+  // Returns the smallest rectangle containing r1\r2
+  KDRect differencedWith(const KDRect & other) const;
   bool contains(KDPoint p) const;
   bool containsRect(const KDRect & other) const;
   bool isAbove(KDPoint p) const;

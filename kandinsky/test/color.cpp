@@ -6,7 +6,8 @@
 #include <cmath>
 
 QUIZ_CASE(kandinsky_color_rgb) {
-  quiz_assert(sizeof(KDColor) == 2); // We really want KDColor to be packed
+  // We really want KDColor to be packed
+  quiz_assert(sizeof(KDColor) == 2);
 
   quiz_assert(KDColor::RGB24(0xFF0000) == 0xF800);
   quiz_assert(KDColor::RGB24(0x00FF00) == 0x07E0);

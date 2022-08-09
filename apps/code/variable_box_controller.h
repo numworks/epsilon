@@ -45,15 +45,20 @@ private:
   constexpr static size_t k_maxNumberOfDisplayedItems = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalSmallFontCellHeight, Escher::Metric::PopUpTopMargin);
   constexpr static size_t k_maxNumberOfDisplayedSubtitles = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(SubtitleCell::k_subtitleRowHeight + Escher::TableCell::k_minimalSmallFontCellHeight, Escher::Metric::PopUpTopMargin);
   constexpr static size_t k_totalBuiltinNodesCount = 107;
-  constexpr static size_t k_maxOtherScriptNodesCount = 32; // Chosen without particular reasons
+  // Chosen without particular reasons
+  constexpr static size_t k_maxOtherScriptNodesCount = 32;
   // CurrentScriptOrigin + BuiltinsOrigin + ImportedOrigin
   constexpr static size_t k_maxScriptNodesCount = k_maxOtherScriptNodesCount + k_totalBuiltinNodesCount + k_maxOtherScriptNodesCount;
-  constexpr static uint8_t k_maxOrigins = 10; // currentScriptOrigin + builtinsOrigin + 8 importedOrigins max
-  constexpr static uint8_t k_subtitleCellType = k_nodeCellType; // We don't care as it is not selectable
-  constexpr static uint8_t k_itemCellType = k_leafCellType; // So that upper class NestedMenuController knows it's a leaf
+  // currentScriptOrigin + builtinsOrigin + 8 importedOrigins max
+  constexpr static uint8_t k_maxOrigins = 10;
+  // We don't care as it is not selectable
+  constexpr static uint8_t k_subtitleCellType = k_nodeCellType;
+  // So that upper class NestedMenuController knows it's a leaf
+  constexpr static uint8_t k_itemCellType = k_leafCellType;
   constexpr static uint8_t k_currentScriptOrigin = 0;
   constexpr static uint8_t k_builtinsOrigin = 1;
-  constexpr static uint8_t k_importedOrigin = 2; // And above for other imported nodes
+  // And above for other imported nodes
+  constexpr static uint8_t k_importedOrigin = 2;
   static_assert(k_currentScriptOrigin == 0 && k_builtinsOrigin == 1 && k_importedOrigin == 2, "These origin index must start at 0 and leave no gaps. k_importedOrigin must be the last one. Otherwise, for loops on origin must be updated.");
 
   /* Returns:
@@ -105,7 +110,8 @@ private:
   uint8_t m_originsCount; // Number of origins
   size_t m_rowsPerOrigins[k_maxOrigins]; // Nodes per origins
   const char * m_originsName[k_maxOrigins]; // Text of origins
-  int m_shortenResultCharCount; // This is used to send only the completing text when we are autocompleting
+  // This is used to send only the completing text when we are autocompleting
+  int m_shortenResultCharCount;
   bool m_displaySubtitles;
 };
 

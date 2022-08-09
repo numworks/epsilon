@@ -169,7 +169,8 @@ void TreePool::registerNode(TreeNode * node) {
   uint16_t nodeID = node->identifier();
   assert(nodeID < MaxNumberOfNodes);
   const int nodeOffset = (((char *)node) - (char *)m_alignedBuffer)/ByteAlignment;
-  assert(nodeOffset < k_maxNodeOffset); // Check that the offset can be stored in a uint16_t
+  // Check that the offset can be stored in a uint16_t
+  assert(nodeOffset < k_maxNodeOffset);
   m_nodeForIdentifierOffset[nodeID] = nodeOffset;
 }
 

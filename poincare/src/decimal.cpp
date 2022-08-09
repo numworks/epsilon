@@ -134,7 +134,8 @@ int DecimalNode::convertToText(char * buffer, int bufferSize, Preferences::Print
     return 0;
   }
   if (unsignedMantissa().isZero()) {
-    return SerializationHelper::CodePoint(buffer, bufferSize, '0'); // This already writes the null terminating char
+    // This already writes the null terminating char
+    return SerializationHelper::CodePoint(buffer, bufferSize, '0');
   }
 
   // Compute the exponent

@@ -10,7 +10,8 @@ bool StudentDistribution::authorizedParameterAtIndex(double x, int index) const 
   if (!OneParameterDistribution::authorizedParameterAtIndex(x, index)) {
     return false;
   }
-  return x >= DBL_EPSILON && x <= 200.0; // We cannot draw the curve for x > 200 (coefficient() is too small)
+  // We cannot draw the curve for x > 200 (coefficient() is too small)
+  return x >= DBL_EPSILON && x <= 200.0;
 }
 
 float StudentDistribution::computeXMin() const {

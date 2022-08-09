@@ -141,7 +141,8 @@ void assert_hypergeometric_is(double a, double b, double c, double z, double res
   double r = 0.0;
   const double precision = FLT_EPSILON;
   quiz_assert(HypergeometricFunction(a, b, c, z, precision, 1000, &r));
-  assert_roughly_equal(r, result, 100 * precision); // Multiply by 100 because precision is too strict
+  // Multiply by 100 because precision is too strict
+  assert_roughly_equal(r, result, 100 * precision);
 }
 
 (probability_hypergeometric_function) {

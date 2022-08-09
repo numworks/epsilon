@@ -100,8 +100,8 @@ Token::Type IdentifierTokenizer::stringTokenType(const char * string, size_t len
   if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::UnitConversion && Unit::CanParse(string, length, nullptr, nullptr)) {
     return Token::Unit;
   }
-  bool hasDegreeSign = UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + length);
-  if (!hasDegreeSign // CustomIdentifiers can't contain '°'
+  bool hasUnitOnlyCodePoint = UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + length) || UTF8Helper::HasCodePoint(string, '\'', string + length) || UTF8Helper::HasCodePoint(string, '"', string + length);
+  if (!hasUnitOnlyCodePoint // CustomIdentifiers can't contain °, ' or "
       && (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment
         || m_parsingContext->context() == nullptr
         || m_parsingContext->context()->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None)) {
@@ -115,7 +115,7 @@ Token::Type IdentifierTokenizer::stringTokenType(const char * string, size_t len
       && Unit::CanParse(string, length, nullptr, nullptr)) {
     return Token::Unit;
   }
-  if (!hasDegreeSign && stringIsACodePointFollowedByNumbers(string, length)) {
+  if (!hasUnitOnlyCodePoint && stringIsACodePointFollowedByNumbers(string, length)) {
     return Token::CustomIdentifier;
   }
   return Token::Undefined;

@@ -9,6 +9,7 @@
 #include <poincare/decimal.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
+#include <poincare/float.h>
 #include <poincare/ghost.h>
 #include <poincare/imaginary_part.h>
 #include <poincare/list.h>
@@ -244,7 +245,9 @@ bool Expression::IsDiscontinuous(const Expression e, Context * context) {
       || e.type() == ExpressionNode::Type::Randint
       || ((e.type() == ExpressionNode::Type::Floor
           || e.type() == ExpressionNode::Type::Round
-          || e.type() == ExpressionNode::Type::Ceiling)
+          || e.type() == ExpressionNode::Type::Ceiling
+          || e.type() == ExpressionNode::Type::FracPart
+          || e.type() == ExpressionNode::Type::AbsoluteValue)
         && e.recursivelyMatches([](const Expression e, Context * context) {
             return e.type() == ExpressionNode::Type::Symbol;
           }, context));
@@ -383,6 +386,12 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, T x1
   }
   if (type() == ExpressionNode::Type::Ceiling || type() == ExpressionNode::Type::Floor || type() == ExpressionNode::Type::Round) {
     return approximateWithValueForSymbol<T>(symbol, x1, context, complexFormat, angleUnit) != approximateWithValueForSymbol<T>(symbol, x2, context, complexFormat, angleUnit);
+  }
+  if (type() == ExpressionNode::Type::FracPart) {
+    return std::floor(childAtIndex(0).approximateWithValueForSymbol<T>(symbol, x1, context, complexFormat, angleUnit)) != std::floor(childAtIndex(0).approximateWithValueForSymbol<T>(symbol, x2, context, complexFormat, angleUnit));
+  }
+  if (type() == ExpressionNode::Type::AbsoluteValue) {
+    return (childAtIndex(0).approximateWithValueForSymbol<T>(symbol, x1, context, complexFormat, angleUnit) > 0.0) != (childAtIndex(0).approximateWithValueForSymbol<T>(symbol, x2, context, complexFormat, angleUnit) > 0.0);
   }
   const int childrenCount = numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {

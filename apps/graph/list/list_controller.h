@@ -44,7 +44,8 @@ public:
 private:
   constexpr static int k_functionCellType = 0;
   constexpr static int k_addNewModelType = 1;
-  constexpr static int k_maxNumberOfDisplayableRows = 5;
+  // 6 rows of undefined empty functions
+  constexpr static int k_maxNumberOfDisplayableRows = 6;
   constexpr static CodePoint k_equationSymbols[] = { '=', '>', '<', UCodePointSuperiorEqual, UCodePointInferiorEqual};
   void fillWithDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController, CodePoint Symbol) const;
   bool layoutRepresentsAnEquation(Poincare::Layout l) const;

@@ -116,7 +116,7 @@ constexpr static ElementData k_elementsData[ElementsDataBase::k_numberOfElements
   ElementData("Fm", I18n::Message::FmName, 257, k_unknown, 1.3, 167, 1527, k_unknown, k_unknown, k_unknown, 627.1546013, Group::Actinide, PhysicalState::Solid, Block::F),
   ElementData("Md", I18n::Message::MdName, 258, k_unknown, 1.3, 173, 827, k_unknown, k_unknown, k_unknown, 634.8734271, Group::Actinide, PhysicalState::Solid, Block::F),
   ElementData("No", I18n::Message::NoName, 259, k_unknown, 1.3, 176, 827, k_unknown, k_unknown, k_unknown, 641.6273998, Group::Actinide, PhysicalState::Solid, Block::F),
-  ElementData("Lr", I18n::Message::LrName, 262, k_unknown, k_unknown, 161, 1627, k_unknown, k_unknown, k_unknown, 478.5672034, Group::TransitionMetal, PhysicalState::Solid, Block::D),
+  ElementData("Lr", I18n::Message::LrName, 262, k_unknown, k_unknown, 161, 1627, k_unknown, k_unknown, k_unknown, 478.5672034, Group::Actinide, PhysicalState::Solid, Block::D),
   ElementData("Rf", I18n::Message::RfName, 261, k_unknown, k_unknown, 157, k_unknown, k_unknown, k_unknown, k_unknown, 578.9119396, Group::TransitionMetal, PhysicalState::Solid, Block::D),
   ElementData("Db", I18n::Message::DbName, 262, k_unknown, k_unknown, 149, k_unknown, k_unknown, k_unknown, k_unknown, k_unknown, Group::TransitionMetal, PhysicalState::Solid, Block::D),
   ElementData("Sg", I18n::Message::SgName, 263, k_unknown, k_unknown, 143, k_unknown, k_unknown, k_unknown, k_unknown, k_unknown, Group::TransitionMetal, PhysicalState::Solid, Block::D),

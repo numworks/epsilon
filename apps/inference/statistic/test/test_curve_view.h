@@ -18,7 +18,7 @@ private:
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
   constexpr static int k_marginsAroundZLabel = 30;
   void drawTest(KDContext * ctx, KDRect rect) const;
-  void drawCurveAndAlphaStripes(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op) const;
+  void drawCurveAndAlphaStripes(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, double factor = 1.0) const;
   void colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z) const;
   void drawLabelAndGraduationAtPosition(KDContext * ctx, float position, Poincare::Layout symbol) const;
   void drawZLabelAndZGraduation(KDContext * ctx, float x) const;

@@ -28,20 +28,21 @@ void TestCurveView::drawTest(KDContext * ctx, KDRect rect) const {
 
   drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
   drawZLabelAndZGraduation(ctx, z);
-  colorUnderCurve(ctx, rect, m_test->hypothesisParams()->comparisonOperator(), z);
-  drawCurveAndAlphaStripes(ctx, rect, m_test->hypothesisParams()->comparisonOperator());
+  HypothesisParams::ComparisonOperator op = m_test->hypothesisParams()->comparisonOperator();
+  colorUnderCurve(ctx, rect, op, z);
+  drawCurveAndAlphaStripes(ctx, rect, op);
 }
 
-void TestCurveView::drawCurveAndAlphaStripes(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op) const {
+void TestCurveView::drawCurveAndAlphaStripes(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, double factor) const {
   if (op == HypothesisParams::ComparisonOperator::Different) {
-    drawCurveAndAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Higher);
-    drawCurveAndAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Lower);
+    drawCurveAndAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Higher, 0.5);
+    drawCurveAndAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Lower, 0.5);
     return;
   }
 
   float stripesStart, stripesEnd;
-  float xAlpha = m_test->thresholdAbscissa(op);
   int pattern;
+  double xAlpha = m_test->thresholdAbscissa(op, factor);
   if (op == HypothesisParams::ComparisonOperator::Higher) {
     stripesStart = xAlpha;
     stripesEnd = INFINITY;

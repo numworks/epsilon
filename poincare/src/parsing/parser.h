@@ -98,6 +98,7 @@ private:
   Expression parseVector();
   Expression parseFunctionParameters();
   Expression parseCommaSeparatedList();
+  void privateParseTimes(Expression & leftHandSide, Token::Type stoppingType);
   void privateParseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper);
   void privateParseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length, Token::Type stoppingType);
   void parseSequence(Expression & leftHandSide, const char * name, Token::Type rightDelimiter);

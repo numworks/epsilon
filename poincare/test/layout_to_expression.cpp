@@ -226,13 +226,12 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
       CodePointLayout::Builder('3'));
   e = Multiplication::Builder(
       BasedInteger::Builder(5),
-      Multiplication::Builder(
-        Division::Builder(
-          BasedInteger::Builder(6),
-          Addition::Builder(
-            BasedInteger::Builder(7),
-            BasedInteger::Builder(5))),
-        BasedInteger::Builder(3)));
+      Division::Builder(
+        BasedInteger::Builder(6),
+        Addition::Builder(
+          BasedInteger::Builder(7),
+          BasedInteger::Builder(5))),
+      BasedInteger::Builder(3));
   assert_parsed_layout_is(l, e);
 
   // [[3^2!, 7][4,5]

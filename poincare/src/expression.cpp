@@ -393,6 +393,7 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, T x1
   if (type() == ExpressionNode::Type::AbsoluteValue) {
     return (childAtIndex(0).approximateWithValueForSymbol<T>(symbol, x1, context, complexFormat, angleUnit) > 0.0) != (childAtIndex(0).approximateWithValueForSymbol<T>(symbol, x2, context, complexFormat, angleUnit) > 0.0);
   }
+  assert(!IsDiscontinuous(*this, context));
   const int childrenCount = numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     if (childAtIndex(i).isDiscontinuousBetweenValuesForSymbol(symbol, x1, x2, context, complexFormat, angleUnit)) {

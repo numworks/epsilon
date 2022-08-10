@@ -92,13 +92,10 @@ void DetailsListController::willDisplayCellForIndex(HighlightCell * cell, int in
   const DataField * dataField = DataFieldForRow(index);
 
   I18n::Message sublabel = I18n::Message::Default;
-  if (dataField == &ElementsDataBase::GroupField) {
-    typedCell->setAccessoryColor(dataField->getColors(z).fg());
-  } else {
+  if (dataField != &ElementsDataBase::GroupField) {
     /* The "Group of element" full legend is used in the display selector, but
      * not in the details card. */
     sublabel = dataField->fieldLegend();
-    typedCell->setAccessoryColor(KDColorBlack);
   }
 
   typedCell->setSubLabelMessage(sublabel);

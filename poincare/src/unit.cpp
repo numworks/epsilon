@@ -970,6 +970,30 @@ bool Unit::IsForbiddenTemperatureProduct(Expression e) {
   return !(p.type() == ExpressionNode::Type::Opposite && (pp.isUninitialized() || pp.type() == ExpressionNode::Type::UnitConvert));
 }
 
+bool Unit::AllowImplicitAddition(const UnitNode::Representative * smallestRepresentative, const UnitNode::Representative * biggestRepresentative) {
+  if (smallestRepresentative == biggestRepresentative) {
+    return false;
+  }
+  for (int i = 0; i < k_representativesAllowingImplicitAdditionLength; i++) {
+    bool foundFirstRepresentative = false;
+    for (int j = 0; j < k_representativesAllowingImplicitAddition[i].length; j++) {
+      if (smallestRepresentative == k_representativesAllowingImplicitAddition[i].representativesList[j]) {
+        foundFirstRepresentative = true;
+      } else if (biggestRepresentative == k_representativesAllowingImplicitAddition[i].representativesList[j]) {
+        if (foundFirstRepresentative) {
+          // Both representatives were found, in order.
+          return true;
+        }
+        return false; // Not in right order
+      }
+    }
+    if (foundFirstRepresentative) {
+      return false; // Only one representative was found.
+    }
+  }
+  return false;
+}
+
 Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   if (reductionContext.unitConversion() == ExpressionNode::UnitConversion::None
       || isBaseUnit()) {

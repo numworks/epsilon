@@ -733,6 +733,51 @@ public:
   static Expression ConvertTemperatureUnits(Expression e, Unit unit, const ExpressionNode::ReductionContext& reductionContext);
   static bool IsForbiddenTemperatureProduct(Expression e);
 
+  // These must be sorted in order, from smallest to biggest
+  constexpr static const UnitNode::Representative * k_timeRepresentativesAllowingImplicitAddition[] = {
+    &k_timeRepresentatives[0], // s
+    &k_timeRepresentatives[1], // min
+    &k_timeRepresentatives[2],  // h
+    &k_timeRepresentatives[3],  // day
+    &k_timeRepresentatives[5],  // month
+    &k_timeRepresentatives[6],  // year
+  };
+  static_assert(strings_equal(k_timeRepresentativesAllowingImplicitAddition[0]->m_rootSymbols, "s"), "Implicit addition between units has wrong unit");
+  static_assert(strings_equal(k_timeRepresentativesAllowingImplicitAddition[1]->m_rootSymbols, "min"), "Implicit addition between units has wrong unit");
+  static_assert(strings_equal(k_timeRepresentativesAllowingImplicitAddition[2]->m_rootSymbols, "h"), "Implicit addition between units has wrong unit");
+  static_assert(strings_equal(k_timeRepresentativesAllowingImplicitAddition[3]->m_rootSymbols, "day"), "Implicit addition between units has wrong unit");
+  static_assert(strings_equal(k_timeRepresentativesAllowingImplicitAddition[4]->m_rootSymbols, "month"), "Implicit addition between units has wrong unit");
+  static_assert(strings_equal(k_timeRepresentativesAllowingImplicitAddition[5]->m_rootSymbols, "year"), "Implicit addition between units has wrong unit");
+
+  // These must be sorted in order, from smallest to biggest
+  constexpr static const UnitNode::Representative * k_distanceRepresentativesAllowingImplicitAddition[] = {
+    &k_distanceRepresentatives[4], // in
+    &k_distanceRepresentatives[5], // ft
+    &k_distanceRepresentatives[6], // yd
+    &k_distanceRepresentatives[7]  // mi
+  };
+  static_assert(strings_equal(k_distanceRepresentativesAllowingImplicitAddition[0]->m_rootSymbols, "in"), "Implicit addition between units has wrong unit");
+  static_assert(strings_equal(k_distanceRepresentativesAllowingImplicitAddition[1]->m_rootSymbols, "ft"), "Implicit addition between units has wrong unit");
+  static_assert(strings_equal(k_distanceRepresentativesAllowingImplicitAddition[2]->m_rootSymbols, "yd"), "Implicit addition between units has wrong unit");
+  static_assert(strings_equal(k_distanceRepresentativesAllowingImplicitAddition[3]->m_rootSymbols, "mi"), "Implicit addition between units has wrong unit");
+
+  // These must be sorted in order, from smallest to biggest
+  constexpr static const UnitNode::Representative * k_massRepresentativesAllowingImplicitAddition[] = {
+    &k_massRepresentatives[3], // oz
+    &k_massRepresentatives[4]  // lb
+  };
+  static_assert(strings_equal(k_massRepresentativesAllowingImplicitAddition[0]->m_rootSymbols, "oz"), "Implicit addition between units has wrong unit");
+  static_assert(strings_equal(k_massRepresentativesAllowingImplicitAddition[1]->m_rootSymbols, "lb"), "Implicit addition between units has wrong unit");
+
+  struct RepresentativesList {const UnitNode::Representative * const * representativesList; int length;};
+  constexpr static RepresentativesList k_representativesAllowingImplicitAddition[] = {
+    {k_timeRepresentativesAllowingImplicitAddition, sizeof(k_timeRepresentativesAllowingImplicitAddition) / sizeof(UnitNode::Representative *)},
+    {k_distanceRepresentativesAllowingImplicitAddition, sizeof(k_distanceRepresentativesAllowingImplicitAddition) / sizeof(UnitNode::Representative *)},
+    {k_massRepresentativesAllowingImplicitAddition, sizeof(k_massRepresentativesAllowingImplicitAddition) / sizeof(UnitNode::Representative *)}
+  };
+  constexpr static int k_representativesAllowingImplicitAdditionLength = sizeof(k_representativesAllowingImplicitAddition) / sizeof(RepresentativesList);
+  static bool AllowImplicitAddition(const UnitNode::Representative * smallestRepresentative, const UnitNode::Representative * biggestRepresentative);
+
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();

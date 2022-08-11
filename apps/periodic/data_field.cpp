@@ -27,19 +27,6 @@ bool DoubleDataField::hasDouble(AtomicNumber z) const {
   return ElementsDataBase::IsElement(z);
 }
 
-static Layout replaceFractionWithSlash(Layout l) {
-  assert(!l.isUninitialized());
-  if (l.type() != LayoutNode::Type::FractionLayout) {
-    return l;
-  }
-  HorizontalLayout h = HorizontalLayout::Builder();
-  h.addOrMergeChildAtIndex(l.childAtIndex(0), 0, false);
-  int n = h.numberOfChildren();
-  h.addOrMergeChildAtIndex(CodePointLayout::Builder('/'), n, false);
-  h.addOrMergeChildAtIndex(l.childAtIndex(1), n + 1, false);
-  return std::move(h);
-}
-
 Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   assert(hasDouble(z));
   Preferences::PrintFloatMode floatDisplayMode = Preferences::sharedPreferences()->displayMode();
@@ -55,7 +42,6 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   if (unit.isUninitialized()) {
     return value;
   }
-  unit = replaceFractionWithSlash(unit);
 
   HorizontalLayout res = HorizontalLayout::Builder();
   res.addOrMergeChildAtIndex(value, 0, false);

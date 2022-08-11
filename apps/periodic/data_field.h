@@ -135,7 +135,7 @@ public:
   I18n::Message fieldLegend() const override { return I18n::Message::PeriodicMassLegend; }
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicMassSymbol; }
   double getDouble(AtomicNumber z) const override;
-  const char * rawUnit() const override { return "_g/_mol"; }
+  const char * rawUnit() const override { return "_g×_mol^\x12-1\x13"; }
 };
 
 class ElectronegativityDataField : public DoubleDataField {
@@ -179,7 +179,7 @@ public:
   I18n::Message fieldLegend() const override { return I18n::Message::PeriodicDensityLegend; }
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicDensitySymbol; }
   double getDouble(AtomicNumber z) const override;
-  const char * rawUnit() const override { return "_g/_cm^3"; }
+  const char * rawUnit() const override { return "_g×_cm^\x12-3\x13"; }
 };
 
 class AffinityDataField : public DoubleDataFieldWithSubscriptSymbol {
@@ -188,7 +188,7 @@ public:
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicAffinitySymbol; }
   double getDouble(AtomicNumber z) const override;
   Poincare::Layout getLayout(AtomicNumber z, int significantDigits = k_defaultSignificantDigits) const override;
-  const char * rawUnit() const override { return "_kJ/_mol"; }
+  const char * rawUnit() const override { return "_kJ×_mol^\x12-1\x13"; }
   I18n::Message fieldSubscript() const override { return I18n::Message::PeriodicAffinitySubscript; }
 };
 
@@ -197,7 +197,7 @@ public:
   I18n::Message fieldLegend() const override { return I18n::Message::PeriodicIonizationLegend; }
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicIonizationSymbol; }
   double getDouble(AtomicNumber z) const override;
-  const char * rawUnit() const override { return "_kJ/_mol"; }
+  const char * rawUnit() const override { return "_kJ×_mol^\x12-1\x13"; }
   I18n::Message fieldSubscript() const override { return I18n::Message::PeriodicIonizationSubscript; }
 };
 

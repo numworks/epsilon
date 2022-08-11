@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class ListStandardDeviationNode : public ListFunctionWithUpToTwoParametersNode {
+class ListStandardDeviationNode : public ListFunctionWithOneOrTwoParametersNode {
 public:
   constexpr static const char k_functionName[] = "stddev";
   const char * functionName() const override { return k_functionName; }

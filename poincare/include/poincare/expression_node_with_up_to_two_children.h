@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class ExpressionNodeWithUpToTwoChildren : public ExpressionNode {
+class ExpressionNodeWithOneOrTwoChildren : public ExpressionNode {
 public:
   int numberOfChildren() const override { return m_hasTwoChildren ? 2 : 1; }
   void setNumberOfChildren(int numberOfChildren) override {

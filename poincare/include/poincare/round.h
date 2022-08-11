@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class RoundNode final : public ExpressionNodeWithUpToTwoChildren  {
+class RoundNode final : public ExpressionNodeWithOneOrTwoChildren  {
 public:
   constexpr static AliasesList k_functionName = "round";
 

@@ -76,7 +76,7 @@ class Expression : public TreeHandle {
   friend class ListSampleStandardDeviation;
   friend class ListSequence;
   friend class ListStandardDeviation;
-  friend class ListFunctionWithUpToTwoParametersNode;
+  friend class ListFunctionWithOneOrTwoParametersNode;
   friend class ListVariance;
   friend class Logarithm;
   friend class Matrix;

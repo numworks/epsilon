@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class ListVarianceNode : public ListFunctionWithUpToTwoParametersNode {
+class ListVarianceNode : public ListFunctionWithOneOrTwoParametersNode {
 public:
   constexpr static const char k_functionName[] = "var";
   const char * functionName() const override { return k_functionName; }

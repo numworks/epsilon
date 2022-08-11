@@ -26,7 +26,7 @@ template<typename T> Evaluation<T> ListSampleStandardDeviationNode::templatedApp
 Expression ListSampleStandardDeviation::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
   Expression children[2];
-  if (!static_cast<ListFunctionWithUpToTwoParametersNode *>(node())->getChildrenIfNonEmptyList(children)) {
+  if (!static_cast<ListFunctionWithOneOrTwoParametersNode *>(node())->getChildrenIfNonEmptyList(children)) {
     return replaceWithUndefinedInPlace();
   }
   // Sample sttdev = sttdev * sqrt(weights / weights - 1)

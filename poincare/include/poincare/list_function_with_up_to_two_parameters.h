@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class ListFunctionWithUpToTwoParametersNode : public ExpressionNodeWithUpToTwoChildren {
+class ListFunctionWithOneOrTwoParametersNode : public ExpressionNodeWithOneOrTwoChildren {
 public:
   virtual const char * functionName() const = 0;
 

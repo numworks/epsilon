@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class ListMeanNode : public ListFunctionWithUpToTwoParametersNode {
+class ListMeanNode : public ListFunctionWithOneOrTwoParametersNode {
 public:
   constexpr static char k_functionName[] = "mean";
   const char * functionName() const override { return k_functionName; }

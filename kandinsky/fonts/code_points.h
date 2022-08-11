@@ -144,6 +144,7 @@ uint32_t CodePoints[] = {
   0x3bb,   // λ // GREEK SMALL LETTER LAMDA
   0x3bc,   // μ // GREEK SMALL LETTER MU
   0x3c0,   // π // GREEK SMALL LETTER PI
+  0x3c1,   // ρ // GREEK SMALL LETTER RHO
   0x3c3,   // σ // GREEK SMALL LETTER SIGMA
   0x3C7,   // χ // GREEK SMALL LETTER CHI
   0x1d07,  // ᴇ // LATIN LETTER SMALL CAPITAL E

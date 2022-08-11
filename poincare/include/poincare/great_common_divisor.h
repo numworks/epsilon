@@ -40,7 +40,7 @@ class GreatCommonDivisor final : public NAryExpression {
 public:
   GreatCommonDivisor(const GreatCommonDivisorNode * n) : NAryExpression(n) {}
   static GreatCommonDivisor Builder(const Tuple & children = {}) { return TreeHandle::NAryBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(convert(children)); }
-  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("gcd", 2, INT_MAX,  &UntypedBuilderMultipleChildren<GreatCommonDivisor>);
+  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("gcd", 2, INT_MAX, &UntypedBuilderMultipleChildren<GreatCommonDivisor>);
 
   // Expression
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);

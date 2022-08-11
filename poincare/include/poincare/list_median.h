@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class ListMedianNode : public ListFunctionWithUpToTwoParametersNode {
+class ListMedianNode : public ListFunctionWithOneOrTwoParametersNode {
 public:
   constexpr static const char k_functionName[] = "med";
   const char * functionName() const override { return k_functionName; }

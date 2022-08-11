@@ -9,7 +9,7 @@
 
 namespace Poincare {
 
-class LogarithmNode final : public ExpressionNodeWithUpToTwoChildren {
+class LogarithmNode final : public ExpressionNodeWithOneOrTwoChildren {
 public:
   constexpr static AliasesList k_functionName = "log";
 

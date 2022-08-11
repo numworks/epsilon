@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class ListSampleStandardDeviationNode : public ListFunctionWithUpToTwoParametersNode {
+class ListSampleStandardDeviationNode : public ListFunctionWithOneOrTwoParametersNode {
 public:
   constexpr static char k_functionName[] = "samplestddev";
   const char * functionName() const override { return k_functionName; }

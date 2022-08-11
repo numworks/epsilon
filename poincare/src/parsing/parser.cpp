@@ -590,10 +590,7 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
     }
   }
 
-  int functionHelperNumberOfChildren = (**functionHelper).minNumberOfChildren();
-  /* FunctionHelpers with negative numberOfChildren value expect any number of
-   * children greater than this value (in absolute). */
-  if (numberOfParameters < abs(functionHelperNumberOfChildren)) {
+  if (numberOfParameters < (**functionHelper).minNumberOfChildren()) {
     m_status = Status::Error; // Too few parameters provided.
     return;
   }

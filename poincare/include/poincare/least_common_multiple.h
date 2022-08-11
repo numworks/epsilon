@@ -2,6 +2,7 @@
 #define POINCARE_LEAST_COMMON_MULTIPLE_H
 
 #include <poincare/n_ary_expression.h>
+#include <limits.h>
 
 namespace Poincare {
 
@@ -39,8 +40,7 @@ class LeastCommonMultiple final : public NAryExpression {
 public:
   LeastCommonMultiple(const LeastCommonMultipleNode * n) : NAryExpression(n) {}
   static LeastCommonMultiple Builder(const Tuple & children = {}) { return TreeHandle::NAryBuilder<LeastCommonMultiple, LeastCommonMultipleNode>(convert(children)); }
-  // Using a -2 as numberOfChildren to allow 2 or more children when parsing
-  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("lcm", -2, &UntypedBuilderMultipleChildren<LeastCommonMultiple>);
+  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("lcm", 2, INT_MAX, &UntypedBuilderMultipleChildren<LeastCommonMultiple>);
 
   // Expression
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);

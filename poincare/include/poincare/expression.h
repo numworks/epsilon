@@ -346,7 +346,9 @@ public:
       m_maxNumberOfChildren(maxNumberOfChildren),
       m_untypedBuilder(builder),
       m_initializer(nullptr),
-      m_size(0) {}
+      m_size(0) {
+        assert(minNumberOfChildren >= 0 && minNumberOfChildren <= maxNumberOfChildren);
+      }
     constexpr FunctionHelper(AliasesList aliasesList, const int numberOfChildren, Expression (* const builder)(Expression)) :
       FunctionHelper(aliasesList, numberOfChildren, numberOfChildren, builder) {}
     constexpr FunctionHelper(AliasesList aliasesList, const int minNumberOfChildren, const int maxNumberOfChildren, TreeNode::Initializer initializer, size_t size) :
@@ -355,7 +357,9 @@ public:
       m_maxNumberOfChildren(maxNumberOfChildren),
       m_untypedBuilder(nullptr),
       m_initializer(initializer),
-      m_size(size) {}
+      m_size(size) {
+        assert(minNumberOfChildren >= 0 && minNumberOfChildren <= maxNumberOfChildren);
+      }
     constexpr AliasesList aliasesList() const { return m_aliasesList; }
     int minNumberOfChildren() const { return m_minNumberOfChildren; }
     int maxNumberOfChildren() const { return m_maxNumberOfChildren; }

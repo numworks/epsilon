@@ -2,6 +2,7 @@
 #define POINCARE_GREAT_COMMON_DIVISOR_H
 
 #include <poincare/n_ary_expression.h>
+#include <limits.h>
 
 namespace Poincare {
 
@@ -39,8 +40,7 @@ class GreatCommonDivisor final : public NAryExpression {
 public:
   GreatCommonDivisor(const GreatCommonDivisorNode * n) : NAryExpression(n) {}
   static GreatCommonDivisor Builder(const Tuple & children = {}) { return TreeHandle::NAryBuilder<GreatCommonDivisor, GreatCommonDivisorNode>(convert(children)); }
-  // Using a -2 as numberOfChildren to allow 2 or more children when parsing
-  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("gcd", -2, &UntypedBuilderMultipleChildren<GreatCommonDivisor>);
+  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("gcd", 2, INT_MAX,  &UntypedBuilderMultipleChildren<GreatCommonDivisor>);
 
   // Expression
   Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);

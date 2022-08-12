@@ -1327,6 +1327,61 @@ Expression Expression::FunctionHelper::build(Expression children) const {
   return maker(children, numberOfChildren, m_initializer, m_size);
 }
 
+int ExpressionNode::numberOfNumericalValues() const {
+  if (isNumber()) {
+    return 1;
+  }
+  if (type() == ExpressionNode::Type::Power) {
+    int base = childAtIndex(0)->numberOfNumericalValues();
+    return base != 0 ? base : childAtIndex(1)->numberOfNumericalValues();
+  }
+  if (type() == ExpressionNode::Type::ConstantMaths) {
+    const ConstantNode * constant = static_cast<const ConstantNode*>(this);
+    // We decide that e is not a constant for e^2 to generalize as e^x
+    return !constant->isConstant("e", constant->constantInfo());
+  }
+  int n = 0;
+  for (ExpressionNode * child : children()) {
+    n += child->numberOfNumericalValues();
+  }
+  return n;
+}
+
+Expression Expression::replaceNumericalValuesWithSymbol(Symbol x) {
+  if (isNumber()) {
+    return x.clone();
+  }
+  Expression result = clone();
+  if (type() == ExpressionNode::Type::Power) {
+    if (childAtIndex(0).numberOfNumericalValues() == 0) {
+      // replace exponent
+      result.replaceChildAtIndexInPlace(1, childAtIndex(1).replaceNumericalValuesWithSymbol(x));
+    } else {
+      // replace base
+      result.replaceChildAtIndexInPlace(0, childAtIndex(0).replaceNumericalValuesWithSymbol(x));
+    }
+    return result;
+  }
+  for (int i = 0; i < numberOfChildren(); i++) {
+    result.replaceChildAtIndexInPlace(i, childAtIndex(i).replaceNumericalValuesWithSymbol(x));
+  }
+  return result;
+}
+
+float Expression::getNumericalValue() {
+  // Assumes the expressions contains only one numerical value
+  if (isNumber()) {
+    return convert<Number>().doubleApproximation();
+  }
+  Expression result = clone();
+  for (int i = 0; i < numberOfChildren(); i++) {
+    float result = childAtIndex(i).getNumericalValue();
+    if (!std::isnan(result)) {
+      return result;
+    }
+  }
+  return NAN;
+}
 
 template Expression Expression::approximate<float>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const;
 template Expression Expression::approximate<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const;

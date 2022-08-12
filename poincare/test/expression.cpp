@@ -3,6 +3,7 @@
 #include <poincare/constant.h>
 #include <poincare/decimal.h>
 #include <poincare/expression.h>
+#include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/unit.h>
 #include <apps/shared/global_context.h>
@@ -95,4 +96,18 @@ QUIZ_CASE(poincare_expression_unit_constructor) {
 
   u = Unit::Builder(Unit::k_powerRepresentatives, Unit::Prefix::EmptyPrefix());
   assert_expression_serialize_to(u, "_W");
+}
+
+static inline void assert_generalizes_to(Expression e, const Expression f) {
+  quiz_assert(e.replaceNumericalValuesWithSymbol(Symbol::Builder('x')).isIdenticalTo(f));
+}
+
+QUIZ_CASE(poincare_expression_generalization) {
+  Symbol x = Symbol::Builder('x');
+  assert_generalizes_to(Function::Builder("ln", 2, Decimal::Builder("2", 1)),
+                        Function::Builder("ln", 2, x));
+  assert_generalizes_to(Power::Builder(Decimal::Builder("2", 1), Decimal::Builder("3", 1)),
+                        Power::Builder(x, Decimal::Builder("3", 1)));
+  assert_generalizes_to(Power::Builder(Constant::Builder("e"), Decimal::Builder("3", 1)),
+                        Power::Builder(Constant::Builder("e"), x));
 }

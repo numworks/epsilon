@@ -99,13 +99,13 @@ bool MainController::textFieldShouldFinishEditing(Escher::AbstractTextField * te
 }
 
 bool MainController::textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) {
-  if (textField->isEditing()) {
+  if (textField->cursorAtEndOfText()) {
     if (event == Ion::Events::Up || event == Ion::Events::Down) {
       ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
       m_view.bannerView()->textField()->setSuggestion(dataSource->cycleSuggestion(event == Ion::Events::Down));
       return true;
     }
-    if (event == Ion::Events::Right && textField->cursorLocation() == textField->text() + textField->draftTextLength()) {
+    if (event == Ion::Events::Right) {
       /* Commit to suggested text on Right press. */
       m_view.bannerView()->textField()->commitSuggestion();
       m_view.elementsView()->reload();
@@ -119,6 +119,7 @@ bool MainController::textFieldDidReceiveEvent(Escher::AbstractTextField * textFi
 }
 
 bool MainController::textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) {
+  m_view.bannerView()->textField()->commitSuggestion();
   AtomicNumber match = App::app()->elementsViewDataSource()->elementSearchResult();
   if (!ElementsDataBase::IsElement(match)) {
     match = 1;
@@ -138,7 +139,7 @@ bool MainController::textFieldDidHandleEvent(Escher::AbstractTextField * textFie
       if (textField->draftTextLength() == 0) {
         textField->setEditing(false);
         endElementSearch(App::app()->elementsViewDataSource()->previousElement());
-      } else {
+      } else if (textField->cursorAtEndOfText()) {
         /* Update suggestion text */
         ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
         m_view.bannerView()->textField()->setSuggestion(dataSource->suggestedElementName());

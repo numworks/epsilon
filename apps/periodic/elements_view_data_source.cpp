@@ -8,7 +8,7 @@ namespace Periodic {
 ElementsViewDataSource::ElementsViewDataSource(ElementsViewDelegate * delegate) :
   m_delegate(delegate),
   m_textFilter(nullptr),
-  m_searchResult(ElementsDataBase::k_noElement)
+  m_suggestedElement(ElementsDataBase::k_noElement)
 {}
 
 AtomicNumber ElementsViewDataSource::selectedElement() const {
@@ -44,32 +44,27 @@ DataField::ColorPair ElementsViewDataSource::filteredColors(AtomicNumber z) cons
   return elementMatchesFilter(z) ? field()->getColors(z) : DataField::ColorPair(Escher::Palette::GrayMiddle, Escher::Palette::GrayWhite);
 }
 
+AtomicNumber ElementsViewDataSource::elementSearchResult() const {
+  return privateElementSearch(&ElementsViewDataSource::elementMatchesFilter);
+}
+
 const char * ElementsViewDataSource::suggestedElementName() {
-  m_searchResult = ElementsDataBase::k_noElement;
-  for (AtomicNumber z = 1; z <= ElementsDataBase::k_numberOfElements; z++) {
-    if (elementNameMatchesFilter(z)) {
-      m_searchResult = z;
-      return I18n::translate(ElementsDataBase::Name(z));
-    }
-    if ((elementSymbolMatchesFilter(z) || (elementNumberMatchesFilter(z))) && !ElementsDataBase::IsElement(m_searchResult)) {
-      m_searchResult = z;
-    }
-  }
-  return nullptr;
+  m_suggestedElement = privateElementSearch(&ElementsViewDataSource::elementNameMatchesFilter);
+  return ElementsDataBase::IsElement(m_suggestedElement) ? I18n::translate(ElementsDataBase::Name(m_suggestedElement)) : nullptr;
 }
 
 const char * ElementsViewDataSource::cycleSuggestion(bool goingDown) {
-  if (!(ElementsDataBase::IsElement(m_searchResult) && elementNameMatchesFilter(m_searchResult))) {
+  if (!(ElementsDataBase::IsElement(m_suggestedElement) && elementNameMatchesFilter(m_suggestedElement))) {
     return nullptr;
   }
   for (int i = 1; i < ElementsDataBase::k_numberOfElements; i++) {
-    AtomicNumber z = (m_searchResult + (goingDown ? i : -i) - 1 + ElementsDataBase::k_numberOfElements) % ElementsDataBase::k_numberOfElements + 1;
+    AtomicNumber z = (m_suggestedElement + (goingDown ? i : -i) - 1 + ElementsDataBase::k_numberOfElements) % ElementsDataBase::k_numberOfElements + 1;
     if (elementNameMatchesFilter(z)) {
-      m_searchResult = z;
+      m_suggestedElement = z;
       break;
     }
   }
-  return I18n::translate(ElementsDataBase::Name(m_searchResult));
+  return I18n::translate(ElementsDataBase::Name(m_suggestedElement));
 }
 
 bool ElementsViewDataSource::elementMatchesFilter(AtomicNumber z) const {
@@ -96,6 +91,15 @@ bool ElementsViewDataSource::elementNumberMatchesFilter(AtomicNumber z) const {
   int zLength = Poincare::PrintInt::Left(z, zBuffer, k_maxZSize);
   zBuffer[zLength] = '\0';
   return UTF8Helper::IsPrefixCaseInsensitiveNoCombining(m_textFilter, zBuffer);
+}
+
+AtomicNumber ElementsViewDataSource::privateElementSearch(ElementTest test) const {
+  for (AtomicNumber z = 1; z <= ElementsDataBase::k_numberOfElements; z++) {
+    if ((this->*test)(z)) {
+      return z;
+    }
+  }
+  return ElementsDataBase::k_noElement;
 }
 
 }

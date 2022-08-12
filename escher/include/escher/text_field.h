@@ -52,6 +52,7 @@ public:
   KDFont::Size font() const { return nonEditableContentView()->font(); }
   void setTextColor(KDColor textColor);
   size_t insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, size_t bufferLength);
+  bool cursorAtEndOfText() const { return isEditing() && cursorLocation() == text() + draftTextLength(); }
 
 protected:
   class ContentView : public TextInput::ContentView {

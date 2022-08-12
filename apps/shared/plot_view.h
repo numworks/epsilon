@@ -61,6 +61,7 @@ public:
   float pixelToFloat(Axis axis, KDCoordinate c) const;
   Poincare::Coordinate2D<float> floatToPixel2D(Poincare::Coordinate2D<float> p) const { return Poincare::Coordinate2D<float>(floatToPixel(Axis::Horizontal, p.x1()), floatToPixel(Axis::Vertical, p.x2())); }
   Poincare::Coordinate2D<float> pixelToFloat2D(Poincare::Coordinate2D<float> xy) const { return Poincare::Coordinate2D<float>(pixelToFloat(Axis::Horizontal, xy.x1()), pixelToFloat(Axis::Vertical, xy.x2())); }
+  KDRect labelRect(const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, bool ignoreMargin = false) const;
 
   // Methods for drawing basic geometry
   /* FIXME These methods are public as they need to be accessible to helper
@@ -70,6 +71,7 @@ public:
   void drawDashedStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness = k_defaultDashThickness, KDCoordinate dashSize = k_defaultDashLength) const { drawStraightSegment(ctx, rect, parallel, position, min, max, color, thickness, dashSize); }
   void drawSegment(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> a, Poincare::Coordinate2D<float> b, KDColor color, bool thick = false) const;
   void drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;
+  void drawLabel(KDContext * ctx, KDRect rect, const char * label, KDRect labelRect, KDColor color) const;
   void drawLayout(KDContext * ctx, KDRect rect, Poincare::Layout layout, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;
   void drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Poincare::Coordinate2D<float> xy, KDColor color) const;
   void drawTick(KDContext * ctx, KDRect rect, Axis perpendicular, float position, KDColor color = KDColorBlack) const;

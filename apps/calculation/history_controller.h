@@ -5,6 +5,7 @@
 #include "calculation_store.h"
 #include "selectable_table_view.h"
 #include "additional_outputs/complex_list_controller.h"
+#include "additional_outputs/function_list_controller.h"
 #include "additional_outputs/integer_list_controller.h"
 #include "additional_outputs/rational_list_controller.h"
 #include "additional_outputs/trigonometry_list_controller.h"
@@ -51,6 +52,7 @@ private:
   UnitListController m_unitController;
   MatrixListController m_matrixController;
   VectorListController m_vectorController;
+  FunctionListController m_functionController;
 };
 
 }

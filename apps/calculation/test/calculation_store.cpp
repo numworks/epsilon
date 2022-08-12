@@ -503,6 +503,9 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeIs("1+i", AdditionalInformationType::Complex, &globalContext, &store);
   assertCalculationAdditionalResultTypeIs("sin(π)", AdditionalInformationType::Trigonometry, &globalContext, &store);
   assertCalculationAdditionalResultTypeIs("sin(iπ)", AdditionalInformationType::Complex, &globalContext, &store);
+  assertCalculationAdditionalResultTypeIs("ln(2)", AdditionalInformationType::Function, &globalContext, &store);
+  assertCalculationAdditionalResultTypeIs("e^3", AdditionalInformationType::Function, &globalContext, &store);
+  assertCalculationAdditionalResultTypeIs("tan(π/2)", AdditionalInformationType::None, &globalContext, &store);
   assertCalculationAdditionalResultTypeIs("[[1]]", AdditionalInformationType::Vector, &globalContext, &store);
   assertCalculationAdditionalResultTypeIs("[[1,1]]", AdditionalInformationType::Vector, &globalContext, &store);
   assertCalculationAdditionalResultTypeIs("[[1][2][3]]", AdditionalInformationType::Vector, &globalContext, &store);

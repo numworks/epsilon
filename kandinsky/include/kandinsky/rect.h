@@ -65,6 +65,7 @@ public:
   void setSize(KDSize size) { m_size = size; }
 
   KDRect translatedBy(KDPoint p) const;
+  KDRect paddedWith(KDCoordinate value) const;
   KDRect movedTo(KDPoint p) const;
   bool intersects(const KDRect & other) const;
   KDRect intersectedWith(const KDRect & other) const;

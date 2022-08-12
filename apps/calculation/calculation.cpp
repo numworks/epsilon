@@ -5,6 +5,8 @@
 #include "../global_preferences.h"
 #include "../exam_mode_configuration.h"
 #include "app.h"
+#include "poincare/complex_cartesian.h"
+#include "poincare/expression_node.h"
 #include <poincare/exception_checkpoint.h>
 #include <poincare/matrix.h>
 #include <poincare/undefined.h>
@@ -278,6 +280,9 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType() 
       return AdditionalInformationType::Vector;
     }
     return AdditionalInformationType::Matrix;
+  }
+  if (a.type() != ExpressionNode::Type::Nonreal && i.numberOfNumericalValues() == 1) {
+    return AdditionalInformationType::Function;
   }
   return AdditionalInformationType::None;
 }

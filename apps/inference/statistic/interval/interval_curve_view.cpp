@@ -34,10 +34,10 @@ float IntervalAxis::tickPosition(int i, const AbstractPlotView * plotView, Abstr
   return m_ticks[i];
 }
 
-void IntervalAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
+void IntervalAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis, KDColor color) const {
   AbstractPlotView::RelativePosition yRelative = AbstractPlotView::RelativePosition::After;
   AbstractPlotView::RelativePosition xRelative = m_realignLabels ? (i == 0 ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::After) : AbstractPlotView::RelativePosition::There;
-  plotView->drawLabel(ctx, rect, m_labels[i], Coordinate2D<float>(t, 0.f), xRelative, yRelative, KDColorBlack);
+  plotView->drawLabel(ctx, rect, m_labels[i], Coordinate2D<float>(t, 0.f), xRelative, yRelative, color);
 }
 
 // IntervalPlotPolicy

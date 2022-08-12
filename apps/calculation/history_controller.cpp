@@ -3,6 +3,7 @@
 #include "../shared/utils.h"
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/symbol.h>
 #include <assert.h>
 
 using namespace Shared;
@@ -21,7 +22,8 @@ HistoryController::HistoryController(EditExpressionController * editExpressionCo
   m_trigonometryController(editExpressionController),
   m_unitController(editExpressionController),
   m_matrixController(editExpressionController),
-  m_vectorController(editExpressionController)
+  m_vectorController(editExpressionController),
+  m_functionController(editExpressionController)
 {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_calculationHistory[i].setParentResponder(&m_selectableTableView);
@@ -142,6 +144,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           vc = &m_vectorController;
         } else if (additionalInfoType == Calculation::AdditionalInformationType::Matrix) {
           vc = &m_matrixController;
+        } else if (additionalInfoType == Calculation::AdditionalInformationType::Function) {
+          e = focusCalculation->input();
+          vc = &m_functionController;
         }
         if (vc) {
           assert(!e.isUninitialized());

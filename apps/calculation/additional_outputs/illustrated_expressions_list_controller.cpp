@@ -81,7 +81,7 @@ Poincare::VariableContext IllustratedExpressionsListController::illustratedExpre
 }
 
 int IllustratedExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
-  assert(index > 0);
+  assert(index >= showIllustration());
   return ExpressionsListController::textAtIndex(buffer, bufferSize, index - showIllustration());
 }
 

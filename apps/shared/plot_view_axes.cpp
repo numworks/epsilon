@@ -91,7 +91,7 @@ int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, 
   return Poincare::PrintFloat::ConvertFloatToText(t, mutableLabel(i), k_labelBufferMaxSize, k_labelBufferMaxGlyphLength, k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal).GlyphLength;
 }
 
-void AbstractLabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
+void AbstractLabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis, KDColor color) const {
   assert(i < numberOfLabels());
   assert(t >= plotView->rangeMin(axis));
 
@@ -125,7 +125,10 @@ void AbstractLabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plo
   }
 
   Coordinate2D<float> xy = axis == AbstractPlotView::Axis::Horizontal ? Coordinate2D<float>(t, m_labelsPosition) : Coordinate2D<float>(m_labelsPosition, t);
-  plotView->drawLabel(ctx, rect, text, xy, xRelative, yRelative, k_color);
+  KDRect labelRect = plotView->labelRect(text, xy, xRelative, yRelative);
+  if (labelWillBeDisplayed(labelRect)) {
+    plotView->drawLabel(ctx, rect, text, labelRect, color);
+  }
 }
 
 void AbstractLabeledAxis::computeLabelsRelativePosition(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {

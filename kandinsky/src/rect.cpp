@@ -156,3 +156,7 @@ bool KDRect::isUnder(KDPoint p) const {
 bool KDRect::isEmpty() const {
   return (width() <= 0 || height() <= 0);
 }
+
+KDRect KDRect::paddedWith(KDCoordinate value) const {
+  return KDRect(x() - value, y() - value, width() + 2 * value, height() + 2 * value);
+}

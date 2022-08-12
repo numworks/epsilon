@@ -13,7 +13,7 @@ public:
 
   void reloadAxis(Shared::AbstractPlotView * plotView, Shared::AbstractPlotView::Axis) override;
   float tickPosition(int i, const Shared::AbstractPlotView * plotView, Shared::AbstractPlotView::Axis) const override;
-  void drawLabel(int i, float t, const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, Shared::AbstractPlotView::Axis axis) const override;
+  void drawLabel(int i, float t, const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, Shared::AbstractPlotView::Axis axis, KDColor color = k_color) const override;
 
 private:
   constexpr static int k_numberOfLabels = 2;

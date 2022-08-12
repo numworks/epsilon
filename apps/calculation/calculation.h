@@ -44,7 +44,8 @@ public:
     Unit,
     Matrix,
     Vector,
-    Complex
+    Complex,
+    Function
   };
   static bool DisplaysExact(DisplayOutput d) { return d != DisplayOutput::ApproximateOnly; }
 

@@ -21,7 +21,7 @@ protected:
 
 class TestXAxis : public Shared::PlotPolicy::HorizontalLabeledAxis {
 protected:
-  void drawLabel(int i, float t, const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, Shared::AbstractPlotView::Axis axis) const override;
+  void drawLabel(int i, float t, const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, Shared::AbstractPlotView::Axis axis, KDColor color) const override;
 };
 
 typedef Shared::PlotPolicy::Axes<Shared::PlotPolicy::NoGrid, TestXAxis, Shared::PlotPolicy::NoAxis> TestAxes;

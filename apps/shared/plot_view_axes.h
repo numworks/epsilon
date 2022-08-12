@@ -70,9 +70,7 @@ protected:
 
   virtual float tickPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
   virtual float tickStep(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
-
-private:
-  virtual void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {}
+  virtual void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis, KDColor color = k_color) const {}
 };
 
 /* Abstract class describing an axis with evenly spaced out labels. */
@@ -95,7 +93,8 @@ protected:
   virtual char * mutableLabel(int i) = 0;
   const char * label(int i) const { return const_cast<AbstractLabeledAxis *>(this)->mutableLabel(i); }
   virtual int computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis);
-  void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const override;
+  virtual bool labelWillBeDisplayed(KDRect rect) const { return true; }
+  void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis, KDColor color = k_color) const override;
   void computeLabelsRelativePosition(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
 
   mutable float m_labelsPosition;

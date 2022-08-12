@@ -107,7 +107,7 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView * plotView, KD
 
 // TestXAxis
 
-void TestXAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
+void TestXAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis, KDColor color) const {
   assert(axis == AbstractPlotView::Axis::Horizontal);
   const TestCurveView * testCurveView = static_cast<const TestCurveView *>(plotView);
   float z = testCurveView->test()->testCriticalValue();

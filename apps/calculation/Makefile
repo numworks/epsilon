@@ -13,6 +13,9 @@ app_calculation_src = $(addprefix apps/calculation/,\
   additional_outputs/complex_list_controller.cpp \
   additional_outputs/expression_with_equal_sign_view.cpp \
   additional_outputs/expressions_list_controller.cpp \
+  additional_outputs/function_graph_cell.cpp \
+  additional_outputs/function_list_controller.cpp \
+  additional_outputs/function_model.cpp \
   additional_outputs/illustrated_expressions_list_controller.cpp \
   additional_outputs/illustrated_list_controller.cpp \
   additional_outputs/illustration_cell.cpp \

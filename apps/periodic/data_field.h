@@ -136,6 +136,8 @@ public:
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicMassSymbol; }
   double getDouble(AtomicNumber z) const override;
   const char * rawUnit() const override { return "_g×_mol^\x12-1\x13"; }
+  ColorPair minColors() const override { return ColorPair(Palette::ScaleTextBlueLight, Palette::ScaleBackBlueLight); }
+  ColorPair maxColors() const override { return ColorPair(Palette::ScaleTextBlueDark, Palette::ScaleBackBlueDark); }
 };
 
 class ElectronegativityDataField : public DoubleDataField {
@@ -144,8 +146,8 @@ public:
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicElectronegativitySymbol; }
   double getDouble(AtomicNumber z) const override;
   const char * rawUnit() const override { return ""; }
-  ColorPair minColors() const override { return ColorPair(Palette::ElementRedDark, Palette::ElementRedLight); }
-  ColorPair maxColors() const override { return ColorPair(Palette::ElementGreenDark, Palette::ElementGreenLight); }
+  ColorPair minColors() const override { return ColorPair(Palette::ScaleTextYellowLight, Palette::ScaleBackYellowLight); }
+  ColorPair maxColors() const override { return ColorPair(Palette::ScaleTextYellowDark, Palette::ScaleBackYellowDark); }
 };
 
 class RadiusDataField : public DoubleDataField {
@@ -154,6 +156,8 @@ public:
   I18n::Message fieldSymbol() const override { return I18n::Message::PeriodicRadiusSymbol; }
   double getDouble(AtomicNumber z) const override;
   const char * rawUnit() const override { return "_pm"; }
+  ColorPair minColors() const override { return ColorPair(Palette::ScaleTextGreenLight, Palette::ScaleBackGreenLight); }
+  ColorPair maxColors() const override { return ColorPair(Palette::ScaleTextGreenDark, Palette::ScaleBackGreenDark); }
 };
 
 class MeltingPointDataField : public DoubleDataFieldWithSubscriptSymbol {
@@ -163,6 +167,8 @@ public:
   double getDouble(AtomicNumber z) const override;
   const char * rawUnit() const override { return "_°C"; }
   I18n::Message fieldSubscript() const override { return I18n::Message::PeriodicMeltingPointSubscript; }
+  ColorPair minColors() const override { return ColorPair(Palette::ScaleTextPurpleLight, Palette::ScaleBackPurpleLight); }
+  ColorPair maxColors() const override { return ColorPair(Palette::ScaleTextPurpleDark, Palette::ScaleBackPurpleDark); }
 };
 
 class BoilingPointDataField : public DoubleDataFieldWithSubscriptSymbol {
@@ -172,6 +178,8 @@ public:
   double getDouble(AtomicNumber z) const override;
   const char * rawUnit() const override { return "_°C"; }
   I18n::Message fieldSubscript() const override { return I18n::Message::PeriodicBoilingPointSubscript; }
+  ColorPair minColors() const override { return ColorPair(Palette::ScaleTextRedLight, Palette::ScaleBackRedLight); }
+  ColorPair maxColors() const override { return ColorPair(Palette::ScaleTextRedDark, Palette::ScaleBackRedDark); }
 };
 
 class DensityDataField : public DoubleDataField {

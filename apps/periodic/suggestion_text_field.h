@@ -9,6 +9,9 @@ class SuggestionTextField : public Escher::AbstractTextField {
 public:
   SuggestionTextField(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::TextFieldDelegate * delegate);
 
+  // Escher::Responder
+  bool handleEvent(Ion::Events::Event event) override;
+
   void setSuggestion(const char * suggestion) { m_contentView.setSuggestion(suggestion); }
   void commitSuggestion();
 
@@ -28,7 +31,7 @@ private:
     const char * m_suggestion;
   };
 
-  const ContentView * nonEditableContentView() const { return &m_contentView; }
+  const ContentView * nonEditableContentView() const override { return &m_contentView; }
 
   ContentView m_contentView;
 };

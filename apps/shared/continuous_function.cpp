@@ -302,19 +302,15 @@ ContinuousFunction::CurveParameter ContinuousFunction::getCurveParameter(int ind
 
 double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, double cursorX, double cursorY, Context * context) const {
   switch (plotType()) {
-  case PlotType::Cartesian:
-  case PlotType::Line:
-  case PlotType::HorizontalLine:
-    return index == 0 ? cursorX : evaluateXYAtParameter(cursorX, context).x2();
-  case PlotType::VerticalLine:
-    return index == 0 ? evaluateXYAtParameter(cursorY, context).x1() : cursorY;
   case PlotType::Parametric:
     return index == 0 ? cursorT : index == 1 ? evaluateXYAtParameter(cursorT, context).x1() : evaluateXYAtParameter(cursorT, context).x2();
   case PlotType::Polar:
     return index == 0 ? cursorT : evaluate2DAtParameter(cursorT, context).x2();
   default:
-    // Conics
-    assert(plotType() < PlotType::Undefined);
+    // Expressions of x and y
+    assert(plotType() < PlotType::Polar);
+    // The subcurve number would need to be passed down here to properly assert
+    assert(numberOfSubCurves() > 1 || evaluateXYAtParameter(cursorT, context).x1() == cursorX && evaluateXYAtParameter(cursorT, context).x2() == cursorY);
     return index == 0 ? cursorX : cursorY;
   }
 }

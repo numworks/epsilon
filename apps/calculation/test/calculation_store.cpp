@@ -8,7 +8,7 @@
 #include "../calculation_store.h"
 #include "../../exam_mode_configuration.h"
 
-typedef ::Calculation::Calculation::AdditionalInformationType AdditionalInformationType;
+typedef ::Calculation::Calculation::AdditionalInformations AdditionalInformations;
 typedef ::Calculation::Calculation::DisplayOutput DisplayOutput;
 typedef ::Calculation::Calculation::EqualSign EqualSign ;
 typedef ::Calculation::Calculation::NumberOfSignificantDigits NumberOfSignificantDigits;
@@ -484,10 +484,14 @@ QUIZ_CASE(calculation_involving_sequence) {
   seqStore->tidyDownstreamPoolFrom();
 }
 
-void assertCalculationAdditionalResultTypeIs(const char * input, const AdditionalInformationType additionalInformationType, Context * context, CalculationStore * store) {
+void assertCalculationAdditionalResultTypeHas(const char * input, const AdditionalInformations::Type additionalInformationType, Context * context, CalculationStore * store) {
   store->push(input, context, dummyHeight);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation = store->calculationAtIndex(0);
-  quiz_assert_print_if_failure(lastCalculation->additionalInformationType() == additionalInformationType, input);
+  if (additionalInformationType == AdditionalInformations::Type::None) {
+    quiz_assert_print_if_failure(lastCalculation->additionalInformations().isNone(), input);
+  } else {
+    quiz_assert_print_if_failure(lastCalculation->additionalInformations().contains(additionalInformationType), input);
+  }
   store->deleteAll();
 }
 
@@ -496,26 +500,30 @@ QUIZ_CASE(calculation_additional_results) {
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
-  assertCalculationAdditionalResultTypeIs("1+1", AdditionalInformationType::Integer, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("π-π", AdditionalInformationType::Integer, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("π+π", AdditionalInformationType::None, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("2/24", AdditionalInformationType::Rational, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("1+i", AdditionalInformationType::Complex, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("sin(π)", AdditionalInformationType::Trigonometry, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("sin(iπ)", AdditionalInformationType::Complex, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("ln(2)", AdditionalInformationType::Function, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("e^3", AdditionalInformationType::Function, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("tan(π/2)", AdditionalInformationType::None, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("[[1]]", AdditionalInformationType::Vector, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("[[1,1]]", AdditionalInformationType::Vector, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("[[1][2][3]]", AdditionalInformationType::Vector, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("transpose(identity(2))", AdditionalInformationType::Matrix, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("[[cos(π/3),-sin(π/3)][sin(π/3),cos(π/3)]]", AdditionalInformationType::Matrix, &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("√(-1)", AdditionalInformationType::None, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("1+1", AdditionalInformations::Type::Integer, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("π-π", AdditionalInformations::Type::Integer, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("π+π", AdditionalInformations::Type::None, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("2/24", AdditionalInformations::Type::Rational, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("1+i", AdditionalInformations::Type::Complex, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("sin(π)", AdditionalInformations::Type::Trigonometry, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("sin(iπ)", AdditionalInformations::Type::Complex, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("ln(2)", AdditionalInformations::Type::Function, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("2^3", AdditionalInformations::Type::Function, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("2^3", AdditionalInformations::Type::Integer, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas(".5^2", AdditionalInformations::Type::Function, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas(".5^2", AdditionalInformations::Type::Rational, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("e^3", AdditionalInformations::Type::Function, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("tan(π/2)", AdditionalInformations::Type::None, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("[[1]]", AdditionalInformations::Type::Vector, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("[[1,1]]", AdditionalInformations::Type::Vector, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("[[1][2][3]]", AdditionalInformations::Type::Vector, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("transpose(identity(2))", AdditionalInformations::Type::Matrix, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("[[cos(π/3),-sin(π/3)][sin(π/3),cos(π/3)]]", AdditionalInformations::Type::Matrix, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("√(-1)", AdditionalInformations::Type::None, &globalContext, &store);
   assertMainCalculationOutputIs("i→z", "i", &globalContext, &store);
-  assertCalculationAdditionalResultTypeIs("z+1", AdditionalInformationType::Complex, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("z+1", AdditionalInformations::Type::Complex, &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("z.exp").destroy();
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
-  assertCalculationAdditionalResultTypeIs("√(-1)", AdditionalInformationType::Complex, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("√(-1)", AdditionalInformations::Type::Complex, &globalContext, &store);
 }

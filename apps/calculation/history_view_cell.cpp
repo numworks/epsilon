@@ -50,7 +50,7 @@ HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculationCRC32(0),
   m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
-  m_calculationAdditionInformation(Calculation::AdditionalInformationType::None),
+  m_calculationAdditionInformations(Calculation::AdditionalInformations::None),
   m_inputView(this, k_inputViewHorizontalMargin, k_inputOutputViewsVerticalMargin),
   m_scrollableOutputView(this),
   m_calculationExpanded(false),
@@ -205,7 +205,7 @@ void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth, KDCoordinate
 
   /* To compute if the calculation is on a single line, use the expanded width
    * if there is both an exact and an approximate layout. */
-  m_calculationSingleLine = ViewsCanBeSingleLine(inputSize.width(), m_scrollableOutputView.minimalSizeForOptimalDisplayFullSize().width(), m_calculationAdditionInformation != Calculation::AdditionalInformationType::None);
+  m_calculationSingleLine = ViewsCanBeSingleLine(inputSize.width(), m_scrollableOutputView.minimalSizeForOptimalDisplayFullSize().width(), !m_calculationAdditionInformations.isNone());
 
   KDCoordinate inputY = k_margin;
   KDCoordinate outputY = k_margin;
@@ -259,7 +259,7 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, P
 
   // Memoization
   m_calculationCRC32 = newCalculationCRC;
-  m_calculationAdditionInformation = calculation->additionalInformationType();
+  m_calculationAdditionInformations = calculation->additionalInformations();
   m_inputView.setLayout(calculation->createInputLayout());
 
   /* All expressions have to be updated at the same time. Otherwise,

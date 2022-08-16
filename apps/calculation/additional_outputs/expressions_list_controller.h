@@ -23,12 +23,12 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int numberOfRows() const override;
 
-  // IllustratedListController
+  // ListController
   void setExpression(Poincare::Expression e) override;
+  int textAtIndex(char * buffer, size_t bufferSize, int index) override;
 
 protected:
   constexpr static int k_maxNumberOfRows = 5;
-  int textAtIndex(char * buffer, size_t bufferSize, int index) override;
   Poincare::Layout getLayoutFromExpression(Poincare::Expression e, Poincare::Context * context, Poincare::Preferences * preferences);
   Poincare::Expression m_expression;
   // Memoization of layouts

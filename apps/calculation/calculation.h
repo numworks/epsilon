@@ -36,17 +36,28 @@ public:
     ExactAndApproximate,
     ExactAndApproximateToggle
   };
-  enum class AdditionalInformationType {
-    None = 0,
-    Integer,
-    Rational,
-    Trigonometry,
-    Unit,
-    Matrix,
-    Vector,
-    Complex,
-    Function
+
+  class AdditionalInformations {
+  public:
+    enum Type {
+      None = 0,
+      Integer = 1,
+      Rational = 2,
+      Trigonometry = 4,
+      Unit = 8,
+      Matrix = 16,
+      Vector = 32,
+      Complex = 64,
+      Function = 128
+    };
+    AdditionalInformations(Type type = Type::None) : m_type(type) {}
+    bool isNone() const { return m_type == Type::None; }
+    bool contains(Type type) const { return m_type & type; }
+    void set(Type type) { m_type = static_cast<Type>(m_type | type); }
+  private:
+    Type m_type;
   };
+
   static bool DisplaysExact(DisplayOutput d) { return d != DisplayOutput::ApproximateOnly; }
 
   /* It is not really the minimal size, but it clears enough space for most
@@ -94,8 +105,8 @@ public:
   void forceDisplayOutput(DisplayOutput d);
   EqualSign exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context);
 
-  // Additional Information
-  AdditionalInformationType additionalInformationType();
+  // Additional Informations
+  AdditionalInformations additionalInformations();
 private:
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;
   constexpr static const char * k_maximalIntegerWithAdditionalInformation = "10000000000000000";

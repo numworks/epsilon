@@ -119,34 +119,46 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       assert(subviewType == SubviewType::Ellipsis);
       UserCircuitBreakerCheckpoint checkpoint;
       if (CircuitBreakerRun(checkpoint)) {
-        Calculation::AdditionalInformationType additionalInfoType = selectedCell->additionalInformationType();
+        Calculation::AdditionalInformations additionalInformations = selectedCell->additionalInformations();
         ListController * vc = nullptr;
         ExpiringPointer<Calculation> focusCalculation = calculationAtIndex(focusRow);
         Expression e = focusCalculation->exactOutput();
-        if (additionalInfoType == Calculation::AdditionalInformationType::Complex) {
+        if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Complex)) {
           vc = &m_complexController;
-        } else if (additionalInfoType == Calculation::AdditionalInformationType::Trigonometry) {
+        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Trigonometry)) {
           vc = &m_trigonometryController;
           // Find which of the input or output is the cosine/sine
           ExpressionNode::Type t = e.type();
           e = t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine ? e : calculationAtIndex(focusRow)->input();
-        } else if (additionalInfoType == Calculation::AdditionalInformationType::Integer) {
+        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Function)) {
+          e = focusCalculation->input();
+          vc = &m_functionController;
+          if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Integer)) {
+            Expression output = focusCalculation->exactOutput();
+            m_integerController.setExpression(output);
+            m_functionController.setTail(&m_integerController);
+          } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Rational)) {
+            Expression output = focusCalculation->exactOutput();
+            Expression input = focusCalculation->input();
+            m_rationalController.setExpression(isFractionInput(input) ? input : output);
+            m_functionController.setTail(&m_rationalController);
+          } else {
+            m_functionController.setTail(nullptr);
+          }
+        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Integer)) {
           vc = &m_integerController;
-        } else if (additionalInfoType == Calculation::AdditionalInformationType::Rational) {
+        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Rational)) {
           Expression focusInput = focusCalculation->input();
           if (isFractionInput(focusInput)) {
             e = focusInput;
           }
           vc = &m_rationalController;
-        } else if (additionalInfoType == Calculation::AdditionalInformationType::Unit) {
+        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Unit)) {
           vc = &m_unitController;
-        } else if (additionalInfoType == Calculation::AdditionalInformationType::Vector) {
+        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Vector)) {
           vc = &m_vectorController;
-        } else if (additionalInfoType == Calculation::AdditionalInformationType::Matrix) {
+        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Matrix)) {
           vc = &m_matrixController;
-        } else if (additionalInfoType == Calculation::AdditionalInformationType::Function) {
-          e = focusCalculation->input();
-          vc = &m_functionController;
         }
         if (vc) {
           assert(!e.isUninitialized());
@@ -258,7 +270,7 @@ bool HistoryController::calculationAtIndexToggles(int index) {
 void HistoryController::setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX, int previousSelectedY) {
   // Avoid selecting non-displayed ellipsis
   HistoryViewCell * selectedCell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
-  if (subviewType == SubviewType::Ellipsis && selectedCell && selectedCell->additionalInformationType() == Calculation::AdditionalInformationType::None) {
+  if (subviewType == SubviewType::Ellipsis && selectedCell && selectedCell->additionalInformations().isNone()) {
     subviewType = SubviewType::Output;
   }
   HistoryViewCellDataSource::setSelectedSubviewType(subviewType, sameCell, previousSelectedX, previousSelectedY);

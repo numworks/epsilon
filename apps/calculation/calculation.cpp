@@ -223,10 +223,10 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   }
 }
 
-Calculation::AdditionalInformationType Calculation::additionalInformationType() {
+Calculation::AdditionalInformations Calculation::additionalInformations() {
   if (ExamModeConfiguration::additionalResultsAreForbidden()
       || strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), "undef") == 0) {
-    return AdditionalInformationType::None;
+    return AdditionalInformations();
   }
   Preferences * preferences = Preferences::sharedPreferences();
   Expression i = input();
@@ -243,7 +243,7 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType() 
    * return any additional outputs for them to avoid bothering with special
    * cases. */
   if (i.isUninitialized() || o.isUninitialized() || i.type() == ExpressionNode::Type::Store || a.type() == ExpressionNode::Type::Undefined) {
-    return AdditionalInformationType::None;
+    return AdditionalInformations();
   }
   /* Trigonometry additional results are displayed if either input or output is a sin or a cos. Indeed, we want to capture both cases:
    * - > input: cos(60)
@@ -253,7 +253,7 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType() 
    * However if the result is complex, it is treated as a complex result instead
    */
   if (!isComplex && (i.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine}) || o.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine}))) {
-    return AdditionalInformationType::Trigonometry;
+    return AdditionalInformations(AdditionalInformations::Type::Trigonometry);
   }
   if (o.hasUnit()) {
     Expression unit;
@@ -261,30 +261,33 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType() 
     double value = PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
     if (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences()->unitFormat())
         || UnitComparison::ShouldDisplayUnitComparison(value, unit)) {
-      return AdditionalInformationType::Unit;
+      return AdditionalInformations(AdditionalInformations::Type::Unit);
     }
-    return AdditionalInformationType::None;
-  }
-  if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
-    return AdditionalInformationType::Integer;
-  }
-  // Find forms like [12]/[23] or -[12]/[23]
-  if (o.isDivisionOfIntegers() || (o.type() == ExpressionNode::Type::Opposite && o.childAtIndex(0).isDivisionOfIntegers())) {
-    return AdditionalInformationType::Rational;
-  }
-  if (isComplex) {
-    return AdditionalInformationType::Complex;
+    return AdditionalInformations();
   }
   if (o.type() == ExpressionNode::Type::Matrix) {
     if (static_cast<const Matrix&>(o).vectorType() != Array::VectorType::None) {
-      return AdditionalInformationType::Vector;
+      return AdditionalInformations(AdditionalInformations::Type::Vector);
     }
-    return AdditionalInformationType::Matrix;
+    return AdditionalInformations(AdditionalInformations::Type::Matrix);
   }
+  if (isComplex) {
+    return AdditionalInformations(AdditionalInformations::Type::Complex);
+  }
+  AdditionalInformations additionalInformations;
   if (a.type() != ExpressionNode::Type::Nonreal && i.numberOfNumericalValues() == 1) {
-    return AdditionalInformationType::Function;
+    additionalInformations.set(AdditionalInformations::Type::Function);
   }
-  return AdditionalInformationType::None;
+  if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
+    additionalInformations.set(AdditionalInformations::Type::Integer);
+    return additionalInformations;
+  }
+  // Find forms like [12]/[23] or -[12]/[23]
+  if (o.isDivisionOfIntegers() || (o.type() == ExpressionNode::Type::Opposite && o.childAtIndex(0).isDivisionOfIntegers())) {
+    additionalInformations.set(AdditionalInformations::Type::Rational);
+    return additionalInformations;
+  }
+  return additionalInformations;
 }
 
 }

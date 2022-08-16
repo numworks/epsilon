@@ -108,7 +108,8 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
           }, f.operator->(), context(), false, f->color(), discontinuityEvaluation);
-      } else if (f->isAlongY() && area == ContinuousFunction::AreaType::None) {
+      } else if (f->isAlongY() && area == ContinuousFunction::AreaType::None && f->plotType() != ContinuousFunction::PlotType::CartesianAlongY) {
+        // TODO : Optimize horizontal lines as well
         // Optimize plot by only drawing the expected segment.
         float minOrdinate = pixelToFloat(axis, rectMax);
         float maxOrdinate = pixelToFloat(axis, rectMin);

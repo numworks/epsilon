@@ -52,7 +52,7 @@ public:
     X
   };
 
-  constexpr static size_t k_numberOfPlotTypes = 22;
+  constexpr static size_t k_numberOfPlotTypes = 23;
   enum class PlotType : uint8_t {
     Cartesian = 0,
     CartesianParabola,
@@ -60,6 +60,7 @@ public:
     Line,
     HorizontalLine,
     // All previous types + Polar and Parametric are active in the values table
+    CartesianAlongY,
     VerticalLine,
     // All previous types + Polar and Parametric plot with only one subcurve
     VerticalLines,
@@ -135,7 +136,7 @@ public:
   // If the ContinuousFunction has x or y for unknown symbol
   bool isAlongXorY() const { return symbol() == ContinuousFunction::k_cartesianSymbol; }
   // If the ContinuousFunction has y for unknown symbol
-  bool isAlongY() const override { return plotType() == PlotType::VerticalLine || plotType() == PlotType::VerticalLines; }
+  bool isAlongY() const override { return plotType() == PlotType::VerticalLine || plotType() == PlotType::VerticalLines || plotType() == PlotType::CartesianAlongY; }
   // If the ContinuousFunction is a conic
   bool isConic() const;
   // If the ContinuousFunction is named ("f(x)=...")

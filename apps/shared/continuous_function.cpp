@@ -114,6 +114,8 @@ I18n::Message ContinuousFunction::plotTypeMessage() const {
       I18n::Message::HyperbolaType, // CartesianHyperbola displayed as Hyperbola
       I18n::Message::LineType,
       I18n::Message::HorizontalLineType,
+      // TODO : Maybe a new message here
+      I18n::Message::OtherType,     // CartesianAlongY displayed as Others
       I18n::Message::VerticalLineType,
       I18n::Message::OtherType,     // VerticalLines displayed as Others
       I18n::Message::CircleType,
@@ -208,7 +210,7 @@ bool ContinuousFunction::drawDottedCurve() const {
 bool ContinuousFunction::isActiveInTable() const {
   /* In addition to isActive(), a function must not be an inequality, must not
    * have any vertical lines and must always plot with a single subcurve. */
-  static_assert(PlotType::VerticalLine > PlotType::HorizontalLine, "VerticalLine shouldn't be active in table.");
+  static_assert(PlotType::CartesianAlongY > PlotType::HorizontalLine, "CartesianAlongY shouldn't be active in table.");
   return equationType() == Poincare::ExpressionNode::Type::Equal
          && (plotType() <= PlotType::HorizontalLine
              || plotType() == PlotType::Polar
@@ -600,7 +602,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context
     } else {
       assert(subCurveIndex == 0);
     }
-    if (type == PlotType::VerticalLine || type == PlotType::VerticalLines) {
+    if (isAlongY()) {
       // Invert x and y with vertical lines so it can be scrolled vertically
       return Coordinate2D<T>(PoincareHelpers::ApproximateWithValueForSymbol(e, k_unknownName, t, context), t);
     }
@@ -633,21 +635,28 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
       /* Function isn't named, m_expression currently is an expression in y or x
        * such as y = x. We extract the solution by solving in y or x. */
       int yDegree = m_expression.polynomialDegree(context, k_ordinateName);
-      if (yDegree < 0 || yDegree > 2) {
-        // Such degrees of equation in y are not handled.
-        m_expression = Undefined::Builder();
-        return m_expression;
+      bool willBeAlongX = true;
+      if (yDegree <= 0 || yDegree > 2) {
+        int xDegree = m_expression.polynomialDegree(context, k_unknownName);
+        if (xDegree == 1 || (xDegree == 2 && yDegree == 0)) {
+          // Equation can be plotted along y. For example : x=cos(y) or x^2=1
+          willBeAlongX = false;
+        } else {
+          // Such degrees of equation in y and x are not handled.
+          // TODO : Add an OtherAlongY type to handle equations with xDegree=2
+          m_expression = Undefined::Builder();
+          return m_expression;
+        }
       }
-      bool isVertical = (yDegree == 0);
-      /* Solve the equation in y (or x if isVertical)
+      /* Solve the equation in y (or x if not willBeAlongX)
        * Symbols are replaced to simplify roots. */
       Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
       int degree = m_expression.getPolynomialReducedCoefficients(
-          isVertical ? k_unknownName : k_ordinateName, coefficients, context,
+          willBeAlongX ? k_ordinateName : k_unknownName, coefficients, context,
           ComplexFormat(), AngleUnit(), k_defaultUnitFormat,
           ExpressionNode::SymbolicComputation::
               ReplaceAllDefinedSymbolsWithDefinition);
-      assert(isVertical || degree == yDegree);
+      assert(!willBeAlongX || degree == yDegree);
       if (degree == 1) {
         Polynomial::LinearPolynomialRoots(
           coefficients[1],
@@ -690,6 +699,10 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
          * horizontal lines as needed. */
         m_expression = Undefined::Builder();
         return m_expression;
+      }
+      if (!willBeAlongX && yDegree != 0) {
+        // No need to replace anything if yDegree is 0
+        m_expression.replaceSymbolWithExpression(Symbol::Builder(k_ordinateCodePoint), Symbol::Builder(UCodePointUnknown));
       }
     } else {
       /* m_expression is resulting of a simplification with the target
@@ -1005,16 +1018,17 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
     return;
   }
 
-  bool isYMainSymbol = (yDeg != 0);
-  if (yDeg < 0 || yDeg > 2 || (!isYMainSymbol && xDeg != 1 && xDeg != 2)) {
+  bool willBeAlongX = (yDeg == 1) || (yDeg == 2);
+  bool willBeAlongY = !willBeAlongX && ((xDeg == 1) || (xDeg == 2 && yDeg == 0));
+  if (!willBeAlongX && !willBeAlongY) {
     // Any equation with such a y and x degree won't be handled anyway.
     m_plotType = PlotType::Unhandled;
     return;
   }
 
-  const char * symbolName = isYMainSymbol ? k_ordinateName : k_unknownName;
-  ExpressionNode::Sign ySign = ExpressionNode::Sign::Unknown;
-  if (!HasNonNullCoefficients(equation, symbolName, context, &ySign)
+  const char * symbolName = willBeAlongX ? k_ordinateName : k_unknownName;
+  ExpressionNode::Sign highestCoefficientSign = ExpressionNode::Sign::Unknown;
+  if (!HasNonNullCoefficients(equation, symbolName, context, &highestCoefficientSign)
       || equation.hasComplexI(context)) {
     // The equation must have at least one nonNull coefficient.
     // TODO : Accept equations such as y=re(i)
@@ -1023,7 +1037,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
   }
 
   if (modelEquationType != ExpressionNode::Type::Equal) {
-    if (ySign == ExpressionNode::Sign::Unknown || (yDeg == 2 && xDeg == -1)) {
+    if (highestCoefficientSign == ExpressionNode::Sign::Unknown || (yDeg == 2 && xDeg == -1)) {
       /* Are unhandled equation with :
        * - An unknown highest coefficient sign: sign must be strict and constant
        * - A non polynomial x coefficient in a quadratic equation on y. */
@@ -1034,7 +1048,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
       m_plotType = PlotType::Disabled;
       return;
     }
-    if (ySign == ExpressionNode::Sign::Negative) {
+    if (highestCoefficientSign == ExpressionNode::Sign::Negative) {
       // Oppose the comparison operator
       m_equationType = ComparisonOperator::Opposite(modelEquationType);
     }
@@ -1046,18 +1060,19 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
    * | 0  | 2  | Vertical Lines
    * | 1  | 0  | Horizontal Line
    * | 1  | 1  | Line
-   * | 1  | +  | Cartesian
+   * | 1  | *  | Cartesian
    * | 2  | 0  | Other (Two Horizontal Lines)
    * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabola, Other
    * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabola, Other
-   * | 2  | +  | Other
+   * | 2  | *  | Other
+   * | *  | 1  | CartesianAlongY
    *
    * Other cases should have been escaped above.
    */
   if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
     // No need to replace any symbols in originalEquation().
     Expression inputEquation = originalEquation(record, UCodePointUnknown);
-    CodePoint symbol = (yDeg == 0) ? UCodePointUnknown : k_ordinateCodePoint;
+    CodePoint symbol = willBeAlongX ? k_ordinateCodePoint : UCodePointUnknown;
     if (!IsExplicitEquation(inputEquation, symbol)) {
       m_plotType = PlotType::Disabled;
       return;
@@ -1065,7 +1080,13 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
   }
 
   if (yDeg == 0) {
+    assert(xDeg == 1 || xDeg == 2);
     m_plotType = xDeg == 1 ? PlotType::VerticalLine : PlotType::VerticalLines;
+    return;
+  }
+
+  if (!willBeAlongX) {
+    m_plotType = PlotType::CartesianAlongY;
     return;
   }
 
@@ -1074,7 +1095,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
     return;
   }
 
-  if (yDeg == 1 && xDeg == 1 && ySign != ExpressionNode::Sign::Unknown) {
+  if (yDeg == 1 && xDeg == 1 && highestCoefficientSign != ExpressionNode::Sign::Unknown) {
     // An Unknown y coefficient sign might mean it depends on x (y*x = ...)
     m_plotType = PlotType::Line;
     return;

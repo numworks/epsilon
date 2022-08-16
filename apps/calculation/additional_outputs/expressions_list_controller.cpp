@@ -34,6 +34,8 @@ void ExpressionsListController::viewDidDisappear() {
      * cells won't be unselected. Therefore we unselect them here. */
     m_cells[i].setHighlighted(false);
     m_layouts[i] = Layout();
+    m_exactLayouts[i] = Layout();
+    m_approximatedLayouts[i] = Layout();
   }
   m_expression = Expression();
 }

@@ -132,7 +132,10 @@ public:
   bool drawDottedCurve() const;
   // If the ContinuousFunction should be considered active in table
   bool isActiveInTable() const;
-  // TODO : Update symbol() for ContinuousFunctions along y
+  /* TODO : ContinuousFunction along y are implemented with a 'x' symbol() so
+   * that they share most properties. A better segmentation would allow more
+   * complex behaviors such as being active in table or computing derivatives.
+   * We don't need these features for now and keep a lighter code. */
   // If the ContinuousFunction has x or y for unknown symbol
   bool isAlongXorY() const { return symbol() == ContinuousFunction::k_cartesianSymbol; }
   // If the ContinuousFunction has y for unknown symbol

@@ -34,8 +34,7 @@ jobs:
         with:
           token: ${{ secrets.SHELLY_ANN_PAT }}
           submodules: true
-      - run: make MODEL=n0110 kernel.A.elf kernel.B.elf
-      - run: make MODEL=n0110 userland.A.elf userland.B.elf userland.test.A.elf userland.test.B.elf userland.onboarding.beta.A.elf userland.onboarding.update.A.elf
+      - run: make MODEL=n0110 epsilon.dfu epsilon.onboarding.dfu epsilon.onboarding.update.dfu
       - run: make MODEL=n0110 flasher.dfu
       - run: make MODEL=n0110 bench.ram.dfu
   n0120:
@@ -48,8 +47,7 @@ jobs:
         with:
           token: ${{ secrets.SHELLY_ANN_PAT }}
           submodules: true
-      - run: make MODEL=n0110 kernel.A.elf kernel.B.elf
-      - run: make MODEL=n0120 userland.A.elf userland.B.elf userland.test.A.elf userland.test.B.elf userland.onboarding.beta.A.elf userland.onboarding.update.A.elf
+      - run: make MODEL=n0120 epsilon.dfu epsilon.onboarding.dfu epsilon.onboarding.update.dfu
       - run: make MODEL=n0120 flasher.dfu
       - run: make MODEL=n0120 bench.ram.dfu
   windows:

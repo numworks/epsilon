@@ -1,17 +1,17 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_ILLUSTRATED_EXPRESSIONS_LIST_CONTROLLER_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_ILLUSTRATED_EXPRESSIONS_LIST_CONTROLLER_H
 
-#include "expressions_list_controller.h"
+#include "chained_expressions_list_controller.h"
 #include "../calculation_store.h"
 #include <poincare/variable_context.h>
 #include <apps/i18n.h>
 
 namespace Calculation {
 
-class IllustratedExpressionsListController : public ExpressionsListController, public Escher::SelectableTableViewDelegate {
+class IllustratedExpressionsListController : public ChainedExpressionsListController, public Escher::SelectableTableViewDelegate {
 public:
   IllustratedExpressionsListController(EditExpressionController * editExpressionController) :
-    ExpressionsListController(editExpressionController, this) {}
+    ChainedExpressionsListController(editExpressionController, this) {}
 
   // Responder
   void didEnterResponderChain(Responder * previousFirstResponder) override;

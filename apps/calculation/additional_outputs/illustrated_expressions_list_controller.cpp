@@ -15,7 +15,7 @@ void IllustratedExpressionsListController::didEnterResponderChain(Responder * pr
 }
 
 int IllustratedExpressionsListController::numberOfRows() const {
-  return ExpressionsListController::numberOfRows() + showIllustration();
+  return ChainedExpressionsListController::numberOfRows() + showIllustration();
 }
 
 int IllustratedExpressionsListController::reusableCellCount(int type) {
@@ -47,7 +47,7 @@ void IllustratedExpressionsListController::willDisplayCellForIndex(HighlightCell
   if (typeAtIndex(index) == k_illustrationCellType) {
     return;
   }
-  ExpressionsListController::willDisplayCellForIndex(cell, index - showIllustration());
+  ChainedExpressionsListController::willDisplayCellForIndex(cell, index - showIllustration());
 }
 
 void IllustratedExpressionsListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
@@ -82,7 +82,7 @@ Poincare::VariableContext IllustratedExpressionsListController::illustratedExpre
 
 int IllustratedExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
   assert(index >= showIllustration());
-  return ExpressionsListController::textAtIndex(buffer, bufferSize, index - showIllustration());
+  return ChainedExpressionsListController::textAtIndex(buffer, bufferSize, index - showIllustration());
 }
 
 }

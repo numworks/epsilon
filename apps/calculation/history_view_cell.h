@@ -60,7 +60,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   Shared::ScrollableTwoExpressionsView * outputView() { return &m_scrollableOutputView; }
   Escher::ScrollableExpressionView * inputView() { return &m_inputView; }
-  Calculation::AdditionalInformationType additionalInformationType() const { return m_calculationAdditionInformation; }
+  Calculation::AdditionalInformations additionalInformations() const { return m_calculationAdditionInformations; }
 
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
@@ -69,11 +69,11 @@ private:
   void reloadScroll();
   void reloadOutputSelection(HistoryViewCellDataSource::SubviewType previousType);
   bool displayedEllipsis() const {
-    return isHighlighted() && m_calculationAdditionInformation != Calculation::AdditionalInformationType::None;
+    return isHighlighted() && !m_calculationAdditionInformations.isNone();
   }
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;
-  Calculation::AdditionalInformationType m_calculationAdditionInformation;
+  Calculation::AdditionalInformations m_calculationAdditionInformations;
   Escher::ScrollableExpressionView m_inputView;
   Shared::ScrollableTwoExpressionsView m_scrollableOutputView;
   Escher::EvenOddCellWithEllipsis m_ellipsis;

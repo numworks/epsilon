@@ -8,6 +8,7 @@ app_calculation_test_src += $(addprefix apps/calculation/,\
 )
 
 app_calculation_src = $(addprefix apps/calculation/,\
+  additional_outputs/chained_expressions_list_controller.cpp \
   additional_outputs/complex_graph_cell.cpp \
   additional_outputs/complex_model.cpp \
   additional_outputs/complex_list_controller.cpp \

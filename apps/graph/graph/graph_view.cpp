@@ -69,13 +69,13 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
       float tmin = f->tMin();
       float tmax = f->tMax();
-      Axis axis = f->hasVerticalLines() ? Axis::Vertical : Axis::Horizontal;
+      Axis axis = f->isAlongY() ? Axis::Vertical : Axis::Horizontal;
       KDCoordinate rectMin = axis == Axis::Horizontal ? rect.left() - k_externRectMargin : rect.bottom() + k_externRectMargin;
       KDCoordinate rectMax = axis == Axis::Horizontal ? rect.right() + k_externRectMargin : rect.top() - k_externRectMargin;
 
       float tCacheMin, tCacheStep;
       float tStepNonCartesian = NAN;
-      if (f->isAlongX()) {
+      if (f->isAlongXorY()) {
         float rectLimit = pixelToFloat(axis, rectMin);
         /* Here, tCacheMin can depend on rect (and change as the user move)
          * because cache can be panned for cartesian curves, instead of being
@@ -108,7 +108,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             Poincare::Context * c = (Poincare::Context *)context;
             return f->evaluateXYAtParameter(t, c);
           }, f.operator->(), context(), false, f->color(), discontinuityEvaluation);
-      } else if (f->hasVerticalLines() && area == ContinuousFunction::AreaType::None) {
+      } else if (f->isAlongY() && area == ContinuousFunction::AreaType::None) {
         // Optimize plot by only drawing the expected segment.
         float minOrdinate = pixelToFloat(axis, rectMax);
         float maxOrdinate = pixelToFloat(axis, rectMin);

@@ -75,7 +75,7 @@ private:
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override;
   int numberOfSubCurves(int curveIndex) const override { return 1; }
-  bool hasVerticalLines(int curveIndex) const override { return false; }
+  bool isAlongY(int curveIndex) const override { return false; }
   bool openMenuForCurveAtIndex(int index) override;
   SeriesSelectionController * curveSelectionController() const override { return const_cast<SeriesSelectionController *>(&m_seriesSelectionController); }
   Escher::Button * calculusButton() const override { return const_cast<Escher::Button * >(&m_calculusButton); }

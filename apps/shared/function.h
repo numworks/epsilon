@@ -31,7 +31,7 @@ public:
   void setColor(KDColor color);
   void setActive(bool active);
   virtual int numberOfSubCurves() const { return 1; }
-  virtual bool hasVerticalLines() const { return false; }
+  virtual bool isAlongY() const { return false; }
 
   // Definition Interval
   virtual float tMin() const { return NAN; }

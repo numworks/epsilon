@@ -288,7 +288,7 @@ int ValuesController::numberOfColumnsForAbscissaColumn(int column) {
 int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) const {
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
   return 1 +
-    (f->isAlongX() && f->displayDerivative());
+    (f->isAlongXorY() && f->displayDerivative());
 }
 
 int ValuesController::numberOfColumnsForSymbolType(int symbolTypeIndex) const {
@@ -428,7 +428,7 @@ void ValuesController::setExactValueCellLayouts(int column, int row) {
 ColumnParameterController * ValuesController::functionParameterController() {
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
-  if (!functionStore()->modelForRecord(record)->isAlongX()) {
+  if (!functionStore()->modelForRecord(record)->isAlongXorY()) {
     return nullptr;
   }
   if (isDerivative) {

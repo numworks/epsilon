@@ -29,7 +29,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   Poincare::Context * context = App::app()->localContext();
   function = App::app()->functionStore()->modelForRecord(record); // Reload the expiring pointer
   double dir = (direction > 0 ? 1.0 : -1.0);
-  double step = function->isAlongX() ? static_cast<double>(range->xGridUnit())/numberOfStepsInGradUnit : (tMax-tMin)/k_definitionDomainDivisor;
+  double step = function->isAlongXorY() ? static_cast<double>(range->xGridUnit())/numberOfStepsInGradUnit : (tMax-tMin)/k_definitionDomainDivisor;
   double slopeMultiplicator = 1.0;
   if (function->canDisplayDerivative()) {
     // Use the local derivative to slow down the cursor's step if needed

@@ -124,23 +124,24 @@ public:
   /* Properties */
 
   // Wether the ContinuousFunction can have a custom domain of definition.
-  bool canHaveCustomDomain() const { return !hasVerticalLines() && equationType() == Poincare::ExpressionNode::Type::Equal; }
+  bool canHaveCustomDomain() const { return !isAlongY() && equationType() == Poincare::ExpressionNode::Type::Equal; }
   // Wether or not we can display the derivative
-  bool canDisplayDerivative() const { return isActiveInTable() && isAlongX(); }
+  bool canDisplayDerivative() const { return isActiveInTable() && isAlongXorY(); }
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool drawDottedCurve() const;
   // If the ContinuousFunction should be considered active in table
   bool isActiveInTable() const;
-  // If the ContinuousFunction has x for unknown symbol
-  bool isAlongX() const { return symbol() == ContinuousFunction::k_cartesianSymbol; }
+  // TODO : Update symbol() for ContinuousFunctions along y
+  // If the ContinuousFunction has x or y for unknown symbol
+  bool isAlongXorY() const { return symbol() == ContinuousFunction::k_cartesianSymbol; }
+  // If the ContinuousFunction has y for unknown symbol
+  bool isAlongY() const override { return plotType() == PlotType::VerticalLine || plotType() == PlotType::VerticalLines; }
   // If the ContinuousFunction is a conic
   bool isConic() const;
-  // If the ContinuousFunction is made of vertical lines
-  bool hasVerticalLines() const override { return plotType() == PlotType::VerticalLine || plotType() == PlotType::VerticalLines; }
   // If the ContinuousFunction is named ("f(x)=...")
   bool isNamed() const;
   /* If we can compute the ContinuousFunction intersections.
-   * hasVerticalLines must be false, but it is checked by "isActiveInTable()".
+   * isAlongY must be false, but it is checked by "isActiveInTable()".
    * TODO : Handle more types of curves ?
    * If intersections are implemented for verticalLines, isActiveInTable might
    * need a change. */
@@ -171,7 +172,7 @@ public:
     return m_model.originalEquation(record, symbol());
   }
   // Update plotType as well as tMin and tMax values.
-  void updateModel(Poincare::Context * context, bool wasAlongX);
+  void updateModel(Poincare::Context * context, bool wasAlongXorY);
 
   /* Evaluation */
 
@@ -261,7 +262,7 @@ private:
 
   /* Range */
 
-  // Return step computed from t range or NAN if isAlongX() is true.
+  // Return step computed from t range or NAN if isAlongXorY() is true.
   float rangeStep() const override;
 
   /* Expressions */

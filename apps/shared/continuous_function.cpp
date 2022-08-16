@@ -117,7 +117,7 @@ I18n::Message ContinuousFunction::plotTypeMessage() const {
       // TODO : Maybe a new message here
       I18n::Message::OtherType,     // CartesianAlongY displayed as Others
       I18n::Message::VerticalLineType,
-      I18n::Message::OtherType,     // VerticalLines displayed as Others
+      I18n::Message::OtherType,     // OtherAlongY displayed as Others
       I18n::Message::CircleType,
       I18n::Message::EllipseType,
       I18n::Message::ParabolaType,
@@ -636,17 +636,15 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
        * such as y = x. We extract the solution by solving in y or x. */
       int yDegree = m_expression.polynomialDegree(context, k_ordinateName);
       bool willBeAlongX = true;
-      if (yDegree <= 0 || yDegree > 2) {
+      if (yDegree < 1 || yDegree > 2) {
         int xDegree = m_expression.polynomialDegree(context, k_unknownName);
-        if (xDegree == 1 || (xDegree == 2 && yDegree == 0)) {
-          // Equation can be plotted along y. For example : x=cos(y) or x^2=1
-          willBeAlongX = false;
-        } else {
+        if (xDegree < 1 || xDegree > 2) {
           // Such degrees of equation in y and x are not handled.
-          // TODO : Add an OtherAlongY type to handle equations with xDegree=2
           m_expression = Undefined::Builder();
           return m_expression;
         }
+        // Equation can be plotted along y. For example : x=cos(y) or x^2=1
+        willBeAlongX = false;
       }
       /* Solve the equation in y (or x if not willBeAlongX)
        * Symbols are replaced to simplify roots. */
@@ -1019,7 +1017,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
   }
 
   bool willBeAlongX = (yDeg == 1) || (yDeg == 2);
-  bool willBeAlongY = !willBeAlongX && ((xDeg == 1) || (xDeg == 2 && yDeg == 0));
+  bool willBeAlongY = !willBeAlongX && ((xDeg == 1) || (xDeg == 2));
   if (!willBeAlongX && !willBeAlongY) {
     // Any equation with such a y and x degree won't be handled anyway.
     m_plotType = PlotType::Unhandled;
@@ -1079,14 +1077,14 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
     }
   }
 
-  if (yDeg == 0) {
-    assert(xDeg == 1 || xDeg == 2);
-    m_plotType = xDeg == 1 ? PlotType::VerticalLine : PlotType::VerticalLines;
-    return;
-  }
-
   if (!willBeAlongX) {
-    m_plotType = PlotType::CartesianAlongY;
+    if (xDeg == 2) {
+      m_plotType = PlotType::OtherAlongY;
+    } else if (yDeg == 0) {
+      m_plotType = PlotType::VerticalLine;
+    } else {
+      m_plotType = PlotType::CartesianAlongY;
+    }
     return;
   }
 

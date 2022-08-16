@@ -120,7 +120,7 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
 
 bool CalculationParameterController::shouldDisplayIntersection() const {
   /* Intersection is handled between all active functions having one subcurve,
-   * except Polar, Parametric and VerticalLines. */
+   * except Polar and Parametric. */
   ContinuousFunctionStore * store = App::app()->functionStore();
   /* Intersection row is displayed if there is at least two intersectable
    * functions. */

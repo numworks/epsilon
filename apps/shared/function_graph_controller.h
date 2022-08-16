@@ -52,7 +52,7 @@ protected:
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
   int numberOfCurves() const override;
   int numberOfSubCurves(int curveIndex) const override;
-  bool hasVerticalLines(int curveIndex) const override;
+  bool isAlongY(int curveIndex) const override;
   void initCursorParameters() override;
   bool cursorMatchesModel() override;
   CurveView * curveView() override;

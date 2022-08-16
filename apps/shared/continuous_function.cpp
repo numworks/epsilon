@@ -166,7 +166,7 @@ int ContinuousFunction::printValue(double cursorT, double cursorX, double cursor
   if (symbolValue) {
     /* With Vertical curves, cursorT != cursorX .
      * We need the value for symbol=... */
-    return PoincareHelpers::ConvertFloatToText<double>(isAlongX() ? cursorX : cursorT, buffer, bufferSize, precision);
+    return PoincareHelpers::ConvertFloatToText<double>(isAlongXorY() ? cursorX : cursorT, buffer, bufferSize, precision);
   }
 
   PlotType type = plotType();
@@ -182,14 +182,14 @@ int ContinuousFunction::printValue(double cursorT, double cursorX, double cursor
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Context * context) {
   setCache(nullptr);
-  bool wasAlongX = isAlongX();
+  bool wasAlongXorY = isAlongXorY();
   /* About to set the content, the symbol does not matter here yet. We don't use
    * ExpressionModelHandle::setContent implementation to avoid calling symbol()
    * and any unnecessary plot type update at this point. See comment in
    * ContinuousFunction::Model::buildExpressionFromText. */
   Ion::Storage::Record::ErrorStatus error = editableModel()->setContent(this, c, context, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
-    updateModel(context, wasAlongX);
+    updateModel(context, wasAlongXorY);
     error = m_model.renameRecordIfNeeded(this, c, context, symbol());
   }
   return error;
@@ -315,16 +315,16 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, dou
   }
 }
 
-void ContinuousFunction::updateModel(Context * context, bool wasAlongX) {
+void ContinuousFunction::updateModel(Context * context, bool wasAlongXorY) {
   setCache(nullptr);
   // Reset model's plot type. expressionReducedForAnalysis() will update plotType
   m_model.resetPlotType();
   expressionReducedForAnalysis(context);
   assert(m_model.plotType() != PlotType::Unknown);
-  if (wasAlongX != isAlongX() || !canHaveCustomDomain()) {
+  if (wasAlongXorY != isAlongXorY() || !canHaveCustomDomain()) {
     // The definition's domain must be reset.
-    setTMin(!isAlongX() ? 0.0 : -INFINITY);
-    setTMax(!isAlongX() ? 2.0 * Trigonometry::PiInAngleUnit(AngleUnit())
+    setTMin(!isAlongXorY() ? 0.0 : -INFINITY);
+    setTMax(!isAlongXorY() ? 2.0 * Trigonometry::PiInAngleUnit(AngleUnit())
                         : INFINITY);
   }
 }
@@ -350,7 +350,7 @@ int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferS
 
 double ContinuousFunction::approximateDerivative(double x, Context * context, int subCurveIndex) const {
   assert(canDisplayDerivative());
-  if (x < tMin() || x > tMax() || hasVerticalLines() || numberOfSubCurves() > 1) {
+  if (x < tMin() || x > tMax() || isAlongY() || numberOfSubCurves() > 1) {
     return NAN;
   }
   // Derivative is simplified once and for all
@@ -378,7 +378,7 @@ bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
 }
 
 void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Context * context) const {
-  if (!isAlongX()) {
+  if (!isAlongXorY()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), xMin, xMax, context, true);
     assert(numberOfSubCurves() == 1);
@@ -395,7 +395,7 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
     return;
   }
 
-  if (hasVerticalLines()) {
+  if (isAlongY()) {
     /* Vertical lines' x range are quite simple and could not be computed with
      * InterestingRangesForDisplay. We use curve(s) x-position(s). */
     *xMin = FLT_MAX;
@@ -454,7 +454,7 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
 }
 
 void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Context * context, bool optimizeRange) const {
-  if (!isAlongX()) {
+  if (!isAlongXorY()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), yMin, yMax, context, false);
     assert(numberOfSubCurves() == 1);
@@ -464,7 +464,7 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForc
   *yMin = NAN;
   *yMax = NAN;
 
-  if (basedOnCostlyAlgorithms(context) || hasVerticalLines()) {
+  if (basedOnCostlyAlgorithms(context) || isAlongY()) {
     /* The function makes use of some costly algorithms, such as integration or
      * sequences, and cannot be computed in a timely manner.
      * Vertical Lines have no interesting y ranges. */
@@ -538,7 +538,7 @@ Coordinate2D<double> ContinuousFunction::nextRootFrom(double start, double max, 
 }
 
 Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, double max, Context * context, Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin, double eDomainMax) const {
-  assert(isAlongX());
+  assert(isAlongXorY());
   double tmin = std::max<double>(tMin(), eDomainMin), tmax = std::min<double>(tMax(), eDomainMax);
   start = start < tmin ? tmin : start > tmax ? tmax : start;
   max = max < tmin ? tmin : max > tmax ? tmax : max;
@@ -549,7 +549,7 @@ Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, doub
 }
 
 Expression ContinuousFunction::sumBetweenBounds(double start, double end, Context * context) const {
-  assert(isAlongX());
+  assert(isAlongXorY());
   start = std::max<double>(start, tMin());
   end = std::min<double>(end, tMax());
   return Integral::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknown), Float<double>::Builder(start), Float<double>::Builder(end)); // Integral takes ownership of args
@@ -561,11 +561,11 @@ Expression ContinuousFunction::sumBetweenBounds(double start, double end, Contex
 /* ContinuousFunction - Private */
 
 float ContinuousFunction::rangeStep() const {
-  return isAlongX() ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints;
+  return isAlongXorY() ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints;
 }
 
 Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, double max, Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const {
-  assert(isAlongX());
+  assert(isAlongXorY());
   double tmin = tMin(), tmax = tMax();
   start = start < tmin ? tmin : start > tmax ? tmax : start;
   max = max < tmin ? tmin : max > tmax ? tmax : max;
@@ -589,7 +589,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Context * 
 template<typename T>
 Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context * context, int subCurveIndex) const {
   if (t < tMin() || t > tMax()) {
-    return Coordinate2D<T>(isAlongX() ? t : NAN, NAN);
+    return Coordinate2D<T>(isAlongXorY() ? t : NAN, NAN);
   }
   Expression e = expressionReduced(context);
   PlotType type = plotType();

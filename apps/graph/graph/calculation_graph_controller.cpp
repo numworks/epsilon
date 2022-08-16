@@ -49,7 +49,7 @@ void CalculationGraphController::viewWillAppear() {
     m_graphView->setBannerView(&m_defaultBannerView);
   } else {
     m_isActive = true;
-    assert(App::app()->functionStore()->modelForRecord(m_record)->isAlongX());
+    assert(App::app()->functionStore()->modelForRecord(m_record)->isAlongXorY());
     m_cursor->moveTo(pointOfInterest.x1(), pointOfInterest.x1(), pointOfInterest.x2());
     m_bannerView->setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews);
     reloadBannerView();
@@ -84,7 +84,7 @@ bool CalculationGraphController::moveCursorHorizontally(int direction, int scrol
   if (std::isnan(newPointOfInterest.x1())) {
     return false;
   }
-  assert(App::app()->functionStore()->modelForRecord(m_record)->isAlongX());
+  assert(App::app()->functionStore()->modelForRecord(m_record)->isAlongXorY());
   m_cursor->moveTo(newPointOfInterest.x1(), newPointOfInterest.x1(), newPointOfInterest.x2());
   return true;
 }

@@ -177,8 +177,8 @@ int FunctionGraphController::numberOfSubCurves(int curveIndex) const {
   return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->numberOfSubCurves();
 }
 
-bool FunctionGraphController::hasVerticalLines(int curveIndex) const {
-  return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->hasVerticalLines();
+bool FunctionGraphController::isAlongY(int curveIndex) const {
+  return functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(curveIndex))->isAlongY();
 }
 
 int FunctionGraphController::numberOfCurves() const {

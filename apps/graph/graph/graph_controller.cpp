@@ -112,7 +112,7 @@ int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedC
 
 double GraphController::defaultCursorT(Ion::Storage::Record record) {
   ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
-  if (function->isAlongX()) {
+  if (function->isAlongXorY()) {
     return FunctionGraphController::defaultCursorT(record);
   }
   return function->tMin();
@@ -133,7 +133,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
       continue;
     }
     ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(currentRecord);
-    assert(f->isAlongX());
+    assert(f->isAlongXorY());
     /* Select the closest horizontal curve, then the closest vertically, then
      * the lowest curve index. */
     double currentTMin = f->tMin();

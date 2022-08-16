@@ -227,7 +227,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
    * rotated by 90 degrees by swapping x and y when dealing with them. */
   double x = m_cursor->x();
   double y = m_cursor->y();
-  if (hasVerticalLines(currentCurveIndex)) {
+  if (isAlongY(currentCurveIndex)) {
     double temp = x;
     x = y;
     y = temp;
@@ -248,7 +248,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
       }
       Poincare::Coordinate2D<double> newXY = xyValues(i, x, context, iSecondary);
       double newY = newXY.x2();
-      if (hasVerticalLines(i)) {
+      if (isAlongY(i)) {
         newY = newXY.x1();
       }
       if (!suitableYValue(newY)) {

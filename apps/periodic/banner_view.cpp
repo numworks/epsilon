@@ -1,5 +1,6 @@
 #include "banner_view.h"
 #include "app.h"
+#include <poincare/serialization_helper.h>
 #include <assert.h>
 
 namespace Periodic {
@@ -91,6 +92,7 @@ void BannerView::layoutSubviews(bool force) {
       m_textView.appendText(I18n::translate(I18n::Message::ColonConvention));
       char buffer[Escher::BufferTextView::k_maxNumberOfChar];
       dataSource->field()->getLayout(z).serializeForParsing(buffer, Escher::BufferTextView::k_maxNumberOfChar);
+      Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer);
       m_textView.appendText(buffer);
     }
   }

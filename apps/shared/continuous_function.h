@@ -63,7 +63,7 @@ public:
     CartesianAlongY,
     VerticalLine,
     // All previous types + Polar and Parametric plot with only one subcurve
-    VerticalLines,
+    OtherAlongY,
     Circle,
     Ellipse,
     Parabola,
@@ -139,7 +139,7 @@ public:
   // If the ContinuousFunction has x or y for unknown symbol
   bool isAlongXorY() const { return symbol() == ContinuousFunction::k_cartesianSymbol; }
   // If the ContinuousFunction has y for unknown symbol
-  bool isAlongY() const override { return plotType() == PlotType::VerticalLine || plotType() == PlotType::VerticalLines || plotType() == PlotType::CartesianAlongY; }
+  bool isAlongY() const override { return plotType() == PlotType::VerticalLine || plotType() == PlotType::OtherAlongY || plotType() == PlotType::CartesianAlongY; }
   // If the ContinuousFunction is a conic
   bool isConic() const;
   // If the ContinuousFunction is named ("f(x)=...")

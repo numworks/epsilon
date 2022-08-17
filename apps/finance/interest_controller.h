@@ -10,7 +10,7 @@
 #include <escher/text_field_delegate.h>
 #include <escher/view_controller.h>
 #include "data.h"
-#include "finance_result_controller.h"
+#include "result_controller.h"
 #include "two_messages_popup_data_source.h"
 
 namespace Finance {
@@ -18,7 +18,7 @@ namespace Finance {
 class InterestController : public Shared::FloatParameterController<double>,
                            public Escher::DropdownCallback {
 public:
-  InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, FinanceResultController * financeResultController, InterestData * data);
+  InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, ResultController * resultController, InterestData * data);
   const char * title() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -40,7 +40,7 @@ private:
   Escher::HighlightCell * reusableParameterCell(int i, int type) override;
   double parameterAtIndex(int index) override { return m_data->getValue(interestParamaterAtIndex(index)); }
   bool setParameterAtIndex(int parameterIndex, double f) override;
-  void buttonAction() override { stackOpenPage(m_financeResultController); }
+  void buttonAction() override { stackOpenPage(m_resultController); }
 
   // Dropdown cell is right after all double parameters but the unknown one
   int indexOfDropdown() const { return m_data->numberOfDoubleValues() - 1; }
@@ -58,7 +58,7 @@ private:
   constexpr static int k_titleBufferSize = 1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
   char m_titleBuffer[k_titleBufferSize];
 
-  FinanceResultController * m_financeResultController;
+  ResultController * m_resultController;
   InterestData * m_data;
 };
 

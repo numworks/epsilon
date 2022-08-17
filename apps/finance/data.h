@@ -138,17 +138,17 @@ public:
   void setValue(uint8_t param, double value) override;
 };
 
-union FinanceData {
+union Data {
 public:
   // By default, use a simple interest data model
-  FinanceData() { new (&m_simpleInterestData) SimpleInterestData(); }
+  Data() { new (&m_simpleInterestData) SimpleInterestData(); }
   // Destroy current data model, using InterestData's virtual destructor
-  ~FinanceData() { interestData()->~InterestData(); }
+  ~Data() { interestData()->~InterestData(); }
   // Delete the implicit copy and move constructors and assignments
-  FinanceData(const FinanceData& other) = delete;
-  FinanceData(FinanceData&& other) = delete;
-  FinanceData& operator=(const FinanceData& other) = delete;
-  FinanceData& operator=(FinanceData&& other) = delete;
+  Data(const Data& other) = delete;
+  Data(Data&& other) = delete;
+  Data& operator=(const Data& other) = delete;
+  Data& operator=(Data&& other) = delete;
 
   InterestData * interestData() {
     return reinterpret_cast<InterestData *>(this);

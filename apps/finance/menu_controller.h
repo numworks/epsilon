@@ -1,5 +1,5 @@
-#ifndef FINANCE_FINANCE_MENU_CONTROLLER_H
-#define FINANCE_FINANCE_MENU_CONTROLLER_H
+#ifndef FINANCE_MENU_CONTROLLER_H
+#define FINANCE_MENU_CONTROLLER_H
 
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/selectable_list_view_controller.h>
@@ -13,9 +13,9 @@ namespace Finance {
 
 constexpr int k_numberOfFinanceCells = 2;
 
-class FinanceMenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells, Escher::RegularListViewDataSource> {
+class MenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells, Escher::RegularListViewDataSource> {
 public:
-  FinanceMenuController(Escher::StackViewController * parentResponder,
+  MenuController(Escher::StackViewController * parentResponder,
                     InterestMenuController * interestMenuController,
                     InterestData * interestData);
   void didBecomeFirstResponder() override;
@@ -31,4 +31,4 @@ private:
 
 }  // namespace Finance
 
-#endif /* FINANCE_FINANCE_MENU_CONTROLLER_H */
+#endif /* FINANCE_MENU_CONTROLLER_H */

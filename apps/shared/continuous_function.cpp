@@ -114,7 +114,6 @@ I18n::Message ContinuousFunction::plotTypeMessage() const {
       I18n::Message::HyperbolaType, // CartesianHyperbola displayed as Hyperbola
       I18n::Message::LineType,
       I18n::Message::HorizontalLineType,
-      // TODO : Maybe a new message here
       I18n::Message::OtherType,     // CartesianAlongY displayed as Others
       I18n::Message::VerticalLineType,
       I18n::Message::OtherType,     // OtherAlongY displayed as Others

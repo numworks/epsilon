@@ -33,15 +33,15 @@ private:
   constexpr static int k_indexOfCartesianModel = k_indexOfEmptyModel + 1;
   constexpr static int k_indexOfImplicitModel = k_indexOfCartesianModel + 1;
   constexpr static int k_indexOfInequationModel = k_indexOfImplicitModel + 1;
-  constexpr static int k_indexOfConicModel = k_indexOfInequationModel + 1;
+  constexpr static int k_indexOfInverseModel = k_indexOfInequationModel + 1;
+  constexpr static int k_indexOfConicModel = k_indexOfInverseModel + 1;
   constexpr static int k_indexOfParametricModel = k_indexOfConicModel + 1;
   constexpr static int k_indexOfPolarModel = k_indexOfParametricModel + 1;
   static_assert(k_indexOfEmptyModel == 0, "Empty model must be first.");
-  static_assert(k_indexOfInequationModel < k_indexOfConicModel, "These models are assumed to be in this order.");
 
   constexpr static int k_numberOfModels = k_indexOfPolarModel + 1;
   constexpr static const char * k_models[k_numberOfModels] = {
-    "", "f(x)=x", "x+y+1=0", "x+y≤0", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "f(θ)=cos(θ)"
+    "", "f(x)=x", "x+y+1=0", "x+y≤0", "x=cos(y)", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "f(θ)=cos(θ)"
   };
   constexpr static const char * k_implicitModelWhenForbidden = "y=x-1";
   constexpr static const char * k_inequationModelWhenForbidden = "y≤x";
@@ -49,7 +49,7 @@ private:
   // Expression cells
   constexpr static int k_numberOfExpressionCells = k_numberOfModels-1;
   constexpr static I18n::Message k_modelDescriptions[k_numberOfExpressionCells] = {
-    I18n::Message::CartesianNamedTemplate, I18n::Message::LineType, I18n::Message::InequationType, I18n::Message::ConicNamedTemplate, I18n::Message::ParametricType, I18n::Message::PolarType
+    I18n::Message::CartesianNamedTemplate, I18n::Message::LineType, I18n::Message::InequationType, I18n::Message::InverseType, I18n::Message::ConicNamedTemplate, I18n::Message::ParametricType, I18n::Message::PolarType
   };
   Escher::StackViewController * stackController() const;
   // Some models may be hidden. return the model index from a visible row index

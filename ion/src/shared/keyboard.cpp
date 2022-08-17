@@ -24,9 +24,10 @@ void keyboardWasScanned(State state) {
    * The states are pushed on a queue and popped one at a time.
    * If the device is stalling, we do not queue the event to avoid a delayed
    * reaction. */
-  if (state != sState) {
+  Ion::Keyboard::Queue * queue = Ion::Keyboard::Queue::sharedQueue();
+  if (state != sState && !queue->isFull()) {
     Events::setPendingKeyboardStateIfPreemtive(state);
-    Ion::Keyboard::Queue::sharedQueue()->push(state);
+    queue->push(state);
     sState = state;
   }
 }

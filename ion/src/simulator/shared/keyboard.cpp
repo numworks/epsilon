@@ -97,12 +97,19 @@ namespace Ion {
 namespace Simulator {
 namespace Keyboard {
 
+static void keyChanged(Ion::Keyboard::State s) {
+  Queue * queue = Queue::sharedQueue();
+  if (!queue->isFull()) {
+    queue->push(s);
+  }
+}
+
 void keyDown(Ion::Keyboard::Key k) {
-  Queue::sharedQueue()->push(State(k));
+  keyChanged(State(k));
 }
 
 void keyUp(Ion::Keyboard::Key k) {
-  Queue::sharedQueue()->push(State(0));
+  keyChanged(State(0));
 }
 
 bool scanHandlesSDLKey(SDL_Scancode key) {

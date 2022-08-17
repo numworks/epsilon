@@ -37,7 +37,6 @@ public:
   void editExpression(Ion::Events::Event event) override { return Shared::ExpressionModelListController::editExpression(event); }
   bool editSelectedRecordWithText(const char * text) override { return Shared::ExpressionModelListController::editSelectedRecordWithText(text); }
   /* ViewController */
-  const char * title() override { return I18n::translate(I18n::Message::EquationsSubAppTitle); }
   Escher::View * view() override { return &m_equationListView; }
   TELEMETRY_ID("List");
   /* Text/Layout Field Delegate */

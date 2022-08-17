@@ -1,10 +1,10 @@
-#ifndef SOLVER_TWO_MESSAGE_POPUP_DATA_SOURCE_H
-#define SOLVER_TWO_MESSAGE_POPUP_DATA_SOURCE_H
+#ifndef FINANCE_TWO_MESSAGE_POPUP_DATA_SOURCE_H
+#define FINANCE_TWO_MESSAGE_POPUP_DATA_SOURCE_H
 
 #include <escher/list_view_data_source.h>
 #include <escher/buffer_text_highlight_cell.h>
 
-namespace Solver {
+namespace Finance {
 
 class TwoMessagesPopupDataSource : public Escher::ListViewDataSource {
 public:
@@ -34,6 +34,6 @@ private:
   Escher::BufferTextHighlightCell m_cells[k_numberOfRows];
 };
 
-}  // namespace Solver
+}  // namespace Finance
 
-#endif /* SOLVER_TWO_MESSAGE_POPUP_DATA_SOURCE_H */
+#endif /* FINANCE_TWO_MESSAGE_POPUP_DATA_SOURCE_H */

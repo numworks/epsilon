@@ -3,7 +3,7 @@
 #include <escher/container.h>
 #include <assert.h>
 
-using namespace Solver;
+using namespace Finance;
 
 FinanceMenuController::FinanceMenuController(Escher::StackViewController * parentResponder, InterestMenuController * interestMenuController, InterestData * interestData) :
       Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells, Escher::RegularListViewDataSource>(parentResponder),
@@ -14,10 +14,6 @@ FinanceMenuController::FinanceMenuController(Escher::StackViewController * paren
   cellAtIndex(k_indexOfSimpleInterest)->setSubtitle(I18n::Message::SimpleInterestDescription);
   cellAtIndex(k_indexOfCompoundInterest)->setMessage(I18n::Message::CompoundInterest);
   cellAtIndex(k_indexOfCompoundInterest)->setSubtitle(I18n::Message::CompoundInterestDescription);
-}
-
-const char * FinanceMenuController::title() {
-  return I18n::translate(I18n::Message::FinanceSubAppTitle);
 }
 
 void FinanceMenuController::didBecomeFirstResponder() {
@@ -35,5 +31,5 @@ bool FinanceMenuController::handleEvent(Ion::Events::Event event) {
     stackOpenPage(m_interestMenuController);
     return true;
   }
-  return popFromStackViewControllerOnLeftEvent(event);
+  return false;
 }

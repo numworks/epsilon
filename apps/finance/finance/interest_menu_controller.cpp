@@ -3,7 +3,7 @@
 #include <escher/container.h>
 #include <assert.h>
 
-using namespace Solver;
+using namespace Finance;
 
 InterestMenuController::InterestMenuController(Escher::StackViewController * parentResponder, InterestController * interestController, InterestData * data) :
       Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfInterestCells, Escher::MemoizedListViewDataSource>(parentResponder, &m_contentView),

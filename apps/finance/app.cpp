@@ -8,14 +8,6 @@ namespace Finance {
 
 // App::Descriptor
 
-I18n::Message App::Descriptor::name() const {
-  return I18n::Message::FinanceApp;
-}
-
-I18n::Message App::Descriptor::upperName() const {
-  return I18n::Message::FinanceAppCapital;
-}
-
 const Escher::Image * App::Descriptor::icon() const {
   // TODO
   return ImageStore::FinanceIconTemp;
@@ -32,18 +24,15 @@ const App::Descriptor * App::Snapshot::descriptor() const {
   return &s_descriptor;
 }
 
-// TODO Remove
-// App::PlaceholderController::ContentView
-
-void App::PlaceholderController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, Escher::Palette::WallScreen);
-  ctx->drawString("Under construction", rect.topLeft().translatedBy(KDPoint(20,20)), KDFont::Size::Large, KDColorBlack, Escher::Palette::WallScreen);
-}
-
 // App
 App::App(Snapshot * snapshot) :
-  Shared::InputEventHandlerDelegateApp(snapshot, &m_controller),
-  m_controller(&m_modalViewController)
+  Shared::InputEventHandlerDelegateApp(snapshot, &m_inputViewController),
+  m_financeResultController(&m_stackViewController, m_financeData.interestData()),
+  m_interestController(&m_stackViewController, &m_inputViewController, &m_financeResultController, m_financeData.interestData()),
+  m_interestMenuController(&m_stackViewController, &m_interestController, m_financeData.interestData()),
+  m_financeMenuController(&m_stackViewController, &m_interestMenuController, m_financeData.interestData()),
+  m_stackViewController(&m_inputViewController, &m_financeMenuController, Escher::StackViewController::Style::GrayGradation),
+  m_inputViewController(&m_modalViewController, &m_stackViewController, this, &m_interestController, nullptr)
 {}
 
 }

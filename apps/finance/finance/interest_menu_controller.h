@@ -1,5 +1,5 @@
-#ifndef SOLVER_SIMPLE_INTEREST_MENU_CONTROLLER_H
-#define SOLVER_SIMPLE_INTEREST_MENU_CONTROLLER_H
+#ifndef FINANCE_SIMPLE_INTEREST_MENU_CONTROLLER_H
+#define FINANCE_SIMPLE_INTEREST_MENU_CONTROLLER_H
 
 #include <escher/memoized_list_view_data_source.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
@@ -12,7 +12,7 @@
 #include "data.h"
 #include "interest_controller.h"
 
-namespace Solver {
+namespace Finance {
 
 constexpr int k_numberOfInterestCells = InterestData::k_maxNumberOfUnknowns;
 
@@ -35,6 +35,6 @@ private:
   InterestData * m_data;
 };
 
-}  // namespace Solver
+}  // namespace Finance
 
-#endif /* SOLVER_SIMPLE_INTEREST_MENU_CONTROLLER_H */
+#endif /* FINANCE_SIMPLE_INTEREST_MENU_CONTROLLER_H */

@@ -46,9 +46,12 @@ QUIZ_CASE(graph_function_plot_type) {
     assert_check_function_properties("x=1", ContinuousFunction::PlotType::VerticalLine);
     assert_check_function_properties("0=x", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::VerticalLine);
     assert_check_function_properties("x=1-x", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::VerticalLine);
+    assert_check_function_properties("0=x+cos(y)+y^2", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::CartesianAlongY);
+    assert_check_function_properties("y^3=x", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::CartesianAlongY);
     assert_check_function_properties("0=x^2", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::OtherAlongY);
     assert_check_function_properties("1=x^2+x", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::OtherAlongY);
     assert_check_function_properties("1+x^2=0", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::OtherAlongY);
+    assert_check_function_properties("x+x^2=cos(y)", noImplicitPlot ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::OtherAlongY);
     assert_check_function_properties("x^2<0", (noInequations || noImplicitPlot) ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::OtherAlongY, ExpressionNode::Type::Inferior, ContinuousFunction::AreaType::Inside);
     assert_check_function_properties("y>log(x)", noInequations ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Cartesian, ExpressionNode::Type::Superior, ContinuousFunction::AreaType::Above);
     assert_check_function_properties("2-y>log(x)", (noInequations || noImplicitPlot) ? ContinuousFunction::PlotType::Disabled : ContinuousFunction::PlotType::Cartesian, ExpressionNode::Type::Inferior, ContinuousFunction::AreaType::Below);
@@ -73,7 +76,6 @@ QUIZ_CASE(graph_function_plot_type) {
     assert_check_function_properties("f(t)=[[cos(t)][t]]*log(0)", ContinuousFunction::PlotType::UndefinedParametric);
     assert_check_function_properties("f(θ)=θ+[[0][0]]", ContinuousFunction::PlotType::UndefinedPolar);
     assert_check_function_properties("3=2", ContinuousFunction::PlotType::Unhandled);
-    assert_check_function_properties("y^3=x", ContinuousFunction::PlotType::Unhandled);
     assert_check_function_properties("x*y^2>1", ContinuousFunction::PlotType::Unhandled);
     assert_check_function_properties("2-y^2>log(x)", ContinuousFunction::PlotType::Unhandled);
     assert_check_function_properties("x*y^2=x", ContinuousFunction::PlotType::Unhandled);

@@ -16,35 +16,22 @@ Expressions there are just a memory 'dump' of the sequential trees. There are ne
 Expressions have a temporary lifetime. They're referred to by a id and they're deleted when the cache is full or when the tree sandbox needs more space.
 We still have to decide which cache algorithm we choose: LRU, ref-counter, FIFO, LFU.
 
-Because they're lifetime is unknown, we use FrozenExpression to interact with them. FrozenExpression is the combination of a potentially cached expression id and a function to rebuild the expression from some data if the expression has been removed from cache.
+Because they're lifetime is unknown, we use CachedTree to interact with them. CachedTree is the combination of a potentially cached tree id and a function to rebuild the tree from some data if the tree has been removed from cache.
 
-Another decision to make is who is responsible for emptying the cache and restarting the interrupted process.
+#### Tree Cache invalidation
 
-Attempt 1:
-When trying to push on sandbox the block that overflows, the sandbox automatically empty the cache, copy the whole sandbox upstream and repush the block.
---> This means that tree block addresses might become invalid without any notice in tree-manipulating function...
-
-Attempt 2:
-When trying to push the overflowing block on the sandbox, it raises an exception. All entry points of Poincaré are wrapted by an handler doing:
-void cacheHandler(action) {
-  if (setCheckpoint) {
-    action()
-  } else {
-    cache->removeLastUsedTrees();
-    action();
-  }
-}
+Any tree manipulation is done through the TreeCache::execute function which sets an Exception Checkpoint before starting the tree manipulation. TreeSandbox functions that are likely to overflow the pool can raise an exception with will longjmp to this checkpoint.
 
 ### TreeSandbox
 
-The sandbox contain the expression that is being edited.
+The sandbox contain the tree that is being edited.
 
-At the end of a procedure, only one expression exists on the sandbox but within a procedure editing the tree, the sandbox can host several trees.
+At the end of a procedure, only one single tree exists on the sandbox but within a procedure editing the tree, the sandbox can host several trees.
 
 
 ## Tree representation
 
-Expressions (layouts) are represented by sequentially compact blocks of 1 byte.
+Trees are represented by sequentially compact blocks of 1 byte.
 
 ### Blocks
 
@@ -73,7 +60,7 @@ We don't want to make block virtual to keep their size < 1 byte. We reimplement 
 
 ## Interruption
 
-Checkpoints outside of a expression/layout edition are easily maintained thanks to Frozen expressions. We can also easily add Checkpoints in the sandbox but I'm not even sure this will be necessary.
+Checkpoints outside of a tree edition are easily maintained thanks to Cached trees. We can also easily add Checkpoints in the sandbox but I'm not even sure this will be necessary.
 
 ## QUESTIONS
 
@@ -122,4 +109,22 @@ Comparison:
 Optional optimizations:
 - Align float and double by letting empty blocks
 - Create special type for common integer INT_ONE or INT_SHORT
+
+Cache invalidation:
+
+Attempt 1:
+When trying to push on sandbox the block that overflows, the sandbox automatically empty the cache, copy the whole sandbox upstream and repush the block.
+--> This means that tree block addresses might become invalid without any notice in tree-manipulating function...
+
+Attempt 2:
+When trying to push the overflowing block on the sandbox, it raises an exception. All entry points of Poincaré are wrapted by an handler doing:
+void cacheHandler(action) {
+  if (setCheckpoint) {
+    action()
+  } else {
+    cache->removeLastUsedTrees();
+    action();
+  }
+}
+
 

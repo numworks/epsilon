@@ -105,8 +105,8 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
 
 int FunctionModelsParameterController::numberOfRows() const {
   return 1 + k_numberOfExpressionCells
-         - ExamModeConfiguration::implicitPlotsAreForbidden()
-         - ExamModeConfiguration::inequalityGraphingIsForbidden();
+         - ExamModeConfiguration::inequalityGraphingIsForbidden()
+         - 2 * ExamModeConfiguration::implicitPlotsAreForbidden();
 };
 
 KDCoordinate FunctionModelsParameterController::nonMemoizedRowHeight(int j) {
@@ -148,25 +148,23 @@ int FunctionModelsParameterController::reusableCellCount(int type) {
 }
 
 int FunctionModelsParameterController::getModelIndex(int row) const {
+  static_assert(k_indexOfInverseModel > k_indexOfInequationModel && k_indexOfConicModel > k_indexOfInequationModel, "Method optimized with model order must be changed.");
   if (row < k_indexOfInequationModel) {
+    // All models before the inequation model are always available
     return row;
   }
-  if (row == k_indexOfInequationModel && !ExamModeConfiguration::inequalityGraphingIsForbidden()) {
-    return row;
-  }
+  // Skip k_indexOfInequationModel if forbidden
   row += ExamModeConfiguration::inequalityGraphingIsForbidden();
-  if (row < k_indexOfConicModel) {
+  if (row <= k_indexOfInequationModel) {
     return row;
   }
-  if (row == k_indexOfConicModel && !ExamModeConfiguration::implicitPlotsAreForbidden()) {
-    return row;
-  }
-  row += ExamModeConfiguration::implicitPlotsAreForbidden();
+  // Skip k_indexOfInverseModel and k_indexOfConicModel if forbidden
+  row += 2 * ExamModeConfiguration::implicitPlotsAreForbidden();
   return row;
 }
 
 const char * FunctionModelsParameterController::modelAtIndex(int index) const {
-  assert(index >=0 && index < k_numberOfModels);
+  assert(index >= 0 && index < k_numberOfModels);
   if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
     if (index == k_indexOfImplicitModel) {
       return k_implicitModelWhenForbidden;

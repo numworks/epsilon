@@ -106,9 +106,9 @@ I18n::Message ContinuousFunction::plotTypeMessage() const {
     // Whichever the plot type, InequationType describes the function
     return I18n::Message::InequationType;
   }
-  const size_t plotTypeIndex = static_cast<size_t>(type);
-  assert(plotTypeIndex < k_numberOfPlotTypes);
-  constexpr I18n::Message k_categories[k_numberOfPlotTypes] = {
+  const uint8_t plotTypeIndex = static_cast<uint8_t>(type);
+  assert(plotTypeIndex < static_cast<uint8_t>(PlotType::NumberOfPlotTypes));
+  constexpr I18n::Message k_categories[static_cast<uint8_t>(PlotType::NumberOfPlotTypes)] = {
       I18n::Message::CartesianType,
       I18n::Message::ParabolaType,  // CartesianParabola displayed as Parabola
       I18n::Message::HyperbolaType, // CartesianHyperbola displayed as Hyperbola

@@ -9,11 +9,13 @@ inline void print() {
   TreeCache * cache = TreeCache::sharedCache();
   TreeSandbox * sandbox = cache->sandbox();
 
+  std::cout << "\n\n\n\nxxxxxxxxxxx MEMORY DUMP xxxxxxxxxxxx" << std::endl;
   std::cout << "\n========= CACHE =========" << std::endl;
   cache->treeLog(std::cout);
 
   std::cout << "\n========= SANDBOX =========" << std::endl;
   sandbox->treeLog(std::cout);
+  std::cout << "\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" << std::endl;
 }
 
 inline void intermediaryPrint() {

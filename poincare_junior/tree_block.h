@@ -55,7 +55,7 @@ protected:
 
 class TypeTreeBlock : public TreeBlock {
 public:
-  constexpr TypeTreeBlock(BlockType content) : TreeBlock(static_cast<uint8_t>(content)) {}
+  constexpr TypeTreeBlock(BlockType content = BlockType::Integer) : TreeBlock(static_cast<uint8_t>(content)) {}
 
 #if POINCARE_TREE_LOG
   void log(std::ostream & stream, bool recursive = true, int indentation = 0, bool verbose = true);

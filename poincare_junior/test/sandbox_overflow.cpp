@@ -11,7 +11,6 @@ bool createTree() {
   Integer::PushNode(2);
   Integer::PushNode(3);
   Integer::PushNode(4);
-
   return true;
 }
 

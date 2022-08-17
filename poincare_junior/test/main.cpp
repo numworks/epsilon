@@ -3,6 +3,7 @@
 
 int elementaryTreeManipulation(TreeCache * cache, TreeSandbox * sandbox);
 int testOverflowTreeSandbox(TreeCache * cache);
+void playWithCachedTree();
 
 int main() {
   TreeCache * cache = TreeCache::sharedCache();
@@ -16,11 +17,19 @@ int main() {
   testOverflowTreeSandbox(cache);
   cache->reset(false);
 
+  std::cout << "\n\n TEST CACHED TREE \n" << std::endl;
+  playWithCachedTree();
+  cache->reset(false);
+
   intermediaryPrint();
 }
 
 //StackPointer given to all arguments indicating where to play: why? The sandbox remembers its end?
 #if 0
+
+Tests to implement:
+Fill the cache of with too many identifiers
+
 
 projection to internal expression (remove ln, /, -...)
 basic_simplication

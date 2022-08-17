@@ -14,8 +14,8 @@ CachedTree::CachedTree(Initializer initializer) :
 
 CachedTree::CachedTree(InitializerFromTree initializer, TypeTreeBlock * tree) :
   CachedTree(
-    [](void * tree, void * subInitializer) {
-      TypeTreeBlock * treeOnSandbox = TreeSandbox::sharedSandbox()->copyTreeFromAddress(static_cast<TypeTreeBlock *>(tree));
+    [](void * subInitializer, void * data) {
+      TypeTreeBlock * treeOnSandbox = TreeSandbox::sharedSandbox()->copyTreeFromAddress(static_cast<TypeTreeBlock *>(data));
       return (reinterpret_cast<InitializerFromTree>(subInitializer))(treeOnSandbox);
     },
     reinterpret_cast<void *>(initializer),

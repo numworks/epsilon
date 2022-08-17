@@ -22,4 +22,4 @@ tests_src += $(addprefix apps/finance/test/,\
   finance.cpp \
 )
 
-$(eval $(call depends_on_image,apps/finance/app.cpp,apps/finance/finance_icon_temp.png))
+$(eval $(call depends_on_image,apps/finance/app.cpp,apps/finance/finance_icon.png))

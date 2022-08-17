@@ -1,6 +1,6 @@
 #include "app.h"
 #include "../apps_container.h"
-#include "finance_icon_temp.h"
+#include "finance_icon.h"
 #include <apps/i18n.h>
 #include <escher/palette.h>
 
@@ -10,7 +10,7 @@ namespace Finance {
 
 const Escher::Image * App::Descriptor::icon() const {
   // TODO
-  return ImageStore::FinanceIconTemp;
+  return ImageStore::FinanceIcon;
 }
 
 // App::Snapshot

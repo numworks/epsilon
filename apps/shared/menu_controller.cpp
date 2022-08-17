@@ -53,9 +53,8 @@ void MenuController::didBecomeFirstResponder() {
 bool MenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     int selRow = selectedRow();
-    if (m_delegate->selectSubApp(selRow)) {
-      stackOpenPage(m_controllers[selRow]);
-    }
+    m_delegate->selectSubApp(selRow);
+    stackOpenPage(m_controllers[selRow]);
     return true;
   }
   return false;

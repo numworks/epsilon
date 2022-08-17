@@ -82,7 +82,7 @@ public:
   TELEMETRY_ID("Inference");
 
   // Shared::MenuControllerDelegate
-  bool selectSubApp(int subAppIndex) override;
+  void selectSubApp(int subAppIndex) override;
   int selectedSubApp() const override { return static_cast<int>(snapshot()->inference()->subApp()); }
   int numberOfSubApps() const override { return static_cast<int>(Inference::SubApp::NumberOfSubApps); }
 

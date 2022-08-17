@@ -20,8 +20,8 @@ public:
   int execute(ActionWithContext action, void * subAction, void * data);
 
   constexpr static int k_maxNumberOfBlocks = 512;
-private:
   constexpr static int k_maxNumberOfCachedTrees = 32;
+private:
 
   TreeCache();
   TypeTreeBlock * firstBlock() override { return m_nextIdentifier == 0 ? nullptr : static_cast<TypeTreeBlock *>(&m_pool[0]); }

@@ -18,11 +18,11 @@ TypeTreeBlock * TreeCache::treeForIdentifier(int id) {
 }
 
 int TreeCache::storeLastTree() {
-  assert(m_nextIdentifier < k_maxNumberOfCachedTrees);
+  assert(m_nextIdentifier <= k_maxNumberOfCachedTrees);
   if (m_sandbox.numberOfBlocks() == 0) {
     return -1;
   }
-  if (m_nextIdentifier >= k_maxNumberOfBlocks) {
+  if (m_nextIdentifier >= k_maxNumberOfCachedTrees) {
     reset(true);
   }
   TypeTreeBlock * block = lastBlock();

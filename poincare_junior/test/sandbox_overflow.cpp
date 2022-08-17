@@ -4,7 +4,6 @@
 using namespace Poincare;
 
 bool createTree() {
-  std::cout << "\n---------------- Store (1 + 2) * 3 * 4 in cache ----------------" << std::endl;
   Multiplication::PushNode(3);
   Addition::PushNode(2);
   Integer::PushNode(1);
@@ -14,14 +13,18 @@ bool createTree() {
   return true;
 }
 
-void createTreeInCache() {
-  CachedTree tree(createTree);
+bool createSmallTree() {
+  Integer::PushNode(1);
+  return true;
+}
+
+void createTreeInCache(CachedTree::Initializer initializer) {
+  CachedTree tree(initializer);
   // Force instantiation in cache
   tree.send(
     [](TypeTreeBlock * tree, void * resultAddress) {},
     nullptr
   );
-  print();
 }
 
 void testOverflowTreeSandbox(TreeCache * cache) {
@@ -37,9 +40,25 @@ void testOverflowTreeSandbox(TreeCache * cache) {
   );
   int maxNumberOfTreesInCache = TreeCache::k_maxNumberOfBlocks/treeSize - 1;
   for (int i = 0; i < maxNumberOfTreesInCache; i++) {
-    createTreeInCache();
+    createTreeInCache(createTree);
   }
+  print();
 
   std::cout << "\n---------------- Edit another tree triggering a cache flush" << std::endl;
-  createTreeInCache();
+  createTreeInCache(createTree);
+  print();
 }
+
+void testOverflowCacheIdentifiers(TreeCache * cache) {
+  std::cout << "\n---------------- Fill cache with the maximum number of trees" << std::endl;
+  for (int i = 0; i < TreeCache::k_maxNumberOfCachedTrees; i++) {
+    createTreeInCache(createSmallTree);
+  }
+  print();
+
+  std::cout << "\n---------------- Create another tree triggering a cache flush" << std::endl;
+  createTreeInCache(createSmallTree);
+  print();
+}
+
+

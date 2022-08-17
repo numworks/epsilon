@@ -3,16 +3,14 @@
 
 #include <poincare/layout_helper.h>
 #include <poincare/absolute_value.h>
-#include <poincare/bracket_pair_layout.h>
+#include <poincare/square_bracket_pair_layout.h>
 #include <poincare/serialization_helper.h>
 
 namespace Poincare {
 
-class AbsoluteValueLayoutNode final : public BracketPairLayoutNode {
+class AbsoluteValueLayoutNode final : public SquareBracketPairLayoutNode {
 public:
-  using BracketPairLayoutNode::BracketPairLayoutNode;
-
-  // Layout
+  // LayoutNode
   Type type() const override { return Type::AbsoluteValueLayout; }
 
   // SerializationHelperInterface
@@ -21,7 +19,6 @@ public:
   }
 
   // TreeNode
-  size_t size() const override { return sizeof(AbsoluteValueLayoutNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "AbsoluteValueLayout";
@@ -29,9 +26,11 @@ public:
 #endif
 
 private:
-  KDCoordinate widthMargin() const override { return 2; }
+  constexpr static KDCoordinate k_innerWidthMargin = 2;
+
+  // SquareBracketPairLayoutNode
+  KDCoordinate bracketWidth() const override { return k_lineThickness + k_innerWidthMargin + k_externalWidthMargin; }
   KDCoordinate verticalMargin() const override { return 0; }
-  KDCoordinate verticalExternMargin() const override { return 1; }
   bool renderTopBar() const override { return false; }
   bool renderBottomBar() const override { return false; }
 };

@@ -2,16 +2,14 @@
 #define POINCARE_CEILING_LAYOUT_NODE_H
 
 #include <poincare/ceiling.h>
-#include <poincare/bracket_pair_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/square_bracket_pair_layout.h>
 
 namespace Poincare {
 
-class CeilingLayoutNode final : public BracketPairLayoutNode {
+class CeilingLayoutNode final : public SquareBracketPairLayoutNode {
 public:
-  using BracketPairLayoutNode::BracketPairLayoutNode;
-
   // Layout
   Type type() const override { return Type::CeilingLayout; }
 
@@ -20,7 +18,6 @@ public:
   }
 
   // TreeNode
-  size_t size() const override { return sizeof(CeilingLayoutNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "CeilingLayout";
@@ -28,6 +25,7 @@ public:
 #endif
 
 protected:
+  // SquareBracketPairLayoutNode
   bool renderBottomBar() const override { return false; }
 };
 

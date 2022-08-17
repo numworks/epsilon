@@ -1,8 +1,8 @@
 #include <poincare/matrix_layout.h>
-#include <poincare/bracket_pair_layout.h>
 #include <poincare/empty_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/square_bracket_pair_layout.h>
 #include <algorithm>
 
 namespace Poincare {
@@ -213,16 +213,12 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
 // Protected
 
 KDSize MatrixLayoutNode::computeSize(KDFont::Size font) {
-  KDSize sizeWithoutBrackets = gridSize(font);
-  KDSize sizeWithBrackets = KDSize(
-      sizeWithoutBrackets.width() + 2 * BracketPairLayoutNode::k_squareBracketWidth,
-      sizeWithoutBrackets.height() + 2 * BracketPairLayoutNode::k_lineThickness);
-  return sizeWithBrackets;
+  return SquareBracketPairLayoutNode::SizeGivenChildSize(gridSize(font));
 }
 
 KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
   assert(indexOfChild(l) >= 0);
-  return GridLayoutNode::positionOfChild(l, font).translatedBy(KDPoint(KDPoint(BracketPairLayoutNode::k_squareBracketWidth, BracketPairLayoutNode::k_lineThickness)));
+  return GridLayoutNode::positionOfChild(l, font).translatedBy(SquareBracketPairLayoutNode::ChildOffset());
 }
 
 void MatrixLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
@@ -352,7 +348,10 @@ bool MatrixLayoutNode::hasGraySquares() const {
 }
 
 void MatrixLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  BracketPairLayoutNode::RenderWithChildSize(gridSize(font), ctx, p, expressionColor, backgroundColor);
+  KDSize s = gridSize(font);
+  SquareBracketPairLayoutNode::RenderWithChildSize(true, s.height(), ctx, p, expressionColor, backgroundColor);
+  KDCoordinate rightOffset = SquareBracketPairLayoutNode::ChildOffset().x() + s.width();
+  SquareBracketPairLayoutNode::RenderWithChildSize(false, s.height(), ctx, p.translatedBy(KDPoint(rightOffset, 0)), expressionColor, backgroundColor);
 }
 
 void MatrixLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) {

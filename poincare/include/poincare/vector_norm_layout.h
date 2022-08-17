@@ -1,17 +1,15 @@
 #ifndef POINCARE_VECTOR_NORM_LAYOUT_NODE_H
 #define POINCARE_VECTOR_NORM_LAYOUT_NODE_H
 
-#include <poincare/vector_norm.h>
-#include <poincare/bracket_pair_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/square_bracket_pair_layout.h>
+#include <poincare/vector_norm.h>
 
 namespace Poincare {
 
-class VectorNormLayoutNode final : public BracketPairLayoutNode {
+class VectorNormLayoutNode final : public SquareBracketPairLayoutNode {
 public:
-  using BracketPairLayoutNode::BracketPairLayoutNode;
-
   // Layout
   Type type() const override { return Type::VectorNormLayout; }
 
@@ -21,7 +19,6 @@ public:
   }
 
   // TreeNode
-  size_t size() const override { return sizeof(VectorNormLayoutNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "VectorNormLayout";
@@ -29,9 +26,11 @@ public:
 #endif
 
 private:
-  KDCoordinate widthMargin() const override { return 2; }
+  constexpr static KDCoordinate k_innerWidthMargin = 2;
+
+  // SquareBracketPairLayoutNode
+  KDCoordinate bracketWidth() const override { return 2 * k_lineThickness + k_doubleBarMargin + k_innerWidthMargin; }
   KDCoordinate verticalMargin() const override { return 0; }
-  KDCoordinate verticalExternMargin() const override { return 1; }
   bool renderTopBar() const override { return false; }
   bool renderBottomBar() const override { return false; }
   bool renderDoubleBar() const override { return true; }

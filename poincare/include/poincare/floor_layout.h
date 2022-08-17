@@ -1,17 +1,15 @@
 #ifndef POINCARE_FLOOR_LAYOUT_NODE_H
 #define POINCARE_FLOOR_LAYOUT_NODE_H
 
-#include <poincare/bracket_pair_layout.h>
 #include <poincare/floor.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/square_bracket_pair_layout.h>
 
 namespace Poincare {
 
-class FloorLayoutNode final : public BracketPairLayoutNode {
+class FloorLayoutNode final : public SquareBracketPairLayoutNode {
 public:
-  using BracketPairLayoutNode::BracketPairLayoutNode;
-
   // Layout
   Type type() const override { return Type::FloorLayout; }
 
@@ -20,7 +18,6 @@ public:
   }
 
   // TreeNode
-  size_t size() const override { return sizeof(FloorLayoutNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "FloorLayout";
@@ -28,6 +25,7 @@ public:
 #endif
 
 protected:
+  // SquareBracketPairLayoutNode
   bool renderTopBar() const override { return false; }
 };
 

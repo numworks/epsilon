@@ -1,6 +1,7 @@
 SFLAGS += -Ipoincare/include
 
 poincare_src += $(addprefix poincare/src/,\
+  aliases_list.cpp \
   binomial_coefficient_layout.cpp \
   bracket_layout.cpp \
   bracket_pair_layout.cpp \
@@ -15,31 +16,30 @@ poincare_src += $(addprefix poincare/src/,\
   grid_layout.cpp \
   horizontal_layout.cpp \
   integral_layout.cpp \
-  layout_cursor.cpp \
   layout.cpp \
+  layout_cursor.cpp \
   layout_node.cpp \
-  list_sequence_layout.cpp \
   letter_a_with_sub_and_superscript_layout.cpp \
   letter_c_with_sub_and_superscript_layout.cpp \
   letter_with_sub_and_superscript_layout.cpp \
+  list_sequence_layout.cpp \
   matrix_layout.cpp \
-  aliases_list.cpp \
   nth_root_layout.cpp \
   parenthesis_layout.cpp \
   product_layout.cpp \
   sequence_layout.cpp \
+  square_bracket_pair_layout.cpp \
   string_layout.cpp \
   sum_layout.cpp \
   vertical_offset_layout.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/,\
-  init.cpp \
   beta_function.cpp \
   binomial_distribution.cpp \
-  checkpoint.cpp \
   cdf_method.cpp \
   cdf_range_method.cpp \
+  checkpoint.cpp \
   chi2_distribution.cpp \
   circuit_breaker_checkpoint.cpp \
   discrete_distribution.cpp \
@@ -52,6 +52,7 @@ poincare_src += $(addprefix poincare/src/,\
   fisher_distribution.cpp \
   geometric_distribution.cpp \
   helpers.cpp \
+  init.cpp \
   inv_method.cpp \
   normal_distribution.cpp \
   pdf_method.cpp \
@@ -133,26 +134,27 @@ poincare_src += $(addprefix poincare/src/,\
   list_minimum.cpp \
   list_product.cpp \
   list_sample_standard_deviation.cpp \
-  list_sort.cpp \
-  list_sum.cpp \
-  list_standard_deviation.cpp \
-  list_variance.cpp \
   list_sequence.cpp \
+  list_sort.cpp \
+  list_standard_deviation.cpp \
+  list_sum.cpp \
+  list_variance.cpp \
   logarithm.cpp \
   matrix.cpp \
   matrix_complex.cpp \
+  matrix_echelon_form.cpp \
   matrix_identity.cpp \
   matrix_inverse.cpp \
+  matrix_reduced_row_echelon_form.cpp \
+  matrix_row_echelon_form.cpp \
   matrix_trace.cpp \
   matrix_transpose.cpp \
-  matrix_echelon_form.cpp \
-  matrix_row_echelon_form.cpp \
-  matrix_reduced_row_echelon_form.cpp \
   mixed_fraction.cpp \
   multiplication.cpp \
   n_ary_expression.cpp \
   n_ary_infix_expression.cpp \
   naperian_logarithm.cpp \
+  nonreal.cpp \
   nth_root.cpp \
   number.cpp \
   opposite.cpp \
@@ -176,15 +178,15 @@ poincare_src += $(addprefix poincare/src/,\
   secant.cpp \
   sequence.cpp \
   serialization_helper.cpp \
-  simplification_helper.cpp \
   sign_function.cpp \
+  simplification_helper.cpp \
   sine.cpp \
   solver.cpp \
   square_root.cpp \
   store.cpp \
-  sum_and_product.cpp \
   subtraction.cpp \
   sum.cpp \
+  sum_and_product.cpp \
   symbol.cpp \
   symbol_abstract.cpp \
   tangent.cpp \
@@ -196,7 +198,6 @@ poincare_src += $(addprefix poincare/src/,\
   undefined.cpp \
   unit.cpp \
   unit_convert.cpp \
-  nonreal.cpp \
   variable_context.cpp \
   vector_cross.cpp \
   vector_dot.cpp \

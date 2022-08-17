@@ -9,26 +9,27 @@ class HorizontalLayoutNode;
 class VerticalOffsetLayout;
 
 class LayoutCursor final {
-  friend class Layout;
   friend class BinomialCoefficientLayoutNode;
   friend class BracketLayoutNode;
   friend class BracketPairLayoutNode;
   friend class ConjugateLayoutNode;
   friend class DerivativeLayoutNode;
-  friend class FirstOrderDerivativeLayoutNode;
-  friend class HigherOrderDerivativeLayoutNode;
   friend class EmptyLayoutNode;
+  friend class FirstOrderDerivativeLayoutNode;
   friend class FractionLayoutNode;
   friend class GridLayoutNode;
+  friend class HigherOrderDerivativeLayoutNode;
   friend class HorizontalLayoutNode;
   friend class IntegralLayoutNode;
+  friend class Layout;
   friend class LayoutNode;
-  friend class MatrixLayoutNode;
   friend class LetterWithSubAndSuperscriptLayoutNode;
+  friend class ListSequenceLayoutNode;
+  friend class MatrixLayoutNode;
   friend class NthRootLayoutNode;
   friend class SequenceLayoutNode;
+  friend class SquareBracketPairLayoutNode;
   friend class VerticalOffsetLayoutNode;
-  friend class ListSequenceLayoutNode;
 public:
   constexpr static KDCoordinate k_cursorWidth = 1;
 

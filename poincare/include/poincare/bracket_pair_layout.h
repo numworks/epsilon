@@ -1,63 +1,53 @@
-#ifndef POINCARE_BRACKET_PAIR_LAYOUT_NODE_H
-#define POINCARE_BRACKET_PAIR_LAYOUT_NODE_H
+#ifndef POINCARE_BRACKET_PAIR_LAYOUT_H
+#define POINCARE_BRACKET_PAIR_LAYOUT_H
 
-#include <poincare/layout_cursor.h>
-#include <poincare/layout.h>
+#include <escher/metric.h>
+#include <poincare/layout_node.h>
 
 namespace Poincare {
 
 class BracketPairLayoutNode : public LayoutNode {
 public:
-  using LayoutNode::LayoutNode;
-
-  constexpr static KDCoordinate k_lineThickness = 1;
-  constexpr static KDCoordinate k_widthMargin = 5;
-  constexpr static KDCoordinate k_externWidthMargin = 2;
-  constexpr static KDCoordinate k_squareBracketWidth = k_externWidthMargin + k_lineThickness + k_widthMargin;
-
-  // Layout
-  Type type() const override { return Type::BracketPairLayout; }
-
-  static void RenderWithChildSize(KDSize childSize, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
-
-  // LayoutNode
-  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
-  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
-  void deleteBeforeCursor(LayoutCursor * cursor) override;
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  bool shouldCollapseSiblingsOnRight() const override{ return true; }
-  void didCollapseSiblings(LayoutCursor * cursor) override;
-
   // TreeNode
   size_t size() const override { return sizeof(BracketPairLayoutNode); }
   int numberOfChildren() const override { return 1; }
-#if TREE_LOG
-  const char * description() const override { return "BracketPairLayout"; }
-#endif
+
+  // LayoutNode
+  void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) override;
+  void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection = false) override;
+  void deleteBeforeCursor(LayoutCursor * cursor) override;
 
 protected:
-  // LayoutNode
-  KDCoordinate computeBaseline(KDFont::Size font) override;
-  KDSize computeSize(KDFont::Size font) override;
-  KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
-  LayoutNode * childLayout() { return childAtIndex(0); }
+  constexpr static KDCoordinate k_lineThickness = 1;
+  // Minimal height at which the children dictates bracket height
+  constexpr static KDCoordinate k_minimalChildHeight = Escher::Metric::MinimalBracketAndParenthesisChildHeight;
 
-private:
-  constexpr static KDCoordinate k_verticalExternMargin = 0;
-  constexpr static KDCoordinate k_bracketWidth = 5;
-  constexpr static KDCoordinate k_verticalMargin = 1;
-  constexpr static bool k_renderTopBar = true;
-  constexpr static bool k_renderBottomBar = true;
-  constexpr static bool k_renderDoubleBar = false;
-  virtual KDCoordinate externWidthMargin() const { return k_externWidthMargin; }
-  virtual KDCoordinate widthMargin() const { return k_widthMargin; }
-  virtual KDCoordinate verticalExternMargin() const { return k_verticalExternMargin; }
-  virtual KDCoordinate verticalMargin() const { return k_verticalMargin; }
-  virtual bool renderTopBar() const { return k_renderTopBar; }
-  virtual bool renderBottomBar() const { return k_renderBottomBar; }
-  virtual bool renderDoubleBar() const { return k_renderDoubleBar; }
+  static bool ChildHeightDictatesHeight(KDCoordinate childHeight) { return childHeight >= k_minimalChildHeight; }
+  static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight, KDCoordinate verticalMargin) {
+    return (ChildHeightDictatesHeight(childHeight) ? childHeight : k_minimalChildHeight) + verticalMargin * 2;
+  }
+  static KDCoordinate BaselineGivenChildHeightAndBaseline(KDCoordinate childHeight, KDCoordinate childBaseline, KDCoordinate verticalMargin) {
+    return childBaseline + verticalMargin + (ChildHeightDictatesHeight(childHeight) ? 0 : (k_minimalChildHeight - childHeight) / 2);
+  }
+  static KDPoint ChildOffset(KDCoordinate verticalMargin, KDCoordinate bracketWidth) { return KDPoint(bracketWidth, verticalMargin); }
+  static KDPoint PositionGivenChildHeightAndBaseline(bool left, KDCoordinate bracketWidth, KDSize childSize, KDCoordinate childBaseline, KDCoordinate verticalMargin) {
+    return KDPoint(
+      left ? -bracketWidth : childSize.width(),
+      ChildHeightDictatesHeight(childSize.height()) ? -verticalMargin : childBaseline - HeightGivenChildHeight(childSize.height(), verticalMargin) / 2
+    );
+  }
+  static KDCoordinate OptimalChildHeightGivenLayoutHeight(KDCoordinate layoutHeight, KDCoordinate verticalMargin) { return layoutHeight - verticalMargin * 2; }
+
+  // LayoutNode
+  KDSize computeSize(KDFont::Size font) override;
+  KDCoordinate computeBaseline(KDFont::Size font) override;
+  KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
-  static void renderWithParameters(KDSize childSize, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, KDCoordinate verticalMargin, KDCoordinate externWidthMargin, KDCoordinate verticalExternMargin, KDCoordinate widthMargin, bool renderTopBar, bool renderBottomBar, bool renderDoubleBar);
+
+  LayoutNode * childLayout() { return childAtIndex(0); }
+  virtual KDCoordinate bracketWidth() const = 0;
+  virtual KDCoordinate verticalMargin() const = 0;
+  virtual void renderOneBracket(bool left, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) = 0;
 };
 
 }

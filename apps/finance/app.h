@@ -7,10 +7,10 @@
 #include "../shared/input_event_handler_delegate_app.h"
 #include "../shared/shared_app.h"
 #include "data.h"
-#include "finance_menu_controller.h"
+#include "menu_controller.h"
 #include "interest_controller.h"
 #include "interest_menu_controller.h"
-#include "finance_result_controller.h"
+#include "result_controller.h"
 
 namespace Finance {
 
@@ -38,11 +38,11 @@ private:
   App(Snapshot * snapshot);
 
   // Controllers
-  FinanceData m_financeData;
-  FinanceResultController m_financeResultController;
+  Data m_data;
+  ResultController m_resultController;
   InterestController m_interestController;
   InterestMenuController m_interestMenuController;
-  FinanceMenuController m_financeMenuController;
+  MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
   Escher::InputViewController m_inputViewController;
 };

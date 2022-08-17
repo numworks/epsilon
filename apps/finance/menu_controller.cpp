@@ -1,11 +1,11 @@
-#include "finance_menu_controller.h"
+#include "menu_controller.h"
 #include <apps/i18n.h>
 #include <escher/container.h>
 #include <assert.h>
 
 using namespace Finance;
 
-FinanceMenuController::FinanceMenuController(Escher::StackViewController * parentResponder, InterestMenuController * interestMenuController, InterestData * interestData) :
+MenuController::MenuController(Escher::StackViewController * parentResponder, InterestMenuController * interestMenuController, InterestData * interestData) :
       Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells, Escher::RegularListViewDataSource>(parentResponder),
       m_interestMenuController(interestMenuController),
       m_interestData(interestData) {
@@ -16,11 +16,11 @@ FinanceMenuController::FinanceMenuController(Escher::StackViewController * paren
   cellAtIndex(k_indexOfCompoundInterest)->setSubtitle(I18n::Message::CompoundInterestDescription);
 }
 
-void FinanceMenuController::didBecomeFirstResponder() {
+void MenuController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
 }
 
-bool FinanceMenuController::handleEvent(Ion::Events::Event event) {
+bool MenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     bool simpleInterestRowSelected = (selectedRow() == k_indexOfSimpleInterest);
     assert(simpleInterestRowSelected || selectedRow() == k_indexOfCompoundInterest);

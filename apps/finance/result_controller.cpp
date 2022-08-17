@@ -1,4 +1,4 @@
-#include "finance_result_controller.h"
+#include "result_controller.h"
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <escher/clipboard.h>
@@ -8,14 +8,14 @@
 
 using namespace Finance;
 
-FinanceResultController::FinanceResultController(Escher::StackViewController * parentResponder, InterestData * data) :
+ResultController::ResultController(Escher::StackViewController * parentResponder, InterestData * data) :
       Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource>(parentResponder),
       m_messageView(KDFont::Size::Small, I18n::Message::CalculatedValues, KDContext::k_alignCenter, KDContext::k_alignCenter, Escher::Palette::GrayDark, Escher::Palette::WallScreen),
       m_contentView(&m_selectableTableView, this, &m_messageView),
       m_data(data) {
 }
 
-void FinanceResultController::didBecomeFirstResponder() {
+void ResultController::didBecomeFirstResponder() {
   /* Build the result cell here because it only needs to be updated once this
    * controller become first responder. */
   cellAtIndex(0)->setMessage(m_data->labelForParameter(m_data->getUnknown()));
@@ -32,7 +32,7 @@ void FinanceResultController::didBecomeFirstResponder() {
   m_contentView.reload();
 }
 
-bool FinanceResultController::handleEvent(Ion::Events::Event event) {
+bool ResultController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
     Escher::Clipboard::sharedClipboard()->store(cellAtIndex(0)->text());
     return true;
@@ -40,7 +40,7 @@ bool FinanceResultController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-const char * FinanceResultController::title() {
+const char * ResultController::title() {
   /* Try fitting the known parameters values in the title using a minimal
    * precision. Use "..." at the end if not all parameters fit. */
   constexpr int precision = Poincare::Preferences::ShortNumberOfSignificantDigits;

@@ -1,5 +1,5 @@
-#ifndef FINANCE_FINANCE_RESULT_CONTROLLER_H
-#define FINANCE_FINANCE_RESULT_CONTROLLER_H
+#ifndef FINANCE_RESULT_CONTROLLER_H
+#define FINANCE_RESULT_CONTROLLER_H
 
 #include <escher/message_table_cell_with_message_with_buffer.h>
 #include <escher/message_text_view.h>
@@ -14,9 +14,9 @@ namespace Finance {
 
 constexpr int k_numberOfResultCells = 1;
 
-class FinanceResultController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource> {
+class ResultController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource> {
 public:
-  FinanceResultController(Escher::StackViewController * parentResponder, InterestData * data);
+  ResultController(Escher::StackViewController * parentResponder, InterestData * data);
 
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
@@ -35,4 +35,4 @@ private:
 
 }  // namespace Finance
 
-#endif /* FINANCE_FINANCE_RESULT_CONTROLLER_H */
+#endif /* FINANCE_RESULT_CONTROLLER_H */

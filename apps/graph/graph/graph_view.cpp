@@ -75,7 +75,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
 
       float tCacheMin, tCacheStep;
       float tStepNonCartesian = NAN;
-      if (f->isAlongXorY()) {
+      if (f->isAlongXOrY()) {
         float rectLimit = pixelToFloat(axis, rectMin);
         /* Here, tCacheMin can depend on rect (and change as the user move)
          * because cache can be panned for cartesian curves, instead of being

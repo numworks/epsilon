@@ -127,7 +127,7 @@ public:
   // Wether the ContinuousFunction can have a custom domain of definition.
   bool canHaveCustomDomain() const { return !isAlongY() && equationType() == Poincare::ExpressionNode::Type::Equal; }
   // Wether or not we can display the derivative
-  bool canDisplayDerivative() const { return isActiveInTable() && isAlongXorY(); }
+  bool canDisplayDerivative() const { return isActiveInTable() && isAlongXOrY(); }
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool drawDottedCurve() const;
   // If the ContinuousFunction should be considered active in table
@@ -137,7 +137,7 @@ public:
    * complex behaviors such as being active in table or computing derivatives.
    * We don't need these features for now and keep a lighter code. */
   // If the ContinuousFunction has x or y for unknown symbol
-  bool isAlongXorY() const { return symbol() == ContinuousFunction::k_cartesianSymbol; }
+  bool isAlongXOrY() const { return symbol() == ContinuousFunction::k_cartesianSymbol; }
   // If the ContinuousFunction has y for unknown symbol
   bool isAlongY() const override { return plotType() == PlotType::VerticalLine || plotType() == PlotType::OtherAlongY || plotType() == PlotType::CartesianAlongY; }
   // If the ContinuousFunction is a conic
@@ -266,7 +266,7 @@ private:
 
   /* Range */
 
-  // Return step computed from t range or NAN if isAlongXorY() is true.
+  // Return step computed from t range or NAN if isAlongXOrY() is true.
   float rangeStep() const override;
 
   /* Expressions */

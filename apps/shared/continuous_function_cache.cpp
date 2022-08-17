@@ -42,7 +42,7 @@ void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCa
     cache->clear();
   }
 
-  if (function->isAlongXorY() && tStep != 0) {
+  if (function->isAlongXOrY() && tStep != 0) {
     function->cache()->pan(function, tMin);
   }
   function->cache()->setRange(function, tMin, tStep);
@@ -109,17 +109,17 @@ int ContinuousFunctionCache::indexForParameter(const ContinuousFunction * functi
   int res = std::round(delta);
   assert(res >= 0);
   if ((res >= k_sizeOfCache)
-   || (res >= k_sizeOfCache / 2 && !function->isAlongXorY())
+   || (res >= k_sizeOfCache / 2 && !function->isAlongXOrY())
    || std::fabs(res - delta) > k_cacheHitTolerance) {
     return -1;
   }
-  assert(function->isAlongXorY() || m_startOfCache == 0);
+  assert(function->isAlongXOrY() || m_startOfCache == 0);
   return (res + m_startOfCache) % k_sizeOfCache;
 }
 
 Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const ContinuousFunction * function, Poincare::Context * context, float t, int i, int curveIndex) {
   assert(curveIndex == 0);
-  if (function->isAlongXorY()) {
+  if (function->isAlongXOrY()) {
     if (IsSignalingNan(m_cache[i])) {
       m_cache[i] = function->privateEvaluateXYAtParameter(t, context, curveIndex).x2();
     }
@@ -134,7 +134,7 @@ Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(const Conti
 }
 
 void ContinuousFunctionCache::pan(ContinuousFunction * function, float newTMin) {
-  assert(function->isAlongXorY());
+  assert(function->isAlongXOrY());
   if (newTMin == m_tMin) {
     return;
   }

@@ -3,7 +3,7 @@
 
 #include <poincare/preferences.h>
 #include <initializer_list>
-#include "../equations/equation_store.h"
+#include "../equation_store.h"
 #include <poincare/test/helper.h>
 
 #define bring_in(prefix, value) static const prefix value = prefix::value;

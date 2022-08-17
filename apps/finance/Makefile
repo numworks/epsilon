@@ -2,15 +2,15 @@ apps += Finance::App
 app_headers += apps/finance/app.h
 
 app_finance_test_src = $(addprefix apps/finance/,\
-  finance/data.cpp \
+  data.cpp \
 )
 
 app_finance_src = $(addprefix apps/finance/,\
   app.cpp \
-  finance/finance_menu_controller.cpp \
-  finance/interest_controller.cpp \
-  finance/interest_menu_controller.cpp \
-  finance/finance_result_controller.cpp \
+  finance_menu_controller.cpp \
+  interest_controller.cpp \
+  interest_menu_controller.cpp \
+  finance_result_controller.cpp \
 )
 
 app_finance_src += $(app_finance_test_src)

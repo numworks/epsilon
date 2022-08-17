@@ -6,7 +6,7 @@
 #include <escher/invocation.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/print.h>
-#include "../app.h"
+#include "app.h"
 
 using namespace Finance;
 

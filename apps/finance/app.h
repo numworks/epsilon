@@ -6,11 +6,11 @@
 #include <escher/input_view_controller.h>
 #include "../shared/input_event_handler_delegate_app.h"
 #include "../shared/shared_app.h"
-#include "finance/data.h"
-#include "finance/finance_menu_controller.h"
-#include "finance/interest_controller.h"
-#include "finance/interest_menu_controller.h"
-#include "finance/finance_result_controller.h"
+#include "data.h"
+#include "finance_menu_controller.h"
+#include "interest_controller.h"
+#include "interest_menu_controller.h"
+#include "finance_result_controller.h"
 
 namespace Finance {
 

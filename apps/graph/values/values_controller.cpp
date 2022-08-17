@@ -377,6 +377,10 @@ Poincare::Layout ValuesController::exactValueLayout(int column, int row) {
     return Layout(); // Do not compute exact derivative
   }
   Poincare::Expression e = function->expressionReduced(context);
+  if (function->symbol() == ContinuousFunction::k_parametricSymbol) {
+    // Do not display exact value of parametric functions
+    return Layout();
+  }
   Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
   Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
   abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));

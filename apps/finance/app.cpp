@@ -26,13 +26,12 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 
 // App
 App::App(Snapshot * snapshot) :
-  Shared::InputEventHandlerDelegateApp(snapshot, &m_inputViewController),
+  Shared::TextFieldDelegateApp(snapshot, &m_stackViewController),
   m_resultController(&m_stackViewController, m_data.interestData()),
-  m_interestController(&m_stackViewController, &m_inputViewController, &m_resultController, m_data.interestData()),
+  m_interestController(&m_stackViewController, this, &m_resultController, m_data.interestData()),
   m_interestMenuController(&m_stackViewController, &m_interestController, m_data.interestData()),
   m_menuController(&m_stackViewController, &m_interestMenuController, m_data.interestData()),
-  m_stackViewController(&m_inputViewController, &m_menuController, Escher::StackViewController::Style::GrayGradation),
-  m_inputViewController(&m_modalViewController, &m_stackViewController, this, &m_interestController, nullptr)
+  m_stackViewController(&m_modalViewController, &m_menuController, Escher::StackViewController::Style::GrayGradation)
 {}
 
 }

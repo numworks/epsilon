@@ -3,8 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/stack_view_controller.h>
-#include <escher/input_view_controller.h>
-#include "../shared/input_event_handler_delegate_app.h"
+#include "../shared/text_field_delegate_app.h"
 #include "../shared/shared_app.h"
 #include "data.h"
 #include "menu_controller.h"
@@ -14,10 +13,10 @@
 
 namespace Finance {
 
-class App : public Shared::InputEventHandlerDelegateApp {
+class App : public Shared::TextFieldDelegateApp {
 public:
   // Descriptor
-  class Descriptor : public Escher::App::Descriptor {
+  class Descriptor : public Shared::TextFieldDelegateApp::Descriptor {
     public:
       I18n::Message name() const override { return I18n::Message::FinanceApp; };
       I18n::Message upperName() const override { return I18n::Message::FinanceAppCapital; };
@@ -44,7 +43,6 @@ private:
   InterestMenuController m_interestMenuController;
   MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
-  Escher::InputViewController m_inputViewController;
 };
 
 }

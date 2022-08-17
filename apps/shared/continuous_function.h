@@ -9,13 +9,13 @@
  * it is the base class of ContinuousFunction and Sequence.
  */
 
+#include "continuous_function_cache.h"
 #include "function.h"
 #include "range_1D.h"
 #include <apps/i18n.h>
-#include <poincare/symbol_abstract.h>
 #include <poincare/conic.h>
 #include <poincare/preferences.h>
-#include "continuous_function_cache.h"
+#include <poincare/symbol_abstract.h>
 
 namespace Shared {
 
@@ -24,8 +24,6 @@ class ContinuousFunction : public Function {
    * bypass cache lookup when memoizing the function's values. */
   friend class ContinuousFunctionCache;
 public:
-  /* ContinuousFunction */
-
   constexpr static int k_maxDefaultNameSize = sizeof("f99");
 
   // Create a record with baseName
@@ -91,6 +89,7 @@ public:
   static bool IsPlotTypeParabola(PlotType type) { return type == PlotType::CartesianParabola || type == PlotType::Parabola; }
   // If a plotType is equivalent to an hyperbola
   static bool IsPlotTypeHyperbola(PlotType type) { return type == PlotType::CartesianHyperbola || type == PlotType::Hyperbola; }
+
   // Return message describing function's PlotType
   I18n::Message plotTypeMessage() const;
   // Return the type of area to draw
@@ -225,7 +224,7 @@ public:
 
   /* Extremum */
 
-  // Compute coordinates of the next minimun, from a starting point
+  // Compute coordinates of the next minimum, from a starting point
   Poincare::Coordinate2D<double> nextMinimumFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
   // Compute coordinates of the next maximum, from a starting point
   Poincare::Coordinate2D<double> nextMaximumFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
@@ -247,10 +246,12 @@ public:
   ContinuousFunctionCache * cache() const { return m_cache; }
   void setCache(ContinuousFunctionCache * v) { m_cache = v; }
   void didBecomeInactive() override { m_cache = nullptr; }
+
   constexpr static char k_unnamedRecordFirstChar = '?';
   constexpr static CodePoint k_cartesianSymbol = 'x';
   constexpr static CodePoint k_parametricSymbol = 't';
   constexpr static CodePoint k_polarSymbol = UCodePointGreekSmallLetterTheta;
+
 private:
   constexpr static char k_ordinateName[2] = "y";
   constexpr static CodePoint k_ordinateCodePoint = k_ordinateName[0];
@@ -302,6 +303,7 @@ private:
     float tMax() const { return m_domain.max(); }
     void setTMin(float tMin) { m_domain.setMin(tMin); }
     void setTMax(float tMax) { m_domain.setMax(tMax); }
+
   private:
     Range1D m_domain;
     bool m_displayDerivative;
@@ -360,6 +362,7 @@ private:
     static bool HasNonNullCoefficients(const Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::ExpressionNode::Sign * highestDegreeCoefficientSign);
     // If equation should be allowed when implicit plots are forbidden.
     static bool IsExplicitEquation(const Poincare::Expression equation, CodePoint symbol);
+
   private:
     // Return address of the record's expression
     void * expressionAddress(const Ion::Storage::Record * record) const override;

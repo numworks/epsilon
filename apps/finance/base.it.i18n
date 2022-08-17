@@ -1,5 +1,5 @@
-FinanceSubAppTitle = "Finanza"
-FinanceSubAppDescription = "Risolutore di interesse\nsemplice e TVM"
+FinanceApp = "Finanza"
+FinanceAppCapital = "FINANZA"
 SimpleInterest = "Interesse semplice"
 SimpleInterestDescription = "L'interesse è calcolato una volta"
 CompoundInterest = "Interesse composto"

@@ -1,5 +1,5 @@
-FinanceSubAppTitle = "Finance"
-FinanceSubAppDescription = "Simple interest and TVM\nsolver"
+FinanceApp = "Finance"
+FinanceAppCapital = "FINANCE"
 SimpleInterest = "Simple interest"
 SimpleInterestDescription = "Interest is computed once"
 CompoundInterest = "Compound interest"

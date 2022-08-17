@@ -1,5 +1,5 @@
-FinanceSubAppTitle = "Finanças"
-FinanceSubAppDescription = "Resolução de juros simples\ne compostos"
+FinanceApp = "Finanças"
+FinanceAppCapital = "FINANCAS"
 SimpleInterest = "Juros simples"
 SimpleInterestDescription = "Juros calculados uma vez"
 CompoundInterest = "Juros compostos"

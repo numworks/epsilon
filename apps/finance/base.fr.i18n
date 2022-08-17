@@ -1,5 +1,5 @@
-FinanceSubAppTitle = "Finance"
-FinanceSubAppDescription = "Solveurs d'intérêts simples\net composés"
+FinanceApp = "Finance"
+FinanceAppCapital = "FINANCE"
 SimpleInterest = "Intérêts simples"
 SimpleInterestDescription = "Intérêts calculés une fois"
 CompoundInterest = "Intérêts composés"

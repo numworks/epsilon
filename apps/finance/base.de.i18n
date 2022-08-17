@@ -1,5 +1,5 @@
-FinanceSubAppTitle = "Finanzlöser"
-FinanceSubAppDescription = "Einfache Zinsrechnung und\nZinseszinsrechnung"
+FinanceApp = "Finanzlöser"
+FinanceAppCapital = "FINANZLOSER"
 SimpleInterest = "Einfache Zinsrechnung"
 SimpleInterestDescription = "Lineare Verzinsung"
 CompoundInterest = "Zinseszinsrechnung"

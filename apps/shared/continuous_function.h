@@ -52,7 +52,6 @@ public:
     X
   };
 
-  constexpr static size_t k_numberOfPlotTypes = 23;
   enum class PlotType : uint8_t {
     Cartesian = 0,
     CartesianParabola,
@@ -80,7 +79,8 @@ public:
     UnhandledPolar,
     UnhandledParametric,
     Disabled,
-    Unknown
+    Unknown,
+    NumberOfPlotTypes
   };
 
   // Return Message corresponding to SymbolType

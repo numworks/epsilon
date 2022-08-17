@@ -1,5 +1,5 @@
-#ifndef SOLVER_SIMPLE_INTEREST_CONTROLLER_H
-#define SOLVER_SIMPLE_INTEREST_CONTROLLER_H
+#ifndef FINANCE_SIMPLE_INTEREST_CONTROLLER_H
+#define FINANCE_SIMPLE_INTEREST_CONTROLLER_H
 
 #include <apps/shared/button_with_separator.h>
 #include <apps/shared/float_parameter_controller.h>
@@ -13,7 +13,7 @@
 #include "finance_result_controller.h"
 #include "two_messages_popup_data_source.h"
 
-namespace Solver {
+namespace Finance {
 
 class InterestController : public Shared::FloatParameterController<double>,
                            public Escher::DropdownCallback {
@@ -62,6 +62,6 @@ private:
   InterestData * m_data;
 };
 
-}  // namespace Solver
+}  // namespace Finance
 
-#endif /* SOLVER_SIMPLE_INTEREST_CONTROLLER_H */
+#endif /* FINANCE_SIMPLE_INTEREST_CONTROLLER_H */

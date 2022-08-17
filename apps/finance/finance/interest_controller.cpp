@@ -8,7 +8,7 @@
 #include <poincare/print.h>
 #include "../app.h"
 
-using namespace Solver;
+using namespace Finance;
 
 InterestController::InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, FinanceResultController * financeResultController, InterestData * data) :
     Shared::FloatParameterController<double>(parent),

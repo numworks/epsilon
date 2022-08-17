@@ -1,5 +1,5 @@
-#ifndef SOLVER_FINANCE_MENU_CONTROLLER_H
-#define SOLVER_FINANCE_MENU_CONTROLLER_H
+#ifndef FINANCE_FINANCE_MENU_CONTROLLER_H
+#define FINANCE_FINANCE_MENU_CONTROLLER_H
 
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/selectable_list_view_controller.h>
@@ -9,7 +9,7 @@
 #include "data.h"
 #include "interest_menu_controller.h"
 
-namespace Solver {
+namespace Finance {
 
 constexpr int k_numberOfFinanceCells = 2;
 
@@ -20,7 +20,6 @@ public:
                     InterestData * interestData);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
-  const char * title() override;
 
   constexpr static int k_indexOfSimpleInterest = 0;
   constexpr static int k_indexOfCompoundInterest = 1;
@@ -30,6 +29,6 @@ private:
   InterestData * m_interestData;
 };
 
-}  // namespace Solver
+}  // namespace Finance
 
-#endif /* SOLVER_FINANCE_MENU_CONTROLLER_H */
+#endif /* FINANCE_FINANCE_MENU_CONTROLLER_H */

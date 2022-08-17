@@ -3,7 +3,7 @@
 #include <float.h>
 #include "../finance/data.h"
 
-using namespace Solver;
+using namespace Finance;
 
 constexpr double k_precision = 5e-3;
 

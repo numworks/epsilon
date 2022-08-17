@@ -1,5 +1,5 @@
-#ifndef SOLVER_FINANCE_RESULT_CONTROLLER_H
-#define SOLVER_FINANCE_RESULT_CONTROLLER_H
+#ifndef FINANCE_FINANCE_RESULT_CONTROLLER_H
+#define FINANCE_FINANCE_RESULT_CONTROLLER_H
 
 #include <escher/message_table_cell_with_message_with_buffer.h>
 #include <escher/message_text_view.h>
@@ -10,7 +10,7 @@
 #include <ion/events.h>
 #include "data.h"
 
-namespace Solver {
+namespace Finance {
 
 constexpr int k_numberOfResultCells = 1;
 
@@ -33,6 +33,6 @@ private:
   InterestData * m_data;
 };
 
-}  // namespace Solver
+}  // namespace Finance
 
-#endif /* SOLVER_FINANCE_RESULT_CONTROLLER_H */
+#endif /* FINANCE_FINANCE_RESULT_CONTROLLER_H */

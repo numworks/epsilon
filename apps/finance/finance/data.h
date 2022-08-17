@@ -1,12 +1,12 @@
-#ifndef SOLVER_DATA_H
-#define SOLVER_DATA_H
+#ifndef FINANCE_DATA_H
+#define FINANCE_DATA_H
 
 #include <apps/i18n.h>
 #include <assert.h>
 
 #include <new>
 
-namespace Solver {
+namespace Finance {
 
 class InterestData {
 public:
@@ -159,6 +159,6 @@ private:
   CompoundInterestData m_compoundInterestData;
 };
 
-}  // namespace Solver
+}  // namespace Finance
 
-#endif /* SOLVER_DATA_H */
+#endif /* FINANCE_DATA_H */

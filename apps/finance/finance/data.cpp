@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <cmath>
 
-namespace Solver {
+namespace Finance {
 
 /* InterestData */
 
@@ -269,4 +269,4 @@ void CompoundInterestData::setValue(uint8_t param, double value) {
   InterestData::setValue(param, value);
 }
 
-}  // namespace Solver
+}  // namespace Finance

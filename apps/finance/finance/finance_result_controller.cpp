@@ -6,7 +6,7 @@
 #include <poincare/print.h>
 #include <assert.h>
 
-using namespace Solver;
+using namespace Finance;
 
 FinanceResultController::FinanceResultController(Escher::StackViewController * parentResponder, InterestData * data) :
       Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource>(parentResponder),

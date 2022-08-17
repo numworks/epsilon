@@ -1,12 +1,25 @@
 apps += Finance::App
 app_headers += apps/finance/app.h
 
-app_finance_src = $(addprefix apps/finance/,\
-  app.cpp \
+app_finance_test_src = $(addprefix apps/finance/,\
+  finance/data.cpp \
 )
 
+app_finance_src = $(addprefix apps/finance/,\
+  app.cpp \
+  finance/finance_menu_controller.cpp \
+  finance/interest_controller.cpp \
+  finance/interest_menu_controller.cpp \
+  finance/finance_result_controller.cpp \
+)
+
+app_finance_src += $(app_finance_test_src)
 apps_src += $(app_finance_src)
 
-i18n_files += apps/finance/base.universal.i18n
+i18n_files += $(call i18n_with_universal_for,finance/base)
+
+tests_src += $(addprefix apps/finance/test/,\
+  finance.cpp \
+)
 
 $(eval $(call depends_on_image,apps/finance/app.cpp,apps/finance/finance_icon_temp.png))

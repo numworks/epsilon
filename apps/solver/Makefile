@@ -2,17 +2,17 @@ apps += Solver::App
 app_headers += apps/solver/app.h
 
 app_solver_test_src = $(addprefix apps/solver/,\
-  equations/equation.cpp \
-  equations/equation_store.cpp \
+  equation.cpp \
+  equation_store.cpp \
 )
 
 app_solver_src = $(addprefix apps/solver/,\
   app.cpp \
-  equations/equation_list_view.cpp \
-  equations/equation_models_parameter_controller.cpp \
-  equations/interval_controller.cpp \
-  equations/list_controller.cpp \
-  equations/solutions_controller.cpp \
+  equation_list_view.cpp \
+  equation_models_parameter_controller.cpp \
+  interval_controller.cpp \
+  list_controller.cpp \
+  solutions_controller.cpp \
 )
 
 app_solver_src += $(app_solver_test_src)

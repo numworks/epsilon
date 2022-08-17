@@ -1,5 +1,5 @@
 #include "interval_controller.h"
-#include "../app.h"
+#include "app.h"
 #include <apps/i18n.h>
 #include <assert.h>
 #include <string.h>

@@ -4,10 +4,10 @@
 #include <apps/i18n.h>
 #include "../shared/expression_field_delegate_app.h"
 #include "../shared/shared_app.h"
-#include "equations/equation_store.h"
-#include "equations/list_controller.h"
-#include "equations/interval_controller.h"
-#include "equations/solutions_controller.h"
+#include "equation_store.h"
+#include "list_controller.h"
+#include "interval_controller.h"
+#include "solutions_controller.h"
 #include "solver_context.h"
 
 namespace Solver {

@@ -1,5 +1,5 @@
-Default,calculation,graph,code,statistics,inference,solver,sequence,regression,settings,periodic
-Variant1,calculation,graph,solver,statistics,inference,regression,sequence,code,settings,periodic
-Variant2,calculation,graph,solver,regression,sequence,inference,statistics,code,settings,periodic
-Variant3,calculation,graph,solver,statistics,inference,sequence,regression,code,settings,periodic
-Variant4,calculation,graph,solver,statistics,regression,inference,sequence,code,settings,periodic
+Default,calculation,graph,code,statistics,inference,solver,sequence,regression,settings,periodic,finance
+Variant1,calculation,graph,solver,statistics,inference,regression,sequence,code,settings,periodic,finance
+Variant2,calculation,graph,solver,regression,sequence,inference,statistics,code,settings,periodic,finance
+Variant3,calculation,graph,solver,statistics,inference,sequence,regression,code,settings,periodic,finance
+Variant4,calculation,graph,solver,statistics,regression,inference,sequence,code,settings,periodic,finance

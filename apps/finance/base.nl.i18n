@@ -1,5 +1,5 @@
-FinanceSubAppTitle = "Financieel"
-FinanceSubAppDescription = "Enkelvoudige en Samengestelde\ninterest berekenen"
+FinanceApp = "Financieel"
+FinanceAppCapital = "FINANCIEEL"
 SimpleInterest = "Enkelvoudige interest"
 SimpleInterestDescription = "De rente wordt één keer berekend"
 CompoundInterest = "Samengestelde interest"

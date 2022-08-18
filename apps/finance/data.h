@@ -10,11 +10,6 @@ namespace Finance {
 
 class InterestData {
 public:
-  // Allow destruction of data models from an InterestData pointer
-  virtual ~InterestData() = default;
-  // Replace a data model at buffer
-  static void Initialize(void * m_buffer, bool simple);
-
   constexpr static uint8_t k_maxNumberOfUnknowns = 5; // static_cast<uint8_t>(CompoundInterestData::Parameter::PY)
 
   virtual I18n::Message labelForParameter(uint8_t param) const = 0;
@@ -138,25 +133,19 @@ public:
   void setValue(uint8_t param, double value) override;
 };
 
-union Data {
+class Data {
 public:
-  // By default, use a simple interest data model
-  Data() { new (&m_simpleInterestData) SimpleInterestData(); }
-  // Destroy current data model, using InterestData's virtual destructor
-  ~Data() { interestData()->~InterestData(); }
-  // Delete the implicit copy and move constructors and assignments
-  Data(const Data& other) = delete;
-  Data(Data&& other) = delete;
-  Data& operator=(const Data& other) = delete;
-  Data& operator=(Data&& other) = delete;
-
+  // By default, select the simple interest data model
+  Data() : m_selectedModel(true) {}
+  void setModel(bool selectedModel) { m_selectedModel = selectedModel; }
   InterestData * interestData() {
-    return reinterpret_cast<InterestData *>(this);
+    return m_selectedModel ? static_cast<InterestData *>(&m_simpleInterestData) : static_cast<InterestData *>(&m_compoundInterestData);
   }
 
 private:
-  SimpleInterestData m_simpleInterestData;
   CompoundInterestData m_compoundInterestData;
+  SimpleInterestData m_simpleInterestData;
+  bool m_selectedModel;
 };
 
 }  // namespace Finance

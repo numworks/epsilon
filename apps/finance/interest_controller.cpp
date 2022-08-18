@@ -10,7 +10,7 @@
 
 using namespace Finance;
 
-InterestController::InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, ResultController * resultController, InterestData * data) :
+InterestController::InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, ResultController * resultController, Data * data) :
     Shared::FloatParameterController<double>(parent),
     m_dropdownCell(&m_selectableTableView, &m_dropdownDataSource, this),
     m_resultController(resultController),
@@ -22,9 +22,9 @@ InterestController::InterestController(Escher::StackViewController * parent, Esc
 }
 
 const char * InterestController::title() {
-  uint8_t unknownParam = m_data->getUnknown();
-  const char * label = I18n::translate(m_data->labelForParameter(unknownParam));
-  int length = Poincare::Print::safeCustomPrintf(m_titleBuffer, k_titleBufferSize, I18n::translate(I18n::Message::FinanceSolving), label, I18n::translate(m_data->sublabelForParameter(unknownParam)));
+  uint8_t unknownParam = m_data->interestData()->getUnknown();
+  const char * label = I18n::translate(m_data->interestData()->labelForParameter(unknownParam));
+  int length = Poincare::Print::safeCustomPrintf(m_titleBuffer, k_titleBufferSize, I18n::translate(I18n::Message::FinanceSolving), label, I18n::translate(m_data->interestData()->sublabelForParameter(unknownParam)));
   if (length >= k_titleBufferSize) {
     // Title did not fit, use a reduced pattern
     Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, I18n::translate(I18n::Message::FinanceSolvingReduced), label);
@@ -34,10 +34,10 @@ const char * InterestController::title() {
 
 void InterestController::didBecomeFirstResponder() {
   // Init from data
-  m_dropdownDataSource.setMessages(m_data->dropdownMessageAtIndex(0),
-                                   m_data->dropdownMessageAtIndex(1));
+  m_dropdownDataSource.setMessages(m_data->interestData()->dropdownMessageAtIndex(0),
+                                   m_data->interestData()->dropdownMessageAtIndex(1));
   selectCellAtLocation(0, 0);
-  m_dropdownCell.dropdown()->selectRow(m_data->m_booleanParam ? 0 : 1);
+  m_dropdownCell.dropdown()->selectRow(m_data->interestData()->m_booleanParam ? 0 : 1);
   m_dropdownCell.dropdown()->init();
   m_dropdownCell.reload();
   resetMemoization();
@@ -56,13 +56,13 @@ void InterestController::willDisplayCellForIndex(Escher::HighlightCell * cell, i
   uint8_t param = interestParamaterAtIndex(index);
   if (type == k_dropdownCellType) {
     assert(&m_dropdownCell == cell);
-    m_dropdownCell.setMessage(m_data->labelForParameter(param));
-    m_dropdownCell.setSubLabelMessage(m_data->sublabelForParameter(param));
+    m_dropdownCell.setMessage(m_data->interestData()->labelForParameter(param));
+    m_dropdownCell.setSubLabelMessage(m_data->interestData()->sublabelForParameter(param));
     return;
   }
   Escher::MessageTableCellWithEditableTextWithMessage * myCell = static_cast<Escher::MessageTableCellWithEditableTextWithMessage *>(cell);
-  myCell->setMessage(m_data->labelForParameter(param));
-  myCell->setSubLabelMessage(m_data->sublabelForParameter(param));
+  myCell->setMessage(m_data->interestData()->labelForParameter(param));
+  myCell->setSubLabelMessage(m_data->interestData()->sublabelForParameter(param));
   return Shared::FloatParameterController<double>::willDisplayCellForIndex(cell, index);
 }
 
@@ -86,16 +86,16 @@ KDCoordinate InterestController::nonMemoizedRowHeight(int j) {
 }
 
 void InterestController::onDropdownSelected(int selectedRow) {
-  m_data->m_booleanParam = (selectedRow == 0);
+  m_data->interestData()->m_booleanParam = (selectedRow == 0);
 }
 
 uint8_t InterestController::interestParamaterAtIndex(int index) const {
-  uint8_t unknownParam = m_data->getUnknown();
-  assert(unknownParam < m_data->numberOfUnknowns());
+  uint8_t unknownParam = m_data->interestData()->getUnknown();
+  assert(unknownParam < m_data->interestData()->numberOfUnknowns());
   if (unknownParam <= index) {
     index += 1;
   }
-  assert(index < m_data->numberOfParameters());
+  assert(index < m_data->interestData()->numberOfParameters());
   return index;
 }
 
@@ -119,10 +119,10 @@ Escher::HighlightCell * InterestController::reusableParameterCell(int i, int typ
 
 bool InterestController::setParameterAtIndex(int parameterIndex, double f) {
   uint8_t param = interestParamaterAtIndex(parameterIndex);
-  if (!m_data->checkValue(param, f)) {
+  if (!m_data->interestData()->checkValue(param, f)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
-  m_data->setValue(param, f);
+  m_data->interestData()->setValue(param, f);
   return true;
 }

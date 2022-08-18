@@ -18,13 +18,13 @@ constexpr int k_numberOfInterestCells = InterestData::k_maxNumberOfUnknowns;
 
 class InterestMenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfInterestCells, Escher::MemoizedListViewDataSource> {
 public:
-  InterestMenuController(Escher::StackViewController * parentResponder, InterestController * interestController, InterestData * data);
+  InterestMenuController(Escher::StackViewController * parentResponder, InterestController * interestController, Data * data);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
-  const char * title() override { return I18n::translate(m_data->menuTitle()); }
+  const char * title() override { return I18n::translate(m_data->interestData()->menuTitle()); }
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; }
   Escher::View * view() override { return &m_contentView; }
-  int numberOfRows() const override { return m_data->numberOfUnknowns(); }
+  int numberOfRows() const override { return m_data->interestData()->numberOfUnknowns(); }
 
 private:
   uint8_t paramaterAtIndex(int index) const;
@@ -32,7 +32,7 @@ private:
   Escher::MessageTextView m_messageView;
   Escher::TableViewWithTopAndBottomViews m_contentView;
   InterestController * m_interestController;
-  InterestData * m_data;
+  Data * m_data;
 };
 
 }  // namespace Finance

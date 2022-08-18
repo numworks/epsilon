@@ -18,7 +18,7 @@ namespace Finance {
 class InterestController : public Shared::FloatParameterController<double>,
                            public Escher::DropdownCallback {
 public:
-  InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, ResultController * resultController, InterestData * data);
+  InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, ResultController * resultController, Data * data);
   const char * title() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -26,7 +26,7 @@ public:
   int typeAtIndex(int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   // Confirm cell plus all parameters but the unknown one
-  int numberOfRows() const override { return m_data->numberOfParameters(); }
+  int numberOfRows() const override { return m_data->interestData()->numberOfParameters(); }
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
 
   // Escher::DropdownCallback
@@ -38,12 +38,12 @@ private:
   // Shared::FloatParameterController<double>
   int reusableParameterCellCount(int type) override;
   Escher::HighlightCell * reusableParameterCell(int i, int type) override;
-  double parameterAtIndex(int index) override { return m_data->getValue(interestParamaterAtIndex(index)); }
+  double parameterAtIndex(int index) override { return m_data->interestData()->getValue(interestParamaterAtIndex(index)); }
   bool setParameterAtIndex(int parameterIndex, double f) override;
   void buttonAction() override { stackOpenPage(m_resultController); }
 
   // Dropdown cell is right after all double parameters but the unknown one
-  int indexOfDropdown() const { return m_data->numberOfDoubleValues() - 1; }
+  int indexOfDropdown() const { return m_data->interestData()->numberOfDoubleValues() - 1; }
 
   constexpr static int k_inputCellType = 0;
   constexpr static int k_dropdownCellType = 2;
@@ -59,7 +59,7 @@ private:
   char m_titleBuffer[k_titleBufferSize];
 
   ResultController * m_resultController;
-  InterestData * m_data;
+  Data * m_data;
 };
 
 }  // namespace Finance

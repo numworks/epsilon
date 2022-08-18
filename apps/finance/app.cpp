@@ -50,10 +50,10 @@ void App::didExitPage(Escher::ViewController * controller) {
 // App
 App::App(Snapshot * snapshot) :
   Shared::TextFieldDelegateApp(snapshot, &m_stackViewController),
-  m_resultController(&m_stackViewController, snapshot->data()->interestData()),
-  m_interestController(&m_stackViewController, this, &m_resultController, snapshot->data()->interestData()),
-  m_interestMenuController(&m_stackViewController, &m_interestController, snapshot->data()->interestData()),
-  m_menuController(&m_stackViewController, &m_interestMenuController, snapshot->data()->interestData()),
+  m_resultController(&m_stackViewController, snapshot->data()),
+  m_interestController(&m_stackViewController, this, &m_resultController, snapshot->data()),
+  m_interestMenuController(&m_stackViewController, &m_interestController, snapshot->data()),
+  m_menuController(&m_stackViewController, &m_interestMenuController, snapshot->data()),
   m_stackViewController(&m_modalViewController, &m_menuController, Escher::StackViewController::Style::GrayGradation)
 {}
 

@@ -5,10 +5,10 @@
 
 using namespace Finance;
 
-MenuController::MenuController(Escher::StackViewController * parentResponder, InterestMenuController * interestMenuController, InterestData * interestData) :
+MenuController::MenuController(Escher::StackViewController * parentResponder, InterestMenuController * interestMenuController, Data * data) :
       Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells, Escher::RegularListViewDataSource>(parentResponder),
       m_interestMenuController(interestMenuController),
-      m_interestData(interestData) {
+      m_data(data) {
   selectRow(0);
   cellAtIndex(k_indexOfSimpleInterest)->setMessage(I18n::Message::SimpleInterest);
   cellAtIndex(k_indexOfSimpleInterest)->setSubtitle(I18n::Message::SimpleInterestDescription);
@@ -25,8 +25,8 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     bool simpleInterestRowSelected = (selectedRow() == k_indexOfSimpleInterest);
     assert(simpleInterestRowSelected || selectedRow() == k_indexOfCompoundInterest);
 
-    // Initialize a new interest data model
-    InterestData::Initialize(m_interestData, simpleInterestRowSelected);
+    // Set the interest data model
+    m_data->setModel(simpleInterestRowSelected);
     m_interestMenuController->selectRow(0);
     stackOpenPage(m_interestMenuController);
     return true;

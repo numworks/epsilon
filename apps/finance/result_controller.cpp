@@ -8,7 +8,7 @@
 
 using namespace Finance;
 
-ResultController::ResultController(Escher::StackViewController * parentResponder, InterestData * data) :
+ResultController::ResultController(Escher::StackViewController * parentResponder, Data * data) :
       Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource>(parentResponder),
       m_messageView(KDFont::Size::Small, I18n::Message::CalculatedValues, KDContext::k_alignCenter, KDContext::k_alignCenter, Escher::Palette::GrayDark, Escher::Palette::WallScreen),
       m_contentView(&m_selectableTableView, this, &m_messageView),
@@ -18,9 +18,9 @@ ResultController::ResultController(Escher::StackViewController * parentResponder
 void ResultController::didBecomeFirstResponder() {
   /* Build the result cell here because it only needs to be updated once this
    * controller become first responder. */
-  cellAtIndex(0)->setMessage(m_data->labelForParameter(m_data->getUnknown()));
-  cellAtIndex(0)->setSubLabelMessage(m_data->sublabelForParameter(m_data->getUnknown()));
-  double value = m_data->computeUnknownValue();
+  cellAtIndex(0)->setMessage(m_data->interestData()->labelForParameter(m_data->interestData()->getUnknown()));
+  cellAtIndex(0)->setSubLabelMessage(m_data->interestData()->sublabelForParameter(m_data->interestData()->getUnknown()));
+  double value = m_data->interestData()->computeUnknownValue();
   constexpr int maxUserPrecision = Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
   constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(maxUserPrecision);
   char buffer[bufferSize];
@@ -50,8 +50,8 @@ const char * ResultController::title() {
   const char * parameterTemplate = "%s=%*.*ed...";
   const char * lastKnownParameterTemplate = "%s=%*.*ed";
   // The boolean parameter isn't displayed
-  uint8_t doubleParameters = m_data->numberOfDoubleValues();
-  uint8_t unknownParam = m_data->getUnknown();
+  uint8_t doubleParameters = m_data->interestData()->numberOfDoubleValues();
+  uint8_t unknownParam = m_data->interestData()->getUnknown();
   bool unknownParamIsLast = (unknownParam == doubleParameters - 1);
   size_t length = 0;
   for (uint8_t param = 0; param < doubleParameters; param++) {
@@ -65,8 +65,8 @@ const char * ResultController::title() {
     int parameterLength = Poincare::Print::safeCustomPrintf(
         m_titleBuffer + length, k_titleBufferSize - length,
         (lastKnownParameter ? lastKnownParameterTemplate : parameterTemplate),
-        I18n::translate(m_data->labelForParameter(param)),
-        m_data->getValue(param), printFloatMode, precision);
+        I18n::translate(m_data->interestData()->labelForParameter(param)),
+        m_data->interestData()->getValue(param), printFloatMode, precision);
     if (length + parameterLength >= k_titleBufferSize) {
       // Text did not fit, insert "..." and overwite last " " if there is one
       if (length > strlen(" ")) {

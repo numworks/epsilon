@@ -16,7 +16,7 @@ constexpr int k_numberOfResultCells = 1;
 
 class ResultController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource> {
 public:
-  ResultController(Escher::StackViewController * parentResponder, InterestData * data);
+  ResultController(Escher::StackViewController * parentResponder, Data * data);
 
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
@@ -30,7 +30,7 @@ private:
 
   Escher::MessageTextView m_messageView;
   Escher::TableViewWithTopAndBottomViews m_contentView;
-  InterestData * m_data;
+  Data * m_data;
 };
 
 }  // namespace Finance

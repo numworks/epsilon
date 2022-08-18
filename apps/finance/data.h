@@ -26,7 +26,7 @@ public:
   virtual uint8_t numberOfDoubleValues() const = 0;
   virtual uint8_t numberOfUnknowns() const = 0;
   virtual I18n::Message dropdownMessageAtIndex(int index) const = 0;
-  virtual double computeUnknownValue() const = 0;
+  virtual double computeUnknownValue() = 0;
 
   virtual void setValue(uint8_t param, double value) {
     assert(param < numberOfDoubleValues());
@@ -89,7 +89,7 @@ public:
   I18n::Message dropdownMessageAtIndex(int index) const override {
     return index == 0 ? I18n::Message::Finance360 : I18n::Message::Finance365;
   }
-  double computeUnknownValue() const override;
+  double computeUnknownValue() override;
 };
 
 class CompoundInterestData : public InterestData {
@@ -134,7 +134,7 @@ public:
     return index == 0 ? I18n::Message::FinanceBeginning
                       : I18n::Message::FinanceEnd;
   }
-  double computeUnknownValue() const override;
+  double computeUnknownValue() override;
   void setValue(uint8_t param, double value) override;
 };
 

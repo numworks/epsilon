@@ -22,15 +22,9 @@ public:
   virtual uint8_t numberOfUnknowns() const = 0;
   virtual I18n::Message dropdownMessageAtIndex(int index) const = 0;
   virtual double computeUnknownValue() = 0;
+  virtual void setValue(uint8_t param, double value) = 0;
+  virtual double getValue(uint8_t param) const = 0;
 
-  virtual void setValue(uint8_t param, double value) {
-    assert(param < numberOfDoubleValues());
-    m_values[param] = value;
-  }
-  double getValue(uint8_t param) const {
-    assert(param < numberOfDoubleValues());
-    return m_values[param];
-  }
   void setUnknown(uint8_t param);
   uint8_t getUnknown() const { return m_unknown; }
   /* For SimpleInterestData, this param tells if the convention for the number
@@ -40,12 +34,8 @@ public:
   bool m_booleanParam;
 
 protected:
-  constexpr static uint8_t k_maxNumberOfDoubleValues = 7; // static_cast<uint8_t>(CompoundInterestData::Parameter::Payment)
   void resetValues();
   uint8_t m_unknown;
-
-private:
-  double m_values[k_maxNumberOfDoubleValues];
 };
 
 class SimpleInterestData : public InterestData {
@@ -64,8 +54,6 @@ public:
   static_assert(static_cast<uint8_t>(Parameter::YearConvention) == k_numberOfParameters - 1, "YearConvention must be last.");
 
   constexpr static uint8_t k_numberOfDoubleValues = static_cast<uint8_t>(Parameter::YearConvention);
-  static_assert(k_maxNumberOfDoubleValues >= k_numberOfDoubleValues, "k_maxNumberOfDoubleValues is invalid.");
-
   constexpr static uint8_t k_numberOfUnknowns = k_numberOfDoubleValues;
   static_assert(k_maxNumberOfUnknowns >= k_numberOfUnknowns, "k_maxNumberOfUnknowns is invalid.");
 
@@ -85,6 +73,17 @@ public:
     return index == 0 ? I18n::Message::Finance360 : I18n::Message::Finance365;
   }
   double computeUnknownValue() override;
+  void setValue(uint8_t param, double value) override {
+    assert(param < numberOfDoubleValues());
+    m_values[param] = value;
+  }
+  double getValue(uint8_t param) const override {
+    assert(param < numberOfDoubleValues());
+    return m_values[param];
+  }
+
+private:
+  double m_values[k_numberOfDoubleValues];
 };
 
 class CompoundInterestData : public InterestData {
@@ -108,8 +107,6 @@ public:
   static_assert(static_cast<uint8_t>(Parameter::Payment) == k_numberOfParameters - 1, "Payment must be last.");
 
   constexpr static uint8_t k_numberOfDoubleValues = static_cast<uint8_t>(Parameter::Payment);
-  static_assert(k_maxNumberOfDoubleValues >= k_numberOfDoubleValues, "k_maxNumberOfDoubleValues is invalid.");
-
   constexpr static uint8_t k_numberOfUnknowns = static_cast<uint8_t>(Parameter::PY);
   static_assert(k_maxNumberOfUnknowns >= k_numberOfUnknowns, "k_maxNumberOfUnknowns is invalid.");
 
@@ -131,6 +128,13 @@ public:
   }
   double computeUnknownValue() override;
   void setValue(uint8_t param, double value) override;
+  double getValue(uint8_t param) const override {
+    assert(param < numberOfDoubleValues());
+    return m_values[param];
+  }
+
+private:
+  double m_values[k_numberOfDoubleValues];
 };
 
 class Data {

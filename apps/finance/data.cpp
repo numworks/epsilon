@@ -19,18 +19,15 @@ void InterestData::Initialize(void * m_buffer, bool simple) {
 
 void InterestData::setUnknown(uint8_t param) {
   assert(m_unknown < numberOfUnknowns());
-  setValue(m_unknown, defaultValue(m_unknown));
   m_unknown = param;
-  setValue(m_unknown, NAN);
 }
 
 void InterestData::resetValues() {
   m_booleanParam = false;
   // Set first parameter as unknown by default
-  setValue(0, NAN);
   m_unknown = 0;
   // Default the other double parameters
-  for (uint8_t param = 1; param < numberOfDoubleValues(); param++) {
+  for (uint8_t param = 0; param < numberOfDoubleValues(); param++) {
     setValue(param, defaultValue(param));
   }
 }
@@ -68,7 +65,7 @@ bool SimpleInterestData::checkValue(uint8_t param, double value) const {
          && (param != static_cast<uint8_t>(Parameter::n) || value >= 0);
 }
 
-double SimpleInterestData::computeUnknownValue() const {
+double SimpleInterestData::computeUnknownValue() {
   /* Using the formula
    * I = -P * r * n'
    * With rPct = r * 100
@@ -96,8 +93,9 @@ double SimpleInterestData::computeUnknownValue() const {
   }
   if (!std::isfinite(result)) {
     // Prevent 0 divisions from returning inf
-    return NAN;
+    result = NAN;
   }
+  setValue(m_unknown, result);
   return result;
 }
 
@@ -215,7 +213,7 @@ double computeFV(double PV, double Pmt, double a, double b) {
   return -(PV + a * Pmt) / b;
 }
 
-double CompoundInterestData::computeUnknownValue() const {
+double CompoundInterestData::computeUnknownValue() {
   /* Using the formulas
    * PV + α*Pmt + β*FV = 0
    * With α = (1 + i*S) * (1-β)/i
@@ -256,8 +254,9 @@ double CompoundInterestData::computeUnknownValue() const {
   }
   if (!std::isfinite(result)) {
     // Prevent 0 divisions from returning inf
-    return NAN;
+    result = NAN;
   }
+  setValue(m_unknown, result);
   return result;
 }
 

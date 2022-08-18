@@ -17,7 +17,7 @@ class MenuController : public Escher::SelectableCellListPage<Escher::MessageTabl
 public:
   MenuController(Escher::StackViewController * parentResponder,
                     InterestMenuController * interestMenuController,
-                    InterestData * interestData);
+                    Data * data);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
 
@@ -26,7 +26,7 @@ public:
 
 private:
   InterestMenuController * m_interestMenuController;
-  InterestData * m_interestData;
+  Data * m_data;
 };
 
 }  // namespace Finance

@@ -37,7 +37,7 @@ TypeTreeBlock * Subtraction::PushNode() {
   return static_cast<TypeTreeBlock *>(TreeSandbox::sharedSandbox()->pushBlock(SubtractionBlock()));
 }
 
-void Subtraction::BasicReduction(TypeTreeBlock * treeBlock) {
+void Subtraction::BasicReduction(TypeTreeBlock * treeBlock) const {
   assert(treeBlock->type() == BlockType::Subtraction);
   return ProjectionReduction(treeBlock,
       []() { return Addition::PushNode(2); },
@@ -52,7 +52,7 @@ TypeTreeBlock * Division::PushNode() {
 }
 
 // TODO factorize with Subtraction
-void Division::BasicReduction(TypeTreeBlock * treeBlock) {
+void Division::BasicReduction(TypeTreeBlock * treeBlock) const {
   assert(treeBlock->type() == BlockType::Division);
   return ProjectionReduction(treeBlock,
       []() { return Multiplication::PushNode(2); },
@@ -66,11 +66,11 @@ void Integer::LogAttributes(const TypeTreeBlock * treeBlock, std::ostream & stre
   stream << " value=\"" << Value(treeBlock) << "\"";
 }
 
-size_t Integer::NodeSize(const TypeTreeBlock * treeBlock, bool head) {
+size_t Integer::NodeSize(const TypeTreeBlock * treeBlock, bool head) const {
   return head ? NodeSize(treeBlock, &TreeBlock::nextBlock) : NodeSize(treeBlock, &TreeBlock::previousBlock);
 }
 
-size_t Integer::NodeSize(const TypeTreeBlock * treeBlock, NextStep step) {
+size_t Integer::NodeSize(const TypeTreeBlock * treeBlock, NextStep step) const {
   TypeTreeBlock * block = const_cast<TypeTreeBlock *>(treeBlock);
   return k_minimalNumberOfNodes + static_cast<ValueTreeBlock *>((block->*step)())->value();
 }
@@ -80,7 +80,7 @@ int Integer::Value(const TypeTreeBlock * treeBlock) {
   TreeBlock * digitBlock;
   digitBlock = const_cast<TypeTreeBlock *>(treeBlock)->nextNthBlock(2);
   ValueTreeBlock * valueBlock = static_cast<ValueTreeBlock *>(digitBlock);
-  for (size_t i = 0; i < NodeSize(treeBlock) - k_minimalNumberOfNodes; i++) {
+  for (size_t i = 0; i < treeBlock->nodeSize() - k_minimalNumberOfNodes; i++) {
     value += valueBlock->value();
     valueBlock =  static_cast<ValueTreeBlock *>(valueBlock->nextBlock());
   }
@@ -110,10 +110,10 @@ TypeTreeBlock * Integer::PushNode(int value) {
 /* NAry */
 
 void NAry::LogAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream) {
-  stream << " numberOfChildren=\"" << NumberOfChildren(treeBlock) << "\"";
+  stream << " numberOfChildren=\"" << treeBlock->numberOfChildren() << "\"";
 }
 
-int NAry::NumberOfChildren(const TypeTreeBlock * treeBlock) {
+int NAry::NumberOfChildren(const TypeTreeBlock * treeBlock) const {
   TypeTreeBlock * block = const_cast<TypeTreeBlock *>(treeBlock);
   return static_cast<ValueTreeBlock *>(block->nextBlock())->value();
 }

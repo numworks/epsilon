@@ -102,23 +102,37 @@ public:
   void logNodeName(std::ostream & stream) const { (*s_logVTable[m_content].m_logName)(stream); }
   void logAttributes(std::ostream & stream) const { (*s_logVTable[m_content].m_logAttribute)(this, stream); }
 #endif
-  constexpr static TreeBlockVTable s_vTable[] = {
-    // Order has to be the same as TypeTreeBlock
 #if GHOST_REQUIRED
-    Ghost::s_vTable,
+  static constexpr Ghost k_ghost;
 #endif
-    Integer::s_vTable,
-    Integer::s_vTable, // IntegerShort
-    Integer::s_vTable, // Float
-    Addition::s_vTable,
-    Multiplication::s_vTable,
-    Subtraction::s_vTable,
-    Division::s_vTable,
-    Power::s_vTable
+  static constexpr Integer k_integer;
+  static constexpr Addition k_addition;
+  static constexpr Multiplication k_multiplication;
+  static constexpr Subtraction k_subtraction;
+  static constexpr Division k_division;
+  static constexpr Power k_power;
+  static constexpr const Handle * k_handles[] = {
+  // Order has to be the same as TypeTreeBlock
+#if GHOST_REQUIRED
+    &k_ghost,
+#endif
+    &k_integer,
+    &k_integer,
+    &k_integer,
+    &k_addition,
+    &k_multiplication,
+    &k_subtraction,
+    &k_division,
+    &k_power
   };
-  void basicReduction() { (*s_vTable[m_content].m_basicReduction)(this); }
-  size_t nodeSize(bool head = true) const { return  (*s_vTable[m_content].m_nodeSize)(this, head); } // Should it be virtual?
-  int numberOfChildren() const { return  (*s_vTable[m_content].m_numberOfChildren)(this); } // Should it be virtual
+
+  const Handle * handle() const { return k_handles[m_content]; }
+  void basicReduction() { handle()->BasicReduction(this); }
+  size_t nodeSize(bool head = true) const { return handle()->NodeSize(this, head); } // Should it be virtual?
+  int numberOfChildren() const { return handle()->NumberOfChildren(this); } // Should it be virtual
+
+  // TODO: dynamic_cast-like that can check its is a subclass with m_content
+  void beautify() { static_cast<const InternalHandle*>(handle())->Beautify(this); }
 
   class ForwardDirect final {
   public:

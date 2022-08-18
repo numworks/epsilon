@@ -173,7 +173,7 @@ void assertCalculationIs(const char * input, DisplayOutput display, EqualSign si
   store->push(input, context, dummyHeight);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation = store->calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(context) == display);
-  if (sign != EqualSign::Unknown) {
+  if (sign != EqualSign::Unknown && display != DisplayOutput::ApproximateOnly && display != DisplayOutput::ExactOnly) {
     quiz_assert(lastCalculation->exactAndApproximateDisplayedOutputsAreEqual(context) == sign);
   }
   if (exactOutput) {
@@ -193,7 +193,7 @@ QUIZ_CASE(calculation_significant_digits) {
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
   assertCalculationIs("11123456789", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "11123456789", "1.112345679ᴇ10", "11123456789", &globalContext, &store);
-  assertCalculationIs("1123456789", DisplayOutput::ApproximateOnly, EqualSign::Equal, "1123456789", "1123456789", "1123456789", &globalContext, &store);
+  assertCalculationIs("1123456789", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "1123456789", "1123456789", "1123456789", &globalContext, &store);
 
 }
 
@@ -215,9 +215,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("28^7", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("3+√(2)→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "3+√(2)", nullptr, nullptr, &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
-  assertCalculationIs("3+2→a", DisplayOutput::ApproximateOnly, EqualSign::Equal, "5", "5", "5", &globalContext, &store);
+  assertCalculationIs("3+2→a", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "5", "5", "5", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
-  assertCalculationIs("3→a", DisplayOutput::ApproximateOnly, EqualSign::Equal, "3", "3", "3", &globalContext, &store);
+  assertCalculationIs("3→a", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "3", "3", "3", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   assertCalculationIs("3+x→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown, "3+x", nullptr, nullptr, &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
@@ -230,9 +230,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("binompdf(2,3,0.5)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "0.375", "0.375", &globalContext, &store);
 
   // Exact output that have dependencies are not displayed
-  assertCalculationIs("sum(1/k,k,0,5)→a", DisplayOutput::ApproximateOnly, EqualSign::Approximation, "sum(1/k,k,0,5)", "undef", "undef", &globalContext, &store);
-  assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Equal, "2", "2", "2", &globalContext, &store);
-  assertCalculationIs("f(a)", DisplayOutput::ApproximateOnly, EqualSign::Approximation, "dep\U00000014(2,{sum(1/k,k,0,5)})", "undef", "undef", &globalContext, &store);
+  assertCalculationIs("sum(1/k,k,0,5)→a", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "sum(1/k,k,0,5)", "undef", "undef", &globalContext, &store);
+  assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown, "2", "2", "2", &globalContext, &store);
+  assertCalculationIs("f(a)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "dep\U00000014(2,{sum(1/k,k,0,5)})", "undef", "undef", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 

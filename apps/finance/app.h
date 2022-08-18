@@ -26,18 +26,32 @@ public:
   // Snapshot
   class Snapshot : public Shared::SharedApp::Snapshot {
   public:
+    /* At most 3 nested menus from MenuController :
+     * InterestMenuController, InterestController and ResultController */
+    constexpr static uint8_t k_maxNumberOfStacks = 3;
+
     App * unpack(Escher::Container * container) override;
     const Descriptor * descriptor() const override;
+    Ion::RingBuffer<Escher::ViewController *, k_maxNumberOfStacks> * pageQueue() { return &m_pageQueue; }
+    Data * data() { return &m_data; }
+  private:
+    Ion::RingBuffer<Escher::ViewController *, k_maxNumberOfStacks> m_pageQueue;
+    Data m_data;
   };
   TELEMETRY_ID("Finance");
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
+  void didBecomeActive(Escher::Window * window) override;
+
+  // Navigation
+  void willOpenPage(Escher::ViewController * controller) override;
+  void didExitPage(Escher::ViewController * controller) override;
 
 private:
   App(Snapshot * snapshot);
+  Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
 
   // Controllers
-  Data m_data;
   ResultController m_resultController;
   InterestController m_interestController;
   InterestMenuController m_interestMenuController;

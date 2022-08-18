@@ -251,11 +251,12 @@ double CompoundInterestData::computeUnknownValue() {
 }
 
 void CompoundInterestData::setValue(uint8_t param, double value) {
+  assert(param < numberOfDoubleValues());
   if (param == static_cast<uint8_t>(Parameter::PY)) {
     // Updating PY should also update CY
-    InterestData::setValue(static_cast<uint8_t>(Parameter::CY), value);
+    m_values[static_cast<uint8_t>(Parameter::CY)] = value;
   }
-  InterestData::setValue(param, value);
+  m_values[param] = value;
 }
 
 }  // namespace Finance

@@ -95,8 +95,8 @@ I18n::Message CompoundInterestData::labelForParameter(uint8_t param) const {
   assert(param < numberOfParameters());
   constexpr I18n::Message k_labels[k_numberOfParameters] = {
       I18n::Message::FinanceN,  I18n::Message::FinanceRPct,
-      I18n::Message::FinancePV, I18n::Message::FinancePmt,
-      I18n::Message::FinanceFV, I18n::Message::FinancePY,
+      I18n::Message::FinancePV, I18n::Message::FinanceFV,
+      I18n::Message::FinancePmt, I18n::Message::FinancePY,
       I18n::Message::FinanceCY, I18n::Message::FinancePayment};
   return k_labels[param];
 }
@@ -107,8 +107,8 @@ I18n::Message CompoundInterestData::sublabelForParameter(uint8_t param) const {
       I18n::Message::NumberOfPayments,
       I18n::Message::NominalAnnualInterestRate,
       I18n::Message::PresentValue,
-      I18n::Message::PaymentEachPeriod,
       I18n::Message::FutureValue,
+      I18n::Message::PaymentEachPeriod,
       I18n::Message::NumberPaymentYear,
       I18n::Message::NumberCompoundingPeriodYear,
       I18n::Message::BeginningEndPeriod};

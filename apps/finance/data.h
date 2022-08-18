@@ -92,8 +92,8 @@ private:
     N = 0,
     rPct,
     PV,
-    Pmt,
     FV,
+    Pmt,
     PY,      // Can't be unknown
     CY,      // Can't be unknown
     Payment  // Is not a double parameter and can't be unknown

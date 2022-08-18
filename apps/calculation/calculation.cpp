@@ -219,6 +219,12 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   if (m_equalSign != EqualSign::Unknown) {
     return m_equalSign;
   }
+  if (m_displayOutput == DisplayOutput::ExactOnly || m_displayOutput == DisplayOutput::ApproximateOnly) {
+    /* Do not compute the equal sign if not needed.
+     * We don't override m_equalSign here in case it needs to be computed later
+     * */
+    return EqualSign::Approximation;
+  }
   /* Displaying the right equal symbol is less important than displaying a
    * result, so we do not want exactAndApproximateDisplayedOutputsAreEqual to
    * create a pool failure that would prevent from displaying a result that we
@@ -231,7 +237,11 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     Preferences * preferences = Preferences::sharedPreferences();
-    // TODO: complex format should not be needed here (as it is not used to create layouts)
+    /* TODO:
+     * - Complex format should not be needed here (as it is not used to create
+     *   layouts).
+     * - This is too slow. It seems useless and costly to simplify again the
+     * exact output if it's long. */
     m_equalSign = Expression::ParsedExpressionsAreEqual(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined), context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat()) ? EqualSign::Equal : EqualSign::Approximation;
     return m_equalSign;
   } else {

@@ -7,6 +7,12 @@ namespace Finance {
 
 /* InterestData */
 
+double InterestData::defaultValue(uint8_t param) const {
+  assert(param < k_numberOfSharedDoubleValues);
+  constexpr double k_defaultValues[k_numberOfSharedDoubleValues] = {100.0, 1.0, -1000.0, 2.7};
+  return k_defaultValues[param];
+}
+
 void InterestData::setUnknown(uint8_t param) {
   assert(m_unknown < numberOfUnknowns());
   m_unknown = param;
@@ -44,9 +50,11 @@ I18n::Message SimpleInterestData::sublabelForParameter(uint8_t param) const {
 
 double SimpleInterestData::defaultValue(uint8_t param) const {
   assert(param < numberOfDoubleValues());
-  constexpr double k_defaultValues[k_numberOfDoubleValues] = {100.0, 1.0,
-                                                              -1000.0, 2.7};
-  return k_defaultValues[param];
+  if (param < k_numberOfSharedDoubleValues) {
+    return InterestData::defaultValue(param);
+  }
+  constexpr double k_defaultValues[k_numberOfDoubleValues - k_numberOfSharedDoubleValues] = {};
+  return k_defaultValues[param - k_numberOfSharedDoubleValues];
 }
 
 bool SimpleInterestData::checkValue(uint8_t param, double value) const {
@@ -89,6 +97,22 @@ double SimpleInterestData::computeUnknownValue() {
   return result;
 }
 
+void SimpleInterestData::setValue(uint8_t param, double value) {
+  assert(param < numberOfDoubleValues());
+  if (param < k_numberOfSharedDoubleValues) {
+    return InterestData::setValue(param, value);
+  }
+  m_values[param - k_numberOfSharedDoubleValues] = value;
+}
+
+double SimpleInterestData::getValue(uint8_t param) const {
+  assert(param < numberOfDoubleValues());
+  if (param < k_numberOfSharedDoubleValues) {
+    return InterestData::getValue(param);
+  }
+  return m_values[param - k_numberOfSharedDoubleValues];
+}
+
 /* CompoundInterestData */
 
 I18n::Message CompoundInterestData::labelForParameter(uint8_t param) const {
@@ -117,9 +141,11 @@ I18n::Message CompoundInterestData::sublabelForParameter(uint8_t param) const {
 
 double CompoundInterestData::defaultValue(uint8_t param) const {
   assert(param < numberOfDoubleValues());
-  constexpr double k_defaultValues[k_numberOfDoubleValues] = {
-      0.0, 0.0, 0.0, 0.0, 0.0, 12.0, 12.0};
-  return k_defaultValues[param];
+  if (param < k_numberOfSharedDoubleValues) {
+    return InterestData::defaultValue(param);
+  }
+  constexpr double k_defaultValues[k_numberOfDoubleValues - k_numberOfSharedDoubleValues] = {0.0, 12.0, 12.0};
+  return k_defaultValues[param - k_numberOfSharedDoubleValues];
 }
 
 bool CompoundInterestData::checkValue(uint8_t param, double value) const {
@@ -252,11 +278,22 @@ double CompoundInterestData::computeUnknownValue() {
 
 void CompoundInterestData::setValue(uint8_t param, double value) {
   assert(param < numberOfDoubleValues());
+  if (param < k_numberOfSharedDoubleValues) {
+    return InterestData::setValue(param, value);
+  }
   if (param == static_cast<uint8_t>(Parameter::PY)) {
     // Updating PY should also update CY
-    m_values[static_cast<uint8_t>(Parameter::CY)] = value;
+    m_values[static_cast<uint8_t>(Parameter::CY) - k_numberOfSharedDoubleValues] = value;
   }
-  m_values[param] = value;
+  m_values[param - k_numberOfSharedDoubleValues] = value;
+}
+
+double CompoundInterestData::getValue(uint8_t param) const {
+  assert(param < numberOfDoubleValues());
+  if (param < k_numberOfSharedDoubleValues) {
+    return InterestData::getValue(param);
+  }
+  return m_values[param - k_numberOfSharedDoubleValues];
 }
 
 }  // namespace Finance

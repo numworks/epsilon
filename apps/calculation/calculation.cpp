@@ -236,13 +236,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
    * Store in the exactOutput. */
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    Preferences * preferences = Preferences::sharedPreferences();
-    /* TODO:
-     * - Complex format should not be needed here (as it is not used to create
-     *   layouts).
-     * - This is too slow. It seems useless and costly to simplify again the
-     * exact output if it's long. */
-    m_equalSign = Expression::ParsedExpressionsAreEqual(exactOutputText(), approximateOutputText(NumberOfSignificantDigits::UserDefined), context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat()) ? EqualSign::Equal : EqualSign::Approximation;
+    m_equalSign = Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(exactOutput(), approximateOutput(NumberOfSignificantDigits::UserDefined)) ? EqualSign::Equal : EqualSign::Approximation;
     return m_equalSign;
   } else {
     /* Do not override m_equalSign in case there is enough room in the pool

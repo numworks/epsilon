@@ -259,9 +259,9 @@ public:
   /* isIdenticalToWithoutParentheses behaves as isIdenticalTo, but without
    * taking into account parentheses: e^(0) is identical to e^0. */
   bool isIdenticalToWithoutParentheses(const Expression e) const;
-  static bool ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat);
-
   bool containsSameDependency(const Expression e, const ExpressionNode::ReductionContext& reductionContext) const;
+
+  static bool ExactAndApproximateBeautifiedExpressionsAreEqual(Expression exactExpression, Expression approximateExpression);
 
   /* Layout Helper */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context, bool stripMarginStyle = false, bool nested = false) const;

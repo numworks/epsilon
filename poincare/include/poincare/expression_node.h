@@ -213,6 +213,9 @@ public:
       m_unitConversion(unitConversion),
       m_shouldExpandMultiplication(shouldExpandMultiplication)
     {}
+    ReductionContext() :
+      ReductionContext(nullptr, Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric, ReductionTarget::User)
+    {}
     static ReductionContext NonInvasiveReductionContext(const ReductionContext& reductionContext) {
       return ReductionContext(
           reductionContext.context(),

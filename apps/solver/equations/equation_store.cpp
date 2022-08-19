@@ -302,7 +302,7 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
        * approximate solutions. */
       m_exactSolutionIdentity[solutionIndex] = ExamModeConfiguration::exactExpressionIsForbidden(exactSolutions[i]) || strcmp(exactBuffer, approximateBuffer) == 0;
       if (!m_exactSolutionIdentity[solutionIndex]) {
-        m_exactSolutionEquality[solutionIndex] = Expression::ParsedExpressionsAreEqual(exactBuffer, approximateBuffer, context, updatedComplexFormat(context), angleUnit, GlobalPreferences::sharedGlobalPreferences()->unitFormat());
+        m_exactSolutionEquality[solutionIndex] = Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(exactSolutions[i], exactSolutionsApproximations[i]);
       }
       solutionIndex++;
     }

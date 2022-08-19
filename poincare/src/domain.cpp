@@ -31,7 +31,7 @@ Domain::Result Domain::ExpressionIsIn(const Expression &expression, Type type, C
     }
   }
 
-  if (!expression.isReal(context)) {
+  if (!expression.isReal(context, false)) {
     return CantCheck;
   }
 

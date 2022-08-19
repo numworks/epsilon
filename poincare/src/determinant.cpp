@@ -50,7 +50,7 @@ Expression Determinant::shallowReduce(ExpressionNode::ReductionContext reduction
   }
   Expression c0 = childAtIndex(0);
   // det(A) = undef if A is not a matrix
-  if (!c0.deepIsMatrix(reductionContext.context())) {
+  if (!c0.deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
     return replaceWithUndefinedInPlace();
   }
   if (c0.type() == ExpressionNode::Type::Matrix) {

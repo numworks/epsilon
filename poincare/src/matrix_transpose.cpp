@@ -54,7 +54,7 @@ Expression MatrixTranspose::shallowReduce(ExpressionNode::ReductionContext reduc
     replaceWithInPlace(result);
     return result;
   }
-  if (c.deepIsMatrix(reductionContext.context())) {
+  if (c.deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
     return *this;
   }
   replaceWithInPlace(c);

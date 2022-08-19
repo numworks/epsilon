@@ -19,7 +19,7 @@ void assert_greater(Expression e1, Expression e2) {
   Addition a = Addition::Builder(e1, e2);
   a.sortChildrenInPlace(
       [](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, false); },
-      &globalContext);
+      &globalContext, true);
   quiz_assert(a.childAtIndex(0) == e1);
   quiz_assert(a.childAtIndex(1) == e2);
 }

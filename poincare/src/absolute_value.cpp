@@ -46,11 +46,10 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
       return e;
     }
   }
-
   Expression c = childAtIndex(0);
 
   // |x| = ±x if x is real
-  if (c.isReal(reductionContext.context())) {
+  if (c.isReal(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
     double app = c.node()->approximate(double(), ExpressionNode::ApproximationContext(reductionContext, true)).toScalar();
     if (!std::isnan(app)) {
       if ((c.isNumber() && app >= 0) || app >= Float<double>::EpsilonLax()) {
@@ -89,7 +88,7 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
    *       = r^a*e^(i*b*ln(r))
    * So if b = 0, |z^y| = |z|^y
    */
-  if (c.type() == ExpressionNode::Type::Power && c.childAtIndex(1).isReal(reductionContext.context())) {
+  if (c.type() == ExpressionNode::Type::Power && c.childAtIndex(1).isReal(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
     List listOfDependencies = List::Builder();
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
       listOfDependencies.addChildAtIndexInPlace(c.clone(), 0, 0);

@@ -65,7 +65,7 @@ Expression VectorCross::shallowReduce(ExpressionNode::ReductionContext reduction
     replaceWithInPlace(a);
     return a.shallowReduce(reductionContext);
   }
-  if (c0.deepIsMatrix(reductionContext.context()) && c1.deepIsMatrix(reductionContext.context())) {
+  if (c0.deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices()) && c1.deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
     return *this;
   }
   return replaceWithUndefinedInPlace();

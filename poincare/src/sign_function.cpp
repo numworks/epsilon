@@ -65,9 +65,6 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
     childAtIndex(0).removeUnit(&unit);
   }
   Expression child = childAtIndex(0);
-  if (child.deepIsMatrix(reductionContext.context())) {
-    return replaceWithUndefinedInPlace();
-  }
   Rational resultSign = Rational::Builder(1);
   ExpressionNode::Sign s = child.sign(reductionContext.context());
   if (s == ExpressionNode::Sign::Negative) {

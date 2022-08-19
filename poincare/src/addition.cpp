@@ -160,7 +160,8 @@ Expression Addition::shallowBeautify(const ExpressionNode::ReductionContext& red
         // If they have same degree, sort children in decreasing order of base.
         return ExpressionNode::SimplificationOrder(e1, e2, false);
       },
-      reductionContext.context());
+      reductionContext.context(),
+      reductionContext.shouldCheckMatrices());
 
    /* Step 2 : Add Subtractions if needed
    * We want to turn "a+(-1)*b" into "a-b". Or, more precisely, any
@@ -228,7 +229,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   assert(childrenCount > 1);
 
   // Step 2: Sort the children
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context());
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context(), reductionContext.shouldCheckMatrices());
 
  // Step 3 : Distribute the addition over lists
   Expression distributed = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
@@ -274,8 +275,8 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
    * last children. */
   {
     Expression lastChild = childAtIndex(childrenCount - 1);
-    if (lastChild.deepIsMatrix(reductionContext.context())) {
-      if (!childAtIndex(0).deepIsMatrix(reductionContext.context())) {
+    if (lastChild.deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
+      if (!childAtIndex(0).deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
         /* If there is a matrix in the children, the last child is a matrix. If
          * there is a a scalar, the first child is a scalar. We forbid the
          * addition of a matrix and a scalar. */
@@ -393,7 +394,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
    *   do anything about it now (allChildrenAreReal == -1)
    * - All children are either real or ComplexCartesian (allChildrenAreReal == 0)
    *   We can bubble up ComplexCartesian nodes. */
-  if (allChildrenAreReal(reductionContext.context()) == 0) {
+  if (allChildrenAreReal(reductionContext.context(), reductionContext.shouldCheckMatrices()) == 0) {
     /* We turn (a+ib)+(c+id) into (a+c)+i(c+d)*/
     Addition imag = Addition::Builder(); // we store all imaginary parts in 'imag'
     Addition real = *this; // we store all real parts in 'real'

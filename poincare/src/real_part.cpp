@@ -37,7 +37,7 @@ Expression RealPart::shallowReduce(ExpressionNode::ReductionContext reductionCon
     }
   }
   Expression c = childAtIndex(0);
-  if (c.isReal(reductionContext.context())) {
+  if (c.isReal(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
     replaceWithInPlace(c);
     return c;
   }

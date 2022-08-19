@@ -61,7 +61,7 @@ Expression Dimension::shallowReduce(ExpressionNode::ReductionContext reductionCo
   }
 
   if (c.type() != ExpressionNode::Type::Matrix) {
-    if (c.deepIsMatrix(reductionContext.context())) {
+    if (c.deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
       return *this;
     }
     return replaceWithUndefinedInPlace();

@@ -112,14 +112,14 @@ int PowerNode::getPolynomialCoefficients(Context * context, const char * symbolN
   return Power(this).getPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-bool PowerNode::isReal(Context * context) const {
+bool PowerNode::isReal(Context * context, bool canContainMatrices) const {
   Expression base(childAtIndex(0));
   Expression index(childAtIndex(1));
   // Both base and index are real and:
   // - either base > 0
   // - or index is an integer
-  if (base.isReal(context) &&
-      index.isReal(context) &&
+  if (base.isReal(context, canContainMatrices) &&
+      index.isReal(context, canContainMatrices) &&
       (base.sign(context) == Sign::Positive ||
        (index.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(index).isInteger()))) {
     return true;
@@ -473,7 +473,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
    * Simple cases where the power is undefined. */
   Expression indexUnit;
   index = index.removeUnit(&indexUnit);
-  if (index.deepIsMatrix(context)
+  if (index.deepIsMatrix(context, reductionContext.shouldCheckMatrices())
    || !indexUnit.isUninitialized() || index.isUndefined()
    || (base.hasUnit() && !(index.type() == ExpressionNode::Type::Rational)))
   {
@@ -483,7 +483,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   /* Step 2
    * Handle matrices in the base.
    * We already know there are no matrices in the index. */
-  if (base.deepIsMatrix(context)) {
+  if (base.deepIsMatrix(context, reductionContext.shouldCheckMatrices())) {
     if (indexType != ExpressionNode::Type::Rational || !static_cast<Rational &>(index).isInteger()) {
       return replaceWithUndefinedInPlace();
     }
@@ -623,9 +623,9 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   }
   /* Step 5
    * Handle complex numbers. */
-  bool baseIsReal = base.isReal(context);
+  bool baseIsReal = base.isReal(context, reductionContext.shouldCheckMatrices());
   bool baseIsCartesian = baseType == ExpressionNode::Type::ComplexCartesian;
-  bool indexIsReal = index.isReal(context);
+  bool indexIsReal = index.isReal(context, reductionContext.shouldCheckMatrices());
   bool indexIsCartesian = indexType == ExpressionNode::Type::ComplexCartesian;
   if (!(baseIsReal || indexIsReal || baseIsCartesian || indexIsCartesian)) {
     /* Step 5.1

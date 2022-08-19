@@ -202,7 +202,7 @@ public:
   // The test should be able to handle uninitialized expressions.
   bool hasExpression(ExpressionTypeTest test, const void * context) const;
   // WARNING: this method must be called on reduced (sorted) expressions
-  bool deepIsMatrix(Context * context) const;
+  bool deepIsMatrix(Context * context, bool canContainMatrices = true) const;
   /* Unlike deepIsMatrix, deepIsList can be called on unreduced expressions. */
   bool deepIsList(Context * context) const;
   // Set of ExpressionTest that can be used with recursivelyMatches
@@ -249,7 +249,7 @@ public:
   static Preferences::ComplexFormat UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat complexFormat, const Expression & e, Context * context);
   bool hasComplexI(Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
   // WARNING: this methods must be called on reduced expressions
-  bool isReal(Context * context) const;
+  bool isReal(Context * context, bool canContainMatrices = true) const;
 
   /* Comparison */
   /* isIdenticalTo is the "easy" equality, it returns true if both trees have

@@ -37,7 +37,7 @@ public:
    * Step 4. Apply the matrix reduction depending on parameter
    * Step 5. Apply the list reduction depending on parameter
    * (Steps 3, 4 and 5 do nothing if parameter = 0) */
-  static Expression defaultShallowReduce(Expression e,  const ExpressionNode::ReductionContext& reductionContext, UnitReduction unitParameter = UnitReduction::KeepUnits, MatrixReduction matrixParameter = MatrixReduction::DefinedOnMatrix, ListReduction listParameter = ListReduction::DoNotDistributeOverLists);
+  static Expression defaultShallowReduce(Expression e,  ExpressionNode::ReductionContext * reductionContext, UnitReduction unitParameter = UnitReduction::KeepUnits, MatrixReduction matrixParameter = MatrixReduction::DefinedOnMatrix, ListReduction listParameter = ListReduction::DoNotDistributeOverLists);
 
   // This will shallowReduce the resulting expression.
   static Expression bubbleUpDependencies(Expression e, const ExpressionNode::ReductionContext& reductionContext);

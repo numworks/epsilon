@@ -116,6 +116,9 @@ public:
   static void LogNodeName(std::ostream & stream) { stream << "Addition"; }
   constexpr static LogTreeBlockVTable s_logVTable = {&LogNodeName, &LogAttributes};
 #endif
+
+  static int CollectChildren(TypeTreeBlock * treeBlock);
+  static TypeTreeBlock * Merge(TypeTreeBlock * treeBlock);
 };
 
 class Multiplication final : public NAry {

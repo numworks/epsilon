@@ -132,6 +132,29 @@ TypeTreeBlock * Addition::PushNode(int numberOfChildren) {
   return NAry::PushNode(numberOfChildren, AdditionBlock());
 }
 
+int Addition::CollectChildren(TypeTreeBlock * treeBlock) {
+  TreeSandbox * sandbox = TreeSandbox::sharedSandbox();
+  int nbChildren = 0;
+  for (IndexedTypeTreeBlock indexedSubTree : treeBlock->directChildren()) {
+    if (indexedSubTree.m_block->type() == BlockType::Addition) {
+      nbChildren += CollectChildren(indexedSubTree.m_block);
+    } else {
+      nbChildren++;
+      sandbox->copyTreeFromAddress(indexedSubTree.m_block);
+    }
+  }
+  return nbChildren;
+}
+
+TypeTreeBlock * Addition::Merge(TypeTreeBlock * treeBlock) {
+  TreeSandbox * sandbox = TreeSandbox::sharedSandbox();
+  TypeTreeBlock * newAddition = Addition::PushNode(0);
+  int nbChildren = CollectChildren(treeBlock);
+  // update children count
+  sandbox->replaceBlock(newAddition + 1, ValueTreeBlock(nbChildren));
+  return newAddition;
+}
+
 /* Multiplication */
 
 TypeTreeBlock * Multiplication::PushNode(int numberOfChildren) {
@@ -157,7 +180,7 @@ TypeTreeBlock * Multiplication::DistributeOverAddition(TypeTreeBlock * treeBlock
         Multiplication::DistributeOverAddition(multiplicationCopy);
       }
       sandbox->replaceTree(treeBlock, newAddition);
-      return newAddition;
+      return treeBlock;
     }
   }
   return treeBlock;

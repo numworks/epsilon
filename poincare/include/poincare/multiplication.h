@@ -95,8 +95,8 @@ public:
   Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression denominator(const ExpressionNode::ReductionContext& reductionContext) const;
-  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context) {
-    NAryExpression::sortChildrenInPlace(order, context, false);
+  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canContainMatrices = true) {
+    NAryExpression::sortChildrenInPlace(order, context, false, canContainMatrices);
   }
   // Derivation
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);

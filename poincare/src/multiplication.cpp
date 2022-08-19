@@ -693,7 +693,7 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
   Context * context = reductionContext.context();
 
   // Sort the children
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, context);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, context, reductionContext.shouldCheckMatrices());
 
   /* Distribute the multiplication over lists */
   Expression distributed = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
@@ -774,7 +774,7 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
      */
 
     if (multiplicationChildIndex >= 0) {
-      if (childAtIndex(multiplicationChildIndex).deepIsMatrix(context)) {
+      if (childAtIndex(multiplicationChildIndex).deepIsMatrix(context, reductionContext.shouldCheckMatrices())) {
         return *this;
       }
       removeChildInPlace(resultMatrix, resultMatrix.numberOfChildren());
@@ -938,7 +938,7 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
    * - All children are either real or ComplexCartesian (allChildrenAreReal == 0)
    *   We can bubble up ComplexCartesian nodes.
    * Do not simplify if there are randoms !*/
-  if (!hasRandom && allChildrenAreReal(context) == 0) {
+  if (!hasRandom && allChildrenAreReal(context, reductionContext.shouldCheckMatrices()) == 0) {
     int nbChildren = numberOfChildren();
     int i = nbChildren-1;
     // Children are sorted so ComplexCartesian nodes are at the end
@@ -1181,7 +1181,7 @@ void Multiplication::addMissingFactors(Expression factor, const ExpressionNode::
     }
   }
   addChildAtIndexInPlace(factor.clone(), 0, numberOfChildren());
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context());
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context(), reductionContext.shouldCheckMatrices());
 }
 
 bool Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {

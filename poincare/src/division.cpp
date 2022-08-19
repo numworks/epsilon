@@ -90,7 +90,7 @@ Expression Division::shallowReduce(ExpressionNode::ReductionContext reductionCon
   }
   /* For matrices: we decided that A/B is undefined, as it is a non-standard
    * shortcut */
-  if (childAtIndex(1).deepIsMatrix(reductionContext.context())) {
+  if (childAtIndex(1).deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
     return replaceWithUndefinedInPlace();
   }
   Expression p = Power::Builder(childAtIndex(1), Rational::Builder(-1));

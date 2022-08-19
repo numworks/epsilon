@@ -19,7 +19,7 @@ public:
   typedef int (*ExpressionOrder)(const ExpressionNode * e1, const ExpressionNode * e2);
 
   // Commutative properties
-  void sortChildrenInPlace(ExpressionOrder order, Context * context, bool canSwapMatrices);
+  void sortChildrenInPlace(ExpressionOrder order, Context * context, bool canSwapMatrices, bool canContainMatrices);
   Expression squashUnaryHierarchyInPlace();
 
 protected:
@@ -46,10 +46,10 @@ public:
    * - 1 if all children are real
    * - 0 if all non real children are ComplexCartesian
    * - -1 if some chidren are non-real and non ComplexCartesian */
-  int allChildrenAreReal(Context * context) const;
+  int allChildrenAreReal(Context * context, bool canContainMatrices = true) const;
 protected:
-  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canSwapMatrices) {
-    node()->sortChildrenInPlace(order, context, canSwapMatrices);
+  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canSwapMatrices, bool canContainMatrices) {
+    node()->sortChildrenInPlace(order, context, canSwapMatrices, canContainMatrices);
   }
   NAryExpressionNode * node() const { return static_cast<NAryExpressionNode *>(Expression::node()); }
   Expression checkChildrenAreRationalIntegersAndUpdate(const ExpressionNode::ReductionContext& reductionContext);

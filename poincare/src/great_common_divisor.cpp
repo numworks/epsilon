@@ -34,7 +34,7 @@ Expression GreatCommonDivisor::shallowBeautify(Context * context) {
   /* Sort children in decreasing order:
    * gcd(1,x,x^2) --> gcd(x^2,x,1)
    * gcd(1,R(2)) --> gcd(R(2),1) */
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, false); }, context, true);
+  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, false); }, context, true, false);
   return *this;
 }
 

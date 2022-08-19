@@ -205,13 +205,14 @@ public:
 
   class ReductionContext : public ComputationContext {
   public:
-    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default, bool shouldExpandMultiplication = true) :
+    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default, bool shouldExpandMultiplication = true, bool shouldCheckMatrices = true) :
       ComputationContext(context, complexFormat, angleUnit),
       m_unitFormat(unitFormat),
       m_target(target),
       m_symbolicComputation(symbolicComputation),
       m_unitConversion(unitConversion),
-      m_shouldExpandMultiplication(shouldExpandMultiplication)
+      m_shouldExpandMultiplication(shouldExpandMultiplication),
+      m_shouldCheckMatrices(shouldCheckMatrices)
     {}
     ReductionContext() :
       ReductionContext(nullptr, Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric, ReductionTarget::User)
@@ -236,12 +237,15 @@ public:
     UnitConversion unitConversion() const { return m_unitConversion; }
     void setExpandMultiplication(bool shouldExpandMultiplication) { m_shouldExpandMultiplication = shouldExpandMultiplication; }
     bool shouldExpandMultiplication() const { return m_shouldExpandMultiplication; }
+    void setCheckMatrices(bool shouldCheckMatrices) { m_shouldCheckMatrices = shouldCheckMatrices; }
+    bool shouldCheckMatrices() const { return m_shouldCheckMatrices; }
   private:
     Preferences::UnitFormat m_unitFormat;
     ReductionTarget m_target;
     SymbolicComputation m_symbolicComputation;
     UnitConversion m_unitConversion;
     bool m_shouldExpandMultiplication;
+    bool m_shouldCheckMatrices;
   };
 
   class ApproximationContext : public ComputationContext {

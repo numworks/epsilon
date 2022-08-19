@@ -42,7 +42,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::Reduct
       if (childT == ExpressionNode::Type::HyperbolicArcCosine) {
         Expression e = childAtIndex(0).childAtIndex(0);
         if (reductionContext.complexFormat() != Preferences::ComplexFormat::Real
-            || (e.isReal(reductionContext.context())
+            || (e.isReal(reductionContext.context(), reductionContext.shouldCheckMatrices())
               && e.approximateToScalar<double>(
                 reductionContext.context(),
                 reductionContext.complexFormat(),
@@ -56,7 +56,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::Reduct
       if (childT == ExpressionNode::Type::HyperbolicCosine) {
         Expression e = childAtIndex(0).childAtIndex(0);
         if (reductionContext.complexFormat() != Preferences::ComplexFormat::Real
-            || (e.isReal(reductionContext.context())
+            || (e.isReal(reductionContext.context(), reductionContext.shouldCheckMatrices())
               && e.approximateToScalar<double>(
                 reductionContext.context(),
                 reductionContext.complexFormat(),
@@ -78,7 +78,7 @@ Expression HyperbolicTrigonometricFunction::shallowReduce(ExpressionNode::Reduct
       if (childT == ExpressionNode::Type::HyperbolicArcTangent) {
         Expression e = childAtIndex(0).childAtIndex(0);
         if (reductionContext.complexFormat() != Preferences::ComplexFormat::Real
-            || (e.isReal(reductionContext.context())
+            || (e.isReal(reductionContext.context(), reductionContext.shouldCheckMatrices())
               && std::fabs(e.approximateToScalar<double>(
                 reductionContext.context(),
                 reductionContext.complexFormat(),

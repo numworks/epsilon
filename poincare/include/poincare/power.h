@@ -22,7 +22,7 @@ public:
 #endif
 
   // Complex
-  bool isReal(Context * context) const;
+  bool isReal(Context * context, bool canContainMatrices = true) const;
 
   // Properties
   Type type() const override { return Type::Power; }

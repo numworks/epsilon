@@ -36,14 +36,14 @@ void SimplificationHelper::defaultDeepReduceChildren(Expression e, const Express
   }
 }
 
-Expression SimplificationHelper::defaultShallowReduce(Expression e,  const ExpressionNode::ReductionContext& reductionContext, UnitReduction unitParameter, MatrixReduction matrixParameter, ListReduction listParameter) {
+Expression SimplificationHelper::defaultShallowReduce(Expression e,  ExpressionNode::ReductionContext * reductionContext, UnitReduction unitParameter, MatrixReduction matrixParameter, ListReduction listParameter) {
   // Step1. Shallow reduce undefined
   Expression res = shallowReduceUndefined(e);
   if (!res.isUninitialized()) {
     return res;
   }
   // Step2. Bubble up dependencies
-  res = bubbleUpDependencies(e, reductionContext);
+  res = bubbleUpDependencies(e, *reductionContext);
   if (!res.isUninitialized()) {
     return res;
   }
@@ -51,7 +51,7 @@ Expression SimplificationHelper::defaultShallowReduce(Expression e,  const Expre
   if (unitParameter == UnitReduction::BanUnits) {
     res = shallowReduceBanningUnits(e);
   } else if (unitParameter == UnitReduction::ExtractUnitsOfFirstChild) {
-    res = shallowReduceKeepingUnitsFromFirstChild(e, reductionContext);
+    res = shallowReduceKeepingUnitsFromFirstChild(e, *reductionContext);
   }
   if (!res.isUninitialized()) {
     return res;
@@ -65,7 +65,7 @@ Expression SimplificationHelper::defaultShallowReduce(Expression e,  const Expre
   }
   // Step5. Handle lists
   if (listParameter == ListReduction::DistributeOverLists) {
-    res = distributeReductionOverLists(e, reductionContext);
+    res = distributeReductionOverLists(e, *reductionContext);
   }
   return res;
 }
@@ -127,13 +127,17 @@ Expression SimplificationHelper::shallowReduceKeepingUnitsFromFirstChild(Express
   return Expression();
 }
 
-Expression SimplificationHelper::undefinedOnMatrix(Expression e, const ExpressionNode::ReductionContext& reductionContext) {
+Expression SimplificationHelper::undefinedOnMatrix(Expression e, ExpressionNode::ReductionContext * reductionContext) {
+  if (!reductionContext->shouldCheckMatrices()) {
+    return Expression();
+  }
   int n = e.numberOfChildren();
   for (int i = 0; i < n ; i ++) {
-    if (e.childAtIndex(i).deepIsMatrix(reductionContext.context())) {
+    if (e.childAtIndex(i).deepIsMatrix(reductionContext->context())) {
       return e.replaceWithUndefinedInPlace();
     }
   }
+  reductionContext->setCheckMatrices(false);
   return Expression();
 }
 
@@ -156,7 +160,7 @@ Expression SimplificationHelper::distributeReductionOverLists(Expression e, cons
   List children = List::Builder();
   for (int i = 0; i < n; i++) {
     // You can't mix lists and matrices
-    if (e.childAtIndex(i).deepIsMatrix(reductionContext.context())) {
+    if (e.childAtIndex(i).deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
       return e.replaceWithUndefinedInPlace();
     }
     children.addChildAtIndexInPlace(e.childAtIndex(i), i, i);

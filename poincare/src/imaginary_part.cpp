@@ -36,7 +36,7 @@ Expression ImaginaryPart::shallowReduce(ExpressionNode::ReductionContext reducti
     }
   }
   Expression c = childAtIndex(0);
-  if (c.isReal(reductionContext.context())) {
+  if (c.isReal(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
     Expression result = Rational::Builder(0);
     replaceWithInPlace(result);
     return result;

@@ -60,7 +60,7 @@ Expression VectorNorm::shallowReduce(ExpressionNode::ReductionContext reductionC
     replaceWithInPlace(a);
     return a.shallowReduce(reductionContext);
   }
-  if (c.deepIsMatrix(reductionContext.context())) {
+  if (c.deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
     return *this;
   }
   return replaceWithUndefinedInPlace();

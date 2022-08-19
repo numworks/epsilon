@@ -91,8 +91,8 @@ public:
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
-  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context) {
-    NAryExpression::sortChildrenInPlace(order, context, true);
+  void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canContainMatrices = true) {
+    NAryExpression::sortChildrenInPlace(order, context, true, canContainMatrices);
   }
 
 private:

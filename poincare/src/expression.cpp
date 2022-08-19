@@ -153,7 +153,10 @@ bool Expression::hasExpression(ExpressionTypeTest test, const void * context) co
   return false;
 }
 
-bool Expression::deepIsMatrix(Context * context) const {
+bool Expression::deepIsMatrix(Context * context, bool canContainMatrices) const {
+  if (!canContainMatrices) {
+    return false;
+  }
   return recursivelyMatches([](const Expression e, Context * context, void *) {
         if (IsMatrix(e, context)) { return RecursiveSearchResult::Yes; }
         // The children were sorted so any expression which is a matrix (deeply) would be at the end
@@ -528,14 +531,14 @@ bool Expression::hasComplexI(Context * context, ExpressionNode::SymbolicComputat
       context, replaceSymbols);
 }
 
-bool Expression::isReal(Context * context) const {
+bool Expression::isReal(Context * context, bool canContainMatrices) const {
   /* We could do something virtual instead of implementing a disjunction on
    * types but many expressions have the same implementation so it is easier to
    * factorize it here. */
 
   // These expressions are real if their children are
   if (isOfType({ExpressionNode::Type::ArcTangent, ExpressionNode::Type::Conjugate, ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine, ExpressionNode::Type::Tangent})) {
-    return childAtIndex(0).isReal(context);
+    return childAtIndex(0).isReal(context, canContainMatrices);
   }
 
   // These expressions are always real
@@ -545,12 +548,12 @@ bool Expression::isReal(Context * context) const {
 
   // These expressions are real when they are scalar
   if (isOfType({ExpressionNode::Type::AbsoluteValue, ExpressionNode::Type::Ceiling, ExpressionNode::Type::ComplexArgument, ExpressionNode::Type::Factorial, ExpressionNode::Type::Floor, ExpressionNode::Type::FracPart, ExpressionNode::Type::ImaginaryPart, ExpressionNode::Type::RealPart})) {
-    return !deepIsMatrix(context);
+    return !deepIsMatrix(context, canContainMatrices);
   }
 
   // NAryExpresions are real if all children are real
   if (IsNAry(*this, context)) {
-    return convert<NAryExpression>().allChildrenAreReal(context) == 1;
+    return convert<NAryExpression>().allChildrenAreReal(context, canContainMatrices) == 1;
   }
 
   if (type() == ExpressionNode::Type::ConstantMaths) {
@@ -558,7 +561,7 @@ bool Expression::isReal(Context * context) const {
   }
 
   if (type() == ExpressionNode::Type::Power) {
-    return static_cast<PowerNode *>(node())->isReal(context);
+    return static_cast<PowerNode *>(node())->isReal(context, canContainMatrices);
   }
 
   return false;

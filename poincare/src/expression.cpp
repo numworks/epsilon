@@ -599,11 +599,27 @@ bool Expression::containsSameDependency(const Expression e, const ExpressionNode
   return false;
 }
 
-bool Expression::ParsedExpressionsAreEqual(const char * e0, const char * e1, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat) {
-  Expression exp0 = Expression::ParseAndSimplify(e0, context, complexFormat, angleUnit, unitFormat, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  Expression exp1 = Expression::ParseAndSimplify(e1, context, complexFormat, angleUnit, unitFormat, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  assert(!exp0.isUninitialized() && !exp1.isUninitialized());
-  return exp0.isIdenticalTo(exp1);
+bool Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(Expression exactExpression, Expression approximateExpression) {
+  if (exactExpression.type() == ExpressionNode::Type::Division && approximateExpression.type() == ExpressionNode::Type::Decimal && exactExpression.childAtIndex(0).type() == ExpressionNode::Type::BasedInteger && exactExpression.childAtIndex(1).type() == ExpressionNode::Type::BasedInteger) {
+    ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext();
+    Expression exp0 = exactExpression.clone().deepReduce(reductionContext);
+    Expression exp1 = approximateExpression.clone().deepReduce(reductionContext);
+    return exp0.isIdenticalTo(exp1);
+  }
+  if (exactExpression.type() == approximateExpression.type()
+      && exactExpression.numberOfChildren() == approximateExpression.numberOfChildren()) {
+    int nChildren = exactExpression.numberOfChildren();
+    if (nChildren == 0) {
+      return true;
+    }
+    for (int i = 0; i < nChildren; i++) {
+      if (!ExactAndApproximateBeautifiedExpressionsAreEqual(exactExpression.childAtIndex(i), approximateExpression.childAtIndex(i))) {
+        return false;
+      }
+    }
+    return true;
+  }
+  return false;
 }
 
 /* Layout Helper */

@@ -206,6 +206,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximate, EqualSign::Equal, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("1/3", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("1/(2i)", DisplayOutput::ExactAndApproximate, EqualSign::Equal, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("1/0", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "undef", "undef", "undef", &globalContext, &store);
   assertCalculationIs("2x-x", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "undef", "undef", "undef", &globalContext, &store);
   assertCalculationIs("[[1,2,3]]", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);

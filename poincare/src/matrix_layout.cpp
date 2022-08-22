@@ -48,7 +48,8 @@ void MatrixLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomp
     assert(!hasGraySquares());
     addGraySquares();
     *shouldRecomputeLayout = true;
-    LayoutNode * lastChild = childAtIndex((m_numberOfColumns-1)*(m_numberOfRows-1));
+    // Go to the bottom right child
+    LayoutNode * lastChild = childAtIndex((m_numberOfColumns * (m_numberOfRows - 1)) - 2);
     cursor->setLayoutNode(lastChild);
     return;
   }

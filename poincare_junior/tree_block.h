@@ -44,10 +44,10 @@ public:
   bool operator!=(const TreeBlock& b) { return b.m_content != m_content; }
 
   // Block Navigation
-  TreeBlock * nextBlock() { return this + sizeof(TreeBlock); }
-  TreeBlock * nextNthBlock(int i) { return this + i * sizeof(TreeBlock); }
-  TreeBlock * previousBlock() { return this - sizeof(TreeBlock); }
-  TreeBlock * previousNthBlock(int i) { return this - i * sizeof(TreeBlock); }
+  TreeBlock * nextBlock() { return this + 1; }
+  TreeBlock * nextNthBlock(int i) { return this + i; }
+  TreeBlock * previousBlock() { return this - 1; }
+  TreeBlock * previousNthBlock(int i) { return this - i; }
 
 protected:
   uint8_t m_content;

@@ -3,6 +3,17 @@
 
 namespace Poincare {
 
+const char * AliasesList::mainAlias() const {
+  if (!hasMultipleAliases()) {
+    return m_formattedAliasesList;
+  }
+  const char * result = m_formattedAliasesList;
+  while (result[0] != k_stringStart) {
+    result++;
+  }
+  return result + 1;
+}
+
 int AliasesList::maxDifferenceWith(const char * alias, int aliasLen) const {
   if (!hasMultipleAliases()) {
     return UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(alias, aliasLen, m_formattedAliasesList);
@@ -20,17 +31,6 @@ int AliasesList::maxDifferenceWith(const char * alias, int aliasLen) const {
   return maxValueOfComparison;
 }
 
-const char * AliasesList::firstAlias() const {
-  if (!hasMultipleAliases()) {
-    return m_formattedAliasesList;
-  }
-  const char * result = m_formattedAliasesList;
-  while (result[0] != k_stringStart) {
-    result++;
-  }
-  return result + 1;
-}
-
 const char * AliasesList::nextAlias(const char * currentPositionInAliasesList) const {
   if (!hasMultipleAliases()) {
     return nullptr;
@@ -42,51 +42,6 @@ const char * AliasesList::nextAlias(const char * currentPositionInAliasesList) c
     return nullptr; // End of list
   }
   return beginningOfNextAlias + 1; // Skip string start char
-}
-
-const char * AliasesList::mainAlias(Poincare::Preferences::NamingConventionForAliases namingConventionForAliases) const {
-  if (!hasMultipleAliases()) {
-    return m_formattedAliasesList;
-  }
-  int mainIndex = mainAliasIndex(namingConventionForAliases);
-  const char * result; // skip header
-  int currentIndex = 0;
-  for (const char * currentAlias : *this) {
-    result = currentAlias;
-    currentIndex++;
-    if (currentIndex > mainIndex) {
-      break;
-    }
-  }
-  assert(result != nullptr);
-  assert(strlen(result) != 0);
-  return result;
-}
-
-int AliasesList::mainAliasIndex(Poincare::Preferences::NamingConventionForAliases namingConventionForAliases) const {
-  assert(hasMultipleAliases());
-  if (namingConventionForAliases == Preferences::NamingConventionForAliases::WorldWide) {
-    return 0;
-  }
-  char conventionIdentifier = IdentifierForNamingConventionForAliases(namingConventionForAliases);
-  const char * currentHeaderPosition = m_formattedAliasesList + 1;
-  while (currentHeaderPosition[0] != k_stringStart) {
-    if (currentHeaderPosition[0] == conventionIdentifier) {
-      return currentHeaderPosition[1] - '0'; // The index follows the identifier
-    }
-    currentHeaderPosition += 2;
-  }
-  return 0;
-}
-
-char AliasesList::IdentifierForNamingConventionForAliases(Poincare::Preferences::NamingConventionForAliases namingConventionForAliases) {
-  for (int i = 0; i < k_numberOfNamingConventionForAliases; i++) {
-    if (k_identifiersForNamingConventionForAliases[i].namingConventionForAliases == namingConventionForAliases) {
-      return k_identifiersForNamingConventionForAliases[i].identifier;
-    }
-  }
-  assert(false);
-  return k_identifiersForNamingConventionForAliases[0].identifier; // silence compiler
 }
 
 }

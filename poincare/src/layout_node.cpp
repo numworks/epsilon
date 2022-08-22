@@ -117,6 +117,27 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   // WARNING: Do no use "this" afterwards
 }
 
+bool LayoutNode::deleteBeforeCursorForLayoutContainingArgument(LayoutNode * argumentNode, LayoutCursor * cursor) {
+  if (cursor->isEquivalentTo(LayoutCursor(argumentNode, LayoutCursor::Position::Left))) {
+    // Case: Left of the argument. Delete the layout, keep the argument.
+    Layout thisRef = Layout(this);
+    Layout argument = Layout(argumentNode);
+    thisRef.replaceChildWithGhostInPlace(argument);
+    // WARNING: Do not use "this" afterwards
+    cursor->setLayout(argument);
+    thisRef.replaceWith(argument, cursor);
+    cursor->setPosition(LayoutCursor::Position::Left);
+    return true;
+  }
+  if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
+    // Case: Right of layout, enter inside layout
+    cursor->setLayout(argumentNode);
+    cursor->setPosition(LayoutCursor::Position::Right);
+    return true;
+  }
+  return false;
+}
+
 LayoutNode * LayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression) {
   assert(correspondingExpression != nullptr);
   return numberOfChildren() > 0 ? childAtIndex(0) : this;

@@ -136,14 +136,7 @@ void SequenceLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldReco
 }
 
 void SequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (cursor->isEquivalentTo(LayoutCursor(argumentLayout(), LayoutCursor::Position::Left))) {
-    // Case: Left of the argument. Delete the layout, keep the argument.
-    Layout argument = Layout(argumentLayout());
-    Layout thisRef = Layout(this);
-    thisRef.replaceChildWithGhostInPlace(argument);
-    // WARNING: Do not call "this" afterwards
-    cursor->setLayout(thisRef.childAtIndex(0));
-    thisRef.replaceWith(argument, cursor);
+  if (deleteBeforeCursorForLayoutContainingArgument(argumentLayout(), cursor)) {
     return;
   }
   LayoutNode::deleteBeforeCursor(cursor);

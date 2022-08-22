@@ -143,15 +143,7 @@ void IntegralLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldReco
 }
 
 void IntegralLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (cursor->isEquivalentTo(LayoutCursor(integrandLayout(), LayoutCursor::Position::Left))) {
-    // Case: Left of the integrand. Delete the layout, keep the integrand.
-    Layout thisRef = Layout(this);
-    Layout integrand = Layout(integrandLayout());
-    thisRef.replaceChildWithGhostInPlace(integrand);
-    // WARNING: Do not use "this" afterwards
-    cursor->setLayout(thisRef.childAtIndex(0));
-    cursor->setPosition(LayoutCursor::Position::Left);
-    thisRef.replaceWith(integrand, cursor);
+  if (deleteBeforeCursorForLayoutContainingArgument(integrandLayout(), cursor)) {
     return;
   }
   LayoutNode::deleteBeforeCursor(cursor);

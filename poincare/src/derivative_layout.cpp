@@ -215,13 +215,7 @@ void HigherOrderDerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool *
 }
 
 void DerivativeLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (cursor->isEquivalentTo(LayoutCursor(derivandLayout(), LayoutCursor::Position::Left))) {
-    Layout l = Layout(this);
-    Layout derivand = Layout(derivandLayout());
-    l.replaceChildWithGhostInPlace(derivand);
-    cursor->setLayout(l.childAtIndex(0));
-    cursor->setPosition(LayoutCursor::Position::Left);
-    l.replaceWith(derivand, cursor);
+  if (deleteBeforeCursorForLayoutContainingArgument(derivandLayout(), cursor)) {
     return;
   }
   LayoutNode::deleteBeforeCursor(cursor);

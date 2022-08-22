@@ -119,18 +119,23 @@ void MatrixLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
         cursor->setPosition(LayoutCursor::Position::Right);
         return;
       }
+      if (columnIndex == 0 && rowIndex > 0) {
+        // If at the start of column, go to the upper one.
+        cursor->setLayoutNode(childAtIndex(indexAtRowColumn(rowIndex - 1, m_numberOfColumns - 2)));
+        cursor->setPosition(LayoutCursor::Position::Right);
+        return;
+      }
     }
     if (columnIndex == 0 && rowIndex == 0 && cursor->position() == LayoutCursor::Position::Left && numberOfChildren() == 4) {
       /* The matrix has 4 children while the cursor is inside: there is one
-       * value and three empty squares. */
-      Layout onlyValue = Layout(pointedChild);
-      Layout thisRef = Layout(this);
-      thisRef.replaceChildWithGhostInPlace(onlyValue);
-      cursor->setLayout(thisRef.childAtIndex(0));
-      thisRef.replaceWith(onlyValue, cursor);
-      cursor->setPosition(LayoutCursor::Position::Left);
+       * value and three empty squares. The cursor is left of the value
+       * so we delete the matrix layout but keep the value inside. */
+      deleteBeforeCursorForLayoutContainingArgument(pointedChild, cursor);
       return;
     }
+  } else if (deleteBeforeCursorForLayoutContainingArgument(nullptr, cursor)) {
+    // This handles the case of cursor being right of matrix and entering it
+    return;
   }
   GridLayoutNode::deleteBeforeCursor(cursor);
 }

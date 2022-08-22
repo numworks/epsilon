@@ -118,7 +118,7 @@ void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 }
 
 bool LayoutNode::deleteBeforeCursorForLayoutContainingArgument(LayoutNode * argumentNode, LayoutCursor * cursor) {
-  if (cursor->isEquivalentTo(LayoutCursor(argumentNode, LayoutCursor::Position::Left))) {
+  if (argumentNode && cursor->isEquivalentTo(LayoutCursor(argumentNode, LayoutCursor::Position::Left))) {
     // Case: Left of the argument. Delete the layout, keep the argument.
     Layout thisRef = Layout(this);
     Layout argument = Layout(argumentNode);
@@ -131,8 +131,8 @@ bool LayoutNode::deleteBeforeCursorForLayoutContainingArgument(LayoutNode * argu
   }
   if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
     // Case: Right of layout, enter inside layout
-    cursor->setLayout(argumentNode);
-    cursor->setPosition(LayoutCursor::Position::Right);
+    bool temp;
+    moveCursorLeft(cursor, &temp);
     return true;
   }
   return false;

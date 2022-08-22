@@ -43,7 +43,7 @@ void TypeTreeBlock::log(std::ostream & stream, bool recursive, int indentation, 
 }
 #endif
 
-TypeTreeBlock * TypeTreeBlock::nextNode() {
+const TypeTreeBlock * TypeTreeBlock::nextNode() const {
   return this + nodeSize();
 }
 
@@ -51,16 +51,16 @@ void TypeTreeBlock::copyTo(TreeBlock * address) {
   memcpy(address, this, treeSize());
 }
 
-TypeTreeBlock * TypeTreeBlock::previousNode(const TreeBlock * firstBlock) {
+const TypeTreeBlock * TypeTreeBlock::previousNode(const TreeBlock * firstBlock) const {
   if (this == firstBlock) {
     return nullptr;
   }
-  TypeTreeBlock * block = static_cast<TypeTreeBlock *>(previousBlock());
+  const TypeTreeBlock * block = static_cast<const TypeTreeBlock *>(previousBlock());
   return this - block->nodeSize(false);
 }
 
-TypeTreeBlock * TypeTreeBlock::nextSibling() {
-  TypeTreeBlock * result = this;
+const TypeTreeBlock * TypeTreeBlock::nextSibling() const {
+  const TypeTreeBlock * result = this;
   int nbOfChildrenToScan = result->numberOfChildren();
   while (nbOfChildrenToScan > 0) {
     result = result->nextNode();
@@ -76,9 +76,9 @@ void TypeTreeBlock::recursivelyApply(InPlaceTreeFunction treeFunction) {
   (this->*treeFunction)();
 }
 
-TypeTreeBlock * TypeTreeBlock::previousRelative(const TreeBlock * firstBlock, bool parent) {
-  TypeTreeBlock * currentNode = this;
-  TypeTreeBlock * closestSibling = nullptr;
+const TypeTreeBlock * TypeTreeBlock::previousRelative(const TreeBlock * firstBlock, bool parent) const {
+  const TypeTreeBlock * currentNode = this;
+  const TypeTreeBlock * closestSibling = nullptr;
   int nbOfChildrenToScan = 1;
   do {
     currentNode = currentNode->previousNode(firstBlock);
@@ -93,16 +93,16 @@ TypeTreeBlock * TypeTreeBlock::previousRelative(const TreeBlock * firstBlock, bo
   return parent ? currentNode : closestSibling;
 }
 
-TypeTreeBlock * TypeTreeBlock::previousSibling(const TreeBlock * firstBlock) {
+const TypeTreeBlock * TypeTreeBlock::previousSibling(const TreeBlock * firstBlock) const {
   return previousRelative(firstBlock, false);
 }
 
-TypeTreeBlock * TypeTreeBlock::parent(const TreeBlock * firstBlock) {
+const TypeTreeBlock * TypeTreeBlock::parent(const TreeBlock * firstBlock) const {
   return previousRelative(firstBlock, true);
 }
 
-TypeTreeBlock * TypeTreeBlock::root(const TreeBlock * firstBlock) {
-  TypeTreeBlock * ancestor = this;
+const TypeTreeBlock * TypeTreeBlock::root(const TreeBlock * firstBlock) const {
+  const TypeTreeBlock * ancestor = this;
   do {
     ancestor = ancestor->parent(firstBlock);
   } while (ancestor != nullptr);
@@ -120,7 +120,7 @@ int TypeTreeBlock::numberOfDescendants(bool includeSelf) const {
   return result;
 }
 
-TypeTreeBlock * TypeTreeBlock::childAtIndex(int i) const {
+const TypeTreeBlock * TypeTreeBlock::childAtIndex(int i) const {
   for (IndexedTypeTreeBlock indexedChild : directChildren()) {
     if (indexedChild.m_index == i) {
       return indexedChild.m_block;

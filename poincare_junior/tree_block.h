@@ -45,13 +45,30 @@ public:
 
   // Block Navigation
   TreeBlock * nextBlock() { return this + 1; }
+  const TreeBlock * nextBlock() const { return this + 1; }
   TreeBlock * nextNthBlock(int i) { return this + i; }
+  const TreeBlock * nextNthBlock(int i) const { return this + i; }
   TreeBlock * previousBlock() { return this - 1; }
+  const TreeBlock * previousBlock() const { return this - 1; }
   TreeBlock * previousNthBlock(int i) { return this - i; }
+  const TreeBlock * previousNthBlock(int i) const { return this - i; }
 
 protected:
   uint8_t m_content;
 };
+
+// This helper wraps a motion on const blocks into a motion on non-const blocks.
+// It should be completely eliminated by the compiler after the type checking.
+typedef const TypeTreeBlock * (TypeTreeBlock::*ConstMotion)() const;
+inline TypeTreeBlock * motion(TypeTreeBlock *object, ConstMotion constMotion) {
+  return const_cast<TypeTreeBlock*>((const_cast<const TypeTreeBlock*>(object)->*constMotion)());
+}
+
+// TODO: merge with previous one ?
+template<typename T>
+inline TypeTreeBlock * motion(TypeTreeBlock *object,  const TypeTreeBlock * (TypeTreeBlock::*constMotion)(T) const, T arg) {
+  return const_cast<TypeTreeBlock*>((const_cast<const TypeTreeBlock*>(object)->*constMotion)(arg));
+}
 
 class TypeTreeBlock : public TreeBlock {
 public:
@@ -64,19 +81,26 @@ public:
   void copyTo(TreeBlock * address);
 
   // Block Navigation
-  TypeTreeBlock * nextNode();
-  TypeTreeBlock * previousNode(const TreeBlock * firstBlock);
-  TypeTreeBlock * nextSibling();
-  TypeTreeBlock * previousSibling(const TreeBlock * firstBlock);
+  const TypeTreeBlock * nextNode() const;
+  TypeTreeBlock * nextNode() { return motion(this, &TypeTreeBlock::nextNode); };
+  const TypeTreeBlock * previousNode(const TreeBlock * firstBlock) const;
+  TypeTreeBlock * previousNode(const TreeBlock * firstBlock) { return motion(this, &TypeTreeBlock::previousNode, firstBlock);}
+  const TypeTreeBlock * nextSibling() const;
+  TypeTreeBlock * nextSibling() { return motion(this, &TypeTreeBlock::nextSibling); };
+  const TypeTreeBlock * previousSibling(const TreeBlock * firstBlock) const;
+  TypeTreeBlock * previousSibling(const TreeBlock * firstBlock) { return motion(this, &TypeTreeBlock::previousSibling, firstBlock);}
 
   // Sizes
-  size_t treeSize() const { return const_cast<TypeTreeBlock *>(this)->nextSibling() - this; }
+  size_t treeSize() const { return nextSibling() - this; }
 
   // Node Hierarchy
-  TypeTreeBlock * parent(const TreeBlock * firstBlock);
-  TypeTreeBlock * root(const TreeBlock * firstBlock);
+  const TypeTreeBlock * parent(const TreeBlock * firstBlock) const;
+  TypeTreeBlock * parent(const TreeBlock * firstBlock) { return motion(this, &TypeTreeBlock::parent, firstBlock);}
+  const TypeTreeBlock * root(const TreeBlock * firstBlock) const;
+  TypeTreeBlock * root(const TreeBlock * firstBlock) { return motion(this, &TypeTreeBlock::root, firstBlock);}
   int numberOfDescendants(bool includeSelf) const;
-  TypeTreeBlock * childAtIndex(int i) const;
+  const TypeTreeBlock * childAtIndex(int index) const;
+  TypeTreeBlock * childAtIndex(int index) { return motion(this, &TypeTreeBlock::childAtIndex, index);}
   int indexOfChild(const TypeTreeBlock * child) const;
   int indexInParent(const TreeBlock * firstBlock) const;
   bool hasChild(const TypeTreeBlock * child) const;
@@ -195,7 +219,7 @@ public:
   void recursivelyApply(InPlaceTreeFunction treeFunction);
 
 private:
-  TypeTreeBlock * previousRelative(const TreeBlock * firstBlock, bool parent);
+  const TypeTreeBlock * previousRelative(const TreeBlock * firstBlock, bool parent) const;
 #if GHOST_REQUIRED
   bool isGhost() const { return type() == BlockType::Ghost; }
 #endif

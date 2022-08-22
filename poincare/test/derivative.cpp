@@ -42,9 +42,9 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(acos(x),x,x)", "dep\u0014(-180/\u0012π×√(-x^2+1)\u0013,{arccos(x)})", Degree);
   assert_reduces_to_formal_expression("diff(atan(x),x,x)", "dep\u0014(1/\u0012x^2+1\u0013,{arctan(x)})");
   assert_reduces_to_formal_expression("diff(atan(x),x,x)", "dep\u0014(180/\u0012π×x^2+π\u0013,{arctan(x)})", Degree);
-  assert_reduces_to_formal_expression("diff(asec(x),x,x)", "dep\u0014(1/\u0012x^2×√(\u0012x^2-1\u0013/x^2)\u0013,{arccos(1/x)})");
-  assert_reduces_to_formal_expression("diff(acsc(x),x,x)", "dep\u0014(-1/\u0012x^2×√(\u0012x^2-1\u0013/x^2)\u0013,{arcsin(1/x)})");
-  assert_reduces_to_formal_expression("diff(acot(x),x,x)", "dep\u0014(-1/\u0012x^2+1\u0013,{1/x,sign(x),arctan(x)})");
+  assert_reduces_to_formal_expression("diff(arcsec(x),x,x)", "dep\u0014(1/\u0012x^2×√(\u0012x^2-1\u0013/x^2)\u0013,{arccos(1/x)})");
+  assert_reduces_to_formal_expression("diff(arccsc(x),x,x)", "dep\u0014(-1/\u0012x^2×√(\u0012x^2-1\u0013/x^2)\u0013,{arcsin(1/x)})");
+  assert_reduces_to_formal_expression("diff(arccot(x),x,x)", "dep\u0014(-1/\u0012x^2+1\u0013,{1/x,sign(x),arctan(x)})");
 
   assert_reduces_to_formal_expression("diff(sinh(x),x,x)", "dep\u0014(cosh(x),{sinh(x)})");
   assert_reduces_to_formal_expression("diff(cosh(x),x,x)", "dep\u0014(sinh(x),{cosh(x)})");

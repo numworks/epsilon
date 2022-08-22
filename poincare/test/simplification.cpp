@@ -507,12 +507,12 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_m+_s", "undef");
   assert_parsed_expression_simplify_to("_m^2+_m", "undef");
   assert_parsed_expression_simplify_to("acos(_s)", "undef");
-  assert_parsed_expression_simplify_to("acosh(_s)", "undef");
+  assert_parsed_expression_simplify_to("arcosh(_s)", "undef");
   assert_parsed_expression_simplify_to("arg(_s)", "undef");
   assert_parsed_expression_simplify_to("asin(_s)", "undef");
-  assert_parsed_expression_simplify_to("asinh(_s)", "undef");
+  assert_parsed_expression_simplify_to("arsinh(_s)", "undef");
   assert_parsed_expression_simplify_to("arctan(_s)", "undef");
-  assert_parsed_expression_simplify_to("atanh(_s)", "undef");
+  assert_parsed_expression_simplify_to("artanh(_s)", "undef");
   assert_parsed_expression_simplify_to("binomcdf(_s,2,3)", "undef");
   assert_parsed_expression_simplify_to("binomcdf(2,_s,3)", "undef");
   assert_parsed_expression_simplify_to("binomcdf(2,3,_s)", "undef");
@@ -1117,7 +1117,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("atan(1/x)", "dep\u0014(\u0012π×sign(x)-2×arctan(x)\u0013/2,{1/x})");
   assert_parsed_expression_simplify_to("atan(1/x)", "dep\u0014(90×sign(x)-arctan(x),{1/x})", User, Degree);
   assert_parsed_expression_simplify_to("atan(1/x)", "dep\u0014(100×sign(x)-arctan(x),{1/x})", User, Gradian);
-  assert_parsed_expression_simplify_to("atan(cos(x)/sin(x))", "dep\u0014(\u0012π×sign(tan(x))-2×arctan(tan(x))\u0013/2,{cosec(x)})");
+  assert_parsed_expression_simplify_to("atan(cos(x)/sin(x))", "dep\u0014(\u0012π×sign(tan(x))-2×arctan(tan(x))\u0013/2,{csc(x)})");
 
   // cos(asin)
   assert_parsed_expression_simplify_to("cos(asin(x))", "√(-x^2+1)", User, Degree);
@@ -1284,8 +1284,8 @@ QUIZ_CASE(poincare_simplification_functions_of_matrices) {
   assert_parsed_expression_simplify_to("gcd(1,[[0,180]])", Undefined::Name());
   assert_parsed_expression_simplify_to("gcd([[0,180]],[[1]])", Undefined::Name());
   assert_parsed_expression_simplify_to("gcd(1,2,[[1]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("asinh([[0,π]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("atanh([[0,π]])", Undefined::Name());
+  assert_parsed_expression_simplify_to("arsinh([[0,π]])", Undefined::Name());
+  assert_parsed_expression_simplify_to("artanh([[0,π]])", Undefined::Name());
   assert_parsed_expression_simplify_to("sinh([[0,π]])", Undefined::Name());
   assert_parsed_expression_simplify_to("im([[1,1+i]])", Undefined::Name());
   assert_parsed_expression_simplify_to("int([[0,180]],x,1,2)", Undefined::Name());
@@ -1682,57 +1682,57 @@ QUIZ_CASE(poincare_hyperbolic_trigonometry) {
   assert_parsed_expression_simplify_to("sinh(0)", "0");
   assert_parsed_expression_simplify_to("cosh(0)", "1");
   assert_parsed_expression_simplify_to("tanh(0)", "0");
-  assert_parsed_expression_simplify_to("asinh(0)", "0");
-  assert_parsed_expression_simplify_to("acosh(1)", "0");
-  assert_parsed_expression_simplify_to("atanh(0)", "0");
+  assert_parsed_expression_simplify_to("arsinh(0)", "0");
+  assert_parsed_expression_simplify_to("arcosh(1)", "0");
+  assert_parsed_expression_simplify_to("artanh(0)", "0");
 
-  // acosh(cosh)
-  assert_parsed_expression_simplify_to("acosh(cosh(3))", "3");
-  assert_parsed_expression_simplify_to("acosh(cosh(0.5))", "1/2");
-  assert_parsed_expression_simplify_to("acosh(cosh(-3))", "3");
-  assert_parsed_expression_simplify_to("acosh(cosh(3))", "3", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("acosh(cosh(0.5))", "1/2", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("acosh(cosh(-3))", "3", User, Radian, MetricUnitFormat, Real);
+  // arcosh(cosh)
+  assert_parsed_expression_simplify_to("arcosh(cosh(3))", "3");
+  assert_parsed_expression_simplify_to("arcosh(cosh(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("arcosh(cosh(-3))", "3");
+  assert_parsed_expression_simplify_to("arcosh(cosh(3))", "3", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("arcosh(cosh(0.5))", "1/2", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("arcosh(cosh(-3))", "3", User, Radian, MetricUnitFormat, Real);
 
   // cosh(acosh)
-  assert_parsed_expression_simplify_to("cosh(acosh(3))", "3");
-  assert_parsed_expression_simplify_to("cosh(acosh(0.5))", "1/2");
-  assert_parsed_expression_simplify_to("cosh(acosh(-3))", "-3");
-  assert_parsed_expression_simplify_to("cosh(acosh(3))", "3", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("cosh(acosh(0.5))", "cosh(arcosh(1/2))", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("cosh(acosh(-3))", "cosh(arcosh(-3))", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("cosh(arcosh(3))", "3");
+  assert_parsed_expression_simplify_to("cosh(arcosh(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("cosh(arcosh(-3))", "-3");
+  assert_parsed_expression_simplify_to("cosh(arcosh(3))", "3", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("cosh(arcosh(0.5))", "cosh(arcosh(1/2))", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("cosh(arcosh(-3))", "cosh(arcosh(-3))", User, Radian, MetricUnitFormat, Real);
 
   // sinh(asinh)
-  assert_parsed_expression_simplify_to("sinh(asinh(3))", "3");
-  assert_parsed_expression_simplify_to("sinh(asinh(0.5))", "1/2");
-  assert_parsed_expression_simplify_to("sinh(asinh(-3))", "-3");
-  assert_parsed_expression_simplify_to("sinh(asinh(3))", "3", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("sinh(asinh(0.5))", "1/2", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("sinh(asinh(-3))", "-3", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("sinh(arsinh(3))", "3");
+  assert_parsed_expression_simplify_to("sinh(arsinh(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("sinh(arsinh(-3))", "-3");
+  assert_parsed_expression_simplify_to("sinh(arsinh(3))", "3", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("sinh(arsinh(0.5))", "1/2", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("sinh(arsinh(-3))", "-3", User, Radian, MetricUnitFormat, Real);
 
-  // asinh(sinh)
-  assert_parsed_expression_simplify_to("asinh(sinh(3))", "3");
-  assert_parsed_expression_simplify_to("asinh(sinh(0.5))", "1/2");
-  assert_parsed_expression_simplify_to("asinh(sinh(-3))", "-3");
-  assert_parsed_expression_simplify_to("asinh(sinh(3))", "3", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("asinh(sinh(0.5))", "1/2", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("asinh(sinh(-3))", "-3", User, Radian, MetricUnitFormat, Real);
+  // arsinh(sinh)
+  assert_parsed_expression_simplify_to("arsinh(sinh(3))", "3");
+  assert_parsed_expression_simplify_to("arsinh(sinh(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("arsinh(sinh(-3))", "-3");
+  assert_parsed_expression_simplify_to("arsinh(sinh(3))", "3", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("arsinh(sinh(0.5))", "1/2", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("arsinh(sinh(-3))", "-3", User, Radian, MetricUnitFormat, Real);
 
   // tanh(atanh)
-  assert_parsed_expression_simplify_to("tanh(atanh(3))", "3");
-  assert_parsed_expression_simplify_to("tanh(atanh(0.5))", "1/2");
-  assert_parsed_expression_simplify_to("tanh(atanh(-3))", "-3");
-  assert_parsed_expression_simplify_to("tanh(atanh(3))", "tanh(artanh(3))", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("tanh(atanh(0.5))", "1/2", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("tanh(atanh(-3))", "-tanh(artanh(3))", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("tanh(artanh(3))", "3");
+  assert_parsed_expression_simplify_to("tanh(artanh(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("tanh(artanh(-3))", "-3");
+  assert_parsed_expression_simplify_to("tanh(artanh(3))", "tanh(artanh(3))", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("tanh(artanh(0.5))", "1/2", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("tanh(artanh(-3))", "-tanh(artanh(3))", User, Radian, MetricUnitFormat, Real);
 
-  // atanh(tanh)
-  assert_parsed_expression_simplify_to("atanh(tanh(3))", "3");
-  assert_parsed_expression_simplify_to("atanh(tanh(0.5))", "1/2");
-  assert_parsed_expression_simplify_to("atanh(tanh(-3))", "-3");
-  assert_parsed_expression_simplify_to("atanh(tanh(3))", "3", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("atanh(tanh(0.5))", "1/2", User, Radian, MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("atanh(tanh(-3))", "-3", User, Radian, MetricUnitFormat, Real);
+  // artanh(tanh)
+  assert_parsed_expression_simplify_to("artanh(tanh(3))", "3");
+  assert_parsed_expression_simplify_to("artanh(tanh(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("artanh(tanh(-3))", "-3");
+  assert_parsed_expression_simplify_to("artanh(tanh(3))", "3", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("artanh(tanh(0.5))", "1/2", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("artanh(tanh(-3))", "-3", User, Radian, MetricUnitFormat, Real);
 }
 
 QUIZ_CASE(poincare_advanced_trigonometry) {
@@ -1740,45 +1740,45 @@ QUIZ_CASE(poincare_advanced_trigonometry) {
   assert_parsed_expression_simplify_to("csc(0)", Undefined::Name());
   assert_parsed_expression_simplify_to("sec(0)", "1");
   assert_parsed_expression_simplify_to("cot(0)", Undefined::Name());
-  assert_parsed_expression_simplify_to("acsc(2/√(3))", "π/3");
-  assert_parsed_expression_simplify_to("asec(2/√(3))", "π/6");
-  assert_parsed_expression_simplify_to("acot(0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("arccsc(2/√(3))", "π/3");
+  assert_parsed_expression_simplify_to("arcsec(2/√(3))", "π/6");
+  assert_parsed_expression_simplify_to("arccot(0)", Undefined::Name());
   assert_parsed_expression_simplify_to("csc(π/2)", "1");
   assert_parsed_expression_simplify_to("sec(π/2)", Undefined::Name());
   assert_parsed_expression_simplify_to("cot(π/2)", "0");
-  assert_parsed_expression_simplify_to("acsc(1)", "π/2");
-  assert_parsed_expression_simplify_to("asec(1)", "0");
-  assert_parsed_expression_simplify_to("acot(1)", "π/4");
+  assert_parsed_expression_simplify_to("arccsc(1)", "π/2");
+  assert_parsed_expression_simplify_to("arcsec(1)", "0");
+  assert_parsed_expression_simplify_to("arccot(1)", "π/4");
 
-  // asec(sec)
-  assert_parsed_expression_simplify_to("asec(sec(3))", "3");
-  assert_parsed_expression_simplify_to("asec(sec(0.5))", "1/2");
-  assert_parsed_expression_simplify_to("asec(sec(-3))", "3");
+  // arcsec(sec)
+  assert_parsed_expression_simplify_to("arcsec(sec(3))", "3");
+  assert_parsed_expression_simplify_to("arcsec(sec(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("arcsec(sec(-3))", "3");
 
   // sec(asec)
-  assert_parsed_expression_simplify_to("sec(asec(3))", "3");
-  assert_parsed_expression_simplify_to("sec(asec(0.5))", "1/2");
-  assert_parsed_expression_simplify_to("sec(asec(-3))", "sec(-arccos(1/3)+π)");
+  assert_parsed_expression_simplify_to("sec(arcsec(3))", "3");
+  assert_parsed_expression_simplify_to("sec(arcsec(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("sec(arcsec(-3))", "sec(-arccos(1/3)+π)");
 
-  // acsc(csc)
-  assert_parsed_expression_simplify_to("acsc(csc(3))", "π-3");
-  assert_parsed_expression_simplify_to("acsc(csc(0.5))", "1/2");
-  assert_parsed_expression_simplify_to("acsc(csc(-3))", "-π+3");
+  // arccsc(csc)
+  assert_parsed_expression_simplify_to("arccsc(csc(3))", "π-3");
+  assert_parsed_expression_simplify_to("arccsc(csc(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("arccsc(csc(-3))", "-π+3");
 
   // csc(acsc)
-  assert_parsed_expression_simplify_to("csc(acsc(3))", "3");
-  assert_parsed_expression_simplify_to("csc(acsc(0.5))", "1/2");
-  assert_parsed_expression_simplify_to("csc(acsc(-3))", "-3");
+  assert_parsed_expression_simplify_to("csc(arccsc(3))", "3");
+  assert_parsed_expression_simplify_to("csc(arccsc(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("csc(arccsc(-3))", "-3");
 
-  // acot(cot)
-  assert_parsed_expression_simplify_to("acot(cot(3))", "-π+3");
-  assert_parsed_expression_simplify_to("acot(cot(0.5))", "1/2");
-  assert_parsed_expression_simplify_to("acot(cot(-3))", "π-3");
+  // arccot(cot)
+  assert_parsed_expression_simplify_to("arccot(cot(3))", "-π+3");
+  assert_parsed_expression_simplify_to("arccot(cot(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("arccot(cot(-3))", "π-3");
 
   // cot(acot)
-  assert_parsed_expression_simplify_to("cot(acot(3))", "3");
-  assert_parsed_expression_simplify_to("cot(acot(0.5))", "1/2");
-  assert_parsed_expression_simplify_to("cot(acot(-3))", "-3");
+  assert_parsed_expression_simplify_to("cot(arccot(3))", "3");
+  assert_parsed_expression_simplify_to("cot(arccot(0.5))", "1/2");
+  assert_parsed_expression_simplify_to("cot(arccot(-3))", "-3");
 }
 
 QUIZ_CASE(poincare_probability) {
@@ -1981,9 +1981,9 @@ QUIZ_CASE(poincare_simplification_functions_of_lists) {
   assert_parsed_expression_simplify_to("frac({1/√(2),1/2,1,-1.3})", "{frac(√(2)/2),1/2,0,7/10}");
   assert_parsed_expression_simplify_to("frac({0.3,180})", "{3/10,0}");
   assert_parsed_expression_simplify_to("gcd({25,60},15)", "{5,15}");
-  assert_parsed_expression_simplify_to("acosh({0,π})", "{arcosh(0),arcosh(π)}");
-  assert_parsed_expression_simplify_to("asinh({0,π})", "{0,arsinh(π)}");
-  assert_parsed_expression_simplify_to("atanh({0,π})", "{0,artanh(π)}");
+  assert_parsed_expression_simplify_to("arcosh({0,π})", "{arcosh(0),arcosh(π)}");
+  assert_parsed_expression_simplify_to("arsinh({0,π})", "{0,arsinh(π)}");
+  assert_parsed_expression_simplify_to("artanh({0,π})", "{0,artanh(π)}");
   assert_parsed_expression_simplify_to("cosh({0,π})", "{1,cosh(π)}");
   assert_parsed_expression_simplify_to("sinh({0,π})", "{0,sinh(π)}");
   assert_parsed_expression_simplify_to("tanh({0,π})", "{0,tanh(π)}");

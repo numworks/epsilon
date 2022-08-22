@@ -9,7 +9,7 @@ namespace Poincare {
 
 class SineNode final : public ExpressionNode {
 public:
-  constexpr static AliasesList k_functionName = AliasesLists::k_sinAliases;
+  constexpr static AliasesList k_functionName = "sin";
 
   // TreeNode
   size_t size() const override { return sizeof(SineNode); }

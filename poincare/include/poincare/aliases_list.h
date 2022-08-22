@@ -117,27 +117,10 @@ namespace AliasesLists {
   constexpr static AliasesList k_piAliases = "\01\02π\00\02pi\00";
   // Units
   constexpr static AliasesList k_litersAliases = "\01\02L\00\02l\00";
-  // Trigo
-  constexpr static AliasesList k_sinAliases = "\01P1\02sin\00\02sen\00";
-  constexpr static AliasesList k_tanAliases = "\01P1\02tan\00\02tg\00";
   // Inverse trigo
-  constexpr static AliasesList k_acosAliases = "\01\02arccos\00\02acos\00\02bgcos\00";
-  constexpr static AliasesList k_asinAliases = "\01P1\02arcsin\00\02arcsen\00\02asin\00\02bgsin\00";
-  constexpr static AliasesList k_atanAliases = "\01P1\02arctan\00\02arctg\00\02atan\00\02bgtan\00";
-  // Advanced trigo
-  constexpr static AliasesList k_cosecAliases = "\01\02cosec\00\02csc\00";
-  constexpr static AliasesList k_cotAliases = "\01\02cot\00\02cotg\00";
-  // Inverse advanced trigo
-  constexpr static AliasesList k_acosecAliases = "\01\02arccosec\00\02acosec\00\02bgcosec\00\02arccsc\00\02acsc\00";
-  constexpr static AliasesList k_asecAliases = "\01\02arcsec\00\02asec\00\02bgsec\00";
-  constexpr static AliasesList k_acotAliases = "\01\02arccot\00\02acot\00\02bgcot\00";
-  // Hyperbolic trigo
-  constexpr static AliasesList k_sinhAliases = "\01P1\02sinh\00\02senh\00";
-  constexpr static AliasesList k_tanhAliases = "\01P1\02tanh\00\02tgh\00";
-  // Inverse hyperbolic trigo
-  constexpr static AliasesList k_acoshAliases = "\01\02arcosh\00\02acosh\00";
-  constexpr static AliasesList k_asinhAliases = "\01P1\02arsinh\00\02arsenh\00\02asinh\00";
-  constexpr static AliasesList k_atanhAliases = "\01P1\02artanh\00\02artgh\00\02atanh\00";
+  constexpr static AliasesList k_acosAliases = "\01\02arccos\00\02acos\00";
+  constexpr static AliasesList k_asinAliases = "\01\02arcsin\00\02asin\00";
+  constexpr static AliasesList k_atanAliases = "\01\02arctan\00\02atan\00";
 }
 
 }

@@ -50,107 +50,93 @@ private:
      * Example:
      * { acos, arccos } -> take acos as reference for position
      * { asin, arcsin } -> take arcsin as reference for position
-     *
-     * The // at the end of each line indicates the first name in alphabetical
-     * order
-     * =======================
-     * WARNING: For now all function aliases that can be used in a country
-     * can also be used in other languages. If it was no more the case, this
-     * implementation would be deprecated.
-     *
-     * Ex:
-     * if "sen = sin" is understood in PT but not in EN:
-     * When parsing "sign", the name comparison with { "sen", "sin" } occurs
-     * before the comparison with "sign". But if "sen" was skipped, the
-     * comparison would only be between "sin" and "sign" which is < 0.
-     * So the iteration through the list would stop and not recognize "sign".
      * */
-    &AbsoluteValue::s_functionHelper,
-    &ArcCosine::s_functionHelper, // acos
-    &ArcCosecant::s_functionHelper, // acosec
-    &HyperbolicArcCosine::s_functionHelper, // acosh
-    &ArcCotangent::s_functionHelper, // acot
+    &AbsoluteValue::s_functionHelper, // abs
+    &ArcCosine::s_functionHelper, // acos, arccos
+    &ArcCotangent::s_functionHelper, // arccot
+    &ArcCosecant::s_functionHelper, // arccsc
+    &HyperbolicArcCosine::s_functionHelper, //arcosh
     &ArcSecant::s_functionHelper, // arcsec
-    &ArcSine::s_functionHelper, // arcsen
-    &ArcTangent::s_functionHelper, // arctan
+    &ArcSine::s_functionHelper, // arcsin, asin
+    &ArcTangent::s_functionHelper, // arctan, atan
     &ComplexArgument::s_functionHelper, // arg
-    &HyperbolicArcSine::s_functionHelper, // arsenh
+    &HyperbolicArcSine::s_functionHelper, // arsinh
     &HyperbolicArcTangent::s_functionHelper, // artanh
-    &BinomCDF::s_functionHelper,
-    &BinomialCoefficient::s_functionHelper,
-    &BinomPDF::s_functionHelper,
-    &Ceiling::s_functionHelper,
-    &Conjugate::s_functionHelper,
-    &Cosine::s_functionHelper,
-    &Cosecant::s_functionHelper, // cosec
-    &HyperbolicCosine::s_functionHelper,
+    &BinomCDF::s_functionHelper, // binomcdf
+    &BinomialCoefficient::s_functionHelper, // binomial
+    &BinomPDF::s_functionHelper, // binompdf
+    &Ceiling::s_functionHelper, // ceil
+    &Conjugate::s_functionHelper, // conj
+    &Cosine::s_functionHelper, // cos
+    &HyperbolicCosine::s_functionHelper, //cosh
     &Cotangent::s_functionHelper, // cot
-    &VectorCross::s_functionHelper,
-    &Dependency::s_functionHelper,
-    &Determinant::s_functionHelper,
-    &Derivative::s_functionHelperFirstOrder,
-    &Derivative::s_functionHelper,
-    &Dimension::s_functionHelper,
-    &VectorDot::s_functionHelper,
-    &Factor::s_functionHelper,
-    &Floor::s_functionHelper,
-    &FracPart::s_functionHelper,
-    &GreatCommonDivisor::s_functionHelper,
-    &GeomCDF::s_functionHelper,
-    &GeomCDFRange::s_functionHelper,
-    &GeomPDF::s_functionHelper,
-    &MatrixIdentity::s_functionHelper,
-    &ImaginaryPart::s_functionHelper,
-    &Integral::s_functionHelper,
-    &InvBinom::s_functionHelper,
-    &MatrixInverse::s_functionHelper,
-    &InvGeom::s_functionHelper,
-    &InvNorm::s_functionHelper,
-    &InvStudent::s_functionHelper,
-    &LeastCommonMultiple::s_functionHelper,
-    &NaperianLogarithm::s_functionHelper,
-    &Logarithm::s_functionHelper,
-    &ListMaximum::s_functionHelper,
-    &ListMean::s_functionHelper,
-    &ListMedian::s_functionHelper,
-    &ListMinimum::s_functionHelper,
-    &VectorNorm::s_functionHelper,
-    &NormCDF::s_functionHelper,
-    &NormCDFRange::s_functionHelper,
-    &NormPDF::s_functionHelper,
-    &PermuteCoefficient::s_functionHelper,
-    &PoissonCDF::s_functionHelper,
-    &PoissonPDF::s_functionHelper,
-    &ListProduct::s_functionHelper,
-    &Product::s_functionHelper,
-    &DivisionQuotient::s_functionHelper,
-    &Randint::s_functionHelper,
-    &Random::s_functionHelper,
-    &RealPart::s_functionHelper,
-    &MatrixRowEchelonForm::s_functionHelper,
-    &DivisionRemainder::s_functionHelper,
-    &NthRoot::s_functionHelper,
-    &Round::s_functionHelper,
-    &MatrixReducedRowEchelonForm::s_functionHelper,
-    &ListSampleStandardDeviation::s_functionHelper,
-    &Secant::s_functionHelper,
-    &Sine::s_functionHelper, // sen
-    &HyperbolicSine::s_functionHelper, // senh
-    &ListSequence::s_functionHelper,
-    &SignFunction::s_functionHelper,
-    &ListSort::s_functionHelper,
-    &ListStandardDeviation::s_functionHelper,
-    &ListSum::s_functionHelper,
-    &Sum::s_functionHelper,
+    &VectorCross::s_functionHelper, // cross
+    &Cosecant::s_functionHelper, // csc
+    &Dependency::s_functionHelper, // dep
+    &Determinant::s_functionHelper, // det
+    &Derivative::s_functionHelperFirstOrder, // diff
+    &Derivative::s_functionHelper, // diff
+    &Dimension::s_functionHelper, // dim
+    &VectorDot::s_functionHelper, // dot
+    &Factor::s_functionHelper, // fact
+    &Floor::s_functionHelper, // floor
+    &FracPart::s_functionHelper, // frac
+    &GreatCommonDivisor::s_functionHelper, // gcd
+    &GeomCDF::s_functionHelper, // geomcdf
+    &GeomCDFRange::s_functionHelper, //geomcdfrange
+    &GeomPDF::s_functionHelper, // geompdf
+    &MatrixIdentity::s_functionHelper, // identity
+    &ImaginaryPart::s_functionHelper, // im
+    &Integral::s_functionHelper, // int
+    &InvBinom::s_functionHelper, // invbinom
+    &MatrixInverse::s_functionHelper, // inverse
+    &InvGeom::s_functionHelper, // invgeom
+    &InvNorm::s_functionHelper, // invnorm
+    &InvStudent::s_functionHelper, // invt
+    &LeastCommonMultiple::s_functionHelper, // lcm
+    &NaperianLogarithm::s_functionHelper, // ln
+    &Logarithm::s_functionHelper, // log
+    &ListMaximum::s_functionHelper, // max
+    &ListMean::s_functionHelper, // mean
+    &ListMedian::s_functionHelper, // med
+    &ListMinimum::s_functionHelper, // min
+    &VectorNorm::s_functionHelper, // norm
+    &NormCDF::s_functionHelper, // normcdf
+    &NormCDFRange::s_functionHelper, // normcdfrange
+    &NormPDF::s_functionHelper, // normpdf
+    &PermuteCoefficient::s_functionHelper, // permute
+    &PoissonCDF::s_functionHelper, // poissoncdf
+    &PoissonPDF::s_functionHelper, // poissonpdf
+    &ListProduct::s_functionHelper, // prod
+    &Product::s_functionHelper, // product
+    &DivisionQuotient::s_functionHelper, // quo
+    &Randint::s_functionHelper, // randint
+    &Random::s_functionHelper, // random
+    &RealPart::s_functionHelper, // re
+    &MatrixRowEchelonForm::s_functionHelper, // ref
+    &DivisionRemainder::s_functionHelper, // rem
+    &NthRoot::s_functionHelper, // root
+    &Round::s_functionHelper, // round
+    &MatrixReducedRowEchelonForm::s_functionHelper, // rref
+    &ListSampleStandardDeviation::s_functionHelper, // samplestddev
+    &Secant::s_functionHelper, // sec
+    &ListSequence::s_functionHelper, // sequence
+    &SignFunction::s_functionHelper, // sign
+    &Sine::s_functionHelper, // sin
+    &HyperbolicSine::s_functionHelper, // sinh
+    &ListSort::s_functionHelper, // sort
+    &ListStandardDeviation::s_functionHelper, // stddev
+    &ListSum::s_functionHelper, // sum (1 param)
+    &Sum::s_functionHelper, // sum (4 params)
     &Tangent::s_functionHelper, // tan
-    &HyperbolicTangent::s_functionHelper,
-    &StudentCDF::s_functionHelper,
-    &StudentCDFRange::s_functionHelper,
-    &StudentPDF::s_functionHelper,
-    &MatrixTrace::s_functionHelper,
-    &MatrixTranspose::s_functionHelper,
-    &ListVariance::s_functionHelper,
-    &SquareRoot::s_functionHelper,
+    &HyperbolicTangent::s_functionHelper, // tanh
+    &StudentCDF::s_functionHelper, // tcdf
+    &StudentCDFRange::s_functionHelper, // tcdfrange
+    &StudentPDF::s_functionHelper, // tpdf
+    &MatrixTrace::s_functionHelper, // trace
+    &MatrixTranspose::s_functionHelper, // transpose
+    &ListVariance::s_functionHelper, // var
+    &SquareRoot::s_functionHelper, // √
   };
 
   constexpr static const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));

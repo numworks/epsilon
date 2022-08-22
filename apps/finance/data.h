@@ -54,19 +54,24 @@ private:
 class SimpleInterestData : public InterestData {
 private:
   enum class Parameter : uint8_t {
-    n = 0,          // Shared value
-    rPct,           // Shared value
-    P,              // Shared value
-    Int,            // Shared value
+    n = 0,          // Shared value with CompoundInterestData::N
+    rPct,           // Shared value with CompoundInterestData::rPct
+    P,              // Shared value with CompoundInterestData::PV
+    Int,            // Shared value with CompoundInterestData::FV
     YearConvention  // Is not a double parameter and can't be unknown
   };
 public:
   SimpleInterestData(double * sharedValues) : InterestData(sharedValues) { resetValues(); }
 
   constexpr static uint8_t k_numberOfParameters = 5;
+  static_assert(static_cast<uint8_t>(Parameter::n) == 0, "n must be first to match CompoundInterestData::N.");
+  static_assert(static_cast<uint8_t>(Parameter::rPct) == 1, "rPct must be second to match CompoundInterestData::rPct.");
+  static_assert(static_cast<uint8_t>(Parameter::P) == 2, "P must be third to match CompoundInterestData::PV.");
+  static_assert(static_cast<uint8_t>(Parameter::Int) == 3, "Int must be forth to match CompoundInterestData::FV.");
   static_assert(static_cast<uint8_t>(Parameter::YearConvention) == k_numberOfParameters - 1, "YearConvention must be last.");
 
   constexpr static uint8_t k_numberOfDoubleValues = static_cast<uint8_t>(Parameter::YearConvention);
+  static_assert(k_numberOfDoubleValues - k_numberOfSharedDoubleValues == 0, "All double values are expected to be shared.");
   constexpr static uint8_t k_numberOfUnknowns = k_numberOfDoubleValues;
   static_assert(k_maxNumberOfUnknowns >= k_numberOfUnknowns, "k_maxNumberOfUnknowns is invalid.");
 
@@ -75,7 +80,6 @@ public:
   I18n::Message menuTitle() const override {
     return I18n::Message::SimpleInterest;
   }
-  double defaultValue(uint8_t param) const override;
   bool checkValue(uint8_t param, double value) const override;
   uint8_t numberOfParameters() const override { return k_numberOfParameters; }
   uint8_t numberOfDoubleValues() const override {
@@ -86,20 +90,15 @@ public:
     return index == 0 ? I18n::Message::Finance360 : I18n::Message::Finance365;
   }
   double computeUnknownValue() override;
-  void setValue(uint8_t param, double value) override;
-  double getValue(uint8_t param) const override;
-
-private:
-  double m_values[k_numberOfDoubleValues - k_numberOfSharedDoubleValues];
 };
 
 class CompoundInterestData : public InterestData {
 private:
   enum class Parameter : uint8_t {
-    N = 0,   // Shared value
-    rPct,    // Shared value
-    PV,      // Shared value
-    FV,      // Shared value
+    N = 0,   // Shared value with SimpleInterestData::n
+    rPct,    // Shared value with SimpleInterestData::rPct
+    PV,      // Shared value with SimpleInterestData::P
+    FV,      // Shared value with SimpleInterestData::Int
     Pmt,
     PY,      // Can't be unknown
     CY,      // Can't be unknown
@@ -109,6 +108,10 @@ public:
   CompoundInterestData(double * sharedValues) : InterestData(sharedValues) { resetValues(); }
 
   constexpr static uint8_t k_numberOfParameters = 8;
+  static_assert(static_cast<uint8_t>(Parameter::N) == 0, "N must be first to match SimpleInterestData::n.");
+  static_assert(static_cast<uint8_t>(Parameter::rPct) == 1, "rPct must be second to match SimpleInterestData::rPct.");
+  static_assert(static_cast<uint8_t>(Parameter::PV) == 2, "PV must be third to match SimpleInterestData::P.");
+  static_assert(static_cast<uint8_t>(Parameter::FV) == 3, "FV must be forth to match SimpleInterestData::Int.");
   static_assert(static_cast<uint8_t>(Parameter::PY) == k_numberOfParameters - 3, "PY must be third from last.");
   static_assert(static_cast<uint8_t>(Parameter::CY) == k_numberOfParameters - 2, "CY must be second from last.");
   static_assert(static_cast<uint8_t>(Parameter::Payment) == k_numberOfParameters - 1, "Payment must be last.");

@@ -48,15 +48,6 @@ I18n::Message SimpleInterestData::sublabelForParameter(uint8_t param) const {
   return k_sublabels[param];
 }
 
-double SimpleInterestData::defaultValue(uint8_t param) const {
-  assert(param < numberOfDoubleValues());
-  if (param < k_numberOfSharedDoubleValues) {
-    return InterestData::defaultValue(param);
-  }
-  constexpr double k_defaultValues[k_numberOfDoubleValues - k_numberOfSharedDoubleValues] = {};
-  return k_defaultValues[param - k_numberOfSharedDoubleValues];
-}
-
 bool SimpleInterestData::checkValue(uint8_t param, double value) const {
   assert(param < numberOfDoubleValues());
   return !std::isnan(value)
@@ -95,22 +86,6 @@ double SimpleInterestData::computeUnknownValue() {
   }
   setValue(m_unknown, result);
   return result;
-}
-
-void SimpleInterestData::setValue(uint8_t param, double value) {
-  assert(param < numberOfDoubleValues());
-  if (param < k_numberOfSharedDoubleValues) {
-    return InterestData::setValue(param, value);
-  }
-  m_values[param - k_numberOfSharedDoubleValues] = value;
-}
-
-double SimpleInterestData::getValue(uint8_t param) const {
-  assert(param < numberOfDoubleValues());
-  if (param < k_numberOfSharedDoubleValues) {
-    return InterestData::getValue(param);
-  }
-  return m_values[param - k_numberOfSharedDoubleValues];
 }
 
 /* CompoundInterestData */

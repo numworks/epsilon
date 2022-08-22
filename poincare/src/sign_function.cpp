@@ -108,7 +108,7 @@ bool SignFunction::derivate(const ExpressionNode::ReductionContext& reductionCon
    * We approximate it's child to know if it is equal to 0
    * The approximation of the child might not be precise that's why it is
    * compared with EpsilonLax.
-   * This derivative is used in the derivative of acot(x)
+   * This derivative is used in the derivative of arccot(x)
   */
   Expression child = childAtIndex(0).clone();
   child = child.replaceSymbolWithExpression(symbol, symbolValue);

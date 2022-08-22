@@ -499,7 +499,7 @@ Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, co
       result = ArcSine::Builder(p);
       break;
     default:
-      // TODO : This will return undef when child = 0, but acot(0) should  return pi/2.
+      // TODO : This will return undef when child = 0, but arccot(0) should  return pi/2.
       assert(e.type() == ExpressionNode::Type::ArcCotangent);
       result = ArcTangent::Builder(p);
       break;

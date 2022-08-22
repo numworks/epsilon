@@ -776,10 +776,10 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<float>("acos(-1)", "200", Gradian);
   assert_expression_approximates_to<double>("acos(1)", "0", Gradian);
   // Advanced function : asec
-  assert_expression_approximates_to<double>("asec(-2.4029979617224)", "2", Radian);
-  assert_expression_approximates_to<float>("asec(-1)", "200", Gradian);
-  assert_expression_approximates_to<float>("asec(0.9986307857)", "2.9999×i", Degree, MetricUnitFormat, Cartesian, 5);
-  assert_expression_approximates_to<float>("asec(-0.55776+0.491828×i)", "2.28318+1×i", Radian, MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<double>("arcsec(-2.4029979617224)", "2", Radian);
+  assert_expression_approximates_to<float>("arcsec(-1)", "200", Gradian);
+  assert_expression_approximates_to<float>("arcsec(0.9986307857)", "2.9999×i", Degree, MetricUnitFormat, Cartesian, 5);
+  assert_expression_approximates_to<float>("arcsec(-0.55776+0.491828×i)", "2.28318+1×i", Radian, MetricUnitFormat, Cartesian, 6);
 
   /* asin: [-1,1]    -> R
    *       ]-inf,-1[ -> -π/2+R×i (odd)
@@ -822,11 +822,11 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("asin(1)", "90", Degree);
   assert_expression_approximates_to<double>("asin(1)", "100", Gradian, MetricUnitFormat, Cartesian);
   // Advanced function : acsc
-  assert_expression_approximates_to<double>("acsc(1.0997501702946)", "1.1415926535898", Radian);
-  assert_expression_approximates_to<double>("acsc(1)", "100", Gradian, MetricUnitFormat, Cartesian, 6);
-  assert_expression_approximates_to<double>("acsc(-19.08987×i)", "3×i", Degree, MetricUnitFormat, Cartesian, 6);
-  assert_expression_approximates_to<double>("acsc(19.08987×i)", "-3×i", Degree, MetricUnitFormat, Cartesian, 6);
-  assert_expression_approximates_to<double>("acsc(0.5+0.4×i)", "0.792676-1.13208×i", Radian, MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<double>("arccsc(1.0997501702946)", "1.1415926535898", Radian);
+  assert_expression_approximates_to<double>("arccsc(1)", "100", Gradian, MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<double>("arccsc(-19.08987×i)", "3×i", Degree, MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<double>("arccsc(19.08987×i)", "-3×i", Degree, MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<double>("arccsc(0.5+0.4×i)", "0.792676-1.13208×i", Radian, MetricUnitFormat, Cartesian, 6);
 
   /* atan: R         ->  R (odd)
    *       [-i,i]    ->  R×i (odd)
@@ -868,11 +868,11 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("atan(-i)", "-inf×i", Radian);
   assert_expression_approximates_to<double>("atan(i)", "inf×i", Radian);
   // Advanced function : acot
-  assert_expression_approximates_to<double>("acot(-0.45765755436029)", "-1.1415926535898", Radian);
-  assert_expression_approximates_to<float>("acot(0)", Undefined::Name(), Gradian);
-  assert_expression_approximates_to<float>("acot(-19.11604×i)", "3×i", Degree, MetricUnitFormat, Cartesian, 6);
-  assert_expression_approximates_to<float>("acot(19.11604×i)", "-3×i", Degree, MetricUnitFormat, Cartesian, 6);
-  assert_expression_approximates_to<float>("acot(-0.253182-0.928133×i)", "-0.858407+1×i", Radian, MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<double>("arccot(-0.45765755436029)", "-1.1415926535898", Radian);
+  assert_expression_approximates_to<float>("arccot(0)", Undefined::Name(), Gradian);
+  assert_expression_approximates_to<float>("arccot(-19.11604×i)", "3×i", Degree, MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<float>("arccot(19.11604×i)", "-3×i", Degree, MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<float>("arccot(-0.253182-0.928133×i)", "-0.858407+1×i", Radian, MetricUnitFormat, Cartesian, 6);
 
   /* cosh: R         -> R (even)
    *       R×i       -> R (oscillator)
@@ -946,28 +946,28 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
    *        ]0, inf*i[   -> π/2×i+R (even on real)
    */
   // On [-1,1]
-  assert_expression_approximates_to<double>("acosh(2)", "1.3169578969248", Radian);
-  assert_expression_approximates_to<double>("acosh(2)", "1.3169578969248", Degree);
-  assert_expression_approximates_to<double>("acosh(2)", "1.3169578969248", Gradian);
+  assert_expression_approximates_to<double>("arcosh(2)", "1.3169578969248", Radian);
+  assert_expression_approximates_to<double>("arcosh(2)", "1.3169578969248", Degree);
+  assert_expression_approximates_to<double>("arcosh(2)", "1.3169578969248", Gradian);
   // On ]-inf, -1[
-  assert_expression_approximates_to<double>("acosh(-4)", "2.0634370688956+3.1415926535898×i", Radian);
-  assert_expression_approximates_to<float>("acosh(-4)", "2.06344+3.14159×i", Radian, MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<double>("arcosh(-4)", "2.0634370688956+3.1415926535898×i", Radian);
+  assert_expression_approximates_to<float>("arcosh(-4)", "2.06344+3.14159×i", Radian, MetricUnitFormat, Cartesian, 6);
   // On ]1,inf[: Symmetry: even on real
-  assert_expression_approximates_to<double>("acosh(4)", "2.0634370688956", Radian);
-  assert_expression_approximates_to<float>("acosh(4)", "2.063437", Radian);
+  assert_expression_approximates_to<double>("arcosh(4)", "2.0634370688956", Radian);
+  assert_expression_approximates_to<float>("arcosh(4)", "2.063437", Radian);
   // On ]-inf×i, 0[
-  assert_expression_approximates_to<double>("acosh(-42×i)", "4.4309584920805-1.5707963267949×i", Radian);
-  assert_expression_approximates_to<float>("acosh(-42×i)", "4.431-1.571×i", Radian, MetricUnitFormat, Cartesian, 4);
+  assert_expression_approximates_to<double>("arcosh(-42×i)", "4.4309584920805-1.5707963267949×i", Radian);
+  assert_expression_approximates_to<float>("arcosh(-42×i)", "4.431-1.571×i", Radian, MetricUnitFormat, Cartesian, 4);
   // On ]0, i×inf[: Symmetry: even on real
-  assert_expression_approximates_to<double>("acosh(42×i)", "4.4309584920805+1.5707963267949×i", Radian);
-  assert_expression_approximates_to<float>("acosh(42×i)", "4.431+1.571×i", Radian, MetricUnitFormat, Cartesian, 4);
+  assert_expression_approximates_to<double>("arcosh(42×i)", "4.4309584920805+1.5707963267949×i", Radian);
+  assert_expression_approximates_to<float>("arcosh(42×i)", "4.431+1.571×i", Radian, MetricUnitFormat, Cartesian, 4);
   // On C
-  assert_expression_approximates_to<float>("acosh(i-4)", "2.0966+2.8894×i", Radian, MetricUnitFormat, Cartesian, 5);
-  assert_expression_approximates_to<float>("acosh(i-4)", "2.0966+2.8894×i", Degree, MetricUnitFormat, Cartesian, 5);
+  assert_expression_approximates_to<float>("arcosh(i-4)", "2.0966+2.8894×i", Radian, MetricUnitFormat, Cartesian, 5);
+  assert_expression_approximates_to<float>("arcosh(i-4)", "2.0966+2.8894×i", Degree, MetricUnitFormat, Cartesian, 5);
   // Key values
-  //assert_expression_approximates_to<double>("acosh(-1)", "3.1415926535898×i", Radian);
-  assert_expression_approximates_to<double>("acosh(1)", "0", Radian);
-  assert_expression_approximates_to<float>("acosh(0)", "1.570796×i", Radian);
+  //assert_expression_approximates_to<double>("arcosh(-1)", "3.1415926535898×i", Radian);
+  assert_expression_approximates_to<double>("arcosh(1)", "0", Radian);
+  assert_expression_approximates_to<float>("arcosh(0)", "1.570796×i", Radian);
 
   /* asinh: R            -> R (odd)
    *        [-i,i]       -> R*i (odd)
@@ -975,29 +975,29 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
    *        ]i, inf×i[   -> π/2×i+R (odd)
    */
   // On R
-  assert_expression_approximates_to<double>("asinh(2)", "1.4436354751788", Radian);
-  assert_expression_approximates_to<double>("asinh(2)", "1.4436354751788", Degree);
-  assert_expression_approximates_to<double>("asinh(2)", "1.4436354751788", Gradian);
+  assert_expression_approximates_to<double>("arsinh(2)", "1.4436354751788", Radian);
+  assert_expression_approximates_to<double>("arsinh(2)", "1.4436354751788", Degree);
+  assert_expression_approximates_to<double>("arsinh(2)", "1.4436354751788", Gradian);
  // Symmetry: odd
-  assert_expression_approximates_to<double>("asinh(-2)", "-1.4436354751788", Radian);
-  assert_expression_approximates_to<double>("asinh(-2)", "-1.4436354751788", Degree);
+  assert_expression_approximates_to<double>("arsinh(-2)", "-1.4436354751788", Radian);
+  assert_expression_approximates_to<double>("arsinh(-2)", "-1.4436354751788", Degree);
   // On [-i,i]
-  assert_expression_approximates_to<double>("asinh(0.2×i)", "0.20135792079033×i", Radian);
-  // asinh(0.2*i) has a too low precision in float on the web platform
-  assert_expression_approximates_to<float>("asinh(0.3×i)", "0.3046927×i", Degree);
+  assert_expression_approximates_to<double>("arsinh(0.2×i)", "0.20135792079033×i", Radian);
+  // arsinh(0.2*i) has a too low precision in float on the web platform
+  assert_expression_approximates_to<float>("arsinh(0.3×i)", "0.3046927×i", Degree);
   // Symmetry: odd
-  assert_expression_approximates_to<double>("asinh(-0.2×i)", "-0.20135792079033×i", Radian);
-  // asinh(-0.2*i) has a too low precision in float on the web platform
-  assert_expression_approximates_to<float>("asinh(-0.3×i)", "-0.3046927×i", Degree);
+  assert_expression_approximates_to<double>("arsinh(-0.2×i)", "-0.20135792079033×i", Radian);
+  // arsinh(-0.2*i) has a too low precision in float on the web platform
+  assert_expression_approximates_to<float>("arsinh(-0.3×i)", "-0.3046927×i", Degree);
   // On ]-inf×i, -i[
-  assert_expression_approximates_to<double>("asinh(-22×i)", "-3.7836727043295-1.5707963267949×i", Radian);
-  assert_expression_approximates_to<float>("asinh(-22×i)", "-3.784-1.571×i", Degree, MetricUnitFormat, Cartesian, 4);
+  assert_expression_approximates_to<double>("arsinh(-22×i)", "-3.7836727043295-1.5707963267949×i", Radian);
+  assert_expression_approximates_to<float>("arsinh(-22×i)", "-3.784-1.571×i", Degree, MetricUnitFormat, Cartesian, 4);
   // On ]i, inf×i[, Symmetry: odd
-  assert_expression_approximates_to<double>("asinh(22×i)", "3.7836727043295+1.5707963267949×i", Radian);
-  assert_expression_approximates_to<float>("asinh(22×i)", "3.784+1.571×i", Degree, MetricUnitFormat, Cartesian, 4);
+  assert_expression_approximates_to<double>("arsinh(22×i)", "3.7836727043295+1.5707963267949×i", Radian);
+  assert_expression_approximates_to<float>("arsinh(22×i)", "3.784+1.571×i", Degree, MetricUnitFormat, Cartesian, 4);
   // On C
-  assert_expression_approximates_to<float>("asinh(i-4)", "-2.123+0.2383×i", Radian, MetricUnitFormat, Cartesian, 4);
-  assert_expression_approximates_to<float>("asinh(i-4)", "-2.123+0.2383×i", Degree, MetricUnitFormat, Cartesian, 4);
+  assert_expression_approximates_to<float>("arsinh(i-4)", "-2.123+0.2383×i", Radian, MetricUnitFormat, Cartesian, 4);
+  assert_expression_approximates_to<float>("arsinh(i-4)", "-2.123+0.2383×i", Degree, MetricUnitFormat, Cartesian, 4);
 
   /* atanh: [-1,1]       -> R (odd)
    *        ]-inf,-1[    -> π/2*i+R (odd)
@@ -1005,45 +1005,45 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
    *        R×i          -> R×i (odd)
    */
   // On [-1,1]
-  assert_expression_approximates_to<double>("atanh(0.4)", "0.4236489301936", Radian);
-  assert_expression_approximates_to<double>("atanh(0.4)", "0.4236489301936", Degree);
-  assert_expression_approximates_to<double>("atanh(0.4)", "0.4236489301936", Gradian);
+  assert_expression_approximates_to<double>("artanh(0.4)", "0.4236489301936", Radian);
+  assert_expression_approximates_to<double>("artanh(0.4)", "0.4236489301936", Degree);
+  assert_expression_approximates_to<double>("artanh(0.4)", "0.4236489301936", Gradian);
   // Symmetry: odd
-  assert_expression_approximates_to<double>("atanh(-0.4)", "-0.4236489301936", Radian);
-  assert_expression_approximates_to<double>("atanh(-0.4)", "-0.4236489301936", Degree);
+  assert_expression_approximates_to<double>("artanh(-0.4)", "-0.4236489301936", Radian);
+  assert_expression_approximates_to<double>("artanh(-0.4)", "-0.4236489301936", Degree);
   // On ]1, inf[
-  assert_expression_approximates_to<double>("atanh(4)", "0.255412811883-1.5707963267949×i", Radian);
-  assert_expression_approximates_to<float>("atanh(4)", "0.2554128-1.570796×i", Degree);
+  assert_expression_approximates_to<double>("artanh(4)", "0.255412811883-1.5707963267949×i", Radian);
+  assert_expression_approximates_to<float>("artanh(4)", "0.2554128-1.570796×i", Degree);
   // On ]-inf,-1[, Symmetry: odd
-  assert_expression_approximates_to<double>("atanh(-4)", "-0.255412811883+1.5707963267949×i", Radian);
-  assert_expression_approximates_to<float>("atanh(-4)", "-0.2554128+1.570796×i", Degree);
+  assert_expression_approximates_to<double>("artanh(-4)", "-0.255412811883+1.5707963267949×i", Radian);
+  assert_expression_approximates_to<float>("artanh(-4)", "-0.2554128+1.570796×i", Degree);
   // On R×i
-  assert_expression_approximates_to<double>("atanh(4×i)", "1.325817663668×i", Radian);
-  assert_expression_approximates_to<float>("atanh(4×i)", "1.325818×i", Radian);
+  assert_expression_approximates_to<double>("artanh(4×i)", "1.325817663668×i", Radian);
+  assert_expression_approximates_to<float>("artanh(4×i)", "1.325818×i", Radian);
   // Symmetry: odd
-  assert_expression_approximates_to<double>("atanh(-4×i)", "-1.325817663668×i", Radian);
-  assert_expression_approximates_to<float>("atanh(-4×i)", "-1.325818×i", Radian);
+  assert_expression_approximates_to<double>("artanh(-4×i)", "-1.325817663668×i", Radian);
+  assert_expression_approximates_to<float>("artanh(-4×i)", "-1.325818×i", Radian);
   // On C
-  assert_expression_approximates_to<float>("atanh(i-4)", "-0.238878+1.50862×i", Radian, MetricUnitFormat, Cartesian, 6);
-  assert_expression_approximates_to<float>("atanh(i-4)", "-0.238878+1.50862×i", Degree, MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<float>("artanh(i-4)", "-0.238878+1.50862×i", Radian, MetricUnitFormat, Cartesian, 6);
+  assert_expression_approximates_to<float>("artanh(i-4)", "-0.238878+1.50862×i", Degree, MetricUnitFormat, Cartesian, 6);
 
   // Check that the complex part is not neglected
-  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-26×i)", "13+5ᴇ-16×i", Radian, MetricUnitFormat, Cartesian, 3);
-  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-60×i)", "13+5ᴇ-50×i", Radian, MetricUnitFormat, Cartesian, 3);
-  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-150×i)", "13+5ᴇ-140×i", Radian, MetricUnitFormat, Cartesian, 3);
-  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-250×i)", "13+5ᴇ-240×i", Radian, MetricUnitFormat, Cartesian, 3);
-  assert_expression_approximates_to<double>("atanh(0.99999999999+1.0ᴇ-300×i)", "13+5ᴇ-290×i", Radian, MetricUnitFormat, Cartesian, 3);
+  assert_expression_approximates_to<double>("artanh(0.99999999999+1.0ᴇ-26×i)", "13+5ᴇ-16×i", Radian, MetricUnitFormat, Cartesian, 3);
+  assert_expression_approximates_to<double>("artanh(0.99999999999+1.0ᴇ-60×i)", "13+5ᴇ-50×i", Radian, MetricUnitFormat, Cartesian, 3);
+  assert_expression_approximates_to<double>("artanh(0.99999999999+1.0ᴇ-150×i)", "13+5ᴇ-140×i", Radian, MetricUnitFormat, Cartesian, 3);
+  assert_expression_approximates_to<double>("artanh(0.99999999999+1.0ᴇ-250×i)", "13+5ᴇ-240×i", Radian, MetricUnitFormat, Cartesian, 3);
+  assert_expression_approximates_to<double>("artanh(0.99999999999+1.0ᴇ-300×i)", "13+5ᴇ-290×i", Radian, MetricUnitFormat, Cartesian, 3);
 
   // WARNING: evaluate on branch cut can be multivalued
   assert_expression_approximates_to<double>("acos(2)", "1.3169578969248×i", Radian);
   assert_expression_approximates_to<double>("acos(2)", "75.456129290217×i", Degree);
   assert_expression_approximates_to<double>("asin(2)", "1.5707963267949-1.3169578969248×i", Radian);
   assert_expression_approximates_to<double>("asin(2)", "90-75.456129290217×i", Degree);
-  assert_expression_approximates_to<double>("atanh(2)", "0.54930614433405-1.5707963267949×i", Radian);
+  assert_expression_approximates_to<double>("artanh(2)", "0.54930614433405-1.5707963267949×i", Radian);
   assert_expression_approximates_to<double>("atan(2i)", "1.5707963267949+0.54930614433405×i", Radian);
   assert_expression_approximates_to<double>("atan(2i)", "90+31.472923730945×i", Degree);
-  assert_expression_approximates_to<double>("asinh(2i)", "1.3169578969248+1.5707963267949×i", Radian);
-  assert_expression_approximates_to<double>("acosh(-2)", "1.3169578969248+3.1415926535898×i", Radian);
+  assert_expression_approximates_to<double>("arsinh(2i)", "1.3169578969248+1.5707963267949×i", Radian);
+  assert_expression_approximates_to<double>("arcosh(-2)", "1.3169578969248+3.1415926535898×i", Radian);
 }
 
 QUIZ_CASE(poincare_approximation_matrix) {

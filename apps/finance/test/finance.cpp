@@ -15,22 +15,19 @@ void assert_interest_solves(const double * expectedValues, bool booleanParam, In
   }
   // Test each parameters
   for (uint8_t paramIndex = 0; paramIndex < data->numberOfUnknowns(); paramIndex++) {
-    uint8_t previousUnknownParamIndex = data->getUnknown();
-    // Set new unknown parameter, previous unknown parameter's value is resetted
+    // Set new unknown parameter
     data->setUnknown(paramIndex);
-    // Restore previous unknown parameter's value
-    if (previousUnknownParamIndex < data->numberOfDoubleValues() && previousUnknownParamIndex != paramIndex) {
-      data->setValue(previousUnknownParamIndex, expectedValues[previousUnknownParamIndex]);
-    }
     // Compute and check unknown parameter's value
     double expectedValue = expectedValues[paramIndex];
-
     assert_roughly_equal(data->computeUnknownValue(), expectedValue, k_precision, false);
+    // Restore unknown parameter's value
+    data->setValue(paramIndex, expectedValue);
   }
 }
 
-QUIZ_CASE(equation_finance_simple_interest) {
-  SimpleInterestData data;
+QUIZ_CASE(finance_simple_interest) {
+  double m_sharedValues[InterestData::k_numberOfSharedDoubleValues];
+  SimpleInterestData data(m_sharedValues);
   {
     const double values[SimpleInterestData::k_numberOfDoubleValues] = {
       100.0,      // n
@@ -54,15 +51,16 @@ QUIZ_CASE(equation_finance_simple_interest) {
   }
 }
 
-QUIZ_CASE(equation_finance_compound_interest) {
-  CompoundInterestData data;
+QUIZ_CASE(finance_compound_interest) {
+  double m_sharedValues[InterestData::k_numberOfSharedDoubleValues];
+  CompoundInterestData data(m_sharedValues);
   {
     const double values[CompoundInterestData::k_numberOfDoubleValues] = {
       72.0,       // N
       12.55741064,// rPct
       12600.0,    // PV
-      -250.0,     // Pmt
       0.0,        // FV
+      -250.0,     // Pmt
       12.0,       // PY
       12.0        // CY
     };
@@ -74,8 +72,8 @@ QUIZ_CASE(equation_finance_compound_interest) {
       8.0,        // N
       6.4,        // rPct
       -37000.0,   // PV
-      0.0,        // Pmt
       42009.9,    // FV
+      0.0,        // Pmt
       4.0,        // PY
       4.0         // CY
     };
@@ -87,8 +85,8 @@ QUIZ_CASE(equation_finance_compound_interest) {
       22.0,       // N
       0.0,        // rPct
       -24000.0,   // PV
-      1000.0,     // Pmt
       2000.0,     // FV
+      1000.0,     // Pmt
       4.0,        // PY
       4.0         // CY
     };
@@ -100,8 +98,8 @@ QUIZ_CASE(equation_finance_compound_interest) {
       18.9692,    // N
       6.4,        // rPct
       -37000.0,   // PV
-      0.0,        // Pmt
       50000.0,    // FV
+      0.0,        // Pmt
       4.0,        // PY
       4.0         // CY
     };
@@ -113,8 +111,8 @@ QUIZ_CASE(equation_finance_compound_interest) {
       6.0,        // N
       0.0,        // rPct
       0.0,        // PV
-      -1.0,       // Pmt
       6.0,        // FV
+      -1.0,       // Pmt
       12.0,       // PY
       1.0         // CY
     };
@@ -126,8 +124,8 @@ QUIZ_CASE(equation_finance_compound_interest) {
       120.0,      // N
       5.0,        // rPct
       0.0,        // PV
-      100.0,      // Pmt
       -15511.0514,// FV
+      100.0,      // Pmt
       12.0,       // PY
       4.0         // CY
     };

@@ -77,12 +77,11 @@ size_t Integer::nodeSize(const TypeTreeBlock * treeBlock, NextStep step) const {
 
 int Integer::Value(const TypeTreeBlock * treeBlock) {
   int value = 0;
-  TreeBlock * digitBlock;
-  digitBlock = const_cast<TypeTreeBlock *>(treeBlock)->nextNthBlock(2);
-  ValueTreeBlock * valueBlock = static_cast<ValueTreeBlock *>(digitBlock);
+  const TreeBlock * digitBlock = treeBlock->nextNthBlock(2);
+  const ValueTreeBlock * valueBlock = static_cast<const ValueTreeBlock *>(digitBlock);
   for (size_t i = 0; i < treeBlock->nodeSize() - k_minimalNumberOfNodes; i++) {
     value += valueBlock->value();
-    valueBlock =  static_cast<ValueTreeBlock *>(valueBlock->nextBlock());
+    valueBlock = static_cast<const ValueTreeBlock *>(valueBlock->nextBlock());
   }
   return value;
 }
@@ -114,8 +113,7 @@ void NAry::logAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream)
 }
 
 int NAry::numberOfChildren(const TypeTreeBlock * treeBlock) const {
-  TypeTreeBlock * block = const_cast<TypeTreeBlock *>(treeBlock);
-  return static_cast<ValueTreeBlock *>(block->nextBlock())->value();
+  return static_cast<const ValueTreeBlock *>(treeBlock->nextBlock())->value();
 }
 
 TypeTreeBlock * NAry::PushNode(int numberOfChildren, TypeTreeBlock blockType) {

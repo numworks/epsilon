@@ -111,8 +111,8 @@ const TypeTreeBlock * TypeTreeBlock::root(const TreeBlock * firstBlock) const {
 
 int TypeTreeBlock::numberOfDescendants(bool includeSelf) const {
   int result = includeSelf ? 1 : 0;
-  TypeTreeBlock * nextSiblingNode = const_cast<TypeTreeBlock *>(this)->nextSibling();
-  TypeTreeBlock * currentNode = const_cast<TypeTreeBlock *>(this)->nextNode();
+  const TypeTreeBlock * nextSiblingNode = nextSibling();
+  const TypeTreeBlock * currentNode = nextNode();
   while (currentNode != nextSiblingNode) {
     result++;
     currentNode = currentNode->nextNode();
@@ -132,7 +132,7 @@ const TypeTreeBlock * TypeTreeBlock::childAtIndex(int i) const {
 int TypeTreeBlock::indexOfChild(const TypeTreeBlock * child) const {
   assert(child != nullptr);
   int childrenCount = numberOfChildren();
-  TypeTreeBlock * childAtIndexi = const_cast<TypeTreeBlock *>(this)->nextNode();
+  const TypeTreeBlock * childAtIndexi = nextNode();
   for (int i = 0; i < childrenCount; i++) {
     if (childAtIndexi == child) {
       return i;
@@ -143,7 +143,7 @@ int TypeTreeBlock::indexOfChild(const TypeTreeBlock * child) const {
 }
 
 int TypeTreeBlock::indexInParent(const TreeBlock * firstBlock) const {
-  TypeTreeBlock * p = const_cast<TypeTreeBlock *>(this)->parent(firstBlock);
+  const TypeTreeBlock * p = parent(firstBlock);
   if (p == nullptr) {
     return -1;
   }
@@ -160,7 +160,7 @@ bool TypeTreeBlock::hasChild(const TypeTreeBlock * child) const {
 }
 
 bool TypeTreeBlock::hasAncestor(const TreeBlock * firstBlock, const TypeTreeBlock * block, bool includeSelf) const {
-  TypeTreeBlock * ancestor = const_cast<TypeTreeBlock *>(this);
+  const TypeTreeBlock * ancestor = this;
   do {
     if (ancestor == block) {
       return includeSelf || (ancestor != this);
@@ -171,7 +171,7 @@ bool TypeTreeBlock::hasAncestor(const TreeBlock * firstBlock, const TypeTreeBloc
 }
 
 bool TypeTreeBlock::hasSibling(const TreeBlock * firstBlock, const TypeTreeBlock * sibling) const {
-  TypeTreeBlock * p = const_cast<TypeTreeBlock *>(this)->parent(firstBlock);
+  const TypeTreeBlock * p = parent(firstBlock);
   if (p == nullptr) {
     return false;
   }

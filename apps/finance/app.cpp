@@ -23,6 +23,11 @@ const App::Descriptor * App::Snapshot::descriptor() const {
   return &s_descriptor;
 }
 
+void App::Snapshot::reset() {
+  m_data.reset();
+  m_pageQueue.reset();
+}
+
 void App::didBecomeActive(Escher::Window * windows) {
   Ion::RingBuffer<Escher::ViewController *, Snapshot::k_maxNumberOfStacks> * queue = snapshot()->pageQueue();
   int queueLength = queue->length();

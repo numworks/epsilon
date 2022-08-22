@@ -271,4 +271,10 @@ double CompoundInterestData::getValue(uint8_t param) const {
   return m_values[param - k_numberOfSharedDoubleValues];
 }
 
+void Data::reset() {
+  m_selectedModel = true;
+  m_compoundInterestData.resetValues();
+  m_simpleInterestData.resetValues();
+}
+
 }  // namespace Finance

@@ -84,24 +84,6 @@ public:
   bool hasSibling(const TreeBlock * firstBlock, const TypeTreeBlock * e) const;
 
   // Virtuality
-#if POINCARE_TREE_LOG
-  constexpr static LogTreeBlockVTable s_logVTable[] = {
-    // Order has to be the same as TypeTreeBlock
-#if GHOST_REQUIRED
-    Ghost::s_logVTable,
-#endif
-    Integer::s_logVTable,
-    Integer::s_logVTable, // IntegerShort
-    Integer::s_logVTable, // Float
-    Addition::s_logVTable,
-    Multiplication::s_logVTable,
-    Subtraction::s_logVTable,
-    Division::s_logVTable,
-    Power::s_logVTable
-  };
-  void logNodeName(std::ostream & stream) const { (*s_logVTable[m_content].m_logName)(stream); }
-  void logAttributes(std::ostream & stream) const { (*s_logVTable[m_content].m_logAttribute)(this, stream); }
-#endif
 #if GHOST_REQUIRED
   static constexpr Ghost k_ghost;
 #endif
@@ -127,9 +109,13 @@ public:
   };
 
   const Handle * handle() const { return k_handles[m_content]; }
-  void basicReduction() { handle()->BasicReduction(this); }
-  size_t nodeSize(bool head = true) const { return handle()->NodeSize(this, head); } // Should it be virtual?
-  int numberOfChildren() const { return handle()->NumberOfChildren(this); } // Should it be virtual
+#if POINCARE_TREE_LOG
+  void logNodeName(std::ostream & stream) const { handle()->logNodeName(stream); }
+  void logAttributes(std::ostream & stream) const { handle()->logAttributes(this, stream); }
+#endif
+  void basicReduction() { handle()->basicReduction(this); }
+  size_t nodeSize(bool head = true) const { return handle()->nodeSize(this, head); } // Should it be virtual?
+  int numberOfChildren() const { return handle()->numberOfChildren(this); } // Should it be virtual
 
   // TODO: dynamic_cast-like that can check its is a subclass with m_content
   void beautify() { static_cast<const InternalHandle*>(handle())->Beautify(this); }

@@ -146,16 +146,7 @@ void NthRootLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecom
 }
 
 void NthRootLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (cursor->layoutNode() == radicandLayout()
-      && cursor->position() == LayoutCursor::Position::Left)
-  {
-    // Case: Left of the radicand. Delete the layout, keep the radicand.
-    Layout radicand = Layout(radicandLayout());
-    Layout thisRef = Layout(this);
-    thisRef.replaceChildWithGhostInPlace(radicand);
-    // WARNING: Do not call "this" afterwards
-    cursor->setLayout(thisRef.childAtIndex(0));
-    thisRef.replaceWith(radicand, cursor);
+  if (deleteBeforeCursorForLayoutContainingArgument(radicandLayout(), cursor)) {
     return;
   }
   LayoutNode::deleteBeforeCursor(cursor);

@@ -120,6 +120,7 @@ public:
 
   // User input
   virtual void deleteBeforeCursor(LayoutCursor * cursor);
+  bool deleteBeforeCursorForLayoutContainingArgument(LayoutNode * argumentNode, LayoutCursor * cursor);
 
   // Other
   virtual LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression);

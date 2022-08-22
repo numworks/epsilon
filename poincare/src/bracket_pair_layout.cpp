@@ -58,15 +58,7 @@ void BracketPairLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * should
 }
 
 void BracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (cursor->isEquivalentTo(LayoutCursor(childLayout(), LayoutCursor::Position::Left))) {
-    // Case: Left of the operand. Delete the layout, keep the operand.
-    Layout thisRef = Layout(this);
-    Layout child = Layout(childLayout());
-    thisRef.replaceChildWithGhostInPlace(child);
-    // WARNING: do not call "this" afterwards
-    cursor->setLayout(thisRef.childAtIndex(0));
-    cursor->setPosition(LayoutCursor::Position::Left);
-    thisRef.replaceWith(child, cursor);
+  if (deleteBeforeCursorForLayoutContainingArgument(childLayout(), cursor)) {
     return;
   }
   LayoutNode::deleteBeforeCursor(cursor);

@@ -51,6 +51,13 @@ void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRe
   }
 }
 
+void ConjugateLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
+  if (deleteBeforeCursorForLayoutContainingArgument(childLayout(), cursor)) {
+    return;
+  }
+  LayoutNode::deleteBeforeCursor(cursor);
+}
+
 int ConjugateLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Conjugate::s_functionHelper.aliasesList().mainAlias(), true);
 }

@@ -76,6 +76,13 @@ void ListSequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shoul
   }
 }
 
+void ListSequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
+  if (deleteBeforeCursorForLayoutContainingArgument(functionLayout(), cursor)) {
+    return;
+  }
+  LayoutNode::deleteBeforeCursor(cursor);
+}
+
 Layout ListSequenceLayoutNode::XNTLayout(int childIndex) const {
   if (childIndex == k_functionLayoutIndex) {
     return Layout(childAtIndex(k_variableLayoutIndex)).clone();

@@ -36,6 +36,7 @@ public:
 
   void setUnknown(uint8_t param);
   uint8_t getUnknown() const { return m_unknown; }
+  void resetValues();
   /* For SimpleInterestData, this param tells if the convention for the number
    * of days per year is 360 (365 otherwise). For CompoundInterestData, it tells
    * if the payment is made at the beginning of the payment period (end
@@ -43,8 +44,6 @@ public:
   bool m_booleanParam;
 
 protected:
-  void resetValues();
-
   uint8_t m_unknown;
 
 private:
@@ -148,6 +147,7 @@ class Data {
 public:
   // By default, select the simple interest data model
   Data() : m_compoundInterestData(m_sharedValues), m_simpleInterestData(m_sharedValues), m_selectedModel(true) {}
+  void reset();
   void setModel(bool selectedModel) { m_selectedModel = selectedModel; }
   InterestData * interestData() {
     return m_selectedModel ? static_cast<InterestData *>(&m_simpleInterestData) : static_cast<InterestData *>(&m_compoundInterestData);

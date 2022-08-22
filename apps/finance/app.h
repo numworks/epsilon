@@ -32,6 +32,7 @@ public:
 
     App * unpack(Escher::Container * container) override;
     const Descriptor * descriptor() const override;
+    void reset() override;
     Ion::RingBuffer<Escher::ViewController *, k_maxNumberOfStacks> * pageQueue() { return &m_pageQueue; }
     Data * data() { return &m_data; }
   private:

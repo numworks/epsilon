@@ -520,9 +520,9 @@ constexpr ToolboxMessageTree logicChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::LessOrEqual, I18n::Message::LessOrEqualText),
   ToolboxMessageTree::Leaf(I18n::Message::GreaterOrEqual, I18n::Message::GreaterOrEqualText),
   ToolboxMessageTree::Leaf(I18n::Message::NotEqual, I18n::Message::NotEqualText),
-  ToolboxMessageTree::Leaf(I18n::Message::AndCommand, I18n::Message::Empty, false, I18n::Message::AndCommandWithSpaces),
+  ToolboxMessageTree::Leaf(I18n::Message::AndCommand, I18n::Message::AndMessage, false, I18n::Message::AndCommandWithSpaces),
   ToolboxMessageTree::Leaf(I18n::Message::OrCommand, I18n::Message::OrMessage, false, I18n::Message::OrCommandWithSpaces),
-  ToolboxMessageTree::Leaf(I18n::Message::NotCommand, I18n::Message::Empty, false, I18n::Message::NotCommandWithSpaces),
+  ToolboxMessageTree::Leaf(I18n::Message::NotCommand, I18n::Message::NotMessage, false, I18n::Message::NotCommandWithSpaces),
   ToolboxMessageTree::Leaf(I18n::Message::XorCommand, I18n::Message::XorMessage, false, I18n::Message::XorCommandWithSpaces),
   ToolboxMessageTree::Leaf(I18n::Message::NorCommand, I18n::Message::NorMessage, false, I18n::Message::NorCommandWithSpaces),
   ToolboxMessageTree::Leaf(I18n::Message::NandCommand, I18n::Message::NandMessage, false, I18n::Message::NandCommandWithSpaces)
@@ -541,7 +541,7 @@ constexpr ToolboxMessageTree menu[] = {
   ToolboxMessageTree::Node(I18n::Message::Arithmetic, arithmeticFork, true),
   ToolboxMessageTree::Node(I18n::Message::Trigonometry, trigonometryChildren),
   ToolboxMessageTree::Node(I18n::Message::DecimalNumbers, decimalNumbersChildren),
-  ToolboxMessageTree::Node(I18n::Message::Logics, logicChildren)
+  ToolboxMessageTree::Node(I18n::Message::Logic, logicChildren)
 };
 
 constexpr ToolboxMessageTree toolboxModel = ToolboxMessageTree::Node(I18n::Message::Toolbox, menu);

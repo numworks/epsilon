@@ -124,17 +124,11 @@ TypeTreeBlock * NAry::PushNode(int numberOfChildren, TypeTreeBlock blockType) {
   return addressOfNAryBlock;
 }
 
-/* Addition */
-
-TypeTreeBlock * Addition::PushNode(int numberOfChildren) {
-  return NAry::PushNode(numberOfChildren, AdditionBlock());
-}
-
-int Addition::CollectChildren(TypeTreeBlock * treeBlock) {
+int NAry::CollectChildren(TypeTreeBlock * treeBlock) {
   TreeSandbox * sandbox = TreeSandbox::sharedSandbox();
   int nbChildren = 0;
   for (IndexedTypeTreeBlock indexedSubTree : treeBlock->directChildren()) {
-    if (indexedSubTree.m_block->type() == BlockType::Addition) {
+    if (treeBlock->type() == indexedSubTree.m_block->type()) {
       nbChildren += CollectChildren(indexedSubTree.m_block);
     } else {
       nbChildren++;
@@ -144,13 +138,21 @@ int Addition::CollectChildren(TypeTreeBlock * treeBlock) {
   return nbChildren;
 }
 
-TypeTreeBlock * Addition::Merge(TypeTreeBlock * treeBlock) {
+TypeTreeBlock * NAry::Flatten(TypeTreeBlock * treeBlock) {
   TreeSandbox * sandbox = TreeSandbox::sharedSandbox();
-  TypeTreeBlock * newAddition = Addition::PushNode(0);
+  TypeTreeBlock * newNAry = static_cast<TypeTreeBlock *>(sandbox->pushBlock(*treeBlock));
+  sandbox->pushBlock(*treeBlock->nextBlock());
+  sandbox->pushBlock(*(treeBlock+2));
   int nbChildren = CollectChildren(treeBlock);
   // update children count
-  sandbox->replaceBlock(newAddition + 1, ValueTreeBlock(nbChildren));
-  return newAddition;
+  sandbox->replaceBlock(newNAry->nextBlock(), ValueTreeBlock(nbChildren));
+  return newNAry;
+}
+
+/* Addition */
+
+TypeTreeBlock * Addition::PushNode(int numberOfChildren) {
+  return NAry::PushNode(numberOfChildren, AdditionBlock());
 }
 
 /* Multiplication */

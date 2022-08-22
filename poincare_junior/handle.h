@@ -91,8 +91,11 @@ public:
   int numberOfChildren(const TypeTreeBlock * treeBlock) const override;
   size_t nodeSize(const TypeTreeBlock * typeTreeBlock, bool head = true) const override { return 3; }
 
+  static TypeTreeBlock * Flatten(TypeTreeBlock * treeBlock);
 protected:
   static TypeTreeBlock * PushNode(int numberOfChildren, TypeTreeBlock blockType);
+private:
+  static int CollectChildren(TypeTreeBlock * treeBlock);
 };
 
 class Addition final : public NAry {
@@ -101,9 +104,6 @@ public:
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Addition"; }
 #endif
-
-  static int CollectChildren(TypeTreeBlock * treeBlock);
-  static TypeTreeBlock * Merge(TypeTreeBlock * treeBlock);
 };
 
 class Multiplication final : public NAry {

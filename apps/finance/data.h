@@ -34,7 +34,10 @@ public:
     return m_sharedValues[param];
   }
 
-  void setUnknown(uint8_t param);
+  void setUnknown(uint8_t param) {
+    assert(m_unknown < numberOfUnknowns());
+    m_unknown = param;
+  }
   uint8_t getUnknown() const { return m_unknown; }
   void resetValues();
   /* For SimpleInterestData, this param tells if the convention for the number

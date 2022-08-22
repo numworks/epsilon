@@ -13,11 +13,6 @@ double InterestData::defaultValue(uint8_t param) const {
   return k_defaultValues[param];
 }
 
-void InterestData::setUnknown(uint8_t param) {
-  assert(m_unknown < numberOfUnknowns());
-  m_unknown = param;
-}
-
 void InterestData::resetValues() {
   m_booleanParam = false;
   // Set first parameter as unknown by default

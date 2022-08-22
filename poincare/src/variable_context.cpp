@@ -12,7 +12,7 @@ void VariableContext::setApproximationForVariable(T value) {
 }
 
 Context::SymbolAbstractType VariableContext::expressionTypeForIdentifier(const char * identifier, int length) {
-  if (strncmp(identifier, m_name, length) == 0) {
+  if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(identifier, length, m_name) == 0) {
     return m_value.isUninitialized() ? SymbolAbstractType::None : SymbolAbstractType::Symbol;
   }
   return ContextWithParent::expressionTypeForIdentifier(identifier, length);

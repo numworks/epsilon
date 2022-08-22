@@ -32,21 +32,8 @@
  * alias of "pi" is "π".
  *
  * === HEADER ===
- * By default, the main alias is the first of the list, but in some cases, the
- * main alias can be specific to a country (ex: "sen" for "sin" in PT).
- * The header contains information on what is the main alias for each country.
- *
- * To specify an other main alias for a country, the header must contain
- * 1 char of the country identifier + 1 char for the main alias index in
- * the list. These country identifiers are stored in the constexpr
- * k_identifiersForNamingConventionForAliases.
- *
- * Example:
- * The header "P1" means that the portugal main alias is at index 1 of the list.
- * (the index starts at 0)
- * So the name "\01P1\02sin\00\02sen\00" means that the main alias
- * for every country is "sin" except for portugal for which it's "sen".
- * WARNING: This implementation does not allow for an index > 9.
+ * For now, the header has no use. It might be used later for localization
+ * of some function names.
  * */
 
 namespace Poincare {
@@ -56,7 +43,7 @@ public:
   constexpr AliasesList(const char * formattedAliasesList) : m_formattedAliasesList(formattedAliasesList) {}
   constexpr operator const char *() const { return m_formattedAliasesList; }
 
-  const char * mainAlias() const { return mainAlias(Preferences::sharedPreferences()->namingConventionForAliases()); }
+  const char * mainAlias() const;
   bool contains(const char * alias, int aliasLen = -1) const { return maxDifferenceWith(alias, aliasLen > -1 ? aliasLen : strlen(alias)) == 0; }
   bool isEquivalentTo(AliasesList otherList) { return strcmp(mainAlias(), otherList.mainAlias()) == 0; }
 
@@ -83,7 +70,7 @@ public:
   };
 
   Iterator<AliasesList> begin() const {
-    return Iterator<AliasesList>(*this, firstAlias());
+    return Iterator<AliasesList>(*this, mainAlias());
   }
   Iterator<AliasesList> end() const {
     return Iterator<AliasesList>(*this, nullptr);
@@ -92,20 +79,10 @@ public:
 private:
   constexpr static char k_headerStart = '\01';
   constexpr static char k_stringStart = '\02';
-  constexpr static struct { Preferences::NamingConventionForAliases namingConventionForAliases; char identifier; } k_identifiersForNamingConventionForAliases[] = {
-    { Preferences::NamingConventionForAliases::Portugal, 'P' }
-  };
-  constexpr static int k_numberOfNamingConventionForAliases = sizeof(k_identifiersForNamingConventionForAliases) / sizeof(k_identifiersForNamingConventionForAliases[0]);
-  // + 1 for WorldWide which does not need an identifier
-  static_assert(k_numberOfNamingConventionForAliases + 1 == static_cast<int>(Preferences::NamingConventionForAliases::NumberOfNamingConventionsForAliases), "Number of naming convention and their identifiers mismatch in aliases_list.h");
-  static char IdentifierForNamingConventionForAliases(Poincare::Preferences::NamingConventionForAliases namingConventionForAliases);
 
   bool hasMultipleAliases() const { return m_formattedAliasesList[0] == k_headerStart; }
-  const char * firstAlias() const;
   // Returns nullptr if there is no next name
   const char * nextAlias(const char * currentPositionInAliasesList) const;
-  const char * mainAlias(Preferences::NamingConventionForAliases namingConventionForAliases) const;
-  int mainAliasIndex(Preferences::NamingConventionForAliases namingConventionForAliases) const;
 
   const char * m_formattedAliasesList;
 };

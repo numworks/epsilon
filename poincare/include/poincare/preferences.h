@@ -63,13 +63,7 @@ public:
     Portuguese = 5,
     Undefined = 6, // Undefined must be the last ExamMode.
   };
-  /* Some functions do not have same name in all countries.
-   * For example sin(x) is named sen(x) in PT. */
-  enum class NamingConventionForAliases : uint8_t {
-    WorldWide = 0,
-    Portugal = 1,
-    NumberOfNamingConventionsForAliases = 2 // used for size of enum. Do not set as preference.
-  };
+
   constexpr static int k_numberOfExamModes = 6;
   static_assert(static_cast<int>(ExamMode::IBTest) == 3, "Preferences::ExamMode::IBTest != 3 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
   static_assert(static_cast<int>(ExamMode::PressToTest) == 4, "Preferences::ExamMode::PressToTest != 4 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
@@ -113,11 +107,6 @@ public:
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
   bool mixedFractionsAreEnabled() const { return m_mixedFractionsAreEnabled; }
   void enableMixedFractions(MixedFractions enable) { m_mixedFractionsAreEnabled = static_cast<bool>(enable); }
-  NamingConventionForAliases namingConventionForAliases() const { return m_namingConventionForAliases; }
-  void setNamingConventionForAliases(NamingConventionForAliases namingConventionForAliases) {
-    assert(namingConventionForAliases != NamingConventionForAliases::NumberOfNamingConventionsForAliases);
-    m_namingConventionForAliases = namingConventionForAliases;
-  }
 
   static_assert((int8_t)Preferences::ExamMode::Off == 0 && (int8_t)Preferences::ExamMode::Unknown < 0, "Preferences::isInExamMode() relies on exam modes order");
   bool isInExamMode() const { return (int8_t)examMode() > 0; }
@@ -145,7 +134,6 @@ private:
   EditionMode m_editionMode;
   ComplexFormat m_complexFormat;
   uint8_t m_numberOfSignificantDigits;
-  NamingConventionForAliases m_namingConventionForAliases;
   mutable CombinatoricSymbols m_combinatoricSymbols;
   mutable ExamMode m_examMode;
   mutable PressToTestParams m_pressToTestParams;

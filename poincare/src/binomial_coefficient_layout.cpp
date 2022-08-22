@@ -71,6 +71,28 @@ void BinomialCoefficientLayoutNode::moveCursorDown(LayoutCursor * cursor, bool *
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
+void BinomialCoefficientLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
+  if (cursor->layoutNode() == kLayout() && cursor->position() == LayoutCursor::Position::Left) {
+    // After deleting the bottom line, go to the upper one
+    cursor->setLayout(nLayout());
+    cursor->setPosition(LayoutCursor::Position::Right);
+    return;
+  }
+  if (cursor->layoutNode() == nLayout() && cursor->position() == LayoutCursor::Position::Left && !kLayout()->isEmpty()) {
+    /* If the k is not empty and user is deleting left of n, just move left.
+     * This case is handled now because otherwise
+     * deleteBeforeCursorForLayoutContainingArgument would delete the whole layout.
+     */
+    bool temp;
+    moveCursorLeft(cursor, &temp, false);
+    return;
+  }
+  if (deleteBeforeCursorForLayoutContainingArgument(nLayout(), cursor)) {
+    return;
+  }
+  LayoutNode::deleteBeforeCursor(cursor);
+}
+
 int BinomialCoefficientLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, BinomialCoefficient::s_functionHelper.aliasesList().mainAlias(), true);
 }

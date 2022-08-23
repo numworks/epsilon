@@ -18,6 +18,7 @@ CalculationParameterController::CalculationParameterController(Responder * paren
   m_derivativeCell(I18n::Message::GraphDerivative),
   m_tangentGraphController(nullptr, graphView, bannerView, range, cursor),
   m_integralGraphController(nullptr, inputEventHandlerDelegate, graphView, range, cursor),
+  m_areaGraphController(nullptr, inputEventHandlerDelegate, graphView, range, cursor),
   m_minimumGraphController(nullptr, graphView, bannerView, range, cursor),
   m_maximumGraphController(nullptr, graphView, bannerView, range, cursor),
   m_rootGraphController(nullptr, graphView, bannerView, range, cursor),
@@ -42,7 +43,7 @@ void CalculationParameterController::didBecomeFirstResponder() {
 bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   int row = selectedRow();
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && row == 0)) {
-    static ViewController * controllers[] = {&m_preimageParameterController, &m_intersectionGraphController, &m_maximumGraphController, &m_minimumGraphController, &m_rootGraphController, &m_tangentGraphController, &m_integralGraphController};
+    static ViewController * controllers[] = {&m_preimageParameterController, &m_intersectionGraphController, &m_maximumGraphController, &m_minimumGraphController, &m_rootGraphController, &m_tangentGraphController, &m_integralGraphController, &m_areaGraphController};
     int displayIntersection = shouldDisplayIntersection();
     if (row == k_derivativeRowIndex + displayIntersection) {
       m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
@@ -59,6 +60,8 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
       m_tangentGraphController.setRecord(m_record);
     } else if (row == k_derivativeRowIndex + displayIntersection + 1) {
       m_integralGraphController.setRecord(m_record);
+    } else if (row == k_derivativeRowIndex + displayIntersection + 2) {
+      m_areaGraphController.setRecord(m_record);
     } else {
       static_cast<CalculationGraphController *>(controller)->setRecord(m_record);
     }
@@ -109,7 +112,7 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
   if (cell == &m_derivativeCell) {
     m_derivativeCell.setState(m_graphController->displayDerivativeInBanner());
   } else if (cell != &m_preimageCell) {
-    I18n::Message titles[] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Default, I18n::Message::Tangent, I18n::Message::Integral};
+    I18n::Message titles[] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Default, I18n::Message::Tangent, I18n::Message::Integral, I18n::Message::Integral};
     static_cast<MessageTableCell *>(cell)->setMessage(titles[index - 1 + !shouldDisplayIntersection()]);
   }
 }

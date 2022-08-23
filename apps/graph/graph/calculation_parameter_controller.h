@@ -4,6 +4,7 @@
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_switch.h>
+#include "area_between_curves_graph_controller.h"
 #include "preimage_parameter_controller.h"
 #include "tangent_graph_controller.h"
 #include "extremum_graph_controller.h"
@@ -36,7 +37,7 @@ public:
 private:
   bool shouldDisplayIntersection() const;
   Escher::MessageTableCellWithChevron m_preimageCell;
-  constexpr static int k_totalNumberOfReusableCells = 6;
+  constexpr static int k_totalNumberOfReusableCells = 7;
   constexpr static int k_defaultCellType = 0;
   constexpr static int k_derivativeCellType = 1;
   constexpr static int k_preImageCellType = 2;
@@ -49,6 +50,7 @@ private:
   Escher::MessageTableCellWithSwitch m_derivativeCell;
   TangentGraphController m_tangentGraphController;
   IntegralGraphController m_integralGraphController;
+  AreaBetweenCurvesGraphController m_areaGraphController;
   MinimumGraphController m_minimumGraphController;
   MaximumGraphController m_maximumGraphController;
   RootGraphController m_rootGraphController;
@@ -58,4 +60,3 @@ private:
 }
 
 #endif
-

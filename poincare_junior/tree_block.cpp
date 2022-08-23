@@ -7,7 +7,7 @@ namespace Poincare {
 /* TypeTreeBlock */
 
 #if POINCARE_TREE_LOG
-void TypeTreeBlock::log(std::ostream & stream, bool recursive, int indentation, bool verbose) {
+void TypeTreeBlock::log(std::ostream & stream, bool recursive, int indentation, bool verbose) const {
   stream << "\n";
   for (int i = 0; i < indentation; ++i) {
     stream << "  ";
@@ -47,7 +47,7 @@ const TypeTreeBlock * TypeTreeBlock::nextNode() const {
   return this + nodeSize();
 }
 
-void TypeTreeBlock::copyTo(TreeBlock * address) {
+void TypeTreeBlock::copyTo(TreeBlock * address) const {
   memcpy(address, this, treeSize());
 }
 

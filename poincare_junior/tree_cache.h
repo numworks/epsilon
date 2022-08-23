@@ -10,7 +10,7 @@ class TreeCache final : public TreePool {
 public:
   static TreeCache * sharedCache();
 
-  TypeTreeBlock * treeForIdentifier(int id);
+  const TypeTreeBlock * treeForIdentifier(int id);
   int storeLastTree();
 
   TreeSandbox * sandbox() { return &m_sandbox; }

@@ -22,7 +22,7 @@ void createTreeInCache(CachedTree::Initializer initializer) {
   CachedTree tree(initializer);
   // Force instantiation in cache
   tree.send(
-    [](TypeTreeBlock * tree, void * resultAddress) {},
+    [](const TypeTreeBlock * tree, void * resultAddress) {},
     nullptr
   );
 }
@@ -33,7 +33,7 @@ void testOverflowTreeSandbox(TreeCache * cache) {
   CachedTree tree(createTree);
   int treeSize;
   tree.send(
-    [](TypeTreeBlock * tree, void * resultAddress) {
+    [](const TypeTreeBlock * tree, void * resultAddress) {
       *static_cast<int *>(resultAddress) = tree->treeSize();
     },
     &treeSize

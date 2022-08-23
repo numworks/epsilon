@@ -27,7 +27,7 @@ CachedTree::CachedTree(InitializerFromTree initializer, CachedTree * tree) :
   CachedTree(
     [](void * subInitializer, void * data) {
       CachedTree * cachedTree = static_cast<CachedTree *>(data);
-      TypeTreeBlock * tree = TreeCache::sharedCache()->treeForIdentifier(cachedTree->id());
+      const TypeTreeBlock * tree = TreeCache::sharedCache()->treeForIdentifier(cachedTree->id());
       assert(tree);
       TypeTreeBlock * treeOnSandbox = TreeSandbox::sharedSandbox()->copyTreeFromAddress(tree);
       return (reinterpret_cast<InitializerFromTree>(subInitializer))(treeOnSandbox);
@@ -48,13 +48,13 @@ CachedTree::CachedTree(InitializerFromString initializer, char * string) :
 {}
 
 void CachedTree::send(FunctionOnConstTree function, void * resultAddress) {
-  TypeTreeBlock * tree = TreeCache::sharedCache()->treeForIdentifier(id());
+  const TypeTreeBlock * tree = TreeCache::sharedCache()->treeForIdentifier(id());
   return function(tree, resultAddress);
 }
 
 int CachedTree::id() {
   TreeCache * cache = TreeCache::sharedCache();
-  TypeTreeBlock * tree = cache->treeForIdentifier(m_id);
+  const TypeTreeBlock * tree = cache->treeForIdentifier(m_id);
   if (!tree) {
     m_id = cache->execute(m_initializer, m_subInitializer, m_data);
   }

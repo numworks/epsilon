@@ -29,7 +29,7 @@ Calculation::Calculation(CachedTree cachedTree) :
   m_output([]() { return true; })
 {
   cachedTree.send(
-      [](TypeTreeBlock * tree, void * buffer) {
+      [](const TypeTreeBlock * tree, void * buffer) {
         TypeTreeBlock * inputBuffer = static_cast<TypeTreeBlock *>(buffer);
         memcpy(inputBuffer, tree, tree->treeSize());
       },
@@ -46,7 +46,7 @@ Calculation::Calculation(CachedTree cachedTree) :
 
 void printCachedTree(CachedTree cachedTree) {
   cachedTree.send(
-      [](TypeTreeBlock * tree, void * result) {
+      [](const TypeTreeBlock * tree, void * result) {
         tree->log(std::cout);
       },
       nullptr

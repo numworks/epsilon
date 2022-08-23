@@ -18,7 +18,7 @@ public:
   typedef bool (*InitializerFromString)(char *);
   CachedTree(InitializerFromString initializer, char * string);
 
-  typedef void (*FunctionOnConstTree)(TypeTreeBlock * tree, void * resultAddress);
+  typedef void (*FunctionOnConstTree)(const TypeTreeBlock * tree, void * resultAddress);
   void send(FunctionOnConstTree functionOnTree, void * resultAddress);
 
 private:

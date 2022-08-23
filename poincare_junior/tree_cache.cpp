@@ -10,7 +10,7 @@ TreeCache * TreeCache::sharedCache() {
   return &s_cache;
 }
 
-TypeTreeBlock * TreeCache::treeForIdentifier(int id) {
+const TypeTreeBlock * TreeCache::treeForIdentifier(int id) {
   if (id < 0 || id >= m_nextIdentifier) {
     return nullptr;
   }

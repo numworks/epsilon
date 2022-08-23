@@ -75,10 +75,10 @@ public:
   constexpr TypeTreeBlock(BlockType content = BlockType::Integer) : TreeBlock(static_cast<uint8_t>(content)) {}
 
 #if POINCARE_TREE_LOG
-  void log(std::ostream & stream, bool recursive = true, int indentation = 0, bool verbose = true);
+  void log(std::ostream & stream, bool recursive = true, int indentation = 0, bool verbose = true) const;
 #endif
 
-  void copyTo(TreeBlock * address);
+  void copyTo(TreeBlock * address) const;
 
   // Block Navigation
   const TypeTreeBlock * nextNode() const;

@@ -161,8 +161,12 @@ const Expression GlobalContext::expressionForSequence(const SymbolAbstract & sym
 Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord, Context * context) {
   Expression expressionToStore = expression;
   PoincareHelpers::CloneAndSimplify(&expressionToStore, context, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  if (!expressionToStore.hasUnit() // If an expression has units, it's already approximated during beautification
-    && PoincareHelpers::shouldOnlyDisplayApproximation(expression, expressionToStore, context)) { // Do not store exact derivative, etc.
+  // Do not store exact derivative, etc.
+  if (PoincareHelpers::shouldOnlyDisplayApproximation(expression, expressionToStore, context)
+      && !expressionToStore.hasUnit())
+      /* If an expression has units, it's already approximated during
+       * beautification and will return undef when re-Approximated */
+  {
     expressionToStore = PoincareHelpers::Approximate<double>(expressionToStore, context);
   }
   ExpressionNode::Type type = expressionToStore.type();

@@ -34,7 +34,7 @@ void ProjectionReduction(TypeTreeBlock * treeBlock, TypeTreeBlock * (*PushNode)(
 /* Subtraction  */
 
 TypeTreeBlock * Subtraction::PushNode() {
-  return static_cast<TypeTreeBlock *>(TreeSandbox::sharedSandbox()->pushBlock(SubtractionBlock()));
+  return static_cast<TypeTreeBlock *>(TreeSandbox::sharedSandbox()->pushBlock(SubtractionBlock));
 }
 
 void Subtraction::basicReduction(TypeTreeBlock * treeBlock) const {
@@ -48,7 +48,7 @@ void Subtraction::basicReduction(TypeTreeBlock * treeBlock) const {
 /* Division */
 
 TypeTreeBlock * Division::PushNode() {
-  return static_cast<TypeTreeBlock *>(TreeSandbox::sharedSandbox()->pushBlock(DivisionBlock()));
+  return static_cast<TypeTreeBlock *>(TreeSandbox::sharedSandbox()->pushBlock(DivisionBlock));
 }
 
 // TODO factorize with Subtraction
@@ -88,7 +88,7 @@ int Integer::Value(const TypeTreeBlock * treeBlock) {
 
 TypeTreeBlock * Integer::PushNode(int value) {
   TreeSandbox * sandbox = TreeSandbox::sharedSandbox();
-  TypeTreeBlock * integerFirstBlock = static_cast<TypeTreeBlock *>(sandbox->pushBlock(IntegerBlock()));
+  TypeTreeBlock * integerFirstBlock = static_cast<TypeTreeBlock *>(sandbox->pushBlock(IntegerBlock));
   // Temporary node size
   size_t nodeSize = 0;
   TreeBlock * addressOfNodeSizeBlock = sandbox->lastBlock();
@@ -100,11 +100,12 @@ TypeTreeBlock * Integer::PushNode(int value) {
     nodeSize++;
   }
   sandbox->pushBlock(ValueTreeBlock(nodeSize));
-  sandbox->pushBlock(IntegerBlock());
+  sandbox->pushBlock(IntegerBlock);
   // Replace temporary node size
   sandbox->replaceBlock(addressOfNodeSizeBlock, ValueTreeBlock(nodeSize));
   return integerFirstBlock;
 }
+
 
 /* NAry */
 
@@ -152,13 +153,13 @@ TypeTreeBlock * NAry::Flatten(TypeTreeBlock * treeBlock) {
 /* Addition */
 
 TypeTreeBlock * Addition::PushNode(int numberOfChildren) {
-  return NAry::PushNode(numberOfChildren, AdditionBlock());
+  return NAry::PushNode(numberOfChildren, AdditionBlock);
 }
 
 /* Multiplication */
 
 TypeTreeBlock * Multiplication::PushNode(int numberOfChildren) {
-  return NAry::PushNode(numberOfChildren, MultiplicationBlock());
+  return NAry::PushNode(numberOfChildren, MultiplicationBlock);
 }
 
 TypeTreeBlock * Multiplication::DistributeOverAddition(TypeTreeBlock * treeBlock) {
@@ -189,7 +190,7 @@ TypeTreeBlock * Multiplication::DistributeOverAddition(TypeTreeBlock * treeBlock
 /* Power */
 
 TypeTreeBlock * Power::PushNode() {
-  return static_cast<TypeTreeBlock *>(TreeSandbox::sharedSandbox()->pushBlock(PowerBlock()));
+  return static_cast<TypeTreeBlock *>(TreeSandbox::sharedSandbox()->pushBlock(PowerBlock));
 }
 
 }

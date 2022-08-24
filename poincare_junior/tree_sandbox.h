@@ -22,7 +22,7 @@ public:
   TreeBlock * pushBlock(TreeBlock block);
   void popBlock();
   void replaceBlock(TreeBlock * previousBlock, TreeBlock newBlock);
-  bool pushTree(TypeTreeBlock * block);
+  TypeTreeBlock * pushTree(const TypeTreeBlock * block);
   void popTree();
   void replaceTree(TypeTreeBlock * previousBlock, TypeTreeBlock * newBlock);
   void moveTree(TreeBlock * destination, TypeTreeBlock * source, size_t * sourceSize = nullptr);

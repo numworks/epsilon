@@ -28,17 +28,18 @@ void TreeSandbox::replaceBlock(TreeBlock * previousBlock, TreeBlock newBlock) {
   *previousBlock = newBlock;
 }
 
-bool TreeSandbox::pushTree(TypeTreeBlock * block) {
+TypeTreeBlock * TreeSandbox::pushTree(const TypeTreeBlock * block) {
   size_t treeSize = block->treeSize();
   if (!checkForEnoughSpace(treeSize)) {
-    return false;
+    return nullptr;
   }
+  TypeTreeBlock * result = static_cast<TypeTreeBlock*>(lastBlock());
   while (treeSize > 0) {
     pushBlock(*block);
     block++;
     treeSize--;
   }
-  return true;
+  return result;
 }
 
 void TreeSandbox::popTree() {

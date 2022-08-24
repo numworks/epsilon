@@ -5,6 +5,7 @@ int elementaryTreeManipulation(TreeCache * cache, TreeSandbox * sandbox);
 int testOverflowTreeSandbox(TreeCache * cache);
 int testOverflowCacheIdentifiers(TreeCache * cache);
 void playWithCachedTree();
+void playWithConstexprNodes();
 
 int main() {
   TreeCache * cache = TreeCache::sharedCache();
@@ -27,6 +28,10 @@ int main() {
   cache->reset(false);
 
   intermediaryPrint();
+
+  std::cout << "\n\n TEST CONSTEXPR NODES \n" << std::endl;
+  playWithConstexprNodes();
+  cache->reset(false);
 }
 
 #if 0

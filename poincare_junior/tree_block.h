@@ -41,6 +41,7 @@ class TreeBlock {
 friend class TreePool;
 public:
   constexpr TreeBlock(uint8_t content = 0) : m_content(content) {}
+  bool operator==(const TreeBlock& b) const { return b.m_content == m_content; }
   bool operator!=(const TreeBlock& b) { return b.m_content != m_content; }
 
   // Block Navigation
@@ -138,8 +139,8 @@ public:
   void logAttributes(std::ostream & stream) const { handle()->logAttributes(this, stream); }
 #endif
   void basicReduction() { handle()->basicReduction(this); }
-  size_t nodeSize(bool head = true) const { return handle()->nodeSize(this, head); } // Should it be virtual?
-  int numberOfChildren() const { return handle()->numberOfChildren(this); } // Should it be virtual
+  size_t nodeSize(bool head = true) const { return handle()->nodeSize(this, head); }
+  int numberOfChildren() const { return handle()->numberOfChildren(this); }
 
   // TODO: dynamic_cast-like that can check its is a subclass with m_content
   void beautify() { static_cast<const InternalHandle*>(handle())->Beautify(this); }
@@ -235,12 +236,71 @@ static_assert(sizeof(TreeBlock) == 1);
 static_assert(sizeof(ValueTreeBlock) == sizeof(TreeBlock));
 static_assert(sizeof(TypeTreeBlock) == sizeof(TreeBlock));
 
-constexpr static TypeTreeBlock AdditionBlock() { return TypeTreeBlock(BlockType::Addition); }
-constexpr static TypeTreeBlock MultiplicationBlock() { return TypeTreeBlock(BlockType::Multiplication); }
-constexpr static TypeTreeBlock IntegerBlock() { return TypeTreeBlock(BlockType::Integer); }
-constexpr static TypeTreeBlock SubtractionBlock() { return TypeTreeBlock(BlockType::Subtraction); }
-constexpr static TypeTreeBlock DivisionBlock() { return TypeTreeBlock(BlockType::Division); }
-constexpr static TypeTreeBlock PowerBlock() { return TypeTreeBlock(BlockType::Power); }
+// static ?
+constexpr static TypeTreeBlock AdditionBlock = TypeTreeBlock(BlockType::Addition);
+constexpr static TypeTreeBlock MultiplicationBlock = TypeTreeBlock(BlockType::Multiplication);
+constexpr static TypeTreeBlock IntegerBlock = TypeTreeBlock(BlockType::Integer);
+constexpr static TypeTreeBlock SubtractionBlock = TypeTreeBlock(BlockType::Subtraction);
+constexpr static TypeTreeBlock DivisionBlock = TypeTreeBlock(BlockType::Division);
+constexpr static TypeTreeBlock PowerBlock = TypeTreeBlock(BlockType::Power);
+
+template <unsigned N>
+struct TreeNode {
+  TreeBlock blocks[N];
+  constexpr operator const TypeTreeBlock*() const { return static_cast<const TypeTreeBlock *>(blocks); }
+};
+
+// TODO: use normal NodeSize but it requires virtual constexprs
+constexpr int NodeSize(const TypeTreeBlock * node) {
+  switch(node->type()) {
+  case BlockType::Addition:
+  case BlockType::Multiplication:
+    return 3;
+  case BlockType::Integer:
+    return 4 + static_cast<const ValueTreeBlock *>(static_cast<const TreeBlock *>(node + 1))->value();
+  default:
+    return 2;
+  }
+}
+
+constexpr int NumberOfChildren(const TypeTreeBlock * node) {
+  switch(node->type()) {
+  case BlockType::Addition:
+  case BlockType::Multiplication:
+    return static_cast<const ValueTreeBlock *>(static_cast<const TreeBlock *>(node + 1))->value();
+  case BlockType::Power:
+  case BlockType::Subtraction:
+  case BlockType::Division:
+    return 2;
+  default:
+    return 0;
+  }
+}
+
+template<bool ChildrenCount, unsigned ...Len>
+constexpr auto makeNary(const TypeTreeBlock type, const TreeNode<Len> (&...nodes)) {
+  // Compute the total length of the children
+  constexpr unsigned N = (... + Len);
+  TreeNode<N + 1 + 2*ChildrenCount> result = {};
+  result.blocks[0] = type;
+  if (ChildrenCount) {
+    result.blocks[1] = (TreeBlock)sizeof...(Len);
+    result.blocks[2] = type;
+  }
+
+  TreeBlock* dst = &result.blocks[1 + 2*ChildrenCount];
+  for (const TypeTreeBlock * node : {static_cast<const TypeTreeBlock*>(nodes)...}) {
+    int toCopy = 1;
+    while (toCopy) {
+      toCopy += NumberOfChildren(node) - 1;
+      const TreeBlock * src = node;
+      for (int size = NodeSize(node); size>0; size--) {
+	*dst++ = *src++;
+      }
+    }
+  }
+  return result;
+}
 
 }
 

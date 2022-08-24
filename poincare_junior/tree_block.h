@@ -126,7 +126,7 @@ public:
   constexpr int numberOfChildren() const { return properties()->numberOfChildren(this); }
 
   // Virtuality
-  constexpr const Handle * handle() const;
+  const Handle * handle() const;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const;
   void logAttributes(std::ostream & stream) const;

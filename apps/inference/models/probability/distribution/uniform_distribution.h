@@ -14,6 +14,7 @@ public:
   float evaluateAtAbscissa(float x) const override;
   bool authorizedParameterAtIndex(double x, int index) const override;
   void setParameterAtIndex(double f, int index) override;
+  static bool IsDiscontinuousBetweenAbscissas(float x1, float x2, void * model, void * context);
 private:
   constexpr static float k_diracMaximum = 10.0f;
   constexpr static float k_diracWidth = 0.005f;

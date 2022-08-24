@@ -31,7 +31,8 @@ enum class BlockType : uint8_t {
   Multiplication,
   Subtraction,
   Division,
-  Power
+  Power,
+  Constant
 };
 
 class Handle;
@@ -227,6 +228,7 @@ constexpr static TypeTreeBlock IntegerBlock = TypeTreeBlock(BlockType::Integer);
 constexpr static TypeTreeBlock SubtractionBlock = TypeTreeBlock(BlockType::Subtraction);
 constexpr static TypeTreeBlock DivisionBlock = TypeTreeBlock(BlockType::Division);
 constexpr static TypeTreeBlock PowerBlock = TypeTreeBlock(BlockType::Power);
+constexpr static TypeTreeBlock ConstantBlock = TypeTreeBlock(BlockType::Constant);
 
 template <unsigned N>
 struct TreeNode {
@@ -239,6 +241,7 @@ constexpr int NodeSize(const TypeTreeBlock * node) {
   switch(node->type()) {
   case BlockType::Addition:
   case BlockType::Multiplication:
+  case BlockType::Constant:
     return 3;
   case BlockType::Integer:
     return 4 + static_cast<const ValueTreeBlock *>(static_cast<const TreeBlock *>(node + 1))->value();

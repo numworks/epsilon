@@ -192,6 +192,7 @@ bool TypeTreeBlock::hasSibling(const TreeBlock * firstBlock, const TypeTreeBlock
   static constexpr Subtraction k_subtraction;
   static constexpr Division k_division;
   static constexpr Power k_power;
+  static constexpr Constant k_constant;
   static constexpr const Handle * k_handles[] = {
   // Order has to be the same as TypeTreeBlock
 #if GHOST_REQUIRED
@@ -204,7 +205,8 @@ bool TypeTreeBlock::hasSibling(const TreeBlock * firstBlock, const TypeTreeBlock
     &k_multiplication,
     &k_subtraction,
     &k_division,
-    &k_power
+    &k_power,
+    &k_constant
   };
 
 const Handle * TypeTreeBlock::handle() const {

@@ -106,6 +106,32 @@ TypeTreeBlock * Integer::PushNode(int value) {
   return integerFirstBlock;
 }
 
+/* Constant */
+
+void Constant::logAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream) const {
+  stream << " value=\"" << Value(treeBlock) << "\"";
+}
+
+float Constant::Value(const TypeTreeBlock * treeBlock) {
+  const TreeBlock * typeBlock = treeBlock->nextBlock();
+  const Type type = static_cast<Type>(static_cast<const ValueTreeBlock *>(typeBlock)->value());
+  switch (type) {
+  case Type::Pi:
+    return 3.14;
+  case Type::E:
+    return 2.72;
+  default:
+    assert(false);
+  }
+}
+
+TypeTreeBlock * Constant::PushNode(Type type) {
+  TreeSandbox * sandbox = TreeSandbox::sharedSandbox();
+  TreeBlock * addressOfFirstBlock = sandbox->pushBlock(ConstantBlock);
+  sandbox->pushBlock(ValueTreeBlock(static_cast<uint8_t>(type)));
+  sandbox->pushBlock(ConstantBlock);
+  return static_cast<TypeTreeBlock *>(addressOfFirstBlock);
+}
 
 /* NAry */
 

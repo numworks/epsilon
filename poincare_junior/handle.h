@@ -82,6 +82,28 @@ static constexpr TreeNode<5> operator "" _n(unsigned long long value) {
   return {IntegerBlock, ValueTreeBlock(1), ValueTreeBlock(value), ValueTreeBlock(1), IntegerBlock};
 }
 
+class Constant final : public InternalHandle {
+public:
+  enum class Type : uint8_t {
+    Pi,
+    E,
+    Undefined
+  };
+  static TypeTreeBlock * PushNode(Type type);
+#if POINCARE_TREE_LOG
+  void logNodeName(std::ostream & stream) const override { stream << "Constant"; }
+  void logAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream) const override;
+#endif
+  size_t nodeSize(const TypeTreeBlock * typeTreeBlock, bool head = true) const override { return 3; }
+  static float Value(const TypeTreeBlock * treeBlock);
+};
+
+static constexpr TreeNode<5> operator "" _n(char16_t name) {
+  Constant::Type type = name == 'e' ? Constant::Type::E : name == u'π' ? Constant::Type::Pi : Constant::Type::Undefined;
+  assert(type != Constant::Type::Undefined);
+  return {ConstantBlock, ValueTreeBlock(static_cast<uint8_t>(type)), ConstantBlock};
+}
+
 class NAry : public InternalHandle {
 public:
 #if POINCARE_TREE_LOG

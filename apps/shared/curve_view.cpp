@@ -890,7 +890,7 @@ static bool pointInBoundingBox(float x1, float y1, float x2, float y2, float xC,
       && ((y1 <= yC && yC <= y2) || (y2 <= yC && yC <= y1));
 }
 
-int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, int stampNumber, EvaluateDiscontinuityBetweenFloatValues evaluateDiscontinuityBetweenValues, bool canBeDiscontinuous) const {
+int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, int stampNumber, EvaluateDiscontinuityBetweenFloatValues evaluateDiscontinuityBetweenValues, bool involvesDiscontinuousFunction) const {
   const bool isFirstDot = std::isnan(t);
   const bool isLeftDotValid = !(
       std::isnan(x) || std::isinf(x) ||
@@ -906,7 +906,7 @@ int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamete
     return stampNumber;
   }
   KDCoordinate circleDiameter = thick ? thickCircleDiameter : thinCircleDiameter;
-  bool isDiscontinuousBetweenTandS = canBeDiscontinuous && evaluateDiscontinuityBetweenValues(t, s, model, context);
+  bool isDiscontinuousBetweenTandS = involvesDiscontinuousFunction && evaluateDiscontinuityBetweenValues(t, s, model, context);
   if (isDiscontinuousBetweenTandS && maxNumberOfRecursion == k_maxNumberOfIterations) {
     maxNumberOfRecursion = k_maxNumberOfIterationsForDiscontinuousFunctions;
   }

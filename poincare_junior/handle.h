@@ -1,19 +1,11 @@
 #ifndef POINCARE_HANDLE_H
 #define POINCARE_HANDLE_H
 
-#define POINCARE_TREE_LOG 1
-#if POINCARE_TREE_LOG
-#include <ostream>
-#endif
-
-#include <stdint.h>
-#include <stddef.h>
+#include "tree_block.h"
 
 namespace Poincare {
 
-class TreeBlock;
 class TreeSandbox;
-class TypeTreeBlock;
 
 typedef TreeBlock * (TreeBlock::*NextStep)();
 typedef TreeBlock * (TreeBlock::*NextNthStep)(int i);
@@ -54,7 +46,7 @@ public:
 class InternalHandle : public Handle {
 public:
   using Handle::Handle;
-  virtual void Beautify(TypeTreeBlock * treeBlock) const {}
+  virtual void beautify(TypeTreeBlock * treeBlock) const {}
 };
 
 #if GHOST_REQUIRED

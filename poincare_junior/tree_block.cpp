@@ -183,6 +183,60 @@ bool TypeTreeBlock::hasSibling(const TreeBlock * firstBlock, const TypeTreeBlock
   return false;
 }
 
+#if GHOST_REQUIRED
+  static constexpr Ghost k_ghost;
+#endif
+  static constexpr Integer k_integer;
+  static constexpr Addition k_addition;
+  static constexpr Multiplication k_multiplication;
+  static constexpr Subtraction k_subtraction;
+  static constexpr Division k_division;
+  static constexpr Power k_power;
+  static constexpr const Handle * k_handles[] = {
+  // Order has to be the same as TypeTreeBlock
+#if GHOST_REQUIRED
+    &k_ghost,
+#endif
+    &k_integer,
+    &k_integer,
+    &k_integer,
+    &k_addition,
+    &k_multiplication,
+    &k_subtraction,
+    &k_division,
+    &k_power
+  };
+
+const Handle * TypeTreeBlock::handle() const {
+  return k_handles[m_content];
+}
+
+#if POINCARE_TREE_LOG
+void TypeTreeBlock::logNodeName(std::ostream & stream) const {
+  handle()->logNodeName(stream);
+}
+
+void TypeTreeBlock::logAttributes(std::ostream & stream) const {
+  handle()->logAttributes(this, stream);
+}
+#endif
+void TypeTreeBlock::basicReduction() {
+  handle()->basicReduction(this);
+}
+
+size_t TypeTreeBlock::nodeSize(bool head) const {
+  return handle()->nodeSize(this, head);
+}
+
+int TypeTreeBlock::numberOfChildren() const {
+  return handle()->numberOfChildren(this);
+}
+
+// TODO: dynamic_cast-like that can check its is a subclass with m_content
+void TypeTreeBlock::beautify() {
+  static_cast<const InternalHandle*>(handle())->beautify(this);
+}
+
 TypeTreeBlock::BackwardsDirect::Iterator::Memoizer::Memoizer(TypeTreeBlock * treeBlock) :
   m_block(treeBlock),
   m_firstMemoizedSubtreeIndex(0),

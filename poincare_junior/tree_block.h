@@ -1,7 +1,14 @@
 #ifndef POINCARE_TREE_BLOCK_H
 #define POINCARE_TREE_BLOCK_H
 
-#include "handle.h"
+#define POINCARE_TREE_LOG 1
+#if POINCARE_TREE_LOG
+#include <ostream>
+#endif
+
+#include <assert.h>
+#include <stddef.h>
+#include <stdint.h>
 
 namespace Poincare {
 
@@ -27,6 +34,7 @@ enum class BlockType : uint8_t {
   Power
 };
 
+class Handle;
 class TreeSandbox;
 class TypeTreeBlock;
 
@@ -109,41 +117,17 @@ public:
   bool hasSibling(const TreeBlock * firstBlock, const TypeTreeBlock * e) const;
 
   // Virtuality
-#if GHOST_REQUIRED
-  static constexpr Ghost k_ghost;
-#endif
-  static constexpr Integer k_integer;
-  static constexpr Addition k_addition;
-  static constexpr Multiplication k_multiplication;
-  static constexpr Subtraction k_subtraction;
-  static constexpr Division k_division;
-  static constexpr Power k_power;
-  static constexpr const Handle * k_handles[] = {
-  // Order has to be the same as TypeTreeBlock
-#if GHOST_REQUIRED
-    &k_ghost,
-#endif
-    &k_integer,
-    &k_integer,
-    &k_integer,
-    &k_addition,
-    &k_multiplication,
-    &k_subtraction,
-    &k_division,
-    &k_power
-  };
-
-  const Handle * handle() const { return k_handles[m_content]; }
+  const Handle * handle() const;
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const { handle()->logNodeName(stream); }
-  void logAttributes(std::ostream & stream) const { handle()->logAttributes(this, stream); }
+  void logNodeName(std::ostream & stream) const;
+  void logAttributes(std::ostream & stream) const;
 #endif
-  void basicReduction() { handle()->basicReduction(this); }
-  size_t nodeSize(bool head = true) const { return handle()->nodeSize(this, head); }
-  int numberOfChildren() const { return handle()->numberOfChildren(this); }
+  void basicReduction();
+  size_t nodeSize(bool head = true) const;
+  int numberOfChildren() const;
 
   // TODO: dynamic_cast-like that can check its is a subclass with m_content
-  void beautify() { static_cast<const InternalHandle*>(handle())->Beautify(this); }
+  void beautify();
 
   class ForwardDirect final {
   public:

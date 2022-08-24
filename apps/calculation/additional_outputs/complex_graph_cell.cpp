@@ -59,7 +59,7 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
         float a = parameters.real();
         float b = parameters.imag();
         return Poincare::Coordinate2D<float>(a*std::cos(t*th), b*std::sin(t*th));
-    }, &parameters, &th, false, Palette::GrayDark, CurveView::DefaultEvaluateDiscontinuityBetweenFloatValues, false);
+    }, &parameters, &th, false, Palette::GrayDark, CurveView::NoPotentialDiscontinuity, false);
 
   // Draw dashed segment to indicate real and imaginary
   drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, real, 0.0f, imag, Palette::Red, 1, 3);

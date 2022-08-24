@@ -162,7 +162,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
   Expression expressionToStore = expression;
   PoincareHelpers::CloneAndSimplify(&expressionToStore, context, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   // Do not store exact derivative, etc.
-  if (PoincareHelpers::shouldOnlyDisplayApproximation(expression, expressionToStore, context)
+  if (PoincareHelpers::ShouldOnlyDisplayApproximation(expression, expressionToStore, context)
       && !expressionToStore.hasUnit())
       /* If an expression has units, it's already approximated during
        * beautification and will return undef when re-Approximated */

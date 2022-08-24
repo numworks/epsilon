@@ -381,7 +381,7 @@ Poincare::Layout ValuesController::exactValueLayout(int column, int row) {
   Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
   abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
   PoincareHelpers::CloneAndSimplify(&e, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
-  if (PoincareHelpers::shouldOnlyDisplayApproximation(function->expressionClone(), e, context)) {
+  if (PoincareHelpers::ShouldOnlyDisplayApproximation(function->expressionClone(), e, context)) {
     return Layout(); // Do not show exact expressions in certain cases
   }
   return e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, context);

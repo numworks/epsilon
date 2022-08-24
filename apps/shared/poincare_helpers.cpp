@@ -20,7 +20,7 @@ T ValueOfFloatAsDisplayed(T t, int precision, Poincare::Context * context) {
   return ApproximateToScalar<T>(buffer, context);
 }
 
-bool shouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context) {
+bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context) {
     // Exact output with remaining dependency are not displayed to avoid 2 ≈ undef
   return exactOutput.type() == ExpressionNode::Type::Dependency
     // Lists or Matrices with only nonreal/undefined children
@@ -46,6 +46,14 @@ bool shouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expres
           ExpressionNode::Type::DistributionDispatcher,
         });
       }, context);
+}
+
+bool ShouldOnlyDisplayExactOutput(Poincare::Expression input) {
+  /* If the input is a "store in a function", do not display the approximate
+   * result. This prevents x->f(x) from displaying x = undef. */
+  assert(!input.isUninitialized());
+  return input.type() == ExpressionNode::Type::Store
+    && input.childAtIndex(1).type() == ExpressionNode::Type::Function;
 }
 
 template float ValueOfFloatAsDisplayed<float>(float t, int precision, Poincare::Context * context);

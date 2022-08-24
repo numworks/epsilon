@@ -104,7 +104,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
       ScrollableTwoExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
       if (outputSubviewPosition == ScrollableTwoExpressionsView::SubviewPosition::Right
-          && !calculation->shouldOnlyDisplayExactOutput())
+          && !PoincareHelpers::ShouldOnlyDisplayExactOutput(calculation->input()))
       {
         editController->insertTextBody(calculation->approximateOutputText(Calculation::NumberOfSignificantDigits::Maximal));
       } else {

@@ -38,7 +38,7 @@ private:
   bool isCumulatedFrequencyColumn(int i) const { return m_store->relativeColumnIndex(i) == k_cumulatedFrequencyRelativeColumnIndex; }
   bool isCumulatedFrequencyCell(int i, int j) const { return j != 0 && isCumulatedFrequencyColumn(i); }
 
-  bool deleteCellValue(int series, int i, int j) override;
+  bool deleteCellValue(int series, int i, int j, bool safeDeletion = false) override;
   Escher::InputViewController * inputViewController() override;
   Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;

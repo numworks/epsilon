@@ -112,7 +112,7 @@ public:
 
   // DoublePairStore
   void updateSeriesValidity(int series) override;
-  bool deleteValueAtIndex(int series, int i, int j, bool delayUpdate = false) override;
+  bool deleteValueAtIndex(int series, int i, int j, bool safeDeletion = false, bool delayUpdate = false) override;
   bool valueValidInColumn(double value, int relativeColumn) const override {
     return DoublePairStore::valueValidInColumn(value, relativeColumn) && (relativeColumn != 1 || value >= 0.0) && value >= -Shared::Range1D::k_lowerMaxFloat && value <= Shared::Range1D::k_upperMaxFloat;
   }

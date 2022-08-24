@@ -139,7 +139,7 @@ int DoublePairStore::numberOfPairs() const {
   return result;
 }
 
-bool DoublePairStore::deleteValueAtIndex(int series, int i, int j, bool delayUpdate) {
+bool DoublePairStore::deleteValueAtIndex(int series, int i, int j, bool safeDeletion, bool delayUpdate) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(j >= 0 && j < numberOfPairsOfSeries(series));
   int otherI = (i + 1) % k_numberOfColumnsPerSeries;
@@ -172,7 +172,7 @@ void DoublePairStore::deleteColumn(int series, int i, bool delayUpdate) {
   assert(series >= 0 && series < k_numberOfSeries);
   assert(i == 0 || i == 1);
   for (int k = 0; k < numberOfPairsOfSeries(series); k++) {
-    deleteValueAtIndex(series, i, k, true);
+    deleteValueAtIndex(series, i, k, false, true);
   }
   updateSeries(series, delayUpdate);
 }

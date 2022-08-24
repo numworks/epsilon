@@ -62,10 +62,12 @@ KDCoordinate ValuesController::columnWidth(int i) {
 }
 
 KDCoordinate ValuesController::cumulatedWidthFromIndex(int i) {
+  // Override RegularTableViewDataSource::cumulatedWidthFromIndex
   return TableViewDataSource::cumulatedWidthFromIndex(i);
 }
 
 int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
+  // Override RegularTableViewDataSource::indexFromCumulatedWidth
   return TableViewDataSource::indexFromCumulatedWidth(offsetX);
 }
 
@@ -77,10 +79,12 @@ KDCoordinate ValuesController::rowHeight(int j) {
 }
 
 KDCoordinate ValuesController::cumulatedHeightFromIndex(int j) {
+  // Override RegularTableViewDataSource::cumulatedHeightFromIndex
   return TableViewDataSource::cumulatedHeightFromIndex(j);
 }
 
 int ValuesController::indexFromCumulatedHeight(KDCoordinate offsetX) {
+  // Override RegularTableViewDataSource::indexFromCumulatedHeight
   return TableViewDataSource::indexFromCumulatedHeight(offsetX);
 }
 

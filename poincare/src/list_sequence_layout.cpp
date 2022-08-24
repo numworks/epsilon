@@ -139,11 +139,11 @@ void ListSequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size fon
   KDPoint functionPosition = positionOfChild(functionLayout(), font);
   KDCoordinate functionBaseline = functionLayout()->baseline(font);
 
-  KDPoint leftBracePosition = LeftCurlyBraceLayoutNode::PositionGivenChildHeightAndBaseline(functionSize, functionBaseline).translatedBy(functionPosition);
-  LeftCurlyBraceLayoutNode::RenderWithChildHeight(functionSize.height(), ctx, leftBracePosition.translatedBy(p), expressionColor, backgroundColor);
+  KDPoint leftBracePosition = CurlyBraceLayoutNode::PositionGivenChildHeightAndBaseline(true, functionSize, functionBaseline).translatedBy(functionPosition);
+  CurlyBraceLayoutNode::RenderWithChildHeight(true, functionSize.height(), ctx, leftBracePosition.translatedBy(p), expressionColor, backgroundColor);
 
-  KDPoint rightBracePosition = RightCurlyBraceLayoutNode::PositionGivenChildHeightAndBaseline(functionSize, functionBaseline).translatedBy(functionPosition);
-  RightCurlyBraceLayoutNode::RenderWithChildHeight(functionSize.height(), ctx, rightBracePosition.translatedBy(p), expressionColor, backgroundColor);
+  KDPoint rightBracePosition = CurlyBraceLayoutNode::PositionGivenChildHeightAndBaseline(true, functionSize, functionBaseline).translatedBy(functionPosition);
+  CurlyBraceLayoutNode::RenderWithChildHeight(false, functionSize.height(), ctx, rightBracePosition.translatedBy(p), expressionColor, backgroundColor);
 
   // Draw k≤...
   KDPoint inferiorEqualPosition = KDPoint(positionOfVariable(font).x() + variableLayout()->layoutSize(font).width(), variableSlotBaseline(font) - KDFont::GlyphHeight(font) / 2);

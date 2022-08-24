@@ -57,13 +57,10 @@ Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFlo
 }
 
 Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
-  HorizontalLayout result = HorizontalLayout::Builder();
-  result.addChildAtIndex(LeftParenthesisLayout::Builder(), 0, 0, nullptr);
-  if (!layout.isUninitialized()) {
-    result.addOrMergeChildAtIndex(cloneLayout ? layout.clone() : layout, 1, true);
+  if (layout.isUninitialized()) {
+    return ParenthesisLayout::Builder();
   }
-  result.addChildAtIndex(RightParenthesisLayout::Builder(), result.numberOfChildren(), result.numberOfChildren(), nullptr);
-  return std::move(result);
+  return ParenthesisLayout::Builder(cloneLayout ? layout.clone() : layout);
 }
 
 Layout LayoutHelper::String(const char * buffer, int bufferLen) {

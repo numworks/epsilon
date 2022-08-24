@@ -2,7 +2,7 @@
 
 namespace Poincare {
 
-constexpr uint8_t topLeftCurve[CurlyBraceLayoutNode::k_curveHeight][CurlyBraceLayoutNode::k_curveWidth] = {
+constexpr static uint8_t topLeftCurve[CurlyBraceLayoutNode::k_curveHeight][CurlyBraceLayoutNode::k_curveWidth] = {
   {0xBD, 0x33, 0x13, 0x00, 0x00},
   {0x31, 0x74, 0xDA, 0xFF, 0xFF},
   {0x00, 0xDC, 0xFF, 0xFF, 0xFF},
@@ -11,7 +11,7 @@ constexpr uint8_t topLeftCurve[CurlyBraceLayoutNode::k_curveHeight][CurlyBraceLa
   {0x02, 0xF3, 0xFF, 0xFF, 0xFF},
 };
 
-constexpr uint8_t topRightCurve[CurlyBraceLayoutNode::k_curveHeight][CurlyBraceLayoutNode::k_curveWidth] = {
+constexpr static uint8_t topRightCurve[CurlyBraceLayoutNode::k_curveHeight][CurlyBraceLayoutNode::k_curveWidth] = {
   {0x00, 0x00, 0x13, 0x33, 0xBD},
   {0xFF, 0xFF, 0xDA, 0x74, 0x31},
   {0xFF, 0xFF, 0xFF, 0xDC, 0x00},
@@ -20,7 +20,7 @@ constexpr uint8_t topRightCurve[CurlyBraceLayoutNode::k_curveHeight][CurlyBraceL
   {0xFF, 0xFF, 0xFF, 0xF3, 0x02},
 };
 
-constexpr uint8_t bottomLeftCurve[CurlyBraceLayoutNode::k_curveHeight][CurlyBraceLayoutNode::k_curveWidth] = {
+constexpr static uint8_t bottomLeftCurve[CurlyBraceLayoutNode::k_curveHeight][CurlyBraceLayoutNode::k_curveWidth] = {
   {0x02, 0xF3, 0xFF, 0xFF, 0xFF},
   {0x00, 0xEF, 0xFF, 0xFF, 0xFF},
   {0x00, 0xDE, 0xFF, 0xFF, 0xFF},
@@ -29,7 +29,7 @@ constexpr uint8_t bottomLeftCurve[CurlyBraceLayoutNode::k_curveHeight][CurlyBrac
   {0xBD, 0x33, 0x13, 0x00, 0x00},
 };
 
-constexpr uint8_t bottomRightCurve[CurlyBraceLayoutNode::k_curveHeight][CurlyBraceLayoutNode::k_curveWidth] = {
+constexpr static uint8_t bottomRightCurve[CurlyBraceLayoutNode::k_curveHeight][CurlyBraceLayoutNode::k_curveWidth] = {
   {0xFF, 0xFF, 0xFF, 0xF3, 0x02},
   {0xFF, 0xFF, 0xFF, 0xEF, 0x00},
   {0xFF, 0xFF, 0xFF, 0xDE, 0x00},
@@ -38,13 +38,13 @@ constexpr uint8_t bottomRightCurve[CurlyBraceLayoutNode::k_curveHeight][CurlyBra
   {0x00, 0x00, 0x13, 0x33, 0xBD},
 };
 
-constexpr uint8_t leftCenter[CurlyBraceLayoutNode::k_centerHeight][CurlyBraceLayoutNode::k_centerWidth] = {
+constexpr static uint8_t leftCenter[CurlyBraceLayoutNode::k_centerHeight][CurlyBraceLayoutNode::k_centerWidth] = {
   {0xF2, 0xB8, 0x11},
   {0x00, 0x00, 0xB3},
   {0xF2, 0xB8, 0x11},
 };
 
-constexpr uint8_t rightCenter[CurlyBraceLayoutNode::k_centerHeight][CurlyBraceLayoutNode::k_centerWidth] = {
+constexpr static uint8_t rightCenter[CurlyBraceLayoutNode::k_centerHeight][CurlyBraceLayoutNode::k_centerWidth] = {
   {0x11, 0xB8, 0xF2},
   {0xB3, 0x00, 0x00},
   {0x11, 0xB8, 0xF2},
@@ -56,10 +56,9 @@ void CurlyBraceLayoutNode::RenderWithChildHeight(bool left, KDCoordinate childHe
   assert(k_curveHeight * k_curveWidth >= k_centerHeight * k_centerWidth);
   constexpr KDCoordinate curveHorizontalOffset = k_centerWidth - k_lineThickness;
   constexpr KDCoordinate centerHorizontalOffset = k_curveWidth - k_lineThickness;
-  KDCoordinate leftMargin, curveLeftOffset, barLeftOffset, centerLeftOffset;
+  KDCoordinate curveLeftOffset, barLeftOffset, centerLeftOffset;
   const uint8_t * topCurve, * bottomCurve, * centerPiece;
   if (left) {
-    leftMargin = k_horizontalExternalMargin;
     curveLeftOffset = curveHorizontalOffset;
     barLeftOffset = curveHorizontalOffset;
     centerLeftOffset = 0;
@@ -67,7 +66,6 @@ void CurlyBraceLayoutNode::RenderWithChildHeight(bool left, KDCoordinate childHe
     bottomCurve = &bottomLeftCurve[0][0];
     centerPiece = &leftCenter[0][0];
   } else {
-    leftMargin = k_horizontalInternalMargin;
     curveLeftOffset = 0;
     barLeftOffset = centerHorizontalOffset;
     centerLeftOffset = centerHorizontalOffset;
@@ -85,7 +83,7 @@ void CurlyBraceLayoutNode::RenderWithChildHeight(bool left, KDCoordinate childHe
   // Top curve
   KDCoordinate dy = 0;
   KDRect frame(
-      leftMargin + curveLeftOffset,
+      k_widthMargin + curveLeftOffset,
       dy,
       k_curveWidth,
       k_curveHeight);
@@ -94,7 +92,7 @@ void CurlyBraceLayoutNode::RenderWithChildHeight(bool left, KDCoordinate childHe
   // Top bar
   dy += k_curveHeight;
   frame = KDRect(
-      leftMargin + barLeftOffset,
+      k_widthMargin + barLeftOffset,
       dy,
       k_lineThickness,
       topBarHeight);
@@ -103,7 +101,7 @@ void CurlyBraceLayoutNode::RenderWithChildHeight(bool left, KDCoordinate childHe
   // Center piece
   dy += topBarHeight;
   frame = KDRect(
-      leftMargin + centerLeftOffset,
+      k_widthMargin + centerLeftOffset,
       dy,
       k_centerWidth,
       k_centerHeight);
@@ -112,7 +110,7 @@ void CurlyBraceLayoutNode::RenderWithChildHeight(bool left, KDCoordinate childHe
   // Bottom bar
   dy += k_centerHeight;
   frame = KDRect(
-      leftMargin + barLeftOffset,
+      k_widthMargin + barLeftOffset,
       dy,
       k_lineThickness,
       bottomBarHeight);
@@ -121,7 +119,7 @@ void CurlyBraceLayoutNode::RenderWithChildHeight(bool left, KDCoordinate childHe
   // Bottom curve
   dy += bottomBarHeight;
   frame = KDRect(
-      leftMargin + curveLeftOffset,
+      k_widthMargin + curveLeftOffset,
       dy,
       k_curveWidth,
       k_curveHeight);

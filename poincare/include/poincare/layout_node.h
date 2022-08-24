@@ -30,26 +30,24 @@ public:
     CombinedCodePointsLayout,
     CondensedSumLayout,
     ConjugateLayout,
+    CurlyBraceLayout,
     EmptyLayout,
     FirstOrderDerivativeLayout,
-    HigherOrderDerivativeLayout,
     FloorLayout,
     FractionLayout,
     GridLayout,
+    HigherOrderDerivativeLayout,
     HorizontalLayout,
     IntegralLayout,
-    LeftCurlyBraceLayout,
-    LeftParenthesisLayout,
-    ListSequenceLayout,
-    MatrixLayout,
     LetterAWithSubAndSuperscriptLayout,
     LetterCWithSubAndSuperscriptLayout,
+    ListSequenceLayout,
+    MatrixLayout,
     NthRootLayout,
+    ParenthesisLayout,
     ProductLayout,
-    RightCurlyBraceLayout,
-    RightParenthesisLayout,
-    SumLayout,
     StringLayout,
+    SumLayout,
     VectorNormLayout,
     VerticalOffsetLayout
   };
@@ -173,8 +171,6 @@ protected:
   virtual KDSize computeSize(KDFont::Size font) = 0;
   virtual KDCoordinate computeBaseline(KDFont::Size font) = 0;
   virtual KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) = 0;
-
-
 
 private:
   void moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection);

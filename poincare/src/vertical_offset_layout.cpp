@@ -2,6 +2,7 @@
 #include <poincare/empty_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/parenthesis_layout.h>
+#include <poincare/serialization_helper.h>
 #include <string.h>
 #include <assert.h>
 #include <algorithm>
@@ -222,26 +223,26 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
       // Add the Left parenthesis
       int idxInParent = parentRef.indexOfChild(thisRef);
       int leftParenthesisIndex = idxInParent;
-      LeftParenthesisLayout leftParenthesis = LeftParenthesisLayout::Builder();
       int numberOfOpenParenthesis = 0;
       while (leftParenthesisIndex > 0
           && parentRef.childAtIndex(leftParenthesisIndex-1).isCollapsable(&numberOfOpenParenthesis, true))
       {
         leftParenthesisIndex--;
       }
-      parentRef.addChildAtIndex(leftParenthesis, leftParenthesisIndex, parentRef.numberOfChildren(), nullptr);
-      idxInParent = parentRef.indexOfChild(thisRef);
-
-      // Add the Right parenthesis
-      RightParenthesisLayout rightParenthesis = RightParenthesisLayout::Builder();
-      if (cursor->position() == LayoutCursor::Position::Right) {
-        parentRef.addChildAtIndex(rightParenthesis, idxInParent + 1, parentRef.numberOfChildren(), nullptr);
-      } else {
-        assert(cursor->position() == LayoutCursor::Position::Left);
-        parentRef.addChildAtIndex(rightParenthesis, idxInParent, parentRef.numberOfChildren(), nullptr);
+      HorizontalLayout h = HorizontalLayout::Builder();
+      int n = 0;
+      for (int i = idxInParent - (cursor->position() == LayoutCursor::Position::Left); i > leftParenthesisIndex; i--) {
+        h.addChildAtIndex(parentRef.childAtIndex(i), 0, n++, nullptr);
       }
-      if (!rightParenthesis.parent().isUninitialized()) {
-        cursor->setLayout(rightParenthesis);
+      ParenthesisLayout parentheses = ParenthesisLayout::Builder(h);
+      parentRef.addChildAtIndex(parentheses, leftParenthesisIndex, parentRef.numberOfChildren(), nullptr);
+      if (!parentheses.parent().isUninitialized()) {
+        if (cursor->position() == LayoutCursor::Position::Left) {
+          cursor->setLayout(h);
+          cursor->setPosition(LayoutCursor::Position::Right);
+        } else {
+          cursor->setLayout(parentheses);
+        }
       }
     }
   }

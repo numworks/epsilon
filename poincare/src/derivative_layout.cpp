@@ -328,11 +328,11 @@ void DerivativeLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font,
   KDPoint derivandPosition = positionOfChild(derivandLayout(), font);
   KDCoordinate derivandBaseline = derivandLayout()->baseline(font);
 
-  KDPoint leftParenthesisPosition = LeftParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(derivandSize, derivandBaseline).translatedBy(derivandPosition);
-  LeftParenthesisLayoutNode::RenderWithChildHeight(derivandSize.height(), ctx, leftParenthesisPosition.translatedBy(p), expressionColor, backgroundColor);
+  KDPoint leftParenthesisPosition = ParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(true, derivandSize, derivandBaseline).translatedBy(derivandPosition);
+  ParenthesisLayoutNode::RenderWithChildHeight(true, derivandSize.height(), ctx, leftParenthesisPosition.translatedBy(p), expressionColor, backgroundColor);
 
-  KDPoint rightParenthesisPosition = RightParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(derivandSize, derivandBaseline).translatedBy(derivandPosition);
-  RightParenthesisLayoutNode::RenderWithChildHeight(derivandSize.height(), ctx, rightParenthesisPosition.translatedBy(p), expressionColor, backgroundColor);
+  KDPoint rightParenthesisPosition = ParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(false, derivandSize, derivandBaseline).translatedBy(derivandPosition);
+  ParenthesisLayoutNode::RenderWithChildHeight(false, derivandSize.height(), ctx, rightParenthesisPosition.translatedBy(p), expressionColor, backgroundColor);
 
   // ...|x=
   KDSize variableSize = variableLayout()->layoutSize(font);

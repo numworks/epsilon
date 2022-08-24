@@ -33,7 +33,6 @@ private:
   bool elementNumberMatchesFilter(AtomicNumber z) const;
   AtomicNumber privateElementSearch(ElementTest test) const;
 
-
   ElementsViewDelegate * m_delegate;
   const char * m_textFilter;
   AtomicNumber m_suggestedElement;

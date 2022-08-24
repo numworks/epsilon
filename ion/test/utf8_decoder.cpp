@@ -78,13 +78,13 @@ QUIZ_CASE(ion_utf8_decode_backwards) {
 }
 
 QUIZ_CASE(ion_utf8_decoder_next_glyph) {
-  const char* string = u8"a\u0065\u0301i";
+  const char* string = "a\u0065\u0301i";
   assert_code_point_at_next_glyph_position_is(string, 'e');
   assert_code_point_at_next_glyph_position_is(string + 1, 'i');
 }
 
 QUIZ_CASE(ion_utf8_decoder_previous_glyph) {
-  const char* string = u8"a\u0065\u0301i";
+  const char* string = "a\u0065\u0301i";
   const char* iPosition = UTF8Helper::CodePointSearch(string, 'i');
   assert_code_point_at_previous_glyph_position_is(string, iPosition, 'e');
   assert_code_point_at_previous_glyph_position_is(string, string + 1, 'a');

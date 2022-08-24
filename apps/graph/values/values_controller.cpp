@@ -48,6 +48,11 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
 }
 
+void ValuesController::viewDidDisappear() {
+  m_exactValueCell.setLayouts(Layout(), Layout());
+  Shared::ValuesController::viewDidDisappear();
+}
+
 // TableViewDataSource
 
 KDCoordinate ValuesController::columnWidth(int i) {
@@ -95,26 +100,27 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     StoreCell * storeCell = static_cast<StoreCell *>(cell);
     storeCell->setSeparatorLeft(i > 0);
   }
-  const int numberOfElementsInCol = numberOfElementsInColumn(i);
-  if (j > numberOfElementsInCol + 1) {
-    assert(typeAtLoc != k_exactValueCellType);
-    if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
-      Shared::Hideable * hideableCell = hideableCellFromType(cell, typeAtLoc);
-      hideableCell->setHide(true);
+  if (typeAtLoc == k_exactValueCellType) {
+    ScrollableTwoExpressionsCell * exactValueCell = static_cast<ScrollableTwoExpressionsCell *>(cell);
+    char * approximateResult = memoizedBufferForCell(i, j);
+    Poincare::Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult);
+    Poincare::Layout exactLayout = exactValueLayout(i, j);
+    exactValueCell->setDisplayCenter(
+      !(exactLayout.isUninitialized()
+      /* Make both layouts editable (with CodePointLayouts rather than
+      * StringLayouts) so that they can be properly compared. */
+      || exactLayout.makeEditable().isIdenticalTo(approximateLayout.makeEditable()))
+    );
+    exactValueCell->setLayouts(exactLayout, approximateLayout);
+  } else if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
+    const int numberOfElementsInCol = numberOfElementsInColumn(i);
+    Shared::Hideable * hideableCell = hideableCellFromType(cell, typeAtLoc);
+    hideableCell->setHide(j > numberOfElementsInCol + 1);
+    if (j >= numberOfElementsInCol + 1) {
+      static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
       hideableCell->reinit();
+      return;
     }
-    return;
-  } else {
-    if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
-      hideableCellFromType(cell, typeAtLoc)->setHide(false);
-    }
-  }
-  if (j == numberOfElementsInCol + 1) {
-    static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
-    if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
-      hideableCellFromType(cell, typeAtLoc)->reinit();
-    }
-    return;
   }
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
 }
@@ -178,25 +184,11 @@ void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int 
   if (j > 1 + numberOfElementsInCol) {
     selectCellAtLocation(i, 1 + numberOfElementsInCol);
   }
-  int selectedCellType = typeAtLocation(i, j);
-  if (selectedCellType == k_exactValueCellType || typeAtLocation(previousSelectedCellX, previousSelectedCellY) == k_notEditableValueCellType) {
-    if (selectedCellType == k_exactValueCellType) {
-      /* Set the Layout in the exact cell now so that height is correctly
-       * computed when reloading data. */
-      char * approximateResult = memoizedBufferForCell(i, j);
-      Poincare::Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult);
-      Poincare::Layout exactLayout = exactValueLayout(i, j);
-      m_exactValueCell.setDisplayCenter(
-        !(exactLayout.isUninitialized()
-        /* Make both layouts editable (with CodePointLayouts rather than
-        * StringLayouts) so that they can be properly compared. */
-        || exactLayout.makeEditable().isIdenticalTo(approximateLayout.makeEditable()))
-      );
-      m_exactValueCell.setLayouts(exactLayout, approximateLayout);
-    } else { // exact cell was previously selected.
-      m_exactValueCell.setLayouts(Layout(), Layout());
-    }
-    // Set false to the second paramater so that the table is not deselected
+
+  if (typeAtLocation(i, j) == k_exactValueCellType || typeAtLocation(previousSelectedCellX, previousSelectedCellY) == k_notEditableValueCellType) {
+    /* The exact value cell changed layouts or was deselected so we reload the
+     * whole table.
+     * Set false to the second parameter so that the table is not deselected */
     t->reloadData(true, false);
   }
 }

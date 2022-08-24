@@ -375,7 +375,7 @@ bool Expression::hasDefinedComplexApproximation(Context * context, Preferences::
   return true;
 }
 
-bool Expression::canBeDiscontinuous(Context * context) const {
+bool Expression::involvesDiscontinuousFunction(Context * context) const {
   return recursivelyMatches(IsDiscontinuous, context);
 }
 

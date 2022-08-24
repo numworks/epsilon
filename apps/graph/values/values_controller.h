@@ -19,6 +19,9 @@ class ValuesController : public Shared::ValuesController, public Escher::Selecta
 public:
   ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header);
 
+  // View controller
+  void viewDidDisappear() override;
+
   // TableViewDataSource
   KDCoordinate columnWidth(int i) override;
   KDCoordinate cumulatedWidthFromIndex(int i) override;

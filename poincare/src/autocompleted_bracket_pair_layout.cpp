@@ -92,6 +92,9 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
     h.removeChild(l, cursor);
     newChild.addOrMergeChildAtIndex(l, injectionIndex, true, cursor);
   }
+  if (newChild.numberOfChildren() == 0) {
+    thisRef.replaceChild(newChild, EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Never));
+  }
 }
 
 /*

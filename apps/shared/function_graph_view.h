@@ -16,6 +16,8 @@ public:
   void setContext(Poincare::Context * context);
   Poincare::Context * context() const;
   void selectRecord(Ion::Storage::Record record);
+  // Select second record to draw area between it and the main record
+  void selectSecondRecord(Ion::Storage::Record record);
   void setAreaHighlight(float start, float end);
   virtual void setAreaHighlightColor(bool highlightColor);
   void resetCurvesInterrupted() override { m_functionsInterrupted = 0; }
@@ -23,6 +25,7 @@ public:
 protected:
   void reloadBetweenBounds(float start, float end);
   Ion::Storage::Record m_selectedRecord;
+  Ion::Storage::Record m_secondSelectedRecord;
   float m_highlightedStart;
   float m_highlightedEnd;
   bool m_shouldColorHighlighted;

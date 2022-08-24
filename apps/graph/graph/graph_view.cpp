@@ -141,7 +141,13 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
               Poincare::Context * c = (Poincare::Context *)context;
               return f->evaluateXYAtParameter(t, c, 0);
             };
+        float areaLowerBound = m_highlightedStart;
+        float areaUpperBound = m_highlightedEnd;
+        bool incrementAreaIndex = (m_selectedRecord == record) && !std::isnan(areaLowerBound) && !std::isnan(areaUpperBound);
         if (area != ContinuousFunction::AreaType::None) {
+          incrementAreaIndex = true;
+          areaLowerBound = -INFINITY;
+          areaUpperBound = INFINITY;
           if (area == ContinuousFunction::AreaType::Outside) {
             // Either plot the area above the first curve, or everywhere.
             xyAreaBound = hasTwoCurves ? xyInfinite : xyNan;
@@ -164,14 +170,29 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             };
           }
         }
-        bool isIntegral = f->color() && area == ContinuousFunction::AreaType::None;
+        ContinuousFunction functionG;
+        ContinuousFunction * g = nullptr;
+        if (!m_secondSelectedRecord.isNull() && m_selectedRecord == record) {
+          // Used by area_between_curves to draw the area between f and g
+          assert(area == ContinuousFunction::AreaType::None); // No second record should be set if the curve is an area
+          xyAreaBound = [](float t, void * model, void * context) {
+            ContinuousFunction * g = (ContinuousFunction *)model;
+            Poincare::Context * c = (Poincare::Context *)context;
+            return g->evaluateXYAtParameter(t, c);
+          };
+          functionG = *(functionStore->modelForRecord(m_secondSelectedRecord).operator->());
+          g = &functionG;
+          incrementAreaIndex = true;
+          // g temporarely took the expiring pointer. Reset f
+          f = functionStore->modelForRecord(record);
+        }
         // 2 - Draw the first curve
         drawCartesianCurve(ctx, rect, tCacheMin, tmax, xyFloatEvaluation,
                            f.operator->(), context(), f->color(), discontinuityEvaluation, true,
-                           record == m_selectedRecord, f->color(), m_highlightedStart,
-                           m_highlightedEnd, xyDoubleEvaluation,
+                           record == m_selectedRecord, f->color(), areaLowerBound,
+                           areaUpperBound, xyDoubleEvaluation,
                            f->drawDottedCurve(), xyAreaBound,
-                           shouldColorAreaWhenNan, isIntegral ? -1 : 1 << areaIndex, tCacheStep, axis);
+                           shouldColorAreaWhenNan,  1 << areaIndex, tCacheStep, axis, g);
         if (hasTwoCurves) {
           /* Evaluations for the second cartesian curve, which is lesser than
            * the first one */
@@ -196,11 +217,11 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           drawCartesianCurve(
               ctx, rect, tCacheMin, tmax, xyFloatEvaluation, f.operator->(),
               context(), f->color(), discontinuityEvaluation, true, record == m_selectedRecord,
-              f->color(), m_highlightedStart, m_highlightedEnd, xyDoubleEvaluation,
+              f->color(), areaLowerBound, areaUpperBound, xyDoubleEvaluation,
               f->drawDottedCurve(), xyAreaBound, shouldColorAreaWhenNan,
               1 << areaIndex, tCacheStep, axis);
         }
-        if (area != ContinuousFunction::AreaType::None) {
+        if (incrementAreaIndex) {
           // We can properly display the superposition of up to 4 areas
           areaIndex = (areaIndex + 1) % CurveView::k_numberOfPatternAreas;
         }

@@ -50,27 +50,6 @@ constexpr KDColor ScaleBackYellowDark = KDColor::RGB24(0xffa500);
 constexpr KDColor ScaleTextYellowLight = KDColor::RGB24(0xffb574);
 constexpr KDColor ScaleTextYellowDark = KDColor::RGB24(0x955b00);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 }
 

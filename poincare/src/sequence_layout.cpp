@@ -254,10 +254,10 @@ void SequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, K
   KDPoint argumentPosition = positionOfChild(argumentLayout(), font);
   KDCoordinate argumentBaseline = argumentLayout()->baseline(font);
 
-  KDPoint leftParenthesisPosition = LeftParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(argumentSize, argumentBaseline).translatedBy(argumentPosition);
-  KDPoint rightParenthesisPosition = RightParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(argumentSize, argumentBaseline).translatedBy(argumentPosition);
-  LeftParenthesisLayoutNode::RenderWithChildHeight(argumentSize.height(), ctx, leftParenthesisPosition.translatedBy(p), expressionColor, backgroundColor);
-  RightParenthesisLayoutNode::RenderWithChildHeight(argumentSize.height(), ctx, rightParenthesisPosition.translatedBy(p), expressionColor, backgroundColor);
+  KDPoint leftParenthesisPosition = ParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(true, argumentSize, argumentBaseline).translatedBy(argumentPosition);
+  KDPoint rightParenthesisPosition = ParenthesisLayoutNode::PositionGivenChildHeightAndBaseline(false, argumentSize, argumentBaseline).translatedBy(argumentPosition);
+  ParenthesisLayoutNode::RenderWithChildHeight(true, argumentSize.height(), ctx, leftParenthesisPosition.translatedBy(p), expressionColor, backgroundColor);
+  ParenthesisLayoutNode::RenderWithChildHeight(false, argumentSize.height(), ctx, rightParenthesisPosition.translatedBy(p), expressionColor, backgroundColor);
 }
 
 KDCoordinate SequenceLayoutNode::completeLowerBoundX(KDFont::Size font) {

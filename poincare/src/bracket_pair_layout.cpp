@@ -71,4 +71,25 @@ void BracketPairLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font
   renderOneBracket(false, ctx, p.translatedBy(KDPoint(rightBracketOffset, 0)), font, expressionColor, backgroundColor);
 }
 
+int BracketPairLayoutNode::serializeWithSymbol(char symbolOpen, char symbolClose, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  int length = 0;
+  buffer[length++] = symbolOpen;
+  if (length >= bufferSize) {
+    buffer[bufferSize - 1] = '\0';
+    return bufferSize;
+  }
+  length += childLayout()->serialize(buffer + length, bufferSize - length, floatDisplayMode, numberOfSignificantDigits);
+  if (length >= bufferSize) {
+    buffer[bufferSize - 1] = '\0';
+    return bufferSize;
+  }
+  buffer[length++] = symbolClose;
+  if (length >= bufferSize) {
+    buffer[bufferSize - 1] = '\0';
+    return bufferSize;
+  }
+  buffer[length] = '\0';
+  return length;
+}
+
 }

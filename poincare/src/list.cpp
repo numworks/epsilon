@@ -30,14 +30,16 @@ int ListNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMo
 }
 
 Layout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  HorizontalLayout result = HorizontalLayout::Builder(LeftCurlyBraceLayout::Builder(), RightCurlyBraceLayout::Builder());
+  HorizontalLayout result = HorizontalLayout::Builder();
   if (m_numberOfChildren > 1) {
     Layout elementsLayout = LayoutHelper::Infix(List(this), floatDisplayMode, numberOfSignificantDigits, ",", context);
-    result.addOrMergeChildAtIndex(elementsLayout, 1, true);
+    result.addOrMergeChildAtIndex(elementsLayout, 0, true);
   } else if (m_numberOfChildren == 1) {
-    result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 1, true);
+    result.addOrMergeChildAtIndex(childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), 0, true);
+  } else if (m_numberOfChildren == 0) {
+    return CurlyBraceLayout::Builder();
   }
-  return std::move(result);
+  return CurlyBraceLayout::Builder(result);
 }
 
 // Helper functions
@@ -118,7 +120,7 @@ Expression List::Ones(int length) {
   for (int i = 0; i < length; i++) {
     result.addChildAtIndexInPlace(Rational::Builder(1), i, i);
   }
-  return result;
+  return std::move(result);
 }
 
 

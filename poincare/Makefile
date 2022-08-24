@@ -2,8 +2,8 @@ SFLAGS += -Ipoincare/include
 
 poincare_src += $(addprefix poincare/src/,\
   aliases_list.cpp \
+  autocompleted_bracket_pair_layout.cpp \
   binomial_coefficient_layout.cpp \
-  bracket_layout.cpp \
   bracket_pair_layout.cpp \
   code_point_layout.cpp\
   combined_code_points_layout.cpp\

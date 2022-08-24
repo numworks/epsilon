@@ -199,19 +199,22 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bo
       assert(!codePoint.isCombining());
       continue;
     }
+    AutocompletedBracketPairLayoutNode::Side autocompletionSide = AutocompletedBracketPairLayoutNode::Side::Left;
     if (codePoint == UCodePointMultiplicationSign) {
       newChild = CodePointLayout::Builder(UCodePointMultiplicationSign);
     } else if (codePoint == '(' || codePoint == UCodePointLeftSystemParenthesis) {
-      newChild = LeftParenthesisLayout::Builder();
+      newChild = ParenthesisLayout::Builder();
       if (pointedChild.isUninitialized()) {
         pointedChild = newChild;
       }
+      autocompletionSide = AutocompletedBracketPairLayoutNode::Side::Right;
     } else if (codePoint == ')' || codePoint == UCodePointRightSystemParenthesis) {
-      newChild = RightParenthesisLayout::Builder();
+      newChild = ParenthesisLayout::Builder();
     } else if (codePoint == '{') {
-      newChild = LeftCurlyBraceLayout::Builder();
+      newChild = CurlyBraceLayout::Builder();
+      autocompletionSide = AutocompletedBracketPairLayoutNode::Side::Right;
     } else if (codePoint == '}') {
-      newChild = RightCurlyBraceLayout::Builder();
+      newChild = CurlyBraceLayout::Builder();
     } else {
       newChild = CodePointLayout::Builder(codePoint);
     }
@@ -220,6 +223,11 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bo
       pointedChild = newChild;
     }
     m_layout.addSibling(this, newChild, true);
+
+    if (newChild.type() == LayoutNode::Type::ParenthesisLayout || newChild.type() == LayoutNode::Type::CurlyBraceLayout) {
+      AutocompletedBracketPairLayoutNode * autocompletedBracket = static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node());
+      autocompletedBracket->makeTemporary(autocompletionSide, this);
+    }
 
     // Get the next code point
     codePoint = decoder.nextCodePoint();

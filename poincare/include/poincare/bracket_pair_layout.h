@@ -44,7 +44,8 @@ protected:
   KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
-  LayoutNode * childLayout() { return childAtIndex(0); }
+  LayoutNode * childLayout() const { return childAtIndex(0); }
+  int serializeWithSymbol(char symbolOpen, char symbolClose, char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
   virtual KDCoordinate bracketWidth() const = 0;
   virtual KDCoordinate verticalMargin() const = 0;
   virtual void renderOneBracket(bool left, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) = 0;

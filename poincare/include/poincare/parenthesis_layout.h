@@ -1,105 +1,56 @@
-#ifndef POINCARE_PARENTHESIS_LAYOUT_NODE_H
-#define POINCARE_PARENTHESIS_LAYOUT_NODE_H
+#ifndef POINCARE_PARENTHESIS_LAYOUT_H
+#define POINCARE_PARENTHESIS_LAYOUT_H
 
-#include <poincare/bracket_layout.h>
+#include <poincare/autocompleted_bracket_pair_layout.h>
 #include <poincare/layout_helper.h>
-#include <poincare/serialization_helper.h>
-#include <algorithm>
+#include <poincare/empty_layout.h>
 
 namespace Poincare {
 
-class ParenthesisLayoutNode : public BracketLayoutNode {
-  friend class SequenceLayoutNode;
+class ParenthesisLayoutNode : public AutocompletedBracketPairLayoutNode {
 public:
-  // Dimensions
+  constexpr static KDCoordinate k_widthMargin = 1;
   constexpr static KDCoordinate k_curveWidth = 5;
   constexpr static KDCoordinate k_curveHeight = 7;
-  // Margins
-  constexpr static KDCoordinate k_widthMargin = 1;
-  constexpr static KDCoordinate k_parenthesisWidth = k_widthMargin + k_curveWidth + k_widthMargin;
+  constexpr static KDCoordinate k_verticalMargin = 2;
+  constexpr static KDCoordinate k_parenthesisWidth = 2 * k_widthMargin + k_curveWidth;
 
-  using BracketLayoutNode::BracketLayoutNode;
+  static void RenderWithChildHeight(bool left, KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
+  static KDCoordinate HeightGivenChildHeight(KDCoordinate childHeight) { return BracketPairLayoutNode::HeightGivenChildHeight(childHeight, k_verticalMargin); }
+  static KDCoordinate BaselineGivenChildHeightAndBaseline(KDCoordinate childHeight, KDCoordinate childBaseline) {
+    return BracketPairLayoutNode::BaselineGivenChildHeightAndBaseline(childHeight, childBaseline, k_verticalMargin);
+  }
+  static KDPoint PositionGivenChildHeightAndBaseline(bool left, KDSize childSize, KDCoordinate childBaseline) {
+    return BracketPairLayoutNode::PositionGivenChildHeightAndBaseline(left, k_parenthesisWidth, childSize, childBaseline, k_verticalMargin);
+  }
+
+  // LayoutNode
+  Type type() const override { return Type::ParenthesisLayout; }
+
   // TreeNode
-  size_t size() const override { return sizeof(ParenthesisLayoutNode); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "ParenthesisLayout";
   }
 #endif
-
-protected:
-  static void RenderWithChildHeight(bool left, KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor);
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
+    return serializeWithSymbol('(', ')', buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  }
 
 private:
-  KDCoordinate width() const override { return k_parenthesisWidth; }
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {
-    RenderWithChildHeight(type() == Type::LeftParenthesisLayout, OptimalChildHeightGivenLayoutHeight(layoutSize(font).height()), ctx, p, expressionColor, backgroundColor);
+  // BracketPairLayoutNode
+  KDCoordinate bracketWidth() const override { return k_parenthesisWidth; }
+  KDCoordinate verticalMargin() const override { return k_verticalMargin; }
+  void renderOneBracket(bool left, KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor) override {
+    RenderWithChildHeight(left, childLayout()->layoutSize(font).height(), ctx, p, bracketColor(left ? Side::Left : Side::Right, expressionColor, backgroundColor), backgroundColor);
   }
 };
 
-class LeftParenthesisLayoutNode final : public ParenthesisLayoutNode {
+class ParenthesisLayout final : public LayoutOneChild<ParenthesisLayout, ParenthesisLayoutNode> {
 public:
-  using ParenthesisLayoutNode::ParenthesisLayoutNode;
-
-  // Layout
-  Type type() const override { return Type::LeftParenthesisLayout; }
-
-  static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-    ParenthesisLayoutNode::RenderWithChildHeight(true, childHeight, ctx, p, expressionColor, backgroundColor);
-  }
-  static KDPoint PositionGivenChildHeightAndBaseline(KDSize childSize, KDCoordinate childBaseline) {
-    return BracketLayoutNode::PositionGivenChildHeightAndBaseline(true, k_parenthesisWidth, childSize, childBaseline);
-  }
-
-  // Serializable Node
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::CodePoint(buffer, bufferSize, '(');
-  }
-
-  // TreeNode
-#if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
-    stream << "LeftParenthesisLayout";
-  }
-#endif
-};
-
-class LeftParenthesisLayout final : public LayoutNoChildren<LeftParenthesisLayout, LeftParenthesisLayoutNode> {
-public:
-  LeftParenthesisLayout() = delete;
-};
-
-class RightParenthesisLayoutNode final : public ParenthesisLayoutNode {
-public:
-  using ParenthesisLayoutNode::ParenthesisLayoutNode;
-
-  // Layout
-  Type type() const override { return Type::RightParenthesisLayout; }
-
-  static void RenderWithChildHeight(KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor) {
-    ParenthesisLayoutNode::RenderWithChildHeight(false, childHeight, ctx, p, expressionColor, backgroundColor);
-  }
-  static KDPoint PositionGivenChildHeightAndBaseline(KDSize childSize, KDCoordinate childBaseline) {
-    return BracketLayoutNode::PositionGivenChildHeightAndBaseline(false, k_parenthesisWidth, childSize, childBaseline);
-  }
-
-  // SerializableNode
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::CodePoint(buffer, bufferSize, ')');
-  }
-
-  // TreeNode
-  size_t size() const override { return sizeof(RightParenthesisLayoutNode); }
-#if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const override {
-    stream << "RightParenthesisLayout";
-  }
-#endif
-};
-
-class RightParenthesisLayout final : public LayoutNoChildren<RightParenthesisLayout, RightParenthesisLayoutNode> {
-public:
-  RightParenthesisLayout() = delete;
+  ParenthesisLayout() = delete;
+  static ParenthesisLayout Builder() { return Builder(EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false)); }
+  static ParenthesisLayout Builder(Layout l) { return LayoutOneChild<ParenthesisLayout, ParenthesisLayoutNode>::Builder(l); }
 };
 
 }

@@ -9,6 +9,7 @@ class HorizontalLayoutNode;
 class VerticalOffsetLayout;
 
 class LayoutCursor final {
+  friend class AutocompletedBracketPairLayoutNode;
   friend class BinomialCoefficientLayoutNode;
   friend class BracketLayoutNode;
   friend class BracketPairLayoutNode;

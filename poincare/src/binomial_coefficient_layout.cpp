@@ -2,6 +2,7 @@
 #include <poincare/binomial_coefficient_layout.h>
 #include <poincare/parenthesis_layout.h>
 #include <poincare/layout_helper.h>
+#include <poincare/serialization_helper.h>
 #include <assert.h>
 #include <algorithm>
 
@@ -122,9 +123,9 @@ KDPoint BinomialCoefficientLayoutNode::positionOfChild(LayoutNode * child, KDFon
 void BinomialCoefficientLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   // Render the parentheses.
   KDCoordinate childHeight = knHeight(font);
-  KDCoordinate rightParenthesisPointX = std::max(nLayout()->layoutSize(font).width(), kLayout()->layoutSize(font).width()) + LeftParenthesisLayoutNode::k_parenthesisWidth;
-  LeftParenthesisLayoutNode::RenderWithChildHeight(childHeight, ctx, p, expressionColor, backgroundColor);
-  RightParenthesisLayoutNode::RenderWithChildHeight(childHeight, ctx, p.translatedBy(KDPoint(rightParenthesisPointX, 0)), expressionColor, backgroundColor);
+  KDCoordinate rightParenthesisPointX = std::max(nLayout()->layoutSize(font).width(), kLayout()->layoutSize(font).width()) + ParenthesisLayoutNode::k_parenthesisWidth;
+  ParenthesisLayoutNode::RenderWithChildHeight(true, childHeight, ctx, p, expressionColor, backgroundColor);
+  ParenthesisLayoutNode::RenderWithChildHeight(false, childHeight, ctx, p.translatedBy(KDPoint(rightParenthesisPointX, 0)), expressionColor, backgroundColor);
 }
 
 }

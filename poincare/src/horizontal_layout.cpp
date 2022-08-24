@@ -169,8 +169,8 @@ LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * corre
   if (correspondingExpression->numberOfChildren() > 0) {
     Layout layoutToPointTo = Layout(this).recursivelyMatches(
       [](Poincare::Layout layout) {
-        return layout.type() == LayoutNode::Type::LeftParenthesisLayout
-            || layout.type() == LayoutNode::Type::LeftCurlyBraceLayout
+        return layout.type() == LayoutNode::Type::ParenthesisLayout
+            || layout.type() == LayoutNode::Type::CurlyBraceLayout
             || layout.isEmpty();
       }
     );

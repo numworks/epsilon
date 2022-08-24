@@ -109,7 +109,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
       !(exactLayout.isUninitialized()
       /* Make both layouts editable (with CodePointLayouts rather than
       * StringLayouts) so that they can be properly compared. */
-      || exactLayout.makeEditable().isIdenticalTo(approximateLayout.makeEditable()))
+      || exactLayout.isIdenticalTo(approximateLayout, true))
     );
     exactValueCell->setLayouts(exactLayout, approximateLayout);
   } else if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {

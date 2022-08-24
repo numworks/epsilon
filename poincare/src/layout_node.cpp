@@ -8,7 +8,10 @@
 
 namespace Poincare {
 
-bool LayoutNode::isIdenticalTo(Layout l) {
+bool LayoutNode::isIdenticalTo(Layout l, bool makeEditable) {
+  if (makeEditable) {
+    return Layout(this).clone().makeEditable().isIdenticalTo(l.clone().makeEditable(), false);
+  }
   if (l.isUninitialized() || type() != l.type()) {
     return false;
   }

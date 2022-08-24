@@ -75,7 +75,7 @@ public:
   virtual Type type() const = 0;
 
   // Comparison
-  bool isIdenticalTo(Layout l);
+  bool isIdenticalTo(Layout l, bool makeEditable = false);
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed);

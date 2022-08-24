@@ -23,7 +23,6 @@ public:
   typedef Poincare::Coordinate2D<double> (*EvaluateXYForDoubleParameter)(double t, void * model, void * context);
   typedef float (*EvaluateYForX)(float x, void * model, void * context);
   typedef bool (*EvaluateDiscontinuityBetweenFloatValues)(float x1, float x2, void * model, void * context);
-  typedef bool (*EvaluateDiscontinuityBetweenDoubleValues)(double x1, double x2, void * model, void * context);
   static bool DefaultEvaluateDiscontinuityBetweenFloatValues(float x1, float x2, void * model, void * context) {
     return false;
   }

@@ -26,6 +26,7 @@ public:
 class Subtraction final : public Handle {
 public:
   static TypeTreeBlock * PushNode();
+  template<unsigned L1, unsigned L2> static constexpr TreeNode<L1+L2+1> Of(const TreeNode<L1> child1, const TreeNode<L2> child2) { return makeNary<false>(BlockType::Subtraction, child1, child2); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Subtraction"; }
 #endif
@@ -36,6 +37,7 @@ public:
 class Division final : public Handle {
 public:
   static TypeTreeBlock * PushNode();
+  template<unsigned L1, unsigned L2> static constexpr TreeNode<L1+L2+1> Of(const TreeNode<L1> child1, const TreeNode<L2> child2) { return makeNary<false>(BlockType::Division, child1, child2); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Division"; }
 #endif
@@ -75,6 +77,11 @@ private:
   size_t nodeSize(const TypeTreeBlock * typeTreeBlock, NextStep step) const;
 };
 
+static constexpr TreeNode<5> operator "" _n(unsigned long long value) {
+  assert(value < 256); // TODO: larger values
+  return {IntegerBlock, ValueTreeBlock(1), ValueTreeBlock(value), ValueTreeBlock(1), IntegerBlock};
+}
+
 class NAry : public InternalHandle {
 public:
 #if POINCARE_TREE_LOG
@@ -93,6 +100,7 @@ private:
 class Addition final : public NAry {
 public:
   static TypeTreeBlock * PushNode(int numberOfChildren);
+  template<unsigned ...Len> static constexpr auto Of(const TreeNode<Len> (&...children)) { return makeNary<true>(BlockType::Addition, children...); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Addition"; }
 #endif
@@ -101,6 +109,7 @@ public:
 class Multiplication final : public NAry {
 public:
   static TypeTreeBlock * PushNode(int numberOfChildren);
+  template<unsigned ...Len> static constexpr auto Of(const TreeNode<Len> (&...children)) { return makeNary<true>(BlockType::Multiplication, children...); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Multiplication"; }
 #endif
@@ -111,6 +120,7 @@ public:
 class Power final : public InternalHandle {
 public:
   static TypeTreeBlock * PushNode();
+    template<unsigned L1, unsigned L2> static constexpr TreeNode<L1+L2+1> Of(const TreeNode<L1> child1, const TreeNode<L2> child2) { return makeNary<false>(BlockType::Power, child1, child2); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Power"; }
 #endif

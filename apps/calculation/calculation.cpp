@@ -146,7 +146,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   Expression outputExp = exactOutput();
   if (inputExp.isUninitialized()
    || outputExp.isUninitialized()
-   || shouldOnlyDisplayExactOutput())
+   || PoincareHelpers::ShouldOnlyDisplayExactOutput(inputExp))
   {
     m_displayOutput = DisplayOutput::ExactOnly;
   } else if (
@@ -162,7 +162,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
    || (strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0
     && strcmp(inputText(), exactOutputText()) == 0)
       // All other conditions are factorized within PoincareHelpers
-   || PoincareHelpers::shouldOnlyDisplayApproximation(inputExp, outputExp, context))
+   || PoincareHelpers::ShouldOnlyDisplayApproximation(inputExp, outputExp, context))
   {
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (inputExp.recursivelyMatches(Expression::IsApproximate, context)
@@ -180,15 +180,6 @@ void Calculation::forceDisplayOutput(DisplayOutput d) {
   // Heights haven't been computed yet
   assert(m_height == -1 && m_expandedHeight == -1);
   m_displayOutput = d;
-}
-
-bool Calculation::shouldOnlyDisplayExactOutput() {
-  /* If the input is a "store in a function", do not display the approximate
-   * result. This prevents x->f(x) from displaying x = undef. */
-  Expression i = input();
-  assert(!i.isUninitialized());
-  return i.type() == ExpressionNode::Type::Store
-    && i.childAtIndex(1).type() == ExpressionNode::Type::Function;
 }
 
 Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(Poincare::Context * context) {

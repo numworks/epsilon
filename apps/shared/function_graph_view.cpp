@@ -46,6 +46,13 @@ void FunctionGraphView::selectRecord(Ion::Storage::Record record) {
   }
 }
 
+void FunctionGraphView::selectSecondRecord(Ion::Storage::Record record) {
+  if (m_secondSelectedRecord != record) {
+    m_secondSelectedRecord = record;
+    reloadBetweenBounds(m_highlightedStart, m_highlightedEnd);
+  }
+}
+
 void FunctionGraphView::setAreaHighlight(float start, float end) {
   if (m_highlightedStart != start || m_highlightedEnd != end) {
     float dirtyStart = start > m_highlightedStart ? m_highlightedStart : start;

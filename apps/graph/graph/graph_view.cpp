@@ -88,9 +88,9 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
         ContinuousFunctionCache::ComputeNonCartesianSteps(&tStepNonCartesian, &tCacheStep, tmax, tmin);
       }
       ContinuousFunctionCache::PrepareForCaching(f.operator->(), cch, tCacheMin, tCacheStep);
-      /* We check if e can be discontinuous to avoid recomputing discontinuity
-       * at each drawn dot of the curve when we are sure that the function
-       * can never be discontinuous. */
+      /* Check now if e can be discontinuous: In case e does not involves
+       * discontinuous functions, this avoids recomputing potential
+       * discontinuity at each dot of the curve. */
       CurveView::EvaluateDiscontinuityBetweenFloatValues discontinuityEvaluation = e.involvesDiscontinuousFunction(context()) ? FonctionIsDiscontinuousBetweenFloatValues : CurveView::NoPotentialDiscontinuity;
       if (type == ContinuousFunction::PlotType::Polar) {
         // Polar

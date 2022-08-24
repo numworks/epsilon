@@ -14,7 +14,7 @@ void playWithConstexprNodes() {
   constexpr TreeNode value = 42_n;
   constexpr TreeNode π = u'π'_n;
 
-  TreeNode node = Addition::Of(π, u'e'_n, Constants::e);
+  constexpr TreeNode node = Addition::Of(π, u'e'_n, Constants::e);
   sandbox->pushTree(node);
 
   TypeTreeBlock * valueMod = sandbox->pushTree(Subtraction::Of(value, 12_n));

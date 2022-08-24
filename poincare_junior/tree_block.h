@@ -199,7 +199,7 @@ public:
   ForwardDirect directChildren() const { return ForwardDirect(const_cast<TypeTreeBlock *>(this)); }
   BackwardsDirect backwardsDirectChildren() const { return BackwardsDirect(const_cast<TypeTreeBlock *>(this)); }
 
-  BlockType type() const { return static_cast<BlockType>(m_content); }
+  constexpr BlockType type() const { return static_cast<BlockType>(m_content); }
 
   // Recursive helper
   void recursivelyApply(InPlaceTreeFunction treeFunction);
@@ -215,6 +215,8 @@ class ValueTreeBlock : public TreeBlock {
 public:
   constexpr ValueTreeBlock(uint8_t value) : TreeBlock(value) {}
   uint8_t value() const { return m_content; }
+  // This dirty cast is a workaround to stricter static_cast in constexprs
+  constexpr operator TypeTreeBlock() { return TypeTreeBlock(static_cast<BlockType>(m_content)); }
 };
 
 static_assert(sizeof(TreeBlock) == 1);
@@ -232,8 +234,9 @@ constexpr static TypeTreeBlock ConstantBlock = TypeTreeBlock(BlockType::Constant
 
 template <unsigned N>
 struct TreeNode {
-  TreeBlock blocks[N];
-  constexpr operator const TypeTreeBlock*() const { return static_cast<const TypeTreeBlock *>(blocks); }
+  // Using this instead of a TreeBlock[N] simplifies up casting in constexprs
+  TypeTreeBlock blocks[N];
+  constexpr operator const TypeTreeBlock*() const { return blocks; }
 };
 
 // TODO: use normal NodeSize but it requires virtual constexprs
@@ -271,16 +274,16 @@ constexpr auto makeNary(const TypeTreeBlock type, const TreeNode<Len> (&...nodes
   TreeNode<N + 1 + 2*ChildrenCount> result = {};
   result.blocks[0] = type;
   if (ChildrenCount) {
-    result.blocks[1] = (TreeBlock)sizeof...(Len);
+    result.blocks[1] = ValueTreeBlock(sizeof...(Len));
     result.blocks[2] = type;
   }
 
-  TreeBlock* dst = &result.blocks[1 + 2*ChildrenCount];
+  TypeTreeBlock* dst = &result.blocks[1 + 2*ChildrenCount];
   for (const TypeTreeBlock * node : {static_cast<const TypeTreeBlock*>(nodes)...}) {
     int toCopy = 1;
     while (toCopy) {
       toCopy += NumberOfChildren(node) - 1;
-      const TreeBlock * src = node;
+      const TypeTreeBlock * src = node;
       for (int size = NodeSize(node); size>0; size--) {
 	*dst++ = *src++;
       }

@@ -49,7 +49,7 @@ private:
 class ParenthesisLayout final : public LayoutOneChild<ParenthesisLayout, ParenthesisLayoutNode> {
 public:
   ParenthesisLayout() = delete;
-  static ParenthesisLayout Builder() { return Builder(EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false)); }
+  static ParenthesisLayout Builder() { return Builder(EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Never)); }
   static ParenthesisLayout Builder(Layout l) { return LayoutOneChild<ParenthesisLayout, ParenthesisLayoutNode>::Builder(l); }
 };
 

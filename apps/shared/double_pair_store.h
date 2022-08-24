@@ -53,7 +53,7 @@ public:
   }
 
   // Delete and reset
-  virtual bool deleteValueAtIndex(int series, int i, int j, bool delayUpdate = false);
+  virtual bool deleteValueAtIndex(int series, int i, int j, bool safeDeletion, bool delayUpdate = false);
   void deletePairOfSeriesAtIndex(int series, int j, bool delayUpdate = false);
   void deleteColumn(int series, int i, bool delayUpdate = false);
   void resetColumn(int series, int i, bool delayUpdate = false);

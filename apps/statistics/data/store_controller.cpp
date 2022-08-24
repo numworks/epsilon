@@ -145,12 +145,12 @@ void StoreController::FillSeriesName(int series, char * buffer, bool withFinalSp
   }
 }
 
-bool StoreController::deleteCellValue(int series, int i, int j) {
+bool StoreController::deleteCellValue(int series, int i, int j, bool safeDeletion) {
   Escher::HighlightCell * selectedCell = nullptr;
   if (isCumulatedFrequencyColumn(i)) {
     selectedCell = selectableTableView()->selectedCell();
   }
-  bool result = Shared::StoreController::deleteCellValue(series, i, j);
+  bool result = Shared::StoreController::deleteCellValue(series, i, j, safeDeletion);
   if (selectedCell && result && m_store->numberOfPairsOfSeries(series) == 0) {
     assert(j == 1);
     /* Deleting the last cumulated frequency value will remove its column.

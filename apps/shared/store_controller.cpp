@@ -35,7 +35,7 @@ bool StoreController::textFieldDidFinishEditing(AbstractTextField * textField, c
   bool wasSeriesValid = m_store->seriesIsValid(series);
   if (text[0] == 0) { // If text = "", delete the cell
     bool didDeleteRow = false;
-    if (handleDeleteEvent(&didDeleteRow)) {
+    if (handleDeleteEvent(true, &didDeleteRow)) {
       if (event != Ion::Events::EXE && event != Ion::Events::OK && (!didDeleteRow || event != Ion::Events::Down)) {
         /* Handle Up, Down, Left and Right events
          * Do nothing if down was pressed and the row is deleted since
@@ -146,7 +146,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-bool StoreController::handleDeleteEvent(bool * didDeleteRow) {
+bool StoreController::handleDeleteEvent(bool safeDeletion, bool * didDeleteRow) {
   int i = selectedColumn();
   int j = selectedRow();
   assert(i >= 0 && i < numberOfColumns());
@@ -155,7 +155,7 @@ bool StoreController::handleDeleteEvent(bool * didDeleteRow) {
   if (j == 0 || j > numberOfElementsInColumn(i)) {
     return false;
   }
-  if (deleteCellValue(series, i, j)) {
+  if (deleteCellValue(series, i, j, safeDeletion)) {
     // A row has been deleted
     if (didDeleteRow) {
       *didDeleteRow = true;
@@ -177,8 +177,8 @@ void StoreController::didBecomeFirstResponder() {
   EditableCellTableViewController::didBecomeFirstResponder();
 }
 
-bool StoreController::deleteCellValue(int series, int i, int j) {
-  return m_store->deleteValueAtIndex(series, m_store->relativeColumnIndex(i), j - 1);
+bool StoreController::deleteCellValue(int series, int i, int j, bool safeDeletion) {
+  return m_store->deleteValueAtIndex(series, m_store->relativeColumnIndex(i), j - 1, safeDeletion);
 }
 
 StackViewController * StoreController::stackController() const {

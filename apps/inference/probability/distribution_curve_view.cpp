@@ -1,6 +1,7 @@
 #include "distribution_curve_view.h"
 
 #include "inference/models/probability/distribution/normal_distribution.h"
+#include "inference/models/probability/distribution/uniform_distribution.h"
 
 using namespace Shared;
 using namespace Escher;
@@ -31,7 +32,7 @@ void DistributionCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   }
   if (m_distribution->isContinuous()) {
     drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, m_distribution, nullptr,
-                       Palette::YellowDark, CurveView::NoPotentialDiscontinuity, true, true, Palette::YellowDark, lowerBound, upperBound);
+                       Palette::YellowDark, m_distribution->type() == Poincare::Distribution::Type::Uniform ? UniformDistribution::IsDiscontinuousBetweenAbscissas : CurveView::NoPotentialDiscontinuity, true, true, Palette::YellowDark, lowerBound, upperBound);
   } else {
     drawHistogram(ctx, rect, EvaluateAtAbscissa, m_distribution, nullptr, 0, 1, false, Palette::GrayMiddle,
                   Palette::YellowDark, 0, KDColorBlack, lowerBound, upperBound + 0.5f);

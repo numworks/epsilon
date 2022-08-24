@@ -6,9 +6,7 @@
 #include <ostream>
 #endif
 
-#include <assert.h>
-#include <stddef.h>
-#include <stdint.h>
+#include "properties.h"
 
 namespace Poincare {
 
@@ -45,27 +43,6 @@ struct IndexedTypeTreeBlock {
 };
 
 typedef void (TypeTreeBlock::*InPlaceTreeFunction)();
-
-class TreeBlock {
-friend class TreePool;
-public:
-  constexpr TreeBlock(uint8_t content = 0) : m_content(content) {}
-  bool operator==(const TreeBlock& b) const { return b.m_content == m_content; }
-  bool operator!=(const TreeBlock& b) { return b.m_content != m_content; }
-
-  // Block Navigation
-  TreeBlock * nextBlock() { return this + 1; }
-  const TreeBlock * nextBlock() const { return this + 1; }
-  TreeBlock * nextNthBlock(int i) { return this + i; }
-  const TreeBlock * nextNthBlock(int i) const { return this + i; }
-  TreeBlock * previousBlock() { return this - 1; }
-  const TreeBlock * previousBlock() const { return this - 1; }
-  TreeBlock * previousNthBlock(int i) { return this - i; }
-  const TreeBlock * previousNthBlock(int i) const { return this - i; }
-
-protected:
-  uint8_t m_content;
-};
 
 // This helper wraps a motion on const blocks into a motion on non-const blocks.
 // It should be completely eliminated by the compiler after the type checking.
@@ -117,15 +94,44 @@ public:
   bool hasAncestor(const TreeBlock * firstBlock, const TypeTreeBlock * node, bool includeSelf) const;
   bool hasSibling(const TreeBlock * firstBlock, const TypeTreeBlock * e) const;
 
+  // Properties
+  #if GHOST_REQUIRED
+  static constexpr GhostProperties k_ghostProperties;
+#endif
+  static constexpr IntegerProperties k_integerProperties;
+  static constexpr AdditionProperties k_additionProperties;
+  static constexpr MultiplicationProperties k_multiplicationProperties;
+  static constexpr SubtractionProperties k_subtractionProperties;
+  static constexpr DivisionProperties k_divisionProperties;
+  static constexpr PowerProperties k_powerProperties;
+  static constexpr ConstantProperties k_constantProperties;
+  static constexpr const Properties * k_properties[] = {
+  // Order has to be the same as TypeTreeBlock
+#if GHOST_REQUIRED
+    &k_ghostProperties,
+#endif
+    &k_integerProperties,
+    &k_integerProperties,
+    &k_integerProperties,
+    &k_additionProperties,
+    &k_multiplicationProperties,
+    &k_subtractionProperties,
+    &k_divisionProperties,
+    &k_powerProperties,
+    &k_constantProperties
+  };
+
+  constexpr const Properties * properties() const { return k_properties[m_content]; }
+  constexpr size_t nodeSize(bool head = true) const { return properties()->nodeSize(this, head); }
+  constexpr int numberOfChildren() const { return properties()->numberOfChildren(this); }
+
   // Virtuality
-  const Handle * handle() const;
+  constexpr const Handle * handle() const;
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const;
   void logAttributes(std::ostream & stream) const;
 #endif
   void basicReduction();
-  size_t nodeSize(bool head = true) const;
-  int numberOfChildren() const;
 
   // TODO: dynamic_cast-like that can check its is a subclass with m_content
   void beautify();
@@ -239,34 +245,6 @@ struct TreeNode {
   constexpr operator const TypeTreeBlock*() const { return blocks; }
 };
 
-// TODO: use normal NodeSize but it requires virtual constexprs
-constexpr int NodeSize(const TypeTreeBlock * node) {
-  switch(node->type()) {
-  case BlockType::Addition:
-  case BlockType::Multiplication:
-  case BlockType::Constant:
-    return 3;
-  case BlockType::Integer:
-    return 4 + static_cast<const ValueTreeBlock *>(static_cast<const TreeBlock *>(node + 1))->value();
-  default:
-    return 2;
-  }
-}
-
-constexpr int NumberOfChildren(const TypeTreeBlock * node) {
-  switch(node->type()) {
-  case BlockType::Addition:
-  case BlockType::Multiplication:
-    return static_cast<const ValueTreeBlock *>(static_cast<const TreeBlock *>(node + 1))->value();
-  case BlockType::Power:
-  case BlockType::Subtraction:
-  case BlockType::Division:
-    return 2;
-  default:
-    return 0;
-  }
-}
-
 template<bool ChildrenCount, unsigned ...Len>
 constexpr auto makeNary(const TypeTreeBlock type, const TreeNode<Len> (&...nodes)) {
   // Compute the total length of the children
@@ -282,9 +260,9 @@ constexpr auto makeNary(const TypeTreeBlock type, const TreeNode<Len> (&...nodes
   for (const TypeTreeBlock * node : {static_cast<const TypeTreeBlock*>(nodes)...}) {
     int toCopy = 1;
     while (toCopy) {
-      toCopy += NumberOfChildren(node) - 1;
+      toCopy += node->numberOfChildren() - 1;
       const TypeTreeBlock * src = node;
-      for (int size = NodeSize(node); size>0; size--) {
+      for (int size = node->nodeSize(); size>0; size--) {
 	*dst++ = *src++;
       }
     }

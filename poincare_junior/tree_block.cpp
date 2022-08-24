@@ -226,14 +226,6 @@ void TypeTreeBlock::basicReduction() {
   handle()->basicReduction(this);
 }
 
-size_t TypeTreeBlock::nodeSize(bool head) const {
-  return handle()->nodeSize(this, head);
-}
-
-int TypeTreeBlock::numberOfChildren() const {
-  return handle()->numberOfChildren(this);
-}
-
 // TODO: dynamic_cast-like that can check its is a subclass with m_content
 void TypeTreeBlock::beautify() {
   static_cast<const InternalHandle*>(handle())->beautify(this);

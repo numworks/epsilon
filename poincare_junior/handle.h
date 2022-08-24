@@ -19,8 +19,6 @@ public:
   virtual void logAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream) const {}
 #endif
   virtual void basicReduction(TypeTreeBlock * treeBlock) const {}
-  virtual size_t nodeSize(const TypeTreeBlock * treeBlock, bool head = true) const { return 1; }
-  virtual int numberOfChildren(const TypeTreeBlock * treeBlock) const { return 0; }
 };
 
 class Subtraction final : public Handle {
@@ -30,7 +28,6 @@ public:
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Subtraction"; }
 #endif
-  int numberOfChildren(const TypeTreeBlock * treeBlock) const override { return 2; }
   void basicReduction(TypeTreeBlock * treeBlock) const override;
 };
 
@@ -41,7 +38,6 @@ public:
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Division"; }
 #endif
-  int numberOfChildren(const TypeTreeBlock * treeBlock) const override { return 2; }
   void basicReduction(TypeTreeBlock * treeBlock) const override;
 };
 
@@ -68,7 +64,6 @@ public:
   void logNodeName(std::ostream & stream) const override { stream << "Integer"; }
   void logAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream) const override;
 #endif
-  size_t nodeSize(const TypeTreeBlock * typeTreeBlock, bool head = true) const override;
   static int Value(const TypeTreeBlock * treeBlock);
 
 private:
@@ -94,7 +89,6 @@ public:
   void logNodeName(std::ostream & stream) const override { stream << "Constant"; }
   void logAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream) const override;
 #endif
-  size_t nodeSize(const TypeTreeBlock * typeTreeBlock, bool head = true) const override { return 3; }
   static float Value(const TypeTreeBlock * treeBlock);
 };
 
@@ -109,8 +103,6 @@ public:
 #if POINCARE_TREE_LOG
   void logAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream) const override;
 #endif
-  int numberOfChildren(const TypeTreeBlock * treeBlock) const override;
-  size_t nodeSize(const TypeTreeBlock * typeTreeBlock, bool head = true) const override { return 3; }
 
   static TypeTreeBlock * Flatten(TypeTreeBlock * treeBlock);
 protected:
@@ -142,11 +134,10 @@ public:
 class Power final : public InternalHandle {
 public:
   static TypeTreeBlock * PushNode();
-    template<unsigned L1, unsigned L2> static constexpr TreeNode<L1+L2+1> Of(const TreeNode<L1> child1, const TreeNode<L2> child2) { return makeNary<false>(BlockType::Power, child1, child2); }
+  template<unsigned L1, unsigned L2> static constexpr TreeNode<L1+L2+1> Of(const TreeNode<L1> child1, const TreeNode<L2> child2) { return makeNary<false>(BlockType::Power, child1, child2); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Power"; }
 #endif
-  int numberOfChildren(const TypeTreeBlock * treeBlock) const override { return 2; }
 };
 
 }

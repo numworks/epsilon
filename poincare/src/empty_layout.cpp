@@ -5,6 +5,13 @@
 
 namespace Poincare {
 
+void EmptyLayoutNode::setVisible(bool visible) {
+  if (m_visibility == Visibility::Never) {
+    return;
+  }
+  m_visibility = visible ? Visibility::On : Visibility::Off;
+}
+
 void EmptyLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   cursor->setPosition(LayoutCursor::Position::Left);
   LayoutNode * p = parent();
@@ -42,7 +49,7 @@ int EmptyLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 KDSize EmptyLayoutNode::computeSize(KDFont::Size font) {
-  KDCoordinate sizeWidth = m_isVisible ? width(font) + 2*(m_margins ? k_marginWidth : 0) : 0;
+  KDCoordinate sizeWidth = isVisible() ? width(font) + 2*(m_margins ? k_marginWidth : 0) : 0;
   return KDSize(sizeWidth, height(font) + 2*(m_margins ? k_marginHeight : 0));
 }
 
@@ -87,7 +94,7 @@ bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling
 }
 
 void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
-  if (m_isVisible) {
+  if (isVisible()) {
     KDColor fillColor = m_color == Color::Yellow ? Escher::Palette::YellowDark : Escher::Palette::GrayBright;
     ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(font), height(font)), fillColor);
     ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(font), height(font)), fillColor);
@@ -102,7 +109,7 @@ bool EmptyLayoutNode::protectedIsIdenticalTo(Layout l) {
 
 EmptyLayout::EmptyLayout(const EmptyLayoutNode * n) : Layout(n) {}
 
-EmptyLayout EmptyLayout::Builder(EmptyLayoutNode::Color color, bool visible, bool margins) {
+EmptyLayout EmptyLayout::Builder(EmptyLayoutNode::Color color, EmptyLayoutNode::Visibility visible, bool margins) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(EmptyLayoutNode));
   EmptyLayoutNode * node = new (bufferNode) EmptyLayoutNode(color, visible, margins);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);

@@ -112,7 +112,8 @@ void Layout::replaceChild(Layout oldChild, Layout newChild, LayoutCursor * curso
 }
 
 void Layout::replaceChildWithEmpty(Layout oldChild, LayoutCursor * cursor) {
-  replaceChild(oldChild, EmptyLayout::Builder(), cursor);
+  EmptyLayoutNode::Visibility visibility = displayEmptyLayouts() ? EmptyLayoutNode::Visibility::Never : EmptyLayoutNode::Visibility::On;
+  replaceChild(oldChild, EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, visibility), cursor);
 }
 
 void Layout::replaceWith(Layout newChild, LayoutCursor * cursor) {

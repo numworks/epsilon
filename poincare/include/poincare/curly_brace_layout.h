@@ -51,7 +51,7 @@ private:
 class CurlyBraceLayout final : public LayoutOneChild<CurlyBraceLayout, CurlyBraceLayoutNode> {
 public:
   CurlyBraceLayout() = delete;
-  static CurlyBraceLayout Builder() { return Builder(EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false)); }
+  static CurlyBraceLayout Builder() { return Builder(EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Never)); }
   static CurlyBraceLayout Builder(Layout l) { return LayoutOneChild<CurlyBraceLayout, CurlyBraceLayoutNode>::Builder(l); }
 };
 

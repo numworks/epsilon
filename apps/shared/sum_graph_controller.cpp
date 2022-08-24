@@ -204,7 +204,7 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
     char buffer[k_editableZoneBufferSize];
     Layout endLayout;
     if (step == Step::SecondParameter) {
-      endLayout = EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, false, false);
+      endLayout = EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Off, false);
     } else {
       PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(end, buffer, k_valuesBufferSize, k_valuesPrecision, Preferences::PrintFloatMode::Decimal);
       endLayout = LayoutHelper::String(buffer, strlen(buffer));

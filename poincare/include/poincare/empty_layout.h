@@ -9,17 +9,22 @@ namespace Poincare {
 
 class EmptyLayoutNode /*final*/ : public LayoutNode {
 public:
-  enum class Color {
+  enum class Color : uint8_t {
     Yellow,
     Gray
+  };
+  enum class Visibility : uint8_t {
+    On,
+    Off,
+    Never
   };
 
   // Layout
   Type type() const override { return Type::EmptyLayout; }
 
-  EmptyLayoutNode(Color color = Color::Yellow, bool visible = true, bool margins = true) :
+  EmptyLayoutNode(Color color = Color::Yellow, Visibility visible = Visibility::On, bool margins = true) :
     LayoutNode(),
-    m_isVisible(visible),
+    m_visibility(visible),
     m_color(color),
     m_margins(margins)
   {}
@@ -27,8 +32,8 @@ public:
   // EmptyLayout
   Color color() const { return m_color; }
   void setColor(Color color) { m_color = color; }
-  bool isVisible() const { return m_isVisible; }
-  void setVisible(bool visible) { m_isVisible = visible; }
+  bool isVisible() const { return m_visibility == Visibility::On; }
+  void setVisible(bool visible);
 
   // LayoutNode
   void deleteBeforeCursor(LayoutCursor * cursor) override;
@@ -68,7 +73,7 @@ private:
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   bool protectedIsIdenticalTo(Layout l) override;
 
-  bool m_isVisible;
+  Visibility m_visibility;
   Color m_color;
   bool m_margins;
 };
@@ -76,7 +81,7 @@ private:
 class EmptyLayout final : public Layout {
 public:
   EmptyLayout(const EmptyLayoutNode * n);
-  static EmptyLayout Builder(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, bool visible = true, bool margins = true);
+  static EmptyLayout Builder(EmptyLayoutNode::Color color = EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility visible = EmptyLayoutNode::Visibility::On, bool margins = true);
   void setVisible(bool visible) {
     node()->setVisible(visible);
   }

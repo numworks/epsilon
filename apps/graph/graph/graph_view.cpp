@@ -91,7 +91,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
       /* We check if e can be discontinuous to avoid recomputing discontinuity
        * at each drawn dot of the curve when we are sure that the function
        * can never be discontinuous. */
-      CurveView::EvaluateDiscontinuityBetweenFloatValues discontinuityEvaluation = e.involvesDiscontinuousFunction(context()) ? FonctionIsDiscontinuousBetweenFloatValues : CurveView::DefaultEvaluateDiscontinuityBetweenFloatValues;
+      CurveView::EvaluateDiscontinuityBetweenFloatValues discontinuityEvaluation = e.involvesDiscontinuousFunction(context()) ? FonctionIsDiscontinuousBetweenFloatValues : CurveView::NoPotentialDiscontinuity;
       if (type == ContinuousFunction::PlotType::Polar) {
         // Polar
         assert(!std::isnan(tStepNonCartesian));

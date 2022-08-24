@@ -31,7 +31,7 @@ void DistributionCurveView::drawRect(KDContext * ctx, KDRect rect) const {
   }
   if (m_distribution->isContinuous()) {
     drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, m_distribution, nullptr,
-                       Palette::YellowDark, CurveView::DefaultEvaluateDiscontinuityBetweenFloatValues, true, true, Palette::YellowDark, lowerBound, upperBound);
+                       Palette::YellowDark, CurveView::NoPotentialDiscontinuity, true, true, Palette::YellowDark, lowerBound, upperBound);
   } else {
     drawHistogram(ctx, rect, EvaluateAtAbscissa, m_distribution, nullptr, 0, 1, false, Palette::GrayMiddle,
                   Palette::YellowDark, 0, KDColorBlack, lowerBound, upperBound + 0.5f);
@@ -64,7 +64,7 @@ void DistributionCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, flo
   // Draw a centered reduced normal curve
   NormalDistribution n;
   constCastedThis->setCurveViewRange(&n);
-  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, &n, nullptr, Palette::YellowDark, CurveView::DefaultEvaluateDiscontinuityBetweenFloatValues, true, true, Palette::YellowDark,
+  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, EvaluateXYAtAbscissa, &n, nullptr, Palette::YellowDark, CurveView::NoPotentialDiscontinuity, true, true, Palette::YellowDark,
                      pixelToFloat(Axis::Horizontal, colorLowerBoundPixel),
                      pixelToFloat(Axis::Horizontal, colorUpperBoundPixel));
 

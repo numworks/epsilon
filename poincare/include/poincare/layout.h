@@ -29,7 +29,7 @@ public:
 
   // Properties
   LayoutNode::Type type() const { return node()->type(); }
-  bool isIdenticalTo(Layout l) { return isUninitialized() ? l.isUninitialized() : node()->isIdenticalTo(l); }
+  bool isIdenticalTo(Layout l, bool makeEditable = false) { return isUninitialized() ? l.isUninitialized() : node()->isIdenticalTo(l, makeEditable); }
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = Escher::Palette::Select) {

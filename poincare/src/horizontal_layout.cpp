@@ -1,4 +1,5 @@
 #include <poincare/horizontal_layout.h>
+#include <poincare/autocompleted_bracket_pair_layout.h>
 #include <poincare/empty_layout.h>
 #include <poincare/layout_helper.h>
 #include <poincare/nth_root_layout.h>
@@ -363,6 +364,14 @@ void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * curso
   }
 }
 
+static void makePermanentIfBracket(LayoutNode * l) {
+  if (l->type() == LayoutNode::Type::ParenthesisLayout || l->type() == LayoutNode::Type::CurlyBraceLayout) {
+    AutocompletedBracketPairLayoutNode * bracket = static_cast<AutocompletedBracketPairLayoutNode *>(l);
+    bracket->makePermanent(AutocompletedBracketPairLayoutNode::Side::Left);
+    bracket->makePermanent(AutocompletedBracketPairLayoutNode::Side::Right);
+  }
+}
+
 bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) {
   if (oldChild == newChild) {
     return false;
@@ -446,6 +455,7 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
     return false;
   }
   // Else, just replace the child.
+  makePermanentIfBracket(newChild);
   if (cursor != nullptr && !oldWasAncestorOfNewLayout) {
     cursor->setPosition(LayoutCursor::Position::Right);
   }
@@ -482,6 +492,7 @@ void HorizontalLayout::addChildAtIndex(Layout l, int index, int currentNumberOfC
       || (index < numberOfChildren()
         && childAtIndex(index).mustHaveLeftSibling()))
   {
+    makePermanentIfBracket(l.node());
     Layout::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }
 }
@@ -542,7 +553,9 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
           && childAtIndex(0).mustHaveLeftSibling())
         || (i < childrenNumber-1 && h.childAtIndex(i+1).mustHaveLeftSibling()))
     {
-      addChildAtIndexInPlace(h.childAtIndex(i), newIndex, numberOfChildren());
+      Layout c = h.childAtIndex(i);
+      makePermanentIfBracket(c.node());
+      addChildAtIndexInPlace(c, newIndex, numberOfChildren());
       if (firstAddedChild) {
         childAtIndex(newIndex).node()->setMargin(margin);
       }

@@ -84,10 +84,13 @@ KDCoordinate TableView::ContentView::width() const {
   return result ? result : m_tableView->maxContentWidthDisplayableWithoutScrolling();
 }
 
-void TableView::ContentView::reloadCellAtLocation(int i, int j) {
+void TableView::ContentView::reloadCellAtLocation(int i, int j, bool forceSetFrame) {
   HighlightCell * cell = cellAtLocation(i, j);
   if (cell) {
     m_dataSource->willDisplayCellAtLocation(cell, i, j);
+    if (forceSetFrame) {
+      cell->setFrame(cellFrame(i,j), true);
+    }
   }
 }
 

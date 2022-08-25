@@ -157,13 +157,31 @@ HighlightCell * SelectableTableView::selectedCell() {
   return cellAtLocation(selectedColumn(), selectedRow());
 }
 
+int SelectableTableView::skipNonSelectableRows(int delta) {
+  int row = selectedRow();
+  int step = delta > 0 ? 1 : -1;
+  while (delta) {
+    row += step;
+    if (row < 0) {
+      return 0;
+    }
+    if (row >= dataSource()->numberOfRows()) {
+      return dataSource()->numberOfRows() - 1;
+    }
+    if (cellAtLocation(selectedColumn(), row)->isSelectable()) {
+      delta -= step;
+    }
+  }
+  return row;
+}
+
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   int step = Ion::Events::longPressFactor();
   if (event == Ion::Events::Down) {
-    return selectCellAtClippedLocation(selectedColumn(), selectedRow() + step);
+    return selectCellAtClippedLocation(selectedColumn(), skipNonSelectableRows(step));
   }
   if (event == Ion::Events::Up) {
-    return selectCellAtClippedLocation(selectedColumn(), selectedRow() - step);
+    return selectCellAtClippedLocation(selectedColumn(), skipNonSelectableRows(-step));
   }
   if (event == Ion::Events::Left) {
     return selectCellAtClippedLocation(selectedColumn() - step, selectedRow());

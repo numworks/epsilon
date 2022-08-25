@@ -13,6 +13,7 @@ class HighlightCell : public View {
 public:
   HighlightCell();
 
+  virtual bool isSelectable() { return true; }
   virtual void setHighlighted(bool highlight);
   virtual void reloadCell();
   virtual Responder * responder() { return nullptr; }

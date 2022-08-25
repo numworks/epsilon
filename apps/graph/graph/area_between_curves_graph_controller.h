@@ -13,6 +13,7 @@ public:
   void setSecondRecord(Ion::Storage::Record record);
 private:
   Poincare::Layout createFunctionLayout(Shared::ExpiringPointer<Shared::Function> function) override;
+  void makeCursorVisible() override;
   Ion::Storage::Record m_secondRecord;
 };
 

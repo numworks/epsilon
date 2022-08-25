@@ -38,7 +38,9 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
     }
     stack->push(intervalSelectorController);
     return true;
-  }, this), k_font)
+  }, this), k_font),
+  m_lastExactValueCellComputedRow(-1),
+  m_lastExactValueCellComputedColumn(-1)
 {
   for (int i = 0; i < k_maxNumberOfDisplayableFunctions; i++) {
     m_functionTitleCells[i].setFont(KDFont::Size::Small);
@@ -50,6 +52,8 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
 
 void ValuesController::viewDidDisappear() {
   m_exactValueCell.setLayouts(Layout(), Layout());
+  m_lastExactValueCellComputedRow = -1;
+  m_lastExactValueCellComputedColumn = -1;
   Shared::ValuesController::viewDidDisappear();
 }
 
@@ -76,9 +80,15 @@ int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
   return TableViewDataSource::indexFromCumulatedWidth(offsetX);
 }
 
+KDCoordinate ValuesController::exactCellHeight() {
+  // For now, Shared::ValuesController::rowHeight always return 20
+  return std::max(m_exactValueCell.minimalSizeForOptimalDisplay().height(), Shared::ValuesController::rowHeight(-1));
+}
+
+
 KDCoordinate ValuesController::rowHeight(int j) {
   if (j == selectedRow() && typeAtLocation(selectedColumn(), j) == k_exactValueCellType) {
-    return std::max(m_exactValueCell.minimalSizeForOptimalDisplay().height(), Shared::ValuesController::rowHeight(j));
+    return exactCellHeight();
   }
   return Shared::ValuesController::rowHeight(j);
 }
@@ -179,15 +189,22 @@ void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int 
     return;
   }
   const int i = selectedColumn();
-  const int j = selectedRow();
+  int j = selectedRow();
   const int numberOfElementsInCol = numberOfElementsInColumn(i);
   if (j > 1 + numberOfElementsInCol) {
     selectCellAtLocation(i, 1 + numberOfElementsInCol);
+    j = 1 + numberOfElementsInCol;
   }
 
-  if (typeAtLocation(i, j) == k_exactValueCellType || typeAtLocation(previousSelectedCellX, previousSelectedCellY) == k_notEditableValueCellType) {
-    /* The exact value cell changed layouts or was deselected so we reload the
-     * whole table.
+  KDCoordinate previousRowHeight = m_lastExactValueCellComputedRow == previousSelectedCellY && m_lastExactValueCellComputedColumn == previousSelectedCellX ? exactCellHeight() : rowHeight(previousSelectedCellY);
+
+  // Re-frame the cell because its size could change after recomputing layouts
+  t->reloadCellAtLocation(previousSelectedCellX, previousSelectedCellY, true);
+  t->reloadCellAtLocation(i, j, true);
+
+  if (Shared::ValuesController::rowHeight(j) != rowHeight(j) || previousRowHeight != rowHeight(previousSelectedCellY)) {
+    /* The current or the previous selected cell changed its row height.
+     * Reload the whole table.
      * Set false to the second parameter so that the table is not deselected */
     t->reloadData(true, false);
   }
@@ -364,7 +381,20 @@ void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
   }
 }
 
+void ValuesController::didChangeCell(int column, int row) {
+  if (m_lastExactValueCellComputedRow == row || m_lastExactValueCellComputedColumn == column) {
+    m_lastExactValueCellComputedRow = -1;
+    m_lastExactValueCellComputedColumn = -1;
+  }
+  Shared::ValuesController::didChangeCell(column, row);
+}
+
 Poincare::Layout ValuesController::exactValueLayout(int column, int row) {
+  if (m_lastExactValueCellComputedColumn == column && m_lastExactValueCellComputedRow == row) {
+    return m_exactValueCell.exactLayout();
+  }
+  m_lastExactValueCellComputedColumn = column;
+  m_lastExactValueCellComputedRow = row;
   double abscissa;
   bool isDerivative = false;
   Shared::ExpiringPointer<ContinuousFunction> function = functionAtIndex(column, row, &abscissa, &isDerivative);

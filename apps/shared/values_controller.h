@@ -61,6 +61,7 @@ protected:
 
   // EditableCellTableViewController
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
+  void didChangeCell(int column, int row) override;
   int numberOfElementsInColumn(int columnIndex) const override;
 
   // Constructor helper
@@ -110,7 +111,6 @@ private:
   // EditableCellTableViewController
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
-  void didChangeCell(int column, int row) override;
   virtual int numberOfValuesColumns() { return functionStore()->numberOfActiveFunctions(); }
   int maxNumberOfElements() const override {
     return Interval::k_maxNumberOfElements;

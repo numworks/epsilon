@@ -77,13 +77,13 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::setDisplayCenter(bo
   layoutSubviews();
 }
 
-Poincare::Layout AbstractScrollableMultipleExpressionsView::ContentCell::layout() const {
-  if (m_selectedSubviewPosition == SubviewPosition::Center) {
+Poincare::Layout AbstractScrollableMultipleExpressionsView::ContentCell::layoutAtPosition(SubviewPosition position) const {
+  if (position == SubviewPosition::Center) {
     return m_centeredExpressionView.layout();
-  } else if (m_selectedSubviewPosition == SubviewPosition::Right) {
+  } else if (position == SubviewPosition::Right) {
     return m_rightExpressionView.layout();
   }
-  assert(m_selectedSubviewPosition == SubviewPosition::Left);
+  assert(position == SubviewPosition::Left);
   assert(leftExpressionView());
   return leftExpressionView()->layout();
 }

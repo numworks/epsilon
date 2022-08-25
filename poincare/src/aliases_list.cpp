@@ -7,11 +7,8 @@ const char * AliasesList::mainAlias() const {
   if (!hasMultipleAliases()) {
     return m_formattedAliasesList;
   }
-  const char * result = m_formattedAliasesList;
-  while (result[0] != k_stringStart) {
-    result++;
-  }
-  return result + 1;
+  assert(m_formattedAliasesList[0] == k_stringStart);
+  return m_formattedAliasesList + 1;
 }
 
 int AliasesList::maxDifferenceWith(const char * alias, int aliasLen) const {

@@ -199,22 +199,19 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bo
       assert(!codePoint.isCombining());
       continue;
     }
-    AutocompletedBracketPairLayoutNode::Side autocompletionSide = AutocompletedBracketPairLayoutNode::Side::Left;
+    AutocompletedBracketPairLayoutNode::Side bracketSide = AutocompletedBracketPairLayoutNode::Side::Left;
     if (codePoint == UCodePointMultiplicationSign) {
       newChild = CodePointLayout::Builder(UCodePointMultiplicationSign);
     } else if (codePoint == '(' || codePoint == UCodePointLeftSystemParenthesis) {
       newChild = ParenthesisLayout::Builder();
-      if (pointedChild.isUninitialized()) {
-        pointedChild = newChild;
-      }
-      autocompletionSide = AutocompletedBracketPairLayoutNode::Side::Right;
     } else if (codePoint == ')' || codePoint == UCodePointRightSystemParenthesis) {
       newChild = ParenthesisLayout::Builder();
+      bracketSide = AutocompletedBracketPairLayoutNode::Side::Right;
     } else if (codePoint == '{') {
       newChild = CurlyBraceLayout::Builder();
-      autocompletionSide = AutocompletedBracketPairLayoutNode::Side::Right;
     } else if (codePoint == '}') {
       newChild = CurlyBraceLayout::Builder();
+      bracketSide = AutocompletedBracketPairLayoutNode::Side::Right;
     } else {
       newChild = CodePointLayout::Builder(codePoint);
     }
@@ -226,7 +223,7 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bo
 
     if (newChild.type() == LayoutNode::Type::ParenthesisLayout || newChild.type() == LayoutNode::Type::CurlyBraceLayout) {
       AutocompletedBracketPairLayoutNode * autocompletedBracket = static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node());
-      autocompletedBracket->makeTemporary(autocompletionSide, this);
+      autocompletedBracket->balanceAfterInsertion(bracketSide, this);
     }
 
     // Get the next code point

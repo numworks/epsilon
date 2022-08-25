@@ -23,7 +23,7 @@ public:
    * requested cell. */
   virtual void scrollToCell(int i, int j) { scrollToContentRect(m_contentView.cellFrame(i, j), true); }
   HighlightCell * cellAtLocation(int i, int j) { return m_contentView.cellAtLocation(i, j); }
-  void reloadCellAtLocation(int i, int j) { m_contentView.reloadCellAtLocation(i, j); }
+  void reloadCellAtLocation(int i, int j, bool forceSetFrame = false) { m_contentView.reloadCellAtLocation(i, j, forceSetFrame); }
   void initSize(KDRect rect);
   void reloadVisibleCellsAtColumn(int column);
 protected:
@@ -40,7 +40,7 @@ protected:
     void setHorizontalCellOverlap(KDCoordinate o) { m_horizontalCellOverlap = o; }
     void setVerticalCellOverlap(KDCoordinate o) { m_verticalCellOverlap = o; }
 
-    void reloadCellAtLocation(int i, int j);
+    void reloadCellAtLocation(int i, int j, bool forceSetFrame);
     HighlightCell * cellAtLocation(int i, int j);
     TableViewDataSource * dataSource() { return m_dataSource; }
     int rowsScrollingOffset() const;

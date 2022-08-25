@@ -142,7 +142,7 @@ void ListSequenceLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size fon
   KDPoint leftBracePosition = CurlyBraceLayoutNode::PositionGivenChildHeightAndBaseline(true, functionSize, functionBaseline).translatedBy(functionPosition);
   CurlyBraceLayoutNode::RenderWithChildHeight(true, functionSize.height(), ctx, leftBracePosition.translatedBy(p), expressionColor, backgroundColor);
 
-  KDPoint rightBracePosition = CurlyBraceLayoutNode::PositionGivenChildHeightAndBaseline(true, functionSize, functionBaseline).translatedBy(functionPosition);
+  KDPoint rightBracePosition = CurlyBraceLayoutNode::PositionGivenChildHeightAndBaseline(false, functionSize, functionBaseline).translatedBy(functionPosition);
   CurlyBraceLayoutNode::RenderWithChildHeight(false, functionSize.height(), ctx, rightBracePosition.translatedBy(p), expressionColor, backgroundColor);
 
   // Draw k≤...

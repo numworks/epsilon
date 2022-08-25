@@ -37,6 +37,7 @@ public:
   void reloadScroll();
   bool handleEvent(Ion::Events::Event event) override;
   Poincare::Layout layout() const { return constContentCell()->layout(); }
+  Poincare::Layout layoutAtPosition(SubviewPosition position) const { return constContentCell()->layoutAtPosition(position); }
   KDCoordinate baseline() const { return constContentCell()->baseline(); }
 protected:
   class ContentCell : public Escher::EvenOddCell {
@@ -72,7 +73,8 @@ protected:
     void setDisplayableCenter(bool displayable) {m_displayableCenter = displayable;}
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
-    Poincare::Layout layout() const override;
+    Poincare::Layout layout() const override { return layoutAtPosition(m_selectedSubviewPosition); }
+    Poincare::Layout layoutAtPosition(SubviewPosition position) const;
     KDCoordinate baseline(KDCoordinate * leftBaseline = nullptr, KDCoordinate * centerBaseline = nullptr, KDCoordinate * rightBaseline = nullptr) const;
     void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame);
   private:

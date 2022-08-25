@@ -40,4 +40,17 @@ Layout AreaBetweenCurvesGraphController::createFunctionLayout(ExpiringPointer<Sh
   return LayoutHelper::String(buffer, strlen(buffer));
 }
 
+void AreaBetweenCurvesGraphController::makeCursorVisible() {
+  float position = m_cursor->x();
+  ExpiringPointer<Shared::Function> functionF = FunctionApp::app()->functionStore()->modelForRecord(m_record);
+  float yF = functionF->evaluateXYAtParameter(position, FunctionApp::app()->localContext()).x2();
+  // Do not zoom out if user is selecting first parameter
+  makeDotVisible(position, yF, m_step != Step::FirstParameter);
+  assert(!m_secondRecord.isNull());
+  ExpiringPointer<Shared::Function> functionG = FunctionApp::app()->functionStore()->modelForRecord(m_secondRecord);
+  float yG = functionG->evaluateXYAtParameter(position, FunctionApp::app()->localContext()).x2();
+  // zoomOut is always true so that the user can see both dots
+  makeDotVisible(position, yG, true);
+}
+
 }

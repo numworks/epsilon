@@ -23,6 +23,9 @@ public:
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 protected:
   virtual bool moveCursorHorizontallyToPosition(double position);
+  void makeCursorVisibleAndReload();
+  virtual void makeCursorVisible();
+  void makeDotVisible(float x, float y, bool zoomOut);
   enum class Step {
     FirstParameter = 0,
     SecondParameter = 1,

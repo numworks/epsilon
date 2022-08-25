@@ -32,10 +32,8 @@ void SumGraphController::viewWillAppear() {
   m_graphView->selectMainView(true);
   m_graphView->setAreaHighlightColor(false);
   m_graphView->setAreaHighlight(NAN, NAN);
-  m_graphView->reload();
-
   m_step = Step::FirstParameter;
-  reloadBannerView();
+  makeCursorVisibleAndReload();
 }
 
 void SumGraphController::didEnterResponderChain(Responder * previousFirstResponder) {
@@ -86,10 +84,31 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
     m_graphView->setAreaHighlight(m_startSum, m_cursor->x());
   }
   m_legendView.setEditableZone(m_cursor->x());
-  m_graphRange->zoomOutToMakePointVisible(x, y, cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
-  m_graphRange->zoomOutToMakePointVisible(x, 0, cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
-  m_graphView->reload();
+  makeCursorVisibleAndReload();
   return true;
+}
+
+void SumGraphController::makeCursorVisibleAndReload() {
+  makeCursorVisible();
+  reloadBannerView();
+  m_graphView->reload();
+}
+void SumGraphController::makeCursorVisible() {
+  float position = m_cursor->x();
+  ExpiringPointer<Function> function = FunctionApp::app()->functionStore()->modelForRecord(m_record);
+  float y = function->evaluateXYAtParameter(position, FunctionApp::app()->localContext()).x2();
+  // Do not zoom out if user is selecting first parameter
+  makeDotVisible(position, y, m_step != Step::FirstParameter);
+  // zoomOut is always true so that the user can see both dots
+  makeDotVisible(position, 0.0, true);
+}
+
+void SumGraphController::makeDotVisible(float x, float y, bool zoomOut) {
+  if (zoomOut) {
+    m_graphRange->zoomOutToMakePointVisible(x, y, cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
+  } else {
+    m_graphRange->panToMakePointVisible(x, y, cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
+  }
 }
 
 void SumGraphController::setRecord(Ion::Storage::Record record) {

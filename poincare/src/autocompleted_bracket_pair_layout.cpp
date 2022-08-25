@@ -5,6 +5,19 @@
 
 namespace Poincare {
 
+bool AutocompletedBracketPairLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
+  Side insertionSide;
+  if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
+    insertionSide = Side::Right;
+  } else if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Left))) {
+    insertionSide = Side::Left;
+  } else {
+    return BracketPairLayoutNode::willAddSibling(cursor, sibling, moveCursor);
+  }
+  makePermanent(insertionSide);
+  return true;
+}
+
 void AutocompletedBracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   Side deletionSide;
   if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
@@ -93,7 +106,7 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
   HorizontalLayout newChild = HorizontalLayout::Builder();
   Layout oldChild = Layout(childLayout());
   thisRef.replaceChild(oldChild, newChild, cursor);
-  newChild.addOrMergeChildAtIndex(oldChild, 0, true, cursor);
+  newChild.addOrMergeChildAtIndex(oldChild, 0, false, cursor);
 
   int injectionIndex, removalStart, removalEnd;
   if (side == Side::Left) {
@@ -150,7 +163,20 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
   if (thisIndex < parentRef.numberOfChildren() - 1) {
     return LayoutCursor(parentRef.childAtIndex(thisIndex + 1), LayoutCursor::Position::Left);
   }
-  return LayoutCursor(childRef, LayoutCursor::Position::Left);
+  return LayoutCursor(childBypassHorizontalLayout(childRef, 0), LayoutCursor::Position::Left);
+}
+
+void AutocompletedBracketPairLayoutNode::makePermanent(Side side) {
+  if (!isTemporary(side)) {
+    return;
+  }
+  int childIndex = side == Side::Left ? 0 : childLayout()->numberOfChildren() - 1;
+  Layout child = childBypassHorizontalLayout(Layout(childLayout()), childIndex);
+  if (isAutocompletedBracket(child)) {
+    AutocompletedBracketPairLayoutNode * bracket = static_cast<AutocompletedBracketPairLayoutNode *>(child.node());
+    bracket->makePermanent(side);
+  }
+  m_status &= ~MaskForSide(side);
 }
 
 }

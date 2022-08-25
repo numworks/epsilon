@@ -19,10 +19,12 @@ public:
   size_t size() const override { return sizeof(AutocompletedBracketPairLayoutNode); }
 
   // LayoutNode
+  bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
 
   bool isTemporary(Side side) const { return m_status & MaskForSide(side); }
   void balanceAfterInsertion(Side insertedSide, LayoutCursor * cursor);
+  void makePermanent(Side side);
 
 protected:
   KDColor bracketColor(Side side, KDColor fg, KDColor bg) const { return isTemporary(side) ? KDColor::blend(fg, bg, k_temporaryBlendAlpha) : fg; }

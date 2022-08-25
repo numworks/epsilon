@@ -15,14 +15,14 @@
  * === ALIASES LIST SYNTAX ===
  * If a name has aliases, they are all stored in one char list, with a special
  * syntax.
- * Each string of the list starts with \01 and ends with \00
- * The aliases list ends with an other \00
+ * The list starts with \01 and ends with a double \00
+ * Each string of the list is separated by a \00
  *
  * Example:
  * arccos and acos are aliases for the arccos function.
- * |\01|a|r|c|c|o|s|\00|\01|a|c|o|s|\00|\00|
- *  ^start of alias1    ^start of alias2 ^end of aliases list
- *        ^         ^end of alias 1 ^end of alias2
+ * |\01|a|r|c|c|o|s|\00|a|c|o|s|\00|\00|
+ *  ^start of list              ^end of alias2
+ *                  ^end of alias1  ^end of aliases list
  *
  * === MAIN ALIAS ===
  * The main alias is the name outputted by the calculator. For example, the main
@@ -70,9 +70,9 @@ public:
   }
 
 private:
-  constexpr static char k_stringStart = '\01';
+  constexpr static char k_listStart = '\01';
 
-  bool hasMultipleAliases() const { return m_formattedAliasesList[0] == k_stringStart; }
+  bool hasMultipleAliases() const { return m_formattedAliasesList[0] == k_listStart; }
   // Returns nullptr if there is no next name
   const char * nextAlias(const char * currentPositionInAliasesList) const;
 
@@ -81,15 +81,15 @@ private:
 
 namespace AliasesLists {
   // Special identifiers
-  constexpr static AliasesList k_ansAliases = "\01Ans\00\01ans\00";
+  constexpr static AliasesList k_ansAliases = "\01Ans\00ans\00";
   // Constants
-  constexpr static AliasesList k_piAliases = "\01π\00\01pi\00";
+  constexpr static AliasesList k_piAliases = "\01π\00pi\00";
   // Units
-  constexpr static AliasesList k_litersAliases = "\01L\00\01l\00";
+  constexpr static AliasesList k_litersAliases = "\01L\00l\00";
   // Inverse trigo
-  constexpr static AliasesList k_acosAliases = "\01arccos\00\01acos\00";
-  constexpr static AliasesList k_asinAliases = "\01arcsin\00\01asin\00";
-  constexpr static AliasesList k_atanAliases = "\01arctan\00\01atan\00";
+  constexpr static AliasesList k_acosAliases = "\01arccos\00acos\00";
+  constexpr static AliasesList k_asinAliases = "\01arcsin\00asin\00";
+  constexpr static AliasesList k_atanAliases = "\01arctan\00atan\00";
 }
 
 }

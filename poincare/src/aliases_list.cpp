@@ -7,7 +7,7 @@ const char * AliasesList::mainAlias() const {
   if (!hasMultipleAliases()) {
     return m_formattedAliasesList;
   }
-  assert(m_formattedAliasesList[0] == k_stringStart);
+  assert(m_formattedAliasesList[0] == k_listStart);
   return m_formattedAliasesList + 1;
 }
 
@@ -34,11 +34,10 @@ const char * AliasesList::nextAlias(const char * currentPositionInAliasesList) c
   }
   assert(strlen(currentPositionInAliasesList) != 0);
   const char * beginningOfNextAlias = currentPositionInAliasesList + strlen(currentPositionInAliasesList) + 1;
-  if (beginningOfNextAlias[0] != k_stringStart) {
-    assert(beginningOfNextAlias[0] == 0);
+  if (beginningOfNextAlias[0] == 0) {
     return nullptr; // End of list
   }
-  return beginningOfNextAlias + 1; // Skip string start char
+  return beginningOfNextAlias;
 }
 
 }

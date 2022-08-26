@@ -34,5 +34,5 @@ void assertionAbort(const char * expression, const char * file, int line) {
   buffer[length] = '\0';
   Ion::Console::writeLine(buffer);
 
-  while (1);
+  while (true);
 }

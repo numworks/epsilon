@@ -325,6 +325,14 @@ bool Expression::isDivisionOfIntegers() const {
   return type() == ExpressionNode::Type::Division && childAtIndex(0).type() == ExpressionNode::Type::BasedInteger && childAtIndex(1).type() == ExpressionNode::Type::BasedInteger;
 }
 
+bool Expression::isAlternativeFormOfRationalNumber() const {
+  return type() == ExpressionNode::Type::Rational
+        || type() == ExpressionNode::Type::BasedInteger
+        || type() == ExpressionNode::Type::Decimal
+        || (type() == ExpressionNode::Type::Division && childAtIndex(0).isAlternativeFormOfRationalNumber() && childAtIndex(1).isAlternativeFormOfRationalNumber())
+        || (type() == ExpressionNode::Type::Opposite && childAtIndex(0).isAlternativeFormOfRationalNumber());
+}
+
 bool Expression::hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, float * returnRealPart, float * returnImagPart) const {
   if (complexFormat == Preferences::ComplexFormat::Real) {
     return false;
@@ -603,12 +611,18 @@ bool Expression::containsSameDependency(const Expression e, const ExpressionNode
 }
 
 bool Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(Expression exactExpression, Expression approximateExpression) {
-  if (exactExpression.type() == ExpressionNode::Type::Division && approximateExpression.type() == ExpressionNode::Type::Decimal && exactExpression.childAtIndex(0).type() == ExpressionNode::Type::BasedInteger && exactExpression.childAtIndex(1).type() == ExpressionNode::Type::BasedInteger) {
+  if (approximateExpression.isAlternativeFormOfRationalNumber() && exactExpression.isAlternativeFormOfRationalNumber()) {
+    /* The only case of exact and approximate expressions being different
+    * but still equal, is when a rational is equal to a decimal.
+    * Ex: 1/2 == 0.5 */
     ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext();
     Expression exp0 = exactExpression.clone().deepReduce(reductionContext);
     Expression exp1 = approximateExpression.clone().deepReduce(reductionContext);
     return exp0.isIdenticalTo(exp1);
   }
+  /* Check deeply for equality, because the expression can be a list, a matrix
+   * or a complex composed of rationals.
+   * Ex: i/2 == 0.5i */
   if (exactExpression.type() == approximateExpression.type()
       && exactExpression.numberOfChildren() == approximateExpression.numberOfChildren()) {
     int nChildren = exactExpression.numberOfChildren();

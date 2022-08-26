@@ -180,6 +180,7 @@ public:
   bool isParameteredExpression() const { return node()->isParameteredExpression(); }
   bool isBasedIntegerCappedBy(const char * integerString) const;
   bool isDivisionOfIntegers() const;
+  bool isAlternativeFormOfRationalNumber() const;
   bool hasDefinedComplexApproximation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, float * returnRealPart = nullptr, float * returnImagPart = nullptr) const;
   bool isCombinationOfUnits() const { return node()->isCombinationOfUnits(); }
 

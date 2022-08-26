@@ -66,26 +66,19 @@ void ListParameterController::tableViewDidChangeSelectionAndDidScroll(Selectable
   }
 }
 
-HighlightCell * ListParameterController::reusableCell(int index, int type) {
-  switch (type) {
-    case k_typeCellType:
-      return &m_typeCell;
-    case k_initialRankCellType:
-      return &m_initialRankCell;
-    default:
-      return Shared::ListParameterController::reusableCell(index, type);
-  }
+HighlightCell * ListParameterController::cell(int index) {
+  assert(0 <= index && index < numberOfRows());
+  HighlightCell * const cells[] = {&m_typeCell, &m_initialRankCell, &m_enableCell, &m_colorCell, &m_deleteCell};
+  return cells[index];
 }
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   cell->setHighlighted(index == selectedRow()); // See FIXME in SelectableTableView::reloadData()
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_typeCell && !m_record.isNull()) {
-    assert(typeAtIndex(index) == k_typeCellType);
     m_typeCell.setLayout(sequence()->definitionName());
   }
   if (cell == &m_initialRankCell && !m_record.isNull()) {
-    assert(typeAtIndex(index) == k_initialRankCellType);
     MessageTableCellWithEditableText * myCell = (MessageTableCellWithEditableText *) cell;
     if (myCell->isEditing()) {
       return;
@@ -96,35 +89,25 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   }
 }
 
-int ListParameterController::typeAtIndex(int index) {
-  if (index == 0) {
-    return k_typeCellType;
-  }
-  if (index == 1) {
-    return k_initialRankCellType;
-  }
-  return Shared::ListParameterController::typeAtIndex(index);
+void ListParameterController::typePressed() {
+  m_typeParameterController.setRecord(m_record);
+  static_cast<StackViewController *>(parentResponder())->push(&m_typeParameterController);
 }
 
-bool ListParameterController::handleEnterOnRow(int rowIndex) {
-  int type = typeAtIndex(rowIndex);
-  switch (type) {
-    case k_typeCellType: {
-      StackViewController * stack = (StackViewController *)(parentResponder());
-      m_typeParameterController.setRecord(m_record);
-      stack->push(&m_typeParameterController);
-      return true;
-    }
-    case k_enableCellType:
-      // Shared::ListParameterController::m_enableCell is selected
-      App::app()->localContext()->resetCache();
-    default:
-      return Shared::ListParameterController::handleEnterOnRow(rowIndex);
-  }
+void ListParameterController::enableSwitched(bool enable) {
+  App::app()->localContext()->resetCache();
+  Shared::ListParameterController::enableSwitched(enable);
 }
 
-bool ListParameterController::rightEventIsEnterOnType(int type) {
-  return type == k_typeCellType || Shared::ListParameterController::rightEventIsEnterOnType(type);
+bool ListParameterController::handleEvent(Ion::Events::Event event) {
+  HighlightCell * cell = selectedCell();
+  if (cell == &m_typeCell) {
+    return m_typeCell.handleEvent(event, this, &ListParameterController::typePressed);
+  }
+  if (cell == &m_enableCell) {
+    return m_enableCell.handleEvent(event, this, &ListParameterController::enableSwitched);
+  }
+  return Shared::ListParameterController::handleEvent(event);
 }
 
 }

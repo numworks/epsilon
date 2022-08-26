@@ -13,15 +13,18 @@ public:
   RingBuffer() : m_start(0), m_length(0) {}
 
   void push(T element) {
-    assert(length() < N);
-    m_length++;
-    m_stack[lastElementIndex()] = element;
+    m_stack[nextElementIndex()] = element;
+    if (length() < N) {
+      m_length++;
+    } else {
+      m_start = (m_start + 1) % N;
+    }
   }
 
   T stackPop() {
     assert(length() > 0);
-    T res = m_stack[lastElementIndex()];
     m_length--;
+    T res = m_stack[nextElementIndex()];
     return res;
   }
 
@@ -51,8 +54,8 @@ public:
   void reset() { m_length = 0; }
 
 private:
-  int lastElementIndex() const {
-    return (m_start + length() - 1) % N;
+  int nextElementIndex() const {
+    return (m_start + length()) % N;
   }
 
   T m_stack[N];

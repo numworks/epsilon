@@ -21,13 +21,10 @@ void resetMemoizedState() {
 
 void keyboardWasScanned(State state) {
   /* OnOff, Home and Back are the only keyboard keys which are preemptive.
-   * The states are pushed on a queue and popped one at a time.
-   * If the device is stalling, we do not queue the event to avoid a delayed
-   * reaction. */
-  Ion::Keyboard::Queue * queue = Ion::Keyboard::Queue::sharedQueue();
-  if (state != sState && !queue->isFull()) {
+   * The states are pushed on a queue and popped one at a time. */
+  if (state != sState) {
     Events::setPendingKeyboardStateIfPreemtive(state);
-    queue->push(state);
+    Queue::sharedQueue()->push(state);
     sState = state;
   }
 }

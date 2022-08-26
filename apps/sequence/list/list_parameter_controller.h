@@ -27,15 +27,14 @@ public:
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // MemoizedListViewDataSource
-  Escher::HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * cell(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int numberOfRows() const override { return numberOfNonInheritedCells() + Shared::ListParameterController::numberOfRows(); }
-  int typeAtIndex(int index) override;
 private:
-  constexpr static int k_typeCellType = k_numberOfSharedCells;
-  constexpr static int k_initialRankCellType = k_typeCellType + 1;
-  bool handleEnterOnRow(int rowIndex) override;
-  bool rightEventIsEnterOnType(int type) override;
+  void typePressed();
+  void initialRankChanged(int value);
+  void enableSwitched(bool enable);
+  bool handleEvent(Ion::Events::Event event) override;
   int numberOfNonInheritedCells() const { return 2; } // number of non inherited cells
   Shared::Sequence * sequence() { return static_cast<Shared::Sequence *>(function().pointer()); }
   Escher::MessageTableCellWithChevronAndExpression m_typeCell;

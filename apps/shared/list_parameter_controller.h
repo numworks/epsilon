@@ -30,16 +30,14 @@ protected:
   constexpr static int k_numberOfSharedCells = 3;
   FunctionStore * functionStore();
   ExpiringPointer<Function> function();
+  void enableSwitched(bool enable);
+  void colorPressed();
+  void deletePressed();
   Escher::MessageTableCellWithMessageWithSwitch m_enableCell;
   Escher::MessageTableCellWithChevronAndMessage m_colorCell;
   Escher::MessageTableCell m_deleteCell;
   Ion::Storage::Record m_record;
 private:
-  void enableSwitched(bool enable);
-  void colorPressed();
-  void deletePressed();
-  // Return index of shared cell from row number
-  int sharedCellIndex(int j);
   ColorParameterController m_colorParameterController;
 };
 

@@ -83,12 +83,6 @@ void ListParameterController::deletePressed() {
   stack->pop();
 }
 
-int ListParameterController::sharedCellIndex(int j) {
-  // Shared::ListParameterController rows are always placed last
-  assert(j >= numberOfRows() - k_numberOfSharedCells && j < numberOfRows());
-  return j - (numberOfRows() - k_numberOfSharedCells);
-}
-
 ExpiringPointer<Function> ListParameterController::function() {
   return functionStore()->modelForRecord(m_record);
 }

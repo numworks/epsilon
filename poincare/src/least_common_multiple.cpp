@@ -38,11 +38,11 @@ Expression LeastCommonMultiple::shallowBeautify(Context * context) {
   return *this;
 }
 
-Expression LeastCommonMultiple::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression LeastCommonMultiple::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

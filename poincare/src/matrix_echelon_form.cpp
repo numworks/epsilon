@@ -35,11 +35,11 @@ Evaluation<T> MatrixEchelonFormNode::templatedApproximate(const ApproximationCon
 }
 
 
-Expression MatrixEchelonForm::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression MatrixEchelonForm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

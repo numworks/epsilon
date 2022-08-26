@@ -78,11 +78,11 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(const Appro
       });
 }
 
-Expression Randint::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Randint::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

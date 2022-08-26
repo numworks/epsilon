@@ -23,7 +23,7 @@ template<typename T> Evaluation<T> ListMedianNode::templatedApproximate(const Ap
   return Complex<T>::Builder(dataset.median());
 }
 
-Expression ListMedian::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ListMedian::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   ExpressionNode::ApproximationContext approximationContext(reductionContext, true);
   ListComplex<double> evaluationArray[2];
   StatisticsDataset<double> dataset = StatisticsDataset<double>::BuildFromChildren(node(), approximationContext, evaluationArray);

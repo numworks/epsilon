@@ -32,11 +32,11 @@ Expression ArcCosecantNode::shallowReduce(const ReductionContext& reductionConte
   return ArcCosecant(this).shallowReduce(reductionContext);
 }
 
-Expression ArcCosecant::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ArcCosecant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

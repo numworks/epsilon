@@ -30,7 +30,7 @@ template<typename T> Evaluation<T> ListSumNode::templatedApproximate(const Appro
   return static_cast<ListNode *>(child)->sumOfElements<T>(approximationContext);
 }
 
-Expression ListSum::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ListSum::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();

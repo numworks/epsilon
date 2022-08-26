@@ -41,11 +41,11 @@ Expression CeilingNode::shallowReduce(const ReductionContext& reductionContext) 
 }
 
 
-Expression Ceiling::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Ceiling::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::ExtractUnitsOfFirstChild,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

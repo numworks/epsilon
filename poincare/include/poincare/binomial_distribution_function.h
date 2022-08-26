@@ -18,7 +18,7 @@ private:
 class BinomialDistributionFunction : public Expression {
 public:
   BinomialDistributionFunction(const BinomialDistributionFunctionNode * n) : Expression(n) {}
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext, bool * stopReduction = nullptr);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext, bool * stopReduction = nullptr);
 };
 
 }

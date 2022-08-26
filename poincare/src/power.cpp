@@ -449,11 +449,11 @@ static int indexOfChildWithSquare(Expression e) {
   return -1;
 }
 
-Expression Power::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::KeepUnits,
         SimplificationHelper::MatrixReduction::DefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists
@@ -1149,12 +1149,10 @@ bool Power::derivate(const ExpressionNode::ReductionContext& reductionContext, S
   /* Reduce the derived g, to check for its null status and, if null, prevent
    * using naperian logarithm of f, which rely on the sign of f. Prevent the
    * replacement of any symbols to preserve the local symbols. */
-  ExpressionNode::SymbolicComputation previousSymbolicComputation = reductionContext.symbolicComputation();
   ExpressionNode::ReductionContext childContext = reductionContext;
   childContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
   derivedFromExponent.deepReduceChildren(childContext);
-  childContext.setSymbolicComputation(previousSymbolicComputation);
-  if (derivedFromExponent.childAtIndex(0).nullStatus(childContext.context()) != ExpressionNode::NullStatus::Null) {
+  if (derivedFromExponent.childAtIndex(0).nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null) {
     derivedFromExponent.addChildAtIndexInPlace(NaperianLogarithm::Builder(base.clone()), 1, 1);
     derivedFromExponent.addChildAtIndexInPlace(clone(), 2, 2);
   }
@@ -1165,7 +1163,7 @@ bool Power::derivate(const ExpressionNode::ReductionContext& reductionContext, S
     Subtraction::Builder(exponent.clone(), Rational::Builder(1))
     ), 1, 1);
   derivedFromBase.addChildAtIndexInPlace(base.clone(), 2, 2);
-  derivedFromBase.derivateChildAtIndexInPlace(2, childContext, symbol, symbolValue);
+  derivedFromBase.derivateChildAtIndexInPlace(2, reductionContext, symbol, symbolValue);
 
   Addition result = Addition::Builder(derivedFromBase, derivedFromExponent);
   replaceWithInPlace(result);

@@ -39,11 +39,11 @@ Evaluation<T> VectorDotNode::templatedApproximate(const ApproximationContext& ap
 }
 
 
-Expression VectorDot::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression VectorDot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

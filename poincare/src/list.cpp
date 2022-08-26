@@ -122,7 +122,7 @@ Expression List::Ones(int length) {
 }
 
 
-Expression List::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression List::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   // A list can't contain a matrix or a list
   if (node()->hasMatrixOrListChild(reductionContext.context())) {
     Expression myParent = parent();

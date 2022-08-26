@@ -23,11 +23,11 @@ Expression RealPartNode::shallowReduce(const ReductionContext& reductionContext)
   return RealPart(this).shallowReduce(reductionContext);
 }
 
-Expression RealPart::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression RealPart::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

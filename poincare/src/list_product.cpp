@@ -30,7 +30,7 @@ template<typename T> Evaluation<T> ListProductNode::templatedApproximate(const A
   return static_cast<ListNode*>(child)->productOfElements<T>(approximationContext);
 }
 
-Expression ListProduct::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ListProduct::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();

@@ -80,7 +80,7 @@ class PercentSimple : public ExpressionOneChild<PercentSimple, PercentSimpleNode
 public:
   using ExpressionBuilder::ExpressionBuilder;
   Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 class PercentAddition final : public ExpressionTwoChildren<PercentAddition, PercentAdditionNode, PercentSimple> {

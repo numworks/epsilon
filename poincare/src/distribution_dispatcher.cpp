@@ -59,14 +59,14 @@ Expression DistributionDispatcherNode::shallowReduce(const ReductionContext& red
   return DistributionDispatcher(this).shallowReduce(reductionContext);
 }
 
-Expression DistributionDispatcher::shallowReduce(const ExpressionNode::ReductionContext& reductionContext, bool * stopReduction) {
+Expression DistributionDispatcher::shallowReduce(ExpressionNode::ReductionContext reductionContext, bool * stopReduction) {
   if (stopReduction != nullptr) {
     *stopReduction = true;
   }
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

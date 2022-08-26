@@ -699,7 +699,7 @@ public:
   static bool IsForbiddenTemperatureProduct(Expression e);
 
   // Simplification
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();
 
   bool isBaseUnit() const { return node()->representative()->isBaseUnit() && node()->prefix() == node()->representative()->basePrefix(); }

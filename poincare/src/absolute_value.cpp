@@ -33,11 +33,11 @@ bool AbsoluteValueNode::derivate(const ReductionContext& reductionContext, Symbo
   return AbsoluteValue(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-Expression AbsoluteValue::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::ExtractUnitsOfFirstChild,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

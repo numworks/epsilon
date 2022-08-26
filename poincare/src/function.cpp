@@ -106,7 +106,7 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   return *this;
 }
 
-Expression Function::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }

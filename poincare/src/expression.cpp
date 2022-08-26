@@ -686,15 +686,14 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
   assert(!simplifiedExpression->isUninitialized() && (!approximateExpression || !approximateExpression->isUninitialized()));
 }
 
-Expression Expression::cloneAndSimplify(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Expression::cloneAndSimplify(ExpressionNode::ReductionContext reductionContext) {
   bool reduceFailure = false;
-  ExpressionNode::ReductionContext childReductionContext = reductionContext;
-  Expression e = cloneAndDeepReduceWithSystemCheckpoint(&childReductionContext, &reduceFailure);
+  Expression e = cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
   if (reduceFailure) {
     // We can't beautify unreduced expression
     return e;
   }
-  return e.deepBeautify(childReductionContext);
+  return e.deepBeautify(reductionContext);
 }
 
 void makePositive(Expression * e, bool * isNegative) {
@@ -931,11 +930,10 @@ failure:
   return e;
 }
 
-Expression Expression::cloneAndReduce(const ExpressionNode::ReductionContext& reductionContext) const {
+Expression Expression::cloneAndReduce(ExpressionNode::ReductionContext reductionContext) const {
   // TODO: Ensure all cloneAndReduce usages handle reduction failure.
   bool reduceFailure;
-  ExpressionNode::ReductionContext childReductionContext = reductionContext;
-  return cloneAndDeepReduceWithSystemCheckpoint(&childReductionContext, &reduceFailure);
+  return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
 }
 
 Expression Expression::deepReduce(const ExpressionNode::ReductionContext& reductionContext) {

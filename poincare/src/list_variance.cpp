@@ -22,7 +22,7 @@ template<typename T> Evaluation<T> ListVarianceNode::templatedApproximate(const 
   return Complex<T>::Builder(dataset.variance());
 }
 
-Expression ListVariance::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ListVariance::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   /* var(L) = mean(L^2) - mean(L)^2 */
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
   Expression children[2];

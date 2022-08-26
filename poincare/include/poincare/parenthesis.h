@@ -43,7 +43,7 @@ class Parenthesis final : public ExpressionOneChild<Parenthesis, ParenthesisNode
 public:
   using ExpressionBuilder::ExpressionBuilder;
   // Expression
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

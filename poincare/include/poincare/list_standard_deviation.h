@@ -29,7 +29,7 @@ private:
 class ListStandardDeviation : public ExpressionUpToTwoChildren<ListStandardDeviation, ListStandardDeviationNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

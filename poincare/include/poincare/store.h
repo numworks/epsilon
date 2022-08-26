@@ -45,7 +45,7 @@ public:
   bool isTrulyReducedInShallowReduce() const { return symbol().type() == ExpressionNode::Type::Symbol; }
 
   // Expression
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
 private:
   Expression storeValueForSymbol(Context * context) const;

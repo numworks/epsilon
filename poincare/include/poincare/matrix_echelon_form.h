@@ -32,7 +32,7 @@ private:
 class MatrixEchelonForm : public Expression {
 public:
   MatrixEchelonForm(const MatrixEchelonFormNode * n) : Expression(n) {}
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool isFormReduced() const { return static_cast<MatrixEchelonFormNode *>(node())->isFormReduced(); }
 };
 

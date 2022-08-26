@@ -44,7 +44,7 @@ private:
 class Cosecant final : public ExpressionOneChild<Cosecant, CosecantNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

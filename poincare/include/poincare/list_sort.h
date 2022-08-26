@@ -34,7 +34,7 @@ class ListSort : public ExpressionOneChild<ListSort, ListSortNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
   constexpr static bool k_nanIsGreatest = true;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

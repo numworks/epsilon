@@ -10,14 +10,14 @@ Expression NormalDistributionFunctionNode::shallowReduce(const ReductionContext&
   return NormalDistributionFunction(this).shallowReduce(reductionContext);
 }
 
-Expression NormalDistributionFunction::shallowReduce(const ExpressionNode::ReductionContext& reductionContext, bool * stopReduction) {
+Expression NormalDistributionFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext, bool * stopReduction) {
   if (stopReduction != nullptr) {
     *stopReduction = true;
   }
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

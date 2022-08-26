@@ -115,7 +115,7 @@ Expression PercentSimpleNode::shallowBeautify(const ReductionContext& reductionC
   return PercentSimple(this).shallowBeautify(reductionContext);
 }
 
-Expression PercentSimpleNode::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression PercentSimpleNode::shallowReduce(const ReductionContext& reductionContext) {
   return PercentSimple(this).shallowReduce(reductionContext);
 }
 
@@ -177,7 +177,7 @@ Expression PercentAdditionNode::shallowBeautify(const ReductionContext& reductio
   return PercentAddition(this).shallowBeautify(reductionContext);
 }
 
-Expression PercentAdditionNode::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression PercentAdditionNode::shallowReduce(const ReductionContext& reductionContext) {
   return PercentAddition(this).shallowReduce(reductionContext);
 }
 
@@ -200,11 +200,11 @@ Expression PercentSimple::shallowBeautify(const ExpressionNode::ReductionContext
   return result;
 }
 
-Expression PercentSimple::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression PercentSimple::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists
@@ -237,13 +237,12 @@ Expression PercentAddition::shallowBeautify(const ExpressionNode::ReductionConte
 }
 
 Expression PercentAddition::deepBeautify(const ExpressionNode::ReductionContext& reductionContext) {
-  ExpressionNode::ReductionContext childContext = reductionContext;
-  Expression e = shallowBeautify(childContext);
+  Expression e = shallowBeautify(reductionContext);
   /* Overriding deepBeautify to prevent the shallow reduce of the addition
     * because we need to preserve the order. */
   assert(e.numberOfChildren() == 2);
   Expression child0 = e.childAtIndex(0);
-  child0 = child0.deepBeautify(childContext);
+  child0 = child0.deepBeautify(reductionContext);
   // We add missing Parentheses after beautifying the parent and child
   if (e.node()->childAtIndexNeedsUserParentheses(child0, 0)) {
     e.replaceChildAtIndexInPlace(0, Parenthesis::Builder(child0));
@@ -251,7 +250,7 @@ Expression PercentAddition::deepBeautify(const ExpressionNode::ReductionContext&
   // Skip the Addition's shallowBeautify
   Expression child1 = e.childAtIndex(1);
   assert(child1.type() == ExpressionNode::Type::Addition || child1.type() == ExpressionNode::Type::Subtraction);
-  SimplificationHelper::deepBeautifyChildren(child1, childContext);
+  SimplificationHelper::deepBeautifyChildren(child1, reductionContext);
   // We add missing Parentheses after beautifying the parent and child
   if (e.node()->childAtIndexNeedsUserParentheses(child1, 0)) {
     e.replaceChildAtIndexInPlace(1, Parenthesis::Builder(child1));

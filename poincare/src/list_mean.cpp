@@ -23,7 +23,7 @@ template<typename T> Evaluation<T> ListMeanNode::templatedApproximate(const Appr
   return Complex<T>::Builder(dataset.mean());
 }
 
-Expression ListMean::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ListMean::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
   Expression children[2];
   if (!static_cast<ListFunctionWithOneOrTwoParametersNode *>(node())->getChildrenIfNonEmptyList(children)) {

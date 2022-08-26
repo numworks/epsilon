@@ -72,11 +72,11 @@ Multiplication Factor::createMultiplicationOfIntegerPrimeDecomposition(Integer i
   return m;
 }
 
-Expression Factor::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Factor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

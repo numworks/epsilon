@@ -108,7 +108,7 @@ private:
   DecimalNode * node() const { return static_cast<DecimalNode *>(Number::node()); }
   static Decimal Builder(size_t size, const Integer & m, int e);
   // Simplification
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();
 };
 

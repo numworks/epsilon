@@ -147,14 +147,14 @@ bool Trigonometry::ExpressionIsEquivalentToInverseOfTangent(const Expression & e
   return ExpressionIsTangentOrInverseOfTangent(e, true);
 }
 
-Expression Trigonometry::shallowReduceDirectFunction(Expression & e, const ExpressionNode::ReductionContext& reductionContext) {
+Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
   assert(isDirectTrigonometryFunction(e));
 
   // Step 0. Map on list child if possible
   {
     Expression eReduced = SimplificationHelper::defaultShallowReduce(
         e,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists
@@ -331,13 +331,13 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, const Expre
   return e;
 }
 
-Expression Trigonometry::shallowReduceInverseFunction(Expression & e, const ExpressionNode::ReductionContext& reductionContext) {
+Expression Trigonometry::shallowReduceInverseFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
   assert(isInverseTrigonometryFunction(e));
   // Step 0. Map on list child if possible
   {
     Expression eReduced = SimplificationHelper::defaultShallowReduce(
         e,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists
@@ -457,7 +457,7 @@ Expression Trigonometry::shallowReduceInverseFunction(Expression & e, const Expr
   return e;
 }
 
-Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, const ExpressionNode::ReductionContext& reductionContext) {
+Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
   assert(isAdvancedTrigonometryFunction(e));
   // Step 0. Replace with inverse (^-1) of equivalent direct function.
   Expression result;
@@ -486,7 +486,7 @@ Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, const Exp
   return p.shallowReduce(reductionContext);
 }
 
-Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, const ExpressionNode::ReductionContext& reductionContext) {
+Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
   assert(isInverseAdvancedTrigonometryFunction(e));
   // Step 0. Replace with equivalent inverse function on inverse (^-1) argument
   Power p = Power::Builder(e.childAtIndex(0), Rational::Builder(-1));

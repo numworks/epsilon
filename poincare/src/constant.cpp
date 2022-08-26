@@ -104,7 +104,7 @@ ConstantNode::ConstantInfo Constant::ConstantInfoFromName(const char * name, int
   return ConstantNode::ConstantInfo("", -1);
 }
 
-Expression Constant::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Constant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   ConstantNode::ConstantInfo info = constantInfo();
   if (isConstant("e", info) || isConstant("π", info)) {
     return *this;

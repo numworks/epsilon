@@ -20,7 +20,7 @@ template<typename T> Evaluation<T> ListStandardDeviationNode::templatedApproxima
   return Complex<T>::Builder(dataset.standardDeviation());
 }
 
-Expression ListStandardDeviation::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ListStandardDeviation::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
   Expression children[2];
   if (!static_cast<ListFunctionWithOneOrTwoParametersNode *>(node())->getChildrenIfNonEmptyList(children)) {

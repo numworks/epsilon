@@ -49,7 +49,7 @@ public:
   /* Reduce an expression of the form √(a√b + c√d) */
   static Expression ReduceNestedRadicals(Expression a, Expression b, Expression c, Expression d, const ExpressionNode::ReductionContext& reductionContext);
   static bool SplitRadical(Expression term, Expression * factor, Expression * underRoot);
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

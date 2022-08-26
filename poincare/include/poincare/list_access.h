@@ -40,7 +40,7 @@ public:
   ListElement(const ListAccessNode<1> * n) : Expression(n) {}
   static ListElement Builder(Expression index, Expression list) { return TreeHandle::FixedArityBuilder<ListElement, ListAccessNode<1>>({index, list}); }
 
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 class ListSlice : public Expression {
@@ -48,7 +48,7 @@ public:
   ListSlice(const ListAccessNode<2> * n) : Expression(n) {}
   static ListSlice Builder(Expression firstIndex, Expression lastIndex, Expression list) { return TreeHandle::FixedArityBuilder<ListSlice, ListAccessNode<2>>({firstIndex, lastIndex, list}); }
 
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

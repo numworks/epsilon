@@ -33,11 +33,11 @@ Expression CosecantNode::shallowReduce(const ReductionContext& reductionContext)
   return Cosecant(this).shallowReduce(reductionContext);
 }
 
-Expression Cosecant::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Cosecant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

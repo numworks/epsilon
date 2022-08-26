@@ -81,8 +81,8 @@ Expression OppositeNode::shallowReduce(const ReductionContext& reductionContext)
 
 /* Simplification */
 
-Expression Opposite::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  Expression result = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
+Expression Opposite::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  Expression result = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
   if (!result.isUninitialized()) {
     return result;
   }

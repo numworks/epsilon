@@ -33,11 +33,11 @@ Expression SecantNode::shallowReduce(const ReductionContext& reductionContext) {
   return Secant(this).shallowReduce(reductionContext);
 }
 
-Expression Secant::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Secant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

@@ -50,8 +50,8 @@ Expression SubtractionNode::shallowReduce(const ReductionContext& reductionConte
   return Subtraction(this).shallowReduce(reductionContext);
 }
 
-Expression Subtraction::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
+Expression Subtraction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
   if (!e.isUninitialized()) {
     return e;
   }

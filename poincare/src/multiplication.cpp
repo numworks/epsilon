@@ -667,9 +667,9 @@ bool Multiplication::derivate(const ExpressionNode::ReductionContext& reductionC
   return true;
 }
 
-Expression Multiplication::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
+    Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }

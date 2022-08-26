@@ -26,8 +26,8 @@ Evaluation<T> ParenthesisNode::templatedApproximate(const ApproximationContext& 
   return childAtIndex(0)->approximate(T(), approximationContext);
 }
 
-Expression Parenthesis::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
-  Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
+Expression Parenthesis::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
   if (!e.isUninitialized()) {
     return e;
   }

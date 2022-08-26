@@ -45,7 +45,7 @@ public:
   Dependency(const DependencyNode * n) : Expression(n) {}
   static Dependency Builder(Expression expression, List dependencies = List::Builder()) { return TreeHandle::FixedArityBuilder<Dependency, DependencyNode>({expression, dependencies}); }
 
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
   int numberOfDependencies() const { return childAtIndex(k_indexOfDependenciesList).numberOfChildren(); }
   void addDependency(Expression newDependency);

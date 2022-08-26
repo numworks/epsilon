@@ -37,11 +37,11 @@ Expression DeterminantNode::shallowReduce(const ReductionContext& reductionConte
   return Determinant(this).shallowReduce(reductionContext);
 }
 
-Expression Determinant::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Determinant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

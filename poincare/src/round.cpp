@@ -45,7 +45,7 @@ Evaluation<T> RoundNode::templatedApproximate(const ApproximationContext& approx
       });
 }
 
-Expression Round::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Round::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     if (numberOfChildren() == 2 && childAtIndex(1).hasUnit()) {
       // Number of digits cannot have units
@@ -53,7 +53,7 @@ Expression Round::shallowReduce(const ExpressionNode::ReductionContext& reductio
     }
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::ExtractUnitsOfFirstChild,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

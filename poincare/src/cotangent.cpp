@@ -35,11 +35,11 @@ Expression CotangentNode::shallowReduce(const ReductionContext& reductionContext
   return Cotangent(this).shallowReduce(reductionContext);
 }
 
-Expression Cotangent::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Cotangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

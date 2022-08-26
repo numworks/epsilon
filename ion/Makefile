@@ -43,7 +43,7 @@ ion_device_bench_src += $(addprefix ion/src/shared/, \
 ion_device_bench_src += ion/src/external/lz4/lz4.c
 
 ion_device_kernel_src += $(addprefix ion/src/shared/, \
-  dummy/assert.cpp \
+  console_line.cpp:+kernelassert \
   crc32_eat_byte.cpp \
   decompress.cpp \
   events.cpp \
@@ -51,6 +51,8 @@ ion_device_kernel_src += $(addprefix ion/src/shared/, \
   keyboard.cpp \
   keyboard_queue.cpp \
   layout_events.cpp \
+  unicode/utf8_decoder.cpp:+kernelassert \
+  unicode/utf8_helper.cpp:+kernelassert \
 )
 
 ion_device_kernel_src += ion/src/external/lz4/lz4.c

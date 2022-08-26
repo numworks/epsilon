@@ -8,7 +8,7 @@ using namespace Escher;
 namespace Shared {
 
 ListParameterController::ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, SelectableTableViewDelegate * tableDelegate) :
-  SelectableListViewController(parentResponder, tableDelegate),
+  ExplicitSelectableListViewController(parentResponder, tableDelegate),
   m_enableCell(I18n::Message::ActivateDeactivateListParamTitle, I18n::Message::ActivateDeactivateListParamDescription, true),
   m_deleteCell(deleteFunctionMessage),
   m_colorParameterController(this)
@@ -35,24 +35,11 @@ void ListParameterController::viewWillAppear() {
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_enableCell && !m_record.isNull()) {
-    assert(typeAtIndex(index) == k_enableCellType);
     m_enableCell.setState(function()->isActive());
   }
   if (cell == &m_colorCell) {
     m_colorCell.setMessage(I18n::Message::Color);
     m_colorCell.setSubtitle(ColorNames::NameForColor(function()->color()));
-  }
-}
-
-int ListParameterController::typeAtIndex(int index) {
-  switch (sharedCellIndex(index)) {
-  case 0:
-    return k_enableCellType;
-  case 1:
-    return k_colorCellType;
-  default:
-    assert(sharedCellIndex(index) == 2);
-    return k_deleteCellType;
   }
 }
 
@@ -62,50 +49,44 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && rightEventIsEnterOnType(typeAtIndex(selectedRow())))) {
-    return handleEnterOnRow(selectedRow());
+  HighlightCell * cell = selectedCell();
+  if (cell == &m_enableCell) {
+    return m_enableCell.handleEvent(event, this, &ListParameterController::enableSwitched);
+  }
+  if (cell == &m_colorCell) {
+    return m_colorCell.handleEvent(event, this, &ListParameterController::colorPressed);
+  }
+  if (cell == &m_deleteCell) {
+    return m_deleteCell.handleEvent(event, this, &ListParameterController::deletePressed);
   }
   return false;
+}
+
+void ListParameterController::enableSwitched(bool enable) {
+  function()->setActive(enable);
+  resetMemoization();
+  m_selectableTableView.reloadData();
+}
+
+void ListParameterController::colorPressed() {
+  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+  m_colorParameterController.setRecord(m_record);
+  stack->push(&m_colorParameterController);
+}
+
+void ListParameterController::deletePressed() {
+  assert(functionStore()->numberOfModels() > 0);
+  m_selectableTableView.deselectTable();
+  functionStore()->removeModel(m_record);
+  setRecord(Ion::Storage::Record());
+  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+  stack->pop();
 }
 
 int ListParameterController::sharedCellIndex(int j) {
   // Shared::ListParameterController rows are always placed last
   assert(j >= numberOfRows() - k_numberOfSharedCells && j < numberOfRows());
   return j - (numberOfRows() - k_numberOfSharedCells);
-}
-
-HighlightCell * ListParameterController::reusableCell(int index, int type) {
-  assert(type >= 0);
-  assert(type < k_numberOfSharedCells);
-  HighlightCell * const cells[k_numberOfSharedCells] = {&m_enableCell, &m_colorCell, &m_deleteCell};
-  return cells[type];
-}
-
-bool ListParameterController::handleEnterOnRow(int rowIndex) {
-  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-  switch (typeAtIndex(rowIndex)) {
-    case k_enableCellType:
-      function()->setActive(!function()->isActive());
-      resetMemoization();
-      m_selectableTableView.reloadData();
-      return true;
-    case k_colorCellType:
-      m_colorParameterController.setRecord(m_record);
-      stack->push(&m_colorParameterController);
-      return true;
-    case k_deleteCellType:
-      {
-        assert(functionStore()->numberOfModels() > 0);
-        m_selectableTableView.deselectTable();
-        functionStore()->removeModel(m_record);
-        setRecord(Ion::Storage::Record());
-        StackViewController * stack = (StackViewController *)(parentResponder());
-        stack->pop();
-        return true;
-      }
-    default:
-      return false;
-  }
 }
 
 ExpiringPointer<Function> ListParameterController::function() {

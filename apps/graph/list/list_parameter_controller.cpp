@@ -20,17 +20,11 @@ ListParameterController::ListParameterController(Responder * parentResponder, I1
 {
 }
 
-HighlightCell * ListParameterController::reusableCell(int index, int type) {
-  switch (type) {
-  case k_detailsCellType:
-    assert(displayDetails());
-    return &m_detailsCell;
-  case k_domainCellType:
-    assert(displayDomain());
-    return &m_functionDomain;
-  default:
-    return Shared::ListParameterController::reusableCell(index, type);
-  }
+HighlightCell * ListParameterController::cell(int index) {
+  assert(0 <= index && index < numberOfRows());
+  index += !displayDetails() + !displayDomain(); // Skip hidden cells
+  HighlightCell * const cells[] = {&m_detailsCell, &m_functionDomainCell, &m_enableCell, &m_colorCell, &m_deleteCell};
+  return cells[index];
 }
 
 void ListParameterController::setRecord(Ion::Storage::Record record) {
@@ -58,54 +52,43 @@ int writeInterval(char * buffer, int bufferSize, double min, double max, int num
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
-  if ((cell == &m_detailsCell || cell == &m_functionDomain) && !m_record.isNull()) {
+  if ((cell == &m_detailsCell || cell == &m_functionDomainCell) && !m_record.isNull()) {
     App * myApp = App::app();
     assert(!m_record.isNull());
     Shared::ExpiringPointer<ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);
     if (cell == &m_detailsCell) {
-      assert(typeAtIndex(index) == k_detailsCellType);
       m_detailsCell.setSubtitle(function->plotTypeMessage());
     } else {
-      assert(cell == &m_functionDomain && typeAtIndex(index) == k_domainCellType);
-      m_functionDomain.setMessage(I18n::Message::FunctionDomain);
+      assert(cell == &m_functionDomainCell);
+      m_functionDomainCell.setMessage(I18n::Message::FunctionDomain);
       double min = function->tMin();
       double max = function->tMax();
       constexpr int bufferSize = BufferTextView::k_maxNumberOfChar;
       char buffer[bufferSize];
       writeInterval(buffer, bufferSize, min, max, Preferences::VeryShortNumberOfSignificantDigits, Preferences::sharedPreferences()->displayMode());
       // Cell's layout will adapt to fit the subLabel.
-      m_functionDomain.setSubLabelText(buffer);
+      m_functionDomainCell.setSubLabelText(buffer);
     }
   }
 }
 
-int ListParameterController::typeAtIndex(int index) {
-  if (displayDetails() && index == 0) {
-    return k_detailsCellType;
-  }
-  if (displayDomain() && index == displayDetails()) {
-    return k_domainCellType;
-  }
-  return Shared::ListParameterController::typeAtIndex(index);
+void ListParameterController::detailsPressed() {
+  static_cast<StackViewController *>(parentResponder())->push(&m_detailsParameterController);
 }
 
-bool ListParameterController::handleEnterOnRow(int rowIndex) {
-  StackViewController * stack = (StackViewController *)(parentResponder());
-  int type = typeAtIndex(rowIndex);
-  switch (type) {
-    case k_detailsCellType:
-    stack->push(&m_detailsParameterController);
-    return true;
-  case k_domainCellType:
-    stack->push(&m_domainParameterController);
-    return true;
-  default:
-    return Shared::ListParameterController::handleEnterOnRow(rowIndex);
-  }
+void ListParameterController::functionDomainPressed() {
+  static_cast<StackViewController *>(parentResponder())->push(&m_domainParameterController);
 }
 
-bool ListParameterController::rightEventIsEnterOnType(int type) {
-  return type == k_detailsCellType || type == k_domainCellType || Shared::ListParameterController::rightEventIsEnterOnType(type);
+bool ListParameterController::handleEvent(Ion::Events::Event event) {
+  HighlightCell * cell = selectedCell();
+  if (cell == &m_detailsCell) {
+    return m_detailsCell.handleEvent(event, this, &ListParameterController::detailsPressed);
+  }
+  if (cell == &m_functionDomainCell) {
+    return m_functionDomainCell.handleEvent(event, this, &ListParameterController::functionDomainPressed);
+  }
+  return Shared::ListParameterController::handleEvent(event);
 }
 
 }

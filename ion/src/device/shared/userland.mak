@@ -5,6 +5,7 @@ ion_device_userland_src += $(addprefix ion/src/device/shared/boot/, \
 )
 
 ion_device_userland_src += $(addprefix ion/src/device/shared/drivers/, \
+  assert.cpp \
   board_unprivileged.cpp \
   flash_unprivileged.cpp \
   trampoline.cpp \

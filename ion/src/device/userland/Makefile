@@ -7,7 +7,6 @@ ion_device_userland_src += $(addprefix ion/src/device/userland/drivers/, \
   board_dual_slots.cpp \
   board_ram_dfu_xip.cpp \
   clipboard.cpp \
-  console_display.cpp:+consoledisplay \
   console_dummy.cpp:-consoledisplay \
   external_apps.cpp:+allow3rdparty \
   reset.cpp \

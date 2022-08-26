@@ -16,9 +16,9 @@ namespace Device {
 namespace Board {
 namespace Config {
 
-/* The bootloader, kernel and userland starts should be aligned to the begining of a sector (to flash them easily).
- * The bootloader should occupty the whole internal flash
- * The memory layouts are the following:
+/* The bootloader, kernel and userland starts should be aligned to the beginning
+ * of a sector (to flash them easily). The bootloader should occupy the whole
+ * internal flash. The memory layouts are the following:
  * - internal flash: 4*16k
  * - external flash: 8*4k + 32K + 127 * 64K
  */
@@ -55,7 +55,7 @@ constexpr uint32_t TrampolineOrigin = BootloaderOrigin + BootloaderLength;
  *
  * The kernel initialisation vector table has specific requirements regarding:
  * - its memory space: it must be in the range 0x00000080 to 0x3FFFFF80
- * - its alignement: you must align the offset to the number of exception entries in the vector table. The minimum alignment is 128 words.
+ * - its alignment: you must align the offset to the number of exception entries in the vector table. The minimum alignment is 128 words.
  * [https://www.st.com/content/ccc/resource/technical/document/programming_manual/6c/3a/cb/e7/e4/ea/44/9b/DM00046982.pdf/files/DM00046982.pdf/jcr:content/translations/en.DM00046982.pdf]
  * Therefore, its is also relocated in sRAM at booting.
  */
@@ -88,6 +88,7 @@ constexpr uint32_t UserlandVirtualOrigin = ExtraDataVirtualOrigin + ExtraDataLen
 
 constexpr uint32_t ExternalAppsSectorUnit = 0x10000;
 
+// clang-format off
 /* SRAM
  *
  * |                                SRAM                                                 |
@@ -101,7 +102,7 @@ constexpr uint32_t ExternalAppsSectorUnit = 0x10000;
  * | USERLAND DATA/BSS | HEAP | USERLAND STACK | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx |
  *
  * The few restrictions to layout the RAM memory are the following:
- * - the begining of Kernel data/bss section should be aligned: the isr table
+ * - the beginning of Kernel data/bss section should be aligned: the isr table
  * is within this section and the VTOR registers can only be configure with
  * some alignments constraints.
  * - the kernel RAM should be aligned to be able to add MPU protection over
@@ -109,6 +110,7 @@ constexpr uint32_t ExternalAppsSectorUnit = 0x10000;
  * - Overflowing the userland stack should not impact the kernel (the MPU region
  * should protect it anyway).
  */
+// clang-format on
 
 constexpr uint32_t SRAMOrigin = 0x20000000;
 constexpr uint32_t SRAMLength = 0x40000; // 256KiB

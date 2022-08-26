@@ -2,7 +2,7 @@
 #define SHARED_LIST_PARAM_CONTROLLER_H
 
 #include <apps/i18n.h>
-#include <escher/selectable_list_view_controller.h>
+#include <escher/explicit_selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_message_with_switch.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/selectable_table_view_delegate.h>
@@ -11,7 +11,7 @@
 
 namespace Shared {
 
-class ListParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
+class ListParameterController : public Escher::ExplicitSelectableListViewController {
 public:
   ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::SelectableTableViewDelegate * tableDelegate = nullptr);
 
@@ -24,27 +24,22 @@ public:
 
   // MemoizedListViewDataSource
   int numberOfRows() const override { return k_numberOfSharedCells; }
-  Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  int reusableCellCount(int type) override { return 1; }
-  int typeAtIndex(int index) override;
 protected:
   // Type order defines cell order
-  constexpr static int k_enableCellType = 0;
-  constexpr static int k_colorCellType = k_enableCellType + 1;
-  constexpr static int k_deleteCellType = k_colorCellType + 1;
-  constexpr static int k_numberOfSharedCells = k_deleteCellType + 1;
-  virtual bool handleEnterOnRow(int rowIndex);
-  virtual bool rightEventIsEnterOnType(int type) { return type == k_colorCellType; }
+  constexpr static int k_numberOfSharedCells = 3;
   FunctionStore * functionStore();
   ExpiringPointer<Function> function();
-  Ion::Storage::Record m_record;
-private:
-  // Return index of shared cell from row number
-  int sharedCellIndex(int j);
   Escher::MessageTableCellWithMessageWithSwitch m_enableCell;
   Escher::MessageTableCellWithChevronAndMessage m_colorCell;
   Escher::MessageTableCell m_deleteCell;
+  Ion::Storage::Record m_record;
+private:
+  void enableSwitched(bool enable);
+  void colorPressed();
+  void deletePressed();
+  // Return index of shared cell from row number
+  int sharedCellIndex(int j);
   ColorParameterController m_colorParameterController;
 };
 

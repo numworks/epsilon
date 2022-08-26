@@ -17,20 +17,18 @@ public:
   ListParameterController(Escher::Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
   void setRecord(Ion::Storage::Record record) override;
   // MemoizedListViewDataSource
-  Escher::HighlightCell * reusableCell(int index, int type) override;
+  Escher::HighlightCell * cell(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+  bool handleEvent(Ion::Events::Event event) override;
   // Shared cells + m_detailsCell + m_functionDomain
   int numberOfRows() const override { return displayDetails() + displayDomain() + Shared::ListParameterController::numberOfRows(); }
-  int typeAtIndex(int index) override;
 private:
-  constexpr static int k_detailsCellType = k_numberOfSharedCells;
-  constexpr static int k_domainCellType = k_detailsCellType + 1;
-  bool handleEnterOnRow(int rowIndex) override;
-  bool rightEventIsEnterOnType(int type) override;
   bool displayDetails() const { return !ExamModeConfiguration::implicitPlotsAreForbidden() && m_detailsParameterController.detailsNumberOfSections() > 0; }
   bool displayDomain() const { return m_domainParameterController.isVisible() > 0; }
+  void detailsPressed();
+  void functionDomainPressed();
   Escher::MessageTableCellWithChevronAndMessage m_detailsCell;
-  Escher::MessageTableCellWithChevronAndBuffer m_functionDomain;
+  Escher::MessageTableCellWithChevronAndBuffer m_functionDomainCell;
   DetailsParameterController m_detailsParameterController;
   DomainParameterController m_domainParameterController;
 };

@@ -16,6 +16,15 @@ public:
   void setTextColor(KDColor color);
   void setMessageFont(KDFont::Size font);
   void setBackgroundColor(KDColor color);
+
+  template<class T>
+  bool handleEvent(Ion::Events::Event event, T * object, void (T::*callback)()) {
+    if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+      (object->*callback)();
+      return true;
+    }
+    return false;
+  }
 protected:
   KDColor backgroundColor() const override { return m_backgroundColor; }
 private:

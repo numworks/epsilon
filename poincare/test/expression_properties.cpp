@@ -115,6 +115,24 @@ QUIZ_CASE(poincare_properties_is_parametered_expression) {
   quiz_assert(!Rational::Builder(2,3).isParameteredExpression());
 }
 
+QUIZ_CASE(poincare_properties_is_rational_number) {
+  quiz_assert(BasedInteger::Builder("2",Integer::Base::Binary).isAlternativeFormOfRationalNumber());
+  quiz_assert(BasedInteger::Builder("2",Integer::Base::Decimal).isAlternativeFormOfRationalNumber());
+  quiz_assert(BasedInteger::Builder("2",Integer::Base::Hexadecimal).isAlternativeFormOfRationalNumber());
+  quiz_assert(Decimal::Builder("2",3).isAlternativeFormOfRationalNumber());
+  quiz_assert(Rational::Builder(2,3).isAlternativeFormOfRationalNumber());
+  quiz_assert(Opposite::Builder(Rational::Builder(2,3)).isAlternativeFormOfRationalNumber());
+  quiz_assert(Division::Builder(BasedInteger::Builder(1), Rational::Builder(2)).isAlternativeFormOfRationalNumber());
+  quiz_assert(Division::Builder(Opposite::Builder(BasedInteger::Builder(1)), Rational::Builder(2)).isAlternativeFormOfRationalNumber());
+  quiz_assert(!Float<float>::Builder(1.0f).isAlternativeFormOfRationalNumber());
+  quiz_assert(!Float<double>::Builder(1.0).isAlternativeFormOfRationalNumber());
+  quiz_assert(!Infinity::Builder(true).isAlternativeFormOfRationalNumber());
+  quiz_assert(!Undefined::Builder().isAlternativeFormOfRationalNumber());
+  quiz_assert(!Symbol::Builder('a').isAlternativeFormOfRationalNumber());
+  quiz_assert(!Multiplication::Builder(Rational::Builder(1), Rational::Builder(2)).isAlternativeFormOfRationalNumber());
+  quiz_assert(!Addition::Builder(Rational::Builder(1), Rational::Builder(2)).isAlternativeFormOfRationalNumber());
+}
+
 void assert_expression_has_property(const char * expression, Context * context, Expression::ExpressionTest test) {
   Expression e = parse_expression(expression, context, false);
   quiz_assert_print_if_failure(e.recursivelyMatches(test, context), expression);

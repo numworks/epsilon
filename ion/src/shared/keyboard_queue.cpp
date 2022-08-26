@@ -20,28 +20,38 @@ void Queue::flush(bool resetPending) {
 }
 
 void Queue::push(State s) {
-  if (!m_lock) {
-    m_lock = true;
+  if (m_busy) {
+    m_pushedWhileBusy = s;
+  } else {
+    m_busy = true;
     m_buffer.push(s);
-    m_lock = false;
+    m_busy = false;
+    handleBusyState();
   }
 }
 
 State Queue::queuePop() {
-  if (!m_lock) {
-    m_lock = true;
-    State res = m_buffer.queuePop();
-    m_lock = false;
-    return res;
-  }
-  return State(-1);
+  assert(!m_busy);
+  m_busy = true;
+  State res = m_buffer.queuePop();
+  m_busy = false;
+  handleBusyState();
+  return res;
 }
 
 void Queue::reset() {
-  if (!m_lock) {
-    m_lock = true;
-    m_buffer.reset();
-    m_lock = false;
+  assert(!m_busy);
+  m_busy = true;
+  m_buffer.reset();
+  m_busy = false;
+  m_pushedWhileBusy = State(-1);
+}
+
+void Queue::handleBusyState() {
+  if (m_pushedWhileBusy != State(-1)) {
+    State s = m_pushedWhileBusy;
+    m_pushedWhileBusy = State(-1);
+    push(s);
   }
 }
 

@@ -62,7 +62,6 @@ ion_device_bootloader_src += $(addprefix ion/src/shared/, \
 ion_device_bootloader_src += ion/src/external/lz4/lz4.c
 
 ion_device_userland_src += $(addprefix ion/src/shared/, \
-  dummy/assert.cpp \
   console_line.cpp \
   decompress.cpp:+consoledisplay \
   stack_position.cpp \

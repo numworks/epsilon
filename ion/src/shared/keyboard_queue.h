@@ -12,23 +12,34 @@ constexpr static size_t k_maximalNumberOfStates = 5;
 class Queue {
 public:
   static Queue * sharedQueue();
-  void flush(bool resetPending = true);
 
+  void flush(bool resetPending = true);
   void push(State s);
   State queuePop();
   size_t length() const { return m_buffer.length(); }
   bool isEmpty() const { return m_buffer.isEmpty(); }
-  bool isFull() const { return m_buffer.isFull(); }
-
 
 private:
-  Queue() : m_lock(false) {}
+  Queue() : m_pushedWhileBusy(-1), m_busy(false) {}
 
   void reset();
   void didFlush(bool resetPending);
+  void handleBusyState();
 
   RingBuffer<State, k_maximalNumberOfStates> m_buffer;
-  bool m_lock;
+  /* The push method is called from a high-priority interruption, and can as
+   * such be executed in the middle of a pop or reset. Conversely, pop and
+   * reset are called from low-priority interrupts (svcall and pendsv
+   * respectively), and cannot interrupt other queue operations.
+   * FIXME If a push occurs while the queue is busy, the State is temporarily
+   * stored in m_pushedWhileBusy, to be pushed later when the original
+   * operation completes. A more thorough solution would be to temporarily
+   * increase the current interruption priority (active interruptions can be
+   * infered from the NVIC_IABRx register). If other problems involving
+   * concurrency arise, we could develop a Transaction class based on this
+   * mechanism. */
+  State m_pushedWhileBusy;
+  bool m_busy;
 };
 
 }

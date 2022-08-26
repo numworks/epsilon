@@ -21,7 +21,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   bool handleEvent(Ion::Events::Event event) override;
   // Shared cells + m_detailsCell + m_functionDomain
-  int numberOfRows() const override { return displayDetails() + displayDomain() + Shared::ListParameterController::numberOfRows(); }
+  int numberOfRows() const override { return 2 + Shared::ListParameterController::numberOfRows(); }
 private:
   bool displayDetails() const { return !ExamModeConfiguration::implicitPlotsAreForbidden() && m_detailsParameterController.detailsNumberOfSections() > 0; }
   bool displayDomain() const { return m_domainParameterController.isVisible() > 0; }

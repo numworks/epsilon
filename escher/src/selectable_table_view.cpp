@@ -59,7 +59,7 @@ void SelectableTableView::reloadData(bool setFirstResponder, bool setSelection) 
 
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
   int col = selectedColumn();
-  int row = selectedRow();
+  int row = std::max(selectedRow(), firstSelectableRow());
   selectColumn(0);
   selectRow(-1);
   selectCellAtLocation(col, row);
@@ -157,22 +157,64 @@ HighlightCell * SelectableTableView::selectedCell() {
   return cellAtLocation(selectedColumn(), selectedRow());
 }
 
+int SelectableTableView::firstSelectableRow() {
+  for (int row = 0, end = dataSource()->numberOfRows(); row < end; row++) {
+    HighlightCell * cell = cellAtLocation(selectedColumn(), row);
+    if (cell && cell->isSelectable()) {
+      return row;
+    }
+  }
+  assert(false);
+  return -1;
+}
+
+int SelectableTableView::lastSelectableRow() {
+  for (int row = dataSource()->numberOfRows() - 1; row >= 0; row--) {
+    HighlightCell * cell = cellAtLocation(selectedColumn(), row);
+    if (cell && cell->isSelectable()) {
+      return row;
+    }
+  }
+  assert(false);
+  return -1;
+}
+
 int SelectableTableView::skipNonSelectableRows(int delta) {
   int row = selectedRow();
   int step = delta > 0 ? 1 : -1;
+  int firstRow = firstSelectableRow();
+  int lastRow = lastSelectableRow();
   while (delta) {
     row += step;
-    if (row < 0) {
-      return 0;
+    if (row < firstRow) {
+      return firstRow;
     }
-    if (row >= dataSource()->numberOfRows()) {
-      return dataSource()->numberOfRows() - 1;
+    if (row > lastRow) {
+      return lastRow;
     }
     if (cellAtLocation(selectedColumn(), row)->isSelectable()) {
       delta -= step;
     }
   }
   return row;
+}
+
+int SelectableTableView::skipNonSelectableColumns(int delta) {
+  int column = selectedColumn();
+  int step = delta > 0 ? 1 : -1;
+  while (delta) {
+    column += step;
+    if (column < 0) {
+      return 0;
+    }
+    if (column >= dataSource()->numberOfColumns()) {
+      return dataSource()->numberOfColumns() - 1;
+    }
+    if (cellAtLocation(column, selectedRow())->isSelectable()) {
+      delta -= step;
+    }
+  }
+  return column;
 }
 
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
@@ -184,10 +226,10 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     return selectCellAtClippedLocation(selectedColumn(), skipNonSelectableRows(-step));
   }
   if (event == Ion::Events::Left) {
-    return selectCellAtClippedLocation(selectedColumn() - step, selectedRow());
+    return selectCellAtClippedLocation(skipNonSelectableColumns(-step), selectedRow());
   }
   if (event == Ion::Events::Right) {
-    return selectCellAtClippedLocation(selectedColumn() + step, selectedRow());
+    return selectCellAtClippedLocation(skipNonSelectableColumns(step), selectedRow());
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
     HighlightCell * cell = selectedCell();

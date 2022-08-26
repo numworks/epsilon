@@ -25,7 +25,10 @@ public:
   int selectedColumn();
   void selectRow(int j);
   void selectColumn(int i);
+  int firstSelectableRow();
+  int lastSelectableRow();
   int skipNonSelectableRows(int delta);
+  int skipNonSelectableColumns(int delta);
   void reloadData(bool setFirstResponder = true, bool setSelection = true);
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;

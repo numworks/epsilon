@@ -147,6 +147,10 @@ void TableView::ContentView::layoutSubviews(bool force, bool updateCellContent) 
    * recomputed at each step of the for loop. */
   for (int index = 0; index < numberOfSubviews(); index++) {
     View * cell = subviewAtIndex(index);
+    if (!cell->isVisible()) {
+      cell->setFrame(KDRectZero, true);
+      continue;
+    }
     int i = absoluteColumnNumberFromSubviewIndex(index);
     int j = absoluteRowNumberFromSubviewIndex(index);
     if (updateCellContent) {

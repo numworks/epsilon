@@ -13,7 +13,8 @@ class HighlightCell : public View {
 public:
   HighlightCell();
 
-  virtual bool isSelectable() { return true; }
+  bool isSelectable() { return isVisible() && protectedIsSelectable(); }
+
   virtual void setHighlighted(bool highlight);
   virtual void reloadCell();
   virtual Responder * responder() { return nullptr; }
@@ -21,6 +22,7 @@ public:
   virtual Poincare::Layout layout() const { return Poincare::Layout(); }
 
 protected:
+  virtual bool protectedIsSelectable() { return true; }
   bool isHighlighted() const { return m_highlighted; }
   KDColor defaultBackgroundColor() const { return m_highlighted ? Palette::Select : KDColorWhite; }
 

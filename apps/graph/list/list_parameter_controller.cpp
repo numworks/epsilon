@@ -22,7 +22,6 @@ ListParameterController::ListParameterController(Responder * parentResponder, I1
 
 HighlightCell * ListParameterController::cell(int index) {
   assert(0 <= index && index < numberOfRows());
-  index += !displayDetails() + !displayDomain(); // Skip hidden cells
   HighlightCell * const cells[] = {&m_detailsCell, &m_functionDomainCell, &m_enableCell, &m_colorCell, &m_deleteCell};
   return cells[index];
 }
@@ -33,6 +32,8 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
    * displayed. */
   m_detailsParameterController.setRecord(m_record);
   m_domainParameterController.setRecord(m_record);
+  m_detailsCell.setVisible(displayDetails());
+  m_functionDomainCell.setVisible(displayDomain());
 }
 
 const char * intervalBracket(double value, bool opening) {

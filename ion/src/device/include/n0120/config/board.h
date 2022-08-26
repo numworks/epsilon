@@ -9,12 +9,15 @@
  * Comments and blank lines are ignored.
  * Macros such as "#if" may be used, as the preprocessor will be run before
  * this file is converted to .ld.
- * Calls to "static_assert" are replaced with LD "ASSERT". */
+ * Calls to "static_assert" are replaced with LD "ASSERT".
+ * Formatting must be deactivated */
 
 namespace Ion {
 namespace Device {
 namespace Board {
 namespace Config {
+
+// clang-format off
 
 /* The bootloader, kernel and userland starts should be aligned to the beginning
  * of a sector (to flash them easily). The bootloader should occupy the whole
@@ -36,7 +39,6 @@ constexpr uint32_t BootloaderLength = InternalFlashLength - PseudoOTPLength - Tr
 constexpr uint32_t PseudoOTPOrigin = BootloaderOrigin + BootloaderLength;
 constexpr uint32_t TrampolineOrigin = PseudoOTPOrigin + PseudoOTPLength;
 
-// clang-format off
 /* External flash
  *
  * ||                                                    EXTERNAL fLASH (8mIb)                                                         ||
@@ -58,10 +60,9 @@ constexpr uint32_t TrampolineOrigin = PseudoOTPOrigin + PseudoOTPLength;
  * [https://www.st.com/content/ccc/resource/technical/document/programming_manual/6c/3a/cb/e7/e4/ea/44/9b/DM00046982.pdf/files/DM00046982.pdf/jcr:content/translations/en.DM00046982.pdf]
  * Therefore, its is also relocated in sRAM at booting.
  */
-// clang-format on
 
 constexpr uint32_t ExternalFlashOrigin = 0x90000000;
-constexpr uint32_t ExternalFlashLength = 0x800000; // 8MiB
+constexpr uint32_t ExternalFlashLength = 0x800000;              // 8MiB
 constexpr uint32_t StandardExternalFlashSectorLength = 0x10000; // 64KiB
 
 constexpr uint32_t SlotAOffset = 0;
@@ -87,7 +88,6 @@ constexpr uint32_t UserlandVirtualOrigin = ExtraDataVirtualOrigin + ExtraDataLen
 
 constexpr uint32_t ExternalAppsSectorUnit = 0x10000;
 
-// clang-format off
 /* SRAM
  *
  * |                                SRAM                                                 |
@@ -109,12 +109,11 @@ constexpr uint32_t ExternalAppsSectorUnit = 0x10000;
  * - Overflowing the userland stack should not impact the kernel (the MPU region
  * should protect it anyway).
  */
-// clang-format on
 
 constexpr uint32_t SRAMOrigin = 0x24000000;
 constexpr uint32_t SRAMLength = 0x40000; // 256KiB
 
-constexpr uint32_t KernelStackLength = 0x400; // 1KiB
+constexpr uint32_t KernelStackLength = 0x400;   // 1KiB
 constexpr uint32_t KernelDataBSSLength = 0xC00; // 3KiB
 constexpr uint32_t KernelSRAMLength = KernelStackLength + KernelDataBSSLength;
 constexpr uint32_t KernelSRAMOrigin = SRAMOrigin + SRAMLength - KernelSRAMLength;
@@ -146,10 +145,11 @@ constexpr uint32_t SignatureLength = SingleSignatureLength * NumberOfSignatures;
 /* Other */
 constexpr int NumberOfMPUSectors = 8;
 
-}
-}
-}
-}
+// clang-format on
+
+} // namespace Config
+} // namespace Board
+} // namespace Device
+} // namespace Ion
 
 #endif
-

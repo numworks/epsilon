@@ -62,11 +62,11 @@ Evaluation<T> PermuteCoefficientNode::templatedApproximate(const ApproximationCo
 }
 
 
-Expression PermuteCoefficient::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression PermuteCoefficient::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

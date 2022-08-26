@@ -53,9 +53,8 @@ Expression ExpressionNode::deepBeautify(const ExpressionNode::ReductionContext& 
   } else if (type() == Type::PercentAddition) {
     return Expression(this).convert<PercentAddition>().deepBeautify(reductionContext);
   } else {
-    ExpressionNode::ReductionContext childContext = reductionContext;
-    Expression e = shallowBeautify(childContext);
-    SimplificationHelper::deepBeautifyChildren(e, childContext);
+    Expression e = shallowBeautify(reductionContext);
+    SimplificationHelper::deepBeautifyChildren(e, reductionContext);
     return e;
   }
 }

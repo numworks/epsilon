@@ -55,7 +55,7 @@ Expression TangentNode::unaryFunctionDifferential(const ReductionContext& reduct
   return Tangent(this).unaryFunctionDifferential(reductionContext);
 }
 
-Expression Tangent::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Tangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression newExpression = Trigonometry::shallowReduceDirectFunction(*this, reductionContext);
   if (newExpression.type() == ExpressionNode::Type::Tangent) {
     Sine s = Sine::Builder(newExpression.childAtIndex(0).clone());

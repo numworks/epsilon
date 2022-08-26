@@ -48,11 +48,11 @@ Complex<T> SignFunctionNode::computeOnComplex(const std::complex<T> c, Preferenc
 }
 
 
-Expression SignFunction::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::KeepUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

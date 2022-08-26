@@ -88,7 +88,7 @@ public:
   static Addition Builder(Expression e1, Expression e2) { return Addition::Builder({e1, e2}); }
   // Expression
   Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context) {
@@ -108,7 +108,7 @@ private:
   static bool TermHasSquaredTrigFunctionWithBase(const Expression & e, const ExpressionNode::ReductionContext& reductionContext, Expression & base, Expression & coefficient, bool * cosine);
   static bool TermHasSquaredCos(const Expression & e, const ExpressionNode::ReductionContext& reductionContext, Expression & baseOfCos);
 
-  Expression factorizeOnCommonDenominator(const ExpressionNode::ReductionContext& reductionContext);
+  Expression factorizeOnCommonDenominator(ExpressionNode::ReductionContext reductionContext);
   void factorizeChildrenAtIndexesInPlace(int index1, int index2, const ExpressionNode::ReductionContext& reductionContext);
   Expression factorizeSquaredTrigFunction(Expression & baseOfTrigFunction, const ExpressionNode::ReductionContext& reductionContext);
   AdditionNode * node() const { return static_cast<AdditionNode *>(Expression::node()); }

@@ -203,9 +203,9 @@ Expression Addition::shallowBeautify(const ExpressionNode::ReductionContext& red
   return result;
 }
 
-Expression Addition::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
+    Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -483,7 +483,7 @@ bool Addition::TermsHaveIdenticalNonNumeralFactors(const Expression & e1, const 
   }
 }
 
-Expression Addition::factorizeOnCommonDenominator(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Addition::factorizeOnCommonDenominator(ExpressionNode::ReductionContext reductionContext) {
   /* We want to turn (a/b+c/d+e/b) into (a*d+b*c+e*d)/(b*d), except if one of
    * the denominators contains random, in which case the factors with random
    * should stay appart. */
@@ -556,29 +556,28 @@ Expression Addition::factorizeOnCommonDenominator(const ExpressionNode::Reductio
    * Example: int((e^(-x))-x^(0.5), x, 0, 3), when creating the common
    * denominator for the integrand. */
   ExpressionNode::SymbolicComputation previousSymbolicComputation = reductionContext.symbolicComputation();
-  ExpressionNode::ReductionContext childContext = reductionContext;
-  childContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+  reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
 
   // Step 4: Simplify the numerator
-  numerator.shallowReduce(childContext);
+  numerator.shallowReduce(reductionContext);
 
   // Step 5: Simplify the denominator (in case it's a rational number)
-  inverseDenominator.deepReduce(childContext);
+  inverseDenominator.deepReduce(reductionContext);
 
   // Restore symbolicComputation status
-  childContext.setSymbolicComputation(previousSymbolicComputation);
+  reductionContext.setSymbolicComputation(previousSymbolicComputation);
 
   /* Step 6: We simplify the resulting multiplication forbidding any
    * distribution of multiplication on additions (to avoid an infinite loop).
    * Handle the removed random factors. */
-  childContext.setExpandMultiplication(false);
+  reductionContext.setExpandMultiplication(false);
   int aChildrenCount = a.numberOfChildren();
   if (aChildrenCount == 0) {
     replaceWithInPlace(result);
-    return result.shallowReduce(childContext);
+    return result.shallowReduce(reductionContext);
   }
   a.addChildAtIndexInPlace(result, aChildrenCount, aChildrenCount);
-  result.shallowReduce(childContext);
+  result.shallowReduce(reductionContext);
   replaceWithInPlace(a);
   return std::move(a);
 }

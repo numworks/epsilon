@@ -121,7 +121,7 @@ Symbol Symbol::Builder(CodePoint name) {
   return Symbol::Builder(buffer, codePointLength);
 }
 
-Expression Symbol::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Symbol::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   ExpressionNode::SymbolicComputation symbolicComputation = reductionContext.symbolicComputation();
   if (symbolicComputation == ExpressionNode::SymbolicComputation::ReplaceDefinedFunctionsWithDefinitions
     || symbolicComputation == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol)
@@ -179,12 +179,9 @@ Expression Symbol::shallowReduce(const ExpressionNode::ReductionContext& reducti
    * ReductionContext's SymbolicComputation is altered, enforcing preservation
    * of remaining variables only to save computation that has already been
    * done in SymbolAbstract::Expand, when looking for parametered functions. */
-  ExpressionNode::ReductionContext childContext = reductionContext;
-  childContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+  reductionContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
   // The stored expression is as entered by the user, so we need to call reduce
-  result = result.deepReduce(childContext);
-  // Restore symbolic computation
-  childContext.setSymbolicComputation(symbolicComputation);
+  result = result.deepReduce(reductionContext);
   return result;
 }
 

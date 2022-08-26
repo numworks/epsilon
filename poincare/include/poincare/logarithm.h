@@ -54,7 +54,7 @@ class Logarithm final : public ExpressionUpToTwoChildren<Logarithm, LogarithmNod
   friend class LogarithmNode;
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
   Expression unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext);

@@ -37,7 +37,7 @@ private:
 class VectorNorm final : public ExpressionOneChild<VectorNorm, VectorNormNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

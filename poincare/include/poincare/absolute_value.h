@@ -51,7 +51,7 @@ class AbsoluteValue final : public ExpressionOneChild<AbsoluteValue, AbsoluteVal
 friend class AbsoluteValueNode;
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 };
 

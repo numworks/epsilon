@@ -54,7 +54,7 @@ public:
   static Expression Ones(int length);
   ListNode * node() const { return static_cast<ListNode *>(Expression::node()); }
   Expression extremum(const ExpressionNode::ReductionContext& reductionContext, bool minimum);
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   using TreeHandle::addChildAtIndexInPlace;
   using TreeHandle::removeChildAtIndexInPlace;
 };

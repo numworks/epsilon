@@ -43,7 +43,7 @@ class PermuteCoefficient final : public ExpressionTwoChildren<PermuteCoefficient
 public:
   using ExpressionBuilder::ExpressionBuilder;
   // Expression
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
   constexpr static int k_maxNValue = 100;
 };

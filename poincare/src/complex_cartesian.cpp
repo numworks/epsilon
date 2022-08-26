@@ -63,11 +63,11 @@ Complex<T> ComplexCartesianNode::templatedApproximate(const ApproximationContext
   return Complex<T>::Builder(a.real(), b.real());
 }
 
-Expression ComplexCartesian::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ComplexCartesian::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

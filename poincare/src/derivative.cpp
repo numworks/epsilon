@@ -199,11 +199,11 @@ T DerivativeNode::riddersApproximation(int order, const ApproximationContext& ap
   return ans;
 }
 
-Expression Derivative::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

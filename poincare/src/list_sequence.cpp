@@ -53,11 +53,11 @@ Expression ListSequence::UntypedBuilder(Expression children) {
   return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2));
 }
 
-Expression ListSequence::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ListSequence::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

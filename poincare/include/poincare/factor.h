@@ -48,7 +48,7 @@ public:
 
   // Expression
   Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

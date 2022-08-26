@@ -62,7 +62,7 @@ private:
    * Otherwise returns uninitialized handle. */
   static Expression shallowReduceKeepingUnitsFromFirstChild(Expression e, const ExpressionNode::ReductionContext& reductionContext);
 
-  static Expression undefinedOnMatrix(Expression e, const ExpressionNode::ReductionContext& reductionContext);
+  static Expression undefinedOnMatrix(Expression e, ExpressionNode::ReductionContext * reductionContext);
 
 };
 }

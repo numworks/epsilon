@@ -45,7 +45,7 @@ private:
 class ArcCotangent final : public ExpressionOneChild<ArcCotangent, ArcCotangentNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

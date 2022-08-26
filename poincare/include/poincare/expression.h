@@ -286,16 +286,16 @@ public:
    *   (For instance, in Polar mode, they return an expression of the form
    *   r*e^(i*th) reduced and approximated.) */
   static Expression ParseAndSimplify(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
-  Expression cloneAndSimplify(const ExpressionNode::ReductionContext& reductionContext);
+  Expression cloneAndSimplify(ExpressionNode::ReductionContext reductionContext);
 
   static void ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default);
   void cloneAndSimplifyAndApproximate(Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, ExpressionNode::UnitConversion unitConversion = ExpressionNode::UnitConversion::Default) const;
-  Expression cloneAndReduce(const ExpressionNode::ReductionContext& reductionContext) const;
+  Expression cloneAndReduce(ExpressionNode::ReductionContext reductionContext) const;
   // TODO: deepReduceWithSystemCheckpoint should be private but we need to make poincare/text/helper.h a class to be able to friend it
   Expression cloneAndDeepReduceWithSystemCheckpoint(ExpressionNode::ReductionContext * reductionContext, bool * reduceFailure) const;
   // TODO: reduceAndRemoveUnit should be private but we need to make poincare/text/helper.h a class to be able to friend it
   Expression reduceAndRemoveUnit(const ExpressionNode::ReductionContext& reductionContext, Expression * Unit);
-  Expression cloneAndReduceOrSimplify(const ExpressionNode::ReductionContext& reductionContext, bool beautify) { return beautify ? cloneAndSimplify(reductionContext) : cloneAndReduce(reductionContext); }
+  Expression cloneAndReduceOrSimplify(ExpressionNode::ReductionContext reductionContext, bool beautify) { return beautify ? cloneAndSimplify(reductionContext) : cloneAndReduce(reductionContext); }
   /* WARNING: this must be called only on expressions that:
    *  - are reduced.
    *  - have a known sign. (sign() != Sign::Unknown) */
@@ -473,7 +473,10 @@ protected:
   Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) { return node()->shallowBeautify(reductionContext); }
   Expression makePositiveAnyNegativeNumeralFactor(const ExpressionNode::ReductionContext& reductionContext);
   Expression denominator(const ExpressionNode::ReductionContext& reductionContext) const { return node()->denominator(reductionContext); }
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext) { return node()->shallowReduce(reductionContext); }
+  /* shallowReduce takes a copy of reductionContext and not a reference
+   * because it might need to modify it during reduction, namely in
+   * SimplificationHelper::undefinedOnMatrix */
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext) { return node()->shallowReduce(reductionContext); }
   Expression deepBeautify(const ExpressionNode::ReductionContext& reductionContext) { return node()->deepBeautify(reductionContext); }
 
   /* Derivation */

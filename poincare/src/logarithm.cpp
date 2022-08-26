@@ -90,7 +90,7 @@ void Logarithm::deepReduceChildren(const ExpressionNode::ReductionContext& reduc
   childAtIndex(0).deepReduce(reductionContext);
 }
 
-Expression Logarithm::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   if (numberOfChildren() == 1) {
     Logarithm log = Logarithm::Builder(childAtIndex(0), Rational::Builder(10));
     replaceWithInPlace(log);
@@ -99,7 +99,7 @@ Expression Logarithm::shallowReduce(const ExpressionNode::ReductionContext& redu
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

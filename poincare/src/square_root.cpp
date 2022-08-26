@@ -108,11 +108,11 @@ Expression SquareRoot::ReduceNestedRadicals(Expression a, Expression b, Expressi
   return result.deepReduce(reductionContext);
 }
 
-Expression SquareRoot::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression SquareRoot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::KeepUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

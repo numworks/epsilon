@@ -46,7 +46,7 @@ public:
   constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("sequence", 3, &UntypedBuilder);
   constexpr static char k_defaultXNTChar = 'k';
 
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
 };
 

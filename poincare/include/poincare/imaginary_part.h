@@ -46,7 +46,7 @@ private:
 class ImaginaryPart final : public ExpressionOneChild<ImaginaryPart, ImaginaryPartNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

@@ -32,7 +32,7 @@ template<typename T> Evaluation<T> ListSortNode::templatedApproximate(const Appr
   return std::move(listChild);
 }
 
-Expression ListSort::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ListSort::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List) {
     return replaceWithUndefinedInPlace();

@@ -100,9 +100,9 @@ template<typename T> Evaluation<T> ListAccessNode<2>::templatedApproximate(const
   return std::move(returnList);
 }
 
-Expression ListElement::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ListElement::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
+    Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -134,9 +134,9 @@ Expression ListElement::shallowReduce(const ExpressionNode::ReductionContext& re
   return element;
 }
 
-Expression ListSlice::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression ListSlice::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
+    Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
     if (!e.isUninitialized()) {
       return e;
     }

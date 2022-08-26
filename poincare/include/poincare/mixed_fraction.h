@@ -45,7 +45,7 @@ public:
   static Expression Builder(Expression integerPart, Expression numerator, Expression denominator) { return Builder(integerPart, Division::Builder(numerator, denominator)); }
   static Expression Builder(Expression integerPart, Division fractionPart) { return TreeHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>({integerPart, fractionPart}); }
 
-  Expression shallowReduce(const ExpressionNode::ReductionContext& context);
+  Expression shallowReduce(ExpressionNode::ReductionContext context);
 };
 
 }

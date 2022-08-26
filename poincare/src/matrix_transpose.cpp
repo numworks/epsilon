@@ -37,11 +37,11 @@ Evaluation<T> MatrixTransposeNode::templatedApproximate(const ApproximationConte
 }
 
 
-Expression MatrixTranspose::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression MatrixTranspose::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

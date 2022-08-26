@@ -41,11 +41,11 @@ Evaluation<T> MatrixInverseNode::templatedApproximate(const ApproximationContext
 }
 
 
-Expression MatrixInverse::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression MatrixInverse::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

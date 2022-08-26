@@ -35,11 +35,11 @@ Evaluation<T> VectorNormNode::templatedApproximate(const ApproximationContext& a
   return Complex<T>::Builder(static_cast<MatrixComplex<T>&>(input).norm());
 }
 
-Expression VectorNorm::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression VectorNorm::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

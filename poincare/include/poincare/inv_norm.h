@@ -39,7 +39,7 @@ private:
 class InvNorm final : public ExpressionThreeChildren<InvNorm, InvNormNode, NormalDistributionFunction> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

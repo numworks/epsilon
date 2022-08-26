@@ -93,7 +93,7 @@ public:
   template<typename T> static void computeOnArrays(T * m, T * n, T * result, int mNumberOfColumns, int mNumberOfRows, int nNumberOfColumns);
   // Simplification
   Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression denominator(const ExpressionNode::ReductionContext& reductionContext) const;
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context) {
     NAryExpression::sortChildrenInPlace(order, context, false);

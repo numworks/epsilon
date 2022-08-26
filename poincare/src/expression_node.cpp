@@ -89,7 +89,8 @@ int ExpressionNode::simplificationOrderSameType(const ExpressionNode * e, bool a
 
 Expression ExpressionNode::shallowReduce(const ReductionContext& reductionContext) {
   Expression e(this);
-  Expression res = SimplificationHelper::defaultShallowReduce(e, reductionContext);
+  ReductionContext alterableContext = reductionContext;
+  Expression res = SimplificationHelper::defaultShallowReduce(e, &alterableContext);
   if (!res.isUninitialized()) {
     return res;
   }

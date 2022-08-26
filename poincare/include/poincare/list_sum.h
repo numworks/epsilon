@@ -34,7 +34,7 @@ private:
 class ListSum : public ExpressionOneChild<ListSum, ListSumNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

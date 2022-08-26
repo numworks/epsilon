@@ -46,7 +46,7 @@ class Randint final : public ExpressionUpToTwoChildren<Randint,RandintNode> {
 friend class RandintNode;
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 

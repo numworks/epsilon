@@ -39,7 +39,7 @@ private:
 class InvBinom final : public ExpressionThreeChildren<InvBinom, InvBinomNode, BinomialDistributionFunction> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

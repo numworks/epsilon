@@ -48,7 +48,7 @@ private:
 class RealPart final : public ExpressionOneChild<RealPart, RealPartNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

@@ -45,7 +45,7 @@ private:
 class Conjugate final : public ExpressionOneChild<Conjugate, ConjugateNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

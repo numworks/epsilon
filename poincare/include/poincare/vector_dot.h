@@ -37,7 +37,7 @@ private:
 class VectorDot final : public ExpressionTwoChildren<VectorDot, VectorDotNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

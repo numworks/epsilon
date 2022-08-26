@@ -31,11 +31,11 @@ Complex<T> ConjugateNode::computeOnComplex(const std::complex<T> c, Preferences:
   return Complex<T>::Builder(std::conj(c));
 }
 
-Expression Conjugate::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Conjugate::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

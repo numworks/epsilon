@@ -54,7 +54,7 @@ public:
 
   // Simplification
   Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
   // Common operations (done in-place)
   Expression squareNorm(const ExpressionNode::ReductionContext& reductionContext);

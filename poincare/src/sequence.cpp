@@ -106,10 +106,10 @@ Expression Sequence::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   return *this;
 }
 
-Expression Sequence::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Sequence::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression e = SimplificationHelper::defaultShallowReduce(
       *this,
-      reductionContext,
+      &reductionContext,
       SimplificationHelper::UnitReduction::BanUnits
   );
   if (!e.isUninitialized()) {

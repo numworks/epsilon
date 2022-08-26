@@ -94,7 +94,7 @@ public:
   bool isComplexI() const { return isConstant("i"); }
 
   // Simplification
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 
   constexpr static ConstantNode::ConstantInfo k_constants[] = {

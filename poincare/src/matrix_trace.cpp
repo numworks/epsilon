@@ -35,11 +35,11 @@ Evaluation<T> MatrixTraceNode::templatedApproximate(const ApproximationContext& 
   return std::move(result);
 }
 
-Expression MatrixTrace::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression MatrixTrace::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits
     );
     if (!e.isUninitialized()) {

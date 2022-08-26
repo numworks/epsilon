@@ -44,7 +44,7 @@ private:
 class Cotangent final : public ExpressionOneChild<Cotangent, CotangentNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

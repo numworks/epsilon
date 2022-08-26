@@ -24,10 +24,10 @@ public:
   static Expression UnitConversionFactor(Preferences::AngleUnit fromUnit, Preferences::AngleUnit toUnit);
   static bool ExpressionIsEquivalentToTangent(const Expression & e);
   static bool ExpressionIsEquivalentToInverseOfTangent(const Expression & e);
-  static Expression shallowReduceDirectFunction(Expression & e, const ExpressionNode::ReductionContext& reductionContext);
-  static Expression shallowReduceInverseFunction(Expression & e,  const ExpressionNode::ReductionContext& reductionContext);
-  static Expression shallowReduceAdvancedFunction(Expression & e,  const ExpressionNode::ReductionContext& reductionContext);
-  static Expression shallowReduceInverseAdvancedFunction(Expression & e,  const ExpressionNode::ReductionContext& reductionContext);
+  static Expression shallowReduceDirectFunction(Expression & e, ExpressionNode::ReductionContext reductionContext);
+  static Expression shallowReduceInverseFunction(Expression & e, ExpressionNode::ReductionContext reductionContext);
+  static Expression shallowReduceAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext);
+  static Expression shallowReduceInverseAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext);
   static Expression replaceWithAdvancedFunction(Expression & e, Expression & denominator);
   static Expression table(const Expression e, ExpressionNode::Type type,  const ExpressionNode::ReductionContext& reductionContext); // , Function f, bool inverse
   template <typename T> static std::complex<T> ConvertToRadian(const std::complex<T> c, Preferences::AngleUnit angleUnit);

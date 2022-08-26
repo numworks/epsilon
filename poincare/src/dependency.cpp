@@ -41,14 +41,14 @@ template<typename T> Evaluation<T> DependencyNode::templatedApproximate(const Ap
 
 // Dependency
 
-Expression Dependency::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   /* Undefined and dependencies are bubbled-up from list of dependencies.
    * We do this here because we do not want to do this in List::shallowReduce
    * since most of lists do not want to bubble up their undef and dependencies.
    * (because {undef} != undef) */
-  SimplificationHelper::defaultShallowReduce(childAtIndex(k_indexOfDependenciesList), reductionContext);
+  SimplificationHelper::defaultShallowReduce(childAtIndex(k_indexOfDependenciesList), &reductionContext);
 
-  Expression e = SimplificationHelper::defaultShallowReduce(*this, reductionContext);
+  Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext);
   if (!e.isUninitialized()) {
     return e;
   }

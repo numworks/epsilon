@@ -40,11 +40,11 @@ Expression FloorNode::shallowReduce(const ReductionContext& reductionContext) {
   return Floor(this).shallowReduce(reductionContext);
 }
 
-Expression Floor::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Floor::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::ExtractUnitsOfFirstChild,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

@@ -37,7 +37,7 @@ private:
 class MatrixTrace final : public ExpressionOneChild<MatrixTrace, MatrixTraceNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

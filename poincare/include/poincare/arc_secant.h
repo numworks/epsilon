@@ -44,7 +44,7 @@ private:
 class ArcSecant final : public ExpressionOneChild<ArcSecant, ArcSecantNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

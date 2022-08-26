@@ -38,11 +38,11 @@ Evaluation<T> InvBinomNode::templatedApproximate(const ApproximationContext& app
       });
 }
 
-Expression InvBinom::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression InvBinom::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
-        reductionContext,
+        &reductionContext,
         SimplificationHelper::UnitReduction::BanUnits,
         SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
         SimplificationHelper::ListReduction::DistributeOverLists

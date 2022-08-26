@@ -905,7 +905,7 @@ bool Unit::IsForbiddenTemperatureProduct(Expression e) {
   return !(p.type() == ExpressionNode::Type::Opposite && (pp.isUninitialized() || pp.type() == ExpressionNode::Type::UnitConvert));
 }
 
-Expression Unit::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   if (reductionContext.unitConversion() == ExpressionNode::UnitConversion::None
       || isBaseUnit()) {
     /* We escape early if we are one of the seven base units.

@@ -38,7 +38,7 @@ private:
 class Determinant final : public ExpressionOneChild<Determinant, DeterminantNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

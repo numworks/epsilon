@@ -25,7 +25,7 @@ Evaluation<T> StoreNode::templatedApproximate(const ApproximationContext& approx
   return storedExpression.node()->approximate(T(), approximationContext);
 }
 
-Expression Store::shallowReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   // Store the expression.
   Expression storedExpression = storeValueForSymbol(reductionContext.context());
 

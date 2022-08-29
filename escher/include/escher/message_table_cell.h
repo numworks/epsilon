@@ -25,6 +25,10 @@ public:
     }
     return false;
   }
+
+  static bool ShouldEnterOnEvent(Ion::Events::Event event) {
+    return event == Ion::Events::OK || event == Ion::Events::EXE;
+  }
 protected:
   KDColor backgroundColor() const override { return m_backgroundColor; }
 private:

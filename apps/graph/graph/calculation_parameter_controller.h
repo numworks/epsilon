@@ -36,9 +36,9 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setRecord(Ion::Storage::Record record);
 private:
+  template<class T> void push(T * controller, bool pop);
   bool ShouldDisplayIntersection() const;
   static bool ShouldDisplayAreaBetweenCurves();
-  static bool RightEventIsEquivalentToEnterEventOnRow(int row);
   // This class is used for the AreaBetweenCurves cell
   class BufferTableCellWithHideableChevron : public Escher::BufferTableCell {
   public:

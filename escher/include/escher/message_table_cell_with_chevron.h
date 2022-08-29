@@ -19,6 +19,11 @@ public:
     }
     return false;
   }
+
+  static bool ShouldEnterOnEvent(Ion::Events::Event event) {
+    return (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right);
+  }
+
 private:
   ChevronView m_accessoryView;
 };

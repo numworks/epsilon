@@ -49,8 +49,6 @@ public:
 
   bool isEmpty() const { return m_length == 0; }
 
-  bool isFull() const { return m_length == N; }
-
   void reset() { m_length = 0; }
 
 private:

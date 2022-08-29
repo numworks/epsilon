@@ -295,6 +295,26 @@ void ListController::tableViewDidChangeSelection(SelectableTableView * t, int pr
   }
 }
 
+/* LayoutFieldDelegate */
+bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
+  // Do not accept empty input
+  if (layoutField->isEditing() && layoutField->shouldFinishEditing(event) && !layoutField->hasText()) {
+    App::app()->displayWarning(I18n::Message::SyntaxError);
+    return true;
+  }
+  return LayoutFieldDelegate::layoutFieldDidReceiveEvent(layoutField, event);
+}
+
+/* TextFieldDelegate */
+bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
+  // Do not accept empty inputs
+  if (textField->isEditing() && textField->shouldFinishEditing(event) && textField->text()[0] == 0) {
+    App::app()->displayWarning(I18n::Message::SyntaxError);
+    return true;
+  }
+  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
+}
+
 void ListController::computeTitlesColumnWidth(bool forceMax) {
   if (forceMax) {
     m_titlesColumnWidth = nameWidth(Poincare::SymbolAbstract::k_maxNameSize + Shared::Function::k_parenthesedArgumentCodePointLength - 1)+k_functionTitleSumOfMargins;

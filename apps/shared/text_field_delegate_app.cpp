@@ -26,6 +26,10 @@ bool TextFieldDelegateApp::textFieldShouldFinishEditing(AbstractTextField * text
 
 bool TextFieldDelegateApp::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
+    if (textField->text()[0] == 0) {
+      // Empty field, let the textfield handle the event
+      return false;
+    }
     if (!isAcceptableText(textField->text())) {
       return true;
     }

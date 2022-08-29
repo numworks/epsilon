@@ -30,7 +30,9 @@ private:
   /* The push method is called from a high-priority interruption, and can as
    * such be executed in the middle of a pop or reset. Conversely, pop and
    * reset are called from low-priority interrupts (svcall and pendsv
-   * respectively), and cannot interrupt other queue operations.
+   * respectively), and cannot interrupt other queue operations (svcall could
+   * theoretically interrupt pendsv as its priority is higher but this cannot
+   * happen in practice as the pendsv handler does not use SVCs).
    * FIXME If a push occurs while the queue is busy, the State is temporarily
    * stored in m_pushedWhileBusy, to be pushed later when the original
    * operation completes. A more thorough solution would be to temporarily

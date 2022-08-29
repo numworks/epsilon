@@ -746,7 +746,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
       cursorMergedLayout = layoutR.numberOfChildren() > 0 ? layoutR.childAtIndex(0) : Layout();
     } else {
       assert(!correspondingExpression.isUninitialized());
-      cursorMergedLayout = layoutR.layoutToPointWhenInserting(&correspondingExpression);
+      cursorMergedLayout = layoutR.layoutToPointWhenInserting(&correspondingExpression, &forceCursorLeftOfText);
       if (cursorMergedLayout == layoutR) {
         /* LayoutR will not be inserted in the layout, so point to its last
          * child instead. It is visually equivalent. */
@@ -788,7 +788,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
     if (!layoutWillBeMerged && !forceCursorLeftOfText) {
       assert(cursorMergedLayout.isUninitialized());
       assert(!correspondingExpression.isUninitialized());
-      cursorMergedLayout = layoutR.layoutToPointWhenInserting(&correspondingExpression);
+      cursorMergedLayout = layoutR.layoutToPointWhenInserting(&correspondingExpression, &forceCursorLeftOfText);
     }
     assert(!cursorMergedLayout.isUninitialized());
     m_contentView.cursor()->setLayout(cursorMergedLayout);

@@ -64,10 +64,10 @@ public:
   bool removeGraySquaresFromAllMatrixAncestors() { return node()->removeGraySquaresFromAllMatrixAncestors(); }
   bool removeGraySquaresFromAllMatrixChildren() { return node()->removeGraySquaresFromAllMatrixChildren(); }
   bool addGraySquaresToAllMatrixAncestors() { return node()->addGraySquaresToAllMatrixAncestors(); }
-  Layout layoutToPointWhenInserting(Expression * correspondingExpression) {
+  Layout layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr) {
     // Pointer to correspondingExpr because expression.h includes layout.h
     assert(correspondingExpression != nullptr);
-    return Layout(node()->layoutToPointWhenInserting(correspondingExpression));
+    return Layout(node()->layoutToPointWhenInserting(correspondingExpression, forceCursorLeftOfText));
   }
   void setMargin(bool hasMargin) { node()->setMargin(hasMargin); }
 

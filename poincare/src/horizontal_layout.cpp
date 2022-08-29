@@ -165,7 +165,7 @@ void HorizontalLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
   LayoutNode::deleteBeforeCursor(cursor);
 }
 
-LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression) {
+LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText) {
   assert(correspondingExpression != nullptr);
   if (correspondingExpression->numberOfChildren() > 0) {
     Layout layoutToPointTo = Layout(this).recursivelyMatches(
@@ -175,6 +175,10 @@ LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * corre
             || layout.isEmpty();
       }
     );
+    if (!layoutToPointTo.isEmpty()) {
+      layoutToPointTo = layoutToPointTo.childAtIndex(0);
+      *forceCursorLeftOfText = true;
+    }
     if (!layoutToPointTo.isUninitialized()) {
       return layoutToPointTo.node();
     }

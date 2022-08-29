@@ -121,7 +121,7 @@ public:
   bool deleteBeforeCursorForLayoutContainingArgument(LayoutNode * argumentNode, LayoutCursor * cursor);
 
   // Other
-  virtual LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression);
+  virtual LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr);
   bool removeGraySquaresFromAllMatrixAncestors();
   bool removeGraySquaresFromAllMatrixChildren();
   bool addGraySquaresToAllMatrixAncestors();

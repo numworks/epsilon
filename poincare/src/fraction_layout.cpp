@@ -153,7 +153,7 @@ int FractionLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   return numberOfChar;
 }
 
-LayoutNode * FractionLayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression) {
+LayoutNode * FractionLayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText) {
   if (numeratorLayout()->isEmpty()){
     return numeratorLayout();
   }

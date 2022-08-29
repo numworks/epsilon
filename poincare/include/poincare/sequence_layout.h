@@ -19,7 +19,7 @@ public:
   void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
-  LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression) override { return lowerBoundLayout(); }
+  LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr) override { return lowerBoundLayout(); }
   Layout XNTLayout(int childIndex = -1) const override;
 
   // TreeNode

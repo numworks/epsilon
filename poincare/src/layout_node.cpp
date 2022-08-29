@@ -138,7 +138,7 @@ bool LayoutNode::deleteBeforeCursorForLayoutContainingArgument(LayoutNode * argu
   return false;
 }
 
-LayoutNode * LayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression) {
+LayoutNode * LayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText) {
   assert(correspondingExpression != nullptr);
   return numberOfChildren() > 0 ? childAtIndex(0) : this;
 }

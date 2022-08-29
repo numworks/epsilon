@@ -27,7 +27,7 @@ public:
     return 0;
   }
 
-  LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression) override {
+  LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr) override {
     assert(false);
     return this;
   }

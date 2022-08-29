@@ -213,37 +213,38 @@ KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child, KDFont::Si
 }
 
 bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
-  if (sibling->type() == Type::VerticalOffsetLayout) {
-    VerticalOffsetLayoutNode * verticalOffsetSibling = static_cast<VerticalOffsetLayoutNode *>(sibling);
-    if (verticalOffsetSibling->position() == Position::Superscript) {
-      Layout rootLayout = root();
-      Layout thisRef = Layout(this);
-      Layout parentRef = Layout(parent());
-      assert(parentRef.type() == Type::HorizontalLayout);
-      // Add the Left parenthesis
-      int idxInParent = parentRef.indexOfChild(thisRef);
-      int leftParenthesisIndex = idxInParent;
-      int numberOfOpenParenthesis = 0;
-      while (leftParenthesisIndex > 0
-          && parentRef.childAtIndex(leftParenthesisIndex-1).isCollapsable(&numberOfOpenParenthesis, true))
-      {
-        leftParenthesisIndex--;
-      }
-      HorizontalLayout h = HorizontalLayout::Builder();
-      int n = 0;
-      for (int i = idxInParent - (cursor->position() == LayoutCursor::Position::Left); i > leftParenthesisIndex; i--) {
-        h.addChildAtIndex(parentRef.childAtIndex(i), 0, n++, nullptr);
-      }
-      ParenthesisLayout parentheses = ParenthesisLayout::Builder(h);
-      parentRef.addChildAtIndex(parentheses, leftParenthesisIndex, parentRef.numberOfChildren(), nullptr);
-      if (!parentheses.parent().isUninitialized()) {
-        if (cursor->position() == LayoutCursor::Position::Left) {
-          cursor->setLayout(h);
-          cursor->setPosition(LayoutCursor::Position::Right);
-        } else {
-          cursor->setLayout(parentheses);
-        }
-      }
+  if (sibling->type() != Type::VerticalOffsetLayout) {
+    return true;
+  }
+  VerticalOffsetLayoutNode * verticalOffsetSibling = static_cast<VerticalOffsetLayoutNode *>(sibling);
+  if (verticalOffsetSibling->position() != Position::Superscript) {
+    return true;
+  }
+
+  Layout thisRef = Layout(this);
+  Layout parentRef = Layout(parent());
+  assert(parentRef.type() == Type::HorizontalLayout);
+  int thisIndex = parentRef.indexOfChild(thisRef);
+  int leftParenthesisIndex = thisIndex - 1;
+  int numberOfOpenParenthesis = 0;
+  while (leftParenthesisIndex >= 0 && parentRef.childAtIndex(leftParenthesisIndex).isCollapsable(&numberOfOpenParenthesis, true)) {
+    leftParenthesisIndex--;
+  }
+  HorizontalLayout h = HorizontalLayout::Builder();
+  int n = 0;
+  for (int i = thisIndex - (cursor->position() == LayoutCursor::Position::Left); i > leftParenthesisIndex; i--) {
+    Layout child = parentRef.childAtIndex(i);
+    parentRef.removeChild(child, nullptr, true);
+    h.addChildAtIndex(child, 0, n++, nullptr);
+  }
+  ParenthesisLayout parentheses = ParenthesisLayout::Builder(h);
+  parentRef.addChildAtIndex(parentheses, leftParenthesisIndex + 1, parentRef.numberOfChildren(), nullptr);
+  if (!parentheses.parent().isUninitialized()) {
+    if (cursor->position() == LayoutCursor::Position::Left) {
+      cursor->setLayout(h);
+      cursor->setPosition(LayoutCursor::Position::Right);
+    } else {
+      cursor->setLayout(parentheses);
     }
   }
   return true;

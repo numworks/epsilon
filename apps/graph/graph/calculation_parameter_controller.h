@@ -3,7 +3,7 @@
 
 #include <escher/buffer_table_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
-#include <escher/selectable_list_view_controller.h>
+#include <escher/explicit_selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_switch.h>
 #include "area_between_curves_graph_controller.h"
 #include "area_between_curves_parameter_controller.h"
@@ -21,7 +21,7 @@ namespace Graph {
 
 class GraphController;
 
-class CalculationParameterController : public Escher::SelectableListViewController<Escher::RegularListViewDataSource> {
+class CalculationParameterController : public Escher::ExplicitSelectableListViewController {
 public:
   CalculationParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor, GraphController * graphController);
   const char * title() override;
@@ -29,15 +29,14 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   TELEMETRY_ID("CalculationParameter");
-  int numberOfRows() const override;
+  int numberOfRows() const override { return constNumberOfRows(); }
+  static constexpr int constNumberOfRows() { return 9; }
 
-  Escher::HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
-  int typeAtIndex(int index) override;
+  Escher::HighlightCell * cell(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setRecord(Ion::Storage::Record record);
 private:
-  static bool ShouldDisplayIntersection();
+  bool ShouldDisplayIntersection() const;
   static bool ShouldDisplayAreaBetweenCurves();
   static bool RightEventIsEquivalentToEnterEventOnRow(int row);
   // This class is used for the AreaBetweenCurves cell
@@ -56,16 +55,13 @@ private:
     Escher::ChevronView m_accessoryView;
     bool m_hideChevron;
   };
-  constexpr static int k_totalNumberOfReusableCells = 6;
-  constexpr static int k_defaultCellType = 0;
-  constexpr static int k_derivativeCellType = 1;
-  constexpr static int k_preImageCellType = 2;
-  constexpr static int k_areaCellType = 3;
-  constexpr static int k_derivativeRowIndex = 4;
-  // The intersection is always displayed when area cell is displayed.
-  constexpr static int k_areaRowIndex = 8;
-  Escher::MessageTableCell m_cells[k_totalNumberOfReusableCells];
   Escher::MessageTableCellWithChevron m_preimageCell;
+  Escher::MessageTableCell m_intersectionCell;
+  Escher::MessageTableCell m_minimumCell;
+  Escher::MessageTableCell m_maximumCell;
+  Escher::MessageTableCell m_integralCell;
+  Escher::MessageTableCell m_tangentCell;
+  Escher::MessageTableCell m_rootCell;
   BufferTableCellWithHideableChevron m_areaCell;
   Ion::Storage::Record m_record;
   GraphController * m_graphController;

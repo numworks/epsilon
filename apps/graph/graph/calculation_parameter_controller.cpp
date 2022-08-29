@@ -11,8 +11,14 @@ using namespace Escher;
 namespace Graph {
 
 CalculationParameterController::CalculationParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, GraphController * graphController) :
-  SelectableListViewController(parentResponder),
+  ExplicitSelectableListViewController(parentResponder),
   m_preimageCell(I18n::Message::Preimage),
+  m_intersectionCell(I18n::Message::Intersection),
+  m_minimumCell(I18n::Message::Minimum),
+  m_maximumCell(I18n::Message::Maximum),
+  m_integralCell(I18n::Message::Integral),
+  m_tangentCell(I18n::Message::Tangent),
+  m_rootCell(I18n::Message::Zeros),
   m_graphController(graphController),
   m_preimageParameterController(nullptr, inputEventHandlerDelegate, range, cursor, &m_preimageGraphController),
   m_preimageGraphController(nullptr, graphView, bannerView, range, cursor),
@@ -26,6 +32,11 @@ CalculationParameterController::CalculationParameterController(Responder * paren
   m_rootGraphController(nullptr, graphView, bannerView, range, cursor),
   m_intersectionGraphController(nullptr, graphView, bannerView, range, cursor)
 {
+}
+
+HighlightCell * CalculationParameterController::cell(int index) {
+  HighlightCell * cells[constNumberOfRows()] = {&m_preimageCell, &m_intersectionCell, &m_maximumCell, &m_minimumCell, &m_rootCell, &m_derivativeCell, &m_tangentCell, &m_integralCell, &m_areaCell};
+  return cells[index];
 }
 
 const char * CalculationParameterController::title() {
@@ -116,67 +127,12 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-int CalculationParameterController::numberOfRows() const {
-  /* The intersection option should always be displayed if the area between
-   * curve is displayed. If not, k_areaRowIndex would be false. */
-  assert(!ShouldDisplayAreaBetweenCurves() || ShouldDisplayIntersection());
-  /* Inverse row + [optional intersection row] + [optional area between curves
-   * row] + derivative + all other rows (max, min zeros, derivative, tangent,
-   * integral) */
-  return 1 + ShouldDisplayIntersection() + ShouldDisplayAreaBetweenCurves() + 1 + k_totalNumberOfReusableCells - 1;
-};
-
-HighlightCell * CalculationParameterController::reusableCell(int index, int type) {
-  assert(index >= 0);
-  assert(index < reusableCellCount(type));
-  switch (type) {
-  case k_defaultCellType:
-    return &m_cells[index];
-  case k_derivativeCellType:
-    return &m_derivativeCell;
-  case k_areaCellType:
-    return &m_areaCell;
-  default:
-    assert(type == k_preImageCellType);
-    return &m_preimageCell;
-  }
-}
-
-int CalculationParameterController::reusableCellCount(int type) {
-  return type == k_defaultCellType ? k_totalNumberOfReusableCells : 1;
-}
-
-int CalculationParameterController::typeAtIndex(int index) {
-  if (index == 0) {
-    return k_preImageCellType;
-  }
-  if (index == k_areaRowIndex) {
-    return k_areaCellType;
-  }
-  if (index == k_derivativeRowIndex + ShouldDisplayIntersection()) {
-    return k_derivativeCellType;
-  }
-  return k_defaultCellType;
-}
-
 void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index <= numberOfRows());
   if (cell == &m_derivativeCell) {
     m_derivativeCell.setState(m_graphController->displayDerivativeInBanner());
     return;
-  } else if (cell == &m_preimageCell) {
-    return;
   } else if (cell != &m_areaCell) {
-    I18n::Message titles[] = {
-      I18n::Message::Intersection,
-      I18n::Message::Maximum,
-      I18n::Message::Minimum,
-      I18n::Message::Zeros,
-      I18n::Message::Default, // always skipped
-      I18n::Message::Tangent,
-      I18n::Message::Integral
-    };
-    static_cast<MessageTableCell *>(cell)->setMessage(titles[index - 1 + !ShouldDisplayIntersection()]);
     return;
   }
 
@@ -216,6 +172,8 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
 
 void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
+  m_intersectionCell.setVisible(shouldDisplayIntersection());
+  m_selectableTableView.reloadData();
 }
 
 bool CalculationParameterController::ShouldDisplayIntersection() {

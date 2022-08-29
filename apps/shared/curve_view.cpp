@@ -981,14 +981,18 @@ int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamete
     // If both dots are out of rect bounds, and on a same side
     if ((xmax < x && xmax < u) || (x < xmin && u < xmin) ||
         (ymax < y && ymax < v) || (y < ymin && v < ymin)) {
-      /* Discard a recursion step to save computation time on dots that are
-       * likely not to be drawn. It can alter precision with some functions when
+      /* Discard some recursion steps to save computation time on dots that are
+       * likely not to be drawn. This makes it so some parametric functions
+       * are drawn faster. Example: f(t) = [floor(t)*cos(t), floor(t)*sin(t)]
+       * If t is in [0, 60pi], and you zoom in a lot, the curve used to take
+       * too much time to draw outside of the screen.
+       * It can alter precision with some functions though, especially when
        * zooming excessively (compared to plot range) on local minimums
-       * For instance, plotting parametric function [t,|t-π|] with t in [0,360],
+       * For instance, plotting parametric function [t,|t-π|] with t in [0,3000],
        * x in [-1,20] and y in [-1,3] will show inaccuracies that would
        * otherwise have been visible at higher zoom only, with x in [2,4] and y
        * in [-0.2,0.2] in this case. */
-      nextMaxNumberOfRecursion--;
+      nextMaxNumberOfRecursion = nextMaxNumberOfRecursion / 2;
     }
 
     /* Pass isDiscontinuousBetweenTandS so that discontinuity is not recomputed

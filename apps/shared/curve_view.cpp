@@ -650,8 +650,6 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
  * Note: this is not true if the curve goes outside of the screen though.
  */
 constexpr static int k_maxNumberOfIterations = 8;
-// Above 3, N110 just take forever to draw discontinuous curves like f(x)=random()
-constexpr static int k_maxNumberOfIterationsForDiscontinuousFunctions = 3;
 
 void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, float tEnd, const float tStep, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, KDColor color, EvaluateDiscontinuityBetweenFloatValues evaluateDiscontinuityBetweenValues, bool thick, bool colorUnderCurve, KDColor colorOfFill, float colorLowerBound, float colorUpperBound, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, EvaluateXYForFloatParameter xyAreaBound, bool shouldColorAreaWhenNan, int areaPattern, Axis axis) const {
   /* ContinuousFunction caching relies on a consistent tStart and tStep. These
@@ -895,7 +893,13 @@ static bool pointInBoundingBox(float x1, float y1, float x2, float y2, float xC,
       && ((y1 <= yC && yC <= y2) || (y2 <= yC && yC <= y1));
 }
 
-int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, int stampNumber, EvaluateDiscontinuityBetweenFloatValues evaluateDiscontinuityBetweenValues, bool involvesDiscontinuousFunction) const {
+bool dotsAreInSameCircle(const float x1, const float y1, const float x2, const float y2, const float circleDiameter) {
+  const float deltaX = x1 - x2;
+  const float deltaY = y1 - y2;
+  return deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f;
+}
+
+int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation , void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation, bool dashedCurve, int stampNumber, EvaluateDiscontinuityBetweenFloatValues evaluateDiscontinuityBetweenValues) const {
   const bool isFirstDot = std::isnan(t);
   const bool isLeftDotValid = !(
       std::isnan(x) || std::isinf(x) ||
@@ -911,17 +915,10 @@ int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamete
     return stampNumber;
   }
   KDCoordinate circleDiameter = thick ? thickCircleDiameter : thinCircleDiameter;
-  bool isDiscontinuousBetweenTandS = involvesDiscontinuousFunction && evaluateDiscontinuityBetweenValues(t, s, model, context);
-  if (isDiscontinuousBetweenTandS && maxNumberOfRecursion == k_maxNumberOfIterations) {
-    maxNumberOfRecursion = k_maxNumberOfIterationsForDiscontinuousFunctions;
-  }
-  assert(!isDiscontinuousBetweenTandS || maxNumberOfRecursion <= k_maxNumberOfIterationsForDiscontinuousFunctions);
   if (isRightDotValid) {
-    const float deltaX = pxf - puf;
-    const float deltaY = pyf - pvf;
     if (isFirstDot // First dot has to be stamped
-       || ((!isLeftDotValid || isDiscontinuousBetweenTandS) && maxNumberOfRecursion <= 0) // Last step of the recursion with an undefined left dot or a discontinuous function : we stamp the last right dot
-       || (isLeftDotValid && deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f)) { // the dots are already close enough
+       || (!isLeftDotValid  && maxNumberOfRecursion <= 0) // Last step of the recursion with an undefined left dot or a discontinuous function : we stamp the last right dot
+       || (isLeftDotValid && dotsAreInSameCircle(pxf, pyf, puf, pvf, circleDiameter))) { // the dots are already close enough
       // the dots are already joined
       /* We need to be sure that the point is not an artifact caused by error
        * in float approximation. */
@@ -936,16 +933,30 @@ int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamete
       return stampAtLocation(ctx, rect, puf, pvd, color, thick, dashedCurve, stampNumber);
     }
   }
+
+  bool isDiscontinuousBetweenTandS = evaluateDiscontinuityBetweenValues(t, s, model, context);
   // Middle point
   float ct = (t + s)/2.0f;
   Coordinate2D<float> cxy = xyFloatEvaluation(ct, model, context);
   float cx = cxy.x1();
   float cy = cxy.x2();
+  if (isDiscontinuousBetweenTandS) {
+    /* If the function is discontinuous, it can never join dots at abscissas of
+     * discontinuity, and thus will always go to max recursion. To avoid this,
+     * and enhance performances, we set the condition that if one of the two
+     * dots left and right of the discontinuity is on the same pixel as the
+     * middle dot, we are close enough of the discontinuity and we can stop
+     * drawing more precisely. */
+    float pcx = floatToPixel(Axis::Horizontal, cx);
+    float pcy = floatToPixel(Axis::Vertical, cy);
+    if (isRightDotValid && (dotsAreInSameCircle(pxf, pyf, pcx, pcy, circleDiameter) || dotsAreInSameCircle(puf, pvf, pcx, pcy, circleDiameter))) {
+      return stampAtLocation(ctx, rect, puf, pvf, color, thick, dashedCurve, stampNumber);
+    }
+  }
   if (!isDiscontinuousBetweenTandS && (drawStraightLinesEarly || maxNumberOfRecursion <= 0) && isRightDotValid && isLeftDotValid &&
       pointInBoundingBox(x, y, u, v, cx, cy)) {
     /* As the middle dot is between the two dots, we assume that we
      * can draw a 'straight' line between the two */
-
     constexpr float dangerousSlope = 1e6f;
     if (xyDoubleEvaluation && std::fabs((v-y) / (u-x)) > dangerousSlope) {
       /* We need to make sure we're not drawing a vertical asymptote because of
@@ -983,8 +994,8 @@ int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamete
     /* Pass isDiscontinuousBetweenTandS so that discontinuity is not recomputed
      * between t and ct, and ct and s, if the model is already continuous
      * between t and s. */
-    stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation, dashedCurve, stampNumber, evaluateDiscontinuityBetweenValues, isDiscontinuousBetweenTandS);
-    stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation, dashedCurve, stampNumber, evaluateDiscontinuityBetweenValues, isDiscontinuousBetweenTandS);
+    stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, t, x, y, ct, cx, cy, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation, dashedCurve, stampNumber, isDiscontinuousBetweenTandS ? evaluateDiscontinuityBetweenValues : NoPotentialDiscontinuity);
+    stampNumber = joinDots(ctx, rect, xyFloatEvaluation, model, context, drawStraightLinesEarly, ct, cx, cy, s, u, v, color, thick, nextMaxNumberOfRecursion, xyDoubleEvaluation, dashedCurve, stampNumber, isDiscontinuousBetweenTandS ? evaluateDiscontinuityBetweenValues : NoPotentialDiscontinuity);
   }
   return stampNumber;
 }

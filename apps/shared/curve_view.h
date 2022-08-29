@@ -170,7 +170,7 @@ private:
   void drawGridLines(KDContext * ctx, KDRect rect, Axis axis, float step, KDColor boldColor, KDColor lightColor) const;
   /* Recursively join two dots (dichotomy). The method stops when the
    * maxNumberOfRecursion in reached. */
-  int joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr, bool dashedCurve = false, int stampNumber = 0, EvaluateDiscontinuityBetweenFloatValues evaluateDiscontinuityBetweenValues = NoPotentialDiscontinuity, bool involvesDiscontinuousFunction = true) const;
+  int joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParameter xyFloatEvaluation, void * model, void * context, bool drawStraightLinesEarly, float t, float x, float y, float s, float u, float v, KDColor color, bool thick, int maxNumberOfRecursion, EvaluateXYForDoubleParameter xyDoubleEvaluation = nullptr, bool dashedCurve = false, int stampNumber = 0, EvaluateDiscontinuityBetweenFloatValues evaluateDiscontinuityBetweenValues = NoPotentialDiscontinuity) const;
   /* Join two dots with a straight line. */
   int straightJoinDots(KDContext * ctx, KDRect rect, float pxf, float pyf, float puf, float pvf, KDColor color, bool thick, bool dashedCurve = false, int stampNumber = 0) const;
   /* Stamp centered around (pxf, pyf). If pxf and pyf are not round number, the

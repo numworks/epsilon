@@ -37,7 +37,7 @@ class View {
   // We only want Window to be able to invoke View::redraw
   friend class Window;
 public:
-  View() : m_frame(KDRectZero), m_superview(nullptr), m_dirtyRect(KDRectZero), m_visible(true) {}
+  View() : m_frame(KDRectZero), m_superview(nullptr), m_dirtyRect(KDRectZero) {}
 
   void resetSuperview() {
     m_superview = nullptr;
@@ -54,10 +54,7 @@ public:
   KDPoint pointFromPointInView(View * view, KDPoint point);
 
   KDRect bounds() const;
-  bool isVisible() const { return m_visible; }
-  void setVisible(bool visible) { m_visible = visible; }
-  void show() { m_visible = true; }
-  void hide() { m_visible = false; }
+  virtual bool isVisible() const { return true; }
 
   virtual View * subview(int index);
 
@@ -99,7 +96,6 @@ private:
    * subviews that 'm_superview = nullptr'. */
   View * m_superview;
   KDRect m_dirtyRect;
-  bool m_visible;
 };
 
 }

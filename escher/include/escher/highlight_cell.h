@@ -13,9 +13,21 @@ class HighlightCell : public View {
 public:
   HighlightCell();
 
+  bool isVisible() const override { return m_state != State::Hidden; }
+  void setVisible(bool visible) {
+    if (m_state == State::Hidden && visible) {
+      m_state = State::Visible;
+    } else if (!visible) {
+      m_state = State::Hidden;
+    }
+  }
+  void show() { setVisible(true); }
+  void hide() { setVisible(false); }
+
   bool isSelectable() { return isVisible() && protectedIsSelectable(); }
 
   virtual void setHighlighted(bool highlight);
+  void setHighlightedWitoutReload(bool highlight);
   virtual void reloadCell();
   virtual Responder * responder() { return nullptr; }
   virtual const char * text() const { return nullptr; }
@@ -23,13 +35,18 @@ public:
 
 protected:
   virtual bool protectedIsSelectable() { return true; }
-  bool isHighlighted() const { return m_highlighted; }
-  KDColor defaultBackgroundColor() const { return m_highlighted ? Palette::Select : KDColorWhite; }
+  bool isHighlighted() const { return m_state == State::Highlighted; }
+  KDColor defaultBackgroundColor() const { return isHighlighted() ? Palette::Select : KDColorWhite; }
 
   /* Not all cells keep m_highlighted up to date, as they may not rely on it
    * for drawing. As such, controllers should not read this value to get the
    * definitive state of the cell. */
-  bool m_highlighted;
+  enum class State : uint8_t {
+    Hidden,
+    Visible,
+    Highlighted,
+  };
+  State m_state;
 };
 
 }

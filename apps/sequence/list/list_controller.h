@@ -49,6 +49,10 @@ public:
   /* ExpressionModelListController */
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   void showLastSequence();
+  /* LayoutFieldDelegate */
+  bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
+  /* TextFieldDelegate */
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
 private:
   /* Cell types */
   constexpr static int k_titleCellType = 0;

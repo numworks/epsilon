@@ -368,11 +368,15 @@ void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * curso
   }
 }
 
-static void makePermanentIfBracket(LayoutNode * l) {
+static void makePermanentIfBracket(LayoutNode * l, bool hasLeftSibling, bool hasRightSibling) {
   if (l->type() == LayoutNode::Type::ParenthesisLayout || l->type() == LayoutNode::Type::CurlyBraceLayout) {
     AutocompletedBracketPairLayoutNode * bracket = static_cast<AutocompletedBracketPairLayoutNode *>(l);
-    bracket->makePermanent(AutocompletedBracketPairLayoutNode::Side::Left);
-    bracket->makePermanent(AutocompletedBracketPairLayoutNode::Side::Right);
+    if (hasLeftSibling) {
+      bracket->makePermanent(AutocompletedBracketPairLayoutNode::Side::Left);
+    }
+    if (hasRightSibling) {
+      bracket->makePermanent(AutocompletedBracketPairLayoutNode::Side::Right);
+    }
   }
 }
 
@@ -451,15 +455,17 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
       }
     }
     bool oldChildRemovedAtMerge = oldChild->isEmpty();
-    thisRef.mergeChildrenAtIndex(HorizontalLayout(static_cast<HorizontalLayoutNode *>(newChild)), indexForInsertion + 1, true);
-    // WARNING: do not call "this" afterwards
+    Layout oldChildRef(oldChild);
+    HorizontalLayout newChildRef(static_cast<HorizontalLayoutNode *>(newChild));
     if (!oldChildRemovedAtMerge) {
-      thisRef.removeChildAtIndex(indexForInsertion, cursor);
+      thisRef.removeChild(oldChildRef, cursor, true);
     }
+    thisRef.mergeChildrenAtIndex(newChildRef, indexForInsertion, true);
+    // WARNING: do not call "this" afterwards
     return false;
   }
   // Else, just replace the child.
-  makePermanentIfBracket(newChild);
+  makePermanentIfBracket(newChild, oldChildIndex > 0, oldChildIndex < numberOfChildren() - 1);
   if (cursor != nullptr && !oldWasAncestorOfNewLayout) {
     cursor->setPosition(LayoutCursor::Position::Right);
   }
@@ -496,7 +502,7 @@ void HorizontalLayout::addChildAtIndex(Layout l, int index, int currentNumberOfC
       || (index < numberOfChildren()
         && childAtIndex(index).mustHaveLeftSibling()))
   {
-    makePermanentIfBracket(l.node());
+    makePermanentIfBracket(l.node(), index > 0, index < currentNumberOfChildren - 1);
     Layout::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
   }
 }
@@ -518,6 +524,13 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
     return;
   }
 
+  if (index > 1) {
+    makePermanentIfBracket(childAtIndex(index - 1).node(), index > 2, true);
+  }
+  if (index < numberOfChildren()) {
+    makePermanentIfBracket(childAtIndex(index).node(), true, index < numberOfChildren() - 1);
+  }
+
   /* Remove any empty child that would be next to the inserted layout.
    * If the layout to insert starts with a vertical offset layout, any empty
    * layout child directly on the left of the inserted layout (if there is one)
@@ -526,20 +539,10 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
   removeEmptyChildBeforeInsertionAtIndex(&newIndex, nullptr, shouldRemoveOnLeft);
   assert(newIndex >= 0 && newIndex <= numberOfChildren());
 
-  // Prepare the next cursor position
-  Layout nextPointedLayout;
-  LayoutCursor::Position nextPosition = LayoutCursor::Position::Left;
-  if (newIndex < numberOfChildren()) {
-    nextPointedLayout = childAtIndex(newIndex);
-    nextPosition = LayoutCursor::Position::Left;
-  } else {
-    nextPointedLayout = *this;
-    nextPosition = LayoutCursor::Position::Right;
-  }
-
   // Merge the horizontal layout
   int childrenNumber = h.numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
+    int n = numberOfChildren();
     if (i == 0
         && h.childAtIndex(0).isEmpty()
         && childrenNumber > 1
@@ -553,13 +556,13 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
     }
     if (!removeEmptyChildren
         || !h.childAtIndex(i).isEmpty()
-        || (numberOfChildren() > 0
+        || (n > 0
           && childAtIndex(0).mustHaveLeftSibling())
         || (i < childrenNumber-1 && h.childAtIndex(i+1).mustHaveLeftSibling()))
     {
       Layout c = h.childAtIndex(i);
-      makePermanentIfBracket(c.node());
-      addChildAtIndexInPlace(c, newIndex, numberOfChildren());
+      makePermanentIfBracket(c.node(), newIndex > 0, newIndex < n - 1 || i  < childrenNumber - 1);
+      addChildAtIndexInPlace(c, newIndex, n);
       if (firstAddedChild) {
         childAtIndex(newIndex).node()->setMargin(margin);
       }
@@ -570,8 +573,13 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
 
   // Set the cursor
   if (cursor != nullptr) {
-    cursor->setLayout(nextPointedLayout);
-    cursor->setPosition(nextPosition);
+    if (newIndex > 0) {
+      cursor->setLayout(childAtIndex(newIndex - 1));
+      cursor->setPosition(LayoutCursor::Position::Right);
+    } else {
+      cursor->setLayout(*this);
+      cursor->setPosition(LayoutCursor::Position::Left);
+    }
   }
 }
 

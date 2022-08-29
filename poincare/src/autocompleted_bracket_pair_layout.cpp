@@ -103,10 +103,14 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
   HorizontalLayout h = static_cast<HorizontalLayout &>(p);
   int thisIndex = h.indexOfChild(thisRef);
 
-  HorizontalLayout newChild = HorizontalLayout::Builder();
-  Layout oldChild = Layout(childLayout());
-  thisRef.replaceChild(oldChild, newChild, cursor);
-  newChild.addOrMergeChildAtIndex(oldChild, 0, false, cursor);
+  if (childLayout()->type() != Type::HorizontalLayout) {
+    HorizontalLayout newChild = HorizontalLayout::Builder();
+    Layout oldChild = Layout(childLayout());
+    thisRef.replaceChild(oldChild, newChild, cursor);
+    newChild.addOrMergeChildAtIndex(oldChild, 0, false, cursor);
+  }
+  assert(childLayout()->type() == Type::HorizontalLayout);
+  HorizontalLayout child = HorizontalLayout(static_cast<HorizontalLayoutNode *>(childLayout()));
 
   int injectionIndex, removalStart, removalEnd;
   if (side == Side::Left) {
@@ -114,17 +118,17 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
     removalStart = thisIndex - 1;
     removalEnd = 0;
   } else {
-    injectionIndex = newChild.isEmpty() ? 0 : newChild.numberOfChildren();
+    injectionIndex = child.isEmpty() ? 0 : child.numberOfChildren();
     removalStart = h.numberOfChildren() - 1;
     removalEnd = thisIndex + 1;
   }
   for (int i = removalStart; i >= removalEnd; i--) {
     Layout l = h.childAtIndex(i);
     h.removeChild(l, cursor);
-    newChild.addOrMergeChildAtIndex(l, injectionIndex, true, cursor);
+    child.addOrMergeChildAtIndex(l, injectionIndex, true, cursor);
   }
-  if (newChild.numberOfChildren() == 0) {
-    thisRef.replaceChild(newChild, EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Never));
+  if (child.numberOfChildren() == 0) {
+    thisRef.replaceChild(child, EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Never));
   }
 }
 

@@ -14,8 +14,17 @@ bool AutocompletedBracketPairLayoutNode::willAddSibling(LayoutCursor * cursor, L
   } else {
     return BracketPairLayoutNode::willAddSibling(cursor, sibling, moveCursor);
   }
+  if (!isTemporary(insertionSide)) {
+    return true;
+  }
   makePermanent(insertionSide);
-  return true;
+  AutocompletedBracketPairLayoutNode * bracketSibling = sibling->type() == type() ? bracketSibling = static_cast<AutocompletedBracketPairLayoutNode *>(sibling) : nullptr;
+  bool ignoreSibling = bracketSibling && bracketSibling->sideInsertedAs() == insertionSide;
+  if (ignoreSibling && insertionSide == Side::Left) {
+    cursor->setPosition(LayoutCursor::Position::Left);
+    cursor->setLayout(Layout(childLayout()));
+  }
+  return !ignoreSibling;
 }
 
 void AutocompletedBracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {

@@ -219,11 +219,15 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bo
       // Point to first non empty codePoint inserted
       pointedChild = newChild;
     }
-    m_layout.addSibling(this, newChild, true);
 
     if (newChild.type() == LayoutNode::Type::ParenthesisLayout || newChild.type() == LayoutNode::Type::CurlyBraceLayout) {
-      AutocompletedBracketPairLayoutNode * autocompletedBracket = static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node());
-      autocompletedBracket->balanceAfterInsertion(bracketSide, this);
+      static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->setInsertionSide(bracketSide);
+      m_layout.addSibling(this, newChild, true);
+      if (!newChild.parent().isUninitialized()) {
+        static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->balanceAfterInsertion(bracketSide, this);
+      }
+    } else {
+      m_layout.addSibling(this, newChild, true);
     }
 
     // Get the next code point

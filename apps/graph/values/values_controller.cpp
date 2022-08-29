@@ -111,17 +111,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     storeCell->setSeparatorLeft(i > 0);
   }
   if (typeAtLoc == k_exactValueCellType) {
-    ScrollableTwoExpressionsCell * exactValueCell = static_cast<ScrollableTwoExpressionsCell *>(cell);
-    char * approximateResult = memoizedBufferForCell(i, j);
-    Poincare::Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult);
-    Poincare::Layout exactLayout = exactValueLayout(i, j);
-    exactValueCell->setDisplayCenter(
-      !(exactLayout.isUninitialized()
-      /* Make both layouts editable (with CodePointLayouts rather than
-      * StringLayouts) so that they can be properly compared. */
-      || exactLayout.isIdenticalTo(approximateLayout, true))
-    );
-    exactValueCell->setLayouts(exactLayout, approximateLayout);
+    setExactValueCellLayouts(i, j);
   } else if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
     const int numberOfElementsInCol = numberOfElementsInColumn(i);
     Shared::Hideable * hideableCell = hideableCellFromType(cell, typeAtLoc);
@@ -389,32 +379,48 @@ void ValuesController::didChangeCell(int column, int row) {
   Shared::ValuesController::didChangeCell(column, row);
 }
 
-Poincare::Layout ValuesController::exactValueLayout(int column, int row) {
+void ValuesController::setExactValueCellLayouts(int column, int row) {
   if (m_lastExactValueCellComputedColumn == column && m_lastExactValueCellComputedRow == row) {
-    return m_exactValueCell.exactLayout();
+    return;
   }
+
+  // Compute approximate layout
+  char * approximateResult = memoizedBufferForCell(column, row);
+  Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult);
+
+  // Compute exact layout
+  Layout exactLayout = Layout();
+  Expression exactExpression = Expression();
   m_lastExactValueCellComputedColumn = column;
   m_lastExactValueCellComputedRow = row;
   double abscissa;
   bool isDerivative = false;
   Shared::ExpiringPointer<ContinuousFunction> function = functionAtIndex(column, row, &abscissa, &isDerivative);
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  if (isDerivative) {
-    return Layout(); // Do not compute exact derivative
+  if (!isDerivative) { // Do not compute exact derivative
+    exactExpression = function->expressionReduced(context);
+    if (function->symbol() != ContinuousFunction::k_parametricSymbol) {
+      // Do not display exact value of parametric functions
+      Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
+      Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
+      abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
+      PoincareHelpers::CloneAndSimplify(&exactExpression, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
+      if (!PoincareHelpers::ShouldOnlyDisplayApproximation(function->expressionClone(), exactExpression, context)) {
+        // Do not show exact expressions in certain cases
+        exactLayout = exactExpression.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, context);
+      }
+    }
   }
-  Poincare::Expression e = function->expressionReduced(context);
-  if (function->symbol() == ContinuousFunction::k_parametricSymbol) {
-    // Do not display exact value of parametric functions
-    return Layout();
-  }
-  Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
-  Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
-  abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
-  PoincareHelpers::CloneAndSimplify(&e, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
-  if (PoincareHelpers::ShouldOnlyDisplayApproximation(function->expressionClone(), e, context)) {
-    return Layout(); // Do not show exact expressions in certain cases
-  }
-  return e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, context);
+  m_exactValueCell.setLayouts(exactLayout, approximateLayout);
+
+  // Decide if the exact layout must be displayed
+  bool displayExactLayout = !exactLayout.isUninitialized() && !exactLayout.isIdenticalTo(approximateLayout, true);
+  m_exactValueCell.setDisplayCenter(displayExactLayout);
+
+  // Decide if the equal sign is an approximate
+  assert(!displayExactLayout || !exactExpression.isUninitialized());
+  bool areExactlyEqual = displayExactLayout && Poincare::Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(exactExpression, PoincareHelpers::ParseAndSimplify(approximateResult, textFieldDelegateApp()->localContext()));
+  m_exactValueCell.setEqualMessage(areExactlyEqual ? I18n::Message::Equal : I18n::Message::AlmostEqual);
 }
 
 // Parameter controllers

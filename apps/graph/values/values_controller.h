@@ -103,7 +103,7 @@ private:
   int absoluteColumnForValuesColumn(int column) override;
   void fillMemoizedBuffer(int column, int row, int index) override;
   void didChangeCell(int column, int row) override;
-  Poincare::Layout exactValueLayout(int column, int row);
+  void setExactValueCellLayouts(int column, int row);
 
   // Parameter controllers
   Shared::ColumnParameterController * functionParameterController() override;

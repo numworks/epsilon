@@ -28,7 +28,7 @@ public:
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
   LayoutCursor equivalentCursor(LayoutCursor * cursor) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
-  LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression) override;
+  LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
   int serializeChildrenBetweenIndexes(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, bool forceIndexes, int firstIndex = -1, int lastIndex = -1) const;

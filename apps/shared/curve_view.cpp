@@ -644,7 +644,12 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 
 #endif
 
-constexpr static int k_maxNumberOfIterations = 10;
+/* When iterating between two abscissas, the steepest curve can go from bottom
+ * to top of screen in one pixel of width. By computing a maximum of 2^8 dots,
+ * we ensure to compute at least one value per pixel, since 2^8 > screen height
+ * Note: this is not true if the curve goes outside of the screen though.
+ */
+constexpr static int k_maxNumberOfIterations = 8;
 // Above 3, N110 just take forever to draw discontinuous curves like f(x)=random()
 constexpr static int k_maxNumberOfIterationsForDiscontinuousFunctions = 3;
 

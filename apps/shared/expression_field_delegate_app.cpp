@@ -21,8 +21,8 @@ bool ExpressionFieldDelegateApp::layoutFieldShouldFinishEditing(LayoutField * la
 bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutField->hasText()) {
-      displayWarning(I18n::Message::SyntaxError);
-      return true;
+      // Accept empty fields
+      return false;
     }
     /* An acceptable layout has to be parsable and serialized in a fixed-size
      * buffer. We check all that here. */

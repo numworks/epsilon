@@ -67,10 +67,10 @@ void HistoryViewCell::setEven(bool even) {
 }
 
 void HistoryViewCell::setHighlighted(bool highlight) {
-  if (m_highlighted == highlight) {
+  if (isHighlighted() == highlight) {
     return;
   }
-  m_highlighted = highlight;
+  setHighlightedWitoutReload(highlight);
   reloadSubviewHighlight();
   // Re-layout as the ellispsis subview might have appear/disappear
   layoutSubviews();

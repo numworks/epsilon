@@ -67,7 +67,7 @@ private:
   void reloadScroll();
   void reloadOutputSelection(HistoryViewCellDataSource::SubviewType previousType);
   bool displayedEllipsis() const {
-    return m_highlighted && m_calculationAdditionInformation != Calculation::AdditionalInformationType::None;
+    return isHighlighted() && m_calculationAdditionInformation != Calculation::AdditionalInformationType::None;
   }
   uint32_t m_calculationCRC32;
   Calculation::DisplayOutput m_calculationDisplayOutput;

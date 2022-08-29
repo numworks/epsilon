@@ -47,7 +47,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     double slopeMultiplicator = 1.0;
     if (function->canDisplayDerivative()) {
       // Use the local derivative to slow down the cursor's step if needed
-      double slope = function->approximateDerivative(t, context, *subCurveIndex);
+      double slope = function->approximateDerivative(t, context, subCurveIndex ? *subCurveIndex : 0);
       // If yGridUnit is twice xGridUnit, visible slope is halved
       slope *= range->xGridUnit() / range->yGridUnit();
       /* Assuming the curve is a straight line of slope s. To move the cursor at a

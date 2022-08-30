@@ -41,8 +41,10 @@ private:
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool shouldDisplayCalculation() const;
   bool shouldDisplayDerivative() const;
-  bool isDerivative(int index) { return cell(index) == &m_derivativeNumberCell; };
+  bool isDerivative(int index) { return cell(index) == &m_derivativeNumberCell && function()->numberOfCurveParameters() == 2; };
   int cellIndex(int visibleCellIndex) const;
+  static constexpr size_t k_titleSize = Shared::Function::k_maxNameWithArgumentSize;
+  char m_title[k_titleSize];
   Escher::BufferTableCellWithEditableText m_abscissaCell;
   Escher::BufferTableCellWithEditableText m_imageCell;
   Escher::BufferTableCellWithEditableText m_derivativeNumberCell;

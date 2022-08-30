@@ -15,7 +15,7 @@ CurveParameterController::CurveParameterController(Escher::InputEventHandlerDele
   m_imageCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
   m_derivativeNumberCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
   m_calculationCell(I18n::Message::Compute),
-  m_optionsCell(I18n::Message::PlotOptions),
+  m_optionsCell(I18n::Message::FunctionOptions),
   m_graphController(graphController),
   m_graphRange(graphRange),
   m_cursor(cursor),
@@ -34,6 +34,10 @@ Shared::ExpiringPointer<Shared::ContinuousFunction> CurveParameterController::fu
 }
 
 const char * CurveParameterController::title() {
+  if (function()->isNamed()) {
+    function()->nameWithArgument(m_title, k_titleSize);
+    return m_title;
+  }
   return I18n::translate(I18n::Message::PlotOptions);
 }
 
@@ -62,7 +66,6 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell, int 
   }
   if (cell == &m_imageCell || cell == &m_derivativeNumberCell) {
     // The parameter requires a custom name built from the function name
-    assert(function()->plotType() == ContinuousFunction::PlotType::Cartesian);
     constexpr size_t bufferSize = BufferTextView::k_maxNumberOfChar;
     char buffer[bufferSize];
     if (cell == &m_imageCell) {
@@ -142,7 +145,7 @@ bool CurveParameterController::editableParameter(int index) {
 
 void CurveParameterController::viewWillAppear() {
   m_preimageGraphController.setImage(m_cursor->y());
-  m_derivativeNumberCell.setVisible(shouldDisplayDerivative());
+  m_derivativeNumberCell.setVisible(shouldDisplayDerivative() || function()->numberOfCurveParameters() == 3);
   m_calculationCell.setVisible(shouldDisplayCalculation());
   resetMemoization();
   m_selectableTableView.reloadData();

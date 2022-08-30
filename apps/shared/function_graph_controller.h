@@ -32,6 +32,8 @@ protected:
     KDCoordinate nonMemoizedRowHeight(int j) override;
     FunctionGraphController * graphController() const { return static_cast<FunctionGraphController *>(const_cast<InteractiveCurveViewController *>(m_graphController)); }
     virtual Poincare::Layout nameLayoutAtIndex(int j) const = 0;
+  private:
+    constexpr static KDFont::Size k_font = KDFont::Size::Large;
   };
 
   float cursorTopMarginRatio() override { return 0.068f; }

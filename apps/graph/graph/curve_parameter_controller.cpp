@@ -10,15 +10,22 @@ using namespace Escher;
 namespace Graph {
 
 CurveParameterController::CurveParameterController(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController) :
-  FloatParameterControllerWithoutButton<float,BufferTableCellWithEditableText>(parentResponder()),
+  ExplicitFloatParameterController<float,BufferTableCellWithEditableText>(parentResponder()),
+  m_abscissaCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
+  m_imageCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
+  m_derivativeNumberCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
+  m_calculationCell(I18n::Message::Compute),
   m_graphController(graphController),
   m_graphRange(graphRange),
   m_cursor(cursor),
   m_preimageGraphController(nullptr, graphView, bannerView, graphRange, cursor),
-  m_parameterCells {{&m_selectableTableView, inputEventHandlerDelegate, this}, {&m_selectableTableView, inputEventHandlerDelegate, this}, {&m_selectableTableView, inputEventHandlerDelegate, this}},
-  m_calculationCell(I18n::Message::Compute),
   m_calculationParameterController(this, inputEventHandlerDelegate, graphView, bannerView, graphRange, cursor)
 {
+}
+
+Escher::HighlightCell * CurveParameterController::cell(int index) {
+  HighlightCell * cells[k_numberOfRows] = {&m_abscissaCell, &m_imageCell, &m_derivativeNumberCell, &m_calculationCell};
+  return cells[index];
 }
 
 Shared::ExpiringPointer<Shared::ContinuousFunction> CurveParameterController::function() const {
@@ -38,32 +45,33 @@ void CurveParameterController::didBecomeFirstResponder() {
 
 void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell, int index) {
   I18n::Message name = I18n::Message::Default;
+  BufferTableCellWithEditableText * parameterCells[] = {&m_abscissaCell, &m_imageCell, &m_derivativeNumberCell};
   if (index < function()->numberOfCurveParameters()) {
     ContinuousFunction::CurveParameter parameter = function()->getCurveParameter(index);
     name = parameter.parameterName;
-    m_parameterCells[index].setEditable(parameter.editable);
+    parameterCells[index]->setEditable(parameter.editable);
   }
   if (name != I18n::Message::Default) {
-    m_parameterCells[index].setMessageWithPlaceholders(name);
-    FloatParameterControllerWithoutButton::willDisplayCellForIndex(cell, index);
+    parameterCells[index]->setMessageWithPlaceholder(name);
+    ExplicitFloatParameterController::willDisplayCellForIndex(cell, index);
     return;
   }
-  if (isDerivative(index)) {
-    m_parameterCells[index].setEditable(false);
+  if (cell == &m_derivativeNumberCell) {
+    m_derivativeNumberCell.setEditable(false);
   }
-  if (index == k_preimageIndex || (isDerivative(index))) {
+  if (cell == &m_imageCell || cell == &m_derivativeNumberCell) {
     // The parameter requires a custom name built from the function name
     assert(function()->plotType() == ContinuousFunction::PlotType::Cartesian);
     constexpr size_t bufferSize = BufferTextView::k_maxNumberOfChar;
     char buffer[bufferSize];
-    if (index == k_preimageIndex) {
+    if (cell == &m_imageCell) {
       function()->nameWithArgument(buffer, bufferSize);
     } else {
       assert(index == k_derivativeIndex);
       function()->derivativeNameWithArgument(buffer, bufferSize);
     }
-    m_parameterCells[index].setLabelText(buffer);
-    FloatParameterControllerWithoutButton::willDisplayCellForIndex(cell, index);
+    parameterCells[index]->setLabelText(buffer);
+    ExplicitFloatParameterController::willDisplayCellForIndex(cell, index);
   }
 }
 
@@ -99,7 +107,7 @@ bool CurveParameterController::confirmParameterAtIndex(int parameterIndex, doubl
 
 bool CurveParameterController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   int index = selectedRow();
-  if (!FloatParameterControllerWithoutButton::textFieldDidFinishEditing(textField, text, event)) {
+  if (!ExplicitFloatParameterController::textFieldDidFinishEditing(textField, text, event)) {
     return false;
   }
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
@@ -122,30 +130,13 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-Escher::HighlightCell * CurveParameterController::reusableCell(int index, int type) {
-  if (type == k_calculationCellType) {
-    return &m_calculationCell;
-  }
-  return &m_parameterCells[index];
-}
-
-int CurveParameterController::typeAtIndex(int index) {
-  if (index < numberOfParameters()) {
-    return k_parameterCellType;
-  }
-  return k_calculationCellType;
-}
-
 bool CurveParameterController::editableParameter(int index) {
   return !isDerivative(index) && function()->getCurveParameter(index).editable;
 }
 
-int CurveParameterController::numberOfRows() const {
-  return numberOfParameters() + shouldDisplayCalculation();
-}
-
 void CurveParameterController::viewWillAppear() {
   m_preimageGraphController.setImage(m_cursor->y());
+  m_derivativeNumberCell.setVisible(shouldDisplayDerivative());
   resetMemoization();
   m_selectableTableView.reloadData();
   SelectableListViewController::viewWillAppear();
@@ -157,10 +148,6 @@ bool CurveParameterController::shouldDisplayCalculation() const {
 
 bool CurveParameterController::shouldDisplayDerivative() const {
   return function()->canDisplayDerivative() && m_graphController->displayDerivativeInBanner();
-}
-
-bool CurveParameterController::isDerivative(int index) const {
-  return shouldDisplayDerivative() && index == k_derivativeIndex;
 }
 
 }

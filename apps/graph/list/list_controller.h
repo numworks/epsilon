@@ -36,6 +36,7 @@ public:
   KDCoordinate expressionRowHeight(int j) override;
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   FunctionToolbox * toolboxForInputEventHandler(Escher::InputEventHandler * handler) override;
+  Shared::ListParameterController * parameterController() override;
 private:
   constexpr static int k_functionCellType = 0;
   constexpr static int k_addNewModelType = 1;
@@ -58,7 +59,6 @@ private:
   // Complete the equationField with a valid left equation side
   bool completeEquation(Escher::InputEventHandler * equationField, CodePoint symbol);
   void addModel() override;
-  Shared::ListParameterController * parameterController() override;
   int maxNumberOfDisplayableRows() override;
   Escher::HighlightCell * functionCells(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int j) override;

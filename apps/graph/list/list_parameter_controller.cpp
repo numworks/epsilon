@@ -35,7 +35,8 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
    * displayed. */
   m_detailsParameterController.setRecord(m_record);
   m_domainParameterController.setRecord(m_record);
-  m_derivativeCell.setVisible(App::app()->functionStore()->modelForRecord(m_record)->canDisplayDerivative());
+  bool displayDerivative = !m_record.isNull() && App::app()->functionStore()->modelForRecord(m_record)->canDisplayDerivative();
+  m_derivativeCell.setVisible(displayDerivative);
   m_detailsCell.setVisible(displayDetails());
   m_functionDomainCell.setVisible(displayDomain());
 }

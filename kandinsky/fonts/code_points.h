@@ -149,6 +149,8 @@ uint32_t CodePoints[] = {
   0x3C7,   // χ // GREEK SMALL LETTER CHI
   0x1d07,  // ᴇ // LATIN LETTER SMALL CAPITAL E
   0x2192,  // → // RIGHTWARDS ARROW
+  0x2197,  // ↗ // NORTH EAST ARROW
+  0x2198,  // ↘ // SOUTH EAST ARROW
   0x2211,  // ∑ // N-ARY SUMMATION
   0x221a,  // √ // SQUARE ROOT
   0x222b,  // ∫ // INTEGRAL

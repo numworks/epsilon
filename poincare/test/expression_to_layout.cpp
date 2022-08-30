@@ -20,7 +20,7 @@ QUIZ_CASE(poincare_expression_to_layout) {
   assert_parsed_expression_layouts_to("floor(1)", FloorLayout::Builder(CodePointLayout::Builder('1')));
   assert_parsed_expression_layouts_to("1/2", FractionLayout::Builder(CodePointLayout::Builder('1'), CodePointLayout::Builder('2')));
   assert_parsed_expression_layouts_to("int(1,x,2,3)", IntegralLayout::Builder(CodePointLayout::Builder('1'), CodePointLayout::Builder('x'), CodePointLayout::Builder('2'), CodePointLayout::Builder('3')));
-  assert_parsed_expression_layouts_to("(1)", HorizontalLayout::Builder(LeftParenthesisLayout::Builder(), CodePointLayout::Builder('1'), RightParenthesisLayout::Builder()));
+  assert_parsed_expression_layouts_to("(1)", ParenthesisLayout::Builder(CodePointLayout::Builder('1')));
   assert_parsed_expression_layouts_to("√(1)", NthRootLayout::Builder(CodePointLayout::Builder('1')));
   assert_parsed_expression_layouts_to("root(1,2)", NthRootLayout::Builder(CodePointLayout::Builder('1'), CodePointLayout::Builder('2')));
   assert_parsed_expression_layouts_to("sum(1,n,2,3)", SumLayout::Builder(CodePointLayout::Builder('1'), CodePointLayout::Builder('n'), CodePointLayout::Builder('2'), CodePointLayout::Builder('3')));

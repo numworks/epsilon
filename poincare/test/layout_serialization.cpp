@@ -33,6 +33,11 @@ QUIZ_CASE(poincare_layout_serialization) {
       ConjugateLayout::Builder(CodePointLayout::Builder('1')),
       "conj\u00121\u0013");
 
+  // CurlyBraceLayout
+  assert_layout_serialize_to(
+      CurlyBraceLayout::Builder(),
+      "{}");
+
   // DerivativeLayout
   assert_layout_serialize_to(
       FirstOrderDerivativeLayout::Builder(CodePointLayout::Builder('f'), CodePointLayout::Builder('x'), CodePointLayout::Builder('a')),
@@ -78,16 +83,6 @@ QUIZ_CASE(poincare_layout_serialization) {
         CodePointLayout::Builder('3')),
       "int\u0012\u00121\u0013,\u0012x\u0013,\u00122\u0013,\u00123\u0013\u0013");
 
-  // LeftCurlyBraceLayout
-  assert_layout_serialize_to(
-      LeftCurlyBraceLayout::Builder(),
-      "{");
-
-  // LeftParenthesisLayout
-  assert_layout_serialize_to(
-      LeftParenthesisLayout::Builder(),
-      "(");
-
   // MatrixLayout
   assert_layout_serialize_to(
       MatrixLayout::Builder(
@@ -105,7 +100,10 @@ QUIZ_CASE(poincare_layout_serialization) {
         CodePointLayout::Builder('6')),
       "root\u0012\u00127\u0013,\u00126\u0013\u0013");
 
-  // ParenthesisLayout -> Tested by Left/RightParenthesisLayout
+  // ParenthesisLayout
+  assert_layout_serialize_to(
+      ParenthesisLayout::Builder(),
+      "()");
 
   // ProductLayout
   assert_layout_serialize_to(
@@ -115,16 +113,6 @@ QUIZ_CASE(poincare_layout_serialization) {
         CodePointLayout::Builder('2'),
         CodePointLayout::Builder('3')),
       "product\u0012\u00121\u0013,\u0012x\u0013,\u00122\u0013,\u00123\u0013\u0013");
-
-  // RightCurlyBraceLayout
-  assert_layout_serialize_to(
-      RightCurlyBraceLayout::Builder(),
-      "}");
-
-  // RightParenthesisLayout
-  assert_layout_serialize_to(
-      RightParenthesisLayout::Builder(),
-      ")");
 
   // SequenceLayout -> Tested by SumLayout and ProductLayout
 

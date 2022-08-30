@@ -9,10 +9,10 @@ QUIZ_CASE(poincare_layout_constructors) {
   CodePointLayout e2 = CodePointLayout::Builder('a');
   BinomialCoefficientLayout e3 = BinomialCoefficientLayout::Builder(e1, e2);
   CeilingLayout e4 = CeilingLayout::Builder(e3);
-  RightParenthesisLayout e5 = RightParenthesisLayout::Builder();
+  ParenthesisLayout e5 = ParenthesisLayout::Builder();
   CondensedSumLayout e7 = CondensedSumLayout::Builder(e4, e5, e3);
   ConjugateLayout e8 = ConjugateLayout::Builder(e7);
-  LeftParenthesisLayout e10 = LeftParenthesisLayout::Builder();
+  CurlyBraceLayout e10 = CurlyBraceLayout::Builder();
   FloorLayout e11 = FloorLayout::Builder(e10);
   FractionLayout e12 = FractionLayout::Builder(e8, e11);
   HorizontalLayout e13 = HorizontalLayout::Builder();
@@ -144,37 +144,13 @@ QUIZ_CASE(poincare_layout_power) {
    * ( 2)|                       (( 2) |)
    * (1 )| -> "Left" "Square" -> ((1 ) |)
    * */
-  Layout l3 = HorizontalLayout::Builder(
-      LeftParenthesisLayout::Builder(),
-      CodePointLayout::Builder('1'),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript),
-      RightParenthesisLayout::Builder());
-  LayoutCursor c3(l3.childAtIndex(3), LayoutCursor::Position::Right);
+  Layout l3 = HorizontalLayout::Builder(ParenthesisLayout::Builder(HorizontalLayout::Builder(
+    CodePointLayout::Builder('1'),
+    VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript)
+  )));
+  LayoutCursor c3(l3, LayoutCursor::Position::Right);
   c3.moveLeft(nullptr);
   c3.addEmptySquarePowerLayout();
   assert_layout_serialize_to(l3, "((1^\u00122\u0013)^\u00122\u0013)");
 }
 
-QUIZ_CASE(poincare_layout_parentheses_size) {
-  /*      3
-   * (2+(---)6)1
-   *      4
-   * Assert that the first and last parentheses have the same size.
-   */
-  HorizontalLayout layout = HorizontalLayout::Builder();
-  LeftParenthesisLayout leftPar = LeftParenthesisLayout::Builder();
-  RightParenthesisLayout rightPar = RightParenthesisLayout::Builder();
-  layout.addChildAtIndex(leftPar, 0, 0, nullptr);
-  layout.addChildAtIndex(CodePointLayout::Builder('2'), 1, 1, nullptr);
-  layout.addChildAtIndex(CodePointLayout::Builder('+'), 2, 2, nullptr);
-  layout.addChildAtIndex(LeftParenthesisLayout::Builder(), 3, 3, nullptr);
-  layout.addChildAtIndex(FractionLayout::Builder(
-        CodePointLayout::Builder('3'),
-        CodePointLayout::Builder('4')),
-      4, 4, nullptr);
-  layout.addChildAtIndex(RightParenthesisLayout::Builder(), 4, 4, nullptr);
-  layout.addChildAtIndex(CodePointLayout::Builder('6'), 5, 5, nullptr);
-  layout.addChildAtIndex(rightPar, 7, 7, nullptr);
-  layout.addChildAtIndex(CodePointLayout::Builder('1'), 8, 8, nullptr);
-  quiz_assert(leftPar.layoutSize(KDFont::Size::Large).height() == rightPar.layoutSize(KDFont::Size::Large).height());
-}

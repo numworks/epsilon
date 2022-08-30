@@ -31,8 +31,7 @@ QUIZ_CASE(poincare_layout_cursor_computation) {
   // random()
   HorizontalLayout hl = HorizontalLayout::Builder();
   hl.addChildAtIndex(StringLayout::Builder("random"), hl.numberOfChildren(),  hl.numberOfChildren(), nullptr);
-  hl.addChildAtIndex(LeftParenthesisLayout::Builder(), hl.numberOfChildren(), hl.numberOfChildren(), nullptr);
-  hl.addChildAtIndex(RightParenthesisLayout::Builder(), hl.numberOfChildren(), hl.numberOfChildren(), nullptr);
+  hl.addChildAtIndex(ParenthesisLayout::Builder(), hl.numberOfChildren(), hl.numberOfChildren(), nullptr);
   l = hl;
   e = Random::Builder();
   assert_inserted_layout_points_to(l, &e, l);
@@ -40,11 +39,10 @@ QUIZ_CASE(poincare_layout_cursor_computation) {
   // cos(\x11)
   hl = HorizontalLayout::Builder();
   hl.addChildAtIndex(StringLayout::Builder("cos"), hl.numberOfChildren(),  hl.numberOfChildren(), nullptr);
-  hl.addChildAtIndex(LeftParenthesisLayout::Builder(), hl.numberOfChildren(), hl.numberOfChildren(), nullptr);
-  hl.addChildAtIndex(RightParenthesisLayout::Builder(), hl.numberOfChildren(), hl.numberOfChildren(), nullptr);
+  hl.addChildAtIndex(ParenthesisLayout::Builder(), hl.numberOfChildren(), hl.numberOfChildren(), nullptr);
   l = hl;
   e = Cosine::Builder(EmptyExpression::Builder());
-  assert_inserted_layout_points_to(l, &e, l.childAtIndex(1));
+  assert_inserted_layout_points_to(l, &e, l.childAtIndex(1).childAtIndex(0));
 
   // •^•
   l = HorizontalLayout::Builder(

@@ -1,5 +1,4 @@
 #include "list_parameter_controller.h"
-#include "list_controller.h"
 #include "../../shared/poincare_helpers.h"
 #include "../app.h"
 #include <escher/metric.h>

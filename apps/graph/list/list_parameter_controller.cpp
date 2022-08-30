@@ -12,17 +12,20 @@ using namespace Escher;
 
 namespace Graph {
 
-ListParameterController::ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate) :
+ListParameterController::ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphController * graphController) :
   Shared::ListParameterController(parentResponder, functionColorMessage, deleteFunctionMessage),
   m_detailsCell(I18n::Message::Details),
+  m_derivativeCell(I18n::Message::GraphDerivative),
   m_detailsParameterController(this),
-  m_domainParameterController(nullptr, inputEventHandlerDelegate)
+  m_domainParameterController(nullptr, inputEventHandlerDelegate),
+  m_graphController(graphController)
 {
 }
 
 HighlightCell * ListParameterController::cell(int index) {
   assert(0 <= index && index < numberOfRows());
-  HighlightCell * const cells[] = {&m_detailsCell, &m_functionDomainCell, &m_enableCell, &m_colorCell, &m_deleteCell};
+  HighlightCell * const cells[] = {&m_detailsCell, &m_colorCell, &m_derivativeCell, &m_functionDomainCell, &m_enableCell, &m_deleteCell};
+  static_assert(sizeof(cells)/sizeof(HighlightCell*) == k_numberOfRows);
   return cells[index];
 }
 
@@ -32,6 +35,7 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
    * displayed. */
   m_detailsParameterController.setRecord(m_record);
   m_domainParameterController.setRecord(m_record);
+  m_derivativeCell.setVisible(App::app()->functionStore()->modelForRecord(m_record)->canDisplayDerivative());
   m_detailsCell.setVisible(displayDetails());
   m_functionDomainCell.setVisible(displayDomain());
 }
@@ -53,6 +57,9 @@ int writeInterval(char * buffer, int bufferSize, double min, double max, int num
 
 void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
+  if (cell == &m_derivativeCell) {
+    m_derivativeCell.setState(m_graphController->displayDerivativeInBanner());
+  }
   if ((cell == &m_detailsCell || cell == &m_functionDomainCell) && !m_record.isNull()) {
     App * myApp = App::app();
     assert(!m_record.isNull());
@@ -81,6 +88,11 @@ void ListParameterController::functionDomainPressed() {
   static_cast<StackViewController *>(parentResponder())->push(&m_domainParameterController);
 }
 
+void ListParameterController::derivativeToggled(bool enable) {
+  m_graphController->setDisplayDerivativeInBanner(enable);
+  m_selectableTableView.reloadData();
+}
+
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell * cell = selectedCell();
   if (cell == &m_detailsCell) {
@@ -88,6 +100,9 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   }
   if (cell == &m_functionDomainCell) {
     return m_functionDomainCell.handleEvent(event, this, &ListParameterController::functionDomainPressed);
+  }
+  if (cell == &m_derivativeCell) {
+    return m_derivativeCell.handleEvent(event, this, &ListParameterController::derivativeToggled);
   }
   return Shared::ListParameterController::handleEvent(event);
 }

@@ -23,19 +23,18 @@ class GraphController;
 
 class CalculationParameterController : public Escher::ExplicitSelectableListViewController {
 public:
-  CalculationParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor, GraphController * graphController);
+  CalculationParameterController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * range, Shared::CurveViewCursor * cursor);
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   TELEMETRY_ID("CalculationParameter");
-  int numberOfRows() const override { return constNumberOfRows(); }
-  static constexpr int constNumberOfRows() { return 9; }
+  int numberOfRows() const override { return k_numberOfRows; }
 
   Escher::HighlightCell * cell(int index) override;
-  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setRecord(Ion::Storage::Record record);
 private:
+  static constexpr int k_numberOfRows = 8;
   template<class T> void push(T * controller, bool pop);
   bool ShouldDisplayIntersection() const;
   static bool ShouldDisplayAreaBetweenCurves();
@@ -64,10 +63,8 @@ private:
   Escher::MessageTableCell m_rootCell;
   BufferTableCellWithHideableChevron m_areaCell;
   Ion::Storage::Record m_record;
-  GraphController * m_graphController;
   PreimageParameterController m_preimageParameterController;
   PreimageGraphController m_preimageGraphController;
-  Escher::MessageTableCellWithSwitch m_derivativeCell;
   TangentGraphController m_tangentGraphController;
   IntegralGraphController m_integralGraphController;
   AreaBetweenCurvesParameterController m_areaParameterController;

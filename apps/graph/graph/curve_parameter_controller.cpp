@@ -15,6 +15,7 @@ CurveParameterController::CurveParameterController(Escher::InputEventHandlerDele
   m_imageCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
   m_derivativeNumberCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
   m_calculationCell(I18n::Message::Compute),
+  m_optionsCell(I18n::Message::PlotOptions),
   m_graphController(graphController),
   m_graphRange(graphRange),
   m_cursor(cursor),
@@ -24,7 +25,7 @@ CurveParameterController::CurveParameterController(Escher::InputEventHandlerDele
 }
 
 Escher::HighlightCell * CurveParameterController::cell(int index) {
-  HighlightCell * cells[k_numberOfRows] = {&m_abscissaCell, &m_imageCell, &m_derivativeNumberCell, &m_calculationCell};
+  HighlightCell * cells[k_numberOfRows] = {&m_abscissaCell, &m_imageCell, &m_derivativeNumberCell, &m_spacer, &m_calculationCell, &m_optionsCell};
   return cells[index];
 }
 
@@ -67,7 +68,7 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell, int 
     if (cell == &m_imageCell) {
       function()->nameWithArgument(buffer, bufferSize);
     } else {
-      assert(index == k_derivativeIndex);
+      assert(cell == &m_derivativeNumberCell);
       function()->derivativeNameWithArgument(buffer, bufferSize);
     }
     parameterCells[index]->setLabelText(buffer);
@@ -119,13 +120,18 @@ bool CurveParameterController::textFieldDidFinishEditing(AbstractTextField * tex
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
+  HighlightCell * cell = selectedCell();
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    if (shouldDisplayCalculation() && selectedRow() == numberOfRows() - 1) {
-      m_calculationParameterController.setRecord(m_record);
-      stack->push(&m_calculationParameterController);
-      return true;
-    }
+  if (cell == &m_calculationCell && m_calculationCell.ShouldEnterOnEvent(event)) {
+    m_calculationParameterController.setRecord(m_record);
+    stack->push(&m_calculationParameterController);
+    return true;
+  }
+  if (cell == &m_optionsCell && m_optionsCell.ShouldEnterOnEvent(event)) {
+    Shared::ListParameterController * details = App::app()->listController()->parameterController();
+    details->setRecord(m_record);
+    stack->push(details);
+    return true;
   }
   return false;
 }
@@ -137,6 +143,7 @@ bool CurveParameterController::editableParameter(int index) {
 void CurveParameterController::viewWillAppear() {
   m_preimageGraphController.setImage(m_cursor->y());
   m_derivativeNumberCell.setVisible(shouldDisplayDerivative());
+  m_calculationCell.setVisible(shouldDisplayCalculation());
   resetMemoization();
   m_selectableTableView.reloadData();
   SelectableListViewController::viewWillAppear();

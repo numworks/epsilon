@@ -80,7 +80,7 @@ void ListParameterController::deletePressed() {
   functionStore()->removeModel(m_record);
   setRecord(Ion::Storage::Record());
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-  stack->pop();
+  stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
 }
 
 ExpiringPointer<Function> ListParameterController::function() {

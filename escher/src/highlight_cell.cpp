@@ -11,7 +11,7 @@ HighlightCell::HighlightCell() :
 void HighlightCell::setHighlighted(bool highlight) {
   if (m_state == State::Hidden) {
     // Is is legit to want to show it and highlight in a single call ?
-    assert(false);
+    assert(highlight == false);
     return;
   }
   if (isHighlighted() != highlight) {

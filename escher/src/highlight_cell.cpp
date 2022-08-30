@@ -20,7 +20,7 @@ void HighlightCell::setHighlighted(bool highlight) {
   }
 }
 
-void HighlightCell::setHighlightedWitoutReload(bool highlight) {
+void HighlightCell::setHighlightedWithoutReload(bool highlight) {
   m_state = highlight ? State::Highlighted : State::Visible;
 }
 

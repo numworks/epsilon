@@ -35,16 +35,13 @@ bool StoreController::textFieldDidFinishEditing(AbstractTextField * textField, c
   bool wasSeriesValid = m_store->seriesIsValid(series);
   if (text[0] == 0) { // If text = "", delete the cell
     bool didDeleteRow = false;
-    if (handleDeleteEvent(true, &didDeleteRow)) {
-      if (event != Ion::Events::EXE && event != Ion::Events::OK && (!didDeleteRow || event != Ion::Events::Down)) {
-        /* Handle Up, Down, Left and Right events
-         * Do nothing if down was pressed and the row is deleted since
-         * it already selects the next row. */
-        selectableTableView()->handleEvent(event);
-      }
-      return true;
+    handleDeleteEvent(true, &didDeleteRow);
+    if (event == Ion::Events::Up || event == Ion::Events::Left || event == Ion::Events::Right || (event == Ion::Events::Down && !didDeleteRow)) {
+      /* Do nothing if down was pressed and the row is deleted since
+       * it already selects the next row. */
+      selectableTableView()->handleEvent(event);
     }
-    return false;
+    return true;
   }
   bool result = EditableCellTableViewController::textFieldDidFinishEditing(textField, text, event);
   if (wasSeriesValid != m_store->seriesIsValid(series)) {
@@ -141,19 +138,20 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Backspace) {
-    return handleDeleteEvent();
+    handleDeleteEvent();
+    return true;
   }
   return false;
 }
 
-bool StoreController::handleDeleteEvent(bool safeDeletion, bool * didDeleteRow) {
+void StoreController::handleDeleteEvent(bool safeDeletion, bool * didDeleteRow) {
   int i = selectedColumn();
   int j = selectedRow();
   assert(i >= 0 && i < numberOfColumns());
   int series = m_store->seriesAtColumn(i);
   assert(j >= 0);
   if (j == 0 || j > numberOfElementsInColumn(i)) {
-    return false;
+    return;
   }
   if (deleteCellValue(series, i, j, safeDeletion)) {
     // A row has been deleted
@@ -167,7 +165,6 @@ bool StoreController::handleDeleteEvent(bool safeDeletion, bool * didDeleteRow) 
     }
     reloadSeriesVisibleCells(series);
   }
-  return true;
 }
 
 void StoreController::didBecomeFirstResponder() {

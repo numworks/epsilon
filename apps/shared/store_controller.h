@@ -75,7 +75,7 @@ protected:
 private:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   int maxNumberOfElements() const override { return DoublePairStore::k_maxNumberOfPairs; }
-  bool handleDeleteEvent(bool safeDeletion = false, bool * didDeleteRow = nullptr);
+  void handleDeleteEvent(bool safeDeletion = false, bool * didDeleteRow = nullptr);
 
   // StoreColumnHelper
   DoublePairStore * store() override { return m_store; }

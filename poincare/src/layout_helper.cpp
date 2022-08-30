@@ -57,7 +57,7 @@ Layout LayoutHelper::Prefix(const Expression & expression, Preferences::PrintFlo
 }
 
 Layout LayoutHelper::Parentheses(Layout layout, bool cloneLayout) {
-  if (layout.isUninitialized() || layout.isEmpty()) {
+  if (layout.isUninitialized() || layout.isEmpty() ||(layout.type() == LayoutNode::Type::HorizontalLayout && layout.numberOfChildren() == 0)) {
     return ParenthesisLayout::Builder();
   }
   return ParenthesisLayout::Builder(cloneLayout ? layout.clone() : layout);

@@ -2,13 +2,13 @@
 #define GRAPH_LIST_CONTROLLER_H
 
 #include "function_toolbox.h"
-#include "list_parameter_controller.h"
+#include "../shared/list_parameter_controller.h"
 #include "../continuous_function_store.h"
 #include <apps/shared/function_list_controller.h>
 #include <apps/shared/text_field_delegate.h>
 #include <apps/shared/layout_field_delegate.h>
 #include <apps/shared/input_event_handler_delegate.h>
-#include "../function_models_parameter_controller.h"
+#include "function_models_parameter_controller.h"
 #include "../graph/graph_controller.h"
 #include "function_cell.h"
 

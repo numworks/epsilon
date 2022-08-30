@@ -1,16 +1,16 @@
 #include "function_models_parameter_controller.h"
-#include "list/list_controller.h"
+#include "list_controller.h"
 #include <apps/exam_mode_configuration.h>
 #include <poincare/integer.h>
 #include <poincare/layout_helper.h>
 #include <poincare/preferences.h>
 #include <assert.h>
 #include <apps/apps_container.h>
-#include "../shared/global_context.h"
-#include "../shared/continuous_function.h"
-#include "app.h"
+#include "../../shared/global_context.h"
+#include "../../shared/continuous_function.h"
+#include "../app.h"
 #include <string.h>
-#include "../global_preferences.h"
+#include "../../global_preferences.h"
 
 using namespace Poincare;
 using namespace Escher;

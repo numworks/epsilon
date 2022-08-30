@@ -7,9 +7,9 @@ app_graph_test_src = $(addprefix apps/graph/,\
 
 app_graph_src = $(addprefix apps/graph/,\
   app.cpp \
-  function_models_parameter_controller.cpp \
   graph/area_between_curves_graph_controller.cpp \
   graph/area_between_curves_parameter_controller.cpp \
+  function_models_parameter_controller.cpp \
   graph/banner_view.cpp \
   graph/calculation_graph_controller.cpp \
   graph/calculation_parameter_controller.cpp \
@@ -25,11 +25,12 @@ app_graph_src = $(addprefix apps/graph/,\
   graph/root_graph_controller.cpp \
   graph/tangent_graph_controller.cpp \
   list/function_cell.cpp \
-  list/details_parameter_controller.cpp \
-  list/domain_parameter_controller.cpp \
+  list/function_models_parameter_controller.cpp \
   list/function_toolbox.cpp \
   list/list_controller.cpp \
-  list/list_parameter_controller.cpp \
+  shared/details_parameter_controller.cpp \
+  shared/domain_parameter_controller.cpp \
+  shared/list_parameter_controller.cpp \
   values/abscissa_title_cell.cpp \
   values/derivative_parameter_controller.cpp \
   values/function_parameter_controller.cpp \

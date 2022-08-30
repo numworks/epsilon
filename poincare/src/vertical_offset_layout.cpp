@@ -223,6 +223,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
 
   Layout thisRef = Layout(this);
   Layout parentRef = Layout(parent());
+  Layout siblingRef = Layout(sibling);
   assert(parentRef.type() == Type::HorizontalLayout);
   int thisIndex = parentRef.indexOfChild(thisRef);
   int leftParenthesisIndex = thisIndex - 1;
@@ -239,6 +240,9 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
   }
   ParenthesisLayout parentheses = ParenthesisLayout::Builder(h);
   parentRef.addChildAtIndex(parentheses, leftParenthesisIndex + 1, parentRef.numberOfChildren(), nullptr);
+  /* Handle the sibling insertion, as the index might have changed after
+   * collapsing nodes inside the parenthesis. */
+  parentRef.addChildAtIndex(siblingRef, leftParenthesisIndex + 2, parentRef.numberOfChildren(), nullptr);
   if (!parentheses.parent().isUninitialized()) {
     if (cursor->position() == LayoutCursor::Position::Left) {
       cursor->setLayout(h);
@@ -247,7 +251,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
       cursor->setLayout(parentheses);
     }
   }
-  return true;
+  return false;
 }
 
 LayoutNode * VerticalOffsetLayoutNode::baseLayout() {

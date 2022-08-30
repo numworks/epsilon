@@ -31,10 +31,11 @@ namespace Escher {
 class Window;
 
 class View {
+  friend class Shared::RoundCursorView;
+  friend class TextCursorView;
+  friend class TransparentView;
   // We only want Window to be able to invoke View::redraw
   friend class Window;
-  friend class TransparentView;
-  friend class Shared::RoundCursorView;
 public:
   View() : m_frame(KDRectZero), m_superview(nullptr), m_dirtyRect(KDRectZero) {}
 

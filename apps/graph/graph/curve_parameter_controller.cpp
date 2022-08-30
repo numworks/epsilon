@@ -17,7 +17,7 @@ CurveParameterController::CurveParameterController(Escher::InputEventHandlerDele
   m_preimageGraphController(nullptr, graphView, bannerView, graphRange, cursor),
   m_parameterCells {{&m_selectableTableView, inputEventHandlerDelegate, this}, {&m_selectableTableView, inputEventHandlerDelegate, this}, {&m_selectableTableView, inputEventHandlerDelegate, this}},
   m_calculationCell(I18n::Message::Compute),
-  m_calculationParameterController(this, inputEventHandlerDelegate, graphView, bannerView, graphRange, cursor, graphController)
+  m_calculationParameterController(this, inputEventHandlerDelegate, graphView, bannerView, graphRange, cursor)
 {
 }
 

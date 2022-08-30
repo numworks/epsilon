@@ -9,13 +9,14 @@
 #include <apps/shared/layout_field_delegate.h>
 #include <apps/shared/input_event_handler_delegate.h>
 #include "../function_models_parameter_controller.h"
+#include "../graph/graph_controller.h"
 #include "function_cell.h"
 
 namespace Graph {
 
 class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate, public Shared::InputEventHandlerDelegate, public Escher::MemoizedListViewDataSource {
 public:
-  ListController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::ButtonRowController * footer);
+  ListController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::ButtonRowController * footer, GraphController * graphController);
   // ListViewDataSource
   int numberOfRows() const override { return this->numberOfExpressionRows(); }
   int typeAtIndex(int index) override;

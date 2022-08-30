@@ -10,7 +10,7 @@ using namespace Escher;
 
 namespace Graph {
 
-CalculationParameterController::CalculationParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, GraphController * graphController) :
+CalculationParameterController::CalculationParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, BannerView * bannerView, InteractiveCurveViewRange * range, CurveViewCursor * cursor) :
   ExplicitSelectableListViewController(parentResponder),
   m_preimageCell(I18n::Message::Preimage),
   m_intersectionCell(I18n::Message::Intersection),
@@ -19,10 +19,8 @@ CalculationParameterController::CalculationParameterController(Responder * paren
   m_integralCell(I18n::Message::Integral),
   m_tangentCell(I18n::Message::Tangent),
   m_rootCell(I18n::Message::Zeros),
-  m_graphController(graphController),
   m_preimageParameterController(nullptr, inputEventHandlerDelegate, range, cursor, &m_preimageGraphController),
   m_preimageGraphController(nullptr, graphView, bannerView, range, cursor),
-  m_derivativeCell(I18n::Message::GraphDerivative),
   m_tangentGraphController(nullptr, graphView, bannerView, range, cursor),
   m_integralGraphController(nullptr, inputEventHandlerDelegate, graphView, range, cursor),
   m_areaParameterController(nullptr, &m_areaGraphController),
@@ -35,7 +33,7 @@ CalculationParameterController::CalculationParameterController(Responder * paren
 }
 
 HighlightCell * CalculationParameterController::cell(int index) {
-  HighlightCell * cells[constNumberOfRows()] = {&m_preimageCell, &m_intersectionCell, &m_maximumCell, &m_minimumCell, &m_rootCell, &m_derivativeCell, &m_tangentCell, &m_integralCell, &m_areaCell};
+  HighlightCell * cells[k_numberOfRows] = {&m_preimageCell, &m_intersectionCell, &m_maximumCell, &m_minimumCell, &m_rootCell, &m_tangentCell, &m_integralCell, &m_areaCell};
   return cells[index];
 }
 
@@ -45,7 +43,7 @@ const char * CalculationParameterController::title() {
 
 void CalculationParameterController::viewWillAppear() {
   bool wasVisible = m_intersectionCell.isVisible();
-  m_intersectionCell.setVisible(shouldDisplayIntersection());
+  m_intersectionCell.setVisible(ShouldDisplayIntersection());
   if (wasVisible !=  m_intersectionCell.isVisible()) {
     resetMemoization();
   }
@@ -71,10 +69,7 @@ template<class T> void CalculationParameterController::push(T * controller, bool
 
 bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell * cell = selectedCell();
-  if (cell == &m_derivativeCell && m_derivativeCell.ShouldEnterOnEvent(event)) {
-    m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
-    m_selectableTableView.reloadData();
-  } else if (cell == &m_preimageCell && m_preimageCell.ShouldEnterOnEvent(event)) {
+  if (cell == &m_preimageCell && m_preimageCell.ShouldEnterOnEvent(event)) {
     push(&m_preimageParameterController, false);
   } else if (cell == &m_tangentCell && m_tangentCell.ShouldEnterOnEvent(event)) {
     push(&m_tangentGraphController, true);

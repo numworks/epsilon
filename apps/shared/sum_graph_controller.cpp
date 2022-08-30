@@ -105,7 +105,7 @@ void SumGraphController::makeCursorVisible() {
 
 void SumGraphController::makeDotVisible(float x, float y, bool zoomOut) {
   if (zoomOut) {
-    m_graphRange->zoomOutToMakePointVisible(x, y, cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
+    m_graphRange->zoomOutToMakePointVisible(x, y, cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio());
   } else {
     m_graphRange->panToMakePointVisible(x, y, cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   }

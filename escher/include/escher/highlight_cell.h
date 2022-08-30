@@ -27,7 +27,7 @@ public:
   bool isSelectable() { return isVisible() && protectedIsSelectable(); }
 
   virtual void setHighlighted(bool highlight);
-  void setHighlightedWitoutReload(bool highlight);
+  void setHighlightedWithoutReload(bool highlight);
   virtual void reloadCell();
   virtual Responder * responder() { return nullptr; }
   virtual const char * text() const { return nullptr; }

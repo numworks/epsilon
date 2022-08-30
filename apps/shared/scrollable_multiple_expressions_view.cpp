@@ -26,7 +26,7 @@ KDColor AbstractScrollableMultipleExpressionsView::ContentCell::backgroundColor(
 
 void AbstractScrollableMultipleExpressionsView::ContentCell::setHighlighted(bool highlight) {
   // Do not call HighlightCell::setHighlighted to avoid marking all cell as dirty
-  setHighlightedWitoutReload(highlight);
+  setHighlightedWithoutReload(highlight);
   KDColor defaultColor = backgroundColor();
   KDColor color = highlight && m_selectedSubviewPosition == SubviewPosition::Center ? Palette::Select : defaultColor;
   m_centeredExpressionView.setBackgroundColor(color);

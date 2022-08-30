@@ -12,8 +12,9 @@ public:
   void viewDidDisappear() override;
   void setSecondRecord(Ion::Storage::Record record);
 private:
-  Poincare::Layout createFunctionLayout(Shared::ExpiringPointer<Shared::Function> function) override;
   void makeCursorVisible() override;
+  Poincare::Layout createFunctionLayout() override;
+  Poincare::Expression createSumExpression(double startSum, double endSum, Poincare::Context * context) override;
   Ion::Storage::Record m_secondRecord;
 };
 

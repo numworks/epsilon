@@ -47,7 +47,8 @@ private:
   Shared::CurveView * curveView() override { return m_graphView; }
   virtual I18n::Message legendMessageAtStep(Step step) = 0;
   virtual double cursorNextStep(double position, int direction) = 0;
-  virtual Poincare::Layout createFunctionLayout(ExpiringPointer<Function> function) = 0;
+  virtual Poincare::Layout createFunctionLayout() = 0;
+  virtual Poincare::Expression createSumExpression(double startSum, double endSum, Poincare::Context * context);
   class LegendView : public Escher::View {
   public:
     LegendView(SumGraphController * controller, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol);

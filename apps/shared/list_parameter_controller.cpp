@@ -50,37 +50,29 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell * cell = selectedCell();
-  if (cell == &m_enableCell) {
-    return m_enableCell.handleEvent(event, this, &ListParameterController::enableSwitched);
+  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+
+  if (cell == &m_enableCell && m_enableCell.ShouldEnterOnEvent(event)) {
+    function()->setActive(!function()->isActive());
+    resetMemoization();
+    m_selectableTableView.reloadData();
+    return true;
   }
-  if (cell == &m_colorCell) {
-    return m_colorCell.handleEvent(event, this, &ListParameterController::colorPressed);
+  if (cell == &m_colorCell && m_colorCell.ShouldEnterOnEvent(event)) {
+    m_colorParameterController.setRecord(m_record);
+    stack->push(&m_colorParameterController);
+    return true;
   }
-  if (cell == &m_deleteCell) {
-    return m_deleteCell.handleEvent(event, this, &ListParameterController::deletePressed);
+  if (cell == &m_deleteCell && m_deleteCell.ShouldEnterOnEvent(event)) {
+    assert(functionStore()->numberOfModels() > 0);
+    m_selectableTableView.deselectTable();
+    functionStore()->removeModel(m_record);
+    setRecord(Ion::Storage::Record());
+    StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
+    return true;
   }
   return false;
-}
-
-void ListParameterController::enableSwitched(bool enable) {
-  function()->setActive(enable);
-  resetMemoization();
-  m_selectableTableView.reloadData();
-}
-
-void ListParameterController::colorPressed() {
-  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-  m_colorParameterController.setRecord(m_record);
-  stack->push(&m_colorParameterController);
-}
-
-void ListParameterController::deletePressed() {
-  assert(functionStore()->numberOfModels() > 0);
-  m_selectableTableView.deselectTable();
-  functionStore()->removeModel(m_record);
-  setRecord(Ion::Storage::Record());
-  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-  stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
 }
 
 ExpiringPointer<Function> ListParameterController::function() {

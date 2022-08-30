@@ -11,15 +11,6 @@ public:
   using MessageTableCell::MessageTableCell;
   const View * accessoryView() const override { return &m_accessoryView; }
 
-  template<class T>
-  bool handleEvent(Ion::Events::Event event, T * object, void (T::*callback)()) {
-    if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-      (object->*callback)();
-      return true;
-    }
-    return false;
-  }
-
   static bool ShouldEnterOnEvent(Ion::Events::Event event) {
     return (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right);
   }

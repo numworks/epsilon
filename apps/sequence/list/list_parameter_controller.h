@@ -31,9 +31,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int numberOfRows() const override { return numberOfNonInheritedCells() + Shared::ListParameterController::numberOfRows(); }
 private:
-  void typePressed();
   void initialRankChanged(int value);
-  void enableSwitched(bool enable);
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfNonInheritedCells() const { return 2; } // number of non inherited cells
   Shared::Sequence * sequence() { return static_cast<Shared::Sequence *>(function().pointer()); }

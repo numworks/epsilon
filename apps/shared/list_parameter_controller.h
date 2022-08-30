@@ -30,9 +30,6 @@ protected:
   constexpr static int k_numberOfSharedCells = 3;
   FunctionStore * functionStore();
   ExpiringPointer<Function> function();
-  void enableSwitched(bool enable);
-  void colorPressed();
-  void deletePressed();
   Escher::MessageTableCellWithMessageWithSwitch m_enableCell;
   Escher::MessageTableCellWithChevronAndMessage m_colorCell;
   Escher::MessageTableCell m_deleteCell;

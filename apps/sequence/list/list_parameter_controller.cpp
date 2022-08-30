@@ -89,23 +89,19 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   }
 }
 
-void ListParameterController::typePressed() {
-  m_typeParameterController.setRecord(m_record);
-  static_cast<StackViewController *>(parentResponder())->push(&m_typeParameterController);
-}
-
-void ListParameterController::enableSwitched(bool enable) {
-  App::app()->localContext()->resetCache();
-  Shared::ListParameterController::enableSwitched(enable);
-}
-
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell * cell = selectedCell();
-  if (cell == &m_typeCell) {
-    return m_typeCell.handleEvent(event, this, &ListParameterController::typePressed);
+  if (cell == &m_typeCell && m_typeCell.ShouldEnterOnEvent(event)) {
+    m_typeParameterController.setRecord(m_record);
+    static_cast<StackViewController *>(parentResponder())->push(&m_typeParameterController);
+    return true;
   }
-  if (cell == &m_enableCell) {
-    return m_enableCell.handleEvent(event, this, &ListParameterController::enableSwitched);
+  if (cell == &m_enableCell && m_enableCell.ShouldEnterOnEvent(event)) {
+    App::app()->localContext()->resetCache();
+    function()->setActive(!function()->isActive());
+    resetMemoization();
+    m_selectableTableView.reloadData();
+    return true;
   }
   return Shared::ListParameterController::handleEvent(event);
 }

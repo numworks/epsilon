@@ -9,8 +9,10 @@ TextCursorView::~TextCursorView() {
 
 void TextCursorView::drawRect(KDContext * ctx, KDRect rect) const {
   BlinkTimer::RegisterCursor(const_cast<TextCursorView *>(this));
-  KDCoordinate height = bounds().height();
-  ctx->fillRect(KDRect(0, 0, k_width, height), m_visible ? KDColorBlack : KDColorWhite);
+  if (m_visible) {
+    KDCoordinate height = bounds().height();
+    ctx->fillRect(KDRect(0, 0, k_width, height), KDColorBlack);
+  }
 }
 
 KDSize TextCursorView::minimalSizeForOptimalDisplay() const {
@@ -24,9 +26,14 @@ void TextCursorView::layoutSubviews(bool force) {
 }
 
 void TextCursorView::setVisible(bool visible) {
-  if (visible != m_visible) {
-    m_visible = visible;
+  if (visible == m_visible) {
+    return;
+  }
+  m_visible = visible;
+  if (m_visible) {
     markRectAsDirty(bounds());
+  } else {
+    m_superview->markRectAsDirty(bounds().translatedBy(m_superview->pointFromPointInView(this, KDPointZero)));
   }
 }
 

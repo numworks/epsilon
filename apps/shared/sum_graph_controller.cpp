@@ -167,19 +167,22 @@ void SumGraphController::reloadBannerView() {
   Poincare::Layout functionLayout;
   if (m_step == Step::Result) {
     endSum = m_cursor->x();
-    FunctionApp * myApp = FunctionApp::app();
     assert(!m_record.isNull());
-    ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
-    Poincare::Context * context = myApp->localContext();
-    Poincare::Expression sum = function->sumBetweenBounds(m_startSum, endSum, context);
+    Poincare::Context * context = FunctionApp::app()->localContext();
+    Poincare::Expression sum = createSumExpression(m_startSum, endSum, context);
     result = PoincareHelpers::ApproximateToScalar<double>(sum, context);
-    functionLayout = createFunctionLayout(function);
+    functionLayout = createFunctionLayout();
   } else {
     m_legendView.setEditableZone(m_cursor->x());
     result = NAN;
   }
   m_result = result;
   m_legendView.setSumLayout(m_step, m_startSum, endSum, result, functionLayout);
+}
+
+Poincare::Expression SumGraphController::createSumExpression(double startSum, double endSum, Poincare::Context * context) {
+  ExpiringPointer<Function> function = FunctionApp::app()->functionStore()->modelForRecord(m_record);
+  return function->sumBetweenBounds(startSum, endSum, context);
 }
 
 /* Legend View */

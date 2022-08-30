@@ -1,7 +1,11 @@
 #include "area_between_curves_graph_controller.h"
+#include "../app.h"
 #include "../../shared/text_field_delegate.h"
 #include <poincare/layout_helper.h>
-#include "../app.h"
+#include <poincare/absolute_value.h>
+#include <poincare/absolute_value_layout.h>
+#include <poincare/integral.h>
+#include <poincare/subtraction.h>
 
 #include <assert.h>
 #include <cmath>
@@ -29,17 +33,6 @@ void AreaBetweenCurvesGraphController::setSecondRecord(Ion::Storage::Record reco
   m_secondRecord = record;
 }
 
-Layout AreaBetweenCurvesGraphController::createFunctionLayout(ExpiringPointer<Shared::Function> function) {
-  // TODO: New function layout
-  constexpr size_t bufferSize = SymbolAbstract::k_maxNameSize+5; // f(x)dx
-  char buffer[bufferSize];
-  const char * dx = "dx";
-  size_t numberOfChars = function->nameWithArgument(buffer, bufferSize-strlen(dx));
-  assert(numberOfChars <= bufferSize);
-  strlcpy(buffer+numberOfChars, dx, bufferSize-numberOfChars);
-  return LayoutHelper::String(buffer, strlen(buffer));
-}
-
 void AreaBetweenCurvesGraphController::makeCursorVisible() {
   float position = m_cursor->x();
   ExpiringPointer<Shared::Function> functionF = FunctionApp::app()->functionStore()->modelForRecord(m_record);
@@ -51,6 +44,31 @@ void AreaBetweenCurvesGraphController::makeCursorVisible() {
   float yG = functionG->evaluateXYAtParameter(position, FunctionApp::app()->localContext()).x2();
   // zoomOut is always true so that the user can see both dots
   makeDotVisible(position, yG, true);
+}
+
+Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
+  // TODO: Implement special case for y=...
+  constexpr size_t bufferSize = SymbolAbstract::k_maxNameSize * 2 + 7; // f(x)-g(x)
+  char buffer[bufferSize];
+  ExpiringPointer<ContinuousFunction> functionF = App::app()->functionStore()->modelForRecord(m_record);
+  size_t numberOfChars = functionF->nameWithArgument(buffer, SymbolAbstract::k_maxNameSize + 3);
+  assert(numberOfChars <= bufferSize);
+  numberOfChars += strlcpy(buffer + numberOfChars, "-", bufferSize-numberOfChars);
+  ExpiringPointer<ContinuousFunction> functionG = App::app()->functionStore()->modelForRecord(m_secondRecord);
+  numberOfChars += functionG->nameWithArgument(buffer + numberOfChars, SymbolAbstract::k_maxNameSize + 3);
+  Poincare::Layout subtractionLayout = LayoutHelper::String(buffer, strlen(buffer));
+  Poincare::Layout absoluteValue = AbsoluteValueLayout::Builder(subtractionLayout);
+  const char * dx = "dx";
+  Poincare::Layout dxLayout = LayoutHelper::String(dx, strlen(dx));
+  return HorizontalLayout::Builder(absoluteValue, dxLayout);
+}
+
+Poincare::Expression AreaBetweenCurvesGraphController::createSumExpression(double startSum, double endSum, Poincare::Context * context) {
+  ExpiringPointer<Shared::Function> functionF = FunctionApp::app()->functionStore()->modelForRecord(m_record);
+  Poincare::Expression expressionF = functionF->expressionReduced(context).clone();
+  ExpiringPointer<Shared::Function> functionG = FunctionApp::app()->functionStore()->modelForRecord(m_secondRecord);
+  Poincare::Expression expressionG = functionG->expressionReduced(context).clone();
+  return Integral::Builder(AbsoluteValue::Builder(Subtraction::Builder(expressionF, expressionG)), Symbol::Builder(UCodePointUnknown), Float<double>::Builder(startSum), Float<double>::Builder(endSum));
 }
 
 }

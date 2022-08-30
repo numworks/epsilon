@@ -1,4 +1,5 @@
 #include "term_sum_controller.h"
+#include "../app.h"
 #include "../../shared/text_field_delegate.h"
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
@@ -17,7 +18,7 @@ using namespace Escher;
 
 namespace Sequence {
 
-TermSumController::TermSumController(Responder * parentResponder, ::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, CurveViewRange * graphRange, CurveViewCursor * cursor) :
+TermSumController::TermSumController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphView * graphView, CurveViewRange * graphRange, CurveViewCursor * cursor) :
   SumGraphController(parentResponder, inputEventHandlerDelegate, graphView, graphRange, cursor, UCodePointNArySummation)
 {
 }
@@ -49,8 +50,8 @@ double TermSumController::cursorNextStep(double x, int direction) {
   return std::round(m_cursor->x()+delta);
 }
 
-Layout TermSumController::createFunctionLayout(Shared::ExpiringPointer<Shared::Function> function) {
-  Shared::Sequence * sequence = static_cast<Shared::Sequence *>(function.pointer());
+Layout TermSumController::createFunctionLayout() {
+  ExpiringPointer<Shared::Sequence> sequence = App::app()->functionStore()->modelForRecord(m_record);
   return sequence->nameLayout();
 }
 

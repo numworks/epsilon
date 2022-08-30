@@ -23,8 +23,8 @@ bool ColorParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     KDColor selectedColor = ColorNames::Colors[selectedRow()];
     function()->setColor(selectedColor);
-    stack->pop();
-    stack->pop(); // Pop all the way back
+    // Pop all the way back
+    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
     return true;
   } else if (event == Ion::Events::Left) {
     stack->pop();

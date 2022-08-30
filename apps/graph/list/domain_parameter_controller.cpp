@@ -144,8 +144,7 @@ bool DomainParameterController::equalTempParameters() {
 void DomainParameterController::buttonAction() {
   confirmParameters();
   StackViewController * stack = stackController();
-  stack->pop();
-  stack->pop();
+  stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
 }
 
 Shared::ExpiringPointer<Shared::ContinuousFunction> DomainParameterController::function() const {

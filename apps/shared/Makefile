@@ -41,6 +41,7 @@ app_shared_src = $(addprefix apps/shared/,\
   column_parameter_controller.cpp \
   double_pair_table_controller.cpp \
   editable_cell_table_view_controller.cpp \
+  explicit_float_parameter_controller.cpp \
   expression_field_delegate_app.cpp \
   expression_model_list_controller.cpp \
   float_parameter_controller.cpp \

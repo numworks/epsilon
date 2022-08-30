@@ -58,18 +58,16 @@ void AutocompletedBracketPairLayoutNode::balanceAfterInsertion(Side insertedSide
   }
 }
 
-static bool isAutocompletedBracket(Layout l) { return l.type() == LayoutNode::Type::ParenthesisLayout || l.type() == LayoutNode::Type::CurlyBraceLayout; }
-
-static AutocompletedBracketPairLayoutNode * autocompletedParent(Layout l) {
-  Layout p = l.parent();
-  while (!p.isUninitialized()) {
-    if (isAutocompletedBracket(p)) {
-      return static_cast<AutocompletedBracketPairLayoutNode *>(p.node());
+AutocompletedBracketPairLayoutNode * AutocompletedBracketPairLayoutNode::autocompletedParent() const {
+  LayoutNode * p = parent();
+  while (p) {
+    if (type() == p->type()) {
+      return static_cast<AutocompletedBracketPairLayoutNode *>(p);
     }
-    if (p.type() != LayoutNode::Type::HorizontalLayout) {
+    if (p->type() != LayoutNode::Type::HorizontalLayout) {
       break;
     }
-    p = p.parent();
+    p = p->parent();
   }
   return nullptr;
 }
@@ -80,11 +78,11 @@ bool AutocompletedBracketPairLayoutNode::makeTemporary(Side side, LayoutCursor *
   }
   Layout thisRef(this);
   absorbSiblings(side, cursor);
-  AutocompletedBracketPairLayoutNode * p = autocompletedParent(thisRef);
+  /* 'this' may be invalid after the call to absorbSiblings. */
+  AutocompletedBracketPairLayoutNode * newThis = static_cast<AutocompletedBracketPairLayoutNode *>(thisRef.node());
+  AutocompletedBracketPairLayoutNode * p = newThis->autocompletedParent();
   if (!(p && p->makeTemporary(side, cursor))) {
-    /* 'this' was the topmost pair without a temporary bracket on this side. It
-     * may be invalid after the call to absorbSiblings. */
-    AutocompletedBracketPairLayoutNode * newThis = static_cast<AutocompletedBracketPairLayoutNode *>(thisRef.node());
+    /* 'this' was the topmost pair without a temporary bracket on this side. */
     newThis->m_status |= MaskForSide(side);
     newThis->removeIfCompletelyTemporary(cursor);
   }
@@ -185,7 +183,7 @@ void AutocompletedBracketPairLayoutNode::makePermanent(Side side) {
   }
   int childIndex = side == Side::Left ? 0 : childLayout()->numberOfChildren() - 1;
   Layout child = childBypassHorizontalLayout(Layout(childLayout()), childIndex);
-  if (isAutocompletedBracket(child)) {
+  if (type() == child.type()) {
     AutocompletedBracketPairLayoutNode * bracket = static_cast<AutocompletedBracketPairLayoutNode *>(child.node());
     bracket->makePermanent(side);
   }

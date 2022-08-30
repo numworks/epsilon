@@ -178,7 +178,9 @@ LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * corre
     if (!layoutToPointTo.isUninitialized()) {
       if (!layoutToPointTo.isEmpty()) {
         layoutToPointTo = layoutToPointTo.childAtIndex(0);
-        *forceCursorLeftOfText = true;
+        if (forceCursorLeftOfText) {
+          *forceCursorLeftOfText = true;
+        }
       }
       return layoutToPointTo.node();
     }

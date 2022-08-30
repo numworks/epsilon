@@ -893,7 +893,7 @@ static bool pointInBoundingBox(float x1, float y1, float x2, float y2, float xC,
       && ((y1 <= yC && yC <= y2) || (y2 <= yC && yC <= y1));
 }
 
-bool dotsAreInSameCircle(const float x1, const float y1, const float x2, const float y2, const float circleDiameter) {
+static bool dotsAreInSameCircle(const float x1, const float y1, const float x2, const float y2, const float circleDiameter) {
   const float deltaX = x1 - x2;
   const float deltaY = y1 - y2;
   return deltaX*deltaX + deltaY*deltaY < circleDiameter * circleDiameter / 4.0f;
@@ -917,7 +917,7 @@ int CurveView::joinDots(KDContext * ctx, KDRect rect, EvaluateXYForFloatParamete
   KDCoordinate circleDiameter = thick ? thickCircleDiameter : thinCircleDiameter;
   if (isRightDotValid) {
     if (isFirstDot // First dot has to be stamped
-       || (!isLeftDotValid  && maxNumberOfRecursion <= 0) // Last step of the recursion with an undefined left dot or a discontinuous function : we stamp the last right dot
+       || (!isLeftDotValid && maxNumberOfRecursion <= 0) // Last step of the recursion with an undefined left dot or a discontinuous function : we stamp the last right dot
        || (isLeftDotValid && dotsAreInSameCircle(pxf, pyf, puf, pvf, circleDiameter))) { // the dots are already close enough
       // the dots are already joined
       /* We need to be sure that the point is not an artifact caused by error

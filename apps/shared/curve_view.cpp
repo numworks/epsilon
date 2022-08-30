@@ -473,7 +473,7 @@ void CurveView::drawPatternAreaInLine(KDContext * ctx, Axis axis, KDCoordinate c
     offset += coordinate%k_numberOfPatternAreas;
     // - Offset to make the segment alignment absolute (indepandent of start)
     offset += k_numberOfPatternAreas - start%k_numberOfPatternAreas;
-    for (KDCoordinate i = start + offset%k_numberOfPatternAreas; i < end; i += k_numberOfPatternAreas) {
+    for (KDCoordinate i = start + offset%k_numberOfPatternAreas + 1; i < end; i += k_numberOfPatternAreas) {
       KDPoint point = (axis == Axis::Horizontal) ? KDPoint(i, coordinate) :  KDPoint(coordinate, i);
       ctx->setPixel(point, color);
     }

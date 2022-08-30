@@ -38,6 +38,7 @@ private:
   static uint8_t MaskForSide(Side side) { return 1 << static_cast<uint8_t>(side); }
   static Side OtherSide(Side side) { return side == Side::Left ? Side::Right : Side::Left; }
 
+  AutocompletedBracketPairLayoutNode * autocompletedParent() const;
   bool makeTemporary(Side side, LayoutCursor * cursor);
   void removeIfCompletelyTemporary(LayoutCursor * cursor);
   void absorbSiblings(Side side, LayoutCursor * cursor);

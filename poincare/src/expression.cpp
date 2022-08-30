@@ -379,19 +379,18 @@ bool Expression::involvesDiscontinuousFunction(Context * context) const {
   return recursivelyMatches(IsDiscontinuous, context);
 }
 
-template <typename T>
-bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, T x1, T x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, float x1, float x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
   if (type() == ExpressionNode::Type::Randint || type() == ExpressionNode::Type::Random) {
     return true;
   }
   if (type() == ExpressionNode::Type::Ceiling || type() == ExpressionNode::Type::Floor || type() == ExpressionNode::Type::Round) {
-    return approximateWithValueForSymbol<T>(symbol, x1, context, complexFormat, angleUnit) != approximateWithValueForSymbol<T>(symbol, x2, context, complexFormat, angleUnit);
+    return approximateWithValueForSymbol<float>(symbol, x1, context, complexFormat, angleUnit) != approximateWithValueForSymbol<float>(symbol, x2, context, complexFormat, angleUnit);
   }
   if (type() == ExpressionNode::Type::FracPart) {
-    return std::floor(childAtIndex(0).approximateWithValueForSymbol<T>(symbol, x1, context, complexFormat, angleUnit)) != std::floor(childAtIndex(0).approximateWithValueForSymbol<T>(symbol, x2, context, complexFormat, angleUnit));
+    return std::floor(childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x1, context, complexFormat, angleUnit)) != std::floor(childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x2, context, complexFormat, angleUnit));
   }
   if (type() == ExpressionNode::Type::AbsoluteValue) {
-    return (childAtIndex(0).approximateWithValueForSymbol<T>(symbol, x1, context, complexFormat, angleUnit) > 0.0) != (childAtIndex(0).approximateWithValueForSymbol<T>(symbol, x2, context, complexFormat, angleUnit) > 0.0);
+    return (childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x1, context, complexFormat, angleUnit) > 0.0) != (childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x2, context, complexFormat, angleUnit) > 0.0);
   }
   assert(!IsDiscontinuous(*this, context));
   const int childrenCount = numberOfChildren();
@@ -1296,8 +1295,5 @@ template Evaluation<double> Expression::approximateToEvaluation(Context * contex
 
 template float Expression::approximateWithValueForSymbol(const char * symbol, float x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 template double Expression::approximateWithValueForSymbol(const char * symbol, double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-
-template bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, double x1, double x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-template bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, float x1, float x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
 }

@@ -188,7 +188,7 @@ public:
    * Functions like 1/x are not handled here since it "obvious" that they are
    * discontinuous. */
   bool involvesDiscontinuousFunction(Context * context) const;
-  template <typename T> bool isDiscontinuousBetweenValuesForSymbol(const char * symbol, T x1, T x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+  bool isDiscontinuousBetweenValuesForSymbol(const char * symbol, float x1, float x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   /* recursivelyMatches will test each node recursively with the function
    * provided as argument. If the result is Yes, it will stop searching and
    * return true. If the result is Maybe, it will continue searching for a Yes

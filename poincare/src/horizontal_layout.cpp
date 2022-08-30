@@ -175,11 +175,11 @@ LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * corre
             || layout.isEmpty();
       }
     );
-    if (!layoutToPointTo.isEmpty()) {
-      layoutToPointTo = layoutToPointTo.childAtIndex(0);
-      *forceCursorLeftOfText = true;
-    }
     if (!layoutToPointTo.isUninitialized()) {
+      if (!layoutToPointTo.isEmpty()) {
+        layoutToPointTo = layoutToPointTo.childAtIndex(0);
+        *forceCursorLeftOfText = true;
+      }
       return layoutToPointTo.node();
     }
   }

@@ -672,23 +672,23 @@ QUIZ_CASE(poincare_expression_children_list_length) {
   assert_list_length_in_children_is("{1,2}+{3,4,5}", Expression::k_mismatchedLists);
 }
 
-void assert_is_continuous_between_values(const char * expression, double x1, double x2, bool isContinuous) {
+void assert_is_continuous_between_values(const char * expression, float x1, float x2, bool isContinuous) {
   Shared::GlobalContext context;
   Expression e = parse_expression(expression, &context, false);
-  quiz_assert_print_if_failure(!isContinuous == e.isDiscontinuousBetweenValuesForSymbol<double>("x", x1, x2, &context, Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit::Degree), expression);
+  quiz_assert_print_if_failure(!isContinuous == e.isDiscontinuousBetweenValuesForSymbol("x", x1, x2, &context, Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit::Degree), expression);
 }
 
 QUIZ_CASE(poincare_expression_continuous) {
-  assert_is_continuous_between_values("x+x^2", 2.43, 2.45, true);
-  assert_is_continuous_between_values("x+x^2", 2.45, 2.47, true);
-  assert_is_continuous_between_values("x+floor(x^2)", 2.43, 2.45, false);
-  assert_is_continuous_between_values("x+floor(x^2)", 2.45, 2.47, true);
-  assert_is_continuous_between_values("x+floor(x^2)", 2.43, 2.45, false);
-  assert_is_continuous_between_values("x+floor(x^2)", 2.45, 2.47, true);
-  assert_is_continuous_between_values("x+ceil(x^2)", 2.43, 2.45, false);
-  assert_is_continuous_between_values("x+ceil(x^2)", 2.45, 2.47, true);
-  assert_is_continuous_between_values("x+round(x^2, 0)", 2.34, 2.36, false);
-  assert_is_continuous_between_values("x+round(x^2, 0)", 2.36, 2.38, true);
-  assert_is_continuous_between_values("x+random()", 2.43, 2.45, false);
-  assert_is_continuous_between_values("x+randint(1,10)", 2.43, 2.45, false);
+  assert_is_continuous_between_values("x+x^2", 2.43f, 2.45f, true);
+  assert_is_continuous_between_values("x+x^2", 2.45f, 2.47f, true);
+  assert_is_continuous_between_values("x+floor(x^2)", 2.43f, 2.45f, false);
+  assert_is_continuous_between_values("x+floor(x^2)", 2.45f, 2.47f, true);
+  assert_is_continuous_between_values("x+floor(x^2)", 2.43f, 2.45f, false);
+  assert_is_continuous_between_values("x+floor(x^2)", 2.45f, 2.47f, true);
+  assert_is_continuous_between_values("x+ceil(x^2)", 2.43f, 2.45f, false);
+  assert_is_continuous_between_values("x+ceil(x^2)", 2.45f, 2.47f, true);
+  assert_is_continuous_between_values("x+round(x^2, 0)", 2.34f, 2.36f, false);
+  assert_is_continuous_between_values("x+round(x^2, 0)", 2.36f, 2.38f, true);
+  assert_is_continuous_between_values("x+random()", 2.43f, 2.45f, false);
+  assert_is_continuous_between_values("x+randint(1,10)", 2.43f, 2.45f, false);
 }

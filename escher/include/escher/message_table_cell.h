@@ -17,15 +17,6 @@ public:
   void setMessageFont(KDFont::Size font);
   void setBackgroundColor(KDColor color);
 
-  template<class T>
-  bool handleEvent(Ion::Events::Event event, T * object, void (T::*callback)()) {
-    if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-      (object->*callback)();
-      return true;
-    }
-    return false;
-  }
-
   static bool ShouldEnterOnEvent(Ion::Events::Event event) {
     return event == Ion::Events::OK || event == Ion::Events::EXE;
   }

@@ -13,16 +13,6 @@ public:
     m_alignLabelAndAccessory(alignLabelAndAccessory) {}
   const View * accessoryView() const override { return &m_accessoryView; }
   void setState(bool state) { m_accessoryView.setState(state); }
-
-  template<class T>
-  bool handleEvent(Ion::Events::Event event, T * object, void (T::*callback)(bool)) {
-    if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-      setState(!state());
-      (object->*callback)(state());
-      return true;
-    }
-    return false;
-  }
 protected:
   bool state() const { return m_accessoryView.state(); }
   bool shouldAlignLabelAndAccessory() const override { return m_alignLabelAndAccessory; }

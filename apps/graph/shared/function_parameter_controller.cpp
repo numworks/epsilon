@@ -80,29 +80,21 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, 
   }
 }
 
-void FunctionParameterController::detailsPressed() {
-  static_cast<StackViewController *>(parentResponder())->push(&m_detailsParameterController);
-}
-
-void FunctionParameterController::functionDomainPressed() {
-  static_cast<StackViewController *>(parentResponder())->push(&m_domainParameterController);
-}
-
-void FunctionParameterController::derivativeToggled(bool enable) {
-  m_graphController->setDisplayDerivativeInBanner(enable);
-  m_selectableTableView.reloadData();
-}
-
 bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell * cell = selectedCell();
-  if (cell == &m_detailsCell) {
-    return m_detailsCell.handleEvent(event, this, &FunctionParameterController::detailsPressed);
+  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+  if (cell == &m_detailsCell && m_detailsCell.ShouldEnterOnEvent(event)) {
+    stack->push(&m_detailsParameterController);
+    return true;
   }
-  if (cell == &m_functionDomainCell) {
-    return m_functionDomainCell.handleEvent(event, this, &FunctionParameterController::functionDomainPressed);
+  if (cell == &m_functionDomainCell && m_functionDomainCell.ShouldEnterOnEvent(event)) {
+    stack->push(&m_detailsParameterController);
+    return true;
   }
-  if (cell == &m_derivativeCell) {
-    return m_derivativeCell.handleEvent(event, this, &FunctionParameterController::derivativeToggled);
+  if (cell == &m_derivativeCell && m_derivativeCell.ShouldEnterOnEvent(event)) {
+    m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
+    m_selectableTableView.reloadData();
+    return true;
   }
   return Shared::ListParameterController::handleEvent(event);
 }

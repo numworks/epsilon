@@ -18,7 +18,7 @@ bool AutocompletedBracketPairLayoutNode::willAddSibling(LayoutCursor * cursor, L
     return true;
   }
   makePermanent(insertionSide);
-  AutocompletedBracketPairLayoutNode * bracketSibling = sibling->type() == type() ? bracketSibling = static_cast<AutocompletedBracketPairLayoutNode *>(sibling) : nullptr;
+  AutocompletedBracketPairLayoutNode * bracketSibling = sibling->type() == type() ? static_cast<AutocompletedBracketPairLayoutNode *>(sibling) : nullptr;
   bool ignoreSibling = bracketSibling && bracketSibling->sideInsertedAs() == insertionSide;
   if (ignoreSibling && insertionSide == Side::Left) {
     cursor->setPosition(LayoutCursor::Position::Left);

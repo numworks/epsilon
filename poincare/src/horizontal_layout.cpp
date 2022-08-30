@@ -570,7 +570,7 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
         || (i < childrenNumber-1 && h.childAtIndex(i+1).mustHaveLeftSibling()))
     {
       Layout c = h.childAtIndex(i);
-      makePermanentIfBracket(c.node(), newIndex > 0, newIndex < n - 1 || i  < childrenNumber - 1);
+      makePermanentIfBracket(c.node(), newIndex > 0, newIndex < n || i  < childrenNumber - 1);
       addChildAtIndexInPlace(c, newIndex, n);
       if (firstAddedChild) {
         childAtIndex(newIndex).node()->setMargin(margin);

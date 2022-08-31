@@ -29,10 +29,7 @@ Evaluation<T> PiecewiseOperatorNode::templatedApproximate(const ApproximationCon
   while (i + 1 < n) {
     Evaluation<T> result = childAtIndex(i)->approximate(T(), approximationContext);
     Evaluation<T> condition = childAtIndex(i + 1)->approximate(T(), approximationContext);
-    if (condition.type() != EvaluationNode<T>::Type::BooleanEvaluation) {
-      return Complex<T>::Undefined();
-    }
-    if (static_cast<BooleanEvaluation<T>&>(condition).value()) {
+    if (condition.type() == EvaluationNode<T>::Type::BooleanEvaluation && static_cast<BooleanEvaluation<T>&>(condition).value()) {
       return result;
     }
     i += 2;
@@ -75,18 +72,18 @@ Expression PiecewiseOperator::shallowReduce(ExpressionNode::ReductionContext red
   int i = 0;
   while (i + 1 < n) {
     Expression condition = childAtIndex(i + 1);
-    if (!condition.hasBooleanValue()) {
-      return replaceWithUndefinedInPlace();
-    }
-    if (condition.type() != ExpressionNode::Type::Boolean) {
-      // The condition is undeterminated, can't reduce
-      return *this;
-    }
-    if (static_cast<Boolean&>(condition).value()) {
-      // Condition is true
-      Expression result = childAtIndex(i);
-      replaceWithInPlace(result);
-      return result;
+    if (condition.hasBooleanValue()) {
+      // Skip conditions that are not booleans. They are always false
+      if (condition.type() != ExpressionNode::Type::Boolean) {
+        // The condition is undeterminated, can't reduce
+        return *this;
+      }
+      if (static_cast<Boolean&>(condition).value()) {
+        // Condition is true
+        Expression result = childAtIndex(i);
+        replaceWithInPlace(result);
+        return result;
+      }
     }
     i += 2;
   }
@@ -109,10 +106,7 @@ int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(const char * 
   int i = 0;
   while (i + 1 < n) {
     Evaluation<float> conditionEvalution = childAtIndex(i + 1).approximateToEvaluation<float>(&variableContext, complexFormat, angleUnit);
-    if (conditionEvalution.type() != EvaluationNode<float>::Type::BooleanEvaluation) {
-      return -1;
-    }
-    if (static_cast<BooleanEvaluation<float>&>(conditionEvalution).value()) {
+    if (conditionEvalution.type() == EvaluationNode<float>::Type::BooleanEvaluation && static_cast<BooleanEvaluation<float>&>(conditionEvalution).value()) {
       return i / 2;
     }
     i += 2;

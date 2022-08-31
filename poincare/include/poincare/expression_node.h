@@ -121,6 +121,7 @@ public:
     Sum,
     VectorDot,
     VectorNorm,
+    PiecewiseOperator,
     /* When sorting the children of an expression, we assert that the following
      * nodes are at the end of the list : */
     // - Units

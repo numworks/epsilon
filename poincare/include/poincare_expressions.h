@@ -84,6 +84,7 @@
 #include <poincare/parenthesis.h>
 #include <poincare/percent.h>
 #include <poincare/permute_coefficient.h>
+#include <poincare/piecewise_operator.h>
 #include <poincare/power.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>

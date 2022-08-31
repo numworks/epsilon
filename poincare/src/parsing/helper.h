@@ -109,6 +109,7 @@ private:
     &NormCDFRange::s_functionHelper, // normcdfrange
     &NormPDF::s_functionHelper, // normpdf
     &PermuteCoefficient::s_functionHelper, // permute
+    &PiecewiseOperator::s_functionHelper, // piecewise
     &PoissonCDF::s_functionHelper, // poissoncdf
     &PoissonPDF::s_functionHelper, // poissonpdf
     &ListProduct::s_functionHelper, // prod

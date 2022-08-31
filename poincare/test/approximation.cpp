@@ -1390,7 +1390,6 @@ QUIZ_CASE(poincare_approximation_piecwise_operator) {
   assert_expression_approximates_to<float>("piecewise(3,0<1,4,0<2,5,0<6,2)", "3");
 
   assert_expression_approximates_to<float>("piecewise(3,1<0,2,3=4)", Undefined::Name());
-  assert_expression_approximates_to<float>("piecewise(3,1+1,2)", Undefined::Name());
 }
 
 template void assert_expression_approximates_to_scalar(const char * expression, float approximation, Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat, Preferences::MixedFractions mixedFractionsParameter);

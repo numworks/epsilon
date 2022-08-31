@@ -2167,8 +2167,6 @@ QUIZ_CASE(poincare_simplification_piecewise_operator) {
   assert_parsed_expression_simplify_to("piecewise(3,0<1,4,0<2,5,0<6,2)", "3");
 
   assert_parsed_expression_simplify_to("piecewise(3,1<0,2,3=4)", Undefined::Name());
-  assert_parsed_expression_simplify_to("piecewise(3,1+1,2)", Undefined::Name());
-
   assert_parsed_expression_simplify_to("piecewise(3,1<0,undef)", Undefined::Name());
   assert_parsed_expression_simplify_to("piecewise(3,1>0,undef)", "3");
 }

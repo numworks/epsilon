@@ -46,6 +46,21 @@ Evaluation<T> PiecewiseOperatorNode::templatedApproximate(const ApproximationCon
   return Complex<T>::Undefined();
 }
 
+Expression PiecewiseOperator::UntypedBuilder(Expression children) {
+  assert(children.type() == ExpressionNode::Type::List);
+  int n = children.numberOfChildren();
+  // Check that each condition is boolean
+  for (int i = 0; i < n; i++) {
+    if (i % 2 == 0) {
+      continue;
+    }
+    if (!children.childAtIndex(i).hasBooleanValue()) {
+      return Expression();
+    }
+  }
+  return UntypedBuilderMultipleChildren<PiecewiseOperator>(children);
+}
+
 Expression PiecewiseOperator::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     /* Do not use defaultShallowReduce since it calls shallowReduceUndfined
@@ -109,7 +124,6 @@ int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(const char * 
   }
   return -1;
 }
-
 
 template Evaluation<float> PiecewiseOperatorNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
 template Evaluation<double> PiecewiseOperatorNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;

@@ -164,6 +164,7 @@ poincare_src += $(addprefix poincare/src/,\
   parenthesis.cpp \
   percent.cpp \
   permute_coefficient.cpp \
+  piecewise_operator.cpp \
   polynomial.cpp \
   power.cpp \
   preferences.cpp \

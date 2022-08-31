@@ -55,10 +55,10 @@ protected:
   constexpr static int k_titleCellType = 0;
   constexpr static int k_editableCellType = 1;
 
-  /* safeDeletion = true ensures that no other non-empty cell will be deleted.
+  /* authorizeNonEmptyRowDeletion = false ensures that no other non-empty cell will be deleted.
    * Example: in Statistics::Store, when deleting a cell, the whole row is
-   * deleted, except if you set safeDeletion = true. */
-  virtual bool deleteCellValue(int series, int col, int row, bool safeDeletion = false);
+   * deleted, except if you set authorizeNonEmptyRowDeletion = false. */
+  virtual bool deleteCellValue(int series, int col, int row, bool authorizeNonEmptyRowDeletion = true);
   Escher::StackViewController * stackController() const override;
   Escher::Responder * tabController() const override;
   bool checkDataAtLocation(double floatBody, int columnIndex, int rowIndex) const override;
@@ -75,7 +75,7 @@ protected:
 private:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   int maxNumberOfElements() const override { return DoublePairStore::k_maxNumberOfPairs; }
-  void handleDeleteEvent(bool safeDeletion = false, bool * didDeleteRow = nullptr);
+  void handleDeleteEvent(bool authorizeNonEmptyRowDeletion = true, bool * didDeleteRow = nullptr);
 
   // StoreColumnHelper
   DoublePairStore * store() override { return m_store; }

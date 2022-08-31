@@ -53,6 +53,9 @@ public:
 
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+
+  // Returns -1 if every condition is false
+  int indexOfFirstTrueConditionWithValueForSymbol(const char * symbol, float x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 };
 
 }

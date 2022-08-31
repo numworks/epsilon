@@ -99,6 +99,7 @@ class Expression : public TreeHandle {
   friend class PercentAddition;
   friend class PercentSimple;
   friend class PermuteCoefficient;
+  friend class PiecewiseOperator;
   friend class Power;
   friend class PowerNode;
   friend class Product;

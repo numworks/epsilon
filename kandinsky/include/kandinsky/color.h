@@ -33,6 +33,9 @@ public:
 
   static KDColor blend(KDColor first, KDColor second, uint8_t alpha);
   operator uint16_t() const { return m_value; }
+
+  static KDColor HSVBlend(KDColor color1, KDColor color2);
+
 private:
   /* When converting from RGB565 to RGB888 we need to artificially expand the
    * bit precision of each color channel. For example, we need to convert a 5
@@ -56,6 +59,15 @@ private:
     (s >> (nBits-(8-nBits))); // Trick: let's try and fill the padding
   }
   constexpr KDColor(uint16_t value) : m_value(value) {}
+
+  struct HSVColor {
+    double H;
+    double S;
+    double V;
+  };
+  HSVColor convertToHSV() const;
+  static KDColor convertHSVToRGB(HSVColor color);
+
   uint16_t m_value;
 };
 

@@ -45,17 +45,21 @@ private:
 };
 
 class PiecewiseOperator final : public Expression {
+  friend class Expression;
 public:
   PiecewiseOperator(const PiecewiseOperatorNode * n) : Expression(n) {}
   using TreeHandle::addChildAtIndexInPlace;
-  static PiecewiseOperator Builder(const Tuple & children = {}) { return TreeHandle::NAryBuilder<PiecewiseOperator, PiecewiseOperatorNode>(convert(children)); }
-  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("piecewise", 1, INT_MAX, &UntypedBuilderMultipleChildren<PiecewiseOperator>);
+  static Expression UntypedBuilder(Expression children);
+  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("piecewise", 1, INT_MAX, &UntypedBuilder);
 
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
   // Returns -1 if every condition is false
   int indexOfFirstTrueConditionWithValueForSymbol(const char * symbol, float x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
+
+private:
+  static PiecewiseOperator Builder(const Tuple & children) { return TreeHandle::NAryBuilder<PiecewiseOperator, PiecewiseOperatorNode>(convert(children)); }
 };
 
 }

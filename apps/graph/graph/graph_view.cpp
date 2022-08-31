@@ -170,6 +170,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
             };
           }
         }
+        KDColor colorOfFill = f->color();
         ContinuousFunction functionG;
         ContinuousFunction * g = nullptr;
         if (!m_secondSelectedRecord.isNull() && m_selectedRecord == record) {
@@ -183,13 +184,14 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
           functionG = *(functionStore->modelForRecord(m_secondSelectedRecord).operator->());
           g = &functionG;
           incrementAreaIndex = true;
+          colorOfFill = KDColor::HSVBlend(colorOfFill, g->color());
           // g temporarely took the expiring pointer. Reset f
           f = functionStore->modelForRecord(record);
         }
         // 2 - Draw the first curve
         drawCartesianCurve(ctx, rect, tCacheMin, tmax, xyFloatEvaluation,
                            f.operator->(), context(), f->color(), discontinuityEvaluation, true,
-                           record == m_selectedRecord, f->color(), areaLowerBound,
+                           record == m_selectedRecord, colorOfFill, areaLowerBound,
                            areaUpperBound, xyDoubleEvaluation,
                            f->drawDottedCurve(), xyAreaBound,
                            shouldColorAreaWhenNan,  1 << areaIndex, tCacheStep, axis, g);

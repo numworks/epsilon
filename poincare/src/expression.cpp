@@ -383,16 +383,20 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, floa
   if (type() == ExpressionNode::Type::Randint || type() == ExpressionNode::Type::Random) {
     return true;
   }
+  bool isDiscontinuous = false;
   if (type() == ExpressionNode::Type::Ceiling || type() == ExpressionNode::Type::Floor || type() == ExpressionNode::Type::Round) {
-    return approximateWithValueForSymbol<float>(symbol, x1, context, complexFormat, angleUnit) != approximateWithValueForSymbol<float>(symbol, x2, context, complexFormat, angleUnit);
+    // is discontinuous if it changes value
+    isDiscontinuous = approximateWithValueForSymbol<float>(symbol, x1, context, complexFormat, angleUnit) != approximateWithValueForSymbol<float>(symbol, x2, context, complexFormat, angleUnit);
+  } else if (type() == ExpressionNode::Type::FracPart) {
+    // is discontinuous if the child changes int value
+    isDiscontinuous = std::floor(childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x1, context, complexFormat, angleUnit)) != std::floor(childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x2, context, complexFormat, angleUnit));
+  } else if (type() == ExpressionNode::Type::AbsoluteValue) {
+    // is discontinuous if the child changes sign
+    isDiscontinuous = (childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x1, context, complexFormat, angleUnit) > 0.0) != (childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x2, context, complexFormat, angleUnit) > 0.0);
   }
-  if (type() == ExpressionNode::Type::FracPart) {
-    return std::floor(childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x1, context, complexFormat, angleUnit)) != std::floor(childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x2, context, complexFormat, angleUnit));
+  if (isDiscontinuous) {
+    return true;
   }
-  if (type() == ExpressionNode::Type::AbsoluteValue) {
-    return (childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x1, context, complexFormat, angleUnit) > 0.0) != (childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x2, context, complexFormat, angleUnit) > 0.0);
-  }
-  assert(!IsDiscontinuous(*this, context));
   const int childrenCount = numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     if (childAtIndex(i).isDiscontinuousBetweenValuesForSymbol(symbol, x1, x2, context, complexFormat, angleUnit)) {

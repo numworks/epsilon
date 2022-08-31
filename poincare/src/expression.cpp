@@ -16,6 +16,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/opposite.h>
 #include <poincare/parenthesis.h>
+#include <poincare/piecewise_operator.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
 #include <poincare/real_part.h>
@@ -243,6 +244,7 @@ bool Expression::IsPercent(const Expression e, Context * context) {
 bool Expression::IsDiscontinuous(const Expression e, Context * context) {
   return e.type() == ExpressionNode::Type::Random
       || e.type() == ExpressionNode::Type::Randint
+      || e.type() == ExpressionNode::Type::PiecewiseOperator
       || ((e.type() == ExpressionNode::Type::Floor
           || e.type() == ExpressionNode::Type::Round
           || e.type() == ExpressionNode::Type::Ceiling
@@ -393,6 +395,9 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, floa
   } else if (type() == ExpressionNode::Type::AbsoluteValue) {
     // is discontinuous if the child changes sign
     isDiscontinuous = (childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x1, context, complexFormat, angleUnit) > 0.0) != (childAtIndex(0).approximateWithValueForSymbol<float>(symbol, x2, context, complexFormat, angleUnit) > 0.0);
+  } else if (type() == ExpressionNode::Type::PiecewiseOperator) {
+    PiecewiseOperator pieceWiseExpression = convert<PiecewiseOperator>();
+    isDiscontinuous = pieceWiseExpression.indexOfFirstTrueConditionWithValueForSymbol(symbol, x1, context, complexFormat, angleUnit) != pieceWiseExpression.indexOfFirstTrueConditionWithValueForSymbol(symbol, x2, context, complexFormat, angleUnit);
   }
   if (isDiscontinuous) {
     return true;

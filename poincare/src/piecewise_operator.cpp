@@ -3,6 +3,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
+#include <poincare/variable_context.h>
 
 namespace Poincare {
 
@@ -84,6 +85,31 @@ Expression PiecewiseOperator::shallowReduce(ExpressionNode::ReductionContext red
   // Every condition is false
   return replaceWithUndefinedInPlace();
 }
+
+int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(const char * symbol, float x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
+  int n = numberOfChildren();
+  assert(n > 0);
+  VariableContext variableContext = VariableContext(symbol, context);
+  variableContext.setApproximationForVariable<float>(x);
+  int i = 0;
+  while (i + 1 < n) {
+    Evaluation<float> conditionEvalution = childAtIndex(i + 1).approximateToEvaluation<float>(&variableContext, complexFormat, angleUnit);
+    if (conditionEvalution.type() != EvaluationNode<float>::Type::BooleanEvaluation) {
+      return -1;
+    }
+    if (static_cast<BooleanEvaluation<float>&>(conditionEvalution).value()) {
+      return i / 2;
+    }
+    i += 2;
+  }
+  if (i < n) {
+    // Last child has no condition and every other condition is false
+    assert(n % 2 == 1 && i == n - 1);
+    return i / 2;
+  }
+  return -1;
+}
+
 
 template Evaluation<float> PiecewiseOperatorNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
 template Evaluation<double> PiecewiseOperatorNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;

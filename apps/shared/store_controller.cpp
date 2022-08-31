@@ -144,7 +144,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void StoreController::handleDeleteEvent(bool safeDeletion, bool * didDeleteRow) {
+void StoreController::handleDeleteEvent(bool authorizeNonEmptyRowDeletion, bool * didDeleteRow) {
   int i = selectedColumn();
   int j = selectedRow();
   assert(i >= 0 && i < numberOfColumns());
@@ -153,7 +153,7 @@ void StoreController::handleDeleteEvent(bool safeDeletion, bool * didDeleteRow) 
   if (j == 0 || j > numberOfElementsInColumn(i)) {
     return;
   }
-  if (deleteCellValue(series, i, j, safeDeletion)) {
+  if (deleteCellValue(series, i, j, authorizeNonEmptyRowDeletion)) {
     // A row has been deleted
     if (didDeleteRow) {
       *didDeleteRow = true;
@@ -174,8 +174,8 @@ void StoreController::didBecomeFirstResponder() {
   EditableCellTableViewController::didBecomeFirstResponder();
 }
 
-bool StoreController::deleteCellValue(int series, int i, int j, bool safeDeletion) {
-  return m_store->deleteValueAtIndex(series, m_store->relativeColumnIndex(i), j - 1, safeDeletion);
+bool StoreController::deleteCellValue(int series, int i, int j, bool authorizeNonEmptyRowDeletion) {
+  return m_store->deleteValueAtIndex(series, m_store->relativeColumnIndex(i), j - 1, authorizeNonEmptyRowDeletion);
 }
 
 StackViewController * StoreController::stackController() const {

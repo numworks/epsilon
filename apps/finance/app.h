@@ -17,10 +17,10 @@ class App : public Shared::TextFieldDelegateApp {
 public:
   // Descriptor
   class Descriptor : public Shared::TextFieldDelegateApp::Descriptor {
-    public:
-      I18n::Message name() const override { return I18n::Message::FinanceApp; };
-      I18n::Message upperName() const override { return I18n::Message::FinanceAppCapital; };
-      const Escher::Image * icon() const override;
+  public:
+    I18n::Message name() const override { return I18n::Message::FinanceApp; }
+    I18n::Message upperName() const override { return I18n::Message::FinanceAppCapital; }
+    const Escher::Image * icon() const override;
   };
 
   // Snapshot

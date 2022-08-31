@@ -9,7 +9,6 @@ namespace Finance {
 // App::Descriptor
 
 const Escher::Image * App::Descriptor::icon() const {
-  // TODO
   return ImageStore::FinanceIcon;
 }
 

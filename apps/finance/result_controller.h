@@ -16,7 +16,7 @@ constexpr int k_numberOfResultCells = 1;
 
 class ResultController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource>, public DataController {
 public:
-  ResultController(Escher::StackViewController * parentResponder, Data * data);
+  ResultController(Escher::StackViewController * parentResponder);
 
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;

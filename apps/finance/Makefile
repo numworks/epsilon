@@ -7,9 +7,10 @@ app_finance_test_src = $(addprefix apps/finance/,\
 
 app_finance_src = $(addprefix apps/finance/,\
   app.cpp \
-  menu_controller.cpp \
+  data_controller.cpp \
   interest_controller.cpp \
   interest_menu_controller.cpp \
+  menu_controller.cpp \
   result_controller.cpp \
 )
 

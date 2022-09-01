@@ -16,8 +16,7 @@ constexpr int k_numberOfFinanceCells = 2;
 class MenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells, Escher::RegularListViewDataSource>, public DataController {
 public:
   MenuController(Escher::StackViewController * parentResponder,
-                    InterestMenuController * interestMenuController,
-                    Data * data);
+                    InterestMenuController * interestMenuController);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
 

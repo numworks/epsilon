@@ -18,6 +18,12 @@ all_release:
 	@ cp output/release/device/n0110/epsilon/epsilon.onboarding.dfu output/all_official/unsigned_epsilon.n0110.onboarding.dfu
 	@ $(MAKE) EMBED_EXTRA_DATA=0 MODEL=n0110 epsilon.onboarding.allow3rdparty.dfu
 	@ cp output/release/device/n0110/epsilon/epsilon.onboarding.allow3rdparty.dfu output/all_official/unsigned_epsilon.n0110.onboarding.allow3rdparty.dfu
+	@ echo "BUILD_FIRMWARE    DEVICE N0115"
+	@ $(MAKE) MODEL=n0115 clean
+	@ $(MAKE) EMBED_EXTRA_DATA=0 MODEL=n0115 epsilon.onboarding.dfu
+	@ cp output/release/device/n0115/epsilon/epsilon.onboarding.dfu output/all_official/unsigned_epsilon.n0115.onboarding.dfu
+	@ $(MAKE) EMBED_EXTRA_DATA=0 MODEL=n0115 epsilon.onboarding.allow3rdparty.dfu
+	@ cp output/release/device/n0115/epsilon/epsilon.onboarding.allow3rdparty.dfu output/all_official/unsigned_epsilon.n0115.onboarding.allow3rdparty.dfu
 	@ echo "BUILD_FIRMWARE    DEVICE N0120"
 	@ $(MAKE) MODEL=n0120 clean
 	@ $(MAKE) EMBED_EXTRA_DATA=1 MODEL=n0120 epsilon.onboarding.dfu
@@ -52,6 +58,12 @@ all_beta:
 	@ cp output/release/device/n0110/epsilon/epsilon.onboarding.beta.dfu output/all_official_beta/unsigned_epsilon.n0110.onboarding.beta.dfu
 	@ $(MAKE) EMBED_EXTRA_DATA=0 MODEL=n0110 epsilon.onboarding.beta.allow3rdparty.dfu
 	@ cp output/release/device/n0110/epsilon/epsilon.onboarding.beta.allow3rdparty.dfu output/all_official_beta/unsigned_epsilon.n0110.onboarding.beta.allow3rdparty.dfu
+	@ echo "BUILD_BETA_FIRMWARE    DEVICE N0115"
+	@ $(MAKE) MODEL=n0115 clean
+	@ $(MAKE) EMBED_EXTRA_DATA=0 MODEL=n0115 epsilon.onboarding.beta.dfu
+	@ cp output/release/device/n0115/epsilon/epsilon.onboarding.beta.dfu output/all_official_beta/unsigned_epsilon.n0115.onboarding.beta.dfu
+	@ $(MAKE) EMBED_EXTRA_DATA=0 MODEL=n0115 epsilon.onboarding.beta.allow3rdparty.dfu
+	@ cp output/release/device/n0115/epsilon/epsilon.onboarding.beta.allow3rdparty.dfu output/all_official_beta/unsigned_epsilon.n0115.onboarding.beta.allow3rdparty.dfu
 	@ echo "BUILD_BETA_FIRMWARE    DEVICE N0120"
 	@ $(MAKE) MODEL=n0120 clean
 	@ $(MAKE) EMBED_EXTRA_DATA=1 MODEL=n0120 epsilon.onboarding.beta.dfu

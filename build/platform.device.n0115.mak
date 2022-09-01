@@ -1,0 +1,2 @@
+PCB_LATEST = 500 # PCB version 5.00
+SIGNATURE_INDEX = 1

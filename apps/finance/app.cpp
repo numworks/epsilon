@@ -28,7 +28,7 @@ void App::Snapshot::reset() {
   m_pageQueue.reset();
 }
 
-void App::didBecomeActive(Escher::Window * windows) {
+void App::didBecomeActive(Escher::Window * window) {
   Ion::RingBuffer<Escher::ViewController *, Snapshot::k_maxNumberOfStacks> * queue = snapshot()->pageQueue();
   int queueLength = queue->length();
   Escher::ViewController * currentController = &m_menuController;
@@ -39,7 +39,7 @@ void App::didBecomeActive(Escher::Window * windows) {
     currentController->stackOpenPage(controller);
     currentController = controller;
   }
-  Escher::App::didBecomeActive(windows);
+  Escher::App::didBecomeActive(window);
 }
 
 void App::willOpenPage(Escher::ViewController * controller) {

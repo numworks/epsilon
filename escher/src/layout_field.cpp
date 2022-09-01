@@ -437,7 +437,9 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
     cursor->addEmptyMatrixLayout();
     return true;
   }
-  Expression resultExpression = Expression::Parse(text, nullptr);
+  // Single keys are not parsed to avoid changing " or g to _" or _g
+  // TODO: currently using char is sufficient but utf8 would be proper
+  Expression resultExpression = strlen(text)>1 ? Expression::Parse(text, nullptr) : Expression();
   // If first inserted character was empty, cursor must be left of layout
   bool forceCursorLeftOfText = !forceCursorRightOfText && text[0] == UCodePointEmpty;
   if (resultExpression.isUninitialized()) {

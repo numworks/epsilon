@@ -8,13 +8,13 @@
 #include <escher/table_view_with_top_and_bottom_views.h>
 #include <ion/display.h>
 #include <ion/events.h>
-#include "data.h"
+#include "data_controller.h"
 
 namespace Finance {
 
 constexpr int k_numberOfResultCells = 1;
 
-class ResultController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource> {
+class ResultController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource>, public DataController {
 public:
   ResultController(Escher::StackViewController * parentResponder, Data * data);
 
@@ -30,7 +30,6 @@ private:
 
   Escher::MessageTextView m_messageView;
   Escher::TableViewWithTopAndBottomViews m_contentView;
-  Data * m_data;
 };
 
 }  // namespace Finance

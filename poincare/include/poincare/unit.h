@@ -131,11 +131,11 @@ public:
     Expression toBaseUnits(const ExpressionNode::ReductionContext& reductionContext) const;
     bool canPrefix(const Prefix * prefix, bool input) const;
     const Prefix * findBestPrefix(double value, double exponent) const;
+    Expression ratioExpressionReduced(const ExpressionNode::ReductionContext& reductionContext) const { return Expression::Parse(m_ratioExpression, nullptr).deepReduce(reductionContext); }
 
   protected:
     static const Representative * DefaultFindBestRepresentative(double value, double exponent, const Representative * representatives, int length, const Prefix * * prefix);
 
-    Expression ratioExpressionReduced(const ExpressionNode::ReductionContext& reductionContext) const { return Expression::Parse(m_ratioExpression, nullptr).deepReduce(reductionContext); }
 
     AliasesList m_rootSymbols;
     /* m_ratio is the factor used to convert a unit made of the representative
@@ -183,13 +183,14 @@ public:
     friend class Unit;
   public:
     constexpr static AngleRepresentative Default() { return AngleRepresentative(nullptr, nullptr, NAN, Prefixable::None, Prefixable::None); }
+    Expression convertInto(Expression value, const Representative * other , const ExpressionNode::ReductionContext& reductionContext) const;
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .angle = 1, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 5; }
     const Representative * representativesOfSameDimension() const override;
     bool isBaseUnit() const override { return this == representativesOfSameDimension(); }
     const Representative * standardRepresentative(double value, double exponent, const ExpressionNode::ReductionContext& reductionContext, const Prefix * * prefix) const override;
     bool hasSpecialAdditionalExpressions(double value, Preferences::UnitFormat unitFormat) const override { return true; }
-    int setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const override;
+    int setAdditionalExpressionsWithExactValue(Expression exactValue, double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const;
   private:
     using Representative::Representative;
   };
@@ -727,7 +728,7 @@ public:
   static bool CanParse(const char * symbol, size_t length, const Representative * * representative, const Prefix * * prefix);
   static void ChooseBestRepresentativeAndPrefixForValue(Expression units, double * value, const ExpressionNode::ReductionContext& reductionContext);
   static bool ShouldDisplayAdditionalOutputs(double value, Expression unit, Preferences::UnitFormat unitFormat);
-  static int SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext);
+  static int SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext, Expression exactOutput);
   static Expression BuildSplit(double value, const Unit * units, int length, const ExpressionNode::ReductionContext& reductionContext);
   static Expression ConvertTemperatureUnits(Expression e, Unit unit, const ExpressionNode::ReductionContext& reductionContext);
   static bool IsForbiddenTemperatureProduct(Expression e);

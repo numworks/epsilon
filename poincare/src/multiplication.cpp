@@ -157,21 +157,21 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
  *
  *               | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction | Hexa/Binary
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
- * Decimal       |    ×    |   x     |    ø      |     ×       |      ×        |  ×   |    ×    |    ×     |    •
+ * Decimal       |    ×    |    ×    |     ø     |      ×      |       ×       |  ×   |    ×    |    ×     |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
- * Integer       |    ×    |   x     |    ø      |     •       |      ø        |  ø   |    •    |    ×     |    •
+ * Integer       |    ×    |    ×    |     ø     |      •      |       ø       |  ø   |    •    |    ×     |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
- * OneLetter     |    ×    |   •     |    •      |     •       |      •        |  ø   |    •    |    ø     |    •
+ * OneLetter     |    ×    |    •    |     •     |      •      |       •       |  ø   |    •    |    ø     |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
- * MoreLetters   |    ×    |   •     |    •      |     •       |      •        |  ø   |    •    |    ø     |    •
+ * MoreLetters   |    ×    |    •    |     •     |      •      |       •       |  ø   |    •    |    ø     |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
- * BundaryPunct. |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    •    |    ×     |    •
+ * BundaryPunct. |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
- * Root          |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    •    |    ×     |    •
+ * Root          |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
- * Fraction      |    ×    |   x     |    ø      |     ø       |      ø        |  ø   |    •    |    ×     |    •
+ * Fraction      |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
- * Hexa/Binary   |    •    |   •     |    •      |     •       |      •        |  •   |    •    |    •     |    •
+ * Hexa/Binary   |    •    |    •    |     •     |      •      |       •       |  •   |    •    |    •     |      •
  *
  * */
 
@@ -484,6 +484,31 @@ Expression Multiplication::shallowBeautify(const ExpressionNode::ReductionContex
     }
 
     ExpressionNode::UnitConversion unitConversionMode = reductionContext.unitConversion();
+    if (units.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(units).representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector()) {
+      if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
+        // Pure angle unit is the only unit allowed to be evaluated exactly
+        const UnitNode::Representative * angleUnit = static_cast<Unit &>(units).representative();
+        double value = self.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+        const UnitNode::Prefix * prefix = UnitNode::Prefix::EmptyPrefix();
+        const UnitNode::Representative * representative = angleUnit->standardRepresentative(value, 1.0, reductionContext, &prefix);
+        assert(representative);
+        Expression toUnit = Unit::Builder(representative, prefix);
+        // Divide the left member by the new unit
+        Expression division = Division::Builder(Multiplication::Builder(self.clone(), units), toUnit.clone());
+        Expression divisionUnit;
+        division = division.reduceAndRemoveUnit(reductionContext, &divisionUnit);
+        if (!divisionUnit.isUninitialized()) {
+          // The left and right members are not homogeneous
+          return replaceWithUndefinedInPlace();
+        }
+        result = Multiplication::Builder(division, toUnit);
+        assert(!result.isUninitialized());
+        self.replaceWithInPlace(result);
+        return result;
+      }
+      return Multiplication::Builder(self.shallowBeautify(reductionContext), units);
+    }
+
     if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
       /* Step 2a: Recognize derived units
        * - Look up in the table of derived units, the one which itself or its inverse simplifies 'units' the most.

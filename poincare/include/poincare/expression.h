@@ -380,7 +380,6 @@ public:
 
 protected:
   Expression(const ExpressionNode * n) : TreeHandle(n) {}
-  Expression(int nodeIdentifier) : TreeHandle(nodeIdentifier) {}
 
   template<typename U>
   static Expression UntypedBuilderOneChild(Expression children) {

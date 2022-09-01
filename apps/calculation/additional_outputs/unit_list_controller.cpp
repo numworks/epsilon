@@ -112,7 +112,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
       GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
       ExpressionNode::ReductionTarget::User,
       ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-  int numberOfExpressions = Unit::SetAdditionalExpressions(units, value, expressions, k_maxNumberOfExpressionCells, reductionContext);
+  int numberOfExpressions = Unit::SetAdditionalExpressions(units, value, expressions, k_maxNumberOfExpressionCells, reductionContext, m_expression);
 
   // 2. SI units only
   assert(numberOfExpressions < k_maxNumberOfExpressionCells - 1);

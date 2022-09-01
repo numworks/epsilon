@@ -26,7 +26,7 @@ void TrigonometryListController::setExpression(Poincare::Expression e) {
   Expression copy = e.childAtIndex(0).clone();
   Expression unit;
   Shared::PoincareHelpers::ReduceAndRemoveUnit(&copy, &context, ExpressionNode::ReductionTarget::User, &unit);
-  assert(unit.isUninitialized() || static_cast<Unit &>(unit).representative()->dimensionVector() != Unit::AngleRepresentative::Default().dimensionVector());
+  assert(unit.isUninitialized() || static_cast<Unit &>(unit).representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector());
   float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(copy, &context);
   m_model.setAngle(angle);
 }

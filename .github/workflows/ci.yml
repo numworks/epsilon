@@ -27,7 +27,7 @@ jobs:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     strategy:
       matrix:
-        model: [n0110, n0120]
+        model: [n0110, n0115, n0120]
     steps:
       - uses: numworks/setup-arm-toolchain@latest
       - uses: actions/checkout@v3

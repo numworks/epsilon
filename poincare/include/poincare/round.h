@@ -21,7 +21,7 @@ public:
 
 
   // Properties
-  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
+  TrinaryBoolean isPositive(Context * context) const override { return childAtIndex(0)->isPositive(context); }
   Type type() const override { return Type::Round; }
 private:
   // Layout

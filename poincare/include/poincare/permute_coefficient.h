@@ -23,7 +23,7 @@ public:
 
   // Properties
   Type type() const override{ return Type::PermuteCoefficient; }
-  Sign sign(Context * context) const override { return Sign::Positive; }
+  TrinaryBoolean isPositive(Context * context) const override { return TrinaryBoolean::True; }
 
 private:
   // Layout

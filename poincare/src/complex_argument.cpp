@@ -54,11 +54,11 @@ Expression ComplexArgument::shallowReduce(ExpressionNode::ReductionContext reduc
   }
   Context * context = reductionContext.context();
   Expression res;
-  if (c.nullStatus(context) == ExpressionNode::NullStatus::Null) {
+  if (c.isNull(context) == TrinaryBoolean::True) {
     res = Undefined::Builder();
-  } else if (c.sign(context) == ExpressionNode::Sign::Positive) {
+  } else if (c.isPositive(context) == TrinaryBoolean::True) {
     res = Rational::Builder(0);
-  } else if (c.sign(context) == ExpressionNode::Sign::Negative) {
+  } else if (c.isPositive(context) == TrinaryBoolean::False) {
     res = Constant::Builder("π");
   } else {
     double approximation = c.approximateToScalar<double>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true);

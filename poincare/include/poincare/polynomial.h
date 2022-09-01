@@ -18,7 +18,7 @@ private:
   constexpr static int k_maxNumberOfNodesBeforeApproximatingDelta = 16;
   static Expression ReducePolynomial(const Expression * coefficients, int degree, Expression parameter, const ExpressionNode::ReductionContext& reductionContext);
   static Rational ReduceRationalPolynomial(const Rational * coefficients, int degree, Rational parameter);
-  static bool IsRoot(const Expression * coefficients, int degree, Expression root, const ExpressionNode::ReductionContext& reductionContext) { return ReducePolynomial(coefficients, degree, root, reductionContext).nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null; }
+  static bool IsRoot(const Expression * coefficients, int degree, Expression root, const ExpressionNode::ReductionContext& reductionContext) { return ReducePolynomial(coefficients, degree, root, reductionContext).isNull(reductionContext.context()) == TrinaryBoolean::True; }
   static Expression RationalRootSearch(const Expression * coefficients, int degree, const ExpressionNode::ReductionContext& reductionContext);
   static Expression SumRootSearch(const Expression * coefficients, int degree, int relevantCoefficient, const ExpressionNode::ReductionContext& reductionContext);
   static Expression CardanoNumber(Expression delta0, Expression delta1, bool * approximate, const ExpressionNode::ReductionContext& reductionContext);

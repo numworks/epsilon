@@ -113,10 +113,10 @@ template<typename T> T RationalNode::templatedApproximate() const {
 // Comparison
 
 int RationalNode::NaturalOrder(const RationalNode * i, const RationalNode * j) {
-  if (Number(i).sign() == Sign::Negative && Number(j).sign() == Sign::Positive) {
+  if (Number(i).isPositive() == TrinaryBoolean::False && Number(j).isPositive() == TrinaryBoolean::True) {
     return -1;
   }
-  if (Number(i).sign() == Sign::Positive && Number(j).sign() == Sign::Negative) {
+  if (Number(i).isPositive() == TrinaryBoolean::True && Number(j).isPositive() == TrinaryBoolean::False) {
     return 1;
   }
   Integer i1 = Integer::Multiplication(i->signedNumerator(), j->denominator());
@@ -236,7 +236,7 @@ Expression Rational::shallowReduce() {
   // Turn into Infinite if the numerator is too big.
   if (unsignedIntegerNumerator().isOverflow()) {
     assert(false);
-    return Infinity::Builder(sign(&context) == ExpressionNode::Sign::Negative);
+    return Infinity::Builder(sign(&context) == TrinaryBoolean::False);
   }
   // Turn into 0 if the denominator is too big.
   if (integerDenominator().isOverflow()) {
@@ -249,8 +249,8 @@ Expression Rational::shallowReduce() {
 }
 
 Expression Rational::shallowBeautify() {
-  if (sign() == ExpressionNode::Sign::Negative) {
-    Expression abs = setSign(ExpressionNode::Sign::Positive);
+  if (isPositive() == TrinaryBoolean::False) {
+    Expression abs = setSign(true);
     Opposite o = Opposite::Builder();
     replaceWithInPlace(o);
     o.replaceChildAtIndexInPlace(0, abs);

@@ -2,58 +2,53 @@
 
 namespace Poincare {
 
-Domain::Result Domain::ExpressionIsIn(const Expression &expression, Type type, Context * context) {
+TrinaryBoolean Domain::ExpressionIsIn(const Expression &expression, Type type, Context * context) {
   if (expression.deepIsMatrix(context)) {
-    return False;
+    return TrinaryBoolean::False;
   }
 
   if (expression.isUndefined() || Expression::IsInfinity(expression, context)) {
-    return False;
+    return TrinaryBoolean::False;
   }
 
   if (type & k_onlyPositive) {
-    ExpressionNode::Sign sign = expression.sign(context);
-    if (sign == ExpressionNode::Sign::Negative) {
-      return False;
-    }
-    if (sign == ExpressionNode::Sign::Unknown) {
-      return CantCheck;
+    TrinaryBoolean isPositive = expression.isPositive(context);
+    if (isPositive != TrinaryBoolean::True) {
+      return isPositive;
     }
   }
 
   if (type & k_onlyNegative) {
-    ExpressionNode::Sign sign = expression.sign(context);
-    if (sign == ExpressionNode::Sign::Positive) {
-      return False;
-    }
-    if (sign == ExpressionNode::Sign::Unknown) {
-      return CantCheck;
+    TrinaryBoolean isPositive = expression.isPositive(context);
+    if (isPositive != TrinaryBoolean::False) {
+      // Return False if isPositive is True
+      return TrinaryNot(isPositive);
     }
   }
 
   if (!expression.isReal(context, false)) {
-    return CantCheck;
+    return TrinaryBoolean::Unknown;
   }
 
   if (expression.type() != ExpressionNode::Type::Rational) {
-    return CantCheck;
+    return TrinaryBoolean::Unknown;
   }
 
   const Rational rational = static_cast<const Rational &>(expression);
 
   if (type & k_onlyIntegers && !rational.isInteger()) {
-    return False;
+    return TrinaryBoolean::False;
   }
 
   if (type & k_nonZero && rational.isZero()) {
-    return False;
+    return TrinaryBoolean::False;
   }
 
   if (type & (UnitSegment | LeftOpenUnitSegment | OpenUnitSegment) && rational.isGreaterThanOne()) {
-    return False;
+    return TrinaryBoolean::False;
   }
 
-  return True;
+  return TrinaryBoolean::True;
 }
 
 }

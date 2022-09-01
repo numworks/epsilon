@@ -29,7 +29,7 @@ bool SubtractionNode::childAtIndexNeedsUserParentheses(const Expression & child,
     // First operand of a subtraction never requires parentheses
     return false;
   }
-  if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
+  if (child.isNumber() && static_cast<const Number &>(child).isPositive() == TrinaryBoolean::False) {
     return true;
   }
   if (child.type() == Type::Conjugate) {

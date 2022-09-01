@@ -360,7 +360,7 @@ private:
     // Update m_plotType depending on the equation
     void updatePlotType(const Ion::Storage::Record * record, const Poincare::Expression equation, Poincare::Context * context) const;
     // If equation has a NonNull coeff. Can also compute last coeff sign.
-    static bool HasNonNullCoefficients(const Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::ExpressionNode::Sign * highestDegreeCoefficientSign);
+    static bool HasNonNullCoefficients(const Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::TrinaryBoolean * highestDegreeCoefficientIsPositive);
     // If equation should be allowed when implicit plots are forbidden.
     static bool IsExplicitEquation(const Poincare::Expression equation, CodePoint symbol);
 

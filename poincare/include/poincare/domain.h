@@ -56,28 +56,19 @@ public:
     return true;
   }
 
-  /* Order is important :
-   * - when casted to bool return if we should return early, ie non true
-   * - the order is used when propagating results */
-  enum Result {
-    True = 0,
-    CantCheck,
-    False,
-  };
-
-  static Result ExpressionIsIn(const Expression &expression, Type domain, Context * context);
+  static TrinaryBoolean ExpressionIsIn(const Expression &expression, Type domain, Context * context);
 
   static bool ExpressionIsIn(bool * result, const Expression &expression, Type domain, Context * context) {
     assert(result != nullptr);
-    Result expressionsIsIn = ExpressionIsIn(expression, domain, context);
+    TrinaryBoolean expressionsIsIn = ExpressionIsIn(expression, domain, context);
     switch (expressionsIsIn) {
-    case CantCheck:
+    case TrinaryBoolean::Unknown:
       return false;
-    case True:
+    case TrinaryBoolean::True:
       *result = true;
       return true;
     default:
-      assert(expressionsIsIn == False);
+      assert(expressionsIsIn == TrinaryBoolean::False);
       *result = false;
       return true;
     }
@@ -85,15 +76,15 @@ public:
 
   static bool ExpressionsAreIn(bool * result, const Expression &expression1, Type domain1, const Expression &expression2, Type domain2, Context * context) {
     assert(result != nullptr);
-    Result expressionsAreIn = std::max(ExpressionIsIn(expression1, domain1, context), ExpressionIsIn(expression2, domain2, context));
+    TrinaryBoolean expressionsAreIn = TrinaryAnd(ExpressionIsIn(expression1, domain1, context), ExpressionIsIn(expression2, domain2, context));
     switch (expressionsAreIn) {
-    case CantCheck:
+    case TrinaryBoolean::Unknown:
       return false;
-    case True:
+    case TrinaryBoolean::True:
       *result = true;
       return true;
     default:
-      assert(expressionsAreIn == False);
+      assert(expressionsAreIn == TrinaryBoolean::False);
       *result = false;
       return true;
     }

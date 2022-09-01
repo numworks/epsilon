@@ -19,17 +19,6 @@ int OppositeNode::polynomialDegree(Context * context, const char * symbolName) c
   return childAtIndex(0)->polynomialDegree(context, symbolName);
 }
 
-ExpressionNode::Sign OppositeNode::sign(Context * context) const {
-  Sign child0Sign = childAtIndex(0)->sign(context);
-  if (child0Sign == Sign::Positive) {
-    return Sign::Negative;
-  }
-  if (child0Sign == Sign::Negative) {
-    return Sign::Positive;
-  }
-  return ExpressionNode::sign(context);
-}
-
 template<typename T>
 Evaluation<T> OppositeNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   Evaluation<T> childEval = childAtIndex(0)->approximate(T(), approximationContext);
@@ -40,7 +29,7 @@ Evaluation<T> OppositeNode::templatedApproximate(const ApproximationContext& app
 
 bool OppositeNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
   assert(childIndex == 0);
-  if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
+  if (child.isNumber() && static_cast<const Number &>(child).isPositive() == TrinaryBoolean::False) {
     return true;
   }
   if (child.type() == Type::Conjugate) {

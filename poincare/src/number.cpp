@@ -22,8 +22,8 @@ double NumberNode::doubleApproximation() const {
     case Type::Nonreal:
       return NAN;
     case Type::Infinity:
-      assert(Number(this).sign() == Sign::Negative || Number(this).sign() == Sign::Positive);
-      return Number(this).sign() == Sign::Negative ? -INFINITY : INFINITY;
+      assert(Number(this).isPositive() == TrinaryBoolean::False || Number(this).isPositive() == TrinaryBoolean::True);
+      return Number(this).isPositive() == TrinaryBoolean::False ? -INFINITY : INFINITY;
     case Type::Float:
       return static_cast<const FloatNode<float> *>(this)->value();
     case Type::Double:

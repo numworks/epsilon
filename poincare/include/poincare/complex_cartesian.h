@@ -19,8 +19,8 @@ public:
 #endif
 
   // Properties
-  Sign sign(Context * context) const override { return childAtIndex(1)->nullStatus(context) == NullStatus::Null ? childAtIndex(0)->sign(context) : Sign::Unknown; }
-  NullStatus nullStatus(Context * context) const override;
+  TrinaryBoolean isPositive(Context * context) const override { return childAtIndex(1)->isNull(context) == TrinaryBoolean::True ? childAtIndex(0)->isPositive(context) : TrinaryBoolean::Unknown; }
+  TrinaryBoolean isNull(Context * context) const override;
   Type type() const override { return Type::ComplexCartesian; }
 private:
   // Layout

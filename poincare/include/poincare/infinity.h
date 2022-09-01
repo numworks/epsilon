@@ -22,8 +22,8 @@ public:
 
   // Properties
   Type type() const override { return Type::Infinity; }
-  Sign sign(Context * context) const override { return m_negative ? Sign::Negative : Sign::Positive; }
-  NullStatus nullStatus(Context * context) const override { return NullStatus::NonNull; }
+  TrinaryBoolean isPositive(Context * context) const override { return BinaryToTrinaryBool(!m_negative); }
+  TrinaryBoolean isNull(Context * context) const override { return TrinaryBoolean::False; }
 
 
   // NumberNode
@@ -62,7 +62,7 @@ public:
   static Infinity Builder(bool negative);
 
   Infinity(InfinityNode * n) : Number(n) {}
-  Expression setSign(ExpressionNode::Sign s);
+  Expression setSign(bool positive);
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 private:
   InfinityNode * node() const { return static_cast<InfinityNode *>(Number::node()); }

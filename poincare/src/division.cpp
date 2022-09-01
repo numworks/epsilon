@@ -15,13 +15,13 @@
 
 namespace Poincare {
 
-ExpressionNode::Sign DivisionNode::sign(Context * context) const {
-  ExpressionNode::Sign numeratorSign = childAtIndex(0)->sign(context);
-  ExpressionNode::Sign denominatorSign = childAtIndex(1)->sign(context);
-  if (numeratorSign == ExpressionNode::Sign::Unknown || denominatorSign == ExpressionNode::Sign::Unknown) {
-    return ExpressionNode::Sign::Unknown;
+TrinaryBoolean DivisionNode::isPositive(Context * context) const {
+  TrinaryBoolean numeratorPositive = childAtIndex(0)->isPositive(context);
+  TrinaryBoolean denominatorPositive = childAtIndex(1)->isPositive(context);
+  if (numeratorPositive == TrinaryBoolean::Unknown || denominatorPositive == TrinaryBoolean::Unknown) {
+    return TrinaryBoolean::Unknown;
   }
-  return numeratorSign == denominatorSign ? ExpressionNode::Sign::Positive : ExpressionNode::Sign::Negative;
+  return BinaryToTrinaryBool(numeratorPositive == denominatorPositive);
 }
 
 int DivisionNode::polynomialDegree(Context * context, const char * symbolName) const {
@@ -38,7 +38,7 @@ Layout DivisionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 }
 
 bool DivisionNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * child) const {
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
+  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).isPositive() == TrinaryBoolean::False) {
     return true;
   }
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {

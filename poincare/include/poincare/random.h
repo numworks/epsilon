@@ -21,7 +21,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Random; }
-  Sign sign(Context * context) const override { return Sign::Positive; }
+  TrinaryBoolean isPositive(Context * context) const override { return TrinaryBoolean::True; }
 private:
   // Simplification
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };

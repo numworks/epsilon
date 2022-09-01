@@ -23,7 +23,10 @@ public:
 #endif
 
   // Properties
-  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context) == Sign::Unknown ? Sign::Unknown : Sign::Positive; }
+  TrinaryBoolean isPositive(Context * context) const override {
+    TrinaryBoolean t = childAtIndex(0)->isPositive(context);
+    return TrinaryOr(TrinaryNot(t), t); // Unknown if unknown, True otherwise
+  }
   Type type() const override { return Type::ArcCosine; }
 
 private:

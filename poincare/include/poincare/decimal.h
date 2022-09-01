@@ -42,8 +42,8 @@ public:
 
   // Properties
   Type type() const override { return Type::Decimal; }
-  Sign sign(Context * context) const override { return m_negative ? Sign::Negative : Sign::Positive; }
-  NullStatus nullStatus(Context * context) const override { return unsignedMantissa().isZero() ? NullStatus::Null : NullStatus::NonNull; }
+  TrinaryBoolean isPositive(Context * context) const override { return BinaryToTrinaryBool(!m_negative); }
+  TrinaryBoolean isNull(Context * context) const override { return BinaryToTrinaryBool(unsignedMantissa().isZero()); }
 
   // NumberNode
   void setNegative(bool negative) override { m_negative = negative; }

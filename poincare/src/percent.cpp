@@ -76,23 +76,24 @@ template <typename U> Evaluation<U> PercentSimpleNode::templateApproximate(const
 
 // Properties
 
-ExpressionNode::Sign PercentAdditionNode::sign(Context * context) const {
-  ExpressionNode::Sign sign0 = childAtIndex(0)->sign(context);
-  ExpressionNode::Sign sign1 = childAtIndex(1)->sign(context);
-  if (sign0 == sign1) {
-    return sign0;
+TrinaryBoolean PercentAdditionNode::isPositive(Context * context) const {
+  TrinaryBoolean isPositive0 = childAtIndex(0)->isPositive(context);
+  TrinaryBoolean isPositive1 = childAtIndex(1)->isPositive(context);
+  if (isPositive0 == isPositive1) {
+    return isPositive0;
   }
-  return Sign::Unknown;
+  return TrinaryBoolean::Unknown;
 }
 
-ExpressionNode::NullStatus PercentAdditionNode::nullStatus(Context * context) const {
-  ExpressionNode::NullStatus nullStatus0 = childAtIndex(0)->nullStatus(context);
-  ExpressionNode::NullStatus nullStatus1 = childAtIndex(1)->nullStatus(context);
-  if (nullStatus0 != ExpressionNode::NullStatus::NonNull || nullStatus1 == ExpressionNode::NullStatus::Null) {
-    return nullStatus0;
+TrinaryBoolean PercentAdditionNode::isNull(Context * context) const {
+  TrinaryBoolean isNull0 = childAtIndex(0)->isNull(context);
+  TrinaryBoolean isNull1 = childAtIndex(1)->isNull(context);
+  if (isNull0 != TrinaryBoolean::False || isNull1 == TrinaryBoolean::True) {
+    return isNull0;
   }
   // At this point if the expression has a defined sign, it is a strict sign
-  return (sign(context) != ExpressionNode::Sign::Unknown) ? ExpressionNode::NullStatus::NonNull : ExpressionNode::NullStatus::Unknown;
+  TrinaryBoolean t = isPositive(context);
+  return TrinaryAnd(TrinaryNot(t), t); // Unknown if unknown, False otherwise
 }
 
 // PercentSimpleNode

@@ -344,12 +344,12 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
   for (int j = m-1; j >= 0; j--) {
     bool rowWithNullCoefficients = true;
     for (int i = 0; i < n; i++) {
-      if (Ab.matrixChild(j, i).nullStatus(context) != ExpressionNode::NullStatus::Null) {
+      if (Ab.matrixChild(j, i).isNull(context) != TrinaryBoolean::True) {
         rowWithNullCoefficients = false;
         break;
       }
     }
-    if (rowWithNullCoefficients && Ab.matrixChild(j, n).nullStatus(context) != ExpressionNode::NullStatus::Null) {
+    if (rowWithNullCoefficients && Ab.matrixChild(j, n).isNull(context) != TrinaryBoolean::True) {
       // TODO: Handle ExpressionNode::NullStatus::Unknown
       m_numberOfSolutions = 0;
     }

@@ -13,13 +13,13 @@ namespace Poincare {
 
 int DivisionQuotientNode::numberOfChildren() const { return DivisionQuotient::s_functionHelper.numberOfChildren(); }
 
-ExpressionNode::Sign DivisionQuotientNode::sign(Context * context) const {
-  ExpressionNode::Sign numeratorSign = childAtIndex(0)->sign(context);
-  ExpressionNode::Sign denominatorSign = childAtIndex(1)->sign(context);
-  if (numeratorSign == ExpressionNode::Sign::Unknown || denominatorSign == ExpressionNode::Sign::Unknown) {
-    return ExpressionNode::Sign::Unknown;
+TrinaryBoolean DivisionQuotientNode::isPositive(Context * context) const {
+  TrinaryBoolean numeratorPositive = childAtIndex(0)->isPositive(context);
+  TrinaryBoolean denominatorPositive = childAtIndex(1)->isPositive(context);
+  if (numeratorPositive == TrinaryBoolean::Unknown || denominatorPositive == TrinaryBoolean::Unknown) {
+    return TrinaryBoolean::Unknown;
   }
-  return numeratorSign == denominatorSign ? ExpressionNode::Sign::Positive : ExpressionNode::Sign::Negative;
+  return BinaryToTrinaryBool(numeratorPositive == denominatorPositive);
 }
 
 Expression DivisionQuotientNode::shallowReduce(const ReductionContext& reductionContext) {

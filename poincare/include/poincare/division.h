@@ -22,10 +22,10 @@ public:
 #endif
 
   // Properties
-  Sign sign(Context * context) const override;
-  NullStatus nullStatus(Context * context) const override {
+  TrinaryBoolean isPositive(Context * context) const override;
+  TrinaryBoolean isNull(Context * context) const override {
     // NonNull Status can't be returned because denominator could be infinite.
-    return childAtIndex(0)->nullStatus(context) == NullStatus::Null ? NullStatus::Null : NullStatus::Unknown;
+    return TrinaryOr(childAtIndex(0)->isNull(context), TrinaryBoolean::Unknown);
   }
   Type type() const override { return Type::Division; }
   int polynomialDegree(Context * context, const char * symbolName) const override;

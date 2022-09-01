@@ -464,8 +464,8 @@ public:
 
   // Expression Properties
   Type type() const override { return Type::Unit; }
-  Sign sign(Context * context) const override { return Sign::Positive; }
-  NullStatus nullStatus(Context * context) const override { return NullStatus::NonNull; }
+  TrinaryBoolean isPositive(Context * context) const override { return TrinaryBoolean::True; }
+  TrinaryBoolean isNull(Context * context) const override { return TrinaryBoolean::False; }
   Expression removeUnit(Expression * unit) override;
 
   /* Layout */

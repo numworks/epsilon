@@ -107,7 +107,7 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode * e, bool asce
     assert(exponent() == other->exponent());
     unsignedComparison = Integer::NaturalOrder(unsignedMantissa(), other->unsignedMantissa());
   }
-  return ((int)Number(this).sign())*unsignedComparison;
+  return ((int)Number(this).isPositive())*unsignedComparison;
 }
 
 Expression DecimalNode::shallowReduce(const ReductionContext& reductionContext) {
@@ -456,8 +456,8 @@ Expression Decimal::shallowReduce(ExpressionNode::ReductionContext reductionCont
 }
 
 Expression Decimal::shallowBeautify() {
-  if (sign() == ExpressionNode::Sign::Negative) {
-    Expression abs = setSign(ExpressionNode::Sign::Positive);
+  if (isPositive() == TrinaryBoolean::True) {
+    Expression abs = setSign(true);
     Opposite o = Opposite::Builder();
     replaceWithInPlace(o);
     o.replaceChildAtIndexInPlace(0, abs);

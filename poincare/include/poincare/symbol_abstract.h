@@ -32,7 +32,7 @@ public:
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
 
   // Property
-  Sign sign(Context * context) const override;
+  TrinaryBoolean isPositive(Context * context) const override;
 
   // TreeNode
 #if POINCARE_TREE_LOG

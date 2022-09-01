@@ -46,11 +46,11 @@ public:
     return Type::DistributionDispatcher;
   }
 
-  Sign sign(Context * context) const override {
+  TrinaryBoolean isPositive(Context * context) const override {
     if (m_methodType != DistributionMethod::Type::Inverse) {
-      return Sign::Positive;
+      return TrinaryBoolean::True;
     }
-    return Sign::Unknown;
+    return TrinaryBoolean::Unknown;
   }
 
 #if POINCARE_TREE_LOG

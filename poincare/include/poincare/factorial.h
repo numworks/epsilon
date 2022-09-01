@@ -19,9 +19,9 @@ public:
 #endif
 
   // Properties
-  NullStatus nullStatus(Context * context) const override { return NullStatus::NonNull; }
+  TrinaryBoolean isNull(Context * context) const override { return TrinaryBoolean::False; }
   Type type() const override { return Type::Factorial; }
-  Sign sign(Context * context) const override { return Sign::Positive; }
+  TrinaryBoolean isPositive(Context * context) const override { return TrinaryBoolean::True; }
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 
 private:

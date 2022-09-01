@@ -326,7 +326,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
       m.addChildAtIndexInPlace(simplifiedCosine, 1, 1);
       return m.shallowReduce(reductionContext);
     }
-    assert(r.sign() == ExpressionNode::Sign::Positive);
+    assert(r.isPositive() == TrinaryBoolean::True);
   }
   return e;
 }

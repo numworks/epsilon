@@ -33,11 +33,12 @@ Expression ListMean::shallowReduce(ExpressionNode::ReductionContext reductionCon
   bool allWeightsArePositive = true;
   int childrenNumber = children[1].numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
-    if (children[1].childAtIndex(i).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+    TrinaryBoolean childIsPositive = children[1].childAtIndex(i).isPositive(reductionContext.context());
+    if (childIsPositive == TrinaryBoolean::False) {
       // If at least one child is negative, return undef
       return replaceWithUndefinedInPlace();
     }
-    if (children[1].childAtIndex(i).sign(reductionContext.context()) == ExpressionNode::Sign::Unknown) {
+    if (childIsPositive == TrinaryBoolean::Unknown) {
       allWeightsArePositive = false;
     }
   }

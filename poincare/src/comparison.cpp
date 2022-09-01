@@ -101,13 +101,13 @@ bool ComparisonNode::IsSimpleComparisonWithOperator(Expression e, OperatorType o
   return IsSimpleComparison(e, &operatorTypeOfE) && operatorTypeOfE == operatorType;
 }
 
-ComparisonNode::TrinaryBoolean ComparisonNode::TrinaryTruthValue(OperatorType type, TrinaryBoolean chidlrenAreEqual, TrinaryBoolean leftChildIsGreater) {
+TrinaryBoolean ComparisonNode::TrinaryTruthValue(OperatorType type, TrinaryBoolean chidlrenAreEqual, TrinaryBoolean leftChildIsGreater) {
   if (chidlrenAreEqual == TrinaryBoolean::Unknown) {
     return TrinaryBoolean::Unknown;
   }
   if (chidlrenAreEqual == TrinaryBoolean::True) {
     bool result = (type == OperatorType::SuperiorEqual || type == OperatorType::InferiorEqual || type == OperatorType::Equal);
-    return result ? TrinaryBoolean::True : TrinaryBoolean::False;
+    return BinaryToTrinaryBool(result);
   }
   assert(chidlrenAreEqual == TrinaryBoolean::False);
   if (type == OperatorType::Equal) {
@@ -119,9 +119,7 @@ ComparisonNode::TrinaryBoolean ComparisonNode::TrinaryTruthValue(OperatorType ty
   if (leftChildIsGreater == TrinaryBoolean::Unknown) {
     return TrinaryBoolean::Unknown;
   }
-  bool leftIsGreater = leftChildIsGreater == TrinaryBoolean::True;
-  bool operatorIsSuperior = (type == OperatorType::SuperiorEqual || type == OperatorType::Superior);
-  return (operatorIsSuperior == leftIsGreater) ? TrinaryBoolean::True : TrinaryBoolean::False;
+  return BinaryToTrinaryBool(leftChildIsGreater == BinaryToTrinaryBool(type == OperatorType::SuperiorEqual || type == OperatorType::Superior));
 }
 
 ComparisonNode::ComparisonNode(int numberOfOperands, OperatorType lastOperatorOfList, OperatorType * otherOperatorsList) :
@@ -219,8 +217,8 @@ Evaluation<T> ComparisonNode::templatedApproximate(const ApproximationContext& a
       leftChildIsGreater = TrinaryBoolean::Unknown;
       chidlrenAreEqual = (firstChildApprox.isUndefined() || secondChildApprox.isUndefined()) ? TrinaryBoolean::Unknown : TrinaryBoolean::False;
     } else {
-      leftChildIsGreater = scalarDifference >= 0.0 ? TrinaryBoolean::True : TrinaryBoolean::False;
-      chidlrenAreEqual = (std::fabs(scalarDifference) < Float<T>::EpsilonLax()) ? TrinaryBoolean::True : TrinaryBoolean::False;
+      leftChildIsGreater = BinaryToTrinaryBool(scalarDifference >= 0.0);
+      chidlrenAreEqual = BinaryToTrinaryBool(std::fabs(scalarDifference) < Float<T>::EpsilonLax());
     }
     TrinaryBoolean truthValue = TrinaryTruthValue(m_operatorsList[i - 1], chidlrenAreEqual, leftChildIsGreater);
     switch (truthValue) {
@@ -283,26 +281,13 @@ Expression Comparison::shallowReduce(const ExpressionNode::ReductionContext& red
     secondChild = childAtIndex(i);
     Expression difference = Subtraction::Builder(firstChild.clone(), secondChild.clone());
     difference = difference.shallowReduce(reductionContext);
-    ExpressionNode::NullStatus differenceNullStatus = difference.nullStatus(reductionContext.context());
-    ExpressionNode::Sign differenceSign = difference.sign(reductionContext.context());
-
-    ComparisonNode::TrinaryBoolean childrenAreEqual =
-      differenceNullStatus == ExpressionNode::NullStatus::Unknown ?
-        ComparisonNode::TrinaryBoolean::Unknown :
-        (differenceNullStatus == ExpressionNode::NullStatus::Null ?
-          ComparisonNode::TrinaryBoolean::True :
-          ComparisonNode::TrinaryBoolean::False);
-    ComparisonNode::TrinaryBoolean leftIsGreater =
-      differenceSign == ExpressionNode::Sign::Unknown ?
-        ComparisonNode::TrinaryBoolean::Unknown :
-        (differenceSign == ExpressionNode::Sign::Positive ?
-          ComparisonNode::TrinaryBoolean::True :
-          ComparisonNode::TrinaryBoolean::False);
-    ComparisonNode::TrinaryBoolean comparison = ComparisonNode::TrinaryTruthValue(node()->operatorAtIndex(i - 1), childrenAreEqual, leftIsGreater);
-    if (comparison == ComparisonNode::TrinaryBoolean::Unknown) {
+    TrinaryBoolean childrenAreEqual = difference.isNull(reductionContext.context());
+    TrinaryBoolean leftIsGreater = difference.isPositive(reductionContext.context());
+    TrinaryBoolean comparison = ComparisonNode::TrinaryTruthValue(node()->operatorAtIndex(i - 1), childrenAreEqual, leftIsGreater);
+    if (comparison == TrinaryBoolean::Unknown) {
       return *this; // Let approximation decide
     }
-    if (comparison == ComparisonNode::TrinaryBoolean::False) {
+    if (comparison == TrinaryBoolean::False) {
       Expression result = Rational::Builder(0);
       replaceWithInPlace(result);
       return result;

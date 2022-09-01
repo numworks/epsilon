@@ -17,19 +17,19 @@
 
 namespace Poincare {
 
-ExpressionNode::Sign AdditionNode::sign(Context * context) const {
+TrinaryBoolean AdditionNode::isPositive(Context * context) const {
   if (numberOfChildren() < 1) {
-    return Sign::Unknown;
+    return TrinaryBoolean::Unknown;
   }
   // If all children have same sign, addition has this sign too.
-  ExpressionNode::Sign additionSign = childAtIndex(0)->sign(context);
+  TrinaryBoolean additionIsPositive = childAtIndex(0)->isPositive(context);
   int childrenNumber = numberOfChildren();
   for (int i = 1; i < childrenNumber; i++) {
-    if (childAtIndex(i)->sign(context) != additionSign) {
-      return Sign::Unknown;
+    if (childAtIndex(i)->isPositive(context) != additionIsPositive) {
+      return TrinaryBoolean::Unknown;
     }
   }
-  return additionSign;
+  return additionIsPositive;
 }
 
 int AdditionNode::polynomialDegree(Context * context, const char * symbolName) const {

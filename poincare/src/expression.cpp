@@ -491,11 +491,11 @@ Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool 
 
 Expression Expression::makePositiveAnyNegativeNumeralFactor(const ExpressionNode::ReductionContext& reductionContext) {
   // The expression is a negative number
-  if (isNumber() && sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
-    return setSign(ExpressionNode::Sign::Positive, reductionContext);
+  if (isNumber() && isPositive(reductionContext.context()) == TrinaryBoolean::False) {
+    return setSign(true, reductionContext);
   }
   // The expression is a multiplication whose numeral factor is negative
-  if (type() == ExpressionNode::Type::Multiplication && numberOfChildren() > 0 && childAtIndex(0).isNumber() && childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+  if (type() == ExpressionNode::Type::Multiplication && numberOfChildren() > 0 && childAtIndex(0).isNumber() && childAtIndex(0).isPositive(reductionContext.context()) == TrinaryBoolean::False) {
     Multiplication m = convert<Multiplication>();
     if (m.childAtIndex(0).type() == ExpressionNode::Type::Rational && m.childAtIndex(0).convert<Rational>().isMinusOne()) {
       // The negative numeral factor is -1, we just remove it
@@ -504,7 +504,7 @@ Expression Expression::makePositiveAnyNegativeNumeralFactor(const ExpressionNode
       return m.squashUnaryHierarchyInPlace();
     } else {
       // Otherwise, we make it positive
-      m.childAtIndex(0).setSign(ExpressionNode::Sign::Positive, reductionContext);
+      m.childAtIndex(0).setSign(true, reductionContext);
     }
     return std::move(m);
   }
@@ -1015,16 +1015,15 @@ Expression Expression::deepRemoveUselessDependencies(const ExpressionNode::Reduc
   return result;
 }
 
-Expression Expression::setSign(ExpressionNode::Sign s, const ExpressionNode::ReductionContext& reductionContext) {
-  assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
+Expression Expression::setSign(bool positive, const ExpressionNode::ReductionContext& reductionContext) {
   if (isNumber()) {
     // Needed to avoid infinite loop in Multiplication::shallowReduce
     Number thisNumber = static_cast<Number &>(*this);
-    return thisNumber.setSign(s);
+    return thisNumber.setSign(positive);
   }
-  ExpressionNode::Sign currentSign = sign(reductionContext.context());
-  assert(currentSign != ExpressionNode::Sign::Unknown);
-  if (currentSign == s) {
+  TrinaryBoolean currentSignPositive = isPositive(reductionContext.context());
+  assert(currentSignPositive != TrinaryBoolean::Unknown);
+  if (BinaryToTrinaryBool(positive) == currentSignPositive) {
     return *this;
   }
   Multiplication revertedSign = Multiplication::Builder(Rational::Builder(-1));
@@ -1209,11 +1208,11 @@ double Expression::nextRoot(const char * symbol, double start, double max, Conte
   /* The algorithms used to numerically find roots require either the function
    * to change sign around the root or for the root to be an extremum. Neither
    * is true for the null function, which we handle here. */
-  if (nullStatus(context) == ExpressionNode::NullStatus::Null) {
+  if (isNull(context) == TrinaryBoolean::True) {
     return start + std::copysign(maximalStep, max - start);
   }
   if (type() == ExpressionNode::Type::Power || type() == ExpressionNode::Type::NthRoot || type() == ExpressionNode::Type::SquareRoot) {
-    if ((type() == ExpressionNode::Type::Power || type() == ExpressionNode::Type::NthRoot) && childAtIndex(1).sign(context) == ExpressionNode::Sign::Negative) {
+    if ((type() == ExpressionNode::Type::Power || type() == ExpressionNode::Type::NthRoot) && childAtIndex(1).isPositive(context) == TrinaryBoolean::False) {
       // Powers at negative index can't be null
       return NAN;
     }

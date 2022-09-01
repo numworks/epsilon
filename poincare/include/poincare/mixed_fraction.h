@@ -20,7 +20,7 @@ public:
 
   // Properties
   Type type() const override { return Type::MixedFraction; }
-  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
+  TrinaryBoolean isPositive(Context * context) const override { return childAtIndex(0)->isPositive(context); }
 private:
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;

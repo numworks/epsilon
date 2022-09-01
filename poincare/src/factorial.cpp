@@ -16,7 +16,7 @@ namespace Poincare {
 // Property
 
 bool FactorialNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
-  if (child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative) {
+  if (child.isNumber() && static_cast<const Number &>(child).isPositive() == TrinaryBoolean::False) {
     return true;
   }
   if (child.type() == Type::Conjugate) {
@@ -91,7 +91,7 @@ Expression Factorial::shallowReduce(ExpressionNode::ReductionContext reductionCo
   Expression c = childAtIndex(0);
   if (c.type() == ExpressionNode::Type::Rational) {
     Rational r = c.convert<Rational>();
-    if (!r.isInteger() || r.sign() == ExpressionNode::Sign::Negative) {
+    if (!r.isInteger() || r.isPositive() == TrinaryBoolean::False) {
       return replaceWithUndefinedInPlace();
     }
     if (Integer(k_maxOperandValue).isLowerThan(r.unsignedIntegerNumerator())) {

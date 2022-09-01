@@ -22,8 +22,8 @@ public:
 
   // Properties
   Type type() const override { return Type::AbsoluteValue; }
-  Sign sign(Context * context) const override { return Sign::Positive; }
-  NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
+  TrinaryBoolean isPositive(Context * context) const override { return TrinaryBoolean::True; }
+  TrinaryBoolean isNull(Context * context) const override { return childAtIndex(0)->isNull(context); }
 
   // Approximation
   template<typename T> static Complex<T> computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {

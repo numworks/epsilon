@@ -19,7 +19,7 @@ public:
 #endif
 
   // Properties
-  Sign sign(Context * context) const override { return Sign::Positive; }
+  TrinaryBoolean isPositive(Context * context) const override { return TrinaryBoolean::True; }
   Type type() const override { return Type::VectorNorm; }
 private:
   // Layout

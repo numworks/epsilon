@@ -2,9 +2,10 @@
 #define POINCARE_EXPRESSION_NODE_H
 
 #include <poincare/tree_node.h>
+#include <poincare/context.h>
 #include <poincare/evaluation.h>
 #include <poincare/layout.h>
-#include <poincare/context.h>
+#include <poincare/trinary_boolean.h>
 #include <stdint.h>
 
 namespace Poincare {
@@ -170,16 +171,6 @@ public:
     Default,
     InternationalSystem
   };
-  enum class Sign {
-    Negative = -1,
-    Unknown = 0,
-    Positive = 1
-  };
-  enum class NullStatus {
-    Unknown = -1,
-    NonNull = 0,
-    Null = 1,
-  };
 
   class ComputationContext {
   public:
@@ -263,8 +254,8 @@ public:
     bool m_withinReduce;
   };
 
-  virtual Sign sign(Context * context) const { return Sign::Unknown; }
-  virtual NullStatus nullStatus(Context * context) const { return NullStatus::Unknown; }
+  virtual TrinaryBoolean isPositive(Context * context) const { return TrinaryBoolean::Unknown; }
+  virtual TrinaryBoolean isNull(Context * context) const { return TrinaryBoolean::Unknown; }
   bool isNumber() const;
   bool isRandom() const;
   bool isParameteredExpression() const;

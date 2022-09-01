@@ -17,8 +17,8 @@ public:
 #endif
   // Properties
   Type type() const override { return Type::PercentSimple; }
-  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
-  NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
+  TrinaryBoolean isPositive(Context * context) const override { return childAtIndex(0)->isPositive(context); }
+  TrinaryBoolean isNull(Context * context) const override { return childAtIndex(0)->isNull(context); }
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 
 protected:
@@ -52,8 +52,8 @@ public:
   int numberOfChildren() const override { return 2; }
   // Properties
   Type type() const override { return Type::PercentAddition; }
-  Sign sign(Context * context) const override;
-  NullStatus nullStatus(Context * context) const override;
+  TrinaryBoolean isPositive(Context * context) const override;
+  TrinaryBoolean isNull(Context * context) const override;
 
 private:
   // PercentSimpleNode

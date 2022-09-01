@@ -9,7 +9,7 @@ Expression CDFMethod::shallowReduce(Expression * abscissae, const Distribution *
   Expression x = abscissae[0];
 
   if (x.type() == ExpressionNode::Type::Infinity) {
-    if (x.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+    if (x.isPositive(reductionContext.context()) == TrinaryBoolean::False) {
       Expression result = Rational::Builder(0);
       expression->replaceWithInPlace(result);
       return result;

@@ -40,44 +40,44 @@
 namespace Poincare {
 
 // Properties
-ExpressionNode::Sign PowerNode::sign(Context * context) const {
-  if (childAtIndex(0)->sign(context) == Sign::Positive && childAtIndex(1)->sign(context) != Sign::Unknown) {
-    return Sign::Positive;
+TrinaryBoolean PowerNode::isPositive(Context * context) const {
+  if (childAtIndex(0)->isPositive(context) == TrinaryBoolean::True && childAtIndex(1)->isPositive(context) != TrinaryBoolean::Unknown) {
+    return TrinaryBoolean::True;
   }
-  if (childAtIndex(0)->sign(context) == Sign::Negative && childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
+  if (childAtIndex(0)->isPositive(context) == TrinaryBoolean::False && childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
     RationalNode * r = static_cast<RationalNode *>(childAtIndex(1));
     if (r->isInteger()) {
       assert(!Integer::Division(r->signedNumerator(), Integer(2)).remainder.isOverflow());
       if (Integer::Division(r->signedNumerator(), Integer(2)).remainder.isZero()) {
-        return Sign::Positive;
+        return TrinaryBoolean::True;
       } else {
-        return Sign::Negative;
+        return TrinaryBoolean::False;
       }
     }
   }
-  return Sign::Unknown;
+  return TrinaryBoolean::Unknown;
 }
 
-ExpressionNode::NullStatus PowerNode::nullStatus(Context * context) const {
-  // In practice, calling nullStatus on a reduced power always returns Unknown.
+TrinaryBoolean PowerNode::isNull(Context * context) const {
+  // In practice, calling isNull on a reduced power always returns Unknown.
   ExpressionNode * base = childAtIndex(0);
-  ExpressionNode::NullStatus baseNullStatus = base->nullStatus(context);
+  TrinaryBoolean baseIsNull = base->isNull(context);
   ExpressionNode * index = childAtIndex(1);
-  ExpressionNode::NullStatus indexNullStatus = index->nullStatus(context);
-  if (indexNullStatus == ExpressionNode::NullStatus::Null && baseNullStatus == ExpressionNode::NullStatus::NonNull) {
+  TrinaryBoolean indexIsNull = index->isNull(context);
+  if (indexIsNull == TrinaryBoolean::True && baseIsNull == TrinaryBoolean::False) {
     // x^0 is non null
-    return ExpressionNode::NullStatus::NonNull;
+    return TrinaryBoolean::False;
   }
-  if (indexNullStatus == ExpressionNode::NullStatus::NonNull && baseNullStatus == ExpressionNode::NullStatus::Null && index->sign(context) == Sign::Positive ) {
+  if (indexIsNull == TrinaryBoolean::False && baseIsNull == TrinaryBoolean::True && index->isPositive(context) == TrinaryBoolean::True ) {
     // 0^+x is null
-    return ExpressionNode::NullStatus::Null;
+    return TrinaryBoolean::True;
   }
-  if ((index->isNumber() || index->type() == Type::ConstantMaths || index->type() == Type::ConstantPhysics) && baseNullStatus == ExpressionNode::NullStatus::NonNull) {
+  if ((index->isNumber() || index->type() == Type::ConstantMaths || index->type() == Type::ConstantPhysics) && baseIsNull == TrinaryBoolean::False) {
     // x^y is not null if y is not -inf and x not null.
-    return ExpressionNode::NullStatus::NonNull;
+    return TrinaryBoolean::False;
   }
   // We don't know if index == -inf or base == 0.
-  return ExpressionNode::NullStatus::Unknown;
+  return TrinaryBoolean::Unknown;
 }
 
 int PowerNode::polynomialDegree(Context * context, const char * symbolName) const {
@@ -91,7 +91,7 @@ int PowerNode::polynomialDegree(Context * context, const char * symbolName) cons
   }
   if (childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
     RationalNode * r = static_cast<RationalNode *>(childAtIndex(1));
-    if (!r->isInteger() || Number(r).sign() == Sign::Negative) {
+    if (!r->isInteger() || Number(r).isPositive() == TrinaryBoolean::False) {
       return -1;
     }
     Integer numeratorInt = r->signedNumerator();
@@ -120,7 +120,7 @@ bool PowerNode::isReal(Context * context, bool canContainMatrices) const {
   // - or index is an integer
   if (base.isReal(context, canContainMatrices) &&
       index.isReal(context, canContainMatrices) &&
-      (base.sign(context) == Sign::Positive ||
+      (base.isPositive(context) == TrinaryBoolean::True ||
        (index.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(index).isInteger()))) {
     return true;
   }
@@ -130,7 +130,7 @@ bool PowerNode::isReal(Context * context, bool canContainMatrices) const {
 bool PowerNode::childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const {
   if (childIndex == 0) {
 
-    if ((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
+    if ((child.isNumber() && static_cast<const Number &>(child).isPositive() == TrinaryBoolean::False)
        || (child.type() == Type::Rational && !static_cast<const Rational &>(child).isInteger()))
     {
       /* ^(-2.3, 4) --> (-2.3)^{4}
@@ -251,7 +251,7 @@ bool PowerNode::childNeedsSystemParenthesesAtSerialization(const TreeNode * chil
   if (childAtIndex(0)->type() == Type::ConstantMaths && static_cast<const ConstantNode *>(childAtIndex(0))->isConstant("e") && indexOfChild(child) == 1) {
     return static_cast<const ExpressionNode *>(child)->type() != Type::Parenthesis;
   }
-  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).sign() == Sign::Negative) {
+  if (static_cast<const ExpressionNode *>(child)->isNumber() && Number(static_cast<const NumberNode *>(child)).isPositive() == TrinaryBoolean::False) {
     return true;
   }
   if (static_cast<const ExpressionNode *>(child)->type() == Type::Rational && !static_cast<const RationalNode *>(child)->isInteger()) {
@@ -381,7 +381,7 @@ int Power::getPolynomialCoefficients(Context * context, const char * symbolName,
       && childAtIndex(1).type() == ExpressionNode::Type::Rational)
   {
     Rational r = childAtIndex(1).convert<Rational>();
-    if (!r.isInteger() || r.sign() == ExpressionNode::Sign::Negative) {
+    if (!r.isInteger() || r.isPositive() == TrinaryBoolean::False) {
       return -1;
     }
     Integer num = r.unsignedIntegerNumerator();
@@ -495,11 +495,11 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       }
       Integer integerIndex = static_cast<Rational &>(index).signedIntegerNumerator();
       if (integerIndex.isNegative()) {
-        index.setSign(ExpressionNode::Sign::Positive, reductionContext);
+        index.setSign(true, reductionContext);
         Expression e = shallowReduce(reductionContext);
         if (e.type() == ExpressionNode::Type::Power) {
           /* The power cannot be reduced, return to avoid an infinite loop. */
-          e.childAtIndex(1).setSign(ExpressionNode::Sign::Negative, reductionContext);
+          e.childAtIndex(1).setSign(false, reductionContext);
           return e;
         }
         Expression temp = Undefined::Builder();
@@ -526,24 +526,24 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
   /* Step 3
    * Trivial simplifications when base or index is 0, 1 or infinity. */
   Expression trivialResult;
-  ExpressionNode::Sign baseSign = base.sign(context);
-  ExpressionNode::Sign indexSign = index.sign(context);
-  ExpressionNode::NullStatus indexNull = index.nullStatus(context);
+  TrinaryBoolean baseIsPositive = base.isPositive(context);
+  TrinaryBoolean indexIsPositive = index.isPositive(context);
+  TrinaryBoolean indexNull = index.isNull(context);
   if (base.type() == ExpressionNode::Type::Infinity) {
-    if (indexNull == ExpressionNode::NullStatus::Null) {
+    if (indexNull == TrinaryBoolean::True) {
       // inf^0 -> undef
       return replaceWithUndefinedInPlace();
     }
-    switch (indexSign) {
-      case ExpressionNode::Sign::Negative:
+    switch (indexIsPositive) {
+      case TrinaryBoolean::False:
         // inf^-x -> 0
         trivialResult = Rational::Builder(0);
         break;
-      case ExpressionNode::Sign::Positive:
+      case TrinaryBoolean::True:
         // +inf^+x -> +inf
         // -inf^+x -> +inf * (-1)^+x
         trivialResult = Infinity::Builder(false);
-        if (baseSign == ExpressionNode::Sign::Negative) {
+        if (baseIsPositive == TrinaryBoolean::False) {
           Power p = Power::Builder(Rational::Builder(-1), index);
           trivialResult = Multiplication::Builder(p, trivialResult);
           p.shallowReduce(reductionContext);
@@ -556,23 +556,23 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     // 1^x -> 1
     trivialResult = Rational::Builder(1);
   } else {
-    ExpressionNode::NullStatus baseNull = base.nullStatus(context);
-    if (baseNull == ExpressionNode::NullStatus::Null) {
-      if (indexSign == ExpressionNode::Sign::Negative || indexNull == ExpressionNode::NullStatus::Null) {
+    TrinaryBoolean baseNull = base.isNull(context);
+    if (baseNull == TrinaryBoolean::True) {
+      if (indexIsPositive == TrinaryBoolean::False || indexNull == TrinaryBoolean::True) {
         // 0^0 or 0^-x -> undef
         trivialResult = Undefined::Builder();
-      } else if (indexSign == ExpressionNode::Sign::Positive && indexNull == ExpressionNode::NullStatus::NonNull) {
+      } else if (indexIsPositive == TrinaryBoolean::True && indexNull == TrinaryBoolean::False) {
         // 0^+x -> 0
         trivialResult = Rational::Builder(0);
       }
-    } else if (indexNull == ExpressionNode::NullStatus::Null) {
+    } else if (indexNull == TrinaryBoolean::True) {
       // x^0 -> 1 or dep(1, {x^0})
-      if (baseNull == ExpressionNode::NullStatus::Unknown) {
+      if (baseNull == TrinaryBoolean::Unknown) {
         List depList = List::Builder();
         depList.addChildAtIndexInPlace(Power::Builder(base, Rational::Builder(-1)), 0, 0);
         trivialResult = Dependency::Builder(Rational::Builder(1), depList);
       } else {
-        assert(baseNull == ExpressionNode::NullStatus::NonNull);
+        assert(baseNull == TrinaryBoolean::False);
         trivialResult = Rational::Builder(1);
       }
     }
@@ -599,21 +599,21 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
      * if x ?= 0 or (complexFormat = real and x ?> 0), e^ln(x) depends on ln(x)
      */
     Expression newSelf = newIndex.childAtIndex(0);
-    ExpressionNode::NullStatus nullStatus = newSelf.nullStatus(context);
-    ExpressionNode::Sign sign = newSelf.sign(context);
-    if (nullStatus == ExpressionNode::NullStatus::Null) {
+    TrinaryBoolean isNull = newSelf.isNull(context);
+    TrinaryBoolean isPositive = newSelf.isPositive(context);
+    if (isNull == TrinaryBoolean::True) {
       return replaceWithUndefinedInPlace();
     }
-    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real && sign == ExpressionNode::Sign::Negative) {
+    if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real && isPositive == TrinaryBoolean::False) {
       Expression result = Nonreal::Builder();
       replaceWithInPlace(result);
       return result;
     }
-    if (nullStatus == ExpressionNode::NullStatus::NonNull && (reductionContext.complexFormat() != Preferences::ComplexFormat::Real || sign == ExpressionNode::Sign::Positive)) {
+    if (isNull == TrinaryBoolean::False && (reductionContext.complexFormat() != Preferences::ComplexFormat::Real || isPositive == TrinaryBoolean::True)) {
       replaceWithInPlace(newSelf);
       return newSelf;
     }
-    // If not able to know sign and/or nullStatus, create a dependency.
+    // If not able to know sign and/or null status, create a dependency.
     List listOfDependencies = List::Builder();
     // e^ln(x) = x if ln(x) is defined.
     listOfDependencies.addChildAtIndexInPlace(newIndex.clone(), 0, 0);
@@ -649,7 +649,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
       res = complexBase.squareRoot(reductionContext).inverse(reductionContext);
     } else if (rationalIndex.isInteger() && rationalIndex.unsignedIntegerNumerator().isLowerThan(Integer(10))) {
       res = complexBase.powerInteger(rationalIndex.unsignedIntegerNumerator().extractedInt(), reductionContext);
-      if (indexSign == ExpressionNode::Sign::Negative) {
+      if (indexIsPositive == TrinaryBoolean::False) {
         res = res.inverse(reductionContext);
       }
     }
@@ -803,20 +803,20 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
     Multiplication multiplicationBase = static_cast<Multiplication &>(base);
     for (int i = 0; i < baseChildren; i++) {
       Expression child = base.childAtIndex(i);
-      ExpressionNode::Sign childSign = child.sign(context);
+      TrinaryBoolean childSign = child.isPositive(context);
       if (child.type() == ExpressionNode::Type::Rational && static_cast<Rational &>(child).isMinusOne()) {
         // a can't be -1
         continue;
       }
-      if (childSign == ExpressionNode::Sign::Positive || (childSign == ExpressionNode::Sign::Negative && child.isNumber())) {
-        if (childSign == ExpressionNode::Sign::Negative) {
+      if (childSign == TrinaryBoolean::True || (childSign == TrinaryBoolean::False && child.isNumber())) {
+        if (childSign == TrinaryBoolean::False) {
           multiplicationBase.replaceChildAtIndexInPlace(i, Rational::Builder(-1));
         } else {
           multiplicationBase.removeChildAtIndexInPlace(i);
         }
         multiplicationBase.shallowReduce(reductionContext);
         Power p = Power::Builder(child, index.clone());
-        child.setSign(ExpressionNode::Sign::Positive, reductionContext);
+        child.setSign(true, reductionContext);
         Multiplication m = Multiplication::Builder(p);
         p.shallowReduce(reductionContext);
         Power thisRef = *this;
@@ -851,7 +851,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
      * OR a > 0
      * OR c is integer */
     if (rationalIndex.isMinusOne()
-      || a.sign(context) == ExpressionNode::Sign::Positive
+      || a.isPositive(context) == TrinaryBoolean::True
       || a.approximateToScalar<double>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true) > Float<double>::EpsilonLax()
       || rationalIndex.isInteger())
     {
@@ -939,7 +939,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
           result = result.shallowReduce(reductionContext);
         }
       }
-      if (rationalIndex.sign() == ExpressionNode::Sign::Negative) {
+      if (rationalIndex.isPositive() == TrinaryBoolean::False) {
         rationalIndex.replaceWithInPlace(Rational::Builder(-1));
         return shallowReduce(reductionContext);
       } else {
@@ -1152,7 +1152,7 @@ bool Power::derivate(const ExpressionNode::ReductionContext& reductionContext, S
   ExpressionNode::ReductionContext childContext = reductionContext;
   childContext.setSymbolicComputation(ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
   derivedFromExponent.deepReduceChildren(childContext);
-  if (derivedFromExponent.childAtIndex(0).nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null) {
+  if (derivedFromExponent.childAtIndex(0).isNull(reductionContext.context()) != TrinaryBoolean::True) {
     derivedFromExponent.addChildAtIndexInPlace(NaperianLogarithm::Builder(base.clone()), 1, 1);
     derivedFromExponent.addChildAtIndexInPlace(clone(), 2, 2);
   }
@@ -1190,8 +1190,8 @@ Power::DependencyType Power::typeOfDependency(const ExpressionNode::ReductionCon
   DependencyType result = DependencyType::None;
 
   // Case 1.
-  if (index.sign(reductionContext.context()) != ExpressionNode::Sign::Positive
-      && base.nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::NonNull) {
+  if (index.isPositive(reductionContext.context()) != TrinaryBoolean::True
+      && base.isNull(reductionContext.context()) != TrinaryBoolean::False) {
     result = DependencyType::NegativeIndex;
   }
 
@@ -1199,7 +1199,7 @@ Power::DependencyType Power::typeOfDependency(const ExpressionNode::ReductionCon
   if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real
       && (index.type() != ExpressionNode::Type::Rational
         || static_cast<Rational &>(index).integerDenominator().isEven())
-      && base.sign(reductionContext.context()) != ExpressionNode::Sign::Positive) {
+      && base.isPositive(reductionContext.context()) != TrinaryBoolean::True) {
     result = result == DependencyType::None ? DependencyType::RationalIndex : DependencyType::Both;
   }
   return result;
@@ -1261,13 +1261,13 @@ Expression Power::PowerRationalRational(Rational base, Rational index, const Exp
       res.addChildAtIndexInPlace(exp, res.numberOfChildren(), res.numberOfChildren());
       exp.shallowReduce(reductionContext);
     }
-    base.setSign(ExpressionNode::Sign::Positive);
+    base.setSign(true);
     Expression res2 = PowerRationalRational(base, index, reductionContext);
     /* PowerRationalRational doesn't alter its arguments: restore the sign of
      * the base. */
-    base.setSign(ExpressionNode::Sign::Negative);
+    base.setSign(false);
     if (res2.isUninitialized()) {
-      base.setSign(ExpressionNode::Sign::Negative);
+      base.setSign(false);
       return Expression();
     } else {
       res.addChildAtIndexInPlace(res2, res.numberOfChildren(), res.numberOfChildren());
@@ -1293,11 +1293,11 @@ Expression Power::PowerRationalRational(Rational base, Rational index, const Exp
     if (index.isMinusOne()) {
       return std::move(base);
     }
-    index.setSign(ExpressionNode::Sign::Positive);
+    index.setSign(true);
     Expression res = PowerRationalRational(base, index, reductionContext);
     /* PowerRationalRational doesn't alter its arguments: restore the sign of
      * the index. */
-    index.setSign(ExpressionNode::Sign::Negative);
+    index.setSign(false);
     return res;
   }
   assert(!index.isNegative());

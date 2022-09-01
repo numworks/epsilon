@@ -7,7 +7,7 @@ bool NAryInfixExpressionNode::childAtIndexNeedsUserParentheses(const Expression 
   /* Expressions like "-2" require parentheses in Addition/Multiplication except
    * when they are the first operand. (same for -2%) */
   if (childIndex != 0
-    && ((child.isNumber() && static_cast<const Number &>(child).sign() == Sign::Negative)
+    && ((child.isNumber() && static_cast<const Number &>(child).isPositive() == TrinaryBoolean::False)
       || child.type() == Type::Opposite))
   {
     return true;

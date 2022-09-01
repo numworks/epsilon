@@ -22,12 +22,12 @@ ConstantNode::ConstantNode(const char * newName, int length) : SymbolAbstractNod
   strlcpy(const_cast<char*>(name()), newName, length+1);
 }
 
-ExpressionNode::Sign ConstantNode::sign(Context * context) const {
+TrinaryBoolean ConstantNode::isPositive(Context * context) const {
   ConstantInfo info = constantInfo();
   if (isConstant("π", info) || isConstant("e", info)) {
-    return Sign::Positive;
+    return TrinaryBoolean::True;
   }
-  return Sign::Unknown;
+  return TrinaryBoolean::Unknown;
 }
 
 bool ConstantNode::isReal() const {

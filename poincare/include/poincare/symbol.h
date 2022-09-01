@@ -22,7 +22,7 @@ public:
   // Expression Properties
   Type type() const override { return Type::Symbol; }
   // Symbol is not expanded for sign as it may be a local variable.
-  Sign sign(Context * context) const override { return Sign::Unknown; }
+  TrinaryBoolean isPositive(Context * context) const override { return TrinaryBoolean::Unknown; }
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;

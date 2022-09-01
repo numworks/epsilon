@@ -32,7 +32,9 @@ void TextCursorView::setVisible(bool visible) {
   m_visible = visible;
   if (m_visible) {
     markRectAsDirty(bounds());
-  } else {
+  } else if (window()) {
+    /* 'pointFromPointInView' can only be called from a view attached to the
+     * window. */
     m_superview->markRectAsDirty(bounds().translatedBy(m_superview->pointFromPointInView(this, KDPointZero)));
   }
 }

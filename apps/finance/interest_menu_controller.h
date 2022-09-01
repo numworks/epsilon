@@ -18,7 +18,7 @@ constexpr int k_numberOfInterestCells = InterestData::k_maxNumberOfUnknowns;
 
 class InterestMenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfInterestCells, Escher::MemoizedListViewDataSource>, public DataController {
 public:
-  InterestMenuController(Escher::StackViewController * parentResponder, InterestController * interestController, Data * data);
+  InterestMenuController(Escher::StackViewController * parentResponder, InterestController * interestController);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char * title() override { return I18n::translate(interestData()->menuTitle()); }

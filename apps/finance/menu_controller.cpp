@@ -5,9 +5,8 @@
 
 using namespace Finance;
 
-MenuController::MenuController(Escher::StackViewController * parentResponder, InterestMenuController * interestMenuController, Data * data) :
+MenuController::MenuController(Escher::StackViewController * parentResponder, InterestMenuController * interestMenuController) :
       Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells, Escher::RegularListViewDataSource>(parentResponder),
-      DataController(data),
       m_interestMenuController(interestMenuController) {
   selectRow(0);
   cellAtIndex(k_indexOfSimpleInterest)->setMessage(I18n::Message::SimpleInterest);

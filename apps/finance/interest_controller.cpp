@@ -10,9 +10,8 @@
 
 using namespace Finance;
 
-InterestController::InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, ResultController * resultController, Data * data) :
+InterestController::InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, ResultController * resultController) :
     Shared::FloatParameterController<double>(parent),
-    DataController(data),
     m_dropdownCell(&m_selectableTableView, &m_dropdownDataSource, this),
     m_resultController(resultController) {
   for (size_t i = 0; i < k_numberOfReusableInputs; i++) {

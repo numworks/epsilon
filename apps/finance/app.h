@@ -42,6 +42,8 @@ public:
   TELEMETRY_ID("Finance");
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
+  Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
+
   void didBecomeActive(Escher::Window * window) override;
 
   // Navigation
@@ -50,7 +52,6 @@ public:
 
 private:
   App(Snapshot * snapshot);
-  Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
 
   // Controllers
   ResultController m_resultController;

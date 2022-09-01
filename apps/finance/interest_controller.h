@@ -19,7 +19,7 @@ class InterestController : public Shared::FloatParameterController<double>,
                            public Escher::DropdownCallback,
                            public DataController {
 public:
-  InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, ResultController * resultController, Data * data);
+  InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, ResultController * resultController);
   const char * title() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;

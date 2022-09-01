@@ -8,9 +8,8 @@
 
 using namespace Finance;
 
-ResultController::ResultController(Escher::StackViewController * parentResponder, Data * data) :
+ResultController::ResultController(Escher::StackViewController * parentResponder) :
       Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource>(parentResponder),
-      DataController(data),
       m_messageView(KDFont::Size::Small, I18n::Message::CalculatedValues, KDContext::k_alignCenter, KDContext::k_alignCenter, Escher::Palette::GrayDark, Escher::Palette::WallScreen),
       m_contentView(&m_selectableTableView, this, &m_messageView) {
 }

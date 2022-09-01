@@ -9,22 +9,22 @@
 #include <escher/table_view_with_top_and_bottom_views.h>
 #include <escher/view_controller.h>
 #include <ion/events.h>
-#include "data.h"
+#include "data_controller.h"
 #include "interest_controller.h"
 
 namespace Finance {
 
 constexpr int k_numberOfInterestCells = InterestData::k_maxNumberOfUnknowns;
 
-class InterestMenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfInterestCells, Escher::MemoizedListViewDataSource> {
+class InterestMenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfInterestCells, Escher::MemoizedListViewDataSource>, public DataController {
 public:
   InterestMenuController(Escher::StackViewController * parentResponder, InterestController * interestController, Data * data);
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
-  const char * title() override { return I18n::translate(m_data->interestData()->menuTitle()); }
+  const char * title() override { return I18n::translate(interestData()->menuTitle()); }
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; }
   Escher::View * view() override { return &m_contentView; }
-  int numberOfRows() const override { return m_data->interestData()->numberOfUnknowns(); }
+  int numberOfRows() const override { return interestData()->numberOfUnknowns(); }
 
 private:
   uint8_t paramaterAtIndex(int index) const;
@@ -32,7 +32,6 @@ private:
   Escher::MessageTextView m_messageView;
   Escher::TableViewWithTopAndBottomViews m_contentView;
   InterestController * m_interestController;
-  Data * m_data;
 };
 
 }  // namespace Finance

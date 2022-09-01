@@ -36,6 +36,10 @@ void TextCursorView::setVisible(bool visible) {
     /* 'pointFromPointInView' can only be called from a view attached to the
      * window. */
     m_superview->markRectAsDirty(bounds().translatedBy(m_superview->pointFromPointInView(this, KDPointZero)));
+  } else {
+    /* 'setVisible' may only be called by the blink timer, meaning the timer is
+     * currently trying to blink an offscreen cursor. */
+    BlinkTimer::RegisterCursor(nullptr);
   }
 }
 

@@ -1019,8 +1019,8 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
   }
 
   const char * symbolName = willBeAlongX ? k_ordinateName : k_unknownName;
-  ExpressionNode::Sign highestCoefficientSign = ExpressionNode::Sign::Unknown;
-  if (!HasNonNullCoefficients(equation, symbolName, context, &highestCoefficientSign)
+  TrinaryBoolean highestCoefficientIsPositive = TrinaryBoolean::Unknown;
+  if (!HasNonNullCoefficients(equation, symbolName, context, &highestCoefficientIsPositive)
       || equation.hasComplexI(context)) {
     // The equation must have at least one nonNull coefficient.
     // TODO : Accept equations such as y=re(i)
@@ -1029,7 +1029,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
   }
 
   if (modelEquationType != ComparisonNode::OperatorType::Equal) {
-    if (highestCoefficientSign == ExpressionNode::Sign::Unknown || (yDeg == 2 && xDeg == -1)) {
+    if (highestCoefficientIsPositive == TrinaryBoolean::Unknown || (yDeg == 2 && xDeg == -1)) {
       /* Are unhandled equation with :
        * - An unknown highest coefficient sign: sign must be strict and constant
        * - A non polynomial x coefficient in a quadratic equation on y. */
@@ -1040,7 +1040,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
       m_plotType = PlotType::Disabled;
       return;
     }
-    if (highestCoefficientSign == ExpressionNode::Sign::Negative) {
+    if (highestCoefficientIsPositive == TrinaryBoolean::False) {
       // Oppose the comparison operator
       m_equationType = ComparisonNode::Opposite(modelEquationType);
     }
@@ -1087,7 +1087,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
     return;
   }
 
-  if (yDeg == 1 && xDeg == 1 && highestCoefficientSign != ExpressionNode::Sign::Unknown) {
+  if (yDeg == 1 && xDeg == 1 && highestCoefficientIsPositive != TrinaryBoolean::Unknown) {
     // An Unknown y coefficient sign might mean it depends on x (y*x = ...)
     m_plotType = PlotType::Line;
     return;
@@ -1126,9 +1126,9 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
   return;
 }
 
-bool ContinuousFunction::Model::HasNonNullCoefficients(const Expression equation, const char * symbolName, Context * context, ExpressionNode::Sign * highestDegreeCoefficientSign) {
+bool ContinuousFunction::Model::HasNonNullCoefficients(const Expression equation, const char * symbolName, Context * context, TrinaryBoolean * highestDegreeCoefficientIsPositive) {
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-  // Symbols will be replaced anyway to compute nullStatus
+  // Symbols will be replaced anyway to compute isNull
   int degree = equation.getPolynomialReducedCoefficients(
       symbolName, coefficients, context, ComplexFormat(), AngleUnit(),
       k_defaultUnitFormat,
@@ -1136,26 +1136,25 @@ bool ContinuousFunction::Model::HasNonNullCoefficients(const Expression equation
           ReplaceAllDefinedSymbolsWithDefinition);
   // Degree should be >= 0 but reduction failure may result in a -1 degree.
   assert(degree <= Expression::k_maxPolynomialDegree);
-  if (highestDegreeCoefficientSign != nullptr && degree >= 0) {
-    ExpressionNode::Sign sign = coefficients[degree].sign(context);
-    if (sign == ExpressionNode::Sign::Unknown) {
+  if (highestDegreeCoefficientIsPositive != nullptr && degree >= 0) {
+    TrinaryBoolean isPositive = coefficients[degree].isPositive(context);
+    if (isPositive == TrinaryBoolean::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
       double approximation = coefficients[degree].approximateToScalar<double>(
           context, ComplexFormat(), AngleUnit());
       if (!std::isnan(approximation) && approximation != 0.0) {
-        sign = approximation < 0.0 ? ExpressionNode::Sign::Negative
-                                   : ExpressionNode::Sign::Positive;
+        isPositive = BinaryToTrinaryBool(approximation > 0.0);
       }
     }
-    *highestDegreeCoefficientSign = sign;
+    *highestDegreeCoefficientIsPositive = isPositive;
   }
   // Look for a NonNull coefficient.
   for (int d = 0; d <= degree; d++) {
-    ExpressionNode::NullStatus nullStatus = coefficients[d].nullStatus(context);
-    if (nullStatus == ExpressionNode::NullStatus::NonNull) {
+    TrinaryBoolean isNull = coefficients[d].isNull(context);
+    if (isNull == TrinaryBoolean::False) {
       return true;
     }
-    if (nullStatus == ExpressionNode::NullStatus::Unknown) {
+    if (isNull == TrinaryBoolean::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
       double approximation = coefficients[d].approximateToScalar<double>(
           context, ComplexFormat(), AngleUnit());

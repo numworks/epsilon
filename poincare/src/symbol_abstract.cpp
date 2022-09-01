@@ -19,14 +19,14 @@ size_t SymbolAbstractNode::size() const {
   return nodeSize() + strlen(name()) + 1;
 }
 
-ExpressionNode::Sign SymbolAbstractNode::sign(Context * context) const {
+TrinaryBoolean SymbolAbstractNode::isPositive(Context * context) const {
   SymbolAbstract s(this);
   // No need to preserve undefined symbols here.
   Expression e = SymbolAbstract::Expand(s, context, true, SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   if (e.isUninitialized()) {
-    return Sign::Unknown;
+    return TrinaryBoolean::Unknown;
   }
-  return e.sign(context);
+  return e.isPositive(context);
 }
 
 int SymbolAbstractNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {

@@ -61,42 +61,42 @@ QUIZ_CASE(poincare_properties_is_number) {
 
 QUIZ_CASE(poincare_properties_is_number_zero) {
   Shared::GlobalContext context;
-  quiz_assert(BasedInteger::Builder("2",Integer::Base::Binary).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
-  quiz_assert(BasedInteger::Builder("2",Integer::Base::Decimal).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
-  quiz_assert(BasedInteger::Builder("2",Integer::Base::Hexadecimal).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
-  quiz_assert(BasedInteger::Builder("0",Integer::Base::Binary).nullStatus(&context) == ExpressionNode::NullStatus::Null );
-  quiz_assert(BasedInteger::Builder("0",Integer::Base::Decimal).nullStatus(&context) == ExpressionNode::NullStatus::Null );
-  quiz_assert(BasedInteger::Builder("0",Integer::Base::Hexadecimal).nullStatus(&context) == ExpressionNode::NullStatus::Null );
-  quiz_assert(Decimal::Builder("2",3).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
-  quiz_assert(Decimal::Builder("0",0).nullStatus(&context) == ExpressionNode::NullStatus::Null );
-  quiz_assert(Float<float>::Builder(1.0f).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
-  quiz_assert(Float<float>::Builder(0.0f).nullStatus(&context) == ExpressionNode::NullStatus::Null );
-  quiz_assert(Infinity::Builder(true).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
-  quiz_assert(Undefined::Builder().nullStatus(&context) == ExpressionNode::NullStatus::Unknown);
-  quiz_assert(Rational::Builder(2,3).nullStatus(&context) == ExpressionNode::NullStatus::NonNull );
-  quiz_assert(Rational::Builder(0,1).nullStatus(&context) == ExpressionNode::NullStatus::Null );
-  quiz_assert(Symbol::Builder('a').nullStatus(&context) == ExpressionNode::NullStatus::Unknown);
-  quiz_assert(Multiplication::Builder(Rational::Builder(1), Rational::Builder(0)).nullStatus(&context) == ExpressionNode::NullStatus::Unknown);
-  quiz_assert(Addition::Builder(Rational::Builder(1), Rational::Builder(-1)).nullStatus(&context) == ExpressionNode::NullStatus::Unknown);
+  quiz_assert(BasedInteger::Builder("2",Integer::Base::Binary).isNull(&context) == TrinaryBoolean::False );
+  quiz_assert(BasedInteger::Builder("2",Integer::Base::Decimal).isNull(&context) == TrinaryBoolean::False );
+  quiz_assert(BasedInteger::Builder("2",Integer::Base::Hexadecimal).isNull(&context) == TrinaryBoolean::False );
+  quiz_assert(BasedInteger::Builder("0",Integer::Base::Binary).isNull(&context) == TrinaryBoolean::True );
+  quiz_assert(BasedInteger::Builder("0",Integer::Base::Decimal).isNull(&context) == TrinaryBoolean::True );
+  quiz_assert(BasedInteger::Builder("0",Integer::Base::Hexadecimal).isNull(&context) == TrinaryBoolean::True );
+  quiz_assert(Decimal::Builder("2",3).isNull(&context) == TrinaryBoolean::False );
+  quiz_assert(Decimal::Builder("0",0).isNull(&context) == TrinaryBoolean::True );
+  quiz_assert(Float<float>::Builder(1.0f).isNull(&context) == TrinaryBoolean::False );
+  quiz_assert(Float<float>::Builder(0.0f).isNull(&context) == TrinaryBoolean::True );
+  quiz_assert(Infinity::Builder(true).isNull(&context) == TrinaryBoolean::False );
+  quiz_assert(Undefined::Builder().isNull(&context) == TrinaryBoolean::Unknown);
+  quiz_assert(Rational::Builder(2,3).isNull(&context) == TrinaryBoolean::False );
+  quiz_assert(Rational::Builder(0,1).isNull(&context) == TrinaryBoolean::True );
+  quiz_assert(Symbol::Builder('a').isNull(&context) == TrinaryBoolean::Unknown);
+  quiz_assert(Multiplication::Builder(Rational::Builder(1), Rational::Builder(0)).isNull(&context) == TrinaryBoolean::Unknown);
+  quiz_assert(Addition::Builder(Rational::Builder(1), Rational::Builder(-1)).isNull(&context) == TrinaryBoolean::Unknown);
 
-  quiz_assert(AbsoluteValue::Builder(Rational::Builder(0)).nullStatus(&context) == ExpressionNode::NullStatus::Null);
-  quiz_assert(ArcSine::Builder(Rational::Builder(1,7)).nullStatus(&context) == ExpressionNode::NullStatus::NonNull);
-  quiz_assert(ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(3, 2)).nullStatus(&context) == ExpressionNode::NullStatus::NonNull);
-  quiz_assert(ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(0)).nullStatus(&context) == ExpressionNode::NullStatus::Null);
-  quiz_assert(Conjugate::Builder(ComplexCartesian::Builder(Rational::Builder(2, 3), Rational::Builder(3, 2))).nullStatus(&context) == ExpressionNode::NullStatus::NonNull);
-  quiz_assert(Factor::Builder(Rational::Builder(0)).nullStatus(&context) == ExpressionNode::NullStatus::Null);
-  quiz_assert(Factorial::Builder(Rational::Builder(0)).nullStatus(&context) == ExpressionNode::NullStatus::NonNull);
-  quiz_assert(ImaginaryPart::Builder(Rational::Builder(14)).nullStatus(&context) == ExpressionNode::NullStatus::Null);
-  quiz_assert(RealPart::Builder(Rational::Builder(0)).nullStatus(&context) == ExpressionNode::NullStatus::Null);
-  quiz_assert(Parenthesis::Builder(Rational::Builder(-7)).nullStatus(&context) == ExpressionNode::NullStatus::NonNull);
-  quiz_assert(SignFunction::Builder(Rational::Builder(0)).nullStatus(&context) == ExpressionNode::NullStatus::Null);
-  quiz_assert(Unit::Builder(Unit::k_powerRepresentatives, Unit::Prefix::EmptyPrefix()).nullStatus(&context) == ExpressionNode::NullStatus::NonNull);
-  quiz_assert(Division::Builder(Rational::Builder(0), Rational::Builder(3,7)).nullStatus(&context) == ExpressionNode::NullStatus::Null);
-  quiz_assert(Power::Builder(Rational::Builder(0), Rational::Builder(3,7)).nullStatus(&context) == ExpressionNode::NullStatus::Null);
-  quiz_assert(SquareRoot::Builder(Rational::Builder(2,5)).nullStatus(&context) == ExpressionNode::NullStatus::NonNull);
-  quiz_assert(PercentAddition::Builder(Rational::Builder(0), Rational::Builder(1)).nullStatus(&context) == ExpressionNode::NullStatus::Null);
-  quiz_assert(PercentAddition::Builder(Rational::Builder(1), Rational::Builder(1)).nullStatus(&context) == ExpressionNode::NullStatus::NonNull);
-  quiz_assert(PercentAddition::Builder(Rational::Builder(1), Rational::Builder(-1)).nullStatus(&context) == ExpressionNode::NullStatus::Unknown);
+  quiz_assert(AbsoluteValue::Builder(Rational::Builder(0)).isNull(&context) == TrinaryBoolean::True);
+  quiz_assert(ArcSine::Builder(Rational::Builder(1,7)).isNull(&context) == TrinaryBoolean::False);
+  quiz_assert(ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(3, 2)).isNull(&context) == TrinaryBoolean::False);
+  quiz_assert(ComplexCartesian::Builder(Rational::Builder(0), Rational::Builder(0)).isNull(&context) == TrinaryBoolean::True);
+  quiz_assert(Conjugate::Builder(ComplexCartesian::Builder(Rational::Builder(2, 3), Rational::Builder(3, 2))).isNull(&context) == TrinaryBoolean::False);
+  quiz_assert(Factor::Builder(Rational::Builder(0)).isNull(&context) == TrinaryBoolean::True);
+  quiz_assert(Factorial::Builder(Rational::Builder(0)).isNull(&context) == TrinaryBoolean::False);
+  quiz_assert(ImaginaryPart::Builder(Rational::Builder(14)).isNull(&context) == TrinaryBoolean::True);
+  quiz_assert(RealPart::Builder(Rational::Builder(0)).isNull(&context) == TrinaryBoolean::True);
+  quiz_assert(Parenthesis::Builder(Rational::Builder(-7)).isNull(&context) == TrinaryBoolean::False);
+  quiz_assert(SignFunction::Builder(Rational::Builder(0)).isNull(&context) == TrinaryBoolean::True);
+  quiz_assert(Unit::Builder(Unit::k_powerRepresentatives, Unit::Prefix::EmptyPrefix()).isNull(&context) == TrinaryBoolean::False);
+  quiz_assert(Division::Builder(Rational::Builder(0), Rational::Builder(3,7)).isNull(&context) == TrinaryBoolean::True);
+  quiz_assert(Power::Builder(Rational::Builder(0), Rational::Builder(3,7)).isNull(&context) == TrinaryBoolean::True);
+  quiz_assert(SquareRoot::Builder(Rational::Builder(2,5)).isNull(&context) == TrinaryBoolean::False);
+  quiz_assert(PercentAddition::Builder(Rational::Builder(0), Rational::Builder(1)).isNull(&context) == TrinaryBoolean::True);
+  quiz_assert(PercentAddition::Builder(Rational::Builder(1), Rational::Builder(1)).isNull(&context) == TrinaryBoolean::False);
+  quiz_assert(PercentAddition::Builder(Rational::Builder(1), Rational::Builder(-1)).isNull(&context) == TrinaryBoolean::Unknown);
 }
 
 QUIZ_CASE(poincare_properties_is_random) {
@@ -195,64 +195,64 @@ QUIZ_CASE(poincare_properties_is_infinity) {
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
 }
 
-constexpr Poincare::ExpressionNode::Sign Positive = Poincare::ExpressionNode::Sign::Positive;
-constexpr Poincare::ExpressionNode::Sign Negative = Poincare::ExpressionNode::Sign::Negative;
-constexpr Poincare::ExpressionNode::Sign Unknown = Poincare::ExpressionNode::Sign::Unknown;
-
-void assert_reduced_expression_sign(const char * expression, Poincare::ExpressionNode::Sign sign, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = MetricUnitFormat) {
+void assert_reduced_expression_sign(const char * expression, Poincare::TrinaryBoolean isPositive, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = MetricUnitFormat) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   e = e.cloneAndReduce(ExpressionNode::ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation));
-  quiz_assert_print_if_failure(e.sign(&globalContext) == sign, expression);
+  quiz_assert_print_if_failure(e.isPositive(&globalContext) == isPositive, expression);
 }
 
 QUIZ_CASE(poincare_properties_decimal_sign) {
-  quiz_assert(Decimal::Builder(-2, 3).sign() == ExpressionNode::Sign::Negative);
-  quiz_assert(Decimal::Builder(-2, -3).sign() == ExpressionNode::Sign::Negative);
-  quiz_assert(Decimal::Builder(2, -3).sign() == ExpressionNode::Sign::Positive);
-  quiz_assert(Decimal::Builder(2, 3).sign() == ExpressionNode::Sign::Positive);
-  quiz_assert(Decimal::Builder(0, 1).sign() == ExpressionNode::Sign::Positive);
+  quiz_assert(Decimal::Builder(-2, 3).isPositive() == TrinaryBoolean::False);
+  quiz_assert(Decimal::Builder(-2, -3).isPositive() == TrinaryBoolean::False);
+  quiz_assert(Decimal::Builder(2, -3).isPositive() == TrinaryBoolean::True);
+  quiz_assert(Decimal::Builder(2, 3).isPositive() == TrinaryBoolean::True);
+  quiz_assert(Decimal::Builder(0, 1).isPositive() == TrinaryBoolean::True);
 }
 
 QUIZ_CASE(poincare_properties_based_integer_sign) {
-  quiz_assert(BasedInteger::Builder(2, Integer::Base::Binary).sign() == ExpressionNode::Sign::Positive);
-  quiz_assert(BasedInteger::Builder(2, Integer::Base::Decimal).sign() == ExpressionNode::Sign::Positive);
-  quiz_assert(BasedInteger::Builder(2, Integer::Base::Hexadecimal).sign() == ExpressionNode::Sign::Positive);
+  quiz_assert(BasedInteger::Builder(2, Integer::Base::Binary).isPositive() == TrinaryBoolean::True);
+  quiz_assert(BasedInteger::Builder(2, Integer::Base::Decimal).isPositive() == TrinaryBoolean::True);
+  quiz_assert(BasedInteger::Builder(2, Integer::Base::Hexadecimal).isPositive() == TrinaryBoolean::True);
 }
 
 QUIZ_CASE(poincare_properties_rational_sign) {
-  quiz_assert(Rational::Builder(-2).sign() == ExpressionNode::Sign::Negative);
-  quiz_assert(Rational::Builder(-2, 3).sign() == ExpressionNode::Sign::Negative);
-  quiz_assert(Rational::Builder(2, 3).sign() == ExpressionNode::Sign::Positive);
-  quiz_assert(Rational::Builder(0, 3).sign() == ExpressionNode::Sign::Positive);
+  quiz_assert(Rational::Builder(-2).isPositive() == TrinaryBoolean::False);
+  quiz_assert(Rational::Builder(-2, 3).isPositive() == TrinaryBoolean::False);
+  quiz_assert(Rational::Builder(2, 3).isPositive() == TrinaryBoolean::True);
+  quiz_assert(Rational::Builder(0, 3).isPositive() == TrinaryBoolean::True);
 }
 
 QUIZ_CASE(poincare_properties_expression_sign) {
   Shared::GlobalContext context;
-  quiz_assert(ArcCosine::Builder(Rational::Builder(-1,7)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(ArcCosine::Builder(Symbol::Builder('a')).sign(&context) == ExpressionNode::Sign::Unknown);
-  quiz_assert(ArcSine::Builder(Rational::Builder(-1,7)).sign(&context) == ExpressionNode::Sign::Negative);
-  quiz_assert(ArcTangent::Builder(Rational::Builder(1,7)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(Ceiling::Builder(Rational::Builder(7,3)).sign(&context) == ExpressionNode::Sign::Unknown);
-  quiz_assert(Floor::Builder(Rational::Builder(7,3)).sign(&context) == ExpressionNode::Sign::Unknown);
-  quiz_assert(Round::Builder(Rational::Builder(7,3), Rational::Builder(1)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(Conjugate::Builder(ComplexCartesian::Builder(Rational::Builder(2, 3), BasedInteger::Builder(0, Integer::Base::Binary))).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(DivisionRemainder::Builder(Decimal::Builder(2.0), Decimal::Builder(3.0)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(AbsoluteValue::Builder(Rational::Builder(-14)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(FracPart::Builder(Rational::Builder(-7,3)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(GreatCommonDivisor::Builder({Rational::Builder(-7),Rational::Builder(-7)}).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(LeastCommonMultiple::Builder({Rational::Builder(-7),Rational::Builder(-7)}).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(Opposite::Builder(Rational::Builder(7)).sign(&context) == ExpressionNode::Sign::Negative);
-  quiz_assert(Parenthesis::Builder(Rational::Builder(-7)).sign(&context) == ExpressionNode::Sign::Negative);
-  quiz_assert(PermuteCoefficient::Builder(Rational::Builder(7),Rational::Builder(8)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(RealPart::Builder(Rational::Builder(-7)).sign(&context) == ExpressionNode::Sign::Negative);
-  quiz_assert(SignFunction::Builder(Rational::Builder(-7)).sign(&context) == ExpressionNode::Sign::Negative);
-  quiz_assert(Unit::Builder(Unit::k_powerRepresentatives, Unit::Prefix::EmptyPrefix()).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(VectorNorm::Builder(BasedInteger::Builder(1)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(Division::Builder(Rational::Builder(7,3), Rational::Builder(-1)).sign(&context) == ExpressionNode::Sign::Negative);
-  quiz_assert(DivisionQuotient::Builder(Rational::Builder(-7), Rational::Builder(-1)).sign(&context) == ExpressionNode::Sign::Positive);
-  quiz_assert(ArcSine::Builder(ArcTangent::Builder(Opposite::Builder(RealPart::Builder(ArcCosine::Builder(Constant::Builder("π")))))).sign(&context) == ExpressionNode::Sign::Negative);
+  quiz_assert(ArcCosine::Builder(Rational::Builder(-1,7)).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(ArcCosine::Builder(Symbol::Builder('a')).isPositive(&context) == TrinaryBoolean::Unknown);
+  quiz_assert(ArcSine::Builder(Rational::Builder(-1,7)).isPositive(&context) == TrinaryBoolean::False);
+  quiz_assert(ArcTangent::Builder(Rational::Builder(1,7)).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(Ceiling::Builder(Rational::Builder(7,3)).isPositive(&context) == TrinaryBoolean::Unknown);
+  quiz_assert(Floor::Builder(Rational::Builder(7,3)).isPositive(&context) == TrinaryBoolean::Unknown);
+  quiz_assert(Round::Builder(Rational::Builder(7,3), Rational::Builder(1)).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(Conjugate::Builder(ComplexCartesian::Builder(Rational::Builder(2, 3), BasedInteger::Builder(0, Integer::Base::Binary))).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(DivisionRemainder::Builder(Decimal::Builder(2.0), Decimal::Builder(3.0)).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(AbsoluteValue::Builder(Rational::Builder(-14)).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(FracPart::Builder(Rational::Builder(-7,3)).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(GreatCommonDivisor::Builder({Rational::Builder(-7),Rational::Builder(-7)}).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(LeastCommonMultiple::Builder({Rational::Builder(-7),Rational::Builder(-7)}).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(Opposite::Builder(Rational::Builder(7)).isPositive(&context) == TrinaryBoolean::False);
+  quiz_assert(Parenthesis::Builder(Rational::Builder(-7)).isPositive(&context) == TrinaryBoolean::False);
+  quiz_assert(PermuteCoefficient::Builder(Rational::Builder(7),Rational::Builder(8)).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(RealPart::Builder(Rational::Builder(-7)).isPositive(&context) == TrinaryBoolean::False);
+  quiz_assert(SignFunction::Builder(Rational::Builder(-7)).isPositive(&context) == TrinaryBoolean::False);
+  quiz_assert(Unit::Builder(Unit::k_powerRepresentatives, Unit::Prefix::EmptyPrefix()).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(VectorNorm::Builder(BasedInteger::Builder(1)).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(Division::Builder(Rational::Builder(7,3), Rational::Builder(-1)).isPositive(&context) == TrinaryBoolean::False);
+  quiz_assert(DivisionQuotient::Builder(Rational::Builder(-7), Rational::Builder(-1)).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(ArcSine::Builder(ArcTangent::Builder(Opposite::Builder(RealPart::Builder(ArcCosine::Builder(Constant::Builder("π")))))).isPositive(&context) == TrinaryBoolean::False);
 }
+
+constexpr Poincare::TrinaryBoolean Positive = Poincare::TrinaryBoolean::True;
+constexpr Poincare::TrinaryBoolean Negative = Poincare::TrinaryBoolean::False;
+constexpr Poincare::TrinaryBoolean Unknown = Poincare::TrinaryBoolean::Unknown;
 
 QUIZ_CASE(poincare_properties_sign) {
   assert_reduced_expression_sign("abs(-cos(2)+I)", Positive);
@@ -287,38 +287,38 @@ QUIZ_CASE(poincare_properties_sign) {
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
 }
 
-void assert_sign_sets_to(Expression e, Poincare::ExpressionNode::Sign sign, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = MetricUnitFormat) {
+void assert_sign_sets_to(Expression e, Poincare::TrinaryBoolean isPositive, Preferences::ComplexFormat complexFormat = Cartesian, Preferences::AngleUnit angleUnit = Radian, Preferences::UnitFormat unitFormat = MetricUnitFormat) {
   Shared::GlobalContext context;
-  ExpressionNode::Sign eSign = e.sign(&context);
-  assert(eSign == ExpressionNode::Sign::Positive || eSign == ExpressionNode::Sign::Negative);
+  TrinaryBoolean eSign = e.isPositive(&context);
+  assert(eSign == TrinaryBoolean::True || eSign == TrinaryBoolean::False);
   double eValue = e.approximateToScalar<double>(&context, complexFormat, angleUnit);
-  Expression f = e.setSign(sign, ExpressionNode::ReductionContext(&context, complexFormat, angleUnit, unitFormat, User));
-  quiz_assert(f.sign(&context) == sign);
+  Expression f = e.setSign(isPositive == TrinaryBoolean::True, ExpressionNode::ReductionContext(&context, complexFormat, angleUnit, unitFormat, User));
+  quiz_assert(f.isPositive(&context) == isPositive);
   double fValue = f.approximateToScalar<double>(&context, complexFormat, angleUnit);
-  quiz_assert(fValue == (eSign == sign ? eValue : -eValue) || (std::isnan(fValue) == std::isnan(eValue)));
+  quiz_assert(fValue == (eSign == isPositive ? eValue : -eValue) || (std::isnan(fValue) == std::isnan(eValue)));
 }
 
 QUIZ_CASE(poincare_properties_set_sign_positive) {
-  assert_sign_sets_to(Factorial::Builder(Rational::Builder(3)), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(DivisionRemainder::Builder(Rational::Builder(33), Rational::Builder(-5)), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(Power::Builder(Rational::Builder(-2), Rational::Builder(5)), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(Float<float>::Builder(-1.234f), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(Float<double>::Builder(-2.468), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(Rational::Builder(2, 7), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(RealPart::Builder(ComplexCartesian::Builder(Rational::Builder(3, 2), Rational::Builder(0))), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(Constant::Builder("π"), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(FracPart::Builder(Rational::Builder(-34, 5)), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(Round::Builder(Rational::Builder(67, 34), Rational::Builder(1)), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(DivisionQuotient::Builder(Rational::Builder(-23), Rational::Builder(12)), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(Unit::Builder(&Unit::k_massRepresentatives[Unit::k_poundRepresentativeIndex], &Unit::k_prefixes[Unit::k_emptyPrefixIndex]), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(Multiplication::Builder(Rational::Builder(-3, 5), Rational::Builder(2), Rational::Builder(-7, 4)), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(ArcSine::Builder(Rational::Builder(-1, 3)), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(Factor::Builder(Rational::Builder(120)), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(ArcCosine::Builder(Rational::Builder(1, 4)), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(AbsoluteValue::Builder(Symbol::Builder("p", 1)), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(SignFunction::Builder(Constant::Builder("π")), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(Infinity::Builder(true), ExpressionNode::Sign::Positive);
-  assert_sign_sets_to(Random::Builder(), ExpressionNode::Sign::Positive);
+  assert_sign_sets_to(Factorial::Builder(Rational::Builder(3)), TrinaryBoolean::True);
+  assert_sign_sets_to(DivisionRemainder::Builder(Rational::Builder(33), Rational::Builder(-5)), TrinaryBoolean::True);
+  assert_sign_sets_to(Power::Builder(Rational::Builder(-2), Rational::Builder(5)), TrinaryBoolean::True);
+  assert_sign_sets_to(Float<float>::Builder(-1.234f), TrinaryBoolean::True);
+  assert_sign_sets_to(Float<double>::Builder(-2.468), TrinaryBoolean::True);
+  assert_sign_sets_to(Rational::Builder(2, 7), TrinaryBoolean::True);
+  assert_sign_sets_to(RealPart::Builder(ComplexCartesian::Builder(Rational::Builder(3, 2), Rational::Builder(0))), TrinaryBoolean::True);
+  assert_sign_sets_to(Constant::Builder("π"), TrinaryBoolean::True);
+  assert_sign_sets_to(FracPart::Builder(Rational::Builder(-34, 5)), TrinaryBoolean::True);
+  assert_sign_sets_to(Round::Builder(Rational::Builder(67, 34), Rational::Builder(1)), TrinaryBoolean::True);
+  assert_sign_sets_to(DivisionQuotient::Builder(Rational::Builder(-23), Rational::Builder(12)), TrinaryBoolean::True);
+  assert_sign_sets_to(Unit::Builder(&Unit::k_massRepresentatives[Unit::k_poundRepresentativeIndex], &Unit::k_prefixes[Unit::k_emptyPrefixIndex]), TrinaryBoolean::True);
+  assert_sign_sets_to(Multiplication::Builder(Rational::Builder(-3, 5), Rational::Builder(2), Rational::Builder(-7, 4)), TrinaryBoolean::True);
+  assert_sign_sets_to(ArcSine::Builder(Rational::Builder(-1, 3)), TrinaryBoolean::True);
+  assert_sign_sets_to(Factor::Builder(Rational::Builder(120)), TrinaryBoolean::True);
+  assert_sign_sets_to(ArcCosine::Builder(Rational::Builder(1, 4)), TrinaryBoolean::True);
+  assert_sign_sets_to(AbsoluteValue::Builder(Symbol::Builder("p", 1)), TrinaryBoolean::True);
+  assert_sign_sets_to(SignFunction::Builder(Constant::Builder("π")), TrinaryBoolean::True);
+  assert_sign_sets_to(Infinity::Builder(true), TrinaryBoolean::True);
+  assert_sign_sets_to(Random::Builder(), TrinaryBoolean::True);
 }
 
 void assert_expression_is_real(const char * expression) {

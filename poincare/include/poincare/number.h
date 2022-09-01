@@ -48,12 +48,11 @@ public:
   static Number Power(const Number & i, const Number & j);
   static int NaturalOrder(const Number & i, const Number & j);
 
-  /* Number::sign() does not need a context or an angle unit
+  /* Number::isPositive() does not need a context or an angle unit
    * (a number can be Infinity, Undefined, Float, Decimal, Rational). */
-  ExpressionNode::Sign sign() const { return Expression::sign(nullptr); }
-  Number setSign(ExpressionNode::Sign s) {
-    assert(s == ExpressionNode::Sign::Positive || s == ExpressionNode::Sign::Negative);
-    node()->setNegative(s == ExpressionNode::Sign::Negative);
+  TrinaryBoolean isPositive() const { return Expression::isPositive(nullptr); }
+  Number setSign(bool positive) {
+    node()->setNegative(!positive);
     return *this;
   }
 

@@ -79,13 +79,13 @@ Expression PermuteCoefficient::shallowReduce(ExpressionNode::ReductionContext re
   Expression c1 = childAtIndex(1);
   if (c0.type() == ExpressionNode::Type::Rational) {
     Rational r0 = static_cast<Rational &>(c0);
-    if (!r0.isInteger() || r0.sign() == ExpressionNode::Sign::Negative) {
+    if (!r0.isInteger() || r0.isPositive() == TrinaryBoolean::False) {
       return replaceWithUndefinedInPlace();
     }
   }
   if (c1.type() == ExpressionNode::Type::Rational) {
     Rational r1 = static_cast<Rational &>(c1);
-    if (!r1.isInteger() || r1.sign() == ExpressionNode::Sign::Negative) {
+    if (!r1.isInteger() || r1.isPositive() == TrinaryBoolean::False) {
       return replaceWithUndefinedInPlace();
     }
   }

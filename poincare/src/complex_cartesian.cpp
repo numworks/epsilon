@@ -21,13 +21,10 @@
 
 namespace Poincare {
 
-ExpressionNode::NullStatus ComplexCartesianNode::nullStatus(Context * context) const {
-  ExpressionNode::NullStatus realNullStatus = childAtIndex(0)->nullStatus(context);
-  ExpressionNode::NullStatus imagNullStatus = childAtIndex(1)->nullStatus(context);
-  if (realNullStatus == ExpressionNode::NullStatus::NonNull || imagNullStatus == ExpressionNode::NullStatus::NonNull) {
-    return ExpressionNode::NullStatus::NonNull;
-  }
-  return (realNullStatus == ExpressionNode::NullStatus::Null && imagNullStatus == ExpressionNode::NullStatus::Null) ? ExpressionNode::NullStatus::Null : ExpressionNode::NullStatus::Unknown;
+TrinaryBoolean ComplexCartesianNode::isNull(Context * context) const {
+  TrinaryBoolean realIsNull = childAtIndex(0)->isNull(context);
+  TrinaryBoolean imagIsNull = childAtIndex(1)->isNull(context);
+  return TrinaryAnd(realIsNull, imagIsNull);
 }
 
 Expression ComplexCartesianNode::shallowReduce(const ReductionContext& reductionContext) {
@@ -74,7 +71,7 @@ Expression ComplexCartesian::shallowReduce(ExpressionNode::ReductionContext redu
       return e;
     }
   }
-  if (imag().nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
+  if (imag().isNull(reductionContext.context()) == TrinaryBoolean::True) {
     Expression r = real();
     replaceWithInPlace(r);
     return r;
@@ -143,9 +140,9 @@ Expression ComplexCartesian::squareNorm(const ExpressionNode::ReductionContext& 
 Expression ComplexCartesian::norm(const ExpressionNode::ReductionContext& reductionContext) {
   Expression a;
   // Special case for pure real or pure imaginary cartesian
-  if (imag().nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
+  if (imag().isNull(reductionContext.context()) == TrinaryBoolean::True) {
     a = real();
-  } else if (real().nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
+  } else if (real().isNull(reductionContext.context()) == TrinaryBoolean::True) {
     a = imag();
   }
   if (!a.isUninitialized()) {
@@ -164,8 +161,8 @@ Expression ComplexCartesian::norm(const ExpressionNode::ReductionContext& reduct
 Expression ComplexCartesian::argument(const ExpressionNode::ReductionContext& reductionContext) {
   Expression a = real();
   Expression b = imag();
-  if (b.nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null) {
-    // TODO: Handle ExpressionNode::NullStatus::Unknown
+  if (b.isNull(reductionContext.context()) != TrinaryBoolean::True) {
+    // TODO: Handle TrinaryBoolean::Unknown
     // if b != 0, argument = sign(b) * π/2 - atan(a/b)
     // First, compute atan(a/b) or (π/180)*atan(a/b)
     Expression divab = Division::Builder(a, b.clone());
@@ -258,11 +255,11 @@ ComplexCartesian ComplexCartesian::powerInteger(int n, const ExpressionNode::Red
   Expression a = real();
   Expression b = imag();
   assert(n > 0);
-  assert(b.nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null);
+  assert(b.isNull(reductionContext.context()) != TrinaryBoolean::True);
 
   // Special case: a == 0 (otherwise, we are going to introduce undefined expressions - a^0 = NAN)
   // (b*i)^n = b^n*i^n with i^n == i, -i, 1 or -1
-  if (a.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
+  if (a.isNull(reductionContext.context()) == TrinaryBoolean::True) {
     ComplexCartesian result;
     Expression bpow = Power::Builder(b, Rational::Builder(n));
     if (n/2%2 == 1) {

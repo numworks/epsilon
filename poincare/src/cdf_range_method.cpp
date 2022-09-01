@@ -10,9 +10,9 @@ Expression CDFRangeMethod::shallowReduce(Expression * abscissae, const Distribut
   Expression x = abscissae[0];
   Expression y = abscissae[1];
 
-  if (x.type() == ExpressionNode::Type::Infinity && x.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+  if (x.type() == ExpressionNode::Type::Infinity && x.isPositive(reductionContext.context()) == TrinaryBoolean::False) {
     if (y.type() == ExpressionNode::Type::Infinity) {
-      Expression result = Rational::Builder(y.sign(reductionContext.context()) == ExpressionNode::Sign::Positive);
+      Expression result = Rational::Builder(y.isPositive(reductionContext.context()) == TrinaryBoolean::True);
       expression->replaceWithInPlace(result);
       return result;
     }

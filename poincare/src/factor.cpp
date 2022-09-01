@@ -110,7 +110,7 @@ Expression Factor::shallowBeautify(const ExpressionNode::ReductionContext& reduc
     }
     result = Division::Builder(result, denominatorDecomp.squashUnaryHierarchyInPlace());
   }
-  if (r.sign() == ExpressionNode::Sign::Negative) {
+  if (r.isPositive() == TrinaryBoolean::False) {
     result = Opposite::Builder(result);
   }
   replaceWithInPlace(result);

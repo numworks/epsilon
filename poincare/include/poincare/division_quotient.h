@@ -20,7 +20,7 @@ public:
 #endif
 
   // ExpressionNode
-  Sign sign(Context * context) const override;
+  TrinaryBoolean isPositive(Context * context) const override;
   Type type() const override { return Type::DivisionQuotient; }
 
   // Simplification

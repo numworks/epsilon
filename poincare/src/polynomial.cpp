@@ -42,9 +42,9 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
   }
 
   bool multipleRoot = false;
-  ExpressionNode::NullStatus deltaNull = delta->nullStatus(context);
-  if (deltaNull == ExpressionNode::NullStatus::Null
-   || (deltaNull == ExpressionNode::NullStatus::Unknown && delta->approximateToScalar<double>(context, complexFormat, angleUnit) == 0.))
+  TrinaryBoolean deltaNull = delta->isNull(context);
+  if (deltaNull == TrinaryBoolean::True
+   || (deltaNull == TrinaryBoolean::Unknown && delta->approximateToScalar<double>(context, complexFormat, angleUnit) == 0.))
   {
     *root1 = Division::Builder(Opposite::Builder(b.clone()), Multiplication::Builder(Rational::Builder(2), a.clone()));
     *root2 = Undefined::Builder();
@@ -52,8 +52,8 @@ int Polynomial::QuadraticPolynomialRoots(Expression a, Expression b, Expression 
   } else {
     // Grapher relies on the order here to properly navigate implicit curves.
     int offset = 0;
-    ExpressionNode::Sign aSign = a.sign(context);
-    if (aSign != ExpressionNode::Sign::Positive && (aSign == ExpressionNode::Sign::Negative || a.approximateToScalar<double>(context, complexFormat, angleUnit) < 0.)) {
+    TrinaryBoolean aPositive = a.isPositive(context);
+    if (aPositive != TrinaryBoolean::True && (aPositive == TrinaryBoolean::False || a.approximateToScalar<double>(context, complexFormat, angleUnit) < 0.)) {
       // Coefficient a is negative, swap root1 and root 2 to preseverve order.
       offset = 1;
     }
@@ -176,14 +176,14 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
   /* If d is null, the polynom can easily be factored by X. We handle it here
    * (even though in most case it would be caught by the following case) in
    * case c is null. */
-  if (d.nullStatus(context) == ExpressionNode::NullStatus::Null || d.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.) {
+  if (d.isNull(context) == TrinaryBoolean::True || d.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.) {
     *root1 = Rational::Builder(0);
   }
   /* Polynoms of the form "ax^3+d=0" have a simple solutions : x1 = sqrt(-d/a,3)
    * x2 = roots[1] * x1 and x3 = roots[2] * x1. */
   if (root1->isUninitialized()
-    && (b.nullStatus(context) == ExpressionNode::NullStatus::Null || b.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.)
-    && (c.nullStatus(context) == ExpressionNode::NullStatus::Null || c.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.)) {
+    && (b.isNull(context) == TrinaryBoolean::True || b.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.)
+    && (c.isNull(context) == TrinaryBoolean::True || c.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.)) {
     *root1 = NthRoot::Builder(Division::Builder(Opposite::Builder(d.clone()), a.clone()), Rational::Builder(3));
     *root1 = root1->cloneAndReduceOrSimplify(reductionContext, beautifyRoots);
     if (root1->numberOfDescendants(true) * 2 > k_maxNumberOfNodesBeforeApproximatingDelta
@@ -225,7 +225,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     /* We have found one simple solution, we can factor and solve the quadratic
      * equation. */
     Expression beta = Addition::Builder({b.clone(), Multiplication::Builder(a.clone(), root1->clone())}).cloneAndSimplify(reductionContext);
-    Expression gamma = root1->nullStatus(context) == ExpressionNode::NullStatus::Null ? c.clone() : Opposite::Builder(Division::Builder(d.clone(), root1->clone())).cloneAndSimplify(reductionContext);
+    Expression gamma = root1->isNull(context) == TrinaryBoolean::True ? c.clone() : Opposite::Builder(Division::Builder(d.clone(), root1->clone())).cloneAndSimplify(reductionContext);
     Expression delta2;
     QuadraticPolynomialRoots(a.clone(), beta, gamma, root2, root3, &delta2, context, complexFormat, angleUnit, false, beautifyRoots);
     assert(!root2->isUninitialized() && !root3->isUninitialized());
@@ -233,7 +233,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     /* We did not manage to find any simple root : we resort to using Cardano's
      * formula. */
     int deltaSign;
-    if (delta->nullStatus(context) == ExpressionNode::NullStatus::Null) {
+    if (delta->isNull(context) == TrinaryBoolean::True) {
       deltaSign = 0;
     } else {
       double deltaValue = delta->approximateToScalar<double>(context, complexFormat, angleUnit);
@@ -245,7 +245,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
     // b^2 - 3ac
     Expression delta0 = Subtraction::Builder(Power::Builder(b.clone(), Rational::Builder(2)), Multiplication::Builder(Rational::Builder(3), a.clone(), c.clone())).cloneAndSimplify(reductionContext);
     if (deltaSign == 0) {
-      if (delta0.nullStatus(context) == ExpressionNode::NullStatus::Null || delta0.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.) {
+      if (delta0.isNull(context) == TrinaryBoolean::True || delta0.approximateToScalar<double>(context, complexFormat, angleUnit) == 0.) {
         // -b / 3a
         *root1 = Division::Builder(b.clone(), Multiplication::Builder(Rational::Builder(-3), a.clone()));
         *root2 = Undefined::Builder();
@@ -287,7 +287,7 @@ int Polynomial::CubicPolynomialRoots(Expression a, Expression b, Expression c, E
         return 0;
       }
       /* cardano is only null when there is a triple root. */
-      assert(cardano.nullStatus(context) != ExpressionNode::NullStatus::Null);
+      assert(cardano.isNull(context) != TrinaryBoolean::True);
       int loneRealRootIndex = -1;
       float minimalImaginaryPart = static_cast<float>(INFINITY);
       for (int i = 0; i < 3; i++) {
@@ -493,7 +493,7 @@ Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool 
    *     risk of subtracting two very close numbers when delta0 << delta1. */
 
   Expression C;
-  if (delta0.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
+  if (delta0.isNull(reductionContext.context()) == TrinaryBoolean::True) {
     C = delta1.clone();
   } else {
     Expression rootDeltaDifference = SquareRoot::Builder(Subtraction::Builder(
@@ -510,13 +510,13 @@ Expression Polynomial::CardanoNumber(Expression delta0, Expression delta1, bool 
   }
   C = NthRoot::Builder(C, Rational::Builder(3)).cloneAndSimplify(reductionContext);
 
-  if (C.nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Unknown) {
+  if (C.isNull(reductionContext.context()) == TrinaryBoolean::Unknown) {
     C = C.approximate<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     *approximate = true;
   } else {
     *approximate = false;
   }
-  assert(C.nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null);
+  assert(C.isNull(reductionContext.context()) != TrinaryBoolean::True);
   return C;
 }
 }

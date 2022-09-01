@@ -126,8 +126,8 @@ int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Pr
   int i = rank-1;
   while (i >= 0) {
     int j = m.numberOfColumns()-1;
-    // TODO: Handle ExpressionNode::NullStatus::Unknown. See rowCanonize comment
-    while (j >= i && matrixChild(i,j).nullStatus(context) == ExpressionNode::NullStatus::Null) {
+    // TODO: Handle TrinaryBoolean::Unknown. See rowCanonize comment
+    while (j >= i && matrixChild(i,j).isNull(context) == TrinaryBoolean::True) {
       j--;
     }
     if (j <= i-1) {
@@ -215,7 +215,7 @@ Matrix Matrix::rowCanonize(const ExpressionNode::ReductionContext& reductionCont
       // Using float to find the biggest pivot is sufficient.
       float pivot = AbsoluteValue::Builder(matrixChild(iPivot_temp, k).clone()).approximateToScalar<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
       // Handle very low pivots
-      if (pivot == 0.0f && matrixChild(iPivot_temp, k).nullStatus(reductionContext.context()) != ExpressionNode::NullStatus::Null) {
+      if (pivot == 0.0f && matrixChild(iPivot_temp, k).isNull(reductionContext.context()) != TrinaryBoolean::True) {
         pivot = FLT_MIN;
       }
 
@@ -231,11 +231,11 @@ Matrix Matrix::rowCanonize(const ExpressionNode::ReductionContext& reductionCont
       }
       iPivot_temp++;
     }
-    /* TODO: Handle ExpressionNode::NullStatus::Unknown : rowCanonize will
+    /* TODO: Handle isNull == TrinaryBoolean::Unknown : rowCanonize will
      * output a mathematically wrong result (and divide expressions by a null
      * expression) if expression is actually null. For examples,
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
-    if (matrixChild(iPivot, k).nullStatus(reductionContext.context()) == ExpressionNode::NullStatus::Null) {
+    if (matrixChild(iPivot, k).isNull(reductionContext.context()) == TrinaryBoolean::True) {
       // No non-null coefficient in this column, skip
       k++;
       if (determinant) {

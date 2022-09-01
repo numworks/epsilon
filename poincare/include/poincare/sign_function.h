@@ -21,8 +21,8 @@ public:
 
   // Properties
   Type type() const override { return Type::SignFunction; }
-  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
-  NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context); }
+  TrinaryBoolean isPositive(Context * context) const override { return childAtIndex(0)->isPositive(context); }
+  TrinaryBoolean isNull(Context * context) const override { return childAtIndex(0)->isNull(context); }
 
 private:
   // Layout

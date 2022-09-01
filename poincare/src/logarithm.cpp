@@ -116,8 +116,8 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
     }
   }
   Expression c = childAtIndex(0);
-  if (c.sign(reductionContext.context()) == ExpressionNode::Sign::Negative
-      || base.sign(reductionContext.context()) == ExpressionNode::Sign::Negative)
+  if (c.isPositive(reductionContext.context()) == TrinaryBoolean::False
+      || base.isPositive(reductionContext.context()) == TrinaryBoolean::False)
   {
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
       Expression result = Nonreal::Builder();
@@ -143,13 +143,13 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
   }
 
   // log(+inf, a) ?
-  if (c.type() == ExpressionNode::Type::Infinity && c.sign(reductionContext.context()) == ExpressionNode::Sign::Positive) {
+  if (c.type() == ExpressionNode::Type::Infinity && c.isPositive(reductionContext.context()) == TrinaryBoolean::True) {
     // log(+inf, a) --> ±inf with a rational and a > 0
     if (base.type() == ExpressionNode::Type::Rational && !static_cast<Rational&>(base).isNegative() && !static_cast<Rational&>(base).isZero()) {
       // log(+inf,a) with a < 1 --> -inf
       // log(+inf,a) with a > 1 --> inf
       if (static_cast<Rational&>(base).signedIntegerNumerator().isLowerThan(static_cast<Rational&>(base).integerDenominator())) {
-        c = c.setSign(ExpressionNode::Sign::Negative, reductionContext);
+        c = c.setSign(false, reductionContext);
       }
       replaceWithInPlace(c);
       return c;
@@ -160,7 +160,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
   }
 
   // log(x^y, b)->y*log(x, b) if x>0
-  if (c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).sign(reductionContext.context()) == ExpressionNode::Sign::Positive) {
+  if (c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).isPositive(reductionContext.context()) == TrinaryBoolean::True) {
     Power p = static_cast<Power &>(c);
     Expression x = p.childAtIndex(0);
     Expression y = p.childAtIndex(1);
@@ -177,7 +177,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
     int childrenNumber = c.numberOfChildren();
     for (int i = 0; i < childrenNumber-1; i++) {
       Expression factor = c.childAtIndex(i);
-      if (factor.sign(reductionContext.context()) == ExpressionNode::Sign::Positive) {
+      if (factor.isPositive(reductionContext.context()) == TrinaryBoolean::True) {
         Expression newLog = clone();
         static_cast<Multiplication &>(c).removeChildInPlace(factor, factor.numberOfChildren());
         newLog.replaceChildAtIndexInPlace(0, factor);

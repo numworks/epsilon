@@ -17,7 +17,7 @@ public:
   bool isNegative() const { return m_negative; }
   void setNegative(bool negative) override { m_negative = negative; }
   bool isInteger() const { return denominator().isOne(); }
-  NullStatus nullStatus(Context * context) const override { return isZero() ? NullStatus::Null : NullStatus::NonNull; }
+  TrinaryBoolean isNull(Context * context) const override { return BinaryToTrinaryBool(isZero()); }
 
   // TreeNode
   size_t size() const override;
@@ -33,7 +33,7 @@ public:
 
   // Expression subclassing
   Type type() const override { return Type::Rational; }
-  Sign sign(Context * context) const override { return m_negative ? Sign::Negative : Sign::Positive; }
+  TrinaryBoolean isPositive(Context * context) const override { return BinaryToTrinaryBool(!m_negative); }
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;

@@ -31,12 +31,6 @@ public:
   static bool IsSimpleComparisonWithOperator(Expression e, OperatorType operatorType);
   static bool IsSimpleEquality(Expression e) { return IsSimpleComparisonWithOperator(e, OperatorType::Equal); }
 
-  // TODO: TrinaryBooleans will be moved out of this class in a few commits
-  enum class TrinaryBoolean : uint8_t {
-    False = 0,
-    True = 1,
-    Unknown = 2
-  };
   static TrinaryBoolean TrinaryTruthValue(OperatorType type, TrinaryBoolean chidlrenAreEqual, TrinaryBoolean leftChildIsGreater);
 
   ComparisonNode(int numberOfOperands, OperatorType lastOperatorOfList, OperatorType * otherOperatorsList = nullptr);

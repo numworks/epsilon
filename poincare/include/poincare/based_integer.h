@@ -28,8 +28,8 @@ public:
 
   // Expression subclassing
   Type type() const override { return Type::BasedInteger; }
-  Sign sign(Context * context) const override { return Sign::Positive; }
-  NullStatus nullStatus(Context * context) const override { return integer().isZero() ? NullStatus::Null : NullStatus::NonNull; }
+  TrinaryBoolean isPositive(Context * context) const override { return TrinaryBoolean::True; }
+  TrinaryBoolean isNull(Context * context) const override { return BinaryToTrinaryBool(integer().isZero()); }
 
   // NumberNode
   void setNegative(bool negative) override { assert(!negative); }

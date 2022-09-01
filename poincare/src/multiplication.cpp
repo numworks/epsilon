@@ -31,18 +31,18 @@ namespace Poincare {
 
 /* Multiplication Node */
 
-ExpressionNode::Sign MultiplicationNode::sign(Context * context) const {
+TrinaryBoolean MultiplicationNode::isPositive(Context * context) const {
   if (numberOfChildren() == 0) {
-    return Sign::Unknown;
+    return TrinaryBoolean::Unknown;
   }
   int sign = 1;
   for (ExpressionNode * c : children()) {
-    sign *= (int)(c->sign(context));
+    sign *= (int)(c->isPositive(context));
+    if (sign == 0) {
+      return TrinaryBoolean::Unknown;
+    }
   }
-  if (sign == 0) {
-    return ExpressionNode::sign(context);
-  }
-  return (Sign)sign;
+  return static_cast<TrinaryBoolean>(sign);
 }
 
 int MultiplicationNode::polynomialDegree(Context * context, const char * symbolName) const {
@@ -57,21 +57,21 @@ int MultiplicationNode::polynomialDegree(Context * context, const char * symbolN
   return degree;
 }
 
-ExpressionNode::NullStatus MultiplicationNode::nullStatus(Context * context) const {
+TrinaryBoolean MultiplicationNode::isNull(Context * context) const {
   if (numberOfChildren() == 0) {
-    return NullStatus::Unknown;
+    return TrinaryBoolean::Unknown;
   }
   /* If multiplying elements with same null-status, multiplication has this
    * status. If the null-status are different, we return Unknown because it
    * could be inf * 0. */
-  NullStatus nullStatus = childAtIndex(0)->nullStatus(context);
+  TrinaryBoolean isNull = childAtIndex(0)->isNull(context);
   int childrenNumber = numberOfChildren();
   for (int i = 1; i < childrenNumber; i++) {
-    if (childAtIndex(i)->nullStatus(context) != nullStatus) {
-      return NullStatus::Unknown;
+    if (childAtIndex(i)->isNull(context) != isNull) {
+      return TrinaryBoolean::Unknown;
     }
   }
-  return nullStatus;
+  return isNull;
 }
 
 int MultiplicationNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
@@ -1174,7 +1174,7 @@ void Multiplication::addMissingFactors(Expression factor, const ExpressionNode::
     for (int i = 0; i < numberOfChildren(); i++) {
       if (TermsHaveIdenticalBase(childAtIndex(i), factor)) {
         Expression sub = Subtraction::Builder(CreateExponent(childAtIndex(i)), CreateExponent(factor)).deepReduce(reductionContext);
-        if (sub.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) { // index[0] < index[1]
+        if (sub.isPositive(reductionContext.context()) == TrinaryBoolean::False) { // index[0] < index[1]
           sub = Opposite::Builder(sub);
           if (factor.type() == ExpressionNode::Type::Power) {
             factor.replaceChildAtIndexInPlace(1, sub);
@@ -1183,7 +1183,7 @@ void Multiplication::addMissingFactors(Expression factor, const ExpressionNode::
           }
           sub.shallowReduce(reductionContext);
           mergeInChildByFactorizingBase(i, factor, reductionContext);
-        } else if (sub.sign(reductionContext.context()) == ExpressionNode::Sign::Unknown) {
+        } else if (sub.isPositive(reductionContext.context()) == TrinaryBoolean::Unknown) {
           mergeInChildByFactorizingBase(i, factor, reductionContext);
         }
         return;
@@ -1203,12 +1203,12 @@ bool Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::
   Number p = CreateExponent(childAtIndex(i)).convert<Number>();
   Number q = CreateExponent(childAtIndex(j)).convert<Number>();
   // If p and q have the same sign, we cannot replace them by a tangent
-  if ((int)p.sign()*(int)q.sign() > 0) {
+  if ((int)p.isPositive()*(int)q.isPositive() > 0) {
     return false;
   }
   Number sumPQ = Number::Addition(p, q);
-  Number absP = p.clone().convert<Number>().setSign(ExpressionNode::Sign::Positive);
-  Number absQ = q.clone().convert<Number>().setSign(ExpressionNode::Sign::Positive);
+  Number absP = p.clone().convert<Number>().setSign(true);
+  Number absQ = q.clone().convert<Number>().setSign(true);
   Expression tan = Tangent::Builder(x.clone());
 
   // First case: replace sin(x)^p by tan(x)^p
@@ -1225,7 +1225,7 @@ bool Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::
   /* If the power of tan is negative and tan(x) = undef, we can't transform
    * cos/sin into 1/tan. Indeed, cos(pi/2)/sin(pi/2) is defined, but tan(pi/2)
    * is undef. */
-  if (tanPower.sign() == ExpressionNode::Sign::Negative && tan.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true).isUndefined()) {
+  if (tanPower.isPositive() == TrinaryBoolean::False && tan.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true).isUndefined()) {
     return false;
   }
   replaceChildAtIndexInPlace(tanIndex, Power::Builder(tan, tanPower));

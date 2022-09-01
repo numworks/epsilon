@@ -20,8 +20,10 @@ public:
 #endif
 
   // Properties
-  Sign sign(Context * context) const override { return childAtIndex(0)->sign(context); }
-  NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->nullStatus(context) == NullStatus::Null ? NullStatus::Null : NullStatus::Unknown; }
+  TrinaryBoolean isPositive(Context * context) const override { return childAtIndex(0)->isPositive(context); }
+  TrinaryBoolean isNull(Context * context) const override {
+    return TrinaryOr(childAtIndex(0)->isNull(context), TrinaryBoolean::Unknown);
+  }
   Type type() const override { return Type::RealPart; }
 
 

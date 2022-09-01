@@ -20,8 +20,8 @@ public:
 
   // Properties
   Type type() const override { return Type::Multiplication; }
-  Sign sign(Context * context) const override;
-  NullStatus nullStatus(Context * context) const override;
+  TrinaryBoolean isPositive(Context * context) const override;
+  TrinaryBoolean isNull(Context * context) const override;
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;

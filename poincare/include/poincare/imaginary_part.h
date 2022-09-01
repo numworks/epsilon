@@ -20,7 +20,10 @@ public:
 #endif
 
   // Properties
-  NullStatus nullStatus(Context * context) const override { return childAtIndex(0)->sign(context) != Sign::Unknown ? NullStatus::Null : NullStatus::Unknown; }
+  TrinaryBoolean isNull(Context * context) const override {
+    TrinaryBoolean t = childAtIndex(0)->isPositive(context);
+    return TrinaryOr(TrinaryNot(t), t); // Unknown if unknown, True otherwise
+  }
   Type type() const override { return Type::ImaginaryPart; }
 
 private:

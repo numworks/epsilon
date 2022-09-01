@@ -39,8 +39,8 @@ public:
 
   // Properties
   Type type() const override { return (sizeof(T) == sizeof(float)) ? Type::Float : Type::Double; }
-  Sign sign(Context * context) const override { return std::isnan(m_value) ? Sign::Unknown : (m_value < 0 ? Sign::Negative : Sign::Positive); }
-  NullStatus nullStatus(Context * context) const override { return m_value == 0.0 ? NullStatus::Null : NullStatus::NonNull; }
+  TrinaryBoolean isPositive(Context * context) const override { return std::isnan(m_value) ? TrinaryBoolean::Unknown : BinaryToTrinaryBool(m_value >= 0.0); }
+  TrinaryBoolean isNull(Context * context) const override { return BinaryToTrinaryBool(m_value == 0.0); }
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
 
 

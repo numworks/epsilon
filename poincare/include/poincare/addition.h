@@ -24,7 +24,7 @@ public:
 
   // Properties
   Type type() const override { return Type::Addition; }
-  Sign sign(Context * context) const override;
+  TrinaryBoolean isPositive(Context * context) const override;
   int polynomialDegree(Context * context, const char * symbolName) const override;
   int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
 

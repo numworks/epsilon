@@ -163,9 +163,8 @@ public:
   /* Properties */
   ExpressionNode::Type type() const { return node()->type(); }
   bool isOfType(std::initializer_list<ExpressionNode::Type> types) const { return node()->isOfType(types); }
-  ExpressionNode::Sign sign(Context * context) const { return node()->sign(context); }
-  ExpressionNode::NullStatus nullStatus(Context * context) const { return node()->nullStatus(context); }
-  bool isStrictly(ExpressionNode::Sign s, Context * context) const { return s == node()->sign(context) && node()->nullStatus(context) == ExpressionNode::NullStatus::NonNull;  }
+  TrinaryBoolean isPositive(Context * context) const { return node()->isPositive(context); }
+  TrinaryBoolean isNull(Context * context) const { return node()->isNull(context); }
   bool isUndefined() const { return isOfType({ExpressionNode::Type::Nonreal, ExpressionNode::Type::Undefined}); }
   bool allChildrenAreUndefined();
   bool isNumber() const { return node()->isNumber(); }
@@ -301,8 +300,8 @@ public:
   Expression cloneAndReduceOrSimplify(ExpressionNode::ReductionContext reductionContext, bool beautify) { return beautify ? cloneAndSimplify(reductionContext) : cloneAndReduce(reductionContext); }
   /* WARNING: this must be called only on expressions that:
    *  - are reduced.
-   *  - have a known sign. (sign() != Sign::Unknown) */
-  Expression setSign(ExpressionNode::Sign s, const ExpressionNode::ReductionContext& reductionContext);
+   *  - have a known sign. (isPositive() != Unknown) */
+  Expression setSign(bool positive, const ExpressionNode::ReductionContext& reductionContext);
 
   Expression deepRemoveUselessDependencies(const ExpressionNode::ReductionContext& reductionContext);
 

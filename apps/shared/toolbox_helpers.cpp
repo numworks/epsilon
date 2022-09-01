@@ -7,27 +7,6 @@
 namespace Shared {
 namespace ToolboxHelpers {
 
-int CursorIndexInCommandText(const char * text) {
-  UTF8Decoder decoder(text);
-  size_t index = 0;
-  const char * currentPointer = text;
-  CodePoint codePoint = decoder.nextCodePoint();
-  const char * nextPointer = decoder.stringPosition();
-  while (codePoint != UCodePointNull) {
-    if (codePoint == '(' || codePoint == '\'') {
-      return index + 1;
-    }
-    if (codePoint == '[') {
-      return index;
-    }
-    index+= nextPointer - currentPointer;
-    currentPointer = nextPointer;
-    codePoint = decoder.nextCodePoint();
-    nextPointer = decoder.stringPosition();
-  }
-  return index;
-}
-
 void TextToInsertForCommandMessage(I18n::Message message, char * buffer, int bufferSize, bool replaceArgsWithEmptyChar) {
   TextToInsertForCommandText(I18n::translate(message), -1, buffer, bufferSize, replaceArgsWithEmptyChar);
 }

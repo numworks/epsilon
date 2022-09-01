@@ -1,4 +1,5 @@
 #include "math_toolbox.h"
+#include "apps/i18n.h"
 #include "exam_mode_configuration.h"
 #include "global_preferences.h"
 #include "shared/global_context.h"
@@ -72,6 +73,18 @@ constexpr const ToolboxMessageTree * const unitDistanceChildrenForMetricToolbox[
 constexpr ToolboxMessageTree unitDistanceFork[] = {
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceChildrenForMetricToolbox),
   ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceChildrenForImperialToolbox)
+};
+
+constexpr ToolboxMessageTree unitAngleToolbox[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::UnitAngleDegreeSymbol, I18n::Message::UnitAngleDegree),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitAngleDMSShortcut, I18n::Message::UnitAngleDMS, false, I18n::Message::UnitAngleDMSShortcut),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitAngleRadianSymbol, I18n::Message::UnitAngleRadian),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitAngleGradianSymbol, I18n::Message::UnitAngleGradian),
+};
+
+constexpr ToolboxMessageTree distanceAndAngleChildren[] = {
+  ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceFork, true),
+  ToolboxMessageTree::Node(I18n::Message::UnitAngleMenu, unitAngleToolbox)
 };
 
 constexpr ToolboxMessageTree unitTimeChildren[] = {
@@ -321,7 +334,7 @@ constexpr ToolboxMessageTree ConstantsChildren[] = {
 
 constexpr ToolboxMessageTree unitChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitConversionCommandWithArg, I18n::Message::UnitConversion, false, I18n::Message::UnitConversionCommand),
-  ToolboxMessageTree::Node(I18n::Message::UnitDistanceMenu, unitDistanceFork, true),
+  ToolboxMessageTree::Node(I18n::Message::UnitDistanceAndAngleMenu, distanceAndAngleChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitTimeAndFrequencyMenu, timeAndFrequencyChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitVolumeAndAreaMenu, volumeAndSurfaceChildren),
   ToolboxMessageTree::Node(I18n::Message::UnitMassMenu, unitMassFork, true),
@@ -663,8 +676,7 @@ bool MathToolbox::selectLeaf(int selectedRow) {
   // Translate the message
   const char * text = I18n::translate(messageTree->insertedText());
   char textToInsert[k_maxMessageSize]; // Has to be in the same scope as handleEventWithText
-  if (messageTree->label() == messageTree->insertedText()) {
-  // Remove the arguments if we kept one message for both inserted and displayed message
+  if (messageTree->stripInsertedText()) {
     int maxTextToInsertLength = strlen(text) + 1;
     assert(maxTextToInsertLength <= k_maxMessageSize);
     Shared::ToolboxHelpers::TextToInsertForCommandText(text, -1, textToInsert, maxTextToInsertLength, true);

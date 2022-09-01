@@ -1,5 +1,6 @@
 #include <poincare/unit.h>
 #include <poincare/addition.h>
+#include <poincare/division.h>
 #include <poincare/float.h>
 #include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
@@ -492,17 +493,26 @@ const UnitNode::Representative * UnitNode::AngleRepresentative::standardRepresen
   return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_arcSecondRepresentativeIndex, 3, prefix);
 }
 
-int UnitNode::AngleRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {
+Expression UnitNode::AngleRepresentative::convertInto(Expression value, const UnitNode::Representative * other , const ExpressionNode::ReductionContext& reductionContext) const {
+  assert(dimensionVector() == other->dimensionVector());
+  Expression unit = Unit::Builder(other, Prefix::EmptyPrefix());
+  Expression inRadians = Multiplication::Builder(value, ratioExpressionReduced(reductionContext)).shallowReduce(reductionContext);
+  Expression inOther = Division::Builder(inRadians, other->ratioExpressionReduced(reductionContext)).shallowReduce(reductionContext).shallowBeautify(reductionContext);
+  return Multiplication::Builder(inOther, unit);
+}
+
+int UnitNode::AngleRepresentative::setAdditionalExpressionsWithExactValue(Expression exactValue, double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
   int numberOfResults = 0;
-  // Convert in radians
-  value = value * ratio();
+  if (this != representativesOfSameDimension() + Unit::k_radianRepresentativeIndex) {
+    // Convert to radians
+    const Representative * radian = representativesOfSameDimension() + Unit::k_radianRepresentativeIndex;
+    dest[numberOfResults++] = convertInto(exactValue, radian, reductionContext);
+  }
   if (this == representativesOfSameDimension() + Unit::k_radianRepresentativeIndex || this == representativesOfSameDimension() + Unit::k_gradianRepresentativeIndex) {
     // Convert to degrees
     const Representative * degree = representativesOfSameDimension() + Unit::k_degreeRepresentativeIndex;
-    double adjustedValue = value / degree->ratio();
-    dest[numberOfResults++] = Multiplication::Builder(Float<double>::Builder(adjustedValue), Unit::Builder(degree, Prefix::EmptyPrefix()));
-    return numberOfResults;
+    dest[numberOfResults++] = convertInto(exactValue, degree, reductionContext);
   }
   // Degrees and its subunits
   const Unit splitUnits[] = {
@@ -510,7 +520,10 @@ int UnitNode::AngleRepresentative::setAdditionalExpressions(double value, Expres
     Unit::Builder(representativesOfSameDimension() + Unit::k_arcMinuteRepresentativeIndex, Prefix::EmptyPrefix()),
     Unit::Builder(representativesOfSameDimension() + Unit::k_degreeRepresentativeIndex, Prefix::EmptyPrefix()),
   };
-  dest[numberOfResults++] = Unit::BuildSplit(value, splitUnits, sizeof(splitUnits)/sizeof(Unit), reductionContext);
+  Expression split = Unit::BuildSplit(value*ratio(), splitUnits, sizeof(splitUnits)/sizeof(Unit), reductionContext);
+  if (!split.isUndefined()) {
+    dest[numberOfResults++] = split;
+  }
   return numberOfResults;
 }
 
@@ -844,13 +857,22 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit, Prefere
     || unit.hasExpression(isNonBase, nullptr);
 }
 
-int Unit::SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) {
+int Unit::SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext, Expression exactOutput) {
   if (units.isUninitialized()) {
     return 0;
   }
   const Representative * representative = units.type() == ExpressionNode::Type::Unit ? static_cast<Unit &>(units).node()->representative() : UnitNode::Representative::RepresentativeForDimension(UnitNode::Vector<int>::FromBaseUnits(units));
   if (!representative) {
     return 0;
+  }
+  if (representative->dimensionVector() == AngleRepresentative::Default().dimensionVector()) {
+    /* Angles are the only unit where we want to display the exact value. */
+    Expression exactValue = exactOutput.clone();
+    Expression unit;
+    ExpressionNode::ReductionContext childContext = reductionContext;
+    childContext.setUnitConversion(ExpressionNode::UnitConversion::None);
+    exactValue.reduceAndRemoveUnit(reductionContext, &unit);
+    return static_cast<const AngleRepresentative*>(representative)->setAdditionalExpressionsWithExactValue(exactValue, value, dest, availableLength, reductionContext);
   }
   return representative->setAdditionalExpressions(value, dest, availableLength, reductionContext);
 }

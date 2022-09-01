@@ -45,7 +45,6 @@ bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expres
           ExpressionNode::Type::ConstantPhysics,
           ExpressionNode::Type::Randint,
           ExpressionNode::Type::Random,
-          ExpressionNode::Type::Unit,
           ExpressionNode::Type::Round,
           ExpressionNode::Type::FracPart,
           ExpressionNode::Type::Integral,

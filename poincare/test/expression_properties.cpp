@@ -597,7 +597,7 @@ void assert_additional_results_compute_to(const char * expression, const char * 
     quiz_assert(length == 0);
     return;
   }
-  const int numberOfResults = Unit::SetAdditionalExpressions(units, value, additional, maxNumberOfResults, reductionContext);
+  const int numberOfResults = Unit::SetAdditionalExpressions(units, value, additional, maxNumberOfResults, reductionContext, Expression());
 
   quiz_assert(numberOfResults == length);
   for (int i = 0; i < length; i++) {

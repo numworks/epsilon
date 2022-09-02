@@ -45,7 +45,7 @@ size_t Tokenizer::popCustomIdentifier() {
   return popWhile([](CodePoint c) { return ShouldAddCodePointToIdentifier(c); });
 }
 
-size_t Tokenizer::popIdentifier() {
+size_t Tokenizer::popIdentifiersString() {
   return popWhile([](CodePoint c) { return ShouldAddCodePointToIdentifier(c) || c == '"'; });
 }
 
@@ -119,15 +119,17 @@ Token Tokenizer::popNumber() {
 }
 
 Token Tokenizer::popToken() {
-  if (m_identifierTokenizer.canStillPop()) {
+  if (m_numberOfStoredIdentifiers != 0) {
     // Popping an implicit multiplication between identifiers
-    return m_identifierTokenizer.popIdentifier();
+    m_numberOfStoredIdentifiers--;
+    // The last identifier of the list is the first of the string
+    return m_storedIdentifiersList[m_numberOfStoredIdentifiers];
   }
   // Skip whitespaces
   while (canPopCodePoint(' ')) {}
 
   /* Save for later use (since m_decoder.stringPosition() is altered by
-   * popNumber, popUnitAndConstant, popIdentifier). */
+   * popNumber and popIdentifiersString). */
   const char * start = m_decoder.stringPosition();
 
   /* If the next code point is the start of a number, we do not want to pop it
@@ -166,11 +168,11 @@ Token Tokenizer::popToken() {
   {
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder.previousCodePoint();
-    assert(!m_identifierTokenizer.canStillPop()); // assert we're done with previous tokenization
-    const char * startOfIdentifier = m_decoder.stringPosition();
-    int identifierLength = popIdentifier();
-    m_identifierTokenizer.startTokenization(startOfIdentifier, identifierLength);
-    return m_identifierTokenizer.popIdentifier();
+    assert(m_numberOfStoredIdentifiers == 0); // assert we're done with previous tokenization
+    fillIdentifiersList();
+    assert(m_numberOfStoredIdentifiers > 0);
+    // The identifiers list is filled, go back to beginning of popToken
+    return popToken();
   }
   if ('(' <= c && c <= '/') {
     /* Those code points form a contiguous range in the utf-8 code points set,
@@ -256,6 +258,119 @@ Token Tokenizer::popToken() {
   default:
     return Token(Token::Undefined);
   }
+}
+
+// ========== Identifiers ==========
+
+void Tokenizer::fillIdentifiersList() {
+  const char * identifiersStringStart = currentPosition();
+  size_t identifiersStringLength = popIdentifiersString();
+  assert(identifiersStringLength != 0);
+  const char * currentStringEnd = currentPosition();
+  while (identifiersStringStart < currentStringEnd) {
+    if (m_numberOfStoredIdentifiers >= k_maxNumberOfIdentifiersInList) {
+      /* If there is not enough space in the list, just empty it.
+       * All the tokens that have already been parsed are lost and will be
+       * reparsed later. This is not optimal, but we can't remember an infinite
+       * list of token. */
+      m_numberOfStoredIdentifiers = 0;
+    }
+    Token rightMostToken = popRightMostIdentifier(identifiersStringStart, &currentStringEnd);
+    m_storedIdentifiersList[m_numberOfStoredIdentifiers] = rightMostToken;
+    m_numberOfStoredIdentifiers++;
+  }
+  /* Since the m_storedIdentifiersList has limited size, fillIdentifiersList
+   * will sometimes not parse the whole identifiers string.
+   * If it's the case, rewind decoder to the end of the right-most parsed token
+   * */
+  Token rightMostParsedToken =  m_storedIdentifiersList[0];
+  goToPosition(rightMostParsedToken.text() + rightMostParsedToken.length());
+}
+
+Token Tokenizer::popRightMostIdentifier(const char * stringStart, const char * * stringEnd) {
+  UTF8Decoder decoder(stringStart);
+  Token::Type tokenType = Token::Undefined;
+  /* Find the right-most identifier by trying to parse 'abcd', then 'bcd',
+   * then 'cd' and then 'd' until you find a defined identifier. */
+  const char * nextTokenStart = stringStart;
+  while (tokenType == Token::Undefined && nextTokenStart < *stringEnd) {
+    stringStart = nextTokenStart;
+    tokenType = stringTokenType(stringStart, *stringEnd - stringStart);
+    decoder.nextCodePoint();
+    nextTokenStart = decoder.stringPosition();
+  }
+  int tokenLength = *stringEnd - stringStart;
+  *stringEnd = stringStart;
+  Token result(tokenType);
+  result.setString(stringStart, tokenLength);
+  return result;
+}
+
+static bool stringIsACodePointFollowedByNumbers(const char * string, size_t length) {
+  UTF8Decoder tempDecoder(string);
+  tempDecoder.nextCodePoint();
+  while (tempDecoder.stringPosition() < string + length) {
+    CodePoint c = tempDecoder.nextCodePoint();
+    if (!c.isDecimalDigit()) {
+      return false;
+    }
+  }
+  return true;
+}
+
+Token::Type Tokenizer::stringTokenType(const char * string, size_t length) const {
+  if (ParsingHelper::IsSpecialIdentifierName(string, length)) {
+    return Token::SpecialIdentifier;
+  }
+  if (Constant::IsConstant(string, length)) {
+    return Token::Constant;
+  }
+  Token::Type logicalOperatorType;
+  if (ParsingHelper::IsLogicalOperator(string, length, &logicalOperatorType)) {
+    return logicalOperatorType;
+  }
+  if (string[0] == '_') {
+    if (Unit::CanParse(string, length, nullptr, nullptr)) {
+      return Token::Unit;
+    }
+    // Only constants and units can be prefixed with a '_'
+    return Token::Undefined;
+  }
+  if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(string, length, ListMinimum::s_functionHelper.aliasesList().mainAlias()) == 0) {
+    /* Special case for "min".
+     * min() = minimum(), min = minute.
+     * We handle this now so that min is never understood as a CustomIdentifier
+     * (3->min is not allowed, just like 3->cos) */
+    return *(string + length) == '(' ? Token::ReservedFunction : Token::Unit;
+  }
+  if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
+    return Token::ReservedFunction;
+  }
+  /* When parsing for unit conversion, the identifier "m" should always
+   * be understood as the unit and not the variable. */
+  if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::UnitConversion && Unit::CanParse(string, length, nullptr, nullptr)) {
+    return Token::Unit;
+  }
+  bool hasUnitOnlyCodePoint = UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + length) || UTF8Helper::HasCodePoint(string, '\'', string + length) || UTF8Helper::HasCodePoint(string, '"', string + length);
+  if (!hasUnitOnlyCodePoint // CustomIdentifiers can't contain °, ' or "
+      && (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment
+        || m_parsingContext->context() == nullptr
+        || m_parsingContext->context()->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None)) {
+    return Token::CustomIdentifier;
+  }
+  /* If not unit conversion and "m" has been or is being assigned by the user
+   * it's understood as a variable before being understood as a unit.
+   * That's why the following condition is checked after the previous one. */
+  if (m_parsingContext->parsingMethod() != ParsingContext::ParsingMethod::UnitConversion
+      && m_parsingContext->context()
+      && m_parsingContext->context()->canRemoveUnderscoreToUnits()
+      && Unit::CanParse(string, length, nullptr, nullptr)) {
+    return Token::Unit;
+  }
+  if (!hasUnitOnlyCodePoint && stringIsACodePointFollowedByNumbers(string, length)) {
+    return Token::CustomIdentifier;
+  }
+  return Token::Undefined;
 }
 
 }

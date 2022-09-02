@@ -958,7 +958,30 @@ QUIZ_CASE(data_statistics_multiple_series) {
   setStoreData(&store, {}, {}, 0, 0);
   setStoreData(&store, {}, {}, 0, 1);
   setStoreData(&store, {}, {}, 0, 2);
+}
 
+QUIZ_CASE(data_statistics_histograms) {
+  GlobalContext context;
+  UserPreferences userPreferences;
+  Store store(&context, &userPreferences);
+
+  constexpr int seriesIndex1 = 0;
+  constexpr int listLength1 = 8;
+  double v1[listLength1] = {11.97, 11.98, 12.01, 12.05, 12.08, 12.09, 12.11, 12.12};
+  double n1[listLength1] = { 1.0 ,  1.0 ,  2.0 ,  3.0 ,  1.0 ,  2.0  , 1.0 , 1.0  };
+  double barWidth1 = 0.01;
+  double firstDrawnBarAbscissa1 = 11.97;
+  constexpr int numberOfBars1 = 16;
+  double barHeight1[numberOfBars1] = {1.0, 1.0, 0.0, 0.0, 2.0, 0.0, 0.0, 0.0, 3.0, 0.0, 0.0, 1.0, 2.0, 0.0, 1.0, 1.0};
+
+  setStoreData(&store, v1, n1, listLength1, seriesIndex1);
+  userPreferences.setBarWidth(barWidth1);
+  userPreferences.setFirstDrawnBarAbscissa(firstDrawnBarAbscissa1);
+
+  int numberOfBars = store.numberOfBars(seriesIndex1);
+  for (int i = 0; i < numberOfBars; i++) {
+    quiz_assert(store.heightOfBarAtIndex(seriesIndex1, i) == barHeight1[i]);
+  }
 }
 
 }

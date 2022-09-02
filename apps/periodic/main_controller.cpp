@@ -99,17 +99,19 @@ bool MainController::textFieldShouldFinishEditing(Escher::AbstractTextField * te
 }
 
 bool MainController::textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) {
-  if (textField->cursorAtEndOfText()) {
-    if (event == Ion::Events::Up || event == Ion::Events::Down) {
-      ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
-      m_view.bannerView()->textField()->setSuggestion(dataSource->cycleSuggestion(event == Ion::Events::Down));
-      return true;
-    }
-    if (event == Ion::Events::Right) {
-      /* Commit to suggested text on Right press. */
-      m_view.bannerView()->textField()->commitSuggestion();
-      m_view.elementsView()->reload();
-      return true;
+  if (textField->isEditing()) {
+    if (textField->cursorAtEndOfText()) {
+      if (event == Ion::Events::Up || event == Ion::Events::Down) {
+        ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
+        m_view.bannerView()->textField()->setSuggestion(dataSource->cycleSuggestion(event == Ion::Events::Down));
+        return true;
+      }
+      if (event == Ion::Events::Right) {
+        /* Commit to suggested text on Right press. */
+        m_view.bannerView()->textField()->commitSuggestion();
+        m_view.elementsView()->reload();
+        return true;
+      }
     }
   } else if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     /* OK should not start the edition */
@@ -154,6 +156,7 @@ void MainController::endElementSearch(AtomicNumber z) {
   ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
   dataSource->setSelectedElement(z);
   dataSource->setTextFilter(nullptr);
+  m_view.bannerView()->textField()->setSuggestion(nullptr);
 }
 
 }

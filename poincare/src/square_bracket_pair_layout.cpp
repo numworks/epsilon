@@ -17,8 +17,8 @@ void SquareBracketPairLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {
 }
 
 void SquareBracketPairLayoutNode::RenderWithParameters(bool left, KDCoordinate childHeight, KDContext * ctx, KDPoint p, KDColor expressionColor, KDColor backgroundColor, KDCoordinate verticalMargin, KDCoordinate bracketWidth, bool renderTopBar, bool renderBottomBar, bool renderDoubleBar) {
-  KDCoordinate horizontalBarX = left ? p.x() + k_externalWidthMargin : p.x();
-  KDCoordinate horizontalBarLength = bracketWidth - k_externalWidthMargin;
+  KDCoordinate horizontalBarX = left ? p.x() + k_externalWidthMargin : p.x() + k_lineThickness;
+  KDCoordinate horizontalBarLength = bracketWidth - k_externalWidthMargin - k_lineThickness;
   KDCoordinate verticalBarX = left ? horizontalBarX : p.x() + bracketWidth - k_lineThickness - k_externalWidthMargin;
   KDCoordinate verticalBarY = p.y();
   KDCoordinate verticalBarLength = HeightGivenChildHeight(childHeight, verticalMargin);

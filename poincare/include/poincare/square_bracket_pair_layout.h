@@ -20,7 +20,7 @@ public:
   void didCollapseSiblings(LayoutCursor * cursor) override;
 
 protected:
-  constexpr static KDCoordinate k_internalWidthMargin = 4;
+  constexpr static KDCoordinate k_internalWidthMargin = 5;
   constexpr static KDCoordinate k_externalWidthMargin = 2;
   constexpr static KDCoordinate k_bracketWidth = k_internalWidthMargin + k_lineThickness + k_externalWidthMargin;
   constexpr static KDCoordinate k_verticalMargin = 1;

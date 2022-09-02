@@ -18,9 +18,12 @@ void Sort(Swap swap, Compare compare, void * context, int numberOfElements);
 int ExtremumIndex(Compare compare, void * context, int numberOfElements, bool minimum);
 bool FloatIsGreater(float xI, float xJ, bool nanIsGreatest);
 
-  /* This is a default *Compare function. Context first three elements must be:
-   * {ListNode *, ApproximationContext *, bool * nanIsGreatest} */
+/* This is a default *Compare function. Context first three elements must be:
+ * {ListNode *, ApproximationContext *, bool * nanIsGreatest} */
 bool ListEvaluationComparisonAtIndex(int i, int j, void * context, int numberOfElements);
+// Return true if observed and expected are approximately equal
+template <typename T>
+bool Relatively_equal(T observed, T expected, T relativeThreshold);
 }
 
 }

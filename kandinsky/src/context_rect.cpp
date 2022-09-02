@@ -1,6 +1,10 @@
 #include <kandinsky/context.h>
 #include <assert.h>
 
+KDRect KDContext::relativeRect(KDRect rect) {
+  return rect.intersectedWith(m_clippingRect).translatedBy(m_origin.opposite());
+}
+
 KDRect KDContext::absoluteFillRect(KDRect rect) {
   return rect.translatedBy(m_origin).intersectedWith(m_clippingRect);
 }

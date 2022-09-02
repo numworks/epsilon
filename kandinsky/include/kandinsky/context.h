@@ -52,6 +52,7 @@ protected:
   virtual void pushRect(KDRect, const KDColor * pixels) = 0;
   virtual void pushRectUniform(KDRect rect, KDColor color) = 0;
   virtual void pullRect(KDRect rect, KDColor * pixels) = 0;
+  KDRect relativeRect(KDRect rect);
 
 private:
   KDPoint alignAndDrawSingleLineString(const char * text, KDPoint p, KDSize frame,

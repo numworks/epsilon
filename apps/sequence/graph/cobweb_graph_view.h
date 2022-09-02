@@ -5,6 +5,7 @@
 #include "../../shared/function_graph_view.h"
 #include "../../shared/sequence_store.h"
 #include "apps/shared/sequence.h"
+#include <kandinsky/pixel_cache.h>
 
 namespace Sequence {
 
@@ -27,9 +28,9 @@ private:
   constexpr static uint8_t k_curveFadeRatio = 100;
   // Cache to store parts of the drawing to be removed at the next step
   mutable float m_x, m_y;
-  mutable KDColor m_dotBuffer[k_diameter * k_diameter];
-  mutable KDColor m_lineBuffer[Ion::Display::Width * k_thickness];
-  mutable KDColor m_textBuffer[KDFont::GlyphHeight(k_font) * KDFont::GlyphWidth(k_font) * k_textMaxLength];
+  mutable KDPixelCache<k_diameter * k_diameter> m_dotCache;
+  mutable KDPixelCache<Ion::Display::Width * k_thickness> m_lineCache;
+  mutable KDPixelCache<KDFont::GlyphHeight(k_font) * KDFont::GlyphWidth(k_font) * k_textMaxLength> m_textCache;
 };
 
 class CobwebAxesPolicy : public Shared::PlotPolicy::TwoLabeledAxes {

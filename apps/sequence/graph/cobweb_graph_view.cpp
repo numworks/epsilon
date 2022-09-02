@@ -7,6 +7,7 @@
 #include "ion/storage/record.h"
 #include "ion/unicode/code_point.h"
 #include "kandinsky/color.h"
+#include "kandinsky/measuring_context.h"
 #include "poincare/coordinate_2D.h"
 #include "poincare/expression.h"
 #include "poincare/function.h"
@@ -27,15 +28,9 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
   if (update) {
     /* If previous step is already drawn, we can remove the dot, the gray line
      * and the label and continue the broken line instead of redrawing. */
-    KDCoordinate px = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, m_x));
-    KDCoordinate py = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Vertical, m_y));
-    KDCoordinate py0 = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Vertical, 0.f));
-    KDRect dotRect(px - (k_diameter-1)/2, py - k_diameter/2, k_diameter, k_diameter);
-    ctx->fillRectWithPixels(dotRect, m_dotBuffer, m_dotBuffer);
-    KDRect lineRect(px, std::min(py, py0), k_thickness, abs(py - py0));
-    ctx->fillRectWithPixels(lineRect, m_lineBuffer, m_lineBuffer);
-    KDRect textRect(px + plotView->k_labelMargin, py0 - plotView->k_labelMargin - KDFont::GlyphHeight(k_font), KDFont::GlyphWidth(k_font) * k_textMaxLength, KDFont::GlyphHeight(k_font));
-    ctx->fillRectWithPixels(textRect, m_textBuffer, m_textBuffer);
+    m_dotCache.restore(ctx);
+    m_lineCache.restore(ctx);
+    m_textCache.restore(ctx);
   }
   constexpr int bufferSize = k_textMaxLength + 1;
   char name[bufferSize] = {};
@@ -91,21 +86,21 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
   m_cachedStep = m_step;
   m_x = x;
   m_y = y;
-  KDCoordinate px = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, x));
-  KDCoordinate py = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Vertical, y));
-  KDCoordinate py0 = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Vertical, 0.f));
+  KDMeasuringContext measuringContext(*ctx);
   if (m_step) {
-    KDRect lineRect(px, std::min(py, py0), k_thickness, abs(py - py0));
-    ctx->getPixels(lineRect, m_lineBuffer);
+    plotView->drawStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark, k_thickness, k_dashSize);
+    m_lineCache.save(ctx, measuringContext.writtenRect());
     plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark, k_thickness, k_dashSize);
   }
-  KDRect dotRect(px - (k_diameter-1)/2, py - k_diameter/2, k_diameter, k_diameter);
-  ctx->getPixels(dotRect, m_dotBuffer);
+  measuringContext.reset();
+  plotView->drawDot(&measuringContext, rect, Dots::Size::Medium, {x, y}, Escher::Palette::YellowDark);
+  m_dotCache.save(ctx, measuringContext.writtenRect());
   plotView->drawDot(ctx, rect, Dots::Size::Medium, {x, y}, Escher::Palette::YellowDark);
   Poincare::Print::CustomPrintf(name + nameLength, bufferSize-nameLength, "(%i)", m_step);
   // Draw label above x-axis
-  KDRect textRect(px + plotView->k_labelMargin, py0 - plotView->k_labelMargin - KDFont::GlyphHeight(k_font), KDFont::GlyphWidth(k_font) * k_textMaxLength, KDFont::GlyphHeight(k_font));
-  ctx->getPixels(textRect, m_textBuffer);
+  measuringContext.reset();
+  plotView->drawLabel(&measuringContext, rect, name, {x, 0.f}, AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::After, Escher::Palette::GrayDark);
+  m_textCache.save(ctx, measuringContext.writtenRect());
   plotView->drawLabel(ctx, rect, name, {x, 0.f}, AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::After, Escher::Palette::GrayDark);
 }
 

@@ -144,6 +144,18 @@ bool ListEvaluationComparisonAtIndex(int i, int j, void * context, int numberOfE
   return FloatIsGreater(xI, xJ, *nanIsGreatest);
 }
 
+template <typename T>
+bool Relatively_equal(T observed, T expected, T relativeThreshold) {
+  assert(std::isfinite(observed) && std::isfinite(expected));
+  if (expected == 0.0) {
+    return observed == 0.0;
+  }
+  return std::fabs((observed - expected) / expected) <= relativeThreshold;
+}
+
+template bool Relatively_equal<float>(float, float, float);
+template bool Relatively_equal<double>(double, double, double);
+
 }
 
 }

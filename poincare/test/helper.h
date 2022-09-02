@@ -77,7 +77,7 @@ bool inline roughly_equal(T observed, T expected, T threshold = Poincare::Float<
     }
     return max <= nullExpectedThreshold;
   }
-  return Poincare::Helpers::Relatively_equal<T>(observed, expected, threshold);
+  return Poincare::Helpers::RelativelyEqual<T>(observed, expected, threshold);
 }
 
 template <typename T>

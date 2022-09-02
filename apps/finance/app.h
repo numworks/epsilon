@@ -42,6 +42,9 @@ public:
   TELEMETRY_ID("Finance");
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
+  static InterestData * GetInterestData() { return app()->snapshot()->data()->interestData(); }
+  static void SetModel(bool selectedModel) { return app()->snapshot()->data()->setModel(selectedModel); }
+
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
 
   void didBecomeActive(Escher::Window * window) override;

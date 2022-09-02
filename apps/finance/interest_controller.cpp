@@ -21,9 +21,9 @@ InterestController::InterestController(Escher::StackViewController * parent, Esc
 }
 
 const char * InterestController::title() {
-  uint8_t unknownParam = interestData()->getUnknown();
-  const char * label = I18n::translate(interestData()->labelForParameter(unknownParam));
-  int length = Poincare::Print::safeCustomPrintf(m_titleBuffer, k_titleBufferSize, I18n::translate(I18n::Message::FinanceSolving), label, I18n::translate(interestData()->sublabelForParameter(unknownParam)));
+  uint8_t unknownParam = App::GetInterestData()->getUnknown();
+  const char * label = I18n::translate(App::GetInterestData()->labelForParameter(unknownParam));
+  int length = Poincare::Print::safeCustomPrintf(m_titleBuffer, k_titleBufferSize, I18n::translate(I18n::Message::FinanceSolving), label, I18n::translate(App::GetInterestData()->sublabelForParameter(unknownParam)));
   if (length >= k_titleBufferSize) {
     // Title did not fit, use a reduced pattern
     Poincare::Print::customPrintf(m_titleBuffer, k_titleBufferSize, I18n::translate(I18n::Message::FinanceSolvingReduced), label);
@@ -33,10 +33,10 @@ const char * InterestController::title() {
 
 void InterestController::didBecomeFirstResponder() {
   // Init from data
-  m_dropdownDataSource.setMessages(interestData()->dropdownMessageAtIndex(0),
-                                   interestData()->dropdownMessageAtIndex(1));
+  m_dropdownDataSource.setMessages(App::GetInterestData()->dropdownMessageAtIndex(0),
+                                   App::GetInterestData()->dropdownMessageAtIndex(1));
   selectCellAtLocation(0, 0);
-  m_dropdownCell.dropdown()->selectRow(interestData()->m_booleanParam ? 0 : 1);
+  m_dropdownCell.dropdown()->selectRow(App::GetInterestData()->m_booleanParam ? 0 : 1);
   m_dropdownCell.dropdown()->init();
   m_dropdownCell.reload();
   resetMemoization();
@@ -55,13 +55,13 @@ void InterestController::willDisplayCellForIndex(Escher::HighlightCell * cell, i
   uint8_t param = interestParamaterAtIndex(index);
   if (type == k_dropdownCellType) {
     assert(&m_dropdownCell == cell);
-    m_dropdownCell.setMessage(interestData()->labelForParameter(param));
-    m_dropdownCell.setSubLabelMessage(interestData()->sublabelForParameter(param));
+    m_dropdownCell.setMessage(App::GetInterestData()->labelForParameter(param));
+    m_dropdownCell.setSubLabelMessage(App::GetInterestData()->sublabelForParameter(param));
     return;
   }
   Escher::MessageTableCellWithEditableTextWithMessage * myCell = static_cast<Escher::MessageTableCellWithEditableTextWithMessage *>(cell);
-  myCell->setMessage(interestData()->labelForParameter(param));
-  myCell->setSubLabelMessage(interestData()->sublabelForParameter(param));
+  myCell->setMessage(App::GetInterestData()->labelForParameter(param));
+  myCell->setSubLabelMessage(App::GetInterestData()->sublabelForParameter(param));
   return Shared::FloatParameterController<double>::willDisplayCellForIndex(cell, index);
 }
 
@@ -84,17 +84,21 @@ KDCoordinate InterestController::nonMemoizedRowHeight(int j) {
   return Shared::FloatParameterController<double>::nonMemoizedRowHeight(j);
 }
 
+int InterestController::numberOfRows() const {
+  return App::GetInterestData()->numberOfParameters();
+}
+
 void InterestController::onDropdownSelected(int selectedRow) {
-  interestData()->m_booleanParam = (selectedRow == 0);
+  App::GetInterestData()->m_booleanParam = (selectedRow == 0);
 }
 
 uint8_t InterestController::interestParamaterAtIndex(int index) const {
-  uint8_t unknownParam = interestData()->getUnknown();
-  assert(unknownParam < interestData()->numberOfUnknowns());
+  uint8_t unknownParam = App::GetInterestData()->getUnknown();
+  assert(unknownParam < App::GetInterestData()->numberOfUnknowns());
   if (unknownParam <= index) {
     index += 1;
   }
-  assert(index < interestData()->numberOfParameters());
+  assert(index < App::GetInterestData()->numberOfParameters());
   return index;
 }
 
@@ -116,12 +120,20 @@ Escher::HighlightCell * InterestController::reusableParameterCell(int i, int typ
   }
 }
 
+double InterestController::parameterAtIndex(int index) {
+  return App::GetInterestData()->getValue(interestParamaterAtIndex(index));
+}
+
 bool InterestController::setParameterAtIndex(int parameterIndex, double f) {
   uint8_t param = interestParamaterAtIndex(parameterIndex);
-  if (!interestData()->checkValue(param, f)) {
+  if (!App::GetInterestData()->checkValue(param, f)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
-  interestData()->setValue(param, f);
+  App::GetInterestData()->setValue(param, f);
   return true;
+}
+
+int InterestController::indexOfDropdown() const {
+  return App::GetInterestData()->numberOfDoubleValues() - 1;
 }

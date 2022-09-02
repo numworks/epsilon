@@ -1,4 +1,5 @@
 #include "menu_controller.h"
+#include "app.h"
 #include <apps/i18n.h>
 #include <escher/container.h>
 #include <assert.h>
@@ -25,7 +26,7 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
     assert(simpleInterestRowSelected || selectedRow() == k_indexOfCompoundInterest);
 
     // Set the interest data model
-    setModel(simpleInterestRowSelected);
+    App::SetModel(simpleInterestRowSelected);
     m_interestMenuController->selectRow(0);
     stackOpenPage(m_interestMenuController);
     return true;

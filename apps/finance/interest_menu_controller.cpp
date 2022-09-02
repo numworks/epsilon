@@ -2,6 +2,7 @@
 #include <apps/i18n.h>
 #include <escher/container.h>
 #include <assert.h>
+#include "app.h"
 
 using namespace Finance;
 
@@ -17,23 +18,31 @@ void InterestMenuController::didBecomeFirstResponder() {
   resetMemoization(true);
   int nRows = numberOfRows();
   for (int i = 0; i < nRows; i++) {
-    cellAtIndex(i)->setMessage(interestData()->labelForParameter(paramaterAtIndex(i)));
-    cellAtIndex(i)->setSubtitle(interestData()->sublabelForParameter(paramaterAtIndex(i)));
+    cellAtIndex(i)->setMessage(App::GetInterestData()->labelForParameter(paramaterAtIndex(i)));
+    cellAtIndex(i)->setSubtitle(App::GetInterestData()->sublabelForParameter(paramaterAtIndex(i)));
   }
   m_contentView.reload();
 }
 
 bool InterestMenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    interestData()->setUnknown(paramaterAtIndex(selectedRow()));
+    App::GetInterestData()->setUnknown(paramaterAtIndex(selectedRow()));
     stackOpenPage(m_interestController);
     return true;
   }
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
+const char * InterestMenuController::title() {
+  return I18n::translate(App::GetInterestData()->menuTitle());
+}
+
+int InterestMenuController::numberOfRows() const {
+  return App::GetInterestData()->numberOfUnknowns();
+}
+
 uint8_t InterestMenuController::paramaterAtIndex(int index) const {
   // Parameters are displayed in the same order as the enum order.
-  assert(index >= 0 && index < interestData()->numberOfUnknowns());
+  assert(index >= 0 && index < App::GetInterestData()->numberOfUnknowns());
   return index;
 }

@@ -1,4 +1,5 @@
 #include "result_controller.h"
+#include "app.h"
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <escher/clipboard.h>
@@ -17,9 +18,9 @@ ResultController::ResultController(Escher::StackViewController * parentResponder
 void ResultController::didBecomeFirstResponder() {
   /* Build the result cell here because it only needs to be updated once this
    * controller become first responder. */
-  cellAtIndex(0)->setMessage(interestData()->labelForParameter(interestData()->getUnknown()));
-  cellAtIndex(0)->setSubLabelMessage(interestData()->sublabelForParameter(interestData()->getUnknown()));
-  double value = interestData()->computeUnknownValue();
+  cellAtIndex(0)->setMessage(App::GetInterestData()->labelForParameter(App::GetInterestData()->getUnknown()));
+  cellAtIndex(0)->setSubLabelMessage(App::GetInterestData()->sublabelForParameter(App::GetInterestData()->getUnknown()));
+  double value = App::GetInterestData()->computeUnknownValue();
   constexpr int maxUserPrecision = Poincare::PrintFloat::k_numberOfStoredSignificantDigits;
   constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(maxUserPrecision);
   char buffer[bufferSize];
@@ -49,8 +50,8 @@ const char * ResultController::title() {
   const char * parameterTemplate = "%s=%*.*ed...";
   const char * lastKnownParameterTemplate = "%s=%*.*ed";
   // The boolean parameter isn't displayed
-  uint8_t doubleParameters = interestData()->numberOfDoubleValues();
-  uint8_t unknownParam = interestData()->getUnknown();
+  uint8_t doubleParameters = App::GetInterestData()->numberOfDoubleValues();
+  uint8_t unknownParam = App::GetInterestData()->getUnknown();
   bool unknownParamIsLast = (unknownParam == doubleParameters - 1);
   size_t length = 0;
   for (uint8_t param = 0; param < doubleParameters; param++) {
@@ -64,8 +65,8 @@ const char * ResultController::title() {
     int parameterLength = Poincare::Print::safeCustomPrintf(
         m_titleBuffer + length, k_titleBufferSize - length,
         (lastKnownParameter ? lastKnownParameterTemplate : parameterTemplate),
-        I18n::translate(interestData()->labelForParameter(param)),
-        interestData()->getValue(param), printFloatMode, precision);
+        I18n::translate(App::GetInterestData()->labelForParameter(param)),
+        App::GetInterestData()->getValue(param), printFloatMode, precision);
     if (length + parameterLength >= k_titleBufferSize) {
       // Text did not fit, insert "..." and overwite last " " if there is one
       if (length > strlen(" ")) {

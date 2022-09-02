@@ -6,14 +6,13 @@
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 #include <ion/events.h>
-#include "data_controller.h"
 #include "interest_menu_controller.h"
 
 namespace Finance {
 
 constexpr int k_numberOfFinanceCells = 2;
 
-class MenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells, Escher::RegularListViewDataSource>, public DataController {
+class MenuController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithChevronAndMessage, k_numberOfFinanceCells, Escher::RegularListViewDataSource> {
 public:
   MenuController(Escher::StackViewController * parentResponder,
                     InterestMenuController * interestMenuController);

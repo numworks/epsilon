@@ -123,3 +123,79 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
     quiz_assert(cursor.isEquivalentTo(LayoutCursor(layout.childAtIndex(0), LayoutCursor::Position::Left)));
   }
 }
+
+QUIZ_CASE(poincare_layout_parentheses) {
+  /*
+   * |∅ -> "(" -> ")" -> ()|
+   */
+  {
+    Layout l = HorizontalLayout::Builder(EmptyLayout::Builder());
+    LayoutCursor c(l, LayoutCursor::Position::Right);
+    c.insertText("(");
+    c.insertText(")");
+    assert_layout_serialize_to(l, "()");
+    quiz_assert(c.isEquivalentTo(LayoutCursor(l, LayoutCursor::Position::Right)));
+  }
+
+  /*
+   * |∅ -> ")" -> "(" -> ()(|)
+   */
+  {
+    Layout l = HorizontalLayout::Builder(EmptyLayout::Builder());
+    LayoutCursor c(l, LayoutCursor::Position::Right);
+    c.insertText(")");
+    c.insertText("(");
+    assert_layout_serialize_to(l, "()()");
+    quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(1).childAtIndex(0), LayoutCursor::Position::Left)));
+  }
+
+  /*
+   * |∅ -> "(" -> "(" -> ((|))
+   */
+  {
+    Layout l = HorizontalLayout::Builder(EmptyLayout::Builder());
+    LayoutCursor c(l, LayoutCursor::Position::Right);
+    c.insertText("(");
+    c.insertText("(");
+    assert_layout_serialize_to(l, "(())");
+    quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0), LayoutCursor::Position::Left)));
+  }
+
+  /*
+   * 12|345 -> "(" -> 12(|345)
+   */
+  {
+    Layout l = HorizontalLayout::Builder({ CodePointLayout::Builder('1'), CodePointLayout::Builder('2'), CodePointLayout::Builder('3'), CodePointLayout::Builder('4'), CodePointLayout::Builder('5') });
+    LayoutCursor c(l.childAtIndex(1), LayoutCursor::Position::Right);
+    c.insertText("(");
+    assert_layout_serialize_to(l, "12(345)");
+    quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(2).childAtIndex(0), LayoutCursor::Position::Left)));
+  }
+
+  /*
+   * (123)| -> BACKSPACE -> (123|)
+   * */
+  {
+    Layout l = HorizontalLayout::Builder(ParenthesisLayout::Builder(HorizontalLayout::Builder({ CodePointLayout::Builder('1'), CodePointLayout::Builder('2'), CodePointLayout::Builder('3') })));
+    LayoutCursor c(l, LayoutCursor::Position::Right);
+    c.performBackspace();
+    assert_layout_serialize_to(l, "(123)");
+    quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(0).childAtIndex(0), LayoutCursor::Position::Right)));
+  }
+
+  /*
+   * (12(|34)5) -> BACKSPACE -> ((12|34)5)
+   */
+  {
+    Layout l = HorizontalLayout::Builder(ParenthesisLayout::Builder(HorizontalLayout::Builder({
+            CodePointLayout::Builder('1'),
+            CodePointLayout::Builder('2'),
+            ParenthesisLayout::Builder(HorizontalLayout::Builder(CodePointLayout::Builder('3'), CodePointLayout::Builder('4'))),
+            CodePointLayout::Builder('5'),
+            })));
+    LayoutCursor c(l.childAtIndex(0).childAtIndex(0).childAtIndex(2).childAtIndex(0), LayoutCursor::Position::Left);
+    c.performBackspace();
+    assert_layout_serialize_to(l, "((1234)5)");
+    quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(2), LayoutCursor::Position::Left)));
+  }
+}

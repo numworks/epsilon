@@ -8,13 +8,12 @@
 #include <escher/table_view_with_top_and_bottom_views.h>
 #include <ion/display.h>
 #include <ion/events.h>
-#include "data_controller.h"
 
 namespace Finance {
 
 constexpr int k_numberOfResultCells = 1;
 
-class ResultController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource>, public DataController {
+class ResultController : public Escher::SelectableCellListPage<Escher::MessageTableCellWithMessageWithBuffer, k_numberOfResultCells, Escher::MemoizedListViewDataSource> {
 public:
   ResultController(Escher::StackViewController * parentResponder);
 

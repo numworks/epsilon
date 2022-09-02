@@ -9,15 +9,13 @@
 #include <escher/stack_view_controller.h>
 #include <escher/text_field_delegate.h>
 #include <escher/view_controller.h>
-#include "data_controller.h"
 #include "result_controller.h"
 #include "two_messages_popup_data_source.h"
 
 namespace Finance {
 
 class InterestController : public Shared::FloatParameterController<double>,
-                           public Escher::DropdownCallback,
-                           public DataController {
+                           public Escher::DropdownCallback {
 public:
   InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, ResultController * resultController);
   const char * title() override;
@@ -27,7 +25,7 @@ public:
   int typeAtIndex(int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   // Confirm cell plus all parameters but the unknown one
-  int numberOfRows() const override { return interestData()->numberOfParameters(); }
+  int numberOfRows() const override;
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTwoTitles; }
 
   // Escher::DropdownCallback
@@ -39,12 +37,12 @@ private:
   // Shared::FloatParameterController<double>
   int reusableParameterCellCount(int type) override;
   Escher::HighlightCell * reusableParameterCell(int i, int type) override;
-  double parameterAtIndex(int index) override { return interestData()->getValue(interestParamaterAtIndex(index)); }
+  double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   void buttonAction() override { stackOpenPage(m_resultController); }
 
   // Dropdown cell is right after all double parameters but the unknown one
-  int indexOfDropdown() const { return interestData()->numberOfDoubleValues() - 1; }
+  int indexOfDropdown() const;
 
   constexpr static int k_inputCellType = 0;
   constexpr static int k_dropdownCellType = 2;

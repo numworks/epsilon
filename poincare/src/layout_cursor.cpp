@@ -22,11 +22,15 @@ KDCoordinate LayoutCursor::cursorHeightWithoutSelection(KDFont::Size font) {
 }
 
 KDCoordinate LayoutCursor::baselineWithoutSelection(KDFont::Size font) {
+  Layout equivalentLayout = m_layout.equivalentCursor(this).layout();
+  Layout brackets = bracketsEncompassingCursor(equivalentLayout);
+  if (!brackets.isUninitialized()) {
+    return brackets.baseline(font);
+  }
   if (layoutHeight(font) == 0) {
     return k_cursorHeight/2;
   }
   KDCoordinate layoutBaseline = m_layout.baseline(font);
-  Layout equivalentLayout = m_layout.equivalentCursor(this).layout();
   if (equivalentLayout.isUninitialized()) {
     return layoutBaseline;
   }
@@ -261,6 +265,10 @@ void LayoutCursor::clearLayout() {
 
 KDCoordinate LayoutCursor::layoutHeight(KDFont::Size font) {
   Layout equivalentLayout = m_layout.equivalentCursor(this).layout();
+  Layout brackets = bracketsEncompassingCursor(equivalentLayout);
+  if (!brackets.isUninitialized()) {
+    return brackets.layoutSize(font).height();
+  }
   if (!equivalentLayout.isUninitialized() && m_layout.hasChild(equivalentLayout)) {
     return equivalentLayout.layoutSize(font).height();
   }
@@ -461,6 +469,23 @@ void LayoutCursor::selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * 
     m_position = up ? Position::Left : Position::Right;
   }
   m_layout = *selection;
+}
+
+Layout LayoutCursor::bracketsEncompassingCursor(Layout equivalentLayout) const {
+  assert(!m_layout.isUninitialized());
+  Layout h;
+  if (m_layout.type() == LayoutNode::Type::HorizontalLayout) {
+    h = m_layout;
+  } else if (!equivalentLayout.isUninitialized() && equivalentLayout.type() == LayoutNode::Type::HorizontalLayout) {
+    h = equivalentLayout;
+  }
+  if (!h.isUninitialized()) {
+    Layout p = h.parent();
+    if (!p.isUninitialized() && (p.type() == LayoutNode::Type::ParenthesisLayout || p.type() == LayoutNode::Type::CurlyBraceLayout)) {
+      return p;
+    }
+  }
+  return Layout();
 }
 
 }

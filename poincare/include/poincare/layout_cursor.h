@@ -124,10 +124,12 @@ public:
 
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
+
   LayoutCursor(LayoutNode * node, Position position = Position::Right) :
     m_layout(node),
     m_position(position)
   {}
+
   LayoutNode * layoutNode() { return m_layout.node(); }
   void setLayoutNode(LayoutNode * n) {
     if (n->identifier() != m_layout.identifier()) {
@@ -144,6 +146,10 @@ private:
   bool privateShowHideEmptyLayoutIfNeeded(bool show);
   void selectLeftRight(bool right, bool * shouldRecomputeLayout, Layout * selection);
   void selectUpDown(bool up, bool * shouldRecomputeLayout, Layout * selection);
+  /* Return an uninitialized layout if the cursor is not inside a bracket pair,
+   * touching one of the brackets. */
+  Layout bracketsEncompassingCursor(Layout equivalentLayout) const;
+
   Layout m_layout;
   Position m_position;
 };

@@ -23,7 +23,7 @@ bool FloatIsGreater(float xI, float xJ, bool nanIsGreatest);
 bool ListEvaluationComparisonAtIndex(int i, int j, void * context, int numberOfElements);
 // Return true if observed and expected are approximately equal
 template <typename T>
-bool Relatively_equal(T observed, T expected, T relativeThreshold);
+bool RelativelyEqual(T observed, T expected, T relativeThreshold);
 }
 
 }

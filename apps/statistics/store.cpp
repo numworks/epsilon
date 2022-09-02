@@ -475,7 +475,7 @@ bool Store::updateSeries(int series, bool delayUpdate) {
 
 double Store::sumOfValuesBetween(int series, double x1, double x2, bool strictUpperBound) const {
   /* Use roughly_equal to handle impossible double representations such as
-   * 12.11 being 2.109999999999999 or 12.110000000000001. */
+   * 12.11 being 12.109999999999999 or 12.110000000000001. */
   if (!seriesIsValid(series)) {
     return NAN;
   }
@@ -484,10 +484,10 @@ double Store::sumOfValuesBetween(int series, double x1, double x2, bool strictUp
   for (int k = 0; k < numberOfPairs; k++) {
     int sortedIndex = valueIndexAtSortedIndex(series, k);
     double value = get(series, 0, sortedIndex);
-    if (value > x2 || (strictUpperBound && Poincare::Helpers::Relatively_equal<double>(value, x2, DBL_EPSILON))) {
+    if (value > x2 || (strictUpperBound && Poincare::Helpers::RelativelyEqual<double>(value, x2, DBL_EPSILON))) {
       break;
     }
-    if (value >= x1 || Poincare::Helpers::Relatively_equal<double>(value, x1, DBL_EPSILON)) {
+    if (value >= x1 || Poincare::Helpers::RelativelyEqual<double>(value, x1, DBL_EPSILON)) {
       result += get(series, 1, sortedIndex);
     }
   }

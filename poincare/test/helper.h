@@ -6,6 +6,7 @@
 #include <poincare/expression_node.h>
 #include <poincare/float.h>
 #include <poincare/print_float.h>
+#include <poincare/helpers.h>
 #include <quiz.h>
 
 const char * MaxIntegerString(); // (2^32)^k_maxNumberOfDigits-1
@@ -70,13 +71,13 @@ bool inline roughly_equal(T observed, T expected, T threshold = Poincare::Float<
   if (max == INFINITY) {
     return observed == expected;
   }
-  if (expected != 0.0) {
-    return std::fabs((observed - expected) / expected) <= threshold;
+  if (expected == 0.0) {
+    if (std::isnan(nullExpectedThreshold)) {
+      nullExpectedThreshold = threshold;
+    }
+    return max <= nullExpectedThreshold;
   }
-  if (std::isnan(nullExpectedThreshold)) {
-    nullExpectedThreshold = threshold;
-  }
-  return max <= nullExpectedThreshold;
+  return Poincare::Helpers::Relatively_equal<T>(observed, expected, threshold);
 }
 
 template <typename T>

@@ -618,6 +618,8 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_text_not_parsable("1 2");
   assert_parsed_expression_is("1x", Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)));
   assert_parsed_expression_is("1Ans", Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("Ans", 3)));
+  // Special identifiers can be implicitly multiplied from the left
+  assert_parsed_expression_is("Ans5", Multiplication::Builder(Symbol::Builder("Ans", 3), BasedInteger::Builder(5)));
   // Fallback from binary number
   assert_parsed_expression_is("0b2", Multiplication::Builder(BasedInteger::Builder(0),Symbol::Builder("b2", 2)));
   assert_parsed_expression_is("0xG", Multiplication::Builder(BasedInteger::Builder(0),Multiplication::Builder(Symbol::Builder("x", 1),Symbol::Builder("G", 1))));

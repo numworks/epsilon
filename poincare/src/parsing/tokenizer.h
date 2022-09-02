@@ -106,7 +106,7 @@ private:
   size_t popIdentifiersString();
   void fillIdentifiersList();
   Token popRightMostIdentifier(const char * stringStart, const char * * stringEnd);
-  Token::Type stringTokenType(const char * string, size_t length) const;
+  Token::Type stringTokenType(const char * string, size_t * length) const;
 
   UTF8Decoder m_decoder;
   ParsingContext * m_parsingContext;

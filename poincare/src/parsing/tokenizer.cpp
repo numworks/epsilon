@@ -293,13 +293,24 @@ Token Tokenizer::popRightMostIdentifier(const char * stringStart, const char * *
   /* Find the right-most identifier by trying to parse 'abcd', then 'bcd',
    * then 'cd' and then 'd' until you find a defined identifier. */
   const char * nextTokenStart = stringStart;
+  size_t tokenLength;
   while (tokenType == Token::Undefined && nextTokenStart < *stringEnd) {
     stringStart = nextTokenStart;
-    tokenType = stringTokenType(stringStart, *stringEnd - stringStart);
+    tokenLength = *stringEnd - stringStart;
+    tokenType = stringTokenType(stringStart, &tokenLength);
     decoder.nextCodePoint();
     nextTokenStart = decoder.stringPosition();
   }
-  int tokenLength = *stringEnd - stringStart;
+  if (stringStart + tokenLength != *stringEnd) {
+    /* The token doesn't go to the end of the string.
+     * This can happen when parsing "Ans5x" for example.
+     * It should be parsed as "Ans*5*x" and not "A*n*s5*x",
+     * so when parsing "Ans5x", we first pop "x" and then "Ans".
+     * To avoid missing the "5", we delete every token right of "Ans" and
+     * we later re-tokenize starting from "5x".
+     * */
+    m_numberOfStoredIdentifiers = 0;
+  }
   *stringEnd = stringStart;
   Token result(tokenType);
   result.setString(stringStart, tokenLength);
@@ -318,44 +329,62 @@ static bool stringIsACodePointFollowedByNumbers(const char * string, size_t leng
   return true;
 }
 
-Token::Type Tokenizer::stringTokenType(const char * string, size_t length) const {
-  if (ParsingHelper::IsSpecialIdentifierName(string, length)) {
+static bool stringIsASpecialIdentifierFollowedByNumbers(const char * string, size_t * length) {
+  UTF8Decoder tempDecoder(string);
+  CodePoint c = tempDecoder.nextCodePoint();
+  size_t identifierLength = 0;
+  while(identifierLength < *length && !c.isDecimalDigit()) {
+    identifierLength += UTF8Decoder::CharSizeOfCodePoint(c);
+    c = tempDecoder.nextCodePoint();
+  }
+  if (identifierLength == *length) {
+    return false;
+  }
+  if (ParsingHelper::IsSpecialIdentifierName(string, identifierLength)) {
+    *length = identifierLength;
+    return true;
+  }
+  return false;
+}
+
+Token::Type Tokenizer::stringTokenType(const char * string, size_t * length) const {
+  if (ParsingHelper::IsSpecialIdentifierName(string, *length)) {
     return Token::SpecialIdentifier;
   }
-  if (Constant::IsConstant(string, length)) {
+  if (Constant::IsConstant(string, *length)) {
     return Token::Constant;
   }
   Token::Type logicalOperatorType;
-  if (ParsingHelper::IsLogicalOperator(string, length, &logicalOperatorType)) {
+  if (ParsingHelper::IsLogicalOperator(string, *length, &logicalOperatorType)) {
     return logicalOperatorType;
   }
   if (string[0] == '_') {
-    if (Unit::CanParse(string, length, nullptr, nullptr)) {
+    if (Unit::CanParse(string, *length, nullptr, nullptr)) {
       return Token::Unit;
     }
     // Only constants and units can be prefixed with a '_'
     return Token::Undefined;
   }
-  if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(string, length, ListMinimum::s_functionHelper.aliasesList().mainAlias()) == 0) {
+  if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(string, *length, ListMinimum::s_functionHelper.aliasesList().mainAlias()) == 0) {
     /* Special case for "min".
      * min() = minimum(), min = minute.
      * We handle this now so that min is never understood as a CustomIdentifier
      * (3->min is not allowed, just like 3->cos) */
-    return *(string + length) == '(' ? Token::ReservedFunction : Token::Unit;
+    return *(string + *length) == '(' ? Token::ReservedFunction : Token::Unit;
   }
-  if (ParsingHelper::GetReservedFunction(string, length) != nullptr) {
+  if (ParsingHelper::GetReservedFunction(string, *length) != nullptr) {
     return Token::ReservedFunction;
   }
   /* When parsing for unit conversion, the identifier "m" should always
    * be understood as the unit and not the variable. */
-  if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::UnitConversion && Unit::CanParse(string, length, nullptr, nullptr)) {
+  if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::UnitConversion && Unit::CanParse(string, *length, nullptr, nullptr)) {
     return Token::Unit;
   }
-  bool hasUnitOnlyCodePoint = UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + length) || UTF8Helper::HasCodePoint(string, '\'', string + length) || UTF8Helper::HasCodePoint(string, '"', string + length);
+  bool hasUnitOnlyCodePoint = UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + *length) || UTF8Helper::HasCodePoint(string, '\'', string + *length) || UTF8Helper::HasCodePoint(string, '"', string + *length);
   if (!hasUnitOnlyCodePoint // CustomIdentifiers can't contain °, ' or "
       && (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment
         || m_parsingContext->context() == nullptr
-        || m_parsingContext->context()->expressionTypeForIdentifier(string, length) != Context::SymbolAbstractType::None)) {
+        || m_parsingContext->context()->expressionTypeForIdentifier(string, *length) != Context::SymbolAbstractType::None)) {
     return Token::CustomIdentifier;
   }
   /* If not unit conversion and "m" has been or is being assigned by the user
@@ -364,10 +393,16 @@ Token::Type Tokenizer::stringTokenType(const char * string, size_t length) const
   if (m_parsingContext->parsingMethod() != ParsingContext::ParsingMethod::UnitConversion
       && m_parsingContext->context()
       && m_parsingContext->context()->canRemoveUnderscoreToUnits()
-      && Unit::CanParse(string, length, nullptr, nullptr)) {
+      && Unit::CanParse(string, *length, nullptr, nullptr)) {
     return Token::Unit;
   }
-  if (!hasUnitOnlyCodePoint && stringIsACodePointFollowedByNumbers(string, length)) {
+  // "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
+  if (stringIsASpecialIdentifierFollowedByNumbers(string, length)) {
+    // If true, the length has been modified to match the end of the identifier
+    return Token::SpecialIdentifier;
+  }
+  // "x12" should not be parsed as "x*12" but "x12"
+  if (!hasUnitOnlyCodePoint && stringIsACodePointFollowedByNumbers(string, *length)) {
     return Token::CustomIdentifier;
   }
   return Token::Undefined;

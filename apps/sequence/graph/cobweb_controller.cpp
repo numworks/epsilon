@@ -13,6 +13,7 @@
 #include "ion/unicode/code_point.h"
 #include "poincare/preferences.h"
 #include "poincare/print.h"
+#include "poincare/sequence.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -78,7 +79,7 @@ void CobwebController::setupZoom() {
     xMax = std::max(xMax, value);
   }
   // bottomRatio takes the part hidden by the banner into account
-  constexpr float bottomRatio = 0.24;
+  constexpr float bottomRatio = 0.14;
   constexpr float margin = 0.10;
   float length = xMax-xMin;
   xMin -= margin*length;
@@ -101,8 +102,29 @@ void CobwebController::setupZoom() {
 
 void CobwebController::setRecord(Ion::Storage::Record record) {
   m_record = record;
-  m_isSuitable = sequence()->type() == Shared::Sequence::Type::SingleRecurrence;
-  // TODO: check that sequence u depends only on u(n) not v(n) nor n
+  char buffer[10];
+  sequence()->name(buffer, 10);
+  // u(n+1) must depend on u(n) only not n nor v(n) nor u(n-1)
+  m_isSuitable = sequence()->type() == Shared::Sequence::Type::SingleRecurrence && !sequence()->expressionClone().recursivelyMatches([](const Expression e, Context * context, void * arg) {
+    if (e.type() == ExpressionNode::Type::Symbol) {
+      const Poincare::Symbol symbol = static_cast<const Poincare::Symbol&>(e);
+      return symbol.isSystemSymbol() ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
+    }
+    if (e.type() != ExpressionNode::Type::Sequence) {
+      return TrinaryBoolean::Unknown;
+    }
+    const Poincare::Sequence seq = static_cast<const Poincare::Sequence&>(e);
+    char * buffer = static_cast<char*>(arg);
+    if (strcmp(seq.name(), buffer) != 0) {
+      return TrinaryBoolean::True;
+    }
+    if (seq.childAtIndex(0).type() != ExpressionNode::Type::Symbol) {
+      return TrinaryBoolean::True;
+    }
+    Expression child = seq.childAtIndex(0);
+    const Poincare::Symbol symbol = static_cast<const Poincare::Symbol&>(child);
+    return symbol.isSystemSymbol() ? TrinaryBoolean::False : TrinaryBoolean::True;
+  }, App::app()->localContext(), ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, static_cast<void*>(buffer));
 }
 
 ExpiringPointer<Shared::Sequence> CobwebController::sequence() const {

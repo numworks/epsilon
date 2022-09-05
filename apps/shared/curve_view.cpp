@@ -595,9 +595,14 @@ void CurveView::drawAxes(KDContext * ctx, KDRect rect) const {
   drawAxis(ctx, rect, Axis::Horizontal);
 }
 
+template<unsigned T>
+struct Mask {
+  uint8_t m_mask[T*T];
+};
+
 constexpr KDCoordinate thinCircleDiameter = 1;
 constexpr KDCoordinate thinStampSize = thinCircleDiameter+1;
-const uint8_t thinStampMask[(thinStampSize+1)*(thinStampSize+1)] = {
+constexpr const Mask<thinStampSize + 1> thinStampMask {
   0xFF, 0xE1, 0xFF,
   0xE1, 0x00, 0xE1,
   0xFF, 0xE1, 0xFF,
@@ -609,7 +614,7 @@ const uint8_t thinStampMask[(thinStampSize+1)*(thinStampSize+1)] = {
 
 constexpr KDCoordinate thickCircleDiameter = 2;
 constexpr KDCoordinate thickStampSize = thickCircleDiameter+1;
-const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
+constexpr const Mask<thickStampSize + 1> thickStampMask {
   0xFF, 0xE6, 0xE6, 0xFF,
   0xE6, 0x33, 0x33, 0xE6,
   0xE6, 0x33, 0x33, 0xE6,
@@ -620,7 +625,7 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 
 constexpr KDCoordinate thickCircleDiameter = 3;
 constexpr KDCoordinate thickStampSize = thickCircleDiameter+1;
-const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
+constexpr const Mask<thickStampSize + 1> thickStampMask {
   0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
   0xFF, 0x7A, 0x0C, 0x7A, 0xFF,
   0xFF, 0x0C, 0x00, 0x0C, 0xFF,
@@ -632,7 +637,7 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 
 constexpr KDCoordinate thickCircleDiameter = 5;
 constexpr KDCoordinate thickStampSize = thickCircleDiameter+1;
-const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
+constexpr const Mask<thickStampSize + 1> thickStampMask {
   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
   0xFF, 0xE1, 0x45, 0x0C, 0x45, 0xE1, 0xFF,
   0xFF, 0x45, 0x00, 0x00, 0x00, 0x45, 0xFF,
@@ -643,6 +648,40 @@ const uint8_t thickStampMask[(thickStampSize+1)*(thickStampSize+1)] = {
 };
 
 #endif
+
+template<unsigned T>
+constexpr Mask<T-1> shiftedMask(const Mask<T> stampMask, float dx, float dy) {
+  const KDCoordinate stampSize = T - 1;
+  const KDCoordinate stampMaskSize = T;
+  Mask<T-1> shiftedMask = {};
+  for (int i=0; i<stampSize; i++) {
+    for (int j=0; j<stampSize; j++) {
+      shiftedMask.m_mask[j*stampSize+i] = (1.0f - dx) * (stampMask.m_mask[j*stampMaskSize+i]*(1.0-dy)+stampMask.m_mask[(j+1)*stampMaskSize+i]*dy)
+        + dx * (stampMask.m_mask[j*stampMaskSize+(i+1)]*(1.0f-dy) + stampMask.m_mask[(j+1)*stampMaskSize+(i+1)]*dy);
+    }
+  }
+  return shiftedMask;
+}
+
+/* [0,1[ is divided in 4 but we precompute 0. and 1. so that we don't have to
+ * add logic to move to the next pixel if dx rounds up to 1. */
+constexpr size_t k_shiftedSteps = 4;
+
+constexpr Mask<thinStampSize> thinShiftedMasks[k_shiftedSteps + 1][k_shiftedSteps + 1] = {
+  {shiftedMask(thinStampMask, .00, .00), shiftedMask(thinStampMask, .00, .25), shiftedMask(thinStampMask, .00, .50), shiftedMask(thinStampMask, .00, .75), shiftedMask(thinStampMask, .00, 1.0)},
+  {shiftedMask(thinStampMask, .25, .00), shiftedMask(thinStampMask, .25, .25), shiftedMask(thinStampMask, .25, .50), shiftedMask(thinStampMask, .25, .75), shiftedMask(thinStampMask, .25, 1.0)},
+  {shiftedMask(thinStampMask, .50, .00), shiftedMask(thinStampMask, .50, .25), shiftedMask(thinStampMask, .50, .50), shiftedMask(thinStampMask, .50, .75), shiftedMask(thinStampMask, .50, 1.0)},
+  {shiftedMask(thinStampMask, .75, .00), shiftedMask(thinStampMask, .75, .25), shiftedMask(thinStampMask, .75, .50), shiftedMask(thinStampMask, .75, .75), shiftedMask(thinStampMask, .75, 1.0)},
+  {shiftedMask(thinStampMask, 1.0, .00), shiftedMask(thinStampMask, 1.0, .25), shiftedMask(thinStampMask, 1.0, .50), shiftedMask(thinStampMask, 1.0, .75), shiftedMask(thinStampMask, 1.0, 1.0)},
+};
+
+constexpr Mask<thickStampSize> thickShiftedMasks[k_shiftedSteps + 1][k_shiftedSteps + 1] = {
+  {shiftedMask(thickStampMask, .00, .00), shiftedMask(thickStampMask, .00, .25), shiftedMask(thickStampMask, .00, .50), shiftedMask(thickStampMask, .00, .75), shiftedMask(thickStampMask, .00, 1.0)},
+  {shiftedMask(thickStampMask, .25, .00), shiftedMask(thickStampMask, .25, .25), shiftedMask(thickStampMask, .25, .50), shiftedMask(thickStampMask, .25, .75), shiftedMask(thickStampMask, .25, 1.0)},
+  {shiftedMask(thickStampMask, .50, .00), shiftedMask(thickStampMask, .50, .25), shiftedMask(thickStampMask, .50, .50), shiftedMask(thickStampMask, .50, .75), shiftedMask(thickStampMask, .50, 1.0)},
+  {shiftedMask(thickStampMask, .75, .00), shiftedMask(thickStampMask, .75, .25), shiftedMask(thickStampMask, .75, .50), shiftedMask(thickStampMask, .75, .75), shiftedMask(thickStampMask, .75, 1.0)},
+  {shiftedMask(thickStampMask, 1.0, .00), shiftedMask(thickStampMask, 1.0, .25), shiftedMask(thickStampMask, 1.0, .50), shiftedMask(thickStampMask, 1.0, .75), shiftedMask(thickStampMask, 1.0, 1.0)},
+};
 
 /* When iterating between two abscissas, the steepest curve can go from bottom
  * to top of screen in one pixel of width. By computing a maximum of 2^8 dots,
@@ -1083,7 +1122,6 @@ int CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float py
     return stampNumber + 1;
   }
   KDCoordinate stampSize = thick ? thickStampSize : thinStampSize;
-  const uint8_t * stampMask = thick ? thickStampMask : thinStampMask;
   pxf -= (stampSize + 1 - 1)/2.0f;
   pyf -= (stampSize + 1 - 1)/2.0f;
   const KDCoordinate px = std::ceil(pxf);
@@ -1092,19 +1130,16 @@ int CurveView::stampAtLocation(KDContext * ctx, KDRect rect, float pxf, float py
   if (!rect.intersects(stampRect)) {
     return stampNumber + 1;
   }
-  uint8_t shiftedMask[stampSize][stampSize];
   KDColor workingBuffer[stampSize*stampSize];
   const float dx = px - pxf;
   const float dy = py - pyf;
-  /* TODO: this could be optimized by precomputing 10 or 100 shifted masks. The
-   * dx and dy would be rounded to one tenth or one hundredth to choose the
-   * right shifted mask. */
-  const KDCoordinate stampMaskSize = stampSize + 1;
-  for (int i=0; i<stampSize; i++) {
-    for (int j=0; j<stampSize; j++) {
-      shiftedMask[j][i] = (1.0f - dx) * (stampMask[j*stampMaskSize+i]*(1.0-dy)+stampMask[(j+1)*stampMaskSize+i]*dy)
-        + dx * (stampMask[j*stampMaskSize+(i+1)]*(1.0f-dy) + stampMask[(j+1)*stampMaskSize+(i+1)]*dy);
-    }
+  const size_t ix = std::round(dx * k_shiftedSteps);
+  const size_t iy = std::round(dy * k_shiftedSteps);
+  const uint8_t * shiftedMask;
+  if (thick) {
+    shiftedMask = thickShiftedMasks[ix][iy].m_mask;
+  } else {
+    shiftedMask = thinShiftedMasks[ix][iy].m_mask;
   }
   ctx->blendRectWithMask(stampRect, color, (const uint8_t *)shiftedMask, workingBuffer);
   return stampNumber + 1;

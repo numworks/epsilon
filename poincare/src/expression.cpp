@@ -47,7 +47,7 @@ Expression Expression::Parse(char const * string, Context * context, bool addPar
   if (string[0] == 0) {
     return Expression();
   }
-  Parser p(string, context, parseForAssignment);
+  Parser p(string, context, nullptr, parseForAssignment ? ParsingContext::ParsingMethod::Assignment : ParsingContext::ParsingMethod::Classic);
   Expression expression = p.parse();
   if (p.getStatus() != Parser::Status::Success) {
     expression = Expression();

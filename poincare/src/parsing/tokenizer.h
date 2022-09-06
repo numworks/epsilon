@@ -10,12 +10,13 @@
 #include <ion/unicode/utf8_decoder.h>
 #include "parsing_context.h"
 #include "token.h"
+
 namespace Poincare {
 
 class Tokenizer {
 public:
-  Tokenizer(const char * text, ParsingContext * parsingContext) :
-    m_decoder(text),
+  Tokenizer(const char * text, ParsingContext * parsingContext, const char * textEnd = nullptr) :
+    m_decoder(text, text, textEnd),
     m_parsingContext(parsingContext),
     m_numberOfStoredIdentifiers(0)
   {}

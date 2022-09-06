@@ -9,7 +9,7 @@ namespace Shared {
 class RingCursorView : public RoundCursorView {
 public:
   RingCursorView() : RoundCursorView(Escher::Palette::YellowDark) {}
-  const uint8_t * mask() const override { return (const uint8_t *)Dots::LargeRingMask; };
+  void drawRect(KDContext * ctx, KDRect rect) const override;
 };
 
 }

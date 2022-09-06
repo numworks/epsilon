@@ -8,10 +8,6 @@ namespace Shared {
 class CursorView : public Escher::TransparentView {
 public:
   virtual void setCursorFrame(KDRect frame, bool force) { Escher::View::setFrame(frame, force); }
-  void drawRect(KDContext * ctx, KDRect rect) const override;
-  KDSize minimalSizeForOptimalDisplay() const override;
-private:
-  constexpr static KDCoordinate k_size = 19;
 };
 
 }

@@ -38,7 +38,6 @@ app_shared_src = $(addprefix apps/shared/,\
   color_parameter_controller.cpp \
   column_helper.cpp \
   column_parameter_controller.cpp \
-  cursor_view.cpp \
   double_pair_table_controller.cpp \
   editable_cell_table_view_controller.cpp \
   expression_field_delegate_app.cpp \
@@ -75,6 +74,7 @@ app_shared_src = $(addprefix apps/shared/,\
   prefaced_twice_table_view.cpp \
   range_parameter_controller.cpp \
   regular_table_view_data_source.cpp \
+  ring_cursor_view.cpp \
   round_cursor_view.cpp \
   scrollable_multiple_expressions_view.cpp \
   scrollable_two_expressions_cell.cpp \

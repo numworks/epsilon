@@ -20,20 +20,20 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   void setColor(KDColor color);
   void setCursorFrame(KDRect frame, bool force) override;
-  virtual const uint8_t * mask() const { return (const uint8_t *)Dots::LargeDotMask; };
 #ifdef GRAPH_CURSOR_SPEEDUP
   void resetMemoization() const { m_underneathPixelBufferLoaded = false; }
 #endif
-private:
-  void markRectAsDirty(KDRect rect) override;
-#ifdef GRAPH_CURSOR_SPEEDUP
-  bool eraseCursorIfPossible();
-#endif
+protected:
   constexpr static int k_cursorSize = Dots::LargeDotDiameter;
   KDColor m_color;
 #ifdef GRAPH_CURSOR_SPEEDUP
   mutable KDColor m_underneathPixelBuffer[k_cursorSize*k_cursorSize];
   mutable bool m_underneathPixelBufferLoaded;
+#endif
+private:
+  void markRectAsDirty(KDRect rect) override;
+#ifdef GRAPH_CURSOR_SPEEDUP
+  bool eraseCursorIfPossible();
 #endif
 };
 

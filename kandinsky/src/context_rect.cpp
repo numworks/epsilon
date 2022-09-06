@@ -59,6 +59,28 @@ void KDContext::fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor 
   }
 }
 
+void KDContext::fillRectWithMask(KDRect rect, KDColor color, KDColor background, const uint8_t * mask, KDColor * workingBuffer) {
+  KDRect absoluteRect = absoluteFillRect(rect);
+
+  /* Caution:
+   * The absoluteRect may have a SMALLER size than the original rect because it
+   * has been clipped. Therefore we cannot assume that the mask can be read as a
+   * continuous area. */
+
+  KDCoordinate startingI = m_clippingRect.x() - rect.translatedBy(m_origin).x();
+  KDCoordinate startingJ = m_clippingRect.y() - rect.translatedBy(m_origin).y();
+  startingI = startingI > 0 ? startingI : 0;
+  startingJ = startingJ > 0 ? startingJ : 0;
+  for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
+    for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
+      KDColor * currentPixelAddress = workingBuffer + i + absoluteRect.width()*j;
+      const uint8_t * currentMaskAddress = mask + i + startingI + rect.width()*(j + startingJ);
+      *currentPixelAddress = KDColor::blend(background, color, *currentMaskAddress);
+    }
+  }
+  pushRect(absoluteRect, workingBuffer);
+}
+
 // Mask's size must be rect.size
 // WorkingBuffer, same deal
 // TODO: should we avoid pullRect by giving a 'memory' working buffer?

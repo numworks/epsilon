@@ -130,6 +130,7 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
     &Parser::parseCaret,                // Token::Power
     &Parser::parseBang,                 // Token::Bang
     &Parser::parseCaretWithParenthesis, // Token::CaretWithParenthesis
+    &Parser::parseImplicitAdditionBetweenUnits, // Token::ImplicitAdditionBetweenUnits
     &Parser::parseMatrix,               // Token::LeftBracket
     &Parser::parseLeftParenthesis,      // Token::LeftParenthesis
     &Parser::parseList,                 // Token::LeftBrace
@@ -154,7 +155,13 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
 
 void Parser::popToken() {
   if (m_pendingImplicitMultiplication) {
-    m_currentToken = Token(Token::ImplicitTimes);
+    if (implicitMultiplicationShouldTurnIntoImplicitAddition()) {
+        /* When parsing implicit addition, there is a "Plus" instead of a
+         * "Times" after each unit. */
+        m_currentToken = Token(Token::Plus);
+    } else {
+      m_currentToken = Token(Token::ImplicitTimes);
+    }
     m_pendingImplicitMultiplication = false;
   } else {
     m_currentToken = m_nextToken;
@@ -182,7 +189,7 @@ bool Parser::popTokenIfType(Token::Type type) {
 }
 
 bool Parser::nextTokenHasPrecedenceOver(Token::Type stoppingType) {
-  Token::Type nextTokenType = (m_pendingImplicitMultiplication) ? Token::ImplicitTimes : m_nextToken.type();
+  Token::Type nextTokenType = (m_pendingImplicitMultiplication) ? (implicitMultiplicationShouldTurnIntoImplicitAddition() ? Token::Plus : Token::ImplicitTimes) : m_nextToken.type();
   if (m_waitingSlashForMixedFraction && nextTokenType == Token::Type::Slash) {
     /* When parsing a mixed fraction, we cannot parse until a token type
      * with lower precedence than slash, but we still need not to stop on the
@@ -213,7 +220,8 @@ void Parser::isThereImplicitMultiplication() {
     m_nextToken.is(Token::LeftParenthesis) ||
     m_nextToken.is(Token::LeftSystemParenthesis) ||
     m_nextToken.is(Token::LeftBracket) ||
-    m_nextToken.is(Token::LeftBrace)
+    m_nextToken.is(Token::LeftBrace) ||
+    m_nextToken.is(Token::ImplicitAdditionBetweenUnits)
   );
 }
 
@@ -312,6 +320,20 @@ void Parser::parseTimes(Expression & leftHandSide, Token::Type stoppingType) {
 
 void Parser::parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType) {
   privateParseTimes(leftHandSide, Token::ImplicitTimes);
+}
+
+void Parser::parseImplicitAdditionBetweenUnits(Expression & leftHandSide, Token::Type stoppingType) {
+  assert(leftHandSide.isUninitialized());
+  assert(m_parsingContext.parsingMethod() != ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits);
+  /* We parse the string again, but this time with
+   * ParsingMethod::ImplicitAdditionBetweenUnits. */
+  Parser p(m_currentToken.text(), m_parsingContext.context(), m_currentToken.text() + m_currentToken.length(), ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits);
+  leftHandSide = p.parse();
+  if (leftHandSide.isUninitialized()) {
+    m_status = Status::Error;
+    return;
+  }
+  isThereImplicitMultiplication();
 }
 
 void Parser::parseSlash(Expression & leftHandSide, Token::Type stoppingType) {
@@ -962,6 +984,10 @@ bool Parser::generateMixedFractionIfNeeded(Expression & leftHandSide) {
   }
   restorePreviousParsingPosition(tokenizerPosition, storedCurrentToken, storedNextToken);
   return false;
+}
+
+bool Parser::implicitMultiplicationShouldTurnIntoImplicitAddition() {
+  return m_parsingContext.parsingMethod() == ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits && m_currentToken.type() == Token::Unit;
 }
 
 void Parser::rememberCurrentParsingPosition(const char ** tokenizerPosition, Token * storedCurrentToken, Token * storedNextToken) {

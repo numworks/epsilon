@@ -37,8 +37,12 @@ size_t Tokenizer::popWhile(PopTest popTest) {
   return length;
 }
 
-bool Tokenizer::ShouldAddCodePointToIdentifier(const CodePoint c) {
+static bool ShouldAddCodePointToIdentfierExcludingDigits(const CodePoint c) {
   return c.isDecimalDigit() || c.isLatinLetter() || c == UCodePointSystem || c == '_' || c == UCodePointDegreeSign || c == '\'' || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
+}
+
+bool Tokenizer::ShouldAddCodePointToIdentifier(const CodePoint c) {
+  return c.isDecimalDigit() || ShouldAddCodePointToIdentfierExcludingDigits(c);
 }
 
 size_t Tokenizer::popCustomIdentifier() {
@@ -139,8 +143,21 @@ Token Tokenizer::popToken() {
 
   // According to c, recognize the Token::Type.
   if (!nextCodePointIsNeitherDotNorDigit) {
+    /* An implicit addition between units always start with a number. so we
+     * check here if there is one. If the parsingMethod is already Implicit
+     * AdditionBetweenUnits, we don't need to check it again. */
+    if (m_parsingContext->parsingMethod() != ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
+      size_t lengthOfImplicitAdditionBetweenUnits = popImplicitAdditionBetweenUnits();
+      if (lengthOfImplicitAdditionBetweenUnits > 0) {
+        Token result = Token(Token::ImplicitAdditionBetweenUnits);
+        result.setString(start, lengthOfImplicitAdditionBetweenUnits);
+        return result;
+      }
+    }
+    // Pop number
     return popNumber();
   }
+
   if (c == UCodePointGreekSmallLetterPi)
   {
     Token result(Token::Constant);
@@ -166,6 +183,14 @@ Token Tokenizer::popToken() {
 
   if (ShouldAddCodePointToIdentifier(c))
   {
+    if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
+      /* If currently popping an implicit addition, we should already have
+       * checked that any identifier is a unit. */
+      Token result(Token::Unit);
+      result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c) + popWhile([](CodePoint c) { return ShouldAddCodePointToIdentfierExcludingDigits(c); }));
+      assert(Unit::CanParse(result.text(), result.length(), nullptr, nullptr));
+      return result;
+    }
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder.previousCodePoint();
     assert(m_numberOfStoredIdentifiers == 0); // assert we're done with previous tokenization
@@ -406,6 +431,71 @@ Token::Type Tokenizer::stringTokenType(const char * string, size_t * length) con
     return Token::CustomIdentifier;
   }
   return Token::Undefined;
+}
+
+// ========== Implicit addition between units ==========
+
+size_t Tokenizer::popImplicitAdditionBetweenUnits() {
+  const char * stringStart = m_decoder.stringPosition();
+  CodePoint c = m_decoder.nextCodePoint();
+  assert(c.isDecimalDigit() || c == '.');
+  bool isImplicitAddition = false;
+  size_t length = 0;
+  const Unit::Representative * storedUnitRepresentative = nullptr;
+  while(true) {
+    /* Check if the string is of the form:
+    * decimalNumber-unit-decimalNumber-unit...
+    * Each loop will check for a pair decimalNumber-unit */
+    size_t lengthOfNumber = 0;
+    while (c.isDecimalDigit() || c == '.') {
+      lengthOfNumber += UTF8Decoder::CharSizeOfCodePoint(c);
+      c = m_decoder.nextCodePoint();
+    }
+    if (lengthOfNumber == 0) {
+      /* If the first element of the pair is not a decimal number,
+       * it's the end of the potential implicit addition. */
+      break;
+    }
+    length += lengthOfNumber;
+    const char * currentStringStart = m_decoder.stringPosition() - UTF8Decoder::CharSizeOfCodePoint(c);
+    size_t lengthOfPotentialUnit = 0;
+    while (ShouldAddCodePointToIdentfierExcludingDigits(c)) {
+      lengthOfPotentialUnit += UTF8Decoder::CharSizeOfCodePoint(c);
+      c = m_decoder.nextCodePoint();
+    }
+    const Unit::Representative * unitRepresentative;
+    const Unit::Prefix * unitPrefix;
+    if (lengthOfPotentialUnit == 0) {
+      // Second element is not a unit: the string is not an implicit addition
+      isImplicitAddition = false;
+      break;
+    }
+    length += lengthOfPotentialUnit;
+    if (!Unit::CanParse(currentStringStart, lengthOfPotentialUnit, &unitRepresentative, &unitPrefix)) {
+      // Second element is not a unit: the string is not an implicit addition
+      isImplicitAddition = false;
+      break;
+    }
+    if (storedUnitRepresentative != nullptr) {
+      // Warning: The order of AllowImplicitAddition arguments matter
+      if (Unit::AllowImplicitAddition(unitRepresentative, storedUnitRepresentative)) {
+        // There is at least 2 units allowing for implicit addition
+        isImplicitAddition = true;
+      } else {
+        // Implicit addition not allowed between this unit and the previous one
+        isImplicitAddition = false;
+        break;
+      }
+    }
+    storedUnitRepresentative = unitRepresentative;
+  }
+  m_decoder.previousCodePoint();
+  if (isImplicitAddition) {
+    return length;
+  }
+  // Rewind decoder if nothing was found
+  goToPosition(stringStart);
+  return 0;
 }
 
 }

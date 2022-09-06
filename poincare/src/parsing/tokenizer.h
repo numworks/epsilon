@@ -109,6 +109,18 @@ private:
   Token popRightMostIdentifier(const char * stringStart, const char * * stringEnd);
   Token::Type stringTokenType(const char * string, size_t * length) const;
 
+  /* ========== IMPLICIT ADDITION BETWEEN UNITS ==========
+   * An implicit addition between units is an expression like "3h40min32.5s".
+   * The general formula is decimalNumber-unit-decimalNumber-unit-etc.
+   * with units allowing for implicit addition between them, and that are
+   * in the right order, from biggest to smallest.
+   * The decimal numbers allowed are only integers or numbers with a dot.
+   * (2/3 or 2E3 are not allowed).
+   * Also, this works only if the implicit addition is "isolated".
+   * For example "2h30min = 2h+30min" but "x2h30min = x2*h30*min".
+   * Same for "2h30mincos(x) = 2*h30*min*cos(x)". */
+  size_t popImplicitAdditionBetweenUnits();
+
   UTF8Decoder m_decoder;
   ParsingContext * m_parsingContext;
   /* This list is used to memoize the identifiers we already parsed.

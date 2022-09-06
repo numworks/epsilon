@@ -9,8 +9,12 @@ namespace Poincare {
 
 void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   if (cursor->layoutNode() == this && cursor->position() == LayoutCursor::Position::Right) {
-    // Case: Right. Go to the last entry.
-    cursor->setLayoutNode(childAtIndex(numberOfChildren() - 1));
+    /* Case: Right of this. Add the gray squares to the grid, then move to
+     * the bottom right non gray child. */
+    addGraySquares();
+    *shouldRecomputeLayout = true;
+    LayoutNode * lastChild = childAtIndex(indexOfLastNonGrayChildWhenHasGraySquares());
+    cursor->setLayoutNode(lastChild);
     return;
   }
   int childIndex = indexOfChild(cursor->layoutNode());
@@ -18,7 +22,10 @@ void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomput
     // Case: The cursor points to a grid's child.
     assert(cursor->position() == LayoutCursor::Position::Left);
     if (childIsLeftOfGrid(childIndex)) {
-      // Case: Left of a child on the left of the grid. Go Left of the grid
+     /* Case: Left of a child on the left of the grid. Remove the gray squares of
+      * the grid, then go left of the grid. */
+      removeGraySquares();
+      *shouldRecomputeLayout = true;
       cursor->setLayoutNode(this);
       return;
     }
@@ -36,9 +43,12 @@ void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomput
 }
 
 void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == this && cursor->position() == LayoutCursor::Position::Left) {
-    // Case: Left. Go to the first entry.
-    assert(numberOfChildren() >= 1);
+  if (cursor->layoutNode() == this
+      && cursor->position() == LayoutCursor::Position::Left) {
+    // Case: Left. Add gray squares to the matrix, then go to its first entry.
+    addGraySquares();
+    *shouldRecomputeLayout = true;
+    assert(m_numberOfColumns*m_numberOfRows >= 1);
     cursor->setLayoutNode(childAtIndex(0));
     return;
   }
@@ -48,6 +58,8 @@ void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecompu
     // Case: The cursor points to a grid's child.
     if (childIsRightOfGrid(childIndex)) {
       // Case: Right of a child on the right of the grid. Go Right of the grid.
+      removeGraySquares();
+      *shouldRecomputeLayout = true;
       cursor->setLayoutNode(this);
       return;
     }
@@ -94,45 +106,168 @@ void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomput
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-// Protected
-
-void GridLayoutNode::addEmptyRow(EmptyLayoutNode::Color color) {
+void GridLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   GridLayout thisRef = GridLayout(this);
-  /* addChildAtIndex messes with the number of rows to keep it consistent with
-   * the number of children */
-  int previousNumberOfChildren = numberOfChildren();
-  int columnsCount = m_numberOfColumns;
-  int previousRowCount = m_numberOfRows;
-  for (int i = 0; i < columnsCount; i++) {
-    thisRef.addChildAtIndex(
-        EmptyLayout::Builder(color),
-        previousNumberOfChildren,
-        previousNumberOfChildren + i,
-        nullptr);
-    // WARNING: Do not access "this" afterwards
+  bool shouldRemoveGraySquares = false;
+  int firstIndex = direction == VerticalDirection::Up ? 0 : numberOfChildren() - m_numberOfColumns;
+  int lastIndex = direction == VerticalDirection::Up ? m_numberOfColumns : numberOfChildren();
+  int i = firstIndex;
+  for (LayoutNode * l : childrenFromIndex(firstIndex)) {
+    if (i >= lastIndex) {
+      break;
+    }
+    if (cursor->layout().node()->hasAncestor(l, true)) {
+      // The cursor is leaving the matrix, so remove the gray squares.
+      shouldRemoveGraySquares = true;
+      break;
+    }
+    i++;
   }
-  thisRef.setDimensions(previousRowCount + 1, columnsCount);
+  LayoutNode::moveCursorVertically(direction, cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
+  if (cursor->isDefined() && shouldRemoveGraySquares) {
+    assert(thisRef.hasGraySquares());
+    thisRef.removeGraySquares();
+    *shouldRecomputeLayout = true;
+  }
 }
 
-void GridLayoutNode::addEmptyColumn(EmptyLayoutNode::Color color) {
-  GridLayout thisRef = GridLayout(this);
-  /* addChildAtIndex messes with the number of rows to keep it consistent with
-   * the number of children */
-  int previousNumberOfChildren = numberOfChildren();
-  int rowsCount = m_numberOfRows;
-  int futureColumnsCount = m_numberOfColumns + 1;
-  for (int i = 0; i < rowsCount; i++) {
-    thisRef.addChildAtIndex(
-        EmptyLayout::Builder(color),
-        i*futureColumnsCount + futureColumnsCount-1,
-        previousNumberOfChildren + i,
-        nullptr);
-    // WARNING: Do not access "this" afterwards
+void GridLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
+  assert(cursor != nullptr);
+  if (deleteBeforeCursorForLayoutContainingArgument(nullptr, cursor)) {
+    // This handles the case of cursor being right of grid and entering it
+    return;
   }
-  thisRef.setDimensions(rowsCount, futureColumnsCount);
+  /* Deleting the left empty layout of an empty row deletes the row, and
+   * deleting the top empty layout of an empty column deletes the column. */
+  LayoutNode * pointedChild = cursor->layoutNode();
+  int indexOfPointedLayout = indexOfChild(pointedChild);
+  if (indexOfPointedLayout >= 0) {
+    int columnIndex = columnAtChildIndex(indexOfPointedLayout);
+    int rowIndex = rowAtChildIndex(indexOfPointedLayout);
+    if (columnIndex == 0 && rowIndex == 0 && onlyFirstChildIsNonEmpty() && cursor->position() == LayoutCursor::Position::Left) {
+      /* The grid has 1 child while the cursor is inside: The cursor is left
+       * of the value so we delete the grid layout but keep the value inside. */
+      deleteBeforeCursorForLayoutContainingArgument(pointedChild, cursor);
+      return;
+    }
+    if (pointedChild->isEmpty()) {
+      bool deleted = false;
+      if (columnIndex == 0) {
+        if (!numberOfRowsIsFixed() && m_numberOfRows > 2 && rowIndex < m_numberOfRows - 1 && isRowEmpty(rowIndex)) {
+          deleteRowAtIndex(rowIndex);
+          deleted = true;
+        } else if (rowIndex > 0) {
+          // If at the start of column, go to the upper one.
+          cursor->setLayoutNode(childAtIndex(indexAtRowColumn(rowIndex - 1, m_numberOfColumns - 1 - static_cast<int>(!numberOfColumnsIsFixed()))));
+          cursor->setPosition(LayoutCursor::Position::Right);
+          return;
+        }
+      }
+      if (rowIndex == 0) {
+        if (!numberOfColumnsIsFixed() && m_numberOfColumns > 2 && columnIndex < m_numberOfColumns - 1 && isColumnEmpty(columnIndex)) {
+          deleteColumnAtIndex(columnIndex);
+          deleted = true;
+        }
+      }
+      if (deleted) {
+        assert(indexOfPointedLayout >= 0 && indexOfPointedLayout < m_numberOfColumns*m_numberOfRows);
+        cursor->setLayoutNode(childAtIndex(indexOfPointedLayout));
+        cursor->setPosition(LayoutCursor::Position::Right);
+        return;
+      }
+    }
+  }
+  LayoutNode::deleteBeforeCursor(cursor);
+}
+
+void GridLayoutNode::willAddSiblingToEmptyChildAtIndex(int childIndex) {
+  bool bottomOfGrid = childIsBottomOfGrid(childIndex);
+  if (childIsRightOfGrid(childIndex) && !numberOfColumnsIsFixed()) {
+    colorGrayEmptyLayoutsInYellowInColumnOrRow(true, m_numberOfColumns - 1);
+    addEmptyColumn(EmptyLayoutNode::Color::Gray);
+  }
+  if (bottomOfGrid && !numberOfRowsIsFixed()) {
+    colorGrayEmptyLayoutsInYellowInColumnOrRow(false, m_numberOfRows - 1);
+    addEmptyRow(EmptyLayoutNode::Color::Gray);
+  }
+}
+
+void GridLayoutNode::addGraySquares() {
+  if (!hasGraySquares()) {
+    Layout thisRef(this);
+    if (!numberOfRowsIsFixed()) {
+      addEmptyRow(EmptyLayoutNode::Color::Gray);
+    }
+    if (!numberOfColumnsIsFixed()) {
+      addEmptyColumn(EmptyLayoutNode::Color::Gray);
+    }
+  }
+}
+
+void GridLayoutNode::removeGraySquares() {
+  if (hasGraySquares()) {
+    if (!numberOfRowsIsFixed()) {
+      deleteRowAtIndex(m_numberOfRows - 1);
+    }
+    if (!numberOfColumnsIsFixed()) {
+      deleteColumnAtIndex(m_numberOfColumns - 1);
+    }
+  }
+}
+
+// Protected
+
+bool GridLayoutNode::hasGraySquares() const {
+  if (numberOfChildren() == 0) {
+    return false;
+  }
+  LayoutNode * lastChild = const_cast<GridLayoutNode *>(this)->childAtIndex(m_numberOfRows * m_numberOfColumns - 1);
+  if (lastChild->isEmpty()
+      && lastChild->type() != Type::HorizontalLayout
+      && (static_cast<EmptyLayoutNode *>(lastChild))->color() == EmptyLayoutNode::Color::Gray)
+  {
+    assert(numberOfRowsIsFixed() || isRowEmpty(m_numberOfRows - 1));
+    assert(numberOfColumnsIsFixed() || (m_numberOfColumns - 1));
+    return true;
+  }
+  return false;
+}
+
+int GridLayoutNode::indexOfLastNonGrayChildWhenHasGraySquares() const {
+  assert(hasGraySquares() || (numberOfColumnsIsFixed() && numberOfRowsIsFixed()));
+ /* If a grid has one row and one column of gray children,
+  * the index m_numberOfColumns * (m_numberOfRows - 1) - 2 is the index of
+  * the last non-gray child.
+  *
+  * Example: m_numberOfColumns = 5, m_numberOfRows = 6
+  *     v-this child has index 0
+  *   [ O O O O X ]
+  *   [ O O O O X ]
+  *   [ O O O O X ]
+  *   [ O O O O X ]
+  *   [ O O O O X ]<<-the last O of this line has index 5 * (6 - 1) - 2
+  *   [ X X X X X ]
+  *     ^-this child has index 5 * (6 - 1)
+  *
+  * This formula becomes m_numberOfColumns * m_numberOfRows - 2 if there is
+  * not a last row with gray children, and it becomes
+  * m_numberOfColumns * (m_numberOfRows - 1) - 1 if there is not a last column
+  * with gray children.
+  * */
+  return numberOfColumns() * (numberOfRows() - static_cast<int>(!numberOfRowsIsFixed())) - 1 - static_cast<int>(!numberOfColumnsIsFixed());
+}
+
+bool GridLayoutNode::onlyFirstChildIsNonEmpty() const {
+  for (int i = 1; i < numberOfChildren(); i++) {
+    if (!childAtIndex(i)->isEmpty()) {
+      return false;
+    }
+  }
+  return true;
 }
 
 void GridLayoutNode::deleteRowAtIndex(int index) {
+  assert(!numberOfRowsIsFixed());
   assert(index >= 0 && index < m_numberOfRows);
   GridLayout thisRef = GridLayout(this);
   /* removeChildAtIndexInPlace messes with the number of rows to keep it
@@ -146,6 +281,7 @@ void GridLayoutNode::deleteRowAtIndex(int index) {
 }
 
 void GridLayoutNode::deleteColumnAtIndex(int index) {
+  assert(!numberOfColumnsIsFixed());
   assert(index >= 0 && index < m_numberOfColumns);
   GridLayout thisRef = GridLayout(this);
   /* removeChildAtIndexInPlace messes with the number of rows to keep it
@@ -283,6 +419,87 @@ KDCoordinate GridLayoutNode::width(KDFont::Size font) const {
   }
   totalWidth += m_numberOfColumns > 0 ? (m_numberOfColumns-1)*k_gridEntryMargin : 0;
   return totalWidth;
+}
+
+bool GridLayoutNode::isColumnOrRowEmpty(bool column, int index) const {
+  assert(index >= 0 && index < (column ? m_numberOfColumns : m_numberOfRows));
+  int i = index * (column ? 1 : m_numberOfColumns);
+  int startingIndex = i;
+  for (LayoutNode * l : const_cast<GridLayoutNode *>(this)->childrenFromIndex(startingIndex)) {
+    if ((column && i > index + (m_numberOfRows - 1) * m_numberOfColumns) || (!column && i >= (index + 1) * m_numberOfColumns)) {
+      break;
+    }
+    if ((!column || i % m_numberOfColumns == index) && !l->isEmpty()) {
+      return false;
+    }
+    i++;
+  }
+  return true;
+}
+
+void GridLayoutNode::addEmptyRowOrColumn(bool column, EmptyLayoutNode::Color color) {
+  GridLayout thisRef = GridLayout(this);
+  /* addChildAtIndex messes with the number of rows to keep it consistent with
+   * the number of children */
+  int previousNumberOfChildren = numberOfChildren();
+  int previousNumberOfLines = column ? m_numberOfColumns : m_numberOfRows;
+  int otherNumberOfLines = column ? m_numberOfRows : m_numberOfColumns;
+  for (int i = 0; i < otherNumberOfLines; i++) {
+    thisRef.addChildAtIndex(
+        EmptyLayout::Builder(color),
+        column ? (i + 1) * (previousNumberOfLines + 1) - 1 : previousNumberOfChildren,
+        previousNumberOfChildren + i,
+        nullptr);
+    // WARNING: Do not access "this" afterwards
+  }
+  if (column) {
+    thisRef.setDimensions(otherNumberOfLines, previousNumberOfLines + 1);
+  } else {
+    thisRef.setDimensions(previousNumberOfLines + 1, otherNumberOfLines);
+  }
+}
+
+void GridLayoutNode::didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) {
+  assert(index >= 0 && index < m_numberOfColumns*m_numberOfRows);
+  int rowIndex = rowAtChildIndex(index);
+  int rowIsEmptyAndCanBeDeleted = !numberOfRowsIsFixed() && isRowEmpty(rowIndex);
+  int columnIndex = columnAtChildIndex(index);
+  bool columnIsEmptyAndCanBeDeleted = !numberOfColumnsIsFixed() && isColumnEmpty(columnIndex);
+  int newIndex = index;
+  if (columnIsEmptyAndCanBeDeleted && m_numberOfColumns > 2 && columnIndex == m_numberOfColumns - 2) {
+    // If the column is now empty, delete it
+    deleteColumnAtIndex(columnIndex);
+    newIndex -= rowIndex;
+  }
+  if (rowIsEmptyAndCanBeDeleted && m_numberOfRows > 2 && rowIndex == m_numberOfRows - 2) {
+    // If the row is now empty, delete it
+    deleteRowAtIndex(rowIndex);
+  }
+  if (cursor) {
+    assert(newIndex >= 0 && newIndex < m_numberOfColumns * m_numberOfRows);
+    cursor->setLayoutNode(childAtIndex(newIndex));
+    cursor->setPosition(LayoutCursor::Position::Right);
+  }
+}
+
+void GridLayoutNode::colorGrayEmptyLayoutsInYellowInColumnOrRow(bool column, int lineIndex) {
+  int childIndex = lineIndex * (column ? 1 : m_numberOfColumns);
+  int startIndex = childIndex;
+  int maxIndex = column ? (m_numberOfRows - 1 - static_cast<int>(!numberOfRowsIsFixed())) * m_numberOfColumns + lineIndex : lineIndex * m_numberOfColumns + m_numberOfColumns - 1 - static_cast<int>(!numberOfColumnsIsFixed());
+  for (LayoutNode * lastLayoutOfLine : childrenFromIndex(startIndex)) {
+    if (childIndex > maxIndex) {
+      break;
+    }
+    if ((!column || childIndex % m_numberOfColumns == lineIndex) && lastLayoutOfLine->isEmpty()) {
+      if (lastLayoutOfLine->type() != Type::HorizontalLayout) {
+        static_cast<EmptyLayoutNode *>(lastLayoutOfLine)->setColor(EmptyLayoutNode::Color::Yellow);
+      } else {
+        assert(lastLayoutOfLine->numberOfChildren() == 1);
+        static_cast<EmptyLayoutNode *>(lastLayoutOfLine->childAtIndex(0))->setColor(EmptyLayoutNode::Color::Yellow);
+      }
+    }
+    childIndex++;
+  }
 }
 
 // Grid Layout Reference

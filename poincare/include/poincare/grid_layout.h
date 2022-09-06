@@ -12,26 +12,31 @@ class GridLayout;
 class MatrixLayoutNode;
 
 class GridLayoutNode : public Array, public LayoutNode {
-  friend class MatrixLayoutNode;
   friend class BinomialCoefficientLayoutNode;
-  friend class BinomialCoefficientLayout;
   friend class GridLayout;
+  friend class MatrixLayoutNode;
 public:
+
+  static bool IsGridLayoutType(Type type) { return type == Type::MatrixLayout; }
+
   GridLayoutNode() :
     Array(),
     LayoutNode()
   {}
 
-  // Layout
-  Type type() const override { return Type::GridLayout; }
-
+  // Grid layout
   KDSize gridSize(KDFont::Size font) const { return KDSize(width(font), height(font)); }
+  void addGraySquares();
+  void removeGraySquares();
+  void willAddSiblingToEmptyChildAtIndex(int childIndex);
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
   void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
+  void moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) override;
+  void deleteBeforeCursor(LayoutCursor * cursor) override;
 
   // SerializableNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
@@ -57,10 +62,27 @@ public:
 
 protected:
   // GridLayoutNode
-  virtual void addEmptyRow(EmptyLayoutNode::Color color);
-  virtual void addEmptyColumn(EmptyLayoutNode::Color color);
-  virtual void deleteRowAtIndex(int index);
-  virtual void deleteColumnAtIndex(int index);
+  virtual bool numberOfRowsIsFixed() const { return false; }
+  virtual bool numberOfColumnsIsFixed() const { return false; }
+  bool hasGraySquares() const;
+  int indexOfLastNonGrayChildWhenHasGraySquares() const;
+  bool onlyFirstChildIsNonEmpty() const;
+  bool isColumnEmpty(int index) const {
+    return isColumnOrRowEmpty(true, index);
+  }
+  bool isRowEmpty(int index) const {
+    return isColumnOrRowEmpty(false, index);
+  }
+  void addEmptyColumn(EmptyLayoutNode::Color color) {
+    assert(!numberOfColumnsIsFixed());
+    return addEmptyRowOrColumn(true, color);
+  }
+  void addEmptyRow(EmptyLayoutNode::Color color) {
+    assert(!numberOfRowsIsFixed());
+    return addEmptyRowOrColumn(false, color);
+  }
+  void deleteColumnAtIndex(int index);
+  void deleteRowAtIndex(int index);
   bool childIsRightOfGrid(int index) const;
   bool childIsLeftOfGrid(int index) const;
   bool childIsTopOfGrid(int index) const;
@@ -82,18 +104,24 @@ private:
   KDCoordinate height(KDFont::Size font) const;
   KDCoordinate columnWidth(int j, KDFont::Size font) const;
   KDCoordinate width(KDFont::Size font) const;
-  void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {}
+
+  bool isColumnOrRowEmpty(bool column, int index) const;
+  void addEmptyRowOrColumn(bool column, EmptyLayoutNode::Color color);
+  void colorGrayEmptyLayoutsInYellowInColumnOrRow(bool column, int lineIndex);
+  void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
 };
 
 class GridLayout : public Layout {
 public:
   GridLayout(const GridLayoutNode * n) : Layout(n) {}
-  static GridLayout Builder() { return TreeHandle::NAryBuilder<GridLayout,GridLayoutNode>(); }
 
   void setDimensions(int rows, int columns);
   using Layout::addChildAtIndex;
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }
+  bool hasGraySquares() const { return node()->hasGraySquares(); }
+  void addGraySquares() { node()->addGraySquares(); }
+  void removeGraySquares() { node()->removeGraySquares(); }
 private:
   virtual GridLayoutNode * node() const { return static_cast<GridLayoutNode *>(Layout::node()); }
   void setNumberOfRows(int rows) { node()->setNumberOfRows(rows); }

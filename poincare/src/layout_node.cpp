@@ -300,13 +300,13 @@ void LayoutNode::scoreCursorInDescendantsVertically (
 }
 
 bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
-  if (l->type() != LayoutNode::Type::MatrixLayout) {
+  if (!GridLayoutNode::IsGridLayoutType(l->type())) {
     return false;
   }
   if (add) {
-    static_cast<MatrixLayoutNode *>(l->node())->addGraySquares();
+    static_cast<GridLayoutNode *>(l->node())->addGraySquares();
   } else {
-    static_cast<MatrixLayoutNode *>(l->node())->removeGraySquares();
+    static_cast<GridLayoutNode *>(l->node())->removeGraySquares();
   }
   return true;
 }

@@ -134,11 +134,7 @@ void LayoutCursor::addEmptyExponentialLayout() {
 }
 
 void LayoutCursor::addEmptyMatrixLayout() {
-  MatrixLayout matrixLayout = MatrixLayout::Builder(
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow),
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Gray),
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Gray),
-      EmptyLayout::Builder(EmptyLayoutNode::Color::Gray));
+  MatrixLayout matrixLayout = MatrixLayout::EmptySquaredMatrixBuilder();
   m_layout.addSibling(this, matrixLayout, false);
   m_layout = matrixLayout.childAtIndex(0);
   m_position = Position::Right;

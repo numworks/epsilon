@@ -18,7 +18,7 @@ namespace Regression {
 GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, CurveViewCursor * cursor, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex) :
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, store, &m_view, cursor, rangeVersion),
   m_bannerView(this, inputEventHandlerDelegate, this),
-  m_view(store, m_cursor, &m_bannerView, &m_crossCursorView),
+  m_view(store, m_cursor, &m_bannerView, &m_ringCursorView),
   m_store(store),
   m_graphOptionsController(this, inputEventHandlerDelegate, m_store, m_cursor, this),
   m_seriesSelectionController(this),
@@ -410,7 +410,7 @@ void GraphController::setRoundCrossCursorView() {
     assert(*m_selectedSeriesIndex < static_cast<int>(Palette::numberOfDataColors()));
     m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
   }
-  CursorView * nextCursorView = round ? static_cast<Shared::CursorView *>(&m_roundCursorView) : static_cast<Shared::CursorView *>(&m_crossCursorView);
+  CursorView * nextCursorView = round ? static_cast<Shared::CursorView *>(&m_roundCursorView) : static_cast<Shared::CursorView *>(&m_ringCursorView);
   // Escape if the cursor view stays the same
   if (m_view.cursorView() == nextCursorView) {
     return;

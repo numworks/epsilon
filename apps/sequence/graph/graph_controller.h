@@ -8,7 +8,7 @@
 #include "curve_view_range.h"
 #include "term_sum_controller.h"
 #include "../../shared/function_graph_controller.h"
-#include "../../shared/cursor_view.h"
+#include "../../shared/ring_cursor_view.h"
 #include "../../shared/sequence_store.h"
 
 namespace Sequence {
@@ -43,7 +43,7 @@ private:
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
   Shared::WithRecord * curveParameterControllerWithRecord() override { return &m_curveParameterController; }
   SequenceSelectionController * curveSelectionController() const override { return const_cast<SequenceSelectionController *>(&m_sequenceSelectionController); }
-  Shared::CursorView m_cursorView;
+  Shared::RingCursorView m_cursorView;
   Shared::XYBannerView m_bannerView;
   GraphView m_view;
   CurveViewRange * m_graphRange;

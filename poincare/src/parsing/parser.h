@@ -73,6 +73,7 @@ private:
   void parseTimes(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseSlash(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseImplicitAdditionBetweenUnits(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseCaret(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseCaretWithParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseComparisonOperator(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
@@ -104,6 +105,7 @@ private:
   void parseSequence(Expression & leftHandSide, const char * name, Token::Type rightDelimiter);
   void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
   bool generateMixedFractionIfNeeded(Expression & leftHandSide);
+  bool implicitMultiplicationShouldTurnIntoImplicitAddition();
   // Allows you to rewind to previous position
   void rememberCurrentParsingPosition(const char ** tokenizerPosition, Token * storedCurrentToken = nullptr, Token * storedNextToken = nullptr);
   void restorePreviousParsingPosition(const char * tokenizerPosition, Token storedCurrentToken = Token(Token::Undefined), Token storedNextToken = Token(Token::Undefined));

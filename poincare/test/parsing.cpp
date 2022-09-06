@@ -37,7 +37,8 @@ void assert_tokenizes_as_constant(const char * string) {
 }
 
 void assert_tokenizes_as_undefined_token(const char * string) {
-  Tokenizer tokenizer(string, nullptr);
+  ParsingContext parsingContext(nullptr, ParsingContext::ParsingMethod::Classic);
+  Tokenizer tokenizer(string, &parsingContext);
   while (true) {
     Token token = tokenizer.popToken();
     if (token.type() == Token::Undefined) {
@@ -393,12 +394,33 @@ QUIZ_CASE(poincare_parsing_units) {
   assert_parsed_expression_is("skm", Multiplication::Builder(second, kilometer));
   assert_parsed_expression_is("3s", Multiplication::Builder(BasedInteger::Builder(3), second));
 
+  // Angle units
   Expression degree = Expression::Parse("_°", nullptr);
   Expression arcsecond = Expression::Parse("_\"", nullptr);
   assert_parsed_expression_is("3°", Multiplication::Builder(BasedInteger::Builder(3), degree));
   assert_parsed_expression_is("3\"", Multiplication::Builder(BasedInteger::Builder(3), arcsecond));
   assert_parsed_expression_is("3\"+a\"", Addition::Builder(Multiplication::Builder(BasedInteger::Builder(3), arcsecond), Multiplication::Builder(Symbol::Builder("a", 1), arcsecond.clone())));
   assert_parsed_expression_is("3\"abc\"", Multiplication::Builder(BasedInteger::Builder(3), Symbol::Builder("\"abc\"", 5)));
+
+  // Implicit addition
+  Expression minute = Expression::Parse("_min", nullptr);
+  Expression hour = Expression::Parse("_h", nullptr);
+  assert_parsed_expression_is("3h40min5s", Addition::Builder({Multiplication::Builder(BasedInteger::Builder(3), hour), Multiplication::Builder(BasedInteger::Builder(40), minute), Multiplication::Builder(BasedInteger::Builder(5), second)}));
+  assert_parsed_expression_is("5mi4yd2ft3in", Addition::Builder({Multiplication::Builder(BasedInteger::Builder(5), Expression::Parse("_mi", nullptr)),Multiplication::Builder(BasedInteger::Builder(4), Expression::Parse("_yd", nullptr)), Multiplication::Builder(BasedInteger::Builder(2), Expression::Parse("_ft", nullptr)), Multiplication::Builder(BasedInteger::Builder(3), Expression::Parse("_in", nullptr))}));
+  assert_parsed_expression_is("5lb4oz", Addition::Builder({Multiplication::Builder(BasedInteger::Builder(5), Expression::Parse("_lb", nullptr)), Multiplication::Builder(BasedInteger::Builder(4), Expression::Parse("_oz", nullptr))}));
+  // Works with decimal numbers
+  assert_parsed_expression_is("3.5h40.3min5.1s", Addition::Builder({Multiplication::Builder(Decimal::Builder(3.5), hour), Multiplication::Builder(Decimal::Builder(40.3), minute), Multiplication::Builder(Decimal::Builder(5.1), second)}));
+  // Has priority over other operation
+  assert_parsed_expression_is("2×3h5s", Multiplication::Builder(BasedInteger::Builder(2), Addition::Builder({Multiplication::Builder(BasedInteger::Builder(3), hour), Multiplication::Builder(BasedInteger::Builder(5), second)})));
+  assert_parsed_expression_is("4h-3h5s", Subtraction::Builder(Multiplication::Builder(BasedInteger::Builder(4), hour.clone()), Addition::Builder({Multiplication::Builder(BasedInteger::Builder(3), hour), Multiplication::Builder(BasedInteger::Builder(5), second)})));
+  // Does not work with fractions or other numbers
+  assert_parsed_expression_is("(3/5)hπs", Multiplication::Builder({Parenthesis::Builder(Division::Builder(BasedInteger::Builder(3), BasedInteger::Builder(5))), hour, Constant::Builder("π"), second}));
+  // Does not work with any unit
+  assert_parsed_expression_is("3km4m", Multiplication::Builder({BasedInteger::Builder(3), Symbol::Builder("k",1), Symbol::Builder("m4", 2), Expression::Parse("_m", nullptr)})); // 3*k*m4*m
+  // Does not work in any order
+  assert_parsed_expression_is("3s5h", Multiplication::Builder({BasedInteger::Builder(3), Symbol::Builder("s5", 2), hour})); // 3*s5*h
+  // Does not allow repetition
+  assert_parsed_expression_is("3s5s", Multiplication::Builder({BasedInteger::Builder(3), Symbol::Builder("s5", 2), second})); // 3*s5*s
 }
 
 QUIZ_CASE(poincare_parsing_identifiers) {

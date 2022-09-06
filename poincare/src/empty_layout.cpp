@@ -80,7 +80,9 @@ bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling
      * being filled in, so add a new empty row or column. */
     LayoutNode * parentNode = parent();
     assert(parentNode != nullptr);
-    parentNode->willAddSiblingToEmptyChildAtIndex(parentNode->indexOfChild(this));
+    if (GridLayoutNode::IsGridLayoutType(parentNode->type())) {
+      static_cast<GridLayoutNode *>(parentNode)->willAddSiblingToEmptyChildAtIndex(parentNode->indexOfChild(this));
+    }
     // WARNING: Do not use previous node pointers afterwards.
   }
   if (siblingRef.mustHaveLeftSibling()) {

@@ -30,10 +30,10 @@ public:
    * The same is true if you set parseForAssignment = true
    * but the parser will set parseForAssignment = false when it encounters a "=".
    * (so that f(x)=xy is parsed as f(x)=x*y, and not as f*(x)=x*y or as f(x)=xy) */
-  Parser(const char * text, Context * context, bool parseForAssignment = false) :
-    m_parsingContext(context, parseForAssignment ? ParsingContext::ParsingMethod::Assignment : ParsingContext::ParsingMethod::Classic),
+  Parser(const char * text, Context * context, const char * textEnd = nullptr, ParsingContext::ParsingMethod parsingMethod = ParsingContext::ParsingMethod::Classic) :
+    m_parsingContext(context, parsingMethod),
     m_status(Status::Progress),
-    m_tokenizer(text, &m_parsingContext),
+    m_tokenizer(text, &m_parsingContext, textEnd),
     m_currentToken(Token(Token::Undefined)),
     m_nextToken(Token(Token::Undefined)),
     m_pendingImplicitMultiplication(false),

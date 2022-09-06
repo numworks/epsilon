@@ -25,7 +25,10 @@ void FrequencyController::appendLabelSuffix(Shared::CurveView::Axis axis, char *
 }
 
 void FrequencyController::moveCursorToSelectedIndex() {
-  m_roundCursorView.setColor(Escher::Palette::YellowDark);
+#ifdef GRAPH_CURSOR_SPEEDUP
+  m_roundCursorView.resetMemoization();
+#endif
+  m_view.curveViewForSeries(0)->setCursorView(&m_ringCursorView);
   PlotController::moveCursorToSelectedIndex();
 }
 
@@ -64,6 +67,10 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
     moveCursorToSelectedIndex();
     return true;
   }
+#ifdef GRAPH_CURSOR_SPEEDUP
+  m_ringCursorView.resetMemoization();
+#endif
+  m_view.curveViewForSeries(0)->setCursorView(&m_roundCursorView);
 
   // Apply step
   x += step;

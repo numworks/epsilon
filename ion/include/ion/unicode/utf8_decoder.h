@@ -30,8 +30,9 @@
 
 class UTF8Decoder {
 public:
-  UTF8Decoder(const char * string, const char * initialPosition = nullptr) :
+  UTF8Decoder(const char * string, const char * initialPosition = nullptr, const char * stringEnd = nullptr) :
     m_string(string),
+    m_stringEnd(stringEnd),
     m_stringPosition(initialPosition == nullptr ? string : initialPosition)
   {
     assert(m_string != nullptr);
@@ -49,6 +50,7 @@ public:
   static bool IsInTheMiddleOfACodePoint(uint8_t value);
 private:
   const char * const m_string;
+  const char * const m_stringEnd;
   const char * m_stringPosition;
 };
 

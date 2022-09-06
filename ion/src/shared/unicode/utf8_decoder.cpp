@@ -19,7 +19,11 @@ static inline uint8_t last_k_bits(uint8_t value, uint8_t bits) {
 }
 
 CodePoint UTF8Decoder::nextCodePoint() {
-  assert(m_stringPosition == m_string || *(m_stringPosition - 1) != 0);
+  assert((m_stringPosition == m_string || *(m_stringPosition - 1) != 0) && (m_stringEnd == nullptr || m_stringPosition <= m_stringEnd));
+  bool returnCodePointNull = false;
+  if (m_stringEnd != nullptr && m_stringPosition == m_stringEnd) {
+    returnCodePointNull = true;
+  }
   int leadingOnes = leading_ones(*m_stringPosition);
   uint32_t result = last_k_bits(*m_stringPosition++, 8-leadingOnes-1);
   for (int i = 0; i < leadingOnes - 1; i++) {
@@ -32,7 +36,7 @@ CodePoint UTF8Decoder::nextCodePoint() {
     }
     result += (nextChunk & 0x3F);
   }
-  return CodePoint(result);
+  return returnCodePointNull ? UCodePointNull : CodePoint(result);
 }
 
 CodePoint UTF8Decoder::previousCodePoint() {

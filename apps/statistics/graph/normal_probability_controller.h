@@ -2,6 +2,7 @@
 #define STATISTICS_NORMAL_PROBABILITY_CONTROLLER_H
 
 #include <escher/alternate_empty_view_delegate.h>
+#include "apps/shared/ring_cursor_view.h"
 #include "plot_controller.h"
 #include <limits.h>
 
@@ -44,7 +45,7 @@ private:
   const char * resultMessageTemplate() const override { return "%s%s%*.*ed"; }
   I18n::Message resultMessage() const override { return I18n::Message::StatisticsNormalProbabilityZScore; }
 
-  Shared::CursorView m_cursorView;
+  Shared::RingCursorView m_cursorView;
 };
 
 }  // namespace Statistics

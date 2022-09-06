@@ -7,7 +7,7 @@
 #include "graph_view.h"
 #include "../shared/interactive_curve_view_controller.h"
 #include "../shared/curve_view_cursor.h"
-#include "../shared/cursor_view.h"
+#include "../shared/ring_cursor_view.h"
 #include "../shared/round_cursor_view.h"
 
 namespace Regression {
@@ -81,7 +81,7 @@ private:
   Escher::Button * calculusButton() const override { return const_cast<Escher::Button * >(&m_calculusButton); }
 
   void setRoundCrossCursorView();
-  Shared::CursorView m_crossCursorView;
+  Shared::RingCursorView m_ringCursorView;
   Shared::RoundCursorView m_roundCursorView;
   BannerView m_bannerView;
   GraphView m_view;

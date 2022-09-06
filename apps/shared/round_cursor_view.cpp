@@ -16,7 +16,7 @@ void RoundCursorView::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->getPixels(r, m_underneathPixelBuffer);
   m_underneathPixelBufferLoaded = true;
 #endif
-  ctx->blendRectWithMask(r, m_color, (const uint8_t *)Dots::LargeDotMask, cursorWorkingBuffer);
+  ctx->blendRectWithMask(r, m_color, mask(), cursorWorkingBuffer);
 }
 
 KDSize RoundCursorView::minimalSizeForOptimalDisplay() const {

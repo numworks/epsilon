@@ -13,8 +13,9 @@ public:
   static const uint8_t SmallDotMask[SmallDotDiameter][SmallDotDiameter];
   constexpr static KDCoordinate MediumDotDiameter = 7;
   static const uint8_t MediumDotMask[MediumDotDiameter][MediumDotDiameter];
-  constexpr static KDCoordinate LargeDotDiameter = 10;
+  constexpr static KDCoordinate LargeDotDiameter = 9;
   static const uint8_t LargeDotMask[LargeDotDiameter][LargeDotDiameter];
+  static const uint8_t LargeRingMask[LargeDotDiameter][LargeDotDiameter];
 };
 
 }

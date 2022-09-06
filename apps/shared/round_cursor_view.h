@@ -20,6 +20,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   void setColor(KDColor color);
   void setCursorFrame(KDRect frame, bool force) override;
+  virtual const uint8_t * mask() const { return (const uint8_t *)Dots::LargeDotMask; };
 #ifdef GRAPH_CURSOR_SPEEDUP
   void resetMemoization() const { m_underneathPixelBufferLoaded = false; }
 #endif

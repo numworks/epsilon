@@ -1,4 +1,5 @@
 #include <poincare/addition.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
@@ -11,7 +12,9 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/subtraction.h>
 #include <poincare/undefined.h>
+#include <poincare/unit.h>
 #include <poincare/simplification_helper.h>
+#include <poincare/string_layout.h>
 #include <assert.h>
 #include <utility>
 
@@ -51,7 +54,25 @@ int AdditionNode::getPolynomialCoefficients(Context * context, const char * symb
 // Layout
 
 Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, "+", context);
+  bool implicitAddition = displayImplicitAdditionBetweenUnits();
+  Layout result = LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, implicitAddition ? "" : "+", context);
+  if (implicitAddition) {
+    /* Check if the layout of the implicit addtion contains an 'ᴇ'.
+     * If it's the case, return a normal addition layout, since implicit
+     * addition should not contain any 'ᴇ'.
+     * We check this after creating the layout because it seems simpler
+     * but it might not be ideal since we create the layout twice if it fails.
+     * */
+    int n = result.numberOfChildren();
+    for (int i = 0; i < n ; i++) {
+      Layout child = result.childAtIndex(i);
+      if ((child.type() == LayoutNode::Type::CodePointLayout && static_cast<CodePointLayout&>(child).codePoint() == UCodePointLatinLetterSmallCapitalE)
+          || (child.type() == LayoutNode::Type::StringLayout && UTF8Helper::CountOccurrences(static_cast<StringLayout&>(child).string(), UCodePointLatinLetterSmallCapitalE) > 0)) {
+        return LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, "+", context);
+      }
+    }
+  }
+  return result;
 }
 
 int AdditionNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
@@ -71,6 +92,28 @@ Expression AdditionNode::shallowBeautify(const ReductionContext& reductionContex
 // Derivation
 bool AdditionNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   return Addition(this).derivate(reductionContext, symbol, symbolValue);
+}
+
+// Properties
+bool AdditionNode::displayImplicitAdditionBetweenUnits() const {
+  int n = numberOfChildren();
+  if (n < 2) {
+    return false;
+  }
+  const Unit::Representative * storedUnitRepresentative = nullptr;
+  for (int i = 0; i < n; i++) {
+    Expression child = childAtIndex(i);
+    if (child.type() != Type::Multiplication || child.numberOfChildren() != 2 || !child.childAtIndex(0).isOfType({Type::BasedInteger, Type::Decimal, Type::Double, Type::Float}) || child.childAtIndex(1).type() != Type::Unit || child.childAtIndex(0).isPositive(nullptr) == TrinaryBoolean::False) {
+      return false;
+    }
+    Expression tempUnitOfChild = child.childAtIndex(1);
+    Unit  unitOfChild = static_cast<Unit &>(tempUnitOfChild);
+    if (storedUnitRepresentative && !Unit::AllowImplicitAddition(unitOfChild.representative(), storedUnitRepresentative)) {
+      return false;
+    }
+    storedUnitRepresentative = unitOfChild.representative();
+  }
+  return true;
 }
 
 // Addition

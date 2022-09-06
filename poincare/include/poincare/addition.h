@@ -75,6 +75,9 @@ private:
   Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override {
     return ApproximationHelper::MapReduce<double>(this, approximationContext, Compute<double>);
   }
+
+  // Properties
+  bool displayImplicitAdditionBetweenUnits() const;
 };
 
 class Addition final : public NAryExpression {

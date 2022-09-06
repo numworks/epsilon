@@ -127,6 +127,11 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
       "2m×3.5m");
 }
 
+QUIZ_CASE(poincare_expression_to_layout_implicit_addition) {
+  assert_expression_layouts_and_serializes_to(Addition::Builder({Multiplication::Builder(BasedInteger::Builder(2), Expression::Parse("_h", nullptr)), Multiplication::Builder(BasedInteger::Builder(3), Expression::Parse("_min", nullptr)), Multiplication::Builder(Decimal::Builder(4.5), Expression::Parse("_s", nullptr))}), "2h3min4.5s");
+  assert_expression_layouts_and_serializes_to(Addition::Builder({Multiplication::Builder(BasedInteger::Builder(2), Expression::Parse("_h", nullptr)), Multiplication::Builder(BasedInteger::Builder(3), Expression::Parse("_min", nullptr)), Multiplication::Builder(Decimal::Builder(4,30), Expression::Parse("_s", nullptr))}), "2h+3min+4ᴇ30s");
+}
+
 void assert_parsed_expression_layout_serialize_to_self(const char * expressionLayout) {
   Expression e = parse_expression(expressionLayout, nullptr, true);
   Layout el = e.createLayout(DecimalMode, PrintFloat::k_numberOfStoredSignificantDigits, nullptr);

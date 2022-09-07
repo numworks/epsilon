@@ -169,9 +169,9 @@ KDColor ExamModeConfiguration::examModeColor(Preferences::ExamMode mode) {
 bool ExamModeConfiguration::appIsForbidden(I18n::Message appName) {
   Preferences::ExamMode mode = Preferences::sharedPreferences()->examMode();
   bool pythonDutchExam = appName == I18n::Message::CodeApp && mode == Preferences::ExamMode::Dutch;
-  bool periodicPortugueseExam = appName == I18n::Message::PeriodicApp && mode == Preferences::ExamMode::Portuguese;
+  bool elementsPortugueseExam = appName == I18n::Message::ElementsApp && mode == Preferences::ExamMode::Portuguese;
   bool solverForbidden = appName == I18n::Message::SolverApp && Preferences::sharedPreferences()->equationSolverIsForbidden();
-  return pythonDutchExam || periodicPortugueseExam || solverForbidden;
+  return pythonDutchExam || elementsPortugueseExam || solverForbidden;
 }
 
 static bool isPrimeFactorization(Expression expression) {

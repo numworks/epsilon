@@ -6,7 +6,7 @@ DEVELOPMENT ?= 0
 
 EPSILON_VERSION ?= 19.0.0
 EXTERNAL_APPS_API_LEVEL ?= 0
-EPSILON_APPS ?= calculation graph code statistics inference solver sequence regression periodic finance settings
+EPSILON_APPS ?= calculation graph code statistics inference solver sequence regression elements finance settings
 EPSILON_I18N ?= en fr nl pt it de es
 EPSILON_COUNTRIES ?= WW CA DE ES FR GB IT NL PT US
 EPSILON_GETOPT ?= 0

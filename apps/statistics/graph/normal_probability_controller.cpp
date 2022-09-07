@@ -22,6 +22,11 @@ bool NormalProbabilityController::drawSeriesZScoreLine(int series, float * x, fl
   return true;
 }
 
+void NormalProbabilityController::moveCursorToSelectedIndex() {
+  m_cursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
+  PlotController::moveCursorToSelectedIndex();
+}
+
 bool NormalProbabilityController::moveSelectionHorizontally(int deltaIndex) {
   assert(m_selectedSeries >= 0);
   int nextIndex = SanitizeIndex(m_selectedIndex + deltaIndex, totalValues(m_selectedSeries));

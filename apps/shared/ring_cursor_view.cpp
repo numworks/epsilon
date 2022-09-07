@@ -18,7 +18,6 @@ void RingCursorView::drawRect(KDContext * ctx, KDRect rect) const {
 #endif
   constexpr KDCoordinate diff = Dots::LargeDotDiameter - Dots::TinyDotDiameter;
   KDRect dotRect(r.x() + diff/2, r.y() + diff/2, r.width() - diff, r.height() - diff);
-  ctx->fillRectWithMask(dotRect, m_color, KDColorWhite, (const uint8_t *)Dots::TinyDotMask, cursorWorkingBuffer);
   ctx->blendRectWithMask(r, m_color, (const uint8_t *)Dots::LargeRingMask, cursorWorkingBuffer);
 }
 

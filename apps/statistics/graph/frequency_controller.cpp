@@ -29,6 +29,7 @@ void FrequencyController::moveCursorToSelectedIndex() {
   m_roundCursorView.resetMemoization();
 #endif
   m_view.curveViewForSeries(0)->setCursorView(&m_ringCursorView);
+  m_ringCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
   PlotController::moveCursorToSelectedIndex();
 }
 

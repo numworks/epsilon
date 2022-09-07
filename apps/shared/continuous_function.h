@@ -171,8 +171,8 @@ public:
   /* Expression */
 
   // Return the unaltered equation expression, replacing unknown symbols.
-  Poincare::Expression originalEquation(const Ion::Storage::Record * record) const {
-    return m_model.originalEquation(record, symbol());
+  Poincare::Expression originalEquation() const {
+    return m_model.originalEquation(this, symbol());
   }
   // Update plotType as well as tMin and tMax values.
   void updateModel(Poincare::Context * context, bool wasAlongXorY);

@@ -83,7 +83,6 @@ private:
   constexpr static int k_lineCellType = 0;
   constexpr static int k_editCellType = 1;
   constexpr static int k_numberOfLineCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(KDFont::GlyphHeight(KDFont::Size::Small));
-  // k_numberOfLineCells = (240 - 18)/14 ~ 15.9. The 0.1 cell can be above and below the 15 other cells so we add +2 cells.
   constexpr static int k_outputAccumulationBufferSize = 100;
   bool isDisplayingViewController();
   void reloadData(bool isEditing);

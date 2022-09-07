@@ -18,8 +18,7 @@ using namespace Escher;
 namespace Graph {
 
 const char * AreaBetweenCurvesGraphController::title() {
-  // TODO: New title
-  return I18n::translate(I18n::Message::UseFunctionModel);
+  return I18n::translate(I18n::Message::AreaBetweenCurves);
 }
 
 void AreaBetweenCurvesGraphController::viewDidDisappear() {

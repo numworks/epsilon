@@ -3,6 +3,7 @@
 #include <poincare/normal_distribution.h>
 #include <poincare/student_distribution.h>
 #include <poincare/geometric_distribution.h>
+#include <poincare/hypergeometric_distribution.h>
 #include <poincare/exponential_distribution.h>
 #include <poincare/poisson_distribution.h>
 #include <poincare/fisher_distribution.h>
@@ -25,6 +26,9 @@ const Distribution * Distribution::Get(Type type) {
   case Type::Geometric:
     constexpr static GeometricDistribution geometric;
     return &geometric;
+  case Type::Hypergeometric:
+    constexpr static HypergeometricDistribution hypergeometric;
+    return &hypergeometric;
   case Type::Fisher:
     constexpr static FisherDistribution fisher;
     return &fisher;

@@ -47,7 +47,7 @@ private:
     Escher::MessageTextView m_titleView;
     Escher::SelectableTableView * m_selectableTableView;
   };
-  constexpr static int k_maxNumberOfCells = 2;
+  constexpr static int k_maxNumberOfCells = 3;
   ContentView m_contentView;
   ExpressionCellWithEditableTextWithMessage m_menuListCell[k_maxNumberOfCells];
   Distribution * m_distribution;

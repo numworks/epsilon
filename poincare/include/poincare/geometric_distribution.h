@@ -20,7 +20,7 @@ public:
   float evaluateAtAbscissa(float x, const float * parameters) const override { return EvaluateAtAbscissa<float>(x, parameters[0]); }
   double evaluateAtAbscissa(double x, const double * parameters) const override { return EvaluateAtAbscissa<double>(x, parameters[0]); }
 
-  template<typename T> static T CumulativeDistributiveInverseForProbability(T probability, T lambda);
+  template<typename T> static T CumulativeDistributiveInverseForProbability(T probability, T p);
   float cumulativeDistributiveInverseForProbability(float x, const float * parameters) const override { return CumulativeDistributiveInverseForProbability<float>(x, parameters[0]); }
   double cumulativeDistributiveInverseForProbability(double x, const double * parameters) const override { return CumulativeDistributiveInverseForProbability<double>(x, parameters[0]); }
 

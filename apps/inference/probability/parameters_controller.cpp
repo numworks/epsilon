@@ -120,7 +120,7 @@ void ParametersController::setTextInCell(Escher::HighlightCell * cell, const cha
 
 HighlightCell * ParametersController::reusableParameterCell(int index, int type) {
   assert(index >= 0);
-  assert(index < 2);
+  assert(index < k_maxNumberOfCells);
   return &m_menuListCell[index];
 }
 

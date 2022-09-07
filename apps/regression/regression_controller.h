@@ -32,7 +32,7 @@ public:
 private:
   // Model::Type::None isn't made available here
   constexpr static int k_numberOfRows = Model::k_numberOfModels - 1;
-  constexpr static int k_numberOfCells = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight - 2*Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
+  constexpr static int k_numberOfCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::TabHeight - 2 * Escher::Metric::StackTitleHeight); // Remaining cell can be above and below so we add +2
   constexpr static Model::Type ModelTypeAtIndex(int index) { return static_cast<Model::Type>(index + 1); }
   constexpr static KDFont::Size k_modelLayoutFont = KDFont::Size::Small;
 

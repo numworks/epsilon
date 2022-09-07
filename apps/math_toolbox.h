@@ -22,7 +22,7 @@ protected:
   Escher::MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;
   int controlChecksum() const override;
-  constexpr static int k_maxNumberOfDisplayedRows = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
+  constexpr static int k_maxNumberOfDisplayedRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight);
 private:
   bool isMessageTreeDisabled(const Escher::ToolboxMessageTree * messageTree) const;
   bool displayMessageTreeDisabledPopUp(const Escher::ToolboxMessageTree * messageTree);

@@ -48,7 +48,7 @@ public:
 protected:
   constexpr static KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) * KDFont::GlyphWidth(KDFont::Size::Small) + 2*Escher::Metric::SmallCellMargin + Escher::Metric::TableSeparatorThickness;
 
-  constexpr static int k_maxNumberOfDisplayableRows = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight)/k_cellHeight + 2;
+  constexpr static int k_maxNumberOfDisplayableRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillHeight(k_cellHeight, Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::TabHeight);
   constexpr static int k_maxNumberOfDisplayableColumns = Ion::Display::Width/k_cellWidth + 2;
   constexpr static int k_maxNumberOfEditableCells = k_maxNumberOfDisplayableRows * k_maxNumberOfDisplayableColumns;
   constexpr static int k_numberOfTitleCells = 4;

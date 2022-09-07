@@ -32,7 +32,7 @@ public:
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 private:
   ExpiringPointer<Function> function();
-  constexpr static int k_numberOfCells = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight - 2*Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
+  constexpr static int k_numberOfCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::TabHeight - 2*Escher::Metric::StackTitleHeight); // Remaining cell can be above and below so we add +2
   Ion::Storage::Record m_record;
   ColorCell m_cells[k_numberOfCells];
 };

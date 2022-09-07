@@ -54,11 +54,11 @@ private:
     int selectedButton() const { return m_selectedButton; }
     ViewController * mainViewController() const { return m_mainViewController; }
   private:
-    constexpr static KDCoordinate k_plainStyleHeight = 20;
-    constexpr static KDCoordinate k_embossedStyleHeightSmall = 36;
-    constexpr static KDCoordinate k_embossedStyleHeightLarge = 52;
-    constexpr static KDCoordinate k_embossedStyleHeightMarginSmall = 6;
-    constexpr static KDCoordinate k_embossedStyleHeightMarginLarge = 8;
+    constexpr static KDCoordinate k_plainStyleHeight = Metric::ButtonRowPlainStyleHeight;
+    constexpr static KDCoordinate k_embossedStyleHeightSmall = Metric::ButtonRowEmbossedStyleHeightSmall;
+    constexpr static KDCoordinate k_embossedStyleHeightLarge = Metric::ButtonRowEmbossedStyleHeightLarge;
+    constexpr static KDCoordinate k_embossedStyleHeightMarginSmall = Metric::ButtonRowEmbossedStyleHeightMarginSmall;
+    constexpr static KDCoordinate k_embossedStyleHeightMarginLarge = Metric::ButtonRowEmbossedStyleHeightMarginLarge;
     ViewController * m_mainViewController;
     int m_selectedButton;
     ButtonRowDelegate * m_delegate;

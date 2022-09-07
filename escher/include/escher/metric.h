@@ -3,6 +3,7 @@
 
 #include <kandinsky/coordinate.h>
 #include <kandinsky/font.h>
+#include <ion/display.h>
 
 namespace Escher {
 
@@ -44,15 +45,27 @@ public:
   constexpr static KDCoordinate FractionAndConjugateHorizontalOverflow = 2;
   constexpr static KDCoordinate MinimalBracketAndParenthesisChildHeight = 16;
   constexpr static KDCoordinate OperatorHorizontalMargin = 4;
-  constexpr static KDCoordinate ScrollStep = 10;
   constexpr static KDCoordinate SmallCellMargin = 2;
   constexpr static KDCoordinate StackTitleHeight = 20;
-  constexpr static KDCoordinate StoreRowHeight = 50;
   constexpr static KDCoordinate TabHeight = 27;
   constexpr static KDCoordinate TableSeparatorThickness = 5;
   constexpr static KDCoordinate ThousandsSeparatorWidth = 3;
   constexpr static KDCoordinate TitleBarExternHorizontalMargin = 5;
+
+  // ButtonRow
+  constexpr static KDCoordinate ButtonRowPlainStyleHeight = 20;
+  constexpr static KDCoordinate ButtonRowEmbossedStyleHeightSmall = 36;
+  constexpr static KDCoordinate ButtonRowEmbossedStyleHeightLarge = 52;
+  constexpr static KDCoordinate ButtonRowEmbossedStyleHeightMarginSmall = 6;
+  constexpr static KDCoordinate ButtonRowEmbossedStyleHeightMarginLarge = 8;
+
+  // Misc
   constexpr static KDCoordinate TitleBarHeight = 18;
+  constexpr static KDCoordinate ScrollStep = 10;
+  constexpr static KDCoordinate StoreRowHeight = 50;
+
+  // Display
+  constexpr static KDCoordinate DisplayHeightWithoutTitleBar = Ion::Display::Height - TitleBarHeight;
 
   constexpr static KDCoordinate SmallFontCellWidth(int numberOfChars, KDCoordinate margin) {
     return numberOfChars * KDFont::GlyphWidth(KDFont::Size::Small) + 2 * margin;

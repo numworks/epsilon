@@ -28,7 +28,7 @@ protected:
   Escher::MessageTableCellWithMessage * leafCellAtIndex(int index) override;
   Escher::MessageTableCellWithChevron* nodeCellAtIndex(int index) override;
   int maxNumberOfDisplayedRows() override;
-  constexpr static int k_maxNumberOfDisplayedRows = ((Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight) / Escher::TableCell::k_minimalSmallFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
+  constexpr static int k_maxNumberOfDisplayedRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillHeight(Escher::TableCell::k_minimalSmallFontCellHeight, Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight);
 private:
   void scrollToLetter(char letter);
   void scrollToAndSelectChild(int i);

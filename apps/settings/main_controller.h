@@ -59,8 +59,7 @@ private:
   // Model index
   constexpr static int k_indexOfExamModeCell = 8;
   // Max number of visible cells
-  constexpr static int k_numberOfSimpleChevronCells = ((Ion::Display::Height - Escher::Metric::TitleBarHeight) / Escher::TableCell::k_minimalLargeFontCellHeight) + 2; // Remaining cell can be above and below so we add +2
-
+  constexpr static int k_numberOfSimpleChevronCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::DisplayHeightWithoutTitleBar);
   Escher::MessageTableCellWithChevronAndMessage m_cells[k_numberOfSimpleChevronCells];
   MessageTableCellWithGaugeWithSeparator m_brightnessCell;
   Escher::MessageTableCellWithSwitch m_popUpCell;

@@ -19,6 +19,6 @@ app_elements_src = $(addprefix apps/elements/,\
 
 apps_src += $(app_elements_src)
 
-i18n_files += apps/elements/base.universal.i18n
+i18n_files += $(call i18n_with_universal_for,elements/base)
 
 $(eval $(call depends_on_image,apps/elements/app.cpp,apps/settings/settings_icon.png))

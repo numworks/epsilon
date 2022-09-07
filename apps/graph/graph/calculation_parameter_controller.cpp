@@ -112,7 +112,7 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
   if (cell == &m_derivativeCell) {
     m_derivativeCell.setState(m_graphController->displayDerivativeInBanner());
   } else if (cell != &m_preimageCell) {
-    I18n::Message titles[] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Default, I18n::Message::Tangent, I18n::Message::Integral, I18n::Message::Integral};
+    I18n::Message titles[] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Default, I18n::Message::Tangent, I18n::Message::Integral, I18n::Message::AreaBetweenCurves};
     static_cast<MessageTableCell *>(cell)->setMessage(titles[index - 1 + !shouldDisplayIntersection()]);
   }
 }

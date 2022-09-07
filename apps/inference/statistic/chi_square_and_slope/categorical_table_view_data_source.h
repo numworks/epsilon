@@ -23,7 +23,7 @@ public:
   KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
 
   constexpr static int k_rowHeight = Escher::Metric::SmallEditableCellHeight;
-  constexpr static int k_maxNumberOfReusableRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillHeight(k_rowHeight, Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::StackTitleHeight);
+  constexpr static int k_maxNumberOfReusableRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(k_rowHeight, Escher::Metric::StackTitleHeight);
   constexpr static int k_typeOfInnerCells = 0;
 protected:
   constexpr static int k_typeOfHeaderCells = k_typeOfInnerCells + 1;

@@ -39,7 +39,7 @@ public:
   void lockDeleteEvent(Page page) { m_lockPageDelete = page; }
 
 private:
-  constexpr static int k_maxNumberOfDisplayedRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::PopUpTopMargin - Escher::Metric::StackTitleHeight); // Remaining cell can be above and below so we add +2
+  constexpr static int k_maxNumberOfDisplayedRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::PopUpTopMargin + Escher::Metric::StackTitleHeight); // Remaining cell can be above and below so we add +2
   constexpr static int k_numberOfMenuRows = static_cast<int>(Page::sizeOfEnum) - 1;
   constexpr static KDCoordinate k_leafMargin = 20;
   constexpr static KDFont::Size k_subLabelFont = KDFont::Size::Small;

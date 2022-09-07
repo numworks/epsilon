@@ -46,8 +46,6 @@ public:
   constexpr static KDCoordinate MinimalBracketAndParenthesisChildHeight = 16;
   constexpr static KDCoordinate OperatorHorizontalMargin = 4;
   constexpr static KDCoordinate SmallCellMargin = 2;
-  constexpr static KDCoordinate StackTitleHeight = 20;
-  constexpr static KDCoordinate TabHeight = 27;
   constexpr static KDCoordinate TableSeparatorThickness = 5;
   constexpr static KDCoordinate ThousandsSeparatorWidth = 3;
   constexpr static KDCoordinate TitleBarExternHorizontalMargin = 5;
@@ -61,6 +59,8 @@ public:
 
   // Misc
   constexpr static KDCoordinate TitleBarHeight = 18;
+  constexpr static KDCoordinate StackTitleHeight = 20;
+  constexpr static KDCoordinate TabHeight = 27;
   constexpr static KDCoordinate ScrollStep = 10;
   constexpr static KDCoordinate StoreRowHeight = 50;
   constexpr static KDCoordinate SmallEditableCellHeight = 20;

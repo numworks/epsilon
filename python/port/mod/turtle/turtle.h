@@ -94,7 +94,7 @@ private:
    * need to invert some values, hence k_invertedYAxisCoefficient. */
   constexpr static int k_invertedYAxisCoefficient = -1;
   constexpr static KDCoordinate k_xOffset = Ion::Display::Width / 2;
-  constexpr static KDCoordinate k_yOffset = (Ion::Display::Height - Escher::Metric::TitleBarHeight) / 2;
+  constexpr static KDCoordinate k_yOffset = Escher::Metric::DisplayHeightWithoutTitleBar / 2;
   constexpr static uint8_t k_defaultSpeed = 8;
   constexpr static uint8_t k_maxSpeed = 10;
   constexpr static KDColor k_defaultColor = KDColorBlack;

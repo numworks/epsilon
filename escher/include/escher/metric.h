@@ -63,6 +63,7 @@ public:
   constexpr static KDCoordinate TitleBarHeight = 18;
   constexpr static KDCoordinate ScrollStep = 10;
   constexpr static KDCoordinate StoreRowHeight = 50;
+  constexpr static KDCoordinate SmallEditableCellHeight = 20;
 
   // Display
   constexpr static KDCoordinate DisplayHeightWithoutTitleBar = Ion::Display::Height - TitleBarHeight;

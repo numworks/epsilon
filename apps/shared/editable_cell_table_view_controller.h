@@ -27,7 +27,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
 protected:
-  constexpr static KDCoordinate k_cellHeight = 20;
+  constexpr static KDCoordinate k_cellHeight = Escher::Metric::SmallEditableCellHeight;
   constexpr static KDCoordinate k_margin = Escher::Metric::TableSeparatorThickness;
   constexpr static KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
 

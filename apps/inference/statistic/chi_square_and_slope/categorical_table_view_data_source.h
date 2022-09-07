@@ -22,8 +22,8 @@ public:
   // BorderedTableViewDataSource
   KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
 
-  constexpr static int k_rowHeight = 20;
-  constexpr static int k_maxNumberOfReusableRows = (Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::StackTitleHeight) / k_rowHeight + 2;
+  constexpr static int k_rowHeight = Escher::Metric::SmallEditableCellHeight;
+  constexpr static int k_maxNumberOfReusableRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillHeight(k_rowHeight, Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::StackTitleHeight);
   constexpr static int k_typeOfInnerCells = 0;
 protected:
   constexpr static int k_typeOfHeaderCells = k_typeOfInnerCells + 1;
@@ -35,4 +35,3 @@ protected:
 }  // namespace Inference
 
 #endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_TABLE_VIEW_DATA_SOURCE_H */
-

@@ -31,10 +31,7 @@ public:
 private:
   void setDistributionAccordingToIndex(int index);
   constexpr static int k_totalNumberOfModels = 9;
-  constexpr static int k_numberOfCells =
-      (Ion::Display::Height - Escher::Metric::TitleBarHeight - KDFont::GlyphHeight(KDFont::Size::Small)) /
-          Escher::TableCell::k_minimalLargeFontCellHeight +
-      2;  // Remaining cell can be above and below so we add +2
+  constexpr static int k_numberOfCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalLargeFontCellHeight, KDFont::GlyphHeight(KDFont::Size::Small));
   DistributionCell m_cells[k_numberOfCells];
   Distribution * m_distribution;
   ParametersController * m_parametersController;

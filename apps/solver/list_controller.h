@@ -47,11 +47,7 @@ public:
   /* Specific to Solver */
   void resolveEquations();
 private:
-  /* Ion::Display::Height - Escher::Metric::TitleBarHeight -
-   * - Escher::Metric::StackTitleHeight
-   * - ButtonRowController::k_embossedStyleHeightLarge
-   * = Metric::StoreRowHeight * 3.0 (240-18-20-52 = 50 * 3) */
-  constexpr static int k_maxNumberOfRows = 3 + 1;
+  constexpr static int k_maxNumberOfRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillHeight(Escher::Metric::StoreRowHeight,  Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::ButtonRowEmbossedStyleHeightLarge);
   Escher::SelectableTableView * selectableTableView() override;
   void reloadButtonMessage();
   void addModel() override;

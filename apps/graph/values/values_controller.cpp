@@ -137,7 +137,7 @@ int ValuesController::fillColumnName(int columnIndex, char * buffer) {
       if (function->isNamed()) {
         return function->nameWithArgument(buffer, bufferNameSize);
       } else {
-        int size = PoincareHelpers::Serialize(function->originalEquation(&record), buffer, bufferNameSize, Preferences::VeryShortNumberOfSignificantDigits);
+        int size = PoincareHelpers::Serialize(function->originalEquation(), buffer, bufferNameSize, Preferences::VeryShortNumberOfSignificantDigits);
         // Serialization may have introduced system parentheses.
         SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer, bufferNameSize - 1);
         return size;
@@ -405,7 +405,7 @@ void ValuesController::setExactValueCellLayouts(int column, int row) {
       Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
       abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
       PoincareHelpers::CloneAndSimplify(&exactExpression, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
-      if (!PoincareHelpers::ShouldOnlyDisplayApproximation(function->expressionClone(), exactExpression, context)) {
+      if (!PoincareHelpers::ShouldOnlyDisplayApproximation(function->originalEquation(), exactExpression, context)) {
         // Do not show exact expressions in certain cases
         exactLayout = exactExpression.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, context);
       }

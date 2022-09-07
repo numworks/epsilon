@@ -44,26 +44,26 @@ constexpr KDColor MetallicGreenLight = KDColor::RGB24(0x80ffbf);
 constexpr KDColor MetallicRedDark = KDColor::RGB24(0x8c2c54);
 constexpr KDColor MetallicRedLight = KDColor::RGB24(0xfbbbbb);
 
-constexpr KDColor ScaleBackBlueLight = KDColor::RGB24(0xeffeff);
-constexpr KDColor ScaleBackBlueDark = KDColor::RGB24(0x024bf1);
-constexpr KDColor ScaleTextBlueLight = KDColor::RGB24(0x00adf5);
-constexpr KDColor ScaleTextBlueDark = KDColor::RGB24(0x02020a);
-constexpr KDColor ScaleBackGreenLight = KDColor::RGB24(0xf1ffe7);
-constexpr KDColor ScaleBackGreenDark = KDColor::RGB24(0x72ff40);
-constexpr KDColor ScaleTextGreenLight = KDColor::RGB24(0x00d905);
-constexpr KDColor ScaleTextGreenDark = KDColor::RGB24(0x063a1e);
+constexpr KDColor ScaleBackBlueLight = KDColor::RGB24(0xd0e7ff);
+constexpr KDColor ScaleBackBlueDark = KDColor::RGB24(0x3a79ff);
+constexpr KDColor ScaleTextBlueLight = KDColor::RGB24(0x009adb);
+constexpr KDColor ScaleTextBlueDark = KDColor::RGB24(0x011b2c);
+constexpr KDColor ScaleBackGreenLight = KDColor::RGB24(0xccf5b4);
+constexpr KDColor ScaleBackGreenDark = KDColor::RGB24(0x6bcc25);
+constexpr KDColor ScaleTextGreenLight = KDColor::RGB24(0x1dac04);
+constexpr KDColor ScaleTextGreenDark = KDColor::RGB24(0x0a4c1a);
 constexpr KDColor ScaleBackPurpleLight = KDColor::RGB24(0xefdfff);
 constexpr KDColor ScaleBackPurpleDark = KDColor::RGB24(0x8d1ffe);
-constexpr KDColor ScaleTextPurpleLight = KDColor::RGB24(0xbd7eff);
-constexpr KDColor ScaleTextPurpleDark = KDColor::RGB24(0x240140);
+constexpr KDColor ScaleTextPurpleLight = KDColor::RGB24(0xa86ee3);
+constexpr KDColor ScaleTextPurpleDark = KDColor::RGB24(0x300f45);
 constexpr KDColor ScaleBackRedLight = KDColor::RGB24(0xfde2af);
 constexpr KDColor ScaleBackRedDark = KDColor::RGB24(0xf31a29);
-constexpr KDColor ScaleTextRedLight = KDColor::RGB24(0xffa53b);
-constexpr KDColor ScaleTextRedDark = KDColor::RGB24(0x570101);
+constexpr KDColor ScaleTextRedLight = KDColor::RGB24(0xe77f12);
+constexpr KDColor ScaleTextRedDark = KDColor::RGB24(0x6c1303);
 constexpr KDColor ScaleBackYellowLight = KDColor::RGB24(0xfff7e9);
 constexpr KDColor ScaleBackYellowDark = KDColor::RGB24(0xffa500);
-constexpr KDColor ScaleTextYellowLight = KDColor::RGB24(0xffb574);
-constexpr KDColor ScaleTextYellowDark = KDColor::RGB24(0x955b00);
+constexpr KDColor ScaleTextYellowLight = KDColor::RGB24(0xfa9740);
+constexpr KDColor ScaleTextYellowDark = KDColor::RGB24(0x7e4d00);
 
 }
 }

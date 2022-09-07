@@ -16,9 +16,9 @@ constexpr Dot<Size> makeDot(float maxRadius, float minRadius = 0.) {
   Dot<Size> result = {};
   float minRadius2 = minRadius * minRadius;
   float maxRadius2 = maxRadius * maxRadius;
-  for (int i = 0; i < Size; i++) {
+  for (unsigned i = 0; i < Size; i++) {
     float x = i - Size / 2.0;
-    for (int j = 0; j < Size; j++) {
+    for (unsigned j = 0; j < Size; j++) {
       float y = j - Size / 2.0;
       int n = 0;
       for (int pi = 0; pi < k_nbSubdivisions; pi++) {
@@ -66,9 +66,9 @@ const uint8_t Dots::MediumDotMask[Dots::MediumDotDiameter][Dots::MediumDotDiamet
 };
 
 static constexpr const Dot<Dots::LargeDotDiameter> largeDot = makeDot<Dots::LargeDotDiameter>(4.0);
-constexpr const uint8_t (&Dots::LargeDotMask)[Dots::LargeDotDiameter][Dots::LargeDotDiameter] = largeDot.m_mask;
+__attribute__((__used__)) constexpr const uint8_t (&Dots::LargeDotMask)[Dots::LargeDotDiameter][Dots::LargeDotDiameter] = largeDot.m_mask;
 
 static constexpr const Dot<Dots::LargeDotDiameter> largeRing = makeDot<Dots::LargeDotDiameter>(4.5, 3.5);
-constexpr const uint8_t (&Dots::LargeRingMask)[Dots::LargeDotDiameter][Dots::LargeDotDiameter] = largeRing.m_mask;
+__attribute__((__used__)) constexpr const uint8_t (&Dots::LargeRingMask)[Dots::LargeDotDiameter][Dots::LargeDotDiameter] = largeRing.m_mask;
 
 }

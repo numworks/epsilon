@@ -29,6 +29,21 @@ constexpr KDColor ElementTurquoiseLight = KDColor::RGB24(0xc9f7ff);
 constexpr KDColor ElementYellowDark = KDColor::RGB24(0x907a02);
 constexpr KDColor ElementYellowLight = KDColor::RGB24(0xfff7cf);
 
+constexpr KDColor MetallicBlueDark = KDColor::RGB24(0x1f2030);
+constexpr KDColor MetallicBlueLight = KDColor::RGB24(0x48aae3);
+constexpr KDColor MetallicTealDark = KDColor::RGB24(0x0a2124);
+constexpr KDColor MetallicTealLight = KDColor::RGB24(0x50bbcb);
+constexpr KDColor MetallicVerdigrisDark = KDColor::RGB24(0x171437);
+constexpr KDColor MetallicVerdigrisLight = KDColor::RGB24(0x64dfdf);
+constexpr KDColor MetallicTurquoiseDark = KDColor::RGB24(0x111348);
+constexpr KDColor MetallicTurquoiseLight = KDColor::RGB24(0x72efdd);
+constexpr KDColor MetallicAquamarineDark = KDColor::RGB24(0x1c1e44);
+constexpr KDColor MetallicAquamarineLight = KDColor::RGB24(0x80ffdb);
+constexpr KDColor MetallicGreenDark = KDColor::RGB24(0x1f1f1f);
+constexpr KDColor MetallicGreenLight = KDColor::RGB24(0x80ffbf);
+constexpr KDColor MetallicRedDark = KDColor::RGB24(0x8c2c54);
+constexpr KDColor MetallicRedLight = KDColor::RGB24(0xfbbbbb);
+
 constexpr KDColor ScaleBackBlueLight = KDColor::RGB24(0xeffeff);
 constexpr KDColor ScaleBackBlueDark = KDColor::RGB24(0x024bf1);
 constexpr KDColor ScaleTextBlueLight = KDColor::RGB24(0x00adf5);

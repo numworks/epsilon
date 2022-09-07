@@ -287,24 +287,47 @@ I18n::Message BlockDataField::protectedGetMessage(AtomicNumber z) const {
   return k_titles[static_cast<uint8_t>(block)];
 }
 
+DataField::ColorPair BlockDataField::getColors(AtomicNumber z) const {
+  constexpr ColorPair k_colors[] = {
+    /* s */ ColorPair(Palette::ElementRedDark, Palette::ElementRedLight),
+    /* p */ ColorPair(Palette::ElementBlueDark, Palette::ElementBlueLight),
+    /* d */ ColorPair(Palette::ElementOrangeDark, Palette::ElementOrangeLight),
+    /* f */ ColorPair(Palette::ElementGreenDark, Palette::ElementGreenLight),
+  };
+  ElementData::Block block = ElementsDataBase::Block(z);
+  assert(static_cast<uint8_t>(block) < sizeof(k_colors) / sizeof(k_colors[0]));
+  return k_colors[static_cast<uint8_t>(block)];
+}
+
 // MetalDataField
 
 I18n::Message MetalDataField::protectedGetMessage(AtomicNumber z) const {
-  if (DeferToGroupDataField(z)) {
+  ElementData::Group group = ElementsDataBase::Group(z);
+  if (ElementsDataBase::IsMetal(z) || group == ElementData::Group::Metalloid || group == ElementData::Group::Unidentified) {
     return ElementsDataBase::GroupField.protectedGetMessage(z);
   }
   return I18n::Message::ElementsGroupNonmetal;
 }
 
 DataField::ColorPair MetalDataField::getColors(AtomicNumber z) const {
-  if (DeferToGroupDataField(z)) {
+  ElementData::Group group = ElementsDataBase::Group(z);
+  if (group == ElementData::Group::Unidentified) {
     return ElementsDataBase::GroupField.getColors(z);
+  } else if (group == ElementData::Group::Metalloid) {
+    return ColorPair(Palette::MetallicRedDark, Palette::MetallicRedLight);
+  } else if (!ElementsDataBase::IsMetal(z)) {
+    return ColorPair(Palette::ElementOrangeDark, Palette::ElementOrangeLight);
   }
-  return ColorPair(Palette::ElementRedDark, Palette::ElementRedLight);
-}
-
-bool MetalDataField::DeferToGroupDataField(AtomicNumber z) {
-  return ElementsDataBase::IsMetal(z) || ElementsDataBase::Group(z) == ElementData::Group::Unidentified;
+  constexpr ColorPair k_colors[] = {
+    ColorPair(Palette::MetallicBlueDark, Palette::MetallicBlueLight),
+    ColorPair(Palette::MetallicTealDark, Palette::MetallicTealLight),
+    ColorPair(Palette::MetallicVerdigrisDark, Palette::MetallicVerdigrisLight),
+    ColorPair(Palette::MetallicTurquoiseDark, Palette::MetallicTurquoiseLight),
+    ColorPair(Palette::MetallicAquamarineDark, Palette::MetallicAquamarineLight),
+    ColorPair(Palette::MetallicGreenDark, Palette::MetallicGreenLight),
+  };
+  assert(static_cast<uint8_t>(group) < sizeof(k_colors) / sizeof(k_colors[0]));
+  return k_colors[static_cast<uint8_t>(group)];
 }
 
 // StateDataField

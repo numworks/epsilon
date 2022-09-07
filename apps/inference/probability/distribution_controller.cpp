@@ -9,6 +9,7 @@
 #include "../images/exponential_icon.h"
 #include "../images/fisher_icon.h"
 #include "../images/geometric_icon.h"
+// #include "../images/hypergeometric_icon.h" TODO
 #include "../images/normal_icon.h"
 #include "../images/poisson_icon.h"
 #include "../images/student_icon.h"
@@ -20,6 +21,7 @@
 #include "inference/models/probability/distribution/exponential_distribution.h"
 #include "inference/models/probability/distribution/fisher_distribution.h"
 #include "inference/models/probability/distribution/geometric_distribution.h"
+#include "inference/models/probability/distribution/hypergeometric_distribution.h"
 #include "inference/models/probability/distribution/normal_distribution.h"
 #include "inference/models/probability/distribution/poisson_distribution.h"
 #include "inference/models/probability/distribution/student_distribution.h"
@@ -76,8 +78,10 @@ constexpr I18n::Message sMessages[] = {I18n::Message::Binomial,
                                        I18n::Message::ChiSquare,
                                        I18n::Message::Student,
                                        I18n::Message::Geometric,
+                                       I18n::Message::Hypergeometric,
                                        I18n::Message::Poisson,
-                                       I18n::Message::Fisher};
+                                       I18n::Message::Fisher,
+};
 
 void DistributionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   DistributionCell * myCell = static_cast<DistributionCell *>(cell);
@@ -90,7 +94,9 @@ void DistributionController::willDisplayCellForIndex(HighlightCell * cell, int i
                                                  ImageStore::StudentIcon,
                                                  ImageStore::GeometricIcon,
                                                  ImageStore::PoissonIcon,
-                                                 ImageStore::FisherIcon};
+                                                 ImageStore::PoissonIcon,
+                                                 ImageStore::FisherIcon,
+};
   myCell->setImage(images[index]);
   myCell->reloadCell();
 }

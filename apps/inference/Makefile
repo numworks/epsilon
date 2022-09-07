@@ -9,6 +9,7 @@ app_inference_test_src += $(addprefix apps/inference/models/probability/distribu
   distribution.cpp \
   fisher_distribution.cpp \
   geometric_distribution.cpp \
+  hypergeometric_distribution.cpp \
   student_distribution.cpp \
   exponential_distribution.cpp \
   normal_distribution.cpp \

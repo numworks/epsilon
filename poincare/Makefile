@@ -53,6 +53,7 @@ poincare_src += $(addprefix poincare/src/,\
   fisher_distribution.cpp \
   geometric_distribution.cpp \
   helpers.cpp \
+  hypergeometric_distribution.cpp \
   init.cpp \
   inv_method.cpp \
   normal_distribution.cpp \

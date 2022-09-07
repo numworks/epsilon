@@ -30,7 +30,7 @@ public:
 
 private:
   void setDistributionAccordingToIndex(int index);
-  constexpr static int k_totalNumberOfModels = 9;
+  constexpr static int k_totalNumberOfModels = 10;
   constexpr static int k_numberOfCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalLargeFontCellHeight, KDFont::GlyphHeight(KDFont::Size::Small));
   DistributionCell m_cells[k_numberOfCells];
   Distribution * m_distribution;

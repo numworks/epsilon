@@ -16,8 +16,9 @@ public:
     ChiSquared,
     Student,
     Geometric,
+    Hypergeometric,
     Poisson,
-    Fisher
+    Fisher,
   };
 
   constexpr static int k_maxNumberOfParameters = 2;
@@ -29,6 +30,8 @@ public:
     case Type::Exponential:
     case Type::ChiSquared:
       return 1;
+    case Type::Hypergeometric:
+      return 3;
     default:
        assert(type == Type::Binomial || type == Type::Uniform || type == Type::Fisher || type == Type::Normal);
       return 2;

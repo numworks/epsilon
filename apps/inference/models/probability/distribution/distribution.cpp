@@ -4,6 +4,7 @@
 #include "exponential_distribution.h"
 #include "fisher_distribution.h"
 #include "geometric_distribution.h"
+#include "hypergeometric_distribution.h"
 #include "normal_distribution.h"
 #include "poisson_distribution.h"
 #include "student_distribution.h"
@@ -40,6 +41,9 @@ bool Distribution::Initialize(Distribution * distribution, Poincare::Distributio
       break;
     case Poincare::Distribution::Type::Geometric:
       new (distribution) GeometricDistribution();
+      break;
+    case Poincare::Distribution::Type::Hypergeometric:
+      new (distribution) HypergeometricDistribution();
       break;
     case Poincare::Distribution::Type::Poisson:
       new (distribution) PoissonDistribution();

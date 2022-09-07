@@ -8,6 +8,7 @@
 #include "probability/distribution/exponential_distribution.h"
 #include "probability/distribution/fisher_distribution.h"
 #include "probability/distribution/geometric_distribution.h"
+#include "probability/distribution/hypergeometric_distribution.h"
 #include "probability/distribution/normal_distribution.h"
 #include "probability/distribution/poisson_distribution.h"
 #include "probability/distribution/student_distribution.h"
@@ -58,6 +59,7 @@ private:
   StudentDistribution m_studentDistribution;
   GeometricDistribution m_geometricDistribution;
   PoissonDistribution m_poissonDistribution;
+  HypergeometricDistribution m_hypergeometricDistribution;
   FisherDistribution m_fisherDistribution;
 };
 

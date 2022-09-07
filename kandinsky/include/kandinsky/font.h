@@ -41,8 +41,8 @@ private:
 
 public:
   enum class Size : bool {
-    Small,
-    Large
+    Small, // width = 7 / height = 14
+    Large // width = 10 / height = 18
   };
   constexpr static KDCoordinate GlyphWidth(Size size) { return size == Size::Small ? SmallFont::k_glyphWidth : LargeFont::k_glyphWidth; }
   constexpr static KDCoordinate GlyphHeight(Size size) { return size == Size::Small ? SmallFont::k_glyphHeight : LargeFont::k_glyphHeight; }

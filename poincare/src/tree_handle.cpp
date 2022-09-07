@@ -321,11 +321,13 @@ template ListSort TreeHandle::FixedArityBuilder<ListSort, ListSortNode>(const Tu
 template Matrix TreeHandle::NAryBuilder<Matrix, MatrixNode>(const Tuple &);
 template MatrixComplex<double> TreeHandle::NAryBuilder<MatrixComplex<double>, MatrixComplexNode<double> >(const Tuple &);
 template MatrixComplex<float> TreeHandle::NAryBuilder<MatrixComplex<float>, MatrixComplexNode<float> >(const Tuple &);
+template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(const Tuple &);
 template MixedFraction TreeHandle::FixedArityBuilder<MixedFraction, MixedFractionNode>(const Tuple &);
 template Multiplication TreeHandle::NAryBuilder<Multiplication, MultiplicationNode>(const Tuple &);
 template Opposite TreeHandle::FixedArityBuilder<Opposite, OppositeNode>(const Tuple &);
 template Parenthesis TreeHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);
 template PiecewiseOperator TreeHandle::NAryBuilder<PiecewiseOperator, PiecewiseOperatorNode>(const Tuple &);
+template PiecewiseOperatorLayout TreeHandle::NAryBuilder<PiecewiseOperatorLayout, PiecewiseOperatorLayoutNode>(const Tuple &);
 template Product TreeHandle::FixedArityBuilder<Product, ProductNode>(const Tuple &);
 template ProductLayout TreeHandle::FixedArityBuilder<ProductLayout, ProductLayoutNode>(const Tuple &);
 template Subtraction TreeHandle::FixedArityBuilder<Subtraction, SubtractionNode>(const Tuple &);
@@ -333,6 +335,5 @@ template Sum TreeHandle::FixedArityBuilder<Sum, SumNode>(const Tuple &);
 template SumLayout TreeHandle::FixedArityBuilder<SumLayout, SumLayoutNode>(const Tuple &);
 template Undefined TreeHandle::FixedArityBuilder<Undefined, UndefinedNode>(const Tuple &);
 template Nonreal TreeHandle::FixedArityBuilder<Nonreal, NonrealNode>(const Tuple &);
-template MatrixLayout TreeHandle::NAryBuilder<MatrixLayout, MatrixLayoutNode>(const Tuple &);
 
 }

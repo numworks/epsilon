@@ -43,6 +43,7 @@ public:
     ListSequenceLayout,
     MatrixLayout,
     NthRootLayout,
+    PiecewiseOperatorLayout,
     ParenthesisLayout,
     ProductLayout,
     StringLayout,

@@ -61,7 +61,7 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
   return std::min(numberOfChar, bufferSize-1);
 }
 
-// Protected
+// Private
 
 KDSize MatrixLayoutNode::computeSize(KDFont::Size font) {
   return SquareBracketPairLayoutNode::SizeGivenChildSize(gridSize(font));
@@ -72,7 +72,10 @@ KDPoint MatrixLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
   return GridLayoutNode::positionOfChild(l, font).translatedBy(SquareBracketPairLayoutNode::ChildOffset());
 }
 
-// Private
+KDCoordinate MatrixLayoutNode::computeBaseline(KDFont::Size font) {
+  return GridLayoutNode::computeBaseline(font) + BracketPairLayoutNode::k_lineThickness;
+}
+
 void MatrixLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   KDSize s = gridSize(font);
   SquareBracketPairLayoutNode::RenderWithChildSize(true, s.height(), ctx, p, expressionColor, backgroundColor);

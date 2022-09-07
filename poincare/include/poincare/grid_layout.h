@@ -17,7 +17,7 @@ class GridLayoutNode : public Array, public LayoutNode {
   friend class MatrixLayoutNode;
 public:
 
-  static bool IsGridLayoutType(Type type) { return type == Type::MatrixLayout; }
+  static bool IsGridLayoutType(Type type) { return type == Type::MatrixLayout || type == Type::PiecewiseOperatorLayout; }
 
   GridLayoutNode() :
     Array(),
@@ -61,7 +61,7 @@ public:
 #endif
 
 protected:
-  // GridLayoutNode
+  // Row and columns
   virtual bool numberOfRowsIsFixed() const { return false; }
   virtual bool numberOfColumnsIsFixed() const { return false; }
   bool hasGraySquares() const;
@@ -91,6 +91,16 @@ protected:
   int columnAtChildIndex(int index) const;
   int indexAtRowColumn(int rowIndex, int columnIndex) const;
 
+  // Sizes
+  constexpr static KDCoordinate k_gridEntryMargin = 6;
+  virtual KDCoordinate horizontalGridEntryMargin(KDFont::Size font) const { return k_gridEntryMargin; }
+  KDCoordinate verticalGridEntryMargin(KDFont::Size font) const { return k_gridEntryMargin; }
+  KDCoordinate rowBaseline(int i, KDFont::Size font);
+  KDCoordinate rowHeight(int i, KDFont::Size font) const;
+  KDCoordinate height(KDFont::Size font) const;
+  KDCoordinate columnWidth(int j, KDFont::Size font) const;
+  KDCoordinate width(KDFont::Size font) const;
+
   // LayoutNode
   KDSize computeSize(KDFont::Size font) override;
   KDCoordinate computeBaseline(KDFont::Size font) override;
@@ -98,12 +108,6 @@ protected:
 
 private:
   // GridLayoutNode
-  constexpr static KDCoordinate k_gridEntryMargin = 6;
-  KDCoordinate rowBaseline(int i, KDFont::Size font);
-  KDCoordinate rowHeight(int i, KDFont::Size font) const;
-  KDCoordinate height(KDFont::Size font) const;
-  KDCoordinate columnWidth(int j, KDFont::Size font) const;
-  KDCoordinate width(KDFont::Size font) const;
 
   bool isColumnOrRowEmpty(bool column, int index) const;
   void addEmptyRowOrColumn(bool column, EmptyLayoutNode::Color color);

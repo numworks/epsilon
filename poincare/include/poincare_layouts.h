@@ -24,6 +24,7 @@
 #include <poincare/matrix_layout.h>
 #include <poincare/nth_root_layout.h>
 #include <poincare/parenthesis_layout.h>
+#include <poincare/piecewise_operator_layout.h>
 #include <poincare/product_layout.h>
 #include <poincare/sum_layout.h>
 #include <poincare/string_layout.h>

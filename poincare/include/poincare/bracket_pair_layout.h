@@ -7,6 +7,7 @@
 namespace Poincare {
 
 class BracketPairLayoutNode : public LayoutNode {
+  friend class MatrixLayoutNode;
 public:
   // TreeNode
   size_t size() const override { return sizeof(BracketPairLayoutNode); }

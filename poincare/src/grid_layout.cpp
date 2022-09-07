@@ -346,12 +346,12 @@ KDPoint GridLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
   for (int j = 0; j < columnIndex; j++) {
     x += columnWidth(j, font);
   }
-  x += (columnWidth(columnIndex, font) - l->layoutSize(font).width())/2+ columnIndex * k_gridEntryMargin;
+  x += (columnWidth(columnIndex, font) - l->layoutSize(font).width())/2+ columnIndex * horizontalGridEntryMargin(font);
   KDCoordinate y = 0;
   for (int i = 0; i < rowIndex; i++) {
     y += rowHeight(i, font);
   }
-  y += rowBaseline(rowIndex, font) - l->baseline(font) + rowIndex * k_gridEntryMargin;
+  y += rowBaseline(rowIndex, font) - l->baseline(font) + rowIndex * verticalGridEntryMargin(font);
   return KDPoint(x, y);
 }
 
@@ -392,7 +392,7 @@ KDCoordinate GridLayoutNode::height(KDFont::Size font) const {
   for (int i = 0; i < m_numberOfRows; i++) {
     totalHeight += rowHeight(i, font);
   }
-  totalHeight += m_numberOfRows > 0 ? (m_numberOfRows-1)*k_gridEntryMargin : 0;
+  totalHeight += m_numberOfRows > 0 ? (m_numberOfRows-1) * verticalGridEntryMargin(font) : 0;
   return totalHeight;
 }
 
@@ -417,7 +417,7 @@ KDCoordinate GridLayoutNode::width(KDFont::Size font) const {
   for (int j = 0; j < m_numberOfColumns; j++) {
     totalWidth += columnWidth(j, font);
   }
-  totalWidth += m_numberOfColumns > 0 ? (m_numberOfColumns-1)*k_gridEntryMargin : 0;
+  totalWidth += m_numberOfColumns > 0 ? (m_numberOfColumns-1) * horizontalGridEntryMargin(font) : 0;
   return totalWidth;
 }
 

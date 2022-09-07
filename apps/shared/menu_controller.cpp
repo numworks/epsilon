@@ -31,7 +31,7 @@ MenuController::MenuController(Escher::StackViewController * parentResponder, st
     cellAtIndex(i++)->setImage(img);
   }
 
-  KDCoordinate availableHeight = Ion::Display::Height - Escher::Metric::TitleBarHeight;
+  KDCoordinate availableHeight = Escher::Metric::DisplayHeightWithoutTitleBar;
   m_selectableTableView.setTopMargin(0);
   m_selectableTableView.setBottomMargin(0);
   m_selectableTableView.setFrame(KDRect(0, 0, Ion::Display::Width, availableHeight), true);
@@ -59,4 +59,3 @@ bool MenuController::handleEvent(Ion::Events::Event event) {
   }
   return false;
 }
-

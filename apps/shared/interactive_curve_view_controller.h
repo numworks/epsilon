@@ -73,10 +73,7 @@ protected:
 
   int m_selectedSubCurveIndex;
 private:
-  /* The value 21 is the actual height of the ButtonRow, that is
-   * ButtonRowController::ContentView::k_plainStyleHeight + 1.
-   * That value is not public though. */
-  constexpr static float k_viewHeight = Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::TabHeight - 21;
+  constexpr static float k_viewHeight = Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::TabHeight - Escher::Metric::ButtonRowPlainStyleHeight - 1;
   void refreshCursor();
 
   // InteractiveCurveViewRangeDelegate

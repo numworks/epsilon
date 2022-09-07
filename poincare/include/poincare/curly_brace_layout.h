@@ -8,6 +8,7 @@
 namespace Poincare {
 
 class CurlyBraceLayoutNode : public AutocompletedBracketPairLayoutNode {
+  friend class PiecewiseOperatorLayoutNode;
 public:
   constexpr static KDCoordinate k_curveHeight = 6;
   constexpr static KDCoordinate k_curveWidth = 5;

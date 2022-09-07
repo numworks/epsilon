@@ -77,7 +77,10 @@ uint8_t DoubleDataField::blendAlphaForContinuousParameter(AtomicNumber z) const 
 
 Layout DoubleDataFieldWithSubscriptSymbol::fieldSymbolLayout() const {
   HorizontalLayout res = HorizontalLayout::Builder(DataField::fieldSymbolLayout());
-  res.addOrMergeChildAtIndex(VerticalOffsetLayout::Builder(LayoutHelper::String(I18n::translate(fieldSubscript())), VerticalOffsetLayoutNode::Position::Subscript), 1, false);
+  const char * subscript = I18n::translate(fieldSubscript());
+  if (subscript[0] != '\0') {
+    res.addOrMergeChildAtIndex(VerticalOffsetLayout::Builder(LayoutHelper::String(subscript), VerticalOffsetLayoutNode::Position::Subscript), 1, false);
+  }
   return std::move(res);
 }
 

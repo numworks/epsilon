@@ -26,6 +26,8 @@ public:
   void setLabelColor(KDColor color) { m_labelView.setTextColor(color); }
   void setAccessoryColor(KDColor color) { m_accessoryView.setTextColor(color); }
 
+  /* FIXME */ bool subviewsCanOverlap() const override { return true; }
+
 private:
   Escher::ExpressionView m_labelView;
   Escher::MessageTextView m_subLabelView;

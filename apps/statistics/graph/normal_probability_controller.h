@@ -25,6 +25,7 @@ public:
   Escher::Responder * defaultController() override { return this; }
 
   // PlotController
+  void moveCursorToSelectedIndex() override;
   int totalValues(int series) const override { return m_store->totalNormalProbabilityValues(series); }
   double valueAtIndex(int series, int i) const override { return m_store->normalProbabilityValueAtIndex(series, i); }
   double resultAtIndex(int series, int i) const override { return m_store->normalProbabilityResultAtIndex(series, i); }

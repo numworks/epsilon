@@ -1,7 +1,7 @@
 #include "app.h"
 #include "elements_data_base.h"
 #include <apps/apps_container.h>
-#include <apps/settings/settings_icon.h> /* TODO */
+#include <apps/elements/elements_icon.h>
 #include <apps/i18n.h>
 #include <escher/palette.h>
 
@@ -19,7 +19,7 @@ I18n::Message App::Descriptor::upperName() const {
 
 const Escher::Image * App::Descriptor::icon() const {
   // TODO
-  return ImageStore::SettingsIcon;
+  return ImageStore::ElementsIcon;
 }
 
 // App::Snapshot

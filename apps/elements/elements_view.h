@@ -27,6 +27,7 @@ private:
   constexpr static KDCoordinate k_zoomedViewMargin = 11;
   constexpr static KDCoordinate k_lanthanideTopMargin = 5;
   constexpr static KDColor k_backgroundColor = KDColorWhite;
+  constexpr static KDColor k_ligatureColor = Escher::Palette::GrayMiddle;
 
   /* rectForCell returns the rect for the colored part of the cell, without
    * its border. This avoid redrawing cells just because their border overlaps
@@ -42,6 +43,7 @@ private:
 
   void drawElementCell(AtomicNumber z, KDRect cell, KDContext * ctx, KDRect rect) const;
   void drawElementBorder(AtomicNumber z, KDColor color, KDContext * ctx, KDRect rect) const;
+  void drawLigatures(KDContext * ctx) const;
   void dirtyElement(AtomicNumber z);
 
   SingleElementView m_singleElementView;

@@ -578,4 +578,3 @@ void PythonToolbox::scrollToAndSelectChild(int i) {
 }
 
 }
-

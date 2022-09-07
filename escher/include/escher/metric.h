@@ -72,8 +72,8 @@ public:
     return numberOfChars * KDFont::GlyphWidth(KDFont::Size::Small) + 2 * margin;
   }
 
-  constexpr static int MinimalNumberOfScrollableRowsToFillHeight(KDCoordinate rowHeight, KDCoordinate totalHeight) {
-    return 1 + 1 + ((totalHeight - 1) / rowHeight);
+  constexpr static int MinimalNumberOfScrollableRowsToFillDisplayHeight(KDCoordinate rowHeight, KDCoordinate unusableHeight = 0) {
+    return 1 + 1 + ((DisplayHeightWithoutTitleBar - unusableHeight - 1) / rowHeight);
     /* The -1 and one of the +1 ensures that we ceil the result.
      * The other +1 is to take into account that the rows are scrollable
      * so there can be half of one at the top and half of another one at the

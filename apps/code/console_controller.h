@@ -82,7 +82,7 @@ private:
   constexpr static size_t k_maxImportCommandSize = 5 + 9 + Escher::TextField::maxBufferSize(); // strlen(k_importCommand1) + strlen(k_importCommand2) + TextField::maxBufferSize()
   constexpr static int k_lineCellType = 0;
   constexpr static int k_editCellType = 1;
-  constexpr static int k_numberOfLineCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillHeight(KDFont::GlyphHeight(KDFont::Size::Small), Escher::Metric::DisplayHeightWithoutTitleBar);
+  constexpr static int k_numberOfLineCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(KDFont::GlyphHeight(KDFont::Size::Small));
   // k_numberOfLineCells = (240 - 18)/14 ~ 15.9. The 0.1 cell can be above and below the 15 other cells so we add +2 cells.
   constexpr static int k_outputAccumulationBufferSize = 100;
   bool isDisplayingViewController();

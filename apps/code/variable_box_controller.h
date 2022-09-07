@@ -41,8 +41,8 @@ public:
   void insertAutocompletionResultAtIndex(int index);
 
 private:
-  constexpr static size_t k_maxNumberOfDisplayedItems = Escher::Metric::MinimalNumberOfScrollableRowsToFillHeight(Escher::TableCell::k_minimalSmallFontCellHeight, Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::PopUpTopMargin);
-  constexpr static size_t k_maxNumberOfDisplayedSubtitles = Escher::Metric::MinimalNumberOfScrollableRowsToFillHeight(SubtitleCell::k_subtitleRowHeight + Escher::TableCell::k_minimalSmallFontCellHeight, Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::PopUpTopMargin);
+  constexpr static size_t k_maxNumberOfDisplayedItems = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalSmallFontCellHeight, Escher::Metric::PopUpTopMargin);
+  constexpr static size_t k_maxNumberOfDisplayedSubtitles = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(SubtitleCell::k_subtitleRowHeight + Escher::TableCell::k_minimalSmallFontCellHeight, Escher::Metric::PopUpTopMargin);
   constexpr static size_t k_totalBuiltinNodesCount = 107;
   constexpr static size_t k_maxOtherScriptNodesCount = 32; // Chosen without particular reasons
   constexpr static size_t k_maxScriptNodesCount = k_maxOtherScriptNodesCount + k_totalBuiltinNodesCount + k_maxOtherScriptNodesCount; // CurrentScriptOrigin + BuiltinsOrigin + ImportedOrigin

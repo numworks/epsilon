@@ -15,6 +15,7 @@ void ElementsView::drawRect(KDContext * ctx, KDRect rect) const {
    * blinking when moving the cursor around. */
   if (m_redrawBackground) {
     ctx->fillRect(rect, k_backgroundColor);
+    drawLigatures(ctx);
     m_redrawBackground = false;
   } else {
     ctx->fillRect(SingleElementViewFrame(), k_backgroundColor);
@@ -130,6 +131,24 @@ void ElementsView::drawElementBorder(AtomicNumber z, KDColor color, KDContext * 
   for (KDRect r : margins) {
     ctx->fillRect(r.intersectedWith(rect), color);
   }
+}
+
+void ElementsView::drawLigatures(KDContext * ctx) const {
+  constexpr KDCoordinate thickness = 1;
+  constexpr KDCoordinate x = k_tableLeftMargin + 2 * (k_cellMargin + k_cellSize);
+  constexpr KDCoordinate y = k_tableTopMargin + 11 * (k_cellMargin + k_cellSize) / 2;
+  constexpr KDCoordinate shortArm = 4;
+  constexpr KDCoordinate longArm = 11;
+  constexpr KDCoordinate height = k_lanthanideTopMargin + 2 * (k_cellMargin + k_cellSize);
+  constexpr KDCoordinate yOffset = k_cellSize + k_cellMargin;
+
+  ctx->fillRect(KDRect(x, y, longArm, thickness), k_ligatureColor);
+  ctx->fillRect(KDRect(x + longArm, y, thickness, height), k_ligatureColor);
+  ctx->fillRect(KDRect(x + longArm + thickness, y + height - thickness, shortArm, thickness), k_ligatureColor);
+
+  ctx->fillRect(KDRect(x, y + yOffset, shortArm, thickness), k_ligatureColor);
+  ctx->fillRect(KDRect(x + shortArm, y + yOffset, thickness, height), k_ligatureColor);
+  ctx->fillRect(KDRect(x + shortArm + thickness, y + yOffset + height - thickness, longArm, thickness), k_ligatureColor);
 }
 
 void ElementsView::dirtyElement(AtomicNumber z) {

@@ -40,6 +40,12 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
     stack->push(intervalSelectorController);
     return true;
   }, this), k_font),
+  // TODO: Change text
+  m_exactValuesButton(this, I18n::Message::PoolMemoryFull2, Invocation([](void * context, void * sender) {
+    ValuesController * valuesController = (ValuesController *) context;
+    valuesController->exactValuesButtonAction();
+    return true;
+  }, this), &m_exactValuesDotView, KDFont::Size::Small),
   m_lastExactValueCellComputedRow(-1),
   m_lastExactValueCellComputedColumn(-1)
 {
@@ -48,6 +54,7 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   }
   KDCoordinate innerMargin = Escher::EvenOddCell::k_horizontalMargin;
   m_exactValueCell.setInnerMargins(innerMargin + 1, innerMargin, innerMargin + 1, innerMargin); // TODO: Factorize margin computation with EvenOddCells
+  m_exactValuesButton.setState(false);
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
 }
 
@@ -446,6 +453,11 @@ EvenOddBufferTextCell * ValuesController::floatCells(int j) {
   return &m_floatCells[j];
 }
 
+ bool ValuesController::exactValuesButtonAction() {
+  m_exactValuesButton.setState(!m_exactValuesButton.state());
+  m_selectableTableView.reloadData();
+  return true;
+}
 
 /* ValuesController::ValuesSelectableTableView */
 

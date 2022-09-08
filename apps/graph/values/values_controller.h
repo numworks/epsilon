@@ -12,6 +12,8 @@
 #include "derivative_parameter_controller.h"
 #include "function_column_parameter_controller.h"
 #include "interval_parameter_selector_controller.h"
+#include <escher/button_state.h>
+#include <escher/toggleable_dot_view.h>
 
 namespace Graph {
 
@@ -31,8 +33,9 @@ public:
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 
   // ButtonRowDelegate
+  int numberOfButtons(Escher::ButtonRowController::Position) const override { return isEmpty() ? 0 : 2; }
   Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
-    return const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
+    return index == 0 ? const_cast<Escher::ButtonState *>(&m_exactValuesButton) : const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
   }
 
   // AlternateEmptyViewDelegate
@@ -127,6 +130,8 @@ private:
 
   KDCoordinate exactCellHeight();
 
+  bool exactValuesButtonAction();
+
   /* For parametric function, we display the evaluation with the form "(1;2)".
    * This form is not parsable so when we store it into the clipboard, we want
    * to turn it into a parsable matrix "[[1][2]]". To do so, we use a child
@@ -151,6 +156,8 @@ private:
   IntervalParameterSelectorController m_intervalParameterSelectorController;
   DerivativeParameterController m_derivativeParameterController;
   Escher::AbstractButtonCell m_setIntervalButton;
+  Escher::ButtonState m_exactValuesButton;
+  Escher::ToggleableDotView m_exactValuesDotView;
   // TODO specialize buffer size as well
   mutable char m_memoizedBuffer[k_maxNumberOfDisplayableCells][k_valuesCellBufferSize];
   mutable int m_lastExactValueCellComputedRow;

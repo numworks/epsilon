@@ -9,6 +9,7 @@ namespace Escher {
 class ButtonState : public AbstractButtonCell {
 public:
   ButtonState(Responder * parentResponder, I18n::Message textBody, Invocation invocation, ToggleableView * stateView, KDFont::Size font = KDFont::Size::Small, KDColor textColor = KDColorBlack);
+  bool state() const { return m_stateView->state(); }
   void setState(bool state);
   KDSize minimalSizeForOptimalDisplay() const override;
   void drawRect(KDContext * ctx, KDRect rect) const override;

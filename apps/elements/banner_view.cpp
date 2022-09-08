@@ -1,7 +1,11 @@
 #include "banner_view.h"
 #include "app.h"
-#include <poincare/serialization_helper.h>
+#include <poincare/code_point_layout.h>
+#include <poincare/horizontal_layout.h>
+#include <poincare/layout_helper.h>
 #include <assert.h>
+
+using namespace Poincare;
 
 namespace Elements {
 
@@ -22,7 +26,7 @@ void BannerView::DotView::setColor(KDColor color) {
 
 BannerView::BannerView(Escher::Responder * textFieldParent, Escher::TextFieldDelegate * textFieldDelegate) :
   m_textField(textFieldParent, nullptr, textFieldDelegate),
-  m_textView(KDFont::Size::Small, KDContext::k_alignLeft, KDContext::k_alignCenter, k_legendColor, k_backgroundColor),
+  m_legendView(KDContext::k_alignLeft, KDContext::k_alignCenter, k_legendColor, k_backgroundColor, KDFont::Size::Small),
   m_button(k_backgroundColor)
 {
   m_textField.setLeftMargin(Escher::Metric::CommonSmallMargin);
@@ -50,7 +54,7 @@ Escher::View * BannerView::subviewAtIndex(int index) {
   case 0:
     return &m_dotView;
   case 1:
-    return &m_textView;
+    return &m_legendView;
   default:
     assert(index == 2);
     return &m_button;
@@ -85,18 +89,17 @@ void BannerView::layoutSubviews(bool force) {
 
   I18n::Message legendMessage = dataSource->field()->getMessage(z);
   if (legendMessage != I18n::Message::Default) {
-    m_textView.setText(I18n::translate(legendMessage));
+    m_legendView.setLayout(LayoutHelper::String(I18n::translate(legendMessage)));
   } else {
-    m_textView.setText(I18n::translate(dataSource->field()->fieldLegend()));
+    HorizontalLayout h = HorizontalLayout::Builder();
+    h.addOrMergeChildAtIndex(LayoutHelper::String(I18n::translate(dataSource->field()->fieldLegend())), 0, true);
     if (dataSource->field()->hasDouble(z)) {
-      m_textView.appendText(" ");
-      char buffer[Escher::BufferTextView::k_maxNumberOfChar];
-      dataSource->field()->getLayout(z).serializeForParsing(buffer, Escher::BufferTextView::k_maxNumberOfChar);
-      Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer);
-      m_textView.appendText(buffer);
+      h.addOrMergeChildAtIndex(CodePointLayout::Builder(' '), h.numberOfChildren(), false);
+      h.addOrMergeChildAtIndex(dataSource->field()->getLayout(z), h.numberOfChildren(), false);
     }
+    m_legendView.setLayout(h);
   }
-  m_textView.setFrame(KDRect(x, k_borderHeight, bounds().width() - k_buttonWidth - x, k_bannerHeight), force);
+  m_legendView.setFrame(KDRect(x, k_borderHeight, bounds().width() - k_buttonWidth - x, k_bannerHeight), force);
 }
 
 }

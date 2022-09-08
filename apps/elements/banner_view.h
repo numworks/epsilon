@@ -3,8 +3,8 @@
 
 #include "elements_view_data_source.h"
 #include "suggestion_text_field.h"
-#include <escher/buffer_text_view.h>
 #include <escher/ellipsis_view.h>
+#include <escher/expression_view.h>
 #include <escher/palette.h>
 #include <escher/solid_color_view.h>
 #include <escher/view.h>
@@ -66,7 +66,7 @@ private:
 
   SuggestionTextField m_textField;
   DotView m_dotView;
-  Escher::BufferTextView m_textView;
+  Escher::ExpressionView m_legendView;
   EllipsisButton m_button;
 };
 

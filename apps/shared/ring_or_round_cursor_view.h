@@ -6,11 +6,14 @@
 
 namespace Shared {
 
-class RingOrRoundCursorView : public MemoizedCursorView<std::max(Dots::LargeRingDiameter, Dots::LargeDotDiameter)> {
+class RingOrRoundCursorView : public MemoizedCursorView {
 public:
-  void drawCursor(KDContext * ctx, KDRect rect) const override;
   void setIsRing(bool isRing);
 private:
+  void drawCursor(KDContext * ctx, KDRect rect) const override;
+  KDCoordinate size() const override { return Dots::LargeRingDiameter; }
+  KDColor * underneathPixelBuffer() const override { return m_underneathPixelBuffer; }
+  mutable KDColor m_underneathPixelBuffer[Dots::LargeRingDiameter * Dots::LargeRingDiameter];
   bool m_isRing;
 };
 

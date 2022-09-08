@@ -15,7 +15,7 @@ extern "C" {
 #endif
 
 namespace Shared {
-  template <KDCoordinate Size> class MemoizedCursorView;
+  class MemoizedCursorView;
 }
 
 namespace Escher {
@@ -31,7 +31,7 @@ namespace Escher {
 class Window;
 
 class View {
-  template <KDCoordinate Size> friend class Shared::MemoizedCursorView;
+  friend class Shared::MemoizedCursorView;
   friend class TextCursorView;
   friend class TransparentView;
   // We only want Window to be able to invoke View::redraw

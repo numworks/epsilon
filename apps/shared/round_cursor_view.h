@@ -6,9 +6,11 @@
 
 namespace Shared {
 
-class RoundCursorView : public MemoizedCursorView<Dots::LargeDotDiameter> {
-public:
+class RoundCursorView : public MemoizedCursorView {
   void drawCursor(KDContext * ctx, KDRect rect) const override;
+  KDCoordinate size() const override { return Dots::LargeDotDiameter; }
+  KDColor * underneathPixelBuffer() const override { return m_underneathPixelBuffer; }
+  mutable KDColor m_underneathPixelBuffer[Dots::LargeDotDiameter * Dots::LargeDotDiameter];
 };
 
 }

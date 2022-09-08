@@ -5,7 +5,6 @@
 
 namespace Shared {
 
-template <KDCoordinate Size>
 class MemoizedCursorView : public CursorView {
 public:
   MemoizedCursorView() : m_underneathPixelBufferLoaded(false) {}
@@ -14,11 +13,12 @@ public:
   void setColor(KDColor color);
   void setCursorFrame(KDRect frame, bool force) override;
   void resetMemoization() const { m_underneathPixelBufferLoaded = false; }
-  virtual void drawCursor(KDContext * ctx, KDRect rect) const = 0;
 protected:
+  virtual void drawCursor(KDContext * ctx, KDRect rect) const = 0;
+  virtual KDCoordinate size() const = 0;
+  virtual KDColor * underneathPixelBuffer() const = 0;
   void markRectAsDirty(KDRect rect) override;
   KDColor m_color;
-  mutable KDColor m_underneathPixelBuffer[Size*Size];
   mutable bool m_underneathPixelBufferLoaded;
 private:
   bool eraseCursorIfPossible();

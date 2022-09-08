@@ -1,6 +1,7 @@
 #include <poincare/piecewise_operator.h>
 #include <poincare/boolean.h>
 #include <poincare/layout_helper.h>
+#include <poincare/piecewise_operator_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/variable_context.h>
@@ -9,7 +10,23 @@ namespace Poincare {
 
 Layout PiecewiseOperatorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   // TODO: Create the piecewise layout (and remove the useless layouthelper include)
-  return LayoutHelper::Prefix(PiecewiseOperator(this), floatDisplayMode, numberOfSignificantDigits, PiecewiseOperator::s_functionHelper.aliasesList().mainAlias(), context);
+  PiecewiseOperatorLayout l = PiecewiseOperatorLayout::Builder();
+  int n = numberOfChildren();
+  int i = 0;
+  while (i + 1 < n) {
+    Layout leftChildLayout = childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
+    Layout rightChildLayout = childAtIndex(i + 1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
+    l.addRow(leftChildLayout, rightChildLayout);
+    i += 2;
+  }
+  if (i < n) {
+    // Last child has no condition
+    assert(n % 2 == 1 && i == n - 1);
+    Layout leftChildLayout = childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
+    l.addRow(leftChildLayout);
+  }
+  l.setDimensions((n + 1) / 2, 2);
+  return l;
 }
 
 int PiecewiseOperatorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

@@ -95,4 +95,17 @@ PiecewiseOperatorLayout PiecewiseOperatorLayout::EmptyPiecewiseOperatorBuilder()
   return result;
 }
 
+PiecewiseOperatorLayout PiecewiseOperatorLayout::Builder() {
+  return TreeHandle::NAryBuilder<PiecewiseOperatorLayout, PiecewiseOperatorLayoutNode>({});
+}
+
+void PiecewiseOperatorLayout::addRow(Layout leftLayout, Layout rightLayout) {
+  if (rightLayout.isUninitialized()) {
+    rightLayout = EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow);
+  }
+  assert(!leftLayout.isUninitialized());
+  addChildAtIndexInPlace(leftLayout, numberOfChildren(), numberOfChildren());
+  addChildAtIndexInPlace(rightLayout, numberOfChildren(), numberOfChildren());
+}
+
 }

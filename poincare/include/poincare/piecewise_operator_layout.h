@@ -44,6 +44,8 @@ class PiecewiseOperatorLayout /*final*/ : public GridLayout {
 public:
   PiecewiseOperatorLayout(const PiecewiseOperatorLayoutNode * n) : GridLayout(n) {}
   static PiecewiseOperatorLayout EmptyPiecewiseOperatorBuilder();
+  static PiecewiseOperatorLayout Builder();
+  void addRow(Layout leftLayout, Layout rightLayout = Layout());
 private:
   PiecewiseOperatorLayoutNode * node() const { return static_cast<PiecewiseOperatorLayoutNode *>(Layout::node()); }
 };

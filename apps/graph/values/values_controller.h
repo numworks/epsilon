@@ -23,11 +23,8 @@ public:
 
   // View controller
   void viewDidDisappear() override;
-
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
-  Escher::HighlightCell * reusableCell(int index, int type) override { return type == k_exactValueCellType ? &m_exactValueCell : Shared::ValuesController::reusableCell(index, type); }
   int typeAtLocation(int i, int j) override;
-  int reusableCellCount(int type) override { return type == k_exactValueCellType ? 1 : Shared::ValuesController::reusableCellCount(type); }
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
@@ -50,7 +47,6 @@ public:
     return &m_intervalParameterSelectorController;
   }
 private:
-  constexpr static int k_exactValueCellType = k_notEditableValueCellType + 1;
   constexpr static KDCoordinate k_abscissaCellWidth = k_cellWidth + Escher::Metric::TableSeparatorThickness;
   constexpr static KDCoordinate k_parametricCellWidth = (2*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)+3) * KDFont::GlyphWidth(KDFont::Size::Small) + 2*Escher::Metric::SmallCellMargin; // The largest cell is holding "(-1.234567E-123;-1.234567E-123)"
   constexpr static size_t k_maxNumberOfSymbolTypes = Shared::ContinuousFunction::k_numberOfSymbolTypes;
@@ -89,20 +85,17 @@ private:
 
   // Function evaluation memoization
   constexpr static int k_valuesCellBufferSize = 2*Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)+3; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
-  char * memoizedBufferAtIndex(int i) override {
+  Poincare::Layout * memoizedLayoutAtIndex(int i) override {
     assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
-    return m_memoizedBuffer[i];
+    return &m_memoizedLayouts[i];
   }
-  int valuesCellBufferSize() const override { return k_valuesCellBufferSize; }
   int numberOfMemoizedColumn() override { return k_maxNumberOfDisplayableFunctions; }
   /* The conversion of column coordinates from the absolute table to the table
    * on only values cell depends on the number of abscissa columns which depends
    * on the number of different plot types in the table. */
   int valuesColumnForAbsoluteColumn(int column) override;
   int absoluteColumnForValuesColumn(int column) override;
-  void fillMemoizedBuffer(int column, int row, int index) override;
-  void didChangeCell(int column, int row) override;
-  void setExactValueCellLayouts(int column, int row);
+  void createMemoizedLayout(int column, int row, int index) override;
 
   // Parameter controllers
   template <class T> T * parameterController();
@@ -121,14 +114,12 @@ private:
   // Cells & View
   Shared::Hideable * hideableCellFromType(Escher::HighlightCell * cell, int type);
   Shared::BufferFunctionTitleCell * functionTitleCells(int j) override;
-  Escher::EvenOddBufferTextCell * floatCells(int j) override;
+  Escher::EvenOddExpressionCell * valueCells(int j) override;
   int abscissaCellsCount() const override { return k_maxNumberOfDisplayableAbscissaCells; }
   Escher::EvenOddEditableTextCell * abscissaCells(int j) override { assert (j >= 0 && j < k_maxNumberOfDisplayableAbscissaCells); return &m_abscissaCells[j]; }
   int abscissaTitleCellsCount() const override { return k_maxNumberOfDisplayableSymbolTypes; }
   Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) override { assert (j >= 0 && j < abscissaTitleCellsCount()); return &m_abscissaTitleCells[j]; }
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
-
-  KDCoordinate exactCellHeight();
 
   bool exactValuesButtonAction();
 
@@ -147,10 +138,9 @@ private:
   Shared::PrefacedTableView m_prefacedView;
   mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableFunctions];
-  Shared::HideableEvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];
+  Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
   AbscissaTitleCell m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
   Shared::StoreCell m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
-  Shared::ScrollableTwoExpressionsCell m_exactValueCell;
   FunctionColumnParameterController * m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;
   IntervalParameterSelectorController m_intervalParameterSelectorController;
@@ -158,10 +148,7 @@ private:
   Escher::AbstractButtonCell m_setIntervalButton;
   Escher::ButtonState m_exactValuesButton;
   Escher::ToggleableDotView m_exactValuesDotView;
-  // TODO specialize buffer size as well
-  mutable char m_memoizedBuffer[k_maxNumberOfDisplayableCells][k_valuesCellBufferSize];
-  mutable int m_lastExactValueCellComputedRow;
-  mutable int m_lastExactValueCellComputedColumn;
+  mutable Poincare::Layout m_memoizedLayouts[k_maxNumberOfDisplayableCells];
 };
 
 }

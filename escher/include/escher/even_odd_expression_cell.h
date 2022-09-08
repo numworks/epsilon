@@ -18,6 +18,7 @@ public:
   void setLayout(Poincare::Layout layout);
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
+  void setFont(KDFont::Size font) { m_expressionView.setFont(font); }
   KDSize minimalSizeForOptimalDisplay() const override;
   void setAlignment(float horizontalAlignment, float verticalAlignment) { m_expressionView.setAlignment(horizontalAlignment, verticalAlignment); }
   void setLeftMargin(KDCoordinate margin);

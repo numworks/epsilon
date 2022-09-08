@@ -68,7 +68,7 @@ const uint8_t Dots::MediumDotMask[Dots::MediumDotDiameter][Dots::MediumDotDiamet
 static constexpr const Dot<Dots::LargeDotDiameter> largeDot = makeDot<Dots::LargeDotDiameter>(4.0);
 __attribute__((__used__)) constexpr const uint8_t (&Dots::LargeDotMask)[Dots::LargeDotDiameter][Dots::LargeDotDiameter] = largeDot.m_mask;
 
-static constexpr const Dot<Dots::LargeDotDiameter> largeRing = makeDot<Dots::LargeDotDiameter>(4.5, 3.5);
+static constexpr const Dot<Dots::LargeDotDiameter> largeRing = makeDot<Dots::LargeDotDiameter>(5.5, 4.25);
 __attribute__((__used__)) constexpr const uint8_t (&Dots::LargeRingMask)[Dots::LargeDotDiameter][Dots::LargeDotDiameter] = largeRing.m_mask;
 
 }

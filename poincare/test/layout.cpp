@@ -32,6 +32,7 @@ QUIZ_CASE(poincare_layout_constructors) {
   FirstOrderDerivativeLayout e28 = FirstOrderDerivativeLayout::Builder(e15, e27, e26);
   HigherOrderDerivativeLayout e29 = HigherOrderDerivativeLayout::Builder(e15, e27, e26, e21);
   Layout e30 = LayoutHelper::String("Hé");
+  PiecewiseOperatorLayout e31 = PiecewiseOperatorLayout::Builder();
 }
 
 QUIZ_CASE(poincare_layout_comparison) {

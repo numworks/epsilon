@@ -26,9 +26,9 @@ public:
 
   // Grid layout
   KDSize gridSize(KDFont::Size font) const { return KDSize(width(font), height(font)); }
-  void addGraySquares();
-  void removeGraySquares();
   void willAddSiblingToEmptyChildAtIndex(int childIndex);
+  virtual void startEditing() = 0;
+  virtual void stopEditing() = 0;
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
@@ -64,8 +64,8 @@ protected:
   // Row and columns
   virtual bool numberOfRowsIsFixed() const { return false; }
   virtual bool numberOfColumnsIsFixed() const { return false; }
-  bool hasGraySquares() const;
-  int indexOfLastNonGrayChildWhenHasGraySquares() const;
+  virtual bool isEditing() const = 0;
+  int indexOfLastNonGrayChildWhenIsEditing() const;
   bool onlyFirstChildIsNonEmpty() const;
   bool isColumnEmpty(int index) const {
     return isColumnOrRowEmpty(true, index);
@@ -123,9 +123,9 @@ public:
   using Layout::addChildAtIndex;
   int numberOfRows() const { return node()->numberOfRows(); }
   int numberOfColumns() const { return node()->numberOfColumns(); }
-  bool hasGraySquares() const { return node()->hasGraySquares(); }
-  void addGraySquares() { node()->addGraySquares(); }
-  void removeGraySquares() { node()->removeGraySquares(); }
+  bool isEditing() const { return node()->isEditing(); }
+  void startEditing() { node()->startEditing(); }
+  void stopEditing() { node()->stopEditing(); }
 private:
   virtual GridLayoutNode * node() const { return static_cast<GridLayoutNode *>(Layout::node()); }
   void setNumberOfRows(int rows) { node()->setNumberOfRows(rows); }

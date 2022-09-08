@@ -65,6 +65,7 @@ app_shared_src = $(addprefix apps/shared/,\
   layout_field_delegate.cpp \
   list_parameter_controller.cpp \
   localization_controller.cpp \
+  memoized_cursor_view.cpp \
   menu_controller.cpp \
   message_view.cpp \
   ok_view.cpp \
@@ -75,6 +76,7 @@ app_shared_src = $(addprefix apps/shared/,\
   range_parameter_controller.cpp \
   regular_table_view_data_source.cpp \
   ring_cursor_view.cpp \
+  ring_or_round_cursor_view.cpp \
   round_cursor_view.cpp \
   scrollable_multiple_expressions_view.cpp \
   scrollable_two_expressions_cell.cpp \

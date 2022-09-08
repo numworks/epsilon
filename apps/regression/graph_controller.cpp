@@ -18,7 +18,7 @@ namespace Regression {
 GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, CurveViewCursor * cursor, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex) :
   InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, store, &m_view, cursor, rangeVersion),
   m_bannerView(this, inputEventHandlerDelegate, this),
-  m_view(store, m_cursor, &m_bannerView, &m_ringCursorView),
+  m_view(store, m_cursor, &m_bannerView, &m_cursorView),
   m_store(store),
   m_graphOptionsController(this, inputEventHandlerDelegate, m_store, m_cursor, this),
   m_seriesSelectionController(this),
@@ -39,9 +39,7 @@ I18n::Message GraphController::emptyMessage() {
 }
 
 void GraphController::viewWillAppear() {
-#ifdef GRAPH_CURSOR_SPEEDUP
-  m_roundCursorView.resetMemoization();
-#endif
+  m_cursorView.resetMemoization();
   /* At this point, some series might have been removed from the model. We need
    * to reinitialize the selected series index if the current selection is
    * either null (right after construction) or refering a removed series. */
@@ -405,22 +403,9 @@ void GraphController::setRoundCrossCursorView() {
   /* At this point, the model (selected series and dot indices) should be up
    * to date. */
   bool round = *m_selectedDotIndex < 0;
-  if (round) {
-    // Set the color although the cursor view stays round
-    assert(*m_selectedSeriesIndex < static_cast<int>(Palette::numberOfDataColors()));
-    m_roundCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
-  } else {
-    m_ringCursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
-  }
-  CursorView * nextCursorView = round ? static_cast<Shared::CursorView *>(&m_roundCursorView) : static_cast<Shared::CursorView *>(&m_ringCursorView);
-  // Escape if the cursor view stays the same
-  if (m_view.cursorView() == nextCursorView) {
-    return;
-  }
-#ifdef GRAPH_CURSOR_SPEEDUP
-  m_roundCursorView.resetMemoization();
-#endif
-  m_view.setCursorView(nextCursorView);
+  m_cursorView.setIsRing(!round);
+  assert(*m_selectedSeriesIndex < static_cast<int>(Palette::numberOfDataColors()));
+  m_cursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
 }
 
 }

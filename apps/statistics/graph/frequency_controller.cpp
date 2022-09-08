@@ -6,7 +6,7 @@ namespace Statistics {
 
 FrequencyController::FrequencyController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store) :
     PlotController(parentResponder, header, tabController, stackViewController, typeViewController, store) {
-  m_curveView.setCursorView(&m_roundCursorView);
+  m_curveView.setCursorView(&m_cursorView);
 }
 
 void FrequencyController::appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {
@@ -25,11 +25,8 @@ void FrequencyController::appendLabelSuffix(Shared::CurveView::Axis axis, char *
 }
 
 void FrequencyController::moveCursorToSelectedIndex() {
-#ifdef GRAPH_CURSOR_SPEEDUP
-  m_roundCursorView.resetMemoization();
-#endif
-  m_view.curveViewForSeries(0)->setCursorView(&m_ringCursorView);
-  m_ringCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
+  m_cursorView.setIsRing(true);
+  m_cursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
   PlotController::moveCursorToSelectedIndex();
 }
 
@@ -68,10 +65,7 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
     moveCursorToSelectedIndex();
     return true;
   }
-#ifdef GRAPH_CURSOR_SPEEDUP
-  m_ringCursorView.resetMemoization();
-#endif
-  m_view.curveViewForSeries(0)->setCursorView(&m_roundCursorView);
+  m_cursorView.setIsRing(false);
 
   // Apply step
   x += step;
@@ -101,7 +95,7 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
 
   // Compute the cursor's position
   double y = yIndex + (yNextIndex - yIndex) * ((x - xIndex) / (xNextIndex - xIndex));
-  m_roundCursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
+  m_cursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
   m_cursor.moveTo(x, x, y);
   m_curveView.reload();
   return true;

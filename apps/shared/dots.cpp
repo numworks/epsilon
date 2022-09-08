@@ -15,7 +15,7 @@ const uint8_t (&Dots::MediumDotMask)[Dots::MediumDotDiameter][Dots::MediumDotDia
 constexpr static const KDMask<Dots::LargeDotDiameter> largeDot = KDMakeDot<Dots::LargeDotDiameter>(Dots::LargeDotRadius);
 const uint8_t (&Dots::LargeDotMask)[Dots::LargeDotDiameter][Dots::LargeDotDiameter] = largeDot.m_mask;
 
-constexpr static const KDMask<Dots::LargeDotDiameter> largeRing = KDMakeRing<Dots::LargeDotDiameter>(Dots::LargeRingInternalRadius, Dots::LargeRingExternalRadius);
-const uint8_t (&Dots::LargeRingMask)[Dots::LargeDotDiameter][Dots::LargeDotDiameter] = largeRing.m_mask;
+constexpr static const KDMask<Dots::LargeRingDiameter> largeRing = KDMakeRing<Dots::LargeRingDiameter>(Dots::LargeRingInternalRadius, Dots::LargeRingExternalRadius);
+const uint8_t (&Dots::LargeRingMask)[Dots::LargeRingDiameter][Dots::LargeRingDiameter] = largeRing.m_mask;
 
 }

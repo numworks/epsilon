@@ -2,8 +2,7 @@
 #define STATISTICS_FREQUENCY_CONTROLLER_H
 
 #include "plot_controller.h"
-#include <apps/shared/ring_cursor_view.h>
-#include <apps/shared/round_cursor_view.h>
+#include <apps/shared/ring_or_round_cursor_view.h>
 
 namespace Statistics {
 
@@ -44,8 +43,7 @@ private:
   const char * resultMessageTemplate() const override { return "%s%s%*.*ed%%"; }
   I18n::Message resultMessage() const override { return I18n::Message::StatisticsFrequencyFcc; }
 
-  Shared::RingCursorView m_ringCursorView;
-  Shared::RoundCursorView m_roundCursorView;
+  Shared::RingOrRoundCursorView m_cursorView;
 };
 
 }  // namespace Statistics

@@ -99,7 +99,9 @@ void BannerView::layoutSubviews(bool force) {
     }
     m_legendView.setLayout(h);
   }
-  m_legendView.setFrame(KDRect(x, k_borderHeight, bounds().width() - k_buttonWidth - x, k_bannerHeight), force);
+  KDCoordinate bannerBaseline = k_bannerHeight / 2 + 1;
+  KDCoordinate legendY = k_borderHeight + bannerBaseline - m_legendView.layout().baseline(KDFont::Size::Small);
+  m_legendView.setFrame(KDRect(x, legendY, bounds().width() - k_buttonWidth - x, m_legendView.layout().layoutSize(KDFont::Size::Small).height()), force);
 }
 
 }

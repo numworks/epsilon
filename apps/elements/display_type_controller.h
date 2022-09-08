@@ -21,7 +21,7 @@ public:
   void viewWillAppear() override;
 
   // Escher::SelectableListViewController
-  Escher::HighlightCell * reusableCell(int index) override { assert(0 <= index && index < k_numberOfCells); return m_cells + index; };
+  Escher::HighlightCell * reusableCell(int index) override { assert(0 <= index && index < static_cast<int>(k_numberOfCells)); return m_cells + index; };
   int reusableCellCount() const override { return k_numberOfCells; };
 
   // Escher::TableViewDataSource

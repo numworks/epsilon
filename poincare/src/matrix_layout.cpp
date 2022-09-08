@@ -44,7 +44,7 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
   }
 
   // Serialize the vectors
-  int maxColumnIndex = hasGraySquares() ? m_numberOfColumns - 2 :  m_numberOfColumns - 1;
+  int maxColumnIndex = isEditing() ? m_numberOfColumns - 2 :  m_numberOfColumns - 1;
   for (int i = minRowIndex; i <= maxRowIndex; i++) {
     numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '[');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1;}
@@ -61,7 +61,29 @@ int MatrixLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Prin
   return std::min(numberOfChar, bufferSize-1);
 }
 
+void MatrixLayoutNode::startEditing() {
+  if (!isEditing()) {
+    addEmptyRow(EmptyLayoutNode::Color::Gray);
+    addEmptyColumn(EmptyLayoutNode::Color::Gray);
+  }
+}
+
+void MatrixLayoutNode::stopEditing() {
+  if (isEditing()) {
+    deleteRowAtIndex(m_numberOfRows - 1);
+    deleteColumnAtIndex(m_numberOfColumns - 1);
+  }
+}
+
 // Private
+
+bool MatrixLayoutNode::isEditing() const {
+  if (numberOfChildren() == 0) {
+    return false;
+  }
+  LayoutNode * lastChild = const_cast<MatrixLayoutNode *>(this)->childAtIndex(m_numberOfRows * m_numberOfColumns - 1);
+  return lastChild->type() == Type::EmptyLayout && static_cast<EmptyLayoutNode *>(lastChild)->color() == EmptyLayoutNode::Color::Gray;
+}
 
 KDSize MatrixLayoutNode::computeSize(KDFont::Size font) {
   return SquareBracketPairLayoutNode::SizeGivenChildSize(gridSize(font));

@@ -20,6 +20,10 @@ public:
   // SerializableNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
+  // Grid layout node
+  void startEditing() override;
+  void stopEditing() override;
+
   // TreeNode
   size_t size() const override { return sizeof(MatrixLayoutNode); }
 #if POINCARE_TREE_LOG
@@ -29,6 +33,9 @@ public:
 #endif
 
 private:
+  // Grid layout node
+  bool isEditing() const override;
+
   // LayoutNode
   KDSize computeSize(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode * l, KDFont::Size font) override;

@@ -18,6 +18,10 @@ public:
   // SerializableNode
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 
+  // Grid layout node
+  void startEditing() override;
+  void stopEditing() override;
+
   // TreeNode
   size_t size() const override { return sizeof(PiecewiseOperatorLayoutNode); }
 #if POINCARE_TREE_LOG
@@ -30,6 +34,7 @@ private:
   // Grid layout node
   KDCoordinate horizontalGridEntryMargin(KDFont::Size font) const override { return 2 * k_gridEntryMargin + KDFont::GlyphWidth(font); }
   bool numberOfColumnsIsFixed() const override { return true; }
+  bool isEditing() const override;
 
   // LayoutNode
   KDSize computeSize(KDFont::Size font) override;
@@ -37,6 +42,7 @@ private:
   KDCoordinate computeBaseline(KDFont::Size font) override;
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
 
+  void makeLastConditionVisibleIfEmpty(bool visible);
 };
 
 class PiecewiseOperatorLayout /*final*/ : public GridLayout {

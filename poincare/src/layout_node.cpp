@@ -304,9 +304,9 @@ bool addRemoveGraySquaresInLayoutIfNeeded(bool add, Layout * l) {
     return false;
   }
   if (add) {
-    static_cast<GridLayoutNode *>(l->node())->addGraySquares();
+    static_cast<GridLayoutNode *>(l->node())->startEditing();
   } else {
-    static_cast<GridLayoutNode *>(l->node())->removeGraySquares();
+    static_cast<GridLayoutNode *>(l->node())->stopEditing();
   }
   return true;
 }

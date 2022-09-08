@@ -11,9 +11,9 @@ void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomput
   if (cursor->layoutNode() == this && cursor->position() == LayoutCursor::Position::Right) {
     /* Case: Right of this. Add the gray squares to the grid, then move to
      * the bottom right non gray child. */
-    addGraySquares();
+    startEditing();
     *shouldRecomputeLayout = true;
-    LayoutNode * lastChild = childAtIndex(indexOfLastNonGrayChildWhenHasGraySquares());
+    LayoutNode * lastChild = childAtIndex(indexOfLastNonGrayChildWhenIsEditing());
     cursor->setLayoutNode(lastChild);
     return;
   }
@@ -24,7 +24,7 @@ void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomput
     if (childIsLeftOfGrid(childIndex)) {
      /* Case: Left of a child on the left of the grid. Remove the gray squares of
       * the grid, then go left of the grid. */
-      removeGraySquares();
+      stopEditing();
       *shouldRecomputeLayout = true;
       cursor->setLayoutNode(this);
       return;
@@ -46,7 +46,7 @@ void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecompu
   if (cursor->layoutNode() == this
       && cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left. Add gray squares to the matrix, then go to its first entry.
-    addGraySquares();
+    startEditing();
     *shouldRecomputeLayout = true;
     assert(m_numberOfColumns*m_numberOfRows >= 1);
     cursor->setLayoutNode(childAtIndex(0));
@@ -58,7 +58,7 @@ void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecompu
     // Case: The cursor points to a grid's child.
     if (childIsRightOfGrid(childIndex)) {
       // Case: Right of a child on the right of the grid. Go Right of the grid.
-      removeGraySquares();
+      stopEditing();
       *shouldRecomputeLayout = true;
       cursor->setLayoutNode(this);
       return;
@@ -125,8 +125,8 @@ void GridLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCur
   }
   LayoutNode::moveCursorVertically(direction, cursor, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
   if (cursor->isDefined() && shouldRemoveGraySquares) {
-    assert(thisRef.hasGraySquares());
-    thisRef.removeGraySquares();
+    assert(thisRef.isEditing());
+    thisRef.stopEditing();
     *shouldRecomputeLayout = true;
   }
 }
@@ -192,49 +192,11 @@ void GridLayoutNode::willAddSiblingToEmptyChildAtIndex(int childIndex) {
   }
 }
 
-void GridLayoutNode::addGraySquares() {
-  if (!hasGraySquares()) {
-    Layout thisRef(this);
-    if (!numberOfRowsIsFixed()) {
-      addEmptyRow(EmptyLayoutNode::Color::Gray);
-    }
-    if (!numberOfColumnsIsFixed()) {
-      addEmptyColumn(EmptyLayoutNode::Color::Gray);
-    }
-  }
-}
-
-void GridLayoutNode::removeGraySquares() {
-  if (hasGraySquares()) {
-    if (!numberOfRowsIsFixed()) {
-      deleteRowAtIndex(m_numberOfRows - 1);
-    }
-    if (!numberOfColumnsIsFixed()) {
-      deleteColumnAtIndex(m_numberOfColumns - 1);
-    }
-  }
-}
-
 // Protected
 
-bool GridLayoutNode::hasGraySquares() const {
-  if (numberOfChildren() == 0) {
-    return false;
-  }
-  LayoutNode * lastChild = const_cast<GridLayoutNode *>(this)->childAtIndex(m_numberOfRows * m_numberOfColumns - 1);
-  if (lastChild->isEmpty()
-      && lastChild->type() != Type::HorizontalLayout
-      && (static_cast<EmptyLayoutNode *>(lastChild))->color() == EmptyLayoutNode::Color::Gray)
-  {
-    assert(numberOfRowsIsFixed() || isRowEmpty(m_numberOfRows - 1));
-    assert(numberOfColumnsIsFixed() || (m_numberOfColumns - 1));
-    return true;
-  }
-  return false;
-}
 
-int GridLayoutNode::indexOfLastNonGrayChildWhenHasGraySquares() const {
-  assert(hasGraySquares() || (numberOfColumnsIsFixed() && numberOfRowsIsFixed()));
+int GridLayoutNode::indexOfLastNonGrayChildWhenIsEditing() const {
+  assert(isEditing() || (numberOfColumnsIsFixed() && numberOfRowsIsFixed()));
  /* If a grid has one row and one column of gray children,
   * the index m_numberOfColumns * (m_numberOfRows - 1) - 2 is the index of
   * the last non-gray child.

@@ -2,6 +2,7 @@
 #include <poincare/addition.h>
 #include <poincare/based_integer.h>
 #include <poincare/binomial_coefficient.h>
+#include <poincare/comparison.h>
 #include <poincare/constant.h>
 #include <poincare/cosine.h>
 #include <poincare/decimal.h>
@@ -13,6 +14,7 @@
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/nth_root.h>
+#include <poincare/piecewise_operator.h>
 #include <poincare/power.h>
 #include "helper.h"
 
@@ -384,4 +386,20 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
       );
 
   assert_parsed_layout_is(l, e);
+
+  // Piecewise
+  PiecewiseOperatorLayout p = PiecewiseOperatorLayout::Builder();
+  p.addRow(CodePointLayout::Builder('3'),HorizontalLayout::Builder(CodePointLayout::Builder('2'), CodePointLayout::Builder('>'), CodePointLayout::Builder('3')));
+  p.addRow(CodePointLayout::Builder('2'),HorizontalLayout::Builder(CodePointLayout::Builder('2'), CodePointLayout::Builder('<'), CodePointLayout::Builder('3')));
+  p.addRow(CodePointLayout::Builder('1'));
+
+  List args = List::Builder();
+  args.addChildAtIndexInPlace(BasedInteger::Builder(3),0,0);
+  args.addChildAtIndexInPlace(Comparison::Builder(BasedInteger::Builder(2),ComparisonNode::OperatorType::Superior,BasedInteger::Builder(3)),1,1);
+  args.addChildAtIndexInPlace(BasedInteger::Builder(2),2,2);
+  args.addChildAtIndexInPlace(Comparison::Builder(BasedInteger::Builder(2),ComparisonNode::OperatorType::Inferior,BasedInteger::Builder(3)),3,3);
+  args.addChildAtIndexInPlace(BasedInteger::Builder(1),4,4);
+  e = PiecewiseOperator::UntypedBuilder(args);
+
+  assert_parsed_layout_is(p, e);
 }

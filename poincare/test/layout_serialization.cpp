@@ -134,4 +134,12 @@ QUIZ_CASE(poincare_layout_serialization) {
           LayoutHelper::StringToCodePointsLayout("x+5", 3),
           VerticalOffsetLayoutNode::Position::Superscript)),
       "2^\x12x+5\x13");
+
+  // Piecewise layout
+  PiecewiseOperatorLayout p = PiecewiseOperatorLayout::Builder();
+  p.addRow(CodePointLayout::Builder('3'),HorizontalLayout::Builder(CodePointLayout::Builder('2'), CodePointLayout::Builder('>'), CodePointLayout::Builder('3')));
+  p.addRow(CodePointLayout::Builder('2'),HorizontalLayout::Builder(CodePointLayout::Builder('2'), CodePointLayout::Builder('<'), CodePointLayout::Builder('3')));
+  p.addRow(CodePointLayout::Builder('1'));
+  assert_layout_serialize_to(p, "piecewise(3,2>3,2,2<3,1)");
+
 }

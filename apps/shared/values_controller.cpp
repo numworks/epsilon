@@ -1,20 +1,17 @@
 #include "values_controller.h"
 #include "function_app.h"
 #include "separable.h"
+#include <poincare/empty_layout.h>
 #include <poincare/preferences.h>
 #include <assert.h>
 #include <limits.h>
 #include <algorithm>
+#include <stdlib.h>
 
 using namespace Poincare;
 using namespace Escher;
 
 namespace Shared {
-
-constexpr int ValuesController::k_maxNumberOfDisplayableRows;
-
-// TODO: use std::abs
-static inline int absInt(int x) { return x < 0 ? -x : x; }
 
 // Constructor and helpers
 
@@ -54,14 +51,13 @@ const char * ValuesController::title() {
 }
 
 void ValuesController::viewWillAppear() {
-  // Reset memoization before any call to willDisplayCellAtLocation
-  resetValuesMemoization();
   EditableCellTableViewController::viewWillAppear();
   header()->setSelectedButton(-1);
 }
 
 void ValuesController::viewDidDisappear() {
   m_numberOfColumnsNeedUpdate = true;
+  resetLayoutMemoization();
   EditableCellTableViewController::viewDidDisappear();
 }
 
@@ -144,9 +140,9 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   if (typeAtLoc == k_notEditableValueCellType) {
     // Special case: last row
     if (j == numberOfElementsInColumn(i) + 1) {
-      static_cast<EvenOddBufferTextCell *>(cell)->setText("");
+      static_cast<EvenOddExpressionCell *>(cell)->setLayout(EmptyLayout::Builder());
     } else {
-      static_cast<EvenOddBufferTextCell *>(cell)->setText(memoizedBufferForCell(i, j));
+      static_cast<EvenOddExpressionCell *>(cell)->setLayout(memoizedLayoutForCell(i, j));
     }
     return;
   }
@@ -162,7 +158,7 @@ HighlightCell * ValuesController::reusableCell(int index, int type) {
     case k_editableValueCellType:
       return abscissaCells(index);
     case k_notEditableValueCellType:
-      return floatCells(index);
+      return valueCells(index);
     default:
       assert(false);
       return nullptr;
@@ -269,7 +265,7 @@ void ValuesController::didChangeCell(int column, int row) {
       // The changed column is out of the memoized table
       continue;
     }
-    fillMemoizedBuffer(i, row, nbOfMemoizedColumns*memoizedRow+memoizedI);
+    createMemoizedLayout(i, row, nbOfMemoizedColumns*memoizedRow+memoizedI);
   }
 }
 
@@ -306,12 +302,16 @@ FunctionStore * ValuesController::functionStore() const {
 
 // Function evaluation memoization
 
-void ValuesController::resetValuesMemoization() {
+void ValuesController::resetLayoutMemoization() {
+  const int numberOfMemoizedCell = k_maxNumberOfDisplayableRows * numberOfMemoizedColumn();
+  for (int i = 0; i < numberOfMemoizedCell; i++) {
+    *memoizedLayoutAtIndex(i) = Layout();
+  }
   m_firstMemoizedColumn = INT_MAX;
   m_firstMemoizedRow = INT_MAX;
 }
 
-char * ValuesController::memoizedBufferForCell(int i, int j) {
+Layout ValuesController::memoizedLayoutForCell(int i, int j) {
   const int nbOfMemoizedColumns = numberOfMemoizedColumn();
   // Conversion of coordinates from absolute table to values table
   int valuesI = valuesColumnForAbsoluteColumn(i);
@@ -338,11 +338,15 @@ char * ValuesController::memoizedBufferForCell(int i, int j) {
     m_firstMemoizedRow = m_firstMemoizedRow + offsetJ;
     // Shift already memoized cells
     const int numberOfMemoizedCell = k_maxNumberOfDisplayableRows * nbOfMemoizedColumns;
-    size_t moveLength = (numberOfMemoizedCell - absInt(offset))*valuesCellBufferSize()*sizeof(char);
+    const int numberOfLayoutsToMove = numberOfMemoizedCell - abs(offset);
     if (offset > 0 && offset < numberOfMemoizedCell) {
-      memmove(memoizedBufferAtIndex(offset), memoizedBufferAtIndex(0), moveLength);
+      for (int i = numberOfLayoutsToMove - 1; i >= 0; i--) {
+        *memoizedLayoutAtIndex(offset + i) = *memoizedLayoutAtIndex(i);
+      }
     } else if (offset < 0 && offset > -numberOfMemoizedCell) {
-      memmove(memoizedBufferAtIndex(0), memoizedBufferAtIndex(-offset), moveLength);
+      for (int i = - offset ; i < - offset + numberOfLayoutsToMove; i++) {
+        *memoizedLayoutAtIndex(offset + i) = *memoizedLayoutAtIndex(i);
+      }
     }
     // Compute the buffer of the new cells of the memoized table
     int maxI = numberOfValuesColumns() - m_firstMemoizedColumn;
@@ -353,13 +357,13 @@ char * ValuesController::memoizedBufferForCell(int i, int j) {
         if (ii >= -offsetI && ii < -offsetI + nbOfMemoizedColumns && jj >= -offsetJ && jj < -offsetJ + k_maxNumberOfDisplayableRows) {
           continue;
         }
-        fillMemoizedBuffer(absoluteColumnForValuesColumn(m_firstMemoizedColumn + ii),
+        createMemoizedLayout(absoluteColumnForValuesColumn(m_firstMemoizedColumn + ii),
             absoluteRowForValuesRow(m_firstMemoizedRow + jj),
             jj * nbOfMemoizedColumns + ii);
       }
     }
   }
-  return memoizedBufferAtIndex((valuesJ-m_firstMemoizedRow)*nbOfMemoizedColumns + (valuesI-m_firstMemoizedColumn));
+  return *memoizedLayoutAtIndex((valuesJ-m_firstMemoizedRow)*nbOfMemoizedColumns + (valuesI-m_firstMemoizedColumn));
 }
 
 void ValuesController::clearSelectedColumn() {

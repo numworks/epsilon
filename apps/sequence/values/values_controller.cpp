@@ -40,6 +40,13 @@ void ValuesController::viewWillAppear() {
   Shared::ValuesController::viewWillAppear();
 }
 
+void ValuesController::viewDidDisappear() {
+  for (int i = 0; i < k_maxNumberOfDisplayableCells; i++) {
+    m_valueCells[i].setLayout(Layout());
+  }
+  Shared::ValuesController::viewDidDisappear();
+}
+
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {
   /* The column names U_n, V_n, etc. are implemented as layout for now (see setTitleCellText of this file)
    * Since there is no column parameters for these column, the fillColumnName is not yet implemented.
@@ -91,12 +98,13 @@ Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
 
 // Function evaluation memoization
 
-void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
-  char * buffer = memoizedBufferAtIndex(index);
+void ValuesController::createMemoizedLayout(int column, int row, int index) {
   double abscissa = intervalAtColumn(column)->element(row-1); // Subtract the title row from row to get the element index
   Shared::ExpiringPointer<Shared::Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(column));
-  Coordinate2D<double> xy = sequence->evaluateXYAtParameter(abscissa, textFieldDelegateApp()->localContext());
-  Shared::PoincareHelpers::ConvertFloatToText<double>(xy.x2(), buffer, k_valuesCellBufferSize, Preferences::VeryLargeNumberOfSignificantDigits);
+  Context * context = textFieldDelegateApp()->localContext();
+  Coordinate2D<double> xy = sequence->evaluateXYAtParameter(abscissa, context);
+  Float<double> e = Float<double>::Builder(xy.x2());
+  *memoizedLayoutAtIndex(index) = e.createLayout(Preferences::PrintFloatMode::Decimal, Preferences::VeryLargeNumberOfSignificantDigits, context);
 }
 
 }

@@ -55,14 +55,14 @@ private:
 
   // Function evaluation memoization
   constexpr static int k_valuesCellBufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
-  char * memoizedBufferAtIndex(int i) override {
+  Poincare::Layout * memoizedLayoutAtIndex(int i) override {
     assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
-    return m_memoizedBuffer[i];
+    return &m_memoizedLayouts[i];
   }
-  int valuesCellBufferSize() const override{ return k_valuesCellBufferSize; }
   int numberOfMemoizedColumn() override { return k_maxNumberOfDisplayableSequences; }
-  void fillMemoizedBuffer(int i, int j, int index) override;
+  void createMemoizedLayout(int i, int j, int index) override;
   void viewWillAppear() override;
+  void viewDidDisappear() override;
 
   // Parameters controllers getter
   Shared::ColumnParameterController * functionParameterController() override { return nullptr; }
@@ -84,9 +84,9 @@ private:
     assert(j >= 0 && j < k_maxNumberOfDisplayableSequences);
     return &m_sequenceTitleCells[j];
   }
-  Escher::EvenOddBufferTextCell * floatCells(int j) override {
+  Escher::EvenOddExpressionCell * valueCells(int j) override {
     assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
-    return &m_floatCells[j];
+    return &m_valueCells[j];
   }
 
   int fillColumnName(int columnIndex, char * buffer) override;
@@ -95,13 +95,13 @@ private:
   Escher::SelectableTableView m_selectableTableView;
   Shared::PrefacedTableView m_prefacedView;
   SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];
-  Escher::EvenOddBufferTextCell m_floatCells[k_maxNumberOfDisplayableCells];
+  Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
   Escher::EvenOddMessageTextCell m_abscissaTitleCell;
   Escher::EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfDisplayableRows];
 
   IntervalParameterController m_intervalParameterController;
   Escher::AbstractButtonCell m_setIntervalButton;
-  mutable char m_memoizedBuffer[k_maxNumberOfDisplayableCells][k_valuesCellBufferSize];
+  mutable Poincare::Layout m_memoizedLayouts[k_maxNumberOfDisplayableCells];
 
   Escher::RegularTableSize1DManager m_widthManager;
   Escher::RegularTableSize1DManager m_heightManager;

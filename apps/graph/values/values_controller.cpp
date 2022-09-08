@@ -4,6 +4,7 @@
 #include <poincare/decimal.h>
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/string_layout.h>
 #include "../../shared/poincare_helpers.h"
 #include "../../shared/utils.h"
 #include "../../constant.h"
@@ -21,7 +22,6 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   Shared::ValuesController(parentResponder, header),
   m_selectableTableView(this),
   m_prefacedView(0, this, &m_selectableTableView, this, this),
-  m_exactValueCell(&m_selectableTableView, KDContext::k_alignRight, KDFont::Size::Small),
   m_functionParameterController(functionParameterController),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_derivativeParameterController(this),
@@ -45,47 +45,40 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
     ValuesController * valuesController = (ValuesController *) context;
     valuesController->exactValuesButtonAction();
     return true;
-  }, this), &m_exactValuesDotView, KDFont::Size::Small),
-  m_lastExactValueCellComputedRow(-1),
-  m_lastExactValueCellComputedColumn(-1)
+  }, this), &m_exactValuesDotView, KDFont::Size::Small)
 {
   for (int i = 0; i < k_maxNumberOfDisplayableFunctions; i++) {
     m_functionTitleCells[i].setFont(KDFont::Size::Small);
   }
-  KDCoordinate innerMargin = Escher::EvenOddCell::k_horizontalMargin;
-  m_exactValueCell.setInnerMargins(innerMargin + 1, innerMargin, innerMargin + 1, innerMargin); // TODO: Factorize margin computation with EvenOddCells
+  for (int i = 0; i < k_maxNumberOfDisplayableCells; i++) {
+    m_valueCells[i].setFont(KDFont::Size::Small);
+    m_valueCells[i].setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
+    // TODO: Factorize margin computation
+    m_valueCells[i].setLeftMargin(Escher::EvenOddCell::k_horizontalMargin + 1);
+    m_valueCells[i].setRightMargin(Escher::EvenOddCell::k_horizontalMargin + 1);
+  }
   m_exactValuesButton.setState(false);
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
 }
 
 void ValuesController::viewDidDisappear() {
-  m_exactValueCell.setLayouts(Layout(), Layout());
-  m_lastExactValueCellComputedRow = -1;
-  m_lastExactValueCellComputedColumn = -1;
+  for (int i = 0; i < k_maxNumberOfDisplayableCells; i++) {
+    m_valueCells[i].setLayout(Layout());
+  }
   Shared::ValuesController::viewDidDisappear();
 }
 
 // TableViewDataSource
 
 KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
-  ContinuousFunction::SymbolType symbolType = symbolTypeAtColumn(&i);
   if (i == 0) {
     return k_abscissaCellWidth;
-  }
-  if (i > 0 && symbolType == ContinuousFunction::SymbolType::T) {
-    return k_parametricCellWidth;
   }
   return k_cellWidth;
 }
 
-KDCoordinate ValuesController::exactCellHeight() {
-  return std::max(m_exactValueCell.minimalSizeForOptimalDisplay().height(), Shared::ValuesController::defaultRowHeight());
-}
-
+// TODO: Properly compute row height.
 KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
-  if (j == selectedRow() && typeAtLocation(selectedColumn(), j) == k_exactValueCellType) {
-    return exactCellHeight();
-  }
   return Shared::ValuesController::nonMemoizedRowHeight(j);
 }
 
@@ -96,15 +89,14 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
     StoreCell * storeCell = static_cast<StoreCell *>(cell);
     storeCell->setSeparatorLeft(i > 0);
   }
-  if (typeAtLoc == k_exactValueCellType) {
-    setExactValueCellLayouts(i, j);
-  } else if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
+  if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
     const int numberOfElementsInCol = numberOfElementsInColumn(i);
-    Shared::Hideable * hideableCell = hideableCellFromType(cell, typeAtLoc);
-    hideableCell->setHide(j > numberOfElementsInCol + 1);
+    // TODO: Create HideableEvenOddExpressionCell. I leave this here to keep the code for future commits
+    //Shared::Hideable * hideableCell = hideableCellFromType(cell, typeAtLoc);
+    //hideableCell->setHide(j > numberOfElementsInCol + 1);
     if (j >= numberOfElementsInCol + 1) {
       static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
-      hideableCell->reinit();
+      //hideableCell->reinit();
       return;
     }
   }
@@ -152,10 +144,8 @@ void ValuesController::setTitleCellStyle(HighlightCell * cell, int columnIndex) 
 }
 
 int ValuesController::typeAtLocation(int i, int j) {
-  bool isSelectedCell = i == selectedColumn() && j == selectedRow();
   symbolTypeAtColumn(&i);
-  int type = Shared::ValuesController::typeAtLocation(i, j);
-  return type == k_notEditableValueCellType && isSelectedCell && j <= numberOfElementsInColumn(i) ? k_exactValueCellType : type;
+  return Shared::ValuesController::typeAtLocation(i, j);
 }
 
 // SelectableTableViewDelegate
@@ -170,20 +160,6 @@ void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int 
   if (j > 1 + numberOfElementsInCol) {
     selectCellAtLocation(i, 1 + numberOfElementsInCol);
     j = 1 + numberOfElementsInCol;
-  }
-
-  KDCoordinate previousRowHeightBeforeUnselection = m_lastExactValueCellComputedRow == previousSelectedCellY && m_lastExactValueCellComputedColumn == previousSelectedCellX ? exactCellHeight() : rowHeight(previousSelectedCellY);
-  KDCoordinate currentRowHeightBeforeSelection = m_lastExactValueCellComputedRow == i && m_lastExactValueCellComputedColumn == j ? exactCellHeight() : rowHeight(j);
-
-  // Re-frame the cell because its size could change after recomputing layouts
-  t->reloadCellAtLocation(previousSelectedCellX, previousSelectedCellY, true);
-  t->reloadCellAtLocation(i, j, true);
-
-  if (currentRowHeightBeforeSelection != rowHeight(j) || previousRowHeightBeforeUnselection != rowHeight(previousSelectedCellY)) {
-    /* The current or the previous selected cell changed its row height.
-     * Reload the whole table.
-     * Set false to the second parameter so that the table is not deselected */
-    t->reloadData(true, false);
   }
 }
 
@@ -323,7 +299,11 @@ int ValuesController::absoluteColumnForValuesColumn(int column) {
   return column + abscissaColumns;
 }
 
-void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
+void ValuesController::createMemoizedLayout(int column, int row, int index) {
+  if (m_exactValuesButton.state()) {
+    *memoizedLayoutAtIndex(index) = StringLayout::Builder("test");
+    return;
+  }
   double evaluationX = NAN;
   double evaluationY = NAN;
   double abscissa;
@@ -341,36 +321,22 @@ void ValuesController::fillMemoizedBuffer(int column, int row, int index) {
       evaluationX = eval.x1();
     }
   }
-  char * buffer = memoizedBufferAtIndex(index);
-  int numberOfChar = 0;
+  Expression approximation;
   if (isParametric) {
-    assert(numberOfChar < k_valuesCellBufferSize-1);
-    buffer[numberOfChar++] = '(';
-    numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationX, buffer+numberOfChar, k_valuesCellBufferSize - numberOfChar, Preferences::VeryLargeNumberOfSignificantDigits);
-    assert(numberOfChar < k_valuesCellBufferSize-1);
-    buffer[numberOfChar++] = ';';
+    approximation = Matrix::Builder();
+    static_cast<Matrix&>(approximation).addChildAtIndexInPlace(Float<double>::Builder(evaluationX), 0, 0);
+    static_cast<Matrix&>(approximation).addChildAtIndexInPlace(Float<double>::Builder(evaluationY), 1, 1);
+    static_cast<Matrix&>(approximation).setDimensions(2, 1);
+  } else {
+    approximation = Float<double>::Builder(evaluationY);
   }
-  numberOfChar += PoincareHelpers::ConvertFloatToText<double>(evaluationY, buffer+numberOfChar, k_valuesCellBufferSize - numberOfChar, Preferences::VeryLargeNumberOfSignificantDigits);
-  if (isParametric) {
-    assert(numberOfChar+1 < k_valuesCellBufferSize-1);
-    buffer[numberOfChar++] = ')';
-    buffer[numberOfChar] = 0;
-  }
+  *memoizedLayoutAtIndex(index) = approximation.createLayout(Preferences::PrintFloatMode::Decimal, Preferences::VeryLargeNumberOfSignificantDigits, context);
 }
 
-void ValuesController::didChangeCell(int column, int row) {
-  if (m_lastExactValueCellComputedRow == row || m_lastExactValueCellComputedColumn == column) {
-    m_lastExactValueCellComputedRow = -1;
-    m_lastExactValueCellComputedColumn = -1;
-  }
-  Shared::ValuesController::didChangeCell(column, row);
-}
+// TODO: Properly compute exact layout. I leave this here for futur commits.
 
+/*
 void ValuesController::setExactValueCellLayouts(int column, int row) {
-  if (m_lastExactValueCellComputedColumn == column && m_lastExactValueCellComputedRow == row) {
-    return;
-  }
-
   // Compute approximate layout
   char * approximateResult = memoizedBufferForCell(column, row);
   Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult);
@@ -378,8 +344,6 @@ void ValuesController::setExactValueCellLayouts(int column, int row) {
   // Compute exact layout
   Layout exactLayout = Layout();
   Expression exactExpression = Expression();
-  m_lastExactValueCellComputedColumn = column;
-  m_lastExactValueCellComputedRow = row;
   double abscissa;
   bool isDerivative = false;
   Shared::ExpiringPointer<ContinuousFunction> function = functionAtIndex(column, row, &abscissa, &isDerivative);
@@ -408,7 +372,7 @@ void ValuesController::setExactValueCellLayouts(int column, int row) {
   assert(!displayExactLayout || !exactExpression.isUninitialized());
   bool areExactlyEqual = displayExactLayout && Poincare::Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(exactExpression, PoincareHelpers::ParseAndSimplify(approximateResult, textFieldDelegateApp()->localContext()));
   m_exactValueCell.setEqualMessage(areExactlyEqual ? I18n::Message::Equal : I18n::Message::AlmostEqual);
-}
+}*/
 
 // Parameter controllers
 
@@ -448,13 +412,14 @@ Shared::BufferFunctionTitleCell * ValuesController::functionTitleCells(int j) {
   return &m_functionTitleCells[j];
 }
 
-EvenOddBufferTextCell * ValuesController::floatCells(int j) {
+EvenOddExpressionCell * ValuesController::valueCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
-  return &m_floatCells[j];
+  return &m_valueCells[j];
 }
 
  bool ValuesController::exactValuesButtonAction() {
   m_exactValuesButton.setState(!m_exactValuesButton.state());
+  resetLayoutMemoization();
   m_selectableTableView.reloadData();
   return true;
 }

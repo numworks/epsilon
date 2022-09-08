@@ -11,8 +11,8 @@
 #include <apps/i18n.h>
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/button_row_controller.h>
-#include <escher/even_odd_buffer_text_cell.h>
 #include <escher/even_odd_editable_text_cell.h>
+#include <escher/even_odd_expression_cell.h>
 #include <escher/even_odd_message_text_cell.h>
 
 namespace Shared {
@@ -81,7 +81,7 @@ protected:
   mutable bool m_numberOfColumnsNeedUpdate;
 
   /* Function evaluation memoization
-   * We memoize value cell buffers in order to increase scrolling speed. However,
+   * We memoize value cell layouts to increase scrolling speed. However
    * abscissa cells are not memoized (their computation does not require any
    * expression evaluation and is therefore not significantly long).
    * In the following, we refer to 3 different tables:
@@ -90,11 +90,11 @@ protected:
    *   the titles and the abscissa columns)
    * - the memoized table (which is a subset of the table of values cells)
    */
-  void resetValuesMemoization();
-  virtual char * memoizedBufferAtIndex(int i) = 0;
+  void resetLayoutMemoization();
+  virtual Poincare::Layout * memoizedLayoutAtIndex(int i) = 0;
   virtual int numberOfMemoizedColumn() = 0;
-  // Coordinates of memoizedBufferForCell refer to the absolute table
-  char * memoizedBufferForCell(int i, int j);
+  // Coordinates of memoizedLayoutForCell refer to the absolute table
+  Poincare::Layout memoizedLayoutForCell(int i, int j);
 
   Escher::SelectableViewController * columnParameterController() override;
   Shared::ColumnParameters * columnParameters() override;
@@ -124,10 +124,9 @@ private:
   int valuesRowForAbsoluteRow(int row) { return row - 1; } // Subtract the title row
   virtual int absoluteColumnForValuesColumn(int column) { return column + 1; } // Add the abscissa column
   int absoluteRowForValuesRow(int row) { return row + 1; } // Add the title row
-  virtual int valuesCellBufferSize() const = 0;
-  // Coordinates of fillMemoizedBuffer refer to the absolute table but the index
+  // Coordinates of createMemoizedLayout refer to the absolute table but the index
   // refers to the memoized table
-  virtual void fillMemoizedBuffer(int i, int j, int index) = 0;
+  virtual void createMemoizedLayout(int i, int j, int index) = 0;
   /* m_firstMemoizedColumn and m_firstMemoizedRow are coordinates of the table
    * of values cells.*/
   virtual int numberOfColumnsForAbscissaColumn(int column) { assert(column == 0); return numberOfColumns(); }
@@ -139,7 +138,7 @@ private:
   virtual int maxNumberOfCells() = 0;
   virtual int maxNumberOfFunctions() = 0;
   virtual FunctionTitleCell * functionTitleCells(int j) = 0;
-  virtual Escher::EvenOddBufferTextCell * floatCells(int j) = 0;
+  virtual Escher::EvenOddExpressionCell * valueCells(int j) = 0;
   virtual int abscissaCellsCount() const = 0;
   virtual Escher::EvenOddEditableTextCell * abscissaCells(int j) = 0;
   virtual int abscissaTitleCellsCount() const = 0;

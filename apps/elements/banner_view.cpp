@@ -89,7 +89,7 @@ void BannerView::layoutSubviews(bool force) {
   } else {
     m_textView.setText(I18n::translate(dataSource->field()->fieldLegend()));
     if (dataSource->field()->hasDouble(z)) {
-      m_textView.appendText(I18n::translate(I18n::Message::ColonConvention));
+      m_textView.appendText(" ");
       char buffer[Escher::BufferTextView::k_maxNumberOfChar];
       dataSource->field()->getLayout(z).serializeForParsing(buffer, Escher::BufferTextView::k_maxNumberOfChar);
       Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer);

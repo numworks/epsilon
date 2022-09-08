@@ -5,33 +5,29 @@
 
 namespace Shared {
 
-template <KDCoordinate Size>
-void MemoizedCursorView<Size>::drawRect(KDContext * ctx, KDRect rect) const {
+void MemoizedCursorView::drawRect(KDContext * ctx, KDRect rect) const {
   KDRect r = bounds();
   /* Beware that only the pixels of the intersection of rect with KDContext's
    * clipping rect are pulled. All other pixels are left unaltered. Indeed
    * nothing outside the clipping rect should be redrawn and hence was not
    * dirty.
    */
-  ctx->getPixels(r, m_underneathPixelBuffer);
+  ctx->getPixels(r, underneathPixelBuffer());
   m_underneathPixelBufferLoaded = true;
   drawCursor(ctx, rect);
 }
 
-template <KDCoordinate Size>
-KDSize MemoizedCursorView<Size>::minimalSizeForOptimalDisplay() const {
-  return KDSize(Size, Size);
+KDSize MemoizedCursorView::minimalSizeForOptimalDisplay() const {
+  return KDSize(size(), size());
 }
 
-template <KDCoordinate Size>
-void MemoizedCursorView<Size>::setColor(KDColor color) {
+void MemoizedCursorView::setColor(KDColor color) {
   m_color = color;
   eraseCursorIfPossible();
   markRectAsDirty(bounds());
 }
 
-template <KDCoordinate Size>
-void MemoizedCursorView<Size>::setCursorFrame(KDRect f, bool force) {
+void MemoizedCursorView::setCursorFrame(KDRect f, bool force) {
   /* TODO This is quite dirty (we are out of the dirty tracking and we assume
    * the cursor is the upmost view) but it works well. */
   if (m_frame == f && !force) {
@@ -48,8 +44,7 @@ void MemoizedCursorView<Size>::setCursorFrame(KDRect f, bool force) {
   CursorView::setCursorFrame(f, force);
 }
 
-template <KDCoordinate Size>
-void MemoizedCursorView<Size>::markRectAsDirty(KDRect rect) {
+void MemoizedCursorView::markRectAsDirty(KDRect rect) {
   /* The CursorView class inherits from TransparentView, so does
    * MemoizedCursorView. The method markRectAsDirty is thus overriden to avoid
    * marking as dirty the backgmemoized of the MemoizedCursorView in its superview.
@@ -57,8 +52,7 @@ void MemoizedCursorView<Size>::markRectAsDirty(KDRect rect) {
   View::markRectAsDirty(rect);
 }
 
-template <KDCoordinate Size>
-bool MemoizedCursorView<Size>::eraseCursorIfPossible() {
+bool MemoizedCursorView::eraseCursorIfPossible() {
   if (!m_underneathPixelBufferLoaded) {
     return false;
   }
@@ -67,17 +61,15 @@ bool MemoizedCursorView<Size>::eraseCursorIfPossible() {
     return false;
   }
   // Erase the cursor
-  KDColor cursorWorkingBuffer[Size * Size];
+  KDColor cursorWorkingBuffer[size() * size()];
   KDContext * ctx = KDIonContext::SharedContext();
   ctx->setOrigin(absoluteOrigin());
   ctx->setClippingRect(currentFrame);
-  KDSize cursorSize = KDSize(Size, Size);
-  ctx->fillRectWithPixels(KDRect(0, 0, cursorSize), m_underneathPixelBuffer, cursorWorkingBuffer);
+  KDSize cursorSize = KDSize(size(), size());
+  ctx->fillRectWithPixels(KDRect(0, 0, cursorSize), underneathPixelBuffer(), cursorWorkingBuffer);
   // TODO Restore the context to previous values?
   return true;
 }
 
-template class MemoizedCursorView<Dots::LargeDotDiameter>;
-template class MemoizedCursorView<Dots::LargeRingDiameter>;
 }
 

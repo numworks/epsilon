@@ -126,7 +126,7 @@ bool LayoutNode::deleteBeforeCursorForLayoutContainingArgument(LayoutNode * argu
     // WARNING: Do not use "this" afterwards
     cursor->setLayout(argument);
     thisRef.replaceWith(argument, cursor);
-    cursor->setPosition(LayoutCursor::Position::Left);
+    cursor->setPosition(argument.isEmpty() ? LayoutCursor::Position::Right : LayoutCursor::Position::Left);
     return true;
   }
   if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {

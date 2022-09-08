@@ -531,6 +531,7 @@ constexpr ToolboxMessageTree listsChildren[] = {
 };
 
 constexpr ToolboxMessageTree logicChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::PiecewiseCommandWithArgs, I18n::Message::PieceWise, false, I18n::Message::PiecewiseCommand),
   ToolboxMessageTree::Leaf(I18n::Message::LessOrEqual, I18n::Message::LessOrEqualText),
   ToolboxMessageTree::Leaf(I18n::Message::GreaterOrEqual, I18n::Message::GreaterOrEqualText),
   ToolboxMessageTree::Leaf(I18n::Message::NotEqual, I18n::Message::NotEqualText),

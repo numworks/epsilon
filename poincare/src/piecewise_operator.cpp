@@ -68,7 +68,8 @@ Expression PiecewiseOperator::UntypedBuilder(Expression children) {
     if (i % 2 == 0) {
       continue;
     }
-    if (!children.childAtIndex(i).hasBooleanValue()) {
+    Expression condition = children.childAtIndex(i);
+    if (!condition.hasBooleanValue() && condition.type() != ExpressionNode::Type::EmptyExpression) {
       return Expression();
     }
   }

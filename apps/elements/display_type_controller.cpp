@@ -30,7 +30,7 @@ bool DisplayTypeController::handleEvent(Ion::Events::Event e) {
 }
 
 void DisplayTypeController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  assert(cell - static_cast<HighlightCell *>(m_cells) < k_numberOfCells * sizeof(m_cells[0]));
+  assert(cell - static_cast<HighlightCell *>(m_cells) < static_cast<int>(k_numberOfCells * sizeof(m_cells[0])));
   MessageTableCell * messageCell = static_cast<MessageTableCell *>(cell);
   messageCell->setMessage(k_fields[index]->fieldLegend());
 }

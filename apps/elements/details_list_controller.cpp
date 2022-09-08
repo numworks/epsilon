@@ -36,7 +36,7 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
     int index = selectedRow();
     Layout l = DataFieldForRow(index)->getLayout(App::app()->elementsViewDataSource()->selectedElement(), PrintFloat::k_numberOfStoredSignificantDigits);
     int length = l.serializeForParsing(buffer, size);
-    assert(length < size);
+    assert(length < static_cast<int>(size));
     (void)length;
     Escher::Clipboard::sharedClipboard()->store(buffer);
     return true;
@@ -55,10 +55,10 @@ const char * DetailsListController::title() {
 
 HighlightCell * DetailsListController::reusableCell(int index, int type) {
   if (type == k_separatorCellType) {
-    assert(index < k_numberOfSeparatorCells);
+    assert(index < static_cast<int>(k_numberOfSeparatorCells));
     return m_separatorCells + index;
   }
-  assert(type == k_normalCellType && index < k_numberOfNormalCells);
+  assert(type == k_normalCellType && index < static_cast<int>(k_numberOfNormalCells));
   return m_normalCells + index;
 
 }
@@ -99,7 +99,8 @@ void DetailsListController::willDisplayCellForIndex(HighlightCell * cell, int in
   }
 
   typedCell->setSubLabelMessage(sublabel);
-  typedCell->setLayouts(dataField->fieldSymbolLayout(), dataField->getLayout(z));
+  int significantDigits = Preferences::sharedPreferences()->numberOfSignificantDigits();
+  typedCell->setLayouts(dataField->fieldSymbolLayout(), dataField->getLayout(z, significantDigits));
 }
 
 KDCoordinate DetailsListController::nonMemoizedRowHeight(int j) {
@@ -129,7 +130,7 @@ const DataField * DetailsListController::DataFieldForRow(int row) {
     &ElementsDataBase::AffinityField,
     &ElementsDataBase::IonizationField,
   };
-  assert(row < k_numberOfRows);
+  assert(row < static_cast<int>(k_numberOfRows));
   return k_fields[row];
 }
 

@@ -19,13 +19,14 @@ public:
   constexpr static float MediumDotRadius = 3.85f;
   static const uint8_t (&MediumDotMask)[MediumDotDiameter][MediumDotDiameter];
 
-  constexpr static KDCoordinate LargeDotDiameter = 11;
+  constexpr static KDCoordinate LargeDotDiameter = 9;
   constexpr static float LargeDotRadius = 4.f;
   static const uint8_t (&LargeDotMask)[LargeDotDiameter][LargeDotDiameter];
 
+  constexpr static KDCoordinate LargeRingDiameter = 11;
   constexpr static float LargeRingInternalRadius = 4.25f;
   constexpr static float LargeRingExternalRadius = 5.5f;
-  static const uint8_t (&LargeRingMask)[LargeDotDiameter][LargeDotDiameter];
+  static const uint8_t (&LargeRingMask)[LargeRingDiameter][LargeRingDiameter];
 };
 
 }

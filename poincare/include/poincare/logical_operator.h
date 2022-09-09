@@ -19,7 +19,8 @@ void logAttributes(std::ostream & stream) const override{
 }
 #endif
 protected:
-  constexpr static int k_sizeOfNameBuffer = 4 + 2 + 1; // "nand" + 2*" " + nullTermination
+  constexpr static int k_sizeOfNameBuffer = 1 + 4 + 1 + 1;
+  //                                       " "+"nand"+" "+nullTermination
   virtual const char * operatorName() const = 0;
 private:
   LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::BoundaryPunctuation; }

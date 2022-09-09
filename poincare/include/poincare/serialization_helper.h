@@ -14,7 +14,7 @@ namespace Poincare {
 
 namespace SerializationHelper {
 
-  enum class TypeOfParenthesis : uint8_t {
+  enum class ParenthesisType : uint8_t {
     Classic = 0,
     Braces,
     System,
@@ -34,7 +34,7 @@ namespace SerializationHelper {
       int firstChildIndex = 0,
       int lastChildIndex = -1);
 
-  /* TypeOfParenthesis::System add System parentheses wrapping the layout children.
+  /* ParenthesisType::System add System parentheses wrapping the layout children.
    * It is used when serializing layouts to avoid creating a parsable string
    * from a misformed layout. For instance, we don't want to parse:
    * |2)(3|, so we serialize it in "abs({2)(3})" where {} are System parentheses
@@ -48,7 +48,7 @@ namespace SerializationHelper {
       Preferences::PrintFloatMode floatDisplayMode,
       int numberOfDigits,
       const char * operatorName,
-      TypeOfParenthesis typeOfParenthesis = TypeOfParenthesis::Classic,
+      ParenthesisType typeOfParenthesis = ParenthesisType::Classic,
       int lastChildIndex = -1);
 
   int SerializeChild(

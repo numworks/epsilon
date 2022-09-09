@@ -45,7 +45,7 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
         contextToUse))
   {
     returnedExpression = Undefined::Builder();
-  } else if (ComparisonNode::IsSimpleEquality(expressionRed)) {
+  } else if (ComparisonNode::IsBinaryEquality(expressionRed)) {
     Preferences * preferences = Preferences::sharedPreferences();
     returnedExpression = static_cast<const Comparison&>(expressionRed).standardEquation(contextToUse, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), preferences->angleUnit(),  GlobalPreferences::sharedGlobalPreferences()->unitFormat(), reductionTarget);
   } else {

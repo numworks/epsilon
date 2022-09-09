@@ -698,7 +698,7 @@ QUIZ_CASE(poincare_parse_logic) {
  assert_parsed_expression_is("True xor False", BinaryLogicalOperator::Builder(Boolean::Builder(true), Boolean::Builder(false), BinaryLogicalOperatorNode::OperatorType::Xor));
  assert_parsed_expression_is("True nor False", BinaryLogicalOperator::Builder(Boolean::Builder(true), Boolean::Builder(false), BinaryLogicalOperatorNode::OperatorType::Nor));
  assert_parsed_expression_is("True nand False", BinaryLogicalOperator::Builder(Boolean::Builder(true), Boolean::Builder(false), BinaryLogicalOperatorNode::OperatorType::Nand));
- assert_parsed_expression_is("not True", NotOperator::Builder(Boolean::Builder(true)));
+ assert_parsed_expression_is("not True", LogicalOperatorNot::Builder(Boolean::Builder(true)));
  assert_text_not_parsable("not");
  assert_text_not_parsable("and");
  assert_text_not_parsable("or True");
@@ -708,7 +708,7 @@ QUIZ_CASE(poincare_parse_logic) {
  assert_text_not_parsable("True and or False");
  assert_text_not_parsable("True not True");
  // Operator prioritiy
- assert_parsed_expression_is("not True and False", BinaryLogicalOperator::Builder(NotOperator::Builder(Boolean::Builder(true)), Boolean::Builder(false), BinaryLogicalOperatorNode::OperatorType::And));
+ assert_parsed_expression_is("not True and False", BinaryLogicalOperator::Builder(LogicalOperatorNot::Builder(Boolean::Builder(true)), Boolean::Builder(false), BinaryLogicalOperatorNode::OperatorType::And));
  assert_parsed_expression_is("True and False or True", BinaryLogicalOperator::Builder(BinaryLogicalOperator::Builder(Boolean::Builder(true), Boolean::Builder(false), BinaryLogicalOperatorNode::OperatorType::And), Boolean::Builder(true), BinaryLogicalOperatorNode::OperatorType::Or));
  assert_parsed_expression_is("True or False and True", BinaryLogicalOperator::Builder(Boolean::Builder(true), BinaryLogicalOperator::Builder(Boolean::Builder(false), Boolean::Builder(true), BinaryLogicalOperatorNode::OperatorType::And), BinaryLogicalOperatorNode::OperatorType::Or));
  assert_parsed_expression_is("True nor False and True", BinaryLogicalOperator::Builder(Boolean::Builder(true), BinaryLogicalOperator::Builder(Boolean::Builder(false), Boolean::Builder(true), BinaryLogicalOperatorNode::OperatorType::And), BinaryLogicalOperatorNode::OperatorType::Nor));

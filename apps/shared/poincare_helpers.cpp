@@ -29,7 +29,7 @@ bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expres
     || ExamModeConfiguration::exactExpressionIsForbidden(exactOutput)
       /* If the output contains the following types, we only display the
        * approximate output. (this can occur for pi > 3 for example, since
-       * it's handle by approximation and not by reduction) */
+       * it's handled by approximation and not by reduction) */
    || exactOutput.recursivelyMatches(
         [](const Expression e, Context * c) {
           return e.isOfType({

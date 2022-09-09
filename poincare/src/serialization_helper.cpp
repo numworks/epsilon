@@ -94,7 +94,7 @@ int InfixPrefix(
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfDigits,
     const char * operatorName,
-    SerializationHelper::TypeOfParenthesis typeOfParenthesis,
+    SerializationHelper::ParenthesisType typeOfParenthesis,
     int firstChildIndex,
     int lastChildIndex)
 {
@@ -119,22 +119,22 @@ int InfixPrefix(
     }
     // Add the opening (system or user) parenthesis
     switch (typeOfParenthesis) {
-      case SerializationHelper::TypeOfParenthesis::Classic:
+      case SerializationHelper::ParenthesisType::Classic:
         openingCodePoint = CodePoint('(');
         closingCodePoint = CodePoint(')');
         break;
-      case SerializationHelper::TypeOfParenthesis::Braces:
+      case SerializationHelper::ParenthesisType::Braces:
         openingCodePoint = CodePoint('{');
         closingCodePoint = CodePoint('}');
         break;
-      case SerializationHelper::TypeOfParenthesis::System:
+      case SerializationHelper::ParenthesisType::System:
         openingCodePoint = UCodePointLeftSystemParenthesis;
         closingCodePoint = UCodePointRightSystemParenthesis;
         break;
       default:
-        assert(typeOfParenthesis == SerializationHelper::TypeOfParenthesis::None);
+        assert(typeOfParenthesis == SerializationHelper::ParenthesisType::None);
     }
-    if (typeOfParenthesis != SerializationHelper::TypeOfParenthesis::None) {
+    if (typeOfParenthesis != SerializationHelper::ParenthesisType::None) {
       numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, openingCodePoint);
     }
     if (numberOfChar >= bufferSize-1) {
@@ -164,7 +164,7 @@ int InfixPrefix(
       }
       // Write the child, with or without parentheses if needed
       if (prefix) {
-        if (typeOfParenthesis == SerializationHelper::TypeOfParenthesis::System && (childrenCount > 1)) {
+        if (typeOfParenthesis == SerializationHelper::ParenthesisType::System && (childrenCount > 1)) {
           numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, UCodePointLeftSystemParenthesis);
           if (numberOfChar >= bufferSize-1) {
             assert(buffer[bufferSize - 1] == 0);
@@ -176,7 +176,7 @@ int InfixPrefix(
           assert(buffer[bufferSize - 1] == 0);
           return bufferSize - 1;
         }
-        if (typeOfParenthesis == SerializationHelper::TypeOfParenthesis::System && (childrenCount > 1)) {
+        if (typeOfParenthesis == SerializationHelper::ParenthesisType::System && (childrenCount > 1)) {
           numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, UCodePointRightSystemParenthesis);
           if (numberOfChar >= bufferSize-1) {
             assert(buffer[bufferSize - 1] == 0);
@@ -193,7 +193,7 @@ int InfixPrefix(
     }
   }
 
-  if (prefix && typeOfParenthesis != SerializationHelper::TypeOfParenthesis::None) {
+  if (prefix && typeOfParenthesis != SerializationHelper::ParenthesisType::None) {
     // Add the closing parenthesis
     numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, closingCodePoint);
     if (numberOfChar >= bufferSize-1) {
@@ -216,7 +216,7 @@ int SerializationHelper::Infix(
     int firstChildIndex,
     int lastChildIndex)
 {
-  return InfixPrefix(false, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, TypeOfParenthesis::None, firstChildIndex, lastChildIndex);
+  return InfixPrefix(false, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, ParenthesisType::None, firstChildIndex, lastChildIndex);
 }
 
 int SerializationHelper::Prefix(
@@ -226,7 +226,7 @@ int SerializationHelper::Prefix(
     Preferences::PrintFloatMode floatDisplayMode,
     int numberOfDigits,
     const char * operatorName,
-    TypeOfParenthesis typeOfParenthesis,
+    ParenthesisType typeOfParenthesis,
     int lastChildIndex)
 {
   return InfixPrefix(true, node, buffer, bufferSize, floatDisplayMode, numberOfDigits, operatorName, typeOfParenthesis, 0, lastChildIndex);

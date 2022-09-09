@@ -781,7 +781,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   }
   PlotType tempPlotType = PlotType::Unknown;
   ComparisonNode::OperatorType equationType;
-  if (!ComparisonNode::IsSimpleComparison(result, &equationType) || equationType == ComparisonNode::OperatorType::NotEqual) {
+  if (!ComparisonNode::IsBinaryComparison(result, &equationType) || equationType == ComparisonNode::OperatorType::NotEqual) {
     /* Happens when the inputted text is too long and "f(x)=" can't be inserted
      * or when inputting amiguous equations like "x+y>2>y" */
     return Undefined::Builder();
@@ -868,7 +868,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
   if (record->hasExtension(Ion::Storage::funcExtension)) {
     ComparisonNode::OperatorType newOperatorType;
     if (!newExpression.isUninitialized()
-        && ComparisonNode::IsSimpleComparison(newExpression, &newOperatorType)
+        && ComparisonNode::IsBinaryComparison(newExpression, &newOperatorType)
         && isValidNamedLeftExpression(newExpression.childAtIndex(0), newOperatorType)) {
       Expression function = newExpression.childAtIndex(0);
       error = Ion::Storage::Record::SetBaseNameWithExtension(record, static_cast<SymbolAbstract&>(function).name(), Ion::Storage::funcExtension);
@@ -908,7 +908,7 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
     }
     // Check if the equation is of the form f(x)=...
     ComparisonNode::OperatorType comparisonType;
-    if (ComparisonNode::IsSimpleComparison(expressionToStore, &comparisonType)
+    if (ComparisonNode::IsBinaryComparison(expressionToStore, &comparisonType)
       && isValidNamedLeftExpression(expressionToStore.childAtIndex(0), comparisonType)) {
       isFunctionAssignment = true;
       Expression functionSymbol = expressionToStore.childAtIndex(0).childAtIndex(0);
@@ -1042,7 +1042,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
     }
     if (highestCoefficientIsPositive == TrinaryBoolean::False) {
       // Oppose the comparison operator
-      m_equationType = ComparisonNode::Opposite(modelEquationType);
+      m_equationType = ComparisonNode::Reverse(modelEquationType);
     }
   }
 

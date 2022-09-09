@@ -118,7 +118,7 @@ bool StoreColumnHelper::createExpressionForFillingColumnWithFormula(const char *
 bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
   int columnToFill = store()->relativeColumnIndex(referencedColumn());
   int seriesToFill = store()->seriesAtColumn(referencedColumn());
-  if (ComparisonNode::IsSimpleEquality(formula)) {
+  if (ComparisonNode::IsBinaryEquality(formula)) {
     bool isValidEquality = false;
     Expression leftOfEqual = formula.childAtIndex(0);
     if (leftOfEqual.type() == ExpressionNode::Type::Symbol) {

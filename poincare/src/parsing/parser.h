@@ -77,7 +77,7 @@ private:
   void parseCaretWithParenthesis(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseComparisonOperator(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseAssigmentEqual(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
-  void parseNotOperator(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseLogicalOperatorNot(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseAndOperator(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::And, leftHandSide, stoppingType); }
   void parseNandOperator(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Nand, leftHandSide, stoppingType); }
   void parseOrOperator(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0) { parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType::Or, leftHandSide, stoppingType); }

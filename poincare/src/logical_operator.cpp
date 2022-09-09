@@ -135,11 +135,9 @@ bool BinaryLogicalOperatorNode::evaluate(bool a, bool b) const {
     return a != b;
   case OperatorType::Nand:
     return !(a && b);
-  case OperatorType::Nor:
-    return !(a || b);
   default:
-    assert(false);
-    return false;
+    assert(m_typeOfOperator == OperatorType::Nor);
+    return !(a || b);
   }
 }
 

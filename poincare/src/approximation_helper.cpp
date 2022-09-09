@@ -141,7 +141,12 @@ template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode
 
   std::complex<T> complexesArray[k_maxNumberOfParametersForMap];
   bool booleansArray[k_maxNumberOfParametersForMap];
-  bool isBooleanEvaluation = evaluationArray[0].type() == EvaluationNode<T>::Type::ListComplex ? evaluationArray[0].childAtIndex(0).type() == EvaluationNode<T>::Type::BooleanEvaluation : evaluationArray[0].type() == EvaluationNode<T>::Type::BooleanEvaluation;
+  bool isBooleanEvaluation;
+  if (evaluationArray[0].type() == EvaluationNode<T>::Type::ListComplex) {
+    isBooleanEvaluation = evaluationArray[0].childAtIndex(0).type() == EvaluationNode<T>::Type::BooleanEvaluation;
+  } else {
+     isBooleanEvaluation = evaluationArray[0].type() == EvaluationNode<T>::Type::BooleanEvaluation;
+  }
   if (listLength == Expression::k_noList) {
     for (int i = 0; i < numberOfParameters; i++) {
       assert(evaluationArray[i].type() == EvaluationNode<T>::Type::Complex || evaluationArray[i].type() == EvaluationNode<T>::Type::BooleanEvaluation);

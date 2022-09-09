@@ -25,7 +25,7 @@ public:
   TrinaryBoolean isPositive(Context * context) const override;
   TrinaryBoolean isNull(Context * context) const override {
     // NonNull Status can't be returned because denominator could be infinite.
-    return TrinaryOr(childAtIndex(0)->isNull(context), TrinaryBoolean::Unknown);
+    return childAtIndex(0)->isNull(context) == TrinaryBoolean::True ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
   }
   Type type() const override { return Type::Division; }
   int polynomialDegree(Context * context, const char * symbolName) const override;

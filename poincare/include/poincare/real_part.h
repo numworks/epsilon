@@ -22,7 +22,7 @@ public:
   // Properties
   TrinaryBoolean isPositive(Context * context) const override { return childAtIndex(0)->isPositive(context); }
   TrinaryBoolean isNull(Context * context) const override {
-    return TrinaryOr(childAtIndex(0)->isNull(context), TrinaryBoolean::Unknown);
+    return childAtIndex(0)->isNull(context) == TrinaryBoolean::True ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
   }
   Type type() const override { return Type::RealPart; }
 

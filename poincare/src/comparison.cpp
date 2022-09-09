@@ -118,12 +118,12 @@ TrinaryBoolean ComparisonNode::TruthValueOfOperator(OperatorType type, TrinaryBo
   return TrinaryOr(leftChildIsGreater, chidlrenAreEqual);
 }
 
-ComparisonNode::ComparisonNode(int numberOfOperands, OperatorType lastOperatorOfList, OperatorType * otherOperatorsList) :
+ComparisonNode::ComparisonNode(int numberOfOperands, OperatorType * operatorsListButTheLast, OperatorType lastOperatorOfList) :
   ExpressionNode(),
   m_numberOfOperands(numberOfOperands) {
   assert(m_numberOfOperands >= 2);
-  if (otherOperatorsList) {
-    memcpy(m_operatorsList, otherOperatorsList, sizeof(OperatorType) * (numberOfOperators() - 1));
+  if (operatorsListButTheLast) {
+    memcpy(m_operatorsList, operatorsListButTheLast, sizeof(OperatorType) * (numberOfOperators() - 1));
   }
   m_operatorsList[numberOfOperators() - 1] = lastOperatorOfList;
 }
@@ -235,7 +235,7 @@ Expression ComparisonNode::shallowReduce(const ReductionContext& reductionContex
 
 Comparison Comparison::Builder(Expression child0, ComparisonNode::OperatorType operatorType, Expression child1) {
   void * bufferNode = TreePool::sharedPool()->alloc(SizeOfComparisonNodeWithOperators(1));
-  ComparisonNode * node = new (bufferNode) ComparisonNode(2, operatorType);
+  ComparisonNode * node = new (bufferNode) ComparisonNode(operatorType);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   h.replaceChildAtIndexInPlace(0, child0);
   h.replaceChildAtIndexInPlace(1, child1);
@@ -246,7 +246,7 @@ Comparison Comparison::addComparison(ComparisonNode::OperatorType operatorType, 
   int numberOfOperands = numberOfChildren() + 1;
   void * bufferNode = TreePool::sharedPool()->alloc(SizeOfComparisonNodeWithOperators(numberOfOperands - 1));
   ComparisonNode::OperatorType * listOfOperators = node()->listOfOperators();
-  ComparisonNode * node = new (bufferNode) ComparisonNode(numberOfOperands, operatorType, listOfOperators);
+  ComparisonNode * node = new (bufferNode) ComparisonNode(numberOfOperands, listOfOperators, operatorType);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   for (int i = 0; i < numberOfOperands - 1; i++) {
     h.replaceChildAtIndexInPlace(i, childAtIndex(i));

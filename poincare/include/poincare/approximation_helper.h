@@ -59,7 +59,7 @@ namespace ApproximationHelper {
   // Lambda reduction function (by default you should use Reduce).
   template <typename T> using ReductionFunction = Evaluation<T>(*)(Evaluation<T> eval1, Evaluation<T> eval2, Preferences::ComplexFormat complexFormat);
 
-  // For now, MapReduce is always undef on booleans
+  // TODO: For now, MapReduce is always undef on booleans
   template<typename T> Evaluation<T> MapReduce(
       const ExpressionNode * expression,
       const ExpressionNode::ApproximationContext& approximationContext,

@@ -150,24 +150,31 @@ ExpressionNode::NullStatus PercentAdditionNode::nullStatus(Context * context) co
 // PercentSimpleNode
 
 int PercentAdditionNode::createSecondChildLayout(Poincare::HorizontalLayout * result, int childrenCount, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  // If second element is an Opposite, there is already the - operator
-  if (childAtIndex(1)->type() != ExpressionNode::Type::Opposite) {
-    result->addChildAtIndex(CodePointLayout::Builder('+'), childrenCount, childrenCount, nullptr);
+  ExpressionNode * percentChild = childAtIndex(1);
+  if (percentChild->type() == ExpressionNode::Type::Opposite) {
+    result->addChildAtIndex(CodePointLayout::Builder(UCodePointSouthEastArrow), childrenCount, childrenCount, nullptr);
+    childrenCount++;
+    percentChild = percentChild->childAtIndex(0);
+  } else {
+    result->addChildAtIndex(CodePointLayout::Builder(UCodePointNorthEastArrow), childrenCount, childrenCount, nullptr);
     childrenCount++;
   }
-  result->addOrMergeChildAtIndex(childAtIndex(1)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), childrenCount, false);
+  result->addOrMergeChildAtIndex(percentChild->createLayout(floatDisplayMode, numberOfSignificantDigits, context), childrenCount, false);
   return result->numberOfChildren();
 }
 
 int PercentAdditionNode::serializeSecondChild(char * buffer, int bufferSize, int numberOfChar, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  // If second element is an Opposite, there is already the - operator
-  if (childAtIndex(1)->type() != ExpressionNode::Type::Opposite) {
-    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, '+');
-    if ((numberOfChar < 0) || (numberOfChar >= bufferSize-1)) {
-      return numberOfChar;
-    }
+  ExpressionNode * percentChild = childAtIndex(1);
+  if (percentChild->type() == ExpressionNode::Type::Opposite) {
+    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, UCodePointSouthEastArrow);
+    percentChild = percentChild->childAtIndex(0);
+  } else {
+    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, UCodePointNorthEastArrow);
   }
-  numberOfChar += SerializationHelper::SerializeChild(childAtIndex(1), this, buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+  if ((numberOfChar < 0) || (numberOfChar >= bufferSize-1)) {
+    return numberOfChar;
+  }
+  numberOfChar += SerializationHelper::SerializeChild(percentChild, this, buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
   return numberOfChar;
 }
 

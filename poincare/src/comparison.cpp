@@ -295,12 +295,4 @@ Expression Comparison::shallowReduce(ExpressionNode::ReductionContext reductionC
   return result;
 }
 
-Expression Comparison::standardEquation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::ReductionTarget reductionTarget) const {
-  if (numberOfChildren() != 2) {
-    return Expression();
-  }
-  Expression sub = Subtraction::Builder(childAtIndex(0).clone(), childAtIndex(1).clone());
-  return sub.cloneAndReduce(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, reductionTarget));
-}
-
 }

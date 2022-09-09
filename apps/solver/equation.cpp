@@ -8,6 +8,7 @@
 #include <poincare/undefined.h>
 #include <poincare/nonreal.h>
 #include <poincare/rational.h>
+#include <poincare/subtraction.h>
 #include <ion/unicode/utf8_helper.h>
 
 using namespace Ion;
@@ -47,7 +48,8 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
     returnedExpression = Undefined::Builder();
   } else if (ComparisonNode::IsBinaryEquality(expressionRed)) {
     Preferences * preferences = Preferences::sharedPreferences();
-    returnedExpression = static_cast<const Comparison&>(expressionRed).standardEquation(contextToUse, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), preferences->angleUnit(),  GlobalPreferences::sharedGlobalPreferences()->unitFormat(), reductionTarget);
+    returnedExpression = Subtraction::Builder(expressionRed.childAtIndex(0), expressionRed.childAtIndex(1));
+    returnedExpression = returnedExpression.cloneAndReduce(ExpressionNode::ReductionContext(contextToUse, Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), reductionTarget));
   } else {
     assert(expressionRed.type() == ExpressionNode::Type::Boolean);
     /* The equality was reduced which means the equality was either

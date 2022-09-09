@@ -43,11 +43,6 @@ void UniformDistribution::setParameterAtIndex(double f, int index) {
   computeCurveViewRange();
 }
 
-bool UniformDistribution::IsDiscontinuousBetweenAbscissas(float x1, float x2, void * model, void * context) {
-  UniformDistribution * distribution = static_cast<UniformDistribution *>(model);
-  return distribution->evaluateAtAbscissa(x1) != distribution->evaluateAtAbscissa(x2);
-}
-
 ParameterRepresentation UniformDistribution::paramRepresentationAtIndex(int i) const {
   switch (i) {
     case ParamsOrder::A:

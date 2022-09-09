@@ -889,8 +889,8 @@ void CurveView::drawHistogram(KDContext * ctx, KDRect rect, EvaluateYForX yEvalu
 }
 
 static bool pointInBoundingBox(float x1, float y1, float x2, float y2, float xC, float yC) {
-  return ((x1 <= xC && xC <= x2) || (x2 <= xC && xC <= x1))
-      && ((y1 <= yC && yC <= y2) || (y2 <= yC && yC <= y1));
+  return ((x1 < xC && xC < x2) || (x2 < xC && xC < x1) || (x2 == xC && xC == x1))
+      && ((y1 < yC && yC < y2) || (y2 < yC && yC < y1) || (y2 == yC && yC == y1));
 }
 
 static bool dotsAreInSameCircle(const float x1, const float y1, const float x2, const float y2, const float circleDiameter) {

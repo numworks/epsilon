@@ -47,7 +47,6 @@ escher_src += $(addprefix escher/src/,\
   key_view.cpp \
   layout_field.cpp \
   list_view_data_source.cpp \
-  memoized_list_view_data_source.cpp \
   message_table_cell.cpp \
   message_table_cell_with_buffer.cpp \
   message_table_cell_with_chevron_and_buffer.cpp \
@@ -75,8 +74,6 @@ escher_src += $(addprefix escher/src/,\
   scrollable_expression_view.cpp \
   scrollable_view.cpp \
   selectable_table_view.cpp \
-  simple_list_view_data_source.cpp \
-  simple_table_view_data_source.cpp \
   solid_color_view.cpp \
   stack_view.cpp \
   stack_view_controller.cpp \
@@ -89,6 +86,7 @@ escher_src += $(addprefix escher/src/,\
   table_view_with_frozen_header.cpp \
   table_view_with_top_and_bottom_views.cpp \
   table_cell.cpp \
+  table_size_1D_manager.cpp \
   table_view.cpp \
   table_view_data_source.cpp \
   text_cursor_view.cpp \

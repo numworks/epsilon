@@ -29,24 +29,6 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   Poincare::Context * context = App::app()->localContext();
   function = App::app()->functionStore()->modelForRecord(record); // Reload the expiring pointer
   double dir = (direction > 0 ? 1.0 : -1.0);
-  double step = function->isAlongXOrY() ? static_cast<double>(range->xGridUnit())/numberOfStepsInGradUnit : (tMax-tMin)/k_definitionDomainDivisor;
-  double slopeMultiplicator = 1.0;
-  if (function->canDisplayDerivative()) {
-    // Use the local derivative to slow down the cursor's step if needed
-    double slope = function->approximateDerivative(t, context, *subCurveIndex);
-    // If yGridUnit is twice xGridUnit, visible slope is halved
-    slope *= range->xGridUnit() / range->yGridUnit();
-    /* Assuming the curve is a straight line of slope s. To move the cursor at a
-     * fixed distance t along the line, the actual x-axis distance needed is
-     * t' = t * cos(θ) with θ the angle between the line and the x-axis.
-     * We also have tan(θ) = (s * t) / t = s
-     * As a result, t' = t * cos(atan(s)) = t / sqrt(1 + s^2) */
-    slopeMultiplicator /= std::sqrt(1.0 + slope*slope);
-    // Add a sqrt(2) factor so that y=x isn't slowed down
-    slopeMultiplicator *= std::sqrt(2.0);
-    // Cap the scroll speed reduction to be able to cross vertical asymptotes
-    slopeMultiplicator = std::max(k_minimalSlopeMultiplicator, slopeMultiplicator);
-  }
 
   bool specialConicCursorMove = false;
   if (function->isConic() && function->numberOfSubCurves() == 2) {
@@ -59,23 +41,53 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     }
   }
 
-  // Cursor's default horizontal movement
-  t += dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
-  if (std::fabs(t - tCursorPosition) < pixelWidth) {
-    // If it didn't move enough, move at least 1 pixel
-    t = tCursorPosition + dir * pixelWidth;
-  }
+  double step;
+  if (function->isAlongXOrY()) {
+    step = static_cast<double>(range->xGridUnit())/numberOfStepsInGradUnit;
+    double slopeMultiplicator = 1.0;
+    if (function->canDisplayDerivative()) {
+      // Use the local derivative to slow down the cursor's step if needed
+      double slope = function->approximateDerivative(t, context, *subCurveIndex);
+      // If yGridUnit is twice xGridUnit, visible slope is halved
+      slope *= range->xGridUnit() / range->yGridUnit();
+      /* Assuming the curve is a straight line of slope s. To move the cursor at a
+      * fixed distance t along the line, the actual x-axis distance needed is
+      * t' = t * cos(θ) with θ the angle between the line and the x-axis.
+      * We also have tan(θ) = (s * t) / t = s
+      * As a result, t' = t * cos(atan(s)) = t / sqrt(1 + s^2) */
+      slopeMultiplicator /= std::sqrt(1.0 + slope*slope);
+      // Add a sqrt(2) factor so that y=x isn't slowed down
+      slopeMultiplicator *= std::sqrt(2.0);
+      // Cap the scroll speed reduction to be able to cross vertical asymptotes
+      slopeMultiplicator = std::max(k_minimalSlopeMultiplicator, slopeMultiplicator);
+    }
 
-  // Use a pixel width as a margin, ensuring t mostly stays at the same pixel
-  if (std::fabs(tCursorPosition) >= pixelWidth && ((dir < 0) != (tCursorPosition < 0)) && std::fabs(t) < pixelWidth) {
-    // Round t to 0 if it is going into that direction, and is close enough
-    t = 0.0;
+    // Cursor's default horizontal movement
+    t += dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
+    if (std::fabs(t - tCursorPosition) < pixelWidth) {
+      // If it didn't move enough, move at least 1 pixel
+      t = tCursorPosition + dir * pixelWidth;
+    }
+
+    // Use a pixel width as a margin, ensuring t mostly stays at the same pixel
+    if (std::fabs(tCursorPosition) >= pixelWidth && ((dir < 0) != (tCursorPosition < 0)) && std::fabs(t) < pixelWidth) {
+      // Round t to 0 if it is going into that direction, and is close enough
+      t = 0.0;
+    } else {
+      // Round t to a simpler value, displayed at the same index
+      double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(pixelWidth));
+      t = magnitude * std::round(t / magnitude);
+      // Also round t so that f(x) matches f evaluated at displayed x
+      t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, context, Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
+    }
   } else {
-    // Round t to a simpler value, displayed at the same index
-    double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(pixelWidth));
-    t = magnitude * std::round(t / magnitude);
-    // Also round t so that f(x) matches f evaluated at displayed x
-    t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, context, Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
+    /* If function is not along X or Y, the cursor speed along t should not
+     * depend on pixelWidth since the t interval can be very small even if the
+     * pixel width is very large. */
+    step = (tMax-tMin)/k_definitionDomainDivisor;
+    t += dir * step * scrollSpeed;
+    // If possible, round t so that f(x) matches f evaluated at displayed x
+    t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences()->numberOfSignificantDigits(), 0.05 * step, true);
   }
   // t must have changed
   assert(tCursorPosition != t);

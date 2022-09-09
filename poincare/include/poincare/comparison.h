@@ -12,6 +12,7 @@
 namespace Poincare {
 
 class ComparisonNode : public ExpressionNode {
+  friend class Comparison;
 public:
   enum class OperatorType : uint8_t {
     Equal = 0,
@@ -34,7 +35,6 @@ public:
 
   static TrinaryBoolean TruthValueOfOperator(OperatorType type, TrinaryBoolean chidlrenAreEqual, TrinaryBoolean leftChildIsGreater);
 
-  ComparisonNode(int numberOfOperands, OperatorType lastOperatorOfList, OperatorType * otherOperatorsList = nullptr);
   //Tree
   size_t size() const override;
   int numberOfChildren() const override { return m_numberOfOperands; }
@@ -52,6 +52,10 @@ public:
   OperatorType * listOfOperators() { return m_operatorsList; }
 
 private:
+  /* This constructor takes its last operator separately so that you can
+   * copy another ComparisonNode and add an operator at the end of it. */
+  ComparisonNode(int numberOfOperands, OperatorType * operatorsListButTheLast, OperatorType lastOperatorOfList);
+  ComparisonNode(OperatorType operatorType) : ComparisonNode(2, nullptr, operatorType) {}
 
   int numberOfOperators() const { assert(m_numberOfOperands >= 2); return m_numberOfOperands - 1; }
 

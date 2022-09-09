@@ -103,24 +103,19 @@ bool ComparisonNode::IsBinaryComparisonWithOperator(Expression e, OperatorType o
 }
 
 TrinaryBoolean ComparisonNode::TruthValueOfOperator(OperatorType type, TrinaryBoolean chidlrenAreEqual, TrinaryBoolean leftChildIsGreater) {
-  if (chidlrenAreEqual == TrinaryBoolean::Unknown) {
-    return TrinaryBoolean::Unknown;
+  if (type == OperatorType::Equal || type == OperatorType::NotEqual) {
+    return type == OperatorType::Equal ? chidlrenAreEqual : TrinaryNot(chidlrenAreEqual);
   }
-  if (chidlrenAreEqual == TrinaryBoolean::True) {
-    bool result = (type == OperatorType::SuperiorEqual || type == OperatorType::InferiorEqual || type == OperatorType::Equal);
-    return BinaryToTrinaryBool(result);
+  if (type == OperatorType::Inferior || type == OperatorType::InferiorEqual) {
+    // Revert the symbol to handle only the Superior and SuperiorOrEqual cases
+    type = Reverse(type);
+    leftChildIsGreater = TrinaryNot(leftChildIsGreater);
   }
-  assert(chidlrenAreEqual == TrinaryBoolean::False);
-  if (type == OperatorType::Equal) {
-    return TrinaryBoolean::False;
+  if (type == OperatorType::Superior) {
+    return TrinaryAnd(leftChildIsGreater, TrinaryNot(chidlrenAreEqual));
   }
-  if (type == OperatorType::NotEqual) {
-    return TrinaryBoolean::True;
-  }
-  if (leftChildIsGreater == TrinaryBoolean::Unknown) {
-    return TrinaryBoolean::Unknown;
-  }
-  return BinaryToTrinaryBool(leftChildIsGreater == BinaryToTrinaryBool(type == OperatorType::SuperiorEqual || type == OperatorType::Superior));
+  assert(type == OperatorType::SuperiorEqual);
+  return TrinaryOr(leftChildIsGreater, chidlrenAreEqual);
 }
 
 ComparisonNode::ComparisonNode(int numberOfOperands, OperatorType lastOperatorOfList, OperatorType * otherOperatorsList) :

@@ -149,7 +149,7 @@ void IntegralLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 }
 
 int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::TypeOfParenthesis::System);
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Integral::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::ParenthesisType::System);
 }
 
 Layout IntegralLayoutNode::XNTLayout(int childIndex) const {

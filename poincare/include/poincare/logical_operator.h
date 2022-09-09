@@ -22,17 +22,17 @@ protected:
   constexpr static int k_sizeOfNameBuffer = 4 + 2 + 1; // "nand" + 2*" " + nullTermination
   virtual const char * operatorName() const = 0;
 private:
-  LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::BoundaryPunctuation; };
+  LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::BoundaryPunctuation; }
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 };
 
 // Not Operator
 
-class NotOperatorNode : public LogicalOperatorNode {
+class LogicalOperatorNotNode : public LogicalOperatorNode {
 public:
   constexpr static const char * k_name = "not";
-  size_t size() const override { return sizeof(NotOperatorNode); }
-  Type type() const override { return Type::NotOperator; }
+  size_t size() const override { return sizeof(LogicalOperatorNotNode); }
+  Type type() const override { return Type::LogicalOperatorNot; }
   int numberOfChildren() const override { return 1; }
 
 private:
@@ -55,7 +55,7 @@ private:
   Expression shallowReduce(const ReductionContext& reductionContext) override;
 };
 
-class NotOperator : public ExpressionOneChild<NotOperator, NotOperatorNode> {
+class LogicalOperatorNot : public ExpressionOneChild<LogicalOperatorNot, LogicalOperatorNotNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

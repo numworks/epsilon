@@ -52,7 +52,7 @@ public:
     Symbol,
     Store,
     UnitConvert,
-    NotOperator,
+    LogicalOperatorNot,
     BinaryLogicalOperator,
     Comparison,
     Sine,

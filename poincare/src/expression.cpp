@@ -408,7 +408,7 @@ bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, floa
 bool Expression::hasBooleanValue() const {
   return type() == ExpressionNode::Type::Boolean
          || type() == ExpressionNode::Type::Comparison
-         || type() == ExpressionNode::Type::NotOperator
+         || type() == ExpressionNode::Type::LogicalOperatorNot
          || type() == ExpressionNode::Type::BinaryLogicalOperator;
 }
 

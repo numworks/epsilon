@@ -24,7 +24,7 @@ void fillBufferWithStartingAndEndingSpace(char * nameBuffer, int sizeOfBuffer, c
 }
 
 int LogicalOperatorNode::LogicalOperatorTypePrecedence(const ExpressionNode * operatorExpression) {
-  if (operatorExpression->type() == Type::NotOperator) {
+  if (operatorExpression->type() == Type::LogicalOperatorNot) {
     return 2;
   }
   if (operatorExpression->type() == Type::BinaryLogicalOperator) {
@@ -42,20 +42,20 @@ bool LogicalOperatorNode::childAtIndexNeedsUserParentheses(const Expression & ch
 
 // Not Operator
 
-Layout NotOperatorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
+Layout LogicalOperatorNotNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   char nameBuffer[k_sizeOfNameBuffer];
   fillBufferWithStartingAndEndingSpace(nameBuffer, k_sizeOfNameBuffer, operatorName(), false);
-  return LayoutHelper::Prefix(NotOperator(this), floatDisplayMode, numberOfSignificantDigits, nameBuffer, context, false);
+  return LayoutHelper::Prefix(LogicalOperatorNot(this), floatDisplayMode, numberOfSignificantDigits, nameBuffer, context, false);
 }
 
-int NotOperatorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+int LogicalOperatorNotNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   char nameBuffer[k_sizeOfNameBuffer];
   fillBufferWithStartingAndEndingSpace(nameBuffer, k_sizeOfNameBuffer, operatorName(), false);
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, nameBuffer, SerializationHelper::TypeOfParenthesis::None);
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, nameBuffer, SerializationHelper::ParenthesisType::None);
 }
 
 template<typename T>
-Evaluation<T> NotOperatorNode::templatedApproximate(const ApproximationContext& approximationContext) const {
+Evaluation<T> LogicalOperatorNotNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   return
     ApproximationHelper::MapOneChild<T>(
       this,
@@ -68,11 +68,11 @@ Evaluation<T> NotOperatorNode::templatedApproximate(const ApproximationContext& 
     );
 }
 
-Expression NotOperatorNode::shallowReduce(const ReductionContext& reductionContext) {
-  return NotOperator(this).shallowReduce(reductionContext);
+Expression LogicalOperatorNotNode::shallowReduce(const ReductionContext& reductionContext) {
+  return LogicalOperatorNot(this).shallowReduce(reductionContext);
 }
 
-Expression NotOperator::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+Expression LogicalOperatorNot::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(
         *this,
@@ -215,7 +215,7 @@ BinaryLogicalOperator BinaryLogicalOperator::Builder(Expression firstChild, Expr
 
 template Evaluation<float> BinaryLogicalOperatorNode::templatedApproximate<float>(const ApproximationContext&) const;
 template Evaluation<double> BinaryLogicalOperatorNode::templatedApproximate<double>(const ApproximationContext&) const;
-template Evaluation<float> NotOperatorNode::templatedApproximate<float>(const ApproximationContext&) const;
-template Evaluation<double> NotOperatorNode::templatedApproximate<double>(const ApproximationContext&) const;
+template Evaluation<float> LogicalOperatorNotNode::templatedApproximate<float>(const ApproximationContext&) const;
+template Evaluation<double> LogicalOperatorNotNode::templatedApproximate<double>(const ApproximationContext&) const;
 
 }

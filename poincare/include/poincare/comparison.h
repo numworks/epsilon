@@ -20,18 +20,19 @@ public:
     Inferior,
     SuperiorEqual,
     InferiorEqual,
+    // Value to know size of enum. Do not use and leave at the end
     NumberOfTypes
   };
   static CodePoint ComparisonCodePoint(OperatorType type);
   static bool IsComparisonOperatorCodePoint(CodePoint c, OperatorType * returnType = nullptr);
   static bool IsComparisonOperatorString(const char * s, size_t length, OperatorType * returnType = nullptr);
-  static OperatorType Opposite(OperatorType type);
+  static OperatorType Reverse(OperatorType type);
 
-  static bool IsSimpleComparison(Expression e, OperatorType * returnType = nullptr);
-  static bool IsSimpleComparisonWithOperator(Expression e, OperatorType operatorType);
-  static bool IsSimpleEquality(Expression e) { return IsSimpleComparisonWithOperator(e, OperatorType::Equal); }
+  static bool IsBinaryComparison(Expression e, OperatorType * returnType = nullptr);
+  static bool IsBinaryComparisonWithOperator(Expression e, OperatorType operatorType);
+  static bool IsBinaryEquality(Expression e) { return IsBinaryComparisonWithOperator(e, OperatorType::Equal); }
 
-  static TrinaryBoolean TrinaryTruthValue(OperatorType type, TrinaryBoolean chidlrenAreEqual, TrinaryBoolean leftChildIsGreater);
+  static TrinaryBoolean TruthValueOfOperator(OperatorType type, TrinaryBoolean chidlrenAreEqual, TrinaryBoolean leftChildIsGreater);
 
   ComparisonNode(int numberOfOperands, OperatorType lastOperatorOfList, OperatorType * otherOperatorsList = nullptr);
   //Tree

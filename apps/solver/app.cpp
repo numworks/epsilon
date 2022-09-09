@@ -51,7 +51,7 @@ bool App::isAcceptableExpression(const Poincare::Expression exp) {
   /* Complete ExpressionFieldDelegateApp acceptable conditions by only accepting
    * the Equal OperatorType. */
   return ExpressionFieldDelegateApp::isAcceptableExpression(exp)
-         && Poincare::ComparisonNode::IsSimpleEquality(exp);
+         && Poincare::ComparisonNode::IsBinaryEquality(exp);
 }
 
 }

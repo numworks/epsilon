@@ -155,10 +155,10 @@ int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::Pri
   if (isSquareRoot()) {
     /* Case: squareRoot(x) or root(x,empty):
      * Write "SquareRootSymbol(radicandLayout) */
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::TypeOfParenthesis::System, 0);
+    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, SquareRoot::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::ParenthesisType::System, 0);
   }
   // Case: root(x,n)
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::TypeOfParenthesis::System);
+  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, NthRoot::s_functionHelper.aliasesList().mainAlias(), SerializationHelper::ParenthesisType::System);
 }
 
 KDSize NthRootLayoutNode::computeSize(KDFont::Size font) {

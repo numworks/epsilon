@@ -117,7 +117,7 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
     &Parser::parseOrOperator,           // Token::Or
     &Parser::parseNandOperator,         // Token::Nand
     &Parser::parseAndOperator,          // Token::And
-    &Parser::parseNotOperator,          // Token::Not
+    &Parser::parseLogicalOperatorNot,   // Token::Not
     &Parser::parseComparisonOperator,   // Token::ComparisonOperator
     &Parser::parseNorthEastArrow,       // Token::NorthEastArrow
     &Parser::parseSouthEastArrow,       // Token::SouthEastArrow
@@ -431,7 +431,7 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
   return;
 }
 
-void Parser::parseNotOperator(Expression & leftHandSide, Token::Type stoppingType) {
+void Parser::parseLogicalOperatorNot(Expression & leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Left-hand side should be empty
     return;
@@ -444,7 +444,7 @@ void Parser::parseNotOperator(Expression & leftHandSide, Token::Type stoppingTyp
     m_status = Status::Error;
     return;
   }
-  leftHandSide = NotOperator::Builder(rightHandSide);
+  leftHandSide = LogicalOperatorNot::Builder(rightHandSide);
 }
 
 void Parser::parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType operatorType, Expression & leftHandSide, Token::Type stoppingType) {

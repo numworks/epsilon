@@ -72,7 +72,7 @@ bool ComparisonNode::IsComparisonOperatorString(const char * s, size_t length, O
 }
 
 
-ComparisonNode::OperatorType ComparisonNode::Opposite(OperatorType type) {
+ComparisonNode::OperatorType ComparisonNode::Reverse(OperatorType type) {
   switch (type) {
   case OperatorType::Superior:
     return OperatorType::Inferior;
@@ -86,7 +86,7 @@ ComparisonNode::OperatorType ComparisonNode::Opposite(OperatorType type) {
   }
 }
 
-bool ComparisonNode::IsSimpleComparison(Expression e, OperatorType * operatorType) {
+bool ComparisonNode::IsBinaryComparison(Expression e, OperatorType * operatorType) {
   if (e.type() != Type::Comparison || e.numberOfChildren() != 2) {
     return false;
   }
@@ -97,12 +97,12 @@ bool ComparisonNode::IsSimpleComparison(Expression e, OperatorType * operatorTyp
   return true;
 }
 
-bool ComparisonNode::IsSimpleComparisonWithOperator(Expression e, OperatorType operatorType) {
+bool ComparisonNode::IsBinaryComparisonWithOperator(Expression e, OperatorType operatorType) {
   OperatorType operatorTypeOfE;
-  return IsSimpleComparison(e, &operatorTypeOfE) && operatorTypeOfE == operatorType;
+  return IsBinaryComparison(e, &operatorTypeOfE) && operatorTypeOfE == operatorType;
 }
 
-TrinaryBoolean ComparisonNode::TrinaryTruthValue(OperatorType type, TrinaryBoolean chidlrenAreEqual, TrinaryBoolean leftChildIsGreater) {
+TrinaryBoolean ComparisonNode::TruthValueOfOperator(OperatorType type, TrinaryBoolean chidlrenAreEqual, TrinaryBoolean leftChildIsGreater) {
   if (chidlrenAreEqual == TrinaryBoolean::Unknown) {
     return TrinaryBoolean::Unknown;
   }
@@ -133,13 +133,13 @@ ComparisonNode::ComparisonNode(int numberOfOperands, OperatorType lastOperatorOf
   m_operatorsList[numberOfOperators() - 1] = lastOperatorOfList;
 }
 
-static size_t SizeOfComparisonNode(int numberOfOperators) {
+static size_t SizeOfComparisonNodeWithOperators(int numberOfOperators) {
   assert(numberOfOperators > 0);
   return sizeof(ComparisonNode) + sizeof(ComparisonNode::OperatorType) * numberOfOperators;
 }
 
 size_t ComparisonNode::size() const {
-  return SizeOfComparisonNode(numberOfOperators());
+  return SizeOfComparisonNodeWithOperators(numberOfOperators());
 }
 
 #if POINCARE_TREE_LOG
@@ -221,7 +221,7 @@ Evaluation<T> ComparisonNode::templatedApproximate(const ApproximationContext& a
       leftChildIsGreater = BinaryToTrinaryBool(scalarDifference >= 0.0);
       chidlrenAreEqual = BinaryToTrinaryBool(std::fabs(scalarDifference) < Float<T>::EpsilonLax());
     }
-    TrinaryBoolean truthValue = TrinaryTruthValue(m_operatorsList[i - 1], chidlrenAreEqual, leftChildIsGreater);
+    TrinaryBoolean truthValue = TruthValueOfOperator(m_operatorsList[i - 1], chidlrenAreEqual, leftChildIsGreater);
     switch (truthValue) {
     case TrinaryBoolean::False:
       return BooleanEvaluation<T>::Builder(false);
@@ -239,7 +239,7 @@ Expression ComparisonNode::shallowReduce(const ReductionContext& reductionContex
 }
 
 Comparison Comparison::Builder(Expression child0, ComparisonNode::OperatorType operatorType, Expression child1) {
-  void * bufferNode = TreePool::sharedPool()->alloc(SizeOfComparisonNode(1));
+  void * bufferNode = TreePool::sharedPool()->alloc(SizeOfComparisonNodeWithOperators(1));
   ComparisonNode * node = new (bufferNode) ComparisonNode(2, operatorType);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   h.replaceChildAtIndexInPlace(0, child0);
@@ -249,7 +249,7 @@ Comparison Comparison::Builder(Expression child0, ComparisonNode::OperatorType o
 
 Comparison Comparison::addComparison(ComparisonNode::OperatorType operatorType, Expression child) {
   int numberOfOperands = numberOfChildren() + 1;
-  void * bufferNode = TreePool::sharedPool()->alloc(SizeOfComparisonNode(numberOfOperands - 1));
+  void * bufferNode = TreePool::sharedPool()->alloc(SizeOfComparisonNodeWithOperators(numberOfOperands - 1));
   ComparisonNode::OperatorType * listOfOperators = node()->listOfOperators();
   ComparisonNode * node = new (bufferNode) ComparisonNode(numberOfOperands, operatorType, listOfOperators);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
@@ -277,7 +277,7 @@ Expression Comparison::shallowReduce(ExpressionNode::ReductionContext reductionC
   }
   Expression firstChild;
   Expression secondChild = childAtIndex(0);
-  int numberOfOperands = numberOfChildren();
+  const int numberOfOperands = numberOfChildren();
   for (int i = 1; i < numberOfOperands; i++) {
     firstChild = secondChild;
     secondChild = childAtIndex(i);
@@ -285,7 +285,7 @@ Expression Comparison::shallowReduce(ExpressionNode::ReductionContext reductionC
     difference = difference.shallowReduce(reductionContext);
     TrinaryBoolean childrenAreEqual = difference.isNull(reductionContext.context());
     TrinaryBoolean leftIsGreater = difference.isPositive(reductionContext.context());
-    TrinaryBoolean comparison = ComparisonNode::TrinaryTruthValue(node()->operatorAtIndex(i - 1), childrenAreEqual, leftIsGreater);
+    TrinaryBoolean comparison = ComparisonNode::TruthValueOfOperator(node()->operatorAtIndex(i - 1), childrenAreEqual, leftIsGreater);
     if (comparison == TrinaryBoolean::Unknown) {
       return *this; // Let approximation decide
     }

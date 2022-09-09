@@ -2,11 +2,11 @@
 #define ESCHER_SELECTABLE_LIST_VIEW_CONTROLLER_H
 
 #include <escher/highlight_cell.h>
-#include <escher/memoized_list_view_data_source.h>
+#include <escher/list_view_data_source.h>
 #include <escher/responder.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_delegate.h>
-#include <escher/simple_list_view_data_source.h>
+#include <escher/list_view_data_source.h>
 #include <escher/view_controller.h>
 #include <type_traits>
 

@@ -3,7 +3,7 @@
 
 #include <escher/input_event_handler.h>
 #include <escher/highlight_cell.h>
-#include <escher/memoized_list_view_data_source.h>
+#include <escher/list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/metric.h>

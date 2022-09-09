@@ -16,7 +16,7 @@ void ListViewDataSource::initCellSize(TableView * view) {
   }
 }
 
-KDCoordinate ListViewDataSource::rowHeight(int j) {
+KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int j) {
   /* Overridden cellHeight implementations boils down to instantiating
    * a temporary cell on which returning heightForCellAtIndex. As temporary cell
    * must be instantiated in the type expected in willDisplayCellAtIndex(),

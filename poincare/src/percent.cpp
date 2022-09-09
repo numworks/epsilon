@@ -92,8 +92,7 @@ TrinaryBoolean PercentAdditionNode::isNull(Context * context) const {
     return isNull0;
   }
   // At this point if the expression has a defined sign, it is a strict sign
-  TrinaryBoolean t = isPositive(context);
-  return TrinaryAnd(TrinaryNot(t), t); // Unknown if unknown, False otherwise
+  return isPositive(context) == TrinaryBoolean::Unknown ? TrinaryBoolean::Unknown : TrinaryBoolean::False;
 }
 
 // PercentSimpleNode

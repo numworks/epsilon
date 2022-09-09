@@ -22,35 +22,52 @@ enum class TrinaryBoolean : int8_t {
  * U | U
  * T | T
  *
- * A | B | A AND B
- * -----------
- * F | F |  F
- * F | U |  F
- * F | T |  F
- * U | U |  U
- * U | T |  U
- * T | T |  T
+ *       A AND B
+ *              A
+ *        | T | U | F |
+ *        -------------
+ *   | T || T | U | F |
+ * B | U || U | U | F |
+ *   | F || F | F | F |
  *
- * A | B | A OR B
- * -----------
- * T | T |  T
- * T | U |  T
- * T | F |  T
- * U | U |  U
- * U | F |  U
- * F | F |  F
+ *       A OR B
+ *              A
+ *        | T | U | F |
+ *        -------------
+ *   | T || T | T | T |
+ * B | U || T | U | U |
+ *   | F || T | U | F |
  * */
 
 inline TrinaryBoolean TrinaryNot(TrinaryBoolean b) {
-  return static_cast<TrinaryBoolean>(static_cast<int8_t>(b) * (-1));
+  if (b == TrinaryBoolean::True) {
+    return TrinaryBoolean::False;
+  }
+  if (b == TrinaryBoolean::False) {
+    return TrinaryBoolean::True;
+  }
+  assert(b == TrinaryBoolean::Unknown);
+  return TrinaryBoolean::Unknown;
 }
 
 inline TrinaryBoolean TrinaryAnd(TrinaryBoolean b1, TrinaryBoolean b2) {
-  return (b1 == TrinaryBoolean::False || b2 == TrinaryBoolean::False) ? TrinaryBoolean::False : ((b1 == TrinaryBoolean::Unknown || b2 == TrinaryBoolean::Unknown) ? TrinaryBoolean::Unknown : TrinaryBoolean::True);
+  if (b1 == TrinaryBoolean::False || b2 == TrinaryBoolean::False) {
+    return TrinaryBoolean::False;
+  }
+  if (b1 == TrinaryBoolean::Unknown || b2 == TrinaryBoolean::Unknown) {
+    return TrinaryBoolean::Unknown;
+  }
+  return TrinaryBoolean::True;
 }
 
 inline TrinaryBoolean TrinaryOr(TrinaryBoolean b1, TrinaryBoolean b2) {
-  return (b1 == TrinaryBoolean::True || b2 == TrinaryBoolean::True) ? TrinaryBoolean::True : ((b1 == TrinaryBoolean::Unknown || b2 == TrinaryBoolean::Unknown) ? TrinaryBoolean::Unknown : TrinaryBoolean::False);
+  if (b1 == TrinaryBoolean::True || b2 == TrinaryBoolean::True) {
+    return TrinaryBoolean::True;
+  }
+  if (b1 == TrinaryBoolean::Unknown || b2 == TrinaryBoolean::Unknown) {
+    return TrinaryBoolean::Unknown;
+  }
+  return TrinaryBoolean::False;
 }
 
 inline TrinaryBoolean BinaryToTrinaryBool(bool b) {

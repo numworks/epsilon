@@ -1203,7 +1203,8 @@ bool Multiplication::factorizeSineAndCosine(int i, int j, const ExpressionNode::
   Number p = CreateExponent(childAtIndex(i)).convert<Number>();
   Number q = CreateExponent(childAtIndex(j)).convert<Number>();
   // If p and q have the same sign, we cannot replace them by a tangent
-  if ((int)p.isPositive()*(int)q.isPositive() > 0) {
+  TrinaryBoolean pIsPositive = p.isPositive();
+  if (pIsPositive != TrinaryBoolean::Unknown && pIsPositive == q.isPositive()) {
     return false;
   }
   Number sumPQ = Number::Addition(p, q);

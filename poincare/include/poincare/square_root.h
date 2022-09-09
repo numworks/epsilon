@@ -12,7 +12,9 @@ public:
   constexpr static AliasesList k_functionName = "√";
 
   // ExpressionNode
-  TrinaryBoolean isPositive(Context * context) const override { return TrinaryOr(childAtIndex(0)->isPositive(context), TrinaryBoolean::Unknown); }
+  TrinaryBoolean isPositive(Context * context) const override {
+    return childAtIndex(0)->isPositive(context) == TrinaryBoolean::True ? TrinaryBoolean::True :  TrinaryBoolean::Unknown;
+  }
   TrinaryBoolean isNull(Context * context) const override { return childAtIndex(0)->isNull(context); }
   Type type() const override { return Type::SquareRoot; }
 

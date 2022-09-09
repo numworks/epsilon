@@ -24,8 +24,7 @@ public:
 
   // Properties
   TrinaryBoolean isPositive(Context * context) const override {
-    TrinaryBoolean t = childAtIndex(0)->isPositive(context);
-    return TrinaryOr(TrinaryNot(t), t); // Unknown if unknown, True otherwise
+    return childAtIndex(0)->isPositive(context) == TrinaryBoolean::Unknown ? TrinaryBoolean::Unknown : TrinaryBoolean::True;
   }
   Type type() const override { return Type::ArcCosine; }
 

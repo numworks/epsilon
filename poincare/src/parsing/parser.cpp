@@ -436,6 +436,7 @@ void Parser::parseLogicalOperatorNot(Expression & leftHandSide, Token::Type stop
     m_status = Status::Error; // Left-hand side should be empty
     return;
   }
+  // Parse until Not so that not A and B = (not A) and B
   Expression rightHandSide = parseUntil(std::max(stoppingType, Token::Not));
   if (m_status != Status::Progress) {
     return;
@@ -452,10 +453,15 @@ void Parser::parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType 
     m_status = Status::Error; // Left-hand side missing.
     return;
   }
+  /* And and Nand have same precedence
+   * Or, Nor and Xor have same precedence */
   Token::Type newStoppingType;
   if (operatorType == BinaryLogicalOperatorNode::OperatorType::And || operatorType == BinaryLogicalOperatorNode::OperatorType::Nand) {
+    static_assert(Token::Nand < Token::And, "Wrong And/Nand precedence.");
     newStoppingType = Token::And;
   } else {
+    assert(operatorType == BinaryLogicalOperatorNode::OperatorType::Or || operatorType == BinaryLogicalOperatorNode::OperatorType::Nor || operatorType == BinaryLogicalOperatorNode::OperatorType::Xor);
+    static_assert(Token::Nor < Token::Or && Token::Xor < Token::Or, "Wrong Or/Nor/Xor precedence.");
     newStoppingType = Token::Or;
   }
   Expression rightHandSide = parseUntil(std::max(stoppingType, newStoppingType));

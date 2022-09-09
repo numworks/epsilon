@@ -675,6 +675,13 @@ QUIZ_CASE(poincare_parse_mixed_fraction) {
 QUIZ_CASE(poincare_parse_function_assignment) {
   assert_parsed_expression_is("f(x)=xy", Comparison::Builder(Multiplication::Builder(Symbol::Builder("f", 1), Parenthesis::Builder(Symbol::Builder("x", 1))), ComparisonNode::OperatorType::Equal, Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("y", 1))));
   assert_parsed_expression_is("f(x)=xy", Comparison::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)), ComparisonNode::OperatorType::Equal, Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("y", 1))), false, true);
+
+  // Without assignment "f(x)=4=3" is "Comparison(f*(x), equal, 4, equal, 3)"
+  Comparison comparison = Comparison::Builder(Multiplication::Builder(Symbol::Builder("f", 1), Parenthesis::Builder(Symbol::Builder("x", 1))), ComparisonNode::OperatorType::Equal, BasedInteger::Builder(4));
+  comparison = comparison.addComparison(ComparisonNode::OperatorType::Equal, BasedInteger::Builder(3));
+  assert_parsed_expression_is("f(x)=4=3", comparison);
+  // When assigning, "f(x)=4=3" is "Assignment(f(x), Comparison(4, equal, 3))"
+  assert_parsed_expression_is("f(x)=4=3", Comparison::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)), ComparisonNode::OperatorType::Equal, Comparison::Builder(BasedInteger::Builder(4), ComparisonNode::OperatorType::Equal, BasedInteger::Builder(3))), false, true);
 }
 
 QUIZ_CASE(poincare_parsing_east_arrows) {

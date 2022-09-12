@@ -79,7 +79,7 @@ void BinomialCoefficientLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
       cursor->setPosition(LayoutCursor::Position::Right);
       return;
     }
-    if (cursor->layoutNode() == nLayout()) {
+    if (cursor->layoutNode() == nLayout() && !kLayout()->isEmpty()) {
       /* If the k is not empty and user is deleting left of n, just move left.
        * This case is handled now because otherwise
        * deleteBeforeCursorForLayoutContainingArgument would delete the whole layout.

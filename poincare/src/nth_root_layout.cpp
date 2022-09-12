@@ -146,10 +146,9 @@ void NthRootLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecom
 }
 
 void NthRootLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (deleteBeforeCursorForLayoutContainingArgument(radicandLayout(), cursor)) {
-    return;
+  if (!deleteBeforeCursorForLayoutContainingArgument(radicandLayout(), cursor)) {
+    LayoutNode::deleteBeforeCursor(cursor);
   }
-  LayoutNode::deleteBeforeCursor(cursor);
 }
 
 int NthRootLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

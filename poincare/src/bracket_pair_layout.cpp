@@ -58,10 +58,9 @@ void BracketPairLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * should
 }
 
 void BracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (deleteBeforeCursorForLayoutContainingArgument(childLayout(), cursor)) {
-    return;
+  if (!deleteBeforeCursorForLayoutContainingArgument(childLayout(), cursor)) {
+    LayoutNode::deleteBeforeCursor(cursor);
   }
-  LayoutNode::deleteBeforeCursor(cursor);
 }
 
 void BracketPairLayoutNode::didCollapseSiblings(LayoutCursor * cursor) {

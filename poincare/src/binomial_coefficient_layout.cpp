@@ -87,10 +87,9 @@ void BinomialCoefficientLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     moveCursorLeft(cursor, &temp, false);
     return;
   }
-  if (deleteBeforeCursorForLayoutContainingArgument(nLayout(), cursor)) {
-    return;
+  if (!deleteBeforeCursorForLayoutContainingArgument(nLayout(), cursor)) {
+    LayoutNode::deleteBeforeCursor(cursor);
   }
-  LayoutNode::deleteBeforeCursor(cursor);
 }
 
 int BinomialCoefficientLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

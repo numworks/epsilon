@@ -115,45 +115,44 @@ void MatrixLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
    * deleting the top empty layout of an empty column deletes the column. */
   LayoutNode * pointedChild = cursor->layoutNode();
   int indexOfPointedLayout = indexOfChild(pointedChild);
-  if (indexOfPointedLayout < 0) {
-    GridLayoutNode::deleteBeforeCursor(cursor);
-    return;
-  }
-  int columnIndex = columnAtChildIndex(indexOfPointedLayout);
-  int rowIndex = rowAtChildIndex(indexOfPointedLayout);
-  if (columnIndex == 0 && rowIndex == 0 && cursor->position() == LayoutCursor::Position::Left && numberOfChildren() == 4) {
-    /* The matrix has 4 children while the cursor is inside: there is one
-      * value and three empty squares. The cursor is left of the value
-      * so we delete the matrix layout but keep the value inside. */
-    deleteBeforeCursorForLayoutContainingArgument(pointedChild, cursor);
-    return;
-  }
-  if (pointedChild->isEmpty()) {
-    bool deleted = false;
-    if (columnIndex == 0) {
-      if (m_numberOfRows > 2 && rowIndex < m_numberOfRows - 1 && isRowEmpty(rowIndex)) {
-        deleteRowAtIndex(rowIndex);
-        deleted = true;
-      } else if (rowIndex > 0) {
-        // If at the start of row, go to the upper one.
-        cursor->setLayoutNode(childAtIndex(indexAtRowColumn(rowIndex - 1, m_numberOfColumns - 2)));
+  if (indexOfPointedLayout >= 0) {
+    int columnIndex = columnAtChildIndex(indexOfPointedLayout);
+    int rowIndex = rowAtChildIndex(indexOfPointedLayout);
+    if (columnIndex == 0 && rowIndex == 0 && cursor->position() == LayoutCursor::Position::Left && numberOfChildren() == 4) {
+      /* The matrix has 4 children while the cursor is inside: there is one
+        * value and three empty squares. The cursor is left of the value
+        * so we delete the matrix layout but keep the value inside. */
+      deleteBeforeCursorForLayoutContainingArgument(pointedChild, cursor);
+      return;
+    }
+    if (pointedChild->isEmpty()) {
+      bool deleted = false;
+      if (columnIndex == 0) {
+        if (m_numberOfRows > 2 && rowIndex < m_numberOfRows - 1 && isRowEmpty(rowIndex)) {
+          deleteRowAtIndex(rowIndex);
+          deleted = true;
+        } else if (rowIndex > 0) {
+          // If at the start of row, go to the upper one.
+          cursor->setLayoutNode(childAtIndex(indexAtRowColumn(rowIndex - 1, m_numberOfColumns - 2)));
+          cursor->setPosition(LayoutCursor::Position::Right);
+          return;
+        }
+      }
+      if (rowIndex == 0) {
+        if (m_numberOfColumns > 2 && columnIndex < m_numberOfColumns - 1 && isColumnEmpty(columnIndex)) {
+          deleteColumnAtIndex(columnIndex);
+          deleted = true;
+        }
+      }
+      if (deleted) {
+        assert(indexOfPointedLayout >= 0 && indexOfPointedLayout < m_numberOfColumns*m_numberOfRows);
+        cursor->setLayoutNode(childAtIndex(indexOfPointedLayout));
         cursor->setPosition(LayoutCursor::Position::Right);
         return;
       }
     }
-    if (rowIndex == 0) {
-      if (m_numberOfColumns > 2 && columnIndex < m_numberOfColumns - 1 && isColumnEmpty(columnIndex)) {
-        deleteColumnAtIndex(columnIndex);
-        deleted = true;
-      }
-    }
-    if (deleted) {
-      assert(indexOfPointedLayout >= 0 && indexOfPointedLayout < m_numberOfColumns*m_numberOfRows);
-      cursor->setLayoutNode(childAtIndex(indexOfPointedLayout));
-      cursor->setPosition(LayoutCursor::Position::Right);
-      return;
-    }
   }
+  GridLayoutNode::deleteBeforeCursor(cursor);
 }
 
 // SerializableNode

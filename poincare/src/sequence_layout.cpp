@@ -136,10 +136,9 @@ void SequenceLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldReco
 }
 
 void SequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (deleteBeforeCursorForLayoutContainingArgument(argumentLayout(), cursor)) {
-    return;
+  if (!deleteBeforeCursorForLayoutContainingArgument(argumentLayout(), cursor)) {
+    LayoutNode::deleteBeforeCursor(cursor);
   }
-  LayoutNode::deleteBeforeCursor(cursor);
 }
 
 Layout SequenceLayoutNode::XNTLayout(int childIndex) const {

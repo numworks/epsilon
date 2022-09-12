@@ -143,10 +143,9 @@ void IntegralLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldReco
 }
 
 void IntegralLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (deleteBeforeCursorForLayoutContainingArgument(integrandLayout(), cursor)) {
-    return;
+  if (!deleteBeforeCursorForLayoutContainingArgument(integrandLayout(), cursor)) {
+    LayoutNode::deleteBeforeCursor(cursor);
   }
-  LayoutNode::deleteBeforeCursor(cursor);
 }
 
 int IntegralLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

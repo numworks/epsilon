@@ -77,10 +77,9 @@ void ListSequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shoul
 }
 
 void ListSequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (deleteBeforeCursorForLayoutContainingArgument(functionLayout(), cursor)) {
-    return;
+  if (!deleteBeforeCursorForLayoutContainingArgument(functionLayout(), cursor)) {
+    LayoutNode::deleteBeforeCursor(cursor);
   }
-  LayoutNode::deleteBeforeCursor(cursor);
 }
 
 Layout ListSequenceLayoutNode::XNTLayout(int childIndex) const {

@@ -215,10 +215,9 @@ void HigherOrderDerivativeLayoutNode::moveCursorUp(LayoutCursor * cursor, bool *
 }
 
 void DerivativeLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (deleteBeforeCursorForLayoutContainingArgument(derivandLayout(), cursor)) {
-    return;
+  if (!deleteBeforeCursorForLayoutContainingArgument(derivandLayout(), cursor)) {
+    LayoutNode::deleteBeforeCursor(cursor);
   }
-  LayoutNode::deleteBeforeCursor(cursor);
 }
 
 Layout DerivativeLayoutNode::XNTLayout(int childIndex) const {

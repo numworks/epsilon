@@ -1139,6 +1139,16 @@ Expression Multiplication::distributeOnOperandAtIndex(int i, const ExpressionNod
 void Multiplication::addMissingFactors(Expression factor, const ExpressionNode::ReductionContext& reductionContext) {
   if (factor.type() == ExpressionNode::Type::Multiplication) {
     int childrenNumber = factor.numberOfChildren();
+    /* WARNING: This is wrong in general case.
+     * LCM(x, a*b*c) != LCM(LCM(LCM(x,a),b),c)
+     * It relies on the fact that factor is reduced, so it cannot
+     * be a multiplication containing terms with common factors.
+     * Example:
+     * LCM(10,2*4*6) = 240.
+     * With this method we would have LCM(10, 2*4*6) = 60 which is false.
+     * But since 2*4*6 is 48 in reduced form, we would compute LCM(10,48) = 240
+     * which is true.
+     */
     for (int j = 0; j < childrenNumber; j++) {
       addMissingFactors(factor.childAtIndex(j), reductionContext);
     }

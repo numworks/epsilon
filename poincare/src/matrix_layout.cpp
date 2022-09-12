@@ -48,7 +48,21 @@ void MatrixLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomp
     assert(!hasGraySquares());
     addGraySquares();
     *shouldRecomputeLayout = true;
-    // Go to the bottom right child
+    /* Go to the bottom right non-gray child
+     * Since matrix has one row and one column of gray children,
+     * the index m_numberOfColumns * (m_numberOfRows - 1) - 2 is the index of
+     * the last non-gray child.
+     *
+     * Example: m_numberOfColumns = 5, m_numberOfRows = 6
+     *     v-this child has index 0
+     *   [ O O O O X ]
+     *   [ O O O O X ]
+     *   [ O O O O X ]
+     *   [ O O O O X ]
+     *   [ O O O O X ]<<-the last O of this line has index 5 * (6 - 1) - 2
+     *   [ X X X X X ]
+     *     ^-this child has index 5 * (6 - 1)
+     * */
     LayoutNode * lastChild = childAtIndex((m_numberOfColumns * (m_numberOfRows - 1)) - 2);
     cursor->setLayoutNode(lastChild);
     return;

@@ -72,20 +72,22 @@ void BinomialCoefficientLayoutNode::moveCursorDown(LayoutCursor * cursor, bool *
 }
 
 void BinomialCoefficientLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
-  if (cursor->layoutNode() == kLayout() && cursor->position() == LayoutCursor::Position::Left) {
-    // After deleting the bottom line, go to the upper one
-    cursor->setLayout(nLayout());
-    cursor->setPosition(LayoutCursor::Position::Right);
-    return;
-  }
-  if (cursor->layoutNode() == nLayout() && cursor->position() == LayoutCursor::Position::Left && !kLayout()->isEmpty()) {
-    /* If the k is not empty and user is deleting left of n, just move left.
-     * This case is handled now because otherwise
-     * deleteBeforeCursorForLayoutContainingArgument would delete the whole layout.
-     */
-    bool temp;
-    moveCursorLeft(cursor, &temp, false);
-    return;
+  if (cursor->position() == LayoutCursor::Position::Left) {
+    if (cursor->layoutNode() == kLayout()) {
+      // After deleting the bottom line, go to the upper one
+      cursor->setLayout(nLayout());
+      cursor->setPosition(LayoutCursor::Position::Right);
+      return;
+    }
+    if (cursor->layoutNode() == nLayout()) {
+      /* If the k is not empty and user is deleting left of n, just move left.
+       * This case is handled now because otherwise
+       * deleteBeforeCursorForLayoutContainingArgument would delete the whole layout.
+       */
+      bool temp;
+      moveCursorLeft(cursor, &temp, false);
+      return;
+    }
   }
   if (!deleteBeforeCursorForLayoutContainingArgument(nLayout(), cursor)) {
     LayoutNode::deleteBeforeCursor(cursor);

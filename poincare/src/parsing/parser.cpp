@@ -246,7 +246,7 @@ void Parser::parsePlus(Expression & leftHandSide, Token::Type stoppingType) {
     return;
   }
   Expression rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Plus)) {
+  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Minus)) {
     if (leftHandSide.type() == ExpressionNode::Type::Addition) {
       int childrenCount = leftHandSide.numberOfChildren();
       static_cast<Addition &>(leftHandSide).addChildAtIndexInPlace(rightHandSide, childrenCount, childrenCount);

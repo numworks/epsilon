@@ -117,14 +117,13 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
     &Parser::parseUnexpected,      // Token::RightParenthesis
     &Parser::parseUnexpected,      // Token::RightBrace
     &Parser::parseUnexpected,      // Token::Comma
-    &Parser::parsePercentAddition, // Token::PercentAddition
     &Parser::parsePlus,            // Token::Plus
     &Parser::parseMinus,           // Token::Minus
     &Parser::parseTimes,           // Token::Times
     &Parser::parseSlash,           // Token::Slash
     &Parser::parseImplicitTimes,   // Token::ImplicitTimes
+    &Parser::parsePercent,         // Token::Percent
     &Parser::parseCaret,           // Token::Power
-    &Parser::parsePercentSimple,   // Token::PercentSimple
     &Parser::parseBang,            // Token::Bang
     &Parser::parseCaretWithParenthesis, // Token::CaretWithParenthesis
     &Parser::parseMatrix,          // Token::LeftBracket
@@ -236,26 +235,6 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
   isThereImplicitMultiplication();
 }
 
-void Parser::parsePlus(Expression & leftHandSide, Token::Type stoppingType) {
-  if (leftHandSide.isUninitialized()) {
-    // +2 = 2
-    Expression rightHandSide = parseUntil(std::max(stoppingType, Token::Minus));
-    if (m_status == Status::Progress) {
-      leftHandSide = rightHandSide;
-    }
-    return;
-  }
-  Expression rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Minus)) {
-    if (leftHandSide.type() == ExpressionNode::Type::Addition) {
-      int childrenCount = leftHandSide.numberOfChildren();
-      static_cast<Addition &>(leftHandSide).addChildAtIndexInPlace(rightHandSide, childrenCount, childrenCount);
-    } else {
-      leftHandSide = Addition::Builder(leftHandSide, rightHandSide);
-    }
-  }
-}
-
 void Parser::parseEmpty(Expression & leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     m_status = Status::Error; //FIXME
@@ -265,19 +244,39 @@ void Parser::parseEmpty(Expression & leftHandSide, Token::Type stoppingType) {
   generateMixedFractionIfNeeded(leftHandSide);
 }
 
+void Parser::parsePlus(Expression & leftHandSide, Token::Type stoppingType) {
+  privateParsePlusAndMinus(leftHandSide, true, stoppingType);
+}
+
 void Parser::parseMinus(Expression & leftHandSide, Token::Type stoppingType) {
+  privateParsePlusAndMinus(leftHandSide, false, stoppingType);
+}
+
+void Parser::privateParsePlusAndMinus(Expression & leftHandSide, bool plus, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
+    // +2 = 2, -2 = -2
     Expression rightHandSide = parseUntil(std::max(stoppingType, Token::Minus));
-    if (m_status != Status::Progress) {
+    if (m_status == Status::Progress) {
+      leftHandSide = plus ? rightHandSide : Opposite::Builder(rightHandSide);
+    }
+    return;
+  }
+  Expression rightHandSide;
+  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Minus)) {
+    if (rightHandSide.type() == ExpressionNode::Type::PercentSimple && rightHandSide.childAtIndex(0).type() != ExpressionNode::Type::PercentSimple) {
+      leftHandSide = PercentAddition::Builder(leftHandSide, plus ? rightHandSide.childAtIndex(0) : Opposite::Builder(rightHandSide.childAtIndex(0)));
       return;
     }
-    leftHandSide = Opposite::Builder(rightHandSide);
-  } else {
-    Expression rightHandSide = parseUntil(Token::Minus); // Subtraction is left-associative
-    if (m_status != Status::Progress) {
+    if (!plus) {
+      leftHandSide = Subtraction::Builder(leftHandSide, rightHandSide);
       return;
     }
-    leftHandSide = Subtraction::Builder(leftHandSide, rightHandSide);
+    if (leftHandSide.type() == ExpressionNode::Type::Addition) {
+      int childrenCount = leftHandSide.numberOfChildren();
+      static_cast<Addition &>(leftHandSide).addChildAtIndexInPlace(rightHandSide, childrenCount, childrenCount);
+    } else {
+      leftHandSide = Addition::Builder(leftHandSide, rightHandSide);
+    }
   }
 }
 
@@ -443,23 +442,13 @@ void Parser::parseBang(Expression & leftHandSide, Token::Type stoppingType) {
   isThereImplicitMultiplication();
 }
 
-void Parser::parsePercentAddition(Expression & leftHandSide, Token::Type stoppingType) {
+void Parser::parsePercent(Expression & leftHandSide, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     m_status = Status::Error; // Left-hand side missing
     return;
   }
-  assert(!(m_nextToken.is(Token::Times) || m_nextToken.is(Token::Slash)));
   isThereImplicitMultiplication();
-  leftHandSide = Percent::ParseTarget(leftHandSide, m_pendingImplicitMultiplication);
-}
-
-void Parser::parsePercentSimple(Expression & leftHandSide, Token::Type stoppingType) {
-  if (leftHandSide.isUninitialized()) {
-    m_status = Status::Error; // Left-hand side missing
-    return;
-  }
-  leftHandSide = Percent::ParseTarget(leftHandSide, true);
-  isThereImplicitMultiplication();
+  leftHandSide = PercentSimple::Builder(leftHandSide);
 }
 
 void Parser::parseConstant(Expression & leftHandSide, Token::Type stoppingType) {

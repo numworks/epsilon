@@ -208,16 +208,7 @@ Token Tokenizer::popToken() {
     return Token(Token::Minus);
   }
   if (c == '%') {
-    constexpr static CodePoint k_percentAdditionNextCodePoints[] = {
-        0, ')', '+', ',', '-', '<', '=', '>', ']', '}', UCodePointRightSystemParenthesis, UCodePointRightwardsArrow, UCodePointSouthEastArrow, UCodePointNorthEastArrow};
-    constexpr static int codePointsTotal = sizeof(k_percentAdditionNextCodePoints) / sizeof(CodePoint);
-    CodePoint nc = nextCodePoint([](CodePoint, CodePoint) { return false; }, c, nullptr);
-    for (int i = 0; i < codePointsTotal; i++) {
-      if (nc == k_percentAdditionNextCodePoints[i]) {
-        return Token(Token::PercentAddition);
-      }
-    }
-    return Token(Token::PercentSimple);
+    return Token(Token::Percent);
   }
   if (c == '=') {
     return Token(Token::Equal);

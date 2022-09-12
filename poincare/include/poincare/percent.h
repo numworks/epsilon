@@ -5,10 +5,6 @@
 
 namespace Poincare {
 
-namespace Percent {
-  Expression ParseTarget(Expression & leftHandSide, bool isPercentSimple);
-}
-
 class PercentSimpleNode : public ExpressionNode  {
 public:
   // TreeNode

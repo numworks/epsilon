@@ -13,54 +13,6 @@
 
 namespace Poincare {
 
-Expression Percent::ParseTarget(Expression & leftHandSide, bool isPercentSimple) {
-  assert(!leftHandSide.isUninitialized());
-  // Extracting the parameters for the percent operation
-  Expression rightHandSide;
-  if (!isPercentSimple && leftHandSide.type() == ExpressionNode::Type::Addition) {
-    // 1+2+3% => PercentAddition(1+2,3)
-    int lastChildIndex = leftHandSide.numberOfChildren() - 1;
-    // Extract last addition child into second parameter
-    rightHandSide = leftHandSide.childAtIndex(lastChildIndex);
-    static_cast<Addition &>(leftHandSide).removeChildAtIndexInPlace(lastChildIndex);
-    if (rightHandSide.type() == ExpressionNode::Type::Subtraction) {
-      // 1+2-3% => PercentAddition(1+2,-3)
-      /* The extracted parameter was a subtraction. Its first element must be
-       * set back into the addition. */
-      static_cast<Addition &>(leftHandSide).addChildAtIndexInPlace(rightHandSide.childAtIndex(0), lastChildIndex, lastChildIndex);
-      rightHandSide = Opposite::Builder(rightHandSide.childAtIndex(1));
-    }
-    if (leftHandSide.numberOfChildren() == 1) {
-      // 2+3% => PercentAddition(2,3)
-      // Remove single addition
-      leftHandSide = leftHandSide.childAtIndex(0);
-    }
-  } else if (!isPercentSimple && leftHandSide.type() == ExpressionNode::Type::Subtraction) {
-    // 1-3% => PercentAddition(1,-3)
-    // Subtraction elements must be separated
-    rightHandSide = Opposite::Builder(leftHandSide.childAtIndex(1));
-    leftHandSide = leftHandSide.childAtIndex(0);
-  } else {
-    // 3%*2 => PercentSimple(3)*2
-    // Percent apply on only on element
-    if (leftHandSide.type() != ExpressionNode::Type::Multiplication) {
-      // log(2)% => PercentSimple(log(2))
-      return PercentSimple::Builder(leftHandSide);
-    }
-    // 2*3% => 2*PercentSimple(3)
-    int lastIndex = leftHandSide.numberOfChildren()-1;
-    leftHandSide.replaceChildAtIndexInPlace(lastIndex, PercentSimple::Builder(leftHandSide.childAtIndex(lastIndex)));
-    return leftHandSide;
-  }
-  assert(!rightHandSide.isUninitialized());
-  if (rightHandSide.type() == ExpressionNode::Type::Multiplication || rightHandSide.type() == ExpressionNode::Type::PercentSimple) {
-    // 1+2*3% => 1+PercentSimple(2*3)
-    // 1+3%% => 1+PercentSimple(PercentSimple(3))
-    return Addition::Builder(leftHandSide, PercentSimple::Builder(rightHandSide));
-  }
-  return PercentAddition::Builder(leftHandSide, rightHandSide);
-}
-
 /* PercentSimpleNode */
 
 // Property

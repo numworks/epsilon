@@ -144,7 +144,7 @@ QUIZ_CASE(poincare_simplification_addition) {
   assert_parsed_expression_simplify_to("M-M", "dep\u0014(0,{M})");
   assert_parsed_expression_simplify_to("-5π+3π", "-2×π");
   assert_parsed_expression_simplify_to("1-3+M-5+2M-4M", "-M-7");
-  assert_parsed_expression_simplify_to("M+P-M-P", "dep\u0014(0,{P,M})");
+  assert_parsed_expression_simplify_to("M+P-M-P", "dep\u0014(0,{M,P})");
   assert_parsed_expression_simplify_to("M+P+(-1)×M+(-1)×P", "dep\u0014(0,{M,P})");
   assert_parsed_expression_simplify_to("2+13cos(2)-23cos(2)", "-10×cos(2)+2");
   assert_parsed_expression_simplify_to("1+1+ln(2)+(5+3×2)/9-4/7+1/98", "\u0012882×ln(2)+2347\u0013/882");
@@ -157,6 +157,7 @@ QUIZ_CASE(poincare_simplification_addition) {
   assert_parsed_expression_simplify_to("4x/x^2+3π/(x^3×π)", "\u00124×x^2+3\u0013/x^3");
   assert_parsed_expression_simplify_to("3^(1/2)+π^2+1", "π^2+1+√(3)");
   assert_parsed_expression_simplify_to("3^(1/2)+2^(-2×3^(1/2)×e^π)/2", "\u00121+2×2^\u00122×√(3)×e^\u0012π\u0013\u0013×√(3)\u0013/\u00122×2^\u00122×√(3)×e^\u0012π\u0013\u0013\u0013");
+  assert_parsed_expression_simplify_to("((4π+5)/10)-2.3", "\u00122×π-9\u0013/5");
   assert_parsed_expression_simplify_to("[[1,2+i][3,4][5,6]]+[[1,2+i][3,4][5,6]]", "[[2,4+2×i][6,8][10,12]]");
   assert_parsed_expression_simplify_to("3+[[1,2][3,4]]", "undef");
   assert_parsed_expression_simplify_to("[[1][3][5]]+[[1,2+i][3,4][5,6]]", "undef");
@@ -215,7 +216,7 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("2×x+2×x", "4×x");
   assert_parsed_expression_simplify_to("x×2+2×n", "2×n+2×x");
   assert_parsed_expression_simplify_to("x+x+n+n", "2×n+2×x");
-  assert_parsed_expression_simplify_to("x-x-n+n", "dep\u0014(0,{x,n})");
+  assert_parsed_expression_simplify_to("x-x-n+n", "dep\u0014(0,{n,x})");
   assert_parsed_expression_simplify_to("x+n-x-n", "dep\u0014(0,{n,x})");
   assert_parsed_expression_simplify_to("x-x", "dep\u0014(0,{x})");
   assert_parsed_expression_simplify_to("π×3^(1/2)×(5π)^(1/2)×(4/5)^(1/2)", "2×√(3)×π^\u00123/2\u0013");

@@ -220,10 +220,29 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
 
   /* Step 1: Addition is associative, so let's start by merging children which
    * are additions.
-   * TODO If the parent Expression is an Addition, one should perhaps
-   * return now and let the parent do the reduction.
-   */
+   * If the parent is also an addition, escape and let the
+   * parent handle the reduction.
+   * Doing this avoids error when factorizing on same denominator.
+   *
+   * Here is an example of why it used to be bugged:
+   * Let's reduce (4pi+5)/10 - 2.3 with the previous method and the current one
+   * We used to reduce (4pi+5)/10 into (4pi/10 + 5/10) and then factorizing on
+   * same denominator back to (4pi+5)/10.
+   * Then (4pi+5)/10 - 2.3 was factorized to (4pi+5-23)/10, and reduced
+   * to (4pi-18)/10 which was no more reduced.
+   * This was wrong since (4pi-18)/10 = (2pi-9)/5
+   * With the new behaviour, (4pi+5)/10 is reduced into (4pi/10 + 5/10) and
+   * then notices that its parent is an addition.
+   * So we now reduce 4pi/10 + 5/10 - 2.3, which is reduced to 4pi/10 - 18/10
+   * which is then correctly put over the same denominator as (2pi-9)/5 */
   mergeSameTypeChildrenInPlace();
+  Expression parentOfThis = parent();
+  while (!parentOfThis.isUninitialized() && parentOfThis.type() == ExpressionNode::Type::Parenthesis) {
+    parentOfThis = parentOfThis.parent();
+  }
+  if (!parentOfThis.isUninitialized() && (parentOfThis.type() == ExpressionNode::Type::Addition || parentOfThis.type() == ExpressionNode::Type::Subtraction)) {
+    return *this;
+  }
 
   const int childrenCount = numberOfChildren();
   assert(childrenCount > 1);

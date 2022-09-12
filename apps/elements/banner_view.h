@@ -34,6 +34,7 @@ private:
   constexpr static KDCoordinate k_borderHeight = 1;
   constexpr static KDCoordinate k_dotLegendMargin = 12;
   constexpr static KDCoordinate k_buttonWidth = 37;
+  constexpr static KDFont::Size k_legendSize = KDFont::Size::Small;
 
   class DotView : public Escher::View {
   public:

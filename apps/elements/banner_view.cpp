@@ -26,7 +26,7 @@ void BannerView::DotView::setColor(KDColor color) {
 
 BannerView::BannerView(Escher::Responder * textFieldParent, Escher::TextFieldDelegate * textFieldDelegate) :
   m_textField(textFieldParent, nullptr, textFieldDelegate),
-  m_legendView(KDContext::k_alignLeft, KDContext::k_alignCenter, k_legendColor, k_backgroundColor, KDFont::Size::Small),
+  m_legendView(KDContext::k_alignLeft, KDContext::k_alignCenter, k_legendColor, k_backgroundColor, k_legendSize),
   m_button(k_backgroundColor)
 {
   m_textField.setLeftMargin(Escher::Metric::CommonSmallMargin);
@@ -100,8 +100,8 @@ void BannerView::layoutSubviews(bool force) {
     m_legendView.setLayout(h);
   }
   KDCoordinate bannerBaseline = k_bannerHeight / 2 + 1;
-  KDCoordinate legendY = k_borderHeight + bannerBaseline - m_legendView.layout().baseline(KDFont::Size::Small);
-  m_legendView.setFrame(KDRect(x, legendY, bounds().width() - k_buttonWidth - x, m_legendView.layout().layoutSize(KDFont::Size::Small).height()), force);
+  KDCoordinate legendY = k_borderHeight + bannerBaseline - m_legendView.layout().baseline(k_legendSize);
+  m_legendView.setFrame(KDRect(x, legendY, bounds().width() - k_buttonWidth - x, m_legendView.layout().layoutSize(k_legendSize).height()), force);
 }
 
 }

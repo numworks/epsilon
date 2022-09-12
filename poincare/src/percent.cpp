@@ -21,11 +21,7 @@ bool PercentSimpleNode::childAtIndexNeedsUserParentheses(const Expression & chil
   if (child.type() == Type::Conjugate) {
     return childAtIndexNeedsUserParentheses(child.childAtIndex(0), childIndex);
   }
-  if (childIndex == 1) {
-    // Parentheses are needed to avoid confusion with percent's first child.
-    return child.isOfType({Type::Subtraction, Type::Addition});
-  }
-  return false;
+  return child.isOfType({Type::Subtraction, Type::Addition, Type::Multiplication});
 }
 
 // Layout

@@ -58,16 +58,16 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
       slopeMultiplicator /= std::sqrt(1.0 + slope*slope);
       // Add a sqrt(2) factor so that y=x isn't slowed down
       slopeMultiplicator *= std::sqrt(2.0);
-      // Cap the scroll speed reduction to be able to cross vertical asymptotes
-      slopeMultiplicator = std::max(k_minimalSlopeMultiplicator, slopeMultiplicator);
+      /* Cap the scroll speed reduction to be able to cross vertical asymptotes
+       * Using pixelWidth / (step * static_cast<double>(scrollSpeed)) as cap
+       * ensures that t moves at least by one pixel.
+       */
+      slopeMultiplicator = std::max(pixelWidth / (step * static_cast<double>(scrollSpeed)), slopeMultiplicator);
     }
-
     // Cursor's default horizontal movement
     t += dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
-    if (std::fabs(t - tCursorPosition) < pixelWidth) {
-      // If it didn't move enough, move at least 1 pixel
-      t = tCursorPosition + dir * pixelWidth;
-    }
+    assert(std::fabs(t - tCursorPosition) >= pixelWidth);
+    // assert that it moved at least of 1 pixel
 
     // Use a pixel width as a margin, ensuring t mostly stays at the same pixel
     if (std::fabs(tCursorPosition) >= pixelWidth && ((dir < 0) != (tCursorPosition < 0)) && std::fabs(t) < pixelWidth) {

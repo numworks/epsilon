@@ -58,7 +58,7 @@ int writeInterval(char * buffer, int bufferSize, double min, double max, int num
 void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_derivativeCell) {
-    m_derivativeCell.setState(m_graphController->displayDerivativeInBanner());
+    m_derivativeCell.setState(function()->displayDerivative());
   }
   if ((cell == &m_detailsCell || cell == &m_functionDomainCell) && !m_record.isNull()) {
     App * myApp = App::app();
@@ -93,7 +93,6 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   }
   if (cell == &m_derivativeCell && m_derivativeCell.ShouldEnterOnEvent(event)) {
     function()->setDisplayDerivative(!function()->displayDerivative());
-    m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
     m_selectableTableView.reloadData();
     return true;
   }

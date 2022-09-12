@@ -15,8 +15,7 @@ GraphController::GraphController(Responder * parentResponder, Escher::InputEvent
   m_view(curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
   m_curveParameterController(inputEventHandlerDelegate, curveViewRange, &m_bannerView, m_cursor, &m_view, this),
-  m_functionSelectionController(this),
-  m_displayDerivativeInBanner(false)
+  m_functionSelectionController(this)
 {
   m_graphRange->setDelegate(this);
 }
@@ -56,10 +55,15 @@ void GraphController::selectFunctionWithCursor(int functionIndex) {
   m_cursorView.setColor(f->color());
 }
 
-void GraphController::reloadBannerView() {
+bool GraphController::displayDerivativeInBanner() const {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  bool displayDerivative = m_displayDerivativeInBanner &&
+  return  functionStore()->modelForRecord(record)->displayDerivative() &&
     functionStore()->modelForRecord(record)->canDisplayDerivative();
+}
+
+ void GraphController::reloadBannerView() {
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  bool displayDerivative = displayDerivativeInBanner();
   m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + displayDerivative);
   FunctionGraphController::reloadBannerView();
   if (!displayDerivative) {

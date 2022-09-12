@@ -19,8 +19,7 @@ public:
   GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion, Escher::ButtonRowController * header);
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
-  bool displayDerivativeInBanner() const { return m_displayDerivativeInBanner; }
-  void setDisplayDerivativeInBanner(bool displayDerivative) { m_displayDerivativeInBanner = displayDerivative; }
+  bool displayDerivativeInBanner() const;
   bool canShrinkWhenNormalizing() const override { return true; }
 private:
   class FunctionSelectionController : public Shared::FunctionGraphController::FunctionSelectionController {
@@ -56,7 +55,6 @@ private:
   Shared::InteractiveCurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;
   FunctionSelectionController m_functionSelectionController;
-  bool m_displayDerivativeInBanner;
 };
 
 }

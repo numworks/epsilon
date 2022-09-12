@@ -678,3 +678,18 @@ QUIZ_CASE(poincare_parse_function_assignment) {
   assert_parsed_expression_is("f(x)=xy", Equal::Builder(Multiplication::Builder(Symbol::Builder("f", 1), Parenthesis::Builder(Symbol::Builder("x", 1))), Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("y", 1))));
   assert_parsed_expression_is("f(x)=xy", Equal::Builder(Function::Builder("f", 1, Symbol::Builder("x", 1)), Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("y", 1))), false, true);
 }
+
+QUIZ_CASE(poincare_parsing_east_arrows) {
+  assert_text_not_parsable("1↗2");
+  assert_text_not_parsable("1↘2");
+  assert_text_not_parsable("1↗2%%");
+  assert_text_not_parsable("1↘2%%");
+  assert_text_not_parsable("1↗2%*10");
+  assert_text_not_parsable("1↘2%*10");
+  assert_text_not_parsable("1↗10*2%");
+  assert_text_not_parsable("1↘10*2%");
+  assert_parsed_expression_is("1↗5%", PercentAddition::Builder(BasedInteger::Builder(1), BasedInteger::Builder(5)));
+  assert_parsed_expression_is("1↘5%", PercentAddition::Builder(BasedInteger::Builder(1), Opposite::Builder(BasedInteger::Builder(5))));
+  assert_parsed_expression_is("2+1↗5%+4", Addition::Builder(PercentAddition::Builder(Addition::Builder(BasedInteger::Builder(2), BasedInteger::Builder(1)), BasedInteger::Builder(5)), BasedInteger::Builder(4)));
+  assert_parsed_expression_is("2+1↘5%+4", Addition::Builder(PercentAddition::Builder(Addition::Builder(BasedInteger::Builder(2), BasedInteger::Builder(1)), Opposite::Builder(BasedInteger::Builder(5))), BasedInteger::Builder(4)));
+}

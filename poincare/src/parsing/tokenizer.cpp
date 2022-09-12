@@ -200,12 +200,10 @@ Token Tokenizer::popToken() {
     return Token(Token::Bang);
   }
   if (c == UCodePointNorthEastArrow) {
-    // TODO: This is temporary
-    return Token(Token::Plus);
+    return Token(Token::NorthEastArrow);
   }
   if (c == UCodePointSouthEastArrow) {
-    // TODO: This is temporary
-    return Token(Token::Minus);
+    return Token(Token::SouthEastArrow);
   }
   if (c == '%') {
     return Token(Token::Percent);

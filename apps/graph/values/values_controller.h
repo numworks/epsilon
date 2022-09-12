@@ -17,7 +17,7 @@ namespace Graph {
 
 class ValuesController : public Shared::ValuesController, public Escher::SelectableTableViewDelegate {
 public:
-  ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header);
+  ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, FunctionColumnParameterController * functionParameterController);
 
   // View controller
   void viewDidDisappear() override;
@@ -102,7 +102,9 @@ private:
   void setExactValueCellLayouts(int column, int row);
 
   // Parameter controllers
-  Shared::ColumnParameterController * functionParameterController() override;
+  Escher::SelectableViewController * functionParameterController() override;
+  Shared::ColumnParameters * columnParameters() override;
+
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
   /* The paramater i should be the column index and symbolTypeAtColumn changes
    * it to be the relative column index within the sub table. */
@@ -143,7 +145,7 @@ private:
   AbscissaTitleCell m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
   Shared::StoreCell m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
   Shared::ScrollableTwoExpressionsCell m_exactValueCell;
-  FunctionColumnParameterController m_functionParameterController;
+  FunctionColumnParameterController * m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;
   IntervalParameterSelectorController m_intervalParameterSelectorController;
   DerivativeParameterController m_derivativeParameterController;

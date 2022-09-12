@@ -88,15 +88,20 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (cell == &m_functionDomainCell && m_functionDomainCell.ShouldEnterOnEvent(event)) {
-    stack->push(&m_detailsParameterController);
+    stack->push(&m_domainParameterController);
     return true;
   }
   if (cell == &m_derivativeCell && m_derivativeCell.ShouldEnterOnEvent(event)) {
+    function()->setDisplayDerivative(!function()->displayDerivative());
     m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
     m_selectableTableView.reloadData();
     return true;
   }
   return Shared::ListParameterController::handleEvent(event);
+}
+
+ExpiringPointer<ContinuousFunction> FunctionParameterController::function() {
+  return App::app()->functionStore()->modelForRecord(m_record);
 }
 
 }

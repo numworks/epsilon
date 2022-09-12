@@ -7,6 +7,7 @@
 #include "column_helper.h"
 #include "text_field_delegate.h"
 #include "tab_table_controller.h"
+#include "column_parameter_controller.h"
 
 namespace Shared {
 
@@ -36,7 +37,9 @@ protected:
   // ClearColumnHelper
   Escher::SelectableTableView * table() override { return selectableTableView(); }
 
-  virtual ColumnParameterController * columnParameterController() = 0;
+  /* Poor's man diamond inheritance */
+  virtual Escher::SelectableViewController * columnParameterController() = 0;
+  virtual Shared::ColumnParameters * columnParameters() = 0;
   virtual Escher::StackViewController * stackController() const = 0;
   virtual void setTitleCellText(Escher::HighlightCell * cell, int columnIndex) = 0;
   virtual void setTitleCellStyle(Escher::HighlightCell * cell, int columnIndex) = 0;

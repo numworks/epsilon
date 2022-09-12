@@ -213,7 +213,7 @@ Responder * ValuesController::defaultController() {
 
 // EditableCellTableViewController
 
-ColumnParameterController * ValuesController::columnParameterController() {
+SelectableViewController * ValuesController::columnParameterController() {
   if (typeAtLocation(selectedColumn(), 0) == k_abscissaTitleCellType) {
     return &m_abscissaParameterController;
   }

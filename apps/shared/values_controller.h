@@ -96,7 +96,7 @@ protected:
   // Coordinates of memoizedBufferForCell refer to the absolute table
   char * memoizedBufferForCell(int i, int j);
 
-  ColumnParameterController * columnParameterController() override;
+  Escher::SelectableViewController * columnParameterController() override;
   virtual PrefacedTableView * prefacedView() = 0;
 
   int fillColumnName(int columnIndex, char * buffer) override;
@@ -143,7 +143,7 @@ private:
   virtual Escher::EvenOddEditableTextCell * abscissaCells(int j) = 0;
   virtual int abscissaTitleCellsCount() const = 0;
   virtual Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) = 0;
-  virtual ColumnParameterController * functionParameterController() = 0;
+  virtual Escher::SelectableViewController * functionParameterController() = 0;
 
   void clearSelectedColumn() override;
   void setClearPopUpContent() override;

@@ -7,23 +7,29 @@
 
 namespace Shared {
 
-class ColumnParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
+class ColumnParameters {
 public:
+  ColumnParameters() : m_columnIndex(-1) {}
   constexpr static int k_titleBufferSize = Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
+  virtual void initializeColumnParameters(); // Always initialize parent class before initiliazing child.
+protected:
+  virtual ClearColumnHelper * clearColumnHelper() = 0;
+  int m_columnIndex;
+  char m_columnNameBuffer[ClearColumnHelper::k_maxSizeOfColumnName];
+  char m_titleBuffer[k_titleBufferSize];
+};
+
+class ColumnParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>, public ColumnParameters {
+public:
   ColumnParameterController(Escher::Responder * parentResponder) :
     SelectableListViewController(parentResponder),
-    m_columnIndex(-1)
+    ColumnParameters()
   {}
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   const char * title() override { return m_titleBuffer; };
-  virtual void initializeColumnParameters(); // Always initialize parent class before initiliazing child.
 protected:
-  virtual ClearColumnHelper * clearColumnHelper() = 0;
   Escher::StackViewController * stackView();
-  int m_columnIndex;
-  char m_columnNameBuffer[ClearColumnHelper::k_maxSizeOfColumnName];
-  char m_titleBuffer[k_titleBufferSize];
 
 };
 

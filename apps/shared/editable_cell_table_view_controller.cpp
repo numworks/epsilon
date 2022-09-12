@@ -128,11 +128,12 @@ bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
-     ColumnParameterController * columnParam = columnParameterController();
-    if (columnParam != nullptr) {
-      columnParam->initializeColumnParameters(); // Always initialize before pushing
-      columnParam->selectRow(0); // Reset here because we want to stay on the same row if we come from a submenu
-      stackController()->push(columnParam);
+    SelectableViewController * controller = columnParameterController();
+    ColumnParameters * parameters = columnParameters();
+    if (controller != nullptr) {
+      parameters->initializeColumnParameters(); // Always initialize before pushing
+      controller->selectRow(0); // Reset here because we want to stay on the same row if we come from a submenu
+      stackController()->push(controller);
     }
     return true;
   }

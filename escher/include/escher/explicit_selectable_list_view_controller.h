@@ -2,7 +2,6 @@
 #define ESCHER_EXPLICIT_SELECTABLE_LIST_VIEW_CONTROLLER_H
 
 #include <escher/selectable_list_view_controller.h>
-#include <escher/memoized_list_view_data_source.h>
 
 namespace Escher {
 

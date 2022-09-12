@@ -14,7 +14,8 @@ public:
 
 private:
   Escher::InputViewController * inputViewController() override;
-  Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }
+  Escher::SelectableViewController * columnParameterController() override { return &m_storeParameterController; }
+  Shared::ColumnParameters * columnParameters() override { return &m_storeParameterController; }
   void clearSelectedColumn() override;
   StoreParameterController m_storeParameterController;
 };

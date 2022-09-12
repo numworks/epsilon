@@ -66,6 +66,7 @@ private:
   Escher::ButtonRowController m_graphHeader;
   Escher::StackViewController m_graphStackViewController;
   ValuesController m_valuesController;
+  FunctionColumnParameterController m_functionParameterController;
   Escher::AlternateEmptyViewController m_valuesAlternateEmptyViewController;
   Escher::ButtonRowController m_valuesHeader;
   Escher::StackViewController m_valuesStackViewController;

@@ -16,7 +16,7 @@ namespace Graph {
 
 class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate, public Shared::InputEventHandlerDelegate, public Escher::MemoizedListViewDataSource {
 public:
-  ListController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::ButtonRowController * footer, GraphController * graphController);
+  ListController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::ButtonRowController * footer, GraphController * graphController, FunctionParameterController * functionParameterController);
   // ListViewDataSource
   int numberOfRows() const override { return this->numberOfExpressionRows(); }
   int typeAtIndex(int index) override;
@@ -65,7 +65,7 @@ private:
   ContinuousFunctionStore * modelStore() override;
   Escher::SelectableTableView m_selectableTableView;
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
-  FunctionParameterController m_parameterController;
+  FunctionParameterController * m_parameterController;
   FunctionModelsParameterController m_modelsParameterController;
   Escher::StackViewController m_modelsStackController;
   FunctionToolbox m_functionToolbox;

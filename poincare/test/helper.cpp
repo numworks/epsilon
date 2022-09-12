@@ -47,6 +47,27 @@ void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
   quiz_assert(test);
 }
 
+void print_failure_infos(const char * expression, const char * result, const char * expectedResult, char * returnedInformationsBuffer, size_t bufferSize) {
+  size_t remainingLength = bufferSize;
+  constexpr static size_t numberOfPieces = 6;
+  const char * piecesOfInformation[numberOfPieces] = {
+    "  ",
+    expression,
+    "\n  processed to\n  ",
+    result,
+    "\n  instead of\n  ",
+    expectedResult,
+  };
+  for (size_t piece = 0; piece < numberOfPieces; piece++) {
+    const size_t length = strlcpy(returnedInformationsBuffer, piecesOfInformation[piece], remainingLength);
+    if (length > remainingLength) {
+      break;
+    }
+    remainingLength -= length;
+    returnedInformationsBuffer += length;
+  }
+}
+
 void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion, ProcessExpression process, int numberOfSignifiantDigits) {
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
@@ -57,25 +78,7 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   const bool test = strcmp(buffer, result) == 0;
   char information[bufferSize] = "";
   if (!test) {
-    char * position = information;
-    size_t remainingLength = bufferSize;
-    constexpr static size_t numberOfPieces = 6;
-    const char * piecesOfInformation[numberOfPieces] = {
-      "  ",
-      expression,
-      "\n  processed to\n  ",
-      buffer,
-      "\n  instead of\n  ",
-      result,
-    };
-    for (size_t piece = 0; piece < numberOfPieces; piece++) {
-      const size_t length = strlcpy(position, piecesOfInformation[piece], remainingLength);
-      if (length > remainingLength) {
-        break;
-      }
-      remainingLength -= length;
-      position += length;
-    }
+    print_failure_infos(expression, buffer, result, information, bufferSize);
   }
   quiz_assert_print_if_failure(test, information);
 }
@@ -145,7 +148,12 @@ void assert_expression_serialize_to(Poincare::Expression expression, const char 
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   expression.serialize(buffer, bufferSize, mode, numberOfSignificantDigits);
-  quiz_assert_print_if_failure(strcmp(serialization, buffer) == 0, serialization);
+  bool test = strcmp(serialization, buffer) == 0;
+  char information[bufferSize] = "";
+  if(!test) {
+      print_failure_infos("serialized expression", buffer, serialization, information, bufferSize);
+  }
+  quiz_assert_print_if_failure(test, information);
 }
 
 void assert_layout_serialize_to(Poincare::Layout layout, const char * serialization) {

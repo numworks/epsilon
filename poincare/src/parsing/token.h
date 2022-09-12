@@ -33,7 +33,6 @@ public:
     RightParenthesis,
     RightBrace,
     Comma,
-    PercentAddition,
     Plus,
     Minus,
     Times,
@@ -43,8 +42,8 @@ public:
        * Eventhough the Tokenizer will never pop ImplicitTimes Tokens,
        * the ImplicitTimes Token Type is defined here with the desired precedence,
        * in order to allow the Parser to insert such Tokens where needed. */
+    Percent,
     Caret,
-    PercentSimple,
     Bang,
     CaretWithParenthesis,
     LeftBracket,

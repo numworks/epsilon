@@ -25,6 +25,7 @@ private:
   static constexpr int k_numberOfRows = Shared::ListParameterController::k_numberOfSharedCells + 3;
   bool displayDetails() const { return !ExamModeConfiguration::implicitPlotsAreForbidden() && m_detailsParameterController.detailsNumberOfSections() > 0; }
   bool displayDomain() const { return m_domainParameterController.isVisible() > 0; }
+  Shared::ExpiringPointer<Shared::ContinuousFunction> function();
   Escher::MessageTableCellWithChevronAndMessage m_detailsCell;
   Escher::MessageTableCellWithChevronAndBuffer m_functionDomainCell;
   Escher::MessageTableCellWithMessageWithSwitch m_derivativeCell;

@@ -1,5 +1,5 @@
-#ifndef SHARED_LIST_PARAM_CONTROLLER_H
-#define SHARED_LIST_PARAM_CONTROLLER_H
+#ifndef SHARED_LIST_PARAMETER_CONTROLLER_H
+#define SHARED_LIST_PARAMETER_CONTROLLER_H
 
 #include <apps/i18n.h>
 #include <escher/explicit_selectable_list_view_controller.h>

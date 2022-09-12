@@ -16,12 +16,12 @@ namespace Graph {
 
 // Constructors
 
-ValuesController::ValuesController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
+ValuesController::ValuesController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, FunctionColumnParameterController * functionParameterController) :
   Shared::ValuesController(parentResponder, header),
   m_selectableTableView(this),
   m_prefacedView(0, this, &m_selectableTableView, this, this),
   m_exactValueCell(&m_selectableTableView, KDContext::k_alignRight, KDFont::Size::Small),
-  m_functionParameterController(this),
+  m_functionParameterController(functionParameterController),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_derivativeParameterController(this),
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
@@ -404,7 +404,7 @@ void ValuesController::setExactValueCellLayouts(int column, int row) {
 
 // Parameter controllers
 
-ColumnParameterController * ValuesController::functionParameterController() {
+SelectableViewController * ValuesController::functionParameterController() {
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
   if (!functionStore()->modelForRecord(record)->isAlongXOrY()) {
@@ -414,8 +414,22 @@ ColumnParameterController * ValuesController::functionParameterController() {
     m_derivativeParameterController.setRecord(record);
     return &m_derivativeParameterController;
   }
-  m_functionParameterController.setRecord(record);
-  return &m_functionParameterController;
+  m_functionParameterController->setRecord(record);
+  return m_functionParameterController;
+}
+
+ColumnParameters * ValuesController::columnParameters() {
+  bool isDerivative = false;
+  Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
+  if (!functionStore()->modelForRecord(record)->isAlongXOrY()) {
+    return nullptr;
+  }
+  if (isDerivative) {
+    m_derivativeParameterController.setRecord(record);
+    return &m_derivativeParameterController;
+  }
+  m_functionParameterController->setRecord(record);
+  return m_functionParameterController;
 }
 
 I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {

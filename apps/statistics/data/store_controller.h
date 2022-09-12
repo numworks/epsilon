@@ -41,6 +41,7 @@ private:
   bool deleteCellValue(int series, int i, int j, bool authorizeNonEmptyRowDeletion = true) override;
   Escher::InputViewController * inputViewController() override;
   Shared::ColumnParameterController * columnParameterController() override { return &m_storeParameterController; }
+  Shared::ColumnParameters * columnParameters() override { return &m_storeParameterController; }
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;

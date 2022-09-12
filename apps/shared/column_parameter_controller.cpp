@@ -16,7 +16,7 @@ void ColumnParameterController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-void ColumnParameterController::initializeColumnParameters() {
+void ColumnParameters::initializeColumnParameters() {
   m_columnIndex = clearColumnHelper()->table()->selectedColumn();
   clearColumnHelper()->fillColumnName(m_columnIndex, m_columnNameBuffer);
   Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),

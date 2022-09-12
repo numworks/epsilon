@@ -15,11 +15,11 @@ namespace Graph {
 
 constexpr CodePoint ListController::k_equationSymbols[];
 
-ListController::ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, GraphController * graphController) :
+ListController::ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, GraphController * graphController, FunctionParameterController * functionParameterController) :
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),
   Shared::InputEventHandlerDelegate(),
   m_selectableTableView(this, this, this, this),
-  m_parameterController(this, I18n::Message::FunctionColor, I18n::Message::DeleteFunction, this, graphController),
+  m_parameterController(functionParameterController),
   m_modelsParameterController(this, nullptr, this),
   m_modelsStackController(nullptr, &m_modelsParameterController, StackViewController::Style::PurpleWhite),
   m_parameterColumnSelected(false)
@@ -282,7 +282,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
 }
 
 Shared::ListParameterController * ListController::parameterController() {
-  return &m_parameterController;
+  return m_parameterController;
 }
 
 int ListController::maxNumberOfDisplayableRows() {

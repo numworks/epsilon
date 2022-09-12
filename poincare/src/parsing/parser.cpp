@@ -117,6 +117,8 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
     &Parser::parseUnexpected,      // Token::RightParenthesis
     &Parser::parseUnexpected,      // Token::RightBrace
     &Parser::parseUnexpected,      // Token::Comma
+    &Parser::parseNorthEastArrow,  // Token::NorthEastArrow
+    &Parser::parseSouthEastArrow,  // Token::SouthEastArrow
     &Parser::parsePlus,            // Token::Plus
     &Parser::parseMinus,           // Token::Minus
     &Parser::parseTimes,           // Token::Times
@@ -277,6 +279,26 @@ void Parser::privateParsePlusAndMinus(Expression & leftHandSide, bool plus, Toke
     } else {
       leftHandSide = Addition::Builder(leftHandSide, rightHandSide);
     }
+  }
+}
+
+void Parser::parseNorthEastArrow(Expression & leftHandSide, Token::Type stoppingType) {
+  privateParseEastArrow(leftHandSide, true, stoppingType);
+}
+
+void Parser::parseSouthEastArrow(Expression & leftHandSide, Token::Type stoppingType) {
+  privateParseEastArrow(leftHandSide, false, stoppingType);
+}
+
+void Parser::privateParseEastArrow(Expression & leftHandSide, bool north, Token::Type stoppingType) {
+  Expression rightHandSide;
+  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Minus)) {
+    if (rightHandSide.type() == ExpressionNode::Type::PercentSimple && rightHandSide.childAtIndex(0).type() != ExpressionNode::Type::PercentSimple) {
+      leftHandSide = PercentAddition::Builder(leftHandSide, north ? rightHandSide.childAtIndex(0) : Opposite::Builder(rightHandSide.childAtIndex(0)));
+      return;
+    }
+    m_status = Status::Error;
+    return;
   }
 }
 

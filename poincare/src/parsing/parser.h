@@ -82,9 +82,12 @@ private:
   void parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseLeftSuperscript(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
   void parseList(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseNorthEastArrow(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseSouthEastArrow(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
 
   // Parsing helpers
   void privateParsePlusAndMinus(Expression & leftHandSide, bool plus, Token::Type stoppingType = (Token::Type)0);
+  void privateParseEastArrow(Expression & leftHandSide, bool north, Token::Type stoppingType = (Token::Type)0);
   bool parseBinaryOperator(const Expression & leftHandSide, Expression & rightHandSide, Token::Type stoppingType);
   Expression parseVector();
   Expression parseFunctionParameters();

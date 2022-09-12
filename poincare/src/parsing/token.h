@@ -33,6 +33,8 @@ public:
     RightParenthesis,
     RightBrace,
     Comma,
+    NorthEastArrow,
+    SouthEastArrow,
     Plus,
     Minus,
     Times,

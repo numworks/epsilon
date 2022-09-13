@@ -14,7 +14,7 @@ public:
   View * view() override;
   int activeTab() const;
   void setSelectedTab(int8_t index);
-  void setActiveTab(int8_t index);
+  void setActiveTab(int8_t index, bool enter = true);
   void setDisplayTabs(bool display) { m_view.setDisplayTabs(display); }
   uint8_t numberOfTabs();
 

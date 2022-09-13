@@ -584,6 +584,7 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
   // Set the cursor
   if (cursor != nullptr) {
     if (newIndex > 0) {
+      assert(newIndex <= numberOfChildren());
       cursor->setLayout(childAtIndex(newIndex - 1));
       cursor->setPosition(LayoutCursor::Position::Right);
     } else {

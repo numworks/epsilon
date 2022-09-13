@@ -181,81 +181,68 @@ Token Tokenizer::popToken() {
     assert(c != '.');
     return Token(typeForCodePoint[c - '(']);
   }
-  if (c == UCodePointMultiplicationSign || c == UCodePointMiddleDot) {
+  switch (c) {
+  case UCodePointMultiplicationSign:
+  case UCodePointMiddleDot:
     return Token(Token::Times);
-  }
-  if (c == UCodePointLeftSystemParenthesis) {
+  case UCodePointLeftSystemParenthesis:
     return Token(Token::LeftSystemParenthesis);
-  }
-  if (c == UCodePointRightSystemParenthesis) {
+  case UCodePointRightSystemParenthesis:
     return Token(Token::RightSystemParenthesis);
-  }
-  if (c == '^') {
+  case '^': {
     if (canPopCodePoint(UCodePointLeftSystemParenthesis)) {
       return Token(Token::CaretWithParenthesis);
     }
     return Token(Token::Caret);
   }
-  if (c == '!') {
+  case '!':
     return Token(Token::Bang);
-  }
-  if (c == UCodePointNorthEastArrow) {
+  case UCodePointNorthEastArrow:
     return Token(Token::NorthEastArrow);
-  }
-  if (c == UCodePointSouthEastArrow) {
+  case UCodePointSouthEastArrow:
     return Token(Token::SouthEastArrow);
-  }
-  if (c == '%') {
+  case '%':
     return Token(Token::Percent);
-  }
-  if (c == '=') {
+  case '=':
     return Token(Token::Equal);
-  }
-  if (c == '>') {
+  case '>': {
     if (canPopCodePoint('=')) {
       return Token(Token::SuperiorEqual);
     }
     return Token(Token::Superior);
   }
-  if (c == UCodePointSuperiorEqual) {
+  case UCodePointSuperiorEqual:
     return Token(Token::SuperiorEqual);
-  }
-  if (c == '<') {
+  case '<': {
     if (canPopCodePoint('=')) {
       return Token(Token::InferiorEqual);
     }
     return Token(Token::Inferior);
   }
-  if (c == UCodePointInferiorEqual) {
+  case UCodePointInferiorEqual:
     return Token(Token::InferiorEqual);
-  }
-  if (c == '[') {
+  case '[':
     return Token(Token::LeftBracket);
-  }
-  if (c == ']') {
+  case ']':
     return Token(Token::RightBracket);
-  }
-  if (c == '{') {
+  case '{':
     return Token(Token::LeftBrace);
-  }
-  if (c == '}') {
+  case '}':
     return Token(Token::RightBrace);
-  }
-  if (c == UCodePointSquareRoot) {
+  case UCodePointSquareRoot: {
     Token result(Token::ReservedFunction);
     result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c));
     return result;
   }
-  if (c == UCodePointEmpty) {
+  case UCodePointEmpty:
     return Token(Token::Empty);
-  }
-  if (c == UCodePointRightwardsArrow) {
+  case UCodePointRightwardsArrow:
     return Token(Token::RightwardsArrow);
-  }
-  if (c == 0) {
+  case 0:
     return Token(Token::EndOfStream);
+  default:
+    return Token(Token::Undefined);
   }
-  return Token(Token::Undefined);
 }
 
 }

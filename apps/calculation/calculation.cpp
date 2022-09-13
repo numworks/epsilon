@@ -204,7 +204,13 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
    * Store in the exactOutput. */
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    m_equalSign = Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(exactOutput(), approximateOutput(NumberOfSignificantDigits::UserDefined)) ? EqualSign::Equal : EqualSign::Approximation;
+    Expression exactOutputExpression = exactOutput();
+    if (input().recursivelyMatches(Expression::IsPercent, context)) {
+      /* When the input contains percent, the exact expression is not fully
+       * reduced so we need to reduce it again prior to computing equal sign */
+      PoincareHelpers::CloneAndSimplify(&exactOutputExpression, context, Poincare::ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+    }
+    m_equalSign = Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(exactOutputExpression, approximateOutput(NumberOfSignificantDigits::UserDefined)) ? EqualSign::Equal : EqualSign::Approximation;
     return m_equalSign;
   } else {
     /* Do not override m_equalSign in case there is enough room in the pool

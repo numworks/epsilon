@@ -1,4 +1,5 @@
 #include "print.h"
+#include "utils.h"
 #include <poincare_junior/cached_tree.h>
 
 using namespace Poincare;
@@ -25,29 +26,12 @@ private:
   Poincare::CachedTree m_output;
 };
 
-// Dummy parse
-CachedTree Parse(const char * textInput) {
-  // textInput == (1-2)/3/4
-  std::cout << "\n---------------- Input " << textInput << "----------------" << std::endl;
-  return CachedTree([]{
-      Division::PushNode();
-      Division::PushNode();
-      Subtraction::PushNode();
-      Integer::PushNode(1);
-      Integer::PushNode(2);
-      Integer::PushNode(3);
-      Integer::PushNode(4);
-      return true;
-    });
-}
-
-
 Calculation::Calculation(const char * textInput) {
   Parse(textInput).dumpAt(m_input);
-  m_output = input()->createBasicReduction();
+  m_output = CachedTree::CreateBasicReduction(input());
 }
 
-void playWithCachedTree() {
+void testCalculation() {
   Calculation calculation("(1-2)/3/4");
   std::cout << "\n---------------- Output ----------------" << std::endl;
   calculation.output().log();

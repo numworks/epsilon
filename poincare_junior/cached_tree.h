@@ -21,8 +21,10 @@ public:
   CachedTree(InitializerFromString initializer, char * string);
 
   typedef void (*FunctionOnConstTree)(const TypeTreeBlock * tree, void * resultAddress);
-  void send(FunctionOnConstTree functionOnTree, void * resultAddress);
+  void send(FunctionOnConstTree functionOnTree, void * resultAddress) const;
 
+  static CachedTree CreateBasicReduction(TypeTreeBlock * treeBlock);
+  float approximate(float x) const;
   void dumpAt(void * address);
   void log();
 
@@ -32,9 +34,9 @@ private:
     m_initializer(initializer),
     m_subInitializer(subInitializer),
     m_data(data) {}
-  int id();
+  int id() const;
 
-  int m_id;
+  mutable int m_id;
   ActionWithContext m_initializer;
   void * m_subInitializer;
   void * m_data;

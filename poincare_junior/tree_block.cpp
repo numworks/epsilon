@@ -223,17 +223,12 @@ void TypeTreeBlock::logAttributes(std::ostream & stream) const {
 }
 #endif
 
-CachedTree TypeTreeBlock::createBasicReduction() {
-  return CachedTree(
-      [](TypeTreeBlock * tree) {
-        tree->basicReduction();
-        return true;
-      },
-    this);
+void TypeTreeBlock::basicReduction() {
+  return handle()->basicReduction(this);
 }
 
-void TypeTreeBlock::basicReduction() {
-  handle()->basicReduction(this);
+float TypeTreeBlock::approximate() const {
+  return handle()->approximate(this);
 }
 
 // TODO: dynamic_cast-like that can check its is a subclass with m_content

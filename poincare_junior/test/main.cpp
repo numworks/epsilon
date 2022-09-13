@@ -4,7 +4,8 @@
 int elementaryTreeManipulation(TreeCache * cache, TreeSandbox * sandbox);
 int testOverflowTreeSandbox(TreeCache * cache);
 int testOverflowCacheIdentifiers(TreeCache * cache);
-void playWithCachedTree();
+void testCalculation();
+void testGraph();
 void playWithConstexprNodes();
 
 int main() {
@@ -23,8 +24,12 @@ int main() {
   testOverflowCacheIdentifiers(cache);
   cache->reset(false);
 
-  std::cout << "\n\n TEST CACHED TREE \n" << std::endl;
-  playWithCachedTree();
+  std::cout << "\n\n TEST DUMMY CALCULATION \n" << std::endl;
+  testCalculation();
+  cache->reset(false);
+
+  std::cout << "\n\n TEST DUMMY GRAPH \n" << std::endl;
+  testGraph();
   cache->reset(false);
 
   intermediaryPrint();

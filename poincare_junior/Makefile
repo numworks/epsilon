@@ -19,6 +19,7 @@ poincare_junior_src += $(addprefix poincare_junior/,\
   test/calculation.o \
   test/constexpr.o \
   test/elementary_tree_manipulations.o \
+  test/graph.o \
   test/main.o \
   test/sandbox_overflow.o \
 )

@@ -1,6 +1,7 @@
 #include "handle.h"
 #include "tree_sandbox.h"
 #include "tree_block.h"
+#include <cmath>
 
 namespace Poincare {
 
@@ -45,6 +46,12 @@ void Subtraction::basicReduction(TypeTreeBlock * treeBlock) const {
     );
 }
 
+float Subtraction::approximate(const TypeTreeBlock * treeBlock) const {
+  float a = treeBlock->childAtIndex(0)->approximate();
+  float b = treeBlock->childAtIndex(1)->approximate();
+  return a - b;
+}
+
 /* Division */
 
 TypeTreeBlock * Division::PushNode() {
@@ -58,6 +65,12 @@ void Division::basicReduction(TypeTreeBlock * treeBlock) const {
       []() { return Multiplication::PushNode(2); },
       Power::PushNode
     );
+}
+
+float Division::approximate(const TypeTreeBlock * treeBlock) const {
+  float a = treeBlock->childAtIndex(0)->approximate();
+  float b = treeBlock->childAtIndex(1)->approximate();
+  return a / b;
 }
 
 /* Integer */
@@ -98,6 +111,10 @@ TypeTreeBlock * Integer::PushNode(int value) {
   return integerFirstBlock;
 }
 
+float Integer::approximate(const TypeTreeBlock * treeBlock) const {
+  return Value(treeBlock);
+}
+
 /* Constant */
 
 void Constant::logAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream) const {
@@ -124,6 +141,9 @@ TypeTreeBlock * Constant::PushNode(Type type) {
   sandbox->pushBlock(ConstantBlock);
   return static_cast<TypeTreeBlock *>(addressOfFirstBlock);
 }
+
+float Constant::approximate(const TypeTreeBlock * treeBlock) const {
+  return Value(treeBlock);}
 
 /* NAry */
 
@@ -170,6 +190,14 @@ TypeTreeBlock * Addition::PushNode(int numberOfChildren) {
   return NAry::PushNode(numberOfChildren, AdditionBlock);
 }
 
+float Addition::approximate(const TypeTreeBlock * treeBlock) const {
+  float res = 0.0f;
+  for (int i = 0; i < treeBlock->numberOfChildren(); i++) {
+    res += treeBlock->childAtIndex(i)->approximate();
+  }
+  return res;
+}
+
 /* Multiplication */
 
 TypeTreeBlock * Multiplication::PushNode(int numberOfChildren) {
@@ -201,10 +229,24 @@ TypeTreeBlock * Multiplication::DistributeOverAddition(TypeTreeBlock * treeBlock
   return treeBlock;
 }
 
+float Multiplication::approximate(const TypeTreeBlock * treeBlock) const {
+  float res = 1.0f;
+  for (int i = 0; i < treeBlock->numberOfChildren(); i++) {
+    res *= treeBlock->childAtIndex(i)->approximate();
+  }
+  return res;
+}
+
 /* Power */
 
 TypeTreeBlock * Power::PushNode() {
   return static_cast<TypeTreeBlock *>(TreeSandbox::sharedSandbox()->pushBlock(PowerBlock));
+}
+
+float Power::approximate(const TypeTreeBlock * treeBlock) const {
+  float a = treeBlock->childAtIndex(0)->approximate();
+  float b = treeBlock->childAtIndex(1)->approximate();
+  return std::pow(a, b);
 }
 
 }

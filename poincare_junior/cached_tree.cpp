@@ -48,9 +48,30 @@ CachedTree::CachedTree(InitializerFromString initializer, char * string) :
   )
 {}
 
-void CachedTree::send(FunctionOnConstTree function, void * resultAddress) {
+void CachedTree::send(FunctionOnConstTree function, void * resultAddress) const {
   const TypeTreeBlock * tree = TreeCache::sharedCache()->treeForIdentifier(id());
   return function(tree, resultAddress);
+}
+
+CachedTree CachedTree::CreateBasicReduction(TypeTreeBlock * treeBlock) {
+  return CachedTree(
+    [](TypeTreeBlock * tree) {
+      tree->basicReduction();
+      return true;
+    },
+  treeBlock);
+}
+
+float CachedTree::approximate(float x) const {
+  float res;
+  send(
+    [](const TypeTreeBlock * tree, void * res) {
+      float * result = static_cast<float *>(res);
+      *result = tree->approximate();
+    },
+    &res
+  );
+  return res;
 }
 
 void CachedTree::dumpAt(void * address) {
@@ -72,7 +93,7 @@ void CachedTree::log() {
     );
 }
 
-int CachedTree::id() {
+int CachedTree::id() const {
   TreeCache * cache = TreeCache::sharedCache();
   const TypeTreeBlock * tree = cache->treeForIdentifier(m_id);
   if (!tree) {

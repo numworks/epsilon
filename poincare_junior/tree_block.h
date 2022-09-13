@@ -133,7 +133,7 @@ public:
   void logAttributes(std::ostream & stream) const;
 #endif
   void basicReduction();
-  CachedTree createBasicReduction();
+  float approximate() const;
 
   // TODO: dynamic_cast-like that can check its is a subclass with m_content
   void beautify();

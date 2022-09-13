@@ -19,6 +19,7 @@ public:
   virtual void logAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream) const {}
 #endif
   virtual void basicReduction(TypeTreeBlock * treeBlock) const {}
+  virtual float approximate(const TypeTreeBlock * treeBlock) const = 0;
 };
 
 class Subtraction final : public Handle {
@@ -29,6 +30,7 @@ public:
   void logNodeName(std::ostream & stream) const override { stream << "Subtraction"; }
 #endif
   void basicReduction(TypeTreeBlock * treeBlock) const override;
+  float approximate(const TypeTreeBlock * treeBlock) const override;
 };
 
 class Division final : public Handle {
@@ -39,6 +41,7 @@ public:
   void logNodeName(std::ostream & stream) const override { stream << "Division"; }
 #endif
   void basicReduction(TypeTreeBlock * treeBlock) const override;
+  float approximate(const TypeTreeBlock * treeBlock) const override;
 };
 
 class InternalHandle : public Handle {
@@ -54,6 +57,7 @@ public:
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Ghost"; }
 #endif
+  float approximate(const TypeTreeBlock * treeBlock) const override { return NAN; }
 };
 #endif
 
@@ -64,6 +68,7 @@ public:
   void logNodeName(std::ostream & stream) const override { stream << "Integer"; }
   void logAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream) const override;
 #endif
+  float approximate(const TypeTreeBlock * treeBlock) const override;
   static int Value(const TypeTreeBlock * treeBlock);
 
 private:
@@ -89,6 +94,7 @@ public:
   void logNodeName(std::ostream & stream) const override { stream << "Constant"; }
   void logAttributes(const TypeTreeBlock * treeBlock, std::ostream & stream) const override;
 #endif
+  float approximate(const TypeTreeBlock * treeBlock) const override;
   static float Value(const TypeTreeBlock * treeBlock);
 };
 
@@ -118,6 +124,7 @@ public:
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Addition"; }
 #endif
+  float approximate(const TypeTreeBlock * treeBlock) const override;
 };
 
 class Multiplication final : public NAry {
@@ -127,6 +134,7 @@ public:
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Multiplication"; }
 #endif
+  float approximate(const TypeTreeBlock * treeBlock) const override;
 
   static TypeTreeBlock * DistributeOverAddition(TypeTreeBlock * treeBlock);
 };
@@ -138,6 +146,7 @@ public:
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Power"; }
 #endif
+  float approximate(const TypeTreeBlock * treeBlock) const override;
 };
 
 }

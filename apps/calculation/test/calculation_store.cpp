@@ -229,6 +229,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("cos(45)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("cos(π/2)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("binompdf(2,3,0.5)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "0.375", "0.375", &globalContext, &store);
+  assertCalculationIs("1+2%", DisplayOutput::ExactAndApproximateToggle, EqualSign::Equal, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("1-(1/3)%", DisplayOutput::ExactAndApproximateToggle, EqualSign::Approximation, nullptr, nullptr, nullptr, &globalContext, &store);
 
   // Exact output that have dependencies are not displayed
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown, "2", "2", "2", &globalContext, &store);

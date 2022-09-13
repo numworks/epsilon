@@ -69,7 +69,10 @@ void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   const char * messages[k_totalNumberOfCell] = {
     Ion::epsilonVersion(),
     Ion::serialNumber(),
-    Ion::fccId()
+    Ion::fccId(),
+#if TERMS_OF_USE
+    "",
+#endif
   };
   assert(index >= 0 && index < k_totalNumberOfCell);
   myCell->setSubLabelText(messages[index]);

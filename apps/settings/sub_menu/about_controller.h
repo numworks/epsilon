@@ -9,7 +9,11 @@ namespace Settings {
 
 class AboutController : public GenericSubController {
 public:
+  #if TERMS_OF_USE
+  constexpr static int k_totalNumberOfCell = 4;
+  #else
   constexpr static int k_totalNumberOfCell = 3;
+  #endif
 
   AboutController(Escher::Responder * parentResponder);
   TELEMETRY_ID("About");

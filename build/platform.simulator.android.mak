@@ -2,6 +2,7 @@ TOOLCHAIN = android
 EXE = so
 
 EPSILON_TELEMETRY ?= 1
+TERMS_OF_USE ?= 1
 
 ARCHS = armeabi-v7a arm64-v8a x86 x86_64
 

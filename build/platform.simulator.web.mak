@@ -2,3 +2,4 @@ TOOLCHAIN = emscripten
 EXE = js
 
 EPSILON_TELEMETRY ?= 0
+TERMS_OF_USE ?= 0

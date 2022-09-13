@@ -401,12 +401,20 @@ constexpr ToolboxMessageTree geometricDistributionChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::InvGeomCommandWithArg, I18n::Message::InvGeom)
 };
 
+constexpr ToolboxMessageTree hypergeometricDistributionChildren[] = {
+  ToolboxMessageTree::Leaf(I18n::Message::HypergeomPDFCommandWithArg, I18n::Message::HypergeomPDF),
+  ToolboxMessageTree::Leaf(I18n::Message::HypergeomCDFCommandWithArg, I18n::Message::HypergeomCDF),
+  ToolboxMessageTree::Leaf(I18n::Message::HypergeomCDFRangeCommandWithArg, I18n::Message::HypergeomCDFRange),
+  ToolboxMessageTree::Leaf(I18n::Message::InvHypergeomCommandWithArg, I18n::Message::InvHypergeom)
+};
+
 constexpr ToolboxMessageTree probabilityLawsChildren[] = {
   ToolboxMessageTree::Node(I18n::Message::Normal, normalDistributionChildren),
   ToolboxMessageTree::Node(I18n::Message::Student, studentDistributionChildren),
   ToolboxMessageTree::Node(I18n::Message::Binomial, binomialDistributionChildren),
   ToolboxMessageTree::Node(I18n::Message::Poisson, poissonDistributionChildren),
   ToolboxMessageTree::Node(I18n::Message::Geometric, geometricDistributionChildren),
+  ToolboxMessageTree::Node(I18n::Message::Hypergeometric, hypergeometricDistributionChildren),
 };
 
 constexpr ToolboxMessageTree randomChildren[] = {

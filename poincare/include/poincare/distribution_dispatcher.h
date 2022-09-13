@@ -32,6 +32,11 @@ template<> constexpr const char * getName<Distribution::Type::Geometric, Distrib
 template<> constexpr const char * getName<Distribution::Type::Geometric, DistributionMethod::Type::PDF>() { return "geompdf"; }
 template<> constexpr const char * getName<Distribution::Type::Geometric, DistributionMethod::Type::Inverse>() { return "invgeom"; }
 
+template<> constexpr const char * getName<Distribution::Type::Hypergeometric, DistributionMethod::Type::CDF>() { return "hgeomcdf"; }
+template<> constexpr const char * getName<Distribution::Type::Hypergeometric, DistributionMethod::Type::CDFRange>() { return "hgeomcdfrange"; }
+template<> constexpr const char * getName<Distribution::Type::Hypergeometric, DistributionMethod::Type::PDF>() { return "hgeompdf"; }
+template<> constexpr const char * getName<Distribution::Type::Hypergeometric, DistributionMethod::Type::Inverse>() { return "invhgeom"; }
+
 class DistributionDispatcherNode : public NAryExpressionNode {
 public:
   // Simplication
@@ -70,6 +75,9 @@ public:
       break;
     case Distribution::Type::Geometric:
       stream << "Geom";
+      break;
+    case Distribution::Type::Hypergeometric:
+      stream << "Hypergeom";
       break;
     default:
       // Other distributions should not be accessible from calculation
@@ -187,6 +195,11 @@ struct GeomCDF      { constexpr static Expression::FunctionHelper s_functionHelp
 struct GeomCDFRange { constexpr static Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Geometric, DistributionMethod::Type::CDFRange>(); };
 struct GeomPDF      { constexpr static Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Geometric, DistributionMethod::Type::PDF>(); };
 struct InvGeom      { constexpr static Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Geometric, DistributionMethod::Type::Inverse>(); };
+
+struct HypergeomCDF      { constexpr static Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Hypergeometric, DistributionMethod::Type::CDF>(); };
+struct HypergeomCDFRange { constexpr static Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Hypergeometric, DistributionMethod::Type::CDFRange>(); };
+struct HypergeomPDF      { constexpr static Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Hypergeometric, DistributionMethod::Type::PDF>(); };
+struct InvHypergeom      { constexpr static Expression::FunctionHelper s_functionHelper = makeHelper<Distribution::Type::Hypergeometric, DistributionMethod::Type::Inverse>(); };
 
 }
 

@@ -89,12 +89,16 @@ private:
     &GeomCDF::s_functionHelper, // geomcdf
     &GeomCDFRange::s_functionHelper, //geomcdfrange
     &GeomPDF::s_functionHelper, // geompdf
+    &HypergeomCDF::s_functionHelper, // hgeomcdf
+    &HypergeomCDFRange::s_functionHelper, //hgeomcdfrange
+    &HypergeomPDF::s_functionHelper, // hgeompdf
     &MatrixIdentity::s_functionHelper, // identity
     &ImaginaryPart::s_functionHelper, // im
     &Integral::s_functionHelper, // int
     &InvBinom::s_functionHelper, // invbinom
     &MatrixInverse::s_functionHelper, // inverse
     &InvGeom::s_functionHelper, // invgeom
+    &InvHypergeom::s_functionHelper, // invhgeom
     &InvNorm::s_functionHelper, // invnorm
     &InvStudent::s_functionHelper, // invt
     &LeastCommonMultiple::s_functionHelper, // lcm

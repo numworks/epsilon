@@ -12,7 +12,7 @@ bool HypergeometricDistribution::authorizedParameterAtIndex(double x, int index)
 }
 
 float HypergeometricDistribution::computeXMax() const {
-  return m_parameters[0] * (1.0f + k_displayRightMarginRatio);
+  return m_parameters[2] * (1.0f + k_displayRightMarginRatio);
 }
 
 float HypergeometricDistribution::computeYMax() const {

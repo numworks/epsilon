@@ -172,8 +172,13 @@ LayoutNode * AutocompletedBracketPairLayoutNode::childOnSide(Side side) const {
 
 LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) const {
   /* Attempting to delete a bracket can cause the children and sibling to be
-   * shuffled around and this to disappear. Anchor the cursor to a stable
-   * layout. */
+   * shuffled around and this to disappear. Before the deletion occurs, anchor
+   * the cursor to a layout that is bound to remain after the deletion. For
+   * instance, if the bracket changes children, pointing on its horizontal
+   * layout might not be safe.
+   * In the following comments, the text before the arrow depicts the layout
+   * as it currently stands, and the text after the arrow the future state of
+   * the Layout after deletion. */
   Layout thisRef(this);
   Layout childRef(childLayout());
   Layout parentRef = thisRef.parent();
@@ -207,7 +212,7 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
     /* e.g. ()|34 -> (|34] */
     return LayoutCursor(parentRef.childAtIndex(thisIndex + 1), LayoutCursor::Position::Left);
   }
-  /* e.g. () -> (|] */
+  /* e.g. ()| -> (|] */
   return LayoutCursor(childOnSide(Side::Left), LayoutCursor::Position::Left);
 }
 

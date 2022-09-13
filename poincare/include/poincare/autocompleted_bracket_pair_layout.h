@@ -38,7 +38,6 @@ private:
 
   AutocompletedBracketPairLayoutNode * autocompletedParent() const;
   bool makeTemporary(Side side, LayoutCursor * cursor);
-  void removeIfCompletelyTemporary(LayoutCursor * cursor);
   void absorbSiblings(Side side, LayoutCursor * cursor);
   LayoutCursor cursorAfterDeletion(Side side) const;
 

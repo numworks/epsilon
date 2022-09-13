@@ -14,6 +14,14 @@ T HypergeometricDistribution::EvaluateAtAbscissa(T k, T N, T K, T n) {
   if (std::isnan(k) || std::isinf(k)){
     return NAN;
   }
+  k = std::floor(k);
+  if (k < std::max(static_cast<T>(0), n + K - N) || k > std::min(n, K)) {
+    return 0;
+  }
+  // We don't want BinomialCoefficient to generalize the formula
+  if (k > K || (n - k) > (N - K)) {
+    return 0;
+  }
   return BinomialCoefficientNode::compute(k, K) * BinomialCoefficientNode::compute(n - k, N - K) / BinomialCoefficientNode::compute(n, N);
 }
 

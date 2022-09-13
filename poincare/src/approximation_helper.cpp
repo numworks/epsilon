@@ -110,7 +110,9 @@ template<typename T> ListComplex<T> ElementWiseOnLists(const ListComplex<T> l1, 
   return result;
 }
 
-constexpr static int k_maxNumberOfParametersForMap = 4;
+/* Must be the maximum the number of parameters of functions that can distribute
+ * over lists, currently hgeomcdfrange(m,q,N,K,n) */
+constexpr static int k_maxNumberOfParametersForMap = 5;
 
 template<typename T> Evaluation<T> ApproximationHelper::Map(const ExpressionNode * expression, const ExpressionNode::ApproximationContext& approximationContext, ComplexesCompute<T> compute, BooleansCompute<T> booleansCompute, bool mapOnList, void * context) {
 

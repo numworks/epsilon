@@ -1109,6 +1109,21 @@ QUIZ_CASE(poincare_approximation_probability) {
   assert_expression_approximates_to<double>("invgeom(1,1)", "1");
   assert_expression_approximates_to<double>("invgeom(0.825,0.5)", "3");
 
+  assert_expression_approximates_to<double>("hgeompdf(-1,2,1,1)", "0");
+  assert_expression_approximates_to<double>("hgeompdf(0,2,1,1)", "0.5");
+  assert_expression_approximates_to<double>("hgeompdf(1,2,1,1)", "0.5");
+  assert_expression_approximates_to<double>("hgeompdf(2,2,1,1)", "0");
+  assert_expression_approximates_to<double>("hgeompdf(3,2,1,1)", "0");
+  assert_expression_approximates_to<double>("hgeompdf(0,2,1,2)", "0");
+  assert_expression_approximates_to<double>("hgeompdf(1,2,1,2)", "1");
+  assert_expression_approximates_to<double>("hgeompdf(2,2,1,2)", "0");
+  assert_expression_approximates_to<double>("hgeompdf(0,42,0,42)", "1");
+  assert_expression_approximates_to<double>("hgeompdf(24,42,24,42)", "1");
+  assert_expression_approximates_to<double>("hgeomcdf(1,4,2,3)", "0.5");
+  assert_expression_approximates_to<double>("hgeomcdf(24,42,24,34)", "1");
+  assert_expression_approximates_to<double>("hgeomcdfrange(2,3,6,3,4)", "0.8");
+  assert_expression_approximates_to<double>("invhgeom(.5,4,2,3)", "1");
+
   assert_expression_approximates_to<double>("normcdf(5, 7, 0.3162)", "1.265256ᴇ-10", Radian, MetricUnitFormat, Cartesian, 7);
 
   assert_expression_approximates_to<float>("normcdf(1.2, 3.4, 5.6)", "0.3472125");

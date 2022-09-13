@@ -101,12 +101,11 @@ int PercentAdditionNode::createSecondChildLayout(Poincare::HorizontalLayout * re
   ExpressionNode * percentChild = childAtIndex(1);
   if (percentChild->type() == ExpressionNode::Type::Opposite) {
     result->addChildAtIndex(CodePointLayout::Builder(UCodePointSouthEastArrow), childrenCount, childrenCount, nullptr);
-    childrenCount++;
     percentChild = percentChild->childAtIndex(0);
   } else {
     result->addChildAtIndex(CodePointLayout::Builder(UCodePointNorthEastArrow), childrenCount, childrenCount, nullptr);
-    childrenCount++;
   }
+  childrenCount++;
   result->addOrMergeChildAtIndex(percentChild->createLayout(floatDisplayMode, numberOfSignificantDigits, context), childrenCount, false);
   return result->numberOfChildren();
 }

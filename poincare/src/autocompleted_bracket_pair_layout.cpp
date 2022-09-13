@@ -19,7 +19,7 @@ bool AutocompletedBracketPairLayoutNode::willAddSibling(LayoutCursor * cursor, L
   }
   makePermanent(insertionSide);
   AutocompletedBracketPairLayoutNode * bracketSibling = sibling->type() == type() ? static_cast<AutocompletedBracketPairLayoutNode *>(sibling) : nullptr;
-  bool ignoreSibling = bracketSibling && bracketSibling->sideInsertedAs() == insertionSide;
+  bool ignoreSibling = bracketSibling && bracketSibling->m_insertedAs == insertionSide;
   if (ignoreSibling && insertionSide == Side::Left) {
     cursor->setPosition(LayoutCursor::Position::Left);
     cursor->setLayout(Layout(childLayout()));
@@ -43,6 +43,15 @@ void AutocompletedBracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * curso
   LayoutCursor nextCursor = cursorAfterDeletion(deletionSide);
   makeTemporary(deletionSide, cursor);
   cursor->setTo(&nextCursor);
+}
+
+void AutocompletedBracketPairLayoutNode::setTemporary(Side side, bool temporary) {
+  if (side == Side::Left) {
+    m_leftIsTemporary = temporary;
+  } else {
+    assert(side == Side::Right);
+    m_rightIsTemporary = temporary;
+  }
 }
 
 void AutocompletedBracketPairLayoutNode::balanceAfterInsertion(Side insertedSide, LayoutCursor * cursor) {
@@ -83,7 +92,7 @@ bool AutocompletedBracketPairLayoutNode::makeTemporary(Side side, LayoutCursor *
   AutocompletedBracketPairLayoutNode * p = newThis->autocompletedParent();
   if (!(p && p->makeTemporary(side, cursor))) {
     /* 'this' was the topmost pair without a temporary bracket on this side. */
-    newThis->m_status |= MaskForSide(side);
+    newThis->setTemporary(side, true);
     newThis->removeIfCompletelyTemporary(cursor);
   }
   return true;
@@ -187,7 +196,7 @@ void AutocompletedBracketPairLayoutNode::makePermanent(Side side) {
     AutocompletedBracketPairLayoutNode * bracket = static_cast<AutocompletedBracketPairLayoutNode *>(child.node());
     bracket->makePermanent(side);
   }
-  m_status &= ~MaskForSide(side);
+  setTemporary(side, false);
 }
 
 }

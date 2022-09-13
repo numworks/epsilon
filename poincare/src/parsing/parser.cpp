@@ -266,6 +266,8 @@ void Parser::privateParsePlusAndMinus(Expression & leftHandSide, bool plus, Toke
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Minus)) {
     if (rightHandSide.type() == ExpressionNode::Type::PercentSimple && rightHandSide.childAtIndex(0).type() != ExpressionNode::Type::PercentSimple) {
+      /* The condition checks if the percent does not contain a percent because
+       * "4+3%%" should be parsed as "4+((3/100)/100)" rather than "4↗0.03%" */
       leftHandSide = PercentAddition::Builder(leftHandSide, plus ? rightHandSide.childAtIndex(0) : Opposite::Builder(rightHandSide.childAtIndex(0)));
       return;
     }

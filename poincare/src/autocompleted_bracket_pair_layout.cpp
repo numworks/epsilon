@@ -93,20 +93,12 @@ bool AutocompletedBracketPairLayoutNode::makeTemporary(Side side, LayoutCursor *
   if (!(p && p->makeTemporary(side, cursor))) {
     /* 'this' was the topmost pair without a temporary bracket on this side. */
     newThis->setTemporary(side, true);
-    newThis->removeIfCompletelyTemporary(cursor);
+    if (newThis->isTemporary(Side::Left) && newThis->isTemporary(Side::Right)) {
+      assert(newThis->parent());
+      thisRef.parent().replaceChild(thisRef, thisRef.childAtIndex(0), cursor);
+    }
   }
   return true;
-}
-
-void AutocompletedBracketPairLayoutNode::removeIfCompletelyTemporary(LayoutCursor * cursor) {
-  if (!(isTemporary(Side::Left) && isTemporary(Side::Right))) {
-    return;
-  }
-  assert(parent());
-  Layout thisRef = Layout(this);
-  Layout childRef = thisRef.childAtIndex(0);
-  Layout parentRef = thisRef.parent();
-  parentRef.replaceChild(thisRef, childRef, cursor);
 }
 
 void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor * cursor) {

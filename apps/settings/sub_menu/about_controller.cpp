@@ -26,12 +26,12 @@ AboutController::AboutController(Responder * parentResponder) :
 bool AboutController::handleEvent(Ion::Events::Event event) {
   /* We hide here the activation hardware test app: in the menu "about", by
    * clicking on '6' on the last row. */
-  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && m_messageTreeModel->label() == I18n::Message::About && selectedRow() == numberOfRows()-1) {
+  if ((event == Ion::Events::Six || event == Ion::Events::LowerT || event == Ion::Events::UpperT) && m_messageTreeModel->label() == I18n::Message::About && selectedRow() == k_hardwareTestCellIndex) {
     m_hardwareTestPopUpController.presentModally();
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (selectedRow() == 0) {
+    if (selectedRow() == k_versionCellIndex) {
       /* When pressing OK on the version cell, the display cycles between
        * Epsilon version number, the commit hash for this build of Epsilon, the
        * PCB revision number, the flags used at compilation and the bootloader
@@ -66,12 +66,12 @@ HighlightCell * AboutController::reusableCell(int index, int type) {
 void AboutController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   GenericSubController::willDisplayCellForIndex(cell, index);
   MessageTableCellWithBuffer * myCell = static_cast<MessageTableCellWithBuffer *>(cell);
-  const char * messages[] = {
+  const char * messages[k_totalNumberOfCell] = {
     Ion::epsilonVersion(),
     Ion::serialNumber(),
     Ion::fccId()
   };
-  assert(index >= 0 && index < 3);
+  assert(index >= 0 && index < k_totalNumberOfCell);
   myCell->setSubLabelText(messages[index]);
 }
 

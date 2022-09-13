@@ -21,7 +21,7 @@ public:
     Fisher,
   };
 
-  constexpr static int k_maxNumberOfParameters = 2;
+  constexpr static int k_maxNumberOfParameters = 3;
   constexpr static int numberOfParameters(Type type) {
     switch (type) {
     case Type::Student:

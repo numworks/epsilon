@@ -1,6 +1,7 @@
 #include "helper.h"
 #include <apps/shared/global_context.h>
 #include <poincare/src/parsing/parser.h>
+#include <poincare/print.h>
 
 using namespace Poincare;
 
@@ -47,25 +48,8 @@ void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
   quiz_assert(test);
 }
 
-void print_failure_infos(const char * expression, const char * result, const char * expectedResult, char * returnedInformationsBuffer, size_t bufferSize) {
-  size_t remainingLength = bufferSize;
-  constexpr static size_t numberOfPieces = 6;
-  const char * piecesOfInformation[numberOfPieces] = {
-    "  ",
-    expression,
-    "\n  processed to\n  ",
-    result,
-    "\n  instead of\n  ",
-    expectedResult,
-  };
-  for (size_t piece = 0; piece < numberOfPieces; piece++) {
-    const size_t length = strlcpy(returnedInformationsBuffer, piecesOfInformation[piece], remainingLength);
-    if (length > remainingLength) {
-      break;
-    }
-    remainingLength -= length;
-    returnedInformationsBuffer += length;
-  }
+void build_failure_infos(char * returnedInformationsBuffer, size_t bufferSize, const char * expression, const char * result, const char * expectedResult) {
+  Poincare::Print::safeCustomPrintf(returnedInformationsBuffer, bufferSize," %s\n processed to\n %s\n instead of\n %s", expression, result, expectedResult);
 }
 
 void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion, ProcessExpression process, int numberOfSignifiantDigits) {
@@ -78,7 +62,7 @@ void assert_parsed_expression_process_to(const char * expression, const char * r
   const bool test = strcmp(buffer, result) == 0;
   char information[bufferSize] = "";
   if (!test) {
-    print_failure_infos(expression, buffer, result, information, bufferSize);
+    build_failure_infos(information, bufferSize, expression, buffer, result);
   }
   quiz_assert_print_if_failure(test, information);
 }
@@ -150,8 +134,8 @@ void assert_expression_serialize_to(Poincare::Expression expression, const char 
   expression.serialize(buffer, bufferSize, mode, numberOfSignificantDigits);
   bool test = strcmp(serialization, buffer) == 0;
   char information[bufferSize] = "";
-  if(!test) {
-      print_failure_infos("serialized expression", buffer, serialization, information, bufferSize);
+  if (!test) {
+      build_failure_infos(information, bufferSize, "serialized expression", buffer, serialization);
   }
   quiz_assert_print_if_failure(test, information);
 }

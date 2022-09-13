@@ -220,7 +220,8 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
   if (verticalOffsetSibling->position() != Position::Superscript) {
     return true;
   }
-
+  /* A power will be inserted next to another power. To avoid ambiguity between
+   * a^(b^c) and (a^b)^c when representing a^b^c, add parentheses. */
   Layout thisRef = Layout(this);
   Layout parentRef = Layout(parent());
   Layout siblingRef = Layout(sibling);

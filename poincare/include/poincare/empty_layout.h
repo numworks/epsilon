@@ -9,7 +9,7 @@ namespace Poincare {
 
 class EmptyLayoutNode /*final*/ : public LayoutNode {
 public:
-  enum class Color : uint8_t {
+  enum class Color : bool {
     Yellow,
     Gray
   };

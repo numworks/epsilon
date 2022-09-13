@@ -10,11 +10,10 @@ class AutocompletedBracketPairLayoutNode : public BracketPairLayoutNode {
 public:
   enum class Side : uint8_t {
     Left = 0,
-    Right,
-    NumberOfSides
+    Right = 1,
   };
 
-  AutocompletedBracketPairLayoutNode() : m_status(0) {}
+  AutocompletedBracketPairLayoutNode() : m_leftIsTemporary(false), m_rightIsTemporary(false) {}
 
   // TreeNode
   size_t size() const override { return sizeof(AutocompletedBracketPairLayoutNode); }
@@ -23,19 +22,18 @@ public:
   bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
 
-  bool isTemporary(Side side) const { return m_status & MaskForSide(side); }
+  bool isTemporary(Side side) const { return side == Side::Left ? m_leftIsTemporary : m_rightIsTemporary; }
+  void setTemporary(Side side, bool temporary);
   void balanceAfterInsertion(Side insertedSide, LayoutCursor * cursor);
   void makePermanent(Side side);
-  void setInsertionSide(Side side) { m_status = (m_status & ~(1 << k_insertionSideBit)) | (static_cast<uint8_t>(side) << k_insertionSideBit); }
+  void setInsertionSide(Side side) { m_insertedAs = side; }
 
 protected:
   KDColor bracketColor(Side side, KDColor fg, KDColor bg) const { return isTemporary(side) ? KDColor::blend(fg, bg, k_temporaryBlendAlpha) : fg; }
 
 private:
   constexpr static uint8_t k_temporaryBlendAlpha = 0x60;
-  constexpr static uint8_t k_insertionSideBit = static_cast<uint8_t>(Side::NumberOfSides);
 
-  static uint8_t MaskForSide(Side side) { return 1 << static_cast<uint8_t>(side); }
   static Side OtherSide(Side side) { return side == Side::Left ? Side::Right : Side::Left; }
 
   AutocompletedBracketPairLayoutNode * autocompletedParent() const;
@@ -43,12 +41,10 @@ private:
   void removeIfCompletelyTemporary(LayoutCursor * cursor);
   void absorbSiblings(Side side, LayoutCursor * cursor);
   LayoutCursor cursorAfterDeletion(Side side) const;
-  Side sideInsertedAs() const { return static_cast<Side>((m_status & (1 << k_insertionSideBit)) >> k_insertionSideBit); }
 
-  /* A bit of 1 indicates the corresponding bracket is temporary i.e the
-   * result of an auto-completion.
-   * Third bit indicates whether the bracket was inserted as a Right or Left bracket. */
-  uint8_t m_status;
+  bool m_leftIsTemporary : 1;
+  bool m_rightIsTemporary : 1;
+  Side m_insertedAs : 1;
 };
 
 }

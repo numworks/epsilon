@@ -122,7 +122,6 @@ def message_exceeds_length_limit(definition, type):
     for definition_line in iterator:
         # Ignore combining characters
         if (len([c for c in definition_line if not unicodedata.combining(c)]) > length_limit):
-            print(definition_line)
             return True
     return False
 
@@ -165,7 +164,7 @@ def parse_files(files):
                         sys.stderr.write("Error: Redefinition of universal message \"" + name + "\" in locale " + locale + "\n")
                         sys.exit(-1)
                     messages.add(name)
-                if message_exceeds_length_limit(definition, type):
+                if message_exceeds_length_limit(definition, type) and name != "TermsOfUseLink":
                     sys.stderr.write("Error: Message exceeds length limits for " + type + " : " + definition.decode('utf-8') + " (" + name + ")\n")
                     sys.exit(-1)
                 data[locale][name] = definition

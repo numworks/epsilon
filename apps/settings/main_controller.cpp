@@ -16,7 +16,11 @@ constexpr MessageTree s_modelFloatDisplayModeChildren[4] = {MessageTree(I18n::Me
 constexpr MessageTree s_modelComplexFormatChildren[3] = {MessageTree(I18n::Message::Real), MessageTree(I18n::Message::Cartesian), MessageTree(I18n::Message::Polar)};
 constexpr MessageTree s_modelFontChildren[2] = {MessageTree(I18n::Message::LargeFont), MessageTree(I18n::Message::SmallFont)};
 constexpr MessageTree s_modelTestModeMenu[2] = {MessageTree(I18n::Message::ExamMode), MessageTree(I18n::Message::PressToTest)};
-constexpr MessageTree s_modelAboutChildren[AboutController::k_totalNumberOfCell] = {MessageTree(I18n::Message::SoftwareVersion), MessageTree(I18n::Message::SerialNumber), MessageTree(I18n::Message::FccId)};
+constexpr MessageTree s_modelAboutChildren[AboutController::k_totalNumberOfCell] = {MessageTree(I18n::Message::SoftwareVersion), MessageTree(I18n::Message::SerialNumber), MessageTree(I18n::Message::FccId),
+#if TERMS_OF_USE
+  MessageTree(I18n::Message::TermsOfUse),
+#endif
+};
 
 MainController::MainController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate) :
   SelectableListViewController(parentResponder),

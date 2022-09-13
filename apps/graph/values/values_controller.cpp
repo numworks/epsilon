@@ -324,16 +324,26 @@ int ValuesController::absoluteColumnForValuesColumn(int column) {
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
-  if (m_exactValuesButton.state()) {
-    *memoizedLayoutAtIndex(index) = StringLayout::Builder("test");
-    return;
-  }
-  double evaluationX = NAN;
-  double evaluationY = NAN;
   double abscissa;
   bool isDerivative = false;
   Shared::ExpiringPointer<ContinuousFunction> function = functionAtIndex(column, row, &abscissa, &isDerivative);
   Poincare::Context * context = textFieldDelegateApp()->localContext();
+  if (!isDerivative && m_exactValuesButton.state()) {
+    // Compute exact result
+    Expression exactResult = function->expressionReduced(context);
+    Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
+    Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
+    abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
+    PoincareHelpers::CloneAndSimplify(&exactResult, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
+    if (!Utils::ShouldOnlyDisplayApproximation(function->originalEquation(), exactResult, context)) {
+      // Do not show exact expressions in certain cases
+      *memoizedLayoutAtIndex(index) = exactResult.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, context);
+      return;
+    }
+  }
+  // Compute approximate result
+  double evaluationX = NAN;
+  double evaluationY = NAN;
   bool isParametric = function->symbolType() == ContinuousFunction::SymbolType::T;
   if (isDerivative) {
     assert(function->canDisplayDerivative());
@@ -357,47 +367,6 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   *memoizedLayoutAtIndex(index) = approximation.createLayout(Preferences::PrintFloatMode::Decimal, Preferences::VeryLargeNumberOfSignificantDigits, context);
 
 }
-
-// TODO: Properly compute exact layout. I leave this here for futur commits.
-
-/*
-void ValuesController::setExactValueCellLayouts(int column, int row) {
-  // Compute approximate layout
-  char * approximateResult = memoizedBufferForCell(column, row);
-  Layout approximateLayout = Poincare::LayoutHelper::String(approximateResult);
-
-  // Compute exact layout
-  Layout exactLayout = Layout();
-  Expression exactExpression = Expression();
-  double abscissa;
-  bool isDerivative = false;
-  Shared::ExpiringPointer<ContinuousFunction> function = functionAtIndex(column, row, &abscissa, &isDerivative);
-  Poincare::Context * context = textFieldDelegateApp()->localContext();
-  if (!isDerivative) { // Do not compute exact derivative
-    exactExpression = function->expressionReduced(context);
-    if (function->symbol() != ContinuousFunction::k_parametricSymbol) {
-      // Do not display exact value of parametric functions
-      Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
-      Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
-      abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
-      PoincareHelpers::CloneAndSimplify(&exactExpression, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
-      if (!Utils::ShouldOnlyDisplayApproximation(function->originalEquation(), exactExpression, context)) {
-        // Do not show exact expressions in certain cases
-        exactLayout = exactExpression.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, context);
-      }
-    }
-  }
-  m_exactValueCell.setLayouts(exactLayout, approximateLayout);
-
-  // Decide if the exact layout must be displayed
-  bool displayExactLayout = !exactLayout.isUninitialized() && !exactLayout.isIdenticalTo(approximateLayout, true);
-  m_exactValueCell.setDisplayCenter(displayExactLayout);
-
-  // Decide if the equal sign is an approximate
-  assert(!displayExactLayout || !exactExpression.isUninitialized());
-  bool areExactlyEqual = displayExactLayout && Poincare::Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(exactExpression, PoincareHelpers::ParseAndSimplify(approximateResult, textFieldDelegateApp()->localContext()));
-  m_exactValueCell.setEqualMessage(areExactlyEqual ? I18n::Message::Equal : I18n::Message::AlmostEqual);
-}*/
 
 // Parameter controllers
 

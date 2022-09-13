@@ -90,7 +90,7 @@ public:
   Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);
   /* WARNING: If the parent of an addition is also an addition (or a
    * subtraction), the reduction won't do anything and let the parent
-   * do the reduction. So you cannot reduce a child addition without
+   * do the reduction. So a child addition can't be reduced without
    * reducing its parent addition. */
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);

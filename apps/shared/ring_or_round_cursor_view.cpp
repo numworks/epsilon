@@ -2,7 +2,7 @@
 
 namespace Shared {
 
-void RingOrRoundCursorView::drawCursor(KDContext * ctx, KDRect rect) const {
+void RingCursorView::drawCursor(KDContext * ctx, KDRect rect) const {
   KDRect r = bounds();
   if (m_isRing) {
     KDColor cursorWorkingBuffer[Dots::LargeRingDiameter*Dots::LargeRingDiameter];

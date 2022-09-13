@@ -6,15 +6,23 @@
 
 namespace Shared {
 
-class RingOrRoundCursorView : public MemoizedCursorView {
+/* To avoid code duplication RingCursorView is indeed a RingOrRoundCursorView
+ * that can't be set to round */
+class RingCursorView : public MemoizedCursorView {
 public:
-  void setIsRing(bool isRing);
+  RingCursorView() : MemoizedCursorView(), m_isRing(true) {}
+protected:
+  bool m_isRing;
 private:
   void drawCursor(KDContext * ctx, KDRect rect) const override;
   KDCoordinate size() const override { return Dots::LargeRingDiameter; }
   KDColor * underneathPixelBuffer() const override { return m_underneathPixelBuffer; }
   mutable KDColor m_underneathPixelBuffer[Dots::LargeRingDiameter * Dots::LargeRingDiameter];
-  bool m_isRing;
+};
+
+class RingOrRoundCursorView : public RingCursorView {
+public:
+  void setIsRing(bool isRing);
 };
 
 }

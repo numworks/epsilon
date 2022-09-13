@@ -270,7 +270,6 @@ inline bool canRepeatEvent(Event e) {
     || e == Events::Up
     || e == Events::Down
     || e == Events::Right
-    || e == Events::OK
     || e == Events::Back
     || e == Events::Backspace
     || e == Events::ShiftLeft

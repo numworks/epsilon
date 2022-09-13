@@ -16,7 +16,7 @@ class Calculation {
  * and input/output are memoized.*/
 
 public:
-  Calculation(CachedTree cachedInput);
+  Calculation(const char * textInput);
   TypeTreeBlock * input() { return m_input; }
   Poincare::CachedTree output() { return m_output; }
 private:
@@ -25,37 +25,11 @@ private:
   Poincare::CachedTree m_output;
 };
 
-Calculation::Calculation(CachedTree cachedTree) :
-  m_output([]() { return true; })
-{
-  cachedTree.send(
-      [](const TypeTreeBlock * tree, void * buffer) {
-        TypeTreeBlock * inputBuffer = static_cast<TypeTreeBlock *>(buffer);
-        memcpy(inputBuffer, tree, tree->treeSize());
-      },
-      m_input
-    );
-  m_output = CachedTree(
-      [](TypeTreeBlock * tree) {
-        tree->basicReduction();
-        return true;
-      },
-      input()
-    );
-}
-
-void printCachedTree(CachedTree cachedTree) {
-  cachedTree.send(
-      [](const TypeTreeBlock * tree, void * result) {
-        tree->log(std::cout);
-      },
-      nullptr
-    );
-}
-
-void playWithCachedTree() {
-  CachedTree inputTree([]{
-      std::cout << "\n---------------- Input (1-2)/3/4 ----------------" << std::endl;
+// Dummy parse
+CachedTree Parse(const char * textInput) {
+  // textInput == (1-2)/3/4
+  std::cout << "\n---------------- Input " << textInput << "----------------" << std::endl;
+  return CachedTree([]{
       Division::PushNode();
       Division::PushNode();
       Subtraction::PushNode();
@@ -65,9 +39,17 @@ void playWithCachedTree() {
       Integer::PushNode(4);
       return true;
     });
-  Calculation calculation(inputTree);
-  std::cout << "\n---------------- Output ----------------" << std::endl;
-  printCachedTree(calculation.output());
+}
 
+
+Calculation::Calculation(const char * textInput) {
+  Parse(textInput).dumpAt(m_input);
+  m_output = input()->createBasicReduction();
+}
+
+void playWithCachedTree() {
+  Calculation calculation("(1-2)/3/4");
+  std::cout << "\n---------------- Output ----------------" << std::endl;
+  calculation.output().log();
   print();
 }

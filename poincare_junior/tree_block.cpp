@@ -222,6 +222,16 @@ void TypeTreeBlock::logAttributes(std::ostream & stream) const {
   handle()->logAttributes(this, stream);
 }
 #endif
+
+CachedTree TypeTreeBlock::createBasicReduction() {
+  return CachedTree(
+      [](TypeTreeBlock * tree) {
+        tree->basicReduction();
+        return true;
+      },
+    this);
+}
+
 void TypeTreeBlock::basicReduction() {
   handle()->basicReduction(this);
 }

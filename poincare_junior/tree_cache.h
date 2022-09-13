@@ -16,7 +16,6 @@ public:
   TreeSandbox * sandbox() { return &m_sandbox; }
   bool reset(bool preserveSandbox);
 
-  typedef bool (*ActionWithContext)(void * subAction, void * data);
   int execute(ActionWithContext action, void * subAction, void * data);
 
   constexpr static int k_maxNumberOfBlocks = 512;

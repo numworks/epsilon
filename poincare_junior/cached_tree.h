@@ -1,13 +1,15 @@
 #ifndef POINCARE_CACHED_TREE_H
 #define POINCARE_CACHED_TREE_H
 
-#include "tree_block.h"
-#include "tree_cache.h"
-
 namespace Poincare {
+
+class TypeTreeBlock;
+
+typedef bool (*ActionWithContext)(void * subAction, void * data);
 
 class CachedTree {
 public:
+  CachedTree() : m_id(-1) {}
   typedef bool (*Initializer)();
   CachedTree(Initializer initializer);
 
@@ -21,8 +23,11 @@ public:
   typedef void (*FunctionOnConstTree)(const TypeTreeBlock * tree, void * resultAddress);
   void send(FunctionOnConstTree functionOnTree, void * resultAddress);
 
+  void dumpAt(void * address);
+  void log();
+
 private:
-  CachedTree(TreeCache::ActionWithContext initializer, void * subInitializer, void * data) :
+  CachedTree(ActionWithContext initializer, void * subInitializer, void * data) :
     m_id(-1),
     m_initializer(initializer),
     m_subInitializer(subInitializer),
@@ -30,7 +35,7 @@ private:
   int id();
 
   int m_id;
-  TreeCache::ActionWithContext m_initializer;
+  ActionWithContext m_initializer;
   void * m_subInitializer;
   void * m_data;
 };

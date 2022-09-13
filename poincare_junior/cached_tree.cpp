@@ -1,4 +1,5 @@
 #include "cached_tree.h"
+#include "tree_cache.h"
 
 namespace Poincare {
 
@@ -50,6 +51,25 @@ CachedTree::CachedTree(InitializerFromString initializer, char * string) :
 void CachedTree::send(FunctionOnConstTree function, void * resultAddress) {
   const TypeTreeBlock * tree = TreeCache::sharedCache()->treeForIdentifier(id());
   return function(tree, resultAddress);
+}
+
+void CachedTree::dumpAt(void * address) {
+  send(
+    [](const TypeTreeBlock * tree, void * buffer) {
+      TypeTreeBlock * inputBuffer = static_cast<TypeTreeBlock *>(buffer);
+      memcpy(inputBuffer, tree, tree->treeSize());
+    },
+    address
+  );
+}
+
+void CachedTree::log() {
+  send(
+     [](const TypeTreeBlock * tree, void * result) {
+        tree->log(std::cout);
+      },
+      nullptr
+    );
 }
 
 int CachedTree::id() {

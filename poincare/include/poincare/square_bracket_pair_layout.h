@@ -24,7 +24,7 @@ protected:
   constexpr static KDCoordinate k_externalWidthMargin = 2;
   constexpr static KDCoordinate k_bracketWidth = k_internalWidthMargin + k_lineThickness + k_externalWidthMargin;
   constexpr static KDCoordinate k_verticalMargin = 1;
-  constexpr static KDCoordinate k_doubleBarMargin = 3;
+  constexpr static KDCoordinate k_doubleBarMargin = 2;
   constexpr static bool k_renderTopBar = true;
   constexpr static bool k_renderBottomBar = true;
   constexpr static bool k_renderDoubleBar = false;

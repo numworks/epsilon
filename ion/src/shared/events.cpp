@@ -71,10 +71,6 @@ bool sLastEventShift = false;
 bool sLastEventAlpha = false;
 bool sEventIsRepeating = false;
 
-bool Event::isRepeating() const {
-  return sEventIsRepeating;
-}
-
 void resetKeyboardState() {
   sKeysSeenUp = -1;
   /* Set the keyboard state of reference to -1 to prevent event repetition. */

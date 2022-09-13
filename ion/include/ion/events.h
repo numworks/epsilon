@@ -34,7 +34,6 @@ public:
   bool operator!=(const Event & other) const { return (m_id != other.m_id); }
   bool isKeyboardEvent() const { return m_id < k_specialEventsOffset; }
   bool isSpecialEvent() const { return m_id >= k_specialEventsOffset; }
-  bool isRepeating() const;
   // Return the length of the copied text (and not the size)
   const char * text() const;
 #ifndef NDEBUG
@@ -80,7 +79,14 @@ ShiftAlphaStatus shiftAlphaStatus();
 void setShiftAlphaStatus(ShiftAlphaStatus s);
 void setSpinner(bool spinner);
 int repetitionFactor();
-int longPressFactor();
+int longPressCounter();
+inline bool isRepeating() {
+  return longPressCounter() > 0;
+}
+inline int longPressFactor() {
+  // The long press factor is increased by 4 every 20 loops in getEvent(2 sec)
+  return (longPressCounter() / 20) * 4 + 1;
+}
 
 // Plain
 

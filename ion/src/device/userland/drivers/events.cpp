@@ -25,8 +25,8 @@ int SVC_ATTRIBUTES repetitionFactor() {
   SVC_RETURNING_R0(SVC_EVENTS_REPETITION_FACTOR, int)
 }
 
-int SVC_ATTRIBUTES longPressFactor() {
-  SVC_RETURNING_R0(SVC_EVENTS_LONG_PRESS_FACTOR, int)
+int SVC_ATTRIBUTES longPressCounter() {
+  SVC_RETURNING_R0(SVC_EVENTS_LONG_PRESS_COUNTER, int)
 }
 
 Event SVC_ATTRIBUTES getEvent(int * timeout) {

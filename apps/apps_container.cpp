@@ -163,7 +163,7 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (event == Ion::Events::Home || (event == Ion::Events::Back && !event.isRepeating())) {
+  if (event == Ion::Events::Home || (event == Ion::Events::Back && !Ion::Events::isRepeating())) {
     switchToBuiltinApp(appSnapshotAtIndex(0));
     return true;
   }

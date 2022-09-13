@@ -148,9 +148,8 @@ static int sLongPressCounter = 0;
 static int sRepetitionCounter = 0;
 
 // How long the event has been pressed (Computed value)
-int longPressFactor() {
-  // The long press factor is increased by 4 every 20 loops in getEvent(2 sec)
-  return (sLongPressCounter / 20) * 4 + 1;
+int longPressCounter() {
+  return sLongPressCounter;
 }
 
 // How much the event has been repeatedly pressed (Raw value)

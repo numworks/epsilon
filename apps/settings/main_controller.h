@@ -24,7 +24,7 @@ extern const MessageTree s_modelFloatDisplayModeChildren[4];
 extern const MessageTree s_modelComplexFormatChildren[3];
 extern const MessageTree s_modelFontChildren[2];
 extern const MessageTree s_modelTestModeMenu[2];
-extern const MessageTree s_modelAboutChildren[3];
+extern const MessageTree s_modelAboutChildren[AboutController::k_totalNumberOfCell];
 extern const MessageTree s_model;
 
 class MainController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {

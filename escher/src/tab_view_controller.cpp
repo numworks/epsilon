@@ -91,6 +91,11 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
     }
     return false;
   }
+  if (event == Ion::Events::Back && m_dataSource->selectedTab() > 0) {
+    setSelectedTab(0);
+    setActiveTab(m_dataSource->selectedTab(), false);
+    return true;
+  }
   if (event == Ion::Events::Left) {
     if (m_dataSource->selectedTab() > 0) {
       setSelectedTab(m_dataSource->selectedTab()-1);
@@ -114,7 +119,7 @@ bool TabViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void TabViewController::setActiveTab(int8_t i) {
+void TabViewController::setActiveTab(int8_t i, bool enter) {
   assert(i >= 0 && i < m_numberOfChildren);
   ViewController * activeVC = m_children[i];
   if (i != m_dataSource->activeTab()) {
@@ -126,7 +131,9 @@ void TabViewController::setActiveTab(int8_t i) {
     m_children[m_dataSource->activeTab()]->viewDidDisappear();
     m_dataSource->setActiveTab(i);
   }
-  Container::activeApp()->setFirstResponder(activeVC);
+  if (enter) {
+    Container::activeApp()->setFirstResponder(activeVC);
+  }
 }
 
 void TabViewController::setSelectedTab(int8_t i) {

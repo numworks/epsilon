@@ -13,7 +13,7 @@ public:
     Right = 1,
   };
 
-  AutocompletedBracketPairLayoutNode() : m_leftIsTemporary(false), m_rightIsTemporary(false) {}
+  AutocompletedBracketPairLayoutNode() : m_leftIsTemporary(false), m_rightIsTemporary(false), m_insertedAs(Side::Left) {}
 
   // TreeNode
   size_t size() const override { return sizeof(AutocompletedBracketPairLayoutNode); }

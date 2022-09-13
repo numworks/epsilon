@@ -567,8 +567,7 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
     }
     if (!removeEmptyChildren
         || !h.childAtIndex(i).isEmpty()
-        || (n > 0
-          && childAtIndex(0).mustHaveLeftSibling())
+        || (n > 0 && childAtIndex(0).mustHaveLeftSibling())
         || (i < childrenNumber-1 && h.childAtIndex(i+1).mustHaveLeftSibling()))
     {
       Layout c = h.childAtIndex(i);

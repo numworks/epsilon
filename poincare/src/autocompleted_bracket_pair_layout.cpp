@@ -6,6 +6,10 @@
 namespace Poincare {
 
 bool AutocompletedBracketPairLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
+  /* Make a temporary bracket permanent if something would be inserted beyond
+   * its bounds.
+   * ([ and ] denote temporary parentheses)
+   * e.g. (1+2]| -> "+" -> (1+2)+| */
   Side insertionSide;
   if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
     insertionSide = Side::Right;
@@ -18,6 +22,9 @@ bool AutocompletedBracketPairLayoutNode::willAddSibling(LayoutCursor * cursor, L
     return true;
   }
   makePermanent(insertionSide);
+  /* If the inserted layout is a bracket of the same type as the temporary
+   * bracket, do not inserted it, as though the user had closed it manually.
+   * e.g. (1+2]| -> ")" -> (1+2)| instead of [(1+2))|*/
   AutocompletedBracketPairLayoutNode * bracketSibling = sibling->type() == type() ? static_cast<AutocompletedBracketPairLayoutNode *>(sibling) : nullptr;
   bool ignoreSibling = bracketSibling && bracketSibling->m_insertedAs == insertionSide;
   if (ignoreSibling && insertionSide == Side::Left) {
@@ -55,6 +62,8 @@ void AutocompletedBracketPairLayoutNode::setTemporary(Side side, bool temporary)
 }
 
 void AutocompletedBracketPairLayoutNode::makePermanent(Side side) {
+  /* Recursively make all bracket children permanent on that side.
+   * e.g. (((1]]|] -> "+" -> (((1))+|] */
   if (!isTemporary(side)) {
     return;
   }
@@ -162,6 +171,9 @@ LayoutNode * AutocompletedBracketPairLayoutNode::childOnSide(Side side) const {
 }
 
 LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) const {
+  /* Attempting to delete a bracket can cause the children and sibling to be
+   * shuffled around and this to disappear. Anchor the cursor to a stable
+   * layout. */
   Layout thisRef(this);
   Layout childRef(childLayout());
   Layout parentRef = thisRef.parent();
@@ -171,23 +183,31 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
 
   if (side == Side::Left) {
     if (thisIndex > 0) {
+      /* e.g. 12(|34) -> [12|34) */
       return LayoutCursor(parentRef.childAtIndex(thisIndex - 1), LayoutCursor::Position::Right);
     }
     if (willDisappear) {
+      /* e.g. (|12] -> |12
+       * Caller function deleteBeforeCursor has an escape case for when the
+       * bracket should disappear and is empty. */
       assert(!childRef.isEmpty());
       return LayoutCursor(childOnSide(Side::Left), LayoutCursor::Position::Left);
     }
+    /* e.g. (|12) -> |[12) */
     return LayoutCursor(thisRef, LayoutCursor::Position::Left);
   }
 
   assert(side == Side::Right);
   if (!childRef.isEmpty()) {
+    /* e.g. (12)| -> (12|] */
     return LayoutCursor(childOnSide(Side::Right), LayoutCursor::Position::Right);
   }
   assert(!willDisappear);
   if (thisIndex < parentRef.numberOfChildren() - 1) {
+    /* e.g. ()|34 -> (|34] */
     return LayoutCursor(parentRef.childAtIndex(thisIndex + 1), LayoutCursor::Position::Left);
   }
+  /* e.g. () -> (|] */
   return LayoutCursor(childOnSide(Side::Left), LayoutCursor::Position::Left);
 }
 

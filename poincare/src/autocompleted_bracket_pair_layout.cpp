@@ -54,6 +54,18 @@ void AutocompletedBracketPairLayoutNode::setTemporary(Side side, bool temporary)
   }
 }
 
+void AutocompletedBracketPairLayoutNode::makePermanent(Side side) {
+  if (!isTemporary(side)) {
+    return;
+  }
+  Layout child = childOnSide(side);
+  if (type() == child.type()) {
+    AutocompletedBracketPairLayoutNode * bracket = static_cast<AutocompletedBracketPairLayoutNode *>(child.node());
+    bracket->makePermanent(side);
+  }
+  setTemporary(side, false);
+}
+
 void AutocompletedBracketPairLayoutNode::balanceAfterInsertion(Side insertedSide, LayoutCursor * cursor) {
   assert(cursor);
   Layout thisRef(this);
@@ -140,10 +152,11 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
   }
 }
 
-static Layout childBypassHorizontalLayout(Layout child, int index) {
-  if (child.type() == LayoutNode::Type::HorizontalLayout) {
-    assert(child.numberOfChildren() > 0);
-    return child.childAtIndex(index);
+LayoutNode * AutocompletedBracketPairLayoutNode::childOnSide(Side side) const {
+  LayoutNode * child = childLayout();
+  if (child->type() == LayoutNode::Type::HorizontalLayout) {
+    assert(child->numberOfChildren() > 0);
+    return child->childAtIndex(side == Side::Left ? 0 : child->numberOfChildren() - 1);
   }
   return child;
 }
@@ -162,33 +175,20 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
     }
     if (willDisappear) {
       assert(!childRef.isEmpty());
-      return LayoutCursor(childBypassHorizontalLayout(childRef, 0), LayoutCursor::Position::Left);
+      return LayoutCursor(childOnSide(Side::Left), LayoutCursor::Position::Left);
     }
     return LayoutCursor(thisRef, LayoutCursor::Position::Left);
   }
 
   assert(side == Side::Right);
   if (!childRef.isEmpty()) {
-    return LayoutCursor(childBypassHorizontalLayout(childRef, childRef.numberOfChildren() - 1), LayoutCursor::Position::Right);
+    return LayoutCursor(childOnSide(Side::Right), LayoutCursor::Position::Right);
   }
   assert(!willDisappear);
   if (thisIndex < parentRef.numberOfChildren() - 1) {
     return LayoutCursor(parentRef.childAtIndex(thisIndex + 1), LayoutCursor::Position::Left);
   }
-  return LayoutCursor(childBypassHorizontalLayout(childRef, 0), LayoutCursor::Position::Left);
-}
-
-void AutocompletedBracketPairLayoutNode::makePermanent(Side side) {
-  if (!isTemporary(side)) {
-    return;
-  }
-  int childIndex = side == Side::Left ? 0 : childLayout()->numberOfChildren() - 1;
-  Layout child = childBypassHorizontalLayout(Layout(childLayout()), childIndex);
-  if (type() == child.type()) {
-    AutocompletedBracketPairLayoutNode * bracket = static_cast<AutocompletedBracketPairLayoutNode *>(child.node());
-    bracket->makePermanent(side);
-  }
-  setTemporary(side, false);
+  return LayoutCursor(childOnSide(Side::Left), LayoutCursor::Position::Left);
 }
 
 }

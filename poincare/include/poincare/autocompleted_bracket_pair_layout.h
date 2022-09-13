@@ -37,6 +37,7 @@ private:
   static Side OtherSide(Side side) { return side == Side::Left ? Side::Right : Side::Left; }
 
   AutocompletedBracketPairLayoutNode * autocompletedParent() const;
+  LayoutNode * childOnSide(Side side) const;
   bool makeTemporary(Side side, LayoutCursor * cursor);
   void absorbSiblings(Side side, LayoutCursor * cursor);
   LayoutCursor cursorAfterDeletion(Side side) const;

@@ -3,7 +3,7 @@
 #include <cmath>
 #include <poincare/chi2_distribution.h>
 
-namespace Inference {
+namespace Distributions {
 
 float ChiSquaredDistribution::evaluateAtAbscissa(float x) const {
   return Poincare::Chi2Distribution::EvaluateAtAbscissa<float>(x, m_parameter);

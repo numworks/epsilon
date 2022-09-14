@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <cmath>
 
-namespace Inference {
+namespace Distributions {
 
 bool BinomialDistribution::authorizedParameterAtIndex(double x, int index) const {
   if (!TwoParametersDistribution::authorizedParameterAtIndex(x, index)) {

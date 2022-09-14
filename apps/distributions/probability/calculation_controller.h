@@ -14,7 +14,7 @@
 #include "distributions/models/probability/distribution/distribution.h"
 #include "distributions/text_helpers.h"
 
-namespace Inference {
+namespace Distributions {
 
 class CalculationController : public Escher::ViewController,
                               public Escher::TableViewDataSource,
@@ -103,6 +103,6 @@ private:
   char m_titleBuffer[k_titleBufferSize];
 };
 
-}  // namespace Inference
+}  // namespace Distributions
 
 #endif

@@ -3,7 +3,7 @@
 
 #include "calculation.h"
 
-namespace Inference {
+namespace Distributions {
 
 class DiscreteCalculation final : public Calculation {
 public:

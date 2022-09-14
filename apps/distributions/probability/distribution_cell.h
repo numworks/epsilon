@@ -7,7 +7,7 @@
 #include <escher/table_cell.h>
 #include <escher/transparent_image_view.h>
 
-namespace Inference {
+namespace Distributions {
 
 class DistributionCell : public Escher::TableCell {
 public:
@@ -32,6 +32,6 @@ private:
   Escher::ChevronView m_chevronView;
 };
 
-}  // namespace Inference
+}  // namespace Distributions
 
 #endif /* DISTRIBUTIONS_PROBABILITY_DISTRIBUTION_CELL_H */

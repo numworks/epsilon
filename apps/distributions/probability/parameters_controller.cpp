@@ -6,7 +6,7 @@
 
 using namespace Escher;
 
-namespace Inference {
+namespace Distributions {
 
 ParametersController::ContentView::ContentView(SelectableTableView * selectableTableView) :
       m_titleView(KDFont::Size::Small,
@@ -157,4 +157,4 @@ void ParametersController::buttonAction() {
   stackOpenPage(m_calculationController);
 }
 
-}  // namespace Inference
+}  // namespace Distributions

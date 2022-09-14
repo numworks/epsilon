@@ -5,7 +5,7 @@
 #include "../images/calculation3_icon.h"
 #include "../images/calculation4_icon.h"
 
-namespace Inference {
+namespace Distributions {
 
 CalculationPopupDataSource::CalculationPopupDataSource(Distribution * distribution) :
   m_distribution(distribution)
@@ -25,4 +25,4 @@ int CalculationPopupDataSource::numberOfRows() const {
   return k_numberOfImages - m_distribution->isContinuous();
 }
 
-}  // namespace Inference
+}  // namespace Distributions

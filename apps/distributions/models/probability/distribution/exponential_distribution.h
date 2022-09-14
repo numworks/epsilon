@@ -5,7 +5,7 @@
 #include "one_parameter_distribution.h"
 #include <poincare/layout_helper.h>
 
-namespace Inference {
+namespace Distributions {
 
 class ExponentialDistribution final : public OneParameterDistribution {
 public:

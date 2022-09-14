@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <cmath>
 
-namespace Inference {
+namespace Distributions {
 
 bool PoissonDistribution::authorizedParameterAtIndex(double x, int index) const {
   if (!OneParameterDistribution::authorizedParameterAtIndex(x, index)) {

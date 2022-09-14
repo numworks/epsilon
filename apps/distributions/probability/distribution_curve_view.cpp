@@ -5,7 +5,7 @@
 using namespace Shared;
 using namespace Escher;
 
-namespace Inference {
+namespace Distributions {
 
 constexpr KDColor DistributionCurveView::k_backgroundColor;
 
@@ -72,4 +72,4 @@ void DistributionCurveView::drawStandardNormal(KDContext * ctx, KDRect rect, flo
   constCastedThis->setCurveViewRange(previousRange);
 }
 
-}  // namespace Inference
+}  // namespace Distributions

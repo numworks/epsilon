@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <cmath>
 
-namespace Inference {
+namespace Distributions {
 
 bool GeometricDistribution::authorizedParameterAtIndex(double x, int index) const {
   assert(index == 0);

@@ -2,7 +2,7 @@
 #include <poincare/student_distribution.h>
 #include <cmath>
 
-namespace Inference {
+namespace Distributions {
 
 using namespace Poincare;
 

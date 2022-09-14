@@ -4,7 +4,7 @@
 #include "distribution.h"
 #include <assert.h>
 
-namespace Inference {
+namespace Distributions {
 
 class OneParameterDistribution : public Distribution {
 public:

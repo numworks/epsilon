@@ -6,7 +6,7 @@
 #include <apps/shared/float_parameter_controller.h>
 #include "calculation_controller.h"
 
-namespace Inference {
+namespace Distributions {
 
 class ParametersController : public Shared::FloatParameterController<double> {
 public:

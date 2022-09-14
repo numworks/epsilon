@@ -7,7 +7,7 @@
 #include "distributions/models/probability/calculation/calculation.h"
 #include "distributions/models/probability/distribution/distribution.h"
 
-namespace Inference {
+namespace Distributions {
 
 class DistributionCurveView : public Shared::CurveView {
  public:
@@ -34,6 +34,6 @@ class DistributionCurveView : public Shared::CurveView {
   Calculation * m_calculation;
 };
 
-}  // namespace Inference
+}  // namespace Distributions
 
 #endif /* DISTRIBUTIONS_PROBABILITY_DISTRIBUTION_CURVE_VIEW_H */

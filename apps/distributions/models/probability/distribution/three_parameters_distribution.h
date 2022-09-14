@@ -3,7 +3,7 @@
 
 #include "distribution.h"
 
-namespace Inference {
+namespace Distributions {
 
 class ThreeParametersDistribution : public Distribution {
 public:

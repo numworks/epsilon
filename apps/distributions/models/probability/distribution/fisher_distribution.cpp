@@ -6,7 +6,7 @@
 #include <float.h>
 #include <algorithm>
 
-namespace Inference {
+namespace Distributions {
 
 bool FisherDistribution::authorizedParameterAtIndex(double x, int index) const {
   assert(index == 0 || index == 1);

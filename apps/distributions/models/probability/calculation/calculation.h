@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <new>
 
-namespace Inference {
+namespace Distributions {
 
 class Distribution;
 

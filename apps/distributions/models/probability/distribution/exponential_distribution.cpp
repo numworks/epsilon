@@ -2,7 +2,7 @@
 #include <cmath>
 #include <float.h>
 
-namespace Inference {
+namespace Distributions {
 
 float ExponentialDistribution::evaluateAtAbscissa(float x) const {
   if (x < 0.0f) {

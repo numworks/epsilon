@@ -5,7 +5,7 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/layout_helper.h>
 
-namespace Inference {
+namespace Distributions {
 
 /* We chose the definition:
  * 0 < p <= 1 for distribution of success

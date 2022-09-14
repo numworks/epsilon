@@ -2,7 +2,7 @@
 
 #include <poincare/hypergeometric_distribution.h>
 
-namespace Inference {
+namespace Distributions {
 
 bool HypergeometricDistribution::authorizedParameterAtIndex(double x, int index) const {
   if (!ThreeParametersDistribution::authorizedParameterAtIndex(x, index)) {

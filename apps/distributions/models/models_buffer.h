@@ -31,7 +31,7 @@
 #include "statistic/two_proportions_z_interval.h"
 #include "statistic/two_proportions_z_test.h"
 
-namespace Inference {
+namespace Distributions {
 
 // Buffers for dynamic allocation
 
@@ -110,6 +110,6 @@ private:
   StatisticBuffer m_statisticBuffer;
 };
 
-}  // namespace Inference
+}  // namespace Distributions
 
 #endif /* DISTRIBUTIONS_MODELS_BUFFER_H */

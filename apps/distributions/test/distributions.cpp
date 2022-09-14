@@ -16,7 +16,7 @@
 #include "distributions/models/probability/distribution/student_distribution.h"
 #include "distributions/models/probability/distribution/uniform_distribution.h"
 
-void assert_cumulative_distributive_function_direct_and_inverse_is(Inference::Distribution * distribution, double x, double result) {
+void assert_cumulative_distributive_function_direct_and_inverse_is(Distributions::Distribution * distribution, double x, double result) {
   double r = distribution->cumulativeDistributiveFunctionAtAbscissa(x);
   quiz_assert(!std::isnan(r));
   quiz_assert(!std::isinf(r));
@@ -28,7 +28,7 @@ void assert_cumulative_distributive_function_direct_and_inverse_is(Inference::Di
   quiz_assert(std::fabs(r-x) < FLT_EPSILON || std::fabs(r-x)/x < FLT_EPSILON);
 }
 
-void assert_finite_integral_between_abscissas_is(Inference::Distribution * distribution, double a, double b, double result) {
+void assert_finite_integral_between_abscissas_is(Distributions::Distribution * distribution, double a, double b, double result) {
   double r = distribution->finiteIntegralBetweenAbscissas(a, b);
   quiz_assert(!std::isnan(r));
   quiz_assert(!std::isinf(r));
@@ -37,7 +37,7 @@ void assert_finite_integral_between_abscissas_is(Inference::Distribution * distr
 
 QUIZ_CASE(probability_binomial_distribution) {
   // B(32, 0.6)
-  Inference::BinomialDistribution distribution;
+  Distributions::BinomialDistribution distribution;
   distribution.setParameterAtIndex(32.0, 0);
   distribution.setParameterAtIndex(0.6, 1);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(4), std::pow(1 - 0.6, 32 - 4) * std::pow(0.6, 4) * 35960 /* 32 choose 4 */, 1e-4);
@@ -63,7 +63,7 @@ QUIZ_CASE(probability_binomial_distribution) {
 
 QUIZ_CASE(probability_uniform_distribution) {
   // U(-1, 1)
-  Inference::UniformDistribution distribution;
+  Distributions::UniformDistribution distribution;
   distribution.setParameterAtIndex(-1, 0);
   distribution.setParameterAtIndex(1, 1);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(4), 0);
@@ -81,7 +81,7 @@ QUIZ_CASE(probability_uniform_distribution) {
 
 QUIZ_CASE(probability_exponential_distribution) {
   // EXP(1)
-  Inference::ExponentialDistribution distribution;
+  Distributions::ExponentialDistribution distribution;
   distribution.setParameterAtIndex(1, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1), std::exp(-1.f));
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(14), std::exp(-14.f));
@@ -98,7 +98,7 @@ QUIZ_CASE(probability_exponential_distribution) {
 
 QUIZ_CASE(probability_poisson_distribution) {
   // POISSON(1)
-  Inference::PoissonDistribution distribution;
+  Distributions::PoissonDistribution distribution;
   distribution.setParameterAtIndex(1, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1), std::exp(-1.f));
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(8), std::exp(-1.f) / 40320 /* 8! */);
@@ -115,7 +115,7 @@ QUIZ_CASE(probability_poisson_distribution) {
 
 QUIZ_CASE(probability_chi_squared_distribution) {
   // Chi Squared distribution with 1 degree of freedom
-  Inference::ChiSquaredDistribution distribution;
+  Distributions::ChiSquaredDistribution distribution;
   distribution.setParameterAtIndex(1.0, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.1), 1.2f, 1e-4);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 1.3, 0.7457867763960355222963016785797663033008575439453125);
@@ -147,7 +147,7 @@ QUIZ_CASE(probability_chi_squared_distribution) {
 
 QUIZ_CASE(probability_student_distribution) {
   // Student distribution with 1 degree of freedom
-  Inference::StudentDistribution distribution;
+  Distributions::StudentDistribution distribution;
   distribution.setParameterAtIndex(1.0, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.1), 0.31515830315226806f);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, -2.0, 0.1475836176504332741754010762247405259511345238869178945999223128627);
@@ -178,7 +178,7 @@ QUIZ_CASE(probability_student_distribution) {
 
 QUIZ_CASE(probability_geometric_distribution) {
   // Geometric distribution with probability of success 0.5
-  Inference::GeometricDistribution distribution;
+  Distributions::GeometricDistribution distribution;
   distribution.setParameterAtIndex(0.5, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(3), 1.f / 8.f);
   assert_cumulative_distributive_function_direct_and_inverse_is(&distribution, 1.0, 0.5);
@@ -200,7 +200,7 @@ QUIZ_CASE(probability_geometric_distribution) {
 
 QUIZ_CASE(probability_normal_distribution) {
   // N(0, 1)
-  Inference::NormalDistribution distribution;
+  Distributions::NormalDistribution distribution;
   distribution.setParameterAtIndex(0, 0);
   distribution.setParameterAtIndex(1, 1);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1), 0.24197072451914337);
@@ -225,7 +225,7 @@ QUIZ_CASE(probability_normal_distribution) {
 
 QUIZ_CASE(probability_fisher_distribution) {
   // Fisher distribution with d1 = 1 and d2 = 1
-  Inference::FisherDistribution distribution;
+  Distributions::FisherDistribution distribution;
   distribution.setParameterAtIndex(1.0, 0);
   distribution.setParameterAtIndex(1.0, 1);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1), 0.15915494309189535);

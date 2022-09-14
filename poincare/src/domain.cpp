@@ -21,8 +21,7 @@ TrinaryBoolean Domain::ExpressionIsIn(const Expression &expression, Type type, C
   if (type & k_onlyNegative) {
     TrinaryBoolean isPositive = expression.isPositive(context);
     if (isPositive != TrinaryBoolean::False) {
-      // Return False if isPositive is True
-      return TrinaryNot(isPositive);
+      return isPositive == TrinaryBoolean::True ? TrinaryBoolean::False : TrinaryBoolean::Unknown;
     }
   }
 

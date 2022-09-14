@@ -20,7 +20,7 @@ apps_layout = apps/home/apps_layout.csv
 $(eval $(call rule_for, \
   APPS_LAYOUT, \
   apps/home/apps_layout.cpp, \
-  , \
+  $(apps_layout), \
   $$(PYTHON) apps/home/apps_layout.py --layouts $(apps_layout) --header $$(subst .cpp,.h,$$@) --implementation $$@ --apps $$(EPSILON_APPS), \
   global \
 ))

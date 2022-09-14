@@ -497,10 +497,7 @@ Expression Multiplication::shallowBeautify(const ExpressionNode::ReductionContex
         Expression division = Division::Builder(Multiplication::Builder(self.clone(), units), toUnit.clone());
         Expression divisionUnit;
         division = division.reduceAndRemoveUnit(reductionContext, &divisionUnit);
-        if (!divisionUnit.isUninitialized()) {
-          // The left and right members are not homogeneous
-          return replaceWithUndefinedInPlace();
-        }
+        assert(divisionUnit.isUninitialized());
         result = Multiplication::Builder(division, toUnit);
         assert(!result.isUninitialized());
         self.replaceWithInPlace(result);

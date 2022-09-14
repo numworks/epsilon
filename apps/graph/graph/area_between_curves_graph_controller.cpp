@@ -18,6 +18,17 @@ const char * AreaBetweenCurvesGraphController::title() {
   return I18n::translate(I18n::Message::UseFunctionModel);
 }
 
+void AreaBetweenCurvesGraphController::viewDidDisappear() {
+  m_graphView->selectSecondRecord(nullptr);
+  m_secondRecord = nullptr;
+  IntegralGraphController::viewDidDisappear();
+}
+
+void AreaBetweenCurvesGraphController::setSecondRecord(Ion::Storage::Record record) {
+  m_graphView->selectSecondRecord(record);
+  m_secondRecord = record;
+}
+
 Layout AreaBetweenCurvesGraphController::createFunctionLayout(ExpiringPointer<Shared::Function> function) {
   // TODO: New function layout
   constexpr size_t bufferSize = SymbolAbstract::k_maxNameSize+5; // f(x)dx

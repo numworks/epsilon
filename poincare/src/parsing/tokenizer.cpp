@@ -37,20 +37,21 @@ size_t Tokenizer::popWhile(PopTest popTest) {
   return length;
 }
 
-static bool ShouldAddCodePointToIdentfierExcludingDigits(const CodePoint c) {
-  return c.isDecimalDigit() || c.isLatinLetter() || c == UCodePointSystem || c == '_' || c == UCodePointDegreeSign || c == '\'' || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
+static bool IsNonDigitalIdentifierMaterial(const CodePoint c) {
+  // CodePointSystem is used to parse dependencies
+  return c.isLatinLetter() || c == UCodePointSystem || c == '_' || c == UCodePointDegreeSign || c == '\'' || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
 }
 
-bool Tokenizer::ShouldAddCodePointToIdentifier(const CodePoint c) {
-  return c.isDecimalDigit() || ShouldAddCodePointToIdentfierExcludingDigits(c);
+bool Tokenizer::IsIdentifierMaterial(const CodePoint c) {
+  return c.isDecimalDigit() || IsNonDigitalIdentifierMaterial(c);
 }
 
 size_t Tokenizer::popCustomIdentifier() {
-  return popWhile([](CodePoint c) { return ShouldAddCodePointToIdentifier(c); });
+  return popWhile([](CodePoint c) { return IsIdentifierMaterial(c); });
 }
 
 size_t Tokenizer::popIdentifiersString() {
-  return popWhile([](CodePoint c) { return ShouldAddCodePointToIdentifier(c) || c == '"'; });
+  return popWhile([](CodePoint c) { return IsIdentifierMaterial(c) || c == '"'; });
 }
 
 size_t Tokenizer::popDigits() {
@@ -143,7 +144,7 @@ Token Tokenizer::popToken() {
 
   // According to c, recognize the Token::Type.
   if (!nextCodePointIsNeitherDotNorDigit) {
-    /* An implicit addition between units always start with a number. so we
+    /* An implicit addition between units always starts with a number. So we
      * check here if there is one. If the parsingMethod is already Implicit
      * AdditionBetweenUnits, we don't need to check it again. */
     if (m_parsingContext->parsingMethod() != ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
@@ -181,13 +182,13 @@ Token Tokenizer::popToken() {
     return result;
   }
 
-  if (ShouldAddCodePointToIdentifier(c))
+  if (IsIdentifierMaterial(c))
   {
     if (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
-      /* If currently popping an implicit addition, we should already have
+      /* If currently popping an implicit addition, we have already
        * checked that any identifier is a unit. */
       Token result(Token::Unit);
-      result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c) + popWhile([](CodePoint c) { return ShouldAddCodePointToIdentfierExcludingDigits(c); }));
+      result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c) + popWhile([](CodePoint c) { return IsNonDigitalIdentifierMaterial(c); }));
       assert(Unit::CanParse(result.text(), result.length(), nullptr, nullptr));
       return result;
     }
@@ -300,7 +301,7 @@ void Tokenizer::fillIdentifiersList() {
        * list of token. */
       m_numberOfStoredIdentifiers = 0;
     }
-    Token rightMostToken = popRightMostIdentifier(identifiersStringStart, &currentStringEnd);
+    Token rightMostToken = popLongestRightMostIdentifier(identifiersStringStart, &currentStringEnd);
     m_storedIdentifiersList[m_numberOfStoredIdentifiers] = rightMostToken;
     m_numberOfStoredIdentifiers++;
   }
@@ -312,7 +313,7 @@ void Tokenizer::fillIdentifiersList() {
   goToPosition(rightMostParsedToken.text() + rightMostParsedToken.length());
 }
 
-Token Tokenizer::popRightMostIdentifier(const char * stringStart, const char * * stringEnd) {
+Token Tokenizer::popLongestRightMostIdentifier(const char * stringStart, const char * * stringEnd) {
   UTF8Decoder decoder(stringStart);
   Token::Type tokenType = Token::Undefined;
   /* Find the right-most identifier by trying to parse 'abcd', then 'bcd',
@@ -459,18 +460,18 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
     length += lengthOfNumber;
     const char * currentStringStart = m_decoder.stringPosition() - UTF8Decoder::CharSizeOfCodePoint(c);
     size_t lengthOfPotentialUnit = 0;
-    while (ShouldAddCodePointToIdentfierExcludingDigits(c)) {
+    while (IsNonDigitalIdentifierMaterial(c)) {
       lengthOfPotentialUnit += UTF8Decoder::CharSizeOfCodePoint(c);
       c = m_decoder.nextCodePoint();
     }
-    const Unit::Representative * unitRepresentative;
-    const Unit::Prefix * unitPrefix;
     if (lengthOfPotentialUnit == 0) {
       // Second element is not a unit: the string is not an implicit addition
       isImplicitAddition = false;
       break;
     }
     length += lengthOfPotentialUnit;
+    const Unit::Representative * unitRepresentative;
+    const Unit::Prefix * unitPrefix;
     if (!Unit::CanParse(currentStringStart, lengthOfPotentialUnit, &unitRepresentative, &unitPrefix)) {
       // Second element is not a unit: the string is not an implicit addition
       isImplicitAddition = false;

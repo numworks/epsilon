@@ -40,6 +40,7 @@ private:
   static bool ShouldAddCodePointToIdentifier(const CodePoint c);
   typedef bool (*PopTest)(CodePoint c);
   const CodePoint nextCodePoint(PopTest popTest, bool * testResult = nullptr);
+  static bool IsIdentifierMaterial(const CodePoint c);
   bool canPopCodePoint(const CodePoint c);
   size_t popWhile(PopTest popTest);
   size_t popDigits();
@@ -106,7 +107,7 @@ private:
    * */
   size_t popIdentifiersString();
   void fillIdentifiersList();
-  Token popRightMostIdentifier(const char * stringStart, const char * * stringEnd);
+  Token popLongestRightMostIdentifier(const char * stringStart, const char * * stringEnd);
   Token::Type stringTokenType(const char * string, size_t * length) const;
 
   /* ========== IMPLICIT ADDITION BETWEEN UNITS ==========

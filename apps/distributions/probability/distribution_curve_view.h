@@ -4,8 +4,8 @@
 #include <apps/shared/curve_view.h>
 #include <poincare/coordinate_2D.h>
 
-#include "inference/models/probability/calculation/calculation.h"
-#include "inference/models/probability/distribution/distribution.h"
+#include "distributions/models/probability/calculation/calculation.h"
+#include "distributions/models/probability/distribution/distribution.h"
 
 namespace Inference {
 

@@ -1,8 +1,8 @@
 #ifndef INFERENCE_PROBABILITY_PARAMETERS_CONTROLLER_H
 #define INFERENCE_PROBABILITY_PARAMETERS_CONTROLLER_H
 
-#include "inference/shared/expression_cell_with_editable_text_with_message.h"
-#include "inference/models/probability/distribution/distribution.h"
+#include "distributions/shared/expression_cell_with_editable_text_with_message.h"
+#include "distributions/models/probability/distribution/distribution.h"
 #include <apps/shared/float_parameter_controller.h>
 #include "calculation_controller.h"
 

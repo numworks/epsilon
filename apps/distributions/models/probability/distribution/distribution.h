@@ -1,11 +1,11 @@
 #ifndef PROBABILITE_DISTRIBUTION_DISTRIBUTION_H
 #define PROBABILITE_DISTRIBUTION_DISTRIBUTION_H
 
-#include "inference/models/inference.h"
-#include "inference/models/probability/calculation/discrete_calculation.h"
-#include "inference/models/probability/calculation/finite_integral_calculation.h"
-#include "inference/models/probability/calculation/left_integral_calculation.h"
-#include "inference/models/probability/calculation/right_integral_calculation.h"
+#include "distributions/models/inference.h"
+#include "distributions/models/probability/calculation/discrete_calculation.h"
+#include "distributions/models/probability/calculation/finite_integral_calculation.h"
+#include "distributions/models/probability/calculation/left_integral_calculation.h"
+#include "distributions/models/probability/calculation/right_integral_calculation.h"
 #include <poincare/distribution.h>
 #include <new>
 

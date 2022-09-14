@@ -2,7 +2,7 @@
 
 #include <assert.h>
 
-#include "inference/app.h"
+#include "distributions/app.h"
 
 using namespace Escher;
 

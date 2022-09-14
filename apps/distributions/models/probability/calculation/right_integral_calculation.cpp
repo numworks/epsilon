@@ -1,5 +1,5 @@
 #include "right_integral_calculation.h"
-#include "inference/models/probability/distribution/distribution.h"
+#include "distributions/models/probability/distribution/distribution.h"
 #include <poincare/preferences.h>
 #include <cmath>
 #include <assert.h>

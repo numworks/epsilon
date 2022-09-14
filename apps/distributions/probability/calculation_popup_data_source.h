@@ -4,7 +4,7 @@
 #include <escher/list_view_data_source.h>
 
 #include <escher/highlight_image_cell.h>
-#include "inference/models/probability/distribution/distribution.h"
+#include "distributions/models/probability/distribution/distribution.h"
 
 namespace Inference {
 

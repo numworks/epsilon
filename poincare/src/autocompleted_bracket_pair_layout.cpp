@@ -44,7 +44,11 @@ void AutocompletedBracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * curso
     return BracketPairLayoutNode::deleteBeforeCursor(cursor);
   }
   if (childLayout()->isEmpty() && isTemporary(OtherSide(deletionSide))) {
-    return BracketPairLayoutNode::deleteBeforeCursor(cursor);
+    /* Use LayoutNode::deleteBeforeCursor instead of BracketPairLayoutNode::,
+     * as that one will attempt to enter the bracket from the right. */
+    cursor->setLayout(Layout(this));
+    cursor->setPosition(LayoutCursor::Position::Right);
+    return LayoutNode::deleteBeforeCursor(cursor);
   }
 
   LayoutCursor nextCursor = cursorAfterDeletion(deletionSide);

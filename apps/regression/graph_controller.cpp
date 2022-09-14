@@ -136,7 +136,7 @@ KDCoordinate GraphController::SeriesSelectionController::nonMemoizedRowHeight(in
 void GraphController::SeriesSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   int series = graphController()->m_store->indexOfKthValidSeries(index);
   const char * name = Store::SeriesTitle(series);
-  static_cast<CurveSelectionCell *>(cell)->setLayout(LayoutHelper::String(name));
+  static_cast<CurveSelectionCellWithChevron *>(cell)->setLayout(LayoutHelper::String(name));
 }
 
 bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {

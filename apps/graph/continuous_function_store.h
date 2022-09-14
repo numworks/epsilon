@@ -8,6 +8,10 @@ namespace Graph {
 
 class ContinuousFunctionStore : public Shared::FunctionStore {
 public:
+  static bool isFunctionActiveAndDerivable(Shared::ExpressionModelHandle * model, void * context) {
+    return isFunctionActive(model, context) && static_cast<Shared::ContinuousFunction *>(model)->canDisplayDerivative();
+  }
+
   ContinuousFunctionStore() : FunctionStore() {}
   int numberOfActiveFunctionsInTable() const {
     return numberOfModelsSatisfyingTest(&isFunctionActiveInTable, nullptr);
@@ -57,9 +61,6 @@ private:
   }
   static bool isFunctionIntersectable(Shared::ExpressionModelHandle * model, void * context) {
     return static_cast<Shared::ContinuousFunction *>(model)->isIntersectable();
-  }
-  static bool isFunctionActiveAndDerivable(Shared::ExpressionModelHandle * model, void * context) {
-    return isFunctionActive(model, context) && static_cast<Shared::ContinuousFunction *>(model)->canDisplayDerivative();
   }
   int maxNumberOfMemoizedModels() const override { return k_maxNumberOfMemoizedModels; }
   const char * modelExtension() const override { return Ion::Storage::funcExtension; }

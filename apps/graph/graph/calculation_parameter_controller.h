@@ -5,6 +5,7 @@
 #include <escher/selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_switch.h>
 #include "area_between_curves_graph_controller.h"
+#include "area_between_curves_parameter_controller.h"
 #include "preimage_parameter_controller.h"
 #include "tangent_graph_controller.h"
 #include "extremum_graph_controller.h"
@@ -51,6 +52,7 @@ private:
   Escher::MessageTableCellWithSwitch m_derivativeCell;
   TangentGraphController m_tangentGraphController;
   IntegralGraphController m_integralGraphController;
+  AreaBetweenCurvesParameterController m_areaParameterController;
   AreaBetweenCurvesGraphController m_areaGraphController;
   MinimumGraphController m_minimumGraphController;
   MaximumGraphController m_maximumGraphController;

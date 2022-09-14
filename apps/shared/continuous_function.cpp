@@ -304,7 +304,13 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, dou
     // Expressions of x and y
     assert(plotType() < PlotType::Polar);
     // The subcurve number would need to be passed down here to properly assert
-    assert(numberOfSubCurves() > 1 || evaluateXYAtParameter(cursorT, context).x1() == cursorX && evaluateXYAtParameter(cursorT, context).x2() == cursorY);
+    assert(numberOfSubCurves() > 1
+          || (evaluateXYAtParameter(cursorT, context).x1() == cursorX
+              || (std::isnan(cursorX) && std::isnan(evaluateXYAtParameter(cursorT, context).x1()))
+             && evaluateXYAtParameter(cursorT, context).x2() == cursorY
+              || (std::isnan(cursorY) && std::isnan(evaluateXYAtParameter(cursorT, context).x2()))
+            )
+          );
     return index == 0 ? cursorX : cursorY;
   }
 }

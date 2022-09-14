@@ -131,6 +131,8 @@ void TabViewController::setActiveTab(int8_t i, bool enter) {
     m_children[m_dataSource->activeTab()]->viewDidDisappear();
     m_dataSource->setActiveTab(i);
   }
+  /* If enter is false, we switch to the ith tab but the focus stays on the tab
+   * button. It is useful when pressing Back on a non-leftmost tab. */
   if (enter) {
     Container::activeApp()->setFirstResponder(activeVC);
   }

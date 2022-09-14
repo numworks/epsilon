@@ -8,7 +8,7 @@
 
 using namespace Escher;
 
-namespace Inference {
+namespace Distributions {
 
 CalculationCell::CalculationCell(Responder * parentResponder,
                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
@@ -94,4 +94,4 @@ KDCoordinate CalculationCell::calculationCellWidth() const {
   return std::min(maxTextFieldWidth, std::max(minTextFieldWidth, calculationCellWidth));
 }
 
-}  // namespace Inference
+}  // namespace Distributions

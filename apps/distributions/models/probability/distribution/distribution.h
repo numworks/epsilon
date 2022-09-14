@@ -9,7 +9,7 @@
 #include <poincare/distribution.h>
 #include <new>
 
-namespace Inference {
+namespace Distributions {
 
 class Distribution : public Inference {
 public:

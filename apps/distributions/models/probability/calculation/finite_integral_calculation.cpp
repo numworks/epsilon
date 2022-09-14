@@ -4,7 +4,7 @@
 
 #include "distributions/models/probability/distribution/normal_distribution.h"
 
-namespace Inference {
+namespace Distributions {
 
 FiniteIntegralCalculation::FiniteIntegralCalculation(Distribution * distribution) :
   Calculation(distribution),

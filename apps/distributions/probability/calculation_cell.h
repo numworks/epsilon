@@ -7,7 +7,7 @@
 #include <escher/message_text_view.h>
 #include <escher/text_field_delegate.h>
 
-namespace Inference {
+namespace Distributions {
 
 class CalculationCell : public Escher::HighlightCell {
 public:
@@ -35,6 +35,6 @@ private:
   bool m_isResponder;
 };
 
-}  // namespace Inference
+}  // namespace Distributions
 
 #endif /* DISTRIBUTIONS_PROBABILITY_CALCULATION_CELL_H */

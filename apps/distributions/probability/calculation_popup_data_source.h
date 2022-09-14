@@ -6,7 +6,7 @@
 #include <escher/highlight_image_cell.h>
 #include "distributions/models/probability/distribution/distribution.h"
 
-namespace Inference {
+namespace Distributions {
 
 /* Provides the views shown to select the desired calculation. */
 class CalculationPopupDataSource : public Escher::ListViewDataSource {
@@ -27,6 +27,6 @@ private:
   Distribution * m_distribution;
 };
 
-}  // namespace Inference
+}  // namespace Distributions
 
 #endif /* DISTRIBUTIONS_PROBABILITY_CALCULATION_POPUP_DATA_SOURCE_H */

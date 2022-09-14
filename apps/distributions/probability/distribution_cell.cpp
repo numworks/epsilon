@@ -2,7 +2,7 @@
 
 using namespace Escher;
 
-namespace Inference {
+namespace Distributions {
 
 DistributionCell::DistributionCell() :
     TableCell(),
@@ -26,4 +26,4 @@ void DistributionCell::setImage(const Image * image) {
   m_iconView.setImage(image);
 }
 
-}  // namespace Inference
+}  // namespace Distributions

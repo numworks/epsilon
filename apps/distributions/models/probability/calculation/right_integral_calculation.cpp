@@ -4,7 +4,7 @@
 #include <cmath>
 #include <assert.h>
 
-namespace Inference {
+namespace Distributions {
 
 RightIntegralCalculation::RightIntegralCalculation(Distribution * distribution) :
   Calculation(distribution),

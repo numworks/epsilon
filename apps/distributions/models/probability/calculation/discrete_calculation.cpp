@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <cmath>
 
-namespace Inference {
+namespace Distributions {
 
 DiscreteCalculation::DiscreteCalculation(Distribution * distribution) :
   Calculation(distribution),

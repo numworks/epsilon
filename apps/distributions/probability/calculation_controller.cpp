@@ -16,7 +16,7 @@ using namespace Poincare;
 using namespace Shared;
 using namespace Escher;
 
-namespace Inference {
+namespace Distributions {
 
 constexpr int CalculationController::k_titleBufferSize;
 
@@ -252,4 +252,4 @@ void CalculationController::updateTitle() {
   }
 }
 
-}  // namespace Inference
+}  // namespace Distributions

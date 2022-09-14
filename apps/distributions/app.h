@@ -27,7 +27,7 @@
 #include "statistic/type_controller.h"
 #include "models/models_buffer.h"
 
-namespace Inference {
+namespace Distributions {
 
 class App : public Shared::ExpressionFieldDelegateApp, public Shared::MenuControllerDelegate {
 public:
@@ -116,6 +116,6 @@ private:
   DynamicCellsDataSourceDestructor * m_bufferDestructor;
 };
 
-}  // namespace Inference
+}  // namespace Distributions
 
 #endif /* DISTRIBUTIONS_APP_H */

@@ -13,7 +13,7 @@
 #include <cmath>
 #include <float.h>
 
-namespace Inference {
+namespace Distributions {
 
 bool Distribution::Initialize(Distribution * distribution, Poincare::Distribution::Type type) {
   if (distribution->type() == type) {
@@ -62,7 +62,7 @@ float Distribution::evaluateAtAbscissa(float x) const {
 }
 
 void Distribution::setParameterAtIndex(double f, int index) {
-  Inference::setParameterAtIndex(f, index);
+  Distributions::setParameterAtIndex(f, index);
   computeCurveViewRange();
 }
 

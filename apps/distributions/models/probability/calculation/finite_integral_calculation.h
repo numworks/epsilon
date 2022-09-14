@@ -3,7 +3,7 @@
 
 #include "calculation.h"
 
-namespace Inference {
+namespace Distributions {
 
 class FiniteIntegralCalculation : public Calculation {
 public:

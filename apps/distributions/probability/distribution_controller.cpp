@@ -29,7 +29,7 @@
 
 using namespace Escher;
 
-namespace Inference {
+namespace Distributions {
 
 DistributionController::DistributionController(Escher::StackViewController * parentResponder,
                                                Distribution * distribution,
@@ -109,4 +109,4 @@ void DistributionController::setDistributionAccordingToIndex(int index) {
   }
 }
 
-}  // namespace Inference
+}  // namespace Distributions

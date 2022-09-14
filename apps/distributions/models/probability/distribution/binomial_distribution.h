@@ -3,7 +3,7 @@
 
 #include "two_parameters_distribution.h"
 
-namespace Inference {
+namespace Distributions {
 
 class BinomialDistribution final : public TwoParametersDistribution {
 public:

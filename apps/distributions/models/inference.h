@@ -8,7 +8,7 @@
 
 // Inference is the common ancestor of Statistic and Probability
 
-namespace Inference {
+namespace Distributions {
 
 struct ParameterRepresentation {
   Poincare::Layout m_symbol;

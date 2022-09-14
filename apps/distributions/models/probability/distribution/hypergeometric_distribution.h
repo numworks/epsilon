@@ -4,7 +4,7 @@
 #include "three_parameters_distribution.h"
 #include <poincare/layout_helper.h>
 
-namespace Inference {
+namespace Distributions {
 
 class HypergeometricDistribution final : public ThreeParametersDistribution {
 public:

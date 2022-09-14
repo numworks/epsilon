@@ -9,7 +9,7 @@
 #include "distributions/probability/distribution_cell.h"
 #include "distributions/models/probability/distribution/distribution.h"
 
-namespace Inference {
+namespace Distributions {
 
 class DistributionController : public Escher::SelectableListViewController<Escher::SimpleListViewDataSource> {
 public:
@@ -37,6 +37,6 @@ private:
   ParametersController * m_parametersController;
 };
 
-}  // namespace Inference
+}  // namespace Distributions
 
 #endif /* DISTRIBUTIONS_PROBABILITY_DISTRIBUTION_CONTROLLER_H */

@@ -6,7 +6,7 @@
 #include "right_integral_calculation.h"
 #include <cmath>
 
-namespace Inference {
+namespace Distributions {
 
 bool Calculation::Initialize(Calculation * calculation, Type type, Distribution * distribution, bool forceReinitialisation) {
   bool changedType = false;

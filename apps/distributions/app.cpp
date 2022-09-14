@@ -10,7 +10,7 @@
 #include "images/probability.h"
 #include "images/significance_test.h"
 
-namespace Inference {
+namespace Distributions {
 
 const Escher::Image * App::Descriptor::icon() const {
   return ImageStore::InferenceIcon;
@@ -130,7 +130,7 @@ void App::cleanBuffer(DynamicCellsDataSourceDestructor * destructor) {
 }
 
 void App::selectSubApp(int subAppIndex) {
-  if (subAppIndex >= 0 && Inference::Initialize(snapshot()->inference(), static_cast<Inference::SubApp>(subAppIndex))) {
+  if (subAppIndex >= 0 && Distributions::Initialize(snapshot()->inference(), static_cast<Inference::SubApp>(subAppIndex))) {
     m_distributionController.selectRow(0);
     m_testController.selectRow(0);
     m_hypothesisController.selectRow(0);
@@ -151,4 +151,4 @@ void App::Snapshot::reset() {
   m_pageQueue.reset();
 }
 
-}  // namespace Inference
+}  // namespace Distributions

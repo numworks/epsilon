@@ -210,6 +210,8 @@ poincare_src += $(addprefix poincare/src/,\
   vector_dot.cpp \
   vector_norm.cpp \
   zoom.cpp \
+  solver2.cpp \
+  solver_algorithms.cpp \
 )
 
 poincare_src += $(addprefix poincare/src/parsing/,\
@@ -252,7 +254,8 @@ tests_src += $(addprefix poincare/test/,\
   rational.cpp\
   regularized_function.cpp \
   simplification.cpp\
-  zoom.cpp\
+  zoom.cpp \
+  solver2.cpp \
 )
 
 poincare_bench_src = $(addprefix poincare/src/,\

@@ -504,23 +504,24 @@ Expression UnitNode::AngleRepresentative::convertInto(Expression value, const Un
 int UnitNode::AngleRepresentative::setAdditionalExpressionsWithExactValue(Expression exactValue, double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
   int numberOfResults = 0;
+  // Conversion to radians should be added to all other units.
   if (this != representativesOfSameDimension() + Unit::k_radianRepresentativeIndex) {
-    // Convert to radians
     const Representative * radian = representativesOfSameDimension() + Unit::k_radianRepresentativeIndex;
     dest[numberOfResults++] = convertInto(exactValue, radian, reductionContext);
   }
+  // Conversion to degrees should be added to all units not degree related
   if (this == representativesOfSameDimension() + Unit::k_radianRepresentativeIndex || this == representativesOfSameDimension() + Unit::k_gradianRepresentativeIndex) {
-    // Convert to degrees
     const Representative * degree = representativesOfSameDimension() + Unit::k_degreeRepresentativeIndex;
     dest[numberOfResults++] = convertInto(exactValue, degree, reductionContext);
+    return numberOfResults;
   }
-  // Degrees and its subunits
+  // Degrees related units should show their decomposition in DMS
   const Unit splitUnits[] = {
     Unit::Builder(representativesOfSameDimension() + Unit::k_arcSecondRepresentativeIndex, Prefix::EmptyPrefix()),
     Unit::Builder(representativesOfSameDimension() + Unit::k_arcMinuteRepresentativeIndex, Prefix::EmptyPrefix()),
     Unit::Builder(representativesOfSameDimension() + Unit::k_degreeRepresentativeIndex, Prefix::EmptyPrefix()),
   };
-  Expression split = Unit::BuildSplit(value*ratio(), splitUnits, sizeof(splitUnits)/sizeof(Unit), reductionContext);
+  Expression split = Unit::BuildSplit(value, splitUnits, sizeof(splitUnits)/sizeof(Unit), reductionContext);
   if (!split.isUndefined()) {
     dest[numberOfResults++] = split;
   }
@@ -871,8 +872,8 @@ int Unit::SetAdditionalExpressions(Expression units, double value, Expression * 
     Expression unit;
     ExpressionNode::ReductionContext childContext = reductionContext;
     childContext.setUnitConversion(ExpressionNode::UnitConversion::None);
-    exactValue.reduceAndRemoveUnit(reductionContext, &unit);
-    return static_cast<const AngleRepresentative*>(representative)->setAdditionalExpressionsWithExactValue(exactValue, value, dest, availableLength, reductionContext);
+    exactValue = exactValue.reduceAndRemoveUnit(childContext, &unit);
+    return static_cast<const AngleRepresentative*>(unit.convert<Unit>().representative())->setAdditionalExpressionsWithExactValue(exactValue, value, dest, availableLength, reductionContext);
   }
   return representative->setAdditionalExpressions(value, dest, availableLength, reductionContext);
 }

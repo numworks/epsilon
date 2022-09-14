@@ -66,32 +66,37 @@ Coordinate2D<T> Solver2<T>::nextRoot(Expression e) {
   ExpressionNode::Type type = e.type();
 
   switch (type) {
-    case ExpressionNode::Type::Multiplication:
-      /* x*y = 0 => x = 0 or y = 0
-       * Check the result in case another term is undefined,
-       * e.g. (x+1)*ln(x) for x =- 1*/
-      registerSolution(nextRootInMultiplication(e), Interest::Root);
-      return result();
+  case ExpressionNode::Type::Multiplication:
+    /* x*y = 0 => x = 0 or y = 0
+     * Check the result in case another term is undefined,
+     * e.g. (x+1)*ln(x) for x =- 1*/
+    registerSolution(nextRootInMultiplication(e), Interest::Root);
+    return result();
 
-    case ExpressionNode::Type::Power:
-    case ExpressionNode::Type::NthRoot:
-    case ExpressionNode::Type::Division:
-      /* f(x,y) = 0 => x = 0
-       * Check the result as some values of y may invalidate it (e.g. x^(1/x)
-       * or (x-1)/ln(x)). */
-      registerSolution(nextPossibleRootInChild(e, 0), Interest::Root);
-      return result();
+  case ExpressionNode::Type::Power:
+  case ExpressionNode::Type::NthRoot:
+  case ExpressionNode::Type::Division:
+    /* f(x,y) = 0 => x = 0
+     * Check the result as some values of y may invalidate it (e.g. x^(1/x)
+     * or (x-1)/ln(x)). */
+    registerSolution(nextPossibleRootInChild(e, 0), Interest::Root);
+    return result();
 
-    case ExpressionNode::Type::AbsoluteValue:
-    case ExpressionNode::Type::HyperbolicSine:
-    case ExpressionNode::Type::Opposite:
-    case ExpressionNode::Type::SquareRoot:
-      /* f(x) = 0 <=> x = 0 */
-      return nextRoot(e.childAtIndex(0));
+  case ExpressionNode::Type::AbsoluteValue:
+  case ExpressionNode::Type::HyperbolicSine:
+  case ExpressionNode::Type::Opposite:
+  case ExpressionNode::Type::SquareRoot:
+    /* f(x) = 0 <=> x = 0 */
+    return nextRoot(e.childAtIndex(0));
 
-    default:
-      return next(e, RootInBracket, SolverAlgorithms::BrentRoot);
+  default:
+    return nextRootNumeric(e);
   }
+}
+
+template<typename T>
+Coordinate2D<T> Solver2<T>::nextMinimum(Expression e) {
+  return next(e, MinimumInBracket, SolverAlgorithms::BrentMinimum);
 }
 
 template<typename T>
@@ -157,7 +162,7 @@ Coordinate2D<T> Solver2<T>::nextPossibleRootInChild(Expression e, int childIndex
   Expression child = e.childAtIndex(childIndex);
   T xRoot = solver.nextRoot(child).x1();
   while (std::isfinite(xRoot)) {
-    if (std::fabs(e.approximateWithValueForSymbol<T>(m_unknown, xRoot, m_context->context(), m_context->complexFormat(), m_context->angleUnit())) < nullTolerance()) {
+    if (std::fabs(e.approximateWithValueForSymbol<T>(m_unknown, xRoot, m_context->context(), m_context->complexFormat(), m_context->angleUnit())) < NullTolerance(m_precision)) {
       return Coordinate2D<T>(xRoot, k_zero);
     }
     xRoot = solver.nextRoot(child).x1();
@@ -180,6 +185,53 @@ Coordinate2D<T> Solver2<T>::nextRootInMultiplication(Expression e) const {
 }
 
 template<typename T>
+Coordinate2D<T> Solver2<T>::nextRootNumeric(Expression e) {
+  /* Even roots (e.g. x^2 for x = 0) cannot be found by searching for
+   * changes in sign. We also need to look for extrema, and check if they
+   * are roots. */
+  BracketTest test = [](T a, T b, T c) {
+    Interest root = RootInBracket(a, b, c);
+    if (root != Interest::None) {
+      return root;
+    }
+    /* FIXME Check the sign of a,b and c. A minimum can only be a root if b is
+     * positive. */
+    Interest extremum = MinimumInBracket(a, b, c);
+    return extremum == Interest::None ? MaximumInBracket(a, b, c) : extremum;
+  };
+
+  HoneResult hone = [](FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision) {
+    if (interest == Interest::Root) {
+      return SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, precision);
+    }
+    Coordinate2D<T> res;
+    if (interest == Interest::LocalMinimum) {
+      res = SolverAlgorithms::BrentMinimum(f, aux, xMin, xMax, interest, precision);
+    } else {
+      assert(interest == Interest::LocalMaximum);
+      const void * pack[] = {&f, aux};
+      FunctionEvaluation minusF = [](T x, const void * aux) {
+        const void * const * param = reinterpret_cast<const void * const *>(aux);
+        const FunctionEvaluation * f = reinterpret_cast<const FunctionEvaluation *>(param[0]);
+        return -(*f)(x, param[1]);
+      };
+      res = SolverAlgorithms::BrentMinimum(minusF, pack, xMin, xMax, interest, precision);
+    }
+    if (std::isfinite(res.x1()) && std::fabs(res.x2()) < NullTolerance(precision)) {
+      return res;
+    }
+    return Coordinate2D<T>(k_NAN, k_NAN);
+  };
+
+  Coordinate2D<T> res = next(e, test, hone);
+  if (lastInterest() != Interest::None) {
+    m_lastInterest = Interest::Root;
+  }
+  return res;
+}
+
+
+template<typename T>
 void Solver2<T>::registerSolution(Coordinate2D<T> solution, Interest interest) {
   if (std::isfinite(solution.x1())) {
     m_xStart = solution.x1();
@@ -193,5 +245,7 @@ void Solver2<T>::registerSolution(Coordinate2D<T> solution, Interest interest) {
 // Explicit template instanciations
 
 template Coordinate2D<double> Solver2<double>::nextRoot(Expression e);
+template Coordinate2D<double> Solver2<double>::nextMinimum(Expression e);
+template Coordinate2D<double> Solver2<double>::nextRootNumeric(Expression e);
 
 }

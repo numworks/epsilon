@@ -1042,7 +1042,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
     }
     if (highestCoefficientIsPositive == TrinaryBoolean::False) {
       // Oppose the comparison operator
-      m_equationType = ComparisonNode::Reverse(modelEquationType);
+      m_equationType = ComparisonNode:: SwitchInferiorSuperior(modelEquationType);
     }
   }
 

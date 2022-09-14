@@ -38,7 +38,7 @@ bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expres
           });
         }, context)
     /* If the input contains the following types, we only display the
-      * approximate output. */
+      * approximate output. Same if it contains an unit other than an angle. */
     || input.recursivelyMatches(
       [](const Expression e, Context * c) {
         return e.isOfType({

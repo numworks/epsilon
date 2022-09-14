@@ -72,7 +72,7 @@ bool ComparisonNode::IsComparisonOperatorString(const char * s, size_t length, O
 }
 
 
-ComparisonNode::OperatorType ComparisonNode::Reverse(OperatorType type) {
+ComparisonNode::OperatorType ComparisonNode:: SwitchInferiorSuperior(OperatorType type) {
   switch (type) {
   case OperatorType::Superior:
     return OperatorType::Inferior;
@@ -108,7 +108,7 @@ TrinaryBoolean ComparisonNode::TruthValueOfOperator(OperatorType type, TrinaryBo
   }
   if (type == OperatorType::Inferior || type == OperatorType::InferiorEqual) {
     // Revert the symbol to handle only the Superior and SuperiorOrEqual cases
-    type = Reverse(type);
+    type = SwitchInferiorSuperior(type);
     leftChildIsGreater = TrinaryNot(leftChildIsGreater);
   }
   if (type == OperatorType::Superior) {

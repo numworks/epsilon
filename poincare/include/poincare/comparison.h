@@ -27,7 +27,7 @@ public:
   static CodePoint ComparisonCodePoint(OperatorType type);
   static bool IsComparisonOperatorCodePoint(CodePoint c, OperatorType * returnType = nullptr);
   static bool IsComparisonOperatorString(const char * s, size_t length, OperatorType * returnType = nullptr);
-  static OperatorType Reverse(OperatorType type);
+  static OperatorType SwitchInferiorSuperior(OperatorType type);
 
   static bool IsBinaryComparison(Expression e, OperatorType * returnType = nullptr);
   static bool IsBinaryComparisonWithOperator(Expression e, OperatorType operatorType);

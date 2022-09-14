@@ -36,7 +36,7 @@ public:
     m_tokenizer(text, &m_parsingContext, textEnd),
     m_currentToken(Token(Token::Undefined)),
     m_nextToken(Token(Token::Undefined)),
-    m_pendingImplicitMultiplication(false),
+    m_pendingImplicitOperator(false),
     m_waitingSlashForMixedFraction(false)
   {}
 
@@ -52,7 +52,9 @@ private:
   void popToken();
   bool popTokenIfType(Token::Type type);
   bool nextTokenHasPrecedenceOver(Token::Type stoppingType);
-  void isThereImplicitMultiplication();
+
+  void isThereImplicitOperator();
+  Token::Type implicitOperatorType();
 
   // Specific Token parsers
   void parseUnexpected(Expression & leftHandSide, Token::Type stoppingType = (Token::Type)0);
@@ -105,7 +107,6 @@ private:
   void parseSequence(Expression & leftHandSide, const char * name, Token::Type rightDelimiter);
   void defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & leftHandSide, Token::Type stoppingType);
   bool generateMixedFractionIfNeeded(Expression & leftHandSide);
-  bool implicitMultiplicationShouldTurnIntoImplicitAddition();
   // Allows you to rewind to previous position
   void rememberCurrentParsingPosition(const char ** tokenizerPosition, Token * storedCurrentToken = nullptr, Token * storedNextToken = nullptr);
   void restorePreviousParsingPosition(const char * tokenizerPosition, Token storedCurrentToken = Token(Token::Undefined), Token storedNextToken = Token(Token::Undefined));
@@ -118,7 +119,7 @@ private:
   Tokenizer m_tokenizer;
   Token m_currentToken;
   Token m_nextToken;
-  bool m_pendingImplicitMultiplication;
+  bool m_pendingImplicitOperator;
   bool m_waitingSlashForMixedFraction;
 };
 

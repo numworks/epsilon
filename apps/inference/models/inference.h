@@ -21,7 +21,6 @@ public:
   virtual ~Inference() = default;
 
   enum class SubApp {
-    Probability,
     Test,
     Interval,
     NumberOfSubApps

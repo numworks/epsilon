@@ -1,5 +1,4 @@
 #include "inference.h"
-#include "probability/distribution/binomial_distribution.h"
 #include "statistic/one_mean_t_test.h"
 #include "statistic/one_mean_t_interval.h"
 
@@ -15,9 +14,6 @@ bool Inference::Initialize(Inference * inference, SubApp subApp) {
   inference->~Inference();
   Statistic * s = nullptr;
   switch (subApp) {
-    case SubApp::Probability:
-      new (inference) BinomialDistribution();
-      break;
     case SubApp::Test:
       s = new (inference) OneMeanTTest();
       break;

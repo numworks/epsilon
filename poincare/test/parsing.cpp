@@ -392,6 +392,13 @@ QUIZ_CASE(poincare_parsing_units) {
   assert_parsed_expression_is("πkm", Multiplication::Builder(Constant::Builder("π"), kilometer));
   assert_parsed_expression_is("skm", Multiplication::Builder(second, kilometer));
   assert_parsed_expression_is("3s", Multiplication::Builder(BasedInteger::Builder(3), second));
+
+  Expression degree = Expression::Parse("_°", nullptr);
+  Expression arcsecond = Expression::Parse("_\"", nullptr);
+  assert_parsed_expression_is("3°", Multiplication::Builder(BasedInteger::Builder(3), degree));
+  assert_parsed_expression_is("3\"", Multiplication::Builder(BasedInteger::Builder(3), arcsecond));
+  assert_parsed_expression_is("3\"+a\"", Addition::Builder(Multiplication::Builder(BasedInteger::Builder(3), arcsecond), Multiplication::Builder(Symbol::Builder("a", 1), arcsecond.clone())));
+  assert_parsed_expression_is("3\"abc\"", Multiplication::Builder(BasedInteger::Builder(3), Symbol::Builder("\"abc\"", 5)));
 }
 
 QUIZ_CASE(poincare_parsing_identifiers) {

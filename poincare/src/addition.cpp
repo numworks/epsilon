@@ -54,22 +54,31 @@ int AdditionNode::getPolynomialCoefficients(Context * context, const char * symb
 // Layout
 
 Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  bool implicitAddition = displayImplicitAdditionBetweenUnits();
-  Layout result = LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, implicitAddition ? "" : "+", context);
-  if (implicitAddition) {
+  Layout result = LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, "+", context);
+  if (displayImplicitAdditionBetweenUnits()) {
     /* Check if the layout of the implicit addtion contains an 'ᴇ'.
      * If it's the case, return a normal addition layout, since implicit
      * addition should not contain any 'ᴇ'.
-     * We check this after creating the layout because it seems simpler
-     * but it might not be ideal since we create the layout twice if it fails.
+     * If not, remove the '+'.
      * */
     int n = result.numberOfChildren();
     for (int i = 0; i < n ; i++) {
       Layout child = result.childAtIndex(i);
       if ((child.type() == LayoutNode::Type::CodePointLayout && static_cast<CodePointLayout&>(child).codePoint() == UCodePointLatinLetterSmallCapitalE)
           || (child.type() == LayoutNode::Type::StringLayout && UTF8Helper::CountOccurrences(static_cast<StringLayout&>(child).string(), UCodePointLatinLetterSmallCapitalE) > 0)) {
-        return LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, "+", context);
+        // Result contains 'ᴇ'.
+        return result;
       }
+    }
+    // Result does not contain 'ᴇ'. Remove the '+'
+    int i = 0;
+    while (i < result.numberOfChildren()) {
+      Layout child = result.childAtIndex(i);
+      if (child.type() == LayoutNode::Type::CodePointLayout && static_cast<CodePointLayout&>(child).codePoint() == '+') {
+        result.removeChildAtIndex(i, nullptr);
+        i--;
+      }
+      i++;
     }
   }
   return result;
@@ -106,8 +115,7 @@ bool AdditionNode::displayImplicitAdditionBetweenUnits() const {
     if (child.type() != Type::Multiplication || child.numberOfChildren() != 2 || !child.childAtIndex(0).isOfType({Type::BasedInteger, Type::Decimal, Type::Double, Type::Float}) || child.childAtIndex(1).type() != Type::Unit || child.childAtIndex(0).isPositive(nullptr) == TrinaryBoolean::False) {
       return false;
     }
-    Expression tempUnitOfChild = child.childAtIndex(1);
-    Unit  unitOfChild = static_cast<Unit &>(tempUnitOfChild);
+    Unit unitOfChild = child.childAtIndex(1).convert<Unit>();
     if (storedUnitRepresentative && !Unit::AllowImplicitAddition(unitOfChild.representative(), storedUnitRepresentative)) {
       return false;
     }

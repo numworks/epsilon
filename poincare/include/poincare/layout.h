@@ -12,6 +12,7 @@ class LayoutCursor;
 class Expression;
 
 class Layout : public TreeHandle {
+  friend class AdditionNode;
   friend class GridLayoutNode;
   friend class HorizontalLayoutNode;
   friend class LayoutNode;

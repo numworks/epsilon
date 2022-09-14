@@ -1,5 +1,5 @@
-#ifndef INFERENCE_MODELS_BUFFER_H
-#define INFERENCE_MODELS_BUFFER_H
+#ifndef DISTRIBUTIONS_MODELS_BUFFER_H
+#define DISTRIBUTIONS_MODELS_BUFFER_H
 
 #include <new>
 
@@ -112,4 +112,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* INFERENCE_MODELS_BUFFER_H */
+#endif /* DISTRIBUTIONS_MODELS_BUFFER_H */

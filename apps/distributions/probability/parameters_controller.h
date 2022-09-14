@@ -1,5 +1,5 @@
-#ifndef INFERENCE_PROBABILITY_PARAMETERS_CONTROLLER_H
-#define INFERENCE_PROBABILITY_PARAMETERS_CONTROLLER_H
+#ifndef DISTRIBUTIONS_PROBABILITY_PARAMETERS_CONTROLLER_H
+#define DISTRIBUTIONS_PROBABILITY_PARAMETERS_CONTROLLER_H
 
 #include "distributions/shared/expression_cell_with_editable_text_with_message.h"
 #include "distributions/models/probability/distribution/distribution.h"
@@ -56,4 +56,4 @@ private:
 
 }
 
-#endif /* INFERENCE_PROBABILITY_PARAMETERS_CONTROLLER_H */
+#endif /* DISTRIBUTIONS_PROBABILITY_PARAMETERS_CONTROLLER_H */

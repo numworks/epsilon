@@ -11,6 +11,20 @@
 
 namespace Shared {
 
+// Expression view with color on the left (TODO)
+class CurveSelectionCell : public Escher::TableCell {
+public:
+  CurveSelectionCell() :
+    Escher::TableCell(),
+    m_expressionView(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite)
+  {}
+  Escher::View * labelView() const override { return const_cast<Escher::ExpressionView *>(&m_expressionView); }
+  void setHighlighted(bool highlight) override;
+  void setLayout(Poincare::Layout layout);
+private:
+  Escher::ExpressionView m_expressionView;
+};
+
 class InteractiveCurveViewController;
 
 class CurveSelectionController : public Escher::ViewController, public Escher::SelectableTableViewDataSource, public Escher::ListViewDataSource {
@@ -25,20 +39,13 @@ public:
   int typeAtLocation(int i, int j) override { return 0; }
 
 protected:
-  // ExpressionTable cell with chevron and color indicator
-  class CurveSelectionCell : public Escher::TableCell {
+  // Add chevron
+  class CurveSelectionCellWithChevron : public CurveSelectionCell {
   public:
-    CurveSelectionCell() :
-      Escher::TableCell(),
-      m_expressionView(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite)
-    {}
-    Escher::View * labelView() const override { return const_cast<Escher::ExpressionView *>(&m_expressionView); }
+    CurveSelectionCellWithChevron() : CurveSelectionCell() {}
     Escher::View * accessoryView() const override { return const_cast<Escher::ChevronView *>(&m_chevronView); }
     bool subviewsCanOverlap() const override { return true; }
-    void setHighlighted(bool highlight) override;
-    void setLayout(Poincare::Layout layout);
   private:
-    Escher::ExpressionView m_expressionView;
     Escher::ChevronView m_chevronView;
   };
 

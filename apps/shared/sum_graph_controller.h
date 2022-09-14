@@ -33,6 +33,7 @@ protected:
   double m_result;
   Ion::Storage::Record m_record;
   InteractiveCurveViewRange * m_graphRange;
+  FunctionGraphView * m_graphView;
 private:
   float cursorTopMarginRatio() override { return 0.06f; }
   float cursorBottomMarginRatio() override { return 0.28f; }
@@ -77,7 +78,6 @@ private:
     char m_textBuffer[k_editableZoneBufferSize];
     CodePoint m_sumSymbol;
   };
-  FunctionGraphView * m_graphView;
   LegendView m_legendView;
   VerticalCursorView m_cursorView;
 };

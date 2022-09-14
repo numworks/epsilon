@@ -17,13 +17,13 @@ public:
   enum Type {
     // Ordered from lower to higher precedence to make Parser's job easier
     EndOfStream = 0, // Must be the first
+    RightwardsArrow,
+    AssignmentEqual,
     RightSystemParenthesis,
     RightBracket,
     RightParenthesis,
     RightBrace,
     Comma,
-    AssignmentEqual,
-    RightwardsArrow,
     Nor,
     Xor,
     Or,

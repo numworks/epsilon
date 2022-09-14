@@ -105,13 +105,13 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
   typedef void (Parser::*TokenParser)(Expression & leftHandSide, Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
     &Parser::parseUnexpected,           // Token::EndOfStream
+    &Parser::parseRightwardsArrow,      // Token::RightwardsArrow
+    &Parser::parseAssigmentEqual,       // Token::AssignmentEqual
     &Parser::parseUnexpected,           // Token::RightSystemParenthesis
     &Parser::parseUnexpected,           // Token::RightBracket
     &Parser::parseUnexpected,           // Token::RightParenthesis
     &Parser::parseUnexpected,           // Token::RightBrace
     &Parser::parseUnexpected,           // Token::Comma
-    &Parser::parseAssigmentEqual,       // Token::AssignmentEqual
-    &Parser::parseRightwardsArrow,      // Token::RightwardsArrow
     &Parser::parseNorOperator,          // Token::Nor
     &Parser::parseXorOperator,          // Token::Xor
     &Parser::parseOrOperator,           // Token::Or

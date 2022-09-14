@@ -174,13 +174,12 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
       return e.replaceWithUndefinedInPlace();
     }
     Unit unitRef = static_cast<Unit &>(unit);
-    if (unitRef.representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector()) {
-      // The child has been converted to radians already by the reduction
-      reductionContext.setAngleUnit(Preferences::AngleUnit::Radian);
-      assert(unitRef.representative()->isBaseUnit());
-    } else {
+    if (unitRef.representative()->dimensionVector() != Unit::AngleRepresentative::Default().dimensionVector()) {
       return e.replaceWithUndefinedInPlace();
     }
+    // The child has been converted to radians already by the reduction
+    reductionContext.setAngleUnit(Preferences::AngleUnit::Radian);
+    assert(unitRef.representative()->isBaseUnit());
   }
 
   // Step 1. Try finding an easy standard calculation reduction

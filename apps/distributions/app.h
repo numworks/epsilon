@@ -1,5 +1,5 @@
-#ifndef INFERENCE_APP_H
-#define INFERENCE_APP_H
+#ifndef DISTRIBUTIONS_APP_H
+#define DISTRIBUTIONS_APP_H
 
 #include <apps/shared/menu_controller.h>
 #include <apps/shared/shared_app.h>
@@ -118,4 +118,4 @@ private:
 
 }  // namespace Inference
 
-#endif /* INFERENCE_APP_H */
+#endif /* DISTRIBUTIONS_APP_H */

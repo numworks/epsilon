@@ -1,6 +1,6 @@
 #include "distribution_curve_view.h"
 
-#include "inference/models/probability/distribution/normal_distribution.h"
+#include "distributions/models/probability/distribution/normal_distribution.h"
 
 using namespace Shared;
 using namespace Escher;

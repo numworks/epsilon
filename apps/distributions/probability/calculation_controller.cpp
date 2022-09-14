@@ -9,8 +9,8 @@
 #include <cmath>
 
 #include "../images/calculation1_icon.h"
-#include "inference/app.h"
-#include "inference/constants.h"
+#include "distributions/app.h"
+#include "distributions/constants.h"
 
 using namespace Poincare;
 using namespace Shared;

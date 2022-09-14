@@ -6,15 +6,15 @@
 #include <cmath>
 
 #include <poincare/test/helper.h>
-#include "inference/models/probability/distribution/binomial_distribution.h"
-#include "inference/models/probability/distribution/chi_squared_distribution.h"
-#include "inference/models/probability/distribution/exponential_distribution.h"
-#include "inference/models/probability/distribution/fisher_distribution.h"
-#include "inference/models/probability/distribution/geometric_distribution.h"
-#include "inference/models/probability/distribution/normal_distribution.h"
-#include "inference/models/probability/distribution/poisson_distribution.h"
-#include "inference/models/probability/distribution/student_distribution.h"
-#include "inference/models/probability/distribution/uniform_distribution.h"
+#include "distributions/models/probability/distribution/binomial_distribution.h"
+#include "distributions/models/probability/distribution/chi_squared_distribution.h"
+#include "distributions/models/probability/distribution/exponential_distribution.h"
+#include "distributions/models/probability/distribution/fisher_distribution.h"
+#include "distributions/models/probability/distribution/geometric_distribution.h"
+#include "distributions/models/probability/distribution/normal_distribution.h"
+#include "distributions/models/probability/distribution/poisson_distribution.h"
+#include "distributions/models/probability/distribution/student_distribution.h"
+#include "distributions/models/probability/distribution/uniform_distribution.h"
 
 void assert_cumulative_distributive_function_direct_and_inverse_is(Inference::Distribution * distribution, double x, double result) {
   double r = distribution->cumulativeDistributiveFunctionAtAbscissa(x);

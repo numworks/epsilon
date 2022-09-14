@@ -3,16 +3,16 @@
 
 #include <apps/shared/parameter_text_field_delegate.h>
 
-#include "inference/constants.h"
-#include "inference/probability/calculation_cell.h"
-#include "inference/probability/calculation_popup_data_source.h"
-#include "inference/probability/distribution_curve_view.h"
+#include "distributions/constants.h"
+#include "distributions/probability/calculation_cell.h"
+#include "distributions/probability/calculation_popup_data_source.h"
+#include "distributions/probability/distribution_curve_view.h"
 #include <escher/dropdown_view.h>
 #include <escher/view_controller.h>
 #include <escher/stack_view_controller.h>
-#include "inference/models/probability/calculation/calculation.h"
-#include "inference/models/probability/distribution/distribution.h"
-#include "inference/text_helpers.h"
+#include "distributions/models/probability/calculation/calculation.h"
+#include "distributions/models/probability/distribution/distribution.h"
+#include "distributions/text_helpers.h"
 
 namespace Inference {
 

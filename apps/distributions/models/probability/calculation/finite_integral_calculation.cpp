@@ -2,7 +2,7 @@
 
 #include <assert.h>
 
-#include "inference/models/probability/distribution/normal_distribution.h"
+#include "distributions/models/probability/distribution/normal_distribution.h"
 
 namespace Inference {
 

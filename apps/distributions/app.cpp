@@ -5,7 +5,7 @@
 #include <apps/exam_mode_configuration.h>
 
 #include "models/statistic/homogeneity_test.h"
-#include "inference_icon.h"
+#include "distributions_icon.h"
 #include "images/confidence_interval.h"
 #include "images/probability.h"
 #include "images/significance_test.h"

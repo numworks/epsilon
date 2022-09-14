@@ -6,8 +6,8 @@
 #include <new>
 
 #include "parameters_controller.h"
-#include "inference/probability/distribution_cell.h"
-#include "inference/models/probability/distribution/distribution.h"
+#include "distributions/probability/distribution_cell.h"
+#include "distributions/models/probability/distribution/distribution.h"
 
 namespace Inference {
 

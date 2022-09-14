@@ -1,5 +1,5 @@
 #include "calculation.h"
-#include "inference/models/probability/distribution/distribution.h"
+#include "distributions/models/probability/distribution/distribution.h"
 #include "discrete_calculation.h"
 #include "finite_integral_calculation.h"
 #include "left_integral_calculation.h"

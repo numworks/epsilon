@@ -40,7 +40,7 @@ Coordinate2D<T> Solver2<T>::next(FunctionEvaluation f, const void * aux, Bracket
     interest = test(y1, y2, y3);
     if (interest != Interest::None) {
       solution = hone(f, aux, x1, x3, interest, m_precision);
-      if (std::isfinite(solution.x1())) {
+      if (std::isfinite(solution.x1()) && solution.x1() != start()) {
         break;
       }
     }

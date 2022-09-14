@@ -26,6 +26,7 @@ QUIZ_CASE(poincare_solver_2) {
   assert_root_is("(x-5)^2/((x-6)(x-4))", -10., 10., 5.);
   assert_root_is("(x+1)^2/(x^2*(x+2))", -10., 10., -1.);
   assert_root_is("(x+1)ln(x)", 0., -10., NAN);
-  // assert_root_is("x^(1/x)", -123., 123., NAN); // FIXME Infinite loop
+  assert_root_is("x^(1/x)", -123., 123., NAN);
   assert_root_is("x^x", -1e-2, 1e2, NAN);
+  assert_root_is("(x+2)(x+3)(x+4)", -3.5, 0., -3.);
 }

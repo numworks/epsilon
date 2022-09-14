@@ -9,8 +9,6 @@
 #include <escher/stack_view_controller.h>
 #include <ion/ring_buffer.h>
 
-#include "probability/distribution_controller.h"
-#include "probability/parameters_controller.h"
 #include "shared/dynamic_cells_data_source.h"
 #include "shared/expression_field_delegate_app.h"
 #include "statistic/chi_square_and_slope/categorical_type_controller.h"
@@ -48,8 +46,6 @@ public:
     void reset() override;
 
     Inference * inference() { return m_modelBuffer.inference(); }
-    Distribution * distribution() { return m_modelBuffer.distribution(); }
-    Calculation * calculation() { return m_modelBuffer.calculation(); }
     Statistic * statistic() { return m_modelBuffer.statistic(); }
 
     Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> * pageQueue() { return &m_pageQueue; }
@@ -103,9 +99,6 @@ private:
   TypeController m_typeController;
   CategoricalTypeController m_categoricalTypeController;
   HypothesisController m_hypothesisController;
-  CalculationController m_calculationController;
-  ParametersController m_parameterController;
-  DistributionController m_distributionController;
   TestController m_testController;
   Shared::MenuController m_menuController;
   Escher::StackViewController m_stackViewController;

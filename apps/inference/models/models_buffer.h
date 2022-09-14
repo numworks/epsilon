@@ -3,16 +3,6 @@
 
 #include <new>
 
-#include "probability/distribution/binomial_distribution.h"
-#include "probability/distribution/chi_squared_distribution.h"
-#include "probability/distribution/exponential_distribution.h"
-#include "probability/distribution/fisher_distribution.h"
-#include "probability/distribution/geometric_distribution.h"
-#include "probability/distribution/hypergeometric_distribution.h"
-#include "probability/distribution/normal_distribution.h"
-#include "probability/distribution/poisson_distribution.h"
-#include "probability/distribution/student_distribution.h"
-#include "probability/distribution/uniform_distribution.h"
 #include "statistic/goodness_test.h"
 #include "statistic/homogeneity_test.h"
 #include "statistic/hypothesis_params.h"
@@ -34,34 +24,6 @@
 namespace Inference {
 
 // Buffers for dynamic allocation
-
-union DistributionBuffer {
-public:
-  DistributionBuffer() {
-    new (&m_binomialDistribution) BinomialDistribution();
-    distribution()->calculation()->compute(0);
-  }
-  ~DistributionBuffer() { distribution()->~Distribution(); }
-  // Rule of 5
-  DistributionBuffer(const DistributionBuffer& other) = delete;
-  DistributionBuffer(DistributionBuffer&& other) = delete;
-  DistributionBuffer& operator=(const DistributionBuffer& other) = delete;
-  DistributionBuffer& operator=(DistributionBuffer&& other) = delete;
-
-  Distribution * distribution() { return reinterpret_cast<Distribution *>(this); }
-
-private:
-  BinomialDistribution m_binomialDistribution;
-  UniformDistribution m_uniformDistribution;
-  ExponentialDistribution m_exponentDistribution;
-  NormalDistribution m_normalDistribution;
-  ChiSquaredDistribution m_chiSquaredDistribution;
-  StudentDistribution m_studentDistribution;
-  GeometricDistribution m_geometricDistribution;
-  PoissonDistribution m_poissonDistribution;
-  HypergeometricDistribution m_hypergeometricDistribution;
-  FisherDistribution m_fisherDistribution;
-};
 
 union StatisticBuffer {
 public:
@@ -98,15 +60,12 @@ private:
 
 union ModelBuffer {
 public:
-  ModelBuffer() { new (&m_distributionBuffer) DistributionBuffer(); }
+  ModelBuffer() { new (&m_statisticBuffer) StatisticBuffer(); }
   ~ModelBuffer() { inference()->~Inference(); }
   Inference * inference() { return reinterpret_cast<Inference *>(this); }
-  Distribution * distribution() { return m_distributionBuffer.distribution(); }
-  Calculation * calculation() { return distribution()->calculation(); }
   Statistic * statistic() { return m_statisticBuffer.statistic(); }
 
 private:
-  DistributionBuffer m_distributionBuffer;
   StatisticBuffer m_statisticBuffer;
 };
 

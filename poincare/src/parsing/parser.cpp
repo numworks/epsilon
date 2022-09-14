@@ -154,15 +154,9 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
 }
 
 void Parser::popToken() {
-  if (m_pendingImplicitMultiplication) {
-    if (implicitMultiplicationShouldTurnIntoImplicitAddition()) {
-        /* When parsing implicit addition, there is a "Plus" instead of a
-         * "Times" after each unit. */
-        m_currentToken = Token(Token::Plus);
-    } else {
-      m_currentToken = Token(Token::ImplicitTimes);
-    }
-    m_pendingImplicitMultiplication = false;
+  if (m_pendingImplicitOperator) {
+    m_currentToken = Token(implicitOperatorType());
+    m_pendingImplicitOperator = false;
   } else {
     m_currentToken = m_nextToken;
     if (m_currentToken.is(Token::EndOfStream)) {
@@ -180,7 +174,7 @@ bool Parser::popTokenIfType(Token::Type type) {
    * (Left and Right) Braces, Bracket, Parenthesis and Comma.
    * Never with Token::ImplicitTimes.
    * If this assumption is not satisfied anymore, change the following to handle ImplicitTimes. */
-  assert(type != Token::ImplicitTimes && !m_pendingImplicitMultiplication);
+  assert(type != Token::ImplicitTimes && !m_pendingImplicitOperator);
   bool tokenTypesCoincide = m_nextToken.is(type);
   if (tokenTypesCoincide) {
     popToken();
@@ -189,7 +183,7 @@ bool Parser::popTokenIfType(Token::Type type) {
 }
 
 bool Parser::nextTokenHasPrecedenceOver(Token::Type stoppingType) {
-  Token::Type nextTokenType = (m_pendingImplicitMultiplication) ? (implicitMultiplicationShouldTurnIntoImplicitAddition() ? Token::Plus : Token::ImplicitTimes) : m_nextToken.type();
+  Token::Type nextTokenType = (m_pendingImplicitOperator) ? implicitOperatorType() : m_nextToken.type();
   if (m_waitingSlashForMixedFraction && nextTokenType == Token::Type::Slash) {
     /* When parsing a mixed fraction, we cannot parse until a token type
      * with lower precedence than slash, but we still need not to stop on the
@@ -203,14 +197,15 @@ bool Parser::nextTokenHasPrecedenceOver(Token::Type stoppingType) {
   return nextTokenType > stoppingType;
 }
 
-void Parser::isThereImplicitMultiplication() {
+void Parser::isThereImplicitOperator() {
   /* This function is called at the end of
    * parseNumber, parseSpecialIdentifier, parseReservedFunction, parseUnit,
    * parseFactorial, parseMatrix, parseLeftParenthesis, parseCustomIdentifier
    * in order to check whether it should be followed by a Token::ImplicitTimes.
-   * In that case, m_pendingImplicitMultiplication is set to true,
-   * so that popToken, popTokenIfType, nextTokenHasPrecedenceOver can handle implicit multiplication. */
-  m_pendingImplicitMultiplication = (
+   * In that case, m_pendingImplicitOperator is set to true,
+   * so that popToken, popTokenIfType, nextTokenHasPrecedenceOver can handle
+   * implicit multiplication. */
+  m_pendingImplicitOperator = (
     m_nextToken.is(Token::Number) ||
     m_nextToken.is(Token::Constant) ||
     m_nextToken.is(Token::Unit) ||
@@ -223,6 +218,10 @@ void Parser::isThereImplicitMultiplication() {
     m_nextToken.is(Token::LeftBrace) ||
     m_nextToken.is(Token::ImplicitAdditionBetweenUnits)
   );
+}
+
+Token::Type Parser::implicitOperatorType() {
+  return m_parsingContext.parsingMethod() == ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits && m_currentToken.type() == Token::Unit ? Token::Plus : Token::ImplicitTimes;
 }
 
 void Parser::parseUnexpected(Expression & leftHandSide, Token::Type stoppingType) {
@@ -244,7 +243,7 @@ void Parser::parseNumber(Expression & leftHandSide, Token::Type stoppingType) {
     m_status = Status::Error;
     return;
   }
-  isThereImplicitMultiplication();
+  isThereImplicitOperator();
 }
 
 void Parser::parseEmpty(Expression & leftHandSide, Token::Type stoppingType) {
@@ -333,7 +332,7 @@ void Parser::parseImplicitAdditionBetweenUnits(Expression & leftHandSide, Token:
     m_status = Status::Error;
     return;
   }
-  isThereImplicitMultiplication();
+  isThereImplicitOperator();
 }
 
 void Parser::parseSlash(Expression & leftHandSide, Token::Type stoppingType) {
@@ -381,7 +380,7 @@ void Parser::parseCaretWithParenthesis(Expression & leftHandSide, Token::Type st
     return;
   }
   leftHandSide = Power::Builder(leftHandSide, rightHandSide);
-  isThereImplicitMultiplication();
+  isThereImplicitOperator();
 }
 
 void Parser::parseComparisonOperator(Expression & leftHandSide, Token::Type stoppingType) {
@@ -528,7 +527,7 @@ void Parser::parseBang(Expression & leftHandSide, Token::Type stoppingType) {
   } else {
     leftHandSide = Factorial::Builder(leftHandSide);
   }
-  isThereImplicitMultiplication();
+  isThereImplicitOperator();
 }
 
 void Parser::parsePercent(Expression & leftHandSide, Token::Type stoppingType) {
@@ -536,14 +535,14 @@ void Parser::parsePercent(Expression & leftHandSide, Token::Type stoppingType) {
     m_status = Status::Error; // Left-hand side missing
     return;
   }
-  isThereImplicitMultiplication();
   leftHandSide = PercentSimple::Builder(leftHandSide);
+  isThereImplicitOperator();
 }
 
 void Parser::parseConstant(Expression & leftHandSide, Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
   leftHandSide = Constant::Builder(m_currentToken.text(), m_currentToken.length());
-  isThereImplicitMultiplication();
+  isThereImplicitOperator();
 }
 
 void Parser::parseUnit(Expression & leftHandSide, Token::Type stoppingType) {
@@ -555,7 +554,7 @@ void Parser::parseUnit(Expression & leftHandSide, Token::Type stoppingType) {
     return;
   }
   leftHandSide = Unit::Builder(unitRepresentative, unitPrefix);
-  isThereImplicitMultiplication();
+  isThereImplicitOperator();
 }
 
 void Parser::parseReservedFunction(Expression & leftHandSide, Token::Type stoppingType) {
@@ -563,7 +562,7 @@ void Parser::parseReservedFunction(Expression & leftHandSide, Token::Type stoppi
   const Expression::FunctionHelper * const * functionHelper = ParsingHelper::GetReservedFunction(m_currentToken.text(), m_currentToken.length());
   assert(functionHelper != nullptr);
   privateParseReservedFunction(leftHandSide, functionHelper);
-  isThereImplicitMultiplication();
+  isThereImplicitOperator();
 }
 
 void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper) {
@@ -699,7 +698,7 @@ void Parser::parseSequence(Expression & leftHandSide, const char * name, Token::
 void Parser::parseSpecialIdentifier(Expression & leftHandSide, Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
   leftHandSide = ParsingHelper::GetIdentifierBuilder(m_currentToken.text(), m_currentToken.length())();
-  isThereImplicitMultiplication();
+  isThereImplicitOperator();
   return;
 }
 
@@ -708,7 +707,7 @@ void Parser::parseCustomIdentifier(Expression & leftHandSide, Token::Type stoppi
   const char * name = m_currentToken.text();
   size_t length = m_currentToken.length();
   privateParseCustomIdentifier(leftHandSide, name, length, stoppingType);
-  isThereImplicitMultiplication();
+  isThereImplicitOperator();
 }
 
 void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char * name, size_t length, Token::Type stoppingType) {
@@ -869,7 +868,7 @@ void Parser::parseMatrix(Expression & leftHandSide, Token::Type stoppingType) {
   } else {
     leftHandSide = matrix;
   }
-  isThereImplicitMultiplication();
+  isThereImplicitOperator();
 }
 
 Expression Parser::parseVector() {
@@ -920,7 +919,7 @@ void Parser::defaultParseLeftParenthesis(bool isSystemParenthesis, Expression & 
   if (!isSystemParenthesis) {
     leftHandSide = Parenthesis::Builder(leftHandSide);
   }
-  isThereImplicitMultiplication();
+  isThereImplicitOperator();
 }
 
 void Parser::parseList(Expression & leftHandSide, Token::Type stoppingType) {
@@ -943,7 +942,7 @@ void Parser::parseList(Expression & leftHandSide, Token::Type stoppingType) {
     result = List::Builder();
   }
   leftHandSide = result;
-  isThereImplicitMultiplication();
+  isThereImplicitOperator();
 }
 
 bool IsIntegerBaseTenOrEmptyExpression(Expression e) {
@@ -986,10 +985,6 @@ bool Parser::generateMixedFractionIfNeeded(Expression & leftHandSide) {
   return false;
 }
 
-bool Parser::implicitMultiplicationShouldTurnIntoImplicitAddition() {
-  return m_parsingContext.parsingMethod() == ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits && m_currentToken.type() == Token::Unit;
-}
-
 void Parser::rememberCurrentParsingPosition(const char ** tokenizerPosition, Token * storedCurrentToken, Token * storedNextToken) {
   if (storedCurrentToken) {
     *storedCurrentToken = m_currentToken;
@@ -999,11 +994,11 @@ void Parser::rememberCurrentParsingPosition(const char ** tokenizerPosition, Tok
   }
   *tokenizerPosition = m_tokenizer.currentPosition();
 }
+
 void Parser::restorePreviousParsingPosition(const char * tokenizerPosition, Token storedCurrentToken, Token storedNextToken) {
   m_tokenizer.goToPosition(tokenizerPosition);
   m_currentToken = storedCurrentToken;
   m_nextToken = storedNextToken;
 }
-
 
 }

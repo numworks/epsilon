@@ -36,8 +36,9 @@ public:
   void setRecord(Ion::Storage::Record record);
 private:
   bool shouldDisplayIntersection() const;
+  bool shouldDisplayAreaBetweenCurves() const;
   Escher::MessageTableCellWithChevron m_preimageCell;
-  constexpr static int k_totalNumberOfReusableCells = 7;
+  constexpr static int k_totalNumberOfReusableCells = 6;
   constexpr static int k_defaultCellType = 0;
   constexpr static int k_derivativeCellType = 1;
   constexpr static int k_preImageCellType = 2;

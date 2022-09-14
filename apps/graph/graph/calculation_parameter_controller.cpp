@@ -83,8 +83,8 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 int CalculationParameterController::numberOfRows() const {
-  // Inverse row + [optional intersection row] + derivative + all other rows (max, min zeros, derivative, tangent, integral)
-  return 1 + shouldDisplayIntersection() + 1 + k_totalNumberOfReusableCells - 1;
+  // Inverse row + [optional intersection row] + [optional area between curves row] + derivative + all other rows (max, min zeros, derivative, tangent, integral)
+  return 1 + shouldDisplayIntersection() + shouldDisplayAreaBetweenCurves() + 1 + k_totalNumberOfReusableCells - 1;
 };
 
 HighlightCell * CalculationParameterController::reusableCell(int index, int type) {
@@ -128,6 +128,13 @@ bool CalculationParameterController::shouldDisplayIntersection() const {
   /* Intersection row is displayed if there is at least two intersectable
    * functions. */
   return store->numberOfIntersectableFunctions() > 1;
+}
+
+bool CalculationParameterController::shouldDisplayAreaBetweenCurves() const {
+  ContinuousFunctionStore * store = App::app()->functionStore();
+  /* Area between curves is displayed if there is at least two derivable
+   * functions. */
+  return store->numberOfActiveDerivableFunctions() > 1;
 }
 
 }

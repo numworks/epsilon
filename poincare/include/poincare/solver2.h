@@ -35,6 +35,7 @@ public:
   Coordinate2D<T> next(FunctionEvaluation f, const void * aux, BracketTest test, HoneResult hone);
   Coordinate2D<T> next(Expression e, BracketTest test, HoneResult hone);
   Coordinate2D<T> nextRoot(Expression e);
+  Coordinate2D<T> nextMinimum(Expression e);
 
 private:
   struct FunctionEvaluationParameters {
@@ -48,14 +49,17 @@ private:
   constexpr static T k_NAN = static_cast<T>(NAN);
   constexpr static T k_zero = static_cast<T>(0.);
 
+  static T NullTolerance(T precision) { /* TODO */ return precision; }
   constexpr static Interest BoolToInterest(bool v, Interest t, Interest f = Interest::None) { return v ? t : f; }
   // BracketTest default implementations
   static Interest RootInBracket(T a, T b, T c) { return BoolToInterest((a < k_zero && k_zero < c) || (c < k_zero && k_zero < a), Interest::Root); }
+  static Interest MinimumInBracket(T a, T b, T c) { return BoolToInterest(b < a && b < c, Interest::LocalMinimum); }
+  static Interest MaximumInBracket(T a, T b, T c) { return BoolToInterest(a < b && c < b, Interest::LocalMaximum); }
 
-  T nullTolerance() const { /* TODO */ return m_precision; }
   T nextX(T x, T direction) const;
   Coordinate2D<T> nextPossibleRootInChild(Expression e, int childIndex) const;
   Coordinate2D<T> nextRootInMultiplication(Expression m) const;
+  Coordinate2D<T> nextRootNumeric(Expression e);
   void registerSolution(Coordinate2D<T> solution, Interest interest);
 
   T m_xStart;

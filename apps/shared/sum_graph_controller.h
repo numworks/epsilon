@@ -76,6 +76,7 @@ private:
     Escher::View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     void layoutSubviews(Step step, bool force);
+    Poincare::Layout defaultSumResultLayout(const char * resultBuffer);
     Escher::ExpressionView m_sum;
     Escher::MessageTextView m_legend;
     Escher::TextField m_editableZone;

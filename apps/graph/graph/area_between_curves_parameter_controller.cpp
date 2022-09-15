@@ -30,9 +30,11 @@ Ion::Storage::Record AreaBetweenCurvesParameterController::DerivableActiveFuncti
 }
 
 AreaBetweenCurvesParameterController::AreaBetweenCurvesParameterController(Responder * parentResponder, AreaBetweenCurvesGraphController * areaGraphController) :
-  SelectableListViewController(parentResponder),
+  SelectableListViewController(parentResponder, &m_contentView),
   m_mainRecord(nullptr),
-  m_areaGraphController(areaGraphController)
+  m_areaGraphController(areaGraphController),
+  m_contentView(&m_selectableTableView, this, &m_topView),
+  m_topView(KDFont::Size::Small, I18n::Message::SelectSecondCurve, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen)
 {}
 
 const char * AreaBetweenCurvesParameterController::title() {

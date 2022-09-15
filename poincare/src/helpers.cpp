@@ -5,16 +5,14 @@
 
 namespace Poincare {
 
-namespace Helpers {
-
-size_t AlignedSize(size_t realSize, size_t alignment) {
+size_t Helpers::AlignedSize(size_t realSize, size_t alignment) {
   size_t modulo = realSize % alignment;
   size_t result = realSize + (modulo == 0 ? 0 : alignment - modulo);
   assert(result % alignment == 0);
   return result;
 }
 
-size_t Gcd(size_t a, size_t b) {
+size_t Helpers::Gcd(size_t a, size_t b) {
   int i = a;
   int j = b;
   do {
@@ -33,7 +31,7 @@ size_t Gcd(size_t a, size_t b) {
 }
 
 
-bool Rotate(uint32_t * dst, uint32_t * src, size_t len) {
+bool Helpers::Rotate(uint32_t * dst, uint32_t * src, size_t len) {
   /* This method "rotates" an array to insert data at src with length len at
    * address dst.
    *
@@ -99,7 +97,7 @@ bool Rotate(uint32_t * dst, uint32_t * src, size_t len) {
   return true;
 }
 
-void Sort(Swap swap, Compare compare, void * context, int numberOfElements) {
+void Helpers::Sort(Swap swap, Compare compare, void * context, int numberOfElements) {
   /* Using an insertion-sort algorithm, which has the advantage of being
    * in-place and efficient when already sorted. It is optimal if Compare is
    * more lenient with equalities ( >= instead of > ) */
@@ -113,7 +111,7 @@ void Sort(Swap swap, Compare compare, void * context, int numberOfElements) {
   }
 }
 
-bool FloatIsGreater(float xI, float xJ, bool nanIsGreatest) {
+bool Helpers::FloatIsGreater(float xI, float xJ, bool nanIsGreatest) {
   if (std::isnan(xI)) {
     return nanIsGreatest;
   }
@@ -123,7 +121,7 @@ bool FloatIsGreater(float xI, float xJ, bool nanIsGreatest) {
   return xI > xJ;
 }
 
-bool ListEvaluationComparisonAtIndex(int i, int j, void * context, int numberOfElements) {
+bool Helpers::ListEvaluationComparisonAtIndex(int i, int j, void * context, int numberOfElements) {
   void ** c = reinterpret_cast<void **>(context);
   ListNode * list = reinterpret_cast<ListNode *>(c[0]);
   ExpressionNode::ApproximationContext * approximationContext = reinterpret_cast<ExpressionNode::ApproximationContext *>(c[1]);
@@ -134,7 +132,7 @@ bool ListEvaluationComparisonAtIndex(int i, int j, void * context, int numberOfE
 }
 
 template <typename T>
-bool RelativelyEqual(T observed, T expected, T relativeThreshold) {
+bool Helpers::RelativelyEqual(T observed, T expected, T relativeThreshold) {
   assert(std::isfinite(observed) && std::isfinite(expected));
   if (expected == 0.0) {
     return observed == 0.0;
@@ -142,9 +140,7 @@ bool RelativelyEqual(T observed, T expected, T relativeThreshold) {
   return std::fabs((observed - expected) / expected) <= relativeThreshold;
 }
 
-template bool RelativelyEqual<float>(float, float, float);
-template bool RelativelyEqual<double>(double, double, double);
-
-}
+template bool Helpers::RelativelyEqual<float>(float, float, float);
+template bool Helpers::RelativelyEqual<double>(double, double, double);
 
 }

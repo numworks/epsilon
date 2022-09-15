@@ -28,7 +28,7 @@ public:
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */
-  Solver(T xStart, T xEnd, const char * unknown = nullptr, Context * context = nullptr, Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian, T precision = Float<T>::Epsilon());
+  Solver(T xStart, T xEnd, const char * unknown = nullptr, Context * context = nullptr, Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
   Solver(const Solver<T> * other);
 
   T start() const { return m_xStart; }
@@ -60,9 +60,12 @@ private:
 
   constexpr static T k_NAN = static_cast<T>(NAN);
   constexpr static T k_zero = static_cast<T>(0.);
-  constexpr static T k_minimalAbsoluteStep = static_cast<T>(1e-3);
+  constexpr static T k_relativePrecision = Float<T>::Epsilon();
+  constexpr static T k_minimalAbsoluteStep = 2. * Helpers::SquareRoot(2. * k_relativePrecision);
+  constexpr static T k_minimalPracticalStep = 1e-6;
+  constexpr static T k_absolutePrecision = k_relativePrecision * k_minimalAbsoluteStep;
 
-  static T NullTolerance(T precision) { /* TODO */ return precision; }
+  static T NullTolerance(T x) { return std::max(k_minimalAbsoluteStep, k_relativePrecision * std::fabs(x)) * static_cast<T>(10.); }
   constexpr static Interest BoolToInterest(bool v, Interest t, Interest f = Interest::None) { return v ? t : f; }
   // Call SolverAlgorithms::BrentMinimum on the opposite evaluation
   static Coordinate2D<T> BrentMaximum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
@@ -74,6 +77,8 @@ private:
   static Interest MaximumInBracket(T a, T b, T c) { return BoolToInterest(a < b && c < b, Interest::LocalMaximum); }
 
   T maximalStep() const;
+  T minimalStep(T x) const;
+  bool validSolution(T x) const;
   T nextX(T x, T direction) const;
   Coordinate2D<T> nextPossibleRootInChild(Expression e, int childIndex) const;
   Coordinate2D<T> nextRootInMultiplication(Expression m) const;
@@ -82,7 +87,6 @@ private:
   T m_xStart;
   T m_xEnd;
   T m_yResult;
-  T m_precision;
   Context * m_context;
   const char * m_unknown;
   Preferences::ComplexFormat m_complexFormat;
@@ -90,8 +94,7 @@ private:
   Interest m_lastInterest;
 };
 
-#if 1
-/* FIXME Temporarily keep SolverHelper until Zoom is refactored to use Solver. */
+#if 1 /* FIXME Temporarily keep SolverHelper until Zoom is refactored to use Solver. */
 
 template<typename T>
 class SolverHelper {

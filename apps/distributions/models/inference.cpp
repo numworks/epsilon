@@ -1,24 +1,8 @@
 #include "inference.h"
-#include "probability/distribution/binomial_distribution.h"
 
 namespace Distributions {
 
 Inference::Inference() : Shared::MemoizedCurveViewRange() {
-}
-
-bool Inference::Initialize(Inference * inference, SubApp subApp) {
-  if (inference->subApp() == subApp) {
-    return false;
-  }
-  inference->~Inference();
-  switch (subApp) {
-    case SubApp::Probability:
-      new (inference) BinomialDistribution();
-      break;
-    default:
-      assert(false);
-  }
-  return true;
 }
 
 void Inference::computeCurveViewRange() {

@@ -13,7 +13,6 @@ const Escher::Image * App::Descriptor::icon() const {
 }
 
 App * App::Snapshot::unpack(Container * container) {
-  inference()->init();
   return new (container->currentAppBuffer()) App(this, static_cast<AppsContainer *>(container)->globalContext());
 }
 
@@ -59,19 +58,9 @@ void App::didExitPage(ViewController * controller) {
   (void)c;
 }
 
-void App::selectSubApp(int subAppIndex) {
-  if (subAppIndex >= 0 && Inference::Initialize(snapshot()->inference(), static_cast<Inference::SubApp>(subAppIndex))) {
-    m_distributionController.selectRow(0);
-  }
-}
-
 const App::Descriptor * App::Snapshot::descriptor() const {
   static App::Descriptor s_descriptor;
   return &s_descriptor;
-}
-
-void App::Snapshot::tidy() {
-  inference()->tidy();
 }
 
 void App::Snapshot::reset() {

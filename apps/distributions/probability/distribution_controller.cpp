@@ -15,17 +15,6 @@
 #include "../images/student_icon.h"
 #include "../images/uniform_icon.h"
 #include "distributions/app.h"
-#include "distributions/models/models_buffer.h"
-#include "distributions/models/probability/distribution/binomial_distribution.h"
-#include "distributions/models/probability/distribution/chi_squared_distribution.h"
-#include "distributions/models/probability/distribution/exponential_distribution.h"
-#include "distributions/models/probability/distribution/fisher_distribution.h"
-#include "distributions/models/probability/distribution/geometric_distribution.h"
-#include "distributions/models/probability/distribution/hypergeometric_distribution.h"
-#include "distributions/models/probability/distribution/normal_distribution.h"
-#include "distributions/models/probability/distribution/poisson_distribution.h"
-#include "distributions/models/probability/distribution/student_distribution.h"
-#include "distributions/models/probability/distribution/uniform_distribution.h"
 
 using namespace Escher;
 

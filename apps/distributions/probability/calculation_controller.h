@@ -10,9 +10,8 @@
 #include <escher/dropdown_view.h>
 #include <escher/view_controller.h>
 #include <escher/stack_view_controller.h>
-#include "distributions/models/probability/calculation/calculation.h"
-#include "distributions/models/probability/distribution/distribution.h"
-#include "distributions/text_helpers.h"
+#include "distributions/models/calculation/calculation.h"
+#include "distributions/models/distribution/distribution.h"
 
 namespace Distributions {
 

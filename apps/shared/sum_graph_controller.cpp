@@ -217,7 +217,6 @@ void SumGraphController::LegendView::setEditableZone(double d) {
 }
 
 void SumGraphController::LegendView::setSumLayout(Step step, double start, double end, double result, Layout functionLayout) {
-  assert(step == Step::Result || functionLayout.isUninitialized());
   constexpr int sigmaLength = 2;
   const CodePoint sigma[sigmaLength] = {' ', m_sumSymbol};
   Poincare::Layout sumLayout = LayoutHelper::CodePointsToLayout(sigma, sigmaLength);
@@ -238,13 +237,27 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start, doubl
         endLayout);
     if (step == Step::Result) {
       int resultPrecision = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
-
       PoincareHelpers::ConvertFloatToText<double>(result, buffer, k_editableZoneBufferSize, resultPrecision);
-      sumLayout = HorizontalLayout::Builder(
+      if (functionLayout.isUninitialized()) {
+        /* If function is uninitialized, display "Area = "
+         * This case should not occur with a sum of terms of a sequence
+         * If it does, "Area = " should be replaced with "Sum = " */
+        assert(m_sumSymbol == UCodePointIntegral);
+        sumLayout = defaultSumResultLayout(buffer);
+      } else {
+        sumLayout = HorizontalLayout::Builder(
           sumLayout,
           functionLayout,
-          LayoutHelper::String("= ", 2),
+          LayoutHelper::String(" = ", 3),
           LayoutHelper::String(buffer, strlen(buffer)));
+        if (sumLayout.layoutSize(KDFont::Size::Small).width() > bounds().width()) {
+          /* If layout is too large, display "Area = "
+           * This case should not occur with a sum of terms of a sequence
+           * If it does, "Area = " should be replaced with "Sum = " */
+          assert(m_sumSymbol == UCodePointIntegral);
+          sumLayout = defaultSumResultLayout(buffer);
+        }
+      }
     }
   }
   m_sum.setLayout(sumLayout);
@@ -286,6 +299,19 @@ void SumGraphController::LegendView::layoutSubviews(Step step, bool force) {
     editableZoneWidth(), editableZoneHeight()
   );
   m_editableZone.setFrame(frame, force);
+}
+
+Layout SumGraphController::LegendView::defaultSumResultLayout(const char * resultBuffer) {
+  // Create layout of "Area = [result]"
+  const char * areaMessage = I18n::translate(I18n::Message::Area);
+  // strlen("Oppervlakte") + strlen(" = ") + 0;
+  constexpr static int bufferSize = 11 + 3 + 1;
+  char buffer[bufferSize];
+  int length = strlcpy(buffer, areaMessage, strlen(areaMessage) + 1);
+  constexpr static const char * equalSign = " = ";
+  length += strlcpy(buffer + length, equalSign, strlen(equalSign) + 1);
+  assert(length < bufferSize);
+  return HorizontalLayout::Builder(LayoutHelper::String(buffer, length), LayoutHelper::String(resultBuffer, strlen(resultBuffer)));
 }
 
 }

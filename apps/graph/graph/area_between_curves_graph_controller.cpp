@@ -46,15 +46,28 @@ void AreaBetweenCurvesGraphController::makeCursorVisible() {
 }
 
 Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
-  // TODO: Implement special case for y=...
-  constexpr size_t bufferSize = SymbolAbstract::k_maxNameSize * 2 + 7; // f(x)-g(x)
+  constexpr size_t bufferSize = Escher::BufferTextView::k_maxNumberOfChar;
   char buffer[bufferSize];
   ExpiringPointer<ContinuousFunction> functionF = App::app()->functionStore()->modelForRecord(m_record);
-  size_t numberOfChars = functionF->nameWithArgument(buffer, SymbolAbstract::k_maxNameSize + 3);
-  assert(numberOfChars <= bufferSize);
+  bool functionFisNamed = functionF->isNamed();
+  size_t numberOfChars = functionF->nameWithArgument(buffer, bufferSize);
+  if (numberOfChars >= bufferSize) {
+    return Layout();
+  }
   numberOfChars += strlcpy(buffer + numberOfChars, "-", bufferSize-numberOfChars);
+  if (numberOfChars >= bufferSize) {
+    return Layout();
+  }
   ExpiringPointer<ContinuousFunction> functionG = App::app()->functionStore()->modelForRecord(m_secondRecord);
-  numberOfChars += functionG->nameWithArgument(buffer + numberOfChars, SymbolAbstract::k_maxNameSize + 3);
+  if (!functionFisNamed && !functionG->isNamed()) {
+    /* If both function are unnamed, display "Area = ..."
+     * to avoid displaying "integral(|y - y|) = ..." */
+    return Layout();
+  }
+  numberOfChars += functionG->nameWithArgument(buffer + numberOfChars, bufferSize-numberOfChars);
+  if (numberOfChars >= bufferSize) {
+    return Layout();
+  }
   Poincare::Layout subtractionLayout = LayoutHelper::String(buffer, strlen(buffer));
   Poincare::Layout absoluteValue = AbsoluteValueLayout::Builder(subtractionLayout);
   const char * dx = "dx";

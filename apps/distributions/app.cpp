@@ -5,7 +5,6 @@
 #include <apps/exam_mode_configuration.h>
 
 #include "distributions_icon.h"
-#include "images/probability.h"
 
 namespace Distributions {
 
@@ -31,14 +30,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
     m_distributionController(&m_stackViewController,
                              snapshot->distribution(),
                              &m_parameterController),
-    m_menuController(
-        &m_stackViewController,
-        {&m_distributionController},
-        {{I18n::Message::ProbaApp, I18n::Message::ProbaDescr}},
-        {ImageStore::Probability,},
-        this
-      ),
-    m_stackViewController(&m_modalViewController, &m_menuController, StackViewController::Style::GrayGradation),
+    m_stackViewController(&m_modalViewController, &m_distributionController, StackViewController::Style::GrayGradation),
     m_inputViewController(&m_modalViewController, &m_stackViewController, nullptr, nullptr, nullptr)
 {
 }
@@ -46,7 +38,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
 void App::didBecomeActive(Window * window) {
   Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> * queue = snapshot()->pageQueue();
   int queueLength = queue->length();
-  Escher::ViewController * currentController = &m_menuController;
+  Escher::ViewController * currentController = &m_distributionController;
   for (int i = 0; i < queueLength; i++) {
     /* The queue is refilled dynamically when "stackOpenPage"ing which prevents
      * from popping until the queue is empty. */

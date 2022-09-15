@@ -7,25 +7,17 @@
 #include <escher/app.h>
 #include <escher/container.h>
 #include <escher/stack_view_controller.h>
+#include <escher/input_view_controller.h>
 #include <ion/ring_buffer.h>
 
+#include "apps/distributions/models/inference.h"
+#include "models/models_buffer.h"
 #include "probability/distribution_controller.h"
 #include "probability/parameters_controller.h"
 #include "shared/dynamic_cells_data_source.h"
-#include "shared/expression_field_delegate_app.h"
-#include "statistic/chi_square_and_slope/categorical_type_controller.h"
-#include "statistic/test/hypothesis_controller.h"
-#include "statistic/input_controller.h"
-#include "statistic/chi_square_and_slope/input_goodness_controller.h"
-#include "statistic/chi_square_and_slope/input_homogeneity_controller.h"
-#include "statistic/chi_square_and_slope/input_slope_controller.h"
-#include "statistic/interval/interval_graph_controller.h"
-#include "statistic/results_controller.h"
-#include "statistic/chi_square_and_slope/results_homogeneity_controller.h"
-#include "statistic/test/test_graph_controller.h"
-#include "statistic/test_controller.h"
-#include "statistic/type_controller.h"
-#include "models/models_buffer.h"
+#include "apps/shared/expression_field_delegate_app.h"
+
+using namespace Escher;
 
 namespace Distributions {
 
@@ -47,10 +39,9 @@ public:
     void tidy() override;
     void reset() override;
 
-    Inference * inference() { return m_modelBuffer.inference(); }
     Distribution * distribution() { return m_modelBuffer.distribution(); }
+    Inference * inference() { return m_modelBuffer.inference(); }
     Calculation * calculation() { return m_modelBuffer.calculation(); }
-    Statistic * statistic() { return m_modelBuffer.statistic(); }
 
     Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> * pageQueue() { return &m_pageQueue; }
   private:
@@ -71,15 +62,15 @@ public:
   void * buffer(size_t offset = 0) { return m_buffer + offset; }
   void cleanBuffer(DynamicCellsDataSourceDestructor * destructor);
 
-  constexpr static int k_bufferSize = std::max({
+  constexpr static int k_bufferSize = 40000;/*std::max({
       sizeof(ExpressionCellWithBufferWithMessage) * k_maxNumberOfExpressionCellsWithBufferWithMessage, // 824 * 5 = 4120
       sizeof(ExpressionCellWithEditableTextWithMessage) * k_maxNumberOfExpressionCellsWithEditableTextWithMessage, // 1040 * 8 = 8320
       sizeof(EvenOddBufferTextCell) * (k_homogeneityTableNumberOfReusableHeaderCells + k_homogeneityTableNumberOfReusableInnerCells), // 360 * (5 + 9 + 45) = 21 240
       sizeof(EvenOddEditableTextCell) * k_homogeneityTableNumberOfReusableInnerCells + sizeof(EvenOddBufferTextCell) * k_homogeneityTableNumberOfReusableHeaderCells, // 640 * 72 + 360 *(6+12) = 33 840
       sizeof(EvenOddEditableTextCell) * k_doubleColumnTableNumberOfReusableCells // 24 * 640 = 15 360
-    });
+    });*/
 
-  TELEMETRY_ID("Inference");
+  TELEMETRY_ID("Distributions");
 
   // Shared::MenuControllerDelegate
   void selectSubApp(int subAppIndex) override;
@@ -92,21 +83,9 @@ private:
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
 
   // Controllers
-  TestGraphController m_testGraphController;
-  IntervalGraphController m_intervalGraphController;
-  ResultsHomogeneityController m_homogeneityResultsController;
-  InputHomogeneityController m_inputHomogeneityController;
-  InputGoodnessController m_inputGoodnessController;
-  InputSlopeController m_inputSlopeController;
-  ResultsController m_resultsController;
-  InputController m_inputController;
-  TypeController m_typeController;
-  CategoricalTypeController m_categoricalTypeController;
-  HypothesisController m_hypothesisController;
   CalculationController m_calculationController;
   ParametersController m_parameterController;
   DistributionController m_distributionController;
-  TestController m_testController;
   Shared::MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
   Escher::InputViewController m_inputViewController;

@@ -1,5 +1,5 @@
 #include "discrete_calculation.h"
-#include "distributions/models/probability/distribution/distribution.h"
+#include "../distribution/distribution.h"
 
 #include <assert.h>
 #include <cmath>

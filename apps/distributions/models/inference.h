@@ -6,8 +6,6 @@
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
 
-// Inference is the common ancestor of Statistic and Probability
-
 namespace Distributions {
 
 struct ParameterRepresentation {
@@ -20,17 +18,7 @@ public:
   Inference();
   virtual ~Inference() = default;
 
-  enum class SubApp {
-    Probability,
-    NumberOfSubApps
-  };
-  virtual void init() {}
-  virtual void tidy() {}
   virtual I18n::Message title() const = 0;
-  static bool Initialize(Inference * inference, SubApp subApp);
-  /* This poor man's RTTI is required only to avoid reinitializing the model
-   * everytime we enter a subapp. */
-  virtual SubApp subApp() const = 0;
 
   // Input parameters
   virtual int numberOfParameters() = 0;
@@ -39,7 +27,6 @@ public:
   Poincare::Layout parameterSymbolAtIndex(int i) const { return paramRepresentationAtIndex(i).m_symbol; }
   I18n::Message parameterDefinitionAtIndex(int i) const { return paramRepresentationAtIndex(i).m_description; }
   virtual bool authorizedParameterAtIndex(double x, int i) const;
-  virtual bool validateInputs() { return true; };
 
   // Evaluation of distribution
   virtual float evaluateAtAbscissa(float x) const = 0;

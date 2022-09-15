@@ -2,7 +2,7 @@
 #define DISTRIBUTIONS_PROBABILITY_PARAMETERS_CONTROLLER_H
 
 #include <escher/expression_cell_with_editable_text_with_message.h>
-#include "distributions/models/probability/distribution/distribution.h"
+#include "distributions/models/distribution/distribution.h"
 #include <apps/shared/float_parameter_controller.h>
 #include "calculation_controller.h"
 

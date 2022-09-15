@@ -4,8 +4,8 @@
 #include <apps/shared/curve_view.h>
 #include <poincare/coordinate_2D.h>
 
-#include "distributions/models/probability/calculation/calculation.h"
-#include "distributions/models/probability/distribution/distribution.h"
+#include "distributions/models/calculation/calculation.h"
+#include "distributions/models/distribution/distribution.h"
 
 namespace Distributions {
 

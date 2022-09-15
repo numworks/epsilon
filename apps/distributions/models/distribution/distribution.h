@@ -2,10 +2,10 @@
 #define PROBABILITE_DISTRIBUTION_DISTRIBUTION_H
 
 #include "distributions/models/inference.h"
-#include "distributions/models/probability/calculation/discrete_calculation.h"
-#include "distributions/models/probability/calculation/finite_integral_calculation.h"
-#include "distributions/models/probability/calculation/left_integral_calculation.h"
-#include "distributions/models/probability/calculation/right_integral_calculation.h"
+#include "distributions/models/calculation/discrete_calculation.h"
+#include "distributions/models/calculation/finite_integral_calculation.h"
+#include "distributions/models/calculation/left_integral_calculation.h"
+#include "distributions/models/calculation/right_integral_calculation.h"
 #include <poincare/distribution.h>
 #include <new>
 
@@ -14,8 +14,6 @@ namespace Distributions {
 class Distribution : public Inference {
 public:
   Distribution(Poincare::Distribution::Type type) : m_calculationBuffer(this), m_distribution(Poincare::Distribution::Get(type)) {}
-
-  SubApp subApp() const override { return SubApp::Probability; }
 
   static bool Initialize(Distribution * distribution, Poincare::Distribution::Type type);
   Poincare::Distribution::Type type() const { return m_distribution->type(); };

@@ -3,7 +3,7 @@ app_headers += apps/distributions/app.h
 
 app_distributions_test_src = apps/distributions/models/inference.cpp
 
-app_distributions_test_src += $(addprefix apps/distributions/models/probability/distribution/,\
+app_distributions_test_src += $(addprefix apps/distributions/models/distribution/,\
   binomial_distribution.cpp \
   chi_squared_distribution.cpp \
   distribution.cpp \
@@ -19,12 +19,9 @@ app_distributions_test_src += $(addprefix apps/distributions/models/probability/
 
 app_distributions_src = $(addprefix apps/distributions/,\
   app.cpp \
-  text_helpers.cpp \
 )
 
-app_distributions_test_src += apps/distributions/text_helpers.cpp
-
-app_distributions_test_src += $(addprefix apps/distributions/models/probability/calculation/,\
+app_distributions_test_src += $(addprefix apps/distributions/models/calculation/,\
   calculation.cpp \
   discrete_calculation.cpp \
   left_integral_calculation.cpp \

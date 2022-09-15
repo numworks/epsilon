@@ -69,6 +69,8 @@ public:
   virtual bool giveAccessoryAllWidth() const { return false; }
   KDCoordinate minimalHeightForOptimalDisplay(KDCoordinate minAccessoryWidth, KDCoordinate width) const;
 
+  KDCoordinate innerWitdh() const { return bounds().width() - 2 * k_separatorThickness - Metric::CellLeftMargin - Metric::CellRightMargin;}
+
 protected:
   // View
   int numberOfSubviews() const override;

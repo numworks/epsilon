@@ -2,11 +2,7 @@
 #define DISTRIBUTIONS_APP_H
 
 #include <apps/shared/shared_app.h>
-#include <apps/shared/text_field_delegate_app.h>
-#include <escher/app.h>
-#include <escher/container.h>
 #include <escher/stack_view_controller.h>
-#include <escher/input_view_controller.h>
 #include <ion/ring_buffer.h>
 
 #include "models/distribution_buffer.h"
@@ -54,8 +50,6 @@ public:
   void didExitPage(ViewController * controller) override;
 
   TELEMETRY_ID("Distributions");
-
-  Escher::InputViewController * inputViewController() { return &m_inputViewController; }
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
@@ -65,7 +59,6 @@ private:
   ParametersController m_parameterController;
   DistributionController m_distributionController;
   Escher::StackViewController m_stackViewController;
-  Escher::InputViewController m_inputViewController;
 };
 
 }  // namespace Distributions

@@ -11,7 +11,7 @@ public:
   const char * title() override;
   TELEMETRY_ID("Root");
 private:
-  Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) override;
+  Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context) override;
   // Prevent horizontal panning to preserve search interval
   float cursorRightMarginRatio() override { return 0.0f; }
   float cursorLeftMarginRatio() override { return 0.0f; }

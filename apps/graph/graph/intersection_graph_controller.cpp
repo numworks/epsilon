@@ -3,8 +3,9 @@
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
-using namespace Shared;
 using namespace Escher;
+using namespace Poincare;
+using namespace Shared;
 
 namespace Graph {
 
@@ -28,7 +29,7 @@ void IntersectionGraphController::reloadBannerView() {
   size_t numberOfChar = f->nameWithArgument(buffer, bufferSize - 2 * strlen(legend));
   assert(numberOfChar < bufferSize);
   size_t fNameLength = numberOfChar;
-  numberOfChar += Poincare::Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar, legend);
+  numberOfChar += Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar, legend);
   // keep 1 char for '=';
   ExpiringPointer<ContinuousFunction> g = functionStore()->modelForRecord(m_intersectedRecord);
   size_t numberOfCharsBeforeGName = numberOfChar;
@@ -37,31 +38,40 @@ void IntersectionGraphController::reloadBannerView() {
     numberOfChar = fNameLength;
   }
   assert(numberOfChar <= bufferSize);
-  Poincare::Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar, "%s%*.*ed",
+  Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar, "%s%*.*ed",
     legend,
-    m_cursor->y(), Poincare::Preferences::sharedPreferences()->displayMode(), numberOfSignificantDigits());
+    m_cursor->y(), Preferences::sharedPreferences()->displayMode(), numberOfSignificantDigits());
   bannerView()->ordinateView()->setText(buffer);
   bannerView()->reload();
 }
 
-Poincare::Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) {
-  // TODO The following three lines should be factored.
-  Poincare::Coordinate2D<double> result = Poincare::Coordinate2D<double>(NAN, NAN);
+Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(double start, double max, Context * context) {
+  Coordinate2D<double> result = Coordinate2D<double>(NAN, NAN);
   int numberOfActiveFunctions = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < numberOfActiveFunctions; i++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(i);
-    if (record != m_record) {
-      ContinuousFunction f = *(functionStore()->modelForRecord(record));
-      if (!f.isIntersectable()) {
-        continue;
-      }
-      Poincare::Coordinate2D<double> intersection = functionStore()->modelForRecord(m_record)->nextIntersectionFrom(start, max, context, f.expressionReduced(context), relativePrecision, minimalStep, maximalStep, f.tMin(), f.tMax());
-      if ((std::isnan(result.x1()) || std::fabs(intersection.x1()-start) < std::fabs(result.x1()-start)) && !std::isnan(intersection.x1())) {
-        m_intersectedRecord = record;
-        result = (std::isnan(result.x1()) || std::fabs(intersection.x1()-start) < std::fabs(result.x1()-start)) ? intersection : result;
-      }
+    if (record == m_record) {
+      continue;
+    }
+    ContinuousFunction f = *(functionStore()->modelForRecord(record));
+    if (!f.isIntersectable()) {
+      continue;
+    }
+
+    double fStart = start, fEnd = max;
+    f.trimResolutionInterval(&fStart, &fEnd);
+    Solver<double> solver = PoincareHelpers::Solver(fStart, fEnd, ContinuousFunction::k_unknownName, context);
+    Coordinate2D<double> intersection = solver.nextIntersection(f.expressionClone(), functionStore()->modelForRecord(m_record)->expressionClone());
+    if (std::isnan(intersection.x1())) {
+      continue;
+    }
+
+    if (std::isnan(result.x1()) || (std::fabs(intersection.x1() - start) < std::fabs(result.x1() - start))) {
+      m_intersectedRecord = record;
+      result = intersection;
     }
   }
+
   return result;
 }
 

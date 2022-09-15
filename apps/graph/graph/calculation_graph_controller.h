@@ -3,9 +3,9 @@
 
 #include "graph_view.h"
 #include "banner_view.h"
-#include "../../shared/simple_interactive_curve_view_controller.h"
-#include "../../shared/function_banner_delegate.h"
 #include "../continuous_function_store.h"
+#include <apps/shared/simple_interactive_curve_view_controller.h>
+#include <apps/shared/function_banner_delegate.h>
 
 namespace Graph {
 
@@ -18,6 +18,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   bool handleEnter() override;
   void viewWillAppear() override;
+
   void setRecord(Ion::Storage::Record record);
 
 protected:
@@ -25,9 +26,10 @@ protected:
   BannerView * bannerView() override { return m_bannerView; }
   void reloadBannerView() override;
   int numberOfSignificantDigits() const override { return Poincare::Preferences::VeryLargeNumberOfSignificantDigits; }
-  Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(double start, int direction);
+
   ContinuousFunctionStore * functionStore() const;
-  virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) = 0;
+  Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(double start, int direction);
+  virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context) = 0;
 
   GraphView * m_graphView;
   BannerView * m_bannerView;

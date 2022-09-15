@@ -389,27 +389,10 @@ void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForc
   }
 }
 
-Coordinate2D<double> ContinuousFunction::nextMinimumFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
-  return nextPointOfInterestFrom(start, max, context, [](Expression e, const char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return PoincareHelpers::NextMinimum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
-}
-
-Coordinate2D<double> ContinuousFunction::nextMaximumFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
-  return nextPointOfInterestFrom(start, max, context, [](Expression e, const char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return PoincareHelpers::NextMaximum(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep); }, relativePrecision, minimalStep, maximalStep);
-}
-
-Coordinate2D<double> ContinuousFunction::nextRootFrom(double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) const {
-  return nextPointOfInterestFrom(start, max, context, [](Expression e, const char * symbol, double start, double max, Context * context, double relativePrecision, double minimalStep, double maximalStep) { return Coordinate2D<double>(PoincareHelpers::NextRoot(e, symbol, start, max, context, relativePrecision, minimalStep, maximalStep), 0.0); }, relativePrecision, minimalStep, maximalStep);
-}
-
-Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, double max, Context * context, Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin, double eDomainMax) const {
-  assert(properties().isCartesian());
-  double tmin = std::max<double>(tMin(), eDomainMin), tmax = std::min<double>(tMax(), eDomainMax);
-  start = start < tmin ? tmin : start > tmax ? tmax : start;
-  max = max < tmin ? tmin : max > tmax ? tmax : max;
-  if (start == max) {
-    return NAN;
-  }
-  return PoincareHelpers::NextIntersection(expressionReduced(context), k_unknownName, start, max, context, e, relativePrecision, minimalStep, maximalStep);
+void ContinuousFunction::trimResolutionInterval(double * start, double * end) const {
+  double tmin = tMin(), tmax = tMax();
+  *start = *start < tmin ? tmin : tmax < *start ? tmax : *start;
+  *end = *end < tmin ? tmin : tmax < *end ? tmax : *end;
 }
 
 Expression ContinuousFunction::sumBetweenBounds(double start, double end, Context * context) const {
@@ -426,17 +409,6 @@ Expression ContinuousFunction::sumBetweenBounds(double start, double end, Contex
 
 float ContinuousFunction::rangeStep() const {
   return properties().isCartesian() ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints;
-}
-
-Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, double max, Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const {
-  assert(properties().isCartesian());
-  double tmin = tMin(), tmax = tMax();
-  start = start < tmin ? tmin : start > tmax ? tmax : start;
-  max = max < tmin ? tmin : max > tmax ? tmax : max;
-  if (start == max) {
-    return NAN;
-  }
-  return compute(expressionReduced(context), k_unknownName, start, max, context, relativePrecision, minimalStep, maximalStep);
 }
 
 template <typename T>

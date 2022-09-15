@@ -21,11 +21,7 @@ Poincare::Expression Model::simplifiedExpression(double * modelCoefficients, Poi
 }
 
 double Model::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
-  Expression yExpression = Number::DecimalNumber(y);
-  PoincareHelpers::CloneAndSimplify(&yExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
-  Expression modelExpression = simplifiedExpression(modelCoefficients, context);
-  double result = PoincareHelpers::NextIntersection(modelExpression, "x", xMin, xMax, context, yExpression, Solver::k_relativePrecision, Solver::k_minimalStep, Solver::DefaultMaximalStep(xMin, xMax)).x1();
-  return result;
+  return PoincareHelpers::Solver(xMin, xMax, "x", context).nextIntersection(Number::DecimalNumber(y), expression(modelCoefficients)).x1();
 }
 
 void Model::fit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {

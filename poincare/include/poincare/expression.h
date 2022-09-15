@@ -8,7 +8,6 @@
 #include <poincare/print_float.h>
 #include <poincare/expression_node.h>
 #include <poincare/complex.h>
-#include <poincare/solver.h>
 #include <ion/storage/file_system.h>
 #include <utility>
 
@@ -348,11 +347,6 @@ public:
   template<typename U> Expression approximateKeepingUnits(const ExpressionNode::ReductionContext& reductionContext) const;
   template<typename U> U approximateToScalar(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
   template<typename U> U approximateWithValueForSymbol(const char * symbol, U x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
-  /* Expression roots/extrema solver */
-  Coordinate2D<double> nextMinimum(const char * symbol, double start, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, double relativePrecision, double minimalStep, double maximalStep) const;
-  Coordinate2D<double> nextMaximum(const char * symbol, double start, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, double relativePrecision, double minimalStep, double maximalStep) const;
-  double nextRoot(const char * symbol, double start, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, double relativePrecision, double minimalStep, double maximalStep) const;
-  Coordinate2D<double> nextIntersection(const char * symbol, double start, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const Expression expression, double relativePrecision, double minimalStep, double maximalStep) const;
 
   /* This class is meant to contain data about named functions (e.g. sin, tan...)
    * in one place: their name, their number of children and a pointer to a builder.
@@ -509,9 +503,6 @@ protected:
 
 private:
   constexpr static int k_maxSymbolReplacementsCount = 10;
-  // Solver parameters
-  constexpr static double k_solverStepPrecision = 1e-2;
-  constexpr static double k_solverMinimalStep = 1e-3;
 
   /* Add missing parenthesis will add parentheses that easen the reading of the
    * expression or that are required by math rules. For example:

@@ -73,7 +73,8 @@ void CalculationGraphController::reloadBannerView() {
 
 Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAbscissa(double start, int direction) {
   double max = direction > 0 ? m_graphRange->xMax() : m_graphRange->xMin();
-  return computeNewPointOfInterest(start, max, textFieldDelegateApp()->localContext(), Solver::k_relativePrecision, Solver::k_minimalStep, Solver::DefaultMaximalStep(start, max));
+  functionStore()->modelForRecord(m_record)->trimResolutionInterval(&start, &max);
+  return computeNewPointOfInterest(start, max, textFieldDelegateApp()->localContext());
 }
 
 ContinuousFunctionStore * CalculationGraphController::functionStore() const {

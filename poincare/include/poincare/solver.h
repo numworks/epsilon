@@ -1,11 +1,97 @@
 #ifndef POINCARE_SOLVER_H
 #define POINCARE_SOLVER_H
 
-#include <poincare/context.h>
-#include <poincare/coordinate_2D.h>
-#include <poincare/preferences.h>
+#include <poincare/expression.h>
+#include <poincare/float.h>
+#include <math.h>
 
 namespace Poincare {
+
+template<typename T>
+class Solver {
+public:
+  enum class Interest : uint8_t {
+    None,
+    Root,
+    LocalMinimum,
+    LocalMaximum,
+    GlobalMinimum,
+    GlobalMaximum,
+    Discontinuity,
+    Intersection,
+    Other,
+  };
+
+  typedef T (*FunctionEvaluation)(T, const void *);
+  typedef Interest (*BracketTest)(T, T, T);
+  typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void *, T, T, Interest, T);
+
+  /* Arguments beyond xEnd are only required if the Solver manipulates
+   * Expression. */
+  Solver(T xStart, T xEnd, const char * unknown = nullptr, Context * context = nullptr, Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian, T precision = Float<T>::Epsilon());
+  Solver(const Solver<T> * other);
+
+  T start() const { return m_xStart; }
+  T end() const { return m_xEnd; }
+  Interest lastInterest() const { return m_lastInterest; }
+  Coordinate2D<T> result() const { return lastInterest() == Interest::None ? Coordinate2D<T>(k_NAN, k_NAN) : Coordinate2D<T>(start(), m_yResult); }
+  /* These methods will return the solution in ]xStart,xEnd[ (or ]xEnd,xStart[)
+   * closest to xStart, or NAN if it does not exist. */
+  Coordinate2D<T> next(Expression e, BracketTest test, HoneResult hone);
+  Coordinate2D<T> next(FunctionEvaluation f, const void * aux, BracketTest test, HoneResult hone);
+  Coordinate2D<T> nextRoot(Expression e);
+  Coordinate2D<T> nextRoot(FunctionEvaluation f, const void * aux) { return next(f, aux, EvenOrOddRootInBracket, CompositeBrentForRoot); }
+  Coordinate2D<T> nextMinimum(Expression e);
+  Coordinate2D<T> nextMaximum(Expression e) { return next(e, MaximumInBracket, BrentMaximum); }
+  Coordinate2D<T> nextIntersection(Expression e1, Expression e2);
+  /* Stretch the interval to include the previous bounds. This allows finding
+   * solutions in [xStart,xEnd], as otherwise all resolution is done on an open
+   * interval. */
+  void stretch();
+
+private:
+  struct FunctionEvaluationParameters {
+    Context * context;
+    const char * unknown;
+    Expression expression;
+    Preferences::ComplexFormat complexFormat;
+    Preferences::AngleUnit angleUnit;
+  };
+
+  constexpr static T k_NAN = static_cast<T>(NAN);
+  constexpr static T k_zero = static_cast<T>(0.);
+  constexpr static T k_minimalAbsoluteStep = static_cast<T>(1e-3);
+
+  static T NullTolerance(T precision) { /* TODO */ return precision; }
+  constexpr static Interest BoolToInterest(bool v, Interest t, Interest f = Interest::None) { return v ? t : f; }
+  // Call SolverAlgorithms::BrentMinimum on the opposite evaluation
+  static Coordinate2D<T> BrentMaximum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
+  static Coordinate2D<T> CompositeBrentForRoot(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
+  // BracketTest default implementations
+  static Interest OddRootInBracket(T a, T b, T c) { return BoolToInterest((a < k_zero && k_zero < c) || (c < k_zero && k_zero < a), Interest::Root); }
+  static Interest EvenOrOddRootInBracket(T a, T b, T c);
+  static Interest MinimumInBracket(T a, T b, T c) { return BoolToInterest(b < a && b < c, Interest::LocalMinimum); }
+  static Interest MaximumInBracket(T a, T b, T c) { return BoolToInterest(a < b && c < b, Interest::LocalMaximum); }
+
+  T maximalStep() const;
+  T nextX(T x, T direction) const;
+  Coordinate2D<T> nextPossibleRootInChild(Expression e, int childIndex) const;
+  Coordinate2D<T> nextRootInMultiplication(Expression m) const;
+  void registerSolution(Coordinate2D<T> solution, Interest interest);
+
+  T m_xStart;
+  T m_xEnd;
+  T m_yResult;
+  T m_precision;
+  Context * m_context;
+  const char * m_unknown;
+  Preferences::ComplexFormat m_complexFormat;
+  Preferences::AngleUnit m_angleUnit;
+  Interest m_lastInterest;
+};
+
+#if 1
+/* FIXME Temporarily keep SolverHelper until Zoom is refactored to use Solver. */
 
 template<typename T>
 class SolverHelper {
@@ -28,42 +114,7 @@ private:
   static Coordinate2D<T> NextPointOfInterestHelper(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T minimalStep, T maximalStep);
   static T Step(T x, T growthSpeed, T minimalStep, T maximalStep);
 };
-
-class Solver {
-public:
-  constexpr static double k_zeroPrecision = 1e-5;
-  constexpr static double k_relativePrecision = 1e-2;
-  constexpr static double k_minimalStep = 1e-3;
-
-  typedef SolverHelper<double>::ValueAtAbscissa ValueAtAbscissa;
-
-  // Minimum
-  static Coordinate2D<double> NextMinimum(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double start, double end, double relativePrecision, double minimalStep, double maximalStep);
-
-  // Root
-  static double NextRoot(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double start, double end, double relativePrecision, double minimalStep, double maximalStep);
-  static Coordinate2D<double> IncreasingFunctionRoot(double ax, double bx, double resultPrecision, ValueAtAbscissa evaluation, Context * context, const void * auxiliary, double * resultEvaluation = nullptr);
-
-  // Probabilities
-  // Cumulative distributive inverse for function defined on N (positive integers)
-  template<typename T> static T CumulativeDistributiveInverseForNDefinedFunction(T * probability, typename SolverHelper<T>::ValueAtAbscissa evaluation, Context * context, const void * auxiliary);
-  // Cumulative distributive function for function defined on N (positive integers)
-  template<typename T> static T CumulativeDistributiveFunctionForNDefinedFunction(T x, typename SolverHelper<T>::ValueAtAbscissa evaluation, Context * context, const void * auxiliary);
-
-  static double DefaultMaximalStep(double start, double stop);
-
-private:
-  constexpr static int k_maxNumberOfOperations = 1000000;
-  constexpr static double k_maxProbability = 0.9999995;
-  constexpr static double k_sqrtEps = 1.4901161193847656E-8; // sqrt(DBL_EPSILON)
-  constexpr static double k_goldenRatio = 0.381966011250105151795413165634361882279690820194237137864; // (3-sqrt(5))/2
-  constexpr static double k_maxFloat = 1e100;
-  constexpr static double k_precisionByGradUnit = 1e6;
-
-  static Coordinate2D<double> BrentMinimum(double ax, double bx, ValueAtAbscissa evaluation, Context * context, const void * auxiliary);
-  static double BrentRoot(double ax, double bx, double precision, ValueAtAbscissa evaluation, Context * context, const void * auxiliary);
-  static Coordinate2D<double> RoundCoordinatesToZero(Coordinate2D<double> xy, double a, double b, ValueAtAbscissa f, Context * context, const void * auxiliary);
-};
+#endif
 
 }
 

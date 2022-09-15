@@ -2,9 +2,10 @@
 #define SHARED_POINCARE_HELPERS_H
 
 #include <apps/global_preferences.h>
+#include <poincare/expression.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
-#include <poincare/expression.h>
+#include <poincare/solver.h>
 
 namespace Shared {
 
@@ -189,65 +190,10 @@ inline void ParseAndSimplifyAndApproximate(
   Poincare::Expression::ParseAndSimplifyAndApproximate(text, parsedExpression, simplifiedExpression, approximateExpression, context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
 }
 
-inline typename Poincare::Coordinate2D<double> NextMinimum(
-  const Poincare::Expression e,
-  const char * symbol,
-  double start,
-  double max,
-  Poincare::Context * context,
-  double relativePrecision,
-  double minimalStep,
-  double maximalStep,
-  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences(),
-  bool updateComplexFormatAndAngleUnit = true)
-{
-  return e.nextMinimum(symbol, start, max, context, ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context), AngleUnitForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context), relativePrecision, minimalStep, maximalStep);
-}
-
-inline typename Poincare::Coordinate2D<double> NextMaximum(
-  const Poincare::Expression e,
-  const char * symbol,
-  double start,
-  double max,
-  Poincare::Context * context,
-  double relativePrecision,
-  double minimalStep,
-  double maximalStep,
-  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences(),
-  bool updateComplexFormatAndAngleUnit = true)
-{
-  return e.nextMaximum(symbol, start, max, context, ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context), AngleUnitForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context), relativePrecision, minimalStep, maximalStep);
-}
-
-inline double NextRoot(
-  const Poincare::Expression e,
-  const char * symbol,
-  double start,
-  double max,
-  Poincare::Context * context,
-  double relativePrecision,
-  double minimalStep,
-  double maximalStep,
-  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences(),
-  bool updateComplexFormatAndAngleUnit = true)
-{
-  return e.nextRoot(symbol, start, max, context, ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context), AngleUnitForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context), relativePrecision, minimalStep, maximalStep);
-}
-
-inline typename Poincare::Coordinate2D<double> NextIntersection(
-  const Poincare::Expression e,
-  const char * symbol,
-  double start,
-  double max,
-  Poincare::Context * context,
-  const Poincare::Expression expression,
-  double relativePrecision,
-  double minimalStep,
-  double maximalStep,
-  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences(),
-  bool updateComplexFormatAndAngleUnit = true)
-{
-  return e.nextIntersection(symbol, start, max, context, ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context), AngleUnitForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context), expression, relativePrecision, minimalStep, maximalStep);
+template<typename T>
+inline Poincare::Solver<T> Solver(T xMin, T xMax, const char * unknown = nullptr, Poincare::Context * context = nullptr) {
+  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
+  return Poincare::Solver<T>(xMin, xMax, unknown, context, preferences->complexFormat(), preferences->angleUnit());
 }
 
 // Return the nearest number from t's representation with given precision.

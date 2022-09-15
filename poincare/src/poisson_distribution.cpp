@@ -36,13 +36,13 @@ T PoissonDistribution::CumulativeDistributiveInverseForProbability(T probability
   }
   T proba = probability;
   const void * pack[1] = { &lambda };
-  return Solver::CumulativeDistributiveInverseForNDefinedFunction<T>(
+  return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
-      [](T x, Context * context, const void * auxiliary) {
+      [](T x, const void * auxiliary) {
         const void * const * pack = static_cast<const void * const *>(auxiliary);
         T lambda = *static_cast<const T *>(pack[0]);
         return PoissonDistribution::EvaluateAtAbscissa(x, lambda);
-      }, nullptr, pack);
+      }, pack);
 }
 
 template<typename T>

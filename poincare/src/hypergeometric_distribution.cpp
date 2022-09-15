@@ -2,7 +2,7 @@
 #include <poincare/binomial_coefficient.h>
 #include <poincare/float.h>
 #include <poincare/domain.h>
-#include <poincare/solver.h>
+#include <poincare/solver_algorithms.h>
 #include <cmath>
 #include <float.h>
 #include <assert.h>
@@ -43,15 +43,15 @@ T HypergeometricDistribution::CumulativeDistributiveInverseForProbability(T prob
   }
   T proba = probability;
   const void * pack[3] = { &N, &K, &n };
-  return Solver::CumulativeDistributiveInverseForNDefinedFunction<T>(
+  return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
-      [](T x, Context * context, const void * auxiliary) {
+      [](T x, const void * auxiliary) {
         const void * const * pack = static_cast<const void * const *>(auxiliary);
         T N = *static_cast<const T *>(pack[0]);
         T K = *static_cast<const T *>(pack[1]);
         T n = *static_cast<const T *>(pack[2]);
         return HypergeometricDistribution::EvaluateAtAbscissa(x, N, K, n);
-      }, nullptr, pack);
+      }, pack);
 }
 
 template<typename T>

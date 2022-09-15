@@ -22,7 +22,7 @@ template <typename T> T StudentDistribution::CumulativeDistributiveFunctionAtAbs
    * k = 0.01 and P(x < 8400000) (for 41000000 it is around 0.6) */
   const double sqrtXSquaredPlusK = std::sqrt(x * x + k);
   double t = (x + sqrtXSquaredPlusK) / (2.0 * sqrtXSquaredPlusK);
-  return Poincare::RegularizedIncompleteBetaFunction(k / 2.0, k / 2.0, t);
+  return RegularizedIncompleteBetaFunction(k / 2.0, k / 2.0, t);
 }
 
 template <typename T> T StudentDistribution::CumulativeDistributiveInverseForProbability(T probability, T k) {
@@ -39,20 +39,17 @@ template <typename T> T StudentDistribution::CumulativeDistributiveInverseForPro
     T k;
   };
   Args args{probability, k};
-  Poincare::Solver::ValueAtAbscissa evaluation =
-      [](double x, Poincare::Context * context, const void * auxiliary) {
-        const Args * args = static_cast<const Args *>(auxiliary);
-        return static_cast<double>(CumulativeDistributiveFunctionAtAbscissa<T>(x, args->k) -
-                                   args->proba);
-      };
+  Solver<double>::FunctionEvaluation evaluation = [](double x, const void * auxiliary) {
+    const Args * args = static_cast<const Args *>(auxiliary);
+    return static_cast<double>(CumulativeDistributiveFunctionAtAbscissa<T>(x, args->k) - args->proba);
+  };
 
   double xmin, xmax;
-  findBoundsForBinarySearch(evaluation, nullptr, &args, xmin, xmax);
+  findBoundsForBinarySearch(evaluation, &args, xmin, xmax);
   assert((xmin < xmax) && std::isfinite(xmin) && std::isfinite(xmax));
 
-  // Compute inverse using Solver::IncreasingFunctionRoot
-  Poincare::Coordinate2D<double> result =
-      Poincare::Solver::IncreasingFunctionRoot(xmin, xmax, DBL_EPSILON, evaluation, nullptr, &args);
+  // Compute inverse using SolverAlgorithms::IncreasingFunctionRoot
+  Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(xmin, xmax, DBL_EPSILON, evaluation, &args);
   return result.x1();
 }
 

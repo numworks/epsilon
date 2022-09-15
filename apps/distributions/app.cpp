@@ -39,8 +39,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
         this
       ),
     m_stackViewController(&m_modalViewController, &m_menuController, StackViewController::Style::GrayGradation),
-    m_inputViewController(&m_modalViewController, &m_stackViewController, nullptr, nullptr, nullptr),
-    m_bufferDestructor(nullptr)
+    m_inputViewController(&m_modalViewController, &m_stackViewController, nullptr, nullptr, nullptr)
 {
 }
 
@@ -66,14 +65,6 @@ void App::didExitPage(ViewController * controller) {
   ViewController * c = snapshot()->pageQueue()->stackPop();
   assert(c == controller);
   (void)c;
-}
-
-void App::cleanBuffer(DynamicCellsDataSourceDestructor * destructor) {
-  assert(destructor);
-  if (m_bufferDestructor) {
-    m_bufferDestructor->destroyCells();
-  }
-  m_bufferDestructor = destructor;
 }
 
 void App::selectSubApp(int subAppIndex) {

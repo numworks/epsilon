@@ -46,13 +46,13 @@ T GeometricDistribution::CumulativeDistributiveInverseForProbability(T probabili
   const void * pack[1] = { &p };
   /* It works even if G(p) is defined on N* and not N because G(0) returns 0 and
    * not undef */
-  return Solver::CumulativeDistributiveInverseForNDefinedFunction<T>(
+  return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
-      [](T x, Context * context, const void * auxiliary) {
+      [](T x, const void * auxiliary) {
         const void * const * pack = static_cast<const void * const *>(auxiliary);
         T p = *static_cast<const T *>(pack[0]);
         return GeometricDistribution::EvaluateAtAbscissa(x, p);
-      }, nullptr, pack);
+      }, pack);
 }
 
 template<typename T>

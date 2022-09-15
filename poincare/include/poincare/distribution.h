@@ -1,7 +1,7 @@
 #ifndef POINCARE_DISTRIBUTION_H
 #define POINCARE_DISTRIBUTION_H
 
-#include <poincare/solver.h>
+#include <poincare/solver_algorithms.h>
 
 namespace Poincare {
 
@@ -75,7 +75,7 @@ protected:
   /* This method looks for bounds such that:
    * cumulativeDistributionEvaluation(xmin) < 0 < cumulativeDistributionEvaluation(xmax)
    */
-  template <typename T> static void findBoundsForBinarySearch(Solver::ValueAtAbscissa cumulativeDistributionEvaluation, Context * context, const void * auxiliary, T & xmin, T & xmax);
+  template <typename T> static void findBoundsForBinarySearch(typename Solver<T>::FunctionEvaluation cumulativeDistributionEvaluation, const void * auxiliary, T & xmin, T & xmax);
   double cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(double p, double ax, double bx, double * parameters) const;
 
 

@@ -89,43 +89,28 @@ void EquationStore::approximateSolve(Poincare::Context * context, bool shouldRep
   m_userVariablesUsed = !shouldReplaceFunctionsButNotSymbols;
   assert(m_variables[0][0] != 0 && m_variables[1][0] == 0);
   assert(m_type == Type::Monovariable);
-  assert(m_intervalApproximateSolutions[0] <= m_intervalApproximateSolutions[1]);
   m_numberOfSolutions = 0;
-  double start = m_intervalApproximateSolutions[0];
-  double maximalStep = Poincare::Solver::DefaultMaximalStep(start, m_intervalApproximateSolutions[1]);
-  /* In order to be able to call NextRoot on the previously found root, the
-   * method cannot return its starting value. To allow the bound of the
-   * interval to be part of the solutions, we need to start the search a
-   * little sooner. */
-  start -= maximalStep;
-  /* The approximated value for a solution located on one of the bound could be
-   * outside the interval, so we need to take a small margin. */
-  double boundMargin = maximalStep * Poincare::Solver::k_zeroPrecision;
-  double root;
-  for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
-    root = PoincareHelpers::NextRoot(undevelopedExpression, m_variables[0], start, m_intervalApproximateSolutions[1], context, Poincare::Solver::k_relativePrecision, Poincare::Solver::k_minimalStep, maximalStep);
 
-    /* Handle solutions found outside the reasonable interval */
-    if (root < m_intervalApproximateSolutions[0] - boundMargin) {
-      /* A solution is found too soon, we simply ignore it and move on. */
-      start = root;
+  double start = m_intervalApproximateSolutions[0];
+  double end = m_intervalApproximateSolutions[1];
+  assert(start <= end);
+  Poincare::Solver<double> solver = PoincareHelpers::Solver(start, end, m_variables[0], context);
+  solver.stretch();
+
+  for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
+    double root = solver.nextRoot(undevelopedExpression).x1();
+    if (root < start) {
       i--;
-      continue;
-    } else if (root > m_intervalApproximateSolutions[1] + boundMargin) {
-      /* A solution is found but too late: there is no solution in the
-       * interval, simply return NAN. */
+    } else if (root > end) {
       root = NAN;
     }
-
     if (i == k_maxNumberOfApproximateSolutions) {
       m_hasMoreThanMaxNumberOfApproximateSolution = !std::isnan(root);
-      break;
-    }
-    m_approximateSolutions[i] = root;
-    if (std::isnan(m_approximateSolutions[i])) {
-      break;
     } else {
-      start = m_approximateSolutions[i];
+      m_approximateSolutions[i] = root;
+      if (std::isnan(root)) {
+        break;
+      }
       m_numberOfSolutions++;
     }
   }

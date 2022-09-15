@@ -139,12 +139,7 @@ double computeA(double i, double S, double b, double N) {
   return i == 0.0 ? N : (1.0 + i * S) * (1.0 - b) / i;
 }
 
-double computeN(double rPct,
-                double PV,
-                double Pmt,
-                double FV,
-                double S,
-                double i) {
+double computeN(double rPct, double PV, double Pmt, double FV, double S, double i) {
   if (rPct == 0.0) {
     return -(PV + FV) / Pmt;
   }
@@ -153,21 +148,15 @@ double computeN(double rPct,
          / std::log(1.0 + i);
 }
 
-double computeRPct(double N,
-                   double PV,
-                   double Pmt,
-                   double FV,
-                   double PY,
-                   double CY,
-                   double S) {
+double computeRPct(double N, double PV, double Pmt, double FV, double PY, double CY, double S) {
   if (Pmt == 0.0) {
     // PV + FV*(1 + r/(100*CY))^(-N*CY/PY) = 0
     return 100.0 * CY * (std::pow(-FV / PV, PY / (N * CY)) - 1.0);
   }
   const double parameters[7] = {N, PV, Pmt, FV, PY, CY, S};
   // We must solve this expression. An exact solution cannot be found.
-  Poincare::Solver::ValueAtAbscissa evaluation =
-      [](double x, Poincare::Context *, const void * aux) {
+  Poincare::Solver<double>::FunctionEvaluation evaluation =
+      [](double x, const void * aux) {
         const double * pack = static_cast<const double *>(aux);
         double N = pack[0];
         double PV = pack[1];
@@ -181,10 +170,8 @@ double computeRPct(double N,
         double a = computeA(i, S, b, N);
         return PV + a * Pmt + b * FV;
       };
-  return Poincare::Solver::NextRoot(
-      evaluation, nullptr, parameters, -100.0, 100,
-      Poincare::Solver::k_relativePrecision, Poincare::Solver::k_minimalStep,
-      Poincare::Solver::DefaultMaximalStep(-100.0, 100));
+  Poincare::Solver<double> solver(-100., 100.);
+  return solver.nextRoot(evaluation, parameters).x1();
 }
 
 double computePV(double Pmt, double FV, double a, double b) {

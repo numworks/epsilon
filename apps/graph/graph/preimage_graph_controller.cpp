@@ -3,6 +3,8 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/float.h>
 
+using namespace Poincare;
+using namespace Shared;
 using namespace Escher;
 
 namespace Graph {
@@ -11,8 +13,8 @@ PreimageGraphController::PreimageGraphController(
   Responder * parentResponder,
   GraphView * graphView,
   BannerView * bannerView,
-  Shared::InteractiveCurveViewRange * curveViewRange,
-  Shared::CurveViewCursor * cursor
+  InteractiveCurveViewRange * curveViewRange,
+  CurveViewCursor * cursor
 ) :
   CalculationGraphController(
     parentResponder,
@@ -26,9 +28,10 @@ PreimageGraphController::PreimageGraphController(
 {
 }
 
-Poincare::Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) {
-  Poincare::Expression expression = Poincare::Float<double>::Builder(m_image);
-  return functionStore()->modelForRecord(m_record)->nextIntersectionFrom(start, max, context, expression, relativePrecision, minimalStep, maximalStep);
+Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(double start, double max, Context * context) {
+  Solver<double> solver = PoincareHelpers::Solver(start, max, ContinuousFunction::k_unknownName, context);
+  Expression f = functionStore()->modelForRecord(m_record)->expressionClone();
+  return solver.nextIntersection(Float<double>::Builder(m_image), f);
 }
 
 }

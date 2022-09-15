@@ -132,19 +132,11 @@ public:
   // Set y range for display
   void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context, bool optimizeRange) const override;
 
-  /* Extremum */
+  /* Solver */
 
-  // Compute coordinates of the next minimum, from a starting point
-  Poincare::Coordinate2D<double> nextMinimumFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
-  // Compute coordinates of the next maximum, from a starting point
-  Poincare::Coordinate2D<double> nextMaximumFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
-
-  /* Roots */
-
-  // Compute coordinates of the next root, from a starting point
-  Poincare::Coordinate2D<double> nextRootFrom(double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep) const;
-  // Compute coordinates of the next intersection, from a starting point
-  Poincare::Coordinate2D<double> nextIntersectionFrom(double start, double max, Poincare::Context * context, Poincare::Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin = -INFINITY, double eDomainMax = INFINITY) const;
+  /* A solver will be run from 'start' to 'end' on this function. Trim 'start'
+   * and 'end' to the interval of definition. */
+  void trimResolutionInterval(double * start, double * end) const;
 
   /* Integral */
 
@@ -184,9 +176,6 @@ private:
 
   /* Evaluation */
 
-  typedef Poincare::Coordinate2D<double> (*ComputePointOfInterest)(Poincare::Expression e, const char * symbol, double start, double max, Poincare::Context * context, double relativePrecision, double minimalStep, double maximalStep);
-  // Compute coordinates of the next point of interest, from a starting point
-  Poincare::Coordinate2D<double> nextPointOfInterestFrom(double start, double max, Poincare::Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const;
   // Evaluate XY at parameter (distinct from approximation with Polar types)
   template<typename T> Poincare::Coordinate2D<T> privateEvaluateXYAtParameter(T t, Poincare::Context * context, int subCurveIndex = 0) const;
   // Approximate XY at parameter

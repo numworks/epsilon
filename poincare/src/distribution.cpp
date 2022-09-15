@@ -1,14 +1,15 @@
-#include <poincare/distribution.h>
 #include <poincare/binomial_distribution.h>
-#include <poincare/normal_distribution.h>
-#include <poincare/student_distribution.h>
+#include <poincare/chi2_distribution.h>
+#include <poincare/distribution.h>
+#include <poincare/exponential_distribution.h>
+#include <poincare/fisher_distribution.h>
 #include <poincare/geometric_distribution.h>
 #include <poincare/hypergeometric_distribution.h>
-#include <poincare/exponential_distribution.h>
+#include <poincare/normal_distribution.h>
 #include <poincare/poisson_distribution.h>
-#include <poincare/fisher_distribution.h>
+#include <poincare/solver_algorithms.h>
+#include <poincare/student_distribution.h>
 #include <poincare/uniform_distribution.h>
-#include <poincare/chi2_distribution.h>
 
 namespace Poincare {
 
@@ -48,18 +49,18 @@ const Distribution * Distribution::Get(Type type) {
   }
 }
 
-template <typename T> void Distribution::findBoundsForBinarySearch(Poincare::Solver::ValueAtAbscissa cumulativeDistributionEvaluation, Poincare::Context * context, const void * auxiliary, T & xmin, T & xmax) {
+template <typename T> void Distribution::findBoundsForBinarySearch(typename Solver<T>::FunctionEvaluation cumulativeDistributionEvaluation, const void * auxiliary, T & xmin, T & xmax) {
   /* We'll simply test [0, 10], [10, 100], [100, 1000] ... until we find a working interval, or
    * symmetrically if the zero is on the left. This obviously assumes that
    * cumulativeDistributionEvaluation is an increasing function.*/
   constexpr static int k_maxNumberOfIterations = 308;  // std::log10(DBL_MAX)
 
   xmin = 0, xmax = 10;
-  T signOfRoot = cumulativeDistributionEvaluation(0, context, auxiliary) < 0 ? 1 : -1;
+  T signOfRoot = cumulativeDistributionEvaluation(0, auxiliary) < 0 ? 1 : -1;
   int iteration = 0;
 
   // We check if xmax if after the root, and otherwise multiply it by 10
-  while ((signOfRoot * cumulativeDistributionEvaluation(signOfRoot * xmax, context, auxiliary) < 0) &&
+  while ((signOfRoot * cumulativeDistributionEvaluation(signOfRoot * xmax, auxiliary) < 0) &&
       (iteration < k_maxNumberOfIterations)) {
     xmin = xmax;
     xmax *= 10;
@@ -87,16 +88,16 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
     return -INFINITY;
   }
   const void * pack[3] = { this, &p, parameters };
-  Coordinate2D<double> result = Solver::IncreasingFunctionRoot(
+  Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(
       ax, bx, DBL_EPSILON,
-      [](double x, Poincare::Context * context, const void * auxiliary) {
+      [](double x, const void * auxiliary) {
         const void * const * pack = static_cast<const void * const *>(auxiliary);
         const Distribution * distribution = static_cast<const Distribution *>(pack[0]);
         const double * proba = static_cast<const double *>(pack[1]);
         const double * parameters = static_cast<const double *>(pack[2]);
         return distribution->cumulativeDistributiveFunctionAtAbscissa(x, parameters) - *proba; // This needs to be an increasing function
       },
-      nullptr, pack);
+      pack);
   /* Either no result was found, the precision is ok or the result was outside
    * the given ax bx bounds */
    if (!(std::isnan(result.x2()) || std::fabs(result.x2()) <= FLT_EPSILON || std::fabs(result.x1()- ax) < FLT_EPSILON || std::fabs(result.x1() - bx) < FLT_EPSILON)) {
@@ -109,7 +110,7 @@ double Distribution::cumulativeDistributiveInverseForProbabilityUsingIncreasingF
    return result.x1();
 }
 
-template void Distribution::findBoundsForBinarySearch<float>(double (*)(double, Poincare::Context*, void const*), Poincare::Context*, void const*, float&, float&);
-template void Distribution::findBoundsForBinarySearch<double>(double (*)(double, Poincare::Context*, void const*), Poincare::Context*, void const*, double&, double&);
+template void Distribution::findBoundsForBinarySearch<float>(Solver<float>::FunctionEvaluation, void const *, float &, float &);
+template void Distribution::findBoundsForBinarySearch<double>(Solver<double>::FunctionEvaluation, void const *, double &, double &);
 
 }

@@ -13,14 +13,14 @@ template<typename T> T DiscreteDistribution::CumulativeDistributiveFunctionAtAbs
     return static_cast<T>(0.0);
   }
   const void * pack[2] = { this, parameters };
-  return Solver::CumulativeDistributiveFunctionForNDefinedFunction<T>(x,
-        [](T k, Poincare::Context * context, const void * auxiliary) {
+  return SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction<T>(x,
+        [](T k, const void * auxiliary) {
           const void * const * pack = static_cast<const void * const *>(auxiliary);
           Distribution * distribution = const_cast<Distribution *>(static_cast<const Distribution *>(pack[0]));
           const T * parameters = static_cast<const T *>(pack[1]);
           return distribution->evaluateAtAbscissa(k, parameters);
         },
-        nullptr, pack);
+        pack);
 }
 
 template float DiscreteDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float, const float *) const;

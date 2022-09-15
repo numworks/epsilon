@@ -27,11 +27,7 @@ T Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
     return 0.0;
   }
   double result = 0.0;
-  if (RegularizedGammaFunction(k / 2.0,
-                       x / 2.0,
-                       k_regularizedGammaPrecision,
-                       k_maxRegularizedGammaIterations,
-                       &result)) {
+  if (RegularizedGammaFunction(k / 2.0, x / 2.0, k_regularizedGammaPrecision, k_maxRegularizedGammaIterations, &result)) {
     return result;
   }
   return NAN;
@@ -39,7 +35,7 @@ T Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
 
 template <typename T>
 T Chi2Distribution::CumulativeDistributiveInverseForProbability(T probability, T k) {
-  // Compute inverse using Solver::IncreasingFunctionRoot
+  // Compute inverse using SolverAlgorithms::IncreasingFunctionRoot
   if (probability > 1.0 - DBL_EPSILON) {
     return INFINITY;
   } else if (probability < DBL_EPSILON) {
@@ -52,17 +48,15 @@ T Chi2Distribution::CumulativeDistributiveInverseForProbability(T probability, T
   };
   Args args{probability, k};
 
-  Poincare::Solver::ValueAtAbscissa evaluation =
-      [](double x, Poincare::Context * context, const void * auxiliary) {
-        const Args * args = static_cast<const Args *>(auxiliary);
-        return CumulativeDistributiveFunctionAtAbscissa<double>(x, args->k) - args->proba;
-      };
+  Solver<double>::FunctionEvaluation evaluation = [](double x, const void * auxiliary) {
+    const Args * args = static_cast<const Args *>(auxiliary);
+    return CumulativeDistributiveFunctionAtAbscissa<double>(x, args->k) - args->proba;
+  };
 
   double xmin, xmax;  // IncreasingFunctionRoot requires double
-  findBoundsForBinarySearch(evaluation, nullptr, &args, xmin, xmax);
+  findBoundsForBinarySearch(evaluation, &args, xmin, xmax);
 
-  Poincare::Coordinate2D<double> result =
-      Poincare::Solver::IncreasingFunctionRoot(xmin, xmax, DBL_EPSILON, evaluation, nullptr, &args);
+  Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(xmin, xmax, DBL_EPSILON, evaluation, &args);
   return result.x1();
 }
 

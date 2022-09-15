@@ -90,7 +90,7 @@ $(call object_for,$(apps_src) $(tests_src)): $(BUILD_DIR)/python/port/genhdr/qst
 
 $(call object_for,$(apps_src)): $(BUILD_DIR)/apps/home/apps_layout.h
 
-apps_tests_src = $(app_calculation_test_src) $(app_code_test_src) $(app_graph_test_src) $(app_inference_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_settings_test_src) $(app_solver_test_src) $(app_finance_test_src)
+apps_tests_src = $(app_calculation_test_src) $(app_code_test_src) $(app_graph_test_src) $(app_distributions_test_src) $(app_inference_test_src) $(app_regression_test_src) $(app_sequence_test_src) $(app_shared_test_src) $(app_statistics_test_src) $(app_settings_test_src) $(app_solver_test_src) $(app_finance_test_src)
 
 apps_tests_src += $(addprefix apps/,\
   alternate_empty_nested_menu_controller.cpp \

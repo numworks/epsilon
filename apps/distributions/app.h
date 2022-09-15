@@ -73,7 +73,6 @@ private:
   CalculationController m_calculationController;
   ParametersController m_parameterController;
   DistributionController m_distributionController;
-  Shared::MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
   Escher::InputViewController m_inputViewController;
 };

@@ -59,10 +59,6 @@ $(call object_for,$(sources)): SFLAGS += -Iapps
 
 $(eval $(call depends_on_image,apps/distributions/app.cpp,apps/distributions/distributions_icon.png))
 
-$(eval $(call depends_on_transparent_image,apps/distributions/app.cpp,$(addprefix apps/distributions/images/,\
-  probability.png \
-)))
-
 $(eval $(call depends_on_transparent_image,apps/distributions/probability/distribution_controller.cpp,$(addprefix apps/distributions/images/,\
   binomial_icon.png \
   chi_squared_icon.png \

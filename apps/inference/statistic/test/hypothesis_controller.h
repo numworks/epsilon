@@ -13,7 +13,7 @@
 #include "inference/statistic/comparison_operator_popup_data_source.h"
 #include "inference/statistic/expression_cell_with_sublabel_and_dropdown.h"
 #include "inference/statistic/input_controller.h"
-#include "inference/shared/expression_cell_with_editable_text_with_message.h"
+#include <escher/expression_cell_with_editable_text_with_message.h>
 #include <escher/selectable_list_view_controller.h>
 
 namespace Inference {
@@ -63,7 +63,7 @@ private:
 
   ComparisonOperatorPopupDataSource m_operatorDataSource;
 
-  ExpressionCellWithEditableTextWithMessage m_h0;
+  Escher::ExpressionCellWithEditableTextWithMessage m_h0;
   ExpressionCellWithSublabelAndDropdown m_ha;
   Shared::ButtonWithSeparator m_next;
 

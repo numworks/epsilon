@@ -1,8 +1,7 @@
-#include "expression_cell_with_editable_text_with_message.h"
-
+#include <escher/expression_cell_with_editable_text_with_message.h>
 #include <escher/container.h>
 
-namespace Inference {
+namespace Escher {
 
 ExpressionCellWithEditableTextWithMessage::ExpressionCellWithEditableTextWithMessage(
     Escher::Responder * parent,
@@ -69,4 +68,4 @@ void ExpressionCellWithEditableTextWithMessage::setDelegates(
   ChainedTextFieldDelegate::setTextFieldDelegate(textFieldDelegate);
 }
 
-}  // namespace Inference
+}  // namespace Escher

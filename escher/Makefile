@@ -30,6 +30,7 @@ escher_src += $(addprefix escher/src/,\
   even_odd_editable_text_cell.cpp \
   even_odd_expression_cell.cpp \
   even_odd_message_text_cell.cpp \
+  expression_cell_with_editable_text_with_message.cpp \
   expression_table_cell.cpp \
   expression_table_cell_with_buffer.cpp \
   expression_table_cell_with_expression.cpp \

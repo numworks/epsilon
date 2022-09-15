@@ -1,7 +1,7 @@
 #ifndef ESCHER_POP_UP_CONTROLLER_H
 #define ESCHER_POP_UP_CONTROLLER_H
 
-#include <escher/button.h>
+#include <escher/abstract_button_cell.h>
 #include <escher/invocation.h>
 #include <escher/buffer_text_view.h>
 #include <escher/message_text_view.h>
@@ -10,9 +10,9 @@
 
 namespace Escher {
 
-class HighContrastButton : public Button {
+class HighContrastButton : public AbstractButtonCell {
 public:
-  using Button::Button;
+  using AbstractButtonCell::AbstractButtonCell;
   KDColor highlightedBackgroundColor() const override { return Palette::YellowDark; }
 };
 

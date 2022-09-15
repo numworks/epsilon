@@ -1,12 +1,12 @@
 #ifndef SHARED_BUTTON_CELL_H
 #define SHARED_BUTTON_CELL_H
 
-#include <escher/button.h>
+#include <escher/abstract_button_cell.h>
 #include <escher/metric.h>
 
 namespace Escher {
 
-class ButtonCell : public Escher::Button {
+class ButtonCell : public Escher::AbstractButtonCell {
 public:
   ButtonCell(Responder * parentResponder,
                       I18n::Message textBody,

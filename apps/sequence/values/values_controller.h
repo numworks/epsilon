@@ -13,8 +13,8 @@ public:
   ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header);
 
   // ButtonRowDelegate
-  Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
-    return const_cast<Escher::Button *>(&m_setIntervalButton);
+  Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
+    return const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
   }
 
   // AlternateEmptyViewDelegate
@@ -100,7 +100,7 @@ private:
   Escher::EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfDisplayableRows];
 
   IntervalParameterController m_intervalParameterController;
-  Escher::Button m_setIntervalButton;
+  Escher::AbstractButtonCell m_setIntervalButton;
   mutable char m_memoizedBuffer[k_maxNumberOfDisplayableCells][k_valuesCellBufferSize];
 
   Escher::RegularTableSize1DManager m_widthManager;

@@ -1,10 +1,10 @@
-#include <escher/button.h>
+#include <escher/abstract_button_cell.h>
 #include <escher/palette.h>
 #include <assert.h>
 
 namespace Escher {
 
-Button::Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDFont::Size font, KDColor textColor) :
+AbstractButtonCell::AbstractButtonCell(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDFont::Size font, KDColor textColor) :
   HighlightCell(),
   Responder(parentResponder),
   m_messageTextView(font, textBody, KDContext::k_alignCenter, KDContext::k_alignCenter, textColor),
@@ -13,24 +13,24 @@ Button::Button(Responder * parentResponder, I18n::Message textBody, Invocation i
 {
 }
 
-void Button::setMessage(I18n::Message message) {
+void AbstractButtonCell::setMessage(I18n::Message message) {
   m_messageTextView.setMessage(message);
 }
 
-int Button::numberOfSubviews() const {
+int AbstractButtonCell::numberOfSubviews() const {
   return 1;
 }
 
-View * Button::subviewAtIndex(int index) {
+View * AbstractButtonCell::subviewAtIndex(int index) {
   assert(index == 0);
   return &m_messageTextView;
 }
 
-void Button::layoutSubviews(bool force) {
+void AbstractButtonCell::layoutSubviews(bool force) {
   m_messageTextView.setFrame(bounds(), force);
 }
 
-bool Button::handleEvent(Ion::Events::Event event) {
+bool AbstractButtonCell::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     m_invocation.perform(this);
     return true;
@@ -38,14 +38,14 @@ bool Button::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void Button::setHighlighted(bool highlight) {
+void AbstractButtonCell::setHighlighted(bool highlight) {
   HighlightCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? highlightedBackgroundColor() : KDColorWhite;
   m_messageTextView.setBackgroundColor(backgroundColor);
   markRectAsDirty(bounds());
 }
 
-KDSize Button::minimalSizeForOptimalDisplay() const {
+KDSize AbstractButtonCell::minimalSizeForOptimalDisplay() const {
   KDSize textSize = m_messageTextView.minimalSizeForOptimalDisplay();
   if (m_font == KDFont::Size::Small) {
     return KDSize(textSize.width() + k_horizontalMarginSmall, textSize.height() + k_verticalMarginSmall);

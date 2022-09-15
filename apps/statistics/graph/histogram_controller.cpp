@@ -30,8 +30,8 @@ HistogramController::HistogramController(Responder * parentResponder, Escher::In
 {
 }
 
-Button * HistogramController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  return index == 0 ? GraphButtonRowDelegate::buttonAtIndex(index, position) : const_cast<Button *>(&m_parameterButton);
+AbstractButtonCell * HistogramController::buttonAtIndex(int index, ButtonRowController::Position position) const {
+  return index == 0 ? GraphButtonRowDelegate::buttonAtIndex(index, position) : const_cast<AbstractButtonCell *>(&m_parameterButton);
 }
 
 bool HistogramController::handleEvent(Ion::Events::Event event) {

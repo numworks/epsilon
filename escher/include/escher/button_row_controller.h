@@ -5,7 +5,7 @@
 #include <escher/view.h>
 #include <escher/invocation.h>
 #include <escher/i18n.h>
-#include <escher/button.h>
+#include <escher/abstract_button_cell.h>
 #include <assert.h>
 
 namespace Escher {
@@ -45,7 +45,7 @@ private:
   public:
     ContentView(ViewController * mainViewController, ButtonRowDelegate * delegate, Position position, Style style, Size size);
     int numberOfButtons() const;
-    Button * buttonAtIndex(int index) const;
+    AbstractButtonCell * buttonAtIndex(int index) const;
     void reload();
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
@@ -74,7 +74,7 @@ class ButtonRowDelegate {
 public:
   ButtonRowDelegate(ButtonRowController * header, ButtonRowController * footer);
   virtual int numberOfButtons(ButtonRowController::Position position) const { return 0; }
-  virtual Button * buttonAtIndex(int index, ButtonRowController::Position position) const {
+  virtual AbstractButtonCell * buttonAtIndex(int index, ButtonRowController::Position position) const {
     assert(false);
     return nullptr;
   }

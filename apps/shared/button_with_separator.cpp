@@ -9,7 +9,7 @@ ButtonWithSeparator::ButtonWithSeparator(Responder * parentResponder,
                                          Escher::Invocation invocation,
                                          KDColor backgroundColor,
                                          KDCoordinate horizontalMargins) :
-      Button(parentResponder, textBody, invocation, KDFont::Size::Large, KDColorBlack),
+      AbstractButtonCell(parentResponder, textBody, invocation, KDFont::Size::Large, KDColorBlack),
       m_backgroundColor(backgroundColor),
       m_horizontalMargins(horizontalMargins)
 {
@@ -42,7 +42,7 @@ void ButtonWithSeparator::layoutSubviews(bool force) {
 }
 
 KDSize ButtonWithSeparator::minimalSizeForOptimalDisplay() const {
-  KDSize buttonSize = Escher::Button::minimalSizeForOptimalDisplay();
+  KDSize buttonSize = Escher::AbstractButtonCell::minimalSizeForOptimalDisplay();
   return KDSize(buttonSize.width() + 2* m_horizontalMargins, buttonSize.height() + k_margin + k_lineThickness);
 }
 

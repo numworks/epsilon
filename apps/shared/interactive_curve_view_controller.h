@@ -31,7 +31,7 @@ public:
   ViewController * zoomParameterController();
 
   int numberOfButtons(Escher::ButtonRowController::Position position) const override;
-  Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
+  Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
 
   Responder * defaultController() override;
 
@@ -55,7 +55,7 @@ protected:
   virtual bool cursorMatchesModel() = 0;
   bool openMenu() { return openMenuForCurveAtIndex(selectedCurveRelativePosition()); };
   virtual CurveSelectionController * curveSelectionController() const = 0;
-  virtual Escher::Button * calculusButton() const = 0;
+  virtual Escher::AbstractButtonCell * calculusButton() const = 0;
   Escher::Invocation calculusButtonInvocation();
 
   // Closest vertical curve helper
@@ -94,7 +94,7 @@ private:
   InteractiveCurveViewRange * m_interactiveRange;
   Escher::ButtonState m_autoButton;
   Escher::ToggleableDotView m_autoDotView;
-  Escher::Button m_navigationButton;
+  Escher::AbstractButtonCell m_navigationButton;
   Escher::ButtonState m_rangeButton;
   Escher::UnequalView m_rangeUnequalView;
 };

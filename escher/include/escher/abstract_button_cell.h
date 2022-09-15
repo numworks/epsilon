@@ -1,5 +1,5 @@
-#ifndef ESCHER_BUTTON_H
-#define ESCHER_BUTTON_H
+#ifndef ESCHER_ABSTRACT_BUTTON_CELL_H
+#define ESCHER_ABSTRACT_BUTTON_CELL_H
 
 #include <escher/highlight_cell.h>
 #include <escher/i18n.h>
@@ -10,9 +10,9 @@
 
 namespace Escher {
 
-class Button : public HighlightCell, public Responder {
+class AbstractButtonCell : public HighlightCell, public Responder {
 public:
-  Button(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDFont::Size font = KDFont::Size::Small, KDColor textColor = KDColorBlack);
+  AbstractButtonCell(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDFont::Size font = KDFont::Size::Small, KDColor textColor = KDColorBlack);
   void setMessage(I18n::Message message);
   bool handleEvent(Ion::Events::Event event) override;
   void setHighlighted(bool highlight) override;

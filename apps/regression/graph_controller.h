@@ -77,7 +77,7 @@ private:
   bool isAlongY(int curveIndex) const override { return false; }
   bool openMenuForCurveAtIndex(int index) override;
   SeriesSelectionController * curveSelectionController() const override { return const_cast<SeriesSelectionController *>(&m_seriesSelectionController); }
-  Escher::Button * calculusButton() const override { return const_cast<Escher::Button * >(&m_calculusButton); }
+  Escher::AbstractButtonCell * calculusButton() const override { return const_cast<Escher::AbstractButtonCell * >(&m_calculusButton); }
 
   void setRoundCrossCursorView();
   Shared::ToggleableRingRoundCursorView m_cursorView;
@@ -86,7 +86,7 @@ private:
   Store * m_store;
   GraphOptionsController m_graphOptionsController;
   SeriesSelectionController m_seriesSelectionController;
-  Escher::Button m_calculusButton;
+  Escher::AbstractButtonCell m_calculusButton;
   /* The selectedDotIndex is -1 when no dot is selected, m_numberOfPairs when
    * the mean dot is selected and the dot index otherwise */
   int * m_selectedDotIndex;

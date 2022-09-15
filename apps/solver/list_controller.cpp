@@ -36,11 +36,11 @@ int ListController::numberOfButtons(ButtonRowController::Position position) cons
   return 0;
 }
 
-Button * ListController::buttonAtIndex(int index, ButtonRowController::Position position) const {
+AbstractButtonCell * ListController::buttonAtIndex(int index, ButtonRowController::Position position) const {
   if (position == ButtonRowController::Position::Top) {
     return nullptr;
   }
-  return const_cast<Button *>(&m_resolveButton);
+  return const_cast<AbstractButtonCell *>(&m_resolveButton);
 }
 
 HighlightCell * ListController::reusableCell(int index, int type) {

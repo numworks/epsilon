@@ -20,8 +20,8 @@ BoxController::BoxController(Responder * parentResponder, ButtonRowController * 
 {
 }
 
-Button * BoxController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  return index == 0 ? GraphButtonRowDelegate::buttonAtIndex(index, position) : const_cast<Button *>(&m_parameterButton);
+AbstractButtonCell * BoxController::buttonAtIndex(int index, ButtonRowController::Position position) const {
+  return index == 0 ? GraphButtonRowDelegate::buttonAtIndex(index, position) : const_cast<AbstractButtonCell *>(&m_parameterButton);
 }
 
 bool BoxController::handleEvent(Ion::Events::Event event) {

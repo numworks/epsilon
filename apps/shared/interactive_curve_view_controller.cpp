@@ -121,9 +121,9 @@ int InteractiveCurveViewController::numberOfButtons(ButtonRowController::Positio
   return 4;
 }
 
-Button * InteractiveCurveViewController::buttonAtIndex(int index, ButtonRowController::Position position) const {
-  const Button * buttons[] = {&m_autoButton, &m_rangeButton, &m_navigationButton, calculusButton()};
-  return (Button *)buttons[index];
+AbstractButtonCell * InteractiveCurveViewController::buttonAtIndex(int index, ButtonRowController::Position position) const {
+  const AbstractButtonCell * buttons[] = {&m_autoButton, &m_rangeButton, &m_navigationButton, calculusButton()};
+  return (AbstractButtonCell *)buttons[index];
 }
 
 Responder * InteractiveCurveViewController::defaultController() {

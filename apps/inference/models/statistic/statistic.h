@@ -2,7 +2,7 @@
 #define INFERENCE_MODELS_STATISTIC_STATISTIC_H
 
 #include <apps/shared/global_context.h>
-#include <inference/models/inference.h>
+#include <apps/shared/inference.h>
 #include "hypothesis_params.h"
 
 namespace Inference {
@@ -35,12 +35,26 @@ enum class CategoricalType {
   Homogeneity
 };
 
-class Statistic : public Inference {
+class Statistic : public Shared::Inference {
 friend class DistributionInterface;
 public:
   Statistic() :
     m_threshold(-1),
     m_degreesOfFreedom(NAN) {}
+
+  enum class SubApp {
+    Test,
+    Interval,
+    NumberOfSubApps
+  };
+
+  virtual void init() {}
+  virtual void tidy() {}
+
+  static bool Initialize(Statistic * statistic, SubApp subApp);
+  /* This poor man's RTTI is required only to avoid reinitializing the model
+   * everytime we enter a subapp. */
+  virtual SubApp subApp() const = 0;
 
   constexpr static int k_numberOfSignificanceTestType = static_cast<int>(SignificanceTestType::NumberOfSignificanceTestTypes);
 
@@ -76,6 +90,7 @@ public:
   void setParameterAtIndex(double f, int i) override;
   double threshold() const { return m_threshold; }
   void setThreshold(double s) { m_threshold = s; }
+  virtual bool validateInputs() { return true; };
 
   int indexOfThreshold() const { return numberOfStatisticParameters(); }
   virtual I18n::Message thresholdName() const = 0;

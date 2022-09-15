@@ -23,7 +23,7 @@
 #include "statistic/test/test_graph_controller.h"
 #include "statistic/test_controller.h"
 #include "statistic/type_controller.h"
-#include "models/models_buffer.h"
+#include "models/statistic_buffer.h"
 
 namespace Inference {
 
@@ -45,15 +45,14 @@ public:
     void tidy() override;
     void reset() override;
 
-    Inference * inference() { return m_modelBuffer.inference(); }
-    Statistic * statistic() { return m_modelBuffer.statistic(); }
+    Statistic * statistic() { return m_statisticBuffer.statistic(); }
 
     Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> * pageQueue() { return &m_pageQueue; }
   private:
     friend App;
     // TODO: optimize size of Stack
     Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> m_pageQueue;
-    ModelBuffer m_modelBuffer;
+    StatisticBuffer m_statisticBuffer;
   };
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
@@ -79,8 +78,8 @@ public:
 
   // Shared::MenuControllerDelegate
   void selectSubApp(int subAppIndex) override;
-  int selectedSubApp() const override { return static_cast<int>(snapshot()->inference()->subApp()); }
-  int numberOfSubApps() const override { return static_cast<int>(Inference::SubApp::NumberOfSubApps); }
+  int selectedSubApp() const override { return static_cast<int>(snapshot()->statistic()->subApp()); }
+  int numberOfSubApps() const override { return static_cast<int>(Statistic::SubApp::NumberOfSubApps); }
 
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
 private:

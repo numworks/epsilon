@@ -26,7 +26,7 @@ double DistributionT::CumulativeNormalizedInverseDistributionFunction(double pro
 }
 
 float DistributionT::YMax(double degreesOfFreedom) {
-  return (1 + Inference::k_displayTopMarginRatio) * CanonicalDensityFunction(0, degreesOfFreedom);
+  return (1 + Shared::Inference::k_displayTopMarginRatio) * CanonicalDensityFunction(0, degreesOfFreedom);
 }
 
 /* Distribution z */
@@ -44,7 +44,7 @@ double DistributionZ::CumulativeNormalizedInverseDistributionFunction(double pro
 }
 
 float DistributionZ::YMax(double degreesOfFreedom) {
-  return (1 + Inference::k_displayTopMarginRatio) * CanonicalDensityFunction(0, degreesOfFreedom);
+  return (1 + Shared::Inference::k_displayTopMarginRatio) * CanonicalDensityFunction(0, degreesOfFreedom);
 }
 
 /* Distribution chi 2 */
@@ -74,16 +74,16 @@ double DistributionChi2::CumulativeNormalizedInverseDistributionFunction(double 
 }
 
 float DistributionChi2::XMin(double degreesOfFreedom) {
-  return -Inference::k_displayLeftMarginRatio * XMax(degreesOfFreedom);
+  return -Shared::Inference::k_displayLeftMarginRatio * XMax(degreesOfFreedom);
 }
 
 float DistributionChi2::XMax(double degreesOfFreedom) {
-  return (1 + Inference::k_displayRightMarginRatio) * (degreesOfFreedom + Test::k_displayWidthToSTDRatio * std::sqrt(degreesOfFreedom));
+  return (1 + Shared::Inference::k_displayRightMarginRatio) * (degreesOfFreedom + Test::k_displayWidthToSTDRatio * std::sqrt(degreesOfFreedom));
 }
 
 float DistributionChi2::YMax(double degreesOfFreedom) {
   float max = degreesOfFreedom <= 2.0 ? 0.5 : CanonicalDensityFunction(degreesOfFreedom - 1, degreesOfFreedom) * 1.2;
-  return (1. + Inference::k_displayTopMarginRatio) * max;
+  return (1. + Shared::Inference::k_displayTopMarginRatio) * max;
 }
 
 

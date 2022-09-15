@@ -1,5 +1,5 @@
-#ifndef INFERENCE_MODELS_BUFFER_H
-#define INFERENCE_MODELS_BUFFER_H
+#ifndef INFERENCE_MODELS_STATISTIC_BUFFER_H
+#define INFERENCE_MODELS_STATISTIC_BUFFER_H
 
 #include <new>
 
@@ -56,17 +56,6 @@ private:
   TwoProportionsZTest m_twoProportionsZTest;
   GoodnessTest m_goodnessTest;
   HomogeneityTest m_homogeneityTest;
-};
-
-union ModelBuffer {
-public:
-  ModelBuffer() { new (&m_statisticBuffer) StatisticBuffer(); }
-  ~ModelBuffer() { inference()->~Inference(); }
-  Inference * inference() { return reinterpret_cast<Inference *>(this); }
-  Statistic * statistic() { return m_statisticBuffer.statistic(); }
-
-private:
-  StatisticBuffer m_statisticBuffer;
 };
 
 }  // namespace Inference

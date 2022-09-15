@@ -202,7 +202,7 @@ bool EditableCategoricalTableCell::recomputeDimensions() {
 }
 
 Table * EditableCategoricalTableCell::tableModel() {
-  if (m_statistic->subApp() == Inference::SubApp::Test) {
+  if (m_statistic->subApp() == Statistic::SubApp::Test) {
     if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
       return static_cast<SlopeTTest *>(m_statistic);
     } else {
@@ -210,7 +210,7 @@ Table * EditableCategoricalTableCell::tableModel() {
       return static_cast<Chi2Test *>(m_statistic);
     }
   }
-  assert(m_statistic->subApp() == Inference::SubApp::Interval);
+  assert(m_statistic->subApp() == Statistic::SubApp::Interval);
   assert(m_statistic->significanceTestType() == SignificanceTestType::Slope);
   return static_cast<SlopeTInterval *>(m_statistic);
 }

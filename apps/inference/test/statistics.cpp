@@ -2,7 +2,7 @@
 #include <quiz.h>
 
 #include <poincare/test/helper.h>
-#include "inference/models/models_buffer.h"
+#include "inference/models/statistic_buffer.h"
 #include "inference/models/statistic/goodness_test.h"
 #include "inference/models/statistic/homogeneity_test.h"
 #include "inference/models/statistic/one_mean_t_interval.h"

@@ -37,7 +37,7 @@ void ResultsController::didBecomeFirstResponder() {
 }
 
 ViewController::TitlesDisplay ResultsController::titlesDisplay() {
-  if (m_statistic->subApp() == Inference::SubApp::Interval || (m_statistic->significanceTestType() == SignificanceTestType::Categorical && m_statistic->categoricalType() == CategoricalType::GoodnessOfFit)) {
+  if (m_statistic->subApp() == Statistic::SubApp::Interval || (m_statistic->significanceTestType() == SignificanceTestType::Categorical && m_statistic->categoricalType() == CategoricalType::GoodnessOfFit)) {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   return ViewController::TitlesDisplay::DisplayLastThreeTitles;
@@ -59,12 +59,12 @@ bool ResultsController::ButtonAction(void * c, void * s) {
     App::app()->displayWarning(I18n::Message::InvalidValues);
     return false;
   }
-  if (ExamModeConfiguration::testsGraphResultsAreForbidden() && controller->m_statistic->subApp() == Inference::SubApp::Test) {
+  if (ExamModeConfiguration::testsGraphResultsAreForbidden() && controller->m_statistic->subApp() == Statistic::SubApp::Test) {
     App::app()->displayWarning(I18n::Message::DisabledFeatureInTestMode1, I18n::Message::DisabledFeatureInTestMode2);
     return false;
   }
   Escher::ViewController * graph;
-  if (controller->m_statistic->subApp() == Inference::SubApp::Test) {
+  if (controller->m_statistic->subApp() == Statistic::SubApp::Test) {
     graph = controller->m_testGraphController;
   } else {
     graph = controller->m_intervalGraphController;

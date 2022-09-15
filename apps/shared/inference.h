@@ -6,6 +6,8 @@
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
 
+// Inference is the common ancestor of Statistic and Distribution
+
 namespace Shared {
 
 struct ParameterRepresentation {

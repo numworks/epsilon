@@ -36,8 +36,8 @@ public:
 private:
   // Significance Test: Slope
   int numberOfStatisticParameters() const override { return numberOfTableParameters(); }
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override {
-    return ParameterRepresentation{Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override {
+    return Shared::ParameterRepresentation{Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
   }
 
   // Inference

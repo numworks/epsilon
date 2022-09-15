@@ -39,7 +39,7 @@ private:
   // Significance Test: TwoMeans
   bool validateInputs() override { return TwoMeans::TValidateInputs(m_params); }
   int numberOfStatisticParameters() const override { return TwoMeans::NumberOfParameters(); }
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override { return TwoMeans::TParameterRepresentationAtIndex(i); }
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override { return TwoMeans::TParameterRepresentationAtIndex(i); }
   double * parametersArray() override { return m_params; }
 
   // Distribution: t

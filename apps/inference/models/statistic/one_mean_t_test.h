@@ -37,7 +37,7 @@ public:
 private:
   // Significance Test: OneMean
   int numberOfStatisticParameters() const override { return OneMean::NumberOfParameters(); }
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override { return OneMean::TParameterRepresentationAtIndex(i); }
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override { return OneMean::TParameterRepresentationAtIndex(i); }
   double * parametersArray() override { return m_params; }
 
   // Distribution: t

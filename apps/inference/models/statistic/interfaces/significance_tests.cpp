@@ -15,6 +15,7 @@
 #include <inference/models/statistic/two_means_z_test.h>
 
 using namespace Poincare;
+using namespace Shared;
 
 namespace Inference {
 

@@ -38,7 +38,7 @@ private:
   // Significance Test: TwoMeans
   bool validateInputs() override { return TwoMeans::ZValidateInputs(m_params); }
   int numberOfStatisticParameters() const override { return TwoMeans::NumberOfParameters(); }
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override { return TwoMeans::ZParameterRepresentationAtIndex(i); }
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override { return TwoMeans::ZParameterRepresentationAtIndex(i); }
   double * parametersArray() override { return m_params; }
   // Distribution: z
   float computeYMax() const override { return DistributionZ::YMax(m_degreesOfFreedom); }

@@ -3,7 +3,7 @@
 
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/buffer_table_cell_with_editable_text.h>
-#include <escher/spacer.h>
+#include <escher/spacer_cell.h>
 #include "../../shared/explicit_float_parameter_controller.h"
 #include "../../shared/with_record.h"
 #include "calculation_parameter_controller.h"
@@ -48,7 +48,7 @@ private:
   Escher::BufferTableCellWithEditableText m_abscissaCell;
   Escher::BufferTableCellWithEditableText m_imageCell;
   Escher::BufferTableCellWithEditableText m_derivativeNumberCell;
-  Escher::Spacer m_spacer;
+  Escher::SpacerCell m_spacer;
   Escher::MessageTableCellWithChevron m_calculationCell;
   Escher::MessageTableCellWithChevron m_optionsCell;
   GraphController * m_graphController;

@@ -1,6 +1,7 @@
 #ifndef GRAPH_CALCULATION_PARAMETER_CONTROLLER_H
 #define GRAPH_CALCULATION_PARAMETER_CONTROLLER_H
 
+#include <escher/buffer_table_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/message_table_cell_with_switch.h>
@@ -32,19 +33,39 @@ public:
 
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int index) override { return index == 0 ? k_preImageCellType : index == (k_derivativeRowIndex + shouldDisplayIntersection()) ? k_derivativeCellType : k_defaultCellType; }
+  int typeAtIndex(int index) override { return index == 0 ? k_preImageCellType : index == k_areaRowIndex ? k_areaCellType : index == (k_derivativeRowIndex + shouldDisplayIntersection()) ? k_derivativeCellType : k_defaultCellType; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setRecord(Ion::Storage::Record record);
 private:
   bool shouldDisplayIntersection() const;
   bool shouldDisplayAreaBetweenCurves() const;
-  Escher::MessageTableCellWithChevron m_preimageCell;
+  // This class is used for the AreaBetweenCurves cell
+  class BufferTableCellWithHideableChevron : public Escher::BufferTableCell {
+  public:
+    BufferTableCellWithHideableChevron() :
+      Escher::BufferTableCell(),
+      m_hideChevron(false)
+    {}
+    const Escher::View * accessoryView() const override {
+      return m_hideChevron ? nullptr : &m_accessoryView;
+    }
+    void hideChevron(bool hide) { m_hideChevron = hide; }
+    bool subviewsCanOverlap() const override { return true; }
+  private:
+    Escher::ChevronView m_accessoryView;
+    bool m_hideChevron;
+  };
   constexpr static int k_totalNumberOfReusableCells = 6;
   constexpr static int k_defaultCellType = 0;
   constexpr static int k_derivativeCellType = 1;
   constexpr static int k_preImageCellType = 2;
+  constexpr static int k_areaCellType = 3;
   constexpr static int k_derivativeRowIndex = 4;
+  // The intersection is always displayed when area cell is displayed.
+  constexpr static int k_areaRowIndex = 8;
+  Escher::MessageTableCellWithChevron m_preimageCell;
   Escher::MessageTableCell m_cells[k_totalNumberOfReusableCells];
+  BufferTableCellWithHideableChevron m_areaCell;
   Ion::Storage::Record m_record;
   GraphController * m_graphController;
   PreimageParameterController m_preimageParameterController;

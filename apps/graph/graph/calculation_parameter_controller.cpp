@@ -1,4 +1,5 @@
 #include "calculation_parameter_controller.h"
+#include "area_between_curves_parameter_controller.h"
 #include "graph_controller.h"
 #include "../app.h"
 #include <assert.h>
@@ -37,13 +38,19 @@ void CalculationParameterController::viewWillAppear() {
 }
 
 void CalculationParameterController::didBecomeFirstResponder() {
-  m_selectableTableView.selectCellAtLocation(0, 0);
+  if (selectedRow() < 0) {
+    m_selectableTableView.selectCellAtLocation(0, 0);
+  }
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
 bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   int row = selectedRow();
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && row == 0)) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE
+      || (event == Ion::Events::Right
+          && (row == 0
+              || (row == k_areaRowIndex
+                  && App::app()->functionStore()->numberOfActiveDerivableFunctions() > 2)))) {
     static ViewController * controllers[] = {&m_preimageParameterController, &m_intersectionGraphController, &m_maximumGraphController, &m_minimumGraphController, &m_rootGraphController, &m_tangentGraphController, &m_integralGraphController, &m_areaParameterController};
     int displayIntersection = shouldDisplayIntersection();
     if (row == k_derivativeRowIndex + displayIntersection) {
@@ -62,7 +69,14 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
     } else if (row == k_derivativeRowIndex + displayIntersection + 1) {
       m_integralGraphController.setRecord(m_record);
     } else if (row == k_derivativeRowIndex + displayIntersection + 2) {
-      m_areaParameterController.setRecord(m_record);
+      if (App::app()->functionStore()->numberOfActiveDerivableFunctions() == 2) {
+        controller = &m_areaGraphController;
+        m_areaGraphController.setRecord(m_record);
+        Ion::Storage::Record secondRecord = AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(0, m_record);
+        m_areaGraphController.setSecondRecord(secondRecord);
+      } else {
+        m_areaParameterController.setRecord(m_record);
+      }
     } else {
       static_cast<CalculationGraphController *>(controller)->setRecord(m_record);
     }
@@ -97,6 +111,9 @@ HighlightCell * CalculationParameterController::reusableCell(int index, int type
   if (type == k_derivativeCellType) {
     return &m_derivativeCell;
   }
+  if (type == k_areaCellType) {
+    return &m_areaCell;
+  }
   assert(type == k_preImageCellType);
   return &m_preimageCell;
 }
@@ -112,8 +129,40 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
   assert(index >= 0 && index <= numberOfRows());
   if (cell == &m_derivativeCell) {
     m_derivativeCell.setState(m_graphController->displayDerivativeInBanner());
+  } else if (cell == &m_areaCell) {
+    int numberOfFunctions = App::app()->functionStore()->numberOfActiveDerivableFunctions();
+    assert(numberOfFunctions > 1);
+    // If there is only two derivable functions, hide the chevron
+    m_areaCell.hideChevron(numberOfFunctions == 2);
+    // Get the name of the selected function
+    ExpiringPointer<ContinuousFunction> mainFunction = App::app()->functionStore()->modelForRecord(m_record);
+    constexpr static int bufferSize = Shared::Function::k_maxNameWithArgumentSize;
+    char mainFunctionName[bufferSize];
+    mainFunction->nameWithArgument(mainFunctionName, bufferSize);
+
+    char secondPlaceHolder[bufferSize];
+    if (numberOfFunctions == 2) {
+      // If there are only 2 functions, display "Area between f(x) and g(x)"
+      secondPlaceHolder[0] = ' ';
+      Ion::Storage::Record secondRecord = AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(0, m_record);
+      ExpiringPointer<ContinuousFunction> secondFunction = App::app()->functionStore()->modelForRecord(secondRecord);
+      secondFunction->nameWithArgument(secondPlaceHolder + 1, bufferSize);
+      if (strcmp(mainFunctionName, secondPlaceHolder + 1) == 0) {
+        // If both functions are name "y", display "Area between curves"
+        m_areaCell.setMessageWithPlaceholders(I18n::Message::AreaBetweenCurves);
+        return;
+      }
+    } else {
+      // If there are more than 2 functions, display "Area between f(x) and"
+      secondPlaceHolder[0] = 0;
+    }
+    m_areaCell.setMessageWithPlaceholders(I18n::Message::AreaBetweenCurvesWithFunctionName, mainFunctionName, secondPlaceHolder);
+    if (m_areaCell.labelView()->minimalSizeForOptimalDisplay().width() > m_areaCell.innerWitdh()) {
+      // If there is not enough space in the cell, display "Area between curves"
+      m_areaCell.setMessageWithPlaceholders(I18n::Message::AreaBetweenCurves);
+    }
   } else if (cell != &m_preimageCell) {
-    I18n::Message titles[] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Default, I18n::Message::Tangent, I18n::Message::Integral, I18n::Message::AreaBetweenCurves};
+    I18n::Message titles[] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Default, I18n::Message::Tangent, I18n::Message::Integral};
     static_cast<MessageTableCell *>(cell)->setMessage(titles[index - 1 + !shouldDisplayIntersection()]);
   }
 }

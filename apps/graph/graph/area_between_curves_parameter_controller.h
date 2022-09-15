@@ -9,6 +9,7 @@ namespace Graph {
 
 class AreaBetweenCurvesParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
+  static Ion::Storage::Record DerivableActiveFunctionAtIndex(int index, Ion::Storage::Record excludedRecord);
   AreaBetweenCurvesParameterController(Escher::Responder * parentResponder, AreaBetweenCurvesGraphController * areaGraphController);
 
   const char * title() override;
@@ -28,7 +29,6 @@ public:
 
 private:
   constexpr static int k_maxNumberOfRows = 7;
-  Ion::Storage::Record recordAtIndex(int index);
 
   Ion::Storage::Record m_mainRecord;
   AreaBetweenCurvesGraphController * m_areaGraphController;

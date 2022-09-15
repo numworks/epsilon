@@ -82,6 +82,7 @@ void TableCell::layoutSubviews(bool force) {
   constexpr KDCoordinate leftOffset = k_separatorThickness + Metric::CellLeftMargin;
   x += leftOffset;
   width -= leftOffset + Metric::CellRightMargin + k_separatorThickness;
+  assert(width == innerWitdh());
   KDCoordinate xEnd = width + leftOffset;
   constexpr KDCoordinate topOffset = k_separatorThickness + Metric::CellTopMargin;
   y += topOffset;

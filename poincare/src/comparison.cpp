@@ -213,6 +213,8 @@ Evaluation<T> ComparisonNode::templatedApproximate(const ApproximationContext& a
       leftChildIsGreater = TrinaryBoolean::Unknown;
       chidlrenAreEqual = (firstChildApprox.isUndefined() || secondChildApprox.isUndefined()) ? TrinaryBoolean::Unknown : TrinaryBoolean::False;
     } else {
+      /* leftChildIsGreater is always used in combination with childrenAreEqual
+       * so the fact that it's strictly greater or not is not important. */
       leftChildIsGreater = BinaryToTrinaryBool(scalarDifference >= 0.0);
       chidlrenAreEqual = BinaryToTrinaryBool(std::fabs(scalarDifference) < Float<T>::EpsilonLax());
     }

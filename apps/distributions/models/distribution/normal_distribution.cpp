@@ -4,6 +4,8 @@
 #include <cmath>
 #include <float.h>
 
+using namespace Shared;
+
 namespace Distributions {
 
 bool NormalDistribution::authorizedParameterAtIndex(double x, int index) const {

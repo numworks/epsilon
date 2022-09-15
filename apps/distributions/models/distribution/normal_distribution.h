@@ -16,7 +16,7 @@ public:
 private:
   constexpr static double k_maxRatioMuSigma = 1000000.0f;
   enum ParamsOrder { Mu, Sigma };
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override;
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override;
   float xExtremum(bool min) const;
   float computeXMin() const override { return xExtremum(true); }
   float computeXMax() const override { return xExtremum(false); }

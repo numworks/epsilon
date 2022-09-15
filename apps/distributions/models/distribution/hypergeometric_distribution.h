@@ -18,9 +18,9 @@ public:
   void setParameterAtIndex(double f, int index) override;
   double defaultComputedValue() const override { return 1.0; }
 private:
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override {
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override {
     I18n::Message parameterTexts[] = {I18n::Message::PopulationSize, I18n::Message::TotalItemsWithFeature, I18n::Message::SampleSize};
-    return ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(i)), parameterTexts[i]};
+    return Shared::ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(i)), parameterTexts[i]};
   }
   float computeXMax() const override;
   float computeYMax() const override;

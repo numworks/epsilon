@@ -1,19 +1,19 @@
-#ifndef PROBABILITE_INFERENCE_H
-#define PROBABILITE_INFERENCE_H
+#ifndef SHARED_INFERENCE_H
+#define SHARED_INFERENCE_H
 
-#include <apps/shared/memoized_curve_view_range.h>
+#include "memoized_curve_view_range.h"
 #include <apps/i18n.h>
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
 
-namespace Distributions {
+namespace Shared {
 
 struct ParameterRepresentation {
   Poincare::Layout m_symbol;
   I18n::Message m_description;
 };
 
-class Inference : public Shared::MemoizedCurveViewRange {
+class Inference : public MemoizedCurveViewRange {
 public:
   Inference();
   virtual ~Inference() = default;

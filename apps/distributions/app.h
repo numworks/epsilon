@@ -9,7 +9,6 @@
 #include <escher/input_view_controller.h>
 #include <ion/ring_buffer.h>
 
-#include "models/inference.h"
 #include "models/distribution_buffer.h"
 #include "probability/distribution_controller.h"
 #include "probability/parameters_controller.h"

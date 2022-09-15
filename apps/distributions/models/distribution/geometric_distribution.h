@@ -19,8 +19,8 @@ public:
   bool authorizedParameterAtIndex(double x, int index) const override;
   double defaultComputedValue() const override { return 1.0; }
 private:
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override {
-    return ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(0)), I18n::Message::SuccessProbability};
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override {
+    return Shared::ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(0)), I18n::Message::SuccessProbability};
   }
   float computeXMax() const override;
   float computeYMax() const override;

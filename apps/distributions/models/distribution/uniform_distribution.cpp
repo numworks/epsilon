@@ -6,6 +6,8 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/layout_helper.h>
 
+using namespace Shared;
+
 namespace Distributions {
 
 float UniformDistribution::evaluateAtAbscissa(float t) const {

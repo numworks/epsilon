@@ -16,8 +16,8 @@ public:
   double meanAbscissa() override { return 0.0; }
   bool authorizedParameterAtIndex(double x, int index) const override;
 private:
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override {
-    return ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(0)), I18n::Message::DegreesOfFreedomDefinition};
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override {
+    return Shared::ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(0)), I18n::Message::DegreesOfFreedomDefinition};
   }
   float computeXMin() const override;
   float computeXMax() const override;

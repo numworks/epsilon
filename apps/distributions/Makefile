@@ -1,8 +1,6 @@
 apps += Distributions::App
 app_headers += apps/distributions/app.h
 
-app_distributions_test_src = apps/distributions/models/inference.cpp
-
 app_distributions_test_src += $(addprefix apps/distributions/models/distribution/,\
   binomial_distribution.cpp \
   chi_squared_distribution.cpp \

@@ -18,7 +18,7 @@ private:
   constexpr static float k_diracMaximum = 10.0f;
   constexpr static float k_diracWidth = 0.005f;
   enum ParamsOrder { A, B };
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override;
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override;
   float computeXMin() const override;
   float computeXMax() const override;
   float computeYMax() const override;

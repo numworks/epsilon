@@ -1,5 +1,5 @@
-#ifndef INFERENCE_STATISTIC_EXPRESSION_CELL_WITH_EDITABLE_TEXT_WITH_MESSAGE_H
-#define INFERENCE_STATISTIC_EXPRESSION_CELL_WITH_EDITABLE_TEXT_WITH_MESSAGE_H
+#ifndef ESCHER_EXPRESSION_CELL_WITH_EDITABLE_TEXT_WITH_MESSAGE_H
+#define ESCHER_EXPRESSION_CELL_WITH_EDITABLE_TEXT_WITH_MESSAGE_H
 
 #include <escher/chained_text_field_delegate.h>
 #include <escher/expression_table_cell_with_message.h>
@@ -7,7 +7,7 @@
 #include <escher/text_field.h>
 #include <poincare/print_float.h>
 
-namespace Inference {
+namespace Escher {
 
 class ExpressionCellWithEditableTextWithMessage : public Escher::ExpressionTableCellWithMessage,
                                                   public Escher::ChainedTextFieldDelegate {
@@ -51,6 +51,6 @@ private:
   Escher::TextField m_textField;
 };
 
-}  // namespace Inference
+}  // namespace Escher
 
-#endif /* INFERENCE_STATISTIC_EXPRESSION_CELL_WITH_EDITABLE_TEXT_WITH_MESSAGE_H */
+#endif /* ESCHER_EXPRESSION_CELL_WITH_EDITABLE_TEXT_WITH_MESSAGE_H */

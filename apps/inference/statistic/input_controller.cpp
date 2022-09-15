@@ -9,6 +9,7 @@
 #include "inference/text_helpers.h"
 #include "results_controller.h"
 
+using namespace Escher;
 using namespace Inference;
 
 InputController::InputController(Escher::StackViewController * parent,

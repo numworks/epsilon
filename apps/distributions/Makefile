@@ -42,10 +42,6 @@ app_distributions_src += $(addprefix apps/distributions/probability/,\
   parameters_controller.cpp \
 )
 
-app_distributions_src += $(addprefix apps/distributions/shared/,\
-  expression_cell_with_editable_text_with_message.cpp \
-)
-
 app_distributions_src += $(app_distributions_test_src)
 apps_src += $(app_distributions_src)
 

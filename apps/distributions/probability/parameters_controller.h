@@ -1,7 +1,7 @@
 #ifndef DISTRIBUTIONS_PROBABILITY_PARAMETERS_CONTROLLER_H
 #define DISTRIBUTIONS_PROBABILITY_PARAMETERS_CONTROLLER_H
 
-#include "distributions/shared/expression_cell_with_editable_text_with_message.h"
+#include <escher/expression_cell_with_editable_text_with_message.h>
 #include "distributions/models/probability/distribution/distribution.h"
 #include <apps/shared/float_parameter_controller.h>
 #include "calculation_controller.h"
@@ -49,7 +49,7 @@ private:
   };
   constexpr static int k_maxNumberOfCells = 3;
   ContentView m_contentView;
-  ExpressionCellWithEditableTextWithMessage m_menuListCell[k_maxNumberOfCells];
+  Escher::ExpressionCellWithEditableTextWithMessage m_menuListCell[k_maxNumberOfCells];
   Distribution * m_distribution;
   CalculationController * m_calculationController;
 };

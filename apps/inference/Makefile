@@ -28,7 +28,6 @@ app_inference_test_src += $(addprefix apps/inference/models/statistic/,\
 
 app_inference_src += $(addprefix apps/inference/shared/,\
   dynamic_cells_data_source.cpp \
-  expression_cell_with_editable_text_with_message.cpp \
 )
 
 app_inference_src += $(addprefix apps/inference/statistic/chi_square_and_slope/,\

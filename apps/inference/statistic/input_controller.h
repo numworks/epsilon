@@ -5,7 +5,7 @@
 #include <escher/input_event_handler_delegate.h>
 
 #include "inference/shared/dynamic_cells_data_source.h"
-#include "inference/shared/expression_cell_with_editable_text_with_message.h"
+#include <escher/expression_cell_with_editable_text_with_message.h>
 #include "inference/statistic/message_table_cell_with_separator.h"
 #include <apps/shared/float_parameter_controller.h>
 #include "inference/models/statistic/statistic.h"
@@ -13,7 +13,7 @@
 
 namespace Inference {
 
-class InputController : public Shared::FloatParameterController<double>, public DynamicCellsDataSource<ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>, public DynamicCellsDataSourceDelegate<ExpressionCellWithEditableTextWithMessage> {
+class InputController : public Shared::FloatParameterController<double>, public DynamicCellsDataSource<Escher::ExpressionCellWithEditableTextWithMessage, k_maxNumberOfExpressionCellsWithEditableTextWithMessage>, public DynamicCellsDataSourceDelegate<Escher::ExpressionCellWithEditableTextWithMessage> {
 friend class InputSlopeController;
 public:
   InputController(Escher::StackViewController * parent,
@@ -32,7 +32,7 @@ public:
   void buttonAction() override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
-  void initCell(ExpressionCellWithEditableTextWithMessage, void * cell, int index) override;
+  void initCell(Escher::ExpressionCellWithEditableTextWithMessage, void * cell, int index) override;
   Escher::SelectableTableView * tableView() override { return &m_selectableTableView; }
 
   constexpr static int k_numberOfReusableCells =

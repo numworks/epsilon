@@ -15,7 +15,7 @@ public:
   double rightIntegralInverseForProbability(double p) const override;
 protected:
   enum ParamsOrder { N, P };
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override;
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override;
   float computeXMin() const override;
   float computeXMax() const override;
   float computeYMax() const override;

@@ -13,8 +13,8 @@ public:
   const char * parameterNameAtIndex(int index) const override { return "λ"; }
   bool authorizedParameterAtIndex(double x, int index) const override;
 private:
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override {
-    return ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(0)), I18n::Message::LambdaPoissonDefinition};
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override {
+    return Shared::ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(0)), I18n::Message::LambdaPoissonDefinition};
   }
   float computeXMax() const override;
   float computeYMax() const override;

@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <cmath>
 
+using namespace Shared;
+
 namespace Distributions {
 
 bool BinomialDistribution::authorizedParameterAtIndex(double x, int index) const {

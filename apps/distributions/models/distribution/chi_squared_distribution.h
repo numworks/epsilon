@@ -19,8 +19,8 @@ public:
   double cumulativeDistributiveInverseForProbability(double p) const override;
 private:
   constexpr static double k_maxK = 31500.0;
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override {
-    return ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(0)), I18n::Message::DegreesOfFreedomDefinition};
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override {
+    return Shared::ParameterRepresentation{Poincare::LayoutHelper::String(parameterNameAtIndex(0)), I18n::Message::DegreesOfFreedomDefinition};
   }
   float computeXMax() const override;
   float computeYMax() const override;

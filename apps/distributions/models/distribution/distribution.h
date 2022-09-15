@@ -1,7 +1,7 @@
 #ifndef PROBABILITE_DISTRIBUTION_DISTRIBUTION_H
 #define PROBABILITE_DISTRIBUTION_DISTRIBUTION_H
 
-#include "distributions/models/inference.h"
+#include <apps/shared/inference.h>
 #include "distributions/models/calculation/discrete_calculation.h"
 #include "distributions/models/calculation/finite_integral_calculation.h"
 #include "distributions/models/calculation/left_integral_calculation.h"
@@ -11,7 +11,7 @@
 
 namespace Distributions {
 
-class Distribution : public Inference {
+class Distribution : public Shared::Inference {
 public:
   Distribution(Poincare::Distribution::Type type) : m_calculationBuffer(this), m_distribution(Poincare::Distribution::Get(type)) {}
 

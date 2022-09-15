@@ -15,7 +15,7 @@ private:
   constexpr static double k_maxParameter = 144.0; // The display works badly for d1 = d2 > 144.
   constexpr static float k_defaultMax = 3.0f;
   enum ParamsOrder { D1, D2 };
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override;
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override;
   float mode() const;
   float computeXMax() const override;
   float computeYMax() const override;

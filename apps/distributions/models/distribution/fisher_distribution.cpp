@@ -6,6 +6,8 @@
 #include <float.h>
 #include <algorithm>
 
+using namespace Shared;
+
 namespace Distributions {
 
 bool FisherDistribution::authorizedParameterAtIndex(double x, int index) const {

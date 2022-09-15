@@ -5,6 +5,13 @@ using namespace Escher;
 
 namespace Shared {
 
+void CurveSelectionCell::drawRect(KDContext * ctx, KDRect rect) const {
+  TableCell::drawRect(ctx, rect);
+  // Draw the color indicator
+  assert(m_color != KDColorBlack); // Check that the color was set
+  ctx->fillRect(KDRect(0, 0, k_colorIndicatorThickness, bounds().height()), m_color);
+}
+
 void CurveSelectionCell::setHighlighted(bool highlight) {
   TableCell::setHighlighted(highlight);
   KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;

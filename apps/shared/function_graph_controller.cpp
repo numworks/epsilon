@@ -79,6 +79,7 @@ KDCoordinate FunctionGraphController::FunctionSelectionController::nonMemoizedRo
 void FunctionGraphController::FunctionSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index < graphController()->functionStore()->numberOfActiveFunctions());
   ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(index));
+  static_cast<CurveSelectionCellWithChevron *>(cell)->setColor(function->color());
   static_cast<CurveSelectionCellWithChevron *>(cell)->setLayout(function->layout().clone());
 }
 

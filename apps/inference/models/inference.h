@@ -1,5 +1,5 @@
-#ifndef PROBABILITE_INFERENCE_H
-#define PROBABILITE_INFERENCE_H
+#ifndef INFERENCE_INFERENCE_H
+#define INFERENCE_INFERENCE_H
 
 #include <apps/shared/memoized_curve_view_range.h>
 #include <apps/i18n.h>

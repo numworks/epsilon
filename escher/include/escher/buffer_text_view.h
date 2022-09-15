@@ -3,10 +3,13 @@
 
 #include <escher/i18n.h>
 #include <escher/text_view.h>
+#include <stdarg.h>
 
 namespace Escher {
 
 class BufferTextView : public TextView {
+  friend class BufferTableCell;
+  friend class BufferPopUpController;
 public:
   constexpr static size_t k_maxNumberOfChar = 256;
   BufferTextView(KDFont::Size font = KDFont::Size::Large,
@@ -17,15 +20,12 @@ public:
                  size_t maxDisplayedTextLength = k_maxNumberOfChar - 1);
   void setText(const char * text) override;
 
-  /* This method only combine a message and 1 string because it is the most common case.
-  * TODO : It should be rewritten to take a va_list to combine a message with more strings.
-  */
-  void setMessageWithPlaceholder(I18n::Message message, const char * string = "");
-
+  void setMessageWithPlaceholders(I18n::Message message, ...);
   const char * text() const override;
   void appendText(const char * text);
   KDSize minimalSizeForOptimalDisplay() const override;
 protected:
+  void privateSetMessageWithPlaceholders(I18n::Message message, va_list args);
   char m_buffer[k_maxNumberOfChar];
   size_t m_maxDisplayedTextLength;
 };

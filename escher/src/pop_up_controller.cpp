@@ -2,6 +2,7 @@
 #include <escher/metric.h>
 #include <escher/container.h>
 #include <assert.h>
+#include <stdarg.h>
 
 namespace Escher {
 
@@ -114,8 +115,11 @@ void BufferPopUpController::setContentText(const char * text) {
   m_bufferTextView.setText(text);
 }
 
-void BufferPopUpController::setMessageWithPlaceholder(I18n::Message message, const char * string) {
-  m_bufferTextView.setMessageWithPlaceholder(message, string);
+void BufferPopUpController::setMessageWithPlaceholders(I18n::Message message, ...) {
+  va_list args;
+  va_start(args, message);
+  m_bufferTextView.privateSetMessageWithPlaceholders(message, args);
+  va_end(args);
 }
 
 }

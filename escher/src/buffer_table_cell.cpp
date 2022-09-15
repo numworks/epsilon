@@ -2,6 +2,7 @@
 #include <escher/i18n.h>
 #include <escher/palette.h>
 #include <assert.h>
+#include <stdarg.h>
 
 namespace Escher {
 
@@ -30,8 +31,11 @@ void BufferTableCell::setLabelText(const char * textBody) {
   layoutSubviews();
 }
 
-void BufferTableCell::setMessageWithPlaceholder(I18n::Message message, const char * string) {
-  m_labelView.setMessageWithPlaceholder(message, string);
+void BufferTableCell::setMessageWithPlaceholders(I18n::Message message, ...) {
+  va_list args;
+  va_start(args, message);
+  m_labelView.privateSetMessageWithPlaceholders(message, args);
+  va_end(args);
 }
 
 void BufferTableCell::appendText(const char * textBody) {

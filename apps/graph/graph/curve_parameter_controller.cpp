@@ -44,7 +44,7 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell, int 
     m_parameterCells[index].setEditable(parameter.editable);
   }
   if (name != I18n::Message::Default) {
-    m_parameterCells[index].setMessageWithPlaceholder(name);
+    m_parameterCells[index].setMessageWithPlaceholders(name);
     FloatParameterControllerWithoutButton::willDisplayCellForIndex(cell, index);
     return;
   }

@@ -16,7 +16,7 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
   m_sortCell(I18n::Message::SortCellLabel),
   m_hideCell(I18n::Message::ActivateDeactivateStoreParamTitle, I18n::Message::ActivateDeactivateStoreParamDescription, false)
 {
-  m_clearColumn.setMessageWithPlaceholder(I18n::Message::ClearColumn);
+  m_clearColumn.setMessageWithPlaceholders(I18n::Message::ClearColumn);
 }
 
 void StoreParameterController::initializeColumnParameters() {

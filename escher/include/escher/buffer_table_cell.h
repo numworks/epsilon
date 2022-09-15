@@ -15,7 +15,7 @@ public:
   const View * labelView() const override { return &m_labelView; }
   void setHighlighted(bool highlight) override;
   void setLabelText(const char * textBody);
-  void setMessageWithPlaceholder(I18n::Message message, const char * string = "");
+  void setMessageWithPlaceholders(I18n::Message message, ...);
   void appendText(const char * textBody);
 protected:
   BufferTextView m_labelView;

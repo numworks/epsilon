@@ -25,11 +25,19 @@ void BufferTextView::setText(const char * text) {
   markRectAsDirty(bounds());
 }
 
-void BufferTextView::setMessageWithPlaceholder(I18n::Message message, const char * string) {
+void BufferTextView::setMessageWithPlaceholders(I18n::Message message, ...) {
+  va_list args;
+  va_start(args, message);
+  privateSetMessageWithPlaceholders(message, args);
+  va_end(args);
+}
+
+void BufferTextView::privateSetMessageWithPlaceholders(I18n::Message message, va_list args) {
   char tempBuffer[k_maxNumberOfChar];
-  Poincare::Print::customPrintf(tempBuffer, m_maxDisplayedTextLength + 1, I18n::translate(message), string);
+  Poincare::Print::privateCustomPrintf(tempBuffer, m_maxDisplayedTextLength + 1, I18n::translate(message), args);
   setText(tempBuffer);
 }
+
 
 void BufferTextView::appendText(const char * text) {
   size_t previousTextLength = strlen(m_buffer);

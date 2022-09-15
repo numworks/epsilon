@@ -2,10 +2,15 @@
 #define POINCARE_PRINT_H
 
 #include <stddef.h>
+#include <stdarg.h>
 
+namespace Escher {
+  class BufferTextView;
+}
 namespace Poincare {
-namespace Print {
-
+class Print {
+  friend class Escher::BufferTextView;
+public:
 /* Custom printf which supports the following formats:
  * - %c for character insertion
  * - %s for string insertion
@@ -35,13 +40,14 @@ namespace Print {
  * bufferSize is large enough. If the text does not fit, the buffer is erased
  * and a length equal or bigger than bufferSize is returned.
  */
+  static int customPrintf(char * buffer, size_t bufferSize, const char * format, ...);
+  static int safeCustomPrintf(char * buffer, size_t bufferSize, const char * format, ...);
+  static void capitalize(char * text);
+  static void decapitalize(char * text);
+private:
+  static int privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, va_list args);
+};
 
-int customPrintf(char * buffer, size_t bufferSize, const char * format, ...);
-int safeCustomPrintf(char * buffer, size_t bufferSize, const char * format, ...);
-void capitalize(char * text);
-void decapitalize(char * text);
-
-}
 }
 
 #endif

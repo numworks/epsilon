@@ -33,7 +33,7 @@ void ClearColumnHelper::presentClearSelectedColumnPopupIfClearable() {
 void ClearColumnHelper::setClearPopUpContent() {
   char columnNameBuffer[ColumnParameterController::k_titleBufferSize];
   fillColumnName(table()->selectedColumn(), columnNameBuffer);
-  m_confirmPopUpController.setMessageWithPlaceholder(I18n::Message::ClearColumnConfirmation, columnNameBuffer);
+  m_confirmPopUpController.setMessageWithPlaceholders(I18n::Message::ClearColumnConfirmation, columnNameBuffer);
 }
 
 int ClearColumnHelper::fillColumnNameWithMessage(char * buffer, I18n::Message message) {

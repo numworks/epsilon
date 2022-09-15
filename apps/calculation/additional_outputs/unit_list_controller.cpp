@@ -212,7 +212,7 @@ void UnitListController::fillBufferCellAtIndex(Escher::BufferTableCellWithMessag
   } else {
     messageInCell = referenceValue->title2;
   }
-  bufferCell->setMessageWithPlaceholder(messageInCell, floatToTextBuffer);
+  bufferCell->setMessageWithPlaceholders(messageInCell, floatToTextBuffer);
 }
 
 int UnitListController::textAtIndex(char * buffer, size_t bufferSize, int index) {

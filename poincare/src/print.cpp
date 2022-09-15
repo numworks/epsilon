@@ -8,9 +8,8 @@
 #include <string.h>
 
 namespace Poincare {
-namespace Print {
 
-int privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, va_list args) {
+int Print::privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, va_list args) {
   /* We still return the required sizes even if we could not write in the
    * buffer in order to indicate that we overflew the buffer. */
   char * const origin = buffer;
@@ -94,7 +93,7 @@ int privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, v
   return buffer - origin;
 }
 
-int customPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
+int Print::customPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
   va_list args;
   va_start(args, format);
   int length = privateCustomPrintf(buffer, bufferSize, format, args);
@@ -103,7 +102,7 @@ int customPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
   return length;
 }
 
-int safeCustomPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
+int Print::safeCustomPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
   va_list args;
   va_start(args, format);
   int length = privateCustomPrintf(buffer, bufferSize, format, args);
@@ -111,19 +110,18 @@ int safeCustomPrintf(char * buffer, size_t bufferSize, const char * format, ...)
   return length;
 }
 
-void capitalize(char * text) {
+void Print::capitalize(char * text) {
   constexpr static int jumpToUpperCase = 'A' - 'a';
   if (text[0] >= 'a' && text[0] <= 'z') {
     text[0] += jumpToUpperCase;
   }
 }
 
-void decapitalize(char * text) {
+void Print::decapitalize(char * text) {
   constexpr static int jumpToLowerCase = 'a' - 'A';
   if (text[0] >= 'A' && text[0] <= 'Z') {
     text[0] += jumpToLowerCase;
   }
 }
 
-}
 }

@@ -57,7 +57,7 @@ class BufferPopUpController : public PopUpController {
 public:
   BufferPopUpController(Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage);
   void setContentText(const char * text);
-  void setMessageWithPlaceholder(I18n::Message message, const char * string = "");
+  void setMessageWithPlaceholders(I18n::Message message, ...);
 private:
   BufferTextView m_bufferTextView;
 };

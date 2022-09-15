@@ -7,7 +7,7 @@ ButtonCell::ButtonCell(Responder * parentResponder,
                                          Escher::Invocation invocation,
                                          KDColor backgroundColor,
                                          KDCoordinate horizontalMargins) :
-      Button(parentResponder, textBody, invocation, KDFont::Size::Large, KDColorBlack),
+      AbstractButtonCell(parentResponder, textBody, invocation, KDFont::Size::Large, KDColorBlack),
       m_backgroundColor(backgroundColor),
       m_horizontalMargins(horizontalMargins)
 {
@@ -36,7 +36,7 @@ void ButtonCell::layoutSubviews(bool force) {
 }
 
 KDSize ButtonCell::minimalSizeForOptimalDisplay() const {
-  KDSize buttonSize = Escher::Button::minimalSizeForOptimalDisplay();
+  KDSize buttonSize = Escher::AbstractButtonCell::minimalSizeForOptimalDisplay();
   return KDSize(buttonSize.width() + 2* m_horizontalMargins, buttonSize.height());
 }
 

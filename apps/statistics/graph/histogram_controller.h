@@ -25,7 +25,7 @@ public:
 
   // ButtonRowDelegate
   int numberOfButtons(Escher::ButtonRowController::Position position) const override { return GraphButtonRowDelegate::numberOfButtons(position) + 1; }
-  Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
+  Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
 
   // ViewController
   MultipleDataView * multipleDataView() override { return &m_view; }
@@ -55,7 +55,7 @@ private:
   HistogramRange m_histogramRange;
   uint32_t * m_storeVersion;
   HistogramParameterController m_histogramParameterController;
-  Escher::Button m_parameterButton;
+  Escher::AbstractButtonCell m_parameterButton;
 };
 
 }

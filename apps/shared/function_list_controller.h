@@ -18,7 +18,7 @@ public:
 
   /* ButtonRowDelegate */
   int numberOfButtons(Escher::ButtonRowController::Position position) const override;
-  Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
+  Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
 
   /* Responder */
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
@@ -35,8 +35,8 @@ private:
   virtual ListParameterController * parameterController() = 0;
   virtual int maxNumberOfDisplayableRows() = 0;
   virtual Escher::HighlightCell * functionCells(int index) = 0;
-  Escher::Button m_plotButton;
-  Escher::Button m_valuesButton;
+  Escher::AbstractButtonCell m_plotButton;
+  Escher::AbstractButtonCell m_valuesButton;
 };
 
 }

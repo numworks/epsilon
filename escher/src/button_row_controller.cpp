@@ -26,7 +26,7 @@ int ButtonRowController::ContentView::numberOfButtons() const {
   return m_delegate->numberOfButtons(m_position);
 }
 
-Button * ButtonRowController::ContentView::buttonAtIndex(int index) const {
+AbstractButtonCell * ButtonRowController::ContentView::buttonAtIndex(int index) const {
   return m_delegate->buttonAtIndex(index, m_position);
 }
 
@@ -77,7 +77,7 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
   if (m_style == Style::EmbossedGray) {
     KDCoordinate totalButtonWidth = 0;
     for (int i = 0; i < nbOfButtons; i++) {
-      Button * button = buttonAtIndex(i);
+      AbstractButtonCell * button = buttonAtIndex(i);
       totalButtonWidth += button->minimalSizeForOptimalDisplay().width();
     }
     widthMargin = std::round(((float)(bounds().width() - totalButtonWidth))/((float)(nbOfButtons+1)));
@@ -87,7 +87,7 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
   KDCoordinate yOrigin = m_position == Position::Top ? buttonHeightMargin : bounds().height()-rowHeight+buttonHeightMargin;
   int currentXOrigin = widthMargin;
   for (int i = 0; i < numberOfButtons(); i++) {
-    Button * button = buttonAtIndex(i);
+    AbstractButtonCell * button = buttonAtIndex(i);
     KDCoordinate buttonWidth = button->minimalSizeForOptimalDisplay().width();
     KDRect buttonFrame(currentXOrigin, yOrigin, buttonWidth, buttonHeight);
     button->setFrame(buttonFrame, force);
@@ -125,14 +125,14 @@ void ButtonRowController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
   KDCoordinate y1 = m_position == Position::Top ? buttonHeight-buttonMargin-2 : bounds().height()-buttonMargin;
   KDCoordinate totalButtonWidth = 0;
   for (int i = 0; i < numberOfButtons(); i++) {
-    Button * button = buttonAtIndex(i);
+    AbstractButtonCell * button = buttonAtIndex(i);
     totalButtonWidth += button->minimalSizeForOptimalDisplay().width();
   }
   KDCoordinate widthMargin = std::round(((float)(bounds().width() - totalButtonWidth))/((float)(numberOfButtons()+1)));
 
   int currentXOrigin = widthMargin-1;
   for (int i = 0; i < numberOfButtons(); i++) {
-    Button * button = buttonAtIndex(i);
+    AbstractButtonCell * button = buttonAtIndex(i);
     KDCoordinate buttonWidth = button->minimalSizeForOptimalDisplay().width();
     ctx->fillRect(KDRect(currentXOrigin, y0, 1, y1-y0+1), Palette::GrayMiddle);
     ctx->fillRect(KDRect(currentXOrigin-1, y0, 1, y1-y0+2), Palette::GrayDark);
@@ -149,12 +149,12 @@ bool ButtonRowController::ContentView::setSelectedButton(int selectedButton) {
     return false;
   }
   if (m_selectedButton >= 0) {
-    Button * button = buttonAtIndex(m_selectedButton);
+    AbstractButtonCell * button = buttonAtIndex(m_selectedButton);
     button->setHighlighted(false);
   }
   m_selectedButton = selectedButton;
   if (m_selectedButton >= 0) {
-    Button * button = buttonAtIndex(selectedButton);
+    AbstractButtonCell * button = buttonAtIndex(selectedButton);
     button->setHighlighted(true);
     Container::activeApp()->setFirstResponder(button);
     return true;

@@ -22,7 +22,7 @@ public:
 
   // ButtonRowDelegate
   int numberOfButtons(Escher::ButtonRowController::Position position) const override { return GraphButtonRowDelegate::numberOfButtons(position) + 1; }
-  Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
+  Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
 
   // MultipleDataViewController
   MultipleDataView * multipleDataView() override { return &m_view; }
@@ -40,7 +40,7 @@ private:
 
   MultipleBoxesView m_view;
   BoxParameterController m_boxParameterController;
-  Escher::Button m_parameterButton;
+  Escher::AbstractButtonCell m_parameterButton;
 };
 
 }

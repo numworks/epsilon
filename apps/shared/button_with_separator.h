@@ -1,12 +1,12 @@
 #ifndef SHARED_BUTTON_WITH_SEPARATOR_H
 #define SHARED_BUTTON_WITH_SEPARATOR_H
 
-#include <escher/button.h>
+#include <escher/abstract_button_cell.h>
 #include <escher/metric.h>
 
 namespace Shared {
 
-class ButtonWithSeparator : public Escher::Button {
+class ButtonWithSeparator : public Escher::AbstractButtonCell {
 public:
   ButtonWithSeparator(Responder * parentResponder,
                       I18n::Message textBody,

@@ -31,8 +31,8 @@ public:
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 
   // ButtonRowDelegate
-  Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
-    return const_cast<Escher::Button *>(&m_setIntervalButton);
+  Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
+    return const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
   }
 
   // AlternateEmptyViewDelegate
@@ -149,7 +149,7 @@ private:
   Shared::IntervalParameterController m_intervalParameterController;
   IntervalParameterSelectorController m_intervalParameterSelectorController;
   DerivativeParameterController m_derivativeParameterController;
-  Escher::Button m_setIntervalButton;
+  Escher::AbstractButtonCell m_setIntervalButton;
   // TODO specialize buffer size as well
   mutable char m_memoizedBuffer[k_maxNumberOfDisplayableCells][k_valuesCellBufferSize];
   mutable int m_lastExactValueCellComputedRow;

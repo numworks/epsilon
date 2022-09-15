@@ -1,12 +1,12 @@
 #ifndef ESCHER_BUTTON_STATE_H
 #define ESCHER_BUTTON_STATE_H
 
-#include <escher/button.h>
+#include <escher/abstract_button_cell.h>
 #include <escher/toggleable_view.h>
 
 namespace Escher {
 
-class ButtonState : public Button {
+class ButtonState : public AbstractButtonCell {
 public:
   ButtonState(Responder * parentResponder, I18n::Message textBody, Invocation invocation, ToggleableView * stateView, KDFont::Size font = KDFont::Size::Small, KDColor textColor = KDColorBlack);
   void setState(bool state);

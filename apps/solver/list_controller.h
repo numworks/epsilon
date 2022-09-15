@@ -18,7 +18,7 @@ public:
   ListController(Escher::Responder * parentResponder, EquationStore * equationStore, Escher::ButtonRowController * footer);
   /* ButtonRowDelegate */
   int numberOfButtons(Escher::ButtonRowController::Position position) const override;
-  Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
+  Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
   /* ListViewDataSource */
   int numberOfRows() const override { return numberOfExpressionRows(); }
   int typeAtIndex(int index) override { return isAddEmptyRow(index); }
@@ -57,7 +57,7 @@ private:
 
   EquationListView m_equationListView;
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
-  Escher::Button m_resolveButton;
+  Escher::AbstractButtonCell m_resolveButton;
   EquationModelsParameterController m_modelsParameterController;
   Escher::StackViewController m_modelsStackController;
 };

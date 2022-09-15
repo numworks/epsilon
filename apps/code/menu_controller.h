@@ -61,9 +61,9 @@ public:
 
   /* ButtonRowDelegate */
   int numberOfButtons(Escher::ButtonRowController::Position position) const override { return 1; }
-  Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
+  Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
     assert(index == 0);
-    return const_cast<Escher::Button *>(&m_consoleButton);
+    return const_cast<Escher::AbstractButtonCell *>(&m_consoleButton);
   }
 
 private:
@@ -86,7 +86,7 @@ private:
   Escher::EvenOddCellWithEllipsis m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];
   Escher::EvenOddMessageTextCell m_addNewScriptCell;
   Escher::EvenOddCell m_emptyCell;
-  Escher::Button m_consoleButton;
+  Escher::AbstractButtonCell m_consoleButton;
   Escher::SelectableTableView m_selectableTableView;
   ScriptParameterController m_scriptParameterController;
   EditorController m_editorController;

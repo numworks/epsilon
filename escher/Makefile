@@ -1,6 +1,7 @@
 SFLAGS += -Iescher/include
 
 escher_src += $(addprefix escher/src/,\
+  abstract_button_cell.cpp \
   alternate_empty_view_controller.cpp \
   alternate_view_controller.cpp \
   app.cpp \
@@ -9,7 +10,6 @@ escher_src += $(addprefix escher/src/,\
   bordered.cpp \
   bordering_view.cpp \
   buffer_text_view.cpp \
-  button.cpp \
   button_state.cpp \
   button_row_controller.cpp \
   buffer_table_cell.cpp \

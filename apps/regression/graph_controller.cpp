@@ -136,6 +136,7 @@ KDCoordinate GraphController::SeriesSelectionController::nonMemoizedRowHeight(in
 void GraphController::SeriesSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   int series = graphController()->m_store->indexOfKthValidSeries(index);
   const char * name = Store::SeriesTitle(series);
+  static_cast<CurveSelectionCellWithChevron *>(cell)->setColor(DoublePairStore::colorOfSeriesAtIndex(series));
   static_cast<CurveSelectionCellWithChevron *>(cell)->setLayout(LayoutHelper::String(name));
 }
 

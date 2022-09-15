@@ -41,6 +41,7 @@ void AreaBetweenCurvesParameterController::didBecomeFirstResponder() {
 
 void AreaBetweenCurvesParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(recordAtIndex(index));
+  static_cast<CurveSelectionCell *>(cell)->setColor(function->color());
   static_cast<CurveSelectionCell *>(cell)->setLayout(function->layout().clone());
 }
 

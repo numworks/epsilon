@@ -37,7 +37,7 @@ private:
   // Significance Test: TwoProportions
   bool validateInputs() override { return TwoProportions::ValidateInputs(m_params); }
   int numberOfStatisticParameters() const override { return TwoProportions::NumberOfParameters(); }
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override { return TwoProportions::ParameterRepresentationAtIndex(i); }
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override { return TwoProportions::ParameterRepresentationAtIndex(i); }
   double * parametersArray() override { return m_params; }
 
   // Distribution: z

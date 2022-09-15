@@ -44,7 +44,7 @@ private:
   // Significance Test: OneProportion
   bool validateInputs() override { return OneProportion::ValidateInputs(m_params); }
   int numberOfStatisticParameters() const override { return OneProportion::NumberOfParameters(); }
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override { return OneProportion::ParameterRepresentationAtIndex(i); }
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override { return OneProportion::ParameterRepresentationAtIndex(i); }
   double * parametersArray() override { return m_params; }
   // Distribution: z
   float computeYMax() const override { return DistributionZ::YMax(m_degreesOfFreedom); }

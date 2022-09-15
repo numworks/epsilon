@@ -1,4 +1,6 @@
 #include "statistic.h"
+#include "one_mean_t_test.h"
+#include "one_mean_t_interval.h"
 
 namespace Inference {
 
@@ -15,6 +17,28 @@ void Statistic::setParameterAtIndex(double f, int i) {
     assert(i < indexOfThreshold());
     parametersArray()[i] = f;
   }
+}
+
+bool Statistic::Initialize(Statistic * statistic, SubApp subApp) {
+  if (statistic->subApp() == subApp) {
+    return false;
+  }
+  statistic->~Statistic();
+  Statistic * s = nullptr;
+  switch (subApp) {
+    case SubApp::Test:
+      s = new (statistic) OneMeanTTest();
+      break;
+    case SubApp::Interval:
+      s = new (statistic) OneMeanTInterval();
+      break;
+    default:
+      assert(false);
+  }
+  if (s) {
+    s->initParameters();
+  }
+  return true;
 }
 
 }  // namespace Inference

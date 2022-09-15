@@ -23,7 +23,7 @@ public:
     return m_titleBuffer;
   }
   ViewController::TitlesDisplay titlesDisplay() override {
-    return m_statistic->subApp() == Inference::SubApp::Interval ? ViewController::TitlesDisplay::DisplayLastTitle : ViewController::TitlesDisplay::DisplayLastTwoTitles;
+    return m_statistic->subApp() == Statistic::SubApp::Interval ? ViewController::TitlesDisplay::DisplayLastTitle : ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   void viewWillAppear() override;
 

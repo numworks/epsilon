@@ -47,8 +47,8 @@ protected:
   using Test::parameterAtIndex;  // Hidden
 
   // Instanciate unused abstract classs
-  ParameterRepresentation paramRepresentationAtIndex(int i) const override {
-    return ParameterRepresentation{Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
+  Shared::ParameterRepresentation paramRepresentationAtIndex(int i) const override {
+    return Shared::ParameterRepresentation{Poincare::HorizontalLayout::Builder(), I18n::Message::Default};
   }
 
   // Chi2 specific

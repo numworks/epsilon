@@ -1,8 +1,6 @@
 apps += Inference::App
 app_headers += apps/inference/app.h
 
-app_inference_test_src = apps/inference/models/inference.cpp
-
 app_inference_src = $(addprefix apps/inference/,\
   app.cpp \
   text_helpers.cpp \

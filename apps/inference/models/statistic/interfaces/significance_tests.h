@@ -38,8 +38,8 @@ public:
   static bool TAuthorizedParameterAtIndex(int i, double p);
   static double ProcessParamaterForIndex(double p, int index);
   static int NumberOfParameters() { return k_numberOfParams; }
-  static ParameterRepresentation ZParameterRepresentationAtIndex(int i);
-  static ParameterRepresentation TParameterRepresentationAtIndex(int i);
+  static Shared::ParameterRepresentation ZParameterRepresentationAtIndex(int i);
+  static Shared::ParameterRepresentation TParameterRepresentationAtIndex(int i);
   static double X(double * params) { return params[ParamsOrder::x]; }
   static double S(double * params) { return params[ParamsOrder::s]; }
   static double N(double * params) { return params[ParamsOrder::n]; }
@@ -78,7 +78,7 @@ public:
   static bool ValidateInputs(double * params) { return X(params) <= N(params); }
 
   static int NumberOfParameters() { return k_numberOfParams; }
-  static ParameterRepresentation ParameterRepresentationAtIndex(int i);
+  static Shared::ParameterRepresentation ParameterRepresentationAtIndex(int i);
   static double X(double * params) { return params[ParamsOrder::x]; }
   static double N(double * params) { return params[ParamsOrder::n]; }
 
@@ -121,8 +121,8 @@ public:
   static bool TValidateInputs(double * params);
 
   static int NumberOfParameters() { return k_numberOfParams; }
-  static ParameterRepresentation ZParameterRepresentationAtIndex(int i);
-  static ParameterRepresentation TParameterRepresentationAtIndex(int i);
+  static Shared::ParameterRepresentation ZParameterRepresentationAtIndex(int i);
+  static Shared::ParameterRepresentation TParameterRepresentationAtIndex(int i);
   static double X1(double * params) { return params[ParamsOrder::x1]; }
   static double N1(double * params) { return params[ParamsOrder::n1]; }
   static double S1(double * params) { return params[ParamsOrder::s1]; }
@@ -178,7 +178,7 @@ public:
   static bool ValidateInputs(double * params);
 
   static int NumberOfParameters() { return k_numberOfParams; }
-  static ParameterRepresentation ParameterRepresentationAtIndex(int i);
+  static Shared::ParameterRepresentation ParameterRepresentationAtIndex(int i);
   static double X1(double * params) { return params[ParamsOrder::x1]; }
   static double N1(double * params) { return params[ParamsOrder::n1]; }
   static double X2(double * params) { return params[ParamsOrder::x2]; }

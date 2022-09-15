@@ -7,27 +7,6 @@ namespace Inference {
 Inference::Inference() : Shared::MemoizedCurveViewRange() {
 }
 
-bool Inference::Initialize(Inference * inference, SubApp subApp) {
-  if (inference->subApp() == subApp) {
-    return false;
-  }
-  inference->~Inference();
-  Statistic * s = nullptr;
-  switch (subApp) {
-    case SubApp::Test:
-      s = new (inference) OneMeanTTest();
-      break;
-    case SubApp::Interval:
-      s = new (inference) OneMeanTInterval();
-      break;
-    default:
-      assert(false);
-  }
-  if (s) {
-    s->initParameters();
-  }
-  return true;
-}
 
 void Inference::computeCurveViewRange() {
   protectedSetXMin(computeXMin(), Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, false);

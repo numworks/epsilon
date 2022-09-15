@@ -16,7 +16,7 @@ const Escher::Image * App::Descriptor::icon() const {
 }
 
 App * App::Snapshot::unpack(Container * container) {
-  inference()->init();
+  statistic()->init();
   return new (container->currentAppBuffer()) App(this, static_cast<AppsContainer *>(container)->globalContext());
 }
 
@@ -118,7 +118,7 @@ void App::cleanBuffer(DynamicCellsDataSourceDestructor * destructor) {
 }
 
 void App::selectSubApp(int subAppIndex) {
-  if (subAppIndex >= 0 && Inference::Initialize(snapshot()->inference(), static_cast<Inference::SubApp>(subAppIndex))) {
+  if (subAppIndex >= 0 && Statistic::Initialize(snapshot()->statistic(), static_cast<Statistic::SubApp>(subAppIndex))) {
     m_testController.selectRow(0);
     m_hypothesisController.selectRow(0);
     m_typeController.selectRow(0);
@@ -131,7 +131,7 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 }
 
 void App::Snapshot::tidy() {
-  inference()->tidy();
+  statistic()->tidy();
 }
 
 void App::Snapshot::reset() {

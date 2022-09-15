@@ -14,7 +14,6 @@
 #include "models/models_buffer.h"
 #include "probability/distribution_controller.h"
 #include "probability/parameters_controller.h"
-#include "shared/dynamic_cells_data_source.h"
 #include "apps/shared/expression_field_delegate_app.h"
 
 using namespace Escher;
@@ -58,18 +57,6 @@ public:
   void willOpenPage(ViewController * controller) override;
   void didExitPage(ViewController * controller) override;
 
-  // Cells buffer API
-  void * buffer(size_t offset = 0) { return m_buffer + offset; }
-  void cleanBuffer(DynamicCellsDataSourceDestructor * destructor);
-
-  constexpr static int k_bufferSize = 40000;/*std::max({
-      sizeof(ExpressionCellWithBufferWithMessage) * k_maxNumberOfExpressionCellsWithBufferWithMessage, // 824 * 5 = 4120
-      sizeof(ExpressionCellWithEditableTextWithMessage) * k_maxNumberOfExpressionCellsWithEditableTextWithMessage, // 1040 * 8 = 8320
-      sizeof(EvenOddBufferTextCell) * (k_homogeneityTableNumberOfReusableHeaderCells + k_homogeneityTableNumberOfReusableInnerCells), // 360 * (5 + 9 + 45) = 21 240
-      sizeof(EvenOddEditableTextCell) * k_homogeneityTableNumberOfReusableInnerCells + sizeof(EvenOddBufferTextCell) * k_homogeneityTableNumberOfReusableHeaderCells, // 640 * 72 + 360 *(6+12) = 33 840
-      sizeof(EvenOddEditableTextCell) * k_doubleColumnTableNumberOfReusableCells // 24 * 640 = 15 360
-    });*/
-
   TELEMETRY_ID("Distributions");
 
   // Shared::MenuControllerDelegate
@@ -89,10 +76,6 @@ private:
   Shared::MenuController m_menuController;
   Escher::StackViewController m_stackViewController;
   Escher::InputViewController m_inputViewController;
-  /* Buffer used for allocating table cells to avoid duplicating required
-   * space for these memory-needy tables. */
-  char m_buffer[k_bufferSize];
-  DynamicCellsDataSourceDestructor * m_bufferDestructor;
 };
 
 }  // namespace Distributions

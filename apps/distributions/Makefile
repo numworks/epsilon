@@ -43,7 +43,6 @@ app_distributions_src += $(addprefix apps/distributions/probability/,\
 )
 
 app_distributions_src += $(addprefix apps/distributions/shared/,\
-  dynamic_cells_data_source.cpp \
   expression_cell_with_editable_text_with_message.cpp \
 )
 

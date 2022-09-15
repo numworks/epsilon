@@ -17,7 +17,7 @@ App * App::Snapshot::unpack(Container * container) {
 }
 
 App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
-    ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
+    ExpressionFieldDelegateApp(snapshot, &m_stackViewController),
     m_calculationController(&m_stackViewController,
                             this,
                             snapshot->distribution(),
@@ -29,8 +29,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
     m_distributionController(&m_stackViewController,
                              snapshot->distribution(),
                              &m_parameterController),
-    m_stackViewController(&m_modalViewController, &m_distributionController, StackViewController::Style::GrayGradation),
-    m_inputViewController(&m_modalViewController, &m_stackViewController, nullptr, nullptr, nullptr)
+    m_stackViewController(&m_modalViewController, &m_distributionController, StackViewController::Style::GrayGradation)
 {
 }
 

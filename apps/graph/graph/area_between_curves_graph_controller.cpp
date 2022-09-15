@@ -59,7 +59,7 @@ Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
   Poincare::Layout absoluteValue = AbsoluteValueLayout::Builder(subtractionLayout);
   const char * dx = "dx";
   Poincare::Layout dxLayout = LayoutHelper::String(dx, strlen(dx));
-  return HorizontalLayout::Builder(absoluteValue, dxLayout);
+  return Poincare::HorizontalLayout::Builder(absoluteValue, dxLayout);
 }
 
 Poincare::Expression AreaBetweenCurvesGraphController::createSumExpression(double startSum, double endSum, Poincare::Context * context) {

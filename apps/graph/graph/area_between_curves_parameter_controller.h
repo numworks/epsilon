@@ -2,6 +2,7 @@
 #define GRAPH_AREA_BETWEEN_CURVES_PARAMETER_CONTROLLER
 
 #include <escher/selectable_list_view_controller.h>
+#include <escher/table_view_with_top_and_bottom_views.h>
 #include <apps/shared/curve_selection_controller.h>
 #include "area_between_curves_graph_controller.h"
 
@@ -26,12 +27,14 @@ public:
   int reusableCellCount(int type) override { return k_maxNumberOfRows; }
 
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-
+  Escher::View * view() override { return &m_contentView; }
 private:
   constexpr static int k_maxNumberOfRows = 7;
 
   Ion::Storage::Record m_mainRecord;
   AreaBetweenCurvesGraphController * m_areaGraphController;
+  Escher::TableViewWithTopAndBottomViews m_contentView;
+  Escher::MessageTextView m_topView;
   Shared::CurveSelectionCell m_cells[k_maxNumberOfRows];
 };
 

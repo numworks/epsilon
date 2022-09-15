@@ -32,8 +32,8 @@ public:
   // Descriptor
   class Descriptor : public Escher::App::Descriptor {
   public:
-    I18n::Message name() const override { return I18n::Message::DistributionApp; };
-    I18n::Message upperName() const override { return I18n::Message::DistributionAppCapital; };
+    I18n::Message name() const override { return I18n::Message::InferenceApp; };
+    I18n::Message upperName() const override { return I18n::Message::InferenceAppCapital; };
     const Escher::Image * icon() const override;
   };
 

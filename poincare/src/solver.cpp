@@ -5,11 +5,10 @@
 namespace Poincare {
 
 template<typename T>
-Solver<T>::Solver(T xStart, T xEnd, const char * unknown, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, T precision) :
+Solver<T>::Solver(T xStart, T xEnd, const char * unknown, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) :
   m_xStart(xStart),
   m_xEnd(xEnd),
   m_yResult(k_NAN),
-  m_precision(precision),
   m_context(context),
   m_unknown(unknown),
   m_complexFormat(complexFormat),
@@ -19,17 +18,17 @@ Solver<T>::Solver(T xStart, T xEnd, const char * unknown, Context * context, Pre
 
 template<typename T>
 Solver<T>::Solver(const Solver<T> * other) :
-  Solver(other->m_xStart, other->m_xEnd, other->m_unknown, other->m_context, other->m_complexFormat, other->m_angleUnit, other->m_precision)
+  Solver(other->m_xStart, other->m_xEnd, other->m_unknown, other->m_context, other->m_complexFormat, other->m_angleUnit)
 {}
 
 template<typename T>
 Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketTest test, HoneResult hone) {
   T x1, x2 = start(), x3 = nextX(x2, end());
   T y1, y2 = f(x2, aux), y3 = f(x3, aux);
-  Coordinate2D<T> solution(k_NAN, k_NAN);
-  Interest interest = Interest::None;
+  Coordinate2D<T> finalSolution(k_NAN, k_NAN);
+  Interest finalInterest = Interest::None;
 
-  do {
+  while ((start() < x3) == (x3 < end())) {
     x1 = x2;
     x2 = x3;
     x3 = nextX(x2, end());
@@ -37,16 +36,18 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketT
     y2 = y3;
     y3 = f(x3, aux);
 
-    interest = test(y1, y2, y3);
+    Interest interest = test(y1, y2, y3);
     if (interest != Interest::None) {
-      solution = hone(f, aux, x1, x3, interest, m_precision);
-      if (std::isfinite(solution.x1()) && solution.x1() != start()) {
+      Coordinate2D<T> solution = hone(f, aux, x1, x3, interest, k_absolutePrecision);
+      if (std::isfinite(solution.x1()) && validSolution(solution.x1())) {
+        finalSolution = solution;
+        finalInterest = interest;
         break;
       }
     }
-  } while ((start() < x3) == (x3 < end()));
+  }
 
-  registerSolution(solution, interest);
+  registerSolution(finalSolution, finalInterest);
   return result();
 }
 
@@ -161,7 +162,7 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f, const voi
     assert(interest == Interest::LocalMaximum);
     res = BrentMaximum(f, aux, xMin, xMax, interest, precision);
   }
-  if (std::isfinite(res.x1()) && std::fabs(res.x2()) < NullTolerance(precision)) {
+  if (std::isfinite(res.x1()) && std::fabs(res.x2()) < NullTolerance(res.x1())) {
     return res;
   }
   return Coordinate2D<T>(k_NAN, k_NAN);
@@ -170,7 +171,18 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f, const voi
 template<typename T>
 T Solver<T>::maximalStep() const {
   constexpr T minimalNumberOfSteps = static_cast<T>(100.);
-  return std::max(k_minimalAbsoluteStep, std::fabs(m_xEnd - m_xStart) / minimalNumberOfSteps);
+  return std::max(k_minimalPracticalStep, std::fabs(m_xEnd - m_xStart) / minimalNumberOfSteps);
+}
+
+template<typename T>
+T Solver<T>::minimalStep(T x) const {
+  return std::max(k_minimalPracticalStep, std::fabs(x) * k_relativePrecision);
+}
+
+template<typename T>
+bool Solver<T>::validSolution(T x) const {
+  T minStep = minimalStep(m_xStart);
+  return m_xStart < m_xEnd ? m_xStart + minStep < x && x < m_xEnd : m_xEnd < x && x < m_xStart - minStep;
 }
 
 template<typename T>
@@ -204,11 +216,12 @@ T Solver<T>::nextX(T x, T direction) const {
   constexpr T upperTypicalMagnitude = static_cast<T>(2.);
 
   T maxStep = maximalStep();
+  T minStep = minimalStep(x);
   T stepSign = x < direction ? static_cast<T>(1.) : static_cast<T>(-1.);
 
   T magnitude = std::log(std::fabs(x));
   if (!std::isfinite(magnitude)) {
-    return x + stepSign * k_minimalAbsoluteStep;
+    return x + stepSign * minStep;
   }
   T ratio;
   if (lowerTypicalMagnitude < magnitude && magnitude < upperTypicalMagnitude) {
@@ -218,10 +231,11 @@ T Solver<T>::nextX(T x, T direction) const {
     ratio = maximalGrowthSpeed - (maximalGrowthSpeed - baseGrowthSpeed) * std::exp(growthSpeedAcceleration * std::pow(exponent, 3.));
   }
   T x2 = (x < direction) == (x < k_zero) ? x / ratio : x * ratio;
-  if (std::fabs(x - x2) < k_minimalAbsoluteStep) {
-    x2 = x + stepSign * k_minimalAbsoluteStep;
-  } else if (std::fabs(x - x2) > maxStep) {
+  if (std::fabs(x - x2) > maxStep) {
     x2 = x + stepSign * maxStep;
+  }
+  if (std::fabs(x - x2) < minStep) {
+    x2 = x + stepSign * minStep;
   }
   assert((x < x2) == (x < direction));
   assert(x2 != x);
@@ -234,7 +248,7 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(Expression e, int childIndex)
   Expression child = e.childAtIndex(childIndex);
   T xRoot = solver.nextRoot(child).x1();
   while (std::isfinite(xRoot)) {
-    if (std::fabs(e.approximateWithValueForSymbol<T>(m_unknown, xRoot, m_context, m_complexFormat, m_angleUnit)) < NullTolerance(m_precision)) {
+    if (std::fabs(e.approximateWithValueForSymbol<T>(m_unknown, xRoot, m_context, m_complexFormat, m_angleUnit)) < NullTolerance(xRoot)) {
       return Coordinate2D<T>(xRoot, k_zero);
     }
     xRoot = solver.nextRoot(child).x1();
@@ -259,24 +273,32 @@ Coordinate2D<T> Solver<T>::nextRootInMultiplication(Expression e) const {
 template<typename T>
 void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest) {
   T x = solution.x1();
-  if ((m_xStart < x && x < m_xEnd) || (m_xEnd < x && x < m_xStart)) {
+  if (std::fabs(x) < NullTolerance(x)) {
+    x = k_zero;
+  }
+  if (std::isnan(x)) {
+    m_lastInterest = Interest::None;
+  } else {
+    assert(validSolution(x));
     m_xStart = x;
     m_yResult = solution.x2();
+    if (std::fabs(m_yResult) < NullTolerance(x)) {
+      m_yResult = k_zero;
+    }
     m_lastInterest = interest;
-  } else {
-    m_lastInterest = Interest::None;
+    assert(m_yResult == 0. || m_lastInterest != Interest::Root);
   }
 }
 
 // Explicit template instanciations
 
-template Solver<double>::Solver(double, double, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit, double);
+template Solver<double>::Solver(double, double, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);
 template Coordinate2D<double> Solver<double>::nextRoot(Expression);
 template Coordinate2D<double> Solver<double>::nextMinimum(Expression);
 template Coordinate2D<double> Solver<double>::nextIntersection(Expression, Expression);
 template void Solver<double>::stretch();
 
-#if 1
+#if 1 /* FIXME Temporarily keep SolverHelper until Zoom is refactored to use Solver. */
 template<typename T>
 Coordinate2D<T> SolverHelper<T>::NextPointOfInterest(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T minimalStep, T maximalStep) {
   assert(relativePrecision > static_cast<T>(0.f) && minimalStep >= static_cast<T>(0.f) && maximalStep >= minimalStep);
@@ -387,7 +409,6 @@ bool SolverHelper<T>::RootExistsOnInterval(T fa, T fb, T fc) {
        || fb * fc < static_cast<T>(0.f));
 }
 
-/* FIXME Temporarily keep SolverHelper until Zoom is refactored to use Solver. */
 template Coordinate2D<float> SolverHelper<float>::NextPointOfInterest(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, float start, float end, float relativePrecision, float minimalStep, float maximalStep);
 template bool SolverHelper<float>::RootExistsOnInterval(float fa, float fb, float fc);
 #endif

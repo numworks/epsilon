@@ -62,7 +62,7 @@ float Distribution::evaluateAtAbscissa(float x) const {
 }
 
 void Distribution::setParameterAtIndex(double f, int index) {
-  Distributions::setParameterAtIndex(f, index);
+  Inference::setParameterAtIndex(f, index);
   computeCurveViewRange();
 }
 

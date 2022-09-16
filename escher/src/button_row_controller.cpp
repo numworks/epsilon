@@ -180,6 +180,10 @@ void ButtonRowController::didBecomeFirstResponder(){
   Container::activeApp()->setFirstResponder(m_contentView.mainViewController());
 }
 
+void ButtonRowController::willExitResponderChain(Responder * nextFirstResponder) {
+  setSelectedButton(-1);
+}
+
 int ButtonRowController::selectedButton() {
   return m_contentView.selectedButton();
 }

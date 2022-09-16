@@ -31,6 +31,7 @@ public:
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override;
   void didBecomeFirstResponder() override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;
   int selectedButton();
   bool setSelectedButton(int selectedButton);

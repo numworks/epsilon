@@ -8,7 +8,7 @@
 #include "curve_view_range.h"
 #include "term_sum_controller.h"
 #include "../../shared/function_graph_controller.h"
-#include "../../shared/ring_or_round_cursor_view.h"
+#include "../../shared/round_cursor_view.h"
 #include "../../shared/sequence_store.h"
 
 namespace Sequence {

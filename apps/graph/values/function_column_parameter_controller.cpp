@@ -1,4 +1,4 @@
-#include "function_parameter_controller.h"
+#include "function_column_parameter_controller.h"
 #include "values_controller.h"
 #include "../app.h"
 #include <assert.h>
@@ -8,17 +8,17 @@ using namespace Escher;
 
 namespace Graph {
 
-FunctionParameterController::FunctionParameterController(ValuesController * valuesController) :
+FunctionColumnParameterController::FunctionColumnParameterController(ValuesController * valuesController) :
   ColumnParameterController(valuesController),
   m_displayDerivativeColumn(I18n::Message::DerivativeFunctionColumn),
   m_valuesController(valuesController)
 { }
 
-Shared::ClearColumnHelper * FunctionParameterController::clearColumnHelper() {
+Shared::ClearColumnHelper * FunctionColumnParameterController::clearColumnHelper() {
   return m_valuesController;
 }
 
-bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
+bool FunctionColumnParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(selectedRow() == 0);
     bool isDisplayingDerivative = function()->displayDerivative();
@@ -30,22 +30,22 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-int FunctionParameterController::numberOfRows() const {
+int FunctionColumnParameterController::numberOfRows() const {
   return k_totalNumberOfCell;
 };
 
-HighlightCell * FunctionParameterController::reusableCell(int index, int type) {
+HighlightCell * FunctionColumnParameterController::reusableCell(int index, int type) {
   assert(index == 0);
   return &m_displayDerivativeColumn;
 }
 
-void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void FunctionColumnParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (cell == &m_displayDerivativeColumn) {
     m_displayDerivativeColumn.setState(function()->displayDerivative());
   }
 }
 
-ExpiringPointer<ContinuousFunction> FunctionParameterController::function() {
+ExpiringPointer<ContinuousFunction> FunctionColumnParameterController::function() {
   return App::app()->functionStore()->modelForRecord(m_record);
 }
 

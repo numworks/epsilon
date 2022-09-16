@@ -1,4 +1,4 @@
-#include "list_parameter_controller.h"
+#include "function_parameter_controller.h"
 #include "../../shared/poincare_helpers.h"
 #include "../app.h"
 #include <escher/metric.h>
@@ -11,7 +11,7 @@ using namespace Escher;
 
 namespace Graph {
 
-ListParameterController::ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphController * graphController) :
+FunctionParameterController::FunctionParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphController * graphController) :
   Shared::ListParameterController(parentResponder, functionColorMessage, deleteFunctionMessage),
   m_detailsCell(I18n::Message::Details),
   m_derivativeCell(I18n::Message::GraphDerivative),
@@ -21,14 +21,14 @@ ListParameterController::ListParameterController(Responder * parentResponder, I1
 {
 }
 
-HighlightCell * ListParameterController::cell(int index) {
+HighlightCell * FunctionParameterController::cell(int index) {
   assert(0 <= index && index < numberOfRows());
   HighlightCell * const cells[] = {&m_detailsCell, &m_colorCell, &m_derivativeCell, &m_functionDomainCell, &m_enableCell, &m_deleteCell};
   static_assert(sizeof(cells)/sizeof(HighlightCell*) == k_numberOfRows);
   return cells[index];
 }
 
-void ListParameterController::setRecord(Ion::Storage::Record record) {
+void FunctionParameterController::setRecord(Ion::Storage::Record record) {
   Shared::ListParameterController::setRecord(record);
   /* Set controllers' record here because we need to know which ones should be
    * displayed. */
@@ -55,7 +55,7 @@ int writeInterval(char * buffer, int bufferSize, double min, double max, int num
     intervalBracket(max, false));
 }
 
-void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_derivativeCell) {
     m_derivativeCell.setState(m_graphController->displayDerivativeInBanner());
@@ -80,29 +80,29 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   }
 }
 
-void ListParameterController::detailsPressed() {
+void FunctionParameterController::detailsPressed() {
   static_cast<StackViewController *>(parentResponder())->push(&m_detailsParameterController);
 }
 
-void ListParameterController::functionDomainPressed() {
+void FunctionParameterController::functionDomainPressed() {
   static_cast<StackViewController *>(parentResponder())->push(&m_domainParameterController);
 }
 
-void ListParameterController::derivativeToggled(bool enable) {
+void FunctionParameterController::derivativeToggled(bool enable) {
   m_graphController->setDisplayDerivativeInBanner(enable);
   m_selectableTableView.reloadData();
 }
 
-bool ListParameterController::handleEvent(Ion::Events::Event event) {
+bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell * cell = selectedCell();
   if (cell == &m_detailsCell) {
-    return m_detailsCell.handleEvent(event, this, &ListParameterController::detailsPressed);
+    return m_detailsCell.handleEvent(event, this, &FunctionParameterController::detailsPressed);
   }
   if (cell == &m_functionDomainCell) {
-    return m_functionDomainCell.handleEvent(event, this, &ListParameterController::functionDomainPressed);
+    return m_functionDomainCell.handleEvent(event, this, &FunctionParameterController::functionDomainPressed);
   }
   if (cell == &m_derivativeCell) {
-    return m_derivativeCell.handleEvent(event, this, &ListParameterController::derivativeToggled);
+    return m_derivativeCell.handleEvent(event, this, &FunctionParameterController::derivativeToggled);
   }
   return Shared::ListParameterController::handleEvent(event);
 }

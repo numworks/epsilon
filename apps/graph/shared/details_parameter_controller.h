@@ -1,5 +1,5 @@
-#ifndef GRAPH_LIST_DETAILS_PARAMATER_CONTROLLER_H
-#define GRAPH_LIST_DETAILS_PARAMATER_CONTROLLER_H
+#ifndef GRAPH_SHARED_DETAILS_PARAMETER_CONTROLLER_H
+#define GRAPH_SHARED_DETAILS_PARAMETER_CONTROLLER_H
 
 #include <escher/view_controller.h>
 #include <escher/selectable_list_view_controller.h>

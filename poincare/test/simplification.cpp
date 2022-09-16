@@ -1954,9 +1954,11 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("med({1})", "1");
   assert_parsed_expression_simplify_to("med({4,2,3,1,6})", "3");
   assert_parsed_expression_simplify_to("med({1,6,3,4,5,2})", "7/2");
-  assert_parsed_expression_simplify_to("med({1,undef,2,3})", Undefined::Name());
+  // Do not reduce if a child is undef
+  assert_parsed_expression_simplify_to("med({1,undef,2,3})","med({1,undef,2,3})");
   assert_parsed_expression_simplify_to("med({1,6,3,4,5,2},{1,2,1,1,2,2})", "4");
-  assert_parsed_expression_simplify_to("med({1,6,3,4,5,undef,2},{1,1,1,1,2,4,2})", Undefined::Name());
+  // Do not reduce if a child is undef
+  assert_parsed_expression_simplify_to("med({1,6,3},{1,1,undef})", "med({1,6,3},{1,1,undef})");
   // List sequences
   assert_parsed_expression_simplify_to("sequence(1,k,1)", "{1}");
   assert_parsed_expression_simplify_to("sequence(k,k,10)", "{1,2,3,4,5,6,7,8,9,10}");

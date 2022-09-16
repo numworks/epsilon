@@ -25,6 +25,16 @@ template<typename T> Evaluation<T> ListMedianNode::templatedApproximate(const Ap
 
 Expression ListMedian::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   ExpressionNode::ApproximationContext approximationContext(reductionContext, true);
+  for (int k = 0; k < numberOfChildren(); k++) {
+    Expression listChild = childAtIndex(k);
+    int n = listChild.numberOfChildren();
+    for (int i = 0; i < n; i++) {
+      if (std::isnan(listChild.childAtIndex(i).node()->approximate(0.0f, approximationContext).toScalar())) {
+        // One of the children is undef, let approximation handle this
+        return *this;
+      }
+    }
+  }
   ListComplex<double> evaluationArray[2];
   StatisticsDataset<double> dataset = StatisticsDataset<double>::BuildFromChildren(node(), approximationContext, evaluationArray);
   if (dataset.isUndefined()) {

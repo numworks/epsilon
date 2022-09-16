@@ -14,7 +14,7 @@ void TreeNode::release(int currentNumberOfChildren) {
   }
 }
 
-void TreeNode::rename(uint16_t identifier, bool unregisterPreviousIdentifier) {
+void TreeNode::rename(uint16_t identifier, bool unregisterPreviousIdentifier, bool skipChildrenUpdate) {
   if (unregisterPreviousIdentifier) {
     /* The previous identifier should not always be unregistered. For instance,
      * if the node is a clone and still has the original node's identifier,
@@ -24,6 +24,9 @@ void TreeNode::rename(uint16_t identifier, bool unregisterPreviousIdentifier) {
   m_identifier = identifier;
   m_referenceCounter = 0;
   TreePool::sharedPool()->registerNode(this);
+  if (skipChildrenUpdate) {
+    return;
+  }
   updateParentIdentifierInChildren();
 }
 

@@ -305,12 +305,8 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, dou
     assert(plotType() < PlotType::Polar);
     // The subcurve number would need to be passed down here to properly assert
     assert(numberOfSubCurves() > 1
-          || (evaluateXYAtParameter(cursorT, context).x1() == cursorX
-              || (std::isnan(cursorX) && std::isnan(evaluateXYAtParameter(cursorT, context).x1()))
-             && evaluateXYAtParameter(cursorT, context).x2() == cursorY
-              || (std::isnan(cursorY) && std::isnan(evaluateXYAtParameter(cursorT, context).x2()))
-            )
-          );
+          || (PoincareHelpers::EqualOrBothNan(evaluateXYAtParameter(cursorT, context).x1(), cursorX)
+              && PoincareHelpers::EqualOrBothNan(evaluateXYAtParameter(cursorT, context).x2(), cursorY)));
     return index == 0 ? cursorX : cursorY;
   }
 }

@@ -1,5 +1,5 @@
-#ifndef GRAPH_LIST_DOMAIN_PARAMATER_CONTROLLER_H
-#define GRAPH_LIST_DOMAIN_PARAMATER_CONTROLLER_H
+#ifndef GRAPH_SHARED_DOMAIN_PARAMATER_CONTROLLER_H
+#define GRAPH_SHARED_DOMAIN_PARAMATER_CONTROLLER_H
 
 #include <escher/message_table_cell_with_expression.h>
 #include <escher/message_table_cell_with_editable_text.h>

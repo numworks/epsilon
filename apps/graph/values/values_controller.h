@@ -10,7 +10,7 @@
 #include "../../shared/values_controller.h"
 #include "abscissa_title_cell.h"
 #include "derivative_parameter_controller.h"
-#include "function_parameter_controller.h"
+#include "function_column_parameter_controller.h"
 #include "interval_parameter_selector_controller.h"
 
 namespace Graph {
@@ -143,7 +143,7 @@ private:
   AbscissaTitleCell m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
   Shared::StoreCell m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
   Shared::ScrollableTwoExpressionsCell m_exactValueCell;
-  FunctionParameterController m_functionParameterController;
+  FunctionColumnParameterController m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;
   IntervalParameterSelectorController m_intervalParameterSelectorController;
   DerivativeParameterController m_derivativeParameterController;

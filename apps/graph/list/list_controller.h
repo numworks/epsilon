@@ -2,7 +2,7 @@
 #define GRAPH_LIST_CONTROLLER_H
 
 #include "function_toolbox.h"
-#include "../shared/list_parameter_controller.h"
+#include "../shared/function_parameter_controller.h"
 #include "../continuous_function_store.h"
 #include <apps/shared/function_list_controller.h>
 #include <apps/shared/text_field_delegate.h>
@@ -65,7 +65,7 @@ private:
   ContinuousFunctionStore * modelStore() override;
   Escher::SelectableTableView m_selectableTableView;
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
-  ListParameterController m_parameterController;
+  FunctionParameterController m_parameterController;
   FunctionModelsParameterController m_modelsParameterController;
   Escher::StackViewController m_modelsStackController;
   FunctionToolbox m_functionToolbox;

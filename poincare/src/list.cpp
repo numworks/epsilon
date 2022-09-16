@@ -43,20 +43,35 @@ Layout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
 }
 
 // Helper functions
-int ListNode::extremumIndex(const ApproximationContext& approximationContext, bool minimum) {
-  void * comparisonContext[] = {this, const_cast<ApproximationContext*>(&approximationContext), &minimum};
-  return Poincare::Helpers::ExtremumIndex(
-      Helpers::ListEvaluationComparisonAtIndex,
-      comparisonContext,
-      numberOfChildren(),
-      minimum);
+int ListNode::extremumIndex(const ApproximationContext& approximationContext, bool minimum, bool returnMinusOneIfUndef) {
+  int numberOfElements = numberOfChildren();
+  int returnIndex = 0;
+  if (numberOfElements == 0) {
+    return -1;
+  }
+  float currentExtremumValue = childAtIndex(0)->approximate(static_cast<float>(0), approximationContext).toScalar();
+  if (returnMinusOneIfUndef && std::isnan(currentExtremumValue)) {
+    return -1;
+  }
+  for (int i = 1; i < numberOfElements; i++) {
+    float newValue = childAtIndex(i)->approximate(static_cast<float>(0), approximationContext).toScalar();
+    if (returnMinusOneIfUndef && std::isnan(newValue)) {
+      return -1;
+    }
+    bool newIsGreater = Helpers::FloatIsGreater(newValue, currentExtremumValue, minimum);
+    if ((minimum && !newIsGreater) || (!minimum && newIsGreater)) {
+      returnIndex = i;
+      currentExtremumValue = newValue;
+    }
+  }
+  return returnIndex;
 }
 
 template <typename T> Evaluation<T> ListNode::extremumApproximation(const ApproximationContext& approximationContext, bool minimum) {
   if (numberOfChildren() == 0) {
     return Complex<T>::Undefined();
   }
-  return childAtIndex(extremumIndex(approximationContext, minimum))->approximate(static_cast<T>(0), approximationContext);
+  return childAtIndex(extremumIndex(approximationContext, minimum, false))->approximate(static_cast<T>(0), approximationContext);
 }
 
 template<typename T> Evaluation<T> ListNode::sumOfElements(const ApproximationContext& approximationContext) {
@@ -140,11 +155,12 @@ Expression List::shallowReduce(ExpressionNode::ReductionContext reductionContext
 }
 
 Expression List::extremum(const ExpressionNode::ReductionContext& reductionContext, bool minimum) {
-  if (numberOfChildren() == 0) {
+  const ExpressionNode::ApproximationContext approximationContext(reductionContext, true);
+  int extremumIndex = node()->extremumIndex(approximationContext, minimum, true);
+  if (extremumIndex < 0) {
     return Undefined::Builder();
   }
-  const ExpressionNode::ApproximationContext approximationContext(reductionContext, true);
-  return childAtIndex(node()->extremumIndex(approximationContext, minimum));
+  return childAtIndex(extremumIndex);
 }
 
 template Evaluation<float> ListNode::templatedApproximate(const ApproximationContext& approximationContext) const;

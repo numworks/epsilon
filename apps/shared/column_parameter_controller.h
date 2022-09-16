@@ -10,7 +10,8 @@ namespace Shared {
 class ColumnParameters {
 public:
   ColumnParameters() : m_columnIndex(-1) {}
-  constexpr static int k_titleBufferSize = Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
+  // Max translated name of Message::ColumnOptions + max column name
+  constexpr static int k_titleBufferSize = ClearColumnHelper::k_maxSizeOfColumnName + 23;
   virtual void initializeColumnParameters(); // Always initialize parent class before initiliazing child.
 protected:
   virtual ClearColumnHelper * clearColumnHelper() = 0;

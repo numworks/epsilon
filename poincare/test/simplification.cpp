@@ -1925,12 +1925,14 @@ QUIZ_CASE(poincare_simplification_list) {
   // Minimum of a list
   assert_parsed_expression_simplify_to("min({})", Undefined::Name());
   assert_parsed_expression_simplify_to("min({1,2,3})", "1");
-  assert_parsed_expression_simplify_to("min({3,undef,-2})", "-2");
+  // Do not simplify when undef value
+  assert_parsed_expression_simplify_to("min({3,undef,-2})", "min({3,undef,-2})");
   assert_parsed_expression_simplify_to("min({3,-inf,-2})", "-inf");
   // Maximum of a list
   assert_parsed_expression_simplify_to("max({})", Undefined::Name());
   assert_parsed_expression_simplify_to("max({1,2,3})", "3");
-  assert_parsed_expression_simplify_to("max({3,undef,-2})", "3");
+  // Do not simplify when undef value
+  assert_parsed_expression_simplify_to("max({3,undef,-2})", "max({3,undef,-2})");
   assert_parsed_expression_simplify_to("max({3,inf,-2})", "inf");
   // Variance of a list
   assert_parsed_expression_simplify_to("var({})", Undefined::Name());

@@ -32,10 +32,14 @@ template<typename T> Evaluation<T> ListMaximumNode::templatedApproximate(const A
 
 Expression ListMaximum::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression child = childAtIndex(0);
-  if (child.type() != ExpressionNode::Type::List) {
+  if (child.type() != ExpressionNode::Type::List || child.numberOfChildren() == 0) {
     return replaceWithUndefinedInPlace();
   }
   Expression result = static_cast<List &>(child).extremum(reductionContext, false);
+  if (result.isUndefined()) {
+    // Let approximation handle this
+    return *this;
+  }
   replaceWithInPlace(result);
   return result;
 }

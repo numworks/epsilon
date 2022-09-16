@@ -210,9 +210,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       }
     }
     double calculation = m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex];
-    assert((calculationIndex == 0 && PoincareHelpers::equalOrBothNan(calculation, m_store->doubleCastedNumberOfPairsOfSeries(seriesNumber)))
-           || (calculationIndex == 1 && PoincareHelpers::equalOrBothNan(calculation, m_store->covariance(seriesNumber)))
-           || (calculationIndex == 2 && PoincareHelpers::equalOrBothNan(calculation, m_store->columnProductSum(seriesNumber))));
+    assert((calculationIndex == 0 && PoincareHelpers::EqualOrBothNan(calculation, m_store->doubleCastedNumberOfPairsOfSeries(seriesNumber)))
+           || (calculationIndex == 1 && PoincareHelpers::EqualOrBothNan(calculation, m_store->covariance(seriesNumber)))
+           || (calculationIndex == 2 && PoincareHelpers::EqualOrBothNan(calculation, m_store->columnProductSum(seriesNumber))));
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, numberSignificantDigits);

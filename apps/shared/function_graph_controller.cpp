@@ -158,7 +158,7 @@ bool FunctionGraphController::cursorMatchesModel() {
   }
   ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
   Coordinate2D<double> xy = f->evaluateXYAtParameter(m_cursor->t(), context, m_selectedSubCurveIndex);
-  return PoincareHelpers::equalOrBothNan(xy.x1(), m_cursor->x()) && PoincareHelpers::equalOrBothNan(xy.x2(), m_cursor->y());
+  return PoincareHelpers::EqualOrBothNan(xy.x1(), m_cursor->x()) && PoincareHelpers::EqualOrBothNan(xy.x2(), m_cursor->y());
 }
 
 CurveView * FunctionGraphController::curveView() {

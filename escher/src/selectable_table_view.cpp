@@ -179,7 +179,7 @@ int SelectableTableView::lastSelectableRow() {
   return -1;
 }
 
-int SelectableTableView::skipNonSelectableRows(int delta) {
+int SelectableTableView::indexOfNextSelectableRow(int delta) {
   int row = selectedRow();
   int step = delta > 0 ? 1 : -1;
   int firstRow = firstSelectableRow();
@@ -199,7 +199,7 @@ int SelectableTableView::skipNonSelectableRows(int delta) {
   return row;
 }
 
-int SelectableTableView::skipNonSelectableColumns(int delta) {
+int SelectableTableView::indexOfNextSelectableColumn(int delta) {
   int column = selectedColumn();
   int step = delta > 0 ? 1 : -1;
   while (delta) {
@@ -220,16 +220,16 @@ int SelectableTableView::skipNonSelectableColumns(int delta) {
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   int step = Ion::Events::longPressFactor();
   if (event == Ion::Events::Down) {
-    return selectCellAtClippedLocation(selectedColumn(), skipNonSelectableRows(step));
+    return selectCellAtClippedLocation(selectedColumn(), indexOfNextSelectableRow(step));
   }
   if (event == Ion::Events::Up) {
-    return selectCellAtClippedLocation(selectedColumn(), skipNonSelectableRows(-step));
+    return selectCellAtClippedLocation(selectedColumn(), indexOfNextSelectableRow(-step));
   }
   if (event == Ion::Events::Left) {
-    return selectCellAtClippedLocation(skipNonSelectableColumns(-step), selectedRow());
+    return selectCellAtClippedLocation(indexOfNextSelectableColumn(-step), selectedRow());
   }
   if (event == Ion::Events::Right) {
-    return selectCellAtClippedLocation(skipNonSelectableColumns(step), selectedRow());
+    return selectCellAtClippedLocation(indexOfNextSelectableColumn(step), selectedRow());
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
     HighlightCell * cell = selectedCell();

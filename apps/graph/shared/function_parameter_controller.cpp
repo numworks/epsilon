@@ -16,8 +16,7 @@ FunctionParameterController::FunctionParameterController(Responder * parentRespo
   m_detailsCell(I18n::Message::Details),
   m_derivativeCell(I18n::Message::GraphDerivative),
   m_detailsParameterController(this),
-  m_domainParameterController(nullptr, inputEventHandlerDelegate),
-  m_graphController(graphController)
+  m_domainParameterController(nullptr, inputEventHandlerDelegate)
 {
 }
 

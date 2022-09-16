@@ -19,7 +19,7 @@ public:
   const char * title() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
-  int numberOfRows() const override { return k_numberOfRows; };
+  int numberOfRows() const override { return k_numberOfRows; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void viewWillAppear() override;
 private:

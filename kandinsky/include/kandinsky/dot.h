@@ -9,9 +9,25 @@ struct KDMask {
   uint8_t m_mask[Size][Size];
 };
 
+/* Each pixel is evaluated in 32*32 points, we could increase this number but
+ * there is a limit on constexpr evaluations and it will be rounded to 256
+ * values anyway. */
 static constexpr int k_nbSubdivisions = 32;
 static constexpr int k_scale = (k_nbSubdivisions * k_nbSubdivisions) / 256;
 
+/* Creates an antialiased grayscale ring, centered in a buffer of Size×Size,
+ * composed of all the points such that minRadius <= radius <= maxRadius.
+ *
+ *       XX##XX
+ *     ##XXxxXX##
+ *   XXXX      XXXX
+ *   ##xx      xx##
+ *   XXXX      XXXX
+ *     ##XXxxXX##
+ *       XX##XX
+ *          <-->      minRadius
+ *          <----->   maxRadius
+ */
 template <KDCoordinate Size>
 constexpr KDMask<Size> KDMakeRing(float minRadius, float maxRadius) {
   /* We compute the grayscale value of each pixel of the mask by subdiving it

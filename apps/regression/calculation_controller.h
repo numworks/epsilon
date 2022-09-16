@@ -14,8 +14,6 @@
 
 namespace Regression {
 
-constexpr static KDCoordinate maxCoordinate(KDCoordinate a, KDCoordinate b) { return a > b ? a : b; }
-
 class CalculationController : public Shared::DoublePairTableController {
 
 public:
@@ -57,9 +55,9 @@ private:
    * VeryLargeNumberOfSignificantDigits and contains two even odd cells. */
   constexpr static KDCoordinate k_minCalculationCellWidth = 2 * Escher::Metric::SmallFontCellWidth(Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits), Escher::EvenOddCell::k_horizontalMargin) + Escher::EvenOddCell::k_separatorWidth;
   // To hold _y=a·x^3+b·x^2+c·x+d_
-  constexpr static KDCoordinate k_cubicCalculationCellWidth = maxCoordinate(Escher::Metric::SmallFontCellWidth(21, Escher::EvenOddCell::k_horizontalMargin) + Escher::EvenOddCell::k_separatorWidth, k_minCalculationCellWidth);
+  constexpr static KDCoordinate k_cubicCalculationCellWidth = std::max<KDCoordinate>(Escher::Metric::SmallFontCellWidth(21, Escher::EvenOddCell::k_horizontalMargin) + Escher::EvenOddCell::k_separatorWidth, k_minCalculationCellWidth);
   // To hold _y=a·x^4+b·x^3+c·x^2+d·x+e_
-  constexpr static KDCoordinate k_quarticCalculationCellWidth = maxCoordinate(Escher::Metric::SmallFontCellWidth(27, Escher::EvenOddCell::k_horizontalMargin) + Escher::EvenOddCell::k_separatorWidth, k_minCalculationCellWidth);
+  constexpr static KDCoordinate k_quarticCalculationCellWidth = std::max<KDCoordinate>(Escher::Metric::SmallFontCellWidth(27, Escher::EvenOddCell::k_horizontalMargin) + Escher::EvenOddCell::k_separatorWidth, k_minCalculationCellWidth);
 
   constexpr static int k_symbolColumnMaxNumberOfChars = 3;
   constexpr static KDCoordinate k_symbolColumnWidth = Escher::Metric::SmallFontCellWidth(k_symbolColumnMaxNumberOfChars, Escher::Metric::CellVerticalElementMargin);

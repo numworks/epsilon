@@ -33,8 +33,8 @@ void KDContext::fillRectWithPixels(KDRect rect, const KDColor * pixels, KDColor 
 
   KDCoordinate startingI = m_clippingRect.x() - rect.translatedBy(m_origin).x();
   KDCoordinate startingJ = m_clippingRect.y() - rect.translatedBy(m_origin).y();
-  startingI = startingI > 0 ? startingI : 0;
-  startingJ = startingJ > 0 ? startingJ : 0;
+  startingI = std::max<KDCoordinate>(0, startingI);
+  startingJ = std::max<KDCoordinate>(0, startingJ);
 
   /* If the rect has indeed been clipped, we only want to push the correct
    * discontinuous extract of pixels. We want also to minimize calls to pushRect
@@ -69,8 +69,8 @@ void KDContext::fillRectWithMask(KDRect rect, KDColor color, KDColor background,
 
   KDCoordinate startingI = m_clippingRect.x() - rect.translatedBy(m_origin).x();
   KDCoordinate startingJ = m_clippingRect.y() - rect.translatedBy(m_origin).y();
-  startingI = startingI > 0 ? startingI : 0;
-  startingJ = startingJ > 0 ? startingJ : 0;
+  startingI = std::max<KDCoordinate>(0, startingI);
+  startingJ = std::max<KDCoordinate>(0, startingJ);
   for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
     for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
       KDColor * currentPixelAddress = workingBuffer + i + absoluteRect.width()*j;
@@ -95,8 +95,8 @@ void KDContext::blendRectWithMask(KDRect rect, KDColor color, const uint8_t * ma
   pullRect(absoluteRect, workingBuffer);
   KDCoordinate startingI = m_clippingRect.x() - rect.translatedBy(m_origin).x();
   KDCoordinate startingJ = m_clippingRect.y() - rect.translatedBy(m_origin).y();
-  startingI = startingI > 0 ? startingI : 0;
-  startingJ = startingJ > 0 ? startingJ : 0;
+  startingI = std::max<KDCoordinate>(0, startingI);
+  startingJ = std::max<KDCoordinate>(0, startingJ);
   for (KDCoordinate j=0; j<absoluteRect.height(); j++) {
     for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
       KDColor * currentPixelAddress = workingBuffer + i + absoluteRect.width()*j;

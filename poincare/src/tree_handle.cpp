@@ -254,13 +254,15 @@ TreeHandle TreeHandle::BuildWithGhostChildren(TreeNode * node) {
   int expectedNumberOfChildren = node->numberOfChildren();
   /* Ensure the pool is syntaxically correct by creating ghost children for
    * nodes that have a fixed, non-zero number of children. */
+  uint16_t nodeIdentifier = pool->generateIdentifier();
+  node->rename(nodeIdentifier, false, true);
   for (int i = 0; i < expectedNumberOfChildren; i++) {
     GhostNode * ghost = new (pool->alloc(sizeof(GhostNode))) GhostNode();
     ghost->rename(pool->generateIdentifier(), false);
+    ghost->setParentIdentifier(nodeIdentifier);
     ghost->retain();
     assert((char *)ghost == (char *)node->next() + i*Helpers::AlignedSize(sizeof(GhostNode), ByteAlignment));
   }
-  node->rename(pool->generateIdentifier(), false);
   return TreeHandle(node);
 }
 

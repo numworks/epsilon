@@ -63,7 +63,7 @@ public:
   void setReferenceCounter(int refCount) { m_referenceCounter = refCount; }
   void retain() { m_referenceCounter++; }
   void release(int currentNumberOfChildren);
-  void rename(uint16_t identifier, bool unregisterPreviousIdentifier);
+  void rename(uint16_t identifier, bool unregisterPreviousIdentifier, bool skipChildrenUpdate = false);
 
   // Hierarchy
   TreeNode * parent() const;

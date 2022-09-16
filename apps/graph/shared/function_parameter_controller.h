@@ -31,7 +31,6 @@ private:
   Escher::MessageTableCellWithMessageWithSwitch m_derivativeCell;
   DetailsParameterController m_detailsParameterController;
   DomainParameterController m_domainParameterController;
-  GraphController * m_graphController;
 };
 
 }

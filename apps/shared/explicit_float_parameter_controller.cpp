@@ -18,10 +18,8 @@ ExplicitFloatParameterController<T,M>::ExplicitFloatParameterController(Responde
 template<typename T, typename M>
 void ExplicitFloatParameterController<T,M>::didBecomeFirstResponder() {
   if (selectedRow() >= 0) {
-    int selRow = selectedRow();
-    selRow = selRow >= numberOfRows() ? numberOfRows()-1 : selRow;
-    int selColumn = selectedColumn();
-    selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
+    int selRow = std::min(selectedRow(), numberOfRows() - 1);
+    int selColumn = std::min(selectedColumn(), numberOfColumns() - 1);
     selectCellAtLocation(selColumn, selRow);
   }
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
@@ -34,9 +32,8 @@ void ExplicitFloatParameterController<T,M>::viewWillAppear() {
   if (selRow == -1) {
     selectCellAtLocation(0, 0);
   } else {
-    selRow = selRow >= numberOfRows() ? numberOfRows()-1 : selRow;
-    int selColumn = selectedColumn();
-    selColumn = selColumn >= numberOfColumns() ? numberOfColumns() - 1 : selColumn;
+    selRow = std::min(selectedRow(), numberOfRows() - 1);
+    int selColumn = std::min(selectedColumn(), numberOfColumns() - 1);
     selectCellAtLocation(selColumn, selRow);
   }
   resetMemoization();

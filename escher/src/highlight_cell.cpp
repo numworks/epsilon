@@ -15,7 +15,7 @@ void HighlightCell::setHighlighted(bool highlight) {
     return;
   }
   if (isHighlighted() != highlight) {
-    m_state = highlight ? State::Highlighted : State::Visible;
+    HighlightCell::setHighlightedWithoutReload(highlight);
     reloadCell();
   }
 }

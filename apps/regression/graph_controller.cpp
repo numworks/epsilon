@@ -279,7 +279,7 @@ bool GraphController::cursorMatchesModel() {
   } else {
     xy = Coordinate2D<double>(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
   }
-  return PoincareHelpers::equalOrBothNan(xy.x1(), m_cursor->x()) && PoincareHelpers::equalOrBothNan(xy.x2(), m_cursor->y());
+  return PoincareHelpers::EqualOrBothNan(xy.x1(), m_cursor->x()) && PoincareHelpers::EqualOrBothNan(xy.x2(), m_cursor->y());
 }
 
 bool GraphController::moveCursorVertically(int direction) {

@@ -114,7 +114,7 @@ inline typename Poincare::Coordinate2D<double> NextIntersection(const Poincare::
   return e.nextIntersection(symbol, start, max, context, complexFormat, preferences->angleUnit(), expression, relativePrecision, minimalStep, maximalStep);
 }
 
-inline bool equalOrBothNan(double a, double b) { return a == b || (std::isnan(a) && std::isnan(b)); }
+inline bool EqualOrBothNan(double a, double b) { return a == b || (std::isnan(a) && std::isnan(b)); }
 
 bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context);
 bool ShouldOnlyDisplayExactOutput(Poincare::Expression input);

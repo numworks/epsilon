@@ -69,7 +69,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
   m_approximatedLayouts[index] = approximated;
   index++;
 
-  if (!norm.isUndefined() && approximatedNorm.nullStatus(context) == ExpressionNode::NullStatus::NonNull) {
+  if (!norm.isUndefined() && approximatedNorm.isNull(context) == TrinaryBoolean::False) {
     // 2. Normalized vector
     m_indexMessageMap[index] = messageIndex++;
     Expression normalized = Division::Builder(m_expression, norm).cloneAndReduce(reductionContext);
@@ -87,7 +87,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
       y = static_cast<Matrix &>(normalized).matrixChild(isColumn ? 1 : 0, isColumn ? 0 : 1);
       setShowIllustration(xApproximation != 0.f || yApproximation != 0.f);
       Expression angle = ArcCosine::Builder(x);
-      if (y.sign(reductionContext.context()) == ExpressionNode::Sign::Negative) {
+      if (y.isPositive(reductionContext.context()) == TrinaryBoolean::False) {
         angle = Subtraction::Builder(Multiplication::Builder(Rational::Builder(2), Poincare::Constant::Builder("π")), angle);
       }
       m_indexMessageMap[index] = messageIndex++;

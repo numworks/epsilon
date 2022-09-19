@@ -18,132 +18,7 @@ ExpressionModelListController::ExpressionModelListController(Responder * parentR
   ViewController(parentResponder),
   m_addNewModel(k_font, KDContext::k_alignLeft)
 {
-  resetMemoization();
   m_addNewModel.setMessage(text);
-}
-
-void ExpressionModelListController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
-  int currentSelectedRow = selectedRow();
-
-  /* Update m_cumulatedHeightForSelectedIndex if we scrolled one cell up/down.
-   * We want previousSelectedCellY >= 0 and currentSelectedRow >= 0 to ensure
-   * that a cell is selected before and after the change.
-   * (previousSelectedCellY >= 0 condition is enough as
-   * currentSelectedRow > previousSelectedCellY) */
-  if (previousSelectedCellY >= 0 && currentSelectedRow == previousSelectedCellY + 1) {
-    /* We selected the cell under the previous cell. Shift the memoized cell
-     * heights. */
-    shiftMemoization(true);
-    resetMemoizationForIndex(k_memoizedCellsCount-1);
-    // Update m_cumulatedHeightForSelectedIndex
-    if (previousSelectedCellY >= 0) {
-      m_cumulatedHeightForSelectedIndex+= memoizedRowHeight(previousSelectedCellY);
-    } else {
-      assert(currentSelectedRow == 0);
-      m_cumulatedHeightForSelectedIndex = 0;
-    }
-  /* We ensure that a cell is selected before and after the selection change by
-   * checking that previousSelectedCellY > currentSelectedRow >= 0. */
-  } else if (currentSelectedRow >= 0 && currentSelectedRow == previousSelectedCellY - 1) {
-    /* We selected the cell above the previous cell. Shift the memoized cell
-     * heights. */
-    shiftMemoization(false);
-    resetMemoizationForIndex(0);
-    // Update m_cumulatedHeightForSelectedIndex
-    if (currentSelectedRow >= 0) {
-      m_cumulatedHeightForSelectedIndex-= memoizedRowHeight(currentSelectedRow);
-    } else {
-      m_cumulatedHeightForSelectedIndex = 0;
-    }
-  } else if (previousSelectedCellY != currentSelectedRow || previousSelectedCellY < 0) {
-    resetMemoization();
-  }
-}
-
-KDCoordinate ExpressionModelListController::memoizedRowHeight(int j) {
-  if (j < 0) {
-    return 0;
-  }
-  int currentSelectedRow = selectedRow() < 0 ? 0 : selectedRow();
-  constexpr int halfMemoizationCount = k_memoizedCellsCount/2;
-  if (j >= currentSelectedRow - halfMemoizationCount && j <= currentSelectedRow + halfMemoizationCount) {
-    int memoizedIndex = j - (currentSelectedRow - halfMemoizationCount);
-    if (m_memoizedCellHeight[memoizedIndex] == k_resetedMemoizedValue) {
-      m_memoizedCellHeight[memoizedIndex] = expressionRowHeight(j);
-    }
-    return m_memoizedCellHeight[memoizedIndex];
-  }
-  return expressionRowHeight(j);
-}
-
-KDCoordinate ExpressionModelListController::memoizedCumulatedHeightFromIndex(int j) {
-  if (j <= 0) {
-    return 0;
-  }
-  int currentSelectedRow = selectedRow() < 0 ? 0 : selectedRow();
-  constexpr int halfMemoizationCount = k_memoizedCellsCount/2;
-  /* If j is not easily computable from the memoized values, compute it the hard
-   * way. */
-  if (j < currentSelectedRow - halfMemoizationCount || j > currentSelectedRow + halfMemoizationCount) {
-    return notMemoizedCumulatedHeightFromIndex(j);
-  }
-  // Recompute the memoized cumulatedHeight if needed
-  if (m_cumulatedHeightForSelectedIndex == k_resetedMemoizedValue) {
-    m_cumulatedHeightForSelectedIndex = notMemoizedCumulatedHeightFromIndex(currentSelectedRow);
-  }
-  /* Compute the wanted cumulated height by adding/removing memoized cell
-   * heights */
-  KDCoordinate result = m_cumulatedHeightForSelectedIndex;
-  if (j <= currentSelectedRow) {
-    /* If j is smaller than the selected row, remove cell heights from the
-     * memoized value */
-    for (int i = j; i < currentSelectedRow; i++) {
-      result -= memoizedRowHeight(i);
-    }
-  } else {
-    /* If j is bigger than the selected row, add cell heights to the memoized
-     * value */
-    assert(j > currentSelectedRow && j <= currentSelectedRow + halfMemoizationCount);
-    for (int i = currentSelectedRow; i < j; i++) {
-      result += memoizedRowHeight(i);
-    }
-  }
-  return result;
-}
-
-int ExpressionModelListController::memoizedIndexFromCumulatedHeight(KDCoordinate offsetY) {
-  if (offsetY == 0) {
-    return 0;
-  }
-  /* We use memoization to speed up this method: if offsetY is "around" the
-   * memoized cumulatedHeightForIndex, we can compute its value easily by
-   * adding/substracting memoized row heights. */
-
-  int currentSelectedRow = selectedRow() < 0 ? 0 : selectedRow();
-  int rowsCount = numberOfExpressionRows();
-  if (rowsCount <= 1 || currentSelectedRow < 1) {
-    return notMemoizedIndexFromCumulatedHeight(offsetY);
-  }
-
-  KDCoordinate currentCumulatedHeight = memoizedCumulatedHeightFromIndex(currentSelectedRow);
-  if (offsetY > currentCumulatedHeight) {
-    int iMax = std::min(k_memoizedCellsCount/2 + 1, rowsCount - currentSelectedRow);
-    for (int i = 0; i < iMax; i++) {
-      currentCumulatedHeight+= memoizedRowHeight(currentSelectedRow + i);
-      if (offsetY <= currentCumulatedHeight) {
-        return currentSelectedRow + i;
-      }
-    }
-  } else {
-    int iMax = std::min(k_memoizedCellsCount/2, currentSelectedRow);
-    for (int i = 1; i <= iMax; i++) {
-      currentCumulatedHeight-= memoizedRowHeight(currentSelectedRow-i);
-      if (offsetY > currentCumulatedHeight) {
-        return currentSelectedRow - i;
-      }
-    }
-  }
-  return notMemoizedIndexFromCumulatedHeight(offsetY);
 }
 
 int ExpressionModelListController::numberOfExpressionRows() const {
@@ -250,12 +125,12 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
       [](void * context, void * sender){
         return true;
       });
+
 }
 
 bool ExpressionModelListController::editSelectedRecordWithText(const char * text) {
   telemetryReportEvent("Edit", text);
-  // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
-  resetMemoizationForIndex(k_memoizedCellsCount/2);
+  didChangeModelsList();
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
   ExpiringPointer<ExpressionModelHandle> model = modelStore()->modelForRecord(record);
   return (model->setContent(text, Container::activeApp()->localContext()) == Ion::Storage::Record::ErrorStatus::None);
@@ -265,30 +140,6 @@ bool ExpressionModelListController::removeModelRow(Ion::Storage::Record record) 
   modelStore()->removeModel(record);
   didChangeModelsList();
   return true;
-}
-
-void ExpressionModelListController::resetMemoizationForIndex(int index) {
-  assert(index >= 0 && index < k_memoizedCellsCount);
-  m_memoizedCellHeight[index] = k_resetedMemoizedValue;
-}
-
-void ExpressionModelListController::shiftMemoization(bool newCellIsUnder) {
-  if (newCellIsUnder) {
-    for (int i = 0; i < k_memoizedCellsCount - 1; i++) {
-      m_memoizedCellHeight[i] = m_memoizedCellHeight[i+1];
-    }
-  } else {
-    for (int i = k_memoizedCellsCount - 1; i > 0; i--) {
-      m_memoizedCellHeight[i] = m_memoizedCellHeight[i-1];
-    }
-  }
-}
-
-void ExpressionModelListController::resetMemoization() {
-  m_cumulatedHeightForSelectedIndex = k_resetedMemoizedValue;
-  for (int i = 0; i < k_memoizedCellsCount; i++) {
-    resetMemoizationForIndex(i);
-  }
 }
 
 }

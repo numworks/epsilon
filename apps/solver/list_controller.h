@@ -13,7 +13,7 @@
 
 namespace Solver {
 
-class ListController : public Shared::ExpressionModelListController, public Escher::ButtonRowDelegate, public Escher::ListViewDataSource, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
+class ListController : public Shared::ExpressionModelListController, public Escher::ButtonRowDelegate, public Escher::MemoizedListViewDataSource, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
   ListController(Escher::Responder * parentResponder, EquationStore * equationStore, Escher::ButtonRowController * footer);
   /* ButtonRowDelegate */
@@ -21,9 +21,6 @@ public:
   Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
   /* ListViewDataSource */
   int numberOfRows() const override { return numberOfExpressionRows(); }
-  KDCoordinate rowHeight(int j) override{ return ExpressionModelListController::memoizedRowHeight(j); }
-  KDCoordinate cumulatedHeightFromIndex(int j) override { return ExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override { return ExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }
   int typeAtIndex(int index) override { return isAddEmptyRow(index); }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
@@ -56,9 +53,10 @@ private:
   EquationStore * modelStore() override;
   Escher::StackViewController * stackController() const;
   Escher::InputViewController * inputController() override;
+
   // ListViewDataSource
-  KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override { return ListViewDataSource::cumulatedHeightFromIndex(j); }
-  int notMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) override { return ListViewDataSource::indexFromCumulatedHeight(offsetY); }
+  KDCoordinate nonMemoizedRowHeight(int j) override { return expressionRowHeight(j); }
+
   EquationListView m_equationListView;
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];
   Escher::Button m_resolveButton;

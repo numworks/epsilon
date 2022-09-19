@@ -28,13 +28,7 @@ public:
   void viewWillAppear() override;
   /* TableViewDataSource */
   int numberOfRows() const override { return this->numberOfExpressionRows(); }
-  KDCoordinate rowHeight(int j) override { return ExpressionModelListController::memoizedRowHeight(j); }
-  KDCoordinate cumulatedHeightFromIndex(int j) override { return ExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override { return ExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }
   int numberOfColumns() const override { return 2; }
-  KDCoordinate columnWidth(int i) override;
-  KDCoordinate cumulatedWidthFromIndex(int i) override;
-  int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   int typeAtLocation(int i, int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return type > k_expressionCellType ? 1 : maxNumberOfDisplayableRows(); }
@@ -71,9 +65,15 @@ private:
   /* Row numbers */
   constexpr static int k_maxNumberOfRows = 3*Shared::SequenceStore::k_maxNumberOfSequences;
 
+  // TableViewDataSource
+  KDCoordinate nonMemoizedColumnWidth(int i) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override { return expressionRowHeight(j); }
+  Escher::TableSize1DManager * rowHeightManager() override { return &m_heightManager; }
+
+  // ExpressionModelListController
+  void resetSizesMemoization() override { resetMemoization(); }
+
   void computeTitlesColumnWidth(bool forceMax = false);
-  void resetMemoizationForIndex(int index) override;
-  void shiftMemoization(bool newCellIsUnder) override;
   bool editInitialConditionOfSelectedRecordWithText(const char * text, bool firstInitialCondition);
   ListParameterController * parameterController() override { return &m_parameterController; }
   int maxNumberOfDisplayableRows() override { return k_maxNumberOfRows; }
@@ -86,13 +86,6 @@ private:
   KDCoordinate maxFunctionNameWidth();
   void didChangeModelsList() override;
   KDCoordinate baseline(int j);
-  KDCoordinate privateBaseline(int j) const;
-  KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override {
-    return TableViewDataSource::cumulatedHeightFromIndex(j);
-  }
-  int notMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) override {
-    return TableViewDataSource::indexFromCumulatedHeight(offsetY);
-  }
   void addModel() override;
   void editExpression(Ion::Events::Event event) override;
   bool removeModelRow(Ion::Storage::Record record) override;
@@ -108,7 +101,7 @@ private:
   Escher::StackViewController m_typeStackController;
   SequenceToolbox m_sequenceToolbox;
   KDCoordinate m_titlesColumnWidth;
-  KDCoordinate m_memoizedCellBaseline[k_memoizedCellsCount];
+  Escher::MemoizedRowHeightManager m_heightManager;
 };
 
 }

@@ -4,23 +4,18 @@
 #include "double_pair_store.h"
 #include "prefaced_twice_table_view.h"
 #include "tab_table_controller.h"
-#include <escher/table_view_data_source.h>
+#include <escher/regular_table_view_data_source.h>
 #include <escher/button_row_controller.h>
 #include <escher/alternate_empty_view_controller.h>
 #include <apps/i18n.h>
 
 namespace Shared {
 
-class DoublePairTableController : public TabTableController, public Escher::TableViewDataSource, public Escher::ButtonRowDelegate, public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableTableViewDelegate, public PrefacedTableView::MarginDelegate {
+class DoublePairTableController : public TabTableController, public Escher::RegularHeightTableViewDataSource, public Escher::ButtonRowDelegate, public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableTableViewDelegate, public PrefacedTableView::MarginDelegate {
 public:
   constexpr static int k_titleNumberOfChars = 22;
 
   DoublePairTableController(Escher::Responder * parentResponder, Escher::ButtonRowController * header);
-
-  // TableViewDataSource
-  KDCoordinate rowHeight(int j) override { return k_cellHeight; }
-  KDCoordinate cumulatedHeightFromIndex(int j) override { return j*rowHeight(0); }
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override { return (offsetY-1) / rowHeight(0); }
 
   // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override { return !store()->hasValidSeries(); }
@@ -43,6 +38,9 @@ protected:
   constexpr static KDCoordinate k_cellHeight = Escher::Metric::SmallEditableCellHeight;
   constexpr static KDCoordinate k_margin = 8;
   constexpr static KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
+
+  // TableViewDataSource
+  KDCoordinate defaultRowHeight() override { return k_cellHeight; }
 
   virtual DoublePairStore * store() const = 0;
   Escher::Responder * tabController() const override { return (parentResponder()->parentResponder()->parentResponder()); }

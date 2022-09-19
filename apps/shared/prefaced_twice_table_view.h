@@ -23,9 +23,9 @@ private:
     int numberOfColumns() const override { return 1; }
     /* Calling relativeRow in rowHeight with this particular implementation
      * would cause an infinite loop. */
-    KDCoordinate rowHeight(int j) override { assert(m_mainDataSource->rowHeight(j) == m_mainDataSource->rowHeight(0)); return m_mainDataSource->rowHeight(j); }
 
   private:
+    KDCoordinate nonMemoizedRowHeight(int j) override { assert(m_mainDataSource->rowHeight(j) == m_mainDataSource->rowHeight(0)); return m_mainDataSource->rowHeight(j); }
     int relativeColumn(int i) override { assert(i == 0); return m_prefaceColumn; }
     int relativeRow(int j) override { return (m_prefaceRow >= 0 && j == indexFromCumulatedHeight(offset().y())) ? m_prefaceRow : j; }
 

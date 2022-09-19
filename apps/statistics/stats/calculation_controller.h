@@ -24,7 +24,6 @@ public:
   bool showModeFrequency() const { return m_store->totalNumberOfModes() > 0; }
   int numberOfColumns() const override;
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
-  KDCoordinate columnWidth(int i) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
@@ -85,8 +84,12 @@ private:
     { I18n::Message::StatisticsSampleMean, I18n::Message::MeanSymbol, &Store::mean, 16, 11 }, // Not displayed with defaultLayout
   };
   constexpr static int k_numberOfCalculations = sizeof(k_calculationRows) / sizeof(CalculationRow);
+
+  // TableViewDataSource
+  KDCoordinate nonMemoizedColumnWidth(int i) override;
+  void resetMemoization(bool force = true) override;
+
   int findCellIndex(int i) const;
-  void resetMemoization();
 
   int fixedNumberOfRows() const;
   Shared::DoublePairStore * store() const override { return m_store; }

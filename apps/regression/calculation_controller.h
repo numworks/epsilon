@@ -31,7 +31,6 @@ public:
   int numberOfRows() const override;
   int numberOfColumns() const override;
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
-  KDCoordinate columnWidth(int i) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
@@ -62,6 +61,9 @@ private:
   constexpr static int k_symbolColumnMaxNumberOfChars = 3;
   constexpr static KDCoordinate k_symbolColumnWidth = Escher::Metric::SmallFontCellWidth(k_symbolColumnMaxNumberOfChars, Escher::Metric::CellVerticalElementMargin);
 
+  // TableViewDataSource
+  KDCoordinate nonMemoizedColumnWidth(int i) override;
+
   Shared::DoublePairStore * store() const override { return m_store; }
   typedef bool (*DisplayCondition)(Model::Type type);
   static bool DisplayR(Model::Type type) { return type == Model::Type::Linear; }
@@ -71,7 +73,7 @@ private:
   bool hasSeriesDisplaying(DisplayCondition condition) const;
   bool shouldSeriesDisplay(int series, DisplayCondition condition) const;
   int maxNumberOfCoefficients() const;
-  void resetMemoization();
+  void resetMemoization(bool force = true) override;
 
   Escher::EvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];
   Escher::EvenOddMessageTextCell m_titleSymbolCells[k_maxNumberOfDisplayableRows];

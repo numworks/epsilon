@@ -30,11 +30,11 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  KDCoordinate rowHeight(int j) override;
   void setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX = -1, int previousSelectedY = -1) override;
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
   void recomputeHistoryCellHeightsIfNeeded();
 private:
+  KDCoordinate nonMemoizedRowHeight(int j) override;
   int storeIndex(int i) { return numberOfRows() - i - 1; }
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
   CalculationSelectableTableView * selectableTableView();

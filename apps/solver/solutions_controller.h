@@ -34,10 +34,6 @@ public:
   int numberOfRows() const override;
   int numberOfColumns() const override { return 2; }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
-  KDCoordinate columnWidth(int i) override { return i == 0 ? k_symbolCellWidth : k_valueCellWidth; }
-  KDCoordinate rowHeight(int j) override;
-  KDCoordinate cumulatedWidthFromIndex(int i) override;
-  int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
@@ -46,6 +42,11 @@ public:
   /* SelectableTableViewDelegate */
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 private:
+  // TableViewDataSource
+  KDCoordinate nonMemoizedColumnWidth(int i) override { return i == 0 ? k_symbolCellWidth : k_valueCellWidth; }
+  // TODO: Memoize the row height ?
+  KDCoordinate nonMemoizedRowHeight(int j) override;
+
   class ContentView : public Escher::View {
   public:
     constexpr static KDCoordinate k_topMargin = 50;
@@ -138,4 +139,3 @@ private:
 }
 
 #endif
-

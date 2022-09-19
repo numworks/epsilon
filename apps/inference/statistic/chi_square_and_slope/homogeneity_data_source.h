@@ -27,8 +27,6 @@ public:
   HighlightCell * reusableCell(int i, int type) override;
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
 
-  KDCoordinate columnWidth(int i) override { return k_columnWidth; }
-
   // DynamicCellsDataSource
   void initCell(Escher::EvenOddBufferTextCell, void * cell, int index) override;
 
@@ -44,6 +42,7 @@ protected:
   constexpr static int k_maxNumberOfColumns = HomogeneityTest::k_maxNumberOfColumns;
   constexpr static int k_maxNumberOfRows = HomogeneityTest::k_maxNumberOfRows;
 
+  KDCoordinate nonMemoizedColumnWidth(int i) override { return k_columnWidth; }
   virtual int innerNumberOfRows() const = 0;
   virtual int innerNumberOfColumns() const = 0;
   virtual void willDisplayInnerCellAtLocation(Escher::HighlightCell * cell, int column, int row) = 0;

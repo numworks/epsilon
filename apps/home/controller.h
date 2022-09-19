@@ -4,7 +4,7 @@
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
-#include <escher/simple_table_view_data_source.h>
+#include <escher/regular_table_view_data_source.h>
 #include <escher/view_controller.h>
 #include "app_cell.h"
 
@@ -22,14 +22,16 @@ public:
 
   int numberOfRows() const override;
   int numberOfColumns() const override;
-  KDCoordinate cellHeight() override;
-  KDCoordinate cellWidth() override;
   Escher::HighlightCell * reusableCell(int index) override;
   int reusableCellCount() const override;
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 private:
+  // SimpleTableViewDataSource
+  KDCoordinate defaultRowHeight() override;
+  KDCoordinate defaultColumnWidth() override;
+
   int numberOfIcons() const;
   Escher::SelectableTableViewDataSource * selectionDataSource() const;
   void switchToSelectedApp();

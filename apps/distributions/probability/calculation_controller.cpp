@@ -109,7 +109,7 @@ int CalculationController::numberOfColumns() const {
  * tableView->cellAtLocation as this function depends on the
  * numberOfDisplaybleRows which depends on the column width! */
 
-KDCoordinate CalculationController::columnWidth(int i) {
+KDCoordinate CalculationController::nonMemoizedColumnWidth(int i) {
   if (i == 0) {
     return m_dropdown.minimalSizeForOptimalDisplay().width();
   }
@@ -117,20 +117,8 @@ KDCoordinate CalculationController::columnWidth(int i) {
   return m_calculationCells[i - 1].minimalSizeForOptimalDisplay().width();
 }
 
-KDCoordinate CalculationController::rowHeight(int j) {
+KDCoordinate CalculationController::defaultRowHeight() {
   return m_dropdown.minimalSizeForOptimalDisplay().height();
-}
-
-KDCoordinate CalculationController::cumulatedHeightFromIndex(int j) {
-  return rowHeight(0) * j;
-}
-
-int CalculationController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  KDCoordinate height = rowHeight(0);
-  if (height == 0) {
-    return 0;
-  }
-  return (offsetY - 1) / height;
 }
 
 HighlightCell * CalculationController::reusableCell(int index, int type) {

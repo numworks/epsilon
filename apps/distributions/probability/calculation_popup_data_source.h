@@ -13,16 +13,16 @@ class CalculationPopupDataSource : public Escher::ListViewDataSource {
 public:
   CalculationPopupDataSource(Distribution * distribution);
   int numberOfRows() const override;
-  KDCoordinate rowHeight(int r) override {
-    assert(false); /* Not needed because DropdownPopupController takes care of it */
-    return 1;
-  }
   int reusableCellCount(int type) override { return numberOfRows(); }
   Escher::HighlightImageCell * reusableCell(int i, int type) override { return &m_imageCells[i]; }
 
   constexpr static int k_numberOfImages = 4;
 
 private:
+  KDCoordinate nonMemoizedRowHeight(int r) override {
+    assert(false); /* Not needed because DropdownPopupController takes care of it */
+    return 1;
+  }
   Escher::HighlightImageCell m_imageCells[k_numberOfImages];
   Distribution * m_distribution;
 };

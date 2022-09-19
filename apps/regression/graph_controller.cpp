@@ -126,7 +126,7 @@ void GraphController::computeYRange(float xMin, float xMax, float yMinIntrinsic,
 
 // Private
 
-KDCoordinate GraphController::SeriesSelectionController::rowHeight(int j) {
+KDCoordinate GraphController::SeriesSelectionController::nonMemoizedRowHeight(int j) {
   if (j < 0 || j >= numberOfRows()) {
     return 0;
   }

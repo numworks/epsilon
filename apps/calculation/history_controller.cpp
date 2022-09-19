@@ -234,7 +234,7 @@ void HistoryController::willDisplayCellForIndex(HighlightCell * cell, int index)
   myCell->reloadSubviewHighlight();
 }
 
-KDCoordinate HistoryController::rowHeight(int j) {
+KDCoordinate HistoryController::nonMemoizedRowHeight(int j) {
   if (j >= m_calculationStore->numberOfCalculations()) {
     return 0;
   }

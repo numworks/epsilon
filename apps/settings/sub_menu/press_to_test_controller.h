@@ -4,7 +4,7 @@
 #include <apps/i18n.h>
 #include <apps/shared/button_with_separator.h>
 #include <apps/shared/pop_up_controller.h>
-#include <escher/memoized_list_view_data_source.h>
+#include <escher/list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/view_controller.h>
 #include <escher/table_view_with_top_and_bottom_views.h>

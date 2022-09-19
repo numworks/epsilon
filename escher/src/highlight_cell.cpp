@@ -10,7 +10,7 @@ HighlightCell::HighlightCell() :
 
 void HighlightCell::setHighlighted(bool highlight) {
   if (m_state == State::Hidden) {
-    // Is is legit to want to show it and highlight in a single call ?
+    // An hidden cell might be deselected but not selected
     assert(highlight == false);
     return;
   }

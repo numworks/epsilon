@@ -67,7 +67,7 @@ void IllustratedExpressionsListController::tableViewDidChangeSelectionAndDidScro
   /* But scroll to the top when we select the first
    * ScrollableThreeExpressionsCell in order display the
    * illustration cell. */
-  if (t->selectedRow() == 1) {
+  if (t->selectedRow() == 1 && showIllustration()) {
     t->scrollToCell(0, 0);
   }
 }

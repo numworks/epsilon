@@ -15,7 +15,6 @@ class ListParameterController : public Escher::ExplicitSelectableListViewControl
 public:
   ListParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::SelectableTableViewDelegate * tableDelegate = nullptr);
 
-  const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
   TELEMETRY_ID("ListParameter");
   virtual void setRecord(Ion::Storage::Record record);

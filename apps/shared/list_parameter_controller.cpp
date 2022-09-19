@@ -14,10 +14,6 @@ ListParameterController::ListParameterController(Responder * parentResponder, I1
   m_colorParameterController(this)
 {}
 
-const char * ListParameterController::title() {
-  return I18n::translate(I18n::Message::FunctionOptions);
-}
-
 void ListParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }

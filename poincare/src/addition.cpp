@@ -55,22 +55,8 @@ int AdditionNode::getPolynomialCoefficients(Context * context, const char * symb
 
 Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   Layout result = LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, "+", context);
-  if (displayImplicitAdditionBetweenUnits()) {
-    /* Check if the layout of the implicit addtion contains an 'ᴇ'.
-     * If it's the case, return a normal addition layout, since implicit
-     * addition should not contain any 'ᴇ'.
-     * If not, remove the '+'.
-     * */
-    int n = result.numberOfChildren();
-    for (int i = 0; i < n ; i++) {
-      Layout child = result.childAtIndex(i);
-      if ((child.type() == LayoutNode::Type::CodePointLayout && static_cast<CodePointLayout&>(child).codePoint() == UCodePointLatinLetterSmallCapitalE)
-          || (child.type() == LayoutNode::Type::StringLayout && UTF8Helper::CountOccurrences(static_cast<StringLayout&>(child).string(), UCodePointLatinLetterSmallCapitalE) > 0)) {
-        // Result contains 'ᴇ'.
-        return result;
-      }
-    }
-    // Result does not contain 'ᴇ'. Remove the '+'
+  if (displayImplicitAdditionBetweenUnits(result)) {
+    // Remove the '+'
     int i = 0;
     while (i < result.numberOfChildren()) {
       Layout child = result.childAtIndex(i);
@@ -104,13 +90,27 @@ bool AdditionNode::derivate(const ReductionContext& reductionContext, Symbol sym
 }
 
 // Properties
-bool AdditionNode::displayImplicitAdditionBetweenUnits() const {
-  int n = numberOfChildren();
-  if (n < 2) {
+bool AdditionNode::displayImplicitAdditionBetweenUnits(Layout l) const {
+  int nChildrenExpression = numberOfChildren();
+  if (nChildrenExpression < 2) {
     return false;
   }
+  /* Step 1: Check if the layout of the addtion contains an 'ᴇ'.
+   * If it's the case, return false, since implicit
+   * addition should not contain any 'ᴇ'.
+   * */
+  int nChildrenLayout = l.numberOfChildren();
+  for (int i = 0; i < nChildrenLayout ; i++) {
+    Layout child = l.childAtIndex(i);
+    if ((child.type() == LayoutNode::Type::CodePointLayout && static_cast<CodePointLayout&>(child).codePoint() == UCodePointLatinLetterSmallCapitalE)
+        || (child.type() == LayoutNode::Type::StringLayout && UTF8Helper::CountOccurrences(static_cast<StringLayout&>(child).string(), UCodePointLatinLetterSmallCapitalE) > 0)) {
+      // layout contains 'ᴇ'.
+      return false;
+    }
+  }
+  // Step 2: Check if units can be implicitly added
   const Unit::Representative * storedUnitRepresentative = nullptr;
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < nChildrenExpression; i++) {
     Expression child = childAtIndex(i);
     if (child.type() != Type::Multiplication || child.numberOfChildren() != 2 || !child.childAtIndex(0).isOfType({Type::BasedInteger, Type::Decimal, Type::Double, Type::Float}) || child.childAtIndex(1).type() != Type::Unit || child.childAtIndex(0).isPositive(nullptr) == TrinaryBoolean::False) {
       return false;

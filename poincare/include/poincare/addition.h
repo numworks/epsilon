@@ -77,7 +77,7 @@ private:
   }
 
   // Properties
-  bool displayImplicitAdditionBetweenUnits() const;
+  bool displayImplicitAdditionBetweenUnits(Layout l) const;
 };
 
 class Addition final : public NAryExpression {

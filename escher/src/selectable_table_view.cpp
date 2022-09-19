@@ -141,16 +141,8 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
 }
 
 bool SelectableTableView::selectCellAtClippedLocation(int i, int j, bool setFirstResponder, bool withinTemporarySelection) {
-  if (i < 0) {
-    i = 0;
-  } else if (i >= dataSource()->numberOfColumns()) {
-    i = dataSource()->numberOfColumns() - 1;
-  }
-  if (j < 0) {
-    j = 0;
-  } else if (j >= dataSource()->numberOfRows()) {
-    j = dataSource()->numberOfRows() - 1;
-  }
+  i = std::clamp(i, 0, dataSource()->numberOfColumns() - 1);
+  j = std::clamp(j, 0, dataSource()->numberOfRows() - 1);
   if (j == selectedRow() && i == selectedColumn()) {
     // Cell was already selected.
     return false;

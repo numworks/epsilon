@@ -16,6 +16,11 @@ inline constexpr const T & max(const T & a, const T & b ) {
   return (b > a) ? b : a;
 }
 
+template <class T>
+inline constexpr const T & clamp(const T & v, const T & lo, const T & hi) {
+  return (v < lo) ? lo : (v > hi) ? hi : v;
+}
+
 template <class T >
 inline constexpr T actionOnList(std::initializer_list<T> ilist, const T & (*Method)(const T & a, const T & b)) {
   T m = *ilist.begin();

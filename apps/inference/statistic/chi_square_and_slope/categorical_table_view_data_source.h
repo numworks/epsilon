@@ -17,7 +17,6 @@ public:
     PrintValueInTextHolder(p, textHolder);
     evenOddCell->setEven(row % 2 == 1);
   }
-  KDCoordinate rowHeight(int j) override { return k_rowHeight; }
 
   // BorderedTableViewDataSource
   KDCoordinate verticalBorderWidth() override { return k_borderBetweenColumns; }
@@ -30,6 +29,7 @@ protected:
 
   constexpr static int k_borderBetweenColumns = 1;
   constexpr static int k_columnWidth = (Ion::Display::Width - 2 * Escher::Metric::CommonLeftMargin - k_borderBetweenColumns) / 2;
+  KDCoordinate nonMemoizedRowHeight(int j) override { return k_rowHeight; }
 };
 
 }  // namespace Inference

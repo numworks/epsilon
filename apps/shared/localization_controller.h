@@ -6,7 +6,7 @@
 #include <escher/message_table_cell.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
-#include <escher/memoized_list_view_data_source.h>
+#include <escher/list_view_data_source.h>
 #include <escher/solid_color_view.h>
 #include <escher/view_controller.h>
 #include <apps/i18n.h>

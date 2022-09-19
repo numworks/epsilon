@@ -9,12 +9,13 @@
 #include <escher/button_row_controller.h>
 #include <escher/even_odd_cell_with_ellipsis.h>
 #include <escher/even_odd_message_text_cell.h>
+#include <escher/regular_table_view_data_source.h>
 
 namespace Code {
 
 class ScriptParameterController;
 
-class MenuController : public Escher::ViewController, public Escher::TableViewDataSource, public Escher::SelectableTableViewDataSource, public Escher::SelectableTableViewDelegate, public Escher::TextFieldDelegate, public Escher::ButtonRowDelegate {
+class MenuController : public Escher::ViewController, public Escher::RegularHeightTableViewDataSource, public Escher::SelectableTableViewDataSource, public Escher::SelectableTableViewDelegate, public Escher::TextFieldDelegate, public Escher::ButtonRowDelegate {
 public:
   MenuController(Escher::Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore, Escher::ButtonRowController * footer);
   ConsoleController * consoleController();
@@ -40,16 +41,11 @@ public:
   int numberOfRows() const override;
   int numberOfColumns() const override { return 2; }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
-  KDCoordinate columnWidth(int i) override;
-  KDCoordinate rowHeight(int j) override { return Escher::Metric::StoreRowHeight; }
-  KDCoordinate cumulatedWidthFromIndex(int i) override;
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedWidth(KDCoordinate offsetX) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
   void willDisplayScriptTitleCellForIndex(Escher::HighlightCell * cell, int index);
+  KDCoordinate defaultRowHeight() override { return Escher::Metric::StoreRowHeight; }
 
   /* SelectableTableViewDelegate */
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
@@ -77,6 +73,8 @@ private:
   constexpr static int ScriptCellType = 1;
   constexpr static int ScriptParameterCellType = 2;
   constexpr static int EmptyCellType = 3;
+  // TableViewDataSource
+  KDCoordinate nonMemoizedColumnWidth(int i) override;
   void addScript();
   void configureScript();
   void editScriptAtIndex(int scriptIndex);

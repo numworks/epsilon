@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/expression_table_cell_with_message.h>
-#include <escher/memoized_list_view_data_source.h>
+#include <escher/list_view_data_source.h>
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
@@ -48,4 +48,3 @@ protected:
 }
 
 #endif
-

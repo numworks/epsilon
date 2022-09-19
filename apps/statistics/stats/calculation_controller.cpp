@@ -151,7 +151,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
 }
 
-KDCoordinate CalculationController::columnWidth(int i) {
+KDCoordinate CalculationController::nonMemoizedColumnWidth(int i) {
   if (i == 0) {
     return k_calculationTitleCellWidth;
   }
@@ -242,7 +242,8 @@ int CalculationController::fixedNumberOfRows() const {
   return GlobalPreferences::sharedGlobalPreferences()->statsRowsLayout() == CountryPreferences::StatsRowsLayout::Variant1 ? k_fixedMaxNumberOfRows : k_fixedMaxNumberOfRows - 1;
 }
 
-void CalculationController::resetMemoization() {
+void CalculationController::resetMemoization(bool force) {
+  DoublePairTableController::resetMemoization(force);
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     for (int j = 0; j < k_numberOfCalculations; j++) {
       m_memoizedCellContent[i][j] = NAN;

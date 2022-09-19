@@ -1,6 +1,7 @@
 #ifndef CODE_CONSOLE_CONTROLLER_H
 #define CODE_CONSOLE_CONTROLLER_H
 
+#include <escher/list_view_data_source.h>
 #include <python/port/port.h>
 #include "console_edit_cell.h"
 #include "console_line_cell.h"
@@ -14,7 +15,7 @@ namespace Code {
 
 class App;
 
-class ConsoleController : public Escher::ViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource, public Escher::SelectableTableViewDelegate, public Escher::TextFieldDelegate, public Shared::InputEventHandlerDelegate, public MicroPython::ExecutionEnvironment {
+class ConsoleController : public Escher::ViewController, public Escher::RegularListViewDataSource, public Escher::SelectableTableViewDataSource, public Escher::SelectableTableViewDelegate, public Escher::TextFieldDelegate, public Shared::InputEventHandlerDelegate, public MicroPython::ExecutionEnvironment {
 public:
   ConsoleController(Escher::Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
 #if EPSILON_GETOPT
@@ -42,9 +43,6 @@ public:
 
   // ListViewDataSource
   int numberOfRows() const override;
-  KDCoordinate rowHeight(int j) override;
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtIndex(int index) override;
@@ -84,6 +82,10 @@ private:
   constexpr static int k_editCellType = 1;
   constexpr static int k_numberOfLineCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(KDFont::GlyphHeight(KDFont::Size::Small));
   constexpr static int k_outputAccumulationBufferSize = 100;
+
+  // RegularListViewDataSource
+  KDCoordinate defaultRowHeight() override;
+
   bool isDisplayingViewController();
   void reloadData(bool isEditing);
   void flushOutputAccumulationBufferToStore();

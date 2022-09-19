@@ -70,7 +70,7 @@ void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
   }
 }
 
-KDCoordinate FunctionGraphController::FunctionSelectionController::rowHeight(int j) {
+KDCoordinate FunctionGraphController::FunctionSelectionController::nonMemoizedRowHeight(int j) {
   assert(j < graphController()->functionStore()->numberOfActiveFunctions());
   ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(j));
   return std::max(function->layout().layoutSize(k_font).height(), nameLayoutAtIndex(j).layoutSize(k_font).height()) + Metric::CellTopMargin + Metric::CellBottomMargin + Metric::CellSeparatorThickness;

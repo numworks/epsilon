@@ -40,7 +40,7 @@ void Controller::ContentView::reloadBottomRow(SimpleTableViewDataSource * dataSo
     /* We mark the missing icons on the last row as dirty. */
     for (int i = 0; i < numberOfColumns; i++) {
       if (i >= numberOfIcons % numberOfColumns) {
-        markRectAsDirty(KDRect(dataSource->cellWidth()*i, dataSource->cellHeight(), dataSource->cellWidth(), dataSource->cellHeight()));
+        markRectAsDirty(KDRect(dataSource->columnWidth(0)*i, dataSource->rowHeight(0), dataSource->columnWidth(0), dataSource->rowHeight(0)));
       }
     }
   }
@@ -64,7 +64,6 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
   m_view(this, selectionDataSource)
 {
 }
-
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
@@ -119,11 +118,11 @@ int Controller::numberOfColumns() const {
   return k_numberOfColumns;
 }
 
-KDCoordinate Controller::cellHeight() {
+KDCoordinate Controller::defaultRowHeight() {
   return k_cellHeight;
 }
 
-KDCoordinate Controller::cellWidth() {
+KDCoordinate Controller::defaultColumnWidth() {
   return k_cellWidth;
 }
 

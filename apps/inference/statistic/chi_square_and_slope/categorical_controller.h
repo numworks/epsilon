@@ -40,12 +40,13 @@ public:
   int typeAtIndex(int index) override { return index; } // One cell per type
   int numberOfRows() const override { return indexOfNextCell() + 1; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  KDCoordinate rowHeight(int index) override;
   int reusableCellCount(int type) override { return 1; }
 
 protected:
   constexpr static int k_marginVertical = 5;
   constexpr static int k_indexOfTableCell = 0;
+
+  KDCoordinate nonMemoizedRowHeight(int index) override;
 
   virtual int indexOfNextCell() const { return 1; }
   virtual CategoricalTableCell * categoricalTableCell() = 0;

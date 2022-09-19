@@ -43,13 +43,13 @@ protected:
     int numberOfRows() const override { return m_mainDataSource->numberOfRows(); }
     int numberOfColumns() const override { return m_mainDataSource->numberOfColumns(); }
     void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override { m_mainDataSource->willDisplayCellAtLocation(cell, relativeColumn(i), relativeRow(j)); }
-    KDCoordinate columnWidth(int i) override { return m_mainDataSource->columnWidth(relativeColumn(i)); }
-    KDCoordinate rowHeight(int j) override { return m_mainDataSource->rowHeight(relativeRow(j)); }
     Escher::HighlightCell * reusableCell(int index, int type) override { return m_mainDataSource->reusableCell(index, type); }
     int reusableCellCount(int type) override { return m_mainDataSource->reusableCellCount(type); }
     int typeAtLocation(int i, int j) override { return m_mainDataSource->typeAtLocation(relativeColumn(i), relativeRow(j)); }
 
   protected:
+    KDCoordinate nonMemoizedColumnWidth(int i) override { return m_mainDataSource->columnWidth(relativeColumn(i)); }
+    KDCoordinate nonMemoizedRowHeight(int j) override { return m_mainDataSource->rowHeight(relativeRow(j)); }
     virtual int relativeColumn(int i) = 0;
     virtual int relativeRow(int j) = 0;
 

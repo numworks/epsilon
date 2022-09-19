@@ -30,8 +30,6 @@ public:
   int typeAtIndex(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
-  // Escher::MemoizedListViewDataSource
-  KDCoordinate nonMemoizedRowHeight(int j) override;
 
 private:
   constexpr static int k_normalCellType = 0;
@@ -39,6 +37,9 @@ private:
   constexpr static size_t k_numberOfRows = 13;
   constexpr static size_t k_numberOfNormalCells = 4;
   constexpr static size_t k_numberOfSeparatorCells = 4;
+
+  // Escher::MemoizedListViewDataSource
+  KDCoordinate nonMemoizedRowHeight(int j) override;
 
   const DataField * DataFieldForRow(int row);
 

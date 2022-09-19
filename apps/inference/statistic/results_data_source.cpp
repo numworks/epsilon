@@ -25,7 +25,7 @@ int ResultsDataSource::numberOfRows() const {
   return m_statistic->numberOfResults() + 1 /* button */;
 }
 
-KDCoordinate ResultsDataSource::cellWidth() {
+KDCoordinate ResultsDataSource::defaultColumnWidth() {
   return Ion::Display::Width - Escher::Metric::CommonLeftMargin - Escher::Metric::CommonRightMargin;
 }
 

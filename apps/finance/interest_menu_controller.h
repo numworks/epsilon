@@ -1,7 +1,7 @@
 #ifndef FINANCE_SIMPLE_INTEREST_MENU_CONTROLLER_H
 #define FINANCE_SIMPLE_INTEREST_MENU_CONTROLLER_H
 
-#include <escher/memoized_list_view_data_source.h>
+#include <escher/list_view_data_source.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>

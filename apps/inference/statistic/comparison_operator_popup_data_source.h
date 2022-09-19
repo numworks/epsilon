@@ -13,10 +13,6 @@ class ComparisonOperatorPopupDataSource : public Escher::ListViewDataSource {
 public:
   ComparisonOperatorPopupDataSource(Test * test) : m_test(test) {}
   int numberOfRows() const override { return k_numberOfOperators; }
-  KDCoordinate rowHeight(int r) override {
-    assert(false); /* Not needed because DropdownPopupController takes care of it */
-    return 0;
-  }
   int reusableCellCount(int type) override { return k_numberOfOperators; }
   Escher::BufferTextHighlightCell * reusableCell(int i, int type) override { return &m_cells[i]; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
@@ -26,6 +22,10 @@ private:
                                           Constants::k_shortFloatNumberOfChars /* float */ +
                                           1 /* \0 */;
   constexpr static int k_numberOfOperators = 3;
+  KDCoordinate nonMemoizedRowHeight(int r) override {
+    assert(false); /* Not needed because DropdownPopupController takes care of it */
+    return 0;
+  }
   Escher::BufferTextHighlightCell m_cells[k_numberOfOperators];
   Test * m_test;
 };

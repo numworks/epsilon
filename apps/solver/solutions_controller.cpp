@@ -274,7 +274,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
   evenOddCell->setEven(j%2 == 0);
 }
 
-KDCoordinate SolutionsController::rowHeight(int j) {
+KDCoordinate SolutionsController::nonMemoizedRowHeight(int j) {
   const int rowOfUserVariablesMessage = userVariablesMessageRow();
   if (rowOfUserVariablesMessage < 0 || j < rowOfUserVariablesMessage - 1) {
     // It's a solution row
@@ -297,30 +297,6 @@ KDCoordinate SolutionsController::rowHeight(int j) {
   const char * symbol = m_equationStore->userVariableAtIndex(j - rowOfUserVariablesMessage - 1);
   Poincare::Layout layout = PoincareHelpers::CreateLayout(App::app()->localContext()->expressionForSymbolAbstract(Poincare::Symbol::Builder(symbol, strlen(symbol)), false), App::app()->localContext());
   return layout.layoutSize(k_solutionsFont).height() + 2 * Metric::CommonSmallMargin;
-}
-
-KDCoordinate SolutionsController::cumulatedWidthFromIndex(int i) {
-  switch (i) {
-    case 0:
-      return 0;
-    case 1:
-      return k_symbolCellWidth;
-    default:
-      assert(i == 2);
-      return k_symbolCellWidth+k_valueCellWidth;
-  }
-}
-
-int SolutionsController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  if (offsetX <= k_symbolCellWidth) {
-    return 0;
-  } else {
-    if (offsetX <= k_symbolCellWidth+k_valueCellWidth)
-      return 1;
-    else {
-      return 2;
-    }
-  }
 }
 
 HighlightCell * SolutionsController::reusableCell(int index, int type) {

@@ -9,6 +9,7 @@
 #include "distributions/probability/distribution_curve_view.h"
 #include <escher/dropdown_view.h>
 #include <escher/view_controller.h>
+#include <escher/regular_table_view_data_source.h>
 #include <escher/stack_view_controller.h>
 #include "distributions/models/calculation/calculation.h"
 #include "distributions/models/distribution/distribution.h"
@@ -16,7 +17,7 @@
 namespace Distributions {
 
 class CalculationController : public Escher::ViewController,
-                              public Escher::TableViewDataSource,
+                              public Escher::RegularHeightTableViewDataSource,
                               public Escher::SelectableTableViewDataSource,
                               public Shared::ParameterTextFieldDelegate,
                               public Escher::DropdownCallback {
@@ -45,10 +46,6 @@ public:
   /* TableViewDataSource */
   int numberOfRows() const override { return 1; }
   int numberOfColumns() const override;
-  KDCoordinate columnWidth(int i) override;
-  KDCoordinate rowHeight(int j) override;
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return 1; }
   int typeAtLocation(int i, int j) override { return i; }
@@ -74,6 +71,11 @@ public:
 private:
   constexpr static int k_numberOfCalculationCells = 3;
   constexpr static KDCoordinate k_tableMargin = 3;
+
+  // TableViewDataSource
+  KDCoordinate nonMemoizedColumnWidth(int i) override;
+  KDCoordinate defaultRowHeight() override;
+
   void updateTitle();
   void setCalculationAccordingToIndex(int index, bool forceReinitialisation = false);
   class ContentView : public Escher::View {

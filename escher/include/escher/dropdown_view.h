@@ -5,7 +5,7 @@
 #include <escher/bordering_view.h>
 #include <escher/image_view.h>
 #include <escher/list_view_data_source.h>
-#include <escher/memoized_list_view_data_source.h>
+#include <escher/list_view_data_source.h>
 #include <escher/responder.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/selectable_table_view.h>
@@ -88,7 +88,7 @@ private:
 
     // MemoizedListViewDataSource
     int numberOfRows() const override { return m_listViewDataSource->numberOfRows(); }
-    KDCoordinate cellWidth() override;
+    KDCoordinate defaultColumnWidth() override;
     int typeAtIndex(int index) override { return m_listViewDataSource->typeAtIndex(index); }
     KDCoordinate nonMemoizedRowHeight(int j) override;
     int reusableCellCount(int type) override {

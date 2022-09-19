@@ -239,16 +239,8 @@ int ConsoleController::numberOfRows() const {
   return m_consoleStore.numberOfLines()+1;
 }
 
-KDCoordinate ConsoleController::rowHeight(int j) {
+KDCoordinate ConsoleController::defaultRowHeight() {
   return KDFont::GlyphHeight(GlobalPreferences::sharedGlobalPreferences()->font());
-}
-
-KDCoordinate ConsoleController::cumulatedHeightFromIndex(int j) {
-  return j*rowHeight(0);
-}
-
-int ConsoleController::indexFromCumulatedHeight(KDCoordinate offsetY ){
-  return offsetY/rowHeight(0);
 }
 
 HighlightCell * ConsoleController::reusableCell(int index, int type) {

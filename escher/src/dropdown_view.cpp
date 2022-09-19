@@ -125,7 +125,7 @@ KDPoint Dropdown::DropdownPopupController::topLeftCornerForSelection(View * orig
       .translatedBy(borderOffset);
 }
 
-KDCoordinate Dropdown::DropdownPopupController::cellWidth() {
+KDCoordinate Dropdown::DropdownPopupController::defaultColumnWidth() {
   if (m_memoizedCellWidth < 0) {
     HighlightCell * cell = reusableCell(0, 0);
     willDisplayCellForIndex(cell, 0);

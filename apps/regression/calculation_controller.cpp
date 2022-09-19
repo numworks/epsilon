@@ -272,7 +272,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
   }
 }
 
-KDCoordinate CalculationController::columnWidth(int i) {
+KDCoordinate CalculationController::nonMemoizedColumnWidth(int i) {
   if (i == 0) {
     return k_titleCalculationCellWidth;
   }
@@ -374,7 +374,8 @@ int CalculationController::maxNumberOfCoefficients() const {
   return maxNumberCoefficients;
 }
 
-void CalculationController::resetMemoization() {
+void CalculationController::resetMemoization(bool force) {
+  DoublePairTableController::resetMemoization(force);
   for (int s = 0; s < Store::k_numberOfSeries; s++) {
     for (int i = 0; i < 2; i++) {
       for (int j = 0; j < k_totalNumberOfDoubleBufferRows; j++) {

@@ -11,8 +11,6 @@ public:
   TwoMessagesPopupDataSource() :
       m_message1(I18n::Message::Default), m_message2(I18n::Message::Default) {}
   int numberOfRows() const override { return k_numberOfRows; }
-  // Not needed because DropdownPopupController takes care of it
-  KDCoordinate rowHeight(int r) override { assert(false); return 0; }
   int reusableCellCount(int type) override { return k_numberOfRows; }
   Escher::BufferTextHighlightCell * reusableCell(int i, int type) override {
     return &m_cells[i];
@@ -28,6 +26,8 @@ public:
 
 private:
   constexpr static int k_numberOfRows = 2;
+  // Not needed because DropdownPopupController takes care of it
+  KDCoordinate nonMemoizedRowHeight(int r) override { assert(false); return 0; }
 
   I18n::Message m_message1;
   I18n::Message m_message2;

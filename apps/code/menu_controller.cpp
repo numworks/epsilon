@@ -13,6 +13,7 @@ namespace Code {
 
 MenuController::MenuController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore, ButtonRowController * footer) :
   ViewController(parentResponder),
+  RegularHeightTableViewDataSource(),
   ButtonRowDelegate(nullptr, footer),
   m_scriptStore(scriptStore),
   m_consoleButton(this, I18n::Message::Console, Invocation([](void * context, void * sender) {
@@ -174,7 +175,7 @@ void MenuController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
   cell->setHighlighted(i == selectedColumn() && j == selectedRow());
 }
 
-KDCoordinate MenuController::columnWidth(int i) {
+KDCoordinate MenuController::nonMemoizedColumnWidth(int i) {
   switch (i) {
     case 0:
       return m_selectableTableView.bounds().width()-k_parametersColumnWidth;
@@ -184,45 +185,6 @@ KDCoordinate MenuController::columnWidth(int i) {
       assert(false);
       return 0;
   }
-}
-
-KDCoordinate MenuController::cumulatedWidthFromIndex(int i) {
-  switch (i) {
-    case 0:
-      return 0;
-    case 1:
-      return m_selectableTableView.bounds().width()-k_parametersColumnWidth;
-    case 2:
-      return m_selectableTableView.bounds().width();
-    default:
-      assert(false);
-      return 0;
-  }
-}
-
-KDCoordinate MenuController::cumulatedHeightFromIndex(int j) {
-  return Metric::StoreRowHeight * j;
-}
-
-int MenuController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  if (offsetX <= m_selectableTableView.bounds().width()-k_parametersColumnWidth) {
-    return 0;
-  }
-  if (offsetX <= m_selectableTableView.bounds().width()) {
-    return 1;
-  }
-  else {
-    return 2;
-  }
-  assert(false);
-  return 0;
-}
-
-int MenuController::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  if (Metric::StoreRowHeight == 0) {
-    return 0;
-  }
-  return (offsetY - 1) / Metric::StoreRowHeight;
 }
 
 HighlightCell * MenuController::reusableCell(int index, int type) {

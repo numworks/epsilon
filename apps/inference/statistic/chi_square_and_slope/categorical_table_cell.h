@@ -98,7 +98,6 @@ public:
   Escher::HighlightCell * reusableCell(int i, int type) override;
   int typeAtLocation(int i, int j) override { return j == 0 ? k_typeOfHeaderCells : k_typeOfInnerCells; }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
-  KDCoordinate columnWidth(int i) override { return k_columnWidth; }
 
   // DynamicCellsDataSource
   Escher::SelectableTableView * tableView() override { return &m_selectableTableView; }
@@ -106,6 +105,7 @@ public:
   constexpr static int k_maxNumberOfColumns = 2;
   constexpr static int k_numberOfReusableCells = k_maxNumberOfColumns * k_maxNumberOfReusableRows;
 private:
+  KDCoordinate nonMemoizedColumnWidth(int i) override { return k_columnWidth; }
   // CategoricalTableViewDataSource
   int relativeColumnIndex(int columnIndex) const override { return columnIndex; }
   virtual Escher::HighlightCell * headerCell(int index) = 0;

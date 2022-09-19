@@ -59,7 +59,7 @@ void ValuesController::viewDidDisappear() {
 
 // TableViewDataSource
 
-KDCoordinate ValuesController::columnWidth(int i) {
+KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
   ContinuousFunction::SymbolType symbolType = symbolTypeAtColumn(&i);
   if (i == 0) {
     return k_abscissaCellWidth;
@@ -70,37 +70,15 @@ KDCoordinate ValuesController::columnWidth(int i) {
   return k_cellWidth;
 }
 
-KDCoordinate ValuesController::cumulatedWidthFromIndex(int i) {
-  // Override RegularTableViewDataSource::cumulatedWidthFromIndex
-  return TableViewDataSource::cumulatedWidthFromIndex(i);
-}
-
-int ValuesController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  // Override RegularTableViewDataSource::indexFromCumulatedWidth
-  return TableViewDataSource::indexFromCumulatedWidth(offsetX);
-}
-
 KDCoordinate ValuesController::exactCellHeight() {
-  // For now, Shared::ValuesController::rowHeight always return 20
-  return std::max(m_exactValueCell.minimalSizeForOptimalDisplay().height(), Shared::ValuesController::rowHeight(-1));
+  return std::max(m_exactValueCell.minimalSizeForOptimalDisplay().height(), Shared::ValuesController::defaultRowHeight());
 }
 
-
-KDCoordinate ValuesController::rowHeight(int j) {
+KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
   if (j == selectedRow() && typeAtLocation(selectedColumn(), j) == k_exactValueCellType) {
     return exactCellHeight();
   }
-  return Shared::ValuesController::rowHeight(j);
-}
-
-KDCoordinate ValuesController::cumulatedHeightFromIndex(int j) {
-  // Override RegularTableViewDataSource::cumulatedHeightFromIndex
-  return TableViewDataSource::cumulatedHeightFromIndex(j);
-}
-
-int ValuesController::indexFromCumulatedHeight(KDCoordinate offsetX) {
-  // Override RegularTableViewDataSource::indexFromCumulatedHeight
-  return TableViewDataSource::indexFromCumulatedHeight(offsetX);
+  return Shared::ValuesController::nonMemoizedRowHeight(j);
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -186,13 +164,14 @@ void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int 
     j = 1 + numberOfElementsInCol;
   }
 
-  KDCoordinate previousRowHeight = m_lastExactValueCellComputedRow == previousSelectedCellY && m_lastExactValueCellComputedColumn == previousSelectedCellX ? exactCellHeight() : rowHeight(previousSelectedCellY);
+  KDCoordinate previousRowHeightBeforeUnselection = m_lastExactValueCellComputedRow == previousSelectedCellY && m_lastExactValueCellComputedColumn == previousSelectedCellX ? exactCellHeight() : rowHeight(previousSelectedCellY);
+  KDCoordinate currentRowHeightBeforeSelection = m_lastExactValueCellComputedRow == i && m_lastExactValueCellComputedColumn == j ? exactCellHeight() : rowHeight(j);
 
   // Re-frame the cell because its size could change after recomputing layouts
   t->reloadCellAtLocation(previousSelectedCellX, previousSelectedCellY, true);
   t->reloadCellAtLocation(i, j, true);
 
-  if (Shared::ValuesController::rowHeight(j) != rowHeight(j) || previousRowHeight != rowHeight(previousSelectedCellY)) {
+  if (currentRowHeightBeforeSelection != rowHeight(j) || previousRowHeightBeforeUnselection != rowHeight(previousSelectedCellY)) {
     /* The current or the previous selected cell changed its row height.
      * Reload the whole table.
      * Set false to the second parameter so that the table is not deselected */

@@ -71,10 +71,6 @@ int EditableCellTableViewController::numberOfRows() const {
   return 1 + numberOfModelElements + (numberOfModelElements < maxNumberOfElements());
 }
 
-KDCoordinate EditableCellTableViewController::rowHeight(int j) {
-  return k_cellHeight;
-}
-
 void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(HighlightCell * cell, int i, int j, Preferences::PrintFloatMode floatDisplayMode) {
   static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
   if (j == 0) {

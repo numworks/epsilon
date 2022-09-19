@@ -2,17 +2,17 @@
 #define SHARED_EDITABLE_CELL_TABLE_VIEW_CONTROLLER_H
 
 #include <poincare/preferences.h>
+#include <escher/regular_table_view_data_source.h>
 #include <escher/stack_view_controller.h>
 #include "column_helper.h"
 #include "text_field_delegate.h"
 #include "tab_table_controller.h"
-#include "regular_table_view_data_source.h"
 
 namespace Shared {
 
 class ColumnParameterController;
 
-class EditableCellTableViewController : public TabTableController , public RegularTableViewDataSource, public TextFieldDelegate, public ClearColumnHelper {
+class EditableCellTableViewController : public TabTableController , public Escher::TableViewDataSource, public TextFieldDelegate, public ClearColumnHelper {
 public:
   EditableCellTableViewController(Responder * parentResponder);
   bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
@@ -20,7 +20,6 @@ public:
 
   int numberOfRows() const override;
   void willDisplayCellAtLocationWithDisplayMode(Escher::HighlightCell * cell, int i, int j, Poincare::Preferences::PrintFloatMode mode);
-  KDCoordinate rowHeight(int j) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
 
@@ -30,6 +29,9 @@ protected:
   constexpr static KDCoordinate k_cellHeight = Escher::Metric::SmallEditableCellHeight;
   constexpr static KDCoordinate k_margin = Escher::Metric::TableSeparatorThickness;
   constexpr static KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
+
+  // TableViewDataSource
+  KDCoordinate defaultRowHeight() override { return k_cellHeight; }
 
   // ClearColumnHelper
   Escher::SelectableTableView * table() override { return selectableTableView(); }

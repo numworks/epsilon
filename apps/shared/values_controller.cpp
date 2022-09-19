@@ -55,7 +55,7 @@ const char * ValuesController::title() {
 
 void ValuesController::viewWillAppear() {
   // Reset memoization before any call to willDisplayCellAtLocation
-  resetMemoization();
+  resetValuesMemoization();
   EditableCellTableViewController::viewWillAppear();
   header()->setSelectedButton(-1);
 }
@@ -299,7 +299,7 @@ FunctionStore * ValuesController::functionStore() const {
 
 // Function evaluation memoization
 
-void ValuesController::resetMemoization() {
+void ValuesController::resetValuesMemoization() {
   m_firstMemoizedColumn = INT_MAX;
   m_firstMemoizedRow = INT_MAX;
 }

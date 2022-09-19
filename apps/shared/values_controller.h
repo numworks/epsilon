@@ -90,7 +90,7 @@ protected:
    *   the titles and the abscissa columns)
    * - the memoized table (which is a subset of the table of values cells)
    */
-  void resetMemoization();
+  void resetValuesMemoization();
   virtual char * memoizedBufferAtIndex(int i) = 0;
   virtual int numberOfMemoizedColumn() = 0;
   // Coordinates of memoizedBufferForCell refer to the absolute table

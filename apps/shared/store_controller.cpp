@@ -55,18 +55,6 @@ int StoreController::numberOfColumns() const {
   return DoublePairStore::k_numberOfColumnsPerSeries * DoublePairStore::k_numberOfSeries;
 }
 
-KDCoordinate StoreController::columnWidth(int i) {
-  return k_cellWidth;
-}
-
-KDCoordinate StoreController::cumulatedWidthFromIndex(int i) {
-  return i*k_cellWidth;
-}
-
-int StoreController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  return (offsetX-1) / k_cellWidth;
-}
-
 HighlightCell * StoreController::reusableCell(int index, int type) {
   assert(index >= 0);
   switch (type) {

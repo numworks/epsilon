@@ -27,9 +27,6 @@ public:
 
   // TableViewDataSource
   int numberOfColumns() const override;
-  KDCoordinate columnWidth(int i) override;
-  KDCoordinate cumulatedWidthFromIndex(int i) override;
-  int indexFromCumulatedWidth(KDCoordinate offsetX) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   int typeAtLocation(int i, int j) override;
@@ -77,6 +74,11 @@ private:
   int maxNumberOfElements() const override { return DoublePairStore::k_maxNumberOfPairs; }
   void handleDeleteEvent(bool authorizeNonEmptyRowDeletion = true, bool * didDeleteRow = nullptr);
 
+  // TableViewDataSource
+  KDCoordinate defaultColumnWidth() override { return k_cellWidth; }
+  Escher::TableSize1DManager * columnWidthManager() override { return &m_widthManager; }
+  Escher::TableSize1DManager * rowHeightManager() override { return &m_heightManager; }
+
   // StoreColumnHelper
   DoublePairStore * store() override { return m_store; }
 
@@ -84,6 +86,8 @@ private:
   PrefacedTableView m_prefacedView;
   StoreSelectableTableView m_dataView;
 
+  Escher::RegularTableSize1DManager m_widthManager;
+  Escher::RegularTableSize1DManager m_heightManager;
 };
 
 }

@@ -27,9 +27,9 @@ protected:
     FunctionSelectionController(FunctionGraphController * graphController) : CurveSelectionController(graphController) {}
     const char * title() override { return I18n::translate(I18n::Message::GraphCalculus); }
     int numberOfRows() const override { return graphController()->functionStore()->numberOfActiveFunctions(); }
-    KDCoordinate rowHeight(int j) override;
     void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   protected:
+    KDCoordinate nonMemoizedRowHeight(int j) override;
     FunctionGraphController * graphController() const { return static_cast<FunctionGraphController *>(const_cast<InteractiveCurveViewController *>(m_graphController)); }
     virtual Poincare::Layout nameLayoutAtIndex(int j) const = 0;
   };

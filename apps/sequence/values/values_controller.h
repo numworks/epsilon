@@ -12,9 +12,6 @@ class ValuesController : public Shared::ValuesController {
 public:
   ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header);
 
-  // TableViewDataSource
-  KDCoordinate columnWidth(int i) override;
-
   // ButtonRowDelegate
   Escher::Button * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
     return const_cast<Escher::Button *>(&m_setIntervalButton);
@@ -31,6 +28,11 @@ public:
 private:
   constexpr static int k_maxNumberOfDisplayableSequences = 3;
   constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableSequences * k_maxNumberOfDisplayableRows;
+
+  // TableViewDataSource
+  KDCoordinate defaultColumnWidth() override { return k_cellWidth; }
+  Escher::TableSize1DManager * columnWidthManager() override { return &m_widthManager; }
+  Escher::TableSize1DManager * rowHeightManager() override { return &m_heightManager; }
 
   // ValuesController
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override {
@@ -99,6 +101,9 @@ private:
   IntervalParameterController m_intervalParameterController;
   Escher::Button m_setIntervalButton;
   mutable char m_memoizedBuffer[k_maxNumberOfDisplayableCells][k_valuesCellBufferSize];
+
+  Escher::RegularTableSize1DManager m_widthManager;
+  Escher::RegularTableSize1DManager m_heightManager;
 };
 
 }

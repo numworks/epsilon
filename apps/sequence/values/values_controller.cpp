@@ -40,12 +40,6 @@ void ValuesController::viewWillAppear() {
   Shared::ValuesController::viewWillAppear();
 }
 
-// TableViewDataSource
-
-KDCoordinate ValuesController::columnWidth(int i) {
-  return k_cellWidth;
-}
-
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {
   /* The column names U_n, V_n, etc. are implemented as layout for now (see setTitleCellText of this file)
    * Since there is no column parameters for these column, the fillColumnName is not yet implemented.

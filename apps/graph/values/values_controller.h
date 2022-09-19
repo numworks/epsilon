@@ -22,14 +22,6 @@ public:
   // View controller
   void viewDidDisappear() override;
 
-  // TableViewDataSource
-  KDCoordinate columnWidth(int i) override;
-  KDCoordinate cumulatedWidthFromIndex(int i) override;
-  int indexFromCumulatedWidth(KDCoordinate offsetX) override;
-  KDCoordinate rowHeight(int j) override;
-  KDCoordinate cumulatedHeightFromIndex(int j) override;
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override;
-
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override { return type == k_exactValueCellType ? &m_exactValueCell : Shared::ValuesController::reusableCell(index, type); }
   int typeAtLocation(int i, int j) override;
@@ -63,6 +55,10 @@ private:
   constexpr static int k_maxNumberOfDisplayableSymbolTypes = 2;
   constexpr static int k_maxNumberOfDisplayableAbscissaCells = k_maxNumberOfDisplayableSymbolTypes * k_maxNumberOfDisplayableRows;
   constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableFunctions * k_maxNumberOfDisplayableRows;
+
+  // TableViewDataSource
+  KDCoordinate nonMemoizedColumnWidth(int i) override;
+  KDCoordinate nonMemoizedRowHeight(int j) override;
 
   // Values controller
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;

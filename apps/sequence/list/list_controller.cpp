@@ -17,17 +17,12 @@ ListController::ListController(Responder * parentResponder, Escher::InputEventHa
   m_parameterController(inputEventHandlerDelegate, this),
   m_typeParameterController(this, this),
   m_typeStackController(nullptr, &m_typeParameterController, StackViewController::Style::PurpleWhite),
-  m_titlesColumnWidth(k_minTitleColumnWidth)
+  m_titlesColumnWidth(k_minTitleColumnWidth),
+  m_heightManager(this)
 {
   for (int i = 0; i < k_maxNumberOfRows; i++) {
     m_expressionCells[i].setLeftMargin(k_expressionMargin);
     m_expressionCells[i].setRightMargin(0);
-  }
-  /* m_memoizedCellBaseline is not initialized by the call to
-   * resetMemoizationForIndex in ExpressionModelListController's
-   * constructor, because it is a virtual method in a constructor. */
-  for (int i = 0; i < k_memoizedCellsCount; i++) {
-    m_memoizedCellBaseline[i] = -1;
   }
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setVerticalCellOverlap(0);
@@ -154,37 +149,13 @@ void ListController::viewWillAppear() {
   computeTitlesColumnWidth();
 }
 
-KDCoordinate ListController::columnWidth(int i) {
+KDCoordinate ListController::nonMemoizedColumnWidth(int i) {
   switch (i) {
     case 0:
       return m_titlesColumnWidth;
     default:
       assert(i == 1);
       return selectableTableView()->bounds().width()-m_titlesColumnWidth;
-  }
-}
-
-KDCoordinate ListController::cumulatedWidthFromIndex(int i) {
-  switch (i) {
-    case 0:
-      return 0;
-    case 1:
-      return m_titlesColumnWidth;
-    default:
-      assert(i == 2);
-      return selectableTableView()->bounds().width();
-  }
-}
-
-int ListController::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  if (offsetX <= m_titlesColumnWidth) {
-    return 0;
-  } else {
-    if (offsetX <= selectableTableView()->bounds().width())
-      return 1;
-    else {
-      return 2;
-    }
   }
 }
 
@@ -324,28 +295,9 @@ void ListController::computeTitlesColumnWidth(bool forceMax) {
   m_titlesColumnWidth = std::max(maxTitleWidth, k_minTitleColumnWidth);
 }
 
-void ListController::resetMemoizationForIndex(int index) {
-  assert(index >= 0 && index < k_memoizedCellsCount);
-  m_memoizedCellBaseline[index] = -1;
-  ExpressionModelListController::resetMemoizationForIndex(index);
-}
-
-void ListController::shiftMemoization(bool newCellIsUnder) {
-  if (newCellIsUnder) {
-    for (int i = 0; i < k_memoizedCellsCount - 1; i++) {
-      m_memoizedCellBaseline[i] = m_memoizedCellBaseline[i+1];
-    }
-  } else {
-    for (int i = k_memoizedCellsCount - 1; i > 0; i--) {
-      m_memoizedCellBaseline[i] = m_memoizedCellBaseline[i-1];
-    }
-  }
-  ExpressionModelListController::shiftMemoization(newCellIsUnder);
-}
-
 bool ListController::editInitialConditionOfSelectedRecordWithText(const char * text, bool firstInitialCondition) {
   // Reset memoization of the selected cell which always corresponds to the k_memoizedCellsCount/2 memoized cell
-  resetMemoizationForIndex(k_memoizedCellsCount/2);
+  resetSizesMemoization();
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
   Shared::Sequence * sequence = modelStore()->modelForRecord(record);
   Context * context = App::app()->localContext();
@@ -465,22 +417,6 @@ void ListController::didChangeModelsList() {
 }
 
 KDCoordinate ListController::baseline(int j) {
-  if (j < 0) {
-    return -1;
-  }
-  int currentSelectedRow = selectedRow();
-  constexpr int halfMemoizationCount = k_memoizedCellsCount/2;
-  if (j >= currentSelectedRow - halfMemoizationCount && j <= currentSelectedRow + halfMemoizationCount) {
-    int memoizedIndex = j - (currentSelectedRow - halfMemoizationCount);
-    if (m_memoizedCellBaseline[memoizedIndex] < 0) {
-      m_memoizedCellBaseline[memoizedIndex] = privateBaseline(j);
-    }
-    return m_memoizedCellBaseline[memoizedIndex];
-  }
-  return privateBaseline(j);
-}
-
-KDCoordinate ListController::privateBaseline(int j) const {
   assert(j >= 0 && j < const_cast<ListController *>(this)->numberOfExpressionRows());
   Escher::EvenOddExpressionCell * cell = static_cast<Escher::EvenOddExpressionCell *>((const_cast<SelectableTableView *>(&m_selectableTableView))->cellAtLocation(1, j));
   Poincare::Layout layout = cell->layout();
@@ -515,6 +451,7 @@ KDCoordinate ListController::nameWidth(int nameLength) const {
 }
 
 void ListController::showLastSequence() {
+  resetSizesMemoization();
   SequenceStore * store = const_cast<ListController *>(this)->modelStore();
   bool hasAddSequenceButton = store->numberOfModels() == store->maxNumberOfModels();
   int lastRow = numberOfExpressionRows() - (hasAddSequenceButton ? 0 : 1) - 1;

@@ -13,14 +13,11 @@
 
 namespace Graph {
 
-class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate, public Shared::InputEventHandlerDelegate, public Escher::ListViewDataSource {
+class ListController : public Shared::FunctionListController, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate, public Shared::InputEventHandlerDelegate, public Escher::MemoizedListViewDataSource {
 public:
   ListController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::ButtonRowController * footer);
   // ListViewDataSource
   int numberOfRows() const override { return this->numberOfExpressionRows(); }
-  KDCoordinate rowHeight(int j) override { return ExpressionModelListController::memoizedRowHeight(j); }
-  KDCoordinate cumulatedHeightFromIndex(int j) override { return ExpressionModelListController::memoizedCumulatedHeightFromIndex(j); }
-  int indexFromCumulatedHeight(KDCoordinate offsetY) override { return ExpressionModelListController::memoizedIndexFromCumulatedHeight(offsetY); }
   int typeAtIndex(int index) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
@@ -47,6 +44,12 @@ private:
   // 6 rows of undefined empty functions
   constexpr static int k_maxNumberOfDisplayableRows = 6;
   constexpr static CodePoint k_equationSymbols[] = { '=', '>', '<', UCodePointSuperiorEqual, UCodePointInferiorEqual};
+
+  // ExpressionModelListController
+  void resetSizesMemoization() override { resetMemoization(); }
+  // ListViewDataSource
+  KDCoordinate nonMemoizedRowHeight(int j) override { return expressionRowHeight(j); }
+
   void fillWithDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController, CodePoint Symbol) const;
   bool layoutRepresentsAnEquation(Poincare::Layout l) const;
   bool layoutRepresentsPolarFunction(Poincare::Layout l) const;
@@ -56,12 +59,6 @@ private:
   bool textRepresentsParametricFunction(const char * text) const;
   // Complete the equationField with a valid left equation side
   bool completeEquation(Escher::InputEventHandler * equationField, CodePoint symbol);
-  KDCoordinate notMemoizedCumulatedHeightFromIndex(int j) override {
-    return ListViewDataSource::cumulatedHeightFromIndex(j);
-  }
-  int notMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) override {
-    return ListViewDataSource::indexFromCumulatedHeight(offsetY);
-  }
   void addModel() override;
   Shared::ListParameterController * parameterController() override;
   int maxNumberOfDisplayableRows() override;

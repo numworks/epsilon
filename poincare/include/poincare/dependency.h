@@ -52,7 +52,7 @@ public:
 
   /* Store the dependecies in m and replace the dependency node with the true expression. */
   void extractDependencies(List l);
-  bool dependencyRecursivelyMatches(ExpressionTernaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const { return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols, auxiliary); }
+  bool dependencyRecursivelyMatches(ExpressionTrinaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const { return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols, auxiliary); }
 
   Expression removeUselessDependencies(const ExpressionNode::ReductionContext& reductionContext);
 

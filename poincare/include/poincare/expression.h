@@ -189,17 +189,12 @@ public:
   bool hasBooleanValue() const;
 
   /* recursivelyMatches will test each node recursively with the function
-   * provided as argument. If the result is Yes, it will stop searching and
-   * return true. If the result is Maybe, it will continue searching for a Yes
-   * in the children. If an expression is tested as No, its children will not
+   * provided as argument. If the result is True, it will stop searching and
+   * return true. If the result is Unknown, it will continue searching for a True
+   * in the children. If an expression is tested as False, its children will not
    * be tested and the result will be false. */
-  enum class RecursiveSearchResult {
-    Yes,
-    Maybe,
-    No,
-  };
-  typedef RecursiveSearchResult (*ExpressionTernaryTest)(const Expression e, Context * context, void * auxiliary);
-  bool recursivelyMatches(ExpressionTernaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const;
+  typedef TrinaryBoolean (*ExpressionTrinaryTest)(const Expression e, Context * context, void * auxiliary);
+  bool recursivelyMatches(ExpressionTrinaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const;
   typedef bool (*ExpressionTest)(const Expression e, Context * context);
   bool recursivelyMatches(ExpressionTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
 

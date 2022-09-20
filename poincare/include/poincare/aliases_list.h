@@ -88,6 +88,8 @@ namespace AliasesLists {
   constexpr static AliasesList k_infinityAliases = "\01∞\00inf\00";
   // Constants
   constexpr static AliasesList k_piAliases = "\01π\00pi\00";
+  // Symbols
+  constexpr static AliasesList k_thetaAliases = "\01θ\00theta\00";
   // Units
   constexpr static AliasesList k_litersAliases = "\01L\00l\00";
   // Inverse trigo

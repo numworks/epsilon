@@ -136,6 +136,7 @@ private:
     &Sine::s_functionHelper, // sin
     &HyperbolicSine::s_functionHelper, // sinh
     &ListSort::s_functionHelper, // sort
+    &SquareRoot::s_functionHelper, // sqrt, √
     &ListStandardDeviation::s_functionHelper, // stddev
     &ListSum::s_functionHelper, // sum (1 param)
     &Sum::s_functionHelper, // sum (4 params)
@@ -147,7 +148,6 @@ private:
     &MatrixTrace::s_functionHelper, // trace
     &MatrixTranspose::s_functionHelper, // transpose
     &ListVariance::s_functionHelper, // var
-    &SquareRoot::s_functionHelper, // √
   };
 
   constexpr static const Expression::FunctionHelper * const * s_reservedFunctionsUpperBound = s_reservedFunctions + (sizeof(s_reservedFunctions)/sizeof(Expression::FunctionHelper *));

@@ -37,7 +37,6 @@ public:
   }
 private:
   constexpr static int k_maxNumberOfIdentifiersInList = 10; // Used for m_storedIdentifiersList
-  static bool ShouldAddCodePointToIdentifier(const CodePoint c);
   typedef bool (*PopTest)(CodePoint c);
   const CodePoint nextCodePoint(PopTest popTest, bool * testResult = nullptr);
   static bool IsIdentifierMaterial(const CodePoint c);

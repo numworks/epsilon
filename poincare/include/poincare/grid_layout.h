@@ -14,7 +14,6 @@ class MatrixLayoutNode;
 class GridLayoutNode : public Array, public LayoutNode {
   friend class BinomialCoefficientLayoutNode;
   friend class GridLayout;
-  friend class MatrixLayoutNode;
 public:
 
   static bool IsGridLayoutType(Type type) { return type == Type::MatrixLayout || type == Type::PiecewiseOperatorLayout; }

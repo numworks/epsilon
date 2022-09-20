@@ -7,8 +7,8 @@
 namespace Poincare {
 
 class BracketPairLayoutNode : public LayoutNode {
-  friend class MatrixLayoutNode;
 public:
+  constexpr static KDCoordinate k_lineThickness = 1;
   // TreeNode
   size_t size() const override { return sizeof(BracketPairLayoutNode); }
   int numberOfChildren() const override { return 1; }
@@ -19,7 +19,6 @@ public:
   void deleteBeforeCursor(LayoutCursor * cursor) override;
 
 protected:
-  constexpr static KDCoordinate k_lineThickness = 1;
   // Minimal height at which the children dictates bracket height
   constexpr static KDCoordinate k_minimalChildHeight = Escher::Metric::MinimalBracketAndParenthesisChildHeight;
 

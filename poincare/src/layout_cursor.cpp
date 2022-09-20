@@ -200,9 +200,7 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bo
       continue;
     }
     AutocompletedBracketPairLayoutNode::Side bracketSide = AutocompletedBracketPairLayoutNode::Side::Left;
-    if (codePoint == UCodePointMultiplicationSign) {
-      newChild = CodePointLayout::Builder(UCodePointMultiplicationSign);
-    } else if (codePoint == '(' || codePoint == UCodePointLeftSystemParenthesis) {
+    if (codePoint == '(' || codePoint == UCodePointLeftSystemParenthesis) {
       newChild = ParenthesisLayout::Builder();
     } else if (codePoint == ')' || codePoint == UCodePointRightSystemParenthesis) {
       newChild = ParenthesisLayout::Builder();

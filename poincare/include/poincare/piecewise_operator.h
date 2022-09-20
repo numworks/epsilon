@@ -33,8 +33,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;
-  LayoutShape leftLayoutShape() const override { /* TODO */ return LayoutShape::MoreLetters; };
-  LayoutShape rightLayoutShape() const override { /* TODO */ return LayoutShape::BoundaryPunctuation; }
+  LayoutShape leftLayoutShape() const override { return LayoutShape::Default; };
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }

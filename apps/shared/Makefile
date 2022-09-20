@@ -75,7 +75,6 @@ app_shared_src = $(addprefix apps/shared/,\
   prefaced_table_view.cpp \
   prefaced_twice_table_view.cpp \
   range_parameter_controller.cpp \
-  regular_table_view_data_source.cpp \
   round_cursor_view.cpp \
   scrollable_multiple_expressions_view.cpp \
   scrollable_two_expressions_cell.cpp \

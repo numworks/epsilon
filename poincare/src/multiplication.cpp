@@ -155,7 +155,7 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
 /* Operative symbol between two expressions depends on the layout shape on the
  * left and the right of the operator:
  *
- *               | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction | Hexa/Binary
+ *               | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction |   Default
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
  * Decimal       |    ×    |    ×    |     ø     |      ×      |       ×       |  ×   |    ×    |    ×     |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
@@ -171,20 +171,19 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
  * Fraction      |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
- * Hexa/Binary   |    •    |    •    |     •     |      •      |       •       |  •   |    •    |    •     |      •
+ * Default       |    •    |    •    |     •     |      •      |       •       |  •   |    •    |    •     |      •
  *
  * */
 
 static int operatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNode::LayoutShape right) {
+  if (left == ExpressionNode::LayoutShape::Default || right == ExpressionNode::LayoutShape::Default) {
+    return 1;
+  }
   switch (left) {
-    case ExpressionNode::LayoutShape::BinaryHexadecimal:
-      return 1;
     case ExpressionNode::LayoutShape::Decimal:
       switch (right) {
         case ExpressionNode::LayoutShape::OneLetter:
           return 0;
-        case ExpressionNode::LayoutShape::BinaryHexadecimal:
-          return 1;
         default:
           return 2;
       }
@@ -196,7 +195,6 @@ static int operatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNod
           return 2;
         case ExpressionNode::LayoutShape::MoreLetters:
         case ExpressionNode::LayoutShape::NthRoot:
-        case ExpressionNode::LayoutShape::BinaryHexadecimal:
           return 1;
         default:
           return 0;
@@ -221,7 +219,6 @@ static int operatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNod
         case ExpressionNode::LayoutShape::Integer:
         case ExpressionNode::LayoutShape::Fraction:
           return 2;
-        case ExpressionNode::LayoutShape::BinaryHexadecimal:
         case ExpressionNode::LayoutShape::NthRoot:
           return 1;
         default:

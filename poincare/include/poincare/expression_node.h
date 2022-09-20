@@ -335,14 +335,14 @@ public:
   enum class LayoutShape {
     Decimal,
     Integer,
-    BinaryHexadecimal,
     OneLetter,
     MoreLetters,
     BoundaryPunctuation, // ( [ ∫
     Root,
     NthRoot,
     Fraction,
-    RightOfPower
+    RightOfPower,
+    Default
   };
   virtual LayoutShape leftLayoutShape() const = 0;
   virtual LayoutShape rightLayoutShape() const { return leftLayoutShape(); }

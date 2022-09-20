@@ -90,14 +90,14 @@ bool Expression::isMinusOne() const {
       || (type() == ExpressionNode::Type::Rational && convert<const Rational>().isMinusOne());
 }
 
-bool Expression::recursivelyMatches(ExpressionTernaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols, void * auxiliary) const {
-  RecursiveSearchResult testResult = test(*this, context, auxiliary);
-  if (testResult == RecursiveSearchResult::Yes) {
+bool Expression::recursivelyMatches(ExpressionTrinaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols, void * auxiliary) const {
+  TrinaryBoolean testResult = test(*this, context, auxiliary);
+  if (testResult == TrinaryBoolean::True) {
     return true;
-  } else if (testResult == RecursiveSearchResult::No) {
+  } else if (testResult == TrinaryBoolean::False) {
     return false;
   }
-  assert(testResult == RecursiveSearchResult::Maybe && !isUninitialized());
+  assert(testResult == TrinaryBoolean::Unknown && !isUninitialized());
 
   // Handle dependencies, symbols and functions
   ExpressionNode::Type t = type();
@@ -132,9 +132,9 @@ bool Expression::recursivelyMatches(ExpressionTernaryTest test, Context * contex
 }
 
 bool Expression::recursivelyMatches(ExpressionTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols) const {
-  ExpressionTernaryTest ternary = [](const Expression e, Context * context, void * auxiliary) {
+  ExpressionTrinaryTest ternary = [](const Expression e, Context * context, void * auxiliary) {
     ExpressionTest * trueTest = static_cast<ExpressionTest *>(auxiliary);
-    return (*trueTest)(e, context) ? RecursiveSearchResult::Yes : RecursiveSearchResult::Maybe;
+    return (*trueTest)(e, context) ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
   };
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
@@ -160,21 +160,21 @@ bool Expression::deepIsMatrix(Context * context, bool canContainMatrices) const 
     return false;
   }
   return recursivelyMatches([](const Expression e, Context * context, void *) {
-        if (IsMatrix(e, context)) { return RecursiveSearchResult::Yes; }
+        if (IsMatrix(e, context)) { return TrinaryBoolean::True; }
         // The children were sorted so any expression which is a matrix (deeply) would be at the end
         if (IsNAry(e, context) && e.numberOfChildren() > 0) {
-          return e.childAtIndex(e.numberOfChildren() - 1).deepIsMatrix(context) ? RecursiveSearchResult::Yes : RecursiveSearchResult::No;
+          return e.childAtIndex(e.numberOfChildren() - 1).deepIsMatrix(context) ? TrinaryBoolean::True : TrinaryBoolean::False;
         }
          /* Dependency are matrices only if their first child is a matrix */
         if (e.type() == ExpressionNode::Type::Dependency) {
-           return e.childAtIndex(0).deepIsMatrix(context) ? RecursiveSearchResult::Yes : RecursiveSearchResult::No;
+           return e.childAtIndex(0).deepIsMatrix(context) ? TrinaryBoolean::True : TrinaryBoolean::False;
         }
         // These types are matrices if one of their children is one
         if (e.isOfType({ExpressionNode::Type::Power, ExpressionNode::Type::Opposite, ExpressionNode::Type::Sum, ExpressionNode::Type::Product})) {
-          return RecursiveSearchResult::Maybe;
+          return TrinaryBoolean::Unknown;
         }
         // Any other type is not a matrix
-        return RecursiveSearchResult::No;
+        return TrinaryBoolean::False;
       }, context);
  }
 
@@ -186,7 +186,7 @@ bool Expression::deepIsList(Context * context) const {
       case ExpressionNode::Type::ListElement:
       case ExpressionNode::Type::ListSlice:
       case ExpressionNode::Type::ListSort:
-      return RecursiveSearchResult::Yes;
+      return TrinaryBoolean::True;
 
       /* These expressions have a list as argument but are never lists, we
        * must stop the search. */
@@ -200,11 +200,11 @@ bool Expression::deepIsList(Context * context) const {
       case ExpressionNode::Type::ListStandardDeviation:
       case ExpressionNode::Type::ListSum:
       case ExpressionNode::Type::ListVariance:
-      return RecursiveSearchResult::No;
+      return TrinaryBoolean::False;
 
       /* Other expressions may be lists if their children are lists. */
       default:
-      return RecursiveSearchResult::Maybe;
+      return TrinaryBoolean::Unknown;
       }
   }, context);
 }
@@ -612,7 +612,7 @@ Preferences::AngleUnit Expression::UpdatedAngleUnitWithExpressionInput(Preferenc
           ExpressionNode::Type::Secant, ExpressionNode::Type::Cosecant, ExpressionNode::Type::Cotangent
         });
       if (e.type() != ExpressionNode::Type::Unit) {
-        return RecursiveSearchResult::Maybe;
+        return TrinaryBoolean::Unknown;
       }
       const Unit::Representative * representative = static_cast<const Unit &>(e).representative();
       angleInformations->hasRadians = angleInformations->hasRadians || representative == &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
@@ -622,7 +622,7 @@ Preferences::AngleUnit Expression::UpdatedAngleUnitWithExpressionInput(Preferenc
         || representative == &Unit::k_angleRepresentatives[Unit::k_degreeRepresentativeIndex]
         || representative == &Unit::k_angleRepresentatives[Unit::k_arcMinuteRepresentativeIndex]
         || representative == &Unit::k_angleRepresentatives[Unit::k_arcSecondRepresentativeIndex];
-      return RecursiveSearchResult::Maybe;
+      return TrinaryBoolean::Unknown;
     },
     context, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, static_cast<void*>(&angleInformations));
   if (angleInformations.hasTrigonometry) {

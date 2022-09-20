@@ -56,7 +56,7 @@ size_t SymbolAbstract::TruncateExtension(char * dst, const char * src, size_t le
   return UTF8Helper::CopyUntilCodePoint(dst, len, src, '.');
 }
 
-bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTernaryTest test, Context * context, void * auxiliary) {
+bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTrinaryTest test, Context * context, void * auxiliary) {
   // Undefined symbols must be preserved.
   Expression e = SymbolAbstract::Expand(symbol, context, false, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   return !e.isUninitialized() && e.recursivelyMatches(test, context, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol, auxiliary);

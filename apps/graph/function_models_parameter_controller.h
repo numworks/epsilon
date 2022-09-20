@@ -23,32 +23,34 @@ public:
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int index) override { return index == k_indexOfEmptyModel ? k_emptyModelCellType : k_modelCellType; }
+  int typeAtIndex(int index) override { return index == static_cast<int>(Models::Empty) ? k_emptyModelCellType : k_modelCellType; }
   int defaultName(char buffer[], size_t bufferSize) const;
 private:
   constexpr static int k_emptyModelCellType = 0;
   constexpr static int k_modelCellType = 1;
 
-  constexpr static int k_indexOfEmptyModel = 0;
-  constexpr static int k_indexOfCartesianModel = k_indexOfEmptyModel + 1;
-  constexpr static int k_indexOfImplicitModel = k_indexOfCartesianModel + 1;
-  constexpr static int k_indexOfInequationModel = k_indexOfImplicitModel + 1;
-  constexpr static int k_indexOfInverseModel = k_indexOfInequationModel + 1;
-  constexpr static int k_indexOfConicModel = k_indexOfInverseModel + 1;
-  constexpr static int k_indexOfParametricModel = k_indexOfConicModel + 1;
-  constexpr static int k_indexOfPolarModel = k_indexOfParametricModel + 1;
-  constexpr static int k_indexOfPiecewiseModel = k_indexOfPolarModel + 1;
-  static_assert(k_indexOfEmptyModel == 0, "Empty model must be first.");
+  // Models are ordered
+  enum class Models : uint8_t {
+    Empty,
+    Cartesian,
+    Implicit,
+    Inequation,
+    Inverse,
+    Conic,
+    Parametric,
+    Polar,
+    Piecewise,
+    NumberOfModels
+  };
 
-  constexpr static int k_numberOfModels = k_indexOfPiecewiseModel + 1;
-  constexpr static const char * k_models[k_numberOfModels] = {
+  constexpr static const char * k_models[static_cast<int>(Models::NumberOfModels)] = {
     "", "f(x)=x", "x+y+1=0", "x+y≤0", "x=cos(y)", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "f(θ)=cos(θ)", "f(x)=piecewise(-x,x<0,x,x≥0)"
   };
   constexpr static const char * k_implicitModelWhenForbidden = "y=x-1";
   constexpr static const char * k_inequationModelWhenForbidden = "y≤x";
   constexpr static size_t k_maxSizeOfNamedModel = 26;
   // Expression cells
-  constexpr static int k_numberOfExpressionCells = k_numberOfModels-1;
+  constexpr static int k_numberOfExpressionCells = static_cast<int>(Models::NumberOfModels)-1;
   constexpr static I18n::Message k_modelDescriptions[k_numberOfExpressionCells] = {
     I18n::Message::CartesianNamedTemplate, I18n::Message::LineType, I18n::Message::InequationType, I18n::Message::InverseType,  I18n::Message::ConicNamedTemplate, I18n::Message::ParametricType, I18n::Message::PolarType, I18n::Message::PiecewiseFunction
   };

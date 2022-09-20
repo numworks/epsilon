@@ -167,7 +167,7 @@ void HorizontalLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 
 LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText) {
   assert(correspondingExpression != nullptr);
-  if (correspondingExpression->numberOfChildren() > 0) {
+  if (correspondingExpression->isUninitialized() || correspondingExpression->numberOfChildren() > 0) {
     Layout layoutToPointTo = Layout(this).recursivelyMatches(
       [](Poincare::Layout layout) {
         return layout.type() == LayoutNode::Type::ParenthesisLayout

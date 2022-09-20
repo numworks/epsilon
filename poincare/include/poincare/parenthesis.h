@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class ParenthesisNode /*final*/ : public ExpressionNode {
+class ParenthesisNode final : public ExpressionNode {
 public:
 
   // TreeNode

@@ -8,7 +8,7 @@ namespace Poincare {
 
 class Division;
 
-class DivisionNode /*final*/ : public ExpressionNode {
+class DivisionNode final : public ExpressionNode {
   friend class LogarithmNode;
 public:
 

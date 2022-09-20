@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class FactorNode /*final*/ : public ExpressionNode {
+class FactorNode final : public ExpressionNode {
 public:
   constexpr static AliasesList k_functionName = "factor";
 

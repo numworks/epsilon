@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class DeterminantNode /*final*/ : public ExpressionNode {
+class DeterminantNode final : public ExpressionNode {
 public:
   constexpr static AliasesList k_functionName = "det";
 

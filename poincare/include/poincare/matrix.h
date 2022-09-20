@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class MatrixNode /*final*/ : public Array, public ExpressionNode {
+class MatrixNode final : public Array, public ExpressionNode {
 public:
   MatrixNode() : Array() {}
 

@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class UnitConvertNode /*final*/ : public RightwardsArrowExpressionNode {
+class UnitConvertNode final : public RightwardsArrowExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(UnitConvertNode); }

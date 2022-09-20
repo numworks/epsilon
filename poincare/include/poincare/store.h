@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class StoreNode /*final*/ : public RightwardsArrowExpressionNode {
+class StoreNode final : public RightwardsArrowExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(StoreNode); }

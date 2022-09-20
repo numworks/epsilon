@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class FractionLayoutNode /*final*/ : public LayoutNode {
+class FractionLayoutNode final : public LayoutNode {
   friend class DerivativeLayoutNode;
 public:
   using LayoutNode::LayoutNode;

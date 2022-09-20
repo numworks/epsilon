@@ -1,6 +1,5 @@
 #include <poincare/piecewise_operator.h>
 #include <poincare/boolean.h>
-#include <poincare/layout_helper.h>
 #include <poincare/piecewise_operator_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
@@ -9,7 +8,6 @@
 namespace Poincare {
 
 Layout PiecewiseOperatorNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  // TODO: Create the piecewise layout (and remove the useless layouthelper include)
   PiecewiseOperatorLayout l = PiecewiseOperatorLayout::Builder();
   int n = numberOfChildren();
   int i = 0;

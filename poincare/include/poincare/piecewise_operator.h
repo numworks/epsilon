@@ -2,11 +2,10 @@
 #define POINCARE_PIECEWISE_OPERATOR_H
 
 #include <poincare/expression.h>
-//#include <poincare/evaluation.h>
 #include <limits.h>
 
 /* The syntax is piecewise(result1,condition1,result2,condtion2,...,resultN)
- % There can be a final resultN without condition or not.
+ * There can be a final resultN without condition or not.
  * If a condition is undef or if every condition is false and there is no final
  * resultN, piecewise = undef. */
 namespace Poincare {

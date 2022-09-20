@@ -16,6 +16,7 @@ class Layout : public TreeHandle {
   friend class AdditionNode;
   friend class GridLayoutNode;
   friend class HorizontalLayoutNode;
+  friend class InputBeautification;
   friend class LayoutNode;
   friend class LayoutCursor;
   friend class VerticalOffsetLayoutNode;

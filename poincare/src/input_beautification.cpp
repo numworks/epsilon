@@ -108,10 +108,6 @@ bool InputBeautification::ShouldBeBeautifiedWhenInputted(Layout parent, int inde
 }
 
 int InputBeautification::CompareAndBeautifyIdentifier(const char * identifier, size_t identifierLength, BeautificationRule beautificationRule, Layout parent, int startIndex, int * numberOfLayoutsAddedOrRemoved, LayoutCursor * layoutCursor, bool isBeautifyingFunction, bool forceCursorRightOfText) {
-  if (isBeautifyingFunction) {
-    // TODO
-    return -1;
-  }
   AliasesList patternAliases = beautificationRule.listOfBeautifiedAliases;
   int comparison = patternAliases.maxDifferenceWith(identifier, identifierLength);
   if (comparison == 0) {
@@ -125,8 +121,15 @@ int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout p
   // Create pattern layout
   Layout inserted = beautificationRule.layoutBuilder();
   if (isBeautifyingFunction) {
-    // TODO
-    return 0;
+    /* Insert parameters between parentheses in function if use is type left of
+     * an already filled parenthesis */
+    assert(parent.childAtIndex(endIndex + 1).type() == LayoutNode::Type::ParenthesisLayout);
+    bool isParameteredExpression = (beautificationRule.listOfBeautifiedAliases.isEquivalentTo(Derivative::s_functionHelper.aliasesList()) || beautificationRule.listOfBeautifiedAliases.isEquivalentTo(Integral::s_functionHelper.aliasesList()));
+    inserted = ReplaceEmptyLayoutsWithParameters(inserted, parent, endIndex + 1, isParameteredExpression);
+    endIndex++; // Include parenthesis in layouts to delete
+    if (inserted.isUninitialized()) {
+      return 0;
+    }
   }
   // Remove layout
   LayoutCursor tempCursor = layoutCursor->clone(); // avoid altering the cursor by cloning it.
@@ -135,7 +138,11 @@ int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout p
   }
   if (!forceCursorRightOfText && isBeautifyingFunction) {
     // Put the cursor inside the beautified function.
-    // TODO
+    Expression dummy;
+    Layout layoutToPointTo = inserted.layoutToPointWhenInserting(&dummy);
+    assert(!layoutToPointTo.isUninitialized());
+    layoutCursor->setLayout(layoutToPointTo);
+    layoutCursor->setPosition(LayoutCursor::Position::Right);
   }
   // Replace input with pattern
   tempCursor.addLayoutAndMoveCursor(inserted);
@@ -145,6 +152,68 @@ int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout p
     layoutCursor->setPosition(tempCursor.position());
   }
   return parent.numberOfChildren() - currentNumberOfChildren;
+}
+
+static Layout DeepSearchEmptyLayout(Layout l, int * nSkips) {
+  if (l.type() == LayoutNode::Type::EmptyLayout) {
+    if (*nSkips == 0) {
+      return l;
+    }
+    (*nSkips)--;
+    return Layout();
+  }
+  int n = l.numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    Layout emptyLayout = DeepSearchEmptyLayout(l.childAtIndex(i), nSkips);
+    if (!emptyLayout.isUninitialized()) {
+      return emptyLayout;
+    }
+  }
+  return Layout();
+}
+
+Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(Layout layoutToModify, Layout parent, int parenthesisIndexInParent, bool isParameteredExpression) {
+  Layout parameters = parent.childAtIndex(parenthesisIndexInParent).childAtIndex(0);
+  assert(parameters.type() == LayoutNode::Type::HorizontalLayout);
+  // Replace the empty layouts with the parameters between parentheses
+  int currentParameterIndex = 0;
+  int numberOfParameters = 0;
+  int n = parameters.numberOfChildren();
+  int numberOfEmptyLayoutsToSkip = 0;
+  HorizontalLayout currentParameter = HorizontalLayout::Builder(EmptyLayout::Builder());
+  while (currentParameterIndex <= n) {
+    Layout child = currentParameterIndex < n ? parameters.childAtIndex(currentParameterIndex) : Layout();
+    if (currentParameterIndex == n || (child.type() == LayoutNode::Type::CodePointLayout && static_cast<CodePointLayout&>(child).codePoint() == ',')) {
+      // right parenthesis or ',' reached. Add parameter
+      int tempNumberOfEmptyLayoutsToSkip = numberOfEmptyLayoutsToSkip;
+      Layout layoutToReplace;
+      if (isParameteredExpression && numberOfParameters == ParameteredExpression::ParameterChildIndex()) {
+        // This parameter can't be empty
+        layoutToReplace = layoutToModify.childAtIndex(numberOfParameters);
+      } else {
+        if (currentParameter.isEmpty()) {
+          /* Parameter is empty, so it is skipped next time an empty layout
+           * is searched. */
+          numberOfEmptyLayoutsToSkip++;
+        }
+        layoutToReplace = DeepSearchEmptyLayout(layoutToModify, &tempNumberOfEmptyLayoutsToSkip);
+      }
+      if (layoutToReplace.isUninitialized()) {
+        // Too much parameters, cancel beautification
+        return Layout();
+      }
+      if (!currentParameter.isEmpty()) {
+        layoutToReplace.replaceWithInPlace(currentParameter);
+      }
+      numberOfParameters++;
+      currentParameter = HorizontalLayout::Builder(EmptyLayout::Builder());
+    } else {
+      // Add layout to parameter
+      currentParameter.addOrMergeChildAtIndex(child.clone(), currentParameter.numberOfChildren(), false);
+    }
+    currentParameterIndex++;
+  }
+  return layoutToModify;
 }
 
 }

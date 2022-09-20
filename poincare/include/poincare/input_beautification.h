@@ -15,11 +15,13 @@ namespace Poincare {
 
 class InputBeautification {
 public:
- /* Returns the index of the leftest beautified layout in parent
-   * returns -1 if the parent was altered. */
-  static int ApplyBeautification(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText = false);
+  static void ApplyBeautificationBetweenIndexes(Layout parent, int firstIndex, int lastIndex, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText = false, bool forceBeautification = false);
 
 private:
+  /* Returns the index of the leftest beautified layout in parent
+   * returns -1 if the parent was altered. */
+  static int ApplyBeautification(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText, bool forceBeautification);
+
   typedef Layout (*BeautifiedLayoutBuilder) ();
   struct BeautificationRule {
     AliasesList listOfBeautifiedAliases;

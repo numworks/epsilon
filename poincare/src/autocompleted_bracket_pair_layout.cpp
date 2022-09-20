@@ -79,7 +79,7 @@ void AutocompletedBracketPairLayoutNode::makePermanent(Side side) {
   setTemporary(side, false);
 }
 
-void AutocompletedBracketPairLayoutNode::balanceAfterInsertion(Side insertedSide, LayoutCursor * cursor) {
+Layout AutocompletedBracketPairLayoutNode::balanceAfterInsertion(Side insertedSide, LayoutCursor * cursor) {
   assert(cursor);
   Layout thisRef(this);
   makeTemporary(OtherSide(insertedSide), cursor);
@@ -90,6 +90,7 @@ void AutocompletedBracketPairLayoutNode::balanceAfterInsertion(Side insertedSide
     cursor->setPosition(LayoutCursor::Position::Right);
     cursor->setLayout(thisRef);
   }
+  return thisRef;
 }
 
 AutocompletedBracketPairLayoutNode * AutocompletedBracketPairLayoutNode::autocompletedParent() const {

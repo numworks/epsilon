@@ -223,14 +223,18 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
       static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->setInsertionSide(bracketSide);
       m_layout.addSibling(this, newChild, true);
       if (!newChild.parent().isUninitialized()) {
-        static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->balanceAfterInsertion(bracketSide, this);
+        newChild = static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->balanceAfterInsertion(bracketSide, this);
+        if (!firstInsertedChild.isUninitialized() && firstInsertedChild.parent().isUninitialized()) {
+          // firstInsertedChild was altered by balanceAfterInsertion
+          firstInsertedChild = newChild;
+        }
+      } else if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(m_layout.type())) {
+        newChild = m_layout;
       }
     } else {
       m_layout.addSibling(this, newChild, true);
     }
-    if (firstInsertedChild.isUninitialized() && !newChild.parent().isUninitialized()) {
-      /* Parent can be uninitialized if the inserted code point is a parenthesis
-       * that completes a grey parenthesis. */
+    if (firstInsertedChild.isUninitialized()) {
       firstInsertedChild = newChild;
     }
     // Get the next code point
@@ -244,16 +248,20 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     m_position = forceCursorLeftOfText ? Position::Left : Position::Right;
   }
   if (!firstInsertedChild.isUninitialized()) {
-    Layout parent = firstInsertedChild.parent();
-    assert(!parent.isUninitialized());
-    int firstInsertedIndex = parent.indexOfChild(firstInsertedChild);
-    int i = parent.indexOfChild(newChild);
-    while (i >= firstInsertedIndex) {
-      // Beautify from right to left
-      i = InputBeautification::ApplyBeautification(parent.childAtIndex(i), this, context, forceCursorRightOfText);
-      assert(i >= 0);
-      i--;
+    Layout mainParentLayout;
+    // Find the common parent of first and last inserted children
+    TreeHandle mainParentHandle = newChild.commonAncestorWith(firstInsertedChild, false);
+    mainParentLayout = static_cast<Layout&>(mainParentHandle);
+    // Set the first and last insterted children to have the same parent
+    while (firstInsertedChild.parent() != mainParentLayout) {
+      firstInsertedChild = firstInsertedChild.parent();
     }
+    while (newChild.parent() != mainParentLayout) {
+      newChild = newChild.parent();
+    }
+    int firstInsertedIndex = mainParentLayout.indexOfChild(firstInsertedChild);
+    int indexAfterLastInstertedChild = mainParentLayout.indexOfChild(newChild) + 1;
+    InputBeautification::ApplyBeautificationBetweenIndexes(mainParentLayout, firstInsertedIndex, indexAfterLastInstertedChild, this, context, forceCursorRightOfText);
   }
 }
 

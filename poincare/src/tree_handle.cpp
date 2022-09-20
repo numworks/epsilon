@@ -25,13 +25,13 @@ int TreeHandle::indexOfChild(TreeHandle t) const { return node()->indexOfChild(t
 
 bool TreeHandle::hasChild(TreeHandle t) const { return node()->hasChild(t.node()); }
 
-TreeHandle TreeHandle::commonAncestorWith(TreeHandle t) const {
-  if (*(const_cast<TreeHandle *>(this)) == t) {
+TreeHandle TreeHandle::commonAncestorWith(TreeHandle t, bool includeTheseNodes) const {
+  if (includeTheseNodes && *(const_cast<TreeHandle *>(this)) == t) {
     return t;
   }
-  TreeHandle p = *this;
+  TreeHandle p = includeTheseNodes ? *this : parent();
   while (!p.isUninitialized()) {
-    if (t.hasAncestor(p, true)) {
+    if (t.hasAncestor(p, includeTheseNodes)) {
       return p;
     }
     p = p.parent();

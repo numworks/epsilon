@@ -79,7 +79,7 @@ public:
   bool hasChild(TreeHandle t) const;
   bool hasSibling(TreeHandle t) const { return node()->hasSibling(t.node()); }
   bool hasAncestor(TreeHandle t, bool includeSelf) const { return node()->hasAncestor(t.node(), includeSelf); }
-  TreeHandle commonAncestorWith(TreeHandle t) const;
+  TreeHandle commonAncestorWith(TreeHandle t, bool includeTheseNodes = true) const;
   int numberOfChildren() const { return node()->numberOfChildren(); }
   void setNumberOfChildren(int numberOfChildren) { node()->setNumberOfChildren(numberOfChildren); }
   int indexOfChild(TreeHandle t) const;

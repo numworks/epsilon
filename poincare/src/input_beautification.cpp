@@ -2,7 +2,23 @@
 #include "parsing/tokenizer.h"
 
 namespace Poincare {
-int InputBeautification::ApplyBeautification(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText) {
+
+void InputBeautification::ApplyBeautificationBetweenIndexes(Layout parent, int firstIndex, int indexAfterLast, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText, bool forceBeautification) {
+  // Beautify from right to left
+  int i = indexAfterLast - 1;
+  while (i >= firstIndex) {
+    Layout child = parent.childAtIndex(i);
+    if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(child.type())) {
+      Layout horizontalLayoutChild = child.childAtIndex(0);
+      ApplyBeautificationBetweenIndexes(horizontalLayoutChild, 0, horizontalLayoutChild.numberOfChildren(), layoutCursor, context, forceCursorRightOfText, true);
+    }
+    i = InputBeautification::ApplyBeautification(child, layoutCursor, context, forceCursorRightOfText, forceBeautification);
+    assert(i >= 0);
+    i--;
+  }
+}
+
+int InputBeautification::ApplyBeautification(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText, bool forceBeautification) {
   Layout parent = lastAddedLayout.parent();
   assert(!parent.isUninitialized());
   int indexOfLastAddedLayout = parent.indexOfChild(lastAddedLayout);
@@ -19,13 +35,16 @@ int InputBeautification::ApplyBeautification(Layout lastAddedLayout, LayoutCurso
   }
 
   /* From now on, trigger the beautification only if a non-identifier layout
-   * was inputted. */
-  if (lastAddedLayout.type() == LayoutNode::Type::CodePointLayout && Tokenizer::IsIdentifierMaterial(static_cast<CodePointLayout&>(lastAddedLayout).codePoint())) {
+   * was inputted, or if beautification is forced. */
+  if (!forceBeautification && lastAddedLayout.type() == LayoutNode::Type::CodePointLayout && Tokenizer::IsIdentifierMaterial(static_cast<CodePointLayout&>(lastAddedLayout).codePoint())) {
     return indexOfLastAddedLayout;
   }
 
-  // Get the identifiers string preceding this last input.
-  int lastIndexOfIdentifier = indexOfLastAddedLayout - 1;
+  /* Get the identifiers string preceding this last input.
+   * If the beautification is forced, the identifiers string
+   * starts at the last input. This is the case when closing
+   * the parenthesis on (3+4pi for example. */
+  int lastIndexOfIdentifier = forceBeautification ? indexOfLastAddedLayout : indexOfLastAddedLayout - 1;
   if (lastIndexOfIdentifier < 0) {
     return indexOfLastAddedLayout;
   }

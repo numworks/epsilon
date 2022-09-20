@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-class MatrixTraceNode /*final*/ : public ExpressionNode {
+class MatrixTraceNode final : public ExpressionNode {
 public:
   constexpr static AliasesList k_functionName = "trace";
 

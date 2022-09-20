@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class EmptyLayoutNode /*final*/ : public LayoutNode {
+class EmptyLayoutNode final : public LayoutNode {
 public:
   enum class Color : bool {
     Yellow,

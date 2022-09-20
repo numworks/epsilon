@@ -57,7 +57,7 @@ private:
   void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
 };
 
-class MatrixLayout /*final*/ : public GridLayout {
+class MatrixLayout final : public GridLayout {
   friend class MatrixLayoutNode;
 public:
   MatrixLayout(const MatrixLayoutNode * n) : GridLayout(n) {}

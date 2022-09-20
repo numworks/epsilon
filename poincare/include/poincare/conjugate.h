@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class ConjugateNode /*final*/ : public ExpressionNode  {
+class ConjugateNode final : public ExpressionNode  {
 public:
   constexpr static AliasesList k_functionName = "conj";
 

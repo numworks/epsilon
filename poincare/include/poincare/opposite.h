@@ -8,7 +8,7 @@ namespace Poincare {
 
 class Opposite;
 
-class OppositeNode /*final*/ : public ExpressionNode {
+class OppositeNode final : public ExpressionNode {
 public:
   // TreeNode
   size_t size() const override { return sizeof(OppositeNode); }

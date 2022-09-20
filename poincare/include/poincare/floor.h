@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-class FloorNode /*final*/ : public ExpressionNode {
+class FloorNode final : public ExpressionNode {
 public:
   constexpr static AliasesList k_functionName = "floor";
 

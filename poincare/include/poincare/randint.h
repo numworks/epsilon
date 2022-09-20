@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class RandintNode /*final*/ : public ExpressionNodeWithOneOrTwoChildren  {
+class RandintNode final : public ExpressionNodeWithOneOrTwoChildren  {
   friend class Randint;
 public:
   constexpr static AliasesList k_functionName = "randint";

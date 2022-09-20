@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class SquareRootNode /*final*/ : public ExpressionNode  {
+class SquareRootNode final : public ExpressionNode  {
 public:
   constexpr static AliasesList k_functionName = "√";
 

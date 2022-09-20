@@ -9,7 +9,7 @@
 
 namespace Poincare {
 
-class CondensedSumLayoutNode /*final*/ : public LayoutNode {
+class CondensedSumLayoutNode final : public LayoutNode {
 public:
   using LayoutNode::LayoutNode;
 

@@ -169,12 +169,7 @@ bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool for
 }
 
 Layout LayoutNode::makeEditable() {
-  int i = 0;
-  while (i < numberOfChildren()) {
-    childAtIndex(i)->makeEditable();
-    i++;
-  }
-  return Layout(this);
+  return Layout(this).defaultMakeEditable();
 }
 
 // Other

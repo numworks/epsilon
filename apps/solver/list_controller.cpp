@@ -116,7 +116,11 @@ bool textRepresentsAnEquality(const char * text) {
 bool layoutRepresentsAnEquality(Poincare::Layout l) {
   Poincare::Layout match = l.recursivelyMatches(
       [](Poincare::Layout layout) {
-      return layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == '='; });
+        if (layout.type() == Poincare::LayoutNode::Type::PiecewiseOperatorLayout) {
+          return Poincare::TrinaryBoolean::False;
+        }
+        return layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == '=' ? Poincare::TrinaryBoolean::True : Poincare::TrinaryBoolean::Unknown;
+      });
   return !match.isUninitialized();
 }
 

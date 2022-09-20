@@ -46,8 +46,12 @@ int Layout::serializeParsedExpression(char * buffer, int bufferSize, Context * c
 }
 
 Layout Layout::recursivelyMatches(LayoutTest test) const {
-  if (test(*this)) {
+  TrinaryBoolean testResult = test(*this);
+  if (testResult == TrinaryBoolean::True) {
     return *this;
+  }
+  if (testResult == TrinaryBoolean::False) {
+    return Layout();
   }
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
@@ -65,10 +69,10 @@ Layout Layout::XNTLayout() const {
   if (!xntLayout.isUninitialized() && static_cast<size_t>(xntLayout.numberOfDescendants(true)) <= SymbolAbstract::k_maxNameSize && xntLayout.recursivelyMatches(
       [](const Layout l) {
         if (l.type() != LayoutNode::Type::CodePointLayout) {
-          return l.type() != LayoutNode::Type::HorizontalLayout;
+          return l.type() == LayoutNode::Type::HorizontalLayout ? TrinaryBoolean::Unknown :  TrinaryBoolean::True;
         }
         CodePoint c = static_cast<const CodePointLayout&>(l).codePoint();
-        return !(c.isDecimalDigit() || c.isLatinLetter() || c == '_');
+        return (c.isDecimalDigit() || c.isLatinLetter() || c == '_') ? TrinaryBoolean::Unknown : TrinaryBoolean::True;
       } ).isUninitialized()) {
     /* Return xnt if :
      * - it is initialized and only contains horizontal layouts and code points

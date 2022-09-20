@@ -66,12 +66,8 @@ protected:
   virtual bool isEditing() const = 0;
   int indexOfLastNonGrayChildWhenIsEditing() const;
   bool onlyFirstChildIsNonEmpty() const;
-  bool isColumnEmpty(int index) const {
-    return isColumnOrRowEmpty(true, index);
-  }
-  bool isRowEmpty(int index) const {
-    return isColumnOrRowEmpty(false, index);
-  }
+  bool isColumnEmpty(int index) const { return isColumnOrRowEmpty(true, index); }
+  bool isRowEmpty(int index) const { return isColumnOrRowEmpty(false, index); }
   void addEmptyColumn(EmptyLayoutNode::Color color) {
     assert(!numberOfColumnsIsFixed());
     return addEmptyRowOrColumn(true, color);

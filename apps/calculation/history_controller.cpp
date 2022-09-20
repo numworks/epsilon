@@ -23,7 +23,8 @@ HistoryController::HistoryController(EditExpressionController * editExpressionCo
   m_unitController(editExpressionController),
   m_matrixController(editExpressionController),
   m_vectorController(editExpressionController),
-  m_functionController(editExpressionController)
+  m_functionController(editExpressionController),
+  m_scientificNotationListController(editExpressionController)
 {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_calculationHistory[i].setParentResponder(&m_selectableTableView);
@@ -139,6 +140,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
             // input or output is inverse trigonometric function use e as is
             assert(Trigonometry::isInverseTrigonometryFunction(focusInput) || Trigonometry::isInverseTrigonometryFunction(e));
           }
+        } else if (additionalInformations.scientificNotation) {
+          vc = &m_scientificNotationListController;
         } else if (additionalInformations.function) {
           e = focusCalculation->input();
           vc = &m_functionController;

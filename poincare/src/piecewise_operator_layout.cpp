@@ -73,7 +73,11 @@ void PiecewiseOperatorLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Siz
 
   /* Set the right color for the condition if empty.
    * The last condition must be grayed if empty.
-   * Other conditions are yellow if empty. */
+   * Other conditions are yellow if empty.
+   * Every color should be already correctly set except for the last
+   * condition which is yellow instead of gray, and the penultimate
+   * condition which could have been previously set to gray here and should
+   * be set to yellow. */
   int lastRealRowIndex = m_numberOfRows - 1 - static_cast<int>(cursorIsInsideOperator);
   LayoutNode * lastRealCondition = childAtIndex(lastRealRowIndex * 2 + 1);
   if (lastRealCondition->type() == Type::EmptyLayout) {

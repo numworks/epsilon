@@ -262,6 +262,7 @@ public:
   bool isRandom() const;
   bool isParameteredExpression() const;
   bool isCombinationOfUnits() const;
+  bool isUndefined() const { return isOfType({Type::Undefined, Type::Nonreal}); }
   /* childAtIndexNeedsUserParentheses checks if parentheses are required by mathematical rules:
    * +(2,-1) --> 2+(-1)
    * *(+(2,1),3) --> (2+1)*3

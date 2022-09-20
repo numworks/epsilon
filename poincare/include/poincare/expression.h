@@ -166,7 +166,7 @@ public:
   bool isOfType(std::initializer_list<ExpressionNode::Type> types) const { return node()->isOfType(types); }
   TrinaryBoolean isPositive(Context * context) const { return node()->isPositive(context); }
   TrinaryBoolean isNull(Context * context) const { return node()->isNull(context); }
-  bool isUndefined() const { return isOfType({ExpressionNode::Type::Nonreal, ExpressionNode::Type::Undefined}); }
+  bool isUndefined() const { return node()->isUndefined(); }
   bool allChildrenAreUndefined();
   bool isNumber() const { return node()->isNumber(); }
   bool isRationalOne() const;

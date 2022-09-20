@@ -16,11 +16,6 @@ using namespace Escher;
 
 namespace Graph {
 
-constexpr const char * FunctionModelsParameterController::k_models[k_numberOfModels];
-constexpr const char * FunctionModelsParameterController::k_implicitModelWhenForbidden;
-constexpr const char * FunctionModelsParameterController::k_inequationModelWhenForbidden;
-constexpr I18n::Message FunctionModelsParameterController::k_modelDescriptions[k_numberOfExpressionCells];
-
 FunctionModelsParameterController::FunctionModelsParameterController(Responder * parentResponder, void * functionStore, ListController * listController) :
   SelectableListViewController(parentResponder),
   m_emptyModelCell(I18n::Message::Empty),
@@ -82,7 +77,7 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
     int modelIndex = getModelIndex(selectedRow());
     const char * model = modelAtIndex(modelIndex);
     bool success;
-    if (modelIndex != k_indexOfCartesianModel && modelIndex != k_indexOfParametricModel && modelIndex != k_indexOfPolarModel) {
+    if (modelIndex != static_cast<int>(Models::Cartesian) && modelIndex != static_cast<int>(Models::Parametric) && modelIndex != static_cast<int>(Models::Polar)) {
       success = m_listController->editSelectedRecordWithText(model);
     } else {
       /* Model starts with a named function. If that name is already taken, use
@@ -148,14 +143,14 @@ int FunctionModelsParameterController::reusableCellCount(int type) {
 }
 
 int FunctionModelsParameterController::getModelIndex(int row) const {
-  static_assert(k_indexOfInverseModel > k_indexOfInequationModel && k_indexOfConicModel > k_indexOfInequationModel, "Method optimized with model order must be changed.");
-  if (row < k_indexOfInequationModel) {
+  static_assert(static_cast<int>(Models::Inverse) > static_cast<int>(Models::Inequation) && static_cast<int>(Models::Conic) > static_cast<int>(Models::Inequation), "Method optimized with model order must be changed.");
+  if (row < static_cast<int>(Models::Inequation)) {
     // All models before the inequation model are always available
     return row;
   }
   // Skip k_indexOfInequationModel if forbidden
   row += ExamModeConfiguration::inequalityGraphingIsForbidden();
-  if (row <= k_indexOfInequationModel) {
+  if (row <= static_cast<int>(Models::Inequation)) {
     return row;
   }
   // Skip k_indexOfInverseModel and k_indexOfConicModel if forbidden
@@ -164,12 +159,12 @@ int FunctionModelsParameterController::getModelIndex(int row) const {
 }
 
 const char * FunctionModelsParameterController::modelAtIndex(int index) const {
-  assert(index >= 0 && index < k_numberOfModels);
+  assert(index >= 0 && index < static_cast<int>(Models::NumberOfModels));
   if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
-    if (index == k_indexOfImplicitModel) {
+    if (index == static_cast<int>(Models::Implicit)) {
       return k_implicitModelWhenForbidden;
     }
-    if (index == k_indexOfInequationModel) {
+    if (index == static_cast<int>(Models::Inequation)) {
       return k_inequationModelWhenForbidden;
     }
   }

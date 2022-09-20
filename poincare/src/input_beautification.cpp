@@ -90,18 +90,61 @@ int InputBeautification::ApplyBeautification(Layout lastAddedLayout, LayoutCurso
 }
 
 bool InputBeautification::ShouldBeBeautifiedWhenInputted(Layout parent, int indexOfLastAddedLayout, BeautificationRule beautificationRule) {
-  // TODO
-  return false;
+  assert(beautificationRule.listOfBeautifiedAliases.mainAlias() == beautificationRule.listOfBeautifiedAliases);
+  // This does not work with multiple aliases
+  const char * pattern = beautificationRule.listOfBeautifiedAliases.mainAlias();
+  int length = strlen(pattern);
+  if (indexOfLastAddedLayout + 1 < length) {
+    return false;
+  }
+  // Compare the code points inputted with the the pattern
+  for (int i = 0; i < length; i++) {
+    Layout child = parent.childAtIndex(indexOfLastAddedLayout - (length - 1) + i);
+    if (child.type() != LayoutNode::Type::CodePointLayout || static_cast<CodePointLayout&>(child).codePoint() != pattern[i]) {
+      return false;
+    }
+  }
+  return true;
 }
 
 int InputBeautification::CompareAndBeautifyIdentifier(const char * identifier, size_t identifierLength, BeautificationRule beautificationRule, Layout parent, int startIndex, int * numberOfLayoutsAddedOrRemoved, LayoutCursor * layoutCursor, bool isBeautifyingFunction, bool forceCursorRightOfText) {
-  // TODO
-  return 1;
+  if (isBeautifyingFunction) {
+    // TODO
+    return -1;
+  }
+  AliasesList patternAliases = beautificationRule.listOfBeautifiedAliases;
+  int comparison = patternAliases.maxDifferenceWith(identifier, identifierLength);
+  if (comparison == 0) {
+    *numberOfLayoutsAddedOrRemoved = RemoveLayoutsBetweenIndexAndReplaceWithPattern(parent, startIndex, startIndex + identifierLength - 1, beautificationRule, layoutCursor, isBeautifyingFunction, forceCursorRightOfText);
+  }
+  return comparison;
 }
 
-int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout parent, int startIndex, int indexAfterLast, BeautificationRule beautificationRule, LayoutCursor * layoutCursor, bool isBeautifyingFunction, bool forceCursorRightOfText) {
-  // TODO
-  return 0;
+int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout parent, int startIndex, int endIndex, BeautificationRule beautificationRule, LayoutCursor * layoutCursor, bool isBeautifyingFunction, bool forceCursorRightOfText) {
+  int currentNumberOfChildren = parent.numberOfChildren();
+  // Create pattern layout
+  Layout inserted = beautificationRule.layoutBuilder();
+  if (isBeautifyingFunction) {
+    // TODO
+    return 0;
+  }
+  // Remove layout
+  LayoutCursor tempCursor = layoutCursor->clone(); // avoid altering the cursor by cloning it.
+  for (int i = endIndex; i >= startIndex; i--) {
+    parent.removeChildAtIndex(i, &tempCursor, true);
+  }
+  if (!forceCursorRightOfText && isBeautifyingFunction) {
+    // Put the cursor inside the beautified function.
+    // TODO
+  }
+  // Replace input with pattern
+  tempCursor.addLayoutAndMoveCursor(inserted);
+  if (layoutCursor->layout().isUninitialized() || !layoutCursor->layout().hasAncestor(parent, true)) {
+    // Pointed layout has been deleted by beautification. Use the temp cursor.
+    layoutCursor->setLayout(tempCursor.layout());
+    layoutCursor->setPosition(tempCursor.position());
+  }
+  return parent.numberOfChildren() - currentNumberOfChildren;
 }
 
 }

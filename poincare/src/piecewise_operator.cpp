@@ -42,9 +42,9 @@ Evaluation<T> PiecewiseOperatorNode::templatedApproximate(const ApproximationCon
   assert(n > 0);
   int i = 0;
   while (i + 1 < n) {
-    Evaluation<T> result = childAtIndex(i)->approximate(T(), approximationContext);
     Evaluation<T> condition = childAtIndex(i + 1)->approximate(T(), approximationContext);
     if (condition.type() == EvaluationNode<T>::Type::BooleanEvaluation && static_cast<BooleanEvaluation<T>&>(condition).value()) {
+      Evaluation<T> result = childAtIndex(i)->approximate(T(), approximationContext);
       return result;
     }
     i += 2;

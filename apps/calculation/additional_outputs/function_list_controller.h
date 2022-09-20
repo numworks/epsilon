@@ -14,6 +14,7 @@ public:
     IllustratedExpressionsListController(editExpressionController),
     m_graphCell(&m_model) {}
   void setExpression(Poincare::Expression e) override;
+  void viewDidDisappear() override;
 private:
   static constexpr CodePoint k_symbol = 'x';
   static constexpr char k_symbolChar[] = {k_symbol, 0};

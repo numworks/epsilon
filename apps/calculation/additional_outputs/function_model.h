@@ -13,6 +13,9 @@ public:
   Poincare::Expression function() const { return m_function; }
   float abscissa() const { return m_abscissa; }
   float ordinate() const { return m_ordinate; }
+  /* Since additional results are opened in a UserCircuitBreakerCheckpoint, we
+   * need to clean all calculated expressions when closing it. */
+  void tidy() { m_function = Poincare::Expression(); }
 private:
   // Margin used to separate the drawings from the curve view's border
   constexpr static int k_marginInPixels = 12;

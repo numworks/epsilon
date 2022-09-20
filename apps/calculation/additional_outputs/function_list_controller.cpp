@@ -54,6 +54,11 @@ void FunctionListController::setExpression(Poincare::Expression e) {
   preferences->setComplexFormat(currentComplexFormat);
 }
 
+void FunctionListController::viewDidDisappear() {
+  ExpressionsListController::viewDidDisappear();
+  m_model.tidy();
+}
+
 I18n::Message FunctionListController::messageAtIndex(int index) {
   // Message index is mapped in setExpression because it depends on the Matrix.
   assert(index < k_maxNumberOfOutputRows && index >=0);

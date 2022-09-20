@@ -82,6 +82,7 @@ private:
     &Derivative::s_functionHelper, // diff
     &Dimension::s_functionHelper, // dim
     &VectorDot::s_functionHelper, // dot
+    &Power::s_exponentialFunctionHelper, // exp
     &Factor::s_functionHelper, // fact
     &Floor::s_functionHelper, // floor
     &FracPart::s_functionHelper, // frac

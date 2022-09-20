@@ -1216,6 +1216,11 @@ void Power::AddPowerToListOfDependenciesIfNeeded(Expression e, Power compareTo, 
   }
 }
 
+Expression Power::ExponentialBuilder(Expression children) {
+  assert(children.type() == ExpressionNode::Type::List);
+  return Builder(Constant::Builder("e"), children.childAtIndex(0));
+}
+
 // Private
 
 // Simplification

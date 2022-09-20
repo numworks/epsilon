@@ -99,6 +99,10 @@ public:
   DependencyType typeOfDependency(const ExpressionNode::ReductionContext& reductionContext) const;
   static void AddPowerToListOfDependenciesIfNeeded(Expression e, Power compareTo, List l, const ExpressionNode::ReductionContext& reductionContext, bool clone);
 
+  constexpr static AliasesList k_exponentialName = "exp";
+  static Expression ExponentialBuilder(Expression children);
+  constexpr static Expression::FunctionHelper s_exponentialFunctionHelper = Expression::FunctionHelper(k_exponentialName, 1, &ExponentialBuilder);
+
 private:
   constexpr static int k_maxExactPowerMatrix = 100;
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;

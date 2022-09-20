@@ -14,6 +14,7 @@
 namespace Poincare {
 
 class Tokenizer {
+  friend class InputBeautification;
 public:
   Tokenizer(const char * text, ParsingContext * parsingContext, const char * textEnd = nullptr) :
     m_decoder(text, text, textEnd),

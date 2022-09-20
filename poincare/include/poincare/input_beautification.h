@@ -37,6 +37,7 @@ private:
     {"->", []() { return static_cast<Layout>(CodePointLayout::Builder(UCodePointRightwardsArrow)); }},
     {"*", []() { return static_cast<Layout>(CodePointLayout::Builder(UCodePointMultiplicationSign)); }},
   };
+  static bool ShouldBeBeautifiedWhenInputted(Layout parent, int indexOfLastAddedLayout, BeautificationRule beautificationRule);
 
   constexpr static BeautificationRule k_derivativeFractionRule = {""/* Name does not matter here */, []() { return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder())); }};
 
@@ -73,6 +74,11 @@ private:
     {NthRoot::s_functionHelper.aliasesList(), []() { return static_cast<Layout>(NthRootLayout::Builder(EmptyLayout::Builder(), EmptyLayout::Builder())); }},
     {SquareRoot::s_functionHelper.aliasesList(), []() { return static_cast<Layout>(NthRootLayout::Builder(EmptyLayout::Builder())); }},
   };
+  // Returns result of comparison
+  static int CompareAndBeautifyIdentifier(const char * identifier, size_t identifierLength, BeautificationRule beautificationRule, Layout parent, int startIndex, int * numberOfLayoutsAddedOrRemoved, LayoutCursor * layoutCursor, bool isBeautifyingFunction, bool forceCursorRightOfText);
+
+  // Returns the number of layouts added or removed
+  static int RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout parent, int startIndex, int endIndex, BeautificationRule beautificationRule, LayoutCursor * layoutCursor, bool isBeautifyingFunction, bool forceCursorRightOfText);
 };
 
 }

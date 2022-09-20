@@ -9,7 +9,7 @@ namespace Poincare {
 
 class SquareRootNode final : public ExpressionNode  {
 public:
-  constexpr static AliasesList k_functionName = "√";
+  constexpr static AliasesList k_functionName = AliasesLists::k_squareRootAliases;
 
   // ExpressionNode
   TrinaryBoolean isPositive(Context * context) const override {

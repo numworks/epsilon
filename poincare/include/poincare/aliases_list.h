@@ -96,6 +96,8 @@ namespace AliasesLists {
   constexpr static AliasesList k_acosAliases = "\01arccos\00acos\00";
   constexpr static AliasesList k_asinAliases = "\01arcsin\00asin\00";
   constexpr static AliasesList k_atanAliases = "\01arctan\00atan\00";
+  // Other functions
+  constexpr static AliasesList k_squareRootAliases = "\01√\00sqrt\00";
 }
 
 }

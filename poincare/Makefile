@@ -1,7 +1,6 @@
 SFLAGS += -Ipoincare/include
 
 poincare_src += $(addprefix poincare/src/,\
-  aliases_list.cpp \
   autocompleted_bracket_pair_layout.cpp \
   binomial_coefficient_layout.cpp \
   bracket_pair_layout.cpp \
@@ -36,6 +35,7 @@ poincare_src += $(addprefix poincare/src/,\
 )
 
 poincare_src += $(addprefix poincare/src/,\
+  aliases_list.cpp \
   beta_function.cpp \
   binomial_distribution.cpp \
   cdf_method.cpp \
@@ -55,6 +55,7 @@ poincare_src += $(addprefix poincare/src/,\
   helpers.cpp \
   hypergeometric_distribution.cpp \
   init.cpp \
+  input_beautification.cpp \
   inv_method.cpp \
   normal_distribution.cpp \
   pdf_method.cpp \

@@ -62,7 +62,7 @@ public:
   int rightCollapsingAbsorbingChildIndex() const { return const_cast<Layout *>(this)->node()->rightCollapsingAbsorbingChildIndex(); }
   bool hasText() { return node()->hasText(); }
   Layout XNTLayout() const;
-  bool displayEmptyLayouts() const { return type() == LayoutNode::Type::ParenthesisLayout || type() == LayoutNode::Type::CurlyBraceLayout; }
+  bool displayEmptyLayouts() const;
 
   // Layout modification
   void deleteBeforeCursor(LayoutCursor * cursor) { return node()->deleteBeforeCursor(cursor); }

@@ -170,8 +170,7 @@ LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * corre
   if (correspondingExpression->isUninitialized() || correspondingExpression->numberOfChildren() > 0) {
     Layout layoutToPointTo = Layout(this).recursivelyMatches(
       [](Poincare::Layout layout) {
-        return layout.type() == LayoutNode::Type::ParenthesisLayout
-            || layout.type() == LayoutNode::Type::CurlyBraceLayout
+        return AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(layout.type())
             || layout.isEmpty() ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
       }
     );
@@ -380,7 +379,7 @@ void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * curso
 }
 
 static void makePermanentIfBracket(LayoutNode * l, bool hasLeftSibling, bool hasRightSibling) {
-  if (l->type() == LayoutNode::Type::ParenthesisLayout || l->type() == LayoutNode::Type::CurlyBraceLayout) {
+  if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(l->type())) {
     AutocompletedBracketPairLayoutNode * bracket = static_cast<AutocompletedBracketPairLayoutNode *>(l);
     if (hasLeftSibling) {
       bracket->makePermanent(AutocompletedBracketPairLayoutNode::Side::Left);

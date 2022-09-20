@@ -8,6 +8,8 @@ namespace Poincare {
 
 class AutocompletedBracketPairLayoutNode : public BracketPairLayoutNode {
 public:
+  static bool IsAutoCompletedBracketPairType(Type type) { return type == LayoutNode::Type::ParenthesisLayout || type == LayoutNode::Type::CurlyBraceLayout; }
+
   enum class Side : uint8_t {
     Left = 0,
     Right = 1,

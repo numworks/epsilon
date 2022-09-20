@@ -219,7 +219,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
       // Point to first non empty codePoint inserted
       pointedChild = newChild;
     }
-    if (newChild.type() == LayoutNode::Type::ParenthesisLayout || newChild.type() == LayoutNode::Type::CurlyBraceLayout) {
+    if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(newChild.type())) {
       static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->setInsertionSide(bracketSide);
       m_layout.addSibling(this, newChild, true);
       if (!newChild.parent().isUninitialized()) {
@@ -492,7 +492,7 @@ Layout LayoutCursor::bracketsEncompassingCursor(Layout equivalentLayout) const {
   }
   if (!h.isUninitialized()) {
     Layout p = h.parent();
-    if (!p.isUninitialized() && (p.type() == LayoutNode::Type::ParenthesisLayout || p.type() == LayoutNode::Type::CurlyBraceLayout)) {
+    if (!p.isUninitialized() && (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(p.type()))) {
       return p;
     }
   }

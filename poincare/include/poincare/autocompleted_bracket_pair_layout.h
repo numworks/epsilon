@@ -26,7 +26,7 @@ public:
 
   bool isTemporary(Side side) const { return side == Side::Left ? m_leftIsTemporary : m_rightIsTemporary; }
   void setTemporary(Side side, bool temporary);
-  void balanceAfterInsertion(Side insertedSide, LayoutCursor * cursor);
+  Layout balanceAfterInsertion(Side insertedSide, LayoutCursor * cursor);
   void makePermanent(Side side);
   void setInsertionSide(Side side) { m_insertedAs = side; }
 

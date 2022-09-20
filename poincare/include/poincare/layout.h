@@ -4,6 +4,7 @@
 #include <poincare/context.h>
 #include <poincare/layout_node.h>
 #include <poincare/tree_handle.h>
+#include <poincare/trinary_boolean.h>
 #include <escher/palette.h>
 
 namespace Poincare {
@@ -49,7 +50,9 @@ public:
   int serializeParsedExpression(char * buffer, int bufferSize, Context * context) const;
 
   // Layout properties
-  typedef bool (*LayoutTest)(const Layout l);
+  /* Return True if the layout succeeded the test, Unknown if its children
+   * could succeed, and False if the recursion should stop. */
+  typedef TrinaryBoolean (*LayoutTest)(const Layout l);
   Layout recursivelyMatches(LayoutTest test) const;
   bool mustHaveLeftSibling() const { return const_cast<Layout *>(this)->node()->mustHaveLeftSibling(); }
   bool isEmpty() const { return const_cast<Layout *>(this)->node()->isEmpty(); }

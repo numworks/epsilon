@@ -172,7 +172,7 @@ LayoutNode * HorizontalLayoutNode::layoutToPointWhenInserting(Expression * corre
       [](Poincare::Layout layout) {
         return layout.type() == LayoutNode::Type::ParenthesisLayout
             || layout.type() == LayoutNode::Type::CurlyBraceLayout
-            || layout.isEmpty();
+            || layout.isEmpty() ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
       }
     );
     if (!layoutToPointTo.isUninitialized()) {

@@ -78,12 +78,17 @@ bool ListController::layoutRepresentsAnEquation(Poincare::Layout l) const {
   Poincare::Layout match = l.recursivelyMatches(
       [](Poincare::Layout layout) {
       constexpr size_t k_numberOfSymbols = sizeof(k_equationSymbols)/sizeof(CodePoint);
-      for (size_t i = 0; i < k_numberOfSymbols; i++) {
-        if (layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == k_equationSymbols[i]) {
-          return true;
+      if (layout.type() == Poincare::LayoutNode::Type::PiecewiseOperatorLayout) {
+        return Poincare::TrinaryBoolean::False;
+      }
+      if (layout.type() == Poincare::LayoutNode::Type::CodePointLayout) {
+        for (size_t i = 0; i < k_numberOfSymbols; i++) {
+          if(static_cast<Poincare::CodePointLayout &>(layout).codePoint() == k_equationSymbols[i]) {
+          return Poincare::TrinaryBoolean::True;
+          }
         }
       }
-      return false;
+      return Poincare::TrinaryBoolean::Unknown;
     });
   return !match.isUninitialized();
 }
@@ -92,7 +97,7 @@ bool ListController::layoutRepresentsAnEquation(Poincare::Layout l) const {
 bool ListController::layoutRepresentsPolarFunction(Poincare::Layout l) const {
   Poincare::Layout match = l.recursivelyMatches(
     [](Poincare::Layout layout) {
-      return layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == ContinuousFunction::k_polarSymbol;
+      return layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == ContinuousFunction::k_polarSymbol ? Poincare::TrinaryBoolean::True : Poincare::TrinaryBoolean::Unknown;
     });
   return !match.isUninitialized();
 }

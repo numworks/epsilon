@@ -40,6 +40,10 @@ int SymbolAbstractNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 
 template <typename T, typename U>
 T SymbolAbstract::Builder(const char * name, int length) {
+  if (AliasesLists::k_thetaAliases.contains(name, length)) {
+    name = AliasesLists::k_thetaAliases.mainAlias();
+    length = strlen(name);
+  }
   size_t size = sizeof(U) + length + 1;
   void * bufferNode = TreePool::sharedPool()->alloc(size);
   U * node = new (bufferNode) U(name, length);

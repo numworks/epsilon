@@ -370,6 +370,9 @@ Token::Type Tokenizer::stringTokenType(const char * string, size_t * length) con
   if (Constant::IsConstant(string, *length)) {
     return Token::Constant;
   }
+  if (AliasesLists::k_thetaAliases.contains(string, *length)) {
+    return Token::CustomIdentifier;
+  }
   Token::Type logicalOperatorType;
   if (ParsingHelper::IsLogicalOperator(string, *length, &logicalOperatorType)) {
     return logicalOperatorType;

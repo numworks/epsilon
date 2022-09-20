@@ -43,19 +43,16 @@ Layout ListNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
 }
 
 // Helper functions
-int ListNode::extremumIndex(const ApproximationContext& approximationContext, bool minimum, bool returnMinusOneIfUndef) {
+int ListNode::extremumIndex(const ApproximationContext& approximationContext, bool minimum, bool returnMinusOneIfCantApproximate) {
   int numberOfElements = numberOfChildren();
-  int returnIndex = 0;
-  if (numberOfElements == 0) {
-    return -1;
-  }
-  float currentExtremumValue = childAtIndex(0)->approximate(static_cast<float>(0), approximationContext).toScalar();
-  if (returnMinusOneIfUndef && std::isnan(currentExtremumValue)) {
-    return -1;
-  }
-  for (int i = 1; i < numberOfElements; i++) {
-    float newValue = childAtIndex(i)->approximate(static_cast<float>(0), approximationContext).toScalar();
-    if (returnMinusOneIfUndef && std::isnan(newValue)) {
+  float currentExtremumValue = NAN;
+  int returnIndex = -1;
+  for (int i = 0; i < numberOfElements; i++) {
+    ExpressionNode * child = childAtIndex(i);
+    float newValue = child->approximate(static_cast<float>(0), approximationContext).toScalar();
+    /* Return -1 if the child approximation is undef but the child is not
+     * directly the expression "undef" or "nonreal" */
+    if (returnMinusOneIfCantApproximate && !child->isUndefined() && std::isnan(newValue)) {
       return -1;
     }
     bool newIsGreater = Helpers::FloatIsGreater(newValue, currentExtremumValue, minimum);

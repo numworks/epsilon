@@ -29,8 +29,12 @@ Expression ListMedian::shallowReduce(ExpressionNode::ReductionContext reductionC
     Expression listChild = childAtIndex(k);
     int n = listChild.numberOfChildren();
     for (int i = 0; i < n; i++) {
+      if (listChild.childAtIndex(i).isUndefined()) {
+        return replaceWithUndefinedInPlace();
+      }
       if (std::isnan(listChild.childAtIndex(i).node()->approximate(0.0f, approximationContext).toScalar())) {
-        // One of the children is undef, let approximation handle this
+        /* One of the children can't be approximated for now, but could be
+         * later: let approximation handle this */
         return *this;
       }
     }

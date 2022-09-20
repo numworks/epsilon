@@ -1925,14 +1925,16 @@ QUIZ_CASE(poincare_simplification_list) {
   // Minimum of a list
   assert_parsed_expression_simplify_to("min({})", Undefined::Name());
   assert_parsed_expression_simplify_to("min({1,2,3})", "1");
-  // Do not simplify when undef value
-  assert_parsed_expression_simplify_to("min({3,undef,-2})", "min({3,undef,-2})");
+  assert_parsed_expression_simplify_to("min({3,undef,-2})", "-2");
+  // Do not simplify when a value can't be approximated
+  assert_parsed_expression_simplify_to("min({3,x,-2})", "min({3,x,-2})");
   assert_parsed_expression_simplify_to("min({3,-inf,-2})", "-inf");
   // Maximum of a list
   assert_parsed_expression_simplify_to("max({})", Undefined::Name());
   assert_parsed_expression_simplify_to("max({1,2,3})", "3");
-  // Do not simplify when undef value
-  assert_parsed_expression_simplify_to("max({3,undef,-2})", "max({3,undef,-2})");
+  assert_parsed_expression_simplify_to("max({3,undef,-2})", "3");
+  // Do not simplify when a value can't be approximated
+  assert_parsed_expression_simplify_to("max({3,x,-2})", "max({3,x,-2})");
   assert_parsed_expression_simplify_to("max({3,inf,-2})", "inf");
   // Variance of a list
   assert_parsed_expression_simplify_to("var({})", Undefined::Name());
@@ -1954,11 +1956,13 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("med({1})", "1");
   assert_parsed_expression_simplify_to("med({4,2,3,1,6})", "3");
   assert_parsed_expression_simplify_to("med({1,6,3,4,5,2})", "7/2");
-  // Do not reduce if a child is undef
-  assert_parsed_expression_simplify_to("med({1,undef,2,3})","med({1,undef,2,3})");
+  assert_parsed_expression_simplify_to("med({1,undef,2,3})","undef");
+  // Do not reduce if a child can't be approximated
+  assert_parsed_expression_simplify_to("med({1,x,2,3})","med({1,x,2,3})");
   assert_parsed_expression_simplify_to("med({1,6,3,4,5,2},{1,2,1,1,2,2})", "4");
-  // Do not reduce if a child is undef
-  assert_parsed_expression_simplify_to("med({1,6,3},{1,1,undef})", "med({1,6,3},{1,1,undef})");
+  assert_parsed_expression_simplify_to("med({1,6,3},{1,1,undef})", "undef");
+  // Do not reduce if a child can't be approximated
+  assert_parsed_expression_simplify_to("med({1,6,3},{1,1,x})", "med({1,6,3},{1,1,x})");
   // List sequences
   assert_parsed_expression_simplify_to("sequence(1,k,1)", "{1}");
   assert_parsed_expression_simplify_to("sequence(k,k,10)", "{1,2,3,4,5,6,7,8,9,10}");

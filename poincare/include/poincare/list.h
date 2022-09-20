@@ -33,7 +33,7 @@ public:
   Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
 
   // Helper functions
-  int extremumIndex(const ApproximationContext& approximationContext, bool minimum, bool returnMinusOneIfUndef);
+  int extremumIndex(const ApproximationContext& approximationContext, bool minimum, bool returnMinusOneIfCantApproximate);
   template <typename T> Evaluation<T> extremumApproximation(const ApproximationContext& approximationContext, bool minimum);
   template<typename T> Evaluation<T> sumOfElements(const ApproximationContext& approximationContext);
   template<typename T> Evaluation<T> productOfElements(const ApproximationContext& approximationContext);

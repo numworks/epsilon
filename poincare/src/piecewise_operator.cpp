@@ -38,25 +38,33 @@ Expression PiecewiseOperatorNode::shallowReduce(const ReductionContext& reductio
 template<typename T>
 Evaluation<T> PiecewiseOperatorNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   // TODO: Distribute on lists
+  int i = indexOfFirstTrueCondition(approximationContext);
+  if (i < 0) {
+    return Complex<T>::Undefined();
+  }
+  return childAtIndex(i)->approximate(T(), approximationContext);
+}
+
+int PiecewiseOperatorNode::indexOfFirstTrueCondition(const ApproximationContext& approximationContext) const {
   int n = numberOfChildren();
   assert(n > 0);
   int i = 0;
   while (i + 1 < n) {
-    Evaluation<T> condition = childAtIndex(i + 1)->approximate(T(), approximationContext);
-    if (condition.type() == EvaluationNode<T>::Type::BooleanEvaluation && static_cast<BooleanEvaluation<T>&>(condition).value()) {
-      Evaluation<T> result = childAtIndex(i)->approximate(T(), approximationContext);
-      return result;
+    Evaluation<float> condition = childAtIndex(i + 1)->approximate(float(), approximationContext);
+    if (condition.type() == EvaluationNode<float>::Type::BooleanEvaluation && static_cast<BooleanEvaluation<float>&>(condition).value()) {
+      return i;
     }
     i += 2;
   }
   if (i < n) {
     // Last child has no condition and every other condition is false
     assert(n % 2 == 1 && i == n - 1);
-    return childAtIndex(i)->approximate(T(), approximationContext);
+    return i;
   }
   // Every condition is false.
-  return Complex<T>::Undefined();
+  return -1;
 }
+
 
 Expression PiecewiseOperator::UntypedBuilder(Expression children) {
   assert(children.type() == ExpressionNode::Type::List);
@@ -119,20 +127,8 @@ int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(const char * 
   assert(n > 0);
   VariableContext variableContext = VariableContext(symbol, context);
   variableContext.setApproximationForVariable<float>(x);
-  int i = 0;
-  while (i + 1 < n) {
-    Evaluation<float> conditionEvalution = childAtIndex(i + 1).approximateToEvaluation<float>(&variableContext, complexFormat, angleUnit);
-    if (conditionEvalution.type() == EvaluationNode<float>::Type::BooleanEvaluation && static_cast<BooleanEvaluation<float>&>(conditionEvalution).value()) {
-      return i / 2;
-    }
-    i += 2;
-  }
-  if (i < n) {
-    // Last child has no condition and every other condition is false
-    assert(n % 2 == 1 && i == n - 1);
-    return i / 2;
-  }
-  return -1;
+  ExpressionNode::ApproximationContext approximationContext = ExpressionNode::ApproximationContext(&variableContext, complexFormat, angleUnit);
+  return static_cast<PiecewiseOperatorNode *>(node())->indexOfFirstTrueCondition(approximationContext);
 }
 
 template Evaluation<float> PiecewiseOperatorNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;

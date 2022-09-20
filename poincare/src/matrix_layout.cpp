@@ -81,7 +81,7 @@ bool MatrixLayoutNode::isEditing() const {
   if (numberOfChildren() == 0) {
     return false;
   }
-  LayoutNode * lastChild = const_cast<MatrixLayoutNode *>(this)->childAtIndex(m_numberOfRows * m_numberOfColumns - 1);
+  LayoutNode * lastChild = childAtIndex(m_numberOfRows * m_numberOfColumns - 1);
   return lastChild->type() == Type::EmptyLayout && static_cast<EmptyLayoutNode *>(lastChild)->color() == EmptyLayoutNode::Color::Gray;
 }
 

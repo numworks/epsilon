@@ -41,7 +41,7 @@ void PiecewiseOperatorLayoutNode::stopEditing() {
 
 bool PiecewiseOperatorLayoutNode::isEditing() const {
   assert(numberOfColumns() == 2);
-  LayoutNode * firstElementOfLastRow = const_cast<PiecewiseOperatorLayoutNode *>(this)->childAtIndex(numberOfChildren() - 2);
+  LayoutNode * firstElementOfLastRow = childAtIndex(numberOfChildren() - 2);
   return firstElementOfLastRow->type() == Type::EmptyLayout && (static_cast<EmptyLayoutNode *>(firstElementOfLastRow))->color() == EmptyLayoutNode::Color::Gray;
 }
 
@@ -60,7 +60,7 @@ KDSize PiecewiseOperatorLayoutNode::computeSize(KDFont::Size font) {
 
 KDPoint PiecewiseOperatorLayoutNode::positionOfChild(LayoutNode * l, KDFont::Size font) {
   assert(indexOfChild(l) >= 0);
-  return GridLayoutNode::positionOfChild(l, font).translatedBy(KDPoint(KDPoint(CurlyBraceLayoutNode::k_curlyBraceWidth, CurlyBraceLayoutNode::k_lineThickness)));
+  return GridLayoutNode::positionOfChild(l, font).translatedBy(KDPoint(CurlyBraceLayoutNode::k_curlyBraceWidth, CurlyBraceLayoutNode::k_lineThickness));
 }
 
 KDCoordinate PiecewiseOperatorLayoutNode::computeBaseline(KDFont::Size font) {

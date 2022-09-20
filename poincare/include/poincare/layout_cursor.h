@@ -116,7 +116,7 @@ public:
   void addEmptySquarePowerLayout();
   void addEmptyTenPowerLayout();
   void addFractionLayoutAndCollapseSiblings();
-  void insertText(const char * text, bool forceCursorRightOfText = false, bool forceCursorLeftOfText = false);
+  void insertText(const char * text, Context * context = nullptr, bool forceCursorRightOfText = false, bool forceCursorLeftOfText = false);
   void addLayoutAndMoveCursor(Layout l);
   bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }
   bool hideEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(false); }

@@ -14,6 +14,10 @@
 namespace Poincare {
 
 class InputBeautification {
+public:
+ /* Returns the index of the leftest beautified layout in parent
+   * returns -1 if the parent was altered. */
+  static int ApplyBeautification(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText = false);
 
 private:
   typedef Layout (*BeautifiedLayoutBuilder) ();

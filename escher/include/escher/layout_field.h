@@ -73,6 +73,7 @@ private:
   void scrollToBaselinedRect(KDRect rect, KDCoordinate baseline);
   void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout = false, bool forceCursorLeftOfText = false);
   bool eventShouldUpdateInsertionCursor(Ion::Events::Event event) { return event == m_insertionCursorEvent; }
+  Poincare::Context * delegateContext() { return m_delegate ? m_delegate->context() : nullptr; }
 
   class ContentView : public View {
   public:

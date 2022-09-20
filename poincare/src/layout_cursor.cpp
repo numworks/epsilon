@@ -4,6 +4,7 @@
 #include <poincare/empty_layout.h>
 #include <poincare/fraction_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/input_beautification.h>
 #include <poincare/layout.h>
 #include <poincare/parenthesis_layout.h>
 #include <poincare/matrix_layout.h>
@@ -184,9 +185,10 @@ void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
   Layout(newChild.node()).collapseSiblings(this);
 }
 
-void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bool forceCursorLeftOfText) {
+void LayoutCursor::insertText(const char * text, Context * context, bool forceCursorRightOfText, bool forceCursorLeftOfText) {
   Layout newChild;
   Layout pointedChild;
+  Layout firstInsertedChild;
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
   if (codePoint == UCodePointNull) {
@@ -217,7 +219,6 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bo
       // Point to first non empty codePoint inserted
       pointedChild = newChild;
     }
-
     if (newChild.type() == LayoutNode::Type::ParenthesisLayout || newChild.type() == LayoutNode::Type::CurlyBraceLayout) {
       static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->setInsertionSide(bracketSide);
       m_layout.addSibling(this, newChild, true);
@@ -227,7 +228,11 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bo
     } else {
       m_layout.addSibling(this, newChild, true);
     }
-
+    if (firstInsertedChild.isUninitialized() && !newChild.parent().isUninitialized()) {
+      /* Parent can be uninitialized if the inserted code point is a parenthesis
+       * that completes a grey parenthesis. */
+      firstInsertedChild = newChild;
+    }
     // Get the next code point
     codePoint = decoder.nextCodePoint();
     while (codePoint.isCombining()) {
@@ -237,6 +242,18 @@ void LayoutCursor::insertText(const char * text, bool forceCursorRightOfText, bo
   if (!forceCursorRightOfText && !pointedChild.isUninitialized() && !pointedChild.parent().isUninitialized()) {
     m_layout = pointedChild;
     m_position = forceCursorLeftOfText ? Position::Left : Position::Right;
+  }
+  if (!firstInsertedChild.isUninitialized()) {
+    Layout parent = firstInsertedChild.parent();
+    assert(!parent.isUninitialized());
+    int firstInsertedIndex = parent.indexOfChild(firstInsertedChild);
+    int i = parent.indexOfChild(newChild);
+    while (i >= firstInsertedIndex) {
+      // Beautify from right to left
+      i = InputBeautification::ApplyBeautification(parent.childAtIndex(i), this, context, forceCursorRightOfText);
+      assert(i >= 0);
+      i--;
+    }
   }
 }
 

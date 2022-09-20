@@ -262,12 +262,17 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     return AdditionalInformations {.trigonometry = true};
   }
   if (o.hasUnit()) {
+    AdditionalInformations additionalInformations;
+    if (!isComplex && preferences->displayMode() != Preferences::PrintFloatMode::Scientific) {
+      additionalInformations.scientificNotation = true;
+    }
     Expression unit;
     PoincareHelpers::ReduceAndRemoveUnit(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User, &unit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
     double value = PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
     if (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences()->unitFormat())
         || UnitComparison::ShouldDisplayUnitComparison(value, unit)) {
-      return AdditionalInformations {.unit = true};
+      additionalInformations.unit = true;
+      return additionalInformations;
     }
     return AdditionalInformations {};
   }
@@ -281,6 +286,9 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     return AdditionalInformations {.complex = true};
   }
   AdditionalInformations additionalInformations = {};
+  if (!isComplex && preferences->displayMode() != Preferences::PrintFloatMode::Scientific) {
+    additionalInformations.scientificNotation = true;
+  }
   // We want a single numerical value and to avoid showing the identity function
   bool isInterestingFunction = !i.isNumber() && i.type() != ExpressionNode::Type::ConstantMaths && !(i.type() == ExpressionNode::Type::Opposite && (i.childAtIndex(0).isNumber() || i.childAtIndex(0).type() == ExpressionNode::Type::ConstantMaths));
   assert(!a.isUndefined());

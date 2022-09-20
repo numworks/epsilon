@@ -11,6 +11,7 @@
 #include "additional_outputs/trigonometry_list_controller.h"
 #include "additional_outputs/unit_list_controller.h"
 #include "additional_outputs/matrix_list_controller.h"
+#include "additional_outputs/scientific_notation_list_controller.h"
 #include "additional_outputs/vector_list_controller.h"
 
 namespace Calculation {
@@ -53,6 +54,7 @@ private:
   MatrixListController m_matrixController;
   VectorListController m_vectorController;
   FunctionListController m_functionController;
+  ScientificNotationListController m_scientificNotationListController;
 };
 
 }

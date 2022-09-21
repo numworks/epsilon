@@ -17,11 +17,17 @@ class InputBeautification {
 public:
   static void ApplyBeautificationBetweenIndexes(Layout parent, int firstIndex, int lastIndex, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText = false, bool forceBeautification = false);
 
-private:
-  /* Returns the index of the leftest beautified layout in parent
+  /* Will apply "convertWhenInputted" rules on lastAddedLayout
+   * Will apply "convertWhenFollowedByANonIdentifierChar" and
+   * "convertWhenFollowedByParentheses" to layouts left of lastAddedLayout,
+   * except if forceBeautification = true. In this case, these are also
+   * applied to lastAddedLayout.
+   *
+   * Returns the index of the leftest beautified layout in parent
    * returns -1 if the parent was altered. */
-  static int ApplyBeautification(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText, bool forceBeautification);
+  static int ApplyBeautificationLeftOfLastAddedLayout(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText = false, bool forceBeautification = false);
 
+private:
   typedef Layout (*BeautifiedLayoutBuilder) ();
   struct BeautificationRule {
     AliasesList listOfBeautifiedAliases;

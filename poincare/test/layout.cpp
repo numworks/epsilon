@@ -76,7 +76,7 @@ QUIZ_CASE(poincare_layout_fraction_create) {
    * */
   Layout layout = LayoutHelper::StringToCodePointsLayout("1234+5", 6);
   LayoutCursor cursor(layout.childAtIndex(2), LayoutCursor::Position::Left);
-  cursor.addFractionLayoutAndCollapseSiblings();
+  cursor.addFractionLayoutAndCollapseSiblings(nullptr);
   assert_layout_serialize_to(layout, "\u0012\u001212\u0013/\u001234\u0013\u0013+5");
   quiz_assert(cursor.isEquivalentTo(LayoutCursor(layout.childAtIndex(0).childAtIndex(1), LayoutCursor::Position::Left)));
 
@@ -86,7 +86,7 @@ QUIZ_CASE(poincare_layout_fraction_create) {
    * */
   Layout lHalfEmptyFraction = LayoutHelper::StringToCodePointsLayout("34+5", 6);
   LayoutCursor fractionCursor(lHalfEmptyFraction.childAtIndex(0), LayoutCursor::Position::Left);
-  fractionCursor.addFractionLayoutAndCollapseSiblings();
+  fractionCursor.addFractionLayoutAndCollapseSiblings(nullptr);
   assert_layout_serialize_to(lHalfEmptyFraction, "\u0012\u0012\u0013/\u001234\u0013\u0013+5");
   quiz_assert(fractionCursor.isEquivalentTo(LayoutCursor(lHalfEmptyFraction.childAtIndex(0).childAtIndex(0), LayoutCursor::Position::Left)));
 
@@ -103,7 +103,7 @@ QUIZ_CASE(poincare_layout_fraction_create) {
       CodePointLayout::Builder('3'),
       CodePointLayout::Builder('4'));
   LayoutCursor c1(l1.childAtIndex(2), LayoutCursor::Position::Left);
-  c1.addFractionLayoutAndCollapseSiblings();
+  c1.addFractionLayoutAndCollapseSiblings(nullptr);
   assert_layout_serialize_to(l1, "\u0012\u00121\u0013/\u00122\u0013\u0013\u0012\u00123\u0013/\u00124\u0013\u0013");
 
   /*
@@ -114,7 +114,7 @@ QUIZ_CASE(poincare_layout_fraction_create) {
 
   Layout l2 = LayoutHelper::StringToCodePointsLayout("sin(x)cos(x)2", 13);
   LayoutCursor c2(l2.childAtIndex(12), LayoutCursor::Position::Left);
-  c2.addFractionLayoutAndCollapseSiblings();
+  c2.addFractionLayoutAndCollapseSiblings(nullptr);
   assert_layout_serialize_to(l2, "\u0012\u0012sin(x)cos(x)\u0013/\u00122\u0013\u0013");
 }
 
@@ -126,7 +126,7 @@ QUIZ_CASE(poincare_layout_power) {
    * */
   Layout l1 = LayoutHelper::StringToCodePointsLayout("12", 2);
   LayoutCursor c1(l1.childAtIndex(1), LayoutCursor::Position::Right);
-  c1.addEmptySquarePowerLayout();
+  c1.addEmptySquarePowerLayout(nullptr);
   assert_layout_serialize_to(l1, "12^\u00122\u0013");
 
   /*                        2|
@@ -138,7 +138,7 @@ QUIZ_CASE(poincare_layout_power) {
       CodePointLayout::Builder('1'),
       VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript));
   LayoutCursor c2(l2.childAtIndex(1), LayoutCursor::Position::Right);
-  c2.addEmptySquarePowerLayout();
+  c2.addEmptySquarePowerLayout(nullptr);
   assert_layout_serialize_to(l2, "(1^\u00122\u0013)^\u00122\u0013");
 
   /*                             (    2|)
@@ -151,7 +151,6 @@ QUIZ_CASE(poincare_layout_power) {
   )));
   LayoutCursor c3(l3, LayoutCursor::Position::Right);
   c3.moveLeft(nullptr);
-  c3.addEmptySquarePowerLayout();
+  c3.addEmptySquarePowerLayout(nullptr);
   assert_layout_serialize_to(l3, "((1^\u00122\u0013)^\u00122\u0013)");
 }
-

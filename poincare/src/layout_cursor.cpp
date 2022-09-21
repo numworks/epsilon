@@ -125,49 +125,56 @@ LayoutCursor LayoutCursor::selectAtDirection(Direction direction, bool * shouldR
 
 /* Layout modification */
 
-void LayoutCursor::addEmptyExponentialLayout() {
+void LayoutCursor::addEmptyExponentialLayout(Context * context) {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
+  VerticalOffsetLayout verticalLayout = VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Position::Superscript);
   HorizontalLayout sibling = HorizontalLayout::Builder(
       CodePointLayout::Builder('e'),
-      VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Position::Superscript));
+      verticalLayout);
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
+  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(verticalLayout, this, context);
 }
 
-void LayoutCursor::addEmptyMatrixLayout() {
+void LayoutCursor::addEmptyMatrixLayout(Context * context) {
   MatrixLayout matrixLayout = MatrixLayout::EmptySquaredMatrixBuilder();
   m_layout.addSibling(this, matrixLayout, false);
   m_layout = matrixLayout.childAtIndex(0);
   m_position = Position::Right;
+  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(matrixLayout, this, context);
 }
 
-void LayoutCursor::addEmptySquareRootLayout() {
+void LayoutCursor::addEmptySquareRootLayout(Context * context) {
   // TODO: add a horizontal layout only if several children
   HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
   NthRootLayout newChild = NthRootLayout::Builder(child1);
   m_layout.addSibling(this, newChild, false);
   m_layout = newChild.childAtIndex(0);
   m_position = Position::Left;
+  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(newChild, this, context);
   ((Layout *)&newChild)->collapseSiblings(this);
 }
 
-void LayoutCursor::addEmptyPowerLayout() {
+void LayoutCursor::addEmptyPowerLayout(Context * context) {
   VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Position::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
   m_layout = offsetLayout.childAtIndex(0);
+  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(offsetLayout, this, context);
 }
 
-void LayoutCursor::addEmptySquarePowerLayout() {
+void LayoutCursor::addEmptySquarePowerLayout(Context * context) {
   VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
   m_layout = offsetLayout;
   m_position = Position::Right;
+  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(offsetLayout, this, context);
 }
 
-void LayoutCursor::addEmptyTenPowerLayout() {
+void LayoutCursor::addEmptyTenPowerLayout(Context * context) {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
+  CodePointLayout multiplicationSign = CodePointLayout::Builder(UCodePointMultiplicationSign);
   HorizontalLayout sibling = HorizontalLayout::Builder(
-      CodePointLayout::Builder(UCodePointMultiplicationSign),
+      multiplicationSign,
       CodePointLayout::Builder('1'),
       CodePointLayout::Builder('0'),
       VerticalOffsetLayout::Builder(
@@ -175,13 +182,15 @@ void LayoutCursor::addEmptyTenPowerLayout() {
         VerticalOffsetLayoutNode::Position::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
+  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(multiplicationSign, this, context);
 }
 
-void LayoutCursor::addFractionLayoutAndCollapseSiblings() {
+void LayoutCursor::addFractionLayoutAndCollapseSiblings(Context * context) {
   HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
   HorizontalLayout child2 = HorizontalLayout::Builder(EmptyLayout::Builder());
   FractionLayout newChild = FractionLayout::Builder(child1, child2);
   m_layout.addSibling(this, newChild, true);
+  InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(newChild, this, context);
   Layout(newChild.node()).collapseSiblings(this);
 }
 

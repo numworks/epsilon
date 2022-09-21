@@ -148,8 +148,8 @@ QUIZ_CASE(poincare_layout_parentheses) {
   {
     Layout l = HorizontalLayout::Builder(EmptyLayout::Builder());
     LayoutCursor c(l, LayoutCursor::Position::Right);
-    c.insertText("(");
-    c.insertText(")");
+    c.insertText("(", nullptr);
+    c.insertText(")", nullptr);
     assert_layout_serialize_to(l, "()");
     quiz_assert(c.isEquivalentTo(LayoutCursor(l, LayoutCursor::Position::Right)));
   }
@@ -160,8 +160,8 @@ QUIZ_CASE(poincare_layout_parentheses) {
   {
     Layout l = HorizontalLayout::Builder(EmptyLayout::Builder());
     LayoutCursor c(l, LayoutCursor::Position::Right);
-    c.insertText(")");
-    c.insertText("(");
+    c.insertText(")", nullptr);
+    c.insertText("(", nullptr);
     assert_layout_serialize_to(l, "()()");
     quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(1).childAtIndex(0), LayoutCursor::Position::Left)));
   }
@@ -172,8 +172,8 @@ QUIZ_CASE(poincare_layout_parentheses) {
   {
     Layout l = HorizontalLayout::Builder(EmptyLayout::Builder());
     LayoutCursor c(l, LayoutCursor::Position::Right);
-    c.insertText("(");
-    c.insertText("(");
+    c.insertText("(", nullptr);
+    c.insertText("(", nullptr);
     assert_layout_serialize_to(l, "(())");
     quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0), LayoutCursor::Position::Left)));
   }
@@ -184,7 +184,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
   {
     Layout l = HorizontalLayout::Builder({ CodePointLayout::Builder('1'), CodePointLayout::Builder('2'), CodePointLayout::Builder('3'), CodePointLayout::Builder('4'), CodePointLayout::Builder('5') });
     LayoutCursor c(l.childAtIndex(1), LayoutCursor::Position::Right);
-    c.insertText("(");
+    c.insertText("(", nullptr);
     assert_layout_serialize_to(l, "12(345)");
     quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(2).childAtIndex(0), LayoutCursor::Position::Left)));
   }

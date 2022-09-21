@@ -12,13 +12,13 @@ void InputBeautification::ApplyBeautificationBetweenIndexes(Layout parent, int f
       Layout childrenOfParenthesisContainer = child.childAtIndex(0).type() == LayoutNode::Type::HorizontalLayout ? child.childAtIndex(0) : child;
       ApplyBeautificationBetweenIndexes(childrenOfParenthesisContainer, 0, childrenOfParenthesisContainer.numberOfChildren(), layoutCursor, context, forceCursorRightOfText, true);
     }
-    i = InputBeautification::ApplyBeautification(child, layoutCursor, context, forceCursorRightOfText, forceBeautification);
+    i = InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(child, layoutCursor, context, forceCursorRightOfText, forceBeautification);
     assert(i >= 0);
     i--;
   }
 }
 
-int InputBeautification::ApplyBeautification(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText, bool forceBeautification) {
+int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText, bool forceBeautification) {
   Layout parent = lastAddedLayout.parent();
   assert(!parent.isUninitialized());
   int indexOfLastAddedLayout = parent.indexOfChild(lastAddedLayout);

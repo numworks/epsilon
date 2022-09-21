@@ -109,14 +109,14 @@ public:
   LayoutCursor selectAtDirection(Direction direction, bool * shouldRecomputeLayout, Layout * selection);
 
   /* Layout modification */
-  void addEmptyExponentialLayout();
-  void addEmptyMatrixLayout();
-  void addEmptyPowerLayout();
-  void addEmptySquareRootLayout();
-  void addEmptySquarePowerLayout();
-  void addEmptyTenPowerLayout();
-  void addFractionLayoutAndCollapseSiblings();
-  void insertText(const char * text, Context * context = nullptr, bool forceCursorRightOfText = false, bool forceCursorLeftOfText = false);
+  void addEmptyExponentialLayout(Context * context);
+  void addEmptyMatrixLayout(Context * context);
+  void addEmptyPowerLayout(Context * context);
+  void addEmptySquareRootLayout(Context * context);
+  void addEmptySquarePowerLayout(Context * context);
+  void addEmptyTenPowerLayout(Context * context);
+  void addFractionLayoutAndCollapseSiblings(Context * context);
+  void insertText(const char * text, Context * context, bool forceCursorRightOfText = false, bool forceCursorLeftOfText = false);
   void addLayoutAndMoveCursor(Layout l);
   bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }
   bool hideEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(false); }

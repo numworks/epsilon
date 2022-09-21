@@ -286,7 +286,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     return AdditionalInformations {.complex = true};
   }
   AdditionalInformations additionalInformations = {};
-  if (!isComplex && preferences->displayMode() != Preferences::PrintFloatMode::Scientific) {
+  if (a.type() != ExpressionNode::Type::Nonreal && preferences->displayMode() != Preferences::PrintFloatMode::Scientific) {
     additionalInformations.scientificNotation = true;
   }
   // We want a single numerical value and to avoid showing the identity function

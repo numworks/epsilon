@@ -64,6 +64,7 @@ class VerticalOffsetLayout final : public Layout {
 public:
   static VerticalOffsetLayout Builder(Layout l, VerticalOffsetLayoutNode::Position position);
   VerticalOffsetLayout() = delete;
+  VerticalOffsetLayoutNode::Position position() const { return static_cast<VerticalOffsetLayoutNode *>(node())->position(); }
 };
 
 }

@@ -39,6 +39,10 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
     return indexOfLastAddedLayout - 1; // (d/dx)(<-lastAddedLayout
   }
 
+  if (BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPossible(parent, indexOfLastAddedLayout, layoutCursor, forceCursorRightOfText)) {
+    return -1; // This modifies the parent.
+  }
+
   /* From now on, trigger the beautification only if a non-identifier layout
    * was inputted, or if beautification is forced. */
   if (!forceBeautification && lastAddedLayout.type() == LayoutNode::Type::CodePointLayout && Tokenizer::IsIdentifierMaterial(static_cast<CodePointLayout&>(lastAddedLayout).codePoint())) {
@@ -149,6 +153,26 @@ bool InputBeautification::BeautifyFractionIntoDerivativeIfPossible(Layout parent
     return false;
   }
   RemoveLayoutsBetweenIndexAndReplaceWithPattern(parent, indexOfLastAddedLayout - 1, indexOfLastAddedLayout - 1, k_derivativeFractionRule, layoutCursor, true, forceCursorRightOfText);
+  return true;
+}
+
+bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText) {
+  Layout lastAddedLayout = parent.childAtIndex(indexOfLastAddedLayout);
+  if (lastAddedLayout.type() != LayoutNode::Type::VerticalOffsetLayout || static_cast<VerticalOffsetLayout&>(lastAddedLayout).position() != VerticalOffsetLayoutNode::Position::Superscript) {
+    return false;
+  }
+  if (parent.parent().isUninitialized() || parent.parent().type() != LayoutNode::Type::FirstOrderDerivativeLayout) {
+    return false;
+  }
+  Layout firstOrderDerivative = parent.parent();
+  Layout derivativeOrder = lastAddedLayout.childAtIndex(0);
+  parent.removeChildAtIndex(indexOfLastAddedLayout, nullptr, true);
+  HigherOrderDerivativeLayout newDerivative = HigherOrderDerivativeLayout::Builder(firstOrderDerivative.childAtIndex(0), firstOrderDerivative.childAtIndex(1), firstOrderDerivative.childAtIndex(2), derivativeOrder);
+  firstOrderDerivative.replaceWithInPlace(newDerivative);
+  if (layoutCursor->layout().isUninitialized() || layoutCursor->layout().parent().isUninitialized()) {
+    layoutCursor->setLayout(derivativeOrder);
+    layoutCursor->setPosition(LayoutCursor::Position::Right);
+  }
   return true;
 }
 

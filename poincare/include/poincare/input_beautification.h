@@ -48,6 +48,7 @@ private:
   static bool ShouldBeBeautifiedWhenInputted(Layout parent, int indexOfLastAddedLayout, BeautificationRule beautificationRule);
 
   constexpr static BeautificationRule k_derivativeFractionRule = {""/* Name does not matter here */, []() { return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder())); }};
+  static bool BeautifyFractionIntoDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText);
 
   /* WARNING: The two following arrays will be beautified only if
    * it can be parsed without being beautified.

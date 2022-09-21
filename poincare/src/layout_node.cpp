@@ -122,7 +122,6 @@ bool LayoutNode::deleteBeforeCursorForLayoutContainingArgument(LayoutNode * argu
     // Case: Left of the argument. Delete the layout, keep the argument.
     Layout thisRef = Layout(this);
     Layout argument = Layout(argumentNode);
-    thisRef.replaceChildWithGhostInPlace(argument);
     // WARNING: Do not use "this" afterwards
     cursor->setLayout(argument);
     thisRef.replaceWith(argument, cursor);

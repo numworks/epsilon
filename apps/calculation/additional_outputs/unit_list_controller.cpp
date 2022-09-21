@@ -11,21 +11,13 @@ using namespace Shared;
 namespace Calculation {
 
 UnitListController::UnitListController(EditExpressionController * editExpressionController) :
-  ListController(editExpressionController),
+  ExpressionsListController(editExpressionController),
   m_numberOfExpressionCells(0),
   m_numberOfBufferCells(0),
-  m_expressionCells{},
   m_bufferCells{},
   m_referenceValues{nullptr, nullptr},
   m_SIValue(0.0)
 {
-  for (int i = 0; i < k_maxNumberOfExpressionCells; i++) {
-    m_expressionCells[i].setParentResponder(m_listController.selectableTableView());
-  }
-}
-
-void UnitListController::didEnterResponderChain(Responder * previousFirstResponder) {
-  selectCellAtLocation(0, 0);
 }
 
 int UnitListController::reusableCellCount(int type) {
@@ -37,23 +29,17 @@ int UnitListController::reusableCellCount(int type) {
 }
 
 void UnitListController::viewDidDisappear() {
-  ListController::viewDidDisappear();
-  // Reset layout and expression to avoid taking extra space in the pool
-  for (int i = 0; i < k_maxNumberOfExpressionCells; i++) {
-    m_expressionCells[i].setLayout(Layout());
-    m_layouts[i] = Layout();
-  }
+  ExpressionsListController::viewDidDisappear();
   for (int i = 0; i < k_maxNumberOfBufferCells; i++) {
     m_referenceValues[i] = nullptr;
   }
-  m_expression = Expression();
   m_numberOfExpressionCells = 0;
   m_numberOfBufferCells = 0;
 }
 
 HighlightCell * UnitListController::reusableCell(int index, int type) {
   if (type == k_expressionCellType) {
-    return &m_expressionCells[index];
+    return ExpressionsListController::reusableCell(index, type);
   }
   assert(type == k_bufferCellType);
   return &m_bufferCells[index];
@@ -61,8 +47,7 @@ HighlightCell * UnitListController::reusableCell(int index, int type) {
 
 KDCoordinate UnitListController::nonMemoizedRowHeight(int index) {
   if (typeAtIndex(index) == k_expressionCellType) {
-    ExpressionTableCellWithMessage tempCell;
-    return heightForCellAtIndexWithWidthInit(&tempCell, index);
+    return ExpressionsListController::nonMemoizedRowHeight(index);
   }
   BufferTableCellWithMessage tempCell;
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
@@ -71,15 +56,11 @@ KDCoordinate UnitListController::nonMemoizedRowHeight(int index) {
 void UnitListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   cell->setHighlighted(false);
   if (typeAtIndex(index) == k_expressionCellType) {
-    ExpressionTableCellWithMessage * myCell = static_cast<ExpressionTableCellWithMessage *>(cell);
-    myCell->setLayout(layoutAtIndex(index));
-    myCell->setSubLabelMessage(messageAtIndex(index));
-    myCell->reloadScroll();
-  } else {
-    BufferTableCellWithMessage * myCell = static_cast<BufferTableCellWithMessage *>(cell);
-    fillBufferCellAtIndex(myCell, index - m_numberOfExpressionCells);
-    myCell->setSubLabelMessage(messageAtIndex(index));
+    return ExpressionsListController::willDisplayCellForIndex(cell, index);
   }
+  BufferTableCellWithMessage * myCell = static_cast<BufferTableCellWithMessage *>(cell);
+  fillBufferCellAtIndex(myCell, index - m_numberOfExpressionCells);
+  myCell->setSubLabelMessage(messageAtIndex(index));
 }
 
 int UnitListController::numberOfRows() const {
@@ -194,11 +175,6 @@ I18n::Message UnitListController::messageAtIndex(int index) {
   return (I18n::Message)0;
 }
 
-Poincare::Layout UnitListController::layoutAtIndex(int index) {
-  assert(index < m_numberOfExpressionCells && !m_layouts[index].isUninitialized());
-  return m_layouts[index];
-}
-
 void UnitListController::fillBufferCellAtIndex(Escher::BufferTableCellWithMessage * bufferCell, int index) {
   assert(index < m_numberOfBufferCells);
   const UnitComparison::ReferenceValue * referenceValue = m_referenceValues[index];
@@ -218,7 +194,7 @@ void UnitListController::fillBufferCellAtIndex(Escher::BufferTableCellWithMessag
 int UnitListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
   assert(index >= 0);
   if (index < m_numberOfExpressionCells) {
-    return m_layouts[index].serializeParsedExpression(buffer, bufferSize, App::app()->localContext());
+    return ExpressionsListController::textAtIndex(buffer, bufferSize, index);
   }
   index = index - m_numberOfExpressionCells;
   assert(index < m_numberOfBufferCells);

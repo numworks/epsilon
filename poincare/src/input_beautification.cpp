@@ -9,8 +9,8 @@ void InputBeautification::ApplyBeautificationBetweenIndexes(Layout parent, int f
   while (i >= firstIndex) {
     Layout child = parent.childAtIndex(i);
     if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(child.type())) {
-      Layout horizontalLayoutChild = child.childAtIndex(0);
-      ApplyBeautificationBetweenIndexes(horizontalLayoutChild, 0, horizontalLayoutChild.numberOfChildren(), layoutCursor, context, forceCursorRightOfText, true);
+      Layout childrenOfParenthesisContainer = child.childAtIndex(0).type() == LayoutNode::Type::HorizontalLayout ? child.childAtIndex(0) : child;
+      ApplyBeautificationBetweenIndexes(childrenOfParenthesisContainer, 0, childrenOfParenthesisContainer.numberOfChildren(), layoutCursor, context, forceCursorRightOfText, true);
     }
     i = InputBeautification::ApplyBeautification(child, layoutCursor, context, forceCursorRightOfText, forceBeautification);
     assert(i >= 0);
@@ -200,16 +200,16 @@ static Layout DeepSearchEmptyLayout(Layout l, int * nSkips) {
 }
 
 Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(Layout layoutToModify, Layout parent, int parenthesisIndexInParent, bool isParameteredExpression) {
-  Layout parameters = parent.childAtIndex(parenthesisIndexInParent).childAtIndex(0);
-  assert(parameters.type() == LayoutNode::Type::HorizontalLayout);
+  Layout parenthesis = parent.childAtIndex(parenthesisIndexInParent);
+  Layout parametersContainer = parenthesis.childAtIndex(0).type() == LayoutNode::Type::HorizontalLayout ? parenthesis.childAtIndex(0): parenthesis;
   // Replace the empty layouts with the parameters between parentheses
   int currentParameterIndex = 0;
   int numberOfParameters = 0;
-  int n = parameters.numberOfChildren();
+  int n = parametersContainer.numberOfChildren();
   int numberOfEmptyLayoutsToSkip = 0;
   HorizontalLayout currentParameter = HorizontalLayout::Builder(EmptyLayout::Builder());
   while (currentParameterIndex <= n) {
-    Layout child = currentParameterIndex < n ? parameters.childAtIndex(currentParameterIndex) : Layout();
+    Layout child = currentParameterIndex < n ? parametersContainer.childAtIndex(currentParameterIndex) : Layout();
     if (currentParameterIndex == n || (child.type() == LayoutNode::Type::CodePointLayout && static_cast<CodePointLayout&>(child).codePoint() == ',')) {
       // right parenthesis or ',' reached. Add parameter
       int tempNumberOfEmptyLayoutsToSkip = numberOfEmptyLayoutsToSkip;

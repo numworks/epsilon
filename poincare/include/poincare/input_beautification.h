@@ -47,10 +47,6 @@ private:
   };
   static bool ShouldBeBeautifiedWhenInputted(Layout parent, int indexOfLastAddedLayout, BeautificationRule beautificationRule);
 
-  constexpr static BeautificationRule k_derivativeFractionRule = {""/* Name does not matter here */, [](Layout builderParameter) { return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder())); }};
-  static bool BeautifyFractionIntoDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText);
-  static bool BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText);
-
   /* WARNING: The two following arrays will be beautified only if
    * it can be parsed without being beautified.
    * If you add any new identifiers to this list, they must be parsable.
@@ -75,6 +71,11 @@ private:
   };
   static int BeautifyPipeKey(Layout parent, int indexOfPipeKey, LayoutCursor * cursor, bool forceCursorRightOfText);
 
+
+  constexpr static BeautificationRule k_derivativeRule = {Derivative::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder())); }};
+  static bool BeautifyFractionIntoDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText);
+  static bool BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText);
+
   /* Sorted in alphabetical order like in parsing/helper.h
    * "If the function has multiple aliases, take the first alias
    * in alphabetical order to choose position in list." */
@@ -84,7 +85,7 @@ private:
     {BinomialCoefficient::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(BinomialCoefficientLayout::Builder(EmptyLayout::Builder(), EmptyLayout::Builder())); }},
     {Conjugate::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(ConjugateLayout::Builder(EmptyLayout::Builder())); }},
     {Ceiling::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(CeilingLayout::Builder(EmptyLayout::Builder())); }},
-    {Derivative::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder())); }},
+    k_derivativeRule,
     {Power::s_exponentialFunctionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(HorizontalLayout::Builder(CodePointLayout::Builder('e'), VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Position::Superscript))); }},
     {Floor::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(FloorLayout::Builder(EmptyLayout::Builder())); }},
     {Integral::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(IntegralLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder(),EmptyLayout::Builder())); }},

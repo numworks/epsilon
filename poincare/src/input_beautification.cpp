@@ -203,7 +203,7 @@ bool InputBeautification::BeautifyFractionIntoDerivativeIfPossible(Layout parent
   if (!fractionDDXLayout.isIdenticalTo(previousChild)) {
     return false;
   }
-  RemoveLayoutsBetweenIndexAndReplaceWithPattern(parent, indexOfLastAddedLayout - 1, indexOfLastAddedLayout - 1, k_derivativeFractionRule, layoutCursor, true, forceCursorRightOfText);
+  RemoveLayoutsBetweenIndexAndReplaceWithPattern(parent, indexOfLastAddedLayout - 1, indexOfLastAddedLayout - 1, k_derivativeRule, layoutCursor, true, forceCursorRightOfText);
   return true;
 }
 

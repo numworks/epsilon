@@ -20,15 +20,33 @@ void ChainedExpressionsListController::viewDidDisappear() {
 }
 
 int ChainedExpressionsListController::reusableCellCount(int type) {
-  return k_maxNumberOfRows + (m_tail ? m_tail->reusableCellCount(type) : 0);
+  return (type == k_expressionCellType ? k_maxNumberOfRows : 0) + (m_tail ? m_tail->reusableCellCount(type) : 0);
 }
 
 HighlightCell * ChainedExpressionsListController::reusableCell(int index, int type) {
+  if (type != k_expressionCellType) {
+    return m_tail->reusableCell(index, type);
+  }
   int numberOfOwnedCells = ExpressionsListController::reusableCellCount(type);
   if (index >= numberOfOwnedCells) {
     return m_tail->reusableCell(index - numberOfOwnedCells, type);
   }
   return &m_cells[index];
+}
+
+void ChainedExpressionsListController::initCellSize(Escher::TableView * view) {
+  ExpressionsListController::initCellSize(view);
+  if (m_tail) {
+    m_tail->initCellSize(view);
+  }
+}
+
+int ChainedExpressionsListController::typeAtIndex(int index) const {
+  int numberOfOwnedCells = ExpressionsListController::numberOfRows();
+  if (index >= numberOfOwnedCells) {
+    return m_tail->typeAtIndex(index - numberOfOwnedCells);
+  }
+  return ExpressionsListController::typeAtIndex(index);
 }
 
 KDCoordinate ChainedExpressionsListController::nonMemoizedRowHeight(int index) {

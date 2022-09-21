@@ -17,6 +17,10 @@ public:
   // Responder
   void viewDidDisappear() override;
 
+  // ListViewDataSource
+  int typeAtIndex(int index) const override;
+  void initCellSize(Escher::TableView * view) override;
+
   // MemoizedListViewDataSource
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;

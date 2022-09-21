@@ -86,15 +86,23 @@ int InputBeautification::ApplyBeautification(Layout lastAddedLayout, LayoutCurso
   while (currentIdentifier.type() != Token::EndOfStream) {
     nextIdentifier = tokenizer.popToken();
     int numberOfLayoutsAddedOrRemoved = 0;
-    // Try to beautify each token
-    for (BeautificationRule beautificationRule : convertWhenFollowedByANonIdentifierChar) {
-      int comparison = CompareAndBeautifyIdentifier(currentIdentifier.text(), currentIdentifier.length(), beautificationRule, parent, firstIndexOfIdentifier, &numberOfLayoutsAddedOrRemoved, layoutCursor, false, forceCursorRightOfText);
-      if (comparison <= 0) { // Break if equal or past the alphabetical order
-        break;
+    // Try to beautify each token.
+    // Beautify pi and theta
+    if (currentIdentifier.type() == Token::Constant || currentIdentifier.type() == Token::CustomIdentifier) {
+      for (BeautificationRule beautificationRule : convertWhenFollowedByANonIdentifierChar) {
+        int comparison = CompareAndBeautifyIdentifier(currentIdentifier.text(), currentIdentifier.length(), beautificationRule, parent, firstIndexOfIdentifier, &numberOfLayoutsAddedOrRemoved, layoutCursor, false, forceCursorRightOfText);
+        if (comparison <= 0) { // Break if equal or past the alphabetical order
+          break;
+        }
       }
     }
-    // Only the last token can be a function
-    if (nextIdentifier.type() == Token::EndOfStream && numberOfLayoutsAddedOrRemoved == 0 && lastAddedLayout.type() == LayoutNode::Type::ParenthesisLayout) {
+    // Beautify functions
+    if (currentIdentifier.type() == Token::ReservedFunction
+        // Only the last token can be a function
+        && nextIdentifier.type() == Token::EndOfStream
+        // Check if a parenthesis was just inputted
+        && lastAddedLayout.type() == LayoutNode::Type::ParenthesisLayout) {
+      assert(numberOfLayoutsAddedOrRemoved == 0);
       for (BeautificationRule beautificationRule : convertWhenFollowedByParentheses) {
         int comparison = CompareAndBeautifyIdentifier(currentIdentifier.text(), currentIdentifier.length(), beautificationRule, parent, firstIndexOfIdentifier, &numberOfLayoutsAddedOrRemoved, layoutCursor, true, forceCursorRightOfText);
         if (comparison <= 0) { // Break if equal or past the alphabetical order

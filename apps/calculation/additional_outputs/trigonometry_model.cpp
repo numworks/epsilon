@@ -10,7 +10,11 @@ TrigonometryModel::TrigonometryModel() :
 }
 
 float TrigonometryModel::yHalfRange() const {
-  return TrigonometryListController::k_illustrationHeight*k_xHalfRange/(Ion::Display::Width - Escher::Metric::PopUpRightMargin - Escher::Metric::PopUpLeftMargin);
+  return yRange() / 2.f;
+}
+
+float TrigonometryModel::yRange() const {
+  return (TrigonometryListController::k_illustrationHeight - 2) * xRange() / 263.f;
 }
 
 }

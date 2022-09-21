@@ -28,6 +28,7 @@ public:
   int textAtIndex(char * buffer, size_t bufferSize, int index) override;
 
 protected:
+  constexpr static int k_expressionCellType = 0;
   constexpr static int k_maxNumberOfRows = 5;
   Poincare::Layout getLayoutFromExpression(Poincare::Expression e, Poincare::Context * context, Poincare::Preferences * preferences);
   Poincare::Expression m_expression;

@@ -122,6 +122,22 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
     assert_layout_serialize_to(layout, "1");
     quiz_assert(cursor.isEquivalentTo(LayoutCursor(layout.childAtIndex(0), LayoutCursor::Position::Left)));
   }
+
+  /* (I is the cursor in this comment since | is used for abs())
+   * |I1|+3 -> "Backspace" -> I1+3
+   * */
+  {
+    HorizontalLayout layout = HorizontalLayout::Builder(
+        AbsoluteValueLayout::Builder(
+          CodePointLayout::Builder('1')
+          ),
+        CodePointLayout::Builder('+'),
+        CodePointLayout::Builder('3'));
+    LayoutCursor cursor(layout.childAtIndex(0).childAtIndex(0), LayoutCursor::Position::Left);
+    cursor.performBackspace();
+    assert_layout_serialize_to(layout, "1+3");
+    quiz_assert(cursor.isEquivalentTo(LayoutCursor(layout.childAtIndex(0), LayoutCursor::Position::Left)));
+  }
 }
 
 QUIZ_CASE(poincare_layout_parentheses) {

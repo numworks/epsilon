@@ -469,7 +469,9 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
     Layout oldChildRef(oldChild);
     HorizontalLayout newChildRef(static_cast<HorizontalLayoutNode *>(newChild));
     if (!oldChildRemovedAtMerge) {
-      thisRef.removeChild(oldChildRef, cursor, true);
+      assert(cursor->layout().node() != oldChild);
+      // Do not alter the cursor. It should already be well-placed
+      thisRef.removeChild(oldChildRef, nullptr, true);
     }
     thisRef.mergeChildrenAtIndex(newChildRef, indexForInsertion, true);
     // WARNING: do not call "this" afterwards

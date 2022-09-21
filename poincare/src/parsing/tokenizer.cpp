@@ -75,14 +75,18 @@ Token Tokenizer::popNumber() {
     const char * string = m_decoder.stringPosition();
     // Look for "0b"
     bool binary = canPopCodePoint('b');
-    // Look for "0x"
-    bool hexa = canPopCodePoint('x');
+    bool hexa = false;
+    if (!binary) {
+      // Look for "0x"
+      hexa = canPopCodePoint('x');
+    }
     if (binary || hexa) {
       const char * binaryOrHexaText = m_decoder.stringPosition();
       size_t binaryOrHexaLength = binary ? popBinaryDigits() : popHexadecimalDigits();
       if (binaryOrHexaLength > 0) {
         Token result(binary ? Token::BinaryNumber : Token::HexadecimalNumber);
         result.setExpression(BasedInteger::Builder(binaryOrHexaText, binaryOrHexaLength, binary ? Integer::Base::Binary : Integer::Base::Hexadecimal));
+        result.setString(integralPartText, integralPartLength + 1 + binaryOrHexaLength);
         return result;
       } else {
         // Rewind before 'b'/'x' letter
@@ -116,6 +120,7 @@ Token Tokenizer::popNumber() {
 
   Token result(Token::Number);
   result.setExpression(Number::ParseNumber(integralPartText, integralPartLength, fractionalPartText, fractionalPartLength, exponentIsNegative, exponentPartText, exponentPartLength));
+  result.setString(integralPartText, exponentPartText - integralPartText + exponentPartLength);
   return result;
 }
 

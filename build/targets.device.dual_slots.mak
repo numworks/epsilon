@@ -31,7 +31,7 @@ $(dfu_targets): $(BUILD_DIR)/%.dfu: | $(BUILD_DIR)/.
 	  -o $@
 
 .PHONY: %_flash
-%_flash: $(BUILD_DIR)/%.dfu flasher.dfu
+%_flash: $(BUILD_DIR)/%.dfu $(subst epsilon,flasher,$(BUILD_DIR))/flasher.dfu
 	@echo "DFU     $@"
 	@echo "INFO    About to flash your device. Please plug your device to your computer"
 	@echo "        using an USB cable and press at the same time the 6 key and the RESET"

@@ -28,7 +28,7 @@ public:
   static int ApplyBeautificationLeftOfLastAddedLayout(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText = false, bool forceBeautification = false);
 
 private:
-  typedef Layout (*BeautifiedLayoutBuilder) ();
+  typedef Layout (*BeautifiedLayoutBuilder) (Layout builderParameter);
   struct BeautificationRule {
     AliasesList listOfBeautifiedAliases;
     BeautifiedLayoutBuilder layoutBuilder;
@@ -36,18 +36,18 @@ private:
 
   constexpr static const BeautificationRule convertWhenInputted[] = {
     // Angle units
-    {"\"\"", []() { return static_cast<Layout>(CodePointLayout::Builder('\'')); }},
-    {"'\"", []() { return static_cast<Layout>(CodePointLayout::Builder(UCodePointDegreeSign)); }},
+    {"\"\"", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder('\'')); }},
+    {"'\"", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointDegreeSign)); }},
     // Comparison operators
-    {"<=", []() { return static_cast<Layout>(CodePointLayout::Builder(UCodePointInferiorEqual)); }},
-    {">=", []() { return static_cast<Layout>(CodePointLayout::Builder(UCodePointSuperiorEqual)); }},
+    {"<=", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointInferiorEqual)); }},
+    {">=", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointSuperiorEqual)); }},
     // Special char
-    {"->", []() { return static_cast<Layout>(CodePointLayout::Builder(UCodePointRightwardsArrow)); }},
-    {"*", []() { return static_cast<Layout>(CodePointLayout::Builder(UCodePointMultiplicationSign)); }},
+    {"->", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointRightwardsArrow)); }},
+    {"*", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointMultiplicationSign)); }},
   };
   static bool ShouldBeBeautifiedWhenInputted(Layout parent, int indexOfLastAddedLayout, BeautificationRule beautificationRule);
 
-  constexpr static BeautificationRule k_derivativeFractionRule = {""/* Name does not matter here */, []() { return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder())); }};
+  constexpr static BeautificationRule k_derivativeFractionRule = {""/* Name does not matter here */, [](Layout builderParameter) { return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder())); }};
   static bool BeautifyFractionIntoDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText);
   static bool BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText);
 
@@ -63,32 +63,40 @@ private:
    * in alphabetical order to choose position in list." */
   constexpr static const BeautificationRule convertWhenFollowedByANonIdentifierChar[] = {
     // Greek letters
-    {AliasesLists::k_piAliases, []() { return static_cast<Layout>(CodePointLayout::Builder(UCodePointGreekSmallLetterPi)); }},
-    {AliasesLists::k_thetaAliases, []() { return static_cast<Layout>(CodePointLayout::Builder(UCodePointGreekSmallLetterTheta)); }},
+    {AliasesLists::k_piAliases, [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointGreekSmallLetterPi)); }},
+    {AliasesLists::k_thetaAliases, [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointGreekSmallLetterTheta)); }},
   };
+
+  constexpr static BeautificationRule k_absoluteValueRule = {
+    AbsoluteValue::s_functionHelper.aliasesList(),
+    [](Layout builderParameter) {
+      return static_cast<Layout>(AbsoluteValueLayout::Builder(builderParameter.isUninitialized() ? EmptyLayout::Builder() : builderParameter));
+    }
+  };
+  static int BeautifyPipeKey(Layout parent, int indexOfPipeKey, LayoutCursor * cursor, bool forceCursorRightOfText);
 
   /* Sorted in alphabetical order like in parsing/helper.h
    * "If the function has multiple aliases, take the first alias
    * in alphabetical order to choose position in list." */
   constexpr static const BeautificationRule convertWhenFollowedByParentheses[] = {
     // Functions
-    {AbsoluteValue::s_functionHelper.aliasesList(), []() { return static_cast<Layout>(AbsoluteValueLayout::Builder(EmptyLayout::Builder())); }},
-    {BinomialCoefficient::s_functionHelper.aliasesList(), []() { return static_cast<Layout>(BinomialCoefficientLayout::Builder(EmptyLayout::Builder(), EmptyLayout::Builder())); }},
-    {Conjugate::s_functionHelper.aliasesList(), []() { return static_cast<Layout>(ConjugateLayout::Builder(EmptyLayout::Builder())); }},
-    {Ceiling::s_functionHelper.aliasesList(), []() { return static_cast<Layout>(CeilingLayout::Builder(EmptyLayout::Builder())); }},
-    {Derivative::s_functionHelper.aliasesList(), []() { return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder())); }},
-    {Power::s_exponentialFunctionHelper.aliasesList(), []() { return static_cast<Layout>(HorizontalLayout::Builder(CodePointLayout::Builder('e'), VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Position::Superscript))); }},
-    {Floor::s_functionHelper.aliasesList(), []() { return static_cast<Layout>(FloorLayout::Builder(EmptyLayout::Builder())); }},
-    {Integral::s_functionHelper.aliasesList(), []() { return static_cast<Layout>(IntegralLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder(),EmptyLayout::Builder())); }},
-    {VectorNorm::s_functionHelper.aliasesList(), []() { return static_cast<Layout>(VectorNormLayout::Builder(EmptyLayout::Builder())); }},
-    {NthRoot::s_functionHelper.aliasesList(), []() { return static_cast<Layout>(NthRootLayout::Builder(EmptyLayout::Builder(), EmptyLayout::Builder())); }},
-    {SquareRoot::s_functionHelper.aliasesList(), []() { return static_cast<Layout>(NthRootLayout::Builder(EmptyLayout::Builder())); }},
+    k_absoluteValueRule,
+    {BinomialCoefficient::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(BinomialCoefficientLayout::Builder(EmptyLayout::Builder(), EmptyLayout::Builder())); }},
+    {Conjugate::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(ConjugateLayout::Builder(EmptyLayout::Builder())); }},
+    {Ceiling::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(CeilingLayout::Builder(EmptyLayout::Builder())); }},
+    {Derivative::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder())); }},
+    {Power::s_exponentialFunctionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(HorizontalLayout::Builder(CodePointLayout::Builder('e'), VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Position::Superscript))); }},
+    {Floor::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(FloorLayout::Builder(EmptyLayout::Builder())); }},
+    {Integral::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(IntegralLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder(),EmptyLayout::Builder())); }},
+    {VectorNorm::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(VectorNormLayout::Builder(EmptyLayout::Builder())); }},
+    {NthRoot::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(NthRootLayout::Builder(EmptyLayout::Builder(), EmptyLayout::Builder())); }},
+    {SquareRoot::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(NthRootLayout::Builder(EmptyLayout::Builder())); }},
   };
   // Returns result of comparison
   static int CompareAndBeautifyIdentifier(const char * identifier, size_t identifierLength, BeautificationRule beautificationRule, Layout parent, int startIndex, int * numberOfLayoutsAddedOrRemoved, LayoutCursor * layoutCursor, bool isBeautifyingFunction, bool forceCursorRightOfText);
 
   // Returns the number of layouts added or removed
-  static int RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout parent, int startIndex, int endIndex, BeautificationRule beautificationRule, LayoutCursor * layoutCursor, bool isBeautifyingFunction, bool forceCursorRightOfText);
+  static int RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout parent, int startIndex, int endIndex, BeautificationRule beautificationRule, LayoutCursor * layoutCursor, bool isBeautifyingFunction, bool forceCursorRightOfText, Layout builderParameter = Layout());
 
   static Layout ReplaceEmptyLayoutsWithParameters(Layout layoutToModify, Layout parent, int parenthesisIndexInParent, bool isParameteredExpression);
 };

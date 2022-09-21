@@ -18,6 +18,10 @@ void InputBeautification::ApplyBeautificationBetweenIndexes(Layout parent, int f
   }
 }
 
+static bool IsPipeKeyLayout(Layout l) {
+  return l.type() == LayoutNode::Type::CodePointLayout && static_cast<CodePointLayout&>(l).codePoint() == '|';
+}
+
 int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText, bool forceBeautification) {
   Layout parent = lastAddedLayout.parent();
   assert(!parent.isUninitialized());
@@ -32,6 +36,10 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
       RemoveLayoutsBetweenIndexAndReplaceWithPattern(parent, startIndexOfBeautification, indexOfLastAddedLayout, beautificationRule, layoutCursor, false, forceCursorRightOfText);
       return startIndexOfBeautification;
     }
+  }
+
+  if (IsPipeKeyLayout(lastAddedLayout)) {
+    return BeautifyPipeKey(parent, indexOfLastAddedLayout, layoutCursor, forceCursorRightOfText);
   }
 
   // Try special beautification d/dx
@@ -143,6 +151,49 @@ bool InputBeautification::ShouldBeBeautifiedWhenInputted(Layout parent, int inde
   return true;
 }
 
+int InputBeautification::BeautifyPipeKey(Layout parent, int indexOfPipeKey, LayoutCursor * cursor, bool forceCursorRightOfText) {
+  Layout pipeKey = parent.childAtIndex(indexOfPipeKey);
+  assert(IsPipeKeyLayout(pipeKey));
+  /* There is two cases:
+   * either something like "|4 + 5|" was inserted,
+   * or something like "4 + |"
+   * In the first case, abs(4+5) should ne outputted
+   * In the second case, 4+abs() should be outputted
+   * */
+  bool numberOfPipeKeysInParentIsOdd = true;
+  int indexOfMatchingPipeKey = -1;
+  for (int i = indexOfPipeKey - 1; i >= 0; i--) {
+    if (IsPipeKeyLayout(parent.childAtIndex(i))) {
+      if (indexOfMatchingPipeKey == -1) {
+        indexOfMatchingPipeKey = i;
+      }
+      numberOfPipeKeysInParentIsOdd = !numberOfPipeKeysInParentIsOdd;
+    }
+  }
+  Layout builderParameter = Layout();
+  if (numberOfPipeKeysInParentIsOdd) {
+    // Case 1: number of pipes is odd, pipe will be beautified like abs()
+    indexOfMatchingPipeKey = indexOfPipeKey;
+    parent.addChildAtIndex(ParenthesisLayout::Builder(), indexOfPipeKey + 1, parent.numberOfChildren(), nullptr);
+  } else {
+    // Case 2: number of pipes is even, beautify |...| as a whole.
+    // Put layouts between pipe and its closest pipe neighbour in a layout
+    int numberOfChildrenToVisit = indexOfPipeKey - indexOfMatchingPipeKey - 1;
+    HorizontalLayout insideAbsoluteValue = HorizontalLayout::Builder();
+    for (int i = 0; i < numberOfChildrenToVisit; i++) {
+      Layout l = parent.childAtIndex(indexOfMatchingPipeKey + 1);
+      parent.removeChild(l, nullptr);
+      insideAbsoluteValue.addOrMergeChildAtIndex(l, insideAbsoluteValue.numberOfChildren(), true, nullptr);
+    }
+    builderParameter = insideAbsoluteValue;
+    parent.removeChild(pipeKey, nullptr);
+  }
+  /* Beautifiy as a function only in case 1. In case 2 you don't need to
+   * absorb arguments. */
+  RemoveLayoutsBetweenIndexAndReplaceWithPattern(parent, indexOfMatchingPipeKey, indexOfMatchingPipeKey, k_absoluteValueRule, cursor, numberOfPipeKeysInParentIsOdd, forceCursorRightOfText, builderParameter);
+  return indexOfMatchingPipeKey;
+}
+
 bool InputBeautification::BeautifyFractionIntoDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText) {
   if (indexOfLastAddedLayout == 0 || parent.childAtIndex(indexOfLastAddedLayout).type() != LayoutNode::Type::ParenthesisLayout) {
     return false;
@@ -185,10 +236,10 @@ int InputBeautification::CompareAndBeautifyIdentifier(const char * identifier, s
   return comparison;
 }
 
-int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout parent, int startIndex, int endIndex, BeautificationRule beautificationRule, LayoutCursor * layoutCursor, bool isBeautifyingFunction, bool forceCursorRightOfText) {
+int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout parent, int startIndex, int endIndex, BeautificationRule beautificationRule, LayoutCursor * layoutCursor, bool isBeautifyingFunction, bool forceCursorRightOfText, Layout builderParameter) {
   int currentNumberOfChildren = parent.numberOfChildren();
   // Create pattern layout
-  Layout inserted = beautificationRule.layoutBuilder();
+  Layout inserted = beautificationRule.layoutBuilder(builderParameter);
   if (isBeautifyingFunction) {
     /* Insert parameters between parentheses in function if use is type left of
      * an already filled parenthesis */

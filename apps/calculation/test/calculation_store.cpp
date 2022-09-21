@@ -487,7 +487,7 @@ QUIZ_CASE(calculation_involving_sequence) {
 
 bool operator ==(const AdditionalInformations &a, const AdditionalInformations &b) {
   // TODO C++20 Use a default comparison operator
-  return a.integer == b.integer && a.rational == b.rational && a.trigonometry == b.trigonometry && a.unit == b.unit && a.matrix == b.matrix && a.vector == b.vector && a.complex == b.complex && a.function == b.function;
+  return a.integer == b.integer && a.rational == b.rational && a.trigonometry == b.trigonometry && a.unit == b.unit && a.matrix == b.matrix && a.vector == b.vector && a.complex == b.complex && a.function == b.function && a.scientificNotation == b.scientificNotation;
 }
 
 void assertCalculationAdditionalResultTypeHas(const char * input, const AdditionalInformations additionalInformationType, Context * context, CalculationStore * store) {
@@ -502,23 +502,31 @@ QUIZ_CASE(calculation_additional_results) {
   CalculationStore store(calculationBuffer,calculationBufferSize);
 
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Poincare::Preferences::ComplexFormat::Real);
-  assertCalculationAdditionalResultTypeHas("1+1", {.integer = true}, &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas("π-π", {.integer = true}, &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas("π+π", {}, &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas("2/24", {.rational = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("1+1", {.integer = true, .scientificNotation = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("π-π", {.integer = true, .scientificNotation = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("2/24", {.rational = true, .scientificNotation = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("1+i", {.complex = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("sin(π)", {.trigonometry = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("sin(iπ)", {.complex = true}, &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas("ln(2)", {.function = true}, &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas("2^3", {.integer = true, .function = true}, &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas(".5^2", {.rational = true, .function = true}, &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas("e^3", {.function = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("ln(2)", {.function = true, .scientificNotation = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("2^3", {.integer = true, .function = true, .scientificNotation = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas(".5^2", {.rational = true, .function = true, .scientificNotation = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("e^3", {.function = true, .scientificNotation = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("tan(π/2)", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("[[1]]", {.vector = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("[[1,1]]", {.vector = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("[[1][2][3]]", {.vector = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("transpose(identity(2))", {.matrix = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("[[cos(π/3),-sin(π/3)][sin(π/3),cos(π/3)]]", {.matrix = true}, &globalContext, &store);
+
+  assertCalculationAdditionalResultTypeHas("1/400", {.rational = true, .scientificNotation = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("400", {.integer = true,.scientificNotation = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("π+π", {.scientificNotation = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("2i", {.complex = true}, &globalContext, &store);
+  Poincare::Preferences::sharedPreferences()->setDisplayMode(Poincare::Preferences::PrintFloatMode::Scientific);
+  assertCalculationAdditionalResultTypeHas("π+π", {}, &globalContext, &store);
+  Poincare::Preferences::sharedPreferences()->setDisplayMode(Poincare::Preferences::PrintFloatMode::Decimal);
+
   assertCalculationAdditionalResultTypeHas("√(-1)", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("{1}", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("{i}", {}, &globalContext, &store);

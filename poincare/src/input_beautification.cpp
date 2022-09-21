@@ -34,6 +34,11 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
     }
   }
 
+  // Try special beautification d/dx
+  if (BeautifyFractionIntoDerivativeIfPossible(parent, indexOfLastAddedLayout, layoutCursor, forceCursorRightOfText)) {
+    return indexOfLastAddedLayout - 1; // (d/dx)(<-lastAddedLayout
+  }
+
   /* From now on, trigger the beautification only if a non-identifier layout
    * was inputted, or if beautification is forced. */
   if (!forceBeautification && lastAddedLayout.type() == LayoutNode::Type::CodePointLayout && Tokenizer::IsIdentifierMaterial(static_cast<CodePointLayout&>(lastAddedLayout).codePoint())) {
@@ -131,6 +136,19 @@ bool InputBeautification::ShouldBeBeautifiedWhenInputted(Layout parent, int inde
       return false;
     }
   }
+  return true;
+}
+
+bool InputBeautification::BeautifyFractionIntoDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText) {
+  if (indexOfLastAddedLayout == 0 || parent.childAtIndex(indexOfLastAddedLayout).type() != LayoutNode::Type::ParenthesisLayout) {
+    return false;
+  }
+  Layout previousChild = parent.childAtIndex(indexOfLastAddedLayout - 1);
+  Layout fractionDDXLayout = FractionLayout::Builder(HorizontalLayout::Builder(CodePointLayout::Builder('d')), HorizontalLayout::Builder(CodePointLayout::Builder('d'), CodePointLayout::Builder('x')));
+  if (!fractionDDXLayout.isIdenticalTo(previousChild)) {
+    return false;
+  }
+  RemoveLayoutsBetweenIndexAndReplaceWithPattern(parent, indexOfLastAddedLayout - 1, indexOfLastAddedLayout - 1, k_derivativeFractionRule, layoutCursor, true, forceCursorRightOfText);
   return true;
 }
 

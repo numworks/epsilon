@@ -392,7 +392,7 @@ void LayoutField::reload(KDSize previousSize) {
   markRectAsDirty(bounds());
 }
 
-typedef void (Poincare::LayoutCursor::*AddLayoutPointer)();
+typedef void (Poincare::LayoutCursor::*AddLayoutPointer)(Context * context);
 
 bool LayoutField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
   /* The text here can be:
@@ -436,12 +436,12 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   for (int i = 0; i < numberOfSpecialEvents; i++) {
     Ion::Events::copyText(static_cast<uint8_t>(specialEvents[i]), buffer, Ion::Events::EventData::k_maxDataSize);
     if (strcmp(text, buffer) == 0) {
-      (cursor->*handleSpecialEvents[i])();
+      (cursor->*handleSpecialEvents[i])(delegateContext());
       return true;
     }
   }
   if ((strcmp(text, "[") == 0) || (strcmp(text, "]") == 0)) {
-    cursor->addEmptyMatrixLayout();
+    cursor->addEmptyMatrixLayout(delegateContext());
     return true;
   }
   // Single keys are not parsed to avoid changing " or g to _" or _g

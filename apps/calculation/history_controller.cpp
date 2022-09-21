@@ -140,8 +140,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
             // input or output is inverse trigonometric function use e as is
             assert(Trigonometry::isInverseTrigonometryFunction(focusInput) || Trigonometry::isInverseTrigonometryFunction(e));
           }
-        } else if (additionalInformations.scientificNotation) {
-          vc = &m_scientificNotationListController;
         } else if (additionalInformations.function) {
           e = focusCalculation->input();
           vc = &m_functionController;
@@ -156,6 +154,24 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
             m_functionController.setTail(&m_rationalController);
           } else {
             m_functionController.setTail(nullptr);
+          }
+        } else if (additionalInformations.scientificNotation) {
+          vc = &m_scientificNotationListController;
+          if (additionalInformations.integer) {
+            Expression output = focusCalculation->exactOutput();
+            m_integerController.setExpression(output);
+            m_scientificNotationListController.setTail(&m_integerController);
+          } else if (additionalInformations.rational) {
+            Expression output = focusCalculation->exactOutput();
+            Expression input = focusCalculation->input();
+            m_rationalController.setExpression(isFractionInput(input) ? input : output);
+            m_scientificNotationListController.setTail(&m_rationalController);
+          } else if (additionalInformations.unit) {
+            Expression output = focusCalculation->exactOutput();
+            m_unitController.setExpression(output);
+            m_scientificNotationListController.setTail(&m_unitController);
+          } else {
+            m_scientificNotationListController.setTail(nullptr);
           }
         } else if (additionalInformations.integer) {
           vc = &m_integerController;

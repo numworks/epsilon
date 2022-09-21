@@ -14,7 +14,7 @@ protected:
   TrigonometryModel * m_model;
 };
 
-class TrigonometryGraphView : public Shared::PlotView<Shared::PlotPolicy::TwoUnlabeledAxes, TrigonometryGraphPolicy, Shared::PlotPolicy::NoBanner, Shared::PlotPolicy::NoCursor> {
+class TrigonometryGraphView : public Shared::PlotView<Shared::PlotPolicy::PolarGrid, TrigonometryGraphPolicy, Shared::PlotPolicy::NoBanner, Shared::PlotPolicy::NoCursor> {
 public:
   TrigonometryGraphView(TrigonometryModel * model);
 };

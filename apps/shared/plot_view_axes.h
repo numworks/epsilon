@@ -67,6 +67,17 @@ public:
   void setOtherAxis(bool other) {}
 };
 
+class PlainAxis {
+public:
+  void drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis) const;
+  void reloadAxis(AbstractPlotView *, AbstractPlotView::Axis) {}
+  bool isAxis() const { return true; }
+  void setOtherAxis(bool other) {}
+
+protected:
+  constexpr static KDColor k_color = KDColorBlack;
+};
+
 class SimpleAxis {
 public:
   void drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const;
@@ -135,7 +146,7 @@ typedef LabeledAxis<AbstractLabeledAxis::k_maxNumberOfYLabels> VerticalLabeledAx
  * PlotView */
 
 typedef Axes<NoGrid, NoAxis, NoAxis> NoAxes;
-typedef Axes<WithPolarGrid, SimpleAxis, SimpleAxis> TwoUnlabeledAxes;
+typedef Axes<WithPolarGrid, PlainAxis, PlainAxis> PolarGrid;
 typedef Axes<NoGrid, HorizontalLabeledAxis, NoAxis> LabeledXAxis;
 typedef Axes<WithGrid, HorizontalLabeledAxis, VerticalLabeledAxis> TwoLabeledAxes;
 

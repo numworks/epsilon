@@ -101,6 +101,14 @@ void WithPolarGrid::drawGrid(const AbstractPlotView * plotView, KDContext * ctx,
 }
 
 
+// PlainAxis
+
+void PlainAxis::drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
+  assert(plotView);
+  plotView->drawStraightSegment(ctx, rect, axis, 0.f, -INFINITY, INFINITY, k_color);
+}
+
+
 // SimpleAxis
 
 void SimpleAxis::drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {

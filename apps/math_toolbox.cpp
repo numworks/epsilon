@@ -329,7 +329,8 @@ constexpr ToolboxMessageTree ConstantsChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::AvogadroConstantSymbol, I18n::Message::AvogadroConstant),
   ToolboxMessageTree::Leaf(I18n::Message::MolarGasConstantSymbol, I18n::Message::MolarGasConstant),
   ToolboxMessageTree::Leaf(I18n::Message::VacuumPermittivitySymbol, I18n::Message::VacuumPermittivity),
-  ToolboxMessageTree::Leaf(I18n::Message::VacuumPermeabilitySymbol, I18n::Message::VacuumPermeability)
+  ToolboxMessageTree::Leaf(I18n::Message::VacuumPermeabilitySymbol, I18n::Message::VacuumPermeability),
+  ToolboxMessageTree::Leaf(I18n::Message::PlanckConstantSymbol, I18n::Message::PlanckConstant)
 };
 
 constexpr ToolboxMessageTree unitChildren[] = {

@@ -85,18 +85,17 @@ Shared::ContinuousFunction::SymbolType IntervalParameterSelectorController::symb
   return symbolType;
 }
 
-static_assert(static_cast<size_t>(Shared::ContinuousFunction::SymbolType::Theta) == 0, "Symbol order must match here.");
-static_assert(static_cast<size_t>(Shared::ContinuousFunction::SymbolType::T) == 1, "Symbol order must match here.");
-static_assert(static_cast<size_t>(Shared::ContinuousFunction::SymbolType::X) == 2, "Symbol order must match here.");
-
 I18n::Message IntervalParameterSelectorController::messageForType(Shared::ContinuousFunction::SymbolType symbolType) {
-  constexpr I18n::Message message[k_numberOfSymbolTypes] = {
-    I18n::Message::IntervalTheta,
-    I18n::Message::IntervalT,
-    I18n::Message::IntervalX
-  };
-  assert(static_cast<size_t>(symbolType) < sizeof(message)/sizeof(I18n::Message));
-  return message[static_cast<size_t>(symbolType)];
+  switch (symbolType) {
+  case Shared::ContinuousFunction::SymbolType::X:
+    return I18n::Message::IntervalX;
+  case Shared::ContinuousFunction::SymbolType::T:
+    return I18n::Message::IntervalT;
+  default: {
+    assert(symbolType == Shared::ContinuousFunction::SymbolType::Theta);
+    return I18n::Message::IntervalTheta;
+  }
+  }
 }
 
 void IntervalParameterSelectorController::setStartEndMessages(Shared::IntervalParameterController * controller, Shared::ContinuousFunction::SymbolType symbolType) {

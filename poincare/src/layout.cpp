@@ -342,13 +342,4 @@ void Layout::collapseSiblings(LayoutCursor * cursor) {
   node()->didCollapseSiblings(cursor);
 }
 
-Layout Layout::defaultMakeEditable() {
-  int i = 0;
-  while (i < numberOfChildren()) {
-    replaceChildAtIndexInPlace(i, childAtIndex(i).makeEditable());
-    i++;
-  }
-  return *this;
-}
-
 }

@@ -7,7 +7,7 @@
 namespace Inference {
 
 bool NormalDistribution::authorizedParameterAtIndex(double x, int index) const {
-  if (!TwoParameterDistribution::authorizedParameterAtIndex(x, index)) {
+  if (!TwoParametersDistribution::authorizedParameterAtIndex(x, index)) {
     return false;
   }
   if (index == 0) {

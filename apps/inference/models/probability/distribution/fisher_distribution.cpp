@@ -10,7 +10,7 @@ namespace Inference {
 
 bool FisherDistribution::authorizedParameterAtIndex(double x, int index) const {
   assert(index == 0 || index == 1);
-  if (!TwoParameterDistribution::authorizedParameterAtIndex(x, index)) {
+  if (!TwoParametersDistribution::authorizedParameterAtIndex(x, index)) {
     return false;
   }
   return x > DBL_MIN && x <= k_maxParameter;

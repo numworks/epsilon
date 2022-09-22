@@ -1,13 +1,13 @@
 #ifndef PROBABILITE_BINOMIAL_DISTRIBUTION_H
 #define PROBABILITE_BINOMIAL_DISTRIBUTION_H
 
-#include "two_parameter_distribution.h"
+#include "two_parameters_distribution.h"
 
 namespace Inference {
 
-class BinomialDistribution final : public TwoParameterDistribution {
+class BinomialDistribution final : public TwoParametersDistribution {
 public:
-  BinomialDistribution() : TwoParameterDistribution(Poincare::Distribution::Type::Binomial, 20.0, 0.5) { computeCurveViewRange(); }
+  BinomialDistribution() : TwoParametersDistribution(Poincare::Distribution::Type::Binomial, 20.0, 0.5) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::BinomialDistribution; }
   const char * parameterNameAtIndex(int index) const override { return index == 0 ? "n" : "p"; }
   bool authorizedParameterAtIndex(double x, int index) const override;

@@ -22,7 +22,7 @@ float UniformDistribution::evaluateAtAbscissa(float t) const {
 
 
 bool UniformDistribution::authorizedParameterAtIndex(double x, int index) const {
-  if (!TwoParameterDistribution::authorizedParameterAtIndex(x, index)) {
+  if (!TwoParametersDistribution::authorizedParameterAtIndex(x, index)) {
     return false;
   }
   if (index == 0) {

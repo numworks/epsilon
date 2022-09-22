@@ -8,7 +8,7 @@
 namespace Inference {
 
 bool BinomialDistribution::authorizedParameterAtIndex(double x, int index) const {
-  if (!TwoParameterDistribution::authorizedParameterAtIndex(x, index)) {
+  if (!TwoParametersDistribution::authorizedParameterAtIndex(x, index)) {
     return false;
   }
   if (index == 0) {

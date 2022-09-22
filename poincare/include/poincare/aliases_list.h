@@ -33,10 +33,17 @@ namespace Poincare {
 
 class AliasesList {
 public:
+  constexpr static int ConstexprStrlen(const char * string) {
+    int result = 0;
+    while (string[result] != 0) { result ++; }
+    return result;
+  }
+
   constexpr AliasesList(const char * formattedAliasesList) : m_formattedAliasesList(formattedAliasesList) {}
   constexpr operator const char *() const { return m_formattedAliasesList; }
 
-  const char * mainAlias() const;
+  constexpr const char * mainAlias() const { return m_formattedAliasesList + hasMultipleAliases(); }
+
   bool contains(const char * alias, int aliasLen = -1) const { return maxDifferenceWith(alias, aliasLen > -1 ? aliasLen : strlen(alias)) == 0; }
   bool isEquivalentTo(AliasesList otherList) { return strcmp(mainAlias(), otherList.mainAlias()) == 0; }
 
@@ -72,7 +79,7 @@ public:
 private:
   constexpr static char k_listStart = '\01';
 
-  bool hasMultipleAliases() const { return m_formattedAliasesList[0] == k_listStart; }
+  constexpr bool hasMultipleAliases() const { return m_formattedAliasesList[0] == k_listStart; }
   // Returns nullptr if there is no next name
   const char * nextAlias(const char * currentPositionInAliasesList) const;
 

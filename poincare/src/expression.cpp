@@ -173,7 +173,8 @@ bool Expression::deepIsList(Context * context) const {
       case ExpressionNode::Type::ListElement:
       case ExpressionNode::Type::ListSlice:
       case ExpressionNode::Type::ListSort:
-      return TrinaryBoolean::True;
+      case ExpressionNode::Type::RandintNoRepeat:
+        return TrinaryBoolean::True;
 
       /* These expressions have a list as argument but are never lists, we
        * must stop the search. */
@@ -187,11 +188,11 @@ bool Expression::deepIsList(Context * context) const {
       case ExpressionNode::Type::ListStandardDeviation:
       case ExpressionNode::Type::ListSum:
       case ExpressionNode::Type::ListVariance:
-      return TrinaryBoolean::False;
+        return TrinaryBoolean::False;
 
       /* Other expressions may be lists if their children are lists. */
       default:
-      return TrinaryBoolean::Unknown;
+        return TrinaryBoolean::Unknown;
       }
   }, context);
 }
@@ -229,8 +230,7 @@ bool Expression::IsPercent(const Expression e, Context * context) {
 }
 
 bool Expression::IsDiscontinuous(const Expression e, Context * context) {
-  return e.type() == ExpressionNode::Type::Random
-      || e.type() == ExpressionNode::Type::Randint
+  return e.isRandom()
       || e.type() == ExpressionNode::Type::PiecewiseOperator
       || ((e.type() == ExpressionNode::Type::Floor
           || e.type() == ExpressionNode::Type::Round
@@ -369,7 +369,7 @@ bool Expression::involvesDiscontinuousFunction(Context * context) const {
 }
 
 bool Expression::isDiscontinuousBetweenValuesForSymbol(const char * symbol, float x1, float x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  if (type() == ExpressionNode::Type::Randint || type() == ExpressionNode::Type::Random) {
+  if (isRandom()) {
     return true;
   }
   bool isDiscontinuous = false;

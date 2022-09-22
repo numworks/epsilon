@@ -120,6 +120,7 @@ private:
     &Product::s_functionHelper, // product
     &DivisionQuotient::s_functionHelper, // quo
     &Randint::s_functionHelper, // randint
+    &RandintNoRepeat::s_functionHelper, // randintnorep
     &Random::s_functionHelper, // random
     &RealPart::s_functionHelper, // re
     &MatrixRowEchelonForm::s_functionHelper, // ref

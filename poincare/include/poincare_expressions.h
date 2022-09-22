@@ -90,6 +90,7 @@
 #include <poincare/print_float.h>
 #include <poincare/product.h>
 #include <poincare/randint.h>
+#include <poincare/randint_no_repeat.h>
 #include <poincare/random.h>
 #include <poincare/rational.h>
 #include <poincare/real_part.h>

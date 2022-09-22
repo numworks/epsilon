@@ -3,6 +3,7 @@
 
 #include <poincare/expression.h>
 #include <poincare/expression_node_with_up_to_two_children.h>
+#include <poincare/random.h>
 #include <poincare/rational.h>
 
 namespace Poincare {
@@ -47,7 +48,10 @@ private:
 class Randint final : public ExpressionUpToTwoChildren<Randint,RandintNode> {
 friend class RandintNode;
 public:
+  // Return a random integer in [a,b]
+  static int RandomInt(int a, int b) { return std::floor(Random::random<float>() * (b + 1 - a) + a); }
   using ExpressionBuilder::ExpressionBuilder;
+
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

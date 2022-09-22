@@ -61,6 +61,7 @@ public:
   }
 
   void addChildAtIndexInPlace(Evaluation<T> t, int index, int currentNumberOfChildren);
+  using TreeHandle::removeChildInPlace;
 
   // Helper function
   ListComplex<T> sort();

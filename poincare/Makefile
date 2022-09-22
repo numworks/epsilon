@@ -175,6 +175,7 @@ poincare_src += $(addprefix poincare/src/,\
   print_int.cpp \
   product.cpp \
   randint.cpp \
+  randint_no_repeat.cpp \
   random.cpp \
   rational.cpp \
   real_part.cpp \

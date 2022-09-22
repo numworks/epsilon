@@ -35,7 +35,10 @@ template<typename T> Evaluation<T> ListSortNode::templatedApproximate(const Appr
 Expression ListSort::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   Expression child = childAtIndex(0);
   if (child.type() != ExpressionNode::Type::List) {
-    return replaceWithUndefinedInPlace();
+    if (!child.deepIsList(reductionContext.context())) {
+      return replaceWithUndefinedInPlace();
+    }
+    return *this;
   }
   List list = static_cast<List &>(child);
   ExpressionNode::ApproximationContext approximationContext(reductionContext, true);

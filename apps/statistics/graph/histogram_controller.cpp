@@ -254,14 +254,28 @@ void HistogramController::sanitizeSelectedIndex() {
   if (m_store->heightOfBarAtIndex(m_selectedSeries, m_selectedIndex) != 0) {
     return;
   }
-  // Select the first visible bar
-  m_selectedIndex = 0;
   int numberOfBars = m_store->numberOfBars(m_selectedSeries);
-  while (m_store->heightOfBarAtIndex(m_selectedSeries, m_selectedIndex) == 0 && m_selectedIndex < numberOfBars) {
-    m_selectedIndex++;
+  int previousIndex = m_selectedIndex;
+  // search a bar with non null height left of the selected one
+  while (m_store->heightOfBarAtIndex(m_selectedSeries, m_selectedIndex) == 0 && m_selectedIndex >= 0) {
+    m_selectedIndex--;
+  }
+  if (m_selectedIndex < 0) {
+    // search a bar with non null height right of the selected one
+    m_selectedIndex = previousIndex + 1;
+    while (m_store->heightOfBarAtIndex(m_selectedSeries, m_selectedIndex) == 0 && m_selectedIndex < numberOfBars) {
+      m_selectedIndex++;
+    }
   }
   assert(m_selectedIndex < numberOfBars);
   m_histogramRange.scrollToSelectedBarIndex(m_selectedSeries, m_selectedIndex);
+}
+
+void HistogramController::updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) {
+  double startDifference = m_store->startOfBarAtIndex(previousSelectedSeries, 0) - m_store->startOfBarAtIndex(m_selectedSeries, 0);
+  m_selectedIndex += static_cast<int>(startDifference / m_store->barWidth());
+  m_selectedIndex = std::max(std::min(m_selectedIndex, m_store->numberOfBars(m_selectedSeries) - 1), 0);
+  sanitizeSelectedIndex();
 }
 
 }

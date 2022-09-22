@@ -47,6 +47,10 @@ private:
   void sanitizeSelectedIndex();
   // return true if the window has scrolled
   bool moveSelectionHorizontally(int deltaIndex) override;
+
+  // DataViewController
+  void updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) override;
+
   MultipleHistogramsView m_view;
   HistogramRange m_histogramRange;
   uint32_t * m_storeVersion;

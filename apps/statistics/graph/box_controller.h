@@ -34,6 +34,10 @@ public:
   TELEMETRY_ID("Box");
 private:
   bool reloadBannerView() override;
+
+  // DataViewController
+  void updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) override;
+
   MultipleBoxesView m_view;
   BoxParameterController m_boxParameterController;
   Escher::Button m_parameterButton;

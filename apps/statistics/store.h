@@ -15,6 +15,7 @@ class Store : public Shared::DoublePairStore {
 friend class BoxRange;
 public:
   constexpr static const char * const * k_columnNames = DoublePairStore::k_statisticsColumNames;
+  constexpr static int k_numberOfQuantiles = 5;
 
   Store(Shared::GlobalContext * context, UserPreferences * userPreferences);
 
@@ -123,7 +124,6 @@ public:
   }
   bool updateSeries(int series, bool delayUpdate = false) override;
 private:
-  constexpr static int k_numberOfQuantiles = 5;
   constexpr static I18n::Message k_quantilesName[k_numberOfQuantiles] = {
     I18n::Message::StatisticsBoxLowerWhisker,
     I18n::Message::FirstQuartile,

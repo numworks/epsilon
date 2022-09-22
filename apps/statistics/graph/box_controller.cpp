@@ -69,4 +69,22 @@ bool BoxController::reloadBannerView() {
   return previousHeight != m_view.bannerView()->minimalSizeForOptimalDisplay().height();
 }
 
+void BoxController::updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) {
+  int resultIndex = -1;
+  int previousNumberOfLowerOutliers = m_store->numberOfLowerOutliers(previousSelectedSeries);
+  if (m_selectedIndex < previousNumberOfLowerOutliers) {
+    // Lower outliers were selected, select first lower outlier
+    resultIndex = 0;
+  } else if (m_selectedIndex < previousNumberOfLowerOutliers + Store::k_numberOfQuantiles) {
+    // Quartiles, max/min or median were selected, select same quantile
+    resultIndex = m_selectedIndex + m_store->numberOfLowerOutliers(m_selectedSeries) - previousNumberOfLowerOutliers;
+  } else {
+    // Upper outliers were selected, select first upper outlier
+    int numberOfUpperOutliers = m_store->numberOfUpperOutliers(m_selectedSeries);
+    resultIndex = m_store->numberOfBoxPlotCalculations(m_selectedSeries) - (numberOfUpperOutliers == 0 ? 1 : numberOfUpperOutliers);
+  }
+  assert(resultIndex >= 0 && resultIndex <= m_store->numberOfBoxPlotCalculations(m_selectedSeries));
+  m_selectedIndex = resultIndex;
+}
+
 }

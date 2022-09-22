@@ -52,6 +52,10 @@ protected:
 
   // DataViewController
   bool reloadBannerView() override;
+  void updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) override {
+    m_selectedIndex = std::floor(totalValues(m_selectedSeries) * (static_cast<double>(m_selectedIndex) / static_cast<double>(totalValues(previousSelectedSeries))));
+  }
+
 
   Shared::CurveViewCursor m_cursor;
   PlotRange m_graphRange;

@@ -1,5 +1,5 @@
-FunctionApp = "Fonctions"
-FunctionAppCapital = "FONCTIONS"
+FunctionApp = "Grapheur"
+FunctionAppCapital = "GRAPHEUR"
 FunctionTab = "Expressions"
 UseFunctionModel = "Ajouter un élément"
 AddFunction = " Ajouter un élément"

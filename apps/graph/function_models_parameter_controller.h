@@ -31,7 +31,7 @@ private:
 
   // Models are ordered
   enum class Models : uint8_t {
-    Empty,
+    Empty = 0,
     Cartesian,
     Implicit,
     Inequation,

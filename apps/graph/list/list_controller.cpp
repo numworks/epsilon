@@ -83,8 +83,8 @@ bool ListController::layoutRepresentsAnEquation(Poincare::Layout l) const {
       }
       if (layout.type() == Poincare::LayoutNode::Type::CodePointLayout) {
         for (size_t i = 0; i < k_numberOfSymbols; i++) {
-          if(static_cast<Poincare::CodePointLayout &>(layout).codePoint() == k_equationSymbols[i]) {
-          return Poincare::TrinaryBoolean::True;
+          if (static_cast<Poincare::CodePointLayout &>(layout).codePoint() == k_equationSymbols[i]) {
+            return Poincare::TrinaryBoolean::True;
           }
         }
       }

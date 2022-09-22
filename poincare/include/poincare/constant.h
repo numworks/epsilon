@@ -113,7 +113,8 @@ public:
     ConstantNode::ConstantInfo("_Na", 3, 6.02214076e23, "_mol^-1"),
     ConstantNode::ConstantInfo("_R", 3, 8.31446261815324, "_J*_mol^-1*_K^-1"),
     ConstantNode::ConstantInfo("_ε0", 3, 8.8541878128e-12, "_F/_m"),
-    ConstantNode::ConstantInfo("_μ0", 3, 1.25663706212e-6, "_N*_A^-2")
+    ConstantNode::ConstantInfo("_μ0", 3, 1.25663706212e-6, "_N*_A^-2"),
+    ConstantNode::ConstantInfo("_hplanck", 3, 6.62607015e-34, "_J*_s")
   };
 
 private:

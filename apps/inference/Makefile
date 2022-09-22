@@ -135,6 +135,7 @@ $(eval $(call depends_on_transparent_image,apps/inference/probability/distributi
   exponential_icon.png \
   fisher_icon.png \
   geometric_icon.png \
+  hypergeometric_icon.png \
   normal_icon.png \
   poisson_icon.png \
   student_icon.png \

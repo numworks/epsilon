@@ -9,7 +9,7 @@
 #include "../images/exponential_icon.h"
 #include "../images/fisher_icon.h"
 #include "../images/geometric_icon.h"
-// #include "../images/hypergeometric_icon.h" TODO
+#include "../images/hypergeometric_icon.h"
 #include "../images/normal_icon.h"
 #include "../images/poisson_icon.h"
 #include "../images/student_icon.h"
@@ -93,7 +93,7 @@ void DistributionController::willDisplayCellForIndex(HighlightCell * cell, int i
                                                  ImageStore::ChiSquaredIcon,
                                                  ImageStore::StudentIcon,
                                                  ImageStore::GeometricIcon,
-                                                 ImageStore::PoissonIcon,
+                                                 ImageStore::HypergeometricIcon,
                                                  ImageStore::PoissonIcon,
                                                  ImageStore::FisherIcon,
 };

@@ -1,6 +1,8 @@
 #ifndef POINCARE_UTILS_H
 #define POINCARE_UTILS_H
 
+#include <cmath>
+
 // Add small constexpr utility methods here
 namespace Poincare {
 
@@ -13,6 +15,10 @@ constexpr int string_length(const char * string) {
   int result = 0;
   while (string[result] != 0) { result ++; }
   return result;
+}
+
+constexpr inline bool equal_or_both_nan(double a, double b) {
+  return a == b || (std::isnan(a) && std::isnan(b));
 }
 
 }

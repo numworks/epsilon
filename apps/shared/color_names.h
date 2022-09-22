@@ -19,6 +19,7 @@ constexpr static KDColor Colors[Count] = {
   Escher::Palette::Pink,
   Escher::Palette::Orange
 };
+
 constexpr static I18n::Message Messages[Count] = {
   I18n::Message::ColorRed,
   I18n::Message::ColorBlue,
@@ -30,7 +31,19 @@ constexpr static I18n::Message Messages[Count] = {
   I18n::Message::ColorOrange
 };
 
+constexpr static I18n::Message CurveMessages[Count] = {
+  I18n::Message::ColorRedCurve,
+  I18n::Message::ColorBlueCurve,
+  I18n::Message::ColorGreenCurve,
+  I18n::Message::ColorYellowDarkCurve,
+  I18n::Message::ColorMagentaCurve,
+  I18n::Message::ColorTurquoiseCurve,
+  I18n::Message::ColorPinkCurve,
+  I18n::Message::ColorOrangeCurve,
+};
+
 I18n::Message NameForColor(KDColor color);
+I18n::Message NameForCurveColor(KDColor color);
 
 }
 

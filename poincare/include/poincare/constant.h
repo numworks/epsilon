@@ -97,6 +97,9 @@ public:
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 
+  /* Some of these are currently not tested in simplification.cpp because
+   * their units are weirdly simplified. These tests whould be updated when
+   * the outputted units are updated. */
   constexpr static ConstantNode::ConstantInfo k_constants[] = {
     ConstantNode::ConstantInfo("i", 0),
     ConstantNode::ConstantInfo(AliasesLists::k_piAliases, 1, M_PI),

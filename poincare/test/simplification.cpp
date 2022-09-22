@@ -246,6 +246,9 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "dep\u0014(x,{√(x)})", User, Radian, MetricUnitFormat, Real);
 }
 
+  /* Some of these are currently not tested because their units are weirdly
+   * simplified. These tests whould be updated when the outputted units are
+   * updated. */
 QUIZ_CASE(poincare_simplification_constants) {
   assert_parsed_expression_simplify_to("i", "i");
   assert_parsed_expression_simplify_to("π", "π");
@@ -263,6 +266,7 @@ QUIZ_CASE(poincare_simplification_constants) {
   assert_parsed_expression_simplify_to("_R", "8.3144626181532×_J×_mol^\u0012-1\u0013×_K^\u0012-1\u0013");
   //assert_parsed_expression_simplify_to("_ε0", "8.8541878128ᴇ-12×_F×_m^\u0012-1\u0013");
   //assert_parsed_expression_simplify_to("_μ0", "1.25663706212ᴇ-6×_N×_A^\u0012-2\u0013");
+  //assert_parsed_expression_simplify_to("_hplanck", "6.62607015ᴇ-34×_J×_s");
 }
 
 void assert_parsed_unit_simplify_to_with_prefixes(const Unit::Representative * representative) {

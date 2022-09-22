@@ -71,32 +71,34 @@ HighlightCell * DistributionController::reusableCell(int index) {
   return &m_cells[index];
 }
 
-constexpr I18n::Message sMessages[] = {I18n::Message::Binomial,
-                                       I18n::Message::Uniforme,
-                                       I18n::Message::Exponential,
-                                       I18n::Message::Normal,
-                                       I18n::Message::ChiSquare,
-                                       I18n::Message::Student,
-                                       I18n::Message::Geometric,
-                                       I18n::Message::Hypergeometric,
-                                       I18n::Message::Poisson,
-                                       I18n::Message::Fisher,
+constexpr I18n::Message sMessages[] = {
+  I18n::Message::Binomial,
+  I18n::Message::Uniforme,
+  I18n::Message::Exponential,
+  I18n::Message::Normal,
+  I18n::Message::ChiSquare,
+  I18n::Message::Student,
+  I18n::Message::Geometric,
+  I18n::Message::Hypergeometric,
+  I18n::Message::Poisson,
+  I18n::Message::Fisher,
 };
 
 void DistributionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   DistributionCell * myCell = static_cast<DistributionCell *>(cell);
   myCell->setLabel(sMessages[index]);
-  const Image * images[k_totalNumberOfModels] = {ImageStore::BinomialIcon,
-                                                 ImageStore::UniformIcon,
-                                                 ImageStore::ExponentialIcon,
-                                                 ImageStore::NormalIcon,
-                                                 ImageStore::ChiSquaredIcon,
-                                                 ImageStore::StudentIcon,
-                                                 ImageStore::GeometricIcon,
-                                                 ImageStore::HypergeometricIcon,
-                                                 ImageStore::PoissonIcon,
-                                                 ImageStore::FisherIcon,
-};
+  const Image * images[k_totalNumberOfModels] = {
+    ImageStore::BinomialIcon,
+    ImageStore::UniformIcon,
+    ImageStore::ExponentialIcon,
+    ImageStore::NormalIcon,
+    ImageStore::ChiSquaredIcon,
+    ImageStore::StudentIcon,
+    ImageStore::GeometricIcon,
+    ImageStore::HypergeometricIcon,
+    ImageStore::PoissonIcon,
+    ImageStore::FisherIcon,
+  };
   myCell->setImage(images[index]);
   myCell->reloadCell();
 }

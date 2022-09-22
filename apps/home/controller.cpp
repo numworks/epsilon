@@ -85,8 +85,8 @@ bool Controller::handleEvent(Ion::Events::Event event) {
 
   char eventText[Ion::Events::EventData::k_maxDataSize] = {0};
   size_t length = Ion::Events::copyText(static_cast<uint8_t>(event), eventText, Ion::Events::EventData::k_maxDataSize);
-  if (length == 1 && eventText[0] >= '1' && eventText[0] <= '9') { // Handle keys from 1 to 9
-    int appIndex = eventText[0] - '1';
+  if (length == 1 && eventText[0] >= '0' && eventText[0] <= '9') { // Handle keys from 1 to 9
+    int appIndex = eventText[0] == '0' ? numberOfIcons() - 1 : eventText[0] - '1';
     int i = appIndex % k_numberOfColumns;
     int j = appIndex / k_numberOfColumns;
     if (i == m_view.selectableTableView()->selectedColumn() && j == m_view.selectableTableView()->selectedRow()) {

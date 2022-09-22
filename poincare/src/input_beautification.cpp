@@ -104,6 +104,7 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
     nextIdentifier = tokenizer.popToken();
     int numberOfLayoutsAddedOrRemoved = 0;
     // Try to beautify each token.
+
     // Beautify pi and theta
     if (currentIdentifier.type() == Token::Constant || currentIdentifier.type() == Token::CustomIdentifier) {
       for (BeautificationRule beautificationRule : convertWhenFollowedByANonIdentifierChar) {
@@ -113,6 +114,24 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
         }
       }
     }
+
+    // Beautify logN(..)
+        // Check if next token is a number
+    if (nextIdentifier.type() == Token::Number
+        // Check if current token is a function
+        && currentIdentifier.type() == Token::ReservedFunction
+        // Check if a parenthesis was just inputted
+        && lastAddedLayout.type() == LayoutNode::Type::ParenthesisLayout
+        // Check if logN is at the end of the identifiers string
+        && *(nextIdentifier.text() + nextIdentifier.length()) == 0
+        // Check if N is integer
+        && nextIdentifier.expression().type() == ExpressionNode::Type::BasedInteger
+        // Check if function is "log"
+        && k_logarithmRule.listOfBeautifiedAliases.contains(currentIdentifier.text(), currentIdentifier.length())) {
+      Layout baseOfLog = nextIdentifier.expression().createLayout(Preferences::PrintFloatMode::Decimal, Preferences::LargeNumberOfSignificantDigits, context).makeEditable();
+      numberOfLayoutsAddedOrRemoved = RemoveLayoutsBetweenIndexAndReplaceWithPattern(parent, firstIndexOfIdentifier, firstIndexOfIdentifier + currentIdentifier.length() + nextIdentifier.length() - 1, k_logarithmRule, layoutCursor, true, forceCursorRightOfText, baseOfLog);
+    }
+
     // Beautify functions
     if (currentIdentifier.type() == Token::ReservedFunction
         // Only the last token can be a function
@@ -127,6 +146,7 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
         }
       }
     }
+
     firstIndexOfIdentifier += currentIdentifier.length() + numberOfLayoutsAddedOrRemoved;
     currentIdentifier = nextIdentifier;
   }

@@ -533,11 +533,13 @@ const UnitNode::Prefix * UnitNode::MassRepresentative::basePrefix() const {
 }
 
 const UnitNode::Representative * UnitNode::MassRepresentative::standardRepresentative(double value, double exponent, const ExpressionNode::ReductionContext& reductionContext, const Prefix * * prefix) const {
-  return (reductionContext.unitFormat() == Preferences::UnitFormat::Metric) ?
-    /* Only search in g. */
-    DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension(), 1, prefix) :
-    /* Only search in imperial units without the long ton. */
-    DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_ounceRepresentativeIndex, Unit::k_shortTonRepresentativeIndex - Unit::k_ounceRepresentativeIndex + 1, prefix);
+  if (reductionContext.unitFormat() == Preferences::UnitFormat::Imperial) {
+    return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_ounceRepresentativeIndex, Unit::k_shortTonRepresentativeIndex - Unit::k_ounceRepresentativeIndex + 1, prefix);
+  }
+  assert(reductionContext.unitFormat() == Preferences::UnitFormat::Metric);
+  bool useTon = exponent == 1. && value >= (representativesOfSameDimension() + Unit::k_tonRepresentativeIndex)->ratio();
+  int representativeIndex = useTon ? Unit::k_tonRepresentativeIndex : Unit::k_gramRepresentativeIndex;
+  return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + representativeIndex, 1, prefix);
 }
 
 int UnitNode::MassRepresentative::setAdditionalExpressions(double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {

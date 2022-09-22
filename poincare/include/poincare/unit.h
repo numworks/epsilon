@@ -690,6 +690,10 @@ public:
   static_assert(strings_equal(k_angleRepresentatives[k_degreeRepresentativeIndex].m_rootSymbols, "°"), "Index for the Degree Representative is incorrect.");
   constexpr static int k_gradianRepresentativeIndex = 4;
   static_assert(strings_equal(k_angleRepresentatives[k_gradianRepresentativeIndex].m_rootSymbols, "gon"), "Index for the Gradian Representative is incorrect.");
+  constexpr static int k_gramRepresentativeIndex = 0;
+  static_assert(strings_equal(k_massRepresentatives[k_gramRepresentativeIndex].m_rootSymbols, "g"), "Index for the Gram Representative is incorrect.");
+  constexpr static int k_tonRepresentativeIndex = 1;
+  static_assert(strings_equal(k_massRepresentatives[k_tonRepresentativeIndex].m_rootSymbols, "t"), "Index for the Ton Representative is incorrect.");
   constexpr static int k_ounceRepresentativeIndex = 3;
   static_assert(strings_equal(k_massRepresentatives[k_ounceRepresentativeIndex].m_rootSymbols, "oz"), "Index for the Ounce Representative is incorrect.");
   constexpr static int k_poundRepresentativeIndex = 4;

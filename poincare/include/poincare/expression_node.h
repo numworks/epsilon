@@ -112,6 +112,7 @@ public:
     Product,
     Random,
     Randint,
+    RandintNoRepeat,
     RealPart,
     Round,
     Sequence,

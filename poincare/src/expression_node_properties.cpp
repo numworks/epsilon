@@ -12,7 +12,7 @@ namespace Poincare {
 
 bool ExpressionNode::isNumber() const { return isOfType({Type::BasedInteger, Type::Decimal, Type::Double, Type::Float, Type::Infinity, Type::Nonreal, Type::Rational, Type::Undefined}); }
 
-bool ExpressionNode::isRandom() const { return isOfType({Type::Random, Type::Randint}); }
+bool ExpressionNode::isRandom() const { return isOfType({Type::Random, Type::Randint, Type::RandintNoRepeat}); }
 
 bool ExpressionNode::isParameteredExpression() const { return isOfType({Type::Derivative, Type::Integral, Type::ListSequence, Type::Sum, Type::Product}); }
 

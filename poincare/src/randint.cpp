@@ -5,7 +5,6 @@
 #include <poincare/infinity.h>
 #include <poincare/integer.h>
 #include <poincare/layout_helper.h>
-#include <poincare/random.h>
 #include <poincare/rational.h>
 #include <poincare/undefined.h>
 #include <poincare/serialization_helper.h>
@@ -82,8 +81,7 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(const Appro
             || (Float<T>::EpsilonLax()*(b+static_cast<T>(1.0)-a) > static_cast<T>(1.0))) {
           return Complex<T>::RealUndefined();
         }
-        T result = std::floor(Random::random<T>()*(b+static_cast<T>(1.0)-a)+a);
-        return Complex<T>::Builder(result);
+        return Complex<T>::Builder(Randint::RandomInt(a, b));
       });
 }
 

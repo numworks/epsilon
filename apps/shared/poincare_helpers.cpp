@@ -44,6 +44,7 @@ bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expres
         return e.isOfType({
           ExpressionNode::Type::ConstantPhysics,
           ExpressionNode::Type::Randint,
+          ExpressionNode::Type::RandintNoRepeat,
           ExpressionNode::Type::Random,
           ExpressionNode::Type::Round,
           ExpressionNode::Type::FracPart,

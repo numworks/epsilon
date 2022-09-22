@@ -33,12 +33,6 @@ namespace Poincare {
 
 class AliasesList {
 public:
-  constexpr static int ConstexprStrlen(const char * string) {
-    int result = 0;
-    while (string[result] != 0) { result ++; }
-    return result;
-  }
-
   constexpr AliasesList(const char * formattedAliasesList) : m_formattedAliasesList(formattedAliasesList) {}
   constexpr operator const char *() const { return m_formattedAliasesList; }
 

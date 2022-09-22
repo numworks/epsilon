@@ -12,10 +12,19 @@ bool HypergeometricDistribution::authorizedParameterAtIndex(double x, int index)
     return false;
   }
   if (index == 0) { // N
-    return x >= m_parameters[1] && x >= m_parameters[2] && x > 0;
+    return x > 0;
   }
   // K or n
   return x <= m_parameters[0];
+}
+
+void HypergeometricDistribution::setParameterAtIndex(double f, int index) {
+  Inference::setParameterAtIndex(f, index);
+  if (index == 0) {
+    m_parameters[1] = std::min(m_parameters[0], m_parameters[1]);
+    m_parameters[2] = std::min(m_parameters[0], m_parameters[2]);
+  }
+  computeCurveViewRange();
 }
 
 float HypergeometricDistribution::computeXMax() const {

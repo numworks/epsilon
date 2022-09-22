@@ -15,6 +15,7 @@ public:
     return parametersNames[index];
   }
   bool authorizedParameterAtIndex(double x, int index) const override;
+  void setParameterAtIndex(double f, int index) override;
   double defaultComputedValue() const override { return 1.0; }
 private:
   ParameterRepresentation paramRepresentationAtIndex(int i) const override {

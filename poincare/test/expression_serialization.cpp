@@ -32,7 +32,7 @@ QUIZ_CASE(poincare_serialization_rational) {
   assert_expression_serialize_to(Rational::Builder(MaxIntegerString()), MaxIntegerString());
   Integer one(1);
   Integer overflow = Integer::Overflow(false);
-  assert_expression_serialize_to(Rational::Builder(one, overflow), "1/inf");
+  assert_expression_serialize_to(Rational::Builder(one, overflow), "1/∞");
   assert_expression_serialize_to(Rational::Builder(overflow), Infinity::Name());
 }
 

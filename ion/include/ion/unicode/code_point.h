@@ -72,6 +72,7 @@ constexpr static CodePoint UCodePointNorthEastArrow           = 0x2197;  // ↗
 constexpr static CodePoint UCodePointSouthEastArrow           = 0x2198;  // ↘
 constexpr static CodePoint UCodePointNArySummation            = 0x2211;  // ∑
 constexpr static CodePoint UCodePointSquareRoot               = 0x221a;  // √
+constexpr static CodePoint UCodePointInfinity                 = 0x221e;  // ∞
 constexpr static CodePoint UCodePointIntegral                 = 0x222b;  // ∫
 constexpr static CodePoint UCodePointNotEqual                 = 0x2260;  // ≠
 constexpr static CodePoint UCodePointInferiorEqual            = 0x2264;  // ≤

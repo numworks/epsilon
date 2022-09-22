@@ -55,10 +55,15 @@ private:
 
 class Infinity final : public Number {
 public:
-  constexpr static char k_fullName[] = "-inf";
+  constexpr static AliasesList k_infinityAliases =  AliasesLists::k_infinityAliases;
+  /* A constexpr of this is needed so that the Name() function can return a
+   * const char * when negative = true */
+  constexpr static const char * k_minusInfinityMainName =  "-∞";
+  // ∞ is 3 chars long.
+  static_assert(k_minusInfinityMainName[1] == k_infinityAliases.mainAlias()[0] && k_minusInfinityMainName[2] == k_infinityAliases.mainAlias()[1] && k_minusInfinityMainName[3] == k_infinityAliases.mainAlias()[2] && k_minusInfinityMainName[4] == k_infinityAliases.mainAlias()[3] && k_minusInfinityMainName[4] == 0, "minus infinity does not have same name as infinity.");
 
-  constexpr static const char * Name(bool negative = false) { return &k_fullName[negative ? 0 : 1]; }
-  constexpr static int NameSize(bool negative = false) { return sizeof(k_fullName) + negative - 1; }
+  constexpr static const char * Name(bool negative = false) { return negative ? k_minusInfinityMainName : k_infinityAliases.mainAlias(); }
+  constexpr static int NameSize(bool negative = false) { return AliasesList::ConstexprStrlen(Name(negative)) + 1; }
   static Infinity Builder(bool negative);
 
   Infinity(InfinityNode * n) : Number(n) {}

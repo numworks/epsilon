@@ -55,7 +55,7 @@ QUIZ_CASE(poincare_simplification_rational) {
   bufferInf[0] = '-';
   bufferLengthOfInf = 1;
   strlcpy(bufferInf + bufferLengthOfInf, BigOverflowedIntegerString(), k_bufferSizeOfInf - bufferLengthOfInf);
-  assert_parsed_expression_simplify_to(bufferInf, "-inf");
+  assert_parsed_expression_simplify_to(bufferInf, Infinity::Name(true));
 
   assert_parsed_expression_simplify_to("-1/3", "-1/3");
   assert_parsed_expression_simplify_to("22355/45325", "4471/9065");
@@ -91,26 +91,26 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("0×inf", Undefined::Name());
   assert_parsed_expression_simplify_to("0×inf×π", Undefined::Name());
   assert_parsed_expression_simplify_to("3×inf/inf", "undef");
-  assert_parsed_expression_simplify_to("1ᴇ1001", "inf");
-  assert_parsed_expression_simplify_to("-1ᴇ1001", "-inf");
+  assert_parsed_expression_simplify_to("1ᴇ1001", Infinity::Name());
+  assert_parsed_expression_simplify_to("-1ᴇ1001", Infinity::Name(true));
   assert_parsed_expression_simplify_to("-1ᴇ-1001", "0");
   assert_parsed_expression_simplify_to("1ᴇ-1001", "0");
-  //assert_parsed_expression_simplify_to("1×10^1000", "inf");
+  //assert_parsed_expression_simplify_to("1×10^1000", Infinity::Name());
 
   assert_parsed_expression_simplify_to("inf^0", "undef");
-  assert_parsed_expression_simplify_to("1^inf", "1^inf");
-  assert_parsed_expression_simplify_to("1^(X^inf)", "1^\u0012X^inf\u0013");
+  assert_parsed_expression_simplify_to("1^inf", "1^∞");
+  assert_parsed_expression_simplify_to("1^(X^inf)", "1^\u0012X^∞\u0013");
   assert_parsed_expression_simplify_to("inf^(-1)", "0");
   assert_parsed_expression_simplify_to("(-inf)^(-1)", "0");
   assert_parsed_expression_simplify_to("inf^(-√(2))", "0");
   assert_parsed_expression_simplify_to("(-inf)^(-√(2))", "0");
-  assert_parsed_expression_simplify_to("inf^2", "inf");
-  assert_parsed_expression_simplify_to("(-inf)^2", "inf");
-  assert_parsed_expression_simplify_to("inf^√(2)", "inf");
-  assert_parsed_expression_simplify_to("(-inf)^√(2)", "inf×(-1)^√(2)");
-  assert_parsed_expression_simplify_to("inf^x", "inf^x");
+  assert_parsed_expression_simplify_to("inf^2", Infinity::Name());
+  assert_parsed_expression_simplify_to("(-inf)^2", Infinity::Name());
+  assert_parsed_expression_simplify_to("inf^√(2)", Infinity::Name());
+  assert_parsed_expression_simplify_to("(-inf)^√(2)", "∞×(-1)^√(2)");
+  assert_parsed_expression_simplify_to("inf^x", "∞^x");
   assert_parsed_expression_simplify_to("1/inf+24", "24");
-  assert_parsed_expression_simplify_to("e^(inf)/inf", "0×e^\u0012inf\u0013");
+  assert_parsed_expression_simplify_to("e^(inf)/inf", "0×e^\u0012∞\u0013");
 
   // Logarithm
   assert_parsed_expression_simplify_to("log(inf,0)", "undef");
@@ -119,11 +119,11 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("log(1,inf)", "0");
   assert_parsed_expression_simplify_to("log(inf,inf)", "undef");
 
-  assert_parsed_expression_simplify_to("ln(inf)", "inf");
-  assert_parsed_expression_simplify_to("log(inf,-3)", "log(inf,-3)");
-  assert_parsed_expression_simplify_to("log(inf,3)", "inf");
-  assert_parsed_expression_simplify_to("log(inf,0.3)", "-inf");
-  assert_parsed_expression_simplify_to("log(inf,x)", "log(inf,x)");
+  assert_parsed_expression_simplify_to("ln(inf)", Infinity::Name());
+  assert_parsed_expression_simplify_to("log(inf,-3)", "log(∞,-3)");
+  assert_parsed_expression_simplify_to("log(inf,3)", Infinity::Name());
+  assert_parsed_expression_simplify_to("log(inf,0.3)", Infinity::Name(true));
+  assert_parsed_expression_simplify_to("log(inf,x)", "log(∞,x)");
   assert_parsed_expression_simplify_to("ln(inf)*0", "undef");
 }
 
@@ -493,8 +493,8 @@ QUIZ_CASE(poincare_simplification_units) {
    * expression */
   assert_parsed_expression_simplify_to("0×_s", "0×_s");
   assert_parsed_expression_simplify_to("0×_tsp", "0×_m^3");
-  assert_parsed_expression_simplify_to("inf×_s", "inf×_s");
-  assert_parsed_expression_simplify_to("-inf×_oz", "-inf×_kg");
+  assert_parsed_expression_simplify_to("inf×_s", "∞×_s");
+  assert_parsed_expression_simplify_to("-inf×_oz", "-∞×_kg");
   assert_parsed_expression_simplify_to("2_s+3_s-5_s", "0×_s");
   assert_parsed_expression_simplify_to("normcdf(0,20,3)×_s", "13.083978345207×_ps");
   assert_parsed_expression_simplify_to("log(0)×_s", "undef");
@@ -1055,7 +1055,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
 
   assert_parsed_expression_simplify_to("acos(cos(12))", "4×π-12");
   assert_parsed_expression_simplify_to("acos(cos(2*1ᴇ10))", "20000000000");
-  assert_parsed_expression_simplify_to("acos(cos(inf))", "arccos(cos(inf))");
+  assert_parsed_expression_simplify_to("acos(cos(inf))", "arccos(cos(∞))");
   assert_parsed_expression_simplify_to("acos(cos(9))", "-2×π+9");
   assert_parsed_expression_simplify_to("acos(cos(10^125))", "arccos(cos(10^125))");
   assert_parsed_expression_simplify_to("acos(cos(1/0))", Undefined::Name());
@@ -1437,7 +1437,7 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   // Cartesian
   assert_parsed_expression_simplify_to("-2.3ᴇ3", "-2300", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("3", "3", User, Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("inf", "inf", User, Radian, MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("∞", Infinity::Name(), User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("1+2+i", "3+i", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("-(5+2×i)", "-5-2×i", User, Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("(5+2×i)", "5+2×i", User, Radian, MetricUnitFormat, Cartesian);
@@ -1521,7 +1521,7 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   // Polar
   assert_parsed_expression_simplify_to("-2.3ᴇ3", "2300×e^\u0012π×i\u0013", User, Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("3", "3", User, Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("inf", "inf", User, Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("∞", Infinity::Name(), User, Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("1+2+i", "√(10)×e^\u0012\u0012-2×arctan(3)+π\u0013/2×i\u0013", User, Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("1+2+i", "√(10)×e^\u0012\u0012-π×arctan(3)+90×π\u0013/180×i\u0013", User, Degree, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("-(5+2×i)", "√(29)×e^\u0012\u0012-2×arctan(5/2)-π\u0013/2×i\u0013", User, Radian, MetricUnitFormat, Polar);
@@ -1819,9 +1819,9 @@ QUIZ_CASE(poincare_probability) {
   assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", Undefined::Name());
   assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", Undefined::Name());
   assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("invnorm(0,2,3)", "-inf");
+  assert_parsed_expression_simplify_to("invnorm(0,2,3)", Infinity::Name(true));
   assert_parsed_expression_simplify_to("invnorm(0.5,2,3)", "2");
-  assert_parsed_expression_simplify_to("invnorm(1,2,3)", "inf");
+  assert_parsed_expression_simplify_to("invnorm(1,2,3)", Infinity::Name());
   assert_parsed_expression_simplify_to("invnorm(1.3,2,3)", "undef");
   assert_parsed_expression_simplify_to("invnorm(3/4,2,random())", "invnorm(3/4,2,random())"); // random can be 0
   assert_parsed_expression_simplify_to("invnorm(0.5,2,0)", Undefined::Name());
@@ -1916,7 +1916,7 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("sort({})", "{}");
   assert_parsed_expression_simplify_to("sort({1})", "{1}");
   assert_parsed_expression_simplify_to("sort({3,2,1})", "{1,2,3}");
-  assert_parsed_expression_simplify_to("sort({undef,-1,-2,-inf,inf})", "{-inf,-2,-1,inf,undef}");
+  assert_parsed_expression_simplify_to("sort({undef,-1,-2,-inf,inf})", "{-∞,-2,-1,∞,undef}");
   // Mean of a list
   assert_parsed_expression_simplify_to("mean({})", Undefined::Name());
   assert_parsed_expression_simplify_to("mean({1,2,3})", "2");
@@ -1932,14 +1932,16 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("min({3,undef,-2})", "-2");
   // Do not simplify when a value can't be approximated
   assert_parsed_expression_simplify_to("min({3,x,-2})", "min({3,x,-2})");
-  assert_parsed_expression_simplify_to("min({3,-inf,-2})", "-inf");
+  assert_parsed_expression_simplify_to("min({3,-inf,-2})", Infinity::Name(true));
+
   // Maximum of a list
   assert_parsed_expression_simplify_to("max({})", Undefined::Name());
   assert_parsed_expression_simplify_to("max({1,2,3})", "3");
   assert_parsed_expression_simplify_to("max({3,undef,-2})", "3");
   // Do not simplify when a value can't be approximated
   assert_parsed_expression_simplify_to("max({3,x,-2})", "max({3,x,-2})");
-  assert_parsed_expression_simplify_to("max({3,inf,-2})", "inf");
+  assert_parsed_expression_simplify_to("max({3,inf,-2})", Infinity::Name());
+
   // Variance of a list
   assert_parsed_expression_simplify_to("var({})", Undefined::Name());
   assert_parsed_expression_simplify_to("var({1})", "0");

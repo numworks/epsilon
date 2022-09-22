@@ -153,6 +153,7 @@ uint32_t CodePoints[] = {
   0x2198,  // ↘ // SOUTH EAST ARROW
   0x2211,  // ∑ // N-ARY SUMMATION
   0x221a,  // √ // SQUARE ROOT
+  0x221e,  // ∞ // INFINITY
   0x222b,  // ∫ // INTEGRAL
   0x2248,  // ≈ // ALMOST EQUAL TO
   0x2260,  // ≠ // NOT EQUAL

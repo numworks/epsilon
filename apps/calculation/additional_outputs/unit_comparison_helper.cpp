@@ -20,7 +20,7 @@ namespace UnitComparison {
 
 constexpr static const ReferenceValue k_lengthReferences[] = {
   ReferenceValue({I18n::Message::AtomNucleusDiameterTitle1, I18n::Message::AtomNucleusDiameterTitle2, I18n::Message::AtomNucleusDiameterSubtitle, 1e-15f}),
-  ReferenceValue({I18n::Message::HydrogenAtomRadiusTitle1, I18n::Message::HydrogenAtomRadiusTitle2, I18n::Message::HydrogenAtomRadiusSubtitle, 1.06e-10f}),
+  ReferenceValue({I18n::Message::HydrogenAtomRadiusTitle1, I18n::Message::HydrogenAtomRadiusTitle2, I18n::Message::HydrogenAtomRadiusSubtitle, 6.4e-11f}),
   ReferenceValue({I18n::Message::AdnDiameterTitle1, I18n::Message::AdnDiameterTitle2, I18n::Message::AdnDiameterSubtitle, 2e-09f}),
   ReferenceValue({I18n::Message::VirusSizeTitle1, I18n::Message::VirusSizeTitle2, I18n::Message::VirusSizeSubtitle, 2e-08f}),
   ReferenceValue({I18n::Message::BacteriaSizeTitle1, I18n::Message::BacteriaSizeTitle2, I18n::Message::BacteriaSizeSubtitle, 5e-06f}),

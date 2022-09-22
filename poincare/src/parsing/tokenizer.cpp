@@ -345,7 +345,7 @@ static bool stringIsACodePointFollowedByNumbers(const char * string, size_t leng
   return true;
 }
 
-static bool stringIsASpecialIdentifierFollowedByNumbers(const char * string, size_t * length) {
+static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(const char * string, size_t * length, Token::Type * returnType) {
   UTF8Decoder tempDecoder(string);
   CodePoint c = tempDecoder.nextCodePoint();
   size_t identifierLength = 0;
@@ -356,7 +356,13 @@ static bool stringIsASpecialIdentifierFollowedByNumbers(const char * string, siz
   if (identifierLength == *length) {
     return false;
   }
+  if (Logarithm::s_functionHelper.aliasesList().contains(string, identifierLength)) {
+    *returnType = Token::ReservedFunction;
+    *length = identifierLength;
+    return true;
+  }
   if (ParsingHelper::IsSpecialIdentifierName(string, identifierLength)) {
+    *returnType = Token::SpecialIdentifier;
     *length = identifierLength;
     return true;
   }
@@ -421,9 +427,10 @@ Token::Type Tokenizer::stringTokenType(const char * string, size_t * length) con
     return Token::Unit;
   }
   // "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
-  if (stringIsASpecialIdentifierFollowedByNumbers(string, length)) {
+  Token::Type type;
+  if (stringIsASpecialIdentifierOrALogFollowedByNumbers(string, length, &type)) {
     // If true, the length has been modified to match the end of the identifier
-    return Token::SpecialIdentifier;
+    return type;
   }
   // "x12" should not be parsed as "x*12" but "x12"
   if (!hasUnitOnlyCodePoint && stringIsACodePointFollowedByNumbers(string, *length)) {

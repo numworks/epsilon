@@ -1,13 +1,13 @@
-#ifndef PROBABILITE_TWO_PARAMETER_DISTRIBUTION_H
-#define PROBABILITE_TWO_PARAMETER_DISTRIBUTION_H
+#ifndef PROBABILITE_TWO_PARAMETERS_DISTRIBUTION_H
+#define PROBABILITE_TWO_PARAMETERS_DISTRIBUTION_H
 
 #include "distribution.h"
 
 namespace Inference {
 
-class TwoParameterDistribution : public Distribution {
+class TwoParametersDistribution : public Distribution {
 public:
-  TwoParameterDistribution(Poincare::Distribution::Type type, double parameterValue1, double parameterValue2) :
+  TwoParametersDistribution(Poincare::Distribution::Type type, double parameterValue1, double parameterValue2) :
     Distribution(type),
     m_parameters{parameterValue1, parameterValue2}
   {}

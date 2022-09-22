@@ -1,13 +1,13 @@
 #ifndef PROBABILITE_UNIFORM_DISTRIBUTION_H
 #define PROBABILITE_UNIFORM_DISTRIBUTION_H
 
-#include "two_parameter_distribution.h"
+#include "two_parameters_distribution.h"
 
 namespace Inference {
 
-class UniformDistribution final : public TwoParameterDistribution {
+class UniformDistribution final : public TwoParametersDistribution {
 public:
-  UniformDistribution() : TwoParameterDistribution(Poincare::Distribution::Type::Uniform, -1.0, 1.0) { computeCurveViewRange(); }
+  UniformDistribution() : TwoParametersDistribution(Poincare::Distribution::Type::Uniform, -1.0, 1.0) { computeCurveViewRange(); }
   I18n::Message title() const override { return I18n::Message::UniformDistribution; }
   const char * parameterNameAtIndex(int index) const override { return index == 0 ? "a" : "b"; }
   double meanAbscissa() override { return (m_parameters[0] + m_parameters[1]) / 2.0; }

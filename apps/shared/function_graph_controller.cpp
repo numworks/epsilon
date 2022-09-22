@@ -4,7 +4,7 @@
 #include <apps/apps_container_helper.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/layout_helper.h>
-#include <poincare/utils.h>
+#include <poincare/helpers.h>
 #include <assert.h>
 #include <cmath>
 #include <float.h>
@@ -159,7 +159,7 @@ bool FunctionGraphController::cursorMatchesModel() {
   }
   ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
   Coordinate2D<double> xy = f->evaluateXYAtParameter(m_cursor->t(), context, m_selectedSubCurveIndex);
-  return Poincare::equal_or_both_nan(xy.x1(), m_cursor->x()) && Poincare::equal_or_both_nan(xy.x2(), m_cursor->y());
+  return Poincare::Helpers::EqualOrBothNan(xy.x1(), m_cursor->x()) && Poincare::Helpers::EqualOrBothNan(xy.x2(), m_cursor->y());
 }
 
 CurveView * FunctionGraphController::curveView() {

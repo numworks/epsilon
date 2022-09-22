@@ -446,7 +446,9 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("π", Constant::Builder("π"));
   assert_parsed_expression_is("pi", Constant::Builder("π"));
   assert_parsed_expression_is("e", Constant::Builder("e"));
-  assert_parsed_expression_is(Infinity::Name(), Infinity::Builder(false));
+  assert_parsed_expression_is("∞", Infinity::Builder(false));
+  assert_parsed_expression_is("+∞", Infinity::Builder(false));
+  assert_parsed_expression_is("inf", Infinity::Builder(false));
   assert_parsed_expression_is("+inf", Infinity::Builder(false));
   assert_parsed_expression_is(Undefined::Name(), Undefined::Builder());
 
@@ -613,6 +615,7 @@ QUIZ_CASE(poincare_parsing_parse_unit_convert) {
   assert_text_not_parsable("1→2");
   assert_text_not_parsable("1→a+a");
   assert_text_not_parsable("1→inf");
+  assert_text_not_parsable("1→∞");
   assert_text_not_parsable("1→undef");
   assert_text_not_parsable("1→π");
   assert_text_not_parsable("1→i");

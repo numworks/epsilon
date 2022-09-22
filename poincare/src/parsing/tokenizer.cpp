@@ -279,6 +279,11 @@ Token Tokenizer::popToken() {
     return Token(Token::Empty);
   case UCodePointRightwardsArrow:
     return Token(Token::RightwardsArrow);
+  case UCodePointInfinity: {
+    Token result = Token(Token::SpecialIdentifier);
+    result.setString(start, UTF8Decoder::CharSizeOfCodePoint(UCodePointInfinity));
+    return result;
+  }
   case 0:
     return Token(Token::EndOfStream);
   default:

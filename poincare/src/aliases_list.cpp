@@ -3,14 +3,6 @@
 
 namespace Poincare {
 
-const char * AliasesList::mainAlias() const {
-  if (!hasMultipleAliases()) {
-    return m_formattedAliasesList;
-  }
-  assert(m_formattedAliasesList[0] == k_listStart);
-  return m_formattedAliasesList + 1;
-}
-
 int AliasesList::maxDifferenceWith(const char * alias, int aliasLen) const {
   if (!hasMultipleAliases()) {
     return UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(alias, aliasLen, m_formattedAliasesList);

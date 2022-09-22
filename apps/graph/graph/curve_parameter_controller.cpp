@@ -14,7 +14,7 @@ CurveParameterController::CurveParameterController(Escher::InputEventHandlerDele
   m_abscissaCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
   m_imageCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
   m_derivativeNumberCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
-  m_calculationCell(I18n::Message::Compute),
+  m_calculationCell(I18n::Message::Find),
   m_optionsCell(I18n::Message::Options),
   m_graphController(graphController),
   m_graphRange(graphRange),

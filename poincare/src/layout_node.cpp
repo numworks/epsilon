@@ -169,7 +169,12 @@ bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool for
 }
 
 Layout LayoutNode::makeEditable() {
-  return Layout(this).defaultMakeEditable();
+  /* We visit children if reverse order to avoid visiting the codepoints they
+   * might have inserted after them. */
+  for (int i = numberOfChildren() - 1; i >= 0; i--) {
+    childAtIndex(i)->makeEditable();
+  }
+  return Layout(this);
 }
 
 // Other

@@ -99,7 +99,6 @@ public:
   void collapseSiblings(LayoutCursor * cursor);
   // Replace strings with codepoints
   Layout makeEditable() { return node()->makeEditable(); }
-  Layout defaultMakeEditable();
 protected:
   // Add
   void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor);

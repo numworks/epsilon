@@ -6,6 +6,8 @@
 #include <poincare/conjugate.h>
 #include <poincare/derivative.h>
 #include <poincare/integral.h>
+#include <poincare/layout_helper.h>
+#include <poincare/logarithm.h>
 #include <poincare/power.h>
 #include <poincare/nth_root.h>
 #include <poincare/square_root.h>
@@ -75,6 +77,13 @@ private:
   constexpr static BeautificationRule k_derivativeRule = {Derivative::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder())); }};
   static bool BeautifyFractionIntoDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText);
   static bool BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText);
+
+  constexpr static BeautificationRule k_logarithmRule = {
+    Logarithm::s_functionHelper.aliasesList(),
+    [](Layout builderParameter) {
+      return static_cast<Layout>(LayoutHelper::Logarithm(EmptyLayout::Builder(), builderParameter.isUninitialized() ? EmptyLayout::Builder() : builderParameter).makeEditable());
+    }
+  };
 
   /* Sorted in alphabetical order like in parsing/helper.h
    * "If the function has multiple aliases, take the first alias

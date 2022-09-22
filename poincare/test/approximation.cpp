@@ -1,6 +1,7 @@
 #include <apps/shared/global_context.h>
 #include <poincare/constant.h>
 #include <poincare/infinity.h>
+#include <poincare/list_sort.h>
 #include <poincare/undefined.h>
 #include "helper.h"
 
@@ -581,6 +582,30 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("randint(4, 3)", Undefined::Name());
   assert_expression_approximates_to<double>("randint(2, 23345678909876545678)", Undefined::Name());
   assert_expression_approximates_to<double>("randint(123456789876543, 123456789876543+10)", Undefined::Name());
+}
+
+template<typename T>
+void assert_no_duplicates_in_list(const char * expression) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, &globalContext, true);
+  e = ListSort::Builder(e);
+  Expression result = e.approximate<T>(&globalContext, Cartesian, Radian);
+  assert(result.type() == ExpressionNode::Type::List);
+  List list = static_cast<List &>(result);
+  int n = list.numberOfChildren();
+  for (int i = 1; i < n; i++) {
+    quiz_assert_print_if_failure(!list.childAtIndex(i).isIdenticalTo(list.childAtIndex(i - 1)), expression);
+  }
+}
+
+
+QUIZ_CASE(poincare_approximation_unique_random) {
+  assert_expression_approximates_to<double>("randintnorep(10,1,3)", Undefined::Name());
+  assert_expression_approximates_to<double>("randintnorep(1,10,100)", Undefined::Name());
+  assert_expression_approximates_to<double>("randintnorep(1,10,-1)", Undefined::Name());
+  assert_expression_approximates_to<double>("randintnorep(1,10,0)", "{}");
+
+  assert_no_duplicates_in_list<float>("randintnorep(-100,99,200)");
 }
 
 QUIZ_CASE(poincare_approximation_integral) {

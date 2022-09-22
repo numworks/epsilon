@@ -373,6 +373,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_yd", "1×_yd", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_mi", "1×_mi", User, Radian, Imperial);
   assert_parsed_unit_simplify_to_with_prefixes(Unit::k_massRepresentatives);
+  assert_parsed_expression_simplify_to("_t", "1×_t");
   assert_parsed_expression_simplify_to("_oz", "1×_oz", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_lb", "1×_lb", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_shtn", "1×_shtn", User, Radian, Imperial);
@@ -399,14 +400,13 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_unit_simplify_to_with_prefixes(Unit::k_catalyticActivityRepresentatives);
 
   /* Units that do not appear as output */
-  assert_parsed_expression_simplify_to("_t", "1000×_kg");
   assert_parsed_expression_simplify_to("_Hz", "1×_s^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("_S", "1×_Ω^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("_L", "1×_dm^3");
   assert_parsed_expression_simplify_to("_ha", "10000×_m^2");
 
   /* Imperial units */
-  assert_parsed_expression_simplify_to("_lgtn", "1016.0469088×_kg");
+  assert_parsed_expression_simplify_to("_lgtn", "1.0160469088×_t");
   assert_parsed_expression_simplify_to("_lgtn", "1.12×_shtn", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_in", "2.54×_cm");
   assert_parsed_expression_simplify_to("_in", "1×_in", User, Radian, Imperial);
@@ -616,8 +616,8 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("abs(2_m) + ceil(3_m) + floor(4_m) + round(5_m, 1)", "14×_m");
   assert_parsed_expression_simplify_to("sign(3_m) + 2", "3");
   assert_parsed_expression_simplify_to("1/_m+1/_km", "1.001×_m^\u0012-1\u0013");
-
-
+  assert_parsed_expression_simplify_to("10000_kg", "10×_t");
+  assert_parsed_expression_simplify_to("1000000_kg", "1×_kt");
 }
 
 QUIZ_CASE(poincare_simplification_power) {
@@ -1361,7 +1361,7 @@ QUIZ_CASE(poincare_simplification_store_correctly_parsed) {
   assert_parsed_expression_simplify_to("t^2→foobar(t)", "t^2");
   assert_parsed_expression_simplify_to("foobar(x)", "x^2");
 
-  assert_parsed_expression_simplify_to("t", "1000×_kg");
+  assert_parsed_expression_simplify_to("t", "1×_t");
   assert_parsed_expression_simplify_to("2→t", "2");
   assert_parsed_expression_simplify_to("t", "2");
 

@@ -45,10 +45,11 @@ public:
   };
 
   constexpr static size_t k_numberOfSymbolTypes = 3;
+  // Order impact order of columns in Graph/Values
   enum class SymbolType : uint8_t {
-    Theta = 0,
-    T,
-    X
+    X = 0,
+    Theta,
+    T
   };
 
   enum class PlotType : uint8_t {

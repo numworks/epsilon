@@ -11,7 +11,7 @@ namespace Poincare {
 
 template<typename T>
 T HypergeometricDistribution::EvaluateAtAbscissa(T k, T N, T K, T n) {
-  if (std::isnan(k) || std::isinf(k)){
+  if (!std::isfinite(k) || n > N || K > N){
     return NAN;
   }
   k = std::floor(k);
@@ -27,7 +27,7 @@ T HypergeometricDistribution::EvaluateAtAbscissa(T k, T N, T K, T n) {
 
 template<typename T>
 T HypergeometricDistribution::CumulativeDistributiveInverseForProbability(T probability, T N, T K, T n) {
-  if (std::isnan(probability) || std::isinf(probability) || probability < static_cast<T>(0.0) || probability > static_cast<T>(1.0)) {
+  if (!std::isfinite(probability) || probability < static_cast<T>(0.0) || probability > static_cast<T>(1.0)) {
     return NAN;
   }
   constexpr T precision = Float<T>::Epsilon();
@@ -36,8 +36,6 @@ T HypergeometricDistribution::CumulativeDistributiveInverseForProbability(T prob
   }
   T proba = probability;
   const void * pack[3] = { &N, &K, &n };
-  /* It works even if G(p) is defined on N* and not N because G(0) returns 0 and
-   * not undef */
   return Solver::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, Context * context, const void * auxiliary) {

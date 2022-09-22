@@ -3,13 +3,8 @@
 
 #include <poincare/expression.h>
 #include <poincare/discrete_distribution.h>
-#include <poincare/preferences.h>
 
 namespace Poincare {
-
-/* We chose the definition:
- * 0 < p <= 1 for distribution of success
- * k number of trials needed to get one success, where k ∈ {1, 2, 3, ...}. */
 
 class HypergeometricDistribution final : public DiscreteDistribution {
 public:

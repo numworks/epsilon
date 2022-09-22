@@ -3,7 +3,7 @@
 
 #include <poincare/expression.h>
 #include <poincare/aliases_list.h>
-#include <poincare/utils.h>
+#include <poincare/helpers.h>
 
 namespace Poincare {
 
@@ -657,73 +657,73 @@ public:
   constexpr static int k_kiloPrefixIndex = 9;
   static_assert(k_prefixes[k_kiloPrefixIndex].m_exponent == 3, "Index for the Kilo Prefix is incorrect.");
   constexpr static int k_secondRepresentativeIndex = 0;
-  static_assert(strings_are_equal(k_timeRepresentatives[k_secondRepresentativeIndex].m_rootSymbols, "s"), "Index for the Second Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_timeRepresentatives[k_secondRepresentativeIndex].m_rootSymbols, "s"), "Index for the Second Representative is incorrect.");
   constexpr static int k_minuteRepresentativeIndex = 1;
-  static_assert(strings_are_equal(k_timeRepresentatives[k_minuteRepresentativeIndex].m_rootSymbols, "min"), "Index for the Minute Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_timeRepresentatives[k_minuteRepresentativeIndex].m_rootSymbols, "min"), "Index for the Minute Representative is incorrect.");
   constexpr static int k_hourRepresentativeIndex = 2;
-  static_assert(strings_are_equal(k_timeRepresentatives[k_hourRepresentativeIndex].m_rootSymbols, "h"), "Index for the Hour Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_timeRepresentatives[k_hourRepresentativeIndex].m_rootSymbols, "h"), "Index for the Hour Representative is incorrect.");
   constexpr static int k_dayRepresentativeIndex = 3;
-  static_assert(strings_are_equal(k_timeRepresentatives[k_dayRepresentativeIndex].m_rootSymbols, "day"), "Index for the Day Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_timeRepresentatives[k_dayRepresentativeIndex].m_rootSymbols, "day"), "Index for the Day Representative is incorrect.");
   constexpr static int k_monthRepresentativeIndex = 5;
-  static_assert(strings_are_equal(k_timeRepresentatives[k_monthRepresentativeIndex].m_rootSymbols, "month"), "Index for the Month Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_timeRepresentatives[k_monthRepresentativeIndex].m_rootSymbols, "month"), "Index for the Month Representative is incorrect.");
   constexpr static int k_yearRepresentativeIndex = 6;
-  static_assert(strings_are_equal(k_timeRepresentatives[k_yearRepresentativeIndex].m_rootSymbols, "year"), "Index for the Year Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_timeRepresentatives[k_yearRepresentativeIndex].m_rootSymbols, "year"), "Index for the Year Representative is incorrect.");
   constexpr static int k_meterRepresentativeIndex = 0;
-  static_assert(strings_are_equal(k_distanceRepresentatives[k_meterRepresentativeIndex].m_rootSymbols, "m"), "Index for the Meter Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_distanceRepresentatives[k_meterRepresentativeIndex].m_rootSymbols, "m"), "Index for the Meter Representative is incorrect.");
   constexpr static int k_inchRepresentativeIndex = 4;
-  static_assert(strings_are_equal(k_distanceRepresentatives[k_inchRepresentativeIndex].m_rootSymbols, "in"), "Index for the Inch Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_distanceRepresentatives[k_inchRepresentativeIndex].m_rootSymbols, "in"), "Index for the Inch Representative is incorrect.");
   constexpr static int k_footRepresentativeIndex = 5;
-  static_assert(strings_are_equal(k_distanceRepresentatives[k_footRepresentativeIndex].m_rootSymbols, "ft"), "Index for the Foot Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_distanceRepresentatives[k_footRepresentativeIndex].m_rootSymbols, "ft"), "Index for the Foot Representative is incorrect.");
   constexpr static int k_yardRepresentativeIndex = 6;
-  static_assert(strings_are_equal(k_distanceRepresentatives[k_yardRepresentativeIndex].m_rootSymbols, "yd"), "Index for the Yard Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_distanceRepresentatives[k_yardRepresentativeIndex].m_rootSymbols, "yd"), "Index for the Yard Representative is incorrect.");
   constexpr static int k_mileRepresentativeIndex = 7;
-  static_assert(strings_are_equal(k_distanceRepresentatives[k_mileRepresentativeIndex].m_rootSymbols, "mi"), "Index for the Mile Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_distanceRepresentatives[k_mileRepresentativeIndex].m_rootSymbols, "mi"), "Index for the Mile Representative is incorrect.");
   constexpr static int k_radianRepresentativeIndex = 0;
-  static_assert(strings_are_equal(k_angleRepresentatives[k_radianRepresentativeIndex].m_rootSymbols, "rad"), "Index for the Radian Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_angleRepresentatives[k_radianRepresentativeIndex].m_rootSymbols, "rad"), "Index for the Radian Representative is incorrect.");
   constexpr static int k_arcSecondRepresentativeIndex = 1;
-  static_assert(strings_are_equal(k_angleRepresentatives[k_arcSecondRepresentativeIndex].m_rootSymbols, "\""), "Index for the ArcSecond Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_angleRepresentatives[k_arcSecondRepresentativeIndex].m_rootSymbols, "\""), "Index for the ArcSecond Representative is incorrect.");
   constexpr static int k_arcMinuteRepresentativeIndex = 2;
-  static_assert(strings_are_equal(k_angleRepresentatives[k_arcMinuteRepresentativeIndex].m_rootSymbols, "'"), "Index for the ArcMinute Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_angleRepresentatives[k_arcMinuteRepresentativeIndex].m_rootSymbols, "'"), "Index for the ArcMinute Representative is incorrect.");
   constexpr static int k_degreeRepresentativeIndex = 3;
-  static_assert(strings_are_equal(k_angleRepresentatives[k_degreeRepresentativeIndex].m_rootSymbols, "°"), "Index for the Degree Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_angleRepresentatives[k_degreeRepresentativeIndex].m_rootSymbols, "°"), "Index for the Degree Representative is incorrect.");
   constexpr static int k_gradianRepresentativeIndex = 4;
-  static_assert(strings_are_equal(k_angleRepresentatives[k_gradianRepresentativeIndex].m_rootSymbols, "gon"), "Index for the Gradian Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_angleRepresentatives[k_gradianRepresentativeIndex].m_rootSymbols, "gon"), "Index for the Gradian Representative is incorrect.");
   constexpr static int k_gramRepresentativeIndex = 0;
-  static_assert(strings_are_equal(k_massRepresentatives[k_gramRepresentativeIndex].m_rootSymbols, "g"), "Index for the Gram Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_massRepresentatives[k_gramRepresentativeIndex].m_rootSymbols, "g"), "Index for the Gram Representative is incorrect.");
   constexpr static int k_tonRepresentativeIndex = 1;
-  static_assert(strings_are_equal(k_massRepresentatives[k_tonRepresentativeIndex].m_rootSymbols, "t"), "Index for the Ton Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_massRepresentatives[k_tonRepresentativeIndex].m_rootSymbols, "t"), "Index for the Ton Representative is incorrect.");
   constexpr static int k_ounceRepresentativeIndex = 3;
-  static_assert(strings_are_equal(k_massRepresentatives[k_ounceRepresentativeIndex].m_rootSymbols, "oz"), "Index for the Ounce Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_massRepresentatives[k_ounceRepresentativeIndex].m_rootSymbols, "oz"), "Index for the Ounce Representative is incorrect.");
   constexpr static int k_poundRepresentativeIndex = 4;
-  static_assert(strings_are_equal(k_massRepresentatives[k_poundRepresentativeIndex].m_rootSymbols, "lb"), "Index for the Pound Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_massRepresentatives[k_poundRepresentativeIndex].m_rootSymbols, "lb"), "Index for the Pound Representative is incorrect.");
   constexpr static int k_shortTonRepresentativeIndex = 5;
-  static_assert(strings_are_equal(k_massRepresentatives[k_shortTonRepresentativeIndex].m_rootSymbols, "shtn"), "Index for the Short Ton Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_massRepresentatives[k_shortTonRepresentativeIndex].m_rootSymbols, "shtn"), "Index for the Short Ton Representative is incorrect.");
   constexpr static int k_kelvinRepresentativeIndex = 0;
-  static_assert(strings_are_equal(k_temperatureRepresentatives[k_kelvinRepresentativeIndex].m_rootSymbols, "K"), "Index for the Kelvin Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_temperatureRepresentatives[k_kelvinRepresentativeIndex].m_rootSymbols, "K"), "Index for the Kelvin Representative is incorrect.");
   constexpr static int k_celsiusRepresentativeIndex = 1;
-  static_assert(strings_are_equal(k_temperatureRepresentatives[k_celsiusRepresentativeIndex].m_rootSymbols, "°C"), "Index for the Celsius Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_temperatureRepresentatives[k_celsiusRepresentativeIndex].m_rootSymbols, "°C"), "Index for the Celsius Representative is incorrect.");
   constexpr static int k_fahrenheitRepresentativeIndex = 2;
-  static_assert(strings_are_equal(k_temperatureRepresentatives[k_fahrenheitRepresentativeIndex].m_rootSymbols, "°F"), "Index for the Fahrenheit Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_temperatureRepresentatives[k_fahrenheitRepresentativeIndex].m_rootSymbols, "°F"), "Index for the Fahrenheit Representative is incorrect.");
   constexpr static int k_jouleRepresentativeIndex = 0;
-  static_assert(strings_are_equal(k_energyRepresentatives[k_jouleRepresentativeIndex].m_rootSymbols, "J"), "Index for the Joule Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_energyRepresentatives[k_jouleRepresentativeIndex].m_rootSymbols, "J"), "Index for the Joule Representative is incorrect.");
   constexpr static int k_electronVoltRepresentativeIndex = 1;
-  static_assert(strings_are_equal(k_energyRepresentatives[k_electronVoltRepresentativeIndex].m_rootSymbols, "eV"), "Index for the Electron Volt Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_energyRepresentatives[k_electronVoltRepresentativeIndex].m_rootSymbols, "eV"), "Index for the Electron Volt Representative is incorrect.");
   constexpr static int k_wattRepresentativeIndex = 0;
-  static_assert(strings_are_equal(k_powerRepresentatives[k_wattRepresentativeIndex].m_rootSymbols, "W"), "Index for the Watt Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_powerRepresentatives[k_wattRepresentativeIndex].m_rootSymbols, "W"), "Index for the Watt Representative is incorrect.");
   constexpr static int k_hectareRepresentativeIndex = 0;
-  static_assert(strings_are_equal(k_surfaceRepresentatives[k_hectareRepresentativeIndex].m_rootSymbols, "ha"), "Index for the Hectare Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_surfaceRepresentatives[k_hectareRepresentativeIndex].m_rootSymbols, "ha"), "Index for the Hectare Representative is incorrect.");
   constexpr static int k_acreRepresentativeIndex = 1;
-  static_assert(strings_are_equal(k_surfaceRepresentatives[k_acreRepresentativeIndex].m_rootSymbols, "acre"), "Index for the Acre Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_surfaceRepresentatives[k_acreRepresentativeIndex].m_rootSymbols, "acre"), "Index for the Acre Representative is incorrect.");
   constexpr static int k_literRepresentativeIndex = 0;
-  static_assert(strings_are_equal(k_volumeRepresentatives[k_literRepresentativeIndex].m_rootSymbols, AliasesLists::k_litersAliases), "Index for the Liter Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_volumeRepresentatives[k_literRepresentativeIndex].m_rootSymbols, AliasesLists::k_litersAliases), "Index for the Liter Representative is incorrect.");
   constexpr static int k_cupRepresentativeIndex = 4;
-  static_assert(strings_are_equal(k_volumeRepresentatives[k_cupRepresentativeIndex].m_rootSymbols, "cup"), "Index for the Cup Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_volumeRepresentatives[k_cupRepresentativeIndex].m_rootSymbols, "cup"), "Index for the Cup Representative is incorrect.");
   constexpr static int k_pintRepresentativeIndex = 5;
-  static_assert(strings_are_equal(k_volumeRepresentatives[k_pintRepresentativeIndex].m_rootSymbols, "pt"), "Index for the Pint Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_volumeRepresentatives[k_pintRepresentativeIndex].m_rootSymbols, "pt"), "Index for the Pint Representative is incorrect.");
   constexpr static int k_quartRepresentativeIndex = 6;
-  static_assert(strings_are_equal(k_volumeRepresentatives[k_quartRepresentativeIndex].m_rootSymbols, "qt"), "Index for the Quart Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_volumeRepresentatives[k_quartRepresentativeIndex].m_rootSymbols, "qt"), "Index for the Quart Representative is incorrect.");
   constexpr static int k_gallonRepresentativeIndex = 7;
-  static_assert(strings_are_equal(k_volumeRepresentatives[k_gallonRepresentativeIndex].m_rootSymbols, "gal"), "Index for the Gallon Representative is incorrect.");
+  static_assert(Helpers::StringsAreEqual(k_volumeRepresentatives[k_gallonRepresentativeIndex].m_rootSymbols, "gal"), "Index for the Gallon Representative is incorrect.");
 
   Unit(const UnitNode * node) : Expression(node) {}
   static Unit Builder(const Representative * representative, const Prefix * prefix);
@@ -744,12 +744,12 @@ public:
     &k_timeRepresentatives[5],  // month
     &k_timeRepresentatives[6],  // year
   };
-  static_assert(strings_are_equal(k_timeRepresentativesAllowingImplicitAddition[0]->m_rootSymbols, "s"), "Implicit addition between units has wrong unit");
-  static_assert(strings_are_equal(k_timeRepresentativesAllowingImplicitAddition[1]->m_rootSymbols, "min"), "Implicit addition between units has wrong unit");
-  static_assert(strings_are_equal(k_timeRepresentativesAllowingImplicitAddition[2]->m_rootSymbols, "h"), "Implicit addition between units has wrong unit");
-  static_assert(strings_are_equal(k_timeRepresentativesAllowingImplicitAddition[3]->m_rootSymbols, "day"), "Implicit addition between units has wrong unit");
-  static_assert(strings_are_equal(k_timeRepresentativesAllowingImplicitAddition[4]->m_rootSymbols, "month"), "Implicit addition between units has wrong unit");
-  static_assert(strings_are_equal(k_timeRepresentativesAllowingImplicitAddition[5]->m_rootSymbols, "year"), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_timeRepresentativesAllowingImplicitAddition[0]->m_rootSymbols, "s"), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_timeRepresentativesAllowingImplicitAddition[1]->m_rootSymbols, "min"), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_timeRepresentativesAllowingImplicitAddition[2]->m_rootSymbols, "h"), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_timeRepresentativesAllowingImplicitAddition[3]->m_rootSymbols, "day"), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_timeRepresentativesAllowingImplicitAddition[4]->m_rootSymbols, "month"), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_timeRepresentativesAllowingImplicitAddition[5]->m_rootSymbols, "year"), "Implicit addition between units has wrong unit");
 
   // These must be sorted in order, from smallest to biggest
   constexpr static const UnitNode::Representative * k_distanceRepresentativesAllowingImplicitAddition[] = {
@@ -758,18 +758,18 @@ public:
     &k_distanceRepresentatives[6], // yd
     &k_distanceRepresentatives[7]  // mi
   };
-  static_assert(strings_are_equal(k_distanceRepresentativesAllowingImplicitAddition[0]->m_rootSymbols, "in"), "Implicit addition between units has wrong unit");
-  static_assert(strings_are_equal(k_distanceRepresentativesAllowingImplicitAddition[1]->m_rootSymbols, "ft"), "Implicit addition between units has wrong unit");
-  static_assert(strings_are_equal(k_distanceRepresentativesAllowingImplicitAddition[2]->m_rootSymbols, "yd"), "Implicit addition between units has wrong unit");
-  static_assert(strings_are_equal(k_distanceRepresentativesAllowingImplicitAddition[3]->m_rootSymbols, "mi"), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_distanceRepresentativesAllowingImplicitAddition[0]->m_rootSymbols, "in"), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_distanceRepresentativesAllowingImplicitAddition[1]->m_rootSymbols, "ft"), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_distanceRepresentativesAllowingImplicitAddition[2]->m_rootSymbols, "yd"), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_distanceRepresentativesAllowingImplicitAddition[3]->m_rootSymbols, "mi"), "Implicit addition between units has wrong unit");
 
   // These must be sorted in order, from smallest to biggest
   constexpr static const UnitNode::Representative * k_massRepresentativesAllowingImplicitAddition[] = {
     &k_massRepresentatives[3], // oz
     &k_massRepresentatives[4]  // lb
   };
-  static_assert(strings_are_equal(k_massRepresentativesAllowingImplicitAddition[0]->m_rootSymbols, "oz"), "Implicit addition between units has wrong unit");
-  static_assert(strings_are_equal(k_massRepresentativesAllowingImplicitAddition[1]->m_rootSymbols, "lb"), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_massRepresentativesAllowingImplicitAddition[0]->m_rootSymbols, "oz"), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_massRepresentativesAllowingImplicitAddition[1]->m_rootSymbols, "lb"), "Implicit addition between units has wrong unit");
 
   struct RepresentativesList {const UnitNode::Representative * const * representativesList; int length;};
   constexpr static RepresentativesList k_representativesAllowingImplicitAddition[] = {

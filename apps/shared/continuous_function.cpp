@@ -16,7 +16,7 @@
 #include <poincare/trigonometry.h>
 #include <poincare/derivative.h>
 #include <poincare/print.h>
-#include <poincare/utils.h>
+#include <poincare/helpers.h>
 #include "poincare_helpers.h"
 #include <algorithm>
 #include "global_context.h"
@@ -306,8 +306,8 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, dou
     assert(plotType() < PlotType::Polar);
     // The subcurve number would need to be passed down here to properly assert
     assert(numberOfSubCurves() > 1
-          || (Poincare::equal_or_both_nan(evaluateXYAtParameter(cursorT, context).x1(), cursorX)
-              && Poincare::equal_or_both_nan(evaluateXYAtParameter(cursorT, context).x2(), cursorY)));
+          || (Poincare::Helpers::EqualOrBothNan(evaluateXYAtParameter(cursorT, context).x1(), cursorX)
+              && Poincare::Helpers::EqualOrBothNan(evaluateXYAtParameter(cursorT, context).x2(), cursorY)));
     return index == 0 ? cursorX : cursorY;
   }
 }

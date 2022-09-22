@@ -2,7 +2,7 @@
 #define POINCARE_INFINITY_H
 
 #include <poincare/number.h>
-#include <poincare/utils.h>
+#include <poincare/helpers.h>
 
 namespace Poincare {
 
@@ -61,10 +61,10 @@ public:
    * const char * when negative = true */
   constexpr static const char * k_minusInfinityMainName =  "-∞";
   // ∞ is 3 chars long.
-  static_assert(strings_are_equal(k_minusInfinityMainName + 1, k_infinityAliases.mainAlias()), "minus infinity does not have same name as infinity.");
+  static_assert(Helpers::StringsAreEqual(k_minusInfinityMainName + 1, k_infinityAliases.mainAlias()), "minus infinity does not have same name as infinity.");
 
   constexpr static const char * Name(bool negative = false) { return negative ? k_minusInfinityMainName : k_infinityAliases.mainAlias(); }
-  constexpr static int NameSize(bool negative = false) { return string_length(Name(negative)) + 1; }
+  constexpr static int NameSize(bool negative = false) { return Helpers::StringLength(Name(negative)) + 1; }
   static Infinity Builder(bool negative);
 
   Infinity(InfinityNode * n) : Number(n) {}

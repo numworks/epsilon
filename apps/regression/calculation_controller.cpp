@@ -6,7 +6,7 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/vertical_offset_layout.h>
 #include <poincare/preferences.h>
-#include <poincare/utils.h>
+#include <poincare/helpers.h>
 #include <algorithm>
 #include <assert.h>
 
@@ -211,9 +211,9 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       }
     }
     double calculation = m_memoizedSimpleCalculationCells[seriesNumber][calculationIndex];
-    assert((calculationIndex == 0 && Poincare::equal_or_both_nan(calculation, m_store->doubleCastedNumberOfPairsOfSeries(seriesNumber)))
-           || (calculationIndex == 1 && Poincare::equal_or_both_nan(calculation, m_store->covariance(seriesNumber)))
-           || (calculationIndex == 2 && Poincare::equal_or_both_nan(calculation, m_store->columnProductSum(seriesNumber))));
+    assert((calculationIndex == 0 && Poincare::Helpers::EqualOrBothNan(calculation, m_store->doubleCastedNumberOfPairsOfSeries(seriesNumber)))
+           || (calculationIndex == 1 && Poincare::Helpers::EqualOrBothNan(calculation, m_store->covariance(seriesNumber)))
+           || (calculationIndex == 2 && Poincare::Helpers::EqualOrBothNan(calculation, m_store->columnProductSum(seriesNumber))));
     constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
     char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(calculation, buffer, bufferSize, numberSignificantDigits);

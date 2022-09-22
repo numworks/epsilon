@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <cmath>
 
 namespace Poincare {
 
@@ -23,6 +24,22 @@ bool ListEvaluationComparisonAtIndex(int i, int j, void * context, int numberOfE
 // Return true if observed and expected are approximately equal
 template <typename T>
 bool RelativelyEqual(T observed, T expected, T relativeThreshold);
+
+/* FIXME : This can be replaced by std::string_view when moving to C++17 */
+constexpr bool StringsAreEqual(const char * s1, const char * s2) {
+  return *s1 == *s2 && ((*s1 == '\0' && *s2 =='\0') || StringsAreEqual(s1 + 1, s2 + 1));
+}
+
+constexpr int StringLength(const char * string) {
+  int result = 0;
+  while (string[result] != 0) { result ++; }
+  return result;
+}
+
+constexpr inline bool EqualOrBothNan(double a, double b) {
+  return a == b || (std::isnan(a) && std::isnan(b));
+}
+
 }
 
 }

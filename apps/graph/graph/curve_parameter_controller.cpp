@@ -3,6 +3,8 @@
 #include "../app.h"
 #include <apps/i18n.h>
 #include <assert.h>
+#include <poincare/print.h>
+#include "apps/shared/color_names.h"
 
 using namespace Shared;
 using namespace Escher;
@@ -36,10 +38,13 @@ Shared::ExpiringPointer<Shared::ContinuousFunction> CurveParameterController::fu
 
 const char * CurveParameterController::title() {
   if (function()->isNamed()) {
-    function()->nameWithArgument(m_title, k_titleSize);
-    return m_title;
+    char * buffer = strcpy(m_title, I18n::translate(I18n::Message::CalculateOnFx));
+    function()->nameWithArgument(buffer + strlen(buffer), k_titleSize - (buffer - m_title));
+  } else {
+    const char * colorName = I18n::translate(Shared::ColorNames::NameForCurveColor(function()->color()));
+    Poincare::Print::customPrintf(m_title, k_titleSize, I18n::translate(I18n::Message::CalculateOnTheCurve), colorName);
   }
-  return I18n::translate(I18n::Message::PlotOptions);
+  return m_title;
 }
 
 void CurveParameterController::didBecomeFirstResponder() {

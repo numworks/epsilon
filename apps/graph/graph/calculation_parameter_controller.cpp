@@ -38,7 +38,7 @@ HighlightCell * CalculationParameterController::cell(int index) {
 }
 
 const char * CalculationParameterController::title() {
-  return I18n::translate(I18n::Message::Compute);
+  return I18n::translate(I18n::Message::Find);
 }
 
 void CalculationParameterController::viewWillAppear() {

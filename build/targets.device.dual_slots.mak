@@ -31,7 +31,7 @@ $(dfu_targets): $(BUILD_DIR)/%.dfu: | $(BUILD_DIR)/.
 	  -o $@
 
 .PHONY: %_flash
-%_flash: $(BUILD_DIR)/%.dfu $(subst epsilon,flasher,$(BUILD_DIR))/flasher.dfu
+%_flash: $(BUILD_DIR)/%.dfu
 	@echo "DFU     $@"
 	@echo "INFO    About to flash your device. Please plug your device to your computer"
 	@echo "        using an USB cable and press at the same time the 6 key and the RESET"
@@ -40,7 +40,8 @@ $(dfu_targets): $(BUILD_DIR)/%.dfu: | $(BUILD_DIR)/.
 	$(eval DFU_SLAVE := $(shell $(PYTHON) build/device/dfu.py -l | grep -E "0483:a291|0483:df11"))
 	$(Q) if [[ "$(DFU_SLAVE)" == *"0483:df11"* ]]; \
 	  then \
-	    $(PYTHON) build/device/dfu.py -D $(word 2,$^); \
+	    $(MAKE) FIRMWARE_COMPONENT=flasher DEBUG=0 flasher.dfu; \
+	    $(PYTHON) build/device/dfu.py -s 0x20030000:leave -D $(subst epsilon,flasher,$(BUILD_DIR))/flasher.dfu; \
 	    sleep 2; \
 	fi
 	$(Q) $(PYTHON) build/device/dfu.py -D $(word 1,$^)

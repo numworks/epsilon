@@ -66,6 +66,15 @@ void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation, P
   layoutSubviews();
 }
 
+ScrollableThreeExpressionsView::SubviewPosition ScrollableThreeExpressionsView::leftMostPosition() {
+  if (!m_contentCell.m_leftExpressionView.layout().isUninitialized()) {
+    return  SubviewPosition::Left;
+  } else if (displayCenter()) {
+    return SubviewPosition::Center;
+  }
+  return SubviewPosition::Right;
+}
+
 KDCoordinate ScrollableThreeExpressionsCell::Height(Calculation * calculation, Poincare::Context * context) {
   ScrollableThreeExpressionsCell cell;
   cell.setCalculation(calculation, context, true);

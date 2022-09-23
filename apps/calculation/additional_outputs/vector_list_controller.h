@@ -17,12 +17,12 @@ private:
   static constexpr char k_symbol[] = "θ";
   const char * symbol() const override { return k_symbol; }
   Escher::HighlightCell * illustrationCell() override { return &m_graphCell; }
-  VectorGraphCell m_graphCell;
-  VectorModel m_model;
   I18n::Message messageAtIndex(int index) override;
   // Map from cell index to message index
   constexpr static int k_maxNumberOfOutputRows = 3;
   int m_indexMessageMap[k_maxNumberOfOutputRows];
+  VectorGraphCell m_graphCell;
+  VectorModel m_model;
 };
 
 }

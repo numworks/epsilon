@@ -71,6 +71,9 @@ app_shared_src = $(addprefix apps/shared/,\
   message_view.cpp \
   ok_view.cpp \
   parameter_text_field_delegate.cpp \
+  plot_view.cpp \
+  plot_view_banners.cpp \
+  plot_view_cursors.cpp \
   poincare_helpers.cpp \
   prefaced_table_view.cpp \
   prefaced_twice_table_view.cpp \
@@ -104,7 +107,6 @@ app_shared_src = $(addprefix apps/shared/,\
 )
 
 app_shared_src += $(addprefix apps/shared/,\
-  plot_view.cpp \
 )
 
 app_shared_src += $(app_shared_test_src)

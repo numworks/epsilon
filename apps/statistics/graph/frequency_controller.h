@@ -31,11 +31,19 @@ public:
 private:
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;
 
+  /* Return y value at abscissa x.
+   * Return first or last result if x is left or right of bounds */
+  double yValueAtAbscissa(int series, double x) const;
+  double yValueForComputedXValues(int series, int index, double x, double xIndex, double xNextIndex) const;
+
   // PlotController
   void moveCursorToSelectedIndex() override;
   bool moveSelectionHorizontally(int deltaIndex) override;
   void computeYBounds(float * yMin, float *yMax) const override;
   bool handleNullFrequencies() const override { return true; }
+  int nextSubviewWhenMovingVertically(int direction) const override;
+  void updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) override;
+
   // Horizontal labels will always be in bottom, vertical labels are wider
   KDCoordinate horizontalMargin() const override { return k_largeMargin; }
   KDCoordinate bottomMargin() const override { return k_mediumMargin; }

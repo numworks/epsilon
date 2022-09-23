@@ -35,7 +35,7 @@ private:
   bool handleEnter() override;
   void drawStep(int n);
   void setupZoom();
-  void stepChanged();
+  bool updateStep(int delta);
   Shared::ExpiringPointer<Shared::Sequence> sequence() const;
   CobwebGraphView m_graphView;
   GraphController * m_graphController;

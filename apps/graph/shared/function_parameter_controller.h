@@ -21,6 +21,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfRows; }
   const char * title() override;
+  TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayLastTwoTitles; }
 private:
   // Shared cells + m_detailsCell + m_functionDomainCell + m_derivativeCell
   static constexpr int k_numberOfRows = Shared::ListParameterController::k_numberOfSharedCells + 3;

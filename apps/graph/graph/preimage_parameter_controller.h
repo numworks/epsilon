@@ -18,6 +18,7 @@ public:
   const char * title() override { return I18n::translate(I18n::Message::Preimage); }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   void viewWillAppear() override;
+  TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayLastThreeTitles; }
 private:
   void buttonAction() override;
   double extractParameterAtIndex(int index) override {

@@ -96,29 +96,7 @@ void CobwebController::setupZoom() {
 
 void CobwebController::setRecord(Ion::Storage::Record record) {
   m_record = record;
-  char buffer[10];
-  sequence()->name(buffer, 10);
-  // u(n+1) must depend on u(n) only not n nor v(n) nor u(n-1)
-  m_isSuitable = sequence()->type() == Shared::Sequence::Type::SingleRecurrence && !sequence()->expressionClone().recursivelyMatches([](const Expression e, Context * context, void * arg) {
-    if (e.type() == ExpressionNode::Type::Symbol) {
-      const Poincare::Symbol symbol = static_cast<const Poincare::Symbol&>(e);
-      return symbol.isSystemSymbol() ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
-    }
-    if (e.type() != ExpressionNode::Type::Sequence) {
-      return TrinaryBoolean::Unknown;
-    }
-    const Poincare::Sequence seq = static_cast<const Poincare::Sequence&>(e);
-    char * buffer = static_cast<char*>(arg);
-    if (strcmp(seq.name(), buffer) != 0) {
-      return TrinaryBoolean::True;
-    }
-    if (seq.childAtIndex(0).type() != ExpressionNode::Type::Symbol) {
-      return TrinaryBoolean::True;
-    }
-    Expression child = seq.childAtIndex(0);
-    const Poincare::Symbol symbol = static_cast<const Poincare::Symbol&>(child);
-    return symbol.isSystemSymbol() ? TrinaryBoolean::False : TrinaryBoolean::True;
-  }, App::app()->localContext(), ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, static_cast<void*>(buffer));
+  m_isSuitable = sequence()->isSimplyRecursive(App::app()->localContext());
 }
 
 ExpiringPointer<Shared::Sequence> CobwebController::sequence() const {
@@ -146,7 +124,7 @@ bool CobwebController::handleEnter() {
 }
 
 bool CobwebController::updateStep(int delta) {
-  if (m_step + delta < 0 || m_step + delta >= k_maximumNumberOfSteps) {
+  if (m_step + delta < 0 || m_step + delta > k_maximumNumberOfSteps) {
     return false;
   }
   m_step += delta;

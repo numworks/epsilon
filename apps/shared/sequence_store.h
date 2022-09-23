@@ -26,6 +26,7 @@ public:
   static int sequenceIndexForName(char name);
   static const char * firstAvailableName(size_t * nameIndex = nullptr);
   constexpr static const char * k_sequenceNames[] = {"u", "v", "w"};
+  constexpr static size_t k_maxSequenceNameSize = 1;
   constexpr static int k_maxNumberOfSequences = 3;
   constexpr static int k_maxRecurrenceDepth = 2;
   Sequence sequenceAtIndex(int i) { assert(i < SequenceStore::k_maxNumberOfSequences && i >= 0); return m_sequences[i]; }

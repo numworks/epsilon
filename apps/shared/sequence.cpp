@@ -146,6 +146,32 @@ bool Sequence::isEmpty() {
         (type == Type::SingleRecurrence || data->initialConditionSize(1) == 0)));
 }
 
+bool Sequence::isSimplyRecursive(Context * context) {
+  constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameSize + 1;
+  char buffer[bufferSize];
+  name(buffer, bufferSize);
+  return type() == Shared::Sequence::Type::SingleRecurrence && !expressionClone().recursivelyMatches([](const Expression e, Context * context, void * arg) {
+    if (e.type() == ExpressionNode::Type::Symbol) {
+      const Poincare::Symbol symbol = static_cast<const Poincare::Symbol&>(e);
+      return symbol.isSystemSymbol() ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
+    }
+    if (e.type() != ExpressionNode::Type::Sequence) {
+      return TrinaryBoolean::Unknown;
+    }
+    const Poincare::Sequence seq = static_cast<const Poincare::Sequence&>(e);
+    char * buffer = static_cast<char*>(arg);
+    if (strcmp(seq.name(), buffer) != 0) {
+      return TrinaryBoolean::True;
+    }
+    if (seq.childAtIndex(0).type() != ExpressionNode::Type::Symbol) {
+      return TrinaryBoolean::True;
+    }
+    Expression child = seq.childAtIndex(0);
+    const Poincare::Symbol symbol = static_cast<const Poincare::Symbol&>(child);
+    return symbol.isSystemSymbol() ? TrinaryBoolean::False : TrinaryBoolean::True;
+  }, context, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, static_cast<void*>(buffer));
+}
+
 void Sequence::tidyDownstreamPoolFrom(char * treePoolCursor) const {
   model()->tidyDownstreamPoolFrom(treePoolCursor);
   m_firstInitialCondition.tidyDownstreamPoolFrom(treePoolCursor);

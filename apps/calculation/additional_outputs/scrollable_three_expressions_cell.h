@@ -26,14 +26,7 @@ public:
   void setShowEqual(bool showEqual) {
     m_contentCell.setShowEqual(showEqual);
   }
-  SubviewPosition leftMostPosition() {
-    if (!m_contentCell.m_leftExpressionView.layout().isUninitialized()) {
-      return  SubviewPosition::Left;
-    } else if (displayCenter()) {
-      return SubviewPosition::Center;
-    }
-    return SubviewPosition::Right;
-  }
+  SubviewPosition leftMostPosition();
 private:
   class ContentCell : public Shared::AbstractScrollableMultipleExpressionsView::ContentCell {
     friend ScrollableThreeExpressionsView;

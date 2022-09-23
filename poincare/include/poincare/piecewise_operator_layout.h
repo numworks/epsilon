@@ -54,6 +54,8 @@ public:
   void addRow(Layout leftLayout, Layout rightLayout = Layout());
 
 private:
+  using GridLayout::addChildAtIndex; // Make private. Use addRow instead.
+  using GridLayout::addChildAtIndexInPlace; // Make private. Use addRow instead.
   PiecewiseOperatorLayoutNode * node() const { return static_cast<PiecewiseOperatorLayoutNode *>(Layout::node()); }
 };
 

@@ -31,6 +31,8 @@ KDSize ConsoleLineCell::ScrollableConsoleLineView::ConsoleLineView::minimalSizeF
 ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(Responder * parentResponder) :
   ScrollableView(parentResponder, &m_consoleLineView, this)
 {
+  setDecoratorType(Escher::ScrollView::Decorator::Type::Arrows);
+  setBackgroundColor(KDColorWhite);
 }
 
 ConsoleLineCell::ConsoleLineCell(Responder * parentResponder) :

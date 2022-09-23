@@ -9,6 +9,7 @@ namespace Code {
 
 class ConsoleStore {
 public:
+  constexpr static size_t k_historySize = 1024;
   ConsoleStore() : m_history{0} {}
   void clear() { assert(k_historySize > 0); m_history[0] = 0; }
   void startNewSession();
@@ -23,7 +24,6 @@ private:
   constexpr static char CurrentSessionResultMarker = 0x02;
   constexpr static char PreviousSessionCommandMarker = 0x03;
   constexpr static char PreviousSessionResultMarker = 0x04;
-  constexpr static size_t k_historySize = 1024;
   static char makePrevious(char marker) {
     if (marker == CurrentSessionCommandMarker || marker == CurrentSessionResultMarker) {
       return marker + 0x02;

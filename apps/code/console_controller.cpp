@@ -489,27 +489,28 @@ void ConsoleController::flushOutputAccumulationBufferToStore() {
 }
 
 void ConsoleController::appendTextToOutputAccumulationBuffer(const char * text, size_t length) {
-  int endOfAccumulatedText = strlen(m_outputAccumulationBuffer);
-  int spaceLeft = k_outputAccumulationBufferSize - endOfAccumulatedText;
-  if (spaceLeft > (int)length) {
-    memcpy(&m_outputAccumulationBuffer[endOfAccumulatedText], text, length);
+  constexpr static int k_maxLength = k_outputAccumulationBufferSize - 1;
+  int lengthOfAccumulatedText = strlen(m_outputAccumulationBuffer);
+  int spaceLeft = k_maxLength - lengthOfAccumulatedText;
+  if (length <= spaceLeft) {
+    memcpy(&m_outputAccumulationBuffer[lengthOfAccumulatedText], text, length);
+    m_outputAccumulationBuffer[lengthOfAccumulatedText + length] = 0;
     return;
   }
-  /* The text to append is too long for the buffer. We need to split it in
-   * chunks. We take special care not to break in the middle of code points! */
-  int maxAppendedTextLength = spaceLeft-1; // we keep the last char to null-terminate the buffer
-  int appendedTextLength = 0;
-  UTF8Decoder decoder(text);
-  while (decoder.stringPosition() - text <= maxAppendedTextLength) {
-    appendedTextLength = decoder.stringPosition() - text;
-    decoder.nextCodePoint();
+
+  /* If the text is too long for the accumulation buffer, truncate it
+   * and add "..." at the end */
+  memcpy(&m_outputAccumulationBuffer[lengthOfAccumulatedText], text, spaceLeft);
+  m_outputAccumulationBuffer[k_maxLength] = 0;
+  constexpr static int k_strLenOfDots = 3 * sizeof('.');
+  int indexOfDots = k_maxLength - k_strLenOfDots;
+  while (UTF8Decoder::IsInTheMiddleOfACodePoint(m_outputAccumulationBuffer[indexOfDots])) {
+    indexOfDots--;
   }
-  memcpy(&m_outputAccumulationBuffer[endOfAccumulatedText], text, appendedTextLength);
-  // The last char of m_outputAccumulationBuffer is kept to 0 to ensure a null-terminated text.
-  assert(endOfAccumulatedText+appendedTextLength < k_outputAccumulationBufferSize);
-  m_outputAccumulationBuffer[endOfAccumulatedText+appendedTextLength] = 0;
-  flushOutputAccumulationBufferToStore();
-  appendTextToOutputAccumulationBuffer(&text[appendedTextLength], length - appendedTextLength);
+  assert(indexOfDots > 0);
+  for (int i = indexOfDots; i < k_maxLength; i++) {
+    m_outputAccumulationBuffer[i] = '.';
+  }
 }
 
 // TODO: is it really needed? Maybe discard to optimize?

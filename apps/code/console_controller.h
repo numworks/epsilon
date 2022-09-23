@@ -81,11 +81,11 @@ private:
   constexpr static int k_lineCellType = 0;
   constexpr static int k_editCellType = 1;
   constexpr static int k_numberOfLineCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(KDFont::GlyphHeight(KDFont::Size::Small));
-  constexpr static int k_outputAccumulationBufferSize = 100;
+  constexpr static int k_outputAccumulationBufferSize = 1000;
+  static_assert(ConsoleStore::k_historySize > k_outputAccumulationBufferSize, "Accumulation buffer of console is larger than history");
 
   // RegularListViewDataSource
   KDCoordinate defaultRowHeight() override;
-
   bool isDisplayingViewController();
   void reloadData(bool isEditing);
   void flushOutputAccumulationBufferToStore();

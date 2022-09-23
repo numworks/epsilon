@@ -520,39 +520,39 @@ void CurveView::drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor 
   }
 }
 
-void CurveView::drawArc(KDContext * ctx, KDRect rect, float tStart, float tEnd, float radius, KDColor color, bool thick) const {
+void CurveView::drawArc(KDContext * ctx, KDRect rect, float angleStart, float angleEnd, float xCenter, float yCenter, float radius, KDColor color, bool thick) const {
   assert(radius > 0.f);
-  float previousT = NAN;
-  float t = NAN;
+  float previousAngle = NAN;
+  float angle = NAN;
   float previousX = NAN;
   float x = NAN;
   float previousY = NAN;
   float y = NAN;
   int i = 0;
   bool isLastSegment = false;
-  // Choose tStep to match the expected length of a single segment in pixels
+  // Choose angleStep to match the expected length of a single segment in pixels
   const float segmentLengthInPixels = 2.f; // Ad hoc
   const float radiusInPixel = std::max(floatLengthToPixelLength(Axis::Horizontal, radius), floatLengthToPixelLength(Axis::Vertical, radius));
   // 2π * length / perimeter where perimeter = 2π * radius in pixels
-  const float tStep = segmentLengthInPixels / radiusInPixel;
+  const float angleStep = segmentLengthInPixels / radiusInPixel;
   do {
-    previousT = t;
-    t = tStart + (i++) * tStep;
-    if (t <= tStart) {
-      t = tStart + FLT_EPSILON;
+    previousAngle = angle;
+    angle = angleStart + (i++) * angleStep;
+    if (angle <= angleStart) {
+      angle = angleStart + FLT_EPSILON;
     }
-    if (t >= tEnd) {
-      t = tEnd - FLT_EPSILON;
+    if (angle >= angleEnd) {
+      angle = angleEnd - FLT_EPSILON;
       isLastSegment = true;
     }
-    if (previousT == t) {
-      // No need to draw segment. Happens when tStep << tStart .
+    if (previousAngle == angle) {
+      // No need to draw segment. Happens when angleStep << angleStart .
       continue;
     }
     previousX = x;
     previousY = y;
-    x = floatToPixel(Axis::Horizontal, std::cos(t) * radius);
-    y = floatToPixel(Axis::Vertical, std::sin(t) * radius);
+    x = floatToPixel(Axis::Horizontal, xCenter + std::cos(angle) * radius);
+    y = floatToPixel(Axis::Vertical, yCenter + std::sin(angle) * radius);
     straightJoinDots(ctx, rect, x, y, previousX, previousY, color, thick);
   } while (!isLastSegment);
 }

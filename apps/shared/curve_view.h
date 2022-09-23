@@ -96,7 +96,10 @@ protected:
     Large
   };
   void drawDot(KDContext * ctx, KDRect rect, float x, float y, KDColor color, Size size = Size::Tiny) const;
-  void drawArc(KDContext * ctx, KDRect rect, float tStart, float tEnd, float radius, KDColor color, bool thick = true) const;
+
+  /* Draw a circular arc between angleStart and angleEnd, with a radius radius
+   * and centered around (xCenter, yCenter). */
+  void drawArc(KDContext * ctx, KDRect rect, float angleStart, float angleEnd, float xCenter, float yCenter, float radius, KDColor color, bool thick = true) const;
 
   /* 'drawArrow' draws the edge of an arrow pointing to (x,y) with the
    * orientation (dx,dy).

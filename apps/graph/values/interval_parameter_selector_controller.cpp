@@ -91,20 +91,23 @@ I18n::Message IntervalParameterSelectorController::messageForType(Shared::Contin
     return I18n::Message::IntervalX;
   case Shared::ContinuousFunction::SymbolType::T:
     return I18n::Message::IntervalT;
-  default: {
+  default:
     assert(symbolType == Shared::ContinuousFunction::SymbolType::Theta);
     return I18n::Message::IntervalTheta;
-  }
   }
 }
 
 void IntervalParameterSelectorController::setStartEndMessages(Shared::IntervalParameterController * controller, Shared::ContinuousFunction::SymbolType symbolType) {
-  if (symbolType == Shared::ContinuousFunction::SymbolType::Theta) {
-    controller->setStartEndMessages(I18n::Message::ThetaStart, I18n::Message::ThetaEnd);
-  } else if (symbolType == Shared::ContinuousFunction::SymbolType::T) {
-    controller->setStartEndMessages(I18n::Message::TStart, I18n::Message::TEnd);
-  } else {
+  switch (symbolType) {
+  case Shared::ContinuousFunction::SymbolType::X:
     controller->setStartEndMessages(I18n::Message::XStart, I18n::Message::XEnd);
+    return;
+  case Shared::ContinuousFunction::SymbolType::T:
+    controller->setStartEndMessages(I18n::Message::TStart, I18n::Message::TEnd);
+    return;
+  default:
+    assert(symbolType == Shared::ContinuousFunction::SymbolType::Theta);
+    controller->setStartEndMessages(I18n::Message::ThetaStart, I18n::Message::ThetaEnd);
   }
 }
 

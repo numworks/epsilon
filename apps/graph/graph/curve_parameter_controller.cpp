@@ -38,8 +38,10 @@ Shared::ExpiringPointer<Shared::ContinuousFunction> CurveParameterController::fu
 
 const char * CurveParameterController::title() {
   if (function()->isNamed()) {
-    char * buffer = strcpy(m_title, I18n::translate(I18n::Message::CalculateOnFx));
-    function()->nameWithArgument(buffer + strlen(buffer), k_titleSize - (buffer - m_title));
+    const char * calculate = I18n::translate(I18n::Message::CalculateOnFx);
+    size_t len = strlen(calculate);
+    memcpy(m_title, calculate, len);
+    function()->nameWithArgument(m_title + len, k_titleSize - len);
   } else {
     const char * colorName = I18n::translate(Shared::ColorNames::NameForCurveColor(function()->color()));
     Poincare::Print::customPrintf(m_title, k_titleSize, I18n::translate(I18n::Message::CalculateOnTheCurve), colorName);

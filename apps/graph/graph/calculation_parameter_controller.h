@@ -30,6 +30,7 @@ public:
   void didBecomeFirstResponder() override;
   TELEMETRY_ID("CalculationParameter");
   int numberOfRows() const override { return k_numberOfRows; }
+  TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayLastTwoTitles; }
 
   Escher::HighlightCell * cell(int index) override;
   void setRecord(Ion::Storage::Record record);

@@ -22,6 +22,7 @@ public:
   int numberOfRows() const override { return k_numberOfRows; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void viewWillAppear() override;
+  TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayLastTitle; }
 private:
   constexpr static int k_numberOfRows = 6;
   float parameterAtIndex(int index) override;

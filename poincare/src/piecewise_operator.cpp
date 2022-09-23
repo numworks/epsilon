@@ -123,8 +123,7 @@ Expression PiecewiseOperator::shallowReduce(ExpressionNode::ReductionContext red
 }
 
 int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(const char * symbol, float x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const {
-  int n = numberOfChildren();
-  assert(n > 0);
+  assert(numberOfChildren() > 0);
   VariableContext variableContext = VariableContext(symbol, context);
   variableContext.setApproximationForVariable<float>(x);
   ExpressionNode::ApproximationContext approximationContext = ExpressionNode::ApproximationContext(&variableContext, complexFormat, angleUnit);

@@ -295,9 +295,9 @@ Token Tokenizer::popToken() {
 
 void Tokenizer::fillIdentifiersList() {
   const char * identifiersStringStart = currentPosition();
-  size_t identifiersStringLength = popIdentifiersString();
-  assert(identifiersStringLength != 0);
+  popIdentifiersString();
   const char * currentStringEnd = currentPosition();
+  assert(currentStringEnd - identifiersStringStart > 0);
   while (identifiersStringStart < currentStringEnd) {
     if (m_numberOfStoredIdentifiers >= k_maxNumberOfIdentifiersInList) {
       /* If there is not enough space in the list, just empty it.

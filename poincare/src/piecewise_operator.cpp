@@ -23,7 +23,6 @@ Layout PiecewiseOperatorNode::createLayout(Preferences::PrintFloatMode floatDisp
     Layout leftChildLayout = childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
     l.addRow(leftChildLayout);
   }
-  l.setDimensions((n + 1) / 2, 2);
   return l;
 }
 
@@ -64,7 +63,6 @@ int PiecewiseOperatorNode::indexOfFirstTrueCondition(const ApproximationContext&
   // Every condition is false.
   return -1;
 }
-
 
 Expression PiecewiseOperator::UntypedBuilder(Expression children) {
   assert(children.type() == ExpressionNode::Type::List);

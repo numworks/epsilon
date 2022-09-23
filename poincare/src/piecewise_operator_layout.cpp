@@ -132,17 +132,24 @@ PiecewiseOperatorLayout PiecewiseOperatorLayout::EmptyPiecewiseOperatorBuilder()
 }
 
 PiecewiseOperatorLayout PiecewiseOperatorLayout::Builder() {
-  return TreeHandle::NAryBuilder<PiecewiseOperatorLayout, PiecewiseOperatorLayoutNode>({});
+  TreeHandle result = TreeHandle::NAryBuilder<PiecewiseOperatorLayout, PiecewiseOperatorLayoutNode>({});
+  PiecewiseOperatorLayout layout = static_cast<PiecewiseOperatorLayout&>(result);
+  layout.setDimensions(0, 2);
+  return layout;
 }
 
 void PiecewiseOperatorLayout::addRow(Layout leftLayout, Layout rightLayout) {
+  assert(numberOfColumns() == 2);
   if (rightLayout.isUninitialized()) {
     rightLayout = EmptyLayout::Builder(EmptyLayoutNode::Color::Gray);
     static_cast<EmptyLayout&>(rightLayout).setVisible(false);
   }
+  int nRows = numberOfRows();
   assert(!leftLayout.isUninitialized());
   addChildAtIndexInPlace(leftLayout, numberOfChildren(), numberOfChildren());
   addChildAtIndexInPlace(rightLayout, numberOfChildren(), numberOfChildren());
+  // Array::didChangeNumberOfChildren will set the number of rows back to 1
+  setDimensions(nRows + 1, 2);
 }
 
 }

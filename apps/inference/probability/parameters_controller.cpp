@@ -42,7 +42,7 @@ void ParametersController::ContentView::layoutSubviews(bool force) {
   /* SelectableTableView must be given a width before computing height. */
   m_selectableTableView->initSize(bounds());
   KDCoordinate tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height();
-  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(), tableHeight), force);
+  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(), tableHeight).intersectedWith(bounds()), force);
 }
 
 /* Parameters Controller */

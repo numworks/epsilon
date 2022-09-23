@@ -37,14 +37,10 @@ const char * CobwebController::title() {
 }
 
 bool CobwebController::handleLeftRightEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Right && m_step < k_maximumNumberOfSteps) {
-    m_step++;
-    stepChanged();
+  if (event == Ion::Events::Right && updateStep(1)) {
     return true;
   }
-  if (event == Ion::Events::Left && m_step > 0) {
-    m_step--;
-    stepChanged();
+  if (event == Ion::Events::Left && updateStep(-1)) {
     return true;
   }
   return false;
@@ -148,18 +144,18 @@ void CobwebController::reloadBannerView() {
 }
 
 bool CobwebController::handleEnter() {
-  if (m_step < k_maximumNumberOfSteps) {
-    m_step++;
-    stepChanged();
-    return true;
-  }
-  return false;
+  return updateStep(1);
 }
 
-void CobwebController::stepChanged() {
+bool CobwebController::updateStep(int delta) {
+  if (m_step + delta < 0 || m_step + delta >= k_maximumNumberOfSteps) {
+    return false;
+  }
+  m_step += delta;
   m_graphView.setStep(m_step);
   m_graphView.reload(false, true);
   reloadBannerView();
+  return true;
 }
 
 }

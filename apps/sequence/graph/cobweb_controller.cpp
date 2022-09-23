@@ -52,8 +52,6 @@ void CobwebController::viewWillAppear() {
   m_graphView.setSequence(sequence().pointer());
   m_graphView.resetCachedStep();
   m_graphView.setStep(0);
-  m_graphView.setStart(m_graphRange.xMin());
-  m_graphView.setEnd(m_graphRange.xMax());
   m_graphView.setCursorView(nullptr);
   m_graphView.setFocus(true);
   reloadBannerView();

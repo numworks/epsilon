@@ -43,7 +43,6 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
       case 1:
         if (hasCobweb()) {
           StackViewController * stack = (StackViewController *)parentResponder();
-          // TODO: pop-push reinitialize the parent which is useless
           stack->pop();
           stack->push(m_cobwebController);
           return true;

@@ -15,8 +15,6 @@ protected:
 
   Shared::Sequence * m_sequence;
   int m_step;
-  float m_start;
-  float m_end;
   mutable int m_cachedStep;
 
 private:
@@ -45,8 +43,6 @@ public:
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView);
   void setSequence(Shared::Sequence * sequence) { m_sequence = sequence; }
   void setStep(int step) { m_step = step; }
-  void setStart(float start) { m_start = start; }
-  void setEnd(float end) { m_end = end; }
   void resetCachedStep() { m_cachedStep = -2; };
 private:
   bool update() const { return m_cachedStep == m_step - 1; }

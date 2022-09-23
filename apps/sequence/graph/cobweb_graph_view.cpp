@@ -51,11 +51,14 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
       return Poincare::Coordinate2D<float>(t, PoincareHelpers::ApproximateWithValueForSymbol<float>(*e, k_unknownName, t, c));
     };
   if (!update) {
-    CurveDrawing plot(Curve2D(evaluateFunction, &function), context, m_start, m_end, plotView->pixelWidth(), fadedColor);
+    float xMin = plotView->range()->xMin();
+    float xMax = plotView->range()->xMax();
+    CurveDrawing plot(Curve2D(evaluateFunction, &function), context, xMin, xMax, plotView->pixelWidth(), fadedColor);
     plot.draw(plotView, ctx, rect);
-    plotView->drawSegment(ctx, rect, {m_start, m_start}, {m_end, m_end}, fadedColor, true);
+    plotView->drawSegment(ctx, rect, {xMin, xMin}, {xMax, xMax}, fadedColor, true);
   }
-  int rank = m_sequence->initialRank() + (update ? m_cachedStep : 0);
+  int initialStep = update ? m_cachedStep : 0;
+  int rank = m_sequence->initialRank() + initialStep;
   float x = update ? m_x : m_sequence->evaluateXYAtParameter(static_cast<float>(rank), context).x2();
   float y = update ? m_y : 0.f;
   float uOfX = m_sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
@@ -71,7 +74,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
    */
   bool cornerCurveToLine = false;
   bool cornerLineToCurve = false;
-  for (int i = (update ? m_cachedStep : 0); i < m_step; i++) {
+  for (int i = initialStep; i < m_step; i++) {
     rank++;
     cornerCurveToLine = x>uOfX && y>uOfX;
     plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color(), k_thickness, k_dashSize, cornerCurveToLine || cornerLineToCurve);

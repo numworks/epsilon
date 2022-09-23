@@ -146,8 +146,10 @@ void PiecewiseOperatorLayout::addRow(Layout leftLayout, Layout rightLayout) {
   }
   int nRows = numberOfRows();
   assert(!leftLayout.isUninitialized());
-  addChildAtIndexInPlace(leftLayout, numberOfChildren(), numberOfChildren());
-  addChildAtIndexInPlace(rightLayout, numberOfChildren(), numberOfChildren());
+  int nChildren = numberOfChildren();
+  addChildAtIndexInPlace(leftLayout, nChildren, nChildren);
+  nChildren = numberOfChildren();
+  addChildAtIndexInPlace(rightLayout, nChildren, nChildren);
   // Array::didChangeNumberOfChildren will set the number of rows back to 1
   setDimensions(nRows + 1, 2);
 }

@@ -26,6 +26,7 @@ public:
   Poincare::Preferences::CombinatoricSymbols combinatoricsSymbols() const { return preferences().combinatoricSymbols(); }
   CountryPreferences::ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return preferences().listsStatsOrderInToolbox(); }
   Poincare::Preferences::MixedFractions mixedFractions() const { return preferences().mixedFractions(); }
+  bool showLineTemplate() const { return preferences().lineTemplateInGraph() == CountryPreferences::LineTemplateInGraph::Default; }
   int sequencesInitialRank() const;
 
   const char * openIntervalChar(bool left) const {

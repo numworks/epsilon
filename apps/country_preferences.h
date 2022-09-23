@@ -61,6 +61,11 @@ public:
     One,
   };
 
+  enum class LineTemplateInGraph : bool {
+    Hidden,
+    Default,
+  };
+
   constexpr CountryPreferences(
     AvailableExamModes availableExamModes,
     MethodForQuartiles methodForQuartiles,
@@ -74,7 +79,8 @@ public:
     Poincare::Preferences::CombinatoricSymbols combinatoricSymbols,
     ListsStatsOrderInToolbox listsStatsOrderInToolbox,
     SequencesInitialRank sequencesInitialRank,
-    Poincare::Preferences::MixedFractions mixedFractions
+    Poincare::Preferences::MixedFractions mixedFractions,
+    LineTemplateInGraph lineTemplateInGraph
     ) :
     m_availableExamModes(availableExamModes),
     m_homeAppsLayout(homeAppsLayout),
@@ -88,7 +94,8 @@ public:
     m_combinatoricSymbols(combinatoricSymbols),
     m_listsStatsOrderInToolbox(listsStatsOrderInToolbox),
     m_sequencesInitialRank(sequencesInitialRank),
-    m_mixedFractions(mixedFractions)
+    m_mixedFractions(mixedFractions),
+    m_lineTemplateInGraph(lineTemplateInGraph)
   {}
 
   constexpr AvailableExamModes availableExamModes() const { return m_availableExamModes; }
@@ -104,6 +111,7 @@ public:
   constexpr ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return m_listsStatsOrderInToolbox; }
   constexpr SequencesInitialRank sequencesInitialRank() const { return m_sequencesInitialRank; }
   constexpr Poincare::Preferences::MixedFractions mixedFractions() const { return m_mixedFractions; }
+  constexpr LineTemplateInGraph lineTemplateInGraph() const { return m_lineTemplateInGraph; }
 
 private:
   const AvailableExamModes m_availableExamModes;
@@ -119,6 +127,7 @@ private:
   const ListsStatsOrderInToolbox m_listsStatsOrderInToolbox;
   const SequencesInitialRank m_sequencesInitialRank;
   const Poincare::Preferences::MixedFractions m_mixedFractions;
+  const LineTemplateInGraph m_lineTemplateInGraph;
 };
 
 #endif

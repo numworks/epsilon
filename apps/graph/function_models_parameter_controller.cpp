@@ -10,6 +10,7 @@
 #include "../shared/continuous_function.h"
 #include "app.h"
 #include <string.h>
+#include "../global_preferences.h"
 
 using namespace Poincare;
 using namespace Escher;
@@ -101,7 +102,8 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
 int FunctionModelsParameterController::numberOfRows() const {
   return 1 + k_numberOfExpressionCells
          - ExamModeConfiguration::inequalityGraphingIsForbidden()
-         - 2 * ExamModeConfiguration::implicitPlotsAreForbidden();
+         - 2 * ExamModeConfiguration::implicitPlotsAreForbidden()
+         - !GlobalPreferences::sharedGlobalPreferences()->showLineTemplate();
 };
 
 KDCoordinate FunctionModelsParameterController::nonMemoizedRowHeight(int j) {
@@ -144,8 +146,13 @@ int FunctionModelsParameterController::reusableCellCount(int type) {
 
 int FunctionModelsParameterController::getModelIndex(int row) const {
   static_assert(static_cast<int>(Models::Inverse) > static_cast<int>(Models::Inequation) && static_cast<int>(Models::Conic) > static_cast<int>(Models::Inequation), "Method optimized with model order must be changed.");
+  if (row < static_cast<int>(Models::Implicit)) {
+    return row;
+  }
+  // Skip implicit line template according to country preferences
+  row += !GlobalPreferences::sharedGlobalPreferences()->showLineTemplate();
+
   if (row < static_cast<int>(Models::Inequation)) {
-    // All models before the inequation model are always available
     return row;
   }
   // Skip k_indexOfInequationModel if forbidden

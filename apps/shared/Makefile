@@ -103,6 +103,10 @@ app_shared_src = $(addprefix apps/shared/,\
   xy_banner_view.cpp \
 )
 
+app_shared_src += $(addprefix apps/shared/,\
+  plot_view.cpp \
+)
+
 app_shared_src += $(app_shared_test_src)
 apps_src += $(app_shared_src)
 

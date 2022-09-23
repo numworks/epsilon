@@ -49,19 +49,18 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
 
   assert(x >= valueAtIndex(m_selectedSeries, m_selectedIndex));
   int index = (step > 0.0 || x > valueAtIndex(m_selectedSeries, m_selectedIndex)) ? m_selectedIndex : m_selectedIndex - 1;
-  int nextIndex = index + 1;
-  if (index < 0 || (step > 0.0 && nextIndex >= totValues)) {
+  if (index < 0 || (step > 0.0 && index + 1 >= totValues)) {
     // Cursor cannot move further
     return false;
   }
   double xTarget = x + step * snapFactor;
   double xIndex = valueAtIndex(m_selectedSeries, index);
-  double xNextIndex = valueAtIndex(m_selectedSeries, nextIndex);
+  double xNextIndex = valueAtIndex(m_selectedSeries, index + 1);
   if (xTarget <= xIndex || xTarget >= xNextIndex) {
     assert((xTarget <= xIndex) == (step < 0.0));
     assert((xTarget >= xNextIndex) == (step > 0.0));
     // Step is too big, snap on the next interesting value
-    m_selectedIndex = (step > 0.0) ? nextIndex : index;
+    m_selectedIndex = index + (step > 0.0);
     moveCursorToSelectedIndex();
     return true;
   }
@@ -88,17 +87,86 @@ bool FrequencyController::moveSelectionHorizontally(int deltaIndex) {
     x = xSimplified;
   }
 
-  // Compute start and end of the segment on which the cursor is
-  assert(x > xIndex && x < xNextIndex && nextIndex == index + 1);
-  double yIndex = resultAtIndex(m_selectedSeries, index);
-  double yNextIndex = resultAtIndex(m_selectedSeries, nextIndex);
-
   // Compute the cursor's position
-  double y = yIndex + (yNextIndex - yIndex) * ((x - xIndex) / (xNextIndex - xIndex));
+  double y = yValueForComputedXValues(m_selectedSeries, index, x, xIndex, xNextIndex);
   m_cursorView.setColor(Shared::DoublePairStore::colorOfSeriesAtIndex(m_selectedSeries));
   m_cursor.moveTo(x, x, y);
   m_curveView.reload();
   return true;
+}
+
+double FrequencyController::yValueForComputedXValues(int series, int index, double x, double xIndex, double xNextIndex) const {
+  assert(x >= xIndex && x < xNextIndex);
+  double yIndex = resultAtIndex(series, index);
+  double yNextIndex = resultAtIndex(series, index + 1);
+  return yIndex + (yNextIndex - yIndex) * ((x - xIndex) / (xNextIndex - xIndex));
+}
+
+double FrequencyController::yValueAtAbscissa(int series, double x) const {
+  int n = totalValues(series);
+  double currentValue = valueAtIndex(series, 0);
+  if (x < currentValue) {
+    return resultAtIndex(series, 0);
+  }
+  for (int i = 0; i < n - 1; i++) {
+    double nextValue = valueAtIndex(series, i + 1);
+    if (x >= currentValue && x < nextValue) {
+      return yValueForComputedXValues(series, i, x, currentValue, nextValue);
+    }
+    currentValue = nextValue;
+  }
+  return resultAtIndex(series, n - 1);
+}
+
+int FrequencyController::nextSubviewWhenMovingVertically(int direction) const{
+  // Search first curve in direction
+  double closestValueUpOrDown = NAN;
+  int nextSubview = direction > 0 ? Store::k_numberOfSeries : -1;
+  double currentY = m_cursor.y();
+  double currentX = m_cursor.x();
+  for (int s = 0; s < Store::k_numberOfSeries; s++) {
+    if (s == m_selectedSeries) {
+      continue;
+    }
+    if (!seriesIsValid(s)) {
+      continue;
+    }
+    double yOfCurrentSeries = yValueAtAbscissa(s, currentX);
+         // series is in the right direction
+    if ((yOfCurrentSeries * direction < currentY * direction
+            // series is closest than others
+         && (std::isnan(closestValueUpOrDown)
+            || closestValueUpOrDown * direction < yOfCurrentSeries * direction))
+        // series is on the same spot
+        || (yOfCurrentSeries == currentY
+           // series is in the right order of declaration in List
+           && s * direction > m_selectedSeries * direction)) {
+      nextSubview = s;
+      closestValueUpOrDown = yOfCurrentSeries;
+    }
+  }
+  return nextSubview;
+}
+
+void FrequencyController::updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) {
+  // Search closest index to cursor
+  double currentXValue = m_cursor.x();
+  if (valueAtIndex(m_selectedSeries, 0) >= currentXValue) {
+    m_selectedIndex = 0;
+    return;
+  }
+  int nValues = totalValues(m_selectedSeries);
+  double previousValue = -1.0;
+  for (int i = nValues - 1; i >= 0; i--) {
+    double valueAtI = valueAtIndex(m_selectedSeries, i);
+    if (valueAtI <= currentXValue) {
+      // +1 if the next index is closer than the current.
+      m_selectedIndex = i + static_cast<int>(previousValue >= 0.0 && currentXValue - valueAtI > previousValue - currentXValue);
+      return;
+    }
+    previousValue = valueAtI;
+  }
+  assert(false);
 }
 
 void FrequencyController::computeYBounds(float * yMin, float *yMax) const {

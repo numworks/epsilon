@@ -61,6 +61,9 @@ public:
   Poincare::Layout nameLayout();
   bool isDefined() override;
   bool isEmpty() override;
+  /* u_(n+1) must depend on u_n only not n nor v_n nor u_(n-1) */
+  bool isSimplyRecursive(Poincare::Context * context);
+
   // Approximation
   Poincare::Coordinate2D<float> evaluateXYAtParameter(float x, Poincare::Context * context, int subCurveIndex = 0) const override {
     return Poincare::Coordinate2D<float>(x, templatedApproximateAtAbscissa(x, reinterpret_cast<SequenceContext *>(context)));

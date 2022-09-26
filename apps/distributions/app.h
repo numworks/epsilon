@@ -34,11 +34,10 @@ public:
     Distribution * distribution() { return m_distributionBuffer.distribution(); }
     Calculation * calculation() { return m_distributionBuffer.distribution()->calculation(); }
 
-    Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> * pageQueue() { return &m_pageQueue; }
+    constexpr static int k_maxNumberOfPages = 3;
+    Ion::RingBuffer<Escher::ViewController *, k_maxNumberOfPages> * pageQueue() { return &m_pageQueue; }
   private:
-    friend App;
-    // TODO: optimize size of Stack
-    Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> m_pageQueue;
+    Ion::RingBuffer<Escher::ViewController *, k_maxNumberOfPages> m_pageQueue;
     DistributionBuffer m_distributionBuffer;
   };
 

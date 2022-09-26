@@ -69,7 +69,7 @@ private:
   constexpr static int k_labelBufferMaxSize = 1 + k_numberSignificantDigits + 1 + Poincare::PrintFloat::k_specialECodePointByteLength + 1 + 3 + 1; // '-' + significant digits + '.' + "E" + '-' + 3 digits + null-terminating char
   constexpr static int k_labelBufferMaxGlyphLength = 1 + k_numberSignificantDigits + 3 + 3; // '-' + significant digits + ".E-" + 3 digits
   /* FIXME Y axis needs less labels than X axis */
-  constexpr static int k_maxNumberOfLabels = PlotRange::k_maxNumberOfXGridUnits > PlotRange::k_maxNumberOfYGridUnits ? PlotRange::k_maxNumberOfXGridUnits : PlotRange::k_maxNumberOfYGridUnits;
+  constexpr static int k_maxNumberOfLabels = CurveViewRange::k_maxNumberOfXGridUnits > CurveViewRange::k_maxNumberOfYGridUnits ? CurveViewRange::k_maxNumberOfXGridUnits : CurveViewRange::k_maxNumberOfYGridUnits;
 
   virtual int computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
 

@@ -16,7 +16,7 @@ void WithGrid::drawGrid(const AbstractPlotView * plotView, KDContext * ctx, KDRe
 void WithGrid::drawGridLines(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis parallel) const {
   assert(plotView);
   float min, max, step;
-  PlotRange * range = plotView->range();
+  CurveViewRange * range = plotView->range();
   if (parallel == AbstractPlotView::Axis::Horizontal) {
     min = range->yMin();
     max = range->yMax();

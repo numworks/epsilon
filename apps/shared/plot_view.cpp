@@ -57,19 +57,19 @@ void AbstractPlotView::drawSegment(KDContext * ctx, KDRect rect, Coordinate2D<fl
   straightJoinDots(ctx, rect, pa, pb, color, thick);
 }
 
-static float relativePositionToOffset(AbstractPlotView::RelativePostion position) {
+static float relativePositionToOffset(AbstractPlotView::RelativePosition position) {
   switch (position) {
-  case AbstractPlotView::RelativePostion::Before:
+  case AbstractPlotView::RelativePosition::Before:
     return -1.f;
-  case AbstractPlotView::RelativePostion::There:
+  case AbstractPlotView::RelativePosition::There:
     return -0.5f;
   default:
-    assert(position == AbstractPlotView::RelativePostion::After);
+    assert(position == AbstractPlotView::RelativePosition::After);
     return 0.f;
   }
 }
 
-void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePostion xPosition, RelativePostion yPosition, KDColor color) const {
+void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color) const {
   KDSize labelSize = KDFont::Font(k_font)->stringSize(label);
 
   Coordinate2D<float> p = floatToPixel2D(xy);

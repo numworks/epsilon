@@ -72,6 +72,7 @@ app_shared_src = $(addprefix apps/shared/,\
   ok_view.cpp \
   parameter_text_field_delegate.cpp \
   plot_view.cpp \
+  plot_view_axes.cpp \
   plot_view_banners.cpp \
   plot_view_cursors.cpp \
   poincare_helpers.cpp \

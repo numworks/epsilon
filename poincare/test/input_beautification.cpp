@@ -323,3 +323,29 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
       });
   assert_inserted_text_turns_into(text25, l);
 }
+
+typedef void (LayoutCursor::*AddLayoutPointer)(Context * context);
+
+void assert_applybeautification_after_layout_insertion(AddLayoutPointer layoutInsertionFunction) {
+  HorizontalLayout horizontalLayout = HorizontalLayout::Builder();
+  LayoutCursor cursor(horizontalLayout);
+  Shared::GlobalContext context;
+  cursor.insertText("pi", &context);
+  (cursor.*layoutInsertionFunction)(&context);
+  Layout piCodePoint = CodePointLayout::Builder(UCodePointGreekSmallLetterPi);
+  if (layoutInsertionFunction == &LayoutCursor::addFractionLayoutAndCollapseSiblings) {
+    // Check numerator of created fraction
+    quiz_assert(horizontalLayout.childAtIndex(0).childAtIndex(0).childAtIndex(0).isIdenticalTo(piCodePoint));
+  } else {
+    quiz_assert(horizontalLayout.childAtIndex(0).isIdenticalTo(piCodePoint));
+  }
+}
+
+QUIZ_CASE(poincare_input_beautification_after_inserting_layout) {
+  AddLayoutPointer layoutInsertionFunction[] = {&LayoutCursor::addFractionLayoutAndCollapseSiblings, &LayoutCursor::addEmptyExponentialLayout,  &LayoutCursor::addEmptyPowerLayout,  &LayoutCursor::addEmptySquareRootLayout, &LayoutCursor::addEmptySquarePowerLayout, &LayoutCursor::addEmptyTenPowerLayout, &LayoutCursor::addEmptyMatrixLayout};
+  int numberOfFunctions = sizeof(layoutInsertionFunction)/sizeof(AddLayoutPointer);
+
+  for (int i = 0; i < numberOfFunctions; i++) {
+    assert_applybeautification_after_layout_insertion(layoutInsertionFunction[i]);
+  }
+}

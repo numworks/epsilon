@@ -132,6 +132,9 @@ void ModalViewController::reloadModalViewController() {
 }
 
 void ModalViewController::dismissModalViewController() {
+  if (!isDisplayingModal()) {
+    return;
+  }
   m_currentModalViewController->viewDidDisappear();
   Container::activeApp()->setFirstResponder(m_previousResponder);
   m_contentView.dismissModalView();

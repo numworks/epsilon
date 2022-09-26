@@ -91,6 +91,9 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     stackController()->pop();
     return true;
   }
+  if (m_record.isNull() && m_listController->handleEventOnExpression(event)) {
+    return true;
+  }
   return false;
 }
 

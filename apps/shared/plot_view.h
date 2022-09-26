@@ -73,7 +73,7 @@ private:
 };
 
 template<class CAxes, class CPlot, class CBanner, class CCursor>
-class PlotView : public AbstractPlotView,  CAxes,  CPlot,  CBanner, CCursor {
+class PlotView : public AbstractPlotView, protected CAxes, protected CPlot, protected CBanner, protected CCursor {
 public:
   using AbstractPlotView::AbstractPlotView;
 

@@ -47,9 +47,6 @@ bool DistributionController::handleEvent(Ion::Events::Event event) {
     setDistributionAccordingToIndex(selectedRow());
     stack->push(m_parametersController);
     return true;
-  } else if (event == Ion::Events::Left) {
-    stack->pop();
-    return true;
   }
   return false;
 }

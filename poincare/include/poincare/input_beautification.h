@@ -93,8 +93,8 @@ private:
     // Functions
     k_absoluteValueRule,
     {BinomialCoefficient::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(BinomialCoefficientLayout::Builder(EmptyLayout::Builder(), EmptyLayout::Builder())); }},
-    {Conjugate::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(ConjugateLayout::Builder(EmptyLayout::Builder())); }},
     {Ceiling::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(CeilingLayout::Builder(EmptyLayout::Builder())); }},
+    {Conjugate::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(ConjugateLayout::Builder(EmptyLayout::Builder())); }},
     k_derivativeRule,
     {Power::s_exponentialFunctionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(HorizontalLayout::Builder(CodePointLayout::Builder('e'), VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Position::Superscript))); }},
     {Floor::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(FloorLayout::Builder(EmptyLayout::Builder())); }},

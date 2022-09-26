@@ -34,7 +34,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
 }
 
 void App::didBecomeActive(Window * window) {
-  Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> * queue = snapshot()->pageQueue();
+  Ion::RingBuffer<Escher::ViewController *, Snapshot::k_maxNumberOfPages> * queue = snapshot()->pageQueue();
   int queueLength = queue->length();
   Escher::ViewController * currentController = &m_distributionController;
   for (int i = 0; i < queueLength; i++) {

@@ -48,10 +48,10 @@ private:
     {"->", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointRightwardsArrow)); }},
     {"*", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointMultiplicationSign)); }},
   };
-  static bool ShouldBeBeautifiedWhenInputted(Layout parent, int indexOfLastAddedLayout, BeautificationRule beautificationRule);
 
-  /* WARNING: The two following arrays will be beautified only if
-   * it can be parsed without being beautified.
+  /* WARNING: The following arrays ("convertWhenFollowedByANonIdentifierChar"
+   * and "convertWhenFollowedByParentheses") will be beautified only if
+   * the expression can be parsed without being beautified.
    * If you add any new identifiers to this list, they must be parsable.
    * This is because we must be able to distinguish "asqrt" = "a*sqrt" from
    * "asqlt" != "a*sqlt".
@@ -74,11 +74,13 @@ private:
       return static_cast<Layout>(AbsoluteValueLayout::Builder(builderParameter.isUninitialized() ? EmptyLayout::Builder() : builderParameter));
     }
   };
-  static int BeautifyPipeKey(Layout parent, int indexOfPipeKey, LayoutCursor * cursor, bool forceCursorRightOfText);
 
-  constexpr static BeautificationRule k_derivativeRule = {Derivative::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder())); }};
-  static bool BeautifyFractionIntoDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText);
-  static bool BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText);
+  constexpr static BeautificationRule k_derivativeRule = {
+    Derivative::s_functionHelper.aliasesList(),
+    [](Layout builderParameter) {
+      return static_cast<Layout>(FirstOrderDerivativeLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder()));
+    }
+  };
 
   constexpr static BeautificationRule k_logarithmRule = {
     Logarithm::s_functionHelper.aliasesList(),
@@ -92,33 +94,89 @@ private:
    * in alphabetical order to choose position in list." */
   constexpr static const BeautificationRule convertWhenFollowedByParentheses[] = {
     // Functions
-    k_absoluteValueRule,
-    {BinomialCoefficient::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(BinomialCoefficientLayout::Builder(EmptyLayout::Builder(), EmptyLayout::Builder())); }},
-    {Ceiling::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(CeilingLayout::Builder(EmptyLayout::Builder())); }},
-    {Conjugate::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(ConjugateLayout::Builder(EmptyLayout::Builder())); }},
-    k_derivativeRule,
-    {Power::s_exponentialFunctionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(HorizontalLayout::Builder(CodePointLayout::Builder('e'), VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Position::Superscript))); }},
-    {Floor::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(FloorLayout::Builder(EmptyLayout::Builder())); }},
-    {Integral::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(IntegralLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder(),EmptyLayout::Builder())); }},
-    {VectorNorm::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(VectorNormLayout::Builder(EmptyLayout::Builder())); }},
-    {PiecewiseOperator::s_functionHelper.aliasesList(), [](Layout builderParameter) {
-      /* WARNING: The implementation of ReplaceEmptyLayoutsWithParameters
-       * needs the created layout to have empty layouts where the parameters
-       * should be insterted. Since Piecewise operator does not have a fixed
-       * number of children, the implementation is not perfect.
-       * Indeed, if the layout_field is currently filled with "4, x>0, 5",
-       * and "piecewise(" is inserted left of it, "piecewise(4, x>0, 5)"
-       * won't be beautified, since the piecewise layout does not have
-       * 3 empty children.
-       * This is a fringe case though, and everything works fine when
-       * "piecewise(" is insterted with nothing on its right. */
-      PiecewiseOperatorLayout layout = PiecewiseOperatorLayout::Builder();
-      layout.addRow(EmptyLayout::Builder());
-      return static_cast<Layout>(layout);
-    }},
-    {NthRoot::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(NthRootLayout::Builder(EmptyLayout::Builder(), EmptyLayout::Builder())); }},
-    {SquareRoot::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(NthRootLayout::Builder(EmptyLayout::Builder())); }},
+      /* abs( */ k_absoluteValueRule,
+    { /* binomial( */
+      BinomialCoefficient::s_functionHelper.aliasesList(),
+      [](Layout builderParameter) {
+        return static_cast<Layout> (BinomialCoefficientLayout::Builder(EmptyLayout::Builder(), EmptyLayout::Builder()));
+      }
+    },
+    { /* ceil( */
+      Ceiling::s_functionHelper.aliasesList(),
+      [](Layout builderParameter) {
+        return static_cast<Layout>(CeilingLayout::Builder(EmptyLayout::Builder()));
+      }
+    },
+    { /* conj( */
+      Conjugate::s_functionHelper.aliasesList(),
+      [](Layout builderParameter) {
+        return static_cast<Layout>(ConjugateLayout::Builder(EmptyLayout::Builder()));
+      }
+    },
+      /* diff( */ k_derivativeRule,
+    { /* exp( */
+      Power::s_exponentialFunctionHelper.aliasesList(),
+      [](Layout builderParameter) {
+        return static_cast<Layout>(HorizontalLayout::Builder(CodePointLayout::Builder('e'), VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Position::Superscript)));
+      }
+    },
+    { /* floor( */
+      Floor::s_functionHelper.aliasesList(),
+      [](Layout builderParameter) {
+        return static_cast<Layout>(FloorLayout::Builder(EmptyLayout::Builder()));
+      }
+    },
+    { /* int( */
+      Integral::s_functionHelper.aliasesList(),
+      [](Layout builderParameter) {
+        return static_cast<Layout>(IntegralLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder(),EmptyLayout::Builder()));
+      }
+    },
+    { /* norm( */
+      VectorNorm::s_functionHelper.aliasesList(),
+      [](Layout builderParameter) {
+        return static_cast<Layout>(VectorNormLayout::Builder(EmptyLayout::Builder()));
+      }
+    },
+    {/* piecewise( */
+      PiecewiseOperator::s_functionHelper.aliasesList(),
+      [](Layout builderParameter) {
+        /* WARNING: The implementation of ReplaceEmptyLayoutsWithParameters
+         * needs the created layout to have empty layouts where the parameters
+         * should be insterted. Since Piecewise operator does not have a fixed
+         * number of children, the implementation is not perfect.
+         * Indeed, if the layout_field is currently filled with "4, x>0, 5",
+         * and "piecewise(" is inserted left of it, "piecewise(4, x>0, 5)"
+         * won't be beautified, since the piecewise layout does not have
+         * 3 empty children.
+         * This is a fringe case though, and everything works fine when
+         * "piecewise(" is insterted with nothing on its right. */
+        PiecewiseOperatorLayout layout = PiecewiseOperatorLayout::Builder();
+        layout.addRow(EmptyLayout::Builder());
+        return static_cast<Layout>(layout);
+      }
+    },
+    { /* root( */
+      NthRoot::s_functionHelper.aliasesList(),
+      [](Layout builderParameter) {
+        return static_cast<Layout>(NthRootLayout::Builder(EmptyLayout::Builder(), EmptyLayout::Builder()));
+      }
+    },
+    { /* sqrt( */
+      SquareRoot::s_functionHelper.aliasesList(),
+      [](Layout builderParameter) {
+        return static_cast<Layout>(NthRootLayout::Builder(EmptyLayout::Builder()));
+      }
+    },
   };
+
+  static bool ShouldBeBeautifiedWhenInputted(Layout parent, int indexOfLastAddedLayout, BeautificationRule beautificationRule);
+
+  static int BeautifyPipeKey(Layout parent, int indexOfPipeKey, LayoutCursor * cursor, bool forceCursorRightOfText);
+
+  static bool BeautifyFractionIntoDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText);
+  static bool BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText);
+
   // Returns result of comparison
   static int CompareAndBeautifyIdentifier(const char * identifier, size_t identifierLength, BeautificationRule beautificationRule, Layout parent, int startIndex, int * numberOfLayoutsAddedOrRemoved, LayoutCursor * layoutCursor, bool isBeautifyingFunction, bool forceCursorRightOfText);
 

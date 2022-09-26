@@ -105,8 +105,8 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
     int numberOfLayoutsAddedOrRemoved = 0;
     // Try to beautify each token.
 
-    // Beautify pi and theta
-    if (currentIdentifier.type() == Token::Constant || currentIdentifier.type() == Token::CustomIdentifier) {
+    // Beautify inf, pi and theta
+    if (currentIdentifier.type() == Token::Constant || currentIdentifier.type() == Token::CustomIdentifier || currentIdentifier.type() == Token::SpecialIdentifier) {
       for (BeautificationRule beautificationRule : convertWhenFollowedByANonIdentifierChar) {
         int comparison = CompareAndBeautifyIdentifier(currentIdentifier.text(), currentIdentifier.length(), beautificationRule, parent, firstIndexOfIdentifier, &numberOfLayoutsAddedOrRemoved, layoutCursor, false, forceCursorRightOfText);
         if (comparison <= 0) { // Break if equal or past the alphabetical order

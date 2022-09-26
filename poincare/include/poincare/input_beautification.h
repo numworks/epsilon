@@ -60,6 +60,8 @@ private:
    * "If the function has multiple aliases, take the first alias
    * in alphabetical order to choose position in list." */
   constexpr static const BeautificationRule convertWhenFollowedByANonIdentifierChar[] = {
+    // inf
+    {AliasesLists::k_infinityAliases, [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointInfinity)); }},
     // Greek letters
     {AliasesLists::k_piAliases, [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointGreekSmallLetterPi)); }},
     {AliasesLists::k_thetaAliases, [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointGreekSmallLetterTheta)); }},

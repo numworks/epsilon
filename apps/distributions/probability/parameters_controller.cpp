@@ -8,43 +8,6 @@ using namespace Escher;
 
 namespace Distributions {
 
-ParametersController::ContentView::ContentView(SelectableTableView * selectableTableView) :
-      m_titleView(KDFont::Size::Small,
-                  I18n::Message::DefineParameters,
-                  KDContext::k_alignCenter,
-                  KDContext::k_alignCenter,
-                  Palette::GrayDark,
-                  Palette::WallScreen),
-      m_selectableTableView(selectableTableView) {
-  // Remove selectable table top margin to control margin between text and table
-  m_selectableTableView->setTopMargin(0);
-  // Fit m_selectableTableView scroll to content size
-  m_selectableTableView->decorator()->setVerticalMargins(0, Metric::CommonBottomMargin);
-}
-
-void ParametersController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  int tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height();
-  ctx->fillRect(KDRect(0, tableHeight, bounds().width(), bounds().height() - tableHeight),
-                Palette::WallScreen);
-}
-
-View * ParametersController::ContentView::subviewAtIndex(int index) {
-  assert(index >= 0 && index < 5);
-  if (index == 0) {
-    return &m_titleView;
-  }
-  return m_selectableTableView;
-}
-
-void ParametersController::ContentView::layoutSubviews(bool force) {
-  KDCoordinate titleHeight = KDFont::GlyphHeight(KDFont::Size::Small) + k_titleMargin;
-  m_titleView.setFrame(KDRect(0, 0, bounds().width(), titleHeight), force);
-  /* SelectableTableView must be given a width before computing height. */
-  m_selectableTableView->initSize(bounds());
-  KDCoordinate tableHeight = m_selectableTableView->minimalSizeForOptimalDisplay().height();
-  m_selectableTableView->setFrame(KDRect(0, titleHeight, bounds().width(), tableHeight).intersectedWith(bounds()), force);
-}
-
 /* Parameters Controller */
 
 ParametersController::ParametersController(Escher::StackViewController * parentResponder,
@@ -52,7 +15,7 @@ ParametersController::ParametersController(Escher::StackViewController * parentR
                                            Distribution * distribution,
                                            CalculationController * calculationController) :
       FloatParameterController<double>(parentResponder),
-      m_contentView(&m_selectableTableView),
+      m_contentView(&m_selectableTableView, I18n::Message::DefineParameters),
       m_distribution(distribution),
       m_calculationController(calculationController) {
   assert(m_distribution != nullptr);

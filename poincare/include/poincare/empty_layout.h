@@ -50,6 +50,10 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << "EmptyLayout";
   }
+  void logAttributes(std::ostream & stream) const override {
+    stream << " color=\"" << (m_color == Color::Yellow ? "yellow" : "gray") << "\"";
+    stream << " visible=\"" << (m_visibility == Visibility::On ? "true" : (m_visibility == Visibility::Off ? "false" : "never")) << "\"";
+  }
 #endif
 
 protected:

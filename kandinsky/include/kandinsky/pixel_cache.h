@@ -24,7 +24,12 @@ public:
 
   /* Warning : the provided function is evaluated twice, the first time to
    * compute the bounding rect of the actual drawings and the second time will
-   * real drawing calls. */
+   * real drawing calls.
+   *
+   * It is templated on the function to accept closures with bindings (that are
+   * more readable than void * ones). Make sure it does not add too much code in
+   * the flash when using it.
+   */
   template<class T> void saveAndDraw(KDContext * ctx, T function) {
     KDMeasuringContext measuringContext(*ctx);
     function(&measuringContext);

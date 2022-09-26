@@ -120,17 +120,6 @@ void PiecewiseOperatorLayoutNode::makeLastConditionVisibleIfEmpty(bool visible) 
 
 // Layout
 
-PiecewiseOperatorLayout PiecewiseOperatorLayout::EmptyPiecewiseOperatorBuilder() {
-  PiecewiseOperatorLayout result = TreeHandle::NAryBuilder<PiecewiseOperatorLayout, PiecewiseOperatorLayoutNode>({
-    EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow),
-    EmptyLayout::Builder(EmptyLayoutNode::Color::Gray),
-    EmptyLayout::Builder(EmptyLayoutNode::Color::Gray),
-    EmptyLayout::Builder(EmptyLayoutNode::Color::Gray)
-    });
-  result.setDimensions(2, 2);
-  return result;
-}
-
 PiecewiseOperatorLayout PiecewiseOperatorLayout::Builder() {
   TreeHandle result = TreeHandle::NAryBuilder<PiecewiseOperatorLayout, PiecewiseOperatorLayoutNode>({});
   PiecewiseOperatorLayout layout = static_cast<PiecewiseOperatorLayout&>(result);

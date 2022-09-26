@@ -49,7 +49,6 @@ class PiecewiseOperatorLayout /*final*/ : public GridLayout {
   friend class PiecewiseOperatorLayoutNode;
 public:
   PiecewiseOperatorLayout(const PiecewiseOperatorLayoutNode * n) : GridLayout(n) {}
-  static PiecewiseOperatorLayout EmptyPiecewiseOperatorBuilder();
   static PiecewiseOperatorLayout Builder();
   void addRow(Layout leftLayout, Layout rightLayout = Layout());
 

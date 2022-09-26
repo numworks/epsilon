@@ -28,9 +28,9 @@ class SimpleTableViewDataSource : public RegularTableViewDataSource {
 public:
   virtual HighlightCell * reusableCell(int index) = 0;
   virtual int reusableCellCount() const = 0;
-  HighlightCell * reusableCell(int index, int type) override { assert(type == 0); return reusableCell(index); }
-  int reusableCellCount(int type) override { assert(type == 0); return reusableCellCount();}
-  int typeAtLocation(int i, int j) override { return 0; }
+  HighlightCell * reusableCell(int index, int type) override final { assert(type == 0); return reusableCell(index); }
+  int reusableCellCount(int type) override final { assert(type == 0); return reusableCellCount();}
+  int typeAtLocation(int i, int j) override final { return 0; }
 };
 
 }

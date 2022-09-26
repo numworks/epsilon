@@ -54,6 +54,10 @@ KDCoordinate MemoizedTableSize1DManager::computeCumulatedSizeAtIndex(int i, KDCo
       // From here on, memoization might be updated.
       cumulatedSize += sizeAtIndex(k);
     }
+    if (i == totalNumberOfLines) {
+      // Update memoized total size
+      m_memoizedTotalSize = cumulatedSize;
+    }
   } else {
     for (int k = m_memoizedIndexOffset - 1; k >= 0; k--) {
       // From here on, memoization might be updated.
@@ -62,10 +66,6 @@ KDCoordinate MemoizedTableSize1DManager::computeCumulatedSizeAtIndex(int i, KDCo
         break;
       }
     }
-  }
-  if (i == totalNumberOfLines) {
-    // Update memoized total size
-    m_memoizedTotalSize = cumulatedSize;
   }
   return cumulatedSize;
 }

@@ -122,9 +122,9 @@ public:
 
   // Other
   virtual LayoutNode * layoutToPointWhenInserting(Expression * correspondingExpression, bool * forceCursorLeftOfText = nullptr);
-  bool removeGraySquaresFromAllMatrixAncestors();
-  bool removeGraySquaresFromAllMatrixChildren();
-  bool addGraySquaresToAllMatrixAncestors();
+  bool removeGraySquaresFromAllGridAncestors();
+  bool removeGraySquaresFromAllGridChildren();
+  bool addGraySquaresToAllGridAncestors();
   /* A layout has text if it is not empty and it is not an horizontal layout
    * with no child or with one child with no text. */
   virtual bool hasText() const { return true; }
@@ -182,7 +182,7 @@ private:
     int * resultScore,
     bool forSelection);
   virtual void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) = 0;
-  void changeGraySquaresOfAllMatrixRelatives(bool add, bool ancestors, bool * changedSquares);
+  void changeGraySquaresOfAllGridRelatives(bool add, bool ancestors, bool * changedSquares);
 
   KDRect m_frame;
   /* m_baseline is the signed vertical distance from the top of the layout to

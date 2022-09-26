@@ -17,7 +17,7 @@ public:
                          Distribution * distribution,
                          ParametersController * parametersController);
   const char * title() override {
-    return I18n::translate(I18n::Message::DistributionControllerTitle);
+    return I18n::translate(I18n::Message::ChooseDistribution);
   }
   void stackOpenPage(Escher::ViewController * nextPage) override;
   bool handleEvent(Ion::Events::Event event) override;

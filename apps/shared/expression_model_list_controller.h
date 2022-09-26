@@ -15,6 +15,7 @@ public:
   ExpressionModelListController(Escher::Responder * parentResponder, I18n::Message text);
   virtual void editExpression(Ion::Events::Event event);
   virtual bool editSelectedRecordWithText(const char * text);
+  bool handleEventOnExpression(Ion::Events::Event event);
 protected:
   constexpr static KDFont::Size k_font = KDFont::Size::Large;
   constexpr static KDCoordinate k_expressionMargin = 5;
@@ -24,7 +25,6 @@ protected:
   virtual KDCoordinate expressionRowHeight(int j);
   virtual void willDisplayExpressionCellAtIndex(Escher::HighlightCell * cell, int j);
   // Responder
-  bool handleEventOnExpression(Ion::Events::Event event);
   virtual void addModel();
   virtual void didChangeModelsList() { resetSizesMemoization(); }
   virtual bool removeModelRow(Ion::Storage::Record record);

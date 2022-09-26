@@ -100,6 +100,7 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
   Tokenizer tokenizer = Tokenizer(identifiersString, &parsingContext);
   Token currentIdentifier = tokenizer.popToken();
   Token nextIdentifier = Token(Token::Undefined);
+  bool layoutAfterIdentifiersIsParenthesis = parent.numberOfChildren() > lastIndexOfIdentifier + 1 && parent.childAtIndex(lastIndexOfIdentifier + 1).type() == LayoutNode::Type::ParenthesisLayout;
   while (currentIdentifier.type() != Token::EndOfStream) {
     nextIdentifier = tokenizer.popToken();
     int numberOfLayoutsAddedOrRemoved = 0;
@@ -120,8 +121,8 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
     if (nextIdentifier.type() == Token::Number
         // Check if current token is a function
         && currentIdentifier.type() == Token::ReservedFunction
-        // Check if a parenthesis was just inputted
-        && lastAddedLayout.type() == LayoutNode::Type::ParenthesisLayout
+        // Check if a parenthesis follows the identifier
+        && layoutAfterIdentifiersIsParenthesis
         // Check if logN is at the end of the identifiers string
         && *(nextIdentifier.text() + nextIdentifier.length()) == 0
         // Check if N is integer
@@ -136,8 +137,8 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
     if (currentIdentifier.type() == Token::ReservedFunction
         // Only the last token can be a function
         && nextIdentifier.type() == Token::EndOfStream
-        // Check if a parenthesis was just inputted
-        && lastAddedLayout.type() == LayoutNode::Type::ParenthesisLayout) {
+        // Check if a parenthesis follows the identifier
+        && layoutAfterIdentifiersIsParenthesis) {
       assert(numberOfLayoutsAddedOrRemoved == 0);
       for (BeautificationRule beautificationRule : convertWhenFollowedByParentheses) {
         int comparison = CompareAndBeautifyIdentifier(currentIdentifier.text(), currentIdentifier.length(), beautificationRule, parent, firstIndexOfIdentifier, &numberOfLayoutsAddedOrRemoved, layoutCursor, true, forceCursorRightOfText);

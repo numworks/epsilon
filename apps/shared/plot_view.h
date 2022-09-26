@@ -19,7 +19,7 @@ public:
     Horizontal = 0,
     Vertical,
   };
-  enum class RelativePostion : uint8_t {
+  enum class RelativePosition : uint8_t {
     Before,
     There,
     After,
@@ -32,8 +32,10 @@ public:
   // Escher::View
   void drawRect(KDContext * ctx, KDRect rect) const final;
 
+  PlotRange * range() const { return m_range; }
   float pixelWidth() const { return (m_range->xMax() - m_range->xMin()) / (bounds().width() - 1); }
   float pixelHeight() const { return (m_range->yMax() - m_range->yMin()) / (bounds().height() - 1); }
+  float pixelLength(Axis axis) const { return axis == Axis::Horizontal ? pixelWidth() : pixelHeight(); }
   float floatToPixel(Axis axis, float f) const;
   float pixelToFloat(Axis axis, KDCoordinate c) const;
   Poincare::Coordinate2D<float> floatToPixel2D(Poincare::Coordinate2D<float> p) const { return Poincare::Coordinate2D<float>(floatToPixel(Axis::Horizontal, p.x1()), floatToPixel(Axis::Vertical, p.x2())); }
@@ -44,7 +46,7 @@ public:
    * be to private them and befriend the helpers. */
   void drawStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = 0) const;
   void drawSegment(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> a, Poincare::Coordinate2D<float> b, KDColor color, bool thick = true) const;
-  void drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePostion xPosition, RelativePostion yPosition, KDColor color) const;
+  void drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color) const;
   void straightJoinDots(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> pixelA, Poincare::Coordinate2D<float> pixelB, KDColor color, bool thick) const;
   void stamp(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> p, KDColor color, bool thick) const;
 
@@ -76,21 +78,12 @@ public:
   using AbstractPlotView::AbstractPlotView;
 
 private:
-  using CAxes::drawAxes;
-  void drawAxes(KDContext * ctx, KDRect rect) const override { drawAxes(this, ctx, rect); }
-
-  using CPlot::drawPlot;
-  void drawPlot(KDContext * ctx, KDRect rect) const override { drawPlot(this, ctx, rect); }
-
-  using CBanner::bannerView;
-  BannerView * bannerView() const override { return bannerView(this); }
-  using CBanner::bannerFrame;
-  KDRect bannerFrame() override { return bannerFrame(this); }
-
-  using CCursor::cursorView;
-  CursorView * cursorView() const override { return cursorView(this); }
-  using CCursor::cursorFrame;
-  KDRect cursorFrame() override { return cursorFrame(this); }
+  void drawAxes(KDContext * ctx, KDRect rect) const override { CAxes::drawAxes(this, ctx, rect); }
+  void drawPlot(KDContext * ctx, KDRect rect) const override { CPlot::drawPlot(this, ctx, rect); }
+  BannerView * bannerView() const override { return CBanner::bannerView(this); }
+  KDRect bannerFrame() override { return CBanner::bannerFrame(this); }
+  CursorView * cursorView() const override { return CCursor::cursorView(this); }
+  KDRect cursorFrame() override { return CCursor::cursorFrame(this); }
 };
 
 }

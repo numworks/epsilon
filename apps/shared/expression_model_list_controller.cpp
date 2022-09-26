@@ -116,16 +116,16 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
     inputController()->setTextBody(initialTextContent);
   }
   inputController()->edit(event, this,
-      [](void * context, void * sender){
-        ExpressionModelListController * myController = static_cast<ExpressionModelListController *>(context);
-        InputViewController * myInputViewController = (InputViewController *)sender;
-        const char * textBody = myInputViewController->textBody();
-        return myController->editSelectedRecordWithText(textBody);
-      },
-      [](void * context, void * sender){
-        return true;
-      });
-
+    [](void * context, void * sender){
+      ExpressionModelListController * myController = static_cast<ExpressionModelListController *>(context);
+      InputViewController * myInputViewController = (InputViewController *)sender;
+      const char * textBody = myInputViewController->textBody();
+      return myController->editSelectedRecordWithText(textBody);
+    },
+    [](void * context, void * sender){
+      return true;
+    }
+  );
 }
 
 bool ExpressionModelListController::editSelectedRecordWithText(const char * text) {

@@ -283,6 +283,7 @@ int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout p
     assert(!layoutToPointTo.isUninitialized());
     layoutCursor->setLayout(layoutToPointTo);
     layoutCursor->setPosition(LayoutCursor::Position::Right);
+    layoutCursor->layout().addGraySquaresToAllGridAncestors();
   }
   // Replace input with pattern
   tempCursor.addLayoutAndMoveCursor(inserted);

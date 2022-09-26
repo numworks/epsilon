@@ -8,6 +8,7 @@
 #include <poincare/integral.h>
 #include <poincare/layout_helper.h>
 #include <poincare/logarithm.h>
+#include <poincare/piecewise_operator.h>
 #include <poincare/power.h>
 #include <poincare/nth_root.h>
 #include <poincare/square_root.h>
@@ -100,6 +101,21 @@ private:
     {Floor::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(FloorLayout::Builder(EmptyLayout::Builder())); }},
     {Integral::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(IntegralLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder(),EmptyLayout::Builder())); }},
     {VectorNorm::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(VectorNormLayout::Builder(EmptyLayout::Builder())); }},
+    {PiecewiseOperator::s_functionHelper.aliasesList(), [](Layout builderParameter) {
+      /* WARNING: The implementation of ReplaceEmptyLayoutsWithParameters
+       * needs the created layout to have empty layouts where the parameters
+       * should be insterted. Since Piecewise operator does not have a fixed
+       * number of children, the implementation is not perfect.
+       * Indeed, if the layout_field is currently filled with "4, x>0, 5",
+       * and "piecewise(" is inserted left of it, "piecewise(4, x>0, 5)"
+       * won't be beautified, since the piecewise layout does not have
+       * 3 empty children.
+       * This is a fringe case though, and everything works fine when
+       * "piecewise(" is insterted with nothing on its right. */
+      PiecewiseOperatorLayout layout = PiecewiseOperatorLayout::Builder();
+      layout.addRow(EmptyLayout::Builder());
+      return static_cast<Layout>(layout);
+    }},
     {NthRoot::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(NthRootLayout::Builder(EmptyLayout::Builder(), EmptyLayout::Builder())); }},
     {SquareRoot::s_functionHelper.aliasesList(), [](Layout builderParameter) { return static_cast<Layout>(NthRootLayout::Builder(EmptyLayout::Builder())); }},
   };

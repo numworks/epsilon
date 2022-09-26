@@ -3,7 +3,7 @@
 
 #include "banner_view.h"
 #include "cursor_view.h"
-#include "plot_range.h"
+#include "curve_view_range.h"
 #include <poincare/coordinate_2D.h>
 
 /* AbstractPlotView maps a range in R² to the screen and provides methods for
@@ -27,12 +27,12 @@ public:
 
   constexpr static Axis OtherAxis(Axis axis) { return static_cast<Axis>(1 - static_cast<uint8_t>(axis)); }
 
-  AbstractPlotView(PlotRange * range) : m_range(range), m_stampDashIndex(k_stampIndexNoDash) {}
+  AbstractPlotView(CurveViewRange * range) : m_range(range), m_stampDashIndex(k_stampIndexNoDash) {}
 
   // Escher::View
   void drawRect(KDContext * ctx, KDRect rect) const final;
 
-  PlotRange * range() const { return m_range; }
+  CurveViewRange * range() const { return m_range; }
   float pixelWidth() const { return (m_range->xMax() - m_range->xMin()) / (bounds().width() - 1); }
   float pixelHeight() const { return (m_range->yMax() - m_range->yMin()) / (bounds().height() - 1); }
   float pixelLength(Axis axis) const { return axis == Axis::Horizontal ? pixelWidth() : pixelHeight(); }
@@ -68,7 +68,7 @@ private:
   virtual CursorView * cursorView() const = 0;
   virtual KDRect cursorFrame() = 0;
 
-  PlotRange * m_range;
+  CurveViewRange * m_range;
   mutable KDCoordinate m_stampDashIndex;
 };
 

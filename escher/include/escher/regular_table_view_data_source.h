@@ -9,7 +9,8 @@ namespace Escher {
 class RegularHeightTableViewDataSource : public TableViewDataSource {
 private:
   KDCoordinate defaultRowHeight() override = 0; // This must be implemented
-  KDCoordinate nonMemoizedRowHeight(int j) override final { return defaultRowHeight(); };
+  // Just make this method final without changing behaviour
+  KDCoordinate nonMemoizedRowHeight(int j) override final { return TableViewDataSource::nonMemoizedRowHeight(j); };
   TableSize1DManager * rowHeightManager() override final { return &m_heightManager; }
   RegularTableSize1DManager m_heightManager;
 };
@@ -17,7 +18,8 @@ private:
 class RegularTableViewDataSource : public RegularHeightTableViewDataSource {
 private:
   KDCoordinate defaultColumnWidth() override = 0; // This must be implemented
-  KDCoordinate nonMemoizedColumnWidth(int i) override final { return defaultColumnWidth(); };
+  // Just make this method final without changing behaviour
+  KDCoordinate nonMemoizedColumnWidth(int i) override final { return TableViewDataSource::nonMemoizedColumnWidth(i); };
   TableSize1DManager * columnWidthManager() override final { return &m_widthManager; }
   RegularTableSize1DManager m_widthManager;
 };

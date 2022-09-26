@@ -25,10 +25,11 @@ public:
   KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell * cell, int index);
 protected:
   KDCoordinate defaultColumnWidth() override { return 0; }
-  /* cellHeight has a default implementation for specific simple
+  /* nonMemoizedRowHeight has a default implementation for specific simple
    * lists. Most implementations should override them.*/
   KDCoordinate nonMemoizedRowHeight(int index) override;
-  KDCoordinate nonMemoizedColumnWidth(int index) override final { return defaultColumnWidth(); }
+  // Just make this method final without changing behaviour
+  KDCoordinate nonMemoizedColumnWidth(int index) override final { return TableViewDataSource::nonMemoizedColumnWidth(index); }
   KDCoordinate heightForCellAtIndex(HighlightCell * cell, int index);
 };
 
@@ -47,7 +48,8 @@ private:
   KDCoordinate defaultRowHeight() override {
     return ListViewDataSource::nonMemoizedRowHeight(0);
   }
-  KDCoordinate nonMemoizedRowHeight(int j) override final { return defaultRowHeight(); }
+  // Just make this method final without changing default behaviour
+  KDCoordinate nonMemoizedRowHeight(int j) override final { return TableViewDataSource::nonMemoizedRowHeight(j); }
   TableSize1DManager * rowHeightManager() override final { return &m_heightManager; }
   RegularTableSize1DManager m_heightManager;
 };

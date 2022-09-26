@@ -6,49 +6,45 @@ void TableViewDataSource::willDisplayCellAtLocation(HighlightCell * cell, int i,
 }
 
 KDCoordinate TableViewDataSource::columnWidth(int i) {
-  KDCoordinate result = TableSize1DManager::k_undefinedSize;
   if (columnWidthManager()) {
-    result = columnWidthManager()->computeSizeAtIndex(i);
+    KDCoordinate result = columnWidthManager()->computeSizeAtIndex(i);
+    if (result != TableSize1DManager::k_undefinedSize) {
+      return result;
+    }
   }
-  if (result == TableSize1DManager::k_undefinedSize) {
-    result = nonMemoizedColumnWidth(i);
-  }
-  assert(result != TableSize1DManager::k_undefinedSize);
-  return result;
+  assert(nonMemoizedColumnWidth(i) != TableSize1DManager::k_undefinedSize);
+  return nonMemoizedColumnWidth(i);
 }
 
 KDCoordinate TableViewDataSource::rowHeight(int j) {
-  KDCoordinate result = TableSize1DManager::k_undefinedSize;
   if (rowHeightManager()) {
-    result = rowHeightManager()->computeSizeAtIndex(j);
+    KDCoordinate result = rowHeightManager()->computeSizeAtIndex(j);
+    if (result != TableSize1DManager::k_undefinedSize) {
+      return result;
+    }
   }
-  if (result == TableSize1DManager::k_undefinedSize) {
-    result = nonMemoizedRowHeight(j);
-  }
-  assert(result != TableSize1DManager::k_undefinedSize);
-  return result;
+  assert(nonMemoizedRowHeight(j) != TableSize1DManager::k_undefinedSize);
+  return nonMemoizedRowHeight(j);
 }
 
 KDCoordinate TableViewDataSource::cumulatedWidthFromIndex(int i) {
-  KDCoordinate result = TableSize1DManager::k_undefinedSize;
   if (columnWidthManager()) {
-    result = columnWidthManager()->computeCumulatedSizeAtIndex(i, defaultColumnWidth());
+    KDCoordinate result = columnWidthManager()->computeCumulatedSizeAtIndex(i, defaultColumnWidth());
+    if (result != TableSize1DManager::k_undefinedSize) {
+      return result;
+    }
   }
-  if (result == TableSize1DManager::k_undefinedSize) {
-    return nonMemoizedCumulatedWidthFromIndex(i);
-  }
-  return result;
+  return nonMemoizedCumulatedWidthFromIndex(i);
 }
 
 KDCoordinate TableViewDataSource::cumulatedHeightFromIndex(int j) {
-  KDCoordinate result = TableSize1DManager::k_undefinedSize;
   if (rowHeightManager()) {
-    result = rowHeightManager()->computeCumulatedSizeAtIndex(j, defaultRowHeight());
+    KDCoordinate result = rowHeightManager()->computeCumulatedSizeAtIndex(j, defaultRowHeight());
+    if (result != TableSize1DManager::k_undefinedSize) {
+      return result;
+    }
   }
-  if (result == TableSize1DManager::k_undefinedSize) {
-    return nonMemoizedCumulatedHeightFromIndex(j);
-  }
-  return result;
+  return nonMemoizedCumulatedHeightFromIndex(j);
 }
 
 KDCoordinate TableViewDataSource::nonMemoizedCumulatedWidthFromIndex(int i) {
@@ -68,39 +64,37 @@ KDCoordinate TableViewDataSource::nonMemoizedCumulatedHeightFromIndex(int j) {
 }
 
 int TableViewDataSource::indexFromCumulatedWidth(KDCoordinate offsetX) {
-  int result = TableSize1DManager::k_undefinedSize;
   if (columnWidthManager()) {
-    result = columnWidthManager()->computeIndexFromCumulatedSize(offsetX, defaultColumnWidth());
-  }
-  if (result != TableSize1DManager::k_undefinedSize) {
-    return result;
+    int result = columnWidthManager()->computeIndexFromCumulatedSize(offsetX, defaultColumnWidth());
+    if (result != TableSize1DManager::k_undefinedSize) {
+      return result;
+    }
   }
 
   KDCoordinate cumulatedWidth = 0;
-  int i = 0;
+  int indexFromNonMemoizedCumulatedWidth = 0;
   int nColumns =  numberOfColumns();
-  while (cumulatedWidth < offsetX && i < nColumns) {
-    cumulatedWidth += columnWidth(i++);
+  while (cumulatedWidth < offsetX && indexFromNonMemoizedCumulatedWidth < nColumns) {
+    cumulatedWidth += columnWidth(indexFromNonMemoizedCumulatedWidth++);
   }
-  return (cumulatedWidth < offsetX || offsetX == 0) ? i : i - 1;
+  return (cumulatedWidth < offsetX || offsetX == 0) ? indexFromNonMemoizedCumulatedWidth : indexFromNonMemoizedCumulatedWidth - 1;
 }
 
 int TableViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
-  int result = TableSize1DManager::k_undefinedSize;
   if (rowHeightManager()) {
-    result = rowHeightManager()->computeIndexFromCumulatedSize(offsetY, defaultRowHeight());
-  }
-  if (result != TableSize1DManager::k_undefinedSize) {
-    return result;
+    int result = rowHeightManager()->computeIndexFromCumulatedSize(offsetY, defaultRowHeight());
+    if (result != TableSize1DManager::k_undefinedSize) {
+      return result;
+    }
   }
 
   KDCoordinate cumulatedHeight = 0;
-  int j = 0;
+  int indexFromNonMemoizedCumulatedHeight = 0;
   int nRows = numberOfRows();
-  while (cumulatedHeight < offsetY && j < nRows) {
-    cumulatedHeight += rowHeight(j++);
+  while (cumulatedHeight < offsetY && indexFromNonMemoizedCumulatedHeight < nRows) {
+    cumulatedHeight += rowHeight(indexFromNonMemoizedCumulatedHeight++);
   }
-  return (cumulatedHeight < offsetY || offsetY == 0) ? j : j - 1;
+  return (cumulatedHeight < offsetY || offsetY == 0) ? indexFromNonMemoizedCumulatedHeight : indexFromNonMemoizedCumulatedHeight - 1;
 }
 
 void TableViewDataSource::resetMemoization(bool force) {

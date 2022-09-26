@@ -2,6 +2,7 @@
 #define DISTRIBUTIONS_PROBABILITY_PARAMETERS_CONTROLLER_H
 
 #include <escher/expression_cell_with_editable_text_with_message.h>
+#include <escher/table_view_with_frozen_header.h>
 #include "distributions/models/distribution/distribution.h"
 #include <apps/shared/float_parameter_controller.h>
 #include "calculation_controller.h"
@@ -32,23 +33,8 @@ private:
   void setTextInCell(Escher::HighlightCell * cell, const char * text, int index) override;
 
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
-  class ContentView : public Escher::View {
-  public:
-    ContentView(Escher::SelectableTableView * selectableTableView);
-    void drawRect(KDContext * ctx, KDRect rect) const override;
-    void layoutSubviews(bool force = false) override;
-    void resetSize() { m_selectableTableView->setSize(KDSize(0,0)); }
-  private:
-    constexpr static KDCoordinate k_textMargin = Escher::Metric::CommonSmallMargin;
-    // Removing a pixel to skew title's baseline downward.
-    constexpr static KDCoordinate k_titleMargin = Escher::Metric::CommonTopMargin - 1;
-    int numberOfSubviews() const override { return 2; };
-    Escher::View * subviewAtIndex(int index) override;
-    Escher::MessageTextView m_titleView;
-    Escher::SelectableTableView * m_selectableTableView;
-  };
   constexpr static int k_maxNumberOfCells = 3;
-  ContentView m_contentView;
+  Escher::TableViewWithFrozenHeader m_contentView;
   Escher::ExpressionCellWithEditableTextWithMessage m_menuListCell[k_maxNumberOfCells];
   Distribution * m_distribution;
   CalculationController * m_calculationController;

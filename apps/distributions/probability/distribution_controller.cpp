@@ -24,6 +24,7 @@ DistributionController::DistributionController(Escher::StackViewController * par
                                                Distribution * distribution,
                                                ParametersController * parametersController) :
       Escher::SelectableListViewController<Escher::SimpleListViewDataSource>(parentResponder),
+      m_contentView(&m_selectableTableView, I18n::Message::ChooseDistribution),
       m_distribution(distribution),
       m_parametersController(parametersController) {
   assert(m_distribution != nullptr);

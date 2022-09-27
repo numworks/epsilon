@@ -75,6 +75,7 @@ app_shared_src = $(addprefix apps/shared/,\
   plot_view_axes.cpp \
   plot_view_banners.cpp \
   plot_view_cursors.cpp \
+  plot_view_plots.cpp \
   poincare_helpers.cpp \
   prefaced_table_view.cpp \
   prefaced_twice_table_view.cpp \

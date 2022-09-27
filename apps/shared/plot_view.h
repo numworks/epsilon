@@ -25,6 +25,8 @@ public:
     After,
   };
 
+  constexpr static KDColor k_backgroundColor = KDColorWhite;
+
   constexpr static Axis OtherAxis(Axis axis) { return static_cast<Axis>(1 - static_cast<uint8_t>(axis)); }
 
   AbstractPlotView(CurveViewRange * range) : m_range(range), m_stampDashIndex(k_stampIndexNoDash) {}
@@ -47,8 +49,10 @@ public:
   void drawStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = 0) const;
   void drawSegment(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> a, Poincare::Coordinate2D<float> b, KDColor color, bool thick = true) const;
   void drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color) const;
+  void setDashed(bool dashed) const { m_stampDashIndex = dashed ? k_stampIndexNoDash : 0; }
   void straightJoinDots(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> pixelA, Poincare::Coordinate2D<float> pixelB, KDColor color, bool thick) const;
   void stamp(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> p, KDColor color, bool thick) const;
+  bool pointsInSameStamp(Poincare::Coordinate2D<float> p1, Poincare::Coordinate2D<float> p2, bool thick) const;
 
 private:
   constexpr static KDCoordinate k_stampDashSize = 5;
@@ -60,7 +64,7 @@ private:
   Escher::View * subviewAtIndex(int i);
   void layoutSubviews(bool force = false);
 
-  virtual void drawBackground(KDContext * ctx, KDRect rect) const { ctx->fillRect(rect, KDColorWhite); }
+  virtual void drawBackground(KDContext * ctx, KDRect rect) const { ctx->fillRect(rect, k_backgroundColor); }
   virtual void drawAxes(KDContext * ctx, KDRect rect) const = 0;
   virtual void drawPlot(KDContext * ctx, KDRect rect) const = 0;
   virtual BannerView * bannerView() const = 0;

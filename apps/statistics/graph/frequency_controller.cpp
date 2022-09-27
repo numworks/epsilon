@@ -158,12 +158,12 @@ void FrequencyController::updateHorizontalIndexAfterSelectingNewSeries(int previ
     return;
   }
   int nValues = totalValues(m_selectedSeries);
-  double previousValue = -1.0;
+  double previousValue = NAN;
   for (int i = nValues - 1; i >= 0; i--) {
     double valueAtI = valueAtIndex(m_selectedSeries, i);
     if (valueAtI <= currentXValue) {
       // +1 if the next index is closer than the current.
-      m_selectedIndex = i + static_cast<int>(previousValue >= 0.0 && currentXValue - valueAtI > previousValue - currentXValue);
+      m_selectedIndex = i + static_cast<int>(!std::isnan(previousValue) && std::fabs(currentXValue - valueAtI) > std::fabs(currentXValue - previousValue));
       return;
     }
     previousValue = valueAtI;

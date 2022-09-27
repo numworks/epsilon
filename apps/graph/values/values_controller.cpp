@@ -45,7 +45,9 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
     ValuesController * valuesController = (ValuesController *) context;
     valuesController->exactValuesButtonAction();
     return true;
-  }, this), &m_exactValuesDotView, KDFont::Size::Small)
+  }, this), &m_exactValuesDotView, KDFont::Size::Small),
+  m_widthManager(this),
+  m_heightManager(this)
 {
   for (int i = 0; i < k_maxNumberOfDisplayableFunctions; i++) {
     m_functionTitleCells[i].setFont(KDFont::Size::Small);
@@ -70,16 +72,38 @@ void ValuesController::viewDidDisappear() {
 
 // TableViewDataSource
 
-KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
-  if (i == 0) {
-    return k_abscissaCellWidth;
-  }
-  return k_cellWidth;
+KDSize ValuesController::CellSizeWithLayout(Layout l) {
+  EvenOddExpressionCell tempCell;
+  tempCell.setFont(KDFont::Size::Small);
+  tempCell.setLayout(l);
+  return tempCell.minimalSizeForOptimalDisplay() + KDSize(Metric::SmallCellMargin * 2, Metric::SmallCellMargin * 2);
 }
 
-// TODO: Properly compute row height.
+
+KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
+  int nRows = numberOfRows();
+  KDCoordinate columnWidth = Shared::ValuesController::defaultColumnWidth();
+  for (int j = 0; j < nRows; j++) {
+    if (typeAtLocation(i, j) == k_notEditableValueCellType && j < numberOfElementsInColumn(i) + 1) {
+      Layout l = memoizedLayoutForCell(i, j);
+      assert(!l.isUninitialized());
+      columnWidth = std::max(CellSizeWithLayout(l).width(), columnWidth);
+    }
+  }
+  return columnWidth;
+}
+
 KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
-  return Shared::ValuesController::nonMemoizedRowHeight(j);
+  int nColumns = numberOfColumns();
+  KDCoordinate rowHeight = Shared::ValuesController::defaultRowHeight();
+  for (int i = 0; i < nColumns; i++) {
+    if (typeAtLocation(i, j) == k_notEditableValueCellType && j < numberOfElementsInColumn(i) + 1) {
+      Layout l = memoizedLayoutForCell(i, j);
+      assert(!l.isUninitialized());
+      rowHeight = std::max(CellSizeWithLayout(l).height(), rowHeight);
+    }
+  }
+  return rowHeight;
 }
 
 void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
@@ -331,6 +355,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     approximation = Float<double>::Builder(evaluationY);
   }
   *memoizedLayoutAtIndex(index) = approximation.createLayout(Preferences::PrintFloatMode::Decimal, Preferences::VeryLargeNumberOfSignificantDigits, context);
+
 }
 
 // TODO: Properly compute exact layout. I leave this here for futur commits.

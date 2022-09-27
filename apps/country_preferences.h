@@ -61,9 +61,10 @@ public:
     One,
   };
 
-  enum class LineTemplateInGraph : bool {
-    Hidden,
+  enum class GraphTemplatesLayout : uint8_t {
     Default,
+    Variant1,
+    Variant2,
   };
 
   enum class RegressionModelOrder : bool {
@@ -85,8 +86,8 @@ public:
     ListsStatsOrderInToolbox listsStatsOrderInToolbox,
     SequencesInitialRank sequencesInitialRank,
     Poincare::Preferences::MixedFractions mixedFractions,
-    LineTemplateInGraph lineTemplateInGraph,
-    RegressionModelOrder regressionModelOrder
+    RegressionModelOrder regressionModelOrder,
+    GraphTemplatesLayout graphTemplatesLayout
     ) :
     m_availableExamModes(availableExamModes),
     m_homeAppsLayout(homeAppsLayout),
@@ -101,8 +102,8 @@ public:
     m_listsStatsOrderInToolbox(listsStatsOrderInToolbox),
     m_sequencesInitialRank(sequencesInitialRank),
     m_mixedFractions(mixedFractions),
-    m_lineTemplateInGraph(lineTemplateInGraph),
-    m_regressionModelOrder(regressionModelOrder)
+    m_regressionModelOrder(regressionModelOrder),
+    m_graphTemplatesLayout(graphTemplatesLayout)
   {}
 
   constexpr AvailableExamModes availableExamModes() const { return m_availableExamModes; }
@@ -118,8 +119,8 @@ public:
   constexpr ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return m_listsStatsOrderInToolbox; }
   constexpr SequencesInitialRank sequencesInitialRank() const { return m_sequencesInitialRank; }
   constexpr Poincare::Preferences::MixedFractions mixedFractions() const { return m_mixedFractions; }
-  constexpr LineTemplateInGraph lineTemplateInGraph() const { return m_lineTemplateInGraph; }
   constexpr RegressionModelOrder regressionModelOrder() const { return m_regressionModelOrder; }
+  constexpr GraphTemplatesLayout graphTemplatesLayout() const { return m_graphTemplatesLayout; }
 
 private:
   const AvailableExamModes m_availableExamModes;
@@ -135,8 +136,8 @@ private:
   const ListsStatsOrderInToolbox m_listsStatsOrderInToolbox;
   const SequencesInitialRank m_sequencesInitialRank;
   const Poincare::Preferences::MixedFractions m_mixedFractions;
-  const LineTemplateInGraph m_lineTemplateInGraph;
   const RegressionModelOrder m_regressionModelOrder;
+  const GraphTemplatesLayout m_graphTemplatesLayout;
 };
 
 #endif

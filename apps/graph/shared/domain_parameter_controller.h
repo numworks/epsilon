@@ -18,6 +18,7 @@ public:
 
   // ViewController
   const char * title() override { return I18n::translate(I18n::Message::FunctionDomain); }
+  TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayLastThreeTitles; }
   TELEMETRY_ID("DomainParameter");
 
   // ListViewDataSource

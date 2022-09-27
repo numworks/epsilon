@@ -30,9 +30,7 @@ I18n::Message GraphController::emptyMessage() {
 
 void GraphController::viewWillAppear() {
   m_view.drawTangent(false);
-#ifdef GRAPH_CURSOR_SPEEDUP
   m_cursorView.resetMemoization();
-#endif
   m_view.setCursorView(&m_cursorView);
   FunctionGraphController::viewWillAppear();
   selectFunctionWithCursor(indexFunctionSelectedByCursor());

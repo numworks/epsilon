@@ -30,7 +30,6 @@ private:
   constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableSequences * k_maxNumberOfDisplayableRows;
 
   // TableViewDataSource
-  KDCoordinate defaultColumnWidth() override { return k_cellWidth; }
   Escher::TableSize1DManager * columnWidthManager() override { return &m_widthManager; }
   Escher::TableSize1DManager * rowHeightManager() override { return &m_heightManager; }
 

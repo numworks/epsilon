@@ -47,17 +47,18 @@ public:
     return &m_intervalParameterSelectorController;
   }
 private:
-  constexpr static KDCoordinate k_abscissaCellWidth = k_cellWidth + Escher::Metric::TableSeparatorThickness;
-  constexpr static KDCoordinate k_parametricCellWidth = (2*Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)+3) * KDFont::GlyphWidth(KDFont::Size::Small) + 2*Escher::Metric::SmallCellMargin; // The largest cell is holding "(-1.234567E-123;-1.234567E-123)"
   constexpr static size_t k_maxNumberOfSymbolTypes = Shared::ContinuousFunction::k_numberOfSymbolTypes;
   constexpr static int k_maxNumberOfDisplayableFunctions = 4;
   constexpr static int k_maxNumberOfDisplayableSymbolTypes = 2;
   constexpr static int k_maxNumberOfDisplayableAbscissaCells = k_maxNumberOfDisplayableSymbolTypes * k_maxNumberOfDisplayableRows;
   constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableFunctions * k_maxNumberOfDisplayableRows;
 
+  static KDSize CellSizeWithLayout(Poincare::Layout l);
   // TableViewDataSource
   KDCoordinate nonMemoizedColumnWidth(int i) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
+  Escher::TableSize1DManager * columnWidthManager() override { return &m_widthManager; }
+  Escher::TableSize1DManager * rowHeightManager() override { return &m_heightManager; }
 
   // Values controller
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
@@ -148,6 +149,8 @@ private:
   Escher::AbstractButtonCell m_setIntervalButton;
   Escher::ButtonState m_exactValuesButton;
   Escher::ToggleableDotView m_exactValuesDotView;
+  Escher::MemoizedColumnWidthManager m_widthManager;
+  Escher::MemoizedRowHeightManager m_heightManager;
   mutable Poincare::Layout m_memoizedLayouts[k_maxNumberOfDisplayableCells];
 };
 

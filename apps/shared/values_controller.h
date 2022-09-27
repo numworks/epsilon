@@ -50,9 +50,7 @@ public:
   void initializeInterval();
 
 protected:
-  // The cellWidth is increased by 3 pixels to avoid displaying more than 4 columns on the screen (and thus decrease the number of memoized cell)
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
-  constexpr static KDCoordinate k_cellWidth = (Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)) * KDFont::GlyphWidth(k_font) + 2*Escher::Metric::SmallCellMargin+3; // we add 10 to avoid displaying more that 4 columns and decr
   constexpr static int k_abscissaTitleCellType = 0;
   constexpr static int k_functionTitleCellType = 1;
   constexpr static int k_editableValueCellType = 2;

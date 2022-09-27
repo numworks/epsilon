@@ -307,6 +307,7 @@ void ValuesController::resetLayoutMemoization() {
   for (int i = 0; i < numberOfMemoizedCell; i++) {
     *memoizedLayoutAtIndex(i) = Layout();
   }
+  resetMemoization(); // reset sizes memoization
   m_firstMemoizedColumn = INT_MAX;
   m_firstMemoizedRow = INT_MAX;
 }

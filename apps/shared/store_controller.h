@@ -43,8 +43,6 @@ public:
   int fillColumnName(int columnIndex, char * buffer) override { return fillColumnNameFromStore(columnIndex, buffer); }
 
 protected:
-  constexpr static KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) * KDFont::GlyphWidth(KDFont::Size::Small) + 2*Escher::Metric::SmallCellMargin + Escher::Metric::TableSeparatorThickness;
-
   constexpr static int k_maxNumberOfDisplayableRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(k_cellHeight, Escher::Metric::TabHeight);
   constexpr static int k_maxNumberOfDisplayableColumns = Ion::Display::Width/k_cellWidth + 2;
   constexpr static int k_maxNumberOfEditableCells = k_maxNumberOfDisplayableRows * k_maxNumberOfDisplayableColumns;
@@ -75,7 +73,6 @@ private:
   void handleDeleteEvent(bool authorizeNonEmptyRowDeletion = true, bool * didDeleteRow = nullptr);
 
   // TableViewDataSource
-  KDCoordinate defaultColumnWidth() override { return k_cellWidth; }
   Escher::TableSize1DManager * columnWidthManager() override { return &m_widthManager; }
   Escher::TableSize1DManager * rowHeightManager() override { return &m_heightManager; }
 

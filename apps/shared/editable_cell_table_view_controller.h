@@ -28,11 +28,13 @@ public:
 
 protected:
   constexpr static KDCoordinate k_cellHeight = Escher::Metric::SmallEditableCellHeight;
+  constexpr static KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) * KDFont::GlyphWidth(KDFont::Size::Small) + 2*Escher::Metric::SmallCellMargin + Escher::Metric::TableSeparatorThickness;
   constexpr static KDCoordinate k_margin = Escher::Metric::TableSeparatorThickness;
   constexpr static KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
 
   // TableViewDataSource
   KDCoordinate defaultRowHeight() override { return k_cellHeight; }
+  KDCoordinate defaultColumnWidth() override { return k_cellWidth; }
 
   // ClearColumnHelper
   Escher::SelectableTableView * table() override { return selectableTableView(); }

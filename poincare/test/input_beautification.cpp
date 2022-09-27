@@ -349,3 +349,22 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_layout) {
     assert_applybeautification_after_layout_insertion(layoutInsertionFunction[i]);
   }
 }
+
+QUIZ_CASE(poincare_input_beautification_derivative) {
+  // Test d/dx()->diff()
+  HorizontalLayout horizontalLayout = HorizontalLayout::Builder(
+    FractionLayout::Builder(
+      HorizontalLayout::Builder(CodePointLayout::Builder('d')),
+      HorizontalLayout::Builder(CodePointLayout::Builder('d'), CodePointLayout::Builder('x'))
+    )
+  );
+  LayoutCursor cursor(horizontalLayout);
+  Shared::GlobalContext context;
+  cursor.insertText("(", &context);
+  quiz_assert(horizontalLayout.isIdenticalTo(HorizontalLayout::Builder(FirstOrderDerivativeLayout::Builder(EmptyLayout::Builder(),CodePointLayout::Builder('x'),EmptyLayout::Builder()))));
+
+  // Test d/dx^2->d^2/dx^2
+  cursor.setLayout(horizontalLayout.childAtIndex(0).childAtIndex(1));
+  cursor.addEmptyPowerLayout(&context);
+  quiz_assert(horizontalLayout.isIdenticalTo(HorizontalLayout::Builder(HigherOrderDerivativeLayout::Builder(EmptyLayout::Builder(),HorizontalLayout::Builder(CodePointLayout::Builder('x')),EmptyLayout::Builder(),EmptyLayout::Builder()))));
+}

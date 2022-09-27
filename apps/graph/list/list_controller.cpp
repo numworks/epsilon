@@ -63,12 +63,18 @@ const char * ListController::title() {
 
 // Fills buffer with a default function equation, such as "f(x)="
 void ListController::fillWithDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController, CodePoint symbol) const {
-  size_t length = modelsParameterController->defaultName(buffer, bufferSize);
-  assert(bufferSize > length);
-  buffer[length++] = '(';
-  length += UTF8Decoder::CodePointToChars(symbol, buffer + length, bufferSize - length);
-  assert(bufferSize > length + 2);
-  buffer[length++] = ')';
+  size_t length;
+  if (FunctionModelsParameterController::EquationsPrefered()) {
+    length = strlen(ContinuousFunction::k_ordinateName);
+    memcpy(buffer, ContinuousFunction::k_ordinateName, length);
+  } else {
+    length = modelsParameterController->defaultName(buffer, bufferSize);
+    assert(bufferSize > length);
+    buffer[length++] = '(';
+    length += UTF8Decoder::CodePointToChars(symbol, buffer + length, bufferSize - length);
+    assert(bufferSize > length + 2);
+    buffer[length++] = ')';
+  }
   buffer[length++] = '=';
   buffer[length++] = 0;
 }

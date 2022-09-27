@@ -1,18 +1,22 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_TRIGONOMETRY_GRAPH_CELL_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_TRIGONOMETRY_GRAPH_CELL_H
 
-#include "../../shared/curve_view.h"
 #include "trigonometry_model.h"
 #include "illustration_cell.h"
+#include <apps/shared/plot_view_policies.h>
 
 namespace Calculation {
 
-class TrigonometryGraphView : public Shared::CurveView {
+class TrigonometryGraphPolicy : public Shared::PlotPolicy::WithCurves {
+protected:
+  void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
+
+  TrigonometryModel * m_model;
+};
+
+class TrigonometryGraphView : public Shared::PlotView<Shared::PlotPolicy::TwoUnlabeledAxes, TrigonometryGraphPolicy, Shared::PlotPolicy::NoBanner, Shared::PlotPolicy::NoCursor> {
 public:
   TrigonometryGraphView(TrigonometryModel * model);
-  void drawRect(KDContext * ctx, KDRect rect) const override;
-private:
-  TrigonometryModel * m_model;
 };
 
 class TrigonometryGraphCell : public IllustrationCell {

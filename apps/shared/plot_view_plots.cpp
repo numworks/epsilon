@@ -177,8 +177,8 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView * plotView, KDCon
   assert(plotView);
 
   bool isFirstDot = std::isnan(t1);
-  bool isLeftDotValid = std::isfinite(xy1.x1() && std::isfinite(xy1.x2()));
-  bool isRightDotValid = std::isfinite(xy2.x1() && std::isfinite(xy2.x2()));
+  bool isLeftDotValid = std::isfinite(xy1.x1()) && std::isfinite(xy1.x2());
+  bool isRightDotValid = std::isfinite(xy2.x1()) && std::isfinite(xy2.x2());
   if (!(isLeftDotValid || isRightDotValid)) {
     return;
   }

@@ -57,7 +57,7 @@ public:
 
 protected:
   float labelPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
-  virtual const char * labelText(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const { return nullptr; }
+  virtual const char * labelText(int i) const { return nullptr; }
 
 private:
   constexpr static KDCoordinate k_labelGraduationHalfLength = 3;
@@ -71,7 +71,7 @@ public:
   void reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) override;
 
 protected:
-  const char * labelText(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const override;
+  const char * labelText(int i) const override;
 
 private:
   constexpr static int k_numberSignificantDigits = Poincare::Preferences::LargeNumberOfSignificantDigits;
@@ -82,7 +82,7 @@ private:
 
   virtual int computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis);
 
-  char k_labels[k_maxNumberOfLabels][k_labelBufferMaxSize];
+  char m_labels[k_maxNumberOfLabels][k_labelBufferMaxSize];
 };
 
 /* The following classes are intended to be used as template arguments for

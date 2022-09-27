@@ -1,4 +1,4 @@
-CountryCode,CountryPreferences::AvailableExamModes,CountryPreferences::MethodForQuartiles,CountryPreferences::OutlierDefaultVisibility,Poincare::Preferences::UnitFormat,CountryPreferences::HomeAppsLayout,CountryPreferences::DiscriminantSymbol,CountryPreferences::HistogramsOffset,CountryPreferences::YPredictedSymbol,CountryPreferences::StatsRowsLayout,Poincare::Preferences::CombinatoricSymbols,CountryPreferences::ListsStatsOrderInToolbox,CountryPreferences::SequencesInitialRank,Poincare::Preferences::MixedFractions,CountryPreferences::LineTemplateInGraph,CountryPreferences::RegressionModelOrder
+CountryCode,CountryPreferences::AvailableExamModes,CountryPreferences::MethodForQuartiles,CountryPreferences::OutlierDefaultVisibility,Poincare::Preferences::UnitFormat,CountryPreferences::HomeAppsLayout,CountryPreferences::DiscriminantSymbol,CountryPreferences::HistogramsOffset,CountryPreferences::YPredictedSymbol,CountryPreferences::StatsRowsLayout,Poincare::Preferences::CombinatoricSymbols,CountryPreferences::ListsStatsOrderInToolbox,CountryPreferences::SequencesInitialRank,Poincare::Preferences::MixedFractions,CountryPreferences::RegressionModelOrder,CountryPreferences::GraphTemplatesLayout
 WW,All,MedianOfSublist,Hidden,Metric,Default,Delta,None,YHat,Default,Default,Default,Zero,Disabled,Default,Default
 CA,StandardOnly,MedianOfSublist,Hidden,Metric,Default,Delta,None,YHat,Default,Default,Default,Zero,Disabled,Default,Default
 DE,StandardOnly,MedianOfSublist,Hidden,Metric,Default,D,None,YHat,Default,Default,Default,Zero,Disabled,Default,Default
@@ -7,5 +7,5 @@ FR,StandardOnly,CumulatedFrequency,Hidden,Metric,Default,Delta,None,YHat,Default
 GB,StandardOnly,MedianOfSublist,Hidden,Metric,Default,Delta,None,YHat,Default,Default,Default,Zero,Enabled,Default,Default
 IT,StandardOnly,CumulatedFrequency,Hidden,Metric,Variant2,Delta,None,YHat,Default,Default,Default,Zero,Disabled,Default,Default
 NL,StandardAndDutch,MedianOfSublist,Hidden,Metric,Variant3,D,OnIntegerValues,YHat,Default,Default,Default,Zero,Enabled,Default,Default
-PT,PortugueseOnly,MedianOfSublist,Hidden,Metric,Variant1,Delta,None,Y,Default,LetterWithSubAndSuperscript,Default,One,Disabled,Default,Default
-US,PressToTestOnly,MedianOfSublist,Displayed,Imperial,Variant4,Delta,None,YHat,Variant1,Default,Alternate,One,Enabled,Hidden,Variant1
+PT,PortugueseOnly,MedianOfSublist,Hidden,Metric,Variant1,Delta,None,Y,Default,LetterWithSubAndSuperscript,Default,One,Disabled,Default,Variant2
+US,PressToTestOnly,MedianOfSublist,Displayed,Imperial,Variant4,Delta,None,YHat,Variant1,Default,Alternate,One,Enabled,Variant1,Variant1

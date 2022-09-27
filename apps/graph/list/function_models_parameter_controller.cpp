@@ -19,18 +19,33 @@ using namespace Escher;
 namespace Graph {
 
 FunctionModelsParameterController::FunctionModelsParameterController(Responder * parentResponder, void * functionStore, ListController * listController) :
-  SelectableListViewController(parentResponder),
+  ExplicitSelectableListViewController(parentResponder),
   m_emptyModelCell(I18n::Message::Empty),
   m_functionStore(functionStore),
   m_listController(listController)
 {
   m_selectableTableView.setMargins(0);
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
+  const Model * models = Models();
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
-    Poincare::Expression e = Expression::Parse(modelAtIndex(i+1), nullptr); // No context needed
+    Poincare::Expression e = Expression::Parse(ModelString(models[i]), nullptr); // No context needed
     m_layouts[i] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Preferences::ShortNumberOfSignificantDigits, AppsContainer::sharedAppsContainer()->globalContext());
+    if (!ModelIsAllowed(models[i])) {
+      m_modelCells[i].setVisible(false);
+      continue;
+    }
+    m_modelCells[i].setLayout(m_layouts[i]);
     m_modelCells[i].setParentResponder(&m_selectableTableView);
+    m_modelCells[i].setSubLabelMessage(ExamModeConfiguration::implicitPlotsAreForbidden() ? I18n::Message::Default : k_modelDescriptions[static_cast<int>(models[i])-1]);
+
   }
+}
+
+Escher::HighlightCell * FunctionModelsParameterController::cell(int index) {
+  if (index == 0) {
+    return &m_emptyModelCell;
+  }
+  return &m_modelCells[index - 1];
 }
 
 const char * FunctionModelsParameterController::title() {
@@ -39,7 +54,7 @@ const char * FunctionModelsParameterController::title() {
 
 void FunctionModelsParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
-  selectCellAtLocation(0, 0);
+  m_selectableTableView.selectCellAtLocation(0, 0);
 }
 
 void FunctionModelsParameterController::didBecomeFirstResponder() {
@@ -76,20 +91,20 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     assert(error == Ion::Storage::Record::ErrorStatus::None);
-    int modelIndex = getModelIndex(selectedRow());
-    const char * model = modelAtIndex(modelIndex);
+    Model model = selectedRow() == 0 ? Model::Empty : Models()[selectedRow() - 1];
+    const char * modelString = ModelString(model);
     bool success;
-    if (model[0] != 'f') {
-      success = m_listController->editSelectedRecordWithText(model);
+    if (model != Model::Function && model != Model::Parametric && model != Model::Piecewise && model != Model::Polar) {
+      success = m_listController->editSelectedRecordWithText(modelString);
     } else {
-      assert(model[1] == '(');
+      assert(modelString[1] == '(');
       /* Model starts with a named function. If that name is already taken, use
        * another one. */
       char buffer[k_maxSizeOfNamedModel];
       int functionNameLength = defaultName(buffer, k_maxSizeOfNamedModel);
       size_t constantNameLength = 1; // 'f', no null-terminating char
-      assert(strlen(model + constantNameLength) + functionNameLength < k_maxSizeOfNamedModel);
-      strlcpy(buffer + functionNameLength, model + constantNameLength, k_maxSizeOfNamedModel - functionNameLength);
+      assert(strlen(modelString + constantNameLength) + functionNameLength < k_maxSizeOfNamedModel);
+      strlcpy(buffer + functionNameLength, modelString + constantNameLength, k_maxSizeOfNamedModel - functionNameLength);
       success = m_listController->editSelectedRecordWithText(buffer);
     }
     assert(success);
@@ -102,82 +117,45 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 int FunctionModelsParameterController::numberOfRows() const {
-  return 1 + k_numberOfExpressionCells
-         - ExamModeConfiguration::inequalityGraphingIsForbidden()
-         - 2 * ExamModeConfiguration::implicitPlotsAreForbidden()
-         - !GlobalPreferences::sharedGlobalPreferences()->showLineTemplate();
+  return 1 + k_numberOfExpressionCells;
 };
 
 KDCoordinate FunctionModelsParameterController::nonMemoizedRowHeight(int j) {
-  int type = typeAtIndex(j);
-  int reusableCellIndex = j;
-  if (type == k_modelCellType) {
-    reusableCellIndex -= reusableCellCount(k_emptyModelCellType);
-  }
-  return heightForCellAtIndex(reusableCell(reusableCellIndex, type), j);
+  return heightForCellAtIndex(cell(j), j);
 }
 
-void FunctionModelsParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
-  int type = typeAtIndex(index);
-  if (type == k_modelCellType) {
-    int expressionCellIndex = getModelIndex(index) - reusableCellCount(k_emptyModelCellType);
-    Escher::ExpressionTableCellWithMessage * modelCell = static_cast<Escher::ExpressionTableCellWithMessage *>(cell);
-    modelCell->setLayout(m_layouts[expressionCellIndex]);
-    modelCell->setSubLabelMessage(ExamModeConfiguration::implicitPlotsAreForbidden() ? I18n::Message::Default : k_modelDescriptions[expressionCellIndex]);
-  } else {
-    assert(cell == reusableCell(index, type));
+const FunctionModelsParameterController::Model * FunctionModelsParameterController::Models() {
+  CountryPreferences::GraphTemplatesLayout layout = GlobalPreferences::sharedGlobalPreferences()->graphTemplatesLayout();
+  switch (layout) {
+  case CountryPreferences::GraphTemplatesLayout::Variant1:
+    return layoutVariant1;
+  case CountryPreferences::GraphTemplatesLayout::Variant2:
+    return layoutVariant2;
+  default:
+    return layoutDefault;
   }
-  return SelectableListViewController::willDisplayCellForIndex(cell, index);
 }
 
-HighlightCell * FunctionModelsParameterController::reusableCell(int index, int type) {
-  assert(index < reusableCellCount(type));
-  if (type == k_emptyModelCellType) {
-    return &m_emptyModelCell;
+bool FunctionModelsParameterController::ModelIsAllowed(Model model) {
+  if (ExamModeConfiguration::inequalityGraphingIsForbidden() && model == Model::Inequality) {
+    return false;
   }
-  return &m_modelCells[index];
+  if (ExamModeConfiguration::implicitPlotsAreForbidden() && (model == Model::Inverse || model == Model::Conic)) {
+    return false;
+  }
+  return true;
 }
 
-int FunctionModelsParameterController::reusableCellCount(int type) {
-  if (type == k_emptyModelCellType) {
-    return 1;
-  }
-  assert(type == k_modelCellType);
-  return k_numberOfExpressionCells;
-}
-
-int FunctionModelsParameterController::getModelIndex(int row) const {
-  static_assert(static_cast<int>(Models::Inverse) > static_cast<int>(Models::Inequation) && static_cast<int>(Models::Conic) > static_cast<int>(Models::Inequation), "Method optimized with model order must be changed.");
-  if (row < static_cast<int>(Models::Implicit)) {
-    return row;
-  }
-  // Skip implicit line template according to country preferences
-  row += !GlobalPreferences::sharedGlobalPreferences()->showLineTemplate();
-
-  if (row < static_cast<int>(Models::Inequation)) {
-    return row;
-  }
-  // Skip k_indexOfInequationModel if forbidden
-  row += ExamModeConfiguration::inequalityGraphingIsForbidden();
-  if (row <= static_cast<int>(Models::Inequation)) {
-    return row;
-  }
-  // Skip k_indexOfInverseModel and k_indexOfConicModel if forbidden
-  row += 2 * ExamModeConfiguration::implicitPlotsAreForbidden();
-  return row;
-}
-
-const char * FunctionModelsParameterController::modelAtIndex(int index) const {
-  assert(index >= 0 && index < static_cast<int>(Models::NumberOfModels));
+const char * FunctionModelsParameterController::ModelString(Model model) {
   if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
-    if (index == static_cast<int>(Models::Implicit)) {
-      return k_implicitModelWhenForbidden;
+    if (model == Model::Line || model == Model::LineVariant) {
+      return k_lineModelWhenForbidden;
     }
-    if (index == static_cast<int>(Models::Inequation)) {
+    if (model == Model::Inequality) {
       return k_inequationModelWhenForbidden;
     }
   }
-  return k_models[index];
+  return k_models[static_cast<int>(model)];
 }
 
 }

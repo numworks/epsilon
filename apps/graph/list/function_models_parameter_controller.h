@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <apps/shared/continuous_function.h>
-#include <escher/selectable_list_view_controller.h>
+#include <escher/explicit_selectable_list_view_controller.h>
 #include <escher/expression_table_cell_with_message.h>
 #include <escher/message_table_cell.h>
 #include <escher/stack_view_controller.h>
@@ -12,7 +12,7 @@ namespace Graph {
 
 class ListController;
 
-class FunctionModelsParameterController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
+class FunctionModelsParameterController : public Escher::ExplicitSelectableListViewController {
 public:
   FunctionModelsParameterController(Escher::Responder * parentResponder, void * functionStore, ListController * listController);
   const char * title() override;
@@ -20,22 +20,17 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  Escher::HighlightCell * reusableCell(int index, int type) override;
-  int reusableCellCount(int type) override;
-  int typeAtIndex(int index) override { return index == static_cast<int>(Models::Empty) ? k_emptyModelCellType : k_modelCellType; }
+  Escher::HighlightCell * cell(int index) override;
   int defaultName(char buffer[], size_t bufferSize) const;
 private:
-  constexpr static int k_emptyModelCellType = 0;
-  constexpr static int k_modelCellType = 1;
-
-  // Models are ordered
-  enum class Models : uint8_t {
+  enum class Model : uint8_t {
     Empty = 0,
-    Cartesian,
-    Implicit,
-    Inequation,
+    Equation,
+    Function,
+    Line,
+    LineVariant,
+    Inequality,
     Inverse,
     Conic,
     Parametric,
@@ -44,23 +39,62 @@ private:
     NumberOfModels
   };
 
-  constexpr static const char * k_models[static_cast<int>(Models::NumberOfModels)] = {
-    "", "f(x)=x", "x+y+1=0", "x+y≤0", "x=cos(y)", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "f(θ)=cos(θ)", "f(x)=piecewise(-x,x<0,x,x≥0)"
+  constexpr static Model layoutDefault[] = {
+    Model::Function,
+    Model::Line,
+    Model::Inequality,
+    Model::Inverse,
+    Model::Piecewise,
+    Model::Conic,
+    Model::Parametric,
+    Model::Polar,
   };
-  constexpr static const char * k_implicitModelWhenForbidden = "y=x-1";
+
+  constexpr static Model layoutVariant1[] = { // US
+    Model::Equation,
+    Model::Function,
+    Model::Inequality,
+    Model::Inverse,
+    Model::Piecewise,
+    Model::Conic,
+    Model::Parametric,
+    Model::Polar
+  };
+
+  constexpr static Model layoutVariant2[] = { // PT
+    Model::Function,
+    Model::Piecewise,
+    Model::LineVariant,
+    Model::Inequality,
+    Model::Conic,
+    Model::Inverse,
+    Model::Polar,
+    Model::Parametric,
+  };
+
+  constexpr static int k_numberOfExpressionModels = static_cast<int>(Model::NumberOfModels)-1;
+
+  static_assert(sizeof(layoutDefault) == sizeof(layoutVariant1) && sizeof(layoutDefault) == sizeof(layoutVariant2), "Template layouts are assumed to be the same length in all countries");
+  constexpr static int k_numberOfExpressionCells = static_cast<int>(sizeof(layoutDefault) / sizeof(Model));
+
+  constexpr static const char * k_models[static_cast<int>(Model::NumberOfModels)] = {
+    "", "y=x", "f(x)=x", "x+y+1=0", "x+y=1", "x+y≤0", "x=√(y)", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "f(θ)=cos(θ)", "f(x)=piecewise(-x,x<0,x,x≥0)"
+  };
+  constexpr static const char * k_lineModelWhenForbidden = "y=x-1";
   constexpr static const char * k_inequationModelWhenForbidden = "y≤x";
   // Piecewise is the longest named model
-  constexpr static size_t k_maxSizeOfNamedModel = Poincare::Helpers::StringLength(k_models[static_cast<int>(Models::Piecewise)]) - 1 + Shared::ContinuousFunction::k_maxDefaultNameSize;
+  constexpr static size_t k_maxSizeOfNamedModel = Poincare::Helpers::StringLength(k_models[static_cast<int>(Model::Piecewise)]) - 1 + Shared::ContinuousFunction::k_maxDefaultNameSize;
   // Expression cells
-  constexpr static int k_numberOfExpressionCells = static_cast<int>(Models::NumberOfModels)-1;
-  constexpr static I18n::Message k_modelDescriptions[k_numberOfExpressionCells] = {
-    I18n::Message::CartesianNamedTemplate, I18n::Message::LineType, I18n::Message::InequationType, I18n::Message::InverseType,  I18n::Message::ConicNamedTemplate, I18n::Message::ParametricType, I18n::Message::PolarType, I18n::Message::PiecewiseFunction
+  constexpr static I18n::Message k_modelDescriptions[k_numberOfExpressionModels] = {
+    I18n::Message::LineEquationTitle, I18n::Message::CartesianNamedTemplate, I18n::Message::LineType, I18n::Message::LineType, I18n::Message::InequationType, I18n::Message::InverseType,  I18n::Message::ConicNamedTemplate, I18n::Message::ParametricType, I18n::Message::PolarType, I18n::Message::PiecewiseFunction
   };
-  Escher::StackViewController * stackController() const;
-  // Some models may be hidden. return the model index from a visible row index
-  int getModelIndex(int row) const;
+  // The models list depends on the current country
+  static const Model * Models();
+  // Some models may be hidden.
+  static bool ModelIsAllowed(Model model);
   // Some models may become forbidden and have an alternate form.
-  const char * modelAtIndex(int index) const;
+  static const char * ModelString(Model model);
+  Escher::StackViewController * stackController() const;
   Escher::MessageTableCell m_emptyModelCell;
   Escher::ExpressionTableCellWithMessage m_modelCells[k_numberOfExpressionCells];
   Poincare::Layout m_layouts[k_numberOfExpressionCells];

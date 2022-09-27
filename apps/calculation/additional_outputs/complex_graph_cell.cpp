@@ -6,27 +6,13 @@ using namespace Escher;
 
 namespace Calculation {
 
-ComplexGraphView::ComplexGraphView(ComplexModel * complexModel) :
-  LabeledCurveView(complexModel),
-  m_complex(complexModel)
-{
-}
-
-void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, KDColorWhite);
-
-  // Draw grid, axes and graduations
-  drawGrid(ctx, rect);
-  drawAxes(ctx, rect);
-  drawLabelsAndGraduations(ctx, rect, Axis::Vertical, true);
-  drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, true);
-
+void ComplexGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+  assert(m_complex && plotView);
   float real = m_complex->real();
   float imag = m_complex->imag();
 
-  assert(!std::isnan(real) && !std::isnan(imag) && !std::isinf(real) && !std::isinf(imag));
-  // Draw the segment from the origin to the dot (real, imag)
-  drawSegment(ctx, rect, 0.0f, 0.0f, m_complex->real(), m_complex->imag(), Palette::GrayDark, false);
+  // - Draw the segment from the origin to the dot (real, imag)
+  plotView->drawSegment(ctx, rect, Coordinate2D<float>(0.f, 0.f), Coordinate2D<float>(real, imag), Palette::GrayDark);
 
   /* Draw the partial ellipse indicating the angle θ
    * - the ellipse parameters are a = |real|/5 and b = |imag|/5,
@@ -36,59 +22,67 @@ void ComplexGraphView::drawRect(KDContext * ctx, KDRect rect) const {
    * - we draw the ellipse for t in [0,1] to represent it from the abscissa axis
    *   to the phase of the complex
    */
+
   /* Compute th: th is the intersection of ellipsis of equation (a*cos(t), b*sin(t))
    * and the line of equation (real*t,imag*t).
    * (a*cos(t), b*sin(t)) = (real*t,imag*t) --> tan(t) = sign(a)*sign(b) (± π)
    * --> t = π/4 [π/2] according to sign(a) and sign(b). */
-  float th = real < 0.0f ? (float)(3.0*M_PI_4) : (float)M_PI_4;
-  th = imag < 0.0f ? -th : th;
+  float th = real < 0.f ? 3.f * M_PI_4 : M_PI_4;
+  th = imag < 0.f ? -th : th;
+
   // Compute ellipsis parameters a and b
-  float factor = 5.0f;
-  float a = std::fabs(real)/factor;
-  float b = std::fabs(imag)/factor;
+  float factor = 5.f;
+  float a = std::fabs(real) / factor;
+  float b = std::fabs(imag) / factor;
+
   // Avoid flat ellipsis for edge cases (for real = 0, the case imag = 0 is excluded)
   if (real == 0.0f) {
-    a = 1.0f/factor;
-    th = imag < 0.0f ? (float)-M_PI_2 : (float)M_PI_2;
+    a = 1.f / factor;
+    th = imag < 0.f ? -M_PI_2 : M_PI_2;
   }
   std::complex<float> parameters(a,b);
-  drawCurve(ctx, rect, 0.0f, 1.0f, 0.01f,
-      [](float t, void * model, void * context) {
-      std::complex<float> parameters = *(std::complex<float> *)model;
-        float th = *(float *)context;
-        float a = parameters.real();
-        float b = parameters.imag();
-        return Poincare::Coordinate2D<float>(a*std::cos(t*th), b*std::sin(t*th));
-    }, &parameters, &th, false, Palette::GrayDark, CurveView::NoPotentialDiscontinuity, false);
 
-  // Draw dashed segment to indicate real and imaginary
-  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, real, 0.0f, imag, Palette::Red, 1, 3);
-  drawHorizontalOrVerticalSegment(ctx, rect, Axis::Horizontal, imag, 0.0f, real, Palette::Red, 1, 3);
+  Curve2D<float> ellipse = [](float t, void * model, void * context) {
+    std::complex<float> param = *reinterpret_cast<std::complex<float> *>(model);
+    float th = *reinterpret_cast<float *>(context);
+    return Coordinate2D<float>(param.real() * std::cos(t * th), param.imag() * std::sin(t * th));
+  };
+  CurveDrawing drawing(ellipse, &parameters, &th, 0.f, 1.f, 0.01f, Palette::GrayDark);
+  drawing.draw(plotView, ctx, rect);
 
-  // Draw complex position on the plan
-  drawDot(ctx, rect, real, imag, Palette::Red, Size::Large);
+  // - Draw dashed segment to indicate real and imaginary
+  plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, imag, 0.f, real, Palette::Red, 1, 3);
+  plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, real, 0.f, imag, Palette::Red, 1, 3);
 
-  // Draw labels
-  // 're(z)' label
-  drawLabel(ctx, rect, real, 0.0f, "re(z)", Palette::Red, CurveView::RelativePosition::None, imag >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After);
-  // 'im(z)' label
-  drawLabel(ctx, rect, 0.0f, imag, "im(z)", Palette::Red, real >= 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After, CurveView::RelativePosition::None);
-  // '|z|' label, the relative horizontal position of this label depends on the quadrant
-  CurveView::RelativePosition verticalPosition = real*imag < 0.0f ? CurveView::RelativePosition::Before : CurveView::RelativePosition::After;
-  if (real == 0.0f) {
-    // Edge case: pure imaginary
-    verticalPosition = CurveView::RelativePosition::None;
+  // - Draw complex position on the plan
+  plotView->drawDot(ctx, rect, Dots::Size::Large, Coordinate2D<float>(real, imag), Palette::Red);
+
+  // - Draw labels: "re(z)", "im(z)", "|z|" and "arg(z)"
+  plotView->drawLabel(ctx, rect, "re(z)", Coordinate2D<float>(real, 0.f), AbstractPlotView::RelativePosition::There, imag > 0.f ? AbstractPlotView::RelativePosition::After : AbstractPlotView::RelativePosition::Before, Palette::Red);
+  plotView->drawLabel(ctx, rect, "im(z)", Coordinate2D<float>(0.f, imag), real > 0.f ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::There, Palette::Red);
+
+  AbstractPlotView::RelativePosition verticalPosition;
+  if (real == 0.f) {
+    verticalPosition = AbstractPlotView::RelativePosition::There;
+  } else {
+    verticalPosition = (real * imag < 0.f) ? AbstractPlotView::RelativePosition::After : AbstractPlotView::RelativePosition::Before;
   }
-  drawLabel(ctx, rect, real/2.0f, imag/2.0f, "|z|", Palette::Red, CurveView::RelativePosition::None, verticalPosition);
-  // 'arg(z)' label, the absolute and relative horizontal/vertical positions of this label depends on the quadrant
-  CurveView::RelativePosition horizontalPosition = real >= 0.0f ? CurveView::RelativePosition::After : CurveView::RelativePosition::None;
-  verticalPosition = imag >= 0.0f ? CurveView::RelativePosition::After : CurveView::RelativePosition::Before;
+  plotView->drawLabel(ctx, rect, "|z|", Coordinate2D<float>(0.5f * real, 0.5f * imag), AbstractPlotView::RelativePosition::There, verticalPosition, Palette::Red);
+
+  AbstractPlotView::RelativePosition horizontalPosition = real >= 0.f ? AbstractPlotView::RelativePosition::After : AbstractPlotView::RelativePosition::There;
+  verticalPosition = imag >= 0.f ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::After;
   /* anglePositionRatio is the ratio of the angle where we position the label
    * For the right half plan, we position the label close to the abscissa axis
    * and for the left half plan, we position the label at the half angle. The
    * relative position is chosen accordingly. */
-  float anglePositionRatio = real >= 0.0f ? 0.0f : 0.5f;
-  drawLabel(ctx, rect, a*std::cos(anglePositionRatio*th), b*std::sin(anglePositionRatio*th), "arg(z)", Palette::Red, horizontalPosition, verticalPosition);
+  float anglePositionRatio = real >= 0.f ? 0.f : 0.5f;
+  plotView->drawLabel(ctx, rect, "arg(z)", Coordinate2D<float>(a * std::cos(anglePositionRatio * th), b * std::sin(anglePositionRatio * th)), horizontalPosition, verticalPosition, Palette::Red);
+}
+
+ComplexGraphView::ComplexGraphView(ComplexModel * complexModel) :
+  PlotView(complexModel)
+{
+  m_complex = complexModel;
 }
 
 }

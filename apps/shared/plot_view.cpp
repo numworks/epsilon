@@ -53,6 +53,10 @@ float AbstractPlotView::pixelToFloat(Axis axis, KDCoordinate p) const {
 }
 
 void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness, KDCoordinate dashSize) const {
+  float fmin = rangeMin(parallel), fmax = rangeMax(parallel);
+  min = std::clamp(min, fmin, fmax);
+  max = std::clamp(max, fmin, fmax);
+
   KDCoordinate p = std::round(floatToPixel(OtherAxis(parallel), position));
   KDCoordinate a = std::round(floatToPixel(parallel, min));
   KDCoordinate b = std::round(floatToPixel(parallel, max));
@@ -77,15 +81,15 @@ void AbstractPlotView::drawSegment(KDContext * ctx, KDRect rect, Coordinate2D<fl
   straightJoinDots(ctx, rect, pa, pb, color, thick);
 }
 
-static float relativePositionToOffset(AbstractPlotView::RelativePosition position) {
+static float relativePositionToOffset(AbstractPlotView::RelativePosition position, KDCoordinate size) {
   switch (position) {
   case AbstractPlotView::RelativePosition::Before:
-    return -1.f;
+    return -size - AbstractPlotView::k_labelMargin;
   case AbstractPlotView::RelativePosition::There:
-    return -0.5f;
+    return -0.5f * size;
   default:
     assert(position == AbstractPlotView::RelativePosition::After);
-    return 0.f;
+    return AbstractPlotView::k_labelMargin;
   }
 }
 
@@ -93,12 +97,46 @@ void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * labe
   KDSize labelSize = KDFont::Font(k_font)->stringSize(label);
 
   Coordinate2D<float> p = floatToPixel2D(xy);
-  KDCoordinate x = std::round(p.x1() + relativePositionToOffset(xPosition) * labelSize.width());
-  KDCoordinate y = std::round(p.x2() + relativePositionToOffset(yPosition) * labelSize.height());
+  KDCoordinate x = std::round(p.x1() + relativePositionToOffset(xPosition, labelSize.width()));
+  KDCoordinate y = std::round(p.x2() + relativePositionToOffset(yPosition, labelSize.height()));
   KDPoint labelOrigin(x, y);
 
   if (KDRect(labelOrigin, labelSize).intersects(rect)) {
     ctx->drawString(label, labelOrigin, k_font, color, k_backgroundColor);
+  }
+}
+
+void AbstractPlotView::drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Poincare::Coordinate2D<float> xy, KDColor color) const {
+  KDCoordinate diameter = 0;
+  const uint8_t * mask = nullptr;
+  switch (size) {
+  case Dots::Size::Tiny:
+    diameter = Dots::TinyDotDiameter;
+    mask = (const uint8_t *)Dots::TinyDotMask;
+    break;
+  case Dots::Size::Small:
+    diameter = Dots::SmallDotDiameter;
+    mask = (const uint8_t *)Dots::SmallDotMask;
+    break;
+  case Dots::Size::Medium:
+    diameter = Dots::MediumDotDiameter;
+    mask = (const uint8_t *)Dots::MediumDotMask;
+    break;
+  default:
+    assert(size == Dots::Size::Large);
+    diameter = Dots::LargeDotDiameter;
+    mask = (const uint8_t *)Dots::LargeDotMask;
+  }
+  assert(diameter <= Dots::LargeDotDiameter);
+  KDColor workingBuffer[Dots::LargeDotDiameter * Dots::LargeDotDiameter];
+
+  /* If circle has an even diameter, out of the four center pixels, the bottom
+   * left one will be placed at (x, y) */
+  Coordinate2D<float> pF = floatToPixel2D(xy);
+  KDPoint p(std::round(pF.x1()) - (diameter - 1) / 2, std::round(pF.x2()) - diameter / 2);
+  KDRect dotRect(p.x(), p.y(), diameter, diameter);
+  if (rect.intersects(dotRect)) {
+    ctx->blendRectWithMask(dotRect, color, mask, workingBuffer);
   }
 }
 
@@ -214,14 +252,14 @@ constexpr Mask<thickStampSize> thickShiftedMasks[k_shiftedSteps + 1][k_shiftedSt
 };
 
 static void clipBarycentricCoordinatesBetweenBounds(float * start, float * end, KDCoordinate lower, KDCoordinate upper, float p1, float p2) {
-  if (p1 == p2) {
-    if (p1 < lower || upper < p1) {
-      *start = 1;
-      *end = 0;
+  if (p1 != p2) {
+    float upperPosition = (upper - p1) / (p2 - p1);
+    float lowerPosition = (lower - p1) / (p2 - p1);
+    if (upperPosition < lowerPosition) {
+      std::swap(lowerPosition, upperPosition);
     }
-  } else {
-    *start = std::max(*start, ((p2 < p1 ? lower : upper) - p2) / (p1 - p2));
-    *end = std::max(*end, ((p1 < p2 ? lower : upper) - p2) / (p1 - p2));
+    *start = std::clamp(*start, lowerPosition, upperPosition);
+    *end = std::clamp(*end, lowerPosition, upperPosition);
   }
 }
 

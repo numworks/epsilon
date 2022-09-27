@@ -4,6 +4,7 @@
 #include "banner_view.h"
 #include "cursor_view.h"
 #include "curve_view_range.h"
+#include "dots.h"
 #include <poincare/coordinate_2D.h>
 
 /* AbstractPlotView maps a range in R² to the screen and provides methods for
@@ -26,6 +27,7 @@ public:
   };
 
   constexpr static KDColor k_backgroundColor = KDColorWhite;
+  constexpr static KDCoordinate k_labelMargin = 4;
 
   constexpr static Axis OtherAxis(Axis axis) { return static_cast<Axis>(1 - static_cast<uint8_t>(axis)); }
 
@@ -39,6 +41,8 @@ public:
   CurveViewRange * range() const { return m_range; }
   bool hasFocus() const { return m_focus; }
   void setFocus(bool f);
+  float rangeMin(Axis axis) const { return axis == Axis::Horizontal ? m_range->xMin() : m_range->yMin(); }
+  float rangeMax(Axis axis) const { return axis == Axis::Horizontal ? m_range->xMax() : m_range->yMax(); }
   float pixelWidth() const { return (m_range->xMax() - m_range->xMin()) / (bounds().width() - 1); }
   float pixelHeight() const { return (m_range->yMax() - m_range->yMin()) / (bounds().height() - 1); }
   float pixelLength(Axis axis) const { return axis == Axis::Horizontal ? pixelWidth() : pixelHeight(); }
@@ -51,8 +55,11 @@ public:
    * classes used as template parameters to PlotView. A better solution might
    * be to private them and befriend the helpers. */
   void drawStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = 0) const;
-  void drawSegment(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> a, Poincare::Coordinate2D<float> b, KDColor color, bool thick = true) const;
+  void drawSegment(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> a, Poincare::Coordinate2D<float> b, KDColor color, bool thick = false) const;
   void drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color) const;
+  void drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Poincare::Coordinate2D<float> xy, KDColor color) const;
+  /* These methods use the stamping state-machine.
+   * FIXME They may be moved into a helper. */
   void setDashed(bool dashed) const { m_stampDashIndex = dashed ? k_stampIndexNoDash : 0; }
   void straightJoinDots(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> pixelA, Poincare::Coordinate2D<float> pixelB, KDColor color, bool thick) const;
   void stamp(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> p, KDColor color, bool thick) const;

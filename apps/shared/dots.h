@@ -4,8 +4,14 @@
 #include <kandinsky/coordinate.h>
 
 namespace Shared {
-
 namespace Dots {
+
+enum class Size : uint8_t {
+  Tiny,
+  Small,
+  Medium,
+  Large
+};
 
 constexpr static KDCoordinate TinyDotDiameter = 5;
 constexpr static float TinyDotRadius = 2.4675f;
@@ -28,8 +34,7 @@ constexpr static float LargeRingInternalRadius = 4.25f;
 constexpr static float LargeRingExternalRadius = 5.5f;
 extern const uint8_t * LargeRingMask;
 
-};
-
+}
 }
 
 #endif

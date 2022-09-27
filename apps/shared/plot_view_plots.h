@@ -51,7 +51,7 @@ protected:
 
   class CurveDrawing {
   public:
-    CurveDrawing(Curve2D<float> curve, void * model, void * context, float tStart, float tEnd, float tStep, KDColor color, AbstractPlotView::Axis axis = AbstractPlotView::Axis::Horizontal, bool thick = true, bool dashed = false);
+    CurveDrawing(Curve2D<float> curve, void * model, void * context, float tStart, float tEnd, float tStep, KDColor color, AbstractPlotView::Axis axis = AbstractPlotView::Axis::Horizontal, bool thick = false, bool dashed = false);
     /* If one of the pattern bound is nullptr, the main curve is used instead. */
     void setPatternOptions(Pattern pattern, Curve2D<float> patternLowerBound, Curve2D<float> patternUpperBound, bool patternWithoutCurve);
     void setPrecisionOptions(bool drawStraightLinesEarly, Curve2D<double> curveDouble, DiscontinuityTest discontinuity);

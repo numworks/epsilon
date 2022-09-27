@@ -7,6 +7,26 @@ using namespace Poincare;
 
 namespace Shared {
 
+void AbstractPlotView::reload(bool resetInterruption, bool force) {
+  uint32_t rangeVersion = m_range->rangeChecksum();
+  if (force || m_drawnRangeVersion != rangeVersion) {
+    // FIXME: This should also be called if the *curve* changed
+    m_drawnRangeVersion = rangeVersion;
+    BannerView * banner = bannerView();
+    KDCoordinate bannerHeight = banner ? banner->bounds().height() : 0;
+    markRectAsDirty(KDRect(0, 0, bounds().width(), bounds().height() - bannerHeight));
+    reloadAxes();
+  }
+  layoutSubviews();
+}
+
+void AbstractPlotView::setFocus(bool focus) {
+  if (m_focus != focus) {
+    m_focus = focus;
+    reload();
+  }
+}
+
 void AbstractPlotView::drawRect(KDContext * ctx, KDRect rect) const {
   drawBackground(ctx, rect);
   drawAxes(ctx, rect);

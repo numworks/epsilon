@@ -78,7 +78,7 @@ void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * labe
   KDPoint labelOrigin(x, y);
 
   if (KDRect(labelOrigin, labelSize).intersects(rect)) {
-    ctx->drawString(label, labelOrigin, k_font, color, KDColorWhite);
+    ctx->drawString(label, labelOrigin, k_font, color, k_backgroundColor);
   }
 }
 
@@ -279,6 +279,13 @@ void AbstractPlotView::stamp(KDContext * ctx, KDRect rect, Coordinate2D<float> p
     shiftedMask = &thinShiftedMasks[ix][iy].m_mask[0];
   }
   ctx->blendRectWithMask(stampRect, color, shiftedMask, workingBuffer);
+}
+
+bool AbstractPlotView::pointsInSameStamp(Coordinate2D<float> p1, Coordinate2D<float> p2, bool thick) const {
+  KDCoordinate diameter = thick ? thickCircleDiameter : thinCircleDiameter;
+  const float deltaX = p1.x1() - p2.x1();
+  const float deltaY = p1.x2() - p2.x2();
+  return deltaX * deltaX + deltaY * deltaY < 0.25f * diameter * diameter;
 }
 
 }

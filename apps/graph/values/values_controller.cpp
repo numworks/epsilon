@@ -40,8 +40,7 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
     stack->push(intervalSelectorController);
     return true;
   }, this), k_font),
-  // TODO: Change text
-  m_exactValuesButton(this, I18n::Message::PoolMemoryFull2, Invocation([](void * context, void * sender) {
+  m_exactValuesButton(this, I18n::Message::ExactResults, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     valuesController->exactValuesButtonAction();
     return true;

@@ -125,24 +125,25 @@ int FrequencyController::nextSubviewWhenMovingVertically(int direction) const {
   int nextSubview = direction > 0 ? Store::k_numberOfSeries : -1;
   double cursorY = m_cursor.y();
   double cursorX = m_cursor.x();
-  for (int s = 0; s < Store::k_numberOfSeries; s++) {
-    if (s == m_selectedSeries) {
+  for (int s = 1; s < Store::k_numberOfSeries; s++) {
+    /* Browse series in order starting with m_selectingSeries +/- 1
+     * This is useful when series are all on the same spot to properly
+     * loop. */
+    int seriesIndex = (m_selectedSeries + direction * s + Store::k_numberOfSeries) % Store::k_numberOfSeries;
+    assert(seriesIndex != m_selectedSeries);
+    if (!seriesIsValid(seriesIndex)) {
       continue;
     }
-    if (!seriesIsValid(s)) {
-      continue;
+    double y = yValueAtAbscissa(seriesIndex, cursorX);
+    if (y == cursorY && seriesIndex * direction > m_selectedSeries * direction) {
+      // series is on the same spot and in the right direction in series list
+      return seriesIndex;
     }
-    double y = yValueAtAbscissa(s, cursorX);
         // series is in the right direction
-    if ((y * direction < cursorY * direction
+    if (y * direction < cursorY * direction
         // series is closest than others
-         && (std::isnan(closestYUpOrDown)
-            || closestYUpOrDown * direction < y * direction))
-        // OR series is on the same spot
-        || (y == cursorY
-        // AND series is in the right order of declaration in List
-           && s * direction > m_selectedSeries * direction)) {
-      nextSubview = s;
+        && (std::isnan(closestYUpOrDown) || closestYUpOrDown * direction < y * direction)) {
+      nextSubview = seriesIndex;
       closestYUpOrDown = y;
     }
   }

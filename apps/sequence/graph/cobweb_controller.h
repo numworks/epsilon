@@ -43,13 +43,11 @@ private:
   Shared::XYBannerView * m_bannerView;
   Shared::InteractiveCurveViewRange m_graphRange;
   Ion::Storage::Record m_record;
-  Ion::Storage::Record m_functionRecord;
 private:
   constexpr static int k_maximumNumberOfSteps = 20;
   int m_step;
   bool m_isSuitable;
   Shared::SequenceStore * m_sequenceStore;
-  Poincare::Expression m_function;
 };
 
 }

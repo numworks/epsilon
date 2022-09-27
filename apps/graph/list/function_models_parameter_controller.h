@@ -23,6 +23,8 @@ public:
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * cell(int index) override;
   int defaultName(char buffer[], size_t bufferSize) const;
+  /* Tell if the country prefers y=x or f(x)=x */
+  static bool EquationsPrefered() { return Models()[0] == Model::Equation; }
 private:
   enum class Model : uint8_t {
     Empty = 0,

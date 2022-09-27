@@ -29,22 +29,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
 {
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
   setDefaultStartEndMessages();
-}
-
-void ValuesController::viewWillAppear() {
-  int index = GlobalPreferences::sharedGlobalPreferences()->sequencesInitialRank();
-  if (!App::app()->snapshot()->intervalModifiedByUser() && App::app()->interval()->parameters()->start() != index && App::app()->functionStore()->smallestInitialRank() >= index) {
-    App::app()->interval()->parameters()->setStart(index);
-    App::app()->interval()->forceRecompute();
-  }
-  Shared::ValuesController::viewWillAppear();
-}
-
-void ValuesController::viewDidDisappear() {
-  for (int i = 0; i < k_maxNumberOfDisplayableCells; i++) {
-    m_valueCells[i].setLayout(Layout());
-  }
-  Shared::ValuesController::viewDidDisappear();
+  initValueCells();
 }
 
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {
@@ -93,6 +78,11 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
 // Model getters
 
 Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
+  int index = GlobalPreferences::sharedGlobalPreferences()->sequencesInitialRank();
+  if (App::app()->interval()->parameters()->start() != index && !App::app()->snapshot()->intervalModifiedByUser() && App::app()->functionStore()->smallestInitialRank() >= index) {
+    App::app()->interval()->parameters()->setStart(index);
+    App::app()->interval()->forceRecompute();
+  }
   return App::app()->interval();
 }
 

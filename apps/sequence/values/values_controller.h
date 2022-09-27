@@ -60,8 +60,6 @@ private:
   }
   int numberOfMemoizedColumn() override { return k_maxNumberOfDisplayableSequences; }
   void createMemoizedLayout(int i, int j, int index) override;
-  void viewWillAppear() override;
-  void viewDidDisappear() override;
 
   // Parameters controllers getter
   Shared::ColumnParameterController * functionParameterController() override { return nullptr; }

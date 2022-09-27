@@ -52,22 +52,9 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   for (int i = 0; i < k_maxNumberOfDisplayableFunctions; i++) {
     m_functionTitleCells[i].setFont(KDFont::Size::Small);
   }
-  for (int i = 0; i < k_maxNumberOfDisplayableCells; i++) {
-    m_valueCells[i].setFont(KDFont::Size::Small);
-    m_valueCells[i].setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
-    // TODO: Factorize margin computation
-    m_valueCells[i].setLeftMargin(Escher::EvenOddCell::k_horizontalMargin + 1);
-    m_valueCells[i].setRightMargin(Escher::EvenOddCell::k_horizontalMargin + 1);
-  }
+  initValueCells();
   m_exactValuesButton.setState(false);
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
-}
-
-void ValuesController::viewDidDisappear() {
-  for (int i = 0; i < k_maxNumberOfDisplayableCells; i++) {
-    m_valueCells[i].setLayout(Layout());
-  }
-  Shared::ValuesController::viewDidDisappear();
 }
 
 // TableViewDataSource

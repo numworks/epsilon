@@ -21,7 +21,6 @@ public:
   ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, FunctionColumnParameterController * functionParameterController);
 
   // View controller
-  void viewDidDisappear() override;
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   int typeAtLocation(int i, int j) override;
 

@@ -56,6 +56,12 @@ void ValuesController::viewWillAppear() {
 }
 
 void ValuesController::viewDidDisappear() {
+  int numberOfValueCells = maxNumberOfCells();
+  for (int i = 0; i < numberOfValueCells; i++) {
+    EvenOddExpressionCell * valueCell = valueCells(i);
+    assert(valueCell);
+    valueCell->setLayout(Layout());
+  }
   m_numberOfColumnsNeedUpdate = true;
   resetLayoutMemoization();
   EditableCellTableViewController::viewDidDisappear();
@@ -140,7 +146,9 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   if (typeAtLoc == k_notEditableValueCellType) {
     // Special case: last row
     if (j == numberOfElementsInColumn(i) + 1) {
-      static_cast<EvenOddExpressionCell *>(cell)->setLayout(EmptyLayout::Builder());
+      EmptyLayout emptyCell = EmptyLayout::Builder();
+      emptyCell.setVisible(false);
+      static_cast<EvenOddExpressionCell *>(cell)->setLayout(emptyCell);
     } else {
       static_cast<EvenOddExpressionCell *>(cell)->setLayout(memoizedLayoutForCell(i, j));
     }
@@ -407,6 +415,19 @@ void ValuesController::reloadEditedCell(int column, int row) {
 void ValuesController::initializeInterval() {
   intervalParameterController()->setInterval(intervalAtColumn(selectedColumn()));
   setStartEndMessages(intervalParameterController(), selectedColumn());
+}
+
+void ValuesController::initValueCells() {
+  int numberOfValueCells = maxNumberOfCells();
+  for (int i = 0; i < numberOfValueCells; i++) {
+    EvenOddExpressionCell * valueCell = valueCells(i);
+    assert(valueCell);
+    valueCell->setFont(KDFont::Size::Small);
+    valueCell->setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
+    // TODO: Factorize margin computation
+    valueCell->setLeftMargin(Escher::EvenOddCell::k_horizontalMargin + 1);
+    valueCell->setRightMargin(Escher::EvenOddCell::k_horizontalMargin + 1);
+  }
 }
 
 }

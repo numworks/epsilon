@@ -57,6 +57,8 @@ protected:
   constexpr static int k_notEditableValueCellType = 3; // Must be last for Graph::ValuesController
   constexpr static int k_maxNumberOfDisplayableRows = 10;
 
+  void initValueCells();
+
   // EditableCellTableViewController
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   void didChangeCell(int column, int row) override;

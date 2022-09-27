@@ -272,6 +272,34 @@ void HistogramController::sanitizeSelectedIndex() {
 }
 
 void HistogramController::updateHorizontalIndexAfterSelectingNewSeries(int previousSelectedSeries) {
+  /* In the simple following case, when all bars are aligned, the selected
+   * index should not change:
+   *           _ _ _ _
+   * series1: | | | | |
+   *             ^ selected index = 1
+   *           _ _ _ _
+   * series2: | | | | |
+   *             ^ select index 1 when moving down
+   *
+   * But in the case where bars do not start on the same spot, selected index
+   * should be offseted so that you always select the bar just above or under
+   * the previously selected one:
+   *           _ _ _ _
+   * series1: | | | | |
+   *             ^ selected index = 1
+   *             _ _ _
+   * series2:   | | | |
+   *             ^ select index 0 when moving down
+   *
+   * At the end of this method, the selected index should be sanitized so that
+   * an empty bar is never selected:
+   *           _ _ _ _
+   * series1: | | | | |
+   *             ^ selected index = 1
+   *           _     _
+   * series2: | |_ _| |
+   *           ^ select index 0 when moving down
+   * */
   double startDifference = m_store->startOfBarAtIndex(previousSelectedSeries, 0) - m_store->startOfBarAtIndex(m_selectedSeries, 0);
   m_selectedIndex += static_cast<int>(startDifference / m_store->barWidth());
   m_selectedIndex = std::max(std::min(m_selectedIndex, m_store->numberOfBars(m_selectedSeries) - 1), 0);

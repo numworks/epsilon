@@ -103,15 +103,18 @@ float SimpleAxis::labelStep(const AbstractPlotView * plotView, AbstractPlotView:
 
 // LabeledAxis
 
-const char * LabeledAxis::labelText(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
-  assert(i < k_maxNumberOfLabels);
-  if (k_labels[i][0] == '\0') {
+void LabeledAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) {
+  for (size_t i = 0; i < k_maxNumberOfLabels; i++) {
     computeLabel(i, plotView, axis);
   }
+}
+
+const char * LabeledAxis::labelText(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
+  assert(i < k_maxNumberOfLabels);
   return k_labels[i];
 }
 
-int LabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
+int LabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis)  {
   float t = labelPosition(i, plotView, axis);
   return Poincare::PrintFloat::ConvertFloatToText(t, k_labels[i], k_labelBufferMaxSize, k_labelBufferMaxGlyphLength, k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal).GlyphLength;
 }

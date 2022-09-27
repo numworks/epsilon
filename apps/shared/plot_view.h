@@ -34,7 +34,11 @@ public:
   // Escher::View
   void drawRect(KDContext * ctx, KDRect rect) const final;
 
+  virtual void reload(bool resetInterruption = false, bool force = false);
+  virtual void resetInterruption() {}
   CurveViewRange * range() const { return m_range; }
+  bool hasFocus() const { return m_focus; }
+  void setFocus(bool f);
   float pixelWidth() const { return (m_range->xMax() - m_range->xMin()) / (bounds().width() - 1); }
   float pixelHeight() const { return (m_range->yMax() - m_range->yMin()) / (bounds().height() - 1); }
   float pixelLength(Axis axis) const { return axis == Axis::Horizontal ? pixelWidth() : pixelHeight(); }
@@ -66,6 +70,7 @@ private:
 
   virtual void drawBackground(KDContext * ctx, KDRect rect) const { ctx->fillRect(rect, k_backgroundColor); }
   virtual void drawAxes(KDContext * ctx, KDRect rect) const = 0;
+  virtual void reloadAxes() = 0;
   virtual void drawPlot(KDContext * ctx, KDRect rect) const = 0;
   virtual BannerView * bannerView() const = 0;
   virtual KDRect bannerFrame() = 0;
@@ -74,6 +79,8 @@ private:
 
   CurveViewRange * m_range;
   mutable KDCoordinate m_stampDashIndex;
+  uint32_t m_drawnRangeVersion;
+  bool m_focus;
 };
 
 template<class CAxes, class CPlot, class CBanner, class CCursor>
@@ -83,6 +90,7 @@ public:
 
 private:
   void drawAxes(KDContext * ctx, KDRect rect) const override { CAxes::drawAxes(this, ctx, rect); }
+  void reloadAxes() override { CAxes::reloadAxes(this); }
   void drawPlot(KDContext * ctx, KDRect rect) const override { CPlot::drawPlot(this, ctx, rect); }
   BannerView * bannerView() const override { return CBanner::bannerView(this); }
   KDRect bannerFrame() override { return CBanner::bannerFrame(this); }

@@ -10,12 +10,16 @@ namespace PlotPolicy {
 template<class CGrid, class CAxisX, class CAxisY>
 class Axes : CGrid {
 protected:
+  /* We inline these method to avoid having to write explicit template
+   * specializations. */
   void drawAxes(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
-    /* We inline this method to avoid having to write explicit template
-     * specializations. */
     CGrid::drawGrid(plotView, ctx, rect);
     m_xAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal);
     m_yAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Vertical);
+  }
+  void reloadAxes(AbstractPlotView * plotView) {
+    m_xAxis.reloadAxis(plotView, AbstractPlotView::Axis::Horizontal);
+    m_yAxis.reloadAxis(plotView, AbstractPlotView::Axis::Vertical);
   }
 
   /* Compose instead of inheriting, as one cannot inherit twice from the same
@@ -43,11 +47,13 @@ private:
 class NoAxis {
 public:
   void drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis) const {}
+  void reloadAxis(AbstractPlotView *, AbstractPlotView::Axis) {}
 };
 
 class SimpleAxis {
 public:
   void drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const;
+  virtual void reloadAxis(AbstractPlotView *, AbstractPlotView::Axis axis) {}
 
 protected:
   float labelPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
@@ -61,6 +67,9 @@ private:
 };
 
 class LabeledAxis : public SimpleAxis {
+public:
+  void reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) override;
+
 protected:
   const char * labelText(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const override;
 
@@ -71,9 +80,9 @@ private:
   /* FIXME Y axis needs less labels than X axis */
   constexpr static int k_maxNumberOfLabels = CurveViewRange::k_maxNumberOfXGridUnits > CurveViewRange::k_maxNumberOfYGridUnits ? CurveViewRange::k_maxNumberOfXGridUnits : CurveViewRange::k_maxNumberOfYGridUnits;
 
-  virtual int computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
+  virtual int computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis);
 
-  mutable char k_labels[k_maxNumberOfLabels][k_labelBufferMaxSize];
+  char k_labels[k_maxNumberOfLabels][k_labelBufferMaxSize];
 };
 
 /* The following classes are intended to be used as template arguments for

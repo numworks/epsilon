@@ -21,6 +21,7 @@ public:
 
   // ViewController
   const char * title() override;
+  TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayLastThreeTitles; }
   void viewWillAppear() override;
   TELEMETRY_ID("TypeParameter");
 

@@ -12,8 +12,9 @@ KDCoordinate TableViewDataSource::columnWidth(int i) {
       return result;
     }
   }
-  assert(nonMemoizedColumnWidth(i) != TableSize1DManager::k_undefinedSize);
-  return nonMemoizedColumnWidth(i);
+  KDCoordinate result = nonMemoizedColumnWidth(i);
+  assert(result != TableSize1DManager::k_undefinedSize);
+  return result;
 }
 
 KDCoordinate TableViewDataSource::rowHeight(int j) {
@@ -23,8 +24,9 @@ KDCoordinate TableViewDataSource::rowHeight(int j) {
       return result;
     }
   }
-  assert(nonMemoizedRowHeight(j) != TableSize1DManager::k_undefinedSize);
-  return nonMemoizedRowHeight(j);
+  KDCoordinate result = nonMemoizedRowHeight(j);
+  assert(result != TableSize1DManager::k_undefinedSize);
+  return result;
 }
 
 KDCoordinate TableViewDataSource::cumulatedWidthFromIndex(int i) {

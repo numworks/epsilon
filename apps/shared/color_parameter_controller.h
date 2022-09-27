@@ -25,7 +25,7 @@ public:
   // SimpleListViewDataSource
   Escher::HighlightCell * reusableCell(int index) override { return &m_cells[index]; }
   int reusableCellCount() const override { return k_numberOfCells; }
-  int numberOfRows() const override { return ColorNames::Count; }
+  int numberOfRows() const override { return ColorNames::k_count; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   // ColorParameterController

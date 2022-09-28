@@ -90,7 +90,7 @@ int LabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, Abstract
 void LabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
   assert(i < k_maxNumberOfLabels);
   const char * text = m_labels[i];
-  if (text[0] == '\0' || (t == 0.f && axis == AbstractPlotView::Axis::Vertical)) {
+  if (m_hidden || text[0] == '\0' || (t == 0.f && axis == AbstractPlotView::Axis::Vertical)) {
     return;
   }
 

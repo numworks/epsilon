@@ -29,6 +29,7 @@ constexpr char ContinuousFunction::k_ordinateName[2];
 constexpr CodePoint ContinuousFunction::k_cartesianSymbol;
 constexpr CodePoint ContinuousFunction::k_parametricSymbol;
 constexpr CodePoint ContinuousFunction::k_polarSymbol;
+constexpr CodePoint ContinuousFunction::k_radiusSymbol;
 constexpr CodePoint ContinuousFunction::k_ordinateCodePoint;
 constexpr CodePoint ContinuousFunction::k_unnamedExpressionSymbol;
 
@@ -154,7 +155,7 @@ int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
   if (isNamed()) {
     return Function::nameWithArgument(buffer, bufferSize);
   }
-  return strlcpy(buffer, k_ordinateName, bufferSize);
+  return strlcpy(buffer, plotType() == PlotType::Polar ? k_radiusName : k_ordinateName, bufferSize);
 }
 
 int ContinuousFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context, bool symbolValue) {
@@ -628,7 +629,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
     // Retrieve the expression equation's expression.
     m_expression = expressionReducedForAnalysis(record, context);
     m_numberOfSubCurves = 1;
-    if (record->fullName() == nullptr || record->fullName()[0] == k_unnamedRecordFirstChar) {
+    if (m_plotType != PlotType::Polar && (record->fullName() == nullptr || record->fullName()[0] == k_unnamedRecordFirstChar)) {
       /* Function isn't named, m_expression currently is an expression in y or x
        * such as y = x. We extract the solution by solving in y or x. */
       int yDegree = m_expression.polynomialDegree(context, k_ordinateName);
@@ -767,7 +768,7 @@ Expression ContinuousFunction::Model::originalEquation(const Ion::Storage::Recor
 }
 
 bool isValidNamedLeftExpression(const Expression e, ComparisonNode::OperatorType equationType) {
-  /* Examples of valid named expression : f(x)= or f(x)< or f(θ)= or f(t)=
+  /* Examples of valid named expression : f(x)= or f(x)< or f(t)=
    * Examples of invalid named expression : cos(x)= or f(θ)< or f(t)<  */
   if (e.type() != ExpressionNode::Type::Function || equationType == ComparisonNode::OperatorType::NotEqual) {
     return false;
@@ -775,8 +776,7 @@ bool isValidNamedLeftExpression(const Expression e, ComparisonNode::OperatorType
   Expression functionSymbol = e.childAtIndex(0);
   return functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_cartesianSymbol))
          || (equationType == ComparisonNode::OperatorType::Equal
-             && (functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_polarSymbol))
-                 || functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_parametricSymbol))));
+             && functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_parametricSymbol)));
 }
 
 Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context, PlotType * computedPlotType) const {
@@ -822,6 +822,11 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
        * Replace the symbol. */
       leftExpression.replaceChildAtIndexInPlace(0, Symbol::Builder(UCodePointUnknown));
     }
+  }
+  if (leftExpression.isIdenticalTo(Symbol::Builder(k_radiusSymbol))) {
+    result = result.childAtIndex(1);
+    tempPlotType = PlotType::Polar;
+    isUnnamedFunction = false;
   }
   if (computedPlotType) {
     *computedPlotType = tempPlotType;
@@ -897,6 +902,10 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
   return error;
 }
 
+bool textRepresentsPolarFunction(const char * text) {
+  return UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, ContinuousFunction::k_polarSymbol), ContinuousFunction::k_polarSymbol);
+}
+
 Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const char * c, CodePoint symbol, Poincare::Context * context) const {
   /* The symbol parameter is discarded in this implementation. Either there is a
    * valid named left expression and the symbol will be extracted, either the
@@ -922,11 +931,9 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
       // Override the symbol so that it can be replaced in the right expression
       if (functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
         symbol = k_cartesianSymbol;
-      } else if (functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))) {
-        symbol = k_parametricSymbol;
       } else {
-        assert((functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))));
-        symbol = k_polarSymbol;
+        assert((functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))));
+        symbol = k_parametricSymbol;
       }
     }
   }
@@ -934,6 +941,9 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
     // Do not replace symbol in f(x)=
     ExpressionModel::ReplaceSymbolWithUnknown(expressionToStore.childAtIndex(1), symbol);
   } else {
+    if (textRepresentsPolarFunction(c)) {
+      symbol = k_polarSymbol;
+    }
     // Fallback on normal parsing
     expressionToStore = ExpressionModel::buildExpressionFromText(c, symbol, context);
   }

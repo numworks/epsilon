@@ -253,7 +253,9 @@ public:
   constexpr static CodePoint k_cartesianSymbol = 'x';
   constexpr static CodePoint k_parametricSymbol = 't';
   constexpr static CodePoint k_polarSymbol = UCodePointGreekSmallLetterTheta;
+  constexpr static char k_radiusName[2] = "r";
   constexpr static char k_ordinateName[2] = "y";
+  constexpr static CodePoint k_radiusSymbol = k_radiusName[0];
   constexpr static CodePoint k_ordinateCodePoint = k_ordinateName[0];
   constexpr static CodePoint k_unnamedExpressionSymbol = k_cartesianSymbol;
 

@@ -94,7 +94,7 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
     Model model = selectedRow() == 0 ? Model::Empty : Models()[selectedRow() - 1];
     const char * modelString = ModelString(model);
     bool success;
-    if (model != Model::Function && model != Model::Parametric && model != Model::Piecewise && model != Model::Polar) {
+    if (model != Model::Function && model != Model::Parametric && model != Model::Piecewise) {
       success = m_listController->editSelectedRecordWithText(modelString);
     } else {
       assert(modelString[1] == '(');

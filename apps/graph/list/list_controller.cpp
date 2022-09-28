@@ -64,7 +64,10 @@ const char * ListController::title() {
 // Fills buffer with a default function equation, such as "f(x)="
 void ListController::fillWithDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController, CodePoint symbol) const {
   size_t length;
-  if (FunctionModelsParameterController::EquationsPrefered()) {
+  if (symbol == ContinuousFunction::k_polarSymbol) {
+    length = 0;
+    buffer[length++] = ContinuousFunction::k_radiusSymbol;
+  } else if (FunctionModelsParameterController::EquationsPrefered()) {
     length = strlen(ContinuousFunction::k_ordinateName);
     memcpy(buffer, ContinuousFunction::k_ordinateName, length);
   } else {
@@ -130,7 +133,7 @@ bool ListController::completeEquation(InputEventHandler * equationField, CodePoi
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
   if (f->isNull() || f->plotType() == ContinuousFunction::PlotType::Undefined) {
     // Function is new or undefined, complete the equation with a default name
-    constexpr size_t k_bufferSize = Shared::ContinuousFunction::k_maxDefaultNameSize + sizeof("(θ)=") - 1;
+    constexpr size_t k_bufferSize = Shared::ContinuousFunction::k_maxDefaultNameSize + sizeof("(x)=") - 1;
     char buffer[k_bufferSize];
     // Insert "f(x)=", with f the default function name and x the symbol
     fillWithDefaultFunctionEquation(buffer, k_bufferSize, &m_modelsParameterController, symbol);

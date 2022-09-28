@@ -38,7 +38,6 @@ void BufferTextView::privateSetMessageWithPlaceholders(I18n::Message message, va
   setText(tempBuffer);
 }
 
-
 void BufferTextView::appendText(const char * text) {
   size_t previousTextLength = strlen(m_buffer);
   if (previousTextLength < m_maxDisplayedTextLength) {

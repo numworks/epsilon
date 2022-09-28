@@ -158,6 +158,9 @@ HighlightCell * SelectableTableView::selectedCell() {
 }
 
 int SelectableTableView::firstSelectableRow() {
+  if (dataSource()->numberOfRows() == 0) {
+    return 0;
+  }
   for (int row = 0, end = dataSource()->numberOfRows(); row < end; row++) {
     HighlightCell * cell = cellAtLocation(selectedColumn(), row);
     if (cell && cell->isSelectable()) {
@@ -169,6 +172,9 @@ int SelectableTableView::firstSelectableRow() {
 }
 
 int SelectableTableView::lastSelectableRow() {
+  if (dataSource()->numberOfRows() == 0) {
+    return 0;
+  }
   for (int row = dataSource()->numberOfRows() - 1; row >= 0; row--) {
     HighlightCell * cell = cellAtLocation(selectedColumn(), row);
     if (cell && cell->isSelectable()) {

@@ -50,7 +50,9 @@ public:
 
 private:
   TableSize1DManager * rowHeightManager() override { return &m_heightManager; }
-  MemoizedRowHeightManager m_heightManager;
+  /* If needed, MemoizedListViewDataSource can be templated with <N> to change
+   * the size of MemoizedRowHeightManager */
+  ShortMemoizedRowHeightManager m_heightManager;
 };
 
 class RegularListViewDataSource : public ListViewDataSource {

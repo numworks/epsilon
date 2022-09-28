@@ -101,7 +101,7 @@ private:
   Escher::StackViewController m_typeStackController;
   SequenceToolbox m_sequenceToolbox;
   KDCoordinate m_titlesColumnWidth;
-  Escher::MemoizedRowHeightManager m_heightManager;
+  Escher::ShortMemoizedRowHeightManager m_heightManager;
 };
 
 }

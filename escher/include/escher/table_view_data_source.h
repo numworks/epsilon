@@ -10,7 +10,9 @@ namespace Escher {
 class TableView;
 
 class TableViewDataSource {
+  template <int N>
   friend class MemoizedRowHeightManager;
+  template <int N>
   friend class MemoizedColumnWidthManager;
 public:
   virtual void initCellSize(TableView * view) {}

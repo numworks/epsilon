@@ -39,6 +39,7 @@ public:
  * This property slows down navigation due to complex cell size calculation.
  * To avoid that, cells size and cumulated size is memoized around the most
  * recently used cells. Total size is also memoized. */
+template <int N>
 class MemoizedTableSize1DManager : public TableSize1DManager {
 public:
   MemoizedTableSize1DManager(TableViewDataSource * tableViewDataSource) :
@@ -59,10 +60,7 @@ protected:
   virtual KDCoordinate nonMemoizedCumulatedSizeFromIndex(int i) const = 0;
   TableViewDataSource * m_dataSource;
 private:
-  /* In practice, no menus display more than 7 lines (colums or rows) at the
-   * time. Reducing this value might reduce binary size at the cost of
-   * performances. */
-  constexpr static int k_memoizedLinesCount = 7;
+  constexpr static int k_memoizedLinesCount = N;
   int getMemoizedIndex(int index) const;
   void setMemoizationIndex(int index);
   void shiftMemoization(bool lowerIndex);
@@ -74,9 +72,10 @@ private:
   mutable int m_memoizationLockedLevel;
 };
 
-class MemoizedColumnWidthManager : public MemoizedTableSize1DManager {
+template <int N>
+class MemoizedColumnWidthManager : public MemoizedTableSize1DManager<N> {
 public:
-  MemoizedColumnWidthManager(TableViewDataSource * dataSource) : MemoizedTableSize1DManager(dataSource) {}
+  MemoizedColumnWidthManager(TableViewDataSource * dataSource) : MemoizedTableSize1DManager<N>(dataSource) {}
 protected:
   int numberOfLines() const override;
   KDCoordinate sizeAtIndex(int i) const override;
@@ -84,15 +83,20 @@ protected:
   KDCoordinate nonMemoizedCumulatedSizeFromIndex(int i) const override;
 };
 
-class MemoizedRowHeightManager : public MemoizedTableSize1DManager {
+template <int N>
+class MemoizedRowHeightManager : public MemoizedTableSize1DManager<N> {
 public:
-  MemoizedRowHeightManager(TableViewDataSource * dataSource) : MemoizedTableSize1DManager(dataSource) {}
+  MemoizedRowHeightManager(TableViewDataSource * dataSource) : MemoizedTableSize1DManager<N>(dataSource) {}
 protected:
   int numberOfLines() const override;
   KDCoordinate sizeAtIndex(int i) const override;
   KDCoordinate nonMemoizedSizeAtIndex(int i) const override;
   KDCoordinate nonMemoizedCumulatedSizeFromIndex(int i) const override;
 };
+
+using ShortMemoizedColumnWidthManager = MemoizedColumnWidthManager<7>;
+using ShortMemoizedRowHeightManager = MemoizedRowHeightManager<7>;
+using LongMemoizedRowHeightManager = MemoizedRowHeightManager<10>;
 
 }
 #endif

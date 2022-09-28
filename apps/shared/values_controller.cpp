@@ -56,12 +56,6 @@ void ValuesController::viewWillAppear() {
 }
 
 void ValuesController::viewDidDisappear() {
-  int numberOfValueCells = maxNumberOfCells();
-  for (int i = 0; i < numberOfValueCells; i++) {
-    EvenOddExpressionCell * valueCell = valueCells(i);
-    assert(valueCell);
-    valueCell->setLayout(Layout());
-  }
   m_numberOfColumnsNeedUpdate = true;
   resetLayoutMemoization();
   EditableCellTableViewController::viewDidDisappear();
@@ -318,6 +312,12 @@ void ValuesController::resetLayoutMemoization() {
   const int numberOfMemoizedCell = k_maxNumberOfDisplayableRows * numberOfMemoizedColumn();
   for (int i = 0; i < numberOfMemoizedCell; i++) {
     *memoizedLayoutAtIndex(i) = Layout();
+  }
+  const int numberOfValueCells = maxNumberOfCells();
+  for (int i = 0; i < numberOfValueCells; i++) {
+    EvenOddExpressionCell * valueCell = valueCells(i);
+    assert(valueCell);
+    valueCell->setLayout(Layout());
   }
   resetMemoization(); // reset sizes memoization
   m_firstMemoizedColumn = INT_MAX;

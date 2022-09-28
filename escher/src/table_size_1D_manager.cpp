@@ -3,7 +3,8 @@
 
 namespace Escher {
 
-KDCoordinate MemoizedTableSize1DManager::computeSizeAtIndex(int i) {
+template <int N>
+KDCoordinate MemoizedTableSize1DManager<N>::computeSizeAtIndex(int i) {
   if (i < m_memoizedIndexOffset || i >= m_memoizedIndexOffset + k_memoizedLinesCount) {
     // Update memoization index.
     setMemoizationIndex(i);
@@ -27,7 +28,8 @@ KDCoordinate MemoizedTableSize1DManager::computeSizeAtIndex(int i) {
   return k_undefinedSize;
 }
 
-KDCoordinate MemoizedTableSize1DManager::computeCumulatedSizeAtIndex(int i, KDCoordinate defaultSize) {
+template <int N>
+KDCoordinate MemoizedTableSize1DManager<N>::computeCumulatedSizeAtIndex(int i, KDCoordinate defaultSize) {
   int totalNumberOfLines = numberOfLines();
   if (i == totalNumberOfLines && m_memoizedTotalSize != k_undefinedSize) {
     // Total size is memoized to save time and preserve memoization.
@@ -70,7 +72,8 @@ KDCoordinate MemoizedTableSize1DManager::computeCumulatedSizeAtIndex(int i, KDCo
   return cumulatedSize;
 }
 
-int MemoizedTableSize1DManager::computeIndexFromCumulatedSize(KDCoordinate offset, KDCoordinate defaultSize) {
+template <int N>
+int MemoizedTableSize1DManager<N>::computeIndexFromCumulatedSize(KDCoordinate offset, KDCoordinate defaultSize) {
   if (offset < m_memoizedCumulatedSizeOffset / 2) {
     return k_undefinedSize;
   }
@@ -106,7 +109,8 @@ int MemoizedTableSize1DManager::computeIndexFromCumulatedSize(KDCoordinate offse
   return 0;
 }
 
-void MemoizedTableSize1DManager::lockMemoization(bool lockUp) const {
+template <int N>
+void MemoizedTableSize1DManager<N>::lockMemoization(bool lockUp) const {
   /* This lock system is used to ensure the memoization state
    * (m_memoizedIndexOffset) is preserved when performing an action that could
    * potentially alter it. */
@@ -114,7 +118,8 @@ void MemoizedTableSize1DManager::lockMemoization(bool lockUp) const {
   assert(m_memoizationLockedLevel >= 0);
 }
 
-void MemoizedTableSize1DManager::resetMemoization(bool force) {
+template <int N>
+void MemoizedTableSize1DManager<N>::resetMemoization(bool force) {
   if (!force && m_memoizationLockedLevel > 0) {
     return;
   }
@@ -136,7 +141,8 @@ void MemoizedTableSize1DManager::resetMemoization(bool force) {
   }
 }
 
-int MemoizedTableSize1DManager::getMemoizedIndex(int index) const {
+template <int N>
+int MemoizedTableSize1DManager<N>::getMemoizedIndex(int index) const {
   /* Values are memoized in a circular way : m_memoizedSize[i] only
    * stores values for index such that index%k_memoizedCellsCount == i
    * Eg : 0 1 2 3 4 5 6 shifts to 7 1 2 3 4 5 6 which shifts to 7 8 2 3 4 5 6
@@ -146,7 +152,8 @@ int MemoizedTableSize1DManager::getMemoizedIndex(int index) const {
   return (circularOffset + index - m_memoizedIndexOffset) % k_memoizedLinesCount;
 }
 
-void MemoizedTableSize1DManager::setMemoizationIndex(int index) {
+template <int N>
+void MemoizedTableSize1DManager<N>::setMemoizationIndex(int index) {
   if (m_memoizationLockedLevel > 0 || index == m_memoizedIndexOffset) {
     return;
   }
@@ -167,7 +174,8 @@ void MemoizedTableSize1DManager::setMemoizationIndex(int index) {
   }
 }
 
-void MemoizedTableSize1DManager::shiftMemoization(bool lowerIndex) {
+template <int N>
+void MemoizedTableSize1DManager<N>::shiftMemoization(bool lowerIndex) {
   // Only a limited number of cells' size are memoized.
   if (m_memoizationLockedLevel > 0) {
     // Memoization is locked, do not shift
@@ -205,36 +213,53 @@ void MemoizedTableSize1DManager::shiftMemoization(bool lowerIndex) {
   }
 }
 
-int MemoizedColumnWidthManager::numberOfLines() const {
-  return m_dataSource->numberOfColumns();
+template <int N>
+int MemoizedColumnWidthManager<N>::numberOfLines() const {
+  return this->m_dataSource->numberOfColumns();
 }
 
-KDCoordinate MemoizedColumnWidthManager::sizeAtIndex(int i) const {
-  return m_dataSource->columnWidth(i);
+template <int N>
+KDCoordinate MemoizedColumnWidthManager<N>::sizeAtIndex(int i) const {
+  return this->m_dataSource->columnWidth(i);
 }
 
-KDCoordinate MemoizedColumnWidthManager::nonMemoizedSizeAtIndex(int i) const {
-  return m_dataSource->nonMemoizedColumnWidth(i);
+template <int N>
+KDCoordinate MemoizedColumnWidthManager<N>::nonMemoizedSizeAtIndex(int i) const {
+  return this->m_dataSource->nonMemoizedColumnWidth(i);
 }
 
-KDCoordinate MemoizedColumnWidthManager::nonMemoizedCumulatedSizeFromIndex(int i) const {
-  return m_dataSource->nonMemoizedCumulatedWidthFromIndex(i);
+template <int N>
+KDCoordinate MemoizedColumnWidthManager<N>::nonMemoizedCumulatedSizeFromIndex(int i) const {
+  return this->m_dataSource->nonMemoizedCumulatedWidthFromIndex(i);
 }
 
-int MemoizedRowHeightManager::numberOfLines() const {
-  return m_dataSource->numberOfRows();
+template <int N>
+int MemoizedRowHeightManager<N>::numberOfLines() const {
+  return this->m_dataSource->numberOfRows();
 }
 
-KDCoordinate MemoizedRowHeightManager::sizeAtIndex(int i) const {
-  return m_dataSource->rowHeight(i);
+template <int N>
+KDCoordinate MemoizedRowHeightManager<N>::sizeAtIndex(int i) const {
+  return this->m_dataSource->rowHeight(i);
 }
 
-KDCoordinate MemoizedRowHeightManager::nonMemoizedSizeAtIndex(int i) const {
-  return m_dataSource->nonMemoizedRowHeight(i);
+template <int N>
+KDCoordinate MemoizedRowHeightManager<N>::nonMemoizedSizeAtIndex(int i) const {
+  return this->m_dataSource->nonMemoizedRowHeight(i);
 }
 
-KDCoordinate MemoizedRowHeightManager::nonMemoizedCumulatedSizeFromIndex(int i) const {
-  return m_dataSource->nonMemoizedCumulatedHeightFromIndex(i);
+template <int N>
+KDCoordinate MemoizedRowHeightManager<N>::nonMemoizedCumulatedSizeFromIndex(int i) const {
+  return this->m_dataSource->nonMemoizedCumulatedHeightFromIndex(i);
 }
+
+template class MemoizedTableSize1DManager<7>;
+template class MemoizedTableSize1DManager<10>;
+
+template class MemoizedColumnWidthManager<7>;
+
+template class MemoizedRowHeightManager<7>;
+template class MemoizedRowHeightManager<10>;
+
 
 }

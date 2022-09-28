@@ -147,8 +147,8 @@ private:
   Escher::AbstractButtonCell m_setIntervalButton;
   Escher::ButtonState m_exactValuesButton;
   Escher::ToggleableDotView m_exactValuesDotView;
-  Escher::MemoizedColumnWidthManager m_widthManager;
-  Escher::MemoizedRowHeightManager m_heightManager;
+  Escher::ShortMemoizedColumnWidthManager m_widthManager;
+  Escher::LongMemoizedRowHeightManager m_heightManager;
   mutable Poincare::Layout m_memoizedLayouts[k_maxNumberOfDisplayableCells];
 };
 

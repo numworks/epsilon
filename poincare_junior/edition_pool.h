@@ -28,8 +28,8 @@ public:
   void removeBlocks(Block * address, size_t numberOfBlocks);
   void moveBlocks(Block * destination, Block * source, size_t numberOfBlocks);
 
-  Node initFromTree(const Node node);
-  Node initFromAddress(void * address);
+  Node initFromTree(const Node node) { return initFromAddress(static_cast<const void *>(node.block())); }
+  Node initFromAddress(const void * address);
 
   bool contains(Block * block) { return block >= firstBlock() && block < lastBlock(); }
   TypeBlock * firstBlock() override { return m_firstBlock; }

@@ -88,27 +88,10 @@ void EditionPool::moveBlocks(Block * destination, Block * source, size_t numberO
   m_referenceTable.updateAllNodesBetween(destination, source, len);
 }
 
-Node EditionPool::initFromTree(const Node node) {
+Node EditionPool::initFromAddress(const void * address) {
   assert(m_numberOfBlocks == 0);
   assert(m_referenceTable.isEmpty());
-  size_t treeSize = node.treeSize();
-  if (!checkForEnoughSpace(treeSize)) {
-    return Node();
-  }
-  TypeBlock * result = static_cast<TypeBlock*>(lastBlock());
-  const Block * currentBlock = node.block();
-  while (treeSize > 0) {
-    pushBlock(*currentBlock);
-    currentBlock++;
-    treeSize--;
-  }
-  return Node(result);
-}
-
-Node EditionPool::initFromAddress(void * address) {
-  assert(m_numberOfBlocks == 0);
-  assert(m_referenceTable.isEmpty());
-  size_t size = Node(reinterpret_cast<TypeBlock *>(address)).treeSize();
+  size_t size = Node(reinterpret_cast<const TypeBlock *>(address)).treeSize();
   if (!checkForEnoughSpace(size)) {
     return Node();
   }

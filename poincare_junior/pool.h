@@ -17,21 +17,21 @@ public:
   virtual Block * lastBlock() = 0;
   size_t size() { return firstBlock() ? lastBlock() - static_cast<Block *>(firstBlock()) : 0; }
 
+  constexpr static int k_maxNumberOfReferences = 128;
 protected:
 
   class ReferenceTable {
   public:
     constexpr static uint16_t NoNodeIdentifier = 0xFFFF;
     ReferenceTable(Pool * pool) : m_pool(pool) {}
-    bool isFull() { return numberOfStoredNode() == k_maxNumberOfReferences; }
+    bool isFull() { return numberOfStoredNode() == Pool::k_maxNumberOfReferences; }
     bool isEmpty() { return numberOfStoredNode() == 0; }
     int numberOfStoredNode() const { return m_length; }
     virtual uint16_t storeNode(Node node);
     virtual Node nodeForIdentifier(uint16_t id) const;
     virtual bool reset();
   protected:
-    constexpr static int k_maxNumberOfReferences = 128;
-    uint16_t m_nodeForIdentifierOffset[k_maxNumberOfReferences];
+    uint16_t m_nodeForIdentifierOffset[Pool::k_maxNumberOfReferences];
     uint16_t m_length;
     Pool * m_pool;
   };

@@ -13,6 +13,10 @@ Node EditionReference::node() const {
   return n;
 }
 
+EditionReference EditionReference::clone() const {
+  return EditionReference(EditionPool::sharedEditionPool()->initFromTree(node()));
+}
+
 void EditionReference::replaceBy(EditionReference t) {
   EditionPool * pool = EditionPool::sharedEditionPool();
   int oldSize = node().nodeSize();

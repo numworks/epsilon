@@ -19,7 +19,7 @@ QUIZ_CASE(kandinsky_color_rgb) {
 }
 
 void assert_colors_blend_to(KDColor c1, KDColor c2, uint8_t alpha, KDColor res) {
-  quiz_assert(KDColor::blend(c1, c2, alpha) == res );
+  quiz_assert(KDColor::Blend(c1, c2, alpha) == res );
 }
 
 QUIZ_CASE(kandinsky_color_blend) {

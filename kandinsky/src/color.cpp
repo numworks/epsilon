@@ -2,7 +2,7 @@
 #include <cmath>
 #include <algorithm>
 
-KDColor KDColor::blend(KDColor first, KDColor second, uint8_t alpha) {
+KDColor KDColor::Blend(KDColor first, KDColor second, uint8_t alpha) {
   /* This function is a hot path since it's being called for every single pixel
    * whenever we want to display a string. In this context, we're quite often
    * calling it with a value of either 0 or 0xFF, which can be very trivially
@@ -29,7 +29,7 @@ KDColor KDColor::blend(KDColor first, KDColor second, uint8_t alpha) {
   return RGB888(red>>8, green>>8, blue>>8);
 }
 
-static double convertDegreeRadian(double x, bool degreeToRadian) {
+static double ConvertDegreeRadian(double x, bool degreeToRadian) {
   return x * (degreeToRadian ? M_PI / 180.0 : 180.0 / M_PI);
 }
 
@@ -52,7 +52,7 @@ KDColor KDColor::HSVBlend(KDColor color1, KDColor color2) {
     meanH = std::fmod(rotatedMean + 180.0, 360.0);
   }
 
-  return convertHSVToRGB(HSVColor({meanH, meanS, meanV}));
+  return ConvertHSVToRGB(HSVColor({meanH, meanS, meanV}));
 }
 
 KDColor::HSVColor KDColor::convertToHSV() const {
@@ -66,13 +66,13 @@ KDColor::HSVColor KDColor::convertToHSV() const {
   double V = M / 255.0;
   double S = M > 0 ? 1.0 - m / M : 0.0;
 
-  double div = convertDegreeRadian(std::acos((R - 0.5 * G - 0.5 * B) / std::sqrt(R * R + G * G + B * B - R * G - R * B - G * B)), false);
+  double div = ConvertDegreeRadian(std::acos((R - 0.5 * G - 0.5 * B) / std::sqrt(R * R + G * G + B * B - R * G - R * B - G * B)), false);
   double H = G < B ? 360.0 - div : div;
 
   return HSVColor({H, S, V});
 }
 
-KDColor KDColor::convertHSVToRGB(KDColor::HSVColor color) {
+KDColor KDColor::ConvertHSVToRGB(KDColor::HSVColor color) {
   double H = color.H;
   double S = color.S;
   double V = color.V;

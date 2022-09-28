@@ -10,7 +10,7 @@ public:
   static KDPalette Gradient(KDColor fromColor, KDColor toColor) {
     KDPalette p;
     for (int i=0; i<S; i++) {
-      p.m_colors[i] = KDColor::blend(fromColor, toColor, (0xFF*i)/(S-1));
+      p.m_colors[i] = KDColor::Blend(fromColor, toColor, (0xFF*i)/(S-1));
     }
     return p;
   }

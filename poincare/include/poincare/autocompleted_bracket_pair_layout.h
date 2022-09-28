@@ -29,7 +29,7 @@ public:
   void setInsertionSide(Side side) { m_insertedAs = side; }
 
 protected:
-  KDColor bracketColor(Side side, KDColor fg, KDColor bg) const { return isTemporary(side) ? KDColor::blend(fg, bg, k_temporaryBlendAlpha) : fg; }
+  KDColor bracketColor(Side side, KDColor fg, KDColor bg) const { return isTemporary(side) ? KDColor::Blend(fg, bg, k_temporaryBlendAlpha) : fg; }
 
 private:
   constexpr static uint8_t k_temporaryBlendAlpha = 0x60;

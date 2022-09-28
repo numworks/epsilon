@@ -157,7 +157,7 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
       secondPlaceHolder[0] = 0;
     }
     m_areaCell.setMessageWithPlaceholders(I18n::Message::AreaBetweenCurvesWithFunctionName, mainFunctionName, secondPlaceHolder);
-    if (m_areaCell.labelView()->minimalSizeForOptimalDisplay().width() > m_areaCell.innerWitdh()) {
+    if (m_areaCell.labelView()->minimalSizeForOptimalDisplay().width() > m_areaCell.innerWidth()) {
       // If there is not enough space in the cell, display "Area between curves"
       m_areaCell.setMessageWithPlaceholders(I18n::Message::AreaBetweenCurves);
     }

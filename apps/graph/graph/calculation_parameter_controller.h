@@ -33,12 +33,12 @@ public:
 
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int index) override { return index == 0 ? k_preImageCellType : index == k_areaRowIndex ? k_areaCellType : index == (k_derivativeRowIndex + shouldDisplayIntersection()) ? k_derivativeCellType : k_defaultCellType; }
+  int typeAtIndex(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void setRecord(Ion::Storage::Record record);
 private:
-  bool shouldDisplayIntersection() const;
-  bool shouldDisplayAreaBetweenCurves() const;
+  static bool ShouldDisplayIntersection();
+  static bool ShouldDisplayAreaBetweenCurves();
   // This class is used for the AreaBetweenCurves cell
   class BufferTableCellWithHideableChevron : public Escher::BufferTableCell {
   public:

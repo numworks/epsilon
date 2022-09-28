@@ -52,7 +52,7 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
               || (row == k_areaRowIndex
                   && App::app()->functionStore()->numberOfActiveDerivableFunctions() > 2)))) {
     static ViewController * controllers[] = {&m_preimageParameterController, &m_intersectionGraphController, &m_maximumGraphController, &m_minimumGraphController, &m_rootGraphController, &m_tangentGraphController, &m_integralGraphController, &m_areaParameterController};
-    int displayIntersection = shouldDisplayIntersection();
+    int displayIntersection = ShouldDisplayIntersection();
     if (row == k_derivativeRowIndex + displayIntersection) {
       m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
       m_selectableTableView.reloadData();
@@ -98,8 +98,13 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 int CalculationParameterController::numberOfRows() const {
-  // Inverse row + [optional intersection row] + [optional area between curves row] + derivative + all other rows (max, min zeros, derivative, tangent, integral)
-  return 1 + shouldDisplayIntersection() + shouldDisplayAreaBetweenCurves() + 1 + k_totalNumberOfReusableCells - 1;
+  /* The intersection option should always be displayed if the area between
+   * curve is displayed. If not, k_areaRowIndex would be false. */
+  assert(!ShouldDisplayAreaBetweenCurves() || ShouldDisplayIntersection());
+  /* Inverse row + [optional intersection row] + [optional area between curves
+   * row] + derivative + all other rows (max, min zeros, derivative, tangent,
+   * integral) */
+  return 1 + ShouldDisplayIntersection() + ShouldDisplayAreaBetweenCurves() + 1 + k_totalNumberOfReusableCells - 1;
 };
 
 HighlightCell * CalculationParameterController::reusableCell(int index, int type) {
@@ -123,6 +128,19 @@ int CalculationParameterController::reusableCellCount(int type) {
     return k_totalNumberOfReusableCells;
   }
   return 1;
+}
+
+int CalculationParameterController::typeAtIndex(int index) {
+  if (index == 0) {
+    return k_preImageCellType;
+  }
+  if (index == k_areaRowIndex) {
+    return k_areaCellType;
+  }
+  if (index == k_derivativeRowIndex + ShouldDisplayIntersection()) {
+    return k_derivativeCellType;
+  }
+  return k_defaultCellType;
 }
 
 void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -163,7 +181,7 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
     }
   } else if (cell != &m_preimageCell) {
     I18n::Message titles[] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Default, I18n::Message::Tangent, I18n::Message::Integral};
-    static_cast<MessageTableCell *>(cell)->setMessage(titles[index - 1 + !shouldDisplayIntersection()]);
+    static_cast<MessageTableCell *>(cell)->setMessage(titles[index - 1 + !ShouldDisplayIntersection()]);
   }
 }
 
@@ -171,7 +189,7 @@ void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
 }
 
-bool CalculationParameterController::shouldDisplayIntersection() const {
+bool CalculationParameterController::ShouldDisplayIntersection() {
   /* Intersection is handled between all active functions having one subcurve,
    * except Polar and Parametric. */
   ContinuousFunctionStore * store = App::app()->functionStore();
@@ -180,13 +198,11 @@ bool CalculationParameterController::shouldDisplayIntersection() const {
   return store->numberOfIntersectableFunctions() > 1;
 }
 
-bool CalculationParameterController::shouldDisplayAreaBetweenCurves() const {
+bool CalculationParameterController::ShouldDisplayAreaBetweenCurves() {
   ContinuousFunctionStore * store = App::app()->functionStore();
   /* Area between curves is displayed if there is at least two derivable
    * functions. */
-  bool shouldDisplay = store->numberOfActiveDerivableFunctions() > 1;
-  assert(!shouldDisplay || shouldDisplayIntersection());
-  return shouldDisplay;
+  return store->numberOfActiveDerivableFunctions() > 1;
 }
 
 }

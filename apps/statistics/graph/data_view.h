@@ -1,10 +1,10 @@
 #ifndef STATISTICS_DATA_VIEW_H
 #define STATISTICS_DATA_VIEW_H
 
-#include <escher/view.h>
-#include <apps/shared/banner_view.h>
-#include <apps/shared/curve_view.h>
 #include "../store.h"
+#include <apps/shared/banner_view.h>
+#include <apps/shared/plot_view.h>
+#include <escher/view.h>
 
 namespace Statistics {
 
@@ -13,7 +13,7 @@ public:
   constexpr static int k_defaultSelectedIndex = 0;
 
   DataView() : m_displayBanner(false) {}
-  virtual Shared::CurveView * curveViewForSeries(int series) = 0;
+  virtual Shared::AbstractPlotView * plotViewForSeries(int series) = 0;
   virtual void reload() = 0;
   void selectViewForSeries(int series);
   void deselectViewForSeries(int series);

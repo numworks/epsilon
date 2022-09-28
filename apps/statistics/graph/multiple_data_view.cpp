@@ -18,7 +18,7 @@ void MultipleDataView::reload() {
   layoutSubviews();
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     if (Shared::DoublePairStore::DefaultValidSeries(m_store, i)) {
-      curveViewForSeries(i)->reload();
+      plotViewForSeries(i)->reload();
     }
   }
 }
@@ -39,7 +39,7 @@ View * MultipleDataView::subviewAtIndex(int index) {
   if (index == MultipleDataView::numberOfSubviews() -1) {
     return bannerView();
   }
-  return curveViewForSeries(m_store->indexOfKthValidSeries(index, Shared::DoublePairStore::DefaultValidSeries));
+  return plotViewForSeries(m_store->indexOfKthValidSeries(index, Shared::DoublePairStore::DefaultValidSeries));
 }
 
 void MultipleDataView::layoutDataSubviews(bool force) {
@@ -47,9 +47,9 @@ void MultipleDataView::layoutDataSubviews(bool force) {
   int displayedSubviewIndex = 0;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     if (Shared::DoublePairStore::DefaultValidSeries(m_store, i)) {
-      CurveView * curveView = curveViewForSeries(i);
+      AbstractPlotView * plotView = plotViewForSeries(i);
       KDRect frame = KDRect(0, displayedSubviewIndex * subHeight, bounds().width(), subHeight);
-      curveView->setFrame(frame, force);
+      plotView->setFrame(frame, force);
       displayedSubviewIndex++;
     }
   }

@@ -16,8 +16,8 @@ void DataView::setDisplayBanner(bool display) {
 }
 
 void DataView::changeDataViewSeriesSelection(int series, bool select) {
-  curveViewForSeries(series)->selectMainView(select);
-  curveViewForSeries(series)->reload();
+  plotViewForSeries(series)->setFocus(select);
+  plotViewForSeries(series)->reload();
 }
 
 KDRect DataView::bannerFrame() const {

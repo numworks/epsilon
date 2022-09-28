@@ -54,7 +54,7 @@ void HistogramController::viewWillAppearBeforeReload() {
 }
 
 void HistogramController::highlightSelection() {
-  HistogramView * selectedHistogramView = static_cast<HistogramView *>(m_view.curveViewForSeries(m_selectedSeries));
+  HistogramView * selectedHistogramView = static_cast<HistogramView *>(m_view.plotViewForSeries(m_selectedSeries));
   selectedHistogramView->setHighlight(m_store->startOfBarAtIndex(m_selectedSeries, m_selectedIndex), m_store->endOfBarAtIndex(m_selectedSeries, m_selectedIndex));
   // if the selectedBar was outside of range, we need to scroll
   if (m_histogramRange.scrollToSelectedBarIndex(m_selectedSeries, m_selectedIndex)) {

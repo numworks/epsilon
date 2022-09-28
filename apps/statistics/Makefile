@@ -9,7 +9,6 @@ app_statistics_src = $(addprefix apps/statistics/,\
   app.cpp \
   stats/calculation_controller.cpp \
   stats/calculation_selectable_table_view.cpp \
-  graph/box_axis_view.cpp \
   graph/box_banner_view.cpp \
   graph/box_controller.cpp \
   graph/box_parameter_controller.cpp \

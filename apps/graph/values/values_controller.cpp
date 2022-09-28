@@ -3,6 +3,7 @@
 #include <escher/clipboard.h>
 #include <poincare/decimal.h>
 #include <poincare/layout_helper.h>
+#include <poincare/matrix_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/string_layout.h>
 #include "../../shared/poincare_helpers.h"
@@ -67,8 +68,12 @@ KDSize ValuesController::CellSizeWithLayout(Layout l) {
 
 
 KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
-  int nRows = numberOfRows();
   KDCoordinate columnWidth = Shared::ValuesController::defaultColumnWidth();
+  if (!m_exactValuesButton.state()) {
+    // Width is constant when displaying approximations
+    return columnWidth;
+  }
+  int nRows = numberOfRows();
   for (int j = 0; j < nRows; j++) {
     if (typeAtLocation(i, j) == k_notEditableValueCellType && j < numberOfElementsInColumn(i) + 1) {
       Layout l = memoizedLayoutForCell(i, j);
@@ -80,13 +85,43 @@ KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
 }
 
 KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
-  int nColumns = numberOfColumns();
   KDCoordinate rowHeight = Shared::ValuesController::defaultRowHeight();
+  if (j == 0) {
+    // Title cell has constant height
+    return rowHeight;
+  }
+  int nColumns = numberOfColumns();
   for (int i = 0; i < nColumns; i++) {
+    int tempI = i;
+    ContinuousFunction::SymbolType symbol = symbolTypeAtColumn(&tempI);
+    if (!m_exactValuesButton.state() && symbol != ContinuousFunction::SymbolType::T) {
+      /* Height is constant when there is no parametric function and exact
+       * result is not displayed. */
+      continue;
+    }
     if (typeAtLocation(i, j) == k_notEditableValueCellType && j < numberOfElementsInColumn(i) + 1) {
-      Layout l = memoizedLayoutForCell(i, j);
+      Layout l;
+      bool shouldBreak = false;
+      if (!m_exactValuesButton.state() && symbol == ContinuousFunction::SymbolType::T) {
+        /* If the exact result is not displayed, every parametric function cell
+         * has the same height, which is a 2-rows vector. No need to compute
+         * the real layout to compute height, just use a placeholder vector */
+        MatrixLayout m = MatrixLayout::Builder();
+        m.addChildAtIndex(StringLayout::Builder(""), 0, 0, nullptr);
+        m.addChildAtIndex(StringLayout::Builder(""), 1, 1, nullptr);
+        m.setDimensions(2, 1);
+        l = m;
+        shouldBreak = true;
+      } else {
+        assert(m_exactValuesButton.state());
+        l = memoizedLayoutForCell(i, j);
+      }
       assert(!l.isUninitialized());
       rowHeight = std::max(CellSizeWithLayout(l).height(), rowHeight);
+      if (shouldBreak) {
+        // When displaying approx, parametric functions have the max height.
+        break;
+      }
     }
   }
   return rowHeight;

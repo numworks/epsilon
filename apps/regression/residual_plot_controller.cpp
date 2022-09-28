@@ -32,11 +32,11 @@ void ResidualPlotController::updateCursor() {
   constexpr size_t bufferSize = Shared::BannerView::k_maxLengthDisplayed - 2; // -2 for "x="
   char buffer[bufferSize];
 
-  Poincare::Print::customPrintf(buffer, bufferSize, "%*.*ed", x, displayMode, significantDigits);
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "%*.*ed", x, displayMode, significantDigits);
   m_bannerView.abscissaValue()->setText(buffer);
   m_bannerView.abscissaSymbol()->setText("x=");
 
-  Poincare::Print::customPrintf(buffer, bufferSize, "%s%s%*.*ed",
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "%s%s%*.*ed",
     I18n::translate(I18n::Message::Residual),
     I18n::translate(I18n::Message::ColonConvention),
     y, displayMode, significantDigits);

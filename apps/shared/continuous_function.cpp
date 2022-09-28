@@ -167,7 +167,7 @@ int ContinuousFunction::printValue(double cursorT, double cursorX, double cursor
   PlotType type = plotType();
   if (type == PlotType::Parametric) {
     Preferences::PrintFloatMode mode = Poincare::Preferences::sharedPreferences()->displayMode();
-    return Poincare::Print::customPrintf(buffer, bufferSize, "(%*.*ed;%*.*ed)", cursorX, mode, precision, cursorY, mode, precision);
+    return Poincare::Print::CustomPrintf(buffer, bufferSize, "(%*.*ed;%*.*ed)", cursorX, mode, precision, cursorY, mode, precision);
   }
   if (type == PlotType::Polar) {
     return PoincareHelpers::ConvertFloatToText<double>(evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize, precision);

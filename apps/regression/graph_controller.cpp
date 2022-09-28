@@ -141,7 +141,7 @@ void GraphController::SeriesSelectionController::willDisplayCellForIndex(Highlig
 }
 
 bool GraphController::buildRegressionExpression(char * buffer, size_t bufferSize, Model::Type modelType, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  int length = Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%s=", GlobalPreferences::sharedGlobalPreferences()->yPredictedSymbol());
+  int length = Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%s=", GlobalPreferences::sharedGlobalPreferences()->yPredictedSymbol());
   if (length >= static_cast<int>(bufferSize)) {
     return false;
   }
@@ -182,12 +182,12 @@ void GraphController::reloadBannerView() {
   /* Use "x=..." or "xmean=..." (\xCC\x85 represents the combining overline ' ̅')
    * if the mean dot is selected. Same with y. */
   double x = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 0) : m_cursor->x();
-  Poincare::Print::customPrintf(buffer, Shared::BannerView::k_maxLengthDisplayed - 2, "%*.*ed", x, displayMode, significantDigits); // -2 for "x="
+  Poincare::Print::CustomPrintf(buffer, Shared::BannerView::k_maxLengthDisplayed - 2, "%*.*ed", x, displayMode, significantDigits); // -2 for "x="
   m_bannerView.abscissaValue()->setText(buffer);
   m_bannerView.abscissaSymbol()->setText(displayMean ? "x\xCC\x85=" : "x=");
 
   double y = displayMean ? m_store->meanOfColumn(*m_selectedSeriesIndex, 1) : m_cursor->y();
-  Poincare::Print::customPrintf(
+  Poincare::Print::CustomPrintf(
     buffer, k_bannerViewTextBufferSize, "%s=%*.*ed",
     (displayMean ? "y\xCC\x85" : (displayEquation ? GlobalPreferences::sharedGlobalPreferences()->yPredictedSymbol() : "y")),
     y, displayMode, significantDigits);

@@ -37,7 +37,7 @@ void ClearColumnHelper::setClearPopUpContent() {
 }
 
 int ClearColumnHelper::fillColumnNameWithMessage(char * buffer, I18n::Message message) {
-  return Poincare::Print::customPrintf(buffer, k_maxSizeOfColumnName, I18n::translate(message));
+  return Poincare::Print::CustomPrintf(buffer, k_maxSizeOfColumnName, I18n::translate(message));
 }
 
 /* StoreColumnHelper */

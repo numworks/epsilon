@@ -63,7 +63,7 @@ void HistogramController::highlightSelection() {
 }
 
 static bool fillBufferWithIntervalFormula(char * buffer, int bufferSize, double lowerBound, double upperBound, Preferences::PrintFloatMode displayMode, int precision) {
-  return bufferSize > Poincare::Print::safeCustomPrintf(
+  return bufferSize > Poincare::Print::SafeCustomPrintf(
     buffer,
     bufferSize,
     "%s%s[%*.*ed,%*.*ed%s",
@@ -109,7 +109,7 @@ bool HistogramController::reloadBannerView() {
 
   // Display frequency
   double size = m_store->heightOfBarAtIndex(m_selectedSeries, m_selectedIndex);
-  Poincare::Print::customPrintf(
+  Poincare::Print::CustomPrintf(
     buffer,
     k_bufferSize,
     "%s%s%*.*ed",
@@ -120,7 +120,7 @@ bool HistogramController::reloadBannerView() {
 
   // Display relative frequency
   double relativeFrequency = size/m_store->sumOfOccurrences(m_selectedSeries);
-  Poincare::Print::customPrintf(
+  Poincare::Print::CustomPrintf(
     buffer,
     k_bufferSize,
     "%s%s%*.*ed",

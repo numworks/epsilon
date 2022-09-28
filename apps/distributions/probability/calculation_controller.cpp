@@ -234,7 +234,7 @@ bool CalculationController::popupDidReceiveEvent(Ion::Events::Event event, Respo
 void CalculationController::updateTitle() {
   int currentChar = 0;
   for (int index = 0; index < m_distribution->numberOfParameters(); index++) {
-    currentChar += Poincare::Print::customPrintf(m_titleBuffer + currentChar, k_titleBufferSize - currentChar, "%s = %*.*ed ",
+    currentChar += Poincare::Print::CustomPrintf(m_titleBuffer + currentChar, k_titleBufferSize - currentChar, "%s = %*.*ed ",
         m_distribution->parameterNameAtIndex(index),
         m_distribution->parameterAtIndex(index), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   }

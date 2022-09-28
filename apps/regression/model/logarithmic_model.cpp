@@ -18,7 +18,7 @@ Layout LogarithmicModel::layout() {
 }
 
 int LogarithmicModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%*.*ed%+*.*ed·ln(x)",
+  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed%+*.*ed·ln(x)",
       modelCoefficients[0], displayMode, significantDigits,
       modelCoefficients[1], displayMode, significantDigits);
 }

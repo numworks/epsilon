@@ -17,7 +17,7 @@ Layout ProportionalModel::layout() {
 }
 
 int ProportionalModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%*.*ed·x",
+  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed·x",
       modelCoefficients[0], displayMode, significantDigits);
 }
 

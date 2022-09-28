@@ -42,7 +42,7 @@ Layout ExponentialModel::layout() {
 }
 
 int ExponentialModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, m_isAbxForm ? "%*.*ed·%*.*ed^x" : "%*.*ed·e^%*.*ed·x",
+  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, m_isAbxForm ? "%*.*ed·%*.*ed^x" : "%*.*ed·e^%*.*ed·x",
       modelCoefficients[0], displayMode, significantDigits,
       modelCoefficients[1], displayMode, significantDigits);
 }

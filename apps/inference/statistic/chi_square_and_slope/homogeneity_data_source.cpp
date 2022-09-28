@@ -69,7 +69,7 @@ void HomogeneityTableDataSource::willDisplayCellAtLocation(Escher::HighlightCell
     }
     constexpr int bufferSize = k_headerTranslationBuffer;
     char txt[bufferSize];
-    Poincare::Print::customPrintf(txt, bufferSize, "%s%c", I18n::translate(m_headerPrefix), digit);
+    Poincare::Print::CustomPrintf(txt, bufferSize, "%s%c", I18n::translate(m_headerPrefix), digit);
     myCell->setText(txt);
     myCell->setTextColor(KDColorBlack);
   } else {

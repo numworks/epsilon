@@ -172,14 +172,14 @@ void FormulaTemplateMenuController::fillSubLabelBuffer(Escher::ExpressionTableCe
     char name2[DoublePairStore::k_columnNamesLength + 1];
     char * columnNames[2] = {name1, name2};
     fillSumColumnNames(columnNames);
-    Print::customPrintf(buffer, BufferTextView::k_maxNumberOfChar + 1, I18n::translate(message), name1, name2);
+    Print::CustomPrintf(buffer, BufferTextView::k_maxNumberOfChar + 1, I18n::translate(message), name1, name2);
     cell->setSubLabelText(buffer);
     return;
   }
   assert(index == 1);
   char columnName[DoublePairStore::k_columnNamesLength + 1];
   fillOtherAppColumnName(columnName);
-  Print::customPrintf(buffer, BufferTextView::k_maxNumberOfChar + 1, I18n::translate(message), columnName);
+  Print::CustomPrintf(buffer, BufferTextView::k_maxNumberOfChar + 1, I18n::translate(message), columnName);
   cell->setSubLabelText(buffer);
 }
 

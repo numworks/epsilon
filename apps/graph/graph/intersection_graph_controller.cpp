@@ -28,7 +28,7 @@ void IntersectionGraphController::reloadBannerView() {
   size_t numberOfChar = f->nameWithArgument(buffer, bufferSize - 2 * strlen(legend));
   assert(numberOfChar < bufferSize);
   size_t fNameLength = numberOfChar;
-  numberOfChar += Poincare::Print::customPrintf(buffer + numberOfChar, bufferSize - numberOfChar, legend);
+  numberOfChar += Poincare::Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar, legend);
   // keep 1 char for '=';
   ExpiringPointer<ContinuousFunction> g = functionStore()->modelForRecord(m_intersectedRecord);
   size_t numberOfCharsBeforeGName = numberOfChar;
@@ -37,7 +37,7 @@ void IntersectionGraphController::reloadBannerView() {
     numberOfChar = fNameLength;
   }
   assert(numberOfChar <= bufferSize);
-  Poincare::Print::customPrintf(buffer + numberOfChar, bufferSize - numberOfChar, "%s%*.*ed",
+  Poincare::Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar, "%s%*.*ed",
     legend,
     m_cursor->y(), Poincare::Preferences::sharedPreferences()->displayMode(), numberOfSignificantDigits());
   bannerView()->ordinateView()->setText(buffer);

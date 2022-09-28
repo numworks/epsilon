@@ -47,7 +47,7 @@ static inline void ion_main_inner(const char * testFilter) {
     QuizCase c = quiz_cases[i];
     if (quiz_print_clear()) {
       // Avoid cluttering the display if it can't be cleared
-      Poincare::Print::customPrintf(buffer, k_bufferSize, "TEST: %i/%i", caseIndex, totalCases);
+      Poincare::Print::CustomPrintf(buffer, k_bufferSize, "TEST: %i/%i", caseIndex, totalCases);
       quiz_print(buffer);
     }
     quiz_print(quiz_case_names[i]);
@@ -61,12 +61,12 @@ static inline void ion_main_inner(const char * testFilter) {
   quiz_print_clear();
 
   // Display test results
-  Poincare::Print::customPrintf(buffer, k_bufferSize, "ALL %i TESTS FINISHED", caseIndex);
+  Poincare::Print::CustomPrintf(buffer, k_bufferSize, "ALL %i TESTS FINISHED", caseIndex);
   quiz_print(buffer);
 
   // Display test duration
   time = Ion::Timing::millis() - time;
-  Poincare::Print::customPrintf(buffer, k_bufferSize, "DURATION: %i ms", time);
+  Poincare::Print::CustomPrintf(buffer, k_bufferSize, "DURATION: %i ms", time);
   quiz_print(buffer);
 #ifdef PLATFORM_DEVICE
   while (1) {

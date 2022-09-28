@@ -96,7 +96,7 @@ void TitleBarView::refreshPreferences() {
   I18n::Message angleMessage = angleUnit == Preferences::AngleUnit::Degree ?
      I18n::Message::Deg :
      (angleUnit == Preferences::AngleUnit::Radian ? I18n::Message::Rad : I18n::Message::Gon);
-  Poincare::Print::customPrintf(buffer, bufferSize, "%s%s", I18n::translate(floatModeMessage), I18n::translate(angleMessage));
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "%s%s", I18n::translate(floatModeMessage), I18n::translate(angleMessage));
   m_preferenceView.setText(buffer);
   // Layout the exam mode icon if needed
   layoutSubviews();

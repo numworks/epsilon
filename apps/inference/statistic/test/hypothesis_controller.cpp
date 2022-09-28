@@ -48,7 +48,7 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
 }
 
 const char * HypothesisController::title() {
-  Poincare::Print::customPrintf(m_titleBuffer,
+  Poincare::Print::CustomPrintf(m_titleBuffer,
            sizeof(m_titleBuffer),
            I18n::translate(m_test->title()),
            I18n::translate(I18n::Message::Test));
@@ -167,7 +167,7 @@ bool HypothesisController::ButtonAction(void * c, void * s) {
 void HypothesisController::loadHypothesisParam() {
   constexpr int bufferSize = k_cellBufferSize;
   char buffer[bufferSize];
-  Poincare::Print::customPrintf(buffer, bufferSize, "%s=%*.*ed", symbolPrefix(), m_test->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "%s=%*.*ed", symbolPrefix(), m_test->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   m_h0.setAccessoryText(buffer);
   m_ha.reload();
   resetMemoization();

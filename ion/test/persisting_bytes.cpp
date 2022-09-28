@@ -11,7 +11,7 @@ void testPersistingByte(PersistingBytes::PersistingBytesInt expectedValue) {
   if (observedValue != expectedValue) {
     constexpr size_t bufferSize = sizeof("255 instead of 255.");
     char buffer[bufferSize];
-    Poincare::Print::customPrintf(buffer, bufferSize, "%i instead of %i.", observedValue, expectedValue);
+    Poincare::Print::CustomPrintf(buffer, bufferSize, "%i instead of %i.", observedValue, expectedValue);
     quiz_assert_print_if_failure(false, buffer);
   }
 }

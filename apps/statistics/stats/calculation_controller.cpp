@@ -92,7 +92,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     // The NL "Modus 100" is the longest possible text here.
     constexpr static int bufferSize = sizeof("Modus 100") / sizeof(char);
     char buffer[bufferSize];
-    Poincare::Print::customPrintf(buffer, bufferSize, pattern, I18n::translate(message), index);
+    Poincare::Print::CustomPrintf(buffer, bufferSize, pattern, I18n::translate(message), index);
     EvenOddBufferTextCell * bufferCell = static_cast<EvenOddBufferTextCell *>(cell);
     bufferCell->setTextColor(i == 1 ? Palette::GrayDark : KDColorBlack);
     bufferCell->setText(buffer);

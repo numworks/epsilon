@@ -42,7 +42,7 @@ void InputController::InputTitle(Escher::ViewController * vc, Statistic * statis
     const char * op = HypothesisParams::strForComparisonOp(statistic->hypothesisParams()->comparisonOperator());
     StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(vc->parentResponder());
     if (stackViewControllerResponder->topViewController() != vc) {
-      Poincare::Print::customPrintf(titleBuffer, titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed",
+      Poincare::Print::CustomPrintf(titleBuffer, titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed",
           symbol,
           statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigits,
           symbol,
@@ -50,7 +50,7 @@ void InputController::InputTitle(Escher::ViewController * vc, Statistic * statis
           statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigits,
           statistic->threshold(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigits);
     } else {
-      Poincare::Print::customPrintf(titleBuffer, titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed",
+      Poincare::Print::CustomPrintf(titleBuffer, titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed",
           symbol,
           statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigits,
           symbol,
@@ -58,7 +58,7 @@ void InputController::InputTitle(Escher::ViewController * vc, Statistic * statis
           statistic->hypothesisParams()->firstParam(), Poincare::Preferences::PrintFloatMode::Decimal, k_numberOfTitleSignificantDigits);
     }
   } else {
-    Poincare::Print::customPrintf(titleBuffer, titleBufferSize, I18n::translate(statistic->title()),
+    Poincare::Print::CustomPrintf(titleBuffer, titleBufferSize, I18n::translate(statistic->title()),
         I18n::translate(I18n::Message::Interval));
   }
 }

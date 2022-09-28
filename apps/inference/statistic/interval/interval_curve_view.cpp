@@ -57,7 +57,7 @@ void IntervalCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
     // Draw the threshold value
     constexpr int k_ThresholdBufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(k_numberSignificantDigits) + 1; // 1 = strlen("%")
     char buffer[k_ThresholdBufferSize];
-    Poincare::Print::customPrintf(
+    Poincare::Print::CustomPrintf(
         buffer, k_ThresholdBufferSize, "%*.*ef%%", threshold * 100.0f,
         Poincare::Preferences::PrintFloatMode::Decimal, k_numberSignificantDigits);
     // Compute the threshold label position

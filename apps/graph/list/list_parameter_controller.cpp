@@ -49,7 +49,7 @@ const char * intervalBracket(double value, bool opening) {
 }
 
 int writeInterval(char * buffer, int bufferSize, double min, double max, int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
-  return Poincare::Print::customPrintf(buffer, bufferSize, "%s%*.*ed,%*.*ed%s",
+  return Poincare::Print::CustomPrintf(buffer, bufferSize, "%s%*.*ed,%*.*ed%s",
     intervalBracket(min, true),
     min, mode, numberOfSignificantDigits,
     max, mode, numberOfSignificantDigits,

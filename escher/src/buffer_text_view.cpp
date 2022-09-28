@@ -34,7 +34,7 @@ void BufferTextView::setMessageWithPlaceholders(I18n::Message message, ...) {
 
 void BufferTextView::privateSetMessageWithPlaceholders(I18n::Message message, va_list args) {
   char tempBuffer[k_maxNumberOfChar];
-  Poincare::Print::privateCustomPrintf(tempBuffer, m_maxDisplayedTextLength + 1, I18n::translate(message), args);
+  Poincare::Print::PrivateCustomPrintf(tempBuffer, m_maxDisplayedTextLength + 1, I18n::translate(message), args);
   setText(tempBuffer);
 }
 

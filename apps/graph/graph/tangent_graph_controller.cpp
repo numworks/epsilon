@@ -76,12 +76,12 @@ void TangentGraphController::reloadBannerView() {
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);
   assert(function->canDisplayDerivative());
   double y = function->approximateDerivative(m_cursor->x(), context);
-  Poincare::Print::customPrintf(buffer, bufferSize, "a=%*.*ed", y, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "a=%*.*ed", y, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
   m_bannerView->aView()->setText(buffer);
 
   assert(function->isAlongXOrY());
   y = -y*m_cursor->x()+function->evaluate2DAtParameter(m_cursor->x(), context).x2();
-  Poincare::Print::customPrintf(buffer, bufferSize, "b=%*.*ed", y, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "b=%*.*ed", y, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
   m_bannerView->bView()->setText(buffer);
   m_bannerView->reload();
 }

@@ -62,7 +62,7 @@ const char * ResultController::title() {
     // Ensure "..." fits if it isn't the last known parameter
     bool lastKnownParameter = (param == doubleParameters - 1 - unknownParamIsLast);
     // Attempting the parameter insertion
-    int parameterLength = Poincare::Print::safeCustomPrintf(
+    int parameterLength = Poincare::Print::SafeCustomPrintf(
         m_titleBuffer + length, k_titleBufferSize - length,
         (lastKnownParameter ? lastKnownParameterTemplate : parameterTemplate),
         I18n::translate(App::GetInterestData()->labelForParameter(param)),
@@ -72,14 +72,14 @@ const char * ResultController::title() {
       if (length > strlen(" ")) {
         length -= strlen(" ");
       }
-      length += Poincare::Print::customPrintf(m_titleBuffer + length, k_titleBufferSize - length, "...");
+      length += Poincare::Print::CustomPrintf(m_titleBuffer + length, k_titleBufferSize - length, "...");
       break;
     }
     length += parameterLength;
     if (!lastKnownParameter) {
       // Text did fit, "..." isn't needed for now and can be replaced with " "
       length -= strlen("...");
-      length += Poincare::Print::customPrintf(m_titleBuffer + length, k_titleBufferSize - length, " ");
+      length += Poincare::Print::CustomPrintf(m_titleBuffer + length, k_titleBufferSize - length, " ");
     }
   }
   assert(length < k_titleBufferSize);

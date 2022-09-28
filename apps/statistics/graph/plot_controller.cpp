@@ -58,7 +58,7 @@ bool PlotController::reloadBannerView() {
   m_bannerView.seriesName()->setText(buffer);
 
   // Display selected value
-  Poincare::Print::customPrintf(
+  Poincare::Print::CustomPrintf(
     buffer,
     k_bufferSize,
     "%s%s%*.*ed",
@@ -68,7 +68,7 @@ bool PlotController::reloadBannerView() {
   m_bannerView.value()->setText(buffer);
 
   // Display result value
-  Poincare::Print::customPrintf(
+  Poincare::Print::CustomPrintf(
     buffer,
     k_bufferSize,
     resultMessageTemplate(),

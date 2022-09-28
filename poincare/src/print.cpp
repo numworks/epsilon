@@ -9,7 +9,7 @@
 
 namespace Poincare {
 
-int Print::privateCustomPrintf(char * buffer, size_t bufferSize, const char * format, va_list args) {
+int Print::PrivateCustomPrintf(char * buffer, size_t bufferSize, const char * format, va_list args) {
   /* We still return the required sizes even if we could not write in the
    * buffer in order to indicate that we overflew the buffer. */
   char * const origin = buffer;
@@ -29,10 +29,10 @@ int Print::privateCustomPrintf(char * buffer, size_t bufferSize, const char * fo
         // Insert text now
         buffer += strlcpy(buffer, va_arg(args, char *), bufferSize - (buffer - origin));
         if (*(format + 1) == 'C') {
-          capitalize(insertedText);
+          Capitalize(insertedText);
           formatLength = 3;
         } else if (*(format + 1) == 'c') {
-          decapitalize(insertedText);
+          Decapitalize(insertedText);
           formatLength = 3;
         }
       } else if (*(format + 1) == 'c') {
@@ -93,31 +93,31 @@ int Print::privateCustomPrintf(char * buffer, size_t bufferSize, const char * fo
   return buffer - origin;
 }
 
-int Print::customPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
+int Print::CustomPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
   va_list args;
   va_start(args, format);
-  int length = privateCustomPrintf(buffer, bufferSize, format, args);
+  int length = PrivateCustomPrintf(buffer, bufferSize, format, args);
   va_end(args);
   assert(length < static_cast<int>(bufferSize));
   return length;
 }
 
-int Print::safeCustomPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
+int Print::SafeCustomPrintf(char * buffer, size_t bufferSize, const char * format, ...) {
   va_list args;
   va_start(args, format);
-  int length = privateCustomPrintf(buffer, bufferSize, format, args);
+  int length = PrivateCustomPrintf(buffer, bufferSize, format, args);
   va_end(args);
   return length;
 }
 
-void Print::capitalize(char * text) {
+void Print::Capitalize(char * text) {
   constexpr static int jumpToUpperCase = 'A' - 'a';
   if (text[0] >= 'a' && text[0] <= 'z') {
     text[0] += jumpToUpperCase;
   }
 }
 
-void Print::decapitalize(char * text) {
+void Print::Decapitalize(char * text) {
   constexpr static int jumpToLowerCase = 'a' - 'A';
   if (text[0] >= 'A' && text[0] <= 'Z') {
     text[0] += jumpToLowerCase;

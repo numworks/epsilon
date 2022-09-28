@@ -55,7 +55,7 @@ Layout QuarticModel::layout() {
 }
 
 int QuarticModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::safeCustomPrintf(buffer, bufferSize, "%*.*ed·x^4%+*.*ed·x^3%+*.*ed·x^2%+*.*ed·x%+*.*ed",
+  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed·x^4%+*.*ed·x^3%+*.*ed·x^2%+*.*ed·x%+*.*ed",
       modelCoefficients[0], displayMode, significantDigits,
       modelCoefficients[1], displayMode, significantDigits,
       modelCoefficients[2], displayMode, significantDigits,

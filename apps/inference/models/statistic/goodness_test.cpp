@@ -13,7 +13,7 @@ GoodnessTest::GoodnessTest() {
 
 void GoodnessTest::setGraphTitle(char * buffer, size_t bufferSize) const {
   const char * format = I18n::translate(I18n::Message::StatisticGraphControllerTestTitleFormatGoodnessTest);
-  Poincare::Print::customPrintf(buffer, bufferSize, format,
+  Poincare::Print::CustomPrintf(buffer, bufferSize, format,
       degreeOfFreedom(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
       threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
       testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
@@ -21,7 +21,7 @@ void GoodnessTest::setGraphTitle(char * buffer, size_t bufferSize) const {
 }
 
 void GoodnessTest::setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const {
-  Poincare::Print::customPrintf(buffer, bufferSize, "df=%*.*ed %s=%*.*ed",
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "df=%*.*ed %s=%*.*ed",
       degreeOfFreedom(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
       I18n::translate(I18n::Message::GreekAlpha),
       threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);

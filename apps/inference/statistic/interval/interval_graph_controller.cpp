@@ -28,7 +28,7 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Copy) {
     // Copy confidence interval as matrix
     char copyBuffer[2 * Constants::k_shortBufferSize + 4];
-    Poincare::Print::customPrintf(copyBuffer, sizeof(copyBuffer), "[[%*.*ed,%*.*ed]]",
+    Poincare::Print::CustomPrintf(copyBuffer, sizeof(copyBuffer), "[[%*.*ed,%*.*ed]]",
         m_interval->estimate() - m_interval->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
         m_interval->estimate() + m_interval->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     Escher::Clipboard::sharedClipboard()->store(copyBuffer, strlen(copyBuffer));

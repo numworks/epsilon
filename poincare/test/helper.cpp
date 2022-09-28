@@ -49,7 +49,7 @@ void quiz_assert_log_if_failure(bool test, TreeHandle tree) {
 }
 
 void build_failure_infos(char * returnedInformationsBuffer, size_t bufferSize, const char * expression, const char * result, const char * expectedResult) {
-  Poincare::Print::safeCustomPrintf(returnedInformationsBuffer, bufferSize," %s\n processed to\n %s\n instead of\n %s", expression, result, expectedResult);
+  Poincare::Print::SafeCustomPrintf(returnedInformationsBuffer, bufferSize," %s\n processed to\n %s\n instead of\n %s", expression, result, expectedResult);
 }
 
 void assert_parsed_expression_process_to(const char * expression, const char * result, ExpressionNode::ReductionTarget target, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion, ProcessExpression process, int numberOfSignifiantDigits) {

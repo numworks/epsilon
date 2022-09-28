@@ -15,7 +15,7 @@ HomogeneityTest::HomogeneityTest() {
 
 void HomogeneityTest::setGraphTitle(char * buffer, size_t bufferSize) const {
   const char * format = I18n::translate(I18n::Message::StatisticGraphControllerTestTitleFormatHomogeneityTest);
-  Poincare::Print::customPrintf(buffer, bufferSize, format,
+  Poincare::Print::CustomPrintf(buffer, bufferSize, format,
           testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
           pValue(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
 }

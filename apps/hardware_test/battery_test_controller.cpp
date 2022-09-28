@@ -48,12 +48,12 @@ void BatteryTestController::updateBatteryState(float batteryLevel, bool batteryC
   constexpr int sizeForPrecision = PrintFloat::charSizeForFloatsWithPrecision(precision);
   constexpr size_t bufferLevelSize = ContentView::k_maxNumberOfCharacters + sizeForPrecision;
   char bufferLevel[bufferLevelSize];
-  Poincare::Print::customPrintf(bufferLevel, bufferLevelSize, "Battery level: %*.*ef", batteryLevel, Preferences::PrintFloatMode::Decimal, precision);
+  Poincare::Print::CustomPrintf(bufferLevel, bufferLevelSize, "Battery level: %*.*ef", batteryLevel, Preferences::PrintFloatMode::Decimal, precision);
   m_view.batteryLevelTextView()->setText(bufferLevel);
 
   constexpr size_t bufferChargingSize = ContentView::k_maxNumberOfCharacters + sizeForPrecision;
   char bufferCharging[bufferChargingSize];
-  Poincare::Print::customPrintf(bufferCharging, bufferChargingSize, "Battery charging: %s", batteryCharging ? "yes" : "no");
+  Poincare::Print::CustomPrintf(bufferCharging, bufferChargingSize, "Battery charging: %s", batteryCharging ? "yes" : "no");
   m_view.batteryChargingTextView()->setText(bufferCharging);
 }
 
@@ -106,4 +106,3 @@ View * BatteryTestController::ContentView::subviewAtIndex(int index) {
 }
 
 }
-

@@ -103,7 +103,7 @@ void StoreController::setTitleCellText(HighlightCell * cell, int columnIndex) {
     fillColumnName(columnIndex, columnName);
     char columnTitle[k_columnTitleSize]; // 50 is an ad-hoc value. A title cell can contain max 15 glyphs but the glyph can take more space than 1 byte in memory.
     I18n::Message titleType = m_store->relativeColumnIndex(columnIndex) % 2 == 1 ? I18n::Message::Frequencies : I18n::Message::Values;
-    Poincare::Print::customPrintf(columnTitle, k_columnTitleSize, I18n::translate(titleType), columnName);
+    Poincare::Print::CustomPrintf(columnTitle, k_columnTitleSize, I18n::translate(titleType), columnName);
     myTitleCell->setText(columnTitle);
   }
 }
@@ -139,7 +139,7 @@ void StoreController::FillSeriesName(int series, char * buffer, bool withFinalSp
     * deleting the table in Graph and Sequence, but the table name is empty in Sequence.
     */
   char tableIndex = static_cast<char>('1' + series);
-  Poincare::Print::customPrintf(buffer, k_tableNameSize, k_tableName, tableIndex, tableIndex);
+  Poincare::Print::CustomPrintf(buffer, k_tableNameSize, k_tableName, tableIndex, tableIndex);
   if (!withFinalSpace) {
     buffer[5] = 0;
   }

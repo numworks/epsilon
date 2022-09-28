@@ -80,7 +80,7 @@ private:
   constexpr static int k_numberOfExpressionCells = static_cast<int>(sizeof(layoutDefault) / sizeof(Model));
 
   constexpr static const char * k_models[static_cast<int>(Model::NumberOfModels)] = {
-    "", "y=x", "f(x)=x", "x+y+1=0", "x+y=1", "x+y≤0", "x=√(y)", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "f(θ)=cos(θ)", "f(x)=piecewise(-x,x<0,x,x≥0)"
+    "", "y=x", "f(x)=x", "x+y+1=0", "x+y=1", "x+y≤0", "x=√(y)", "x^2+y^2+x*y+x+y=0", "f(t)=[[cos(t)][sin(t)]]", "r=cos(θ)", "f(x)=piecewise(-x,x<0,x,x≥0)"
   };
   constexpr static const char * k_lineModelWhenForbidden = "y=x-1";
   constexpr static const char * k_inequationModelWhenForbidden = "y≤x";

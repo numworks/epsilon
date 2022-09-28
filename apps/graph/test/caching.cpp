@@ -116,12 +116,12 @@ QUIZ_CASE(graph_caching) {
   assert_cache_stays_valid(Cartesian, "f(x)=1/x", -5e-5f, 5e-5f);
   assert_cache_stays_valid(Cartesian, "f(x)=-e^x");
 
-  assert_cache_stays_valid(Polar, "f(θ)=1", 0.f, 360.f);
-  assert_cache_stays_valid(Polar, "f(θ)=θ", 0.f, 360.f);
-  assert_cache_stays_valid(Polar, "f(θ)=sin(θ)", 0.f, 360.f);
-  assert_cache_stays_valid(Polar, "f(θ)=sin(θ)", 2e-4f, 1e-3f);
-  assert_cache_stays_valid(Polar, "f(θ)=cos(5θ)", 0.f, 360.f);
-  assert_cache_stays_valid(Polar, "f(θ)=cos(5θ)", -1e8f, 1e8f);
+  assert_cache_stays_valid(Polar, "r=1", 0.f, 360.f);
+  assert_cache_stays_valid(Polar, "r=θ", 0.f, 360.f);
+  assert_cache_stays_valid(Polar, "r=sin(θ)", 0.f, 360.f);
+  assert_cache_stays_valid(Polar, "r=sin(θ)", 2e-4f, 1e-3f);
+  assert_cache_stays_valid(Polar, "r=cos(5θ)", 0.f, 360.f);
+  assert_cache_stays_valid(Polar, "r=cos(5θ)", -1e8f, 1e8f);
 
   Preferences::sharedPreferences()->setAngleUnit(previousAngleUnit);
 }

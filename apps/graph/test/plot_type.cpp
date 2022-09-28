@@ -34,7 +34,7 @@ QUIZ_CASE(graph_function_plot_type) {
     pressToTestParams.m_implicitPlotsAreForbidden = noImplicitPlot;
     Poincare::Preferences::sharedPreferences()->setExamMode((noInequations || noImplicitPlot) ? Poincare::Preferences::ExamMode::PressToTest : Poincare::Preferences::ExamMode::Off, pressToTestParams);
 
-    assert_check_function_properties("f(θ)=2", ContinuousFunction::PlotType::Polar);
+    assert_check_function_properties("r=2", ContinuousFunction::PlotType::Polar);
     assert_check_function_properties("g(t)=[[cos(t)][t]]", ContinuousFunction::PlotType::Parametric);
     assert_check_function_properties("h(x)=log(x)", ContinuousFunction::PlotType::Cartesian);
     assert_check_function_properties("y=log(x)", ContinuousFunction::PlotType::Cartesian);
@@ -73,7 +73,7 @@ QUIZ_CASE(graph_function_plot_type) {
     assert_check_function_properties("", ContinuousFunction::PlotType::Undefined);
     assert_check_function_properties("y=log(0)", ContinuousFunction::PlotType::Undefined);
     assert_check_function_properties("f(t)=[[cos(t)][t]]*log(0)", ContinuousFunction::PlotType::UndefinedParametric);
-    assert_check_function_properties("f(θ)=θ+[[0][0]]", ContinuousFunction::PlotType::UndefinedPolar);
+    assert_check_function_properties("r=θ+[[0][0]]", ContinuousFunction::PlotType::UndefinedPolar);
     assert_check_function_properties("3=2", ContinuousFunction::PlotType::Unhandled);
     assert_check_function_properties("x*y^2>1", ContinuousFunction::PlotType::Unhandled);
     assert_check_function_properties("2-y^2>log(x)", ContinuousFunction::PlotType::Unhandled);

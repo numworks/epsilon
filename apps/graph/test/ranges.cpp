@@ -149,7 +149,7 @@ QUIZ_CASE(graph_ranges_several_functions) {
     assert_best_range_is(definitions, types, -16, 17, -5.76562405, 11.765624);
   }
   {
-    const char * definitions[] = {"f(θ)=sin(θ)", "g(θ)=cos(θ)"};
+    const char * definitions[] = {"r=sin(θ)", "r=cos(θ)"};
     ContinuousFunction::PlotType types[] = {Polar, Polar};
     assert_best_range_is(definitions, types, -1.63235319, 2.13235331, -0.800000011, 1.20000005);
   }

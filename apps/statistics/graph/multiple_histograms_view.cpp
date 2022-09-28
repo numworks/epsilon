@@ -10,12 +10,12 @@ MultipleHistogramsView::MultipleHistogramsView(Store * store, Shared::CurveViewR
   m_histogramView3(store, 2, curveViewRange)
 {
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    HistogramView * histView = curveViewForSeries(i);
+    HistogramView * histView = plotViewForSeries(i);
     histView->setDisplayLabels(false);
   }
 }
 
-HistogramView *  MultipleHistogramsView::curveViewForSeries(int series) {
+HistogramView *  MultipleHistogramsView::plotViewForSeries(int series) {
   assert(series >= 0 && series < Shared::DoublePairStore::k_numberOfSeries);
   HistogramView * views[] = {&m_histogramView1, &m_histogramView2, &m_histogramView3};
   return views[series];
@@ -34,10 +34,10 @@ void MultipleHistogramsView::layoutSubviews(bool force) {
 
 void MultipleHistogramsView::changeDataViewSeriesSelection(int series, bool select) {
   MultipleDataView::changeDataViewSeriesSelection(series, select);
-  curveViewForSeries(series)->setDisplayLabels(select);
+  plotViewForSeries(series)->setDisplayLabels(select);
   if (select == false) {
     // Set the hightlight to default selected bar to prevent blinking
-    curveViewForSeries(series)->setHighlight(m_store->startOfBarAtIndex(series, k_defaultSelectedIndex), m_store->endOfBarAtIndex(series, k_defaultSelectedIndex));
+    plotViewForSeries(series)->setHighlight(m_store->startOfBarAtIndex(series, k_defaultSelectedIndex), m_store->endOfBarAtIndex(series, k_defaultSelectedIndex));
   }
 }
 

@@ -65,7 +65,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void DataViewController::didEnterResponderChain(Responder * firstResponder) {
-  if (!m_store->hasValidSeries(validSerieMethod()) || !dataView()->curveViewForSeries(m_selectedSeries)->isMainViewSelected()) {
+  if (!m_store->hasValidSeries(validSerieMethod()) || !dataView()->plotViewForSeries(m_selectedSeries)->hasFocus()) {
     header()->setSelectedButton(0);
   } else {
     assert(validSerieMethod()(m_store, m_selectedSeries));

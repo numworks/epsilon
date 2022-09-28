@@ -270,6 +270,8 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView * plotView, KDCon
 
 }
 
+// WithCurves
+
 void WithCurves::drawArcOfEllipse(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, Coordinate2D<float> center, float width, float height, float angleStart, float angleEnd, KDColor color) const {
   assert(plotView);
 
@@ -286,6 +288,79 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView * plotView, KDContext *
     return Coordinate2D<float>(a * std::cos(t) + x, b * std::sin(t) + y);
   };
   CurveDrawing(arc, parameters, nullptr, angleStart, angleEnd, angleStep, color).draw(plotView, ctx, rect);
+}
+
+// WithHistogram::HistogramDrawing
+
+WithHistogram::HistogramDrawing::HistogramDrawing(Curve1D curve, void * model, void * context, float start, float barsWidth, KDColor color, bool fillBars) :
+  m_curve(curve),
+  m_model(model),
+  m_context(context),
+  m_highlighted(nullptr),
+  m_start(start),
+  m_width(barsWidth),
+  m_borderWidth(0.f),
+  m_color(color),
+  m_fillBars(fillBars)
+{}
+
+void WithHistogram::HistogramDrawing::setBorderOptions(KDCoordinate width, KDColor color) {
+  m_borderWidth = width;
+  m_borderColor = color;
+}
+
+void WithHistogram::HistogramDrawing::setHighlightOptions(HighlightTest highlighted, KDColor color) {
+  m_highlighted = highlighted;
+  m_highlightColor = color;
+}
+
+void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+  float rectMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.left());
+  float rectMax = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.right());
+  float step = std::max(plotView->pixelWidth(), m_width);
+  KDCoordinate axisPixel = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Vertical, 0.f));
+
+  float xPrevious = NAN;
+  for (float x = m_start; x < rectMax; x += step) {
+    if (x == xPrevious) {
+      return;
+    }
+    xPrevious = x;
+
+    float xCenter = m_fillBars ? x + 0.5f * m_width : x;
+    float y = m_curve(xCenter, m_model, m_context);
+    if (std::isnan(y) || y == 0.f) {
+      continue;
+    }
+    /* TODO This method is not ready to display histogram with negative values. */
+    assert(y > 0.f);
+
+    Coordinate2D<float> pxy = plotView->floatToPixel2D(Coordinate2D<float>(x, y));
+    KDCoordinate pxLeft = std::round(pxy.x1());
+    KDCoordinate pxRight = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, x + m_width));
+    if (pxRight + m_borderWidth < rectMin) {
+      continue;
+    }
+    KDCoordinate py = std::round(pxy.x2());
+    KDCoordinate barHeight = axisPixel - py;
+    assert(barHeight >= 0);
+    KDCoordinate barWidth;
+    if (m_fillBars) {
+      barWidth = pxRight - pxLeft;
+    } else {
+      assert(m_borderWidth == 0);
+      barWidth = k_hollowBarWidth;
+    }
+    KDRect barRect(pxLeft + m_borderWidth, py + m_borderWidth, barWidth, barHeight - m_borderWidth);
+    KDColor color = m_highlighted && m_highlighted(xCenter, m_model, m_context) ? m_highlightColor : m_color;
+    ctx->fillRect(barRect, color);
+
+    if (m_borderWidth > 0 && barRect.width() > 0 && barRect.height() > 0) {
+      ctx->fillRect(KDRect(pxLeft, py, m_borderWidth, barHeight), m_borderColor);
+      ctx->fillRect(KDRect(pxLeft + m_borderWidth, py, barWidth, m_borderWidth), m_borderColor);
+      ctx->fillRect(KDRect(pxRight, py, m_borderWidth, barHeight), m_borderColor);
+    }
+  }
 }
 
 }

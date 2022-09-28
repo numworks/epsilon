@@ -68,7 +68,9 @@ void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis pa
   if (dashSize <= 0) {
     dashSize = b - a;
   }
-  assert(dashSize > 0);
+  if (dashSize == 0) {
+    return;
+  }
   for (KDCoordinate i = a; i < b; i += 2 * dashSize) {
     KDRect rectangle = parallel == Axis::Horizontal ? KDRect(i, p, dashSize, thickness) : KDRect(p, i, thickness, dashSize);
     ctx->fillRect(rectangle.intersectedWith(rect), color);

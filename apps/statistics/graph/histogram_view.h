@@ -4,32 +4,37 @@
 #include <poincare/print_float.h>
 #include "../store.h"
 #include <apps/constant.h>
-#include <apps/shared/labeled_curve_view.h>
+ #include <apps/shared/plot_view_policies.h>
 
 namespace Statistics {
 
-class HistogramController;
-
-class HistogramView : public Shared::HorizontallyLabeledCurveView {
-public:
-  HistogramView(Store * store, int series, Shared::CurveViewRange * curveViewRange);
-  int series() const { return m_series; }
-  void reload(bool resetInterrupted = false, bool force = false) override;
-  void reloadSelectedBar();
-  void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setHighlight(float start, float end);
-  void setDisplayLabels(bool display) { m_displayLabels = display; }
-private:
+class HistogramPlotPolicy : public Shared::PlotPolicy::WithHistogram {
+protected:
+  constexpr static KDCoordinate k_borderWidth = 1;
   constexpr static KDColor k_notSelectedHistogramColor =  Escher::Palette::GrayWhite;
   constexpr static KDColor k_notSelectedHistogramBorderColor = Escher::Palette::GrayMiddle;
   constexpr static KDColor k_selectedBarColor = Escher::Palette::YellowDark;
 
+  void drawPlot(const Shared::AbstractPlotView *, KDContext * ctx, KDRect rect) const;
+
   Store * m_store;
-  static float EvaluateHistogramAtAbscissa(float abscissa, void * model, void * context);
+  int m_series;
   float m_highlightedBarStart;
   float m_highlightedBarEnd;
-  int m_series;
-  bool m_displayLabels;
+};
+
+class HistogramView : public Shared::PlotView<Shared::PlotPolicy::LabeledXAxis, HistogramPlotPolicy, Shared::PlotPolicy::NoBanner, Shared::PlotPolicy::NoCursor> {
+public:
+  HistogramView(Store * store, int series, Shared::CurveViewRange * range);
+
+  // AbstractPlotView
+  void reload(bool resetInterruption = false, bool force = false);
+
+  void setHighlight(float start, float end);
+  void setDisplayLabels(bool display) { /* TODO */ }
+
+private:
+  void reloadSelectedBar();
 };
 
 }

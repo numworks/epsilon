@@ -90,6 +90,37 @@ protected:
   void drawArcOfEllipse(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> center, float width, float height, float angleStart, float angleEnd, KDColor color) const;
 };
 
+/* A PlotPolicy trying to draw histograms should derive WithHistogram and
+ * implement a drawPlot(const AbstractPlotView *, KDContext *, KDRect) method. */
+class WithHistogram {
+protected:
+  typedef float (*Curve1D)(float, void *, void *);
+  typedef bool (*HighlightTest)(float, void *, void *);
+
+  class HistogramDrawing {
+  public:
+    HistogramDrawing(Curve1D curve, void * model, void * context, float start, float barsWidth, KDColor color, bool fillBars);
+    void setBorderOptions(KDCoordinate width, KDColor color);
+    void setHighlightOptions(HighlightTest highlighted, KDColor color);
+    void draw(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
+
+  private:
+    constexpr static KDCoordinate k_hollowBarWidth = 2;
+
+    Curve1D m_curve;
+    void * m_model;
+    void * m_context;
+    HighlightTest m_highlighted;
+    float m_start;
+    float m_width;
+    KDCoordinate m_borderWidth;
+    KDColor m_color;
+    KDColor m_highlightColor;
+    KDColor m_borderColor;
+    bool m_fillBars;
+  };
+};
+
 }
 }
 

@@ -53,7 +53,7 @@ bool BoxController::reloadBannerView() {
   m_view.bannerView()->seriesName()->setText(buffer);
 
   // Display calculation
-  int selectedBoxCalculation = m_view.curveViewForSeries(m_selectedSeries)->selectedBoxCalculation();
+  int selectedBoxCalculation = m_view.plotViewForSeries(m_selectedSeries)->selectedBoxCalculation();
   double value = m_store->boxPlotCalculationAtIndex(m_selectedSeries, selectedBoxCalculation);
   Poincare::Print::CustomPrintf(
     buffer,

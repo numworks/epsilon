@@ -6,45 +6,57 @@ using namespace Shared;
 
 namespace Statistics {
 
-HistogramView::HistogramView(Store * store, int series, Shared::CurveViewRange * curveViewRange) :
-  HorizontallyLabeledCurveView(curveViewRange, nullptr, nullptr, nullptr),
-  m_store(store),
-  m_highlightedBarStart(NAN),
-  m_highlightedBarEnd(NAN),
-  m_series(series),
-  m_displayLabels(true)
-{
+// HistogramPlotPolicy
+
+static float histogramLevels(float x, void * model, void * context) {
+  Store * store = reinterpret_cast<Store *>(model);
+  float * parameters = reinterpret_cast<float *>(context);
+  float maxSize = parameters[0];
+  float series = parameters[1];
+  return store->heightOfBarAtValue(series, x) / maxSize;
 }
 
-void HistogramView::reload(bool resetInterrupted, bool force) {
-  CurveView::reload(resetInterrupted, force);
-  markRectAsDirty(bounds());
+static bool barIsHighlighted(float x, void * model, void * context) {
+  float * parameters = reinterpret_cast<float *>(context);
+  float start = parameters[2];
+  float end = parameters[3];
+  return start <= x && x < end;
 }
 
-void HistogramView::reloadSelectedBar() {
-  CurveView::reload();
-  float pixelLowerBound = floatToPixel(Axis::Horizontal, m_highlightedBarStart)-2;
-  float pixelUpperBound = floatToPixel(Axis::Horizontal, m_highlightedBarEnd)+2;
-  /* We deliberately do not mark as dirty the frame of the banner view to avoid
-   *unpleasant blinking of the drawing of the banner view. */
-  KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
-    bounds().height()));
-  markRectAsDirty(dirtyZone);
-}
+void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
 
-void HistogramView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, KDColorWhite);
-  drawAxis(ctx, rect, Axis::Horizontal);
-  drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, !m_displayLabels);
-  /* We memoize the maximal bar size to avoid recomputing it at every call to
-   * EvaluateHistogramAtAbscissa() */
-  float totalSize = m_store->maxHeightOfBar(m_series);
-  float context[] = {totalSize, static_cast<float>(m_series)};
-  if (isMainViewSelected()) {
-    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, DoublePairStore::colorLightOfSeriesAtIndex(m_series), k_selectedBarColor, 1, Shared::DoublePairStore::colorOfSeriesAtIndex(m_series), m_highlightedBarStart, m_highlightedBarEnd);
+  float context[] = { static_cast<float>(m_store->maxHeightOfBar(m_series)), static_cast<float>(m_series), m_highlightedBarStart, m_highlightedBarEnd };
+
+  KDColor color, borderColor;
+  HighlightTest highlights = nullptr;
+  if (plotView->hasFocus()) {
+    color = DoublePairStore::colorLightOfSeriesAtIndex(m_series);
+    borderColor = DoublePairStore::colorOfSeriesAtIndex(m_series);
+    highlights = &barIsHighlighted;
   } else {
-    drawHistogram(ctx, rect, EvaluateHistogramAtAbscissa, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, k_notSelectedHistogramColor, k_selectedBarColor, 1, k_notSelectedHistogramBorderColor);
+    color = k_notSelectedHistogramColor;
+    borderColor = k_notSelectedHistogramBorderColor;
   }
+
+  HistogramDrawing histogram(histogramLevels, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), color, true);
+  histogram.setBorderOptions(k_borderWidth, borderColor);
+  histogram.setHighlightOptions(highlights, k_selectedBarColor);
+  histogram.draw(plotView, ctx, rect);
+}
+
+// HistogramView
+
+HistogramView::HistogramView(Store * store, int series, Shared::CurveViewRange * range) :
+  PlotView(range)
+{
+  // HistogramPlotPolicy
+  m_store = store;
+  m_series = series;
+}
+
+void HistogramView::reload(bool resetInterruption, bool force) {
+  AbstractPlotView::reload(resetInterruption, force);
+  markRectAsDirty(bounds());
 }
 
 void HistogramView::setHighlight(float start, float end) {
@@ -56,11 +68,15 @@ void HistogramView::setHighlight(float start, float end) {
   }
 }
 
-float HistogramView::EvaluateHistogramAtAbscissa(float abscissa, void * model, void * context) {
-  Store * store = (Store *)model;
-  float totalSize = ((float *)context)[0];
-  int series = ((float *)context)[1];
-  return store->heightOfBarAtValue(series, abscissa) / totalSize;
+void HistogramView::reloadSelectedBar() {
+  AbstractPlotView::reload();
+  float pixelLowerBound = floatToPixel(Axis::Horizontal, m_highlightedBarStart) - 2;
+  float pixelUpperBound = floatToPixel(Axis::Horizontal, m_highlightedBarEnd) + 2;
+  /* We deliberately do not mark as dirty the frame of the banner view to avoid
+   *unpleasant blinking of the drawing of the banner view. */
+  KDRect dirtyZone(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound, bounds().height());
+  markRectAsDirty(dirtyZone);
 }
+
 
 }

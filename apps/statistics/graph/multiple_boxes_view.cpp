@@ -13,10 +13,10 @@ MultipleBoxesView::MultipleBoxesView(Store * store, int * selectedBoxCalculation
   m_boxView3(store, 2, selectedBoxCalculation),
   m_axisView(store)
 {
-  static_assert(MultipleBoxesView::BoxToBoxMargin(2) >= BoxView::BoxVerticalMargin() && MultipleBoxesView::BoxToBoxMargin(3) >= BoxView::BoxVerticalMargin(), "BoxToBoxMargin() should be bigger than BoxVerticalMargin().");
+  static_assert(MultipleBoxesView::BoxToBoxMargin(2) >= BoxPlotPolicy::BoxVerticalMargin() && MultipleBoxesView::BoxToBoxMargin(3) >= BoxPlotPolicy::BoxVerticalMargin(), "BoxToBoxMargin() should be bigger than BoxVerticalMargin().");
 }
 
-BoxView *  MultipleBoxesView::curveViewForSeries(int series) {
+BoxView *  MultipleBoxesView::plotViewForSeries(int series) {
   assert(series >= 0 && series < Shared::DoublePairStore::k_numberOfSeries);
   BoxView * views[] = {&m_boxView1, &m_boxView2, &m_boxView3};
   return views[series];
@@ -30,9 +30,9 @@ void MultipleBoxesView::layoutDataSubviews(bool force) {
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     if (Shared::DoublePairStore::DefaultValidSeries(m_store, i)) {
       // Add vertical margins to box layout. Boxes layouts may overlap.
-      KDRect frame = KDRect(0, boxYPosition - BoxView::BoxVerticalMargin(), bounds().width(), BoxView::BoxFrameHeight(numberOfDataSubviews));
-      curveViewForSeries(i)->setFrame(frame, force);
-      boxYPosition += BoxView::BoxHeight(numberOfDataSubviews) + BoxToBoxMargin(numberOfDataSubviews);
+      KDRect frame = KDRect(0, boxYPosition - BoxPlotPolicy::BoxVerticalMargin(), bounds().width(), BoxPlotPolicy::BoxFrameHeight(numberOfDataSubviews));
+      plotViewForSeries(i)->setFrame(frame, force);
+      boxYPosition += BoxPlotPolicy::BoxHeight(numberOfDataSubviews) + BoxToBoxMargin(numberOfDataSubviews);
     }
   }
   // Remove BoxToBoxMargin on last box
@@ -49,7 +49,7 @@ void MultipleBoxesView::reload() {
 
 bool MultipleBoxesView::moveSelectionHorizontally(int series, int deltaIndex) {
   assert(deltaIndex != 0);
-  BoxView * view = curveViewForSeries(series);
+  BoxView * view = plotViewForSeries(series);
   if (view->canIncrementSelectedCalculation(deltaIndex)) {
     // Mark rect as dirty in parent's view to also redraw the background
     markRectAsDirty(view->selectedCalculationRect());
@@ -82,7 +82,7 @@ void MultipleBoxesView::drawRect(KDContext * ctx, KDRect rect) const {
 void MultipleBoxesView::changeDataViewSeriesSelection(int series, bool select) {
   MultipleDataView::changeDataViewSeriesSelection(series, select);
   // Mark rect as dirty in parent's view to also redraw the background
-  markRectAsDirty(curveViewForSeries(series)->rectToReload());
+  markRectAsDirty(plotViewForSeries(series)->rectToReload());
 }
 
 }

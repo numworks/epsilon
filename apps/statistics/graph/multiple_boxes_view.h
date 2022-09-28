@@ -9,14 +9,12 @@
 
 namespace Statistics {
 
-class BoxController;
-
 class MultipleBoxesView : public MultipleDataView {
 public:
   MultipleBoxesView(Store * store, int * selectedBoxCalculation);
   // MultipleDataView
   BoxBannerView * bannerView() override { return &m_bannerView; }
-  BoxView * curveViewForSeries(int series) override;
+  BoxView * plotViewForSeries(int series) override;
   void layoutDataSubviews(bool force) override;
   void reload() override;
   bool moveSelectionHorizontally(int series, int deltaIndex);

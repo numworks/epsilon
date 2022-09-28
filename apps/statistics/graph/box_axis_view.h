@@ -3,21 +3,17 @@
 
 #include "box_range.h"
 #include "../store.h"
-#include <apps/shared/labeled_curve_view.h>
 #include <apps/constant.h>
+#include <apps/shared/plot_view_policies.h>
 #include <poincare/print_float.h>
 
 namespace Statistics {
 
-class BoxAxisView : public Shared::HorizontallyLabeledCurveView {
+class BoxAxisView : public Shared::PlotView<Shared::PlotPolicy::LabeledXAxis, Shared::PlotPolicy::NoPlot, Shared::PlotPolicy::NoBanner, Shared::PlotPolicy::NoCursor> {
 public:
-  BoxAxisView(Store * store) :
-    HorizontallyLabeledCurveView(&m_boxRange),
-    m_boxRange(BoxRange(store))
-  {}
-  void drawRect(KDContext * ctx, KDRect rect) const override;
+  BoxAxisView(Store * store) : PlotView(&m_boxRange), m_boxRange(BoxRange(store)) {}
+
 private:
-  constexpr static KDCoordinate k_axisMargin = 3;
   BoxRange m_boxRange;
 };
 

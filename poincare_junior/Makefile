@@ -8,6 +8,29 @@ include build/platform.$(PLATFORM).mak
 include build/toolchain.$(TOOLCHAIN).mak
 
 poincare_junior_src += $(addprefix poincare_junior/,\
+  interfaces/addition_interface.o \
+  interfaces/constant_interface.o \
+  interfaces/division_interface.o \
+  interfaces/expression_interface.o \
+  interfaces/integer_interface.o \
+  interfaces/interface.o \
+  interfaces/multiplication_interface.o \
+  interfaces/n_ary_interface.o \
+  interfaces/power_interface.o \
+  interfaces/subtraction_interface.o \
+  temporary.o \
+  cache_pool.o \
+  cache_reference.o \
+  edition_pool.o \
+  edition_reference.o \
+  exception_checkpoint.o \
+  expression.o \
+  node.o \
+  pool.o \
+  utils.o \
+)
+
+poincare_junior_src2 += $(addprefix poincare_junior/,\
   cached_tree.o \
   exception_checkpoint.o \
   helpers.o \

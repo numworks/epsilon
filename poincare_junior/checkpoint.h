@@ -1,7 +1,7 @@
 #ifndef POINCARE_CHECKPOINT_H
 #define POINCARE_CHECKPOINT_H
 
-#include "tree_cache.h"
+#include "edition_pool.h"
 
 /* Usage:
  *
@@ -30,7 +30,7 @@ namespace Poincare {
 class Checkpoint {
 public:
 protected:
-  virtual void rollback() { Poincare::TreeCache::sharedCache()->sandbox()->reset(); }
+  virtual void rollback() { EditionPool::sharedEditionPool()->flush(); }
 };
 
 }

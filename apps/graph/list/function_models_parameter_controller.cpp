@@ -6,11 +6,11 @@
 #include <poincare/preferences.h>
 #include <assert.h>
 #include <apps/apps_container.h>
-#include "../../shared/global_context.h"
-#include "../../shared/continuous_function.h"
+#include <apps/shared/global_context.h>
+#include <apps/global_preferences.h>
+#include <apps/shared/continuous_function.h>
 #include "../app.h"
 #include <string.h>
-#include "../../global_preferences.h"
 
 using namespace Poincare;
 using namespace Escher;

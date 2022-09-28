@@ -12,7 +12,6 @@ public:
   int reusableCellCount(int type) override { return 1; }
   HighlightCell * reusableCell(int index, int type) override { return cell(type); }
   HighlightCell * selectedCell() { return cell(selectedRow()); }
-  // KDCoordinate nonMemoizedRowHeight(int index) override { return heightForCellAtIndex(cell(index), index); }
 
 protected:
   virtual HighlightCell * cell(int index) = 0;

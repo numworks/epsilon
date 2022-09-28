@@ -9,10 +9,10 @@ namespace Escher {
 class ButtonCell : public Escher::AbstractButtonCell {
 public:
   ButtonCell(Responder * parentResponder,
-                      I18n::Message textBody,
-                      Escher::Invocation invocation,
-                      KDColor backgroundColor = Escher::Palette::WallScreen,
-                      KDCoordinate horizontalMargins = 0);
+             I18n::Message textBody,
+             Escher::Invocation invocation,
+             KDColor backgroundColor = Escher::Palette::WallScreen,
+             KDCoordinate horizontalMargins = 0);
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
@@ -22,6 +22,7 @@ public:
 protected:
   constexpr static KDCoordinate k_lineThickness = Escher::Metric::CellSeparatorThickness;
   constexpr static KDCoordinate k_margin = Escher::Metric::CommonMenuMargin;
+
 private:
   void layoutSubviews(bool force = false) override;
 
@@ -29,5 +30,5 @@ private:
   KDCoordinate m_horizontalMargins;
 };
 
-}  // namespace Shared
+} // namespace Escher
 #endif

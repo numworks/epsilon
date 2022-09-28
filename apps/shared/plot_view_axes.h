@@ -71,6 +71,7 @@ class LabeledAxis : public SimpleAxis {
 public:
   void reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) override;
   void forceRelativePosition(AbstractPlotView::RelativePosition position);
+  void setHidden(bool hide) { m_hidden = hide; }
 
 private:
   constexpr static int k_numberSignificantDigits = Poincare::Preferences::LargeNumberOfSignificantDigits;
@@ -86,6 +87,7 @@ private:
   char m_labels[k_maxNumberOfLabels][k_labelBufferMaxSize];
   mutable AbstractPlotView::RelativePosition m_relativePosition : 2;
   bool m_forceRelativePosition : 1;
+  bool m_hidden : 1;
 };
 
 /* The following classes are intended to be used as template arguments for

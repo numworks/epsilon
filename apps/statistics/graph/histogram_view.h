@@ -31,7 +31,7 @@ public:
   void reload(bool resetInterruption = false, bool force = false);
 
   void setHighlight(float start, float end);
-  void setDisplayLabels(bool display) { /* TODO */ }
+  void setDisplayLabels(bool display) { m_xAxis.setHidden(!display); }
 
 private:
   void reloadSelectedBar();

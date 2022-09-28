@@ -23,6 +23,7 @@ public:
   // View controller
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   int typeAtLocation(int i, int j) override;
+  void viewDidDisappear() override;
 
   // SelectableTableViewDelegate
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;

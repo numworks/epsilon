@@ -56,22 +56,21 @@ public:
   virtual void reloadAxis(AbstractPlotView *, AbstractPlotView::Axis axis) {}
 
 protected:
-  float labelPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
-  virtual const char * labelText(int i) const { return nullptr; }
+  constexpr static KDColor k_color = KDColorBlack;
+
+  float tickPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
 
 private:
   constexpr static KDCoordinate k_labelGraduationHalfLength = 3;
-  constexpr static KDColor k_color = KDColorBlack;
 
-  virtual float labelStep(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
+  virtual void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {}
+  float tickStep(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
 };
 
 class LabeledAxis : public SimpleAxis {
 public:
   void reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) override;
-
-protected:
-  const char * labelText(int i) const override;
+  void forceRelativePosition(AbstractPlotView::RelativePosition position);
 
 private:
   constexpr static int k_numberSignificantDigits = Poincare::Preferences::LargeNumberOfSignificantDigits;
@@ -80,9 +79,13 @@ private:
   /* FIXME Y axis needs less labels than X axis */
   constexpr static int k_maxNumberOfLabels = CurveViewRange::k_maxNumberOfXGridUnits > CurveViewRange::k_maxNumberOfYGridUnits ? CurveViewRange::k_maxNumberOfXGridUnits : CurveViewRange::k_maxNumberOfYGridUnits;
 
-  virtual int computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis);
+  int computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis);
+  void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const override;
+  void computeLabelsRelativePosition(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
 
   char m_labels[k_maxNumberOfLabels][k_labelBufferMaxSize];
+  mutable AbstractPlotView::RelativePosition m_relativePosition : 2;
+  bool m_forceRelativePosition : 1;
 };
 
 /* The following classes are intended to be used as template arguments for

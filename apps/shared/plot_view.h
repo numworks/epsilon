@@ -28,6 +28,7 @@ public:
 
   constexpr static KDColor k_backgroundColor = KDColorWhite;
   constexpr static KDCoordinate k_labelMargin = 4;
+  constexpr static KDFont::Size k_font = KDFont::Size::Small;
 
   constexpr static Axis OtherAxis(Axis axis) { return static_cast<Axis>(1 - static_cast<uint8_t>(axis)); }
 
@@ -69,7 +70,6 @@ public:
 private:
   constexpr static KDCoordinate k_stampDashSize = 5;
   constexpr static KDCoordinate k_stampIndexNoDash = -1;
-  constexpr static KDFont::Size k_font = KDFont::Size::Small;
 
   // Escher::View
   int numberOfSubviews() const { return (bannerView() != nullptr) + (cursorView() != nullptr); }

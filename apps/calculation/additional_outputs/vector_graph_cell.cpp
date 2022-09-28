@@ -39,6 +39,7 @@ VectorGraphView::VectorGraphView(VectorModel * model) :
   PlotView(model)
 {
   m_model = model;
+  m_xAxis.forceRelativePosition(RelativePosition::There);
 }
 
 }

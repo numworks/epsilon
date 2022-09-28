@@ -50,6 +50,7 @@ protected:
 
 private:
   virtual void didChangeCell(int column, int row) {}
+  virtual void updateSizeMemoizationForRow(int row, KDCoordinate rowPreviousHeight) {}
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
   virtual bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) = 0;
   virtual double dataAtLocation(int columnIndex, int rowIndex) = 0;

@@ -96,11 +96,13 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     selectedRow() <= numberOfElementsInColumn(selectedColumn())) {
     int row = selectedRow();
     int column = selectedColumn();
+    KDCoordinate rwHeight = rowHeight(row);
     intervalAtColumn(column)->deleteElementAtIndex(row-1);
     // Reload memoization
     for (int i = row; i < numberOfElementsInColumn(column)+1; i++) {
       didChangeCell(column, i);
     }
+    deleteRowFromMemoization(row, rwHeight);
     selectableTableView()->reloadData();
     return true;
   }
@@ -273,7 +275,9 @@ void ValuesController::didChangeCell(int column, int row) {
       // The changed column is out of the memoized table
       continue;
     }
+    KDCoordinate currentWidth = columnWidth(i);
     createMemoizedLayout(i, row, nbOfMemoizedColumns*memoizedRow+memoizedI);
+    updateSizeMemoizationForColumnAfterIndexChanged(i, currentWidth, row);
   }
 }
 

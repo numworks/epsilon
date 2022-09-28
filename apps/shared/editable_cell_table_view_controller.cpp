@@ -35,6 +35,7 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(AbstractTextFiel
   // Save attributes for later use
   int column = selectedColumn();
   int previousRow = selectedRow();
+  KDCoordinate rwHeight = rowHeight(previousRow);
   int previousNumberOfElementsInColumn = numberOfElementsInColumn(column);
   if (!checkDataAtLocation(floatBody, column, previousRow)) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
@@ -53,11 +54,14 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(AbstractTextFiel
     selectableTableView()->handleEvent(event);
   }
   didChangeCell(column, previousRow);
+  updateSizeMemoizationForRow(previousRow, rwHeight);
   // Reload other cells
-  if (previousNumberOfElementsInColumn != numberOfElementsInColumn(column)) {
+  if (previousNumberOfElementsInColumn < numberOfElementsInColumn(column)) {
     // Reload the whole table, if a value was appended.
+    updateSizeMemoizationForRow(selectedRow(), 0); // update total height
     selectableTableView()->reloadData();
   } else {
+    assert(previousNumberOfElementsInColumn == numberOfElementsInColumn(column));
     reloadEditedCell(column, previousRow);
   }
   return true;

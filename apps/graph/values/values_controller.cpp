@@ -240,7 +240,16 @@ void ValuesController::setStartEndMessages(Shared::IntervalParameterController *
   m_intervalParameterSelectorController.setStartEndMessages(controller, symbolTypeAtColumn(&c));
 }
 
-// Number of columns memoization
+void ValuesController::reloadEditedCell(int column, int row) {
+  if (m_exactValuesButton.state()) {
+    // Sizes might have change
+    selectableTableView()->reloadData();
+    return;
+  }
+  Shared::ValuesController::reloadEditedCell(column, row);
+}
+
+// Memoization
 
 void ValuesController::updateNumberOfColumns() const {
   for (size_t symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes; symbolTypeIndex++) {
@@ -257,6 +266,23 @@ void ValuesController::updateNumberOfColumns() const {
   for (size_t symbolTypeIndex = 0; symbolTypeIndex < k_maxNumberOfSymbolTypes; symbolTypeIndex++) {
     // Count abscissa column if the sub table does exist
     m_numberOfColumns += numberOfColumnsForSymbolType(symbolTypeIndex);
+  }
+}
+
+void ValuesController::updateSizeMemoizationForRow(int row, KDCoordinate rowPreviousHeight) {
+  m_heightManager.updateMemoizationForIndex(row, rowPreviousHeight);
+}
+
+void ValuesController::deleteRowFromMemoization(int row, KDCoordinate rowPreviousHeight) {
+  m_heightManager.deleteIndexFromMemoization(row, rowPreviousHeight);
+}
+
+void ValuesController::updateSizeMemoizationForColumnAfterIndexChanged(int column, KDCoordinate columnPreviousWidth, int row) {
+  if (m_exactValuesButton.state()) {
+    KDCoordinate minimalWidthForColumn = CellSizeWithLayout(memoizedLayoutForCell(column, row)).width();
+    if (columnPreviousWidth < minimalWidthForColumn) {
+      m_widthManager.updateMemoizationForIndex(column, columnPreviousWidth, minimalWidthForColumn);
+    }
   }
 }
 

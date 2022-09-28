@@ -45,6 +45,7 @@ public:
   IntervalParameterSelectorController * intervalParameterSelectorController() {
     return &m_intervalParameterSelectorController;
   }
+
 private:
   constexpr static size_t k_maxNumberOfSymbolTypes = Shared::ContinuousFunction::k_numberOfSymbolTypes;
   constexpr static int k_maxNumberOfDisplayableFunctions = 4;
@@ -64,9 +65,13 @@ private:
   int maxNumberOfCells() override { return k_maxNumberOfDisplayableCells; }
   int maxNumberOfFunctions() override { return k_maxNumberOfDisplayableFunctions; }
   Shared::PrefacedTableView * prefacedView() override { return &m_prefacedView; }
+  void reloadEditedCell(int column, int row) override;
 
-  // Number of columns memoization
+  // Memoization
   void updateNumberOfColumns() const override;
+  void updateSizeMemoizationForRow(int row, KDCoordinate rowPreviousHeight) override;
+  void deleteRowFromMemoization(int row, KDCoordinate rowPreviousHeight) override;
+  void updateSizeMemoizationForColumnAfterIndexChanged(int column, KDCoordinate columnPreviousWidth, int changedRow) override;
 
   // Model getters
   Ion::Storage::Record recordAtColumn(int i) override;

@@ -139,10 +139,9 @@ int FrequencyController::nextSubviewWhenMovingVertically(int direction) const {
       // series is on the same spot and in the right direction in series list
       return seriesIndex;
     }
-        // series is in the right direction
     if (y * direction < cursorY * direction
-        // series is closest than others
         && (std::isnan(closestYUpOrDown) || closestYUpOrDown * direction < y * direction)) {
+      // series is in the right direction and closer than others
       nextSubview = seriesIndex;
       closestYUpOrDown = y;
     }

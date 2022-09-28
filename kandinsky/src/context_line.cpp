@@ -88,8 +88,8 @@ void KDContext::drawAntialiasedLine(KDPoint p1, KDPoint p2, KDColor c, KDColor b
     int yAbove = yBelow + 1;
     float fractionalPart = y - yBelow;
     uint8_t alpha = 255u * (1 - fractionalPart);
-    KDColor colorBelow = KDColor::blend(c, background, alpha);
-    KDColor colorAbove = KDColor::blend(c, background, 255 - alpha);
+    KDColor colorBelow = KDColor::Blend(c, background, alpha);
+    KDColor colorAbove = KDColor::Blend(c, background, 255 - alpha);
     if (steep) {
       setPixel(KDPoint(yBelow, x), colorBelow);
       setPixel(KDPoint(yAbove, x), colorAbove);

@@ -18,20 +18,20 @@ public:
   }
   uint8_t red() const {
     uint8_t r5 = (m_value>>11)&0x1F;
-    return expand(r5, 5);
+    return Expand(r5, 5);
   }
 
   uint8_t green() const {
     uint8_t g6 = (m_value>>5)&0x3F;
-    return expand(g6, 6);
+    return Expand(g6, 6);
   }
 
   uint8_t blue() const {
     uint8_t b5 = m_value&0x1F;
-    return expand(b5, 5);
+    return Expand(b5, 5);
   }
 
-  static KDColor blend(KDColor first, KDColor second, uint8_t alpha);
+  static KDColor Blend(KDColor first, KDColor second, uint8_t alpha);
   operator uint16_t() const { return m_value; }
 
   static KDColor HSVBlend(KDColor color1, KDColor color2);
@@ -52,7 +52,7 @@ private:
    * the original value. For example, to expand 0b101010 from 6 to 8 bits we
    * would append the first two bits (0b10), resulting in 0b10101010. This way,
    * full blacks remain black, and full whites remain whites. Yay, contrast! */
-  constexpr static uint8_t expand(uint8_t s, uint8_t nBits) {
+  constexpr static uint8_t Expand(uint8_t s, uint8_t nBits) {
     return
     (s << (8-nBits)) // Normal, zero-padded shifted value
     |
@@ -66,7 +66,7 @@ private:
     double V;
   };
   HSVColor convertToHSV() const;
-  static KDColor convertHSVToRGB(HSVColor color);
+  static KDColor ConvertHSVToRGB(HSVColor color);
 
   uint16_t m_value;
 };

@@ -21,8 +21,8 @@ public:
   public:
     constexpr ColorPair(KDColor fg = KDColorBlack, KDColor bg = KDColorWhite) : m_fg(fg), m_bg(bg) {}
     ColorPair(uint8_t alpha, KDColor fgMin, KDColor fgMax, KDColor bgMin, KDColor bgMax) :
-      m_fg(KDColor::blend(fgMax, fgMin, alpha)),
-      m_bg(KDColor::blend(bgMax, bgMin, alpha))
+      m_fg(KDColor::Blend(fgMax, fgMin, alpha)),
+      m_bg(KDColor::Blend(bgMax, bgMin, alpha))
     {}
     KDColor fg() const { return m_fg; }
     KDColor bg() const { return m_bg; }

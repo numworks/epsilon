@@ -40,7 +40,7 @@ void TransparentImageView::blendInPlace(KDColor * colorBuffer, uint8_t * alphaBu
   for (int row = 0; row < m_image->height(); row++) {
     for (int col = 0; col < m_image->width(); col++) {
       position = col + row * m_image->width();
-      colorBuffer[position] = KDColor::blend(colorBuffer[position],
+      colorBuffer[position] = KDColor::Blend(colorBuffer[position],
                                              m_backgroundColor,
                                              alphaBuffer[position]);
     }

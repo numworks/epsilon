@@ -75,7 +75,7 @@ void KDContext::fillRectWithMask(KDRect rect, KDColor color, KDColor background,
     for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
       KDColor * currentPixelAddress = workingBuffer + i + absoluteRect.width()*j;
       const uint8_t * currentMaskAddress = mask + i + startingI + rect.width()*(j + startingJ);
-      *currentPixelAddress = KDColor::blend(background, color, *currentMaskAddress);
+      *currentPixelAddress = KDColor::Blend(background, color, *currentMaskAddress);
     }
   }
   pushRect(absoluteRect, workingBuffer);
@@ -101,7 +101,7 @@ void KDContext::blendRectWithMask(KDRect rect, KDColor color, const uint8_t * ma
     for (KDCoordinate i=0; i<absoluteRect.width(); i++) {
       KDColor * currentPixelAddress = workingBuffer + i + absoluteRect.width()*j;
       const uint8_t * currentMaskAddress = mask + i + startingI + rect.width()*(j + startingJ);
-      *currentPixelAddress = KDColor::blend(*currentPixelAddress, color, *currentMaskAddress);
+      *currentPixelAddress = KDColor::Blend(*currentPixelAddress, color, *currentMaskAddress);
       //*currentPixelAddress = KDColorBlend(*currentPixelAddress, color, *currentMaskAddress);
     }
   }
@@ -114,4 +114,3 @@ void KDContext::strokeRect(KDRect rect, KDColor color) {
   fillRect(KDRect(rect.origin(), 1, rect.height()), color);
   fillRect(KDRect(KDPoint(rect.right(), rect.y()), 1, rect.height()), color);
 }
-

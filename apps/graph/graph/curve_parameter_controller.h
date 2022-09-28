@@ -29,10 +29,7 @@ private:
   bool setParameterAtIndex(int parameterIndex, float f) override {
     return confirmParameterAtIndex(parameterIndex, f);
   }
-  void setRecord(Ion::Storage::Record record) override {
-    Shared::WithRecord::setRecord(record);
-    m_preimageGraphController.setRecord(record);
-  }
+  void setRecord(Ion::Storage::Record record) override;
   bool editableParameter(int index);
   int numberOfParameters() const { return function()->numberOfCurveParameters() + shouldDisplayDerivative(); }
   Escher::HighlightCell * cell(int index) override;

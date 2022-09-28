@@ -151,10 +151,21 @@ bool CurveParameterController::editableParameter(int index) {
   return !isDerivative(index) && function()->getCurveParameter(index).editable;
 }
 
-void CurveParameterController::viewWillAppear() {
-  m_preimageGraphController.setImage(m_cursor->y());
+void CurveParameterController::setRecord(Ion::Storage::Record record) {
+  Shared::WithRecord::setRecord(record);
   m_derivativeNumberCell.setVisible(shouldDisplayDerivative() || function()->numberOfCurveParameters() == 3);
   m_calculationCell.setVisible(shouldDisplayCalculation());
+  resetMemoization();
+  m_selectableTableView.reloadData();
+  m_preimageGraphController.setRecord(record);
+}
+
+void CurveParameterController::viewWillAppear() {
+  m_preimageGraphController.setImage(m_cursor->y());
+  /* We need to update the visibility of the derivativeCell both when the
+   * function changes (in setRecord) and here since show derivative can be
+   * toggled from a sub-menu of this one. */
+  m_derivativeNumberCell.setVisible(shouldDisplayDerivative() || function()->numberOfCurveParameters() == 3);
   resetMemoization();
   m_selectableTableView.reloadData();
   SelectableListViewController::viewWillAppear();

@@ -162,7 +162,8 @@ void FrequencyController::updateHorizontalIndexAfterSelectingNewSeries(int previ
     double valueAtI = valueAtIndex(m_selectedSeries, i);
     if (valueAtI <= currentXValue) {
       // +1 if the next index is closer than the current.
-      m_selectedIndex = i + static_cast<int>(!std::isnan(previousValue) && std::fabs(currentXValue - valueAtI) > std::fabs(currentXValue - previousValue));
+      assert(std::isnan(previousValue) || currentXValue < previousValue);
+      m_selectedIndex = i + static_cast<int>(!std::isnan(previousValue) && (currentXValue - valueAtI > previousValue - currentXValue));
       return;
     }
     previousValue = valueAtI;

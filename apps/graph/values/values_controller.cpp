@@ -1,6 +1,7 @@
 #include "values_controller.h"
 #include <assert.h>
 #include <escher/clipboard.h>
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/decimal.h>
 #include <poincare/layout_helper.h>
 #include <poincare/matrix_layout.h>
@@ -457,10 +458,21 @@ EvenOddExpressionCell * ValuesController::valueCells(int j) {
 }
 
  bool ValuesController::exactValuesButtonAction() {
-  m_exactValuesButton.setState(!m_exactValuesButton.state());
+  bool buttonWasOn = m_exactValuesButton.state();
   resetLayoutMemoization();
-  m_selectableTableView.reloadData();
-  return true;
+  {
+    UserCircuitBreakerCheckpoint checkpoint;
+    if (CircuitBreakerRun(checkpoint)) {
+      m_exactValuesButton.setState(!buttonWasOn);
+      m_selectableTableView.reloadData();
+      return true;
+    } else {
+      m_exactValuesButton.setState(false);
+      resetLayoutMemoization();
+      m_selectableTableView.reloadData();
+      return buttonWasOn;
+    }
+  }
 }
 
 /* ValuesController::ValuesSelectableTableView */

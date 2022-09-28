@@ -19,14 +19,16 @@ private:
     ColumnPrefaceDataSource(int prefaceColumn, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceColumn(prefaceColumn), m_prefaceRow(-1) {}
 
     void setPrefaceRow(int row) { m_prefaceRow = row; }
-    bool prefaceFullyInFrame(int offset) const { return offset <= m_mainDataSource->cumulatedWidthFromIndex(m_prefaceColumn); }
+    bool prefaceFullyInFrame(int offset);
     int numberOfColumns() const override { return 1; }
     /* Calling relativeRow in rowHeight with this particular implementation
      * would cause an infinite loop. */
 
   private:
-    KDCoordinate nonMemoizedRowHeight(int j) override { assert(m_mainDataSource->rowHeight(j) == m_mainDataSource->rowHeight(0)); return m_mainDataSource->rowHeight(j); }
-    int relativeColumn(int i) override { assert(i == 0); return m_prefaceColumn; }
+    KDCoordinate nonMemoizedCumulatedWidthFromIndex(int i) override;
+    int nonMemoizedIndexFromCumulatedWidth(KDCoordinate offsetX) override;
+
+    int relativeColumn(int i) override { assert(i == 0 || i == 1); return m_prefaceColumn + i; }
     int relativeRow(int j) override { return (m_prefaceRow >= 0 && j == indexFromCumulatedHeight(offset().y())) ? m_prefaceRow : j; }
 
     const int m_prefaceColumn;

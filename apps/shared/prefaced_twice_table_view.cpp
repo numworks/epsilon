@@ -64,4 +64,29 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
   }
 }
 
+bool PrefacedTwiceTableView::ColumnPrefaceDataSource::prefaceFullyInFrame(int offset) {
+  // Do not alter main dataSource memoization
+  m_mainDataSource->lockMemoization(true);
+  bool result = offset <= m_mainDataSource->cumulatedWidthFromIndex(m_prefaceColumn);
+  m_mainDataSource->lockMemoization(false);
+  return result;
+}
+
+KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::nonMemoizedCumulatedWidthFromIndex(int i) {
+  // Do not alter main dataSource memoization
+  assert(i == 0 || i == 1);
+  m_mainDataSource->lockMemoization(true);
+  KDCoordinate result = i == 1 ? m_mainDataSource->columnWidth(m_prefaceColumn) : 0;
+  m_mainDataSource->lockMemoization(false);
+  return result;
+}
+
+int PrefacedTwiceTableView::ColumnPrefaceDataSource::nonMemoizedIndexFromCumulatedWidth(KDCoordinate offsetX) {
+  // Do not alter main dataSource memoization
+  m_mainDataSource->lockMemoization(true);
+  int result = offsetX <= m_mainDataSource->columnWidth(m_prefaceColumn) ? 0 : 1;
+  m_mainDataSource->lockMemoization(false);
+  return result;
+}
+
 }

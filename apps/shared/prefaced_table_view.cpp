@@ -89,4 +89,77 @@ void PrefacedTableView::layoutSubviews(bool force) {
   layoutSubviewsInRect(bounds(), force);
 }
 
+KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedColumnWidth(int i) {
+  // Do not alter main dataSource memoization
+  m_mainDataSource->lockMemoization(true);
+  KDCoordinate result = m_mainDataSource->columnWidth(relativeColumn(i));
+  m_mainDataSource->lockMemoization(false);
+  return result;
+}
+
+KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedRowHeight(int j) {
+  // Do not alter main dataSource memoization
+  m_mainDataSource->lockMemoization(true);
+  KDCoordinate result = m_mainDataSource->rowHeight(relativeRow(j));
+  m_mainDataSource->lockMemoization(false);
+  return result;
+}
+
+KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedCumulatedWidthFromIndex(int i) {
+  // Do not alter main dataSource memoization
+  m_mainDataSource->lockMemoization(true);
+  KDCoordinate result = m_mainDataSource->cumulatedWidthFromIndex(relativeColumn(i));
+  m_mainDataSource->lockMemoization(false);
+  return result;
+}
+
+KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedCumulatedHeightFromIndex(int j) {
+  // Do not alter main dataSource memoization
+  m_mainDataSource->lockMemoization(true);
+  KDCoordinate result = m_mainDataSource->cumulatedHeightFromIndex(relativeRow(j));
+  m_mainDataSource->lockMemoization(false);
+  return result;
+}
+
+int PrefacedTableView::IntermediaryDataSource::nonMemoizedIndexFromCumulatedWidth(KDCoordinate offsetX) {
+  // Do not alter main dataSource memoization
+  m_mainDataSource->lockMemoization(true);
+  int result = m_mainDataSource->indexFromCumulatedWidth(offsetX);
+  m_mainDataSource->lockMemoization(false);
+  return result;
+}
+
+int PrefacedTableView::IntermediaryDataSource::nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) {
+  // Do not alter main dataSource memoization
+  m_mainDataSource->lockMemoization(true);
+  int result = m_mainDataSource->indexFromCumulatedHeight(offsetY);
+  m_mainDataSource->lockMemoization(false);
+  return result;
+}
+
+bool PrefacedTableView::PrefaceDataSource::prefaceFullyInFrame(int offset) {
+  // Do not alter main dataSource memoization
+  m_mainDataSource->lockMemoization(true);
+  bool result = offset <= m_mainDataSource->cumulatedHeightFromIndex(m_prefaceRow);
+  m_mainDataSource->lockMemoization(false);
+  return result;
+}
+
+KDCoordinate PrefacedTableView::PrefaceDataSource::nonMemoizedCumulatedHeightFromIndex(int j) {
+  // Do not alter main dataSource memoization
+  assert(j == 0 || j == 1);
+  m_mainDataSource->lockMemoization(true);
+  KDCoordinate result = j == 1 ? m_mainDataSource->rowHeight(m_prefaceRow) : 0;
+  m_mainDataSource->lockMemoization(false);
+  return result;
+}
+
+int PrefacedTableView::PrefaceDataSource::nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) {
+  // Do not alter main dataSource memoization
+  m_mainDataSource->lockMemoization(true);
+  int result = offsetY <= m_mainDataSource->rowHeight(m_prefaceRow) ? 0 : 1;
+  m_mainDataSource->lockMemoization(false);
+  return result;
+}
+
 }

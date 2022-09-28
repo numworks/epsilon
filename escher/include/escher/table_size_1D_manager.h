@@ -17,6 +17,7 @@ public:
   virtual int computeIndexFromCumulatedSize(KDCoordinate offset, KDCoordinate defaultSize) = 0;
 
   virtual void resetMemoization(bool force = true) {}
+  virtual void lockMemoization(bool state) const {}
 };
 
 /* Use RegularTableSize1DManager if the height or with is constant.
@@ -53,6 +54,7 @@ public:
   int computeIndexFromCumulatedSize(KDCoordinate offset, KDCoordinate defaultSize) override;
 
   void resetMemoization(bool force = true) override;
+  void lockMemoization(bool state) const override;
 protected:
   virtual int numberOfLines() const = 0; // Return number of rows or columns
   virtual KDCoordinate sizeAtIndex(int i) const = 0;
@@ -64,7 +66,6 @@ private:
   int getMemoizedIndex(int index) const;
   void setMemoizationIndex(int index);
   void shiftMemoization(bool lowerIndex);
-  void lockMemoization(bool state) const;
   KDCoordinate m_memoizedSizes[k_memoizedLinesCount];
   KDCoordinate m_memoizedCumulatedSizeOffset;
   KDCoordinate m_memoizedTotalSize;

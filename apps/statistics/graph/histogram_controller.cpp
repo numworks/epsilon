@@ -282,7 +282,7 @@ void HistogramController::updateHorizontalIndexAfterSelectingNewSeries(int previ
    *             ^ select index 1 when moving down
    *
    * But in the case where bars do not start on the same spot, selected index
-   * should be offseted so that you always select the bar just above or under
+   * should be offsetted so that you always select the bar just above or under
    * the previously selected one:
    *           _ _ _ _
    * series1: | | | | |

@@ -162,6 +162,11 @@ int ValuesController::typeAtLocation(int i, int j) {
   return Shared::ValuesController::typeAtLocation(i, j);
 }
 
+void ValuesController::viewDidDisappear() {
+  m_exactValuesButton.setState(false);
+  Shared::ValuesController::viewDidDisappear();
+}
+
 // SelectableTableViewDelegate
 
 void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {

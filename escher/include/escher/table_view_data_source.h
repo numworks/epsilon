@@ -24,10 +24,9 @@ public:
   KDCoordinate rowHeight(int j);
   /* return the number of pixels to include in offset to display the column i
    * at the top.
-   * TODO: These are virtual only for BorderTableViewDataSource. We might find
-   * a way to avoid having this in the vtable ? */
-  virtual KDCoordinate cumulatedWidthFromIndex(int i);
-  virtual KDCoordinate cumulatedHeightFromIndex(int j);
+   */
+  KDCoordinate cumulatedWidthFromIndex(int i);
+  KDCoordinate cumulatedHeightFromIndex(int j);
   /* return the number of columns (starting with first ones) that can be fully
    * displayed in offsetX pixels.
    * Caution: if the offset is exactly the size of n columns, the function
@@ -39,6 +38,7 @@ public:
   virtual int typeAtLocation(int i, int j) = 0;
 
   virtual void resetMemoization(bool force = true);
+  void lockMemoization(bool state);
 
 protected:
   /* These should always be overriden unless sizes are regular, in which case
@@ -50,8 +50,11 @@ protected:
   virtual KDCoordinate defaultColumnWidth() { return TableSize1DManager::k_undefinedSize; }
   virtual KDCoordinate defaultRowHeight() { return TableSize1DManager::k_undefinedSize; }
 
-  KDCoordinate nonMemoizedCumulatedWidthFromIndex(int i);
-  KDCoordinate nonMemoizedCumulatedHeightFromIndex(int j);
+  virtual KDCoordinate nonMemoizedCumulatedWidthFromIndex(int i);
+  virtual KDCoordinate nonMemoizedCumulatedHeightFromIndex(int j);
+
+  virtual int nonMemoizedIndexFromCumulatedWidth(KDCoordinate offsetX);
+  virtual int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY);
 
   /* These handle the potential memoization of sizes, the computation of
    * cumulatedXFromIndex, and the computation of indexFromCumulatedX.

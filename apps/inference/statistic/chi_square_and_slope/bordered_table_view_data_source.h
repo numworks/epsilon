@@ -10,11 +10,12 @@ class BorderedTableViewDataSource : public Escher::TableViewDataSource {
 public:
   virtual KDCoordinate verticalBorderWidth() { return 0; }
   virtual KDCoordinate horizontalBorderHeight() { return 0; }
-  KDCoordinate cumulatedWidthFromIndex(int i) override {
-    return Escher::TableViewDataSource::cumulatedWidthFromIndex(i) + (i == numberOfColumns() ? i - 1 : i) * verticalBorderWidth();
+private:
+  KDCoordinate nonMemoizedCumulatedWidthFromIndex(int i) override {
+    return Escher::TableViewDataSource::nonMemoizedCumulatedWidthFromIndex(i) + (i == numberOfColumns() ? i - 1 : i) * verticalBorderWidth();
   }
-  KDCoordinate cumulatedHeightFromIndex(int j) override {
-    return Escher::TableViewDataSource::cumulatedHeightFromIndex(j) + j * horizontalBorderHeight();
+  KDCoordinate nonMemoizedCumulatedHeightFromIndex(int j) override {
+    return Escher::TableViewDataSource::nonMemoizedCumulatedHeightFromIndex(j) + j * horizontalBorderHeight();
   }
 };
 

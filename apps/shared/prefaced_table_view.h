@@ -48,10 +48,21 @@ protected:
     int typeAtLocation(int i, int j) override { return m_mainDataSource->typeAtLocation(relativeColumn(i), relativeRow(j)); }
 
   protected:
-    KDCoordinate nonMemoizedColumnWidth(int i) override { return m_mainDataSource->columnWidth(relativeColumn(i)); }
-    KDCoordinate nonMemoizedRowHeight(int j) override { return m_mainDataSource->rowHeight(relativeRow(j)); }
-    virtual int relativeColumn(int i) = 0;
-    virtual int relativeRow(int j) = 0;
+    KDCoordinate nonMemoizedColumnWidth(int i) override;
+    KDCoordinate nonMemoizedRowHeight(int j) override;
+
+    KDCoordinate nonMemoizedCumulatedWidthFromIndex(int i) override;
+    KDCoordinate nonMemoizedCumulatedHeightFromIndex(int j) override;
+
+    /* WARNING: This method works only if relativeColumn(i) == i.
+     * Else, it should be overriden.*/
+    int nonMemoizedIndexFromCumulatedWidth(KDCoordinate offsetX) override;
+    /* WARNING: This method works only if relativeRow(j) == j.
+     * Else, it should be overriden.*/
+    int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) override;
+
+    virtual int relativeColumn(int i) { return i; }
+    virtual int relativeRow(int j) { return j; }
 
     Escher::TableViewDataSource * m_mainDataSource;
   };
@@ -61,12 +72,14 @@ protected:
     PrefaceDataSource(int prefaceRow, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceRow(prefaceRow) {}
 
     int prefaceRow() const { return m_prefaceRow; }
-    bool prefaceFullyInFrame(int offset) const { return offset <= m_mainDataSource->cumulatedHeightFromIndex(m_prefaceRow); }
+    bool prefaceFullyInFrame(int offset);
     int numberOfRows() const override { return 1; }
 
   private:
-    int relativeColumn(int i) override { return i; }
-    int relativeRow(int j) override { assert(j == 0); return m_prefaceRow; }
+    KDCoordinate nonMemoizedCumulatedHeightFromIndex(int j) override;
+    int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) override;
+
+    int relativeRow(int j) override { assert(j == 0 || j == 1); return m_prefaceRow + j; }
 
     const int m_prefaceRow;
   };

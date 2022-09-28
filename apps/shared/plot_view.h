@@ -58,9 +58,10 @@ public:
   void drawSegment(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> a, Poincare::Coordinate2D<float> b, KDColor color, bool thick = false) const;
   void drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color) const;
   void drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Poincare::Coordinate2D<float> xy, KDColor color) const;
+  void drawArrowhead(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> xy, Poincare::Coordinate2D<float> dxy, float width, KDColor color, bool thick = false, float tanAngle = 1.f / 3.f) const;
   /* These methods use the stamping state-machine.
    * FIXME They may be moved into a helper. */
-  void setDashed(bool dashed) const { m_stampDashIndex = dashed ? k_stampIndexNoDash : 0; }
+  void setDashed(bool dashed) const { m_stampDashIndex = dashed ? 0 : k_stampIndexNoDash; }
   void straightJoinDots(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> pixelA, Poincare::Coordinate2D<float> pixelB, KDColor color, bool thick) const;
   void stamp(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> p, KDColor color, bool thick) const;
   bool pointsInSameStamp(Poincare::Coordinate2D<float> p1, Poincare::Coordinate2D<float> p2, bool thick) const;

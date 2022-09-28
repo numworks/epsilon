@@ -85,6 +85,9 @@ protected:
     bool m_patternWithoutCurve;
     bool m_drawStraightLinesEarly;
   };
+
+  // Methods for drawing special curves
+  void drawArcOfEllipse(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> center, float width, float height, float angleStart, float angleEnd, KDColor color) const;
 };
 
 }

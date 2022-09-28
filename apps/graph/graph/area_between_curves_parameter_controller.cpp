@@ -18,7 +18,7 @@ Ion::Storage::Record AreaBetweenCurvesParameterController::DerivableActiveFuncti
       continue;
     }
     ExpiringPointer<ContinuousFunction> function = store->modelForRecord(currentRecord);
-    if (ContinuousFunctionStore::isFunctionActiveAndDerivable(function.operator->(), nullptr)) {
+    if (ContinuousFunctionStore::IsFunctionActiveAndDerivable(function.operator->(), nullptr)) {
       if (index == numberOfDerivableActiveFunctionsFound) {
         return currentRecord;
       }

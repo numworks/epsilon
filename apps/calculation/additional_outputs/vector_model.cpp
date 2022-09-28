@@ -21,8 +21,8 @@ void VectorModel::recomputeViewRange() {
 
   /* When the vector points downward, we need to keep space around the origin
    * for the arc which extends on the other side of the vector. */
-  float arcHorizontalMargin = x > 0 && y < 0 && !verticallyCapped ? VectorGraphView::k_arcRadiusInPixels * ratio : 0.f;
-  float arcVerticalMargin = y < 0 && verticallyCapped ? VectorGraphView::k_arcRadiusInPixels * ratio : 0.f;
+  float arcHorizontalMargin = x > 0 && y < 0 && !verticallyCapped ? VectorGraphPolicy::k_arcRadiusInPixels * ratio : 0.f;
+  float arcVerticalMargin = y < 0 && verticallyCapped ? VectorGraphPolicy::k_arcRadiusInPixels * ratio : 0.f;
 
   width += arcHorizontalMargin;
   height += arcVerticalMargin;

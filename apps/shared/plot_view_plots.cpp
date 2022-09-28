@@ -103,7 +103,11 @@ WithCurves::CurveDrawing::CurveDrawing(Curve2D<float> curve, void * model, void 
   m_dashed(dashed),
   m_patternWithoutCurve(false),
   m_drawStraightLinesEarly(false)
-{}
+{
+  if (m_tStart > m_tEnd) {
+    std::swap(m_tStart, m_tEnd);
+  }
+}
 
 void WithCurves::CurveDrawing::setPatternOptions(Pattern pattern, Curve2D<float> patternLowerBound, Curve2D<float> patternUpperBound, bool patternWithoutCurve) {
   m_pattern = pattern;
@@ -120,6 +124,7 @@ void WithCurves::CurveDrawing::setPrecisionOptions(bool drawStraightLinesEarly, 
 
 void WithCurves::CurveDrawing::draw(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   assert(plotView);
+  assert(m_tStart <= m_tEnd);
 
   plotView->setDashed(m_dashed);
 
@@ -166,6 +171,8 @@ void WithCurves::CurveDrawing::draw(const AbstractPlotView * plotView, KDContext
 
     joinDots(plotView, ctx, rect, previousT, previousXY, t, xy, k_maxNumberOfIterations, m_discontinuity);
   } while (!isLastSegment);
+
+  plotView->setDashed(false);
 }
 
 static bool pointInBoundingBox(float x1, float y1, float x2, float y2, float xC, float yC) {
@@ -261,6 +268,24 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView * plotView, KDCon
   joinDots(plotView, ctx, rect, t1, xy1, t12, xy12, remainingIterations, discontinuous ? m_discontinuity : NoDiscontinuity);
   joinDots(plotView, ctx, rect, t12, xy12, t2, xy2, remainingIterations, discontinuous ? m_discontinuity : NoDiscontinuity);
 
+}
+
+void WithCurves::drawArcOfEllipse(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, Coordinate2D<float> center, float width, float height, float angleStart, float angleEnd, KDColor color) const {
+  assert(plotView);
+
+  constexpr float segmentLength = 2.f;
+  float radiusInPixel = std::max(plotView->pixelWidth() * width, plotView->pixelHeight() * height);
+  float angleStep = segmentLength / radiusInPixel;
+  float parameters[] = { center.x1(), center.x2(), width, height };
+  Curve2D<float> arc = [](float t, void * model, void *) {
+    float * parameters = reinterpret_cast<float *>(model);
+    float x = parameters[0];
+    float y = parameters[1];
+    float a = parameters[2];
+    float b = parameters[3];
+    return Coordinate2D<float>(a * std::cos(t) + x, b * std::sin(t) + y);
+  };
+  CurveDrawing(arc, parameters, nullptr, angleStart, angleEnd, angleStep, color).draw(plotView, ctx, rect);
 }
 
 }

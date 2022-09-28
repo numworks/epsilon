@@ -76,6 +76,7 @@ void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis pa
 }
 
 void AbstractPlotView::drawSegment(KDContext * ctx, KDRect rect, Coordinate2D<float> a, Coordinate2D<float> b, KDColor color, bool thick) const {
+  setDashed(false);
   Coordinate2D<float> pa = floatToPixel2D(a);
   Coordinate2D<float> pb = floatToPixel2D(b);
   straightJoinDots(ctx, rect, pa, pb, color, thick);
@@ -138,6 +139,34 @@ void AbstractPlotView::drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Po
   if (rect.intersects(dotRect)) {
     ctx->blendRectWithMask(dotRect, color, mask, workingBuffer);
   }
+}
+
+void AbstractPlotView::drawArrowhead(KDContext * ctx, KDRect rect, Coordinate2D<float> xy, Coordinate2D<float> dxy, float width, KDColor color, bool thick, float tanAngle) const {
+  /*
+   *            /A     |                ^
+   *          /        h                |v
+   *        / \ angle  |             u  |
+   *  xy2 <------------------xy    <----+
+   *        \
+   *          \
+   *            \B
+   *
+   *      -- l --
+   */
+
+  Coordinate2D<float> xy2(xy.x1() + dxy.x1(), xy.x2() + dxy.x2());
+  float h = 0.5f * width;
+  float l = h / tanAngle;
+
+  float bodyLength = std::sqrt(std::pow(dxy.x1(), 2.f) + std::pow(dxy.x2(), 2.f));
+  Coordinate2D<float> u(dxy.x1() / bodyLength, dxy.x2() / bodyLength);
+  Coordinate2D<float> v(u.x2(), -u.x1());
+
+  Coordinate2D<float> xyA(xy2.x1() - l * u.x1() + h * v.x1(), xy2.x2() - l * u.x2() + h * v.x2());
+  Coordinate2D<float> xyB(xy2.x1() - l * u.x1() - h * v.x1(), xy2.x2() - l * u.x2() - h * v.x2());
+
+  drawSegment(ctx, rect, xy2, xyB, color, thick);
+  drawSegment(ctx, rect, xy2, xyA, color, thick);
 }
 
 View * AbstractPlotView::subviewAtIndex(int i) {

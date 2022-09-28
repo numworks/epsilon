@@ -14,41 +14,18 @@ void ComplexGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext *
   // - Draw the segment from the origin to the dot (real, imag)
   plotView->drawSegment(ctx, rect, Coordinate2D<float>(0.f, 0.f), Coordinate2D<float>(real, imag), Palette::GrayDark);
 
-  /* Draw the partial ellipse indicating the angle θ
-   * - the ellipse parameters are a = |real|/5 and b = |imag|/5,
-   * - the parametric ellipse equation is x(t) = a*cos(th*t) and y(t) = b*sin(th*t)
-   *   with th computed in order to be the intersection of the line forming an
-   *   angle θ with the abscissa and the ellipsis
-   * - we draw the ellipse for t in [0,1] to represent it from the abscissa axis
-   *   to the phase of the complex
-   */
-
-  /* Compute th: th is the intersection of ellipsis of equation (a*cos(t), b*sin(t))
-   * and the line of equation (real*t,imag*t).
-   * (a*cos(t), b*sin(t)) = (real*t,imag*t) --> tan(t) = sign(a)*sign(b) (± π)
-   * --> t = π/4 [π/2] according to sign(a) and sign(b). */
+  // - Draw the partial ellipse indicating the angle θ
+  constexpr float ellipseScale = 0.2f;
+  float a = std::fabs(real) * ellipseScale;
+  float b = std::fabs(imag) * ellipseScale;
   float th = real < 0.f ? 3.f * M_PI_4 : M_PI_4;
   th = imag < 0.f ? -th : th;
-
-  // Compute ellipsis parameters a and b
-  float factor = 5.f;
-  float a = std::fabs(real) / factor;
-  float b = std::fabs(imag) / factor;
-
   // Avoid flat ellipsis for edge cases (for real = 0, the case imag = 0 is excluded)
   if (real == 0.0f) {
-    a = 1.f / factor;
+    a = 1.f * ellipseScale;
     th = imag < 0.f ? -M_PI_2 : M_PI_2;
   }
-  std::complex<float> parameters(a,b);
-
-  Curve2D<float> ellipse = [](float t, void * model, void * context) {
-    std::complex<float> param = *reinterpret_cast<std::complex<float> *>(model);
-    float th = *reinterpret_cast<float *>(context);
-    return Coordinate2D<float>(param.real() * std::cos(t * th), param.imag() * std::sin(t * th));
-  };
-  CurveDrawing drawing(ellipse, &parameters, &th, 0.f, 1.f, 0.01f, Palette::GrayDark);
-  drawing.draw(plotView, ctx, rect);
+  drawArcOfEllipse(plotView, ctx, rect, Coordinate2D<float>(0.f, 0.f), a, b, 0.f, th, Palette::GrayDark);
 
   // - Draw dashed segment to indicate real and imaginary
   plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, imag, 0.f, real, Palette::Red, 1, 3);

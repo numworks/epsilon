@@ -38,77 +38,33 @@ void WithGrid::drawGridLines(const AbstractPlotView * plotView, KDContext * ctx,
 void SimpleAxis::drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
   assert(plotView);
 
-  AbstractPlotView::Axis otherAxis;
-  float tMin, tMax;
-  float labelPos = 0.f;
-  AbstractPlotView::RelativePosition labelRelativeX, labelRelativeY;
-  if (axis == AbstractPlotView::Axis::Horizontal) {
-    otherAxis = AbstractPlotView::Axis::Vertical;
-    tMin = plotView->range()->xMin();
-    tMax = plotView->range()->xMax();
-    labelRelativeX = AbstractPlotView::RelativePosition::There;
-    labelRelativeY = AbstractPlotView::RelativePosition::After;
-  } else {
-    otherAxis = AbstractPlotView::Axis::Horizontal;
-    tMin = plotView->range()->yMin();
-    tMax = plotView->range()->yMax();
-    labelRelativeX = AbstractPlotView::RelativePosition::Before;
-    labelRelativeY = AbstractPlotView::RelativePosition::There;
-  }
+  AbstractPlotView::Axis otherAxis = AbstractPlotView::OtherAxis(axis);
   float graduationFloatLength = k_labelGraduationHalfLength * plotView->pixelLength(otherAxis);
-
-  if (tMin >= 0.f) {
-    labelPos = tMin;
-    if (axis == AbstractPlotView::Axis::Horizontal) {
-      labelRelativeY = AbstractPlotView::RelativePosition::Before;
-    } else {
-      labelRelativeX = AbstractPlotView::RelativePosition::After;
-    }
-  } else if (tMax <= 0.f) {
-    labelPos = tMax;
-    if (axis == AbstractPlotView::Axis::Horizontal) {
-      labelRelativeY = AbstractPlotView::RelativePosition::After;
-    } else {
-      labelRelativeX = AbstractPlotView::RelativePosition::Before;
-    }
-  }
 
   // - Draw plain axis
   plotView->drawStraightSegment(ctx, rect, axis, 0.f, -INFINITY, INFINITY, k_color);
 
   // - Draw ticks and eventual labels
+  float tMax = plotView->rangeMax(axis);
   int i = 0;
-  float t = labelPosition(i, plotView, axis);
+  float t = tickPosition(i, plotView, axis);
   while (t <= tMax) {
-    if (t == 0.f) {
-      if (axis == AbstractPlotView::Axis::Horizontal) {
-        /* FIXME This case is tied to the presence of a second axis. Get rid of
-         * this coupling. */
-        plotView->drawLabel(ctx, rect, "0", Coordinate2D<float>(0.f, 0.f), AbstractPlotView::RelativePosition::Before, labelRelativeY, k_color);
-      }
-    } else {
-      plotView->drawStraightSegment(ctx, rect, otherAxis, t, -graduationFloatLength, graduationFloatLength, k_color);
-      const char * text = labelText(i);
-      if (text) {
-        Coordinate2D<float> xy = axis == AbstractPlotView::Axis::Horizontal ? Coordinate2D<float>(t, labelPos) : Coordinate2D<float>(labelPos, t);
-        plotView->drawLabel(ctx, rect, text, xy, labelRelativeX, labelRelativeY, k_color);
-      }
-    }
-
+    plotView->drawStraightSegment(ctx, rect, otherAxis, t, -graduationFloatLength, graduationFloatLength, k_color);
+    drawLabel(i, t, plotView, ctx, rect, axis);
     i++;
-    t = labelPosition(i, plotView, axis);
+    t = tickPosition(i, plotView, axis);
   }
 }
 
-float SimpleAxis::labelPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
-  float step = labelStep(plotView, axis);
+float SimpleAxis::tickPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
+  float step = tickStep(plotView, axis);
   float tMin = axis == AbstractPlotView::Axis::Horizontal ? plotView->range()->xMin() : plotView->range()->yMin();
   assert(std::fabs(std::round(tMin / step)) < INT_MAX);
-  int indexOfOrigin = std::round(-tMin / step) - 1;
+  int indexOfOrigin = std::round(-tMin / step);
   return step * (i - indexOfOrigin);
 }
 
-float SimpleAxis::labelStep(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
+float SimpleAxis::tickStep(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
   float step = axis == AbstractPlotView::Axis::Horizontal ? plotView->range()->xGridUnit() : plotView->range()->yGridUnit();
   return 2.f * step;
 }
@@ -121,14 +77,56 @@ void LabeledAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis
   }
 }
 
-const char * LabeledAxis::labelText(int i) const {
-  assert(i < k_maxNumberOfLabels);
-  return m_labels[i];
+void LabeledAxis::forceRelativePosition(AbstractPlotView::RelativePosition position) {
+  m_forceRelativePosition = true;
+  m_relativePosition = position;
 }
 
 int LabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis)  {
-  float t = labelPosition(i, plotView, axis);
+  float t = tickPosition(i, plotView, axis);
   return Poincare::PrintFloat::ConvertFloatToText(t, m_labels[i], k_labelBufferMaxSize, k_labelBufferMaxGlyphLength, k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal).GlyphLength;
+}
+
+void LabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
+  assert(i < k_maxNumberOfLabels);
+  const char * text = m_labels[i];
+  if (text[0] == '\0' || (t == 0.f && axis == AbstractPlotView::Axis::Vertical)) {
+    return;
+  }
+
+  if (i == 0) {
+    computeLabelsRelativePosition(plotView, axis);
+  }
+  CurveViewRange * range = plotView->range();
+  float otherMin, otherMax;
+  AbstractPlotView::RelativePosition xRelative, yRelative;
+  if (axis == AbstractPlotView::Axis::Horizontal) {
+    otherMin = range->yMin();
+    otherMax = range->yMax();
+    xRelative = t == 0.f ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::There;
+    yRelative = m_relativePosition;
+  } else {
+    otherMin = range->xMin();
+    otherMax = range->xMax();
+    xRelative = m_relativePosition;
+    yRelative = AbstractPlotView::RelativePosition::There;
+  }
+  float otherPos = std::clamp(0.f, otherMin, otherMax);
+
+  Coordinate2D<float> xy = axis == AbstractPlotView::Axis::Horizontal ? Coordinate2D<float>(t, otherPos) : Coordinate2D<float>(otherPos, t);
+  plotView->drawLabel(ctx, rect, text, xy, xRelative, yRelative, k_color);
+}
+
+void LabeledAxis::computeLabelsRelativePosition(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
+  if (m_forceRelativePosition) {
+    return;
+  }
+
+  if (axis == AbstractPlotView::Axis::Horizontal) {
+    m_relativePosition = plotView->range()->yMin() > 0.f ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::After;
+  } else {
+    m_relativePosition = plotView->range()->xMin() > 0.f ? AbstractPlotView::RelativePosition::After : AbstractPlotView::RelativePosition::Before;
+  }
 }
 
 }

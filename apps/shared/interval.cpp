@@ -2,7 +2,7 @@
 #include <cmath>
 #include <poincare/print_float.h>
 #include "interval.h"
-#include "poincare_helpers.h"
+#include "utils.h"
 
 namespace Shared {
 
@@ -85,7 +85,7 @@ void Interval::computeElements() {
        * instead of 2.22e-16. */
       m_intervalBuffer[i] = 0.0;
     } else {
-      m_intervalBuffer[i] = PoincareHelpers::ValueOfFloatAsDisplayed<double>(m_parameters.start() + i * m_parameters.step(), precision, nullptr);
+      m_intervalBuffer[i] = Utils::ValueOfFloatAsDisplayed<double>(m_parameters.start() + i * m_parameters.step(), precision, nullptr);
       checkForElementZero = checkForElementZero && m_intervalBuffer[i] < 0.0;
     }
   }

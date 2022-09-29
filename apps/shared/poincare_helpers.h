@@ -25,10 +25,6 @@ inline int ConvertFloatToTextWithDisplayMode(T d, char * buffer, int bufferSize,
   return Poincare::PrintFloat::ConvertFloatToText(d, buffer, bufferSize, Poincare::PrintFloat::glyphLengthForFloatWithPrecision(numberOfSignificantDigits), numberOfSignificantDigits, displayMode).CharLength;
 }
 
-template <class T>
-// Return the nearest number from t's representation with given precision.
-T ValueOfFloatAsDisplayed(T t, int precision, Poincare::Context * context);
-
 inline int Serialize(const Poincare::Expression e, char * buffer, int bufferSize, int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits) {
   return e.serialize(buffer, bufferSize, Poincare::Preferences::sharedPreferences()->displayMode(), numberOfSignificantDigits);
 }
@@ -123,9 +119,6 @@ inline typename Poincare::Coordinate2D<double> NextIntersection(const Poincare::
   Poincare::Preferences::AngleUnit angleUnit = Poincare::Expression::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), expression, context);
   return e.nextIntersection(symbol, start, max, context, complexFormat, angleUnit, expression, relativePrecision, minimalStep, maximalStep);
 }
-
-bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context);
-bool ShouldOnlyDisplayExactOutput(Poincare::Expression input);
 
 }
 

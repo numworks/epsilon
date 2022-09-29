@@ -136,7 +136,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
       // Outputs hold exact output, approximate output and its duplicate
       constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
       Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
-      PoincareHelpers::ParseAndSimplifyAndApproximate(addressOfCalculation + calcSize, &(outputs[0]), &(outputs[1]), context, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+      PoincareHelpers::ParseAndSimplifyAndApproximate(addressOfCalculation + calcSize, &(outputs[0]), &(outputs[1]), context);
       if (ExamModeConfiguration::unitsAreForbidden() && outputs[1].hasUnit()) {
         /* Hide results with units on units if required by the exam mode
          * configuration. */

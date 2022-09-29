@@ -74,8 +74,8 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
     return true;
   }
   FunctionApp * myApp = FunctionApp::app();
-  assert(!m_record.isNull());
-  ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(m_record);
+  assert(!selectedRecord().isNull());
+  ExpiringPointer<Function> function = myApp->functionStore()->modelForRecord(selectedRecord());
 
   /* TODO We would like to assert that the function is not a parametered
    * function, so we can indeed evaluate the function for parameter x. */
@@ -96,7 +96,7 @@ void SumGraphController::makeCursorVisibleAndReload() {
 }
 void SumGraphController::makeCursorVisible() {
   float position = m_cursor->x();
-  ExpiringPointer<Function> function = FunctionApp::app()->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<Function> function = FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
   float y = function->evaluateXYAtParameter(position, FunctionApp::app()->localContext()).x2();
   // Do not zoom out if user is selecting first parameter
   makeDotVisible(position, y, m_step != Step::FirstParameter);
@@ -114,7 +114,6 @@ void SumGraphController::makeDotVisible(float x, float y, bool zoomOut) {
 
 void SumGraphController::setRecord(Ion::Storage::Record record) {
   m_graphView->selectRecord(record);
-  m_record = record;
 }
 
 bool SumGraphController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
@@ -168,7 +167,7 @@ void SumGraphController::reloadBannerView() {
   Poincare::Layout functionLayout;
   if (m_step == Step::Result) {
     endSum = m_cursor->x();
-    assert(!m_record.isNull());
+    assert(!selectedRecord().isNull());
     Poincare::Context * context = FunctionApp::app()->localContext();
     Poincare::Expression sum = createSumExpression(m_startSum, endSum, context);
     result = PoincareHelpers::ApproximateToScalar<double>(sum, context);
@@ -182,7 +181,7 @@ void SumGraphController::reloadBannerView() {
 }
 
 Poincare::Expression SumGraphController::createSumExpression(double startSum, double endSum, Poincare::Context * context) {
-  ExpiringPointer<Function> function = FunctionApp::app()->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<Function> function = FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
   return function->sumBetweenBounds(startSum, endSum, context);
 }
 

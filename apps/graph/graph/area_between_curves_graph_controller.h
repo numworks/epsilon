@@ -15,7 +15,7 @@ private:
   void makeCursorVisible() override;
   Poincare::Layout createFunctionLayout() override;
   Poincare::Expression createSumExpression(double startSum, double endSum, Poincare::Context * context) override;
-  Ion::Storage::Record m_secondRecord;
+  Ion::Storage::Record secondSelectedRecord() const { return m_graphView->secondSelectedRecord(); }
 };
 
 }

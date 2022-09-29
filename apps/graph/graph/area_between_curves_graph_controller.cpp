@@ -23,23 +23,23 @@ const char * AreaBetweenCurvesGraphController::title() {
 
 void AreaBetweenCurvesGraphController::viewDidDisappear() {
   m_graphView->selectSecondRecord(nullptr);
-  m_secondRecord = nullptr;
+  secondSelectedRecord() = nullptr;
   IntegralGraphController::viewDidDisappear();
 }
 
 void AreaBetweenCurvesGraphController::setSecondRecord(Ion::Storage::Record record) {
   m_graphView->selectSecondRecord(record);
-  m_secondRecord = record;
+  secondSelectedRecord() = record;
 }
 
 void AreaBetweenCurvesGraphController::makeCursorVisible() {
   float position = m_cursor->x();
-  ExpiringPointer<Shared::Function> functionF = FunctionApp::app()->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<Shared::Function> functionF = FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
   float yF = functionF->evaluateXYAtParameter(position, FunctionApp::app()->localContext()).x2();
   // Do not zoom out if user is selecting first parameter
   makeDotVisible(position, yF, m_step != Step::FirstParameter);
-  assert(!m_secondRecord.isNull());
-  ExpiringPointer<Shared::Function> functionG = FunctionApp::app()->functionStore()->modelForRecord(m_secondRecord);
+  assert(!secondSelectedRecord().isNull());
+  ExpiringPointer<Shared::Function> functionG = FunctionApp::app()->functionStore()->modelForRecord(secondSelectedRecord());
   float yG = functionG->evaluateXYAtParameter(position, FunctionApp::app()->localContext()).x2();
   // zoomOut is always true so that the user can see both dots
   makeDotVisible(position, yG, true);
@@ -48,7 +48,7 @@ void AreaBetweenCurvesGraphController::makeCursorVisible() {
 Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
   constexpr size_t bufferSize = Escher::BufferTextView::k_maxNumberOfChar;
   char buffer[bufferSize];
-  ExpiringPointer<ContinuousFunction> functionF = App::app()->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<ContinuousFunction> functionF = App::app()->functionStore()->modelForRecord(selectedRecord());
   bool functionFisNamed = functionF->isNamed();
   size_t numberOfChars = functionF->nameWithArgument(buffer, bufferSize);
   if (numberOfChars >= bufferSize) {
@@ -58,7 +58,7 @@ Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
   if (numberOfChars >= bufferSize) {
     return Layout();
   }
-  ExpiringPointer<ContinuousFunction> functionG = App::app()->functionStore()->modelForRecord(m_secondRecord);
+  ExpiringPointer<ContinuousFunction> functionG = App::app()->functionStore()->modelForRecord(secondSelectedRecord());
   if (!functionFisNamed && !functionG->isNamed()) {
     /* If both function are unnamed, display "Area = ..."
      * to avoid displaying "integral(|y - y|) = ..." */
@@ -76,9 +76,9 @@ Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
 }
 
 Poincare::Expression AreaBetweenCurvesGraphController::createSumExpression(double startSum, double endSum, Poincare::Context * context) {
-  ExpiringPointer<Shared::Function> functionF = FunctionApp::app()->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<Shared::Function> functionF = FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
   Poincare::Expression expressionF = functionF->expressionReduced(context).clone();
-  ExpiringPointer<Shared::Function> functionG = FunctionApp::app()->functionStore()->modelForRecord(m_secondRecord);
+  ExpiringPointer<Shared::Function> functionG = FunctionApp::app()->functionStore()->modelForRecord(secondSelectedRecord());
   Poincare::Expression expressionG = functionG->expressionReduced(context).clone();
   return Integral::Builder(AbsoluteValue::Builder(Subtraction::Builder(expressionF, expressionG)), Symbol::Builder(UCodePointUnknown), Float<double>::Builder(startSum), Float<double>::Builder(endSum));
 }

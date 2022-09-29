@@ -38,7 +38,7 @@ double IntegralGraphController::cursorNextStep(double x, int direction) {
 }
 
 Layout IntegralGraphController::createFunctionLayout() {
-  ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(selectedRecord());
   constexpr size_t bufferSize = SymbolAbstract::k_maxNameSize+5; // f(x)dx
   char buffer[bufferSize];
   const char * dx = "dx";

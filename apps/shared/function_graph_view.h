@@ -22,6 +22,9 @@ public:
   virtual void setAreaHighlightColor(bool highlightColor);
   void resetCurvesInterrupted() override { m_functionsInterrupted = 0; }
 
+  Ion::Storage::Record selectedRecord() const { return m_selectedRecord; }
+  Ion::Storage::Record secondSelectedRecord() const { return m_secondSelectedRecord; }
+
 protected:
   void reloadBetweenBounds(float start, float end);
   Ion::Storage::Record m_selectedRecord;

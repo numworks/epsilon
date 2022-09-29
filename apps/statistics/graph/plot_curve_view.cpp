@@ -4,18 +4,22 @@
 #include <algorithm>
 #include <assert.h>
 
+using namespace Poincare;
+using namespace Shared;
+
 namespace Statistics {
 
-PlotCurveView::PlotCurveView(Shared::CurveViewRange * curveViewRange,
-                             Shared::CurveViewCursor * curveViewCursor,
-                             Shared::CursorView * cursorView,
-                             PlotController * plotController) :
-    // No banners to display
-    Shared::LabeledCurveView(curveViewRange, curveViewCursor, nullptr, cursorView),
-    m_plotController(plotController) {
+// PlotViewPolicy
+
+void PlotViewPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+  for (int i = 0; i < Store::k_numberOfSeries; i++) {
+    if (m_plotController->seriesIsValid(i)) {
+      drawSeriesCurve(plotView, ctx, rect, i);
+    }
+  }
 }
 
-void PlotCurveView::drawSeriesCurve(KDContext * ctx, KDRect rect, int series) const {
+void PlotViewPolicy::drawSeriesCurve(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, int series) const {
   int numberOfPairs = m_plotController->totalValues(series);
   // Draw and connect each points
   KDColor color = Store::colorOfSeriesAtIndex(series);
@@ -23,9 +27,9 @@ void PlotCurveView::drawSeriesCurve(KDContext * ctx, KDRect rect, int series) co
   for (int i = 0; i < numberOfPairs; i++) {
     double x = m_plotController->valueAtIndex(series, i);
     double y = m_plotController->resultAtIndex(series, i);
-    Shared::CurveView::drawDot(ctx, rect, x, y, color);
+    plotView->drawDot(ctx, rect, Dots::Size::Tiny, Coordinate2D<float>(x, y), color);
     if (m_plotController->connectPoints() && i > 0) {
-      Shared::CurveView::drawSegment(ctx, rect, x, y, previousX, previousY, color);
+      plotView->drawSegment(ctx, rect, Coordinate2D<float>(x, y), Coordinate2D<float>(previousX, previousY), color, true);
     }
     previousX = x;
     previousY = y;
@@ -34,28 +38,20 @@ void PlotCurveView::drawSeriesCurve(KDContext * ctx, KDRect rect, int series) co
   if (m_plotController->drawSeriesZScoreLine(series, &x, &y, &u, &v)) {
     // Using brighter colors for the lines
     color = Store::colorLightOfSeriesAtIndex(series);
-    Shared::CurveView::drawSegment(ctx, rect, x, y, u, v, color);
+    plotView->drawSegment(ctx, rect, Coordinate2D<float>(x, y), Coordinate2D<float>(u, v), color, true);
   }
 }
 
-void PlotCurveView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, KDColorWhite);
-  drawGrid(ctx, rect);
-  drawAxes(ctx, rect);
-  simpleDrawBothAxesLabels(ctx, rect);
-  for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    if (m_plotController->seriesIsValid(i)) {
-      drawSeriesCurve(ctx, rect, i);
-    }
-  }
-}
+// PlotCurveView
 
-void PlotCurveView::appendLabelSuffix(Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) {
-  m_plotController->appendLabelSuffix(axis, labelBuffer, maxSize, glyphLength, maxGlyphLength);
-}
-
-float PlotCurveView::labelStepFactor(Axis axis) const {
-  return m_plotController->labelStepMultiplicator(axis);
+PlotCurveView::PlotCurveView(Shared::CurveViewRange * range, Shared::CurveViewCursor * cursor, Shared::CursorView * cursorView, PlotController * plotController) :
+  PlotView(range)
+{
+  // PlotViewPolicy
+  m_plotController = plotController;
+  // PlotPoliy::WithCursor
+  m_cursor = cursor;
+  m_cursorView = cursorView;
 }
 
 }

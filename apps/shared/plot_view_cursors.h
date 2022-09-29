@@ -14,6 +14,9 @@ protected:
 };
 
 class WithCursor {
+public:
+  void setCursorView(CursorView * cursorView) { m_cursorView = cursorView; }
+
 protected:
   CursorView * cursorView(const AbstractPlotView *) const { return m_cursorView; }
   KDRect cursorFrame(AbstractPlotView * plotView);

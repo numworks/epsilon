@@ -181,13 +181,13 @@ View * AbstractPlotView::subviewAtIndex(int i) {
 }
 
 void AbstractPlotView::layoutSubviews(bool force) {
-  View * banner = bannerView();
+  BannerView * banner = bannerView();
   if (banner) {
     banner->setFrame(bannerFrame(), force);
   }
-  View * cursor = cursorView();
+  CursorView * cursor = cursorView();
   if (cursor) {
-    cursor->setFrame(cursorFrame(), force);
+    cursor->setCursorFrame(cursorFrame(), force);
   }
 }
 

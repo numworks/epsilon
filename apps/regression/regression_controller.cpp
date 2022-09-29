@@ -48,8 +48,13 @@ ViewController::TitlesDisplay RegressionController::titlesDisplay() {
 void RegressionController::didBecomeFirstResponder() {
   Model::Type type = m_store->seriesRegressionType(m_series);
   int initialIndex = std::max(0, IndexOfModelType(type));
-  assert(initialIndex < numberOfRows());
-  assert(type == Model::Type::None || type == ModelTypeAtIndex(initialIndex));
+  if (initialIndex >= numberOfRows()) {
+    assert(type == Model::Type::LinearApbx && GlobalPreferences::sharedGlobalPreferences()->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Default);
+    // Type is hidden for selected country, select the first line.
+    initialIndex = 0;
+  } else {
+    assert(type == Model::Type::None || type == ModelTypeAtIndex(initialIndex));
+  }
   selectCellAtLocation(0, initialIndex);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }

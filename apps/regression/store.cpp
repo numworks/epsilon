@@ -31,6 +31,7 @@ Store::Store(Shared::GlobalContext * context, Model::Type * regressionTypes) :
   LinearRegressionStore(context),
   m_regressionTypes(regressionTypes),
   m_exponentialAbxModel(true),
+  m_linearApbxModel(true),
   m_recomputeCoefficients{true, true, true}
 {
   initListsFromStorage();
@@ -332,7 +333,7 @@ double Store::computeDeterminationCoefficient(int series, Poincare::Context * gl
 }
 
 Model * Store::regressionModel(int index) {
-  Model * models[Model::k_numberOfModels] = {&m_noneModel, &m_linearModel, &m_proportionalModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialAebxModel, &m_exponentialAbxModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel, &m_medianModel};
+  Model * models[Model::k_numberOfModels] = {&m_noneModel, &m_linearAxpbModel, &m_proportionalModel, &m_quadraticModel, &m_cubicModel, &m_quarticModel, &m_logarithmicModel, &m_exponentialAebxModel, &m_exponentialAbxModel, &m_powerModel, &m_trigonometricModel, &m_logisticModel, &m_medianModel, &m_linearApbxModel};
   static_assert(sizeof(models) / sizeof(Model *) == Model::k_numberOfModels, "Inconsistency between the number of models in the store and the real number.");
   return models[index];
 }

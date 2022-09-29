@@ -57,17 +57,21 @@ void assert_regression_is(double * xi, double * yi, int numberOfPoints, Model::T
 QUIZ_CASE(linear_regression) {
   double x[] = {1.0, 8.0, 14.0, 79.0};
   double y[] = {-3.581, 20.296, 40.676, 261.623};
-  double coefficients[] = {3.4, -7.0};
+  double coefficientsAxpb[] = {3.4, -7.0};
+  double coefficientsApbx[] = {-7.0, 3.4};
   double r2 = 1.0;
-  assert_regression_is(x, y, 4, Model::Type::Linear, coefficients, r2);
+  assert_regression_is(x, y, 4, Model::Type::LinearAxpb, coefficientsAxpb, r2);
+  assert_regression_is(x, y, 4, Model::Type::LinearApbx, coefficientsApbx, r2);
 }
 
 QUIZ_CASE(linear_regression2) {
   double x[] = {-5.0, 2.0, 4.0, 5.6, 9.0};
   double y[] = {22.0, 1.0, 13.0, 28.36, 78.0};
-  double coefficients[] = {3.31824, 18.1191};
+  double coefficientsAxpb[] = {3.31824, 18.1191};
+  double coefficientsApbx[] = {18.1191, 3.31824};
   double r2 = 0.343;
-  assert_regression_is(x, y, 5, Model::Type::Linear, coefficients, r2);
+  assert_regression_is(x, y, 5, Model::Type::LinearAxpb, coefficientsAxpb, r2);
+  assert_regression_is(x, y, 5, Model::Type::LinearApbx, coefficientsApbx, r2);
 }
 
 QUIZ_CASE(proportional_regression) {

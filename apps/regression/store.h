@@ -77,7 +77,7 @@ private:
   Model * regressionModel(int index);
   Model::Type * m_regressionTypes; // This is a table of size k_numberOfSeries.
   NoneModel m_noneModel;
-  LinearModel m_linearModel;
+  LinearModel m_linearAxpbModel;
   ProportionalModel m_proportionalModel;
   QuadraticModel m_quadraticModel;
   CubicModel m_cubicModel;
@@ -89,6 +89,7 @@ private:
   TrigonometricModel m_trigonometricModel;
   LogisticModel m_logisticModel;
   MedianModel m_medianModel;
+  LinearModel m_linearApbxModel;
   double m_regressionCoefficients[k_numberOfSeries][Model::k_maxNumberOfCoefficients];
   double m_determinationCoefficient[k_numberOfSeries];
   bool m_recomputeCoefficients[k_numberOfSeries];

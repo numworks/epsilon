@@ -29,7 +29,7 @@ public:
   int numberOfSubviews() const override { return 2; } // CurveView and Banner
   Escher::View * subviewAtIndex(int index) override;
   // All series are displayed in the same curve view
-  Shared::AbstractPlotView * plotViewForSeries(int series) override { return nullptr; } // TODO
+  Shared::AbstractPlotView * plotViewForSeries(int series) override { return m_plotCurveView; }
   PlotBannerView * bannerView() override { return m_bannerView; }
   void reload() override;
 

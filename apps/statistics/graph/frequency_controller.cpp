@@ -9,8 +9,8 @@ FrequencyController::FrequencyController(Escher::Responder * parentResponder, Es
   m_curveView.setCursorView(&m_cursorView);
 }
 
-void FrequencyController::appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {
-  if (axis == Shared::CurveView::Axis::Horizontal) {
+void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {
+  if (axis == Shared::AbstractPlotView::Axis::Horizontal) {
     return;
   }
   int length = strlen(labelBuffer);

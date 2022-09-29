@@ -1,19 +1,19 @@
 #ifndef STATISTICS_PLOT_CONTROLLER_H
 #define STATISTICS_PLOT_CONTROLLER_H
 
+#include "../store.h"
+#include "data_view_controller.h"
+#include "plot_banner_view.h"
+#include "plot_curve_view.h"
+#include "plot_range.h"
+#include "plot_view.h"
 #include <apps/i18n.h>
-#include <apps/shared/curve_view.h>
 #include <apps/shared/curve_view_cursor.h>
+#include <apps/shared/plot_view.h>
 #include <escher/button_row_controller.h>
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
-#include "../store.h"
-#include "data_view_controller.h"
-#include "plot_curve_view.h"
-#include "plot_banner_view.h"
-#include "plot_range.h"
-#include "plot_view.h"
 #include <algorithm>
 
 namespace Statistics {
@@ -34,8 +34,8 @@ public:
   virtual double resultAtIndex(int series, int i) const = 0;
   virtual bool connectPoints() const { return false; }
   virtual bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const { return false; }
-  virtual void appendLabelSuffix(Shared::CurveView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {}
-  virtual float labelStepMultiplicator(Shared::CurveView::Axis axis) const { return 2.0f; }
+  virtual void appendLabelSuffix(Shared::AbstractPlotView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {}
+  virtual float labelStepMultiplicator(Shared::AbstractPlotView::Axis axis) const { return 2.0f; }
 
   // DataViewController
   DataView * dataView() override { return &m_view; }

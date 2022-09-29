@@ -2,7 +2,10 @@
 
 using namespace Poincare;
 
-void elementaryTreeManipulation(CachePool * cache, EditionPool * editionPool) {
+void elementaryTreeManipulation() {
+  CachePool * cache = CachePool::sharedCachePool();
+  EditionPool * editionPool = cache->editionPool();
+
   std::cout << "\n---------------- Create (1 + 2) * 3 * 4 ----------------" << std::endl;
   MultiplicationInterface::PushNode(3);
   AdditionInterface::PushNode(2);

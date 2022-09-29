@@ -18,10 +18,12 @@ poincare_junior_src += $(addprefix poincare_junior/,\
   interfaces/n_ary_interface.o \
   interfaces/power_interface.o \
   interfaces/subtraction_interface.o \
+  test/calculation.o \
   test/constexpr.o \
   test/edition_pool_overflow.o \
   test/elementary_tree_manipulations.o \
-  temporary.o \
+  test/graph.o \
+  test/main.o \
   cache_pool.o \
   cache_reference.o \
   edition_pool.o \

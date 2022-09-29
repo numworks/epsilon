@@ -1,6 +1,6 @@
 #include "print.h"
 #include "utils.h"
-#include <poincare_junior/cached_tree.h>
+#include <poincare_junior/expression.h>
 
 using namespace Poincare;
 
@@ -18,22 +18,22 @@ class Calculation {
 
 public:
   Calculation(const char * textInput);
-  TypeTreeBlock * input() { return m_input; }
-  Poincare::CachedTree output() { return m_output; }
+  TypeBlock * input() { return m_input; }
+  Poincare::Expression output() { return m_output; }
 private:
   constexpr static int k_bufferSize = 128;
-  TypeTreeBlock m_input[k_bufferSize];
-  Poincare::CachedTree m_output;
+  TypeBlock m_input[k_bufferSize];
+  Poincare::Expression m_output;
 };
 
 Calculation::Calculation(const char * textInput) {
   Parse(textInput).dumpAt(m_input);
-  m_output = CachedTree::CreateBasicReduction(input());
+  m_output = Expression::CreateBasicReduction(input());
 }
 
 void testCalculation() {
   Calculation calculation("(1-2)/3/4");
-  std::cout << "\n---------------- Output ----------------" << std::endl;
+  std::cout << "\n---------------- Push Calculation (1-2)/3/4 ----------------" << std::endl;
   calculation.output().log();
   print();
 }

@@ -1,6 +1,6 @@
 #include "print.h"
 #include "utils.h"
-#include <poincare_junior/cached_tree.h>
+#include <poincare_junior/expression.h>
 
 using namespace Poincare;
 
@@ -13,7 +13,7 @@ public:
 private:
   constexpr static int k_bufferSize = 128;
   char m_functionText[k_bufferSize];
-  Poincare::CachedTree m_function;
+  Poincare::Expression m_function;
 };
 
 Graph::Graph(const char * text) {
@@ -26,6 +26,7 @@ float Graph::approximateAtAbscissa(float x) const {
 }
 
 void testGraph() {
+  std::cout << "\n---------------- Push Graph (1-2)/3/4 ----------------" << std::endl;
   Graph graph("cos(x)");
   float valueAt0 = graph.approximateAtAbscissa(0);
   std::cout << "Approximation = " << valueAt0 << std::endl;

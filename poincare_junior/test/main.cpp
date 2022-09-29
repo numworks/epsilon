@@ -1,42 +1,32 @@
 #include <iostream>
 #include "print.h"
 
-int elementaryTreeManipulation(TreeCache * cache, TreeSandbox * sandbox);
-int testOverflowTreeSandbox(TreeCache * cache);
-int testOverflowCacheIdentifiers(TreeCache * cache);
+void elementaryTreeManipulation();
+void testOverflowEditionPool();
+void testOverflowCacheIdentifiers();
 void testCalculation();
 void testGraph();
 void playWithConstexprNodes();
 
+typedef void (*Test)();
+
+void test(Test test, const char * title) {
+  std::cout << "\n\n--------------------------------\n" << std::endl;
+  std::cout << title << std::endl;
+  std::cout << "\n--------------------------------\n" << std::endl;
+  test();
+  CachePool::sharedCachePool()->reset();
+  std::cout << "\n--------------------------------\n" << std::endl;
+  std::cout << "\n--------------------------------\n" << std::endl;
+}
+
 int main() {
-  TreeCache * cache = TreeCache::sharedCachePool();
-  TreeSandbox * sandbox = cache->sandbox();
-
-  std::cout << "\n\n ELEMENTARY TREE MANIPULATION \n" << std::endl;
-  elementaryTreeManipulation(cache, sandbox);
-  cache->reset(false);
-
-  std::cout << "\n\n TEST OVERFLOW TREE SANDBOX \n" << std::endl;
-  testOverflowTreeSandbox(cache);
-  cache->reset(false);
-
-  std::cout << "\n\n TEST OVERFLOW CACHE IDENTIFIERS \n" << std::endl;
-  testOverflowCacheIdentifiers(cache);
-  cache->reset(false);
-
-  std::cout << "\n\n TEST DUMMY CALCULATION \n" << std::endl;
-  testCalculation();
-  cache->reset(false);
-
-  std::cout << "\n\n TEST DUMMY GRAPH \n" << std::endl;
-  testGraph();
-  cache->reset(false);
-
-  intermediaryPrint();
-
-  std::cout << "\n\n TEST CONSTEXPR NODES \n" << std::endl;
-  playWithConstexprNodes();
-  cache->reset(false);
+  test(elementaryTreeManipulation, "ELEMENTARY TREE MANIPULATION");
+  test(testOverflowEditionPool, "TEST OVERFLOW TREE EDITION POOL");
+  test(testOverflowCacheIdentifiers, "TEST OVERFLOW CACHE IDENTIFIERS");
+  test(testCalculation, "TEST DUMMY CALCULATION");
+  test(testGraph, "TEST DUMMY GRAPH");
+  test(playWithConstexprNodes, "TEST CONSTEXPR NODES");
 }
 
 #if 0

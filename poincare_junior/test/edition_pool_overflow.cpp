@@ -25,8 +25,8 @@ void createTreeInCache(CacheReference::Initializer initializer) {
   );
 }
 
-void testOverflowEditionPool(CachePool * cache) {
-  std::cout << "\n---------------- Fill cache with copies until almost full" << std::endl;
+void testOverflowEditionPool() {
+  std::cout << "---------------- Fill cache with copies until almost full" << std::endl;
   CacheReference tree(createTree);
   int treeSize;
   tree.send(
@@ -35,27 +35,26 @@ void testOverflowEditionPool(CachePool * cache) {
     },
     &treeSize
   );
-  int maxNumberOfTreesInCache = CachePool::k_maxNumberOfBlocks/treeSize - 1;
   for (int i = 0; i < maxNumberOfTreesInCache; i++) {
     createTreeInCache(createTree);
   }
   print();
 
-  std::cout << "\n---------------- Edit another tree triggering a cache flush" << std::endl;
+  std::cout << "---------------- Edit another tree triggering a cache flush" << std::endl;
   createTreeInCache(createTree);
   print();
 }
 
 constexpr static int k_maxNumberOfReferences = 128;
 
-void testOverflowCacheIdentifiers(CachePool * cache) {
-  std::cout << "\n---------------- Fill cache with the maximum number of trees" << std::endl;
+void testOverflowCacheIdentifiers() {
+  std::cout << "---------------- Fill cache with the maximum number of trees" << std::endl;
   for (int i = 0; i < Pool::k_maxNumberOfReferences; i++) {
     createTreeInCache(createSmallTree);
   }
   print();
 
-  std::cout << "\n---------------- Create another tree triggering a cache flush" << std::endl;
+  std::cout << "---------------- Create another tree triggering a cache flush" << std::endl;
   createTreeInCache(createSmallTree);
   print();
 }

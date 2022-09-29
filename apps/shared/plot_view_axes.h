@@ -58,7 +58,7 @@ public:
 protected:
   constexpr static KDColor k_color = KDColorBlack;
 
-  float tickPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
+  virtual float tickPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
   virtual float tickStep(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
 
 private:
@@ -69,6 +69,12 @@ private:
 
 class LabeledAxis : public SimpleAxis {
 public:
+  constexpr static int k_numberSignificantDigits = Poincare::Preferences::LargeNumberOfSignificantDigits;
+  constexpr static int k_labelBufferMaxSize = 1 + k_numberSignificantDigits + 1 + Poincare::PrintFloat::k_specialECodePointByteLength + 1 + 3 + 1; // '-' + significant digits + '.' + "E" + '-' + 3 digits + null-terminating char
+  constexpr static int k_labelBufferMaxGlyphLength = 1 + k_numberSignificantDigits + 3 + 3; // '-' + significant digits + ".E-" + 3 digits
+  /* FIXME Y axis needs less labels than X axis */
+  constexpr static int k_maxNumberOfLabels = CurveViewRange::k_maxNumberOfXGridUnits > CurveViewRange::k_maxNumberOfYGridUnits ? CurveViewRange::k_maxNumberOfXGridUnits : CurveViewRange::k_maxNumberOfYGridUnits;
+
   LabeledAxis() : m_forceRelativePosition(false), m_hidden(false) {}
 
   void reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) override;
@@ -76,11 +82,6 @@ public:
   void setHidden(bool hide) { m_hidden = hide; }
 
 protected:
-  constexpr static int k_numberSignificantDigits = Poincare::Preferences::LargeNumberOfSignificantDigits;
-  constexpr static int k_labelBufferMaxSize = 1 + k_numberSignificantDigits + 1 + Poincare::PrintFloat::k_specialECodePointByteLength + 1 + 3 + 1; // '-' + significant digits + '.' + "E" + '-' + 3 digits + null-terminating char
-  constexpr static int k_labelBufferMaxGlyphLength = 1 + k_numberSignificantDigits + 3 + 3; // '-' + significant digits + ".E-" + 3 digits
-  /* FIXME Y axis needs less labels than X axis */
-  constexpr static int k_maxNumberOfLabels = CurveViewRange::k_maxNumberOfXGridUnits > CurveViewRange::k_maxNumberOfYGridUnits ? CurveViewRange::k_maxNumberOfXGridUnits : CurveViewRange::k_maxNumberOfYGridUnits;
 
   virtual int computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis);
   void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const override;

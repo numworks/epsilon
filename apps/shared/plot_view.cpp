@@ -84,28 +84,28 @@ void AbstractPlotView::drawSegment(KDContext * ctx, KDRect rect, Coordinate2D<fl
   straightJoinDots(ctx, rect, pa, pb, color, thick);
 }
 
-static float relativePositionToOffset(AbstractPlotView::RelativePosition position, KDCoordinate size) {
+static float relativePositionToOffset(AbstractPlotView::RelativePosition position, KDCoordinate size, bool ignoreMargin) {
   switch (position) {
   case AbstractPlotView::RelativePosition::Before:
-    return -size - AbstractPlotView::k_labelMargin;
+    return -size - (ignoreMargin ? 0.f : AbstractPlotView::k_labelMargin);
   case AbstractPlotView::RelativePosition::There:
     return -0.5f * size;
   default:
     assert(position == AbstractPlotView::RelativePosition::After);
-    return AbstractPlotView::k_labelMargin;
+    return ignoreMargin ? 0.f : AbstractPlotView::k_labelMargin;
   }
 }
 
-void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color) const {
+void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin) const {
   KDSize labelSize = KDFont::Font(k_font)->stringSize(label);
 
   Coordinate2D<float> p = floatToPixel2D(xy);
-  KDCoordinate x = std::round(p.x1() + relativePositionToOffset(xPosition, labelSize.width()));
-  KDCoordinate y = std::round(p.x2() + relativePositionToOffset(yPosition, labelSize.height()));
+  KDCoordinate x = std::round(p.x1() + relativePositionToOffset(xPosition, labelSize.width(), ignoreMargin));
+  KDCoordinate y = std::round(p.x2() + relativePositionToOffset(yPosition, labelSize.height(), ignoreMargin));
   KDPoint labelOrigin(x, y);
 
   if (KDRect(labelOrigin, labelSize).intersects(rect)) {
-    ctx->drawString(label, labelOrigin, k_font, color, k_backgroundColor);
+    ctx->drawString(label, labelOrigin, k_font, color, backgroundColor());
   }
 }
 

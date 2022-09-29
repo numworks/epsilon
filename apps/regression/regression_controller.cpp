@@ -48,6 +48,7 @@ ViewController::TitlesDisplay RegressionController::titlesDisplay() {
 void RegressionController::didBecomeFirstResponder() {
   Model::Type type = m_store->seriesRegressionType(m_series);
   int initialIndex = std::max(0, IndexOfModelType(type));
+  assert(initialIndex < numberOfRows());
   assert(type == Model::Type::None || type == ModelTypeAtIndex(initialIndex));
   selectCellAtLocation(0, initialIndex);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
@@ -83,7 +84,7 @@ HighlightCell * RegressionController::reusableCell(int index, int type) {
 }
 
 void RegressionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  assert(index >= 0 && index < k_numberOfRows);
+  assert(index >= 0 && index < numberOfRows());
   MessageTableCellWithExpression * castedCell = static_cast<MessageTableCellWithExpression *>(cell);
   Model * model = m_store->regressionModel(ModelTypeAtIndex(index));
   castedCell->setMessage(model->name());

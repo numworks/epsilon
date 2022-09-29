@@ -4,6 +4,7 @@
 #include <poincare/empty_layout.h>
 #include <poincare/condensed_sum_layout.h>
 #include <poincare/layout_helper.h>
+#include <poincare/print.h>
 #include "poincare_helpers.h"
 
 #include <assert.h>
@@ -307,9 +308,7 @@ Layout SumGraphController::LegendView::defaultSumResultLayout(const char * resul
   // strlen("Oppervlakte") + strlen(" = ") + 0;
   constexpr static int bufferSize = 11 + 3 + 1;
   char buffer[bufferSize];
-  int length = strlcpy(buffer, areaMessage, strlen(areaMessage) + 1);
-  constexpr static const char * equalSign = " = ";
-  length += strlcpy(buffer + length, equalSign, strlen(equalSign) + 1);
+  int length = Print::CustomPrintf(buffer, bufferSize, "% = ", areaMessage);
   assert(length < bufferSize);
   return HorizontalLayout::Builder(LayoutHelper::String(buffer, length), LayoutHelper::String(resultBuffer, strlen(resultBuffer)));
 }

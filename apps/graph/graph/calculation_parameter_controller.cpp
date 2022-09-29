@@ -129,24 +129,21 @@ int CalculationParameterController::numberOfRows() const {
 HighlightCell * CalculationParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < reusableCellCount(type));
-  if (type == k_defaultCellType) {
+  switch (type){
+  case k_defaultCellType:
     return &m_cells[index];
-  }
-  if (type == k_derivativeCellType) {
+  case k_derivativeCellType:
     return &m_derivativeCell;
-  }
-  if (type == k_areaCellType) {
+  case k_areaCellType:
     return &m_areaCell;
+  default:
+    assert(type == k_preImageCellType);
+    return &m_preimageCell;
   }
-  assert(type == k_preImageCellType);
-  return &m_preimageCell;
 }
 
 int CalculationParameterController::reusableCellCount(int type) {
-  if (type == k_defaultCellType) {
-    return k_totalNumberOfReusableCells;
-  }
-  return 1;
+  return type == k_defaultCellType ? k_totalNumberOfReusableCells : 1;
 }
 
 int CalculationParameterController::typeAtIndex(int index) {
@@ -166,41 +163,54 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
   assert(index >= 0 && index <= numberOfRows());
   if (cell == &m_derivativeCell) {
     m_derivativeCell.setState(m_graphController->displayDerivativeInBanner());
-  } else if (cell == &m_areaCell) {
-    int numberOfFunctions = App::app()->functionStore()->numberOfActiveDerivableFunctions();
-    assert(numberOfFunctions > 1);
-    // If there is only two derivable functions, hide the chevron
-    m_areaCell.hideChevron(numberOfFunctions == 2);
-    // Get the name of the selected function
-    ExpiringPointer<ContinuousFunction> mainFunction = App::app()->functionStore()->modelForRecord(m_record);
-    constexpr static int bufferSize = Shared::Function::k_maxNameWithArgumentSize;
-    char mainFunctionName[bufferSize];
-    mainFunction->nameWithArgument(mainFunctionName, bufferSize);
-
-    char secondPlaceHolder[bufferSize];
-    if (numberOfFunctions == 2) {
-      // If there are only 2 functions, display "Area between f(x) and g(x)"
-      secondPlaceHolder[0] = ' ';
-      Ion::Storage::Record secondRecord = AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(0, m_record);
-      ExpiringPointer<ContinuousFunction> secondFunction = App::app()->functionStore()->modelForRecord(secondRecord);
-      secondFunction->nameWithArgument(secondPlaceHolder + 1, bufferSize);
-      if (strcmp(mainFunctionName, secondPlaceHolder + 1) == 0) {
-        // If both functions are name "y", display "Area between curves"
-        m_areaCell.setMessageWithPlaceholders(I18n::Message::AreaBetweenCurves);
-        return;
-      }
-    } else {
-      // If there are more than 2 functions, display "Area between f(x) and"
-      secondPlaceHolder[0] = 0;
-    }
-    m_areaCell.setMessageWithPlaceholders(I18n::Message::AreaBetweenCurvesWithFunctionName, mainFunctionName, secondPlaceHolder);
-    if (m_areaCell.labelView()->minimalSizeForOptimalDisplay().width() > m_areaCell.innerWidth()) {
-      // If there is not enough space in the cell, display "Area between curves"
-      m_areaCell.setMessageWithPlaceholders(I18n::Message::AreaBetweenCurves);
-    }
-  } else if (cell != &m_preimageCell) {
-    I18n::Message titles[] = {I18n::Message::Intersection, I18n::Message::Maximum, I18n::Message::Minimum, I18n::Message::Zeros, I18n::Message::Default, I18n::Message::Tangent, I18n::Message::Integral};
+    return;
+  } else if (cell == &m_preimageCell) {
+    return;
+  } else if (cell != &m_areaCell) {
+    I18n::Message titles[] = {
+      I18n::Message::Intersection,
+      I18n::Message::Maximum,
+      I18n::Message::Minimum,
+      I18n::Message::Zeros,
+      I18n::Message::Default, // always skipped
+      I18n::Message::Tangent,
+      I18n::Message::Integral
+    };
     static_cast<MessageTableCell *>(cell)->setMessage(titles[index - 1 + !ShouldDisplayIntersection()]);
+    return;
+  }
+
+  assert(cell == &m_areaCell);
+  int numberOfFunctions = App::app()->functionStore()->numberOfActiveDerivableFunctions();
+  assert(numberOfFunctions > 1);
+  // If there is only two derivable functions, hide the chevron
+  m_areaCell.hideChevron(numberOfFunctions == 2);
+  // Get the name of the selected function
+  ExpiringPointer<ContinuousFunction> mainFunction = App::app()->functionStore()->modelForRecord(m_record);
+  constexpr static int bufferSize = Shared::Function::k_maxNameWithArgumentSize;
+  char mainFunctionName[bufferSize];
+  mainFunction->nameWithArgument(mainFunctionName, bufferSize);
+
+  char secondPlaceHolder[bufferSize];
+  if (numberOfFunctions == 2) {
+    // If there are only 2 functions, display "Area between f(x) and g(x)"
+    secondPlaceHolder[0] = ' ';
+    Ion::Storage::Record secondRecord = AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(0, m_record);
+    ExpiringPointer<ContinuousFunction> secondFunction = App::app()->functionStore()->modelForRecord(secondRecord);
+    secondFunction->nameWithArgument(secondPlaceHolder + 1, bufferSize);
+    if (strcmp(mainFunctionName, secondPlaceHolder + 1) == 0) {
+      // If both functions are name "y", display "Area between curves"
+      m_areaCell.setMessageWithPlaceholders(I18n::Message::AreaBetweenCurves);
+      return;
+    }
+  } else {
+    // If there are more than 2 functions, display "Area between f(x) and"
+    secondPlaceHolder[0] = 0;
+  }
+  m_areaCell.setMessageWithPlaceholders(I18n::Message::AreaBetweenCurvesWithFunctionName, mainFunctionName, secondPlaceHolder);
+  if (m_areaCell.labelView()->minimalSizeForOptimalDisplay().width() > m_areaCell.innerWidth()) {
+    // If there is not enough space in the cell, display "Area between curves"
+    m_areaCell.setMessageWithPlaceholders(I18n::Message::AreaBetweenCurves);
   }
 }
 

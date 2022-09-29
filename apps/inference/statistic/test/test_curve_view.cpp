@@ -5,114 +5,113 @@
 #include <cmath>
 
 using namespace Escher;
+using namespace Poincare;
+using namespace Shared;
 
 namespace Inference {
 
-void TestCurveView::drawRect(KDContext * ctx, KDRect rect) const {
-  StatisticCurveView::drawRect(ctx, rect);
-  drawTest(ctx, rect);
-}
+// TestPlotPolicy
 
-bool TestCurveView::shouldDrawLabelAtPosition(float labelValue) const {
-  float margin = k_marginsAroundZLabel / static_cast<float>(bounds().width()) * (curveViewRange()->xMax() - curveViewRange()->xMin());
+void TestPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   float z = static_cast<float>(m_test->testCriticalValue());
-  bool res = labelValue >= z + margin || labelValue <= z - margin;
-  if (m_test->hypothesisParams()->comparisonOperator() == HypothesisParams::ComparisonOperator::Different) {
-    res = res && (labelValue >= -z + margin || labelValue <= -z - margin);
-  }
-  return res;
-}
-
-void TestCurveView::drawTest(KDContext * ctx, KDRect rect) const {
-  float z = static_cast<float>(m_test->testCriticalValue());
-
-  drawLabelsAndGraduations(ctx, rect, Axis::Horizontal, false, false, false, 0, k_backgroundColor);
-  drawZLabelAndZGraduation(ctx, z);
   HypothesisParams::ComparisonOperator op = m_test->hypothesisParams()->comparisonOperator();
-  colorUnderCurve(ctx, rect, op, z);
-  drawCurveAndAlphaStripes(ctx, rect, op);
+  drawZLabelAndZGraduation(plotView, ctx, rect, z, op);
+  drawTestCurve(plotView, ctx, rect, z, op);
 }
 
-void TestCurveView::drawCurveAndAlphaStripes(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, double factor) const {
+void TestPlotPolicy::drawZLabelAndZGraduation(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float z, HypothesisParams::ComparisonOperator op) const {
   if (op == HypothesisParams::ComparisonOperator::Different) {
-    drawCurveAndAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Higher, 0.5);
-    drawCurveAndAlphaStripes(ctx, rect, HypothesisParams::ComparisonOperator::Lower, 0.5);
-    return;
-  }
-
-  float stripesStart, stripesEnd;
-  int pattern;
-  double xAlpha = m_test->thresholdAbscissa(op, factor);
-  if (op == HypothesisParams::ComparisonOperator::Higher) {
-    stripesStart = xAlpha;
-    stripesEnd = INFINITY;
-    pattern = 0b1001;
-  } else {
-    assert(op == HypothesisParams::ComparisonOperator::Lower);
-    stripesStart = -INFINITY;
-    stripesEnd = xAlpha;
-    pattern = 0b101;
-  }
-
-  assert(!std::isnan(xAlpha));
-  drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, evaluateAtAbscissa, m_test, nullptr, Palette::YellowDark, CurveView::NoPotentialDiscontinuity, true, true, Palette::PurpleBright, stripesStart, stripesEnd, nullptr, false, nullptr, false, pattern);
-}
-
-void TestCurveView::colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z) const {
-  if (op == HypothesisParams::ComparisonOperator::Different) {
-    z = std::fabs(z);
-    colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Higher, z);
-    colorUnderCurve(ctx, rect, HypothesisParams::ComparisonOperator::Lower, -z);
-    return;
-  }
-
-  float xStart, xEnd;
-  if (op == HypothesisParams::ComparisonOperator::Higher) {
-    xStart = std::max(z, curveViewRange()->xMin());
-    xEnd = curveViewRange()->xMax();
-  } else {
-    assert(op == HypothesisParams::ComparisonOperator::Lower);
-    xStart = curveViewRange()->xMin();
-    xEnd = std::min(z, curveViewRange()->xMax());
-  }
-
-  float xStep = pixelLengthToFloatLength(Axis::Horizontal, 1);
-  for (float x = xStart; x < xEnd + xStep; x += xStep) {
-    float y = m_test->evaluateAtAbscissa(x);
-    drawHorizontalOrVerticalSegment(ctx, rect, Axis::Vertical, x, 0.f, y, Palette::YellowDark);
-  }
-}
-
-void TestCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx, float position, Poincare::Layout symbol) const {
-  if ((curveViewRange()->xMin() <= position) && (position <= curveViewRange()->xMax())) {
-    float verticalOrigin = std::round(floatToPixel(Axis::Vertical, 0.0f));
-    KDCoordinate graduationPosition = drawGraduationAtPosition(ctx, position);
-
-    KDPoint labelPosition = positionLabel(graduationPosition, verticalOrigin, symbol.layoutSize(k_font), RelativePosition::None, RelativePosition::Before);
-    symbol.draw(ctx, labelPosition, k_font, KDColorBlack, k_backgroundColor);
-  }
-}
-
-void TestCurveView::drawZLabelAndZGraduation(KDContext * ctx, float z) const {
-  // Label
-  if (z < curveViewRange()->xMin() || z > curveViewRange()->xMax()) {
-    // z outside screen
-    return;
-  }
-  if (m_test->hypothesisParams()->comparisonOperator() == HypothesisParams::ComparisonOperator::Different) {
-    Poincare::AbsoluteValueLayout absolute = Poincare::AbsoluteValueLayout::Builder(m_test->testCriticalValueSymbol());
-    drawLabelAndGraduationAtPosition(ctx, std::abs(z), absolute);
+    AbsoluteValueLayout absolute = Poincare::AbsoluteValueLayout::Builder(m_test->testCriticalValueSymbol());
+    drawLabelAndGraduation(plotView, ctx, rect, std::abs(z), absolute);
     absolute.invalidAllSizesPositionsAndBaselines();
-    drawLabelAndGraduationAtPosition(ctx, -std::abs(z), Poincare::HorizontalLayout::Builder(Poincare::CodePointLayout::Builder('-'), absolute));
+    drawLabelAndGraduation(plotView, ctx, rect, -std::abs(z), HorizontalLayout::Builder(CodePointLayout::Builder('-'), absolute));
   } else {
-    drawLabelAndGraduationAtPosition(ctx, z, m_test->testCriticalValueSymbol());
+    drawLabelAndGraduation(plotView, ctx, rect, z, m_test->testCriticalValueSymbol());
   }
 }
 
-Poincare::Coordinate2D<float> TestCurveView::evaluateAtAbscissa(float x, void * model, void * context) {
-  Test * test = static_cast<Test *>(model);
-  return Poincare::Coordinate2D<float>(x, test->evaluateAtAbscissa(x));
+void TestPlotPolicy::drawLabelAndGraduation(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float x, Layout layout) const {
+  float gradLength = PlotPolicy::SimpleAxis::k_labelGraduationHalfLength * plotView->pixelHeight();
+  plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, gradLength, -gradLength, KDColorBlack);
+  plotView->drawLayout(ctx, rect, layout, Coordinate2D<float>(x, 0.f), AbstractPlotView::RelativePosition::There, AbstractPlotView::RelativePosition::After, KDColorBlack);
 }
 
+static Coordinate2D<float> evaluate(float x, void * model, void *) {
+  Test * test = reinterpret_cast<Test *>(model);
+  return Coordinate2D<float>(x, test->evaluateAtAbscissa(x));
+}
 
-}  // namespace Inference
+static Coordinate2D<float> evaluateZero(float, void *, void *) { return Coordinate2D<float>(0.f, 0.f); }
+
+void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float z, HypothesisParams::ComparisonOperator op, double factor) const {
+  if (op == HypothesisParams::ComparisonOperator::Different) {
+    drawTestCurve(plotView,ctx, rect, z, HypothesisParams::ComparisonOperator::Higher, 0.5);
+    drawTestCurve(plotView,ctx, rect, -z, HypothesisParams::ComparisonOperator::Lower, 0.5);
+    return;
+  }
+
+  CurveViewRange * range = plotView->range();
+  double xAlpha = m_test->thresholdAbscissa(op, factor);
+  /* We can draw one of the two following combination of patterns (reversed for
+   * ComparisonOperator::Lower):
+   * - No pattern | Stripes   | Stripes&Highlight
+   *            xAlpha        z
+   *
+   * - No pattern | Highlight | Stripes&Highlight
+   *              z         xAlpha
+   */
+  Pattern patternBoth, patternSingle;
+  float bothStart, bothEnd, singleStart, singleEnd, singleCurveStart, singleCurveEnd;
+  if (op == HypothesisParams::ComparisonOperator::Higher) {
+    patternBoth = Pattern(true, false, false, true, Palette::PurpleBright, Palette::YellowDark);
+    singleCurveStart = range->xMin();
+    if (z < xAlpha) {
+      singleStart = z;
+      patternSingle = Pattern(Palette::YellowDark);
+      bothStart = xAlpha;
+    } else {
+      singleStart = xAlpha;
+      patternSingle = Pattern(true, false, false, true, Palette::PurpleBright);
+      bothStart = z;
+    }
+    singleStart -= plotView->pixelWidth();
+    singleCurveEnd = singleEnd = bothStart;
+    bothEnd = range->xMax();
+  } else {
+    patternBoth = Pattern(true, false, true, false, Palette::PurpleBright, Palette::YellowDark);
+    bothStart = range->xMin();
+    if (z < xAlpha) {
+      bothEnd = z;
+      patternSingle = Pattern(true, false, false, true, Palette::PurpleBright);
+      singleEnd = xAlpha;
+    } else {
+      bothEnd = xAlpha;
+      patternSingle = Pattern(Palette::YellowDark);
+      singleEnd = z;
+    }
+    singleCurveStart = singleStart = bothEnd;
+    singleCurveEnd = range->xMax();
+  }
+
+  {
+    CurveDrawing plot(evaluate, m_test, nullptr, bothStart, bothEnd, plotView->pixelWidth(), Palette::YellowDark);
+    plot.setPatternOptions(patternBoth, bothStart, bothEnd, evaluateZero, nullptr, false);
+    plot.draw(plotView, ctx, rect);
+  }
+  {
+    CurveDrawing plot(evaluate, m_test, nullptr, singleCurveStart, singleCurveEnd, plotView->pixelWidth(), Palette::YellowDark);
+    plot.setPatternOptions(patternSingle, singleStart, singleEnd, evaluateZero, nullptr, false);
+    plot.draw(plotView, ctx, rect);
+  }
+}
+
+// TestCurveView
+
+TestCurveView::TestCurveView(Test * test) :
+  PlotView(test)
+{
+  // TestPlotPolicy
+  m_test = test;
+}
+
+}

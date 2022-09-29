@@ -2,32 +2,25 @@
 #define INFERENCE_INFERENCE_STATISTIC_TEST_TEST_CURVE_VIEW_H
 
 #include "inference/models/statistic/test.h"
-#include "inference/statistic/statistic_curve_view.h"
+#include <apps/shared/plot_view_policies.h>
 
 namespace Inference {
 
-class TestCurveView : public StatisticCurveView {
-public:
-  TestCurveView(Test * test) : StatisticCurveView(test), m_test(test) {}
-  void drawRect(KDContext * ctx, KDRect rect) const override;
-
+class TestPlotPolicy : Shared::PlotPolicy::WithCurves {
 protected:
-  bool shouldDrawLabelAtPosition(float labelValue) const override;
-
-private:
-  constexpr static KDFont::Size k_font = KDFont::Size::Small;
-  constexpr static int k_marginsAroundZLabel = 30;
-  void drawTest(KDContext * ctx, KDRect rect) const;
-  void drawCurveAndAlphaStripes(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, double factor = 1.0) const;
-  void colorUnderCurve(KDContext * ctx, KDRect rect, HypothesisParams::ComparisonOperator op, float z) const;
-  void drawLabelAndGraduationAtPosition(KDContext * ctx, float position, Poincare::Layout symbol) const;
-  void drawZLabelAndZGraduation(KDContext * ctx, float x) const;
-
-  static Poincare::Coordinate2D<float> evaluateAtAbscissa(float x, void * model, void * context);
+  void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
+  void drawZLabelAndZGraduation(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float x, HypothesisParams::ComparisonOperator op) const;
+  void drawLabelAndGraduation(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float x, Poincare::Layout layout) const;
+  void drawTestCurve(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float z, HypothesisParams::ComparisonOperator op, double factor = 1.0) const;
 
   Test * m_test;
 };
 
-}  // namespace Inference
+class TestCurveView : public Shared::PlotView<Shared::PlotPolicy::LabeledXAxis, TestPlotPolicy, Shared::PlotPolicy::NoBanner, Shared::PlotPolicy::NoCursor> {
+public:
+  TestCurveView(Test * test);
+};
 
-#endif /* INFERENCE_INFERENCE_STATISTIC_TEST_TEST_CURVE_VIEW_H */
+}
+
+#endif

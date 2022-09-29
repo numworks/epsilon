@@ -52,6 +52,8 @@ public:
 
 class SimpleAxis {
 public:
+  constexpr static KDCoordinate k_labelGraduationHalfLength = 3;
+
   void drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const;
   virtual void reloadAxis(AbstractPlotView *, AbstractPlotView::Axis axis) {}
 
@@ -62,8 +64,6 @@ protected:
   virtual float tickStep(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
 
 private:
-  constexpr static KDCoordinate k_labelGraduationHalfLength = 3;
-
   virtual void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {}
 };
 

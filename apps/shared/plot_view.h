@@ -6,6 +6,7 @@
 #include "curve_view_range.h"
 #include "dots.h"
 #include <poincare/coordinate_2D.h>
+#include <poincare/layout.h>
 
 /* AbstractPlotView maps a range in R² to the screen and provides methods for
  * drawing basic geometry in R².
@@ -59,6 +60,7 @@ public:
   void drawStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = 0) const;
   void drawSegment(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> a, Poincare::Coordinate2D<float> b, KDColor color, bool thick = false) const;
   void drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;
+  void drawLayout(KDContext * ctx, KDRect rect, Poincare::Layout layout, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;
   void drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Poincare::Coordinate2D<float> xy, KDColor color) const;
   void drawArrowhead(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> xy, Poincare::Coordinate2D<float> dxy, float width, KDColor color, bool thick = false, float tanAngle = 1.f / 3.f) const;
   /* These methods use the stamping state-machine.

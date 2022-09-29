@@ -35,6 +35,7 @@ void testOverflowEditionPool() {
     },
     &treeSize
   );
+  int maxNumberOfTreesInCache = CachePool::k_maxNumberOfBlocks/treeSize - 1;
   for (int i = 0; i < maxNumberOfTreesInCache; i++) {
     createTreeInCache(createTree);
   }
@@ -44,8 +45,6 @@ void testOverflowEditionPool() {
   createTreeInCache(createTree);
   print();
 }
-
-constexpr static int k_maxNumberOfReferences = 128;
 
 void testOverflowCacheIdentifiers() {
   std::cout << "---------------- Fill cache with the maximum number of trees" << std::endl;

@@ -64,8 +64,8 @@ private:
   constexpr static int k_derivativeRowIndex = 4;
   // The intersection is always displayed when area cell is displayed.
   constexpr static int k_areaRowIndex = 8;
-  Escher::MessageTableCellWithChevron m_preimageCell;
   Escher::MessageTableCell m_cells[k_totalNumberOfReusableCells];
+  Escher::MessageTableCellWithChevron m_preimageCell;
   BufferTableCellWithHideableChevron m_areaCell;
   Ion::Storage::Record m_record;
   GraphController * m_graphController;

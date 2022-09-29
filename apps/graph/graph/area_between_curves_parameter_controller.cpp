@@ -47,7 +47,9 @@ int AreaBetweenCurvesParameterController::numberOfRows() const {
 
 KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(int j) {
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(DerivableActiveFunctionAtIndex(j, m_mainRecord));
-  return function->layout().layoutSize(KDFont::Size::Large).height() + Metric::CellTopMargin + Metric::CellBottomMargin + Metric::CellSeparatorThickness;
+  CurveSelectionCell tempCell;
+  tempCell.setLayout(function->layout());
+  return tempCell.labelView()->minimalSizeForOptimalDisplay().height() + Metric::CellTopMargin + Metric::CellBottomMargin + Metric::CellSeparatorThickness;
 }
 
 void AreaBetweenCurvesParameterController::viewWillAppear() {

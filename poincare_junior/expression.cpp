@@ -6,7 +6,9 @@ namespace Poincare {
 Expression Expression::CreateBasicReduction(void * expressionAddress) {
   return Expression(
     [](Node tree) {
-      tree.expressionInterface()->basicReduction(tree.block());
+      tree.recursivelyApply([](Node node) {
+          node.expressionInterface()->basicReduction(node.block());
+        });
     },
     expressionAddress);
 }

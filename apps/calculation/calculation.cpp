@@ -1,6 +1,7 @@
 #include "calculation.h"
 #include "../shared/poincare_helpers.h"
 #include "../shared/scrollable_multiple_expressions_view.h"
+#include "../shared/utils.h"
 #include "../global_preferences.h"
 #include "../exam_mode_configuration.h"
 #include "app.h"
@@ -147,7 +148,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   Expression outputExp = exactOutput();
   if (inputExp.isUninitialized()
    || outputExp.isUninitialized()
-   || PoincareHelpers::ShouldOnlyDisplayExactOutput(inputExp))
+   || Utils::ShouldOnlyDisplayExactOutput(inputExp))
   {
     m_displayOutput = DisplayOutput::ExactOnly;
   } else if (
@@ -163,7 +164,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
    || (strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0
     && strcmp(inputText(), exactOutputText()) == 0)
       // All other conditions are factorized within PoincareHelpers
-   || PoincareHelpers::ShouldOnlyDisplayApproximation(inputExp, outputExp, context))
+   || Utils::ShouldOnlyDisplayApproximation(inputExp, outputExp, context))
   {
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (inputExp.recursivelyMatches(Expression::IsApproximate, context)

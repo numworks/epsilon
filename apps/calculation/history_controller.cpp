@@ -1,5 +1,6 @@
 #include "history_controller.h"
 #include "app.h"
+#include "../shared/utils.h"
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
 #include <assert.h>
@@ -105,7 +106,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
       ScrollableTwoExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
       if (outputSubviewPosition == ScrollableTwoExpressionsView::SubviewPosition::Right
-          && !PoincareHelpers::ShouldOnlyDisplayExactOutput(calculation->input()))
+          && !Utils::ShouldOnlyDisplayExactOutput(calculation->input()))
       {
         editController->insertTextBody(calculation->approximateOutputText(Calculation::NumberOfSignificantDigits::Maximal));
       } else {

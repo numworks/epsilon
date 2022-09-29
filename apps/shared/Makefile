@@ -22,12 +22,12 @@ app_shared_test_src = $(addprefix apps/shared/,\
   plot_view_banners.cpp \
   plot_view_cursors.cpp \
   plot_view_plots.cpp \
-  poincare_helpers.cpp \
   range_1D.cpp \
   sequence.cpp \
   sequence_context.cpp \
   sequence_store.cpp \
   toolbox_helpers.cpp \
+  utils.cpp \
   zoom_and_pan_curve_view_controller.cpp \
   zoom_curve_view_controller.cpp \
 )
@@ -74,7 +74,6 @@ app_shared_src = $(addprefix apps/shared/,\
   message_view.cpp \
   ok_view.cpp \
   parameter_text_field_delegate.cpp \
-  poincare_helpers.cpp \
   prefaced_table_view.cpp \
   prefaced_twice_table_view.cpp \
   range_parameter_controller.cpp \
@@ -100,6 +99,7 @@ app_shared_src = $(addprefix apps/shared/,\
   text_field_delegate.cpp \
   text_field_delegate_app.cpp \
   text_field_with_extension.cpp \
+  utils.cpp \
   values_controller.cpp \
   values_parameter_controller.cpp \
   vertical_cursor_view.cpp \

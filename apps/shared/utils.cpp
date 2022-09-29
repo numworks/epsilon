@@ -1,25 +1,28 @@
-#include "poincare_helpers.h"
+#include "utils.h"
 #include <apps/exam_mode_configuration.h>
 #include <poincare/unit.h>
+#include "poincare_helpers.h"
 
 using namespace Poincare;
+
 namespace Shared {
 
-namespace PoincareHelpers {
+namespace Utils {
 
 template <class T>
 T ValueOfFloatAsDisplayed(T t, int precision, Poincare::Context * context) {
-  assert(precision <= Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
-  constexpr size_t bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+  assert(precision <= PrintFloat::k_numberOfStoredSignificantDigits);
+  constexpr size_t bufferSize = PrintFloat::charSizeForFloatsWithPrecision(PrintFloat::k_numberOfStoredSignificantDigits);
   char buffer[bufferSize];
   // Get displayed value
-  size_t numberOfChar = ConvertFloatToText<T>(t, buffer, bufferSize, precision);
+  size_t numberOfChar = PoincareHelpers::ConvertFloatToText<T>(t, buffer, bufferSize, precision);
   assert(numberOfChar <= bufferSize);
   // Silence compiler warnings for assert
   (void) numberOfChar;
   // Extract displayed value
-  return ApproximateToScalar<T>(buffer, context);
+  return PoincareHelpers::ApproximateToScalar<T>(buffer, context);
 }
+
 
 bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context) {
     // Exact output with remaining dependency are not displayed to avoid 2 ≈ undef

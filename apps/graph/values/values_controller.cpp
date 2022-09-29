@@ -5,6 +5,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include "../../shared/poincare_helpers.h"
+#include "../../shared/utils.h"
 #include "../../constant.h"
 #include "../app.h"
 
@@ -384,7 +385,7 @@ void ValuesController::setExactValueCellLayouts(int column, int row) {
       Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
       abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
       PoincareHelpers::CloneAndSimplify(&exactExpression, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
-      if (!PoincareHelpers::ShouldOnlyDisplayApproximation(function->originalEquation(), exactExpression, context)) {
+      if (!Utils::ShouldOnlyDisplayApproximation(function->originalEquation(), exactExpression, context)) {
         // Do not show exact expressions in certain cases
         exactLayout = exactExpression.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, context);
       }

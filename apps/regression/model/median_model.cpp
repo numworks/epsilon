@@ -17,6 +17,7 @@ double MedianModel::getMedianValue(Store * store, uint8_t * sortedIndex, int ser
 
 void MedianModel::privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) {
   uint8_t numberOfDots = store->numberOfPairsOfSeries(series);
+  assert(slopeCoefficientIndex() == 0 && yInterceptCoefficientIndex() == 1);
   if (numberOfDots < 3) {
     modelCoefficients[0] = NAN;
     modelCoefficients[1] = NAN;

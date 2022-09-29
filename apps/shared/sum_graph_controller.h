@@ -26,6 +26,7 @@ protected:
   void makeCursorVisibleAndReload();
   virtual void makeCursorVisible();
   void makeDotVisible(float x, float y, bool zoomOut);
+  Ion::Storage::Record selectedRecord() { return m_graphView->selectedRecord(); }
   enum class Step {
     FirstParameter = 0,
     SecondParameter = 1,
@@ -34,7 +35,6 @@ protected:
   Step m_step;
   double m_startSum;
   double m_result;
-  Ion::Storage::Record m_record;
   InteractiveCurveViewRange * m_graphRange;
   FunctionGraphView * m_graphView;
 private:

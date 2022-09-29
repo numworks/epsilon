@@ -51,7 +51,7 @@ double TermSumController::cursorNextStep(double x, int direction) {
 }
 
 Layout TermSumController::createFunctionLayout() {
-  ExpiringPointer<Shared::Sequence> sequence = App::app()->functionStore()->modelForRecord(m_record);
+  ExpiringPointer<Shared::Sequence> sequence = App::app()->functionStore()->modelForRecord(selectedRecord());
   return sequence->nameLayout();
 }
 

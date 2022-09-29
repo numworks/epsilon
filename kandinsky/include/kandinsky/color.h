@@ -34,6 +34,13 @@ public:
   static KDColor Blend(KDColor first, KDColor second, uint8_t alpha);
   operator uint16_t() const { return m_value; }
 
+  struct HSVColor {
+    double H; // Between 0.0 and 360.0 (360.0 excluded)
+    double S; // Between 0.0 and 1.0
+    double V; // Between 0.0 and 255.0
+  };
+  HSVColor convertToHSV() const;
+  static KDColor ConvertHSVToRGB(HSVColor color);
   static KDColor HSVBlend(KDColor color1, KDColor color2);
 
 private:
@@ -59,14 +66,6 @@ private:
     (s >> (nBits-(8-nBits))); // Trick: let's try and fill the padding
   }
   constexpr KDColor(uint16_t value) : m_value(value) {}
-
-  struct HSVColor {
-    double H;
-    double S;
-    double V;
-  };
-  HSVColor convertToHSV() const;
-  static KDColor ConvertHSVToRGB(HSVColor color);
 
   uint16_t m_value;
 };

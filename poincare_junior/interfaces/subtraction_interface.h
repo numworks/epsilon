@@ -8,16 +8,17 @@ namespace Poincare {
 
 class SubtractionInterface final : public Interface {
 public:
-  constexpr static size_t CreateNodeAtAddress(Block * address) {
-    *(address) = SubtractionBlock;
-    return k_numberOfBlocksInNode;
+  constexpr static bool CreateBlockAtIndex(Block * block, size_t blockIndex) {
+    assert(blockIndex == 0);
+    *block = SubtractionBlock;
+    return true;
   }
-  static TypeBlock * PushNode() { return Interface::PushNode<SubtractionInterface, k_numberOfBlocksInNode>(); }
+  static TypeBlock * PushNode() { return Interface::PushNode<SubtractionInterface>(); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Subtraction"; }
 #endif
   constexpr int numberOfChildren(const TypeBlock * block) const override { return k_numberOfChildren; }
-  static constexpr size_t k_numberOfBlocksInNode = 3;
+  static constexpr size_t k_numberOfBlocksInNode = 1;
   constexpr static int k_numberOfChildren = 2;
 };
 

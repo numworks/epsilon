@@ -44,10 +44,6 @@ void Node::copyTreeTo(void * address) const {
   memcpy(address, m_block, treeSize());
 }
 
-const Node Node::nextNode() const {
-  return Node(m_block + nodeSize());
-}
-
 const Node Node::previousNode() const {
   if (m_block == CachePool::sharedCachePool()->firstBlock()) {
     return Node();
@@ -55,17 +51,6 @@ const Node Node::previousNode() const {
   const Block * block = m_block->previous();
   return Node(m_block - Node(block).nodeSize(false));
 }
-
-const Node Node::nextTree() const {
-  Node result = *this;
-  int nbOfChildrenToScan = result.numberOfChildren();
-  while (nbOfChildrenToScan > 0) {
-    result = result.nextNode();
-    nbOfChildrenToScan += result.numberOfChildren() - 1;
-  }
-  return result.nextNode();
-}
-
 
 const Node Node::previousTree() const {
   return previousRelative(false);

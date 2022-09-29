@@ -7,8 +7,8 @@ namespace Poincare {
 
 class MultiplicationInterface final : public NAryInterface {
 public:
-   static constexpr size_t CreateNodeAtAddress(Block * address, uint8_t numberOfChildren) { return NAryInterface::CreateNodeAtAddress(address, MultiplicationBlock, numberOfChildren); }
-  static TypeBlock * PushNode(uint8_t numberOfChildren) { return Interface::PushNode<MultiplicationInterface, k_numberOfBlocksInNode>(numberOfChildren); }
+   constexpr static bool CreateBlockAtIndex(Block * block, size_t blockIndex, uint8_t numberOfChildren) { return NAryInterface::CreateBlockAtIndex(block, blockIndex, numberOfChildren, MultiplicationBlock); }
+  static TypeBlock * PushNode(uint8_t numberOfChildren) { return Interface::PushNode<MultiplicationInterface>(numberOfChildren); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Multiplication"; }
 #endif

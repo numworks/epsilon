@@ -10,11 +10,12 @@ namespace Poincare {
 #if GHOST_REQUIRED
 class GhostInterface final : public Interface {
 public:
-   static constexpr size_t CreateNodeAtAddress(Block * address) {
-    *(address) = GhostBlock;
-    return k_numberOfBlocksInNode;
+  constexpr static bool CreateBlockAtIndex(Block * block, size_t blockIndex) {
+    assert(blockIndex == 0);
+    *block = GhostBlock;
+    return true;
   }
-  static TypeBlock * PushNode() { return Interface::PushNode<GhostInterface, k_numberOfBlocksInNode>(); }
+  static TypeBlock * PushNode() { return Interface::PushNode<GhostInterface>(); }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Ghost"; }
 #endif

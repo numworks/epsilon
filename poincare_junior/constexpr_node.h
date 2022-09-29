@@ -1,8 +1,9 @@
 #ifndef POINCARE_CONSTEXPR_NODE_H
 #define POINCARE_CONSTEXPR_NODE_H
 
-#include "type_block.h"
 #include "interfaces/interfaces.h"
+#include "node.h"
+#include "type_block.h"
 
 namespace Poincare {
 
@@ -13,48 +14,62 @@ template <unsigned N>
 class Tree {
 public:
   constexpr Tree() {}
-  constexpr Tree(Block * blocks) {
-    memcpy(m_blocks, blocks, N * sizeof(Block));
-  }
-  constexpr operator Node() { return Node(static_cast<TypeBlock *>(m_blocks)); }
+  constexpr Block * blockAtIndex(size_t i) { return &m_blocks[i]; }
+  constexpr operator Node() const { return Node(const_cast<TypeBlock *>(m_blocks)); }
 private:
-  Block m_blocks[N];
+  TypeBlock m_blocks[N];
 };
 
-typedef size_t (*NodeCreator)(Block *, size_t);
-template<unsigned ...Len>
-constexpr static auto MakeTree(NodeCreator nodeCreator, const Tree<Len> * (&...nodes)) {
+typedef bool (*BlockCreator)(Block *, size_t, uint8_t);
+
+template<unsigned NumberOfBlocksInNode, unsigned ...Len>
+constexpr static auto MakeTree(BlockCreator blockCreator, const Tree<Len> (&...nodes)) {
   // Compute the total length of the children
   constexpr unsigned NumberOfChildren = (... + Len);
 
-  Block blocks[k_maxNumberOfBlocksInNode];
-  size_t numberOfNodeBlocks = nodeCreator(blocks, NumberOfChildren);
-  Tree<NumberOfChildren + numberOfNodeBlocks> result(blocks);
-
-  Block * childrenAddress = &result[numberOfNodeBlocks];
-  for (Node node : {static_cast<Node>(nodes)...}) {
-    node.copyTreeTo(childrenAddress);
-    childrenAddress += node.treeSize();
+  Tree<NumberOfChildren + NumberOfBlocksInNode> tree;
+  size_t i = 0;
+  while (!blockCreator(tree.blockAtIndex(i), i, NumberOfChildren)) {
+    i++; // TODO factorize
   }
-  return result;
+
+  size_t blockIndex = NumberOfBlocksInNode;
+  for (Node node : {static_cast<Node>(nodes)...}) {
+    // We can't use node.copyTreeTo(tree.blockAtIndex(blockIndex++)) because memcpy isn't constexpr
+    // TODO: use constexpr version of memcpy in copyTreeTo?
+    for (size_t i = 0; i < node.treeSize(); i++) {
+      *(tree.blockAtIndex(blockIndex++)) = *(node.block() + i);
+    }
+  }
+  return tree;
 }
 
-template<unsigned ...Len> static constexpr auto Addition(const Tree<Len> (&...children)) { return MakeTree(AdditionInterface::CreateNodeAtAddress, children...); }
-template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Division(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree(DivisionInterface::CreateNodeAtAddress, child1, child2); }
-  template<unsigned ...Len> static constexpr auto Multiplication(const Tree<Len> (&...children)) { return MakeTree(MultiplicationInterface::CreateNodeAtAddress, children...); }
-  template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Power(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree(PowerInterface::CreateNodeAtAddress, child1, child2); }
-template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Subtraction(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree(SubtractionInterface::CreateNodeAtAddress, child1, child2); }
+template<unsigned ...Len> static constexpr auto Addition(const Tree<Len> (&...children)) { return MakeTree<AdditionInterface::k_numberOfBlocksInNode>(AdditionInterface::CreateBlockAtIndex, children...); }
+
+template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Division(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<DivisionInterface::k_numberOfBlocksInNode>([](Block * b, size_t i, uint8_t nb) { return DivisionInterface::CreateBlockAtIndex(b, i); }, child1, child2); }
+
+template<unsigned ...Len> static constexpr auto Multiplication(const Tree<Len> (&...children)) { return MakeTree<MultiplicationInterface::k_numberOfBlocksInNode>(MultiplicationInterface::CreateBlockAtIndex, children...); }
+
+template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Power(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<PowerInterface::k_numberOfBlocksInNode>([](Block * b, size_t i, uint8_t nb) { return PowerInterface::CreateBlockAtIndex(b, i); }, child1, child2); }
+
+template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Subtraction(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<SubtractionInterface::k_numberOfBlocksInNode>([](Block * b, size_t i, uint8_t nb) { return SubtractionInterface::CreateBlockAtIndex(b, i); }, child1, child2); }
 
 static constexpr Tree<ConstantInterface::k_numberOfBlocksInNode> operator "" _n(char16_t name) {
   Tree<ConstantInterface::k_numberOfBlocksInNode> result;
-  ConstantInterface::CreateNodeAtAddress(static_cast<Node>(result).block(), name);
+  size_t i = 0;
+  while (!ConstantInterface::CreateBlockAtIndex(result.blockAtIndex(i), i, name)) {
+    i++; // TODO factorize
+  }
   return result;
 }
 
 static constexpr Tree<IntegerInterface::k_minimalNumberOfBlocksInNode + 1> operator "" _n(unsigned long long value) {
   assert(value < 256); // TODO: larger values
   Tree<IntegerInterface::k_minimalNumberOfBlocksInNode + 1> result;
-  IntegerInterface::CreateNodeAtAddress(static_cast<Node>(result).block(), value);
+  size_t i = 0;
+  while (!IntegerInterface::CreateBlockAtIndex(result.blockAtIndex(i), i, value)) {
+    i++; // TODO factorize
+  }
   return result;
 }
 

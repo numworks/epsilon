@@ -8,7 +8,7 @@ namespace Poincare {
 
 class Interface {
 public:
-  template <typename T, int N, typename... Types>
+  template <typename T, typename... Types>
   static TypeBlock * PushNode(Types... args);
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream & stream) const = 0;

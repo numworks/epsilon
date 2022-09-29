@@ -8,17 +8,18 @@ namespace Poincare {
 
 class DivisionInterface final : public Interface {
 public:
-   static constexpr size_t CreateNodeAtAddress(Block * address) {
-    *(address) = DivisionBlock;
-    return k_numberOfBlocksInNode;
+  constexpr static bool CreateBlockAtIndex(Block * block, size_t blockIndex) {
+    assert(blockIndex == 0);
+    *block = DivisionBlock;
+    return true;
   }
-  static TypeBlock * PushNode() { return Interface::PushNode<DivisionInterface, k_numberOfBlocksInNode>(); }
+  static TypeBlock * PushNode() { return Interface::PushNode<DivisionInterface>(); }
   constexpr int numberOfChildren(const TypeBlock * block) const override { return k_numberOfChildren; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Division"; }
 #endif
 
-  constexpr static size_t k_numberOfBlocksInNode = 3;
+  constexpr static size_t k_numberOfBlocksInNode = 1;
   constexpr static int k_numberOfChildren = 2;
 };
 

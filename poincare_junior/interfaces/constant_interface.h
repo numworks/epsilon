@@ -14,15 +14,18 @@ public:
     Undefined
   };
 
-  constexpr static size_t CreateNodeAtAddress(Block * address, char16_t name) {
-    Type type = name == 'e' ? Type::E : name == u'π' ? Type::Pi : Type::Undefined;
-    assert(type != ConstantInterface::Type::Undefined);
-    *(address++) = ConstantBlock;
-    *(address++) = ValueBlock(static_cast<uint8_t>(type));
-    *(address) = ConstantBlock;
-    return k_numberOfBlocksInNode;
-  }
-  static TypeBlock * PushNode(char16_t type) { return Interface::PushNode<ConstantInterface, k_numberOfBlocksInNode>(type); }
+  constexpr static bool CreateBlockAtIndex(Block * block, size_t blockIndex, char16_t name) {
+    if (blockIndex == 0 || blockIndex == k_numberOfBlocksInNode - 1) {
+      *block = ConstantBlock;
+    } else {
+      assert(blockIndex == 1);
+      Type type = name == 'e' ? Type::E : name == u'π' ? Type::Pi : Type::Undefined;
+      assert(type != ConstantInterface::Type::Undefined);
+      *block = ValueBlock(static_cast<uint8_t>(type));
+    }
+    return blockIndex == k_numberOfBlocksInNode - 1;
+  };
+  static TypeBlock * PushNode(char16_t type) { return Interface::PushNode<ConstantInterface>(type); }
 
   constexpr size_t nodeSize(const TypeBlock * block, bool head = true) const override { return 3; }
 #if POINCARE_TREE_LOG

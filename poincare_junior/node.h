@@ -25,23 +25,31 @@ public:
   void log(std::ostream & stream, bool recursive = true, int indentation = 0, bool verbose = true) const;
 #endif
 
-  const TypeBlock * block() const { return m_block; }
-  TypeBlock * block() { return m_block; }
+  constexpr TypeBlock * block() const { return m_block; }
+  constexpr TypeBlock * block() { return m_block; }
   bool isUninitialized() const { return m_block == nullptr; }
   void copyTreeTo(void * address) const;
 
   // Block Navigation
-  const Node nextNode() const;
-  Node nextNode() { return Utils::DeconstifyObj(&Node::nextNode, this); };
+  constexpr const Node nextNode() const { return Node(m_block + nodeSize()); }
+  constexpr Node nextNode() { return Utils::DeconstifyObj(&Node::nextNode, this); };
   const Node previousNode() const;
   Node previousNode() { return Utils::DeconstifyObj(&Node::previousNode, this);}
-  const Node nextTree() const;
-  Node nextTree() { return Utils::DeconstifyObj(&Node::nextTree, this); };
+  constexpr const Node nextTree() const {
+    Node result = *this;
+    int nbOfChildrenToScan = result.numberOfChildren();
+    while (nbOfChildrenToScan > 0) {
+      result = result.nextNode();
+      nbOfChildrenToScan += result.numberOfChildren() - 1;
+    }
+    return result.nextNode();
+  }
+  constexpr Node nextTree() { return Utils::DeconstifyObj(&Node::nextTree, this); };
   const Node previousTree() const;
   Node previousTree() { return Utils::DeconstifyObj(&Node::previousTree, this);}
 
   // Sizes
-  size_t treeSize() const { return nextTree().block() - block(); }
+  constexpr size_t treeSize() const { return nextTree().block() - block(); }
 
   // Node Hierarchy
   const Node parent() const;

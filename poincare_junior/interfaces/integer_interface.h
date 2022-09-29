@@ -9,21 +9,27 @@ namespace Poincare {
 class IntegerInterface final : public Interface {
 friend class IntegerExpressionInterface;
 public:
-  static constexpr size_t CreateNodeAtAddress(Block * address, unsigned long long value) {
-    *(address) = IntegerBlock;
-    int nodeSize = 0;
-    while (value != 0) {
-      uint8_t digit = value % k_maxValue;
-      *(address + nodeSize + 2) = ValueBlock(digit);
-      value = value / k_maxValue;
-      nodeSize++;
+  constexpr static bool CreateBlockAtIndex(Block * block, size_t blockIndex, unsigned long long value) {
+    if (blockIndex == 0) {
+      *block = IntegerBlock;
+      return false;
+    } else {
+      size_t digitIndex = blockIndex - 1;
+      uint8_t leftValue = value;
+      for (size_t i = 0; i < digitIndex; i++) {
+        // TODO: optimize?
+        leftValue /= k_maxValue;
+      }
+      if (leftValue == 0) {
+        *block = IntegerBlock;
+        return true;
+      }
+      uint8_t digit = leftValue % k_maxValue;
+      *block = ValueBlock(digit);
+      return false;
     }
-    *(address + 1) = nodeSize;
-    *(address + nodeSize + 2) = nodeSize;
-    *(address + nodeSize + 3) = IntegerBlock;
-    return nodeSize + k_minimalNumberOfBlocksInNode;
   }
-  static TypeBlock * PushNode(int value) { return Interface::PushNode<IntegerInterface, k_minimalNumberOfBlocksInNode + sizeof(unsigned long long)/sizeof(Block)>(value); }
+  static TypeBlock * PushNode(int value) { return Interface::PushNode<IntegerInterface>(value); }
 
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override { stream << "Integer"; }

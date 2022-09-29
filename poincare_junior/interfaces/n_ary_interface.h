@@ -17,11 +17,13 @@ public:
   constexpr size_t nodeSize(const TypeBlock * block, bool head = true) const override { return 3; }
   static constexpr size_t k_numberOfBlocksInNode = 3;
 protected:
-   static constexpr size_t CreateNodeAtAddress(Block * address, TypeBlock typeBlock, uint8_t numberOfChildren) {
-    *(address++) = typeBlock;
-    *(address++) = ValueBlock(numberOfChildren);
-    *(address) = typeBlock;
-    return k_numberOfBlocksInNode;
+  constexpr static bool CreateBlockAtIndex(Block * block, size_t blockIndex, uint8_t numberOfChildren, TypeBlock typeBlock) {
+    if (blockIndex == 0 || blockIndex == k_numberOfBlocksInNode - 1) {
+      *block = typeBlock;
+    } else {
+      *block = ValueBlock(numberOfChildren);
+    }
+    return blockIndex == k_numberOfBlocksInNode - 1;
   }
 };
 

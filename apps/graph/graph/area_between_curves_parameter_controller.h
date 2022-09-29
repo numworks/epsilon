@@ -19,23 +19,25 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
+  Escher::ViewController::TitlesDisplay titlesDisplay() override { return Escher::ViewController::TitlesDisplay::DisplayLastThreeTitles; }
 
   int numberOfRows() const override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   int typeAtIndex(int index) override { return 0; }
   Shared::CurveSelectionCell * reusableCell(int index, int type) override { assert(index >= 0 && index < reusableCellCount(type)); return m_cells + index; }
-  int reusableCellCount(int type) override { return k_maxNumberOfRows; }
+  int reusableCellCount(int type) override { return k_maxNumberOfDisplayableRows; }
 
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   Escher::View * view() override { return &m_contentView; }
 private:
-  constexpr static int k_maxNumberOfRows = 7;
+  constexpr static int k_maxNumberOfDisplayableRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::TabHeight + 3 * Escher::Metric::StackTitleHeight);
+  // There should alway be 3 titles displayed.
 
   Ion::Storage::Record m_mainRecord;
   AreaBetweenCurvesGraphController * m_areaGraphController;
   Escher::TableViewWithTopAndBottomViews m_contentView;
   Escher::MessageTextView m_topView;
-  Shared::CurveSelectionCell m_cells[k_maxNumberOfRows];
+  Shared::CurveSelectionCell m_cells[k_maxNumberOfDisplayableRows];
 };
 
 }

@@ -69,6 +69,8 @@ private:
 
 class LabeledAxis : public SimpleAxis {
 public:
+  LabeledAxis() : m_forceRelativePosition(false), m_hidden(false) {}
+
   void reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) override;
   void forceRelativePosition(AbstractPlotView::RelativePosition position);
   void setHidden(bool hide) { m_hidden = hide; }

@@ -51,9 +51,9 @@ protected:
 
   class CurveDrawing {
   public:
-    CurveDrawing(Curve2D<float> curve, void * model, void * context, float tStart, float tEnd, float tStep, KDColor color, AbstractPlotView::Axis axis = AbstractPlotView::Axis::Horizontal, bool thick = false, bool dashed = false);
+    CurveDrawing(Curve2D<float> curve, void * model, void * context, float tStart, float tEnd, float tStep, KDColor color, bool thick = true, bool dashed = false);
     /* If one of the pattern bound is nullptr, the main curve is used instead. */
-    void setPatternOptions(Pattern pattern, Curve2D<float> patternLowerBound, Curve2D<float> patternUpperBound, bool patternWithoutCurve);
+    void setPatternOptions(Pattern pattern, float patternStart, float patternEnd, Curve2D<float> patternLowerBound, Curve2D<float> patternUpperBound, bool patternWithoutCurve, AbstractPlotView::Axis axis = AbstractPlotView::Axis::Horizontal);
     void setPrecisionOptions(bool drawStraightLinesEarly, Curve2D<double> curveDouble, DiscontinuityTest discontinuity);
     void draw(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
 
@@ -78,6 +78,8 @@ protected:
     float m_tStart;
     float m_tEnd;
     float m_tStep;
+    float m_patternStart;
+    float m_patternEnd;
     KDColor m_color;
     AbstractPlotView::Axis m_axis;
     bool m_thick;

@@ -16,7 +16,7 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDCont
   Curve2D<float> circle = [](float t, void * model, void * context) {
     return Coordinate2D<float>(std::cos(t), std::sin(t));
   };
-  CurveDrawing(circle, nullptr, nullptr, 0.f, 2.f * M_PI, M_PI / 180.f, Palette::GrayDark).draw(plotView, ctx, rect);
+  CurveDrawing(circle, nullptr, nullptr, 0.f, 2.f * M_PI, M_PI / 180.f, Palette::GrayDark, false).draw(plotView, ctx, rect);
 
   // - Draw sine and cosine projections
   plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, s, 0.f, c, Palette::Red, 1, 3);

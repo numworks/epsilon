@@ -93,10 +93,10 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
       stack->push(&m_goToParameterController);
       return true;
     }
-  } else if ((event == Ion::Events::Copy || event == Ion::Events::Cut)) {
+  } else if ((event == Ion::Events::Copy || event == Ion::Events::Cut) || event == Ion::Events::Sto) {
     if (type == k_r2CellType) {
-      Escher::Clipboard::sharedClipboard()->store(m_r2Cell.text(), strlen(m_r2Cell.text()));
-      return true;
+      Escher::Clipboard::sharedClipboardForEvent(event)->store(m_r2Cell.text(), strlen(m_r2Cell.text()));
+      return event != Ion::Events::Sto;
     } else if (type == k_regressionEquationCellType) {
       Poincare::Layout l = m_regressionEquationCell.layout();
       if (!l.isUninitialized()) {

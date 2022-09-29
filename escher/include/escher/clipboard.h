@@ -11,6 +11,7 @@ public:
   Clipboard(bool isSystemClipboard) : m_isSystem(isSystemClipboard) {}
   static Clipboard * sharedClipboard();
   static Clipboard * sharedStoreBuffer();
+  static Clipboard * sharedClipboardForEvent(Ion::Events::Event event);
   void store(const char * storedText, int length = -1);
   const char * storedText();
   void reset();

@@ -25,14 +25,14 @@ void IntervalGraphController::didBecomeFirstResponder() {
 }
 
 bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Copy) {
+  if (event == Ion::Events::Copy || event == Ion::Events::Sto) {
     // Copy confidence interval as matrix
     char copyBuffer[2 * Constants::k_shortBufferSize + 4];
     Poincare::Print::CustomPrintf(copyBuffer, sizeof(copyBuffer), "[[%*.*ed,%*.*ed]]",
         m_interval->estimate() - m_interval->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
         m_interval->estimate() + m_interval->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
-    Escher::Clipboard::sharedClipboard()->store(copyBuffer, strlen(copyBuffer));
-    return true;
+    Escher::Clipboard::sharedClipboardForEvent(event)->store(copyBuffer, strlen(copyBuffer));
+    return event != Ion::Events::Sto;
   }
   if (event == Ion::Events::Up || event == Ion::Events::Down) {
     m_graphView.selectAdjacentInterval(event == Ion::Events::Up);

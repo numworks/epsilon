@@ -198,16 +198,16 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::EXE) {
     return handleEventWithText("\n");
   }
-  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
+  if (event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto) {
     if (contentView()->selectionIsEmpty()) {
       return false;
     }
     const char * start = contentView()->selectionStart();
-    Clipboard::sharedClipboard()->store(start, contentView()->selectionEnd() - start);
+    Clipboard::sharedClipboardForEvent(event)->store(start, contentView()->selectionEnd() - start);
     if (event == Ion::Events::Cut) {
       deleteSelection();
     }
-    return true;
+    return event != Ion::Events::Sto;
   }
   if (event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);

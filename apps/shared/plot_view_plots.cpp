@@ -47,18 +47,20 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView * plotView, KDContex
   if (max < min) {
     std::swap(max, min);
   }
-  KDCoordinate minC = plotView->floatToPixel(parallel, min);
-  KDCoordinate maxC = plotView->floatToPixel(parallel, max);
+  KDCoordinate minC = std::round(plotView->floatToPixel(parallel, min));
+  KDCoordinate maxC = std::round(plotView->floatToPixel(parallel, max));
   KDRect boundingRect = parallel == AbstractPlotView::Axis::Horizontal ? KDRect(minC, posC, maxC - minC, 1) : KDRect(posC, maxC, 1, minC - maxC);
   boundingRect = boundingRect.intersectedWith(rect);
   if (parallel == AbstractPlotView::Axis::Horizontal) {
     minC = boundingRect.left();
-    maxC = boundingRect.right() - 1;
+    maxC = boundingRect.right();
   } else {
     minC = boundingRect.top();
-    maxC = boundingRect.bottom() - 1;
+    maxC = boundingRect.bottom();
   }
-  assert(minC <= maxC);
+  if (minC >= maxC) {
+    return;
+  }
 
   if (posC % k_size >= k_size / 2) {
     std::swap(firstColor, secondColor);

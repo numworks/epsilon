@@ -96,7 +96,7 @@ static float relativePositionToOffset(AbstractPlotView::RelativePosition positio
   }
 }
 
-void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin) const {
+void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * label, Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin) const {
   KDSize labelSize = KDFont::Font(k_font)->stringSize(label);
 
   Coordinate2D<float> p = floatToPixel2D(xy);
@@ -106,6 +106,19 @@ void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * labe
 
   if (KDRect(labelOrigin, labelSize).intersects(rect)) {
     ctx->drawString(label, labelOrigin, k_font, color, backgroundColor());
+  }
+}
+
+void AbstractPlotView::drawLayout(KDContext * ctx, KDRect rect, Layout layout, Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin) const {
+  KDSize layoutSize = layout.layoutSize(k_font);
+
+  Coordinate2D<float> p = floatToPixel2D(xy);
+  KDCoordinate x = std::round(p.x1() + relativePositionToOffset(xPosition, layoutSize.width(), ignoreMargin));
+  KDCoordinate y = std::round(p.x2() + relativePositionToOffset(yPosition, layoutSize.height(), ignoreMargin));
+  KDPoint layoutOrigin(x, y);
+
+  if (KDRect(layoutOrigin, layoutSize).intersects(rect)) {
+    layout.draw(ctx, layoutOrigin, k_font, color, backgroundColor());
   }
 }
 

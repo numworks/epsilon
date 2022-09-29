@@ -1,20 +1,19 @@
 #ifndef POINCARE_TEST_UTILS_H
 #define POINCARE_TEST_UTILS_H
 
-#include <poincare_junior/cached_tree.h>
+#include <poincare_junior/cache_reference.h>
 
 // Dummy parse
-inline CachedTree Parse(const char * textInput) {
+inline CachedReference Parse(const char * textInput) {
   // textInput == (1-2)/3/4
-  std::cout << "\n---------------- Input " << textInput << "----------------" << std::endl;
-  return CachedTree([]{
-      Division::PushNode();
-      Division::PushNode();
-      Subtraction::PushNode();
-      Integer::PushNode(1);
-      Integer::PushNode(2);
-      Integer::PushNode(3);
-      Integer::PushNode(4);
+  return CacheReference([]{
+      DivisionInterface::PushNode();
+      DivisionInterface::PushNode();
+      SubtractionInterface::PushNode();
+      IntegerInterface::PushNode(1);
+      IntegerInterface::PushNode(2);
+      IntegerInterface::PushNode(3);
+      IntegerInterface::PushNode(4);
       return true;
     });
 }

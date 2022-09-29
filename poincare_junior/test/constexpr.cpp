@@ -1,24 +1,24 @@
-#include "poincare_junior/handle.h"
+#include "poincare_junior/constexpr_node.h"
 #include "print.h"
 
 namespace Constants {
 
-constexpr TreeNode e = u'π'_n;
+constexpr Tree e = u'π'_n;
 
 }
 
 void playWithConstexprNodes() {
-  TreeCache * cache = TreeCache::sharedCache();
-  TreeSandbox * sandbox = cache->sandbox();
+  CachePool * cache = CachePool::sharedCachePool();
+  EditionPool * editionPool = cache->editionPool();
 
-  constexpr TreeNode value = 42_n;
-  constexpr TreeNode π = u'π'_n;
+  constexpr Tree value = 42_n;
+  constexpr Tree π = u'π'_n;
 
-  constexpr TreeNode node = Addition::Of(π, u'e'_n, Constants::e);
-  sandbox->pushTree(node);
+  constexpr Tree node = Addition(π, u'e'_n, Constants::e);
+  editionPool->initFromTree(node);
 
-  TypeTreeBlock * valueMod = sandbox->pushTree(Subtraction::Of(value, 12_n));
-  valueMod->basicReduction();
+  Node valueMod = editionPool->initFromTree(Subtraction(value, 12_n));
+  valueMod.expressionInterface()->basicReduction(valueMod.block());
 
   print();
 }

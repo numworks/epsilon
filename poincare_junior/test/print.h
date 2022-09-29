@@ -1,30 +1,30 @@
 #include <iostream>
-#include <poincare_junior/handle.h>
-#include <poincare_junior/tree_cache.h>
-#include <poincare_junior/tree_sandbox.h>
+#include <poincare_junior/cache_pool.h>
+#include <poincare_junior/edition_pool.h>
 
 using namespace Poincare;
 
 inline void print() {
-  TreeCache * cache = TreeCache::sharedCache();
-  TreeSandbox * sandbox = cache->sandbox();
+  CachePool * cachePool = CachePool::sharedCachePool();
+  EditionPool * editionPool = cachePool->editionPool();
 
   std::cout << "\n\n\n\nxxxxxxxxxxx MEMORY DUMP xxxxxxxxxxxx" << std::endl;
-  std::cout << "\n========= CACHE =========" << std::endl;
-  cache->treeLog(std::cout);
+  std::cout << "\n========= CACHE POOL =========" << std::endl;
+  cachePool->treeLog(std::cout);
 
-  std::cout << "\n========= SANDBOX =========" << std::endl;
-  sandbox->treeLog(std::cout);
+  std::cout << "\n========= EDITION POOL =========" << std::endl;
+  editionPool->treeLog(std::cout);
   std::cout << "\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" << std::endl;
 }
 
 inline void intermediaryPrint() {
-  TreeCache * cache = TreeCache::sharedCache();
-  TreeSandbox * sandbox = cache->sandbox();
+  CachePool * cachePool = CachePool::sharedCachePool();
+  EditionPool * editionPool = cachePool->editionPool();
 
-  std::cout << "\n========= CACHE =========" << std::endl;
-  cache->treeLog(std::cout);
+  std::cout << "\n========= CACHE POOL =========" << std::endl;
+  cachePool->treeLog(std::cout);
 
-  std::cout << "\n========= INCOMPLETE SANDBOX =========" << std::endl;
-  sandbox->flatLog(std::cout);
+  std::cout << "\n========= INCOMPLETE EDITION POOL =========" << std::endl;
+  editionPool->flatLog(std::cout);
+  std::cout << "\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" << std::endl;
 }

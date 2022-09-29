@@ -9,7 +9,7 @@ void testGraph();
 void playWithConstexprNodes();
 
 int main() {
-  TreeCache * cache = TreeCache::sharedCache();
+  TreeCache * cache = TreeCache::sharedCachePool();
   TreeSandbox * sandbox = cache->sandbox();
 
   std::cout << "\n\n ELEMENTARY TREE MANIPULATION \n" << std::endl;

@@ -12,7 +12,7 @@ bool ZoomCurveViewController::handleEvent(Ion::Events::Event event) {
     /* If the display is turned on while all curves have been interrupted,
      * redrawing the curve view will be skipped. Since the frame info has been
      * lost on powering down, this would lead to a noisy screen. */
-    curveView()->resetCurvesInterrupted();
+    curveView()->resetInterruption();
     /* Return false here as the OnOff event needs to be caught downstream for
      * the screen to be redrawn. */
     return false;

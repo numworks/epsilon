@@ -31,7 +31,7 @@ void VectorGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * 
 
   // - Draw arrow
   plotView->drawSegment(ctx, rect, Coordinate2D<float>(0.f, 0.f), Coordinate2D<float>(x, y), Palette::Red);
-  plotView->drawArrowhead(ctx, rect, Coordinate2D<float>(0.f, 0.f), Coordinate2D<float>(x, y), k_arrowSizeInPixels * plotView->pixelWidth(), Palette::Red);
+  plotView->drawArrowhead(ctx, rect, Coordinate2D<float>(x, y), Coordinate2D<float>(x, y), k_arrowSizeInPixels, Palette::Red);
 
 }
 

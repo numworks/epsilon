@@ -40,6 +40,8 @@ public:
 
   virtual void reload(bool resetInterruption = false, bool force = false);
   virtual void resetInterruption() {}
+  virtual CursorView * cursorView() const = 0;
+
   CurveViewRange * range() const { return m_range; }
   void setRange(CurveViewRange * range) { m_range = range; }
   bool hasFocus() const { return m_focus; }
@@ -52,6 +54,7 @@ public:
   float floatToPixel(Axis axis, float f) const;
   float pixelToFloat(Axis axis, KDCoordinate c) const;
   Poincare::Coordinate2D<float> floatToPixel2D(Poincare::Coordinate2D<float> p) const { return Poincare::Coordinate2D<float>(floatToPixel(Axis::Horizontal, p.x1()), floatToPixel(Axis::Vertical, p.x2())); }
+  Poincare::Coordinate2D<float> pixelToFloat2D(Poincare::Coordinate2D<float> xy) const { return Poincare::Coordinate2D<float>(pixelToFloat(Axis::Horizontal, xy.x1()), pixelToFloat(Axis::Vertical, xy.x2())); }
 
   // Methods for drawing basic geometry
   /* FIXME These methods are public as they need to be accessible to helper
@@ -62,7 +65,7 @@ public:
   void drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;
   void drawLayout(KDContext * ctx, KDRect rect, Poincare::Layout layout, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;
   void drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Poincare::Coordinate2D<float> xy, KDColor color) const;
-  void drawArrowhead(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> xy, Poincare::Coordinate2D<float> dxy, float width, KDColor color, bool thick = false, float tanAngle = 1.f / 3.f) const;
+  void drawArrowhead(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> xy, Poincare::Coordinate2D<float> dxy, float pixelArrowWidth, KDColor color, bool thick = false, float tanAngle = 1.f / 3.f) const;
   /* These methods use the stamping state-machine.
    * FIXME They may be moved into a helper. */
   void setDashed(bool dashed) const { m_stampDashIndex = dashed ? 0 : k_stampIndexNoDash; }
@@ -86,7 +89,6 @@ private:
   virtual void drawPlot(KDContext * ctx, KDRect rect) const = 0;
   virtual BannerView * bannerView() const = 0;
   virtual KDRect bannerFrame() = 0;
-  virtual CursorView * cursorView() const = 0;
   virtual KDRect cursorFrame() = 0;
 
   CurveViewRange * m_range;

@@ -71,7 +71,7 @@ void GraphController::viewWillAppear() {
 }
 
 void GraphController::didBecomeFirstResponder() {
-  if (*m_selectedDotIndex == -1 && curveView()->isMainViewSelected()) {
+  if (*m_selectedDotIndex == -1 && curveView()->hasFocus()) {
     setAbscissaInputAsFirstResponder();
   }
   Shared::InteractiveCurveViewController::didBecomeFirstResponder();
@@ -225,8 +225,8 @@ InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {
   return m_store;
 }
 
-CurveView * GraphController::curveView() {
-  return &m_view;
+AbstractPlotView * GraphController::curveView() {
+  return nullptr; // TODO
 }
 
 bool GraphController::openMenuForCurveAtIndex(int index) {

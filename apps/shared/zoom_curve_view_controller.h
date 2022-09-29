@@ -4,7 +4,7 @@
 #include <escher/view_controller.h>
 #include "interactive_curve_view_range.h"
 #include "curve_view_cursor.h"
-#include "curve_view.h"
+#include "plot_view.h"
 
 namespace Shared {
 
@@ -22,7 +22,7 @@ protected:
   virtual bool handleZoom(Ion::Events::Event event);
   virtual bool handleEnter();
   virtual InteractiveCurveViewRange * interactiveCurveViewRange() = 0;
-  virtual CurveView * curveView() = 0;
+  virtual AbstractPlotView * curveView() = 0;
   virtual float xFocus() = 0;
   virtual float yFocus() = 0;
   CurveViewCursor * m_cursor;

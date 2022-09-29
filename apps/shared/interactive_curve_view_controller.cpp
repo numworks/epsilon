@@ -56,14 +56,14 @@ const char * InteractiveCurveViewController::title() {
 
 void InteractiveCurveViewController::setCurveViewAsMainView(bool resetInterrupted, bool forceReload) {
   header()->setSelectedButton(-1);
-  curveView()->selectMainView(true);
+  curveView()->setFocus(true);
   Container::activeApp()->setFirstResponder(this);
   reloadBannerView();
   curveView()->reload(resetInterrupted, forceReload);
 }
 
 bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
-  if (!curveView()->isMainViewSelected()) {
+  if (!curveView()->hasFocus()) {
     if (event == Ion::Events::Down) {
       setCurveViewAsMainView(false, false);
       return true;
@@ -88,7 +88,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     if (event == Ion::Events::Up) {
-      curveView()->selectMainView(false);
+      curveView()->setFocus(false);
       header()->setSelectedButton(0);
       return true;
     }
@@ -101,7 +101,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
 }
 
 void InteractiveCurveViewController::didBecomeFirstResponder() {
-  if (!curveView()->isMainViewSelected()) {
+  if (!curveView()->hasFocus()) {
     header()->setSelectedButton(0);
   }
 }
@@ -140,8 +140,8 @@ void InteractiveCurveViewController::viewWillAppear() {
 
   *m_rangeVersion = rangeVersion();
 
-  if (!curveView()->isMainViewSelected()) {
-    curveView()->selectMainView(true);
+  if (!curveView()->hasFocus()) {
+    curveView()->setFocus(true);
     header()->setSelectedButton(-1);
   }
 
@@ -165,7 +165,7 @@ void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirs
   if (nextFirstResponder == tabController()) {
     assert(tabController() != nullptr);
     m_selectedSubCurveIndex = 0;
-    curveView()->selectMainView(false);
+    curveView()->setFocus(false);
     header()->setSelectedButton(-1);
     curveView()->reload();
   }

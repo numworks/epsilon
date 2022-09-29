@@ -1,4 +1,5 @@
 #include <poincare/preferences.h>
+#include <poincare/expression.h>
 #include <ion/include/ion/persisting_bytes.h>
 #include <assert.h>
 
@@ -23,6 +24,35 @@ Preferences::Preferences() :
 Preferences * Preferences::sharedPreferences() {
   static Preferences preferences;
   return &preferences;
+}
+
+Preferences Preferences::SharedPreferencesClone() {
+  Preferences result = Preferences();
+  Preferences * shared = sharedPreferences();
+  result.setAngleUnit(shared->angleUnit());
+  result.setDisplayMode(shared->displayMode());
+  result.setEditionMode(shared->editionMode());
+  result.setComplexFormat(shared->complexFormat());
+  result.setCombinatoricSymbols(shared->combinatoricSymbols());
+  result.setNumberOfSignificantDigits(shared->numberOfSignificantDigits());
+  result.enableMixedFractions(static_cast<MixedFractions>(shared->mixedFractionsAreEnabled()));
+  result.setExamMode(shared->examMode(), shared->pressToTestParams());
+  return result;
+}
+
+
+Preferences Preferences::UpdatedSharedPreferencesWithComplexFormatAndAngleUnit(ComplexFormat complexFormat, AngleUnit angleUnit) {
+  Preferences result = SharedPreferencesClone();
+  result.setComplexFormat(complexFormat);
+  result.setAngleUnit(angleUnit);
+  return result;
+}
+
+Preferences Preferences::UpdatedSharedPreferencesWithExpressionInput(Expression e, Context * context) {
+  return UpdatedSharedPreferencesWithComplexFormatAndAngleUnit(
+    Expression::UpdatedComplexFormatWithExpressionInput(sharedPreferences()->complexFormat(), e, context),
+    Expression::UpdatedAngleUnitWithExpressionInput(sharedPreferences()->angleUnit(), e, context)
+  );
 }
 
 void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {

@@ -769,7 +769,7 @@ void CurveView::drawCurve(KDContext * ctx, KDRect rect, const float tStart, floa
           float upperBound = std::isnan(secondaryCoordinate) || std::isnan(areaBound) ? INFINITY : std::max(secondaryCoordinate, areaBound);
           drawHorizontalOrVerticalSegment(ctx, rect, secondaryAxis, mainCoordinate, lowerBound, upperBound, colorOfFill, 1, 1, areaPattern);
         }
-      } else if (!(std::isnan(secondaryCoordinate) || std::isinf(secondaryCoordinate))) {
+      } else if (std::isfinite(secondaryCoordinate)) {
         drawHorizontalOrVerticalSegment(ctx, rect, secondaryAxis, mainCoordinate, std::min(0.0f, secondaryCoordinate), std::max(0.0f, secondaryCoordinate), colorOfFill, 1, areaPattern >= 0 ? 1 : -1, areaPattern);
       }
     }

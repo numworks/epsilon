@@ -61,7 +61,7 @@ private:
   float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(m_bannerView.minimalSizeForOptimalDisplay().height()); }
   void reloadBannerView() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
-  Shared::CurveView * curveView() override;
+  Shared::AbstractPlotView * curveView() override;
 
   // InteractiveCurveViewController
   void initCursorParameters() override;

@@ -57,7 +57,7 @@ protected:
   bool isAlongY(int curveIndex) const override;
   void initCursorParameters() override;
   bool cursorMatchesModel() override;
-  CurveView * curveView() override;
+  AbstractPlotView * curveView() override;
 
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;
 

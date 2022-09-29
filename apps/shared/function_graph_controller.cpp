@@ -30,7 +30,7 @@ bool FunctionGraphController::isEmpty() const {
 }
 
 void FunctionGraphController::didBecomeFirstResponder() {
-  if (curveView()->isMainViewSelected()) {
+  if (curveView()->hasFocus()) {
     bannerView()->abscissaValue()->setParentResponder(this);
     bannerView()->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
     Container::activeApp()->setFirstResponder(bannerView()->abscissaValue());
@@ -163,8 +163,8 @@ bool FunctionGraphController::cursorMatchesModel() {
   return Poincare::Helpers::EqualOrBothNan(xy.x1(), m_cursor->x()) && Poincare::Helpers::EqualOrBothNan(xy.x2(), m_cursor->y());
 }
 
-CurveView * FunctionGraphController::curveView() {
-  return functionGraphView();
+AbstractPlotView * FunctionGraphController::curveView() {
+  return nullptr; // TODO
 }
 
 uint32_t FunctionGraphController::rangeVersion() {

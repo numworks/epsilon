@@ -44,7 +44,7 @@ private:
   bool handleEnter() override;
   void reloadBannerView() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
-  Shared::CurveView * curveView() override { return m_graphView; }
+  Shared::AbstractPlotView * curveView() override { return nullptr; } // TODO
   virtual I18n::Message legendMessageAtStep(Step step) = 0;
   virtual double cursorNextStep(double position, int direction) = 0;
   virtual Poincare::Layout createFunctionLayout() = 0;

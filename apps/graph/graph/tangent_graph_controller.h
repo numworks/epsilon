@@ -21,7 +21,7 @@ public:
 private:
   float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(bannerView()->minimalSizeForOptimalDisplay().height()); }
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
-  Shared::CurveView * curveView() override { return m_graphView; }
+  Shared::AbstractPlotView * curveView() override { return nullptr; } // TODO
   BannerView * bannerView() override { return m_bannerView; };
   void reloadBannerView() override;
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;

@@ -8,8 +8,8 @@ namespace Shared {
 namespace PlotPolicy {
 
 template<class CGrid, class CAxisX, class CAxisY>
-class Axes : CGrid {
-protected:
+class Axes : public CGrid {
+public:
   /* We inline these method to avoid having to write explicit template
    * specializations. */
   void drawAxes(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
@@ -22,6 +22,7 @@ protected:
     m_yAxis.reloadAxis(plotView, AbstractPlotView::Axis::Vertical);
   }
 
+protected:
   /* Compose instead of inheriting, as one cannot inherit twice from the same
    * class. */
   CAxisX m_xAxis;

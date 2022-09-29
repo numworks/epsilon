@@ -7,6 +7,7 @@
 #include <escher/message_text_view.h>
 #include "zoom_and_pan_curve_view_controller.h"
 #include "banner_view.h"
+#include "curve_view.h"
 
 namespace Shared {
 
@@ -63,7 +64,7 @@ private:
 
   // ZoomAndPanCurveViewController
   InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_interactiveRange; }
-  CurveView * curveView() override { return m_contentView.curveView(); }
+  AbstractPlotView * curveView() override { return nullptr; } // TODO
 
   ContentView m_contentView;
   InteractiveCurveViewRange * m_interactiveRange;

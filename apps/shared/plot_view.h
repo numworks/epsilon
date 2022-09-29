@@ -44,8 +44,8 @@ public:
   void setFocus(bool f);
   float rangeMin(Axis axis) const { return axis == Axis::Horizontal ? m_range->xMin() : m_range->yMin(); }
   float rangeMax(Axis axis) const { return axis == Axis::Horizontal ? m_range->xMax() : m_range->yMax(); }
-  float pixelWidth() const { return (m_range->xMax() - m_range->xMin()) / (bounds().width() - 1); }
-  float pixelHeight() const { return (m_range->yMax() - m_range->yMin()) / (bounds().height() - 1); }
+  float pixelWidth() const { return (m_range->xMax() - m_range->xMin()) / (m_frame.width() - 1); }
+  float pixelHeight() const { return (m_range->yMax() - m_range->yMin()) / (m_frame.height() - 1); }
   float pixelLength(Axis axis) const { return axis == Axis::Horizontal ? pixelWidth() : pixelHeight(); }
   float floatToPixel(Axis axis, float f) const;
   float pixelToFloat(Axis axis, KDCoordinate c) const;

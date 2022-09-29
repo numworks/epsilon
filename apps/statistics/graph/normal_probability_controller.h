@@ -21,7 +21,7 @@ public:
 
   // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override { return !m_store->hasValidSeries(validSerieMethod()); }
-  I18n::Message emptyMessage() override { return I18n::Message::NoDataToPlot; }
+  I18n::Message emptyMessage() override { return I18n::Message::TooManyDataPoints; }
   Escher::Responder * defaultController() override { return this; }
 
   // PlotController

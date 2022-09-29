@@ -18,8 +18,9 @@ namespace Shared {
  * Some behaviour could also be factorized with Escher::ExpressionTableCell.
  * More globally, we need a simple way to add widgets and properties to cells.
  * Here the problem is that the color indicator can't be set as an accessory,
- * and the class can't inherite from ExpressionTableCell because it is not an
- * EvenOddCell, and because the ExpressionView is not Scrollable.
+ * since there is already a chevron in some cases, and the class can't inherit
+ * from ExpressionTableCell because it is not an EvenOddCell, and because the
+ * ExpressionView is not Scrollable.
  */
 class CurveSelectionCell : public Escher::TableCell {
 public:

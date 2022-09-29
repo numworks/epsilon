@@ -25,9 +25,7 @@ public:
   void reload(bool resetInterruption = false, bool force = false) override;
 
 private:
-  constexpr static KDColor k_backgroundColor = Escher::Palette::WallScreen;
-
-  void drawBackground(KDContext * ctx, KDRect rect) const override { ctx->fillRect(rect, k_backgroundColor); }
+  KDColor backgroundColor() const override { return Escher::Palette::WallScreen; }
 };
 
 }

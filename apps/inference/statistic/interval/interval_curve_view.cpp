@@ -2,11 +2,117 @@
 #include <poincare/print.h>
 #include <cmath>
 
+using namespace Poincare;
+using namespace Shared;
+
 namespace Inference {
 
-void IntervalCurveView::drawRect(KDContext * ctx, KDRect rect) const {
-  StatisticCurveView::drawRect(ctx, rect);
-  drawInterval(ctx, rect);
+// IntervalAxis
+
+static void convertFloatToText(float f, char * buffer, int bufferSize) {
+  Poincare::PrintFloat::ConvertFloatToText<float>(f, buffer, PlotPolicy::LabeledAxis::k_labelBufferMaxSize, PlotPolicy::LabeledAxis::k_labelBufferMaxGlyphLength, PlotPolicy::LabeledAxis::k_numberSignificantDigits, Poincare::Preferences::PrintFloatMode::Decimal);
+}
+
+void IntervalAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) {
+  Interval * plotInterval = interval(plotView);
+  float low = plotInterval->estimate() - plotInterval->marginOfError();
+  float high = plotInterval->estimate() + plotInterval->marginOfError();
+  float spaceBetweenBounds = plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, high) - plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, low);
+  m_realignLabels = spaceBetweenBounds <= PlotPolicy::LabeledAxis::k_labelBufferMaxGlyphLength * KDFont::GlyphWidth(AbstractPlotView::k_font);
+
+  convertFloatToText(low, m_labels[0], PlotPolicy::LabeledAxis::k_labelBufferMaxSize);
+  convertFloatToText(high, m_labels[1], PlotPolicy::LabeledAxis::k_labelBufferMaxSize);
+  /* Memoize the interval bounds, as at the time of display, there is no guarantee the bounds will be correct. */
+  m_ticks[0] = low;
+  m_ticks[1] = high;
+}
+
+float IntervalAxis::tickPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis) const {
+  if (i > k_numberOfLabels) {
+    return NAN;
+  }
+  return m_ticks[i];
+}
+
+void IntervalAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
+  AbstractPlotView::RelativePosition yRelative = AbstractPlotView::RelativePosition::After;
+  AbstractPlotView::RelativePosition xRelative = m_realignLabels ? (i == 0 ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::After) : AbstractPlotView::RelativePosition::There;
+  plotView->drawLabel(ctx, rect, m_labels[i], Coordinate2D<float>(t, 0.f), xRelative, yRelative, KDColorBlack);
+}
+
+// IntervalPlotPolicy
+
+void IntervalPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+  /* Distribute the Interval::k_numberOfDisplayedIntervals intervals between top of rect and axis:
+   *  i   isMainInterval
+   *                                            |10%|
+   *  0       false                             |▔▔▔|
+   *                                        |    20%    |
+   *  1       false                         |▔▔▔▔▔▔▔▔▔▔▔|
+   *                                     |      25.4%      |
+   *  2       true                       |▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔|
+   *                               |            40%                |
+   *  3       false                |▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔|
+   *
+   *  axis                   ------------|-----------------|-------------------
+   *  */
+
+  float graduationTopLength = plotView->pixelHeight() * k_intervalBoundHalfHeight;
+  float top = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, rect.top());
+  float bot = 0.0f;
+  // The main interval is the confidence level the user inputted
+  float estimate = m_interval->estimate();
+  float mainThreshold = m_interval->threshold();
+  // Draw each intervals
+  for (int i = 0; i < Interval::k_numberOfDisplayedIntervals; i++) {
+    float verticalPosition = top - (top - bot) * (i + 1) / (Interval::k_numberOfDisplayedIntervals + 1);
+    float threshold = Interval::DisplayedIntervalThresholdAtIndex(mainThreshold, i);
+    bool isMainInterval = (i == m_selectedIntervalIndex);
+    // Temporarily set the interval to compute the margin of error
+    m_interval->setThreshold(threshold);
+    m_interval->compute();
+    float marginOfError = m_interval->marginOfError();
+    // Draw the threshold value
+    constexpr int k_ThresholdBufferSize = PrintFloat::charSizeForFloatsWithPrecision(PlotPolicy::LabeledAxis::k_numberSignificantDigits) + 1; // 1 = strlen("%")
+    char buffer[k_ThresholdBufferSize];
+    Print::CustomPrintf(buffer, k_ThresholdBufferSize, "%*.*ef%%", threshold * 100.0f, Preferences::PrintFloatMode::Decimal, PlotPolicy::LabeledAxis::k_numberSignificantDigits);
+    KDColor textColor = isMainInterval ? KDColorBlack : Escher::Palette::GrayDarkMiddle;
+    plotView->drawLabel(ctx, rect, buffer, Coordinate2D<float>(estimate, verticalPosition), AbstractPlotView::RelativePosition::There, AbstractPlotView::RelativePosition::Before, textColor, true);
+
+    // Draw the interval segment : --------
+    double intervalRightBound = estimate - marginOfError;
+    double intervalLeftBound = estimate + marginOfError;
+    KDColor intervalColor = isMainInterval ? Escher::Palette::YellowDark : Escher::Palette::GrayDarkMiddle;
+    KDCoordinate intervalThickness = isMainInterval ? k_mainIntervalThickness : k_intervalThickness;
+    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, verticalPosition, intervalRightBound, intervalLeftBound, intervalColor, intervalThickness);
+    // Draw each bounds of the interval : |--------|
+    float graduationBottomLength = plotView->pixelHeight() * (k_intervalBoundHalfHeight + intervalThickness);
+    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, intervalRightBound, verticalPosition + graduationTopLength, verticalPosition - graduationBottomLength, intervalColor, intervalThickness);
+    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, intervalLeftBound, verticalPosition + graduationTopLength, verticalPosition - graduationBottomLength, intervalColor, intervalThickness);
+  }
+
+  // Restore initial threshold and interval
+  m_interval->setThreshold(mainThreshold);
+  m_interval->compute();
+}
+
+// IntervalCurveView
+
+IntervalCurveView::IntervalCurveView(Interval * interval) :
+  PlotView(interval)
+{
+  // IntervalPlotPolicy
+  m_interval = interval;
+}
+
+void IntervalCurveView::reload(bool resetInterruption, bool force) {
+  /* Set the interval so that the axis displays the right bounds. */
+  float mainThreshold = m_interval->threshold();
+  m_interval->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(m_interval->threshold(), m_selectedIntervalIndex));
+  m_interval->compute();
+  AbstractPlotView::reload(resetInterruption, force);
+  m_interval->setThreshold(mainThreshold);
+  m_interval->compute();
 }
 
 void IntervalCurveView::resetSelectedInterval() {
@@ -23,115 +129,6 @@ void IntervalCurveView::selectedIntervalEstimateAndMarginOfError(float * estimat
   // Restore initial threshold and interval
   m_interval->setThreshold(mainThreshold);
   m_interval->compute();
-}
-
-// Draw the main interval along side with 3 other significant intervals.
-void IntervalCurveView::drawInterval(KDContext * ctx, KDRect rect) const {
-  /* Distribute the Interval::k_numberOfDisplayedIntervals intervals between top of rect and axis:
-   *  i   isMainInterval
-   *                                            |10%|
-   *  0       false                             |▔▔▔|
-   *                                        |    20%    |
-   *  1       false                         |▔▔▔▔▔▔▔▔▔▔▔|
-   *                                     |      25.4%      |
-   *  2       true                       |▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔|
-   *                               |            40%                |
-   *  3       false                |▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔|
-   *
-   *  axis                   ------------|-----------------|-------------------
-   *  */
-  float top = pixelToFloat(Axis::Vertical, rect.top());
-  float bot = 0.0f;
-  // The main interval is the confidence level the user inputted
-  float estimate = m_interval->estimate();
-  float mainThreshold = m_interval->threshold();
-  // Draw each intervals
-  for (int i = 0; i < Interval::k_numberOfDisplayedIntervals; i++) {
-    float verticalPosition = top - (top - bot) * (i + 1) / (Interval::k_numberOfDisplayedIntervals + 1);
-    float threshold = Interval::DisplayedIntervalThresholdAtIndex(mainThreshold, i);
-    bool isMainInterval = (i == m_selectedIntervalIndex);
-    // Temporarily set the interval to compute the margin of error
-    m_interval->setThreshold(threshold);
-    m_interval->compute();
-    float marginOfError = m_interval->marginOfError();
-    // Draw the threshold value
-    constexpr int k_ThresholdBufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(k_numberSignificantDigits) + 1; // 1 = strlen("%")
-    char buffer[k_ThresholdBufferSize];
-    Poincare::Print::CustomPrintf(
-        buffer, k_ThresholdBufferSize, "%*.*ef%%", threshold * 100.0f,
-        Poincare::Preferences::PrintFloatMode::Decimal, k_numberSignificantDigits);
-    // Compute the threshold label position
-    KDPoint labelPosition = positionLabel(
-        std::round(floatToPixel(Axis::Horizontal, estimate)),
-        std::round(floatToPixel(Axis::Vertical, verticalPosition)) + k_labelGraduationLength,
-        KDFont::Font(KDFont::Size::Small)->stringSize(buffer), RelativePosition::None, RelativePosition::After);
-    KDColor textColor = isMainInterval ? KDColorBlack : Escher::Palette::GrayDarkMiddle;
-    if (rect.contains(labelPosition)) {
-      ctx->drawString(buffer, labelPosition, KDFont::Size::Small, textColor, k_backgroundColor);
-    }
-
-    // Draw the interval segment : --------
-    double intervalRightBound = estimate - marginOfError;
-    double intervalLeftBound = estimate + marginOfError;
-    KDColor intervalColor = isMainInterval ? Escher::Palette::YellowDark : Escher::Palette::GrayDarkMiddle;
-    KDCoordinate intervalThickness = isMainInterval ? k_mainIntervalThickness : k_intervalThickness;
-    drawHorizontalOrVerticalSegment(
-        ctx, rect, Axis::Horizontal, verticalPosition, intervalRightBound,
-        intervalLeftBound, intervalColor, intervalThickness);
-    // Draw each bounds of the interval : |--------|
-    drawGraduationAtPosition(ctx, intervalRightBound, verticalPosition,
-                             intervalColor, k_intervalBoundHalfHeight,
-                             intervalThickness);
-    drawGraduationAtPosition(ctx, intervalLeftBound, verticalPosition,
-                             intervalColor, k_intervalBoundHalfHeight,
-                             intervalThickness);
-    if (isMainInterval) {
-      // Draw label and graduations
-      drawIntervalLabelAndGraduation(ctx);
-    }
-  }
-
-  // Restore initial threshold and interval
-  m_interval->setThreshold(mainThreshold);
-  m_interval->compute();
-}
-
-void IntervalCurveView::drawLabelAndGraduationAtPosition(KDContext * ctx, float position, const char * text, RelativePosition horizontalPosition) const {
-  // Draw only if visible
-  if ((curveViewRange()->xMin() <= position) && (position <= curveViewRange()->xMax())) {
-    float verticalOrigin = std::round(floatToPixel(Axis::Vertical, 0.0f));
-    KDCoordinate graduationPosition = drawGraduationAtPosition(ctx, position);
-
-    // Label
-    KDPoint labelPosition = positionLabel(graduationPosition,
-                                          verticalOrigin,
-                                          KDFont::Font(KDFont::Size::Small)->stringSize(text),
-                                          horizontalPosition,
-                                          RelativePosition::Before);
-    ctx->drawString(text, labelPosition, KDFont::Size::Small, KDColorBlack, k_backgroundColor);
-  }
-}
-
-void IntervalCurveView::drawIntervalLabelAndGraduation(KDContext * ctx) const {
-  float lowerBound = m_interval->estimate() - m_interval->marginOfError();
-  float upperBound = m_interval->estimate() + m_interval->marginOfError();
-  float spaceBetweenBounds = floatToPixel(Axis::Horizontal, upperBound) - floatToPixel(Axis::Horizontal, lowerBound);
-  // Align labels left and right if they would overlap
-  bool realignLabels = spaceBetweenBounds <= k_labelBufferMaxGlyphLength * KDFont::GlyphWidth(KDFont::Size::Small);
-  char buffer[k_labelBufferMaxSize];
-  convertFloatToText(lowerBound, buffer, k_labelBufferMaxSize);
-  drawLabelAndGraduationAtPosition(ctx, lowerBound, buffer, realignLabels ? RelativePosition::Before : RelativePosition::None);
-  convertFloatToText(upperBound, buffer, k_labelBufferMaxSize);
-  drawLabelAndGraduationAtPosition(ctx, upperBound, buffer, realignLabels ? RelativePosition::After : RelativePosition::None);
-}
-
-void IntervalCurveView::convertFloatToText(float value, char * buffer, int bufferSize) const {
-  Poincare::PrintFloat::ConvertFloatToText<float>(value,
-                                                  buffer,
-                                                  k_labelBufferMaxSize,
-                                                  k_labelBufferMaxGlyphLength,
-                                                  k_numberSignificantDigits,
-                                                  Poincare::Preferences::PrintFloatMode::Decimal);
 }
 
 }  // namespace Inference

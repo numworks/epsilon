@@ -58,7 +58,7 @@ public:
    * be to private them and befriend the helpers. */
   void drawStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = 0) const;
   void drawSegment(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> a, Poincare::Coordinate2D<float> b, KDColor color, bool thick = false) const;
-  void drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color) const;
+  void drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;
   void drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Poincare::Coordinate2D<float> xy, KDColor color) const;
   void drawArrowhead(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> xy, Poincare::Coordinate2D<float> dxy, float width, KDColor color, bool thick = false, float tanAngle = 1.f / 3.f) const;
   /* These methods use the stamping state-machine.
@@ -77,7 +77,8 @@ private:
   Escher::View * subviewAtIndex(int i);
   void layoutSubviews(bool force = false);
 
-  virtual void drawBackground(KDContext * ctx, KDRect rect) const { ctx->fillRect(rect, k_backgroundColor); }
+  virtual KDColor backgroundColor() const { return k_backgroundColor; }
+  virtual void drawBackground(KDContext * ctx, KDRect rect) const { ctx->fillRect(rect, backgroundColor()); }
   virtual void drawAxes(KDContext * ctx, KDRect rect) const = 0;
   virtual void reloadAxes() = 0;
   virtual void drawPlot(KDContext * ctx, KDRect rect) const = 0;

@@ -40,6 +40,7 @@ public:
   virtual void reload(bool resetInterruption = false, bool force = false);
   virtual void resetInterruption() {}
   CurveViewRange * range() const { return m_range; }
+  void setRange(CurveViewRange * range) { m_range = range; }
   bool hasFocus() const { return m_focus; }
   void setFocus(bool f);
   float rangeMin(Axis axis) const { return axis == Axis::Horizontal ? m_range->xMin() : m_range->yMin(); }

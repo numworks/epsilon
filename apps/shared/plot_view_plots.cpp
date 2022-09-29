@@ -85,7 +85,7 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView * plotView, KDContex
 
 // WithCurves::CurveDrawing
 
-WithCurves::CurveDrawing::CurveDrawing(Curve2D<float> curve, void * model, void * context, float tStart, float tEnd, float tStep, KDColor color, AbstractPlotView::Axis axis, bool thick, bool dashed) :
+WithCurves::CurveDrawing::CurveDrawing(Curve2D<float> curve, void * model, void * context, float tStart, float tEnd, float tStep, KDColor color, bool thick, bool dashed) :
   m_pattern(),
   m_model(model),
   m_context(context),
@@ -98,22 +98,25 @@ WithCurves::CurveDrawing::CurveDrawing(Curve2D<float> curve, void * model, void 
   m_tEnd(tEnd),
   m_tStep(tStep),
   m_color(color),
-  m_axis(axis),
+  m_axis(AbstractPlotView::Axis::Horizontal),
   m_thick(thick),
   m_dashed(dashed),
   m_patternWithoutCurve(false),
-  m_drawStraightLinesEarly(false)
+  m_drawStraightLinesEarly(true)
 {
   if (m_tStart > m_tEnd) {
     std::swap(m_tStart, m_tEnd);
   }
 }
 
-void WithCurves::CurveDrawing::setPatternOptions(Pattern pattern, Curve2D<float> patternLowerBound, Curve2D<float> patternUpperBound, bool patternWithoutCurve) {
+void WithCurves::CurveDrawing::setPatternOptions(Pattern pattern, float patternStart, float patternEnd, Curve2D<float> patternLowerBound, Curve2D<float> patternUpperBound, bool patternWithoutCurve, AbstractPlotView::Axis axis) {
   m_pattern = pattern;
+  m_patternStart = patternStart;
+  m_patternEnd = patternEnd;
   m_patternLowerBound = patternLowerBound;
   m_patternUpperBound = patternUpperBound;
   m_patternWithoutCurve = patternWithoutCurve;
+  m_axis = axis;
 }
 
 void WithCurves::CurveDrawing::setPrecisionOptions(bool drawStraightLinesEarly, Curve2D<double> curveDouble, DiscontinuityTest discontinuity) {
@@ -152,7 +155,7 @@ void WithCurves::CurveDrawing::draw(const AbstractPlotView * plotView, KDContext
       continue;
     }
     previousXY = xy;
-    Coordinate2D<float> xy = m_curve(t, m_model, m_context);
+    xy = m_curve(t, m_model, m_context);
 
     // Draw a line with the pattern
     float patternMin = ((m_patternLowerBound ? m_patternLowerBound(t, m_model, m_context) : xy).*ordinate)();
@@ -165,7 +168,7 @@ void WithCurves::CurveDrawing::draw(const AbstractPlotView * plotView, KDContext
         patternMax = INFINITY;
       }
     }
-    if (!(std::isnan(patternMin) || std::isnan(patternMax)) && patternMin != patternMax) {
+    if (!(std::isnan(patternMin) || std::isnan(patternMax)) && patternMin != patternMax && m_patternStart <= t && t < m_patternEnd) {
       m_pattern.drawInLine(plotView, ctx, rect, AbstractPlotView::OtherAxis(m_axis), (xy.*abscissa)(), patternMin, patternMax);
     }
 
@@ -263,11 +266,10 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView * plotView, KDCon
        * in [-0.2,0.2] in this case. */
       remainingIterations /= 2;
     }
+
+    joinDots(plotView, ctx, rect, t1, xy1, t12, xy12, remainingIterations, discontinuous ? m_discontinuity : NoDiscontinuity);
+    joinDots(plotView, ctx, rect, t12, xy12, t2, xy2, remainingIterations, discontinuous ? m_discontinuity : NoDiscontinuity);
   }
-
-  joinDots(plotView, ctx, rect, t1, xy1, t12, xy12, remainingIterations, discontinuous ? m_discontinuity : NoDiscontinuity);
-  joinDots(plotView, ctx, rect, t12, xy12, t2, xy2, remainingIterations, discontinuous ? m_discontinuity : NoDiscontinuity);
-
 }
 
 // WithCurves
@@ -287,7 +289,9 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView * plotView, KDContext *
     float b = parameters[3];
     return Coordinate2D<float>(a * std::cos(t) + x, b * std::sin(t) + y);
   };
-  CurveDrawing(arc, parameters, nullptr, angleStart, angleEnd, angleStep, color).draw(plotView, ctx, rect);
+  CurveDrawing plot(arc, parameters, nullptr, angleStart, angleEnd, angleStep, color, false);
+  plot.setPrecisionOptions(false, nullptr, NoDiscontinuity);
+  plot.draw(plotView, ctx, rect);
 }
 
 // WithHistogram::HistogramDrawing

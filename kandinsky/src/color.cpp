@@ -1,6 +1,7 @@
 #include <kandinsky/color.h>
 #include <cmath>
 #include <algorithm>
+#include <assert.h>
 
 KDColor KDColor::Blend(KDColor first, KDColor second, uint8_t alpha) {
   /* This function is a hot path since it's being called for every single pixel
@@ -29,10 +30,6 @@ KDColor KDColor::Blend(KDColor first, KDColor second, uint8_t alpha) {
   return RGB888(red>>8, green>>8, blue>>8);
 }
 
-static double ConvertDegreeRadian(double x, bool degreeToRadian) {
-  return x * (degreeToRadian ? M_PI / 180.0 : 180.0 / M_PI);
-}
-
 KDColor KDColor::HSVBlend(KDColor color1, KDColor color2) {
   HSVColor HSVcolor1 = color1.convertToHSV();
   HSVColor HSVcolor2 = color2.convertToHSV();
@@ -46,12 +43,18 @@ KDColor KDColor::HSVBlend(KDColor color1, KDColor color2) {
   if (Hmax - Hmin < 180.0) {
     meanH = (Hmax + Hmin) / 2.0;
   } else {
+    /* This handles the case where the mean angle H is not
+     * between Hmin and Hmax. For example if Hmin = 358° and
+     * Hmax = 6°, Hmean = 2°. */
     double rotatedHmax = std::fmod(Hmax + 180.0, 360.0);
     double rotatedHmin = std::fmod(Hmin + 180.0, 360.0);
     double rotatedMean = (rotatedHmax + rotatedHmin) / 2.0;
     meanH = std::fmod(rotatedMean + 180.0, 360.0);
   }
 
+  assert(0.0 <= meanH && meanH < 360.0);
+  assert(0.0 <= meanS && meanS <= 1.0);
+  assert(0.0 <= meanV && meanV <= 255.0);
   return ConvertHSVToRGB(HSVColor({meanH, meanS, meanV}));
 }
 
@@ -60,15 +63,28 @@ KDColor::HSVColor KDColor::convertToHSV() const {
   double G = static_cast<double>(green());
   double B = static_cast<double>(blue());
 
-  double M = std::max(std::max(R, G), B);
+  double V = std::max(std::max(R, G), B);
   double m = std::min(std::min(R, G), B);
 
-  double V = M / 255.0;
-  double S = M > 0 ? 1.0 - m / M : 0.0;
+  double delta = V - m;
+  double S = V > 0 ? delta / V : 0.0;
 
-  double div = ConvertDegreeRadian(std::acos((R - 0.5 * G - 0.5 * B) / std::sqrt(R * R + G * G + B * B - R * G - R * B - G * B)), false);
-  double H = G < B ? 360.0 - div : div;
+  double H;
+  if (delta == 0) {
+    H = 0.0;
+  } else if (V == R) {
+    H = 60 * (G - B) / delta;
+  } else if (V == G) {
+    H = 120.0 + 60.0 * (B - R) / delta;
+  } else {
+    H = 240.0 + 60.0 * (R - G) / delta;
+  }
+  // Make H positive
+  H = (std::fmod((H + 360.0), 360.0));
 
+  assert(0.0 <= H && H < 360.0);
+  assert(0.0 <= S && S <= 1.0);
+  assert(0.0 <= V && V <= 255.0);
   return HSVColor({H, S, V});
 }
 
@@ -77,31 +93,38 @@ KDColor KDColor::ConvertHSVToRGB(KDColor::HSVColor color) {
   double S = color.S;
   double V = color.V;
 
-  double M = 255.0 * V;
-  double m = M * (1 - S);
+  assert(0.0 <= H && H < 360.0);
+  assert(0.0 <= S && S <= 1.0);
+  assert(0.0 <= V && V <= 255.0);
 
-  double z = (M - m) * (1.0 - std::fabs(std::fmod((H / 60.0), 2.0) - 1.0));
+  double alpha = V * (1 - S);
+  double beta = V * (1 - S * std::fabs(std::fmod(H / 60.0, 2.0) - 1));
 
-  uint8_t intM = static_cast<uint8_t>(M);
-  uint8_t intm = static_cast<uint8_t>(m);
-  uint8_t intzm = static_cast<uint8_t>(z + m);
-  if (H < 60) {
-    return KDColor::RGB888(intM, intzm, intm);
+  assert(0.0 <= alpha && alpha <= 255.0);
+  assert(0.0 <= beta && beta <= 255.0);
+
+  uint8_t intV = static_cast<uint8_t>(std::round(V));
+  uint8_t intAlpha = static_cast<uint8_t>(std::round(alpha));
+  uint8_t intBeta = static_cast<uint8_t>(std::round(beta));
+
+  if (H < 60.0) {
+    return KDColor::RGB888(intV, intBeta, intAlpha);
   }
-  if (H < 120) {
-    return KDColor::RGB888(intzm, intM, intm);
+  if (H < 120.0) {
+    return KDColor::RGB888(intBeta, intV, intAlpha);
   }
-  if (H < 180) {
-    return KDColor::RGB888(intm, intM, intzm);
+  if (H < 180.0) {
+    return KDColor::RGB888(intAlpha, intV, intBeta);
   }
-  if (H < 240) {
-    return KDColor::RGB888(intm, intzm, intM);
+  if (H < 240.0) {
+    return KDColor::RGB888(intAlpha, intBeta, intV);
   }
-  if (H < 300) {
-    return KDColor::RGB888(intzm, intm, intM);
+  if (H < 300.0) {
+    return KDColor::RGB888(intBeta, intAlpha, intV);
   }
-  if (H < 360) {
-    return KDColor::RGB888(intM, intm, intzm);
+  if (H < 360.0) {
+    return KDColor::RGB888(intV, intAlpha, intBeta);
   }
+  assert(false);
   return KDColorBlack;
 }

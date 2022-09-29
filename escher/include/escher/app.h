@@ -74,7 +74,7 @@ protected:
   App(Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage = (I18n::Message)0) :
     Responder(nullptr),
     m_modalViewController(this, rootViewController),
-    m_firstResponder(nullptr),
+    m_firstResponder(this),
     m_snapshot(snapshot),
     m_warningController(this, warningMessage)
   {}

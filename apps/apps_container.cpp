@@ -166,14 +166,6 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (event == Ion::Events::Sto) {
-    const char * text = Escher::Clipboard::sharedStoreBuffer()->storedText();
-    if (text[0] != '\0') {
-      Container::activeApp()->displayModalViewController(&m_storeController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
-      return true;
-    }
-    return false;
-  }
   if (event == Ion::Events::Home || (event == Ion::Events::Back && !Ion::Events::isRepeating())) {
     switchToBuiltinApp(appSnapshotAtIndex(0));
     return true;
@@ -405,6 +397,10 @@ void AppsContainer::storageIsFull() {
   if (s_activeApp) {
     s_activeApp->displayWarning(I18n::Message::StorageMemoryFull1, I18n::Message::StorageMemoryFull2, true);
   }
+}
+
+void AppsContainer::openStoreMenu() {
+  Container::activeApp()->displayModalViewController(&m_storeController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
 }
 
 Window * AppsContainer::window() {

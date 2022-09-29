@@ -66,7 +66,7 @@ private:
 
   Shared::DoublePairStore * store() const override { return m_store; }
   typedef bool (*DisplayCondition)(Model::Type type);
-  static bool DisplayR(Model::Type type) { return type == Model::Type::Linear; }
+  static bool DisplayR(Model::Type type) { return type == Model::Type::LinearApbx || type == Model::Type::LinearAxpb; }
   static bool DisplayR2(Model::Type type) { return type != Model::Type::None && type != Model::Type::Median; }
   static bool DisplayRegression(Model::Type type) { return type != Model::Type::None; }
 

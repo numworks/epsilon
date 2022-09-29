@@ -15,7 +15,7 @@ class Model {
 public:
   enum class Type : uint8_t {
     None            = 0,
-    Linear          = 1,
+    LinearAxpb      = 1,
     Proportional    = 2,
     Quadratic       = 3,
     Cubic           = 4,
@@ -27,8 +27,9 @@ public:
     Trigonometric   = 10,
     Logistic        = 11,
     Median          = 12,
+    LinearApbx      = 13,
   };
-  constexpr static int k_numberOfModels = 13;
+  constexpr static int k_numberOfModels = 14;
   constexpr static int k_maxNumberOfCoefficients = 5; // This has to verify: k_maxNumberOfCoefficients < Matrix::k_maxNumberOfCoefficients
   virtual Poincare::Layout layout() = 0;
 

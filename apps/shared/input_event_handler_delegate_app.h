@@ -11,6 +11,7 @@ public:
   virtual ~InputEventHandlerDelegateApp() = default;
   Escher::Toolbox * toolboxForInputEventHandler(Escher::InputEventHandler * textInput) override;
   Escher::NestedMenuController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
+  bool handleEvent(Ion::Events::Event event) override;
 protected:
   InputEventHandlerDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
 };

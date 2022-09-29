@@ -1,6 +1,7 @@
 #include "input_event_handler_delegate_app.h"
 #include "../apps_container.h"
 #include <cmath>
+#include <escher/clipboard.h>
 #include <string.h>
 
 using namespace Escher;
@@ -25,6 +26,18 @@ NestedMenuController * InputEventHandlerDelegateApp::variableBoxForInputEventHan
   varBox->setSender(textInput);
   varBox->lockDeleteEvent(MathVariableBoxController::Page::RootMenu);
   return varBox;
+}
+
+bool InputEventHandlerDelegateApp::handleEvent(Ion::Events::Event event) {
+  /* When they want to open the store menu, handleEvent(Events::Sto) on cells
+   * saves the text to be copied in the storeBuffer and return false for the
+   * event to bubble up and be treated here. */
+  if (event == Ion::Events::Sto) {
+    AppsContainer::sharedAppsContainer()->openStoreMenu();
+    Clipboard::sharedStoreBuffer()->reset();
+    return true;
+  }
+  return App::handleEvent(event);
 }
 
 }

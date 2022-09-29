@@ -61,6 +61,7 @@ public:
 #if EPSILON_GETOPT
   void setInitialAppSnapshot(Escher::App::Snapshot * snapshot) { m_initialAppSnapshot = snapshot; }
 #endif
+  void openStoreMenu();
 protected:
   int numberOfExternalApps() { return Ion::ExternalApps::numberOfApps(); }
 private:

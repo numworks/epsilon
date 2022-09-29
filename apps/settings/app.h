@@ -22,6 +22,7 @@ public:
   };
   TELEMETRY_ID("Settings");
 private:
+  bool handleEvent(Ion::Events::Event event) override;
   App(Snapshot * snapshot);
   MainController m_mainController;
   Escher::StackViewController m_stackViewController;

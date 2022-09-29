@@ -233,7 +233,7 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
   return moved;
 }
 
-static void computeNewBounds(float x, float minBoundWithMargin, float maxBoundWithMargin, float minBoundMarginRatio, float maxBoundMarginRatio, float * newMinBound, float * newMaxBound) {
+static void ComputeNewBoundsAfterZoomingOut(float x, float minBoundWithMargin, float maxBoundWithMargin, float minBoundMarginRatio, float maxBoundMarginRatio, float * newMinBound, float * newMaxBound) {
   // One of the bounds within margins becomes x
   if (x < minBoundWithMargin) {
     minBoundWithMargin = x;
@@ -275,7 +275,7 @@ bool InteractiveCurveViewRange::zoomOutToMakePointVisible(float x, float y, floa
     if (x < xMinWithMargin || x > xMaxWithMargin) {
       moved = true;
       float newXMin, newXMax;
-      computeNewBounds(x, xMinWithMargin, xMaxWithMargin, leftMarginRatio, rightMarginRatio, &newXMin, &newXMax);
+      ComputeNewBoundsAfterZoomingOut(x, xMinWithMargin, xMaxWithMargin, leftMarginRatio, rightMarginRatio, &newXMin, &newXMax);
       MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
       MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
     }
@@ -287,7 +287,7 @@ bool InteractiveCurveViewRange::zoomOutToMakePointVisible(float x, float y, floa
     if (y < yMinWithMargin || y > yMaxWithMargin) {
       moved = true;
       float newYMin, newYMax;
-      computeNewBounds(y, yMinWithMargin, yMaxWithMargin, bottomMarginRatio, topMarginRatio, &newYMin, &newYMax);
+      ComputeNewBoundsAfterZoomingOut(y, yMinWithMargin, yMaxWithMargin, bottomMarginRatio, topMarginRatio, &newYMin, &newYMax);
       MemoizedCurveViewRange::protectedSetYMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
       MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
     }

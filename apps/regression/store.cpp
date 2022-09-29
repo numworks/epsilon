@@ -202,7 +202,7 @@ double Store::determinationCoefficientForSeries(int series, Poincare::Context * 
 }
 
 void Store::resetMemoization() {
-  static_assert(((int)Model::Type::None) == 0, "None type should be default at 0");
+  static_assert(static_cast<int>(Model::Type::None) == 0, "None type should be default at 0");
   memset(m_regressionTypes, 0, sizeof(Model::Type) * Store::k_numberOfSeries);
   memset(m_recomputeCoefficients, 0, sizeof(m_recomputeCoefficients));
 }
@@ -224,13 +224,13 @@ float Store::minValueOfColumn(int series, int i) const {
 }
 
 double Store::yValueForXValue(int series, double x, Poincare::Context * globalContext) {
-  Model * model = regressionModel((int)m_regressionTypes[series]);
+  Model * model = regressionModel(m_regressionTypes[series]);
   double * coefficients = coefficientsForSeries(series, globalContext);
   return model->evaluate(coefficients, x);
 }
 
 double Store::xValueForYValue(int series, double y, Poincare::Context * globalContext) {
-  Model * model = regressionModel((int)m_regressionTypes[series]);
+  Model * model = regressionModel(m_regressionTypes[series]);
   double * coefficients = coefficientsForSeries(series, globalContext);
   return model->levelSet(coefficients, xMin(), xMax(), y, globalContext);
 }

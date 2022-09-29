@@ -49,7 +49,7 @@ public:
    * on the left otherwise */
   int nextDot(int series, int direction, int dot, bool displayMean);
   Model * regressionModel(Model::Type type) {
-    return regressionModel((int) type);
+    return regressionModel(static_cast<int>(type));
   }
 
   // Series

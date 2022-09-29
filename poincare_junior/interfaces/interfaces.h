@@ -31,19 +31,6 @@ static constexpr PowerExpressionInterface k_powerExpressionInterface;
 static constexpr ConstantInterface k_constantInterface;
 static constexpr ConstantExpressionInterface k_constantExpressionInterface;
 
-constexpr size_t k_maxNumberOfBlocksInNode = std::max({
-#if GHOST_REQUIRED
-    GhostInterface::k_numberOfBlocksInNode,
-#endif
-    IntegerInterface::k_minimalNumberOfBlocksInNode,
-    AdditionInterface::k_numberOfBlocksInNode,
-    MultiplicationInterface::k_numberOfBlocksInNode,
-    SubtractionInterface::k_numberOfBlocksInNode,
-    DivisionInterface::k_numberOfBlocksInNode,
-    PowerInterface::k_numberOfBlocksInNode,
-    ConstantInterface::k_numberOfBlocksInNode
-  });
-
 static constexpr const Interface * k_interfaces[] = {
   // Order has to be the same as TypeTreeBlock
 #if GHOST_REQUIRED

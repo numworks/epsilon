@@ -34,6 +34,7 @@ private:
   constexpr static int k_numberOfRows = Model::k_numberOfModels - 1;
   constexpr static int k_numberOfCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::TabHeight + 2 * Escher::Metric::StackTitleHeight); // Remaining cell can be above and below so we add +2
   constexpr static Model::Type ModelTypeAtIndex(int index) { return static_cast<Model::Type>(index + 1); }
+  constexpr static int IndexOfModelType(Model::Type type) { return static_cast<int>(type) - 1; }
   constexpr static KDFont::Size k_modelLayoutFont = KDFont::Size::Small;
 
   // Display X?/Y? only when no other displayed title already names the series.

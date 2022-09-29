@@ -46,9 +46,10 @@ ViewController::TitlesDisplay RegressionController::titlesDisplay() {
 }
 
 void RegressionController::didBecomeFirstResponder() {
-  int initialindex = std::max(0, static_cast<int>(m_store->seriesRegressionType(m_series))-1);
-  assert(m_store->seriesRegressionType(m_series) == Model::Type::None || m_store->seriesRegressionType(m_series) == ModelTypeAtIndex(initialindex));
-  selectCellAtLocation(0, initialindex);
+  Model::Type type = m_store->seriesRegressionType(m_series);
+  int initialIndex = std::max(0, IndexOfModelType(type));
+  assert(type == Model::Type::None || type == ModelTypeAtIndex(initialIndex));
+  selectCellAtLocation(0, initialIndex);
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 

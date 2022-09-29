@@ -9,6 +9,18 @@ using namespace Shared;
 
 namespace Statistics {
 
+// LabeledAxisWithOptionalPercent
+
+float LabeledAxisWithOptionalPercent::tickStep(const Shared::AbstractPlotView * plotView, Shared::AbstractPlotView::Axis axis) const {
+  return LabeledAxis::tickStep(plotView, axis) * 0.5f * m_plotController->labelStepMultiplicator(axis);
+}
+
+int LabeledAxisWithOptionalPercent::computeLabel(int i, const Shared::AbstractPlotView * plotView, AbstractPlotView::Axis axis) {
+  int length = LabeledAxis::computeLabel(i, plotView, axis);
+  m_plotController->appendLabelSuffix(axis, &m_labels[i][length], k_labelBufferMaxSize - length, length, k_labelBufferMaxGlyphLength - length);
+  return k_labelBufferMaxSize;
+}
+
 // PlotViewPolicy
 
 void PlotViewPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
@@ -47,6 +59,8 @@ void PlotViewPolicy::drawSeriesCurve(const AbstractPlotView * plotView, KDContex
 PlotCurveView::PlotCurveView(Shared::CurveViewRange * range, Shared::CurveViewCursor * cursor, Shared::CursorView * cursorView, PlotController * plotController) :
   PlotView(range)
 {
+  // PlotViewAxes
+  m_yAxis.setPlotController(plotController);
   // PlotViewPolicy
   m_plotController = plotController;
   // PlotPoliy::WithCursor

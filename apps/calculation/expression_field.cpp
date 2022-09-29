@@ -28,6 +28,10 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
        event == Ion::Events::Sto)) {
     handleEventWithText(Poincare::Symbol::k_ansAliases.mainAlias());
   }
+  if (event == Ion::Events::Sto) {
+    handleEventWithText("→");
+    return true;
+  }
   if (event == Ion::Events::Minus
       && isEditing()
       && fieldContainsSingleMinusSymbol()) {

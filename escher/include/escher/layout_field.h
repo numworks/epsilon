@@ -1,6 +1,7 @@
 #ifndef ESCHER_LAYOUT_FIELD_H
 #define ESCHER_LAYOUT_FIELD_H
 
+#include <escher/clipboard.h>
 #include <escher/editable_field.h>
 #include <escher/expression_view.h>
 #include <escher/layout_field_delegate.h>
@@ -92,7 +93,7 @@ private:
     Poincare::Layout * selectionEnd() { return &m_selectionEnd; }
     void addSelection(Poincare::Layout addedLayout);
     bool resetSelection(); // returns true if the selection was indeed reset
-    void copySelection(Poincare::Context * context);
+    void copySelection(Poincare::Context * context, Escher::Clipboard * clipboard);
     bool selectionIsEmpty() const;
     void deleteSelection();
     void invalidateInsertionCursor() { m_insertionCursor = Poincare::LayoutCursor(); }

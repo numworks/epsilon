@@ -24,7 +24,7 @@ const EventData s_dataForEvent[Event::k_specialEventsOffset] = {
   TL(), TL(), TL(), TL(), U(), U(),
   U(), U(), U(), U(), U(), U(),
   U(), U(), TL(), TL(), TL(), TL(),
-  T("["), T("]"), T("{"), T("}"), T("_"), T("→"),
+  T("["), T("]"), T("{"), T("}"), T("_"), TL(),
   T("arcsin(\x11)"), T("arccos(\x11)"), T("arctan(\x11)"), T("="), T("<"), T(">"),
   U(), U(), U(), U(), U(), U(),
   U(), U(), U(), U(), U(), U(),

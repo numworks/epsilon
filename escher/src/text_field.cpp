@@ -366,15 +366,15 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
-    if (storeInClipboard() && event == Ion::Events::Cut) {
+  if (event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto) {
+    if (storeInClipboard(Clipboard::sharedClipboardForEvent(event)) && event == Ion::Events::Cut) {
       if (!contentView()->selectionIsEmpty()) {
         deleteSelection();
       } else {
         removeWholeText();
       }
     }
-    return true;
+    return event != Ion::Events::Sto;
   }
   return false;
 }
@@ -636,13 +636,13 @@ void AbstractTextField::removeWholeText() {
   reloadScroll();
 }
 
-bool AbstractTextField::storeInClipboard() const {
+bool AbstractTextField::storeInClipboard(Clipboard * clipboard) const {
   if (!isEditing()) {
-    Clipboard::sharedClipboard()->store(text());
+    clipboard->store(text());
     return true;
   } else if (!nonEditableContentView()->selectionIsEmpty()) {
     const char * start = nonEditableContentView()->selectionStart();
-    Clipboard::sharedClipboard()->store(start, nonEditableContentView()->selectionEnd() - start);
+    clipboard->store(start, nonEditableContentView()->selectionEnd() - start);
     return true;
   }
   return false;

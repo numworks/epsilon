@@ -9,6 +9,8 @@
 namespace Escher {
 // See TODO in EditableField
 
+class Clipboard;
+
 /* TODO: TextField currently uses using 2 buffers:
  * - one to keep the displayed text
  * - another one to edit the text while keeping the previous text in the first
@@ -121,7 +123,7 @@ private:
   bool privateHandleEvent(Ion::Events::Event event);
   bool privateHandleMoveEvent(Ion::Events::Event event);
   bool privateHandleSelectEvent(Ion::Events::Event event);
-  bool storeInClipboard() const;
+  bool storeInClipboard(Escher::Clipboard * clipboard) const;
 
   TextFieldDelegate * m_delegate;
 };

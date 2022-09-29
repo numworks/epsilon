@@ -6,16 +6,18 @@
 
 namespace Escher {
 
-static Clipboard s_clipboard(true);
-
 Clipboard * Clipboard::sharedClipboard() {
+  static Clipboard s_clipboard(true);
   return &s_clipboard;
 }
 
-static Clipboard s_storeBuffer(false);
-
 Clipboard * Clipboard::sharedStoreBuffer() {
+  static Clipboard s_storeBuffer(false);
   return &s_storeBuffer;
+}
+
+Clipboard * Clipboard::sharedClipboardForEvent(Ion::Events::Event event) {
+  return event == Ion::Events::Sto ? sharedStoreBuffer() : sharedClipboard();
 }
 
 void Clipboard::store(const char * storedText, int length) {

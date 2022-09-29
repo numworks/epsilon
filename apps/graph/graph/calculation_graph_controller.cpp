@@ -21,9 +21,9 @@ CalculationGraphController::CalculationGraphController(Responder * parentRespond
 }
 
 bool CalculationGraphController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
-    Escher::Clipboard::sharedClipboard()->store(m_bannerView->abscissaValue()->text());
-    return true;
+  if (event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto) {
+    Escher::Clipboard::sharedClipboardForEvent(event)->store(m_bannerView->abscissaValue()->text());
+    return event != Ion::Events::Sto;
   }
   return SimpleInteractiveCurveViewController::handleEvent(event);
 }

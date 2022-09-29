@@ -243,23 +243,23 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Right) {
     return selectCellAtClippedLocation(indexOfNextSelectableColumn(step), selectedRow());
   }
-  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
+  if (event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto) {
     HighlightCell * cell = selectedCell();
     if (cell == nullptr) {
       return false;
     }
     const char * text = cell->text();
     if (text) {
-      Clipboard::sharedClipboard()->store(text);
-      return true;
+      Clipboard::sharedClipboardForEvent(event)->store(text);
+      return event != Ion::Events::Sto;
     }
     Poincare::Layout l = cell->layout();
     if (!l.isUninitialized()) {
       constexpr int bufferSize = TextField::maxBufferSize();
       char buffer[bufferSize];
       l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
-      Clipboard::sharedClipboard()->store(buffer);
-      return true;
+      Clipboard::sharedClipboardForEvent(event)->store(buffer);
+      return event != Ion::Events::Sto;
     }
   }
   return false;

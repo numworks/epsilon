@@ -56,15 +56,15 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
     reloadBannerView();
     return true;
   }
-  if ((event == Ion::Events::Copy || event == Ion::Events::Cut) &&  m_step == Step::Result) {
+  if ((event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto) &&  m_step == Step::Result) {
     /* We want to save more digits than we have in the banner to we need to
      * convert the result here */
     constexpr static int precision = Preferences::DefaultNumberOfPrintedSignificantDigits;
     constexpr static int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
      char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(m_result, buffer, bufferSize, precision);
-    Escher::Clipboard::sharedClipboard()->store(buffer);
-    return true;
+    Escher::Clipboard::sharedClipboardForEvent(event)->store(buffer);
+    return event != Ion::Events::Sto;
   }
   return SimpleInteractiveCurveViewController::handleEvent(event);
 }

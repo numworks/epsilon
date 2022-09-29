@@ -37,6 +37,7 @@ apps_src += $(addprefix apps/,\
   math_variable_box_controller.cpp \
   math_variable_box_empty_controller.cpp \
   shift_alpha_lock_view.cpp \
+  store_menu_controller.cpp \
   suspend_timer.cpp \
   title_bar_view.cpp \
 )

@@ -10,40 +10,39 @@ namespace Regression {
 
 Layout AffineModel::layout() {
   if (m_layout.isUninitialized()) {
-    constexpr static const char * s = "a·x+b";
-    m_layout = LayoutHelper::StringToCodePointsLayout(s, strlen(s));
+    m_layout = LayoutHelper::StringToCodePointsLayout(layoutString(), strlen(layoutString()));
   }
   return m_layout;
 }
 
 int AffineModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
-  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed·x%+*.*ed",
+  return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, equationTemplate(),
       modelCoefficients[0], displayMode, significantDigits,
       modelCoefficients[1], displayMode, significantDigits);
 }
 
 double AffineModel::evaluate(double * modelCoefficients, double x) const {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  return a*x+b;
+  double slope = modelCoefficients[slopeCoefficientIndex()];
+  double yIntercept = modelCoefficients[yInterceptCoefficientIndex()];
+  return slope * x + yIntercept;
 }
 
 double AffineModel::levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) {
-  double a = modelCoefficients[0];
-  double b = modelCoefficients[1];
-  if (a == 0) {
+  double slope = modelCoefficients[slopeCoefficientIndex()];
+  double yIntercept = modelCoefficients[yInterceptCoefficientIndex()];
+  if (slope == 0) {
     return NAN;
   }
-  return (y-b)/a;
+  return (y - yIntercept) / slope;
 }
 
 double AffineModel::partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const {
-  if (derivateCoefficientIndex == 0) {
-    // Derivate with respect to a: x
+  if (derivateCoefficientIndex == slopeCoefficientIndex()) {
+    // Derivate with respect to slope: x
     return x;
   }
-  assert(derivateCoefficientIndex == 1);
-  // Derivate with respect to b: 1
+  assert(derivateCoefficientIndex == yInterceptCoefficientIndex());
+  // Derivate with respect to yIntercept: 1
   return 1.0;
 }
 

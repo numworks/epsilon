@@ -16,6 +16,13 @@ public:
   double levelSet(double * modelCoefficients, double xMin, double xMax, double y, Poincare::Context * context) override;
   double partialDerivate(double * modelCoefficients, int derivateCoefficientIndex, double x) const override;
   int numberOfCoefficients() const override { return 2; }
+
+protected:
+  virtual int slopeCoefficientIndex() const { return 0; }
+  virtual int yInterceptCoefficientIndex() const { return 1; }
+  virtual const char * layoutString() const { return "a·x+b"; }
+  virtual const char * equationTemplate() const { return "%*.*ed·x%+*.*ed"; }
+
 private:
   void privateFit(Store * store, int series, double * modelCoefficients, Poincare::Context * context) override = 0;
 };

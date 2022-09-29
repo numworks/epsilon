@@ -46,55 +46,74 @@ void CalculationParameterController::didBecomeFirstResponder() {
 
 bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   int row = selectedRow();
-  if (event == Ion::Events::OK || event == Ion::Events::EXE
-      || (event == Ion::Events::Right
-          && (row == 0
-              || (row == k_areaRowIndex
-                  && App::app()->functionStore()->numberOfActiveDerivableFunctions() > 2)))) {
-    static ViewController * controllers[] = {&m_preimageParameterController, &m_intersectionGraphController, &m_maximumGraphController, &m_minimumGraphController, &m_rootGraphController, &m_tangentGraphController, &m_integralGraphController, &m_areaParameterController};
-    int displayIntersection = ShouldDisplayIntersection();
-    if (row == k_derivativeRowIndex + displayIntersection) {
-      m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
-      m_selectableTableView.reloadData();
-      return true;
-    } else if (row > k_derivativeRowIndex + displayIntersection) {
-      row--;
-    }
-    int indexController = row == 0 ? 0 : row + !displayIntersection;
-    ViewController * controller = controllers[indexController];
-    if (row == 0) {
-      m_preimageParameterController.setRecord(m_record);
-    } else if (row == k_derivativeRowIndex + displayIntersection) {
-      m_tangentGraphController.setRecord(m_record);
-    } else if (row == k_derivativeRowIndex + displayIntersection + 1) {
-      m_integralGraphController.setRecord(m_record);
-    } else if (row == k_derivativeRowIndex + displayIntersection + 2) {
-      if (App::app()->functionStore()->numberOfActiveDerivableFunctions() == 2) {
-        controller = &m_areaGraphController;
-        m_areaGraphController.setRecord(m_record);
-        Ion::Storage::Record secondRecord = AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(0, m_record);
-        m_areaGraphController.setSecondRecord(secondRecord);
-      } else {
-        m_areaParameterController.setRecord(m_record);
-      }
-    } else {
-      static_cast<CalculationGraphController *>(controller)->setRecord(m_record);
-    }
-    StackViewController * stack = static_cast<StackViewController *>(parentResponder());
-    if (controller != &m_preimageParameterController && controller != &m_areaParameterController) {
-      /* setupActiveViewController() must be called here because the graph view
-       * must be re-layouted before pushing the controller */
-      stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
-    }
-    stack->push(controller);
-    return true;
-  }
+
   if (event == Ion::Events::Left) {
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     stack->pop();
     return true;
   }
-  return false;
+
+  if (event != Ion::Events::OK && event != Ion::Events::EXE && (event != Ion::Events::Right || !RightEventIsEquivalentToEnterEventOnRow(row))) {
+    return false;
+  }
+
+  static ViewController * controllers[] = {
+    &m_preimageParameterController,
+    &m_intersectionGraphController,
+    &m_maximumGraphController,
+    &m_minimumGraphController,
+    &m_rootGraphController,
+    &m_tangentGraphController,
+    &m_integralGraphController,
+    &m_areaParameterController
+  };
+
+  bool displayIntersection = ShouldDisplayIntersection();
+  int realDerivativeRowIndex = k_derivativeRowIndex + displayIntersection;
+  if (row == realDerivativeRowIndex) {
+    m_graphController->setDisplayDerivativeInBanner(!m_graphController->displayDerivativeInBanner());
+    m_selectableTableView.reloadData();
+    return true;
+  }
+
+  int indexController = row == 0 ? 0 : row + !displayIntersection - (row > realDerivativeRowIndex);
+  ViewController * controller = controllers[indexController];
+
+  if (controller == &m_preimageParameterController) {
+    assert(row == 0);
+    m_preimageParameterController.setRecord(m_record);
+  } else if (controller == &m_tangentGraphController) {
+    assert(row == realDerivativeRowIndex +1);
+    m_tangentGraphController.setRecord(m_record);
+  } else if (controller == &m_integralGraphController) {
+    assert(row == realDerivativeRowIndex + 2);
+    m_integralGraphController.setRecord(m_record);
+  } else if (controller == &m_areaParameterController) {
+    assert(row == realDerivativeRowIndex + 3);
+    if (App::app()->functionStore()->numberOfActiveDerivableFunctions() == 2) {
+      controller = &m_areaGraphController;
+      m_areaGraphController.setRecord(m_record);
+      Ion::Storage::Record secondRecord = AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(0, m_record);
+      m_areaGraphController.setSecondRecord(secondRecord);
+    } else {
+      m_areaParameterController.setRecord(m_record);
+    }
+  } else {
+    assert((controller == &m_intersectionGraphController && row == 1 && displayIntersection)
+           || (controller == &m_rootGraphController && row == realDerivativeRowIndex - 1)
+           || (controller == &m_maximumGraphController && row == realDerivativeRowIndex - 2)
+           || (controller == &m_maximumGraphController && row == realDerivativeRowIndex - 3));
+    static_cast<CalculationGraphController *>(controller)->setRecord(m_record);
+  }
+
+  StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+  if (controller != &m_preimageParameterController && controller != &m_areaParameterController) {
+    /* setupActiveViewController() must be called here because the graph view
+     * must be re-layouted before pushing the controller */
+    stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
+  }
+  stack->push(controller);
+  return true;
 }
 
 int CalculationParameterController::numberOfRows() const {
@@ -203,6 +222,12 @@ bool CalculationParameterController::ShouldDisplayAreaBetweenCurves() {
   /* Area between curves is displayed if there is at least two derivable
    * functions. */
   return store->numberOfActiveDerivableFunctions() > 1;
+}
+
+bool CalculationParameterController::RightEventIsEquivalentToEnterEventOnRow(int row) {
+  /* First row is inverse image.
+   * Area between curves row does not always have a chevron. */
+  return row == 0 || (row == k_areaRowIndex && App::app()->functionStore()->numberOfActiveDerivableFunctions() > 2);
 }
 
 }

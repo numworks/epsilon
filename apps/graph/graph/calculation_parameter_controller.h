@@ -39,6 +39,7 @@ public:
 private:
   static bool ShouldDisplayIntersection();
   static bool ShouldDisplayAreaBetweenCurves();
+  static bool RightEventIsEquivalentToEnterEventOnRow(int row);
   // This class is used for the AreaBetweenCurves cell
   class BufferTableCellWithHideableChevron : public Escher::BufferTableCell {
   public:

@@ -1,10 +1,13 @@
 #ifndef POINCARE_PREFERENCES_H
 #define POINCARE_PREFERENCES_H
 
+#include <poincare/context.h>
 #include <assert.h>
 #include <stdint.h>
 
 namespace Poincare {
+
+class Expression;
 
 class Preferences final {
 public:
@@ -93,6 +96,9 @@ public:
 
   Preferences();
   static Preferences * sharedPreferences();
+  static Preferences SharedPreferencesClone();
+  static Preferences UpdatedSharedPreferencesWithComplexFormatAndAngleUnit(ComplexFormat complexFormat, AngleUnit angleUnit);
+  static Preferences UpdatedSharedPreferencesWithExpressionInput(Expression e, Context * context);
   AngleUnit angleUnit() const { return m_angleUnit; }
   void setAngleUnit(AngleUnit angleUnit) { m_angleUnit = angleUnit; }
   PrintFloatMode displayMode() const { return m_displayMode; }

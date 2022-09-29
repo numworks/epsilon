@@ -66,6 +66,11 @@ public:
     Default,
   };
 
+  enum class RegressionModelOrder : bool {
+    Default,
+    Variant1,
+  };
+
   constexpr CountryPreferences(
     AvailableExamModes availableExamModes,
     MethodForQuartiles methodForQuartiles,
@@ -80,7 +85,8 @@ public:
     ListsStatsOrderInToolbox listsStatsOrderInToolbox,
     SequencesInitialRank sequencesInitialRank,
     Poincare::Preferences::MixedFractions mixedFractions,
-    LineTemplateInGraph lineTemplateInGraph
+    LineTemplateInGraph lineTemplateInGraph,
+    RegressionModelOrder regressionModelOrder
     ) :
     m_availableExamModes(availableExamModes),
     m_homeAppsLayout(homeAppsLayout),
@@ -95,7 +101,8 @@ public:
     m_listsStatsOrderInToolbox(listsStatsOrderInToolbox),
     m_sequencesInitialRank(sequencesInitialRank),
     m_mixedFractions(mixedFractions),
-    m_lineTemplateInGraph(lineTemplateInGraph)
+    m_lineTemplateInGraph(lineTemplateInGraph),
+    m_regressionModelOrder(regressionModelOrder)
   {}
 
   constexpr AvailableExamModes availableExamModes() const { return m_availableExamModes; }
@@ -112,6 +119,7 @@ public:
   constexpr SequencesInitialRank sequencesInitialRank() const { return m_sequencesInitialRank; }
   constexpr Poincare::Preferences::MixedFractions mixedFractions() const { return m_mixedFractions; }
   constexpr LineTemplateInGraph lineTemplateInGraph() const { return m_lineTemplateInGraph; }
+  constexpr RegressionModelOrder regressionModelOrder() const { return m_regressionModelOrder; }
 
 private:
   const AvailableExamModes m_availableExamModes;
@@ -128,6 +136,7 @@ private:
   const SequencesInitialRank m_sequencesInitialRank;
   const Poincare::Preferences::MixedFractions m_mixedFractions;
   const LineTemplateInGraph m_lineTemplateInGraph;
+  const RegressionModelOrder m_regressionModelOrder;
 };
 
 #endif

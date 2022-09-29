@@ -27,6 +27,7 @@ public:
   CountryPreferences::ListsStatsOrderInToolbox listsStatsOrderInToolbox() const { return preferences().listsStatsOrderInToolbox(); }
   Poincare::Preferences::MixedFractions mixedFractions() const { return preferences().mixedFractions(); }
   bool showLineTemplate() const { return preferences().lineTemplateInGraph() == CountryPreferences::LineTemplateInGraph::Default; }
+  CountryPreferences::RegressionModelOrder regressionModelOrder() const { return preferences().regressionModelOrder(); }
   int sequencesInitialRank() const;
 
   const char * openIntervalChar(bool left) const {

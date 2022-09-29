@@ -6,10 +6,16 @@
 
 namespace Escher {
 
-static Clipboard s_clipboard;
+static Clipboard s_clipboard(true);
 
 Clipboard * Clipboard::sharedClipboard() {
   return &s_clipboard;
+}
+
+static Clipboard s_storeBuffer(false);
+
+Clipboard * Clipboard::sharedStoreBuffer() {
+  return &s_storeBuffer;
 }
 
 void Clipboard::store(const char * storedText, int length) {
@@ -25,13 +31,17 @@ void Clipboard::store(const char * storedText, int length) {
   }
   assert(length >= 0 && !UTF8Decoder::IsInTheMiddleOfACodePoint(storedText[length]));
   strlcpy(m_textBuffer, storedText, length + 1);
-  Ion::Clipboard::write(m_textBuffer);
+  if (m_isSystem) {
+    Ion::Clipboard::write(m_textBuffer);
+  }
 }
 
 const char * Clipboard::storedText() {
-  const char * systemText = Ion::Clipboard::read();
-  if (systemText) {
-    return systemText;
+  if (m_isSystem) {
+    const char * systemText = Ion::Clipboard::read();
+    if (systemText) {
+      return systemText;
+    }
   }
 
   /* In order to allow copy/paste of empty formulas, we need to add empty

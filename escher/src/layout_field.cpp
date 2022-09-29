@@ -1,5 +1,4 @@
 #include <escher/layout_field.h>
-#include <escher/clipboard.h>
 #include <escher/text_field.h>
 #include <ion/keyboard/layout_events.h>
 #include <poincare/expression.h>
@@ -177,7 +176,7 @@ bool LayoutField::ContentView::resetSelection() {
   return true;
 }
 
-void LayoutField::ContentView::copySelection(Context * context) {
+void LayoutField::ContentView::copySelection(Context * context, Clipboard * clipboard) {
   if (selectionIsEmpty()) {
     return;
   }
@@ -203,7 +202,7 @@ void LayoutField::ContentView::copySelection(Context * context) {
     static_cast<HorizontalLayout&>(selectionParent).serializeChildren(firstIndex, lastIndex, buffer, bufferSize);
   }
   if (buffer[0] != 0) {
-    Clipboard::sharedClipboard()->store(buffer);
+    clipboard->store(buffer);
   }
 }
 
@@ -609,12 +608,12 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if ((event == Ion::Events::Copy || event == Ion::Events::Cut) && isEditing()) {
-    m_contentView.copySelection(context());
+  if ((event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto) && isEditing()) {
+    m_contentView.copySelection(context(), Clipboard::sharedClipboardForEvent(event));
     if (event == Ion::Events::Cut) {
       m_contentView.deleteSelection();
     }
-    return true;
+    return event != Ion::Events::Sto;
   }
   if (event == Ion::Events::Clear && isEditing()) {
     clearLayout();

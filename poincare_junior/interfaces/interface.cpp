@@ -21,7 +21,6 @@ TypeBlock * Interface::PushNode(Types... args) {
 
 template Poincare::TypeBlock* Poincare::Interface::PushNode<Poincare::AdditionInterface, uint8_t>(uint8_t);
 template Poincare::TypeBlock* Poincare::Interface::PushNode<Poincare::DivisionInterface>();
-template Poincare::TypeBlock* Poincare::Interface::PushNode<Poincare::IntegerInterface, int>(int);
 template Poincare::TypeBlock* Poincare::Interface::PushNode<Poincare::MultiplicationInterface, uint8_t>(uint8_t);
 template Poincare::TypeBlock* Poincare::Interface::PushNode<Poincare::PowerInterface>();
 template Poincare::TypeBlock* Poincare::Interface::PushNode<Poincare::SubtractionInterface>();

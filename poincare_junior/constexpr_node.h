@@ -63,14 +63,16 @@ static constexpr Tree<ConstantInterface::k_numberOfBlocksInNode> operator "" _n(
   return result;
 }
 
-static constexpr Tree<IntegerInterface::k_minimalNumberOfBlocksInNode + 1> operator "" _n(unsigned long long value) {
+static constexpr Tree<5> operator "" _n(unsigned long long value) {
   assert(value < 256); // TODO: larger values
-  Tree<IntegerInterface::k_minimalNumberOfBlocksInNode + 1> result;
-  size_t i = 0;
-  while (!IntegerInterface::CreateBlockAtIndex(result.blockAtIndex(i), i, value)) {
-    i++; // TODO factorize
-  }
-  return result;
+  assert(value > 0); // TODO: Create IntegerZeroBlock
+  Tree<5> tree;
+  *tree.blockAtIndex(0) = IntegerBlock;
+  *tree.blockAtIndex(1) = ValueBlock(1);
+  *tree.blockAtIndex(2) = ValueBlock(value);
+  *tree.blockAtIndex(3) = ValueBlock(1);
+  *tree.blockAtIndex(4) = IntegerBlock;
+  return tree;
 }
 
 }

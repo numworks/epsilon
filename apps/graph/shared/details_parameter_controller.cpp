@@ -1,11 +1,11 @@
 #include "details_parameter_controller.h"
-#include <apps/exam_mode_configuration.h>
-#include <poincare/layout_helper.h>
-#include <poincare/expression.h>
-#include <apps/i18n.h>
 #include "../app.h"
+#include <apps/exam_mode_configuration.h>
+#include <apps/i18n.h>
+#include <apps/shared/poincare_helpers.h>
+#include <poincare/expression.h>
+#include <poincare/layout_helper.h>
 #include <assert.h>
-#include "../../shared/poincare_helpers.h"
 
 using namespace Escher;
 

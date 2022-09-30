@@ -27,7 +27,7 @@ WithCurves::Pattern::Pattern(int s, KDColor color, KDColor backgroundColor) :
 
 void WithCurves::Pattern::drawInLine(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis parallel, float position, float min, float max) const {
   AbstractPlotView::Axis perpendicular = AbstractPlotView::OtherAxis(parallel);
-  KDCoordinate posC = plotView->floatToPixel(perpendicular, position);
+  KDCoordinate posC = std::round(plotView->floatToPixel(perpendicular, position));
 
   KDColor firstColor, secondColor;
   if (posC % (k_size / 2) == 0) {
@@ -40,7 +40,9 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView * plotView, KDContex
 
   bool canSpeedUpDrawing = firstColor == m_cBackground && secondColor == m_cBackground;
   if (canSpeedUpDrawing) {
-    plotView->drawStraightSegment(ctx, rect, parallel, position, min, max, m_cBackground);
+    if (m_cBackground != k_transparent) {
+      plotView->drawStraightSegment(ctx, rect, parallel, position, min, max, m_cBackground);
+    }
     return;
   }
 
@@ -49,14 +51,15 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView * plotView, KDContex
   }
   KDCoordinate minC = std::round(plotView->floatToPixel(parallel, min));
   KDCoordinate maxC = std::round(plotView->floatToPixel(parallel, max));
-  KDRect boundingRect = parallel == AbstractPlotView::Axis::Horizontal ? KDRect(minC, posC, maxC - minC, 1) : KDRect(posC, maxC, 1, minC - maxC);
-  boundingRect = boundingRect.intersectedWith(rect);
   if (parallel == AbstractPlotView::Axis::Horizontal) {
-    minC = boundingRect.left();
-    maxC = boundingRect.right();
+    minC = std::max(minC, rect.left());
+    maxC = std::min(maxC, rect.right());
   } else {
-    minC = boundingRect.top();
-    maxC = boundingRect.bottom();
+    /* Swap minC and maxC, as the Y axis changes direction between the range
+     * space and screen space. */
+    KDCoordinate temp = minC;
+    minC = std::max(maxC, rect.top());
+    maxC = std::min(temp, rect.bottom());
   }
   if (minC >= maxC) {
     return;
@@ -90,6 +93,8 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView * plotView, KDContex
 WithCurves::CurveDrawing::CurveDrawing(Curve2D<float> curve, void * model, void * context, float tStart, float tEnd, float tStep, KDColor color, bool thick, bool dashed) :
   m_pattern(),
   m_model(model),
+  m_patternModelLower(nullptr),
+  m_patternModelUpper(nullptr),
   m_context(context),
   m_curve(curve),
   m_patternLowerBound(nullptr),
@@ -111,12 +116,14 @@ WithCurves::CurveDrawing::CurveDrawing(Curve2D<float> curve, void * model, void 
   }
 }
 
-void WithCurves::CurveDrawing::setPatternOptions(Pattern pattern, float patternStart, float patternEnd, Curve2D<float> patternLowerBound, Curve2D<float> patternUpperBound, bool patternWithoutCurve, AbstractPlotView::Axis axis) {
+void WithCurves::CurveDrawing::setPatternOptions(Pattern pattern, float patternStart, float patternEnd, Curve2D<float> patternLowerBound, void * patternModelLower, Curve2D<float> patternUpperBound, void * patternModelUpper, bool patternWithoutCurve, AbstractPlotView::Axis axis) {
   m_pattern = pattern;
   m_patternStart = patternStart;
   m_patternEnd = patternEnd;
   m_patternLowerBound = patternLowerBound;
   m_patternUpperBound = patternUpperBound;
+  m_patternModelLower = patternModelLower;
+  m_patternModelUpper = patternModelUpper;
   m_patternWithoutCurve = patternWithoutCurve;
   m_axis = axis;
 }
@@ -160,8 +167,8 @@ void WithCurves::CurveDrawing::draw(const AbstractPlotView * plotView, KDContext
     xy = m_curve(t, m_model, m_context);
 
     // Draw a line with the pattern
-    float patternMin = ((m_patternLowerBound ? m_patternLowerBound(t, m_model, m_context) : xy).*ordinate)();
-    float patternMax = ((m_patternUpperBound ? m_patternUpperBound(t, m_model, m_context) : xy).*ordinate)();
+    float patternMin = ((m_patternLowerBound ? m_patternLowerBound(t, m_patternModelLower, m_context) : xy).*ordinate)();
+    float patternMax = ((m_patternUpperBound ? m_patternUpperBound(t, m_patternModelUpper, m_context) : xy).*ordinate)();
     if (m_patternWithoutCurve) {
       if (std::isnan(patternMin)) {
         patternMin = -INFINITY;

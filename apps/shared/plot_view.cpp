@@ -12,7 +12,7 @@ void AbstractPlotView::reload(bool resetInterruption, bool force) {
   if (force || m_drawnRangeVersion != rangeVersion) {
     // FIXME: This should also be called if the *curve* changed
     m_drawnRangeVersion = rangeVersion;
-    BannerView * banner = bannerView();
+    View * banner = bannerView();
     KDCoordinate bannerHeight = banner ? banner->bounds().height() : 0;
     markRectAsDirty(KDRect(0, 0, bounds().width(), bounds().height() - bannerHeight));
     reloadAxes();
@@ -203,7 +203,7 @@ View * AbstractPlotView::subviewAtIndex(int i) {
 }
 
 void AbstractPlotView::layoutSubviews(bool force) {
-  BannerView * banner = bannerView();
+  View * banner = bannerView();
   if (banner) {
     banner->setFrame(bannerFrame(), force);
   }
@@ -326,10 +326,10 @@ void AbstractPlotView::straightJoinDots(KDContext * ctx, KDRect rect, Coordinate
   KDCoordinate stampSize = thick ? thickStampSize : thinStampSize;
   clipBarycentricCoordinatesBetweenBounds(&start, &end, rect.left() - stampSize, rect.right() + stampSize, pixelA.x1(), pixelB.x1());
   clipBarycentricCoordinatesBetweenBounds(&start, &end, rect.top() - stampSize, rect.bottom() + stampSize, pixelA.x2(), pixelB.x2());
-  float puf = start * pixelA.x1() + (1 - start) * pixelB.x1();
-  float pvf = start * pixelA.x2() + (1 - start) * pixelB.x2();
-  float pxf = end * pixelA.x1() + (1 - end) * pixelB.x1();
-  float pyf = end * pixelA.x2() + (1 - end) * pixelB.x2();
+  float puf = start * pixelB.x1() + (1 - start) * pixelA.x1();
+  float pvf = start * pixelB.x2() + (1 - start) * pixelA.x2();
+  float pxf = end * pixelB.x1() + (1 - end) * pixelA.x1();
+  float pyf = end * pixelB.x2() + (1 - end) * pixelA.x2();
 
   float deltaX = pxf - puf;
   float deltaY = pyf - pvf;

@@ -164,7 +164,7 @@ bool FunctionGraphController::cursorMatchesModel() {
 }
 
 AbstractPlotView * FunctionGraphController::curveView() {
-  return nullptr; // TODO
+  return functionGraphView();
 }
 
 uint32_t FunctionGraphController::rangeVersion() {

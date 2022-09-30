@@ -7,7 +7,8 @@
 #include <escher/message_table_cell_with_message_with_buffer.h>
 #include <escher/stack_view_controller.h>
 #include <ion/storage/file_system.h>
-#include "../../shared/continuous_function.h"
+#include <apps/shared/continuous_function.h>
+#include <apps/shared/expiring_pointer.h>
 #include <poincare/conic.h>
 
 namespace Graph {

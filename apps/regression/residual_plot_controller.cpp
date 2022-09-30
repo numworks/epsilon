@@ -71,7 +71,7 @@ bool ResidualPlotController::handleEvent(Ion::Events::Event event) {
 
 void ResidualPlotController::viewWillAppear() {
   Escher::ViewController::viewWillAppear();
-  m_curveView.selectMainView(true);
+  m_curveView.setFocus(true);
 
   // Compute all data points to find the maximums and minimums
   double xMin = DBL_MAX;

@@ -1,21 +1,34 @@
 #include "residual_plot_curve_view.h"
 #include "residual_plot_controller.h"
 
+using namespace Poincare;
+using namespace Shared;
+
 namespace Regression {
 
-void ResidualPlotCurveView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, KDColorWhite);
-  drawGrid(ctx, rect);
-  drawAxes(ctx, rect);
-  simpleDrawBothAxesLabels(ctx, rect);
-  KDColor color = m_residualPlotController->selectedSeriesColor();
-  int numberOfDots = m_residualPlotController->numberOfResidualDots();
+// ResidualPlotPolicy
+
+void ResidualPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+  KDColor color = m_controller->selectedSeriesColor();
+  int numberOfDots = m_controller->numberOfResidualDots();
   for (int i = 0; i < numberOfDots; i++) {
-    double x = m_residualPlotController->xAtIndex(i);
-    double y = m_residualPlotController->yAtIndex(i);
-    Shared::CurveView::drawDot(ctx, rect, x, y, color);
+    Coordinate2D<float> xy(m_controller->xAtIndex(i), m_controller->yAtIndex(i));
+    plotView->drawDot(ctx, rect, Dots::Size::Tiny, xy, color);
   }
-  Shared::LabeledCurveView::drawRect(ctx, rect);
+}
+
+// ResidualPlotCurveView
+
+ResidualPlotCurveView::ResidualPlotCurveView(CurveViewRange * range, CurveViewCursor * cursor, BannerView * banner, CursorView * cursorView, ResidualPlotController * controller) :
+  PlotView(range)
+{
+  // ResidualPlotPolicy
+  m_controller = controller;
+  // WithBanner
+  m_banner = banner;
+  // WithCursor
+  m_cursor = cursor;
+  m_cursorView = cursorView;
 }
 
 }

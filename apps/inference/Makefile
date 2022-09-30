@@ -65,7 +65,6 @@ app_inference_src += $(addprefix apps/inference/statistic/,\
   message_table_cell_with_separator.cpp \
   results_controller.cpp \
   results_data_source.cpp \
-  statistic_curve_view.cpp \
   test_controller.cpp \
   type_controller.cpp \
 )

@@ -12,7 +12,6 @@ namespace Shared {
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex). */
 
-template<typename T, typename M=Escher::MessageTableCellWithEditableText>
 class ExplicitFloatParameterController : public Escher::ExplicitSelectableListViewController, public ParameterTextFieldDelegate {
 public:
   ExplicitFloatParameterController(Escher::Responder * parentResponder);
@@ -33,13 +32,13 @@ protected:
     MinusInfinity
   };
   Escher::StackViewController * stackController() { return static_cast<Escher::StackViewController *>(parentResponder()); }
-  virtual T parameterAtIndex(int index) = 0;
+  virtual float parameterAtIndex(int index) = 0;
   virtual bool isCellEditing(Escher::HighlightCell * cell, int index);
   virtual void setTextInCell(Escher::HighlightCell * cell, const char * text, int index);
 
 private:
   virtual InfinityTolerance infinityAllowanceForRow(int row) const { return InfinityTolerance::None; }
-  virtual bool setParameterAtIndex(int parameterIndex, T f) = 0;
+  virtual bool setParameterAtIndex(int parameterIndex, float f) = 0;
 };
 
 }

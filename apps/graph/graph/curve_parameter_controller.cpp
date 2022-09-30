@@ -12,7 +12,7 @@ using namespace Escher;
 namespace Graph {
 
 CurveParameterController::CurveParameterController(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, BannerView * bannerView, CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController) :
-  ExplicitFloatParameterController<float,BufferTableCellWithEditableText>(parentResponder()),
+  ExplicitFloatParameterController(parentResponder()),
   m_abscissaCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
   m_imageCell({&m_selectableTableView, inputEventHandlerDelegate, this}),
   m_derivativeNumberCell({&m_selectableTableView, inputEventHandlerDelegate, this}),

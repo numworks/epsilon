@@ -24,6 +24,8 @@ public:
   Type type() const override { return Type::Randint; }
 
 private:
+  constexpr static int k_defaultMinBound = 1;
+  Expression createExpressionWithTwoChildren() const;
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

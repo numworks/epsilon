@@ -420,7 +420,6 @@ constexpr ToolboxMessageTree probabilityLawsChildren[] = {
 constexpr ToolboxMessageTree randomChildren[] = {
   ToolboxMessageTree::Leaf(I18n::Message::RandomCommandWithArg, I18n::Message::RandomFloat),
   ToolboxMessageTree::Leaf(I18n::Message::RandintCommandWithArg, I18n::Message::RandomInteger),
-  ToolboxMessageTree::Leaf(I18n::Message::RandintCommandWithOnlyOneArg, I18n::Message::RandomIntegerWithOnlyOneArg),
 };
 
 constexpr ToolboxMessageTree probabilityChildren[] = {

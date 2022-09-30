@@ -28,6 +28,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   TELEMETRY_ID("CalculationParameter");
   int numberOfRows() const override { return k_numberOfRows; }
   TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayLastTwoTitles; }
@@ -37,8 +38,9 @@ public:
 private:
   static constexpr int k_numberOfRows = 8;
   template<class T> void push(T * controller, bool pop);
-  bool ShouldDisplayIntersection() const;
+  static bool ShouldDisplayIntersection();
   static bool ShouldDisplayAreaBetweenCurves();
+  static bool DisplayChevronInAreaCell();
   // This class is used for the AreaBetweenCurves cell
   class BufferTableCellWithHideableChevron : public Escher::BufferTableCell {
   public:
@@ -51,6 +53,9 @@ private:
     }
     void hideChevron(bool hide) { m_hideChevron = hide; }
     bool subviewsCanOverlap() const override { return true; }
+    bool shouldEnterOnEvent(Ion::Events::Event event) {
+      return m_hideChevron ? Escher::MessageTableCell::ShouldEnterOnEvent(event) : Escher::MessageTableCellWithChevron::ShouldEnterOnEvent(event);
+    }
   private:
     Escher::ChevronView m_accessoryView;
     bool m_hideChevron;

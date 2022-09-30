@@ -63,6 +63,7 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, 
   Shared::ListParameterController::willDisplayCellForIndex(cell, index);
   if (cell == &m_derivativeCell) {
     m_derivativeCell.setState(function()->displayDerivative());
+    return;
   }
   if ((cell == &m_detailsCell || cell == &m_functionDomainCell) && !m_record.isNull()) {
     App * myApp = App::app();

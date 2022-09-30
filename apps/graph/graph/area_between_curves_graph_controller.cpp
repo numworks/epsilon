@@ -23,13 +23,11 @@ const char * AreaBetweenCurvesGraphController::title() {
 
 void AreaBetweenCurvesGraphController::viewDidDisappear() {
   m_graphView->selectSecondRecord(nullptr);
-  secondSelectedRecord() = nullptr;
   IntegralGraphController::viewDidDisappear();
 }
 
 void AreaBetweenCurvesGraphController::setSecondRecord(Ion::Storage::Record record) {
   m_graphView->selectSecondRecord(record);
-  secondSelectedRecord() = record;
 }
 
 void AreaBetweenCurvesGraphController::makeCursorVisible() {

@@ -11,7 +11,7 @@ namespace Shared {
 /* This controller edits float parameter of any model (given through
  * parameterAtIndex and setParameterAtIndex). */
 
-template<typename T, typename M=Escher::MessageTableCellWithEditableText>
+template<typename T>
 class FloatParameterControllerWithoutButton : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>, public ParameterTextFieldDelegate {
 public:
   FloatParameterControllerWithoutButton(Escher::Responder * parentResponder);

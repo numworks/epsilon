@@ -13,7 +13,7 @@ namespace Graph {
 
 class GraphController;
 
-class CurveParameterController : public Shared::ExplicitFloatParameterController<float,Escher::BufferTableCellWithEditableText>, public Shared::WithRecord {
+class CurveParameterController : public Shared::ExplicitFloatParameterController, public Shared::WithRecord {
 public:
   CurveParameterController(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * graphRange, BannerView * bannerView, Shared::CurveViewCursor * cursor, GraphView * graphView, GraphController * graphController);
   const char * title() override;

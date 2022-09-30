@@ -10,13 +10,11 @@ using namespace Poincare;
 
 namespace Shared {
 
-template<typename T, typename M>
-ExplicitFloatParameterController<T,M>::ExplicitFloatParameterController(Responder * parentResponder) :
+ExplicitFloatParameterController::ExplicitFloatParameterController(Responder * parentResponder) :
   ExplicitSelectableListViewController(parentResponder)
 {}
 
-template<typename T, typename M>
-void ExplicitFloatParameterController<T,M>::didBecomeFirstResponder() {
+void ExplicitFloatParameterController::didBecomeFirstResponder() {
   if (selectedRow() >= 0) {
     int selRow = std::min(selectedRow(), numberOfRows() - 1);
     int selColumn = std::min(selectedColumn(), numberOfColumns() - 1);
@@ -25,8 +23,7 @@ void ExplicitFloatParameterController<T,M>::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-template<typename T, typename M>
-void ExplicitFloatParameterController<T,M>::viewWillAppear() {
+void ExplicitFloatParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   int selRow = selectedRow();
   if (selRow == -1) {
@@ -40,16 +37,14 @@ void ExplicitFloatParameterController<T,M>::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-template<typename T, typename M>
-void ExplicitFloatParameterController<T,M>::viewDidDisappear() {
+void ExplicitFloatParameterController::viewDidDisappear() {
   if (parentResponder() == nullptr) {
     m_selectableTableView.deselectTable();
     m_selectableTableView.scrollToCell(0,0);
   }
 }
 
-template<typename T, typename M>
-bool ExplicitFloatParameterController<T,M>::handleEvent(Ion::Events::Event event) {
+bool ExplicitFloatParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back) {
     stackController()->pop();
     return true;
@@ -57,33 +52,29 @@ bool ExplicitFloatParameterController<T,M>::handleEvent(Ion::Events::Event event
   return false;
 }
 
-template<typename T, typename M>
-void ExplicitFloatParameterController<T,M>::willDisplayCellForIndex(HighlightCell * cell, int index) {
+void ExplicitFloatParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (isCellEditing(cell, index)) {
     return;
   }
   constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
   constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];
-  PoincareHelpers::ConvertFloatToTextWithDisplayMode<T>(parameterAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
+  PoincareHelpers::ConvertFloatToTextWithDisplayMode(parameterAtIndex(index), buffer, bufferSize, precision, Preferences::PrintFloatMode::Decimal);
   setTextInCell(cell, buffer, index);
 }
 
-template<typename T, typename M>
-KDCoordinate ExplicitFloatParameterController<T,M>::nonMemoizedRowHeight(int j) {
+KDCoordinate ExplicitFloatParameterController::nonMemoizedRowHeight(int j) {
   return SelectableListViewController::nonMemoizedRowHeight(j);
 }
 
-template<typename T, typename M>
-bool ExplicitFloatParameterController<T,M>::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
+bool ExplicitFloatParameterController::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   return (event == Ion::Events::Down && selectedRow() < numberOfRows()-1)
       || (event == Ion::Events::Up && selectedRow() > 0)
       || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
-template<typename T, typename M>
-bool ExplicitFloatParameterController<T,M>::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
-  T floatBody;
+bool ExplicitFloatParameterController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
+  float floatBody;
   int row = selectedRow();
   InfinityTolerance infTolerance = infinityAllowanceForRow(row);
   if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody, infTolerance == InfinityTolerance::PlusInfinity, infTolerance == InfinityTolerance::MinusInfinity)) {
@@ -104,18 +95,12 @@ bool ExplicitFloatParameterController<T,M>::textFieldDidFinishEditing(AbstractTe
 }
 
 
-template<typename T, typename M>
-bool ExplicitFloatParameterController<T,M>::isCellEditing(Escher::HighlightCell * cell, int index) {
-  return static_cast<M *>(cell)->isEditing();
+bool ExplicitFloatParameterController::isCellEditing(Escher::HighlightCell * cell, int index) {
+  return static_cast<BufferTableCellWithEditableText *>(cell)->isEditing();
 }
 
-template<typename T, typename M>
-void ExplicitFloatParameterController<T,M>::setTextInCell(Escher::HighlightCell * cell, const char * text, int index) {
-  static_cast<M *>(cell)->setAccessoryText(text);
+void ExplicitFloatParameterController::setTextInCell(Escher::HighlightCell * cell, const char * text, int index) {
+  static_cast<BufferTableCellWithEditableText *>(cell)->setAccessoryText(text);
 }
-
-template class ExplicitFloatParameterController<float>;
-template class ExplicitFloatParameterController<double>;
-template class ExplicitFloatParameterController<float, BufferTableCellWithEditableText>;
 
 }

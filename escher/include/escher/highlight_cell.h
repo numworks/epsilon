@@ -38,8 +38,8 @@ protected:
   bool isHighlighted() const { return m_state == State::Highlighted; }
   KDColor defaultBackgroundColor() const { return isHighlighted() ? Palette::Select : KDColorWhite; }
 
-  /* Not all cells keep m_highlighted up to date, as they may not rely on it
-   * for drawing. As such, controllers should not read this value to get the
+  /* Not all cells keep m_state up to date, as they may not rely on it for
+   * drawing. As such, controllers should not read this value to get the
    * definitive state of the cell. */
   enum class State : uint8_t {
     Hidden,

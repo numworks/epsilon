@@ -83,7 +83,7 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
     assert(row == 0);
     m_preimageParameterController.setRecord(m_record);
   } else if (controller == &m_tangentGraphController) {
-    assert(row == realDerivativeRowIndex +1);
+    assert(row == realDerivativeRowIndex + 1);
     m_tangentGraphController.setRecord(m_record);
   } else if (controller == &m_integralGraphController) {
     assert(row == realDerivativeRowIndex + 2);
@@ -129,7 +129,7 @@ int CalculationParameterController::numberOfRows() const {
 HighlightCell * CalculationParameterController::reusableCell(int index, int type) {
   assert(index >= 0);
   assert(index < reusableCellCount(type));
-  switch (type){
+  switch (type) {
   case k_defaultCellType:
     return &m_cells[index];
   case k_derivativeCellType:

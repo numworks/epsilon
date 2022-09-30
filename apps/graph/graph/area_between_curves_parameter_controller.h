@@ -31,7 +31,7 @@ public:
   Escher::View * view() override { return &m_contentView; }
 private:
   constexpr static int k_maxNumberOfDisplayableRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::TabHeight + 3 * Escher::Metric::StackTitleHeight);
-  // There should alway be 3 titles displayed.
+  // There should always be 3 titles displayed.
 
   Ion::Storage::Record m_mainRecord;
   AreaBetweenCurvesGraphController * m_areaGraphController;

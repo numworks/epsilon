@@ -1,43 +1,58 @@
 #ifndef SHARED_FUNCTION_GRAPH_VIEW_H
 #define SHARED_FUNCTION_GRAPH_VIEW_H
 
-#include "labeled_curve_view.h"
-#include "../constant.h"
+#include <apps/constant.h>
 #include "interactive_curve_view_range.h"
+#include "plot_view_policies.h"
 
 namespace Shared {
 
-class FunctionGraphView : public LabeledCurveView {
+class FunctionGraphPolicy {
 public:
-  FunctionGraphView(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor,
-    BannerView * bannerView, CursorView * cursorView);
-  void reload(bool resetInterrupted = false, bool force = false) override;
+  Poincare::Context * context() const { return m_context; }
+  void setContext(Poincare::Context * context) { m_context = context; }
+
+protected:
+  void drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
+
+  virtual int numberOfDrawnRecords() const = 0;
+  virtual void drawRecord(int i, KDContext *, KDRect) const = 0;
+  virtual void tidyModel(int i) const = 0;
+
+  bool allFunctionsInterrupted() const;
+  bool functionWasInterrupted(int index) const;
+  void setFunctionInterrupted(int index) const;
+
+  Poincare::Context * m_context;
+  mutable uint32_t m_functionsInterrupted;
+};
+
+class FunctionGraphView : public PlotView<PlotPolicy::TwoLabeledAxes, FunctionGraphPolicy, PlotPolicy::WithBanner, PlotPolicy::WithCursor> {
+public:
+  FunctionGraphView(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, BannerView * bannerView, CursorView * cursorView);
+
+  // AbstractPlotView
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void setContext(Poincare::Context * context);
-  Poincare::Context * context() const;
+  void reload(bool resetInterrupted = false, bool force = false) override;
+  void resetInterruption() override { m_functionsInterrupted = 0; }
+
   void selectRecord(Ion::Storage::Record record);
   // Select second record to draw area between it and the main record
   void selectSecondRecord(Ion::Storage::Record record);
-  void setAreaHighlight(float start, float end);
   virtual void setAreaHighlightColor(bool highlightColor);
-  void resetCurvesInterrupted() override { m_functionsInterrupted = 0; }
+  void setAreaHighlight(float start, float end);
 
   Ion::Storage::Record selectedRecord() const { return m_selectedRecord; }
   Ion::Storage::Record secondSelectedRecord() const { return m_secondSelectedRecord; }
 
 protected:
   void reloadBetweenBounds(float start, float end);
-  Ion::Storage::Record m_selectedRecord;
-  Ion::Storage::Record m_secondSelectedRecord;
+
   float m_highlightedStart;
   float m_highlightedEnd;
+  Ion::Storage::Record m_selectedRecord;
+  Ion::Storage::Record m_secondSelectedRecord;
   bool m_shouldColorHighlighted;
-  bool allFunctionsInterrupted(int numberOfFunctions) const;
-  bool functionWasInterrupted(int index) const;
-  void setFunctionInterrupted(int index) const;
-
-  mutable uint32_t m_functionsInterrupted;
-  Poincare::Context * m_context;
 };
 
 }

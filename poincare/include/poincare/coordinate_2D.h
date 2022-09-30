@@ -11,7 +11,7 @@ public:
   Coordinate2D(T x1 = NAN, T x2 = NAN) : m_x1(x1), m_x2(x2) {}
 
   template<class C>
-  operator Coordinate2D<C>() { return Coordinate2D<T>(static_cast<C>(m_x1), static_cast<C>(m_x2)); }
+  operator Coordinate2D<C>() { return Coordinate2D<C>(static_cast<C>(m_x1), static_cast<C>(m_x2)); }
 
   T x1() const { return m_x1; }
   T x2() const { return m_x2; }

@@ -30,7 +30,7 @@ void SumGraphController::viewWillAppear() {
   m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   m_graphView->setBannerView(&m_legendView);
   m_graphView->setCursorView(&m_cursorView);
-  m_graphView->selectMainView(true);
+  m_graphView->setFocus(true);
   m_graphView->setAreaHighlightColor(false);
   m_graphView->setAreaHighlight(NAN, NAN);
   m_step = Step::FirstParameter;
@@ -59,8 +59,8 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::Copy || event == Ion::Events::Cut) &&  m_step == Step::Result) {
     /* We want to save more digits than we have in the banner to we need to
      * convert the result here */
-    constexpr static int precision = Poincare::Preferences::DefaultNumberOfPrintedSignificantDigits;
-    constexpr static int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(precision);
+    constexpr static int precision = Preferences::DefaultNumberOfPrintedSignificantDigits;
+    constexpr static int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
      char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(m_result, buffer, bufferSize, precision);
     Escher::Clipboard::sharedClipboard()->store(buffer);
@@ -164,7 +164,7 @@ void SumGraphController::reloadBannerView() {
   m_legendView.setLegendMessage(legendMessageAtStep(m_step), m_step);
   double endSum = NAN;
   double result;
-  Poincare::Layout functionLayout;
+  Layout functionLayout;
   if (m_step == Step::Result) {
     endSum = m_cursor->x();
     assert(!selectedRecord().isNull());
@@ -219,7 +219,7 @@ void SumGraphController::LegendView::setEditableZone(double d) {
 void SumGraphController::LegendView::setSumLayout(Step step, double start, double end, double result, Layout functionLayout) {
   constexpr int sigmaLength = 2;
   const CodePoint sigma[sigmaLength] = {' ', m_sumSymbol};
-  Poincare::Layout sumLayout = LayoutHelper::CodePointsToLayout(sigma, sigmaLength);
+  Layout sumLayout = LayoutHelper::CodePointsToLayout(sigma, sigmaLength);
   if (step != Step::FirstParameter) {
     static_assert(k_valuesBufferSize <= k_editableZoneBufferSize);
     char buffer[k_editableZoneBufferSize];

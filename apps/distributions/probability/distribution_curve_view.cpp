@@ -40,7 +40,7 @@ void DistributionPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView,
     drawStandardNormal(plotView, ctx, rect, pixelColorLowerBound, pixelColorUpperBound);
   } else if (m_distribution->isContinuous()) {
     CurveDrawing plot(evaluateDistribution2D, m_distribution, nullptr, m_distribution->xMin(), m_distribution->xMax(), plotView->pixelWidth(), Palette::YellowDark, true);
-    plot.setPatternOptions(Pattern(Palette::YellowDark), lowerBound, upperBound, evaluateZero, nullptr, false);
+    plot.setPatternOptions(Pattern(Palette::YellowDark), lowerBound, upperBound, evaluateZero, nullptr, nullptr, nullptr, false);
     plot.draw(plotView, ctx, rect);
   } else {
     float context[] = { lowerBound, upperBound };
@@ -63,7 +63,7 @@ void DistributionPlotPolicy::drawStandardNormal(const Shared::AbstractPlotView *
   float colorEnd = mutablePlotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, colorUpperBound);
 
   CurveDrawing plot(evaluateDistribution2D, &n, nullptr, n.xMin(), n.xMax(), mutablePlotView->pixelWidth(), Palette::YellowDark, true);
-  plot.setPatternOptions(Pattern(Palette::YellowDark), colorStart, colorEnd, evaluateZero, nullptr, false);
+  plot.setPatternOptions(Pattern(Palette::YellowDark), colorStart, colorEnd, evaluateZero, nullptr, nullptr, nullptr, false);
   plot.draw(mutablePlotView, ctx, rect);
 
   // Put back the previous curve view range

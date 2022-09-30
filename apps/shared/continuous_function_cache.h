@@ -1,10 +1,10 @@
 #ifndef SHARED_CONTINUOUS_FUNCTION_CACHE_H
 #define SHARED_CONTINUOUS_FUNCTION_CACHE_H
 
-#include "../graph/graph/graph_view.h"
 #include <ion/display.h>
 #include <poincare/context.h>
 #include <poincare/coordinate_2D.h>
+#include <float.h>
 
 namespace Shared {
 
@@ -55,6 +55,19 @@ private:
    * The value 128*FLT_EPSILON has been found to be the lowest for which all
    * indices verify indexForParameter(tMin + index * tStep) = index. */
   constexpr static float k_cacheHitTolerance = 128.0f * FLT_EPSILON;
+  /* The step is a fraction of tmax-tmin. We will evaluate the function at
+   * every step and if the consecutive dots are close enough, we won't
+   * evaluate any more dot within the step. We pick a very strange fraction
+   * denominator to avoid evaluating a periodic function periodically. For
+   * example, if tstep was (tmax - tmin)/10, the polar function r(θ) = sin(5θ)
+   * defined on 0..2π would be evaluated on r(0) = 0, r(π/5) = 0, r(2*π/5) = 0
+   * which would lead to no curve at all. With 10.0938275501223, the
+   * problematic functions are the functions whose period is proportionned to
+   * 80.0938275501223 which are hopefully rare enough.
+   * TODO: The drawCurve algorithm should use the derivative function to know
+   * how fast the function moves... */
+  constexpr static float k_graphStepDenominator = 80.0938275501223f;
+
 
   void invalidateBetween(int iInf, int iSup);
   void setRange(ContinuousFunction * function, float tMin, float tStep);

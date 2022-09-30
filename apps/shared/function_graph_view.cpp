@@ -1,42 +1,84 @@
 #include "function_graph_view.h"
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <assert.h>
 #include <cmath>
 #include <float.h>
+
 using namespace Poincare;
 
 namespace Shared {
 
-FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * graphRange,
-  CurveViewCursor * cursor, BannerView * bannerView, CursorView * cursorView) :
-  LabeledCurveView(graphRange, cursor, bannerView, cursorView),
+// FunctionGraphPolicy
+
+void FunctionGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+  int n = numberOfDrawnRecords();
+  for (int i = 0; i < n; i++) {
+    if (functionWasInterrupted(i)) {
+      continue;
+    }
+    UserCircuitBreakerCheckpoint checkpoint;
+    if (CircuitBreakerRun(checkpoint)) {
+      drawRecord(i, ctx, rect);
+    } else {
+      setFunctionInterrupted(i);
+      tidyModel(i);
+      m_context->tidyDownstreamPoolFrom();
+    }
+  }
+}
+
+bool FunctionGraphPolicy::allFunctionsInterrupted() const {
+  /* The number of functions displayed at the same time is theoretically
+   * unbounded, but we only store the status of 32 functions. */
+  int numberOfFunctions = numberOfDrawnRecords();
+  if (numberOfFunctions <= 0 || static_cast<size_t>(numberOfFunctions) > 8 * sizeof(m_functionsInterrupted)) {
+    return false;
+  }
+  return m_functionsInterrupted == static_cast<uint32_t>((1 << numberOfFunctions) - 1);
+}
+
+bool FunctionGraphPolicy::functionWasInterrupted(int index) const {
+  if (index < 0 || static_cast<size_t>(index) >= 8 * sizeof(m_functionsInterrupted)) {
+    return false;
+  }
+  return (1 << index) & m_functionsInterrupted;
+}
+
+void FunctionGraphPolicy::setFunctionInterrupted(int index) const {
+  if (index >= 0 && static_cast<size_t>(index) < 8 * sizeof(m_functionsInterrupted)) {
+    m_functionsInterrupted |= 1 << index;
+  }
+}
+
+// FunctionGraphView
+
+FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange * range, CurveViewCursor * cursor, BannerView * bannerView, CursorView * cursorView) :
+  PlotView(range),
   m_highlightedStart(NAN),
   m_highlightedEnd(NAN),
-  m_shouldColorHighlighted(false),
-  m_functionsInterrupted(0),
-  m_context(nullptr)
+  m_shouldColorHighlighted(false)
 {
+  // FunctionGraphPolicy
+  m_functionsInterrupted = 0;
+  m_context = nullptr;
+  // WithBanner
+  m_banner = bannerView;
+  // WithCursor
+  m_cursor = cursor;
+  m_cursorView = cursorView;
+}
+
+void FunctionGraphView::drawRect(KDContext * ctx, KDRect rect) const {
+  if (!allFunctionsInterrupted()) {
+    PlotView::drawRect(ctx, rect);
+  }
 }
 
 void FunctionGraphView::reload(bool resetInterrupted, bool force) {
   if (force || resetInterrupted) {
-    resetCurvesInterrupted();
+    resetInterruption();
   }
-  LabeledCurveView::reload(resetInterrupted, force);
-}
-
-void FunctionGraphView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, KDColorWhite);
-  drawGrid(ctx, rect);
-  drawAxes(ctx, rect);
-  simpleDrawBothAxesLabels(ctx, rect);
-}
-
-void FunctionGraphView::setContext(Context * context) {
-  m_context = context;
-}
-
-Context * FunctionGraphView::context() const {
-  return m_context;
+  AbstractPlotView::reload(resetInterrupted, force);
 }
 
 void FunctionGraphView::selectRecord(Ion::Storage::Record record) {
@@ -87,30 +129,8 @@ void FunctionGraphView::reloadBetweenBounds(float start, float end) {
   float pixelUpperBound = floatToPixel(Axis::Horizontal, end) + 4.0f;
   /* We exclude the banner frame from the dirty zone to avoid unnecessary
    * redrawing */
-  KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound-pixelLowerBound,
-        bounds().height()-m_bannerView->bounds().height()));
+  KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound - pixelLowerBound, bounds().height() - m_banner->bounds().height()));
   markRectAsDirty(dirtyZone);
-}
-
-bool FunctionGraphView::allFunctionsInterrupted(int numberOfFunctions) const {
-  /* The number of functions displayed at the same time is theoretically unbounded, but we only store the status of 32 functions. */
-  if (numberOfFunctions <= 0 || static_cast<size_t>(numberOfFunctions) > 8 * sizeof(m_functionsInterrupted)) {
-    return false;
-  }
-  return m_functionsInterrupted == static_cast<uint32_t>((1 << numberOfFunctions) - 1);
-}
-
-bool FunctionGraphView::functionWasInterrupted(int index) const {
-  if (index < 0 || static_cast<size_t>(index) >= 8 * sizeof(m_functionsInterrupted)) {
-    return false;
-  }
-  return (1 << index) & m_functionsInterrupted;
-}
-
-void FunctionGraphView::setFunctionInterrupted(int index) const {
-  if (index >= 0 && static_cast<size_t>(index) < 8 * sizeof(m_functionsInterrupted)) {
-    m_functionsInterrupted |= 1 << index;
-  }
 }
 
 }

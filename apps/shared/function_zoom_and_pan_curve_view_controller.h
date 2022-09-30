@@ -65,7 +65,7 @@ private:
 
   // ZoomAndPanCurveViewController
   InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_interactiveRange; }
-  AbstractPlotView * curveView() override { return nullptr; } // TODO
+  AbstractPlotView * curveView() override { return m_contentView.curveView(); }
 
   ContentView m_contentView;
   InteractiveCurveViewRange * m_interactiveRange;

@@ -64,12 +64,12 @@ Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(const C
 
 void ContinuousFunctionCache::ComputeNonCartesianSteps(float * tStep, float * tCacheStep, float tMax, float tMin) {
   // Expected step length
-  *tStep = (tMax - tMin) / Graph::GraphView::k_graphStepDenominator;
+  *tStep = (tMax - tMin) / k_graphStepDenominator;
   /* Parametric and polar functions require caching both x and y values,
    * with the same k_sizeOfCache. To cover the entire range,
    * number of cacheable points is half the cache size. */
   const int numberOfCacheablePoints = k_sizeOfCache / 2;
-  const int numberOfWholeSteps = static_cast<int>(Graph::GraphView::k_graphStepDenominator);
+  const int numberOfWholeSteps = static_cast<int>(k_graphStepDenominator);
   static_assert(numberOfCacheablePoints % numberOfWholeSteps == 0, "numberOfCacheablePoints should be a multiple of numberOfWholeSteps for optimal caching");
   const int multiple = numberOfCacheablePoints / numberOfWholeSteps;
   static_assert(multiple && !(multiple & (multiple - 1)), "multiple should be a power of 2 for optimal caching");

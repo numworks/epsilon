@@ -36,7 +36,7 @@ public:
   AbstractPlotView(CurveViewRange * range) : m_range(range), m_stampDashIndex(k_stampIndexNoDash) {}
 
   // Escher::View
-  void drawRect(KDContext * ctx, KDRect rect) const final;
+  void drawRect(KDContext * ctx, KDRect rect) const;
 
   virtual void reload(bool resetInterruption = false, bool force = false);
   virtual void resetInterruption() {}
@@ -87,7 +87,7 @@ private:
   virtual void drawAxes(KDContext * ctx, KDRect rect) const = 0;
   virtual void reloadAxes() = 0;
   virtual void drawPlot(KDContext * ctx, KDRect rect) const = 0;
-  virtual BannerView * bannerView() const = 0;
+  virtual Escher::View * bannerView() const = 0;
   virtual KDRect bannerFrame() = 0;
   virtual KDRect cursorFrame() = 0;
 
@@ -106,7 +106,7 @@ private:
   void drawAxes(KDContext * ctx, KDRect rect) const override { CAxes::drawAxes(this, ctx, rect); }
   void reloadAxes() override { CAxes::reloadAxes(this); }
   void drawPlot(KDContext * ctx, KDRect rect) const override { CPlot::drawPlot(this, ctx, rect); }
-  BannerView * bannerView() const override { return CBanner::bannerView(this); }
+  Escher::View * bannerView() const override { return CBanner::bannerView(this); }
   KDRect bannerFrame() override { return CBanner::bannerFrame(this); }
   CursorView * cursorView() const override { return CCursor::cursorView(this); }
   KDRect cursorFrame() override { return CCursor::cursorFrame(this); }

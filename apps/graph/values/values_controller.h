@@ -103,7 +103,7 @@ private:
 
   // Parameter controllers
   Escher::SelectableViewController * functionParameterController() override;
-  Shared::ColumnParameters * columnParameters() override;
+  Shared::ColumnParameters * functionParameters() override;
 
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
   /* The paramater i should be the column index and symbolTypeAtColumn changes

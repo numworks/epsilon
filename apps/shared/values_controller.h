@@ -97,6 +97,7 @@ protected:
   char * memoizedBufferForCell(int i, int j);
 
   Escher::SelectableViewController * columnParameterController() override;
+  Shared::ColumnParameters * columnParameters() override;
   virtual PrefacedTableView * prefacedView() = 0;
 
   int fillColumnName(int columnIndex, char * buffer) override;
@@ -144,6 +145,7 @@ private:
   virtual int abscissaTitleCellsCount() const = 0;
   virtual Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) = 0;
   virtual Escher::SelectableViewController * functionParameterController() = 0;
+  virtual Shared::ColumnParameters * functionParameters() = 0;
 
   void clearSelectedColumn() override;
   void setClearPopUpContent() override;

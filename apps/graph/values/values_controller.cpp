@@ -418,7 +418,7 @@ SelectableViewController * ValuesController::functionParameterController() {
   return m_functionParameterController;
 }
 
-ColumnParameters * ValuesController::columnParameters() {
+ColumnParameters * ValuesController::functionParameters() {
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
   if (!functionStore()->modelForRecord(record)->isAlongXOrY()) {

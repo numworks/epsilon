@@ -66,7 +66,7 @@ private:
 
   // Parameters controllers getter
   Shared::ColumnParameterController * functionParameterController() override { return nullptr; }
-  Shared::ColumnParameters * columnParameters() override { return nullptr; }
+  Shared::ColumnParameters * functionParameters() override { return nullptr; }
 
   // Cells & view
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }

@@ -63,9 +63,9 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
     assert(functionStore()->numberOfModels() > 0);
     m_selectableTableView.deselectTable();
     functionStore()->removeModel(m_record);
-    setRecord(Ion::Storage::Record());
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
+    setRecord(Ion::Storage::Record());
     return true;
   }
   return false;

@@ -42,9 +42,11 @@ const char * CalculationParameterController::title() {
 }
 
 void CalculationParameterController::viewWillAppear() {
-  bool wasVisible = m_intersectionCell.isVisible();
+  bool intersectionWasVisible = m_intersectionCell.isVisible();
+  bool areaWasVisible = m_intersectionCell.isVisible();
   m_intersectionCell.setVisible(ShouldDisplayIntersection());
-  if (wasVisible !=  m_intersectionCell.isVisible()) {
+  m_areaCell.setVisible(ShouldDisplayAreaBetweenCurves());
+  if (intersectionWasVisible != m_intersectionCell.isVisible() || areaWasVisible != m_areaCell.isVisible()) {
     resetMemoization();
   }
   ViewController::viewWillAppear();
@@ -86,9 +88,8 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::Left) {
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     stack->pop();
-  } else if (cell == &m_areaCell) {
-    assert(row == realDerivativeRowIndex + 3);
-    if (App::app()->functionStore()->numberOfActiveDerivableFunctions() == 2) {
+  } else if (cell == &m_areaCell && m_areaCell.shouldEnterOnEvent(event)) {
+    if (!DisplayChevronInAreaCell()) {
       Ion::Storage::Record secondRecord = AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(0, m_record);
       m_areaGraphController.setSecondRecord(secondRecord);
       push(&m_areaGraphController, true);
@@ -103,14 +104,9 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
 
 void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(index >= 0 && index <= numberOfRows());
-  if (cell == &m_derivativeCell) {
-    m_derivativeCell.setState(m_graphController->displayDerivativeInBanner());
-    return;
-  } else if (cell != &m_areaCell) {
+  if (cell != &m_areaCell) {
     return;
   }
-
-  assert(cell == &m_areaCell);
   int numberOfFunctions = App::app()->functionStore()->numberOfActiveDerivableFunctions();
   assert(numberOfFunctions > 1);
   // If there is only two derivable functions, hide the chevron
@@ -146,6 +142,9 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
 
 void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
+  m_intersectionCell.setVisible(ShouldDisplayIntersection());
+  m_areaCell.setVisible(ShouldDisplayAreaBetweenCurves());
+  resetMemoization();
 }
 
 bool CalculationParameterController::ShouldDisplayIntersection() {
@@ -162,6 +161,11 @@ bool CalculationParameterController::ShouldDisplayAreaBetweenCurves() {
   /* Area between curves is displayed if there is at least two derivable
    * functions. */
   return store->numberOfActiveDerivableFunctions() > 1;
+}
+
+bool CalculationParameterController::DisplayChevronInAreaCell() {
+  /* Area between curves row does not always have a chevron. */
+  return App::app()->functionStore()->numberOfActiveDerivableFunctions() > 2;
 }
 
 }

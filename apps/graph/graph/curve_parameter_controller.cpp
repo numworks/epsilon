@@ -44,7 +44,7 @@ const char * CurveParameterController::title() {
     function()->nameWithArgument(m_title + len, k_titleSize - len);
   } else {
     const char * colorName = I18n::translate(Shared::ColorNames::NameForCurveColor(function()->color()));
-    Poincare::Print::customPrintf(m_title, k_titleSize, I18n::translate(I18n::Message::CalculateOnTheCurve), colorName);
+    Poincare::Print::CustomPrintf(m_title, k_titleSize, I18n::translate(I18n::Message::CalculateOnTheCurve), colorName);
   }
   return m_title;
 }
@@ -65,7 +65,7 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell, int 
     parameterCells[index]->setEditable(parameter.editable);
   }
   if (name != I18n::Message::Default) {
-    parameterCells[index]->setMessageWithPlaceholder(name);
+    parameterCells[index]->setMessageWithPlaceholders(name);
     ExplicitFloatParameterController::willDisplayCellForIndex(cell, index);
     return;
   }
@@ -155,8 +155,8 @@ void CurveParameterController::setRecord(Ion::Storage::Record record) {
   Shared::WithRecord::setRecord(record);
   m_derivativeNumberCell.setVisible(shouldDisplayDerivative() || function()->numberOfCurveParameters() == 3);
   m_calculationCell.setVisible(shouldDisplayCalculation());
+  selectCellAtLocation(0, 0);
   resetMemoization();
-  m_selectableTableView.reloadData();
   m_preimageGraphController.setRecord(record);
 }
 

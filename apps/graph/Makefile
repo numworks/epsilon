@@ -9,7 +9,6 @@ app_graph_src = $(addprefix apps/graph/,\
   app.cpp \
   graph/area_between_curves_graph_controller.cpp \
   graph/area_between_curves_parameter_controller.cpp \
-  function_models_parameter_controller.cpp \
   graph/banner_view.cpp \
   graph/calculation_graph_controller.cpp \
   graph/calculation_parameter_controller.cpp \

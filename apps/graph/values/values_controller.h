@@ -102,8 +102,9 @@ private:
   void setExactValueCellLayouts(int column, int row);
 
   // Parameter controllers
-  Escher::SelectableViewController * functionParameterController() override;
-  Shared::ColumnParameters * functionParameters() override;
+  template <class T> T * parameterController();
+  Escher::SelectableViewController * functionParameterController() override { return parameterController<Escher::SelectableViewController>(); }
+  Shared::ColumnParameters * functionParameters() override { return parameterController<Shared::ColumnParameters>(); }
 
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
   /* The paramater i should be the column index and symbolTypeAtColumn changes

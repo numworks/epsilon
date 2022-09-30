@@ -404,21 +404,8 @@ void ValuesController::setExactValueCellLayouts(int column, int row) {
 
 // Parameter controllers
 
-SelectableViewController * ValuesController::functionParameterController() {
-  bool isDerivative = false;
-  Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
-  if (!functionStore()->modelForRecord(record)->isAlongXOrY()) {
-    return nullptr;
-  }
-  if (isDerivative) {
-    m_derivativeParameterController.setRecord(record);
-    return &m_derivativeParameterController;
-  }
-  m_functionParameterController->setRecord(record);
-  return m_functionParameterController;
-}
-
-ColumnParameters * ValuesController::functionParameters() {
+template <class T>
+T * ValuesController::parameterController() {
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
   if (!functionStore()->modelForRecord(record)->isAlongXOrY()) {

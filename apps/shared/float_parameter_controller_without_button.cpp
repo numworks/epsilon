@@ -10,13 +10,13 @@ using namespace Poincare;
 
 namespace Shared {
 
-template<typename T, typename M>
-FloatParameterControllerWithoutButton<T,M>::FloatParameterControllerWithoutButton(Responder * parentResponder) :
+template<typename T>
+FloatParameterControllerWithoutButton<T>::FloatParameterControllerWithoutButton(Responder * parentResponder) :
   SelectableListViewController(parentResponder)
 {}
 
-template<typename T, typename M>
-void FloatParameterControllerWithoutButton<T,M>::didBecomeFirstResponder() {
+template<typename T>
+void FloatParameterControllerWithoutButton<T>::didBecomeFirstResponder() {
   if (selectedRow() >= 0) {
     int selRow = selectedRow();
     selRow = selRow >= numberOfRows() ? numberOfRows()-1 : selRow;
@@ -27,8 +27,8 @@ void FloatParameterControllerWithoutButton<T,M>::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-template<typename T, typename M>
-void FloatParameterControllerWithoutButton<T,M>::viewWillAppear() {
+template<typename T>
+void FloatParameterControllerWithoutButton<T>::viewWillAppear() {
   ViewController::viewWillAppear();
   int selRow = selectedRow();
   if (selRow == -1) {
@@ -43,16 +43,16 @@ void FloatParameterControllerWithoutButton<T,M>::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-template<typename T, typename M>
-void FloatParameterControllerWithoutButton<T,M>::viewDidDisappear() {
+template<typename T>
+void FloatParameterControllerWithoutButton<T>::viewDidDisappear() {
   if (parentResponder() == nullptr) {
     m_selectableTableView.deselectTable();
     m_selectableTableView.scrollToCell(0,0);
   }
 }
 
-template<typename T, typename M>
-bool FloatParameterControllerWithoutButton<T,M>::handleEvent(Ion::Events::Event event) {
+template<typename T>
+bool FloatParameterControllerWithoutButton<T>::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back) {
     stackController()->pop();
     return true;
@@ -60,13 +60,13 @@ bool FloatParameterControllerWithoutButton<T,M>::handleEvent(Ion::Events::Event 
   return false;
 }
 
-template<typename T, typename M>
-int FloatParameterControllerWithoutButton<T,M>::typeAtIndex(int index) {
+template<typename T>
+int FloatParameterControllerWithoutButton<T>::typeAtIndex(int index) {
   return k_parameterCellType;
 }
 
-template<typename T, typename M>
-void FloatParameterControllerWithoutButton<T,M>::willDisplayCellForIndex(HighlightCell * cell, int index) {
+template<typename T>
+void FloatParameterControllerWithoutButton<T>::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (isCellEditing(cell, index)) {
     return;
   }
@@ -77,20 +77,20 @@ void FloatParameterControllerWithoutButton<T,M>::willDisplayCellForIndex(Highlig
   setTextInCell(cell, buffer, index);
 }
 
-template<typename T, typename M>
-KDCoordinate FloatParameterControllerWithoutButton<T,M>::nonMemoizedRowHeight(int j) {
+template<typename T>
+KDCoordinate FloatParameterControllerWithoutButton<T>::nonMemoizedRowHeight(int j) {
   return SelectableListViewController::nonMemoizedRowHeight(j);
 }
 
-template<typename T, typename M>
-bool FloatParameterControllerWithoutButton<T,M>::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
+template<typename T>
+bool FloatParameterControllerWithoutButton<T>::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   return (event == Ion::Events::Down && selectedRow() < numberOfRows()-1)
       || (event == Ion::Events::Up && selectedRow() > 0)
       || TextFieldDelegate::textFieldShouldFinishEditing(textField, event);
 }
 
-template<typename T, typename M>
-bool FloatParameterControllerWithoutButton<T,M>::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
+template<typename T>
+bool FloatParameterControllerWithoutButton<T>::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   T floatBody;
   int row = selectedRow();
   InfinityTolerance infTolerance = infinityAllowanceForRow(row);
@@ -112,18 +112,17 @@ bool FloatParameterControllerWithoutButton<T,M>::textFieldDidFinishEditing(Abstr
 }
 
 
-template<typename T, typename M>
-bool FloatParameterControllerWithoutButton<T,M>::isCellEditing(Escher::HighlightCell * cell, int index) {
-  return static_cast<M *>(cell)->isEditing();
+template<typename T>
+bool FloatParameterControllerWithoutButton<T>::isCellEditing(Escher::HighlightCell * cell, int index) {
+  return static_cast<MessageTableCellWithEditableText *>(cell)->isEditing();
 }
 
-template<typename T, typename M>
-void FloatParameterControllerWithoutButton<T,M>::setTextInCell(Escher::HighlightCell * cell, const char * text, int index) {
-  static_cast<M *>(cell)->setAccessoryText(text);
+template<typename T>
+void FloatParameterControllerWithoutButton<T>::setTextInCell(Escher::HighlightCell * cell, const char * text, int index) {
+  static_cast<MessageTableCellWithEditableText *>(cell)->setAccessoryText(text);
 }
 
 template class FloatParameterControllerWithoutButton<float>;
 template class FloatParameterControllerWithoutButton<double>;
-template class FloatParameterControllerWithoutButton<float, BufferTableCellWithEditableText>;
 
 }

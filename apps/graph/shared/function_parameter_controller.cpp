@@ -86,6 +86,11 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, 
 bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell * cell = selectedCell();
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
+  // We want left to pop into graph -> calculate but not into list
+  if (event == Ion::Events::Left && stack->depth() > InteractiveCurveViewController::k_graphControllerStackDepth + 1) {
+    stack->pop();
+    return true;
+  }
   if (cell == &m_detailsCell && m_detailsCell.ShouldEnterOnEvent(event)) {
     stack->push(&m_detailsParameterController);
     return true;

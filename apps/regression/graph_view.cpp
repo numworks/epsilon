@@ -4,44 +4,59 @@
 #include <poincare/context.h>
 #include <assert.h>
 
-using namespace Shared;
 using namespace Escher;
+using namespace Poincare;
+using namespace Shared;
 
 namespace Regression {
 
-GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * bannerView, Shared::CursorView * cursorView) :
-  LabeledCurveView(store, cursor, bannerView, cursorView),
-  m_store(store)
-{
+// RegressionPlotPolicy
+
+static Coordinate2D<float> evaluateRegression(float x, void * model, void * context) {
+  Model * regression = reinterpret_cast<Model *>(model);
+  double * coeffs = reinterpret_cast<double *>(context);
+  return Poincare::Coordinate2D<float>(x, regression->evaluate(coeffs, x));
 }
 
-void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(rect, KDColorWhite);
-  drawGrid(ctx, rect);
-  drawAxes(ctx, rect);
-  simpleDrawBothAxesLabels(ctx, rect);
-  Poincare::Context * globContext = AppsContainerHelper::sharedAppsContainerGlobalContext();
+void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+  Context * globalContext = AppsContainerHelper::sharedAppsContainerGlobalContext();
+
   for (size_t series = 0; series < Store::k_numberOfSeries; series++) {
-    if (m_store->seriesIsValid(series)) {
-      assert(series < Palette::numberOfDataColors());
-      KDColor color = Palette::DataColor[series];
-      Model * seriesModel = m_store->modelForSeries(series);
-      drawCartesianCurve(ctx, rect, -INFINITY, INFINITY, [](float abscissa, void * model, void * context) {
-          Model * regressionModel = static_cast<Model *>(model);
-          double * regressionCoefficients = static_cast<double *>(context);
-          return Poincare::Coordinate2D<float>(abscissa, (float)regressionModel->evaluate(regressionCoefficients, abscissa));
-          },
-          seriesModel, m_store->coefficientsForSeries(series, globContext), color);
-      for (int index = 0; index < m_store->numberOfPairsOfSeries(series); index++) {
-        drawDot(ctx, rect, m_store->get(series, 0, index), m_store->get(series, 1, index), color);
-      }
-      // Hide mean points in scatter plots
-      if (m_store->seriesRegressionType(series) != Model::Type::None) {
-        drawDot(ctx, rect, m_store->meanOfColumn(series, 0), m_store->meanOfColumn(series, 1), color, Size::Medium);
-        drawDot(ctx, rect, m_store->meanOfColumn(series, 0), m_store->meanOfColumn(series, 1), KDColorWhite);
-      }
+    if (!m_store->seriesIsValid(series)) {
+      continue;
+    }
+    assert(series < Palette::numberOfDataColors());
+    KDColor color = Palette::DataColor[series];
+    // - Draw regression curve
+    Model * seriesModel = m_store->modelForSeries(series);
+    CurveDrawing plot(evaluateRegression, seriesModel, m_store->coefficientsForSeries(series, globalContext), m_store->xMin(), m_store->xMax(), plotView->pixelWidth(), color);
+    plot.draw(plotView, ctx, rect);
+    // - Draw data points
+    int numberOfPairs = m_store->numberOfPairsOfSeries(series);
+    for (int i = 0; i < numberOfPairs; i++) {
+      plotView->drawDot(ctx, rect, Dots::Size::Tiny, Coordinate2D<float>(m_store->get(series, 0, i), m_store->get(series, 1, i)), color);
+    }
+    //   Mean point is hidden in scatter plots
+    if (m_store->seriesRegressionType(series) != Model::Type::None) {
+      Coordinate2D<float> mean(m_store->meanOfColumn(series, 0), m_store->meanOfColumn(series, 1));
+      plotView->drawDot(ctx, rect, Dots::Size::Medium, mean, color);
+      plotView->drawDot(ctx, rect, Dots::Size::Tiny, mean, KDColorWhite);
     }
   }
+}
+
+// GraphView
+
+GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * bannerView, Shared::CursorView * cursorView) :
+  PlotView(store)
+{
+  // RegressionPlotPolicy
+  m_store = store;
+  // WithBanner
+  m_banner = bannerView;
+  // WithCursor
+  m_cursor = cursor;
+  m_cursorView = cursorView;
 }
 
 }

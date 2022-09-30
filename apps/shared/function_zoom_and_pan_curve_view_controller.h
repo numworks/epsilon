@@ -8,12 +8,13 @@
 #include "zoom_and_pan_curve_view_controller.h"
 #include "banner_view.h"
 #include "curve_view.h"
+#include "plot_view.h"
 
 namespace Shared {
 
 class FunctionZoomAndPanCurveViewController : public ZoomAndPanCurveViewController {
 public:
-  FunctionZoomAndPanCurveViewController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange, CurveView * curveView);
+  FunctionZoomAndPanCurveViewController(Responder * parentResponder, InteractiveCurveViewRange * interactiveCurveViewRange, AbstractPlotView * curveView);
   const char * title() override;
   Escher::View * view() override { return &m_contentView; }
   void viewWillAppear() override;
@@ -28,9 +29,9 @@ private:
   public:
     constexpr static KDFont::Size k_legendFont = KDFont::Size::Small;
     constexpr static KDCoordinate k_legendHeight = 2 * Escher::Metric::BannerTextMargin + KDFont::GlyphHeight(k_legendFont);
-    ContentView(CurveView * curveView);
+    ContentView(AbstractPlotView * curveView);
     void layoutSubviews(bool force = false) override;
-    CurveView * curveView();
+    AbstractPlotView * curveView();
     bool displayLegend() const { return m_displayLegend; }
     void setDisplayLegend(bool v) { m_displayLegend = v; }
   private:
@@ -51,7 +52,7 @@ private:
     };
     int numberOfSubviews() const override;
     Escher::View * subviewAtIndex(int index) override;
-    CurveView * m_curveView;
+    AbstractPlotView * m_curveView;
     LegendView m_legendView;
     bool m_displayLegend;
   };

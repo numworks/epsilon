@@ -6,7 +6,7 @@ using namespace Escher;
 
 namespace Shared {
 
-FunctionZoomAndPanCurveViewController::FunctionZoomAndPanCurveViewController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange, CurveView * curveView) :
+FunctionZoomAndPanCurveViewController::FunctionZoomAndPanCurveViewController(Responder * parentResponder, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView) :
   ZoomAndPanCurveViewController(parentResponder),
   m_contentView(curveView),
   m_interactiveRange(interactiveRange)
@@ -78,7 +78,7 @@ bool FunctionZoomAndPanCurveViewController::setLegendVisible(bool legendWillAppe
 
 /* Content View */
 
-FunctionZoomAndPanCurveViewController::ContentView::ContentView(CurveView * curveView) :
+FunctionZoomAndPanCurveViewController::ContentView::ContentView(AbstractPlotView * curveView) :
   m_curveView(curveView),
   m_displayLegend(false)
 {
@@ -101,7 +101,7 @@ void FunctionZoomAndPanCurveViewController::ContentView::layoutSubviews(bool for
   m_legendView.setFrame(m_displayLegend ? KDRect(0, bounds().height() - k_legendHeight, bounds().width(), k_legendHeight) : KDRectZero, force);
 }
 
-CurveView * FunctionZoomAndPanCurveViewController::ContentView::curveView() {
+AbstractPlotView * FunctionZoomAndPanCurveViewController::ContentView::curveView() {
   return m_curveView;
 }
 

@@ -11,7 +11,7 @@ namespace Shared {
 
 class FunctionGraphController : public InteractiveCurveViewController, public FunctionBannerDelegate {
 public:
-  FunctionGraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion);
+  FunctionGraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header,  InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion);
   bool isEmpty() const override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;

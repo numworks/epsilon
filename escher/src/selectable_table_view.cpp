@@ -163,7 +163,9 @@ int SelectableTableView::firstSelectableRow() {
   }
   for (int row = 0, end = dataSource()->numberOfRows(); row < end; row++) {
     HighlightCell * cell = cellAtLocation(selectedColumn(), row);
-    if (cell && cell->isSelectable()) {
+    /* If the cell is undefined, we are in a resuableCell pattern and all rows
+     * must be selectable. */
+    if (!cell || cell->isSelectable()) {
       return row;
     }
   }
@@ -177,7 +179,7 @@ int SelectableTableView::lastSelectableRow() {
   }
   for (int row = dataSource()->numberOfRows() - 1; row >= 0; row--) {
     HighlightCell * cell = cellAtLocation(selectedColumn(), row);
-    if (cell && cell->isSelectable()) {
+    if (!cell || cell->isSelectable()) {
       return row;
     }
   }
@@ -198,7 +200,8 @@ int SelectableTableView::indexOfNextSelectableRow(int delta) {
     if (row > lastRow) {
       return lastRow;
     }
-    if (cellAtLocation(selectedColumn(), row)->isSelectable()) {
+    HighlightCell * cell = cellAtLocation(selectedColumn(), row);
+    if (!cell || cell->isSelectable()) {
       delta -= step;
     }
   }

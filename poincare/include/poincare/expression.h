@@ -104,6 +104,7 @@ class Expression : public TreeHandle {
   friend class PowerNode;
   friend class Product;
   friend class Randint;
+  friend class RandintNode;
   friend class RealPart;
   friend class Round;
   friend class Secant;

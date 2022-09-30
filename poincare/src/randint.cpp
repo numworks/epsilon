@@ -1,4 +1,5 @@
 #include <poincare/randint.h>
+#include <poincare/based_integer.h>
 #include <poincare/complex.h>
 #include <poincare/float.h>
 #include <poincare/infinity.h>
@@ -18,12 +19,20 @@ extern "C" {
 
 namespace Poincare {
 
+Expression RandintNode::createExpressionWithTwoChildren() const {
+  if (numberOfChildren() == 1) {
+    return Randint::Builder(BasedInteger::Builder(k_defaultMinBound), Expression(childAtIndex(0)).clone());
+  }
+  assert(numberOfChildren() == 2);
+  return Randint(this);
+}
+
 Layout RandintNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  return LayoutHelper::Prefix(Randint(this), floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.aliasesList().mainAlias(), context);
+  return LayoutHelper::Prefix(createExpressionWithTwoChildren(), floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.aliasesList().mainAlias(), context);
 }
 
 int RandintNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.aliasesList().mainAlias());
+  return SerializationHelper::Prefix(createExpressionWithTwoChildren().node(), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Randint::s_functionHelper.aliasesList().mainAlias());
 }
 
 Expression RandintNode::shallowReduce(const ReductionContext& reductionContext) {
@@ -33,7 +42,7 @@ Expression RandintNode::shallowReduce(const ReductionContext& reductionContext) 
 template <typename T> Evaluation<T> RandintNode::templateApproximate(const ApproximationContext& approximationContext, bool * inputIsUndefined) const {
   Evaluation<T> aInput; Evaluation<T> bInput;
   if (numberOfChildren() == 1) {
-    aInput = Complex<T>::Builder(0.0);
+    aInput = Complex<T>::Builder(static_cast<T>(k_defaultMinBound));
     bInput = childAtIndex(0)->approximate(T(), approximationContext);
   } else {
     assert(numberOfChildren() == 2);
@@ -50,7 +59,7 @@ template <typename T> Evaluation<T> RandintNode::templateApproximate(const Appro
       [] (const std::complex<T> * c, int numberOfComplexes, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, void * ctx) {
         T a; T b;
         if (numberOfComplexes == 1) {
-          a = 0.0;
+          a = static_cast<T>(k_defaultMinBound);
           b = ComplexNode<T>::ToScalar(c[0]);
         } else {
           assert(numberOfComplexes == 2);

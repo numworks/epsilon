@@ -15,7 +15,7 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override { return KDSize(0, k_defaultHeight); }
   void drawRect(KDContext * ctx, KDRect rect) const override {
     /* Drawing rects overlap in lists and spacer only redraws its own part. */
-    ctx->fillRect(KDRect(rect.left(), rect.top() + k_overlap, rect.width(), rect.height() - 2*k_overlap), Palette::WallScreen);
+    ctx->fillRect(KDRect(rect.left(), rect.top() + k_overlap, rect.width(), rect.height() - 2 * k_overlap), Palette::WallScreen);
   }
 private:
   bool protectedIsSelectable() override { return false; }

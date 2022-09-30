@@ -226,7 +226,7 @@ InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {
 }
 
 AbstractPlotView * GraphController::curveView() {
-  return nullptr; // TODO
+  return &m_view;
 }
 
 bool GraphController::openMenuForCurveAtIndex(int index) {

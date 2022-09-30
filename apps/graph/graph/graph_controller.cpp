@@ -10,7 +10,7 @@ using namespace Escher;
 namespace Graph {
 
 GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion, ButtonRowController * header) :
-  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, rangeVersion),
+  FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, nullptr /* &m_view TODO */, cursor, indexFunctionSelectedByCursor, rangeVersion),
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),

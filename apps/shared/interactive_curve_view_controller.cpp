@@ -10,7 +10,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * rangeVersion) :
+InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, uint32_t * rangeVersion) :
   SimpleInteractiveCurveViewController(parentResponder, cursor),
   ButtonRowDelegate(header, nullptr),
   m_selectedSubCurveIndex(0),

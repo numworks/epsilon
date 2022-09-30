@@ -10,6 +10,7 @@
 #include "cursor_view.h"
 #include "curve_selection_controller.h"
 #include "function_zoom_and_pan_curve_view_controller.h"
+#include "plot_view.h"
 #include "range_parameter_controller.h"
 #include "simple_interactive_curve_view_controller.h"
 
@@ -19,7 +20,7 @@ class InteractiveCurveViewController : public SimpleInteractiveCurveViewControll
 public:
   constexpr static int k_graphControllerStackDepth = 1;
 
-  InteractiveCurveViewController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, CurveView * curveView, CurveViewCursor * cursor, uint32_t * rangeVersion);
+  InteractiveCurveViewController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, uint32_t * rangeVersion);
 
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::NeverDisplayOwnTitle; }

@@ -186,6 +186,7 @@ int ValuesController::reusableCellCount(int type) {
 }
 
 int ValuesController::typeAtLocation(int i, int j) {
+  static_assert(k_abscissaTitleCellType == 0 && k_functionTitleCellType == 1 && k_editableValueCellType == 2 && k_notEditableValueCellType == 3, "ValuesController::typeAtLocation formula is wrong.");
   return (i > 0) + 2 * (j > 0);
 }
 

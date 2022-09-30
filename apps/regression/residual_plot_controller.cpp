@@ -26,6 +26,7 @@ void ResidualPlotController::updateCursor() {
   double x = xAtIndex(m_selectedDotIndex);
   double y = yAtIndex(m_selectedDotIndex);
   m_cursor.moveTo(x, x, y);
+  m_cursorView.setColor(Escher::Palette::DataColor[m_selectedSeriesIndex]);
 
   const int significantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();

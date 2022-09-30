@@ -6,8 +6,7 @@
 #include <apps/i18n.h>
 #include <apps/shared/memoized_curve_view_range.h>
 #include <apps/shared/curve_view_cursor.h>
-#include <apps/shared/cursor_view.h>
-#include <apps/shared/cursor_view.h>
+#include <apps/shared/round_cursor_view.h>
 #include <apps/shared/xy_banner_view.h>
 #include "residual_plot_curve_view.h"
 #include "residual_plot_range.h"
@@ -40,7 +39,7 @@ private:
 
   Store * m_store;
   Shared::CurveViewCursor m_cursor;
-  Shared::CursorView m_cursorView;
+  Shared::RingCursorView m_cursorView;
   ResidualPlotRange m_range;
   Shared::XYBannerView m_bannerView;
   ResidualPlotCurveView m_curveView;

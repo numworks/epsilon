@@ -76,8 +76,7 @@ bool ExplicitFloatParameterController::textFieldShouldFinishEditing(AbstractText
 bool ExplicitFloatParameterController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   float floatBody;
   int row = selectedRow();
-  InfinityTolerance infTolerance = infinityAllowanceForRow(row);
-  if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody, infTolerance == InfinityTolerance::PlusInfinity, infTolerance == InfinityTolerance::MinusInfinity)) {
+  if (textFieldDelegateApp()->hasUndefinedValue(text, &floatBody)) {
     return false;
   }
   if (!setParameterAtIndex(row, floatBody)) {

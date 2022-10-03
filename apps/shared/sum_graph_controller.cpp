@@ -307,7 +307,7 @@ Layout SumGraphController::LegendView::defaultSumResultLayout(const char * resul
   // strlen("Oppervlakte") + strlen(" = ") + 0;
   constexpr static int bufferSize = 11 + 3 + 1;
   char buffer[bufferSize];
-  int length = Print::CustomPrintf(buffer, bufferSize, "% = ", areaMessage);
+  int length = Print::CustomPrintf(buffer, bufferSize, "%s = ", areaMessage);
   assert(length < bufferSize);
   return HorizontalLayout::Builder(LayoutHelper::String(buffer, length), LayoutHelper::String(resultBuffer, strlen(resultBuffer)));
 }

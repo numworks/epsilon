@@ -53,11 +53,19 @@ bool ExpressionField::isEditing() const {
   return editionIsInTextField() ? m_textField.isEditing() : m_layoutField.isEditing();
 }
 
+void ExpressionField::setBackgroundColor(KDColor backgroundColor) {
+  editionIsInTextField() ? m_textField.setBackgroundColor(backgroundColor) : m_layoutField.setBackgroundColor(backgroundColor);
+}
+
 const char * ExpressionField::text() {
   if (!editionIsInTextField()) {
     m_layoutField.layout().serializeForParsing(m_textField.draftTextBuffer(), k_textFieldBufferSize);
   }
   return m_textField.draftTextBuffer();
+}
+
+void ExpressionField::tidy() {
+  m_layoutField.tidy();
 }
 
 void ExpressionField::setText(const char * text) {

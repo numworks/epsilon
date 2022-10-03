@@ -40,7 +40,7 @@ private:
   template<class T> void push(T * controller, bool pop);
   static bool ShouldDisplayIntersection();
   static bool ShouldDisplayAreaBetweenCurves();
-  static bool DisplayChevronInAreaCell();
+  static bool ShouldDisplayChevronInAreaCell();
   // This class is used for the AreaBetweenCurves cell
   class BufferTableCellWithHideableChevron : public Escher::BufferTableCell {
   public:

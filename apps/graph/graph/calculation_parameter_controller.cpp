@@ -43,7 +43,7 @@ const char * CalculationParameterController::title() {
 
 void CalculationParameterController::viewWillAppear() {
   bool intersectionWasVisible = m_intersectionCell.isVisible();
-  bool areaWasVisible = m_intersectionCell.isVisible();
+  bool areaWasVisible = m_areaCell.isVisible();
   m_intersectionCell.setVisible(ShouldDisplayIntersection());
   m_areaCell.setVisible(ShouldDisplayAreaBetweenCurves());
   if (intersectionWasVisible != m_intersectionCell.isVisible() || areaWasVisible != m_areaCell.isVisible()) {
@@ -89,7 +89,7 @@ bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     stack->pop();
   } else if (cell == &m_areaCell && m_areaCell.shouldEnterOnEvent(event)) {
-    if (!DisplayChevronInAreaCell()) {
+    if (!ShouldDisplayChevronInAreaCell()) {
       Ion::Storage::Record secondRecord = AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(0, m_record);
       m_areaGraphController.setSecondRecord(secondRecord);
       push(&m_areaGraphController, true);
@@ -107,10 +107,9 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
   if (cell != &m_areaCell) {
     return;
   }
-  int numberOfFunctions = App::app()->functionStore()->numberOfActiveDerivableFunctions();
-  assert(numberOfFunctions > 1);
+  assert(ShouldDisplayAreaBetweenCurves());
   // If there is only two derivable functions, hide the chevron
-  m_areaCell.hideChevron(numberOfFunctions == 2);
+  m_areaCell.hideChevron(!ShouldDisplayChevronInAreaCell());
   // Get the name of the selected function
   ExpiringPointer<ContinuousFunction> mainFunction = App::app()->functionStore()->modelForRecord(m_record);
   constexpr static int bufferSize = Shared::Function::k_maxNameWithArgumentSize;
@@ -118,7 +117,7 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
   mainFunction->nameWithArgument(mainFunctionName, bufferSize);
 
   char secondPlaceHolder[bufferSize];
-  if (numberOfFunctions == 2) {
+  if (!ShouldDisplayChevronInAreaCell()) {
     // If there are only 2 functions, display "Area between f(x) and g(x)"
     secondPlaceHolder[0] = ' ';
     Ion::Storage::Record secondRecord = AreaBetweenCurvesParameterController::DerivableActiveFunctionAtIndex(0, m_record);
@@ -163,7 +162,7 @@ bool CalculationParameterController::ShouldDisplayAreaBetweenCurves() {
   return store->numberOfActiveDerivableFunctions() > 1;
 }
 
-bool CalculationParameterController::DisplayChevronInAreaCell() {
+bool CalculationParameterController::ShouldDisplayChevronInAreaCell() {
   /* Area between curves row does not always have a chevron. */
   return App::app()->functionStore()->numberOfActiveDerivableFunctions() > 2;
 }

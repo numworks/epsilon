@@ -21,7 +21,8 @@ public:
 
   // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override { return !m_store->hasValidSeries(validSerieMethod()); }
-  I18n::Message emptyMessage() override { return I18n::Message::TooManyDataPoints; }
+  // Only two causes : either too many or non-integer frequencies
+  I18n::Message emptyMessage() override { return m_store->hasValidSeries(Store::SumOfOccurrencesUnderMax) ? I18n::Message::NonIntegerFrequencies : I18n::Message::TooManyDataPoints; }
   Escher::Responder * defaultController() override { return this; }
 
   // PlotController

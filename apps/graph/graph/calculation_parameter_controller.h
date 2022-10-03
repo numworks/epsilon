@@ -46,19 +46,19 @@ private:
   public:
     BufferTableCellWithHideableChevron() :
       Escher::BufferTableCell(),
-      m_hideChevron(false)
+      m_displayChevron(true)
     {}
     const Escher::View * accessoryView() const override {
-      return m_hideChevron ? nullptr : &m_accessoryView;
+      return m_displayChevron ? &m_accessoryView : nullptr;
     }
-    void hideChevron(bool hide) { m_hideChevron = hide; }
+    void displayChevron(bool display) { m_displayChevron = display; }
     bool subviewsCanOverlap() const override { return true; }
     bool shouldEnterOnEvent(Ion::Events::Event event) {
-      return m_hideChevron ? Escher::MessageTableCell::ShouldEnterOnEvent(event) : Escher::MessageTableCellWithChevron::ShouldEnterOnEvent(event);
+      return m_displayChevron ? Escher::MessageTableCellWithChevron::ShouldEnterOnEvent(event) : Escher::MessageTableCell::ShouldEnterOnEvent(event);
     }
   private:
     Escher::ChevronView m_accessoryView;
-    bool m_hideChevron;
+    bool m_displayChevron;
   };
   Escher::MessageTableCellWithChevron m_preimageCell;
   Escher::MessageTableCell m_intersectionCell;

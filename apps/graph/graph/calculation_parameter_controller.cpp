@@ -109,7 +109,7 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
   }
   assert(ShouldDisplayAreaBetweenCurves());
   // If there is only two derivable functions, hide the chevron
-  m_areaCell.hideChevron(!ShouldDisplayChevronInAreaCell());
+  m_areaCell.displayChevron(ShouldDisplayChevronInAreaCell());
   // Get the name of the selected function
   ExpiringPointer<ContinuousFunction> mainFunction = App::app()->functionStore()->modelForRecord(m_record);
   constexpr static int bufferSize = Shared::Function::k_maxNameWithArgumentSize;

@@ -367,10 +367,11 @@ void ContinuousFunction::setTMax(float tMax) {
 }
 
 bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
-  return expressionReduced(context).hasExpression([](const Expression e, const void * context) {
-      return e.type() == ExpressionNode::Type::Sequence
-          || e.type() == ExpressionNode::Type::Integral
-          || e.type() == ExpressionNode::Type::Derivative;
+  return expressionReduced(context).recursivelyMatches([](const Expression e, Context * context) {
+      return !e.isUninitialized()
+             && (e.type() == ExpressionNode::Type::Sequence
+                || e.type() == ExpressionNode::Type::Integral
+                || e.type() == ExpressionNode::Type::Derivative);
       }, nullptr);
 }
 
@@ -1175,11 +1176,13 @@ bool ContinuousFunction::Model::IsExplicitEquation(const Expression equation, Co
    * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */
   return equation.type() == ExpressionNode::Type::Comparison
          && equation.childAtIndex(0).isIdenticalTo(Symbol::Builder(symbol))
-         && !equation.childAtIndex(1).hasExpression(
-             [](const Expression e, const void * context) {
-               const CodePoint * symbol = static_cast<const CodePoint *>(context);
-               return e.isIdenticalTo(Symbol::Builder(*symbol));
-             }, static_cast<const void *>(&symbol));
+         && !equation.childAtIndex(1).recursivelyMatches(
+            [](const Expression e, Context * context, void * auxiliary) {
+              const CodePoint * symbol = static_cast<const CodePoint *>(auxiliary);
+              return BinaryToTrinaryBool(!e.isUninitialized() && e.isIdenticalTo(Symbol::Builder(*symbol)));
+            },
+            nullptr, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+            static_cast<void *>(&symbol));
 }
 
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {

@@ -139,22 +139,6 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context * context, Expr
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
 
-bool Expression::hasExpression(ExpressionTypeTest test, const void * context) const {
-  if (test(*this, context)) {
-    return true;
-  }
-  if (isUninitialized()) {
-    return false;
-  }
-  const int childrenCount = numberOfChildren();
-  for (int i = 0; i < childrenCount; i++) {
-    if (childAtIndex(i).hasExpression(test, context)) {
-      return true;
-    }
-  }
-  return false;
-}
-
 bool Expression::deepIsMatrix(Context * context, bool canContainMatrices) const {
   if (!canContainMatrices) {
     return false;

@@ -199,9 +199,6 @@ public:
   typedef bool (*ExpressionTest)(const Expression e, Context * context);
   bool recursivelyMatches(ExpressionTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
 
-  typedef bool (*ExpressionTypeTest)(const Expression e, const void * context);
-  // The test should be able to handle uninitialized expressions.
-  bool hasExpression(ExpressionTypeTest test, const void * context) const;
   // WARNING: this method must be called on reduced (sorted) expressions
   bool deepIsMatrix(Context * context, bool canContainMatrices = true) const;
   /* Unlike deepIsMatrix, deepIsList can be called on unreduced expressions. */

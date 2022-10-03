@@ -852,12 +852,12 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit, Prefere
   UnitNode::Vector<int> vector = UnitNode::Vector<int>::FromBaseUnits(unit);
   const Representative * representative = Representative::RepresentativeForDimension(vector);
 
-  ExpressionTypeTest isNonBase = [](const Expression e, const void * context) {
-    return e.type() == ExpressionNode::Type::Unit && !e.convert<Unit>().isBaseUnit();
+  ExpressionTest isNonBase = [](const Expression e, Context * context) {
+    return !e.isUninitialized() && e.type() == ExpressionNode::Type::Unit && !e.convert<Unit>().isBaseUnit();
   };
 
   return (representative != nullptr && representative->hasSpecialAdditionalExpressions(value, unitFormat))
-    || unit.hasExpression(isNonBase, nullptr);
+         || unit.recursivelyMatches(isNonBase, nullptr);
 }
 
 int Unit::SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext, Expression exactOutput) {

@@ -24,7 +24,6 @@ bool appIsForbidden(I18n::Message appName);
 bool exactExpressionIsForbidden(Poincare::Expression e);
 bool additionalResultsAreForbidden();
 bool lineDetailsAreForbidden();
-bool testsGraphResultsAreForbidden();
 bool inequalityGraphingIsForbidden();
 bool implicitPlotsAreForbidden();
 bool statsDiagnosticsAreForbidden();

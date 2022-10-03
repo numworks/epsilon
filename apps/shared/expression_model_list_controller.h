@@ -13,6 +13,8 @@ namespace Shared {
 class ExpressionModelListController : public Escher::ViewController, public Escher::SelectableTableViewDataSource, public Escher::SelectableTableViewDelegate {
 public:
   ExpressionModelListController(Escher::Responder * parentResponder, I18n::Message text);
+  virtual void editExpression(Ion::Events::Event event);
+  virtual bool editSelectedRecordWithText(const char * text);
 protected:
   constexpr static KDFont::Size k_font = KDFont::Size::Large;
   constexpr static KDCoordinate k_expressionMargin = 5;
@@ -25,8 +27,6 @@ protected:
   bool handleEventOnExpression(Ion::Events::Event event);
   virtual void addModel();
   virtual void didChangeModelsList() { resetSizesMemoization(); }
-  virtual void editExpression(Ion::Events::Event event);
-  virtual bool editSelectedRecordWithText(const char * text);
   virtual bool removeModelRow(Ion::Storage::Record record);
   virtual int modelIndexForRow(int j) { return j; }
   // ViewController

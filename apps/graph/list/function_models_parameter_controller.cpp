@@ -1,15 +1,16 @@
+#include "../app.h"
 #include "function_models_parameter_controller.h"
 #include "list_controller.h"
+
+#include <apps/apps_container.h>
 #include <apps/exam_mode_configuration.h>
+#include <apps/global_preferences.h>
+#include <apps/shared/global_context.h>
 #include <poincare/integer.h>
 #include <poincare/layout_helper.h>
 #include <poincare/preferences.h>
+
 #include <assert.h>
-#include <apps/apps_container.h>
-#include <apps/shared/global_context.h>
-#include <apps/global_preferences.h>
-#include <apps/shared/continuous_function.h>
-#include "../app.h"
 #include <string.h>
 
 using namespace Poincare;
@@ -78,9 +79,10 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
     int modelIndex = getModelIndex(selectedRow());
     const char * model = modelAtIndex(modelIndex);
     bool success;
-    if (modelIndex != static_cast<int>(Models::Cartesian) && modelIndex != static_cast<int>(Models::Parametric) && modelIndex != static_cast<int>(Models::Polar)) {
+    if (model[0] != 'f') {
       success = m_listController->editSelectedRecordWithText(model);
     } else {
+      assert(model[1] == '(');
       /* Model starts with a named function. If that name is already taken, use
        * another one. */
       char buffer[k_maxSizeOfNamedModel];

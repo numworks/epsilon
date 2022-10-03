@@ -1,11 +1,12 @@
 #ifndef GRAPH_FUNCTION_MODELS_PARAMETER_CONTROLLER_H
 #define GRAPH_FUNCTION_MODELS_PARAMETER_CONTROLLER_H
 
+#include <apps/i18n.h>
+#include <apps/shared/continuous_function.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/expression_table_cell_with_message.h>
 #include <escher/message_table_cell.h>
 #include <escher/stack_view_controller.h>
-#include <apps/i18n.h>
 
 namespace Graph {
 
@@ -48,7 +49,8 @@ private:
   };
   constexpr static const char * k_implicitModelWhenForbidden = "y=x-1";
   constexpr static const char * k_inequationModelWhenForbidden = "y≤x";
-  constexpr static size_t k_maxSizeOfNamedModel = 26;
+  // Piecewise is the longest named model
+  constexpr static size_t k_maxSizeOfNamedModel = Poincare::Helpers::StringLength(k_models[static_cast<int>(Models::Piecewise)]) - 1 + Shared::ContinuousFunction::k_maxDefaultNameSize;
   // Expression cells
   constexpr static int k_numberOfExpressionCells = static_cast<int>(Models::NumberOfModels)-1;
   constexpr static I18n::Message k_modelDescriptions[k_numberOfExpressionCells] = {

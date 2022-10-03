@@ -23,7 +23,7 @@ Layout PiecewiseOperatorNode::createLayout(Preferences::PrintFloatMode floatDisp
     Layout leftChildLayout = childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
     l.addRow(leftChildLayout);
   }
-  return l;
+  return std::move(l);
 }
 
 int PiecewiseOperatorNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

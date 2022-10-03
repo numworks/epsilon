@@ -34,9 +34,6 @@ public:
   // ExpressionModelListController
   KDCoordinate expressionRowHeight(int j) override;
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
-  // Make methods public
-  void editExpression(Ion::Events::Event event) override { return Shared::FunctionListController::editExpression(event); }
-  bool editSelectedRecordWithText(const char * text) override { return Shared::FunctionListController::editSelectedRecordWithText(text); }
   FunctionToolbox * toolboxForInputEventHandler(Escher::InputEventHandler * handler) override;
 private:
   constexpr static int k_functionCellType = 0;

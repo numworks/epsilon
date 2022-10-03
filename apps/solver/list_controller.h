@@ -29,10 +29,6 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
-  /* ExpressionModelListController */
-  // Make methods public
-  void editExpression(Ion::Events::Event event) override { return Shared::ExpressionModelListController::editExpression(event); }
-  bool editSelectedRecordWithText(const char * text) override { return Shared::ExpressionModelListController::editSelectedRecordWithText(text); }
   /* ViewController */
   Escher::View * view() override { return &m_equationListView; }
   TELEMETRY_ID("List");

@@ -1,7 +1,6 @@
 #include "results_controller.h"
 
 #include <apps/i18n.h>
-#include <apps/exam_mode_configuration.h>
 #include <escher/input_event_handler_delegate.h>
 #include <escher/invocation.h>
 #include <escher/stack_view_controller.h>
@@ -57,10 +56,6 @@ bool ResultsController::ButtonAction(void * c, void * s) {
   ResultsController * controller = static_cast<ResultsController *>(c);
   if (!controller->m_statistic->isGraphable()) {
     App::app()->displayWarning(I18n::Message::InvalidValues);
-    return false;
-  }
-  if (ExamModeConfiguration::testsGraphResultsAreForbidden() && controller->m_statistic->subApp() == Statistic::SubApp::Test) {
-    App::app()->displayWarning(I18n::Message::DisabledFeatureInTestMode1, I18n::Message::DisabledFeatureInTestMode2);
     return false;
   }
   Escher::ViewController * graph;

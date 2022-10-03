@@ -52,6 +52,8 @@ private:
 
   // ListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override { return expressionRowHeight(j); }
+  // ExpressionModelListController
+  void resetSizesMemoization() override { resetMemoization(); }
 
   EquationListView m_equationListView;
   Escher::EvenOddExpressionCell m_expressionCells[k_maxNumberOfRows];

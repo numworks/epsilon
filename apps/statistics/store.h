@@ -120,7 +120,13 @@ public:
 
   typedef double (Store::*CalculPointer)(int) const;
   static bool ValidSeriesAndValidTotalNormalProbabilities(const DoublePairStore * store, int series) {
-    return store->seriesIsValid(series) && static_cast<const Store *>(store)->totalNormalProbabilityValues(series) > 0;
+    return store->seriesIsValid(series) && IntegerFrequencies(store, series) && SumOfOccurrencesUnderMax(store, series);
+  }
+  static bool SumOfOccurrencesUnderMax(const DoublePairStore * store, int series) {
+    return static_cast<const Store *>(store)->sumOfOccurrences(series) < k_maxNumberOfPairs;
+  }
+  static bool IntegerFrequencies(const DoublePairStore * store, int series) {
+    return static_cast<const Store *>(store)->columnIsIntegersOnly(series, 1);
   }
   bool updateSeries(int series, bool delayUpdate = false) override;
 private:

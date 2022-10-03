@@ -56,8 +56,8 @@ Evaluation<T> RandintNoRepeatNode::templatedApproximate(const ApproximationConte
   /* Then, shuffle the list. */
   ListComplex<T> result = ListComplex<T>::Builder();
   for (int i = 0; i < n; i++) {
-    int r = Randint::RandomInt(a, b - i);
-    Evaluation<T> e = sorted.childAtIndex(r - a);
+    int r = Randint::RandomInt(0, n - 1 - i);
+    Evaluation<T> e = sorted.childAtIndex(r);
     sorted.removeChildInPlace(e, 0);
     result.addChildAtIndexInPlace(e, i, i);
   }

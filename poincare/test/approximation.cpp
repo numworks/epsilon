@@ -606,6 +606,10 @@ QUIZ_CASE(poincare_approximation_unique_random) {
   assert_expression_approximates_to<double>("randintnorep(1,10,0)", "{}");
 
   assert_no_duplicates_in_list<float>("randintnorep(-100,99,200)");
+  assert_no_duplicates_in_list<float>("randintnorep(1234,5678,20)");
+
+  // Random lists can be sorted
+  assert_expression_approximates_to<double>("sort(randintnorep(5,8,4))", "{5,6,7,8}");
 }
 
 QUIZ_CASE(poincare_approximation_integral) {

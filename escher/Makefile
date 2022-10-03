@@ -21,6 +21,7 @@ escher_src += $(addprefix escher/src/,\
   clipboard.cpp \
   container.cpp \
   dropdown_view.cpp \
+  editable_expression_cell.cpp \
   editable_text_cell.cpp \
   ellipsis_view.cpp \
   expression_field.cpp \

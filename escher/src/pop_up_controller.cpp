@@ -8,9 +8,9 @@ namespace Escher {
 
 // PopUpController
 
-PopUpController::PopUpController(Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage, TextView * detailTextView) :
+PopUpController::PopUpController(Invocation OkInvocation, Invocation CancelInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage, TextView * detailTextView) :
   ViewController(nullptr),
-  m_contentView(this, OkInvocation, warningMessage, okMessage, cancelMessage, detailTextView)
+  m_contentView(this, OkInvocation, CancelInvocation, warningMessage, okMessage, cancelMessage, detailTextView)
 { }
 
 View * PopUpController::view() {
@@ -22,6 +22,10 @@ void PopUpController::didBecomeFirstResponder() {
 }
 
 bool PopUpController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Back) {
+    m_contentView.m_cancelButton.handleEvent(Ion::Events::OK);
+    return true;
+  }
   if (event == Ion::Events::Left && m_contentView.selectedButton() == 1) {
     m_contentView.setSelectedButton(0);
     return true;
@@ -40,16 +44,9 @@ void PopUpController::presentModally() {
 
 // PopUp Content View
 
-PopUpController::ContentView::ContentView(Responder * parentResponder, Invocation okInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage, TextView * detailTextView) :
+PopUpController::ContentView::ContentView(Responder * parentResponder, Invocation okInvocation, Invocation cancelInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage, TextView * detailTextView) :
   Responder(parentResponder),
-  m_cancelButton(
-    this, cancelMessage,
-    Invocation(
-      [](void * context, void * sender) {
-        Container::activeApp()->dismissModalViewController();
-        return true;
-      }, this),
-    KDFont::Size::Small),
+  m_cancelButton(this, cancelMessage, cancelInvocation, KDFont::Size::Small),
   m_okButton(this, okMessage, okInvocation, KDFont::Size::Small),
   m_warningTextView(KDFont::Size::Small, warningMessage, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorWhite, KDColorBlack),
   m_detailTextView(detailTextView)
@@ -97,7 +94,13 @@ void PopUpController::ContentView::layoutSubviews(bool force) {
 // MessagePopUpController
 
 MessagePopUpController::MessagePopUpController(Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
-    PopUpController(OkInvocation, warningMessage, okMessage, cancelMessage, &m_messageTextView)
+    PopUpController(OkInvocation,
+                    Invocation(
+                      [](void * context, void * sender) {
+                        Container::activeApp()->dismissModalViewController();
+                        return true;
+                      }, &m_contentView),
+                    warningMessage, okMessage, cancelMessage, &m_messageTextView)
 { }
 
 
@@ -105,10 +108,27 @@ void MessagePopUpController::setContentMessage(I18n::Message message) {
   m_messageTextView.setMessage(message);
 }
 
+// MessagePopUpControllerWithCustomCancel
+
+MessagePopUpControllerWithCustomCancel::MessagePopUpControllerWithCustomCancel(Invocation OkInvocation, Invocation cancelInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
+  PopUpController(OkInvocation, cancelInvocation, warningMessage, okMessage, cancelMessage, &m_messageTextView)
+{ }
+
+
+void MessagePopUpControllerWithCustomCancel::setContentMessage(I18n::Message message) {
+  m_messageTextView.setMessage(message);
+}
+
 // BufferPopUpController
 
 BufferPopUpController::BufferPopUpController(Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :
-  PopUpController(OkInvocation, warningMessage, okMessage, cancelMessage, &m_bufferTextView)
+  PopUpController(OkInvocation,
+                  Invocation(
+                    [](void * context, void * sender) {
+                      Container::activeApp()->dismissModalViewController();
+                      return true;
+                    }, &m_contentView),
+                  warningMessage, okMessage, cancelMessage, &m_bufferTextView)
 { }
 
 void BufferPopUpController::setContentText(const char * text) {

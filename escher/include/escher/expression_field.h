@@ -22,6 +22,7 @@ public:
    * buffer. This is the case in the application 'Calculation' and we do not
    * use text() there... TODO: change text() for fillTextInBuffer?*/
   const char * text();
+  void tidy();
   void setText(const char * text);
   bool editionIsInTextField() const;
   bool isEmpty() const;
@@ -30,6 +31,7 @@ public:
   void setLayoutInsertionCursorEvent(Ion::Events::Event event) { m_layoutField.setInsertionCursorEvent(event); }
   size_t moveCursorAndDumpContent(char * buffer, size_t bufferSize);
   void restoreContent(const char * buffer, size_t size);
+  void setBackgroundColor(KDColor backgroundColor);
 
   /* View */
   int numberOfSubviews() const override { return 1; }

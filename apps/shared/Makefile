@@ -17,6 +17,11 @@ app_shared_test_src = $(addprefix apps/shared/,\
   interval.cpp \
   linear_regression_store.cpp \
   memoized_curve_view_range.cpp \
+  plot_view.cpp \
+  plot_view_axes.cpp \
+  plot_view_banners.cpp \
+  plot_view_cursors.cpp \
+  plot_view_plots.cpp \
   poincare_helpers.cpp \
   range_1D.cpp \
   sequence.cpp \
@@ -69,11 +74,6 @@ app_shared_src = $(addprefix apps/shared/,\
   message_view.cpp \
   ok_view.cpp \
   parameter_text_field_delegate.cpp \
-  plot_view.cpp \
-  plot_view_axes.cpp \
-  plot_view_banners.cpp \
-  plot_view_cursors.cpp \
-  plot_view_plots.cpp \
   poincare_helpers.cpp \
   prefaced_table_view.cpp \
   prefaced_twice_table_view.cpp \

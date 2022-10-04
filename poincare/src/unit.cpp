@@ -857,7 +857,7 @@ bool Unit::ShouldDisplayAdditionalOutputs(double value, Expression unit, Prefere
   };
 
   return (representative != nullptr && representative->hasSpecialAdditionalExpressions(value, unitFormat))
-         || unit.recursivelyMatches(isNonBase, nullptr);
+         || unit.recursivelyMatches(isNonBase);
 }
 
 int Unit::SetAdditionalExpressions(Expression units, double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext, Expression exactOutput) {

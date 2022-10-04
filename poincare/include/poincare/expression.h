@@ -195,9 +195,9 @@ public:
    * in the children. If an expression is tested as False, its children will not
    * be tested and the result will be false. */
   typedef TrinaryBoolean (*ExpressionTrinaryTest)(const Expression e, Context * context, void * auxiliary);
-  bool recursivelyMatches(ExpressionTrinaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const;
+  bool recursivelyMatches(ExpressionTrinaryTest test, Context * context = nullptr, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const;
   typedef bool (*ExpressionTest)(const Expression e, Context * context);
-  bool recursivelyMatches(ExpressionTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+  bool recursivelyMatches(ExpressionTest test, Context * context = nullptr, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
 
   // WARNING: this method must be called on reduced (sorted) expressions
   bool deepIsMatrix(Context * context, bool canContainMatrices = true) const;

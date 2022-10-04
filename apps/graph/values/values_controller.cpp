@@ -70,6 +70,7 @@ KDSize ValuesController::CellSizeWithLayout(Layout l) {
 
 KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
   KDCoordinate columnWidth = Shared::ValuesController::defaultColumnWidth();
+  KDCoordinate maxColumnWidth = MaxColumnWidth();
   if (!m_exactValuesButton.state()) {
     // Width is constant when displaying approximations
     return columnWidth;
@@ -80,6 +81,9 @@ KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
       Layout l = memoizedLayoutForCell(i, j);
       assert(!l.isUninitialized());
       columnWidth = std::max(CellSizeWithLayout(l).width(), columnWidth);
+      if (columnWidth > maxColumnWidth) {
+        return maxColumnWidth;
+      }
     }
   }
   return columnWidth;
@@ -87,6 +91,7 @@ KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
 
 KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
   KDCoordinate rowHeight = Shared::ValuesController::defaultRowHeight();
+  KDCoordinate maxRowHeight = MaxRowHeight();
   if (j == 0) {
     // Title cell has constant height
     return rowHeight;
@@ -119,6 +124,9 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
       }
       assert(!l.isUninitialized());
       rowHeight = std::max(CellSizeWithLayout(l).height(), rowHeight);
+      if (rowHeight > maxRowHeight) {
+        return maxRowHeight;
+      }
       if (shouldBreak) {
         // When displaying approx, parametric functions have the max height.
         break;
@@ -280,7 +288,7 @@ void ValuesController::deleteRowFromMemoization(int row, KDCoordinate rowPreviou
 
 void ValuesController::updateSizeMemoizationForColumnAfterIndexChanged(int column, KDCoordinate columnPreviousWidth, int row) {
   if (m_exactValuesButton.state()) {
-    KDCoordinate minimalWidthForColumn = CellSizeWithLayout(memoizedLayoutForCell(column, row)).width();
+    KDCoordinate minimalWidthForColumn = std::min(MaxColumnWidth(), CellSizeWithLayout(memoizedLayoutForCell(column, row)).width());
     if (columnPreviousWidth < minimalWidthForColumn) {
       m_widthManager.updateMemoizationForIndex(column, columnPreviousWidth, minimalWidthForColumn);
     }

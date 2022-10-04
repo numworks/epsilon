@@ -54,6 +54,8 @@ private:
   constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableFunctions * k_maxNumberOfDisplayableRows;
 
   static KDSize CellSizeWithLayout(Poincare::Layout l);
+  static KDCoordinate MaxColumnWidth() { return 2 * k_cellWidth; }
+  static KDCoordinate MaxRowHeight() { return 5 * k_cellHeight; }
   // TableViewDataSource
   KDCoordinate nonMemoizedColumnWidth(int i) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;

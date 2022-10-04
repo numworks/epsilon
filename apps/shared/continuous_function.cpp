@@ -367,12 +367,13 @@ void ContinuousFunction::setTMax(float tMax) {
 }
 
 bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
-  return expressionReduced(context).recursivelyMatches([](const Expression e, Context * context) {
+  return expressionReduced(context).recursivelyMatches(
+    [](const Expression e, Context * context) {
       return !e.isUninitialized()
              && (e.type() == ExpressionNode::Type::Sequence
                 || e.type() == ExpressionNode::Type::Integral
                 || e.type() == ExpressionNode::Type::Derivative);
-      }, nullptr);
+    });
 }
 
 void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Context * context) const {
@@ -1181,7 +1182,8 @@ bool ContinuousFunction::Model::IsExplicitEquation(const Expression equation, Co
               const CodePoint * symbol = static_cast<const CodePoint *>(auxiliary);
               return BinaryToTrinaryBool(!e.isUninitialized() && e.isIdenticalTo(Symbol::Builder(*symbol)));
             },
-            nullptr, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+            nullptr,
+            ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol,
             static_cast<void *>(&symbol));
 }
 

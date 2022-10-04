@@ -91,6 +91,9 @@ bool Expression::isMinusOne() const {
 }
 
 bool Expression::recursivelyMatches(ExpressionTrinaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols, void * auxiliary) const {
+  if (!context) {
+    replaceSymbols = ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;
+  }
   TrinaryBoolean testResult = test(*this, context, auxiliary);
   if (testResult == TrinaryBoolean::True) {
     return true;

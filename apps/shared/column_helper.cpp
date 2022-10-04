@@ -156,7 +156,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     return true;
   }
   // If formula contains a random formula, evaluate it for each pairs.
-  bool evaluateForEachPairs = formula.recursivelyMatches([](const Expression e, Context * context) { return !e.isUninitialized() && e.isRandom(); }, nullptr);
+  bool evaluateForEachPairs = formula.recursivelyMatches([](const Expression e, Context * context) { return !e.isUninitialized() && e.isRandom(); });
   double evaluation = PoincareHelpers::ApproximateToScalar<double>(formula, &storeContext);
   if (std::isnan(evaluation)) {
     return displayNotSuitableWarning();

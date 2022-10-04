@@ -177,14 +177,15 @@ bool ExamModeConfiguration::appIsForbidden(I18n::Message appName) {
 static bool isPrimeFactorization(Expression expression) {
   /* A prime factorization can only be built with integers, powers of integers,
    * and a multiplication. */
-  return !expression.recursivelyMatches([](const Expression e, Context * context) {
-    return e.isUninitialized()
-           || !(e.type() == ExpressionNode::Type::BasedInteger
-              || e.type() == ExpressionNode::Type::Multiplication
-              || (e.type() == ExpressionNode::Type::Power
-                  && e.childAtIndex(0).type() == ExpressionNode::Type::BasedInteger
-                  && e.childAtIndex(1).type() == ExpressionNode::Type::BasedInteger));
-  }, nullptr);
+  return !expression.recursivelyMatches(
+    [](const Expression e, Context * context) {
+      return e.isUninitialized()
+             || !(e.type() == ExpressionNode::Type::BasedInteger
+                  || e.type() == ExpressionNode::Type::Multiplication
+                  || (e.type() == ExpressionNode::Type::Power
+                      && e.childAtIndex(0).type() == ExpressionNode::Type::BasedInteger
+                      && e.childAtIndex(1).type() == ExpressionNode::Type::BasedInteger));
+    });
 }
 
 bool ExamModeConfiguration::exactExpressionIsForbidden(Expression e) {

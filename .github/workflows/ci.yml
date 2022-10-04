@@ -63,8 +63,8 @@ jobs:
     steps:
       - uses: msys2/setup-msys2@v2
       - uses: actions/checkout@v2
-      - run: pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config make mingw-w64-x86_64-python3 mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng mingw-w64-x86_64-imagemagick mingw-w64-x86_64-librsvg mingw-w64-x86_64-inkscape mingw-w64-x86_64-python3-pip
-      - run: pip3 install lz4 pypng stringcase
+      - run: pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config make mingw-w64-x86_64-python3 mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng mingw-w64-x86_64-imagemagick mingw-w64-x86_64-librsvg mingw-w64-x86_64-inkscape mingw-w64-x86_64-python3-pip mingw-w64-x86_64-python-lz4
+      - run: pip3 install pypng stringcase
       - run: make PLATFORM=simulator
       - run: make PLATFORM=simulator epsilon.exe
       - run: make PLATFORM=simulator test.exe

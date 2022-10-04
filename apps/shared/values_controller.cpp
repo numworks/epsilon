@@ -202,7 +202,7 @@ int ValuesController::numberOfButtons(ButtonRowController::Position) const {
 // AlternateEmptyViewDelegate
 
 bool ValuesController::isEmpty() const {
-  if (functionStore()->numberOfActiveFunctions() == 0) {
+  if (numberOfColumns() <= 1) {
     return true;
   }
   return false;

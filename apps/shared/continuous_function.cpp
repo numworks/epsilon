@@ -1180,7 +1180,7 @@ bool ContinuousFunction::Model::IsExplicitEquation(const Expression equation, Co
          && !equation.childAtIndex(1).recursivelyMatches(
             [](const Expression e, Context * context, void * auxiliary) {
               const CodePoint * symbol = static_cast<const CodePoint *>(auxiliary);
-              return BinaryToTrinaryBool(!e.isUninitialized() && e.isIdenticalTo(Symbol::Builder(*symbol)));
+              return (!e.isUninitialized() && e.isIdenticalTo(Symbol::Builder(*symbol))) ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
             },
             nullptr,
             ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol,

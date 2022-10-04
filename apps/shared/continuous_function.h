@@ -253,13 +253,13 @@ public:
   constexpr static CodePoint k_cartesianSymbol = 'x';
   constexpr static CodePoint k_parametricSymbol = 't';
   constexpr static CodePoint k_polarSymbol = UCodePointGreekSmallLetterTheta;
-  constexpr static char k_radiusName[2] = "r";
-  constexpr static char k_ordinateName[2] = "y";
-  constexpr static CodePoint k_radiusSymbol = k_radiusName[0];
-  constexpr static CodePoint k_ordinateCodePoint = k_ordinateName[0];
+  constexpr static CodePoint k_radiusSymbol = 'r';
+  constexpr static CodePoint k_ordinateSymbol = 'y';
   constexpr static CodePoint k_unnamedExpressionSymbol = k_cartesianSymbol;
 
 private:
+  constexpr static char k_ordinateName[2] = "y";
+  static_assert(k_ordinateSymbol == k_ordinateName[0]);
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
   // Units are not handled in the graph app. The default unit does not matters
   constexpr static Poincare::Preferences::UnitFormat k_defaultUnitFormat = Poincare::Preferences::UnitFormat::Metric;

@@ -61,15 +61,13 @@ const char * ListController::title() {
   return I18n::translate(I18n::Message::FunctionTab);
 }
 
-// Fills buffer with a default function equation, such as "f(x)="
+// Fills buffer with a default function equation, such as "f(x)=", "y=" or "r="
 void ListController::fillWithDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController, CodePoint symbol) const {
   size_t length;
   if (symbol == ContinuousFunction::k_polarSymbol) {
-    length = 0;
-    buffer[length++] = ContinuousFunction::k_radiusSymbol;
+    length = UTF8Decoder::CodePointToChars(ContinuousFunction::k_radiusSymbol, buffer, bufferSize);
   } else if (FunctionModelsParameterController::EquationsPrefered()) {
-    length = strlen(ContinuousFunction::k_ordinateName);
-    memcpy(buffer, ContinuousFunction::k_ordinateName, length);
+    length = UTF8Decoder::CodePointToChars(ContinuousFunction::k_ordinateSymbol, buffer, bufferSize);
   } else {
     length = modelsParameterController->defaultName(buffer, bufferSize);
     assert(bufferSize > length);

@@ -21,8 +21,9 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   Escher::HighlightCell * cell(int index) override;
-  int defaultName(char buffer[], size_t bufferSize) const;
+  static int DefaultName(char buffer[], size_t bufferSize);
   /* Tell if the country prefers y=x or f(x)=x */
   static bool EquationsPrefered() { return Models()[0] == Model::Equation; }
 private:
@@ -96,6 +97,7 @@ private:
   static bool ModelIsAllowed(Model model);
   // Some models may become forbidden and have an alternate form.
   static const char * ModelString(Model model);
+  static const char * ModelWithDefaultName(Model model, char buffer[], size_t bufferSize);
   Escher::StackViewController * stackController() const;
   Escher::MessageTableCell m_emptyModelCell;
   Escher::ExpressionTableCellWithMessage m_modelCells[k_numberOfExpressionCells];

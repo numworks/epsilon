@@ -28,8 +28,6 @@ FunctionModelsParameterController::FunctionModelsParameterController(Responder *
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
   const Model * models = Models();
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
-    Poincare::Expression e = Expression::Parse(ModelString(models[i]), nullptr); // No context needed
-    m_layouts[i] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Preferences::ShortNumberOfSignificantDigits, AppsContainer::sharedAppsContainer()->globalContext());
     if (!ModelIsAllowed(models[i])) {
       m_modelCells[i].setVisible(false);
       continue;
@@ -37,7 +35,6 @@ FunctionModelsParameterController::FunctionModelsParameterController(Responder *
     /* Building the cells here is possible since the list is modified when
      * entering exam mode or changing country which requires exiting the app and
      * rebuilding the cells when re-entering. */
-    m_modelCells[i].setLayout(m_layouts[i]);
     m_modelCells[i].setParentResponder(&m_selectableTableView);
     m_modelCells[i].setSubLabelMessage(ExamModeConfiguration::implicitPlotsAreForbidden() ? I18n::Message::Default : k_modelDescriptions[static_cast<int>(models[i])-1]);
   }
@@ -57,13 +54,26 @@ const char * FunctionModelsParameterController::title() {
 void FunctionModelsParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
   m_selectableTableView.selectCellAtLocation(0, 0);
+  m_selectableTableView.reloadData();
 }
 
 void FunctionModelsParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-int FunctionModelsParameterController::defaultName(char buffer[], size_t bufferSize) const {
+void FunctionModelsParameterController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
+  if (cell == &m_emptyModelCell) {
+    return;
+  }
+  int i = index - 1;
+  Model model = Models()[i];
+  char buffer[k_maxSizeOfNamedModel];
+  Poincare::Expression e = Expression::Parse(ModelWithDefaultName(model, buffer, k_maxSizeOfNamedModel), nullptr); // No context needed
+  m_layouts[i] = e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Preferences::ShortNumberOfSignificantDigits, AppsContainer::sharedAppsContainer()->globalContext());
+  m_modelCells[i].setLayout(m_layouts[i]);
+}
+
+int FunctionModelsParameterController::DefaultName(char buffer[], size_t bufferSize) {
   constexpr int k_maxNumberOfDefaultLetterNames = 4;
   constexpr char k_defaultLetterNames[k_maxNumberOfDefaultLetterNames] = {
     'f', 'g', 'h', 'p'
@@ -86,6 +96,21 @@ int FunctionModelsParameterController::defaultName(char buffer[], size_t bufferS
   return Ion::Storage::FileSystem::sharedFileSystem()->firstAvailableNameFromPrefix(buffer, 1, bufferSize, Shared::GlobalContext::k_extensions, Shared::GlobalContext::k_numberOfExtensions, 99);
 }
 
+const char * FunctionModelsParameterController::ModelWithDefaultName(Model model, char buffer[], size_t bufferSize) {
+  const char * modelString = ModelString(model);
+  if (modelString[0] != 'f') {
+    return modelString;
+  }
+  assert(modelString[1] == '(');
+  /* Model starts with a named function. If that name is already taken, use
+   * another one. */
+  int functionNameLength = DefaultName(buffer, k_maxSizeOfNamedModel);
+  size_t constantNameLength = 1; // 'f', no null-terminating char
+  assert(strlen(modelString + constantNameLength) + functionNameLength < k_maxSizeOfNamedModel);
+  strlcpy(buffer + functionNameLength, modelString + constantNameLength, k_maxSizeOfNamedModel - functionNameLength);
+  return buffer;
+}
+
 bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Ion::Storage::Record::ErrorStatus error = App::app()->functionStore()->addEmptyModel();
@@ -94,21 +119,8 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
     }
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     Model model = selectedRow() == 0 ? Model::Empty : Models()[selectedRow() - 1];
-    const char * modelString = ModelString(model);
-    bool success;
-    if (model != Model::Function && model != Model::Parametric && model != Model::Piecewise) {
-      success = m_listController->editSelectedRecordWithText(modelString);
-    } else {
-      assert(modelString[1] == '(');
-      /* Model starts with a named function. If that name is already taken, use
-       * another one. */
-      char buffer[k_maxSizeOfNamedModel];
-      int functionNameLength = defaultName(buffer, k_maxSizeOfNamedModel);
-      size_t constantNameLength = 1; // 'f', no null-terminating char
-      assert(strlen(modelString + constantNameLength) + functionNameLength < k_maxSizeOfNamedModel);
-      strlcpy(buffer + functionNameLength, modelString + constantNameLength, k_maxSizeOfNamedModel - functionNameLength);
-      success = m_listController->editSelectedRecordWithText(buffer);
-    }
+    char buffer[k_maxSizeOfNamedModel];
+    bool success = m_listController->editSelectedRecordWithText(ModelWithDefaultName(model, buffer, k_maxSizeOfNamedModel));
     assert(success);
     (void) success; // Silence warnings
     Container::activeApp()->dismissModalViewController();

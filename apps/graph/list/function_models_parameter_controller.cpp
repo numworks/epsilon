@@ -34,10 +34,12 @@ FunctionModelsParameterController::FunctionModelsParameterController(Responder *
       m_modelCells[i].setVisible(false);
       continue;
     }
+    /* Building the cells here is possible since the list is modified when
+     * entering exam mode or changing country which requires exiting the app and
+     * rebuilding the cells when re-entering. */
     m_modelCells[i].setLayout(m_layouts[i]);
     m_modelCells[i].setParentResponder(&m_selectableTableView);
     m_modelCells[i].setSubLabelMessage(ExamModeConfiguration::implicitPlotsAreForbidden() ? I18n::Message::Default : k_modelDescriptions[static_cast<int>(models[i])-1]);
-
   }
 }
 

@@ -123,6 +123,15 @@ bool CobwebController::handleEnter() {
   return updateStep(1);
 }
 
+bool CobwebController::handleZoom(Ion::Events::Event event) {
+  float ratio = event == Ion::Events::Plus ? 1.f / k_zoomOutRatio : k_zoomOutRatio;
+  float value = sequence()->evaluateXYAtParameter(static_cast<float>(m_step + sequence()->initialRank()), App::app()->localContext()).x2();
+  interactiveCurveViewRange()->zoom(ratio, value, m_step ? value : 0.f);
+  m_graphView.resetCachedStep();
+  curveView()->reload(true);
+  return true;
+}
+
 bool CobwebController::updateStep(int delta) {
   if (m_step + delta < 0 || m_step + delta > k_maximumNumberOfSteps) {
     return false;

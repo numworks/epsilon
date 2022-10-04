@@ -33,6 +33,7 @@ private:
   void reloadBannerView() override;
   bool handleLeftRightEvent(Ion::Events::Event event) override;
   bool handleEnter() override;
+  bool handleZoom(Ion::Events::Event event) override;
   void drawStep(int n);
   void setupZoom();
   bool updateStep(int delta);

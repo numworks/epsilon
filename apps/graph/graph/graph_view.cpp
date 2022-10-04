@@ -106,7 +106,7 @@ void GraphView::tidyModel(int i) const {
 template<typename T>
 static Coordinate2D<T> evaluateXY(T t, void * model, void * context) { return reinterpret_cast<ContinuousFunction *>(model)->evaluateXYAtParameter(t, reinterpret_cast<Context *>(context), 0); }
 template<typename T>
-static Coordinate2D<T> evaluateXYSecondCurve(T t, void * model, void * context) { return reinterpret_cast<ContinuousFunction *>(model)->evaluateXYAtParameter(t, reinterpret_cast<Context *>(context), 0); }
+static Coordinate2D<T> evaluateXYSecondCurve(T t, void * model, void * context) { return reinterpret_cast<ContinuousFunction *>(model)->evaluateXYAtParameter(t, reinterpret_cast<Context *>(context), 1); }
 
 static Coordinate2D<float> evaluateInfinity(float t, void *, void *) { return Coordinate2D<float>(t, INFINITY); }
 static Coordinate2D<float> evaluateMinusInfinity(float t, void *, void *) { return Coordinate2D<float>(t, -INFINITY); }
@@ -125,7 +125,7 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
   float patternStart = tStart, patternEnd = tEnd;
   Curve2D<float> patternLower = nullptr, patternUpper = nullptr;
   Curve2D<float> patternLower2 = nullptr, patternUpper2 = nullptr;
-  ContinuousFunction * patternModel = nullptr;
+  ContinuousFunction * patternModel = f;
   bool isIntegral = false;
   Pattern pattern(m_areaIndex, f->color());
   m_areaIndex = (m_areaIndex + 1) % Pattern::k_numberOfSections;
@@ -177,6 +177,7 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
     CurveDrawing secondCurve(evaluateXYSecondCurve<float>, f, context(), tStart, tEnd, tStep, f->color(), true, f->drawDottedCurve());
     secondCurve.setPrecisionOptions(true, evaluateXYSecondCurve<double>, discontinuity);
     secondCurve.setPatternOptions(pattern, patternStart, patternEnd, patternLower2, f, patternUpper2, f, patternWithoutCurve, axis);
+    secondCurve.draw(this, ctx, rect);
   }
 
   // - Draw tangent

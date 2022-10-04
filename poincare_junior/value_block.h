@@ -10,10 +10,6 @@ class ValueBlock : public Block {
 public:
   constexpr ValueBlock(uint8_t value) : Block(value) {}
   uint8_t value() const { return m_content; }
-
-#warning Discard?
-  // This dirty cast is a workaround to stricter static_cast in constexprs
-  constexpr operator TypeBlock() { return TypeBlock(static_cast<BlockType>(m_content)); }
 };
 
 static_assert(sizeof(ValueBlock) == sizeof(Block));

@@ -32,7 +32,6 @@ public:
   Block * previousNth(int i) { return Utils::DeconstifyPtr(&Block::previousNth, this, i); }
 
   constexpr explicit operator uint8_t() const { return m_content; }
-
 protected:
   uint8_t m_content;
 };

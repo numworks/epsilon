@@ -17,6 +17,7 @@ public:
   constexpr Block * blockAtIndex(size_t i) { return &m_blocks[i]; }
   constexpr operator Node() const { return Node(const_cast<TypeBlock *>(m_blocks)); }
 private:
+  // Using this instead of a Block[N] simplifies up casting in constexprs
   TypeBlock m_blocks[N];
 };
 

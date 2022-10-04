@@ -69,7 +69,7 @@ void ListController::fillWithDefaultFunctionEquation(char * buffer, size_t buffe
   } else if (FunctionModelsParameterController::EquationsPrefered()) {
     length = UTF8Decoder::CodePointToChars(ContinuousFunction::k_ordinateSymbol, buffer, bufferSize);
   } else {
-    length = modelsParameterController->defaultName(buffer, bufferSize);
+    length = modelsParameterController->DefaultName(buffer, bufferSize);
     assert(bufferSize > length);
     buffer[length++] = '(';
     length += UTF8Decoder::CodePointToChars(symbol, buffer + length, bufferSize - length);

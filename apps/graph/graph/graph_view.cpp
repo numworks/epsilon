@@ -84,7 +84,7 @@ void GraphView::drawRecord(int i, KDContext * ctx, KDRect rect) const {
   /* Check now if e can be discontinuous: In case e does not involves
    * discontinuous functions, this avoids recomputing potential
    * discontinuity at each dot of the curve. */
-  CurveView::EvaluateDiscontinuityBetweenFloatValues discontinuityEvaluation = e.involvesDiscontinuousFunction(context()) ? FunctionIsDiscontinuousBetweenFloatValues : NoDiscontinuity;
+  DiscontinuityTest discontinuityEvaluation = e.involvesDiscontinuousFunction(context()) ? FunctionIsDiscontinuousBetweenFloatValues : NoDiscontinuity;
 
   switch (type) {
   case ContinuousFunction::PlotType::Parametric:

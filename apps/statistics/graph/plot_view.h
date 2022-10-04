@@ -1,7 +1,6 @@
 #ifndef STATISTICS_PLOT_VIEW_H
 #define STATISTICS_PLOT_VIEW_H
 
-#include <apps/shared/curve_view.h>
 #include <apps/shared/curve_view_cursor.h>
 #include <escher/view.h>
 #include "plot_curve_view.h"

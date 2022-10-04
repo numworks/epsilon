@@ -3,7 +3,6 @@
 
 #include "data_view.h"
 #include "../store.h"
-#include <apps/shared/curve_view.h>
 
 namespace Statistics {
 

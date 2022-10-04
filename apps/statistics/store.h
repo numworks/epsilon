@@ -123,7 +123,7 @@ public:
     return store->seriesIsValid(series) && IntegerFrequencies(store, series) && SumOfOccurrencesUnderMax(store, series);
   }
   static bool SumOfOccurrencesUnderMax(const DoublePairStore * store, int series) {
-    return static_cast<const Store *>(store)->sumOfOccurrences(series) < k_maxNumberOfPairs;
+    return static_cast<const Store *>(store)->sumOfOccurrences(series) <= k_maxNumberOfPairs;
   }
   static bool IntegerFrequencies(const DoublePairStore * store, int series) {
     return static_cast<const Store *>(store)->columnIsIntegersOnly(series, 1);

@@ -19,7 +19,7 @@ KDRect WithCursor::cursorFrame(AbstractPlotView * plotView) {
   constexpr int maxCursorPixel = KDCOORDINATE_MAX / 2;
   // Assert we are not removing visible cursors
   static_assert((Ion::Display::Width * 2 < maxCursorPixel) && (Ion::Display::Height * 2 < maxCursorPixel), "maxCursorPixel is should be bigger");
-  if (std::abs(p.x1()) > maxCursorPixel || std::abs(p.x2()) > maxCursorPixel) {
+  if (std::fabs(p.x1()) > maxCursorPixel || std::fabs(p.x2()) > maxCursorPixel) {
     return KDRectZero;
   }
 

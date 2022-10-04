@@ -156,13 +156,14 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
       patternUpper = nullptr;
       if (m_secondSelectedRecord.isNull()) {
         patternLower = evaluateZero;
+        pattern = Pattern(f->color());
       } else {
         patternLower = evaluateXY;
         patternModel = App::app()->functionStore()->modelForRecord(m_secondSelectedRecord).operator->();
+        pattern = Pattern(m_areaIndex, KDColor::HSVBlend(f->color(), patternModel->color()));
       }
       patternStart = m_highlightedStart;
       patternEnd = m_highlightedEnd;
-      pattern = Pattern(f->color());
     }
   }
 

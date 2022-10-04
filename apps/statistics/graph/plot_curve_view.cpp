@@ -1,6 +1,5 @@
 #include "plot_curve_view.h"
 #include "plot_controller.h"
-#include <apps/shared/curve_view.h>
 #include <algorithm>
 #include <assert.h>
 

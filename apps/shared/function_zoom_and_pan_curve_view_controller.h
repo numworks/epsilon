@@ -7,7 +7,6 @@
 #include <escher/message_text_view.h>
 #include "zoom_and_pan_curve_view_controller.h"
 #include "banner_view.h"
-#include "curve_view.h"
 #include "plot_view.h"
 
 namespace Shared {

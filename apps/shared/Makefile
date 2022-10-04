@@ -2,7 +2,6 @@ app_shared_test_src = $(addprefix apps/shared/,\
   continuous_function.cpp \
   continuous_function_cache.cpp \
   curve_selection_controller.cpp \
-  curve_view.cpp \
   curve_view_cursor.cpp \
   curve_view_range.cpp \
   dots.cpp \
@@ -16,7 +15,6 @@ app_shared_test_src = $(addprefix apps/shared/,\
   interactive_curve_view_range.cpp \
   interactive_curve_view_range_delegate.cpp \
   interval.cpp \
-  labeled_curve_view.cpp \
   linear_regression_store.cpp \
   memoized_curve_view_range.cpp \
   poincare_helpers.cpp \

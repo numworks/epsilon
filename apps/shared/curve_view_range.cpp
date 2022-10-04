@@ -1,5 +1,4 @@
 #include "curve_view_range.h"
-#include "curve_view.h"
 #include <cmath>
 #include <ion.h>
 #include <poincare/ieee754.h>

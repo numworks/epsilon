@@ -89,6 +89,7 @@ protected:
   void computeLabelsRelativePosition(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
 
   char m_labels[k_maxNumberOfLabels][k_labelBufferMaxSize];
+  mutable float m_labelsPosition;
   mutable AbstractPlotView::RelativePosition m_relativePosition : 2;
   bool m_forceRelativePosition : 1;
   bool m_hidden : 1;

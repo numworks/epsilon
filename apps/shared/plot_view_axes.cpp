@@ -33,7 +33,7 @@ void WithGrid::drawGridLines(const AbstractPlotView * plotView, KDContext * ctx,
   }
 }
 
-// UnlabelledAxis
+// SimpleAxis
 
 void SimpleAxis::drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
   assert(plotView);
@@ -90,42 +90,74 @@ int LabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, Abstract
 void LabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
   assert(i < k_maxNumberOfLabels);
   const char * text = m_labels[i];
-  if (m_hidden || text[0] == '\0' || (t == 0.f && axis == AbstractPlotView::Axis::Vertical)) {
+  if (m_hidden || text[0] == '\0') {
     return;
   }
 
   if (i == 0) {
     computeLabelsRelativePosition(plotView, axis);
   }
-  CurveViewRange * range = plotView->range();
-  float otherMin, otherMax;
   AbstractPlotView::RelativePosition xRelative, yRelative;
   if (axis == AbstractPlotView::Axis::Horizontal) {
-    otherMin = range->yMin();
-    otherMax = range->yMax();
-    xRelative = t == 0.f ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::There;
+    if (t == 0.f) {
+      if (m_labelsPosition != 0.f) {
+        return;
+      }
+      xRelative = AbstractPlotView::RelativePosition::Before;
+    } else {
+      xRelative = AbstractPlotView::RelativePosition::There;
+    }
     yRelative = m_relativePosition;
   } else {
-    otherMin = range->xMin();
-    otherMax = range->xMax();
+    if (t == 0.f) {
+      return;
+    }
     xRelative = m_relativePosition;
     yRelative = AbstractPlotView::RelativePosition::There;
   }
-  float otherPos = std::clamp(0.f, otherMin, otherMax);
 
-  Coordinate2D<float> xy = axis == AbstractPlotView::Axis::Horizontal ? Coordinate2D<float>(t, otherPos) : Coordinate2D<float>(otherPos, t);
+  Coordinate2D<float> xy = axis == AbstractPlotView::Axis::Horizontal ? Coordinate2D<float>(t, m_labelsPosition) : Coordinate2D<float>(m_labelsPosition, t);
   plotView->drawLabel(ctx, rect, text, xy, xRelative, yRelative, k_color);
 }
 
 void LabeledAxis::computeLabelsRelativePosition(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
+  m_labelsPosition = 0.f;
   if (m_forceRelativePosition) {
     return;
   }
 
   if (axis == AbstractPlotView::Axis::Horizontal) {
-    m_relativePosition = plotView->range()->yMin() > 0.f ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::After;
+    float bannerHeight = plotView->bannerView() ? plotView->bannerView()->bounds().height() * plotView->pixelHeight() : 0.f;
+    float yMin = plotView->range()->yMin();
+    float yMax = plotView->range()->yMax();
+    if (yMin > - bannerHeight) {
+      m_relativePosition = AbstractPlotView::RelativePosition::Before;
+      m_labelsPosition = yMin + bannerHeight;
+    } else {
+      if (yMax < 0.f) {
+        m_labelsPosition = yMax;
+      }
+      m_relativePosition = AbstractPlotView::RelativePosition::After;
+    }
   } else {
-    m_relativePosition = plotView->range()->xMin() > 0.f ? AbstractPlotView::RelativePosition::After : AbstractPlotView::RelativePosition::Before;
+    KDCoordinate labelsWidth = 0;
+    for (int i = 0; i < k_maxNumberOfLabels; i++) {
+      KDCoordinate w = KDFont::Font(AbstractPlotView::k_font)->stringSize(m_labels[i]).width();
+      if (w > labelsWidth) {
+        labelsWidth = w;
+      }
+    }
+    float xMin = plotView->range()->xMin();
+    float xMax = plotView->range()->xMax();
+    if (xMin > - labelsWidth * plotView->pixelWidth()) {
+      m_relativePosition = AbstractPlotView::RelativePosition::After;
+      m_labelsPosition = xMin;
+    } else {
+      if (xMax < 0.f) {
+        m_labelsPosition = xMax;
+      }
+      m_relativePosition = AbstractPlotView::RelativePosition::Before;
+    }
   }
 }
 

@@ -205,7 +205,14 @@ View * AbstractPlotView::subviewAtIndex(int i) {
 void AbstractPlotView::layoutSubviews(bool force) {
   View * banner = bannerView();
   if (banner) {
+    KDRect oldFrame = banner->bounds();
     banner->setFrame(bannerFrame(), force);
+    /* If the banner frame changes, dirty the area right above it, since the X
+     * axis labels may have moved. */
+    if (!(oldFrame == banner->bounds())) {
+      KDCoordinate dirtyHeight = std::max(oldFrame.height(), banner->bounds().height()) + KDFont::GlyphSize(k_font).height() + 2 * k_labelMargin;
+      markRectAsDirty(KDRect(0, m_frame.height() - dirtyHeight, m_frame.width(), dirtyHeight));
+    }
   }
   CursorView * cursor = cursorView();
   if (cursor) {

@@ -40,6 +40,7 @@ public:
 
   virtual void reload(bool resetInterruption = false, bool force = false);
   virtual void resetInterruption() {}
+  virtual Escher::View * bannerView() const = 0;
   virtual CursorView * cursorView() const = 0;
 
   CurveViewRange * range() const { return m_range; }
@@ -87,7 +88,6 @@ private:
   virtual void drawAxes(KDContext * ctx, KDRect rect) const = 0;
   virtual void reloadAxes() = 0;
   virtual void drawPlot(KDContext * ctx, KDRect rect) const = 0;
-  virtual Escher::View * bannerView() const = 0;
   virtual KDRect bannerFrame() = 0;
   virtual KDRect cursorFrame() = 0;
 

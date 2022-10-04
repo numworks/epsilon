@@ -30,7 +30,7 @@ constexpr CodePoint ContinuousFunction::k_cartesianSymbol;
 constexpr CodePoint ContinuousFunction::k_parametricSymbol;
 constexpr CodePoint ContinuousFunction::k_polarSymbol;
 constexpr CodePoint ContinuousFunction::k_radiusSymbol;
-constexpr CodePoint ContinuousFunction::k_ordinateCodePoint;
+constexpr CodePoint ContinuousFunction::k_ordinateSymbol;
 constexpr CodePoint ContinuousFunction::k_unnamedExpressionSymbol;
 
 /* ContinuousFunction - Public */
@@ -155,7 +155,7 @@ int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
   if (isNamed()) {
     return Function::nameWithArgument(buffer, bufferSize);
   }
-  return strlcpy(buffer, plotType() == PlotType::Polar ? k_radiusName : k_ordinateName, bufferSize);
+  return UTF8Decoder::CodePointToChars(plotType() == PlotType::Polar ? k_radiusSymbol : k_ordinateSymbol, buffer, bufferSize);
 }
 
 int ContinuousFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context, bool symbolValue) {
@@ -698,7 +698,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
       }
       if (!willBeAlongX && yDegree != 0) {
         // No need to replace anything if yDegree is 0
-        m_expression.replaceSymbolWithExpression(Symbol::Builder(k_ordinateCodePoint), Symbol::Builder(UCodePointUnknown));
+        m_expression.replaceSymbolWithExpression(Symbol::Builder(k_ordinateSymbol), Symbol::Builder(UCodePointUnknown));
       }
     } else {
       /* m_expression is resulting of a simplification with the target
@@ -838,7 +838,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
      * symbols nested in function, which is not a supported behavior anyway.
      * TODO: Make a consistent behavior calculation/additional_outputs using a
      *       VariableContext to temporary disable y's predefinition. */
-    result = result.replaceSymbolWithExpression(Symbol::Builder(k_ordinateCodePoint), Symbol::Builder(UCodePointTemporaryUnknown));
+    result = result.replaceSymbolWithExpression(Symbol::Builder(k_ordinateSymbol), Symbol::Builder(UCodePointTemporaryUnknown));
   }
   // Replace all defined symbols and functions to extract symbols
   result = Expression::ExpressionWithoutSymbols(result, context);
@@ -847,7 +847,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
     return Undefined::Builder();
   }
   if (isUnnamedFunction) {
-    result = result.replaceSymbolWithExpression(Symbol::Builder(UCodePointTemporaryUnknown), Symbol::Builder(k_ordinateCodePoint));
+    result = result.replaceSymbolWithExpression(Symbol::Builder(UCodePointTemporaryUnknown), Symbol::Builder(k_ordinateSymbol));
   }
   assert(!result.isUninitialized());
   return result;
@@ -1079,7 +1079,7 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
   if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
     // No need to replace any symbols in originalEquation().
     Expression inputEquation = originalEquation(record, UCodePointUnknown);
-    CodePoint symbol = willBeAlongX ? k_ordinateCodePoint : UCodePointUnknown;
+    CodePoint symbol = willBeAlongX ? k_ordinateSymbol : UCodePointUnknown;
     if (!IsExplicitEquation(inputEquation, symbol)) {
       m_plotType = PlotType::Disabled;
       return;

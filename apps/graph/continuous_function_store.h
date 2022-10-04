@@ -8,6 +8,9 @@ namespace Graph {
 
 class ContinuousFunctionStore : public Shared::FunctionStore {
 public:
+  // Very large limit, so that records id in name can't exceed two chars.
+  constexpr static int k_maxNumberOfModels = 100;
+  constexpr static int k_maxNumberOfMemoizedModels = 10;
   static bool IsFunctionActiveAndDerivable(Shared::ExpressionModelHandle * model, void * context) {
     return IsFunctionActive(model, context) && static_cast<Shared::ContinuousFunction *>(model)->canDisplayDerivative();
   }
@@ -44,9 +47,6 @@ public:
   int maxNumberOfModels() const override { return k_maxNumberOfModels; }
 
 private:
-  // Very large limit, so that records id in name can't exceed two chars.
-  constexpr static int k_maxNumberOfModels = 100;
-  constexpr static int k_maxNumberOfMemoizedModels = 10;
   static bool IsFunctionActiveInTable(Shared::ExpressionModelHandle * model, void * context) {
     // An active function must be defined
     return IsFunctionActive(model, context) && static_cast<Shared::ContinuousFunction *>(model)->isActiveInTable();

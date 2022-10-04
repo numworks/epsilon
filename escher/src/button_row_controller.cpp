@@ -86,7 +86,7 @@ void ButtonRowController::ContentView::layoutSubviews(bool force) {
   }
   KDCoordinate yOrigin = m_position == Position::Top ? buttonHeightMargin : bounds().height()-rowHeight+buttonHeightMargin;
   int currentXOrigin = widthMargin;
-  for (int i = 0; i < numberOfButtons(); i++) {
+  for (int i = 0; i < nbOfButtons; i++) {
     AbstractButtonCell * button = buttonAtIndex(i);
     KDCoordinate buttonWidth = button->minimalSizeForOptimalDisplay().width();
     KDRect buttonFrame(currentXOrigin, yOrigin, buttonWidth, buttonHeight);

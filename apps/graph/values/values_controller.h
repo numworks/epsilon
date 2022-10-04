@@ -29,9 +29,13 @@ public:
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 
   // ButtonRowDelegate
-  int numberOfButtons(Escher::ButtonRowController::Position) const override { return isEmpty() ? 0 : 2; }
+  bool displayExactValues() const {
+    // Above this value, the performances significantly drop.
+    return numberOfValuesColumns() <= ContinuousFunctionStore::k_maxNumberOfMemoizedModels;
+  }
+  int numberOfButtons(Escher::ButtonRowController::Position) const override { return isEmpty() ? 0 : 1 + displayExactValues(); }
   Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
-    return index == 0 ? const_cast<Escher::ButtonState *>(&m_exactValuesButton) : const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
+    return index == 0 && displayExactValues() ? const_cast<Escher::ButtonState *>(&m_exactValuesButton) : const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
   }
 
   // AlternateEmptyViewDelegate
@@ -86,8 +90,8 @@ private:
   int numberOfColumnsForAbscissaColumn(int column) override;
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   int numberOfColumnsForSymbolType(int symbolTypeIndex) const;
-  int numberOfAbscissaColumnsBeforeColumn(int column);
-  int numberOfValuesColumns() override;
+  int numberOfAbscissaColumnsBeforeColumn(int column) const;
+  int numberOfValuesColumns() const override;
   Shared::ContinuousFunction::SymbolType symbolTypeAtColumn(int * i) const;
 
   // Function evaluation memoization

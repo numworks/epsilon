@@ -347,7 +347,7 @@ int ValuesController::numberOfColumnsForSymbolType(int symbolTypeIndex) const {
   return m_numberOfValuesColumnsForType[symbolTypeIndex] + (m_numberOfValuesColumnsForType[symbolTypeIndex] > 0); // Count abscissa column if there is one
 }
 
-int ValuesController::numberOfAbscissaColumnsBeforeColumn(int column) {
+int ValuesController::numberOfAbscissaColumnsBeforeColumn(int column) const {
   int result = 0;
   int symbolType = column < 0 ?  k_maxNumberOfSymbolTypes : (int)symbolTypeAtColumn(&column) + 1;
   for (int symbolTypeIndex = 0; symbolTypeIndex < symbolType; symbolTypeIndex++) {
@@ -356,8 +356,8 @@ int ValuesController::numberOfAbscissaColumnsBeforeColumn(int column) {
   return result;
 }
 
-int ValuesController::numberOfValuesColumns() {
-  return m_numberOfColumns - numberOfAbscissaColumnsBeforeColumn(-1);
+int ValuesController::numberOfValuesColumns() const {
+  return numberOfColumns() - numberOfAbscissaColumnsBeforeColumn(-1);
 }
 
 ContinuousFunction::SymbolType ValuesController::symbolTypeAtColumn(int * i) const {

@@ -64,7 +64,9 @@ void CacheReference::dumpAt(void * address) {
   );
 }
 
+#if POINCARE_TREE_LOG
 void CacheReference::log() {
+  std::cout << "id: " << m_id;
   send(
      [](const Node tree, void * result) {
         tree.log(std::cout);
@@ -72,6 +74,7 @@ void CacheReference::log() {
       nullptr
     );
 }
+#endif
 
 int CacheReference::id() const {
   CachePool * cache = CachePool::sharedCachePool();

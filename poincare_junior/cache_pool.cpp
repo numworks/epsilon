@@ -8,8 +8,11 @@ namespace Poincare {
 // ReferenceTable
 
 Node CachePool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
+  if (id == NoNodeIdentifier) {
+    return Node();
+  }
   uint16_t index = indexForId(id);
-  if (id >= m_length) {
+  if (index >= m_length) {
     return Node();
   }
   return Pool::ReferenceTable::nodeForIdentifier(index);
@@ -90,7 +93,7 @@ bool CachePool::needFreeBlocks(int numberOfBlocks) {
 }
 
 bool CachePool::reset() {
-  if (m_referenceTable.isEmpty() == 0) {
+  if (m_referenceTable.isEmpty()) {
     // The cache has already been emptied
     return false;
   }

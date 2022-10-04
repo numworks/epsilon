@@ -24,3 +24,4 @@ template Poincare::TypeBlock* Poincare::Interface::PushNode<Poincare::DivisionIn
 template Poincare::TypeBlock* Poincare::Interface::PushNode<Poincare::MultiplicationInterface, uint8_t>(uint8_t);
 template Poincare::TypeBlock* Poincare::Interface::PushNode<Poincare::PowerInterface>();
 template Poincare::TypeBlock* Poincare::Interface::PushNode<Poincare::SubtractionInterface>();
+template Poincare::TypeBlock* Poincare::Interface::PushNode<Poincare::ConstantInterface, char16_t>(char16_t);

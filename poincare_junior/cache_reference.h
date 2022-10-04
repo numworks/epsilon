@@ -26,7 +26,9 @@ public:
   void send(FunctionOnConstTree functionOnTree, void * context) const;
 
   void dumpAt(void * address);
+#if POINCARE_TREE_LOG
   void log();
+#endif
 
 private:
   CacheReference(ActionWithContext initializer, void * subInitializer, void * data) :

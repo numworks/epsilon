@@ -25,11 +25,12 @@ typedef bool (*BlockCreator)(Block *, size_t, uint8_t);
 template<unsigned NumberOfBlocksInNode, unsigned ...Len>
 constexpr static auto MakeTree(BlockCreator blockCreator, const Tree<Len> (&...nodes)) {
   // Compute the total length of the children
-  constexpr unsigned NumberOfChildren = (... + Len);
+  constexpr unsigned k_numberOfChildren = sizeof...(Len);
+  constexpr unsigned k_numberOfChildrenBlocks = (... + Len);
 
-  Tree<NumberOfChildren + NumberOfBlocksInNode> tree;
+  Tree<k_numberOfChildrenBlocks + NumberOfBlocksInNode> tree;
   size_t i = 0;
-  while (!blockCreator(tree.blockAtIndex(i), i, NumberOfChildren)) {
+  while (!blockCreator(tree.blockAtIndex(i), i, k_numberOfChildren)) {
     i++; // TODO factorize
   }
 

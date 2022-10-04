@@ -13,16 +13,17 @@ void createTree() {
 }
 
 void createSmallTree() {
-  IntegerInterface::PushNode(1);
+  ConstantInterface::PushNode(u'π');
 }
 
-void createTreeInCache(CacheReference::Initializer initializer) {
+CacheReference createTreeInCache(CacheReference::Initializer initializer) {
   CacheReference tree(initializer);
   // Force instantiation in cache
   tree.send(
     [](const Node tree, void * resultAddress) {},
     nullptr
   );
+  return tree;
 }
 
 void testOverflowEditionPool() {
@@ -54,8 +55,8 @@ void testOverflowCacheIdentifiers() {
   print();
 
   std::cout << "---------------- Create another tree triggering a cache flush" << std::endl;
-  createTreeInCache(createSmallTree);
-  print();
+  CacheReference ref = createTreeInCache(createSmallTree);
+  ref.log();
 }
 
 

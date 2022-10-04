@@ -6,7 +6,9 @@ namespace Poincare {
 
 uint16_t Pool::ReferenceTable::storeNode(Node node) {
   assert(!isFull());
-  m_nodeForIdentifierOffset[m_length++] = static_cast<uint16_t>(node.block() - m_pool->firstBlock());
+  // Increment first to make firstBlock != nullptr
+  m_length++;
+  m_nodeForIdentifierOffset[m_length - 1] = static_cast<uint16_t>(node.block() - m_pool->firstBlock());
   return m_length - 1;
 }
 

@@ -16,15 +16,26 @@ Node EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   return n;
 }
 
-void EditionPool::ReferenceTable::updateAllNodesBetween(Block * from, Block * to, int delta) {
-  uint16_t fromOffset = static_cast<uint16_t>(from - static_cast<Block *>(m_pool->firstBlock()));
-  uint16_t toOffset = to ? static_cast<uint16_t>(to - static_cast<Block *>(m_pool->firstBlock())) : 0xFFFF;
+void EditionPool::reinit(TypeBlock * firstBlock, size_t size) {
+  m_firstBlock = firstBlock;
+  m_size = size;
+  flush();
+}
+
+void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function, Block * contextSelection1, Block * contextSelection2, int contextAlteration) {
+  Block * first = static_cast<Block *>(m_pool->firstBlock());
   for (int i = 0; i < m_length; i++) {
-    if (m_nodeForIdentifierOffset[i] < fromOffset || m_nodeForIdentifierOffset[i] > toOffset) {
-      continue;
-    }
-    m_nodeForIdentifierOffset[i] += delta;
+    function(&m_nodeForIdentifierOffset[i], m_nodeForIdentifierOffset[i] + first, contextSelection1, contextSelection2, contextAlteration);
   }
+}
+
+void EditionPool::ReferenceTable::updateAllNodesAfter(Block * from, int delta) {
+  return updateNodes(
+      [](uint16_t * offset, Block * testedBlock, Block * from, Block * to, int delta) {
+        if (from <= testedBlock) {
+          *offset += delta;
+          }
+      }, from, nullptr, delta);
 }
 
 // EditionTable
@@ -34,7 +45,7 @@ EditionPool * EditionPool::sharedEditionPool() {
 }
 
 uint16_t EditionPool::referenceNode(Node node) {
-  m_referenceTable.storeNode(node);
+  return m_referenceTable.storeNode(node);
 }
 
 void EditionPool::flush() {
@@ -69,7 +80,7 @@ bool EditionPool::insertBlocks(Block * destination, Block * source, size_t numbe
   memmove(destination + insertionSize, destination, lastBlock() - destination);
   m_numberOfBlocks += numberOfBlocks;
   memcpy(destination, source, insertionSize);
-  m_referenceTable.updateAllNodesBetween(destination, nullptr, insertionSize);
+  m_referenceTable.updateAllNodesAfter(destination, numberOfBlocks);
   return true;
 }
 
@@ -77,7 +88,7 @@ void EditionPool::removeBlocks(Block * address, size_t numberOfBlocks) {
   int deletionSize = numberOfBlocks * sizeof(Block);
   m_numberOfBlocks -= numberOfBlocks;
   memmove(address, address + deletionSize, lastBlock() - address);
-  m_referenceTable.updateAllNodesBetween(address, nullptr, -1 * deletionSize);
+  m_referenceTable.updateAllNodesAfter(address, -numberOfBlocks);
 }
 
 void EditionPool::moveBlocks(Block * destination, Block * source, size_t numberOfBlocks) {
@@ -85,12 +96,18 @@ void EditionPool::moveBlocks(Block * destination, Block * source, size_t numberO
   uint8_t * dst = reinterpret_cast<uint8_t *>(destination);
   size_t len = numberOfBlocks * sizeof(Block);
   Utils::Rotate(dst, src, len);
-  m_referenceTable.updateAllNodesBetween(destination, source, len);
+  m_referenceTable.updateNodes(
+      [](uint16_t * offset, Block * testedBlock, Block * dst, Block * src, int nbOfBlocks) {
+        if (testedBlock >= src && testedBlock < src + nbOfBlocks) {
+          *offset += dst - src;
+        } else if ((testedBlock >= src + nbOfBlocks && testedBlock < dst) ||
+                   (testedBlock >= dst && testedBlock < src)) {
+          *offset += dst > src ? -nbOfBlocks : nbOfBlocks;
+        }
+      }, destination, source, numberOfBlocks);
 }
 
 Node EditionPool::initFromAddress(const void * address) {
-  assert(m_numberOfBlocks == 0);
-  assert(m_referenceTable.isEmpty());
   size_t size = Node(reinterpret_cast<const TypeBlock *>(address)).treeSize();
   if (!checkForEnoughSpace(size)) {
     return Node();

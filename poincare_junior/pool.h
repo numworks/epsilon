@@ -11,6 +11,11 @@ namespace Poincare {
 
 class Pool {
 public:
+  /* We delete the assignment operator because copying without care the
+   * ReferenceTable would corrupt the m_referenceTable.m_pool pointer. */
+  Pool & operator=(Pool &&) = delete;
+  Pool & operator=(const Pool&) = delete;
+
   Block * blockAtIndex(int i) { return firstBlock() + sizeof(Block) * i; }
 
   virtual TypeBlock * firstBlock() = 0;
@@ -23,7 +28,7 @@ protected:
   class ReferenceTable {
   public:
     constexpr static uint16_t NoNodeIdentifier = 0xFFFF;
-    ReferenceTable(Pool * pool) : m_pool(pool) {}
+    ReferenceTable(Pool * pool) : m_length(0), m_pool(pool) {}
     bool isFull() { return numberOfStoredNode() == Pool::k_maxNumberOfReferences; }
     bool isEmpty() { return numberOfStoredNode() == 0; }
     int numberOfStoredNode() const { return m_length; }

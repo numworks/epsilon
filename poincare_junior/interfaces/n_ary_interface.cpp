@@ -13,7 +13,7 @@ TypeBlock * NAryExpressionInterface::Flatten(TypeBlock * block) {
     if (block->type() == indexedNode.m_node.block()->type()) {
       EditionReference nAry = EditionReference(Node(Flatten(indexedNode.m_node.block())));
       numberOfChildren += nAry.node().numberOfChildren();
-      nAry.remove();
+      nAry.removeNode();
     } else {
       numberOfChildren++;
     }

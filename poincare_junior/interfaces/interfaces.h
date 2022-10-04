@@ -47,7 +47,11 @@ static constexpr const Interface * k_interfaces[] = {
   &k_divisionInterface
 };
 
+#if GHOST_REQUIRED
 static constexpr const int k_offsetOfExpressionInterfaces = 1;
+#else
+static constexpr const int k_offsetOfExpressionInterfaces = 0;
+#endif
 
 static constexpr const InternalExpressionInterface * k_internalExpressionInterfaces[] = {
   // Order has to be the same as TypeTreeBlock

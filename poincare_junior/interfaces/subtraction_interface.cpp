@@ -6,7 +6,7 @@
 namespace Poincare {
 
 void SubtractionExpressionInterface::basicReduction(TypeBlock * block) const {
-  assert(block->type() == BlockType::Division);
+  assert(block->type() == BlockType::Subtraction);
   return projectionReduction(block,
       []() { return AdditionInterface::PushNode(2); },
       []() { return MultiplicationInterface::PushNode(2); }

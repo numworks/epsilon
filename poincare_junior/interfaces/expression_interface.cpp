@@ -17,15 +17,15 @@ void ExpressionInterface::projectionReduction(TypeBlock * block, TypeBlock * (*P
     childrenReferences[indexedNode.m_index] = EditionReference(indexedNode.m_node);
   }
   // Move first child
-  childrenReferences[0].insertAfter(multiplication);
+  childrenReferences[0].insertTreeAfter(multiplication);
   // Create empty ^ (or *)
   EditionReference power(PushInverseNode());
   // Move second child
-  childrenReferences[1].insertAfter(power);
+  childrenReferences[1].insertTreeAfter(power);
   // Complete: a * b^-1 (or a + b * -1)
   IntegerInterface::PushNode(111); // TODO: implement negative number
   // Remove / node (or -)
-  division.remove();
+  division.removeNode();
 }
 
 

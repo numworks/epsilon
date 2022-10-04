@@ -15,6 +15,7 @@ public:
   {}
 
   static EditionPool * sharedEditionPool();
+  void reinit(TypeBlock * firstBlock, size_t size);
 
   uint16_t referenceNode(Node node);
   Node nodeForIdentifier(uint16_t id) { return m_referenceTable.nodeForIdentifier(id); }
@@ -56,6 +57,9 @@ private:
     ReferenceTable(Pool * pool) : Pool::ReferenceTable(pool) {}
     Node nodeForIdentifier(uint16_t id) const override;
     void updateAllNodesBetween(Block * from, Block * to, int delta);
+    typedef void (*AlterSelectedBlock)(uint16_t *, Block *, Block *, Block *, int);
+    void updateNodes(AlterSelectedBlock function, Block * contextSelection1, Block * contextSelection2, int contextAlteration);
+    void updateAllNodesAfter(Block * from, int delta);
   };
 
   ReferenceTable m_referenceTable;

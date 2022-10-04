@@ -21,6 +21,9 @@ void test(Test test, const char * title) {
 }
 
 int main() {
+  // Dummy call just to keep it in the executable and be able to call it from debugger
+  intermediaryPrint();
+
   test(elementaryTreeManipulation, "ELEMENTARY TREE MANIPULATION");
   test(testOverflowEditionPool, "TEST OVERFLOW TREE EDITION POOL");
   test(testOverflowCacheIdentifiers, "TEST OVERFLOW CACHE IDENTIFIERS");

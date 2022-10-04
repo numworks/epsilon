@@ -95,7 +95,7 @@ bool CachePool::reset() {
     return false;
   }
   m_referenceTable.reset();
-  m_editionPool = EditionPool(lastBlock(), k_maxNumberOfBlocks, 0);
+  m_editionPool.reinit(lastBlock(), k_maxNumberOfBlocks);
   return true;
 }
 
@@ -123,7 +123,7 @@ CachePool::CachePool() :
 
 void CachePool::resetEditionPool() {
   size_t numberOfCachedBlocks = lastBlock() - firstBlock();
-  m_editionPool = EditionPool(lastBlock(), k_maxNumberOfBlocks - numberOfCachedBlocks);
+  m_editionPool.reinit(lastBlock(), k_maxNumberOfBlocks - numberOfCachedBlocks);
 }
 
 }

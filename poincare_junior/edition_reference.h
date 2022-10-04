@@ -30,13 +30,19 @@ public:
   int numberOfDescendants(bool includeSelf) const { return node().numberOfDescendants(includeSelf); }
 
   /* Edition operations on Node */
-  void replaceBy(EditionReference t);
-  void insertAfter(EditionReference t) { insert(t, false); }
-  void insertBefore(EditionReference t) { insert(t, true); }
-  void remove();
+  void replaceNodeBy(EditionReference t) { replaceBy(t, false); }
+  void replaceTreeBy(EditionReference t) { replaceBy(t, true); }
+  void insertNodeAfter(EditionReference t) { insert(t, false, false); }
+  void insertTreeAfter(EditionReference t) { insert(t, false, true); }
+  void insertNodeBefore(EditionReference t) { insert(t, true, false); }
+  void insertTreeBefore(EditionReference t) { insert(t, true, true); }
+  void removeNode() { remove(false); }
+  void removeTree() { remove(true); }
 
 private:
-  void insert(EditionReference t, bool before);
+  void insert(EditionReference t, bool before, bool insertTree);
+  void replaceBy(EditionReference t, bool replaceTrees);
+  void remove(bool removeTree);
   uint16_t m_identifier;
 };
 

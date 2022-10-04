@@ -30,6 +30,11 @@ KDRect WithCursor::cursorFrame(AbstractPlotView * plotView) {
   if (!(KDCOORDINATE_MIN <= px && px <= KDCOORDINATE_MAX && KDCOORDINATE_MIN <= py && py <= KDCOORDINATE_MAX)) {
     return KDRectZero;
   }
+  if (size.height() == 0) {
+    // The cursor is supposed to take up all the available vertical space.
+    KDCoordinate plotHeight = plotView->bounds().height() - (plotView->bannerView() ? plotView->bannerView()->bounds().height() : 0);
+    return KDRect(px, 0, size.width(), plotHeight);
+  }
   return KDRect(px, py, size);
 }
 

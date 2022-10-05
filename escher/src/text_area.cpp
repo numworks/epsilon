@@ -1,5 +1,6 @@
 #include <escher/text_area.h>
 #include <escher/clipboard.h>
+#include <escher/container.h>
 #include <escher/text_input_helpers.h>
 #include <ion/events.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -203,11 +204,18 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
       return false;
     }
     const char * start = contentView()->selectionStart();
-    Clipboard::sharedClipboardForEvent(event)->store(start, contentView()->selectionEnd() - start);
+    if (event == Ion::Events::Sto) {
+      char buffer[Escher::Clipboard::k_bufferSize];
+      strlcpy(buffer, start, std::min<size_t>(contentView()->selectionEnd() - start + 1, Escher::Clipboard::k_bufferSize));
+      Container::activeApp()->storeValue(buffer);
+    } else {
+      Escher::Clipboard::sharedClipboard()->store(start, contentView()->selectionEnd() - start);
+    }
+    return true;
     if (event == Ion::Events::Cut) {
       deleteSelection();
     }
-    return event != Ion::Events::Sto;
+    return true;
   }
   if (event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);

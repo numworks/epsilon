@@ -26,7 +26,7 @@ public:
   int typeAtIndex(int index) const override { return 0; }
   Escher::HighlightCell * reusableCell(int index, int type) override { return &m_cell; }
 
-  void setup();
+  void setText(const char * text);
 
   bool layoutFieldShouldFinishEditing(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;

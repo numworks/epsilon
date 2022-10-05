@@ -63,8 +63,12 @@ bool SumGraphController::handleEvent(Ion::Events::Event event) {
     constexpr static int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(precision);
      char buffer[bufferSize];
     PoincareHelpers::ConvertFloatToText<double>(m_result, buffer, bufferSize, precision);
-    Escher::Clipboard::sharedClipboardForEvent(event)->store(buffer);
-    return event != Ion::Events::Sto;
+    if (event == Ion::Events::Sto) {
+      Container::activeApp()->storeValue(buffer);
+    } else {
+      Escher::Clipboard::sharedClipboard()->store(buffer);
+    }
+    return true;
   }
   return SimpleInteractiveCurveViewController::handleEvent(event);
 }

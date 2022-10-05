@@ -250,16 +250,24 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     }
     const char * text = cell->text();
     if (text) {
-      Clipboard::sharedClipboardForEvent(event)->store(text);
-      return event != Ion::Events::Sto;
+      if (event == Ion::Events::Sto) {
+        Container::activeApp()->storeValue(text);
+      } else {
+        Escher::Clipboard::sharedClipboard()->store(text);
+      }
+      return true;
     }
     Poincare::Layout l = cell->layout();
     if (!l.isUninitialized()) {
       constexpr int bufferSize = TextField::maxBufferSize();
       char buffer[bufferSize];
       l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
-      Clipboard::sharedClipboardForEvent(event)->store(buffer);
-      return event != Ion::Events::Sto;
+      if (event == Ion::Events::Sto) {
+        Container::activeApp()->storeValue(buffer);
+      } else {
+        Escher::Clipboard::sharedClipboard()->store(buffer);
+      }
+      return true;
     }
   }
   return false;

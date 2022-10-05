@@ -33,9 +33,13 @@ void ResultController::didBecomeFirstResponder() {
 }
 
 bool ResultController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto) {
-    Escher::Clipboard::sharedClipboardForEvent(event)->store(cellAtIndex(0)->text());
-    return event != Ion::Events::Sto;
+  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
+    Escher::Clipboard::sharedClipboard()->store(cellAtIndex(0)->text());
+    return true;
+  }
+  if (event == Ion::Events::Sto) {
+    App::app()->storeValue(cellAtIndex(0)->text());
+    return true;
   }
   return popFromStackViewControllerOnLeftEvent(event);
 }

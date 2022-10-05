@@ -95,15 +95,23 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
     }
   } else if ((event == Ion::Events::Copy || event == Ion::Events::Cut) || event == Ion::Events::Sto) {
     if (type == k_r2CellType) {
-      Escher::Clipboard::sharedClipboardForEvent(event)->store(m_r2Cell.text(), strlen(m_r2Cell.text()));
-      return event != Ion::Events::Sto;
+      if (event == Ion::Events::Sto) {
+        App::app()->storeValue(m_r2Cell.text());
+      } else {
+        Escher::Clipboard::sharedClipboard()->store(m_r2Cell.text());
+      }
+      return true;
     } else if (type == k_regressionEquationCellType) {
       Poincare::Layout l = m_regressionEquationCell.layout();
       if (!l.isUninitialized()) {
         constexpr int bufferSize = TextField::maxBufferSize();
         char buffer[bufferSize];
         l.serializeParsedExpression(buffer, bufferSize, nullptr);
-        Escher::Clipboard::sharedClipboard()->store(buffer, strlen(buffer));
+        if (event == Ion::Events::Sto) {
+          App::app()->storeValue(buffer);
+        } else {
+          Escher::Clipboard::sharedClipboard()->store(buffer);
+        }
         return true;
       }
     }

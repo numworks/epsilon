@@ -38,8 +38,12 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
     int length = l.serializeForParsing(buffer, size);
     assert(length < static_cast<int>(size));
     (void)length;
-    Escher::Clipboard::sharedClipboardForEvent(e)->store(buffer);
-    return e != Ion::Events::Sto;
+    if (e == Ion::Events::Sto) {
+      App::app()->storeValue(buffer);
+    } else {
+      Escher::Clipboard::sharedClipboard()->store(buffer);
+    }
+    return true;
   }
 
   return false;

@@ -91,6 +91,7 @@ app_shared_src = $(addprefix apps/shared/,\
   store_controller.cpp \
   store_parameter_controller.cpp \
   store_title_cell.cpp \
+  store_menu_controller.cpp \
   sum_graph_controller.cpp \
   tab_table_controller.cpp \
   text_field_delegate.cpp \

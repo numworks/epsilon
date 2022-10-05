@@ -399,11 +399,6 @@ void AppsContainer::storageIsFull() {
   }
 }
 
-void AppsContainer::openStoreMenu() {
-  m_storeController.setup();
-  Container::activeApp()->displayModalViewController(&m_storeController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
-}
-
 Window * AppsContainer::window() {
   return &m_window;
 }

@@ -35,23 +35,6 @@ poincare_junior_src += $(addprefix poincare_junior/,\
   utils.o \
 )
 
-poincare_junior_src2 += $(addprefix poincare_junior/,\
-  cached_tree.o \
-  exception_checkpoint.o \
-  helpers.o \
-  handle.o \
-  tree_block.o \
-  tree_cache.o \
-  tree_pool.o \
-  tree_sandbox.o \
-  test/calculation.o \
-  test/constexpr.o \
-  test/elementary_tree_manipulations.o \
-  test/graph.o \
-  test/main.o \
-  test/sandbox_overflow.o \
-)
-
 junior.elf: $(poincare_junior_src)
 	$(LD) $^ $(LDFLAGS) -o $@
 

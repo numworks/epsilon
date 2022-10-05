@@ -58,7 +58,12 @@ KDColor KDColor::HSVBlend(KDColor color1, KDColor color2) {
   return ConvertHSVToRGB(HSVColor({meanH, meanS, meanV}));
 }
 
-KDColor::HSVColor KDColor::convertToHSV() const {
+KDColor::HSVColor
+#if PLATFORM_DEVICE
+// Needed because compiler does not respect procedure call API
+  __attribute__((pcs("aapcs-vfp")))
+#endif
+                  KDColor::convertToHSV() const {
   double R = static_cast<double>(red());
   double G = static_cast<double>(green());
   double B = static_cast<double>(blue());

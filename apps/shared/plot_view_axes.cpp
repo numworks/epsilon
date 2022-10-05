@@ -45,7 +45,7 @@ void SimpleAxis::drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KD
   /* Do not draw ticks on the vertical axis if the axis itself is not visible,
    * as they could be mistaken for minus signs. */
   bool drawTicks = !(axis ==  AbstractPlotView::Axis::Vertical && plotView->range()->xMin() >= 0.f);
-  float tMax = plotView->rangeMax(axis);
+  float tMax = plotView->rangeMax(axis) + plotView->pixelLength(axis);
   int i = 0;
   float t = tickPosition(i, plotView, axis);
   while (t <= tMax) {

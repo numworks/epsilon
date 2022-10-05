@@ -16,6 +16,7 @@ jobs:
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
       - run: pip3 install lz4 pypng stringcase
+      - run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v2
       - run: make PLATFORM=simulator TARGET=android
       - run: make PLATFORM=simulator TARGET=android epsilon.apk

@@ -178,6 +178,14 @@ size_t ExpressionField::moveCursorAndDumpContent(char * buffer, size_t bufferSiz
   return returnValue;
 }
 
+void ExpressionField::putCursorLeftOfField() {
+  if (editionIsInTextField()) {
+    m_textField.setCursorLocation(m_textField.text());
+  } else {
+    m_layoutField.putCursorLeftOfLayout();
+  }
+}
+
 void ExpressionField::restoreContent(const char * buffer, size_t size) {
   if (editionIsInTextField()) {
     if (size != 0 || buffer[0] == 0) {

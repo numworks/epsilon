@@ -108,8 +108,8 @@ static Coordinate2D<T> evaluateXY(T t, void * model, void * context) { return re
 template<typename T>
 static Coordinate2D<T> evaluateXYSecondCurve(T t, void * model, void * context) { return reinterpret_cast<ContinuousFunction *>(model)->evaluateXYAtParameter(t, reinterpret_cast<Context *>(context), 1); }
 
-static Coordinate2D<float> evaluateInfinity(float t, void *, void *) { return Coordinate2D<float>(t, INFINITY); }
-static Coordinate2D<float> evaluateMinusInfinity(float t, void *, void *) { return Coordinate2D<float>(t, -INFINITY); }
+static Coordinate2D<float> evaluateInfinity(float t, void *, void *) { return Coordinate2D<float>(INFINITY, INFINITY); }
+static Coordinate2D<float> evaluateMinusInfinity(float t, void *, void *) { return Coordinate2D<float>(-INFINITY, -INFINITY); }
 static Coordinate2D<float> evaluateZero(float t, void *, void *) { return Coordinate2D<float>(t, 0.f); }
 
 bool GraphView::FunctionIsDiscontinuousBetweenFloatValues(float x1, float x2, void * model, void * context) {

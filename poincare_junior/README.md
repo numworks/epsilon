@@ -4,40 +4,43 @@
 
 Expressions/Layout can exist in 3 different locations:
 - in FileSystem (or alternatively in App::Snapshot),
-- in TreeCache,
-- in TreeSandbox.
+- in CachePool,
+- in EditionPool.
 
 ### FileSystem expressions (or App::Snapshot)
 
 Expressions there are just a memory 'dump' of the sequential trees. There are never modified. They're added or removed using the FileSystem API. When stored in an App::Snapshot, they're added/removed using the specific API of the model contained in the App::Snapshot.
 
-### TreeCache
+### CachePool
 
-Expressions have a temporary lifetime. They're referred to by a id and they're deleted when the cache is full or when the tree sandbox needs more space.
+Expressions have a temporary lifetime. They're referred to by a id and they're deleted when the cache is full (no new identifiers to attribute) or when the Edition Pool needs more space.
 We still have to decide which cache algorithm we choose: LRU, ref-counter, FIFO, LFU.
+Marc idea: the invalidating function should take into account: last used, time-to-compute, space-taken
 
-Because they're lifetime is unknown, we use CachedTree to interact with them. CachedTree is the combination of a potentially cached tree id and a function to rebuild the tree from some data if the tree has been removed from cache.
+Because they're lifetime is unknown, we use CacheReference to interact with them. CacheReference is the combination of a potentially cached tree identifier and a function to rebuild the tree from some data if the tree has been removed from cache.
 
-#### Tree Cache invalidation
+#### Cache invalidation
 
-Any tree manipulation is done through the TreeCache::execute function which sets an Exception Checkpoint before starting the tree manipulation. TreeSandbox functions that are likely to overflow the pool can raise an exception with will longjmp to this checkpoint.
+Any tree manipulation is done through the CachePool::execute function which sets an Exception Checkpoint before starting the tree manipulation. EditionPool functions that are likely to overflow the pool can raise an exception with will longjmp to this checkpoint.
 
-### TreeSandbox
+### EditionPool
 
-The sandbox contain the tree that is being edited.
+The EditionPool contains the tree that is being edited.
 
-At the end of a procedure, only one single tree exists on the sandbox but within a procedure editing the tree, the sandbox can host several trees.
+At the end of a procedure, only one single tree exists on the EditionPool but within a procedure editing the tree, the EditionPool can host several trees.
+
+We use EditionReference to interact with Node while they're being edited. EditionReference are an intern tool that should not be available outside Poincare.
 
 
 ## Tree representation
 
 Trees are represented by sequentially compact blocks of 1 byte.
 
-### Blocks
+### Block
 
 A block is the elementary object. It can hold a type (Addition, Integer etc) or a value.
 
-### Nodes
+### Node
 
 Nodes are composed of several blocks. When they're composed by more than 1 block, they start and end by the same TypeBlock. This enables to easily find the parent of a node by scanning backwards.
 
@@ -51,20 +54,33 @@ Examples:
 
 ### Trees
 
-Tree are derived from parsing.
+Tree are derived from parsing nodes.
+Tree class also refers to a constexpr constructor of nodes sequences.
 
-### Pseudo-virtuality
+### Pseudo-virtuality - interfaces
 
 We don't want to make block virtual to keep their size < 1 byte. We reimplement a virtuality with homemade v-table based on the block types.
 
 
 ## Interruption
 
-Checkpoints outside of a tree edition are easily maintained thanks to Cached trees. We can also easily add Checkpoints in the sandbox but I'm not even sure this will be necessary.
+Checkpoints outside of a tree edition are easily maintained thanks to Cache References. We can also easily add Checkpoints in the EditionPool but I'm not even sure this will be necessary.
+
+## Ideas
+
+We could create a node "link" to another tree to avoid duplicating whole subtree (when expanding multiplication for instance)
 
 ## QUESTIONS
 
 Is this easy enough to implement methods transforming trees?
+
+## TODOs
+
+Implement a profiler mecanism to identify Poincare hot paths.
+
+Divide Poincare folder to hide the internal tools (node, EditionReference, Interfaces...) and expose the useful API (solver, dataset, CacheReference etc).
+
+Optional optimization: editing a subtree which is at the beginning of the edited tree is very memcpy expensive. We could move the subtree at the end of the edition pool before doing multiple modification and reinsert it in the tree afterwards.
 
 ## Archive
 
@@ -110,6 +126,8 @@ Optional optimizations:
 - Align float and double by letting empty blocks
 - Create special type for common integer INT_ONE or INT_SHORT
 
+Instead of stocking meta data in a header AND a footer we could store them only in a header and suffix nodes with their length. This means that all nodes are at least 2-lock long but variable-sized nodes are shorter (integer, string...)
+
 Cache invalidation:
 
 Attempt 1:
@@ -126,5 +144,3 @@ void cacheHandler(action) {
     action();
   }
 }
-
-

@@ -6,8 +6,8 @@ namespace Shared {
 namespace PlotPolicy {
 
 KDRect WithCursor::cursorFrame(AbstractPlotView * plotView) {
-  assert(plotView && m_cursorView && m_cursor);
-  if (!(plotView->hasFocus() && std::isfinite(m_cursor->x()) && std::isfinite(m_cursor->y()))) {
+  assert(plotView && m_cursor);
+  if (!m_cursorView || !(plotView->hasFocus() && std::isfinite(m_cursor->x()) && std::isfinite(m_cursor->y()))) {
     return KDRectZero;
   }
   KDSize size = m_cursorView->minimalSizeForOptimalDisplay();

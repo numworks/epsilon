@@ -20,6 +20,13 @@ void AbstractPlotView::reload(bool resetInterruption, bool force) {
   layoutSubviews();
 }
 
+void AbstractPlotView::setCursorView(CursorView * cursorView) {
+  markRectAsDirty(cursorFrame());
+  privateSetCursorView(cursorView);
+  markRectAsDirty(cursorFrame());
+  layoutSubviews();
+}
+
 void AbstractPlotView::setFocus(bool focus) {
   if (m_focus != focus) {
     m_focus = focus;

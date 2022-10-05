@@ -42,6 +42,7 @@ public:
   virtual void resetInterruption() {}
   virtual Escher::View * bannerView() const = 0;
   virtual CursorView * cursorView() const = 0;
+  void setCursorView(CursorView * cursorView);
 
   CurveViewRange * range() const { return m_range; }
   void setRange(CurveViewRange * range) { m_range = range; }
@@ -91,6 +92,7 @@ private:
   virtual void reloadAxes() = 0;
   virtual void drawPlot(KDContext * ctx, KDRect rect) const = 0;
   virtual KDRect bannerFrame() = 0;
+  virtual void privateSetCursorView(CursorView *) = 0;
   virtual KDRect cursorFrame() = 0;
 
   CurveViewRange * m_range;
@@ -111,6 +113,7 @@ private:
   Escher::View * bannerView() const override { return CBanner::bannerView(this); }
   KDRect bannerFrame() override { return CBanner::bannerFrame(this); }
   CursorView * cursorView() const override { return CCursor::cursorView(this); }
+  void privateSetCursorView(CursorView * cursorView) override { CCursor::privateSetCursorView(this, cursorView); }
   KDRect cursorFrame() override { return CCursor::cursorFrame(this); }
 };
 

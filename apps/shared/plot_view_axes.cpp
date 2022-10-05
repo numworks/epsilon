@@ -132,10 +132,11 @@ void LabeledAxis::computeLabelsRelativePosition(const AbstractPlotView * plotVie
   }
 
   if (axis == AbstractPlotView::Axis::Horizontal) {
+    KDCoordinate labelHeight = (KDFont::GlyphSize(AbstractPlotView::k_font).height() + 2 * AbstractPlotView::k_labelMargin) * plotView->pixelHeight();
     float bannerHeight = plotView->bannerView() ? plotView->bannerView()->bounds().height() * plotView->pixelHeight() : 0.f;
     float yMin = plotView->range()->yMin();
     float yMax = plotView->range()->yMax();
-    if (yMin > - bannerHeight) {
+    if (yMin > - bannerHeight - labelHeight) {
       m_relativePosition = AbstractPlotView::RelativePosition::Before;
       m_labelsPosition = yMin + bannerHeight;
     } else {
@@ -156,7 +157,7 @@ void LabeledAxis::computeLabelsRelativePosition(const AbstractPlotView * plotVie
     float xMax = plotView->range()->xMax();
     if (xMin > - labelsWidth * plotView->pixelWidth()) {
       m_relativePosition = AbstractPlotView::RelativePosition::After;
-      m_labelsPosition = xMin;
+      m_labelsPosition = std::max(xMin, 0.f);
     } else {
       if (xMax < 0.f) {
         m_labelsPosition = xMax;

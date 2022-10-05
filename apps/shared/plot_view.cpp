@@ -53,7 +53,8 @@ float AbstractPlotView::pixelToFloat(Axis axis, KDCoordinate p) const {
 }
 
 void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness, KDCoordinate dashSize) const {
-  float fmin = rangeMin(parallel), fmax = rangeMax(parallel);
+  float pLength = pixelLength(parallel);
+  float fmin = rangeMin(parallel) - pLength, fmax = rangeMax(parallel) + pLength;
   min = std::clamp(min, fmin, fmax);
   max = std::clamp(max, fmin, fmax);
 

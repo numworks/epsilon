@@ -38,14 +38,11 @@ void WithGrid::drawGridLines(const AbstractPlotView * plotView, KDContext * ctx,
 void SimpleAxis::drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
   assert(plotView);
 
-  AbstractPlotView::Axis otherAxis = AbstractPlotView::OtherAxis(axis);
-  float graduationFloatLength = k_labelGraduationHalfLength * plotView->pixelLength(otherAxis);
-
   // - Draw plain axis
   plotView->drawStraightSegment(ctx, rect, axis, 0.f, -INFINITY, INFINITY, k_color);
 
   // - Draw ticks and eventual labels
-  /* Do not draw ticks on the vertical axis if the axis itslef is not visible,
+  /* Do not draw ticks on the vertical axis if the axis itself is not visible,
    * as they could be mistaken for minus signs. */
   bool drawTicks = !(axis ==  AbstractPlotView::Axis::Vertical && plotView->range()->xMin() >= 0.f);
   float tMax = plotView->rangeMax(axis);
@@ -53,7 +50,7 @@ void SimpleAxis::drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KD
   float t = tickPosition(i, plotView, axis);
   while (t <= tMax) {
     if (drawTicks) {
-      plotView->drawStraightSegment(ctx, rect, otherAxis, t, -graduationFloatLength, graduationFloatLength, k_color);
+      plotView->drawTick(ctx, rect, axis, t, k_color);
     }
     drawLabel(i, t, plotView, ctx, rect, axis);
     i++;

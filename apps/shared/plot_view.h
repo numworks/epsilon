@@ -66,6 +66,7 @@ public:
   void drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;
   void drawLayout(KDContext * ctx, KDRect rect, Poincare::Layout layout, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;
   void drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Poincare::Coordinate2D<float> xy, KDColor color) const;
+  void drawTick(KDContext * ctx, KDRect rect, Axis perpendicular, float position, KDColor color = KDColorBlack) const;
   void drawArrowhead(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> xy, Poincare::Coordinate2D<float> dxy, float pixelArrowWidth, KDColor color, bool thick = false, float tanAngle = 1.f / 3.f) const;
   /* These methods use the stamping state-machine.
    * FIXME They may be moved into a helper. */
@@ -77,6 +78,7 @@ public:
 private:
   constexpr static KDCoordinate k_stampDashSize = 5;
   constexpr static KDCoordinate k_stampIndexNoDash = -1;
+  constexpr static KDCoordinate k_tickHalfLength = 2;
 
   // Escher::View
   int numberOfSubviews() const { return (bannerView() != nullptr) + (cursorView() != nullptr); }

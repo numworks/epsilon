@@ -60,8 +60,6 @@ public:
 
 class SimpleAxis {
 public:
-  constexpr static KDCoordinate k_labelGraduationHalfLength = 3;
-
   void drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const;
   virtual void reloadAxis(AbstractPlotView *, AbstractPlotView::Axis axis) {}
   bool isAxis() const { return true; }

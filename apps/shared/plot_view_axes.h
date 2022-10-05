@@ -76,14 +76,14 @@ public:
   /* FIXME Y axis needs less labels than X axis */
   constexpr static int k_maxNumberOfLabels = CurveViewRange::k_maxNumberOfXGridUnits > CurveViewRange::k_maxNumberOfYGridUnits ? CurveViewRange::k_maxNumberOfXGridUnits : CurveViewRange::k_maxNumberOfYGridUnits;
 
-  LabeledAxis() : m_forceRelativePosition(false), m_hidden(false) {}
+  LabeledAxis() : m_forceRelativePosition(false), m_hidden(false), m_offsetOrigin(false) {}
 
   void reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) override;
   void forceRelativePosition(AbstractPlotView::RelativePosition position);
   void setHidden(bool hide) { m_hidden = hide; }
+  void setOffsetOrigin(bool offset) { m_offsetOrigin = offset; }
 
 protected:
-
   virtual int computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis);
   void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const override;
   void computeLabelsRelativePosition(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
@@ -93,6 +93,7 @@ protected:
   mutable AbstractPlotView::RelativePosition m_relativePosition : 2;
   bool m_forceRelativePosition : 1;
   bool m_hidden : 1;
+  bool m_offsetOrigin : 1;
 };
 
 /* The following classes are intended to be used as template arguments for
@@ -101,7 +102,11 @@ protected:
 typedef Axes<NoGrid, NoAxis, NoAxis> NoAxes;
 typedef Axes<WithGrid, SimpleAxis, SimpleAxis> TwoUnlabeledAxes;
 typedef Axes<NoGrid, LabeledAxis, NoAxis> LabeledXAxis;
-typedef Axes<WithGrid, LabeledAxis, LabeledAxis> TwoLabeledAxes;
+
+class TwoLabeledAxes : public Axes<WithGrid, LabeledAxis, LabeledAxis> {
+public:
+  TwoLabeledAxes() { m_xAxis.setOffsetOrigin(true); }
+};
 
 }
 }

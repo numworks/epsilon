@@ -287,7 +287,7 @@ int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout p
     layoutCursor->layout().addGraySquaresToAllGridAncestors();
   }
   // Replace input with pattern
-  tempCursor.addLayoutAndMoveCursor(inserted);
+  tempCursor.addLayoutAndMoveCursor(inserted, nullptr, false);
   if (layoutCursor->layout().isUninitialized() || !layoutCursor->layout().hasAncestor(parent, true)) {
     // Pointed layout has been deleted by beautification. Use the temp cursor.
     layoutCursor->setLayout(tempCursor.layout());

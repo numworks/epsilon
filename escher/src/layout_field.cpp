@@ -769,7 +769,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
   }
 
   // Add the layout. This puts the cursor at the right of the added layout
-  cursor->addLayoutAndMoveCursor(layoutR);
+  cursor->addLayoutAndMoveCursor(layoutR, delegateContext());
 
   /* Move the cursor if needed.
    *

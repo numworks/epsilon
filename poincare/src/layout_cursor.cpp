@@ -274,10 +274,23 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
   }
 }
 
-void LayoutCursor::addLayoutAndMoveCursor(Layout l) {
+void LayoutCursor::addLayoutAndMoveCursor(Layout l, Context * context, bool beautify) {
   bool layoutWillBeMerged = l.type() == LayoutNode::Type::HorizontalLayout;
+  Layout parent = m_layout.parent();
+  int mergeLength = l.numberOfChildren();
+  int mergeIndex;
+  if (parent.isUninitialized()) {
+    parent = m_layout;
+    mergeIndex = m_position == Position::Left ? 0 : parent.numberOfChildren();
+  } else {
+    mergeIndex = parent.indexOfChild(m_layout) + (m_position == Position::Right);
+  }
   m_layout.addSibling(this, l, true);
+  if (beautify) {
+    InputBeautification::ApplyBeautificationBetweenIndexes(parent, mergeIndex, mergeIndex + mergeLength, this, context);
+  }
   if (!layoutWillBeMerged) {
+    assert(!l.isUninitialized());
     l.collapseSiblings(this);
   }
 }

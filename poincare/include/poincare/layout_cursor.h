@@ -117,12 +117,14 @@ public:
   void addEmptyTenPowerLayout(Context * context);
   void addFractionLayoutAndCollapseSiblings(Context * context);
   void insertText(const char * text, Context * context, bool forceCursorRightOfText = false, bool forceCursorLeftOfText = false);
-  void addLayoutAndMoveCursor(Layout l);
+  void addLayoutAndMoveCursor(Layout l, Context * context, bool beautify = true);
   bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }
   bool hideEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(false); }
   void performBackspace() { m_layout.deleteBeforeCursor(this); }
   void clearLayout();
 
+  // Only implemented and used when testing. Do not use elsewhere.
+  void testAddLayoutAndMoveCursor(Context * context);
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
 

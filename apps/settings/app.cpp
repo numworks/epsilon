@@ -35,9 +35,4 @@ App::App(Snapshot * snapshot) :
 {
 }
 
-bool App::handleEvent(Ion::Events::Event event) {
-  // We don't want InputEventHandlerDelegateApp to open the store menu in here
-  return false;
-}
-
 }

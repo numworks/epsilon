@@ -1,6 +1,7 @@
 #include "interval_graph_controller.h"
 #include <escher/clipboard.h>
 #include <poincare/print.h>
+#include <inference/app.h>
 
 namespace Inference {
 
@@ -31,8 +32,12 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
     Poincare::Print::CustomPrintf(copyBuffer, sizeof(copyBuffer), "[[%*.*ed,%*.*ed]]",
         m_interval->estimate() - m_interval->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
         m_interval->estimate() + m_interval->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
-    Escher::Clipboard::sharedClipboardForEvent(event)->store(copyBuffer, strlen(copyBuffer));
-    return event != Ion::Events::Sto;
+    if (event == Ion::Events::Sto) {
+      App::app()->storeValue(copyBuffer);
+    } else {
+      Escher::Clipboard::sharedClipboard()->store(copyBuffer);
+    }
+    return true;
   }
   if (event == Ion::Events::Up || event == Ion::Events::Down) {
     m_graphView.selectAdjacentInterval(event == Ion::Events::Up);

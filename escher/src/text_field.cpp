@@ -1,6 +1,7 @@
 #include <escher/text_field.h>
 #include <escher/text_input_helpers.h>
 #include <escher/clipboard.h>
+#include <escher/container.h>
 #include <ion/events.h>
 #include <ion/unicode/utf8_decoder.h>
 #include <ion/unicode/utf8_helper.h>
@@ -366,15 +367,18 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto) {
-    if (storeInClipboard(Clipboard::sharedClipboardForEvent(event)) && event == Ion::Events::Cut) {
+  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
+    if (storeInClipboard() && event == Ion::Events::Cut) {
       if (!contentView()->selectionIsEmpty()) {
         deleteSelection();
       } else {
         removeWholeText();
       }
     }
-    return event != Ion::Events::Sto;
+    return true;
+  }
+  if (event == Ion::Events::Sto) {
+    storeValue();
   }
   return false;
 }
@@ -636,13 +640,27 @@ void AbstractTextField::removeWholeText() {
   reloadScroll();
 }
 
-bool AbstractTextField::storeInClipboard(Clipboard * clipboard) const {
+bool AbstractTextField::storeInClipboard() const {
   if (!isEditing()) {
-    clipboard->store(text());
+    Clipboard::sharedClipboard()->store(text());
     return true;
   } else if (!nonEditableContentView()->selectionIsEmpty()) {
     const char * start = nonEditableContentView()->selectionStart();
-    clipboard->store(start, nonEditableContentView()->selectionEnd() - start);
+    Clipboard::sharedClipboard()->store(start, nonEditableContentView()->selectionEnd() - start);
+    return true;
+  }
+  return false;
+}
+
+bool AbstractTextField::storeValue() const {
+  if (!isEditing()) {
+    Container::activeApp()->storeValue(text());
+    return true;
+  } else if (!nonEditableContentView()->selectionIsEmpty()) {
+    const char * start = nonEditableContentView()->selectionStart();
+    char buffer[Escher::Clipboard::k_bufferSize];
+    strlcpy(buffer, start, std::min<size_t>(nonEditableContentView()->selectionEnd() - start + 1, Escher::Clipboard::k_bufferSize));
+    Container::activeApp()->storeValue(buffer);
     return true;
   }
   return false;

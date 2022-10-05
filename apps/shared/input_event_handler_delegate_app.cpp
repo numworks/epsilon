@@ -29,16 +29,18 @@ NestedMenuController * InputEventHandlerDelegateApp::variableBoxForInputEventHan
 }
 
 bool InputEventHandlerDelegateApp::handleEvent(Ion::Events::Event event) {
-  /* When they want to open the store menu, handleEvent(Events::Sto) on cells
-   * saves the text to be copied in the storeBuffer and return false for the
-   * event to bubble up and be treated here. */
   if (event == Ion::Events::Sto) {
-    m_storeController.setup();
-    displayModalViewController(&m_storeController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
-    Clipboard::sharedStoreBuffer()->reset();
-    return true;
+    storeValue("");
   }
   return App::handleEvent(event);
+}
+
+void InputEventHandlerDelegateApp::storeValue(const char * text) {
+  if (m_modalViewController.isDisplayingModal()) {
+    return;
+  }
+  m_storeController.setText(text);
+  displayModalViewController(&m_storeController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
 }
 
 }

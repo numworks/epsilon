@@ -176,7 +176,7 @@ bool LayoutField::ContentView::resetSelection() {
   return true;
 }
 
-void LayoutField::ContentView::copySelection(Context * context, Clipboard * clipboard) {
+void LayoutField::ContentView::copySelection(Context * context, Ion::Events::Event event) {
   if (selectionIsEmpty()) {
     return;
   }
@@ -202,7 +202,11 @@ void LayoutField::ContentView::copySelection(Context * context, Clipboard * clip
     static_cast<HorizontalLayout&>(selectionParent).serializeChildren(firstIndex, lastIndex, buffer, bufferSize);
   }
   if (buffer[0] != 0) {
-    clipboard->store(buffer);
+    if (event == Ion::Events::Sto) {
+      Container::activeApp()->storeValue(buffer);
+    } else {
+      Clipboard::sharedClipboard()->store(buffer);
+    }
   }
 }
 
@@ -609,11 +613,11 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   if ((event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto) && isEditing()) {
-    m_contentView.copySelection(context(), Clipboard::sharedClipboardForEvent(event));
+    m_contentView.copySelection(context(), event);
     if (event == Ion::Events::Cut) {
       m_contentView.deleteSelection();
     }
-    return event != Ion::Events::Sto;
+    return true;
   }
   if (event == Ion::Events::Clear && isEditing()) {
     clearLayout();

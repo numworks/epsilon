@@ -54,8 +54,7 @@ bool StoreMenuController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void StoreMenuController::setup() {
-  const char * text = Escher::Clipboard::sharedStoreBuffer()->storedText();
+void StoreMenuController::setText(const char * text) {
   m_preventReload = true;
   m_cell.expressionField()->setEditing(true);
   m_cell.expressionField()->setText(text);

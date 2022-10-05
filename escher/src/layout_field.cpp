@@ -23,13 +23,10 @@ LayoutField::ContentView::ContentView(KDFont::Size font) :
                      &m_selectionStart,
                      &m_selectionEnd),
     m_isEditing(false) {
-  m_expressionView.setLayout(Layout());
+  clearLayout();
 }
 
 bool LayoutField::ContentView::setEditing(bool isEditing) {
-  if (m_expressionView.layout().isUninitialized()) {
-    clearLayout();
-  }
   m_isEditing = isEditing;
   markRectAsDirty(bounds());
   if (isEditing) {
@@ -62,11 +59,6 @@ void LayoutField::ContentView::clearLayout() {
     resetSelection();
   }
   m_cursor.setLayout(h);
-}
-
-void LayoutField::ContentView::tidy() {
-  m_expressionView.setLayout(Layout());
-  m_cursor.setLayout(Layout());
 }
 
 KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
@@ -338,10 +330,6 @@ void LayoutField::setLayout(Poincare::Layout newLayout) {
   reload(previousSize);
 }
 
-void LayoutField::tidy() {
-  m_contentView.tidy();
-}
-
 Context * LayoutField::context() const {
   return (m_delegate != nullptr) ? m_delegate->context() : nullptr;
 }
@@ -482,9 +470,6 @@ bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
 }
 
 bool LayoutField::handleEvent(Ion::Events::Event event) {
-  if (layout().isUninitialized()) {
-    clearLayout();
-  }
   bool didHandleEvent = false;
   KDSize previousSize = minimalSizeForOptimalDisplay();
   bool shouldRecomputeLayout = m_contentView.cursor()->showEmptyLayoutIfNeeded();

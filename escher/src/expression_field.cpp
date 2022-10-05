@@ -64,10 +64,6 @@ const char * ExpressionField::text() {
   return m_textField.draftTextBuffer();
 }
 
-void ExpressionField::tidy() {
-  m_layoutField.tidy();
-}
-
 void ExpressionField::setText(const char * text) {
   if (editionIsInTextField()) {
     m_textField.reinitDraftTextBuffer();

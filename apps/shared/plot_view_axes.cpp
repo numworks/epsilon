@@ -9,8 +9,8 @@ namespace PlotPolicy {
 // WithGrid
 
 void WithGrid::drawGrid(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
-  drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal);
   drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Vertical);
+  drawGridLines(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal);
 }
 
 void WithGrid::drawGridLines(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis parallel) const {

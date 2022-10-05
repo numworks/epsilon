@@ -128,7 +128,8 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
   ContinuousFunction * patternModel = f;
   bool isIntegral = false;
   Pattern pattern(m_areaIndex, f->color());
-  m_areaIndex = (m_areaIndex + 1) % Pattern::k_numberOfSections;
+  bool incrementArea = true;
+
   switch (area) {
   case ContinuousFunction::AreaType::Outside:
     if (hasTwoCurves) {
@@ -151,6 +152,7 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
     break;
   default:
     assert(area == ContinuousFunction::AreaType::None);
+    incrementArea = false;
     isIntegral = f->color();
     if (isIntegral) {
       patternUpper = nullptr;
@@ -158,6 +160,7 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
         patternLower = evaluateZero;
         pattern = Pattern(f->color());
       } else if (record == m_selectedRecord) {
+        incrementArea = true;
         patternLower = evaluateXY;
         patternModel = App::app()->functionStore()->modelForRecord(m_secondSelectedRecord).operator->();
         pattern = Pattern(m_areaIndex, KDColor::HSVBlend(f->color(), patternModel->color()));
@@ -165,6 +168,9 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
       patternStart = m_highlightedStart;
       patternEnd = m_highlightedEnd;
     }
+  }
+  if (incrementArea) {
+    m_areaIndex = (m_areaIndex + 1) % Pattern::k_numberOfSections;
   }
 
   // - Draw first curve

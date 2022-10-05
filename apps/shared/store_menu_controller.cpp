@@ -1,7 +1,7 @@
 #include "store_menu_controller.h"
 #include <escher/clipboard.h>
 #include <escher/invocation.h>
-#include "shared/poincare_helpers.h"
+#include "poincare_helpers.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -25,7 +25,7 @@ StoreMenuController::StoreMenuController() :
   ModalViewController(this, &m_stackViewController),
   m_stackViewController(nullptr, &m_listController, StackViewController::Style::PurpleWhite),
   m_listController(this),
-  m_cell(this, nullptr, this, this),
+  m_cell(this, nullptr, nullptr, this),
   m_abortController(
     Invocation([](void * context, void * sender) {
       StoreMenuController * storeMenu = static_cast<StoreMenuController*>(context);
@@ -43,10 +43,6 @@ StoreMenuController::StoreMenuController() :
   m_isUpdating(false)
 {
   m_abortController.setContentMessage(I18n::Message::InvalidInputWarning);
-}
-
-void StoreMenuController::viewDidDisappear() {
-  m_cell.expressionField()->tidy();
 }
 
 bool StoreMenuController::handleEvent(Ion::Events::Event event) {
@@ -83,26 +79,41 @@ void StoreMenuController::layoutFieldDidChangeSize(LayoutField * layoutField) {
   m_isUpdating = false;
 }
 
+bool StoreMenuController::layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) {
+  // if (event != Ion::Events::OK && event != Ion::Events::EXE) {
+    // return false;
+  // }
+  constexpr size_t bufferSize = 42;
+  char buffer[bufferSize];
+  layoutR.serializeForParsing(buffer, bufferSize);
+  PoincareHelpers::ParseAndSimplify(buffer, Container::activeApp()->localContext());
+  m_isUpdating = true;
+  Container::activeApp()->dismissModalViewController();
+  return true;
+}
+
 bool StoreMenuController::layoutFieldShouldFinishEditing(Escher::LayoutField * layoutField, Ion::Events::Event event) {
   if (event != Ion::Events::OK && event != Ion::Events::EXE) {
     return false;
   }
-  PoincareHelpers::ParseAndSimplify(m_cell.expressionField()->text(), Container::activeApp()->localContext());
+  // PoincareHelpers::ParseAndSimplify(m_cell.expressionField()->text(), Container::activeApp()->localContext());
   // TODO move warning here
   /* We need to dismiss the controller but it can't be done here so we set a
    * flag a catch the event later. */
   // We are already in a popup, we only need the bottom margin
   // displayModalViewController(&m_abortController, 0.f, 0.f, 0, 0, Escher::Metric::PopUpBottomMargin, 0);
-  return false;
+  return true;
 }
 
 bool StoreMenuController::layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) {
-  // Container::activeApp()->dismissModalViewController();
+  m_isUpdating = true;
+  Container::activeApp()->dismissModalViewController();
   return true;
 }
 
 void StoreMenuController::didBecomeFirstResponder() {
   resetMemoization();
+  m_isUpdating = false;
   Container::activeApp()->setFirstResponder(&m_listController);
   // Additional outputs should have at least one row to display
   assert(numberOfRows() > 0);

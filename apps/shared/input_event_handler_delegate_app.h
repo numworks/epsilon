@@ -1,6 +1,7 @@
 #ifndef SHARED_INPUT_EVENT_HANDLER_DELEGATE_APP_H
 #define SHARED_INPUT_EVENT_HANDLER_DELEGATE_APP_H
 
+#include "store_menu_controller.h"
 #include <escher/app.h>
 #include <escher/input_event_handler_delegate.h>
 
@@ -14,6 +15,10 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 protected:
   InputEventHandlerDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
+
+private:
+  StoreMenuController m_storeController;
+
 };
 
 }

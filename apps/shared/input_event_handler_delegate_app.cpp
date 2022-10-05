@@ -33,7 +33,8 @@ bool InputEventHandlerDelegateApp::handleEvent(Ion::Events::Event event) {
    * saves the text to be copied in the storeBuffer and return false for the
    * event to bubble up and be treated here. */
   if (event == Ion::Events::Sto) {
-    AppsContainer::sharedAppsContainer()->openStoreMenu();
+    m_storeController.setup();
+    displayModalViewController(&m_storeController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
     Clipboard::sharedStoreBuffer()->reset();
     return true;
   }

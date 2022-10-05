@@ -12,7 +12,6 @@
 #include "exam_pop_up_controller.h"
 #include "exam_pop_up_controller_delegate.h"
 #include "battery_timer.h"
-#include "store_menu_controller.h"
 #include "suspend_timer.h"
 #include "backlight_dimming_timer.h"
 #include "shared/global_context.h"
@@ -61,7 +60,6 @@ public:
 #if EPSILON_GETOPT
   void setInitialAppSnapshot(Escher::App::Snapshot * snapshot) { m_initialAppSnapshot = snapshot; }
 #endif
-  void openStoreMenu();
 protected:
   int numberOfExternalApps() { return Ion::ExternalApps::numberOfApps(); }
 private:
@@ -82,7 +80,6 @@ private:
   Shared::GlobalContext m_globalContext;
   MathToolbox m_mathToolbox;
   MathVariableBoxController m_variableBoxController;
-  StoreMenuController m_storeController;
   ExamPopUpController m_examPopUpController;
   OnBoarding::PromptController m_promptController;
   BatteryTimer m_batteryTimer;

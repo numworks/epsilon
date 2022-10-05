@@ -104,16 +104,19 @@ void LabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, K
   }
   AbstractPlotView::RelativePosition xRelative, yRelative;
   if (axis == AbstractPlotView::Axis::Horizontal) {
-    if (t == 0.f && m_labelsPosition != 0.f) {
+    if (t == 0.f && m_otherAxis) {
+      if (m_labelsPosition != 0.f) {
+        /* Do not draw a floating 0 label. */
         return;
-    } else if (t == 0.f && m_offsetOrigin) {
+      }
+      /* 0 must not be overlaid on the vertical axis. */
       xRelative = AbstractPlotView::RelativePosition::Before;
     } else {
       xRelative = AbstractPlotView::RelativePosition::There;
     }
     yRelative = m_relativePosition;
   } else {
-    if (t == 0.f) {
+    if (t == 0.f && m_otherAxis) {
       return;
     }
     xRelative = m_relativePosition;

@@ -31,6 +31,7 @@ public:
   size_t moveCursorAndDumpContent(char * buffer, size_t bufferSize);
   void restoreContent(const char * buffer, size_t size);
   void setBackgroundColor(KDColor backgroundColor);
+  void putCursorLeftOfField();
 
   /* View */
   int numberOfSubviews() const override { return 1; }

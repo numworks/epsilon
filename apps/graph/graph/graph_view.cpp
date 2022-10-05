@@ -157,7 +157,7 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
       if (m_secondSelectedRecord.isNull()) {
         patternLower = evaluateZero;
         pattern = Pattern(f->color());
-      } else {
+      } else if (record == m_selectedRecord) {
         patternLower = evaluateXY;
         patternModel = App::app()->functionStore()->modelForRecord(m_secondSelectedRecord).operator->();
         pattern = Pattern(m_areaIndex, KDColor::HSVBlend(f->color(), patternModel->color()));

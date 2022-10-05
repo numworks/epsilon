@@ -157,8 +157,9 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
     if (isIntegral) {
       patternUpper = nullptr;
       if (m_secondSelectedRecord.isNull()) {
+        incrementArea = true;
         patternLower = evaluateZero;
-        pattern = Pattern(f->color());
+        pattern = Pattern(m_areaIndex, f->color());
       } else if (record == m_selectedRecord) {
         incrementArea = true;
         patternLower = evaluateXY;

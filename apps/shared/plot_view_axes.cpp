@@ -45,11 +45,16 @@ void SimpleAxis::drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KD
   plotView->drawStraightSegment(ctx, rect, axis, 0.f, -INFINITY, INFINITY, k_color);
 
   // - Draw ticks and eventual labels
+  /* Do not draw ticks on the vertical axis if the axis itslef is not visible,
+   * as they could be mistaken for minus signs. */
+  bool drawTicks = !(axis ==  AbstractPlotView::Axis::Vertical && plotView->range()->xMin() >= 0.f);
   float tMax = plotView->rangeMax(axis);
   int i = 0;
   float t = tickPosition(i, plotView, axis);
   while (t <= tMax) {
-    plotView->drawStraightSegment(ctx, rect, otherAxis, t, -graduationFloatLength, graduationFloatLength, k_color);
+    if (drawTicks) {
+      plotView->drawStraightSegment(ctx, rect, otherAxis, t, -graduationFloatLength, graduationFloatLength, k_color);
+    }
     drawLabel(i, t, plotView, ctx, rect, axis);
     i++;
     t = tickPosition(i, plotView, axis);

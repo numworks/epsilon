@@ -22,7 +22,6 @@ public:
    * buffer. This is the case in the application 'Calculation' and we do not
    * use text() there... TODO: change text() for fillTextInBuffer?*/
   const char * text();
-  void tidy();
   void setText(const char * text);
   bool editionIsInTextField() const;
   bool isEmpty() const;

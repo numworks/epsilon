@@ -31,10 +31,8 @@ ExpressionField * EditableExpressionCell::expressionField() {
 }
 
 void EditableExpressionCell::setHighlighted(bool highlight) {
+  // We want the background to stay white to improve visibility
   return;
-  HighlightCell::setHighlighted(highlight);
-  KDColor backgroundColor = highlight? Palette::Select : KDColorWhite;
-  m_expressionField.setBackgroundColor(backgroundColor);
 }
 
 int EditableExpressionCell::numberOfSubviews() const {

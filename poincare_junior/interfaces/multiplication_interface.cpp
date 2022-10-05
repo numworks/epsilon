@@ -27,11 +27,11 @@ TypeBlock * MultiplicationExpressionInterface::DistributeOverAddition(TypeBlock 
         EditionReference additionChildCopy = EditionReference(additionCopy.childAtIndex(indexedAdditionChild.m_index));
         // Replace addition per its child
         additionCopy.replaceTreeBy(additionChildCopy);
-        assert(multCopy.node().block()->type() == BlockType::Multiplication);
-        MultiplicationExpressionInterface::DistributeOverAddition(multCopy.node().block());
+        assert(multCopy.block()->type() == BlockType::Multiplication);
+        MultiplicationExpressionInterface::DistributeOverAddition(multCopy.block());
       }
       mult.replaceTreeBy(add);
-      return add.node().block();
+      return add.block();
     }
   }
   return block;

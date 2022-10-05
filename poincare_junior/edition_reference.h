@@ -15,6 +15,7 @@ public:
   inline bool operator!=(const EditionReference & t) const { return m_identifier != t.identifier(); }
 
   Node node() const;
+  TypeBlock * block() { return node().block(); }
   EditionReference clone() const;
 
   uint16_t identifier() const { return m_identifier; }

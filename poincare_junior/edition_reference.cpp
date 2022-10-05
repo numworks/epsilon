@@ -26,8 +26,8 @@ void EditionReference::replaceBy(EditionReference t, bool trees) {
   int newSize = trees ? newNode.treeSize() : newNode.nodeSize();
   Block * oldBlock = oldNode.block();
   Block * newBlock = newNode.block();
-  // TODO: should we handle !pool->contains(node().block())?
-  if (pool->contains(t.node().block())) {
+  // TODO: should we handle !pool->contains(block())?
+  if (pool->contains(t.block())) {
     if (newNode.hasAncestor(oldNode, false)) {
       oldSize -= newSize;
     }
@@ -44,18 +44,18 @@ void EditionReference::replaceBy(EditionReference t, bool trees) {
 }
 
 void EditionReference::remove(bool removeTree) {
-  EditionPool::sharedEditionPool()->removeBlocks(node().block(), removeTree ? node().treeSize() : node().nodeSize());
+  EditionPool::sharedEditionPool()->removeBlocks(block(), removeTree ? node().treeSize() : node().nodeSize());
 }
 
 void EditionReference::insert(EditionReference t, bool before, bool insertTree) {
   Node destination = before ? t.node() : t.node().nextNode();
   EditionPool * pool = EditionPool::sharedEditionPool();
   size_t sizeToInsert = insertTree ? node().treeSize() : node().nodeSize();
-  // TODO: should we handle !pool->contains(node().block())?
-  if (pool->contains(node().block())) {
-    pool->moveBlocks(destination.block(), node().block(), sizeToInsert);
+  // TODO: should we handle !pool->contains(block())?
+  if (pool->contains(block())) {
+    pool->moveBlocks(destination.block(), block(), sizeToInsert);
   } else {
-    pool->insertBlocks(destination.block(), node().block(), sizeToInsert);
+    pool->insertBlocks(destination.block(), block(), sizeToInsert);
   }
 }
 

@@ -11,7 +11,7 @@
 #include <apps/i18n.h>
 #include "pop_up_controller.h"
 
-class StoreMenuController : public Escher::ModalViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource, public Escher::LayoutFieldDelegate  {
+class StoreMenuController : public Escher::ModalViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource, public Escher::TextFieldDelegate, public Escher::LayoutFieldDelegate  {
 public:
   StoreMenuController();
 
@@ -33,6 +33,12 @@ public:
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override { return false; }
   bool layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) override;
   void layoutFieldDidChangeSize(Escher::LayoutField * layoutField) override;
+
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  // virtual void textFieldDidStartEditing(AbstractTextField * textField) {}
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override { return false; };
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
 private:
   class InnerListController : public ViewController {
   public:
@@ -50,6 +56,7 @@ private:
   Escher::EditableExpressionCell m_cell;
   Escher::MessagePopUpControllerWithCustomCancel m_abortController;
   bool m_preventReload;
+  const char * m_text;
 };
 
 #endif

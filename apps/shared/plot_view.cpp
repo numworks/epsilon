@@ -157,6 +157,15 @@ void AbstractPlotView::drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Po
   }
 }
 
+void AbstractPlotView::drawTick(KDContext * ctx, KDRect rect, Axis perpendicular, float position, KDColor color) const {
+  Axis parallel = OtherAxis(perpendicular);
+  KDCoordinate p = std::round(floatToPixel(perpendicular, position));
+  KDCoordinate tickStart = std::round(floatToPixel(parallel, 0.f)) - k_tickHalfLength;
+  KDCoordinate tickLength = 2 * k_tickHalfLength + 1;
+  KDRect tickRect = perpendicular == Axis::Horizontal ? KDRect(p, tickStart, 1, tickLength) : KDRect(tickStart, p, tickLength, 1);
+  ctx->fillRect(tickRect, color);
+}
+
 void AbstractPlotView::drawArrowhead(KDContext * ctx, KDRect rect, Coordinate2D<float> xy, Coordinate2D<float> dxy, float pixelArrowWidth, KDColor color, bool thick, float tanAngle) const {
   /*
    * In the screen plane:

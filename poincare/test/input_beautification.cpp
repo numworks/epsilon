@@ -342,7 +342,7 @@ void assert_applybeautification_after_layout_insertion(AddLayoutPointer layoutIn
 }
 
 QUIZ_CASE(poincare_input_beautification_after_inserting_layout) {
-  AddLayoutPointer layoutInsertionFunction[] = {&LayoutCursor::addFractionLayoutAndCollapseSiblings, &LayoutCursor::addEmptyExponentialLayout,  &LayoutCursor::addEmptyPowerLayout,  &LayoutCursor::addEmptySquareRootLayout, &LayoutCursor::addEmptySquarePowerLayout, &LayoutCursor::addEmptyTenPowerLayout, &LayoutCursor::addEmptyMatrixLayout};
+  AddLayoutPointer layoutInsertionFunction[] = {&LayoutCursor::addFractionLayoutAndCollapseSiblings, &LayoutCursor::addEmptyExponentialLayout,  &LayoutCursor::addEmptyPowerLayout,  &LayoutCursor::addEmptySquareRootLayout, &LayoutCursor::addEmptySquarePowerLayout, &LayoutCursor::addEmptyTenPowerLayout, &LayoutCursor::addEmptyMatrixLayout, &LayoutCursor::testAddLayoutAndMoveCursor};
   int numberOfFunctions = sizeof(layoutInsertionFunction)/sizeof(AddLayoutPointer);
 
   for (int i = 0; i < numberOfFunctions; i++) {

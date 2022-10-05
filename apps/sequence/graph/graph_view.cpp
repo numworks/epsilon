@@ -18,7 +18,7 @@ void GraphView::drawRecord(int i, KDContext * ctx, KDRect rect) const {
   float xStep = std::ceil(pixelWidth());
   float xMin = range()->xMin(), xMax = range()->xMax();
 
-  for (int x = xMin; x < xMax; x += xStep) {
+  for (int x = xMin; x <= xMax; x += xStep) {
     float y = s->evaluateXYAtParameter(static_cast<float>(x), context()).x2();
     if (std::isnan(y)) {
       continue;

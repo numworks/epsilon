@@ -104,10 +104,9 @@ void LabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, K
   }
   AbstractPlotView::RelativePosition xRelative, yRelative;
   if (axis == AbstractPlotView::Axis::Horizontal) {
-    if (t == 0.f) {
-      if (m_labelsPosition != 0.f) {
+    if (t == 0.f && m_labelsPosition != 0.f) {
         return;
-      }
+    } else if (t == 0.f && m_offsetOrigin) {
       xRelative = AbstractPlotView::RelativePosition::Before;
     } else {
       xRelative = AbstractPlotView::RelativePosition::There;

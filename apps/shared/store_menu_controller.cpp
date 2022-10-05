@@ -2,6 +2,7 @@
 #include <escher/clipboard.h>
 #include <escher/invocation.h>
 #include "poincare_helpers.h"
+#include "text_field_delegate_app.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -40,16 +41,12 @@ StoreMenuController::StoreMenuController() :
     }, this),
     I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel
     ),
-  m_isUpdating(false)
+  m_preventReload(false)
 {
   m_abortController.setContentMessage(I18n::Message::InvalidInputWarning);
 }
 
 bool StoreMenuController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Back || event == Ion::Events::EXE || event == Ion::Events::OK) {
-    Container::activeApp()->dismissModalViewController();
-    return true;
-  }
   if (event == Ion::Events::Sto) {
     m_cell.expressionField()->handleEventWithText("→");
     return true;
@@ -59,11 +56,11 @@ bool StoreMenuController::handleEvent(Ion::Events::Event event) {
 
 void StoreMenuController::setup() {
   const char * text = Escher::Clipboard::sharedStoreBuffer()->storedText();
-  m_isUpdating = true;
+  m_preventReload = true;
   m_cell.expressionField()->setEditing(true);
   m_cell.expressionField()->setText(text);
   m_cell.expressionField()->handleEventWithText("→");
-  m_isUpdating = false;
+  m_preventReload = false;
 }
 
 void StoreMenuController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -71,51 +68,45 @@ void StoreMenuController::willDisplayCellForIndex(HighlightCell * cell, int inde
 }
 
 void StoreMenuController::layoutFieldDidChangeSize(LayoutField * layoutField) {
-  if (!m_isUpdating) {
-    m_isUpdating = true;
+  if (!m_preventReload) {
+    m_preventReload = true;
     m_listController.selectableTableView()->reloadData();
-    // m_listController.selectableTableView()->setFrame(m_listController.selectableTableView()->bounds(), true);
   }
-  m_isUpdating = false;
+  m_preventReload = false;
 }
 
 bool StoreMenuController::layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) {
-  // if (event != Ion::Events::OK && event != Ion::Events::EXE) {
-    // return false;
-  // }
-  constexpr size_t bufferSize = 42;
+  constexpr size_t bufferSize = TextField::maxBufferSize();
   char buffer[bufferSize];
   layoutR.serializeForParsing(buffer, bufferSize);
+  Expression exp = Expression::Parse(buffer, Container::activeApp()->localContext());
+  m_preventReload = true;
+  if (exp.isUninitialized()) {
+    // We are already in a popup, we only need the bottom margin
+    displayModalViewController(&m_abortController, 0.f, 0.f, 0, 0, Escher::Metric::PopUpBottomMargin, 0);
+    return false;
+  }
   PoincareHelpers::ParseAndSimplify(buffer, Container::activeApp()->localContext());
-  m_isUpdating = true;
   Container::activeApp()->dismissModalViewController();
   return true;
 }
 
 bool StoreMenuController::layoutFieldShouldFinishEditing(Escher::LayoutField * layoutField, Ion::Events::Event event) {
-  if (event != Ion::Events::OK && event != Ion::Events::EXE) {
-    return false;
-  }
-  // PoincareHelpers::ParseAndSimplify(m_cell.expressionField()->text(), Container::activeApp()->localContext());
-  // TODO move warning here
-  /* We need to dismiss the controller but it can't be done here so we set a
-   * flag a catch the event later. */
-  // We are already in a popup, we only need the bottom margin
-  // displayModalViewController(&m_abortController, 0.f, 0.f, 0, 0, Escher::Metric::PopUpBottomMargin, 0);
-  return true;
+  return event == Ion::Events::OK || event == Ion::Events::EXE;
 }
 
 bool StoreMenuController::layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) {
-  m_isUpdating = true;
+  /* Since dismissing the controller will call layoutFieldDidChangeSize, we need
+   * to set the flag to avoid reloadData from happening which would otherwise
+   * setFirstResponder on the store menu while it is hidden. */
+  m_preventReload = true;
   Container::activeApp()->dismissModalViewController();
   return true;
 }
 
 void StoreMenuController::didBecomeFirstResponder() {
   resetMemoization();
-  m_isUpdating = false;
+  m_preventReload = false;
   Container::activeApp()->setFirstResponder(&m_listController);
-  // Additional outputs should have at least one row to display
-  assert(numberOfRows() > 0);
 }
 

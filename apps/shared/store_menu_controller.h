@@ -25,7 +25,6 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int typeAtIndex(int index) const override { return 0; }
   Escher::HighlightCell * reusableCell(int index, int type) override { return &m_cell; }
-  // KDCoordinate nonMemoizedRowHeight(int j) override;
 
   void setup();
 
@@ -50,7 +49,7 @@ private:
   InnerListController m_listController;
   Escher::EditableExpressionCell m_cell;
   Escher::MessagePopUpControllerWithCustomCancel m_abortController;
-  bool m_isUpdating;
+  bool m_preventReload;
 };
 
 #endif

@@ -142,6 +142,38 @@ void MemoizedTableSize1DManager<N>::resetMemoization(bool force) {
 }
 
 template <int N>
+void MemoizedTableSize1DManager<N>::updateMemoizationForIndex(int index, KDCoordinate previousSize, KDCoordinate newSize) {
+  if (newSize == k_undefinedSize) {
+    newSize = nonMemoizedSizeAtIndex(index);
+  }
+  m_memoizedTotalSize = m_memoizedTotalSize - previousSize + newSize;
+  if (index >= m_memoizedIndexOffset + k_memoizedLinesCount) {
+    return;
+  }
+  if (index <= m_memoizedIndexOffset) {
+    m_memoizedCumulatedSizeOffset = m_memoizedCumulatedSizeOffset - previousSize + newSize;
+    return;
+  }
+  m_memoizedSizes[getMemoizedIndex(index)] = newSize;
+}
+
+template <int N>
+void MemoizedTableSize1DManager<N>::deleteIndexFromMemoization(int index, KDCoordinate previousSize) {
+  m_memoizedTotalSize -= previousSize;
+  if (index >= m_memoizedIndexOffset + k_memoizedLinesCount) {
+    return;
+  }
+  if (index <= m_memoizedIndexOffset) {
+    m_memoizedCumulatedSizeOffset -= previousSize;
+    return;
+  }
+  for (int i = index; i < m_memoizedIndexOffset + k_memoizedLinesCount - 1; i++) {
+    m_memoizedSizes[getMemoizedIndex(i)] = m_memoizedSizes[getMemoizedIndex(i + 1)];
+  }
+  m_memoizedSizes[getMemoizedIndex(m_memoizedIndexOffset + k_memoizedLinesCount - 1)] = k_undefinedSize;
+}
+
+template <int N>
 int MemoizedTableSize1DManager<N>::getMemoizedIndex(int index) const {
   /* Values are memoized in a circular way : m_memoizedSize[i] only
    * stores values for index such that index%k_memoizedCellsCount == i

@@ -194,6 +194,17 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
     Coordinate2D<float> p2(maxAbscissa, tangentParameterA * maxAbscissa + tangentParameterB);
     drawSegment(ctx, rect, p1, p2, Palette::GrayVeryDark, false);
   }
+
+  // - Draw points of interest
+  if (m_selectedRecord == record) {
+    PointsOfInterestList * pointsOfInterest = App::app()->graphController()->pointsOfInterest();
+    for (const PointOfInterest & p : pointsOfInterest->filter()) {
+      /* TODO This will draw a solid dot of half-tone color. What we really
+       * want is a half-transparent dot with full tone, so that it appears
+       * half-toned and see-through. */
+      drawDot(ctx, rect, Dots::Size::Large, Coordinate2D<float>(p.x(), p.y()), KDColor::Blend(f->color(), k_backgroundColor, 0x80));
+    }
+  }
 }
 
 static float polarThetaFromCoordinates(float x, float y, Preferences::AngleUnit angleUnit) {

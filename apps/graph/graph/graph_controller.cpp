@@ -54,6 +54,7 @@ void GraphController::selectFunctionWithCursor(int functionIndex, bool willBeVis
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(functionIndex);
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
   m_cursorView.setColor(f->color());
+  m_view.selectRecord(record);
 
   // Compute points of interest
   if (willBeVisible) {

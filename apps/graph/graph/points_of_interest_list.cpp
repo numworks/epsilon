@@ -7,6 +7,18 @@ using namespace Shared;
 
 namespace Graph {
 
+// PointsOfInterestList::Iterator
+
+PointsOfInterestList::Iterator & PointsOfInterestList::Iterator::operator++() {
+  int n = m_list->m_list.numberOfChildren();
+  do {
+    ++m_index;
+  } while (m_interest != Solver<double>::Interest::None && m_index < n && m_list->pointAtIndex(m_index).interest() != m_interest);
+  return *this;
+}
+
+// PointsOfInterestList
+
 void PointsOfInterestList::setBoundsAndCompute(float start, float end) {
   assert(start < end);
   assert(!m_record.isNull());

@@ -5,10 +5,10 @@ using namespace Escher;
 namespace Shared {
 
 void StoreCell::drawRect(KDContext * ctx, KDRect rect) const {
-  HideableEvenOddEditableTextCell::drawRect(ctx, rect);
+  EvenOddEditableTextCell::drawRect(ctx, rect);
   // Draw the separator
   if (m_separatorLeft) {
-    ctx->fillRect(separatorRect(bounds()), HideableEvenOddEditableTextCell::hideColor());
+    ctx->fillRect(separatorRect(bounds()), EvenOddCell::k_hideColor);
   }
 }
 
@@ -22,4 +22,3 @@ void StoreCell::didSetSeparator() {
 }
 
 }
-

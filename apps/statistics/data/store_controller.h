@@ -4,7 +4,6 @@
 #include "../store.h"
 #include "store_parameter_controller.h"
 #include <apps/shared/store_controller.h>
-#include <apps/shared/hideable_even_odd_buffer_text_cell.h>
 
 namespace Statistics {
 
@@ -51,7 +50,7 @@ private:
 
   Store * m_store;
   StoreParameterController m_storeParameterController;
-  Shared::HideableEvenOddBufferTextCell m_nonEditableCells[k_maxNumberOfNonEditableCells];
+  Escher::EvenOddBufferTextCell m_nonEditableCells[k_maxNumberOfNonEditableCells];
 };
 
 }

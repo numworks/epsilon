@@ -61,8 +61,10 @@ public:
   Shared::ScrollableTwoExpressionsView * outputView() { return &m_scrollableOutputView; }
   Escher::ScrollableExpressionView * inputView() { return &m_inputView; }
   Calculation::AdditionalInformationType additionalInformationType() const { return m_calculationAdditionInformation; }
+
 private:
   constexpr static KDCoordinate k_resultWidth = 80;
+  void updateSubviewsBackgroundAfterChangingState() override;
   void computeSubviewFrames(KDCoordinate frameWidth, KDCoordinate frameHeight, KDRect * ellipsisFrame, KDRect * inputFrame, KDRect * outputFrame);
   void reloadScroll();
   void reloadOutputSelection(HistoryViewCellDataSource::SubviewType previousType);

@@ -14,19 +14,14 @@ namespace Graph {
 class FunctionCell : public Escher::EvenOddCell {
 public:
   FunctionCell();
-  // EvenOddCell
-  void setEven(bool even) override;
-  void drawRect(KDContext * ctx, KDRect rect) const override;
-
-  // HighlightCell
-  void setHighlighted(bool highlight) override;
 
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
   Poincare::Layout layout() const override { return m_expressionView.layout(); }
 
-  // FunctionCell
-  void updateBackgrounds();
+  // EvenOddCell
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+  void updateSubviewsBackgroundAfterChangingState() override;
 
   // - Expression View
   void setTextColor(KDColor textColor) {

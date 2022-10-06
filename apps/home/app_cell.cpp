@@ -9,8 +9,7 @@ AppCell::AppCell() :
   HighlightCell(),
   m_messageNameView(KDFont::Size::Small, (I18n::Message)0, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, KDColorWhite),
   m_image(0, 0, nullptr, 0),
-  m_pointerNameView(KDFont::Size::Small, nullptr, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, KDColorWhite),
-  m_visible(true)
+  m_pointerNameView(KDFont::Size::Small, nullptr, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, KDColorWhite)
 {
 }
 
@@ -21,7 +20,7 @@ void AppCell::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 int AppCell::numberOfSubviews() const {
-  return m_visible ? 2 : 0;
+  return isVisible() ? 2 : 0;
 }
 
 View * AppCell::subviewAtIndex(int index) {
@@ -51,8 +50,8 @@ void AppCell::setExternalApp(Ion::ExternalApps::App app) {
 }
 
 void AppCell::setVisible(bool visible) {
-  if (m_visible != visible) {
-    m_visible = visible;
+  if (isVisible() != visible) {
+    Escher::HighlightCell::setVisible(visible);
     markRectAsDirty(bounds());
   }
 }

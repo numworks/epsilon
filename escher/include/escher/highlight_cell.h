@@ -14,7 +14,7 @@ public:
   HighlightCell();
 
   bool isVisible() const override { return m_state != State::Hidden; }
-  void setVisible(bool visible) {
+  virtual void setVisible(bool visible) {
     if (m_state == State::Hidden && visible) {
       m_state = State::Visible;
     } else if (!visible) {

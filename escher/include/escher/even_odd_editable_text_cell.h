@@ -20,14 +20,13 @@ public:
                           KDCoordinate bottomMargin = 0,
                           KDCoordinate leftMargin = 0);
   EditableTextCell * editableTextCell();
-  void setEven(bool even) override;
-  void setHighlighted(bool highlight) override;
   Responder * responder() override { return this; }
   const char * text() const override { return m_editableCell.text(); }
   void didBecomeFirstResponder() override;
   void setFont(KDFont::Size font) { m_editableCell.textField()->setFont(font); }
 
 private:
+  void updateSubviewsBackgroundAfterChangingState() override;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

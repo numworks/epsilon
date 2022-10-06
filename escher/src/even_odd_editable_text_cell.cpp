@@ -15,13 +15,7 @@ EditableTextCell * EvenOddEditableTextCell::editableTextCell() {
   return &m_editableCell;
 }
 
-void EvenOddEditableTextCell::setHighlighted(bool highlight) {
-  EvenOddCell::setHighlighted(highlight);
-  m_editableCell.textField()->setBackgroundColor(backgroundColor());
-}
-
-void EvenOddEditableTextCell::setEven(bool even) {
-  EvenOddCell::setEven(even);
+void EvenOddEditableTextCell::updateSubviewsBackgroundAfterChangingState() {
   m_editableCell.textField()->setBackgroundColor(backgroundColor());
 }
 

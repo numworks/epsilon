@@ -60,8 +60,6 @@ HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
 
 void HistoryViewCell::setEven(bool even) {
   EvenOddCell::setEven(even);
-  m_inputView.setBackgroundColor(backgroundColor());
-  m_scrollableOutputView.setBackgroundColor(backgroundColor());
   m_scrollableOutputView.evenOddCell()->setEven(even);
   m_ellipsis.setEven(even);
 }
@@ -74,6 +72,11 @@ void HistoryViewCell::setHighlighted(bool highlight) {
   reloadSubviewHighlight();
   // Re-layout as the ellispsis subview might have appear/disappear
   layoutSubviews();
+}
+
+void HistoryViewCell::updateSubviewsBackgroundAfterChangingState() {
+  m_inputView.setBackgroundColor(backgroundColor());
+  m_scrollableOutputView.setBackgroundColor(backgroundColor());
 }
 
 void HistoryViewCell::reloadSubviewHighlight() {

@@ -21,11 +21,11 @@ public:
   void setAlignment(float horizontalAlignment, float verticalAlignment) {
     m_bufferTextView.setAlignment(horizontalAlignment, verticalAlignment);
   }
-  void setEven(bool even) override;
-  void setHighlighted(bool highlight) override;
   void setText(const char * textContent);
   void setTextColor(KDColor textColor);
+
 protected:
+  void updateSubviewsBackgroundAfterChangingState() override;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

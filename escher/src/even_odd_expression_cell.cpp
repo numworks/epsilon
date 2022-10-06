@@ -13,18 +13,6 @@ EvenOddExpressionCell::EvenOddExpressionCell(float horizontalAlignment, float ve
 {
 }
 
-void EvenOddExpressionCell::setHighlighted(bool highlight) {
-  if (highlight != isHighlighted()) {
-    EvenOddCell::setHighlighted(highlight);
-    m_expressionView.setBackgroundColor(backgroundColor());
-  }
-}
-
-void EvenOddExpressionCell::setEven(bool even) {
-  EvenOddCell::setEven(even);
-  m_expressionView.setBackgroundColor(backgroundColor());
-}
-
 void EvenOddExpressionCell::setLayout(Layout layoutR) {
   m_expressionView.setLayout(layoutR);
 }
@@ -56,6 +44,10 @@ void EvenOddExpressionCell::drawRect(KDContext * ctx, KDRect rect) const {
   // Color the margins
   ctx->fillRect(KDRect(0, 0, m_leftMargin, bounds().height()), backgroundColor());
   ctx->fillRect(KDRect(bounds().width() - m_rightMargin, 0, m_rightMargin, bounds().height()), backgroundColor());
+}
+
+void EvenOddExpressionCell::updateSubviewsBackgroundAfterChangingState() {
+  m_expressionView.setBackgroundColor(backgroundColor());
 }
 
 int EvenOddExpressionCell::numberOfSubviews() const {

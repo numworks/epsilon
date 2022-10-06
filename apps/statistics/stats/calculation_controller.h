@@ -5,7 +5,6 @@
 #include <poincare/preferences.h>
 #include "../store.h"
 #include "calculation_selectable_table_view.h"
-#include <apps/shared/hideable_even_odd_cell.h>
 #include <apps/shared/separator_even_odd_buffer_text_cell.h>
 #include <apps/shared/store_title_cell.h>
 #include <apps/shared/double_pair_table_controller.h>
@@ -100,7 +99,7 @@ private:
   Escher::EvenOddBufferTextCell m_calculationModeTitleCells[k_numberOfCalculationTitleCells];
   Escher::EvenOddBufferTextCell m_calculationModeSymbolCells[k_numberOfCalculationTitleCells];
   Shared::SeparatorEvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
-  Shared::HideableEvenOddCell m_hideableCell[k_numberOfHeaderColumns];
+  Escher::EvenOddCell m_hideableCell[k_numberOfHeaderColumns];
   double m_memoizedCellContent[Store::k_numberOfSeries][k_numberOfCalculations];
   Store * m_store;
 };

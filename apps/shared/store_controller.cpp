@@ -84,12 +84,12 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   if (j > numberOfElementsInCol + 1) {
     StoreCell * myCell = static_cast<StoreCell *>(cell);
     myCell->editableTextCell()->textField()->setText("");
-    myCell->setHide(true);
+    myCell->hide();
     return;
   }
   if (typeAtLocation(i, j) == k_editableCellType) {
     Shared::StoreCell * myCell = static_cast<StoreCell *>(cell);
-    myCell->setHide(false);
+    myCell->show();
     myCell->setSeparatorLeft(i > 0 && (m_store->relativeColumnIndex(i) == 0));
     KDColor textColor = (m_store->seriesIsValid(m_store->seriesAtColumn(i)) || m_store->numberOfPairsOfSeries(m_store->seriesAtColumn(i)) == 0) ? KDColorBlack : Palette::GrayDark;
     myCell->editableTextCell()->textField()->setTextColor(textColor);

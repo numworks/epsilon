@@ -9,18 +9,12 @@ EvenOddMessageTextCell::EvenOddMessageTextCell(KDFont::Size font, float horizont
 {
 }
 
-void EvenOddMessageTextCell::setHighlighted(bool highlight) {
-  EvenOddCell::setHighlighted(highlight);
-  m_messageTextView.setBackgroundColor(backgroundColor());
-}
-
-void EvenOddMessageTextCell::setEven(bool even) {
-  EvenOddCell::setEven(even);
-  m_messageTextView.setBackgroundColor(backgroundColor());
-}
-
 void EvenOddMessageTextCell::setAlignment(float horizontalAlignment, float verticalAlignment) {
   m_messageTextView.setAlignment(horizontalAlignment, verticalAlignment);
+}
+
+void EvenOddMessageTextCell::updateSubviewsBackgroundAfterChangingState() {
+  m_messageTextView.setBackgroundColor(backgroundColor());
 }
 
 int EvenOddMessageTextCell::numberOfSubviews() const {

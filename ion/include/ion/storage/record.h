@@ -57,7 +57,7 @@ public:
 #if ION_STORAGE_LOG
   void log();
 #endif
-  uint32_t checksum();
+  uint32_t checksum() const;
   bool isNull() const {
     return m_fullNameCRC32 == 0;
   }

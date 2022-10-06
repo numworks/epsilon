@@ -3,6 +3,20 @@
 
 namespace Poincare {
 
+// TODO dummy parse
+Expression Expression::Parse(const char * textInput) {
+  // textInput == (1-2)/3/4
+  return Expression([]{
+      DivisionInterface::PushNode();
+      DivisionInterface::PushNode();
+      SubtractionInterface::PushNode();
+      IntegerInterface::PushNode(1);
+      IntegerInterface::PushNode(2);
+      IntegerInterface::PushNode(3);
+      IntegerInterface::PushNode(4);
+    });
+}
+
 Expression Expression::CreateBasicReduction(void * expressionAddress) {
   return Expression(
     [](Node tree) {

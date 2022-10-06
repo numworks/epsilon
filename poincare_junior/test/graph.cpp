@@ -1,5 +1,4 @@
 #include "print.h"
-#include "utils.h"
 #include <poincare_junior/expression.h>
 
 using namespace Poincare;
@@ -18,7 +17,7 @@ private:
 
 Graph::Graph(const char * text) {
   strlcpy(m_functionText, text, k_bufferSize);
-  m_function = Parse(m_functionText);
+  m_function = Poincare::Expression::Parse(m_functionText);
 }
 
 float Graph::approximateAtAbscissa(float x) const {

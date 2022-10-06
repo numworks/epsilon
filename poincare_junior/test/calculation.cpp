@@ -1,5 +1,4 @@
 #include "print.h"
-#include "utils.h"
 #include <poincare_junior/expression.h>
 
 using namespace Poincare;
@@ -27,8 +26,8 @@ private:
 };
 
 Calculation::Calculation(const char * textInput) {
-  Parse(textInput).dumpAt(m_input);
-  m_output = Expression::CreateBasicReduction(input());
+  Expression::Parse(textInput).dumpAt(m_input);
+  m_output = Expression::CreateBasicReduction(m_input);
 }
 
 void testCalculation() {

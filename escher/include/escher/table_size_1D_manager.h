@@ -55,6 +55,9 @@ public:
 
   void resetMemoization(bool force = true) override;
   void lockMemoization(bool state) const override;
+
+  void updateMemoizationForIndex(int index, KDCoordinate previousSize, KDCoordinate newSize = k_undefinedSize);
+  void deleteIndexFromMemoization(int index, KDCoordinate previousSize);
 protected:
   virtual int numberOfLines() const = 0; // Return number of rows or columns
   virtual KDCoordinate sizeAtIndex(int i) const = 0;

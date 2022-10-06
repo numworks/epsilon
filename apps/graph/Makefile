@@ -17,10 +17,11 @@ app_graph_src = $(addprefix apps/graph/,\
   graph/graph_controller.cpp \
   graph/graph_controller_helper.cpp \
   graph/graph_view.cpp \
-  graph/preimage_graph_controller.cpp\
-  graph/preimage_parameter_controller.cpp\
   graph/integral_graph_controller.cpp \
   graph/intersection_graph_controller.cpp \
+  graph/points_of_interest_list.cpp \
+  graph/preimage_graph_controller.cpp\
+  graph/preimage_parameter_controller.cpp\
   graph/root_graph_controller.cpp \
   graph/tangent_graph_controller.cpp \
   list/function_cell.cpp \

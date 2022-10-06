@@ -57,7 +57,7 @@ void Record::log() {
 }
 #endif
 
-uint32_t Record::checksum() {
+uint32_t Record::checksum() const {
   uint32_t crc32Results[2];
   crc32Results[0] = m_fullNameCRC32;
   Data data = value();

@@ -33,7 +33,7 @@ CalculationController::CalculationController(Responder * parentResponder, Button
     m_titleSymbolCells[i].setMessageFont(KDFont::Size::Small);
   }
   for (int i = 0; i < k_numberOfHeaderColumns; i++) {
-    m_hideableCell[i].setHide(true);
+    m_hideableCell[i].hide();
   }
   resetMemoization();
 }

@@ -18,7 +18,7 @@ public:
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
-  void setVisible(bool visible);
+  void setVisible(bool visible) override;
   void reloadCell() override;
   void setBuiltinAppDescriptor(const Escher::App::Descriptor * appDescriptor);
   void setExternalApp(Ion::ExternalApps::App app);
@@ -33,7 +33,6 @@ private:
   Escher::MessageTextView m_messageNameView;
   Escher::Image m_image;
   Escher::PointerTextView m_pointerNameView;
-  bool m_visible;
 };
 
 }

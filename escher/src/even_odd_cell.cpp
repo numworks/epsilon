@@ -14,12 +14,29 @@ void EvenOddCell::setEven(bool even) {
     m_even = even;
     reloadCell();
   }
+  updateSubviewsBackgroundAfterChangingState();
+}
+
+void EvenOddCell::setVisible(bool visible) {
+  if (visible != isVisible()) {
+    HighlightCell::setVisible(visible);
+    updateSubviewsBackgroundAfterChangingState();
+    reloadCell();
+  }
+}
+
+void EvenOddCell::setHighlighted(bool highlighted) {
+  HighlightCell::setHighlighted(highlighted);
+  updateSubviewsBackgroundAfterChangingState();
 }
 
 KDColor EvenOddCell::backgroundColor() const {
-   // Select the background color according to the even line and the cursor selection
-  KDColor background = m_even ? KDColorWhite : Palette::WallScreen;
-  return isHighlighted() ? Palette::Select : background;
+  if (!isVisible()) {
+    return k_hideColor;
+  } else if (isHighlighted()) {
+    return Palette::Select;
+  }
+  return m_even ? KDColorWhite : Palette::WallScreen;
 }
 
 void EvenOddCell::drawRect(KDContext * ctx, KDRect rect) const {

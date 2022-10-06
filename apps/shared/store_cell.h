@@ -1,15 +1,15 @@
 #ifndef APPS_SHARED_STORE_CELL_H
 #define APPS_SHARED_STORE_CELL_H
 
-#include "hideable_even_odd_editable_text_cell.h"
 #include "separable.h"
+#include <escher/even_odd_editable_text_cell.h>
 
 namespace Shared {
 
-class StoreCell : public HideableEvenOddEditableTextCell, public Separable {
+class StoreCell : public Escher::EvenOddEditableTextCell, public Separable {
 public:
   StoreCell(Responder * parentResponder = nullptr, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr, Escher::TextFieldDelegate * delegate = nullptr) :
-    HideableEvenOddEditableTextCell(parentResponder, inputEventHandlerDelegate, delegate),
+    EvenOddEditableTextCell(parentResponder, inputEventHandlerDelegate, delegate, KDFont::Size::Small),
     Separable()
   {}
   void drawRect(KDContext * ctx, KDRect rect) const override;

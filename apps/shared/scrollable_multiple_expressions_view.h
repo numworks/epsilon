@@ -45,7 +45,6 @@ protected:
     ContentCell(float horizontalAlignment = KDContext::k_alignLeft, KDFont::Size font = KDFont::Size::Large);
     KDColor backgroundColor() const override;
     void setHighlighted(bool highlight) override;
-    void setEven(bool even) override;
     void reloadTextColor();
     KDSize minimalSizeForOptimalDisplay() const override;
     KDSize minimalSizeForOptimalDisplayFullSize() const;
@@ -79,6 +78,7 @@ protected:
     void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame);
   private:
     const static I18n::Message k_defaultApproximateMessage = I18n::Message::AlmostEqual;
+    void updateSubviewsBackgroundAfterChangingState() override;
     KDSize privateMinimalSizeForOptimalDisplay(bool forceFullDisplay) const;
     View * subviewAtIndex(int index) override;
     Escher::ExpressionView m_rightExpressionView;

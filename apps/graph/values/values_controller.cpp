@@ -115,12 +115,16 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   }
   if (typeAtLoc == k_notEditableValueCellType || typeAtLoc == k_editableValueCellType) {
     const int numberOfElementsInCol = numberOfElementsInColumn(i);
-    // TODO: Create HideableEvenOddExpressionCell. I leave this here to keep the code for future commits
-    //Shared::Hideable * hideableCell = hideableCellFromType(cell, typeAtLoc);
-    //hideableCell->setHide(j > numberOfElementsInCol + 1);
+    EvenOddCell * eoCell = static_cast<EvenOddCell *>(cell);
+    eoCell->setVisible(j <= numberOfElementsInCol + 1);
     if (j >= numberOfElementsInCol + 1) {
       static_cast<EvenOddCell *>(cell)->setEven(j%2 == 0);
-      //hideableCell->reinit();
+      if (typeAtLoc == k_notEditableValueCellType) {
+        static_cast<EvenOddExpressionCell *>(eoCell)->setLayout(Layout());
+      } else {
+        assert(typeAtLoc == k_editableValueCellType);
+        static_cast<StoreCell *>(eoCell)->editableTextCell()->textField()->setText("");
+      }
       return;
     }
   }
@@ -390,17 +394,6 @@ I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) 
 }
 
 // Cells & View
-
-Shared::Hideable * ValuesController::hideableCellFromType(HighlightCell * cell, int type) {
-  if (type == k_notEditableValueCellType) {
-    Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);
-    return static_cast<Shared::Hideable *>(myCell);
-  }
-  assert(type == k_editableValueCellType);
-  Shared::StoreCell * myCell = static_cast<Shared::StoreCell *>(cell);
-  return static_cast<Shared::Hideable *>(myCell);
-}
-
 Shared::BufferFunctionTitleCell * ValuesController::functionTitleCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableFunctions);
   return &m_functionTitleCells[j];

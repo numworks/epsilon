@@ -37,11 +37,6 @@ FunctionCell::FunctionCell() :
     m_parameterSelected(false) {
 }
 
-void FunctionCell::setEven(bool even) {
-  EvenOddCell::setEven(even);
-  updateBackgrounds();
-}
-
 void FunctionCell::drawRect(KDContext * ctx, KDRect rect) const {
   // Draw the color indicator
   ctx->fillRect(KDRect(0, 0, k_colorIndicatorThickness, bounds().height()),
@@ -57,13 +52,6 @@ void FunctionCell::drawRect(KDContext * ctx, KDRect rect) const {
                        k_parametersColumnWidth, bounds().height()),
                 m_ellipsisBackground);
 
-}
-
-void FunctionCell::setHighlighted(bool highlight) {
-  if (highlight != isHighlighted()) {
-    EvenOddCell::setHighlighted(highlight);
-    updateBackgrounds();
-  }
 }
 
 KDSize FunctionCell::minimalSizeForOptimalDisplay() const {
@@ -83,7 +71,7 @@ KDSize FunctionCell::minimalSizeForOptimalDisplay() const {
   return KDSize(bounds().width(), minimalHeight);
 }
 
-void FunctionCell::updateBackgrounds() {
+void FunctionCell::updateSubviewsBackgroundAfterChangingState() {
   KDColor defaultColor = m_even ? KDColorWhite : Palette::WallScreen;
   // If not highlighted, selectedColor is defaultColor
   KDColor selectedColor = backgroundColor();
@@ -99,7 +87,7 @@ void FunctionCell::updateBackgrounds() {
 void FunctionCell::setParameterSelected(bool selected) {
   if (selected != m_parameterSelected) {
     m_parameterSelected = selected;
-    updateBackgrounds();
+    updateSubviewsBackgroundAfterChangingState();
   }
 }
 

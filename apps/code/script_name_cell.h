@@ -21,11 +21,6 @@ public:
   }
 
   Shared::TextFieldWithExtension * textField() { return &m_textField; }
-
-  // EvenOddCell
-  void setEven(bool even) override;
-  // HighlightCell
-  void setHighlighted(bool highlight) override;
   Escher::Responder * responder() override {
     if (m_textField.isEditing()) {
       return this;
@@ -41,6 +36,8 @@ public:
 private:
   constexpr static size_t k_extensionLength = 1+ScriptStore::k_scriptExtensionLength; // '.' + "py"
   constexpr static KDCoordinate k_leftMargin = Escher::Metric::CommonLargeMargin;
+
+  void updateSubviewsBackgroundAfterChangingState() override;
 
   // View
   int numberOfSubviews() const override { return 1; }

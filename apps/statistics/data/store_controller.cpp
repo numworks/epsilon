@@ -49,13 +49,13 @@ void StoreController::willDisplayCellAtLocation(HighlightCell * cell, int i, int
   }
   // Handle hidden cells
   const int numberOfElementsInCol = numberOfElementsInColumn(i);
-  Shared::HideableEvenOddBufferTextCell * myCell = static_cast<Shared::HideableEvenOddBufferTextCell *>(cell);
+  EvenOddBufferTextCell * myCell = static_cast<EvenOddBufferTextCell *>(cell);
   if (j > numberOfElementsInCol + 1) {
     myCell->setText("");
-    myCell->setHide(true);
+    myCell->hide();
     return;
   }
-  myCell->setHide(false);
+  myCell->show();
   myCell->setEven(j%2 == 0);
 
   double value = (j == numberOfElementsInCol + 1) ? NAN : dataAtLocation(i, j);

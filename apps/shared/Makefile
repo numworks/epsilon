@@ -59,9 +59,6 @@ app_shared_src = $(addprefix apps/shared/,\
   function_title_cell.cpp \
   function_zoom_and_pan_curve_view_controller.cpp \
   go_to_parameter_controller.cpp \
-  hideable_even_odd_buffer_text_cell.cpp \
-  hideable_even_odd_cell.cpp \
-  hideable_even_odd_editable_text_cell.cpp \
   input_event_handler_delegate_app.cpp \
   interactive_curve_view_controller.cpp \
   interval.cpp \

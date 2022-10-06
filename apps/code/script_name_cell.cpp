@@ -6,16 +6,6 @@ using namespace Escher;
 
 namespace Code {
 
-void ScriptNameCell::setEven(bool even) {
-  EvenOddCell::setEven(even);
-  m_textField.setBackgroundColor(backgroundColor());
-}
-
-void ScriptNameCell::setHighlighted(bool highlight) {
-  EvenOddCell::setHighlighted(highlight);
-  m_textField.setBackgroundColor(backgroundColor());
-}
-
 const char * ScriptNameCell::text() const {
   if (!m_textField.isEditing()) {
     return m_textField.text();
@@ -29,6 +19,10 @@ KDSize ScriptNameCell::minimalSizeForOptimalDisplay() const {
 
 void ScriptNameCell::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_textField);
+}
+
+void ScriptNameCell::updateSubviewsBackgroundAfterChangingState() {
+  m_textField.setBackgroundColor(backgroundColor());
 }
 
 void ScriptNameCell::layoutSubviews(bool force) {

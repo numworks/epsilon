@@ -1,5 +1,4 @@
 #include "even_odd_double_buffer_text_cell_with_separator.h"
-#include "../shared/hideable_even_odd_editable_text_cell.h"
 #include "escher/metric.h"
 #include <assert.h>
 
@@ -75,7 +74,7 @@ void EvenOddDoubleBufferTextCellWithSeparator::drawRect(KDContext * ctx, KDRect 
   EvenOddCell::drawRect(ctx, rect);
   // Draw the separator
   KDRect separatorRect(0, 0, k_separatorWidth, bounds().height());
-  ctx->fillRect(separatorRect, Shared::HideableEvenOddEditableTextCell::hideColor());
+  ctx->fillRect(separatorRect, EvenOddCell::k_hideColor);
 }
 
 int EvenOddDoubleBufferTextCellWithSeparator::numberOfSubviews() const {

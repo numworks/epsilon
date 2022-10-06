@@ -3,7 +3,6 @@
 
 #include "../continuous_function_store.h"
 #include "../../shared/buffer_function_title_cell.h"
-#include "../../shared/hideable_even_odd_buffer_text_cell.h"
 #include "../../shared/interval_parameter_controller.h"
 #include "../../shared/scrollable_two_expressions_cell.h"
 #include "../../shared/store_cell.h"
@@ -113,7 +112,6 @@ private:
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
 
   // Cells & View
-  Shared::Hideable * hideableCellFromType(Escher::HighlightCell * cell, int type);
   Shared::BufferFunctionTitleCell * functionTitleCells(int j) override;
   Escher::EvenOddExpressionCell * valueCells(int j) override;
   int abscissaCellsCount() const override { return k_maxNumberOfDisplayableAbscissaCells; }

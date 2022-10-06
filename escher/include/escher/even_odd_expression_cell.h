@@ -13,8 +13,6 @@ public:
                         KDColor textColor = KDColorBlack,
                         KDColor backgroundColor = KDColorWhite,
                         KDFont::Size font = KDFont::Size::Large);
-  void setEven(bool even) override;
-  void setHighlighted(bool highlight) override;
   void setLayout(Poincare::Layout layout);
   void setBackgroundColor(KDColor backgroundColor);
   void setTextColor(KDColor textColor);
@@ -27,7 +25,9 @@ public:
   Poincare::Layout layout() const override { return m_expressionView.layout(); }
   KDFont::Size font() const { return m_expressionView.font(); }
   void drawRect(KDContext * ctx, KDRect rect) const override;
+
 protected:
+  void updateSubviewsBackgroundAfterChangingState() override;
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

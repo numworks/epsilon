@@ -7,7 +7,6 @@
 #include "store.h"
 #include "column_title_cell.h"
 #include "even_odd_double_buffer_text_cell_with_separator.h"
-#include <apps/shared/hideable_even_odd_cell.h>
 #include <apps/shared/separator_even_odd_buffer_text_cell.h>
 #include <apps/shared/store_cell.h>
 #include <apps/shared/double_pair_table_controller.h>
@@ -80,7 +79,7 @@ private:
   ColumnTitleCell m_columnTitleCells[Store::k_numberOfSeries];
   EvenOddDoubleBufferTextCellWithSeparator m_doubleCalculationCells[k_numberOfDoubleCalculationCells];
   Shared::SeparatorEvenOddBufferTextCell m_calculationCells[k_numberOfCalculationCells];
-  Shared::HideableEvenOddCell m_hideableCell[k_numberOfHeaderColumns];
+  Escher::EvenOddCell m_hideableCell[k_numberOfHeaderColumns];
   Store * m_store;
   double m_memoizedDoubleCalculationCells[Store::k_numberOfSeries][2][k_totalNumberOfDoubleBufferRows];
   double m_memoizedSimpleCalculationCells[Store::k_numberOfSeries][k_regressionCellIndex-k_totalNumberOfDoubleBufferRows-1];

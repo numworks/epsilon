@@ -27,7 +27,12 @@ KDColor AbstractScrollableMultipleExpressionsView::ContentCell::backgroundColor(
 void AbstractScrollableMultipleExpressionsView::ContentCell::setHighlighted(bool highlight) {
   // Do not call HighlightCell::setHighlighted to avoid marking all cell as dirty
   setHighlightedWithoutReload(highlight);
+  updateSubviewsBackgroundAfterChangingState();
+}
+
+void AbstractScrollableMultipleExpressionsView::ContentCell::updateSubviewsBackgroundAfterChangingState() {
   KDColor defaultColor = backgroundColor();
+  bool highlight = isHighlighted();
   KDColor color = highlight && m_selectedSubviewPosition == SubviewPosition::Center ? Palette::Select : defaultColor;
   m_centeredExpressionView.setBackgroundColor(color);
   color = highlight && m_selectedSubviewPosition == SubviewPosition::Right ? Palette::Select : defaultColor;
@@ -36,17 +41,6 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::setHighlighted(bool
   if (leftExpressionView()) {
     color = highlight && m_selectedSubviewPosition == SubviewPosition::Left ? Palette::Select : defaultColor;
     leftExpressionView()->setBackgroundColor(color);
-  }
-}
-
-void AbstractScrollableMultipleExpressionsView::ContentCell::setEven(bool even) {
-  EvenOddCell::setEven(even);
-  KDColor defaultColor = backgroundColor();
-  m_centeredExpressionView.setBackgroundColor(defaultColor);
-  m_rightExpressionView.setBackgroundColor(defaultColor);
-  m_approximateSign.setBackgroundColor(defaultColor);
-  if (leftExpressionView()) {
-    leftExpressionView()->setBackgroundColor(defaultColor);
   }
 }
 

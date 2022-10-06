@@ -41,13 +41,12 @@ public:
   void selectSecondRecord(Ion::Storage::Record record);
   virtual void setAreaHighlightColor(bool highlightColor);
   void setAreaHighlight(float start, float end);
+  void reloadBetweenBounds(float start, float end);
 
   Ion::Storage::Record selectedRecord() const { return m_selectedRecord; }
   Ion::Storage::Record secondSelectedRecord() const { return m_secondSelectedRecord; }
 
 protected:
-  void reloadBetweenBounds(float start, float end);
-
   float m_highlightedStart;
   float m_highlightedEnd;
   Ion::Storage::Record m_selectedRecord;

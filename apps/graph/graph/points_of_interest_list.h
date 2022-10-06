@@ -1,6 +1,7 @@
 #ifndef GRAPH_POINTS_OF_INTEREST_LIST
 #define GRAPH_POINTS_OF_INTEREST_LIST
 
+#include <apps/shared/range_1D.h>
 #include <poincare/list.h>
 #include <poincare/point_of_interest.h>
 #include <ion/storage/record.h>
@@ -13,7 +14,7 @@ public:
 
   bool isUpToDate() const { return m_record.checksum() == m_checksum; }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
-  void setBoundsAndCompute(float start, float end);
+  Shared::Range1D setBoundsAndCompute(float start, float end);
   Poincare::PointOfInterest pointAtIndex(int i) const;
 
   /* The following classes and methods are used to iterate other a certain type
@@ -46,8 +47,8 @@ public:
 
 private:
   void stripOutOfBounds();
-  void computeBetween(float start, float end);
-  void append(double x, double y, Poincare::Solver<double>::Interest);
+  void computeBetween(float start, float end, float * dirtyStart, float * dirtyEnd);
+  void append(double x, double y, Poincare::Solver<double>::Interest, float * dirtyStart, float * dirtyEnd);
 
   Ion::Storage::Record m_record;
   uint32_t m_checksum;

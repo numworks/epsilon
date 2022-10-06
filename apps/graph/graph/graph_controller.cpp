@@ -59,7 +59,7 @@ void GraphController::selectFunctionWithCursor(int functionIndex, bool willBeVis
   // Compute points of interest
   if (willBeVisible) {
     m_pointsOfInterest.setRecord(record);
-    m_pointsOfInterest.setBoundsAndCompute(m_graphRange->xMin(), m_graphRange->xMax());
+    refreshPointsOfInterest();
   }
 }
 
@@ -83,7 +83,7 @@ bool GraphController::displayDerivativeInBanner() const {
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   bool result = privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
-  m_pointsOfInterest.setBoundsAndCompute(m_graphRange->xMin(), m_graphRange->xMax());
+  refreshPointsOfInterest();
   return result;
 }
 
@@ -184,6 +184,14 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
   m_selectedSubCurveIndex = nextSubCurve;
   selectFunctionWithCursor(nextCurveIndex, true);
   return;
+}
+
+void GraphController::refreshPointsOfInterest() {
+  Range1D dirtyRange = m_pointsOfInterest.setBoundsAndCompute(m_graphRange->xMin(), m_graphRange->xMax());
+  if (dirtyRange.min() <= dirtyRange.max()) {
+    float dotRadius = (Dots::LargeDotDiameter * m_view.pixelWidth()) * 0.5f;
+    m_view.reloadBetweenBounds(dirtyRange.min() - dotRadius, dirtyRange.max() + dotRadius);
+  }
 }
 
 }

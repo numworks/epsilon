@@ -24,6 +24,7 @@ public:
   bool canShrinkWhenNormalizing() const override { return true; }
 
   bool displayDerivativeInBanner() const;
+  PointsOfInterestList * pointsOfInterest() { return &m_pointsOfInterest; }
 
 private:
   class FunctionSelectionController : public Shared::FunctionGraphController::FunctionSelectionController {

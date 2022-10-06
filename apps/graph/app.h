@@ -55,6 +55,7 @@ public:
   ValuesController * valuesController() override { return &m_valuesController; }
   Escher::InputViewController * inputViewController() override { return &m_inputViewController; }
   ListController * listController() { return &m_listController; }
+  GraphController * graphController() { return &m_graphController; }
 
 private:
   App(Snapshot * snapshot);

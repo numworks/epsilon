@@ -23,6 +23,13 @@ void PointsOfInterestList::setBoundsAndCompute(float start, float end) {
   assert(start < end);
   assert(!m_record.isNull());
 
+  uint32_t checksum = m_record.checksum();
+  if (m_checksum != checksum) {
+    /* Discard the old results if the  record has changed. */
+    m_start = m_end = NAN;
+    m_list = List::Builder();
+  }
+
   float oldStart = m_start, oldEnd = m_end;
   m_start = start;
   m_end = end;

@@ -60,6 +60,7 @@ private:
   bool defaultRangeIsNormalized() const override;
 
   void interestingFunctionRange(Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
+  void refreshPointsOfInterest();
 
   PointsOfInterestList m_pointsOfInterest;
   Shared::RoundCursorView m_cursorView;

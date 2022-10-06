@@ -19,14 +19,20 @@ PointsOfInterestList::Iterator & PointsOfInterestList::Iterator::operator++() {
 
 // PointsOfInterestList
 
-void PointsOfInterestList::setBoundsAndCompute(float start, float end) {
+Range1D PointsOfInterestList::setBoundsAndCompute(float start, float end) {
   assert(start < end);
   assert(!m_record.isNull());
+
+  float dirtyStart = end, dirtyEnd = start;
 
   uint32_t checksum = m_record.checksum();
   if (m_checksum != checksum) {
     /* Discard the old results if the  record has changed. */
     m_start = m_end = NAN;
+    if (!m_list.isUninitialized() && m_list.numberOfChildren() > 0) {
+      dirtyStart = pointAtIndex(0).x();
+      dirtyEnd = pointAtIndex(m_list.numberOfChildren() -1).x();
+    }
     m_list = List::Builder();
   }
 
@@ -41,17 +47,18 @@ void PointsOfInterestList::setBoundsAndCompute(float start, float end) {
   }
 
   if (start > oldEnd || end < oldStart || std::isnan(oldEnd) || std::isnan(oldStart)) {
-    computeBetween(start, end);
+    computeBetween(start, end, &dirtyStart, &dirtyEnd);
   } else {
     if (start < oldStart) {
-      computeBetween(start, oldStart);
+      computeBetween(start, oldStart, &dirtyStart, &dirtyEnd);
     }
     if (end > oldEnd) {
-      computeBetween(oldEnd, end);
+      computeBetween(oldEnd, end, &dirtyStart, &dirtyEnd);
     }
   }
 
   m_checksum = m_record.checksum();
+  return Range1D(dirtyStart, dirtyEnd);
 }
 
 PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
@@ -75,7 +82,7 @@ void PointsOfInterestList::stripOutOfBounds() {
   }
 }
 
-void PointsOfInterestList::computeBetween(float start, float end) {
+void PointsOfInterestList::computeBetween(float start, float end, float * dirtyStart, float * dirtyEnd) {
   assert(!m_list.isUninitialized());
 
   ContinuousFunctionStore * store = App::app()->functionStore();
@@ -89,7 +96,7 @@ void PointsOfInterestList::computeBetween(float start, float end) {
     Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);
     Coordinate2D<double> solution = (solver.*next)(e);
     while (std::isfinite(solution.x1())) {
-      append(solution.x1(), solution.x2(), solver.lastInterest());
+      append(solution.x1(), solution.x2(), solver.lastInterest(), dirtyStart, dirtyEnd);
       solution = (solver.*next)(e);
     }
   }
@@ -105,13 +112,13 @@ void PointsOfInterestList::computeBetween(float start, float end) {
     Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);
     Coordinate2D<double> intersection = solver.nextIntersection(e, e2);
     while (std::isfinite(intersection.x1())) {
-      append(intersection.x1(), intersection.x2(), Solver<double>::Interest::Intersection);
+      append(intersection.x1(), intersection.x2(), Solver<double>::Interest::Intersection, dirtyStart, dirtyEnd);
       intersection = solver.nextIntersection(e, e2);
     }
   }
 }
 
-void PointsOfInterestList::append(double x, double y, Solver<double>::Interest interest) {
+void PointsOfInterestList::append(double x, double y, Solver<double>::Interest interest, float * dirtyStart, float * dirtyEnd) {
   assert(!m_list.isUninitialized());
   int i = 0;
   int n = m_list.numberOfChildren();
@@ -119,6 +126,8 @@ void PointsOfInterestList::append(double x, double y, Solver<double>::Interest i
     i++;
   }
   m_list.addChildAtIndexInPlace(PointOfInterest::Builder(x, y, interest), i, n);
+  *dirtyStart = std::min(*dirtyStart, static_cast<float>(x));
+  *dirtyEnd = std::max(*dirtyEnd, static_cast<float>(x));
 }
 
 }

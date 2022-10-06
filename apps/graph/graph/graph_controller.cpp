@@ -32,7 +32,7 @@ void GraphController::viewWillAppear() {
   m_cursorView.resetMemoization();
   m_view.setCursorView(&m_cursorView);
   FunctionGraphController::viewWillAppear();
-  selectFunctionWithCursor(indexFunctionSelectedByCursor());
+  selectFunctionWithCursor(indexFunctionSelectedByCursor(), true);
 }
 
 bool GraphController::defaultRangeIsNormalized() const {
@@ -49,10 +49,17 @@ Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(int j) co
   return LayoutHelper::String(buffer, size);
 }
 
-void GraphController::selectFunctionWithCursor(int functionIndex) {
-  FunctionGraphController::selectFunctionWithCursor(functionIndex);
-  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));
+void GraphController::selectFunctionWithCursor(int functionIndex, bool willBeVisible) {
+  FunctionGraphController::selectFunctionWithCursor(functionIndex, willBeVisible);
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(functionIndex);
+  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
   m_cursorView.setColor(f->color());
+
+  // Compute points of interest
+  if (willBeVisible) {
+    m_pointsOfInterest.setRecord(record);
+    m_pointsOfInterest.setBoundsAndCompute(m_graphRange->xMin(), m_graphRange->xMax());
+  }
 }
 
 bool GraphController::displayDerivativeInBanner() const {
@@ -74,7 +81,9 @@ bool GraphController::displayDerivativeInBanner() const {
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
+  bool result = privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
+  m_pointsOfInterest.setBoundsAndCompute(m_graphRange->xMin(), m_graphRange->xMax());
+  return result;
 }
 
 int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * nextSubCurveIndex) const {
@@ -172,7 +181,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
   }
   m_cursor->moveTo(nextT, nextT, nextY);
   m_selectedSubCurveIndex = nextSubCurve;
-  selectFunctionWithCursor(nextCurveIndex);
+  selectFunctionWithCursor(nextCurveIndex, true);
   return;
 }
 

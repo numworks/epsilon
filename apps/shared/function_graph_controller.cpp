@@ -52,7 +52,7 @@ void FunctionGraphController::viewWillAppear() {
 
 bool FunctionGraphController::openMenuForCurveAtIndex(int index) {
   if (index != *m_indexFunctionSelectedByCursor) {
-    selectFunctionWithCursor(index);
+    selectFunctionWithCursor(index, false);
     Coordinate2D<double> xy = xyValues(index, m_cursor->t(), textFieldDelegateApp()->localContext(), m_selectedSubCurveIndex);
     m_cursor->moveTo(m_cursor->t(), xy.x1(), xy.x2());
   }
@@ -63,7 +63,7 @@ bool FunctionGraphController::openMenuForCurveAtIndex(int index) {
   return true;
 }
 
-void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
+void FunctionGraphController::selectFunctionWithCursor(int functionIndex, bool willBeVisible) {
   if (functionIndex != *m_indexFunctionSelectedByCursor) {
     m_selectedSubCurveIndex = 0;
     *m_indexFunctionSelectedByCursor = functionIndex;
@@ -128,7 +128,7 @@ void FunctionGraphController::initCursorParameters() {
     functionIndex = 0;
   }
   m_cursor->moveTo(t, xy.x1(), xy.x2());
-  selectFunctionWithCursor(functionIndex);
+  selectFunctionWithCursor(functionIndex, false);
 }
 
 bool FunctionGraphController::moveCursorVertically(int direction) {
@@ -148,7 +148,7 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   }
   Poincare::Coordinate2D<double> cursorPosition = f->evaluateXYAtParameter(clippedT, context, nextSubCurve);
   m_cursor->moveTo(clippedT, cursorPosition.x1(), cursorPosition.x2());
-  selectFunctionWithCursor(nextActiveFunctionIndex);
+  selectFunctionWithCursor(nextActiveFunctionIndex, false);
   m_selectedSubCurveIndex = nextSubCurve;
   return true;
 }

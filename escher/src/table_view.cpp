@@ -70,7 +70,13 @@ TableView::ContentView::ContentView(TableView * tableView, TableViewDataSource *
 
 KDRect TableView::ContentView::cellFrame(int i, int j) const {
   KDCoordinate columnWidth = m_dataSource->columnWidth(i);
-  columnWidth = columnWidth ? columnWidth : m_tableView->maxContentWidthDisplayableWithoutScrolling();
+  KDCoordinate rowHeight = m_dataSource->rowHeight(j);
+  if (columnWidth == 0 || rowHeight == 0) {
+    return KDRectZero;
+  }
+  if (columnWidth == KDCOORDINATE_MAX) { // For ListViewDataSource
+    columnWidth = m_tableView->maxContentWidthDisplayableWithoutScrolling();
+  }
   return KDRect(
     m_dataSource->cumulatedWidthFromIndex(i), m_dataSource->cumulatedHeightFromIndex(j),
     columnWidth + m_horizontalCellOverlap,
@@ -80,8 +86,8 @@ KDRect TableView::ContentView::cellFrame(int i, int j) const {
 
 KDCoordinate TableView::ContentView::width() const {
   int result = m_dataSource->cumulatedWidthFromIndex(m_dataSource->numberOfColumns())+m_horizontalCellOverlap;
-  // handle the case of list: cumulatedWidthFromIndex() = 0
-  return result ? result : m_tableView->maxContentWidthDisplayableWithoutScrolling();
+  // handle the case of list: cumulatedWidthFromIndex() = KDCOORDINATE_MAX
+  return result == KDCOORDINATE_MAX ? m_tableView->maxContentWidthDisplayableWithoutScrolling() : result;
 }
 
 void TableView::ContentView::reloadCellAtLocation(int i, int j, bool forceSetFrame) {
@@ -147,10 +153,6 @@ void TableView::ContentView::layoutSubviews(bool force, bool updateCellContent) 
    * recomputed at each step of the for loop. */
   for (int index = 0; index < numberOfSubviews(); index++) {
     View * cell = subviewAtIndex(index);
-    if (!cell->isVisible()) {
-      cell->setFrame(KDRectZero, true);
-      continue;
-    }
     int i = absoluteColumnNumberFromSubviewIndex(index);
     int j = absoluteRowNumberFromSubviewIndex(index);
     if (updateCellContent) {

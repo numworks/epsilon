@@ -17,7 +17,11 @@ public:
   int reusableCellCount(int type) override { return numberOfRows(); }
 
   virtual void willDisplayCellForIndex(HighlightCell * cell, int index) {}
-  void willDisplayCellAtLocation(HighlightCell * cell, int x, int y) override final { willDisplayCellForIndex(cell, y); }
+  void willDisplayCellAtLocation(HighlightCell * cell, int x, int y) override final {
+    if (cell->isVisible()) { // Frame is already set to zero if hidden
+      willDisplayCellForIndex(cell, y);
+    }
+  }
 
   virtual int typeAtIndex(int index) const { return 0; }
   int typeAtLocation(int i, int j) override final { assert(i==0); return typeAtIndex(j); }
@@ -25,7 +29,7 @@ public:
   KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell * cell, int index);
 
 protected:
-  KDCoordinate defaultColumnWidth() override { return 0; }
+  KDCoordinate defaultColumnWidth() override { return KDCOORDINATE_MAX; }
   /* nonMemoizedRowHeight has a default implementation for specific simple
    * lists. Most implementations should override them.*/
   KDCoordinate nonMemoizedRowHeight(int index) override;

@@ -37,7 +37,7 @@ private:
 
   Shared::XYBannerView * bannerView() override { return &m_bannerView; }
   bool openMenuForCurveAtIndex(int index) override;
-  void selectFunctionWithCursor(int functionIndex) override;
+  void selectFunctionWithCursor(int functionIndex, bool willBeVisible) override;
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
   double defaultCursorT(Ion::Storage::Record record) override;
   CurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }

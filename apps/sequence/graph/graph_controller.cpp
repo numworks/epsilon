@@ -39,7 +39,7 @@ void GraphController::viewWillAppear() {
   m_cursorView.resetMemoization();
   m_smallestRank = m_sequenceStore->smallestInitialRank();
   FunctionGraphController::viewWillAppear();
-  selectFunctionWithCursor(indexFunctionSelectedByCursor());
+  selectFunctionWithCursor(indexFunctionSelectedByCursor(), true);
 }
 
 float GraphController::interestingXMin() const {
@@ -79,8 +79,8 @@ Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(int j) co
   return sequence->definitionName().clone();
 }
 
-void GraphController::selectFunctionWithCursor(int functionIndex) {
-  FunctionGraphController::selectFunctionWithCursor(functionIndex);
+void GraphController::selectFunctionWithCursor(int functionIndex, bool willBeVisible) {
+  FunctionGraphController::selectFunctionWithCursor(functionIndex, willBeVisible);
   ExpiringPointer<Shared::Sequence> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));
   m_cursorView.setColor(f->color());
 }

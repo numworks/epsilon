@@ -43,7 +43,7 @@ protected:
   bool openMenuForCurveAtIndex(int index) override;
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }
   Escher::AbstractButtonCell * calculusButton() const override { return const_cast<Escher::AbstractButtonCell * >(&m_calculusButton); }
-  virtual void selectFunctionWithCursor(int functionIndex);
+  virtual void selectFunctionWithCursor(int functionIndex, bool willBeVisible);
   virtual double defaultCursorT(Ion::Storage::Record record);
   virtual FunctionStore * functionStore() const;
 

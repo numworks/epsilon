@@ -60,7 +60,7 @@ KDColor KDColor::HSVBlend(KDColor color1, KDColor color2) {
 
 KDColor::HSVColor
 #if PLATFORM_DEVICE
-// Needed because compiler does not respect procedure call API
+// Needed because compiler does not respect procedure call standards
   __attribute__((pcs("aapcs-vfp")))
 #endif
                   KDColor::convertToHSV() const {

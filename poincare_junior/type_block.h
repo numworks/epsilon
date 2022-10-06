@@ -22,6 +22,11 @@ enum class BlockType : uint8_t {
   Division
 };
 
+// TODO:
+// - if the number of BlockType > 256, add a special tag that prefixes the least
+//   used tags
+// - Optimization: some Integer should have their special tags? 0, 1, 2, 10?
+
 class TypeBlock : public Block {
 public:
   constexpr TypeBlock(BlockType content = BlockType::Integer) : Block(static_cast<uint8_t>(content)) {}

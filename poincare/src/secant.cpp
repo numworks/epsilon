@@ -34,19 +34,6 @@ Expression SecantNode::shallowReduce(const ReductionContext& reductionContext) {
 }
 
 Expression Secant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  {
-    Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
-        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::KeepUnits,
-        SimplificationHelper::MatrixReduction::UndefinedOnMatrix,
-        SimplificationHelper::ListReduction::DistributeOverLists
-    );
-    if (!e.isUninitialized()) {
-      return e;
-    }
-  }
   return Trigonometry::shallowReduceAdvancedFunction(*this, reductionContext);
 }
 

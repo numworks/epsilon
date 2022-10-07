@@ -34,17 +34,6 @@ Expression CosecantNode::shallowReduce(const ReductionContext& reductionContext)
 }
 
 Expression Cosecant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  {
-    Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
-        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::KeepUnits
-    );
-    if (!e.isUninitialized()) {
-      return e;
-    }
-  }
   return Trigonometry::shallowReduceAdvancedFunction(*this, reductionContext);
 }
 

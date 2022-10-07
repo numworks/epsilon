@@ -488,6 +488,17 @@ Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, Expressio
   /* Since the child always ends in a direct function, angle units are left
    * untouched here */
   assert(isAdvancedTrigonometryFunction(e));
+  {
+    Expression eReduced = SimplificationHelper::defaultShallowReduce(
+        e,
+        &reductionContext,
+        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
+        SimplificationHelper::UnitReduction::KeepUnits
+    );
+    if (!eReduced.isUninitialized()) {
+      return eReduced;
+    }
+  }
   // Step 0. Replace with inverse (^-1) of equivalent direct function.
   Expression result;
   switch (e.type()) {

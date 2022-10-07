@@ -13,20 +13,27 @@ public:
     Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
     Escher::TextFieldDelegate * textFieldDelegate
   );
+
   Escher::BufferTextView * derivativeView() { return &m_derivativeView; }
   Escher::BufferTextView * aView() { return &m_aView; }
   Escher::BufferTextView * bView() { return &m_bView; }
-  void setNumberOfSubviews(int numberOfSubviews) { m_numberOfSubviews = numberOfSubviews; }
-  constexpr static int k_numberOfSubviews = Shared::XYBannerView::k_numberOfSubviews + 4;
+  void setInterestMessage(I18n::Message message) { m_interestView.setMessage(message); }
+  void setDisplayParameters(bool showInterest, bool showDerivative, bool showTangent);
+
 private:
-  int numberOfSubviews() const override { return m_numberOfSubviews; }
-  bool lineBreakBeforeSubview(Escher::View * subview) const override;
+  int numberOfSubviews() const override { return XYBannerView::k_numberOfSubviews + hasInterestMessage() + m_showDerivative + m_showTangent; };
   Escher::View * subviewAtIndex(int index) override;
+  bool lineBreakBeforeSubview(Escher::View * subview) const override;
+  bool hasInterestMessage() const { return m_showInterest && m_interestView.text()[0] != '\0'; }
+
+  Escher::MessageTextView m_interestView;
   Escher::BufferTextView m_derivativeView;
   Escher::MessageTextView m_tangentEquationView;
   Escher::BufferTextView m_aView;
   Escher::BufferTextView m_bView;
-  int m_numberOfSubviews;
+  bool m_showInterest : 1;
+  bool m_showDerivative : 1;
+  bool m_showTangent : 1;
 };
 
 }

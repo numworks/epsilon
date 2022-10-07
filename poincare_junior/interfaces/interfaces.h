@@ -5,7 +5,6 @@
 #include "addition.h"
 #include "constant.h"
 #include "division.h"
-#include "ghost.h"
 #include "integer.h"
 #include "multiplication.h"
 #include "power.h"
@@ -13,9 +12,6 @@
 
 namespace Poincare {
 
-#if GHOST_REQUIRED
-static constexpr GhostInterface k_ghostInterface;
-#endif
 static constexpr IntegerInterface k_integerInterface;
 static constexpr IntegerExpressionInterface k_integerExpressionInterface;
 static constexpr AdditionInterface k_additionInterface;
@@ -33,9 +29,6 @@ static constexpr ConstantExpressionInterface k_constantExpressionInterface;
 
 static constexpr const Interface * k_interfaces[] = {
   // Order has to be the same as TypeTreeBlock
-#if GHOST_REQUIRED
-  &k_ghostInterface,
-#endif
   &k_integerInterface,
   &k_integerInterface,
   &k_integerInterface,
@@ -47,11 +40,7 @@ static constexpr const Interface * k_interfaces[] = {
   &k_divisionInterface
 };
 
-#if GHOST_REQUIRED
-static constexpr const int k_offsetOfExpressionInterfaces = 1;
-#else
 static constexpr const int k_offsetOfExpressionInterfaces = 0;
-#endif
 
 static constexpr const InternalExpressionInterface * k_internalExpressionInterfaces[] = {
   // Order has to be the same as TypeTreeBlock

@@ -64,23 +64,29 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
        */
       slopeMultiplicator = std::max(pixelWidth / (step * static_cast<double>(scrollSpeed)), slopeMultiplicator);
     }
-    // Cursor's default horizontal movement
-    t += dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
-    assert(std::round(static_cast<float>(t)/pixelWidth) != std::round(static_cast<float>(tCursorPosition)/pixelWidth));
-    /* assert that it moved at least of 1 pixel.
-     * round(t/pxWidth) is used by CurveView to compute the cursor's position.
-     */
 
-    // Use a pixel width as a margin, ensuring t mostly stays at the same pixel
-    if (std::fabs(static_cast<float>(tCursorPosition)) >= pixelWidth && ((dir < 0) != (tCursorPosition < 0)) && std::fabs(static_cast<float>(t)) < pixelWidth) {
-      // Round t to 0 if it is going into that direction, and is close enough
-      t = 0.0;
+    float tStep = dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
+    constexpr float snapFactor = 1.5f;
+    Coordinate2D<double> nextPointOfInterest = App::app()->graphController()->pointsOfInterest()->firstPointInDirection(t, t + snapFactor * tStep).xy();
+    if (std::isfinite(nextPointOfInterest.x1())) {
+      /* Snap to a point of interest. */
+      t = nextPointOfInterest.x1();
     } else {
-      // Round t to a simpler value, displayed at the same index
-      double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(pixelWidth));
-      t = magnitude * std::round(t / magnitude);
-      // Also round t so that f(x) matches f evaluated at displayed x
-      t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, context, Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
+      t += tStep;
+      assert(std::round(static_cast<float>(t)/pixelWidth) != std::round(static_cast<float>(tCursorPosition)/pixelWidth));
+      /* assert that it moved at least of 1 pixel.
+       * round(t/pxWidth) is used by CurveView to compute the cursor's position. */
+      if (std::fabs(static_cast<float>(tCursorPosition)) >= pixelWidth && ((dir < 0) != (tCursorPosition < 0)) && std::fabs(static_cast<float>(t)) < pixelWidth) {
+        // Use a pixel width as a margin, ensuring t mostly stays at the same pixel
+        // Round t to 0 if it is going into that direction, and is close enough
+        t = 0.0;
+      } else {
+        // Round t to a simpler value, displayed at the same index
+        double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(pixelWidth));
+        t = magnitude * std::round(t / magnitude);
+        // Also round t so that f(x) matches f evaluated at displayed x
+        t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, context, Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
+      }
     }
   } else {
     /* If function is not along X or Y, the cursor speed along t should not

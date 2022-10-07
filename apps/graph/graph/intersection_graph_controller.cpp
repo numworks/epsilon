@@ -47,7 +47,7 @@ void IntersectionGraphController::reloadBannerView() {
 }
 
 Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context) {
-  PointOfInterest p = App::app()->graphController()->pointsOfInterest()->firstPointInDirection(specialInterest(), start, max);
+  PointOfInterest p = App::app()->graphController()->pointsOfInterest()->firstPointInDirection(start, max, specialInterest());
   if (!p.isUninitialized()) {
     assert(sizeof(p.data()) == sizeof(Ion::Storage::Record));
     uint32_t data = p.data();

@@ -71,21 +71,21 @@ PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
   return static_cast<PointOfInterest &>(h);
 }
 
-PointOfInterest PointsOfInterestList::firstPointInDirection(Solver<double>::Interest interest, double start, double end) const {
+PointOfInterest PointsOfInterestList::firstPointInDirection(double start, double end, Solver<double>::Interest interest) const {
   assert(start != end);
   PointOfInterest previous(nullptr);
   for (const PointOfInterest & p : filter(interest)) {
     double x = p.x();
     if (x >= start) {
       if (start > end) {
-        return previous;
+        break;
       } else if (x > start) {
-        return p;
+        return x < end ? p : PointOfInterest(nullptr);
       }
     }
     previous = p;
   }
-  return PointOfInterest(nullptr);
+  return (previous.isUninitialized() || previous.x() > end) ? previous : PointOfInterest(nullptr);
 }
 
 void PointsOfInterestList::stripOutOfBounds() {

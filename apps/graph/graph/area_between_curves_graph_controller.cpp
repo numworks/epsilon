@@ -48,6 +48,17 @@ void AreaBetweenCurvesGraphController::makeCursorVisible() {
   makeDotVisible(position, yG, true);
 }
 
+double AreaBetweenCurvesGraphController::cursorNextStep(double position, int direction) {
+  double nextX = IntegralGraphController::cursorNextStep(position, direction);
+  constexpr double snapFactor = 1.5;
+  double nextSnap = position + snapFactor * (nextX - position);
+  Coordinate2D<double> nextIntersection = App::app()->graphController()->pointsOfInterest()->firstPointInDirection(position, nextSnap, Solver<double>::Interest::Intersection).xy();
+  if (std::isfinite(nextIntersection.x1())) {
+    return nextIntersection.x1();
+  }
+  return nextX;
+}
+
 Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
   constexpr size_t bufferSize = Escher::BufferTextView::k_maxNumberOfChar;
   char buffer[bufferSize];

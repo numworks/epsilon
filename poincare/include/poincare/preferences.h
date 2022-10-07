@@ -96,9 +96,14 @@ public:
 
   Preferences();
   static Preferences * sharedPreferences();
+
   static Preferences SharedPreferencesClone();
   static Preferences UpdatedSharedPreferencesWithComplexFormatAndAngleUnit(ComplexFormat complexFormat, AngleUnit angleUnit);
   static Preferences UpdatedSharedPreferencesWithExpressionInput(Expression e, Context * context);
+
+  static ComplexFormat UpdatedComplexFormatWithExpressionInput(ComplexFormat complexFormat, const Expression & e, Context * context);
+  static AngleUnit UpdatedAngleUnitWithExpressionInput(AngleUnit angleUnit, const Expression & exp, Context * context);
+
   AngleUnit angleUnit() const { return m_angleUnit; }
   void setAngleUnit(AngleUnit angleUnit) { m_angleUnit = angleUnit; }
   PrintFloatMode displayMode() const { return m_displayMode; }

@@ -567,13 +567,6 @@ void Expression::SetEncounteredComplex(bool encounterComplex) {
   sApproximationEncounteredComplex = encounterComplex;
 }
 
-Preferences::ComplexFormat Expression::UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat complexFormat, const Expression & exp, Context * context) {
-  if (complexFormat == Preferences::ComplexFormat::Real && exp.hasComplexI(context)) {
-    return Preferences::ComplexFormat::Cartesian;
-  }
-  return complexFormat;
-}
-
 bool Expression::hasComplexI(Context * context, ExpressionNode::SymbolicComputation replaceSymbols) const {
   return !isUninitialized() && recursivelyMatches(
       [](const Expression e, Context * context) {
@@ -581,50 +574,6 @@ bool Expression::hasComplexI(Context * context, ExpressionNode::SymbolicComputat
                && static_cast<const Constant &>(e).isConstant("i");
       },
       context, replaceSymbols);
-}
-
-Preferences::AngleUnit Expression::UpdatedAngleUnitWithExpressionInput(Preferences::AngleUnit angleUnit, const Expression & exp, Context * context) {
-  struct AngleInformations {
-    bool hasTrigonometry;
-    bool hasRadians;
-    bool hasDegrees;
-    bool hasGradians;
-  };
-  AngleInformations angleInformations = {};
-  exp.recursivelyMatches(
-    [](const Expression e, Context * context, void * data) {
-      AngleInformations * angleInformations = static_cast<AngleInformations*>(data);
-      angleInformations->hasTrigonometry = angleInformations->hasTrigonometry || e.isOfType({
-          ExpressionNode::Type::Sine, ExpressionNode::Type::Cosine, ExpressionNode::Type::Tangent,
-          ExpressionNode::Type::Secant, ExpressionNode::Type::Cosecant, ExpressionNode::Type::Cotangent
-        });
-      if (e.type() != ExpressionNode::Type::Unit) {
-        return TrinaryBoolean::Unknown;
-      }
-      const Unit::Representative * representative = static_cast<const Unit &>(e).representative();
-      angleInformations->hasRadians = angleInformations->hasRadians || representative == &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
-      angleInformations->hasGradians = angleInformations->hasGradians || representative == &Unit::k_angleRepresentatives[Unit::k_gradianRepresentativeIndex];
-      angleInformations->hasDegrees =
-        angleInformations->hasDegrees
-        || representative == &Unit::k_angleRepresentatives[Unit::k_degreeRepresentativeIndex]
-        || representative == &Unit::k_angleRepresentatives[Unit::k_arcMinuteRepresentativeIndex]
-        || representative == &Unit::k_angleRepresentatives[Unit::k_arcSecondRepresentativeIndex];
-      return TrinaryBoolean::Unknown;
-    },
-    context, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, static_cast<void*>(&angleInformations));
-  if (angleInformations.hasTrigonometry) {
-    return angleUnit;
-  }
-  if (angleInformations.hasDegrees && !angleInformations.hasGradians && !angleInformations.hasRadians) {
-    return Preferences::AngleUnit::Degree;
-  }
-  if (!angleInformations.hasDegrees && angleInformations.hasGradians && !angleInformations.hasRadians) {
-    return Preferences::AngleUnit::Gradian;
-  }
-  if (!angleInformations.hasDegrees && !angleInformations.hasGradians && angleInformations.hasRadians) {
-    return Preferences::AngleUnit::Radian;
-  }
-  return angleUnit;
 }
 
 bool Expression::isReal(Context * context, bool canContainMatrices) const {
@@ -772,8 +721,8 @@ Expression Expression::ParseAndSimplify(const char * text, Context * context, Pr
   if (exp.isUninitialized()) {
     return Undefined::Builder();
   }
-  complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
-  angleUnit = UpdatedAngleUnitWithExpressionInput(angleUnit, exp, context);
+  complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
+  angleUnit = Preferences::UpdatedAngleUnitWithExpressionInput(angleUnit, exp, context);
   exp = exp.cloneAndSimplify(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion));
   assert(!exp.isUninitialized());
   return exp;
@@ -782,8 +731,8 @@ Expression Expression::ParseAndSimplify(const char * text, Context * context, Pr
 void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
   assert(simplifiedExpression);
   Expression exp = Parse(text, context, false);
-  complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
-  angleUnit = UpdatedAngleUnitWithExpressionInput(angleUnit, exp, context);
+  complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
+  angleUnit = Preferences::UpdatedAngleUnitWithExpressionInput(angleUnit, exp, context);
   if (exp.isUninitialized()) {
     *simplifiedExpression = Undefined::Builder();
     *approximateExpression = Undefined::Builder();
@@ -1112,8 +1061,8 @@ U Expression::approximateToScalar(Context * context, Preferences::ComplexFormat 
 template<typename U>
 U Expression::ParseAndSimplifyAndApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) {
   Expression exp = ParseAndSimplify(text, context, complexFormat, angleUnit, unitFormat, symbolicComputation);
-  complexFormat = UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
-  angleUnit = UpdatedAngleUnitWithExpressionInput(angleUnit, exp, context);
+  complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
+  angleUnit = Preferences::UpdatedAngleUnitWithExpressionInput(angleUnit, exp, context);
   assert(!exp.isUninitialized());
   return exp.approximateToScalar<U>(context, complexFormat, angleUnit);
 }

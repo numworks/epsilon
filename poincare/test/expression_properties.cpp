@@ -696,7 +696,7 @@ QUIZ_CASE(poincare_expression_continuous) {
 void assert_update_angle_unit(const char * expression, Preferences::AngleUnit initial, Preferences::AngleUnit updated) {
   Shared::GlobalContext context;
   Expression e = parse_expression(expression, &context, false);
-  quiz_assert_print_if_failure(Expression::UpdatedAngleUnitWithExpressionInput(initial, e, &context) == updated, expression);
+  quiz_assert_print_if_failure(Preferences::UpdatedAngleUnitWithExpressionInput(initial, e, &context) == updated, expression);
 }
 
 QUIZ_CASE(poincare_expression_update_angle_unit) {

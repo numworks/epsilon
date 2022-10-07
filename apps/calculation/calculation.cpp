@@ -233,7 +233,7 @@ Calculation::AdditionalInformationType Calculation::additionalInformationType() 
   /* Using the approximated output instead of the user input to guess the
    * complex format makes additional results more consistent when the user has
    * created complexes in Complex mode and then switched back to Real mode. */
-  Preferences::ComplexFormat complexFormat = Expression::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), a, nullptr);
+  Preferences::ComplexFormat complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), a, nullptr);
   bool isComplex = a.hasDefinedComplexApproximation(nullptr, complexFormat, preferences->angleUnit());
   /* Special case for Store:
    * Store nodes have to be at the root of the expression, which prevents

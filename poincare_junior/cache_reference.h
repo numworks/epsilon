@@ -46,6 +46,7 @@ public:
   typedef void (*InitializerFromString)(const char *);
   CacheReference(InitializerFromString initializer, const char * string);
 
+  // TODO: find a way not to build the tree in cache if it's just a copy from another tree pointed by data
   typedef void (*FunctionOnConstTree)(const Node tree, void * context);
   void send(FunctionOnConstTree functionOnTree, void * context) const;
 

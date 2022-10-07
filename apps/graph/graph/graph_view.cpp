@@ -23,6 +23,14 @@ void GraphView::reload(bool resetInterrupted, bool force) {
   return FunctionGraphView::reload(resetInterrupted, force);
 }
 
+void GraphView::setFocus(bool focus) {
+  if (focus != hasFocus()) {
+    /* Points of interest change visibility when the focus changes. */
+    markRectAsDirty(bounds());
+  }
+  FunctionGraphView::setFocus(focus);
+}
+
 int GraphView::numberOfDrawnRecords() const {
   return App::app()->functionStore()->numberOfActiveFunctions();
 }
@@ -120,7 +128,7 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
   bool hasTwoCurves = (f->numberOfSubCurves() == 2);
 
   // - Draw points of interest below the curve
-  if (m_selectedRecord == record) {
+  if (m_selectedRecord == record && hasFocus()) {
     PointsOfInterestList * pointsOfInterest = App::app()->graphController()->pointsOfInterest();
     for (const PointOfInterest & p : pointsOfInterest->filter(m_interest)) {
       Coordinate2D<float> xy = axis == Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());

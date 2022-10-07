@@ -44,12 +44,12 @@ public:
   virtual void resetInterruption() {}
   virtual Escher::View * bannerView() const = 0;
   virtual CursorView * cursorView() const = 0;
-  void setCursorView(CursorView * cursorView);
+  virtual void setFocus(bool f);
 
   CurveViewRange * range() const { return m_range; }
   void setRange(CurveViewRange * range) { m_range = range; }
+  void setCursorView(CursorView * cursorView);
   bool hasFocus() const { return m_focus; }
-  void setFocus(bool f);
   float rangeMin(Axis axis) const { return axis == Axis::Horizontal ? m_range->xMin() : m_range->yMin(); }
   float rangeMax(Axis axis) const { return axis == Axis::Horizontal ? m_range->xMax() : m_range->yMax(); }
   float graphWidth() const { return m_frame.width() - 1; }

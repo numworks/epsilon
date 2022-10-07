@@ -20,6 +20,7 @@ public:
   int numberOfDrawnRecords() const override;
   void drawRecord(int i, KDContext *, KDRect) const override;
   void tidyModel(int i) const override;
+  void setFocus(bool focus) override;
 
   void drawTangent(bool tangent) { m_tangent = tangent; }
   void setInterest(Poincare::Solver<double>::Interest interest) { m_interest = interest; }

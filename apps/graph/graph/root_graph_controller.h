@@ -8,6 +8,7 @@ namespace Graph {
 class RootGraphController : public CalculationGraphController {
 public:
   RootGraphController(Escher::Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
+  void viewWillAppear() override;
   const char * title() override;
   TELEMETRY_ID("Root");
 private:

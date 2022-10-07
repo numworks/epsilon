@@ -17,6 +17,11 @@ const char * MinimumGraphController::title() {
   return I18n::translate(I18n::Message::Minimum);
 }
 
+void MinimumGraphController::viewWillAppear() {
+  CalculationGraphController::viewWillAppear();
+  m_graphView->setInterest(Solver<double>::Interest::LocalMinimum);
+}
+
 Coordinate2D<double> MinimumGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context) {
   Solver<double> solver = PoincareHelpers::Solver(start, max, ContinuousFunction::k_unknownName, context);
   return solver.nextMinimum(functionStore()->modelForRecord(m_record)->expressionReduced(context));
@@ -29,6 +34,11 @@ MaximumGraphController::MaximumGraphController(Responder * parentResponder, Grap
 
 const char * MaximumGraphController::title() {
   return I18n::translate(I18n::Message::Maximum);
+}
+
+void MaximumGraphController::viewWillAppear() {
+  CalculationGraphController::viewWillAppear();
+  m_graphView->setInterest(Solver<double>::Interest::LocalMaximum);
 }
 
 Coordinate2D<double> MaximumGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context) {

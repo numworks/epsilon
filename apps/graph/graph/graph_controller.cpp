@@ -30,6 +30,7 @@ I18n::Message GraphController::emptyMessage() {
 void GraphController::viewWillAppear() {
   m_view.drawTangent(false);
   m_cursorView.resetMemoization();
+  m_view.setInterest(Solver<double>::Interest::None);
   m_view.setCursorView(&m_cursorView);
   FunctionGraphController::viewWillAppear();
   selectFunctionWithCursor(indexFunctionSelectedByCursor(), true);

@@ -36,6 +36,12 @@ void GraphController::viewWillAppear() {
   selectFunctionWithCursor(indexFunctionSelectedByCursor(), true);
 }
 
+void GraphController::didBecomeFirstResponder() {
+  FunctionGraphController::didBecomeFirstResponder();
+  m_view.selectRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
+  refreshPointsOfInterest();
+}
+
 bool GraphController::defaultRangeIsNormalized() const {
   return functionStore()->displaysFunctionsToNormalize();
 }

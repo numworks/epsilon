@@ -21,6 +21,7 @@ public:
 
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
+  void didBecomeFirstResponder() override;
   bool canShrinkWhenNormalizing() const override { return true; }
 
   bool displayDerivativeInBanner() const;

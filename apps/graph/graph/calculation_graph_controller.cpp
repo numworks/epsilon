@@ -59,6 +59,7 @@ void CalculationGraphController::viewWillAppear() {
     reloadBannerView();
     m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   }
+  m_graphView->setInterest(specialInterest());
   m_graphView->reload();
 }
 
@@ -75,6 +76,10 @@ Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAb
   double max = direction > 0 ? m_graphRange->xMax() : m_graphRange->xMin();
   functionStore()->modelForRecord(m_record)->trimResolutionInterval(&start, &max);
   return computeNewPointOfInterest(start, max, textFieldDelegateApp()->localContext());
+}
+
+Poincare::Coordinate2D<double> CalculationGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context) {
+  return App::app()->graphController()->pointsOfInterest()->firstPointInDirection(specialInterest(), start, max).xy();
 }
 
 ContinuousFunctionStore * CalculationGraphController::functionStore() const {

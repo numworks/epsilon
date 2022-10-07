@@ -22,7 +22,7 @@ public:
   bool needFreeBlocks(int numberOfBlocks);
   bool reset();
 
-  int execute(ActionWithContext action, void * subAction, void * data);
+  int execute(ActionWithContext action, void * subAction, const void * data);
 
   constexpr static int k_maxNumberOfBlocks = 512;
   constexpr static int k_maxNumberOfCachedTrees = 32;

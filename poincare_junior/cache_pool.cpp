@@ -102,7 +102,7 @@ bool CachePool::reset() {
   return true;
 }
 
-int CachePool::execute(ActionWithContext action, void * subAction, void * data) {
+int CachePool::execute(ActionWithContext action, void * subAction, const void * data) {
   ExceptionCheckpoint checkpoint;
 start_execute:
   if (ExceptionRun(checkpoint)) {

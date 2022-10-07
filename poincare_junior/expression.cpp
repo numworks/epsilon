@@ -6,7 +6,7 @@ namespace Poincare {
 // TODO dummy parse
 Expression Expression::Parse(const char * textInput) {
   // textInput == (1-2)/3/4
-  return Expression([]{
+  return Expression([](const char * text){
       DivisionInterface::PushNode();
       DivisionInterface::PushNode();
       SubtractionInterface::PushNode();
@@ -14,7 +14,7 @@ Expression Expression::Parse(const char * textInput) {
       IntegerInterface::PushNode(2);
       IntegerInterface::PushNode(3);
       IntegerInterface::PushNode(4);
-    });
+    }, textInput);
 }
 
 Expression Expression::CreateBasicReduction(void * expressionAddress) {

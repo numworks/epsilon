@@ -2,6 +2,7 @@ PLATFORM ?= simulator
 DEBUG ?= 1
 DEVELOPMENT ?= 1
 ARCH = arm64
+ASSERTIONS = 1
 
 include build/defaults.mak
 include build/platform.$(PLATFORM).mak
@@ -34,6 +35,11 @@ poincare_junior_src += $(addprefix poincare_junior/,\
   pool.o \
   utils.o \
 )
+
+poincare_junior_src += ion/src/simulator/shared/crc32.o
+poincare_junior_src += ion/src/shared/crc32_eat_byte.o
+
+SFLAGS += -DASSERTIONS=$(ASSERTIONS) -Iion/include/ -Ikandinsky/include
 
 junior.elf: $(poincare_junior_src)
 	$(LD) $^ $(LDFLAGS) -o $@

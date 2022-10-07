@@ -7,6 +7,7 @@ void testOverflowCacheIdentifiers();
 void testCalculation();
 void testGraph();
 void playWithConstexprNodes();
+void testRunTimeCrashIllFormedExpression();
 
 typedef void (*Test)();
 
@@ -30,6 +31,7 @@ int main() {
   test(testCalculation, "TEST DUMMY CALCULATION");
   test(testGraph, "TEST DUMMY GRAPH");
   test(playWithConstexprNodes, "TEST CONSTEXPR NODES");
+  test(testRunTimeCrashIllFormedExpression, "TEST ILL-FORMED EXPRESSIONS");
 }
 
 #if 0

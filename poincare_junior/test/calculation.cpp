@@ -36,3 +36,18 @@ void testCalculation() {
   calculation.output().log();
   print();
 }
+
+// Check SharedPointer
+
+Expression expressionViolingLifetimeOfData() {
+  char input[20] = "1+2";
+  Expression e = Expression::Parse(input);
+  // Corrupt the data source
+  input[0] = 'a';
+  return e;
+}
+
+void testRunTimeCrashIllFormedExpression() {
+  Expression e = expressionViolingLifetimeOfData();
+  e.log();
+}

@@ -30,12 +30,8 @@ int CosecantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 }
 
 Expression CosecantNode::shallowReduce(const ReductionContext& reductionContext) {
-  return Cosecant(this).shallowReduce(reductionContext);
+  Cosecant e = Cosecant(this);
+  return Trigonometry::shallowReduceAdvancedFunction(e, reductionContext);
 }
-
-Expression Cosecant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  return Trigonometry::shallowReduceAdvancedFunction(*this, reductionContext);
-}
-
 
 }

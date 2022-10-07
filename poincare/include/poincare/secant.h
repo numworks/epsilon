@@ -44,7 +44,6 @@ private:
 class Secant final : public ExpressionOneChild<Secant, SecantNode> {
 public:
   using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 
 }

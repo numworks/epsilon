@@ -32,12 +32,8 @@ int CotangentNode::serialize(char * buffer, int bufferSize, Preferences::PrintFl
 }
 
 Expression CotangentNode::shallowReduce(const ReductionContext& reductionContext) {
-  return Cotangent(this).shallowReduce(reductionContext);
+  Cotangent e = Cotangent(this);
+  return Trigonometry::shallowReduceAdvancedFunction(e, reductionContext);
 }
-
-Expression Cotangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  return Trigonometry::shallowReduceAdvancedFunction(*this, reductionContext);
-}
-
 
 }

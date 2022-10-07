@@ -1,5 +1,6 @@
 #include "intersection_graph_controller.h"
-#include "../../shared/poincare_helpers.h"
+#include "../app.h"
+#include <apps/shared/poincare_helpers.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
@@ -43,6 +44,16 @@ void IntersectionGraphController::reloadBannerView() {
     m_cursor->y(), Preferences::sharedPreferences()->displayMode(), numberOfSignificantDigits());
   bannerView()->ordinateView()->setText(buffer);
   bannerView()->reload();
+}
+
+Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context) {
+  PointOfInterest p = App::app()->graphController()->pointsOfInterest()->firstPointInDirection(specialInterest(), start, max);
+  if (!p.isUninitialized()) {
+    assert(sizeof(p.data()) == sizeof(Ion::Storage::Record));
+    uint32_t data = p.data();
+    m_intersectedRecord = *reinterpret_cast<Ion::Storage::Record *>(&data);
+  }
+  return p.xy();
 }
 
 }

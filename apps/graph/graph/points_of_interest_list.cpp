@@ -118,6 +118,10 @@ void PointsOfInterestList::computeBetween(float start, float end, float * dirtyS
     }
   }
 
+  if (!f->isIntersectable()) {
+    return;
+  }
+
   int n = store->numberOfActiveFunctions();
   for (int i = 0; i < n; i++) {
     Ion::Storage::Record record = store->activeRecordAtIndex(i);
@@ -125,24 +129,28 @@ void PointsOfInterestList::computeBetween(float start, float end, float * dirtyS
       continue;
     }
     ExpiringPointer<ContinuousFunction> g = store->modelForRecord(record);
+    if (!g->isIntersectable()) {
+      continue;
+    }
     Expression e2 = g->expressionReduced(context);
     Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);
     Coordinate2D<double> intersection = solver.nextIntersection(e, e2);
     while (std::isfinite(intersection.x1())) {
-      append(intersection.x1(), intersection.x2(), Solver<double>::Interest::Intersection, dirtyStart, dirtyEnd);
+      assert(sizeof(record) == sizeof(uint32_t));
+      append(intersection.x1(), intersection.x2(), Solver<double>::Interest::Intersection, dirtyStart, dirtyEnd, *reinterpret_cast<uint32_t *>(&record));
       intersection = solver.nextIntersection(e, e2);
     }
   }
 }
 
-void PointsOfInterestList::append(double x, double y, Solver<double>::Interest interest, float * dirtyStart, float * dirtyEnd) {
+void PointsOfInterestList::append(double x, double y, Solver<double>::Interest interest, float * dirtyStart, float * dirtyEnd, uint32_t data) {
   assert(!m_list.isUninitialized());
   int i = 0;
   int n = m_list.numberOfChildren();
   while (i < n && pointAtIndex(i).x() < x) {
     i++;
   }
-  m_list.addChildAtIndexInPlace(PointOfInterest::Builder(x, y, interest), i, n);
+  m_list.addChildAtIndexInPlace(PointOfInterest::Builder(x, y, interest, data), i, n);
   *dirtyStart = std::min(*dirtyStart, static_cast<float>(x));
   *dirtyEnd = std::max(*dirtyEnd, static_cast<float>(x));
 }

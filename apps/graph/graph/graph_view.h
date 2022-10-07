@@ -22,6 +22,7 @@ public:
   void tidyModel(int i) const override;
 
   void drawTangent(bool tangent) { m_tangent = tangent; }
+  void setInterest(Poincare::Solver<double>::Interest interest) { m_interest = interest; }
 
 private:
   constexpr static int k_externRectMargin = 2;
@@ -33,6 +34,7 @@ private:
   void drawParametric(KDContext * ctx, KDRect rect, Shared::ContinuousFunction * f, float tMin, float tMax, float tStep, DiscontinuityTest discontinuity) const;
 
   mutable int m_areaIndex;
+  Poincare::Solver<double>::Interest m_interest;
   bool m_tangent;
 };
 

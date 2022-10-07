@@ -21,6 +21,11 @@ const char * AreaBetweenCurvesGraphController::title() {
   return I18n::translate(I18n::Message::AreaBetweenCurves);
 }
 
+void AreaBetweenCurvesGraphController::viewWillAppear() {
+  IntegralGraphController::viewWillAppear();
+  static_cast<GraphView *>(m_graphView)->setInterest(Solver<double>::Interest::Intersection);
+}
+
 void AreaBetweenCurvesGraphController::viewDidDisappear() {
   m_graphView->selectSecondRecord(nullptr);
   IntegralGraphController::viewDidDisappear();

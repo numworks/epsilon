@@ -18,6 +18,11 @@ const char * IntersectionGraphController::title() {
   return I18n::translate(I18n::Message::Intersection);
 }
 
+void IntersectionGraphController::viewWillAppear() {
+  CalculationGraphController::viewWillAppear();
+  m_graphView->setInterest(Solver<double>::Interest::Intersection);
+}
+
 void IntersectionGraphController::reloadBannerView() {
   assert(!m_intersectedRecord.isNull());
   CalculationGraphController::reloadBannerView();

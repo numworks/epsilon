@@ -9,6 +9,7 @@ class IntersectionGraphController : public CalculationGraphController {
 public:
   IntersectionGraphController(Escher::Responder * parentResponder, GraphView * graphView, BannerView * bannerView, Shared::InteractiveCurveViewRange * curveViewRange, Shared::CurveViewCursor * cursor);
   const char * title() override;
+  void viewWillAppear() override;
 private:
   void reloadBannerView() override;
   Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context) override;

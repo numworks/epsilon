@@ -73,7 +73,7 @@ bool GraphController::displayDerivativeInBanner() const {
  void GraphController::reloadBannerView() {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   bool displayDerivative = displayDerivativeInBanner();
-  m_bannerView.setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews + displayDerivative);
+  m_bannerView.setDisplayParameters(true, displayDerivative, false);
   FunctionGraphController::reloadBannerView();
   if (!displayDerivative) {
     return;

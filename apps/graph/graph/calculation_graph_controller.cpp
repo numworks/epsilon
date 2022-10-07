@@ -55,7 +55,7 @@ void CalculationGraphController::viewWillAppear() {
     m_isActive = true;
     assert(App::app()->functionStore()->modelForRecord(m_record)->properties().isCartesian());
     m_cursor->moveTo(pointOfInterest.x1(), pointOfInterest.x1(), pointOfInterest.x2());
-    m_bannerView->setNumberOfSubviews(Shared::XYBannerView::k_numberOfSubviews);
+    m_bannerView->setDisplayParameters(false, false, false);
     reloadBannerView();
     m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   }

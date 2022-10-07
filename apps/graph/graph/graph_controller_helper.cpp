@@ -19,6 +19,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   double tMin = function->tMin();
   double tMax = function->tMax();
   int functionsCount = -1;
+  bannerView()->setInterestMessage(I18n::Message::Default);
+
   if (((direction > 0 && std::abs(t-tMax) < DBL_EPSILON)
         || (direction < 0 && std::abs(t-tMin) < DBL_EPSILON))
       && !App::app()->functionStore()->displaysNonCartesianFunctions(&functionsCount))
@@ -67,10 +69,28 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
 
     float tStep = dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
     constexpr float snapFactor = 1.5f;
-    Coordinate2D<double> nextPointOfInterest = App::app()->graphController()->pointsOfInterest()->firstPointInDirection(t, t + snapFactor * tStep).xy();
-    if (std::isfinite(nextPointOfInterest.x1())) {
-      /* Snap to a point of interest. */
-      t = nextPointOfInterest.x1();
+    PointOfInterest nextPointOfInterest = App::app()->graphController()->pointsOfInterest()->firstPointInDirection(t, t + snapFactor * tStep);
+    Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
+    if (std::isfinite(nextPointOfInterestXY.x1())) {
+      /* Snap to a point of interest, and display its type in the banner. */
+      t = nextPointOfInterestXY.x1();
+      I18n::Message interestMessage;
+      switch (nextPointOfInterest.interest()) {
+      case Solver<double>::Interest::Root:
+        interestMessage = I18n::Message::Zeros;
+        break;
+      case Solver<double>::Interest::LocalMinimum:
+        interestMessage = I18n::Message::Minimum;
+        break;
+      case Solver<double>::Interest::LocalMaximum:
+        interestMessage = I18n::Message::Maximum;
+        break;
+      default:
+      assert(nextPointOfInterest.interest() == Solver<double>::Interest::Intersection);
+        interestMessage = I18n::Message::Intersection;
+        break;
+      }
+      bannerView()->setInterestMessage(interestMessage);
     } else {
       t += tStep;
       assert(std::round(static_cast<float>(t)/pixelWidth) != std::round(static_cast<float>(tCursorPosition)/pixelWidth));

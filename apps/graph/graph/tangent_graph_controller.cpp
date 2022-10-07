@@ -27,7 +27,7 @@ void TangentGraphController::viewWillAppear() {
   Shared::SimpleInteractiveCurveViewController::viewWillAppear();
   m_graphView->drawTangent(true);
   m_graphView->setFocus(true);
-  m_bannerView->setNumberOfSubviews(BannerView::k_numberOfSubviews);
+  m_bannerView->setDisplayParameters(false, true, true);
   reloadBannerView();
   m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   m_graphView->reload();

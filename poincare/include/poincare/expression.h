@@ -241,6 +241,9 @@ public:
   /* Units */
   Expression removeUnit(Expression * unit) { return node()->removeUnit(unit); }
   bool hasUnit() const;
+  // True if has only rad or ° as unit.
+  bool hasPureAngleUnit(bool expressionIsAlreadyReduced) const;
+  template<typename U> Expression approximateReducedExpressionContainingPureAngleUnit(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
 
   /* Complex */
   static bool EncounteredComplex();

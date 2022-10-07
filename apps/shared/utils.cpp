@@ -41,8 +41,9 @@ bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expres
           ExpressionNode::Type::Derivative,
           ExpressionNode::Type::Sequence,
           ExpressionNode::Type::DistributionDispatcher,
-        }) || (e.type() == ExpressionNode::Type::Unit && static_cast<const Unit&>(e).representative()->dimensionVector() != Unit::AngleRepresentative::Default().dimensionVector());
-      }, context);
+        });
+      }, context)
+    || (exactOutput.hasUnit() && !exactOutput.hasPureAngleUnit(false));
 }
 
 bool ShouldOnlyDisplayExactOutput(Poincare::Expression input) {

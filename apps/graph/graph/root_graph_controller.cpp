@@ -1,5 +1,4 @@
 #include "root_graph_controller.h"
-#include "../app.h"
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/serialization_helper.h>
 

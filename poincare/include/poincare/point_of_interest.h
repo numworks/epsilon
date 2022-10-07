@@ -10,7 +10,7 @@ class PointOfInterest;
 class PointOfInterestNode : public TreeNode {
   friend class PointOfInterest;
 public:
-  PointOfInterestNode(double x, double y, Solver<double>::Interest interest) : m_x(x), m_y(y), m_interest(interest) {}
+  PointOfInterestNode(double x, double y, Solver<double>::Interest interest, uint32_t data) : m_x(x), m_y(y), m_data(data), m_interest(interest) {}
 
   // TreeNode
   size_t size() const override { return sizeof(PointOfInterestNode); }
@@ -23,12 +23,13 @@ public:
 private:
   double m_x;
   double m_y;
+  uint32_t m_data;
   Solver<double>::Interest m_interest;
 };
 
 class PointOfInterest : public TreeHandle {
 public:
-  static PointOfInterest Builder(double x, double y, Solver<double>::Interest interest);
+  static PointOfInterest Builder(double x, double y, Solver<double>::Interest interest, uint32_t data);
 
   PointOfInterest(PointOfInterestNode * node) : TreeHandle(node) {}
 
@@ -36,6 +37,7 @@ public:
   double y() const { return node()->m_y; }
   Solver<double>::Interest interest() const { return node()->m_interest; }
   Coordinate2D<double> xy() const { return isUninitialized() ? Coordinate2D<double>() : Coordinate2D<double>(x(), y()); }
+  uint32_t data() const { return node()->m_data; }
 
 private:
   PointOfInterestNode * node() const { return static_cast<PointOfInterestNode *>(TreeHandle::node()); }

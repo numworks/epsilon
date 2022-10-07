@@ -12,8 +12,7 @@ public:
 private:
   void reloadBannerView() override;
   Poincare::Solver<double>::Interest specialInterest() const override { return Poincare::Solver<double>::Interest::Intersection; }
-  /* FIXME The default implementation for computeNewPointOfInterest does not
-   * update m_intersectedRecord. */
+  Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context) override;
 
   Ion::Storage::Record m_intersectedRecord;
   // Prevent horizontal panning to preserve search interval

@@ -22,18 +22,46 @@ public:
   Ion::Storage::Record::ErrorStatus setExpressionContent(Ion::Storage::Record * record, const Poincare::Expression & newExpression);
 
   virtual void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) const;
+
+  Poincare::Preferences::ComplexFormat complexFormat(const Ion::Storage::Record * record, Poincare::Context * context) const;
+  Poincare::Preferences::AngleUnit angleUnit(const Ion::Storage::Record * record, Poincare::Context * context) const;
 protected:
   // Setters helper
   virtual Poincare::Expression buildExpressionFromText(const char * c, CodePoint symbol = 0, Poincare::Context * context = nullptr) const;
   static Poincare::Expression ReplaceSymbolWithUnknown(Poincare::Expression e, CodePoint symbol);
-  mutable Poincare::Expression m_expression;
-  mutable Poincare::Layout m_layout;
+
   bool isCircularlyDefined(const Ion::Storage::Record * record, Poincare::Context * context) const;
   virtual void updateNewDataWithExpression(Ion::Storage::Record * record, const Poincare::Expression & expressionToStore, void * expressionAddress, size_t expressionToStoreSize, size_t previousExpressionSize);
+
+  mutable Poincare::Expression m_expression;
+  mutable Poincare::Layout m_layout;
+
 private:
   virtual void * expressionAddress(const Ion::Storage::Record * record) const = 0;
   virtual size_t expressionSize(const Ion::Storage::Record * record) const = 0;
+
   mutable int8_t m_circular;
+
+  enum class MemoizedComplexFormat : int8_t {
+    NotMemoized = -1,
+    Complex = 0,
+    Any = 1,
+  };
+  enum class MemoizedAngleUnit : int8_t {
+    NotMemoized = -1,
+    Radian = 0,
+    Degree = 1,
+    Gradian = 2,
+    Any = 3
+  };
+  static_assert(static_cast<int>(MemoizedAngleUnit::Radian) == static_cast<int>(Poincare::Preferences::AngleUnit::Radian), "Angle unit in preferences and expression model don't match.");
+  static_assert(static_cast<int>(MemoizedAngleUnit::Degree) == static_cast<int>(Poincare::Preferences::AngleUnit::Degree), "Angle unit in preferences and expression model don't match.");
+  static_assert(static_cast<int>(MemoizedAngleUnit::Gradian) == static_cast<int>(Poincare::Preferences::AngleUnit::Gradian), "Angle unit in preferences and expression model don't match.");
+
+  /* Memoize complex format and angle unit to avoid recomputing them each time
+   * the model is approximated (when it's plotted for example). */
+  mutable MemoizedComplexFormat m_expressionComplexFormat;
+  mutable MemoizedAngleUnit m_expressionAngleUnit;
 };
 
 }

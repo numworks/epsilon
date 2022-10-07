@@ -19,7 +19,9 @@ using namespace Poincare;
 namespace Shared {
 
 ExpressionModel::ExpressionModel() :
-  m_circular(-1)
+  m_circular(-1),
+  m_expressionComplexFormat(MemoizedComplexFormat::NotMemoized),
+  m_expressionAngleUnit(MemoizedAngleUnit::NotMemoized)
 {
 }
 
@@ -50,6 +52,40 @@ bool ExpressionModel::isCircularlyDefined(const Storage::Record * record, Poinca
   return m_circular;
 }
 
+Preferences::ComplexFormat ExpressionModel::complexFormat(const Storage::Record * record, Context * context) const {
+  if (m_expressionComplexFormat == MemoizedComplexFormat::NotMemoized) {
+    Expression e = ExpressionModel::expressionClone(record);
+    if (e.isUninitialized()) {
+      m_expressionComplexFormat = MemoizedComplexFormat::Any;
+    } else {
+      Preferences::ComplexFormat expressionUpdatedComplexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(Preferences::ComplexFormat::Real, e, context);
+      m_expressionComplexFormat = expressionUpdatedComplexFormat == Preferences::k_defautComplexFormatIfNotReal ? MemoizedComplexFormat::Complex : MemoizedComplexFormat::Any;
+    }
+  }
+
+  assert(m_expressionComplexFormat != MemoizedComplexFormat::NotMemoized);
+  Preferences::ComplexFormat userComplexFormat = Preferences::sharedPreferences()->complexFormat();
+  if (m_expressionComplexFormat == MemoizedComplexFormat::Complex && userComplexFormat == Preferences::ComplexFormat::Real) {
+    return Preferences::k_defautComplexFormatIfNotReal;
+  }
+  return userComplexFormat;
+}
+
+Preferences::AngleUnit ExpressionModel::angleUnit(const Storage::Record * record, Context * context) const {
+  if (m_expressionAngleUnit == MemoizedAngleUnit::NotMemoized) {
+    Expression e = ExpressionModel::expressionClone(record);
+    if (e.isUninitialized()) {
+      m_expressionAngleUnit = MemoizedAngleUnit::Any;
+    } else {
+      bool forceUpdate;
+      Preferences::AngleUnit expressionUpdatedAngleUnit = Preferences::UpdatedAngleUnitWithExpressionInput(Preferences::AngleUnit::Degree, e, context, &forceUpdate);
+      m_expressionAngleUnit = forceUpdate ?  static_cast<MemoizedAngleUnit>(static_cast<int>(expressionUpdatedAngleUnit)) : MemoizedAngleUnit::Any;
+    }
+  }
+  assert(m_expressionAngleUnit != MemoizedAngleUnit::NotMemoized);
+  return m_expressionAngleUnit == MemoizedAngleUnit::Any ? Preferences::sharedPreferences()->angleUnit() : static_cast<Preferences::AngleUnit>(static_cast<int>(m_expressionAngleUnit));
+}
+
 Expression ExpressionModel::expressionReduced(const Storage::Record * record, Poincare::Context * context) const {
   /* TODO
    * By calling isCircularlyDefined and then Simplify, the expression tree is
@@ -78,7 +114,8 @@ Expression ExpressionModel::expressionReduced(const Storage::Record * record, Po
       /* 'Simplify' routine might need to call expressionReduced on the very
        * same function. So we need to keep a valid m_expression while executing
        * 'Simplify'. Thus, we use a temporary expression. */
-      PoincareHelpers::CloneAndSimplify(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+      Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(record, context), angleUnit(record, context));
+      PoincareHelpers::CloneAndSimplify(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation, PoincareHelpers::k_systemDefaultSymbolicComputation, PoincareHelpers::k_defaultUnitConversion, &preferences, false);
     }
   }
   return m_expression;
@@ -162,6 +199,8 @@ void ExpressionModel::tidyDownstreamPoolFrom(char * treePoolCursor) const {
     m_layout = Layout();
     m_expression = Expression();
     m_circular = -1;
+    m_expressionComplexFormat = MemoizedComplexFormat::NotMemoized;
+    m_expressionAngleUnit = MemoizedAngleUnit::NotMemoized;
   }
 }
 

@@ -66,7 +66,8 @@ void check_sum_of_sequence_between_bounds(double result, double start, double en
 
   Sequence * seq = addSequence(store, type, definition, condition1, condition2, sequenceContext);
 
-  double sum = PoincareHelpers::ApproximateToScalar<double>(seq->sumBetweenBounds(start, end, sequenceContext), sequenceContext);
+  Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(seq->complexFormat(sequenceContext), seq->angleUnit(sequenceContext));
+  double sum = PoincareHelpers::ApproximateToScalar<double>(seq->sumBetweenBounds(start, end, sequenceContext), sequenceContext, &preferences, false);
   assert_roughly_equal(sum, result);
 
   store->removeAll();

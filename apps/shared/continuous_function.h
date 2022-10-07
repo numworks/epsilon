@@ -264,11 +264,6 @@ private:
   // Units are not handled in the graph app. The default unit does not matters
   constexpr static Poincare::Preferences::UnitFormat k_defaultUnitFormat = Poincare::Preferences::UnitFormat::Metric;
 
-  /* Context */
-
-  static Poincare::Preferences::AngleUnit AngleUnit() { return Poincare::Preferences::sharedPreferences()->angleUnit(); }
-  static Poincare::Preferences::ComplexFormat ComplexFormat() { return Poincare::Preferences::sharedPreferences()->complexFormat(); }
-
   /* Range */
 
   // Return step computed from t range or NAN if isAlongXOrY() is true.

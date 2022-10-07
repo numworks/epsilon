@@ -48,13 +48,13 @@ Preferences Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(Comple
 }
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(ComplexFormat complexFormat, const Expression & exp, Context * context) {
-  if (complexFormat == ComplexFormat::Real && exp.hasComplexI(context)) {
-    return ComplexFormat::Cartesian;
+  if ((complexFormat == ComplexFormat::Real) && exp.hasComplexI(context)) {
+    return k_defautComplexFormatIfNotReal;
   }
   return complexFormat;
 }
 
-Preferences::AngleUnit Preferences::UpdatedAngleUnitWithExpressionInput(AngleUnit angleUnit, const Expression & exp, Context * context) {
+Preferences::AngleUnit Preferences::UpdatedAngleUnitWithExpressionInput(AngleUnit angleUnit, const Expression & exp, Context * context, bool * forceChange) {
   struct AngleInformations {
     bool hasTrigonometry;
     bool hasRadians;
@@ -82,17 +82,22 @@ Preferences::AngleUnit Preferences::UpdatedAngleUnitWithExpressionInput(AngleUni
         || representative == &Unit::k_angleRepresentatives[Unit::k_arcSecondRepresentativeIndex];
       return TrinaryBoolean::Unknown;
     },
-    context, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, static_cast<void*>(&angleInformations));
+    context,
+    ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, static_cast<void*>(&angleInformations));
+  if (forceChange) { *forceChange = false; }
   if (angleInformations.hasTrigonometry) {
     return angleUnit;
   }
   if (angleInformations.hasDegrees && !angleInformations.hasGradians && !angleInformations.hasRadians) {
+    if (forceChange) { *forceChange = true; }
     return Preferences::AngleUnit::Degree;
   }
   if (!angleInformations.hasDegrees && angleInformations.hasGradians && !angleInformations.hasRadians) {
+    if (forceChange) { *forceChange = true; }
     return Preferences::AngleUnit::Gradian;
   }
   if (!angleInformations.hasDegrees && !angleInformations.hasGradians && angleInformations.hasRadians) {
+    if (forceChange) { *forceChange = true; }
     return Preferences::AngleUnit::Radian;
   }
   return angleUnit;

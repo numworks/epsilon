@@ -88,7 +88,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
   assert(symbol.type() == ExpressionNode::Type::Function && symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
   Expression childSymbol = symbol.childAtIndex(0);
   finalExpression = finalExpression.replaceSymbolWithExpression(static_cast<const Symbol &>(childSymbol), Symbol::Builder(UCodePointUnknown));
-  if (!(childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_cartesianSymbol)) || childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_parametricSymbol)) || childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_polarSymbol)))) {
+  if (!(childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_cartesianSymbol)) || childSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_parametricSymbol)))) {
     // Unsupported symbol. Fall back to the default cartesain function symbol
     Expression symbolInX = symbol.clone();
     symbolInX.replaceChildAtIndexInPlace(0, Symbol::Builder(ContinuousFunction::k_cartesianSymbol));

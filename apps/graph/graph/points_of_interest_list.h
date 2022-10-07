@@ -16,7 +16,7 @@ public:
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   Shared::Range1D setBoundsAndCompute(float start, float end);
   Poincare::PointOfInterest pointAtIndex(int i) const;
-  Poincare::PointOfInterest firstPointInDirection(Poincare::Solver<double>::Interest interest, double start, double end) const;
+  Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None) const;
 
   /* The following classes and methods are used to iterate other a certain type
    * of points of interest. */

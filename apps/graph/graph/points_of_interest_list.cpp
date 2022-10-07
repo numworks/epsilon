@@ -71,6 +71,23 @@ PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
   return static_cast<PointOfInterest &>(h);
 }
 
+PointOfInterest PointsOfInterestList::firstPointInDirection(Solver<double>::Interest interest, double start, double end) const {
+  assert(start != end);
+  PointOfInterest previous(nullptr);
+  for (const PointOfInterest & p : filter(interest)) {
+    double x = p.x();
+    if (x >= start) {
+      if (start > end) {
+        return previous;
+      } else if (x > start) {
+        return p;
+      }
+    }
+    previous = p;
+  }
+  return PointOfInterest(nullptr);
+}
+
 void PointsOfInterestList::stripOutOfBounds() {
   assert(!m_list.isUninitialized());
 

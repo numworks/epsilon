@@ -29,7 +29,8 @@ protected:
 
   ContinuousFunctionStore * functionStore() const;
   Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(double start, int direction);
-  virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context) = 0;
+  virtual Poincare::Solver<double>::Interest specialInterest() const { return Poincare::Solver<double>::Interest::None; }
+  virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context);
 
   GraphView * m_graphView;
   BannerView * m_bannerView;

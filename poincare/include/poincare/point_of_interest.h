@@ -35,6 +35,7 @@ public:
   double x() const { return node()->m_x; }
   double y() const { return node()->m_y; }
   Solver<double>::Interest interest() const { return node()->m_interest; }
+  Coordinate2D<double> xy() const { return isUninitialized() ? Coordinate2D<double>() : Coordinate2D<double>(x(), y()); }
 
 private:
   PointOfInterestNode * node() const { return static_cast<PointOfInterestNode *>(TreeHandle::node()); }

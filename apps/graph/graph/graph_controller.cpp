@@ -188,10 +188,17 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
 }
 
 void GraphController::refreshPointsOfInterest() {
-  Range1D dirtyRange = m_pointsOfInterest.setBoundsAndCompute(m_graphRange->xMin(), m_graphRange->xMax());
-  if (dirtyRange.min() <= dirtyRange.max()) {
-    float dotRadius = (Dots::LargeDotDiameter * m_view.pixelWidth()) * 0.5f;
-    m_view.reloadBetweenBounds(dirtyRange.min() - dotRadius, dirtyRange.max() + dotRadius);
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
+  if (f->isAlongY()) {
+    m_pointsOfInterest.setBoundsAndCompute(m_graphRange->yMin(), m_graphRange->yMax());
+    m_view.reload();
+  } else {
+    Range1D dirtyRange = m_pointsOfInterest.setBoundsAndCompute(m_graphRange->xMin(), m_graphRange->xMax());
+    if (dirtyRange.min() <= dirtyRange.max()) {
+      float dotRadius = (Dots::LargeDotDiameter * m_view.pixelWidth()) * 0.5f;
+      m_view.reloadBetweenBounds(dirtyRange.min() - dotRadius, dirtyRange.max() + dotRadius);
+    }
   }
 }
 

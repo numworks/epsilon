@@ -199,10 +199,8 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
   if (m_selectedRecord == record) {
     PointsOfInterestList * pointsOfInterest = App::app()->graphController()->pointsOfInterest();
     for (const PointOfInterest & p : pointsOfInterest->filter(m_interest)) {
-      /* TODO This will draw a solid dot of half-tone color. What we really
-       * want is a half-transparent dot with full tone, so that it appears
-       * half-toned and see-through. */
-      drawDot(ctx, rect, Dots::Size::Large, Coordinate2D<float>(p.x(), p.y()), KDColor::Blend(f->color(), k_backgroundColor, 0x80));
+      Coordinate2D<float> xy = axis == Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
+      drawDot(ctx, rect, Dots::Size::Large, xy, KDColor::Blend(f->color(), k_backgroundColor, 0x80));
     }
   }
 }

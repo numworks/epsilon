@@ -37,6 +37,7 @@ public:
     Cartesian = 1,
     Polar = 2
   };
+  constexpr static ComplexFormat k_defautComplexFormatIfNotReal = ComplexFormat::Cartesian;
   enum class AngleUnit : uint8_t {
     Radian = 0,
     Degree = 1,
@@ -101,7 +102,7 @@ public:
   static Preferences ClonePreferencesWithNewComplexFormatAndAngleUnit(ComplexFormat complexFormat, AngleUnit angleUnit, Preferences * preferences = sharedPreferences());
 
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(ComplexFormat complexFormat, const Expression & e, Context * context);
-  static AngleUnit UpdatedAngleUnitWithExpressionInput(AngleUnit angleUnit, const Expression & exp, Context * context);
+  static AngleUnit UpdatedAngleUnitWithExpressionInput(AngleUnit angleUnit, const Expression & exp, Context * context, bool * forceChange = nullptr);
 
   AngleUnit angleUnit() const { return m_angleUnit; }
   void setAngleUnit(AngleUnit angleUnit) { m_angleUnit = angleUnit; }

@@ -29,6 +29,13 @@ public:
   virtual void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) const { model()->tidyDownstreamPoolFrom(treePoolCursor); }
   virtual Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) { return editableModel()->setContent(this, c, context, symbol()); }
   Ion::Storage::Record::ErrorStatus setExpressionContent(const Poincare::Expression & e) { return editableModel()->setExpressionContent(this, e); }
+
+  Poincare::Preferences::ComplexFormat complexFormat(Poincare::Context * context) const {
+    return model()->complexFormat(this, context);
+  }
+  Poincare::Preferences::AngleUnit angleUnit(Poincare::Context * context) const {
+    return model()->angleUnit(this, context);
+  }
 protected:
   ExpressionModel * editableModel() { return const_cast<ExpressionModel *>(model()); }
   virtual const ExpressionModel * model() const = 0;

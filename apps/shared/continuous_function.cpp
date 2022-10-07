@@ -234,8 +234,7 @@ bool ContinuousFunction::isNamed() const {
 
 bool ContinuousFunction::isDiscontinuousBetweenFloatValues(float x1, float x2, Poincare::Context * context) const {
   Expression equation = expressionReduced(context);
-  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
-  return equation.isDiscontinuousBetweenValuesForSymbol(k_unknownName, x1, x2, context, preferences->complexFormat(), preferences->angleUnit());
+  return equation.isDiscontinuousBetweenValuesForSymbol(k_unknownName, x1, x2, context, complexFormat(context), angleUnit(context));
 }
 
 void ContinuousFunction::getLineParameters(double * slope, double * intercept, Context * context) const {
@@ -245,7 +244,7 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   // Separate the two line coefficients for approximation.
   int d = equation.getPolynomialReducedCoefficients(
-      k_unknownName, coefficients, context, ComplexFormat(), AngleUnit(),
+      k_unknownName, coefficients, context, complexFormat(context), angleUnit(context),
       k_defaultUnitFormat,
       ExpressionNode::SymbolicComputation::
           ReplaceAllSymbolsWithDefinitionsOrUndefined);
@@ -256,11 +255,11 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
     *slope = NAN;
     *intercept = NAN;
   } else {
-    *intercept = coefficients[0].approximateToScalar<double>(context, ComplexFormat(), AngleUnit());
+    *intercept = coefficients[0].approximateToScalar<double>(context, complexFormat(context), angleUnit(context));
     if (d == 0) {
       *slope = 0.0;
     } else {
-      *slope = coefficients[1].approximateToScalar<double>(context, ComplexFormat(), AngleUnit());
+      *slope = coefficients[1].approximateToScalar<double>(context, complexFormat(context), angleUnit(context));
     }
   }
 }
@@ -322,8 +321,7 @@ void ContinuousFunction::updateModel(Context * context, bool wasAlongXorY) {
   if (wasAlongXorY != isAlongXOrY() || !canHaveCustomDomain()) {
     // The definition's domain must be reset.
     setTMin(!isAlongXOrY() ? 0.0 : -INFINITY);
-    setTMax(!isAlongXOrY() ? 2.0 * Trigonometry::PiInAngleUnit(AngleUnit())
-                        : INFINITY);
+    setTMax(!isAlongXOrY() ? 2.0 * Trigonometry::PiInAngleUnit(angleUnit(context)) : INFINITY);
   }
 }
 
@@ -354,7 +352,8 @@ double ContinuousFunction::approximateDerivative(double x, Context * context, in
   // Derivative is simplified once and for all
   Expression derivate = expressionDerivateReduced(context);
   assert(subCurveIndex == 0);
-  return PoincareHelpers::ApproximateWithValueForSymbol(derivate, k_unknownName, x, context);
+  Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(context), angleUnit(context));
+  return PoincareHelpers::ApproximateWithValueForSymbol(derivate, k_unknownName, x, context, &preferences, false);
 }
 
 void ContinuousFunction::setTMin(float tMin) {
@@ -581,7 +580,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Context * 
   if (plotType() != PlotType::Polar) {
     return x1x2;
   }
-  const T angle = x1x2.x1() * M_PI / Trigonometry::PiInAngleUnit(AngleUnit());
+  const T angle = x1x2.x1() * M_PI / Trigonometry::PiInAngleUnit(angleUnit(context));
   return Coordinate2D<T>(x1x2.x2() * std::cos(angle),
                          x1x2.x2() * std::sin(angle));
 }
@@ -593,6 +592,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context
   }
   Expression e = expressionReduced(context);
   PlotType type = plotType();
+  Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(context), angleUnit(context));
   if (type != PlotType::Parametric) {
     if (numberOfSubCurves() >= 2) {
       assert(e.numberOfChildren() > subCurveIndex);
@@ -602,9 +602,9 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context
     }
     if (isAlongY()) {
       // Invert x and y with vertical lines so it can be scrolled vertically
-      return Coordinate2D<T>(PoincareHelpers::ApproximateWithValueForSymbol(e, k_unknownName, t, context), t);
+      return Coordinate2D<T>(PoincareHelpers::ApproximateWithValueForSymbol(e, k_unknownName, t, context, &preferences, false), t);
     }
-    return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(e, k_unknownName, t, context));
+    return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol(e, k_unknownName, t, context, &preferences, false));
   }
   if (e.type() == ExpressionNode::Type::Dependency) {
     e = e.childAtIndex(0);
@@ -617,8 +617,8 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context
   assert(static_cast<Matrix&>(e).numberOfRows() == 2);
   assert(static_cast<Matrix&>(e).numberOfColumns() == 1);
   return Coordinate2D<T>(
-      PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), k_unknownName, t, context),
-      PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), k_unknownName, t, context));
+      PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(0), k_unknownName, t, context, &preferences, false),
+      PoincareHelpers::ApproximateWithValueForSymbol(e.childAtIndex(1), k_unknownName, t, context, &preferences, false));
 }
 
 /* ContinuousFunction::Model */
@@ -628,6 +628,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
   if (m_expression.isUninitialized()) {
     // Retrieve the expression equation's expression.
     m_expression = expressionReducedForAnalysis(record, context);
+    Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(record, context), angleUnit(record, context));
     m_numberOfSubCurves = 1;
     if (m_plotType != PlotType::Polar && (record->fullName() == nullptr || record->fullName()[0] == k_unnamedRecordFirstChar)) {
       /* Function isn't named, m_expression currently is an expression in y or x
@@ -649,7 +650,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
       Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
       int degree = m_expression.getPolynomialReducedCoefficients(
           willBeAlongX ? k_ordinateName : k_unknownName, coefficients, context,
-          ComplexFormat(), AngleUnit(), k_defaultUnitFormat,
+          preferences.complexFormat(), preferences.angleUnit(), k_defaultUnitFormat,
           ExpressionNode::SymbolicComputation::
               ReplaceAllDefinedSymbolsWithDefinition);
       assert(!willBeAlongX || degree == yDegree);
@@ -659,8 +660,8 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
           coefficients[0],
           &m_expression,
           context,
-          ComplexFormat(),
-          AngleUnit(),
+          preferences.complexFormat(),
+          preferences.angleUnit(),
           false);
       } else if (degree == 2) {
         // Equation is of degree 2, each root is a subcurve to plot.
@@ -673,8 +674,8 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
             &root2,
             &delta,
             context,
-            ComplexFormat(),
-            AngleUnit(),
+            preferences.complexFormat(),
+            preferences.angleUnit(),
             false,
             false);
         if (solutions <= 1) {
@@ -719,7 +720,9 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
             &resultForApproximation,
             context,
             ExpressionNode::ReductionTarget::SystemForApproximation,
-            ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
+            ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol,
+            PoincareHelpers::k_defaultUnitConversion,
+            &preferences, false);
         if (resultForApproximation.numberOfDescendants(true) < m_expression.numberOfDescendants(true)) {
           m_expression = resultForApproximation;
         }
@@ -733,11 +736,14 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(con
   PlotType computedPlotType;
   Expression result = expressionEquation(record, context, &computedPlotType);
   if (!result.isUndefined()) {
+    Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(record, context), angleUnit(record, context));
     PoincareHelpers::CloneAndReduce(
         &result,
         context,
         ExpressionNode::ReductionTarget::SystemForAnalysis,
-        ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol); // Symbols have already been replaced.
+        ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol,
+        PoincareHelpers::k_defaultUnitConversion, // Symbols have already been replaced.
+        &preferences, false);
   } else {
     computedPlotType = PlotType::Undefined;
   }
@@ -862,11 +868,12 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
       m_expressionDerivate = Undefined::Builder();
     } else {
       m_expressionDerivate = Derivative::Builder(expression, Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
+      Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(record, context), angleUnit(record, context));
       /* On complex functions, this step can take a significant time.
       * A workaround could be to identify big functions to skip simplification
       * at the cost of possible inaccurate evaluations (such as diff(abs(x),x,0)
       * not being undefined). */
-      PoincareHelpers::CloneAndSimplify(&m_expressionDerivate, context, ExpressionNode::ReductionTarget::SystemForApproximation);
+      PoincareHelpers::CloneAndSimplify(&m_expressionDerivate, context, ExpressionNode::ReductionTarget::SystemForApproximation, PoincareHelpers::k_systemDefaultSymbolicComputation, PoincareHelpers::k_defaultUnitConversion, &preferences, false);
     }
   }
   return m_expressionDerivate;
@@ -1142,10 +1149,12 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
 }
 
 bool ContinuousFunction::Model::HasNonNullCoefficients(const Expression equation, const char * symbolName, Context * context, TrinaryBoolean * highestDegreeCoefficientIsPositive) {
+  Preferences::ComplexFormat complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(Preferences::sharedPreferences()->complexFormat(), equation, context);
+  Preferences::AngleUnit angleUnit = Preferences::UpdatedAngleUnitWithExpressionInput(Preferences::sharedPreferences()->angleUnit(), equation, context);
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   // Symbols will be replaced anyway to compute isNull
   int degree = equation.getPolynomialReducedCoefficients(
-      symbolName, coefficients, context, ComplexFormat(), AngleUnit(),
+      symbolName, coefficients, context, complexFormat, angleUnit,
       k_defaultUnitFormat,
       ExpressionNode::SymbolicComputation::
           ReplaceAllDefinedSymbolsWithDefinition);
@@ -1156,7 +1165,7 @@ bool ContinuousFunction::Model::HasNonNullCoefficients(const Expression equation
     if (isPositive == TrinaryBoolean::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
       double approximation = coefficients[degree].approximateToScalar<double>(
-          context, ComplexFormat(), AngleUnit());
+          context, complexFormat, angleUnit);
       if (!std::isnan(approximation) && approximation != 0.0) {
         isPositive = BinaryToTrinaryBool(approximation > 0.0);
       }
@@ -1172,7 +1181,7 @@ bool ContinuousFunction::Model::HasNonNullCoefficients(const Expression equation
     if (isNull == TrinaryBoolean::Unknown) {
       // Approximate for a better estimation. Nan if coefficient depends on x/y.
       double approximation = coefficients[d].approximateToScalar<double>(
-          context, ComplexFormat(), AngleUnit());
+          context, complexFormat, angleUnit);
       if (!std::isnan(approximation) && approximation != 0.0) {
         return true;
       }

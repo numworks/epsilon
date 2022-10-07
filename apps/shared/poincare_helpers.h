@@ -81,13 +81,13 @@ inline T ApproximateWithValueForSymbol(
 }
 
 template <class T>
-inline T ApproximateToScalar(
+inline T ParseAndSimplifyAndApproximateToScalar(
   const char * text,
   Poincare::Context * context,
   Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_userDefaultSymbolicComputation,
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences())
 {
-  return Poincare::Expression::ApproximateToScalar<T>(text, context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
+  return Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<T>(text, context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
 }
 
 inline Poincare::Expression ParseAndSimplify(

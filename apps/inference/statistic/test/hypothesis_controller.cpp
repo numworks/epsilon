@@ -90,7 +90,7 @@ bool HypothesisController::textFieldShouldFinishEditing(Escher::AbstractTextFiel
 bool HypothesisController::textFieldDidFinishEditing(Escher::AbstractTextField * textField,
                                                                   const char * text,
                                                                   Ion::Events::Event event) {
-  double h0 = Shared::PoincareHelpers::ApproximateToScalar<double>(
+  double h0 = Shared::PoincareHelpers::ParseAndSimplifyAndApproximateToScalar<double>(
       text,
       AppsContainerHelper::sharedAppsContainerGlobalContext());
   // Check

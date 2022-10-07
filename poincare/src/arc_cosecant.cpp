@@ -29,11 +29,8 @@ int ArcCosecantNode::serialize(char * buffer, int bufferSize, Preferences::Print
 }
 
 Expression ArcCosecantNode::shallowReduce(const ReductionContext& reductionContext) {
-  return ArcCosecant(this).shallowReduce(reductionContext);
-}
-
-Expression ArcCosecant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  return Trigonometry::shallowReduceInverseAdvancedFunction(*this, reductionContext);
+  ArcCosecant e = ArcCosecant(this);
+  return Trigonometry::shallowReduceInverseAdvancedFunction(e, reductionContext);
 }
 
 

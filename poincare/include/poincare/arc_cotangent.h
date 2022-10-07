@@ -50,7 +50,6 @@ private:
 class ArcCotangent final : public ExpressionOneChild<ArcCotangent, ArcCotangentNode> {
 public:
    using ExpressionBuilder::ExpressionBuilder;
-   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
    // Derivation
    bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);

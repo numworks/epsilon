@@ -1,8 +1,8 @@
-#ifndef POINCARE_POWER_INTERFACE_H
-#define POINCARE_POWER_INTERFACE_H
+#ifndef POINCARE_INTERFACES_POWER_H
+#define POINCARE_INTERFACES_POWER_H
 
 #include "interface.h"
-#include "internal_expression_interface.h"
+#include "internal_expression.h"
 
 namespace Poincare {
 

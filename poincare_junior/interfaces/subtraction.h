@@ -1,7 +1,7 @@
-#ifndef POINCARE_SUBTRACTION_INTERFACE_H
-#define POINCARE_SUBTRACTION_INTERFACE_H
+#ifndef POINCARE_INTERFACES_SUBTRACTION_H
+#define POINCARE_INTERFACES_SUBTRACTION_H
 
-#include "expression_interface.h"
+#include "expression.h"
 #include "interface.h"
 
 namespace Poincare {

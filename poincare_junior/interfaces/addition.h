@@ -1,7 +1,7 @@
 #ifndef POINCARE_ADDITION_INTERFACE_H
 #define POINCARE_ADDITION_INTERFACE_H
 
-#include "n_ary_interface.h"
+#include "n_ary.h"
 
 namespace Poincare {
 

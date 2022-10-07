@@ -2,14 +2,14 @@
 #define POINCARE_INTERFACES_H
 
 #include <algorithm>
-#include "addition_interface.h"
-#include "constant_interface.h"
-#include "division_interface.h"
-#include "ghost_interface.h"
-#include "integer_interface.h"
-#include "multiplication_interface.h"
-#include "power_interface.h"
-#include "subtraction_interface.h"
+#include "addition.h"
+#include "constant.h"
+#include "division.h"
+#include "ghost.h"
+#include "integer.h"
+#include "multiplication.h"
+#include "power.h"
+#include "subtraction.h"
 
 namespace Poincare {
 

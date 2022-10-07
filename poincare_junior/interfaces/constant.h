@@ -1,7 +1,7 @@
-#ifndef POINCARE_CONSTANT_INTERFACE_H
-#define POINCARE_CONSTANT_INTERFACE_H
+#ifndef POINCARE_INTERFACES_CONSTANT_H
+#define POINCARE_INTERFACES_CONSTANT_H
 
-#include "internal_expression_interface.h"
+#include "internal_expression.h"
 #include "interface.h"
 
 namespace Poincare {

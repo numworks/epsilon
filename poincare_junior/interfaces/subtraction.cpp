@@ -1,7 +1,7 @@
-#include "addition_interface.h"
-#include "multiplication_interface.h"
+#include "addition.h"
+#include "multiplication.h"
 #include "../node.h"
-#include "subtraction_interface.h"
+#include "subtraction.h"
 
 namespace Poincare {
 

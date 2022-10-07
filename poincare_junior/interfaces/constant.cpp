@@ -1,4 +1,4 @@
-#include "constant_interface.h"
+#include "constant.h"
 #include "../node.h"
 
 namespace Poincare {

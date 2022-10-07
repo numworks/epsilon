@@ -1,7 +1,7 @@
-#ifndef POINCARE_MULTIPLICATION_INTERFACE_H
-#define POINCARE_MULTIPLICATION_INTERFACE_H
+#ifndef POINCARE_INTERFACES_MULTIPLICATION_H
+#define POINCARE_INTERFACES_MULTIPLICATION_H
 
-#include "n_ary_interface.h"
+#include "n_ary.h"
 
 namespace Poincare {
 

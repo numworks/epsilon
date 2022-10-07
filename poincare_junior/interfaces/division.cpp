@@ -1,6 +1,6 @@
-#include "constant_interface.h"
-#include "multiplication_interface.h"
-#include "power_interface.h"
+#include "constant.h"
+#include "multiplication.h"
+#include "power.h"
 #include "../node.h"
 
 namespace Poincare {

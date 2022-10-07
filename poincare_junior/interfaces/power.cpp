@@ -1,6 +1,6 @@
 #include <cmath>
 #include "../node.h"
-#include "power_interface.h"
+#include "power.h"
 
 namespace Poincare {
 

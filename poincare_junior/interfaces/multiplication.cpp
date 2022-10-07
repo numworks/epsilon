@@ -1,4 +1,4 @@
-#include "multiplication_interface.h"
+#include "multiplication.h"
 #include "../edition_reference.h"
 #include "../node.h"
 

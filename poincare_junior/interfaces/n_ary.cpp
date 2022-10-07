@@ -1,4 +1,4 @@
-#include "n_ary_interface.h"
+#include "n_ary.h"
 #include "../edition_reference.h"
 
 namespace Poincare {

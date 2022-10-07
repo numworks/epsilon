@@ -1,7 +1,7 @@
-#ifndef POINCARE_DIVISION_INTERFACE_H
-#define POINCARE_DIVISION_INTERFACE_H
+#ifndef POINCARE_INTERFACES_DIVISION_H
+#define POINCARE_INTERFACES_DIVISION_H
 
-#include "expression_interface.h"
+#include "expression.h"
 #include "interface.h"
 
 namespace Poincare {

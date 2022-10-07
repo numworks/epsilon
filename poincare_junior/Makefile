@@ -9,16 +9,16 @@ include build/platform.$(PLATFORM).mak
 include build/toolchain.$(TOOLCHAIN).mak
 
 poincare_junior_src += $(addprefix poincare_junior/,\
-  interfaces/addition_interface.o \
-  interfaces/constant_interface.o \
-  interfaces/division_interface.o \
-  interfaces/expression_interface.o \
-  interfaces/integer_interface.o \
+  interfaces/addition.o \
+  interfaces/constant.o \
+  interfaces/division.o \
+  interfaces/expression.o \
+  interfaces/integer.o \
   interfaces/interface.o \
-  interfaces/multiplication_interface.o \
-  interfaces/n_ary_interface.o \
-  interfaces/power_interface.o \
-  interfaces/subtraction_interface.o \
+  interfaces/multiplication.o \
+  interfaces/n_ary.o \
+  interfaces/power.o \
+  interfaces/subtraction.o \
   test/calculation.o \
   test/constexpr.o \
   test/edition_pool_overflow.o \

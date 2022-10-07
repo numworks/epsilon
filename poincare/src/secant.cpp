@@ -30,12 +30,8 @@ int SecantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloat
 }
 
 Expression SecantNode::shallowReduce(const ReductionContext& reductionContext) {
-  return Secant(this).shallowReduce(reductionContext);
+  Secant e = Secant(this);
+  return Trigonometry::shallowReduceAdvancedFunction(e, reductionContext);
 }
-
-Expression Secant::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  return Trigonometry::shallowReduceAdvancedFunction(*this, reductionContext);
-}
-
 
 }

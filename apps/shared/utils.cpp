@@ -20,7 +20,7 @@ T ValueOfFloatAsDisplayed(T t, int precision, Poincare::Context * context) {
   // Silence compiler warnings for assert
   (void) numberOfChar;
   // Extract displayed value
-  return PoincareHelpers::ApproximateToScalar<T>(buffer, context);
+  return PoincareHelpers::ParseAndSimplifyAndApproximateToScalar<T>(buffer, context);
 }
 
 

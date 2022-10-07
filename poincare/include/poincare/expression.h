@@ -325,9 +325,9 @@ public:
 
   /* Approximation Helper */
   // These methods reset the sApproximationEncounteredComplex flag. They should not be use to implement node approximation
+  template<typename U> static U ParseAndSimplifyAndApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   template<typename U> Expression approximate(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
   template<typename U> U approximateToScalar(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
-  template<typename U> static U ApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   template<typename U> U approximateWithValueForSymbol(const char * symbol, U x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   /* Expression roots/extrema solver */
   Coordinate2D<double> nextMinimum(const char * symbol, double start, double max, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, double relativePrecision, double minimalStep, double maximalStep) const;

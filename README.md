@@ -161,7 +161,7 @@ You need a windows version >= 1903.
 1. Use simultaneously win + X keys and then click on "admin powershell".
 
 ```powershell
-dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux all /norestart
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 ```
 
 This command activate WSL functionalities.

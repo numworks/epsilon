@@ -80,6 +80,21 @@ dnf install make automake gcc gcc-c++ kernel-devel git ImageMagick libX11-devel 
 
 </details>
 
+<details>
+
+<summary>Nix/Nixos</summary>
+
+<br>
+
+Installez toutes les dépendances grâce à cette commande:
+```bash
+nix-env -p gcc libpng libjpeg xorg.libX11 pkg-config freetype xorg.libXext python3 imagemagick python310Packages.lz4 python310Packages.pypng python310Packages.pypng gcc-arm-embedded
+```
+
+<br>
+
+</details>
+
 </details>
 
 <details>

@@ -244,7 +244,7 @@ public:
   // True if has only rad or ° as unit.
   bool hasPureAngleUnit(bool expressionIsAlreadyReduced) const;
   bool isPureAngleUnit() const;
-  template<typename U> Expression approximateReducedExpressionWithUnits(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce = false) const;
+  template<typename U> Expression approximateExpressionWithUnits(const ExpressionNode::ReductionContext& reductionContext) const;
 
   /* Complex */
   static bool EncounteredComplex();

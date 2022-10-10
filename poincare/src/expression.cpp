@@ -572,15 +572,18 @@ bool Expression::isPureAngleUnit() const {
   return !isUninitialized() && type() == ExpressionNode::Type::Unit && convert<Unit>().representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector();
 }
 
-template<typename U> Expression Expression::approximateReducedExpressionWithUnits(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const {
+template<typename U> Expression Expression::approximateExpressionWithUnits(const ExpressionNode::ReductionContext& reductionContext) const {
   assert(hasUnit());
   // Unit need to be extracted before approximating.
   Expression units;
-  Expression expressionReducedWithoutUnits = clone().removeUnit(&units);
+  ExpressionNode::ReductionContext childContext = reductionContext;
+  childContext.setUnitConversion(ExpressionNode::UnitConversion::None);
+  Expression expressionReducedWithoutUnits = clone().reduceAndRemoveUnit(childContext, &units);
   assert(units.isPureAngleUnit());
   /* Other units are already approximated during beautification and don't need
-   * to be approximated here. */
-  Expression approximationWithoutUnits = expressionReducedWithoutUnits.approximate<U>(context, complexFormat, angleUnit);
+   * to be approximated here. This assert is not necessary since other units
+   * could also use this method if approximation of units is reworked. */
+  Expression approximationWithoutUnits = expressionReducedWithoutUnits.approximate<U>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
   return Multiplication::Builder(approximationWithoutUnits, units);
 }
 
@@ -837,10 +840,7 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
     /* Case 2: The reduced expression has a complex component that could not
      * be bubbled up. */
     bool hasOnlyAngleUnit = hasUnits && hasPureAngleUnit(true);
-    Expression reducedClone; // Needed for approximation of expressions containing angle units
-    if (hasOnlyAngleUnit) {
-      reducedClone = clone();
-    }
+
     // Step 1: beautifying
     *simplifiedExpression = deepBeautify(userReductionContext);
     // Step 2: approximation
@@ -850,7 +850,7 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
       if (hasOnlyAngleUnit) {
         /* Pure angle units are not approximated during beautification.
          * */
-        *approximateExpression = reducedClone.approximateReducedExpressionWithUnits<double>(context, complexFormat, angleUnit);
+        *approximateExpression = simplifiedExpression->approximateExpressionWithUnits<double>(userReductionContext);
         return;
       }
       if (hasUnits) {
@@ -1345,5 +1345,5 @@ template Evaluation<double> Expression::approximateToEvaluation(Context * contex
 template float Expression::approximateWithValueForSymbol(const char * symbol, float x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 template double Expression::approximateWithValueForSymbol(const char * symbol, double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
-template Expression Expression::approximateReducedExpressionWithUnits<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const;
+template Expression Expression::approximateExpressionWithUnits<double>(const ExpressionNode::ReductionContext& reductionContext) const;
 }

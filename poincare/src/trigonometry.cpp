@@ -40,11 +40,16 @@ namespace Poincare {
 /* The values must be in the order defined in poincare/preferences:
  * Radians / Degrees / Gradians */
 
-constexpr static int s_piDivisor[] {
-  1,
-  180,
-  200
-};
+static int PiDivisor(Preferences::AngleUnit angleUnit) {
+  if (angleUnit == Preferences::AngleUnit::Radian) {
+    return 1;
+  }
+  if (angleUnit == Preferences::AngleUnit::Degree) {
+    return 180;
+  }
+  assert(angleUnit == Preferences::AngleUnit::Gradian);
+  return 200;
+}
 
 Expression Trigonometry::PiExpressionInAngleUnit(Preferences::AngleUnit angleUnit) {
   if (angleUnit == Preferences::AngleUnit::Radian) {
@@ -299,7 +304,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
      * We first check if p/q * π is already in the right quadrant:
      * p/q * π < π/2 => p/q < 2 => 2p < q */
     Integer dividand = Integer::Addition(r.unsignedIntegerNumerator(), r.unsignedIntegerNumerator());
-    Integer divisor = Integer::Multiplication(r.integerDenominator(), Integer(s_piDivisor[(int)angleUnit]));
+    Integer divisor = Integer::Multiplication(r.integerDenominator(), Integer(PiDivisor(angleUnit)));
     if (divisor.isLowerThan(dividand)) {
       /* Step 6.2. p/q * π is not in the wanted trigonometrical quadrant.
        * We could subtract n*π to p/q with n an integer.
@@ -307,7 +312,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
        * (p/q * π - q'*π) < π/2 => r'/q < 1/2 => 2*r'<q
        * (q' is the theoretical n).*/
       int unaryCoefficient = 1; // store 1 or -1 for the final result.
-      Integer piDivisor = Integer::Multiplication(r.integerDenominator(), Integer(s_piDivisor[(int)angleUnit]));
+      Integer piDivisor = Integer::Multiplication(r.integerDenominator(), Integer(PiDivisor(angleUnit)));
       IntegerDivision div = Integer::Division(r.unsignedIntegerNumerator(), piDivisor);
       dividand = Integer::Addition(div.remainder, div.remainder);
       if (divisor.isLowerThan(dividand)) {

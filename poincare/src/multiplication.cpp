@@ -503,7 +503,7 @@ Expression Multiplication::shallowBeautify(const ExpressionNode::ReductionContex
     }
 
     ExpressionNode::UnitConversion unitConversionMode = reductionContext.unitConversion();
-    if (units.hasPureAngleUnit(true)) {
+    if (units.isPureAngleUnit()) {
       if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
         // Pure angle unit is the only unit allowed to be evaluated exactly
         const UnitNode::Representative * angleUnit = static_cast<Unit &>(units).representative();

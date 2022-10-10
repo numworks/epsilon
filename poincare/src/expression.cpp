@@ -801,8 +801,11 @@ void makePositive(Expression * e, bool * isNegative) {
   }
 }
 
-void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
+void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression, Expression * approximateExpression, ExpressionNode::ReductionContext userReductionContext) {
   bool hasUnits = hasUnit();
+  Context * context = userReductionContext.context();
+  Preferences::AngleUnit angleUnit = userReductionContext.angleUnit();
+  Preferences::ComplexFormat complexFormat = userReductionContext.complexFormat();
   /* Case 1: the reduced expression is ComplexCartesian or pure real, we can
    * take into account the complex format to display a+i*b or r*e^(i*th) */
   if ((type() == ExpressionNode::Type::ComplexCartesian || isReal(context)) && !hasUnits) {
@@ -866,7 +869,7 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
   }
 }
 
-void Expression::SimplifyAndApproximateChildren(Expression input, Expression * simplifiedOutput, Expression * approximateOutput, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, const ExpressionNode::ReductionContext& reductionContext) {
+void Expression::SimplifyAndApproximateChildren(Expression input, Expression * simplifiedOutput, Expression * approximateOutput, const ExpressionNode::ReductionContext& reductionContext) {
   assert(input.type() == ExpressionNode::Type::Matrix || input.type() == ExpressionNode::Type::List);
   List simplifiedChildren = List::Builder(), approximatedChildren = List::Builder();
   int n = input.numberOfChildren();
@@ -874,7 +877,7 @@ void Expression::SimplifyAndApproximateChildren(Expression input, Expression * s
     Expression simplifiedChild, approximateChild;
     Expression * approximateChildAddress = approximateOutput ? &approximateChild : nullptr;
     Expression childI = input.childAtIndex(i);
-    childI.beautifyAndApproximateScalar(&simplifiedChild, approximateChildAddress, reductionContext, context, complexFormat, angleUnit);
+    childI.beautifyAndApproximateScalar(&simplifiedChild, approximateChildAddress, reductionContext);
     simplifiedChildren.addChildAtIndexInPlace(simplifiedChild, i, i);
     if (approximateOutput) {
       assert(!approximateChild.isUninitialized());
@@ -934,11 +937,11 @@ void Expression::cloneAndSimplifyAndApproximate(Expression * simplifiedExpressio
   /* Case 1: the reduced expression is a matrix or a list : We scan the
    * children to beautify them with the right complex format. */
   if (e.type() == ExpressionNode::Type::Matrix || e.type() == ExpressionNode::Type::List) {
-    SimplifyAndApproximateChildren(e, simplifiedExpression, approximateExpression, context, complexFormat, angleUnit, userReductionContext);
+    SimplifyAndApproximateChildren(e, simplifiedExpression, approximateExpression, userReductionContext);
   } else {
     /* Case 2: the reduced expression is scalar or too complex to respect the
      * complex format. */
-    e.beautifyAndApproximateScalar(simplifiedExpression, approximateExpression, userReductionContext, context, complexFormat, angleUnit);
+    e.beautifyAndApproximateScalar(simplifiedExpression, approximateExpression, userReductionContext);
   }
 }
 

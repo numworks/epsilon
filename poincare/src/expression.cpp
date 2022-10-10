@@ -565,7 +565,11 @@ bool Expression::hasPureAngleUnit(bool expressionIsAlreadyReduced) const {
   } else {
     thisClone.reduceAndRemoveUnit(ExpressionNode::ReductionContext(), &units);
   }
-  return !units.isUninitialized() && units.type() == ExpressionNode::Type::Unit && static_cast<Unit &>(units).representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector();
+  return units.isPureAngleUnit();
+}
+
+bool Expression::isPureAngleUnit() const {
+  return !isUninitialized() && type() == ExpressionNode::Type::Unit && convert<Unit>().representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector();
 }
 
 template<typename U> Expression Expression::approximateReducedExpressionContainingPureAngleUnit(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const {
@@ -573,7 +577,7 @@ template<typename U> Expression Expression::approximateReducedExpressionContaini
   // Unit need to be extracted before approximating.
   Expression units;
   Expression expressionReducedWithoutUnits = clone().removeUnit(&units);
-  assert(units.hasPureAngleUnit(true));
+  assert(units.isPureAngleUnit());
   Expression approximationWithoutUnits = expressionReducedWithoutUnits.approximate<U>(context, complexFormat, angleUnit);
   return Multiplication::Builder(approximationWithoutUnits, units);
 }

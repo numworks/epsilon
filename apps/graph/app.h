@@ -48,6 +48,7 @@ public:
   TELEMETRY_ID("Graph");
   CodePoint XNT() override;
   Escher::NestedMenuController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
+  bool storageWillChangeForRecord(Ion::Storage::Record) override;
   ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }
   Shared::Interval * intervalForSymbolType(Shared::ContinuousFunction::SymbolType symbolType) { return snapshot()->intervalForSymbolType(symbolType); }
   ValuesController * valuesController() override { return &m_valuesController; }

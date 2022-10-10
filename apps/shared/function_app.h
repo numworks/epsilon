@@ -22,7 +22,6 @@ public:
     virtual FunctionStore * functionStore() = 0;
     int * indexFunctionSelectedByCursor() { return &m_indexFunctionSelectedByCursor; }
     void reset() override;
-    void storageDidChangeForRecord(const Ion::Storage::Record record) override;
   protected:
     CurveViewCursor m_cursor;
   private:
@@ -36,6 +35,7 @@ public:
   Snapshot * snapshot() const {
     return static_cast<Snapshot *>(Escher::App::snapshot());
   }
+  void storageDidChangeForRecord(const Ion::Storage::Record record) override;
   virtual FunctionStore * functionStore() { return snapshot()->functionStore(); }
   virtual ValuesController * valuesController() = 0;
   virtual Escher::InputViewController * inputViewController() = 0;

@@ -16,6 +16,8 @@ namespace Storage {
  * We thus decided to notify a delegate when the storage changes. */
 class StorageDelegate {
 public:
+  /* Return false to cancel change */
+  virtual bool storageWillChangeForRecord(const Record record) { return true; };
   virtual void storageDidChangeForRecord(const Record record) = 0;
   virtual void storageIsFull() = 0;
 };

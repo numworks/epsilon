@@ -140,7 +140,9 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
      * difference of size between the two of available space. */
    return notifyFullnessToDelegate();
   }
-
+  if (m_delegate && !m_delegate->storageWillChangeForRecord(recordWithSameName)) {
+    return Record::ErrorStatus::CanceledByDelegate;
+  }
   /* WARNING : This relies on the fact that when you create a python script or
    * a function, you first create it with a placeholder name and then let the
    * user set its name through setNameOfRecord. */
@@ -313,6 +315,9 @@ Record::ErrorStatus FileSystem::setNameOfRecord(Record * record, Record::Name na
     // Name has not changed
     return Record::ErrorStatus::None;
   }
+  if (m_delegate && !m_delegate->storageWillChangeForRecord(*record)) {
+    return Record::ErrorStatus::CanceledByDelegate;
+  }
   /* If you do not verifiy that the name has not changed if the previous 'if'
    * this will return false, and see the name as taken. */
   if (!handleCompetingRecord(name, false)) {
@@ -362,6 +367,9 @@ Record::ErrorStatus FileSystem::setValueOfRecord(Record record, Record::Data dat
     size_t newRecordSize = sizeOfRecordWithName(name, data.size);
     if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+previousRecordSize, newRecordSize-previousRecordSize)) {
       return notifyFullnessToDelegate();
+    }
+    if (m_delegate && !m_delegate->storageWillChangeForRecord(record)) {
+      return Record::ErrorStatus::CanceledByDelegate;
     }
     record_size_t nameSize = Record::SizeOfName(name);
     overrideSizeAtPosition(p, newRecordSize);

@@ -38,6 +38,13 @@ const App::Descriptor * App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
+bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
+  if (!isStoreMenuOpen()) {
+    return true;
+  }
+  return !record.hasExtension(Ion::Storage::funcExtension);
+}
+
 void App::Snapshot::tidy() {
   m_functionStore.tidyDownstreamPoolFrom();
   m_graphRange.setDelegate(nullptr);

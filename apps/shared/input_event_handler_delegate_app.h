@@ -14,6 +14,7 @@ public:
   Escher::NestedMenuController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
   bool handleEvent(Ion::Events::Event event) override;
   void storeValue(const char * text) override;
+  bool isStoreMenuOpen();
 protected:
   InputEventHandlerDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
 

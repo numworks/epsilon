@@ -572,12 +572,14 @@ bool Expression::isPureAngleUnit() const {
   return !isUninitialized() && type() == ExpressionNode::Type::Unit && convert<Unit>().representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector();
 }
 
-template<typename U> Expression Expression::approximateReducedExpressionContainingPureAngleUnit(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const {
-  assert(hasPureAngleUnit(true));
+template<typename U> Expression Expression::approximateReducedExpressionWithUnits(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const {
+  assert(hasUnit());
   // Unit need to be extracted before approximating.
   Expression units;
   Expression expressionReducedWithoutUnits = clone().removeUnit(&units);
   assert(units.isPureAngleUnit());
+  /* Other units are already approximated during beautification and don't need
+   * to be approximated here. */
   Expression approximationWithoutUnits = expressionReducedWithoutUnits.approximate<U>(context, complexFormat, angleUnit);
   return Multiplication::Builder(approximationWithoutUnits, units);
 }
@@ -848,7 +850,7 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
       if (hasOnlyAngleUnit) {
         /* Pure angle units are not approximated during beautification.
          * */
-        *approximateExpression = reducedClone.approximateReducedExpressionContainingPureAngleUnit<double>(context, complexFormat, angleUnit);
+        *approximateExpression = reducedClone.approximateReducedExpressionWithUnits<double>(context, complexFormat, angleUnit);
         return;
       }
       if (hasUnits) {
@@ -1343,5 +1345,5 @@ template Evaluation<double> Expression::approximateToEvaluation(Context * contex
 template float Expression::approximateWithValueForSymbol(const char * symbol, float x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 template double Expression::approximateWithValueForSymbol(const char * symbol, double x, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
 
-template Expression Expression::approximateReducedExpressionContainingPureAngleUnit<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const;
+template Expression Expression::approximateReducedExpressionWithUnits<double>(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const;
 }

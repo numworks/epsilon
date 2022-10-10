@@ -83,7 +83,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(const Expression & expression
 
   // Set the expression in the storage depending on the symbol type
   if (symbol.type() == ExpressionNode::Type::Symbol) {
-    return SetExpressionForActualSymbol(finalExpression, symbol, record, this) == Ion::Storage::Record::ErrorStatus::None;
+    return setExpressionForActualSymbol(finalExpression, symbol, record) == Ion::Storage::Record::ErrorStatus::None;
   }
   assert(symbol.type() == ExpressionNode::Type::Function && symbol.childAtIndex(0).type() == ExpressionNode::Type::Symbol);
   Expression childSymbol = symbol.childAtIndex(0);
@@ -158,18 +158,18 @@ const Expression GlobalContext::expressionForSequence(const SymbolAbstract & sym
   return Float<double>::Builder(NAN);
 }
 
-Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord, Context * context) {
+Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(const Expression & expression, const SymbolAbstract & symbol, Ion::Storage::Record previousRecord) {
   Expression expressionToStore = expression;
-  PoincareHelpers::CloneAndSimplify(&expressionToStore, context, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
+  PoincareHelpers::CloneAndSimplify(&expressionToStore, this, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   // Do not store exact derivative, etc.
-  if (Utils::ShouldOnlyDisplayApproximation(expression, expressionToStore, context)) {
+  if (Utils::ShouldOnlyDisplayApproximation(expression, expressionToStore, this)) {
     /* "approximateKeepingUnits" is called because the expression might contain
      * units, and juste calling "approximate" would return undef
      */
     Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
-    Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionToStore, context);
-    Poincare::Preferences::AngleUnit angleUnit = Poincare::Preferences::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), expressionToStore, context);
-    expressionToStore = expressionToStore.approximateKeepingUnits<double>(Poincare::ExpressionNode::ReductionContext(context, complexFormat, angleUnit, GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, Poincare::ExpressionNode::UnitConversion::Default));
+    Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionToStore, this);
+    Poincare::Preferences::AngleUnit angleUnit = Poincare::Preferences::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), expressionToStore, this);
+    expressionToStore = expressionToStore.approximateKeepingUnits<double>(Poincare::ExpressionNode::ReductionContext(this, complexFormat, angleUnit, GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, Poincare::ExpressionNode::UnitConversion::Default));
   }
   ExpressionNode::Type type = expressionToStore.type();
   const char * extension;

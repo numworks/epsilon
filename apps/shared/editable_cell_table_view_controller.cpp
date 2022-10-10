@@ -1,6 +1,7 @@
 #include "editable_cell_table_view_controller.h"
 #include "column_parameter_controller.h"
-#include "../shared/poincare_helpers.h"
+#include "poincare_helpers.h"
+#include "text_field_delegate_app.h"
 #include "../constant.h"
 #include <assert.h>
 #include <escher/even_odd_cell.h>

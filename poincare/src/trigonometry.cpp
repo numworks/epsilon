@@ -509,9 +509,19 @@ Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, Expressio
 
 Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
   assert(isInverseAdvancedTrigonometryFunction(e));
-  // Step 0. Replace with equivalent inverse function on inverse (^-1) argument
-  Power p = Power::Builder(e.childAtIndex(0), Rational::Builder(-1));
   Expression result;
+  // Step 1. Manage specific cases for Arcotangent
+  if (e.type() == ExpressionNode::Type::ArcCotangent) {
+    TrinaryBoolean isNull = e.childAtIndex(0).isNull(reductionContext.context());
+    // Step 1.1. Reduce ArcCotangent(0) to π/2
+    if (isNull == TrinaryBoolean::True) {
+      result = Multiplication::Builder(PiExpressionInAngleUnit(reductionContext.angleUnit()), Rational::Builder(1, 2));
+      e.replaceWithInPlace(result);
+      return result.shallowReduce(reductionContext);
+    }
+  }
+  // Step 2. Replace with equivalent inverse function on inverse (^-1) argument
+  Power p = Power::Builder(e.childAtIndex(0), Rational::Builder(-1));
   switch (e.type()) {
     case ExpressionNode::Type::ArcSecant:
       result = ArcCosine::Builder(p);
@@ -520,7 +530,6 @@ Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, Ex
       result = ArcSine::Builder(p);
       break;
     default:
-      // TODO : This will return undef when child = 0, but arccot(0) should  return pi/2.
       assert(e.type() == ExpressionNode::Type::ArcCotangent);
       result = ArcTangent::Builder(p);
       break;

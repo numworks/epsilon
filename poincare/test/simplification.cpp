@@ -1757,7 +1757,7 @@ QUIZ_CASE(poincare_advanced_trigonometry) {
   assert_parsed_expression_simplify_to("cot(0)", Undefined::Name());
   assert_parsed_expression_simplify_to("arccsc(2/√(3))", "π/3");
   assert_parsed_expression_simplify_to("arcsec(2/√(3))", "π/6");
-  assert_parsed_expression_simplify_to("arccot(0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("arccot(0)", "π/2");
   assert_parsed_expression_simplify_to("csc(π/2)", "1");
   assert_parsed_expression_simplify_to("sec(π/2)", Undefined::Name());
   assert_parsed_expression_simplify_to("cot(π/2)", "0");

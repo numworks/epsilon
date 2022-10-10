@@ -1,5 +1,6 @@
 #include "function_banner_delegate.h"
 #include "interactive_curve_view_controller.h"
+#include "text_field_delegate_app.h"
 #include <escher/tab_view_controller.h>
 #include <cmath>
 #include <float.h>

@@ -119,14 +119,6 @@ bool StoreMenuController::textFieldDidFinishEditing(Escher::AbstractTextField * 
   return true;
 }
 
-bool StoreMenuController::layoutFieldShouldFinishEditing(Escher::LayoutField * layoutField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
-}
-
-bool StoreMenuController::textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) {
-  return event == Ion::Events::OK || event == Ion::Events::EXE;
-}
-
 bool StoreMenuController::layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) {
   /* Since dismissing the controller will call layoutFieldDidChangeSize, we need
    * to set the flag to avoid reloadData from happening which would otherwise
@@ -141,3 +133,6 @@ bool StoreMenuController::textFieldDidAbortEditing(Escher::AbstractTextField * t
   return true;
 }
 
+bool StoreMenuController::layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) {
+  return textFieldDelegateApp()->fieldDidReceiveEvent(layoutField, layoutField, event);
+}

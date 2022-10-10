@@ -19,9 +19,9 @@ public:
   bool isAcceptableText(const char * text);
   template<typename T>
   bool hasUndefinedValue(const char * text, T * value, bool enablePlusInfinity = false, bool enableMinusInfinity = false);
+  bool fieldDidReceiveEvent(Escher::EditableField * field, Escher::Responder * responder, Ion::Events::Event event);
 protected:
   TextFieldDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
-  bool fieldDidReceiveEvent(Escher::EditableField * field, Escher::Responder * responder, Ion::Events::Event event);
   bool isFinishingEvent(Ion::Events::Event event);
   virtual bool isAcceptableExpression(const Poincare::Expression expression);
   static bool ExpressionCanBeSerialized(const Poincare::Expression expression, bool replaceAns, Poincare::Expression ansExpression, Poincare::Context * context);

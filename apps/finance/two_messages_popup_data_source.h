@@ -1,6 +1,7 @@
 #ifndef FINANCE_TWO_MESSAGE_POPUP_DATA_SOURCE_H
 #define FINANCE_TWO_MESSAGE_POPUP_DATA_SOURCE_H
 
+#include <apps/i18n.h>
 #include <escher/list_view_data_source.h>
 #include <escher/buffer_text_highlight_cell.h>
 

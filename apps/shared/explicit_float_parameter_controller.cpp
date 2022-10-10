@@ -1,5 +1,6 @@
 #include "explicit_float_parameter_controller.h"
 #include "poincare_helpers.h"
+#include "text_field_delegate_app.h"
 #include <escher/buffer_table_cell_with_editable_text.h>
 #include <poincare/preferences.h>
 #include <assert.h>

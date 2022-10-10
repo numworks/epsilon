@@ -1,4 +1,5 @@
 #include "layout_field_delegate.h"
+#include "expression_field_delegate_app.h"
 
 using namespace Escher;
 using namespace Poincare;
@@ -23,6 +24,10 @@ bool LayoutFieldDelegate::layoutFieldDidAbortEditing(LayoutField * layoutField) 
 
 void LayoutFieldDelegate::layoutFieldDidChangeSize(LayoutField * layoutField) {
   return expressionFieldDelegateApp()->layoutFieldDidChangeSize(layoutField);
+}
+
+ExpressionFieldDelegateApp * LayoutFieldDelegate::expressionFieldDelegateApp() const {
+  return static_cast<ExpressionFieldDelegateApp *>(Escher::Container::activeApp());
 }
 
 }

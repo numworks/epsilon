@@ -898,7 +898,8 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   assert_expression_approximates_to<double>("atan(i)", "∞×i", Radian);
   // Advanced function : acot
   assert_expression_approximates_to<double>("arccot(-0.45765755436029)", "-1.1415926535898", Radian);
-  assert_expression_approximates_to<float>("arccot(0)", Undefined::Name(), Gradian);
+  assert_expression_approximates_to<double>("arccot(0)", "90", Degree);
+  assert_expression_approximates_to<float>("arccot(0)", "1.570796", Radian);
   assert_expression_approximates_to<float>("arccot(-19.11604×i)", "3×i", Degree, MetricUnitFormat, Cartesian, 6);
   assert_expression_approximates_to<float>("arccot(19.11604×i)", "-3×i", Degree, MetricUnitFormat, Cartesian, 6);
   assert_expression_approximates_to<float>("arccot(-0.253182-0.928133×i)", "-0.858407+1×i", Radian, MetricUnitFormat, Cartesian, 6);

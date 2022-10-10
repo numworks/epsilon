@@ -14,7 +14,7 @@ int ArcCotangentNode::numberOfChildren() const { return ArcCotangent::s_function
 template<typename T>
 Complex<T> ArcCotangentNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) {
   if (c == static_cast<T>(0.0)) {
-    return Complex<T>::Undefined();
+    return Complex<T>::Builder(Trigonometry::ConvertRadianToAngleUnit(std::complex<T>(M_PI_2), angleUnit));
   }
   return ArcTangentNode::computeOnComplex<T>(std::complex<T>(1) / c, complexFormat, angleUnit);
 }

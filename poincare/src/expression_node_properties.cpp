@@ -6,6 +6,7 @@
 #include <poincare/percent.h>
 #include <poincare/power.h>
 #include <poincare/simplification_helper.h>
+#include <poincare/store.h>
 #include <poincare/unit_convert.h>
 
 namespace Poincare {
@@ -64,6 +65,7 @@ Expression ExpressionNode::deepBeautify(const ExpressionNode::ReductionContext& 
 
 void ExpressionNode::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
   if (type() == Type::Store) {
+    Expression(this).convert<Store>().deepReduceChildren(reductionContext);
     return;
   }
   if (type() == Type::Logarithm && numberOfChildren()==2) {

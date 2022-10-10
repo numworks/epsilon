@@ -1,6 +1,7 @@
 #include "store_menu_controller.h"
 #include <escher/clipboard.h>
 #include <escher/invocation.h>
+#include <poincare/store.h>
 #include "poincare_helpers.h"
 #include "text_field_delegate_app.h"
 
@@ -94,7 +95,13 @@ bool StoreMenuController::layoutFieldDidFinishEditing(Escher::LayoutField * layo
     displayModalViewController(&m_abortController, 0.f, 0.f, 0, 0, Escher::Metric::PopUpBottomMargin, 0);
     return false;
   }
-  PoincareHelpers::ParseAndSimplify(buffer, Container::activeApp()->localContext());
+  Expression reducedExp = PoincareHelpers::ParseAndSimplify(buffer, Container::activeApp()->localContext());
+  if (reducedExp.type() != ExpressionNode::Type::Store) {
+    displayModalViewController(&m_abortController, 0.f, 0.f, 0, 0, Escher::Metric::PopUpBottomMargin, 0);
+    return false;
+  }
+  Store store = static_cast<Store&>(reducedExp);
+  store.storeValueForSymbol(Container::activeApp()->localContext());
   Container::activeApp()->dismissModalViewController();
   return true;
 }

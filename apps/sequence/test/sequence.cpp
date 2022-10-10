@@ -489,7 +489,7 @@ QUIZ_CASE(sequence_evaluation) {
 }
 
 QUIZ_CASE(sequence_context) {
-  assert_reduce("3→f(x)");
+  assert_reduce_and_store("3→f(x)");
   assert_expression_simplifies_approximates_to<double>("f(u(0))", "undef");
 
   Shared::GlobalContext globalContext;

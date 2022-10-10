@@ -882,9 +882,6 @@ void Expression::cloneAndSimplifyAndApproximate(Expression * simplifiedExpressio
   assert(!approximateExpression || approximateExpression->isUninitialized());
 
   // Step 1: we reduce the expression
-  /* We tried first with the ReductionTarget::User. If the reduction failed
-   * without any user interruption (too many nodes were generated), we try
-   * again with ReductionTarget::SystemForApproximation. */
   ExpressionNode::ReductionContext userReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion);
   ExpressionNode::ReductionContext reductionContext = userReductionContext;
   bool reduceFailure = false;
@@ -956,6 +953,9 @@ Expression Expression::reduceAndRemoveUnit(const ExpressionNode::ReductionContex
 }
 
 Expression Expression::cloneAndDeepReduceWithSystemCheckpoint(ExpressionNode::ReductionContext * reductionContext, bool * reduceFailure) const {
+  /* We tried first with the supplied ReductionTarget. If the reduction failed
+   * without any user interruption (too many nodes were generated), we try again
+   * with ReductionTarget::SystemForApproximation. */
   *reduceFailure = false;
 #if __EMSCRIPTEN__
   Expression e = clone().deepReduce(*reductionContext);

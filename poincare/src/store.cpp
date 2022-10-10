@@ -17,24 +17,23 @@ Expression StoreNode::shallowReduce(const ReductionContext& reductionContext) {
 
 template<typename T>
 Evaluation<T> StoreNode::templatedApproximate(const ApproximationContext& approximationContext) const {
-  /* If we are here, it means that the store node was not shallowReduced.
-   * Otherwise, it would have been replaced by its symbol. We thus have to
-   * setExpressionForSymbolAbstract. */
-  Expression storedExpression = Store(this).storeValueForSymbol(approximationContext.context());
-  assert(!storedExpression.isUninitialized());
-  return storedExpression.node()->approximate(T(), approximationContext);
+  /* We return a dummy value if the store is interrupted. Since the app waits
+   * for a Store node to do the actual store, there is nothing better to do. */
+  return Complex<T>::Undefined();
+}
+
+void Store::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
+  // Only the value of a symbol should have no free variables
+  if (symbol().type() == ExpressionNode::Type::Symbol) {
+    childAtIndex(0).deepReduce(reductionContext);
+  }
 }
 
 Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  // Store the expression.
-  Expression storedExpression = storeValueForSymbol(reductionContext.context());
-
-  if (symbol().type() == ExpressionNode::Type::Symbol) {
-    storedExpression = storedExpression.cloneAndReduce(reductionContext);
-  }
-
-  replaceWithInPlace(storedExpression);
-  return storedExpression;
+  /* Stores are kept by the reduction and the app will do the effective store if
+   * deemed necessary. Side-effects of the storage modification will therefore
+   * happen outside of the checkpoint. */
+  return *this;
 }
 
 Expression Store::storeValueForSymbol(Context * context) const {

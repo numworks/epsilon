@@ -1188,30 +1188,6 @@ QUIZ_CASE(poincare_approximation_probability) {
 
 }
 
-QUIZ_CASE(poincare_approximation_store) {
-  assert_expression_approximates_to<float>("1+42→A", "43");
-  assert_expression_approximates_to<double>("0.123+i→B", "0.123+i");
-
-  assert_expression_approximates_to_scalar<float>("1+42→A", 43.0f);
-  assert_expression_approximates_to_scalar<double>("0.123+i→B", NAN);
-
-  assert_expression_simplifies_and_approximates_to("abs({0}×π)→f(x)", "{0}");
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("A.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("B.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
-}
-
-QUIZ_CASE(poincare_approximation_store_matrix) {
-  assert_expression_approximates_to<double>("[[7]]→a", "[[7]]");
-
-  assert_expression_approximates_to_scalar<float>("[[7]]→a", NAN);
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.mat").destroy();
-}
-
 QUIZ_CASE(poincare_approximation_complex_format) {
   // Real
   assert_expression_approximates_to<float>("0", "0", Radian, MetricUnitFormat, Real);
@@ -1347,7 +1323,7 @@ QUIZ_CASE(poincare_approximation_mix) {
 }
 
 QUIZ_CASE(poincare_approximation_lists_access) {
-  assert_expression_approximates_to<double>("{1,2,3,4,5}→L", "{1,2,3,4,5}");
+  assert_reduce_and_store("{1,2,3,4,5}→L");
 
   assert_expression_approximates_to<float>("L(1)", "1");
   assert_expression_approximates_to<float>("L(0)", Undefined::Name());

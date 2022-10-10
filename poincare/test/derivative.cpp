@@ -54,10 +54,10 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(diff(x^3,x,x),x,x)", "6×x");
   assert_reduces_to_formal_expression("diff(sinh(sin(y)),x,x)", "dep\u0014(0,{sinh(sin(y))})");
 
-  assert_reduce("2→a");
-  assert_reduce("-1→b");
-  assert_reduce("3→c");
-  assert_reduce("x/2→f(x)");
+  assert_reduce_and_store("2→a");
+  assert_reduce_and_store("-1→b");
+  assert_reduce_and_store("3→c");
+  assert_reduce_and_store("x/2→f(x)");
 
   assert_reduces_to_formal_expression("diff(a×x^2+b×x+c,x,x)", "4×x-1");
   assert_reduces_to_formal_expression("diff(f(x),x,x)", "dep\u0014(1/2,{x})");
@@ -111,7 +111,7 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   assert_reduces_for_approximation("diff(x^3+5*x^2,x,0)", "0");
   assert_reduces_for_approximation("diff(5^(sin(x)),x,3)", "5^sin(3)×cos(3)×ln(5)");
   assert_reduces_for_approximation("diff((-1)^(4-2*2),x,3)", "0");
-  assert_reduce("0→a");
+  assert_reduce_and_store("0→a");
   assert_reduces_for_approximation("diff((-1)^(a*x),x,3)", "0");
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
 }

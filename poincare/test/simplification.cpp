@@ -1789,6 +1789,12 @@ QUIZ_CASE(poincare_advanced_trigonometry) {
   assert_parsed_expression_simplify_to("arccot(cot(3))", "-π+3");
   assert_parsed_expression_simplify_to("arccot(cot(0.5))", "1/2");
   assert_parsed_expression_simplify_to("arccot(cot(-3))", "π-3");
+  assert_parsed_expression_simplify_to("arccot(3)", "arctan(1/3)", User);
+  assert_parsed_expression_simplify_to("arccot(3)", "arctan(1/3)", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("arccot(3)", "arctan(1/3)", SystemForApproximation);
+  assert_parsed_expression_simplify_to("arccot(x)", "dep\u0014(\u0012π×sign(x)-2×arctan(x)\u0013/2,{1/x})", User);
+  assert_parsed_expression_simplify_to("arccot(x)", "arccot(x)", SystemForAnalysis);
+  assert_parsed_expression_simplify_to("arccot(x)", "arccot(x)", SystemForApproximation);
 
   // cot(acot)
   assert_parsed_expression_simplify_to("cot(arccot(3))", "3");

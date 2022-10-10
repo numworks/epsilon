@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <cmath>
+#include <poincare/store.h>
 #include "../equation_store.h"
 #include "../solver_context.h"
 
@@ -151,13 +152,14 @@ void set(const char * variable, const char * value) {
 
   Shared::GlobalContext globalContext;
   SolverContext solverContext(&globalContext);
-  Expression::ParseAndSimplify(
+  Expression e = Expression::ParseAndSimplify(
     buffer,
     &solverContext,
     Preferences::sharedPreferences()->complexFormat(),
     Preferences::sharedPreferences()->angleUnit(),
     GlobalPreferences::sharedGlobalPreferences()->unitFormat()
   );
+  static_cast<Store&>(e).storeValueForSymbol(&globalContext);
 }
 
 void unset(const char * variable) {

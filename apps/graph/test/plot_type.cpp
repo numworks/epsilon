@@ -111,17 +111,16 @@ QUIZ_CASE(graph_function_plot_type_with_predefined_variables) {
     addFunction("a*y*y+y=x", ContinuousFunction::PlotType::Other, &store, &context);
 
     // Add a predefined a symbol
-    assert_reduce("0→a", Preferences::AngleUnit::Radian, Poincare::Preferences::UnitFormat::Metric, Poincare::Preferences::ComplexFormat::Real);
-    Expression::Parse("0→a", &context);
+    assert_reduce_and_store("0→a", Preferences::AngleUnit::Radian, Poincare::Preferences::UnitFormat::Metric, Poincare::Preferences::ComplexFormat::Real);
     addFunction("y=a*x+1", ContinuousFunction::PlotType::HorizontalLine, &store, &context);
     addFunction("a*y*y+y=x", ContinuousFunction::PlotType::Line, &store, &context);
 
-    assert_reduce("1→a", Preferences::AngleUnit::Radian, Poincare::Preferences::UnitFormat::Metric, Poincare::Preferences::ComplexFormat::Real);
+    assert_reduce_and_store("1→a", Preferences::AngleUnit::Radian, Poincare::Preferences::UnitFormat::Metric, Poincare::Preferences::ComplexFormat::Real);
     addFunction("y=a*x+1", ContinuousFunction::PlotType::Line, &store, &context);
     addFunction("a*y*y+y=x", ContinuousFunction::PlotType::Parabola, &store, &context);
 
     // Add a predefined y symbol
-    assert_reduce("1→y", Preferences::AngleUnit::Radian, Poincare::Preferences::UnitFormat::Metric, Poincare::Preferences::ComplexFormat::Real);
+    assert_reduce_and_store("1→y", Preferences::AngleUnit::Radian, Poincare::Preferences::UnitFormat::Metric, Poincare::Preferences::ComplexFormat::Real);
     addFunction("y=x", ContinuousFunction::PlotType::Line, &store, &context);
 
     Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();

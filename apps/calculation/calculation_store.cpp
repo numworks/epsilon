@@ -2,6 +2,7 @@
 #include "../shared/poincare_helpers.h"
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/rational.h>
+#include <poincare/store.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include "../exam_mode_configuration.h"
@@ -137,6 +138,11 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
       constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
       Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
       PoincareHelpers::ParseAndSimplifyAndApproximate(addressOfCalculation + calcSize, &(outputs[0]), &(outputs[1]), context);
+      if (outputs[0].type() == ExpressionNode::Type::Store) {
+        Store store = static_cast<Store&>(outputs[0]);
+        outputs[0] = store.storeValueForSymbol(context);
+        outputs[1] = PoincareHelpers::Approximate<double>(outputs[0], context);
+      }
       if (ExamModeConfiguration::unitsAreForbidden() && outputs[1].hasUnit()) {
         /* Hide results with units on units if required by the exam mode
          * configuration. */
@@ -261,12 +267,7 @@ Expression CalculationStore::ansExpression(Context * context) {
   if (exactOutput.isUninitialized() || input.isUninitialized()) {
     return defaultAns;
   }
-  /* Special case: the exact output is a Store expression.
-   * Store expression can only be at the root of an expression.
-   * To avoid turning 'ans->A' in '2->A->A' ans is replaced by
-   * the approximation output when any Store expression appears. */
-  bool exactOutputInvolvesStore = exactOutput.type() == ExpressionNode::Type::Store;
-  if (input.recursivelyMatches(Expression::IsApproximate, context) || exactOutputInvolvesStore) {
+  if (input.recursivelyMatches(Expression::IsApproximate, context)) {
     Expression approximate = mostRecentCalculation->approximateOutput(Calculation::NumberOfSignificantDigits::Maximal);
     if (approximate.isUninitialized()) {
       return defaultAns;

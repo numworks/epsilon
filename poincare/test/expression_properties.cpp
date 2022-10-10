@@ -190,7 +190,7 @@ QUIZ_CASE(poincare_properties_is_infinity) {
   assert_expression_has_property("3.4+inf", &context, Expression::IsInfinity);
   assert_expression_has_not_property("2.3+1", &context, Expression::IsInfinity);
   assert_expression_has_not_property("a", &context, Expression::IsInfinity);
-  assert_reduce("42.3+inf→a");
+  assert_reduce_and_store("42.3+inf→a");
   assert_expression_has_property("a", &context, Expression::IsInfinity);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
 }
@@ -282,7 +282,7 @@ QUIZ_CASE(poincare_properties_sign) {
   assert_reduced_expression_sign("-1-1%", Negative);
   assert_reduced_expression_sign("1-1%", Unknown);
   assert_reduced_expression_sign("a", Unknown);
-  assert_reduce("42→a");
+  assert_reduce_and_store("42→a");
   assert_reduced_expression_sign("a", Positive);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
 }
@@ -391,19 +391,19 @@ QUIZ_CASE(poincare_properties_polynomial_degree) {
   assert_reduced_expression_polynomial_degree("√(-1)×x", -1, "x", Real);
 
   // f: y→y^2+πy+1
-  assert_reduce("1+π×y+y^2→f(y)");
+  assert_reduce_and_store("1+π×y+y^2→f(y)");
   assert_reduced_expression_polynomial_degree("f(x)", 2);
   // With y=1
-  assert_reduce("1→y");
+  assert_reduce_and_store("1→y");
   assert_reduced_expression_polynomial_degree("f(x)", 2);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("y.exp").destroy();
   // a : undef and f : y→ay+πy+1
-  assert_reduce("undef→a");
-  assert_reduce("1+π×y+y×a→f(y)");
+  assert_reduce_and_store("undef→a");
+  assert_reduce_and_store("1+π×y+y×a→f(y)");
   assert_reduced_expression_polynomial_degree("f(x)", -1); // a is undefined
   // With a = 1
-  assert_reduce("1→a");
+  assert_reduce_and_store("1→a");
   assert_reduced_expression_polynomial_degree("f(x)", 1);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
@@ -438,18 +438,18 @@ QUIZ_CASE(poincare_properties_get_variables) {
   assert_expression_has_variables("x+y+z+2×w", variableBuffer2, 4);
   const char * variableBuffer3[] = {"a","x","y","k","B", ""};
   assert_expression_has_variables("a+x^2+2×y+k!×B", variableBuffer3, 5);
-  assert_reduce("x→BABA");
-  assert_reduce("y→abab");
+  assert_reduce_and_store("x→BABA");
+  assert_reduce_and_store("y→abab");
   const char * variableBuffer4[] = {"BABA","abab", ""};
   assert_expression_has_variables("BABA+abab", variableBuffer4, 2);
-  assert_reduce("z→BBBBBB");
+  assert_reduce_and_store("z→BBBBBB");
   const char * variableBuffer5[] = {"BBBBBB", ""};
   assert_expression_has_variables("BBBBBB", variableBuffer5, 1);
   const char * variableBuffer6[] = {""};
   assert_expression_has_variables("a+b+c+d+f+g+h+j+k+l+m+n+o+p+q+r+s+t+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+mm+nn+oo", variableBuffer6, -1);
   assert_expression_has_variables("a+b+c+d+f+j+k", variableBuffer6, -1);
   // f: x → 1+πx+x^2+toto
-  assert_reduce("1+π×x+x^2+\"toto\"→f(x)");
+  assert_reduce_and_store("1+π×x+x^2+\"toto\"→f(x)");
   const char * variableBuffer7[] = {"\"tata\"","\"toto\"", ""};
   assert_expression_has_variables("f(\"tata\")", variableBuffer7, 2);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("BABA.exp").destroy();
@@ -468,44 +468,44 @@ QUIZ_CASE(poincare_properties_get_variables) {
   assert_expression_has_variables("\"box\"+y×int(z,x,a,0)", variableBuffer11, 4);
 
   // f: x → 0
-  assert_reduce("0→f(x)");
-  assert_reduce("x→va");
+  assert_reduce_and_store("0→f(x)");
+  assert_reduce_and_store("x→va");
   const char * variableBuffer12[] = {"va", ""};
   assert_expression_has_variables("f(va)", variableBuffer12, 1);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
   // f: x → a, with a = 12
-  assert_reduce("12→a");
-  assert_reduce("a→f(x)");
+  assert_reduce_and_store("12→a");
+  assert_reduce_and_store("a→f(x)");
   const char * variableBuffer13[] = {"a", "x", ""};
   assert_expression_has_variables("f(x)", variableBuffer13, 2);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   // f: x → 1, g: x → 2
-  assert_reduce("1→f(x)");
-  assert_reduce("2→g(x)");
+  assert_reduce_and_store("1→f(x)");
+  assert_reduce_and_store("2→g(x)");
   const char * variableBuffer14[] = {"x", "y", ""};
   assert_expression_has_variables("f(g(x)+y)", variableBuffer14, 2);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("g.func").destroy();
 
   // x = 1
-  assert_reduce("1→x");
+  assert_reduce_and_store("1→x");
   const char * variableBuffer15[] = {"x","y",""};
   assert_expression_has_variables("x+y", variableBuffer15, 2);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();
 
   // x = a + b
-  assert_reduce("1→a");
-  assert_reduce("a+b+c→x");
+  assert_reduce_and_store("1→a");
+  assert_reduce_and_store("a+b+c→x");
   const char * variableBuffer16[] = {"x","y",""};
   assert_expression_has_variables("x+y", variableBuffer16, 2);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
 
   // f: x → a+g(y+x), g: x → x+b, a = b + c + x
-  assert_reduce("b+c+x→a");
-  assert_reduce("x+b→g(x)");
-  assert_reduce("a+g(x+y)→f(x)");
+  assert_reduce_and_store("b+c+x→a");
+  assert_reduce_and_store("x+b→g(x)");
+  assert_reduce_and_store("a+g(x+y)→f(x)");
   const char * variableBuffer17[] = {"a", "x", "y", "b", ""};
   assert_expression_has_variables("f(x)", variableBuffer17, 4);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
@@ -541,7 +541,7 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   assert_reduced_expression_has_polynomial_coefficient("x^2-π×x+1", "x", coefficient3);
 
   // f: x→x^2+Px+1
-  assert_reduce("1+π×x+x^2→f(x)");
+  assert_reduce_and_store("1+π×x+x^2→f(x)");
   const char * coefficient4[] = {"1", "π", "1", 0}; //x^2+π×x+1
   assert_reduced_expression_has_polynomial_coefficient("f(x)", "x", coefficient4);
   const char * coefficient5[] = {"0", "i", 0}; //√(-1)x
@@ -550,7 +550,7 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x", coefficient6, Real);
 
   // 3 -> x
-  assert_reduce("3→x");
+  assert_reduce_and_store("3→x");
   const char * coefficient7[] = {"4", 0};
   assert_reduced_expression_has_polynomial_coefficient("x+1", "x", coefficient7 );
   const char * coefficient8[] = {"2", "1", 0};

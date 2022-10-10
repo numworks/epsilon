@@ -627,12 +627,12 @@ QUIZ_CASE(poincare_parsing_parse_unit_convert) {
   assert_text_not_parsable("4→_km/_m");
   assert_text_not_parsable("3×_min→_s+1-1");
   assert_text_not_parsable("0→_K");
-  assert_reduce("_m→a", Radian, MetricUnitFormat, Real);
-  assert_reduce("_m→b", Radian, MetricUnitFormat, Real);
+  assert_reduce_and_store("_m→a", Radian, MetricUnitFormat, Real);
+  assert_reduce_and_store("_m→b", Radian, MetricUnitFormat, Real);
   assert_text_not_parsable("1_km→a×b");
-  assert_reduce("2→a");
+  assert_reduce_and_store("2→a");
   assert_text_not_parsable("3_m→a×_km");
-  assert_reduce("2→f(x)");
+  assert_reduce_and_store("2→f(x)");
   assert_text_not_parsable("3_m→f(2)×_km");
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();

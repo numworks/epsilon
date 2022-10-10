@@ -1332,47 +1332,42 @@ QUIZ_CASE(poincare_simplification_functions_of_matrices) {
 }
 
 QUIZ_CASE(poincare_simplification_store) {
-  assert_parsed_expression_simplify_to("1+2→x", "3");
-  assert_parsed_expression_simplify_to("0.1+0.2→x", "3/10");
-  assert_parsed_expression_simplify_to("a→x", Undefined::Name());
-  assert_parsed_expression_simplify_to("diff(ln(x),x,4)→x", "0.25"); // Do not store exact derivative
-
+  assert_parsed_expression_simplify_to("1+2→x", "3→x");
+  assert_parsed_expression_simplify_to("0.1+0.2→x", "3/10→x");
+  assert_parsed_expression_simplify_to("a→x", "a→x");
+  assert_parsed_expression_simplify_to("a→x", "undef→x", User, Radian, MetricUnitFormat, Cartesian, ReplaceAllSymbolsWithDefinitionsOrUndefined);
 
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();
 }
 
 QUIZ_CASE(poincare_simplification_store_matrix) {
-  assert_parsed_expression_simplify_to("1+1→a", "2");
-  assert_parsed_expression_simplify_to("[[8]]→f(x)", "[[8]]");
-  assert_parsed_expression_simplify_to("[[x]]→f(x)", "[[x]]");
-
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
+  assert_parsed_expression_simplify_to("1+1→a", "2→a");
+  assert_parsed_expression_simplify_to("[[8]]→f(x)", "[[8]]→f(x)");
+  assert_parsed_expression_simplify_to("[[x]]→f(x)", "[[x]]→f(x)");
 }
 
 QUIZ_CASE(poincare_simplification_store_correctly_parsed) {
   assert_parsed_expression_simplify_to("abc", "a×b×c");
   assert_parsed_expression_simplify_to("\"abc\"", "\"abc\"");
-  assert_parsed_expression_simplify_to("2→a", "2");
-  assert_parsed_expression_simplify_to("5→bc", "5");
+  assert_reduce_and_store("2→a");
+  assert_reduce_and_store("5→bc");
   assert_parsed_expression_simplify_to("abc", "10"); // a*bc
   assert_parsed_expression_simplify_to("aa", "4");
-  assert_parsed_expression_simplify_to("10→aa", "10");
+  assert_reduce_and_store("10→aa");
   assert_parsed_expression_simplify_to("aa", "10");
   assert_parsed_expression_simplify_to("aaa", "20"); // Parsed to a*aa
   assert_parsed_expression_simplify_to("aaaaa", "200"); // Parsed to a*aa*aa
   assert_parsed_expression_simplify_to("acos(b)", "arccos(b)");
   assert_parsed_expression_simplify_to("aacos(b)", "2×arccos(b)");
-  assert_parsed_expression_simplify_to("t→bar(t)", "t");
-  assert_parsed_expression_simplify_to("8→foo", "8");
+  assert_reduce_and_store("t→bar(t)");
+  assert_reduce_and_store("8→foo");
   assert_parsed_expression_simplify_to("foobar(x)", "8×x");
-  assert_parsed_expression_simplify_to("t^2→foobar(t)", "t^2");
+  assert_reduce_and_store("t^2→foobar(t)");
   assert_parsed_expression_simplify_to("foobar(x)", "x^2");
 
   assert_parsed_expression_simplify_to("t", "1×_t");
-  assert_parsed_expression_simplify_to("2→t", "2");
+  assert_reduce_and_store("2→t");
   assert_parsed_expression_simplify_to("t", "2");
 
   // Clean the storage for other tests
@@ -1428,13 +1423,13 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   // User defined variable
   assert_parsed_expression_simplify_to("a", "a", User, Radian, MetricUnitFormat, Real);
   // a = 2+i
-  assert_reduce("2+i→a", Radian, MetricUnitFormat, Real);
+  assert_reduce_and_store("2+i→a", Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("a", "nonreal", User, Radian, MetricUnitFormat, Real);
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   // User defined function
   // f : x → x+1
-  assert_reduce("x+1+i→f(x)", Radian, MetricUnitFormat, Real);
+  assert_reduce_and_store("x+1+i→f(x)", Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("f(3)", "nonreal", User, Radian, MetricUnitFormat, Real);
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
@@ -1513,13 +1508,13 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   // User defined variable
   assert_parsed_expression_simplify_to("a", "a", User, Radian, MetricUnitFormat, Cartesian);
   // a = 2+i
-  assert_reduce("2+i→a", Radian, MetricUnitFormat, Cartesian);
+  assert_reduce_and_store("2+i→a", Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("a", "2+i", User, Radian, MetricUnitFormat, Cartesian);
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   // User defined function
   // f : x → x+1
-  assert_reduce("x+1+i→f(x)", Radian, MetricUnitFormat, Cartesian);
+  assert_reduce_and_store("x+1+i→f(x)", Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("f(3)", "4+i", User, Radian, MetricUnitFormat, Cartesian);
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
@@ -1563,14 +1558,14 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   // User defined variable
   assert_parsed_expression_simplify_to("a", "a", User, Radian, MetricUnitFormat, Polar);
   // a = 2 + i
-  assert_reduce("2+i→a", Radian, MetricUnitFormat, Polar);
+  assert_reduce_and_store("2+i→a", Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("a", "√(5)×e^\u0012\u0012-2×arctan(2)+π\u0013/2×i\u0013", User, Radian, MetricUnitFormat, Polar);
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   // User defined function
   // f: x → x+1
 
-  assert_reduce("x+1+i→f(x)", Radian, MetricUnitFormat, Polar);
+  assert_reduce_and_store("x+1+i→f(x)", Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("f(3)", "√(17)×e^\u0012\u0012-2×arctan(4)+π\u0013/2×i\u0013", User, Radian, MetricUnitFormat, Polar);
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
@@ -1612,40 +1607,13 @@ QUIZ_CASE(poincare_simplification_unit_conversion) {
 QUIZ_CASE(poincare_simplification_user_function) {
   // User defined function
   // f: x → x*3
-  assert_reduce("x*3→f(x)", Radian, MetricUnitFormat, Polar);
+  assert_reduce_and_store("x*3→f(x)", Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("f(1+1)", "6", User, Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("f({2,3})", "{6,9}", User, Radian, MetricUnitFormat, Polar);
   // f: x → 3
-  assert_reduce("3→f(x)", Radian, MetricUnitFormat, Polar);
+  assert_reduce_and_store("3→f(x)", Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("f(1/0)", Undefined::Name(), User, Radian, MetricUnitFormat, Polar);
   // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
-}
-
-QUIZ_CASE(poincare_simplification_user_function_with_convert) {
-  /* User defined function
-   * f: x → 0→0
-   * It cannot be created with a const char *, so we create it by hand. */
-  Expression e = Store::Builder(
-      UnitConvert::Builder(
-        Rational::Builder(0),
-        Rational::Builder(0)),
-      Function::Builder(
-        "f", 1,
-        Symbol::Builder('x')));
-  assert_expression_reduce(e);
-  assert_parsed_expression_simplify_to("e^(f(0))", "undef");
-
-  e = Store::Builder(
-      UnitConvert::Builder(
-        Rational::Builder(0),
-        Unit::Builder(&Unit::k_timeRepresentatives[Unit::k_secondRepresentativeIndex], Unit::Prefix::EmptyPrefix())),
-      Function::Builder(
-        "f", 1,
-        Symbol::Builder('x')));
-  assert_expression_reduce(e);
-  assert_parsed_expression_simplify_to("0f(0)", "undef");
-
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 }
 
@@ -1892,8 +1860,8 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("{1,4,9,16,25}^(1/2)", "{1,2,3,4,5}");
 
   // Access to an element
-  assert_reduce("{1,4,9}→l1");
-  assert_reduce("{}→l2");
+  assert_reduce_and_store("{1,4,9}→l1");
+  assert_reduce_and_store("{}→l2");
   assert_parsed_expression_simplify_to("l1(1)", "1");
   assert_parsed_expression_simplify_to("l1(2)", "4");
   assert_parsed_expression_simplify_to("l1(3)", "9");
@@ -1987,7 +1955,7 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("sequence(1/(n-3),n,5)", "{-1/2,-1,undef,1,1/2}");
   assert_parsed_expression_simplify_to("sequence(x^2,x,3)", "{1,4,9}");
   // Do not confuse u{n} and L*{n}
-  assert_parsed_expression_simplify_to("{3}→L", "{3}");
+  assert_reduce_and_store("{3}→L");
   assert_parsed_expression_simplify_to("L{2}", "{6}"); // L*{2}
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("L.lis").destroy();

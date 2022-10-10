@@ -248,6 +248,15 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
   Expression symbolValue = childAtIndex(2);
   Expression derivandAsDependency = derivand.clone();
 
+  /* Use reduction target SystemForAnalysis when derivating,
+   * because we don't want to have false reductions such as 
+   * arccot(x) -> arctan(1/x) 
+   * This will not impact the function derivate since it only 
+   * use the angle unit of the reduction context, but it will 
+   * impact the function deepReduce */
+  ExpressionNode::ReductionTarget initialTarget = reductionContext.target();
+  reductionContext.setTarget(ExpressionNode::ReductionTarget::SystemForAnalysis);
+
   int currentDerivationOrder = derivationOrder;
   /* Since derivand is a child to the derivative node, it can be replaced in
    * place without derivate having to return the derivative. */
@@ -275,10 +284,14 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
      * replaceWithInplace on it. */
     derivand = childAtIndex(0);
   }
+
   if (currentDerivationOrder < derivationOrder) {
     // Do not add a dependecy if nothing was derivated.
     listOfDependencies.addChildAtIndexInPlace(derivandAsDependency, listOfDependencies.numberOfChildren(), listOfDependencies.numberOfChildren());
   }
+
+  reductionContext.setTarget(initialTarget);
+
   if (currentDerivationOrder == 0) {
     /* Deep reduces the child, because derivate may not preserve its reduced
      * status. */

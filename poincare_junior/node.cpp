@@ -179,37 +179,4 @@ const Node Node::previousRelative(bool parent) const {
   return parent ? currentNode : closestSibling;
 }
 
-// Iterator
-
-NodeIterator::BackwardsDirect::Iterator::Memoizer::Memoizer(Node node) :
-  m_node(node),
-  m_firstMemoizedSubtreeIndex(0),
-  m_firstSubtreeIndex(0),
-  m_numberOfChildren(node.numberOfChildren())
-{
-  memoizeUntilIndex(m_numberOfChildren);
-}
-
-NodeIterator::IndexedNode NodeIterator::BackwardsDirect::Iterator::Memoizer::childAtIndex(int i) {
-  if (i < m_firstSubtreeIndex || i >= m_firstSubtreeIndex + m_numberOfChildren) {
-    memoizeUntilIndex(i + 1);
-  }
-  assert(i >= m_firstSubtreeIndex && i < m_firstSubtreeIndex + m_numberOfChildren);
-  return m_children[(m_firstMemoizedSubtreeIndex + i - m_firstSubtreeIndex) % k_maxNumberOfMemoizedSubtrees];
-}
-
-void NodeIterator::BackwardsDirect::Iterator::Memoizer::memoizeUntilIndex(int i) {
-  for (NodeIterator::IndexedNode indexedChild : NodeIterator(m_node).directChildren()) {
-    m_children[indexedChild.m_index % k_maxNumberOfMemoizedSubtrees] = indexedChild;
-    if (indexedChild.m_index + 1 == i) {
-      break;
-    }
-  }
-  if (i < k_maxNumberOfMemoizedSubtrees) {
-    m_firstMemoizedSubtreeIndex = 0;
-  } else {
-    m_firstMemoizedSubtreeIndex = std::min(i, m_node.numberOfChildren()) % k_maxNumberOfMemoizedSubtrees;
-  }
-}
-
 }

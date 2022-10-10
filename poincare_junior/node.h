@@ -122,46 +122,24 @@ public:
 
   class BackwardsDirect final {
   public:
-    BackwardsDirect(const Node node) : m_memoizer(node) {}
-
-    // TODO: explain why memoizing
+    BackwardsDirect(const Node node) : m_node(node) {}
     class Iterator {
     public:
-
-      class Memoizer {
-      public:
-        Memoizer(Node node);
-        IndexedNode childAtIndex(int i);
-        size_t numberOfChildren() { return m_numberOfChildren; }
-      private:
-        void memoizeUntilIndex(int i);
-        Node m_node;
-        // Memoization of children addresses in a RingBuffer
-        constexpr static size_t k_maxNumberOfMemoizedSubtrees = 16;
-        IndexedNode m_children[k_maxNumberOfMemoizedSubtrees];
-        size_t m_firstMemoizedSubtreeIndex; // Index used for ring buffer
-        size_t m_firstSubtreeIndex;
-        size_t m_numberOfChildren;
-      };
-
-      Iterator(int childIndex, Memoizer * memoizer) :
-        m_childIndex(childIndex),
-        m_memoizer(memoizer) {}
-      IndexedNode operator*() { return m_memoizer->childAtIndex(m_childIndex); }
-      bool operator!=(const Iterator& it) const { return (m_childIndex != it.m_childIndex); }
-
+      Iterator(Node node, int index) : m_indexedNode({.m_node = node, .m_index = index}) {}
+      IndexedNode operator*() { return m_indexedNode; }
+      bool operator!=(const Iterator& it) const { return (m_indexedNode.m_index != it.m_indexedNode.m_index); }
       Iterator & operator++() {
-        m_childIndex--;
+        m_indexedNode.m_node = m_indexedNode.m_node.previousTree();
+        m_indexedNode.m_index--;
         return *this;
       }
     private:
-      int m_childIndex;
-      mutable Memoizer * m_memoizer;
+      IndexedNode m_indexedNode;
     };
-    Iterator begin() const { return Iterator(m_memoizer.numberOfChildren() - 1, &m_memoizer); }
-    Iterator end() const { return Iterator(-1, &m_memoizer); }
+    Iterator begin() const { return Iterator(m_node.nextTree().previousNode(), m_node.numberOfChildren() - 1); }
+    Iterator end() const { return Iterator(Node(), -1); }
   private:
-    mutable Iterator::Memoizer m_memoizer;
+    Node m_node;
   };
 
   ForwardDirect directChildren() { return ForwardDirect(m_node); }

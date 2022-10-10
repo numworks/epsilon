@@ -519,6 +519,10 @@ Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, Ex
       e.replaceWithInPlace(result);
       return result.shallowReduce(reductionContext);
     }
+    // Step 1.2. Do not reduce ArcCotangent when we do not know if child is null and target is not User
+    if (isNull == TrinaryBoolean::Unknown && reductionContext.target() != ExpressionNode::ReductionTarget::User) {
+      return e;
+    }
   }
   // Step 2. Replace with equivalent inverse function on inverse (^-1) argument
   Power p = Power::Builder(e.childAtIndex(0), Rational::Builder(-1));

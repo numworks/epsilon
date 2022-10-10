@@ -273,6 +273,7 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
     replaceWithInPlace(result);
     return result.deepReduce(reductionContext);
   }
+
   // If derivation fails, we still need to decrease the derivation order according to what was already done.
   replaceChildAtIndexInPlace(numberOfChildren() - 1, Rational::Builder(currentDerivationOrder));
   Dependency d = Dependency::Builder(Undefined::Builder(), listOfDependencies);
@@ -286,7 +287,6 @@ void Derivative::DerivateUnaryFunction(Expression function, Symbol symbol, Expre
   Expression g = function.childAtIndex(0);
   Expression dg = g.derivate(reductionContext, symbol, symbolValue) ? function.childAtIndex(0) : Derivative::Builder(function.childAtIndex(0), symbol.clone().convert<Symbol>(), symbolValue.clone());
   function.replaceWithInPlace(Multiplication::Builder(df, dg));
-
 }
 
 Expression Derivative::UntypedBuilder(Expression children) {

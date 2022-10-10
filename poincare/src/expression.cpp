@@ -841,18 +841,18 @@ void Expression::beautifyAndApproximateScalar(Expression * simplifiedExpression,
     if (approximateExpression) {
       /* TODO: All these special cases with units are weird.
        * We should probably not approximate units during beautification. */
-      if (hasUnits && !hasOnlyAngleUnit) {
+      if (hasOnlyAngleUnit) {
+        /* Pure angle units are not approximated during beautification.
+         * */
+        *approximateExpression = reducedClone.approximateReducedExpressionContainingPureAngleUnit<double>(context, complexFormat, angleUnit);
+        return;
+      }
+      if (hasUnits) {
         /* The approximation was taken care of during beautification.
          * Approximate and simplified expressions are set equal so that only
          * one of them will be output. Note that there is no need to clone
          * since the expressions will not be altered. */
         *approximateExpression = *simplifiedExpression;
-        return;
-      }
-      if (hasOnlyAngleUnit) {
-        /* Pure angle units are not approximated during beautification.
-         * */
-        *approximateExpression = reducedClone.approximateReducedExpressionContainingPureAngleUnit<double>(context, complexFormat, angleUnit);
         return;
       }
       *approximateExpression = simplifiedExpression->approximate<double>(context, complexFormat, angleUnit);

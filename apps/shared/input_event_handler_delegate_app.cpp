@@ -43,4 +43,8 @@ void InputEventHandlerDelegateApp::storeValue(const char * text) {
   displayModalViewController(&m_storeController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
 }
 
+bool InputEventHandlerDelegateApp::isStoreMenuOpen() {
+  return m_modalViewController.currentModalViewController() == &m_storeController;
+}
+
 }

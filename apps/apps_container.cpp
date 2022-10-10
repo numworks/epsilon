@@ -387,9 +387,16 @@ void AppsContainer::examDeactivatingPopUpIsDismissed() {
   Ion::USB::clearEnumerationInterrupt();
 }
 
+bool AppsContainer::storageWillChangeForRecord(const Ion::Storage::Record record) {
+  if (s_activeApp) {
+    return s_activeApp->storageWillChangeForRecord(record);
+  }
+  return true;
+}
+
 void AppsContainer::storageDidChangeForRecord(const Ion::Storage::Record record) {
   if (s_activeApp) {
-    s_activeApp->snapshot()->storageDidChangeForRecord(record);
+    s_activeApp->storageDidChangeForRecord(record);
   }
 }
 

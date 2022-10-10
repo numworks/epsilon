@@ -21,6 +21,7 @@ public:
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
+  ViewController * currentModalViewController() const { return m_currentModalViewController; };
 protected:
   void reloadView();
 private:

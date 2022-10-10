@@ -39,7 +39,6 @@ public:
     virtual void pack(App * app);
     /* reset all instances to their initial values */
     virtual void reset() {}
-    virtual void storageDidChangeForRecord(Ion::Storage::Record) {}
     virtual const Descriptor * descriptor() const = 0;
 #if EPSILON_GETOPT
     virtual void setOpt(const char * name, const char * value) {}
@@ -68,6 +67,8 @@ public:
   virtual int numberOfTimers() { return 0; }
   virtual Timer * timerAtIndex(int i) { assert(false); return nullptr; }
   virtual Poincare::Context * localContext() { return nullptr; }
+  virtual bool storageWillChangeForRecord(Ion::Storage::Record) { return true; }
+  virtual void storageDidChangeForRecord(Ion::Storage::Record) {}
 #if EPSILON_TELEMETRY
   virtual const char * telemetryId() const { return nullptr; }
 #endif

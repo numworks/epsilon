@@ -55,6 +55,7 @@ public:
   // Exam pop-up controller delegate
   void examDeactivatingPopUpIsDismissed() override;
   // Ion::Storage::StorageDelegate
+  bool storageWillChangeForRecord(const Ion::Storage::Record record) override;
   void storageDidChangeForRecord(const Ion::Storage::Record record) override;
   void storageIsFull() override;
 #if EPSILON_GETOPT

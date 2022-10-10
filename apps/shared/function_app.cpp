@@ -17,7 +17,7 @@ void FunctionApp::Snapshot::reset() {
   setActiveTab(0);
 }
 
-void FunctionApp::Snapshot::storageDidChangeForRecord(const Ion::Storage::Record record) {
+void FunctionApp::storageDidChangeForRecord(const Ion::Storage::Record record) {
   functionStore()->storageDidChangeForRecord(record);
 }
 

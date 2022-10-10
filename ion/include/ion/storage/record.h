@@ -30,7 +30,8 @@ public:
     NameTaken = 1,
     NonCompliantName = 2,
     NotEnoughSpaceAvailable = 3,
-    RecordDoesNotExist = 4
+    RecordDoesNotExist = 4,
+    CanceledByDelegate = 5,
   };
   struct Data {
     const void * buffer;

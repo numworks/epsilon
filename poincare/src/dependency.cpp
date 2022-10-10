@@ -41,6 +41,18 @@ template<typename T> Evaluation<T> DependencyNode::templatedApproximate(const Ap
 
 // Dependency
 
+void Dependency::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
+  assert(numberOfChildren() == 2);
+
+  /* Main expression is reduced with the same reduction target as the parent */
+  childAtIndex(0).deepReduce(reductionContext);
+
+  /* List of dependencies is reduced with target SystemForAnalysis */
+  ExpressionNode::ReductionContext depContext = reductionContext;
+  depContext.setTarget(ExpressionNode::ReductionTarget::SystemForAnalysis);
+  childAtIndex(1).deepReduce(depContext);
+}
+
 Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   /* Undefined and dependencies are bubbled-up from list of dependencies.
    * We do this here because we do not want to do this in List::shallowReduce

@@ -1,3 +1,4 @@
+#include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/logarithm.h>
 #include <poincare/multiplication.h>
@@ -70,6 +71,10 @@ void ExpressionNode::deepReduceChildren(const ExpressionNode::ReductionContext& 
   }
   if (type() == Type::Derivative) { // Also for integral ?
     Expression(this).convert<Derivative>().deepReduceChildren(reductionContext);
+    return;
+  }
+  if (type() == Type::Dependency) {
+    Expression(this).convert<Dependency>().deepReduceChildren(reductionContext);
     return;
   }
   if (type() == Type::UnitConvert) {

@@ -3,6 +3,18 @@
 
 using namespace Escher;
 
+
+/*
+  Flash pictogram (when charging)
+  1101 1011 0000 0000 0000 0000 1111 1111
+  1011 0111 0000 0000 0110 1101 1111 1111
+  0110 1101 0000 0000 1101 1011 1111 1111
+  0010 0100 0000 0000 0000 0000 0000 0000
+  0000 0000 0000 0000 0000 0000 0010 0100
+  1111 1111 1101 1011 0000 0000 0110 1101
+  1111 1111 0110 1101 0000 0000 1011 0111
+  1111 1111 0000 0000 0000 0000 1101 1011
+*/
 const uint8_t flashMask[BatteryView::k_flashHeight][BatteryView::k_flashWidth] = {
   {0xDB, 0x00, 0x00, 0xFF},
   {0xB7, 0x00, 0x6D, 0xFF},
@@ -14,6 +26,15 @@ const uint8_t flashMask[BatteryView::k_flashHeight][BatteryView::k_flashWidth] =
   {0xFF, 0x00, 0x00, 0xDB},
 };
 
+/*
+  Tick pictogram (when plugged and full)
+  1111 1111 1111 1111 1111 1111 1111 1111 1111 1111 1101 1011 0000 0000 0010 0100
+  1111 1111 1111 1111 1111 1111 1111 1111 1111 1111 0110 1101 0000 0000 1101 1011
+  0110 1101 0000 0000 1011 0111 1111 1111 1011 0111 0000 0000 0010 0100 1111 1111
+  1101 1011 0000 0000 0000 0000 1111 1111 0000 0000 0000 0000 1111 1111 1111 1111
+  1111 1111 1011 0111 0000 0000 0010 0100 0000 0000 1011 0111 1111 1111 1111 1111
+  1111 1111 1111 1111 0010 0100 0000 0000 0010 0100 1111 1111 1111 1111 1111 1111
+*/
 const uint8_t tickMask[BatteryView::k_tickHeight][BatteryView::k_tickWidth] = {
   {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xDB, 0x00, 0x24},
   {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x6D, 0x00, 0xDB},
@@ -76,21 +97,22 @@ void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
     ctx->blendRectWithMask(frame, KDColorWhite, (const uint8_t *)flashMask, flashWorkingBuffer);
   } else if (m_chargeState == Ion::Battery::Charge::LOW) {
     assert(!m_isPlugged);
-    // Low: Quite empty battery
-    ctx->fillRect(KDRect(batteryInsideX, 0, 2*k_elementWidth, k_batteryHeight), Palette::LowBattery);
-    ctx->fillRect(KDRect(3*k_elementWidth+k_separatorThickness, 0, k_batteryWidth-5*k_elementWidth-2*k_separatorThickness, k_batteryHeight), Palette::YellowLight);
+    // LOW: Quite empty battery
+    constexpr KDCoordinate lowChargeWidth = 2*k_elementWidth;
+    ctx->fillRect(KDRect(batteryInsideX, 0, lowChargeWidth, k_batteryHeight), Palette::LowBattery);
+    ctx->fillRect(KDRect(batteryInsideX+lowChargeWidth, 0, batteryInsideWidth-lowChargeWidth, k_batteryHeight), Palette::YellowLight);
   } else if (m_chargeState == Ion::Battery::Charge::SOMEWHERE_INBETWEEN) {
     assert(!m_isPlugged);
-    // Middle: Half full battery
+    // MID: Half full battery
     constexpr KDCoordinate middleChargeWidth = batteryInsideWidth/2;
     ctx->fillRect(KDRect(batteryInsideX, 0, middleChargeWidth, k_batteryHeight), KDColorWhite);
     ctx->fillRect(KDRect(batteryInsideX+middleChargeWidth, 0, middleChargeWidth, k_batteryHeight), Palette::YellowLight);
   } else {
     assert(m_chargeState == Ion::Battery::Charge::FULL);
-    // Full but not plugged: Full battery
+    // FULL but not plugged: Full battery
     ctx->fillRect(KDRect(batteryInsideX, 0, batteryInsideWidth, k_batteryHeight), KDColorWhite);
     if (m_isPlugged) {
-      // Plugged and full: Full battery with tick
+      // FULL and plugged: Full battery with tick
       KDRect frame((k_batteryWidth-k_tickWidth)/2, (k_batteryHeight-k_tickHeight)/2, k_tickWidth, k_tickHeight);
       KDColor tickWorkingBuffer[k_tickHeight*k_tickWidth];
       ctx->blendRectWithMask(frame, Palette::YellowDark, (const uint8_t *)tickMask, tickWorkingBuffer);

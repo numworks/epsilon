@@ -60,7 +60,8 @@ public:
   constexpr static Expression::FunctionHelper s_functionHelperFirstOrder = Expression::FunctionHelper("diff", 3, &UntypedBuilder);
   constexpr static char k_defaultXNTChar = 'x';
   static void DerivateUnaryFunction(Expression function, Symbol symbol, Expression symbolValue, const ExpressionNode::ReductionContext& reductionContext);
-
+  
+  void deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

@@ -33,8 +33,8 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(sin(x),x,x)", "dep\u0014(\u0012π×cos(x)\u0013/180,{sin(x)})", Degree);
   assert_reduces_to_formal_expression("diff(cos(x),x,x)", "dep\u0014(-sin(x),{cos(x)})");
   assert_reduces_to_formal_expression("diff(cos(x),x,x)", "dep\u0014(-\u0012π×sin(x)\u0013/200,{cos(x)})", Gradian);
-  assert_reduces_to_formal_expression("diff(tan(x),x,x)", "dep\u0014(1/cos(x)^2,{tan(x)})");
-  assert_reduces_to_formal_expression("diff(tan(x),x,x)", "dep\u0014(π/\u0012180×cos(x)^2\u0013,{tan(x)})", Degree);
+  assert_reduces_to_formal_expression("diff(tan(x),x,x)", "tan(x)^2+1");
+  assert_reduces_to_formal_expression("diff(tan(x),x,x)", "\u0012π×tan(x)^2+π\u0013/180", Degree);
 
   assert_reduces_to_formal_expression("diff(asin(x),x,x)", "dep\u0014(1/√(-x^2+1),{arcsin(x)})");
   assert_reduces_to_formal_expression("diff(asin(x),x,x)", "dep\u0014(180/\u0012π×√(-x^2+1)\u0013,{arcsin(x)})", Degree);
@@ -44,7 +44,7 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(atan(x),x,x)", "dep\u0014(180/\u0012π×x^2+π\u0013,{arctan(x)})", Degree);
   assert_reduces_to_formal_expression("diff(arcsec(x),x,x)", "dep\u0014(1/\u0012x^2×√(\u0012x^2-1\u0013/x^2)\u0013,{arccos(1/x)})");
   assert_reduces_to_formal_expression("diff(arccsc(x),x,x)", "dep\u0014(-1/\u0012x^2×√(\u0012x^2-1\u0013/x^2)\u0013,{arcsin(1/x)})");
-  assert_reduces_to_formal_expression("diff(arccot(x),x,x)", "dep\u0014(-1/\u0012x^2+1\u0013,{1/x,sign(x),arctan(x)})");
+  assert_reduces_to_formal_expression("diff(arccot(x),x,x)", "diff(arccot(x),x,x)");
 
   assert_reduces_to_formal_expression("diff(sinh(x),x,x)", "dep\u0014(cosh(x),{sinh(x)})");
   assert_reduces_to_formal_expression("diff(cosh(x),x,x)", "dep\u0014(sinh(x),{cosh(x)})");

@@ -101,7 +101,7 @@ void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
     constexpr KDCoordinate lowChargeWidth = 2*k_elementWidth;
     ctx->fillRect(KDRect(batteryInsideX, 0, lowChargeWidth, k_batteryHeight), Palette::LowBattery);
     ctx->fillRect(KDRect(batteryInsideX+lowChargeWidth, 0, batteryInsideWidth-lowChargeWidth, k_batteryHeight), Palette::YellowLight);
-  } else if (m_chargeState == Ion::Battery::Charge::SOMEWHERE_INBETWEEN) {
+  } else if (m_chargeState == Ion::Battery::Charge::MID) {
     assert(!m_isPlugged);
     // MID: Half full battery
     constexpr KDCoordinate middleChargeWidth = batteryInsideWidth/2;

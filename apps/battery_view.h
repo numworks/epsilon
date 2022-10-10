@@ -8,7 +8,7 @@
 class BatteryView : public Escher::TransparentView {
 public:
   BatteryView() :
-    m_chargeState(Ion::Battery::Charge::SOMEWHERE_INBETWEEN),
+    m_chargeState(Ion::Battery::Charge::MID),
     m_isCharging(false),
     m_isPlugged(false)
   {}

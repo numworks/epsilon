@@ -20,7 +20,7 @@ bool isCharging();
 enum class Charge : uint8_t {
   EMPTY = 0,
   LOW = 1,
-  SOMEWHERE_INBETWEEN = 2,
+  MID = 2,
   FULL = 3
 };
 Charge level();

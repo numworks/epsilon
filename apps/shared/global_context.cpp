@@ -175,7 +175,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
       Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
       Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionToStore, context);
       Poincare::Preferences::AngleUnit angleUnit = Poincare::Preferences::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), expressionToStore, context);
-      expressionToStore = expressionToStore.approximateReducedExpressionContainingPureAngleUnit<double>(context, complexFormat, angleUnit);
+      expressionToStore = expressionToStore.approximateReducedExpressionWithUnits<double>(context, complexFormat, angleUnit);
     }
   }
   ExpressionNode::Type type = expressionToStore.type();

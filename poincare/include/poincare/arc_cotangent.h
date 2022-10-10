@@ -33,6 +33,10 @@ private:
   Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { return LayoutShape::MoreLetters; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
+  
+  // Derivation
+   bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) override;
+   Expression unaryFunctionDifferential(const ReductionContext& reductionContext) override;
 
   // Evaluation
   Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override {
@@ -45,8 +49,12 @@ private:
 
 class ArcCotangent final : public ExpressionOneChild<ArcCotangent, ArcCotangentNode> {
 public:
-  using ExpressionBuilder::ExpressionBuilder;
-  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+   using ExpressionBuilder::ExpressionBuilder;
+   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
+
+   // Derivation
+   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+   Expression unaryFunctionDifferential(const ExpressionNode::ReductionContext& reductionContext);
 };
 
 }

@@ -90,7 +90,7 @@ public:
    * still exist but can't be destroyed.
    * (see RecordNameVerifier for more info on competing names)
 .*/
-  bool handleCompetingRecord(Record::Name recordName, bool destroyRecordWithSameFullName);
+  bool handleCompetingRecord(Record::Name recordName, bool destroyRecordWithSameFullName, bool notifyDelegate = true);
 
 private:
   constexpr static uint32_t Magic = 0xEE0BDDBA;
@@ -114,7 +114,7 @@ private:
   Record::ErrorStatus setNameOfRecord(Record * record, Record::Name name);
   Record::Data valueOfRecord(const Record record);
   Record::ErrorStatus setValueOfRecord(const Record record, Record::Data data);
-  void destroyRecord(const Record record);
+  void destroyRecord(const Record record, bool notifyDelegate = true);
 
   /* Getters on address in buffer */
   char * pointerOfRecord(const Record record) const;

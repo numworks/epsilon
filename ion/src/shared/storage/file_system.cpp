@@ -144,7 +144,10 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
   /* WARNING : This relies on the fact that when you create a python script or
    * a function, you first create it with a placeholder name and then let the
    * user set its name through setNameOfRecord. */
-  if (!handleCompetingRecord(recordName, extensionCanOverrideItself)) {
+  /* We don't notify the delegate of the destruction here since it might move
+   * things in the pool and invalidate the chunks we have. It will be notified
+   * later on anyway. */
+  if (!handleCompetingRecord(recordName, extensionCanOverrideItself, false)) {
     return Record::ErrorStatus::NameTaken;
   }
 
@@ -253,11 +256,11 @@ void FileSystem::destroyRecordsWithExtension(const char * extension) {
   }
 }
 
-bool FileSystem::handleCompetingRecord(Record::Name recordName, bool destroyRecordWithSameFullName) {
+bool FileSystem::handleCompetingRecord(Record::Name recordName, bool destroyRecordWithSameFullName, bool notifyDelegate) {
   Record sameNameRecord = Record(recordName);
   if (isNameOfRecordTaken(sameNameRecord)) {
     if (destroyRecordWithSameFullName) {
-      sameNameRecord.destroy();
+      destroyRecord(sameNameRecord, notifyDelegate);
       return true;
     }
     return false;
@@ -271,7 +274,7 @@ bool FileSystem::handleCompetingRecord(Record::Name recordName, bool destroyReco
     return false;
   }
   if (result == RecordNameVerifier::OverrideStatus::Allowed) {
-    competingRecord.destroy();
+    destroyRecord(competingRecord, notifyDelegate);
   }
   return true;
 }
@@ -371,7 +374,7 @@ Record::ErrorStatus FileSystem::setValueOfRecord(Record record, Record::Data dat
   return Record::ErrorStatus::RecordDoesNotExist;
 }
 
-void FileSystem::destroyRecord(Record record) {
+void FileSystem::destroyRecord(Record record, bool notifyDelegate) {
   if (record.isNull()) {
     return;
   }
@@ -379,7 +382,9 @@ void FileSystem::destroyRecord(Record record) {
   if (p != nullptr) {
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
     slideBuffer(p+previousRecordSize, -previousRecordSize);
-    notifyChangeToDelegate();
+    if (notifyDelegate) {
+      notifyChangeToDelegate();
+    }
   }
 }
 

@@ -130,7 +130,7 @@ bool ExpressionField::handleDivision() {
         assert(mixedFractionsEnabled);
         createAnsFraction();
         break;
-       case DivisionCycleStep::DenominatorOfEmptyFraction :
+      case DivisionCycleStep::DenominatorOfEmptyFraction :
         assert(false);
         break;
     }

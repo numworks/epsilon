@@ -38,6 +38,7 @@ private:
     bool isDisplayingModal() const;
     void reload();
   private:
+    KDSize minimalSizeForOptimalDisplay() const override { return m_regularView->minimalSizeForOptimalDisplay(); }
     KDRect modalViewFrame() const;
     View * m_regularView;
     View * m_currentModalView;

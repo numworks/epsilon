@@ -47,12 +47,15 @@ View * ModalViewController::ContentView::subviewAtIndex(int index) {
 
 KDRect ModalViewController::ContentView::modalViewFrame() const {
   KDSize modalSize = m_isDisplayingModal ? m_currentModalView->minimalSizeForOptimalDisplay() : KDSize(0,0);
+  KDCoordinate availableHeight = bounds().height() - m_topMargin - m_bottomMargin;
   KDCoordinate modalHeight = modalSize.height();
-  modalHeight = modalHeight == 0 ? bounds().height()-m_topMargin-m_bottomMargin : modalHeight;
+  modalHeight = modalHeight == 0 ? availableHeight : std::min(modalHeight, availableHeight);
+  KDCoordinate availableWidth = bounds().width() - m_leftMargin - m_rightMargin;
   KDCoordinate modalWidth = modalSize.width();
-  modalWidth = modalWidth == 0 ? bounds().width()-m_leftMargin-m_rightMargin : modalWidth;
-  KDRect modalViewFrame(m_leftMargin + m_horizontalAlignment*(bounds().width()-m_leftMargin-m_rightMargin-modalWidth),
-    m_topMargin+m_verticalAlignment*(bounds().height()-m_topMargin-m_bottomMargin-modalHeight), modalWidth, modalHeight);
+  modalWidth = modalWidth == 0 ? availableWidth : std::min(modalWidth, availableWidth);
+  KDRect modalViewFrame(m_leftMargin + m_horizontalAlignment * (availableWidth - modalWidth),
+                        m_topMargin + m_verticalAlignment * (availableHeight - modalHeight),
+                        modalWidth, modalHeight);
   return modalViewFrame;
 }
 
@@ -60,9 +63,10 @@ void ModalViewController::ContentView::layoutSubviews(bool force) {
   assert(m_regularView != nullptr);
   if (m_isDisplayingModal) {
     assert(m_currentModalView != nullptr);
-    KDRect modalFrame = modalViewFrame();
+    KDRect oldFrame = m_currentModalView->m_frame;
+    KDRect modalFrame = modalViewFrame().unionedWith(oldFrame);
     m_regularView->setFrame(modalFrame == bounds() ? KDRectZero : bounds(), force);
-    m_currentModalView->setFrame(modalFrame, force);
+    m_currentModalView->setFrame(modalFrame, oldFrame == modalFrame);
   } else {
     m_regularView->setFrame(bounds(), force);
     if (m_currentModalView) {

@@ -36,12 +36,14 @@ public:
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
+  void setupActiveView();
   void setupHeadersBorderOverlaping(bool headersOverlapHeaders = true, bool headersOverlapContent = false, KDColor headersContentBorderColor = Palette::GrayBright) {
     m_view.setupHeadersBorderOverlaping(headersOverlapHeaders, headersOverlapContent, headersContentBorderColor);
   }
   constexpr static uint8_t k_maxNumberOfChildren = k_MaxNumberOfStacks;
 private:
   class ControllerView : public View {
+    friend StackViewController;
   public:
     ControllerView(Style style);
     int8_t numberOfStacks() const { return m_stackViews.length(); }
@@ -54,6 +56,7 @@ private:
   const char * className() const override;
 #endif
   private:
+    KDSize minimalSizeForOptimalDisplay() const override;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
@@ -73,7 +76,6 @@ private:
   };
   ControllerView m_view;
   void pushModel(ViewController * vc);
-  void setupActiveView();
   void setupActiveViewController();
   bool shouldStoreHeaderOnStack(ViewController * vc, int index);
   void updateStack(ViewController::TitlesDisplay titleDisplay);

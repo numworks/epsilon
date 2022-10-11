@@ -19,6 +19,10 @@ EditableExpressionCell::EditableExpressionCell(Responder * parentResponder, Inpu
   m_expressionBody[0] = 0;
 }
 
+void EditableExpressionCell::drawRect(KDContext * ctx, KDRect rect) const {
+  drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
+}
+
 void EditableExpressionCell::setMargins(KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) {
   m_topMargin = topMargin;
   m_rightMargin = rightMargin;
@@ -46,10 +50,10 @@ View * EditableExpressionCell::subviewAtIndex(int index) {
 
 void EditableExpressionCell::layoutSubviews(bool force) {
   KDRect cellBounds = bounds();
-  m_expressionField.setFrame(KDRect(cellBounds.x() + m_leftMargin,
+  m_expressionField.setFrame(KDRect(cellBounds.x() + m_leftMargin + k_separatorThickness,
                                     cellBounds.y() + m_topMargin,
-                                    cellBounds.width() - m_leftMargin - m_rightMargin,
-                                    cellBounds.height() - m_topMargin - m_bottomMargin),
+                                    cellBounds.width() - m_leftMargin - m_rightMargin - 2 * k_separatorThickness,
+                                    cellBounds.height() - m_topMargin - m_bottomMargin - k_separatorThickness),
                              force);
 }
 

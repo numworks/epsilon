@@ -32,6 +32,7 @@ class Window;
 
 class View {
   friend class Shared::MemoizedCursorView;
+  friend class ModalViewController;
   friend class TextCursorView;
   friend class TransparentView;
   // We only want Window to be able to invoke View::redraw

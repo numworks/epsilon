@@ -41,17 +41,11 @@ void AbstractPlotView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 static float clippedFloat(float f) {
-  if (f < KDCOORDINATE_MIN) {
-    return KDCOORDINATE_MIN;
-  } else if (f > KDCOORDINATE_MAX) {
-    return KDCOORDINATE_MAX;
-  } else {
-    return f;
-  }
+  return std::clamp(f, static_cast<float>(KDCOORDINATE_MIN), static_cast<float>(KDCOORDINATE_MAX));
 }
 
 float AbstractPlotView::floatToPixel(Axis axis, float f) const {
-  float res = axis == Axis::Horizontal ? (f - m_range->xMin()) / pixelWidth() : (m_range->yMax() - f) / pixelHeight();
+  float res = (axis == Axis::Horizontal) ? ((f - m_range->xMin()) / pixelWidth()) : ((m_range->yMax() - f) / pixelHeight());
   return clippedFloat(res);
 }
 
@@ -69,9 +63,7 @@ void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis pa
   KDCoordinate a = std::round(floatToPixel(parallel, min));
   KDCoordinate b = std::round(floatToPixel(parallel, max));
   if (a > b) {
-    float temp = a;
-    a = b;
-    b = temp;
+    std::swap(a, b);
   }
   if (dashSize <= 0) {
     dashSize = b - a;
@@ -104,28 +96,27 @@ static KDCoordinate relativePositionToOffset(AbstractPlotView::RelativePosition 
   }
 }
 
+static bool computeOriginAndShouldDraw(KDPoint * origin, const AbstractPlotView * plotView, KDSize size, KDRect rect, Coordinate2D<float> xy, AbstractPlotView::RelativePosition xPosition, AbstractPlotView::RelativePosition yPosition, bool ignoreMargin) {
+  assert(origin && plotView);
+  Coordinate2D<float> p = plotView->floatToPixel2D(xy);
+  KDCoordinate x = std::round(p.x1()) + relativePositionToOffset(xPosition, size.width(), ignoreMargin);
+  KDCoordinate y = std::round(p.x2()) + relativePositionToOffset(yPosition, size.height(), ignoreMargin);
+  *origin = KDPoint(x, y);
+  return KDRect(*origin, size).intersects(rect);
+}
+
 void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * label, Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin) const {
   KDSize labelSize = KDFont::Font(k_font)->stringSize(label);
-
-  Coordinate2D<float> p = floatToPixel2D(xy);
-  KDCoordinate x = std::round(p.x1()) + relativePositionToOffset(xPosition, labelSize.width(), ignoreMargin);
-  KDCoordinate y = std::round(p.x2()) + relativePositionToOffset(yPosition, labelSize.height(), ignoreMargin);
-  KDPoint labelOrigin(x, y);
-
-  if (KDRect(labelOrigin, labelSize).intersects(rect)) {
+  KDPoint labelOrigin = KDPointZero;
+  if (computeOriginAndShouldDraw(&labelOrigin, this, labelSize, rect, xy, xPosition, yPosition, ignoreMargin)) {
     ctx->drawString(label, labelOrigin, k_font, color, backgroundColor());
   }
 }
 
 void AbstractPlotView::drawLayout(KDContext * ctx, KDRect rect, Layout layout, Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin) const {
   KDSize layoutSize = layout.layoutSize(k_font);
-
-  Coordinate2D<float> p = floatToPixel2D(xy);
-  KDCoordinate x = std::round(p.x1() + relativePositionToOffset(xPosition, layoutSize.width(), ignoreMargin));
-  KDCoordinate y = std::round(p.x2() + relativePositionToOffset(yPosition, layoutSize.height(), ignoreMargin));
-  KDPoint layoutOrigin(x, y);
-
-  if (KDRect(layoutOrigin, layoutSize).intersects(rect)) {
+  KDPoint layoutOrigin = KDPointZero;
+  if (computeOriginAndShouldDraw(&layoutOrigin, this, layoutSize, rect, xy, xPosition, yPosition, ignoreMargin)) {
     layout.draw(ctx, layoutOrigin, k_font, color, backgroundColor());
   }
 }
@@ -152,7 +143,6 @@ void AbstractPlotView::drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Po
     mask = (const uint8_t *)Dots::LargeDotMask;
   }
   assert(diameter <= Dots::LargeDotDiameter);
-  KDColor workingBuffer[Dots::LargeDotDiameter * Dots::LargeDotDiameter];
 
   /* If circle has an even diameter, out of the four center pixels, the bottom
    * left one will be placed at (x, y) */
@@ -160,6 +150,7 @@ void AbstractPlotView::drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Po
   KDPoint p(std::round(pF.x1()) - (diameter - 1) / 2, std::round(pF.x2()) - diameter / 2);
   KDRect dotRect(p.x(), p.y(), diameter, diameter);
   if (rect.intersects(dotRect)) {
+    KDColor workingBuffer[Dots::LargeDotDiameter * Dots::LargeDotDiameter];
     ctx->blendRectWithMask(dotRect, color, mask, workingBuffer);
   }
 }
@@ -211,12 +202,12 @@ void AbstractPlotView::drawArrowhead(KDContext * ctx, KDRect rect, Coordinate2D<
 }
 
 View * AbstractPlotView::subviewAtIndex(int i) {
-  View * subviews[] = { bannerView(), cursorView() };
-  if (!subviews[0]) {
-    i++;
+  View * banner = bannerView();
+  if (i == 0 && banner) {
+    return banner;
   }
-  assert(i < sizeof(subviews) / sizeof(subviews[0]));
-  return subviews[i];
+  assert(cursorView() && ((i == 1 && banner) || (i == 0 && !banner)));
+  return cursorView();
 }
 
 void AbstractPlotView::layoutSubviews(bool force) {
@@ -245,9 +236,9 @@ struct Mask {
   uint8_t m_mask[T*T];
 };
 
-constexpr KDCoordinate thinCircleDiameter = 1;
-constexpr KDCoordinate thinStampSize = thinCircleDiameter+1;
-constexpr const Mask<thinStampSize + 1> thinStampMask {
+constexpr KDCoordinate k_thinCircleDiameter = 1;
+constexpr KDCoordinate k_thinStampSize = k_thinCircleDiameter + 1;
+constexpr const Mask<k_thinStampSize + 1> thinStampMask {
   0xFF, 0xE1, 0xFF,
   0xE1, 0x00, 0xE1,
   0xFF, 0xE1, 0xFF,
@@ -255,11 +246,12 @@ constexpr const Mask<thinStampSize + 1> thinStampMask {
 
 #define LINE_THICKNESS 2
 
+constexpr KDCoordinate k_thickCircleDiameter = LINE_THICKNESS;
+constexpr KDCoordinate k_thickStampSize = k_thickCircleDiameter + 1;
+
 #if LINE_THICKNESS == 2
 
-constexpr KDCoordinate thickCircleDiameter = 2;
-constexpr KDCoordinate thickStampSize = thickCircleDiameter+1;
-constexpr const Mask<thickStampSize + 1> thickStampMask {
+constexpr const Mask<k_thickStampSize + 1> thickStampMask {
   0xFF, 0xE6, 0xE6, 0xFF,
   0xE6, 0x33, 0x33, 0xE6,
   0xE6, 0x33, 0x33, 0xE6,
@@ -268,9 +260,7 @@ constexpr const Mask<thickStampSize + 1> thickStampMask {
 
 #elif LINE_THICKNESS == 3
 
-constexpr KDCoordinate thickCircleDiameter = 3;
-constexpr KDCoordinate thickStampSize = thickCircleDiameter+1;
-constexpr const Mask<thickStampSize + 1> thickStampMask {
+constexpr const Mask<k_thickStampSize + 1> thickStampMask {
   0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
   0xFF, 0x7A, 0x0C, 0x7A, 0xFF,
   0xFF, 0x0C, 0x00, 0x0C, 0xFF,
@@ -280,9 +270,7 @@ constexpr const Mask<thickStampSize + 1> thickStampMask {
 
 #elif LINE_THICKNESS == 5
 
-constexpr KDCoordinate thickCircleDiameter = 5;
-constexpr KDCoordinate thickStampSize = thickCircleDiameter+1;
-constexpr const Mask<thickStampSize + 1> thickStampMask {
+constexpr const Mask<k_thickStampSize + 1> thickStampMask {
   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
   0xFF, 0xE1, 0x45, 0x0C, 0x45, 0xE1, 0xFF,
   0xFF, 0x45, 0x00, 0x00, 0x00, 0x45, 0xFF,
@@ -312,7 +300,7 @@ constexpr Mask<T-1> shiftedMask(const Mask<T> stampMask, float dx, float dy) {
  * add logic to move to the next pixel if dx rounds up to 1. */
 constexpr size_t k_shiftedSteps = 4;
 
-constexpr Mask<thinStampSize> thinShiftedMasks[k_shiftedSteps + 1][k_shiftedSteps + 1] = {
+constexpr Mask<k_thinStampSize> thinShiftedMasks[k_shiftedSteps + 1][k_shiftedSteps + 1] = {
   {shiftedMask(thinStampMask, .00, .00), shiftedMask(thinStampMask, .00, .25), shiftedMask(thinStampMask, .00, .50), shiftedMask(thinStampMask, .00, .75), shiftedMask(thinStampMask, .00, 1.0)},
   {shiftedMask(thinStampMask, .25, .00), shiftedMask(thinStampMask, .25, .25), shiftedMask(thinStampMask, .25, .50), shiftedMask(thinStampMask, .25, .75), shiftedMask(thinStampMask, .25, 1.0)},
   {shiftedMask(thinStampMask, .50, .00), shiftedMask(thinStampMask, .50, .25), shiftedMask(thinStampMask, .50, .50), shiftedMask(thinStampMask, .50, .75), shiftedMask(thinStampMask, .50, 1.0)},
@@ -320,7 +308,7 @@ constexpr Mask<thinStampSize> thinShiftedMasks[k_shiftedSteps + 1][k_shiftedStep
   {shiftedMask(thinStampMask, 1.0, .00), shiftedMask(thinStampMask, 1.0, .25), shiftedMask(thinStampMask, 1.0, .50), shiftedMask(thinStampMask, 1.0, .75), shiftedMask(thinStampMask, 1.0, 1.0)},
 };
 
-constexpr Mask<thickStampSize> thickShiftedMasks[k_shiftedSteps + 1][k_shiftedSteps + 1] = {
+constexpr Mask<k_thickStampSize> thickShiftedMasks[k_shiftedSteps + 1][k_shiftedSteps + 1] = {
   {shiftedMask(thickStampMask, .00, .00), shiftedMask(thickStampMask, .00, .25), shiftedMask(thickStampMask, .00, .50), shiftedMask(thickStampMask, .00, .75), shiftedMask(thickStampMask, .00, 1.0)},
   {shiftedMask(thickStampMask, .25, .00), shiftedMask(thickStampMask, .25, .25), shiftedMask(thickStampMask, .25, .50), shiftedMask(thickStampMask, .25, .75), shiftedMask(thickStampMask, .25, 1.0)},
   {shiftedMask(thickStampMask, .50, .00), shiftedMask(thickStampMask, .50, .25), shiftedMask(thickStampMask, .50, .50), shiftedMask(thickStampMask, .50, .75), shiftedMask(thickStampMask, .50, 1.0)},
@@ -343,11 +331,11 @@ static void clipBarycentricCoordinatesBetweenBounds(float * start, float * end, 
 void AbstractPlotView::straightJoinDots(KDContext * ctx, KDRect rect, Coordinate2D<float> pixelA, Coordinate2D<float> pixelB, KDColor color, bool thick) const {
   /* Before drawing the line segment, clip it to rect:
    * start and end are the barycentric coordinates on the line segment (0
-   * corresponding to (u, v) and 1 to (x, y)), of the drawing start and end
+   * corresponding to A and 1 to B), of the drawing start and end
    * points. */
   float start = 0;
   float end = 1;
-  KDCoordinate stampSize = thick ? thickStampSize : thinStampSize;
+  KDCoordinate stampSize = thick ? k_thickStampSize : k_thinStampSize;
   clipBarycentricCoordinatesBetweenBounds(&start, &end, rect.left() - stampSize, rect.right() + stampSize, pixelA.x1(), pixelB.x1());
   clipBarycentricCoordinatesBetweenBounds(&start, &end, rect.top() - stampSize, rect.bottom() + stampSize, pixelA.x2(), pixelB.x2());
   float puf = start * pixelB.x1() + (1 - start) * pixelA.x1();
@@ -357,7 +345,7 @@ void AbstractPlotView::straightJoinDots(KDContext * ctx, KDRect rect, Coordinate
 
   float deltaX = pxf - puf;
   float deltaY = pyf - pvf;
-  KDCoordinate circleDiameter = thick ? thickCircleDiameter : thinCircleDiameter;
+  KDCoordinate circleDiameter = thick ? k_thickCircleDiameter : k_thinCircleDiameter;
   float normsRatio = std::sqrt(deltaX*deltaX + deltaY*deltaY) / (circleDiameter / 2.0f);
   float stepX = deltaX / normsRatio ;
   float stepY = deltaY / normsRatio;
@@ -392,7 +380,7 @@ void AbstractPlotView::stamp(KDContext * ctx, KDRect rect, Coordinate2D<float> p
    * stampMask.
    */
 
-  KDCoordinate stampSize = thick ? thickStampSize : thinStampSize;
+  KDCoordinate stampSize = thick ? k_thickStampSize : k_thinStampSize;
   float pxf = p.x1() - 0.5f * stampSize;
   float pyf = p.x2() - 0.5f * stampSize;
   KDCoordinate px = std::ceil(pxf);
@@ -417,7 +405,7 @@ void AbstractPlotView::stamp(KDContext * ctx, KDRect rect, Coordinate2D<float> p
 }
 
 bool AbstractPlotView::pointsInSameStamp(Coordinate2D<float> p1, Coordinate2D<float> p2, bool thick) const {
-  KDCoordinate diameter = thick ? thickCircleDiameter : thinCircleDiameter;
+  KDCoordinate diameter = thick ? k_thickCircleDiameter : k_thinCircleDiameter;
   const float deltaX = p1.x1() - p2.x1();
   const float deltaY = p1.x2() - p2.x2();
   return deltaX * deltaX + deltaY * deltaY < 0.25f * diameter * diameter;

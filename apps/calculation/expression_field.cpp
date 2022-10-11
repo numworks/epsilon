@@ -63,9 +63,12 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
 }
 
 bool ExpressionField::handleDivision() {
-  /* The cycle is:
-   * Ans fraction -> Empty fraction -> mixed fraction -> ans fraction -> etc.
-   */
+  /* The cycle is : 
+   * 1) in a country with mixed fractions :
+   *   when first operation : Start -> DenominatorOfAnsFraction -> NumeratorOfEmptyFraction -> MixedFraction -> DenominatorOfAnsFraction -> etc
+   * 2) in a country without mixed fractions :
+   *   when first operation : Start -> DenominatorOfAnsFraction -> NumeratorOfEmptyFraction -> DenominatorOfAnsFraction -> etc */
+  bool mixedFractionsEnabled = Poincare::Preferences::sharedPreferences()->mixedFractionsAreEnabled();
   Ion::Events::Event event = Ion::Events::Division;
   switch (m_currentStep) {
     case DivisionCycleStep::Start:
@@ -78,16 +81,23 @@ bool ExpressionField::handleDivision() {
       setText("");
       break;
     case DivisionCycleStep::NumeratorOfEmptyFraction :
-      m_currentStep = DivisionCycleStep::MixedFraction;
-      if (editionIsInTextField()) {
-        setText(" /");
-        m_textField.setCursorLocation(m_textField.draftTextBuffer());
+      if (mixedFractionsEnabled) {
+        m_currentStep = DivisionCycleStep::MixedFraction;
+        if (editionIsInTextField()) {
+          setText(" /");
+          m_textField.setCursorLocation(m_textField.draftTextBuffer());
+        } else {
+          setText("");
+          handleEventWithText(I18n::translate(I18n::Message::MixedFractionCommand));
+        }
+        return true;
       } else {
-        setText("");
-        handleEventWithText(I18n::translate(I18n::Message::MixedFractionCommand));
+        m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
+        setText(Poincare::Symbol::k_ansAliases.mainAlias());
       }
-      return true;
+      break;
     case DivisionCycleStep::MixedFraction :
+      assert(mixedFractionsEnabled);
       m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
       setText(Poincare::Symbol::k_ansAliases.mainAlias());
       break;

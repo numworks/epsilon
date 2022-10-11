@@ -2178,3 +2178,8 @@ QUIZ_CASE(poincare_simplification_piecewise_operator) {
   assert_parsed_expression_simplify_to("piecewise(3,1<0,undef)", Undefined::Name());
   assert_parsed_expression_simplify_to("piecewise(3,1>0,undef)", "3");
 }
+
+QUIZ_CASE(poincare_simplification_integral) {
+  assert_parsed_expression_simplify_to("int(tan(x),x,0,x)", "int(tan(x),x,0,x)");
+  assert_parsed_expression_simplify_to("int(arccot(x),x,0,x)", "int(dep\U00000014(\U00000012π×sign(x)-2×arctan(x)\U00000013/2,{1/x}),x,0,x)");
+}

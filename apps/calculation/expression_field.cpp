@@ -63,16 +63,16 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
 }
 
 bool ExpressionField::createdEmptyFraction() {
-  Layout layout = m_layoutField.cursor()->layout();
-  assert(layout.isEmpty());
+  Layout pointedLayout = m_layoutField.cursor()->layout();
+  assert(pointedLayout.isEmpty());
 
   Layout fraction;
-  if (layout.parent().type() == LayoutNode::Type::FractionLayout) {
-    fraction = layout.parent();
+  if (pointedLayout.parent().type() == LayoutNode::Type::FractionLayout) {
+    fraction = pointedLayout.parent();
   }
   else {
-    assert(layout.parent().type() == LayoutNode::Type::HorizontalLayout && layout.parent().numberOfChildren() == 1 && layout.parent().parent().type() == LayoutNode::Type::FractionLayout);
-    fraction = layout.parent().parent();
+    assert(pointedLayout.parent().type() == LayoutNode::Type::HorizontalLayout && pointedLayout.parent().numberOfChildren() == 1 && pointedLayout.parent().parent().type() == LayoutNode::Type::FractionLayout);
+    fraction = pointedLayout.parent().parent();
   }
   assert(fraction.type() == LayoutNode::Type::FractionLayout);
   return fraction.childAtIndex(0).isEmpty() && fraction.childAtIndex(1).isEmpty();

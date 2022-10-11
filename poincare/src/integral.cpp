@@ -406,6 +406,20 @@ Expression Integral::UntypedBuilder(Expression children) {
   return Builder(children.childAtIndex(0), children.childAtIndex(1).convert<Symbol>(), children.childAtIndex(2), children.childAtIndex(3));
 }
 
+void Integral::deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
+  /* First child is reduced with target SystemForAnalysis */
+  ExpressionNode::ReductionContext childContext = reductionContext;
+  childContext.setTarget(ExpressionNode::ReductionTarget::SystemForAnalysis);
+  childAtIndex(0).deepReduce(childContext);
+
+  /* Other children are reduced with the same reduction target as the parent */
+  const int childrenCount = numberOfChildren();
+  assert(childrenCount > 1);
+  for (int i = 1; i < childrenCount; i++) {
+    childAtIndex(i).deepReduce(reductionContext);
+  }
+}
+
 Expression Integral::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {
     Expression e = SimplificationHelper::defaultShallowReduce(

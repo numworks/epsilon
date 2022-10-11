@@ -29,7 +29,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
       && isEditing()
       && fieldContainsSingleMinusSymbol()) {
     setText(Poincare::Symbol::k_ansAliases.mainAlias());
-    // The 'minus' symbol will be addded by ExpressionField::handleEvent
+    // The Minus symbol will be addded by (::ExpressionField::handleEvent)
   }
   if (event == Ion::Events::Division
       && isEditing()) {

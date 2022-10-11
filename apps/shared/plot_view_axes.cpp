@@ -80,11 +80,6 @@ void AbstractLabeledAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotVi
   }
 }
 
-void AbstractLabeledAxis::forceRelativePosition(AbstractPlotView::RelativePosition position) {
-  m_forceRelativePosition = true;
-  m_relativePosition = position;
-}
-
 int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) {
   float t = tickPosition(i, plotView, axis);
   return Poincare::PrintFloat::ConvertFloatToText(t, mutableLabel(i), k_labelBufferMaxSize, k_labelBufferMaxGlyphLength, k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal).GlyphLength;
@@ -127,9 +122,6 @@ void AbstractLabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plo
 
 void AbstractLabeledAxis::computeLabelsRelativePosition(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
   m_labelsPosition = 0.f;
-  if (m_forceRelativePosition) {
-    return;
-  }
 
   if (axis == AbstractPlotView::Axis::Horizontal) {
     float labelHeight = (KDFont::GlyphSize(AbstractPlotView::k_font).height() + 2 * AbstractPlotView::k_labelMargin) * plotView->pixelHeight();

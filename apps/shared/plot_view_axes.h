@@ -84,11 +84,10 @@ public:
   constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
   constexpr static int k_maxNumberOfYLabels = CurveViewRange::k_maxNumberOfYGridUnits;
 
-  AbstractLabeledAxis() : m_forceRelativePosition(false), m_hidden(false) {}
+  AbstractLabeledAxis() : m_hidden(false) {}
 
   void reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) override;
   void setOtherAxis(bool other) override { m_otherAxis = other; }
-  void forceRelativePosition(AbstractPlotView::RelativePosition position);
   void setHidden(bool hide) { m_hidden = hide; }
 
 protected:
@@ -101,7 +100,6 @@ protected:
 
   mutable float m_labelsPosition;
   mutable AbstractPlotView::RelativePosition m_relativePosition : 2;
-  bool m_forceRelativePosition : 1;
   bool m_hidden : 1;
   bool m_otherAxis : 1;
 };

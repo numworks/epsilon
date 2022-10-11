@@ -94,52 +94,51 @@ public:
   NodeIterator(const Node n) : m_node(n) {}
 
   struct IndexedNode {
-    Node m_node;
+    const Node m_node;
     int m_index;
   };
 
-  class ForwardDirect final {
+  class Direct {
   public:
-    ForwardDirect(const Node node) : m_node(node) {}
+    Direct(const Node node) : m_node(node) {}
     class Iterator {
     public:
-      Iterator(Node node, int index) : m_indexedNode({.m_node = node, .m_index = index}) {}
+      Iterator(const Node node, int index) : m_indexedNode({.m_node = node, .m_index = index}) {}
       IndexedNode operator*() { return m_indexedNode; }
       bool operator!=(const Iterator& it) const { return (m_indexedNode.m_index != it.m_indexedNode.m_index); }
-      Iterator & operator++() {
-        m_indexedNode.m_node = m_indexedNode.m_node.nextTree();
-        m_indexedNode.m_index++;
-        return *this;
-      }
-    private:
+    protected:
       IndexedNode m_indexedNode;
+    };
+  protected:
+    const Node m_node;
+  };
+
+  class ForwardDirect final : public Direct {
+  public:
+    using Direct::Direct;
+    class Iterator : public Direct::Iterator {
+    public:
+      using Direct::Iterator::Iterator;
+      Iterator operator++() {
+        return Iterator(m_indexedNode.m_node.nextTree(), m_indexedNode.m_index + 1);
+      }
     };
     Iterator begin() const { return Iterator(m_node.nextNode(), 0); }
     Iterator end() const { return Iterator(Node(), m_node.numberOfChildren()); }
-  private:
-    Node m_node;
   };
 
-  class BackwardsDirect final {
+  class BackwardsDirect final : public Direct {
   public:
-    BackwardsDirect(const Node node) : m_node(node) {}
-    class Iterator {
+    using Direct::Direct;
+    class Iterator : public Direct::Iterator {
     public:
-      Iterator(Node node, int index) : m_indexedNode({.m_node = node, .m_index = index}) {}
-      IndexedNode operator*() { return m_indexedNode; }
-      bool operator!=(const Iterator& it) const { return (m_indexedNode.m_index != it.m_indexedNode.m_index); }
-      Iterator & operator++() {
-        m_indexedNode.m_node = m_indexedNode.m_node.previousTree();
-        m_indexedNode.m_index--;
-        return *this;
+      using Direct::Iterator::Iterator;
+      Iterator operator++() {
+        return Iterator(m_indexedNode.m_node.previousTree(), m_indexedNode.m_index - 1);
       }
-    private:
-      IndexedNode m_indexedNode;
     };
     Iterator begin() const { return Iterator(m_node.nextTree().previousNode(), m_node.numberOfChildren() - 1); }
     Iterator end() const { return Iterator(Node(), -1); }
-  private:
-    Node m_node;
   };
 
   ForwardDirect directChildren() { return ForwardDirect(m_node); }

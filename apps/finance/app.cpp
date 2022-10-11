@@ -54,7 +54,7 @@ void App::didExitPage(Escher::ViewController * controller) {
 
 // App
 App::App(Snapshot * snapshot) :
-  Shared::TextFieldDelegateApp(snapshot, &m_stackViewController),
+  Shared::ExpressionFieldDelegateApp(snapshot, &m_stackViewController),
   m_resultController(&m_stackViewController),
   m_interestController(&m_stackViewController, this, &m_resultController),
   m_interestMenuController(&m_stackViewController, &m_interestController),

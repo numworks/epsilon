@@ -90,11 +90,13 @@ private:
 };
 
 class NodeIterator {
+  /* These iterators should be used only to scan without modifying any child.
+   * Otherwise, use the ReferenceIterator. */
 public:
   NodeIterator(const Node n) : m_node(n) {}
 
   struct IndexedNode {
-    const Node m_node;
+    Node m_node;
     int m_index;
   };
 
@@ -104,7 +106,7 @@ public:
     class Iterator {
     public:
       Iterator(const Node node, int index) : m_indexedNode({.m_node = node, .m_index = index}) {}
-      IndexedNode operator*() { return m_indexedNode; }
+      const IndexedNode operator*() { return m_indexedNode; }
       bool operator!=(const Iterator& it) const { return (m_indexedNode.m_index != it.m_indexedNode.m_index); }
     protected:
       IndexedNode m_indexedNode;
@@ -119,8 +121,10 @@ public:
     class Iterator : public Direct::Iterator {
     public:
       using Direct::Iterator::Iterator;
-      Iterator operator++() {
-        return Iterator(m_indexedNode.m_node.nextTree(), m_indexedNode.m_index + 1);
+      Iterator & operator++() {
+        m_indexedNode.m_node = m_indexedNode.m_node.nextTree();
+        m_indexedNode.m_index++;
+        return *this;
       }
     };
     Iterator begin() const { return Iterator(m_node.nextNode(), 0); }
@@ -133,8 +137,10 @@ public:
     class Iterator : public Direct::Iterator {
     public:
       using Direct::Iterator::Iterator;
-      Iterator operator++() {
-        return Iterator(m_indexedNode.m_node.previousTree(), m_indexedNode.m_index - 1);
+      Iterator & operator++() {
+        m_indexedNode.m_node = m_indexedNode.m_node.previousTree();
+        m_indexedNode.m_index--;
+        return *this;
       }
     };
     Iterator begin() const { return Iterator(m_node.nextTree().previousNode(), m_node.numberOfChildren() - 1); }

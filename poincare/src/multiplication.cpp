@@ -175,40 +175,40 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
  *
  * */
 
-static int operatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNode::LayoutShape right) {
+MultiplicationNode::MultiplicationSymbol MultiplicationNode::OperatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNode::LayoutShape right) {
   if (left == ExpressionNode::LayoutShape::Default || right == ExpressionNode::LayoutShape::Default) {
-    return 1;
+    return MultiplicationSymbol::MiddleDot;
   }
   switch (left) {
     case ExpressionNode::LayoutShape::Decimal:
       switch (right) {
         case ExpressionNode::LayoutShape::OneLetter:
-          return 0;
+          return MultiplicationSymbol::Empty;
         default:
-          return 2;
+          return MultiplicationSymbol::MultiplicationSign;
       }
     case ExpressionNode::LayoutShape::Integer:
       switch (right) {
         case ExpressionNode::LayoutShape::Integer:
         case ExpressionNode::LayoutShape::Decimal:
         case ExpressionNode::LayoutShape::Fraction:
-          return 2;
+          return MultiplicationSymbol::MultiplicationSign;
         case ExpressionNode::LayoutShape::MoreLetters:
         case ExpressionNode::LayoutShape::NthRoot:
-          return 1;
+          return MultiplicationSymbol::MiddleDot;
         default:
-          return 0;
+          return MultiplicationSymbol::Empty;
       }
     case ExpressionNode::LayoutShape::OneLetter:
     case ExpressionNode::LayoutShape::MoreLetters:
       switch (right) {
         case ExpressionNode::LayoutShape::Decimal:
-          return 2;
+          return MultiplicationSymbol::MultiplicationSign;
         case ExpressionNode::LayoutShape::Fraction:
         case ExpressionNode::LayoutShape::Root:
-          return 0;
+          return MultiplicationSymbol::Empty;
         default:
-          return 1;
+          return MultiplicationSymbol::MiddleDot;
       }
     default:
     //case ExpressionNode::LayoutShape::BoundaryPunctuation:
@@ -218,37 +218,40 @@ static int operatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNod
         case ExpressionNode::LayoutShape::Decimal:
         case ExpressionNode::LayoutShape::Integer:
         case ExpressionNode::LayoutShape::Fraction:
-          return 2;
+          return MultiplicationSymbol::MultiplicationSign;
         case ExpressionNode::LayoutShape::NthRoot:
-          return 1;
+          return MultiplicationSymbol::MiddleDot;
         default:
-          return 0;
+          return MultiplicationSymbol::Empty;
       }
   }
 }
 
+CodePoint MultiplicationNode::CodePointForOperatorSymbol(MultiplicationSymbol symbol) {
+  switch (symbol) {
+    case MultiplicationSymbol::Empty:
+      return UCodePointNull;
+    case MultiplicationSymbol::MiddleDot:
+      return UCodePointMiddleDot;
+    default:
+      assert(symbol == MultiplicationSymbol::MultiplicationSign);
+      return UCodePointMultiplicationSign;
+  }
+}
+
 CodePoint MultiplicationNode::operatorSymbol() const {
-  /* ø --> 0
-   * · --> 1
-   * × --> 2 */
   int sign = -1;
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber - 1; i++) {
     /* The operator symbol must be the same for all operands of the multiplication.
      * If one operator has to be '×', they will all be '×'. Idem for '·'. */
-    sign = std::max(sign, operatorSymbolBetween(childAtIndex(i)->rightLayoutShape(), childAtIndex(i+1)->leftLayoutShape()));
+    sign = std::max(sign, static_cast<int>(OperatorSymbolBetween(childAtIndex(i)->rightLayoutShape(), childAtIndex(i+1)->leftLayoutShape())));
   }
-  switch (sign) {
-    case 0:
-      return UCodePointNull;
-    case 1:
-      return UCodePointMiddleDot;
-    default:
-      return UCodePointMultiplicationSign;
-  }
+  assert(sign >= 0);
+  return CodePointForOperatorSymbol(static_cast<MultiplicationSymbol>(sign));
 }
 
-Layout  MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
+Layout MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
   char string[stringMaxSize];
   SerializationHelper::CodePoint(string, stringMaxSize, operatorSymbol());
@@ -260,7 +263,7 @@ Layout  MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDispla
     context,
     [](Expression left, Expression right) {
       bool rightIsUnit = right.type() == ExpressionNode::Type::Unit || (right.type() == ExpressionNode::Type::Power && right.childAtIndex(0).type() == ExpressionNode::Type::Unit);
-      return rightIsUnit && operatorSymbolBetween(left.rightLayoutShape(), right.leftLayoutShape()) == 0;
+      return rightIsUnit && OperatorSymbolBetween(left.rightLayoutShape(), right.leftLayoutShape()) == MultiplicationSymbol::Empty;
     });
 }
 

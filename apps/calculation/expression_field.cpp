@@ -33,24 +33,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Division
       && isEditing()) {
-    /* The cycle is:
-     * Ans fraction -> Empty fraction -> mixed fraction -> ans fraction -> etc.
-     */
-    DivisionCycleStep currentDivisionCycleStep = currentStepOfDivisionCycling();
-    if (currentDivisionCycleStep == DivisionCycleStep::MixedFraction || currentDivisionCycleStep == DivisionCycleStep::Start) {
-      setText(Poincare::Symbol::k_ansAliases.mainAlias());
-    } else if (currentDivisionCycleStep == DivisionCycleStep::AnsDivided) {
-      setText("");
-    } else if (currentDivisionCycleStep == DivisionCycleStep::EmptyFraction) {
-      if (editionIsInTextField()) {
-        setText(k_1DMixedFractionCommand);
-        m_textField.setCursorLocation(m_textField.draftTextBuffer());
-      } else {
-        setText("");
-        handleEventWithText(I18n::translate(I18n::Message::MixedFractionCommand));
-      }
-      return true;
-    }
+    return handleDivision();
   }
   return (::ExpressionField::handleEvent(event));
 }
@@ -102,4 +85,28 @@ ExpressionField::DivisionCycleStep ExpressionField::currentStepOfDivisionCycling
   }
   return DivisionCycleStep::NotCycling;
 }
+
+bool ExpressionField::handleDivision() {
+  /* The cycle is:
+   * Ans fraction -> Empty fraction -> mixed fraction -> ans fraction -> etc.
+   */
+  Ion::Events::Event event = Ion::Events::Division;
+  DivisionCycleStep currentDivisionCycleStep = currentStepOfDivisionCycling();
+  if (currentDivisionCycleStep == DivisionCycleStep::MixedFraction || currentDivisionCycleStep == DivisionCycleStep::Start) {
+    setText(Poincare::Symbol::k_ansAliases.mainAlias());
+  } else if (currentDivisionCycleStep == DivisionCycleStep::AnsDivided) {
+    setText("");
+  } else if (currentDivisionCycleStep == DivisionCycleStep::EmptyFraction) {
+    if (editionIsInTextField()) {
+      setText(k_1DMixedFractionCommand);
+      m_textField.setCursorLocation(m_textField.draftTextBuffer());
+    } else {
+      setText("");
+      handleEventWithText(I18n::translate(I18n::Message::MixedFractionCommand));
+    }
+    return true;
+  }
+  return (::ExpressionField::handleEvent(event));
+}
+
 }

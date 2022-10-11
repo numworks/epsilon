@@ -114,9 +114,8 @@ bool ExpressionField::handleDivision() {
             setText(" /");
             m_textField.setCursorLocation(m_textField.draftTextBuffer());
             return true;
-          } else {
-            event = Ion::Events::Left;
           }
+          event = Ion::Events::Left;
         } else {
           m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
           setText(Poincare::Symbol::k_ansAliases.mainAlias());

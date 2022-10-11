@@ -79,6 +79,7 @@ public:
   constexpr static char k_defaultXNTChar = 'x';
 
   // Expression
+  void deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 };
 

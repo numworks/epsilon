@@ -1,5 +1,6 @@
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
+#include <poincare/integral.h>
 #include <poincare/logarithm.h>
 #include <poincare/multiplication.h>
 #include <poincare/percent.h>
@@ -69,7 +70,11 @@ void ExpressionNode::deepReduceChildren(const ExpressionNode::ReductionContext& 
     Expression(this).convert<Logarithm>().deepReduceChildren(reductionContext);
     return;
   }
-  if (type() == Type::Derivative) { // Also for integral ?
+  if (type() == Type::Integral) {
+    Expression(this).convert<Integral>().deepReduceChildren(reductionContext);
+    return;
+  }
+  if (type() == Type::Derivative) {
     Expression(this).convert<Derivative>().deepReduceChildren(reductionContext);
     return;
   }

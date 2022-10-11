@@ -15,8 +15,8 @@ void AbstractPlotView::reload(bool resetInterruption, bool force) {
     View * banner = bannerView();
     KDCoordinate bannerHeight = banner ? banner->bounds().height() : 0;
     markRectAsDirty(KDRect(0, 0, bounds().width(), bounds().height() - bannerHeight));
-    reloadAxes();
   }
+  reloadAxes();
   layoutSubviews();
 }
 

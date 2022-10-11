@@ -17,9 +17,9 @@ protected:
 private:
   enum class DivisionCycleStep : uint8_t {
     Start = 0,
-    AnsDivided,
-    EmptyFraction,
-    MixedFraction,
+    DenominatorOfAnsFraction, // cursor at Denominator of Ans/Empty
+    NumeratorOfEmptyFraction, // cursor at Numerator of Empty/Empty
+    MixedFraction, // cursor before Empty/Empty
     NotCycling
   };
 

@@ -62,6 +62,7 @@ public:
       .m_positioned = false,
       .m_sized = false,
       .m_margin = false,
+      .m_lockMargin = false,
       .m_baselineFontSize = KDFont::Size::Small,
       .m_positionFontSize = KDFont::Size::Small,
       .m_sizeFontSize = KDFont::Size::Small,
@@ -81,7 +82,10 @@ public:
   KDSize layoutSize(KDFont::Size font);
   KDCoordinate baseline(KDFont::Size font);
   void setMargin(bool hasMargin) { m_flags.m_margin = hasMargin; }
+  void lockMargin(bool lock) { m_flags.m_lockMargin = lock; }
   int leftMargin() { return m_flags.m_margin ? Escher::Metric::OperatorHorizontalMargin : 0; }
+  bool marginIsLocked() { return m_flags.m_lockMargin; }
+
   //TODO: invalid cache when tempering with hierarchy
   virtual void invalidAllSizesPositionsAndBaselines();
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode = Preferences::PrintFloatMode::Decimal, int numberOfSignificantDigits = 0) const override { assert(false); return 0; }
@@ -197,6 +201,7 @@ private:
     bool m_positioned: 1;
     bool m_sized: 1;
     bool m_margin: 1;
+    bool m_lockMargin: 1;
     KDFont::Size m_baselineFontSize: 1;
     KDFont::Size m_positionFontSize: 1;
     KDFont::Size m_sizeFontSize: 1;

@@ -678,36 +678,37 @@ bool Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(Expression exa
 
 /* Layout Helper */
 
-static bool hasStringWithThousandSeparator(Layout l) {
+static bool LayoutHasStringWithThousandSeparator(Layout l) {
   if (l.type() == LayoutNode::Type::StringLayout) {
     return static_cast<StringLayoutNode *>(l.node())->numberOfThousandsSeparators() > 0;
   }
   int n = l.numberOfChildren();
   for (int i = 0; i < n; i++) {
-    if (hasStringWithThousandSeparator(l.childAtIndex(i))) {
+    if (LayoutHasStringWithThousandSeparator(l.childAtIndex(i))) {
       return true;
     }
   }
   return false;
 }
 
-static void stripMargin(Layout l) {
-  l.node()->setMargin(false);
+static void StripMarginFromLayout(Layout l, bool force) {
+  if (force || !l.node()->marginIsLocked()) {
+    l.node()->setMargin(false);
+  }
   int n = l.numberOfChildren();
   for (int i = 0; i < n; i++) {
-    stripMargin(l.childAtIndex(i));
+    StripMarginFromLayout(l.childAtIndex(i), force);
   }
 }
 
-Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context, bool stripMarginStyle, bool nested) const {
+Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context, bool forceStripMargin, bool nested) const {
   if (isUninitialized()) {
     return Layout();
   }
   Layout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
   assert(!l.isUninitialized());
-  if (stripMarginStyle
-   || !(nested || hasStringWithThousandSeparator(l))) {
-    stripMargin(l);
+  if (forceStripMargin || (!nested && !LayoutHasStringWithThousandSeparator(l))) {
+    StripMarginFromLayout(l, forceStripMargin);
   }
   return l;
 }

@@ -194,11 +194,6 @@ bool ExpressionField::handleDivision() {
         break;
     }
   }
-
-  if (!handled) {
-    m_divisionCycleChoiceUpToDate = false;
-    return false;
-  }
   return (::ExpressionField::handleEvent(event));
 }
 

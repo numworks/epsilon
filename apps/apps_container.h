@@ -57,6 +57,9 @@ public:
   // Ion::Storage::StorageDelegate
   void storageDidChangeForRecord(const Ion::Storage::Record record) override;
   void storageIsFull() override;
+#if EPSILON_GETOPT
+  void setInitialAppSnapshot(Escher::App::Snapshot * snapshot) { m_initialAppSnapshot = snapshot; }
+#endif
 protected:
   int numberOfExternalApps() { return Ion::ExternalApps::numberOfApps(); }
 private:
@@ -87,6 +90,10 @@ private:
   OnBoarding::App::Snapshot m_onBoardingSnapshot;
   HardwareTest::App::Snapshot m_hardwareTestSnapshot;
   USB::App::Snapshot m_usbConnectedSnapshot;
+#if EPSILON_GETOPT
+  // Used to launch a given app on a simulator
+  Escher::App::Snapshot * m_initialAppSnapshot;
+#endif
 };
 
 #endif

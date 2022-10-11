@@ -26,6 +26,9 @@ AppsContainer::AppsContainer() :
   m_firstUSBEnumeration(true),
   m_examPopUpController(this),
   m_promptController(k_promptMessages, k_promptColors, k_promptNumberOfMessages)
+#if EPSILON_GETOPT
+  , m_initialAppSnapshot(nullptr)
+#endif
 {
   m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), false);
   Ion::Storage::FileSystem::sharedFileSystem()->setDelegate(this);

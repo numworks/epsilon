@@ -59,17 +59,37 @@ void ion_main(int argc, const char * const argv[]) {
       }
       continue;
     }
+
+    const char * appNames[] = {"home", EPSILON_APPS_NAMES};
+
+    /* Option to open a given app at run-time:
+     * $ ./epsilon.elf --open-app code
+     */
+    if (strcmp(argv[i], "--open-app") == 0 && argc > i+1) {
+      const char * requestedAppName = argv[i+1];
+      if (strcmp(requestedAppName, "none") == 0) {
+        continue;
+      }
+      for (int j = 0; j < AppsContainer::sharedAppsContainer()->numberOfBuiltinApps(); j++) {
+        if (strcmp(requestedAppName, appNames[j]) == 0) {
+          Escher::App::Snapshot * snapshot = AppsContainer::sharedAppsContainer()->appSnapshotAtIndex(j);
+          AppsContainer::sharedAppsContainer()->setInitialAppSnapshot(snapshot);
+          break;
+        }
+      }
+      continue;
+    }
+
     /* Option should be given at run-time:
      * $ ./epsilon.elf --[app_name]-[option] [arguments]
      * For example:
      * $ make -j8 PLATFORM=emscripten EPSILON_APPS=code
      * $ ./epsilon.elf --code-script hello_world.py:print("hello") --code-lock-on-console
      */
-    const char * appNames[] = {"home", EPSILON_APPS_NAMES};
     for (int j = 0; j < AppsContainer::sharedAppsContainer()->numberOfBuiltinApps(); j++) {
-      Escher::App::Snapshot * snapshot = AppsContainer::sharedAppsContainer()->appSnapshotAtIndex(j);
       int cmp = strcmp(argv[i]+2, appNames[j]);
       if (cmp == '-') {
+        Escher::App::Snapshot * snapshot = AppsContainer::sharedAppsContainer()->appSnapshotAtIndex(j);
         snapshot->setOpt(argv[i]+2+strlen(appNames[j])+1, argv[i+1]);
         break;
       }

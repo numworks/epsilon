@@ -11,6 +11,8 @@ public:
   ExpressionField(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandler, Escher::TextFieldDelegate * textFieldDelegate, Escher::LayoutFieldDelegate * layoutFieldDelegate) :
   Escher::ExpressionField(parentResponder, inputEventHandler, textFieldDelegate, layoutFieldDelegate) {
     setLayoutInsertionCursorEvent(Ion::Events::Up);
+    m_currentStep = DivisionCycleStep::Start;
+    m_divisionStepUpToDate = false;
   }
 protected:
   bool handleEvent(Ion::Events::Event event) override;
@@ -28,9 +30,10 @@ private:
   constexpr static const char k_serializedEmptyFraction[] = "\U00000012\U00000012\U00000013/\U00000012\U00000013\U00000013";
   constexpr static const char k_serializedAnsFraction[] = "\U00000012\U00000012Ans\U00000013/\U00000012\U00000013\U00000013";
   constexpr static int k_divisionCycleCheckBufferSize = std::max({sizeof(k_1DMixedFractionCommand), sizeof(k_1DAnsFraction), sizeof(k_serializedEmptyFraction), sizeof(k_serializedAnsFraction)}) + 1;
+  DivisionCycleStep m_currentStep;
+  bool m_divisionStepUpToDate;
 
   bool fieldContainsSingleMinusSymbol() const;
-  DivisionCycleStep currentStepOfDivisionCycling();
   bool handleDivision();
 };
 

@@ -10,6 +10,9 @@ using namespace Poincare;
 namespace Calculation {
 
 bool ExpressionField::handleEvent(Ion::Events::Event event) {
+  if (event != Ion::Events::Division) {
+    m_divisionStepUpToDate = false;
+  }
   if (event == Ion::Events::Back) {
     return false;
   }
@@ -33,6 +36,10 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Division
       && isEditing()) {
+    if (!m_divisionStepUpToDate) {
+      m_currentStep = isEmpty() ? DivisionCycleStep::Start : DivisionCycleStep::NotCycling;
+      m_divisionStepUpToDate = true;
+    }
     return handleDivision();
   }
   return (::ExpressionField::handleEvent(event));
@@ -55,52 +62,23 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
   }
 }
 
-ExpressionField::DivisionCycleStep ExpressionField::currentStepOfDivisionCycling() {
-  if (isEmpty()) {
-    return DivisionCycleStep::Start;
-  }
-  bool cursorIsLeftOfLayout = false;
-  char inputBuffer[k_divisionCycleCheckBufferSize];
-  if (editionIsInTextField()) {
-    if (strlen(m_textField.draftTextBuffer()) >= k_divisionCycleCheckBufferSize) {
-      return DivisionCycleStep::NotCycling;
-    }
-    strlcpy(inputBuffer, m_textField.draftTextBuffer(), k_divisionCycleCheckBufferSize);
-  } else {
-    Layout layout = m_layoutField.layout();
-    if (layout.numberOfChildren() > 1) {
-      return DivisionCycleStep::NotCycling;
-    }
-    layout.serializeForParsing(inputBuffer, k_divisionCycleCheckBufferSize);
-    cursorIsLeftOfLayout = m_layoutField.cursor()->isEquivalentTo(LayoutCursor(layout, Poincare::LayoutCursor::Position::Left));
-  }
-  if ((inputBuffer[0] == '/' && inputBuffer[1] == 0) || (!cursorIsLeftOfLayout && strcmp(k_serializedEmptyFraction, inputBuffer) == 0)) {
-    return DivisionCycleStep::NumeratorOfEmptyFraction;
-  }
-  if (strcmp(k_1DAnsFraction, inputBuffer) == 0 || strcmp(k_serializedAnsFraction, inputBuffer) == 0) {
-    return DivisionCycleStep::DenominatorOfAnsFraction;
-  }
-  if (strcmp(k_1DMixedFractionCommand, inputBuffer) == 0 || (cursorIsLeftOfLayout && strcmp(k_serializedEmptyFraction, inputBuffer) == 0)) {
-    return DivisionCycleStep::MixedFraction;
-  }
-  return DivisionCycleStep::NotCycling;
-}
-
 bool ExpressionField::handleDivision() {
   /* The cycle is:
    * Ans fraction -> Empty fraction -> mixed fraction -> ans fraction -> etc.
    */
   Ion::Events::Event event = Ion::Events::Division;
-  DivisionCycleStep currentDivisionCycleStep = currentStepOfDivisionCycling();
-  switch (currentDivisionCycleStep) {
+  switch (m_currentStep) {
     case DivisionCycleStep::Start:
       assert(isEmpty());
+      m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
       setText(Poincare::Symbol::k_ansAliases.mainAlias());
       break;
     case DivisionCycleStep::DenominatorOfAnsFraction : 
+      m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
       setText("");
       break;
     case DivisionCycleStep::NumeratorOfEmptyFraction :
+      m_currentStep = DivisionCycleStep::MixedFraction;
       if (editionIsInTextField()) {
         setText(k_1DMixedFractionCommand);
         m_textField.setCursorLocation(m_textField.draftTextBuffer());
@@ -110,6 +88,7 @@ bool ExpressionField::handleDivision() {
       }
       return true;
     case DivisionCycleStep::MixedFraction :
+      m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
       setText(Poincare::Symbol::k_ansAliases.mainAlias());
       break;
   }

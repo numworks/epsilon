@@ -158,7 +158,7 @@ bool ExpressionField::handleDivision() {
       case DivisionCycleStep::NumeratorOfEmptyFraction : 
         if (editionIn1D) {
           m_currentStep = DivisionCycleStep::MixedFraction;
-          handled = (::ExpressionField::handleEvent(Ion::Events::Space));
+          handled = (::ExpressionField::handleEvent(Ion::Events::Space)); // OR handleEventWithText(" ");
           assert(handled == true);
           event = Ion::Events::Left;
         } else {
@@ -178,9 +178,9 @@ bool ExpressionField::handleDivision() {
         assert(mixedFractionsEnabled);
         if (editionIn1D) {
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
-          handled = (::ExpressionField::handleEvent(Ion::Events::Right));
+          handled = (::ExpressionField::handleEvent(Ion::Events::Right)); // OR m_textField.moveCursorRight(); but protected in TextInput
           assert(handled == true);
-          handled = (::ExpressionField::handleEvent(Ion::Events::Backspace));
+          handled = (::ExpressionField::handleEvent(Ion::Events::Backspace)); // OR m_textField.removePreviousGlyph();
           assert(handled == true);
         } else {
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;

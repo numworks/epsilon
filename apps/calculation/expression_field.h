@@ -8,11 +8,11 @@ namespace Calculation {
 class ExpressionField : public Escher::ExpressionField {
 public:
   ExpressionField(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandler, Escher::TextFieldDelegate * textFieldDelegate, Escher::LayoutFieldDelegate * layoutFieldDelegate) :
-  Escher::ExpressionField(parentResponder, inputEventHandler, textFieldDelegate, layoutFieldDelegate) {
+  Escher::ExpressionField(parentResponder, inputEventHandler, textFieldDelegate, layoutFieldDelegate),
+  m_currentStep(DivisionCycleStep::Start),
+  m_divisionCycleWithAns(true),
+  m_divisionCycleChoiceUpToDate(false) {
     setLayoutInsertionCursorEvent(Ion::Events::Up);
-    m_currentStep = DivisionCycleStep::Start;
-    m_divisionCycleWithAns = true;
-    m_divisionCycleChoiceUpToDate = false;
   }
 protected:
   bool handleEvent(Ion::Events::Event event) override;

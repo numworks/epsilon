@@ -35,19 +35,23 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
     return Undefined::Builder().createLayout(floatDisplayMode, significantDigits, nullptr);
   }
 
-  Layout value = Float<double>::Builder(v).createLayout(floatDisplayMode, significantDigits, nullptr);
+  Expression value = Float<double>::Builder(v);
   /* Check the global context to know whether units need an underscore. */
   Context * globalContext = AppsContainer::sharedAppsContainer()->globalContext();
-  Layout unit = Expression::Parse(rawUnit(), globalContext).createLayout(floatDisplayMode, significantDigits, globalContext);
+  Expression unit = Expression::Parse(rawUnit(), globalContext);
+
   if (unit.isUninitialized()) {
-    return value;
+    return value.createLayout(floatDisplayMode, significantDigits, globalContext);
   }
 
-  HorizontalLayout res = HorizontalLayout::Builder();
-  res.addOrMergeChildAtIndex(value, 0, false);
-  res.addOrMergeChildAtIndex(CodePointLayout::Builder(' '), res.numberOfChildren(), false);
-  res.addOrMergeChildAtIndex(unit, res.numberOfChildren(), false);
-  return std::move(res);
+  Expression result;
+  if (unit.type() == ExpressionNode::Type::Multiplication) {
+    static_cast<Multiplication&>(unit).addChildAtIndexInPlace(value, 0, unit.numberOfChildren());
+    result = unit;
+  } else {
+    result = Multiplication::Builder(value, unit);
+  }
+  return result.createLayout(floatDisplayMode, significantDigits, globalContext);
 }
 
 DataField::ColorPair DoubleDataField::getColors(AtomicNumber z) const {

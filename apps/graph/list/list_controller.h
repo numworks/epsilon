@@ -25,6 +25,7 @@ public:
   // ViewController
   const char * title() override;
   Escher::View * view() override { return &m_selectableTableView; }
+  void viewWillAppear() override;
   // LayoutFieldDelegate
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   // TextFieldDelegate

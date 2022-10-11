@@ -61,6 +61,11 @@ const char * ListController::title() {
   return I18n::translate(I18n::Message::FunctionTab);
 }
 
+void ListController::viewWillAppear() {
+  resetMemoization(); // A function could have been deleted
+  Shared::FunctionListController::viewWillAppear();
+}
+
 // Fills buffer with a default function equation, such as "f(x)=", "y=" or "r="
 void ListController::fillWithDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController, CodePoint symbol) const {
   size_t length;

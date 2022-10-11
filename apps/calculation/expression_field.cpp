@@ -62,6 +62,14 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
   }
 }
 
+void ExpressionField::createAnsFraction() {
+  assert(m_currentStep == DivisionCycleStep::Start 
+     || (m_currentStep == DivisionCycleStep::NumeratorOfEmptyFraction && !Poincare::Preferences::sharedPreferences()->mixedFractionsAreEnabled()) 
+     || (m_currentStep == DivisionCycleStep::MixedFraction && Poincare::Preferences::sharedPreferences()->mixedFractionsAreEnabled()));
+  m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
+  setText(Poincare::Symbol::k_ansAliases.mainAlias());
+}
+
 bool ExpressionField::createdEmptyFraction() {
   Layout pointedLayout = m_layoutField.cursor()->layout();
   assert(pointedLayout.isEmpty());
@@ -99,8 +107,7 @@ bool ExpressionField::handleDivision() {
     switch (m_currentStep) {
       case DivisionCycleStep::Start:
         assert(isEmpty());
-        m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
-        setText(Poincare::Symbol::k_ansAliases.mainAlias());
+        createAnsFraction();
         break;
       case DivisionCycleStep::DenominatorOfAnsFraction : 
         m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
@@ -116,14 +123,12 @@ bool ExpressionField::handleDivision() {
           }
           event = Ion::Events::Left;
         } else {
-          m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
-          setText(Poincare::Symbol::k_ansAliases.mainAlias());
+          createAnsFraction();
         }
         break;
       case DivisionCycleStep::MixedFraction :
         assert(mixedFractionsEnabled);
-        m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
-        setText(Poincare::Symbol::k_ansAliases.mainAlias());
+        createAnsFraction();
         break;
        case DivisionCycleStep::DenominatorOfEmptyFraction :
         assert(false);

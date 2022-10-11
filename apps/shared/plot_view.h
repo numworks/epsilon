@@ -11,7 +11,7 @@
 /* AbstractPlotView maps a range in R² to the screen and provides methods for
  * drawing basic geometry in R².
  * To instanciate a view, one can use or derive the
- * PlotView<CAXes, CPlot, CBanner, CCursor> template. */
+ * PlotView<CAxes, CPlot, CBanner, CCursor> template. */
 
 namespace Shared {
 
@@ -77,8 +77,8 @@ public:
   bool pointsInSameStamp(Poincare::Coordinate2D<float> p1, Poincare::Coordinate2D<float> p2, bool thick) const;
 
 private:
-  constexpr static KDCoordinate k_stampDashSize = 5;
-  constexpr static KDCoordinate k_stampIndexNoDash = -1;
+  constexpr static int8_t k_stampDashSize = 5;
+  constexpr static int8_t k_stampIndexNoDash = -1;
   constexpr static KDCoordinate k_tickHalfLength = 2;
 
   // Escher::View
@@ -96,7 +96,7 @@ private:
   virtual KDRect cursorFrame() = 0;
 
   CurveViewRange * m_range;
-  mutable KDCoordinate m_stampDashIndex;
+  mutable int8_t m_stampDashIndex;
   uint32_t m_drawnRangeVersion;
   bool m_focus;
 };

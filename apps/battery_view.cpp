@@ -78,6 +78,11 @@ bool BatteryView::setIsPlugged(bool isPlugged) {
   return false;
 }
 
+void BatteryView::drawInsideBatteryLevel(KDContext * ctx, KDCoordinate width, KDColor color) const {
+  ctx->fillRect(KDRect(k_batteryInsideX, 0, width, k_batteryHeight), color);
+  ctx->fillRect(KDRect(k_batteryInsideX + width, 0, k_batteryInsideWidth - width, k_batteryHeight), Palette::YellowLight);
+}
+
 void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
   assert(m_chargeState != Ion::Battery::Charge::EMPTY);
   /* We draw from left to right. The middle part representing the battery
@@ -96,19 +101,15 @@ void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
   } else if (m_chargeState == Ion::Battery::Charge::LOW) {
     assert(!m_isPlugged);
     // LOW: Quite empty battery
-    constexpr KDCoordinate lowChargeWidth = 2*k_elementWidth;
-    ctx->fillRect(KDRect(k_batteryInsideX, 0, lowChargeWidth, k_batteryHeight), Palette::LowBattery);
-    ctx->fillRect(KDRect(k_batteryInsideX+lowChargeWidth, 0, k_batteryInsideWidth-lowChargeWidth, k_batteryHeight), Palette::YellowLight);
+    drawInsideBatteryLevel(ctx, 2 * k_elementWidth, Palette::LowBattery);
   } else if (m_chargeState == Ion::Battery::Charge::MID) {
     assert(!m_isPlugged);
     // MID: Half full battery
-    constexpr KDCoordinate middleChargeWidth = k_batteryInsideWidth/2;
-    ctx->fillRect(KDRect(k_batteryInsideX, 0, middleChargeWidth, k_batteryHeight), KDColorWhite);
-    ctx->fillRect(KDRect(k_batteryInsideX+middleChargeWidth, 0, middleChargeWidth, k_batteryHeight), Palette::YellowLight);
+    drawInsideBatteryLevel(ctx, k_batteryInsideWidth / 2, KDColorWhite);
   } else {
     assert(m_chargeState == Ion::Battery::Charge::FULL);
     // FULL but not plugged: Full battery
-    ctx->fillRect(KDRect(k_batteryInsideX, 0, k_batteryInsideWidth, k_batteryHeight), KDColorWhite);
+    drawInsideBatteryLevel(ctx, k_batteryInsideWidth, KDColorWhite);
     if (m_isPlugged) {
       // FULL and plugged: Full battery with tick
       KDRect frame((k_batteryWidth-k_tickWidth)/2, (k_batteryHeight-k_tickHeight)/2, k_tickWidth, k_tickHeight);

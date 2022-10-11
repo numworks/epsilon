@@ -47,60 +47,92 @@ private:
   uint16_t m_identifier;
 };
 
-class ReferenceIterator {
+class Iterator {
+  /* You can iterate forward and backward but can only modify the children
+   * downstream (the children after the current child if you're going forwards
+   * and the children before the current child if you're going backwards). */
 public:
-  ReferenceIterator(const EditionReference reference) : m_reference(reference) {}
+  Iterator(const Node node) : m_node(node) {}
 
-  class Direct {
+  struct IndexedNode {
+    Node m_node;
+    int m_index;
+  };
+
+  class ScanChildren {
   public:
-    Direct(const EditionReference reference) : m_reference(reference) {}
+    ScanChildren(const Node node) : m_node(node) {}
     class Iterator {
     public:
-      Iterator(EditionReference reference) : m_reference(reference) {}
-      EditionReference operator*() { return m_reference; }
-      bool operator!=(const Iterator& it) const { return (m_reference != it.m_reference); }
+      Iterator(EditionReference reference = EditionReference()) : m_reference(reference), m_index(0) {}
+      IndexedNode operator*() { return {.m_node = getNode(), .m_index = m_index}; }
+      bool operator!=(const Iterator& it) const { return (m_reference.node() != it.m_reference.node()); }
+      Iterator & operator++() {
+        setNode(incrNode(getNode()));
+        m_index++;
+        return *this;
+      }
     protected:
+      /* Hack: we keep a reference to a block right before (or after) the
+       * currenNode to handle cases where the current node is replaced by
+       * another one. The assertion that the previous children aren't modified
+       * ensure the validity of this hack. */
+      virtual Node getNode() { return Node(m_reference.node().block() + delta()); }
+      virtual void setNode(Node node) { m_reference = EditionReference(Node(node.block() - delta())); }
       EditionReference m_reference;
+      int m_index;
+    private:
+      virtual Node incrNode(Node node) = 0;
+      virtual int delta() = 0;
     };
   protected:
-    const EditionReference m_reference;
+    const Node m_node;
   };
 
-  class ForwardDirect final : public Direct {
-    using Direct::Direct;
+  class ForwardChildren final : public ScanChildren {
+    using ScanChildren::ScanChildren;
   public:
-    class Iterator : public Direct::Iterator {
+    class Iterator final : public ScanChildren::Iterator {
     public:
-      using Direct::Iterator::Iterator;
-      Iterator & operator++() {
-        m_reference = EditionReference(m_reference.node().nextTree());
-        return *this;
-      }
+      Iterator(const Node node) : ScanChildren::Iterator() { setNode(node); }
+    private:
+      Node incrNode(Node node) override { return node.nextTree(); }
+      int delta() override { return 1; }
     };
-    Iterator begin() const { return Iterator(EditionReference(m_reference.node().nextNode())); }
-    Iterator end() const { return Iterator(EditionReference(m_reference.node().nextTree())); }
+    Iterator begin() const { return Iterator(m_node.nextNode()); }
+    Iterator end() const { return Iterator(m_node.nextTree()); }
   };
 
-  class BackwardsDirect final : public Direct {
+  class BackwardsChildren final : public ScanChildren {
   public:
-    using Direct::Direct;
-    class Iterator : public Direct::Iterator {
+    using ScanChildren::ScanChildren;
+    class Iterator final : public ScanChildren::Iterator {
     public:
-      using Direct::Iterator::Iterator;
-      Iterator & operator++() {
-        m_reference = EditionReference(m_reference.node().previousTree());
-        return *this;
+      Iterator(const Node node) : ScanChildren::Iterator(EditionReference(node)) {}
+    private:
+      /* We can't keep a reference outside the scanned tree so we create
+       * an edge case for the right most child: it's referenced by the parent
+       * node. */
+      Node getNode() override { return m_index == 0 ? m_reference.node().nextTree().previousNode() : ScanChildren::Iterator::getNode(); }
+      void setNode(Node node) override {
+        if (node.isUninitialized()) {
+          m_reference = EditionReference(node);
+        } else {
+          ScanChildren::Iterator::setNode(node);
+        }
       }
+      Node incrNode(Node node) override { return node.previousTree(); }
+      int delta() override { return -1; }
     };
-    Iterator begin() const { return Iterator(EditionReference(m_reference.node().nextTree().previousNode())); }
-    Iterator end() const { return Iterator(EditionReference(Node())); }
+    Iterator begin() const { return Iterator(m_node); }
+    Iterator end() const { return Iterator(Node()); }
   };
 
-  ForwardDirect directChildren() { return ForwardDirect(m_reference); }
-  BackwardsDirect backwardsDirectChildren() { return BackwardsDirect(m_reference); }
+  ForwardChildren forwardChildren() { return ForwardChildren(m_node); }
+  BackwardsChildren backwardsChildren() { return BackwardsChildren(m_node); }
 
 private:
-  const EditionReference m_reference;
+  const Node m_node;
 };
 
 }

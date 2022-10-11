@@ -144,8 +144,8 @@ bool Node::hasSibling(const Node sibling) const {
 }
 
 void Node::recursivelyApply(InPlaceTreeFunction treeFunction) {
-  for (EditionReference child : ReferenceIterator(EditionReference(*this)).directChildren()) {
-    child.node().recursivelyApply(treeFunction);
+  for (Iterator::IndexedNode child : Iterator(*this).forwardChildren()) {
+    child.m_node.recursivelyApply(treeFunction);
   }
   (*treeFunction)(*this);
 }

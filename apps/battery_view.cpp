@@ -106,6 +106,10 @@ void BatteryView::drawRect(KDContext * ctx, KDRect rect) const {
     assert(!m_isPlugged);
     // MID: Half full battery
     drawInsideBatteryLevel(ctx, k_batteryInsideWidth / 2, KDColorWhite);
+  } else if (m_chargeState == Ion::Battery::Charge::THREE_QUARTERS) {
+    assert(!m_isPlugged);
+    // THREE_QUARTERS: 3/4 full battery
+    drawInsideBatteryLevel(ctx, 3 * k_batteryInsideWidth / 4, KDColorWhite);
   } else {
     assert(m_chargeState == Ion::Battery::Charge::FULL);
     // FULL but not plugged: Full battery

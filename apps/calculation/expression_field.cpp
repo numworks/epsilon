@@ -92,6 +92,7 @@ bool ExpressionField::handleDivision() {
    *      2.2.1) in 1D : DenominatorOfAnsFraction
    *      2.2.2) in 2D : NumeratorOfEmptyFraction */
   bool mixedFractionsEnabled = Poincare::Preferences::sharedPreferences()->mixedFractionsAreEnabled();
+  bool editionIn1D = editionIsInTextField();
   Ion::Events::Event event = Ion::Events::Division;
   bool handled = true;
 
@@ -110,7 +111,7 @@ bool ExpressionField::handleDivision() {
       case DivisionCycleStep::NumeratorOfEmptyFraction :
         if (mixedFractionsEnabled) {
           m_currentStep = DivisionCycleStep::MixedFraction;
-          if (editionIsInTextField()) {
+          if (editionIn1D) {
             setText(" /");
             m_textField.setCursorLocation(m_textField.draftTextBuffer());
           } else {
@@ -147,7 +148,7 @@ bool ExpressionField::handleDivision() {
               handleEvent create a fraction with the expresion at the 
               denominator and the cursor at the numerator
          * -> in both cases, we don't want to cycle */
-        if (editionIsInTextField()) {
+        if (editionIn1D) {
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
         } else if (createdEmptyFraction()) {
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
@@ -157,7 +158,7 @@ bool ExpressionField::handleDivision() {
         }
         return handled;
       case DivisionCycleStep::NumeratorOfEmptyFraction : 
-        if (editionIsInTextField()) {
+        if (editionIn1D) {
           m_currentStep = DivisionCycleStep::MixedFraction;
           handled = (::ExpressionField::handleEvent(Ion::Events::Space));
           assert(handled == true);
@@ -168,7 +169,7 @@ bool ExpressionField::handleDivision() {
         }
         break;
       case DivisionCycleStep::DenominatorOfEmptyFraction :
-        if (editionIsInTextField()) {
+        if (editionIn1D) {
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
         } else {
           m_currentStep = DivisionCycleStep::MixedFraction;
@@ -177,7 +178,7 @@ bool ExpressionField::handleDivision() {
         break;
       case DivisionCycleStep::MixedFraction :
         assert(mixedFractionsEnabled);
-        if (editionIsInTextField()) {
+        if (editionIn1D) {
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
           handled = (::ExpressionField::handleEvent(Ion::Events::Right));
           assert(handled == true);

@@ -107,14 +107,14 @@ public:
   using AbstractPlotView::AbstractPlotView;
 
 private:
-  void drawAxes(KDContext * ctx, KDRect rect) const override { CAxes::drawAxes(this, ctx, rect); }
-  void reloadAxes() override { CAxes::reloadAxes(this); }
-  void drawPlot(KDContext * ctx, KDRect rect) const override { CPlot::drawPlot(this, ctx, rect); }
-  Escher::View * bannerView() const override { return CBanner::bannerView(this); }
-  KDRect bannerFrame() override { return CBanner::bannerFrame(this); }
-  CursorView * cursorView() const override { return CCursor::cursorView(this); }
-  void privateSetCursorView(CursorView * cursorView) override { CCursor::privateSetCursorView(this, cursorView); }
-  KDRect cursorFrame() override { return CCursor::cursorFrame(this); }
+  void drawAxes(KDContext * ctx, KDRect rect) const final override { CAxes::drawAxes(this, ctx, rect); }
+  void reloadAxes() final override { CAxes::reloadAxes(this); }
+  void drawPlot(KDContext * ctx, KDRect rect) const final override { CPlot::drawPlot(this, ctx, rect); }
+  Escher::View * bannerView() const final override { return CBanner::bannerView(this); }
+  KDRect bannerFrame() final override { return CBanner::bannerFrame(this); }
+  CursorView * cursorView() const final override { return CCursor::cursorView(this); }
+  void privateSetCursorView(CursorView * cursorView) final override { CCursor::privateSetCursorView(this, cursorView); }
+  KDRect cursorFrame() final override { return CCursor::cursorFrame(this); }
 };
 
 }

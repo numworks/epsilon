@@ -3,14 +3,14 @@
 
 #include "elements_view_data_source.h"
 #include "main_controller.h"
-#include <apps/shared/text_field_delegate_app.h>
+#include <apps/shared/expression_field_delegate_app.h>
 #include <apps/shared/shared_app.h>
 #include <escher/container.h>
 #include <escher/stack_view_controller.h>
 
 namespace Elements {
 
-class App : public Shared::TextFieldDelegateApp {
+class App : public Shared::ExpressionFieldDelegateApp {
 public:
   class Descriptor : public Escher::App::Descriptor {
   public:

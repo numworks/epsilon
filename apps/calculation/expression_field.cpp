@@ -92,19 +92,26 @@ bool ExpressionField::handleDivision() {
    */
   Ion::Events::Event event = Ion::Events::Division;
   DivisionCycleStep currentDivisionCycleStep = currentStepOfDivisionCycling();
-  if (currentDivisionCycleStep == DivisionCycleStep::MixedFraction || currentDivisionCycleStep == DivisionCycleStep::Start) {
-    setText(Poincare::Symbol::k_ansAliases.mainAlias());
-  } else if (currentDivisionCycleStep == DivisionCycleStep::DenominatorOfAnsFraction) {
-    setText("");
-  } else if (currentDivisionCycleStep == DivisionCycleStep::NumeratorOfEmptyFraction) {
-    if (editionIsInTextField()) {
-      setText(k_1DMixedFractionCommand);
-      m_textField.setCursorLocation(m_textField.draftTextBuffer());
-    } else {
+  switch (currentDivisionCycleStep) {
+    case DivisionCycleStep::Start:
+      assert(isEmpty());
+      setText(Poincare::Symbol::k_ansAliases.mainAlias());
+      break;
+    case DivisionCycleStep::DenominatorOfAnsFraction : 
       setText("");
-      handleEventWithText(I18n::translate(I18n::Message::MixedFractionCommand));
-    }
-    return true;
+      break;
+    case DivisionCycleStep::NumeratorOfEmptyFraction :
+      if (editionIsInTextField()) {
+        setText(k_1DMixedFractionCommand);
+        m_textField.setCursorLocation(m_textField.draftTextBuffer());
+      } else {
+        setText("");
+        handleEventWithText(I18n::translate(I18n::Message::MixedFractionCommand));
+      }
+      return true;
+    case DivisionCycleStep::MixedFraction :
+      setText(Poincare::Symbol::k_ansAliases.mainAlias());
+      break;
   }
   return (::ExpressionField::handleEvent(event));
 }

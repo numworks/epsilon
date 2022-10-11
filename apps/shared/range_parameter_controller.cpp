@@ -22,7 +22,7 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
     ((RangeParameterController *)context)->stackController()->pop();
     return true;
   }, this)),
-  m_singleRangeController(parentResponder, inputEventHandlerDelegate, &m_tempInteractiveRange, &m_confirmPopUpController)
+  m_singleInteractiveCurveViewRangeController(parentResponder, inputEventHandlerDelegate, &m_tempInteractiveRange, &m_confirmPopUpController)
 {}
 
 int RangeParameterController::typeAtIndex(int index) const {
@@ -109,7 +109,7 @@ void RangeParameterController::viewWillAppear() {
   } else {
     /* If the table has not been deselected, it means we come from the
      * SingleRangeController. */
-    int row = (m_singleRangeController.editXRange() ? 0 : 1) + displayNormalizeCell();
+    int row = (m_singleInteractiveCurveViewRangeController.editXRange() ? 0 : 1) + displayNormalizeCell();
     selectCellAtLocation(selectedColumn(), row);
   }
   resetMemoization();
@@ -145,8 +145,8 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
    && (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right))
   {
     assert(typeAtIndex(selectedRow()) == k_rangeCellType);
-    m_singleRangeController.setEditXRange(index == 0);
-    stackController()->push(&m_singleRangeController);
+    m_singleInteractiveCurveViewRangeController.setEditXRange(index == 0);
+    stackController()->push(&m_singleInteractiveCurveViewRangeController);
     return true;
   }
   return false;

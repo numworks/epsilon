@@ -2,8 +2,9 @@
 #define SHARED_SINGLE_RANGE_CONTROLLER_H
 
 #include "float_parameter_controller.h"
-#include "interactive_curve_view_range.h"
 #include "pop_up_controller.h"
+#include "range_1D.h"
+#include <apps/i18n.h>
 #include <escher/message_table_cell_with_editable_text.h>
 #include <escher/message_table_cell_with_switch.h>
 
@@ -11,9 +12,7 @@ namespace Shared {
 
 class SingleRangeController : public FloatParameterController<float> {
 public:
-  SingleRangeController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * interactiveCurveViewRange, MessagePopUpController * confirmPopUpController);
-
-  const char * title() override { return I18n::translate(m_editXRange ? I18n::Message::ValuesOfX : I18n::Message::ValuesOfY); }
+  SingleRangeController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, MessagePopUpController * confirmPopUpController);
   void viewWillAppear() override;
 
   int numberOfRows() const override { return k_numberOfTextCells + 2; }
@@ -24,36 +23,32 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   bool handleEvent(Ion::Events::Event event) override;
-
-  bool editXRange() const { return m_editXRange; }
-  void setEditXRange(bool editXRange);
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
-private:
+protected:
   constexpr static int k_numberOfTextCells = 2;
   constexpr static int k_autoCellType = 2;
   static_assert(k_autoCellType != FloatParameterController<float>::k_parameterCellType && k_autoCellType != FloatParameterController<float>::k_buttonCellType, "k_autoCellType value already taken.");
 
-  bool autoStatus() const { return m_autoParam; }
-  void setAutoStatus(bool autoParam);
+  virtual I18n::Message parameterMessage(int index) const = 0;
+  virtual bool parametersAreDifferent() = 0;
+  virtual void extractParameters() = 0;
   float parameterAtIndex(int index) override;
+  virtual void setAutoStatus(bool autoParam) = 0;
+  virtual void confirmParameters() = 0;
+  virtual void pop(bool onConfirmation) = 0;
+
+  Escher::MessageTableCellWithEditableText m_boundsCells[k_numberOfTextCells];
+  Range1D m_rangeParam;
+  bool m_autoParam;
+
+private:
   int reusableParameterCellCount(int type) override { return k_numberOfTextCells; }
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
-  bool setParameterAtIndex(int parameterIndex, float f) override;
-  void extractParameters();
-  bool parametersAreDifferent();
-  void confirmParameters();
   void buttonAction() override;
 
   Escher::MessageTableCellWithSwitch m_autoCell;
-  Escher::MessageTableCellWithEditableText m_boundsCells[k_numberOfTextCells];
-  InteractiveCurveViewRange * m_range;
   Shared::MessagePopUpController * m_confirmPopUpController;
-  Range1D m_rangeParam;
-  // m_secondaryRangeParam is only used when activating xAuto while yAuto is on.
-  Range1D m_secondaryRangeParam;
-  bool m_autoParam;
-  bool m_editXRange;
 };
 
 }

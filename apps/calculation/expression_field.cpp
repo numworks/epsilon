@@ -80,7 +80,7 @@ bool ExpressionField::handleDivision() {
     case DivisionCycleStep::NumeratorOfEmptyFraction :
       m_currentStep = DivisionCycleStep::MixedFraction;
       if (editionIsInTextField()) {
-        setText(k_1DMixedFractionCommand);
+        setText(" /");
         m_textField.setCursorLocation(m_textField.draftTextBuffer());
       } else {
         setText("");

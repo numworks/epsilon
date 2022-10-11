@@ -12,26 +12,40 @@
 
 namespace Poincare {
 
-Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context, OperatorTest replaceOperatorWithMargin) {
+Layout LayoutHelper::DefaultCreateOperatorLayoutForInfix(const char * operatorName, Expression left, Expression right, Layout rightLayout) {
+  rightLayout.setMargin(true);
+  size_t operatorLength = strlen(operatorName);
+  if (operatorLength == 0) {
+    return Layout();
+  }
+  Layout result = String(operatorName, operatorLength);
+  result.setMargin(true);
+  return result;
+}
+
+Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context, OperatorLayoutForInfix operatorLayoutBuilder) {
   HorizontalLayout result = HorizontalLayout::Builder();
-  const size_t operatorLength = strlen(operatorName);
   const int numberOfChildren = expression.numberOfChildren();
   assert(numberOfChildren > 1);
+
+  Expression leftChild;
+  Expression rightChild;
+
   for (int i = 0; i < numberOfChildren; i++) {
-    Layout childLayout = expression.childAtIndex(i).createLayout(floatDisplayMode, numberOfSignificantDigits, context, false, true);
+    rightChild = expression.childAtIndex(i);
+    Layout childLayout = rightChild.createLayout(floatDisplayMode, numberOfSignificantDigits, context, false, true);
 
     if (i > 0) {
       /* Handle the operator */
-      childLayout.setMargin(true);
-      if (replaceOperatorWithMargin && replaceOperatorWithMargin(expression.childAtIndex(i - 1), expression.childAtIndex(i))) {
-        childLayout.lockMargin(true);
-      } else if (operatorLength > 0) {
-        Layout operatorLayout = String(operatorName, operatorLength);
-        operatorLayout.setMargin(true);
+      assert(!leftChild.isUninitialized() && !rightChild.isUninitialized());
+      Layout operatorLayout = operatorLayoutBuilder(operatorName, leftChild, rightChild, childLayout);
+      if (!operatorLayout.isUninitialized()) {
         result.addOrMergeChildAtIndex(operatorLayout, result.numberOfChildren(), true);
       }
     }
+
     result.addOrMergeChildAtIndex(childLayout, result.numberOfChildren(), true);
+    leftChild = rightChild;
   }
   return std::move(result);
 }

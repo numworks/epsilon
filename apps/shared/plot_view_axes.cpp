@@ -44,7 +44,7 @@ void SimpleAxis::drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KD
   // - Draw ticks and eventual labels
   /* Do not draw ticks on the vertical axis if the axis itself is not visible,
    * as they could be mistaken for minus signs. */
-  bool drawTicks = !(axis ==  AbstractPlotView::Axis::Vertical && plotView->range()->xMin() >= 0.f);
+  bool drawTicks = !(axis == AbstractPlotView::Axis::Vertical && plotView->range()->xMin() >= 0.f);
   float tMax = plotView->rangeMax(axis) + plotView->pixelLength(axis);
   int i = 0;
   float t = tickPosition(i, plotView, axis);
@@ -60,7 +60,7 @@ void SimpleAxis::drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KD
 
 float SimpleAxis::tickPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
   float step = tickStep(plotView, axis);
-  float tMin = axis == AbstractPlotView::Axis::Horizontal ? plotView->range()->xMin() : plotView->range()->yMin();
+  float tMin = plotView->rangeMin(axis);
   assert(std::fabs(std::round(tMin / step)) < INT_MAX);
   int indexOfOrigin = std::round(-tMin / step);
   return step * (i - indexOfOrigin);
@@ -85,7 +85,7 @@ void AbstractLabeledAxis::forceRelativePosition(AbstractPlotView::RelativePositi
   m_relativePosition = position;
 }
 
-int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis)  {
+int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) {
   float t = tickPosition(i, plotView, axis);
   return Poincare::PrintFloat::ConvertFloatToText(t, mutableLabel(i), k_labelBufferMaxSize, k_labelBufferMaxGlyphLength, k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal).GlyphLength;
 }
@@ -132,11 +132,11 @@ void AbstractLabeledAxis::computeLabelsRelativePosition(const AbstractPlotView *
   }
 
   if (axis == AbstractPlotView::Axis::Horizontal) {
-    KDCoordinate labelHeight = (KDFont::GlyphSize(AbstractPlotView::k_font).height() + 2 * AbstractPlotView::k_labelMargin) * plotView->pixelHeight();
+    float labelHeight = (KDFont::GlyphSize(AbstractPlotView::k_font).height() + 2 * AbstractPlotView::k_labelMargin) * plotView->pixelHeight();
     float bannerHeight = plotView->bannerView() ? plotView->bannerView()->bounds().height() * plotView->pixelHeight() : 0.f;
     float yMin = plotView->range()->yMin();
     float yMax = plotView->range()->yMax();
-    if (yMin > - bannerHeight - labelHeight) {
+    if (yMin + bannerHeight > 0.f - labelHeight) {
       m_relativePosition = AbstractPlotView::RelativePosition::Before;
       m_labelsPosition = yMin + bannerHeight;
     } else {
@@ -156,7 +156,7 @@ void AbstractLabeledAxis::computeLabelsRelativePosition(const AbstractPlotView *
     }
     float xMin = plotView->range()->xMin();
     float xMax = plotView->range()->xMax();
-    if (xMin > - labelsWidth * plotView->pixelWidth()) {
+    if (xMin  + labelsWidth * plotView->pixelWidth() > 0.f) {
       m_relativePosition = AbstractPlotView::RelativePosition::After;
       m_labelsPosition = std::max(xMin, 0.f);
     } else {

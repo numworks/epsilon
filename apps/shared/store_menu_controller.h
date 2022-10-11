@@ -39,7 +39,7 @@ private:
   class InnerListController : public ViewController {
   public:
     InnerListController(StoreMenuController * dataSource, Escher::SelectableTableViewDelegate * delegate = nullptr);
-    const char * title() override { return I18n::translate(I18n::Message::Store); }
+    const char * title() override { return I18n::translate(I18n::Message::DefineVariable); }
     Escher::View * view() override { return &m_selectableTableView; }
     void didBecomeFirstResponder() override;
     Escher::SelectableTableView * selectableTableView() { return &m_selectableTableView; }

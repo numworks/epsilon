@@ -691,13 +691,24 @@ static bool LayoutHasStringWithThousandSeparator(Layout l) {
   return false;
 }
 
-static void StripMarginFromLayout(Layout l, bool force) {
-  if (force || !l.node()->marginIsLocked()) {
-    l.node()->setMargin(false);
+static bool LayoutHasLockedMargins(Layout l) {
+  if (l.node()->marginIsLocked()) {
+    return true;
   }
   int n = l.numberOfChildren();
   for (int i = 0; i < n; i++) {
-    StripMarginFromLayout(l.childAtIndex(i), force);
+    if (LayoutHasLockedMargins(l.childAtIndex(i))) {
+      return true;
+    }
+  }
+  return false;
+}
+
+static void StripMarginFromLayout(Layout l) {
+  l.node()->setMargin(false);
+  int n = l.numberOfChildren();
+  for (int i = 0; i < n; i++) {
+    StripMarginFromLayout(l.childAtIndex(i));
   }
 }
 
@@ -707,8 +718,8 @@ Layout Expression::createLayout(Preferences::PrintFloatMode floatDisplayMode, in
   }
   Layout l = node()->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
   assert(!l.isUninitialized());
-  if (forceStripMargin || (!nested && !LayoutHasStringWithThousandSeparator(l))) {
-    StripMarginFromLayout(l, forceStripMargin);
+  if (forceStripMargin || !(nested || LayoutHasLockedMargins(l) || LayoutHasStringWithThousandSeparator(l))) {
+    StripMarginFromLayout(l);
   }
   return l;
 }

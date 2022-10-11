@@ -9,6 +9,8 @@ namespace Calculation {
 
 class ComplexGraphPolicy : public Shared::PlotPolicy::WithCurves {
 protected:
+  constexpr static KDCoordinate k_dashSize = 3;
+
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
 
   ComplexModel * m_complex;

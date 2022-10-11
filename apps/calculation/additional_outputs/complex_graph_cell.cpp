@@ -28,8 +28,8 @@ void ComplexGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext *
   drawArcOfEllipse(plotView, ctx, rect, Coordinate2D<float>(0.f, 0.f), a, b, 0.f, th, Palette::GrayDark);
 
   // - Draw dashed segment to indicate real and imaginary
-  plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, imag, 0.f, real, Palette::Red, 1, 3);
-  plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, real, 0.f, imag, Palette::Red, 1, 3);
+  plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, imag, 0.f, real, Palette::Red, 1, k_dashSize);
+  plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, real, 0.f, imag, Palette::Red, 1, k_dashSize);
 
   // - Draw complex position on the plan
   plotView->drawDot(ctx, rect, Dots::Size::Large, Coordinate2D<float>(real, imag), Palette::Red);

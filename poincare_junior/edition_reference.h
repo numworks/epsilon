@@ -47,6 +47,62 @@ private:
   uint16_t m_identifier;
 };
 
+class ReferenceIterator {
+public:
+  ReferenceIterator(const EditionReference reference) : m_reference(reference) {}
+
+  class Direct {
+  public:
+    Direct(const EditionReference reference) : m_reference(reference) {}
+    class Iterator {
+    public:
+      Iterator(EditionReference reference) : m_reference(reference) {}
+      EditionReference operator*() { return m_reference; }
+      bool operator!=(const Iterator& it) const { return (m_reference != it.m_reference); }
+    protected:
+      EditionReference m_reference;
+    };
+  protected:
+    const EditionReference m_reference;
+  };
+
+  class ForwardDirect final : public Direct {
+    using Direct::Direct;
+  public:
+    class Iterator : public Direct::Iterator {
+    public:
+      using Direct::Iterator::Iterator;
+      Iterator & operator++() {
+        m_reference = EditionReference(m_reference.node().nextTree());
+        return *this;
+      }
+    };
+    Iterator begin() const { return Iterator(EditionReference(m_reference.node().nextNode())); }
+    Iterator end() const { return Iterator(EditionReference(m_reference.node().nextTree())); }
+  };
+
+  class BackwardsDirect final : public Direct {
+  public:
+    using Direct::Direct;
+    class Iterator : public Direct::Iterator {
+    public:
+      using Direct::Iterator::Iterator;
+      Iterator & operator++() {
+        m_reference = EditionReference(m_reference.node().previousTree());
+        return *this;
+      }
+    };
+    Iterator begin() const { return Iterator(EditionReference(m_reference.node().nextTree().previousNode())); }
+    Iterator end() const { return Iterator(EditionReference(Node())); }
+  };
+
+  ForwardDirect directChildren() { return ForwardDirect(m_reference); }
+  BackwardsDirect backwardsDirectChildren() { return BackwardsDirect(m_reference); }
+
+private:
+  const EditionReference m_reference;
+};
+
 }
 
 #endif

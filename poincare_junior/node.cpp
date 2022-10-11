@@ -1,5 +1,6 @@
-#include "node.h"
 #include "cache_pool.h"
+#include "edition_reference.h"
+#include "node.h"
 
 namespace Poincare {
 
@@ -143,8 +144,8 @@ bool Node::hasSibling(const Node sibling) const {
 }
 
 void Node::recursivelyApply(InPlaceTreeFunction treeFunction) {
-  for (NodeIterator::IndexedNode indexedChild : NodeIterator(*this).directChildren()) {
-    indexedChild.m_node.recursivelyApply(treeFunction);
+  for (EditionReference child : ReferenceIterator(EditionReference(*this)).directChildren()) {
+    child.node().recursivelyApply(treeFunction);
   }
   (*treeFunction)(*this);
 }

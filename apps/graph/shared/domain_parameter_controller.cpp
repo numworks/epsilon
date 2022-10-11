@@ -1,6 +1,5 @@
 #include "domain_parameter_controller.h"
 #include "../app.h"
-#include <apps/i18n.h>
 #include <poincare/infinity.h>
 #include <assert.h>
 
@@ -11,53 +10,13 @@ using namespace Poincare;
 namespace Graph {
 
 DomainParameterController::DomainParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate) :
-  FloatParameterController<float>(parentResponder),
+  Shared::SingleRangeController(parentResponder, inputEventHandlerDelegate, &m_confirmPopUpController),
   m_confirmPopUpController(Invocation([](void * context, void * sender) {
     Container::activeApp()->dismissModalViewController();
-    ((DomainParameterController *)context)->stackController()->pop();
+    ((DomainParameterController *)context)->pop(false);
     return true;
   }, this))
-{
-  for (int i = 0; i < k_totalNumberOfCell; i++) {
-    m_domainCells[i].setParentResponder(&m_selectableTableView);
-    m_domainCells[i].setDelegates(inputEventHandlerDelegate, this);
-  }
-}
-
-void DomainParameterController::viewWillAppear() {
-  // Initialize m_tempParameters to the extracted value.
-  extractParameters();
-  FloatParameterController::viewWillAppear();
-}
-
-void DomainParameterController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  if (index == numberOfRows()-1) {
-    return;
-  }
-  MessageTableCellWithEditableText * myCell = static_cast<MessageTableCellWithEditableText *>(cell);
-  ContinuousFunction::PlotType plotType = function()->plotType();
-  switch (plotType) {
-    case ContinuousFunction::PlotType::Parametric:
-    {
-      I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::TMin, I18n::Message::TMax};
-      myCell->setMessage(labels[index]);
-      break;
-    }
-    case ContinuousFunction::PlotType::Polar:
-    {
-      I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::ThetaMin, I18n::Message::ThetaMax};
-      myCell->setMessage(labels[index]);
-      break;
-    }
-    default:
-    {
-      I18n::Message labels[k_totalNumberOfCell] = {I18n::Message::XMin, I18n::Message::XMax};
-      myCell->setMessage(labels[index]);
-      break;
-    }
-  }
-  FloatParameterController::willDisplayCellForIndex(cell, index);
-}
+{}
 
 bool DomainParameterController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   /* Set the right additional cells in the toolbox. Ideally, we would like to
@@ -75,10 +34,10 @@ bool DomainParameterController::textFieldDidReceiveEvent(AbstractTextField * tex
 bool DomainParameterController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   switchToolboxContent(textField, false);
   if (text[0] == '\0') {
-    if (textField == m_domainCells[0].textField()) {
+    if (textField == m_boundsCells[0].textField()) {
       text = Infinity::Name(true);
     } else {
-      assert(textField == m_domainCells[1].textField());
+      assert(textField == m_boundsCells[1].textField());
       text = Infinity::Name(false);
     }
   }
@@ -90,82 +49,84 @@ bool DomainParameterController::textFieldDidAbortEditing(AbstractTextField * tex
   return false;
 }
 
-HighlightCell * DomainParameterController::reusableParameterCell(int index, int type) {
-  assert(index >= 0 && index < k_totalNumberOfCell);
-  return &m_domainCells[index];
+I18n::Message DomainParameterController::parameterMessage(int index) const {
+  switch (function()->plotType()) {
+  case ContinuousFunction::PlotType::Parametric:
+    return index == 0 ? I18n::Message::TMin : I18n::Message::TMax;
+  case ContinuousFunction::PlotType::Polar:
+    return index == 0 ? I18n::Message::ThetaMin : I18n::Message::ThetaMax;
+  default:
+    return index == 0 ? I18n::Message::XMin : I18n::Message::XMax;
+  }
 }
 
-bool DomainParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Left && stackController()->depth() > 2) {
-    stackController()->pop();
-    return true;
-  }
-  if (event == Ion::Events::Back && !equalTempParameters()) {
-    // Open pop-up to confirm discarding values
-    m_confirmPopUpController.presentModally();
-    return true;
-  }
-  return false;
-}
-
-float DomainParameterController::parameterAtIndex(int index) {
-  return index == 0 ? m_tempDomain.min() : m_tempDomain.max();
+bool DomainParameterController::parametersAreDifferent() {
+  return function()->tMin() != m_rangeParam.min()
+      || function()->tMax() != m_rangeParam.max()
+      || function()->tAuto() != m_autoParam;
 }
 
 void DomainParameterController::extractParameters() {
-  setParameterAtIndex(0, function()->tMin());
-  setParameterAtIndex(1, function()->tMax());
-  /* Setting m_tempDomain tMin might affect m_tempDomain.max(), but setting tMax
-   * right after will not affect m_tempDomain.min() because Function's Range1D
+  setParameterAtIndex(1, function()->tMin());
+  setParameterAtIndex(2, function()->tMax());
+  m_autoParam = function()->tAuto();
+  /* Setting m_rangeParam tMin might affect m_rangeParam.max(), but setting tMax
+   * right after will not affect m_rangeParam.min() because Function's Range1D
    * parameters are valid (tMax>tMin), and final tMin value is already set.
    * Same happens in confirmParameters when setting function's parameters from
-   * valid m_tempDomain parameters. */
-  assert(equalTempParameters());
+   * valid m_rangeParam parameters. */
+  assert(!parametersAreDifferent());
+}
+
+void DomainParameterController::setAutoStatus(bool autoParam) {
+  if (m_autoParam == autoParam) {
+    return;
+  }
+  if (autoParam) {
+    setParameterAtIndex(1, function()->autoTMin());
+    setParameterAtIndex(2, function()->autoTMax());
+  }
+  m_autoParam = autoParam;
+  resetMemoization();
+  m_selectableTableView.reloadData();
 }
 
 bool DomainParameterController::setParameterAtIndex(int parameterIndex, float f) {
   /* Setting Min (or Max) parameter can alter the previously set Max
-   * (or Min) parameter if Max <= Min. */
-  parameterIndex == 0 ? m_tempDomain.setMin(f) : m_tempDomain.setMax(f);
+   * (or Min) parameter if Max <= Min. It also disable the auto domain. */
+  m_autoParam = false;
+  parameterIndex == 1 ? m_rangeParam.setMin(f) : m_rangeParam.setMax(f);
   return true;
 }
 
 void DomainParameterController::confirmParameters() {
-  function()->setTMin(parameterAtIndex(0));
-  function()->setTMax(parameterAtIndex(1));
+  function()->setTAuto(m_autoParam);
+  if (!m_autoParam) {
+    function()->setTMin(m_rangeParam.min());
+    function()->setTMax(m_rangeParam.max());
+  }
   // See comment on Range1D initialization in extractParameters
-  assert(equalTempParameters());
-}
-
-bool DomainParameterController::equalTempParameters() {
-  return function()->tMin() == m_tempDomain.min() && function()->tMax() == m_tempDomain.max();
-}
-
-void DomainParameterController::buttonAction() {
-  confirmParameters();
-  StackViewController * stack = stackController();
-  stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
-}
-
-Shared::ExpiringPointer<Shared::ContinuousFunction> DomainParameterController::function() const {
-  assert(!m_record.isNull());
-  App * myApp = App::app();
-  return myApp->functionStore()->modelForRecord(m_record);
+  assert(!parametersAreDifferent());
 }
 
 FloatParameterController<float>::InfinityTolerance DomainParameterController::infinityAllowanceForRow(int row) const {
   if (function()->isAlongXOrY()) {
-    return row == 0 ? FloatParameterController<float>::InfinityTolerance::MinusInfinity : FloatParameterController<float>::InfinityTolerance::PlusInfinity;
+    return row == 1 ? FloatParameterController<float>::InfinityTolerance::MinusInfinity : FloatParameterController<float>::InfinityTolerance::PlusInfinity;
   }
   return FloatParameterController<float>::InfinityTolerance::None;
 }
 
+Shared::ExpiringPointer<Shared::ContinuousFunction> DomainParameterController::function() const {
+  assert(!m_record.isNull());
+  return App::app()->functionStore()->modelForRecord(m_record);
+}
+
 void DomainParameterController::switchToolboxContent(Escher::AbstractTextField * textField, bool setSpecificContent) {
-  assert(textField == m_domainCells[0].textField() || textField == m_domainCells[1].textField());
+  assert(textField == m_boundsCells[0].textField() || textField == m_boundsCells[1].textField());
   FunctionToolbox::AddedCellsContent content;
   if (setSpecificContent) {
     content = !function()->isAlongXOrY() ? FunctionToolbox::AddedCellsContent::None
-            : textField == m_domainCells[0].textField() ? FunctionToolbox::AddedCellsContent::NegativeInfinity
+            : textField == m_boundsCells[0].textField() ? FunctionToolbox::AddedCellsContent::NegativeInfinity
             : FunctionToolbox::AddedCellsContent::PositiveInfinity;
   } else {
     content = FunctionToolbox::AddedCellsContent::ComparisonOperators;

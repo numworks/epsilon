@@ -82,8 +82,8 @@ private:
     constexpr static KDCoordinate k_symbolHeightMargin = 8;
     constexpr static KDCoordinate k_sigmaHeight = 18;
 
-    static KDCoordinate editableZoneWidth() { return 12*KDFont::GlyphWidth(k_font); }
-    static KDCoordinate editableZoneHeight() { return KDFont::GlyphHeight(k_font); }
+    constexpr static KDCoordinate editableZoneWidth() { return 12*KDFont::GlyphWidth(k_font); }
+    constexpr static KDCoordinate editableZoneHeight() { return KDFont::GlyphHeight(k_font); }
 
     int numberOfSubviews() const override { return 3; }
     Escher::View * subviewAtIndex(int index) override;

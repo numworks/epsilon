@@ -13,6 +13,9 @@ uint16_t Pool::ReferenceTable::storeNode(Node node) {
 }
 
 Node Pool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
+  if (id == NoNodeIdentifier) {
+    return Node();
+  }
   assert(id < m_length);
   return Node(m_pool->firstBlock() + m_nodeForIdentifierOffset[id]);
 }

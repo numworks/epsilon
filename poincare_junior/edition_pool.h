@@ -56,10 +56,8 @@ private:
   public:
     ReferenceTable(Pool * pool) : Pool::ReferenceTable(pool) {}
     Node nodeForIdentifier(uint16_t id) const override;
-    void updateAllNodesBetween(Block * from, Block * to, int delta);
     typedef void (*AlterSelectedBlock)(uint16_t *, Block *, Block *, Block *, int);
     void updateNodes(AlterSelectedBlock function, Block * contextSelection1, Block * contextSelection2, int contextAlteration);
-    void updateAllNodesAfter(Block * from, int delta);
   };
 
   ReferenceTable m_referenceTable;

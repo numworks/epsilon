@@ -287,7 +287,7 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView * plotView, KDContext *
   assert(plotView);
 
   constexpr float segmentLength = 2.f;
-  float radiusInPixel = std::max(plotView->pixelWidth() * width, plotView->pixelHeight() * height);
+  float radiusInPixel = std::max(width / plotView->pixelWidth(), height / plotView->pixelHeight());
   float angleStep = segmentLength / radiusInPixel;
   float parameters[] = { center.x1(), center.x2(), width, height };
   Curve2D<float> arc = [](float t, void * model, void *) {

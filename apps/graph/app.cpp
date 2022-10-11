@@ -45,6 +45,39 @@ bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
   return !record.hasExtension(Ion::Storage::funcExtension);
 }
 
+void App::storageDidChangeForRecord(Ion::Storage::Record record) {
+  FunctionApp::storageDidChangeForRecord(record);
+  if (!isStoreMenuOpen()) {
+    return;
+  }
+  bool shouldUpdateFunctions = false;
+  for (int i = 0; i < functionStore()->numberOfModels(); i++) {
+    Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(functionStore()->recordAtIndex(i));
+    Symbol symbol = Symbol::Builder(record.name().baseName, record.name().baseNameLength);
+    Expression f = function->expressionClone();
+    /* TODO this condition has false positives when the expression contains a
+     * bound symbol with the same name as the modified symbol. An ad-hoc
+     * hasSymbol could be implemented but the best solution is to rework
+     * recursivelyMatches to make it aware of parametered expressions. */
+    if (f.recursivelyMatches([](const Expression e, Context * context, void * symbol) {
+      return (e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol&>(e).isIdenticalTo(*static_cast<Symbol*>(symbol))) ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
+    }, context(), ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol, &symbol)) {
+      shouldUpdateFunctions = true;
+      break;
+    }
+  }
+  if (!shouldUpdateFunctions) {
+    return;
+  }
+  if (m_tabViewController.activeTab() == 1) {
+    m_graphController.viewDidDisappear();
+    m_graphController.viewWillAppear();
+  } else if (m_tabViewController.activeTab() == 2) {
+    m_valuesController.viewDidDisappear();
+    m_valuesController.viewWillAppear();
+  }
+}
+
 void App::Snapshot::tidy() {
   m_functionStore.tidyDownstreamPoolFrom();
   m_graphRange.setDelegate(nullptr);

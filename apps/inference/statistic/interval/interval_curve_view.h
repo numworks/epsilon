@@ -8,6 +8,9 @@ namespace Inference {
 
 class IntervalAxis : public Shared::PlotPolicy::SimpleAxis {
 public:
+  constexpr static size_t k_bufferSize = Shared::PlotPolicy::AbstractLabeledAxis::k_labelBufferMaxSize;
+  constexpr static size_t k_glyphLength = Shared::PlotPolicy::AbstractLabeledAxis::k_labelBufferMaxGlyphLength;
+
   void reloadAxis(Shared::AbstractPlotView * plotView, Shared::AbstractPlotView::Axis) override;
   float tickPosition(int i, const Shared::AbstractPlotView * plotView, Shared::AbstractPlotView::Axis) const override;
   void drawLabel(int i, float t, const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, Shared::AbstractPlotView::Axis axis) const override;
@@ -18,7 +21,7 @@ private:
   Interval * interval(const Shared::AbstractPlotView * plotView) const { return static_cast<Interval *>(plotView->range()); }
 
   float m_ticks[k_numberOfLabels];
-  char m_labels[k_numberOfLabels][Shared::PlotPolicy::LabeledAxis::k_labelBufferMaxSize];
+  char m_labels[k_numberOfLabels][k_bufferSize];
   bool m_realignLabels;
 };
 

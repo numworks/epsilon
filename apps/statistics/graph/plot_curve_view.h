@@ -8,7 +8,7 @@ namespace Statistics {
 
 class PlotController;
 
-class LabeledAxisWithOptionalPercent : public Shared::PlotPolicy::LabeledAxis {
+class LabeledAxisWithOptionalPercent : public Shared::PlotPolicy::VerticalLabeledAxis {
 public:
   void setPlotController(PlotController * controller) { m_plotController = controller; }
 
@@ -19,7 +19,7 @@ protected:
   PlotController * m_plotController;
 };
 
-typedef Shared::PlotPolicy::Axes<Shared::PlotPolicy::WithGrid, Shared::PlotPolicy::LabeledAxis, LabeledAxisWithOptionalPercent> PlotViewAxes;
+typedef Shared::PlotPolicy::Axes<Shared::PlotPolicy::WithGrid, Shared::PlotPolicy::HorizontalLabeledAxis, LabeledAxisWithOptionalPercent> PlotViewAxes;
 
 class PlotViewPolicy {
 protected:

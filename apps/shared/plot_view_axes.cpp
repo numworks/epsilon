@@ -71,27 +71,28 @@ float SimpleAxis::tickStep(const AbstractPlotView * plotView, AbstractPlotView::
   return 2.f * step;
 }
 
-// LabeledAxis
+// AbstractLabeledAxis
 
-void LabeledAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) {
-  for (size_t i = 0; i < k_maxNumberOfLabels; i++) {
+void AbstractLabeledAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) {
+  int n = numberOfLabels();
+  for (size_t i = 0; i < n; i++) {
     computeLabel(i, plotView, axis);
   }
 }
 
-void LabeledAxis::forceRelativePosition(AbstractPlotView::RelativePosition position) {
+void AbstractLabeledAxis::forceRelativePosition(AbstractPlotView::RelativePosition position) {
   m_forceRelativePosition = true;
   m_relativePosition = position;
 }
 
-int LabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis)  {
+int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis)  {
   float t = tickPosition(i, plotView, axis);
-  return Poincare::PrintFloat::ConvertFloatToText(t, m_labels[i], k_labelBufferMaxSize, k_labelBufferMaxGlyphLength, k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal).GlyphLength;
+  return Poincare::PrintFloat::ConvertFloatToText(t, mutableLabel(i), k_labelBufferMaxSize, k_labelBufferMaxGlyphLength, k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal).GlyphLength;
 }
 
-void LabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
-  assert(i < k_maxNumberOfLabels);
-  const char * text = m_labels[i];
+void AbstractLabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
+  assert(i < numberOfLabels());
+  const char * text = label(i);
   if (m_hidden || text[0] == '\0') {
     return;
   }
@@ -124,7 +125,7 @@ void LabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, K
   plotView->drawLabel(ctx, rect, text, xy, xRelative, yRelative, k_color);
 }
 
-void LabeledAxis::computeLabelsRelativePosition(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
+void AbstractLabeledAxis::computeLabelsRelativePosition(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
   m_labelsPosition = 0.f;
   if (m_forceRelativePosition) {
     return;
@@ -146,8 +147,9 @@ void LabeledAxis::computeLabelsRelativePosition(const AbstractPlotView * plotVie
     }
   } else {
     KDCoordinate labelsWidth = 0;
-    for (int i = 0; i < k_maxNumberOfLabels; i++) {
-      KDCoordinate w = KDFont::Font(AbstractPlotView::k_font)->stringSize(m_labels[i]).width();
+    int n = numberOfLabels();
+    for (int i = 0; i < n; i++) {
+      KDCoordinate w = KDFont::Font(AbstractPlotView::k_font)->stringSize(label(i)).width();
       if (w > labelsWidth) {
         labelsWidth = w;
       }

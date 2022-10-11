@@ -16,7 +16,6 @@ public:
   StoreMenuController();
 
   // Responder
-  bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
   //ListViewDataSource
@@ -34,6 +33,7 @@ public:
   void layoutFieldDidChangeSize(Escher::LayoutField * layoutField) override;
 
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
+  bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
 private:
   class InnerListController : public ViewController {

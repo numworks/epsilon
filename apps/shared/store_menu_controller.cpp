@@ -47,14 +47,6 @@ StoreMenuController::StoreMenuController() :
   m_abortController.setContentMessage(I18n::Message::InvalidInputWarning);
 }
 
-bool StoreMenuController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Sto) {
-    m_cell.expressionField()->handleEventWithText("→");
-    return true;
-  }
-  return false;
-}
-
 void StoreMenuController::didBecomeFirstResponder() {
   m_preventReload = true;
   m_cell.expressionField()->setEditing(true);
@@ -134,5 +126,18 @@ bool StoreMenuController::textFieldDidAbortEditing(Escher::AbstractTextField * t
 }
 
 bool StoreMenuController::layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) {
+  if (event == Ion::Events::Sto) {
+    layoutField->handleEventWithText("→");
+    return true;
+  }
+  // We short circuit the LayoutFieldDelegate to avoid calls to displayWarning
   return textFieldDelegateApp()->fieldDidReceiveEvent(layoutField, layoutField, event);
+}
+
+bool StoreMenuController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
+  if (event == Ion::Events::Sto) {
+    textField->handleEventWithText("→");
+    return true;
+  }
+  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
 }

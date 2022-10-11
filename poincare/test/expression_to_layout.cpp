@@ -125,6 +125,26 @@ QUIZ_CASE(poincare_expression_to_layout_multiplication_operator) {
   assert_expression_layouts_and_serializes_to(
       Multiplication::Builder(Rational::Builder(2), Unit::Builder(Unit::k_distanceRepresentatives + Unit::k_meterRepresentativeIndex, UnitNode::Prefix::EmptyPrefix()), Float<double>::Builder(3.5), Unit::Builder(Unit::k_distanceRepresentatives + Unit::k_meterRepresentativeIndex, UnitNode::Prefix::EmptyPrefix())),
       "2m×3.5m");
+  // Always put a dot between units
+  // 2_s^-1·_m
+  assert_expression_layouts_and_serializes_to(
+      Multiplication::Builder(
+        Rational::Builder(2),
+        Power::Builder(
+          Unit::Builder(Unit::k_timeRepresentatives + Unit::k_secondRepresentativeIndex, UnitNode::Prefix::EmptyPrefix()),
+          Rational::Builder(-1)),
+        Unit::Builder(Unit::k_distanceRepresentatives + Unit::k_meterRepresentativeIndex, UnitNode::Prefix::EmptyPrefix())),
+      "2s^\u0012-1\u0013·m");
+  // 2×3_m·_s^-1
+  assert_expression_layouts_and_serializes_to(
+      Multiplication::Builder(
+        Rational::Builder(2),
+        Rational::Builder(3),
+        Unit::Builder(Unit::k_distanceRepresentatives + Unit::k_meterRepresentativeIndex, UnitNode::Prefix::EmptyPrefix()),
+        Power::Builder(
+          Unit::Builder(Unit::k_timeRepresentatives + Unit::k_secondRepresentativeIndex, UnitNode::Prefix::EmptyPrefix()),
+          Rational::Builder(-1))),
+      "2×3m·s^\u0012-1\u0013");
 }
 
 QUIZ_CASE(poincare_expression_to_layout_implicit_addition) {

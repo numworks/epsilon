@@ -14,8 +14,10 @@ namespace Poincare {
 
 namespace LayoutHelper {
   /* Expression to Layout */
-  typedef bool (*OperatorTest)(Expression left, Expression right);
-  Layout Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context, OperatorTest replaceOperatorWithMargin = nullptr);
+  typedef Layout (*OperatorLayoutForInfix)(const char * operatorName, Expression left, Expression right, Layout rightLayout);
+  Layout DefaultCreateOperatorLayoutForInfix(const char * operatorName, Expression left, Expression right, Layout rightLayout);
+
+  Layout Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context, OperatorLayoutForInfix operatorLayoutBuilder = DefaultCreateOperatorLayoutForInfix);
   Layout Prefix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context, bool addParenthesese = true);
 
   /* Create special layouts */

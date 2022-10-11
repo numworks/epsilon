@@ -1,8 +1,9 @@
 #include <poincare/multiplication.h>
 #include <poincare/addition.h>
 #include <poincare/arithmetic.h>
-#include <poincare/dependency.h>
+#include <poincare/code_point_layout.h>
 #include <poincare/cotangent.h>
+#include <poincare/dependency.h>
 #include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/exception_checkpoint.h>
@@ -251,6 +252,10 @@ CodePoint MultiplicationNode::operatorSymbol() const {
   return CodePointForOperatorSymbol(static_cast<MultiplicationSymbol>(sign));
 }
 
+static bool ExpressionIsUnit(Expression  e) {
+  return e.type() == ExpressionNode::Type::Unit || (e.type() == ExpressionNode::Type::Power && e.childAtIndex(0).type() == ExpressionNode::Type::Unit);
+}
+
 Layout MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   constexpr int stringMaxSize = CodePoint::MaxCodePointCharLength + 1;
   char string[stringMaxSize];
@@ -261,9 +266,23 @@ Layout MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplay
     numberOfSignificantDigits,
     string,
     context,
-    [](Expression left, Expression right) {
-      bool rightIsUnit = right.type() == ExpressionNode::Type::Unit || (right.type() == ExpressionNode::Type::Power && right.childAtIndex(0).type() == ExpressionNode::Type::Unit);
-      return rightIsUnit && OperatorSymbolBetween(left.rightLayoutShape(), right.leftLayoutShape()) == MultiplicationSymbol::Empty;
+    [](const char * operatorName, Expression left, Expression right, Layout rightLayout) {
+      bool leftIsUnit = ExpressionIsUnit(left);
+      bool rightIsUnit = ExpressionIsUnit(right);
+      if (rightIsUnit && leftIsUnit) {
+        // Both children are unit: symbol is always a middle dot with no margin
+        Layout symbolLayout = CodePointLayout::Builder(CodePointForOperatorSymbol(MultiplicationSymbol::MiddleDot));
+        symbolLayout.setMargin(false);
+        rightLayout.setMargin(false);
+        return symbolLayout;
+      }
+      if (rightIsUnit && OperatorSymbolBetween(left.rightLayoutShape(), right.leftLayoutShape()) == MultiplicationSymbol::Empty) {
+        // Unit on the right: don't display useless symbol and force margin
+        rightLayout.setMargin(true);
+        rightLayout.lockMargin(true);
+        return Layout();
+      }
+      return LayoutHelper::DefaultCreateOperatorLayoutForInfix(operatorName, left, right, rightLayout);
     });
 }
 

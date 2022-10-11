@@ -75,15 +75,16 @@ private:
   virtual void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {}
 };
 
-class LabeledAxis : public SimpleAxis {
+/* Abstract class describing an axis with evenly spaced out labels. */
+class AbstractLabeledAxis : public SimpleAxis {
 public:
   constexpr static int k_numberSignificantDigits = Poincare::Preferences::LargeNumberOfSignificantDigits;
   constexpr static int k_labelBufferMaxSize = 1 + k_numberSignificantDigits + 1 + Poincare::PrintFloat::k_specialECodePointByteLength + 1 + 3 + 1; // '-' + significant digits + '.' + "E" + '-' + 3 digits + null-terminating char
   constexpr static int k_labelBufferMaxGlyphLength = 1 + k_numberSignificantDigits + 3 + 3; // '-' + significant digits + ".E-" + 3 digits
-  /* FIXME Y axis needs less labels than X axis */
-  constexpr static int k_maxNumberOfLabels = CurveViewRange::k_maxNumberOfXGridUnits > CurveViewRange::k_maxNumberOfYGridUnits ? CurveViewRange::k_maxNumberOfXGridUnits : CurveViewRange::k_maxNumberOfYGridUnits;
+  constexpr static int k_maxNumberOfXLabels = CurveViewRange::k_maxNumberOfXGridUnits;
+  constexpr static int k_maxNumberOfYLabels = CurveViewRange::k_maxNumberOfYGridUnits;
 
-  LabeledAxis() : m_forceRelativePosition(false), m_hidden(false) {}
+  AbstractLabeledAxis() : m_forceRelativePosition(false), m_hidden(false) {}
 
   void reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) override;
   void setOtherAxis(bool other) override { m_otherAxis = other; }
@@ -91,11 +92,13 @@ public:
   void setHidden(bool hide) { m_hidden = hide; }
 
 protected:
+  virtual size_t numberOfLabels() const = 0;
+  virtual char * mutableLabel(int i) = 0;
+  const char * label(int i) const { return const_cast<AbstractLabeledAxis *>(this)->mutableLabel(i); }
   virtual int computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis);
   void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const override;
   void computeLabelsRelativePosition(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
 
-  char m_labels[k_maxNumberOfLabels][k_labelBufferMaxSize];
   mutable float m_labelsPosition;
   mutable AbstractPlotView::RelativePosition m_relativePosition : 2;
   bool m_forceRelativePosition : 1;
@@ -103,13 +106,31 @@ protected:
   bool m_otherAxis : 1;
 };
 
+template<size_t N>
+class LabeledAxis : public AbstractLabeledAxis {
+public:
+  LabeledAxis() {
+    for (size_t i = 0; i < N; i++) {
+      m_labels[i][0] = '\0';
+    }
+  }
+
+protected:
+  size_t numberOfLabels() const override { return N; }
+  char * mutableLabel(int i) override { assert(i < N); return m_labels[i]; }
+  char m_labels[N][k_labelBufferMaxSize];
+};
+
+typedef LabeledAxis<AbstractLabeledAxis::k_maxNumberOfXLabels> HorizontalLabeledAxis;
+typedef LabeledAxis<AbstractLabeledAxis::k_maxNumberOfYLabels> VerticalLabeledAxis;
+
 /* The following classes are intended to be used as template arguments for
  * PlotView */
 
 typedef Axes<NoGrid, NoAxis, NoAxis> NoAxes;
 typedef Axes<WithGrid, SimpleAxis, SimpleAxis> TwoUnlabeledAxes;
-typedef Axes<NoGrid, LabeledAxis, NoAxis> LabeledXAxis;
-typedef Axes<WithGrid, LabeledAxis, LabeledAxis> TwoLabeledAxes;
+typedef Axes<NoGrid, HorizontalLabeledAxis, NoAxis> LabeledXAxis;
+typedef Axes<WithGrid, HorizontalLabeledAxis, VerticalLabeledAxis> TwoLabeledAxes;
 
 }
 }

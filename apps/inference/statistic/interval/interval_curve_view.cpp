@@ -10,7 +10,7 @@ namespace Inference {
 // IntervalAxis
 
 static void convertFloatToText(float f, char * buffer, int bufferSize) {
-  Poincare::PrintFloat::ConvertFloatToText<float>(f, buffer, PlotPolicy::LabeledAxis::k_labelBufferMaxSize, PlotPolicy::LabeledAxis::k_labelBufferMaxGlyphLength, PlotPolicy::LabeledAxis::k_numberSignificantDigits, Poincare::Preferences::PrintFloatMode::Decimal);
+  Poincare::PrintFloat::ConvertFloatToText<float>(f, buffer, IntervalAxis::k_bufferSize, IntervalAxis::k_glyphLength, PlotPolicy::AbstractLabeledAxis::k_numberSignificantDigits, Poincare::Preferences::PrintFloatMode::Decimal);
 }
 
 void IntervalAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) {
@@ -18,10 +18,10 @@ void IntervalAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axi
   float low = plotInterval->estimate() - plotInterval->marginOfError();
   float high = plotInterval->estimate() + plotInterval->marginOfError();
   float spaceBetweenBounds = plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, high) - plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, low);
-  m_realignLabels = spaceBetweenBounds <= PlotPolicy::LabeledAxis::k_labelBufferMaxGlyphLength * KDFont::GlyphWidth(AbstractPlotView::k_font);
+  m_realignLabels = spaceBetweenBounds <= k_glyphLength * KDFont::GlyphWidth(AbstractPlotView::k_font);
 
-  convertFloatToText(low, m_labels[0], PlotPolicy::LabeledAxis::k_labelBufferMaxSize);
-  convertFloatToText(high, m_labels[1], PlotPolicy::LabeledAxis::k_labelBufferMaxSize);
+  convertFloatToText(low, m_labels[0], k_bufferSize);
+  convertFloatToText(high, m_labels[1], k_bufferSize);
   /* Memoize the interval bounds, as at the time of display, there is no guarantee the bounds will be correct. */
   m_ticks[0] = low;
   m_ticks[1] = high;
@@ -73,9 +73,9 @@ void IntervalPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext *
     m_interval->compute();
     float marginOfError = m_interval->marginOfError();
     // Draw the threshold value
-    constexpr int k_ThresholdBufferSize = PrintFloat::charSizeForFloatsWithPrecision(PlotPolicy::LabeledAxis::k_numberSignificantDigits) + 1; // 1 = strlen("%")
+    constexpr int k_ThresholdBufferSize = PrintFloat::charSizeForFloatsWithPrecision(PlotPolicy::AbstractLabeledAxis::k_numberSignificantDigits) + 1; // 1 = strlen("%")
     char buffer[k_ThresholdBufferSize];
-    Print::CustomPrintf(buffer, k_ThresholdBufferSize, "%*.*ef%%", threshold * 100.0f, Preferences::PrintFloatMode::Decimal, PlotPolicy::LabeledAxis::k_numberSignificantDigits);
+    Print::CustomPrintf(buffer, k_ThresholdBufferSize, "%*.*ef%%", threshold * 100.0f, Preferences::PrintFloatMode::Decimal, PlotPolicy::AbstractLabeledAxis::k_numberSignificantDigits);
     KDColor textColor = isMainInterval ? KDColorBlack : Escher::Palette::GrayDarkMiddle;
     plotView->drawLabel(ctx, rect, buffer, Coordinate2D<float>(estimate, verticalPosition), AbstractPlotView::RelativePosition::There, AbstractPlotView::RelativePosition::Before, textColor, true);
 

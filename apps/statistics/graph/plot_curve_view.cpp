@@ -11,11 +11,11 @@ namespace Statistics {
 // LabeledAxisWithOptionalPercent
 
 float LabeledAxisWithOptionalPercent::tickStep(const Shared::AbstractPlotView * plotView, Shared::AbstractPlotView::Axis axis) const {
-  return LabeledAxis::tickStep(plotView, axis) * 0.5f * m_plotController->labelStepMultiplicator(axis);
+  return PlotPolicy::VerticalLabeledAxis::tickStep(plotView, axis) * 0.5f * m_plotController->labelStepMultiplicator(axis);
 }
 
 int LabeledAxisWithOptionalPercent::computeLabel(int i, const Shared::AbstractPlotView * plotView, AbstractPlotView::Axis axis) {
-  int length = LabeledAxis::computeLabel(i, plotView, axis);
+  int length = PlotPolicy::VerticalLabeledAxis::computeLabel(i, plotView, axis);
   m_plotController->appendLabelSuffix(axis, &m_labels[i][length], k_labelBufferMaxSize - length, length, k_labelBufferMaxGlyphLength - length);
   return k_labelBufferMaxSize;
 }
@@ -62,7 +62,7 @@ PlotCurveView::PlotCurveView(Shared::CurveViewRange * range, Shared::CurveViewCu
   m_yAxis.setPlotController(plotController);
   // PlotViewPolicy
   m_plotController = plotController;
-  // PlotPoliy::WithCursor
+  // PlotPolicy::WithCursor
   m_cursor = cursor;
   m_cursorView = cursorView;
 }

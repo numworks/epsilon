@@ -18,7 +18,7 @@ protected:
 
 private:
   Shared::PlotPolicy::Axes<Shared::PlotPolicy::WithGrid, Shared::PlotPolicy::NoAxis, Shared::PlotPolicy::NoAxis> m_grid;
-  Shared::PlotPolicy::Axes<Shared::PlotPolicy::NoGrid, Shared::PlotPolicy::LabeledAxis, Shared::PlotPolicy::LabeledAxis> m_axes;
+  Shared::PlotPolicy::Axes<Shared::PlotPolicy::NoGrid, Shared::PlotPolicy::HorizontalLabeledAxis, Shared::PlotPolicy::VerticalLabeledAxis> m_axes;
 };
 
 class PyplotPolicy {

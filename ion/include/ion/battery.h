@@ -21,7 +21,8 @@ enum class Charge : uint8_t {
   EMPTY = 0,
   LOW = 1,
   MID = 2,
-  FULL = 3
+  THREE_QUARTERS = 3,
+  FULL = 4
 };
 Charge level();
 

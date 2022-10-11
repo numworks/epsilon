@@ -12,7 +12,7 @@
 
 namespace Poincare {
 
-Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context, OperatorTest forbidOperator) {
+Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, const char * operatorName, Context * context, OperatorTest replaceOperatorWithMargin) {
   HorizontalLayout result = HorizontalLayout::Builder();
   const size_t operatorLength = strlen(operatorName);
   const int numberOfChildren = expression.numberOfChildren();
@@ -22,14 +22,14 @@ Layout LayoutHelper::Infix(const Expression & expression, Preferences::PrintFloa
 
     if (i > 0) {
       /* Handle the operator */
-      if (operatorLength > 0
-       && !(forbidOperator && forbidOperator(expression.childAtIndex(i - 1), expression.childAtIndex(i))))
-      {
+      childLayout.setMargin(true);
+      if (replaceOperatorWithMargin && replaceOperatorWithMargin(expression.childAtIndex(i - 1), expression.childAtIndex(i))) {
+        childLayout.lockMargin(true);
+      } else if (operatorLength > 0) {
         Layout operatorLayout = String(operatorName, operatorLength);
         operatorLayout.setMargin(true);
         result.addOrMergeChildAtIndex(operatorLayout, result.numberOfChildren(), true);
       }
-      childLayout.setMargin(true);
     }
     result.addOrMergeChildAtIndex(childLayout, result.numberOfChildren(), true);
   }

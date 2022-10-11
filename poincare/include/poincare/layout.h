@@ -74,6 +74,7 @@ public:
     return Layout(node()->layoutToPointWhenInserting(correspondingExpression, forceCursorLeftOfText));
   }
   void setMargin(bool hasMargin) { node()->setMargin(hasMargin); }
+  void lockMargin(bool lock) { node()->lockMargin(lock); }
 
   // Cursor
   LayoutCursor cursor() const;

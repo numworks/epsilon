@@ -523,6 +523,7 @@ void HorizontalLayout::addChildAtIndex(Layout l, int index, int currentNumberOfC
 void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool removeEmptyChildren, LayoutCursor * cursor) {
   int newIndex = index;
   bool margin = h.node()->leftMargin() > 0;
+  bool marginIsLocked = h.node()->marginIsLocked();
   bool firstAddedChild = true;
   // Remove h if it is a child
   int indexOfh = indexOfChild(h);
@@ -576,7 +577,9 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
       makePermanentIfBracket(c.node(), newIndex > 0, newIndex < n || i  < childrenNumber - 1);
       addChildAtIndexInPlace(c, newIndex, n);
       if (firstAddedChild) {
-        childAtIndex(newIndex).node()->setMargin(margin);
+        LayoutNode * l = childAtIndex(newIndex).node();
+        l->setMargin(margin);
+        l->lockMargin(marginIsLocked);
       }
       firstAddedChild = false;
       newIndex++;

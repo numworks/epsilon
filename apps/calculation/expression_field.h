@@ -11,7 +11,8 @@ public:
   Escher::ExpressionField(parentResponder, inputEventHandler, textFieldDelegate, layoutFieldDelegate) {
     setLayoutInsertionCursorEvent(Ion::Events::Up);
     m_currentStep = DivisionCycleStep::Start;
-    m_divisionStepUpToDate = false;
+    m_divisionCycleWithAns = true;
+    m_divisionCycleChoiceUpToDate = false;
   }
 protected:
   bool handleEvent(Ion::Events::Event event) override;
@@ -19,15 +20,17 @@ private:
   enum class DivisionCycleStep : uint8_t {
     Start = 0,
     DenominatorOfAnsFraction, // cursor at Denominator of Ans/Empty
+    DenominatorOfEmptyFraction, // cursor at Denominator of Empty/Empty
     NumeratorOfEmptyFraction, // cursor at Numerator of Empty/Empty
     MixedFraction, // cursor before Empty/Empty
-    NotCycling
   };
 
   DivisionCycleStep m_currentStep;
-  bool m_divisionStepUpToDate;
+  bool m_divisionCycleWithAns;
+  bool m_divisionCycleChoiceUpToDate;
 
   bool fieldContainsSingleMinusSymbol() const;
+  bool createdEmptyFraction();
   bool handleDivision();
 };
 

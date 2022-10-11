@@ -75,10 +75,10 @@ ExpressionField::DivisionCycleStep ExpressionField::currentStepOfDivisionCycling
     cursorIsLeftOfLayout = m_layoutField.cursor()->isEquivalentTo(LayoutCursor(layout, Poincare::LayoutCursor::Position::Left));
   }
   if ((inputBuffer[0] == '/' && inputBuffer[1] == 0) || (!cursorIsLeftOfLayout && strcmp(k_serializedEmptyFraction, inputBuffer) == 0)) {
-    return DivisionCycleStep::EmptyFraction;
+    return DivisionCycleStep::NumeratorOfEmptyFraction;
   }
   if (strcmp(k_1DAnsFraction, inputBuffer) == 0 || strcmp(k_serializedAnsFraction, inputBuffer) == 0) {
-    return DivisionCycleStep::AnsDivided;
+    return DivisionCycleStep::DenominatorOfAnsFraction;
   }
   if (strcmp(k_1DMixedFractionCommand, inputBuffer) == 0 || (cursorIsLeftOfLayout && strcmp(k_serializedEmptyFraction, inputBuffer) == 0)) {
     return DivisionCycleStep::MixedFraction;
@@ -94,9 +94,9 @@ bool ExpressionField::handleDivision() {
   DivisionCycleStep currentDivisionCycleStep = currentStepOfDivisionCycling();
   if (currentDivisionCycleStep == DivisionCycleStep::MixedFraction || currentDivisionCycleStep == DivisionCycleStep::Start) {
     setText(Poincare::Symbol::k_ansAliases.mainAlias());
-  } else if (currentDivisionCycleStep == DivisionCycleStep::AnsDivided) {
+  } else if (currentDivisionCycleStep == DivisionCycleStep::DenominatorOfAnsFraction) {
     setText("");
-  } else if (currentDivisionCycleStep == DivisionCycleStep::EmptyFraction) {
+  } else if (currentDivisionCycleStep == DivisionCycleStep::NumeratorOfEmptyFraction) {
     if (editionIsInTextField()) {
       setText(k_1DMixedFractionCommand);
       m_textField.setCursorLocation(m_textField.draftTextBuffer());

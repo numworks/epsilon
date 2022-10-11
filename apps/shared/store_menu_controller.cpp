@@ -45,23 +45,25 @@ StoreMenuController::StoreMenuController() :
   m_preventReload(false)
 {
   m_abortController.setContentMessage(I18n::Message::InvalidInputWarning);
+  /* We need to set the width early since minimalSizeForOptimalDisplay will be
+   * called before willDisplayCell. */
+  m_cell.setFrame(KDRect(0, 0, Ion::Display::Width - Metric::PopUpLeftMargin - Metric::PopUpRightMargin, 0), false);
 }
 
 void StoreMenuController::didBecomeFirstResponder() {
-  m_preventReload = true;
-  m_cell.expressionField()->setEditing(true);
-  m_cell.expressionField()->setText(m_text);
-  m_cell.expressionField()->handleEventWithText("→");
-  if (m_text[0] == 0) {
-    m_cell.expressionField()->putCursorLeftOfField();
-  }
-  resetMemoization();
-  m_preventReload = false;
   Container::activeApp()->setFirstResponder(&m_listController);
 }
 
 void StoreMenuController::setText(const char * text) {
-  m_text = text;
+  m_preventReload = true;
+  m_cell.expressionField()->setEditing(true);
+  m_cell.expressionField()->setText(text);
+  m_cell.expressionField()->handleEventWithText("→");
+  if (text[0] == 0) {
+    m_cell.expressionField()->putCursorLeftOfField();
+  }
+  m_stackViewController.setupActiveView();
+  m_preventReload = false;
 }
 
 void StoreMenuController::willDisplayCellForIndex(HighlightCell * cell, int index) {
@@ -71,7 +73,7 @@ void StoreMenuController::willDisplayCellForIndex(HighlightCell * cell, int inde
 void StoreMenuController::layoutFieldDidChangeSize(LayoutField * layoutField) {
   if (!m_preventReload) {
     m_preventReload = true;
-    m_listController.selectableTableView()->reloadData();
+    Container::activeApp()->modalViewController()->reloadModalViewController();
   }
   m_preventReload = false;
 }

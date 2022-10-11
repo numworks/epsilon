@@ -52,7 +52,6 @@ private:
   Escher::EditableExpressionCell m_cell;
   Escher::MessagePopUpControllerWithCustomCancel m_abortController;
   bool m_preventReload;
-  const char * m_text;
 };
 
 #endif

@@ -54,6 +54,16 @@ void StackViewController::ControllerView::pushStack(ViewController * vc) {
   m_stackViews.push(StackView(vc, textColor, backgroundColor, separatorColor));
 }
 
+KDSize StackViewController::ControllerView::minimalSizeForOptimalDisplay() const {
+  if (m_contentView == nullptr) {
+    return KDSizeZero;
+  }
+  KDSize size = m_contentView->minimalSizeForOptimalDisplay();
+  int heightDiff = Metric::StackTitleHeight + (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
+  int numberOfStacks = m_stackViews.length();
+  return KDSize(size.width(), size.height() + heightDiff * numberOfStacks + Metric::CellSeparatorThickness);
+}
+
 void StackViewController::ControllerView::layoutSubviews(bool force) {
   /* Layout:    Overlap   |    No overlap
 

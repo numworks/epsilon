@@ -11,7 +11,7 @@
 
 namespace Escher {
 
-class EditableExpressionCell : public HighlightCell, public Responder {
+class EditableExpressionCell : public Bordered, public HighlightCell, public Responder {
 public:
   EditableExpressionCell(Responder * parentResponder = nullptr,
                          InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr,
@@ -43,6 +43,7 @@ public:
   void layoutSubviews(bool force = false) override;
   void didBecomeFirstResponder() override;
   KDSize minimalSizeForOptimalDisplay() const override;
+  void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   ExpressionField m_expressionField;

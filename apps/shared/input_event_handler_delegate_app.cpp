@@ -40,7 +40,7 @@ void InputEventHandlerDelegateApp::storeValue(const char * text) {
     return;
   }
   m_storeController.setText(text);
-  displayModalViewController(&m_storeController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+  displayModalViewController(&m_storeController, 0.5f, 0.f, 0, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
 }
 
 bool InputEventHandlerDelegateApp::isStoreMenuOpen() {

@@ -69,8 +69,7 @@ bool ExpressionField::createdEmptyFraction() {
   Layout fraction;
   if (pointedLayout.parent().type() == LayoutNode::Type::FractionLayout) {
     fraction = pointedLayout.parent();
-  }
-  else {
+  } else {
     assert(pointedLayout.parent().type() == LayoutNode::Type::HorizontalLayout && pointedLayout.parent().numberOfChildren() == 1 && pointedLayout.parent().parent().type() == LayoutNode::Type::FractionLayout);
     fraction = pointedLayout.parent().parent();
   }
@@ -79,17 +78,17 @@ bool ExpressionField::createdEmptyFraction() {
 }
 
 bool ExpressionField::handleDivision() {
-  /* The cycle is : 
-   * 1) in a country with mixed fractions :
+  /* The cycle is: 
+   * 1) in a country with mixed fractions:
    *   1.1) when first operation : Start -> DenominatorOfAnsFraction -> NumeratorOfEmptyFraction -> MixedFraction -> DenominatorOfAnsFraction -> etc 
-   *   1.2) otherwise :
-   *      1.2.1) in 1D : Start -> DenominatorOfEmptyFraction -> NumeratorOfEmptyFraction -> MixedFraction -> DenominatorOfEmptyFraction -> etc 
-   *      1.2.2) in 2D : Start -> NumeratorOfEmptyFraction -> DenominatorOfEmptyFraction -> MixedFraction -> NumeratorOfEmptyFraction -> etc 
+   *   1.2) otherwise:
+   *      1.2.1) in 1D: Start -> DenominatorOfEmptyFraction -> NumeratorOfEmptyFraction -> MixedFraction -> DenominatorOfEmptyFraction -> etc 
+   *      1.2.2) in 2D: Start -> NumeratorOfEmptyFraction -> DenominatorOfEmptyFraction -> MixedFraction -> NumeratorOfEmptyFraction -> etc 
    * 2) in a country without mixed fractions :
-   *   2.1) when first operation : Start -> DenominatorOfAnsFraction -> NumeratorOfEmptyFraction -> DenominatorOfAnsFraction -> etc 
-   *   2.2) otherwise : only default behavior which is 
-   *      2.2.1) in 1D : DenominatorOfAnsFraction
-   *      2.2.2) in 2D : NumeratorOfEmptyFraction */
+   *   2.1) when first operation: Start -> DenominatorOfAnsFraction -> NumeratorOfEmptyFraction -> DenominatorOfAnsFraction -> etc 
+   *   2.2) otherwise: only default behavior which is 
+   *      2.2.1) in 1D: DenominatorOfAnsFraction
+   *      2.2.2) in 2D: NumeratorOfEmptyFraction */
   bool mixedFractionsEnabled = Poincare::Preferences::sharedPreferences()->mixedFractionsAreEnabled();
   bool editionIn1D = editionIsInTextField();
   Ion::Events::Event event = Ion::Events::Division;
@@ -137,12 +136,12 @@ bool ExpressionField::handleDivision() {
         handled = (::ExpressionField::handleEvent(event));
         /* In 1D we always cycle
          * In 2D we cycle only if the default handleEvent created an 
-         * empty fraction, to avoid the cases :
+         * empty fraction, to avoid the cases:
          *  - when we press Division after an expression, the default
-              handleEvent create a fraction with the expression at the
+              handleEvent creates a fraction with the expression at the
               numerator and the cursor at the denominator
             - when we press Division before an expression, the default
-              handleEvent create a fraction with the expresion at the 
+              handleEvent creates a fraction with the expresion at the 
               denominator and the cursor at the numerator
          * -> in both cases, we don't want to cycle */
         if (editionIn1D) {

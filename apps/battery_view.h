@@ -27,6 +27,8 @@ private:
   constexpr static KDCoordinate k_elementWidth = 1;
   constexpr static KDCoordinate k_capHeight = 4;
   constexpr static KDCoordinate k_separatorThickness = Escher::Metric::CellSeparatorThickness;
+  constexpr static KDCoordinate k_batteryInsideX = k_elementWidth + k_separatorThickness;
+  constexpr static KDCoordinate k_batteryInsideWidth = k_batteryWidth - 3 * k_elementWidth - 2 * k_separatorThickness;
   Ion::Battery::Charge m_chargeState;
   bool m_isCharging;
   bool m_isPlugged;

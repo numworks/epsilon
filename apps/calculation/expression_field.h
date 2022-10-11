@@ -31,6 +31,7 @@ private:
 
   bool fieldContainsSingleMinusSymbol() const;
   DivisionCycleStep currentStepOfDivisionCycling();
+  bool handleDivision();
 };
 
 }

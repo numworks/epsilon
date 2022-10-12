@@ -63,7 +63,7 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
   }
 }
 
-bool ExpressionField::createdEmptyFraction() {
+bool ExpressionField::didCreateEmptyFraction() {
   Layout pointedLayout = m_layoutField.cursor()->layout();
   assert(pointedLayout.isEmpty());
 
@@ -140,7 +140,7 @@ bool ExpressionField::handleDivision() {
          *     the expresion at the  denominator and the cursor at the numerator */
         if (editionIn1D) {
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
-        } else if (createdEmptyFraction()) {
+        } else if (didCreateEmptyFraction()) {
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
         }
         if (!handled) {

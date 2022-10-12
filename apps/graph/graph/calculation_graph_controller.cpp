@@ -25,7 +25,7 @@ bool CalculationGraphController::handleEvent(Ion::Events::Event event) {
     Escher::Clipboard::sharedClipboard()->store(m_bannerView->abscissaValue()->text());
     return true;
   }
-  if (event == Ion::Events::Sto) {
+  if (event == Ion::Events::Sto || event == Ion::Events::Var) {
     App::app()->storeValue(m_bannerView->abscissaValue()->text());
     return true;
   }

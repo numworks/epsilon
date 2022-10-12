@@ -37,7 +37,7 @@ bool ResultController::handleEvent(Ion::Events::Event event) {
     Escher::Clipboard::sharedClipboard()->store(cellAtIndex(0)->text());
     return true;
   }
-  if (event == Ion::Events::Sto) {
+  if (event == Ion::Events::Sto || event == Ion::Events::Var) {
     App::app()->storeValue(cellAtIndex(0)->text());
     return true;
   }

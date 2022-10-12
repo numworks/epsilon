@@ -16,6 +16,10 @@ function print_help() {
   echo -e "\t$ compare scenari/ Epsilon_master Epsilon_new"
   echo -e "\t$ compare scenari/ folder_with_images/ Epsilon_new"
   echo -e "\t$ compare MAKEFLAGS=\"-j4 PLATFORM=simulator DEBUG=1\" scenari/ folder_with_images/ HEAD"
+  echo -e "\nIf used with only one source: take_scenari_screenshots.sh [--debug] [MAKEFLAGS=...] <folder_with_scenari> <source>"
+  echo -e "Generate a screenshot of the final state of each scenari (useful when creating new scenari)."
+  echo -e "\nExample:"
+  echo -e "\t$ compare scenari/ Epsilon_master"
 }
 
 
@@ -160,12 +164,12 @@ function create_img() {
   case "${!arg_mode}" in
     "d")
       img="${!arg}/$(stem ${state_file}).png"
-      echo img="${img}"
+      echo "Get image from ${img}"
       cp "${img}" "$2"
       ;;
     "e" | "g")
       exe=exe$1
-      echo executable at ${!exe}
+      echo "Generate screenshot of ${state_file}"
       img_for_executable "${!exe}" "$2"
       ;;
   esac
@@ -186,7 +190,7 @@ function print_report() {
 # === Main ===
 
 
-if [[ $# -lt 3 ]]; then
+if [[ $# -lt 2 ]]; then
   error "Error: not enough arguments"
   print_help
   exit 1
@@ -207,6 +211,32 @@ then
   exit 3
 fi
 
+# if only 2 args, generate all screenshots
+if [[ $# -eq 2 ]]; then
+  output_folder="generated_screenshots$(date +%d-%m-%Y_%Hh%M)"
+  mkdir -p ${output_folder}
+
+  parse_arg "$2" 1
+
+  log args ${arg1_mode} ${arg1}
+
+  echo "Generating screenshots"
+
+  for state_file in "${scenari_folder}"/*.nws
+  do
+    filestem=$(stem "${state_file}")
+    log state_file: "$filestem"
+
+    out_file1="${output_folder}/${filestem}.png"
+
+    # Extract screenshots
+    create_img 1 "${out_file1}"
+  done
+  print_report
+  exit
+fi
+
+# if 3 arguments, compare screenshots
 output_folder="compare_output_$(date +%d-%m-%Y_%Hh%M)"
 mkdir -p ${output_folder}
 
@@ -214,6 +244,8 @@ parse_arg "$2" 1
 parse_arg "$3" 2
 
 log args ${arg1_mode} ${arg1} ${arg2_mode} ${arg2}
+
+echo -e "Comparing screenshots"
 
 for state_file in "${scenari_folder}"/*.nws
 do

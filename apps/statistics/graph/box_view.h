@@ -26,6 +26,7 @@ protected:
   constexpr static KDCoordinate k_outlierSize = Shared::Dots::SmallDotDiameter;
   static_assert(k_outlierSize <= std::max(k_twoBoxesHeight, k_threeBoxesHeight), "Outliers are not expected to be taller than the box.");
   constexpr static KDCoordinate k_chevronMargin = 2;
+  // A calculation may be a quantile or an outlier. It has chevrons if selected.
   constexpr static KDCoordinate k_biggestCalculationWidth = std::max({k_quantileBarWidth, Chevrons::k_chevronWidth, k_outlierSize});
   // Object and its center:       --o-- (5)   --o--- (6)
   // Right pixels to be dirtied:  ##    (2)   ##     (2)

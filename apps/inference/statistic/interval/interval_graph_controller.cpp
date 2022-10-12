@@ -26,13 +26,13 @@ void IntervalGraphController::didBecomeFirstResponder() {
 }
 
 bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Copy || event == Ion::Events::Sto) {
+  if (event == Ion::Events::Copy || event == Ion::Events::Sto || event == Ion::Events::Var) {
     // Copy confidence interval as matrix
     char copyBuffer[2 * Constants::k_shortBufferSize + 4];
     Poincare::Print::CustomPrintf(copyBuffer, sizeof(copyBuffer), "[[%*.*ed,%*.*ed]]",
         m_interval->estimate() - m_interval->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
         m_interval->estimate() + m_interval->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
-    if (event == Ion::Events::Sto) {
+    if (event == Ion::Events::Sto || event == Ion::Events::Var) {
       App::app()->storeValue(copyBuffer);
     } else {
       Escher::Clipboard::sharedClipboard()->store(copyBuffer);

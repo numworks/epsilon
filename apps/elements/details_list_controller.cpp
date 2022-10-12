@@ -30,7 +30,7 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
     return true;
   }
 
-  if (e == Ion::Events::Copy || e == Ion::Events::Sto) {
+  if (e == Ion::Events::Copy || e == Ion::Events::Sto || e == Ion::Events::Var) {
     constexpr size_t size = Escher::Clipboard::k_bufferSize;
     char buffer[size];
     int index = selectedRow();
@@ -38,7 +38,7 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
     int length = l.serializeForParsing(buffer, size);
     assert(length < static_cast<int>(size));
     (void)length;
-    if (e == Ion::Events::Sto) {
+    if (e == Ion::Events::Sto || e == Ion::Events::Var) {
       App::app()->storeValue(buffer);
     } else {
       Escher::Clipboard::sharedClipboard()->store(buffer);

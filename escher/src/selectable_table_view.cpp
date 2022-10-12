@@ -243,14 +243,14 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Right) {
     return selectCellAtClippedLocation(indexOfNextSelectableColumn(step), selectedRow());
   }
-  if (event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto) {
+  if (event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto || event == Ion::Events::Var) {
     HighlightCell * cell = selectedCell();
     if (cell == nullptr) {
       return false;
     }
     const char * text = cell->text();
     if (text) {
-      if (event == Ion::Events::Sto) {
+      if (event == Ion::Events::Sto || event == Ion::Events::Var) {
         Container::activeApp()->storeValue(text);
       } else {
         Escher::Clipboard::sharedClipboard()->store(text);

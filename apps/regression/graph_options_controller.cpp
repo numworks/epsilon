@@ -93,9 +93,9 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
       stack->push(&m_goToParameterController);
       return true;
     }
-  } else if ((event == Ion::Events::Copy || event == Ion::Events::Cut) || event == Ion::Events::Sto) {
+  } else if ((event == Ion::Events::Copy || event == Ion::Events::Cut) || event == Ion::Events::Sto || event == Ion::Events::Var) {
     if (type == k_r2CellType) {
-      if (event == Ion::Events::Sto) {
+      if (event == Ion::Events::Sto || event == Ion::Events::Var) {
         App::app()->storeValue(m_r2Cell.text());
       } else {
         Escher::Clipboard::sharedClipboard()->store(m_r2Cell.text());
@@ -107,7 +107,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
         constexpr int bufferSize = TextField::maxBufferSize();
         char buffer[bufferSize];
         l.serializeParsedExpression(buffer, bufferSize, nullptr);
-        if (event == Ion::Events::Sto) {
+        if (event == Ion::Events::Sto || event == Ion::Events::Var) {
           App::app()->storeValue(buffer);
         } else {
           Escher::Clipboard::sharedClipboard()->store(buffer);

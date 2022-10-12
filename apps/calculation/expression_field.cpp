@@ -105,14 +105,17 @@ bool ExpressionField::handleDivision() {
     // Cycles 1.1 and 1.2
     switch (m_currentStep) {
       case DivisionCycleStep::Start:
+        // Start -> DenominatorOfAnsFraction
         assert(isEmpty());
         createAnsFraction();
         break;
       case DivisionCycleStep::DenominatorOfAnsFraction : 
+        // DenominatorOfAnsFraction -> NumeratorOfEmptyFraction
         m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
         setText("");
         break;
       case DivisionCycleStep::NumeratorOfEmptyFraction :
+        // NumeratorOfEmptyFraction -> MixedFraction
         m_currentStep = DivisionCycleStep::MixedFraction;
         if (mixedFractionsEnabled) {
           if (editionIn1D) {
@@ -124,8 +127,10 @@ bool ExpressionField::handleDivision() {
           }
           return true;
         }
-        // If mixed fractions are not enabled, fall under next case
+        /* If mixed fractions are not enabled, fall under next case
+         * in order to skip the MixedFraction step */
       case DivisionCycleStep::MixedFraction :
+        // MixedFraction -> DenominatorOfAnsFraction
         createAnsFraction();
         break;
       case DivisionCycleStep::DenominatorOfEmptyFraction :

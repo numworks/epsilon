@@ -28,7 +28,7 @@ public:
     ScanChildren(const Node node) : m_node(node) {}
     class Iterator {
     public:
-      Iterator() : m_index(0) {}
+      Iterator(int index = 0) : m_index(index) {}
       const IndexedNode operator*() { return {.m_node = getNode(), .m_index = m_index}; }
       bool operator!=(const Iterator& it) const { return (getConstNode() != it.getConstNode()); }
       Iterator & operator++() {
@@ -92,7 +92,7 @@ public:
     using ScanChildren::ScanChildren;
     class Iterator : public ScanChildren::Iterator {
     public:
-      Iterator(EditionReference reference = EditionReference()) : ScanChildren::Iterator(), m_reference(reference) {}
+      Iterator(EditionReference reference = EditionReference(), int index = 0) : ScanChildren::Iterator(index), m_reference(reference) {}
       IndexedNode operator*() { return {.m_node = getNode(), .m_index = m_index}; }
     protected:
       /* Hack: we keep a reference to a block right before (or after) the
@@ -121,29 +121,39 @@ public:
     Iterator end() const { return Iterator(m_node.nextTree()); }
   };
 
+  /* This code is UGLY, please do something. */
   class BackwardsEditableChildren final : public ScanEditableChildren {
   public:
     using ScanEditableChildren::ScanEditableChildren;
     class Iterator final : public ScanEditableChildren::Iterator {
     public:
-      Iterator(const Node node) : ScanEditableChildren::Iterator(EditionReference(node)) {}
+      Iterator(const Node node, int index) : ScanEditableChildren::Iterator(EditionReference(node), index) {}
     private:
-      /* We can't keep a reference outside the scanned tree so we create
-       * an edge case for the right most child: it's referenced by the parent
-       * node. */
-      Node getNode() override { return m_index == 0 ? m_reference.node().nextTree().previousNode() : ScanChildren::Iterator::getNode(); }
+      Node getNode() override {
+        if (m_index < 0) {
+          // Special case: end iterator
+          return Node();
+        } else if (m_index == 0) {
+          /* We can't keep a reference outside the scanned tree so we create
+           * an edge case for the right most child: it's referenced by the parent
+           * node. */
+          return m_reference.node().nextTree().previousNode();
+        }
+        return ScanEditableChildren::Iterator::getNode();
+      }
       void setNode(Node node) override {
         if (node.isUninitialized()) {
-          m_reference = EditionReference(node);
-        } else {
-          ScanChildren::Iterator::setNode(node);
+          // Special case: end iterator
+          m_index = -2;
+          return;
         }
+        ScanEditableChildren::Iterator::setNode(node);
       }
       Node incrNode(Node node) override { return node.previousTree(); }
       int delta() override { return -1; }
     };
-    Iterator begin() const { return Iterator(m_node); }
-    Iterator end() const { return Iterator(Node()); }
+    Iterator begin() const { return Iterator(m_node, 0); }
+    Iterator end() const { return Iterator(Node(), -1); }
   };
 
   ForwardConstChildren forwardConstChildren() { return ForwardConstChildren(m_node); }

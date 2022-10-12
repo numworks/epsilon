@@ -356,7 +356,9 @@ int SolutionsController::typeAtLocation(int i, int j) {
 }
 
 void SolutionsController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(m_contentView.selectableTableView());
+  if (numberOfDisplayedSolutions() > 0) {
+    Container::activeApp()->setFirstResponder(m_contentView.selectableTableView());
+  }
 }
 
 void SolutionsController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {

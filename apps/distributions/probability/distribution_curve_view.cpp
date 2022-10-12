@@ -32,8 +32,8 @@ void DistributionPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView,
   float upperBound = m_calculation->upperBound();
 
   if (m_distribution->isContinuous()) {
-    CurveDrawing plot(evaluateDistribution2D, m_distribution, nullptr, m_distribution->xMin(), m_distribution->xMax(), plotView->pixelWidth(), Palette::YellowDark, true);
-    plot.setPatternOptions(Pattern(Palette::YellowDark), lowerBound, upperBound, evaluateZero, nullptr, nullptr, nullptr, false);
+    CurveDrawing plot(Curve2D(evaluateDistribution2D, m_distribution), nullptr, m_distribution->xMin(), m_distribution->xMax(), plotView->pixelWidth(), Palette::YellowDark, true);
+    plot.setPatternOptions(Pattern(Palette::YellowDark), lowerBound, upperBound, Curve2D(evaluateZero), Curve2D(), false);
     plot.draw(plotView, ctx, rect);
   } else {
     float context[] = { lowerBound, upperBound };

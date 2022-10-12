@@ -123,29 +123,27 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
   // - Define the bounds of the colored area
   bool patternWithoutCurve = false;
   float patternStart = tStart, patternEnd = tEnd;
-  Curve2D<float> patternLower = nullptr, patternUpper = nullptr;
-  Curve2D<float> patternLower2 = nullptr, patternUpper2 = nullptr;
-  ContinuousFunction * patternModel = f;
+  Curve2D patternLower, patternUpper, patternLower2;
   Pattern pattern(m_areaIndex, f->color());
 
   switch (area) {
   case ContinuousFunction::AreaType::Outside:
     /* This relies on the fact that the second curve will be below the first. */
-    (hasTwoCurves ? patternLower2 : patternLower) = evaluateMinusInfinity;
-    patternUpper = evaluateInfinity;
+    (hasTwoCurves ? patternLower2 : patternLower) = Curve2D(evaluateMinusInfinity);
+    patternUpper = Curve2D(evaluateInfinity);
     patternWithoutCurve = true;
     break;
   case ContinuousFunction::AreaType::Above:
-    patternUpper = evaluateInfinity;
+    patternUpper = Curve2D(evaluateInfinity);
     break;
   case ContinuousFunction::AreaType::Below:
-    (hasTwoCurves ? patternLower2 : patternLower) = evaluateMinusInfinity;
+    (hasTwoCurves ? patternLower2 : patternLower) = Curve2D(evaluateMinusInfinity);
     break;
   case ContinuousFunction::AreaType::Inside:
     /* The function might not have two curves if the area is empty
      * (e.g. y^2<0). */
     if (hasTwoCurves) {
-      patternLower = evaluateXYSecondCurve<float>;
+      patternLower = Curve2D(evaluateXYSecondCurve<float>, f);
     }
     break;
   default:
@@ -154,31 +152,31 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
     if (isIntegral) {
       assert(!hasTwoCurves);
       if (m_secondSelectedRecord.isNull()) {
-        patternLower = evaluateZero;
+        patternLower = Curve2D(evaluateZero);
       } else {
-        patternModel = App::app()->functionStore()->modelForRecord(m_secondSelectedRecord).operator->();
-        patternLower = evaluateXY;
-        pattern = Pattern(m_areaIndex, KDColor::HSVBlend(f->color(), patternModel->color()));
+        ContinuousFunction * otherModel = App::app()->functionStore()->modelForRecord(m_secondSelectedRecord).operator->();
+        patternLower = Curve2D(evaluateXY, otherModel);
+        pattern = Pattern(m_areaIndex, KDColor::HSVBlend(f->color(), otherModel->color()));
       }
       patternStart = m_highlightedStart;
       patternEnd = m_highlightedEnd;
     }
   }
-  if (patternLower || patternUpper || patternLower2 || patternUpper2) {
+  if (patternLower || patternUpper || patternLower2) {
     m_areaIndex = (m_areaIndex + 1) % Pattern::k_numberOfSections;
   }
 
   // - Draw first curve
-  CurveDrawing firstCurve(evaluateXY<float>, f, context(), tStart, tEnd, tStep, f->color(), true, f->drawDottedCurve());
+  CurveDrawing firstCurve(Curve2D(evaluateXY<float>, f), context(), tStart, tEnd, tStep, f->color(), true, f->drawDottedCurve());
   firstCurve.setPrecisionOptions(true, evaluateXY<double>, discontinuity);
-  firstCurve.setPatternOptions(pattern, patternStart, patternEnd, patternLower, patternModel, patternUpper, f, patternWithoutCurve, axis);
+  firstCurve.setPatternOptions(pattern, patternStart, patternEnd, patternLower, patternUpper, patternWithoutCurve, axis);
   firstCurve.draw(this, ctx, rect);
 
   // - Draw second curve
   if (hasTwoCurves) {
-    CurveDrawing secondCurve(evaluateXYSecondCurve<float>, f, context(), tStart, tEnd, tStep, f->color(), true, f->drawDottedCurve());
+    CurveDrawing secondCurve(Curve2D(evaluateXYSecondCurve<float>, f), context(), tStart, tEnd, tStep, f->color(), true, f->drawDottedCurve());
     secondCurve.setPrecisionOptions(true, evaluateXYSecondCurve<double>, discontinuity);
-    secondCurve.setPatternOptions(pattern, patternStart, patternEnd, patternLower2, f, patternUpper2, f, patternWithoutCurve, axis);
+    secondCurve.setPatternOptions(pattern, patternStart, patternEnd, patternLower2, Curve2D(), patternWithoutCurve, axis);
     secondCurve.draw(this, ctx, rect);
   }
 
@@ -317,7 +315,7 @@ void GraphView::drawPolar(KDContext * ctx, KDRect rect, ContinuousFunction * f, 
 }
 
 void GraphView::drawParametric(KDContext * ctx, KDRect rect, ContinuousFunction * f, float tStart, float tEnd, float tStep, DiscontinuityTest discontinuity) const {
-  CurveDrawing plot(evaluateXY<float>, f, context(), tStart, tEnd, tStep, f->color());
+  CurveDrawing plot(Curve2D(evaluateXY<float>, f), context(), tStart, tEnd, tStep, f->color());
   plot.setPrecisionOptions(false, nullptr, discontinuity);
   plot.draw(this, ctx, rect);
 }

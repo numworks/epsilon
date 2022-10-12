@@ -90,15 +90,10 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView * plotView, KDContex
 
 // WithCurves::CurveDrawing
 
-WithCurves::CurveDrawing::CurveDrawing(Curve2D<float> curve, void * model, void * context, float tStart, float tEnd, float tStep, KDColor color, bool thick, bool dashed) :
-  m_pattern(),
-  m_model(model),
-  m_patternModelLower(nullptr),
-  m_patternModelUpper(nullptr),
-  m_context(context),
+WithCurves::CurveDrawing::CurveDrawing(Curve2D curve, void * context, float tStart, float tEnd, float tStep, KDColor color, bool thick, bool dashed) :
   m_curve(curve),
-  m_patternLowerBound(nullptr),
-  m_patternUpperBound(nullptr),
+  m_pattern(),
+  m_context(context),
   m_curveDouble(nullptr),
   m_discontinuity(NoDiscontinuity),
   m_tStart(tStart),
@@ -116,19 +111,17 @@ WithCurves::CurveDrawing::CurveDrawing(Curve2D<float> curve, void * model, void 
   }
 }
 
-void WithCurves::CurveDrawing::setPatternOptions(Pattern pattern, float patternStart, float patternEnd, Curve2D<float> patternLowerBound, void * patternModelLower, Curve2D<float> patternUpperBound, void * patternModelUpper, bool patternWithoutCurve, AbstractPlotView::Axis axis) {
+void WithCurves::CurveDrawing::setPatternOptions(Pattern pattern, float patternStart, float patternEnd, Curve2D patternLowerBound, Curve2D patternUpperBound, bool patternWithoutCurve, AbstractPlotView::Axis axis) {
   m_pattern = pattern;
   m_patternStart = patternStart;
   m_patternEnd = patternEnd;
   m_patternLowerBound = patternLowerBound;
   m_patternUpperBound = patternUpperBound;
-  m_patternModelLower = patternModelLower;
-  m_patternModelUpper = patternModelUpper;
   m_patternWithoutCurve = patternWithoutCurve;
   m_axis = axis;
 }
 
-void WithCurves::CurveDrawing::setPrecisionOptions(bool drawStraightLinesEarly, Curve2D<double> curveDouble, DiscontinuityTest discontinuity) {
+void WithCurves::CurveDrawing::setPrecisionOptions(bool drawStraightLinesEarly, Curve2DEvaluation<double> curveDouble, DiscontinuityTest discontinuity) {
   m_drawStraightLinesEarly = drawStraightLinesEarly;
   m_curveDouble = curveDouble;
   m_discontinuity = discontinuity;
@@ -162,11 +155,11 @@ void WithCurves::CurveDrawing::draw(const AbstractPlotView * plotView, KDContext
       continue;
     }
     previousXY = xy;
-    xy = m_curve(t, m_model, m_context);
+    xy = m_curve.evaluate(t, m_context);
 
     // Draw a line with the pattern
-    float patternMin = ((m_patternLowerBound ? m_patternLowerBound(t, m_patternModelLower, m_context) : xy).*ordinate)();
-    float patternMax = ((m_patternUpperBound ? m_patternUpperBound(t, m_patternModelUpper, m_context) : xy).*ordinate)();
+    float patternMin = ((m_patternLowerBound ? m_patternLowerBound.evaluate(t, m_context) : xy).*ordinate)();
+    float patternMax = ((m_patternUpperBound ? m_patternUpperBound.evaluate(t, m_context) : xy).*ordinate)();
     if (m_patternWithoutCurve) {
       if (std::isnan(patternMin)) {
         patternMin = -INFINITY;
@@ -206,7 +199,7 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView * plotView, KDCon
     if (isFirstDot || (!isLeftDotValid && remainingIterations <= 0) || (isLeftDotValid && plotView->pointsInSameStamp(p1, p2, m_thick))) {
       /* We need to be sure that the point is not an artifact caused by error
        * in float approximation. */
-      Coordinate2D<float> p2Double = m_curveDouble ? plotView->floatToPixel2D(m_curveDouble(t2, m_model, m_context)) : p2;
+      Coordinate2D<float> p2Double = m_curveDouble ? plotView->floatToPixel2D(m_curveDouble(t2, m_curve.model(), m_context)) : p2;
       if (std::isnan(p2Double.x1()) || std::isnan(p2Double.x2())) {
         p2Double = p2;
       }
@@ -216,9 +209,9 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView * plotView, KDCon
   }
 
   float t12 = 0.5f * (t1 + t2);
-  Coordinate2D<float> xy12 = m_curve(t12, m_model, m_context);
+  Coordinate2D<float> xy12 = m_curve.evaluate(t12, m_context);
 
-  bool discontinuous = discontinuity(t1, t2, m_model, m_context);
+  bool discontinuous = discontinuity(t1, t2, m_curve.model(), m_context);
   if (discontinuous) {
     /* If the function is discontinuous, it can never join dots at abscissas of
      * discontinuity, and thus will always go to max recursion. To avoid this,
@@ -238,9 +231,9 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView * plotView, KDCon
     if (m_curveDouble && std::fabs((p2.x2() - p1.x2()) / (p2.x1() - p1.x1())) > dangerousSlope) {
       /* We need to make sure we're not drawing a vertical asymptote because of
        * rounding errors. */
-      Coordinate2D<double> xy1Double = m_curveDouble(t1, m_model, m_context);
-      Coordinate2D<double> xy2Double = m_curveDouble(t2, m_model, m_context);
-      Coordinate2D<double> xy12Double = m_curveDouble(t12, m_model, m_context);
+      Coordinate2D<double> xy1Double = m_curveDouble(t1, m_curve.model(), m_context);
+      Coordinate2D<double> xy2Double = m_curveDouble(t2, m_curve.model(), m_context);
+      Coordinate2D<double> xy12Double = m_curveDouble(t12, m_curve.model(), m_context);
       if (pointInBoundingBox(xy1Double.x1(), xy1Double.x2(), xy2Double.x1(), xy2Double.x2(), xy12Double.x1(), xy12Double.x2())) {
         plotView->straightJoinDots(ctx, rect, plotView->floatToPixel2D(xy1Double), plotView->floatToPixel2D(xy2Double), m_color, m_thick);
         return;
@@ -288,7 +281,7 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView * plotView, KDContext *
   float radiusInPixel = std::max(width / plotView->pixelWidth(), height / plotView->pixelHeight());
   float angleStep = segmentLength / radiusInPixel;
   float parameters[] = { center.x1(), center.x2(), width, height };
-  Curve2D<float> arc = [](float t, void * model, void *) {
+  Curve2DEvaluation<float> arc = [](float t, void * model, void *) {
     float * parameters = reinterpret_cast<float *>(model);
     float x = parameters[0];
     float y = parameters[1];
@@ -296,7 +289,7 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView * plotView, KDContext *
     float b = parameters[3];
     return Coordinate2D<float>(a * std::cos(t) + x, b * std::sin(t) + y);
   };
-  CurveDrawing plot(arc, parameters, nullptr, angleStart, angleEnd, angleStep, color, false);
+  CurveDrawing plot(Curve2D(arc, parameters), nullptr, angleStart, angleEnd, angleStep, color, false);
   plot.setPrecisionOptions(false, nullptr, NoDiscontinuity);
   plot.draw(plotView, ctx, rect);
 }

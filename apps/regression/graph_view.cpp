@@ -29,7 +29,7 @@ void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, K
     KDColor color = Palette::DataColor[series];
     // - Draw regression curve
     Model * seriesModel = m_store->modelForSeries(series);
-    CurveDrawing plot(evaluateRegression, seriesModel, m_store->coefficientsForSeries(series, globalContext), m_store->xMin(), m_store->xMax(), plotView->pixelWidth(), color);
+    CurveDrawing plot(Curve2D(evaluateRegression, seriesModel), m_store->coefficientsForSeries(series, globalContext), m_store->xMin(), m_store->xMax(), plotView->pixelWidth(), color);
     plot.draw(plotView, ctx, rect);
     // - Draw data points
     int numberOfPairs = m_store->numberOfPairsOfSeries(series);

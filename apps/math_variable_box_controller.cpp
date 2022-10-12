@@ -72,7 +72,9 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
     selectCellAtLocation(selectedColumn(), newSelectedRow);
     resetMemoization();
     m_selectableTableView.reloadData();
-    displayEmptyControllerIfNeeded();
+    if (numberOfElements(m_currentPage) == 0) {
+      returnToRootMenu();
+    }
     return true;
   }
   if (m_currentPage == Page::RootMenu && m_defineVariableCell.ShouldEnterOnEvent(event) && selectedRow() == numberOfRows() - 1) {

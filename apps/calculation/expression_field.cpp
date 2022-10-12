@@ -79,24 +79,15 @@ bool ExpressionField::createdEmptyFraction() {
 }
 
 bool ExpressionField::handleDivision() {
-  /* The cycle is: 
-   * 1) in a country with mixed fractions:
-   *   1.1) when first operation : Start -> DenominatorOfAnsFraction -> NumeratorOfEmptyFraction -> MixedFraction -> DenominatorOfAnsFraction -> etc 
-   *   1.2) otherwise:
-   *      1.2.1) in 1D: Start -> DenominatorOfEmptyFraction -> NumeratorOfEmptyFraction -> MixedFraction -> DenominatorOfEmptyFraction -> etc 
-   *      1.2.2) in 2D: Start -> NumeratorOfEmptyFraction -> DenominatorOfEmptyFraction -> MixedFraction -> NumeratorOfEmptyFraction -> etc 
-   * 2) in a country without mixed fractions :
-   *   2.1) when first operation: Start -> DenominatorOfAnsFraction -> NumeratorOfEmptyFraction -> DenominatorOfAnsFraction -> etc 
-   *   2.2) otherwise: only default behavior which is 
-   *      2.2.1) in 1D: DenominatorOfAnsFraction
-   *      2.2.2) in 2D: NumeratorOfEmptyFraction */
   bool mixedFractionsEnabled = Poincare::Preferences::sharedPreferences()->mixedFractionsAreEnabled();
   bool editionIn1D = editionIsInTextField();
   Ion::Events::Event event = Ion::Events::Division;
   bool handled = true;
 
   if (m_divisionCycleWithAns) {
-    // Cycles 1.1 and 1.2
+    /* When we are in the "Ans" case, the cycle is the following :
+     * Start -> DenominatorOfAnsFraction -> NumeratorOfEmptyFraction (-> MixedFraction) -> DenominatorOfAnsFraction -> etc
+     * with the mixed fraction step only kept when the country enables it */
     switch (m_currentStep) {
       case DivisionCycleStep::DenominatorOfEmptyFraction :
         assert(false);
@@ -128,7 +119,13 @@ bool ExpressionField::handleDivision() {
         setText(Poincare::Symbol::k_ansAliases.mainAlias());
     }
   } else if (mixedFractionsEnabled) {
-    // Cycles 1.2.1 and 1.2.2
+    /* When we are in NOT the "Ans" case, the cycle is the following :
+     *   - in 1D: Start -> DenominatorOfEmptyFraction -> NumeratorOfEmptyFraction   -> MixedFraction -> DenominatorOfEmptyFraction -> etc 
+     *   - in 2D: Start -> NumeratorOfEmptyFraction   -> DenominatorOfEmptyFraction -> MixedFraction -> NumeratorOfEmptyFraction   -> etc 
+     * and we do NOT cycle when the country doesn't enable mixed fractions
+     * (because without the mixed fraction step, the cycle would only switch
+     * between the numerator and the denominator of an empty fraction, which
+     * is not the wanted behavior when pressing the Division key) */
     switch (m_currentStep) {
       case DivisionCycleStep::DenominatorOfAnsFraction :
         assert(false);
@@ -136,15 +133,11 @@ bool ExpressionField::handleDivision() {
       case DivisionCycleStep::Start :
         handled = (::ExpressionField::handleEvent(event));
         /* In 1D we always cycle
-         * In 2D we cycle only if the default handleEvent created an 
-         * empty fraction, to avoid the cases:
-         *  - when we press Division after an expression, the default
-              handleEvent creates a fraction with the expression at the
-              numerator and the cursor at the denominator
-            - when we press Division before an expression, the default
-              handleEvent creates a fraction with the expresion at the 
-              denominator and the cursor at the numerator
-         * -> in both cases, we don't want to cycle */
+         * In 2D we cycle only if the default handleEvent created an empty fraction, to avoid the cases:
+         *   - when we press Division after an expression, the default handleEvent creates a fraction with 
+         *     the expression at the numerator and the cursor at the denominator
+         *   - when we press Division before an expression, the default handleEvent creates a fraction with 
+         *     the expresion at the  denominator and the cursor at the numerator */
         if (editionIn1D) {
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
         } else if (createdEmptyFraction()) {

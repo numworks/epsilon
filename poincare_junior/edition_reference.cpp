@@ -26,19 +26,19 @@ void EditionReference::replaceBy(EditionReference t, bool trees) {
   int newSize = trees ? newNode.treeSize() : newNode.nodeSize();
   Block * oldBlock = oldNode.block();
   Block * newBlock = newNode.block();
-  // TODO: should we handle !pool->contains(block())?
-  if (pool->contains(t.block())) {
+  if (pool->contains(newNode.block())) {
     if (newNode.hasAncestor(oldNode, false)) {
       oldSize -= newSize;
     }
     pool->moveBlocks(oldBlock, newBlock, newSize);
     pool->removeBlocks(oldBlock + newSize, oldSize);
   } else {
-    memcpy(oldBlock, newBlock, std::min(oldSize, newSize));
+    size_t minSize = std::min(oldSize, newSize);
+    memcpy(oldBlock, newBlock, minSize);
     if (oldSize > newSize) {
-      pool->removeBlocks(oldBlock, oldSize - newSize);
+      pool->removeBlocks(oldBlock + minSize, oldSize - newSize);
     } else {
-      pool->insertBlocks(oldBlock, newBlock, newSize - oldSize);
+      pool->insertBlocks(oldBlock + minSize, newBlock + minSize, newSize - oldSize);
     }
   }
 }

@@ -56,7 +56,7 @@ private:
   bool returnToPreviousMenu() override;
   bool returnToRootMenu() override;
   bool selectLeaf(int selectedRow) override;
-  I18n::Message nodeLabelAtIndex(int index);
+  I18n::Message nodeLabel(Page page);
   Poincare::Layout expressionLayoutForRecord(Ion::Storage::Record record, int index);
   const char * extension() const;
   Ion::Storage::Record recordAtIndex(int rowIndex);

@@ -104,6 +104,9 @@ bool ExpressionField::handleDivision() {
   if (m_divisionCycleWithAns) {
     // Cycles 1.1 and 1.2
     switch (m_currentStep) {
+      case DivisionCycleStep::DenominatorOfEmptyFraction :
+        assert(false);
+        break;
       case DivisionCycleStep::Start:
         // Start -> DenominatorOfAnsFraction
         assert(isEmpty());
@@ -133,13 +136,13 @@ bool ExpressionField::handleDivision() {
         // MixedFraction -> DenominatorOfAnsFraction
         createAnsFraction();
         break;
-      case DivisionCycleStep::DenominatorOfEmptyFraction :
-        assert(false);
-        break;
     }
   } else if (mixedFractionsEnabled) {
     // Cycles 1.2.1 and 1.2.2
     switch (m_currentStep) {
+      case DivisionCycleStep::DenominatorOfAnsFraction :
+        assert(false);
+        break;
       case DivisionCycleStep::Start :
         handled = (::ExpressionField::handleEvent(event));
         /* In 1D we always cycle
@@ -192,9 +195,6 @@ bool ExpressionField::handleDivision() {
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
         }
         event = Ion::Events::Right;
-        break;
-      case DivisionCycleStep::DenominatorOfAnsFraction :
-        assert(false);
         break;
     }
   }

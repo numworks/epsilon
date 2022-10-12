@@ -5,7 +5,7 @@
 #include "math_variable_box_empty_controller.h"
 #include <apps/i18n.h>
 #include <escher/expression_table_cell_with_expression.h>
-#include <escher/message_table_cell_with_chevron.h>
+#include <escher/message_table_cell_with_chevron_and_buffer.h>
 #include <ion.h>
 
 class MathVariableBoxController : public AlternateEmptyNestedMenuController {
@@ -46,6 +46,7 @@ private:
   Escher::ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;
   Escher::MessageTableCellWithChevron * nodeCellAtIndex(int index) override;
   I18n::Message subTitle() override;
+  int numberOfElements(Page page) const;
   Page pageAtIndex(int index);
   void setPage(Page page);
   bool selectSubMenu(int selectedRow) override;
@@ -62,7 +63,7 @@ private:
   Page m_currentPage;
   Page m_lockPageDelete;
   Escher::ExpressionTableCellWithExpression m_leafCells[k_maxNumberOfDisplayedRows];
-  Escher::MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
+  Escher::MessageTableCellWithChevronAndBuffer m_nodeCells[k_numberOfMenuRows];
   MathVariableBoxEmptyController m_emptyViewController;
   // Layout memoization
   // TODO: make a helper doing the RingMemoizationOfConsecutiveObjets to factorize this code and ExpressionModelStore code

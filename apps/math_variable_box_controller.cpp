@@ -9,6 +9,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/preferences.h>
+#include <poincare/print.h>
 #include <assert.h>
 #include <algorithm>
 #include <apps/shared/sequence.h>
@@ -77,7 +78,11 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
 }
 
 int MathVariableBoxController::numberOfRows() const {
-  switch (m_currentPage) {
+  return numberOfElements(m_currentPage);
+}
+
+int MathVariableBoxController::numberOfElements(Page page) const {
+  switch (page) {
     case Page::RootMenu:
       return k_numberOfMenuRows;
     case Page::Expression:
@@ -106,8 +111,13 @@ int MathVariableBoxController::reusableCellCount(int type) {
 void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_currentPage == Page::RootMenu) {
     I18n::Message label = nodeLabelAtIndex(index);
-    MessageTableCell * myCell = static_cast<MessageTableCell *>(cell);
+    MessageTableCellWithChevronAndBuffer * myCell = static_cast<MessageTableCellWithChevronAndBuffer *>(cell);
+    int nb = numberOfElements(static_cast<Page>(index + 1));
+    constexpr size_t bufferSize = 20;
+    char buffer[bufferSize];
+    Print::CustomPrintf(buffer, bufferSize, "%i elements", nb);
     myCell->setMessage(label);
+    myCell->setSubLabelText(buffer);
     myCell->reloadCell();
     return;
   }
@@ -145,7 +155,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
 
 KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
   if (m_currentPage == Page::RootMenu) {
-    MessageTableCellWithMessage tempCell;
+    MessageTableCellWithChevronAndBuffer tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   ExpressionTableCellWithExpression tempCell;

@@ -126,17 +126,12 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
   Curve2D<float> patternLower = nullptr, patternUpper = nullptr;
   Curve2D<float> patternLower2 = nullptr, patternUpper2 = nullptr;
   ContinuousFunction * patternModel = f;
-  bool isIntegral = false;
   Pattern pattern(m_areaIndex, f->color());
-  bool incrementArea = true;
 
   switch (area) {
   case ContinuousFunction::AreaType::Outside:
-    if (hasTwoCurves) {
-      patternLower2 = evaluateMinusInfinity;
-    } else {
-      patternLower = evaluateMinusInfinity;
-    }
+    /* This relies on the fact that the second curve will be below the first. */
+    (hasTwoCurves ? patternLower2 : patternLower) = evaluateMinusInfinity;
     patternUpper = evaluateInfinity;
     patternWithoutCurve = true;
     break;
@@ -147,30 +142,29 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
     (hasTwoCurves ? patternLower2 : patternLower) = evaluateMinusInfinity;
     break;
   case ContinuousFunction::AreaType::Inside:
-    assert(hasTwoCurves);
-    patternLower = evaluateXYSecondCurve<float>;
+    /* The function might not have two curves if the area is empty
+     * (e.g. y^2<0). */
+    if (hasTwoCurves) {
+      patternLower = evaluateXYSecondCurve<float>;
+    }
     break;
   default:
     assert(area == ContinuousFunction::AreaType::None);
-    incrementArea = false;
-    isIntegral = f->color();
+    bool isIntegral = record == m_selectedRecord && std::isfinite(m_highlightedStart) && std::isfinite(m_highlightedEnd);
     if (isIntegral) {
-      patternUpper = nullptr;
+      assert(!hasTwoCurves);
       if (m_secondSelectedRecord.isNull()) {
-        incrementArea = true;
         patternLower = evaluateZero;
-        pattern = Pattern(m_areaIndex, f->color());
-      } else if (record == m_selectedRecord) {
-        incrementArea = true;
-        patternLower = evaluateXY;
+      } else {
         patternModel = App::app()->functionStore()->modelForRecord(m_secondSelectedRecord).operator->();
+        patternLower = evaluateXY;
         pattern = Pattern(m_areaIndex, KDColor::HSVBlend(f->color(), patternModel->color()));
       }
       patternStart = m_highlightedStart;
       patternEnd = m_highlightedEnd;
     }
   }
-  if (incrementArea) {
+  if (patternLower || patternUpper || patternLower2 || patternUpper2) {
     m_areaIndex = (m_areaIndex + 1) % Pattern::k_numberOfSections;
   }
 

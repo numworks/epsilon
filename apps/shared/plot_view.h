@@ -88,7 +88,7 @@ private:
 
   virtual KDColor backgroundColor() const { return k_backgroundColor; }
   virtual void drawBackground(KDContext * ctx, KDRect rect) const { ctx->fillRect(rect, backgroundColor()); }
-  virtual void drawAxes(KDContext * ctx, KDRect rect) const = 0;
+  virtual void drawAxesAndGrid(KDContext * ctx, KDRect rect) const = 0;
   virtual void reloadAxes() = 0;
   virtual void drawPlot(KDContext * ctx, KDRect rect) const = 0;
   virtual KDRect bannerFrame() = 0;
@@ -107,7 +107,7 @@ public:
   using AbstractPlotView::AbstractPlotView;
 
 private:
-  void drawAxes(KDContext * ctx, KDRect rect) const final override { CAxes::drawAxes(this, ctx, rect); }
+  void drawAxesAndGrid(KDContext * ctx, KDRect rect) const final override { CAxes::drawAxesAndGrid(this, ctx, rect); }
   void reloadAxes() final override { CAxes::reloadAxes(this); }
   void drawPlot(KDContext * ctx, KDRect rect) const final override { CPlot::drawPlot(this, ctx, rect); }
   Escher::View * bannerView() const final override { return CBanner::bannerView(this); }

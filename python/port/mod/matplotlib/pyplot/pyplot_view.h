@@ -12,7 +12,7 @@ namespace Matplotlib {
 
 class OptionalAxes {
 protected:
-  void drawAxes(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
+  void drawAxesAndGrid(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
   void reloadAxes(Shared::AbstractPlotView * plotView) { m_axes.reloadAxes(plotView); }
   virtual PlotStore * plotStore() const = 0;
 

@@ -9,13 +9,13 @@ namespace Matplotlib {
 
 // OptionalAxes
 
-void OptionalAxes::drawAxes(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+void OptionalAxes::drawAxesAndGrid(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   PlotStore * store = plotStore();
   if (store->gridRequested()) {
-    m_grid.drawAxes(plotView, ctx, rect);
+    m_grid.drawAxesAndGrid(plotView, ctx, rect);
   }
   if (store->axesRequested()) {
-    m_axes.drawAxes(plotView, ctx, rect);
+    m_axes.drawAxesAndGrid(plotView, ctx, rect);
   }
 }
 

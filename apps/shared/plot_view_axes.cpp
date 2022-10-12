@@ -62,7 +62,7 @@ float SimpleAxis::tickPosition(int i, const AbstractPlotView * plotView, Abstrac
   float step = tickStep(plotView, axis);
   float tMin = plotView->rangeMin(axis);
   assert(std::fabs(std::round(tMin / step)) < INT_MAX);
-  int indexOfOrigin = std::round(-tMin / step);
+  int indexOfOrigin = std::floor(-tMin / step);
   return step * (i - indexOfOrigin);
 }
 
@@ -87,6 +87,8 @@ int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, 
 
 void AbstractLabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
   assert(i < numberOfLabels());
+  assert(t >= plotView->rangeMin(axis));
+
   const char * text = label(i);
   if (m_hidden || text[0] == '\0') {
     return;
@@ -124,7 +126,7 @@ void AbstractLabeledAxis::computeLabelsRelativePosition(const AbstractPlotView *
   m_labelsPosition = 0.f;
 
   if (axis == AbstractPlotView::Axis::Horizontal) {
-    float labelHeight = (KDFont::GlyphSize(AbstractPlotView::k_font).height() + 2 * AbstractPlotView::k_labelMargin) * plotView->pixelHeight();
+    float labelHeight = (KDFont::GlyphSize(AbstractPlotView::k_font).height() + AbstractPlotView::k_labelMargin) * plotView->pixelHeight();
     float bannerHeight = plotView->bannerView() ? plotView->bannerView()->bounds().height() * plotView->pixelHeight() : 0.f;
     float yMin = plotView->range()->yMin();
     float yMax = plotView->range()->yMax();

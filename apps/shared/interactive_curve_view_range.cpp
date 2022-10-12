@@ -149,8 +149,12 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
 void InteractiveCurveViewRange::normalize() {
   m_yMinIntrinsic = NAN;
   m_yMaxIntrinsic = NAN;
+  /* If one axis is set manually and the other is in auto mode, prioritize
+   * changing the auto one. */
+  bool canChangeX = m_xAuto || !m_yAuto;
+  bool canChangeY = m_yAuto || !m_xAuto;
   setZoomAuto(false);
-  protectedNormalize(true, true, false);
+  protectedNormalize(canChangeX, canChangeY, !canChangeX || !canChangeY);
 }
 
 void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {

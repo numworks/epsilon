@@ -22,6 +22,9 @@ private:
 };
 
 class PyplotPolicy {
+public:
+  void setMicroPythonExecutionEnvironment(MicroPython::ExecutionEnvironment * env) { m_micropythonEnvironment = env; }
+
 protected:
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
   void traceDot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect r, PlotStore::Dot dot) const;
@@ -37,10 +40,7 @@ class PyplotView : public Shared::PlotView<OptionalAxes, PyplotPolicy, Shared::P
 public:
   PyplotView(PlotStore * s);
 
-  void setMicroPythonExecutionEnvironment(MicroPython::ExecutionEnvironment * env) { m_micropythonEnvironment = env; }
-
 private:
-  using OptionalAxes::plotStore;
   PlotStore * plotStore() const override { return m_store; }
 };
 

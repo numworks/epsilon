@@ -35,7 +35,7 @@ public:
   virtual bool connectPoints() const { return false; }
   virtual bool drawSeriesZScoreLine(int series, float * x, float * y, float * u, float * v) const { return false; }
   virtual void appendLabelSuffix(Shared::AbstractPlotView::Axis axis, char * labelBuffer, int maxSize, int glyphLength, int maxGlyphLength) const {}
-  virtual float labelStepMultiplicator(Shared::AbstractPlotView::Axis axis) const { return 2.0f; }
+  virtual float labelStepMultiplicator(Shared::AbstractPlotView::Axis axis) const { return 1.0f; }
 
   // DataViewController
   DataView * dataView() override { return &m_view; }

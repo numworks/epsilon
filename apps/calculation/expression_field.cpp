@@ -64,9 +64,7 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
 }
 
 void ExpressionField::createAnsFraction() {
-  assert(m_currentStep == DivisionCycleStep::Start 
-     || (m_currentStep == DivisionCycleStep::NumeratorOfEmptyFraction && !Poincare::Preferences::sharedPreferences()->mixedFractionsAreEnabled()) 
-     || (m_currentStep == DivisionCycleStep::MixedFraction && Poincare::Preferences::sharedPreferences()->mixedFractionsAreEnabled()));
+  assert(m_currentStep == DivisionCycleStep::Start || m_currentStep == DivisionCycleStep::MixedFraction);
   m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
   setText(Poincare::Symbol::k_ansAliases.mainAlias());
 }
@@ -115,8 +113,8 @@ bool ExpressionField::handleDivision() {
         setText("");
         break;
       case DivisionCycleStep::NumeratorOfEmptyFraction :
+        m_currentStep = DivisionCycleStep::MixedFraction;
         if (mixedFractionsEnabled) {
-          m_currentStep = DivisionCycleStep::MixedFraction;
           if (editionIn1D) {
             setText(" /");
             m_textField.setCursorLocation(m_textField.draftTextBuffer());
@@ -126,10 +124,8 @@ bool ExpressionField::handleDivision() {
           }
           return true;
         }
-        createAnsFraction();
-        break;
+        // If mixed fractions are not enabled, fall under next case
       case DivisionCycleStep::MixedFraction :
-        assert(mixedFractionsEnabled);
         createAnsFraction();
         break;
       case DivisionCycleStep::DenominatorOfEmptyFraction :

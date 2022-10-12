@@ -130,7 +130,7 @@ void TableCell::layoutSubviews(bool force) {
     }
   } else {  // Two rows
     KDCoordinate firstRowHeight, firstColumnWidth, accessoryRowHeight;
-    if (shouldAlignLabelAndAccessory() && subLabelWidth + Metric::CellHorizontalElementMargin + accessoryWidth > width) {
+    if (shouldAlignLabelAndAccessory() || subLabelWidth + Metric::CellHorizontalElementMargin + accessoryWidth > width) {
       firstRowHeight = std::max(labelHeight, accessoryHeight);
       firstColumnWidth = labelWidth;
       accessoryRowHeight = firstRowHeight;

@@ -18,7 +18,7 @@ KDRect WithCursor::cursorFrame(AbstractPlotView * plotView) {
    * The "2" factor is a big safety margin. */
   constexpr int maxCursorPixel = KDCOORDINATE_MAX / 2;
   // Assert we are not removing visible cursors
-  static_assert((Ion::Display::Width * 2 < maxCursorPixel) && (Ion::Display::Height * 2 < maxCursorPixel), "maxCursorPixel is should be bigger");
+  static_assert((Ion::Display::Width * 2 < maxCursorPixel) && (Ion::Display::Height * 2 < maxCursorPixel), "maxCursorPixel should be bigger");
   if (std::fabs(p.x1()) > maxCursorPixel || std::fabs(p.x2()) > maxCursorPixel) {
     return KDRectZero;
   }
@@ -27,12 +27,9 @@ KDRect WithCursor::cursorFrame(AbstractPlotView * plotView) {
   px -= (size.width() - 1) / 2;
   KDCoordinate py = std::round(p.x2());
   py -= (size.height() - 1) / 2;
-  if (!(KDCOORDINATE_MIN <= px && px <= KDCOORDINATE_MAX && KDCOORDINATE_MIN <= py && py <= KDCOORDINATE_MAX)) {
-    return KDRectZero;
-  }
   if (size.height() == 0) {
     // The cursor is supposed to take up all the available vertical space.
-    KDCoordinate plotHeight = plotView->bounds().height() - (plotView->bannerView() ? plotView->bannerView()->bounds().height() : 0);
+    KDCoordinate plotHeight = plotView->bounds().height() - (plotView->bannerView() ? plotView->bannerView()->minimalSizeForOptimalDisplay().height() : 0);
     return KDRect(px, 0, size.width(), plotHeight);
   }
   return KDRect(px, py, size);

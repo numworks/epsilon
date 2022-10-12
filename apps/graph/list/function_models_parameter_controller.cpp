@@ -127,7 +127,7 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
     m_listController->editExpression(Ion::Events::OK);
     return true;
   }
-  if (m_listController->handleEventOnExpression(event)) {
+  if (m_listController->handleEventOnExpressionInTemplateMenu(event)) {
     return true;
   }
   return false;

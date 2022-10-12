@@ -91,7 +91,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     stackController()->pop();
     return true;
   }
-  if (m_record.isNull() && m_listController->handleEventOnExpression(event)) {
+  if (m_record.isNull() && m_listController->handleEventOnExpressionInTemplateMenu(event)) {
     return true;
   }
   return false;

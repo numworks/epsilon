@@ -11,7 +11,6 @@ namespace Distributions {
 class DistributionPlotPolicy : public Shared::PlotPolicy::WithCurves, public Shared::PlotPolicy::WithHistogram {
 protected:
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
-  void drawStandardNormal(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float colorLowerBound, float colorUpperBound) const;
 
   Distribution * m_distribution;
   Calculation * m_calculation;

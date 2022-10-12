@@ -19,7 +19,7 @@ void Node::log(std::ostream & stream, bool recursive, int indentation, bool verb
   logAttributes(stream);
   bool tagIsClosed = false;
   if (recursive) {
-    for (NodeIterator::IndexedNode child : NodeIterator(*this).directChildren()) {
+    for (const Iterator::IndexedNode child : Iterator(*this).forwardConstChildren()) {
       if (!tagIsClosed) {
         stream << ">";
         tagIsClosed = true;
@@ -81,7 +81,7 @@ int Node::numberOfDescendants(bool includeSelf) const {
 }
 
 const Node Node::childAtIndex(int i) const {
-  for (NodeIterator::IndexedNode indexedChild : NodeIterator(*this).directChildren()) {
+  for (const Iterator::IndexedNode indexedChild : Iterator(*this).forwardConstChildren()) {
     if (indexedChild.m_index == i) {
       return indexedChild.m_node;
     }
@@ -111,7 +111,7 @@ int Node::indexInParent() const {
 }
 
 bool Node::hasChild(const Node child) const {
-  for (NodeIterator::IndexedNode indexedChild : NodeIterator(*this).directChildren()) {
+  for (const Iterator::IndexedNode indexedChild : Iterator(*this).forwardConstChildren()) {
     if (child == indexedChild.m_node) {
       return true;
     }
@@ -135,7 +135,7 @@ bool Node::hasSibling(const Node sibling) const {
   if (p == Node()) {
     return false;
   }
-  for (NodeIterator::IndexedNode indexedChild : NodeIterator(p).directChildren()) {
+  for (const Iterator::IndexedNode indexedChild : Iterator(p).forwardConstChildren()) {
     if (indexedChild.m_node == sibling) {
       return true;
     }
@@ -143,9 +143,16 @@ bool Node::hasSibling(const Node sibling) const {
   return false;
 }
 
-void Node::recursivelyApply(InPlaceTreeFunction treeFunction) {
-  for (Iterator::IndexedNode child : Iterator(*this).forwardChildren()) {
-    child.m_node.recursivelyApply(treeFunction);
+void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
+  for (const Iterator::IndexedNode child : Iterator(*this).forwardConstChildren()) {
+    child.m_node.recursivelyGet(treeFunction);
+  }
+  (*treeFunction)(*this);
+}
+
+void Node::recursivelyEdit(InPlaceTreeFunction treeFunction) {
+  for (Iterator::IndexedNode child : Iterator(*this).forwardEditableChildren()) {
+    child.m_node.recursivelyEdit(treeFunction);
   }
   (*treeFunction)(*this);
 }

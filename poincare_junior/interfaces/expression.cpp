@@ -13,7 +13,7 @@ void ExpressionInterface::projectionReduction(TypeBlock * block, TypeBlock * (*P
   // Get references to children
   assert(Node(block).numberOfChildren() == 2);
   EditionReference childrenReferences[2];
-  for (NodeIterator::IndexedNode indexedNode : NodeIterator(division.node()).directChildren()) {
+  for (Iterator::IndexedNode indexedNode : Iterator(division.node()).forwardEditableChildren()) {
     childrenReferences[indexedNode.m_index] = EditionReference(indexedNode.m_node);
   }
   // Move first child

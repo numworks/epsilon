@@ -9,7 +9,7 @@ void NAryInterface::logAttributes(const TypeBlock * block, std::ostream & stream
 
 TypeBlock * NAryExpressionInterface::Flatten(TypeBlock * block) {
   uint8_t numberOfChildren = 0;
-  for (NodeIterator::IndexedNode indexedNode : NodeIterator(Node(block)).directChildren()) {
+  for (Iterator::IndexedNode indexedNode : Iterator(Node(block)).forwardEditableChildren()) {
     if (block->type() == indexedNode.m_node.block()->type()) {
       EditionReference nAry = EditionReference(Node(Flatten(indexedNode.m_node.block())));
       numberOfChildren += nAry.node().numberOfChildren();

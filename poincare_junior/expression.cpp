@@ -20,7 +20,7 @@ Expression Expression::Parse(const char * textInput) {
 Expression Expression::CreateBasicReduction(void * expressionAddress) {
   return Expression(
     [](Node tree) {
-      tree.recursivelyApply([](Node node) {
+      tree.recursivelyEdit([](Node node) {
           node.expressionInterface()->basicReduction(node.block());
         });
     },

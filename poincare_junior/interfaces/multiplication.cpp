@@ -6,7 +6,7 @@ namespace Poincare {
 
 float MultiplicationExpressionInterface::approximate(const TypeBlock * block) const {
   float res = 1.0f;
-  for (NodeIterator::IndexedNode indexedNode : NodeIterator(Node(block)).directChildren()) {
+  for (const Iterator::IndexedNode indexedNode : Iterator(Node(block)).forwardConstChildren()) {
     res *= indexedNode.m_node.expressionInterface()->approximate(indexedNode.m_node.block());
   }
   return res;
@@ -14,11 +14,11 @@ float MultiplicationExpressionInterface::approximate(const TypeBlock * block) co
 
 TypeBlock * MultiplicationExpressionInterface::DistributeOverAddition(TypeBlock * block) {
   EditionReference mult = EditionReference(Node(block));
-  for (NodeIterator::IndexedNode indexedNode : NodeIterator(Node(block)).directChildren()) {
+  for (Iterator::IndexedNode indexedNode : Iterator(Node(block)).forwardEditableChildren()) {
     if (indexedNode.m_node.block()->type() == BlockType::Addition) {
       // Create new addition that will be filled in the following loop
       EditionReference add = EditionReference(Node(AdditionInterface::PushNode(indexedNode.m_node.numberOfChildren())));
-      for (NodeIterator::IndexedNode indexedAdditionChild : NodeIterator(indexedNode.m_node).directChildren()) {
+      for (Iterator::IndexedNode indexedAdditionChild : Iterator(indexedNode.m_node).forwardEditableChildren()) {
         // Copy a multiplication
         EditionReference multCopy = mult.clone();
         // Find the addition to be replaced

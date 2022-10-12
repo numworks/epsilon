@@ -209,6 +209,7 @@ int SelectableTableView::indexOfNextSelectableRow(int delta) {
 }
 
 int SelectableTableView::indexOfNextSelectableColumn(int delta) {
+  assert(selectedRow() >= 0 && selectedRow() < dataSource()->numberOfRows());
   int column = selectedColumn();
   int step = delta > 0 ? 1 : -1;
   while (delta) {
@@ -219,7 +220,9 @@ int SelectableTableView::indexOfNextSelectableColumn(int delta) {
     if (column >= dataSource()->numberOfColumns()) {
       return dataSource()->numberOfColumns() - 1;
     }
-    if (cellAtLocation(column, selectedRow())->isSelectable()) {
+    Escher::HighlightCell * cell = cellAtLocation(column, selectedRow());
+    assert(cell);
+    if (cell->isSelectable()) {
       delta -= step;
     }
   }

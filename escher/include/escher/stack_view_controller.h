@@ -20,7 +20,7 @@ public:
     PurpleWhite,
     WhiteUniform
   };
-  StackViewController(Responder * parentResponder, ViewController * rootViewController, Style style);
+  StackViewController(Responder * parentResponder, ViewController * rootViewController, Style style, bool extendVertically = false);
 
   /* Push creates a new StackView and adds it */
   void push(ViewController * vc);
@@ -45,7 +45,7 @@ private:
   class ControllerView : public View {
     friend StackViewController;
   public:
-    ControllerView(Style style);
+    ControllerView(Style style, bool extendVertically);
     int8_t numberOfStacks() const { return m_stackViews.length(); }
     void setContentView(View * view);
     void setupHeadersBorderOverlaping(bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor);
@@ -73,6 +73,7 @@ private:
     // TODO: enum class? Some combination can't exist?
     bool m_headersOverlapHeaders;
     bool m_headersOverlapContent;
+    bool m_extendVertically;
   };
   ControllerView m_view;
   void pushModel(ViewController * vc);

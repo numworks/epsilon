@@ -8,13 +8,15 @@ extern "C" {
 
 namespace Escher {
 
-StackViewController::ControllerView::ControllerView(Style style) :
+StackViewController::ControllerView::ControllerView(Style style, bool extendVertically) :
     View(),
     m_borderView(Palette::GrayBright),
     m_contentView(nullptr),
     m_style(style),
     m_headersOverlapHeaders(true),
-    m_headersOverlapContent(false) {
+    m_headersOverlapContent(false),
+    m_extendVertically(extendVertically)
+{
 }
 
 void StackViewController::ControllerView::setContentView(View * view) {
@@ -61,7 +63,7 @@ KDSize StackViewController::ControllerView::minimalSizeForOptimalDisplay() const
   KDSize size = m_contentView->minimalSizeForOptimalDisplay();
   int heightDiff = Metric::StackTitleHeight + (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
   int numberOfStacks = m_stackViews.length();
-  return KDSize(size.width(), size.height() + heightDiff * numberOfStacks + Metric::CellSeparatorThickness);
+  return KDSize(size.width(), m_extendVertically ? 0 : size.height() + heightDiff * numberOfStacks + Metric::CellSeparatorThickness);
 }
 
 void StackViewController::ControllerView::layoutSubviews(bool force) {
@@ -149,9 +151,9 @@ const char * StackViewController::ControllerView::className() const {
 }
 #endif
 
-StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController, Style style) :
+StackViewController::StackViewController(Responder * parentResponder, ViewController * rootViewController, Style style, bool extendVertically) :
     ViewController(parentResponder),
-    m_view(style),
+    m_view(style, extendVertically),
     m_numberOfChildren(0),
     m_isVisible(false),
     m_headersDisplayMask(~0)

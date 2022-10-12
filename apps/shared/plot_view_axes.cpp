@@ -74,7 +74,7 @@ float SimpleAxis::tickStep(const AbstractPlotView * plotView, AbstractPlotView::
 // AbstractLabeledAxis
 
 void AbstractLabeledAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis) {
-  int n = numberOfLabels();
+  size_t n = numberOfLabels();
   for (size_t i = 0; i < n; i++) {
     computeLabel(i, plotView, axis);
   }

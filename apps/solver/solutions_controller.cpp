@@ -31,7 +31,7 @@ SolutionsController::ContentView::ContentView(SolutionsController * controller) 
 }
 
 void SolutionsController::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  if (m_selectableTableView.numberOfDisplayableRows() == 0) {
+  if (hideTableView()) {
     // No selectable table, fill the entire bound for background
     ctx->fillRect(KDRect(KDPointZero, bounds().size()), k_backgroundColor);
   } else if (m_displayWarningMoreSolutions) {
@@ -58,7 +58,7 @@ void SolutionsController::ContentView::setWarningMessages(I18n::Message message0
 
 int SolutionsController::ContentView::numberOfSubviews() const {
   // Exclude selectableTableView if there are no rows to display
-  return (m_selectableTableView.numberOfDisplayableRows() == 0 ? 0 : 1) + 2 * m_displayWarningMoreSolutions;
+  return (hideTableView() ? 0 : 1) + 2 * m_displayWarningMoreSolutions;
 }
 
 View * SolutionsController::ContentView::subviewAtIndex(int index) {
@@ -82,7 +82,7 @@ void SolutionsController::ContentView::layoutSubviews(bool force) {
     KDCoordinate warningMessage0Height = m_warningMessageView0.text()[0] == 0 ? 0 : textHeight;
     KDCoordinate warningMessage1Height = m_warningMessageView1.text()[0] == 0 ? 0 : textHeight;
     // Warning messages are vertically centered.
-    if (m_selectableTableView.numberOfDisplayableRows() == 0) {
+    if (hideTableView()) {
       // Warning messages must fit into the entire bound height
       topMargin = (bounds().height() - warningMessage0Height - warningMessage1Height) / 2;
     } else {

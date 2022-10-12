@@ -56,9 +56,11 @@ private:
     void setWarning(bool warning);
     void setWarningMessages(I18n::Message message0, I18n::Message message1);
     Escher::SelectableTableView * selectableTableView() { return &m_selectableTableView; }
+
   private:
     constexpr static KDFont::Size k_warningMessageFont = KDFont::Size::Small;
 
+    bool hideTableView() const { return m_selectableTableView.numberOfDisplayableRows() == 0; }
     int numberOfSubviews() const override;
     Escher::View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;

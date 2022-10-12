@@ -16,7 +16,22 @@ protected:
  * implement a drawPlot(const AbstractPlotView *, KDContext *, KDRect) method. */
 class WithCurves {
 protected:
-  template<typename T> using Curve2D = Poincare::Coordinate2D<T> (*)(T, void *, void *);
+  /* The 'model' argument is specific to one curve, while the 'context'
+   * argument is shared between all curves in one drawing. */
+  template<typename T> using Curve2DEvaluation = Poincare::Coordinate2D<T> (*)(T, void * model, void * context);
+
+  class Curve2D {
+  public:
+    Curve2D(Curve2DEvaluation<float> f = nullptr, void * model = nullptr) : m_f(f), m_model(model) {}
+    operator bool() const { return m_f != nullptr; }
+    void * model() const { return m_model; }
+    Poincare::Coordinate2D<float> evaluate(float t, void * context) const { assert(m_f); return m_f(t, m_model, context); }
+
+  private:
+    Curve2DEvaluation<float> m_f;
+    void * m_model;
+  };
+
   typedef bool (*DiscontinuityTest)(float, float, void *, void *);
 
   static bool NoDiscontinuity(float, float, void *, void *) { return false; }
@@ -51,10 +66,10 @@ protected:
 
   class CurveDrawing {
   public:
-    CurveDrawing(Curve2D<float> curve, void * model, void * context, float tStart, float tEnd, float tStep, KDColor color, bool thick = true, bool dashed = false);
+    CurveDrawing(Curve2D curve, void * context, float tStart, float tEnd, float tStep, KDColor color, bool thick = true, bool dashed = false);
     /* If one of the pattern bound is nullptr, the main curve is used instead. */
-    void setPatternOptions(Pattern pattern, float patternStart, float patternEnd, Curve2D<float> patternLowerBound, void * patternModelLower, Curve2D<float> patternUpperBound, void * patternModelUpper, bool patternWithoutCurve, AbstractPlotView::Axis axis = AbstractPlotView::Axis::Horizontal);
-    void setPrecisionOptions(bool drawStraightLinesEarly, Curve2D<double> curveDouble, DiscontinuityTest discontinuity);
+    void setPatternOptions(Pattern pattern, float patternStart, float patternEnd, Curve2D patternLowerBound, Curve2D patternUpperBound, bool patternWithoutCurve, AbstractPlotView::Axis axis = AbstractPlotView::Axis::Horizontal);
+    void setPrecisionOptions(bool drawStraightLinesEarly, Curve2DEvaluation<double> curveDouble, DiscontinuityTest discontinuity);
     void draw(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
 
   private:
@@ -67,15 +82,12 @@ protected:
 
     void joinDots(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float t1, Poincare::Coordinate2D<float> xy1, float t2, Poincare::Coordinate2D<float> xy2, int remainingIterations, DiscontinuityTest discontinuity) const;
 
+    Curve2D m_curve;
+    Curve2D m_patternLowerBound;
+    Curve2D m_patternUpperBound;
     Pattern m_pattern;
-    void * m_model;
-    void * m_patternModelLower;
-    void * m_patternModelUpper;
     void * m_context;
-    Curve2D<float> m_curve;
-    Curve2D<float> m_patternLowerBound;
-    Curve2D<float> m_patternUpperBound;
-    Curve2D<double> m_curveDouble;
+    Curve2DEvaluation<double> m_curveDouble;
     DiscontinuityTest m_discontinuity;
     float m_tStart;
     float m_tEnd;

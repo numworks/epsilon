@@ -93,13 +93,13 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView * plotView, KD
   }
 
   {
-    CurveDrawing plot(evaluate, m_test, nullptr, bothStart, bothEnd, plotView->pixelWidth(), Palette::YellowDark);
-    plot.setPatternOptions(patternBoth, bothStart, bothEnd, evaluateZero, nullptr, nullptr, nullptr, false);
+    CurveDrawing plot(Curve2D(evaluate, m_test), nullptr, bothStart, bothEnd, plotView->pixelWidth(), Palette::YellowDark);
+    plot.setPatternOptions(patternBoth, bothStart, bothEnd, Curve2D(evaluateZero), Curve2D(), false);
     plot.draw(plotView, ctx, rect);
   }
   {
-    CurveDrawing plot(evaluate, m_test, nullptr, singleCurveStart, singleCurveEnd, plotView->pixelWidth(), Palette::YellowDark);
-    plot.setPatternOptions(patternSingle, singleStart, singleEnd, evaluateZero, nullptr, nullptr, nullptr, false);
+    CurveDrawing plot(Curve2D(evaluate, m_test), nullptr, singleCurveStart, singleCurveEnd, plotView->pixelWidth(), Palette::YellowDark);
+    plot.setPatternOptions(patternSingle, singleStart, singleEnd, Curve2D(evaluateZero), Curve2D(), false);
     plot.draw(plotView, ctx, rect);
   }
 }

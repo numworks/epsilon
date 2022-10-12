@@ -3,7 +3,7 @@
 
 #include <escher/bordered.h>
 #include <escher/highlight_cell.h>
-
+#include <algorithm>
 namespace Escher {
 
 class TableCell : public Bordered, public HighlightCell {
@@ -57,6 +57,13 @@ public:
   constexpr static KDCoordinate k_minimalLargeFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + KDFont::GlyphHeight(KDFont::Size::Large) + Metric::CellTopMargin;
   constexpr static KDCoordinate k_minimalSmallFontCellHeight = Metric::CellSeparatorThickness + Metric::CellTopMargin + KDFont::GlyphHeight(KDFont::Size::Small) + Metric::CellTopMargin;
 
+  constexpr static KDCoordinate k_leftOffset = k_separatorThickness + Metric::CellLeftMargin;
+  constexpr static KDCoordinate k_rightOffset = k_separatorThickness + Metric::CellRightMargin;
+  constexpr static KDCoordinate k_topOffset = k_separatorThickness + Metric::CellTopMargin;
+  constexpr static KDCoordinate k_bottomOffset = Metric::CellBottomMargin;
+  constexpr static KDCoordinate k_innerHorizontalMargin = Metric::CellHorizontalElementMargin;
+  constexpr static KDCoordinate k_innerVerticalMargin = Metric::CellVerticalElementMargin;
+
   TableCell();
 
   // View
@@ -67,9 +74,10 @@ public:
   virtual const View * subLabelView() const { return nullptr; }
   virtual const View * accessoryView() const { return nullptr; }
   virtual bool giveAccessoryAllWidth() const { return false; }
-  KDCoordinate minimalHeightForOptimalDisplay(KDCoordinate minAccessoryWidth, KDCoordinate width) const;
+  KDCoordinate minimalHeightForOptimalDisplay() const;
 
-  KDCoordinate innerWidth() const { return bounds().width() - 2 * k_separatorThickness - Metric::CellLeftMargin - Metric::CellRightMargin;}
+  KDCoordinate innerWidth() const { return m_frame.width() - k_leftOffset - k_rightOffset; }
+  KDCoordinate innerHeight() const { return m_frame.height() - k_topOffset - k_bottomOffset; }
 
 protected:
   // View
@@ -78,7 +86,7 @@ protected:
   void layoutSubviews(bool force = false) override;
 
   virtual KDColor backgroundColor() const { return KDColorWhite; }
-  virtual bool shouldAlignLabelAndAccessory() const { return false; }
+  virtual bool forceAlignLabelAndAccessory() const { return false; }
   virtual bool shouldAlignSublabelRight() const { return true; }
   virtual KDCoordinate accessoryMinimalWidthOverridden() const { return -1; }
   virtual bool shouldHideSublabel() { return false; }
@@ -87,7 +95,13 @@ protected:
   bool singleRowMode() const;
 
 private:
-  static bool singleRowMode(KDCoordinate width, const View * labelView, const View * sublabelView, KDCoordinate accessoryWidth);
+  KDSize labelSize() const { return labelView() ? labelView()->minimalSizeForOptimalDisplay() : KDSizeZero; }
+  KDSize subLabelSize() const { return subLabelView() ? subLabelView()->minimalSizeForOptimalDisplay() : KDSizeZero; }
+  KDSize accessorySize() const { return accessoryView() ? accessoryView()->minimalSizeForOptimalDisplay() : KDSizeZero; }
+
+  bool shouldAlignLabelAndAccessory() const;
+  KDCoordinate accessoryMinimalWidth() const { return std::max(accessoryMinimalWidthOverridden(), accessorySize().width()); }
+
   static KDRect setFrameIfViewExists(View * v, KDRect rect, bool force);
 };
 }

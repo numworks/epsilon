@@ -32,7 +32,7 @@ public:
     m_dropdown.setHighlighted(highlight);
     Escher::ExpressionTableCellWithMessage::setHighlighted(highlight);
   }
-  bool shouldAlignLabelAndAccessory() const override { return true; }
+  bool forceAlignLabelAndAccessory() const override { return true; }
 
 private:
   Escher::Dropdown m_dropdown;

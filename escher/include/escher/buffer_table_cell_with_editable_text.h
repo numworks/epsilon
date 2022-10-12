@@ -24,7 +24,7 @@ public:
   const char * text() const override { return !m_textField.isEditing() ? m_textField.text() : nullptr; }
   void setAccessoryText(const char * text);
   bool shouldAlignSublabelRight() const override { return false; }
-  bool shouldAlignLabelAndAccessory() const override { return true; }
+  bool forceAlignLabelAndAccessory() const override { return true; }
   bool giveAccessoryAllWidth() const override { return true; }
   KDCoordinate accessoryMinimalWidthOverridden() const override {
     return Poincare::PrintFloat::glyphLengthForFloatWithPrecision(

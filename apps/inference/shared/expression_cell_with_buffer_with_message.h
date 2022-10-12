@@ -14,7 +14,7 @@ public:
     ExpressionTableCellWithMessage::setHighlighted(highlight);
     m_labelView.setBackgroundColor(highlight ? Escher::Palette::Select : backgroundColor());
   }
-  bool shouldAlignLabelAndAccessory() const override { return true; }
+  bool forceAlignLabelAndAccessory() const override { return true; }
   bool shouldAlignSublabelRight() const override { return false; }
   Escher::BufferTextView * bufferTextView() { return &m_labelView; }
   const char * text() const override { return m_labelView.text(); }

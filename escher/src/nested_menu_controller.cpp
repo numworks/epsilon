@@ -71,7 +71,7 @@ void NestedMenuController::ListController::didBecomeFirstResponder() {
 /* NestedMenuController */
 
 NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Message title) :
-  StackViewController(parentResponder, &m_listController, StackViewController::Style::PurpleWhite),
+  StackViewController(parentResponder, &m_listController, StackViewController::Style::PurpleWhite, true),
   m_selectableTableView(&m_listController, this, this, this),
   m_breadcrumbController(this, &m_selectableTableView),
   m_listController(this, &m_selectableTableView, title),

@@ -9,7 +9,7 @@ void elementaryTreeManipulation() {
   EditionPool * editionPool = cache->editionPool();
 
   std::cout << "\n---------------- Create (1 + 2) * 3 * 4 ----------------" << std::endl;
-  MultiplicationInterface::PushNode(3);
+  TypeBlock * root = MultiplicationInterface::PushNode(3);
   AdditionInterface::PushNode(2);
   IntegerInterface::PushNode(1);
   IntegerInterface::PushNode(2);
@@ -17,12 +17,6 @@ void elementaryTreeManipulation() {
   IntegerInterface::PushNode(4);
 
   print();
-
-  std::cout << "\n---------------- Scan children backward ----------------" << std::endl;
-  TypeBlock * root = editionPool->firstBlock();
-  for (const NodeIterator::IndexedNode indexedNode : NodeIterator(Node(root)).backwardsConstChildren()) {
-    indexedNode.m_node.log(std::cout);
-  }
 
   std::cout << "\n---------------- Store (1+2)*3*4 ----------------" << std::endl;
   uint16_t treeId = cache->storeEditedTree();

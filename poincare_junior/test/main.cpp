@@ -2,6 +2,7 @@
 #include "print.h"
 
 void elementaryTreeManipulation();
+void testChildrenIterator();
 void testOverflowEditionPool();
 void testOverflowCacheIdentifiers();
 void testCalculation();
@@ -26,6 +27,7 @@ int main() {
   intermediaryPrint();
 
   test(elementaryTreeManipulation, "ELEMENTARY TREE MANIPULATION");
+  test(testChildrenIterator, "TEST NODE CHILDREN ITERATOR");
   test(testOverflowEditionPool, "TEST OVERFLOW TREE EDITION POOL");
   test(testOverflowCacheIdentifiers, "TEST OVERFLOW CACHE IDENTIFIERS");
   test(testCalculation, "TEST DUMMY CALCULATION");

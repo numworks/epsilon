@@ -25,6 +25,7 @@ poincare_junior_src += $(addprefix poincare_junior/,\
   test/elementary_tree_manipulations.o \
   test/graph.o \
   test/main.o \
+  test/node_iterator.o \
   cache_pool.o \
   cache_reference.o \
   edition_pool.o \

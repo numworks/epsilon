@@ -30,7 +30,6 @@ private:
   bool m_divisionCycleChoiceUpToDate;
 
   bool fieldContainsSingleMinusSymbol() const;
-  void createAnsFraction();
   bool createdEmptyFraction();
   bool handleDivision();
 };

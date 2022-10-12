@@ -63,12 +63,6 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
   }
 }
 
-void ExpressionField::createAnsFraction() {
-  assert(m_currentStep == DivisionCycleStep::Start || m_currentStep == DivisionCycleStep::MixedFraction);
-  m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
-  setText(Poincare::Symbol::k_ansAliases.mainAlias());
-}
-
 bool ExpressionField::createdEmptyFraction() {
   Layout pointedLayout = m_layoutField.cursor()->layout();
   assert(pointedLayout.isEmpty());
@@ -107,11 +101,6 @@ bool ExpressionField::handleDivision() {
       case DivisionCycleStep::DenominatorOfEmptyFraction :
         assert(false);
         break;
-      case DivisionCycleStep::Start:
-        // Start -> DenominatorOfAnsFraction
-        assert(isEmpty());
-        createAnsFraction();
-        break;
       case DivisionCycleStep::DenominatorOfAnsFraction : 
         // DenominatorOfAnsFraction -> NumeratorOfEmptyFraction
         m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
@@ -132,10 +121,11 @@ bool ExpressionField::handleDivision() {
         }
         /* If mixed fractions are not enabled, fall under next case
          * in order to skip the MixedFraction step */
-      case DivisionCycleStep::MixedFraction :
-        // MixedFraction -> DenominatorOfAnsFraction
-        createAnsFraction();
-        break;
+      default:
+        // Start / MixedFraction -> DenominatorOfAnsFraction
+        assert(m_currentStep == DivisionCycleStep::Start || m_currentStep == DivisionCycleStep::MixedFraction);
+        m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
+        setText(Poincare::Symbol::k_ansAliases.mainAlias());
     }
   } else if (mixedFractionsEnabled) {
     // Cycles 1.2.1 and 1.2.2

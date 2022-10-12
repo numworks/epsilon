@@ -351,9 +351,9 @@ void AbstractPlotView::straightJoinDots(KDContext * ctx, KDRect rect, Coordinate
   float stepY = deltaY / normsRatio;
   int numberOfStamps = std::floor(normsRatio);
   for (int i = 0; i < numberOfStamps; i++) {
-    stamp(ctx, rect, Coordinate2D<float>(puf, pvf), color, thick);
     puf += stepX;
     pvf += stepY;
+    stamp(ctx, rect, Coordinate2D<float>(puf, pvf), color, thick);
   }
 }
 

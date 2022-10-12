@@ -24,7 +24,7 @@ public:
   Escher::TextField * textField() { return &m_textField; }
 
   bool giveAccessoryAllWidth() const override { return true; }
-  bool shouldAlignLabelAndAccessory() const override { return true; }
+  bool forceAlignLabelAndAccessory() const override { return true; }
   bool shouldAlignSublabelRight() const override { return false; }
   KDCoordinate accessoryMinimalWidthOverridden() const override {
     // TODO this is redundant with MessageTableCellWithEditableText

@@ -31,7 +31,7 @@ public:
     m_dropdown.setHighlighted(highlight);
     MessageTableCellWithMessage::setHighlighted(highlight);
   }
-  bool shouldAlignLabelAndAccessory() const override { return true; }
+  bool forceAlignLabelAndAccessory() const override { return true; }
 
 private:
   Dropdown m_dropdown;

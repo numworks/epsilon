@@ -18,7 +18,7 @@ public:
   const Escher::View * subLabelView() const override { return &m_subLabelView; }
   const Escher::View * accessoryView() const override { return &m_accessoryView; }
   void setHighlighted(bool highlight) override;
-  bool shouldAlignLabelAndAccessory() const override { return true; }
+  bool forceAlignLabelAndAccessory() const override { return true; }
   bool shouldAlignSublabelRight() const override { return false; }
 
   void setLayouts(Poincare::Layout label, Poincare::Layout accessory);

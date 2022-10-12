@@ -83,8 +83,8 @@ public:
   KDCoordinate baseline(KDFont::Size font);
   void setMargin(bool hasMargin) { m_flags.m_margin = hasMargin; }
   void lockMargin(bool lock) { m_flags.m_lockMargin = lock; }
-  int leftMargin() { return m_flags.m_margin ? Escher::Metric::OperatorHorizontalMargin : 0; }
-  bool marginIsLocked() { return m_flags.m_lockMargin; }
+  int leftMargin() const { return m_flags.m_margin ? Escher::Metric::OperatorHorizontalMargin : 0; }
+  bool marginIsLocked() const { return m_flags.m_lockMargin; }
 
   //TODO: invalid cache when tempering with hierarchy
   virtual void invalidAllSizesPositionsAndBaselines();

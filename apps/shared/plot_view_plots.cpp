@@ -140,8 +140,6 @@ void WithCurves::CurveDrawing::draw(const AbstractPlotView * plotView, KDContext
 
   plotView->setDashed(m_dashed);
 
-  /* ContinuousFunction caching relies on a consistent tStart and tStep. These
-   * values shouldn't be altered here. */
   float previousT = NAN, t = NAN;
   Coordinate2D<float> previousXY, xy;
   float (Coordinate2D<float>::*abscissa)() const = m_axis == AbstractPlotView::Axis::Horizontal ? &Coordinate2D<float>::x1 : &Coordinate2D<float>::x2;
@@ -358,6 +356,9 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
     KDCoordinate barHeight = axisPixel - py;
     assert(barHeight >= 0);
     KDCoordinate barWidth;
+    /* If m_fillBar is true, we fill the space between one bar and the next
+     * (e.g. histograms in the Statistics app). Otherwise, we only draw a thin
+     * bar on lefmost pixels (e.g. histograms for discrete distributions). */
     if (m_fillBars) {
       barWidth = pxRight - pxLeft;
     } else {
@@ -366,11 +367,15 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
     }
     KDRect barRect(pxLeft + m_borderWidth, py, barWidth, barHeight);
     KDColor color = m_highlighted && m_highlighted(xCenter, m_model, m_context) ? m_highlightColor : m_color;
+    // - Fill the body of the bar
     ctx->fillRect(barRect, color);
 
     if (m_borderWidth > 0 && barRect.width() > 0 && barRect.height() > 0) {
+      // Left border
       ctx->fillRect(KDRect(pxLeft, py, m_borderWidth, barHeight), m_borderColor);
+      // Top border
       ctx->fillRect(KDRect(pxLeft, py - m_borderWidth, barWidth + m_borderWidth, m_borderWidth), m_borderColor);
+      // Right border
       ctx->fillRect(KDRect(pxRight, py, m_borderWidth, barHeight), m_borderColor);
     }
   }

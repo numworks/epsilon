@@ -15,7 +15,8 @@ public:
   ExpressionModelListController(Escher::Responder * parentResponder, I18n::Message text);
   virtual void editExpression(Ion::Events::Event event);
   virtual bool editSelectedRecordWithText(const char * text);
-  bool handleEventOnExpression(Ion::Events::Event event);
+  bool handleEventOnExpression(Ion::Events::Event event, bool inTemplateMenu = false);
+  bool handleEventOnExpressionInTemplateMenu(Ion::Events::Event event) { return handleEventOnExpression(event, true); }
 protected:
   constexpr static KDFont::Size k_font = KDFont::Size::Large;
   constexpr static KDCoordinate k_expressionMargin = 5;

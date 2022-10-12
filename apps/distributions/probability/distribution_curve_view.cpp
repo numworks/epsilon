@@ -31,14 +31,7 @@ void DistributionPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView,
   float lowerBound = m_calculation->lowerBound();
   float upperBound = m_calculation->upperBound();
 
-  if (m_distribution->type() == Poincare::Distribution::Type::Normal) {
-    /* Special case for the normal distribution, which has always the same curve
-     * We indicate the pixels from and to which we color under the curve, not
-     * the float values, as we change the curve parameters. */
-    float pixelColorLowerBound = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, lowerBound));
-    float pixelColorUpperBound = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, upperBound));
-    drawStandardNormal(plotView, ctx, rect, pixelColorLowerBound, pixelColorUpperBound);
-  } else if (m_distribution->isContinuous()) {
+  if (m_distribution->isContinuous()) {
     CurveDrawing plot(evaluateDistribution2D, m_distribution, nullptr, m_distribution->xMin(), m_distribution->xMax(), plotView->pixelWidth(), Palette::YellowDark, true);
     plot.setPatternOptions(Pattern(Palette::YellowDark), lowerBound, upperBound, evaluateZero, nullptr, nullptr, nullptr, false);
     plot.draw(plotView, ctx, rect);
@@ -48,26 +41,6 @@ void DistributionPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView,
     plot.setHighlightOptions(barIsHighlighted, Palette::YellowDark);
     plot.draw(plotView, ctx, rect);
   }
-}
-
-void DistributionPlotPolicy::drawStandardNormal(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float colorLowerBound, float colorUpperBound) const {
-  // Save the previous curve view range
-  CurveViewRange * previousRange = plotView->range();
-
-  // Draw a centered reduced normal curve
-  AbstractPlotView * mutablePlotView = const_cast<AbstractPlotView *>(plotView);
-  NormalDistribution n;
-  mutablePlotView->setRange(&n);
-
-  float colorStart = mutablePlotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, colorLowerBound);
-  float colorEnd = mutablePlotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, colorUpperBound);
-
-  CurveDrawing plot(evaluateDistribution2D, &n, nullptr, n.xMin(), n.xMax(), mutablePlotView->pixelWidth(), Palette::YellowDark, true);
-  plot.setPatternOptions(Pattern(Palette::YellowDark), colorStart, colorEnd, evaluateZero, nullptr, nullptr, nullptr, false);
-  plot.draw(mutablePlotView, ctx, rect);
-
-  // Put back the previous curve view range
-  mutablePlotView->setRange(previousRange);
 }
 
 // DistributionCurveView

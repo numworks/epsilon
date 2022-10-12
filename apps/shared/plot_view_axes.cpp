@@ -1,4 +1,5 @@
 #include "plot_view_axes.h"
+#include <limits.h>
 #include <cmath>
 
 using namespace Poincare;

@@ -22,6 +22,7 @@ public:
   //ListViewDataSource
   int numberOfRows() const override;
   int reusableCellCount(int type) override;
+  Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   int typeAtIndex(int index) const override;
@@ -40,9 +41,11 @@ public:
 
 private:
   constexpr static int k_maxNumberOfDisplayedRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::PopUpTopMargin + Escher::Metric::StackTitleHeight); // Remaining cell can be above and below so we add +2
-  constexpr static int k_numberOfMenuRows = static_cast<int>(Page::sizeOfEnum) - 1;
+  constexpr static int k_numberOfMenuRows = static_cast<int>(Page::sizeOfEnum) - 1 + 1;
   constexpr static KDCoordinate k_leafMargin = 20;
   constexpr static KDFont::Size k_subLabelFont = KDFont::Size::Small;
+  constexpr static int k_defineVariableCellType = 2;
+  constexpr static int k_defineVariableCellIndex = k_numberOfMenuRows - 1;
   Escher::ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;
   Escher::MessageTableCellWithChevron * nodeCellAtIndex(int index) override;
   I18n::Message subTitle() override;
@@ -64,6 +67,7 @@ private:
   Page m_lockPageDelete;
   Escher::ExpressionTableCellWithExpression m_leafCells[k_maxNumberOfDisplayedRows];
   Escher::MessageTableCellWithChevronAndBuffer m_nodeCells[k_numberOfMenuRows];
+  Escher::MessageTableCell m_defineVariableCell;
   MathVariableBoxEmptyController m_emptyViewController;
   // Layout memoization
   // TODO: make a helper doing the RingMemoizationOfConsecutiveObjets to factorize this code and ExpressionModelStore code

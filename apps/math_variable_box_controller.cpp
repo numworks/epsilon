@@ -25,6 +25,7 @@ MathVariableBoxController::MathVariableBoxController() :
   AlternateEmptyNestedMenuController(I18n::Message::Variables),
   m_currentPage(Page::RootMenu),
   m_lockPageDelete(Page::RootMenu),
+  m_defineVariableCell(I18n::Message::DefineVariable),
   m_firstMemoizedLayoutIndex(0)
 {
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
@@ -74,6 +75,11 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
     displayEmptyControllerIfNeeded();
     return true;
   }
+  if (m_currentPage == Page::RootMenu && selectedRow() == k_defineVariableCellIndex && m_defineVariableCell.ShouldEnterOnEvent(event)) {
+    Container::activeApp()->dismissModalViewController();
+    Container::activeApp()->storeValue("");
+    return true;
+  }
   return AlternateEmptyNestedMenuController::handleEvent(event);
 }
 
@@ -101,7 +107,11 @@ int MathVariableBoxController::numberOfElements(Page page) const {
 }
 
 int MathVariableBoxController::reusableCellCount(int type) {
-  assert(type < 2);
+  assert(type < 3);
+  if (type == k_defineVariableCellType) {
+    assert(m_currentPage == Page::RootMenu);
+    return 1;
+  }
   if (type == 0) {
     return k_maxNumberOfDisplayedRows;
   }
@@ -110,12 +120,16 @@ int MathVariableBoxController::reusableCellCount(int type) {
 
 void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_currentPage == Page::RootMenu) {
+    if (index == k_defineVariableCellIndex) {
+      return;
+    }
     I18n::Message label = nodeLabelAtIndex(index);
     MessageTableCellWithChevronAndBuffer * myCell = static_cast<MessageTableCellWithChevronAndBuffer *>(cell);
     int nb = numberOfElements(static_cast<Page>(index + 1));
     constexpr size_t bufferSize = 20;
     char buffer[bufferSize];
     Print::CustomPrintf(buffer, bufferSize, "%i elements", nb);
+    // myCell->setVisible(nb > 0);
     myCell->setMessage(label);
     myCell->setSubLabelText(buffer);
     myCell->reloadCell();
@@ -155,6 +169,10 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
 
 KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
   if (m_currentPage == Page::RootMenu) {
+    if (index == k_defineVariableCellIndex) {
+      MessageTableCell tempCell;
+      return heightForCellAtIndex(&tempCell, index);
+    }
     MessageTableCellWithChevronAndBuffer tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
@@ -164,9 +182,23 @@ KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
 
 int MathVariableBoxController::typeAtIndex(int index) const {
   if (m_currentPage == Page::RootMenu) {
-    return 1;
+    if (index == k_defineVariableCellIndex) {
+      return k_defineVariableCellType;
+    }
+    return k_nodeCellType;
   }
-  return 0;
+  return k_leafCellType;
+}
+
+HighlightCell * MathVariableBoxController::reusableCell(int index, int type) {
+  assert(index >= 0);
+  if (type == k_defineVariableCellType) {
+    return &m_defineVariableCell;
+  }
+  if (type == k_leafCellType) {
+    return leafCellAtIndex(index);
+  }
+  return nodeCellAtIndex(index);
 }
 
 ExpressionTableCellWithExpression * MathVariableBoxController::leafCellAtIndex(int index) {

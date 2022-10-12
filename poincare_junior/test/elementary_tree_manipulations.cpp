@@ -1,5 +1,6 @@
 #include "print.h"
 #include <poincare_junior/edition_reference.h>
+#include <poincare_junior/node_iterator.h>
 
 using namespace Poincare;
 
@@ -19,7 +20,7 @@ void elementaryTreeManipulation() {
 
   std::cout << "\n---------------- Scan children backward ----------------" << std::endl;
   TypeBlock * root = editionPool->firstBlock();
-  for (const Iterator::IndexedNode indexedNode : Iterator(Node(root)).backwardsConstChildren()) {
+  for (const NodeIterator::IndexedNode indexedNode : NodeIterator(Node(root)).backwardsConstChildren()) {
     indexedNode.m_node.log(std::cout);
   }
 

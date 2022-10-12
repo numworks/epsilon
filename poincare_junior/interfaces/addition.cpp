@@ -1,11 +1,12 @@
 #include "addition.h"
 #include "../edition_reference.h"
+#include "../node_iterator.h"
 
 namespace Poincare {
 
 float AdditionExpressionInterface::approximate(const TypeBlock * block) const {
   float res = 0.0f;
-  for (const Iterator::IndexedNode indexedNode : Iterator(Node(block)).forwardConstChildren()) {
+  for (const NodeIterator::IndexedNode indexedNode : NodeIterator(Node(block)).forwardConstChildren()) {
     res += indexedNode.m_node.expressionInterface()->approximate(indexedNode.m_node.block());
   }
   return res;

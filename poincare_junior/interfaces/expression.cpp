@@ -1,6 +1,6 @@
 #include "expression.h"
 #include "../edition_reference.h"
-#include "../node.h"
+#include "../node_iterator.h"
 
 namespace Poincare {
 
@@ -13,7 +13,7 @@ void ExpressionInterface::projectionReduction(TypeBlock * block, TypeBlock * (*P
   // Get references to children
   assert(Node(block).numberOfChildren() == 2);
   EditionReference childrenReferences[2];
-  for (Iterator::IndexedNode indexedNode : Iterator(division.node()).forwardEditableChildren()) {
+  for (NodeIterator::IndexedNode indexedNode : NodeIterator(division.node()).forwardEditableChildren()) {
     childrenReferences[indexedNode.m_index] = EditionReference(indexedNode.m_node);
   }
   // Move first child

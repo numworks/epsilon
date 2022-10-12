@@ -17,7 +17,7 @@ public:
     m_yAxis.setOtherAxis(m_xAxis.isAxis());
   }
 
-  void drawAxes(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+  void drawAxesAndGrid(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
     CGrid::drawGrid(plotView, ctx, rect);
     m_xAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal);
     m_yAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Vertical);

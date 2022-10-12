@@ -36,7 +36,7 @@ void AbstractPlotView::setFocus(bool focus) {
 
 void AbstractPlotView::drawRect(KDContext * ctx, KDRect rect) const {
   drawBackground(ctx, rect);
-  drawAxes(ctx, rect);
+  drawAxesAndGrid(ctx, rect);
   drawPlot(ctx, rect);
 }
 

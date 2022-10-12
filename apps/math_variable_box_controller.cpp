@@ -75,7 +75,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
     displayEmptyControllerIfNeeded();
     return true;
   }
-  if (m_currentPage == Page::RootMenu && selectedRow() == k_defineVariableCellIndex && m_defineVariableCell.ShouldEnterOnEvent(event)) {
+  if (m_currentPage == Page::RootMenu && m_defineVariableCell.ShouldEnterOnEvent(event) && selectedRow() == numberOfRows() - 1) {
     Container::activeApp()->dismissModalViewController();
     Container::activeApp()->storeValue("");
     return true;
@@ -90,7 +90,7 @@ int MathVariableBoxController::numberOfRows() const {
 int MathVariableBoxController::numberOfElements(Page page) const {
   switch (page) {
     case Page::RootMenu:
-      return k_numberOfMenuRows;
+      return (numberOfElements(Page::Expression) > 0) + (numberOfElements(Page::Function) > 0) + (numberOfElements(Page::Sequence) > 0) + (numberOfElements(Page::List) > 0) + (numberOfElements(Page::Matrix) > 0) + 1;
     case Page::Expression:
       return Storage::FileSystem::sharedFileSystem()->numberOfRecordsWithExtension(Ion::Storage::expExtension);
     case Page::Function:
@@ -120,17 +120,16 @@ int MathVariableBoxController::reusableCellCount(int type) {
 
 void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_currentPage == Page::RootMenu) {
-    if (index == k_defineVariableCellIndex) {
+    if (index == numberOfRows() - 1) {
       return;
     }
-    I18n::Message label = nodeLabelAtIndex(index);
     MessageTableCellWithChevronAndBuffer * myCell = static_cast<MessageTableCellWithChevronAndBuffer *>(cell);
-    int nb = numberOfElements(static_cast<Page>(index + 1));
+    Page page = pageAtIndex(index);
+    int nb = numberOfElements(page);
     constexpr size_t bufferSize = 20;
     char buffer[bufferSize];
     Print::CustomPrintf(buffer, bufferSize, "%i elements", nb);
-    // myCell->setVisible(nb > 0);
-    myCell->setMessage(label);
+    myCell->setMessage(nodeLabel(page));
     myCell->setSubLabelText(buffer);
     myCell->reloadCell();
     return;
@@ -169,9 +168,9 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
 
 KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
   if (m_currentPage == Page::RootMenu) {
-    if (index == k_defineVariableCellIndex) {
+    if (index == numberOfRows() - 1) {
       MessageTableCell tempCell;
-      return heightForCellAtIndex(&tempCell, index);
+      return heightForCellAtIndexWithWidthInit(&tempCell, index);
     }
     MessageTableCellWithChevronAndBuffer tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
@@ -182,7 +181,7 @@ KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
 
 int MathVariableBoxController::typeAtIndex(int index) const {
   if (m_currentPage == Page::RootMenu) {
-    if (index == k_defineVariableCellIndex) {
+    if (index == numberOfRows() - 1) {
       return k_defineVariableCellType;
     }
     return k_nodeCellType;
@@ -212,12 +211,20 @@ MessageTableCellWithChevron * MathVariableBoxController::nodeCellAtIndex(int ind
 }
 
 I18n::Message MathVariableBoxController::subTitle() {
-  return nodeLabelAtIndex(static_cast<int>(m_currentPage) - 1);
+  return nodeLabel(m_currentPage);
 }
 
 MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(int index) {
-  assert(index >= 0 && index < k_numberOfMenuRows);
-  return static_cast<Page>(index + 1);
+  assert(index >= 0 && index < numberOfElements(Page::RootMenu));
+  int pageId = static_cast<int>(Page::RootMenu);
+  index += 1;
+  while (index) {
+    pageId++;
+    if (numberOfElements(static_cast<Page>(pageId)) > 0) {
+      index--;
+    }
+  }
+  return static_cast<Page>(pageId);
 }
 
 void MathVariableBoxController::setPage(Page page) {
@@ -284,9 +291,7 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
   return true;
 }
 
-I18n::Message MathVariableBoxController::nodeLabelAtIndex(int index) {
-  assert(index >= 0 && index < k_numberOfMenuRows);
-  Page page = pageAtIndex(index);
+I18n::Message MathVariableBoxController::nodeLabel(Page page) {
   switch (page) {
     case Page::Expression:
       return I18n::Message::Expressions;

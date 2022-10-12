@@ -1,4 +1,5 @@
 #include "expression_field.h"
+#include <apps/i18n.h>
 #include <poincare/symbol.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/code_point_layout.h>
@@ -119,12 +120,13 @@ bool ExpressionField::handleDivision() {
           if (editionIn1D) {
             setText(" /");
             m_textField.setCursorLocation(m_textField.draftTextBuffer());
-            return true;
+          } else {
+            setText("");
+            handleEventWithText(I18n::translate(I18n::Message::MixedFractionCommand));
           }
-          event = Ion::Events::Left;
-        } else {
-          createAnsFraction();
+          return true;
         }
+        createAnsFraction();
         break;
       case DivisionCycleStep::MixedFraction :
         assert(mixedFractionsEnabled);

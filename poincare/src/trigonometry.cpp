@@ -41,36 +41,39 @@ namespace Poincare {
  * Radians / Degrees / Gradians */
 
 static int PiDivisor(Preferences::AngleUnit angleUnit) {
-  if (angleUnit == Preferences::AngleUnit::Radian) {
+  switch (angleUnit) {
+  case Preferences::AngleUnit::Radian:
     return 1;
-  }
-  if (angleUnit == Preferences::AngleUnit::Degree) {
+  case Preferences::AngleUnit::Degree:
     return 180;
+  default:
+    assert(angleUnit == Preferences::AngleUnit::Gradian);
+    return 200;
   }
-  assert(angleUnit == Preferences::AngleUnit::Gradian);
-  return 200;
 }
 
 Expression Trigonometry::PiExpressionInAngleUnit(Preferences::AngleUnit angleUnit) {
-  if (angleUnit == Preferences::AngleUnit::Radian) {
-    return Constant::Builder("π");
-  }
-  if (angleUnit == Preferences::AngleUnit::Degree) {
+  switch (angleUnit) {
+  case Preferences::AngleUnit::Radian:
+    return Constant::Builder("π");;
+  case Preferences::AngleUnit::Degree:
     return Rational::Builder(180);
+  default:
+    assert(angleUnit == Preferences::AngleUnit::Gradian);
+    return Rational::Builder(200);
   }
-  assert(angleUnit == Preferences::AngleUnit::Gradian);
-  return Rational::Builder(200);
 }
 
 double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
-  if (angleUnit == Preferences::AngleUnit::Radian) {
+  switch (angleUnit) {
+  case Preferences::AngleUnit::Radian:
     return M_PI;
-  }
-  if (angleUnit == Preferences::AngleUnit::Degree) {
+  case Preferences::AngleUnit::Degree:
     return 180.0;
+  default:
+    assert(angleUnit == Preferences::AngleUnit::Gradian);
+    return 200.0;
   }
-  assert(angleUnit == Preferences::AngleUnit::Gradian);
-  return 200.0;
 }
 
 bool Trigonometry::isDirectTrigonometryFunction(const Expression & e) {

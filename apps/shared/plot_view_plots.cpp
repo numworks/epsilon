@@ -80,7 +80,7 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView * plotView, KDContex
     colors[0] = colors[2] = m_cBackground;
   }
 
-  for (int i = minC; i <= maxC; i++) {
+  for (int i = minC; i < maxC; i++) {
     KDColor color = colors[i % k_size];
     if (color != k_transparent) {
       ctx->setPixel(parallel == AbstractPlotView::Axis::Horizontal ? KDPoint(i, posC) : KDPoint(posC, i), color);

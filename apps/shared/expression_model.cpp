@@ -115,7 +115,7 @@ Expression ExpressionModel::expressionReduced(const Storage::Record * record, Po
        * same function. So we need to keep a valid m_expression while executing
        * 'Simplify'. Thus, we use a temporary expression. */
       Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(record, context), angleUnit(record, context));
-      PoincareHelpers::CloneAndSimplify(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation, PoincareHelpers::k_systemDefaultSymbolicComputation, PoincareHelpers::k_defaultUnitConversion, &preferences, false);
+      PoincareHelpers::CloneAndSimplify(&m_expression, context, ExpressionNode::ReductionTarget::SystemForApproximation, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, PoincareHelpers::k_defaultUnitConversion, &preferences, false);
     }
   }
   return m_expression;

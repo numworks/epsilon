@@ -1,7 +1,7 @@
 #ifndef CODE_VARIABLE_BOX_CONTROLLER_H
 #define CODE_VARIABLE_BOX_CONTROLLER_H
 
-#include <apps/alternate_empty_nested_menu_controller.h>
+#include "alternate_empty_nested_menu_controller.h"
 #include <escher/toolbox_message_tree.h>
 #include "script_node.h"
 #include "script_node_cell.h"

@@ -22,7 +22,7 @@ using namespace Ion;
 using namespace Escher;
 
 MathVariableBoxController::MathVariableBoxController() :
-  AlternateEmptyNestedMenuController(I18n::Message::Variables),
+  NestedMenuController(nullptr, I18n::Message::Variables),
   m_currentPage(Page::RootMenu),
   m_lockPageDelete(Page::RootMenu),
   m_defineVariableCell(I18n::Message::DefineVariable),
@@ -34,13 +34,8 @@ MathVariableBoxController::MathVariableBoxController() :
   }
 }
 
-void MathVariableBoxController::viewWillAppear() {
-  AlternateEmptyNestedMenuController::viewWillAppear();
-  displayEmptyControllerIfNeeded();
-}
-
 void MathVariableBoxController::viewDidDisappear() {
-  AlternateEmptyNestedMenuController::viewDidDisappear();
+  NestedMenuController::viewDidDisappear();
 
   /* NestedMenuController::viewDidDisappear might need cell heights, which would
    * use the MathVariableBoxController cell heights memoization. We thus reset the
@@ -64,7 +59,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
    *   The deletion on the current page is locked
    * - The empty controller is displayed
    */
-  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu && m_lockPageDelete != m_currentPage && !isDisplayingEmptyController()) {
+  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu && m_lockPageDelete != m_currentPage) {
     int rowIndex = selectedRow();
     m_selectableTableView.deselectTable();
     destroyRecordAtRowIndex(rowIndex);
@@ -82,7 +77,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
     Container::activeApp()->storeValue("");
     return true;
   }
-  return AlternateEmptyNestedMenuController::handleEvent(event);
+  return NestedMenuController::handleEvent(event);
 }
 
 int MathVariableBoxController::numberOfRows() const {
@@ -237,21 +232,13 @@ void MathVariableBoxController::setPage(Page page) {
 bool MathVariableBoxController::selectSubMenu(int selectedRow) {
   m_selectableTableView.deselectTable();
   setPage(pageAtIndex(selectedRow));
-  bool selectSubMenu = AlternateEmptyNestedMenuController::selectSubMenu(selectedRow);
-  if (displayEmptyControllerIfNeeded()) {
-    return true;
-  }
-  return selectSubMenu;
+  return NestedMenuController::selectSubMenu(selectedRow);
 }
 
 bool MathVariableBoxController::returnToPreviousMenu() {
-  if (isDisplayingEmptyController()) {
-    pop();
-  } else {
-    m_selectableTableView.deselectTable();
-  }
+  m_selectableTableView.deselectTable();
   setPage(Page::RootMenu);
-  return AlternateEmptyNestedMenuController::returnToPreviousMenu();
+  return NestedMenuController::returnToPreviousMenu();
 }
 
 bool MathVariableBoxController::returnToRootMenu() {
@@ -260,11 +247,6 @@ bool MathVariableBoxController::returnToRootMenu() {
 }
 
 bool MathVariableBoxController::selectLeaf(int selectedRow) {
-  if (isDisplayingEmptyController()) {
-    /* We do not want to handle OK/EXE events in that case. */
-    return false;
-  }
-
   // Deselect the table
   assert(selectedRow >= 0 && selectedRow < numberOfRows());
   m_selectableTableView.deselectTable();
@@ -367,11 +349,6 @@ Storage::Record MathVariableBoxController::recordAtIndex(int rowIndex) {
   }
   assert(!record.isNull());
   return record;
-}
-
-ViewController * MathVariableBoxController::emptyViewController() {
-  m_emptyViewController.setPage(static_cast<int>(m_currentPage));
-  return &m_emptyViewController;
 }
 
 void MathVariableBoxController::resetVarBoxMemoization() {

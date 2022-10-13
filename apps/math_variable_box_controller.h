@@ -1,19 +1,17 @@
 #ifndef APPS_MATH_VARIABLE_BOX_CONTROLLER_H
 #define APPS_MATH_VARIABLE_BOX_CONTROLLER_H
 
-#include "alternate_empty_nested_menu_controller.h"
-#include "math_variable_box_empty_controller.h"
 #include <apps/i18n.h>
+#include <escher/nested_menu_controller.h>
 #include <escher/expression_table_cell_with_expression.h>
 #include <escher/message_table_cell_with_chevron_and_buffer.h>
 #include <ion.h>
 
-class MathVariableBoxController : public AlternateEmptyNestedMenuController {
+class MathVariableBoxController : public Escher::NestedMenuController {
 public:
   MathVariableBoxController();
 
   // View Controller
-  void viewWillAppear() override;
   void viewDidDisappear() override;
 
   // Responder
@@ -60,7 +58,6 @@ private:
   Poincare::Layout expressionLayoutForRecord(Ion::Storage::Record record, int index);
   const char * extension() const;
   Ion::Storage::Record recordAtIndex(int rowIndex);
-  Escher::ViewController * emptyViewController() override;
   void resetVarBoxMemoization();
   void destroyRecordAtRowIndex(int rowIndex);
   Page m_currentPage;
@@ -68,7 +65,6 @@ private:
   Escher::ExpressionTableCellWithExpression m_leafCells[k_maxNumberOfDisplayedRows];
   Escher::MessageTableCellWithChevronAndBuffer m_nodeCells[k_numberOfMenuRows];
   Escher::MessageTableCell m_defineVariableCell;
-  MathVariableBoxEmptyController m_emptyViewController;
   // Layout memoization
   // TODO: make a helper doing the RingMemoizationOfConsecutiveObjets to factorize this code and ExpressionModelStore code
   int m_firstMemoizedLayoutIndex;

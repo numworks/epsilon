@@ -2,6 +2,7 @@ apps += Code::App
 app_headers += apps/code/app.h
 
 app_code_src = $(addprefix apps/code/,\
+  alternate_empty_nested_menu_controller.cpp \
   app.cpp \
   console_controller.cpp \
   console_edit_cell.cpp \

@@ -10,8 +10,8 @@ namespace Shared {
 
 namespace PoincareHelpers {
 
-constexpr static Poincare::ExpressionNode::SymbolicComputation k_userDefaultSymbolicComputation = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
-constexpr static Poincare::ExpressionNode::SymbolicComputation k_systemDefaultSymbolicComputation = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
+constexpr static Poincare::ExpressionNode::SymbolicComputation k_replaceWithDefinitionOrUndefined = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
+constexpr static Poincare::ExpressionNode::SymbolicComputation k_replaceWithDefinition = Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition;
 constexpr static Poincare::ExpressionNode::UnitConversion k_defaultUnitConversion = Poincare::ExpressionNode::UnitConversion::Default;
 
 inline Poincare::Layout CreateLayout(
@@ -96,7 +96,7 @@ template <class T>
 inline T ParseAndSimplifyAndApproximateToScalar(
   const char * text,
   Poincare::Context * context,
-  Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_userDefaultSymbolicComputation,
+  Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_replaceWithDefinitionOrUndefined,
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences())
 {
   return Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<T>(text, context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
@@ -106,7 +106,7 @@ inline T ParseAndSimplifyAndApproximateToScalar(
 inline Poincare::Expression ParseAndSimplify(
   const char * text,
   Poincare::Context * context,
-  Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_userDefaultSymbolicComputation,
+  Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_replaceWithDefinitionOrUndefined,
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences())
 {
   return Poincare::Expression::ParseAndSimplify(text, context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
@@ -116,7 +116,7 @@ inline void CloneAndSimplify(
   Poincare::Expression * e,
   Poincare::Context * context,
   Poincare::ExpressionNode::ReductionTarget target,
-  Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_systemDefaultSymbolicComputation,
+  Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
   Poincare::ExpressionNode::UnitConversion unitConversion = k_defaultUnitConversion,
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences(),
   bool updateComplexFormatAndAngleUnit = true)
@@ -128,7 +128,7 @@ inline void CloneAndReduce(
   Poincare::Expression * e,
   Poincare::Context * context,
   Poincare::ExpressionNode::ReductionTarget target,
-  Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_systemDefaultSymbolicComputation,
+  Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
   Poincare::ExpressionNode::UnitConversion unitConversion = k_defaultUnitConversion,
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences(),
   bool updateComplexFormatAndAngleUnit = true)
@@ -141,7 +141,7 @@ inline void ReduceAndRemoveUnit(
   Poincare::Context * context,
   Poincare::ExpressionNode::ReductionTarget target,
   Poincare::Expression * unit,
-  Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_systemDefaultSymbolicComputation,
+  Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
   Poincare::ExpressionNode::UnitConversion unitConversion = k_defaultUnitConversion,
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences(),
   bool updateComplexFormatAndAngleUnit = true)
@@ -156,7 +156,7 @@ inline void ParseAndSimplifyAndApproximate(
   Poincare::Expression * simplifiedExpression,
   Poincare::Expression * approximateExpression,
   Poincare::Context * context,
-  Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_userDefaultSymbolicComputation,
+  Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_replaceWithDefinitionOrUndefined,
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences())
 {
   Poincare::Expression::ParseAndSimplifyAndApproximate(text, simplifiedExpression, approximateExpression, context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);

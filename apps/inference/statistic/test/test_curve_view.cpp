@@ -105,6 +105,20 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView * plotView, KD
   }
 }
 
+// TestXAxis
+
+void TestXAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
+  assert(axis == AbstractPlotView::Axis::Horizontal);
+  const TestCurveView * testCurveView = static_cast<const TestCurveView *>(plotView);
+  float z = testCurveView->test()->testCriticalValue();
+  KDCoordinate labelWidth = KDFont::Font(AbstractPlotView::k_font)->stringSize(label(i)).width();
+  KDCoordinate zWidth = KDFont::GlyphSize(AbstractPlotView::k_font).width() * TestPlotPolicy::k_zLabelMaxGlyphLength;
+  if (std::fabs(z - t) > plotView->pixelWidth() * 0.5f * (labelWidth + zWidth)) {
+    /* Label does not overlap with z label, it can be drawn */
+    PlotPolicy::HorizontalLabeledAxis::drawLabel(i, t, plotView, ctx, rect, axis);
+  }
+}
+
 // TestCurveView
 
 TestCurveView::TestCurveView(Test * test) :

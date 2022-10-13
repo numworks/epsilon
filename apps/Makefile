@@ -12,7 +12,6 @@ apps =
 $(foreach i,${EPSILON_APPS},$(eval include apps/$(i)/Makefile))
 
 apps_src += $(addprefix apps/,\
-  alternate_empty_nested_menu_controller.cpp \
   apps_container.cpp \
   apps_container_helper.cpp \
   apps_container_launch_default.cpp:-onboarding \
@@ -35,7 +34,6 @@ apps_src += $(addprefix apps/,\
   main.cpp \
   math_toolbox.cpp \
   math_variable_box_controller.cpp \
-  math_variable_box_empty_controller.cpp \
   shift_alpha_lock_view.cpp \
   suspend_timer.cpp \
   title_bar_view.cpp \

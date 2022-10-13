@@ -624,7 +624,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("1000000_kg", "1×_kt");
 
   // angle units
-  assert_parsed_expression_simplify_to("ln(2/2)_°", "0×_°", ExpressionNode::ReductionTarget::User, Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("ln(2/2)_°", "0×_rad", ExpressionNode::ReductionTarget::User, Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("ln(2/2)_rad", "0×_rad");
   assert_parsed_expression_simplify_to("1×π×_°", "π×_°", ExpressionNode::ReductionTarget::User, Preferences::AngleUnit::Degree);
   assert_parsed_expression_simplify_to("1×π×_rad", "π×_rad");

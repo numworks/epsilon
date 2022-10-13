@@ -741,8 +741,8 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(con
         &result,
         context,
         ExpressionNode::ReductionTarget::SystemForAnalysis,
-        ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol,
-        PoincareHelpers::k_defaultUnitConversion, // Symbols have already been replaced.
+        ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol, // Symbols have already been replaced.
+        PoincareHelpers::k_defaultUnitConversion,
         &preferences, false);
   } else {
     computedPlotType = PlotType::Undefined;

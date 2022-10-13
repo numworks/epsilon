@@ -44,6 +44,7 @@ static Coordinate2D<float> evaluateZero(float, void *, void *) { return Coordina
 
 void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float z, HypothesisParams::ComparisonOperator op, double factor) const {
   if (op == HypothesisParams::ComparisonOperator::Different) {
+    z = std::fabs(z);
     drawTestCurve(plotView,ctx, rect, z, HypothesisParams::ComparisonOperator::Higher, 0.5);
     drawTestCurve(plotView,ctx, rect, -z, HypothesisParams::ComparisonOperator::Lower, 0.5);
     return;
@@ -81,7 +82,7 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView * plotView, KD
     bothStart = range->xMin();
     if (z < xAlpha) {
       bothEnd = z;
-      patternSingle = Pattern(true, false, false, true, Palette::PurpleBright);
+      patternSingle = Pattern(true, false, true, false, Palette::PurpleBright);
       singleEnd = xAlpha;
     } else {
       bothEnd = xAlpha;

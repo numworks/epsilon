@@ -837,7 +837,7 @@ const char * VariableBoxController::importationSourceNameFromNode(mp_parse_node_
 }
 
 bool VariableBoxController::importationSourceIsModule(const char * sourceName, const ToolboxMessageTree * * moduleChildren, int * numberOfModuleChildren) {
-  const ToolboxMessageTree * children = static_cast<PythonToolbox *>(App::app()->toolbox())->moduleChildren(sourceName, numberOfModuleChildren);
+  const ToolboxMessageTree * children = App::app()->toolbox()->moduleChildren(sourceName, numberOfModuleChildren);
   if (moduleChildren != nullptr) {
     *moduleChildren = children;
   }

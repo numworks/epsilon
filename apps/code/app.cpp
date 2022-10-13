@@ -106,7 +106,7 @@ void App::willExitResponderChain(Responder * nextFirstResponder) {
   m_menuController.willExitApp();
 }
 
-Toolbox * App::toolbox() {
+PythonToolbox * App::toolbox() {
   return &m_toolbox;
 }
 

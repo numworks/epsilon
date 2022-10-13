@@ -50,7 +50,7 @@ public:
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 
   /* InputEventHandlerDelegate */
-  Escher::Toolbox * toolbox() override;
+  PythonToolbox * toolbox() override;
   VariableBoxController * variableBox() override;
 
   /* TextInputDelegate */
@@ -62,8 +62,6 @@ public:
   bool isPythonUser(const void * pythonUser) { return m_pythonUser == pythonUser; }
   void initPythonWithUser(const void * pythonUser);
   void deinitPython();
-
-  VariableBoxController * variableBoxController() { return &m_variableBoxController; }
 
   constexpr static size_t k_pythonHeapSize = 65536; // 64KiB
 

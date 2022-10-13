@@ -53,13 +53,13 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView * plotView, KDContex
   KDCoordinate maxC = std::round(plotView->floatToPixel(parallel, max));
   if (parallel == AbstractPlotView::Axis::Horizontal) {
     minC = std::max(minC, rect.left());
-    maxC = std::min(maxC, rect.right());
+    maxC = std::min(maxC, static_cast<KDCoordinate>(rect.right() + 1));
   } else {
     /* Swap minC and maxC, as the Y axis changes direction between the range
      * space and screen space. */
     KDCoordinate temp = minC;
     minC = std::max(maxC, rect.top());
-    maxC = std::min(temp, rect.bottom());
+    maxC = std::min(temp, static_cast<KDCoordinate>(rect.bottom() + 1));
   }
   if (minC >= maxC) {
     return;

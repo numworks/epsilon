@@ -85,7 +85,7 @@ void TableCell::layoutSubviews(bool force) {
     labelRect = KDRect(x, y + (height - labelHeight) / 2, labelWidth, labelHeight);
     x += labelWidth + k_innerHorizontalMargin;
 
-    if (shouldAlignSublabelRight() & !giveAccessoryAllWidth()) {
+    if (shouldAlignSublabelRight() && !giveAccessoryAllWidth()) {
       // Align SubLabel right
       x = xEnd - subLabelWidth;
       if (accessoryWidth > 0) {

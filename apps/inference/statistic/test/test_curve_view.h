@@ -7,6 +7,9 @@
 namespace Inference {
 
 class TestPlotPolicy : Shared::PlotPolicy::WithCurves {
+public:
+  constexpr static int k_zLabelMaxGlyphLength = 4; // "-|z|"
+
 protected:
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
   void drawZLabelAndZGraduation(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float x, HypothesisParams::ComparisonOperator op) const;
@@ -16,9 +19,18 @@ protected:
   Test * m_test;
 };
 
-class TestCurveView : public Shared::PlotView<Shared::PlotPolicy::LabeledXAxis, TestPlotPolicy, Shared::PlotPolicy::NoBanner, Shared::PlotPolicy::NoCursor> {
+class TestXAxis : public Shared::PlotPolicy::HorizontalLabeledAxis {
+protected:
+  void drawLabel(int i, float t, const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, Shared::AbstractPlotView::Axis axis) const override;
+};
+
+typedef Shared::PlotPolicy::Axes<Shared::PlotPolicy::NoGrid, TestXAxis, Shared::PlotPolicy::NoAxis> TestAxes;
+
+class TestCurveView : public Shared::PlotView<TestAxes, TestPlotPolicy, Shared::PlotPolicy::NoBanner, Shared::PlotPolicy::NoCursor> {
 public:
   TestCurveView(Test * test);
+
+  Test * test() const { return m_test; }
 };
 
 }

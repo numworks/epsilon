@@ -23,6 +23,7 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   bool canShrinkWhenNormalizing() const override { return true; }
+  bool handleZoom(Ion::Events::Event event) override;
 
   bool displayDerivativeInBanner() const;
   PointsOfInterestList * pointsOfInterest() { return &m_pointsOfInterest; }

@@ -15,15 +15,12 @@ InputEventHandlerDelegateApp::InputEventHandlerDelegateApp(Snapshot * snapshot, 
 {
 }
 
-Toolbox * InputEventHandlerDelegateApp::toolboxForInputEventHandler(InputEventHandler * textInput) {
-  Toolbox * toolbox = AppsContainer::sharedAppsContainer()->mathToolbox();
-  toolbox->setSender(textInput);
-  return toolbox;
+Toolbox * InputEventHandlerDelegateApp::toolboxForInputEventHandler() {
+  return AppsContainer::sharedAppsContainer()->mathToolbox();
 }
 
-NestedMenuController * InputEventHandlerDelegateApp::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+NestedMenuController * InputEventHandlerDelegateApp::variableBoxForInputEventHandler() {
   MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
-  varBox->setSender(textInput);
   varBox->lockDeleteEvent(MathVariableBoxController::Page::RootMenu);
   return varBox;
 }

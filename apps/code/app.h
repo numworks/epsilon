@@ -50,8 +50,8 @@ public:
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 
   /* InputEventHandlerDelegate */
-  Escher::Toolbox * toolboxForInputEventHandler(Escher::InputEventHandler * textInput) override;
-  VariableBoxController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
+  Escher::Toolbox * toolboxForInputEventHandler() override;
+  VariableBoxController * variableBoxForInputEventHandler() override;
 
   /* TextInputDelegate */
   bool textInputDidReceiveEvent(Escher::InputEventHandler * textInput, Ion::Events::Event event);

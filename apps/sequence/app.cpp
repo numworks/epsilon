@@ -70,9 +70,8 @@ App::App(Snapshot * snapshot) :
 {
 }
 
-NestedMenuController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+NestedMenuController * App::variableBoxForInputEventHandler() {
   MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
-  varBox->setSender(textInput);
   varBox->lockDeleteEvent(MathVariableBoxController::Page::Sequence);
   return varBox;
 }

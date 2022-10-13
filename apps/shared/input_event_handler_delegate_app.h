@@ -10,8 +10,8 @@ namespace Shared {
 class InputEventHandlerDelegateApp : public Escher::App, public Escher::InputEventHandlerDelegate {
 public:
   virtual ~InputEventHandlerDelegateApp() = default;
-  Escher::Toolbox * toolboxForInputEventHandler(Escher::InputEventHandler * textInput) override;
-  Escher::NestedMenuController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
+  Escher::Toolbox * toolboxForInputEventHandler() override;
+  Escher::NestedMenuController * variableBoxForInputEventHandler() override;
   bool handleEvent(Ion::Events::Event event) override;
   void storeValue(const char * text) override;
   bool isStoreMenuOpen();

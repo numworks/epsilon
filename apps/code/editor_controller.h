@@ -32,7 +32,7 @@ public:
   bool textAreaDidReceiveEvent(Escher::TextArea * textArea, Ion::Events::Event event) override;
 
   /* InputEventHandlerDelegate */
-  VariableBoxController * variableBoxForInputEventHandler(Escher::InputEventHandler * textInput) override;
+  VariableBoxController * variableBoxForInputEventHandler() override;
 
 private:
   void cleanStorageEmptySpace();

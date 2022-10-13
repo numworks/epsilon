@@ -106,11 +106,11 @@ void App::willExitResponderChain(Responder * nextFirstResponder) {
   m_menuController.willExitApp();
 }
 
-Toolbox * App::toolboxForInputEventHandler(InputEventHandler * textInput) {
+Toolbox * App::toolboxForInputEventHandler() {
   return &m_toolbox;
 }
 
-VariableBoxController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+VariableBoxController * App::variableBoxForInputEventHandler() {
   return &m_variableBoxController;
 }
 

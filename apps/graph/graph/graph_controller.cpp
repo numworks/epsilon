@@ -42,6 +42,14 @@ void GraphController::didBecomeFirstResponder() {
   refreshPointsOfInterest();
 }
 
+bool GraphController::handleZoom(Ion::Events::Event event) {
+  bool res = FunctionGraphController::handleZoom(event);
+  if (res) {
+    refreshPointsOfInterest();
+  }
+  return res;
+}
+
 bool GraphController::defaultRangeIsNormalized() const {
   return functionStore()->displaysFunctionsToNormalize();
 }

@@ -1,46 +1,45 @@
-#ifndef GRAPH_POINTS_OF_INTEREST_LIST
-#define GRAPH_POINTS_OF_INTEREST_LIST
+#ifndef GRAPH_POINTS_OF_INTEREST_CACHE
+#define GRAPH_POINTS_OF_INTEREST_CACHE
 
 #include <apps/shared/range_1D.h>
-#include <poincare/list.h>
 #include <poincare/point_of_interest.h>
 #include <ion/storage/record.h>
 
 namespace Graph {
 
-class PointsOfInterestList {
+class PointsOfInterestCache {
 public:
-  PointsOfInterestList() : m_start(NAN), m_end(NAN) {}
+  PointsOfInterestCache() : m_start(NAN), m_end(NAN) {}
 
   bool isUpToDate() const { return m_record.checksum() == m_checksum; }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   Shared::Range1D setBoundsAndCompute(float start, float end);
-  Poincare::PointOfInterest pointAtIndex(int i) const;
-  Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None) const;
+  Poincare::PointOfInterest<double> pointAtIndex(int i) const { return m_list.pointAtIndex(i); }
+  Poincare::PointOfInterest<double> firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None) const;
 
   /* The following classes and methods are used to iterate other a certain type
    * of points of interest. */
   class Iterator {
   public:
-    Iterator(int index, const PointsOfInterestList * list, Poincare::Solver<double>::Interest interest) : m_index(index), m_list(list), m_interest(interest) {}
+    Iterator(int index, const PointsOfInterestCache * list, Poincare::Solver<double>::Interest interest) : m_index(index), m_list(list), m_interest(interest) {}
     Iterator & operator++();
-    Poincare::PointOfInterest operator*() { return m_list->pointAtIndex(m_index); }
+    Poincare::PointOfInterest<double> operator*() { return m_list->pointAtIndex(m_index); }
     bool operator!=(const Iterator & other) const { return m_index != other.m_index; }
 
   private:
     int m_index;
-    const PointsOfInterestList * m_list;
+    const PointsOfInterestCache * m_list;
     Poincare::Solver<double>::Interest m_interest;
   };
 
   class Filter {
   public:
-    Filter(const PointsOfInterestList * list, Poincare::Solver<double>::Interest interest) : m_list(list), m_interest(interest) {}
+    Filter(const PointsOfInterestCache * list, Poincare::Solver<double>::Interest interest) : m_list(list), m_interest(interest) {}
     Iterator begin() const { return ++Iterator(-1, m_list, m_interest); }
-    Iterator end() const { return Iterator(m_list->m_list.numberOfChildren(), m_list, m_interest); }
+    Iterator end() const { return Iterator(m_list->m_list.numberOfPoints(), m_list, m_interest); }
 
   private:
-    const PointsOfInterestList * m_list;
+    const PointsOfInterestCache * m_list;
     Poincare::Solver<double>::Interest m_interest;
   };
 
@@ -55,7 +54,7 @@ private:
   uint32_t m_checksum;
   float m_start;
   float m_end;
-  Poincare::List m_list;
+  Poincare::PointsOfInterestList<double> m_list;
 };
 
 }

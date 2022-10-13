@@ -12,9 +12,9 @@ bool InputEventHandler::handleBoxEvent(Ion::Events::Event event) {
   }
   NestedMenuController * box = nullptr;
   if (event == Ion::Events::Toolbox) {
-    box = m_inputEventHandlerDelegate->toolboxForInputEventHandler();
+    box = m_inputEventHandlerDelegate->toolbox();
   } else if (event == Ion::Events::Var) {
-    box = m_inputEventHandlerDelegate->variableBoxForInputEventHandler();
+    box = m_inputEventHandlerDelegate->variableBox();
   }
   if (box) {
     box->setSender(this);

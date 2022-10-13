@@ -42,8 +42,8 @@ public:
   void layoutFieldDidChangeSize(LayoutField * layoutField) override;
 
   /* InputEventHandlerDelegate */
-  Toolbox * toolboxForInputEventHandler() override;
-  NestedMenuController * variableBoxForInputEventHandler() override;
+  Toolbox * toolbox() override;
+  NestedMenuController * variableBox() override;
 private:
   class ExpressionFieldController : public ViewController {
   public:

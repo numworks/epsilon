@@ -21,7 +21,7 @@ public:
   const char * title() override { return I18n::translate(I18n::Message::SequenceTab); }
   int numberOfExpressionRows() const override;
   KDCoordinate expressionRowHeight(int j) override;
-  Escher::Toolbox * toolboxForInputEventHandler() override;
+  Escher::Toolbox * toolbox() override;
   void selectPreviousNewSequenceCell();
   void editExpression(int sequenceDefinitionIndex, Ion::Events::Event event);
   /* ViewController */

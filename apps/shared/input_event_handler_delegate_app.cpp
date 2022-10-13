@@ -15,11 +15,11 @@ InputEventHandlerDelegateApp::InputEventHandlerDelegateApp(Snapshot * snapshot, 
 {
 }
 
-Toolbox * InputEventHandlerDelegateApp::toolboxForInputEventHandler() {
+Toolbox * InputEventHandlerDelegateApp::toolbox() {
   return AppsContainer::sharedAppsContainer()->mathToolbox();
 }
 
-NestedMenuController * InputEventHandlerDelegateApp::variableBoxForInputEventHandler() {
+NestedMenuController * InputEventHandlerDelegateApp::variableBox() {
   MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
   varBox->lockDeleteEvent(MathVariableBoxController::Page::RootMenu);
   return varBox;

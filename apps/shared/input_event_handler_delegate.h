@@ -8,8 +8,8 @@ namespace Shared {
 
 class InputEventHandlerDelegate : public Escher::InputEventHandlerDelegate {
 public:
-  Escher::Toolbox * toolboxForInputEventHandler() override { return inputEventHandlerDelegateApp()->toolboxForInputEventHandler(); }
-  Escher::NestedMenuController * variableBoxForInputEventHandler() override { return inputEventHandlerDelegateApp()->variableBoxForInputEventHandler(); }
+  Escher::Toolbox * toolbox() override { return inputEventHandlerDelegateApp()->toolbox(); }
+  Escher::NestedMenuController * variableBox() override { return inputEventHandlerDelegateApp()->variableBox(); }
 private:
   InputEventHandlerDelegateApp * inputEventHandlerDelegateApp() const {
     return static_cast<InputEventHandlerDelegateApp *>(Escher::Container::activeApp());

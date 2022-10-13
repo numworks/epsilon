@@ -40,15 +40,6 @@ void VectorListController::setExpression(Poincare::Expression e) {
     preferences->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
   }
 
-  Context * context = App::app()->localContext();
-  ExpressionNode::ReductionContext reductionContext(
-    context,
-    preferences->complexFormat(),
-    preferences->angleUnit(),
-    GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
-    ExpressionNode::ReductionTarget::SystemForApproximation,
-    ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-
   setShowIllustration(false);
 
   assert(m_expression.type() == ExpressionNode::Type::Matrix);
@@ -59,11 +50,15 @@ void VectorListController::setExpression(Poincare::Expression e) {
   size_t index = 0;
   size_t messageIndex = 0;
 
+  Context * context = App::app()->localContext();
+  constexpr static ExpressionNode::ReductionTarget k_target = ExpressionNode::ReductionTarget::SystemForApproximation;
+  constexpr static ExpressionNode::SymbolicComputation k_symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
   // 1. Vector norm
-  Expression norm = VectorNorm::Builder(m_expression).cloneAndReduce(reductionContext);
+  Expression norm = VectorNorm::Builder(m_expression);
+  PoincareHelpers::CloneAndReduce(&norm, context, k_target, k_symbolicComputation);
   m_indexMessageMap[index] = messageIndex++;
   Layout exact = getLayoutFromExpression(norm, context, preferences);
-  Expression approximatedNorm = norm.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit());
+  Expression approximatedNorm = PoincareHelpers::Approximate<double>(norm, context);
   Layout approximated =  getLayoutFromExpression(approximatedNorm, context, preferences);
   m_exactLayouts[index] = approximated.isIdenticalTo(exact) ? Layout() : exact;
   m_approximatedLayouts[index] = approximated;
@@ -72,22 +67,23 @@ void VectorListController::setExpression(Poincare::Expression e) {
   if (!norm.isUndefined() && approximatedNorm.isNull(context) == TrinaryBoolean::False) {
     // 2. Normalized vector
     m_indexMessageMap[index] = messageIndex++;
-    Expression normalized = Division::Builder(m_expression, norm).cloneAndReduce(reductionContext);
+    Expression normalized = Division::Builder(m_expression, norm);
+    PoincareHelpers::CloneAndReduce(&normalized, context, k_target, k_symbolicComputation);
     assert(normalized.type() == ExpressionNode::Type::Matrix);
     m_layouts[index++] = getLayoutFromExpression(normalized, context, preferences);
     if (is2D) {
       // 3. Angle with x-axis
       Expression x = static_cast<Matrix &>(vector).matrixChild(0, 0);
       Expression y = static_cast<Matrix &>(vector).matrixChild(isColumn ? 1 : 0, isColumn ? 0 : 1);
-      float xApproximation = x.approximateToScalar<float>(context, preferences->complexFormat(), preferences->angleUnit());
-      float yApproximation = y.approximateToScalar<float>(context, preferences->complexFormat(), preferences->angleUnit());
+      float xApproximation = PoincareHelpers::ApproximateToScalar<float>(x, context);
+      float yApproximation = PoincareHelpers::ApproximateToScalar<float>(y, context);
       m_model.setVector(xApproximation, yApproximation);
       illustrationCell()->reloadCell();
       x = static_cast<Matrix &>(normalized).matrixChild(0, 0);
       y = static_cast<Matrix &>(normalized).matrixChild(isColumn ? 1 : 0, isColumn ? 0 : 1);
       setShowIllustration(xApproximation != 0.f || yApproximation != 0.f);
       Expression angle = ArcCosine::Builder(x);
-      if (y.isPositive(reductionContext.context()) == TrinaryBoolean::False) {
+      if (y.isPositive(context) == TrinaryBoolean::False) {
         angle = Subtraction::Builder(Multiplication::Builder(Rational::Builder(2), Poincare::Constant::Builder("π")), angle);
       }
       m_indexMessageMap[index] = messageIndex++;

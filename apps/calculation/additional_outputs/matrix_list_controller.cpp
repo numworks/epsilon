@@ -32,14 +32,6 @@ void MatrixListController::setExpression(Poincare::Expression e) {
   }
 
   Context * context = App::app()->localContext();
-  ExpressionNode::ReductionContext reductionContext(
-    context,
-    preferences->complexFormat(),
-    preferences->angleUnit(),
-    GlobalPreferences::sharedGlobalPreferences()->unitFormat(),
-    ExpressionNode::ReductionTarget::SystemForApproximation,
-    ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
-
   // The expression must be reduced to call methods such as determinant or trace
   assert(m_expression.type() == ExpressionNode::Type::Matrix);
 
@@ -51,7 +43,8 @@ void MatrixListController::setExpression(Poincare::Expression e) {
     /* Determinant is reduced so that a null determinant can be detected.
      * However, some exceptions remain such as cos(x)^2+sin(x)^2-1 which will
      * not be reduced to a rational, but will be null in theory. */
-    Expression determinant = Determinant::Builder(m_expression).cloneAndReduce(reductionContext);
+    Expression determinant = Determinant::Builder(m_expression);
+    PoincareHelpers::CloneAndReduce(&determinant, context, ExpressionNode::ReductionTarget::SystemForApproximation, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     m_indexMessageMap[index] = messageIndex++;
     m_layouts[index++] = getLayoutFromExpression(determinant, context, preferences);
     // 2. Matrix inverse if invertible matrix

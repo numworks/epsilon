@@ -141,8 +141,8 @@ const Expression GlobalContext::expressionForSequence(const SymbolAbstract & sym
   Sequence seq(r);
   Expression rank = symbol.childAtIndex(0).clone();
   bool rankIsInteger = false;
-  rank = rank.cloneAndSimplify(ExpressionNode::ReductionContext(ctx, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::SystemForApproximation));
-  double rankValue = rank.approximateToScalar<double>(ctx, Poincare::Preferences::sharedPreferences()->complexFormat(), Poincare::Preferences::sharedPreferences()->angleUnit());
+  PoincareHelpers::CloneAndSimplify(&rank, ctx, ExpressionNode::ReductionTarget::SystemForApproximation);
+  double rankValue = PoincareHelpers::ApproximateToScalar<double>(rank, ctx);
   if (rank.type() == ExpressionNode::Type::Rational) {
     Rational n = static_cast<Rational &>(rank);
     rankIsInteger = n.isInteger();

@@ -94,7 +94,7 @@ App::App(Snapshot * snapshot) :
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader, Escher::StackViewController::Style::WhiteUniform),
   m_valuesController(&m_valuesAlternateEmptyViewController, this, &m_valuesHeader, &m_functionParameterController),
-  m_functionParameterController(this, I18n::Message::FunctionColor, I18n::Message::DeleteExpression, this, &m_graphController, &m_valuesController),
+  m_functionParameterController(this, I18n::Message::FunctionColor, I18n::Message::DeleteExpression, &m_inputViewController, &m_graphController, &m_valuesController),
   m_valuesAlternateEmptyViewController(&m_valuesHeader, &m_valuesController, &m_valuesController),
   m_valuesHeader(&m_valuesStackViewController, &m_valuesAlternateEmptyViewController, &m_valuesController),
   m_valuesStackViewController(&m_tabViewController, &m_valuesHeader, Escher::StackViewController::Style::WhiteUniform),
@@ -113,9 +113,8 @@ CodePoint App::XNT() {
   return ContinuousFunction::k_cartesianSymbol;
 }
 
-NestedMenuController * App::variableBoxForInputEventHandler(InputEventHandler * textInput) {
+NestedMenuController * App::variableBoxForInputEventHandler() {
   MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
-  varBox->setSender(textInput);
   varBox->lockDeleteEvent(MathVariableBoxController::Page::Function);
   return varBox;
 }

@@ -59,7 +59,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
   return std::max<KDCoordinate>(defaultHeight, sequenceHeight + 2*k_expressionCellVerticalMargin);
 }
 
-Toolbox * ListController::toolboxForInputEventHandler(InputEventHandler * textInput) {
+Toolbox * ListController::toolboxForInputEventHandler() {
   // Set extra cells
   int recurrenceDepth = -1;
   int row = selectedRow();
@@ -68,8 +68,6 @@ Toolbox * ListController::toolboxForInputEventHandler(InputEventHandler * textIn
     recurrenceDepth = sequence->numberOfElements() - 1;
   }
   m_sequenceToolbox.buildExtraCellsLayouts(sequence->fullName(), recurrenceDepth);
-  // Set sender
-  m_sequenceToolbox.setSender(textInput);
   return &m_sequenceToolbox;
 }
 

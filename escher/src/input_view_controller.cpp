@@ -101,12 +101,12 @@ void InputViewController::layoutFieldDidChangeSize(LayoutField * layoutField) {
   }
 }
 
-Toolbox * InputViewController::toolboxForInputEventHandler(InputEventHandler * handler) {
-  return m_inputEventHandlerDelegate->toolboxForInputEventHandler(handler);
+Toolbox * InputViewController::toolboxForInputEventHandler() {
+  return m_inputEventHandlerDelegate->toolboxForInputEventHandler();
 }
 
-NestedMenuController * InputViewController::variableBoxForInputEventHandler(InputEventHandler * handler) {
-  return m_inputEventHandlerDelegate->variableBoxForInputEventHandler(handler);
+NestedMenuController * InputViewController::variableBoxForInputEventHandler() {
+  return m_inputEventHandlerDelegate->variableBoxForInputEventHandler();
 }
 
 bool InputViewController::inputViewDidFinishEditing() {

@@ -145,6 +145,7 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
 /* ViewController */
 
 void ListController::viewWillAppear() {
+  resetMemoization(); // A sequence could have been deleted
   ExpressionModelListController::viewWillAppear();
   computeTitlesColumnWidth();
 }

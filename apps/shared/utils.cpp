@@ -1,28 +1,12 @@
 #include "utils.h"
 #include <apps/exam_mode_configuration.h>
 #include <poincare/unit.h>
-#include "poincare_helpers.h"
 
 using namespace Poincare;
 
 namespace Shared {
 
 namespace Utils {
-
-template <class T>
-T ValueOfFloatAsDisplayed(T t, int precision, Poincare::Context * context) {
-  assert(precision <= PrintFloat::k_numberOfStoredSignificantDigits);
-  constexpr size_t bufferSize = PrintFloat::charSizeForFloatsWithPrecision(PrintFloat::k_numberOfStoredSignificantDigits);
-  char buffer[bufferSize];
-  // Get displayed value
-  size_t numberOfChar = PoincareHelpers::ConvertFloatToText<T>(t, buffer, bufferSize, precision);
-  assert(numberOfChar <= bufferSize);
-  // Silence compiler warnings for assert
-  (void) numberOfChar;
-  // Extract displayed value
-  return PoincareHelpers::ParseAndSimplifyAndApproximateToScalar<T>(buffer, context);
-}
-
 
 bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context) {
     // Exact output with remaining dependency are not displayed to avoid 2 ≈ undef
@@ -68,9 +52,6 @@ bool ShouldOnlyDisplayExactOutput(Poincare::Expression input) {
   return input.type() == ExpressionNode::Type::Store
     && input.childAtIndex(1).type() == ExpressionNode::Type::Function;
 }
-
-template float ValueOfFloatAsDisplayed<float>(float t, int precision, Poincare::Context * context);
-template double ValueOfFloatAsDisplayed<double>(double t, int precision, Poincare::Context * context);
 
 }
 

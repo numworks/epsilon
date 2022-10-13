@@ -502,7 +502,7 @@ void PythonTextArea::addAutocompletion(int index) {
 
   // First load variables and functions that complete the textToAutocomplete
   const int scriptIndex = m_contentView.pythonDelegate()->menuController()->editedScriptIndex();
-  m_contentView.pythonDelegate()->variableBoxController()->loadFunctionsAndVariables(scriptIndex, autocompletionTokenBeginning, autocompletionLocation - autocompletionTokenBeginning);
+  m_contentView.pythonDelegate()->variableBox()->loadFunctionsAndVariables(scriptIndex, autocompletionTokenBeginning, autocompletionLocation - autocompletionTokenBeginning);
 
   addAutocompletionTextAtIndex(index);
 }
@@ -518,7 +518,7 @@ bool PythonTextArea::addAutocompletionTextAtIndex(int nextIndex, int * currentIn
   }
   assert(type == AutocompletionType::EndOfIdentifier);
   (void)type; // Silence warnings
-  VariableBoxController * varBox = m_contentView.pythonDelegate()->variableBoxController();
+  VariableBoxController * varBox = m_contentView.pythonDelegate()->variableBox();
   int textToInsertLength = 0;
   bool addParentheses = false;
   const char * textToInsert = varBox->autocompletionAlternativeAtIndex(autocompletionLocation - autocompletionTokenBeginning, &textToInsertLength, &addParentheses, nextIndex, currentIndexToUpdate);
@@ -565,8 +565,8 @@ void PythonTextArea::acceptAutocompletion(bool moveCursorToEndOfAutocompletion) 
 
   removeAutocompletion();
 
-  m_contentView.pythonDelegate()->variableBoxController()->setSender(this);
-  m_contentView.pythonDelegate()->variableBoxController()->insertAutocompletionResultAtIndex(m_autocompletionResultIndex);
+  m_contentView.pythonDelegate()->variableBox()->setSender(this);
+  m_contentView.pythonDelegate()->variableBox()->insertAutocompletionResultAtIndex(m_autocompletionResultIndex);
 
   // insertAutocompletionResultAtIndex already added the autocompletion
 

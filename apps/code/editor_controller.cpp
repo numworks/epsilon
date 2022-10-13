@@ -124,7 +124,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
 }
 
 VariableBoxController * EditorController::variableBox() {
-  VariableBoxController * varBox = App::app()->variableBoxController();
+  VariableBoxController * varBox = App::app()->variableBox();
   // Subtitle display status must be set before as it alter loaded node order
   varBox->setDisplaySubtitles(true);
   varBox->setTitle(I18n::Message::Autocomplete);

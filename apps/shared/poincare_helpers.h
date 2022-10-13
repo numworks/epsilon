@@ -91,7 +91,7 @@ inline T ApproximateWithValueForSymbol(
   return e.approximateWithValueForSymbol<T>(symbol, x, context, ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context), AngleUnitForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context));
 }
 
-// This method automatically update complex format and angle unit
+// This method automatically updates complex format and angle unit
 template <class T>
 inline T ParseAndSimplifyAndApproximateToScalar(
   const char * text,
@@ -102,7 +102,7 @@ inline T ParseAndSimplifyAndApproximateToScalar(
   return Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<T>(text, context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
 }
 
-// This method automatically update complex format and angle unit
+// This method automatically updates complex format and angle unit
 inline Poincare::Expression ParseAndSimplify(
   const char * text,
   Poincare::Context * context,
@@ -150,7 +150,7 @@ inline void ReduceAndRemoveUnit(
   *e = e->removeUnit(unit);
 }
 
-// This method automatically update complex format and angle unit
+// This method automatically updates complex format and angle unit
 inline void ParseAndSimplifyAndApproximate(
   const char * text,
   Poincare::Expression * simplifiedExpression,

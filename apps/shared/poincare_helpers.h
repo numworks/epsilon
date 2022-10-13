@@ -223,6 +223,21 @@ inline typename Poincare::Coordinate2D<double> NextIntersection(
   return e.nextIntersection(symbol, start, max, context, ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context), AngleUnitForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context), expression, relativePrecision, minimalStep, maximalStep);
 }
 
+// Return the nearest number from t's representation with given precision.
+template <class T>
+inline T ValueOfFloatAsDisplayed(T t, int precision, Poincare::Context * context) {
+  assert(precision <= Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+  constexpr static size_t bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
+  char buffer[bufferSize];
+  // Get displayed value
+  size_t numberOfChar = ConvertFloatToText<T>(t, buffer, bufferSize, precision);
+  assert(numberOfChar <= bufferSize);
+  // Silence compiler warnings for assert
+  (void) numberOfChar;
+  // Extract displayed value
+  return ParseAndSimplifyAndApproximateToScalar<T>(buffer, context);
+}
+
 }
 
 }

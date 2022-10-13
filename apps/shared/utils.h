@@ -7,10 +7,6 @@ namespace Shared {
 
 namespace Utils {
 
-template <class T>
-// Return the nearest number from t's representation with given precision.
-T ValueOfFloatAsDisplayed(T t, int precision, Poincare::Context * context);
-
 bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context);
 bool ShouldOnlyDisplayExactOutput(Poincare::Expression input);
 

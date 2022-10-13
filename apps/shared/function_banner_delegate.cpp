@@ -1,6 +1,6 @@
 #include "function_banner_delegate.h"
 #include <ion/unicode/utf8_decoder.h>
-#include "utils.h"
+#include "poincare_helpers.h"
 
 using namespace Poincare;
 
@@ -38,7 +38,7 @@ double FunctionBannerDelegate::getValueDisplayedOnBanner(double t, Poincare::Con
     return 0.0;
   }
   // Round to displayed value
-  double displayedValue = Utils::ValueOfFloatAsDisplayed<double>(t, significantDigits, context);
+  double displayedValue = PoincareHelpers::ValueOfFloatAsDisplayed<double>(t, significantDigits, context);
   // Return displayed value if difference from t is under deltaThreshold
   return std::fabs(displayedValue-t) < deltaThreshold ? displayedValue : t;
 }

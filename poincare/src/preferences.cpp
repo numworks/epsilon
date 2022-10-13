@@ -84,23 +84,19 @@ Preferences::AngleUnit Preferences::UpdatedAngleUnitWithExpressionInput(AngleUni
     },
     context,
     ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, static_cast<void*>(&angleInformations));
-  if (forceChange) { *forceChange = false; }
-  if (angleInformations.hasTrigonometry) {
-    return angleUnit;
+
+  bool forceChangeResult = false;
+  Preferences::AngleUnit result = angleUnit;
+  if (!angleInformations.hasTrigonometry && (angleInformations.hasDegrees + angleInformations.hasRadians + angleInformations.hasGradians == 1))
+  {
+    // Exactly one among hasDegree, hasRadians and hasGradians is true
+    forceChangeResult = true;
+    result = angleInformations.hasDegrees ? Preferences::AngleUnit::Degree : (angleInformations.hasGradians ? Preferences::AngleUnit::Gradian : Preferences::AngleUnit::Radian);
   }
-  if (angleInformations.hasDegrees && !angleInformations.hasGradians && !angleInformations.hasRadians) {
-    if (forceChange) { *forceChange = true; }
-    return Preferences::AngleUnit::Degree;
+  if (forceChange) {
+    *forceChange = forceChangeResult;
   }
-  if (!angleInformations.hasDegrees && angleInformations.hasGradians && !angleInformations.hasRadians) {
-    if (forceChange) { *forceChange = true; }
-    return Preferences::AngleUnit::Gradian;
-  }
-  if (!angleInformations.hasDegrees && !angleInformations.hasGradians && angleInformations.hasRadians) {
-    if (forceChange) { *forceChange = true; }
-    return Preferences::AngleUnit::Radian;
-  }
-  return angleUnit;
+  return result;
 }
 
 void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {

@@ -79,8 +79,12 @@ QUIZ_CASE(graph_function_plot_type) {
     assert_check_function_properties("2-y^2>log(x)", ContinuousFunction::PlotType::Unhandled);
     assert_check_function_properties("x*y^2=x", ContinuousFunction::PlotType::Unhandled);
     assert_check_function_properties("y=i*x+1", ContinuousFunction::PlotType::Unhandled);
+
     // Updated complex format
     assert(Poincare::Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Cartesian);
+    assert_check_function_properties("y=(√(-1))^2", ContinuousFunction::PlotType::HorizontalLine);
+    assert_check_function_properties("y=(i)^2", ContinuousFunction::PlotType::HorizontalLine);
+    assert_check_function_properties("f(x)=im(i*x+1)", ContinuousFunction::PlotType::Cartesian);
     Poincare::Preferences::sharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Real);
     assert_check_function_properties("y=(√(-1))^2", ContinuousFunction::PlotType::Unhandled);
     assert_check_function_properties("y=(i)^2", ContinuousFunction::PlotType::HorizontalLine);

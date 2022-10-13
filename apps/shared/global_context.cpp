@@ -163,20 +163,13 @@ Ion::Storage::Record::ErrorStatus GlobalContext::SetExpressionForActualSymbol(co
   PoincareHelpers::CloneAndSimplify(&expressionToStore, context, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   // Do not store exact derivative, etc.
   if (Utils::ShouldOnlyDisplayApproximation(expression, expressionToStore, context)) {
-    if (!expressionToStore.hasUnit()) {
-      /* If an expression has units, it's already approximated during
-       * beautification and will return undef when re-Approximated */
-      expressionToStore = PoincareHelpers::Approximate<double>(expressionToStore, context);
-    } else if (expressionToStore.hasPureAngleUnit(true)) {
-      /* If an expression has only angle units, it's not approximated
-       * during beautification but will still return undef if approximated
-       * the classic way. So we need to call a special approximation function.
-       * */
-      Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
-      Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionToStore, context);
-      Poincare::Preferences::AngleUnit angleUnit = Poincare::Preferences::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), expressionToStore, context);
-      expressionToStore = expressionToStore.approximateExpressionWithUnits<double>(Poincare::ExpressionNode::ReductionContext(context, complexFormat, angleUnit, GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, Poincare::ExpressionNode::UnitConversion::Default));
-    }
+    /* "approximateKeepingUnits" is called because the expression might contain
+     * units, and juste calling "approximate" would return undef
+     */
+    Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
+    Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionToStore, context);
+    Poincare::Preferences::AngleUnit angleUnit = Poincare::Preferences::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), expressionToStore, context);
+    expressionToStore = expressionToStore.approximateKeepingUnits<double>(Poincare::ExpressionNode::ReductionContext(context, complexFormat, angleUnit, GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, Poincare::ExpressionNode::UnitConversion::Default));
   }
   ExpressionNode::Type type = expressionToStore.type();
   const char * extension;

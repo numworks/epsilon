@@ -58,7 +58,7 @@ public:
   bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
 
   // InputEventHandlerDelegate
-  VariableBoxController * variableBoxForInputEventHandler() override;
+  VariableBoxController * variableBox() override;
 
   // MicroPython::ExecutionEnvironment
   Escher::ViewController * sandbox() override { return &m_sandboxController; }

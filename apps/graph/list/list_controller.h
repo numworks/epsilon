@@ -36,7 +36,7 @@ public:
   // ExpressionModelListController
   KDCoordinate expressionRowHeight(int j) override;
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
-  FunctionToolbox * toolboxForInputEventHandler() override;
+  FunctionToolbox * toolbox() override;
   Shared::ListParameterController * parameterController() override;
 private:
   constexpr static int k_functionCellType = 0;

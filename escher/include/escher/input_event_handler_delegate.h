@@ -9,8 +9,8 @@ class NestedMenuController;
 
 class InputEventHandlerDelegate {
 public:
-  virtual Toolbox * toolboxForInputEventHandler() = 0;
-  virtual NestedMenuController * variableBoxForInputEventHandler() = 0;
+  virtual Toolbox * toolbox()  = 0;
+  virtual NestedMenuController * variableBox() = 0;
 };
 
 }

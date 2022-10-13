@@ -170,7 +170,7 @@ void DomainParameterController::switchToolboxContent(Escher::AbstractTextField *
   } else {
     content = FunctionToolbox::AddedCellsContent::ComparisonOperators;
   }
-  FunctionToolbox * toolbox = App::app()->listController()->toolboxForInputEventHandler();
+  FunctionToolbox * toolbox = App::app()->listController()->toolbox();
   toolbox->setAddedCellsContent(content);
 }
 

@@ -123,7 +123,7 @@ bool EditorController::textAreaDidReceiveEvent(TextArea * textArea, Ion::Events:
   return false;
 }
 
-VariableBoxController * EditorController::variableBoxForInputEventHandler() {
+VariableBoxController * EditorController::variableBox() {
   VariableBoxController * varBox = App::app()->variableBoxController();
   // Subtitle display status must be set before as it alter loaded node order
   varBox->setDisplaySubtitles(true);

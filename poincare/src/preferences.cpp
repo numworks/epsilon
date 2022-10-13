@@ -27,33 +27,24 @@ Preferences * Preferences::sharedPreferences() {
   return &preferences;
 }
 
-Preferences Preferences::SharedPreferencesClone() {
+Preferences Preferences::PreferencesClone(Preferences * preferences) {
   Preferences result = Preferences();
-  Preferences * shared = sharedPreferences();
-  result.setAngleUnit(shared->angleUnit());
-  result.setDisplayMode(shared->displayMode());
-  result.setEditionMode(shared->editionMode());
-  result.setComplexFormat(shared->complexFormat());
-  result.setCombinatoricSymbols(shared->combinatoricSymbols());
-  result.setNumberOfSignificantDigits(shared->numberOfSignificantDigits());
-  result.enableMixedFractions(static_cast<MixedFractions>(shared->mixedFractionsAreEnabled()));
-  result.setExamMode(shared->examMode(), shared->pressToTestParams());
+  result.setAngleUnit(preferences->angleUnit());
+  result.setDisplayMode(preferences->displayMode());
+  result.setEditionMode(preferences->editionMode());
+  result.setComplexFormat(preferences->complexFormat());
+  result.setCombinatoricSymbols(preferences->combinatoricSymbols());
+  result.setNumberOfSignificantDigits(preferences->numberOfSignificantDigits());
+  result.enableMixedFractions(static_cast<MixedFractions>(preferences->mixedFractionsAreEnabled()));
+  result.setExamMode(preferences->examMode(), preferences->pressToTestParams());
   return result;
 }
 
-
-Preferences Preferences::UpdatedSharedPreferencesWithComplexFormatAndAngleUnit(ComplexFormat complexFormat, AngleUnit angleUnit) {
-  Preferences result = SharedPreferencesClone();
+Preferences Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(ComplexFormat complexFormat, AngleUnit angleUnit, Preferences * preferences) {
+  Preferences result = PreferencesClone(preferences);
   result.setComplexFormat(complexFormat);
   result.setAngleUnit(angleUnit);
   return result;
-}
-
-Preferences Preferences::UpdatedSharedPreferencesWithExpressionInput(Expression e, Context * context) {
-  return UpdatedSharedPreferencesWithComplexFormatAndAngleUnit(
-    UpdatedComplexFormatWithExpressionInput(sharedPreferences()->complexFormat(), e, context),
-    UpdatedAngleUnitWithExpressionInput(sharedPreferences()->angleUnit(), e, context)
-  );
 }
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(ComplexFormat complexFormat, const Expression & exp, Context * context) {

@@ -489,10 +489,6 @@ const UnitNode::Representative * UnitNode::AngleRepresentative::standardRepresen
     return &Unit::k_angleRepresentatives[Unit::k_gradianRepresentativeIndex];
   }
   assert(reductionContext.angleUnit() == Poincare::Preferences::AngleUnit::Degree);
-  // Choose between degree and its subunits
-  if (value == 0.0) {
-    return &Unit::k_angleRepresentatives[Unit::k_degreeRepresentativeIndex];
-  }
   return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_arcSecondRepresentativeIndex, 3, prefix);
 }
 

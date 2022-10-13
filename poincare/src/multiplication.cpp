@@ -506,12 +506,9 @@ Expression Multiplication::shallowBeautify(const ExpressionNode::ReductionContex
     if (units.isPureAngleUnit()) {
       if (unitConversionMode == ExpressionNode::UnitConversion::Default) {
         // Pure angle unit is the only unit allowed to be evaluated exactly
-        const UnitNode::Representative * angleUnit = static_cast<Unit &>(units).representative();
         double value = self.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
-        const UnitNode::Prefix * prefix = UnitNode::Prefix::EmptyPrefix();
-        const UnitNode::Representative * representative = angleUnit->standardRepresentative(value, 1.0, reductionContext, &prefix);
-        assert(representative);
-        Expression toUnit = Unit::Builder(representative, prefix);
+        Expression toUnit = units.clone();
+        Unit::ChooseBestRepresentativeAndPrefixForValue(toUnit, &value, reductionContext);
         // Divide the left member by the new unit
         Expression division = Division::Builder(Multiplication::Builder(self.clone(), units), toUnit.clone());
         Expression divisionUnit;

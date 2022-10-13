@@ -53,10 +53,6 @@ View * TableCell::subviewAtIndex(int index) {
   return  const_cast<View *>(accessoryView());
 }
 
-static KDCoordinate cropIfOverflow(KDCoordinate value, KDCoordinate max) {
-  return std::min(max, value);
-}
-
 void TableCell::layoutSubviews(bool force) {
   /* Apply margins and separators on every side. At this point, we assume cell's
    * frame has been updated to add bottom and right overlapping borders. */
@@ -75,12 +71,12 @@ void TableCell::layoutSubviews(bool force) {
   KDSize thisSubLabelSize = subLabelSize();
   KDSize thisAccessorySize = accessorySize();
 
-  KDCoordinate labelHeight = cropIfOverflow(thisLabelSize.height(), height);
-  KDCoordinate labelWidth = cropIfOverflow(thisLabelSize.width(), width);
-  KDCoordinate subLabelHeight = cropIfOverflow(thisSubLabelSize.height(), height);
-  KDCoordinate subLabelWidth = shouldHideSublabel() ? 0 : cropIfOverflow(thisSubLabelSize.width(), width);
-  KDCoordinate accessoryHeight = cropIfOverflow(thisAccessorySize.height(), height);
-  KDCoordinate accessoryWidth = cropIfOverflow(accessoryMinimalWidth(), width);
+  KDCoordinate labelHeight = std::min(thisLabelSize.height(), height);
+  KDCoordinate labelWidth = std::min(thisLabelSize.width(), width);
+  KDCoordinate subLabelHeight = std::min(thisSubLabelSize.height(), height);
+  KDCoordinate subLabelWidth = shouldHideSublabel() ? 0 : std::min(thisSubLabelSize.width(), width);
+  KDCoordinate accessoryHeight = std::min(thisAccessorySize.height(), height);
+  KDCoordinate accessoryWidth = std::min(accessoryMinimalWidth(), width);
 
   KDRect labelRect = KDRectZero, subLabelRect = KDRectZero, accessoryRect = KDRectZero;
 

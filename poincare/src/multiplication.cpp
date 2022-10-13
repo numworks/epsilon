@@ -517,6 +517,7 @@ Expression Multiplication::shallowBeautify(const ExpressionNode::ReductionContex
         Expression divisionUnit;
         division = division.reduceAndRemoveUnit(reductionContext, &divisionUnit);
         assert(divisionUnit.isUninitialized());
+        division = division.shallowReduce(reductionContext).shallowBeautify(reductionContext);
         result = Multiplication::Builder(division, toUnit);
         assert(!result.isUninitialized());
         self.replaceWithInPlace(result);

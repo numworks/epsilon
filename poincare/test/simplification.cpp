@@ -622,6 +622,12 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("1/_m+1/_km", "1.001×_m^\u0012-1\u0013");
   assert_parsed_expression_simplify_to("10000_kg", "10×_t");
   assert_parsed_expression_simplify_to("1000000_kg", "1×_kt");
+
+  // angle units
+  assert_parsed_expression_simplify_to("ln(2/2)_°", "0×_°", ExpressionNode::ReductionTarget::User, Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("ln(2/2)_rad", "0×_rad");
+  assert_parsed_expression_simplify_to("1×π×_°", "π×_°", ExpressionNode::ReductionTarget::User, Preferences::AngleUnit::Degree);
+  assert_parsed_expression_simplify_to("1×π×_rad", "π×_rad");
 }
 
 QUIZ_CASE(poincare_simplification_power) {

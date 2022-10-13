@@ -1,4 +1,4 @@
-#include "points_of_interest_list.h"
+#include "points_of_interest_cache.h"
 #include "../app.h"
 #include <apps/shared/poincare_helpers.h>
 
@@ -7,19 +7,19 @@ using namespace Shared;
 
 namespace Graph {
 
-// PointsOfInterestList::Iterator
+// PointsOfInterestCache::Iterator
 
-PointsOfInterestList::Iterator & PointsOfInterestList::Iterator::operator++() {
-  int n = m_list->m_list.numberOfChildren();
+PointsOfInterestCache::Iterator & PointsOfInterestCache::Iterator::operator++() {
+  int n = m_list->m_list.numberOfPoints();
   do {
     ++m_index;
   } while (m_interest != Solver<double>::Interest::None && m_index < n && m_list->pointAtIndex(m_index).interest() != m_interest);
   return *this;
 }
 
-// PointsOfInterestList
+// PointsOfInterestCache
 
-Range1D PointsOfInterestList::setBoundsAndCompute(float start, float end) {
+Range1D PointsOfInterestCache::setBoundsAndCompute(float start, float end) {
   assert(start < end);
   assert(!m_record.isNull());
 
@@ -29,11 +29,11 @@ Range1D PointsOfInterestList::setBoundsAndCompute(float start, float end) {
   if (m_checksum != checksum) {
     /* Discard the old results if the  record has changed. */
     m_start = m_end = NAN;
-    if (!m_list.isUninitialized() && m_list.numberOfChildren() > 0) {
+    if (!m_list.isUninitialized() && m_list.numberOfPoints() > 0) {
       dirtyStart = pointAtIndex(0).x();
-      dirtyEnd = pointAtIndex(m_list.numberOfChildren() -1).x();
+      dirtyEnd = pointAtIndex(m_list.numberOfPoints() -1).x();
     }
-    m_list = List::Builder();
+    m_list.init();
   }
 
   float oldStart = m_start, oldEnd = m_end;
@@ -41,7 +41,7 @@ Range1D PointsOfInterestList::setBoundsAndCompute(float start, float end) {
   m_end = end;
 
   if (m_list.isUninitialized()) {
-    m_list = List::Builder();
+    m_list.init();
   } else {
     stripOutOfBounds();
   }
@@ -61,45 +61,35 @@ Range1D PointsOfInterestList::setBoundsAndCompute(float start, float end) {
   return Range1D(dirtyStart, dirtyEnd);
 }
 
-PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
-  assert(!m_list.isUninitialized());
-  assert(0 <= i && i < m_list.numberOfChildren());
-  /* We need to call TreeHandle::childAtIndex instead of
-   * Expression::childAtIndex, since a PointOfInterest is not an Expression. */
-  TreeHandle h = static_cast<const TreeHandle &>(m_list).childAtIndex(i);
-  assert(h.size() == sizeof(PointOfInterestNode));
-  return static_cast<PointOfInterest &>(h);
-}
-
-PointOfInterest PointsOfInterestList::firstPointInDirection(double start, double end, Solver<double>::Interest interest) const {
+PointOfInterest<double> PointsOfInterestCache::firstPointInDirection(double start, double end, Solver<double>::Interest interest) const {
   assert(start != end);
-  PointOfInterest previous(nullptr);
-  for (const PointOfInterest & p : filter(interest)) {
+  PointOfInterest<double> previous(nullptr);
+  for (const PointOfInterest<double> & p : filter(interest)) {
     double x = p.x();
     if (x >= start) {
       if (start > end) {
         break;
       } else if (x > start) {
-        return x < end ? p : PointOfInterest(nullptr);
+        return x < end ? p : PointOfInterest<double>(nullptr);
       }
     }
     previous = p;
   }
-  return (previous.isUninitialized() || previous.x() > end) ? previous : PointOfInterest(nullptr);
+  return (previous.isUninitialized() || previous.x() > end) ? previous : PointOfInterest<double>(nullptr);
 }
 
-void PointsOfInterestList::stripOutOfBounds() {
+void PointsOfInterestCache::stripOutOfBounds() {
   assert(!m_list.isUninitialized());
 
-  for (int i = m_list.numberOfChildren() - 1; i >= 0; i--) {
+  for (int i = m_list.numberOfPoints() - 1; i >= 0; i--) {
     float x = static_cast<float>(pointAtIndex(i).x());
     if (x < m_start || m_end < x) {
-      m_list.removeChildAtIndexInPlace(i);
+      m_list.list().removeChildAtIndexInPlace(i);
     }
   }
 }
 
-void PointsOfInterestList::computeBetween(float start, float end, float * dirtyStart, float * dirtyEnd) {
+void PointsOfInterestCache::computeBetween(float start, float end, float * dirtyStart, float * dirtyEnd) {
   assert(!m_list.isUninitialized());
 
   ContinuousFunctionStore * store = App::app()->functionStore();
@@ -143,14 +133,8 @@ void PointsOfInterestList::computeBetween(float start, float end, float * dirtyS
   }
 }
 
-void PointsOfInterestList::append(double x, double y, Solver<double>::Interest interest, float * dirtyStart, float * dirtyEnd, uint32_t data) {
-  assert(!m_list.isUninitialized());
-  int i = 0;
-  int n = m_list.numberOfChildren();
-  while (i < n && pointAtIndex(i).x() < x) {
-    i++;
-  }
-  m_list.addChildAtIndexInPlace(PointOfInterest::Builder(x, y, interest, data), i, n);
+void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest, float * dirtyStart, float * dirtyEnd, uint32_t data) {
+  m_list.append(x, y, data, interest);
   *dirtyStart = std::min(*dirtyStart, static_cast<float>(x));
   *dirtyEnd = std::max(*dirtyEnd, static_cast<float>(x));
 }

@@ -113,7 +113,7 @@ public:
   void addEmptyTenPowerLayout(Context * context);
   void addFractionLayoutAndCollapseSiblings(Context * context);
   void insertText(const char * text, Context * context, bool forceCursorRightOfText = false, bool forceCursorLeftOfText = false);
-  void addLayoutAndMoveCursor(Layout l, Context * context, bool beautify = true);
+  void addLayoutAndMoveCursor(Layout l, Context * context, bool withinBeautification = false);
   bool showEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(true); }
   bool hideEmptyLayoutIfNeeded() { return privateShowHideEmptyLayoutIfNeeded(false); }
   void performBackspace() { m_layout.deleteBeforeCursor(this); }

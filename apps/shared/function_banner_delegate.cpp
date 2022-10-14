@@ -32,7 +32,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   bannerView()->reload();
 }
 
-double FunctionBannerDelegate::getValueDisplayedOnBanner(double t, Poincare::Context * context, int significantDigits, double deltaThreshold, bool roundToZero) {
+double FunctionBannerDelegate::GetValueDisplayedOnBanner(double t, Poincare::Context * context, int significantDigits, double deltaThreshold, bool roundToZero) {
   if (roundToZero && std::fabs(t) < deltaThreshold) {
     // Round to 0 to avoid rounding to unnecessary low non-zero value.
     return 0.0;

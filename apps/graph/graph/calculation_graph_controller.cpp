@@ -37,7 +37,7 @@ bool CalculationGraphController::handleEnter() {
    * calculation one, highlighting precision errors. To prevent that, cursor is
    * moved to the value displayed on the banner. */
   double t = m_cursor->t();
-  t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, App::app()->localContext(), numberOfSignificantDigits(), curveView()->pixelWidth());
+  t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, App::app()->localContext(), numberOfSignificantDigits(), curveView()->pixelWidth());
   Coordinate2D<double> xy = App::app()->functionStore()->modelForRecord(m_record)->evaluateXYAtParameter(t, App::app()->localContext());
   m_cursor->moveTo(t, xy.x1(), xy.x2());
   return Shared::SimpleInteractiveCurveViewController::handleEnter();

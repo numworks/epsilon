@@ -80,7 +80,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
       double magnitude = std::pow(10.0, Poincare::IEEE754<double>::exponentBase10(pixelWidth));
       t = magnitude * std::round(t / magnitude);
       // Also round t so that f(x) matches f evaluated at displayed x
-      t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, context, Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
+      t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, context, Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
     }
   } else {
     /* If function is not along X or Y, the cursor speed along t should not
@@ -89,7 +89,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     step = (tMax-tMin)/k_definitionDomainDivisor;
     t += dir * step * scrollSpeed;
     // If possible, round t so that f(x) matches f evaluated at displayed x
-    t = FunctionBannerDelegate::getValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences()->numberOfSignificantDigits(), 0.05 * step, true);
+    t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, App::app()->localContext(), Preferences::sharedPreferences()->numberOfSignificantDigits(), 0.05 * step, true);
   }
   // t must have changed
   assert(tCursorPosition != t);

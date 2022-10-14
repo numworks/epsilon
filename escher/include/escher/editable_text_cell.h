@@ -19,13 +19,8 @@ public:
                    float horizontalAlignment = KDContext::k_alignLeft,
                    float verticalAlignment = KDContext::k_alignCenter,
                    KDColor textColor = KDColorBlack,
-                   KDColor = KDColorWhite,
-                   KDCoordinate topMargin = 0,
-                   KDCoordinate rightMargin = 0,
-                   KDCoordinate bottomMargin = 0,
-                   KDCoordinate leftMargin = 0);
+                   KDColor backgroundColor = KDColorWhite);
   TextField * textField();
-  void setMargins(KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
   void setHighlighted(bool highlight) override;
   Responder * responder() override {
     return this;
@@ -45,10 +40,6 @@ private:
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   TextField m_textField;
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
-  KDCoordinate m_topMargin;
-  KDCoordinate m_rightMargin;
-  KDCoordinate m_bottomMargin;
-  KDCoordinate m_leftMargin;
 };
 
 }

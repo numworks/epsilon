@@ -16,18 +16,8 @@ public:
   EditableExpressionCell(Responder * parentResponder = nullptr,
                          InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr,
                          TextFieldDelegate * textDelegate = nullptr,
-                         LayoutFieldDelegate * layoutDelegate = nullptr,
-                         KDFont::Size font = KDFont::Size::Large,
-                         float horizontalAlignment = KDContext::k_alignLeft,
-                         float verticalAlignment = KDContext::k_alignCenter,
-                         KDColor expressionColor = KDColorBlack,
-                         KDColor = KDColorWhite,
-                         KDCoordinate topMargin = 0,
-                         KDCoordinate rightMargin = 0,
-                         KDCoordinate bottomMargin = 0,
-                         KDCoordinate leftMargin = 0);
+                         LayoutFieldDelegate * layoutDelegate = nullptr);
   ExpressionField * expressionField();
-  void setMargins(KDCoordinate topMargin = 0, KDCoordinate rightMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate leftMargin = 0);
   void setHighlighted(bool highlight) override;
   Responder * responder() override {
     return this;
@@ -42,10 +32,6 @@ private:
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   ExpressionField m_expressionField;
   char m_expressionBody[Poincare::PrintFloat::k_maxFloatCharSize];
-  KDCoordinate m_topMargin;
-  KDCoordinate m_rightMargin;
-  KDCoordinate m_bottomMargin;
-  KDCoordinate m_leftMargin;
 };
 
 }

@@ -6,28 +6,16 @@
 
 namespace Escher {
 
-EditableExpressionCell::EditableExpressionCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textDelegate, LayoutFieldDelegate * layoutDelegate,
-   KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor expressionColor, KDColor backgroundColor, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
+EditableExpressionCell::EditableExpressionCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textDelegate, LayoutFieldDelegate * layoutDelegate) :
   HighlightCell(),
   Responder(parentResponder),
-  m_expressionField(this, inputEventHandlerDelegate, textDelegate, layoutDelegate),//m_expressionBody, Poincare::PrintFloat::k_maxFloatCharSize, ExpressionField::maxBufferSize(), inputEventHandlerDelegate, textDelegate, font, horizontalAlignment, verticalAlignment, expressionColor, backgroundColor),
-  m_topMargin(topMargin),
-  m_rightMargin(rightMargin),
-  m_bottomMargin(bottomMargin),
-  m_leftMargin(leftMargin)
+  m_expressionField(this, inputEventHandlerDelegate, textDelegate, layoutDelegate)
 {
   m_expressionBody[0] = 0;
 }
 
 void EditableExpressionCell::drawRect(KDContext * ctx, KDRect rect) const {
   drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
-}
-
-void EditableExpressionCell::setMargins(KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) {
-  m_topMargin = topMargin;
-  m_rightMargin = rightMargin;
-  m_bottomMargin = bottomMargin;
-  m_leftMargin = leftMargin;
 }
 
 ExpressionField * EditableExpressionCell::expressionField() {
@@ -50,10 +38,10 @@ View * EditableExpressionCell::subviewAtIndex(int index) {
 
 void EditableExpressionCell::layoutSubviews(bool force) {
   KDRect cellBounds = bounds();
-  m_expressionField.setFrame(KDRect(cellBounds.x() + m_leftMargin + k_separatorThickness,
-                                    cellBounds.y() + m_topMargin,
-                                    cellBounds.width() - m_leftMargin - m_rightMargin - 2 * k_separatorThickness,
-                                    cellBounds.height() - m_topMargin - m_bottomMargin - k_separatorThickness),
+  m_expressionField.setFrame(KDRect(cellBounds.x() + k_separatorThickness,
+                                    cellBounds.y(),
+                                    cellBounds.width() - 2 * k_separatorThickness,
+                                    cellBounds.height() - k_separatorThickness),
                              force);
 }
 

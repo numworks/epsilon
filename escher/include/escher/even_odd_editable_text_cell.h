@@ -14,11 +14,7 @@ public:
                           TextFieldDelegate * delegate = nullptr,
                           KDFont::Size font = KDFont::Size::Large,
                           float horizontalAlignment = KDContext::k_alignRight,
-                          float verticalAlignment = KDContext::k_alignCenter,
-                          KDCoordinate topMargin = 0,
-                          KDCoordinate rightMargin = 0,
-                          KDCoordinate bottomMargin = 0,
-                          KDCoordinate leftMargin = 0);
+                          float verticalAlignment = KDContext::k_alignCenter);
   EditableTextCell * editableTextCell();
   Responder * responder() override { return this; }
   const char * text() const override { return m_editableCell.text(); }

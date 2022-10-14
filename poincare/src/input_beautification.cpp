@@ -319,6 +319,10 @@ static Layout DeepSearchEmptyLayout(Layout l, int * nSkips) {
 
 Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(Layout layoutToModify, Layout parent, int parenthesisIndexInParent, bool isParameteredExpression) {
   Layout parenthesis = parent.childAtIndex(parenthesisIndexInParent);
+  assert(parenthesis.type() == LayoutNode::Type::ParenthesisLayout);
+  bool rightParenthesisIsTemporary = static_cast<AutocompletedBracketPairLayoutNode *>(parenthesis.node())->isTemporary(AutocompletedBracketPairLayoutNode::Side::Right);
+  // Left parenthesis was just input so it should not be temporary
+  assert(!static_cast<AutocompletedBracketPairLayoutNode *>(parenthesis.node())->isTemporary(AutocompletedBracketPairLayoutNode::Side::Left));
   Layout parametersContainer = parenthesis.childAtIndex(0).type() == LayoutNode::Type::HorizontalLayout ? parenthesis.childAtIndex(0): parenthesis;
   // Replace the empty layouts with the parameters between parentheses
   int currentParameterIndex = 0;
@@ -347,8 +351,15 @@ Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(Layout layoutToMod
         // Too much parameters, cancel beautification
         return Layout();
       }
+      AutocompletedBracketPairLayoutNode * parenthesisParameterContainer = nullptr;
+      if (layoutToReplace.parent().type() == LayoutNode::Type::ParenthesisLayout) {
+        parenthesisParameterContainer = static_cast<AutocompletedBracketPairLayoutNode *>(layoutToReplace.parent().node());
+      }
       if (!currentParameter.isEmpty()) {
         layoutToReplace.replaceWithInPlace(currentParameter);
+      }
+      if (parenthesisParameterContainer) {
+        parenthesisParameterContainer->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, rightParenthesisIsTemporary);
       }
       numberOfParameters++;
       currentParameter = HorizontalLayout::Builder(EmptyLayout::Builder());

@@ -35,7 +35,7 @@ bool SVC_ATTRIBUTES eadk_display_wait_for_vblank() {
   SVC_RETURNING_R0(SVC_DISPLAY_WAIT_FOR_V_BLANK, bool)
 }
 
-// Keyboard
+// Keyboard and Events
 
 eadk_keyboard_state_t SVC_ATTRIBUTES eadk_keyboard_scan() {
   SVC_RETURNING_R0R1(SVC_KEYBOARD_SCAN, eadk_keyboard_state_t)
@@ -43,6 +43,10 @@ eadk_keyboard_state_t SVC_ATTRIBUTES eadk_keyboard_scan() {
 
 eadk_keyboard_state_t SVC_ATTRIBUTES eadk_keyboard_pop_state() {
   SVC_RETURNING_R0R1(SVC_KEYBOARD_POP_STATE, eadk_keyboard_state_t)
+}
+
+eadk_event_t eadk_event_get(int32_t * timeout) {
+  SVC_RETURNING_R0(SVC_EVENTS_GET_EVENT, eadk_event_t)
 }
 
 // Timing

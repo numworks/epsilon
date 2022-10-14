@@ -15,7 +15,6 @@ public:
   bool setChargeState(Ion::Battery::Charge chargeState);
   bool setIsCharging(bool isCharging);
   bool setIsPlugged(bool isPlugged);
-  void drawInsideBatteryLevel(KDContext * ctx, KDCoordinate width, KDColor color) const;
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   constexpr static int k_flashHeight = 8;
@@ -23,6 +22,7 @@ public:
   constexpr static int k_tickHeight = 6;
   constexpr static int k_tickWidth = 8;
 private:
+  void drawInsideBatteryLevel(KDContext * ctx, KDCoordinate width, KDColor color) const;
   constexpr static KDCoordinate k_batteryHeight = 8;
   constexpr static KDCoordinate k_batteryWidth = 15;
   constexpr static KDCoordinate k_elementWidth = 1;

@@ -4,13 +4,13 @@
 
 using namespace Poincare;
 
-void assert_inserted_text_turns_into(const char * textToInsert, Layout generatedLayout, const char * textRightOfInsertedText = "") {
+void assert_inserted_text_turns_into(const char * textToInsert, Layout expectedLayout, const char * textRightOfInsertedText = "") {
   HorizontalLayout horizontalLayout = HorizontalLayout::Builder();
   LayoutCursor cursor(horizontalLayout);
   Shared::GlobalContext context;
   cursor.insertText(textRightOfInsertedText, &context, false, true);
   cursor.insertText(textToInsert, &context);
-  quiz_assert(horizontalLayout.isIdenticalTo(generatedLayout));
+  quiz_assert(horizontalLayout.isIdenticalTo(expectedLayout));
 }
 
 QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
@@ -107,7 +107,7 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
   assert_inserted_text_turns_into(text4, l);
 
   // Correctly beautify pipe key
-  constexpr static const char * text5 = "|3+4|+5+|";
+  constexpr static const char * text5 = "|3+4|+5+|6+7";
   l = HorizontalLayout::Builder({
         AbsoluteValueLayout::Builder(
           HorizontalLayout::Builder({
@@ -119,7 +119,9 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
         CodePointLayout::Builder('+'),
         CodePointLayout::Builder('5'),
         CodePointLayout::Builder('+'),
-        AbsoluteValueLayout::Builder(HorizontalLayout::Builder(EmptyLayout::Builder()))
+        AbsoluteValueLayout::Builder(HorizontalLayout::Builder(CodePointLayout::Builder('6'))),
+        CodePointLayout::Builder('+'),
+        CodePointLayout::Builder('7')
       });
   assert_inserted_text_turns_into(text5, l);
 
@@ -202,7 +204,7 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
   // Test all functions
   constexpr static const char * text10 = "abs(";
   l = HorizontalLayout::Builder({
-    AbsoluteValueLayout::Builder(HorizontalLayout::Builder(EmptyLayout::Builder()))
+    AbsoluteValueLayout::Builder(EmptyLayout::Builder())
   });
   assert_inserted_text_turns_into(text10, l);
 
@@ -214,13 +216,13 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
 
   constexpr static const char * text12 = "ceil(";
   l = HorizontalLayout::Builder({
-    CeilingLayout::Builder(HorizontalLayout::Builder(EmptyLayout::Builder()))
+    CeilingLayout::Builder(EmptyLayout::Builder())
   });
   assert_inserted_text_turns_into(text12, l);
 
   constexpr static const char * text13 = "conj(";
   l = HorizontalLayout::Builder({
-    ConjugateLayout::Builder(HorizontalLayout::Builder(EmptyLayout::Builder()))
+    ConjugateLayout::Builder(EmptyLayout::Builder())
   });
   assert_inserted_text_turns_into(text13, l);
 
@@ -239,25 +241,25 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
 
   constexpr static const char * text16 = "floor(";
   l = HorizontalLayout::Builder({
-    FloorLayout::Builder(HorizontalLayout::Builder(EmptyLayout::Builder()))
+    FloorLayout::Builder(EmptyLayout::Builder())
   });
   assert_inserted_text_turns_into(text16, l);
 
   constexpr static const char * text17 = "norm(";
   l = HorizontalLayout::Builder({
-    VectorNormLayout::Builder(HorizontalLayout::Builder(EmptyLayout::Builder()))
+    VectorNormLayout::Builder(EmptyLayout::Builder())
   });
   assert_inserted_text_turns_into(text17, l);
 
   constexpr static const char * text18 = "root(";
   l = HorizontalLayout::Builder({
-    NthRootLayout::Builder(HorizontalLayout::Builder(EmptyLayout::Builder()), EmptyLayout::Builder())
+    NthRootLayout::Builder(EmptyLayout::Builder(), EmptyLayout::Builder())
   });
   assert_inserted_text_turns_into(text18, l);
 
   constexpr static const char * text19 = "sqrt(";
   l = HorizontalLayout::Builder({
-    NthRootLayout::Builder(HorizontalLayout::Builder(EmptyLayout::Builder()))
+    NthRootLayout::Builder(EmptyLayout::Builder())
   });
   assert_inserted_text_turns_into(text19, l);
 
@@ -286,7 +288,7 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
 
   constexpr static const char * text22bis = "root(,4)";
   l = HorizontalLayout::Builder({
-        NthRootLayout::Builder(HorizontalLayout::Builder(EmptyLayout::Builder()),HorizontalLayout::Builder(CodePointLayout::Builder('4')))
+        NthRootLayout::Builder(EmptyLayout::Builder(),HorizontalLayout::Builder(CodePointLayout::Builder('4')))
       });
   assert_inserted_text_turns_into(text22bis, l);
 
@@ -302,7 +304,7 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
   l = HorizontalLayout::Builder({
     CodePointLayout::Builder(UCodePointGreekSmallLetterPi),
     CodePointLayout::Builder('x'),
-    NthRootLayout::Builder(HorizontalLayout::Builder(EmptyLayout::Builder()))
+    NthRootLayout::Builder(EmptyLayout::Builder())
   });
   assert_inserted_text_turns_into(text24, l);
 
@@ -312,11 +314,11 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
         NthRootLayout::Builder(
           HorizontalLayout::Builder(
             FloorLayout::Builder(
-              HorizontalLayout::Builder(EmptyLayout::Builder())
+              EmptyLayout::Builder()
             ),
             CodePointLayout::Builder('+'),
             ConjugateLayout::Builder(
-              HorizontalLayout::Builder(EmptyLayout::Builder())
+              EmptyLayout::Builder()
             )
           )
         )

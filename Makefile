@@ -86,6 +86,7 @@ include kandinsky/Makefile
 include poincare/Makefile
 include python/Makefile
 include escher/Makefile
+include eadk/Makefile
 # Executable Makefiles
 include apps/Makefile
 include build/struct_layout/Makefile

@@ -119,8 +119,6 @@ public:
   void performBackspace() { m_layout.deleteBeforeCursor(this); }
   void clearLayout();
 
-  // Only implemented and used when testing. Do not use elsewhere.
-  void testAddLayoutAndMoveCursor(Context * context);
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;
 

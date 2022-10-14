@@ -255,8 +255,6 @@ tests_src += $(addprefix poincare/test/,\
   zoom.cpp\
 )
 
-tests_src += poincare/src/layout_cursor_test.cpp
-
 poincare_bench_src = $(addprefix poincare/src/,\
   exception_checkpoint_dummy.cpp \
   helpers.cpp \

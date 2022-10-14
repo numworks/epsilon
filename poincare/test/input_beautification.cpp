@@ -325,15 +325,16 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
 }
 
 typedef void (LayoutCursor::*AddLayoutPointer)(Context * context);
+typedef void (*CursorAddLayout)(LayoutCursor * cursor, Context * context, AddLayoutPointer optionalAddLayoutFunction);
 
-void assert_applybeautification_after_layout_insertion(AddLayoutPointer layoutInsertionFunction) {
+void assert_apply_beautification_after_layout_insertion(CursorAddLayout layoutInsertionFunction, AddLayoutPointer optionalAddLayoutFunction = nullptr) {
   HorizontalLayout horizontalLayout = HorizontalLayout::Builder();
   LayoutCursor cursor(horizontalLayout);
   Shared::GlobalContext context;
   cursor.insertText("pi", &context);
-  (cursor.*layoutInsertionFunction)(&context);
+  (*layoutInsertionFunction)(&cursor, &context, optionalAddLayoutFunction);
   Layout piCodePoint = CodePointLayout::Builder(UCodePointGreekSmallLetterPi);
-  if (layoutInsertionFunction == &LayoutCursor::addFractionLayoutAndCollapseSiblings) {
+  if (optionalAddLayoutFunction == &LayoutCursor::addFractionLayoutAndCollapseSiblings) {
     // Check numerator of created fraction
     quiz_assert(horizontalLayout.childAtIndex(0).childAtIndex(0).childAtIndex(0).isIdenticalTo(piCodePoint));
   } else {
@@ -342,12 +343,22 @@ void assert_applybeautification_after_layout_insertion(AddLayoutPointer layoutIn
 }
 
 QUIZ_CASE(poincare_input_beautification_after_inserting_layout) {
-  AddLayoutPointer layoutInsertionFunction[] = {&LayoutCursor::addFractionLayoutAndCollapseSiblings, &LayoutCursor::addEmptyExponentialLayout,  &LayoutCursor::addEmptyPowerLayout,  &LayoutCursor::addEmptySquareRootLayout, &LayoutCursor::addEmptySquarePowerLayout, &LayoutCursor::addEmptyTenPowerLayout, &LayoutCursor::addEmptyMatrixLayout, &LayoutCursor::testAddLayoutAndMoveCursor};
+  AddLayoutPointer layoutInsertionFunction[] = {&LayoutCursor::addFractionLayoutAndCollapseSiblings, &LayoutCursor::addEmptyExponentialLayout,  &LayoutCursor::addEmptyPowerLayout, &LayoutCursor::addEmptySquareRootLayout, &LayoutCursor::addEmptySquarePowerLayout, &LayoutCursor::addEmptyTenPowerLayout, &LayoutCursor::addEmptyMatrixLayout};
   int numberOfFunctions = sizeof(layoutInsertionFunction)/sizeof(AddLayoutPointer);
 
   for (int i = 0; i < numberOfFunctions; i++) {
-    assert_applybeautification_after_layout_insertion(layoutInsertionFunction[i]);
+    assert_apply_beautification_after_layout_insertion(
+      [](LayoutCursor * cursor, Context * context, AddLayoutPointer optionalAddLayoutFunction) {
+        (cursor->*optionalAddLayoutFunction)(context);
+      },
+      layoutInsertionFunction[i]);
   }
+
+  assert_apply_beautification_after_layout_insertion(
+    [](LayoutCursor * cursor, Context * context, AddLayoutPointer optionalAddLayoutFunction) {
+      Layout l = HorizontalLayout::Builder(CodePointLayout::Builder('a'), NthRootLayout::Builder(EmptyLayout::Builder()));
+      cursor->addLayoutAndMoveCursor(l, context);
+    });
 }
 
 QUIZ_CASE(poincare_input_beautification_derivative) {

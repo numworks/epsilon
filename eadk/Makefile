@@ -14,3 +14,5 @@ $(call object_for,$(eadk_src)): SFLAGS += -Iion/src/device #Just to make include
 eadk.o: $(call object_for,$(eadk_src))
 	@echo "LD      $@"
 	$(Q) $(LD) $(EADK_LDFLAGS) $^ -o $@
+	@echo "STRIP   $@"
+	$(Q) arm-none-eabi-strip --strip-debug --discard-all $@

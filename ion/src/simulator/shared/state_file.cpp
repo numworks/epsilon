@@ -108,9 +108,15 @@ static inline bool save(FILE * f) {
   if (fwrite(sHeader, sHeaderLength, 1, f) != 1) {
     return false;
   }
+#ifdef NDEBUG
   if (fwrite(epsilonVersion(), sVersionLength, 1, f) != 1) {
     return false;
   }
+#else
+  if (fwrite(sWildcardVersion, sVersionLength, 1, f) != 1) {
+    return false;
+  }
+#endif
   if (fwrite(&sLatestFormatVersion, sFormatVersionLength, 1, f) != 1) {
     return false;
   }

@@ -4,10 +4,10 @@
 
 namespace Escher {
 
-EvenOddEditableTextCell::EvenOddEditableTextCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
+EvenOddEditableTextCell::EvenOddEditableTextCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate, KDFont::Size font, float horizontalAlignment, float verticalAlignment) :
   EvenOddCell(),
   Responder(parentResponder),
-  m_editableCell(this, inputEventHandlerDelegate, delegate, font, horizontalAlignment, verticalAlignment, KDColorBlack, KDColorWhite, topMargin, rightMargin, bottomMargin, leftMargin)
+  m_editableCell(this, inputEventHandlerDelegate, delegate, font, horizontalAlignment, verticalAlignment, KDColorBlack, KDColorWhite)
 {
 }
 

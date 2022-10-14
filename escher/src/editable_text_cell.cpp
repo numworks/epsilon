@@ -7,23 +7,12 @@
 namespace Escher {
 
 EditableTextCell::EditableTextCell(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate,
-   KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor, KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) :
+   KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   HighlightCell(),
   Responder(parentResponder),
-  m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize, TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, font, horizontalAlignment, verticalAlignment, textColor, backgroundColor),
-  m_topMargin(topMargin),
-  m_rightMargin(rightMargin),
-  m_bottomMargin(bottomMargin),
-  m_leftMargin(leftMargin)
+  m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize, TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, font, horizontalAlignment, verticalAlignment, textColor, backgroundColor)
 {
   m_textBody[0] = 0;
-}
-
-void EditableTextCell::setMargins(KDCoordinate topMargin, KDCoordinate rightMargin, KDCoordinate bottomMargin, KDCoordinate leftMargin) {
-  m_topMargin = topMargin;
-  m_rightMargin = rightMargin;
-  m_bottomMargin = bottomMargin;
-  m_leftMargin = leftMargin;
 }
 
 TextField * EditableTextCell::textField() {
@@ -47,11 +36,7 @@ View * EditableTextCell::subviewAtIndex(int index) {
 
 void EditableTextCell::layoutSubviews(bool force) {
   KDRect cellBounds = bounds();
-  m_textField.setFrame(KDRect(cellBounds.x() + m_leftMargin,
-        cellBounds.y() + m_topMargin,
-        cellBounds.width() - m_leftMargin - m_rightMargin,
-        cellBounds.height() - m_topMargin - m_bottomMargin),
-      force);
+  m_textField.setFrame(cellBounds, force);
 }
 
 void EditableTextCell::didBecomeFirstResponder() {

@@ -1,4 +1,5 @@
 #include <escher/layout_field.h>
+#include <escher/clipboard.h>
 #include <escher/text_field.h>
 #include <ion/keyboard/layout_events.h>
 #include <poincare/expression.h>

@@ -78,7 +78,7 @@ public:
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed);
-  KDPoint absoluteOrigin(KDFont::Size font);
+  KDPoint absoluteOrigin(KDFont::Size font) { return absoluteOriginWithMargin(font).translatedBy(KDPoint(leftMargin(), 0)); }
   KDSize layoutSize(KDFont::Size font);
   KDCoordinate baseline(KDFont::Size font);
   void setMargin(bool hasMargin) { m_flags.m_margin = hasMargin; }
@@ -176,6 +176,7 @@ protected:
   virtual KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) = 0;
 
 private:
+  KDPoint absoluteOriginWithMargin(KDFont::Size font);
   void moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection);
   void scoreCursorInDescendantsVertically (
     VerticalDirection direction,

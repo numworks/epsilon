@@ -32,14 +32,15 @@ void LayoutNode::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor exp
   selectionEnd = isSelected ? nullptr : selectionEnd;
   KDColor backColor = isSelected ? selectionColor : backgroundColor;
   KDPoint renderingAbsoluteOrigin = absoluteOrigin(font).translatedBy(p);
-  ctx->fillRect(KDRect(renderingAbsoluteOrigin, layoutSize(font)), backColor);
+  KDPoint renderingOrginWithMargin = absoluteOriginWithMargin(font).translatedBy(p);
+  ctx->fillRect(KDRect(renderingOrginWithMargin, layoutSize(font)), backColor);
   render(ctx, renderingAbsoluteOrigin, font, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);
   for (LayoutNode * l : children()) {
     l->draw(ctx, p, font, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);
   }
 }
 
-KDPoint LayoutNode::absoluteOrigin(KDFont::Size font) {
+KDPoint LayoutNode::absoluteOriginWithMargin(KDFont::Size font) {
   LayoutNode * p = parent();
   if (!m_flags.m_positioned || m_flags.m_positionFontSize != font) {
     if (p != nullptr) {
@@ -50,7 +51,7 @@ KDPoint LayoutNode::absoluteOrigin(KDFont::Size font) {
     m_flags.m_positioned = true;
     m_flags.m_positionFontSize = font;
   }
-  return m_frame.origin().translatedBy(KDPoint(leftMargin(), 0));
+  return m_frame.origin();
 }
 
 KDSize LayoutNode::layoutSize(KDFont::Size font) {

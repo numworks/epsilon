@@ -20,6 +20,7 @@ public:
   void computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax, bool optimizeRange) override;
   void improveFullRange(float * xMin, float * xMax, float * yMin, float * yMax) override;
   void tidyModels() override;
+  int numberOfCurves() const override;
 
 protected:
   class FunctionSelectionController : public CurveSelectionController {
@@ -52,7 +53,6 @@ protected:
   }
   int selectedCurveRelativePosition() const override { return *m_indexFunctionSelectedByCursor; }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
-  int numberOfCurves() const override;
   int numberOfSubCurves(int curveIndex) const override;
   bool isAlongY(int curveIndex) const override;
   void initCursorParameters() override;

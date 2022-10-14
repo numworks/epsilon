@@ -23,7 +23,7 @@ FunctionGraphController::FunctionGraphController(Responder * parentResponder, In
 }
 
 bool FunctionGraphController::isEmpty() const {
-  if (functionStore()->numberOfActiveFunctions() == 0) {
+  if (numberOfCurves() == 0) {
     return true;
   }
   return false;
@@ -71,20 +71,20 @@ void FunctionGraphController::selectFunctionWithCursor(int functionIndex) {
 }
 
 KDCoordinate FunctionGraphController::FunctionSelectionController::nonMemoizedRowHeight(int j) {
-  assert(j < graphController()->functionStore()->numberOfActiveFunctions());
+  assert(j < graphController()->numberOfCurves());
   ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(j));
   return std::max(function->layout().layoutSize(k_font).height(), nameLayoutAtIndex(j).layoutSize(k_font).height()) + Metric::CellTopMargin + Metric::CellBottomMargin + Metric::CellSeparatorThickness;
 }
 
 void FunctionGraphController::FunctionSelectionController::willDisplayCellForIndex(HighlightCell * cell, int index) {
-  assert(index < graphController()->functionStore()->numberOfActiveFunctions());
+  assert(index < graphController()->numberOfCurves());
   ExpiringPointer<Function> function = graphController()->functionStore()->modelForRecord(graphController()->functionStore()->activeRecordAtIndex(index));
   static_cast<CurveSelectionCellWithChevron *>(cell)->setColor(function->color());
   static_cast<CurveSelectionCellWithChevron *>(cell)->setLayout(function->layout().clone());
 }
 
 void FunctionGraphController::reloadBannerView() {
-  assert(functionStore()->numberOfActiveFunctions() > 0);
+  assert(numberOfCurves() > 0);
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
@@ -113,7 +113,7 @@ FunctionStore * FunctionGraphController::functionStore() const {
 
 void FunctionGraphController::initCursorParameters() {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  const int activeFunctionsCount = functionStore()->numberOfActiveFunctions();
+  const int activeFunctionsCount = numberOfCurves();
   assert(activeFunctionsCount > 0);
   int functionIndex = 0;
   Coordinate2D<double> xy;
@@ -154,12 +154,11 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
 }
 
 bool FunctionGraphController::cursorMatchesModel() {
-  Poincare::Context * context = textFieldDelegateApp()->localContext();
-  if (indexFunctionSelectedByCursor() >= functionStore()->numberOfActiveFunctions()) {
+  if (indexFunctionSelectedByCursor() >= numberOfCurves()) {
     return false;
   }
-  ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
-  Coordinate2D<double> xy = f->evaluateXYAtParameter(m_cursor->t(), context, m_selectedSubCurveIndex);
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
+  Coordinate2D<double> xy = xyValues(indexFunctionSelectedByCursor(), m_cursor->t(), context, m_selectedSubCurveIndex);
   return Poincare::Helpers::EqualOrBothNan(xy.x1(), m_cursor->x()) && Poincare::Helpers::EqualOrBothNan(xy.x2(), m_cursor->y());
 }
 
@@ -201,7 +200,7 @@ void FunctionGraphController::improveFullRange(float * xMin, float * xMax, float
 }
 
 void FunctionGraphController::tidyModels() {
-  int nbOfFunctions = functionStore()->numberOfActiveFunctions();
+  int nbOfFunctions = numberOfCurves();
   for (int i = 0; i < nbOfFunctions; i++) {
     ExpiringPointer<Function> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
     f->tidyDownstreamPoolFrom();

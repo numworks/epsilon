@@ -247,7 +247,7 @@ QUIZ_CASE(poincare_simplification_multiplication) {
 }
 
   /* Some of these are currently not tested because their units are weirdly
-   * simplified. These tests whould be updated when the outputted units are
+   * simplified. These tests whould be updated when the output units are
    * updated. */
 QUIZ_CASE(poincare_simplification_constants) {
   assert_parsed_expression_simplify_to("i", "i");

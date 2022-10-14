@@ -16,7 +16,7 @@ void assert_inserted_text_turns_into(const char * textToInsert, Layout generated
 QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
   Layout l;
 
-  // Beautify when inputted
+  // Beautify when input
   constexpr static const char * text0 = "\"\" '\" <= >= -> *";
   l = HorizontalLayout::Builder({
         CodePointLayout::Builder('\''),

@@ -334,7 +334,7 @@ private:
     Poincare::Expression expressionReducedForAnalysis(const Ion::Storage::Record * record, Poincare::Context * context) const;
     // Return the expression of the named function (right side of the equal)
     Poincare::Expression expressionClone(const Ion::Storage::Record * record) const override;
-    // Return the entire expression that the user inputted. Replace symbols.
+    // Return the entire expression that the user input. Replace symbols.
     Poincare::Expression originalEquation(const Ion::Storage::Record * record, CodePoint symbol) const;
     /* Return the expression representing the equation
      * (turns "f(x)=xy" into "xy" and "xy=a" into "xy-a") */

@@ -25,7 +25,7 @@
  *                  ^end of alias1  ^end of aliases list
  *
  * === MAIN ALIAS ===
- * The main alias is the name outputted by the calculator. For example, the main
+ * The main alias is the name output by the calculator. For example, the main
  * alias of "pi" is "π".
  * */
 

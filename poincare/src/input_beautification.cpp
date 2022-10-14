@@ -192,25 +192,32 @@ int InputBeautification::BeautifyPipeKey(Layout parent, int indexOfPipeKey, Layo
   }
   Layout builderParameter = Layout();
   if (numberOfPipeKeysInParentIsOdd) {
-    // Case 1: number of pipes is odd, pipe will be beautified like abs()
+    // Case 1: number of pipes is odd, insert an absolute value layout
     indexOfMatchingPipeKey = indexOfPipeKey;
-    parent.addChildAtIndex(ParenthesisLayout::Builder(), indexOfPipeKey + 1, parent.numberOfChildren(), nullptr);
-  } else {
-    // Case 2: number of pipes is even, beautify |...| as a whole.
-    // Put layouts between pipe and its closest pipe neighbour in a layout
-    int numberOfChildrenToVisit = indexOfPipeKey - indexOfMatchingPipeKey - 1;
-    HorizontalLayout insideAbsoluteValue = HorizontalLayout::Builder();
-    for (int i = 0; i < numberOfChildrenToVisit; i++) {
-      Layout l = parent.childAtIndex(indexOfMatchingPipeKey + 1);
-      parent.removeChild(l, nullptr);
-      insideAbsoluteValue.addOrMergeChildAtIndex(l, insideAbsoluteValue.numberOfChildren(), true, nullptr);
+    LayoutCursor tempCursor = *cursor;
+    LayoutCursor * cursorToUse = cursor;
+    if (forceCursorRightOfText) {
+      // Do not alter cursor if forced right of text
+      cursorToUse = &tempCursor;
     }
-    builderParameter = insideAbsoluteValue;
-    parent.removeChild(pipeKey, nullptr);
+    parent.removeChild(pipeKey, cursorToUse);
+    Layout toInsert = k_absoluteValueRule.layoutBuilder(Layout());
+    cursorToUse->addLayoutAndMoveCursor(toInsert, nullptr);
+    return indexOfPipeKey;
   }
-  /* Beautifiy as a function only in case 1. In case 2 you don't need to
-   * absorb arguments. */
-  RemoveLayoutsBetweenIndexAndReplaceWithPattern(parent, indexOfMatchingPipeKey, indexOfMatchingPipeKey, k_absoluteValueRule, cursor, numberOfPipeKeysInParentIsOdd, forceCursorRightOfText, builderParameter);
+  // Case 2: number of pipes is even, beautify |...| as a whole.
+  // Put layouts between pipe and its next pipe neighbour in a layout
+  int numberOfChildrenToVisit = indexOfPipeKey - indexOfMatchingPipeKey - 1;
+  HorizontalLayout insideAbsoluteValue = HorizontalLayout::Builder();
+  for (int i = 0; i < numberOfChildrenToVisit; i++) {
+    Layout l = parent.childAtIndex(indexOfMatchingPipeKey + 1);
+    parent.removeChild(l, nullptr);
+    insideAbsoluteValue.addOrMergeChildAtIndex(l, insideAbsoluteValue.numberOfChildren(), true, nullptr);
+  }
+  builderParameter = insideAbsoluteValue;
+  parent.removeChild(pipeKey, nullptr);
+  /* No need to beautifiy as a function since the args are already absorbed. */
+  RemoveLayoutsBetweenIndexAndReplaceWithPattern(parent, indexOfMatchingPipeKey, indexOfMatchingPipeKey, k_absoluteValueRule, cursor, false, forceCursorRightOfText, builderParameter);
   return indexOfMatchingPipeKey;
 }
 

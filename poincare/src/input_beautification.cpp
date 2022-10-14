@@ -65,17 +65,16 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
   if (lastIndexOfIdentifier < 0) {
     return indexOfLastAddedLayout;
   }
-  int firstIndexOfIdentifier = lastIndexOfIdentifier;
-  Layout currentLayout = parent.childAtIndex(firstIndexOfIdentifier);
-  while (currentLayout.type() == LayoutNode::Type::CodePointLayout
-         && Tokenizer::IsIdentifierMaterial(static_cast<CodePointLayout&>(currentLayout).codePoint())) {
-    firstIndexOfIdentifier--;
-    if (firstIndexOfIdentifier < 0) {
+  int firstIndexOfIdentifier = 0;
+  for (int i = lastIndexOfIdentifier; i >= 0; i--) {
+    Layout currentLayout = parent.childAtIndex(i);
+    if (currentLayout.type() != LayoutNode::Type::CodePointLayout
+        || !Tokenizer::IsIdentifierMaterial(static_cast<CodePointLayout&>(currentLayout).codePoint()))
+    {
+      firstIndexOfIdentifier = i + 1;
       break;
     }
-    currentLayout = parent.childAtIndex(firstIndexOfIdentifier);
   }
-  firstIndexOfIdentifier++;
   if (firstIndexOfIdentifier > lastIndexOfIdentifier) {
     return indexOfLastAddedLayout;
   }

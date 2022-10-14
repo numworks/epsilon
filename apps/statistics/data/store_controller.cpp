@@ -1,7 +1,6 @@
 #include "store_controller.h"
 #include "../app.h"
 #include <apps/constant.h>
-#include <apps/shared/range_1D.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <float.h>

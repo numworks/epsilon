@@ -58,7 +58,7 @@ Range1D PointsOfInterestCache::setBoundsAndCompute(float start, float end) {
   }
 
   m_checksum = m_record.checksum();
-  return Range1D(dirtyStart, dirtyEnd);
+  return Range1D(std::min(dirtyStart, dirtyEnd), std::max(dirtyStart, dirtyEnd));
 }
 
 PointOfInterest<double> PointsOfInterestCache::firstPointInDirection(double start, double end, Solver<double>::Interest interest) const {

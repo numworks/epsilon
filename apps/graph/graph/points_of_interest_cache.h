@@ -1,8 +1,8 @@
 #ifndef GRAPH_POINTS_OF_INTEREST_CACHE
 #define GRAPH_POINTS_OF_INTEREST_CACHE
 
-#include <apps/shared/range_1D.h>
 #include <poincare/point_of_interest.h>
+#include <poincare/range.h>
 #include <ion/storage/record.h>
 
 namespace Graph {
@@ -13,7 +13,7 @@ public:
 
   bool isUpToDate() const { return m_record.checksum() == m_checksum; }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
-  Shared::Range1D setBoundsAndCompute(float start, float end);
+  Poincare::Range1D setBoundsAndCompute(float start, float end);
   Poincare::PointOfInterest<double> pointAtIndex(int i) const { return m_list.pointAtIndex(i); }
   Poincare::PointOfInterest<double> firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None) const;
 

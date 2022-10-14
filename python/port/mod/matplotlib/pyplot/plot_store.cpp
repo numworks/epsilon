@@ -153,8 +153,8 @@ void updateRange(float * xMin, float * xMax, float * yMin, float * yMax, float x
 
 void checkPositiveRangeAndAddMargin(float * min, float * max) {
   if (*min > *max) {
-    *min = - Shared::Range1D::k_default;
-    *max = Shared::Range1D::k_default;
+    *min = - Poincare::Range1D::k_defaultHalfLength;
+    *max = Poincare::Range1D::k_defaultHalfLength;
     return;
   }
   // Add margins

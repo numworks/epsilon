@@ -82,9 +82,9 @@ bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(int paramete
   assert(parameterIndex >= 1 && parameterIndex < k_numberOfTextCells + 1);
   // Apply InteractiveCurveViewRange float bounds
   if (parameterIndex == 1) {
-    m_rangeParam.setMin(f, InteractiveCurveViewRange::k_lowerMaxFloat, InteractiveCurveViewRange::k_upperMaxFloat);
+    m_rangeParam.setMin(f, InteractiveCurveViewRange::k_maxFloat);
   } else {
-    m_rangeParam.setMax(f, InteractiveCurveViewRange::k_lowerMaxFloat, InteractiveCurveViewRange::k_upperMaxFloat);
+    m_rangeParam.setMax(f, InteractiveCurveViewRange::k_maxFloat);
   }
   return true;
 }

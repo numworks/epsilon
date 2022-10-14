@@ -1,5 +1,7 @@
 #include "complex_model.h"
-#include <apps/shared/range_1D.h>
+#include <poincare/range.h>
+
+using namespace Poincare;
 
 namespace Calculation {
 
@@ -23,9 +25,14 @@ float ComplexModel::rangeBound(float direction, bool horizontal) const {
   }
   float r1 = minFactor * value;
   float r2 = maxFactor * value;
-  r2 = Shared::Range1D::checkedValue(r2, nullptr, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, value >= 0.0f);
-  r1 = Shared::Range1D::checkedValue(r1, &r2, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, value < 0.0f);
-  return direction * value >= 0.0f ? r2 : r1;
+  Range1D range1D(r2, r2);
+  if (value >= 0.f) {
+    range1D.setMin(r1);
+  } else {
+    range1D.setMax(r1);
+  }
+
+  return direction * value >= 0.0f ? range1D.max() : range1D.min();
 }
 
 float ComplexModel::xMin() const {

@@ -1,6 +1,5 @@
 #include "function.h"
 #include "interactive_curve_view_range.h"
-#include "range_1D.h"
 #include "poincare_helpers.h"
 #include "poincare/src/parsing/parser.h"
 #include <poincare/zoom.h>

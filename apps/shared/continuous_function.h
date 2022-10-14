@@ -10,9 +10,9 @@
  */
 
 #include "continuous_function_cache.h"
-#include "function.h"
 #include "continuous_function_properties.h"
-#include "range_1D.h"
+#include "function.h"
+#include "packed_range_1D.h"
 #include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
 #include <poincare/conic.h>
@@ -200,7 +200,7 @@ private:
     void setTAuto(bool tAuto) { m_tAuto = tAuto; }
 
   private:
-    Range1D m_domain;
+    PackedRange1D m_domain;
     bool m_displayDerivative;
     bool m_tAuto;
     /* In the record, after the boolean flag about displayDerivative, there is

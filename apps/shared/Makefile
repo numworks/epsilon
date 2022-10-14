@@ -18,12 +18,12 @@ app_shared_test_src = $(addprefix apps/shared/,\
   interval.cpp \
   linear_regression_store.cpp \
   memoized_curve_view_range.cpp \
+  packed_range_1D.cpp \
   plot_view.cpp \
   plot_view_axes.cpp \
   plot_view_banners.cpp \
   plot_view_cursors.cpp \
   plot_view_plots.cpp \
-  range_1D.cpp \
   sequence.cpp \
   sequence_context.cpp \
   sequence_store.cpp \

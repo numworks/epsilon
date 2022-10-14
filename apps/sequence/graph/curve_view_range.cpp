@@ -11,9 +11,7 @@ namespace Sequence {
 
 CurveViewRange::CurveViewRange(InteractiveCurveViewRangeDelegate * delegate) :
   InteractiveCurveViewRange(delegate)
-{
-  MemoizedCurveViewRange::protectedSetXMin(-k_displayLeftMarginRatio * xMax(), k_lowerMaxFloat, k_upperMaxFloat);
-}
+{}
 
 void CurveViewRange::protectedNormalize(bool canChangeX, bool canChangeY, bool canShrink) {
   Shared::InteractiveCurveViewRange::protectedNormalize(canChangeX, canChangeY, canShrink);
@@ -23,8 +21,8 @@ void CurveViewRange::protectedNormalize(bool canChangeX, bool canChangeY, bool c
    * the X range rightward to the origin. */
   float interestingXMin = m_delegate->interestingXMin();
   float xRange = xMax() - xMin();
-  MemoizedCurveViewRange::protectedSetXMin(interestingXMin - k_displayLeftMarginRatio * xRange, INFINITY, INFINITY, false);
-  MemoizedCurveViewRange::protectedSetXMax(xMin() + xRange, k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetXMin(interestingXMin - k_displayLeftMarginRatio * xRange, false, INFINITY);
+  MemoizedCurveViewRange::protectedSetXMax(xMin() + xRange, true, k_maxFloat);
 }
 
 }

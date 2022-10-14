@@ -53,7 +53,7 @@ protected:
   virtual uint32_t rangeVersion() = 0;
   bool isCursorVisible();
   // The cursor does not match if selected model has been edited or deleted
-  virtual bool cursorMatchesModel() = 0;
+  virtual bool cursorMatchesModel() const = 0;
   bool openMenu() { return openMenuForCurveAtIndex(selectedCurveRelativePosition()); };
   virtual CurveSelectionController * curveSelectionController() const = 0;
   virtual Escher::AbstractButtonCell * calculusButton() const = 0;

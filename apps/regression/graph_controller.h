@@ -65,7 +65,7 @@ private:
 
   // InteractiveCurveViewController
   void initCursorParameters() override;
-  bool cursorMatchesModel() override;
+  bool cursorMatchesModel() const override;
   uint32_t rangeVersion() override;
   int selectedCurveRelativePosition() const override;
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const override;

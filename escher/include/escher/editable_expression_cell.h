@@ -32,12 +32,6 @@ public:
   Responder * responder() override {
     return this;
   }
-  // const char * expression() const override {
-    // if (!m_expressionField.isEditing()) {
-      // return m_expressionField.expression();
-    // }
-    // return nullptr;
-  // }
   int numberOfSubviews() const override;
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;

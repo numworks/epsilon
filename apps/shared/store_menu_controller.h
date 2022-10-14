@@ -15,6 +15,7 @@
 class StoreMenuController : public Escher::ModalViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate, public Escher::PervasiveBox {
 public:
   StoreMenuController();
+  void setText(const char * text);
 
   // PervasiveBox
   void open() override;
@@ -22,23 +23,24 @@ public:
   // Responder
   void didBecomeFirstResponder() override;
 
-  //ListViewDataSource
+  // ListViewDataSource
   int numberOfRows() const override { return 1; }
   int reusableCellCount(int type) override { return 1; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int typeAtIndex(int index) const override { return 0; }
   Escher::HighlightCell * reusableCell(int index, int type) override { return &m_cell; }
 
-  void setText(const char * text);
-
+  // LayoutFieldDelegate
   bool layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   bool layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) override;
   void layoutFieldDidChangeSize(Escher::LayoutField * layoutField) override;
 
+  // TextFieldDelegate
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
+
 private:
   class InnerListController : public ViewController {
   public:

@@ -6,8 +6,6 @@
 #include "text_field_delegate_app.h"
 
 using namespace Poincare;
-using namespace Shared;
-using namespace Ion;
 using namespace Escher;
 
 StoreMenuController::InnerListController::InnerListController(StoreMenuController * dataSource, SelectableTableViewDelegate * delegate) :
@@ -35,6 +33,7 @@ StoreMenuController::StoreMenuController() :
   m_abortController(
     Invocation([](void * context, void * sender) {
       StoreMenuController * storeMenu = static_cast<StoreMenuController*>(context);
+      // Close the warning and then the store menu which are both modals
       storeMenu->dismissModalViewController();
       Container::activeApp()->dismissModalViewController();
       return true;
@@ -75,10 +74,14 @@ void StoreMenuController::willDisplayCellForIndex(HighlightCell * cell, int inde
 }
 
 void StoreMenuController::layoutFieldDidChangeSize(LayoutField * layoutField) {
-  if (!m_preventReload) {
-    m_preventReload = true;
-    Container::activeApp()->modalViewController()->reloadModalViewController();
+  if (m_preventReload) {
+    return;
   }
+  /* Reloading the store menu will update its frame to match the size of the
+   * layout but it will also call layoutFieldDidChangeSize. We set this
+   * boolean to break the cycle. */
+  m_preventReload = true;
+  Container::activeApp()->modalViewController()->reloadModalViewController();
   m_preventReload = false;
 }
 
@@ -102,7 +105,7 @@ bool StoreMenuController::layoutFieldDidFinishEditing(Escher::LayoutField * layo
     openAbortWarning();
     return false;
   }
-  Expression reducedExp = PoincareHelpers::ParseAndSimplify(buffer, Container::activeApp()->localContext());
+  Expression reducedExp = Shared::PoincareHelpers::ParseAndSimplify(buffer, Container::activeApp()->localContext());
   if (reducedExp.type() != ExpressionNode::Type::Store) {
     openAbortWarning();
     return false;
@@ -120,7 +123,7 @@ bool StoreMenuController::textFieldDidFinishEditing(Escher::AbstractTextField * 
     openAbortWarning();
     return false;
   }
-  PoincareHelpers::ParseAndSimplify(text, Container::activeApp()->localContext());
+  Shared::PoincareHelpers::ParseAndSimplify(text, Container::activeApp()->localContext());
   Container::activeApp()->dismissModalViewController();
   return true;
 }

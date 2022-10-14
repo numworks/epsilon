@@ -56,7 +56,8 @@ protected:
   int numberOfSubCurves(int curveIndex) const override;
   bool isAlongY(int curveIndex) const override;
   void initCursorParameters() override;
-  bool cursorMatchesModel() const override;
+  bool selectedModelIsValid() const override;
+  Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
   AbstractPlotView * curveView() override;
 
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;

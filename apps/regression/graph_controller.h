@@ -65,7 +65,8 @@ private:
 
   // InteractiveCurveViewController
   void initCursorParameters() override;
-  bool cursorMatchesModel() const override;
+  bool selectedModelIsValid() const override;
+  Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
   uint32_t rangeVersion() override;
   int selectedCurveRelativePosition() const override;
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const override;

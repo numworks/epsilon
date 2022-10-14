@@ -52,8 +52,8 @@ protected:
   virtual bool moveCursorVertically(int direction) = 0;
   virtual uint32_t rangeVersion() = 0;
   bool isCursorVisible();
-  // The cursor does not match if selected model has been edited or deleted
-  virtual bool cursorMatchesModel() const = 0;
+  virtual bool selectedModelIsValid() const = 0;
+  virtual Poincare::Coordinate2D<double> selectedModelXyValues(double t) const = 0;
   bool openMenu() { return openMenuForCurveAtIndex(selectedCurveRelativePosition()); };
   virtual CurveSelectionController * curveSelectionController() const = 0;
   virtual Escher::AbstractButtonCell * calculusButton() const = 0;

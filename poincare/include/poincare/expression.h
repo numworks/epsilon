@@ -198,6 +198,8 @@ public:
   bool recursivelyMatches(ExpressionTrinaryTest test, Context * context = nullptr, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const;
   typedef bool (*ExpressionTest)(const Expression e, Context * context);
   bool recursivelyMatches(ExpressionTest test, Context * context = nullptr, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition) const;
+  typedef bool (*ExpressionTestAuxiliary)(const Expression e, Context * context, void * auxiliary);
+  bool recursivelyMatches(ExpressionTestAuxiliary test, Context * context = nullptr, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const;
 
   // WARNING: this method must be called on reduced (sorted) expressions
   bool deepIsMatrix(Context * context, bool canContainMatrices = true) const;

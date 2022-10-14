@@ -210,10 +210,9 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
       Container::activeApp()->storeValue(buffer);
     } else {
       Escher::Clipboard::sharedClipboard()->store(start, contentView()->selectionEnd() - start);
-    }
-    return true;
-    if (event == Ion::Events::Cut) {
-      deleteSelection();
+      if (event == Ion::Events::Cut) {
+        deleteSelection();
+      }
     }
     return true;
   }

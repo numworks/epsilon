@@ -12,4 +12,5 @@ $(call object_for,$(eadk_src)): SFLAGS := $(filter-out -flto,$(SFLAGS))
 $(call object_for,$(eadk_src)): SFLAGS += -Iion/src/device #Just to make include in userland/svcall.h happy. Maybe not the best way.
 
 eadk.o: $(call object_for,$(eadk_src))
-	$(LD) $(EADK_LDFLAGS) $^ -o $@
+	@echo "LD      $@"
+	$(Q) $(LD) $(EADK_LDFLAGS) $^ -o $@

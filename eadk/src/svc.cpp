@@ -2,7 +2,6 @@ extern "C" {
 #include "../include/eadk/eadk.h"
 }
 
-// TODO: No namespace when just defining macros
 #include "ion/src/device/shared/drivers/svcall.h"
 #include "ion/src/device/userland/drivers/svcall.h"
 
@@ -37,6 +36,7 @@ bool SVC_ATTRIBUTES eadk_display_wait_for_vblank() {
 }
 
 // Keyboard
+
 eadk_keyboard_state_t SVC_ATTRIBUTES eadk_keyboard_scan() {
   SVC_RETURNING_R0R1(SVC_KEYBOARD_SCAN, eadk_keyboard_state_t)
 }

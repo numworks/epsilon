@@ -28,7 +28,9 @@ typedef struct {
 
 // Keyboard and Events
 
-static const eadk_rect_t eadk_screen_rect = {0, 0, 320, 240};
+#define EADK_SCREEN_WIDTH 320
+#define EADK_SCREEN_HEIGTH 240
+static const eadk_rect_t eadk_screen_rect = {0, 0, EADK_SCREEN_WIDTH, EADK_SCREEN_HEIGTH};
 
 typedef uint64_t eadk_keyboard_state_t;
 typedef enum {

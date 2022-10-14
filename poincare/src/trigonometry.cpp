@@ -517,6 +517,17 @@ Expression Trigonometry::shallowReduceAdvancedFunction(Expression & e, Expressio
 
 Expression Trigonometry::shallowReduceInverseAdvancedFunction(Expression & e, ExpressionNode::ReductionContext reductionContext) {
   assert(isInverseAdvancedTrigonometryFunction(e));
+  {
+    Expression eReduced = SimplificationHelper::defaultShallowReduce(
+        e,
+        &reductionContext,
+        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
+        SimplificationHelper::UnitReduction::BanUnits
+    );
+    if (!eReduced.isUninitialized()) {
+      return eReduced;
+    }
+  }
   Expression result;
   // Step 1. Manage specific cases for Arcotangent
   if (e.type() == ExpressionNode::Type::ArcCotangent) {

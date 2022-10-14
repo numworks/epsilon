@@ -43,17 +43,6 @@ Expression ArcCotangentNode::unaryFunctionDifferential(const ReductionContext& r
 }
 
 Expression ArcCotangent::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
-  {
-    Expression e = SimplificationHelper::defaultShallowReduce(
-        *this,
-        &reductionContext,
-        SimplificationHelper::BooleanReduction::UndefinedOnBooleans,
-        SimplificationHelper::UnitReduction::BanUnits
-    );
-    if (!e.isUninitialized()) {
-      return e;
-    }
-  }
   return Trigonometry::shallowReduceInverseAdvancedFunction(*this, reductionContext);
 }
 

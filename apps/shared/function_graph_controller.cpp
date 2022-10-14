@@ -153,14 +153,15 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   return true;
 }
 
-bool FunctionGraphController::cursorMatchesModel() const {
+bool FunctionGraphController::selectedModelIsValid() const {
   int curveIndex = indexFunctionSelectedByCursor();
-  if (curveIndex >= numberOfCurves() || m_selectedSubCurveIndex >= numberOfSubCurves(curveIndex)) {
-    return false;
-  }
+  return curveIndex < numberOfCurves() && m_selectedSubCurveIndex < numberOfSubCurves(curveIndex);
+}
+
+Poincare::Coordinate2D<double> FunctionGraphController::selectedModelXyValues(double t) const {
+  assert(selectedModelIsValid());
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(), context, m_selectedSubCurveIndex);
-  return Poincare::Helpers::EqualOrBothNan(xy.x1(), m_cursor->x()) && Poincare::Helpers::EqualOrBothNan(xy.x2(), m_cursor->y());
+  return xyValues(indexFunctionSelectedByCursor(), t, context, m_selectedSubCurveIndex);
 }
 
 AbstractPlotView * FunctionGraphController::curveView() {

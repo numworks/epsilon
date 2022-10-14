@@ -265,21 +265,22 @@ void GraphController::initCursorParameters() {
   m_cursor->moveTo(x, x, y);
 }
 
-bool GraphController::cursorMatchesModel() const {
+bool GraphController::selectedModelIsValid() const {
   if (!m_store->seriesIsValid(*m_selectedSeriesIndex)) {
     return false;
   }
-  Coordinate2D<double> xy;
+  uint8_t numberOfPairs = m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex);
+  return *m_selectedDotIndex < numberOfPairs || (*m_selectedDotIndex == numberOfPairs && !selectedSeriesIsScatterPlot());
+}
+
+Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(double t) const {
+  assert(selectedModelIsValid());
   if (*m_selectedDotIndex == -1) {
-    xy = xyValues(*m_selectedSeriesIndex, m_cursor->t(), globalContext());
+    return xyValues(*m_selectedSeriesIndex, t, globalContext());
   } else if (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex) && !selectedSeriesIsScatterPlot()) {
-    xy = Coordinate2D<double>(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
-  } else if (*m_selectedDotIndex >= m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {
-    return false;
-  } else {
-    xy = Coordinate2D<double>(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
+    return Coordinate2D<double>(m_store->meanOfColumn(*m_selectedSeriesIndex, 0), m_store->meanOfColumn(*m_selectedSeriesIndex, 1));
   }
-  return Poincare::Helpers::EqualOrBothNan(xy.x1(), m_cursor->x()) && Poincare::Helpers::EqualOrBothNan(xy.x2(), m_cursor->y());
+  return Coordinate2D<double>(m_store->get(*m_selectedSeriesIndex, 0, *m_selectedDotIndex), m_store->get(*m_selectedSeriesIndex, 1, *m_selectedDotIndex));
 }
 
 bool GraphController::moveCursorVertically(int direction) {

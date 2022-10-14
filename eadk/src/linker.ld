@@ -17,18 +17,18 @@ SECTIONS {
     LONG(0xDEC0BEBA);
   } >FLASH
 
-  .text : {
-    . = ALIGN(4);
-    *(.text)
-    *(.text.*)
-  } >FLASH
-
   .rodata.eadk_app_name : {
     KEEP(*(.rodata.eadk_app_name))
   } >FLASH
 
   .rodata.eadk_app_icon : {
     KEEP(*(.rodata.eadk_app_icon))
+  } >FLASH
+
+  .text : {
+    . = ALIGN(4);
+    *(.text)
+    *(.text.*)
   } >FLASH
 
   .rodata : {

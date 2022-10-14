@@ -22,7 +22,7 @@ public:
   constexpr static int k_tickHeight = 6;
   constexpr static int k_tickWidth = 8;
 private:
-  void drawInsideBatteryLevel(KDContext * ctx, KDCoordinate width, KDColor color) const;
+  void drawInsideBatteryLevel(KDContext * ctx, KDCoordinate width, KDColor color = KDColorWhite) const;
   constexpr static KDCoordinate k_batteryHeight = 8;
   constexpr static KDCoordinate k_batteryWidth = 15;
   constexpr static KDCoordinate k_elementWidth = 1;

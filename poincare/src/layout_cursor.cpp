@@ -274,7 +274,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
   }
 }
 
-void LayoutCursor::addLayoutAndMoveCursor(Layout l, Context * context, bool beautify) {
+void LayoutCursor::addLayoutAndMoveCursor(Layout l, Context * context, bool withinBeautification) {
   bool layoutWillBeMerged = l.type() == LayoutNode::Type::HorizontalLayout;
   Layout parent = m_layout.parent();
   int mergeLength = layoutWillBeMerged ? l.numberOfChildren() : 1;
@@ -286,12 +286,12 @@ void LayoutCursor::addLayoutAndMoveCursor(Layout l, Context * context, bool beau
     mergeIndex = parent.indexOfChild(m_layout) + (m_position == Position::Right);
   }
   m_layout.addSibling(this, l, true);
-  if (beautify) {
+  if (!withinBeautification) {
     InputBeautification::ApplyBeautificationBetweenIndexes(parent, mergeIndex, mergeIndex + mergeLength, this, context);
-  }
-  if (!layoutWillBeMerged) {
-    assert(!l.isUninitialized());
-    l.collapseSiblings(this);
+    if (!layoutWillBeMerged) {
+      assert(!l.isUninitialized());
+      l.collapseSiblings(this);
+    }
   }
 }
 

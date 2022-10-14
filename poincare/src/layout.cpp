@@ -108,7 +108,8 @@ void Layout::replaceChild(Layout oldChild, Layout newChild, LayoutCursor * curso
     return;
   }
   replaceChildInPlace(oldChild, newChild);
-  if (cursor != nullptr) {
+  if (cursor != nullptr && cursor->layout() != newChild) {
+    // Do not alter cursor if it was already sticked to newChild
     cursor->setLayout(newChild);
     cursor->setPosition(LayoutCursor::Position::Right);
   }

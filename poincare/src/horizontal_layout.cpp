@@ -479,9 +479,6 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
   }
   // Else, just replace the child.
   makePermanentIfBracket(newChild, oldChildIndex > 0, oldChildIndex < numberOfChildren() - 1);
-  if (cursor != nullptr && !oldWasAncestorOfNewLayout) {
-    cursor->setPosition(LayoutCursor::Position::Right);
-  }
   return true;
 }
 

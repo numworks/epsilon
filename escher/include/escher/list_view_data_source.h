@@ -46,10 +46,10 @@ private:
 class RegularListViewDataSource : public ListViewDataSource {
 private:
   KDCoordinate defaultRowHeight() override {
+    // See ListViewDataSource::nonMemoizedRowHeight comment
     return ListViewDataSource::nonMemoizedRowHeight(0);
   }
-  // Just make this method final without changing default behaviour
-  KDCoordinate nonMemoizedRowHeight(int j) override final { return TableViewDataSource::nonMemoizedRowHeight(j); }
+  KDCoordinate nonMemoizedRowHeight(int j) override final { return defaultRowHeight(); }
   TableSize1DManager * rowHeightManager() override final { return &m_heightManager; }
   RegularTableSize1DManager m_heightManager;
 };

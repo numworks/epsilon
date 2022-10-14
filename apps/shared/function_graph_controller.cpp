@@ -153,7 +153,7 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   return true;
 }
 
-bool FunctionGraphController::cursorMatchesModel() {
+bool FunctionGraphController::cursorMatchesModel() const {
   if (indexFunctionSelectedByCursor() >= numberOfCurves()) {
     return false;
   }

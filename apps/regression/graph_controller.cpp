@@ -265,7 +265,7 @@ void GraphController::initCursorParameters() {
   m_cursor->moveTo(x, x, y);
 }
 
-bool GraphController::cursorMatchesModel() {
+bool GraphController::cursorMatchesModel() const {
   if (!m_store->seriesIsValid(*m_selectedSeriesIndex)) {
     return false;
   }

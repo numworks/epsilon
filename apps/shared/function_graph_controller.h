@@ -56,7 +56,7 @@ protected:
   int numberOfSubCurves(int curveIndex) const override;
   bool isAlongY(int curveIndex) const override;
   void initCursorParameters() override;
-  bool cursorMatchesModel() override;
+  bool cursorMatchesModel() const override;
   AbstractPlotView * curveView() override;
 
   void yRangeForCursorFirstMove(Shared::InteractiveCurveViewRange * range) const;

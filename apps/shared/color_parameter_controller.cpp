@@ -49,6 +49,12 @@ void ColorParameterController::willDisplayCellForIndex(HighlightCell * cell, int
   colorCell->setColor(ColorNames::k_colors[index]);
 }
 
+KDCoordinate ColorParameterController::defaultRowHeight() {
+  // Use the first row as template for all heights.
+  ColorCell tempCell;
+  return heightForCellAtIndexWithWidthInit(&tempCell, 0);
+}
+
 ExpiringPointer<Function> ColorParameterController::function() {
   return FunctionApp::app()->functionStore()->modelForRecord(m_record);
 }

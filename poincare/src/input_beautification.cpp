@@ -52,7 +52,7 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
   }
 
   /* From now on, trigger the beautification only if a non-identifier layout
-   * was inputted, or if beautification is forced. */
+   * was input, or if beautification is forced. */
   if (!forceBeautification && lastAddedLayout.type() == LayoutNode::Type::CodePointLayout && Tokenizer::IsIdentifierMaterial(static_cast<CodePointLayout&>(lastAddedLayout).codePoint())) {
     return indexOfLastAddedLayout;
   }
@@ -162,7 +162,7 @@ bool InputBeautification::ShouldBeBeautifiedWhenInputted(Layout parent, int inde
   if (indexOfLastAddedLayout + 1 < length) {
     return false;
   }
-  // Compare the code points inputted with the the pattern
+  // Compare the code points input with the the pattern
   for (int i = 0; i < length; i++) {
     Layout child = parent.childAtIndex(indexOfLastAddedLayout - (length - 1) + i);
     if (child.type() != LayoutNode::Type::CodePointLayout || static_cast<CodePointLayout&>(child).codePoint() != pattern[i]) {
@@ -175,11 +175,11 @@ bool InputBeautification::ShouldBeBeautifiedWhenInputted(Layout parent, int inde
 int InputBeautification::BeautifyPipeKey(Layout parent, int indexOfPipeKey, LayoutCursor * cursor, bool forceCursorRightOfText) {
   Layout pipeKey = parent.childAtIndex(indexOfPipeKey);
   assert(IsPipeKeyLayout(pipeKey));
-  /* There is two cases:
+  /* There are two cases:
    * either something like "|4 + 5|" was inserted,
    * or something like "4 + |"
-   * In the first case, abs(4+5) should ne outputted
-   * In the second case, 4+abs() should be outputted
+   * In the first case, abs(4+5) should be output
+   * In the second case, 4+abs() should be output
    * */
   bool numberOfPipeKeysInParentIsOdd = true;
   int indexOfMatchingPipeKey = -1;

@@ -26,7 +26,7 @@ public:
    * except if forceBeautification = true. In this case, these are also
    * applied to lastAddedLayout.
    *
-   * Returns the index of the leftest beautified layout in parent
+   * Returns the index of the leftmost beautified layout in parent
    * returns -1 if the parent was altered. */
   static int ApplyBeautificationLeftOfLastAddedLayout(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText = false, bool forceBeautification = false);
 

@@ -793,7 +793,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   PlotType tempPlotType = PlotType::Unknown;
   ComparisonNode::OperatorType equationType;
   if (!ComparisonNode::IsBinaryComparison(result, &equationType) || equationType == ComparisonNode::OperatorType::NotEqual) {
-    /* Happens when the inputted text is too long and "f(x)=" can't be inserted
+    /* Happens when the input text is too long and "f(x)=" can't be inserted
      * or when inputting amiguous equations like "x+y>2>y" */
     return Undefined::Builder();
   }

@@ -15,6 +15,11 @@ public:
     Assignment
   };
 
+  // diff(f(x), x, a, ..)
+  constexpr static int k_derivandLayoutIndex = 0;
+  constexpr static int k_variableLayoutIndex = 1;
+  constexpr static int k_abscissaLayoutIndex = 2;
+
   DerivativeLayoutNode() : LayoutNode(), m_variableSlot(VariableSlot::Fraction) {}
 
   // LayoutNode
@@ -26,12 +31,9 @@ public:
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   Layout XNTLayout(int childIndex = -1) const override;
 
-protected:
-  // diff(f(x), x, a, ..)
-  constexpr static int k_derivandLayoutIndex = 0;
-  constexpr static int k_variableLayoutIndex = 1;
-  constexpr static int k_abscissaLayoutIndex = 2;
+  VariableSlot variableSlot() const { return m_variableSlot; }
 
+protected:
   constexpr static const char * k_d = "d";
 
   LayoutNode * derivandLayout() { return childAtIndex(k_derivandLayoutIndex); }

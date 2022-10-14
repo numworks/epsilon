@@ -233,7 +233,11 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPo
   if (lastAddedLayout.type() != LayoutNode::Type::VerticalOffsetLayout || static_cast<VerticalOffsetLayout&>(lastAddedLayout).position() != VerticalOffsetLayoutNode::Position::Superscript) {
     return false;
   }
-  if (parent.parent().isUninitialized() || parent.parent().type() != LayoutNode::Type::FirstOrderDerivativeLayout) {
+  Layout firstOrderDerivativeLayout = parent.parent();
+  if (firstOrderDerivativeLayout.isUninitialized()
+      || firstOrderDerivativeLayout.type() != LayoutNode::Type::FirstOrderDerivativeLayout
+      || firstOrderDerivativeLayout.indexOfChild(parent) != DerivativeLayoutNode::k_variableLayoutIndex
+      || static_cast<DerivativeLayoutNode *>(firstOrderDerivativeLayout.node())->variableSlot() != DerivativeLayoutNode::VariableSlot::Fraction) {
     return false;
   }
   Layout firstOrderDerivative = parent.parent();

@@ -154,11 +154,12 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
 }
 
 bool FunctionGraphController::cursorMatchesModel() const {
-  if (indexFunctionSelectedByCursor() >= numberOfCurves()) {
+  int curveIndex = indexFunctionSelectedByCursor();
+  if (curveIndex >= numberOfCurves() || m_selectedSubCurveIndex >= numberOfSubCurves(curveIndex)) {
     return false;
   }
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  Coordinate2D<double> xy = xyValues(indexFunctionSelectedByCursor(), m_cursor->t(), context, m_selectedSubCurveIndex);
+  Coordinate2D<double> xy = xyValues(curveIndex, m_cursor->t(), context, m_selectedSubCurveIndex);
   return Poincare::Helpers::EqualOrBothNan(xy.x1(), m_cursor->x()) && Poincare::Helpers::EqualOrBothNan(xy.x2(), m_cursor->y());
 }
 

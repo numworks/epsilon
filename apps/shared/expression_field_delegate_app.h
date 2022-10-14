@@ -12,9 +12,16 @@ public:
   bool layoutFieldShouldFinishEditing(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   bool isAcceptableExpression(const Poincare::Expression expression) override;
+  bool isStoreMenuOpen();
+  void storeValue(const char * text = "") override;
+
 protected:
   ExpressionFieldDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
   virtual bool shouldParseFieldAsAssignment() { return false; }
+  bool handleEvent(Ion::Events::Event event) override;
+
+private:
+  StoreMenuController m_storeController;
 };
 
 }

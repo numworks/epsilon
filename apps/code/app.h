@@ -67,7 +67,6 @@ public:
 
 private:
   App(Snapshot * snapshot);
-  void storeValue(const char * text) override {}
 
   /* Python delegate:
    * MicroPython requires a heap. To avoid dynamic allocation, we keep a working

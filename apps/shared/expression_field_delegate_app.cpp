@@ -73,4 +73,23 @@ bool ExpressionFieldDelegateApp::isAcceptableExpression(const Expression exp) {
   return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store && TextFieldDelegateApp::ExpressionCanBeSerialized(exp, false, Poincare::Expression(), localContext());
 }
 
+bool ExpressionFieldDelegateApp::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Sto) {
+    storeValue();
+  }
+  return TextFieldDelegateApp::handleEvent(event);
+}
+
+void ExpressionFieldDelegateApp::storeValue(const char * text) {
+  if (m_modalViewController.isDisplayingModal()) {
+    return;
+  }
+  m_storeController.setText(text);
+  m_storeController.open();
+}
+
+bool ExpressionFieldDelegateApp::isStoreMenuOpen() {
+  return m_modalViewController.currentModalViewController() == &m_storeController;
+}
+
 }

@@ -12,15 +12,9 @@ public:
   virtual ~InputEventHandlerDelegateApp() = default;
   Escher::PervasiveBox * toolbox() override;
   Escher::PervasiveBox * variableBox() override;
-  bool handleEvent(Ion::Events::Event event) override;
-  void storeValue(const char * text = "") override;
-  bool isStoreMenuOpen();
+
 protected:
   InputEventHandlerDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
-
-private:
-  StoreMenuController m_storeController;
-
 };
 
 }

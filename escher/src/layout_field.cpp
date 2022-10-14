@@ -176,8 +176,11 @@ bool LayoutField::ContentView::resetSelection() {
   return true;
 }
 
-void LayoutField::ContentView::copySelection(Context * context, Ion::Events::Event event) {
+void LayoutField::ContentView::copySelection(Context * context, bool intoStoreMenu) {
   if (selectionIsEmpty()) {
+    if (intoStoreMenu) {
+      Container::activeApp()->storeValue();
+    }
     return;
   }
   constexpr int bufferSize = TextField::maxBufferSize();
@@ -202,7 +205,7 @@ void LayoutField::ContentView::copySelection(Context * context, Ion::Events::Eve
     static_cast<HorizontalLayout&>(selectionParent).serializeChildren(firstIndex, lastIndex, buffer, bufferSize);
   }
   if (buffer[0] != 0) {
-    if (event == Ion::Events::Sto) {
+    if (intoStoreMenu) {
       Container::activeApp()->storeValue(buffer);
     } else {
       Clipboard::sharedClipboard()->store(buffer);
@@ -613,7 +616,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   if ((event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto) && isEditing()) {
-    m_contentView.copySelection(context(), event);
+    m_contentView.copySelection(context(), event == Ion::Events::Sto);
     if (event == Ion::Events::Cut) {
       m_contentView.deleteSelection();
     }
@@ -627,6 +630,10 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
   return false;
 }
 
+bool LayoutField::handleStoreEvent() {
+  m_contentView.copySelection(context(), true);
+  return true;
+}
 
 static_assert_sequential(
   LayoutCursor::Direction::Left,

@@ -378,7 +378,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Sto) {
-    storeValue();
+    return handleStoreEvent();
   }
   return false;
 }
@@ -652,18 +652,20 @@ bool AbstractTextField::storeInClipboard() const {
   return false;
 }
 
-bool AbstractTextField::storeValue() const {
+bool AbstractTextField::handleStoreEvent() {
   if (!isEditing()) {
     Container::activeApp()->storeValue(text());
     return true;
-  } else if (!nonEditableContentView()->selectionIsEmpty()) {
+  }
+  if (!nonEditableContentView()->selectionIsEmpty()) {
     const char * start = nonEditableContentView()->selectionStart();
     char buffer[Escher::Clipboard::k_bufferSize];
     strlcpy(buffer, start, std::min<size_t>(nonEditableContentView()->selectionEnd() - start + 1, Escher::Clipboard::k_bufferSize));
     Container::activeApp()->storeValue(buffer);
-    return true;
+  } else {
+    Container::activeApp()->storeValue();
   }
-  return false;
+  return true;
 }
 
 /* TextField */

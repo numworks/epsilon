@@ -262,7 +262,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
       constexpr int bufferSize = TextField::maxBufferSize();
       char buffer[bufferSize];
       l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
-      if (event == Ion::Events::Sto) {
+      if (event == Ion::Events::Sto || event == Ion::Events::Var) {
         Container::activeApp()->storeValue(buffer);
       } else {
         Escher::Clipboard::sharedClipboard()->store(buffer);

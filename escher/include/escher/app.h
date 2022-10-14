@@ -65,7 +65,7 @@ public:
   ModalViewController * modalViewController() { return &m_modalViewController; }
   virtual void willOpenPage(ViewController * controller) {}
   virtual void didExitPage(ViewController * controller) {}
-  virtual void storeValue(const char * text) {}
+  virtual void storeValue(const char * text = "") {}
   virtual int numberOfTimers() { return 0; }
   virtual Timer * timerAtIndex(int i) { assert(false); return nullptr; }
   virtual Poincare::Context * localContext() { return nullptr; }

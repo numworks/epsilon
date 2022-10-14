@@ -13,7 +13,7 @@ public:
   Escher::PervasiveBox * toolbox() override;
   Escher::PervasiveBox * variableBox() override;
   bool handleEvent(Ion::Events::Event event) override;
-  void storeValue(const char * text) override;
+  void storeValue(const char * text = "") override;
   bool isStoreMenuOpen();
 protected:
   InputEventHandlerDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);

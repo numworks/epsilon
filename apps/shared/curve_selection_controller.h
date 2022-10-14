@@ -52,8 +52,6 @@ public:
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  int typeAtLocation(int i, int j) override { return 0; }
-
 protected:
   // Add chevron
   class CurveSelectionCellWithChevron : public CurveSelectionCell {

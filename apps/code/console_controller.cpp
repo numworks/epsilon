@@ -273,10 +273,9 @@ int ConsoleController::typeAtIndex(int index) {
   }
 }
 
-void ConsoleController::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
-  assert(i == 0);
-  if (j < m_consoleStore.numberOfLines()) {
-    static_cast<ConsoleLineCell *>(cell)->setLine(m_consoleStore.lineAtIndex(j));
+void ConsoleController::willDisplayCellForIndex(HighlightCell * cell, int index) {
+  if (index < m_consoleStore.numberOfLines()) {
+    static_cast<ConsoleLineCell *>(cell)->setLine(m_consoleStore.lineAtIndex(index));
   }
 }
 

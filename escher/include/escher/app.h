@@ -24,6 +24,7 @@
 namespace Escher {
 
 class Container;
+class InputEventHandler;
 
 class App : public Responder {
 public:

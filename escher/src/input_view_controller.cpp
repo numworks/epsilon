@@ -101,11 +101,11 @@ void InputViewController::layoutFieldDidChangeSize(LayoutField * layoutField) {
   }
 }
 
-Toolbox * InputViewController::toolbox() {
+PervasiveBox * InputViewController::toolbox() {
   return m_inputEventHandlerDelegate->toolbox();
 }
 
-NestedMenuController * InputViewController::variableBox() {
+PervasiveBox * InputViewController::variableBox() {
   return m_inputEventHandlerDelegate->variableBox();
 }
 

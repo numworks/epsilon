@@ -1,16 +1,14 @@
 #ifndef ESCHER_INPUT_EVENT_HANDLER_DELEGATE_H
 #define ESCHER_INPUT_EVENT_HANDLER_DELEGATE_H
 
-namespace Escher {
+#include "pervasive_box.h"
 
-class InputEventHandler;
-class Toolbox;
-class NestedMenuController;
+namespace Escher {
 
 class InputEventHandlerDelegate {
 public:
-  virtual Toolbox * toolbox()  = 0;
-  virtual NestedMenuController * variableBox() = 0;
+  virtual PervasiveBox * toolbox()  = 0;
+  virtual PervasiveBox * variableBox() = 0;
 };
 
 }

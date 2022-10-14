@@ -75,7 +75,6 @@ NestedMenuController::NestedMenuController(Responder * parentResponder, I18n::Me
   m_selectableTableView(&m_listController, this, this, this),
   m_breadcrumbController(this, &m_selectableTableView),
   m_listController(this, &m_selectableTableView, title),
-  m_sender(nullptr),
   m_lastState(0),
   m_savedChecksum(0)
 {
@@ -207,6 +206,10 @@ void NestedMenuController::tableViewDidChangeSelection(SelectableTableView * t, 
   if (selectedRow() >= 0) {
     m_lastState = currentState(); // Persist current state
   }
+}
+
+void NestedMenuController::open() {
+  Container::activeApp()->displayModalViewController(this, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
 }
 
 }

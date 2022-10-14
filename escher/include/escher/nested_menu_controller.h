@@ -4,6 +4,7 @@
 #include <escher/input_event_handler.h>
 #include <escher/highlight_cell.h>
 #include <escher/list_view_data_source.h>
+#include <escher/pervasive_box.h>
 #include <escher/selectable_table_view.h>
 #include <escher/stack_view_controller.h>
 #include <escher/metric.h>
@@ -13,10 +14,9 @@
 
 namespace Escher {
 
-class NestedMenuController : public StackViewController, public MemoizedListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate {
+class NestedMenuController : public StackViewController, public MemoizedListViewDataSource, public SelectableTableViewDataSource, public SelectableTableViewDelegate, public PervasiveBox {
 public:
   NestedMenuController(Responder * parentResponder, I18n::Message title = (I18n::Message)0);
-  void setSender(InputEventHandler * sender) { m_sender = sender; }
   void setTitle(I18n::Message title) { m_listController.setTitle(title); }
 
   // StackViewController
@@ -29,6 +29,7 @@ public:
   HighlightCell * reusableCell(int index, int type) override;
 
   void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
+  void open() override;
 
 protected:
   class StackState {
@@ -50,7 +51,6 @@ protected:
   virtual bool returnToPreviousMenu();
   virtual bool returnToRootMenu();
   virtual bool selectLeaf(int selectedRow) = 0;
-  InputEventHandler * sender() { return m_sender; }
   virtual HighlightCell * leafCellAtIndex(int index) = 0;
   virtual HighlightCell * nodeCellAtIndex(int index) = 0;
   virtual I18n::Message subTitle() = 0;
@@ -100,7 +100,6 @@ private:
   void willOpenPage(ViewController * controller) const override {}
   BreadcrumbController m_breadcrumbController;
   ListController m_listController;
-  InputEventHandler * m_sender;
   Ion::RingBuffer<StackState, k_maxModelTreeDepth> m_stack;
   StackState m_lastState;
   int m_savedChecksum;

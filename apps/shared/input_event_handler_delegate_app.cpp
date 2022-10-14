@@ -15,11 +15,11 @@ InputEventHandlerDelegateApp::InputEventHandlerDelegateApp(Snapshot * snapshot, 
 {
 }
 
-Toolbox * InputEventHandlerDelegateApp::toolbox() {
+PervasiveBox * InputEventHandlerDelegateApp::toolbox() {
   return AppsContainer::sharedAppsContainer()->mathToolbox();
 }
 
-NestedMenuController * InputEventHandlerDelegateApp::variableBox() {
+PervasiveBox * InputEventHandlerDelegateApp::variableBox() {
   MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
   varBox->lockDeleteEvent(MathVariableBoxController::Page::RootMenu);
   return varBox;
@@ -37,7 +37,7 @@ void InputEventHandlerDelegateApp::storeValue(const char * text) {
     return;
   }
   m_storeController.setText(text);
-  displayModalViewController(&m_storeController, 0.5f, 0.f, 0, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+  m_storeController.open();
 }
 
 bool InputEventHandlerDelegateApp::isStoreMenuOpen() {

@@ -18,6 +18,10 @@ StoreMenuController::InnerListController::InnerListController(StoreMenuControlle
   m_selectableTableView.setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
+void StoreMenuController::open() {
+  Container::activeApp()->displayModalViewController(this, 0.5f, 0.f, 0, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+}
+
 void StoreMenuController::InnerListController::didBecomeFirstResponder() {
   m_selectableTableView.selectCellAtLocation(0, 0);
   m_selectableTableView.reloadData();

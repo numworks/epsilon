@@ -1,6 +1,7 @@
 #ifndef SHARED_STORE_MENU_CONTROLLER_H
 #define SHARED_STORE_MENU_CONTROLLER_H
 
+#include <escher/pervasive_box.h>
 #include <escher/stack_view_controller.h>
 #include <escher/selectable_table_view.h>
 #include <escher/list_view_data_source.h>
@@ -11,9 +12,12 @@
 #include <apps/i18n.h>
 #include "pop_up_controller.h"
 
-class StoreMenuController : public Escher::ModalViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate  {
+class StoreMenuController : public Escher::ModalViewController, public Escher::ListViewDataSource, public Escher::SelectableTableViewDataSource, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate, public Escher::PervasiveBox {
 public:
   StoreMenuController();
+
+  // PervasiveBox
+  void open() override;
 
   // Responder
   void didBecomeFirstResponder() override;

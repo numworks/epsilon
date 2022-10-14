@@ -10,18 +10,18 @@ bool InputEventHandler::handleBoxEvent(Ion::Events::Event event) {
   if (m_inputEventHandlerDelegate == nullptr) {
     return false;
   }
-  NestedMenuController * box = nullptr;
+  PervasiveBox * box = nullptr;
   if (event == Ion::Events::Toolbox) {
     box = m_inputEventHandlerDelegate->toolbox();
   } else if (event == Ion::Events::Var) {
     box = m_inputEventHandlerDelegate->variableBox();
   }
-  if (box) {
-    box->setSender(this);
-    Container::activeApp()->displayModalViewController(box, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
-    return true;
+  if (!box) {
+    return false;
   }
-  return false;
+  box->setSender(this);
+  box->open();
+  return true;
 }
 
 }

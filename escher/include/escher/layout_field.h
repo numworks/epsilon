@@ -53,6 +53,7 @@ public:
   /* Responder */
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
+  bool handleStoreEvent() override;
   // TODO: factorize with TextField (see TODO of EditableField)
   bool shouldFinishEditing(Ion::Events::Event event) override;
 
@@ -93,7 +94,7 @@ private:
     Poincare::Layout * selectionEnd() { return &m_selectionEnd; }
     void addSelection(Poincare::Layout addedLayout);
     bool resetSelection(); // returns true if the selection was indeed reset
-    void copySelection(Poincare::Context * context, Ion::Events::Event event);
+    void copySelection(Poincare::Context * context, bool intoStoreMenu);
     bool selectionIsEmpty() const;
     void deleteSelection();
     void invalidateInsertionCursor() { m_insertionCursor = Poincare::LayoutCursor(); }

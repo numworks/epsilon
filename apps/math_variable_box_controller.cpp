@@ -74,7 +74,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
   }
   if (m_currentPage == Page::RootMenu && m_defineVariableCell.ShouldEnterOnEvent(event) && selectedRow() == numberOfRows() - 1) {
     Container::activeApp()->dismissModalViewController();
-    Container::activeApp()->storeValue("");
+    sender()->handleStoreEvent();
     return true;
   }
   return NestedMenuController::handleEvent(event);

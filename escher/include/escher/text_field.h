@@ -123,8 +123,8 @@ private:
   bool privateHandleEvent(Ion::Events::Event event);
   bool privateHandleMoveEvent(Ion::Events::Event event);
   bool privateHandleSelectEvent(Ion::Events::Event event);
+  bool handleStoreEvent() override;
   bool storeInClipboard() const;
-  bool storeValue() const;
 
   TextFieldDelegate * m_delegate;
 };

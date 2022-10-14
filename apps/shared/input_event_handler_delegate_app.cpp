@@ -27,7 +27,7 @@ PervasiveBox * InputEventHandlerDelegateApp::variableBox() {
 
 bool InputEventHandlerDelegateApp::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Sto) {
-    storeValue("");
+    storeValue();
   }
   return App::handleEvent(event);
 }

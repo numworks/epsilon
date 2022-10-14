@@ -10,15 +10,6 @@ class MultiplicationNode final : public NAryInfixExpressionNode {
 public:
   using NAryInfixExpressionNode::NAryInfixExpressionNode;
 
-  enum class MultiplicationSymbol : uint8_t {
-  // The order matters !
-    Empty = 0,
-    MiddleDot = 1,
-    MultiplicationSign = 2,
-  };
-  static MultiplicationSymbol OperatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNode::LayoutShape right);
-  static CodePoint CodePointForOperatorSymbol(MultiplicationSymbol symbol);
-
   // Tree
   size_t size() const override { return sizeof(MultiplicationNode); }
 #if POINCARE_TREE_LOG
@@ -55,7 +46,15 @@ public:
   }
 
 private:
+  enum class MultiplicationSymbol : uint8_t {
+  // The order matters !
+    Empty = 0,
+    MiddleDot = 1,
+    MultiplicationSign = 2,
+  };
 
+  static MultiplicationSymbol OperatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNode::LayoutShape right);
+  static CodePoint CodePointForOperatorSymbol(MultiplicationSymbol symbol);
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
   CodePoint operatorSymbol() const;

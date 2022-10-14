@@ -102,7 +102,7 @@ bool CurveParameterController::confirmParameterAtIndex(int parameterIndex, doubl
   }
   // If possible, round f so that we go to the evaluation of the displayed f
   double pixelWidth = (m_graphRange->xMax() - m_graphRange->xMin()) / Ion::Display::Width;
-  f = FunctionBannerDelegate::getValueDisplayedOnBanner(f, App::app()->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
+  f = FunctionBannerDelegate::GetValueDisplayedOnBanner(f, App::app()->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
 
   Poincare::Coordinate2D<double> xy = function()->evaluateXYAtParameter(f, App::app()->localContext());
   m_cursor->moveTo(f, xy.x1(), xy.x2());

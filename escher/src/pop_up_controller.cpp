@@ -91,6 +91,14 @@ void PopUpController::ContentView::layoutSubviews(bool force) {
   m_detailTextView->setTextColor(KDColorWhite);
 }
 
+KDSize PopUpController::ContentView::minimalSizeForOptimalDisplay() const {
+  /* The size could be computed from the content (see above) but these values
+   * are used since all pop-ups have their size imposed by presentModally
+   * currently and we want them to report the size they will have. */
+  return KDSize(Ion::Display::Width - (Metric::PopUpLeftMargin + Metric::PopUpRightMargin),
+                Ion::Display::Height - (Metric::TitleBarHeight + Metric::PopUpTopMargin + Metric::PopUpBottomMargin));
+}
+
 // MessagePopUpController
 
 MessagePopUpController::MessagePopUpController(Invocation OkInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage) :

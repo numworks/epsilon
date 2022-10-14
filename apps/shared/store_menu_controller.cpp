@@ -19,7 +19,7 @@ StoreMenuController::InnerListController::InnerListController(StoreMenuControlle
 }
 
 void StoreMenuController::open() {
-  Container::activeApp()->displayModalViewController(this, 0.5f, 0.f, 0, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+  Container::activeApp()->displayModalViewController(this, KDContext::k_alignCenter, KDContext::k_alignCenter, 0, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
 }
 
 void StoreMenuController::InnerListController::didBecomeFirstResponder() {
@@ -82,6 +82,16 @@ void StoreMenuController::layoutFieldDidChangeSize(LayoutField * layoutField) {
   m_preventReload = false;
 }
 
+void StoreMenuController::openAbortWarning() {
+  /* We want to open the warning but the current store menu is likely too small
+   * to display it entirely. We open the pop-up and then reload which will cause
+   * the store menu to be relayouted with the minimalsizeForOptimalDisplay of
+   * the warning. We could save a reload by moving the centering logic after the
+   * embedded pop-up. */
+  displayModalViewController(&m_abortController, KDContext::k_alignCenter, KDContext::k_alignCenter);
+  Container::activeApp()->modalViewController()->reloadModalViewController();
+}
+
 bool StoreMenuController::layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) {
   constexpr size_t bufferSize = TextField::maxBufferSize();
   char buffer[bufferSize];
@@ -89,13 +99,12 @@ bool StoreMenuController::layoutFieldDidFinishEditing(Escher::LayoutField * layo
   Expression exp = Expression::Parse(buffer, Container::activeApp()->localContext());
   m_preventReload = true;
   if (exp.isUninitialized()) {
-    // We are already in a popup, we only need the bottom margin
-    displayModalViewController(&m_abortController, 0.f, 0.f, 0, 0, Escher::Metric::PopUpBottomMargin, 0);
+    openAbortWarning();
     return false;
   }
   Expression reducedExp = PoincareHelpers::ParseAndSimplify(buffer, Container::activeApp()->localContext());
   if (reducedExp.type() != ExpressionNode::Type::Store) {
-    displayModalViewController(&m_abortController, 0.f, 0.f, 0, 0, Escher::Metric::PopUpBottomMargin, 0);
+    openAbortWarning();
     return false;
   }
   Store store = static_cast<Store&>(reducedExp);
@@ -108,8 +117,7 @@ bool StoreMenuController::textFieldDidFinishEditing(Escher::AbstractTextField * 
   Expression exp = Expression::Parse(text, Container::activeApp()->localContext());
   m_preventReload = true;
   if (exp.isUninitialized()) {
-    // We are already in a popup, we only need the bottom margin
-    displayModalViewController(&m_abortController, 0.f, 0.f, 0, 0, Escher::Metric::PopUpBottomMargin, 0);
+    openAbortWarning();
     return false;
   }
   PoincareHelpers::ParseAndSimplify(text, Container::activeApp()->localContext());

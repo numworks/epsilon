@@ -35,6 +35,7 @@ protected:
     constexpr static KDCoordinate k_topMargin = 8;
     HighContrastButton m_cancelButton;
   private:
+    KDSize minimalSizeForOptimalDisplay() const override;
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;

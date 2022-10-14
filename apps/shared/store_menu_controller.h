@@ -51,6 +51,7 @@ private:
     Escher::SelectableTableView m_selectableTableView;
   };
 
+  void openAbortWarning();
   Escher::StackViewController m_stackViewController;
   InnerListController m_listController;
   Escher::EditableExpressionCell m_cell;

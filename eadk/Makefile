@@ -11,8 +11,10 @@ EADK_LDFLAGS += -flinker-output=nolto-rel # Don't output an LTO object
 $(call object_for,$(eadk_src)): SFLAGS := $(filter-out -flto,$(SFLAGS))
 $(call object_for,$(eadk_src)): SFLAGS += -Iion/src/device #Just to make include in userland/svcall.h happy. Maybe not the best way.
 
-eadk.o: $(call object_for,$(eadk_src))
-	@echo "LD      $@"
+.PHONY: eadk.o
+eadk.o: $(BUILD_DIR)/eadk.o
+$(BUILD_DIR)/eadk.o: $(call object_for,$(eadk_src))
+	$(call rule_label,LD)
 	$(Q) $(LD) $(EADK_LDFLAGS) $^ -o $@
-	@echo "STRIP   $@"
+	$(call rule_label,STRIP)
 	$(Q) arm-none-eabi-strip --strip-debug --discard-all $@

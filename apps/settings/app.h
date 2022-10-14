@@ -22,7 +22,6 @@ public:
   };
   TELEMETRY_ID("Settings");
 private:
-  void storeValue(const char * text) override {}
   App(Snapshot * snapshot);
   MainController m_mainController;
   Escher::StackViewController m_stackViewController;

@@ -25,23 +25,4 @@ PervasiveBox * InputEventHandlerDelegateApp::variableBox() {
   return varBox;
 }
 
-bool InputEventHandlerDelegateApp::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Sto) {
-    storeValue();
-  }
-  return App::handleEvent(event);
-}
-
-void InputEventHandlerDelegateApp::storeValue(const char * text) {
-  if (m_modalViewController.isDisplayingModal()) {
-    return;
-  }
-  m_storeController.setText(text);
-  m_storeController.open();
-}
-
-bool InputEventHandlerDelegateApp::isStoreMenuOpen() {
-  return m_modalViewController.currentModalViewController() == &m_storeController;
-}
-
 }

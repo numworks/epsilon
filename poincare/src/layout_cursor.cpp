@@ -277,7 +277,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
 void LayoutCursor::addLayoutAndMoveCursor(Layout l, Context * context, bool beautify) {
   bool layoutWillBeMerged = l.type() == LayoutNode::Type::HorizontalLayout;
   Layout parent = m_layout.parent();
-  int mergeLength = l.numberOfChildren();
+  int mergeLength = layoutWillBeMerged ? l.numberOfChildren() : 1;
   int mergeIndex;
   if (parent.isUninitialized()) {
     parent = m_layout;

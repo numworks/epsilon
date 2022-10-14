@@ -81,7 +81,7 @@ void LayoutCursor::move(Direction direction, bool * shouldRecomputeLayout, bool 
 }
 
 LayoutCursor LayoutCursor::cursorAtDirection(Direction direction, bool * shouldRecomputeLayout, bool forSelection, int step) {
-  LayoutCursor result = clone();
+  LayoutCursor result = *this;
   if (step <= 0) {
     return result;
   }
@@ -118,7 +118,7 @@ void LayoutCursor::select(Direction direction, bool * shouldRecomputeLayout, Lay
 }
 
 LayoutCursor LayoutCursor::selectAtDirection(Direction direction, bool * shouldRecomputeLayout, Layout * selection) {
-  LayoutCursor result = clone();
+  LayoutCursor result = *this;
   result.select(direction, shouldRecomputeLayout, selection);
   return result;
 }

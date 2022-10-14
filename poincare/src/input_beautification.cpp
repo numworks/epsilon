@@ -276,7 +276,7 @@ int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout p
     }
   }
   // Remove layout
-  LayoutCursor tempCursor = layoutCursor->clone(); // avoid altering the cursor by cloning it.
+  LayoutCursor tempCursor = *layoutCursor; // avoid altering the cursor by copying it.
   for (int i = endIndex; i >= startIndex; i--) {
     parent.removeChildAtIndex(i, &tempCursor, true);
   }

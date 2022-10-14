@@ -61,7 +61,7 @@ void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCu
   /* The two cursor positions around an EmptyLayoutNode are equivalent, so both
    * should be checked. */
   assert(cursor->layoutNode() == this);
-  LayoutCursor cursorResult = cursor->clone();
+  LayoutCursor cursorResult = *cursor;
   LayoutNode::moveCursorVertically(direction, &cursorResult, shouldRecomputeLayout, equivalentPositionVisited, forSelection);
   if (cursorResult.isDefined()) {
     cursor->setTo(&cursorResult);

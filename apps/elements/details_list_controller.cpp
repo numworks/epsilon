@@ -30,7 +30,7 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
     return true;
   }
 
-  if (e == Ion::Events::Copy || e == Ion::Events::Sto || e == Ion::Events::Var) {
+  if (e == Ion::Events::Copy || e == Ion::Events::Cut || e == Ion::Events::Sto || e == Ion::Events::Var) {
     constexpr size_t size = Escher::Clipboard::k_bufferSize;
     char buffer[size];
     int index = selectedRow();

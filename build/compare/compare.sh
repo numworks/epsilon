@@ -16,7 +16,7 @@ function print_help() {
   echo -e "\t$ compare scenari/ Epsilon_master Epsilon_new"
   echo -e "\t$ compare scenari/ folder_with_images/ Epsilon_new"
   echo -e "\t$ compare MAKEFLAGS=\"-j4 PLATFORM=simulator DEBUG=1\" scenari/ folder_with_images/ HEAD"
-  echo -e "\nIf used with only one source: take_scenari_screenshots.sh [--debug] [MAKEFLAGS=...] <folder_with_scenari> <source>"
+  echo -e "\nIf used with only one source: compare [--debug] [MAKEFLAGS=...] <folder_with_scenari> <source>"
   echo -e "Generate a screenshot of the final state of each scenari (useful when creating new scenari)."
   echo -e "\nExample:"
   echo -e "\t$ compare scenari/ Epsilon_master"

@@ -39,7 +39,11 @@ SIMULATOR_ICONS = $(addprefix $(SIMULATOR_ICONSET)/,$(addsuffix .png,$(addprefix
 
 $(addprefix $(SIMULATOR_ICONSET)/,icon_%.png): ion/src/simulator/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)
+ifeq ($(SIMULATOR_ICON_USE_MASK),1)
+	$(Q) convert -background "#FFB734" $< -gravity center -scale 80% -extent 1024x1024 ion/src/simulator/assets/icon_mask.svg -alpha Off -compose CopyOpacity -composite -resize $* $@
+else
 	$(Q) convert -background "#FFB734" -resize $* $< $@
+endif
 
 # Export simulator app dependencies
 

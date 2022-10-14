@@ -56,10 +56,6 @@ public:
     m_position(position)
   {}
 
-  LayoutCursor clone() const {
-    return LayoutCursor(m_layout, m_position);
-  }
-
   // Definition
   bool isDefined() const { return !m_layout.isUninitialized(); }
 

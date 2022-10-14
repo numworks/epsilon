@@ -3,10 +3,10 @@
 
 #include "float_parameter_controller.h"
 #include "pop_up_controller.h"
-#include "range_1D.h"
 #include <apps/i18n.h>
 #include <escher/message_table_cell_with_editable_text.h>
 #include <escher/message_table_cell_with_switch.h>
+#include <poincare/range.h>
 
 namespace Shared {
 
@@ -39,7 +39,7 @@ protected:
   virtual void pop(bool onConfirmation) = 0;
 
   Escher::MessageTableCellWithEditableText m_boundsCells[k_numberOfTextCells];
-  Range1D m_rangeParam;
+  Poincare::Range1D m_rangeParam;
   bool m_autoParam;
 
 private:

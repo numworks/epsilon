@@ -9,8 +9,8 @@ namespace Statistics {
 class HistogramRange : public Shared::MemoizedCurveViewRange {
 public:
   HistogramRange(Store * store) : m_store(store) {}
-  void setHistogramXMin(float f, bool updateGridUnit) { protectedSetXMin(f, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, updateGridUnit); }
-  void setHistogramXMax(float f, bool updateGridUnit) { protectedSetXMax(f, Shared::Range1D::k_lowerMaxFloat, Shared::Range1D::k_upperMaxFloat, updateGridUnit); }
+  void setHistogramXMin(float f, bool updateGridUnit) { protectedSetXMin(f, updateGridUnit); }
+  void setHistogramXMax(float f, bool updateGridUnit) { protectedSetXMax(f, updateGridUnit); }
   // return true if the window has scrolled
   bool scrollToSelectedBarIndex(int series, int index);
 

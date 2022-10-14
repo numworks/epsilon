@@ -3,32 +3,13 @@
 #include <assert.h>
 #include <ion.h>
 
+using namespace Poincare;
+
 namespace Shared {
 
-MemoizedCurveViewRange::MemoizedCurveViewRange() :
-  m_xGridUnit(2.0f),
-  m_yGridUnit(2.0f)
-{
-}
-
-void MemoizedCurveViewRange::protectedSetXMin(float xMin, float lowerMaxFloat, float upperMaxFloat, bool updateGridUnit) {
-  m_xRange.setMin(xMin, lowerMaxFloat, upperMaxFloat);
-  m_xGridUnit = updateGridUnit ? CurveViewRange::xGridUnit() : 0.0f;
-}
-
-void MemoizedCurveViewRange::protectedSetXMax(float xMax, float lowerMaxFloat, float upperMaxFloat, bool updateGridUnit) {
-  m_xRange.setMax(xMax, lowerMaxFloat, upperMaxFloat);
-  m_xGridUnit = updateGridUnit ? CurveViewRange::xGridUnit() : 0.0f;
-}
-
-void MemoizedCurveViewRange::protectedSetYMin(float yMin, float lowerMaxFloat, float upperMaxFloat, bool updateGridUnit) {
-  m_yRange.setMin(yMin, lowerMaxFloat, upperMaxFloat);
-  m_yGridUnit = updateGridUnit ? CurveViewRange::yGridUnit() : 0.0f;
-}
-
-void MemoizedCurveViewRange::protectedSetYMax(float yMax, float lowerMaxFloat, float upperMaxFloat, bool updateGridUnit) {
-  m_yRange.setMax(yMax, lowerMaxFloat, upperMaxFloat);
-  m_yGridUnit = updateGridUnit ? CurveViewRange::yGridUnit() : 0.0f;
+void MemoizedCurveViewRange::privateSet(float f, float limit, Range1D & range1D, void (Range1D::*setter)(float, float), bool updateGridUnit, float * gridUnit) {
+  (range1D.*setter)(f, limit);
+  *gridUnit = updateGridUnit ? (gridUnit == &m_xGridUnit ? CurveViewRange::xGridUnit() : CurveViewRange::yGridUnit()) : 0.f;
 }
 
 }

@@ -57,7 +57,7 @@ float InteractiveCurveViewRange::roundLimit(float y, float range, bool isMin) {
 
 void InteractiveCurveViewRange::setXMin(float xMin) {
   assert(!xAuto() || m_delegate == nullptr);
-  MemoizedCurveViewRange::protectedSetXMin(xMin, k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetXMin(xMin, true, k_maxFloat);
   m_yMinIntrinsic = NAN;
   m_yMaxIntrinsic = NAN;
   computeRanges();
@@ -65,7 +65,7 @@ void InteractiveCurveViewRange::setXMin(float xMin) {
 
 void InteractiveCurveViewRange::setXMax(float xMax) {
   assert(!xAuto() || m_delegate == nullptr);
-  MemoizedCurveViewRange::protectedSetXMax(xMax, k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetXMax(xMax, true, k_maxFloat);
   m_yMinIntrinsic = NAN;
   m_yMaxIntrinsic = NAN;
   computeRanges();
@@ -73,20 +73,20 @@ void InteractiveCurveViewRange::setXMax(float xMax) {
 
 void InteractiveCurveViewRange::setYMin(float yMin) {
   assert(!yAuto() || m_delegate == nullptr);
-  MemoizedCurveViewRange::protectedSetYMin(yMin, k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetYMin(yMin, true, k_maxFloat);
   setZoomNormalize(isOrthonormal());
 }
 
 void InteractiveCurveViewRange::setYMax(float yMax) {
   assert(!yAuto() || m_delegate == nullptr);
-  MemoizedCurveViewRange::protectedSetYMax(yMax, k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetYMax(yMax, true, k_maxFloat);
   setZoomNormalize(isOrthonormal());
 }
 
 void InteractiveCurveViewRange::setOffscreenYAxis(float f) {
   float d = m_offscreenYAxis - f;
   m_offscreenYAxis = f;
-  MemoizedCurveViewRange::protectedSetYMax(yMax() + d, k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetYMax(yMax() + d, true, k_maxFloat);
 }
 
 float InteractiveCurveViewRange::yGridUnit() const {
@@ -110,7 +110,7 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   float xMa = xMax();
   float yMi = yMin();
   float yMa = yMax();
-  if (ratio*std::fabs(xMa-xMi) < Range1D::k_minFloat || ratio*std::fabs(yMa-yMi) < Range1D::k_minFloat) {
+  if (ratio*std::fabs(xMa-xMi) < Range1D::k_minLength || ratio*std::fabs(yMa-yMi) < Range1D::k_minLength) {
     return;
   }
   float centerX = std::isnan(x) || std::isinf(x) ? xCenter() : x;
@@ -118,14 +118,14 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   Zoom::SetZoom(ratio, centerX, centerY, &xMi, &xMa, &yMi, &yMa);
   if (!std::isnan(xMi) && !std::isnan(xMa)) {
     setZoomAuto(false);
-    MemoizedCurveViewRange::protectedSetXMax(xMa, k_lowerMaxFloat, k_upperMaxFloat, false);
-    MemoizedCurveViewRange::protectedSetXMin(xMi, k_lowerMaxFloat, k_upperMaxFloat);
+    MemoizedCurveViewRange::protectedSetXMax(xMa, false, k_maxFloat);
+    MemoizedCurveViewRange::protectedSetXMin(xMi, true, k_maxFloat);
   }
   if (!std::isnan(yMi) && !std::isnan(yMa)) {
     setZoomAuto(false);
     float yMaxOld = yMax(), yMinOld = yMin();
-    MemoizedCurveViewRange::protectedSetYMax(yMa, k_lowerMaxFloat, k_upperMaxFloat, false);
-    MemoizedCurveViewRange::protectedSetYMin(yMi, k_lowerMaxFloat, k_upperMaxFloat);
+    MemoizedCurveViewRange::protectedSetYMax(yMa, false, k_maxFloat);
+    MemoizedCurveViewRange::protectedSetYMin(yMi, true, k_maxFloat);
     /* The factor will typically be equal to ratio, unless yMax and yMin are
      * close to the maximal values. */
     m_offscreenYAxis *= (yMax() - yMin()) / (yMaxOld - yMinOld);
@@ -134,16 +134,23 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
 }
 
 void InteractiveCurveViewRange::panWithVector(float x, float y) {
-  if (clipped(xMin() + x, false) != xMin() + x || clipped(xMax() + x, true) != xMax() + x || clipped(yMin() + y, false) != yMin() + y || clipped(yMax() + y, true) != yMax() + y || std::isnan(clipped(xMin() + x, false)) || std::isnan(clipped(xMax() + x, true)) || std::isnan(clipped(yMin() + y, false)) || std::isnan(clipped(yMax() + y, true))) {
+  Range1D xRange(xMin(), xMax());
+  xRange.setMin(xMin() + x);
+  xRange.setMax(xMax() + x);
+  Range1D yRange(yMin(), yMax());
+  yRange.setMin(yMin() + y);
+  yRange.setMax(yMax() + y);
+  if (xRange.min() != xMin() + x || xRange.max() != xMax() + x || yRange.min() != yMin() + x || yRange.max() != yMax() + x) {
     return;
   }
+
   if (x != 0.f || y != 0.f) {
     setZoomAuto(false);
   }
-  MemoizedCurveViewRange::protectedSetXMax(xMax()+x, k_lowerMaxFloat, k_upperMaxFloat, false);
-  MemoizedCurveViewRange::protectedSetXMin(xMin() + x, k_lowerMaxFloat, k_upperMaxFloat);
-  MemoizedCurveViewRange::protectedSetYMax(yMax()+y, k_lowerMaxFloat, k_upperMaxFloat, false);
-  MemoizedCurveViewRange::protectedSetYMin(yMin() + y, k_lowerMaxFloat, k_upperMaxFloat);
+  MemoizedCurveViewRange::protectedSetXMax(xMax() + x, false, k_maxFloat);
+  MemoizedCurveViewRange::protectedSetXMin(xMin() + x, k_maxFloat);
+  MemoizedCurveViewRange::protectedSetYMax(yMax() + y, false, k_maxFloat);
+  MemoizedCurveViewRange::protectedSetYMin(yMin() + y, k_maxFloat);
 }
 
 void InteractiveCurveViewRange::normalize() {
@@ -164,24 +171,24 @@ void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
   if (axis == Axis::X) {
     float range = xMax() - xMin();
     if (std::fabs(position/range) > k_maxRatioPositionRange) {
-      range = Range1D::defaultRangeLengthFor(position);
+      range = Range1D::DefaultLengthAt(position);
     }
     float newXMax = position + range/2.0f;
     if (xMax() != newXMax) {
       setZoomAuto(false);
-      MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat, false);
-      MemoizedCurveViewRange::protectedSetXMin(newXMax - range, k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetXMax(newXMax, false, k_maxFloat);
+      MemoizedCurveViewRange::protectedSetXMin(newXMax - range, true, k_maxFloat);
     }
   } else {
     float range = yMax() - yMin();
     if (std::fabs(position/range) > k_maxRatioPositionRange) {
-      range = Range1D::defaultRangeLengthFor(position);
+      range = Range1D::DefaultLengthAt(position);
     }
     float newYMax = position + range/2.0f;
     if (yMax() != newYMax) {
       setZoomAuto(false);
-      MemoizedCurveViewRange::protectedSetYMax(position + range/2.0f, k_lowerMaxFloat, k_upperMaxFloat, false);
-      MemoizedCurveViewRange::protectedSetYMin(position - range/2.0f, k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetYMax(position + range/2.0f, false, k_maxFloat);
+      MemoizedCurveViewRange::protectedSetYMin(position - range/2.0f, true, k_maxFloat);
     }
   }
 
@@ -198,15 +205,15 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
       /* The panning increment is a whole number of pixels so that the caching
        * for cartesian functions is not invalidated. */
       const float newXMin = std::floor((x - leftMargin - xMin()) / pixelWidth) * pixelWidth + xMin();
-      MemoizedCurveViewRange::protectedSetXMax(newXMin + xRange, k_lowerMaxFloat, k_upperMaxFloat, false);
-      MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetXMax(newXMin + xRange, false, k_maxFloat);
+      MemoizedCurveViewRange::protectedSetXMin(newXMin, true, k_maxFloat);
     }
     const float rightMargin = rightMarginRatio * xRange;
     if (x > xMax() - rightMargin) {
       moved = true;
       const float newXMax = std::ceil((x + rightMargin - xMax()) / pixelWidth) * pixelWidth + xMax();
-      MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat, false);
-      MemoizedCurveViewRange::protectedSetXMin(xMax() - xRange, k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetXMax(newXMax, false, k_maxFloat);
+      MemoizedCurveViewRange::protectedSetXMin(xMax() - xRange, true, k_maxFloat);
     }
   }
   if (!std::isinf(y) && !std::isnan(y)) {
@@ -215,14 +222,14 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
     if (y < yMin() + bottomMargin) {
       moved = true;
       const float newYMin = y - bottomMargin;
-      MemoizedCurveViewRange::protectedSetYMax(newYMin + yRange, k_lowerMaxFloat, k_upperMaxFloat, false);
-      MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetYMax(newYMin + yRange, false, k_maxFloat);
+      MemoizedCurveViewRange::protectedSetYMin(newYMin, true, k_maxFloat);
     }
     const float topMargin = topMarginRatio * yRange;
     if (y > yMax() - topMargin) {
       moved = true;
-      MemoizedCurveViewRange::protectedSetYMax(y + topMargin, k_lowerMaxFloat, k_upperMaxFloat, false);
-      MemoizedCurveViewRange::protectedSetYMin(yMax() - yRange, k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetYMax(y + topMargin, false, k_maxFloat);
+      MemoizedCurveViewRange::protectedSetYMin(yMax() - yRange, true, k_maxFloat);
     }
   }
 
@@ -280,8 +287,8 @@ bool InteractiveCurveViewRange::zoomOutToMakePointVisible(float x, float y, floa
       moved = true;
       float newXMin, newXMax;
       ComputeNewBoundsAfterZoomingOut(x, xMinWithMargin, xMaxWithMargin, leftMarginRatio, rightMarginRatio, &newXMin, &newXMax);
-      MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
-      MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetXMax(newXMax, true, k_maxFloat);
+      MemoizedCurveViewRange::protectedSetXMin(newXMin, true, k_maxFloat);
     }
   }
   if (!std::isinf(y) && !std::isnan(y)) {
@@ -292,8 +299,8 @@ bool InteractiveCurveViewRange::zoomOutToMakePointVisible(float x, float y, floa
       moved = true;
       float newYMin, newYMax;
       ComputeNewBoundsAfterZoomingOut(y, yMinWithMargin, yMaxWithMargin, bottomMarginRatio, topMarginRatio, &newYMin, &newYMax);
-      MemoizedCurveViewRange::protectedSetYMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
-      MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetYMax(newYMax, true, k_maxFloat);
+      MemoizedCurveViewRange::protectedSetYMin(newYMin, true, k_maxFloat);
     }
   }
 
@@ -339,17 +346,17 @@ void InteractiveCurveViewRange::protectedNormalize(bool canChangeX, bool canChan
   if (!shrink || canShrink) {
     Zoom::SetToRatio(normalizedYXRatio, &newXMin, &newXMax, &newYMin, &newYMax, shrink);
 
-    MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat, false);
-    MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
-    MemoizedCurveViewRange::protectedSetYMin(newYMin, k_lowerMaxFloat, k_upperMaxFloat, false);
-    MemoizedCurveViewRange::protectedSetYMax(newYMax, k_lowerMaxFloat, k_upperMaxFloat);
+    MemoizedCurveViewRange::protectedSetXMin(newXMin, false, k_maxFloat);
+    MemoizedCurveViewRange::protectedSetXMax(newXMax, true, k_maxFloat);
+    MemoizedCurveViewRange::protectedSetYMin(newYMin, false, k_maxFloat);
+    MemoizedCurveViewRange::protectedSetYMax(newYMax, true, k_maxFloat);
 
     /* The range should be close to orthonormal, unless :
      *   - it has been clipped because the maximum bounds have been reached.
      *   - the the bounds are too close and of too large a magnitude, leading to
      *     a drastic loss of significance. */
     assert(isOrthonormal()
-        || xMin() <= - k_lowerMaxFloat || xMax() >= k_lowerMaxFloat || yMin() <= - k_lowerMaxFloat || yMax() >= k_lowerMaxFloat
+        || xMin() <= - k_maxFloat || xMax() >= k_maxFloat || yMin() <= - k_maxFloat || yMax() >= k_maxFloat
         || normalizationSignificantBits() <= 0);
   }
   setZoomNormalize(isOrthonormal());
@@ -414,12 +421,12 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
     }
     if (computeX) {
       // No need to update xGridUnit beffor having set XMax.
-      MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat, false);
-      MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetXMin(newXMin, false, k_maxFloat);
+      MemoizedCurveViewRange::protectedSetXMax(newXMax, true, k_maxFloat);
       if (!hasDefaultRange()) {
         float dx = xMax() - xMin();
-        MemoizedCurveViewRange::protectedSetXMin(roundLimit(m_delegate->addMargin(newXMin, dx, false , true), dx, true),  k_lowerMaxFloat, k_upperMaxFloat, false);
-        MemoizedCurveViewRange::protectedSetXMax(roundLimit(m_delegate->addMargin(newXMax, dx, false , false), dx, false), k_lowerMaxFloat, k_upperMaxFloat);
+        MemoizedCurveViewRange::protectedSetXMin(roundLimit(m_delegate->addMargin(newXMin, dx, false , true), dx, true),  false, k_maxFloat);
+        MemoizedCurveViewRange::protectedSetXMax(roundLimit(m_delegate->addMargin(newXMax, dx, false , false), dx, false), true, k_maxFloat);
       }
     }
 
@@ -437,13 +444,13 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
         newXMin = xMin();
         newXMax = xMax();
         m_delegate->improveFullRange(&newXMin, &newXMax, &newYMin, &newYMax);
-        MemoizedCurveViewRange::protectedSetXMin(newXMin, k_lowerMaxFloat, k_upperMaxFloat, false);
-        MemoizedCurveViewRange::protectedSetXMax(newXMax, k_lowerMaxFloat, k_upperMaxFloat);
+        MemoizedCurveViewRange::protectedSetXMin(newXMin, false, k_maxFloat);
+        MemoizedCurveViewRange::protectedSetXMax(newXMax, true, k_maxFloat);
       }
       /* Add vertical margins */
       dy = newYMax - newYMin;
-      MemoizedCurveViewRange::protectedSetYMin(roundLimit(m_delegate->addMargin(newYMin, dy, true , true), dy, true), k_lowerMaxFloat, k_upperMaxFloat, false);
-      MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(newYMax, dy, true , false), dy, false), k_lowerMaxFloat, k_upperMaxFloat);
+      MemoizedCurveViewRange::protectedSetYMin(roundLimit(m_delegate->addMargin(newYMin, dy, true , true), dy, true), false, k_maxFloat);
+      MemoizedCurveViewRange::protectedSetYMax(roundLimit(m_delegate->addMargin(newYMax, dy, true , false), dy, false), true, k_maxFloat);
     }
 
     if (m_delegate->defaultRangeIsNormalized() || shouldBeNormalized()) {
@@ -459,16 +466,16 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
         bool changedYMin = false;
         if (yMinIntrinsicWithMargin < yMin()) {
           float delta = yMin() - yMinIntrinsicWithMargin;
-          MemoizedCurveViewRange::protectedSetYMin(yMinIntrinsicWithMargin, k_lowerMaxFloat, k_upperMaxFloat, false);
-          MemoizedCurveViewRange::protectedSetYMax(yMax() - delta, k_lowerMaxFloat, k_upperMaxFloat);
+          MemoizedCurveViewRange::protectedSetYMin(yMinIntrinsicWithMargin, false, k_maxFloat);
+          MemoizedCurveViewRange::protectedSetYMax(yMax() - delta, true, k_maxFloat);
           changedYMin = true;
         }
         float yMaxIntrinsicWithMargin = m_delegate->addMargin(m_yMaxIntrinsic, dy, true, false);
         if (yMaxIntrinsicWithMargin > yMax()) {
           float delta = yMaxIntrinsicWithMargin - yMax();
-          MemoizedCurveViewRange::protectedSetYMax(yMaxIntrinsicWithMargin, k_lowerMaxFloat, k_upperMaxFloat);
+          MemoizedCurveViewRange::protectedSetYMax(yMaxIntrinsicWithMargin, true, k_maxFloat);
           if (!changedYMin && yMinIntrinsicWithMargin >= yMin() + delta) {
-            MemoizedCurveViewRange::protectedSetYMin(yMin() + delta, k_lowerMaxFloat, k_upperMaxFloat);
+            MemoizedCurveViewRange::protectedSetYMin(yMin() + delta, true, k_maxFloat);
           }
         }
         setZoomNormalize(isOrthonormal());
@@ -479,12 +486,12 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
 
     float xMin = -10.f;
     float xMax = 10.f;
-    MemoizedCurveViewRange::protectedSetXMin(xMin, k_lowerMaxFloat, k_upperMaxFloat, false);
-    MemoizedCurveViewRange::protectedSetXMax(xMax, k_lowerMaxFloat, k_upperMaxFloat);
+    MemoizedCurveViewRange::protectedSetXMin(xMin, false, k_maxFloat);
+    MemoizedCurveViewRange::protectedSetXMax(xMax, true, k_maxFloat);
     float yMin, yMax;
     Poincare::Zoom::SanitizeRangeForDisplay(&yMin, &yMax, NormalYXRatio() * (xMax - xMin) / 2.f);
-    MemoizedCurveViewRange::protectedSetYMin(yMin, k_lowerMaxFloat, k_upperMaxFloat, false);
-    MemoizedCurveViewRange::protectedSetYMax(yMax, k_lowerMaxFloat, k_upperMaxFloat);
+    MemoizedCurveViewRange::protectedSetYMin(yMin, false, k_maxFloat);
+    MemoizedCurveViewRange::protectedSetYMax(yMax, true, k_maxFloat);
   }
 }
 

@@ -26,7 +26,7 @@ private:
 
   InteractiveCurveViewRange * m_range;
   // m_secondaryRangeParam is only used when activating xAuto while yAuto is on.
-  Range1D m_secondaryRangeParam;
+  Poincare::Range1D m_secondaryRangeParam;
   bool m_editXRange;
 };
 

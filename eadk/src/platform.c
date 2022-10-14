@@ -4,6 +4,12 @@
 
 #include "../include/eadk/eadk.h"
 
+// External data
+
+extern const char _eadk_external_data_start, _eadk_external_data_size;
+const char * eadk_external_data = &_eadk_external_data_start;
+size_t eadk_external_data_size = (size_t)&_eadk_external_data_size;
+
 // Heap operations
 
 extern char _heap_start;

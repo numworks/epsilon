@@ -2,6 +2,7 @@
 #define EADK_H
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 // Types and constants
@@ -242,7 +243,10 @@ void eadk_timing_usleep(uint32_t us);
 void eadk_timing_msleep(uint32_t ms);
 uint64_t eadk_timing_millis();
 
-extern const unsigned char eadk_external_data[];
+// External data
+
+extern const char * eadk_external_data;
+extern size_t eadk_external_data_size;
 
 // Misc
 

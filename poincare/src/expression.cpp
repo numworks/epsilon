@@ -142,6 +142,19 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context * context, Expr
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
 
+bool Expression::recursivelyMatches(ExpressionTestAuxiliary test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols, void * auxiliary) const {
+  struct Pack {
+    ExpressionTestAuxiliary * test;
+    void * auxiliary;
+  };
+  ExpressionTrinaryTest ternary = [](const Expression e, Context * context, void * pack) {
+    ExpressionTestAuxiliary * trueTest = static_cast<ExpressionTestAuxiliary *>(static_cast<Pack *>(pack)->test);
+    return (*trueTest)(e, context, static_cast<Pack *>(pack)->auxiliary) ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
+  };
+  struct Pack pack { &test, auxiliary };
+  return recursivelyMatches(ternary, context, replaceSymbols, &pack);
+}
+
 bool Expression::deepIsMatrix(Context * context, bool canContainMatrices) const {
   if (!canContainMatrices) {
     return false;

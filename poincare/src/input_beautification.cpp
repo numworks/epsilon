@@ -265,8 +265,8 @@ int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout p
   // Create pattern layout
   Layout inserted = beautificationRule.layoutBuilder(builderParameter);
   if (isBeautifyingFunction) {
-    /* Insert parameters between parentheses in function if use is type left of
-     * an already filled parenthesis */
+    /* Insert parameters between parentheses in function if user typed it
+     * left of an already filled parenthesis */
     assert(parent.childAtIndex(endIndex + 1).type() == LayoutNode::Type::ParenthesisLayout);
     bool isParameteredExpression = (beautificationRule.listOfBeautifiedAliases.isEquivalentTo(Derivative::s_functionHelper.aliasesList()) || beautificationRule.listOfBeautifiedAliases.isEquivalentTo(Integral::s_functionHelper.aliasesList()));
     inserted = ReplaceEmptyLayoutsWithParameters(inserted, parent, endIndex + 1, isParameteredExpression);

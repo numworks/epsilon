@@ -123,8 +123,8 @@ private:
   int valuesRowForAbsoluteRow(int row) { return row - 1; } // Subtract the title row
   virtual int absoluteColumnForValuesColumn(int column) { return column + 1; } // Add the abscissa column
   int absoluteRowForValuesRow(int row) { return row + 1; } // Add the title row
-  // Coordinates of createMemoizedLayout refer to the absolute table but the index
-  // refers to the memoized table
+  /* Coordinates of createMemoizedLayout refer to the absolute table but the index
+   * refers to the memoized table */
   virtual void createMemoizedLayout(int i, int j, int index) = 0;
   /* m_firstMemoizedColumn and m_firstMemoizedRow are coordinates of the table
    * of values cells.*/

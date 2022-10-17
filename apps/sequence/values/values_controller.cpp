@@ -25,7 +25,7 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
      * used and we set them in ValuesController::ValuesController(...) */
     stack->push(controller);
     return true;
-  }, this), k_font)
+  }, this), k_cellFont)
 {
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
   setDefaultStartEndMessages();

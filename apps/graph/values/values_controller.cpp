@@ -42,17 +42,17 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
     }
     stack->push(intervalSelectorController);
     return true;
-  }, this), k_font),
+  }, this), k_cellFont),
   m_exactValuesButton(this, I18n::Message::ExactResults, Invocation([](void * context, void * sender) {
     ValuesController * valuesController = (ValuesController *) context;
     valuesController->exactValuesButtonAction();
     return true;
-  }, this), &m_exactValuesDotView, KDFont::Size::Small),
+  }, this), &m_exactValuesDotView, k_cellFont),
   m_widthManager(this),
   m_heightManager(this)
 {
   for (int i = 0; i < k_maxNumberOfDisplayableFunctions; i++) {
-    m_functionTitleCells[i].setFont(KDFont::Size::Small);
+    m_functionTitleCells[i].setFont(k_cellFont);
   }
   initValueCells();
   m_exactValuesButton.setState(false);
@@ -63,14 +63,14 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
 
 KDSize ValuesController::ApproximatedParametricCellSize() {
   KDSize layoutSize = SquareBracketPairLayoutNode::SizeGivenChildSize(KDSize(
-    PrintFloat::glyphLengthForFloatWithPrecision(::Preferences::VeryLargeNumberOfSignificantDigits) * KDFont::GlyphWidth(KDFont::Size::Small),
-    2 * KDFont::GlyphHeight(KDFont::Size::Small) + GridLayoutNode::k_gridEntryMargin));
+    PrintFloat::glyphLengthForFloatWithPrecision(::Preferences::VeryLargeNumberOfSignificantDigits) * KDFont::GlyphWidth(k_cellFont),
+    2 * KDFont::GlyphHeight(k_cellFont) + GridLayoutNode::k_gridEntryMargin));
   return layoutSize + KDSize(Metric::SmallCellMargin * 2, Metric::SmallCellMargin * 2);
 }
 
 KDSize ValuesController::CellSizeWithLayout(Layout l) {
   EvenOddExpressionCell tempCell;
-  tempCell.setFont(KDFont::Size::Small);
+  tempCell.setFont(k_cellFont);
   tempCell.setLayout(l);
   return tempCell.minimalSizeForOptimalDisplay() + KDSize(Metric::SmallCellMargin * 2, Metric::SmallCellMargin * 2);
 }

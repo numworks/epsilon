@@ -71,7 +71,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (m_currentPage == Page::RootMenu && m_defineVariableCell.ShouldEnterOnEvent(event) && selectedRow() == numberOfRows() - 1) {
+  if (m_currentPage == Page::RootMenu && m_defineVariableCell.ShouldEnterOnEvent(event) && selectedRow() == defineVariableCellIndex()) {
     Container::activeApp()->dismissModalViewController();
     sender()->handleStoreEvent();
     return true;
@@ -108,7 +108,7 @@ int MathVariableBoxController::reusableCellCount(int type) {
     assert(m_currentPage == Page::RootMenu);
     return 1;
   }
-  if (type == 0) {
+  if (type == k_leafCellType) {
     return k_maxNumberOfDisplayedRows;
   }
   return k_numberOfMenuRows;
@@ -116,7 +116,7 @@ int MathVariableBoxController::reusableCellCount(int type) {
 
 void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   if (m_currentPage == Page::RootMenu) {
-    if (index == numberOfRows() - 1) {
+    if (index == defineVariableCellIndex()) {
       return;
     }
     MessageTableCellWithChevron * myCell = static_cast<MessageTableCellWithChevron *>(cell);
@@ -158,7 +158,7 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
 
 KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
   if (m_currentPage == Page::RootMenu) {
-    if (index == numberOfRows() - 1) {
+    if (index == defineVariableCellIndex()) {
       MessageTableCell tempCell;
       return heightForCellAtIndexWithWidthInit(&tempCell, index);
     }
@@ -171,7 +171,7 @@ KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
 
 int MathVariableBoxController::typeAtIndex(int index) const {
   if (m_currentPage == Page::RootMenu) {
-    if (index == numberOfRows() - 1) {
+    if (index == defineVariableCellIndex()) {
       return k_defineVariableCellType;
     }
     return k_nodeCellType;

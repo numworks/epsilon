@@ -63,7 +63,8 @@ KDSize StackViewController::ControllerView::minimalSizeForOptimalDisplay() const
   KDSize size = m_contentView->minimalSizeForOptimalDisplay();
   int heightDiff = Metric::StackTitleHeight + (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
   int numberOfStacks = m_stackViews.length();
-  return KDSize(size.width(), m_extendVertically ? 0 : size.height() + heightDiff * numberOfStacks + Metric::CellSeparatorThickness);
+  assert(m_extendVertically || numberOfStacks > 0);
+  return KDSize(size.width(), m_extendVertically ? 0 : (size.height() + heightDiff * numberOfStacks + Metric::CellSeparatorThickness));
 }
 
 void StackViewController::ControllerView::layoutSubviews(bool force) {

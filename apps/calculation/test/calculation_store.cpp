@@ -204,17 +204,17 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Preferences::AngleUnit previousAngleUnit = Preferences::sharedPreferences()->angleUnit();
   Preferences::sharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
 
-  assertCalculationIs("1/2", DisplayOutput::ExactAndApproximate, EqualSign::Equal, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("1/3", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("1/(2i)", DisplayOutput::ExactAndApproximate, EqualSign::Equal, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("1/2", DisplayOutput::ExactAndApproximate, EqualSign::Equal, "1/2", "0.5", "0.5", &globalContext, &store);
+  assertCalculationIs("1/3", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "1/3", "0.3333333333", "0.33333333333333", &globalContext, &store);
+  assertCalculationIs("1/(2i)", DisplayOutput::ExactAndApproximate, EqualSign::Equal, "-1/2×i", "-0.5×i", "-0.5×i", &globalContext, &store);
   assertCalculationIs("1/0", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "undef", "undef", "undef", &globalContext, &store);
   assertCalculationIs("2x-x", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "undef", "undef", "undef", &globalContext, &store);
-  assertCalculationIs("[[1,2,3]]", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("[[1,2,3]]", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "[[1,2,3]]", "[[1,2,3]]", &globalContext, &store);
   assertCalculationIs("[[1,x,3]]", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "[[1,undef,3]]", "[[1,undef,3]]", &globalContext, &store);
   assertCalculationIs("[[1/0,2/0]]", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "[[undef,undef]]", "[[undef,undef]]", &globalContext, &store);
   assertCalculationIs("{1/0,2/0}", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "{undef,undef}", "{undef,undef}", &globalContext, &store);
-  assertCalculationIs("28^7", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("3+√(2)→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "3+√(2)", nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("28^7", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, "13492928512", "1.349292851ᴇ10", "13492928512", &globalContext, &store);
+  assertCalculationIs("3+√(2)→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "3+√(2)", "4.414213562", "4.4142135623731", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   assertCalculationIs("3+2→a", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "5", "5", "5", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
@@ -225,12 +225,12 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("1+1+random()", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("1+1+round(1.343,2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "3.34", "3.34", &globalContext, &store);
   assertCalculationIs("randint(2,2)+3", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "5", "5", &globalContext, &store);
-  assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("cos(45)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("cos(π/2)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, "2×√(2)", "2.828427125", "2.8284271247462", &globalContext, &store);
+  assertCalculationIs("cos(45×_°)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, "√(2)/2", "0.7071067812", "0.70710678118655", &globalContext, &store);
+  assertCalculationIs("cos(π/4×_rad)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, "√(2)/2", "0.7071067812", "0.70710678118655", &globalContext, &store);
   assertCalculationIs("binompdf(2,3,0.5)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "0.375", "0.375", &globalContext, &store);
-  assertCalculationIs("1+2%", DisplayOutput::ExactAndApproximateToggle, EqualSign::Equal, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("1-(1/3)%", DisplayOutput::ExactAndApproximateToggle, EqualSign::Approximation, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("1+2%", DisplayOutput::ExactAndApproximateToggle, EqualSign::Equal, "1×(1+2/100)", "1.02", "1.02", &globalContext, &store);
+  assertCalculationIs("1-(1/3)%", DisplayOutput::ExactAndApproximateToggle, EqualSign::Approximation, "1×(1-\u00121/3\u0013/100)", "0.9966666667", "0.99666666666667", &globalContext, &store);
 
   // Exact output that have dependencies are not displayed
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown, "2", "2", "2", &globalContext, &store);
@@ -238,26 +238,25 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 
-  assertCalculationIs("(1/7)_g", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("(1/7)_L_kg", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("(1/7)_rad", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("(1/7)_°", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("(1/7)_rad^(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("diff(x^2,x,3)_rad", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("(1/7)_rad→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("diff(x^2,x,3)_rad→a", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("(1/6)_g", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1.666666667×_dg", "1.6666666666667×_dg", &globalContext, &store);
+  assertCalculationIs("(1/6)_L_kg", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1.666666667×_dg×_m^3", "1.6666666666667×_dg×_m^3", &globalContext, &store);
+  assertCalculationIs("(1/6)_rad", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "1/6×_rad", "0.1666666667×_rad", "0.16666666666667×_rad", &globalContext, &store);
+  assertCalculationIs("(1/11)_°", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "60/11×_'", "5.454545455×_'", "5.4545454545455×_'", &globalContext, &store);
+  assertCalculationIs("(1/6)_rad^(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "0.1666666667×_rad^\u0012-1\u0013", "0.16666666666667×_rad^\u0012-1\u0013", &globalContext, &store);
+  assertCalculationIs("diff(x^2,x,3)_rad", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "6×_rad", "6×_rad", &globalContext, &store);
+  assertCalculationIs("(1/6)_rad→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "1/6×_rad", "0.1666666667×_rad", "0.16666666666667×_rad", &globalContext, &store);
+  assertCalculationIs("diff(x^2,x,3)_rad→a", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "6×_rad", "6×_rad", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
 
   Poincare::Preferences::ExamMode previousExamMode = Poincare::Preferences::sharedPreferences()->examMode();
   Poincare::Preferences::sharedPreferences()->setExamMode(Poincare::Preferences::ExamMode::Dutch);
 
-  assertCalculationIs("1+1", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("1+1", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "2", "2", &globalContext, &store);
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximate, EqualSign::Equal, "1/2", "0.5", nullptr, &globalContext, &store);
   assertCalculationIs("0.5", DisplayOutput::ExactAndApproximateToggle, EqualSign::Equal, "1/2", "0.5", nullptr, &globalContext, &store);
-  assertCalculationIs("√(8)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("cos(45)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("cos(π/2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
-  assertCalculationIs("cos(π/2)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
+  assertCalculationIs("√(8)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr,"2.828427125", "2.8284271247462", &globalContext, &store);
+  assertCalculationIs("cos(45×°)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "0.7071067812", "0.70710678118655", &globalContext, &store);
+  assertCalculationIs("cos(π/4×_rad)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "0.7071067812", "0.70710678118655", &globalContext, &store);
   assertCalculationIs("_G", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
   assertCalculationIs("_g0", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);
 

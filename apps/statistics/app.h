@@ -56,6 +56,7 @@ private:
   void activeViewDidBecomeFirstResponder(Escher::ViewController * activeViewController) override;
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   void didBecomeActive(Escher::Window * window) override;
+  bool storageWillChangeForRecord(Ion::Storage::Record) override;
   Store m_store;
   CalculationController m_calculationController;
   Escher::AlternateEmptyViewController m_calculationAlternateEmptyViewController;

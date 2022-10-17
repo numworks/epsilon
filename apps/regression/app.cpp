@@ -47,6 +47,10 @@ const App::Descriptor * App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
+bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
+  return !isStoreMenuOpen() || !record.hasExtension(Ion::Storage::lisExtension);
+}
+
 App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
   m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(), snapshot->regressionTypes()),

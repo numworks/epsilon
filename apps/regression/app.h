@@ -47,6 +47,7 @@ public:
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
+  bool storageWillChangeForRecord(Ion::Storage::Record) override;
   Store m_store;
   CalculationController m_calculationController;
   Escher::AlternateEmptyViewController m_calculationAlternateEmptyViewController;

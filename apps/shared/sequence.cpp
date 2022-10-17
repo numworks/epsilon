@@ -314,17 +314,6 @@ Expression Sequence::sumBetweenBounds(double start, double end, Poincare::Contex
   return Float<double>::Builder(result);
 }
 
-void Sequence::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context *) const {
-  *xMin = static_cast<float>(initialRank());
-  *xMax = *xMin + Zoom::k_defaultHalfRange;
-  *yMinIntrinsic = FLT_MAX;
-  *yMaxIntrinsic = -FLT_MAX;
-}
-
-void Sequence::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context, bool optimizeRange) const {
-  protectedFullRangeForDisplay(xMin, xMax, 1.f, yMin, yMax, context, false);
-}
-
 Sequence::RecordDataBuffer * Sequence::recordData() const {
   assert(!isNull());
   Ion::Storage::Record::Data d = value();

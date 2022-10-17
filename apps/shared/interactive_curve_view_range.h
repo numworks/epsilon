@@ -87,11 +87,11 @@ protected:
   virtual void protectedNormalize(bool canChangeX, bool canChangeY, bool canShrink);
 
   InteractiveCurveViewRangeDelegate * m_delegate;
+
 private:
   int normalizationSignificantBits() const;
   void privateSetZoomAuto(bool xAuto, bool yAuto);
   void privateComputeRanges(bool computeX, bool computeY);
-  bool intrinsicYRangeIsUnset() const { return std::isnan(m_yMinIntrinsic) && std::isnan(m_yMaxIntrinsic); }
 
   float m_offscreenYAxis;
   float m_yMinIntrinsic;

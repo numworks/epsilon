@@ -50,8 +50,11 @@ public:
   Range1D & x() { return m_x; }
   Range1D & y() { return m_y; }
   Coordinate2D<float> center() const { return Coordinate2D<float>(m_x.center(), m_y.center()); }
+  float ratio() const { return m_y.length() / m_x.length(); }
+  bool ratioIs(float r) const;
   void extend(Coordinate2D<float> p) { m_x.extend(p.x1()); m_y.extend(p.x2()); }
   void zoom(float ratio, Coordinate2D<float> p) { m_x.zoom(ratio, p.x1()); m_y.zoom(ratio, p.x2()); }
+  void setRatio(float r, bool shrink);
 
 private:
   Range1D m_x;

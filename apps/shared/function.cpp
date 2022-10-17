@@ -62,19 +62,4 @@ Function::RecordDataBuffer * Function::recordData() const {
   return reinterpret_cast<RecordDataBuffer *>(const_cast<void *>(d.buffer));
 }
 
-void Function::protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Poincare::Context * context, bool xRange) const {
-  Poincare::Zoom::ValueAtAbscissa evaluation;
-  if (xRange) {
-    evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
-      return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x1();
-    };
-  } else {
-    evaluation = [](float x, Poincare::Context * context, const void * auxiliary) {
-      return static_cast<const Function *>(auxiliary)->evaluateXYAtParameter(x, context).x2();
-    };
-  }
-
-  Poincare::Zoom::FullRange(evaluation, tMin, tMax, tStep, min, max, context, this);
-}
-
 }

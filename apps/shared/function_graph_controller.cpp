@@ -188,19 +188,6 @@ int FunctionGraphController::numberOfCurves() const {
   return functionStore()->numberOfActiveFunctions();
 }
 
-void FunctionGraphController::computeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic) {
-  DefaultComputeXRange(xMinLimit, xMaxLimit, xMin, xMax, yMinIntrinsic, yMaxIntrinsic, textFieldDelegateApp()->localContext(), functionStore());
-}
-
-void FunctionGraphController::computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax, bool optimizeRange) {
-  float ratio = InteractiveCurveViewRange::NormalYXRatio() * (1 - cursorTopMarginRatio() - cursorBottomMarginRatio());
-  DefaultComputeYRange(xMin, xMax, yMinIntrinsic, yMaxIntrinsic, ratio, yMin, yMax, textFieldDelegateApp()->localContext(), functionStore(), optimizeRange);
-}
-
-void FunctionGraphController::improveFullRange(float * xMin, float * xMax, float * yMin, float * yMax) {
-  DefaultImproveFullRange(xMin, xMax, yMin, yMax, textFieldDelegateApp()->localContext(), functionStore());
-}
-
 void FunctionGraphController::tidyModels() {
   int nbOfFunctions = numberOfCurves();
   for (int i = 0; i < nbOfFunctions; i++) {

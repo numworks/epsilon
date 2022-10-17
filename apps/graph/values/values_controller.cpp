@@ -67,7 +67,6 @@ KDSize ValuesController::CellSizeWithLayout(Layout l) {
   return tempCell.minimalSizeForOptimalDisplay() + KDSize(Metric::SmallCellMargin * 2, Metric::SmallCellMargin * 2);
 }
 
-
 KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
   KDCoordinate columnWidth = Shared::ValuesController::defaultColumnWidth();
   KDCoordinate maxColumnWidth = MaxColumnWidth();

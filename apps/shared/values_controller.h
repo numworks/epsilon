@@ -50,7 +50,6 @@ public:
   void initializeInterval();
 
 protected:
-  constexpr static KDFont::Size k_font = KDFont::Size::Small;
   constexpr static int k_abscissaTitleCellType = 0;
   constexpr static int k_functionTitleCellType = 1;
   constexpr static int k_editableValueCellType = 2;

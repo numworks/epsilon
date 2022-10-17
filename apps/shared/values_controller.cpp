@@ -35,12 +35,12 @@ void ValuesController::setupSelectableTableViewAndCells(InputEventHandlerDelegat
     EvenOddEditableTextCell * c = abscissaCells(i);
     c->setParentResponder(selectableTableView());
     c->editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
-    c->editableTextCell()->textField()->setFont(k_font);
+    c->editableTextCell()->textField()->setFont(k_cellFont);
   }
   int numberOfAbscissaTitleCells = abscissaTitleCellsCount();
   for (int i = 0; i < numberOfAbscissaTitleCells; i++) {
     EvenOddMessageTextCell * c = abscissaTitleCells(i);
-    c->setMessageFont(k_font);
+    c->setMessageFont(k_cellFont);
   }
 }
 
@@ -427,7 +427,7 @@ void ValuesController::initValueCells() {
   for (int i = 0; i < numberOfValueCells; i++) {
     EvenOddExpressionCell * valueCell = valueCells(i);
     assert(valueCell);
-    valueCell->setFont(KDFont::Size::Small);
+    valueCell->setFont(k_cellFont);
     valueCell->setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
     // TODO: Factorize margin computation
     valueCell->setLeftMargin(Escher::EvenOddCell::k_horizontalMargin + 1);

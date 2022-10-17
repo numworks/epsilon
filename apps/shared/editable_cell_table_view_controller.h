@@ -27,8 +27,9 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
 protected:
+  constexpr static KDFont::Size k_cellFont = KDFont::Size::Small;
   constexpr static KDCoordinate k_cellHeight = Escher::Metric::SmallEditableCellHeight;
-  constexpr static KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) * KDFont::GlyphWidth(KDFont::Size::Small) + 2*Escher::Metric::SmallCellMargin + Escher::Metric::TableSeparatorThickness;
+  constexpr static KDCoordinate k_cellWidth = Poincare::PrintFloat::glyphLengthForFloatWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) * KDFont::GlyphWidth(k_cellFont) + 2*Escher::Metric::SmallCellMargin + Escher::Metric::TableSeparatorThickness;
   constexpr static KDCoordinate k_margin = Escher::Metric::TableSeparatorThickness;
   constexpr static KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
 

@@ -106,14 +106,6 @@ void App::willExitResponderChain(Responder * nextFirstResponder) {
   m_menuController.willExitApp();
 }
 
-PythonToolbox * App::toolbox() {
-  return &m_toolbox;
-}
-
-VariableBoxController * App::variableBox() {
-  return &m_variableBoxController;
-}
-
 bool App::textInputDidReceiveEvent(InputEventHandler * textInput, Ion::Events::Event event) {
   const char * pythonText = Helpers::PythonTextForEvent(event);
   if (pythonText != nullptr) {

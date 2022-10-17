@@ -138,4 +138,8 @@ void App::Snapshot::reset() {
   m_pageQueue.reset();
 }
 
+bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
+  return !isStoreMenuOpen() || !record.hasExtension(Ion::Storage::lisExtension);
+}
+
 }  // namespace Inference

@@ -50,8 +50,8 @@ public:
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 
   /* InputEventHandlerDelegate */
-  PythonToolbox * toolbox() override;
-  VariableBoxController * variableBox() override;
+  PythonToolbox * toolbox() override { return &m_toolbox; }
+  VariableBoxController * variableBox() override { return &m_variableBoxController; }
 
   /* TextInputDelegate */
   bool textInputDidReceiveEvent(Escher::InputEventHandler * textInput, Ion::Events::Event event);

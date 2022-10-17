@@ -38,13 +38,13 @@ public:
   void lockDeleteEvent(Page page) { m_lockPageDelete = page; }
 
 private:
-  constexpr static int k_maxNumberOfDisplayedRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::PopUpTopMargin + Escher::Metric::StackTitleHeight); // Remaining cell can be above and below so we add +2
-  constexpr static int k_numberOfMenuRows = static_cast<int>(Page::sizeOfEnum) - 1 + 1;
+  constexpr static int k_maxNumberOfDisplayedRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::PopUpTopMargin + Escher::Metric::StackTitleHeight);
+  constexpr static int k_numberOfMenuRows = static_cast<int>(Page::sizeOfEnum) - 1 /* RootMenu */ + 1 /* DefineVariable */;
   constexpr static KDCoordinate k_leafMargin = 20;
   constexpr static KDFont::Size k_subLabelFont = KDFont::Size::Small;
   constexpr static int k_defineVariableCellType = 2;
-  constexpr static int k_defineVariableCellIndex = k_numberOfMenuRows - 1;
   Escher::ExpressionTableCellWithExpression * leafCellAtIndex(int index) override;
+  int defineVariableCellIndex() const { return numberOfRows() - 1; }
   Escher::MessageTableCellWithChevron * nodeCellAtIndex(int index) override;
   I18n::Message subTitle() override;
   int numberOfElements(Page page) const;

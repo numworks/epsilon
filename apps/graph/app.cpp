@@ -62,11 +62,11 @@ void App::storageDidChangeForRecord(Ion::Storage::Record record) {
     Symbol symbol = Symbol::Builder(record.name().baseName, record.name().baseNameLength);
     Expression f = function->isNamed() ? function->expressionClone() : function->originalEquation();
     /* TODO this condition has false positives when the expression contains a
-     * bound symbol with the same name as the modified symbol. An ad-hoc
-     * hasSymbol could be implemented but the best solution is to rework
-     * recursivelyMatches to make it aware of parametered expressions. */
+     * local context with the modified symbol. An ad-hoc hasSymbol could be
+     * implemented but the best solution is to rework recursivelyMatches to make
+     * it aware of parametered expressions. */
     if (f.recursivelyMatches([](const Expression e, Context * context, void * symbol) {
-      return (e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol&>(e).isIdenticalTo(*static_cast<Symbol*>(symbol))) ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
+      return e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol&>(e).isIdenticalTo(*static_cast<Symbol*>(symbol));
     }, context(), ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol, &symbol)) {
       shouldUpdateFunctions = true;
       break;

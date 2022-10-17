@@ -49,7 +49,7 @@ bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
 
 void App::storageDidChangeForRecord(Ion::Storage::Record record) {
   FunctionApp::storageDidChangeForRecord(record);
-  if (!isStoreMenuOpen()) {
+  if (record.hasExtension(Ion::Storage::funcExtension)) {
     return;
   }
   /* A variable has been modified via the store menu, we need to compute if one
@@ -60,7 +60,7 @@ void App::storageDidChangeForRecord(Ion::Storage::Record record) {
     /* Do not skip inactive functions since active ones may depend on them. */
     Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(functionStore()->recordAtIndex(i));
     Symbol symbol = Symbol::Builder(record.name().baseName, record.name().baseNameLength);
-    Expression f = function->expressionClone();
+    Expression f = function->isNamed() ? function->expressionClone() : function->originalEquation();
     /* TODO this condition has false positives when the expression contains a
      * bound symbol with the same name as the modified symbol. An ad-hoc
      * hasSymbol could be implemented but the best solution is to rework
@@ -75,12 +75,18 @@ void App::storageDidChangeForRecord(Ion::Storage::Record record) {
   if (!shouldUpdateFunctions) {
     return;
   }
-  if (m_tabViewController.activeTab() == 1) {
-    m_graphController.viewDidDisappear();
-    m_graphController.viewWillAppear();
-  } else if (m_tabViewController.activeTab() == 2) {
-    m_valuesController.viewDidDisappear();
-    m_valuesController.viewWillAppear();
+  ViewController * tabs[] = {&m_listController, &m_graphController, &m_valuesController};
+  StackViewController * tabStacks[] = {&m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController};
+  int tab = m_tabViewController.activeTab();
+  assert(0 <= tab && tab < 3);
+  if (tabStacks[tab]->depth() > Shared::InteractiveCurveViewController::k_graphControllerStackDepth) {
+    /* Close the details/curve menu/calculation views (minimum...)/column header
+     * since they may not make sense with the updated function. */
+    tabStacks[tab]->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
+  } else {
+    /* Reload the current tab. */
+    tabs[tab]->viewDidDisappear();
+    tabs[tab]->viewWillAppear();
   }
 }
 

@@ -111,8 +111,8 @@ bool StoreMenuController::layoutFieldDidFinishEditing(Escher::LayoutField * layo
     return false;
   }
   Store store = static_cast<Store&>(reducedExp);
-  store.storeValueForSymbol(Container::activeApp()->localContext());
   Container::activeApp()->dismissModalViewController();
+  store.storeValueForSymbol(Container::activeApp()->localContext());
   return true;
 }
 

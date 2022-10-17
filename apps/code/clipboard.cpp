@@ -13,7 +13,7 @@ int Clipboard::s_replacementRuleStartingPoint = 0;
 
 Clipboard * Clipboard::sharedClipboard() {
   assert(sizeof(Clipboard) == sizeof(Escher::Clipboard));
-  return static_cast<Clipboard *>(Escher::Clipboard::sharedClipboard());
+  return static_cast<Clipboard *>(Escher::Clipboard::SharedClipboard());
 }
 
 bool Clipboard::ShouldReplaceLetterE(const char * text, size_t length, size_t position) {

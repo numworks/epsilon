@@ -35,7 +35,7 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
     if (event == Ion::Events::Sto || event == Ion::Events::Var) {
       App::app()->storeValue(copyBuffer);
     } else {
-      Escher::Clipboard::sharedClipboard()->store(copyBuffer);
+      Escher::Clipboard::SharedClipboard()->store(copyBuffer);
     }
     return true;
   }

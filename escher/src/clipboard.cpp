@@ -8,7 +8,7 @@ namespace Escher {
 
 static Clipboard s_clipboard;
 
-Clipboard * Clipboard::sharedClipboard() {
+Clipboard * Clipboard::SharedClipboard() {
   return &s_clipboard;
 }
 

@@ -98,7 +98,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {
         App::app()->storeValue(m_r2Cell.text());
       } else {
-        Escher::Clipboard::sharedClipboard()->store(m_r2Cell.text());
+        Escher::Clipboard::SharedClipboard()->store(m_r2Cell.text());
       }
       return true;
     } else if (type == k_regressionEquationCellType) {
@@ -110,7 +110,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
         if (event == Ion::Events::Sto || event == Ion::Events::Var) {
           App::app()->storeValue(buffer);
         } else {
-          Escher::Clipboard::sharedClipboard()->store(buffer);
+          Escher::Clipboard::SharedClipboard()->store(buffer);
         }
         return true;
       }

@@ -209,7 +209,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
       strlcpy(buffer, start, std::min<size_t>(contentView()->selectionEnd() - start + 1, Escher::Clipboard::k_bufferSize));
       Container::activeApp()->storeValue(buffer);
     } else {
-      Escher::Clipboard::sharedClipboard()->store(start, contentView()->selectionEnd() - start);
+      Escher::Clipboard::SharedClipboard()->store(start, contentView()->selectionEnd() - start);
       if (event == Ion::Events::Cut) {
         deleteSelection();
       }
@@ -217,7 +217,7 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Paste) {
-    return handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);
+    return handleEventWithText(Clipboard::SharedClipboard()->storedText(), false, true);
   }
 
   // The following events need a scrollToCursor and return true

@@ -41,7 +41,7 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
     if (e == Ion::Events::Sto || e == Ion::Events::Var) {
       App::app()->storeValue(buffer);
     } else {
-      Escher::Clipboard::sharedClipboard()->store(buffer);
+      Escher::Clipboard::SharedClipboard()->store(buffer);
     }
     return true;
   }

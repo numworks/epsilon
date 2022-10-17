@@ -17,16 +17,16 @@ public:
                          InputEventHandlerDelegate * inputEventHandlerDelegate = nullptr,
                          TextFieldDelegate * textDelegate = nullptr,
                          LayoutFieldDelegate * layoutDelegate = nullptr);
-  ExpressionField * expressionField();
+  ExpressionField * expressionField() { return &m_expressionField; }
   void setHighlighted(bool highlight) override;
   Responder * responder() override {
     return this;
   }
-  int numberOfSubviews() const override;
-  View * subviewAtIndex(int index) override;
+  int numberOfSubviews() const override { return 1; }
+  View * subviewAtIndex(int index) override { return &m_expressionField; }
   void layoutSubviews(bool force = false) override;
   void didBecomeFirstResponder() override;
-  KDSize minimalSizeForOptimalDisplay() const override;
+  KDSize minimalSizeForOptimalDisplay() const override { return m_expressionField.minimalSizeForOptimalDisplay(); }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;

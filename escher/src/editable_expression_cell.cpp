@@ -18,22 +18,9 @@ void EditableExpressionCell::drawRect(KDContext * ctx, KDRect rect) const {
   drawBorderOfRect(ctx, bounds(), Palette::GrayBright);
 }
 
-ExpressionField * EditableExpressionCell::expressionField() {
-  return &m_expressionField;
-}
-
 void EditableExpressionCell::setHighlighted(bool highlight) {
   // We want the background to stay white to improve visibility
   return;
-}
-
-int EditableExpressionCell::numberOfSubviews() const {
-  return 1;
-}
-
-View * EditableExpressionCell::subviewAtIndex(int index) {
-  assert(index == 0);
-  return &m_expressionField;
 }
 
 void EditableExpressionCell::layoutSubviews(bool force) {
@@ -47,10 +34,6 @@ void EditableExpressionCell::layoutSubviews(bool force) {
 
 void EditableExpressionCell::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_expressionField);
-}
-
-KDSize EditableExpressionCell::minimalSizeForOptimalDisplay() const {
-  return m_expressionField.minimalSizeForOptimalDisplay();
 }
 
 }

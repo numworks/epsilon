@@ -129,7 +129,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
 
     // Compute and serialize the outputs
     /* The serialized outputs are:
-     * - the exact ouput
+     * - the exact output
      * - the approximate output with the maximal number of significant digits
      * - the approximate output with the displayed number of significant digits
      */
@@ -139,6 +139,13 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
       Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
       PoincareHelpers::ParseAndSimplifyAndApproximate(addressOfCalculation + calcSize, &(outputs[0]), &(outputs[1]), context);
       if (outputs[0].type() == ExpressionNode::Type::Store) {
+        /* When a input contains a store it is kept by the reduction in the
+         * exact output and the actual store is performed here. The global
+         * context will perform the store and ensure that no symbol is kept in
+         * the definition of a variable.
+         * Once this is done we replace the output with the stored expression
+         * and approximate it to mimic the behaviour of normal computations.
+         */
         Store store = static_cast<Store&>(outputs[0]);
         outputs[0] = store.storeValueForSymbol(context);
         outputs[1] = PoincareHelpers::Approximate<double>(outputs[0], context);

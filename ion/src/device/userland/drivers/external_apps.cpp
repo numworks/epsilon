@@ -16,7 +16,7 @@ namespace Ion {
 namespace ExternalApps {
 
 /* The ExternalApp start with its info layout as:
- * - 4 bytes: a magic code 0XBABECODE
+ * - 4 bytes: a magic code 0xBABECODE
  * - 4 bytes: the API level of the AppInfo layout
  * - 4 bytes: the address of the app name
  * - 4 bytes: the size of the compressed icon

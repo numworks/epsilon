@@ -142,9 +142,9 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   if (typeAtLoc == k_notEditableValueCellType) {
     // Special case: last row
     if (j == numberOfElementsInColumn(i) + 1) {
-      EmptyLayout emptyCell = EmptyLayout::Builder();
-      emptyCell.setVisible(false);
-      static_cast<EvenOddExpressionCell *>(cell)->setLayout(emptyCell);
+      EmptyLayout emptyLayout = EmptyLayout::Builder();
+      emptyLayout.setVisible(false);
+      static_cast<EvenOddExpressionCell *>(cell)->setLayout(emptyLayout);
     } else {
       static_cast<EvenOddExpressionCell *>(cell)->setLayout(memoizedLayoutForCell(i, j));
     }

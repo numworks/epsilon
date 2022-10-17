@@ -209,7 +209,7 @@ void LayoutField::ContentView::copySelection(Context * context, bool intoStoreMe
     if (intoStoreMenu) {
       Container::activeApp()->storeValue(buffer);
     } else {
-      Clipboard::sharedClipboard()->store(buffer);
+      Clipboard::SharedClipboard()->store(buffer);
     }
   }
 }
@@ -605,7 +605,7 @@ bool LayoutField::privateHandleEvent(Ion::Events::Event event) {
     if (eventTextLength > 0) {
       handleEventWithText(buffer);
     } else if (event == Ion::Events::Paste) {
-      handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);
+      handleEventWithText(Clipboard::SharedClipboard()->storedText(), false, true);
     } else {
       assert(event == Ion::Events::Backspace);
       if (!m_contentView.selectionIsEmpty()) {

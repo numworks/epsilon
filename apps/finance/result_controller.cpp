@@ -34,7 +34,7 @@ void ResultController::didBecomeFirstResponder() {
 
 bool ResultController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
-    Escher::Clipboard::sharedClipboard()->store(cellAtIndex(0)->text());
+    Escher::Clipboard::SharedClipboard()->store(cellAtIndex(0)->text());
     return true;
   }
   if (event == Ion::Events::Sto || event == Ion::Events::Var) {

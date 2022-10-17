@@ -253,7 +253,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {
         Container::activeApp()->storeValue(text);
       } else {
-        Escher::Clipboard::sharedClipboard()->store(text);
+        Escher::Clipboard::SharedClipboard()->store(text);
       }
       return true;
     }
@@ -265,7 +265,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {
         Container::activeApp()->storeValue(buffer);
       } else {
-        Escher::Clipboard::sharedClipboard()->store(buffer);
+        Escher::Clipboard::SharedClipboard()->store(buffer);
       }
       return true;
     }

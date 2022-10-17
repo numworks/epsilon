@@ -517,7 +517,7 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
   } else if (m_delegate->textFieldDidReceiveEvent(this, event)) {
     return true;
   } else if (event == Ion::Events::Paste) {
-    return handleEventWithText(Clipboard::sharedClipboard()->storedText(), false, true);
+    return handleEventWithText(Clipboard::SharedClipboard()->storedText(), false, true);
   } else if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     const char * previousText = contentView()->text();
     setEditing(true);
@@ -642,11 +642,11 @@ void AbstractTextField::removeWholeText() {
 
 bool AbstractTextField::storeInClipboard() const {
   if (!isEditing()) {
-    Clipboard::sharedClipboard()->store(text());
+    Clipboard::SharedClipboard()->store(text());
     return true;
   } else if (!nonEditableContentView()->selectionIsEmpty()) {
     const char * start = nonEditableContentView()->selectionStart();
-    Clipboard::sharedClipboard()->store(start, nonEditableContentView()->selectionEnd() - start);
+    Clipboard::SharedClipboard()->store(start, nonEditableContentView()->selectionEnd() - start);
     return true;
   }
   return false;

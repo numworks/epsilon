@@ -8,7 +8,7 @@ namespace Escher {
 
 class Clipboard {
 public:
-  static Clipboard * sharedClipboard();
+  static Clipboard * SharedClipboard();
   void store(const char * storedText, int length = -1);
   const char * storedText();
   void reset();

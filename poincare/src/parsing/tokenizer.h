@@ -46,7 +46,6 @@ private:
   size_t popDigits();
   size_t popBinaryDigits();
   size_t popHexadecimalDigits();
-  size_t popCustomIdentifier();
   Token popNumber();
 
   /* ========== IDENTIFIERS ==========

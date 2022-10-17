@@ -792,6 +792,22 @@ public:
   constexpr static int k_representativesAllowingImplicitAdditionLength = sizeof(k_representativesAllowingImplicitAddition) / sizeof(RepresentativesList);
   static bool AllowImplicitAddition(const UnitNode::Representative * smallestRepresentative, const UnitNode::Representative * biggestRepresentative);
 
+  constexpr static const UnitNode::Representative * k_representativesWithoutLeftMargin[] = {
+    &k_angleRepresentatives[1], // "
+    &k_angleRepresentatives[2], // '
+    &k_angleRepresentatives[3], // °
+    &k_temperatureRepresentatives[1], // °C
+    &k_temperatureRepresentatives[2] // °F
+  };
+  constexpr static int k_numberOfRepresentativesWithoutLeftMargin = sizeof(k_representativesWithoutLeftMargin) / sizeof(UnitNode::Representative *);
+  static_assert(Helpers::StringsAreEqual(k_representativesWithoutLeftMargin[0]->m_rootSymbols, "\""), "Wrong unit without margin");
+  static_assert(Helpers::StringsAreEqual(k_representativesWithoutLeftMargin[1]->m_rootSymbols, "'"), "Wrong unit without margin");
+  static_assert(Helpers::StringsAreEqual(k_representativesWithoutLeftMargin[2]->m_rootSymbols, "°"), "Wrong unit without margin");
+  static_assert(Helpers::StringsAreEqual(k_representativesWithoutLeftMargin[3]->m_rootSymbols, "°C"), "Wrong unit without margin");
+  static_assert(Helpers::StringsAreEqual(k_representativesWithoutLeftMargin[4]->m_rootSymbols, "°F"), "Wrong unit without margin");
+
+  static bool ForceMarginLeftOfUnit(const Unit& unit);
+
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
   Expression shallowBeautify();

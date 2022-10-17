@@ -995,6 +995,16 @@ bool Unit::AllowImplicitAddition(const UnitNode::Representative * smallestRepres
   return false;
 }
 
+bool Unit::ForceMarginLeftOfUnit(const Unit& unit) {
+  const UnitNode::Representative * representative = unit.representative();
+  for (int i = 0; i < k_numberOfRepresentativesWithoutLeftMargin; i++) {
+    if (k_representativesWithoutLeftMargin[i] == representative) {
+      return false;
+    }
+  }
+  return true;
+}
+
 Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   if (reductionContext.unitConversion() == ExpressionNode::UnitConversion::None
       || isBaseUnit()) {

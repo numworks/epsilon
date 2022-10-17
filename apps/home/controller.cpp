@@ -206,13 +206,10 @@ void Controller::switchToSelectedApp() {
       container->switchToBuiltinApp(selectedSnapshot);
     }
   } else {
-    if (examMode != Poincare::Preferences::ExamMode::Off) {
-      App::app()->displayWarning(ExamModeConfiguration::forbiddenAppMessage(examMode, 0), ExamModeConfiguration::forbiddenAppMessage(examMode, 1));
-    } else {
-      m_view.reload();
-      Ion::ExternalApps::App a = container->externalAppAtIndex(appIndex - container->numberOfBuiltinApps());
-      container->switchToExternalApp(a);
-    }
+    assert(examMode != Poincare::Preferences::ExamMode::Off);
+    m_view.reload();
+    Ion::ExternalApps::App a = container->externalAppAtIndex(appIndex - container->numberOfBuiltinApps());
+    container->switchToExternalApp(a);
   }
 }
 

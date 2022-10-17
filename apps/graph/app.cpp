@@ -39,6 +39,8 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 }
 
 bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
+  /* Prevent functions from being (re)defined from the store menu.
+   * Variables can be changed even if they are used in functions. */
   if (!isStoreMenuOpen()) {
     return true;
   }
@@ -50,8 +52,12 @@ void App::storageDidChangeForRecord(Ion::Storage::Record record) {
   if (!isStoreMenuOpen()) {
     return;
   }
+  /* A variable has been modified via the store menu, we need to compute if one
+   * of the functions depends on this variable and update the displayed views if
+   * it is the case. */
   bool shouldUpdateFunctions = false;
   for (int i = 0; i < functionStore()->numberOfModels(); i++) {
+    /* Do not skip inactive functions since active ones may depend on them. */
     Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(functionStore()->recordAtIndex(i));
     Symbol symbol = Symbol::Builder(record.name().baseName, record.name().baseNameLength);
     Expression f = function->expressionClone();

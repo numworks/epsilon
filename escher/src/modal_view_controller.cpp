@@ -66,7 +66,7 @@ void ModalViewController::ContentView::layoutSubviews(bool force) {
     KDRect oldFrame = m_currentModalView->m_frame;
     KDRect modalFrame = modalViewFrame().unionedWith(oldFrame);
     m_regularView->setFrame(modalFrame == bounds() ? KDRectZero : bounds(), force);
-    m_currentModalView->setFrame(modalFrame, oldFrame == modalFrame);
+    m_currentModalView->setFrame(modalFrame, force || oldFrame == modalFrame);
   } else {
     m_regularView->setFrame(bounds(), force);
     if (m_currentModalView) {

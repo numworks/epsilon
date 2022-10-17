@@ -15,6 +15,7 @@ class GridLayoutNode : public Array, public LayoutNode {
   friend class BinomialCoefficientLayoutNode;
   friend class GridLayout;
 public:
+  constexpr static KDCoordinate k_gridEntryMargin = 6;
 
   static bool IsGridLayoutType(Type type) { return type == Type::MatrixLayout || type == Type::PiecewiseOperatorLayout; }
 
@@ -87,7 +88,6 @@ protected:
   int indexAtRowColumn(int rowIndex, int columnIndex) const;
 
   // Sizes
-  constexpr static KDCoordinate k_gridEntryMargin = 6;
   virtual KDCoordinate horizontalGridEntryMargin(KDFont::Size font) const { return k_gridEntryMargin; }
   KDCoordinate verticalGridEntryMargin(KDFont::Size font) const { return k_gridEntryMargin; }
   KDCoordinate rowBaseline(int i, KDFont::Size font);

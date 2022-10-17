@@ -6,6 +6,7 @@
 #include <poincare/layout_helper.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/square_bracket_pair_layout.h>
 #include <poincare/string_layout.h>
 #include <apps/shared/poincare_helpers.h>
 #include <apps/shared/utils.h>
@@ -60,6 +61,13 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
 
 // TableViewDataSource
 
+KDSize ValuesController::ApproximatedParametricCellSize() {
+  KDSize layoutSize = SquareBracketPairLayoutNode::SizeGivenChildSize(KDSize(
+    PrintFloat::glyphLengthForFloatWithPrecision(::Preferences::VeryLargeNumberOfSignificantDigits) * KDFont::GlyphWidth(KDFont::Size::Small),
+    2 * KDFont::GlyphHeight(KDFont::Size::Small) + GridLayoutNode::k_gridEntryMargin));
+  return layoutSize + KDSize(Metric::SmallCellMargin * 2, Metric::SmallCellMargin * 2);
+}
+
 KDSize ValuesController::CellSizeWithLayout(Layout l) {
   EvenOddExpressionCell tempCell;
   tempCell.setFont(KDFont::Size::Small);
@@ -68,7 +76,15 @@ KDSize ValuesController::CellSizeWithLayout(Layout l) {
 }
 
 KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
-  KDCoordinate columnWidth = Shared::ValuesController::defaultColumnWidth();
+  KDCoordinate columnWidth;
+  int tempI = i;
+  ContinuousFunction::SymbolType symbol = symbolTypeAtColumn(&tempI);
+  if (tempI > 0 && symbol == ContinuousFunction::SymbolType::T) {
+    // Default width is larger for parametric functions
+    columnWidth = ApproximatedParametricCellSize().width();
+  } else {
+    columnWidth = Shared::ValuesController::defaultColumnWidth();
+  }
   KDCoordinate maxColumnWidth = MaxColumnWidth();
   if (!m_exactValuesButton.state()) {
     // Width is constant when displaying approximations
@@ -99,36 +115,22 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
   for (int i = 0; i < nColumns; i++) {
     int tempI = i;
     ContinuousFunction::SymbolType symbol = symbolTypeAtColumn(&tempI);
-    if (!m_exactValuesButton.state() && symbol != ContinuousFunction::SymbolType::T) {
+    if (!m_exactValuesButton.state()) {
+     if (symbol != ContinuousFunction::SymbolType::T) {
       /* Height is constant when there is no parametric function and exact
        * result is not displayed. */
       continue;
+     } else {
+      return ApproximatedParametricCellSize().height();
+     }
     }
     if (typeAtLocation(i, j) == k_notEditableValueCellType && j < numberOfElementsInColumn(i) + 1) {
-      Layout l;
-      bool shouldBreak = false;
-      if (!m_exactValuesButton.state() && symbol == ContinuousFunction::SymbolType::T) {
-        /* If the exact result is not displayed, every parametric function cell
-         * has the same height, which is a 2-rows vector. No need to compute
-         * the real layout to compute height, just use a placeholder vector */
-        MatrixLayout m = MatrixLayout::Builder();
-        m.addChildAtIndex(StringLayout::Builder(""), 0, 0, nullptr);
-        m.addChildAtIndex(StringLayout::Builder(""), 1, 1, nullptr);
-        m.setDimensions(2, 1);
-        l = m;
-        shouldBreak = true;
-      } else {
-        assert(m_exactValuesButton.state());
-        l = memoizedLayoutForCell(i, j);
-      }
+      assert(m_exactValuesButton.state());
+      Layout l = memoizedLayoutForCell(i, j);
       assert(!l.isUninitialized());
       rowHeight = std::max(CellSizeWithLayout(l).height(), rowHeight);
       if (rowHeight > maxRowHeight) {
         return maxRowHeight;
-      }
-      if (shouldBreak) {
-        // When displaying approx, parametric functions have the max height.
-        break;
       }
     }
   }

@@ -409,6 +409,7 @@ QUIZ_CASE(poincare_parsing_units) {
   assert_parsed_expression_is("3h40min5s", Addition::Builder({Multiplication::Builder(BasedInteger::Builder(3), hour), Multiplication::Builder(BasedInteger::Builder(40), minute), Multiplication::Builder(BasedInteger::Builder(5), second)}));
   assert_parsed_expression_is("5mi4yd2ft3in", Addition::Builder({Multiplication::Builder(BasedInteger::Builder(5), Expression::Parse("_mi", nullptr)),Multiplication::Builder(BasedInteger::Builder(4), Expression::Parse("_yd", nullptr)), Multiplication::Builder(BasedInteger::Builder(2), Expression::Parse("_ft", nullptr)), Multiplication::Builder(BasedInteger::Builder(3), Expression::Parse("_in", nullptr))}));
   assert_parsed_expression_is("5lb4oz", Addition::Builder({Multiplication::Builder(BasedInteger::Builder(5), Expression::Parse("_lb", nullptr)), Multiplication::Builder(BasedInteger::Builder(4), Expression::Parse("_oz", nullptr))}));
+  assert_parsed_expression_is("5°4'3\"", Addition::Builder({Multiplication::Builder(BasedInteger::Builder(5), Expression::Parse("_°", nullptr)), Multiplication::Builder(BasedInteger::Builder(4), Expression::Parse("_'", nullptr)), Multiplication::Builder(BasedInteger::Builder(3), Expression::Parse("_\"", nullptr))}));
   // Works with decimal numbers
   assert_parsed_expression_is("3.5h40.3min5.1s", Addition::Builder({Multiplication::Builder(Decimal::Builder(3.5), hour), Multiplication::Builder(Decimal::Builder(40.3), minute), Multiplication::Builder(Decimal::Builder(5.1), second)}));
   // Has priority over other operation

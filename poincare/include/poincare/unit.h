@@ -771,11 +771,22 @@ public:
   static_assert(Helpers::StringsAreEqual(k_massRepresentativesAllowingImplicitAddition[0]->m_rootSymbols, "oz"), "Implicit addition between units has wrong unit");
   static_assert(Helpers::StringsAreEqual(k_massRepresentativesAllowingImplicitAddition[1]->m_rootSymbols, "lb"), "Implicit addition between units has wrong unit");
 
+  // These must be sorted in order, from smallest to biggest
+  constexpr static const UnitNode::Representative * k_angleRepresentativesAllowingImplicitAddition[] = {
+    &k_angleRepresentatives[1], // "
+    &k_angleRepresentatives[2], // '
+    &k_angleRepresentatives[3] // °
+  };
+  static_assert(Helpers::StringsAreEqual(k_angleRepresentativesAllowingImplicitAddition[0]->m_rootSymbols, "\""), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_angleRepresentativesAllowingImplicitAddition[1]->m_rootSymbols, "'"), "Implicit addition between units has wrong unit");
+  static_assert(Helpers::StringsAreEqual(k_angleRepresentativesAllowingImplicitAddition[2]->m_rootSymbols, "°"), "Implicit addition between units has wrong unit");
+
   struct RepresentativesList {const UnitNode::Representative * const * representativesList; int length;};
   constexpr static RepresentativesList k_representativesAllowingImplicitAddition[] = {
     {k_timeRepresentativesAllowingImplicitAddition, sizeof(k_timeRepresentativesAllowingImplicitAddition) / sizeof(UnitNode::Representative *)},
     {k_distanceRepresentativesAllowingImplicitAddition, sizeof(k_distanceRepresentativesAllowingImplicitAddition) / sizeof(UnitNode::Representative *)},
-    {k_massRepresentativesAllowingImplicitAddition, sizeof(k_massRepresentativesAllowingImplicitAddition) / sizeof(UnitNode::Representative *)}
+    {k_massRepresentativesAllowingImplicitAddition, sizeof(k_massRepresentativesAllowingImplicitAddition) / sizeof(UnitNode::Representative *)},
+    {k_angleRepresentativesAllowingImplicitAddition, sizeof(k_angleRepresentativesAllowingImplicitAddition) / sizeof(UnitNode::Representative *)}
   };
   constexpr static int k_representativesAllowingImplicitAdditionLength = sizeof(k_representativesAllowingImplicitAddition) / sizeof(RepresentativesList);
   static bool AllowImplicitAddition(const UnitNode::Representative * smallestRepresentative, const UnitNode::Representative * biggestRepresentative);

@@ -184,6 +184,7 @@ public:
     friend class Unit;
   public:
     constexpr static AngleRepresentative Default() { return AngleRepresentative(nullptr, nullptr, NAN, Prefixable::None, Prefixable::None); }
+    // Returns a beautified expression
     Expression convertInto(Expression value, const Representative * other , const ExpressionNode::ReductionContext& reductionContext) const;
     const Vector<int> dimensionVector() const override { return Vector<int>{.time = 0, .distance = 0, .angle = 1, .mass = 0, .current = 0, .temperature = 0, .amountOfSubstance = 0, .luminuousIntensity = 0}; }
     int numberOfRepresentatives() const override { return 5; }

@@ -252,8 +252,19 @@ CodePoint MultiplicationNode::operatorSymbol() const {
   return CodePointForOperatorSymbol(static_cast<MultiplicationSymbol>(sign));
 }
 
-static bool ExpressionIsUnit(Expression  e) {
-  return e.type() == ExpressionNode::Type::Unit || (e.type() == ExpressionNode::Type::Power && e.childAtIndex(0).type() == ExpressionNode::Type::Unit);
+static bool ExpressionIsUnit(Expression e, bool * shouldLockMargin) {
+  Expression unitExpression;
+  if (e.type() == ExpressionNode::Type::Unit) {
+    unitExpression = e;
+  } else if (e.type() == ExpressionNode::Type::Power && e.childAtIndex(0).type() == ExpressionNode::Type::Unit) {
+    unitExpression =  e.childAtIndex(0);
+  } else {
+    return false;
+  }
+  if (shouldLockMargin) {
+    *shouldLockMargin = Unit::ForceMarginLeftOfUnit(static_cast<Unit&>(unitExpression));
+  }
+  return true;
 }
 
 Layout MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
@@ -267,8 +278,9 @@ Layout MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplay
     string,
     context,
     [](const char * operatorName, Expression left, Expression right, Layout rightLayout) {
-      bool leftIsUnit = ExpressionIsUnit(left);
-      bool rightIsUnit = ExpressionIsUnit(right);
+      bool forceMarginOfRightUnit;
+      bool leftIsUnit = ExpressionIsUnit(left, nullptr);
+      bool rightIsUnit = ExpressionIsUnit(right, &forceMarginOfRightUnit);
       if (rightIsUnit && leftIsUnit) {
         // Both children are unit: symbol is always a middle dot with no margin
         Layout symbolLayout = CodePointLayout::Builder(CodePointForOperatorSymbol(MultiplicationSymbol::MiddleDot));
@@ -279,7 +291,7 @@ Layout MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplay
       if (rightIsUnit && OperatorSymbolBetween(left.rightLayoutShape(), right.leftLayoutShape()) == MultiplicationSymbol::Empty) {
         // Unit on the right: don't display useless symbol and force margin
         rightLayout.setMargin(true);
-        rightLayout.lockMargin(true);
+        rightLayout.lockMargin(forceMarginOfRightUnit);
         return Layout();
       }
       return LayoutHelper::DefaultCreateOperatorLayoutForInfix(operatorName, left, right, rightLayout);

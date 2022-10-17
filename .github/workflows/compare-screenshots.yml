@@ -17,7 +17,7 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Compare screenshot images
-        run: ./build/compare/compare.sh MAKEFLAGS="-j32 PLATFORM=simulator DEBUG=1" tests/screenshots_dataset/scenari/ tests/screenshots_dataset/reference_images/ ${{ github.event.pull_request.head.sha }}
+        run: ./build/screenshots/compare.sh MAKEFLAGS="-j32 PLATFORM=simulator DEBUG=1" tests/screenshots_dataset/scenari/ tests/screenshots_dataset/reference_images/ ${{ github.event.pull_request.head.sha }}
       - name: Gather screenshots
         if: ${{ github.event.inputs.downloadArtifacts == 'yes' }}
         uses: actions/upload-artifact@v2

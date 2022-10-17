@@ -5,7 +5,7 @@ set -e
 source "$(dirname "$0")/helper.sh"
 
 function print_help() {
-  echo -e "\nUsage: take_tests_screenshots [--debug] [MAKEFLAGS=...] <folder_with_scenari> <source>"
+  echo -e "\nUsage: generate [--debug] [MAKEFLAGS=...] <folder_with_scenari> <source>"
   echo -e "Generate a screenshot of the final state of each scenari (useful when creating new scenari)."
   echo -e "A source can either be:"
   echo -e " - an Epsilon executable"

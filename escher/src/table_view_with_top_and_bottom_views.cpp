@@ -130,7 +130,7 @@ KDRect TableViewWithTopAndBottomViews::tableFrame(KDCoordinate * yOffset) const 
   KDCoordinate fullTableHeight = m_table->minimalSizeForOptimalDisplay().height();
   /* It is assumed that both top and bottom view cannot appear at the same
    * time. It is the case in all current use cases. */
-  assert(fullTableHeight > bounds().height());
+  assert(fullTableHeight > bounds().height() || m_bottomView == nullptr);
   KDCoordinate bottom = fullTableHeight - *yOffset;
 
   if (bottom <= bounds().height()) {

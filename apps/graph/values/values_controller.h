@@ -2,11 +2,11 @@
 #define GRAPH_VALUES_CONTROLLER_H
 
 #include "../continuous_function_store.h"
-#include "../../shared/buffer_function_title_cell.h"
-#include "../../shared/interval_parameter_controller.h"
-#include "../../shared/scrollable_two_expressions_cell.h"
-#include "../../shared/store_cell.h"
-#include "../../shared/values_controller.h"
+#include <apps/shared/buffer_function_title_cell.h>
+#include <apps/shared/interval_parameter_controller.h>
+#include <apps/shared/scrollable_two_expressions_cell.h>
+#include <apps/shared/store_cell.h>
+#include <apps/shared/values_controller.h>
 #include "abscissa_title_cell.h"
 #include "derivative_parameter_controller.h"
 #include "function_column_parameter_controller.h"

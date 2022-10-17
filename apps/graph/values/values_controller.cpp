@@ -7,9 +7,9 @@
 #include <poincare/matrix_layout.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/string_layout.h>
-#include "../../shared/poincare_helpers.h"
-#include "../../shared/utils.h"
-#include "../../constant.h"
+#include <apps/shared/poincare_helpers.h>
+#include <apps/shared/utils.h>
+#include <apps/constant.h>
 #include "../app.h"
 
 using namespace Shared;

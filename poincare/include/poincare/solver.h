@@ -26,6 +26,14 @@ public:
   typedef Interest (*BracketTest)(T, T, T);
   typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void *, T, T, Interest, T);
 
+  // BracketTest default implementations
+  constexpr static Interest BoolToInterest(bool v, Interest t, Interest f = Interest::None) { return v ? t : f; }
+  static Interest OddRootInBracket(T a, T b, T c) { return BoolToInterest((a < k_zero && k_zero < c) || (c < k_zero && k_zero < a), Interest::Root); }
+  static Interest EvenOrOddRootInBracket(T a, T b, T c);
+  static Interest MinimumInBracket(T a, T b, T c) { return BoolToInterest(b < a && b < c, Interest::LocalMinimum); }
+  static Interest MaximumInBracket(T a, T b, T c) { return BoolToInterest(a < b && c < b, Interest::LocalMaximum); }
+  static Interest DiscontinuityInBracket(T a, T b, T c) { return BoolToInterest(std::isnan(a) != std::isnan(c), Interest::Discontinuity); }
+
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */
   Solver(T xStart, T xEnd, const char * unknown = nullptr, Context * context = nullptr, Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
@@ -66,15 +74,9 @@ private:
   constexpr static T k_absolutePrecision = k_relativePrecision * k_minimalAbsoluteStep;
 
   static T NullTolerance(T x) { return std::max(k_minimalAbsoluteStep, k_relativePrecision * std::fabs(x)) * static_cast<T>(10.); }
-  constexpr static Interest BoolToInterest(bool v, Interest t, Interest f = Interest::None) { return v ? t : f; }
   // Call SolverAlgorithms::BrentMinimum on the opposite evaluation
   static Coordinate2D<T> BrentMaximum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
   static Coordinate2D<T> CompositeBrentForRoot(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
-  // BracketTest default implementations
-  static Interest OddRootInBracket(T a, T b, T c) { return BoolToInterest((a < k_zero && k_zero < c) || (c < k_zero && k_zero < a), Interest::Root); }
-  static Interest EvenOrOddRootInBracket(T a, T b, T c);
-  static Interest MinimumInBracket(T a, T b, T c) { return BoolToInterest(b < a && b < c, Interest::LocalMinimum); }
-  static Interest MaximumInBracket(T a, T b, T c) { return BoolToInterest(a < b && c < b, Interest::LocalMaximum); }
 
   T maximalStep() const;
   T minimalStep(T x) const;
@@ -93,31 +95,6 @@ private:
   Preferences::AngleUnit m_angleUnit;
   Interest m_lastInterest;
 };
-
-#if 1 /* FIXME Temporarily keep SolverHelper until Zoom is refactored to use Solver. */
-
-template<typename T>
-class SolverHelper {
-public:
-  typedef T (*ValueAtAbscissa)(T abscissa, Context * context, const void * auxiliary);
-  typedef Coordinate2D<T> (*BracketSearch)(T a, T b, T c, T fa, T fb, T fc, ValueAtAbscissa f, Context * context, const void * auxiliary);
-
-  static Coordinate2D<T> NextPointOfInterest(
-      ValueAtAbscissa evaluation, Context * context, const void * auxiliary,
-      BracketSearch search,
-      T start, T end,
-      T relativePrecision,
-      T minimalStep, T maximalStep);
-
-  static bool RootExistsOnInterval(T fa, T fb, T fc);
-  static bool MinimumExistsOnInterval(T fa, T fb, T fc) { return (std::isnan(fa) || fa > fb) && (std::isnan(fc) || fb < fc) && (!std::isnan(fa) || !std::isnan(fc)); }
-  static bool MaximumExistsOnInterval(T fa, T fb, T fc) { return MinimumExistsOnInterval(-fa, -fb, -fc); }
-
-private:
-  static Coordinate2D<T> NextPointOfInterestHelper(ValueAtAbscissa evaluation, Context * context, const void * auxiliary, BracketSearch search, T start, T end, T relativePrecision, T minimalStep, T maximalStep);
-  static T Step(T x, T growthSpeed, T minimalStep, T maximalStep);
-};
-#endif
 
 }
 

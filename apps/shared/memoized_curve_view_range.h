@@ -27,6 +27,7 @@ public:
 protected:
   /* A false updateGridUnit flag prevents computing grid_unit twice, and will
    * invalidate, so we can check if it has been properly updated later. */
+  Poincare::Range2D memoizedRange() const { return m_range; }
   void protectedSetXMin(float f, bool updateGridUnit = true, float limit = Poincare::Range1D::k_maxFloat) { privateSet(f, limit, m_range.x(), &Poincare::Range1D::setMin, updateGridUnit, &m_xGridUnit); }
   void protectedSetXMax(float f, bool updateGridUnit = true, float limit = Poincare::Range1D::k_maxFloat) { privateSet(f, limit, m_range.x(), &Poincare::Range1D::setMax, updateGridUnit, &m_xGridUnit); }
   void protectedSetYMin(float f, bool updateGridUnit = true, float limit = Poincare::Range1D::k_maxFloat) { privateSet(f, limit, m_range.y(), &Poincare::Range1D::setMin, updateGridUnit, &m_yGridUnit); }

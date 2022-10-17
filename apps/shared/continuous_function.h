@@ -123,17 +123,10 @@ public:
   float autoTMax() const;
   float autoTMin() const;
 
-  /* Range */
+  /* Solver */
 
   // If curve expression is based on costly algorithm for approximation
   bool basedOnCostlyAlgorithms(Poincare::Context * context) const override;
-  // Set x range for display adapt y ranges accordingly as well.
-  void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const override;
-  // Set y range for display
-  void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context, bool optimizeRange) const override;
-
-  /* Solver */
-
   /* A solver will be run from 'start' to 'end' on this function. Trim 'start'
    * and 'end' to the interval of definition. */
   void trimResolutionInterval(double * start, double * end) const;

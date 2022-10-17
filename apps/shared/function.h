@@ -52,8 +52,6 @@ public:
 
   // Range
   virtual bool basedOnCostlyAlgorithms(Poincare::Context * context) const = 0;
-  virtual void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const = 0;
-  virtual void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context, bool optimizeRange) const = 0;
 
 protected:
   /* RecordDataBuffer is the layout of the data buffer of Record
@@ -94,7 +92,6 @@ protected:
     bool m_active;
   };
 
-  void protectedFullRangeForDisplay(float tMin, float tMax, float tStep, float * min, float * max, Poincare::Context * context, bool xRange) const;
   virtual void didBecomeInactive() {}
 
 private:

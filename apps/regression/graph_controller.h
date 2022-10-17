@@ -29,9 +29,6 @@ public:
   bool moveCursorVertically(int direction) override;
 
   // InteractiveCurveViewRangeDelegate
-  void computeXRange(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic) override;
-  void computeYRange(float xMin, float xMax, float yMinIntrinsic, float yMaxIntrinsic, float * yMin, float * yMax, bool optimizeRange) override;
-  void improveFullRange(float * xMin, float * xMax, float * yMin, float * yMax) override {}
   void tidyModels() override {}
 
 private:

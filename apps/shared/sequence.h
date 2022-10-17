@@ -81,8 +81,6 @@ public:
 
   //Range
   bool basedOnCostlyAlgorithms(Poincare::Context * context) const override { return true; }
-  void xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Poincare::Context * context) const override;
-  void yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Poincare::Context * context, bool optimizeRange) const override;
 
 private:
   constexpr static KDFont::Size k_layoutFont = KDFont::Size::Large;

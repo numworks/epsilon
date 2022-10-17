@@ -206,15 +206,16 @@ I18n::Message MathVariableBoxController::subTitle() {
 
 MathVariableBoxController::Page MathVariableBoxController::pageAtIndex(int index) {
   assert(index >= 0 && index < numberOfElements(Page::RootMenu));
-  int pageId = static_cast<int>(Page::RootMenu);
-  index += 1;
-  while (index) {
-    pageId++;
+  for (int pageId = static_cast<int>(Page::Expression); pageId < static_cast<int>(Page::sizeOfEnum); pageId++) {
     if (numberOfElements(static_cast<Page>(pageId)) > 0) {
+      if (index == 0) {
+        return static_cast<Page>(pageId);
+      }
       index--;
     }
   }
-  return static_cast<Page>(pageId);
+  assert(false);
+  return static_cast<Page>(Page::Function);
 }
 
 void MathVariableBoxController::setPage(Page page) {

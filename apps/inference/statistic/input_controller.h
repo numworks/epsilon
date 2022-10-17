@@ -43,7 +43,7 @@ protected:
   void setTextInCell(Escher::HighlightCell * cell, const char * text, int index) override;
 
 private:
-  int reusableParameterCellCount(int type) override { return k_numberOfReusableCells; }
+  int reusableParameterCellCount(int type) override;
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   static void InputTitle(Escher::ViewController * vc, Statistic * statistic, char * titleBuffer, size_t titleBufferSize);

@@ -108,6 +108,14 @@ void InputController::willDisplayCellForIndex(Escher::HighlightCell * cell, int 
   FloatParameterController<double>::willDisplayCellForIndex(cell, index);
 }
 
+int InputController::reusableParameterCellCount(int type) {
+  if (type == k_parameterCellType) {
+    return k_numberOfReusableCells;
+  }
+  assert(type == k_significanceCellType);
+  return 1;
+}
+
 Escher::HighlightCell * InputController::reusableParameterCell(int index, int type) {
   if (type == k_parameterCellType) {
     assert(index >= 0 && index < k_numberOfReusableCells);

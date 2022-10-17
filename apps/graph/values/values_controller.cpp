@@ -74,9 +74,9 @@ KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
     // Width is constant when displaying approximations
     return columnWidth;
   }
-  int nRows = numberOfRows();
+  int nRows = numberOfElementsInColumn(i) + 1;
   for (int j = 0; j < nRows; j++) {
-    if (typeAtLocation(i, j) == k_notEditableValueCellType && j < numberOfElementsInColumn(i) + 1) {
+    if (typeAtLocation(i, j) == k_notEditableValueCellType) {
       Layout l = memoizedLayoutForCell(i, j);
       assert(!l.isUninitialized());
       columnWidth = std::max(CellSizeWithLayout(l).width(), columnWidth);

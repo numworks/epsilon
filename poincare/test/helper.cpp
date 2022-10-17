@@ -78,9 +78,8 @@ void assert_reduce_and_store(const char * expression, Preferences::AngleUnit ang
   Shared::GlobalContext globalContext;
   Expression e = parse_expression(expression, &globalContext, false);
   assert_expression_reduce(e, angleUnit, unitFormat, complexFormat, target, expression);
-  if (e.type() == ExpressionNode::Type::Store) {
-    static_cast<Store&>(e).storeValueForSymbol(&globalContext);
-  }
+  assert(e.type() == ExpressionNode::Type::Store);
+  static_cast<Store&>(e).storeValueForSymbol(&globalContext);
 }
 
 void assert_expression_reduce(Expression e, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, Preferences::ComplexFormat complexFormat, ExpressionNode::ReductionTarget target, const char * printIfFailure) {

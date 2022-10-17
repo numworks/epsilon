@@ -659,8 +659,9 @@ bool AbstractTextField::handleStoreEvent() {
   }
   if (!nonEditableContentView()->selectionIsEmpty()) {
     const char * start = nonEditableContentView()->selectionStart();
+    static_assert(TextField::maxBufferSize() == Escher::Clipboard::k_bufferSize);
     char buffer[Escher::Clipboard::k_bufferSize];
-    strlcpy(buffer, start, std::min<size_t>(nonEditableContentView()->selectionEnd() - start + 1, Escher::Clipboard::k_bufferSize));
+    strlcpy(buffer, start, nonEditableContentView()->selectionEnd() - start + 1);
     Container::activeApp()->storeValue(buffer);
   } else {
     Container::activeApp()->storeValue();

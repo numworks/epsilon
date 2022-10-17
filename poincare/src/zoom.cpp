@@ -3,10 +3,23 @@
 
 namespace Poincare {
 
-Range2D Zoom::DefaultRange(float normalYXRatio) {
-  float xMax = Range1D::k_defaultHalfLength;
-  float yMax = xMax * normalYXRatio;
-  return Range2D(-xMax, xMax, -yMax, yMax);
+static Range1D sanitationHelper(Range1D range, float normalHalfLength) {
+  if (!range.isValid()) {
+    range = Range1D(0.f, 0.f);
+  }
+  if (range.isEmpty()) {
+    range = Range1D(range.min() - normalHalfLength, range.max() + normalHalfLength);
+  }
+  assert(range.min() < range.max());
+  return range;
+}
+
+Range2D Zoom::Sanitize(Range2D range, float normalYXRatio) {
+  float xLength = range.x().length();
+  float yLength = range.y().length();
+  float normalXLength = yLength > 0.f ? 0.5f * yLength / normalYXRatio : Range1D::k_defaultHalfLength;
+  float normalYLength = (xLength > 0.f ? xLength : normalXLength) * normalYXRatio;
+  return Range2D(sanitationHelper(range.x(), normalXLength), sanitationHelper(range.y(), normalYLength));
 }
 
 void Zoom::setFunction(Solver<float>::FunctionEvaluation f, const void * model) {

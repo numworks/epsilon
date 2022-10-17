@@ -29,6 +29,7 @@ public:
   bool moveCursorVertically(int direction) override;
 
   // InteractiveCurveViewRangeDelegate
+  Poincare::Range2D optimalRange(bool computeX, bool computeY, Poincare::Range2D originalRange, Poincare::Range1D intrinsicYRange) const override;
   void tidyModels() override {}
 
 private:

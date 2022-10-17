@@ -14,7 +14,9 @@ public:
   constexpr static float k_mediumUnitMantissa = 2.f;
   constexpr static float k_largeUnitMantissa = 5.f;
 
-  static Range2D DefaultRange(float normalYXRatio);
+  static Range2D Sanitize(Range2D range, float normalYXRatio);
+  static Range2D DefaultRange(float normalYXRatio) { return Sanitize(Range2D(), normalYXRatio); }
+
 
   /* A YX ratio is length of Y axis over length of X axis. For instance, a
    * normal YX ratio of 0.5 means the range ([-1,1],[2,3]) is normalized. */

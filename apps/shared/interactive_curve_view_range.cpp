@@ -368,7 +368,7 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
   Poincare::UserCircuitBreakerCheckpoint checkpoint;
   if (CircuitBreakerRun(checkpoint)) {
     Range1D intrinsicRange(m_yMinIntrinsic, m_yMaxIntrinsic);
-    Range2D newRange = m_delegate->optimalRange(computeX, computeY, intrinsicRange);
+    Range2D newRange = m_delegate->optimalRange(computeX, computeY, memoizedRange(), intrinsicRange);
 
     if (computeX) {
       MemoizedCurveViewRange::protectedSetXMin(newRange.xMin(), false, k_maxFloat);

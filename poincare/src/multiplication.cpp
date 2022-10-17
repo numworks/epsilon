@@ -850,8 +850,8 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
   /* We look for terms of form sin(x)^p*cos(x)^q with p, q rational of
    * opposite signs. We replace them by either:
    * - tan(x)^p*cos(x)^(p+q) if |p|<|q|
-   * - tan(x)^(-q)*sin(x)^(p+q) otherwise 
-   * We need to do this here for ReductionTarget::User (and not in beautification) 
+   * - tan(x)^(-q)*sin(x)^(p+q) otherwise
+   * We need to do this here for ReductionTarget::User (and not in beautification)
    * because we don't want Addition to put eveything under a common denominator
    * for example : tan(3)ln(2)+π --> sin(3)/cos(3)ln(2)+π --> (sin(3)ln(2) + πcos(3)) / cos(3)
    * won't be beautificated into tan(3)ln(2)+π */

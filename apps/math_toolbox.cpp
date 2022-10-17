@@ -77,7 +77,7 @@ constexpr ToolboxMessageTree unitDistanceFork[] = {
 
 constexpr ToolboxMessageTree unitAngleToolbox[] = {
   ToolboxMessageTree::Leaf(I18n::Message::UnitAngleDegreeSymbol, I18n::Message::UnitAngleDegree),
-  ToolboxMessageTree::Leaf(I18n::Message::UnitAngleDMSShortcut, I18n::Message::UnitAngleDMS, false, I18n::Message::UnitAngleDMSShortcut),
+  ToolboxMessageTree::Leaf(I18n::Message::UnitAngleDMSShortcut, I18n::Message::UnitAngleDMS, false, I18n::Message::UnitAngleDMSShortcut2),
   ToolboxMessageTree::Leaf(I18n::Message::UnitAngleRadianSymbol, I18n::Message::UnitAngleRadian),
   ToolboxMessageTree::Leaf(I18n::Message::UnitAngleGradianSymbol, I18n::Message::UnitAngleGradian),
 };

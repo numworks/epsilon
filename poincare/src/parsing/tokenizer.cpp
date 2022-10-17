@@ -39,19 +39,15 @@ size_t Tokenizer::popWhile(PopTest popTest) {
 
 static bool IsNonDigitalIdentifierMaterial(const CodePoint c) {
   // CodePointSystem is used to parse dependencies
-  return c.isLatinLetter() || c == UCodePointSystem || c == '_' || c == UCodePointDegreeSign || c == '\'' || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
+  return c.isLatinLetter() || c == UCodePointSystem || c == '_' || c == UCodePointDegreeSign || c == '\'' || c == '"' || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
 }
 
 bool Tokenizer::IsIdentifierMaterial(const CodePoint c) {
   return c.isDecimalDigit() || IsNonDigitalIdentifierMaterial(c);
 }
 
-size_t Tokenizer::popCustomIdentifier() {
-  return popWhile([](CodePoint c) { return IsIdentifierMaterial(c); });
-}
-
 size_t Tokenizer::popIdentifiersString() {
-  return popWhile([](CodePoint c) { return IsIdentifierMaterial(c) || c == '"'; });
+  return popWhile([](CodePoint c) { return IsIdentifierMaterial(c); });
 }
 
 size_t Tokenizer::popDigits() {
@@ -163,22 +159,6 @@ Token Tokenizer::popToken() {
   {
     Token result(Token::Constant);
     result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c));
-    return result;
-  }
-  if (c == '"') {
-    Token result(Token::CustomIdentifier);
-    int length = popCustomIdentifier();
-    result.setString(start, length + 2);
-    // The +2 for the two ""
-    if (m_decoder.stringPosition()[0] != '"') {
-      if (length == 0) {
-        result.setType(Token::Unit);
-        result.setString("\"", 1);
-        return result;
-      }
-      return Token(Token::Undefined);
-    }
-    m_decoder.nextCodePoint();
     return result;
   }
 
@@ -379,6 +359,11 @@ static bool stringIsASpecialIdentifierFollowedByNumbers(const char * string, siz
 }
 
 Token::Type Tokenizer::stringTokenType(const char * string, size_t * length) const {
+  // If there are two \" around an identifier, it is a forced custom identifier
+  const char * lastCharOfString = string + *length - 1;
+  if (*length > 2 && string[0] == '"' && *lastCharOfString == '"' && UTF8Helper::CodePointSearch(string + 1, '"', lastCharOfString) == lastCharOfString) {
+    return Token::CustomIdentifier;
+  }
   if (ParsingHelper::IsSpecialIdentifierName(string, *length)) {
     return Token::SpecialIdentifier;
   }

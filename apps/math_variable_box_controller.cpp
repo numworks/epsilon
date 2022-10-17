@@ -9,7 +9,6 @@
 #include <poincare/layout_helper.h>
 #include <poincare/matrix_layout.h>
 #include <poincare/preferences.h>
-#include <poincare/print.h>
 #include <assert.h>
 #include <algorithm>
 #include <apps/shared/sequence.h>
@@ -120,14 +119,8 @@ void MathVariableBoxController::willDisplayCellForIndex(HighlightCell * cell, in
     if (index == numberOfRows() - 1) {
       return;
     }
-    MessageTableCellWithChevronAndBuffer * myCell = static_cast<MessageTableCellWithChevronAndBuffer *>(cell);
-    Page page = pageAtIndex(index);
-    int nb = numberOfElements(page);
-    constexpr size_t bufferSize = 20;
-    char buffer[bufferSize];
-    Print::CustomPrintf(buffer, bufferSize, "%i elements", nb);
-    myCell->setMessage(nodeLabel(page));
-    myCell->setSubLabelText(buffer);
+    MessageTableCellWithChevron * myCell = static_cast<MessageTableCellWithChevron *>(cell);
+    myCell->setMessage(nodeLabel(pageAtIndex(index)));
     myCell->reloadCell();
     return;
   }
@@ -169,7 +162,7 @@ KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
       MessageTableCell tempCell;
       return heightForCellAtIndexWithWidthInit(&tempCell, index);
     }
-    MessageTableCellWithChevronAndBuffer tempCell;
+    MessageTableCellWithChevron tempCell;
     return heightForCellAtIndexWithWidthInit(&tempCell, index);
   }
   ExpressionTableCellWithExpression tempCell;

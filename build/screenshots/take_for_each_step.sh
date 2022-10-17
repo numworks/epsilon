@@ -3,7 +3,7 @@
 
 if [ $# -lt 2 ]; then
   echo "Not enough parameters"
-  echo "take_all_screenshots.sh path/to/Epsilon path/to/state_file [output_folder]"
+  echo "take_for_each_step.sh path/to/Epsilon path/to/state_file [output_folder]"
   exit 1
 fi
 

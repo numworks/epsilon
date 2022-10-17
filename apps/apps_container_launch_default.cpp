@@ -6,5 +6,5 @@ Escher::App::Snapshot * AppsContainer::initialAppSnapshot() {
     return m_initialAppSnapshot;
   }
 #endif
-  return appSnapshotAtIndex(numberOfApps() == 2 ? 1 : 0);
+  return appSnapshotAtIndex(0);
 }

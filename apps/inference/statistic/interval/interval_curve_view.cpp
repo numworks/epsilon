@@ -28,7 +28,7 @@ void IntervalAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axi
 }
 
 float IntervalAxis::tickPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis) const {
-  if (i > k_numberOfLabels) {
+  if (i >= k_numberOfLabels) {
     return NAN;
   }
   return m_ticks[i];

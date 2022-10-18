@@ -70,6 +70,19 @@ inline Poincare::Expression Approximate(
 }
 
 template <class T>
+inline Poincare::Expression ApproximateKeepingUnits(
+  const Poincare::Expression e,
+  Poincare::Context * context,
+  Poincare::ExpressionNode::ReductionTarget target = Poincare::ExpressionNode::ReductionTarget::User,
+  Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_replaceWithDefinition,
+  Poincare::ExpressionNode::UnitConversion unitConversion = k_defaultUnitConversion,
+  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences(),
+  bool updateComplexFormatAndAngleUnit = true)
+{
+  return e.approximateKeepingUnits<T>(Poincare::ExpressionNode::ReductionContext(context, ComplexFormatForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context), AngleUnitForPreferences(preferences, updateComplexFormatAndAngleUnit, e, context), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), target, symbolicComputation, unitConversion));
+}
+
+template <class T>
 inline T ApproximateToScalar(
   const Poincare::Expression e,
   Poincare::Context * context,

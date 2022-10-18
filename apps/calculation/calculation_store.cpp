@@ -149,13 +149,10 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
          * and approximate it to mimic the behaviour of normal computations.
          */
         Store store = static_cast<Store&>(outputs[0]);
+        bool isVariable = store.childAtIndex(1).type() == Poincare::ExpressionNode::Type::Symbol;
         Expression exactValue = store.childAtIndex(0);
-        Expression placeholder;
-        Preferences::ComplexFormat complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(Poincare::Preferences::sharedPreferences()->complexFormat(), input, context);
-        Preferences::AngleUnit angleUnit = Preferences::UpdatedAngleUnitWithExpressionInput(Poincare::Preferences::sharedPreferences()->angleUnit(), input, context);
-        Expression approximatedValue;
-        exactValue.cloneAndSimplifyAndApproximate(&placeholder, &approximatedValue, context, complexFormat, angleUnit, GlobalPreferences::sharedGlobalPreferences()->unitFormat());
-        if (store.childAtIndex(1).type() == Poincare::ExpressionNode::Type::Symbol && Utils::ShouldOnlyDisplayApproximation(input, exactValue, context)) {
+        Expression approximatedValue = PoincareHelpers::ApproximateKeepingUnits<double>(exactValue, context);
+        if (isVariable && Utils::ShouldOnlyDisplayApproximation(input, exactValue, context)) {
           store.replaceChildAtIndexInPlace(0, approximatedValue);
         }
         outputs[0] = store.storeValueForSymbol(context);

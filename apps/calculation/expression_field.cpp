@@ -11,7 +11,7 @@ namespace Calculation {
 
 bool ExpressionField::handleEvent(Ion::Events::Event event) {
   if (event != Ion::Events::Division) {
-    m_divisionCycleChoiceUpToDate = false;
+    m_divisionCycleWithAns = Poincare::TrinaryBoolean::Unknown;
   }
   if (event == Ion::Events::Back) {
     return false;
@@ -36,10 +36,14 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Division
       && isEditing()) {
-    if (!m_divisionCycleChoiceUpToDate) {
+    if (m_divisionCycleWithAns == Poincare::TrinaryBoolean::Unknown) {
       m_currentStep = DivisionCycleStep::Start;
-      m_divisionCycleWithAns = isEmpty();
-      m_divisionCycleChoiceUpToDate = true;
+      if (isEmpty()) {
+        m_divisionCycleWithAns = Poincare::TrinaryBoolean::True;
+      }
+      else {
+        m_divisionCycleWithAns = Poincare::TrinaryBoolean::False;
+      }
     }
     return handleDivision();
   }
@@ -79,12 +83,13 @@ bool ExpressionField::didCreateEmptyFraction() {
 }
 
 bool ExpressionField::handleDivision() {
+  assert(m_divisionCycleWithAns != Poincare::TrinaryBoolean::Unknown);
   bool mixedFractionsEnabled = Poincare::Preferences::sharedPreferences()->mixedFractionsAreEnabled();
   bool editionIn1D = editionIsInTextField();
   Ion::Events::Event event = Ion::Events::Division;
   bool handled = true;
 
-  if (m_divisionCycleWithAns) {
+  if (m_divisionCycleWithAns == Poincare::TrinaryBoolean::True) {
     /* When we are in the "Ans" case, the cycle is the following :
      * Start -> DenominatorOfAnsFraction -> NumeratorOfEmptyFraction (-> MixedFraction) -> DenominatorOfAnsFraction -> etc
      * with the mixed fraction step only kept when the country enables it */
@@ -119,6 +124,7 @@ bool ExpressionField::handleDivision() {
         setText(Poincare::Symbol::k_ansAliases.mainAlias());
     }
   } else if (mixedFractionsEnabled) {
+    assert(m_divisionCycleWithAns == Poincare::TrinaryBoolean::False);
     /* When we are in NOT the "Ans" case, the cycle is the following :
      *   - in 1D: Start -> DenominatorOfEmptyFraction -> NumeratorOfEmptyFraction   -> MixedFraction -> DenominatorOfEmptyFraction -> etc 
      *   - in 2D: Start -> NumeratorOfEmptyFraction   -> DenominatorOfEmptyFraction -> MixedFraction -> NumeratorOfEmptyFraction   -> etc 
@@ -144,7 +150,7 @@ bool ExpressionField::handleDivision() {
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
         }
         if (!handled) {
-          m_divisionCycleChoiceUpToDate = false;
+          m_divisionCycleWithAns = Poincare::TrinaryBoolean::Unknown;
         }
         return handled;
       case DivisionCycleStep::NumeratorOfEmptyFraction : 

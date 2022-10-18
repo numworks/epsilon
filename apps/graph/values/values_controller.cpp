@@ -23,8 +23,6 @@ namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, FunctionColumnParameterController * functionParameterController) :
   Shared::ValuesController(parentResponder, header),
-  m_selectableTableView(this),
-  m_prefacedView(0, this, &m_selectableTableView, this, this),
   m_functionParameterController(functionParameterController),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_derivativeParameterController(this),
@@ -212,21 +210,6 @@ int ValuesController::typeAtLocation(int i, int j) {
 void ValuesController::viewDidDisappear() {
   activateExactValues(false);
   Shared::ValuesController::viewDidDisappear();
-}
-
-// SelectableTableViewDelegate
-
-void ValuesController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
-  if (withinTemporarySelection) {
-    return;
-  }
-  const int i = selectedColumn();
-  int j = selectedRow();
-  const int numberOfElementsInCol = numberOfElementsInColumn(i);
-  if (j > 1 + numberOfElementsInCol) {
-    selectCellAtLocation(i, 1 + numberOfElementsInCol);
-    j = 1 + numberOfElementsInCol;
-  }
 }
 
 // AlternateEmptyViewDelegate
@@ -501,50 +484,6 @@ EvenOddExpressionCell * ValuesController::valueCells(int j) {
 void ValuesController::activateExactValues(bool activate) {
   m_exactValuesAreActivated = activate;
   m_exactValuesButton.setState(m_exactValuesAreActivated);
-}
-
-
-/* ValuesController::ValuesSelectableTableView */
-
-int writeMatrixBrackets(char * buffer, const int bufferSize, int type) {
-  /* Write the double brackets required in matrix notation.
-   * - type == 1: "[["
-   * - type == 0: "]["
-   * - type == -1: "]]"
-   */
-  int currentChar = 0;
-  assert(currentChar < bufferSize-1);
-  buffer[currentChar++] = type < 0 ? '[' : ']';
-  assert(currentChar < bufferSize-1);
-  buffer[currentChar++] = type <= 0 ? '[' : ']';
-  return currentChar;
-}
-
-bool ValuesController::ValuesSelectableTableView::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
-    HighlightCell * cell = selectedCell();
-    if (cell) {
-      const char * text = cell->text();
-      if (text && text[0] == '(') {
-        constexpr int bufferSize = 2*PrintFloat::k_maxFloatCharSize + 6; // "[[a][b]]" gives 6 characters in addition to the 2 floats
-        char buffer[bufferSize];
-        int currentChar = 0;
-        currentChar += writeMatrixBrackets(buffer + currentChar, bufferSize - currentChar, -1);
-        assert(currentChar < bufferSize-1);
-        size_t semiColonPosition = UTF8Helper::CopyUntilCodePoint(buffer+currentChar, TextField::maxBufferSize() - currentChar, text+1, ';');
-        currentChar += semiColonPosition;
-        currentChar += writeMatrixBrackets(buffer + currentChar, bufferSize - currentChar, 0);
-        assert(currentChar < bufferSize-1);
-        currentChar += UTF8Helper::CopyUntilCodePoint(buffer+currentChar, TextField::maxBufferSize() - currentChar, text+1+semiColonPosition+1, ')');
-        currentChar += writeMatrixBrackets(buffer + currentChar, bufferSize - currentChar, 1);
-        assert(currentChar < bufferSize-1);
-        buffer[currentChar] = 0;
-        Clipboard::sharedClipboard()->store(buffer);
-        return true;
-      }
-    }
-  }
-  return SelectableTableView::handleEvent(event);
 }
 
 }

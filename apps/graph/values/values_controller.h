@@ -25,9 +25,6 @@ public:
   int typeAtLocation(int i, int j) override;
   void viewDidDisappear() override;
 
-  // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
-
   // ButtonRowDelegate
   bool displayExactValues() const {
     // Above this value, the performances significantly drop.
@@ -76,7 +73,6 @@ private:
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
   int maxNumberOfCells() override { return k_maxNumberOfDisplayableCells; }
   int maxNumberOfFunctions() override { return k_maxNumberOfDisplayableFunctions; }
-  Shared::PrefacedTableView * prefacedView() override { return &m_prefacedView; }
   void reloadEditedCell(int column, int row) override;
 
   // Memoization
@@ -135,24 +131,10 @@ private:
   Escher::EvenOddEditableTextCell * abscissaCells(int j) override { assert (j >= 0 && j < k_maxNumberOfDisplayableAbscissaCells); return &m_abscissaCells[j]; }
   int abscissaTitleCellsCount() const override { return k_maxNumberOfDisplayableSymbolTypes; }
   Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) override { assert (j >= 0 && j < abscissaTitleCellsCount()); return &m_abscissaTitleCells[j]; }
-  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
 
   bool exactValuesButtonAction();
   void activateExactValues(bool activate);
 
-  /* For parametric function, we display the evaluation with the form "(1;2)".
-   * This form is not parsable so when we store it into the clipboard, we want
-   * to turn it into a parsable matrix "[[1][2]]". To do so, we use a child
-   * class of SelectableTableView to override the behaviour of the responder
-   *  when encountering a cut/copy events. */
-  class ValuesSelectableTableView : public Escher::SelectableTableView {
-  public:
-    ValuesSelectableTableView(ValuesController * vc) : Escher::SelectableTableView(vc, vc, vc) {}
-    bool handleEvent(Ion::Events::Event event) override;
-  };
-
-  ValuesSelectableTableView m_selectableTableView;
-  Shared::PrefacedTableView m_prefacedView;
   mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];
   Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableFunctions];
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];

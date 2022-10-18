@@ -8,10 +8,8 @@
 #include "layout_field_delegate.h"
 #include "input_event_handler_delegate.h"
 #include "layout_field_delegate.h"
-#include "prefaced_table_view.h"
 #include "store_cell.h"
 #include "store_parameter_controller.h"
-#include "store_selectable_table_view.h"
 #include "store_title_cell.h"
 
 namespace Shared {
@@ -19,7 +17,6 @@ namespace Shared {
 class StoreController : public EditableCellTableViewController, public Escher::ButtonRowDelegate, public StoreColumnHelper {
 public:
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
-  Escher::View * view() override { return &m_prefacedView; }
   TELEMETRY_ID("Store");
 
   //TextFieldDelegate
@@ -42,6 +39,9 @@ public:
   // ClearColumnHelper
   int fillColumnName(int columnIndex, char * buffer) override { return fillColumnNameFromStore(columnIndex, buffer); }
 
+  // EditableCellTableViewController
+  int numberOfRowsAtColumn(int i) const override;
+
 protected:
   constexpr static int k_maxNumberOfDisplayableRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(k_cellHeight, Escher::Metric::TabHeight);
   constexpr static int k_maxNumberOfDisplayableColumns = Ion::Display::Width/k_cellWidth + 2;
@@ -62,7 +62,6 @@ protected:
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
   int numberOfElementsInColumn(int columnIndex) const override;
-  Escher::SelectableTableView * selectableTableView() override { return &m_dataView; }
 
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
@@ -80,8 +79,6 @@ private:
   DoublePairStore * store() override { return m_store; }
 
   StoreTitleCell m_titleCells[k_numberOfTitleCells];
-  PrefacedTableView m_prefacedView;
-  StoreSelectableTableView m_dataView;
 
   Escher::RegularTableSize1DManager m_widthManager;
   Escher::RegularTableSize1DManager m_heightManager;

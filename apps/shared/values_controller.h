@@ -22,7 +22,6 @@ public:
   ValuesController(Escher::Responder * parentResponder, Escher::ButtonRowController * header);
   // View controller
   const char * title() override;
-  Escher::View * view() override { return prefacedView(); }
   void viewWillAppear() override;
   void viewDidDisappear() override;
   TELEMETRY_ID("Values");
@@ -45,6 +44,9 @@ public:
   // AlternateEmptyViewDelegate
   bool isEmpty() const override;
   Escher::Responder * defaultController() override;
+
+  // EditableCellTableViewController
+  int numberOfRowsAtColumn(int i) const override;
 
   virtual IntervalParameterController * intervalParameterController() = 0;
   void initializeInterval();
@@ -97,7 +99,6 @@ protected:
 
   Escher::SelectableViewController * columnParameterController() override;
   Shared::ColumnParameters * columnParameters() override;
-  virtual PrefacedTableView * prefacedView() = 0;
 
   int fillColumnName(int columnIndex, char * buffer) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;

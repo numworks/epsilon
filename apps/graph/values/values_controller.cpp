@@ -49,13 +49,14 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
     return true;
   }, this), &m_exactValuesDotView, k_cellFont),
   m_widthManager(this),
-  m_heightManager(this)
+  m_heightManager(this),
+  m_exactValuesAreActivated(false)
 {
   for (int i = 0; i < k_maxNumberOfDisplayableFunctions; i++) {
     m_functionTitleCells[i].setFont(k_cellFont);
   }
   initValueCells();
-  m_exactValuesButton.setState(false);
+  m_exactValuesButton.setState(m_exactValuesAreActivated);
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
 }
 
@@ -86,7 +87,7 @@ KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
     columnWidth = Shared::ValuesController::defaultColumnWidth();
   }
   KDCoordinate maxColumnWidth = MaxColumnWidth();
-  if (!m_exactValuesButton.state()) {
+  if (!m_exactValuesAreActivated) {
     // Width is constant when displaying approximations
     return columnWidth;
   }
@@ -115,7 +116,7 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
   for (int i = 0; i < nColumns; i++) {
     int tempI = i;
     ContinuousFunction::SymbolType symbol = symbolTypeAtColumn(&tempI);
-    if (!m_exactValuesButton.state()) {
+    if (!m_exactValuesAreActivated) {
      if (symbol != ContinuousFunction::SymbolType::T) {
       /* Height is constant when there is no parametric function and exact
        * result is not displayed. */
@@ -125,7 +126,7 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
      }
     }
     if (typeAtLocation(i, j) == k_notEditableValueCellType && j < numberOfElementsInColumn(i) + 1) {
-      assert(m_exactValuesButton.state());
+      assert(m_exactValuesAreActivated);
       Layout l = memoizedLayoutForCell(i, j);
       assert(!l.isUninitialized());
       rowHeight = std::max(CellSizeWithLayout(l).height(), rowHeight);
@@ -208,7 +209,7 @@ int ValuesController::typeAtLocation(int i, int j) {
 }
 
 void ValuesController::viewDidDisappear() {
-  m_exactValuesButton.setState(false);
+  activateExactValues(false);
   Shared::ValuesController::viewDidDisappear();
 }
 
@@ -251,7 +252,7 @@ void ValuesController::setStartEndMessages(Shared::IntervalParameterController *
 }
 
 void ValuesController::reloadEditedCell(int column, int row) {
-  if (m_exactValuesButton.state()) {
+  if (m_exactValuesAreActivated) {
     // Sizes might have changed
     selectableTableView()->reloadData();
     return;
@@ -289,7 +290,7 @@ void ValuesController::deleteRowFromMemoization(int row, KDCoordinate rowPreviou
 
 void ValuesController::updateSizeMemoizationForColumnAfterIndexChanged(int column, KDCoordinate columnPreviousWidth, int row) {
   // Update the size only if column becomes larger
-  if (m_exactValuesButton.state()) {
+  if (m_exactValuesAreActivated) {
     KDCoordinate minimalWidthForColumn = std::min(MaxColumnWidth(), CellSizeWithLayout(memoizedLayoutForCell(column, row)).width());
     if (columnPreviousWidth < minimalWidthForColumn) {
       m_widthManager.updateMemoizationForIndex(column, columnPreviousWidth, minimalWidthForColumn);
@@ -395,7 +396,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   bool isDerivative = false;
   Shared::ExpiringPointer<ContinuousFunction> function = functionAtIndex(column, row, &abscissa, &isDerivative);
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  if (!isDerivative && m_exactValuesButton.state()) {
+  if (!isDerivative && m_exactValuesAreActivated) {
     // Compute exact result
     Expression exactResult = function->expressionReduced(context);
     Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
@@ -468,22 +469,29 @@ EvenOddExpressionCell * ValuesController::valueCells(int j) {
 }
 
  bool ValuesController::exactValuesButtonAction() {
-  bool buttonWasOn = m_exactValuesButton.state();
+  assert(m_exactValuesButton.state() == m_exactValuesAreActivated);
+  bool buttonWasOn = m_exactValuesAreActivated;
   resetLayoutMemoization();
   {
     UserCircuitBreakerCheckpoint checkpoint;
     if (CircuitBreakerRun(checkpoint)) {
-      m_exactValuesButton.setState(!buttonWasOn);
+      activateExactValues(!buttonWasOn);
       m_selectableTableView.reloadData();
       return true;
     } else {
-      m_exactValuesButton.setState(false);
+      activateExactValues(false);
       resetLayoutMemoization();
       m_selectableTableView.reloadData();
       return buttonWasOn;
     }
   }
 }
+
+void ValuesController::activateExactValues(bool activate) {
+  m_exactValuesAreActivated = activate;
+  m_exactValuesButton.setState(m_exactValuesAreActivated);
+}
+
 
 /* ValuesController::ValuesSelectableTableView */
 

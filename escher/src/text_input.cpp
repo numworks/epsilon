@@ -146,6 +146,9 @@ void TextInput::scrollToCursor() {
    * In order to avoid requiring two layouts, we allow overscrolling in
    * scrollToContentRect, and the last layout of the scroll view corrects the
    * size of the scroll view only once. */
+  if (bounds() == KDRectZero) {
+    return;
+  }
   KDRect cursorRect = contentView()->cursorRect();
   assert(cursorRect.top() >= 0 && cursorRect.right() >= 0 && cursorRect.bottom() >= 0 && cursorRect.left() >= 0);
   scrollToContentRect(cursorRect, true);

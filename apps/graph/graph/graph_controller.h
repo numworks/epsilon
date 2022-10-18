@@ -23,6 +23,7 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   bool canShrinkWhenNormalizing() const override { return true; }
+  Poincare::Range2D optimalRange(bool computeX, bool computeY, Poincare::Range2D originalRange) const override;
   bool handleZoom(Ion::Events::Event event) override;
 
   bool displayDerivativeInBanner() const;

@@ -77,7 +77,7 @@ static Coordinate2D<float> evaluator(float x, const void * model, Context * cont
   return s->evaluateXYAtParameter(x, context);
 }
 
-Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange, Range1D intrinsicYRange) const {
+Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange) const {
   Range2D result;
   if (computeX) {
     float xMin = interestingXMin();

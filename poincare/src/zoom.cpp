@@ -79,9 +79,16 @@ void Zoom::fitOnlyY() {
 }
 
 void Zoom::fitBothXAndY(bool forceNormalization) {
-  sampleY();
-  expandSparseWindow();
-  // TODO Round the axes ?
+  if (m_function && m_model) {
+    sampleY();
+    expandSparseWindow();
+  }
+
+  float currentRatio = m_range.ratio();
+  bool closeToNormalized = m_normalRatio / k_orthonormalTolerance <= currentRatio && currentRatio <= m_normalRatio * k_orthonormalTolerance;
+  if (forceNormalization || closeToNormalized) {
+    m_range.setRatio(m_normalRatio, false);
+  }
 }
 
 void Zoom::fitFullFunction() {
@@ -91,6 +98,8 @@ void Zoom::fitFullFunction() {
   for (int i = 0; i < k_sampleSize; i++) {
     m_range.extend(approximate(m_tMin + i * tStep));
   }
+
+  m_sampleUpToDate = false;
 }
 
 // Private
@@ -253,7 +262,7 @@ bool Zoom::findYAxisForOrderOfMagnitude() {
     }
   }
 
-  float yMin = nPop > 0 ? std::max(sampleMin, std::exp(nSum / nPop + 1.f)) : sampleMin;
+  float yMin = nPop > 0 ? std::max(sampleMin, -std::exp(nSum / nPop + 1.f)) : sampleMin;
   float yMax = pPop > 0 ? std::min(sampleMax, std::exp(pSum / pPop + 1.f)) : sampleMax;
   if (std::isnan(yMin) || std::isnan(yMax)) {
     return false;

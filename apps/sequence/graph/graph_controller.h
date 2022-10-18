@@ -21,9 +21,9 @@ public:
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
-  Poincare::Range2D optimalRange(bool computeX, bool computeY, Poincare::Range2D originalRange, Poincare::Range1D intrinsicYRange) const override;
-  TermSumController * termSumController() { return &m_termSumController; }
+  Poincare::Range2D optimalRange(bool computeX, bool computeY, Poincare::Range2D originalRange) const override;
 
+  TermSumController * termSumController() { return &m_termSumController; }
   float interestingXMin() const;
   void moveToRank(int n);
 

@@ -120,7 +120,7 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
   Range1D yRange(yMin(), yMax());
   yRange.setMin(yMin() + y);
   yRange.setMax(yMax() + y);
-  if (xRange.min() != xMin() + x || xRange.max() != xMax() + x || yRange.min() != yMin() + x || yRange.max() != yMax() + x) {
+  if (xRange.min() != xMin() + x || xRange.max() != xMax() + x || yRange.min() != yMin() + y || yRange.max() != yMax() + y) {
     return;
   }
 

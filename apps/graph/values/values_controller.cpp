@@ -380,42 +380,19 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   bool isDerivative = false;
   Shared::ExpiringPointer<ContinuousFunction> function = functionAtIndex(column, row, &abscissa, &isDerivative);
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  if (!isDerivative && m_exactValuesAreActivated) {
-    // Compute exact result
-    Expression exactResult = function->expressionReduced(context);
-    Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
-    Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
-    abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
-    PoincareHelpers::CloneAndSimplify(&exactResult, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
-    if (!Utils::ShouldOnlyDisplayApproximation(function->originalEquation(), exactResult, context)) {
-      // Do not show exact expressions in certain cases
-      *memoizedLayoutAtIndex(index) = exactResult.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, context);
-      return;
-    }
+  // Compute exact result
+  Expression exactResult = function->expressionReduced(context);
+  Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
+  Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
+  abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
+  PoincareHelpers::CloneAndSimplify(&exactResult, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
+  if (m_exactValuesAreActivated && !isDerivative && !Utils::ShouldOnlyDisplayApproximation(function->originalEquation(), exactResult, context)) {
+    // Do not show exact expressions in certain cases
+    *memoizedLayoutAtIndex(index) = exactResult.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, context);
+    return;
   }
   // Compute approximate result
-  double evaluationX = NAN;
-  double evaluationY = NAN;
-  bool isParametric = function->symbolType() == ContinuousFunction::SymbolType::T;
-  if (isDerivative) {
-    assert(function->canDisplayDerivative());
-    evaluationY = function->approximateDerivative(abscissa, context);
-  } else {
-    Poincare::Coordinate2D<double> eval = function->evaluate2DAtParameter(abscissa, context);
-    evaluationY = eval.x2();
-    if (isParametric) {
-      evaluationX = eval.x1();
-    }
-  }
-  Expression approximation;
-  if (isParametric) {
-    approximation = Matrix::Builder();
-    static_cast<Matrix&>(approximation).addChildAtIndexInPlace(Float<double>::Builder(evaluationX), 0, 0);
-    static_cast<Matrix&>(approximation).addChildAtIndexInPlace(Float<double>::Builder(evaluationY), 1, 1);
-    static_cast<Matrix&>(approximation).setDimensions(2, 1);
-  } else {
-    approximation = Float<double>::Builder(evaluationY);
-  }
+  Expression approximation = PoincareHelpers::Approximate<double>(exactResult, context);
   *memoizedLayoutAtIndex(index) = approximation.createLayout(Preferences::PrintFloatMode::Decimal, Preferences::VeryLargeNumberOfSignificantDigits, context);
 
 }

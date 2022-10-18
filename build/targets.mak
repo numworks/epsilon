@@ -20,7 +20,6 @@ HANDY_TARGETS += epsilon
 # Epsilon flavored targets
 
 epsilon_flavors = \
-  noboot \
   onboarding \
   onboarding.update \
   onboarding.beta

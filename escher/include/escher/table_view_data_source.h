@@ -23,8 +23,7 @@ public:
   KDCoordinate columnWidth(int i);
   KDCoordinate rowHeight(int j);
   /* return the number of pixels to include in offset to display the column i
-   * at the top.
-   */
+   * at the top. */
   KDCoordinate cumulatedWidthFromIndex(int i);
   KDCoordinate cumulatedHeightFromIndex(int j);
   /* return the number of columns (starting with first ones) that can be fully
@@ -50,9 +49,11 @@ protected:
   virtual KDCoordinate defaultColumnWidth() { return TableSize1DManager::k_undefinedSize; }
   virtual KDCoordinate defaultRowHeight() { return TableSize1DManager::k_undefinedSize; }
 
+  /* TODO: These are virtual only for BorderTableViewDataSource and
+   * PrefacedTableView. We might find a way to avoid having this in
+   * the vtable ? */
   virtual KDCoordinate nonMemoizedCumulatedWidthFromIndex(int i);
   virtual KDCoordinate nonMemoizedCumulatedHeightFromIndex(int j);
-
   virtual int nonMemoizedIndexFromCumulatedWidth(KDCoordinate offsetX);
   virtual int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY);
 

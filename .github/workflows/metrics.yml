@@ -26,7 +26,7 @@ jobs:
           ref:  ${{ steps.common_ancestor.outputs.commit_sha }}
           path: base
       - name: Build common ancestor for N0110
-        run: make -C base bootloader.elf && make -C base kernel.A.elf && make -C base userland.A.elf
+        run: ALLOW_THIRD_PARTY=1 make -C base bootloader.elf && make -C base kernel.A.elf && make -C base userland.A.elf
       - name: Find head of PR
         uses: actions/checkout@v2
         with:
@@ -35,7 +35,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           path: head
       - name: Build head for N0110
-        run: make -C head bootloader.elf && make -C head kernel.A.elf && make -C head userland.A.elf
+        run: ALLOW_THIRD_PARTY=1 make -C head bootloader.elf && make -C head kernel.A.elf && make -C head userland.A.elf
       - name: Binary size summary
         id: binary_size_summary
         run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.A.elf base/output/release/device/n0110/userland/userland.A.elf @Head head/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/userland/userland.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)"

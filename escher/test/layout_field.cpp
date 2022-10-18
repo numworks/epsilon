@@ -12,9 +12,9 @@ void assert_events_lead_to_selection(const Ion::Events::Event * events, int numb
   for (int i = 0; i < numberOfEvents; i++) {
     field.handleEvent(events[i]);
   }
-  Clipboard::sharedClipboard()->reset();
+  Clipboard::SharedClipboard()->reset();
   field.handleEvent(Ion::Events::Copy);
-  quiz_assert(strcmp(Clipboard::sharedClipboard()->storedText(), selectedParsedAndSerializedText) == 0);
+  quiz_assert(strcmp(Clipboard::SharedClipboard()->storedText(), selectedParsedAndSerializedText) == 0);
 }
 
 QUIZ_CASE(escher_layout_field_select_left_right) {

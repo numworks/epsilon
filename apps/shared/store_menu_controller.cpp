@@ -108,8 +108,9 @@ bool StoreMenuController::parseAndStore(const char * text) {
     openAbortWarning();
     return false;
   }
-  if (Shared::Utils::ShouldOnlyDisplayApproximation(input, reducedExp, Container::activeApp()->localContext())) {
-    reducedExp.replaceChildAtIndexInPlace(0, Shared::PoincareHelpers::Approximate<double>(reducedExp.childAtIndex(0), Container::activeApp()->localContext()));
+  bool isVariable = reducedExp.childAtIndex(1).type() == Poincare::ExpressionNode::Type::Symbol;
+  if (isVariable && Shared::Utils::ShouldOnlyDisplayApproximation(input, reducedExp, Container::activeApp()->localContext())) {
+    reducedExp.replaceChildAtIndexInPlace(0, Shared::PoincareHelpers::ApproximateKeepingUnits<double>(reducedExp.childAtIndex(0), Container::activeApp()->localContext()));
   }
   Store store = static_cast<Store&>(reducedExp);
   Container::activeApp()->dismissModalViewController();

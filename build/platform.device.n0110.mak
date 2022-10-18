@@ -1,7 +1,2 @@
 PCB_LATEST = 343 # PCB version 3.43
-ifeq ($(IN_FACTORY),1)
-  ALLOW_THIRD_PARTY ?=0
-else
-  ALLOW_THIRD_PARTY ?=1
-endif
 SIGNATURE_INDEX = 1

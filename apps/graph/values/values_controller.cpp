@@ -117,9 +117,10 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
     int tempI = i;
     ContinuousFunction::SymbolType symbol = symbolTypeAtColumn(&tempI);
     if (!m_exactValuesAreActivated) {
-     if (symbol != ContinuousFunction::SymbolType::T) {
-      /* Height is constant when there is no parametric function and exact
-       * result is not displayed. */
+     if (symbol != ContinuousFunction::SymbolType::T || j >= numberOfElementsInColumn(i) + 1) {
+      /* Height is constant when exact result is not displayed and
+       * either there is no parametric function or it's the last row
+       * of the column. */
       continue;
      } else {
       return ApproximatedParametricCellSize().height();

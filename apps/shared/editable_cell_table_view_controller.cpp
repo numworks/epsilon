@@ -34,35 +34,34 @@ bool EditableCellTableViewController::textFieldDidFinishEditing(AbstractTextFiel
   }
   // Save attributes for later use
   int column = selectedColumn();
-  int previousRow = selectedRow();
-  KDCoordinate rwHeight = rowHeight(previousRow);
+  int row = selectedRow();
+  KDCoordinate rwHeight = rowHeight(row);
   int previousNumberOfElementsInColumn = numberOfElementsInColumn(column);
-  if (!checkDataAtLocation(floatBody, column, previousRow)) {
+  if (!checkDataAtLocation(floatBody, column, row)) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  if (!setDataAtLocation(floatBody, column, previousRow)) {
+  if (!setDataAtLocation(floatBody, column, row)) {
     // Storage memory error
     return false;
   }
-  /* At this point, a new cell is selected depending on the event, before the
-   * data is reloaded, which means that the right cell is selected but the data
-   * may be incorrect. The data is reloaded afterwards. */
-  if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    selectableTableView()->selectCellAtLocation(column, selectedRow()+1);
-  } else {
-    selectableTableView()->handleEvent(event);
-  }
-  didChangeCell(column, previousRow);
-  updateSizeMemoizationForRow(previousRow, rwHeight);
+
+  didChangeCell(column, row);
+  updateSizeMemoizationForRow(row, rwHeight);
   // Reload other cells
   if (previousNumberOfElementsInColumn < numberOfElementsInColumn(column)) {
     // Reload the whole table, if a value was appended.
-    updateSizeMemoizationForRow(selectedRow(), 0); // update total height
+    updateSizeMemoizationForRow(row + 1, 0); // update total height
     selectableTableView()->reloadData();
   } else {
     assert(previousNumberOfElementsInColumn == numberOfElementsInColumn(column));
-    reloadEditedCell(column, previousRow);
+    reloadEditedCell(column, row);
+  }
+
+  if (event == Ion::Events::EXE || event == Ion::Events::OK) {
+    selectableTableView()->selectCellAtLocation(column, row + 1);
+  } else {
+    selectableTableView()->handleEvent(event);
   }
   return true;
 }

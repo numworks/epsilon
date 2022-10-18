@@ -32,7 +32,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
       && isEditing()
       && fieldContainsSingleMinusSymbol()) {
     setText(Poincare::Symbol::k_ansAliases.mainAlias());
-    // The Minus symbol will be addded by (::ExpressionField::handleEvent)
+    // The Minus symbol will be addded by ::ExpressionField::handleEvent
   }
   if (event == Ion::Events::Division
       && isEditing()) {
@@ -43,7 +43,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
     }
     return handleDivision();
   }
-  return (::ExpressionField::handleEvent(event));
+  return ::ExpressionField::handleEvent(event);
 }
 
 bool ExpressionField::fieldContainsSingleMinusSymbol() const {
@@ -131,7 +131,7 @@ bool ExpressionField::handleDivision() {
         assert(false);
         break;
       case DivisionCycleStep::Start :
-        handled = (::ExpressionField::handleEvent(event));
+        handled = ::ExpressionField::handleEvent(event);
         /* In 1D we always cycle
          * In 2D we cycle only if the default handleEvent created an empty fraction, to avoid the cases:
          *   - when we press Division after an expression, the default handleEvent creates a fraction with 
@@ -150,7 +150,7 @@ bool ExpressionField::handleDivision() {
       case DivisionCycleStep::NumeratorOfEmptyFraction : 
         if (editionIn1D) {
           m_currentStep = DivisionCycleStep::MixedFraction;
-          handled = (::ExpressionField::handleEvent(Ion::Events::Space)); // TODO : OR handleEventWithText(" ");
+          handled = ::ExpressionField::handleEvent(Ion::Events::Space); // TODO : OR handleEventWithText(" ");
           assert(handled);
           event = Ion::Events::Left;
         } else {
@@ -170,9 +170,9 @@ bool ExpressionField::handleDivision() {
         assert(mixedFractionsEnabled);
         if (editionIn1D) {
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
-          handled = (::ExpressionField::handleEvent(Ion::Events::Right)); // TODO : OR m_textField.moveCursorRight(); but protected in TextInput
+          handled = ::ExpressionField::handleEvent(Ion::Events::Right); // TODO : OR m_textField.moveCursorRight(); but protected in TextInput
           assert(handled);
-          handled = (::ExpressionField::handleEvent(Ion::Events::Backspace)); // TODO : OR m_textField.removePreviousGlyph();
+          handled = ::ExpressionField::handleEvent(Ion::Events::Backspace); // TODO : OR m_textField.removePreviousGlyph();
           assert(handled);
         } else {
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
@@ -181,7 +181,7 @@ bool ExpressionField::handleDivision() {
         break;
     }
   }
-  return (::ExpressionField::handleEvent(event));
+  return ::ExpressionField::handleEvent(event);
 }
 
 }

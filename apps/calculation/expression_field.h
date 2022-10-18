@@ -2,6 +2,7 @@
 #define CALCULATION_EXPRESSION_FIELD_H
 
 #include <escher/expression_field.h>
+#include <poincare/trinary_boolean.h>
 
 namespace Calculation {
 
@@ -10,8 +11,7 @@ public:
   ExpressionField(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandler, Escher::TextFieldDelegate * textFieldDelegate, Escher::LayoutFieldDelegate * layoutFieldDelegate) :
   Escher::ExpressionField(parentResponder, inputEventHandler, textFieldDelegate, layoutFieldDelegate),
   m_currentStep(DivisionCycleStep::Start),
-  m_divisionCycleWithAns(true),
-  m_divisionCycleChoiceUpToDate(false) {
+  m_divisionCycleWithAns(Poincare::TrinaryBoolean::Unknown) {
     setLayoutInsertionCursorEvent(Ion::Events::Up);
   }
 protected:
@@ -26,8 +26,7 @@ private:
   };
 
   DivisionCycleStep m_currentStep;
-  bool m_divisionCycleWithAns;
-  bool m_divisionCycleChoiceUpToDate;
+  Poincare::TrinaryBoolean m_divisionCycleWithAns;
 
   bool fieldContainsSingleMinusSymbol() const;
   bool didCreateEmptyFraction();

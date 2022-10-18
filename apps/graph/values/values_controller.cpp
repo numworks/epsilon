@@ -470,19 +470,29 @@ EvenOddExpressionCell * ValuesController::valueCells(int j) {
 
  bool ValuesController::exactValuesButtonAction() {
   assert(m_exactValuesButton.state() == m_exactValuesAreActivated);
-  bool buttonWasOn = m_exactValuesAreActivated;
+  /* Approximated values computation is much faster than exact values so it's
+   * uninterruptable and if the exact values computation is interrupted, it
+   * falls back on approximated values computation. */
   resetLayoutMemoization();
+
+  if (m_exactValuesAreActivated) {
+    activateExactValues(false);
+    resetLayoutMemoization();
+    m_selectableTableView.reloadData();
+    return true;
+  }
+
   {
     UserCircuitBreakerCheckpoint checkpoint;
     if (CircuitBreakerRun(checkpoint)) {
-      activateExactValues(!buttonWasOn);
+      activateExactValues(true);
       m_selectableTableView.reloadData();
       return true;
     } else {
       activateExactValues(false);
       resetLayoutMemoization();
       m_selectableTableView.reloadData();
-      return buttonWasOn;
+      return false;
     }
   }
 }

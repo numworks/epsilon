@@ -117,7 +117,7 @@ AppIterator & AppIterator::operator++() {
   return *this;
 }
 
-bool s_externalAppsVisible = false;
+bool s_externalAppsVisible = false; // After reset, external apps are not visible
 
 AppIterator Apps::begin() const {
   uint8_t * storageStart = &_external_apps_flash_start;

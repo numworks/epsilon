@@ -6,7 +6,7 @@ ion_device_bootloader_src += $(addprefix ion/src/device/shared/boot/, \
 
 ion_device_bootloader_src += $(addprefix ion/src/device/shared/drivers/, \
   base64.cpp \
-  flash_unprivileged.cpp \
+  flash_information.cpp \
   serial_number.cpp \
   usb_unprivileged.cpp \
 )

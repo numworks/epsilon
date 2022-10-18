@@ -1,7 +1,7 @@
 #include "dfu_interface.h"
 #include <shared/drivers/board_shared.h>
 #include <shared/drivers/flash_erase.h>
-#include <shared/drivers/flash_unprivileged.h>
+#include <shared/drivers/flash_information.h>
 #include <shared/drivers/flash_write.h>
 #include <ion/timing.h>
 #include <string.h>

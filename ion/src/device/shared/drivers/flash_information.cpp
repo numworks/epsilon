@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <config/board.h>
 #include <config/external_flash.h>
-#include "flash_unprivileged.h"
+#include "flash_information.h"
 
 namespace Ion {
 namespace Device {

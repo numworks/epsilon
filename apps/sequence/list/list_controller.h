@@ -89,7 +89,7 @@ private:
   void addModel() override;
   void editExpression(Ion::Events::Event event) override;
   bool removeModelRow(Ion::Storage::Record record) override;
-  Shared::SequenceStore * modelStore() override;
+  Shared::SequenceStore * modelStore() const override;
   KDCoordinate nameWidth(int nameLength) const;
 
   Escher::SelectableTableView m_selectableTableView;

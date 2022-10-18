@@ -339,7 +339,7 @@ void ListController::addModel() {
   Container::activeApp()->displayModalViewController(&m_modelsStackController, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpRightMargin, 0, Metric::PopUpLeftMargin);
 }
 
-ContinuousFunctionStore * ListController::modelStore() {
+ContinuousFunctionStore * ListController::modelStore() const {
   return App::app()->functionStore();
 }
 

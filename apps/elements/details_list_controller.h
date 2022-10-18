@@ -38,10 +38,10 @@ private:
   constexpr static size_t k_numberOfNormalCells = 4;
   constexpr static size_t k_numberOfSeparatorCells = 4;
 
+  static const DataField * DataFieldForRow(int row);
+
   // Escher::MemoizedListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override;
-
-  const DataField * DataFieldForRow(int row);
 
   Escher::StackViewController * stackViewController() const { return static_cast<Escher::StackViewController *>(parentResponder()); }
 

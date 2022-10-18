@@ -17,8 +17,6 @@ public:
     MemoizedCurveViewRange(),
     m_delegate(delegate),
     m_offscreenYAxis(0.f),
-    m_yMinIntrinsic(NAN),
-    m_yMaxIntrinsic(NAN),
     m_xAuto(true),
     m_yAuto(true),
     m_zoomNormalize(false)
@@ -65,8 +63,6 @@ public:
 
 protected:
   constexpr static float k_maxRatioPositionRange = 1E5f;
-  /* The tolerance is chosen to normalize sqrt(x) */
-  constexpr static float k_orthonormalTolerance = 1.78f;
   /* In normalized settings, we put each axis so that 1cm = 2 units. For now,
    * the screen has size 43.2mm * 57.6mm.
    * We want:
@@ -81,7 +77,6 @@ protected:
    *   2 * 1 unit -> 10.0mm
    * So normalizedYHalfRange = 43.2mm * 170/240 * 1 unit / 10.0mm */
   constexpr static float NormalizedYHalfRange(float unit) {  return 3.06f * unit; }
-  bool shouldBeNormalized() const;
   virtual bool hasDefaultRange() const { return (xMin() == std::round(xMin())) && (xMax() == std::round(xMax())); }
   /* This method only updates the zoomNormalize status, and does not change either the auto statuses or the intrinsic Y range. */
   virtual void protectedNormalize(bool canChangeX, bool canChangeY, bool canShrink);
@@ -94,8 +89,6 @@ private:
   void privateComputeRanges(bool computeX, bool computeY);
 
   float m_offscreenYAxis;
-  float m_yMinIntrinsic;
-  float m_yMaxIntrinsic;
   bool m_xAuto;
   bool m_yAuto;
   bool m_zoomNormalize;

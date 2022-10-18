@@ -374,7 +374,7 @@ void GraphController::setRoundCrossCursorView() {
   m_cursorView.setColor(Palette::DataColor[*m_selectedSeriesIndex]);
 }
 
-Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange, Range1D intrinsicYRange) const {
+Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange) const {
   Range1D xRange, yRange;
   for (int series = 0; series < Store::k_numberOfSeries; series++) {
     if (!m_store->seriesIsValid(series)) {

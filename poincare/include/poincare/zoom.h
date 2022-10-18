@@ -21,12 +21,17 @@ public:
 
   static Range2D Sanitize(Range2D range, float normalYXRatio);
   static Range2D DefaultRange(float normalYXRatio) { return Sanitize(Range2D(), normalYXRatio); }
+  // Static methods for the Solver API
+  static Solver<float>::Interest PointIsInteresting(float ya, float yb, float yc);
+  static Coordinate2D<float> SelectMiddle(Solver<float>::FunctionEvaluation f, const void * model, float a, float b, Solver<float>::Interest, float precision);
+
 
   /* A YX ratio is length of Y axis over length of X axis. For instance, a
    * normal YX ratio of 0.5 means the range ([-1,1],[2,3]) is normalized. */
   Zoom(float tMin, float tMax, float normalYXRatio, Context * context) : m_tMax(tMax), m_tMin(tMin), m_normalRatio(normalYXRatio), m_context(context), m_function(nullptr), m_sampleUpToDate(false) {}
 
   Range2D range() const { return m_range; }
+  void setBounds(float tMin, float tMax) { m_tMin = tMin; m_tMax = tMax; }
   void setFunction(FunctionEvaluation2DWithContext f, const void * model);
   void includePoint(Coordinate2D<float> p);
   /* The fitX method will compute an X axis based on the points of interest of
@@ -43,10 +48,8 @@ private:
   constexpr static size_t k_sampleSize = Ion::Display::Width / 2;
   constexpr static int k_maxPointsOnOneSide = 10;
   constexpr static float k_defaultHalfRange = Range1D::k_defaultHalfLength;
-
-  // Static methods for the Solver API
-  static Solver<float>::Interest PointIsInteresting(float ya, float yb, float yc);
-  static Coordinate2D<float> SelectMiddle(Solver<float>::FunctionEvaluation f, const void * model, float a, float b, Solver<float>::Interest, float precision);
+  /* The tolerance is chosen to normalize sqrt(x) */
+  constexpr static float k_orthonormalTolerance = 1.78f;
 
   Coordinate2D<float> approximate(float x) const { assert(m_function); return m_function(x, m_model, m_context); }
   void sampleY();

@@ -49,16 +49,12 @@ float InteractiveCurveViewRange::roundLimit(float y, float range, bool isMin) {
 void InteractiveCurveViewRange::setXMin(float xMin) {
   assert(!xAuto() || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetXMin(xMin, true, k_maxFloat);
-  m_yMinIntrinsic = NAN;
-  m_yMaxIntrinsic = NAN;
   computeRanges();
 }
 
 void InteractiveCurveViewRange::setXMax(float xMax) {
   assert(!xAuto() || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetXMax(xMax, true, k_maxFloat);
-  m_yMinIntrinsic = NAN;
-  m_yMaxIntrinsic = NAN;
   computeRanges();
 }
 
@@ -138,8 +134,6 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
 }
 
 void InteractiveCurveViewRange::normalize() {
-  m_yMinIntrinsic = NAN;
-  m_yMaxIntrinsic = NAN;
   /* If one axis is set manually and the other is in auto mode, prioritize
    * changing the auto one. */
   bool canChangeX = m_xAuto || !m_yAuto;
@@ -299,11 +293,6 @@ bool InteractiveCurveViewRange::zoomOutToMakePointVisible(float x, float y, floa
   return moved;
 }
 
-bool InteractiveCurveViewRange::shouldBeNormalized() const {
-  float ratio = (yMax() - yMin()) / (xMax() - xMin());
-  return ratio >= NormalYXRatio() / k_orthonormalTolerance && ratio <= NormalYXRatio() * k_orthonormalTolerance;
-}
-
 void InteractiveCurveViewRange::protectedNormalize(bool canChangeX, bool canChangeY, bool canShrink) {
   /* We center the ranges on the current range center, and put each axis so that
    * 1cm = 2 current units. */
@@ -367,8 +356,7 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
 
   Poincare::UserCircuitBreakerCheckpoint checkpoint;
   if (CircuitBreakerRun(checkpoint)) {
-    Range1D intrinsicRange(m_yMinIntrinsic, m_yMaxIntrinsic);
-    Range2D newRange = m_delegate->optimalRange(computeX, computeY, memoizedRange(), intrinsicRange);
+    Range2D newRange = m_delegate->optimalRange(computeX, computeY, memoizedRange());
 
     if (computeX) {
       MemoizedCurveViewRange::protectedSetXMin(newRange.xMin(), false, k_maxFloat);

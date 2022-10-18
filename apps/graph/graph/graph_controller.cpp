@@ -1,5 +1,6 @@
 #include "graph_controller.h"
 #include "../app.h"
+#include <apps/shared/poincare_helpers.h>
 #include <poincare/layout_helper.h>
 #include <algorithm>
 
@@ -40,6 +41,114 @@ void GraphController::didBecomeFirstResponder() {
   FunctionGraphController::didBecomeFirstResponder();
   m_view.selectRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
   refreshPointsOfInterest();
+}
+
+static Coordinate2D<float> evaluator(float t, const void * model, Context * context) {
+  const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
+  return f->evaluateXYAtParameter(t, context);
+}
+
+static Coordinate2D<float> evaluatorSecondCurve(float t, const void * model, Context * context) {
+  const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
+  return f->evaluateXYAtParameter(t, context, 1);
+}
+
+struct IntersectionParameters {
+  ContinuousFunction * f;
+  ContinuousFunction * g;
+  Context * context;
+};
+
+static float evaluatorIntersection(float t, const void * aux) {
+  const IntersectionParameters * params = static_cast<const IntersectionParameters *>(aux);
+  Context * context = params->context;
+  return params->f->evaluateXYAtParameter(t, context).x2() - params->g->evaluateXYAtParameter(t, context).x2();
+}
+
+Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange) const {
+  /* Steps:
+   * - Set the range so that all polar and parametric functions are displayed in full
+   * - Display all points of interest of the first cartesian function along X
+   * - Extend the X range to fully display function along Y
+   *   TODO A more subtle approach should be used for curves such as x = 1/y */
+
+  Context * context = App::app()->localContext();
+  Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context);
+  ContinuousFunction * firstCartesian = nullptr;
+
+  ContinuousFunctionStore * store = functionStore();
+  int nbFunctions = store->numberOfActiveFunctions();
+  for (int i = 0; i < nbFunctions; i++) {
+    ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
+    if (f->basedOnCostlyAlgorithms(context)) {
+      continue;
+    }
+    if (f->plotType() == ContinuousFunction::PlotType::Polar || f->plotType() == ContinuousFunction::PlotType::Parametric) {
+      assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
+      zoom.setBounds(f->tMin(), f->tMax());
+      zoom.setFunction(evaluator, f.operator->());
+      zoom.fitFullFunction();
+    } else if (!firstCartesian && f->isAlongXOrY() && !f->isAlongY()) {
+      firstCartesian = f.operator->();
+    }
+  }
+
+  Range1D xRange = computeX ? Range1D(-InteractiveCurveViewRange::k_maxFloat, InteractiveCurveViewRange::k_maxFloat) : originalRange.x();
+  zoom.setFunction(evaluator, firstCartesian);
+
+  if (firstCartesian) {
+    // Find the intersections with other curves
+    if (firstCartesian->isIntersectable()) {
+      for (int i = 0; i < nbFunctions; i++) {
+        ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
+        if (f.operator->() == firstCartesian || !f->isIntersectable() || f->basedOnCostlyAlgorithms(context)) {
+          continue;
+        }
+        Solver<float> solver = PoincareHelpers::Solver<float>(xRange.min(), xRange.max());
+        IntersectionParameters intersectionParameters = { .f = firstCartesian, .g = f.operator->(), .context = context };
+        Coordinate2D<float> intersection = solver.next(evaluatorIntersection, &intersectionParameters, Solver<float>::EvenOrOddRootInBracket, Zoom::SelectMiddle);
+        while (std::isfinite(intersection.x1())) {
+          zoom.includePoint(intersection);
+          intersection = solver.next(evaluatorIntersection, &intersectionParameters, Solver<float>::EvenOrOddRootInBracket, Zoom::SelectMiddle);
+        }
+      }
+    }
+    // Find the other points of interest
+    zoom.setBounds(xRange.min(), xRange.max());
+    zoom.fitX();
+    if (firstCartesian->numberOfSubCurves() > 1) {
+      assert(firstCartesian->numberOfSubCurves() == 2);
+      zoom.setFunction(evaluatorSecondCurve, firstCartesian);
+      zoom.fitX();
+      zoom.setFunction(evaluator, firstCartesian);
+    }
+    if (computeY) {
+      zoom.fitOnlyY();
+    }
+  }
+
+  if (computeX) {
+    if (computeY) {
+      /* If firstCartesian is nullptr, this will only perform basic teaking
+       * such as normalization. Otherwise, sample values of the function should
+       * have been memoized from the call to fitOnlyY. */
+      zoom.fitBothXAndY(defaultRangeIsNormalized());
+    }
+
+    for (int i = 0; i < nbFunctions; i++) {
+      ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
+      if (!f->isAlongY() || f->basedOnCostlyAlgorithms(context)) {
+        continue;
+      }
+      Range1D yRange = (computeY ? zoom.range() : originalRange).y();
+      zoom.setBounds(yRange.min(), yRange.max());
+      zoom.setFunction(evaluator, f.operator->());
+      zoom.fitFullFunction();
+    }
+  }
+
+  Range2D newRange = zoom.range();
+  return Range2D((computeX ? newRange : originalRange).x(), (computeY ? newRange : originalRange).y());
 }
 
 bool GraphController::handleZoom(Ion::Events::Event event) {

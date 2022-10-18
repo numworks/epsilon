@@ -273,7 +273,7 @@ Coordinate2D<T> Solver<T>::nextRootInMultiplication(Expression e) const {
 template<typename T>
 void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest) {
   T x = solution.x1();
-  if (std::fabs(x) < NullTolerance(x)) {
+  if (std::fabs(x) < NullTolerance(x) && validSolution(k_zero)) {
     x = k_zero;
   }
   if (std::isnan(x)) {
@@ -286,7 +286,6 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest) {
       m_yResult = k_zero;
     }
     m_lastInterest = interest;
-    assert(m_yResult == 0. || m_lastInterest != Interest::Root);
   }
 }
 
@@ -298,6 +297,7 @@ template Coordinate2D<double> Solver<double>::nextMinimum(Expression);
 template Coordinate2D<double> Solver<double>::nextIntersection(Expression, Expression);
 template void Solver<double>::stretch();
 
+template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(float a, float b, float c);
 template Solver<float>::Solver(float, float, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);
 template Coordinate2D<float> Solver<float>::next(FunctionEvaluation, const void *, BracketTest, HoneResult);
 

@@ -23,7 +23,7 @@ public:
   static Range2D DefaultRange(float normalYXRatio) { return Sanitize(Range2D(), normalYXRatio); }
   // Static methods for the Solver API
   static Solver<float>::Interest PointIsInteresting(float ya, float yb, float yc);
-  static Coordinate2D<float> SelectMiddle(Solver<float>::FunctionEvaluation f, const void * model, float a, float b, Solver<float>::Interest, float precision);
+  static Coordinate2D<float> SelectFar(Solver<float>::FunctionEvaluation f, const void * model, float a, float b, Solver<float>::Interest, float precision) { return Coordinate2D<float>(b, f(b, model)); }
 
 
   /* A YX ratio is length of Y axis over length of X axis. For instance, a

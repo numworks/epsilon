@@ -116,11 +116,6 @@ Solver<float>::Interest Zoom::PointIsInteresting(float ya, float yb, float yc) {
   return interest;
 }
 
-Coordinate2D<float> Zoom::SelectMiddle(Solver<float>::FunctionEvaluation f, const void * model, float a, float b, Solver<float>::Interest, float precision) {
-  float c = 0.5f * (a + b);
-  return Coordinate2D<float>(c, f(c, model));
-}
-
 void Zoom::sampleY() {
   assert(m_sample);
   if (m_sampleUpToDate) {
@@ -149,12 +144,12 @@ void Zoom::grossFitToInterest(float xStart, float xEnd) {
   CallParameters params = { .function = m_function, .model = m_model, .context = m_context };
 
   Solver<float> solver(xStart, xEnd);
-  Coordinate2D<float> p = solver.next(evaluator, &params, PointIsInteresting, SelectMiddle);
+  Coordinate2D<float> p = solver.next(evaluator, &params, PointIsInteresting, SelectFar);
   int n = 0;
   while (std::isfinite(p.x1()) && n < k_maxPointsOnOneSide) {
     n++;
     m_range.extend(p);
-    p = solver.next(evaluator, &params, PointIsInteresting, SelectMiddle);
+    p = solver.next(evaluator, &params, PointIsInteresting, SelectFar);
   }
 }
 

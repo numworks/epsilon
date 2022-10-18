@@ -215,4 +215,18 @@ QUIZ_CASE(poincare_layout_parentheses) {
     assert_layout_serialize_to(l, "((1234)5)");
     quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(2), LayoutCursor::Position::Left)));
   }
+  /*
+   * ((|3)] -> BACKSPACE -> (|3)
+   */
+  {
+    Layout l = HorizontalLayout::Builder(
+      ParenthesisLayout::Builder(HorizontalLayout::Builder(
+        ParenthesisLayout::Builder(HorizontalLayout::Builder(
+            CodePointLayout::Builder('3'))))));
+    static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
+    LayoutCursor c(l.childAtIndex(0).childAtIndex(0).childAtIndex(0).childAtIndex(0), LayoutCursor::Position::Left);
+    c.performBackspace();
+    assert_layout_serialize_to(l, "(3)");
+    quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(0).childAtIndex(0).childAtIndex(0), LayoutCursor::Position::Left)));
+  }
 }

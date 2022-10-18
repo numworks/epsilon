@@ -95,17 +95,13 @@ void StoreMenuController::openAbortWarning() {
   Container::activeApp()->modalViewController()->reloadModalViewController();
 }
 
-bool StoreMenuController::layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) {
-  constexpr size_t bufferSize = TextField::maxBufferSize();
-  char buffer[bufferSize];
-  layoutR.serializeForParsing(buffer, bufferSize);
-  Expression exp = Expression::Parse(buffer, Container::activeApp()->localContext());
-  m_preventReload = true;
+bool StoreMenuController::parseAndStore(const char * text) {
+  Expression exp = Expression::Parse(text, Container::activeApp()->localContext());
   if (exp.isUninitialized()) {
     openAbortWarning();
     return false;
   }
-  Expression reducedExp = Shared::PoincareHelpers::ParseAndSimplify(buffer, Container::activeApp()->localContext());
+  Expression reducedExp = Shared::PoincareHelpers::ParseAndSimplify(text, Container::activeApp()->localContext());
   if (reducedExp.type() != ExpressionNode::Type::Store) {
     openAbortWarning();
     return false;
@@ -116,16 +112,15 @@ bool StoreMenuController::layoutFieldDidFinishEditing(Escher::LayoutField * layo
   return true;
 }
 
+bool StoreMenuController::layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) {
+  constexpr size_t bufferSize = TextField::maxBufferSize();
+  char buffer[bufferSize];
+  layoutR.serializeForParsing(buffer, bufferSize);
+  return parseAndStore(buffer);
+}
+
 bool StoreMenuController::textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) {
-  Expression exp = Expression::Parse(text, Container::activeApp()->localContext());
-  m_preventReload = true;
-  if (exp.isUninitialized()) {
-    openAbortWarning();
-    return false;
-  }
-  Shared::PoincareHelpers::ParseAndSimplify(text, Container::activeApp()->localContext());
-  Container::activeApp()->dismissModalViewController();
-  return true;
+  return parseAndStore(text);
 }
 
 bool StoreMenuController::layoutFieldDidAbortEditing(Escher::LayoutField * layoutField) {

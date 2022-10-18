@@ -35,7 +35,7 @@ protected:
 
 private:
   // Only used in an assert
-  bool canReusableIndexBeAssumed(int index, int type, int reusableCellCount);
+  bool canReusableIndexBeAssumed(int index, int type, int reusableCellCount) const;
 };
 
 class MemoizedListViewDataSource : public ListViewDataSource {

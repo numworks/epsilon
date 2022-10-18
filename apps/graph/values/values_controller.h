@@ -138,6 +138,7 @@ private:
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
 
   bool exactValuesButtonAction();
+  void activateExactValues(bool activate);
 
   /* For parametric function, we display the evaluation with the form "(1;2)".
    * This form is not parsable so when we store it into the clipboard, we want
@@ -166,6 +167,7 @@ private:
   Escher::ToggleableDotView m_exactValuesDotView;
   Escher::ShortMemoizedColumnWidthManager m_widthManager;
   Escher::LongMemoizedRowHeightManager m_heightManager;
+  bool m_exactValuesAreActivated;
   mutable Poincare::Layout m_memoizedLayouts[k_maxNumberOfDisplayableCells];
 };
 

@@ -39,10 +39,13 @@ void Zoom::includePoint(Coordinate2D<float> p) {
 
 void Zoom::fitX() {
   assert(std::isfinite(m_tMin) && std::isfinite(m_tMax));
-  /* Attempt to balance the range between m_tMin and m_tMax. */
+  /* Attempt to balance the range between m_tMin and m_tMax.
+   * Step away from the center, as it is more likely to be a significant value
+   * (typically zero).*/
   float xCenter = 0.5f * (m_tMin + m_tMax);
-  grossFitToInterest(xCenter, m_tMax);
-  grossFitToInterest(xCenter, m_tMin);
+  float dx = std::max(Solver<float>::k_minimalAbsoluteStep, Solver<float>::k_relativePrecision * std::fabs(xCenter));
+  grossFitToInterest(xCenter - dx, m_tMax);
+  grossFitToInterest(xCenter - dx, m_tMin);
 
   /* TODO Add some margin around the X axis ? */
 

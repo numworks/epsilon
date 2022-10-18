@@ -26,6 +26,9 @@ public:
   typedef Interest (*BracketTest)(T, T, T);
   typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void *, T, T, Interest, T);
 
+  constexpr static T k_relativePrecision = Float<T>::Epsilon();
+  constexpr static T k_minimalAbsoluteStep = 2. * Helpers::SquareRoot(2. * k_relativePrecision);
+
   // BracketTest default implementations
   constexpr static Interest BoolToInterest(bool v, Interest t, Interest f = Interest::None) { return v ? t : f; }
   static Interest OddRootInBracket(T a, T b, T c) { return BoolToInterest((a < k_zero && k_zero < c) || (c < k_zero && k_zero < a), Interest::Root); }
@@ -68,8 +71,6 @@ private:
 
   constexpr static T k_NAN = static_cast<T>(NAN);
   constexpr static T k_zero = static_cast<T>(0.);
-  constexpr static T k_relativePrecision = Float<T>::Epsilon();
-  constexpr static T k_minimalAbsoluteStep = 2. * Helpers::SquareRoot(2. * k_relativePrecision);
   constexpr static T k_minimalPracticalStep = 1e-6;
   constexpr static T k_absolutePrecision = k_relativePrecision * k_minimalAbsoluteStep;
 

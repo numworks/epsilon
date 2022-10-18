@@ -8,9 +8,6 @@ namespace Ion {
 namespace Device {
 namespace Flash {
 
-// Actions
-void MassErase();
-bool EraseSector(int i);
 bool WriteMemory(uint8_t * destination, const uint8_t * source, size_t length);
 
 }

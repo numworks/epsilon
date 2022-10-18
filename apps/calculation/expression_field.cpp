@@ -134,8 +134,10 @@ bool ExpressionField::handleDivision() {
          *   - when we press Division before an expression, the default handleEvent creates a fraction with 
          *     the expresion at the  denominator and the cursor at the numerator */
         if (editionIn1D) {
+          // 1D: Start -> DenominatorOfEmptyFraction
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
         } else if (didCreateEmptyFraction()) {
+          // 2D: Start -> NumeratorOfEmptyFraction
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
         }
         if (!handled) {
@@ -144,19 +146,23 @@ bool ExpressionField::handleDivision() {
         return handled;
       case DivisionCycleStep::NumeratorOfEmptyFraction : 
         if (editionIn1D) {
+          // 1D: NumeratorOfEmptyFraction -> MixedFraction
           m_currentStep = DivisionCycleStep::MixedFraction;
           handled = ::ExpressionField::handleEvent(Ion::Events::Space); // TODO : OR handleEventWithText(" ");
           assert(handled);
           event = Ion::Events::Left;
         } else {
+          // 2D: NumeratorOfEmptyFraction -> DenominatorOfEmptyFraction
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
           event = Ion::Events::Down;
         }
         break;
       case DivisionCycleStep::DenominatorOfEmptyFraction :
         if (editionIn1D) {
+          // 1D: DenominatorOfEmptyFraction -> NumeratorOfEmptyFraction
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
         } else {
+          // 2D: DenominatorOfEmptyFraction -> MixedFraction
           m_currentStep = DivisionCycleStep::MixedFraction;
         }
         event = Ion::Events::Left;
@@ -164,12 +170,14 @@ bool ExpressionField::handleDivision() {
       default:
         assert(m_currentStep == DivisionCycleStep::MixedFraction && mixedFractionsEnabled);
         if (editionIn1D) {
+          // 1D: MixedFraction -> DenominatorOfEmptyFraction
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
           handled = ::ExpressionField::handleEvent(Ion::Events::Right); // TODO : OR m_textField.moveCursorRight(); but protected in TextInput
           assert(handled);
           handled = ::ExpressionField::handleEvent(Ion::Events::Backspace); // TODO : OR m_textField.removePreviousGlyph();
           assert(handled);
         } else {
+          // 2D: MixedFraction -> NumeratorOfEmptyFraction
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
         }
         event = Ion::Events::Right;

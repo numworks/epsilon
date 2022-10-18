@@ -201,7 +201,7 @@ bool Zoom::findNormalYAxis() {
        * chose a yMin that would hide it. */
       break;
     }
-    while (sortedSample[j] <= yi + yLength) {
+    while (j < k_sampleSize && sortedSample[j] <= yi + yLength) {
       j++;
     }
     int breadth = j - i;
@@ -216,13 +216,17 @@ bool Zoom::findNormalYAxis() {
     return false;
   }
   int bestJ = bestI + bestBreadth - 1;
+  assert(bestJ < k_sampleSize);
 
   /* Functions with a very steep slope might only take a small portion of the
    * X axis. Conversely, very flat functions may only take a small portion of
    * the Y range. In those cases, the ratio is not suitable. */
   constexpr float minimalXCoverage = 0.15f;
+  bool doesNotCoverX = bestBreadth < minimalXCoverage * k_sampleSize;
   constexpr float minimalYCoverage = 0.3f;
-  if (bestBreadth < minimalXCoverage * k_sampleSize || sortedSample[bestJ] - sortedSample[bestI] < minimalYCoverage * yLength) {
+  bool doesNotCoverY = sortedSample[bestJ] != sortedSample[bestI] && sortedSample[bestJ] - sortedSample[bestI] < minimalYCoverage * yLength;
+
+  if (doesNotCoverX || doesNotCoverY) {
     return false;
   }
 

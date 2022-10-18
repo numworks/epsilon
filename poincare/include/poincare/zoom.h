@@ -28,7 +28,7 @@ public:
 
   /* A YX ratio is length of Y axis over length of X axis. For instance, a
    * normal YX ratio of 0.5 means the range ([-1,1],[2,3]) is normalized. */
-  Zoom(float tMin, float tMax, float normalYXRatio, Context * context) : m_tMax(tMax), m_tMin(tMin), m_normalRatio(normalYXRatio), m_context(context), m_function(nullptr), m_sampleUpToDate(false) {}
+  Zoom(float tMin, float tMax, float normalYXRatio, Context * context) : m_range(), m_tMax(tMax), m_tMin(tMin), m_normalRatio(normalYXRatio), m_context(context), m_function(nullptr), m_sampleUpToDate(false) {}
 
   Range2D range() const { return m_range; }
   void setBounds(float tMin, float tMax) { m_tMin = tMin; m_tMax = tMax; }
@@ -46,7 +46,7 @@ public:
 
 private:
   constexpr static size_t k_sampleSize = Ion::Display::Width / 2;
-  constexpr static int k_maxPointsOnOneSide = 10;
+  constexpr static int k_maxPointsOnOneSide = 5;
   constexpr static float k_defaultHalfRange = Range1D::k_defaultHalfLength;
   /* The tolerance is chosen to normalize sqrt(x) */
   constexpr static float k_orthonormalTolerance = 1.78f;

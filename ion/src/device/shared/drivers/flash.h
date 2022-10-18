@@ -8,10 +8,6 @@ namespace Ion {
 namespace Device {
 namespace Flash {
 
-// Authorization
-bool ForbiddenSector(int i);
-bool MassEraseEnable();
-
 // Actions
 void MassErase();
 bool EraseSector(int i);

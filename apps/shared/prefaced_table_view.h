@@ -48,8 +48,8 @@ protected:
     int typeAtLocation(int i, int j) override { return m_mainDataSource->typeAtLocation(relativeColumn(i), relativeRow(j)); }
 
   protected:
-    KDCoordinate nonMemoizedColumnWidth(int i) override;
-    KDCoordinate nonMemoizedRowHeight(int j) override;
+    KDCoordinate nonMemoizedColumnWidth(int i) override final;
+    KDCoordinate nonMemoizedRowHeight(int j) override final;
 
     KDCoordinate nonMemoizedCumulatedWidthFromIndex(int i) override;
     KDCoordinate nonMemoizedCumulatedHeightFromIndex(int j) override;

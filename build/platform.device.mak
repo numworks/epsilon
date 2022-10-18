@@ -6,6 +6,14 @@ EXE = elf
 EPSILON_TELEMETRY ?= 0
 EMBED_EXTRA_DATA ?= 0
 
+ifeq ($(IN_FACTORY),1)
+  ALLOW_THIRD_PARTY ?=0
+else
+ifndef ALLOW_THIRD_PARTY
+  $(error ALLOW_THIRD_PARTY is not set)
+endif
+endif
+
 # We want to do the following transformations:
 # bootloader[./_][dfu/elf/bin/run] --> bootloader
 # kernel.[A/B][./_][dfu/elf/bin/run] --> kernel

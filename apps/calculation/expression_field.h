@@ -25,12 +25,12 @@ private:
     MixedFraction, // cursor before Empty/Empty
   };
 
-  DivisionCycleStep m_currentStep;
-  Poincare::TrinaryBoolean m_divisionCycleWithAns;
-
   bool fieldContainsSingleMinusSymbol() const;
   bool didCreateEmptyFraction();
   bool handleDivision();
+
+  DivisionCycleStep m_currentStep;
+  Poincare::TrinaryBoolean m_divisionCycleWithAns;
 };
 
 }

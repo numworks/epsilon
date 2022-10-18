@@ -78,7 +78,6 @@ private:
   // Memoization
   void updateNumberOfColumns() const override;
   void updateSizeMemoizationForRow(int row, KDCoordinate rowPreviousHeight) override;
-  void deleteRowFromMemoization(int row, KDCoordinate rowPreviousHeight) override;
   void updateSizeMemoizationForColumnAfterIndexChanged(int column, KDCoordinate columnPreviousWidth, int changedRow) override;
 
   // Model getters

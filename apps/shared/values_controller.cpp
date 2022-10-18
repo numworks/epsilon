@@ -86,18 +86,13 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     selectedRow() <= numberOfElementsInColumn(selectedColumn())) {
     int row = selectedRow();
     int column = selectedColumn();
-    bool longestColumn = numberOfRowsAtColumn(column) == numberOfRows();
     intervalAtColumn(column)->deleteElementAtIndex(row-1);
     // Reload memoization
     int nRows = numberOfElementsInColumn(column) + 1;
     for (int i = row; i < nRows; i++) {
-      KDCoordinate rwHeight = rowHeight(i);
       didChangeCell(column, i);
-      updateSizeMemoizationForRow(i, rwHeight);
     }
-    if (longestColumn) {
-      deleteRowFromMemoization(nRows, rowHeight(nRows));
-    }
+    resetMemoization(); // This is slow but it works
     selectableTableView()->reloadData();
     return true;
   }

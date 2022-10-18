@@ -25,7 +25,7 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
   m_singleRangeController(parentResponder, inputEventHandlerDelegate, &m_tempInteractiveRange, &m_confirmPopUpController)
 {}
 
-int RangeParameterController::typeAtIndex(int index) {
+int RangeParameterController::typeAtIndex(int index) const {
   int types[] = {k_normalizeCellType, k_rangeCellType, k_rangeCellType, k_okCellType};
   return types[index + !displayNormalizeCell()];
 }

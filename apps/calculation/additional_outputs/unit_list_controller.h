@@ -16,7 +16,7 @@ public:
   void viewDidDisappear() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
 
-  int typeAtIndex(int index) override { return index < m_numberOfExpressionCells ? k_expressionCellType : k_bufferCellType; }
+  int typeAtIndex(int index) const override { return index < m_numberOfExpressionCells ? k_expressionCellType : k_bufferCellType; }
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;

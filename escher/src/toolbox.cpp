@@ -36,7 +36,7 @@ KDCoordinate Toolbox::nonMemoizedRowHeight(int index) {
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 
-int Toolbox::typeAtIndex(int index) {
+int Toolbox::typeAtIndex(int index) const {
   if (messageTreeModelAtIndex(index)->numberOfChildren() == 0) {
     return k_leafCellType;
   }

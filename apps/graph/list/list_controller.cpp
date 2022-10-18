@@ -30,7 +30,7 @@ ListController::ListController(Responder * parentResponder, ButtonRowController 
 
 /* TableViewDataSource */
 
-int ListController::typeAtIndex(int index) {
+int ListController::typeAtIndex(int index) const {
   if (isAddEmptyRow(index)) {
     return k_addNewModelType;
   }

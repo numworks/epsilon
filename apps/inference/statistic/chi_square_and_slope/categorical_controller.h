@@ -37,7 +37,7 @@ public:
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 
   // ListViewDataSource
-  int typeAtIndex(int index) override { return index; } // One cell per type
+  int typeAtIndex(int index) const override { return index; } // One cell per type
   int numberOfRows() const override { return indexOfNextCell() + 1; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return 1; }

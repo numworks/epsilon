@@ -263,7 +263,7 @@ int ConsoleController::reusableCellCount(int type) {
   }
 }
 
-int ConsoleController::typeAtIndex(int index) {
+int ConsoleController::typeAtIndex(int index) const {
   assert(index >= 0);
   if (index < m_consoleStore.numberOfLines()) {
     return k_lineCellType;

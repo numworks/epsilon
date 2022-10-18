@@ -22,7 +22,7 @@ public:
   void didBecomeFirstResponder() override;
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
   int numberOfRows() const override;
-  int typeAtIndex(int index) override;
+  int typeAtIndex(int index) const override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;

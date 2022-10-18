@@ -89,7 +89,7 @@ private:
     // MemoizedListViewDataSource
     int numberOfRows() const override { return m_listViewDataSource->numberOfRows(); }
     KDCoordinate defaultColumnWidth() override;
-    int typeAtIndex(int index) override { return m_listViewDataSource->typeAtIndex(index); }
+    int typeAtIndex(int index) const override { return m_listViewDataSource->typeAtIndex(index); }
     KDCoordinate nonMemoizedRowHeight(int j) override;
     int reusableCellCount(int type) override {
       return m_listViewDataSource->reusableCellCount(type);

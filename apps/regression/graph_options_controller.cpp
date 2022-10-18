@@ -125,7 +125,7 @@ HighlightCell * GraphOptionsController::reusableCell(int index, int type) {
   return reusableCells[type];
 }
 
-int GraphOptionsController::typeAtIndex(int index) {
+int GraphOptionsController::typeAtIndex(int index) const {
   static_assert(k_regressionEquationCellType < k_r2CellType && k_r2CellType < k_residualPlotCellType, "This type order is assumed.");
   if (index >= k_regressionEquationCellType && !displayRegressionEquationCell()) {
     index++;

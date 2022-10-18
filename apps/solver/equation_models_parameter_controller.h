@@ -22,7 +22,7 @@ public:
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int index) override { return index == 0 ? k_emptyModelCellType : k_modelCellType; }
+  int typeAtIndex(int index) const override { return index == 0 ? k_emptyModelCellType : k_modelCellType; }
 private:
   constexpr static int k_emptyModelCellType = 0;
   constexpr static int k_modelCellType = 1;

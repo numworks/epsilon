@@ -32,7 +32,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   Escher::MessageTableCellWithMessageWithBuffer * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override { return k_numberOfDataPoints; }
-  int typeAtIndex(int index) override { return 0; }
+  int typeAtIndex(int index) const override { return 0; }
   // Number of sections to display in the ContinuousFunction's detail menu
   int detailsNumberOfSections() const;
   void setRecord(Ion::Storage::Record record);

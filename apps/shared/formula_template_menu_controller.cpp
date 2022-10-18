@@ -105,7 +105,7 @@ int FormulaTemplateMenuController::reusableCellCount(int type) {
   return k_numberOfExpressionCellsWithBuffer;
 }
 
-int FormulaTemplateMenuController::typeAtIndex(int index) {
+int FormulaTemplateMenuController::typeAtIndex(int index) const {
   assert(index < numberOfRows());
   if (index <= static_cast<int>(Cell::EmptyTemplate)) {
     return static_cast<int>(CellType::EmptyTemplate);

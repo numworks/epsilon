@@ -66,7 +66,7 @@ bool FloatParameterController<T>::handleEvent(Ion::Events::Event event) {
 }
 
 template<typename T>
-int FloatParameterController<T>::typeAtIndex(int index) {
+int FloatParameterController<T>::typeAtIndex(int index) const {
   if (index == this->numberOfRows() - 1) {
     return k_buttonCellType;
   }

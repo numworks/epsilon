@@ -17,7 +17,7 @@ public:
   void viewWillAppear() override;
 
   int numberOfRows() const override { return k_numberOfTextCells + 2; }
-  int typeAtIndex(int index) override { return index == 0 ? k_autoCellType : FloatParameterController<float>::typeAtIndex(index); }
+  int typeAtIndex(int index) const override { return index == 0 ? k_autoCellType : FloatParameterController<float>::typeAtIndex(index); }
   int reusableCellCount(int type) override { return type == k_autoCellType ? 1 : FloatParameterController<float>::reusableCellCount(type); }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;

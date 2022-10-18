@@ -18,7 +18,7 @@ public:
   const char * title() override { return I18n::translate(I18n::Message::Axis); }
 
   int numberOfRows() const override { return displayNormalizeCell() + k_numberOfRangeCells + 1; }
-  int typeAtIndex(int index) override;
+  int typeAtIndex(int index) const override;
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;

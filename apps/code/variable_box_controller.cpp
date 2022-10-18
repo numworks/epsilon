@@ -158,7 +158,7 @@ void VariableBoxController::tableViewDidChangeSelection(SelectableTableView * t,
   }
 }
 
-int VariableBoxController::typeAtIndex(int index) {
+int VariableBoxController::typeAtIndex(int index) const {
   return typeAndOriginAtLocation(index);
 }
 

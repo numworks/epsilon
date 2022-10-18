@@ -59,7 +59,7 @@ KDCoordinate SequenceToolbox::nonMemoizedRowHeight(int index) {
   return MathToolbox::nonMemoizedRowHeight(index);
 }
 
-int SequenceToolbox::typeAtIndex(int index) {
+int SequenceToolbox::typeAtIndex(int index) const {
   if (index < addedCellsAtRoot()) {
     return k_addedCellType;
   }

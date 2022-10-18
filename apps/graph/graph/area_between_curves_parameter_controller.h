@@ -23,7 +23,7 @@ public:
 
   int numberOfRows() const override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  int typeAtIndex(int index) override { return 0; }
+  int typeAtIndex(int index) const override { return 0; }
   Shared::CurveSelectionCell * reusableCell(int index, int type) override { assert(index >= 0 && index < reusableCellCount(type)); return m_cells + index; }
   int reusableCellCount(int type) override { return k_maxNumberOfDisplayableRows; }
 

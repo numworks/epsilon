@@ -152,7 +152,7 @@ KDCoordinate MathVariableBoxController::nonMemoizedRowHeight(int index) {
   return heightForCellAtIndexWithWidthInit(&tempCell, index);
 }
 
-int MathVariableBoxController::typeAtIndex(int index) {
+int MathVariableBoxController::typeAtIndex(int index) const {
   if (m_currentPage == Page::RootMenu) {
     return 1;
   }

@@ -99,7 +99,7 @@ KDCoordinate FunctionToolbox::nonMemoizedRowHeight(int index) {
   return MathToolbox::nonMemoizedRowHeight(index);
 }
 
-int FunctionToolbox::typeAtIndex(int index) {
+int FunctionToolbox::typeAtIndex(int index) const {
   if (index < addedCellsAtRoot()) {
     return k_addedCellType;
   }

@@ -24,7 +24,7 @@ public:
   int numberOfRows() const override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int i) override;
+  int typeAtIndex(int i) const override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   /* SelectableTableViewDelegate */
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;

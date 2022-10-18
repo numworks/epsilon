@@ -320,8 +320,7 @@ void ContinuousFunction::updateModel(Context * context, bool wasAlongXorY) {
   assert(m_model.plotType() != PlotType::Unknown);
   if (wasAlongXorY != isAlongXOrY() || !canHaveCustomDomain()) {
     // The definition's domain must be reset.
-    setTMin(!isAlongXOrY() ? 0.0 : -INFINITY);
-    setTMax(!isAlongXOrY() ? 2.0 * Trigonometry::PiInAngleUnit(angleUnit(context)) : INFINITY);
+    setTAuto(true);
   }
 }
 
@@ -357,13 +356,35 @@ double ContinuousFunction::approximateDerivative(double x, Context * context, in
 }
 
 void ContinuousFunction::setTMin(float tMin) {
+  assert(!recordData()->tAuto());
   recordData()->setTMin(tMin);
   setCache(nullptr);
 }
 
 void ContinuousFunction::setTMax(float tMax) {
+  assert(!recordData()->tAuto());
   recordData()->setTMax(tMax);
   setCache(nullptr);
+}
+
+void ContinuousFunction::setTAuto(bool tAuto) {
+  if (!tAuto && !recordData()->tAuto()) {
+    return;
+  }
+  /* Domain either was or will be auto. Reset values anyway in case model has
+   * been updated or angle unit changed. */
+  recordData()->setTMin(autoTMin());
+  recordData()->setTMax(autoTMax());
+  recordData()->setTAuto(tAuto);
+  setCache(nullptr);
+}
+
+float ContinuousFunction::autoTMax() const {
+  return isAlongXOrY() ? INFINITY : 2.0 * Trigonometry::PiInAngleUnit(Preferences::sharedPreferences()->angleUnit());
+}
+
+float ContinuousFunction::autoTMin() const {
+  return isAlongXOrY() ? -INFINITY : 0.0;
 }
 
 bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {

@@ -22,7 +22,7 @@ public:
 
   // ViewController
   Escher::View * view() override { return dataView(); }
-  void viewWillAppear() final override;
+  void viewWillAppear() override final;
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

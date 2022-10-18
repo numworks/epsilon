@@ -768,9 +768,10 @@ Expression Expression::ParseAndSimplify(const char * text, Context * context, Pr
   return exp;
 }
 
-void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
-  assert(simplifiedExpression);
+void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * parsedExpression, Expression * simplifiedExpression, Expression * approximateExpression, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation, ExpressionNode::UnitConversion unitConversion) {
+  assert(parsedExpression && simplifiedExpression);
   Expression exp = Parse(text, context, false);
+  *parsedExpression = exp;
   complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
   angleUnit = Preferences::UpdatedAngleUnitWithExpressionInput(angleUnit, exp, context);
   if (exp.isUninitialized()) {

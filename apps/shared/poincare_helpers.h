@@ -166,13 +166,14 @@ inline void ReduceAndRemoveUnit(
 // This method automatically updates complex format and angle unit
 inline void ParseAndSimplifyAndApproximate(
   const char * text,
+  Poincare::Expression * parsedExpression,
   Poincare::Expression * simplifiedExpression,
   Poincare::Expression * approximateExpression,
   Poincare::Context * context,
   Poincare::ExpressionNode::SymbolicComputation symbolicComputation = k_replaceWithDefinitionOrUndefined,
   Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences())
 {
-  Poincare::Expression::ParseAndSimplifyAndApproximate(text, simplifiedExpression, approximateExpression, context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
+  Poincare::Expression::ParseAndSimplifyAndApproximate(text, parsedExpression, simplifiedExpression, approximateExpression, context, preferences->complexFormat(), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), symbolicComputation);
 }
 
 inline typename Poincare::Coordinate2D<double> NextMinimum(

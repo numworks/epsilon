@@ -288,6 +288,7 @@ void ValuesController::deleteRowFromMemoization(int row, KDCoordinate rowPreviou
 }
 
 void ValuesController::updateSizeMemoizationForColumnAfterIndexChanged(int column, KDCoordinate columnPreviousWidth, int row) {
+  // Update the size only if column becomes larger
   if (m_exactValuesButton.state()) {
     KDCoordinate minimalWidthForColumn = std::min(MaxColumnWidth(), CellSizeWithLayout(memoizedLayoutForCell(column, row)).width());
     if (columnPreviousWidth < minimalWidthForColumn) {

@@ -436,8 +436,8 @@ void ValuesController::initValueCells() {
     valueCell->setFont(k_cellFont);
     valueCell->setAlignment(KDContext::k_alignRight, KDContext::k_alignCenter);
     // TODO: Factorize margin computation
-    valueCell->setLeftMargin(Escher::EvenOddCell::k_horizontalMargin + 1);
-    valueCell->setRightMargin(Escher::EvenOddCell::k_horizontalMargin + 1);
+    valueCell->setLeftMargin(EvenOddCell::k_horizontalMargin);
+    valueCell->setRightMargin(EvenOddCell::k_horizontalMargin);
   }
 }
 

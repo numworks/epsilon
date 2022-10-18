@@ -8,8 +8,8 @@ BoxRange::BoxRange(Store * store) :
 
 float BoxRange::computeMinMax(bool isMax) const {
   Poincare::Range1D range1D;
-  range1D.setMax(m_store->minValueForAllSeries(false, Shared::DoublePairStore::DefaultValidSeries));
-  range1D.setMin(m_store->maxValueForAllSeries(false, Shared::DoublePairStore::DefaultValidSeries));
+  range1D.setMin(m_store->minValueForAllSeries(false, Shared::DoublePairStore::DefaultValidSeries));
+  range1D.setMax(m_store->maxValueForAllSeries(false, Shared::DoublePairStore::DefaultValidSeries));
   float max = range1D.max();
   float min = range1D.min();
   float margin = k_displayRightMarginRatio * (max - min);

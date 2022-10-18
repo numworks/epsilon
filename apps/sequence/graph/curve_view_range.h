@@ -5,13 +5,17 @@
 
 namespace Sequence {
 
+class GraphController;
+
 class CurveViewRange : public Shared::InteractiveCurveViewRange {
 public:
-  CurveViewRange(Shared::InteractiveCurveViewRangeDelegate * delegate = nullptr);
+  CurveViewRange(GraphController * delegate = nullptr);
+
 private:
+  constexpr static float k_displayLeftMarginRatio = 0.1f;
+
   bool hasDefaultRange() const override { return false; }
   void protectedNormalize(bool canChangeX, bool canChangeY, bool canShrink) override;
-  constexpr static float k_displayLeftMarginRatio = 0.1f;
 };
 
 }

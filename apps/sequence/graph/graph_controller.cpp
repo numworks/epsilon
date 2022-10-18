@@ -72,6 +72,34 @@ void GraphController::moveToRank(int n) {
   m_view.reload();
 }
 
+static float evaluator(float x, const void * model, Context * context) {
+  const Shared::Sequence * s = static_cast<const Shared::Sequence *>(model);
+  return s->evaluateXYAtParameter(x, context).x2();
+}
+
+Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange, Range1D intrinsicYRange) const {
+  Range2D result;
+  if (computeX) {
+    float xMin = interestingXMin();
+    result.x() = Range1D(xMin, xMin + k_defaultXHalfRange);
+  } else {
+    result.x() = originalRange.x();
+  }
+  if (computeY) {
+    Zoom zoom(result.xMin(), result.xMax(), InteractiveCurveViewRange::NormalYXRatio(), textFieldDelegateApp()->localContext());
+    int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
+    for (int i = 0; i < nbOfActiveModels; i++) {
+      Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
+      zoom.setFunction(evaluator, s);
+      zoom.fitFullFunction();
+    }
+    result.y() = zoom.range().y();
+  }
+  return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio());
+}
+
+
+
 Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(int j) const {
   GraphController * graphController = static_cast<GraphController *>(m_graphController);
   SequenceStore * store = graphController->functionStore();

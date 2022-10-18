@@ -3,6 +3,8 @@
 
 namespace Poincare {
 
+// Public
+
 static Range1D sanitationHelper(Range1D range, float normalHalfLength) {
   if (!range.isValid()) {
     range = Range1D(0.f, 0.f);
@@ -22,7 +24,7 @@ Range2D Zoom::Sanitize(Range2D range, float normalYXRatio) {
   return Range2D(sanitationHelper(range.x(), normalXLength), sanitationHelper(range.y(), normalYLength));
 }
 
-void Zoom::setFunction(Solver<float>::FunctionEvaluation f, const void * model) {
+void Zoom::setFunction(FunctionEvaluationWithContext f, const void * model) {
   m_function = f;
   m_model = model;
   m_sampleUpToDate = false;
@@ -30,17 +32,17 @@ void Zoom::setFunction(Solver<float>::FunctionEvaluation f, const void * model) 
 
 void Zoom::includePoint(Coordinate2D<float> p) {
   float x = p.x1();
-  if (m_xMin <= x && x <= m_xMax) {
+  if (m_tMin <= x && x <= m_tMax) {
     m_range.extend(p);
   }
 }
 
 void Zoom::fitX() {
-  assert(std::isfinite(m_xMin) && std::isfinite(m_xMax));
-  /* Attempt to balance the range between m_xMin and m_xMax. */
-  float xCenter = 0.5f * (m_xMin + m_xMax);
-  grossFitToInterest(xCenter, m_xMax);
-  grossFitToInterest(xCenter, m_xMin);
+  assert(std::isfinite(m_tMin) && std::isfinite(m_tMax));
+  /* Attempt to balance the range between m_tMin and m_tMax. */
+  float xCenter = 0.5f * (m_tMin + m_tMax);
+  grossFitToInterest(xCenter, m_tMax);
+  grossFitToInterest(xCenter, m_tMin);
 
   /* TODO Add some margin around the X axis ? */
 
@@ -82,6 +84,17 @@ void Zoom::fitBothXAndY(bool forceNormalization) {
   // TODO Round the axes ?
 }
 
+void Zoom::fitFullFunction() {
+  assert(std::isfinite(m_tMin) && std::isfinite(m_tMax));
+  m_range.x() = Range1D(m_tMin, m_tMax);
+  sample();
+  for (float & y : m_sample) {
+    m_range.y().extend(y);
+  }
+}
+
+// Private
+
 Solver<float>::Interest Zoom::PointIsInteresting(float ya, float yb, float yc) {
   Solver<float>::BracketTest tests[] = { Solver<float>::OddRootInBracket, Solver<float>::MinimumInBracket, Solver<float>::MaximumInBracket, Solver<float>::DiscontinuityInBracket };
   Solver<float>::Interest interest;
@@ -112,14 +125,29 @@ void Zoom::sample() {
   m_sampleUpToDate = true;
 }
 
+struct CallParameters {
+  Zoom::FunctionEvaluationWithContext function;
+  const void * model;
+  Context * context;
+};
+
+static float evaluator(float t, const void * aux) {
+  const CallParameters * p = static_cast<const CallParameters *>(aux);
+  return p->function(t, p->model, p->context);
+}
+
 void Zoom::grossFitToInterest(float xStart, float xEnd) {
+  /* FIXME This juggling is too much trouble, add a context argument in
+   * Solver<>::FunctionEvaluation, it will not be wasted anyway. */
+  CallParameters params = { .function = m_function, .model = m_model, .context = m_context };
+
   Solver<float> solver(xStart, xEnd);
-  Coordinate2D<float> p = solver.next(m_function, m_model, PointIsInteresting, SelectMiddle);
+  Coordinate2D<float> p = solver.next(evaluator, &params, PointIsInteresting, SelectMiddle);
   int n = 0;
   while (std::isfinite(p.x1()) && n < k_maxPointsOnOneSide) {
     n++;
     m_range.extend(p);
-    p = solver.next(m_function, m_model, PointIsInteresting, SelectMiddle);
+    p = solver.next(evaluator, &params, PointIsInteresting, SelectMiddle);
   }
 }
 

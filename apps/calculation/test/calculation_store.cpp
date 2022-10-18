@@ -220,6 +220,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   assertCalculationIs("3→a", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "3", "3", "3", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
+  assertCalculationIs("3/2→a", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, "3/2", "1.5", "1.5", &globalContext, &store);
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   assertCalculationIs("3+x→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown, "3+x", nullptr, nullptr, &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
   assertCalculationIs("1+1+random()", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, nullptr, nullptr, &globalContext, &store);

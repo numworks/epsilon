@@ -43,6 +43,8 @@ protected:
   KDCoordinate defaultRowHeight() override { return k_cellHeight; }
   KDCoordinate defaultColumnWidth() override { return k_cellWidth; }
 
+  virtual void updateSizeMemoizationForRow(int row, KDCoordinate rowPreviousHeight) {}
+
   // ClearColumnHelper
   Escher::SelectableTableView * table() override { return selectableTableView(); }
 
@@ -62,7 +64,6 @@ protected:
 
 private:
   virtual void didChangeCell(int column, int row) {}
-  virtual void updateSizeMemoizationForRow(int row, KDCoordinate rowPreviousHeight) {}
   virtual bool cellAtLocationIsEditable(int columnIndex, int rowIndex) = 0;
   virtual bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) = 0;
   virtual double dataAtLocation(int columnIndex, int rowIndex) = 0;

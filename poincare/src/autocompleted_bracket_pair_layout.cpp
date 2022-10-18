@@ -190,16 +190,21 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
   int thisIndex = parentRef.indexOfChild(thisRef);
   bool willDisappear = isTemporary(OtherSide(side));
 
+  AutocompletedBracketPairLayoutNode * topMostBracket = const_cast<AutocompletedBracketPairLayoutNode *>(this);
+  AutocompletedBracketPairLayoutNode * parentBracket = autocompletedParent();
+  while(parentBracket) {
+    topMostBracket = parentBracket;
+    parentBracket = parentBracket->autocompletedParent();
+  }
+  bool parentWillDisappear = topMostBracket->isTemporary(OtherSide(side));
+
   if (side == Side::Left) {
     if (thisIndex > 0) {
       /* e.g. 12(|34) -> [12|34) */
       return LayoutCursor(parentRef.childAtIndex(thisIndex - 1), LayoutCursor::Position::Right);
     }
-    if (willDisappear) {
-      /* e.g. (|12] -> |12
-       * Caller function deleteBeforeCursor has an escape case for when the
-       * bracket should disappear and is empty. */
-      assert(!childRef.isEmpty());
+    if (willDisappear || parentWillDisappear) {
+      /* e.g. (|12] -> |12 or ((|12)] -> (|12) or ((|)] -> (|) */
       return LayoutCursor(childOnSide(Side::Left), LayoutCursor::Position::Left);
     }
     /* e.g. (|12) -> |[12) */

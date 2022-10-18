@@ -5,6 +5,20 @@
 
 namespace Poincare {
 
+template <typename T, typename... Types>
+Node Node::Push(Types... args) {
+  EditionPool * pool = EditionPool::sharedEditionPool();
+  TypeBlock * newNode = static_cast<TypeBlock *>(pool->lastBlock());
+  Block block;
+  size_t i = 0;
+  bool endOfNode = false;
+  do {
+    endOfNode = T::CreateBlockAtIndex(&block, i++, args...);
+    pool->pushBlock(block);
+  } while (!endOfNode);
+  return Node(newNode);
+}
+
 #if POINCARE_TREE_LOG
 void Node::log(std::ostream & stream, bool recursive, int indentation, bool verbose) const {
   stream << "\n";
@@ -12,7 +26,7 @@ void Node::log(std::ostream & stream, bool recursive, int indentation, bool verb
     stream << "  ";
   }
   stream << "<";
-  logNodeName(stream);
+  logName(stream);
   if (verbose) {
     stream << " size=\"" << nodeSize() << "\"";
     stream << " address=\"" << m_block << "\"";
@@ -34,12 +48,64 @@ void Node::log(std::ostream & stream, bool recursive, int indentation, bool verb
       stream << "  ";
     }
     stream << "</";
-    logNodeName(stream);
+    logName(stream);
     stream << ">";
   } else {
     stream << "/>";
   }
 }
+
+void Node::logName(std::ostream & stream) const {
+  constexpr const char * names[] = {
+    // Respect the order of BlockType
+    "Zero",
+    "One",
+    "Two",
+    "Half",
+    "MinusOne",
+    "IntegerShort",
+    "IntegerPosBig",
+    "IntegerNegBig",
+    "RationalShort",
+    "RationalPosBig",
+    "RationalNegBig",
+    "Float",
+    "Addition",
+    "Multiplication",
+    "Power",
+    "Constant",
+    "Subtraction",
+    "Division",
+    "HorizontalLayout"
+  };
+  static_assert(sizeof(names)/sizeof(const char *) == static_cast<uint8_t>(BlockType::NumberOfTypes));
+  stream << names[static_cast<uint8_t>(*m_block)];
+}
+
+void Node::logAttributes(std::ostream & stream) const {
+  switch (type()) {
+    case BlockType::Addition:
+    case BlockType::Multiplication:
+      stream << " numberOfChildren=\"" << numberOfChildren() << "\"";
+      return;
+    case BlockType::IntegerShort:
+    case BlockType::IntegerPosBig:
+    case BlockType::IntegerNegBig:
+    case BlockType::RationalShort:
+    case BlockType::RationalPosBig:
+    case BlockType::RationalNegBig:
+    case BlockType::Float:
+      // TODO
+      // stream << " value=\"" << Number::approximate() << "\"";
+      return;
+    case BlockType::Constant:
+      stream << " value=\"" << Constant::Value(m_block) << "\"";
+      return;
+    default:
+      return;
+  }
+}
+
 #endif
 
 void Node::copyTreeTo(void * address) const {
@@ -158,19 +224,6 @@ void Node::recursivelyEdit(InPlaceTreeFunction treeFunction) {
   (*treeFunction)(*this);
 }
 
-const ExpressionInterface * Node::expressionInterface() const {
-  uint8_t typeIndex = static_cast<uint8_t>(*m_block);
-  assert(typeIndex >= k_offsetOfExpressionInterfaces && typeIndex < k_offsetOfLayoutInterfaces);
-  typeIndex -= k_offsetOfExpressionInterfaces;
-  size_t numberOfInternalExpressions = sizeof(k_internalExpressionInterfaces) / sizeof(const InternalExpressionInterface *);
-  if (typeIndex < numberOfInternalExpressions) {
-    return k_internalExpressionInterfaces[typeIndex];
-  }
-  typeIndex -= numberOfInternalExpressions;
-  assert(typeIndex < sizeof(k_expressionInterfaces) / sizeof(const ExpressionInterface *));
-  return k_expressionInterfaces[typeIndex];
-}
-
 const Node Node::previousRelative(bool parent) const {
   Node currentNode = *this;
   Node closestSibling;
@@ -189,3 +242,11 @@ const Node Node::previousRelative(bool parent) const {
 }
 
 }
+
+template Poincare::Node Poincare::Node::Push<Poincare::Addition, int>(int);
+template Poincare::Node Poincare::Node::Push<Poincare::Division>();
+template Poincare::Node Poincare::Node::Push<Poincare::Multiplication, int>(int);
+template Poincare::Node Poincare::Node::Push<Poincare::Power>();
+template Poincare::Node Poincare::Node::Push<Poincare::Subtraction>();
+template Poincare::Node Poincare::Node::Push<Poincare::Constant, char16_t>(char16_t);
+template Poincare::Node Poincare::Node::Push<Poincare::IntegerShort, int>(int);

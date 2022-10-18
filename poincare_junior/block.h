@@ -22,16 +22,19 @@ public:
   bool operator!=(const Block& b) { return b.m_content != m_content; }
 
   // Block Navigation
-  const Block * next() const { return this + 1; }
-  Block * next() { return Utils::DeconstifyPtr(&Block::next, this); }
-  const Block * nextNth(int i) const { return this + i; }
-  Block * nextNth(int i) { return Utils::DeconstifyPtr(&Block::nextNth, this, i); }
-  const Block * previous() const { return this - 1; }
-  Block * previous() { return Utils::DeconstifyPtr(&Block::previous, this); }
-  const Block * previousNth(int i) const { return this - i; }
-  Block * previousNth(int i) { return Utils::DeconstifyPtr(&Block::previousNth, this, i); }
+  constexpr const Block * next() const { return this + 1; }
+  constexpr Block * next() { return Utils::DeconstifyPtr(&Block::next, this); }
+  constexpr const Block * nextNth(int i) const { return this + i; }
+  constexpr Block * nextNth(int i) { return Utils::DeconstifyPtr(&Block::nextNth, this, i); }
+  constexpr const Block * previous() const { return this - 1; }
+  constexpr Block * previous() { return Utils::DeconstifyPtr(&Block::previous, this); }
+  constexpr const Block * previousNth(int i) const { return this - i; }
+  constexpr Block * previousNth(int i) { return Utils::DeconstifyPtr(&Block::previousNth, this, i); }
 
   constexpr explicit operator uint8_t() const { return m_content; }
+  constexpr explicit operator int8_t() const { return m_content; }
+  constexpr static uint8_t k_maxValue = 0xFF;
+
 protected:
   uint8_t m_content;
 };

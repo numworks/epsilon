@@ -61,10 +61,56 @@ Tree class also refers to a constexpr constructor of nodes sequences.
 
 We don't want to make block virtual to keep their size < 1 byte. We reimplement a virtuality with homemade v-table based on the block types.
 
+Do we?
+
+13th October: what is the +/- of interfaces?
+
+Let define:
+N number of block types
+F number of functions
+
+Interfaces requires:
+-> 1 switch of N entries (to decide the right interface for one block type)
+-> N v-tables of size F
+(-> N consexpr instances of interfaces)
+
+C-style switch requires:
+-> F switchs of size < N
+
+FxN < Nx(F + 1)
+
+We'll go for C-style.
 
 ## Interruption
 
 Checkpoints outside of a tree edition are easily maintained thanks to Cache References. We can also easily add Checkpoints in the EditionPool but I'm not even sure this will be necessary.
+
+
+## Polynomial
+
+Representation?
+http://www.maia.ub.es/dsg/sam07/sam07poly.pdf
+
+This is an optimization! Anyway, we still to recognize polynomials from their tree structure.
+
+If we add the sparse representation:
+- list of variables (x, y)
+- list of pairs (coefficient, (exponent variables 1, exponent variable 2)
+We would try to keep a fixed-size pair which would force integer < 2^31 coefficients? Therefore, we won't be able to represent all polynomials.
+
+Variables
+Numerator
+Denominator
+rational_simplify/normal
+
+## Number
+
+Nodes: Zero, One, Two, Integer, ShortInteger, Rational, ShortRational
+
+Operations on Integers are done on IntegerHandler.
+Operations on Rational are done on Expression
+StaticIntegerInterface --> DefaultInterface, ShortIntegerInterface
+...
 
 ## Ideas
 
@@ -144,3 +190,51 @@ void cacheHandler(action) {
     action();
   }
 }
+
+### Interfaces
+
+Convention:
+Interface is the common interface of all nodes
+
+ExpressionInterface is a virtual access to all expression functions that most subclasses override.
+We can add a method to expression if at least one third of its subclasses override it. Why did we chose the trade-off?
+If we add a method to expression, we add N v-table entries; with N the number of ExpressionInterface subclasses. If we rather create another hierarchy of interfaces like TrigonometryInterface, we create (n is the number of overriding subclasses):
+- n subclasses, ie, n v-table
+- n instances of these subclasses
+- a switch on n node type that return the right subclass instance.
+So we choose to do this when 3n < N.
+
+ We don't forget to assert false all methods that should not exist on ExpressionInterface subclasses
+
+ Approximater implements approximate: division, addition implements are ApproximationInterface but not some specific expressions that are always reduces in Default reduction and that never reappears in reduceForApproximation
+
+  InternalExpressionInterface:
+   - reduceForApproximation (recognize /, - and reintroduce them to ensure the most precise approximation)
+   - beautify (some change just to return beautiful results - no root at denominator etc)
+
+ Node::??Interface returns a nullptr if the type was wrong?
+
+### Matrix, List, Unit?
+
+ - matrix reduction
+ - list reduction
+ - unit reduction
+ -
+
+
+ List is a complicated thing!
+ We want list of matrices, list of float (with optimality), list of units. Le noeud list doit pouvoir prendre n'importe quoi comme éléments/ List de taille fixe ? Peut-etre de types de liste ? ExpressionList et List
+ List >> Matrix >> Units
+
+ - basicReduction
+ Checkpoint
+ - bubble-up list, matrix, unit
+
+ Si un bubble up ne fonctionne pas car il génère trop de noeuds, bubbleUpWithApproximation qui réduit les noeufs au fur et à mesure
+
+ - routine approximateToScalar
+
+
+
+ Parcours des enfants optimals ??
+ */

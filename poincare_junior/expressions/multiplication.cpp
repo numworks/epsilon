@@ -1,24 +1,14 @@
 #include "multiplication.h"
-#include "../edition_reference.h"
-#include "../node.h"
 #include "../node_iterator.h"
 
 namespace Poincare {
 
-float MultiplicationExpressionInterface::approximate(const TypeBlock * block) const {
-  float res = 1.0f;
-  for (const NodeIterator::IndexedNode indexedNode : NodeIterator(Node(block)).forwardConstChildren()) {
-    res *= indexedNode.m_node.expressionInterface()->approximate(indexedNode.m_node.block());
-  }
-  return res;
-}
-
-TypeBlock * MultiplicationExpressionInterface::DistributeOverAddition(TypeBlock * block) {
+TypeBlock * Multiplication::DistributeOverAddition(TypeBlock * block) {
   EditionReference mult = EditionReference(Node(block));
   for (NodeIterator::IndexedNode indexedNode : NodeIterator(Node(block)).forwardEditableChildren()) {
     if (indexedNode.m_node.block()->type() == BlockType::Addition) {
       // Create new addition that will be filled in the following loop
-      EditionReference add = EditionReference(Node(AdditionInterface::PushNode(indexedNode.m_node.numberOfChildren())));
+      EditionReference add = EditionReference(Node(Node::Push<Addition>(indexedNode.m_node.numberOfChildren())));
       for (NodeIterator::IndexedNode indexedAdditionChild : NodeIterator(indexedNode.m_node).forwardEditableChildren()) {
         // Copy a multiplication
         EditionReference multCopy = mult.clone();
@@ -29,7 +19,7 @@ TypeBlock * MultiplicationExpressionInterface::DistributeOverAddition(TypeBlock 
         // Replace addition per its child
         additionCopy.replaceTreeBy(additionChildCopy);
         assert(multCopy.block()->type() == BlockType::Multiplication);
-        MultiplicationExpressionInterface::DistributeOverAddition(multCopy.block());
+        Multiplication::DistributeOverAddition(multCopy.block());
       }
       mult.replaceTreeBy(add);
       return add.block();

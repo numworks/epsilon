@@ -112,6 +112,7 @@ start_execute:
   } else {
     // TODO: assert that we don't delete last called treeForIdentifier otherwise can't copyTreeFromAddress if in cache...
     if (!needFreeBlocks(m_editionPool.fullSize() * 2)) {
+      // TODO: try with less demanding reducing context (everything is a float ? SystemTaget?)
       return ReferenceTable::NoNodeIdentifier;
     }
     goto start_execute;

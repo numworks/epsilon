@@ -4,16 +4,11 @@
 using namespace Poincare;
 
 void createTree() {
-  MultiplicationInterface::PushNode(3);
-  AdditionInterface::PushNode(2);
-  IntegerInterface::PushNode(1);
-  IntegerInterface::PushNode(2);
-  IntegerInterface::PushNode(3);
-  IntegerInterface::PushNode(4);
+  createSimpleExpression();
 }
 
 void createSmallTree() {
-  ConstantInterface::PushNode(u'π');
+  Node::Push<Constant>(u'π');
 }
 
 CacheReference createTreeInCache(CacheReference::Initializer initializer) {

@@ -14,11 +14,11 @@ void playWithConstexprNodes() {
   constexpr Tree value = 42_n;
   constexpr Tree π = u'π'_n;
 
-  constexpr Tree node = Addition(π, u'e'_n, Constants::e);
+  constexpr Tree node = Add(π, u'e'_n, Constants::e);
   editionPool->initFromTree(node);
 
-  Node valueMod = editionPool->initFromTree(Subtraction(value, 12_n));
-  valueMod.expressionInterface()->basicReduction(valueMod.block());
+  Node valueMod = editionPool->initFromTree(Sub(value, 12_n));
+  Expression::BasicReduction(valueMod.block());
 
   print();
 }

@@ -1,7 +1,7 @@
 #ifndef POINCARE_CONSTEXPR_NODE_H
 #define POINCARE_CONSTEXPR_NODE_H
 
-#include "interfaces/interfaces.h"
+#include "expressions/expressions.h"
 #include "node.h"
 #include "type_block.h"
 
@@ -46,34 +46,33 @@ constexpr static auto MakeTree(BlockCreator blockCreator, const Tree<Len> (&...n
   return tree;
 }
 
-template<unsigned ...Len> static constexpr auto Addition(const Tree<Len> (&...children)) { return MakeTree<AdditionInterface::k_numberOfBlocksInNode>(AdditionInterface::CreateBlockAtIndex, children...); }
+template<unsigned ...Len> static constexpr auto Add(const Tree<Len> (&...children)) { return MakeTree<Addition::k_numberOfBlocksInNode>(Addition::CreateBlockAtIndex, children...); }
 
-template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Division(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<DivisionInterface::k_numberOfBlocksInNode>([](Block * b, size_t i, uint8_t nb) { return DivisionInterface::CreateBlockAtIndex(b, i); }, child1, child2); }
+template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Div(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<Division::k_numberOfBlocksInNode>([](Block * b, size_t i, uint8_t nb) { return Division::CreateBlockAtIndex(b, i); }, child1, child2); }
 
-template<unsigned ...Len> static constexpr auto Multiplication(const Tree<Len> (&...children)) { return MakeTree<MultiplicationInterface::k_numberOfBlocksInNode>(MultiplicationInterface::CreateBlockAtIndex, children...); }
+template<unsigned ...Len> static constexpr auto Mult(const Tree<Len> (&...children)) { return MakeTree<Multiplication::k_numberOfBlocksInNode>(Multiplication::CreateBlockAtIndex, children...); }
 
-template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Power(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<PowerInterface::k_numberOfBlocksInNode>([](Block * b, size_t i, uint8_t nb) { return PowerInterface::CreateBlockAtIndex(b, i); }, child1, child2); }
+template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Pow(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<Power::k_numberOfBlocksInNode>([](Block * b, size_t i, uint8_t nb) { return Power::CreateBlockAtIndex(b, i); }, child1, child2); }
 
-template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Subtraction(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<SubtractionInterface::k_numberOfBlocksInNode>([](Block * b, size_t i, uint8_t nb) { return SubtractionInterface::CreateBlockAtIndex(b, i); }, child1, child2); }
+template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Sub(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<Subtraction::k_numberOfBlocksInNode>([](Block * b, size_t i, uint8_t nb) { return Subtraction::CreateBlockAtIndex(b, i); }, child1, child2); }
 
-static constexpr Tree<ConstantInterface::k_numberOfBlocksInNode> operator "" _n(char16_t name) {
-  Tree<ConstantInterface::k_numberOfBlocksInNode> result;
+static constexpr Tree<Constant::k_numberOfBlocksInNode> operator "" _n(char16_t name) {
+  Tree<Constant::k_numberOfBlocksInNode> result;
   size_t i = 0;
-  while (!ConstantInterface::CreateBlockAtIndex(result.blockAtIndex(i), i, name)) {
+  while (!Constant::CreateBlockAtIndex(result.blockAtIndex(i), i, name)) {
     i++; // TODO factorize
   }
   return result;
 }
 
-static constexpr Tree<5> operator "" _n(unsigned long long value) {
-  assert(value < 256); // TODO: larger values
-  assert(value > 0); // TODO: Create IntegerZeroBlock
-  Tree<5> tree;
-  *tree.blockAtIndex(0) = IntegerBlock;
-  *tree.blockAtIndex(1) = ValueBlock(1);
-  *tree.blockAtIndex(2) = ValueBlock(value);
-  *tree.blockAtIndex(3) = ValueBlock(1);
-  *tree.blockAtIndex(4) = IntegerBlock;
+static constexpr Tree<3> operator "" _n(unsigned long long value) {
+  assert(value != 0 && value != -1 && value != 1 && value != 2); // TODO: make this robust
+  assert(value < 128); // TODO: handle negative small numbers?
+  Tree<3> tree;
+  size_t i = 0;
+  while (!IntegerShort::CreateBlockAtIndex(tree.blockAtIndex(i), i, value)) {
+    i++; // TODO factorize
+  }
   return tree;
 }
 

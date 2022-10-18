@@ -9,16 +9,18 @@ include build/platform.$(PLATFORM).mak
 include build/toolchain.$(TOOLCHAIN).mak
 
 poincare_junior_src += $(addprefix poincare_junior/,\
-  interfaces/addition.o \
-  interfaces/constant.o \
-  interfaces/division.o \
-  interfaces/expression.o \
-  interfaces/integer.o \
-  interfaces/interface.o \
-  interfaces/multiplication.o \
-  interfaces/n_ary.o \
-  interfaces/power.o \
-  interfaces/subtraction.o \
+  expressions/numbers/integer.o \
+  expressions/numbers/integer_handler.o \
+  expressions/numbers/rational.o \
+  expressions/addition.o \
+  expressions/approximation.o \
+  expressions/constant.o \
+  expressions/division.o \
+  expressions/expression.o \
+  expressions/multiplication.o \
+  expressions/n_ary.o \
+  expressions/power.o \
+  expressions/subtraction.o \
   test/calculation.o \
   test/constexpr.o \
   test/edition_pool_overflow.o \
@@ -31,9 +33,10 @@ poincare_junior_src += $(addprefix poincare_junior/,\
   edition_pool.o \
   edition_reference.o \
   exception_checkpoint.o \
-  expression.o \
+  expression_reference.o \
   node.o \
   pool.o \
+  type_block.o \
   utils.o \
 )
 

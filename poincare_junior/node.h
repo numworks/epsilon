@@ -1,7 +1,7 @@
 #ifndef POINCARE_NODE_H
 #define POINCARE_NODE_H
 
-#include "interfaces/interfaces.h"
+#include "expressions/expressions.h"
 
 namespace Poincare {
 
@@ -15,6 +15,9 @@ namespace Poincare {
 
 class Node {
 public:
+  template <typename T, typename... Types>
+  static Node Push(Types... args);
+
   constexpr Node(TypeBlock * block = nullptr) : m_block(block) {}
   Node(const Block * block) : m_block(static_cast<TypeBlock *>(const_cast<Block *>(block))) {}
 
@@ -23,6 +26,8 @@ public:
 
 #if POINCARE_TREE_LOG
   void log(std::ostream & stream, bool recursive = true, int indentation = 0, bool verbose = true) const;
+  void logName(std::ostream & stream) const;
+  void logAttributes(std::ostream & stream) const;
 #endif
 
   constexpr TypeBlock * block() const { return m_block; }
@@ -65,14 +70,52 @@ public:
   bool hasAncestor(const Node node, bool includeSelf) const;
   bool hasSibling(const Node e) const;
 
-  constexpr size_t nodeSize(bool head = true) const { return interface()->nodeSize(block(), head); }
-  constexpr int numberOfChildren() const { return interface()->numberOfChildren(block()); }
-
-  // Virtuality
-#if POINCARE_TREE_LOG
-  void logNodeName(std::ostream & stream) const { return interface()->logNodeName(stream); }
-  void logAttributes(std::ostream & stream) const { return interface()->logAttributes(m_block, stream); }
-#endif
+  constexpr size_t nodeSize(bool head = true) const {
+    // TODO: generate this switch using a C Macro
+    switch (type()) {
+      case BlockType::IntegerShort:
+        return IntegerShort::k_numberOfBlocksInNode;
+      case BlockType::IntegerPosBig:
+      case BlockType::IntegerNegBig:
+      {
+        return IntegerBig::k_numberOfMetaBlocksInNode + IntegerBig::NumberOfDigits(block(), head);
+      }
+      case BlockType::RationalShort:
+        return RationalShort::k_numberOfBlocksInNode;
+      case BlockType::RationalPosBig:
+      case BlockType::RationalNegBig:
+      {
+        const TypeBlock * b = block();
+        if (!head) {
+          b = static_cast<const TypeBlock *>(b->previousNth(RationalBig::NumberOfDigitsFromTail(b) + RationalBig::k_numberOfMetaBlocksInNode - 1));
+        }
+        return RationalBig::k_numberOfMetaBlocksInNode + RationalBig::NumeratorNumberOfDigits(b) + RationalBig::DenominatorNumberOfDigits(b);
+      }
+      case BlockType::Float:
+        return sizeof(float)/sizeof(uint8_t);
+      case BlockType::Addition:
+      case BlockType::Multiplication:
+        return NAry::k_numberOfBlocksInNode;
+      case BlockType::Constant:
+        return Constant::k_numberOfBlocksInNode;
+      default:
+        return 1;
+    }
+  }
+  constexpr int numberOfChildren() const {
+    // TODO: generate this switch using a C Macro
+    switch (type()) {
+      case BlockType::Addition:
+      case BlockType::Multiplication:
+        return static_cast<uint8_t>(*(m_block->next()));
+      case BlockType::Power:
+      case BlockType::Subtraction:
+      case BlockType::Division:
+        return 2;
+      default:
+        return 0;
+    }
+  }
 
   constexpr BlockType type() const { return m_block->type(); }
 
@@ -82,12 +125,8 @@ public:
   typedef void (*InPlaceTreeFunction)(Node node);
   void recursivelyEdit(InPlaceTreeFunction treeFunction);
 
-  const ExpressionInterface * expressionInterface() const;
-
 private:
   const Node previousRelative(bool parent) const;
-  constexpr const Interface * interface() const { return k_interfaces[static_cast<uint8_t>(*block())]; }
-
   TypeBlock * m_block;
 };
 

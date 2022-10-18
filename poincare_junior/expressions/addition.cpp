@@ -4,14 +4,6 @@
 
 namespace Poincare {
 
-float AdditionExpressionInterface::approximate(const TypeBlock * block) const {
-  float res = 0.0f;
-  for (const NodeIterator::IndexedNode indexedNode : NodeIterator(Node(block)).forwardConstChildren()) {
-    res += indexedNode.m_node.expressionInterface()->approximate(indexedNode.m_node.block());
-  }
-  return res;
-}
-
 #if 0
 Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
   {

@@ -133,7 +133,6 @@ private:
   mutable int m_firstMemoizedColumn;
   mutable int m_firstMemoizedRow;
 
-  virtual void deleteRowFromMemoization(int row, KDCoordinate rowPreviousHeight) {}
   virtual void updateSizeMemoizationForColumnAfterIndexChanged(int column, KDCoordinate columnPreviousWidth, int changedRow) {}
 
   virtual Interval * intervalAtColumn(int columnIndex) = 0;

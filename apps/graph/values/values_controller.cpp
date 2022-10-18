@@ -268,10 +268,6 @@ void ValuesController::updateSizeMemoizationForRow(int row, KDCoordinate rowPrev
   m_heightManager.updateMemoizationForIndex(row, rowPreviousHeight);
 }
 
-void ValuesController::deleteRowFromMemoization(int row, KDCoordinate rowPreviousHeight) {
-  m_heightManager.deleteIndexFromMemoization(row, rowPreviousHeight);
-}
-
 void ValuesController::updateSizeMemoizationForColumnAfterIndexChanged(int column, KDCoordinate columnPreviousWidth, int row) {
   // Update the size only if column becomes larger
   if (m_exactValuesAreActivated) {

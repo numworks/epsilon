@@ -93,10 +93,11 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     }
   }
 
-  Range1D xRange = computeX ? Range1D(-InteractiveCurveViewRange::k_maxFloat, InteractiveCurveViewRange::k_maxFloat) : originalRange.x();
   zoom.setFunction(evaluator, firstCartesian);
 
   if (firstCartesian) {
+    Range1D xRange = computeX ? Range1D(-InteractiveCurveViewRange::k_maxFloat, InteractiveCurveViewRange::k_maxFloat) : originalRange.x();
+    zoom.setBounds(xRange.min(), xRange.max());
     // Find the intersections with other curves
     if (firstCartesian->isIntersectable()) {
       for (int i = 0; i < nbFunctions; i++) {
@@ -108,13 +109,12 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
         IntersectionParameters intersectionParameters = { .f = firstCartesian, .g = f.operator->(), .context = context };
         Coordinate2D<float> intersection = solver.next(evaluatorIntersection, &intersectionParameters, Solver<float>::EvenOrOddRootInBracket, Zoom::SelectFar);
         while (std::isfinite(intersection.x1())) {
-          zoom.includePoint(intersection);
+          zoom.includePoint(firstCartesian->evaluateXYAtParameter(intersection.x1(), context));
           intersection = solver.next(evaluatorIntersection, &intersectionParameters, Solver<float>::EvenOrOddRootInBracket, Zoom::SelectFar);
         }
       }
     }
     // Find the other points of interest
-    zoom.setBounds(xRange.min(), xRange.max());
     zoom.fitX();
     if (firstCartesian->numberOfSubCurves() > 1) {
       assert(firstCartesian->numberOfSubCurves() == 2);

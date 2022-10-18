@@ -94,9 +94,6 @@ bool ExpressionField::handleDivision() {
      * Start -> DenominatorOfAnsFraction -> NumeratorOfEmptyFraction (-> MixedFraction) -> DenominatorOfAnsFraction -> etc
      * with the mixed fraction step only kept when the country enables it */
     switch (m_currentStep) {
-      case DivisionCycleStep::DenominatorOfEmptyFraction :
-        assert(false);
-        break;
       case DivisionCycleStep::DenominatorOfAnsFraction : 
         // DenominatorOfAnsFraction -> NumeratorOfEmptyFraction
         m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
@@ -133,9 +130,6 @@ bool ExpressionField::handleDivision() {
      * between the numerator and the denominator of an empty fraction, which
      * is not the wanted behavior when pressing the Division key) */
     switch (m_currentStep) {
-      case DivisionCycleStep::DenominatorOfAnsFraction :
-        assert(false);
-        break;
       case DivisionCycleStep::Start :
         handled = ::ExpressionField::handleEvent(event);
         /* In 1D we always cycle
@@ -172,8 +166,8 @@ bool ExpressionField::handleDivision() {
         }
         event = Ion::Events::Left;
         break;
-      case DivisionCycleStep::MixedFraction :
-        assert(mixedFractionsEnabled);
+      default:
+        assert(m_currentStep == DivisionCycleStep::MixedFraction && mixedFractionsEnabled);
         if (editionIn1D) {
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
           handled = ::ExpressionField::handleEvent(Ion::Events::Right); // TODO : OR m_textField.moveCursorRight(); but protected in TextInput

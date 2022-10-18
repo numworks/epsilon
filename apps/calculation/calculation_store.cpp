@@ -8,6 +8,7 @@
 #include "../exam_mode_configuration.h"
 #include <assert.h>
 #include <ion/circuit_breaker.h>
+#include <apps/shared/utils.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -137,7 +138,8 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
       // Outputs hold exact output, approximate output and its duplicate
       constexpr static int numberOfOutputs = Calculation::k_numberOfExpressions - 1;
       Expression outputs[numberOfOutputs] = {Expression(), Expression(), Expression()};
-      PoincareHelpers::ParseAndSimplifyAndApproximate(addressOfCalculation + calcSize, &(outputs[0]), &(outputs[1]), context);
+      Expression input = Poincare::Expression::Parse(addressOfCalculation + calcSize, context);
+      PoincareHelpers::CloneAndSimplifyAndApproximate(input, &(outputs[0]), &(outputs[1]), context);
       if (outputs[0].type() == ExpressionNode::Type::Store) {
         /* When a input contains a store it is kept by the reduction in the
          * exact output and the actual store is performed here. The global
@@ -147,6 +149,9 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
          * and approximate it to mimic the behaviour of normal computations.
          */
         Store store = static_cast<Store&>(outputs[0]);
+        if (Utils::ShouldOnlyDisplayApproximation(input, outputs[0], context)) {
+          outputs[0].replaceChildAtIndexInPlace(0, PoincareHelpers::Approximate<double>(outputs[0].childAtIndex(0), context));
+        }
         outputs[0] = store.storeValueForSymbol(context);
         outputs[1] = PoincareHelpers::Approximate<double>(outputs[0], context);
       }

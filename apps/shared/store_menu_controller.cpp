@@ -2,6 +2,7 @@
 #include <escher/clipboard.h>
 #include <escher/invocation.h>
 #include <poincare/store.h>
+#include "utils.h"
 #include "poincare_helpers.h"
 #include "text_field_delegate_app.h"
 
@@ -96,15 +97,19 @@ void StoreMenuController::openAbortWarning() {
 }
 
 bool StoreMenuController::parseAndStore(const char * text) {
-  Expression exp = Expression::Parse(text, Container::activeApp()->localContext());
-  if (exp.isUninitialized()) {
+  Expression input = Expression::Parse(text, Container::activeApp()->localContext());
+  if (input.isUninitialized()) {
     openAbortWarning();
     return false;
   }
-  Expression reducedExp = Shared::PoincareHelpers::ParseAndSimplify(text, Container::activeApp()->localContext());
+  Expression reducedExp = input;
+  Shared::PoincareHelpers::CloneAndSimplify(&reducedExp, Container::activeApp()->localContext(), Poincare::ExpressionNode::ReductionTarget::User);
   if (reducedExp.type() != ExpressionNode::Type::Store) {
     openAbortWarning();
     return false;
+  }
+  if (Shared::Utils::ShouldOnlyDisplayApproximation(input, reducedExp, Container::activeApp()->localContext())) {
+    reducedExp.replaceChildAtIndexInPlace(0, Shared::PoincareHelpers::Approximate<double>(reducedExp.childAtIndex(0), Container::activeApp()->localContext()));
   }
   Store store = static_cast<Store&>(reducedExp);
   Container::activeApp()->dismissModalViewController();

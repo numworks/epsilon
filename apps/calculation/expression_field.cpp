@@ -38,12 +38,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
       && isEditing()) {
     if (m_divisionCycleWithAns == Poincare::TrinaryBoolean::Unknown) {
       m_currentStep = DivisionCycleStep::Start;
-      if (isEmpty()) {
-        m_divisionCycleWithAns = Poincare::TrinaryBoolean::True;
-      }
-      else {
-        m_divisionCycleWithAns = Poincare::TrinaryBoolean::False;
-      }
+      m_divisionCycleWithAns = isEmpty() ? Poincare::TrinaryBoolean::True : Poincare::TrinaryBoolean::False;
     }
     return handleDivision();
   }

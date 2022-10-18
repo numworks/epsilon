@@ -35,9 +35,9 @@ jobs:
         with:
           token: ${{ secrets.SHELLY_ANN_PAT }}
           submodules: true
-      - run: make MODEL=n0110 epsilon.dfu
-      - run: make MODEL=n0110 epsilon.onboarding.dfu
-      - run: make MODEL=n0110 epsilon.onboarding.update.dfu
+      - run: make MODEL=n0110 ALLOW_THIRD_PARTY=1 epsilon.dfu
+      - run: make MODEL=n0110 ALLOW_THIRD_PARTY=0 epsilon.onboarding.dfu
+      - run: make MODEL=n0110 ALLOW_THIRD_PARTY=1 epsilon.onboarding.update.dfu
       - run: make MODEL=n0110 flasher.dfu
       - run: make MODEL=n0110 bench.ram.dfu
   n0120:
@@ -50,9 +50,9 @@ jobs:
         with:
           token: ${{ secrets.SHELLY_ANN_PAT }}
           submodules: true
-      - run: make MODEL=n0120 epsilon.dfu
-      - run: make MODEL=n0120 epsilon.onboarding.dfu
-      - run: make MODEL=n0120 epsilon.onboarding.update.dfu
+      - run: make MODEL=n0120 ALLOW_THIRD_PARTY=0 epsilon.dfu
+      - run: make MODEL=n0120 ALLOW_THIRD_PARTY=1 epsilon.onboarding.dfu
+      - run: make MODEL=n0120 ALLOW_THIRD_PARTY=1 epsilon.onboarding.update.dfu
       - run: make MODEL=n0120 flasher.dfu
       - run: make MODEL=n0120 bench.ram.dfu
   windows:

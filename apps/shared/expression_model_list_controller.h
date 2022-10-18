@@ -22,7 +22,7 @@ protected:
   constexpr static KDCoordinate k_expressionMargin = 5;
   // TableViewDataSource
   virtual int numberOfExpressionRows() const;
-  bool isAddEmptyRow(int j);
+  bool isAddEmptyRow(int j) const;
   virtual KDCoordinate expressionRowHeight(int j);
   virtual void willDisplayExpressionCellAtIndex(Escher::HighlightCell * cell, int j);
   // Responder
@@ -32,7 +32,7 @@ protected:
   virtual int modelIndexForRow(int j) { return j; }
   // ViewController
   virtual Escher::SelectableTableView * selectableTableView() = 0;
-  virtual ExpressionModelStore * modelStore() = 0;
+  virtual ExpressionModelStore * modelStore() const = 0;
   virtual Escher::InputViewController * inputController() = 0;
   Escher::EvenOddMessageTextCell m_addNewModel;
   // Memoization

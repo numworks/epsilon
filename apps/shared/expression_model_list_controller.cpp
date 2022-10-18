@@ -27,7 +27,7 @@ int ExpressionModelListController::numberOfExpressionRows() const {
   return modelsCount + (modelsCount == store->maxNumberOfModels() ? 0 : 1);
 }
 
-bool ExpressionModelListController::isAddEmptyRow(int j) {
+bool ExpressionModelListController::isAddEmptyRow(int j) const {
   return j == numberOfExpressionRows() - 1 && modelStore()->numberOfModels() != modelStore()->maxNumberOfModels();
 }
 

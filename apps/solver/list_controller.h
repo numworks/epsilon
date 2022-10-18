@@ -46,7 +46,7 @@ private:
   void addModel() override;
   bool removeModelRow(Ion::Storage::Record record) override;
   void reloadBrace();
-  EquationStore * modelStore() override;
+  EquationStore * modelStore() const override;
   Escher::StackViewController * stackController() const;
   Escher::InputViewController * inputController() override;
 

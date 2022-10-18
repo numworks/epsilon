@@ -63,7 +63,7 @@ private:
   int maxNumberOfDisplayableRows() override;
   Escher::HighlightCell * functionCells(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int j) override;
-  ContinuousFunctionStore * modelStore() override;
+  ContinuousFunctionStore * modelStore() const override;
   Escher::SelectableTableView m_selectableTableView;
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   FunctionParameterController * m_parameterController;

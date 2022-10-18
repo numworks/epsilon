@@ -442,7 +442,7 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
   return true;
 }
 
-SequenceStore * ListController::modelStore() {
+SequenceStore * ListController::modelStore() const {
   return App::app()->functionStore();
 }
 

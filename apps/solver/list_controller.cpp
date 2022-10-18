@@ -229,7 +229,7 @@ void ListController::reloadBrace() {
   m_equationListView.setBraceStyle(braceStyle);
 }
 
-EquationStore * ListController::modelStore() {
+EquationStore * ListController::modelStore() const {
   return App::app()->equationStore();
 }
 

@@ -252,7 +252,7 @@ void ValuesController::setStartEndMessages(Shared::IntervalParameterController *
 
 void ValuesController::reloadEditedCell(int column, int row) {
   if (m_exactValuesButton.state()) {
-    // Sizes might have change
+    // Sizes might have changed
     selectableTableView()->reloadData();
     return;
   }

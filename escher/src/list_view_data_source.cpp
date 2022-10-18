@@ -16,7 +16,7 @@ void ListViewDataSource::initCellSize(TableView * view) {
   }
 }
 
-bool ListViewDataSource::canReusableIndexBeAssumed(int index, int type, int reusableCellCount) {
+bool ListViewDataSource::canReusableIndexBeAssumed(int index, int type, int reusableCellCount) const {
   /* Ensure the reusable cell index "j" can be assumed from the cell index
    * "index" */
   if (reusableCellCount <= 0) {

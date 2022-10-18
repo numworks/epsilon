@@ -26,10 +26,6 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
 {}
 
 void ValuesController::setupSelectableTableViewAndCells(InputEventHandlerDelegate * inputEventHandlerDelegate) {
-  prefacedView()->setCellOverlap(0, 0);
-  prefacedView()->setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-  prefacedView()->setBackgroundColor(Palette::WallScreenDark);
-
   int numberOfAbscissaCells = abscissaCellsCount();
   for (int i = 0; i < numberOfAbscissaCells; i++) {
     EvenOddEditableTextCell * c = abscissaCells(i);
@@ -213,6 +209,11 @@ Responder * ValuesController::defaultController() {
 }
 
 // EditableCellTableViewController
+
+int ValuesController::numberOfRowsAtColumn(int i) const {
+  // Number of elements + title + last empty cell
+  return numberOfElementsInColumn(i) + 2;
+}
 
 SelectableViewController * ValuesController::columnParameterController() {
   if (typeAtLocation(selectedColumn(), 0) == k_abscissaTitleCellType) {

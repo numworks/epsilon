@@ -43,6 +43,7 @@ app_shared_src = $(addprefix apps/shared/,\
   column_helper.cpp \
   column_parameter_controller.cpp \
   double_pair_table_controller.cpp \
+  editable_cell_selectable_table_view.cpp \
   editable_cell_table_view_controller.cpp \
   explicit_float_parameter_controller.cpp \
   expression_field_delegate_app.cpp \
@@ -89,7 +90,6 @@ app_shared_src = $(addprefix apps/shared/,\
   store_cell.cpp \
   store_controller.cpp \
   store_parameter_controller.cpp \
-  store_selectable_table_view.cpp \
   store_title_cell.cpp \
   sum_graph_controller.cpp \
   tab_table_controller.cpp \

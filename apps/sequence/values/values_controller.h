@@ -37,7 +37,6 @@ private:
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override {
     setDefaultStartEndMessages();
   }
-  Shared::PrefacedTableView * prefacedView() override { return &m_prefacedView; }
 
   void setDefaultStartEndMessages();
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
@@ -89,8 +88,6 @@ private:
   int fillColumnName(int columnIndex, char * buffer) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
 
-  Escher::SelectableTableView m_selectableTableView;
-  Shared::PrefacedTableView m_prefacedView;
   SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
   Escher::EvenOddMessageTextCell m_abscissaTitleCell;

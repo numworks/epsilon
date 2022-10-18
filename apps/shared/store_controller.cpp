@@ -15,15 +15,10 @@ StoreController::StoreController(Responder * parentResponder, Escher::InputEvent
   EditableCellTableViewController(parentResponder),
   ButtonRowDelegate(header, nullptr),
   StoreColumnHelper(this, parentContext, this),
-  m_store(store),
-  m_prefacedView(0, this, &m_dataView, this),
-  m_dataView(m_store, this, this, this, &m_prefacedView)
+  m_store(store)
 {
-  m_prefacedView.setBackgroundColor(Palette::WallScreenDark);
-  m_prefacedView.setCellOverlap(0, 0);
-  m_prefacedView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   for (int i = 0; i < k_maxNumberOfEditableCells; i++) {
-    m_editableCells[i].setParentResponder(&m_dataView);
+    m_editableCells[i].setParentResponder(&m_selectableTableView);
     m_editableCells[i].editableTextCell()->textField()->setDelegates(inputEventHandlerDelegate, this);
   }
 }
@@ -160,6 +155,12 @@ void StoreController::didBecomeFirstResponder() {
     selectCellAtLocation(0, 0);
   }
   EditableCellTableViewController::didBecomeFirstResponder();
+}
+
+int StoreController::numberOfRowsAtColumn(int i) const {
+  int s = m_store->seriesAtColumn(i);
+  // number of pairs + title + last empty cell
+  return m_store->numberOfPairsOfSeries(s) + 2;
 }
 
 bool StoreController::deleteCellValue(int series, int i, int j, bool authorizeNonEmptyRowDeletion) {

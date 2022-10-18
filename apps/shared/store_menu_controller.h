@@ -53,6 +53,7 @@ private:
     Escher::SelectableTableView m_selectableTableView;
   };
 
+  bool parseAndStore(const char * text);
   void openAbortWarning();
   Escher::StackViewController m_stackViewController;
   InnerListController m_listController;

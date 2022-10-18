@@ -156,5 +156,5 @@ bool StoreMenuController::textFieldDidReceiveEvent(AbstractTextField * textField
     textField->handleEventWithText("→");
     return true;
   }
-  return TextFieldDelegate::textFieldDidReceiveEvent(textField, event);
+  return textFieldDelegateApp()->fieldDidReceiveEvent(textField, textField, event);
 }

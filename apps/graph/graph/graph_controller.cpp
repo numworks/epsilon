@@ -106,10 +106,10 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
         }
         Solver<float> solver = PoincareHelpers::Solver<float>(xRange.min(), xRange.max());
         IntersectionParameters intersectionParameters = { .f = firstCartesian, .g = f.operator->(), .context = context };
-        Coordinate2D<float> intersection = solver.next(evaluatorIntersection, &intersectionParameters, Solver<float>::EvenOrOddRootInBracket, Zoom::SelectMiddle);
+        Coordinate2D<float> intersection = solver.next(evaluatorIntersection, &intersectionParameters, Solver<float>::EvenOrOddRootInBracket, Zoom::SelectFar);
         while (std::isfinite(intersection.x1())) {
           zoom.includePoint(intersection);
-          intersection = solver.next(evaluatorIntersection, &intersectionParameters, Solver<float>::EvenOrOddRootInBracket, Zoom::SelectMiddle);
+          intersection = solver.next(evaluatorIntersection, &intersectionParameters, Solver<float>::EvenOrOddRootInBracket, Zoom::SelectFar);
         }
       }
     }

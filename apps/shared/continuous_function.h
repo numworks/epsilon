@@ -204,16 +204,17 @@ public:
   // Approximate derivative at x, on given sub curve if there is one
   double approximateDerivative(double x, Poincare::Context * context, int subCurveIndex = 0) const;
 
-  /* tMin and tMax */
+  /* tMin, tMax and tAuto */
 
-  // tMin getter
-  float tMin() const override { return recordData()->tMin(); }
-  // tMax getter
-  float tMax() const override { return recordData()->tMax(); }
-  // tMin setter
+  float tMin() const override { return tAuto() ? autoTMin() : recordData()->tMin(); }
+  float tMax() const override { return tAuto() ? autoTMax() : recordData()->tMax(); }
+  // If TAuto is true, domain has auto values (which may depend on angle unit)
+  bool tAuto() const { return recordData()->tAuto(); }
   void setTMin(float tMin);
-  // tMax setter
   void setTMax(float tMax);
+  void setTAuto(bool tAuto);
+  float autoTMax() const;
+  float autoTMin() const;
 
   /* Range */
 
@@ -295,17 +296,21 @@ private:
     RecordDataBuffer(KDColor color) :
         Shared::Function::RecordDataBuffer(color),
         m_domain(-INFINITY, INFINITY),
-        m_displayDerivative(false) {}
+        m_displayDerivative(false),
+        m_tAuto(true) {}
     bool displayDerivative() const { return m_displayDerivative; }
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }
     float tMin() const { return m_domain.min(); }
     float tMax() const { return m_domain.max(); }
+    bool tAuto() const { return m_tAuto; }
     void setTMin(float tMin) { m_domain.setMin(tMin); }
     void setTMax(float tMax) { m_domain.setMax(tMax); }
+    void setTAuto(bool tAuto) { m_tAuto = tAuto; }
 
   private:
     Range1D m_domain;
     bool m_displayDerivative;
+    bool m_tAuto;
     /* In the record, after the boolean flag about displayDerivative, there is
      * the expression of the function, directly copied from the pool. */
     //char m_expression[0];

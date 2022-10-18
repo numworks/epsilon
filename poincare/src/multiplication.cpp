@@ -278,7 +278,7 @@ Layout MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplay
     string,
     context,
     [](const char * operatorName, Expression left, Expression right, Layout rightLayout) {
-      bool forceMarginOfRightUnit;
+      bool forceMarginOfRightUnit = true;
       bool leftIsUnit = ExpressionIsUnit(left, nullptr);
       bool rightIsUnit = ExpressionIsUnit(right, &forceMarginOfRightUnit);
       if (rightIsUnit && leftIsUnit) {

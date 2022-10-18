@@ -5,7 +5,9 @@ namespace Poincare {
 // Range1D
 
 void Range1D::extend(float t) {
-  assert(!std::isnan(t));
+  if (!std::isfinite(t)) {
+    return;
+  }
   /* Using this syntax for the comparison takes care of the NAN. */
   if (!(t >= m_min)) {
     m_min = t;

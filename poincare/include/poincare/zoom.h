@@ -13,7 +13,7 @@ public:
   /* FIXME Removing the "context" argument from Solver<>::FunctionEvaluation
    * was shortsighted, and makes it necessary to hack a new lambda in
    * grossFitToInterest. */
-  typedef float (*FunctionEvaluationWithContext)(float, const void *, Context *);
+  typedef Coordinate2D<float> (*FunctionEvaluation2DWithContext)(float, const void *, Context *);
 
   constexpr static float k_smallUnitMantissa = 1.f;
   constexpr static float k_mediumUnitMantissa = 2.f;
@@ -27,7 +27,7 @@ public:
   Zoom(float tMin, float tMax, float normalYXRatio, Context * context) : m_tMax(tMax), m_tMin(tMin), m_normalRatio(normalYXRatio), m_context(context), m_function(nullptr), m_sampleUpToDate(false) {}
 
   Range2D range() const { return m_range; }
-  void setFunction(FunctionEvaluationWithContext f, const void * model);
+  void setFunction(FunctionEvaluation2DWithContext f, const void * model);
   void includePoint(Coordinate2D<float> p);
   /* The fitX method will compute an X axis based on the points of interest of
    * the expression, or a default one if none are found. It will also compute
@@ -48,8 +48,8 @@ private:
   static Solver<float>::Interest PointIsInteresting(float ya, float yb, float yc);
   static Coordinate2D<float> SelectMiddle(Solver<float>::FunctionEvaluation f, const void * model, float a, float b, Solver<float>::Interest, float precision);
 
-  float approximate(float x) const { assert(m_function); return m_function(x, m_model, m_context); }
-  void sample();
+  Coordinate2D<float> approximate(float x) const { assert(m_function); return m_function(x, m_model, m_context); }
+  void sampleY();
   void grossFitToInterest(float xStart, float xEnd);
   bool findNormalYAxis();
   bool findYAxisForOrderOfMagnitude();
@@ -60,7 +60,7 @@ private:
   float m_tMax, m_tMin;
   float m_normalRatio;
   Context * m_context;
-  FunctionEvaluationWithContext m_function;
+  FunctionEvaluation2DWithContext m_function;
   const void * m_model;
   bool m_sampleUpToDate;
 };

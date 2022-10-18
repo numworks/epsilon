@@ -7,6 +7,15 @@ using namespace Poincare;
 
 namespace Shared {
 
+MemoizedCurveViewRange::MemoizedCurveViewRange() :
+  /* FIXME Due to some impromptu reload, some controllers use the range before
+   * setting its values, making it necessary to initialize it with some
+   * contrived values. This should probably be reworked. */
+  m_range(Range1D::k_defaultHalfLength, Range1D::k_defaultHalfLength, Range1D::k_defaultHalfLength, Range1D::k_defaultHalfLength),
+  m_xGridUnit(k_defaultGridUnit),
+  m_yGridUnit(k_defaultGridUnit)
+{}
+
 void MemoizedCurveViewRange::privateSet(float f, float limit, Range1D & range1D, void (Range1D::*setter)(float, float), bool updateGridUnit, float * gridUnit) {
   (range1D.*setter)(f, limit);
   *gridUnit = updateGridUnit ? (gridUnit == &m_xGridUnit ? CurveViewRange::xGridUnit() : CurveViewRange::yGridUnit()) : 0.f;

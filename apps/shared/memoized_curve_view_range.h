@@ -8,7 +8,7 @@ namespace Shared {
 
 class MemoizedCurveViewRange : public CurveViewRange {
 public:
-  MemoizedCurveViewRange() : m_xGridUnit(k_defaultGridUnit), m_yGridUnit(k_defaultGridUnit) {}
+  MemoizedCurveViewRange();
 
   //CurveViewRange
   float xMin() const override { return m_range.xMin(); }

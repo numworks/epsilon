@@ -8,7 +8,7 @@ ion_device_userland_src += $(addprefix ion/src/device/shared/drivers/, \
   assert.cpp \
   board_unprivileged.cpp \
   console_display.cpp:+consoledisplay \
-  flash_unprivileged.cpp \
+  flash_information.cpp \
   trampoline.cpp \
   usb_unprivileged.cpp \
 )

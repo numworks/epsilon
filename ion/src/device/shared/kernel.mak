@@ -7,7 +7,7 @@ ion_device_kernel_src += $(addprefix ion/src/device/shared/drivers/, \
   base64.cpp \
   board_unprivileged.cpp \
   console_display.cpp:+kernelassert \
-  flash_unprivileged.cpp\
+  flash_information.cpp\
   serial_number.cpp \
   trampoline.cpp \
   usb_unprivileged.cpp \

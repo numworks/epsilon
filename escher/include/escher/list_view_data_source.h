@@ -23,6 +23,7 @@ public:
   int typeAtLocation(int i, int j) override final { assert(i==0); return typeAtIndex(j); }
   // Used to easily override nonMemoizedRowHeight
   KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell * cell, int index);
+
 protected:
   KDCoordinate defaultColumnWidth() override { return 0; }
   /* nonMemoizedRowHeight has a default implementation for specific simple
@@ -31,6 +32,10 @@ protected:
   // Just make this method final without changing behaviour
   KDCoordinate nonMemoizedColumnWidth(int index) override final { return TableViewDataSource::nonMemoizedColumnWidth(index); }
   KDCoordinate heightForCellAtIndex(HighlightCell * cell, int index);
+
+private:
+  // Only used in an assert
+  bool canReusableIndexBeAssumed(int index, int type, int reusableCellCount);
 };
 
 class MemoizedListViewDataSource : public ListViewDataSource {
@@ -38,6 +43,7 @@ public:
   MemoizedListViewDataSource() :
     m_heightManager(this)
   {}
+
 private:
   TableSize1DManager * rowHeightManager() override { return &m_heightManager; }
   MemoizedRowHeightManager m_heightManager;

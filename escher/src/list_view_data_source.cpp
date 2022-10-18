@@ -16,8 +16,9 @@ void ListViewDataSource::initCellSize(TableView * view) {
   }
 }
 
-// This ensures we can assume the reusable cell index j from the cell index
-bool CanReusableIndexBeAssumed(int index, int type, int reusableCellCount, ListViewDataSource * listView) {
+bool ListViewDataSource::canReusableIndexBeAssumed(int index, int type, int reusableCellCount) {
+  /* Ensure the reusable cell index "j" can be assumed from the cell index
+   * "index" */
   if (reusableCellCount <= 0) {
     // Cells of this type must be stored as reusable cells.
     return false;
@@ -33,12 +34,12 @@ bool CanReusableIndexBeAssumed(int index, int type, int reusableCellCount, ListV
    * It is assumed here that ListViewDataSource::nonMemoizedRowHeight is only
    * used with lists and types for which the reusableCellCount is exactly the
    * minimal number of displayable cells. */
-  if (listView->numberOfRows() == reusableCellCount) {
+  if (numberOfRows() == reusableCellCount) {
     // All rows are reusable cells of the same type, j = index
     return true;
   }
   for (int i = 0; i < index; i++) {
-    if (listView->typeAtIndex(i) != type) {
+    if (typeAtIndex(i) != type) {
       return false;
     }
   }
@@ -60,7 +61,7 @@ KDCoordinate ListViewDataSource::nonMemoizedRowHeight(int index) {
   assert(index < numberOfRows());
   int type = typeAtIndex(index);
   int thisReusableCellCount = reusableCellCount(type);
-  assert(CanReusableIndexBeAssumed(index, type, thisReusableCellCount, this));
+  assert(canReusableIndexBeAssumed(index, type, thisReusableCellCount));
   // We can assume the reusable index
   int j = (thisReusableCellCount == 1) ? 0 : index;
   assert(j < thisReusableCellCount);

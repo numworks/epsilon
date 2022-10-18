@@ -135,12 +135,17 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
       zoom.fitBothXAndY(defaultRangeIsNormalized());
     }
 
+    /* Fit zoom for reciprocal funtions.
+     * FIXME Adapt the zoom API to accept x=f(y) function */
     for (int i = 0; i < nbFunctions; i++) {
       ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
       if (!f->isAlongY() || f->basedOnCostlyAlgorithms(context)) {
         continue;
       }
       Range1D yRange = (computeY ? zoom.range() : originalRange).y();
+      if (!yRange.isValid() || yRange.isEmpty()) {
+        yRange = Zoom::DefaultRange(InteractiveCurveViewRange::NormalYXRatio()).y();
+      }
       zoom.setBounds(yRange.min(), yRange.max());
       zoom.setFunction(evaluator, f.operator->());
       zoom.fitFullFunction();

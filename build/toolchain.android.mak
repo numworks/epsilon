@@ -60,7 +60,7 @@ fi
 endef
 
 # This function returns info about the nearest folder from given missing folder
-define nearest_existing_folder
+define existing_parent_folder
 existing_folder=$(1); \
 while test ! -d $$existing_folder; do \
   previous_folder=$${existing_folder%/*}; \
@@ -76,5 +76,5 @@ ls $$existing_folder;
 endef
 
 ifneq ("$(strip $(shell $(call folder_check,$(NDK_TOOLCHAIN_PATH))))","")
-$(error $(shell $(call nearest_existing_folder,$(NDK_TOOLCHAIN_PATH))))
+$(error $(shell $(call existing_parent_folder,$(NDK_TOOLCHAIN_PATH))))
 endif

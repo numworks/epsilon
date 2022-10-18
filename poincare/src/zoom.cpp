@@ -24,7 +24,7 @@ Range2D Zoom::Sanitize(Range2D range, float normalYXRatio) {
   return Range2D(sanitationHelper(range.x(), normalXLength), sanitationHelper(range.y(), normalYLength));
 }
 
-void Zoom::setFunction(FunctionEvaluationWithContext f, const void * model) {
+void Zoom::setFunction(FunctionEvaluation2DWithContext f, const void * model) {
   m_function = f;
   m_model = model;
   m_sampleUpToDate = false;
@@ -58,7 +58,7 @@ void Zoom::fitX() {
 }
 
 void Zoom::fitOnlyY() {
-  sample();
+  sampleY();
 
   /* Attempt to find a normalized range. This is not possible if the
    * interesting Y range is greater than the normalized Y range. */
@@ -79,17 +79,17 @@ void Zoom::fitOnlyY() {
 }
 
 void Zoom::fitBothXAndY(bool forceNormalization) {
-  sample();
+  sampleY();
   expandSparseWindow();
   // TODO Round the axes ?
 }
 
 void Zoom::fitFullFunction() {
   assert(std::isfinite(m_tMin) && std::isfinite(m_tMax));
-  m_range.x() = Range1D(m_tMin, m_tMax);
-  sample();
-  for (float & y : m_sample) {
-    m_range.y().extend(y);
+  float tStep = (m_tMax - m_tMin) / k_sampleSize;
+
+  for (int i = 0; i < k_sampleSize; i++) {
+    m_range.extend(approximate(m_tMin + i * tStep));
   }
 }
 
@@ -112,7 +112,7 @@ Coordinate2D<float> Zoom::SelectMiddle(Solver<float>::FunctionEvaluation f, cons
   return Coordinate2D<float>(c, f(c, model));
 }
 
-void Zoom::sample() {
+void Zoom::sampleY() {
   assert(m_sample);
   if (m_sampleUpToDate) {
     return;
@@ -120,25 +120,23 @@ void Zoom::sample() {
   assert(m_range.x().isValid() && !m_range.x().isEmpty());
   float xStep = m_range.x().length() / (k_sampleSize - 1);
   for (size_t i = 0; i < k_sampleSize; i++) {
-    m_sample[i] = approximate(m_range.x().min() + i * xStep);
+    m_sample[i] = approximate(m_range.x().min() + i * xStep).x2();
   }
   m_sampleUpToDate = true;
 }
 
 struct CallParameters {
-  Zoom::FunctionEvaluationWithContext function;
+  Zoom::FunctionEvaluation2DWithContext function;
   const void * model;
   Context * context;
 };
 
 static float evaluator(float t, const void * aux) {
   const CallParameters * p = static_cast<const CallParameters *>(aux);
-  return p->function(t, p->model, p->context);
+  return p->function(t, p->model, p->context).x2();
 }
 
 void Zoom::grossFitToInterest(float xStart, float xEnd) {
-  /* FIXME This juggling is too much trouble, add a context argument in
-   * Solver<>::FunctionEvaluation, it will not be wasted anyway. */
   CallParameters params = { .function = m_function, .model = m_model, .context = m_context };
 
   Solver<float> solver(xStart, xEnd);

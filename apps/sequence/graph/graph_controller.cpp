@@ -72,9 +72,9 @@ void GraphController::moveToRank(int n) {
   m_view.reload();
 }
 
-static float evaluator(float x, const void * model, Context * context) {
+static Coordinate2D<float> evaluator(float x, const void * model, Context * context) {
   const Shared::Sequence * s = static_cast<const Shared::Sequence *>(model);
-  return s->evaluateXYAtParameter(x, context).x2();
+  return s->evaluateXYAtParameter(x, context);
 }
 
 Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange, Range1D intrinsicYRange) const {
@@ -97,8 +97,6 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   }
   return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio());
 }
-
-
 
 Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(int j) const {
   GraphController * graphController = static_cast<GraphController *>(m_graphController);

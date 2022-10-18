@@ -54,7 +54,7 @@ int StoreParameterController::numberOfRows() const {
   return m_isCumulatedFrequencyColumnSelected ? k_indexOfHideCumulatedFrequencyCell + 1 : Shared::StoreParameterController::numberOfRows() + 1;
 }
 
-int StoreParameterController::typeAtIndex(int index) {
+int StoreParameterController::typeAtIndex(int index) const {
   assert(index >= 0 && index < numberOfRows());
   if (index == numberOfRows() - 1) {
     return m_isCumulatedFrequencyColumnSelected ? k_hideCumulatedFrequencyCellType : k_displayCumulatedFrequencyCellType;

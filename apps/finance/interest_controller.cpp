@@ -65,7 +65,7 @@ void InterestController::willDisplayCellForIndex(Escher::HighlightCell * cell, i
   return Shared::FloatParameterController<double>::willDisplayCellForIndex(cell, index);
 }
 
-int InterestController::typeAtIndex(int index) {
+int InterestController::typeAtIndex(int index) const {
   if (index < indexOfDropdown()) {
     return k_inputCellType;
   }

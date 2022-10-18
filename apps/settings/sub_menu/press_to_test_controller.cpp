@@ -166,7 +166,7 @@ int PressToTestController::numberOfRows() const {
   return k_numberOfSwitchCells + (Preferences::sharedPreferences()->isInExamMode() ? 0 : 1);
 }
 
-int PressToTestController::typeAtIndex(int index) {
+int PressToTestController::typeAtIndex(int index) const {
   assert(index >= 0 && index <= k_numberOfSwitchCells);
   return index < k_numberOfSwitchCells ? k_switchCellType : k_buttonCellType;
 }

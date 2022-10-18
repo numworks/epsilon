@@ -13,7 +13,7 @@ namespace Escher {
 class ExplicitSelectableListViewController : public SelectableListViewController<MemoizedListViewDataSource> {
 public:
   using SelectableListViewController::SelectableListViewController;
-  int typeAtIndex(int index) override final { return index; }
+  int typeAtIndex(int index) const override final { return index; }
   int reusableCellCount(int type) override final { return 1; }
   HighlightCell * reusableCell(int index, int type) override final { return cell(type); }
   HighlightCell * selectedCell() { return cell(selectedRow()); }

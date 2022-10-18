@@ -11,7 +11,7 @@ public:
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return m_titlesDisplay; }
   void setTitlesDisplay(Escher::ViewController::TitlesDisplay titlesDisplay) { m_titlesDisplay = titlesDisplay; }
   int numberOfRows() const override { return sizeof(k_typesOrder)/sizeof(int); }
-  int typeAtIndex(int index) override { return k_typesOrder[index]; }
+  int typeAtIndex(int index) const override { return k_typesOrder[index]; }
 
 private:
   constexpr static int k_typesOrder[] = {k_sortCellType, k_fillFormulaCellType, k_clearCellType};

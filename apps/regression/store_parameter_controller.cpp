@@ -25,7 +25,7 @@ bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   return Shared::StoreParameterController::handleEvent(event);
 }
 
-int StoreParameterController::typeAtIndex(int index) {
+int StoreParameterController::typeAtIndex(int index) const {
   if (index == k_changeRegressionCellIndex) {
     return k_changeRegressionCellType;
   }

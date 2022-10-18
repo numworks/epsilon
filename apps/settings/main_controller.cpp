@@ -155,7 +155,7 @@ int MainController::reusableCellCount(int type) {
   return 1;
 }
 
-int MainController::typeAtIndex(int index) {
+int MainController::typeAtIndex(int index) const {
   switch (messageAtModelIndex(getModelIndex(index))) {
     case I18n::Message::Brightness:
       return k_brightnessCellType;

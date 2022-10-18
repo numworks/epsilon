@@ -27,7 +27,7 @@ public:
   int reusableCellCount(int type) override;
 
   // Escher::ListViewDataSource
-  int typeAtIndex(int index) override;
+  int typeAtIndex(int index) const override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
 

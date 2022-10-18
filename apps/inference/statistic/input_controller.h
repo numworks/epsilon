@@ -26,7 +26,7 @@ public:
     return m_titleBuffer;
   }
   ViewController::TitlesDisplay titlesDisplay() override;
-  int typeAtIndex(int i) override;
+  int typeAtIndex(int i) const override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   void buttonAction() override;

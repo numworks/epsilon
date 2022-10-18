@@ -19,7 +19,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfCells; }
   int reusableCellCount(int type) override { return 1; }
-  int typeAtIndex(int index) override { assert(index < k_numberOfCells); return index; }
+  int typeAtIndex(int index) const override { assert(index < k_numberOfCells); return index; }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   void initializeColumnParameters() override;

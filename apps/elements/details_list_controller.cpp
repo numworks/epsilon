@@ -71,7 +71,7 @@ int DetailsListController::reusableCellCount(int type) {
   return k_numberOfNormalCells;
 }
 
-int DetailsListController::typeAtIndex(int index) {
+int DetailsListController::typeAtIndex(int index) const {
   assert(index < numberOfRows());
   const DataField * dataField = DataFieldForRow(index);
   if (dataField == &ElementsDataBase::ConfigurationField

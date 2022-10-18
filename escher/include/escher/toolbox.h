@@ -16,7 +16,7 @@ public:
   int numberOfRows() const override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(HighlightCell * cell, int index) override;
-  int typeAtIndex(int i) override;
+  int typeAtIndex(int i) const override;
 
 protected:
   constexpr static int k_maxMessageSize = 100;

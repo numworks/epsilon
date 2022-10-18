@@ -20,7 +20,7 @@ public:
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
 
-  int typeAtIndex(int index) override;
+  int typeAtIndex(int index) const override;
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;

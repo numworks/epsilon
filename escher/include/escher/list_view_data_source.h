@@ -19,7 +19,7 @@ public:
   virtual void willDisplayCellForIndex(HighlightCell * cell, int index) {}
   void willDisplayCellAtLocation(HighlightCell * cell, int x, int y) override final { willDisplayCellForIndex(cell, y); }
 
-  virtual int typeAtIndex(int index) { return 0; }
+  virtual int typeAtIndex(int index) const { return 0; }
   int typeAtLocation(int i, int j) override final { assert(i==0); return typeAtIndex(j); }
   // Used to easily override nonMemoizedRowHeight
   KDCoordinate heightForCellAtIndexWithWidthInit(HighlightCell * cell, int index);
@@ -66,7 +66,7 @@ public:
   virtual int reusableCellCount() const = 0;
   HighlightCell * reusableCell(int index, int type) override final { assert(type == 0); return reusableCell(index); }
   int reusableCellCount(int type) override final { assert(type == 0); return reusableCellCount(); }
-  int typeAtIndex(int i) override final { return 0; }
+  int typeAtIndex(int i) const override final { return 0; }
 };
 
 }

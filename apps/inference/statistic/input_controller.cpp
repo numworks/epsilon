@@ -70,7 +70,7 @@ ViewController::TitlesDisplay InputController::titlesDisplay() {
   return ViewController::TitlesDisplay::DisplayLastTitle;
 }
 
-int InputController::typeAtIndex(int i) {
+int InputController::typeAtIndex(int i) const {
   if (i == m_statistic->indexOfThreshold()) {
     return k_significanceCellType;
   }

@@ -14,7 +14,7 @@ public:
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
-  int typeAtIndex(int index) override { return (index == numberOfRows() - 1) ? k_significantDigitsType : k_resultFormatType; }
+  int typeAtIndex(int index) const override { return (index == numberOfRows() - 1) ? k_significantDigitsType : k_resultFormatType; }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;

@@ -16,7 +16,7 @@ public:
   void initializeColumnParameters() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
-  int typeAtIndex(int index) override;
+  int typeAtIndex(int index) const override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:

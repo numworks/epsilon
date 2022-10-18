@@ -24,7 +24,7 @@ public:
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
-  int typeAtIndex(int index) override;
+  int typeAtIndex(int index) const override;
 
   // Menu
   enum class Page {

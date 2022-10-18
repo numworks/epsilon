@@ -34,7 +34,7 @@ public:
   Escher::HighlightCell * reusableCell(int index, int type) override;
   // Each cell has its own type
   int reusableCellCount(int type) override { return 1; }
-  int typeAtIndex(int index) override;
+  int typeAtIndex(int index) const override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
   // Type order is also used for cell order

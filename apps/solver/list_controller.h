@@ -21,7 +21,7 @@ public:
   Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
   /* ListViewDataSource */
   int numberOfRows() const override { return numberOfExpressionRows(); }
-  int typeAtIndex(int index) override { return isAddEmptyRow(index); }
+  int typeAtIndex(int index) const override { return isAddEmptyRow(index); }
   Escher::HighlightCell * reusableCell(int index, int type) override;
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;

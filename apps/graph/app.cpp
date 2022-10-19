@@ -46,7 +46,7 @@ bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
 
 void App::storageDidChangeForRecord(Ion::Storage::Record record) {
   FunctionApp::storageDidChangeForRecord(record);
-  if (record.hasExtension(Ion::Storage::funcExtension)) {
+  if (record.isNull() || record.hasExtension(Ion::Storage::funcExtension)) {
     return;
   }
   /* A variable has been modified via the store menu, we need to compute if one

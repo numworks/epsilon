@@ -147,7 +147,7 @@ bool Sequence::isEmpty() {
 }
 
 bool Sequence::isSimplyRecursive(Context * context) {
-  constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameSize + 1;
+  constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameLength + 1;
   char buffer[bufferSize];
   name(buffer, bufferSize);
   return type() == Shared::Sequence::Type::SingleRecurrence && !expressionClone().recursivelyMatches([](const Expression e, Context * context, void * arg) {

@@ -99,6 +99,7 @@ protected:
 };
 
 using ShortMemoizedColumnWidthManager = MemoizedColumnWidthManager<7>;
+using MemoizedOneRowHeightManager = MemoizedRowHeightManager<1>;
 using ShortMemoizedRowHeightManager = MemoizedRowHeightManager<7>;
 using LongMemoizedRowHeightManager = MemoizedRowHeightManager<10>;
 

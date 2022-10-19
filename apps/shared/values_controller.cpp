@@ -328,6 +328,7 @@ void ValuesController::resetLayoutMemoization() {
     titleCell->setLayout(Layout());
   }
   resetMemoization(); // reset sizes memoization
+  m_prefacedView.resetDataSourceSizeMemoization();
   m_firstMemoizedColumn = INT_MAX;
   m_firstMemoizedRow = INT_MAX;
 }

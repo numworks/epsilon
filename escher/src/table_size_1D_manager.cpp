@@ -285,11 +285,13 @@ KDCoordinate MemoizedRowHeightManager<N>::nonMemoizedCumulatedSizeFromIndex(int 
   return this->m_dataSource->nonMemoizedCumulatedHeightFromIndex(i);
 }
 
+template class MemoizedTableSize1DManager<1>;
 template class MemoizedTableSize1DManager<7>;
 template class MemoizedTableSize1DManager<10>;
 
 template class MemoizedColumnWidthManager<7>;
 
+template class MemoizedRowHeightManager<1>;
 template class MemoizedRowHeightManager<7>;
 template class MemoizedRowHeightManager<10>;
 

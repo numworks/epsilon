@@ -386,7 +386,7 @@ void ValuesController::clearSelectedColumn() {
 }
 
 void ValuesController::setClearPopUpContent() {
-  m_confirmPopUpController.setMessageWithPlaceholders(I18n::Message::ClearTableConfirmation);
+  m_confirmPopUpController.setMessageWithPlaceholders(I18n::Message::ClearTableConfirmation, "");
 }
 
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {

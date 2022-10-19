@@ -1,7 +1,7 @@
 #ifndef CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 #define CALCULATION_EDIT_EXPRESSION_CONTROLLER_H
 
-#include "expression_field.h"
+#include "expression_input_bar.h"
 #include "history_controller.h"
 #include "selectable_table_view.h"
 #include <apps/shared/layout_field_delegate.h>
@@ -51,14 +51,14 @@ private:
     ContentView(Escher::Responder * parentResponder, CalculationSelectableTableView * subview, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
     void reload();
     CalculationSelectableTableView * mainView() { return m_mainView; }
-    ExpressionField * expressionField() { return &m_expressionField; }
+    Escher::ExpressionField * expressionField() { return &m_expressionInputBar; }
 
   private:
     int numberOfSubviews() const override { return 2; }
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     CalculationSelectableTableView * m_mainView;
-    ExpressionField m_expressionField;
+    ExpressionInputBar m_expressionInputBar;
   };
 
   void reloadView();

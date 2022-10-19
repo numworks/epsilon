@@ -18,10 +18,10 @@ namespace Escher {
 class LayoutField : public WithBlinkingTextCursor<ScrollableView>, public ScrollViewDataSource, public EditableField {
   friend class ExpressionField;
 public:
-  LayoutField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate = nullptr, KDFont::Size font = KDFont::Size::Large) :
+  LayoutField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate = nullptr, KDFont::Size font = KDFont::Size::Large, float horizontalAlignment = KDContext::k_alignLeft, float verticalAlignment = KDContext::k_alignCenter) :
     WithBlinkingTextCursor<ScrollableView>(parentResponder, &m_contentView, this),
     EditableField(inputEventHandlerDelegate),
-    m_contentView(font),
+    m_contentView(font, horizontalAlignment, verticalAlignment),
     m_delegate(delegate)
   {}
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
@@ -72,7 +72,7 @@ private:
 
   class ContentView : public View {
   public:
-    ContentView(KDFont::Size font);
+    ContentView(KDFont::Size font, float horizontalAlignment, float verticalAlignment);
     bool isEditing() const { return m_isEditing; }
     // returns True if LayoutField should reload
     bool setEditing(bool isEditing);

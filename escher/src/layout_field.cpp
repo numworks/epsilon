@@ -14,10 +14,10 @@ using namespace Poincare;
 
 namespace Escher {
 
-LayoutField::ContentView::ContentView(KDFont::Size font) :
+LayoutField::ContentView::ContentView(KDFont::Size font, float horizontalAlignment, float verticalAlignment) :
     m_expressionView(&m_cursor,
-                     KDContext::k_alignLeft,
-                     KDContext::k_alignCenter,
+                     horizontalAlignment,
+                     verticalAlignment,
                      KDColorBlack,
                      KDColorWhite,
                      font),

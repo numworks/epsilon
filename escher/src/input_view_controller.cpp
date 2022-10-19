@@ -5,19 +5,19 @@
 
 namespace Escher {
 
-InputViewController::ExpressionFieldController::ExpressionFieldController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
+InputViewController::ExpressionInputBarController::ExpressionInputBarController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   ViewController(parentResponder),
-  m_expressionField(this, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
+  m_expressionInputBar(this, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
 {
 }
 
-void InputViewController::ExpressionFieldController::didBecomeFirstResponder() {
-  Container::activeApp()->setFirstResponder(&m_expressionField);
+void InputViewController::ExpressionInputBarController::didBecomeFirstResponder() {
+  Container::activeApp()->setFirstResponder(&m_expressionInputBar);
 }
 
 InputViewController::InputViewController(Responder * parentResponder, ViewController * child, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   ModalViewController(parentResponder, child),
-  m_expressionFieldController(this, this, this, this),
+  m_expressionInputBarController(this, this, this, this),
   m_successAction(Invocation(nullptr, nullptr)),
   m_failureAction(Invocation(nullptr, nullptr)),
   m_inputEventHandlerDelegate(inputEventHandlerDelegate),
@@ -29,16 +29,16 @@ InputViewController::InputViewController(Responder * parentResponder, ViewContro
 void InputViewController::edit(Ion::Events::Event event, void * context, Invocation::Action successAction, Invocation::Action failureAction) {
   m_successAction = Invocation(successAction, context);
   m_failureAction = Invocation(failureAction, context);
-  displayModalViewController(&m_expressionFieldController, 1.0f, 1.0f);
-  m_expressionFieldController.expressionField()->handleEvent(event);
+  displayModalViewController(&m_expressionInputBarController, 1.0f, 1.0f);
+  m_expressionInputBarController.expressionField()->handleEvent(event);
 }
 
 bool InputViewController::isEditing() {
-  return m_expressionFieldController.expressionField()->isEditing();
+  return m_expressionInputBarController.expressionField()->isEditing();
 }
 
 void InputViewController::abortEditionAndDismiss() {
-  m_expressionFieldController.expressionField()->setEditing(false);
+  m_expressionInputBarController.expressionField()->setEditing(false);
   dismissModal();
 }
 
@@ -87,7 +87,7 @@ bool InputViewController::layoutFieldDidAbortEditing(LayoutField * layoutField) 
 }
 
 void InputViewController::layoutFieldDidChangeSize(LayoutField * layoutField) {
-  if (m_expressionFieldController.expressionField()->inputViewHeightDidChange()) {
+  if (m_expressionInputBarController.expressionField()->inputViewHeightDidChange()) {
     /* Reload the whole view only if the ExpressionField's height did actually
      * change. */
     reloadModal();
@@ -97,7 +97,7 @@ void InputViewController::layoutFieldDidChangeSize(LayoutField * layoutField) {
      * to be relayouted.
      * We force the relayout because the frame stays the same but we need to
      * propagate a relayout to the content of the field scroll view. */
-    m_expressionFieldController.expressionField()->layoutSubviews(true);
+    m_expressionInputBarController.expressionField()->layoutSubviews(true);
   }
 }
 

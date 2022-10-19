@@ -53,6 +53,7 @@ void CobwebController::viewWillAppear() {
   setupZoom();
   m_step = 0;
   m_graphView.setSequence(sequence().pointer());
+  m_graphView.resetCachedStep();
   m_graphView.setStep(0);
   m_graphView.setStart(m_graphRange.xMin());
   m_graphView.setEnd(m_graphRange.xMax());

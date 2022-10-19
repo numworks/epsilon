@@ -3,7 +3,7 @@
 
 #include <apps/shared/sequence_store.h>
 #include <apps/shared/values_controller.h>
-#include "../sequence_title_cell.h"
+#include <apps/shared/expression_function_title_cell.h>
 #include "interval_parameter_controller.h"
 
 namespace Sequence {
@@ -76,7 +76,7 @@ private:
     assert (j >= 0 && j < abscissaTitleCellsCount());
     return &m_abscissaTitleCell;
   }
-  SequenceTitleCell * functionTitleCells(int j) override {
+  Shared::FunctionTitleCell * functionTitleCells(int j) override {
     assert(j >= 0 && j < k_maxNumberOfDisplayableSequences);
     return &m_sequenceTitleCells[j];
   }
@@ -88,7 +88,7 @@ private:
   int fillColumnName(int columnIndex, char * buffer) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
 
-  SequenceTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];
+  Shared::ExpressionFunctionTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
   Escher::EvenOddMessageTextCell m_abscissaTitleCell;
   Escher::EvenOddEditableTextCell m_abscissaCells[k_maxNumberOfDisplayableRows];

@@ -47,6 +47,7 @@ app_shared_src = $(addprefix apps/shared/,\
   editable_cell_table_view_controller.cpp \
   explicit_float_parameter_controller.cpp \
   expression_field_delegate_app.cpp \
+  expression_function_title_cell.cpp \
   expression_model_list_controller.cpp \
   float_parameter_controller.cpp \
   formula_template_menu_controller.cpp \

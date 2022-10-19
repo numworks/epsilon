@@ -1,4 +1,4 @@
-#include "expression_field.h"
+#include "expression_input_bar.h"
 #include <apps/i18n.h>
 #include <poincare/symbol.h>
 #include <poincare/horizontal_layout.h>
@@ -9,7 +9,7 @@ using namespace Poincare;
 
 namespace Calculation {
 
-bool ExpressionField::handleEvent(Ion::Events::Event event) {
+bool ExpressionInputBar::handleEvent(Ion::Events::Event event) {
   if (event != Ion::Events::Division && event.isKeyPress()) {
     m_divisionCycleWithAns = Poincare::TrinaryBoolean::Unknown;
   }
@@ -36,7 +36,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
       && isEditing()
       && fieldContainsSingleMinusSymbol()) {
     setText(Poincare::Symbol::k_ansAliases.mainAlias());
-    // The Minus symbol will be addded by ::ExpressionField::handleEvent
+    // The Minus symbol will be addded by ::ExpressionInputBar::handleEvent
   }
   if (event == Ion::Events::Division
       && isEditing()) {
@@ -46,10 +46,10 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
     }
     return handleDivision();
   }
-  return ::ExpressionField::handleEvent(event);
+  return ::ExpressionInputBar::handleEvent(event);
 }
 
-bool ExpressionField::fieldContainsSingleMinusSymbol() const {
+bool ExpressionInputBar::fieldContainsSingleMinusSymbol() const {
   if (editionIsInTextField()) {
     const char * inputBuffer = m_textField.draftTextBuffer();
     return (inputBuffer[0] == '-' && inputBuffer[1] == 0);
@@ -66,7 +66,7 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
   }
 }
 
-bool ExpressionField::handleDivision() {
+bool ExpressionInputBar::handleDivision() {
   assert(m_divisionCycleWithAns != Poincare::TrinaryBoolean::Unknown);
   bool mixedFractionsEnabled = Poincare::Preferences::sharedPreferences->mixedFractionsAreEnabled();
   bool editionIn1D = editionIsInTextField();
@@ -115,7 +115,7 @@ bool ExpressionField::handleDivision() {
      * is not the wanted behavior when pressing the Division key) */
     switch (m_currentStep) {
       case DivisionCycleStep::Start :
-        handled = ::ExpressionField::handleEvent(event);
+        handled = ::ExpressionInputBar::handleEvent(event);
         /* In 1D we always cycle
          * In 2D we cycle only if the default handleEvent created an empty fraction */
         if (editionIn1D) {
@@ -133,7 +133,7 @@ bool ExpressionField::handleDivision() {
         if (editionIn1D) {
           // 1D: NumeratorOfEmptyFraction -> MixedFraction
           m_currentStep = DivisionCycleStep::MixedFraction;
-          handled = ::ExpressionField::handleEvent(Ion::Events::Space); // TODO : OR handleEventWithText(" ");
+          handled = ::ExpressionInputBar::handleEvent(Ion::Events::Space); // TODO : OR handleEventWithText(" ");
           assert(handled);
           event = Ion::Events::Left;
         } else {
@@ -157,9 +157,9 @@ bool ExpressionField::handleDivision() {
         if (editionIn1D) {
           // 1D: MixedFraction -> DenominatorOfEmptyFraction
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
-          handled = ::ExpressionField::handleEvent(Ion::Events::Right); // TODO : OR m_textField.moveCursorRight(); but protected in TextInput
+          handled = ::ExpressionInputBar::handleEvent(Ion::Events::Right); // TODO : OR m_textField.moveCursorRight(); but protected in TextInput
           assert(handled);
-          handled = ::ExpressionField::handleEvent(Ion::Events::Backspace); // TODO : OR m_textField.removePreviousGlyph();
+          handled = ::ExpressionInputBar::handleEvent(Ion::Events::Backspace); // TODO : OR m_textField.removePreviousGlyph();
           assert(handled);
         } else {
           // 2D: MixedFraction -> NumeratorOfEmptyFraction
@@ -169,7 +169,7 @@ bool ExpressionField::handleDivision() {
         break;
     }
   }
-  return ::ExpressionField::handleEvent(event);
+  return ::ExpressionInputBar::handleEvent(event);
 }
 
 }

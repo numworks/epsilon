@@ -12,7 +12,7 @@ namespace Escher {
 
 class ExpressionField : public WithBlinkingTextCursor<Responder>, public View {
 public:
-  ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
+  ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate, float horizontalAlignment = KDContext::k_alignLeft, float verticalAlignment = KDContext::k_alignCenter);
 
   void setEditing(bool isEditing, bool reinitDraftBuffer = true);
   bool isEditing() const;
@@ -38,7 +38,6 @@ public:
   int numberOfSubviews() const override { return 1; }
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
   /* Responder */
@@ -46,17 +45,13 @@ public:
   void didBecomeFirstResponder() override;
 
 protected:
+  void layoutSubviewsInRect(KDRect rect, bool force);
   TextField m_textField;
   LayoutField m_layoutField;
 
 private:
   constexpr static int k_textFieldBufferSize = TextField::MaxBufferSize();
-  constexpr static KDCoordinate k_minimalHeight = 37;
-  constexpr static KDCoordinate k_maximalHeight = 0.6*Ion::Display::Height;
-  constexpr static KDCoordinate k_horizontalMargin = 5;
-  constexpr static KDCoordinate k_verticalMargin = 5;
-  constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
-  KDCoordinate inputViewHeight() const;
+  virtual KDCoordinate inputViewHeight() const;
   TextCursorView * textCursorView() override {
     return editionIsInTextField() ? m_textField.textCursorView() : m_layoutField.textCursorView();
   }

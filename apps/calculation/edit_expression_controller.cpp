@@ -13,7 +13,7 @@ namespace Calculation {
 EditExpressionController::ContentView::ContentView(Responder * parentResponder, CalculationSelectableTableView * subview, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate) :
   View(),
   m_mainView(subview),
-  m_expressionField(parentResponder, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
+  m_expressionInputBar(parentResponder, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
 {}
 
 View * EditExpressionController::ContentView::subviewAtIndex(int index) {
@@ -22,15 +22,15 @@ View * EditExpressionController::ContentView::subviewAtIndex(int index) {
     return m_mainView;
   }
   assert(index == 1);
-  return &m_expressionField;
+  return &m_expressionInputBar;
 }
 
 void EditExpressionController::ContentView::layoutSubviews(bool force) {
-  KDCoordinate inputViewFrameHeight = m_expressionField.minimalSizeForOptimalDisplay().height();
+  KDCoordinate inputViewFrameHeight = m_expressionInputBar.minimalSizeForOptimalDisplay().height();
   KDRect mainViewFrame(0, 0, bounds().width(), bounds().height() - inputViewFrameHeight);
   m_mainView->setFrame(mainViewFrame, force);
   KDRect inputViewFrame(0, bounds().height() - inputViewFrameHeight, bounds().width(), inputViewFrameHeight);
-  m_expressionField.setFrame(inputViewFrame, force);
+  m_expressionInputBar.setFrame(inputViewFrame, force);
 }
 
 void EditExpressionController::ContentView::reload() {

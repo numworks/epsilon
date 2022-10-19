@@ -7,13 +7,12 @@ using namespace Poincare;
 
 namespace Escher {
 
-constexpr KDCoordinate ExpressionField::k_maximalHeight;
-constexpr KDCoordinate ExpressionField::k_minimalHeight;
-
 ExpressionField::ExpressionField(Responder * parentResponder,
                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
                                  TextFieldDelegate * textFieldDelegate,
-                                 LayoutFieldDelegate * layoutFieldDelegate) :
+                                 LayoutFieldDelegate * layoutFieldDelegate,
+                                 float horizontalAlignment,
+                                 float verticalAlignment) :
     WithBlinkingTextCursor<Responder>(parentResponder),
     View(),
     m_textField(parentResponder,
@@ -23,17 +22,20 @@ ExpressionField::ExpressionField(Responder * parentResponder,
                 inputEventHandlerDelegate,
                 textFieldDelegate,
                 KDFont::Size::Large,
-                KDContext::k_alignLeft,
-                KDContext::k_alignCenter,
+                horizontalAlignment,
+                verticalAlignment,
                 KDColorBlack,
                 KDColorWhite),
-    m_layoutField(parentResponder, inputEventHandlerDelegate, layoutFieldDelegate),
+    m_layoutField(parentResponder,
+                  inputEventHandlerDelegate,
+                  layoutFieldDelegate,
+                  KDFont::Size::Large,
+                  horizontalAlignment,
+                  verticalAlignment),
     m_inputViewMemoizedHeight(0) {
   // Initialize text field
-  m_textField.setMargins(0, k_horizontalMargin, 0, k_horizontalMargin);
   m_textField.setBackgroundColor(KDColorWhite);
   // Initialize layout field
-  m_layoutField.setMargins(k_verticalMargin, k_horizontalMargin, k_verticalMargin, k_horizontalMargin);
   m_layoutField.setBackgroundColor(KDColorWhite);
 }
 
@@ -84,20 +86,18 @@ View * ExpressionField::subviewAtIndex(int index) {
   return &m_layoutField;
 }
 
-void ExpressionField::layoutSubviews(bool force) {
-  KDRect inputViewFrame(0, k_separatorThickness, bounds().width(), bounds().height() - k_separatorThickness);
+void ExpressionField::layoutSubviewsInRect(KDRect rect, bool force) {
   if (editionIsInTextField()) {
-    m_textField.setFrame(inputViewFrame, force);
+    m_textField.setFrame(rect, force);
     m_layoutField.setFrame(KDRectZero, force);
     return;
   }
-  m_layoutField.setFrame(inputViewFrame, force);
+  m_layoutField.setFrame(rect, force);
   m_textField.setFrame(KDRectZero, force);
 }
 
-void ExpressionField::drawRect(KDContext * ctx, KDRect rect) const {
-  // Draw the separator
-  ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GrayMiddle);
+void ExpressionField::layoutSubviews(bool force) {
+  layoutSubviewsInRect(bounds(), force);
 }
 
 bool ExpressionField::handleEvent(Ion::Events::Event event) {
@@ -110,7 +110,8 @@ void ExpressionField::didBecomeFirstResponder() {
 }
 
 KDSize ExpressionField::minimalSizeForOptimalDisplay() const {
-  return KDSize(0, inputViewHeight());
+  // return KDSize(1000, inputViewHeight());
+  return KDSize(editionIsInTextField() ? m_textField.minimalSizeForOptimalDisplay().width() : m_layoutField.minimalSizeForOptimalDisplay().width(), inputViewHeight());
 }
 
 bool ExpressionField::editionIsInTextField() const {
@@ -144,10 +145,7 @@ bool ExpressionField::handleEventWithText(const char * text, bool indentation, b
 }
 
 KDCoordinate ExpressionField::inputViewHeight() const {
-  return k_separatorThickness
-    + (editionIsInTextField() ? k_minimalHeight :
-        std::min(k_maximalHeight,
-          std::max(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
+  return editionIsInTextField() ?  m_textField.minimalSizeForOptimalDisplay().height() : m_layoutField.minimalSizeForOptimalDisplay().height();
 }
 
 size_t ExpressionField::dumpContent(char * buffer, size_t bufferSize, int * cursorOffset, int * position) {

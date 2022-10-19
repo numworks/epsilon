@@ -33,7 +33,7 @@ public:
   };
 
   void setMarginDelegate(MarginDelegate * delegate) { m_marginDelegate = delegate; }
-
+  void resetDataSourceSizeMemoization() { m_prefaceDataSource.resetMemoization(); }
 protected:
   class IntermediaryDataSource : public Escher::TableViewDataSource, public Escher::ScrollViewDataSource {
   public:
@@ -69,7 +69,7 @@ protected:
 
   class PrefaceDataSource : public IntermediaryDataSource {
   public:
-    PrefaceDataSource(int prefaceRow, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceRow(prefaceRow) {}
+    PrefaceDataSource(int prefaceRow, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceRow(prefaceRow), m_rowHeigthManager(this) {}
 
     int prefaceRow() const { return m_prefaceRow; }
     bool prefaceFullyInFrame(int offset);
@@ -81,7 +81,10 @@ protected:
 
     int relativeRow(int j) override { assert(j == 0 || j == 1); return m_prefaceRow + j; }
 
+    Escher::TableSize1DManager * rowHeightManager() override { return &m_rowHeigthManager; }
+
     const int m_prefaceRow;
+    Escher::MemoizedOneRowHeightManager m_rowHeigthManager;
   };
 
   void layoutSubviewsInRect(KDRect rect, bool force);

@@ -73,6 +73,7 @@ KDSize ValuesController::CellSizeWithLayout(Layout l) {
 
 KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
   KDCoordinate columnWidth;
+  KDCoordinate maxColumnWidth = MaxColumnWidth();
   int tempI = i;
   ContinuousFunction::SymbolType symbol = symbolTypeAtColumn(&tempI);
   if (tempI > 0 && symbol == ContinuousFunction::SymbolType::T) {
@@ -81,7 +82,9 @@ KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
   } else {
     columnWidth = Shared::ValuesController::defaultColumnWidth();
   }
-  KDCoordinate maxColumnWidth = MaxColumnWidth();
+  if (typeAtLocation(i, 0) == k_functionTitleCellType) {
+    columnWidth = std::min(maxColumnWidth, std::max(CellSizeWithLayout(functionTitleLayout(i)).width(), columnWidth));
+  }
   if (!m_exactValuesAreActivated) {
     // Width is constant when displaying approximations
     return columnWidth;
@@ -103,11 +106,18 @@ KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
 KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
   KDCoordinate rowHeight = Shared::ValuesController::defaultRowHeight();
   KDCoordinate maxRowHeight = MaxRowHeight();
+  int nColumns = numberOfColumns();
   if (j == 0) {
-    // Title cell has constant height
+    for (int i = 0; i < nColumns; i++) {
+      if (typeAtLocation(i, 0) == k_functionTitleCellType) {
+        rowHeight = std::max(CellSizeWithLayout(functionTitleLayout(i)).height(), rowHeight);
+      }
+      if (rowHeight > maxRowHeight) {
+        return maxRowHeight;
+      }
+    }
     return rowHeight;
   }
-  int nColumns = numberOfColumns();
   for (int i = 0; i < nColumns; i++) {
     int tempI = i;
     ContinuousFunction::SymbolType symbol = symbolTypeAtColumn(&tempI);

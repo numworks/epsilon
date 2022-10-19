@@ -52,9 +52,9 @@ void ValuesController::viewWillAppear() {
 }
 
 void ValuesController::viewDidDisappear() {
-  m_numberOfColumnsNeedUpdate = true;
   resetLayoutMemoization();
   EditableCellTableViewController::viewDidDisappear();
+  m_numberOfColumnsNeedUpdate = true;
 }
 
 // Responder

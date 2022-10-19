@@ -2,7 +2,7 @@
 #define GRAPH_VALUES_CONTROLLER_H
 
 #include "../continuous_function_store.h"
-#include <apps/shared/buffer_function_title_cell.h>
+#include <apps/shared/expression_function_title_cell.h>
 #include <apps/shared/interval_parameter_controller.h>
 #include <apps/shared/scrollable_two_expressions_cell.h>
 #include <apps/shared/store_cell.h>
@@ -118,13 +118,14 @@ private:
   /* The paramater i should be the column index and symbolTypeAtColumn changes
    * it to be the relative column index within the sub table. */
 
-  //Column name and title cells
+  // Column name and title cells
+  Poincare::Layout functionTitleLayout(int columnIndex);
   int fillColumnName(int columnIndex, char * buffer) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
 
   // Cells & View
-  Shared::BufferFunctionTitleCell * functionTitleCells(int j) override;
+  Shared::ExpressionFunctionTitleCell * functionTitleCells(int j) override;
   Escher::EvenOddExpressionCell * valueCells(int j) override;
   int abscissaCellsCount() const override { return k_maxNumberOfDisplayableAbscissaCells; }
   Escher::EvenOddEditableTextCell * abscissaCells(int j) override { assert (j >= 0 && j < k_maxNumberOfDisplayableAbscissaCells); return &m_abscissaCells[j]; }
@@ -135,7 +136,7 @@ private:
   void activateExactValues(bool activate);
 
   mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];
-  Shared::BufferFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableFunctions];
+  Shared::ExpressionFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableFunctions];
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
   AbscissaTitleCell m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
   Shared::StoreCell m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];

@@ -76,7 +76,7 @@ private:
     assert (j >= 0 && j < abscissaTitleCellsCount());
     return &m_abscissaTitleCell;
   }
-  Shared::FunctionTitleCell * functionTitleCells(int j) override {
+  Shared::ExpressionFunctionTitleCell * functionTitleCells(int j) override {
     assert(j >= 0 && j < k_maxNumberOfDisplayableSequences);
     return &m_sequenceTitleCells[j];
   }

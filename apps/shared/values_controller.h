@@ -3,7 +3,7 @@
 
 #include "editable_cell_table_view_controller.h"
 #include "function_store.h"
-#include "function_title_cell.h"
+#include "expression_function_title_cell.h"
 #include "interval.h"
 #include "interval_parameter_controller.h"
 #include "prefaced_table_view.h"
@@ -139,7 +139,7 @@ private:
   virtual I18n::Message valuesParameterMessageAtColumn(int columnIndex) const = 0;
   virtual int maxNumberOfCells() = 0;
   virtual int maxNumberOfFunctions() = 0;
-  virtual FunctionTitleCell * functionTitleCells(int j) = 0;
+  virtual ExpressionFunctionTitleCell * functionTitleCells(int j) = 0;
   virtual Escher::EvenOddExpressionCell * valueCells(int j) = 0;
   virtual int abscissaCellsCount() const = 0;
   virtual Escher::EvenOddEditableTextCell * abscissaCells(int j) = 0;

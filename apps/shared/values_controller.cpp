@@ -321,6 +321,12 @@ void ValuesController::resetLayoutMemoization() {
     assert(valueCell);
     valueCell->setLayout(Layout());
   }
+  const int numberOfFunctionRows = numberOfValuesColumns();
+  for (int i = 0; i < numberOfFunctionRows; i++) {
+    ExpressionFunctionTitleCell * titleCell = functionTitleCells(i);
+    assert(titleCell);
+    titleCell->setLayout(Layout());
+  }
   resetMemoization(); // reset sizes memoization
   m_firstMemoizedColumn = INT_MAX;
   m_firstMemoizedRow = INT_MAX;

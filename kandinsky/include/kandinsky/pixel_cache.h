@@ -6,19 +6,18 @@
 #include <kandinsky/rect.h>
 #include "measuring_context.h"
 
-template <unsigned Size>
-class KDPixelCache {
+class KDAbstractPixelCache {
 public:
-  KDPixelCache() : m_rect(KDRectZero) {}
+  KDAbstractPixelCache() : m_rect(KDRectZero) {}
 
   void save(KDContext * ctx, KDRect rect) {
     assert(rect.width() * rect.height() <= Size);
-    ctx->getPixels(rect, m_buffer);
+    ctx->getPixels(rect, buffer());
     m_rect = rect;
   }
 
   void restore(KDContext * ctx) {
-    ctx->fillRectWithPixels(m_rect, m_buffer, m_buffer);
+    ctx->fillRectWithPixels(m_rect, buffer(), buffer());
     m_rect = KDRectZero;
   }
 
@@ -36,8 +35,19 @@ public:
     save(ctx, measuringContext.writtenRect());
     function(ctx);
   }
+
 private:
+  virtual KDColor * buffer() = 0;
   KDRect m_rect;
+};
+
+template <unsigned Size>
+class KDPixelCache : public KDAbstractPixelCache {
+public:
+  using KDAbstractPixelCache::KDAbstractPixelCache;
+
+private:
+  KDColor * buffer() override { return m_buffer; }
   KDColor m_buffer[Size];
 };
 

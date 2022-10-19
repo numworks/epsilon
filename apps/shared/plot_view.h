@@ -36,7 +36,7 @@ public:
   AbstractPlotView(CurveViewRange * range) : m_range(range), m_stampDashIndex(k_stampIndexNoDash) {}
 
   // Escher::View
-  void drawRect(KDContext * ctx, KDRect rect) const;
+  void drawRect(KDContext * ctx, KDRect rect) const override;
 
   virtual void reload(bool resetInterruption = false, bool force = false);
   virtual void resetInterruption() {}
@@ -75,6 +75,7 @@ public:
   void straightJoinDots(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> pixelA, Poincare::Coordinate2D<float> pixelB, KDColor color, bool thick) const;
   void stamp(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> p, KDColor color, bool thick) const;
   bool pointsInSameStamp(Poincare::Coordinate2D<float> p1, Poincare::Coordinate2D<float> p2, bool thick) const;
+  virtual KDColor backgroundColor() const { return k_backgroundColor; }
 
 private:
   constexpr static int8_t k_stampDashSize = 5;
@@ -82,11 +83,10 @@ private:
   constexpr static KDCoordinate k_tickHalfLength = 2;
 
   // Escher::View
-  int numberOfSubviews() const { return (bannerView() != nullptr) + (cursorView() != nullptr); }
-  Escher::View * subviewAtIndex(int i);
-  void layoutSubviews(bool force = false);
+  int numberOfSubviews() const override { return (bannerView() != nullptr) + (cursorView() != nullptr); }
+  Escher::View * subviewAtIndex(int i) override;
+  void layoutSubviews(bool force = false) override;
 
-  virtual KDColor backgroundColor() const { return k_backgroundColor; }
   virtual void drawBackground(KDContext * ctx, KDRect rect) const { ctx->fillRect(rect, backgroundColor()); }
   virtual void drawAxesAndGrid(KDContext * ctx, KDRect rect) const = 0;
   virtual void reloadAxes() = 0;

@@ -9,9 +9,6 @@
 namespace Sequence {
 
 class CobwebPlotPolicy : public Shared::PlotPolicy::WithCurves {
-public:
-  void resetCachedStep() { m_cachedStep = -2; };
-
 protected:
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
 
@@ -19,6 +16,7 @@ protected:
   int m_step;
   float m_start;
   float m_end;
+  mutable int m_cachedStep;
 
 private:
   constexpr static int k_dashSize = 4;
@@ -28,14 +26,19 @@ private:
   constexpr static int k_textMaxLength = 5; // u(99)
   constexpr static uint8_t k_curveFadeRatio = 100;
   // Cache to store parts of the drawing to be removed at the next step
-  mutable int m_cachedStep;
   mutable float m_x, m_y;
   mutable KDColor m_dotBuffer[k_diameter * k_diameter];
   mutable KDColor m_lineBuffer[Ion::Display::Width * k_thickness];
   mutable KDColor m_textBuffer[KDFont::GlyphHeight(k_font) * KDFont::GlyphWidth(k_font) * k_textMaxLength];
 };
 
-class CobwebGraphView : public Shared::PlotView<Shared::PlotPolicy::TwoLabeledAxes, CobwebPlotPolicy, Shared::PlotPolicy::WithBanner, Shared::PlotPolicy::WithCursor> {
+class CobwebAxesPolicy : public Shared::PlotPolicy::TwoLabeledAxes {
+public:
+  void drawAxesAndGrid(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
+};
+
+class CobwebGraphView : public Shared::PlotView<CobwebAxesPolicy, CobwebPlotPolicy, Shared::PlotPolicy::WithBanner, Shared::PlotPolicy::WithCursor> {
+  friend CobwebAxesPolicy;
 public:
   CobwebGraphView(Shared::InteractiveCurveViewRange * graphRange,
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView);
@@ -43,6 +46,10 @@ public:
   void setStep(int step) { m_step = step; }
   void setStart(float start) { m_start = start; }
   void setEnd(float end) { m_end = end; }
+  void resetCachedStep() { m_cachedStep = -2; };
+private:
+  bool update() const { return m_cachedStep == m_step - 1; }
+  void drawBackground(KDContext * ctx, KDRect rect) const override;
 };
 
 }

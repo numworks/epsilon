@@ -36,7 +36,6 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
     ctx->fillRectWithPixels(lineRect, m_lineBuffer, m_lineBuffer);
     KDRect textRect(px + plotView->k_labelMargin, py0 - plotView->k_labelMargin - KDFont::GlyphHeight(k_font), KDFont::GlyphWidth(k_font) * k_textMaxLength, KDFont::GlyphHeight(k_font));
     ctx->fillRectWithPixels(textRect, m_textBuffer, m_textBuffer);
-  } else {
   }
   constexpr int bufferSize = k_textMaxLength + 1;
   char name[bufferSize] = {};
@@ -61,9 +60,9 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
     plot.draw(plotView, ctx, rect);
     plotView->drawSegment(ctx, rect, {m_start, m_start}, {m_end, m_end}, fadedColor, true);
   }
-  int rank = m_sequence->initialRank();
-  float x = m_sequence->evaluateXYAtParameter(static_cast<float>(rank), context).x2();
-  float y = 0.f;
+  int rank = m_sequence->initialRank() + (update ? m_cachedStep : 0);
+  float x = update ? m_x : m_sequence->evaluateXYAtParameter(static_cast<float>(rank), context).x2();
+  float y = update ? m_y : 0.f;
   float uOfX = m_sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
   /* We need to detect bottom-right corners made by a vertical and an horizontal
    * segment : they can happen in two cases.
@@ -110,6 +109,14 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
   plotView->drawLabel(ctx, rect, name, {x, 0.f}, AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::After, Escher::Palette::GrayDark);
 }
 
+void CobwebAxesPolicy::drawAxesAndGrid(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+  const CobwebGraphView * cobweb = static_cast<const CobwebGraphView *>(plotView);
+  if (cobweb->update()) {
+    return;
+  }
+  Shared::PlotPolicy::TwoLabeledAxes::drawAxesAndGrid(cobweb, ctx, rect);
+}
+
 CobwebGraphView::CobwebGraphView(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, BannerView * bannerView, CursorView * cursorView) :
   PlotView(graphRange)
 {
@@ -119,4 +126,12 @@ CobwebGraphView::CobwebGraphView(InteractiveCurveViewRange * graphRange, CurveVi
   m_cursor = cursor;
   m_cursorView = cursorView;
 }
+
+void CobwebGraphView::drawBackground(KDContext *ctx, KDRect rect) const {
+  if (update()) {
+    return;
+  }
+  ctx->fillRect(rect, backgroundColor());
+}
+
 }

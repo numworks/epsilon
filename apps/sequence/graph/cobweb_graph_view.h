@@ -22,7 +22,7 @@ private:
   constexpr static int k_thickness = 2;
   constexpr static int k_diameter = Shared::Dots::MediumDotDiameter;
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
-  constexpr static int k_textMaxLength = 5; // u(99)
+  constexpr static int k_textMaxLength = sizeof("u(99)");
   constexpr static uint8_t k_curveFadeRatio = 100;
   // Cache to store parts of the drawing to be removed at the next step
   mutable float m_x, m_y;

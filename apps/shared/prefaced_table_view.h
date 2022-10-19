@@ -11,9 +11,14 @@
 
 namespace Shared {
 
+class PrefaceTableViewDelegate {
+  public:
+    virtual KDCoordinate maxPrefaceHeight() const = 0;
+};
+
 class PrefacedTableView : public Escher::View, public Escher::Responder, public Escher::SelectableTableViewDelegate {
 public:
-  PrefacedTableView(int prefaceRow, Escher::Responder * parentResponder, Escher::SelectableTableView * mainTableView, Escher::TableViewDataSource * cellsDataSource, Escher::SelectableTableViewDelegate * delegate = nullptr);
+  PrefacedTableView(int prefaceRow, Escher::Responder * parentResponder, Escher::SelectableTableView * mainTableView, Escher::TableViewDataSource * cellsDataSource, Escher::SelectableTableViewDelegate * delegate = nullptr, PrefaceTableViewDelegate * prefaceTableViewDelegate = nullptr);
 
   // Responder
   void didBecomeFirstResponder() override { Escher::Container::activeApp()->setFirstResponder(m_mainTableView); }
@@ -101,6 +106,7 @@ private:
   void layoutSubviews(bool force = false) override;
 
   Escher::SelectableTableViewDelegate * m_mainTableDelegate;
+  PrefaceTableViewDelegate * m_prefaceDelegate;
   KDCoordinate m_storedMargin;
 };
 

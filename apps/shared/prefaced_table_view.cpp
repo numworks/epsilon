@@ -4,13 +4,14 @@ using namespace Escher;
 
 namespace Shared {
 
-  PrefacedTableView::PrefacedTableView(int prefaceRow, Responder * parentResponder, SelectableTableView * mainTableView, TableViewDataSource * cellsDataSource, SelectableTableViewDelegate * delegate) :
+  PrefacedTableView::PrefacedTableView(int prefaceRow, Responder * parentResponder, SelectableTableView * mainTableView, TableViewDataSource * cellsDataSource, SelectableTableViewDelegate * delegate, PrefaceTableViewDelegate * prefaceTableViewDelegate) :
   Escher::Responder(parentResponder),
   m_prefaceDataSource(prefaceRow, cellsDataSource),
   m_prefaceView(&m_prefaceDataSource, &m_prefaceDataSource),
   m_mainTableView(mainTableView),
   m_marginDelegate(nullptr),
   m_mainTableDelegate(delegate),
+  m_prefaceDelegate(prefaceTableViewDelegate),
   m_storedMargin(0)
 {
   m_mainTableView->setParentResponder(parentResponder);
@@ -57,8 +58,9 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(Escher::Selectab
 }
 
 void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
-  bool hidePreface = m_prefaceDataSource.prefaceFullyInFrame(m_mainTableView->contentOffset().y()) || m_mainTableView->selectedRow() == -1;
   KDCoordinate prefaceHeight = m_prefaceView.minimalSizeForOptimalDisplay().height();
+  bool prefaceIsTooLarge = m_prefaceDelegate && prefaceHeight > m_prefaceDelegate->maxPrefaceHeight();
+  bool hidePreface = prefaceIsTooLarge || m_prefaceDataSource.prefaceFullyInFrame(m_mainTableView->contentOffset().y()) || m_mainTableView->selectedRow() == -1;
   ScrollViewVerticalBar * verticalBar = static_cast<TableView::BarDecorator*>(m_mainTableView->decorator())->verticalBar();
 
   if (hidePreface) {

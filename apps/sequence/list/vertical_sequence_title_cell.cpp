@@ -4,7 +4,9 @@
 
 namespace Sequence {
 
-VerticalSequenceTitleCell::VerticalSequenceTitleCell() : SequenceTitleCell(k_font) {
+VerticalSequenceTitleCell::VerticalSequenceTitleCell() :
+  Shared::ExpressionFunctionTitleCell(k_font)
+{
   /* We do not care here about the vertical alignment, it will be set properly
    * in layoutSubviews */
   m_titleTextView.setAlignment(k_horizontalAlignment, 0.0f);
@@ -27,7 +29,7 @@ KDRect VerticalSequenceTitleCell::subviewFrame() const {
 
 void VerticalSequenceTitleCell::layoutSubviews(bool force) {
   m_titleTextView.setAlignment(k_horizontalAlignment, verticalAlignment());
-  SequenceTitleCell::layoutSubviews(force);
+  Shared::ExpressionFunctionTitleCell::layoutSubviews(force);
 }
 
 float VerticalSequenceTitleCell::verticalAlignment() const {

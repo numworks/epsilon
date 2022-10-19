@@ -41,7 +41,7 @@ int ValuesController::fillColumnName(int columnIndex, char * buffer) {
 
 void ValuesController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   if (typeAtLocation(columnIndex,0) == k_functionTitleCellType) {
-    SequenceTitleCell * myCell = static_cast<SequenceTitleCell *>(cell);
+    Shared::ExpressionFunctionTitleCell * myCell = static_cast<Shared::ExpressionFunctionTitleCell *>(cell);
     Shared::Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(columnIndex));
     myCell->setLayout(sequence->nameLayout());
     return;

@@ -1,11 +1,11 @@
 #ifndef APPS_SEQUENCE_VERTICAL_SEQUENCE_TITLE_CELL_H
 #define APPS_SEQUENCE_VERTICAL_SEQUENCE_TITLE_CELL_H
 
-#include "../sequence_title_cell.h"
+#include <apps/shared/expression_function_title_cell.h>
 
 namespace Sequence {
 
-class VerticalSequenceTitleCell : public SequenceTitleCell {
+class VerticalSequenceTitleCell : public Shared::ExpressionFunctionTitleCell {
 public:
   constexpr static KDFont::Size k_font = KDFont::Size::Large;
 

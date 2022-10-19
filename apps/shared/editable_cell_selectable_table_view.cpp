@@ -24,7 +24,7 @@ bool EditableCellSelectableTableView::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Right) {
     return selectNonHiddenCellAtClippedLocation(selectedColumn() + step, selectedRow());
   }
-  return false;
+  return SelectableTableView::handleEvent(event);
 }
 
 bool EditableCellSelectableTableView::selectNonHiddenCellAtClippedLocation(int i, int j) {

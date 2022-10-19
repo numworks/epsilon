@@ -18,7 +18,7 @@ namespace Shared {
 
 EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder) :
   TabTableController(parentResponder),
-  m_prefacedView(0, this, &m_selectableTableView, this),
+  m_prefacedView(0, this, &m_selectableTableView, this, nullptr, this),
   m_selectableTableView(this, this, this, this, &m_prefacedView)
 {
   m_prefacedView.setBackgroundColor(Palette::WallScreenDark);

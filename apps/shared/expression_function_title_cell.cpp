@@ -9,9 +9,7 @@ namespace Shared {
 ExpressionFunctionTitleCell::ExpressionFunctionTitleCell(KDFont::Size font) :
   FunctionTitleCell(),
   m_titleTextView(k_alignment, k_alignment, KDColorBlack, KDColorWhite, font)
-{
-  m_titleTextView.setRightMargin(3);
-}
+{}
 
 void ExpressionFunctionTitleCell::setHighlighted(bool highlight) {
   EvenOddCell::setHighlighted(highlight);

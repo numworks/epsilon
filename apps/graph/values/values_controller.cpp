@@ -50,9 +50,6 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   m_heightManager(this),
   m_exactValuesAreActivated(false)
 {
-  for (int i = 0; i < k_maxNumberOfDisplayableFunctions; i++) {
-    m_functionTitleCells[i].setFont(k_cellFont);
-  }
   initValueCells();
   m_exactValuesButton.setState(m_exactValuesAreActivated);
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
@@ -162,32 +159,40 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   Shared::ValuesController::willDisplayCellAtLocation(cell, i, j);
 }
 
+Layout ValuesController::functionTitleLayout(int columnIndex) {
+  assert(typeAtLocation(columnIndex, 0) == k_functionTitleCellType);
+  constexpr size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
+  char buffer[bufferNameSize];
+  bool isDerivative = false;
+  Ion::Storage::Record record = recordAtColumn(columnIndex, &isDerivative);
+  Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
+  if (isDerivative) {
+    function->derivativeNameWithArgument(buffer, bufferNameSize);
+    return StringLayout::Builder(buffer);
+  }
+  if (function->isNamed()) {
+    function->nameWithArgument(buffer, bufferNameSize);
+    return StringLayout::Builder(buffer);
+  }
+  return PoincareHelpers::CreateLayout(function->originalEquation(), textFieldDelegateApp()->localContext());
+}
+
+
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {
   if (typeAtLocation(columnIndex, 0) == k_functionTitleCellType) {
-    const size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
-    bool isDerivative = false;
-    Ion::Storage::Record record = recordAtColumn(columnIndex, &isDerivative);
-    Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
-    if (isDerivative) {
-      return function->derivativeNameWithArgument(buffer, bufferNameSize);
-    } else {
-      if (function->isNamed()) {
-        return function->nameWithArgument(buffer, bufferNameSize);
-      } else {
-        int size = PoincareHelpers::Serialize(function->originalEquation(), buffer, bufferNameSize, Preferences::VeryShortNumberOfSignificantDigits);
-        // Serialization may have introduced system parentheses.
-        SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer, bufferNameSize - 1);
-        return size;
-      }
-    }
+    constexpr size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
+    int size = functionTitleLayout(columnIndex).serializeParsedExpression(buffer, bufferNameSize, textFieldDelegateApp()->localContext());
+    // Serialization may have introduced system parentheses.
+    SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer, bufferNameSize - 1);
+    return size;
   }
   return Shared::ValuesController::fillColumnName(columnIndex, buffer);
 }
 
 void ValuesController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   if (typeAtLocation(columnIndex,0) == k_functionTitleCellType) {
-    BufferFunctionTitleCell * myTitleCell = static_cast<BufferFunctionTitleCell *>(cell);
-    fillColumnName(columnIndex, const_cast<char *>(myTitleCell->text()));
+    ExpressionFunctionTitleCell * titleCell = static_cast<ExpressionFunctionTitleCell *>(cell);
+    titleCell->setLayout(functionTitleLayout(columnIndex));
     return;
   }
   Shared::ValuesController::setTitleCellText(cell, columnIndex);
@@ -415,7 +420,7 @@ I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) 
 }
 
 // Cells & View
-Shared::BufferFunctionTitleCell * ValuesController::functionTitleCells(int j) {
+Shared::ExpressionFunctionTitleCell * ValuesController::functionTitleCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableFunctions);
   return &m_functionTitleCells[j];
 }

@@ -30,6 +30,10 @@ constexpr static uint32_t k_magic = 0xDEC0BEBA;
 constexpr int k_numberOfAppInfoElements = 8;
 constexpr uint32_t k_minAppSize = sizeof(uint32_t) * k_numberOfAppInfoElements;
 
+bool appAtAddress(uint8_t * address) {
+  return *reinterpret_cast<uint32_t *>(address) == k_magic;
+}
+
 App::App(uint8_t * a) : m_startAddress(a) {
   assert(*reinterpret_cast<uint32_t *>(m_startAddress) == k_magic);
 }
@@ -94,10 +98,6 @@ void * App::entryPoint() const {
   return reinterpret_cast<void *>(reinterpret_cast<uint32_t>(addressAtIndexInAppInfo(5)) | 0x1);
 }
 
-bool App::appAtAddress(uint8_t * address) {
-  return *reinterpret_cast<uint32_t *>(address) == k_magic;
-}
-
 uint8_t * nextSectorAlignedAddress(uint8_t * address) {
   // Trick to return address if it was already aligned
   address -= 1;
@@ -112,7 +112,7 @@ AppIterator & AppIterator::operator++() {
   m_currentAddress += sizeOfCurrentApp;
   // Find the next address aligned on external apps sector size
   m_currentAddress = nextSectorAlignedAddress(m_currentAddress);
-  if (m_currentAddress < &_external_apps_flash_start || m_currentAddress + k_minAppSize > &_external_apps_flash_end || !App::appAtAddress(m_currentAddress)) {
+  if (m_currentAddress < &_external_apps_flash_start || m_currentAddress + k_minAppSize > &_external_apps_flash_end || !appAtAddress(m_currentAddress)) {
     m_currentAddress = nullptr;
   }
   return *this;
@@ -123,7 +123,7 @@ bool s_externalAppsVisible = false; // After reset, external apps are not visibl
 AppIterator Apps::begin() const {
   uint8_t * storageStart = &_external_apps_flash_start;
   assert(nextSectorAlignedAddress(storageStart) == storageStart);
-  if (!s_externalAppsVisible || !App::appAtAddress(storageStart)) {
+  if (!s_externalAppsVisible || !appAtAddress(storageStart)) {
     return end();
   }
   return AppIterator(storageStart);

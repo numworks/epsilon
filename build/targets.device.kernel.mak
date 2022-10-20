@@ -1,3 +1,8 @@
+kernel_target_simple_variants = $(subst .epsilon,,$(addprefix kernel.,$(epsilon_target_variants)))
+kernel_target_variants = $(addsuffix .A,$(kernel_target_simple_variants)) $(addsuffix .B,$(kernel_target_simple_variants))
+
+HANDY_TARGETS += $(kernel_target_variants)
+
 kernel_src = $(ion_device_kernel_src) $(liba_kernel_src)
 
 ASSERTIONS = $(DEVELOPMENT)
@@ -11,24 +16,27 @@ endif
 # Ensure kandinsky fonts are generated first
 $(call object_for,$(kernel_src)): $(kandinsky_deps)
 
+kernel_targets = $(addprefix $(BUILD_DIR)/,$(addsuffix .$(EXE),$(kernel_target_variants)))
+
 KERNEL_LDFLAGS = -Lion/src/$(PLATFORM)/epsilon-core/device/kernel/flash
 KERNEL_LDDEPS += ion/src/$(PLATFORM)/epsilon-core/device/kernel/flash/kernel_shared.ld
-
-HANDY_TARGETS += kernel.A kernel.B
 
 # stack protector
 SFLAGS += -fstack-protector-strong
 
-kernel_obj = $(call flavored_object_for,$(kernel_src),$(MODEL) $(THIRD_PARTY_FLAVOR) $(KERNEL_ASSERT_FLAVOR))
+define rule_for_flavored_kernel
+$(warning $$(call flavored_object_for,$$(kernel_src), $(MODEL) $(KERNEL_ASSERT_FLAVOR) $(patsubst $(BUILD_DIR)/kernel%.$(EXE),%,$(1))))
+$(1): $$(call flavored_object_for,$$(kernel_src), $(MODEL) $(KERNEL_ASSERT_FLAVOR) $(patsubst $(BUILD_DIR)/kernel%.$(EXE),%,$(1)))
 ifeq ($(EMBED_EXTRA_DATA),1)
-kernel_obj += $(BUILD_DIR)/bootloader.o $(BUILD_DIR)/trampoline.o
+$(1): $(BUILD_DIR)/trampoline.o $(BUILD_DIR)/bootloader.o
 endif
+endef
 
-$(BUILD_DIR)/kernel.A.$(EXE): $(kernel_obj)
-$(BUILD_DIR)/kernel.A.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/epsilon-core/device/kernel/flash/kernel_A.ld
+$(foreach target,$(kernel_targets),$(eval $(call rule_for_flavored_kernel,$(target))))
 
-$(BUILD_DIR)/kernel.B.$(EXE): $(kernel_obj)
-$(BUILD_DIR)/kernel.B.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/epsilon-core/device/kernel/flash/kernel_B.ld
+$(kernel_targets): LDFLAGS += $(KERNEL_LDFLAGS)
 
-$(BUILD_DIR)/kernel.%.$(EXE): LDFLAGS += $(KERNEL_LDFLAGS)
-$(BUILD_DIR)/kernel.%.$(EXE): LDDEPS += $(KERNEL_LDDEPS) $(LDSCRIPT)
+$(filter %.A.$(EXE),$(kernel_targets)): LDSCRIPT = ion/src/$(PLATFORM)/epsilon-core/device/kernel/flash/kernel_A.ld
+$(filter %.B.$(EXE),$(kernel_targets)): LDSCRIPT = ion/src/$(PLATFORM)/epsilon-core/device/kernel/flash/kernel_B.ld
+
+$(kernel_targets): LDDEPS += $(KERNEL_LDDEPS) $(LDSCRIPT)

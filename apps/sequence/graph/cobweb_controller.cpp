@@ -72,7 +72,6 @@ void CobwebController::setupZoom() {
     xMin = std::min(xMin, value);
     xMax = std::max(xMax, value);
   }
-  // bottomRatio takes the part hidden by the banner into account
   constexpr float bottomRatio = 0.14;
   constexpr float margin = 0.10;
   float length = xMax-xMin;
@@ -113,8 +112,9 @@ void CobwebController::reloadBannerView() {
   char buffer[bufferSize];
   Poincare::Print::CustomPrintf(buffer, bufferSize, "%i", m_step);
   m_bannerView->abscissaValue()->setText(buffer);
+  int nameLength = sequence()->nameWithArgument(buffer, bufferSize);
   double u_n = sequence()->valueAtRank<double>(m_step, App::app()->localContext());
-  Poincare::Print::CustomPrintf(buffer, bufferSize, "u(n)=%*.*ef", u_n, Preferences::PrintFloatMode::Decimal, Preferences::LargeNumberOfSignificantDigits);
+  Poincare::Print::CustomPrintf(buffer + nameLength, bufferSize - nameLength, "=%*.*ef", u_n, Preferences::PrintFloatMode::Decimal, Preferences::LargeNumberOfSignificantDigits);
   m_bannerView->ordinateView()->setText(buffer);
   m_bannerView->reload();
 }

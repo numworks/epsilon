@@ -35,7 +35,7 @@ bool appAtAddress(uint8_t * address) {
 }
 
 App::App(uint8_t * a) : m_startAddress(a) {
-  assert(*reinterpret_cast<uint32_t *>(m_startAddress) == k_magic);
+  assert(appAtAddress(m_startAddress));
 }
 
 bool addressWithinExternalAppsSection(const uint8_t * address) {

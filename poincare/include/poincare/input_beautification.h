@@ -59,10 +59,10 @@ private:
    * in alphabetical order to choose position in list." */
   constexpr static const BeautificationRule convertWhenFollowedByANonIdentifierChar[] = {
     // inf
-    {AliasesLists::k_infinityAliases, [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointInfinity)); }},
+    {"inf", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointInfinity)); }},
     // Greek letters
-    {AliasesLists::k_piAliases, [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointGreekSmallLetterPi)); }},
-    {AliasesLists::k_thetaAliases, [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointGreekSmallLetterTheta)); }},
+    {"pi", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointGreekSmallLetterPi)); }},
+    {"theta", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointGreekSmallLetterTheta)); }},
   };
 
   constexpr static BeautificationRule k_absoluteValueRule = {

@@ -17,7 +17,6 @@ public:
   static bool appAtAddress(uint8_t * address);
 private:
   uint8_t * addressAtIndexInAppInfo(int index) const;
-  constexpr static uint32_t k_magic = 0xDEC0BEBA;
   uint8_t * m_startAddress;
 };
 

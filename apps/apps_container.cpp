@@ -379,10 +379,6 @@ void AppsContainer::activateExamMode(Poincare::Preferences::ExamMode examMode) {
 }
 
 void AppsContainer::examDeactivatingPopUpIsDismissed() {
-  if (!Poincare::Preferences::sharedPreferences()->isInExamMode()) {
-    Ion::ExternalApps::setVisible();
-    m_window.redraw(true);
-  }
   Ion::USB::clearEnumerationInterrupt();
 }
 

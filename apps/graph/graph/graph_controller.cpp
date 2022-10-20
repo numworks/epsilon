@@ -53,18 +53,6 @@ static Coordinate2D<float> evaluatorSecondCurve(float t, const void * model, Con
   return f->evaluateXYAtParameter(t, context, 1);
 }
 
-struct IntersectionParameters {
-  ContinuousFunction * f;
-  ContinuousFunction * g;
-  Context * context;
-};
-
-static float evaluatorIntersection(float t, const void * aux) {
-  const IntersectionParameters * params = static_cast<const IntersectionParameters *>(aux);
-  Context * context = params->context;
-  return params->f->evaluateXYAtParameter(t, context).x2() - params->g->evaluateXYAtParameter(t, context).x2();
-}
-
 Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange) const {
   /* Steps:
    * - Set the range so that all polar and parametric functions are displayed in full
@@ -105,13 +93,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
         if (f.operator->() == firstCartesian || !f->isIntersectable() || f->basedOnCostlyAlgorithms(context)) {
           continue;
         }
-        Solver<float> solver = PoincareHelpers::Solver<float>(xRange.min(), xRange.max());
-        IntersectionParameters intersectionParameters = { .f = firstCartesian, .g = f.operator->(), .context = context };
-        Coordinate2D<float> intersection = solver.next(evaluatorIntersection, &intersectionParameters, Solver<float>::EvenOrOddRootInBracket, Zoom::SelectFar);
-        while (std::isfinite(intersection.x1())) {
-          zoom.includePoint(firstCartesian->evaluateXYAtParameter(intersection.x1(), context));
-          intersection = solver.next(evaluatorIntersection, &intersectionParameters, Solver<float>::EvenOrOddRootInBracket, Zoom::SelectFar);
-        }
+        zoom.fitIntersections(evaluator, f.operator->());
       }
     }
     // Find the other points of interest

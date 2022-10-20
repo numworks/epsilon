@@ -34,6 +34,7 @@ public:
   void setBounds(float tMin, float tMax) { m_tMin = tMin; m_tMax = tMax; }
   void setFunction(FunctionEvaluation2DWithContext f, const void * model);
   void includePoint(Coordinate2D<float> p);
+  void fitIntersections(FunctionEvaluation2DWithContext otherF, const void * otherModel);
   /* The fitX method will compute an X axis based on the points of interest of
    * the expression, or a default one if none are found. It will also compute
    * the Y range associated with those points. */
@@ -53,7 +54,7 @@ private:
 
   Coordinate2D<float> approximate(float x) const { assert(m_function); return m_function(x, m_model, m_context); }
   void sampleY();
-  void grossFitToInterest(float xStart, float xEnd);
+  void fitUsingSolver(float xStart, float xEnd, Solver<float>::FunctionEvaluation eval, const void * aux, Solver<float>::BracketTest test);
   bool findNormalYAxis();
   bool findYAxisForOrderOfMagnitude();
   void expandSparseWindow();

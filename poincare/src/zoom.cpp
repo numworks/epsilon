@@ -37,15 +37,51 @@ void Zoom::includePoint(Coordinate2D<float> p) {
   }
 }
 
+struct IntersectionParameters {
+  Zoom::FunctionEvaluation2DWithContext f;
+  const void * fModel;
+  Zoom::FunctionEvaluation2DWithContext g;
+  const void * gModel;
+  Context * context;
+};
+
+static float evaluatorIntersection(float t, const void * aux) {
+  const IntersectionParameters * params = static_cast<const IntersectionParameters *>(aux);
+  Context * context = params->context;
+  return params->f(t, params->fModel, context).x2() - params->g(t, params->gModel, context).x2();
+}
+
+void Zoom::fitIntersections(FunctionEvaluation2DWithContext otherFunction, const void * otherModel) {
+  assert(std::isfinite(m_tMin) && std::isfinite(m_tMax));
+  IntersectionParameters params = { .f = m_function, .fModel = m_model, .g = otherFunction, .gModel = otherModel, .context = m_context };
+  float xCenter = 0.5f * (m_tMin + m_tMax);
+  fitUsingSolver(xCenter, m_tMax, evaluatorIntersection, &params, Solver<float>::EvenOrOddRootInBracket);
+  fitUsingSolver(xCenter, m_tMin, evaluatorIntersection, &params, Solver<float>::EvenOrOddRootInBracket);
+
+  m_sampleUpToDate = false;
+}
+
+struct CallParameters {
+  Zoom::FunctionEvaluation2DWithContext function;
+  const void * model;
+  Context * context;
+};
+
+static float evaluator(float t, const void * aux) {
+  const CallParameters * p = static_cast<const CallParameters *>(aux);
+  return p->function(t, p->model, p->context).x2();
+}
+
 void Zoom::fitX() {
   assert(std::isfinite(m_tMin) && std::isfinite(m_tMax));
+  CallParameters params = { .function = m_function, .model = m_model, .context = m_context };
   /* Attempt to balance the range between m_tMin and m_tMax.
    * Step away from the center, as it is more likely to be a significant value
    * (typically zero).*/
   float xCenter = 0.5f * (m_tMin + m_tMax);
   float dx = std::max(Solver<float>::k_minimalAbsoluteStep, Solver<float>::k_relativePrecision * std::fabs(xCenter));
-  grossFitToInterest(xCenter - dx, m_tMax);
-  grossFitToInterest(xCenter - dx, m_tMin);
+  fitUsingSolver(xCenter - dx, m_tMax, evaluator, &params, PointIsInteresting);
+  fitUsingSolver(xCenter - dx, m_tMin, evaluator, &params, PointIsInteresting);
 
   /* TODO Add some margin around the X axis ? */
 
@@ -132,27 +168,14 @@ void Zoom::sampleY() {
   m_sampleUpToDate = true;
 }
 
-struct CallParameters {
-  Zoom::FunctionEvaluation2DWithContext function;
-  const void * model;
-  Context * context;
-};
-
-static float evaluator(float t, const void * aux) {
-  const CallParameters * p = static_cast<const CallParameters *>(aux);
-  return p->function(t, p->model, p->context).x2();
-}
-
-void Zoom::grossFitToInterest(float xStart, float xEnd) {
-  CallParameters params = { .function = m_function, .model = m_model, .context = m_context };
-
+void Zoom::fitUsingSolver(float xStart, float xEnd, Solver<float>::FunctionEvaluation eval, const void * aux, Solver<float>::BracketTest test) {
   Solver<float> solver(xStart, xEnd);
-  Coordinate2D<float> p = solver.next(evaluator, &params, PointIsInteresting, SelectFar);
+  Coordinate2D<float> p = solver.next(eval, aux, test, SelectFar);
   int n = 0;
   while (std::isfinite(p.x1()) && n < k_maxPointsOnOneSide) {
     n++;
     m_range.extend(p);
-    p = solver.next(evaluator, &params, PointIsInteresting, SelectFar);
+    p = solver.next(eval, aux, test, SelectFar);
   }
 }
 

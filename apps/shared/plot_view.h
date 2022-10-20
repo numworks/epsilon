@@ -33,7 +33,7 @@ public:
 
   constexpr static Axis OtherAxis(Axis axis) { return static_cast<Axis>(1 - static_cast<uint8_t>(axis)); }
 
-  AbstractPlotView(CurveViewRange * range) : m_range(range), m_stampDashIndex(k_stampIndexNoDash) {}
+  AbstractPlotView(CurveViewRange * range) : m_range(range), m_stampDashIndex(k_stampIndexNoDash), m_bannerOverlapsGraph(true) {}
 
   // Escher::View
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -50,8 +50,10 @@ public:
   void setFocus(bool f);
   float rangeMin(Axis axis) const { return axis == Axis::Horizontal ? m_range->xMin() : m_range->yMin(); }
   float rangeMax(Axis axis) const { return axis == Axis::Horizontal ? m_range->xMax() : m_range->yMax(); }
-  float pixelWidth() const { return (m_range->xMax() - m_range->xMin()) / (m_frame.width() - 1); }
-  float pixelHeight() const { return (m_range->yMax() - m_range->yMin()) / (m_frame.height() - 1); }
+  float graphWidth() const { return m_frame.width() - 1; }
+  float graphHeight() const { return m_frame.height() - 1 - (m_bannerOverlapsGraph ? 0 : bannerView()->bounds().height()); }
+  float pixelWidth() const { return (m_range->xMax() - m_range->xMin()) / graphWidth(); }
+  float pixelHeight() const { return (m_range->yMax() - m_range->yMin()) / graphHeight(); }
   float pixelLength(Axis axis) const { return axis == Axis::Horizontal ? pixelWidth() : pixelHeight(); }
   float floatToPixel(Axis axis, float f) const;
   float pixelToFloat(Axis axis, KDCoordinate c) const;
@@ -75,7 +77,11 @@ public:
   void straightJoinDots(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> pixelA, Poincare::Coordinate2D<float> pixelB, KDColor color, bool thick) const;
   void stamp(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> p, KDColor color, bool thick) const;
   bool pointsInSameStamp(Poincare::Coordinate2D<float> p1, Poincare::Coordinate2D<float> p2, bool thick) const;
+  bool bannerOverlapsGraph() const { return m_bannerOverlapsGraph; }
   virtual KDColor backgroundColor() const { return k_backgroundColor; }
+
+protected:
+  void setBannerOverlapsGraph(bool bannerOverlapsGraph) { m_bannerOverlapsGraph = bannerOverlapsGraph; }
 
 private:
   constexpr static int8_t k_stampDashSize = 5;
@@ -98,6 +104,7 @@ private:
   CurveViewRange * m_range;
   mutable int8_t m_stampDashIndex;
   uint32_t m_drawnRangeVersion;
+  bool m_bannerOverlapsGraph;
   bool m_focus;
 };
 

@@ -133,7 +133,7 @@ void AbstractLabeledAxis::computeLabelsRelativePosition(const AbstractPlotView *
 
   if (axis == AbstractPlotView::Axis::Horizontal) {
     float labelHeight = (KDFont::GlyphSize(AbstractPlotView::k_font).height() + AbstractPlotView::k_labelMargin) * plotView->pixelHeight();
-    float bannerHeight = plotView->bannerView() ? plotView->bannerView()->bounds().height() * plotView->pixelHeight() : 0.f;
+    float bannerHeight = plotView->bannerView() && plotView->bannerOverlapsGraph() ? plotView->bannerView()->bounds().height() * plotView->pixelHeight() : 0.f;
     float yMin = plotView->range()->yMin();
     float yMax = plotView->range()->yMax();
     if (yMin + bannerHeight > 0.f - labelHeight) {

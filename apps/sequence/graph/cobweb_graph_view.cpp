@@ -115,6 +115,7 @@ void CobwebAxesPolicy::drawAxesAndGrid(const AbstractPlotView * plotView, KDCont
 CobwebGraphView::CobwebGraphView(InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor, BannerView * bannerView, CursorView * cursorView) :
   PlotView(graphRange)
 {
+  setBannerOverlapsGraph(false);
   // WithBanner
   m_banner = bannerView;
   // WithCursor

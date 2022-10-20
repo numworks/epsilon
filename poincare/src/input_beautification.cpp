@@ -358,15 +358,11 @@ Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(Layout layoutToMod
         // Too much parameters, cancel beautification
         return Layout();
       }
-      AutocompletedBracketPairLayoutNode * parenthesisParameterContainer = nullptr;
       if (layoutToReplace.parent().type() == LayoutNode::Type::ParenthesisLayout) {
-        parenthesisParameterContainer = static_cast<AutocompletedBracketPairLayoutNode *>(layoutToReplace.parent().node());
+        static_cast<AutocompletedBracketPairLayoutNode *>(layoutToReplace.parent().node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, rightParenthesisIsTemporary);
       }
       if (!currentParameter.isEmpty()) {
         layoutToReplace.replaceWithInPlace(currentParameter);
-      }
-      if (parenthesisParameterContainer) {
-        parenthesisParameterContainer->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, rightParenthesisIsTemporary);
       }
       numberOfParameters++;
       currentParameter = HorizontalLayout::Builder(EmptyLayout::Builder());

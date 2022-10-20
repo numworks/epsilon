@@ -7,8 +7,6 @@ HANDY_TARGETS_EXTENSIONS ?=
 
 # Epsilon base target
 
-# TODO: handle flavors on device (onboarding, update, beta...)
-
 base_src = $(ion_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src)
 
 epsilon_src = $(base_src) $(apps_src)
@@ -20,9 +18,12 @@ HANDY_TARGETS += epsilon
 # Epsilon flavored targets
 
 epsilon_flavors = \
+  allow3rdparty \
   onboarding \
   onboarding.update \
-  onboarding.beta
+  onboarding.beta \
+  onboarding.beta.allow3rdparty \
+  onboarding.allow3rdparty
 
 # Clean the targets.*.mak to
 define rule_for_epsilon_flavor

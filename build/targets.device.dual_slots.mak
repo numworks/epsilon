@@ -16,16 +16,16 @@ $(dfu_targets): DFUFLAGS += --custom
 
 $(dfu_targets): $(BUILD_DIR)/%.dfu: | $(BUILD_DIR)/.
 	$(if $(NO_BOOTLOADER),,$(MAKE) FIRMWARE_COMPONENT=bootloader DEBUG=0 bootloader.elf)
-	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.A.elf
-	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel.B.elf
-	$(MAKE) FIRMWARE_COMPONENT=userland userland$(USERLAND_STEM).A.elf
-	$(MAKE) FIRMWARE_COMPONENT=userland userland$(USERLAND_STEM).B.elf
+	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel$(TARGET_STEM).A.elf
+	$(MAKE) FIRMWARE_COMPONENT=kernel DEBUG=0 kernel$(TARGET_STEM).B.elf
+	$(MAKE) FIRMWARE_COMPONENT=userland userland$(TARGET_STEM).A.elf
+	$(MAKE) FIRMWARE_COMPONENT=userland userland$(TARGET_STEM).B.elf
 	$(PYTHON) build/device/elf2dfu.py $(DFUFLAGS) -i \
 	  $(if $(NO_BOOTLOADER),,$(subst $(FIRMWARE_COMPONENT),bootloader,$(subst debug,release,$(BUILD_DIR)))/bootloader.elf) \
-	  $(subst $(FIRMWARE_COMPONENT),userland,$(BUILD_DIR))/userland$(USERLAND_STEM).A.elf \
-	  $(subst $(FIRMWARE_COMPONENT),kernel,$(subst debug,release,$(BUILD_DIR)))/kernel.A.elf \
-	  $(subst $(FIRMWARE_COMPONENT),userland,$(BUILD_DIR))/userland$(USERLAND_STEM).B.elf \
-	  $(subst $(FIRMWARE_COMPONENT),kernel,$(subst debug,release,$(BUILD_DIR)))/kernel.B.elf \
+	  $(subst $(FIRMWARE_COMPONENT),userland,$(BUILD_DIR))/userland$(TARGET_STEM).A.elf \
+	  $(subst $(FIRMWARE_COMPONENT),kernel,$(subst debug,release,$(BUILD_DIR)))/kernel$(TARGET_STEM).A.elf \
+	  $(subst $(FIRMWARE_COMPONENT),userland,$(BUILD_DIR))/userland$(TARGET_STEM).B.elf \
+	  $(subst $(FIRMWARE_COMPONENT),kernel,$(subst debug,release,$(BUILD_DIR)))/kernel$(TARGET_STEM).B.elf \
 	  -o $@
 
 .PHONY: %_flash

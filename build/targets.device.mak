@@ -1,11 +1,7 @@
 epsilon_target_variants = test epsilon $(addprefix epsilon.,$(epsilon_flavors))
 dfu_targets = $(addprefix $(BUILD_DIR)/,$(addsuffix .dfu,$(epsilon_target_variants)))
 .PHONY: $(dfu_targets)
-$(dfu_targets): USERLAND_STEM = $(subst .epsilon,,$(patsubst $(BUILD_DIR)/%.dfu,.%,$@))
-
-ifeq ($(ALLOW_THIRD_PARTY),1)
-THIRD_PARTY_FLAVOR=allow3rdparty
-endif
+$(dfu_targets): TARGET_STEM = $(subst .epsilon,,$(patsubst $(BUILD_DIR)/%.dfu,.%,$@))
 
 include build/targets.device.$(MODEL).mak
 -include build/targets.device.$(MODEL).$(FIRMWARE_COMPONENT).mak

@@ -30,10 +30,14 @@ all:
 	@ $(MAKE) clean
 	@ $(MAKE) epsilon.onboarding.dfu
 	@ cp output/release/device/n0110/epsilon/epsilon.onboarding.dfu output/all_official/epsilon.device.n0110.dfu
+	@ $(MAKE) epsilon.onboarding.allow3rdparty.dfu
+	@ cp output/release/device/n0110/epsilon/epsilon.onboarding.allow3rdparty.dfu output/all_official/epsilon.device.n0110.allow3rdparty.dfu
 	@ echo "BUILD_FIRMWARE    DEVICE N0120"
 	@ $(MAKE) clean
 	@ $(MAKE) MODEL=n0120 epsilon.onboarding.dfu
 	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.dfu output/all_official/epsilon.device.n0120.dfu
+	@ $(MAKE) MODEL=n0120 epsilon.onboarding.allow3rdparty.dfu
+	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.allow3rdparty.dfu output/all_official/epsilon.device.n0120.allow3rdparty.dfu
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB ZIP"
 	@ $(MAKE) PLATFORM=simulator TARGET=web clean
 	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.zip

@@ -39,6 +39,8 @@ help:
 	@echo "  make epsilon.onboarding.update.dfu"
 	@echo "  make epsilon.onboarding.beta.dfu"
 	@echo "  make flasher.light.bin"
+	@echo "  make epsilon.onboarding.allow3rdparty.dfu"
+	@echo "  make epsilon.onboarding.beta.allow3rdparty.dfu"
 	@echo "  make flasher.verbose.dfu"
 	@echo "  make bench.ram.bin"
 	@echo "  make bench.flash.bin"

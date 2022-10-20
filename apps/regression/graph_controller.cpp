@@ -393,7 +393,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   }
 
   Range2D result(computeX ? xRange : originalRange.x(), computeY ? yRange : originalRange.y());
-  return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio());
+  return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(), InteractiveCurveViewRange::k_maxFloat);
 }
 
 }

@@ -43,29 +43,23 @@ void GraphController::didBecomeFirstResponder() {
   refreshPointsOfInterest();
 }
 
-static Coordinate2D<float> evaluator(float t, const void * model, Context * context) {
-  const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
-  return f->evaluateXYAtParameter(t, context);
-}
-
-static Coordinate2D<float> evaluatorSecondCurve(float t, const void * model, Context * context) {
-  const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
-  return f->evaluateXYAtParameter(t, context, 1);
-}
-
 Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange) const {
-  /* Steps:
-   * - Set the range so that all polar and parametric functions are displayed in full
-   * - Display all points of interest of the first cartesian function along X
-   * - Extend the X range to fully display function along Y
-   *   TODO A more subtle approach should be used for curves such as x = 1/y */
+  Zoom::Function2DWithContext evaluator = [](float t, const void * model, Context * context) {
+    const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
+    return f->evaluateXYAtParameter(t, context);
+  };
+  Zoom::Function2DWithContext evaluatorSecondCurve = [](float t, const void * model, Context * context) {
+    const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
+    return f->evaluateXYAtParameter(t, context, 1);
+  };
 
   Context * context = App::app()->localContext();
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context);
-  ContinuousFunction * firstCartesian = nullptr;
-
   ContinuousFunctionStore * store = functionStore();
   int nbFunctions = store->numberOfActiveFunctions();
+  constexpr float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
+  Range1D xBounds = computeX ? Range1D(-k_maxFloat, k_maxFloat) : originalRange.x();
+
   for (int i = 0; i < nbFunctions; i++) {
     ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
     if (f->basedOnCostlyAlgorithms(context)) {
@@ -74,67 +68,43 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     if (f->plotType() == ContinuousFunction::PlotType::Polar || f->plotType() == ContinuousFunction::PlotType::Parametric) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
       zoom.setBounds(f->tMin(), f->tMax());
-      zoom.setFunction(evaluator, f.operator->());
-      zoom.fitFullFunction();
-    } else if (!firstCartesian && f->isAlongXOrY() && !f->isAlongY()) {
-      firstCartesian = f.operator->();
-    }
-  }
-
-  zoom.setFunction(evaluator, firstCartesian);
-
-  if (firstCartesian) {
-    Range1D xRange = computeX ? Range1D(-InteractiveCurveViewRange::k_maxFloat, InteractiveCurveViewRange::k_maxFloat) : originalRange.x();
-    zoom.setBounds(xRange.min(), xRange.max());
-    // Find the intersections with other curves
-    if (firstCartesian->isIntersectable()) {
-      for (int i = 0; i < nbFunctions; i++) {
-        ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
-        if (f.operator->() == firstCartesian || !f->isIntersectable() || f->basedOnCostlyAlgorithms(context)) {
-          continue;
+      zoom.fitFullFunction(evaluator, f.operator->());
+    } else if (!f->isAlongY()) { // TODO Update Zoom to handle x=f(y) functions
+      assert(f->isAlongXOrY());
+      zoom.setBounds(xBounds.min(), xBounds.max());
+      zoom.fitPointsOfInterest(evaluator, f.operator->());
+      if (f->numberOfSubCurves() > 1) {
+        assert(f->numberOfSubCurves() == 2);
+        zoom.fitPointsOfInterest(evaluatorSecondCurve, f.operator->());
+      }
+      if (f->isIntersectable()) {
+        ContinuousFunction * mainF = f.operator->();
+        for (int j = 0; j < nbFunctions; j++) {
+          ExpiringPointer<ContinuousFunction> g = store->modelForRecord(store->activeRecordAtIndex(j));
+          if (i == j || !g->isIntersectable() || g->basedOnCostlyAlgorithms(context)) {
+            continue;
+          }
+          zoom.fitIntersections(evaluator, mainF, evaluator, g.operator->());
         }
-        zoom.fitIntersections(evaluator, f.operator->());
       }
     }
-    // Find the other points of interest
-    zoom.fitX();
-    if (firstCartesian->numberOfSubCurves() > 1) {
-      assert(firstCartesian->numberOfSubCurves() == 2);
-      zoom.setFunction(evaluatorSecondCurve, firstCartesian);
-      zoom.fitX();
-      zoom.setFunction(evaluator, firstCartesian);
-    }
-    if (computeY) {
-      zoom.fitOnlyY();
-    }
   }
 
-  if (computeX) {
-    if (computeY) {
-      /* If firstCartesian is nullptr, this will only perform basic teaking
-       * such as normalization. Otherwise, sample values of the function should
-       * have been memoized from the call to fitOnlyY. */
-      zoom.fitBothXAndY(defaultRangeIsNormalized());
-    }
-
-    /* Fit zoom for reciprocal funtions.
-     * FIXME Adapt the zoom API to accept x=f(y) function */
+  if (computeY) {
+    zoom.setBounds(xBounds.min(), xBounds.max());
     for (int i = 0; i < nbFunctions; i++) {
       ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
-      if (!f->isAlongY() || f->basedOnCostlyAlgorithms(context)) {
+      if (f->basedOnCostlyAlgorithms(context) || f->isAlongY() || !f->isAlongXOrY()) {
         continue;
       }
-      Range1D yRange = (computeY ? zoom.range() : originalRange).y();
-      if (!yRange.isValid() || yRange.isEmpty()) {
-        yRange = Zoom::DefaultRange(InteractiveCurveViewRange::NormalYXRatio()).y();
+      zoom.fitMagnitude(evaluator, f.operator->());
+      if (f->numberOfSubCurves() > 1) {
+        zoom.fitMagnitude(evaluatorSecondCurve, f.operator->());
       }
-      zoom.setBounds(yRange.min(), yRange.max());
-      zoom.setFunction(evaluator, f.operator->());
-      zoom.fitFullFunction();
     }
   }
 
-  Range2D newRange = zoom.range();
+  Range2D newRange = zoom.range(k_maxFloat, defaultRangeIsNormalized());
   return Range2D((computeX ? newRange : originalRange).x(), (computeY ? newRange : originalRange).y());
 }
 

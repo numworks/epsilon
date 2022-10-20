@@ -27,7 +27,7 @@ private:
   constexpr static int k_textMaxLength = sizeof("u(99)");
   constexpr static uint8_t k_curveFadeRatio = 100;
   // Cache to store parts of the drawing to be removed at the next step
-  mutable float m_x, m_y;
+  mutable float m_x;
   mutable KDPixelCache<k_diameter * k_diameter> m_dotCache;
   mutable KDPixelCache<Ion::Display::Width * k_thickness> m_horizontalLineCache[k_maximumNumberOfSteps];
   mutable KDPixelCache<Ion::Display::Height * k_thickness> m_verticalLineCache[k_maximumNumberOfSteps];

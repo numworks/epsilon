@@ -10,6 +10,8 @@
 namespace Sequence {
 
 class CobwebPlotPolicy : public Shared::PlotPolicy::WithCurves {
+public:
+  constexpr static int k_maximumNumberOfSteps = 20;
 protected:
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
 
@@ -27,7 +29,8 @@ private:
   // Cache to store parts of the drawing to be removed at the next step
   mutable float m_x, m_y;
   mutable KDPixelCache<k_diameter * k_diameter> m_dotCache;
-  mutable KDPixelCache<Ion::Display::Width * k_thickness> m_lineCache;
+  mutable KDPixelCache<Ion::Display::Width * k_thickness> m_horizontalLineCache[k_maximumNumberOfSteps];
+  mutable KDPixelCache<Ion::Display::Height * k_thickness> m_verticalLineCache[k_maximumNumberOfSteps];
   mutable KDPixelCache<KDFont::GlyphHeight(k_font) * KDFont::GlyphWidth(k_font) * k_textMaxLength> m_textCache;
 };
 
@@ -45,7 +48,7 @@ public:
   void setStep(int step) { m_step = step; }
   void resetCachedStep() { m_cachedStep = -2; };
 private:
-  bool update() const { return m_cachedStep == m_step - 1; }
+  bool update() const { return m_cachedStep != - 2; }
   void drawBackground(KDContext * ctx, KDRect rect) const override;
 };
 

@@ -47,7 +47,6 @@ private:
 private:
   constexpr static float k_bottomMargin = 0.14;
   constexpr static float k_margin = 0.10;
-  constexpr static int k_maximumNumberOfSteps = 20;
   int m_step;
   bool m_isSuitable;
   Shared::SequenceStore * m_sequenceStore;

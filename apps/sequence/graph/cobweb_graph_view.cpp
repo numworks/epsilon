@@ -24,13 +24,20 @@ namespace Sequence {
 
 void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   assert(m_sequence);
-  bool update = m_cachedStep == m_step - 1;
+  bool update = m_cachedStep != - 2;
   if (update) {
     /* If previous step is already drawn, we can remove the dot, the gray line
      * and the label and continue the broken line instead of redrawing. */
     m_dotCache.restore(ctx);
-    m_lineCache.restore(ctx);
+    m_verticalLineCache[m_cachedStep].restore(ctx);
     m_textCache.restore(ctx);
+    if (m_step < m_cachedStep) {
+      for (int step = m_cachedStep - 1; step >= 0; step--) {
+        assert(0 <= step && step < k_maximumNumberOfSteps);
+        m_horizontalLineCache[step].restore(ctx);
+        m_verticalLineCache[step].restore(ctx);
+      }
+    }
   }
   constexpr int bufferSize = k_textMaxLength + 1;
   char name[bufferSize] = {};
@@ -57,10 +64,11 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
     plot.draw(plotView, ctx, rect);
     plotView->drawSegment(ctx, rect, {xMin, xMin}, {xMax, xMax}, fadedColor, true);
   }
-  int initialStep = update ? m_cachedStep : 0;
+  bool increasing = update && m_cachedStep == m_step - 1;
+  int initialStep = increasing ? m_cachedStep : 0;
   int rank = m_sequence->initialRank() + initialStep;
-  float x = update ? m_x : m_sequence->evaluateXYAtParameter(static_cast<float>(rank), context).x2();
-  float y = update ? m_y : 0.f;
+  float x = increasing ? m_x : m_sequence->evaluateXYAtParameter(static_cast<float>(rank), context).x2();
+  float y = increasing ? m_y : 0.f;
   float uOfX = m_sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
   /* We need to detect bottom-right corners made by a vertical and an horizontal
    * segment : they can happen in two cases.
@@ -74,13 +82,20 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
    */
   bool cornerCurveToLine = false;
   bool cornerLineToCurve = false;
+  KDMeasuringContext measuringContext(*ctx);
   for (int i = initialStep; i < m_step; i++) {
     rank++;
     cornerCurveToLine = x>uOfX && y>uOfX;
+    measuringContext.reset();
+    plotView->drawStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color(), k_thickness, k_dashSize, cornerCurveToLine || cornerLineToCurve);
+    m_verticalLineCache[i].save(ctx, measuringContext.writtenRect());
     plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color(), k_thickness, k_dashSize, cornerCurveToLine || cornerLineToCurve);
     y = uOfX;
     float uOfuOfX = m_sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
     cornerLineToCurve = x<uOfX && y<uOfuOfX;
+    measuringContext.reset();
+    plotView->drawStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color(), k_thickness, k_dashSize, cornerCurveToLine || cornerLineToCurve);
+    m_horizontalLineCache[i].save(ctx, measuringContext.writtenRect());
     plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color(), k_thickness, k_dashSize, cornerCurveToLine || cornerLineToCurve);
     x = uOfX;
     uOfX = uOfuOfX;
@@ -92,10 +107,10 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
   /* We need to save all the buffers first and then do all the drawings
    * otherwise an element could be saved in the buffer of another one.
    * When the said buffer is restored the element will appear twice. */
-  KDMeasuringContext measuringContext(*ctx);
+  measuringContext.reset();
   if (m_step) {
     plotView->drawStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark, k_thickness, k_dashSize);
-    m_lineCache.save(ctx, measuringContext.writtenRect());
+    m_verticalLineCache[m_step].save(ctx, measuringContext.writtenRect());
   }
   measuringContext.reset();
   plotView->drawDot(&measuringContext, rect, Dots::Size::Medium, {x, y}, Escher::Palette::YellowDark);

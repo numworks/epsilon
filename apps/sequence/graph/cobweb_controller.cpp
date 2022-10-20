@@ -67,7 +67,7 @@ void CobwebController::setupZoom() {
   SequenceContext * sequenceContext = App::app()->localContext();
   // We need the x-axis in the view
   float xMin = 0.f, xMax = 0.f;
-  for (int step = 0; step <= k_maximumNumberOfSteps; step++) {
+  for (int step = 0; step < CobwebGraphView::k_maximumNumberOfSteps; step++) {
     float value = sequence()->evaluateXYAtParameter(static_cast<float>(step + sequence()->initialRank()), sequenceContext).x2();
     xMin = std::min(xMin, value);
     xMax = std::max(xMax, value);
@@ -131,7 +131,7 @@ bool CobwebController::handleZoom(Ion::Events::Event event) {
 }
 
 bool CobwebController::updateStep(int delta) {
-  if (m_step + delta < 0 || m_step + delta > k_maximumNumberOfSteps) {
+  if (m_step + delta < 0 || m_step + delta >= CobwebGraphView::k_maximumNumberOfSteps) {
     return false;
   }
   m_step += delta;
@@ -139,7 +139,7 @@ bool CobwebController::updateStep(int delta) {
   double x = u_n;
   double y = m_step == 0 ? u_n : 0.f;
   // TODO: For some reason panToMakePointVisible is stricter that our computation
-  constexpr float marginDelta = 0.1;
+  constexpr float marginDelta = 0.02;
   float margin = k_margin - marginDelta;
   if (interactiveCurveViewRange()->panToMakePointVisible(x, y, margin, margin, k_bottomMargin - marginDelta, margin, m_graphView.pixelWidth())) {
     m_graphView.resetCachedStep();

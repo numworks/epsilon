@@ -147,6 +147,9 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
       }
     }
 
+    /* TODO/WARGNING:
+     * This assumes that the identifier has only 1-char long codepoints (which
+     * is the case for all beautified identifiers for now) */
     firstIndexOfIdentifier += currentIdentifier.length() + numberOfLayoutsAddedOrRemoved;
     currentIdentifier = nextIdentifier;
   }
@@ -262,6 +265,9 @@ int InputBeautification::CompareAndBeautifyIdentifier(const char * identifier, s
   AliasesList patternAliases = beautificationRule.listOfBeautifiedAliases;
   int comparison = patternAliases.maxDifferenceWith(identifier, identifierLength);
   if (comparison == 0) {
+    /* TODO/WARGNING:
+     * This assumes that the identifier has only 1-char long codepoints (which
+     * is the case for all beautified identifiers for now) */
     *numberOfLayoutsAddedOrRemoved = RemoveLayoutsBetweenIndexAndReplaceWithPattern(parent, startIndex, startIndex + identifierLength - 1, beautificationRule, layoutCursor, isBeautifyingFunction, forceCursorRightOfText);
   }
   return comparison;

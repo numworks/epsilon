@@ -85,26 +85,32 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
     x = uOfX;
     uOfX = uOfuOfX;
   }
-  // Save step parameters and buffers to allow partial redraw
+  // Save step parameters
   m_cachedStep = m_step;
   m_x = x;
   m_y = y;
+  /* We need to save all the buffers first and then do all the drawings
+   * otherwise an element could be saved in the buffer of another one.
+   * When the said buffer is restored the element will appear twice. */
   KDMeasuringContext measuringContext(*ctx);
   if (m_step) {
     plotView->drawStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark, k_thickness, k_dashSize);
     m_lineCache.save(ctx, measuringContext.writtenRect());
-    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark, k_thickness, k_dashSize);
   }
   measuringContext.reset();
   plotView->drawDot(&measuringContext, rect, Dots::Size::Medium, {x, y}, Escher::Palette::YellowDark);
   m_dotCache.save(ctx, measuringContext.writtenRect());
-  plotView->drawDot(ctx, rect, Dots::Size::Medium, {x, y}, Escher::Palette::YellowDark);
   Poincare::Print::CustomPrintf(name + nameLength, bufferSize-nameLength, "(%i)", m_step);
-  // Draw label above x-axis
   measuringContext.reset();
-  plotView->drawLabel(&measuringContext, rect, name, {x, 0.f}, AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::After, Escher::Palette::GrayDark);
+  plotView->drawLabel(&measuringContext, rect, name, {x, 0.f}, AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::Before, Escher::Palette::GrayDark);
   m_textCache.save(ctx, measuringContext.writtenRect());
-  plotView->drawLabel(ctx, rect, name, {x, 0.f}, AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::After, Escher::Palette::GrayDark);
+  // Actual drawings
+  if (m_step) {
+    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark, k_thickness, k_dashSize);
+  }
+  plotView->drawDot(ctx, rect, Dots::Size::Medium, {x, y}, Escher::Palette::YellowDark);
+  // Draw label above x-axis
+  plotView->drawLabel(ctx, rect, name, {x, 0.f}, AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::Before, Escher::Palette::GrayDark);
 }
 
 void CobwebAxesPolicy::drawAxesAndGrid(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {

@@ -11,7 +11,7 @@ namespace Sequence {
 
 class CobwebPlotPolicy : public Shared::PlotPolicy::WithCurves {
 public:
-  constexpr static int k_maximumNumberOfSteps = 20;
+  constexpr static int k_maximumNumberOfSteps = 18;
 protected:
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
 
@@ -26,11 +26,15 @@ private:
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
   constexpr static int k_textMaxLength = sizeof("u(99)");
   constexpr static uint8_t k_curveFadeRatio = 100;
+  /* To save space we assume that vertical lines to be saved are smaller than
+   * this constant.
+   * TODO: the banner could also be removed. */
+  constexpr static KDCoordinate k_maxHeight = Ion::Display::Height - Escher::Metric::TitleBarHeight - Escher::Metric::StackTitleHeight;
   // Cache to store parts of the drawing to be removed at the next step
   mutable float m_x;
   mutable KDPixelCache<k_diameter * k_diameter> m_dotCache;
   mutable KDPixelCache<Ion::Display::Width * k_thickness> m_horizontalLineCache[k_maximumNumberOfSteps];
-  mutable KDPixelCache<Ion::Display::Height * k_thickness> m_verticalLineCache[k_maximumNumberOfSteps];
+  mutable KDPixelCache<k_maxHeight * k_thickness> m_verticalLineCache[k_maximumNumberOfSteps];
   mutable KDPixelCache<KDFont::GlyphHeight(k_font) * KDFont::GlyphWidth(k_font) * k_textMaxLength> m_textCache;
 };
 

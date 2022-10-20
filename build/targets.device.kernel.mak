@@ -25,7 +25,6 @@ KERNEL_LDDEPS += ion/src/$(PLATFORM)/epsilon-core/device/kernel/flash/kernel_sha
 SFLAGS += -fstack-protector-strong
 
 define rule_for_flavored_kernel
-$(warning $$(call flavored_object_for,$$(kernel_src), $(MODEL) $(KERNEL_ASSERT_FLAVOR) $(patsubst $(BUILD_DIR)/kernel%.$(EXE),%,$(1))))
 $(1): $$(call flavored_object_for,$$(kernel_src), $(MODEL) $(KERNEL_ASSERT_FLAVOR) $(patsubst $(BUILD_DIR)/kernel%.$(EXE),%,$(1)))
 ifeq ($(EMBED_EXTRA_DATA),1)
 $(1): $(BUILD_DIR)/trampoline.o $(BUILD_DIR)/bootloader.o

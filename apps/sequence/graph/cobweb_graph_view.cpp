@@ -89,19 +89,22 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
   m_cachedStep = m_step;
   m_x = x;
   m_y = y;
+  KDMeasuringContext measuringContext(*ctx);
   if (m_step) {
-    m_lineCache.saveAndDraw(ctx, [&](KDContext * ctx) {
-      plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark, k_thickness, k_dashSize);
-    });
+    plotView->drawStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark, k_thickness, k_dashSize);
+    m_lineCache.save(ctx, measuringContext.writtenRect());
+    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark, k_thickness, k_dashSize);
   }
-  m_dotCache.saveAndDraw(ctx, [&](KDContext * ctx) {
-    plotView->drawDot(ctx, rect, Dots::Size::Medium, {x, y}, Escher::Palette::YellowDark);
-  });
+  measuringContext.reset();
+  plotView->drawDot(&measuringContext, rect, Dots::Size::Medium, {x, y}, Escher::Palette::YellowDark);
+  m_dotCache.save(ctx, measuringContext.writtenRect());
+  plotView->drawDot(ctx, rect, Dots::Size::Medium, {x, y}, Escher::Palette::YellowDark);
   Poincare::Print::CustomPrintf(name + nameLength, bufferSize-nameLength, "(%i)", m_step);
   // Draw label above x-axis
-  m_textCache.saveAndDraw(ctx, [&](KDContext * ctx) {
-    plotView->drawLabel(ctx, rect, name, {x, 0.f}, AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::After, Escher::Palette::GrayDark);
-  });
+  measuringContext.reset();
+  plotView->drawLabel(&measuringContext, rect, name, {x, 0.f}, AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::After, Escher::Palette::GrayDark);
+  m_textCache.save(ctx, measuringContext.writtenRect());
+  plotView->drawLabel(ctx, rect, name, {x, 0.f}, AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::After, Escher::Palette::GrayDark);
 }
 
 void CobwebAxesPolicy::drawAxesAndGrid(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {

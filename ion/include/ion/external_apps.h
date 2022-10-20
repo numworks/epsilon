@@ -42,4 +42,3 @@ int numberOfApps();
 }
 
 #endif
-

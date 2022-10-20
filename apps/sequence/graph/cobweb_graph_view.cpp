@@ -24,6 +24,7 @@ namespace Sequence {
 
 void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   assert(m_sequence);
+  assert(rect.height() < k_maxHeight);
   bool update = m_cachedStep != - 2;
   if (update) {
     /* If previous step is already drawn, we can remove the dot, the gray line

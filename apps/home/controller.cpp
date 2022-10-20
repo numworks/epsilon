@@ -183,7 +183,7 @@ void Controller::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t
    * background complete redrawing but the code is a bit
    * clumsy. */
   if (t->selectedRow() == numberOfRows() - 1) {
-    m_view.reloadBottomRow(this, AppsContainer::sharedAppsContainer()->numberOfApps() - 1, k_numberOfColumns);
+    m_view.reloadBottomRow(this, numberOfIcons(), k_numberOfColumns);
   }
 }
 

@@ -26,6 +26,7 @@ namespace ExternalApps {
  * - 4 bytes: the same magic code 0xBABECODE
  */
 
+constexpr static uint32_t k_magic = 0xDEC0BEBA;
 constexpr int k_numberOfAppInfoElements = 8;
 constexpr uint32_t k_minAppSize = sizeof(uint32_t) * k_numberOfAppInfoElements;
 

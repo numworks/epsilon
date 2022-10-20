@@ -127,15 +127,6 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
   ContinuousFunctionProperties::AreaType area = f->properties().areaType();
   bool hasTwoCurves = (f->numberOfSubCurves() == 2);
 
-  // - Draw points of interest below the curve
-  if (m_selectedRecord == record && hasFocus()) {
-    PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterest();
-    for (const PointOfInterest<double> & p : pointsOfInterest->filter(m_interest)) {
-      Coordinate2D<float> xy = axis == Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
-      drawDot(ctx, rect, Dots::Size::Large, xy, Palette::GrayDarkMiddle);
-    }
-  }
-
   // - Define the bounds of the colored area
   bool patternWithoutCurve = false;
   float patternStart = tStart, patternEnd = tEnd;
@@ -211,6 +202,16 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
     Coordinate2D<float> p2(maxAbscissa, tangentParameterA * maxAbscissa + tangentParameterB);
     drawSegment(ctx, rect, p1, p2, Palette::GrayVeryDark, false);
   }
+
+  // - Draw points of interest above the curve
+  if (m_selectedRecord == record && hasFocus()) {
+    PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterest();
+    for (const PointOfInterest<double> & p : pointsOfInterest->filter(m_interest)) {
+      Coordinate2D<float> xy = axis == Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
+      drawDot(ctx, rect, Dots::Size::Tiny, xy, Palette::GrayDarkest);
+    }
+  }
+
 }
 
 static float polarThetaFromCoordinates(float x, float y, Preferences::AngleUnit angleUnit) {

@@ -18,10 +18,10 @@ USERLAND_LDDEPS += ion/src/$(PLATFORM)/userland/flash/userland_shared.ld
 define rule_for_flavored_userland
 $(1): $$(call flavored_object_for, \
 	$(if $(findstring test,$(1)),$$(userland_test_src),$$(userland_src)), \
-	leaveuserland consoledisplay $(patsubst $(BUILD_DIR)/userland%.$(EXE), $(subst test,,$(subst ., ,%)),$(1)))
+	leaveuserland consoledisplay $(MODEL) $(THIRD_PARTY_FLAVOR) $(patsubst $(BUILD_DIR)/userland%.$(EXE),%,$(1)))
 endef
 
-$(foreach target,$(userland_targets),$(eval $(call rule_for_flavored_userland,$(MODEL) $(target) $(THIRD_PARTY_FLAVOR))))
+$(foreach target,$(userland_targets),$(eval $(call rule_for_flavored_userland,$(target))))
 
 $(userland_targets): LDFLAGS += $(USERLAND_LDFLAGS)
 

@@ -30,8 +30,8 @@ define direct_object_for
 $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(1))))
 endef
 
-# Objects for source files in $(1) matching flavor $(2). A flavor is a dot
-# separated list of variants (e.g. large.speed).
+# Objects for source files in $(1) matching flavor $(2). A flavor is a dot or space
+# separated list of variants (e.g. large.speed or large speed).
 define flavored_object_for
 $(call direct_object_for,$(call filter_variants,$(1),$(sort $(subst ., ,$(2)))))
 endef

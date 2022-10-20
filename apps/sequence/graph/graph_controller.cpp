@@ -72,12 +72,12 @@ void GraphController::moveToRank(int n) {
   m_view.reload();
 }
 
-static Coordinate2D<float> evaluator(float x, const void * model, Context * context) {
-  const Shared::Sequence * s = static_cast<const Shared::Sequence *>(model);
-  return s->evaluateXYAtParameter(x, context);
-}
-
 Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange) const {
+  Zoom::Function2DWithContext evaluator = [](float x, const void * model, Context * context) {
+    const Shared::Sequence * s = static_cast<const Shared::Sequence *>(model);
+    return s->evaluateXYAtParameter(x, context);
+  };
+
   Range2D result;
   if (computeX) {
     float xMin = interestingXMin();
@@ -90,12 +90,11 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
     for (int i = 0; i < nbOfActiveModels; i++) {
       Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
-      zoom.setFunction(evaluator, s);
-      zoom.fitFullFunction();
+      zoom.fitFullFunction(evaluator, s);
     }
-    result.y() = zoom.range().y();
+    result.y() = zoom.range(InteractiveCurveViewRange::k_maxFloat, false).y();
   }
-  return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio());
+  return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(), InteractiveCurveViewRange::k_maxFloat);
 }
 
 Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(int j) const {

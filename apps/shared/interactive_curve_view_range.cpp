@@ -386,7 +386,7 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
 
   } else {
     m_delegate->tidyModels();
-    Range2D newRange = Zoom::DefaultRange(NormalYXRatio());
+    Range2D newRange = Zoom::DefaultRange(NormalYXRatio(), k_maxFloat);
     MemoizedCurveViewRange::protectedSetXMin(newRange.xMin(), false, k_maxFloat);
     MemoizedCurveViewRange::protectedSetXMax(newRange.xMax(), true, k_maxFloat);
     MemoizedCurveViewRange::protectedSetYMin(newRange.yMin(), false, k_maxFloat);

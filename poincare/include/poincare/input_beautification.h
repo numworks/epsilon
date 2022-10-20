@@ -38,9 +38,6 @@ private:
   };
 
   constexpr static const BeautificationRule convertWhenInputted[] = {
-    // Angle units
-    {"\"\"", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder('\'')); }},
-    {"'\"", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointDegreeSign)); }},
     // Comparison operators
     {"<=", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointInferiorEqual)); }},
     {">=", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointSuperiorEqual)); }},

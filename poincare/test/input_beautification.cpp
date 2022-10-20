@@ -17,12 +17,8 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
   Layout l;
 
   // Beautify when input
-  constexpr static const char * text0 = "\"\" '\" <= >= -> *";
+  constexpr static const char * text0 = "<= >= -> *";
   l = HorizontalLayout::Builder({
-        CodePointLayout::Builder('\''),
-        CodePointLayout::Builder(' '),
-        CodePointLayout::Builder(UCodePointDegreeSign),
-        CodePointLayout::Builder(' '),
         CodePointLayout::Builder(UCodePointInferiorEqual),
         CodePointLayout::Builder(' '),
         CodePointLayout::Builder(UCodePointSuperiorEqual),

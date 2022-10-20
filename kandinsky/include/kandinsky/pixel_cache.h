@@ -10,7 +10,6 @@ public:
   KDAbstractPixelCache() : m_rect(KDRectZero) {}
 
   void save(KDContext * ctx, KDRect rect) {
-    assert(rect.width() * rect.height() <= Size);
     ctx->getPixels(rect, buffer());
     m_rect = rect;
   }

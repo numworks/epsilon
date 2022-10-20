@@ -72,16 +72,14 @@ void CobwebController::setupZoom() {
     xMin = std::min(xMin, value);
     xMax = std::max(xMax, value);
   }
-  constexpr float bottomRatio = 0.14;
-  constexpr float margin = 0.10;
   float length = xMax-xMin;
-  xMin -= margin*length;
-  xMax += margin*length;
+  xMin -= k_margin * length;
+  xMax += k_margin * length;
 
   float yMin = xMin;
   float yMax = xMax;
-  if (std::abs(yMin)/(yMax-yMin) < bottomRatio) {
-    yMin = -(yMax-yMin)*bottomRatio;
+  if (std::abs(yMin)/(yMax-yMin) < k_bottomMargin) {
+    yMin = -(yMax-yMin) * k_bottomMargin;
   }
   // panTomakepointvisible ?
   m_graphRange.setXAuto(false);
@@ -137,6 +135,15 @@ bool CobwebController::updateStep(int delta) {
     return false;
   }
   m_step += delta;
+  double u_n = sequence()->valueAtRank<double>(m_step, App::app()->localContext());
+  double x = u_n;
+  double y = m_step == 0 ? u_n : 0.f;
+  // TODO: For some reason panToMakePointVisible is stricter that our computation
+  constexpr float marginDelta = 0.1;
+  float margin = k_margin - marginDelta;
+  if (interactiveCurveViewRange()->panToMakePointVisible(x, y, margin, margin, k_bottomMargin - marginDelta, margin, m_graphView.pixelWidth())) {
+    m_graphView.resetCachedStep();
+  }
   m_graphView.setStep(m_step);
   m_graphView.reload(false, true);
   reloadBannerView();

@@ -32,7 +32,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
     m_verticalLineCache[m_cachedStep].restore(ctx);
     m_textCache.restore(ctx);
     if (m_step < m_cachedStep) {
-      for (int step = m_cachedStep - 1; step >= 0; step--) {
+      for (int step = m_cachedStep - 1; step >= m_step; step--) {
         assert(0 <= step && step < k_maximumNumberOfSteps);
         m_horizontalLineCache[step].restore(ctx);
         m_verticalLineCache[step].restore(ctx);
@@ -65,10 +65,10 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
     plotView->drawSegment(ctx, rect, {xMin, xMin}, {xMax, xMax}, fadedColor, true);
   }
   bool increasing = update && m_cachedStep == m_step - 1;
-  int initialStep = increasing ? m_cachedStep : 0;
+  int initialStep = increasing ? m_cachedStep : m_step;
   int rank = m_sequence->initialRank() + initialStep;
   float x = increasing ? m_x : m_sequence->evaluateXYAtParameter(static_cast<float>(rank), context).x2();
-  float y = increasing ? m_y : 0.f;
+  float y = rank == m_sequence->initialRank() ? 0 : x;
   float uOfX = m_sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
   /* We need to detect bottom-right corners made by a vertical and an horizontal
    * segment : they can happen in two cases.
@@ -103,7 +103,6 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
   // Save step parameters
   m_cachedStep = m_step;
   m_x = x;
-  m_y = y;
   /* We need to save all the buffers first and then do all the drawings
    * otherwise an element could be saved in the buffer of another one.
    * When the said buffer is restored the element will appear twice. */

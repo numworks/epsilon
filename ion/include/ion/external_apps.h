@@ -14,7 +14,6 @@ public:
   uint32_t iconSize() const;
   const uint8_t * iconData() const;
   void * entryPoint() const;
-  static bool appAtAddress(uint8_t * address);
 private:
   uint8_t * addressAtIndexInAppInfo(int index) const;
   uint8_t * m_startAddress;

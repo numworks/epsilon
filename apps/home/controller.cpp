@@ -174,14 +174,12 @@ void Controller::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t
   if (withinTemporarySelection) {
     return;
   }
-  /* If the number of apps (including home) is != 3*n+1, when we display the
-   * lowest icons, the other(s) are empty. As no icon is thus redrawn on the
-   * previous ones, the cell is not cleaned. We need to redraw a white rect on
-   * the cells to hide the leftover icons. Ideally, we would have redrawn all
-   * the background in white and then redraw visible cells. However, the
-   * redrawing takes time and is visible at scrolling. Here, we avoid the
-   * background complete redrawing but the code is a bit
-   * clumsy. */
+  /* If the number of icons is != 3*n, when we display the lowest row, no icons
+   * are redrawn on the last cells, so the cells are not cleaned. We need to redraw
+   * a white rect on these cells to hide the leftover icons. Ideally, we would have 
+   * redrawn all the background in white and then redraw visible cells. However, 
+   * the redrawing takes time and is visible at scrolling. Here, we avoid the 
+   * background complete redrawing but the code is a bit clumsy. */
   if (t->selectedRow() == numberOfRows() - 1) {
     m_view.reloadBottomRow(this, numberOfIcons(), k_numberOfColumns);
   }

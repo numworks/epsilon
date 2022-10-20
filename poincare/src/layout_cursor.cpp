@@ -239,6 +239,11 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
         }
       } else if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(m_layout.type())) {
         newChild = m_layout;
+      } else if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(m_layout.parent().type())) {
+        newChild = m_layout.parent();
+      } else {
+        // The newChild was altered and did not find its new layout
+        assert(false);
       }
     } else {
       m_layout.addSibling(this, newChild, true);
@@ -257,10 +262,10 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     m_position = forceCursorLeftOfText ? Position::Left : Position::Right;
   }
   if (!firstInsertedChild.isUninitialized()) {
-    Layout mainParentLayout;
     // Find the common parent of first and last inserted children
     TreeHandle mainParentHandle = newChild.commonAncestorWith(firstInsertedChild, false);
-    mainParentLayout = static_cast<Layout&>(mainParentHandle);
+    Layout mainParentLayout = static_cast<Layout&>(mainParentHandle);
+    assert(!mainParentLayout.isUninitialized());
     // Set the first and last insterted children to have the same parent
     while (firstInsertedChild.parent() != mainParentLayout) {
       firstInsertedChild = firstInsertedChild.parent();

@@ -139,7 +139,7 @@ Range2D Zoom::prettyRange() const {
   float yLengthNormalized = xLength * m_normalRatio;
   constexpr float k_minimalXCoverage = 0.8f;
   constexpr float k_minimalYCoverage = 0.3f;
-  bool yCanBeNormalized = yLengthNormalized * k_minimalYCoverage <= yLength && yLength <= yLengthNormalized;
+  bool yCanBeNormalized = yLengthNormalized * k_minimalYCoverage <= yLength && thisRange.y().length() <= yLengthNormalized;
   if (!yRange.isValid() || yLength == 0.f || yCanBeNormalized) {
     float yCenter = yRange.center();
     if (!std::isfinite(yCenter)) {

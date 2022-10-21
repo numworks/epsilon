@@ -36,7 +36,6 @@ public:
   AppIterator end() const { return AppIterator(nullptr); };
 };
 
-void setVisible();
 int numberOfApps();
 void deleteApps();
 

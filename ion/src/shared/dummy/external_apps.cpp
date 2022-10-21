@@ -35,8 +35,6 @@ AppIterator Apps::begin() const {
   return AppIterator(nullptr);
 }
 
-void setVisible() {}
-
 int numberOfApps() {
   return 0;
 }

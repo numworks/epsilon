@@ -71,7 +71,7 @@ private:
 
   constexpr static T k_NAN = static_cast<T>(NAN);
   constexpr static T k_zero = static_cast<T>(0.);
-  constexpr static T k_minimalPracticalStep = 1e-6;
+  constexpr static T k_minimalPracticalStep = std::max(static_cast<T>(1e-6), k_minimalAbsoluteStep);
   constexpr static T k_absolutePrecision = k_relativePrecision * k_minimalAbsoluteStep;
 
   static T NullTolerance(T x) { return std::max(k_minimalAbsoluteStep, k_relativePrecision * std::fabs(x)) * static_cast<T>(10.); }

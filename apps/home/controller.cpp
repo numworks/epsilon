@@ -81,8 +81,8 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   size_t length = Ion::Events::copyText(static_cast<uint8_t>(event), eventText, Ion::Events::EventData::k_maxDataSize);
   if (length == 1 && eventText[0] >= '0' && eventText[0] <= '9') {
     int iconIndex = eventText[0] == '0' ? numberOfIcons() - 1 : eventText[0] - '1';
-    int col = iconIndex % numberOfColumns();
-    int row = iconIndex / numberOfColumns();
+    int col = columnIndex(iconIndex);
+    int row = rowIndex(iconIndex);
     if (col == m_view.selectableTableView()->selectedColumn() && row == m_view.selectableTableView()->selectedRow()) {
       // We were already on the selected app
       switchToSelectedApp();
@@ -92,7 +92,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   }
   // Handle Down when less than 3 icons at last row
   if (event == Ion::Events::Down && selectionDataSource()->selectedRow() == numberOfRows() - 2) {
-    int lastIconColumn = (numberOfIcons() - 1) % k_numberOfColumns;
+    int lastIconColumn = columnIndex(numberOfIcons() - 1);
     assert(selectionDataSource()->selectedColumn() > lastIconColumn); // Otherwise would have been handled by SelectableTableView
     return m_view.selectableTableView()->selectCellAtLocation(lastIconColumn, numberOfRows() - 1);
   }
@@ -137,7 +137,7 @@ int Controller::reusableCellCount() const {
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   AppCell * appCell = static_cast<AppCell *>(cell);
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  int appIndex = (j * numberOfColumns() + i) + 1;
+  int appIndex = iconIndex(i, j) + 1;
   if (appIndex >= container->numberOfApps()) {
     appCell->setVisible(false);
   } else {
@@ -179,7 +179,7 @@ SelectableTableViewDataSource * Controller::selectionDataSource() const {
 
 void Controller::switchToSelectedApp() {
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  int appIndex = selectionDataSource()->selectedRow() * numberOfColumns() + selectionDataSource()->selectedColumn() + 1;
+  int appIndex = iconIndex(selectionDataSource()->selectedColumn(), selectionDataSource()->selectedRow()) + 1;
   Poincare::Preferences::ExamMode examMode = Poincare::Preferences::sharedPreferences()->examMode();
   if (appIndex < container->numberOfBuiltinApps()) {
     ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex));

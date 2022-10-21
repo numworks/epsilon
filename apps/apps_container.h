@@ -52,8 +52,6 @@ public:
   OnBoarding::PromptController * promptController();
   void redrawWindow();
   void activateExamMode(Poincare::Preferences::ExamMode examMode);
-  // Exam pop-up controller delegate
-  void examDeactivatingPopUpIsDismissed() override;
   // Ion::Storage::StorageDelegate
   bool storageWillChangeForRecord(const Ion::Storage::Record record) override;
   void storageDidChangeForRecord(const Ion::Storage::Record record) override;

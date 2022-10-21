@@ -378,10 +378,6 @@ void AppsContainer::activateExamMode(Poincare::Preferences::ExamMode examMode) {
   }
 }
 
-void AppsContainer::examDeactivatingPopUpIsDismissed() {
-  Ion::USB::clearEnumerationInterrupt();
-}
-
 bool AppsContainer::storageWillChangeForRecord(const Ion::Storage::Record record) {
   if (s_activeApp) {
     return s_activeApp->storageWillChangeForRecord(record);

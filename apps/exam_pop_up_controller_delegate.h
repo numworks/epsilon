@@ -3,7 +3,7 @@
 
 class ExamPopUpControllerDelegate {
 public:
-  virtual void examDeactivatingPopUpIsDismissed() = 0;
+  void examDeactivatingPopUpIsDismissed() {};
 };
 
 #endif

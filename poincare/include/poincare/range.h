@@ -31,6 +31,7 @@ public:
   float center() const { return 0.5f * (m_min + m_max); }
   void extend(float t);
   void zoom(float ratio, float center);
+  void nudgeToContain(float t);
 
 private:
   void privateSet(float t, float * bound, float limit);

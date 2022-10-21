@@ -22,6 +22,17 @@ void Range1D::zoom(float ratio, float center) {
   m_max = (m_max - center) * ratio + center;
 }
 
+void Range1D::nudgeToContain(float t) {
+  float l = length();
+  if (t < m_min) {
+    m_min = t;
+    m_max = t + l;
+  } else if (m_max < t) {
+    m_max = t;
+    m_min = t - l;
+  }
+}
+
 void Range1D::privateSet(float t, float * bound, float limit) {
   if (std::isnan(t)) {
     m_min = t;

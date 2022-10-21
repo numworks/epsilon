@@ -46,7 +46,7 @@ void Zoom::fitPointsOfInterest(Function2DWithContext f, const void * model) {
     const Parameters * p = static_cast<const Parameters *>(aux);
     return p->f(t, p->model, p->context).x2(); // TODO Zoom could also work for x=f(y) functions
   };
-  fitWithSolver(evaluator, &params, PointIsInteresting);
+  fitWithSolver(evaluator, &params, PointIsInteresting, HonePoint);
 }
 
 void Zoom::fitIntersections(Function2DWithContext f1, const void * model1, Function2DWithContext f2, const void * model2) {
@@ -62,7 +62,11 @@ void Zoom::fitIntersections(Function2DWithContext f1, const void * model1, Funct
     const Parameters * p = static_cast<const Parameters *>(aux);
     return p->f1(t, p->model1, p->context).x2() - p->f2(t, p->model2, p->context).x2();
   };
-  fitWithSolver(evaluator, &params, Solver<float>::EvenOrOddRootInBracket);
+  Solver<float>::HoneResult hone = [](Solver<float>::FunctionEvaluation f, const void * aux, float, float b, Solver<float>::Interest, float) {
+    const Parameters * p = static_cast<const Parameters *>(aux);
+    return p->f1(b, p->model1, p->context);
+  };
+  fitWithSolver(evaluator, &params, Solver<float>::EvenOrOddRootInBracket, hone);
 }
 
 void Zoom::fitMagnitude(Function2DWithContext f, const void * model) {
@@ -185,26 +189,26 @@ Range2D Zoom::prettyRange() const {
   return Range2D(xRange, yRange);
 }
 
-void Zoom::fitWithSolver(Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test) {
+void Zoom::fitWithSolver(Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone) {
   /* Step away from the center, as it is more likely to be a significant value
    * (typically zero).*/
   float c = m_bounds.center();
   float d = std::max(Solver<float>::k_minimalAbsoluteStep, std::fabs(c * Solver<float>::k_relativePrecision));
-  fitWithSolverHelper(c - d, m_bounds.max(), evaluator, aux, test);
-  fitWithSolverHelper(c - d, m_bounds.min(), evaluator, aux, test);
+  fitWithSolverHelper(c - d, m_bounds.max(), evaluator, aux, test, hone);
+  fitWithSolverHelper(c - d, m_bounds.min(), evaluator, aux, test, hone);
 }
 
-void Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test) {
+void Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone) {
   constexpr int k_maxPointsOnOneSide = 20;
   constexpr int k_maxPointsIfInfinite = 5;
 
   Solver<float> solver(start, end);
   Range2D tempRange;
-  Coordinate2D<float> p = solver.next(evaluator, aux, test, HonePoint);
+  Coordinate2D<float> p = solver.next(evaluator, aux, test, hone);
   int n = 0;
   while (solver.lastInterest() != Solver<float>::Interest::None) {
     m_interestingRange.extend(p);
-    p = solver.next(evaluator, aux, test, HonePoint);
+    p = solver.next(evaluator, aux, test, hone);
     n++;
     if (n == k_maxPointsIfInfinite) {
       tempRange = m_interestingRange;

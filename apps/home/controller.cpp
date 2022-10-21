@@ -80,9 +80,9 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   char eventText[Ion::Events::EventData::k_maxDataSize] = {0};
   size_t length = Ion::Events::copyText(static_cast<uint8_t>(event), eventText, Ion::Events::EventData::k_maxDataSize);
   if (length == 1 && eventText[0] >= '0' && eventText[0] <= '9') {
-    int appIndex = eventText[0] == '0' ? numberOfIcons() - 1 : eventText[0] - '1';
-    int col = appIndex % numberOfColumns();
-    int row = appIndex / numberOfColumns();
+    int iconIndex = eventText[0] == '0' ? numberOfIcons() - 1 : eventText[0] - '1';
+    int col = iconIndex % numberOfColumns();
+    int row = iconIndex / numberOfColumns();
     if (col == m_view.selectableTableView()->selectedColumn() && row == m_view.selectableTableView()->selectedRow()) {
       // We were already on the selected app
       switchToSelectedApp();

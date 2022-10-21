@@ -126,7 +126,7 @@ void AbstractLabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plo
 
   Coordinate2D<float> xy = axis == AbstractPlotView::Axis::Horizontal ? Coordinate2D<float>(t, m_labelsPosition) : Coordinate2D<float>(m_labelsPosition, t);
   KDRect labelRect = plotView->labelRect(text, xy, xRelative, yRelative);
-  if (labelWillBeDisplayed(labelRect)) {
+  if (labelWillBeDisplayed(i, labelRect)) {
     plotView->drawLabel(ctx, rect, text, labelRect, color);
   }
 }

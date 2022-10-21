@@ -135,12 +135,6 @@ AppIterator Apps::begin() const {
   return AppIterator(storageStart);
 }
 
-void setVisible() {
-  if (numberOfApps() > 0) {
-    Device::Board::enableExternalApps(); // Display pop-up
-  }
-}
-
 int numberOfApps() {
   int counter = 0;
   for (App a : Apps()) {

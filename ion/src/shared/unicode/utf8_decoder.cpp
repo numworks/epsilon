@@ -121,6 +121,13 @@ size_t UTF8Decoder::CodePointToChars(CodePoint c, char * buffer, size_t bufferLe
   return charCount;
 }
 
+size_t UTF8Decoder::CodePointToCharsWithNullTermination(CodePoint c, char * buffer, size_t bufferSize) {
+  size_t result = CodePointToChars(c, buffer, bufferSize - 1);
+  assert(result < bufferSize);
+  buffer[result] = 0;
+  return result;
+}
+
 bool UTF8Decoder::IsInTheMiddleOfACodePoint(uint8_t value) {
   return value >= 0b10000000 && value < 0b11000000;
 }

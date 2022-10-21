@@ -37,7 +37,7 @@ private:
 
   // Static methods for the Solver API
   static Solver<float>::Interest PointIsInteresting(float ya, float yb, float yc);
-  static Coordinate2D<float> SelectFar(Solver<float>::FunctionEvaluation f, const void * model, float a, float b, Solver<float>::Interest, float precision) { return Coordinate2D<float>(b, f(b, model)); }
+  static Coordinate2D<float> HonePoint(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest, float precision);
 
   Range1D sanitizedXRange() const;
   Range2D prettyRange() const;

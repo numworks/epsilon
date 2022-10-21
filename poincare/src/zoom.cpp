@@ -1,4 +1,5 @@
 #include <poincare/zoom.h>
+#include <poincare/trinary_boolean.h>
 #include <string.h>
 
 namespace Poincare {
@@ -111,6 +112,35 @@ Solver<float>::Interest Zoom::PointIsInteresting(float ya, float yb, float yc) {
   return interest;
 }
 
+Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest interest, float precision) {
+  constexpr int k_numberOfIterations = 10; // TODO Tune
+  bool convex = true;
+  float fa = f(a, aux), fb = f(b, aux);
+  float c = 0.5f * (a + b), fc = f(c, aux);
+  float u, fu, v, fv;
+  for (int i = 0; i < k_numberOfIterations; i++) {
+    u = 0.5f * (a + c);
+    v = 0.5f * (c + b);
+    fu = f(u, aux);
+    fv = f(v, aux);
+
+    convex = convex && std::fabs(fu - fc) <= std::fabs(fa - fc) && std::fabs(fv - fc) <= std::fabs(fb - fc);
+
+    if (PointIsInteresting(fc, fv, fb) != Solver<float>::Interest::None || PointIsInteresting(fa, fu, fc) == Solver<float>::Interest::None) {
+      a = c;
+      fa = fc;
+      c = v;
+      fc = fv;
+    } else {
+      b = c;
+      fb = fc;
+      c = u;
+      fc = fu;
+    }
+  }
+  return Coordinate2D<float>(b, interest == Solver<float>::Interest::Root ? 0.f : convex ? fb : NAN);
+}
+
 Range1D Zoom::sanitizedXRange() const {
   Range2D thisRange = m_interestingRange; // Copy for const-ness
   if (!thisRange.x().isValid()) {
@@ -170,11 +200,11 @@ void Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEv
 
   Solver<float> solver(start, end);
   Range2D tempRange;
-  Coordinate2D<float> p = solver.next(evaluator, aux, test, SelectFar);
+  Coordinate2D<float> p = solver.next(evaluator, aux, test, HonePoint);
   int n = 0;
   while (solver.lastInterest() != Solver<float>::Interest::None) {
     m_interestingRange.extend(p);
-    p = solver.next(evaluator, aux, test, SelectFar);
+    p = solver.next(evaluator, aux, test, HonePoint);
     n++;
     if (n == k_maxPointsIfInfinite) {
       tempRange = m_interestingRange;

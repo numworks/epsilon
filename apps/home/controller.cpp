@@ -81,8 +81,8 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   size_t length = Ion::Events::copyText(static_cast<uint8_t>(event), eventText, Ion::Events::EventData::k_maxDataSize);
   if (length == 1 && eventText[0] >= '0' && eventText[0] <= '9') {
     int appIndex = eventText[0] == '0' ? numberOfIcons() - 1 : eventText[0] - '1';
-    int i = appIndex % k_numberOfColumns;
-    int j = appIndex / k_numberOfColumns;
+    int i = appIndex % numberOfColumns();
+    int j = appIndex / numberOfColumns();
     if (i == m_view.selectableTableView()->selectedColumn() && j == m_view.selectableTableView()->selectedRow()) {
       // We were already on the selected app
       switchToSelectedApp();
@@ -111,7 +111,7 @@ View * Controller::view() {
 }
 
 int Controller::numberOfRows() const {
-  return ((numberOfIcons() - 1) / k_numberOfColumns) + 1;
+  return ((numberOfIcons() - 1) / numberOfColumns()) + 1;
 }
 
 int Controller::numberOfColumns() const {
@@ -137,7 +137,7 @@ int Controller::reusableCellCount() const {
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   AppCell * appCell = static_cast<AppCell *>(cell);
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  int appIndex = (j * k_numberOfColumns + i) + 1;
+  int appIndex = (j * numberOfColumns() + i) + 1;
   if (appIndex >= container->numberOfApps()) {
     appCell->setVisible(false);
   } else {
@@ -169,7 +169,7 @@ void Controller::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t
    * the redrawing takes time and is visible at scrolling. Here, we avoid the 
    * background complete redrawing but the code is a bit clumsy. */
   if (t->selectedRow() == numberOfRows() - 1) {
-    m_view.reloadBottomRow(this, numberOfIcons(), k_numberOfColumns);
+    m_view.reloadBottomRow(this, numberOfIcons(), numberOfColumns());
   }
 }
 
@@ -179,7 +179,7 @@ SelectableTableViewDataSource * Controller::selectionDataSource() const {
 
 void Controller::switchToSelectedApp() {
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  int appIndex = selectionDataSource()->selectedRow() * k_numberOfColumns + selectionDataSource()->selectedColumn() + 1;
+  int appIndex = selectionDataSource()->selectedRow() * numberOfColumns() + selectionDataSource()->selectedColumn() + 1;
   Poincare::Preferences::ExamMode examMode = Poincare::Preferences::sharedPreferences()->examMode();
   if (appIndex < container->numberOfBuiltinApps()) {
     ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex));

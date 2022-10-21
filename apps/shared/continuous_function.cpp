@@ -155,7 +155,7 @@ int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
   if (isNamed()) {
     return Function::nameWithArgument(buffer, bufferSize);
   }
-  return UTF8Decoder::CodePointToChars(plotType() == PlotType::Polar ? k_radiusSymbol : k_ordinateSymbol, buffer, bufferSize);
+  return UTF8Decoder::CodePointToCharsWithNullTermination(plotType() == PlotType::Polar ? k_radiusSymbol : k_ordinateSymbol, buffer, bufferSize);
 }
 
 int ContinuousFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context, bool symbolValue) {

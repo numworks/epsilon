@@ -25,7 +25,6 @@ public:
   Escher::HighlightCell * reusableCell(int index) override;
   int reusableCellCount() const override;
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
-  void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 private:
   // SimpleTableViewDataSource

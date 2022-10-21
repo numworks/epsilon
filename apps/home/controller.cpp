@@ -155,12 +155,6 @@ int Controller::numberOfIcons() const {
   return container->numberOfApps() - 1;
 }
 
-void Controller::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
-  if (withinTemporarySelection) {
-    return;
-  }
-}
-
 void Controller::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   if (withinTemporarySelection) {
     return;

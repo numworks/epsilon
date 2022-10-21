@@ -23,7 +23,7 @@ public:
   };
 
   typedef T (*FunctionEvaluation)(T, const void *);
-  typedef Interest (*BracketTest)(T, T, T);
+  typedef Interest (*BracketTest)(Coordinate2D<T>, Coordinate2D<T>, Coordinate2D<T>);
   typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void *, T, T, Interest, T);
 
   constexpr static T k_relativePrecision = Float<T>::Epsilon();
@@ -31,11 +31,11 @@ public:
 
   // BracketTest default implementations
   constexpr static Interest BoolToInterest(bool v, Interest t, Interest f = Interest::None) { return v ? t : f; }
-  static Interest OddRootInBracket(T a, T b, T c) { return BoolToInterest((a < k_zero && k_zero < c) || (c < k_zero && k_zero < a), Interest::Root); }
-  static Interest EvenOrOddRootInBracket(T a, T b, T c);
-  static Interest MinimumInBracket(T a, T b, T c) { return BoolToInterest(b < a && b < c, Interest::LocalMinimum); }
-  static Interest MaximumInBracket(T a, T b, T c) { return BoolToInterest(a < b && c < b, Interest::LocalMaximum); }
-  static Interest DiscontinuityInBracket(T a, T b, T c) { return BoolToInterest(std::isnan(a) != std::isnan(c), Interest::Discontinuity); }
+  static Interest OddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c) { return BoolToInterest((a.x2() < k_zero && k_zero < c.x2()) || (c.x2() < k_zero && k_zero < a.x2()), Interest::Root); }
+  static Interest EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c);
+  static Interest MinimumInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c) { return BoolToInterest(b.x2() < a.x2() && b.x2() < c.x2(), Interest::LocalMinimum); }
+  static Interest MaximumInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c) { return BoolToInterest(a.x2() < b.x2() && c.x2() < b.x2(), Interest::LocalMaximum); }
+  static Interest DiscontinuityInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c) { return BoolToInterest(std::isnan(a.x2()) != std::isnan(c.x2()), Interest::Discontinuity); }
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */

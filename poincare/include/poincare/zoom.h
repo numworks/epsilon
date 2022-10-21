@@ -36,7 +36,7 @@ private:
   constexpr static size_t k_sampleSize = Ion::Display::Width / 2;
 
   // Static methods for the Solver API
-  static Solver<float>::Interest PointIsInteresting(float ya, float yb, float yc);
+  static Solver<float>::Interest PointIsInteresting(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c);
   static Coordinate2D<float> HonePoint(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest, float precision);
 
   Range1D sanitizedXRange() const;

@@ -104,11 +104,11 @@ void Zoom::fitMagnitude(Function2DWithContext f, const void * model) {
 
 // Private
 
-Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c) {
+Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c, const void * aux) {
   Solver<float>::BracketTest tests[] = { Solver<float>::OddRootInBracket, Solver<float>::MinimumInBracket, Solver<float>::MaximumInBracket, Solver<float>::DiscontinuityInBracket };
   Solver<float>::Interest interest = Solver<float>::Interest::None;
   for (Solver<float>::BracketTest & test : tests) {
-    interest = test(a, b, c);
+    interest = test(a, b, c, aux);
     if (interest != Solver<float>::Interest::None) {
       break;
     }
@@ -130,7 +130,7 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const v
 
     convex = convex && std::fabs(fu - fc) <= std::fabs(fa - fc) && std::fabs(fv - fc) <= std::fabs(fb - fc);
 
-    if (PointIsInteresting(fc, fv, fb) != Solver<float>::Interest::None || PointIsInteresting(fa, fu, fc) == Solver<float>::Interest::None) {
+    if (PointIsInteresting(fc, fv, fb, aux) != Solver<float>::Interest::None || PointIsInteresting(fa, fu, fc, aux) == Solver<float>::Interest::None) {
       a = c;
       fa = fc;
       c = v;

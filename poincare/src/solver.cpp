@@ -34,7 +34,7 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketT
     p3.setX1(nextX(p2.x1(), end()));
     p3.setX2(f(p3.x1(), aux));
 
-    Interest interest = test(p1, p2, p3);
+    Interest interest = test(p1, p2, p3, aux);
     if (interest != Interest::None) {
       Coordinate2D<T> solution = hone(f, aux, p1.x1(), p3.x1(), interest, k_absolutePrecision);
       if (std::isfinite(solution.x1()) && validSolution(solution.x1())) {
@@ -125,15 +125,15 @@ void Solver<T>::stretch() {
 }
 
 template<typename T>
-typename Solver<T>::Interest Solver<T>::EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c) {
-  Interest root = OddRootInBracket(a, b, c);
+typename Solver<T>::Interest Solver<T>::EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void * aux) {
+  Interest root = OddRootInBracket(a, b, c, aux);
   if (root != Interest::None) {
     return root;
   }
   /* FIXME Check the sign of a,b and c. A minimum can only be a root if b is
    * positive. */
-  Interest extremum = MinimumInBracket(a, b, c);
-  return extremum == Interest::None ? MaximumInBracket(a, b, c) : extremum;
+  Interest extremum = MinimumInBracket(a, b, c, aux);
+  return extremum == Interest::None ? MaximumInBracket(a, b, c, aux) : extremum;
 }
 
 template<typename T>
@@ -295,7 +295,7 @@ template Coordinate2D<double> Solver<double>::nextMinimum(Expression);
 template Coordinate2D<double> Solver<double>::nextIntersection(Expression, Expression);
 template void Solver<double>::stretch();
 
-template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c);
+template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>, const void *);
 template Solver<float>::Solver(float, float, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);
 template Coordinate2D<float> Solver<float>::next(FunctionEvaluation, const void *, BracketTest, HoneResult);
 

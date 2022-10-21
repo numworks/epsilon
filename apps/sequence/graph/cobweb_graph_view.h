@@ -14,10 +14,13 @@ public:
   constexpr static int k_maximumNumberOfSteps = 18;
 protected:
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
-
+  /* If the step is the cache step it means the whole screen should be redrawn
+   * after a OnOff. */
+  bool update() const { return m_cachedStep != k_emptyCache && m_cachedStep != m_step; }
+  constexpr static int8_t k_emptyCache = - 2;
   Shared::Sequence * m_sequence;
-  int m_step;
-  mutable int m_cachedStep;
+  int8_t m_step;
+  mutable int8_t m_cachedStep;
 
 private:
   constexpr static int k_dashSize = 4;
@@ -50,9 +53,8 @@ public:
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView);
   void setSequence(Shared::Sequence * sequence) { m_sequence = sequence; }
   void setStep(int step) { m_step = step; }
-  void resetCachedStep() { m_cachedStep = -2; };
+  void resetCachedStep() { m_cachedStep = k_emptyCache; };
 private:
-  bool update() const { return m_cachedStep != - 2; }
   void drawBackground(KDContext * ctx, KDRect rect) const override;
 };
 

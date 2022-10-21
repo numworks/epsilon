@@ -154,5 +154,13 @@ int numberOfApps() {
   return counter;
 }
 
+void deleteApps() {
+  s_externalAppsVisible = true;
+  for (App a : Apps()) {
+    a.eraseMagicCode();
+  }
+  s_externalAppsVisible = false;
+}
+
 }
 }

@@ -47,8 +47,8 @@ public:
 
 private:
   void stripOutOfBounds();
-  void computeBetween(float start, float end, float * dirtyStart, float * dirtyEnd);
-  void append(double x, double y, Poincare::Solver<double>::Interest, float * dirtyStart, float * dirtyEnd, uint32_t data = 0);
+  void computeBetween(float start, float end, Poincare::Range1D * dirtyRange);
+  void append(double x, double y, Poincare::Solver<double>::Interest, Poincare::Range1D * dirtyRange, uint32_t data = 0);
 
   Ion::Storage::Record m_record;
   uint32_t m_checksum;

@@ -25,6 +25,8 @@ void * App::entryPoint() const {
   return nullptr;
 }
 
+void App::eraseMagicCode() {}
+
 AppIterator& AppIterator::operator++() {
   return *this;
 }

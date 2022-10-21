@@ -35,7 +35,7 @@ private:
   bool handleEnter() override;
   bool handleZoom(Ion::Events::Event event) override;
   void drawStep(int n);
-  void setupZoom();
+  void setupRange();
   bool updateStep(int delta);
   Shared::ExpiringPointer<Shared::Sequence> sequence() const;
   CobwebGraphView m_graphView;
@@ -45,9 +45,9 @@ private:
   Shared::InteractiveCurveViewRange m_graphRange;
   Ion::Storage::Record m_record;
 private:
-  constexpr static float k_bottomMargin = 0.14;
-  constexpr static float k_margin = 0.10;
+  constexpr static float k_margin = 0.12;
   int m_step;
+  bool m_initialZoom;
   bool m_isSuitable;
   Shared::SequenceStore * m_sequenceStore;
 };

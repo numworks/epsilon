@@ -47,8 +47,9 @@ bool CobwebController::handleLeftRightEvent(Ion::Events::Event event) {
 }
 
 void CobwebController::viewWillAppear() {
-  setupZoom();
+  setupRange();
   m_step = 0;
+  m_initialZoom = true;
   m_graphView.setSequence(sequence().pointer());
   m_graphView.resetCachedStep();
   m_graphView.setStep(0);
@@ -61,33 +62,23 @@ void CobwebController::viewDidDisappear() {
   m_graphController->moveToRank(m_step);
 }
 
-void CobwebController::setupZoom() {
-  /* compute the bounding rect of the maximum number of value we will want to
-   * draw such that we never need to move the view */
+void CobwebController::setupRange() {
+  /* Compute the bounding rect of the maximum number of values we will want to
+   * draw such that we never need to move the view. */
   SequenceContext * sequenceContext = App::app()->localContext();
-  // We need the x-axis in the view
-  float xMin = 0.f, xMax = 0.f;
+  InteractiveCurveViewRange range;
   for (int step = 0; step < CobwebGraphView::k_maximumNumberOfSteps; step++) {
     float value = sequence()->evaluateXYAtParameter(static_cast<float>(step + sequence()->initialRank()), sequenceContext).x2();
-    xMin = std::min(xMin, value);
-    xMax = std::max(xMax, value);
+    if (step == 0) {
+      range.setXMin(value);
+      range.setXMax(value);
+      range.setYMin(0);
+      range.setYMax(0);
+    } else {
+      range.zoomOutToMakePointVisible(value, value, k_margin, k_margin, k_margin, k_margin);
+    }
   }
-  float length = xMax-xMin;
-  xMin -= k_margin * length;
-  xMax += k_margin * length;
-
-  float yMin = xMin;
-  float yMax = xMax;
-  if (std::abs(yMin)/(yMax-yMin) < k_bottomMargin) {
-    yMin = -(yMax-yMin) * k_bottomMargin;
-  }
-  // panTomakepointvisible ?
-  m_graphRange.setXAuto(false);
-  m_graphRange.setXMin(xMin);
-  m_graphRange.setXMax(xMax);
-  m_graphRange.setYAuto(false);
-  m_graphRange.setYMin(yMin);
-  m_graphRange.setYMax(yMax);
+  m_graphRange = range;
   m_graphView.reload();
 }
 
@@ -122,6 +113,7 @@ bool CobwebController::handleEnter() {
 }
 
 bool CobwebController::handleZoom(Ion::Events::Event event) {
+  m_initialZoom = false;
   float ratio = event == Ion::Events::Plus ? 1.f / k_zoomOutRatio : k_zoomOutRatio;
   float value = sequence()->evaluateXYAtParameter(static_cast<float>(m_step + sequence()->initialRank()), App::app()->localContext()).x2();
   interactiveCurveViewRange()->zoom(ratio, value, m_step ? value : 0.f);
@@ -138,10 +130,7 @@ bool CobwebController::updateStep(int delta) {
   double u_n = sequence()->valueAtRank<double>(m_step, App::app()->localContext());
   double x = u_n;
   double y = m_step == 0 ? 0.f : u_n;
-  // TODO: For some reason panToMakePointVisible is stricter that our computation
-  constexpr float marginDelta = 0.02;
-  float margin = k_margin - marginDelta;
-  if (interactiveCurveViewRange()->panToMakePointVisible(x, y, margin, margin, k_bottomMargin - marginDelta, margin, m_graphView.pixelWidth())) {
+  if (!m_initialZoom && interactiveCurveViewRange()->panToMakePointVisible(x, y, k_margin,  k_margin,  k_margin,  k_margin, m_graphView.pixelWidth())) {
     m_graphView.resetCachedStep();
   }
   m_graphView.setStep(m_step);

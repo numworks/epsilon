@@ -47,6 +47,7 @@ public:
     return c <= 0x7F ? 1 : (c <= 0x7FF ? 2 : (c <= 0xFFFF ? 3 : 4));
   }
   static size_t CodePointToChars(CodePoint c, char * buffer, size_t bufferLength); // No null-terminating char
+  static size_t CodePointToCharsWithNullTermination(CodePoint c, char * buffer, size_t bufferSize);
   static bool IsInTheMiddleOfACodePoint(uint8_t value);
 private:
   const char * const m_string;

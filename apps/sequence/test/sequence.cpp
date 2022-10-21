@@ -545,4 +545,18 @@ QUIZ_CASE(sequence_sum_evaluation) {
   check_sum_of_sequence_between_bounds(92.0, 2.0, 7.0, Sequence::Type::DoubleRecurrence, "u(n)+u(n+1)+2", "0", "0");
 }
 
+QUIZ_CASE(sequence_simply_recursive) {
+  Shared::GlobalContext globalContext;
+  SequenceStore * store = globalContext.sequenceStore();
+  SequenceContext * sequenceContext = globalContext.sequenceContext();
+  quiz_assert(addSequence(store, Sequence::Type::SingleRecurrence, "3(u(n)+2)+u(n)", "0", nullptr, sequenceContext)->isSimplyRecursive(sequenceContext));
+  store->removeAll();
+  quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence, "v(n)+2", "0", nullptr, sequenceContext)->isSimplyRecursive(sequenceContext));
+  store->removeAll();
+  quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence, "u(n)+cos(n)", "0", nullptr, sequenceContext)->isSimplyRecursive(sequenceContext));
+  store->removeAll();
+  quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence, "2*u(n-2)", "0", nullptr, sequenceContext)->isSimplyRecursive(sequenceContext));
+  store->removeAll();
+}
+
 }

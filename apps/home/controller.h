@@ -34,6 +34,12 @@ private:
   int numberOfIcons() const;
   Escher::SelectableTableViewDataSource * selectionDataSource() const;
   void switchToSelectedApp();
+
+  // Conversion index <--> column/row
+  int columnIndex(int iconIndex) const { return iconIndex % numberOfColumns(); }
+  int rowIndex(int iconIndex) const { return iconIndex / numberOfColumns(); }
+  int iconIndex(int columnIndex, int rowIndex) const { return rowIndex * numberOfColumns() + columnIndex; }
+  
   class ContentView : public Escher::View {
   public:
     ContentView(Controller * controller, Escher::SelectableTableViewDataSource * selectionDataSource);

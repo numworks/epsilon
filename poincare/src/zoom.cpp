@@ -38,6 +38,8 @@ Range2D Zoom::Sanitize(Range2D range, float normalYXRatio, float maxFloat) {
     result.setRatio(m_normalRatio, false);
   }
 
+  // Condition inverted to account for NANs
+  assert(!(result.xMin() > m_interestingRange.xMin()) && !(m_interestingRange.xMax() > result.xMax()) && !(result.yMin() > m_interestingRange.yMin()) && !(m_interestingRange.yMax() > result.yMax()));
   return result;
 }
 
@@ -205,6 +207,8 @@ Range2D Zoom::prettyRange() const {
       yCenter = 0.f;
     }
     yRange = Range1D(yCenter - 0.5f * yLengthNormalized, yCenter + 0.5f * yLengthNormalized);
+    yRange.nudgeToContain(thisRange.yMin());
+    yRange.nudgeToContain(thisRange.yMax());
   } else if (xLengthNormalized * k_minimalXCoverage <= xLength && xLength <= xLengthNormalized) {
     float xCenter = xRange.center();
     xRange = Range1D(xCenter - xLengthNormalized * 0.5f, xCenter + xLengthNormalized * 0.5f);

@@ -23,7 +23,7 @@ public:
   };
 
   typedef T (*FunctionEvaluation)(T, const void *);
-  typedef Interest (*BracketTest)(Coordinate2D<T>, Coordinate2D<T>, Coordinate2D<T>);
+  typedef Interest (*BracketTest)(Coordinate2D<T>, Coordinate2D<T>, Coordinate2D<T>, const void *);
   typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void *, T, T, Interest, T);
 
   constexpr static T k_relativePrecision = Float<T>::Epsilon();
@@ -31,11 +31,11 @@ public:
 
   // BracketTest default implementations
   constexpr static Interest BoolToInterest(bool v, Interest t, Interest f = Interest::None) { return v ? t : f; }
-  static Interest OddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c) { return BoolToInterest((a.x2() < k_zero && k_zero < c.x2()) || (c.x2() < k_zero && k_zero < a.x2()), Interest::Root); }
-  static Interest EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c);
-  static Interest MinimumInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c) { return BoolToInterest(b.x2() < a.x2() && b.x2() < c.x2(), Interest::LocalMinimum); }
-  static Interest MaximumInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c) { return BoolToInterest(a.x2() < b.x2() && c.x2() < b.x2(), Interest::LocalMaximum); }
-  static Interest DiscontinuityInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c) { return BoolToInterest(std::isnan(a.x2()) != std::isnan(c.x2()), Interest::Discontinuity); }
+  static Interest OddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *) { return BoolToInterest((a.x2() < k_zero && k_zero < c.x2()) || (c.x2() < k_zero && k_zero < a.x2()), Interest::Root); }
+  static Interest EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *);
+  static Interest MinimumInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *) { return BoolToInterest(b.x2() < a.x2() && b.x2() < c.x2(), Interest::LocalMinimum); }
+  static Interest MaximumInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *) { return BoolToInterest(a.x2() < b.x2() && c.x2() < b.x2(), Interest::LocalMaximum); }
+  static Interest DiscontinuityInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *) { return BoolToInterest(std::isnan(a.x2()) != std::isnan(c.x2()), Interest::Discontinuity); }
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */

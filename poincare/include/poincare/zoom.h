@@ -35,15 +35,17 @@ public:
 private:
   class HorizontalAsymptoteHelper {
   public:
-    HorizontalAsymptoteHelper(float center) : m_center(center), m_left(NAN), m_right(NAN) {}
+    HorizontalAsymptoteHelper(float center) : m_center(center), m_left(-INFINITY), m_right(INFINITY) {}
 
-    Coordinate2D<float> left() const { return m_left; }
-    Coordinate2D<float> right() const { return m_right; }
+    Coordinate2D<float> left() const { return privateGet(&m_left); }
+    Coordinate2D<float> right() const { return privateGet(&m_right); }
     void update(Coordinate2D<float> x, float slope);
 
   private:
     constexpr static float k_threshold = 0.2f; // TODO Tune
     constexpr static float k_hysteresis = 0.01f; // TODO Tune
+
+    Coordinate2D<float> privateGet(const Coordinate2D<float> * p) const { return std::isfinite(p->x1()) ? *p : Coordinate2D<float>(); }
 
     float m_center;
     Coordinate2D<float> m_left;

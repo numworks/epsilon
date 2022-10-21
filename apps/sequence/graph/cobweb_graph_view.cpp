@@ -70,33 +70,19 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
   float x = increasing ? m_x : m_sequence->evaluateXYAtParameter(static_cast<float>(rank), context).x2();
   float y = rank == m_sequence->initialRank() ? 0 : x;
   float uOfX = m_sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
-  /* We need to detect bottom-right corners made by a vertical and an horizontal
-   * segment : they can happen in two cases.
-   *
-   * We are on the line in (x,y) going down to the curve in (x,u(x)) and then
-   * left to the line in (u(x),u(x)). We could be tempted to use y=x but not
-   * assuming this also deals with the case when we started on the x-axis.
-   *
-   * We are on the curve in (x,u(x)) moving horizontally to the right to the
-   * line into (u(x),u(x)) and then up to the curve in (u((x),u(u(x))).
-   */
-  bool cornerCurveToLine = false;
-  bool cornerLineToCurve = false;
   KDMeasuringContext measuringContext(*ctx);
   for (int i = initialStep; i < m_step; i++) {
     rank++;
-    cornerCurveToLine = x>uOfX && y>uOfX;
     measuringContext.reset();
-    plotView->drawStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color(), k_thickness, k_dashSize, cornerCurveToLine || cornerLineToCurve);
+    plotView->drawStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color(), k_thickness, k_dashSize);
     m_verticalLineCache[i].save(ctx, measuringContext.writtenRect());
-    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color(), k_thickness, k_dashSize, cornerCurveToLine || cornerLineToCurve);
+    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color(), k_thickness, k_dashSize);
     y = uOfX;
     float uOfuOfX = m_sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
-    cornerLineToCurve = x<uOfX && y<uOfuOfX;
     measuringContext.reset();
-    plotView->drawStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color(), k_thickness, k_dashSize, cornerCurveToLine || cornerLineToCurve);
+    plotView->drawStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color(), k_thickness, k_dashSize);
     m_horizontalLineCache[i].save(ctx, measuringContext.writtenRect());
-    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color(), k_thickness, k_dashSize, cornerCurveToLine || cornerLineToCurve);
+    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color(), k_thickness, k_dashSize);
     x = uOfX;
     uOfX = uOfuOfX;
   }

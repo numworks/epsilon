@@ -7,7 +7,7 @@
 
 using namespace Escher;
 
-ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate) :
+ExamPopUpController::ExamPopUpController() :
   Shared::MessagePopUpController(
     Invocation(
       [](void * context, void * sender) {
@@ -40,8 +40,7 @@ ExamPopUpController::ExamPopUpController(ExamPopUpControllerDelegate * delegate)
       }, this),
       I18n::Message::Default
   ),
-  m_targetExamMode(Poincare::Preferences::ExamMode::Unknown),
-  m_delegate(delegate)
+  m_targetExamMode(Poincare::Preferences::ExamMode::Unknown)
 {
 }
 

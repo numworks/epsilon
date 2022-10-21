@@ -15,6 +15,7 @@ public:
 private:
   constexpr static KDCoordinate k_verticalColorIndicatorThickness = k_colorIndicatorThickness + 1;
   constexpr static KDCoordinate k_equalWidthWithMargins = 10;  // Ad hoc value
+  constexpr static KDCoordinate k_rightMargin = 3;  // Ad hoc value
   constexpr static float k_horizontalAlignment = 0.9f;
 
   KDRect subviewFrame() const override;

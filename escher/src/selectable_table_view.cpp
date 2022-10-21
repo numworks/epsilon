@@ -213,13 +213,15 @@ int SelectableTableView::indexOfNextSelectableColumn(int delta) {
   assert(selectedRow() >= 0 && selectedRow() < dataSource()->numberOfRows());
   int column = selectedColumn();
   int step = delta > 0 ? 1 : -1;
+  int firstColumn = 0;
+  int lastColumn = dataSource()->numberOfColumns() - 1;
   while (delta) {
     column += step;
-    if (column < 0) {
-      return 0;
+    if (column < firstColumn) {
+      return firstColumn;
     }
-    if (column >= dataSource()->numberOfColumns()) {
-      return dataSource()->numberOfColumns() - 1;
+    if (column > lastColumn) {
+      return lastColumn;
     }
     Escher::HighlightCell * cell = cellAtLocation(column, selectedRow());
     assert(cell);

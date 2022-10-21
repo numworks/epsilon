@@ -125,7 +125,6 @@ AppIterator & AppIterator::operator++() {
   return *this;
 }
 
-
 AppIterator Apps::begin() const {
   uint8_t * storageStart = &_external_apps_flash_start;
   assert(nextSectorAlignedAddress(storageStart) == storageStart);

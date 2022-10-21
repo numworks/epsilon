@@ -3,6 +3,7 @@
 #include "exam_mode_configuration.h"
 #include <assert.h>
 #include <apps/i18n.h>
+#include <ion/usb.h>
 
 using namespace Escher;
 
@@ -51,7 +52,7 @@ void ExamPopUpController::setTargetExamMode(Poincare::Preferences::ExamMode mode
 
 void ExamPopUpController::viewDidDisappear() {
   if (m_targetExamMode == Poincare::Preferences::ExamMode::Off) {
-    m_delegate->examDeactivatingPopUpIsDismissed();
+    Ion::USB::clearEnumerationInterrupt();
   }
 }
 

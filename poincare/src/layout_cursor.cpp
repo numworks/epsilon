@@ -239,11 +239,10 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
         }
       } else if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(m_layout.type())) {
         newChild = m_layout;
-      } else if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(m_layout.parent().type())) {
-        newChild = m_layout.parent();
       } else {
-        // The newChild was altered and did not find its new layout
-        assert(false);
+        // Assert crashes if the newChild was altered and not found after that
+        assert(AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(m_layout.parent().type()));
+        newChild = m_layout.parent();
       }
     } else {
       m_layout.addSibling(this, newChild, true);

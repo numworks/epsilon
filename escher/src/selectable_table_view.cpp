@@ -261,7 +261,7 @@ int SelectableTableView::indexOfNextSelectableColumn(int delta) {
     if (column > lastColumn) {
       return lastColumn;
     }
-    Escher::HighlightCell * cell = cellAtLocation(column, selectedRow());
+    HighlightCell * cell = cellAtLocation(column, selectedRow());
     if (!cell || cell->isSelectable()) {
       delta -= step;
     }

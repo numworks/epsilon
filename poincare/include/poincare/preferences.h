@@ -98,7 +98,6 @@ public:
   Preferences();
   static Preferences * sharedPreferences();
 
-  static Preferences PreferencesClone(Preferences * preferences = sharedPreferences());
   static Preferences ClonePreferencesWithNewComplexFormatAndAngleUnit(ComplexFormat complexFormat, AngleUnit angleUnit, Preferences * preferences = sharedPreferences());
 
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(ComplexFormat complexFormat, const Expression & e, Context * context);

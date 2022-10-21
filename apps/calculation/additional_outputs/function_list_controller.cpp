@@ -60,10 +60,9 @@ void FunctionListController::viewDidDisappear() {
 }
 
 I18n::Message FunctionListController::messageAtIndex(int index) {
-  // Message index is mapped in setExpression because it depends on the Matrix.
   assert(index < k_maxNumberOfOutputRows && index >=0);
   I18n::Message messages[k_maxNumberOfOutputRows] = {
-    I18n::Message::CartesianType, // TODO: CurveEquation
+    I18n::Message::CurveEquation,
   };
   return messages[m_indexMessageMap[index]];
 }

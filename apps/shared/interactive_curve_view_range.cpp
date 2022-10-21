@@ -339,7 +339,9 @@ void InteractiveCurveViewRange::privateSetZoomAuto(bool xAuto, bool yAuto) {
 }
 
 void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool computeY) {
-  assert(m_delegate);
+  if (!m_delegate) {
+    return;
+  }
 
   if (offscreenYAxis() != 0.f) {
     /* The Navigation window was exited without being cleaned up, probably

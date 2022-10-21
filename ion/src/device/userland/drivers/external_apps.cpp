@@ -1,6 +1,7 @@
 #include <ion/external_apps.h>
 #include <drivers/board.h>
 #include <config/board.h>
+#include <shared/drivers/flash_write_with_interruptions.h>
 #include <assert.h>
 
 #ifndef EXTERNAL_APPS_API_LEVEL
@@ -96,6 +97,12 @@ void * App::entryPoint() const {
    * instructions.
    */
   return reinterpret_cast<void *>(reinterpret_cast<uint32_t>(addressAtIndexInAppInfo(5)) | 0x1);
+}
+
+void App::eraseMagicCode() {
+  assert(appAtAddress(m_startAddress));
+  uint8_t value = 0x00;
+  Ion::Device::Flash::WriteMemoryWithInterruptions(m_startAddress, reinterpret_cast<uint8_t *>(&value), sizeof(value), true);
 }
 
 uint8_t * nextSectorAlignedAddress(uint8_t * address) {

@@ -14,6 +14,7 @@ public:
   uint32_t iconSize() const;
   const uint8_t * iconData() const;
   void * entryPoint() const;
+  void eraseMagicCode();
 private:
   uint8_t * addressAtIndexInAppInfo(int index) const;
   uint8_t * m_startAddress;

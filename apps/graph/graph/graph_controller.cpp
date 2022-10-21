@@ -275,7 +275,7 @@ void GraphController::refreshPointsOfInterest() {
     m_view.reload();
   } else {
     Range1D dirtyRange = m_pointsOfInterest.setBoundsAndCompute(m_graphRange->xMin(), m_graphRange->xMax());
-    if (dirtyRange.min() <= dirtyRange.max()) {
+    if (dirtyRange.isValid()) {
       float dotRadius = (Dots::LargeDotDiameter * m_view.pixelWidth()) * 0.5f;
       m_view.reloadBetweenBounds(dirtyRange.min() - dotRadius, dirtyRange.max() + dotRadius);
     }

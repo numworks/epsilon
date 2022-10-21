@@ -23,15 +23,14 @@ Range1D PointsOfInterestCache::setBoundsAndCompute(float start, float end) {
   assert(start < end);
   assert(!m_record.isNull());
 
-  float dirtyStart = end, dirtyEnd = start;
+  Range1D dirtyRange;
 
   uint32_t checksum = m_record.checksum();
   if (m_checksum != checksum) {
     /* Discard the old results if the  record has changed. */
     m_start = m_end = NAN;
     if (!m_list.isUninitialized() && m_list.numberOfPoints() > 0) {
-      dirtyStart = pointAtIndex(0).x();
-      dirtyEnd = pointAtIndex(m_list.numberOfPoints() -1).x();
+      dirtyRange = Range1D(pointAtIndex(0).x(), pointAtIndex(m_list.numberOfPoints() - 1).x());
     }
     m_list.init();
   }
@@ -47,18 +46,18 @@ Range1D PointsOfInterestCache::setBoundsAndCompute(float start, float end) {
   }
 
   if (start > oldEnd || end < oldStart || std::isnan(oldEnd) || std::isnan(oldStart)) {
-    computeBetween(start, end, &dirtyStart, &dirtyEnd);
+    computeBetween(start, end, &dirtyRange);
   } else {
     if (start < oldStart) {
-      computeBetween(start, oldStart, &dirtyStart, &dirtyEnd);
+      computeBetween(start, oldStart, &dirtyRange);
     }
     if (end > oldEnd) {
-      computeBetween(oldEnd, end, &dirtyStart, &dirtyEnd);
+      computeBetween(oldEnd, end, &dirtyRange);
     }
   }
 
   m_checksum = m_record.checksum();
-  return Range1D(std::min(dirtyStart, dirtyEnd), std::max(dirtyStart, dirtyEnd));
+  return dirtyRange;
 }
 
 PointOfInterest<double> PointsOfInterestCache::firstPointInDirection(double start, double end, Solver<double>::Interest interest) const {
@@ -89,7 +88,7 @@ void PointsOfInterestCache::stripOutOfBounds() {
   }
 }
 
-void PointsOfInterestCache::computeBetween(float start, float end, float * dirtyStart, float * dirtyEnd) {
+void PointsOfInterestCache::computeBetween(float start, float end, Range1D * dirtyRange) {
   assert(!m_list.isUninitialized());
 
   ContinuousFunctionStore * store = App::app()->functionStore();
@@ -103,7 +102,7 @@ void PointsOfInterestCache::computeBetween(float start, float end, float * dirty
     Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);
     Coordinate2D<double> solution = (solver.*next)(e);
     while (std::isfinite(solution.x1())) {
-      append(solution.x1(), solution.x2(), solver.lastInterest(), dirtyStart, dirtyEnd);
+      append(solution.x1(), solution.x2(), solver.lastInterest(), dirtyRange);
       solution = (solver.*next)(e);
     }
   }
@@ -127,16 +126,15 @@ void PointsOfInterestCache::computeBetween(float start, float end, float * dirty
     Coordinate2D<double> intersection = solver.nextIntersection(e, e2);
     while (std::isfinite(intersection.x1())) {
       assert(sizeof(record) == sizeof(uint32_t));
-      append(intersection.x1(), intersection.x2(), Solver<double>::Interest::Intersection, dirtyStart, dirtyEnd, *reinterpret_cast<uint32_t *>(&record));
+      append(intersection.x1(), intersection.x2(), Solver<double>::Interest::Intersection, dirtyRange, *reinterpret_cast<uint32_t *>(&record));
       intersection = solver.nextIntersection(e, e2);
     }
   }
 }
 
-void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest, float * dirtyStart, float * dirtyEnd, uint32_t data) {
+void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest, Range1D * dirtyRange, uint32_t data) {
   m_list.append(x, y, data, interest);
-  *dirtyStart = std::min(*dirtyStart, static_cast<float>(x));
-  *dirtyEnd = std::max(*dirtyEnd, static_cast<float>(x));
+  dirtyRange->extend(x);
 }
 
 }

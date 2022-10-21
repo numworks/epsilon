@@ -19,6 +19,7 @@ public:
     GlobalMaximum,
     Discontinuity,
     Intersection,
+    HorizontalAsymptote,
     Other,
   };
 

@@ -188,6 +188,7 @@ int SelectableTableView::lastSelectableRow() {
 }
 
 int SelectableTableView::indexOfNextSelectableRow(int delta) {
+  assert(selectedColumn() >= 0 && selectedColumn() < dataSource()->numberOfColumns());
   int row = selectedRow();
   int step = delta > 0 ? 1 : -1;
   int firstRow = firstSelectableRow();

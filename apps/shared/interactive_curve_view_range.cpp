@@ -354,43 +354,45 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
    * normalized. */
   setZoomNormalize(false);
 
-  Poincare::UserCircuitBreakerCheckpoint checkpoint;
-  if (CircuitBreakerRun(checkpoint)) {
-    Range2D newRange = m_delegate->optimalRange(computeX, computeY, memoizedRange());
+  if (computeX || computeY) {
+    Poincare::UserCircuitBreakerCheckpoint checkpoint;
+    if (CircuitBreakerRun(checkpoint)) {
+      Range2D newRange = m_delegate->optimalRange(computeX, computeY, memoizedRange());
 
-    if (computeX) {
+      if (computeX) {
+        MemoizedCurveViewRange::protectedSetXMin(newRange.xMin(), false, k_maxFloat);
+        MemoizedCurveViewRange::protectedSetXMax(newRange.xMax(), true, k_maxFloat);
+      }
+      /* We notify the delegate to refresh the cursor's position and update the
+       * bottom margin (which depends on the banner height). */
+      m_delegate->updateBottomMargin();
+
+      Range2D newRangeWithMargins = m_delegate->addMargins(newRange);
+      newRangeWithMargins = Range2D(
+          computeX ? newRangeWithMargins.x() : Range1D(xMin(), xMax()),
+          computeY ? newRangeWithMargins.y() : Range1D(yMin(), yMax()));
+      if (newRange.ratioIs(NormalYXRatio())) {
+        newRangeWithMargins.setRatio(NormalYXRatio(), false);
+        assert(newRangeWithMargins.ratioIs(NormalYXRatio()));
+      }
+
+      if (computeX) {
+        MemoizedCurveViewRange::protectedSetXMin(newRangeWithMargins.xMin(), false, k_maxFloat);
+        MemoizedCurveViewRange::protectedSetXMax(newRangeWithMargins.xMax(), true, k_maxFloat);
+      }
+      if (computeY) {
+        MemoizedCurveViewRange::protectedSetYMin(newRangeWithMargins.yMin(), false, k_maxFloat);
+        MemoizedCurveViewRange::protectedSetYMax(newRangeWithMargins.yMax(), true, k_maxFloat);
+      }
+
+    } else {
+      m_delegate->tidyModels();
+      Range2D newRange = Zoom::DefaultRange(NormalYXRatio(), k_maxFloat);
       MemoizedCurveViewRange::protectedSetXMin(newRange.xMin(), false, k_maxFloat);
       MemoizedCurveViewRange::protectedSetXMax(newRange.xMax(), true, k_maxFloat);
+      MemoizedCurveViewRange::protectedSetYMin(newRange.yMin(), false, k_maxFloat);
+      MemoizedCurveViewRange::protectedSetYMax(newRange.yMax(), true, k_maxFloat);
     }
-    /* We notify the delegate to refresh the cursor's position and update the
-     * bottom margin (which depends on the banner height). */
-    m_delegate->updateBottomMargin();
-
-    Range2D newRangeWithMargins = m_delegate->addMargins(newRange);
-    newRangeWithMargins = Range2D(
-      computeX ? newRangeWithMargins.x() : Range1D(xMin(), xMax()),
-      computeY ? newRangeWithMargins.y() : Range1D(yMin(), yMax()));
-    if (newRange.ratioIs(NormalYXRatio())) {
-      newRangeWithMargins.setRatio(NormalYXRatio(), false);
-      assert(newRangeWithMargins.ratioIs(NormalYXRatio()));
-    }
-
-    if (computeX) {
-      MemoizedCurveViewRange::protectedSetXMin(newRangeWithMargins.xMin(), false, k_maxFloat);
-      MemoizedCurveViewRange::protectedSetXMax(newRangeWithMargins.xMax(), true, k_maxFloat);
-    }
-    if (computeY) {
-      MemoizedCurveViewRange::protectedSetYMin(newRangeWithMargins.yMin(), false, k_maxFloat);
-      MemoizedCurveViewRange::protectedSetYMax(newRangeWithMargins.yMax(), true, k_maxFloat);
-    }
-
-  } else {
-    m_delegate->tidyModels();
-    Range2D newRange = Zoom::DefaultRange(NormalYXRatio(), k_maxFloat);
-    MemoizedCurveViewRange::protectedSetXMin(newRange.xMin(), false, k_maxFloat);
-    MemoizedCurveViewRange::protectedSetXMax(newRange.xMax(), true, k_maxFloat);
-    MemoizedCurveViewRange::protectedSetYMin(newRange.yMin(), false, k_maxFloat);
-    MemoizedCurveViewRange::protectedSetYMax(newRange.yMax(), true, k_maxFloat);
   }
 
   setZoomNormalize(isOrthonormal());

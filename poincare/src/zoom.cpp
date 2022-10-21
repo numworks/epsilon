@@ -104,11 +104,11 @@ void Zoom::fitMagnitude(Function2DWithContext f, const void * model) {
 
 // Private
 
-Solver<float>::Interest Zoom::PointIsInteresting(float ya, float yb, float yc) {
+Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c) {
   Solver<float>::BracketTest tests[] = { Solver<float>::OddRootInBracket, Solver<float>::MinimumInBracket, Solver<float>::MaximumInBracket, Solver<float>::DiscontinuityInBracket };
-  Solver<float>::Interest interest;
+  Solver<float>::Interest interest = Solver<float>::Interest::None;
   for (Solver<float>::BracketTest & test : tests) {
-    interest = test(ya, yb, yc);
+    interest = test(a, b, c);
     if (interest != Solver<float>::Interest::None) {
       break;
     }

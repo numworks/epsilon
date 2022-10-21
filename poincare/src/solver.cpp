@@ -23,22 +23,20 @@ Solver<T>::Solver(const Solver<T> * other) :
 
 template<typename T>
 Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketTest test, HoneResult hone) {
-  T x1, x2 = start(), x3 = nextX(x2, end());
-  T y1, y2 = f(x2, aux), y3 = f(x3, aux);
-  Coordinate2D<T> finalSolution(k_NAN, k_NAN);
+  Coordinate2D<T> p1, p2(start(), f(start(), aux)), p3(nextX(p2.x1(), end()));
+  p3.setX2(f(p3.x1(), aux));
+  Coordinate2D<T> finalSolution;
   Interest finalInterest = Interest::None;
 
-  while ((start() < x3) == (x3 < end())) {
-    x1 = x2;
-    x2 = x3;
-    x3 = nextX(x2, end());
-    y1 = y2;
-    y2 = y3;
-    y3 = f(x3, aux);
+  while ((start() < p3.x1()) == (p3.x1() < end())) {
+    p1 = p2;
+    p2 = p3;
+    p3.setX1(nextX(p2.x1(), end()));
+    p3.setX2(f(p3.x1(), aux));
 
-    Interest interest = test(y1, y2, y3);
+    Interest interest = test(p1, p2, p3);
     if (interest != Interest::None) {
-      Coordinate2D<T> solution = hone(f, aux, x1, x3, interest, k_absolutePrecision);
+      Coordinate2D<T> solution = hone(f, aux, p1.x1(), p3.x1(), interest, k_absolutePrecision);
       if (std::isfinite(solution.x1()) && validSolution(solution.x1())) {
         finalSolution = solution;
         finalInterest = interest;
@@ -127,7 +125,7 @@ void Solver<T>::stretch() {
 }
 
 template<typename T>
-typename Solver<T>::Interest Solver<T>::EvenOrOddRootInBracket(T a, T b, T c) {
+typename Solver<T>::Interest Solver<T>::EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c) {
   Interest root = OddRootInBracket(a, b, c);
   if (root != Interest::None) {
     return root;
@@ -297,7 +295,7 @@ template Coordinate2D<double> Solver<double>::nextMinimum(Expression);
 template Coordinate2D<double> Solver<double>::nextIntersection(Expression, Expression);
 template void Solver<double>::stretch();
 
-template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(float a, float b, float c);
+template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c);
 template Solver<float>::Solver(float, float, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);
 template Coordinate2D<float> Solver<float>::next(FunctionEvaluation, const void *, BracketTest, HoneResult);
 

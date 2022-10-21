@@ -74,15 +74,15 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
   for (int i = initialStep; i < m_step; i++) {
     rank++;
     measuringContext.reset();
-    plotView->drawStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color(), k_thickness, k_dashSize);
+    plotView->drawDashedStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color());
     m_verticalLineCache[i].save(ctx, measuringContext.writtenRect());
-    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color(), k_thickness, k_dashSize);
+    plotView->drawDashedStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color());
     y = uOfX;
     float uOfuOfX = m_sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
     measuringContext.reset();
-    plotView->drawStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color(), k_thickness, k_dashSize);
+    plotView->drawDashedStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color());
     m_horizontalLineCache[i].save(ctx, measuringContext.writtenRect());
-    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color(), k_thickness, k_dashSize);
+    plotView->drawDashedStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color());
     x = uOfX;
     uOfX = uOfuOfX;
   }
@@ -94,7 +94,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
    * When the said buffer is restored the element will appear twice. */
   measuringContext.reset();
   if (m_step) {
-    plotView->drawStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark, k_thickness, k_dashSize);
+    plotView->drawDashedStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark);
     m_verticalLineCache[m_step].save(ctx, measuringContext.writtenRect());
   }
   measuringContext.reset();
@@ -106,7 +106,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
   m_textCache.save(ctx, measuringContext.writtenRect());
   // Actual drawings
   if (m_step) {
-    plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark, k_thickness, k_dashSize);
+    plotView->drawDashedStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, 0.f, Escher::Palette::GrayDark);
   }
   plotView->drawDot(ctx, rect, Dots::Size::Medium, {x, y}, Escher::Palette::YellowDark);
   // Draw label above x-axis

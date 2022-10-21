@@ -30,6 +30,8 @@ public:
   constexpr static KDColor k_backgroundColor = KDColorWhite;
   constexpr static KDCoordinate k_labelMargin = 4;
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
+  constexpr static KDCoordinate k_defaultDashThickness = 1;
+  constexpr static KDCoordinate k_defaultDashLength = 3;
 
   constexpr static Axis OtherAxis(Axis axis) { return static_cast<Axis>(1 - static_cast<uint8_t>(axis)); }
 
@@ -65,6 +67,7 @@ public:
    * classes used as template parameters to PlotView. A better solution might
    * be to private them and befriend the helpers. */
   void drawStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness = 1, KDCoordinate dashSize = 0) const;
+  void drawDashedStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness = k_defaultDashThickness, KDCoordinate dashSize = k_defaultDashLength) const;
   void drawSegment(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> a, Poincare::Coordinate2D<float> b, KDColor color, bool thick = false) const;
   void drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;
   void drawLayout(KDContext * ctx, KDRect rect, Poincare::Layout layout, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;

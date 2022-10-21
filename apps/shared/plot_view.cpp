@@ -83,6 +83,10 @@ void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis pa
   }
 }
 
+void AbstractPlotView::drawDashedStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness, KDCoordinate dashSize) const {
+  drawStraightSegment(ctx, rect, parallel, position, min, max, color, thickness, dashSize);
+}
+
 void AbstractPlotView::drawSegment(KDContext * ctx, KDRect rect, Coordinate2D<float> a, Coordinate2D<float> b, KDColor color, bool thick) const {
   setDashed(false);
   Coordinate2D<float> pa = floatToPixel2D(a);

@@ -67,21 +67,19 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     switchToSelectedApp();
     return true;
   }
-
   if (event == Ion::Events::Home || event == Ion::Events::Back) {
     return m_view.selectableTableView()->selectCellAtLocation(0, 0);
   }
-
   if (event == Ion::Events::Right && selectionDataSource()->selectedRow() < numberOfRows() - 1) {
     return m_view.selectableTableView()->selectCellAtLocation(0, selectionDataSource()->selectedRow() + 1);
   }
   if (event == Ion::Events::Left && selectionDataSource()->selectedRow() > 0) {
     return m_view.selectableTableView()->selectCellAtLocation(numberOfColumns() - 1, selectionDataSource()->selectedRow() - 1);
   }
-
+  // Handle keys from 0 to 9
   char eventText[Ion::Events::EventData::k_maxDataSize] = {0};
   size_t length = Ion::Events::copyText(static_cast<uint8_t>(event), eventText, Ion::Events::EventData::k_maxDataSize);
-  if (length == 1 && eventText[0] >= '0' && eventText[0] <= '9') { // Handle keys from 0 to 9
+  if (length == 1 && eventText[0] >= '0' && eventText[0] <= '9') {
     int appIndex = eventText[0] == '0' ? numberOfIcons() - 1 : eventText[0] - '1';
     int i = appIndex % k_numberOfColumns;
     int j = appIndex / k_numberOfColumns;
@@ -92,7 +90,6 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     }
     return m_view.selectableTableView()->selectCellAtLocation(i, j);
   }
-
   return false;
 }
 

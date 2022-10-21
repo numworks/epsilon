@@ -53,7 +53,7 @@ float AbstractPlotView::pixelToFloat(Axis axis, KDCoordinate p) const {
   return (axis == Axis::Horizontal) ? m_range->xMin() + p * pixelWidth() : m_range->yMax() - p * pixelHeight();
 }
 
-void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness, KDCoordinate dashSize, bool inBottomRightAngle) const {
+void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness, KDCoordinate dashSize) const {
   float pLength = pixelLength(parallel);
   float fmin = rangeMin(parallel) - pLength, fmax = rangeMax(parallel) + pLength;
   min = std::clamp(min, fmin, fmax);
@@ -64,18 +64,6 @@ void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis pa
   KDCoordinate b = std::round(floatToPixel(parallel, max));
   if (a > b) {
     std::swap(a, b);
-  }
-  if (inBottomRightAngle) {
-    /* Thick lines are always drawn below or to the right of the given
-     * coordinates. A bottom/right corner made from a thick horizontal line
-     * ending in (x,y) and a thick vertical line going up from (x,y) will
-     * therefore look like this :
-     *       (y) …
-     *        O  O
-     * (x) O  O  O
-     *  …  O  O
-     * We need to add a pixel in (x+1, y+1) by adding the thickness to the end. */
-    b += thickness - 1;
   }
   if (dashSize <= 0 || 2 * dashSize > b - a) {
     dashSize = b - a;

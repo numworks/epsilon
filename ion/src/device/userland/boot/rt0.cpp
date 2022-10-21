@@ -21,6 +21,7 @@ void __attribute__((noinline)) start() {
   Ion::Device::Init::configureRAM();
   // Initialize slotInfo to be accessible to Kernel
   Ion::Device::USB::slotInfo();
+  Ion::ExternalApps::deleteApps();
   ion_main(0, nullptr);
   abort();
 }

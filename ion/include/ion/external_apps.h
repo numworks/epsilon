@@ -38,6 +38,7 @@ public:
 
 void setVisible();
 int numberOfApps();
+void deleteApps();
 
 }
 }

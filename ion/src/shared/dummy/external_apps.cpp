@@ -41,5 +41,7 @@ int numberOfApps() {
   return 0;
 }
 
+void deleteApps() {}
+
 }
 }

@@ -65,8 +65,10 @@ private:
 
   Range1D sanitizedXRange() const;
   Range2D prettyRange() const;
-  void fitWithSolver(Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone);
-  void fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone);
+  void fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone);
+  /* Return true if the search was interrupted because too many points were
+   * found. */
+  bool fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone);
 
   /* m_interestingRange is edited by fitFullFunction, fitPointsOfInterest and
    * fitIntersections, and will always be included in the final range. */

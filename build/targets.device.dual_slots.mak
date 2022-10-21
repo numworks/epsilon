@@ -1,3 +1,7 @@
+define add_slot_suffix
+$(addsuffix .A,$(1)) $(addsuffix .B,$(1))
+endef
+
 HANDY_TARGETS += test.external_flash.write test.external_flash.read
 
 $(BUILD_DIR)/test.external_flash.%.$(EXE): LDSCRIPT = ion/test/device/$(MODEL)/external_flash_tests.ld

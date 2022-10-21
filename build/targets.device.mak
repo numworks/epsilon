@@ -3,6 +3,16 @@ dfu_targets = $(addprefix $(BUILD_DIR)/,$(addsuffix .dfu,$(epsilon_target_varian
 .PHONY: $(dfu_targets)
 $(dfu_targets): TARGET_STEM = $(subst .epsilon,,$(patsubst $(BUILD_DIR)/%.dfu,.%,$@))
 
+ASSERTIONS = $(DEVELOPMENT)
+
+define target_variants_for_component
+$(subst .epsilon,,$(addprefix $(1).,$(epsilon_target_variants)))
+endef
+
+define flavored_dependencies_for_target
+$(1): $$(call flavored_object_for,$$($(addsuffix $(if $(findstring test,$(1)),_test_src,_src),$(2))),$(3) $(MODEL) $(THIRD_PARTY_FLAVOR) $(patsubst $(BUILD_DIR)/$(2)%.$(EXE),%,$(1)))
+endef
+
 include build/targets.device.$(MODEL).mak
 -include build/targets.device.$(MODEL).$(FIRMWARE_COMPONENT).mak
 

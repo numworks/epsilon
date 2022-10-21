@@ -33,6 +33,30 @@ public:
   void fitMagnitude(Function2DWithContext f, const void * model);
 
 private:
+  class HorizontalAsymptoteHelper {
+  public:
+    HorizontalAsymptoteHelper(float center) : m_center(center), m_left(NAN), m_right(NAN) {}
+
+    Coordinate2D<float> left() const { return m_left; }
+    Coordinate2D<float> right() const { return m_right; }
+    void update(Coordinate2D<float> x, float slope);
+
+  private:
+    constexpr static float k_threshold = 0.2f; // TODO Tune
+    constexpr static float k_hysteresis = 0.01f; // TODO Tune
+
+    float m_center;
+    Coordinate2D<float> m_left;
+    Coordinate2D<float> m_right;
+  };
+
+  struct InterestParameters {
+    Function2DWithContext f;
+    const void * model;
+    Context * context;
+    HorizontalAsymptoteHelper * asymptotes;
+  };
+
   constexpr static size_t k_sampleSize = Ion::Display::Width / 2;
 
   // Static methods for the Solver API

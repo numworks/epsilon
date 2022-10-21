@@ -23,8 +23,7 @@ protected:
   mutable int8_t m_cachedStep;
 
 private:
-  constexpr static int k_dashSize = 4;
-  constexpr static int k_thickness = 1;
+  constexpr static int k_thickness = Shared::AbstractPlotView::k_defaultDashThickness;
   constexpr static int k_diameter = Shared::Dots::MediumDotDiameter;
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
   constexpr static int k_textMaxLength = sizeof("u(99)");

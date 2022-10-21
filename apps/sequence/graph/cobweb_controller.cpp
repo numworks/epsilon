@@ -137,7 +137,7 @@ bool CobwebController::updateStep(int delta) {
   m_step += delta;
   double u_n = sequence()->valueAtRank<double>(m_step, App::app()->localContext());
   double x = u_n;
-  double y = m_step == 0 ? u_n : 0.f;
+  double y = m_step == 0 ? 0.f : u_n;
   // TODO: For some reason panToMakePointVisible is stricter that our computation
   constexpr float marginDelta = 0.02;
   float margin = k_margin - marginDelta;

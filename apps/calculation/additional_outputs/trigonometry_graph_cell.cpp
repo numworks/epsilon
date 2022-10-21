@@ -19,8 +19,8 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDCont
   CurveDrawing(circle, nullptr, 0.f, 2.f * M_PI, M_PI / 180.f, Palette::GrayDark, false).draw(plotView, ctx, rect);
 
   // - Draw sine and cosine projections
-  plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, s, 0.f, c, Palette::Red, 1, 3);
-  plotView->drawStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, c, 0.f, s, Palette::Red, 1, 3);
+  plotView->drawDashedStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, s, 0.f, c, Palette::Red);
+  plotView->drawDashedStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, c, 0.f, s, Palette::Red);
 
   // - Draw angle position on the circle
   plotView->drawDot(ctx, rect, Dots::Size::Large, Coordinate2D<float>(c, s), Palette::Red);

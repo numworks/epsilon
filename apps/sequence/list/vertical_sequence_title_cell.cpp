@@ -7,7 +7,7 @@ namespace Sequence {
 VerticalSequenceTitleCell::VerticalSequenceTitleCell() :
   Shared::ExpressionFunctionTitleCell(k_font)
 {
-  m_titleTextView.setRightMargin(3);
+  m_titleTextView.setRightMargin(k_rightMargin);
   /* We do not care here about the vertical alignment, it will be set properly
    * in layoutSubviews */
   m_titleTextView.setAlignment(k_horizontalAlignment, 0.0f);

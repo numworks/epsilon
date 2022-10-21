@@ -10,7 +10,6 @@
 #include "math_toolbox.h"
 #include "math_variable_box_controller.h"
 #include "exam_pop_up_controller.h"
-#include "exam_pop_up_controller_delegate.h"
 #include "battery_timer.h"
 #include "suspend_timer.h"
 #include "backlight_dimming_timer.h"
@@ -21,7 +20,7 @@
 #include <poincare/preferences.h>
 #include <ion/events.h>
 
-class AppsContainer : public Escher::Container, ExamPopUpControllerDelegate, Ion::Storage::StorageDelegate {
+class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
 public:
   static AppsContainer * sharedAppsContainer();
   AppsContainer();

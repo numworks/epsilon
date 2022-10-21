@@ -24,7 +24,7 @@ AppsContainer * AppsContainer::sharedAppsContainer() {
 AppsContainer::AppsContainer() :
   Container(),
   m_firstUSBEnumeration(true),
-  m_examPopUpController(this),
+  m_examPopUpController(),
   m_promptController(k_promptMessages, k_promptColors, k_promptNumberOfMessages)
 #if EPSILON_GETOPT
   , m_initialAppSnapshot(nullptr)

@@ -81,14 +81,14 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   size_t length = Ion::Events::copyText(static_cast<uint8_t>(event), eventText, Ion::Events::EventData::k_maxDataSize);
   if (length == 1 && eventText[0] >= '0' && eventText[0] <= '9') {
     int appIndex = eventText[0] == '0' ? numberOfIcons() - 1 : eventText[0] - '1';
-    int i = appIndex % numberOfColumns();
-    int j = appIndex / numberOfColumns();
-    if (i == m_view.selectableTableView()->selectedColumn() && j == m_view.selectableTableView()->selectedRow()) {
+    int col = appIndex % numberOfColumns();
+    int row = appIndex / numberOfColumns();
+    if (col == m_view.selectableTableView()->selectedColumn() && row == m_view.selectableTableView()->selectedRow()) {
       // We were already on the selected app
       switchToSelectedApp();
       return true;
     }
-    return m_view.selectableTableView()->selectCellAtLocation(i, j);
+    return m_view.selectableTableView()->selectCellAtLocation(col, row);
   }
   // Handle Down when less than 3 icons at last row
   if (event == Ion::Events::Down && selectionDataSource()->selectedRow() == numberOfRows() - 2) {

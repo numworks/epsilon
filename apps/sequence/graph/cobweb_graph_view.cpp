@@ -25,8 +25,7 @@ namespace Sequence {
 void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   assert(m_sequence);
   assert(rect.height() < k_maxHeight);
-  bool update = m_cachedStep != - 2;
-  if (update) {
+  if (update()) {
     /* If previous step is already drawn, we can remove the dot, the gray line
      * and the label and continue the broken line instead of redrawing. */
     m_dotCache.restore(ctx);
@@ -58,15 +57,15 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
       constexpr static char k_unknownName[2] = {UCodePointUnknown, 0};
       return Poincare::Coordinate2D<float>(t, PoincareHelpers::ApproximateWithValueForSymbol<float>(*e, k_unknownName, t, c));
     };
-  if (!update) {
+  if (!update()) {
     float xMin = plotView->range()->xMin();
     float xMax = plotView->range()->xMax();
     CurveDrawing plot(Curve2D(evaluateFunction, &function), context, xMin, xMax, plotView->pixelWidth(), fadedColor);
     plot.draw(plotView, ctx, rect);
     plotView->drawSegment(ctx, rect, {xMin, xMin}, {xMax, xMax}, fadedColor, true);
   }
-  bool increasing = update && m_cachedStep == m_step - 1;
-  int initialStep = increasing ? m_cachedStep : m_step;
+  bool increasing = update() && m_cachedStep == m_step - 1;
+  int initialStep = increasing ? m_cachedStep : (update() ? m_step : 0);
   int rank = m_sequence->initialRank() + initialStep;
   float x = increasing ? m_x : m_sequence->evaluateXYAtParameter(static_cast<float>(rank), context).x2();
   float y = rank == m_sequence->initialRank() ? 0 : x;

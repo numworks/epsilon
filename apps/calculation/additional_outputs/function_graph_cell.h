@@ -20,7 +20,7 @@ private:
   constexpr static int k_labelsPrecision = Poincare::Preferences::VeryShortNumberOfSignificantDigits;
 
   // AbstractLabeledAxis
-  bool labelWillBeDisplayed(KDRect labelRect) const override;
+  bool labelWillBeDisplayed(int i, KDRect labelRect) const override;
 
   // LabeledAxis
   size_t numberOfLabels() const override { return N + 1; }
@@ -48,8 +48,6 @@ public:
   FunctionGraphView(FunctionModel * model) : PlotView(model) {
     m_model = model;
   }
-  // FunctionGraphView(FunctionModel * model) : LabeledCurveView(model), m_model(model), m_xLabel(KDRectZero), m_yLabel(KDRectZero) {}
-  // void drawRect(KDContext * ctx, KDRect rect) const override;
 };
 
 class FunctionGraphCell : public IllustrationCell {

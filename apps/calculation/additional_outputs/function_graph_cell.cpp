@@ -37,9 +37,8 @@ void FunctionAxis<N>::drawAxis(const AbstractPlotView * plotView, KDContext * ct
 }
 
 template<size_t N>
-bool FunctionAxis<N>::labelWillBeDisplayed(KDRect labelRect) const {
-  KDRect rect = labelRect.paddedWith(k_labelAvoidanceMargin);
-  return !rect.intersects(m_specialLabelRect);
+bool FunctionAxis<N>::labelWillBeDisplayed(int i, KDRect labelRect) const {
+  return i == N || !labelRect.paddedWith(k_labelAvoidanceMargin).intersects(m_specialLabelRect);
 }
 
 void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
@@ -65,8 +64,8 @@ void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KD
   plot.draw(plotView, ctx, rect);
 }
 
-template bool FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfYLabels>::labelWillBeDisplayed(KDRect labelRect) const;
-template bool FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfXLabels>::labelWillBeDisplayed(KDRect labelRect) const;
+template bool FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfYLabels>::labelWillBeDisplayed(int i, KDRect labelRect) const;
+template bool FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfXLabels>::labelWillBeDisplayed(int i, KDRect labelRect) const;
 template void FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfXLabels>::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis);
 template void FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfYLabels>::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axis axis);
 template void FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfXLabels>::drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const;

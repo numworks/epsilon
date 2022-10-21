@@ -39,6 +39,7 @@ private:
   int columnIndex(int iconIndex) const { return iconIndex % numberOfColumns(); }
   int rowIndex(int iconIndex) const { return iconIndex / numberOfColumns(); }
   int iconIndex(int columnIndex, int rowIndex) const { return rowIndex * numberOfColumns() + columnIndex; }
+  int lastIconColumn() { return columnIndex(numberOfIcons() - 1); }
   
   class ContentView : public Escher::View {
   public:

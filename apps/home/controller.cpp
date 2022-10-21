@@ -91,9 +91,8 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   }
   // Handle Down when less than 3 icons at last row
   if (event == Ion::Events::Down && selectionDataSource()->selectedRow() == numberOfRows() - 2) {
-    int lastIconColumn = columnIndex(numberOfIcons() - 1);
-    assert(selectionDataSource()->selectedColumn() > lastIconColumn); // Otherwise would have been handled by SelectableTableView
-    return m_view.selectableTableView()->selectCellAtLocation(lastIconColumn, numberOfRows() - 1);
+    assert(selectionDataSource()->selectedColumn() > lastIconColumn()); // Otherwise would have been handled by SelectableTableView
+    return m_view.selectableTableView()->selectCellAtLocation(lastIconColumn(), numberOfRows() - 1);
   }
   return false;
 }
@@ -168,7 +167,7 @@ void Controller::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t
    * the redrawing takes time and is visible at scrolling. Here, we avoid the 
    * background complete redrawing but the code is a bit clumsy. */
   if (t->selectedRow() == numberOfRows() - 1) {
-    m_view.reloadBottomRow(this, columnIndex(numberOfIcons() - 1));
+    m_view.reloadBottomRow(this, lastIconColumn());
   }
 }
 

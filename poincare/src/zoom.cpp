@@ -156,7 +156,7 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const v
     pv.setX1(0.5f * (pc.x1() + pb.x1()));
     pv.setX2(f(pv.x1(), aux));
 
-    convex = convex && std::fabs(pu.x2() - pc.x2()) <= std::fabs(pa.x2() - pc.x2()) && std::fabs(pv.x2() - pc.x2()) <= std::fabs(pb.x2() - pc.x2());
+    convex = std::fabs(pu.x2() - pc.x2()) <= std::fabs(pa.x2() - pc.x2()) && std::fabs(pv.x2() - pc.x2()) <= std::fabs(pb.x2() - pc.x2());
 
     if (pointIsInterestingHelper(pc, pv, pb, aux) != Solver<float>::Interest::None || pointIsInterestingHelper(pa, pu, pc, aux) == Solver<float>::Interest::None) {
       pa = pc;

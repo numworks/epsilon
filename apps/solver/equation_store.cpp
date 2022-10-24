@@ -101,6 +101,7 @@ void EquationStore::approximateSolve(Poincare::Context * context, bool shouldRep
     double root = solver.nextRoot(undevelopedExpression).x1();
     if (root < start) {
       i--;
+      continue;
     } else if (root > end) {
       root = NAN;
     }

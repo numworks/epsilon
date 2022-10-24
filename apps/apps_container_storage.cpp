@@ -28,13 +28,13 @@ Escher::App::Snapshot * AppsContainerStorage::appSnapshotAtIndex(int index) {
   if (index < 0) {
     return nullptr;
   }
-  assert(index < k_numberOfCommonApps);
+  assert(index < numberOfBuiltinApps());
   Escher::App::Snapshot * snapshots[] = {
     homeAppSnapshot()
     APPS_CONTAINER_SNAPSHOT_LIST
   };
-  assert(sizeof(snapshots)/sizeof(snapshots[0]) == k_numberOfCommonApps);
-  assert(index >= 0 && index < k_numberOfCommonApps);
+  assert(sizeof(snapshots)/sizeof(snapshots[0]) == numberOfBuiltinApps());
+  assert(index >= 0 && index < numberOfBuiltinApps());
   return snapshots[index];
 }
 

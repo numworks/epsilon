@@ -252,6 +252,7 @@ tests_src += $(addprefix poincare/test/,\
   print.cpp\
   print_float.cpp\
   print_int.cpp\
+  range.cpp \
   rational.cpp\
   regularized_function.cpp \
   simplification.cpp\

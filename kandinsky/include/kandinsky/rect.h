@@ -40,8 +40,8 @@ public:
   KDCoordinate height() const { return m_height; }
   KDSize size() const { return KDSize(m_width, m_height); }
   KDCoordinate top() const { return m_y; }
-  KDCoordinate right() const { return m_x+m_width-1; }
-  KDCoordinate bottom() const { return m_y+m_height-1; }
+  KDCoordinate right() const { return m_x + m_width - 1; }
+  KDCoordinate bottom() const { return m_y + m_height - 1; }
   KDCoordinate left() const { return m_x; }
 
   KDPoint topLeft() const { return KDPoint(left(), top()); }
@@ -73,6 +73,6 @@ private:
   KDCoordinate m_x, m_y, m_width, m_height;
 };
 
-constexpr KDRect KDRectZero = KDRect(0,0,0,0);
+constexpr KDRect KDRectZero = KDRect(0, 0, 0, 0);
 
 #endif

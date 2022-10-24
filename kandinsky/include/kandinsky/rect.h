@@ -29,9 +29,18 @@ public:
     m_origin(x, y), 
     m_size(width, height) 
   {}
-  KDRect(KDPoint p, KDSize s);
-  KDRect(KDCoordinate x, KDCoordinate y, KDSize s);
-  KDRect(KDPoint p, KDCoordinate width, KDCoordinate height);
+  KDRect(KDPoint p, KDSize s) :
+    m_origin(p),
+    m_size(s)
+  {}
+  KDRect(KDCoordinate x, KDCoordinate y, KDSize s) :
+    m_origin(x, y),
+    m_size(s)
+  {}
+  KDRect(KDPoint p, KDCoordinate width, KDCoordinate height) :
+    m_origin(p),
+    m_size(width, height)
+  {}
 
   KDCoordinate x() const { return m_origin.x(); }
   KDCoordinate y() const { return m_origin.y(); }
@@ -51,8 +60,8 @@ public:
 
   bool operator ==(const KDRect &other) const { return (m_origin == other.origin() && m_size == other.size()); }
 
-  void setOrigin(KDPoint origin);
-  void setSize(KDSize size);
+  void setOrigin(KDPoint origin) { m_origin = origin; }
+  void setSize(KDSize size) { m_size = size; }
 
   KDRect translatedBy(KDPoint p) const;
   KDRect movedTo(KDPoint p) const;

@@ -19,19 +19,19 @@ void FunctionAxis<N>::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::
   float t = axis == AbstractPlotView::Axis::Horizontal ? model->abscissa() : model->ordinate();
   // Compute special labels content and position
   Print::CustomPrintf(m_specialLabel, PlotPolicy::AbstractLabeledAxis::k_labelBufferMaxSize, "%*.*ef", t, Preferences::PrintFloatMode::Decimal, k_labelsPrecision);
-  Coordinate2D<float> position = axis == AbstractPlotView::Axis::Horizontal ? Coordinate2D(t, 0.0f) : Coordinate2D(0.0f, t);
-  m_specialLabelRect = plotView->labelRect(m_specialLabel, position, AbstractPlotView::RelativePosition::There, AbstractPlotView::RelativePosition::After);
+  m_specialLabelRect = PlotPolicy::AbstractLabeledAxis::labelRect(N, t, plotView, axis);
 }
 
 template<size_t N>
 void FunctionAxis<N>::drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const {
   const FunctionModel * model = static_cast<const FunctionModel *>(plotView->range());
   float t = axis == AbstractPlotView::Axis::Horizontal ? model->abscissa() : model->ordinate();
-  float other = axis == AbstractPlotView::Axis::Horizontal ? model->ordinate() : model->abscissa();
+  AbstractPlotView::Axis otherAxis = axis == AbstractPlotView::Axis::Horizontal ? AbstractPlotView::Axis::Vertical : AbstractPlotView::Axis::Horizontal;
+  float other = otherAxis == AbstractPlotView::Axis::Horizontal ? model->abscissa() : model->ordinate();
   // Draw the usual graduations
   PlotPolicy::SimpleAxis::drawAxis(plotView, ctx, rect, axis);
   // Draw the dashed lines since they are the ticks of the special labels
-  plotView->drawStraightSegment(ctx, rect, axis, other, 0.0f, t, Palette::Red, 1, 3);
+  plotView->drawStraightSegment(ctx, rect, otherAxis, t, 0.0f, other, Palette::Red, 1, 3);
   // Draw the special label
   PlotPolicy::AbstractLabeledAxis::drawLabel(N, t, plotView, ctx, rect, axis, Palette::Red);
 }

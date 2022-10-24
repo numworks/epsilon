@@ -70,7 +70,7 @@ KDCoordinate TrigonometryListController::nonMemoizedRowHeight(int j) {
 
 I18n::Message TrigonometryListController::messageAtIndex(int index) {
   if (index == 0) {
-    return I18n::Message::AngleUnit;
+    return I18n::Message::AngleInZeroTwoPi;
   }
   return I18n::Message::Default;
 }

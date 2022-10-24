@@ -17,6 +17,7 @@ void ScientificNotationListController::setExactAndApproximateExpression(Poincare
   preferences->setDisplayMode(Preferences::PrintFloatMode::Scientific);
   Context * context = App::app()->localContext();
   int index = 0;
+  Layout exactResult = PoincareHelpers::CreateLayout(a, context);
   Expression value = a.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit());
   if (value.isUndefined()) {
     // Units can't be approximated, we remove them temporarily
@@ -24,7 +25,10 @@ void ScientificNotationListController::setExactAndApproximateExpression(Poincare
     value = a.removeUnit(&units);
     value = Multiplication::Builder(value.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit()), units);
   }
-  m_layouts[index++] = PoincareHelpers::CreateLayout(value, context);
+  Layout scientific = PoincareHelpers::CreateLayout(value, context);
+  if (!exactResult.isIdenticalTo(scientific)) {
+    m_layouts[index++] = scientific;
+  }
   preferences->setDisplayMode(previousMode);
 }
 

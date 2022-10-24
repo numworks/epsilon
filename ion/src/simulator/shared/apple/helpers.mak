@@ -14,7 +14,7 @@ $(simulator_app_binary): $(foreach arch,$(ARCHS),$(BUILD_DIR)/$(arch)/%.bin) | $
 	$(call rule_label,LIPO)
 	$(Q) $(LIPO) -create $^ -output $@
 
-# Background & Keys images
+# Keys images
 
 define rule_for_asset
 simulator_app_deps += $(call simulator_app_resource,$(1))
@@ -24,6 +24,14 @@ $(call simulator_app_resource,$(1)): ion/src/simulator/assets/$(1) | $$$$(@D)/.
 endef
 
 $(foreach asset,$(ion_simulator_assets),$(eval $(call rule_for_asset,$(asset))))
+
+# Background image
+
+background_image = $(addprefix $(BUILD_DIR),ion/src/simulator/assets/background.jpg)
+$(call simulator_app_resource,background.jpg): $(addprefix $(BUILD_DIR),ion/src/simulator/assets/background.jpg)
+	$(call rule_label,COPY)
+	$(Q) cp $^ $@
+simulator_app_deps += $(call simulator_app_resource,background.jpg)
 
 # Process icons
 

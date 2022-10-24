@@ -31,7 +31,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   window.cpp \
 )
 
-ion_simulator_assets = background.webp backgroundlea.jpg horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png
+ion_simulator_assets = background.webp horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png
 ion_simulator_assets_paths = $(addprefix ion/src/simulator/assets/,$(ion_simulator_assets))
 
 $(addprefix $(BUILD_DIR),ion/src/simulator/assets/background.jpg): ion/src/simulator/assets/background.webp

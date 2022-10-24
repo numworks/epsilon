@@ -87,7 +87,7 @@ bool ExplicitFloatParameterController::textFieldDidFinishEditing(AbstractTextFie
   m_selectableTableView.reloadCellAtLocation(0, selectedRow());
   m_selectableTableView.reloadData();
   if (event == Ion::Events::EXE || event == Ion::Events::OK) {
-    m_selectableTableView.selectCellAtLocation(selectedColumn(), row + 1);
+    m_selectableTableView.selectCellAtLocation(selectedColumn(), m_selectableTableView.indexOfNextSelectableRow(1));
   } else {
     m_selectableTableView.handleEvent(event);
   }

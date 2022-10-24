@@ -17,7 +17,6 @@ public:
 
 protected:
   ExpressionFieldDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
-  virtual bool shouldParseFieldAsAssignment() { return false; }
   bool handleEvent(Ion::Events::Event event) override;
 
 private:

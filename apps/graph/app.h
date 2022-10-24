@@ -58,7 +58,6 @@ public:
 
 private:
   App(Snapshot * snapshot);
-  bool shouldParseFieldAsAssignment() override { return true; }
   ListController m_listController;
   Escher::ButtonRowController m_listFooter;
   Escher::ButtonRowController m_listHeader;

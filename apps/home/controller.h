@@ -46,7 +46,7 @@ private:
     Escher::SelectableTableView * selectableTableView();
     void drawRect(KDContext * ctx, KDRect rect) const override;
     void reload();
-    void reloadBottomRow(SimpleTableViewDataSource * dataSource, int numberOfIcons);
+    void reloadBottomRow(SimpleTableViewDataSource * dataSource, int lastIconColumn);
   private:
     int numberOfSubviews() const override;
     View * subviewAtIndex(int index) override;

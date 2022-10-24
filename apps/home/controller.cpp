@@ -35,8 +35,7 @@ void Controller::ContentView::reload() {
   markRectAsDirty(bounds());
 }
 
-void Controller::ContentView::reloadBottomRow(SimpleTableViewDataSource * dataSource, int numberOfIcons) {
-  int lastIconColumn = (numberOfIcons - 1) % dataSource->numberOfColumns();
+void Controller::ContentView::reloadBottomRow(SimpleTableViewDataSource * dataSource, int lastIconColumn) {
   /* We mark the missing icons on the last row as dirty. */
   for (int i = lastIconColumn; i < dataSource->numberOfColumns(); i++) {
     markRectAsDirty(KDRect(dataSource->columnWidth(0)*i, dataSource->rowHeight(0), dataSource->columnWidth(0), dataSource->rowHeight(0)));
@@ -169,7 +168,7 @@ void Controller::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t
    * the redrawing takes time and is visible at scrolling. Here, we avoid the 
    * background complete redrawing but the code is a bit clumsy. */
   if (t->selectedRow() == numberOfRows() - 1) {
-    m_view.reloadBottomRow(this, numberOfIcons());
+    m_view.reloadBottomRow(this, columnIndex(numberOfIcons() - 1));
   }
 }
 

@@ -20,7 +20,7 @@ public:
     PurpleWhite,
     WhiteUniform
   };
-  StackViewController(Responder * parentResponder, ViewController * rootViewController, Style style, bool extendVertically = false);
+  StackViewController(Responder * parentResponder, ViewController * rootViewController, Style style, bool extendVertically = true);
 
   /* Push creates a new StackView and adds it */
   void push(ViewController * vc);

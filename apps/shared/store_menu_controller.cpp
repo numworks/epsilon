@@ -34,7 +34,7 @@ void StoreMenuController::InnerListController::didBecomeFirstResponder() {
 
 StoreMenuController::StoreMenuController() :
   ModalViewController(this, &m_stackViewController),
-  m_stackViewController(nullptr, &m_listController, StackViewController::Style::PurpleWhite),
+  m_stackViewController(nullptr, &m_listController, StackViewController::Style::PurpleWhite, false),
   m_listController(this),
   m_cell(this, nullptr, this, this),
   m_abortController(

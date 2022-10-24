@@ -86,7 +86,7 @@ private:
   T nextX(T x, T direction) const;
   Coordinate2D<T> nextPossibleRootInChild(Expression e, int childIndex) const;
   Coordinate2D<T> nextRootInMultiplication(Expression m) const;
-  void registerSolution(Coordinate2D<T> solution, Interest interest);
+  void registerSolution(Coordinate2D<T> solution, Interest interest, FunctionEvaluation f = nullptr, const void * aux = nullptr);
 
   T m_xStart;
   T m_xEnd;

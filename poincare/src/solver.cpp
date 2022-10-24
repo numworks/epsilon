@@ -45,7 +45,7 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketT
     }
   }
 
-  registerSolution(finalSolution, finalInterest);
+  registerSolution(finalSolution, finalInterest, f, aux);
   return result();
 }
 
@@ -269,11 +269,23 @@ Coordinate2D<T> Solver<T>::nextRootInMultiplication(Expression e) const {
 }
 
 template<typename T>
-void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest) {
+void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, FunctionEvaluation f, const void * aux) {
   T x = solution.x1();
-  if (std::fabs(x) < NullTolerance(x) && validSolution(k_zero)) {
-    x = k_zero;
+
+  if (f) {
+    /* When searching for an extremum, the function can take the extremal value
+     * on several abscissas, and Brent can pick up any of them. This deviation
+     * is particularly visible if the theoretical solution is an integer. */
+    T roundX = std::copysign(k_minimalPracticalStep * std::floor(std::fabs(x) / k_minimalPracticalStep), x);
+    if (validSolution(roundX)) {
+      T fIntX = f(roundX, aux);
+      bool roundXIsBetter = fIntX == solution.x2() || (interest == Interest::Root && fIntX == k_zero) || (interest == Interest::LocalMinimum && fIntX < solution.x2()) || (interest == Interest::LocalMaximum && fIntX > solution.x2());
+      if (roundXIsBetter) {
+        x = roundX;
+      }
+    }
   }
+
   if (std::isnan(x)) {
     m_lastInterest = Interest::None;
   } else {

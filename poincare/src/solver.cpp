@@ -302,10 +302,12 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, Fu
 // Explicit template instanciations
 
 template Solver<double>::Solver(double, double, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);
+template Coordinate2D<double> Solver<double>::next(FunctionEvaluation, const void *, BracketTest, HoneResult);
 template Coordinate2D<double> Solver<double>::nextRoot(Expression);
 template Coordinate2D<double> Solver<double>::nextMinimum(Expression);
 template Coordinate2D<double> Solver<double>::nextIntersection(Expression, Expression);
 template void Solver<double>::stretch();
+template Coordinate2D<double> Solver<double>::BrentMaximum(FunctionEvaluation, const void *, double, double, Interest, double);
 
 template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>, const void *);
 template Solver<float>::Solver(float, float, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);

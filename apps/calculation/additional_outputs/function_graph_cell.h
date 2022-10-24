@@ -26,7 +26,7 @@ private:
   size_t numberOfLabels() const override { return N + 1; }
   char * mutableLabel(int i) override { return i == N ? m_specialLabel : Shared::PlotPolicy::LabeledAxis<N>::mutableLabel(i); }
 
-  KDRect m_specialLabelRect;
+  mutable KDRect m_specialLabelRect;
   char m_specialLabel[Shared::PlotPolicy::AbstractLabeledAxis::k_labelBufferMaxSize];
 };
 

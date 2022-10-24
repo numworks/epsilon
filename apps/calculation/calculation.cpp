@@ -275,7 +275,8 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     return AdditionalInformations(AdditionalInformations::Type::Complex);
   }
   AdditionalInformations additionalInformations;
-  if (a.type() != ExpressionNode::Type::Nonreal && i.numberOfNumericalValues() == 1) {
+  // We want a single numerical value and to avoid showing the identity function
+  if (a.type() != ExpressionNode::Type::Nonreal && !i.isNumber() && i.type() != ExpressionNode::Type::ConstantMaths && i.numberOfNumericalValues() == 1) {
     additionalInformations.set(AdditionalInformations::Type::Function);
   }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {

@@ -92,6 +92,7 @@ public:
   bool isConstant(const char * constantName, ConstantNode::ConstantInfo info = ConstantNode::ConstantInfo()) const { return node()->isConstant(constantName, info); }
   static bool IsConstant(const char * name, size_t length);
   bool isComplexI() const { return isConstant("i"); }
+  ConstantNode::ConstantInfo constantInfo() const { return node()->constantInfo(); }
 
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
@@ -123,7 +124,6 @@ public:
 private:
   static ConstantNode::ConstantInfo ConstantInfoFromName(const char * name, int length);
 
-  ConstantNode::ConstantInfo constantInfo() const { return node()->constantInfo(); }
   ConstantNode * node() const { return static_cast<ConstantNode *>(Expression::node()); }
 };
 

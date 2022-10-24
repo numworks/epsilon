@@ -1351,6 +1351,9 @@ Expression Expression::replaceNumericalValuesWithSymbol(Symbol x) {
   if (isNumber()) {
     return x.clone();
   }
+  if (type() == ExpressionNode::Type::ConstantMaths && !convert<Constant>().isConstant("e")) {
+    return x.clone();
+  }
   Expression result = clone();
   if (type() == ExpressionNode::Type::Power) {
     if (childAtIndex(0).numberOfNumericalValues() == 0) {
@@ -1372,6 +1375,9 @@ float Expression::getNumericalValue() {
   // Assumes the expressions contains only one numerical value
   if (isNumber()) {
     return convert<Number>().doubleApproximation();
+  }
+  if (type() == ExpressionNode::Type::ConstantMaths && !convert<Constant>().isConstant("e")) {
+    return convert<Constant>().constantInfo().value();
   }
   Expression result = clone();
   for (int i = 0; i < numberOfChildren(); i++) {

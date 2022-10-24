@@ -19,7 +19,7 @@ void FunctionAxis<N>::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::
   float t = axis == AbstractPlotView::Axis::Horizontal ? model->abscissa() : model->ordinate();
   // Compute special labels content and position
   Print::CustomPrintf(m_specialLabel, PlotPolicy::AbstractLabeledAxis::k_labelBufferMaxSize, "%*.*ef", t, Preferences::PrintFloatMode::Decimal, k_labelsPrecision);
-  m_specialLabelRect = PlotPolicy::AbstractLabeledAxis::labelRect(N, t, plotView, axis);
+  m_specialLabelRect = KDRectZero;
 }
 
 template<size_t N>
@@ -28,6 +28,11 @@ void FunctionAxis<N>::drawAxis(const AbstractPlotView * plotView, KDContext * ct
   float t = axis == AbstractPlotView::Axis::Horizontal ? model->abscissa() : model->ordinate();
   AbstractPlotView::Axis otherAxis = axis == AbstractPlotView::Axis::Horizontal ? AbstractPlotView::Axis::Vertical : AbstractPlotView::Axis::Horizontal;
   float other = otherAxis == AbstractPlotView::Axis::Horizontal ? model->abscissa() : model->ordinate();
+  // Compute the special label position needed by labelWillBeDisplayed
+  if (m_specialLabelRect == KDRectZero) {
+    PlotPolicy::AbstractLabeledAxis::computeLabelsRelativePosition(plotView, axis);
+    m_specialLabelRect = PlotPolicy::AbstractLabeledAxis::labelRect(N, t, plotView, axis).paddedWith(k_labelAvoidanceMargin);
+  }
   // Draw the usual graduations
   PlotPolicy::SimpleAxis::drawAxis(plotView, ctx, rect, axis);
   // Draw the dashed lines since they are the ticks of the special labels
@@ -38,7 +43,7 @@ void FunctionAxis<N>::drawAxis(const AbstractPlotView * plotView, KDContext * ct
 
 template<size_t N>
 bool FunctionAxis<N>::labelWillBeDisplayed(int i, KDRect labelRect) const {
-  return i == N || !labelRect.paddedWith(k_labelAvoidanceMargin).intersects(m_specialLabelRect);
+  return i == N || !labelRect.intersects(m_specialLabelRect);
 }
 
 void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {

@@ -727,7 +727,7 @@ public:
   static_assert(Helpers::StringsAreEqual(k_volumeRepresentatives[k_gallonRepresentativeIndex].m_rootSymbols, "gal"), "Index for the Gallon Representative is incorrect.");
 
   Unit(const UnitNode * node) : Expression(node) {}
-  static Unit Builder(const Representative * representative, const Prefix * prefix);
+  static Unit Builder(const Representative * representative, const Prefix * prefix = Prefix::EmptyPrefix());
   static bool CanParse(const char * symbol, size_t length, const Representative * * representative, const Prefix * * prefix);
   static void ChooseBestRepresentativeAndPrefixForValue(Expression units, double * value, const ExpressionNode::ReductionContext& reductionContext);
   static bool ShouldDisplayAdditionalOutputs(double value, Expression unit, Preferences::UnitFormat unitFormat);

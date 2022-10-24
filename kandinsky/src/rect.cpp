@@ -24,8 +24,8 @@ KDRect KDRect::intersectedWith(const KDRect & other) const {
   return KDRect(
       intersectionLeft,
       intersectionTop,
-      intersectionRight-intersectionLeft+1,
-      intersectionBottom-intersectionTop+1);
+      intersectionRight - intersectionLeft + 1,
+      intersectionBottom - intersectionTop + 1);
 }
 
 void computeUnionBound(KDCoordinate size1, KDCoordinate size2,
@@ -77,8 +77,8 @@ KDRect KDRect::unionedWith(const KDRect & other) const {
   return KDRect(
     resultLeft,
     resultTop,
-    resultRight-resultLeft+1,
-    resultBottom-resultTop+1
+    resultRight - resultLeft + 1,
+    resultBottom - resultTop + 1
     );
 }
 
@@ -118,8 +118,8 @@ KDRect KDRect::differencedWith(const KDRect & other) const {
   return KDRect(
     resultLeft,
     resultTop,
-    resultRight-resultLeft+1,
-    resultBottom-resultTop+1
+    resultRight - resultLeft + 1,
+    resultBottom - resultTop + 1
     );
 }
 

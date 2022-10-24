@@ -5,9 +5,15 @@
 #include <poincare/solver.h>
 #include <ion/display.h>
 
+/* The unit tests need to be able to read the working values of
+ * m_interestingRange and m_magnitudeYRange, but we do not want to make public
+ * getters for those as it would weaken the Zoom API. */
+class ZoomTest;
+
 namespace Poincare {
 
 class Zoom {
+  friend class ::ZoomTest;
 public:
   constexpr static float k_smallUnitMantissa = 1.f;
   constexpr static float k_mediumUnitMantissa = 2.f;

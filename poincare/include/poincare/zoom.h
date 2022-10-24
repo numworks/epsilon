@@ -35,7 +35,7 @@ public:
 private:
   class HorizontalAsymptoteHelper {
   public:
-    HorizontalAsymptoteHelper(float center) : m_center(center), m_left(-INFINITY), m_right(INFINITY) {}
+    HorizontalAsymptoteHelper(float center) : m_center(center), m_left(-INFINITY, NAN), m_right(INFINITY, NAN) {}
 
     Coordinate2D<float> left() const { return privateGet(&m_left); }
     Coordinate2D<float> right() const { return privateGet(&m_right); }

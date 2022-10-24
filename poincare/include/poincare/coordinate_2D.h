@@ -8,7 +8,8 @@ namespace Poincare {
 template <typename T>
 class Coordinate2D final {
 public:
-  Coordinate2D(T x1 = NAN, T x2 = NAN) : m_x1(x1), m_x2(x2) {}
+  Coordinate2D(T x1, T x2) : m_x1(x1), m_x2(x2) {}
+  Coordinate2D() : Coordinate2D(NAN, NAN) {}
 
   template<class C>
   operator Coordinate2D<C>() { return Coordinate2D<C>(static_cast<C>(m_x1), static_cast<C>(m_x2)); }

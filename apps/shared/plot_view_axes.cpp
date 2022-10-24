@@ -91,13 +91,13 @@ int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, 
   return Poincare::PrintFloat::ConvertFloatToText(t, mutableLabel(i), k_labelBufferMaxSize, k_labelBufferMaxGlyphLength, k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal).GlyphLength;
 }
 
-void AbstractLabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis, KDColor color) const {
+KDRect AbstractLabeledAxis::labelRect(int i, float t, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
   assert(i < numberOfLabels());
   assert(t >= plotView->rangeMin(axis));
 
   const char * text = label(i);
   if (m_hidden || text[0] == '\0') {
-    return;
+    return KDRectZero;
   }
 
   if (i == 0) {
@@ -108,7 +108,7 @@ void AbstractLabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plo
     if (t == 0.f && m_otherAxis) {
       if (m_labelsPosition != 0.f) {
         /* Do not draw a floating 0 label. */
-        return;
+        return KDRectZero;
       }
       /* 0 must not be overlaid on the vertical axis. */
       xRelative = AbstractPlotView::RelativePosition::Before;
@@ -118,16 +118,27 @@ void AbstractLabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plo
     yRelative = m_relativePosition;
   } else {
     if (t == 0.f && m_otherAxis) {
-      return;
+      return KDRectZero;
     }
     xRelative = m_relativePosition;
     yRelative = AbstractPlotView::RelativePosition::There;
   }
 
   Coordinate2D<float> xy = axis == AbstractPlotView::Axis::Horizontal ? Coordinate2D<float>(t, m_labelsPosition) : Coordinate2D<float>(m_labelsPosition, t);
-  KDRect labelRect = plotView->labelRect(text, xy, xRelative, yRelative);
-  if (labelWillBeDisplayed(i, labelRect)) {
-    plotView->drawLabel(ctx, rect, text, labelRect, color);
+  return plotView->labelRect(text, xy, xRelative, yRelative);
+}
+
+void AbstractLabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis, KDColor color) const {
+  const char * text = label(i);
+  if (m_hidden || text[0] == '\0') {
+    return;
+  }
+  KDRect thisLabelRect = labelRect(i, t, plotView, axis);
+  if (thisLabelRect == KDRectZero) {
+    return;
+  }
+  if (labelWillBeDisplayed(i, thisLabelRect)) {
+    plotView->drawLabel(ctx, rect, text, thisLabelRect, color);
   }
 }
 

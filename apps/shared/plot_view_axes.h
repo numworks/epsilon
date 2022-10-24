@@ -94,6 +94,7 @@ protected:
   const char * label(int i) const { return const_cast<AbstractLabeledAxis *>(this)->mutableLabel(i); }
   virtual int computeLabel(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis);
   virtual bool labelWillBeDisplayed(int i, KDRect rect) const { return true; }
+  KDRect labelRect(int i, float t, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
   void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis, KDColor color = k_color) const override;
   void computeLabelsRelativePosition(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
 

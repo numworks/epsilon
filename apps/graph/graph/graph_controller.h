@@ -22,7 +22,6 @@ public:
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  bool canShrinkWhenNormalizing() const override { return true; }
   Poincare::Range2D optimalRange(bool computeX, bool computeY, Poincare::Range2D originalRange) const override;
   bool handleZoom(Ion::Events::Event event) override;
 
@@ -60,8 +59,8 @@ private:
   Shared::WithRecord * curveParameterControllerWithRecord() override { return &m_curveParameterController; }
   FunctionSelectionController * curveSelectionController() const override { return const_cast<FunctionSelectionController *>(&m_functionSelectionController); }
   ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
-  bool defaultRangeIsNormalized() const override;
 
+  bool defaultRangeIsNormalized() const { return functionStore()->displaysFunctionsToNormalize(); }
   void interestingFunctionRange(Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
   void refreshPointsOfInterest();
 

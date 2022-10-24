@@ -26,7 +26,7 @@ Range2D Zoom::Sanitize(Range2D range, float normalYXRatio, float maxFloat) {
   return zoom.range(maxFloat, false);
 }
 
- Range2D Zoom::range(float maxFloat, bool forceNormalization) const {
+Range2D Zoom::range(float maxFloat, bool forceNormalization) const {
   Range2D result;
   Range2D pretty = prettyRange();
   result.x().setMin(pretty.xMin(), maxFloat);

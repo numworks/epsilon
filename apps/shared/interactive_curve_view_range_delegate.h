@@ -17,11 +17,9 @@ public:
 
   static float DefaultAddMargin(float x, float range, bool isVertical, bool isMin, float top, float bottom, float left, float right);
 
-  virtual bool defaultRangeIsNormalized() const { return false; }
   virtual Poincare::Range2D optimalRange(bool computeX, bool computeY, Poincare::Range2D originalRange) const = 0;
   virtual float addMargin(float x, float range, bool isVertical, bool isMin) = 0;
   Poincare::Range2D addMargins(Poincare::Range2D range);
-  virtual bool canShrinkWhenNormalizing() const { return false; }
   virtual void updateBottomMargin() = 0;
   virtual void updateZoomButtons() = 0;
   virtual void tidyModels() = 0;

@@ -116,10 +116,6 @@ bool GraphController::handleZoom(Ion::Events::Event event) {
   return res;
 }
 
-bool GraphController::defaultRangeIsNormalized() const {
-  return functionStore()->displaysFunctionsToNormalize();
-}
-
 Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(int j) const {
   GraphController * graphController = static_cast<GraphController *>(m_graphController);
   ContinuousFunctionStore * store = graphController->functionStore();

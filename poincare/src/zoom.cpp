@@ -104,7 +104,7 @@ void Zoom::fitMagnitude(Function2DWithContext f, const void * model) {
     float y = f(x, model, m_context).x2(); // TODO Zoom could also work for x=f(y) functions
     sample.extend(y);
     float yAbs = std::fabs(y);
-    if (yAbs <= aboutZero) {
+    if (!(yAbs > aboutZero)) { // Negated to account for NANs
       continue;
     }
     float yLog = std::log(yAbs);

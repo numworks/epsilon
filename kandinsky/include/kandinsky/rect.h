@@ -27,32 +27,29 @@ class KDRect {
 public:
   constexpr KDRect(KDCoordinate x, KDCoordinate y,
       KDCoordinate width, KDCoordinate height) :
-    m_x(x), m_y(y), m_width(width), m_height(height) {}
+    m_origin(x, y), m_size(width, height) {}
 
   KDRect(KDPoint p, KDSize s);
   KDRect(KDCoordinate x, KDCoordinate y, KDSize s);
   KDRect(KDPoint p, KDCoordinate width, KDCoordinate height);
 
-  KDCoordinate x() const { return m_x; }
-  KDCoordinate y() const { return m_y; }
-  KDPoint origin() const { return KDPoint(m_x, m_y); }
-  KDCoordinate width() const { return m_width; }
-  KDCoordinate height() const { return m_height; }
-  KDSize size() const { return KDSize(m_width, m_height); }
-  KDCoordinate top() const { return m_y; }
-  KDCoordinate right() const { return m_x + m_width - 1; }
-  KDCoordinate bottom() const { return m_y + m_height - 1; }
-  KDCoordinate left() const { return m_x; }
+  KDCoordinate x() const { return m_origin.x(); }
+  KDCoordinate y() const { return m_origin.y(); }
+  KDPoint origin() const { return m_origin; }
+  KDCoordinate width() const { return m_size.width(); }
+  KDCoordinate height() const { return m_size.height(); }
+  KDSize size() const { return m_size; }
+  KDCoordinate top() const { return y(); }
+  KDCoordinate right() const { return x() + width() - 1; }
+  KDCoordinate bottom() const { return y() + height() - 1; }
+  KDCoordinate left() const { return x(); }
 
   KDPoint topLeft() const { return KDPoint(left(), top()); }
   KDPoint topRight() const { return KDPoint(right(), top()); }
   KDPoint bottomLeft() const { return KDPoint(left(), bottom()); }
   KDPoint bottomRight() const { return KDPoint(right(), bottom()); }
 
-  bool operator ==(const KDRect &other) const {
-    return (m_x == other.m_x && m_y == other.m_y
-        && m_width == other.m_width && m_height == other.m_height);
-  }
+  bool operator ==(const KDRect &other) const { return (m_origin == other.origin() && m_size == other.size()); }
 
   void setOrigin(KDPoint origin);
   void setSize(KDSize size);
@@ -70,7 +67,8 @@ public:
   bool isEmpty() const;
 
 private:
-  KDCoordinate m_x, m_y, m_width, m_height;
+  KDPoint m_origin;
+  KDSize m_size;
 };
 
 constexpr KDRect KDRectZero = KDRect(0, 0, 0, 0);

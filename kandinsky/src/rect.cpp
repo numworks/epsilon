@@ -2,25 +2,25 @@
 #include <algorithm>
 
 KDRect::KDRect(KDPoint p, KDSize s) :
-  m_x(p.x()), m_y(p.y()),
-  m_width(s.width()), m_height(s.height())
+  m_origin(p),
+  m_size(s)
 {
 }
 
 KDRect::KDRect(KDCoordinate x, KDCoordinate y, KDSize s) :
-  m_x(x), m_y(y),
-  m_width(s.width()), m_height(s.height())
+  m_origin(x, y),
+  m_size(s)
 {
 }
 
 KDRect::KDRect(KDPoint p, KDCoordinate width, KDCoordinate height) :
-  m_x(p.x()), m_y(p.y()),
-  m_width(width), m_height(height)
+  m_origin(p),
+  m_size(width, height)
 {
 }
 
-void KDRect::setOrigin(KDPoint p) { m_x = p.x(); m_y = p.y(); }
-void KDRect::setSize(KDSize s) { m_width = s.width(); m_height = s.height(); }
+void KDRect::setOrigin(KDPoint p) { m_origin = p; }
+void KDRect::setSize(KDSize s) { m_size = s; }
 
 bool KDRect::intersects(const KDRect & other) const {
   return (

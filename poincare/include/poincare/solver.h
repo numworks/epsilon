@@ -36,7 +36,7 @@ public:
   static Interest EvenOrOddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *);
   static Interest MinimumInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *) { return BoolToInterest(b.x2() < a.x2() && b.x2() < c.x2(), Interest::LocalMinimum); }
   static Interest MaximumInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *) { return BoolToInterest(a.x2() < b.x2() && c.x2() < b.x2(), Interest::LocalMaximum); }
-  static Interest DiscontinuityInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *) { return BoolToInterest(std::isnan(a.x2()) != std::isnan(c.x2()), Interest::Discontinuity); }
+  static Interest DiscontinuityInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *) { return BoolToInterest((std::isfinite(a.x2()) && std::isnan(c.x2())) || (std::isfinite(c.x2()) && std::isnan(a.x2())), Interest::Discontinuity); }
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */

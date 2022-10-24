@@ -23,7 +23,7 @@ Solver<T>::Solver(const Solver<T> * other) :
 
 template<typename T>
 Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketTest test, HoneResult hone) {
-  Coordinate2D<T> p1, p2(start(), f(start(), aux)), p3(nextX(p2.x1(), end()));
+  Coordinate2D<T> p1, p2(start(), f(start(), aux)), p3(nextX(p2.x1(), end()), k_NAN);
   p3.setX2(f(p3.x1(), aux));
   Coordinate2D<T> finalSolution;
   Interest finalInterest = Interest::None;

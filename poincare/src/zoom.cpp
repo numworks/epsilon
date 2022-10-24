@@ -146,30 +146,27 @@ Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a, Coordina
 Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest interest, float precision) {
   constexpr int k_numberOfIterations = 10; // TODO Tune
   bool convex = true;
-  float fa = f(a, aux), fb = f(b, aux);
-  float c = 0.5f * (a + b), fc = f(c, aux);
-  float u, fu, v, fv;
+  float c = 0.5f * (a + b);
+  Coordinate2D<float> pa(a, f(a, aux)), pb(b, f(b, aux)), pc(c, f(c, aux));
+  Coordinate2D<float> pu, pv;
+
   for (int i = 0; i < k_numberOfIterations; i++) {
-    u = 0.5f * (a + c);
-    v = 0.5f * (c + b);
-    fu = f(u, aux);
-    fv = f(v, aux);
+    pu.setX1(0.5f * (pa.x1() + pc.x1()));
+    pu.setX2(f(pu.x1(), aux));
+    pv.setX1(0.5f * (pc.x1() + pb.x1()));
+    pv.setX2(f(pv.x1(), aux));
 
-    convex = convex && std::fabs(fu - fc) <= std::fabs(fa - fc) && std::fabs(fv - fc) <= std::fabs(fb - fc);
+    convex = convex && std::fabs(pu.x2() - pc.x2()) <= std::fabs(pa.x2() - pc.x2()) && std::fabs(pv.x2() - pc.x2()) <= std::fabs(pb.x2() - pc.x2());
 
-    if (pointIsInterestingHelper(fc, fv, fb, aux) != Solver<float>::Interest::None || pointIsInterestingHelper(fa, fu, fc, aux) == Solver<float>::Interest::None) {
-      a = c;
-      fa = fc;
-      c = v;
-      fc = fv;
+    if (pointIsInterestingHelper(pc, pv, pb, aux) != Solver<float>::Interest::None || pointIsInterestingHelper(pa, pu, pc, aux) == Solver<float>::Interest::None) {
+      pa = pc;
+      pc = pv;
     } else {
-      b = c;
-      fb = fc;
-      c = u;
-      fc = fu;
+      pb = pc;
+      pc = pu;
     }
   }
-  return Coordinate2D<float>(b, interest == Solver<float>::Interest::Root ? 0.f : convex ? fb : NAN);
+  return Coordinate2D<float>(pb.x1(), interest == Solver<float>::Interest::Root ? 0.f : convex ? pb.x2() : NAN);
 }
 
 Range1D Zoom::sanitizedXRange() const {

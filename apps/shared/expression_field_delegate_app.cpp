@@ -39,8 +39,13 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
       displayWarning(I18n::Message::SyntaxError);
       return true;
     }
-    // Step 2: Parsing
-    Poincare::Expression e = Poincare::Expression::Parse(buffer, layoutField->context(), true, shouldParseFieldAsAssignment());
+    /* Step 2: Parsing
+     * Do not parse for assignment to detect if there is a syntax error, since
+     * some errors could be missed.
+     * Sometimes the field needs to be parsed for assignment but this is
+     * done later, namely by ContinuousFunction::buildExpressionFromText.
+     */
+    Poincare::Expression e = Poincare::Expression::Parse(buffer, layoutField->context(), true, false);
     if (e.isUninitialized()) {
       // Unparsable expression
       displayWarning(I18n::Message::SyntaxError);

@@ -75,7 +75,7 @@ private:
   constexpr static T k_minimalPracticalStep = std::max(static_cast<T>(1e-6), k_minimalAbsoluteStep);
   constexpr static T k_absolutePrecision = k_relativePrecision * k_minimalAbsoluteStep;
 
-  static T NullTolerance(T x) { return std::max(k_minimalAbsoluteStep, k_relativePrecision * std::fabs(x)) * static_cast<T>(10.); }
+  static T NullTolerance(T x) { return std::max(k_relativePrecision, k_relativePrecision * std::fabs(x)) * static_cast<T>(10.); }
   // Call SolverAlgorithms::BrentMinimum on the opposite evaluation
   static Coordinate2D<T> BrentMaximum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
   static Coordinate2D<T> CompositeBrentForRoot(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);

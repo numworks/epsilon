@@ -206,9 +206,13 @@ Range2D Zoom::prettyRange() const {
     if (!std::isfinite(yCenter)) {
       yCenter = 0.f;
     }
-    yRange = Range1D(yCenter - 0.5f * yLengthNormalized, yCenter + 0.5f * yLengthNormalized);
-    yRange.nudgeToContain(thisRange.yMin());
-    yRange.nudgeToContain(thisRange.yMax());
+    if (yCenter - 0.5f * yLengthNormalized > thisRange.yMin()) {
+      yRange = Range1D(thisRange.yMin(), thisRange.yMin() + yLengthNormalized);
+    } else if (yCenter + 0.5f * yLengthNormalized < thisRange.yMax()) {
+      yRange = Range1D(thisRange.yMax() - yLengthNormalized, thisRange.yMax());
+    } else {
+      yRange = Range1D(yCenter - 0.5f * yLengthNormalized, yCenter + 0.5f * yLengthNormalized);
+    }
   } else if (xLengthNormalized * k_minimalXCoverage <= xLength && xLength <= xLengthNormalized) {
     float xCenter = xRange.center();
     xRange = Range1D(xCenter - xLengthNormalized * 0.5f, xCenter + xLengthNormalized * 0.5f);

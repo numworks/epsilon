@@ -53,7 +53,6 @@ int ChainedExpressionsListController::numberOfRows() const {
 
 void ChainedExpressionsListController::setExpression(Poincare::Expression e) {
   ExpressionsListController::setExpression(e);
-  m_tail->setExpression(e);
 }
 
 int ChainedExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, int index) {

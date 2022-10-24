@@ -1,6 +1,14 @@
 #include <kandinsky/rect.h>
 #include <algorithm>
 
+KDRect KDRect::translatedBy(KDPoint p) const {
+  return KDRect(x() + p.x(), y() + p.y(), width(), height());
+}
+
+KDRect KDRect::movedTo(KDPoint p) const {
+  return KDRect(p.x(), p.y(), width(), height());
+}
+
 bool KDRect::intersects(const KDRect & other) const {
   return (
       other.right() >= left() &&
@@ -143,14 +151,6 @@ bool KDRect::isAbove(KDPoint p) const {
 
 bool KDRect::isUnder(KDPoint p) const {
   return (p.y() <= bottom());
-}
-
-KDRect KDRect::translatedBy(KDPoint p) const {
-  return KDRect(x() + p.x(), y() + p.y(), width(), height());
-}
-
-KDRect KDRect::movedTo(KDPoint p) const {
-  return KDRect(p.x(), p.y(), width(), height());
 }
 
 bool KDRect::isEmpty() const {

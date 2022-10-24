@@ -1,4 +1,5 @@
 #include "plot_view.h"
+#include <float.h>
 #include <algorithm>
 #include <cmath>
 
@@ -181,6 +182,84 @@ void AbstractPlotView::drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Po
     KDColor workingBuffer[Dots::LargeDotDiameter * Dots::LargeDotDiameter];
     ctx->blendRectWithMask(dotRect, color, mask, workingBuffer);
   }
+}
+
+double AbstractPlotView::angleFromPoint(KDPoint point) const {
+  double x = pixelToFloat(Axis::Horizontal, point.x());
+  double y = pixelToFloat(Axis::Vertical, point.y());
+  double angle = std::atan2(y, x);
+  return angle<0 ? angle + 2 * M_PI : angle;
+}
+
+void AbstractPlotView::drawArc(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> center, float radius, float angleStart, float angleEnd, KDColor color) const {
+  assert(radius >= 0.f);
+  double previousT = NAN;
+  double t = NAN;
+  double previousX = NAN;
+  double x = NAN;
+  double previousY = NAN;
+  double y = NAN;
+  int i = 0;
+  bool isLastSegment = false;
+  double tMin = 0;
+  double tMax = 2*M_PI;
+  if (!rect.contains(KDPoint(floatToPixel(Axis::Horizontal, 0.f),floatToPixel(Axis::Vertical, 0.f)))) {
+    double t1 = angleFromPoint(rect.bottomRight());
+    double t2 = angleFromPoint(rect.topRight());
+    double t3 = angleFromPoint(rect.bottomLeft());
+    double t4 = angleFromPoint(rect.topLeft());
+    /* The area between tMin and tMax (modulo π) is the only area where
+     * something needs to be plotted. */
+    tMin = std::min({t1, t2, t3, t4});
+    tMax = std::max({t1, t2, t3, t4});
+    if (tMax - tMin > M_PI) {
+      // we should draw between tMax and tMin
+      // tStart = std::max(tStart, tMin);
+      // tEnd = std::min(tEnd, tMax);
+      if (angleStart < tMin) {
+        tMin = t3;// - 2*M_PI;
+        tMax = t4;
+        drawArc(ctx, rect, center, radius, tMin, angleEnd, color);
+        angleEnd = tMax;
+      }
+    } else {
+      angleStart = std::max(angleStart, (float)tMin);
+      angleEnd = std::min(angleEnd, (float)tMax);
+    }
+  }
+  // Choose tStep to match the expected length of a single segment in pixels
+  const float segmentLengthInPixels = 8.f; // Ad hoc
+  const float radiusInPixel = std::max(radius / pixelWidth(), radius / pixelHeight());
+  // 2π * length / perimeter where perimeter = 2π * radius in pixels
+  const float tStep = std::min((float)M_PI/15.f, segmentLengthInPixels / radiusInPixel);
+  do {
+    previousT = t;
+    t = angleStart + (i++) * tStep;
+    if (t <= angleStart) {
+      t = angleStart + FLT_EPSILON;
+    }
+    if (t >= angleEnd) {
+      t = angleEnd - FLT_EPSILON;
+      isLastSegment = true;
+    }
+    if (previousT == t) {
+      // No need to draw segment. Happens when tStep << tStart .
+      continue;
+    }
+    previousX = x;
+    previousY = y;
+    x = floatToPixel(Axis::Horizontal, std::cos(t) * radius);
+    y = floatToPixel(Axis::Vertical, std::sin(t) * radius);
+    if (std::isnan(previousX)) {
+      continue;
+    }
+    KDPoint from = KDPoint(previousX, previousY);
+    KDPoint to = KDPoint(x, y);
+    if (rect.contains(from) || rect.contains(to)) {
+      ctx->drawAntialiasedLine(from, to, color, KDColorWhite);
+    }
+    // straightJoinDots(ctx, rect, x, y, previousX, previousY, color, thick);
+  } while (!isLastSegment);
 }
 
 void AbstractPlotView::drawTick(KDContext * ctx, KDRect rect, Axis perpendicular, float position, KDColor color) const {

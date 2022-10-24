@@ -42,9 +42,30 @@ void WithGrid::drawGridLines(const AbstractPlotView * plotView, KDContext * ctx,
 
 // WithPolarGrid
 
+void WithPolarGrid::drawPolarCircles(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+  // assert(m_curveViewRange->xGridUnit() == m_curveViewRange->yGridUnit());
+  float step = plotView->range()->xGridUnit();
+  /* We translate the pixel coordinates into floats, adding/subtracting 1 to
+   * account for conversion errors. */
+  float xMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.left() - 1);
+  float xMax = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.right() + 1);
+  float yMin = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, rect.bottom() + 1);
+  float yMax = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, rect.top() - 1);
+
+  float xAbsoluteMin = std::fabs(std::max(xMin, -xMax));
+  float yAbsoluteMin = std::fabs(std::max(yMin, -yMax));
+  float xAbsoluteMax = std::max(-xMin, xMax);
+  float yAbsoluteMax = std::max(-yMin, yMax);
+  const int start = ((xMin*xMax <= 0) ? yAbsoluteMin : xAbsoluteMin)/step;
+  const int end = std::sqrt(xAbsoluteMax * xAbsoluteMax + yAbsoluteMax * yAbsoluteMax)/step;
+  bool originInFrame = (xMin*xMax <= 0) && (yMin*yMax <= 0);
+  for (int i = originInFrame ? 1 : start; i <= end; i++) {
+    plotView->drawCircle(ctx, rect, {0.f, 0.f}, i * step, i % 2 ? k_lightColor : k_boldColor);
+  }
+}
+
 void WithPolarGrid::drawGrid(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
-  constexpr float minimumGraduationDistanceToCenter = 60;
-  constexpr int angleStepInDegree = 15;
+  drawPolarCircles(plotView, ctx, rect);
   // The widest label is of length 4 : '360°'
   const int graduationHorizontalMargin = KDFont::GlyphWidth(KDFont::Size::Small) * 4 / 2;
   const int graduationVerticalMargin = KDFont::GlyphHeight(KDFont::Size::Small) / 2;
@@ -55,16 +76,17 @@ void WithPolarGrid::drawGrid(const AbstractPlotView * plotView, KDContext * ctx,
   float yMin = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, rect.bottom() - graduationVerticalMargin);
   float yMax = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, rect.top() + graduationVerticalMargin);
   float length = 2.f * std::max({-xMin, xMax, -yMin, yMax});
-  for (int angle = 0; angle <= 360; angle += angleStepInDegree) {
+  for (int angle = 0; angle <= 360; angle += k_angleStepInDegree) {
     float angleRadian = angle *  M_PI / 180.f;
     float cos = std::cos(angleRadian);
     float sin = std::sin(angleRadian);
-    bool shouldHaveGraduation = angle % (2 * angleStepInDegree) == 0;
+    bool shouldHaveGraduation = angle % (2 * k_angleStepInDegree) == 0;
     // drawSegment(ctx, rect, 0.f, 0.f, length * cos, length * sin, shouldHaveGraduation ? k_boldColor : k_lightColor, false);
     KDPoint from = KDPoint(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, 0.f), plotView->floatToPixel(AbstractPlotView::Axis::Vertical, 0.f));
     KDPoint to = KDPoint(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, length * cos), plotView->floatToPixel(AbstractPlotView::Axis::Vertical, length * sin));
     if (angle % 90) {
-      ctx->drawAntialiasedLine(from, to, shouldHaveGraduation ? k_boldColor : k_lightColor, KDColorWhite);
+      // TODO: this call is the only slow part when we are far from the origin
+      ctx->drawAntialiasedLine(from, to, shouldHaveGraduation ? k_boldColor : k_lightColor, plotView->k_backgroundColor);
     }
     if (!shouldHaveGraduation) {
       continue;
@@ -76,8 +98,8 @@ void WithPolarGrid::drawGrid(const AbstractPlotView * plotView, KDContext * ctx,
     AbstractPlotView::RelativePosition horizontalRelativePosition = AbstractPlotView::RelativePosition::There;
     float xQuadrant = cos >= 0 ? xMax : xMin;
     float yQuadrant = sin >= 0 ? yMax : yMin;
-    if (std::abs(cos)*std::abs(yQuadrant) > std::abs(sin)*std::abs(xQuadrant)) {
-      float marginToRemove = AbstractPlotView::k_labelMargin * plotView->pixelHeight();//LengthToFloatLength(AbstractPlotView::Axis::Vertical, k_labelMargin);
+    if (std::fabs(cos)*std::fabs(yQuadrant) > std::fabs(sin)*std::fabs(xQuadrant)) {
+      float marginToRemove = AbstractPlotView::k_labelMargin * plotView->pixelHeight();
       x = xQuadrant;
       y = xQuadrant * sin/cos + (angle == 360 ? 0 : -marginToRemove);
       if (angle % 180 == 0) {
@@ -87,12 +109,12 @@ void WithPolarGrid::drawGrid(const AbstractPlotView * plotView, KDContext * ctx,
     } else {
       x = std::copysign(yQuadrant * cos/sin, cos);
       y = yQuadrant;
-      if (angle == 90) {
+      if (angle == 90 || angle == 270) {
         horizontalRelativePosition = AbstractPlotView::RelativePosition::After;
       }
     }
     // TODO: update condition for non-orthonormal axes
-    if (x*x + y*y > std::pow(minimumGraduationDistanceToCenter * plotView->pixelWidth(), 2)) {//plotView->pixelLengthToFloatLength(AbstractPlotView::Axis::Horizontal, minimumGraduationDistanceToCenter),2)) {
+    if (x*x + y*y > std::pow(k_minimumGraduationDistanceToCenter * plotView->pixelWidth(), 2)) {
       plotView->drawLabel(ctx, rect, buffer, {x, y}, horizontalRelativePosition, verticalRelativePosition, k_boldColor);
     }
     /* TODO: don't print labels if the origin is off-screen and they end up on

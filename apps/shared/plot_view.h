@@ -61,6 +61,7 @@ public:
   float pixelToFloat(Axis axis, KDCoordinate c) const;
   Poincare::Coordinate2D<float> floatToPixel2D(Poincare::Coordinate2D<float> p) const { return Poincare::Coordinate2D<float>(floatToPixel(Axis::Horizontal, p.x1()), floatToPixel(Axis::Vertical, p.x2())); }
   Poincare::Coordinate2D<float> pixelToFloat2D(Poincare::Coordinate2D<float> xy) const { return Poincare::Coordinate2D<float>(pixelToFloat(Axis::Horizontal, xy.x1()), pixelToFloat(Axis::Vertical, xy.x2())); }
+  double angleFromPoint(KDPoint point) const;
   /* Compute the rect where a label will be drawn. */
   KDRect labelRect(const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, bool ignoreMargin = false) const;
 
@@ -75,6 +76,8 @@ public:
   void drawLabel(KDContext * ctx, KDRect rect, const char * label, KDRect labelRect, KDColor color) const;
   void drawLayout(KDContext * ctx, KDRect rect, Poincare::Layout layout, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;
   void drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Poincare::Coordinate2D<float> xy, KDColor color) const;
+  void drawArc(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> center, float radius, float angleStart, float angleEnd, KDColor color) const;
+  void drawCircle(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> center, float radius, KDColor color) const { drawArc(ctx, rect, center, radius, 0.f, 2 * M_PI, color); }
   void drawTick(KDContext * ctx, KDRect rect, Axis perpendicular, float position, KDColor color = KDColorBlack) const;
   void drawArrowhead(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> xy, Poincare::Coordinate2D<float> dxy, float pixelArrowWidth, KDColor color, bool thick = false, float tanAngle = 1.f / 3.f) const;
   /* These methods use the stamping state-machine.

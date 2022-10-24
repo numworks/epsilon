@@ -57,6 +57,10 @@ protected:
 private:
   constexpr static KDColor k_boldColor = Escher::Palette::GrayMiddle;
   constexpr static KDColor k_lightColor = Escher::Palette::GrayBright;
+  constexpr static float k_minimumGraduationDistanceToCenter = 60;
+  constexpr static int k_angleStepInDegree = 15;
+
+  void drawPolarCircles(const AbstractPlotView * plotView, KDContext *ctx, KDRect rect) const;
 };
 
 class NoAxis {

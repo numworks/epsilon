@@ -25,10 +25,10 @@
 
 class KDRect {
 public:
-  constexpr KDRect(KDCoordinate x, KDCoordinate y,
-      KDCoordinate width, KDCoordinate height) :
-    m_origin(x, y), m_size(width, height) {}
-
+  constexpr KDRect(KDCoordinate x, KDCoordinate y, KDCoordinate width, KDCoordinate height) :
+    m_origin(x, y), 
+    m_size(width, height) 
+  {}
   KDRect(KDPoint p, KDSize s);
   KDRect(KDCoordinate x, KDCoordinate y, KDSize s);
   KDRect(KDPoint p, KDCoordinate width, KDCoordinate height);

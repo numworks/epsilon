@@ -163,8 +163,9 @@ int SelectableTableView::firstSelectableRow() {
   }
   for (int row = 0, end = dataSource()->numberOfRows(); row < end; row++) {
     HighlightCell * cell = cellAtLocation(selectedColumn(), row);
-    /* If the cell is undefined, we are in a resuableCell pattern and all rows
-     * must be selectable. */
+    /* If the cell is undefined, we are in a resuableCell
+     * pattern and all rows must be selectable. 
+     * Warning : this is very dangerous --> TODO Marc */
     if (!cell || cell->isSelectable()) {
       return row;
     }
@@ -179,8 +180,9 @@ int SelectableTableView::firstSelectableColumn() {
   }
   for (int column = 0, end = dataSource()->numberOfColumns(); column < end; column++) {
     HighlightCell * cell = cellAtLocation(column, selectedRow());
-    /* If the cell is undefined, we are in a resuableCell pattern and all rows
-     * must be selectable. */
+    /* If the cell is undefined, we are in a resuableCell
+     * pattern and all columns must be selectable. 
+     * Warning : this is very dangerous --> TODO Marc */
     if (!cell || cell->isSelectable()) {
       return column;
     }
@@ -195,6 +197,9 @@ int SelectableTableView::lastSelectableRow() {
   }
   for (int row = dataSource()->numberOfRows() - 1; row >= 0; row--) {
     HighlightCell * cell = cellAtLocation(selectedColumn(), row);
+    /* If the cell is undefined, we are in a resuableCell
+     * pattern and all rows must be selectable. 
+     * Warning : this is very dangerous --> TODO Marc */
     if (!cell || cell->isSelectable()) {
       return row;
     }
@@ -209,6 +214,9 @@ int SelectableTableView::lastSelectableColumn() {
   }
   for (int column = dataSource()->numberOfColumns() - 1; column >= 0; column--) {
     HighlightCell * cell = cellAtLocation(column, selectedRow());
+    /* If the cell is undefined, we are in a resuableCell
+     * pattern and all columns must be selectable. 
+     * Warning : this is very dangerous --> TODO Marc */
     if (!cell || cell->isSelectable()) {
       return column;
     }

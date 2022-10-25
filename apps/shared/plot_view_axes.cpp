@@ -104,7 +104,7 @@ void WithPolarGrid::drawGrid(const AbstractPlotView * plotView, KDContext * ctx,
       y = xQuadrant * sin/cos + (angle == 360 ? 0 : -marginToRemove);
       if (angle % 180 == 0) {
         // Since the axis is black, we need to draw the graduation under or on top of it
-        verticalRelativePosition = angle == 360 ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::After;
+        verticalRelativePosition = angle == 360 ? AbstractPlotView::RelativePosition::After : AbstractPlotView::RelativePosition::Before;
       }
     } else {
       x = std::copysign(yQuadrant * cos/sin, cos);

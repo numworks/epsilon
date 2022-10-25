@@ -7,6 +7,15 @@
 
 namespace Calculation {
 
+class UnitCircle : Shared::PlotPolicy::Axes<Shared::PlotPolicy::WithPolarGrid, Shared::PlotPolicy::PlainAxis, Shared::PlotPolicy::PlainAxis> {
+public:
+  using Axes::reloadAxes;
+  void drawAxesAndGrid(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
+private:
+  constexpr static KDPoint k_minusOneFineTunePosition = {2, -6};
+  constexpr static KDPoint k_oneFineTunePosition = {-1, -6};
+};
+
 class TrigonometryGraphPolicy : public Shared::PlotPolicy::WithCurves {
 protected:
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
@@ -14,7 +23,7 @@ protected:
   TrigonometryModel * m_model;
 };
 
-class TrigonometryGraphView : public Shared::PlotView<Shared::PlotPolicy::PolarGrid, TrigonometryGraphPolicy, Shared::PlotPolicy::NoBanner, Shared::PlotPolicy::NoCursor> {
+class TrigonometryGraphView : public Shared::PlotView<UnitCircle, TrigonometryGraphPolicy, Shared::PlotPolicy::NoBanner, Shared::PlotPolicy::NoCursor> {
 public:
   TrigonometryGraphView(TrigonometryModel * model);
 };

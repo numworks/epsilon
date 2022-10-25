@@ -7,7 +7,7 @@
 
 namespace Inference {
 
-class InputHomogeneityTableCell : public EditableCategoricalTableCell, public HomogeneityTableDataSource, public DynamicCellsDataSource<EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells> {
+class InputHomogeneityTableCell : public EditableCategoricalTableCell, public HomogeneityTableDataSource, public DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells> {
 public:
   InputHomogeneityTableCell(Escher::Responder * parentResponder, DynamicSizeTableViewDataSourceDelegate * dynamicSizeTableViewDataSourceDelegate, Escher::SelectableTableViewDelegate * selectableTableViewDelegate, HomogeneityTest * test);
 
@@ -33,7 +33,7 @@ private:
   int relativeColumnIndex(int columnIndex) const override { return columnIndex - 1; }
 
   // HomogeneityTableViewDataSource
-  Escher::HighlightCell * innerCell(int i) override { return DynamicCellsDataSource<EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells>::cell(i); }
+  Escher::HighlightCell * innerCell(int i) override { return DynamicCellsDataSource<Escher::EvenOddEditableTextCell, k_homogeneityTableNumberOfReusableInnerCells>::cell(i); }
   void willDisplayInnerCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
 
   // DynamicCellsDataSource

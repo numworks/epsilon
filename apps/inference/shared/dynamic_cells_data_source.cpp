@@ -2,6 +2,8 @@
 #include "inference/app.h"
 #include <new>
 
+using namespace Escher;
+
 namespace Inference {
 
 template <typename T, int N>

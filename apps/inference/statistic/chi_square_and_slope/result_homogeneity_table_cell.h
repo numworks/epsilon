@@ -37,7 +37,7 @@ private:
   /* The totals are not displayed when in Contribution mode. */
   int innerNumberOfRows() const override { return m_statistic->numberOfResultRows() + (m_mode == Mode::ExpectedValue); }
   int innerNumberOfColumns() const override { return m_statistic->numberOfResultColumns() + (m_mode == Mode::ExpectedValue); }
-  Escher::HighlightCell * innerCell(int i) override { return DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>::cell(i); }
+  Escher::HighlightCell * innerCell(int i) override { return DynamicCellsDataSource<Escher::EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableInnerCells>::cell(i); }
   void willDisplayInnerCellAtLocation(Escher::HighlightCell * cell, int column, int row) override;
 
   // DynamicCellsDataSource

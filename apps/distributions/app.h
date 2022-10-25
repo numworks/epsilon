@@ -1,16 +1,13 @@
 #ifndef DISTRIBUTIONS_APP_H
 #define DISTRIBUTIONS_APP_H
 
-#include <apps/shared/shared_app.h>
-#include <escher/stack_view_controller.h>
-#include <ion/ring_buffer.h>
-
 #include "models/distribution_buffer.h"
 #include "probability/distribution_controller.h"
 #include "probability/parameters_controller.h"
-#include "apps/shared/expression_field_delegate_app.h"
-
-using namespace Escher;
+#include <apps/shared/expression_field_delegate_app.h>
+#include <apps/shared/shared_app.h>
+#include <escher/stack_view_controller.h>
+#include <ion/ring_buffer.h>
 
 namespace Distributions {
 
@@ -42,11 +39,11 @@ public:
   };
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
-  void didBecomeActive(Window * window) override;
+  void didBecomeActive(Escher::Window * window) override;
 
   // Navigation
-  void willOpenPage(ViewController * controller) override;
-  void didExitPage(ViewController * controller) override;
+  void willOpenPage(Escher::ViewController * controller) override;
+  void didExitPage(Escher::ViewController * controller) override;
 
   TELEMETRY_ID("Distributions");
 private:
@@ -60,6 +57,6 @@ private:
   Escher::StackViewController m_stackViewController;
 };
 
-}  // namespace Distributions
+}
 
-#endif /* DISTRIBUTIONS_APP_H */
+#endif

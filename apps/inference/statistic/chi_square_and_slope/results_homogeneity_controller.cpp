@@ -1,5 +1,7 @@
 #include "results_homogeneity_controller.h"
 
+using namespace Escher;
+
 namespace Inference {
 
 // ResultsHomogeneityController

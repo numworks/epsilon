@@ -1,6 +1,21 @@
 #ifndef INFERENCE_APP_H
 #define INFERENCE_APP_H
 
+#include "models/statistic_buffer.h"
+#include "shared/dynamic_cells_data_source.h"
+#include "shared/expression_field_delegate_app.h"
+#include "statistic/chi_square_and_slope/categorical_type_controller.h"
+#include "statistic/chi_square_and_slope/input_goodness_controller.h"
+#include "statistic/chi_square_and_slope/input_homogeneity_controller.h"
+#include "statistic/chi_square_and_slope/input_slope_controller.h"
+#include "statistic/chi_square_and_slope/results_homogeneity_controller.h"
+#include "statistic/input_controller.h"
+#include "statistic/interval/interval_graph_controller.h"
+#include "statistic/results_controller.h"
+#include "statistic/test/hypothesis_controller.h"
+#include "statistic/test/test_graph_controller.h"
+#include "statistic/test_controller.h"
+#include "statistic/type_controller.h"
 #include <apps/shared/menu_controller.h>
 #include <apps/shared/shared_app.h>
 #include <apps/shared/text_field_delegate_app.h>
@@ -8,22 +23,6 @@
 #include <escher/container.h>
 #include <escher/stack_view_controller.h>
 #include <ion/ring_buffer.h>
-
-#include "shared/dynamic_cells_data_source.h"
-#include "shared/expression_field_delegate_app.h"
-#include "statistic/chi_square_and_slope/categorical_type_controller.h"
-#include "statistic/test/hypothesis_controller.h"
-#include "statistic/input_controller.h"
-#include "statistic/chi_square_and_slope/input_goodness_controller.h"
-#include "statistic/chi_square_and_slope/input_homogeneity_controller.h"
-#include "statistic/chi_square_and_slope/input_slope_controller.h"
-#include "statistic/interval/interval_graph_controller.h"
-#include "statistic/results_controller.h"
-#include "statistic/chi_square_and_slope/results_homogeneity_controller.h"
-#include "statistic/test/test_graph_controller.h"
-#include "statistic/test_controller.h"
-#include "statistic/type_controller.h"
-#include "models/statistic_buffer.h"
 
 namespace Inference {
 
@@ -56,11 +55,11 @@ public:
   };
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
-  void didBecomeActive(Window * window) override;
+  void didBecomeActive(Escher::Window * window) override;
 
   // Navigation
-  void willOpenPage(ViewController * controller) override;
-  void didExitPage(ViewController * controller) override;
+  void willOpenPage(Escher::ViewController * controller) override;
+  void didExitPage(Escher::ViewController * controller) override;
 
   // Cells buffer API
   void * buffer(size_t offset = 0) { return m_buffer + offset; }
@@ -68,10 +67,10 @@ public:
 
   constexpr static int k_bufferSize = std::max({
       sizeof(ExpressionCellWithBufferWithMessage) * k_maxNumberOfExpressionCellsWithBufferWithMessage, // 824 * 5 = 4120
-      sizeof(ExpressionCellWithEditableTextWithMessage) * k_maxNumberOfExpressionCellsWithEditableTextWithMessage, // 1040 * 8 = 8320
-      sizeof(EvenOddBufferTextCell) * (k_homogeneityTableNumberOfReusableHeaderCells + k_homogeneityTableNumberOfReusableInnerCells), // 360 * (5 + 9 + 45) = 21 240
-      sizeof(EvenOddEditableTextCell) * k_homogeneityTableNumberOfReusableInnerCells + sizeof(EvenOddBufferTextCell) * k_homogeneityTableNumberOfReusableHeaderCells, // 640 * 72 + 360 *(6+12) = 33 840
-      sizeof(EvenOddEditableTextCell) * k_doubleColumnTableNumberOfReusableCells // 24 * 640 = 15 360
+      sizeof(Escher::ExpressionCellWithEditableTextWithMessage) * k_maxNumberOfExpressionCellsWithEditableTextWithMessage, // 1040 * 8 = 8320
+      sizeof(Escher::EvenOddBufferTextCell) * (k_homogeneityTableNumberOfReusableHeaderCells + k_homogeneityTableNumberOfReusableInnerCells), // 360 * (5 + 9 + 45) = 21 240
+      sizeof(Escher::EvenOddEditableTextCell) * k_homogeneityTableNumberOfReusableInnerCells + sizeof(Escher::EvenOddBufferTextCell) * k_homogeneityTableNumberOfReusableHeaderCells, // 640 * 72 + 360 *(6+12) = 33 840
+      sizeof(Escher::EvenOddEditableTextCell) * k_doubleColumnTableNumberOfReusableCells // 24 * 640 = 15 360
     });
 
   TELEMETRY_ID("Inference");
@@ -109,6 +108,6 @@ private:
   DynamicCellsDataSourceDestructor * m_bufferDestructor;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_APP_H */
+#endif

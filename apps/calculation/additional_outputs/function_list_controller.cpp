@@ -1,10 +1,10 @@
 #include "function_list_controller.h"
 #include "../app.h"
-#include "../../shared/poincare_helpers.h"
-#include "ion/unicode/code_point.h"
-#include "poincare/expression.h"
-#include "poincare/layout_helper.h"
-#include "poincare/rational.h"
+#include <apps/shared/poincare_helpers.h>
+#include <ion/unicode/code_point.h>
+#include <poincare/expression.h>
+#include <poincare/layout_helper.h>
+#include <poincare/rational.h>
 #include <apps/global_preferences.h>
 #include <poincare/constant.h>
 #include <poincare/code_point_layout.h>
@@ -60,7 +60,7 @@ void FunctionListController::viewDidDisappear() {
 }
 
 I18n::Message FunctionListController::messageAtIndex(int index) {
-  assert(index < k_maxNumberOfOutputRows && index >=0);
+  assert(index < k_maxNumberOfOutputRows && index >= 0);
   I18n::Message messages[k_maxNumberOfOutputRows] = {
     I18n::Message::CurveEquation,
   };

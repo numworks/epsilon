@@ -135,7 +135,7 @@ int Controller::reusableCellCount() const {
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   AppCell * appCell = static_cast<AppCell *>(cell);
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  int appIdx = iconIndex(i, j) + 1;
+  int appIdx = appIndex(i, j);
   if (appIdx >= container->numberOfApps()) {
     appCell->setVisible(false);
   } else {
@@ -177,7 +177,7 @@ SelectableTableViewDataSource * Controller::selectionDataSource() const {
 
 void Controller::switchToSelectedApp() {
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  int appIdx = iconIndex(selectionDataSource()->selectedColumn(), selectionDataSource()->selectedRow()) + 1;
+  int appIdx = appIndex(selectionDataSource()->selectedColumn(), selectionDataSource()->selectedRow());
   Poincare::Preferences::ExamMode examMode = Poincare::Preferences::sharedPreferences()->examMode();
   if (appIdx < container->numberOfBuiltinApps()) {
     ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIdx));

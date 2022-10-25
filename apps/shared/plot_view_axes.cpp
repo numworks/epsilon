@@ -71,10 +71,11 @@ void WithPolarGrid::drawGrid(const AbstractPlotView * plotView, KDContext * ctx,
   const int graduationVerticalMargin = KDFont::GlyphHeight(KDFont::Size::Small) / 2;
   constexpr int bufferSize = sizeof("360°");
   char buffer[bufferSize];
-  float xMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.left() + graduationHorizontalMargin);
-  float xMax = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.right() - graduationHorizontalMargin);
-  float yMin = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, rect.bottom() - graduationVerticalMargin);
-  float yMax = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, rect.top() + graduationVerticalMargin);
+  KDRect bounds = plotView->bounds();
+  float xMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, bounds.left() + graduationHorizontalMargin);
+  float xMax = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, bounds.right() - graduationHorizontalMargin);
+  float yMin = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, bounds.bottom() - graduationVerticalMargin);
+  float yMax = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, bounds.top() + graduationVerticalMargin);
   float length = 2.f * std::max({-xMin, xMax, -yMin, yMax});
   for (int angle = 0; angle <= 360; angle += k_angleStepInDegree) {
     float angleRadian = angle *  M_PI / 180.f;

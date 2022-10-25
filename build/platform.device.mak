@@ -4,7 +4,14 @@ USE_LIBA = 1
 EXE = elf
 
 EPSILON_TELEMETRY ?= 0
+
+ifeq ($(DEVELOPMENT),1)
 EMBED_EXTRA_DATA ?= 0
+else
+ifndef EMBED_EXTRA_DATA
+$(error EMBED_EXTRA_DATA should be defined in DEVELOPMENT=0)
+endif
+endif
 
 # We want to do the following transformations:
 # bootloader[./_][dfu/elf/bin/run] --> bootloader

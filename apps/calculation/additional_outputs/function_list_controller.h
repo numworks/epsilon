@@ -27,8 +27,6 @@ private:
 
   FunctionGraphCell m_graphCell;
   FunctionModel m_model;
-  // Map from cell index to message index
-  int m_indexMessageMap[k_maxNumberOfOutputRows];
 };
 
 }

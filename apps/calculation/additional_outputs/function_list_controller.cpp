@@ -25,33 +25,19 @@ void FunctionListController::setExpression(Poincare::Expression e) {
   static_assert(k_maxNumberOfRows >= k_maxNumberOfOutputRows, "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   Preferences * preferences = Preferences::sharedPreferences();
-  Preferences::ComplexFormat currentComplexFormat = preferences->complexFormat();
-  if (currentComplexFormat == Preferences::ComplexFormat::Real) {
-    /* Temporary change complex format to avoid all additional expressions to be
-     * "nonreal" (with [i] for instance). As additional results are computed from
-     * the output, which is built taking ComplexFormat into account, there are
-     * no risks of displaying additional results on an nonreal output. */
-    preferences->setComplexFormat(Preferences::ComplexFormat::Cartesian);
-  }
-
   Context * context = App::app()->localContext();
 
   float abscissa = e.getNumericalValue();
   Symbol variable = Symbol::Builder(UCodePointUnknown);
   e.replaceNumericalValuesWithSymbol(variable);
 
-  int index = 0;
-  m_indexMessageMap[index] = 0;
-  m_layouts[index] = LayoutHelper::String("y");
-  m_approximatedLayouts[index] = e.replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol)).createLayout(preferences->displayMode(), preferences->numberOfSignificantDigits(), context);
-  index++;
+  m_model.setParameters(e.clone(), abscissa);
 
-  m_model.setParameters(e.replaceSymbolWithExpression(Symbol::Builder('x'), Symbol::Builder(UCodePointUnknown)), abscissa);
+  m_layouts[0] = LayoutHelper::String("y");
+  m_approximatedLayouts[0] = e.replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol)).createLayout(preferences->displayMode(), preferences->numberOfSignificantDigits(), context);
+
   illustrationCell()->reloadCell();
-
   setShowIllustration(true);
-  // Reset complex format as before
-  preferences->setComplexFormat(currentComplexFormat);
 }
 
 void FunctionListController::viewDidDisappear() {
@@ -60,11 +46,8 @@ void FunctionListController::viewDidDisappear() {
 }
 
 I18n::Message FunctionListController::messageAtIndex(int index) {
-  assert(index < k_maxNumberOfOutputRows && index >= 0);
-  I18n::Message messages[k_maxNumberOfOutputRows] = {
-    I18n::Message::CurveEquation,
-  };
-  return messages[m_indexMessageMap[index]];
+  assert(index == 0);
+  return I18n::Message::CurveEquation;
 }
 
 }

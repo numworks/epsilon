@@ -114,8 +114,7 @@ private:
 
 class PolarConic : public Conic {
 public:
-  constexpr static const char * k_tetha = "θ";
-  PolarConic(const Expression& e, Context * context);
+  PolarConic(const Expression& e, Context * context, const char * theta = "θ");
 private:
   CoordinateType coordinateType() const override { return CoordinateType::Polar; }
 };

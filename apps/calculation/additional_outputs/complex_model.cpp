@@ -32,7 +32,7 @@ float ComplexModel::rangeBound(float direction, bool horizontal) const {
     range1D.setMax(r1);
   }
 
-  return direction * value >= 0.0f ? range1D.max() : range1D.min();
+  return direction >= 0.0f ? range1D.max() : range1D.min();
 }
 
 float ComplexModel::xMin() const {

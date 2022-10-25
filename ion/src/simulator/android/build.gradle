@@ -1,4 +1,5 @@
-def BUILD_DIR = '../../../../'+System.getenv('BUILD_DIR')+'/app'
+def EPSILON_BUILD_DIR = '../../../../'+System.getenv('BUILD_DIR')
+def BUILD_DIR = EPSILON_BUILD_DIR+'/app'
 
 def projectVariable(name) {
   /* This function retrieves a variable from the environment and falls back
@@ -67,7 +68,7 @@ android {
       res.srcDir BUILD_DIR + '/res'
       java.srcDir 'src'
       jniLibs.srcDir BUILD_DIR + '/libs/' + System.getenv('EPSILON_VARIANT')
-      assets.srcDir '../assets'
+      assets.srcDirs = ['../assets', EPSILON_BUILD_DIR + 'ion/src/simulator/assets']
     }
   }
   lintOptions {

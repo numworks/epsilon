@@ -16,7 +16,7 @@ protected:
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
   /* If the step is the cache step it means the whole screen should be redrawn
    * after a OnOff. */
-  bool update() const { return m_cachedStep != k_emptyCache && m_cachedStep != m_step; }
+  bool shouldUpdate() const { return m_cachedStep != k_emptyCache && m_cachedStep != m_step; }
   constexpr static int8_t k_emptyCache = - 2;
   Shared::Sequence * m_sequence;
   int8_t m_step;

@@ -31,23 +31,6 @@ ContinuousFunctionProperties::CurveParameter ContinuousFunctionProperties::getCu
   }
 }
 
-Conic::Type ContinuousFunctionProperties::conicType() const {
-  if (!isConic()) {
-    return Conic::Type::Unknown;
-  }
-  if (m_plotType == &FunctionTypes::k_circleEquation) {
-    return Conic::Type::Circle;
-  }
-  if (m_plotType == &FunctionTypes::k_ellipseEquation) {
-    return Conic::Type::Ellipse;
-  }
-  if (m_plotType == &FunctionTypes::k_hyperbolaEquationWithOneSubCurve || m_plotType == &FunctionTypes::k_hyperbolaEquationWithTwoSubCurves) {
-    return Conic::Type::Hyperbola;
-  }
-  assert(m_plotType == &FunctionTypes::k_parabolaEquationWithOneSubCurve || m_plotType == &FunctionTypes::k_parabolaEquationWithTwoSubCurves);
-  return Conic::Type::Parabola;
-}
-
 ContinuousFunctionProperties::AreaType ContinuousFunctionProperties::areaType() const {
   assert(isInitialized());
   if (!canBeActive() || m_equationType == ComparisonNode::OperatorType::Equal) {

@@ -1328,8 +1328,12 @@ Expression Expression::FunctionHelper::build(Expression children) const {
 }
 
 int ExpressionNode::numberOfNumericalValues() const {
+  constexpr int error = -1;
+  if (isRandom()) {
+    return error;
+  }
   if (isNumber()) {
-    return 1;
+    return std::isfinite(static_cast<const NumberNode*>(this)->doubleApproximation()) ? 1 : error;
   }
   if (type() == ExpressionNode::Type::Power) {
     int base = childAtIndex(0)->numberOfNumericalValues();
@@ -1338,45 +1342,47 @@ int ExpressionNode::numberOfNumericalValues() const {
   if (type() == ExpressionNode::Type::ConstantMaths) {
     const ConstantNode * constant = static_cast<const ConstantNode*>(this);
     // We decide that e is not a constant for e^2 to generalize as e^x
-    return !constant->isConstant("e", constant->constantInfo());
+    return !constant->isConstant("e") && !constant->isConstant("i") ;
   }
   int n = 0;
   for (ExpressionNode * child : children()) {
-    n += child->numberOfNumericalValues();
+    int childValue = child->numberOfNumericalValues();
+    if (childValue == error) {
+      return error;
+    }
+    n += childValue;
   }
   return n;
 }
 
-Expression Expression::replaceNumericalValuesWithSymbol(Symbol x) {
+void Expression::replaceNumericalValuesWithSymbol(Symbol x) {
   if (isNumber()) {
-    return x.clone();
+    return replaceWithInPlace(x);
   }
-  if (type() == ExpressionNode::Type::ConstantMaths && !convert<Constant>().isConstant("e")) {
-    return x.clone();
+  if (type() == ExpressionNode::Type::ConstantMaths && !convert<Constant>().isConstant("e") && !convert<Constant>().isConstant("i")) {
+    return replaceWithInPlace(x);
   }
-  Expression result = clone();
   if (type() == ExpressionNode::Type::Power) {
     if (childAtIndex(0).numberOfNumericalValues() == 0) {
       // replace exponent
-      result.replaceChildAtIndexInPlace(1, childAtIndex(1).replaceNumericalValuesWithSymbol(x));
+      childAtIndex(1).replaceNumericalValuesWithSymbol(x);
     } else {
       // replace base
-      result.replaceChildAtIndexInPlace(0, childAtIndex(0).replaceNumericalValuesWithSymbol(x));
+      childAtIndex(0).replaceNumericalValuesWithSymbol(x);
     }
-    return result;
+    return;
   }
   for (int i = 0; i < numberOfChildren(); i++) {
-    result.replaceChildAtIndexInPlace(i, childAtIndex(i).replaceNumericalValuesWithSymbol(x));
+    childAtIndex(i).replaceNumericalValuesWithSymbol(x);
   }
-  return result;
 }
 
 float Expression::getNumericalValue() {
-  // Assumes the expressions contains only one numerical value
+  assert(numberOfNumericalValues() <= 1);
   if (isNumber()) {
     return convert<Number>().doubleApproximation();
   }
-  if (type() == ExpressionNode::Type::ConstantMaths && !convert<Constant>().isConstant("e")) {
+  if (type() == ExpressionNode::Type::ConstantMaths && !convert<Constant>().isConstant("e") && !convert<Constant>().isConstant("i")) {
     return convert<Constant>().constantInfo().value();
   }
   Expression result = clone();

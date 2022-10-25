@@ -98,16 +98,33 @@ QUIZ_CASE(poincare_expression_unit_constructor) {
   assert_expression_serialize_to(u, "_W");
 }
 
-static inline void assert_generalizes_to(Expression e, const Expression f) {
-  quiz_assert(e.replaceNumericalValuesWithSymbol(Symbol::Builder('x')).isIdenticalTo(f));
+static inline void assert_number_of_numerical_values(const char * expression, int result) {
+  Shared::GlobalContext globalContext;
+  quiz_assert(parse_expression(expression, &globalContext, false).numberOfNumericalValues() == result);
+}
+
+QUIZ_CASE(poincare_number_of_numerical_values) {
+  assert_number_of_numerical_values("2+(3-1)", 3);
+  assert_number_of_numerical_values("e", 0);
+  assert_number_of_numerical_values("π", 1);
+  assert_number_of_numerical_values("√(1+random())", -1);
+  assert_number_of_numerical_values("ln(1+inf)", -1);
+}
+
+static inline void assert_generalizes_to_and_extract(const char * expression, const char * generalized, float value) {
+  Shared::GlobalContext globalContext;
+  Expression e = parse_expression(expression, &globalContext, false);
+  Expression g = parse_expression(generalized, &globalContext, false);
+  float v = e.getNumericalValue();
+  e.replaceNumericalValuesWithSymbol(Symbol::Builder('x'));
+  quiz_assert(e.isIdenticalTo(g));
+  quiz_assert(value == v);
 }
 
 QUIZ_CASE(poincare_expression_generalization) {
-  Symbol x = Symbol::Builder('x');
-  assert_generalizes_to(Function::Builder("ln", 2, Decimal::Builder("2", 1)),
-                        Function::Builder("ln", 2, x));
-  assert_generalizes_to(Power::Builder(Decimal::Builder("2", 1), Decimal::Builder("3", 1)),
-                        Power::Builder(x, Decimal::Builder("3", 1)));
-  assert_generalizes_to(Power::Builder(Constant::Builder("e"), Decimal::Builder("3", 1)),
-                        Power::Builder(Constant::Builder("e"), x));
+  assert_generalizes_to_and_extract("ln(2)", "ln(x)", 2.f);
+  assert_generalizes_to_and_extract("2^3", "x^3", 2.f);
+  assert_generalizes_to_and_extract("e^3", "e^x", 3.f);
+  assert_generalizes_to_and_extract("√(e+tan(e^(e^(π^4))))", "√(e+tan(e^(e^(x^4))))", M_PI);
+  assert_generalizes_to_and_extract("abs(i+3)", "abs(i+x)", 3.f);
 }

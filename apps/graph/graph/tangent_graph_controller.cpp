@@ -48,7 +48,7 @@ bool TangentGraphController::textFieldDidFinishEditing(AbstractTextField * textF
     return false;
   }
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);
-  assert(function->isAlongXOrY());
+  assert(function->properties().isCartesian());
   double y = function->evaluate2DAtParameter(floatBody, myApp->localContext()).x2();
   m_cursor->moveTo(floatBody, floatBody, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
@@ -79,7 +79,7 @@ void TangentGraphController::reloadBannerView() {
   Poincare::Print::CustomPrintf(buffer, bufferSize, "a=%*.*ed", y, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
   m_bannerView->aView()->setText(buffer);
 
-  assert(function->isAlongXOrY());
+  assert(function->properties().isCartesian());
   y = -y*m_cursor->x()+function->evaluate2DAtParameter(m_cursor->x(), context).x2();
   Poincare::Print::CustomPrintf(buffer, bufferSize, "b=%*.*ed", y, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
   m_bannerView->bView()->setText(buffer);

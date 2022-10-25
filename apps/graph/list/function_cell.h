@@ -44,8 +44,8 @@ public:
 
 private:
   // View
-  bool displayPlotType() const { return m_messageTextView.text() != nullptr && m_messageTextView.text()[0] != 0; }
-  int numberOfSubviews() const override { return 2 + displayPlotType(); }
+  bool displayFunctionType() const { return m_messageTextView.text() != nullptr && m_messageTextView.text()[0] != 0; }
+  int numberOfSubviews() const override { return 2 + displayFunctionType(); }
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 

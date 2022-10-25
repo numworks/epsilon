@@ -31,18 +31,18 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   double dir = (direction > 0 ? 1.0 : -1.0);
 
   bool specialConicCursorMove = false;
-  if (function->isConic() && function->numberOfSubCurves() == 2) {
+  if (function->properties().isConic() && function->numberOfSubCurves() == 2) {
     assert(subCurveIndex != nullptr);
     // previousXY will be needed for conic's special horizontal cursor moves.
     specialConicCursorMove = std::isfinite(function->evaluateXYAtParameter(t, context, *subCurveIndex).x2());
-    if (*subCurveIndex == 1 && function->plotType() != ContinuousFunction::PlotType::Hyperbola) {
+    if (*subCurveIndex == 1 && function->properties().isHyperbolaWithTwoSubCurves()) {
       // On the sub curve, pressing left actually moves the cursor right
       dir *= -1.0;
     }
   }
 
   double step;
-  if (function->isAlongXOrY()) {
+  if (function->properties().isCartesian()) {
     step = static_cast<double>(range->xGridUnit())/numberOfStepsInGradUnit;
     double slopeMultiplicator = 1.0;
     if (function->canDisplayDerivative()) {
@@ -99,7 +99,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   Coordinate2D<double> xy = function->evaluateXYAtParameter(t, context, subCurveIndexValue);
 
   if (specialConicCursorMove && std::isnan(xy.x2())) {
-    if (function->plotType() == ContinuousFunction::PlotType::Hyperbola) {
+    if (function->properties().isHyperbolaWithTwoSubCurves()) {
       // Hyperbolas have an undefined section along-side the x axis.
       double previousT = t;
       int tries = 0;

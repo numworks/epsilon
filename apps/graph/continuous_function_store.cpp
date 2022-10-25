@@ -6,12 +6,11 @@ using namespace Shared;
 namespace Graph {
 
 bool ContinuousFunctionStore::displaysNonCartesianFunctions(int * nbActiveFunctions) const {
+  int nActive = numberOfActiveFunctions();
   if (nbActiveFunctions != nullptr) {
-    *nbActiveFunctions = numberOfActiveFunctions();
+    *nbActiveFunctions = nActive;
   }
-  return numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType::Theta)
-       + numberOfActiveFunctionsOfSymbolType(ContinuousFunction::SymbolType::T)
-       != 0;
+  return numberOfActiveFunctionsWithProperty(&ContinuousFunctionProperties::isCartesian) < nActive;
 }
 
 bool ContinuousFunctionStore::displaysFunctionsToNormalize(int * nbActiveFunctions) const {
@@ -19,11 +18,7 @@ bool ContinuousFunctionStore::displaysFunctionsToNormalize(int * nbActiveFunctio
     *nbActiveFunctions = numberOfActiveFunctions();
   }
   // Normalization isn't enforced on Parabola and Hyperbola for a better zooms
-  return numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Polar)
-       + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Parametric)
-       + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Circle)
-       + numberOfActiveFunctionsOfType(ContinuousFunction::PlotType::Ellipse)
-       != 0;
+  return numberOfActiveFunctionsWithProperty(&ContinuousFunctionProperties::isConic) != 0;
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {

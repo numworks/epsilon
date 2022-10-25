@@ -31,7 +31,7 @@ private:
   }
   void setRecord(Ion::Storage::Record record) override;
   bool editableParameter(int index);
-  int numberOfParameters() const { return function()->numberOfCurveParameters() + shouldDisplayDerivative(); }
+  int numberOfParameters() const { return function()->properties().numberOfCurveParameters() + shouldDisplayDerivative(); }
   Escher::HighlightCell * cell(int index) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
@@ -39,7 +39,7 @@ private:
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool shouldDisplayCalculation() const;
   bool shouldDisplayDerivative() const;
-  bool isDerivative(int index) { return cell(index) == &m_derivativeNumberCell && function()->numberOfCurveParameters() == 2; };
+  bool isDerivative(int index) { return cell(index) == &m_derivativeNumberCell && function()->properties().numberOfCurveParameters() == 2; };
   int cellIndex(int visibleCellIndex) const;
   /* max(Function::k_maxNameWithArgumentSize + CalculateOnFx, CalculateOnTheCurve + max(Color*Curve)) */
   static constexpr size_t k_titleSize = 40; // "Berechnen auf der türkisen Kurve"

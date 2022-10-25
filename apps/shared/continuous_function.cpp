@@ -455,7 +455,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Context * 
 template<typename T>
 Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context * context, int subCurveIndex) const {
   if (t < tMin() || t > tMax()) {
-    return Coordinate2D<T>(isAlongXOrY() ? t : NAN, NAN);
+    return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
   Expression e = expressionReduced(context);
   Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(context), angleUnit(context));

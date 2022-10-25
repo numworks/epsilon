@@ -23,7 +23,7 @@ public:
   bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }
-  bool isVisible() const { return m_record.isNull() ? false : function()->canHaveCustomDomain(); }
+  bool isVisible() const { return m_record.isNull() ? false : function()->properties().canHaveCustomDomain(); }
 
 private:
   I18n::Message parameterMessage(int index) const override;

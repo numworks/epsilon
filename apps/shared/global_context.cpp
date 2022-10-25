@@ -198,9 +198,9 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const 
   }
   Poincare::Expression equation = Poincare::Comparison::Builder(symbol.clone(), ComparisonNode::OperatorType::Equal, expressionToStore);
   ContinuousFunction model = ContinuousFunction(recordToSet);
-  bool wasAlongXorY = model.isAlongXOrY();
+  bool wasCartesian = model.properties().isCartesian();
   error = model.setExpressionContent(equation);
-  model.updateModel(this, wasAlongXorY);
+  model.updateModel(this, wasCartesian);
   return error;
 }
 

@@ -36,9 +36,9 @@ void FunctionAxis<N>::drawAxis(const AbstractPlotView * plotView, KDContext * ct
   // Draw the usual graduations
   PlotPolicy::SimpleAxis::drawAxis(plotView, ctx, rect, axis);
   // Draw the dashed lines since they are the ticks of the special labels
-  plotView->drawStraightSegment(ctx, rect, otherAxis, t, 0.0f, other, Palette::Red, 1, 3);
+  plotView->drawStraightSegment(ctx, rect, otherAxis, t, 0.0f, other, k_color, 1, 3);
   // Draw the special label
-  PlotPolicy::AbstractLabeledAxis::drawLabel(N, t, plotView, ctx, rect, axis, Palette::Red);
+  PlotPolicy::AbstractLabeledAxis::drawLabel(N, t, plotView, ctx, rect, axis, k_color);
 }
 
 template<size_t N>
@@ -61,12 +61,12 @@ void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KD
       return Coordinate2D<float>(t, PoincareHelpers::ApproximateWithValueForSymbol<float>(*e, k_unknownName, t, c));
     };
 
-  plotView->drawDot(ctx, rect, Dots::Size::Large, {x, y}, Palette::Red);
-
   // Draw the curve
-  Context * context = App::app()->localContext();
-  CurveDrawing plot(Curve2D(evaluateFunction, &function), context, m_model->xMin(), m_model->xMax(), plotView->pixelWidth(), Palette::Red);
+  CurveDrawing plot(Curve2D(evaluateFunction, &function), App::app()->localContext(), m_model->xMin(), m_model->xMax(), plotView->pixelWidth(), k_color);
   plot.draw(plotView, ctx, rect);
+
+  // Draw the dot
+  plotView->drawDot(ctx, rect, Dots::Size::Large, {x, y}, k_color);
 }
 
 template bool FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfYLabels>::labelWillBeDisplayed(int i, KDRect labelRect) const;

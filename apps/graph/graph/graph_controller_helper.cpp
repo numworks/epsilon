@@ -154,7 +154,7 @@ bool GraphControllerHelper::snapToInterestAndUpdateBanner(double * t, double sta
   I18n::Message interestMessage;
   switch (nextPointOfInterest.interest()) {
   case Solver<double>::Interest::Root:
-    interestMessage = I18n::Message::Zeros;
+    interestMessage = I18n::Message::Zero;
     break;
   case Solver<double>::Interest::LocalMinimum:
     interestMessage = I18n::Message::Minimum;

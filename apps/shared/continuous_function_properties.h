@@ -203,8 +203,13 @@ public:
   constexpr static CodePoint k_cartesianSymbol = 'x';
   constexpr static CodePoint k_parametricSymbol = 't';
   constexpr static CodePoint k_polarSymbol = UCodePointGreekSmallLetterTheta;
+  constexpr static CodePoint k_radiusSymbol = 'r';
+  constexpr static CodePoint k_ordinateSymbol = 'y';
+  constexpr static char k_ordinateName[2] = "y";
+  static_assert(k_ordinateSymbol == k_ordinateName[0]);
 
-  static const FunctionType * CartesianFunctionAnalysis(const Poincare::Expression& e, Poincare::Context * context);
+  // Units are not handled in the graph app. The default unit does not matters
+  constexpr static Poincare::Preferences::UnitFormat k_defaultUnitFormat = Poincare::Preferences::UnitFormat::Metric;
 
   ContinuousFunctionProperties() :
     m_plotType(&k_uninitializedFunctionType),
@@ -268,12 +273,21 @@ public:
   Poincare::ComparisonNode::OperatorType equationType() const { assert(isInitialized()); return m_equationType; }
   CodePoint equationSymbol() const { return Poincare::ComparisonNode::ComparisonCodePoint(equationType()); }
 
-  // Setters
-  void setEquationType(Poincare::ComparisonNode::OperatorType equationType) { m_equationType = equationType; }
-  void setFunctionType(const FunctionType * plotType) { m_plotType = plotType; }
-  void resetFunctionType() { m_plotType = &k_uninitializedFunctionType; }
+  // Update
+  void update(const Poincare::Expression reducedEquation, const Poincare::Expression inputEquation, Poincare::Context * context, Poincare::ComparisonNode::OperatorType precomputedOperatorType, FunctionType::SymbolType precomputedFunctionSymbol);
+  void reset() { m_plotType = &k_uninitializedFunctionType; }
 
 private:
+  static const FunctionType * CartesianFunctionAnalysis(const Poincare::Expression& e, Poincare::Context * context);
+
+  // If equation has a NonNull coeff. Can also compute last coeff sign.
+  static bool HasNonNullCoefficients(const Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::TrinaryBoolean * highestDegreeCoefficientIsPositive);
+  // If equation should be allowed when implicit plots are forbidden.
+  static bool IsExplicitEquation(const Poincare::Expression equation, CodePoint symbol);
+
+  void setEquationType(Poincare::ComparisonNode::OperatorType equationType) { m_equationType = equationType; }
+  void setFunctionType(const FunctionType * plotType) { m_plotType = plotType; }
+
   const FunctionType * m_plotType;
   Poincare::ComparisonNode::OperatorType m_equationType;
 };

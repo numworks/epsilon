@@ -187,79 +187,7 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
     }
   }
 
-  /* We can now rely on x and y degree to identify plot type :
-   * | y  | x  | Status
-   * | 0  | 1  | Vertical Line
-   * | 0  | 2  | Vertical Lines
-   * | 1  | 0  | Horizontal Line
-   * | 1  | 1  | Line
-   * | 1  | *  | Cartesian
-   * | 2  | 0  | Other (Two Horizontal Lines)
-   * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabola, Other
-   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabola, Other
-   * | 2  | *  | Other
-   * | *  | 1  | CartesianAlongY
-   *
-   * Other cases should have been escaped above.
-   */
-
-
-  if (!willBeAlongX) {
-    if (xDeg == 2) {
-      setFunctionType(&FunctionTypes::k_cartesianEquationAlongYWithTwoSubCurves);
-      return;
-    }
-    if (yDeg == 0) {
-      setFunctionType(&FunctionTypes::k_verticalLine);
-      return;
-    }
-    assert(xDeg == 1);
-    setFunctionType(&FunctionTypes::k_cartesianEquationAlongY);
-    return;
-  }
-
-  if (yDeg == 1 && xDeg == 0) {
-    setFunctionType(&FunctionTypes::k_horizontalLineEquation);
-    return;
-  }
-
-  if (yDeg == 1 && xDeg == 1 && highestCoefficientIsPositive != TrinaryBoolean::Unknown) {
-    // An Unknown y coefficient sign might mean it depends on x (y*x = ...)
-    setFunctionType(&FunctionTypes::k_lineEquation);
-    return;
-  }
-
-  if (yDeg >= 1 && xDeg >= 1 && xDeg <= 2 && !ExamModeConfiguration::implicitPlotsAreForbidden()) {
-    /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
-     * details. Otherwise, try to identify a conic.
-     * For instance, x*y=1 as an hyperbola. */
-    Conic equationConic = Conic(reducedEquation, context, Function::k_unknownName);
-    Conic::Type ctype = equationConic.getConicType();
-    if (ctype == Conic::Type::Hyperbola) {
-      setFunctionType(yDeg > 1 ? &FunctionTypes::k_hyperbolaEquationWithTwoSubCurves : &FunctionTypes::k_hyperbolaEquationWithOneSubCurve);
-      return;
-    } else if (ctype == Conic::Type::Parabola) {
-      setFunctionType(yDeg > 1 ? &FunctionTypes::k_parabolaEquationWithTwoSubCurves : &FunctionTypes::k_parabolaEquationWithOneSubCurve);
-      return;
-    } else if (ctype == Conic::Type::Ellipse) {
-      setFunctionType(&FunctionTypes::k_ellipseEquation);
-      return;
-    } else if (ctype == Conic::Type::Circle) {
-      setFunctionType(&FunctionTypes::k_circleEquation);
-      return;
-    }
-    // A conic could not be identified.
-  }
-
-  if (yDeg == 1) {
-    setFunctionType(&FunctionTypes::k_simpleCartesianEquationType);
-    return;
-  }
-
-  assert(yDeg == 2);
-  // Unknown type that we are able to plot anyway.
-  setFunctionType(&FunctionTypes::k_cartesianEquationWithTwoSubCurves);
-  return;
+  setFunctionType(CartesianEquationAnalysis(reducedEquation, context, xDeg, yDeg, highestCoefficientIsPositive));
 }
 
 typedef bool (*PatternTest)(const Expression& e, Context * context);
@@ -317,10 +245,10 @@ static bool IsRationalFunction(const Expression& e, Context * context) {
   return denominatorDegree >= 0 && numeratorDegree >= 0;
 }
 
-const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(const Expression& equation, Context * context) {
-  Expression analysedEquation = equation;
-  if (equation.type() == ExpressionNode::Type::Dependency) {
-    analysedEquation = equation.childAtIndex(0);
+const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(const Expression& reducedEquation, Context * context) {
+  Expression analysedEquation = reducedEquation;
+  if (reducedEquation.type() == ExpressionNode::Type::Dependency) {
+    analysedEquation = reducedEquation.childAtIndex(0);
   }
 
   // f(x) = piecewise(...)
@@ -398,6 +326,72 @@ const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(con
 
   // Others
   return &FunctionTypes::k_cartesianFunctionType;
+}
+
+const FunctionType * ContinuousFunctionProperties::CartesianEquationAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context, int xDeg, int yDeg, TrinaryBoolean highestCoefficientIsPositive) {
+  /* We can rely on x and y degree to identify plot type :
+   * | y  | x  | Status
+   * | 0  | 1  | Vertical Line
+   * | 0  | 2  | Vertical Lines
+   * | 1  | 0  | Horizontal Line
+   * | 1  | 1  | Line
+   * | 1  | *  | Cartesian
+   * | 2  | 0  | Other (Two Horizontal Lines)
+   * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabola, Other
+   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabola, Other
+   * | 2  | *  | Other
+   * | *  | 1  | CartesianAlongY
+   *
+   * Other cases should have been escaped before.
+   */
+
+  if (yDeg != 1 && yDeg != 2) { // function is along Y
+    if (xDeg == 2) {
+      return &FunctionTypes::k_cartesianEquationAlongYWithTwoSubCurves;
+    }
+    if (yDeg == 0) {
+      return &FunctionTypes::k_verticalLine;
+    }
+    assert(xDeg == 1);
+    return &FunctionTypes::k_cartesianEquationAlongY;
+  }
+
+  if (yDeg == 1 && xDeg == 0) {
+    return &FunctionTypes::k_horizontalLineEquation;
+  }
+
+  if (yDeg == 1 && xDeg == 1 && highestCoefficientIsPositive != TrinaryBoolean::Unknown) {
+    // An Unknown y coefficient sign might mean it depends on x (y*x = ...)
+    return &FunctionTypes::k_lineEquation;
+  }
+
+  if (yDeg >= 1 && xDeg >= 1 && xDeg <= 2 && !ExamModeConfiguration::implicitPlotsAreForbidden()) {
+    /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
+     * details. Otherwise, try to identify a conic.
+     * For instance, x*y=1 as an hyperbola. */
+    Conic equationConic = Conic(reducedEquation, context, Function::k_unknownName);
+    Conic::Type ctype = equationConic.getConicType();
+    switch (ctype) {
+    case Conic::Type::Hyperbola:
+      return yDeg > 1 ? &FunctionTypes::k_hyperbolaEquationWithTwoSubCurves : &FunctionTypes::k_hyperbolaEquationWithOneSubCurve;
+    case Conic::Type::Parabola:
+      return yDeg > 1 ? &FunctionTypes::k_parabolaEquationWithTwoSubCurves : &FunctionTypes::k_parabolaEquationWithOneSubCurve;
+    case Conic::Type::Ellipse:
+      return &FunctionTypes::k_ellipseEquation;
+    case Conic::Type::Circle:
+      return &FunctionTypes::k_circleEquation;
+    default:;
+      // A conic could not be identified.
+    }
+  }
+
+  if (yDeg == 1) {
+    return &FunctionTypes::k_simpleCartesianEquationType;
+  }
+
+  assert(yDeg == 2);
+  // Unknown type that we are able to plot anyway.
+  return &FunctionTypes::k_cartesianEquationWithTwoSubCurves;
 }
 
 bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation, CodePoint symbol) {

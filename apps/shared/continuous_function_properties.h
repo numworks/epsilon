@@ -94,7 +94,8 @@ public:
   void reset() { m_plotType = &FunctionTypes::k_uninitializedFunctionType; }
 
 private:
-  static const FunctionType * CartesianFunctionAnalysis(const Poincare::Expression& e, Poincare::Context * context);
+  static const FunctionType * CartesianFunctionAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context);
+  static const FunctionType * CartesianEquationAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context, int xDeg, int yDeg, Poincare::TrinaryBoolean highestCoefficientIsPositive);
 
   // If equation has a NonNull coeff. Can also compute last coeff sign.
   static bool HasNonNullCoefficients(const Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::TrinaryBoolean * highestDegreeCoefficientIsPositive);

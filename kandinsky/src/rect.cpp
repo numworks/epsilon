@@ -2,7 +2,7 @@
 #include <algorithm>
 
 KDRect KDRect::translatedBy(KDPoint p) const {
-  return KDRect(x() + p.x(), y() + p.y(), width(), height());
+  return KDRect(origin().translatedBy(p), size());
 }
 
 KDRect KDRect::movedTo(KDPoint p) const {

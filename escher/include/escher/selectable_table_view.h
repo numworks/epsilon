@@ -26,7 +26,9 @@ public:
   void selectRow(int j);
   void selectColumn(int i);
   int firstSelectableRow();
+  int firstSelectableColumn();
   int lastSelectableRow();
+  int lastSelectableColumn();
   int indexOfNextSelectableRow(int delta);
   int indexOfNextSelectableColumn(int delta);
   void reloadData(bool setFirstResponder = true, bool setSelection = true);

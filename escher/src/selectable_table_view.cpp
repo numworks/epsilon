@@ -173,6 +173,22 @@ int SelectableTableView::firstSelectableRow() {
   return -1;
 }
 
+int SelectableTableView::firstSelectableColumn() {
+  if (dataSource()->numberOfColumns() == 0) {
+    return 0;
+  }
+  for (int column = 0, end = dataSource()->numberOfColumns(); column < end; column++) {
+    HighlightCell * cell = cellAtLocation(column, selectedRow());
+    /* If the cell is undefined, we are in a resuableCell pattern and all rows
+     * must be selectable. */
+    if (!cell || cell->isSelectable()) {
+      return column;
+    }
+  }
+  assert(false);
+  return -1;
+}
+
 int SelectableTableView::lastSelectableRow() {
   if (dataSource()->numberOfRows() == 0) {
     return 0;
@@ -181,6 +197,20 @@ int SelectableTableView::lastSelectableRow() {
     HighlightCell * cell = cellAtLocation(selectedColumn(), row);
     if (!cell || cell->isSelectable()) {
       return row;
+    }
+  }
+  assert(false);
+  return -1;
+}
+
+int SelectableTableView::lastSelectableColumn() {
+  if (dataSource()->numberOfColumns() == 0) {
+    return 0;
+  }
+  for (int column = dataSource()->numberOfColumns() - 1; column >= 0; column--) {
+    HighlightCell * cell = cellAtLocation(column, selectedRow());
+    if (!cell || cell->isSelectable()) {
+      return column;
     }
   }
   assert(false);
@@ -213,8 +243,8 @@ int SelectableTableView::indexOfNextSelectableColumn(int delta) {
   assert(selectedRow() >= 0 && selectedRow() < dataSource()->numberOfRows());
   int column = selectedColumn();
   int step = delta > 0 ? 1 : -1;
-  int firstColumn = 0;
-  int lastColumn = dataSource()->numberOfColumns() - 1;
+  int firstColumn = firstSelectableColumn();
+  int lastColumn = lastSelectableColumn();
   while (delta) {
     column += step;
     if (column < firstColumn) {
@@ -224,8 +254,7 @@ int SelectableTableView::indexOfNextSelectableColumn(int delta) {
       return lastColumn;
     }
     Escher::HighlightCell * cell = cellAtLocation(column, selectedRow());
-    assert(cell);
-    if (cell->isSelectable()) {
+    if (!cell || cell->isSelectable()) {
       delta -= step;
     }
   }

@@ -11,6 +11,7 @@
 
 #include "continuous_function_cache.h"
 #include "function.h"
+#include "continuous_function_properties.h"
 #include "range_1D.h"
 #include <apps/i18n.h>
 #include <poincare/conic.h>
@@ -32,91 +33,21 @@ public:
   // Builder
   ContinuousFunction(Ion::Storage::Record record = Record()) : Function(record), m_cache(nullptr) {}
 
-  /* Area, Symbol and Plot types */
-
-  enum class AreaType : uint8_t {
-    /* Which area to fill (#) around the curve (|). For example:
-     *  Equation:      x^2-1    x^2     x^2+1    x      */
-    None = 0, //  =0    | |      |               |
-    Above,    //  >0     -       -        -      |#
-    Below,    //  <0     -       -        -     #|
-    Inside,   //  <0    |#|      |               -
-    Outside   //  >0   #| |#    #|#       #      -
-  };
-
-  constexpr static size_t k_numberOfSymbolTypes = 3;
-  // Order impact order of columns in Graph/Values
-  enum class SymbolType : uint8_t {
-    X = 0,
-    Theta,
-    T
-  };
-
-  enum class PlotType : uint8_t {
-    Cartesian = 0,
-    CartesianParabola,
-    CartesianHyperbola,
-    Line,
-    HorizontalLine,
-    // All previous types + Polar and Parametric are active in the values table
-    CartesianAlongY,
-    VerticalLine,
-    // All previous types + Polar and Parametric plot with only one subcurve
-    OtherAlongY,
-    Circle,
-    Ellipse,
-    Parabola,
-    Hyperbola,
-    Other,
-    // All previous types are expressions of x and y
-    Polar,
-    Parametric,
-    // All following types shall never be active
-    Undefined,
-    UndefinedPolar,
-    UndefinedParametric,
-    Unhandled,
-    UnhandledPolar,
-    UnhandledParametric,
-    Disabled,
-    Unknown,
-    NumberOfPlotTypes
-  };
-
-  // Return Message corresponding to SymbolType
-  static I18n::Message MessageForSymbolType(SymbolType symbolType);
-  // If a plotType is an inactive plotType
-  static bool IsPlotTypeInactive(PlotType plotType) { return plotType >= PlotType::Undefined; };
-  // If a plotType is equivalent to a parabola
-  static bool IsPlotTypeParabola(PlotType type) { return type == PlotType::CartesianParabola || type == PlotType::Parabola; }
-  // If a plotType is equivalent to an hyperbola
-  static bool IsPlotTypeHyperbola(PlotType type) { return type == PlotType::CartesianHyperbola || type == PlotType::Hyperbola; }
-
-  // Return message describing function's PlotType
-  I18n::Message plotTypeMessage() const;
-  // Return the type of area to draw
-  AreaType areaType() const;
-  // Return the equation's symbol
-  Poincare::ComparisonNode::OperatorType equationType() const { return m_model.equationType(); }
-  // Return ContinuousFunction's PlotType. Recompute if Unknown can't be handled
-  PlotType plotType() const;
-  // Return ContinuousFunction's SymbolType
-  SymbolType symbolType() const;
+  ContinuousFunctionProperties properties() const;
 
   /* Function */
 
+  CodePoint symbol() const override { return properties().symbol(); }
   // Return Message corresponding to ContinuousFunction's SymbolType
-  I18n::Message parameterMessageName() const override { return MessageForSymbolType(symbolType()); }
-  // Return CodePoint corresponding to ContinuousFunction's SymbolType
-  CodePoint symbol() const override;
-  // Return CodePoint corresponding to ContinuousFunction's equation symbol
-  CodePoint equationSymbol() const;
+  I18n::Message parameterMessageName() const override { return properties().symbolMessage(); }
   // Insert ContinuousFunction's name and argument in buffer ("f(x)" or "y")
   int nameWithArgument(char * buffer, size_t bufferSize) override;
   // Insert the value of the evaluation (or the symbol if symbolValue) in buffer
   int printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Poincare::Context * context, bool symbolValue = false) override;
   // Return true if the ContinuousFunction is active
-  bool isActive() const override { return Function::isActive() && !IsPlotTypeInactive(plotType()); };
+  bool isActive() const override { return Function::isActive() && properties().canBeActive(); };
+  // If the ContinuousFunction has y for unknown symbol
+  bool isAlongY() const override { return properties().isAlongY(); }
 
   /* ExpressionModelHandle */
 
@@ -125,24 +56,10 @@ public:
 
   /* Properties */
 
-  // Wether the ContinuousFunction can have a custom domain of definition.
-  bool canHaveCustomDomain() const { return !isAlongY() && equationType() == Poincare::ComparisonNode::OperatorType::Equal; }
   // Wether or not we can display the derivative
-  bool canDisplayDerivative() const { return isActiveInTable() && isAlongXOrY(); }
-  // Wether to draw a dotted or solid line (Strict inequalities).
-  bool drawDottedCurve() const;
+  bool canDisplayDerivative() const { return isActiveInTable() && properties().isCartesian(); }
   // If the ContinuousFunction should be considered active in table
-  bool isActiveInTable() const;
-  /* TODO : ContinuousFunction along y are implemented with a 'x' symbol() so
-   * that they share most properties. A better segmentation would allow more
-   * complex behaviors such as being active in table or computing derivatives.
-   * We don't need these features for now and keep a lighter code. */
-  // If the ContinuousFunction has x or y for unknown symbol
-  bool isAlongXOrY() const { return symbol() == ContinuousFunction::k_cartesianSymbol; }
-  // If the ContinuousFunction has y for unknown symbol
-  bool isAlongY() const override { return plotType() == PlotType::VerticalLine || plotType() == PlotType::OtherAlongY || plotType() == PlotType::CartesianAlongY; }
-  // If the ContinuousFunction is a conic
-  bool isConic() const;
+  bool isActiveInTable() const { return properties().canBeActiveInTable() && isActive(); }
   // If the ContinuousFunction is named ("f(x)=...")
   bool isNamed() const;
   /* If we can compute the ContinuousFunction intersections.
@@ -150,7 +67,7 @@ public:
    * TODO : Handle more types of curves ?
    * If intersections are implemented for verticalLines, isActiveInTable might
    * need a change. */
-  bool isIntersectable() const { return isActiveInTable() && !(plotType() == PlotType::Polar || plotType() == PlotType::Parametric); }
+  bool isIntersectable() const { return isActiveInTable() && properties().isCartesian(); }
   bool isDiscontinuousBetweenFloatValues(float x1, float x2, Poincare::Context * context) const;
   // Compute line parameters (slope and intercept) from ContinuousFunction
   void getLineParameters(double * slope, double * intercept, Poincare::Context * context) const;
@@ -161,14 +78,7 @@ public:
    * (expensive) expressionReduced method before yielding a non-zero result.
    * numberOfSubCurves shouldn't be called at stages where the expressionReduced
    * has not been executed yet. */
-  int numberOfSubCurves() const override { assert(m_model.numberOfSubCurves() > 0); return m_model.numberOfSubCurves(); }
-  int numberOfCurveParameters() const;
-  struct CurveParameter {
-    I18n::Message parameterName;
-    bool editable;
-    bool isPreimage;
-  };
-  CurveParameter getCurveParameter(int index) const;
+  int numberOfSubCurves() const override { return properties().numberOfSubCurves(); }
 
   /* Expression */
 
@@ -177,7 +87,7 @@ public:
     return m_model.originalEquation(this, symbol());
   }
   // Update plotType as well as tMin and tMax values.
-  void updateModel(Poincare::Context * context, bool wasAlongXorY);
+  void updateModel(Poincare::Context * context, bool wasCartesian);
 
   /* Evaluation */
 
@@ -251,9 +161,9 @@ public:
   void didBecomeInactive() override { m_cache = nullptr; }
 
   constexpr static char k_unnamedRecordFirstChar = '?';
-  constexpr static CodePoint k_cartesianSymbol = 'x';
-  constexpr static CodePoint k_parametricSymbol = 't';
-  constexpr static CodePoint k_polarSymbol = UCodePointGreekSmallLetterTheta;
+  constexpr static CodePoint k_cartesianSymbol = ContinuousFunctionProperties::k_cartesianSymbol;
+  constexpr static CodePoint k_parametricSymbol = ContinuousFunctionProperties::k_parametricSymbol;
+  constexpr static CodePoint k_polarSymbol = ContinuousFunctionProperties::k_polarSymbol;
   constexpr static CodePoint k_radiusSymbol = 'r';
   constexpr static CodePoint k_ordinateSymbol = 'y';
   constexpr static CodePoint k_unnamedExpressionSymbol = k_cartesianSymbol;
@@ -328,11 +238,6 @@ private:
 
   class Model : public ExpressionModel {
   public:
-    Model() :
-        ExpressionModel(),
-        m_numberOfSubCurves(0),
-        m_equationType(Poincare::ComparisonNode::OperatorType::Equal),
-        m_plotType(PlotType::Unknown) {}
     // Return the expression to plot.
     Poincare::Expression expressionReduced(const Ion::Storage::Record * record, Poincare::Context * context) const override;
     // Return the expression reduced, and computes plotType
@@ -343,7 +248,7 @@ private:
     Poincare::Expression originalEquation(const Ion::Storage::Record * record, CodePoint symbol) const;
     /* Return the expression representing the equation
      * (turns "f(x)=xy" into "xy" and "xy=a" into "xy-a") */
-    Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context, PlotType * computedPlotType) const;
+    Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context, Poincare::ComparisonNode::OperatorType * computedEquationType = nullptr, FunctionType::SymbolType * computedFunctionSymbol = nullptr) const;
     // Return the derivative of the expression to plot.
     Poincare::Expression expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
     // Rename the record if needed. Record pointer might get corrupted.
@@ -352,16 +257,12 @@ private:
     Poincare::Expression buildExpressionFromText(const char * c, CodePoint symbol = 0, Poincare::Context * context = nullptr) const override;
     // Tidy the model
     void tidyDownstreamPoolFrom(char * treePoolCursor) const override;
-    // m_numberOfSubCurves getter
-    int numberOfSubCurves() const { return m_numberOfSubCurves; }
-    // m_equationType getter
-    Poincare::ComparisonNode::OperatorType equationType() const { return m_equationType; }
     // m_plotType getter
-    PlotType plotType() const { return m_plotType; }
+    ContinuousFunctionProperties properties() const { return m_properties; }
     // Reset m_plotType to Unknown type
-    void resetPlotType() const { m_plotType = PlotType::Unknown; }
+    void resetContinuousFunctionProperties() const { m_properties.resetFunctionType(); }
     // Update m_plotType depending on the equation
-    void updatePlotType(const Ion::Storage::Record * record, const Poincare::Expression equation, Poincare::Context * context) const;
+    void updateContinuousFunctionProperties(const Ion::Storage::Record * record, const Poincare::Expression equation, Poincare::Context * context, Poincare::ComparisonNode::OperatorType precomputedOperatorType, FunctionType::SymbolType precomputedFunctionSymbol) const;
     // If equation has a NonNull coeff. Can also compute last coeff sign.
     static bool HasNonNullCoefficients(const Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::TrinaryBoolean * highestDegreeCoefficientIsPositive);
     // If equation should be allowed when implicit plots are forbidden.
@@ -372,9 +273,7 @@ private:
     void * expressionAddress(const Ion::Storage::Record * record) const override;
     // Return size of the record's expression
     size_t expressionSize(const Ion::Storage::Record * record) const override;
-    mutable int m_numberOfSubCurves;
-    mutable Poincare::ComparisonNode::OperatorType m_equationType;
-    mutable PlotType m_plotType;
+    mutable ContinuousFunctionProperties m_properties;
     mutable Poincare::Expression m_expressionDerivate;
   };
 

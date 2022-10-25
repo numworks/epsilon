@@ -25,14 +25,6 @@ using namespace Poincare;
 
 namespace Shared {
 
-constexpr char ContinuousFunction::k_ordinateName[2];
-constexpr CodePoint ContinuousFunction::k_cartesianSymbol;
-constexpr CodePoint ContinuousFunction::k_parametricSymbol;
-constexpr CodePoint ContinuousFunction::k_polarSymbol;
-constexpr CodePoint ContinuousFunction::k_radiusSymbol;
-constexpr CodePoint ContinuousFunction::k_ordinateSymbol;
-constexpr CodePoint ContinuousFunction::k_unnamedExpressionSymbol;
-
 /* ContinuousFunction - Public */
 
 ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatus * error, const char * baseName) {
@@ -48,129 +40,37 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
   return ContinuousFunction(Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
 }
 
-I18n::Message ContinuousFunction::MessageForSymbolType(SymbolType symbolType) {
-  switch (symbolType) {
-  case SymbolType::T:
-    return I18n::Message::T;
-  case SymbolType::Theta:
-    return I18n::Message::Theta;
-  default:
-    return I18n::Message::X;
-  }
-}
-
-ContinuousFunction::AreaType ContinuousFunction::areaType() const {
-  ComparisonNode::OperatorType eqType = equationType();
-  PlotType type = plotType();
-  if (IsPlotTypeInactive(type) || eqType == ComparisonNode::OperatorType::Equal) {
-    return AreaType::None;
-  }
-  assert(type <= PlotType::Other);
-  // To draw y^2>a, the area plotted should be Outside and not Above.
-  bool inequationIsLinear = type <= PlotType::VerticalLine;
-  assert(numberOfSubCurves() == 1 || !inequationIsLinear);
-  if (eqType == ComparisonNode::OperatorType::Inferior || eqType == ComparisonNode::OperatorType::InferiorEqual) {
-    return inequationIsLinear ? AreaType::Below : AreaType::Inside;
-  }
-  assert(eqType == ComparisonNode::OperatorType::Superior || eqType == ComparisonNode::OperatorType::SuperiorEqual);
-  return inequationIsLinear ? AreaType::Above : AreaType::Outside;
-}
-
-ContinuousFunction::PlotType ContinuousFunction::plotType() const {
-  if (m_model.plotType() == PlotType::Unknown) {
+ContinuousFunctionProperties ContinuousFunction::properties() const {
+  if (!m_model.properties().isInitialized()) {
     // Computing the expression equation will update the unknown plot type.
     expressionReducedForAnalysis(AppsContainerHelper::sharedAppsContainerGlobalContext());
   }
-  assert(m_model.plotType() != PlotType::Unknown);
-  return m_model.plotType();
-}
-
-ContinuousFunction::SymbolType ContinuousFunction::symbolType() const {
-  PlotType functionPlotType = plotType();
-  switch (functionPlotType) {
-  case PlotType::Parametric:
-  case PlotType::UndefinedParametric:
-  case PlotType::UnhandledParametric:
-    return SymbolType::T;
-  case PlotType::Polar:
-  case PlotType::UndefinedPolar:
-  case PlotType::UnhandledPolar:
-    return SymbolType::Theta;
-  default:
-    return SymbolType::X;
-  }
-}
-
-I18n::Message ContinuousFunction::plotTypeMessage() const {
-  PlotType type = plotType();
-  if (!IsPlotTypeInactive(type) && equationType() != ComparisonNode::OperatorType::Equal) {
-    // Whichever the plot type, InequationType describes the function
-    return I18n::Message::InequationType;
-  }
-  const uint8_t plotTypeIndex = static_cast<uint8_t>(type);
-  assert(plotTypeIndex < static_cast<uint8_t>(PlotType::NumberOfPlotTypes));
-  constexpr I18n::Message k_categories[static_cast<uint8_t>(PlotType::NumberOfPlotTypes)] = {
-      I18n::Message::CartesianType,
-      I18n::Message::ParabolaType,  // CartesianParabola displayed as Parabola
-      I18n::Message::HyperbolaType, // CartesianHyperbola displayed as Hyperbola
-      I18n::Message::LineType,
-      I18n::Message::HorizontalLineType,
-      I18n::Message::InverseType,
-      I18n::Message::VerticalLineType,
-      I18n::Message::OtherType,     // OtherAlongY displayed as Others
-      I18n::Message::CircleType,
-      I18n::Message::EllipseType,
-      I18n::Message::ParabolaType,
-      I18n::Message::HyperbolaType,
-      I18n::Message::OtherType,
-      I18n::Message::PolarType,
-      I18n::Message::ParametricType,
-      I18n::Message::UndefinedType,
-      I18n::Message::UndefinedType, // UndefinedPolar displayed as Undefined
-      I18n::Message::UndefinedType, // UndefinedParametric displayed as Undefined
-      I18n::Message::UnhandledType,
-      I18n::Message::UnhandledType, // UnhandledPolar displayed as Unhandled
-      I18n::Message::UnhandledType, // UnhandledParametric displayed as Unhandled
-      I18n::Message::Disabled,
-      I18n::Message::UndefinedType};      // Shouldn't be displayed
-  return k_categories[plotTypeIndex];
-}
-
-CodePoint ContinuousFunction::symbol() const {
-  switch (symbolType()) {
-  case SymbolType::T:
-    return k_parametricSymbol;
-  case SymbolType::Theta:
-    return k_polarSymbol;
-  default:
-    return k_cartesianSymbol;
-  }
-}
-
-CodePoint ContinuousFunction::equationSymbol() const {
-  return ComparisonNode::ComparisonCodePoint(equationType());
+  assert(m_model.properties().isInitialized());
+  return m_model.properties();
 }
 
 int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
   if (isNamed()) {
     return Function::nameWithArgument(buffer, bufferSize);
   }
-  return UTF8Decoder::CodePointToCharsWithNullTermination(plotType() == PlotType::Polar ? k_radiusSymbol : k_ordinateSymbol, buffer, bufferSize);
+  return UTF8Decoder::CodePointToCharsWithNullTermination(properties().isPolar() ? k_radiusSymbol : k_ordinateSymbol, buffer, bufferSize);
 }
 
 int ContinuousFunction::printValue(double cursorT, double cursorX, double cursorY, char * buffer, int bufferSize, int precision, Context * context, bool symbolValue) {
+  ContinuousFunctionProperties thisProperties = properties();
+
   if (symbolValue) {
     /* With Vertical curves, cursorT != cursorX .
      * We need the value for symbol=... */
-    return PoincareHelpers::ConvertFloatToText<double>(isAlongXOrY() ? cursorX : cursorT, buffer, bufferSize, precision);
+    return PoincareHelpers::ConvertFloatToText<double>(thisProperties.isCartesian() ? cursorX : cursorT, buffer, bufferSize, precision);
   }
 
-  PlotType type = plotType();
-  if (type == PlotType::Parametric) {
+
+  if (thisProperties.isParametric()) {
     Preferences::PrintFloatMode mode = Poincare::Preferences::sharedPreferences()->displayMode();
     return Poincare::Print::CustomPrintf(buffer, bufferSize, "(%*.*ed;%*.*ed)", cursorX, mode, precision, cursorY, mode, precision);
   }
-  if (type == PlotType::Polar) {
+  if (thisProperties.isPolar()) {
     return PoincareHelpers::ConvertFloatToText<double>(evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize, precision);
   }
   return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
@@ -178,14 +78,14 @@ int ContinuousFunction::printValue(double cursorT, double cursorX, double cursor
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Context * context) {
   setCache(nullptr);
-  bool wasAlongXorY = isAlongXOrY();
+  bool wasCartesian = properties().isCartesian();
   /* About to set the content, the symbol does not matter here yet. We don't use
    * ExpressionModelHandle::setContent implementation to avoid calling symbol()
    * and any unnecessary plot type update at this point. See comment in
    * ContinuousFunction::Model::buildExpressionFromText. */
   Ion::Storage::Record::ErrorStatus error = editableModel()->setContent(this, c, context, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
-    updateModel(context, wasAlongXorY);
+    updateModel(context, wasCartesian);
     error = m_model.renameRecordIfNeeded(this, c, context, symbol());
   }
   return error;
@@ -194,36 +94,6 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
 void ContinuousFunction::tidyDownstreamPoolFrom(char * treePoolCursor) const {
   ExpressionModelHandle::tidyDownstreamPoolFrom(treePoolCursor);
   m_cache = nullptr;
-}
-
-bool ContinuousFunction::drawDottedCurve() const {
-  ComparisonNode::OperatorType eqType = equationType();
-  return eqType == ComparisonNode::OperatorType::Superior || eqType == ComparisonNode::OperatorType::Inferior;
-}
-
-bool ContinuousFunction::isActiveInTable() const {
-  /* In addition to isActive(), a function must not be an inequality, must not
-   * have any vertical lines and must always plot with a single subcurve. */
-  static_assert(PlotType::CartesianAlongY > PlotType::HorizontalLine, "CartesianAlongY shouldn't be active in table.");
-  return equationType() == ComparisonNode::OperatorType::Equal
-         && (plotType() <= PlotType::HorizontalLine
-             || plotType() == PlotType::Polar
-             || plotType() == PlotType::Parametric)
-         && isActive();
-}
-
-bool ContinuousFunction::isConic() const {
-  switch (plotType()) {
-    case PlotType::CartesianParabola:
-    case PlotType::CartesianHyperbola:
-    case PlotType::Circle:
-    case PlotType::Ellipse:
-    case PlotType::Parabola:
-    case PlotType::Hyperbola:
-      return true;
-    default:
-      return false;
-  }
 }
 
 bool ContinuousFunction::isNamed() const {
@@ -238,7 +108,7 @@ bool ContinuousFunction::isDiscontinuousBetweenFloatValues(float x1, float x2, P
 }
 
 void ContinuousFunction::getLineParameters(double * slope, double * intercept, Context * context) const {
-  assert(plotType() == PlotType::Line);
+  assert(properties().isLine());
   Expression equation = expressionReduced(context);
   // Compute metrics for details view of Line
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
@@ -265,45 +135,17 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
 }
 
 Conic ContinuousFunction::getConicParameters(Context * context) const {
-  assert(isConic());
+  assert(properties().isConic());
   return Conic(expressionReducedForAnalysis(context), context, k_unknownName);
 }
 
-int ContinuousFunction::numberOfCurveParameters() const {
-  return plotType() == PlotType::Parametric ? 3 : 2;
-}
-
-ContinuousFunction::CurveParameter ContinuousFunction::getCurveParameter(int index) const {
-  using namespace I18n;
-  switch (plotType()) {
-  case PlotType::Cartesian:
-    return {index == 0 ? Message::X : Message::Default, true, .isPreimage = index == 1};
-  case PlotType::Line:
-    return {index == 0 ? Message::X : Message::Y, true, .isPreimage = index == 1};
-  case PlotType::HorizontalLine:
-    return {index == 0 ? Message::X : Message::Y, index == 0};
-  case PlotType::VerticalLine:
-    return {index == 0 ? Message::X : Message::Y, index == 1};
-  case PlotType::Parametric:
-    return {index == 0 ? Message::T : index == 1 ? Message::XOfT : Message::YOfT, index == 0};
-  case PlotType::Polar:
-    return {index == 0 ? Message::Theta : Message::R, index == 0};
-  default:
-    // Conics
-    assert(plotType() < PlotType::Undefined);
-    return {index == 0 ? Message::X : Message::Y, false};
-  }
-}
-
 double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, double cursorX, double cursorY, Context * context) const {
-  switch (plotType()) {
-  case PlotType::Parametric:
+  switch (properties().symbolType()) {
+  case FunctionType::SymbolType::T:
     return index == 0 ? cursorT : index == 1 ? evaluateXYAtParameter(cursorT, context).x1() : evaluateXYAtParameter(cursorT, context).x2();
-  case PlotType::Polar:
+  case FunctionType::SymbolType::Theta:
     return index == 0 ? cursorT : evaluate2DAtParameter(cursorT, context).x2();
   default:
-    // Expressions of x and y
-    assert(plotType() < PlotType::Polar);
     // The subcurve number would need to be passed down here to properly assert
     assert(numberOfSubCurves() > 1
           || (Poincare::Helpers::EqualOrBothNan(evaluateXYAtParameter(cursorT, context).x1(), cursorX)
@@ -312,13 +154,13 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, dou
   }
 }
 
-void ContinuousFunction::updateModel(Context * context, bool wasAlongXorY) {
+void ContinuousFunction::updateModel(Context * context, bool wasCartesian) {
   setCache(nullptr);
   // Reset model's plot type. expressionReducedForAnalysis() will update plotType
-  m_model.resetPlotType();
+  m_model.resetContinuousFunctionProperties();
   expressionReducedForAnalysis(context);
-  assert(m_model.plotType() != PlotType::Unknown);
-  if (wasAlongXorY != isAlongXOrY() || !canHaveCustomDomain()) {
+  assert(properties().isInitialized());
+  if (wasCartesian != m_model.properties().isCartesian() || !properties().canHaveCustomDomain()) {
     // The definition's domain must be reset.
     setTAuto(true);
   }
@@ -384,11 +226,11 @@ void ContinuousFunction::setTAuto(bool tAuto) {
 }
 
 float ContinuousFunction::autoTMax() const {
-  return isAlongXOrY() ? INFINITY : 2.0 * Trigonometry::PiInAngleUnit(Preferences::sharedPreferences()->angleUnit());
+  return properties().isCartesian() ? INFINITY : 2.0 * Trigonometry::PiInAngleUnit(Preferences::sharedPreferences()->angleUnit());
 }
 
 float ContinuousFunction::autoTMin() const {
-  return isAlongXOrY() ? -INFINITY : 0.0;
+  return properties().isCartesian() ? -INFINITY : 0.0;
 }
 
 bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
@@ -402,7 +244,7 @@ bool ContinuousFunction::basedOnCostlyAlgorithms(Context * context) const {
 }
 
 void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, float * xMin, float * xMax, float * yMinIntrinsic, float * yMaxIntrinsic, Context * context) const {
-  if (!isAlongXOrY()) {
+  if (!properties().isCartesian()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), xMin, xMax, context, true);
     assert(numberOfSubCurves() == 1);
@@ -478,7 +320,7 @@ void ContinuousFunction::xRangeForDisplay(float xMinLimit, float xMaxLimit, floa
 }
 
 void ContinuousFunction::yRangeForDisplay(float xMin, float xMax, float yMinForced, float yMaxForced, float ratio, float * yMin, float * yMax, Context * context, bool optimizeRange) const {
-  if (!isAlongXOrY()) {
+  if (!properties().isCartesian()) {
     assert(std::isfinite(tMin()) && std::isfinite(tMax()) && std::isfinite(rangeStep()) && rangeStep() > 0);
     protectedFullRangeForDisplay(tMin(), tMax(), rangeStep(), yMin, yMax, context, false);
     assert(numberOfSubCurves() == 1);
@@ -562,7 +404,7 @@ Coordinate2D<double> ContinuousFunction::nextRootFrom(double start, double max, 
 }
 
 Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, double max, Context * context, Expression e, double relativePrecision, double minimalStep, double maximalStep, double eDomainMin, double eDomainMax) const {
-  assert(isAlongXOrY());
+  assert(properties().isCartesian());
   double tmin = std::max<double>(tMin(), eDomainMin), tmax = std::min<double>(tMax(), eDomainMax);
   start = start < tmin ? tmin : start > tmax ? tmax : start;
   max = max < tmin ? tmin : max > tmax ? tmax : max;
@@ -573,7 +415,7 @@ Coordinate2D<double> ContinuousFunction::nextIntersectionFrom(double start, doub
 }
 
 Expression ContinuousFunction::sumBetweenBounds(double start, double end, Context * context) const {
-  assert(isAlongXOrY());
+  assert(properties().isCartesian());
   start = std::max<double>(start, tMin());
   end = std::min<double>(end, tMax());
   return Integral::Builder(expressionReduced(context).clone(), Symbol::Builder(UCodePointUnknown), Float<double>::Builder(start), Float<double>::Builder(end)); // Integral takes ownership of args
@@ -585,11 +427,11 @@ Expression ContinuousFunction::sumBetweenBounds(double start, double end, Contex
 /* ContinuousFunction - Private */
 
 float ContinuousFunction::rangeStep() const {
-  return isAlongXOrY() ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints;
+  return properties().isCartesian() ? NAN : (tMax() - tMin())/k_polarParamRangeSearchNumberOfPoints;
 }
 
 Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, double max, Context * context, ComputePointOfInterest compute, double relativePrecision, double minimalStep, double maximalStep) const {
-  assert(isAlongXOrY());
+  assert(properties().isCartesian());
   double tmin = tMin(), tmax = tMax();
   start = start < tmin ? tmin : start > tmax ? tmax : start;
   max = max < tmin ? tmin : max > tmax ? tmax : max;
@@ -602,7 +444,7 @@ Coordinate2D<double> ContinuousFunction::nextPointOfInterestFrom(double start, d
 template <typename T>
 Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Context * context, int subCurveIndex) const {
   Coordinate2D<T> x1x2 = templatedApproximateAtParameter(t, context, subCurveIndex);
-  if (plotType() != PlotType::Polar) {
+  if (!properties().isPolar()) {
     return x1x2;
   }
   const T angle = x1x2.x1() * M_PI / Trigonometry::PiInAngleUnit(angleUnit(context));
@@ -616,9 +458,8 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context
     return Coordinate2D<T>(isAlongXOrY() ? t : NAN, NAN);
   }
   Expression e = expressionReduced(context);
-  PlotType type = plotType();
   Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(context), angleUnit(context));
-  if (type != PlotType::Parametric) {
+  if (!properties().isParametric()) {
     if (numberOfSubCurves() >= 2) {
       assert(e.numberOfChildren() > subCurveIndex);
       e = e.childAtIndex(subCurveIndex);
@@ -654,8 +495,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
     // Retrieve the expression equation's expression.
     m_expression = expressionReducedForAnalysis(record, context);
     Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(record, context), angleUnit(record, context));
-    m_numberOfSubCurves = 1;
-    if (m_plotType != PlotType::Polar && (record->fullName() == nullptr || record->fullName()[0] == k_unnamedRecordFirstChar)) {
+    if (!properties().isPolar() && (record->fullName() == nullptr || record->fullName()[0] == k_unnamedRecordFirstChar)) {
       /* Function isn't named, m_expression currently is an expression in y or x
        * such as y = x. We extract the solution by solving in y or x. */
       int yDegree = m_expression.polynomialDegree(context, k_ordinateName);
@@ -706,7 +546,6 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
         if (solutions <= 1) {
           m_expression = root1;
         } else {
-          m_numberOfSubCurves = 2;
           // SubCurves are stored in a 2x1 matrix
           Matrix newExpr = Matrix::Builder();
           // Roots are ordered so that the first one is superior to the second
@@ -739,7 +578,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
       * of nodes of each expression. We take the one that has the less node.
       * This is not ideal because an expression with less node does not always
       * mean a simpler expression, but it's a good compromise for now. */
-      Expression resultForApproximation = expressionEquation(record, context, nullptr);
+      Expression resultForApproximation = expressionEquation(record, context);
       if (!resultForApproximation.isUninitialized()) {
         PoincareHelpers::CloneAndReduce(
             &resultForApproximation,
@@ -758,8 +597,9 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
 }
 
 Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(const Ion::Storage::Record * record, Poincare::Context * context) const {
-  PlotType computedPlotType;
-  Expression result = expressionEquation(record, context, &computedPlotType);
+  FunctionType::SymbolType computedFunctionSymbol = FunctionType::SymbolType::Unknown;
+  ComparisonNode::OperatorType computedEquationType = ComparisonNode::OperatorType::Equal;
+  Expression result = expressionEquation(record, context, &computedEquationType, &computedFunctionSymbol);
   if (!result.isUndefined()) {
     Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(record, context), angleUnit(record, context));
     PoincareHelpers::CloneAndReduce(
@@ -769,13 +609,10 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(con
         ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol, // Symbols have already been replaced.
         PoincareHelpers::k_defaultUnitConversion,
         &preferences, false);
-  } else {
-    computedPlotType = PlotType::Undefined;
   }
-  if (plotType() == PlotType::Unknown) {
-    m_plotType = computedPlotType;
+  if (!m_properties.isInitialized()) {
     // Use the computed equation to update the plot type.
-    updatePlotType(record, result, context);
+    updateContinuousFunctionProperties(record, result, context, computedEquationType, computedFunctionSymbol);
   }
   return result;
 }
@@ -810,20 +647,20 @@ bool isValidNamedLeftExpression(const Expression e, ComparisonNode::OperatorType
              && functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_parametricSymbol)));
 }
 
-Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context, PlotType * computedPlotType) const {
+Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context, ComparisonNode::OperatorType * computedEquationType, FunctionType::SymbolType * computedFunctionSymbol) const {
   Expression result = ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
     return Undefined::Builder();
   }
-  PlotType tempPlotType = PlotType::Unknown;
+  FunctionType::SymbolType tempFunctionSymbol = FunctionType::SymbolType::Unknown;
   ComparisonNode::OperatorType equationType;
   if (!ComparisonNode::IsBinaryComparison(result, &equationType) || equationType == ComparisonNode::OperatorType::NotEqual) {
     /* Happens when the input text is too long and "f(x)=" can't be inserted
      * or when inputting amiguous equations like "x+y>2>y" */
     return Undefined::Builder();
   }
- if (plotType() == PlotType::Unknown) {
-    m_equationType = equationType;
+ if (computedEquationType) {
+    *computedEquationType = equationType;
   }
   bool isUnnamedFunction = true;
   Expression leftExpression = result.childAtIndex(0);
@@ -839,12 +676,12 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
       Expression functionSymbol = leftExpression.childAtIndex(0);
       // Set the model's plot type.
       if (functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))) {
-        tempPlotType = PlotType::Parametric;
+        tempFunctionSymbol = FunctionType::SymbolType::T;
       } else if (functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
-        tempPlotType = PlotType::Cartesian;
+        tempFunctionSymbol = FunctionType::SymbolType::X;
       } else {
         assert((functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))));
-        tempPlotType = PlotType::Polar;
+        tempFunctionSymbol = FunctionType::SymbolType::Theta;
       }
       result = result.childAtIndex(1);
       isUnnamedFunction = false;
@@ -856,11 +693,11 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   }
   if (leftExpression.isIdenticalTo(Symbol::Builder(k_radiusSymbol))) {
     result = result.childAtIndex(1);
-    tempPlotType = PlotType::Polar;
+    tempFunctionSymbol = FunctionType::SymbolType::Theta;
     isUnnamedFunction = false;
   }
-  if (computedPlotType) {
-    *computedPlotType = tempPlotType;
+  if (computedFunctionSymbol) {
+    *computedFunctionSymbol = tempFunctionSymbol;
   }
   if (isUnnamedFunction) {
     result = Subtraction::Builder(leftExpression, result.childAtIndex(1));
@@ -889,7 +726,7 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
   if (m_expressionDerivate.isUninitialized()) {
     Expression expression = expressionReduced(record, context).clone();
     // Derivative isn't available on curves with multiple subcurves
-    if (numberOfSubCurves() > 1) {
+    if (properties().numberOfSubCurves() > 1) {
       m_expressionDerivate = Undefined::Builder();
     } else {
       m_expressionDerivate = Derivative::Builder(expression, Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
@@ -984,61 +821,68 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
 
 void ContinuousFunction::Model::tidyDownstreamPoolFrom(char * treePoolCursor) const {
   if (treePoolCursor == nullptr || m_expressionDerivate.isDownstreamOf(treePoolCursor)) {
-    m_numberOfSubCurves = 0;
-    m_equationType = ComparisonNode::OperatorType::Equal;
-    m_plotType = PlotType::Unknown;
+    resetContinuousFunctionProperties();
     m_expressionDerivate = Expression();
   }
   ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);
 }
 
-void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * record, const Expression equation, Context * context) const {
-  // Named functions : PlotType has been updated when parsing the equation
-  PlotType modelPlotType = plotType();
+void ContinuousFunction::Model::updateContinuousFunctionProperties(const Ion::Storage::Record * record, const Expression equation, Context * context, Poincare::ComparisonNode::OperatorType precomputedOperatorType, FunctionType::SymbolType precomputedFunctionSymbol) const {
+
+  if (ExamModeConfiguration::inequalityGraphingIsForbidden() && precomputedOperatorType != ComparisonNode::OperatorType::Equal) {
+    m_properties.setFunctionType(&ContinuousFunctionProperties::k_bannedFunctionType);
+    return;
+  }
 
   assert(!equation.isUninitialized());
   if (equation.type() == ExpressionNode::Type::Undefined) {
     // Equation is undefined, preserve symbol.
-    switch (modelPlotType) {
-    case PlotType::Parametric:
-      m_plotType = PlotType::UndefinedParametric;
+    switch (precomputedFunctionSymbol) {
+    case FunctionType::SymbolType::T:
+      m_properties.setFunctionType(&ContinuousFunctionProperties::k_undefinedParametricFunctionType);
       return;
-    case PlotType::Polar:
-      m_plotType = PlotType::UndefinedPolar;
+    case FunctionType::SymbolType::Theta:
+      m_properties.setFunctionType(&ContinuousFunctionProperties::k_undefinedPolarFunctionType);
       return;
     default:
-      m_plotType = PlotType::Undefined;
+      m_properties.setFunctionType(&ContinuousFunctionProperties::k_undefinedCartesianFunctionType);
       return;
     }
   }
-  // Compute equation's degree regarding y and x.
+
+  m_properties.setEquationType(precomputedOperatorType);
+
+  // Compute equation's degree regarding y.
   int yDeg = equation.polynomialDegree(context, k_ordinateName);
-  int xDeg = equation.polynomialDegree(context, k_unknownName);
 
-  // Inequations : equation symbol has been updated when parsing the equation
-  ComparisonNode::OperatorType modelEquationType = equationType();
-
-  if (modelPlotType == PlotType::Parametric || modelPlotType == PlotType::Polar || modelPlotType == PlotType::Cartesian) {
+  /* Symbol was precomputed if the expression is a function of type "f(x)=",
+   * "f(t)=" or "r=" (for polar functions). */
+  if (precomputedFunctionSymbol != FunctionType::SymbolType::Unknown) {
     // There should be no y symbol. Inequations are handled on cartesians only
-    if (yDeg > 0 || (modelEquationType != ComparisonNode::OperatorType::Equal && modelPlotType != PlotType::Cartesian)) {
+    if (yDeg > 0 || (precomputedOperatorType != ComparisonNode::OperatorType::Equal && precomputedFunctionSymbol != FunctionType::SymbolType::X)) {
       // We distinguish the Unhandled type so that x/θ/t symbol is preserved.
-      switch (modelPlotType) {
-      case PlotType::Parametric:
-        m_plotType = PlotType::UnhandledParametric;
+      switch (precomputedFunctionSymbol) {
+      case FunctionType::SymbolType::T:
+        m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledParametricFunctionType);
         return;
-      case PlotType::Polar:
-        m_plotType = PlotType::UnhandledPolar;
+      case FunctionType::SymbolType::Theta:
+        m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledPolarFunctionType);
         return;
       default:
-        m_plotType = PlotType::Unhandled;
+        m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledCartesianFunctionType);
         return;
       }
     }
-    if (ExamModeConfiguration::inequalityGraphingIsForbidden() && modelEquationType != ComparisonNode::OperatorType::Equal) {
-      m_plotType = PlotType::Disabled;
+
+    if (precomputedFunctionSymbol == FunctionType::SymbolType::X) {
+      // TODO : New analysis of function
+      m_properties.setFunctionType(&ContinuousFunctionProperties::k_cartesianFunctionType);
       return;
     }
-    if (modelPlotType == PlotType::Parametric) {
+
+    assert(precomputedOperatorType == ComparisonNode::OperatorType::Equal);
+
+    if (precomputedFunctionSymbol == FunctionType::SymbolType::T) {
       const Expression matrixEquation = (equation.type()
                                          == ExpressionNode::Type::Dependency)
                                             ? equation.childAtIndex(0)
@@ -1048,20 +892,26 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
           || static_cast<const Matrix &>(matrixEquation).numberOfColumns()
                  != 1) {
         // Invalid parametric format
-        m_plotType = PlotType::UnhandledParametric;
+        m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledParametricFunctionType);
         return;
       }
+      m_properties.setFunctionType(&ContinuousFunctionProperties::k_parametricFunctionType);
+      return;
     }
-    // TODO : f(x)=1+x could be labelled as line.
-    m_plotType = modelPlotType;
+
+    assert(precomputedFunctionSymbol == FunctionType::SymbolType::Theta);
+    m_properties.setFunctionType(&ContinuousFunctionProperties::k_polarFunctionType);
     return;
   }
+
+  // Compute equation's degree regarding x.
+  int xDeg = equation.polynomialDegree(context, k_unknownName);
 
   bool willBeAlongX = (yDeg == 1) || (yDeg == 2);
   bool willBeAlongY = !willBeAlongX && ((xDeg == 1) || (xDeg == 2));
   if (!willBeAlongX && !willBeAlongY) {
     // Any equation with such a y and x degree won't be handled anyway.
-    m_plotType = PlotType::Unhandled;
+    m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledCartesianFunctionType);
     return;
   }
 
@@ -1071,25 +921,22 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
       || equation.hasComplexI(context)) {
     // The equation must have at least one nonNull coefficient.
     // TODO : Accept equations such as y=re(i)
-    m_plotType = PlotType::Unhandled;
+    m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledCartesianFunctionType);
     return;
   }
 
-  if (modelEquationType != ComparisonNode::OperatorType::Equal) {
+  if (precomputedOperatorType != ComparisonNode::OperatorType::Equal) {
     if (highestCoefficientIsPositive == TrinaryBoolean::Unknown || (yDeg == 2 && xDeg == -1)) {
       /* Are unhandled equation with :
        * - An unknown highest coefficient sign: sign must be strict and constant
        * - A non polynomial x coefficient in a quadratic equation on y. */
-      m_plotType = PlotType::Unhandled;
-      return;
-    }
-    if (ExamModeConfiguration::inequalityGraphingIsForbidden()) {
-      m_plotType = PlotType::Disabled;
+      m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledCartesianFunctionType);
       return;
     }
     if (highestCoefficientIsPositive == TrinaryBoolean::False) {
       // Oppose the comparison operator
-      m_equationType = ComparisonNode:: SwitchInferiorSuperior(modelEquationType);
+      precomputedOperatorType = ComparisonNode::SwitchInferiorSuperior(precomputedOperatorType);
+      m_properties.setEquationType(precomputedOperatorType);
     }
   }
 
@@ -1113,30 +960,33 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
     Expression inputEquation = originalEquation(record, UCodePointUnknown);
     CodePoint symbol = willBeAlongX ? k_ordinateSymbol : UCodePointUnknown;
     if (!IsExplicitEquation(inputEquation, symbol)) {
-      m_plotType = PlotType::Disabled;
+      m_properties.setFunctionType(&ContinuousFunctionProperties::k_bannedFunctionType);
       return;
     }
   }
 
   if (!willBeAlongX) {
     if (xDeg == 2) {
-      m_plotType = PlotType::OtherAlongY;
-    } else if (yDeg == 0) {
-      m_plotType = PlotType::VerticalLine;
-    } else {
-      m_plotType = PlotType::CartesianAlongY;
+      m_properties.setFunctionType(&ContinuousFunctionProperties::k_cartesianEquationAlongYWithTwoSubCurves);
+      return;
     }
+    if (yDeg == 0) {
+      m_properties.setFunctionType(&ContinuousFunctionProperties::k_verticalLine);
+      return;
+    }
+    assert(xDeg == 1);
+    m_properties.setFunctionType(&ContinuousFunctionProperties::k_cartesianEquationAlongY);
     return;
   }
 
   if (yDeg == 1 && xDeg == 0) {
-    m_plotType = PlotType::HorizontalLine;
+    m_properties.setFunctionType(&ContinuousFunctionProperties::k_horizontalLineEquation);
     return;
   }
 
   if (yDeg == 1 && xDeg == 1 && highestCoefficientIsPositive != TrinaryBoolean::Unknown) {
     // An Unknown y coefficient sign might mean it depends on x (y*x = ...)
-    m_plotType = PlotType::Line;
+    m_properties.setFunctionType(&ContinuousFunctionProperties::k_lineEquation);
     return;
   }
 
@@ -1147,29 +997,29 @@ void ContinuousFunction::Model::updatePlotType(const Ion::Storage::Record * reco
     Conic equationConic = Conic(equation, context, k_unknownName);
     Conic::Type ctype = equationConic.getConicType();
     if (ctype == Conic::Type::Hyperbola) {
-      m_plotType = yDeg > 1 ? PlotType::Hyperbola : PlotType::CartesianHyperbola;
+      m_properties.setFunctionType(yDeg > 1 ? &ContinuousFunctionProperties::k_hyperbolaEquationWithTwoSubCurves : &ContinuousFunctionProperties::k_hyperbolaEquationWithOneSubCurve);
       return;
     } else if (ctype == Conic::Type::Parabola) {
-      m_plotType = yDeg > 1 ? PlotType::Parabola : PlotType::CartesianParabola;
+      m_properties.setFunctionType(yDeg > 1 ? &ContinuousFunctionProperties::k_parabolaEquationWithTwoSubCurves : &ContinuousFunctionProperties::k_parabolaEquationWithOneSubCurve);
       return;
     } else if (ctype == Conic::Type::Ellipse) {
-      m_plotType = PlotType::Ellipse;
+      m_properties.setFunctionType(&ContinuousFunctionProperties::k_ellipseEquation);
       return;
     } else if (ctype == Conic::Type::Circle) {
-      m_plotType = PlotType::Circle;
+      m_properties.setFunctionType(&ContinuousFunctionProperties::k_circleEquation);
       return;
     }
     // A conic could not be identified.
   }
 
   if (yDeg == 1) {
-    m_plotType = PlotType::Cartesian;
+    m_properties.setFunctionType(&ContinuousFunctionProperties::k_simpleCartesianEquationType);
     return;
   }
 
   assert(yDeg == 2);
   // Unknown type that we are able to plot anyway.
-  m_plotType = PlotType::Other;
+  m_properties.setFunctionType(&ContinuousFunctionProperties::k_cartesianEquationWithTwoSubCurves);
   return;
 }
 

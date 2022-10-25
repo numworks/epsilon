@@ -177,7 +177,7 @@ private:
 
   /* Range */
 
-  // Return step computed from t range or NAN if isAlongXOrY() is true.
+  // Return step computed from t range or NAN if properties().isCartesian() is true.
   float rangeStep() const override;
 
   /* Expressions */

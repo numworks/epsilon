@@ -8,7 +8,7 @@
 #include <assert.h>
 
 using namespace Escher;
-
+using namespace Poincare;
 namespace Graph {
 
 DetailsParameterController::DetailsParameterController(Responder * parentResponder) :
@@ -54,11 +54,11 @@ void DetailsParameterController::willDisplayCellForIndex(HighlightCell * cell, i
   if (index == 0) {
     myCell->setMessage(I18n::Message::CurveType);
     myCell->setSubLabelMessage(I18n::Message::Default);
-    myCell->setAccessoryText(I18n::translate(function()->plotTypeMessage()));
+    myCell->setAccessoryText(I18n::translate(function()->properties().message()));
   } else {
     myCell->setMessage(detailsTitle(index - 1));
     double value = detailsValue(index - 1);
-    if (index - 1 == 0 && function()->plotType() == Shared::ContinuousFunction::PlotType::Line) {
+    if (index - 1 == 0 && functionIsNonVerticalLine()) {
       assert(std::isnan(value));
       /* For the line's equation cell, we want the detail description (y=mx+b)
        * to be displayed as the value would : a large font accessory. */
@@ -85,11 +85,11 @@ void DetailsParameterController::setRecord(Ion::Storage::Record record) {
   if (!m_record.isNull()) {
     Shared::ExpiringPointer<Shared::ContinuousFunction> f = function();
     Poincare::Context * context = App::app()->localContext();
-    if (f->plotType() == Shared::ContinuousFunction::PlotType::Line) {
+    if (functionIsNonVerticalLine()) {
       double slope, intercept;
       f->getLineParameters(&slope, &intercept, context);
       setLineDetailsValues(slope, intercept);
-    } else if (f->isConic()) {
+    } else if (f->properties().isConic()) {
       setConicDetailsValues(f->getConicParameters(context));
     }
   }
@@ -99,21 +99,22 @@ int DetailsParameterController::detailsNumberOfSections() const {
   if (m_record.isNull()) {
     return 0;
   }
-  switch (function()->plotType()) {
-    case Shared::ContinuousFunction::PlotType::Line:
-      return ExamModeConfiguration::lineDetailsAreForbidden() ? 0 : k_lineDetailsSections;
-    case Shared::ContinuousFunction::PlotType::Circle:
-      return k_circleDetailsSections;
-    case Shared::ContinuousFunction::PlotType::Ellipse:
-      return k_ellipseDetailsSections;
-    case Shared::ContinuousFunction::PlotType::CartesianParabola:
-    case Shared::ContinuousFunction::PlotType::Parabola:
-      return k_parabolaDetailsSections;
-    case Shared::ContinuousFunction::PlotType::CartesianHyperbola:
-    case Shared::ContinuousFunction::PlotType::Hyperbola:
-      return k_hyperbolaDetailsSections;
-    default:
-      return 0;
+  if (functionIsNonVerticalLine()) {
+    return ExamModeConfiguration::lineDetailsAreForbidden() ? 0 : k_lineDetailsSections;
+  }
+  if (!function()->properties().isConic()) {
+    return 0;
+  }
+  switch (function()->properties().conicType()) {
+  case Conic::Type::Circle:
+    return k_circleDetailsSections;
+  case Conic::Type::Ellipse:
+    return k_ellipseDetailsSections;
+  case Conic::Type::Parabola:
+    return k_parabolaDetailsSections;
+  default:
+    assert(function()->properties().conicType() == Conic::Type::Hyperbola);
+    return k_hyperbolaDetailsSections;
   }
 }
 
@@ -125,16 +126,18 @@ Shared::ExpiringPointer<Shared::ContinuousFunction> DetailsParameterController::
 
 I18n::Message DetailsParameterController::detailsTitle(int i) const {
   assert(i < detailsNumberOfSections());
-  switch (function()->plotType()) {
-    case Shared::ContinuousFunction::PlotType::Line: {
-      constexpr I18n::Message k_titles[k_lineDetailsSections] = {
-          I18n::Message::LineEquationTitle,
-          I18n::Message::LineSlopeTitle,
-          I18n::Message::LineYInterceptTitle,
-      };
-      return k_titles[i];
-    }
-    case Shared::ContinuousFunction::PlotType::Circle: {
+
+  if (functionIsNonVerticalLine()) {
+    constexpr I18n::Message k_titles[k_lineDetailsSections] = {
+      I18n::Message::LineEquationTitle,
+      I18n::Message::LineSlopeTitle,
+      I18n::Message::LineYInterceptTitle,
+    };
+    return k_titles[i];
+  }
+
+  switch (function()->properties().conicType()) {
+    case Conic::Type::Circle: {
       constexpr I18n::Message k_titles[k_circleDetailsSections] = {
           I18n::Message::CircleRadiusTitle,
           I18n::Message::CenterAbscissaTitle,
@@ -142,7 +145,7 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
       };
       return k_titles[i];
     }
-    case Shared::ContinuousFunction::PlotType::Ellipse: {
+    case Conic::Type::Ellipse: {
       constexpr I18n::Message k_titles[k_ellipseDetailsSections] = {
           I18n::Message::EllipseSemiMajorAxisTitle,
           I18n::Message::EllipseSemiMinorAxisTitle,
@@ -153,8 +156,7 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
       };
       return k_titles[i];
     }
-    case Shared::ContinuousFunction::PlotType::CartesianParabola:
-    case Shared::ContinuousFunction::PlotType::Parabola: {
+    case Conic::Type::Parabola: {
       constexpr I18n::Message k_titles[k_parabolaDetailsSections] = {
           I18n::Message::ParabolaParameterTitle,
           I18n::Message::ParabolaVertexAbscissaTitle,
@@ -163,7 +165,7 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
       return k_titles[i];
     }
     default: {
-      assert(Shared::ContinuousFunction::IsPlotTypeHyperbola(function()->plotType()));
+      assert(function()->properties().conicType() == Conic::Type::Hyperbola);
       constexpr I18n::Message k_titles[k_hyperbolaDetailsSections] = {
           I18n::Message::HyperbolaSemiMajorAxisTitle,
           I18n::Message::HyperbolaSemiMinorAxisTitle,
@@ -179,16 +181,16 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
 
 I18n::Message DetailsParameterController::detailsDescription(int i) const {
   assert(i < detailsNumberOfSections());
-  switch (function()->plotType()) {
-    case Shared::ContinuousFunction::PlotType::Line: {
-      constexpr I18n::Message k_descriptions[k_lineDetailsSections] = {
-          I18n::Message::LineEquationDescription,
-          I18n::Message::LineSlopeDescription,
-          I18n::Message::LineYInterceptDescription,
-      };
-      return k_descriptions[i];
-    }
-    case Shared::ContinuousFunction::PlotType::Circle: {
+  if (functionIsNonVerticalLine()) {
+    constexpr I18n::Message k_descriptions[k_lineDetailsSections] = {
+        I18n::Message::LineEquationDescription,
+        I18n::Message::LineSlopeDescription,
+        I18n::Message::LineYInterceptDescription,
+    };
+    return k_descriptions[i];
+  }
+  switch (function()->properties().conicType()) {
+    case Conic::Type::Circle: {
       constexpr I18n::Message k_descriptions[k_circleDetailsSections] = {
           I18n::Message::CircleRadiusDescription,
           I18n::Message::CenterAbscissaDescription,
@@ -196,7 +198,7 @@ I18n::Message DetailsParameterController::detailsDescription(int i) const {
       };
       return k_descriptions[i];
     }
-    case Shared::ContinuousFunction::PlotType::Ellipse: {
+    case Conic::Type::Ellipse: {
       constexpr I18n::Message k_descriptions[k_ellipseDetailsSections] = {
           I18n::Message::EllipseSemiMajorAxisDescription,
           I18n::Message::EllipseSemiMinorAxisDescription,
@@ -207,8 +209,7 @@ I18n::Message DetailsParameterController::detailsDescription(int i) const {
       };
       return k_descriptions[i];
     }
-    case Shared::ContinuousFunction::PlotType::CartesianParabola:
-    case Shared::ContinuousFunction::PlotType::Parabola: {
+    case Conic::Type::Parabola: {
       constexpr I18n::Message k_descriptions[k_parabolaDetailsSections] = {
           I18n::Message::ParabolaParameterDescription,
           I18n::Message::ParabolaVertexAbscissaDescription,
@@ -217,7 +218,7 @@ I18n::Message DetailsParameterController::detailsDescription(int i) const {
       return k_descriptions[i];
     }
     default: {
-      assert(Shared::ContinuousFunction::IsPlotTypeHyperbola(function()->plotType()));
+      assert(function()->properties().conicType() == Conic::Type::Hyperbola);
       constexpr I18n::Message k_descriptions[k_hyperbolaDetailsSections] = {
           I18n::Message::HyperbolaSemiMajorAxisDescription,
           I18n::Message::HyperbolaSemiMinorAxisDescription,
@@ -232,27 +233,27 @@ I18n::Message DetailsParameterController::detailsDescription(int i) const {
 }
 
 void DetailsParameterController::setLineDetailsValues(double slope, double intercept) {
-  assert(function()->plotType() == Shared::ContinuousFunction::PlotType::Line);
+  assert(functionIsNonVerticalLine());
   m_detailValues[0] = NAN;
   m_detailValues[1] = slope;
   m_detailValues[2] = intercept;
 }
 
 void DetailsParameterController::setConicDetailsValues(Poincare::Conic conic) {
-  Shared::ContinuousFunction::PlotType type = function()->plotType();
+  Conic::Type type = function()->properties().conicType();
   double cx, cy;
-  if (Shared::ContinuousFunction::IsPlotTypeParabola(function()->plotType())) {
+  if (type == Conic::Type::Parabola) {
     conic.getSummit(&cx, &cy);
   } else {
     conic.getCenter(&cx, &cy);
   }
-  if (type == Shared::ContinuousFunction::PlotType::Circle) {
+  if (type == Conic::Type::Circle) {
     m_detailValues[0] = conic.getRadius();
     m_detailValues[1] = cx;
     m_detailValues[2] = cy;
     return;
   }
-  if (type == Shared::ContinuousFunction::PlotType::Ellipse) {
+  if (type == Conic::Type::Ellipse) {
     m_detailValues[0] = conic.getSemiMajorAxis();
     m_detailValues[1] = conic.getSemiMinorAxis();
     m_detailValues[2] = conic.getLinearEccentricity();
@@ -261,13 +262,13 @@ void DetailsParameterController::setConicDetailsValues(Poincare::Conic conic) {
     m_detailValues[5] = cy;
     return;
   }
-  if (Shared::ContinuousFunction::IsPlotTypeParabola(function()->plotType())) {
+  if (type == Conic::Type::Parabola) {
     m_detailValues[0] = conic.getParameter();
     m_detailValues[1] = cx;
     m_detailValues[2] = cy;
     return;
   }
-  assert(Shared::ContinuousFunction::IsPlotTypeHyperbola(function()->plotType()));
+  assert(type == Conic::Type::Hyperbola);
   m_detailValues[0] = conic.getSemiMajorAxis();
   m_detailValues[1] = conic.getSemiMinorAxis();
   m_detailValues[2] = conic.getLinearEccentricity();

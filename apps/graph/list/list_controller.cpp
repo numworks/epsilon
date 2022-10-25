@@ -134,7 +134,7 @@ bool ListController::layoutRepresentsParametricFunction(Poincare::Layout l) cons
 bool ListController::completeEquation(InputEventHandler * equationField, CodePoint symbol) {
   // Retrieve the edited function
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
-  if (f->isNull() || f->plotType() == ContinuousFunction::PlotType::Undefined) {
+  if (f->isNull() || f->properties().status() == FunctionType::Status::Undefined) {
     // Function is new or undefined, complete the equation with a default name
     constexpr size_t k_bufferSize = Shared::ContinuousFunction::k_maxDefaultNameSize + sizeof("(x)=") - 1;
     char buffer[k_bufferSize];
@@ -146,10 +146,10 @@ bool ListController::completeEquation(InputEventHandler * equationField, CodePoi
   constexpr size_t k_bufferSize = Poincare::SymbolAbstract::k_maxNameSize + sizeof("(x)≥") - 1;
   static_assert(sizeof("(x)≥") >= sizeof("(θ)="), "k_bufferSize should fit both situations.");
   // (θ)≥ would not fit, but inequations on polar are not handled.
-  assert(f->symbol() != ContinuousFunction::k_polarSymbol || f->equationSymbol() == '=');
+  assert(!f->properties().isPolar() || f->properties().isEquality());
   char buffer[k_bufferSize];
   size_t nameLength = f->nameWithArgument(buffer, k_bufferSize);
-  nameLength += UTF8Decoder::CodePointToChars(f->equationSymbol(), buffer + nameLength, k_bufferSize - nameLength);
+  nameLength += UTF8Decoder::CodePointToChars(f->properties().equationSymbol(), buffer + nameLength, k_bufferSize - nameLength);
   assert(nameLength < k_bufferSize);
   buffer[nameLength] = 0;
   return equationField->handleEventWithText(buffer);
@@ -320,7 +320,7 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int j) {
   FunctionCell * functionCell = static_cast<FunctionCell *>(cell);
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(j));
   functionCell->setLayout(f->layout());
-  functionCell->setMessage(ExamModeConfiguration::implicitPlotsAreForbidden() ? I18n::Message::Default : f->plotTypeMessage());
+  functionCell->setMessage(ExamModeConfiguration::implicitPlotsAreForbidden() ? I18n::Message::Default : f->properties().message());
   KDColor functionColor = f->isActive() ? f->color() : Palette::GrayDark;
   functionCell->setColor(functionColor);
   KDColor textColor = f->isActive() ? KDColorBlack : Palette::GrayDark;

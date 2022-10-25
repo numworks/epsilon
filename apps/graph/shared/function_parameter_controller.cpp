@@ -70,7 +70,7 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, 
     assert(!m_record.isNull());
     Shared::ExpiringPointer<ContinuousFunction> function = myApp->functionStore()->modelForRecord(m_record);
     if (cell == &m_detailsCell) {
-      m_detailsCell.setSubtitle(function->plotTypeMessage());
+      m_detailsCell.setSubtitle(function->properties().message());
     } else {
       assert(cell == &m_functionDomainCell);
       m_functionDomainCell.setMessage(I18n::Message::FunctionDomain);

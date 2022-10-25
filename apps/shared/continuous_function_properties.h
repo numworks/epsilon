@@ -3,6 +3,7 @@
 
 #include <apps/i18n.h>
 #include <poincare/comparison.h>
+#include <poincare/conic.h>
 
 /* ContinuousFunctionProperties is an object containing:
  *  - A pointer to a const function type
@@ -215,6 +216,9 @@ public:
 
   bool canBeActiveInTable() const { return !isAlongY() && numberOfSubCurves() == 1 && isEquality(); }
   bool canHaveCustomDomain() const { return !isAlongY() && isEquality(); }
+
+  bool isHyperbolaWithTwoSubCurves() const { return m_plotType == &k_hyperbolaEquationWithTwoSubCurves; }
+  Poincare::Conic::Type conicType() const;
 
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool plotIsDotted() const { return equationType() == Poincare::ComparisonNode::OperatorType::Superior ||  equationType() == Poincare::ComparisonNode::OperatorType::Inferior;}

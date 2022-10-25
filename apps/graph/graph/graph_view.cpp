@@ -37,16 +37,15 @@ void GraphView::drawRecord(int i, KDContext * ctx, KDRect rect) const {
   ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
 
   Expression e = f->expressionReduced(context());
-  ContinuousFunction::AreaType area = f->areaType();
-  ContinuousFunction::PlotType type = f->plotType();
+  ContinuousFunctionProperties::AreaType area = f->properties().areaType();
   assert(f->numberOfSubCurves() <= 2);
   bool hasTwoCurves = (f->numberOfSubCurves() == 2);
-  if (area == ContinuousFunction::AreaType::None) {
+  if (area == ContinuousFunctionProperties::AreaType::None) {
     if (e.type() == ExpressionNode::Type::Dependency) {
       e = e.childAtIndex(0);
     }
     bool isUndefined = e.isUndefined();
-    if (!isUndefined && (type == ContinuousFunction::PlotType::Parametric || hasTwoCurves)) {
+    if (!isUndefined && (f->properties().isParametric() || hasTwoCurves)) {
       assert(e.type() == ExpressionNode::Type::Matrix);
       assert(static_cast<Matrix&>(e).numberOfRows() == 2);
       assert(static_cast<Matrix&>(e).numberOfColumns() == 1);
@@ -66,7 +65,7 @@ void GraphView::drawRecord(int i, KDContext * ctx, KDRect rect) const {
   KDCoordinate rectMax = axis == Axis::Horizontal ? rect.right() + k_externRectMargin : rect.top() - k_externRectMargin;
   float tCacheMin, tCacheStep;
   float tStepNonCartesian = NAN;
-  if (f->isAlongXOrY()) {
+  if (f->properties().isCartesian()) {
     float rectLimit = pixelToFloat(axis, rectMin);
     /* Here, tCacheMin can depend on rect (and change as the user move)
      * because cache can be panned for cartesian curves, instead of being
@@ -86,16 +85,16 @@ void GraphView::drawRecord(int i, KDContext * ctx, KDRect rect) const {
    * discontinuity at each dot of the curve. */
   DiscontinuityTest discontinuityEvaluation = e.involvesDiscontinuousFunction(context()) ? FunctionIsDiscontinuousBetweenFloatValues : NoDiscontinuity;
 
-  switch (type) {
-  case ContinuousFunction::PlotType::Parametric:
+  if (f->properties().isParametric()) {
     drawParametric(ctx, rect, f.operator->(), tCacheMin, tmax, tStepNonCartesian, discontinuityEvaluation);
-    break;
-  case ContinuousFunction::PlotType::Polar:
-    drawPolar(ctx, rect, f.operator->(), tCacheMin, tmax, tStepNonCartesian, discontinuityEvaluation);
-    break;
-  default:
-    drawCartesian(ctx, rect, f.operator->(), record, tCacheMin, tmax, tCacheStep, discontinuityEvaluation, axis, rectMin, rectMax);
+    return;
   }
+  if (f->properties().isPolar()) {
+    drawPolar(ctx, rect, f.operator->(), tCacheMin, tmax, tStepNonCartesian, discontinuityEvaluation);
+    return;
+  }
+  assert(f->properties().isCartesian());
+  drawCartesian(ctx, rect, f.operator->(), record, tCacheMin, tmax, tCacheStep, discontinuityEvaluation, axis, rectMin, rectMax);
 }
 
 void GraphView::tidyModel(int i) const {
@@ -117,7 +116,7 @@ bool GraphView::FunctionIsDiscontinuousBetweenFloatValues(float x1, float x2, vo
 }
 
 void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction * f, Ion::Storage::Record record, float tStart, float tEnd, float tStep, DiscontinuityTest discontinuity, Axis axis, KDCoordinate rectMin, KDCoordinate rectMax) const {
-  ContinuousFunction::AreaType area = f->areaType();
+  ContinuousFunctionProperties::AreaType area = f->properties().areaType();
   bool hasTwoCurves = (f->numberOfSubCurves() == 2);
 
   // - Define the bounds of the colored area
@@ -127,19 +126,19 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
   Pattern pattern(m_areaIndex, f->color());
 
   switch (area) {
-  case ContinuousFunction::AreaType::Outside:
+  case ContinuousFunctionProperties::AreaType::Outside:
     /* This relies on the fact that the second curve will be below the first. */
     (hasTwoCurves ? patternLower2 : patternLower) = Curve2D(evaluateMinusInfinity);
     patternUpper = Curve2D(evaluateInfinity);
     patternWithoutCurve = true;
     break;
-  case ContinuousFunction::AreaType::Above:
+  case ContinuousFunctionProperties::AreaType::Above:
     patternUpper = Curve2D(evaluateInfinity);
     break;
-  case ContinuousFunction::AreaType::Below:
+  case ContinuousFunctionProperties::AreaType::Below:
     (hasTwoCurves ? patternLower2 : patternLower) = Curve2D(evaluateMinusInfinity);
     break;
-  case ContinuousFunction::AreaType::Inside:
+  case ContinuousFunctionProperties::AreaType::Inside:
     /* The function might not have two curves if the area is empty
      * (e.g. y^2<0). */
     if (hasTwoCurves) {
@@ -147,7 +146,7 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
     }
     break;
   default:
-    assert(area == ContinuousFunction::AreaType::None);
+    assert(area == ContinuousFunctionProperties::AreaType::None);
     bool isIntegral = record == m_selectedRecord && std::isfinite(m_highlightedStart) && std::isfinite(m_highlightedEnd);
     if (isIntegral) {
       assert(!hasTwoCurves);
@@ -167,14 +166,14 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
   }
 
   // - Draw first curve
-  CurveDrawing firstCurve(Curve2D(evaluateXY<float>, f), context(), tStart, tEnd, tStep, f->color(), true, f->drawDottedCurve());
+  CurveDrawing firstCurve(Curve2D(evaluateXY<float>, f), context(), tStart, tEnd, tStep, f->color(), true, f->properties().plotIsDotted());
   firstCurve.setPrecisionOptions(true, evaluateXY<double>, discontinuity);
   firstCurve.setPatternOptions(pattern, patternStart, patternEnd, patternLower, patternUpper, patternWithoutCurve, axis);
   firstCurve.draw(this, ctx, rect);
 
   // - Draw second curve
   if (hasTwoCurves) {
-    CurveDrawing secondCurve(Curve2D(evaluateXYSecondCurve<float>, f), context(), tStart, tEnd, tStep, f->color(), true, f->drawDottedCurve());
+    CurveDrawing secondCurve(Curve2D(evaluateXYSecondCurve<float>, f), context(), tStart, tEnd, tStep, f->color(), true, f->properties().plotIsDotted());
     secondCurve.setPrecisionOptions(true, evaluateXYSecondCurve<double>, discontinuity);
     secondCurve.setPatternOptions(pattern, patternStart, patternEnd, patternLower2, Curve2D(), patternWithoutCurve, axis);
     secondCurve.draw(this, ctx, rect);

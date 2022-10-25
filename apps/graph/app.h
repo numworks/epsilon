@@ -29,14 +29,14 @@ public:
     const Descriptor * descriptor() const override;
     ContinuousFunctionStore * functionStore() override { return &m_functionStore; }
     Shared::InteractiveCurveViewRange * graphRange() { return &m_graphRange; }
-    Shared::Interval * intervalForSymbolType(Shared::ContinuousFunction::SymbolType plotType) {
-      return m_interval + static_cast<size_t>(plotType);
+    Shared::Interval * intervalForSymbolType(Shared::FunctionType::SymbolType symbolType) {
+      return m_interval + static_cast<size_t>(symbolType);
     }
   private:
     void tidy() override;
     ContinuousFunctionStore m_functionStore;
     Shared::InteractiveCurveViewRange m_graphRange;
-    Shared::Interval m_interval[Shared::ContinuousFunction::k_numberOfSymbolTypes];
+    Shared::Interval m_interval[Shared::FunctionType::k_numberOfSymbolTypes];
   };
   static App * app() {
     return static_cast<App *>(Escher::Container::activeApp());
@@ -51,7 +51,7 @@ public:
   bool storageWillChangeForRecord(Ion::Storage::Record) override;
   void storageDidChangeForRecord(Ion::Storage::Record) override;
   ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }
-  Shared::Interval * intervalForSymbolType(Shared::ContinuousFunction::SymbolType symbolType) { return snapshot()->intervalForSymbolType(symbolType); }
+  Shared::Interval * intervalForSymbolType(Shared::FunctionType::SymbolType symbolType) { return snapshot()->intervalForSymbolType(symbolType); }
   ValuesController * valuesController() override { return &m_valuesController; }
   Escher::InputViewController * inputViewController() override { return &m_inputViewController; }
   ListController * listController() { return &m_listController; }

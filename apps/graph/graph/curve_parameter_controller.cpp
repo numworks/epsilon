@@ -59,8 +59,8 @@ void CurveParameterController::didBecomeFirstResponder() {
 void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell, int index) {
   I18n::Message name = I18n::Message::Default;
   BufferTableCellWithEditableText * parameterCells[] = {&m_abscissaCell, &m_imageCell, &m_derivativeNumberCell};
-  if (index < function()->numberOfCurveParameters()) {
-    ContinuousFunction::CurveParameter parameter = function()->getCurveParameter(index);
+  if (index < function()->properties().numberOfCurveParameters()) {
+    ContinuousFunctionProperties::CurveParameter parameter = function()->properties().getCurveParameter(index);
     name = parameter.parameterName;
     parameterCells[index]->setEditable(parameter.editable);
   }
@@ -96,7 +96,7 @@ float CurveParameterController::parameterAtIndex(int index) {
 }
 
 bool CurveParameterController::confirmParameterAtIndex(int parameterIndex, double f) {
-  if (function()->getCurveParameter(parameterIndex).isPreimage) {
+  if (function()->properties().getCurveParameter(parameterIndex).isPreimage) {
     m_preimageGraphController.setImage(f);
     return true;
   }
@@ -124,7 +124,7 @@ bool CurveParameterController::textFieldDidFinishEditing(AbstractTextField * tex
   }
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   stack->popUntilDepth(InteractiveCurveViewController::k_graphControllerStackDepth, true);
-  if (function()->getCurveParameter(index).isPreimage) {
+  if (function()->properties().getCurveParameter(index).isPreimage) {
     stack->push(&m_preimageGraphController);
   }
   return true;
@@ -148,12 +148,12 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
 }
 
 bool CurveParameterController::editableParameter(int index) {
-  return !isDerivative(index) && function()->getCurveParameter(index).editable;
+  return !isDerivative(index) && function()->properties().getCurveParameter(index).editable;
 }
 
 void CurveParameterController::setRecord(Ion::Storage::Record record) {
   Shared::WithRecord::setRecord(record);
-  m_derivativeNumberCell.setVisible(shouldDisplayDerivative() || function()->numberOfCurveParameters() == 3);
+  m_derivativeNumberCell.setVisible(shouldDisplayDerivative() || function()->properties().numberOfCurveParameters() == 3);
   m_calculationCell.setVisible(shouldDisplayCalculation());
   selectCellAtLocation(0, 0);
   resetMemoization();
@@ -165,7 +165,7 @@ void CurveParameterController::viewWillAppear() {
   /* We need to update the visibility of the derivativeCell both when the
    * function changes (in setRecord) and here since show derivative can be
    * toggled from a sub-menu of this one. */
-  m_derivativeNumberCell.setVisible(shouldDisplayDerivative() || function()->numberOfCurveParameters() == 3);
+  m_derivativeNumberCell.setVisible(shouldDisplayDerivative() || function()->properties().numberOfCurveParameters() == 3);
   resetMemoization();
   m_selectableTableView.reloadData();
   SelectableListViewController::viewWillAppear();

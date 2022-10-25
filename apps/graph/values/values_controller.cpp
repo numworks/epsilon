@@ -75,8 +75,8 @@ KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
   KDCoordinate columnWidth;
   KDCoordinate maxColumnWidth = MaxColumnWidth();
   int tempI = i;
-  ContinuousFunction::SymbolType symbol = symbolTypeAtColumn(&tempI);
-  if (tempI > 0 && symbol == ContinuousFunction::SymbolType::T) {
+  FunctionType::SymbolType symbol = symbolTypeAtColumn(&tempI);
+  if (tempI > 0 && symbol == FunctionType::SymbolType::T) {
     // Default width is larger for parametric functions
     columnWidth = ApproximatedParametricCellSize().width();
   } else {
@@ -120,9 +120,9 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
   }
   for (int i = 0; i < nColumns; i++) {
     int tempI = i;
-    ContinuousFunction::SymbolType symbol = symbolTypeAtColumn(&tempI);
+    FunctionType::SymbolType symbol = symbolTypeAtColumn(&tempI);
     if (!m_exactValuesAreActivated) {
-     if (symbol != ContinuousFunction::SymbolType::T || j >= numberOfElementsInColumn(i) + 1) {
+     if (symbol != FunctionType::SymbolType::T || j >= numberOfElementsInColumn(i) + 1) {
       /* Height is constant when exact result is not displayed and
        * either there is no parametric function or it's the last row
        * of the column. */
@@ -269,7 +269,7 @@ void ValuesController::updateNumberOfColumns() const {
   for (int i = 0; i < numberOfActiveFunctionsInTable; i++) {
     Ion::Storage::Record record = functionStore()->activeRecordInTableAtIndex(i);
     ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
-    int symbolTypeIndex = static_cast<int>(f->symbolType());
+    int symbolTypeIndex = static_cast<int>(f->properties().symbolType());
     m_numberOfValuesColumnsForType[symbolTypeIndex] += numberOfColumnsForRecord(record);
   }
   m_numberOfColumns = 0;
@@ -302,7 +302,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative) {
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
-  ContinuousFunction::SymbolType symbolType = symbolTypeAtColumn(&i);
+  FunctionType::SymbolType symbolType = symbolTypeAtColumn(&i);
   int index = 1;
   int numberOfActiveFunctionsOfSymbolType = functionStore()->numberOfActiveFunctionsOfSymbolType(symbolType);
   for (int k = 0; k < numberOfActiveFunctionsOfSymbolType; k++) {
@@ -337,8 +337,7 @@ int ValuesController::numberOfColumnsForAbscissaColumn(int column) {
 
 int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) const {
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
-  return 1 +
-    (f->isAlongXOrY() && f->displayDerivative());
+  return 1 + (f->properties().isCartesian() && f->displayDerivative());
 }
 
 int ValuesController::numberOfColumnsForSymbolType(int symbolTypeIndex) const {
@@ -358,13 +357,13 @@ int ValuesController::numberOfValuesColumns() const {
   return numberOfColumns() - numberOfAbscissaColumnsBeforeColumn(-1);
 }
 
-ContinuousFunction::SymbolType ValuesController::symbolTypeAtColumn(int * i) const {
+FunctionType::SymbolType ValuesController::symbolTypeAtColumn(int * i) const {
   size_t symbolTypeIndex = 0;
   while (*i >= numberOfColumnsForSymbolType(symbolTypeIndex)) {
     *i -= numberOfColumnsForSymbolType(symbolTypeIndex++);
     assert(symbolTypeIndex < k_maxNumberOfSymbolTypes);
   }
-  return static_cast<ContinuousFunction::SymbolType>(symbolTypeIndex);
+  return static_cast<FunctionType::SymbolType>(symbolTypeIndex);
 }
 
 // Function evaluation memoization
@@ -414,7 +413,7 @@ template <class T>
 T * ValuesController::parameterController() {
   bool isDerivative = false;
   Ion::Storage::Record record = recordAtColumn(selectedColumn(), &isDerivative);
-  if (!functionStore()->modelForRecord(record)->isAlongXOrY()) {
+  if (!functionStore()->modelForRecord(record)->properties().isCartesian()) {
     return nullptr;
   }
   if (isDerivative) {
@@ -426,7 +425,7 @@ T * ValuesController::parameterController() {
 }
 
 I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
-  return ContinuousFunction::MessageForSymbolType(symbolTypeAtColumn(&columnIndex));
+  return ContinuousFunctionProperties::MessageForSymbolType(symbolTypeAtColumn(&columnIndex));
 }
 
 // Cells & View

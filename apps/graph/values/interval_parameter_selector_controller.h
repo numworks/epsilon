@@ -19,11 +19,11 @@ public:
   int reusableCellCount() const override { return k_numberOfSymbolTypes; }
   Escher::HighlightCell * reusableCell(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  void setStartEndMessages(Shared::IntervalParameterController * controller, Shared::ContinuousFunction::SymbolType symbolType);
+  void setStartEndMessages(Shared::IntervalParameterController * controller, Shared::FunctionType::SymbolType symbolType);
 private:
-  constexpr static size_t k_numberOfSymbolTypes = Shared::ContinuousFunction::k_numberOfSymbolTypes;
-  Shared::ContinuousFunction::SymbolType symbolTypeAtRow(int j) const;
-  I18n::Message messageForType(Shared::ContinuousFunction::SymbolType symbolType);
+  constexpr static size_t k_numberOfSymbolTypes = Shared::FunctionType::k_numberOfSymbolTypes;
+  Shared::FunctionType::SymbolType symbolTypeAtRow(int j) const;
+  I18n::Message messageForType(Shared::FunctionType::SymbolType symbolType);
   Escher::MessageTableCellWithChevron m_intervalParameterCell[k_numberOfSymbolTypes];
 };
 

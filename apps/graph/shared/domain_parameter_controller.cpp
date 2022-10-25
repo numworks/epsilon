@@ -28,7 +28,7 @@ bool DomainParameterController::textFieldDidReceiveEvent(AbstractTextField * tex
   }
   /* Do not refuse empty text for functions of x, as that will later be
    * replaced by ±inf. */
-  return !(function()->isAlongXOrY() && textFieldShouldFinishEditing(textField, event) && textField->text()[0] == '\0') && FloatParameterController<float>::textFieldDidReceiveEvent(textField, event);
+  return !(function()->properties().isCartesian() && textFieldShouldFinishEditing(textField, event) && textField->text()[0] == '\0') && FloatParameterController<float>::textFieldDidReceiveEvent(textField, event);
 }
 
 bool DomainParameterController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
@@ -50,12 +50,12 @@ bool DomainParameterController::textFieldDidAbortEditing(AbstractTextField * tex
 }
 
 I18n::Message DomainParameterController::parameterMessage(int index) const {
-  switch (function()->plotType()) {
-  case ContinuousFunction::PlotType::Parametric:
+  ContinuousFunctionProperties plotProperties = function()->properties();
+  if (plotProperties.isParametric()) {
     return index == 0 ? I18n::Message::TMin : I18n::Message::TMax;
-  case ContinuousFunction::PlotType::Polar:
+  } else if (plotProperties.isPolar()) {
     return index == 0 ? I18n::Message::ThetaMin : I18n::Message::ThetaMax;
-  default:
+  } else {
     return index == 0 ? I18n::Message::XMin : I18n::Message::XMax;
   }
 }
@@ -110,7 +110,7 @@ void DomainParameterController::confirmParameters() {
 }
 
 FloatParameterController<float>::InfinityTolerance DomainParameterController::infinityAllowanceForRow(int row) const {
-  if (function()->isAlongXOrY()) {
+  if (function()->properties().isCartesian()) {
     return row == 1 ? FloatParameterController<float>::InfinityTolerance::MinusInfinity : FloatParameterController<float>::InfinityTolerance::PlusInfinity;
   }
   return FloatParameterController<float>::InfinityTolerance::None;
@@ -125,7 +125,7 @@ void DomainParameterController::switchToolboxContent(Escher::AbstractTextField *
   assert(textField == m_boundsCells[0].textField() || textField == m_boundsCells[1].textField());
   FunctionToolbox::AddedCellsContent content;
   if (setSpecificContent) {
-    content = !function()->isAlongXOrY() ? FunctionToolbox::AddedCellsContent::None
+    content = !function()->properties().isCartesian() ? FunctionToolbox::AddedCellsContent::None
             : textField == m_boundsCells[0].textField() ? FunctionToolbox::AddedCellsContent::NegativeInfinity
             : FunctionToolbox::AddedCellsContent::PositiveInfinity;
   } else {

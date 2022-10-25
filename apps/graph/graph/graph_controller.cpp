@@ -159,8 +159,8 @@ bool GraphController::displayDerivativeInBanner() const {
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  bool result = privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
   refreshPointsOfInterest();
+  bool result = privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
   return result;
 }
 
@@ -261,6 +261,31 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
   m_selectedSubCurveIndex = nextSubCurve;
   selectFunctionWithCursor(nextCurveIndex, true);
   return;
+}
+
+bool GraphController::moveCursorVertically(int direction) {
+  bannerView()->setInterestMessage(I18n::Message::Default);
+  bool moved = FunctionGraphController::moveCursorVertically(direction);
+  if (!moved) {
+    return false;
+  }
+  double t = m_cursor->t();
+  constexpr static int k_snapStep = 100;
+  double dt = (m_graphRange->xMax() - m_graphRange->xMin()) / k_snapStep;
+  if (moved && snapToInterestAndUpdateBanner(&t, t - dt, t + dt)) {
+    Coordinate2D<double> xy = xyValues(indexFunctionSelectedByCursor(), t, App::app()->localContext(), m_selectedSubCurveIndex);
+    m_cursor->moveTo(t, xy.x1(), xy.x2());
+  }
+  return true;
+}
+
+void GraphController::moveCursorAndCenterIfNeeded(double t) {
+  bannerView()->setInterestMessage(I18n::Message::Default);
+  FunctionGraphController::moveCursorAndCenterIfNeeded(t);
+  double dummy;
+  if (snapToInterestAndUpdateBanner(&dummy, std::nextafter(m_cursor->t(), -INFINITY), std::nextafter(m_cursor->t(), INFINITY))) {
+    reloadBannerView();
+  }
 }
 
 void GraphController::refreshPointsOfInterest() {

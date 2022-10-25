@@ -68,30 +68,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     }
 
     float tStep = dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
-    constexpr float snapFactor = 1.5f;
-    PointOfInterest nextPointOfInterest = App::app()->graphController()->pointsOfInterest()->firstPointInDirection(t, t + snapFactor * tStep);
-    Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
-    if (std::isfinite(nextPointOfInterestXY.x1())) {
-      /* Snap to a point of interest, and display its type in the banner. */
-      t = nextPointOfInterestXY.x1();
-      I18n::Message interestMessage;
-      switch (nextPointOfInterest.interest()) {
-      case Solver<double>::Interest::Root:
-        interestMessage = I18n::Message::Zeros;
-        break;
-      case Solver<double>::Interest::LocalMinimum:
-        interestMessage = I18n::Message::Minimum;
-        break;
-      case Solver<double>::Interest::LocalMaximum:
-        interestMessage = I18n::Message::Maximum;
-        break;
-      default:
-      assert(nextPointOfInterest.interest() == Solver<double>::Interest::Intersection);
-        interestMessage = I18n::Message::Intersection;
-        break;
-      }
-      bannerView()->setInterestMessage(interestMessage);
-    } else {
+    if (!snapToInterestAndUpdateBanner(&t, t, t + tStep * k_snapFactor)) {
       t += tStep;
       assert(std::round(static_cast<float>(t)/pixelWidth) != std::round(static_cast<float>(tCursorPosition)/pixelWidth));
       /* assert that it moved at least of 1 pixel.
@@ -164,6 +141,34 @@ void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shar
     function->approximateDerivative(cursor->x(), App::app()->localContext()), Poincare::Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits());
   bannerView()->derivativeView()->setText(buffer);
   bannerView()->reload();
+}
+
+bool GraphControllerHelper::snapToInterestAndUpdateBanner(double * t, double start, double end) {
+  PointOfInterest nextPointOfInterest = App::app()->graphController()->pointsOfInterest()->firstPointInDirection(start, end);
+  Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
+  if (!std::isfinite(nextPointOfInterestXY.x1())) {
+    return false;
+  }
+  /* Snap to a point of interest, and display its type in the banner. */
+  *t = nextPointOfInterestXY.x1();
+  I18n::Message interestMessage;
+  switch (nextPointOfInterest.interest()) {
+  case Solver<double>::Interest::Root:
+    interestMessage = I18n::Message::Zeros;
+    break;
+  case Solver<double>::Interest::LocalMinimum:
+    interestMessage = I18n::Message::Minimum;
+    break;
+  case Solver<double>::Interest::LocalMaximum:
+    interestMessage = I18n::Message::Maximum;
+    break;
+  default:
+    assert(nextPointOfInterest.interest() == Solver<double>::Interest::Intersection);
+    interestMessage = I18n::Message::Intersection;
+    break;
+  }
+  bannerView()->setInterestMessage(interestMessage);
+  return true;
 }
 
 }

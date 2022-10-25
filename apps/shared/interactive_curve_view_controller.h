@@ -43,7 +43,7 @@ public:
   bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
 
   virtual bool openMenuForCurveAtIndex(int index) = 0;
-  void moveCursorAndCenterIfNeeded(double t);
+  virtual void moveCursorAndCenterIfNeeded(double t);
 
 protected:
   Responder * tabController() const;

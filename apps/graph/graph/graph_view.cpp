@@ -105,6 +105,25 @@ void GraphView::drawRecord(int i, KDContext * ctx, KDRect rect) const {
   drawCartesian(ctx, rect, f.operator->(), record, tCacheMin, tmax, tCacheStep, discontinuityEvaluation, axis, rectMin, rectMax);
 }
 
+void GraphView::drawForeground(KDContext * ctx, KDRect rect) const {
+  // Draw points of interest above all the curves.
+  if (!hasFocus()) {
+    return;
+  }
+  ContinuousFunctionStore * functionStore = App::app()->functionStore();
+  ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(m_selectedRecord);
+  if (f->plotType() != ContinuousFunction::PlotType::Cartesian) {
+    return;
+  }
+  Axis axis = f->isAlongY() ? Axis::Vertical : Axis::Horizontal;
+
+  PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterest();
+  for (const PointOfInterest<double> & p : pointsOfInterest->filter(m_interest)) {
+    Coordinate2D<float> xy = axis == Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
+    drawDot(ctx, rect, Dots::Size::Tiny, xy, Palette::GrayDarkest);
+  }
+}
+
 void GraphView::tidyModel(int i) const {
   ContinuousFunctionStore * store = App::app()->functionStore();
   store->modelForRecord(store->activeRecordAtIndex(i))->tidyDownstreamPoolFrom();
@@ -202,16 +221,6 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
     Coordinate2D<float> p2(maxAbscissa, tangentParameterA * maxAbscissa + tangentParameterB);
     drawSegment(ctx, rect, p1, p2, Palette::GrayVeryDark, false);
   }
-
-  // - Draw points of interest above the curve
-  if (m_selectedRecord == record && hasFocus()) {
-    PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterest();
-    for (const PointOfInterest<double> & p : pointsOfInterest->filter(m_interest)) {
-      Coordinate2D<float> xy = axis == Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
-      drawDot(ctx, rect, Dots::Size::Tiny, xy, Palette::GrayDarkest);
-    }
-  }
-
 }
 
 static float polarThetaFromCoordinates(float x, float y, Preferences::AngleUnit angleUnit) {

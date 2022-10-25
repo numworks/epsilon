@@ -19,6 +19,7 @@ public:
   void setAreaHighlightColor(bool highlightColor) override {};
   int numberOfDrawnRecords() const override;
   void drawRecord(int i, KDContext *, KDRect) const override;
+  void drawForeground(KDContext *, KDRect) const override;
   void tidyModel(int i) const override;
   void setFocus(bool focus) override;
 

@@ -39,7 +39,7 @@ $(eval $(call rule_for, \
   RESGEN, \
   ion/src/simulator/windows/resources_gen.rc ion/src/simulator/windows/images.h, \
   $(ion_simulator_assets_paths), \
-  $$(PYTHON) ion/src/simulator/windows/resgen.py $(ion_simulator_assets) -o $$@, \
+  $$(PYTHON) ion/src/simulator/windows/resgen.py $(foreach asset_path,$(ion_simulator_assets_paths),$(notdir $(asset_path))) -o $$@, \
   global \
 ))
 

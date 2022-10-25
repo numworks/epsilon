@@ -6,7 +6,7 @@ KDRect KDRect::translatedBy(KDPoint p) const {
 }
 
 KDRect KDRect::movedTo(KDPoint p) const {
-  return KDRect(p.x(), p.y(), width(), height());
+  return KDRect(p, size());
 }
 
 bool KDRect::intersects(const KDRect & other) const {

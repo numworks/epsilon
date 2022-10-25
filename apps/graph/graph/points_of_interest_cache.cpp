@@ -96,6 +96,11 @@ void PointsOfInterestCache::computeBetween(float start, float end, Range1D * dir
   ExpiringPointer<ContinuousFunction> f = store->modelForRecord(m_record);
   Expression e = f->expressionReduced(context);
 
+  if (start < 0.f && 0.f < end) {
+    Coordinate2D<double> xy = f->evaluateXYAtParameter(0., context);
+    append(xy.x1(), xy.x2(), Solver<double>::Interest::YIntercept, dirtyRange);
+  }
+
   typedef Coordinate2D<double> (Solver<double>::*NextSolution)(Expression e);
   NextSolution methodsNext[] = { &Solver<double>::nextRoot, &Solver<double>::nextMinimum, &Solver<double>::nextMaximum };
   for (NextSolution next : methodsNext) {

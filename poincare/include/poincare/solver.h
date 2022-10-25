@@ -20,6 +20,7 @@ public:
     Discontinuity,
     Intersection,
     HorizontalAsymptote,
+    YIntercept,
     Other,
   };
 

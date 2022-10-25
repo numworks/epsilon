@@ -112,15 +112,16 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
     }
   }
 
+  // Unhighlight previous cell
   HighlightCell * previousCell = cellAtLocation(previousColumn, previousRow);
   if (previousCell) {
     previousCell->setHighlighted(false); // Must be done before scrolling because if previousCell becomes hidden, setHighlighted will not reload
   }
 
+  // Scroll
   if (selectedRow() >= 0) {
     scrollToCell(selectedColumn(), selectedRow());
   }
-
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelectionAndDidScroll(this, previousColumn, previousRow, withinTemporarySelection);
   }
@@ -131,8 +132,10 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
     if ((selectedColumn() != previousColumn || selectedRow() != previousRow) && setFirstResponder) {
       Container::activeApp()->setFirstResponder(cell->responder() ? cell->responder() : this);
     }
+    // Highlight new cell
     cell->setHighlighted(true);
   }
+
   return true;
 }
 

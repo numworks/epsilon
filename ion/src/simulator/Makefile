@@ -31,15 +31,17 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   window.cpp \
 )
 
-ion_simulator_assets = background.webp horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png
-ion_simulator_assets_paths = $(addprefix ion/src/simulator/assets/,$(ion_simulator_assets))
+ion_simulator_existing_assets = background.webp horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png
+ion_simulator_assets = $(ion_simulator_existing_assets)
+ion_simulator_assets_paths = $(addprefix ion/src/simulator/assets/,$(ion_simulator_existing_assets))
 
 $(addprefix $(BUILD_DIR),ion/src/simulator/assets/background.jpg): ion/src/simulator/assets/background.webp
 	$(call rule_label,CONVERT)
 	$(Q) mkdir -p $(dir $@)
 	$(Q) convert -crop 1358x2673+239+16 $< $@
-
-simulator_app_deps += $(addprefix $(BUILD_DIR),ion/src/simulator/assets/background.jpg)
+ion_simulator_assets += background.jpg
+ion_simulator_assets_paths += $(addprefix $(BUILD_DIR),ion/src/simulator/assets/background.jpg)
+simulator_app_deps += $(ion_simulator_assets_paths)
 
 include ion/src/simulator/$(TARGET)/Makefile
 include ion/src/simulator/external/Makefile

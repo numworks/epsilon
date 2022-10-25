@@ -28,6 +28,8 @@ constexpr int Height = 240;
 constexpr int WidthInTenthOfMillimeter = 576;
 constexpr int HeightInTenthOfMillimeter = 432;
 
+constexpr KDRect KDRectScreen = KDRect(0, 0, Width, Height);
+
 // For Power On Self tests
 int displayUniformTilingSize10(KDColor c);
 int displayColoredTilingSize10();

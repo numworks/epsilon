@@ -38,7 +38,7 @@ void ColorsLCDTestController::ContentView::setColor(KDColor color) {
 }
 
 void ColorsLCDTestController::ContentView::layoutSubviews(bool force) {
-  m_colorsLCDStateView.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), force);
+  m_colorsLCDStateView.setFrame(Ion::Display::KDRectScreen, force);
 }
 
 }

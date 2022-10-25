@@ -7,8 +7,7 @@ KDIonContext * KDIonContext::SharedContext() {
 }
 
 KDIonContext::KDIonContext() :
-KDContext(KDPointZero,
-    KDRect(0, 0, Ion::Display::Width, Ion::Display::Height))
+KDContext(KDPointZero, Ion::Display::KDRectScreen)
 {
 }
 

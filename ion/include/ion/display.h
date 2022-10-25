@@ -24,8 +24,6 @@ void pullRect(KDRect r, KDColor * pixels);
 
 bool waitForVBlank();
 
-constexpr KDRect KDRectScreen = KDRect(0, 0, Width, Height);
-
 // For Power On Self tests
 int displayUniformTilingSize10(KDColor c);
 int displayColoredTilingSize10();

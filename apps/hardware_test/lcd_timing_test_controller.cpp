@@ -27,7 +27,7 @@ bool LCDTimingTestController::handleEvent(Ion::Events::Event event) {
 }
 
 void LCDTimingTestController::viewWillAppear() {
-  Ion::Display::pushRectUniform(Ion::Display::KDRectScreen, KDColorWhite);
+  Ion::Display::pushRectUniform(KDRectScreen, KDColorWhite);
   Ion::Backlight::setBrightness(0);
   runTest();
   Ion::Backlight::setBrightness(Ion::Backlight::MaxBrightness);
@@ -52,7 +52,7 @@ void LCDTimingTestController::ContentView::setStatus(bool success, int numberOfE
 }
 
 void LCDTimingTestController::ContentView::layoutSubviews(bool force) {
-  m_lcdTimingStateView.setFrame(Ion::Display::KDRectScreen, force);
+  m_lcdTimingStateView.setFrame(KDRectScreen, force);
   m_lcdNumberGlyphFailuresView.setFrame(KDRect(10, 10, Ion::Display::Width, 20), force);
 }
 

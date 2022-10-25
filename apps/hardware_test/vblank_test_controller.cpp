@@ -38,7 +38,7 @@ void VBlankTestController::ContentView::setColor(KDColor color) {
 }
 
 void VBlankTestController::ContentView::layoutSubviews(bool force) {
-  m_vBlankStateView.setFrame(Ion::Display::KDRectScreen, force);
+  m_vBlankStateView.setFrame(KDRectScreen, force);
 }
 
 }

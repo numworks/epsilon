@@ -18,6 +18,7 @@ public:
 private:
   constexpr static int k_labelAvoidanceMargin = 2;
   constexpr static int k_labelsPrecision = Poincare::Preferences::VeryShortNumberOfSignificantDigits;
+  constexpr static KDColor k_color = Escher::Palette::Red;
 
   // AbstractLabeledAxis
   bool labelWillBeDisplayed(int i, KDRect labelRect) const override;
@@ -41,6 +42,9 @@ protected:
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
 
   FunctionModel * m_model;
+
+private:
+  constexpr static KDColor k_color = Escher::Palette::Red;
 };
 
 class FunctionGraphView : public Shared::PlotView<FunctionTwoLabeledAxes, FunctionGraphPolicy, Shared::PlotPolicy::NoBanner, Shared::PlotPolicy::NoCursor> {

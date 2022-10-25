@@ -92,6 +92,7 @@ public:
   bool isConstant(const char * constantName, ConstantNode::ConstantInfo info = ConstantNode::ConstantInfo()) const { return node()->isConstant(constantName, info); }
   static bool IsConstant(const char * name, size_t length);
   bool isComplexI() const { return isConstant("i"); }
+  bool isExponentialE() const { return isConstant("e"); }
   ConstantNode::ConstantInfo constantInfo() const { return node()->constantInfo(); }
 
   // Simplification

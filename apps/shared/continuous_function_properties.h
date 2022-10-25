@@ -157,10 +157,24 @@ public:
   constexpr static ErrorFunctionType k_undefinedParametricFunctionType = ErrorFunctionType(I18n::Message::UndefinedType, FunctionType::Status::Undefined, FunctionType::SymbolType::T);
   constexpr static ErrorFunctionType k_undefinedPolarFunctionType = ErrorFunctionType(I18n::Message::UndefinedType, FunctionType::Status::Undefined, FunctionType::SymbolType::Theta);
 
-  // Function types
-  constexpr static CartesianFunctionType k_cartesianFunctionType = CartesianFunctionType(I18n::Message::CartesianType);
+  // Parametric
   constexpr static ParametricFunctionType k_parametricFunctionType = ParametricFunctionType();
+
+  // Polar
   constexpr static PolarFunctionType k_polarFunctionType = PolarFunctionType();
+
+  // Cartesian function
+  // TODO: Update messages.
+  constexpr static CartesianFunctionType k_cartesianFunctionType = CartesianFunctionType(I18n::Message::CartesianType);
+  constexpr static CartesianFunctionType k_piecewiseFunctionType = CartesianFunctionType(I18n::Message::ColorBlue);
+  constexpr static CartesianFunctionType k_linearFunctionType = CartesianFunctionType(I18n::Message::ColorGreen);
+  constexpr static CartesianFunctionType k_affineFunctionType = CartesianFunctionType(I18n::Message::ColorRed);
+  constexpr static CartesianFunctionType k_constantFunctionType = CartesianFunctionType(I18n::Message::ColorYellowDark);
+  constexpr static CartesianFunctionType k_polynomialFunctionType = CartesianFunctionType(I18n::Message::ColorOrange);
+  constexpr static CartesianFunctionType k_trigonometricFunctionType = CartesianFunctionType(I18n::Message::ColorMagenta);
+  constexpr static CartesianFunctionType k_exponentialFunctionType = CartesianFunctionType(I18n::Message::ColorPink);
+  constexpr static CartesianFunctionType k_logarithmicFunctionType = CartesianFunctionType(I18n::Message::Ceiling);
+  constexpr static CartesianFunctionType k_rationalFunctionType = CartesianFunctionType(I18n::Message::Rounding);
 
   // Cartesian equation types
   // y = f(x)
@@ -189,6 +203,8 @@ public:
   constexpr static CodePoint k_cartesianSymbol = 'x';
   constexpr static CodePoint k_parametricSymbol = 't';
   constexpr static CodePoint k_polarSymbol = UCodePointGreekSmallLetterTheta;
+
+  static const FunctionType * CartesianFunctionAnalysis(const Poincare::Expression& e, Poincare::Context * context);
 
   ContinuousFunctionProperties() :
     m_plotType(&k_uninitializedFunctionType),

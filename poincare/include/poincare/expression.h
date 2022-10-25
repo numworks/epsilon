@@ -244,7 +244,7 @@ public:
   int numberOfNumericalValues() const { return node()->numberOfNumericalValues(); }
   /* Generalizes an expression to a function, by replacing numerical values with
    * a symbol. Beware that 2^3 is generalized as x^3, not x^x. */
-  Expression replaceNumericalValuesWithSymbol(Symbol x);
+  void replaceNumericalValuesWithSymbol(Symbol x);
   /* Return any numerical value in the expression. */
   float getNumericalValue();
 

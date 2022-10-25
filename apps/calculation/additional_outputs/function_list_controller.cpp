@@ -38,7 +38,7 @@ void FunctionListController::setExpression(Poincare::Expression e) {
 
   float abscissa = e.getNumericalValue();
   Symbol variable = Symbol::Builder(UCodePointUnknown);
-  e = e.replaceNumericalValuesWithSymbol(variable);
+  e.replaceNumericalValuesWithSymbol(variable);
 
   int index = 0;
   m_indexMessageMap[index] = 0;

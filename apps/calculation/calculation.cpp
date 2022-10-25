@@ -5,7 +5,6 @@
 #include "../global_preferences.h"
 #include "../exam_mode_configuration.h"
 #include "app.h"
-#include "poincare/complex_cartesian.h"
 #include "poincare/expression_node.h"
 #include <poincare/exception_checkpoint.h>
 #include <poincare/matrix.h>

@@ -3,7 +3,6 @@
 #include "../shared/utils.h"
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/symbol.h>
 #include <assert.h>
 
 using namespace Shared;

@@ -668,6 +668,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   if (isValidNamedLeftExpression(leftExpression, equationType)) {
     // Ensure that function name is either record's name, or free
     assert(record->fullName() != nullptr);
+    assert(leftExpression.type() == Poincare::ExpressionNode::Type::Function);
     const char * functionName = static_cast<Poincare::Function&>(leftExpression).name();
     const size_t functionNameLength = strlen(functionName);
     if (Shared::GlobalContext::SymbolAbstractNameIsFree(functionName)
@@ -677,11 +678,9 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
       // Set the model's plot type.
       if (functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))) {
         tempFunctionSymbol = FunctionType::SymbolType::T;
-      } else if (functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
-        tempFunctionSymbol = FunctionType::SymbolType::X;
       } else {
-        assert((functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))));
-        tempFunctionSymbol = FunctionType::SymbolType::Theta;
+        assert(functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol)));
+        tempFunctionSymbol = FunctionType::SymbolType::X;
       }
       result = result.childAtIndex(1);
       isUnnamedFunction = false;
@@ -690,8 +689,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
        * Replace the symbol. */
       leftExpression.replaceChildAtIndexInPlace(0, Symbol::Builder(UCodePointUnknown));
     }
-  }
-  if (leftExpression.isIdenticalTo(Symbol::Builder(k_radiusSymbol))) {
+  } else if (leftExpression.isIdenticalTo(Symbol::Builder(k_radiusSymbol))) {
     result = result.childAtIndex(1);
     tempFunctionSymbol = FunctionType::SymbolType::Theta;
     isUnnamedFunction = false;

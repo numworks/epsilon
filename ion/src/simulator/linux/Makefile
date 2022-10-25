@@ -40,7 +40,7 @@ $(eval $(call rule_for, \
   INCBIN, \
   ion/src/simulator/linux/assets.s ion/src/simulator/linux/platform_images.h, \
   $(ion_simulator_assets_paths), \
-  $$(PYTHON) ion/src/simulator/linux/incbin.py $(ion_simulator_assets) -o $$@, \
+  $$(PYTHON) ion/src/simulator/linux/incbin.py $(foreach asset_path,$(ion_simulator_assets_paths),$(notdir $(asset_path))) -o $$@, \
   global \
 ))
 

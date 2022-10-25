@@ -135,16 +135,16 @@ int Controller::reusableCellCount() const {
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   AppCell * appCell = static_cast<AppCell *>(cell);
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  int appIndex = iconIndex(i, j) + 1;
-  if (appIndex >= container->numberOfApps()) {
+  int appIdx = iconIndex(i, j) + 1;
+  if (appIdx >= container->numberOfApps()) {
     appCell->setVisible(false);
   } else {
     appCell->setVisible(true);
-    if (appIndex < container->numberOfBuiltinApps()) {
-      const ::App::Descriptor * descriptor = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex))->descriptor();
+    if (appIdx < container->numberOfBuiltinApps()) {
+      const ::App::Descriptor * descriptor = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIdx))->descriptor();
       appCell->setBuiltinAppDescriptor(descriptor);
     } else {
-      Ion::ExternalApps::App a = container->externalAppAtIndex(appIndex - container->numberOfBuiltinApps());
+      Ion::ExternalApps::App a = container->externalAppAtIndex(appIdx - container->numberOfBuiltinApps());
       appCell->setExternalApp(a);
     }
   }
@@ -177,10 +177,10 @@ SelectableTableViewDataSource * Controller::selectionDataSource() const {
 
 void Controller::switchToSelectedApp() {
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  int appIndex = iconIndex(selectionDataSource()->selectedColumn(), selectionDataSource()->selectedRow()) + 1;
+  int appIdx = iconIndex(selectionDataSource()->selectedColumn(), selectionDataSource()->selectedRow()) + 1;
   Poincare::Preferences::ExamMode examMode = Poincare::Preferences::sharedPreferences()->examMode();
-  if (appIndex < container->numberOfBuiltinApps()) {
-    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIndex));
+  if (appIdx < container->numberOfBuiltinApps()) {
+    ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIdx));
     if (ExamModeConfiguration::appIsForbidden(selectedSnapshot->descriptor()->name())) {
       App::app()->displayWarning(ExamModeConfiguration::forbiddenAppMessage(examMode, 0), ExamModeConfiguration::forbiddenAppMessage(examMode, 1));
     } else {
@@ -189,7 +189,7 @@ void Controller::switchToSelectedApp() {
   } else {
     assert(examMode != Poincare::Preferences::ExamMode::Off);
     m_view.reload();
-    Ion::ExternalApps::App a = container->externalAppAtIndex(appIndex - container->numberOfBuiltinApps());
+    Ion::ExternalApps::App a = container->externalAppAtIndex(appIdx - container->numberOfBuiltinApps());
     container->switchToExternalApp(a);
   }
 }

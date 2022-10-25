@@ -29,7 +29,7 @@ void SVC_ATTRIBUTES POSTPushMulticolor(int rootNumberTiles, int tileSize) {
 void drawString(const char * text, KDPoint point, bool largeFont, KDColor textColor, KDColor backgroundColor) {
   KDContext * ctx = KDIonContext::SharedContext();
   ctx->setOrigin(KDPointZero);
-  ctx->setClippingRect(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height));
+  ctx->setClippingRect(Ion::Display::KDRectScreen);
   ctx->drawString(text, point, largeFont ? KDFont::Size::Large : KDFont::Size::Small, textColor, backgroundColor, 255);
 }
 

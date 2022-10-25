@@ -30,7 +30,7 @@ AppsContainer::AppsContainer() :
   , m_initialAppSnapshot(nullptr)
 #endif
 {
-  m_emptyBatteryWindow.setFrame(KDRect(0, 0, Ion::Display::Width, Ion::Display::Height), false);
+  m_emptyBatteryWindow.setFrame(Ion::Display::KDRectScreen, false);
   Ion::Storage::FileSystem::sharedFileSystem()->setDelegate(this);
   Shared::RecordRestrictiveExtensions::registerRestrictiveExtensionsToSharedStorage();
 }
@@ -248,12 +248,11 @@ void AppsContainer::handleRunException(bool resetSnapshot) {
 }
 
 void AppsContainer::run() {
-  KDRect screenRect = KDRect(0, 0, Ion::Display::Width, Ion::Display::Height);
-  window()->setFrame(screenRect, false);
+  window()->setFrame(Ion::Display::KDRectScreen, false);
   /* We push a white screen here, because fetching the exam mode takes some time
    * and it is visible when reflashing a N0100 (there is some noise on the
    * screen before the logo appears). */
-  Ion::Display::pushRectUniform(screenRect, KDColorWhite);
+  Ion::Display::pushRectUniform(Ion::Display::KDRectScreen, KDColorWhite);
   Poincare::Preferences * poincarePreferences = Poincare::Preferences::sharedPreferences();
   if (poincarePreferences->isInExamMode()) {
     activateExamMode(poincarePreferences->examMode());

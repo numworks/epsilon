@@ -131,10 +131,6 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
     if ((selectedColumn() != previousColumn || selectedRow() != previousRow) && setFirstResponder) {
       Container::activeApp()->setFirstResponder(cell->responder() ? cell->responder() : this);
     }
-  }
-
-  cell = selectedCell();
-  if (cell) {
     cell->setHighlighted(true);
   }
   return true;

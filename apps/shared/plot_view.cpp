@@ -231,7 +231,7 @@ void AbstractPlotView::drawArc(KDContext * ctx, KDRect rect, Poincare::Coordinat
   const float segmentLengthInPixels = 8.f; // Ad hoc
   const float radiusInPixel = std::max(radius / pixelWidth(), radius / pixelHeight());
   // 2π * length / perimeter where perimeter = 2π * radius in pixels
-  const float tStep = std::min((float)M_PI/15.f, segmentLengthInPixels / radiusInPixel);
+  const float tStep = std::min((float)M_PI/30.f, segmentLengthInPixels / radiusInPixel);
   do {
     previousT = t;
     t = angleStart + (i++) * tStep;
@@ -256,7 +256,7 @@ void AbstractPlotView::drawArc(KDContext * ctx, KDRect rect, Poincare::Coordinat
     KDPoint from = KDPoint(previousX, previousY);
     KDPoint to = KDPoint(x, y);
     if (rect.contains(from) || rect.contains(to)) {
-      ctx->drawAntialiasedLine(from, to, color, KDColorWhite);
+      ctx->drawAntialiasedLine(previousX, previousY, x, y, color, KDColorWhite);
     }
     // straightJoinDots(ctx, rect, x, y, previousX, previousY, color, thick);
   } while (!isLastSegment);

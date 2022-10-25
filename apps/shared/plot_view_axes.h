@@ -150,7 +150,6 @@ typedef LabeledAxis<AbstractLabeledAxis::k_maxNumberOfYLabels> VerticalLabeledAx
  * PlotView */
 
 typedef Axes<NoGrid, NoAxis, NoAxis> NoAxes;
-typedef Axes<WithPolarGrid, PlainAxis, PlainAxis> PolarGrid;
 typedef Axes<NoGrid, HorizontalLabeledAxis, NoAxis> LabeledXAxis;
 typedef Axes<WithGrid, HorizontalLabeledAxis, VerticalLabeledAxis> TwoLabeledAxes;
 

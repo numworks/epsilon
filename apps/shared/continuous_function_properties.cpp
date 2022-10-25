@@ -90,10 +90,16 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
     }
   }
 
+  Expression analysedEquation = reducedEquation;
+  if (reducedEquation.type() == ExpressionNode::Type::Dependency) {
+    // Do not handle dependencies for now.
+    analysedEquation = reducedEquation.childAtIndex(0);
+  }
+
   setEquationType(precomputedOperatorType);
 
   // Compute equation's degree regarding y.
-  int yDeg = reducedEquation.polynomialDegree(context, k_ordinateName);
+  int yDeg = analysedEquation.polynomialDegree(context, k_ordinateName);
 
   /* Symbol was precomputed if the expression is a function of type "f(x)=",
    * "f(t)=" or "r=" (for polar functions). */
@@ -115,21 +121,16 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
     }
 
     if (precomputedFunctionSymbol == FunctionType::SymbolType::X) {
-      setFunctionType(ContinuousFunctionProperties::CartesianFunctionAnalysis(reducedEquation, context));
+      setFunctionType(ContinuousFunctionProperties::CartesianFunctionAnalysis(analysedEquation, context));
       return;
     }
 
     assert(precomputedOperatorType == ComparisonNode::OperatorType::Equal);
 
     if (precomputedFunctionSymbol == FunctionType::SymbolType::T) {
-      const Expression matrixEquation = (reducedEquation.type()
-                                         == ExpressionNode::Type::Dependency)
-                                            ? reducedEquation.childAtIndex(0)
-                                            : reducedEquation;
-      if (matrixEquation.type() != ExpressionNode::Type::Matrix
-          || static_cast<const Matrix &>(matrixEquation).numberOfRows() != 2
-          || static_cast<const Matrix &>(matrixEquation).numberOfColumns()
-                 != 1) {
+      if (analysedEquation.type() != ExpressionNode::Type::Matrix
+          || static_cast<const Matrix &>(analysedEquation).numberOfRows() != 2
+          || static_cast<const Matrix &>(analysedEquation).numberOfColumns() != 1) {
         // Invalid parametric format
         setFunctionType(&FunctionTypes::k_unhandledParametricFunctionType);
         return;
@@ -139,12 +140,12 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
     }
 
     assert(precomputedFunctionSymbol == FunctionType::SymbolType::Theta);
-    setFunctionType(&FunctionTypes::k_polarFunctionType);
+    setFunctionType(PolarFunctionAnalysis(analysedEquation, context));
     return;
   }
 
   // Compute equation's degree regarding x.
-  int xDeg = reducedEquation.polynomialDegree(context, Function::k_unknownName);
+  int xDeg = analysedEquation.polynomialDegree(context, Function::k_unknownName);
 
   bool willBeAlongX = (yDeg == 1) || (yDeg == 2);
   bool willBeAlongY = !willBeAlongX && ((xDeg == 1) || (xDeg == 2));
@@ -156,8 +157,8 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
 
   const char * symbolName = willBeAlongX ? k_ordinateName : Function::k_unknownName;
   TrinaryBoolean highestCoefficientIsPositive = TrinaryBoolean::Unknown;
-  if (!HasNonNullCoefficients(reducedEquation, symbolName, context, &highestCoefficientIsPositive)
-      || reducedEquation.hasComplexI(context)) {
+  if (!HasNonNullCoefficients(analysedEquation, symbolName, context, &highestCoefficientIsPositive)
+      || analysedEquation.hasComplexI(context)) {
     // The equation must have at least one nonNull coefficient.
     // TODO : Accept equations such as y=re(i)
     setFunctionType(&FunctionTypes::k_unhandledCartesianFunctionType);
@@ -187,7 +188,7 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
     }
   }
 
-  setFunctionType(CartesianEquationAnalysis(reducedEquation, context, xDeg, yDeg, highestCoefficientIsPositive));
+  setFunctionType(CartesianEquationAnalysis(analysedEquation, context, xDeg, yDeg, highestCoefficientIsPositive));
 }
 
 typedef bool (*PatternTest)(const Expression& e, Context * context);
@@ -246,13 +247,10 @@ static bool IsRationalFunction(const Expression& e, Context * context) {
 }
 
 const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(const Expression& reducedEquation, Context * context) {
-  Expression analysedEquation = reducedEquation;
-  if (reducedEquation.type() == ExpressionNode::Type::Dependency) {
-    analysedEquation = reducedEquation.childAtIndex(0);
-  }
+  assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
 
   // f(x) = piecewise(...)
-  if (analysedEquation.recursivelyMatches(
+  if (reducedEquation.recursivelyMatches(
     [](const Expression e, Context * context) {
       return e.type() == ExpressionNode::Type::PiecewiseOperator;
     },
@@ -261,7 +259,7 @@ const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(con
     return &FunctionTypes::k_piecewiseFunctionType;
   }
 
-  int xDeg = analysedEquation.polynomialDegree(context, Function::k_unknownName);
+  int xDeg = reducedEquation.polynomialDegree(context, Function::k_unknownName);
   // f(x) = a
   if (xDeg == 0) {
     return &FunctionTypes::k_constantFunctionType;
@@ -269,8 +267,7 @@ const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(con
 
   // f(x) = a*x + b
   if (xDeg == 1) {
-    // analysedEquation is already reduced
-    return analysedEquation.type() == ExpressionNode::Type::Addition ? &FunctionTypes::k_affineFunctionType : &FunctionTypes::k_linearFunctionType;
+    return reducedEquation.type() == ExpressionNode::Type::Addition ? &FunctionTypes::k_affineFunctionType : &FunctionTypes::k_linearFunctionType;
   }
 
   // f(x) = a*x^n + b*x^ + ... + z
@@ -280,7 +277,7 @@ const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(con
 
   // f(x) = a*cos(b*x+c) + d*sin(e*x+f) + g*tan(h*x+k) + z
   if (IsLinearCombinationOfPattern(
-    analysedEquation,
+    reducedEquation,
     context,
     [](const Expression& e, Context * context) {
       return (e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Sine || e.type() == ExpressionNode::Type::Tangent)
@@ -292,7 +289,7 @@ const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(con
 
   // f(x) = a*logk(b*x+c) + d*logM(e*x+f) + ... + z
   if (IsLinearCombinationOfPattern(
-    analysedEquation,
+    reducedEquation,
     context,
     [](const Expression& e, Context * context) {
       return e.type() == ExpressionNode::Type::Logarithm
@@ -304,7 +301,7 @@ const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(con
 
   // f(x) = a*exp(b*x+c) + d
   if (IsLinearCombinationOfPattern(
-    analysedEquation,
+    reducedEquation,
     context,
     [](const Expression& e, Context * context) {
       if (e.type() != ExpressionNode::Type::Power) {
@@ -320,7 +317,7 @@ const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(con
   }
 
   // f(x) = polynomial/polynomial
-  if (IsLinearCombinationOfPattern(analysedEquation, context, &IsRationalFunction)) {
+  if (IsLinearCombinationOfPattern(reducedEquation, context, &IsRationalFunction)) {
     return &FunctionTypes::k_rationalFunctionType;
   }
 
@@ -329,6 +326,8 @@ const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(con
 }
 
 const FunctionType * ContinuousFunctionProperties::CartesianEquationAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context, int xDeg, int yDeg, TrinaryBoolean highestCoefficientIsPositive) {
+  assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
+
   /* We can rely on x and y degree to identify plot type :
    * | y  | x  | Status
    * | 0  | 1  | Vertical Line

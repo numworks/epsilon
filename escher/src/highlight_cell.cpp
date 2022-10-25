@@ -11,6 +11,7 @@ HighlightCell::HighlightCell() :
 void HighlightCell::setHighlighted(bool highlight) {
   // An hidden cell might be deselected but not selected
   assert(m_state != State::Hidden || !highlight);
+  // WARNING : if state = hidden, the cell will not be reload
   if (isHighlighted() != highlight) {
     HighlightCell::setHighlightedWithoutReload(highlight);
     reloadCell();

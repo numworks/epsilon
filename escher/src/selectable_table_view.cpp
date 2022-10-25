@@ -113,16 +113,16 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
   }
 
   HighlightCell * previousCell = cellAtLocation(previousColumn, previousRow);
+  if (previousCell) {
+    previousCell->setHighlighted(false); // Must be done before scrolling because if previousCell becomes hidden, setHighlighted will not reload
+  }
+
   if (selectedRow() >= 0) {
     scrollToCell(selectedColumn(), selectedRow());
   }
 
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelectionAndDidScroll(this, previousColumn, previousRow, withinTemporarySelection);
-  }
-
-  if (previousCell) {
-    previousCell->setHighlighted(false);
   }
 
   HighlightCell * cell = selectedCell();

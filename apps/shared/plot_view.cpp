@@ -65,6 +65,22 @@ void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis pa
   if (a > b) {
     std::swap(a, b);
   }
+#if 0
+  /* Uncomment this if you need a thick broken line.
+   * See the history of CobwebPlotPolicy::drawPlot for a use case. */
+  if (inBottomRightAngle) {
+    /* Thick lines are always drawn below or to the right of the given
+     * coordinates. A bottom/right corner made from a thick horizontal line
+     * ending in (x,y) and a thick vertical line going up from (x,y) will
+     * therefore look like this :
+     *       (y) …
+     *        O  O
+     * (x) O  O  O
+     *  …  O  O
+     * We need to add a pixel in (x+1, y+1) by adding the thickness to the end. */
+    b += thickness - 1;
+  }
+#endif
   if (dashSize <= 0 || 2 * dashSize > b - a) {
     dashSize = b - a;
     KDRect lineRect = (parallel == Axis::Horizontal) ? KDRect(a, p, dashSize, thickness) :  KDRect(p, a, thickness, dashSize);
@@ -81,10 +97,6 @@ void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis pa
     KDRect rectangle = parallel == Axis::Horizontal ? KDRect(i, p, dashSize, thickness) : KDRect(p, i, thickness, dashSize);
     ctx->fillRect(rectangle.intersectedWith(rect), color);
   }
-}
-
-void AbstractPlotView::drawDashedStraightSegment(KDContext * ctx, KDRect rect, Axis parallel, float position, float min, float max, KDColor color, KDCoordinate thickness, KDCoordinate dashSize) const {
-  drawStraightSegment(ctx, rect, parallel, position, min, max, color, thickness, dashSize);
 }
 
 void AbstractPlotView::drawSegment(KDContext * ctx, KDRect rect, Coordinate2D<float> a, Coordinate2D<float> b, KDColor color, bool thick) const {

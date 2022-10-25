@@ -873,8 +873,7 @@ void ContinuousFunction::Model::updateContinuousFunctionProperties(const Ion::St
     }
 
     if (precomputedFunctionSymbol == FunctionType::SymbolType::X) {
-      // TODO : New analysis of function
-      m_properties.setFunctionType(&ContinuousFunctionProperties::k_cartesianFunctionType);
+      m_properties.setFunctionType(ContinuousFunctionProperties::CartesianFunctionAnalysis(equation, context));
       return;
     }
 

@@ -108,6 +108,8 @@ public:
   }
   // Derivation
   bool derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
+
+  void splitIntoNormalForm(Expression & numerator, Expression & denominator, const ExpressionNode::ReductionContext& reductionContext) const;
 private:
   // Unit
   Expression removeUnit(Expression * unit);
@@ -130,7 +132,6 @@ private:
   static bool TermIsPowerOfRationals(const Expression & e);
   static const Expression CreateExponent(Expression e);
   static inline const Expression Base(const Expression e);
-  void splitIntoNormalForm(Expression & numerator, Expression & denominator, const ExpressionNode::ReductionContext& reductionContext) const;
 };
 
 }

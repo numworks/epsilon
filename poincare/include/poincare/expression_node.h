@@ -221,6 +221,17 @@ public:
           UnitConversion::None
         );
     }
+    static ReductionContext DefaultReductionContextForAnalysis(Context * context) {
+      return ReductionContext(
+        context,
+        Preferences::ComplexFormat::Cartesian,
+        Preferences::AngleUnit::Radian,
+        Preferences::UnitFormat::Metric,
+        ReductionTarget::SystemForAnalysis,
+        SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+        UnitConversion::None
+      );
+    }
     Preferences::UnitFormat unitFormat() const { return m_unitFormat; }
     ReductionTarget target() const { return m_target; }
     void setTarget(ReductionTarget target) { m_target = target; }

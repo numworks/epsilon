@@ -1,6 +1,7 @@
 #ifndef KANDINSKY_RECT_H
 #define KANDINSKY_RECT_H
 
+#include <ion/display_constants.h>
 #include <kandinsky/coordinate.h>
 #include <kandinsky/point.h>
 #include <kandinsky/size.h>

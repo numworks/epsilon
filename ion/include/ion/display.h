@@ -11,6 +11,7 @@
  * pixel coordinates every time. We're therefore leveraging this capability
  * which results in a very consequent speedup (up to ~10x faster). */
 
+#include <ion/display_constants.h>
 #include <kandinsky/rect.h>
 #include <kandinsky/color.h>
 
@@ -22,11 +23,6 @@ void pushRectUniform(KDRect r, KDColor c);
 void pullRect(KDRect r, KDColor * pixels);
 
 bool waitForVBlank();
-
-constexpr int Width = 320;
-constexpr int Height = 240;
-constexpr int WidthInTenthOfMillimeter = 576;
-constexpr int HeightInTenthOfMillimeter = 432;
 
 constexpr KDRect KDRectScreen = KDRect(0, 0, Width, Height);
 

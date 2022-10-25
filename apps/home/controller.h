@@ -58,7 +58,7 @@ private:
   constexpr static KDCoordinate k_bottomMargin = 14;
   constexpr static KDCoordinate k_indicatorMargin = 61;
   constexpr static int k_numberOfColumns = 3;
-  constexpr static int k_maxNumberOfCells = 16;
+  constexpr static int k_maxNumberOfCells = 12;
   constexpr static int k_cellHeight = 104;
   constexpr static int k_cellWidth = 104;
   ContentView m_view;

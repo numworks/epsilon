@@ -162,6 +162,9 @@ bool GraphControllerHelper::snapToInterestAndUpdateBanner(double * t, double sta
   case Solver<double>::Interest::LocalMaximum:
     interestMessage = I18n::Message::Maximum;
     break;
+  case Solver<double>::Interest::YIntercept:
+    interestMessage = I18n::Message::LineYInterceptDescription;
+    break;
   default:
     assert(nextPointOfInterest.interest() == Solver<double>::Interest::Intersection);
     interestMessage = I18n::Message::Intersection;

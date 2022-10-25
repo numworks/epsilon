@@ -39,7 +39,7 @@ public:
   FunctionType::SymbolType symbolType() const { return m_plotType->symbolType(); }
   int numberOfSubCurves() const { return m_plotType->numberOfSubCurves(); }
   bool isAlongY() const { return m_plotType->isAlongY(); }
-  bool isConic() const { return m_plotType->isConic(); }
+  Poincare::Conic::Type conicType() const { return m_plotType->conicType(); }
   bool isLine() const { return m_plotType->isLine(); }
   FunctionType::CurveParameterType getCurveParameterType() const { return m_plotType->getCurveParameterType(); }
 
@@ -54,8 +54,8 @@ public:
   bool canBeActiveInTable() const { return !isAlongY() && numberOfSubCurves() == 1 && isEquality(); }
   bool canHaveCustomDomain() const { return !isAlongY() && isEquality(); }
 
+  bool isConic() const { return conicType() != Poincare::Conic::Type::Unknown; }
   bool isHyperbolaWithTwoSubCurves() const { return m_plotType == &FunctionTypes::k_hyperbolaEquationWithTwoSubCurves; }
-  Poincare::Conic::Type conicType() const;
 
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool plotIsDotted() const { return equationType() == Poincare::ComparisonNode::OperatorType::Superior ||  equationType() == Poincare::ComparisonNode::OperatorType::Inferior;}

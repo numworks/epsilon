@@ -2,6 +2,7 @@
 #define SHARED_CONTINUOUS_FUNCTION_TYPES_H
 
 #include <apps/i18n.h>
+#include <poincare/conic.h>
 
 /* A function type is a constexpr object that contains datas about a specific
  * type of function. All these constexpr are declared at the end of this file.
@@ -44,8 +45,8 @@ public:
   virtual Status status() const { assert(isInitialized()); return Status::Enabled; }
   virtual SymbolType symbolType() const { assert(isInitialized()); return SymbolType::Unknown; }
   virtual int numberOfSubCurves() const { assert(isInitialized()); return 1; }
+  virtual Poincare::Conic::Type conicType() const { assert(isInitialized()); return Poincare::Conic::Type::Unknown; }
   virtual bool isAlongY() const { assert(isInitialized()); return false; }
-  virtual bool isConic() const { assert(isInitialized()); return false; }
   virtual bool isLine() const { assert(isInitialized()); return false; }
   virtual CurveParameterType getCurveParameterType() const { assert(isInitialized()); return CurveParameterType::Default; }
 
@@ -112,10 +113,13 @@ public:
 
 class ConicEquationType final : public CartesianEquationType {
 public:
-  constexpr ConicEquationType(I18n::Message message, bool hasTwoSubCurves) :
-    CartesianEquationType(message, hasTwoSubCurves, false)
+  constexpr ConicEquationType(I18n::Message message, Poincare::Conic::Type conicType, bool hasTwoSubCurves) :
+    CartesianEquationType(message, hasTwoSubCurves, false),
+    m_conicType(conicType)
   {}
-  bool isConic() const override { return true; }
+  Poincare::Conic::Type conicType() const override { return m_conicType; }
+private:
+  Poincare::Conic::Type m_conicType;
 };
 
 class LineEquationType final : public CartesianEquationType {
@@ -178,12 +182,12 @@ private:
   // y^2 = f(x)
   constexpr static CartesianEquationType k_cartesianEquationWithTwoSubCurves = CartesianEquationType(I18n::Message::OtherType, true);
   // Conics
-  constexpr static ConicEquationType k_circleEquation = ConicEquationType(I18n::Message::CircleType, true);
-  constexpr static ConicEquationType k_ellipseEquation = ConicEquationType(I18n::Message::EllipseType, true);
-  constexpr static ConicEquationType k_parabolaEquationWithTwoSubCurves = ConicEquationType(I18n::Message::ParabolaType, true);
-  constexpr static ConicEquationType k_parabolaEquationWithOneSubCurve = ConicEquationType(I18n::Message::ParabolaType, false);
-  constexpr static ConicEquationType k_hyperbolaEquationWithTwoSubCurves = ConicEquationType(I18n::Message::HyperbolaType, true);
-  constexpr static ConicEquationType k_hyperbolaEquationWithOneSubCurve = ConicEquationType(I18n::Message::HyperbolaType, false);
+  constexpr static ConicEquationType k_circleEquation = ConicEquationType(I18n::Message::CircleType, Poincare::Conic::Type::Circle, true);
+  constexpr static ConicEquationType k_ellipseEquation = ConicEquationType(I18n::Message::EllipseType, Poincare::Conic::Type::Ellipse, true);
+  constexpr static ConicEquationType k_parabolaEquationWithTwoSubCurves = ConicEquationType(I18n::Message::ParabolaType, Poincare::Conic::Type::Parabola, true);
+  constexpr static ConicEquationType k_parabolaEquationWithOneSubCurve = ConicEquationType(I18n::Message::ParabolaType, Poincare::Conic::Type::Parabola, false);
+  constexpr static ConicEquationType k_hyperbolaEquationWithTwoSubCurves = ConicEquationType(I18n::Message::HyperbolaType, Poincare::Conic::Type::Hyperbola, true);
+  constexpr static ConicEquationType k_hyperbolaEquationWithOneSubCurve = ConicEquationType(I18n::Message::HyperbolaType, Poincare::Conic::Type::Hyperbola, false);
   // x = f(y)
   constexpr static CartesianEquationType k_cartesianEquationAlongY = CartesianEquationType(I18n::Message::InverseType, false, true);
   // x = a

@@ -164,16 +164,12 @@ public:
   constexpr static CodePoint k_cartesianSymbol = ContinuousFunctionProperties::k_cartesianSymbol;
   constexpr static CodePoint k_parametricSymbol = ContinuousFunctionProperties::k_parametricSymbol;
   constexpr static CodePoint k_polarSymbol = ContinuousFunctionProperties::k_polarSymbol;
-  constexpr static CodePoint k_radiusSymbol = 'r';
-  constexpr static CodePoint k_ordinateSymbol = 'y';
+  constexpr static CodePoint k_radiusSymbol = ContinuousFunctionProperties::k_radiusSymbol;
+  constexpr static CodePoint k_ordinateSymbol = ContinuousFunctionProperties::k_ordinateSymbol;
   constexpr static CodePoint k_unnamedExpressionSymbol = k_cartesianSymbol;
 
 private:
-  constexpr static char k_ordinateName[2] = "y";
-  static_assert(k_ordinateSymbol == k_ordinateName[0]);
   constexpr static float k_polarParamRangeSearchNumberOfPoints = 100.0f; // This is ad hoc, no special justification
-  // Units are not handled in the graph app. The default unit does not matters
-  constexpr static Poincare::Preferences::UnitFormat k_defaultUnitFormat = Poincare::Preferences::UnitFormat::Metric;
 
   /* Range */
 
@@ -259,14 +255,8 @@ private:
     void tidyDownstreamPoolFrom(char * treePoolCursor) const override;
     // m_plotType getter
     ContinuousFunctionProperties properties() const { return m_properties; }
-    // Reset m_plotType to Unknown type
-    void resetContinuousFunctionProperties() const { m_properties.resetFunctionType(); }
-    // Update m_plotType depending on the equation
-    void updateContinuousFunctionProperties(const Ion::Storage::Record * record, const Poincare::Expression equation, Poincare::Context * context, Poincare::ComparisonNode::OperatorType precomputedOperatorType, FunctionType::SymbolType precomputedFunctionSymbol) const;
-    // If equation has a NonNull coeff. Can also compute last coeff sign.
-    static bool HasNonNullCoefficients(const Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::TrinaryBoolean * highestDegreeCoefficientIsPositive);
-    // If equation should be allowed when implicit plots are forbidden.
-    static bool IsExplicitEquation(const Poincare::Expression equation, CodePoint symbol);
+    // Reset m_plotType to Uninitialized type
+    void resetProperties() const { m_properties.reset(); }
 
   private:
     // Return address of the record's expression

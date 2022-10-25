@@ -1,5 +1,4 @@
 #include "continuous_function.h"
-#include <apps/exam_mode_configuration.h>
 #include <apps/apps_container_helper.h>
 #include <escher/palette.h>
 #include <poincare/subtraction.h>
@@ -115,7 +114,7 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
   // Separate the two line coefficients for approximation.
   int d = equation.getPolynomialReducedCoefficients(
       k_unknownName, coefficients, context, complexFormat(context), angleUnit(context),
-      k_defaultUnitFormat,
+      ContinuousFunctionProperties::k_defaultUnitFormat,
       ExpressionNode::SymbolicComputation::
           ReplaceAllSymbolsWithDefinitionsOrUndefined);
   assert(d <= 1);
@@ -157,7 +156,7 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, dou
 void ContinuousFunction::updateModel(Context * context, bool wasCartesian) {
   setCache(nullptr);
   // Reset model's plot type. expressionReducedForAnalysis() will update plotType
-  m_model.resetContinuousFunctionProperties();
+  m_model.resetProperties();
   expressionReducedForAnalysis(context);
   assert(properties().isInitialized());
   if (wasCartesian != m_model.properties().isCartesian() || !properties().canHaveCustomDomain()) {
@@ -498,7 +497,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
     if (!properties().isPolar() && (record->fullName() == nullptr || record->fullName()[0] == k_unnamedRecordFirstChar)) {
       /* Function isn't named, m_expression currently is an expression in y or x
        * such as y = x. We extract the solution by solving in y or x. */
-      int yDegree = m_expression.polynomialDegree(context, k_ordinateName);
+      int yDegree = m_expression.polynomialDegree(context, ContinuousFunctionProperties::k_ordinateName);
       bool willBeAlongX = true;
       if (yDegree < 1 || yDegree > 2) {
         int xDegree = m_expression.polynomialDegree(context, k_unknownName);
@@ -514,8 +513,8 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
        * Symbols are replaced to simplify roots. */
       Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
       int degree = m_expression.getPolynomialReducedCoefficients(
-          willBeAlongX ? k_ordinateName : k_unknownName, coefficients, context,
-          preferences.complexFormat(), preferences.angleUnit(), k_defaultUnitFormat,
+          willBeAlongX ? ContinuousFunctionProperties::k_ordinateName : k_unknownName, coefficients, context,
+          preferences.complexFormat(), preferences.angleUnit(), ContinuousFunctionProperties::k_defaultUnitFormat,
           ExpressionNode::SymbolicComputation::
               ReplaceAllDefinedSymbolsWithDefinition);
       assert(!willBeAlongX || degree == yDegree);
@@ -612,7 +611,7 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(con
   }
   if (!m_properties.isInitialized()) {
     // Use the computed equation to update the plot type.
-    updateContinuousFunctionProperties(record, result, context, computedEquationType, computedFunctionSymbol);
+    m_properties.update(result, originalEquation(record, UCodePointUnknown), context, computedEquationType, computedFunctionSymbol);
   }
   return result;
 }
@@ -819,263 +818,10 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
 
 void ContinuousFunction::Model::tidyDownstreamPoolFrom(char * treePoolCursor) const {
   if (treePoolCursor == nullptr || m_expressionDerivate.isDownstreamOf(treePoolCursor)) {
-    resetContinuousFunctionProperties();
+    resetProperties();
     m_expressionDerivate = Expression();
   }
   ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);
-}
-
-void ContinuousFunction::Model::updateContinuousFunctionProperties(const Ion::Storage::Record * record, const Expression equation, Context * context, Poincare::ComparisonNode::OperatorType precomputedOperatorType, FunctionType::SymbolType precomputedFunctionSymbol) const {
-
-  if (ExamModeConfiguration::inequalityGraphingIsForbidden() && precomputedOperatorType != ComparisonNode::OperatorType::Equal) {
-    m_properties.setFunctionType(&ContinuousFunctionProperties::k_bannedFunctionType);
-    return;
-  }
-
-  assert(!equation.isUninitialized());
-  if (equation.type() == ExpressionNode::Type::Undefined) {
-    // Equation is undefined, preserve symbol.
-    switch (precomputedFunctionSymbol) {
-    case FunctionType::SymbolType::T:
-      m_properties.setFunctionType(&ContinuousFunctionProperties::k_undefinedParametricFunctionType);
-      return;
-    case FunctionType::SymbolType::Theta:
-      m_properties.setFunctionType(&ContinuousFunctionProperties::k_undefinedPolarFunctionType);
-      return;
-    default:
-      m_properties.setFunctionType(&ContinuousFunctionProperties::k_undefinedCartesianFunctionType);
-      return;
-    }
-  }
-
-  m_properties.setEquationType(precomputedOperatorType);
-
-  // Compute equation's degree regarding y.
-  int yDeg = equation.polynomialDegree(context, k_ordinateName);
-
-  /* Symbol was precomputed if the expression is a function of type "f(x)=",
-   * "f(t)=" or "r=" (for polar functions). */
-  if (precomputedFunctionSymbol != FunctionType::SymbolType::Unknown) {
-    // There should be no y symbol. Inequations are handled on cartesians only
-    if (yDeg > 0 || (precomputedOperatorType != ComparisonNode::OperatorType::Equal && precomputedFunctionSymbol != FunctionType::SymbolType::X)) {
-      // We distinguish the Unhandled type so that x/θ/t symbol is preserved.
-      switch (precomputedFunctionSymbol) {
-      case FunctionType::SymbolType::T:
-        m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledParametricFunctionType);
-        return;
-      case FunctionType::SymbolType::Theta:
-        m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledPolarFunctionType);
-        return;
-      default:
-        m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledCartesianFunctionType);
-        return;
-      }
-    }
-
-    if (precomputedFunctionSymbol == FunctionType::SymbolType::X) {
-      m_properties.setFunctionType(ContinuousFunctionProperties::CartesianFunctionAnalysis(equation, context));
-      return;
-    }
-
-    assert(precomputedOperatorType == ComparisonNode::OperatorType::Equal);
-
-    if (precomputedFunctionSymbol == FunctionType::SymbolType::T) {
-      const Expression matrixEquation = (equation.type()
-                                         == ExpressionNode::Type::Dependency)
-                                            ? equation.childAtIndex(0)
-                                            : equation;
-      if (matrixEquation.type() != ExpressionNode::Type::Matrix
-          || static_cast<const Matrix &>(matrixEquation).numberOfRows() != 2
-          || static_cast<const Matrix &>(matrixEquation).numberOfColumns()
-                 != 1) {
-        // Invalid parametric format
-        m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledParametricFunctionType);
-        return;
-      }
-      m_properties.setFunctionType(&ContinuousFunctionProperties::k_parametricFunctionType);
-      return;
-    }
-
-    assert(precomputedFunctionSymbol == FunctionType::SymbolType::Theta);
-    m_properties.setFunctionType(&ContinuousFunctionProperties::k_polarFunctionType);
-    return;
-  }
-
-  // Compute equation's degree regarding x.
-  int xDeg = equation.polynomialDegree(context, k_unknownName);
-
-  bool willBeAlongX = (yDeg == 1) || (yDeg == 2);
-  bool willBeAlongY = !willBeAlongX && ((xDeg == 1) || (xDeg == 2));
-  if (!willBeAlongX && !willBeAlongY) {
-    // Any equation with such a y and x degree won't be handled anyway.
-    m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledCartesianFunctionType);
-    return;
-  }
-
-  const char * symbolName = willBeAlongX ? k_ordinateName : k_unknownName;
-  TrinaryBoolean highestCoefficientIsPositive = TrinaryBoolean::Unknown;
-  if (!HasNonNullCoefficients(equation, symbolName, context, &highestCoefficientIsPositive)
-      || equation.hasComplexI(context)) {
-    // The equation must have at least one nonNull coefficient.
-    // TODO : Accept equations such as y=re(i)
-    m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledCartesianFunctionType);
-    return;
-  }
-
-  if (precomputedOperatorType != ComparisonNode::OperatorType::Equal) {
-    if (highestCoefficientIsPositive == TrinaryBoolean::Unknown || (yDeg == 2 && xDeg == -1)) {
-      /* Are unhandled equation with :
-       * - An unknown highest coefficient sign: sign must be strict and constant
-       * - A non polynomial x coefficient in a quadratic equation on y. */
-      m_properties.setFunctionType(&ContinuousFunctionProperties::k_unhandledCartesianFunctionType);
-      return;
-    }
-    if (highestCoefficientIsPositive == TrinaryBoolean::False) {
-      // Oppose the comparison operator
-      precomputedOperatorType = ComparisonNode::SwitchInferiorSuperior(precomputedOperatorType);
-      m_properties.setEquationType(precomputedOperatorType);
-    }
-  }
-
-  /* We can now rely on x and y degree to identify plot type :
-   * | y  | x  | Status
-   * | 0  | 1  | Vertical Line
-   * | 0  | 2  | Vertical Lines
-   * | 1  | 0  | Horizontal Line
-   * | 1  | 1  | Line
-   * | 1  | *  | Cartesian
-   * | 2  | 0  | Other (Two Horizontal Lines)
-   * | 2  | 1  | Circle, Ellipsis, Hyperbola, Parabola, Other
-   * | 2  | 2  | Circle, Ellipsis, Hyperbola, Parabola, Other
-   * | 2  | *  | Other
-   * | *  | 1  | CartesianAlongY
-   *
-   * Other cases should have been escaped above.
-   */
-  if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
-    // No need to replace any symbols in originalEquation().
-    Expression inputEquation = originalEquation(record, UCodePointUnknown);
-    CodePoint symbol = willBeAlongX ? k_ordinateSymbol : UCodePointUnknown;
-    if (!IsExplicitEquation(inputEquation, symbol)) {
-      m_properties.setFunctionType(&ContinuousFunctionProperties::k_bannedFunctionType);
-      return;
-    }
-  }
-
-  if (!willBeAlongX) {
-    if (xDeg == 2) {
-      m_properties.setFunctionType(&ContinuousFunctionProperties::k_cartesianEquationAlongYWithTwoSubCurves);
-      return;
-    }
-    if (yDeg == 0) {
-      m_properties.setFunctionType(&ContinuousFunctionProperties::k_verticalLine);
-      return;
-    }
-    assert(xDeg == 1);
-    m_properties.setFunctionType(&ContinuousFunctionProperties::k_cartesianEquationAlongY);
-    return;
-  }
-
-  if (yDeg == 1 && xDeg == 0) {
-    m_properties.setFunctionType(&ContinuousFunctionProperties::k_horizontalLineEquation);
-    return;
-  }
-
-  if (yDeg == 1 && xDeg == 1 && highestCoefficientIsPositive != TrinaryBoolean::Unknown) {
-    // An Unknown y coefficient sign might mean it depends on x (y*x = ...)
-    m_properties.setFunctionType(&ContinuousFunctionProperties::k_lineEquation);
-    return;
-  }
-
-  if (yDeg >= 1 && xDeg >= 1 && xDeg <= 2 && !ExamModeConfiguration::implicitPlotsAreForbidden()) {
-    /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
-     * details. Otherwise, try to identify a conic.
-     * For instance, x*y=1 as an hyperbola. */
-    Conic equationConic = Conic(equation, context, k_unknownName);
-    Conic::Type ctype = equationConic.getConicType();
-    if (ctype == Conic::Type::Hyperbola) {
-      m_properties.setFunctionType(yDeg > 1 ? &ContinuousFunctionProperties::k_hyperbolaEquationWithTwoSubCurves : &ContinuousFunctionProperties::k_hyperbolaEquationWithOneSubCurve);
-      return;
-    } else if (ctype == Conic::Type::Parabola) {
-      m_properties.setFunctionType(yDeg > 1 ? &ContinuousFunctionProperties::k_parabolaEquationWithTwoSubCurves : &ContinuousFunctionProperties::k_parabolaEquationWithOneSubCurve);
-      return;
-    } else if (ctype == Conic::Type::Ellipse) {
-      m_properties.setFunctionType(&ContinuousFunctionProperties::k_ellipseEquation);
-      return;
-    } else if (ctype == Conic::Type::Circle) {
-      m_properties.setFunctionType(&ContinuousFunctionProperties::k_circleEquation);
-      return;
-    }
-    // A conic could not be identified.
-  }
-
-  if (yDeg == 1) {
-    m_properties.setFunctionType(&ContinuousFunctionProperties::k_simpleCartesianEquationType);
-    return;
-  }
-
-  assert(yDeg == 2);
-  // Unknown type that we are able to plot anyway.
-  m_properties.setFunctionType(&ContinuousFunctionProperties::k_cartesianEquationWithTwoSubCurves);
-  return;
-}
-
-bool ContinuousFunction::Model::HasNonNullCoefficients(const Expression equation, const char * symbolName, Context * context, TrinaryBoolean * highestDegreeCoefficientIsPositive) {
-  Preferences::ComplexFormat complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(Preferences::sharedPreferences()->complexFormat(), equation, context);
-  Preferences::AngleUnit angleUnit = Preferences::UpdatedAngleUnitWithExpressionInput(Preferences::sharedPreferences()->angleUnit(), equation, context);
-  Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-  // Symbols will be replaced anyway to compute isNull
-  int degree = equation.getPolynomialReducedCoefficients(
-      symbolName, coefficients, context, complexFormat, angleUnit,
-      k_defaultUnitFormat,
-      ExpressionNode::SymbolicComputation::
-          ReplaceAllDefinedSymbolsWithDefinition);
-  // Degree should be >= 0 but reduction failure may result in a -1 degree.
-  assert(degree <= Expression::k_maxPolynomialDegree);
-  if (highestDegreeCoefficientIsPositive != nullptr && degree >= 0) {
-    TrinaryBoolean isPositive = coefficients[degree].isPositive(context);
-    if (isPositive == TrinaryBoolean::Unknown) {
-      // Approximate for a better estimation. Nan if coefficient depends on x/y.
-      double approximation = coefficients[degree].approximateToScalar<double>(
-          context, complexFormat, angleUnit);
-      if (!std::isnan(approximation) && approximation != 0.0) {
-        isPositive = BinaryToTrinaryBool(approximation > 0.0);
-      }
-    }
-    *highestDegreeCoefficientIsPositive = isPositive;
-  }
-  // Look for a NonNull coefficient.
-  for (int d = 0; d <= degree; d++) {
-    TrinaryBoolean isNull = coefficients[d].isNull(context);
-    if (isNull == TrinaryBoolean::False) {
-      return true;
-    }
-    if (isNull == TrinaryBoolean::Unknown) {
-      // Approximate for a better estimation. Nan if coefficient depends on x/y.
-      double approximation = coefficients[d].approximateToScalar<double>(
-          context, complexFormat, angleUnit);
-      if (!std::isnan(approximation) && approximation != 0.0) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
-bool ContinuousFunction::Model::IsExplicitEquation(const Expression equation, CodePoint symbol) {
-  /* An equation is explicit if it is a comparison between the given symbol and
-   * something that does not depend on it. For example, using 'y' symbol:
-   * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */
-  return equation.type() == ExpressionNode::Type::Comparison
-         && equation.childAtIndex(0).isIdenticalTo(Symbol::Builder(symbol))
-         && !equation.childAtIndex(1).recursivelyMatches(
-            [](const Expression e, Context * context, void * auxiliary) {
-              const CodePoint * symbol = static_cast<const CodePoint *>(auxiliary);
-              return (!e.isUninitialized() && e.isIdenticalTo(Symbol::Builder(*symbol))) ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
-            },
-            nullptr,
-            ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol,
-            static_cast<void *>(&symbol));
 }
 
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {

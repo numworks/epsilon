@@ -82,5 +82,6 @@ private:
 };
 
 constexpr KDRect KDRectZero = KDRect(0, 0, 0, 0);
+constexpr KDRect KDRectScreen = KDRect(0, 0, Ion::Display::Width, Ion::Display::Height);
 
 #endif

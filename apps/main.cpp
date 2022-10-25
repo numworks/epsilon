@@ -13,7 +13,7 @@ char digit_to_char(int n) {
 
 void ion_main(int argc, const char * const argv[]) {
   Ion::LED::setColor(KDColorBlack);
-  Ion::Display::pushRectUniform(Ion::Display::KDRectScreen, KDColorWhite);
+  Ion::Display::pushRectUniform(KDRectScreen, KDColorWhite);
 
   constexpr int bufsiz = 32;
   char txtbuf[bufsiz];

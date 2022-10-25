@@ -1,4 +1,5 @@
 #include <poincare/conic.h>
+#include <poincare/multiplication.h>
 #include <poincare/polynomial.h>
 #include <poincare/preferences.h>
 #include <algorithm>
@@ -400,8 +401,126 @@ double CartesianConic::getRadius() const {
   return std::sqrt(1 / m_a);
 }
 
-PolarConic::PolarConic(const Expression& e, Context * context) {
-  // TODO
+static bool IsCosOrSinOfTheta(const Expression& e, ExpressionNode::ReductionContext reductionContext, const char * theta, double * coefficientBeforeCos = nullptr) {
+  if (e.type() == ExpressionNode::Type::Multiplication) {
+    // Check if expression is a*b*cos(theta+constant)
+    double coefficient = 1.0;
+    int nChildren = e.numberOfChildren();
+    bool foundCosOrSin = false;
+    for (int i = 0; i < nChildren; i++) {
+      Expression child = e.childAtIndex(i);
+      double tempCoef;
+      bool isCosOrSinOfTheta = IsCosOrSinOfTheta(child, reductionContext, theta, &tempCoef);
+      if (isCosOrSinOfTheta) {
+        if (foundCosOrSin) {
+          return false;
+        }
+        foundCosOrSin = true;
+        coefficient *= tempCoef;
+        continue;
+      }
+      int thetaDeg = child.polynomialDegree(reductionContext.context(), theta);
+      if (thetaDeg != 0) {
+        return false;
+      }
+      coefficient *= child.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    }
+    if (coefficientBeforeCos) {
+      *coefficientBeforeCos = coefficient;
+    }
+    return foundCosOrSin;
+  }
+
+  if (coefficientBeforeCos) {
+    *coefficientBeforeCos = 1.0;
+  }
+  // Check is expression is cos(theta+constant)
+  if (e.type() != ExpressionNode::Type::Sine && e.type() != ExpressionNode::Type::Cosine) {
+    return false;
+  }
+  Expression child = e.childAtIndex(0);
+  int thetaDeg = child.polynomialDegree(reductionContext.context(), theta);
+  if (thetaDeg != 1) {
+    return false;
+  }
+  Expression coefficients[2]; // Only 2 coefficients since child has degree 1
+  child.getPolynomialReducedCoefficients(theta, coefficients, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation());
+  return coefficients[1].isOne();
+}
+
+PolarConic::PolarConic(const Expression& e, Context * context, const char * theta) {
+  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
+  // Reduce Conic for analysis
+  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForAnalysis);
+  Expression reducedExpression = e.cloneAndReduce(reductionContext);
+
+  // Detect the pattern r = a
+  int thetaDeg = reducedExpression.polynomialDegree(context, theta);
+  if (thetaDeg == 0) {
+    m_shape = Shape::Circle;
+    return;
+  }
+  if (thetaDeg > 0) {
+    m_shape = Shape::Undefined;
+    return;
+  }
+
+  // Detect the pattern r = cos/sin(theta)
+  if (IsCosOrSinOfTheta(reducedExpression, reductionContext, theta)) {
+    m_shape = Shape::Circle;
+    return;
+  }
+
+  // Detect the pattern (d*e)/(1±e*cos(theta)) where e is the eccentricity
+  Expression numerator, denominator;
+  if (reducedExpression.type() == ExpressionNode::Type::Multiplication) {
+    static_cast<Multiplication&>(reducedExpression).splitIntoNormalForm(numerator, denominator, reductionContext);
+  } else if (reducedExpression.type() == ExpressionNode::Type::Power && reducedExpression.childAtIndex(1).isMinusOne()) {
+    denominator = reducedExpression.childAtIndex(0);
+  }
+
+  if (denominator.isUninitialized()
+      || (!numerator.isUninitialized() && numerator.polynomialDegree(context, theta) != 0)) {
+    m_shape = Shape::Undefined;
+    return;
+  }
+
+  // Check that the denominator is of the form a+b+c+k*cos(theta)
+  int nChildren = denominator.numberOfChildren();
+  bool foundCosOrSin = false;
+  double coefficient;
+  for (int i = 0; i < nChildren; i++) {
+    Expression child = denominator.childAtIndex(i);
+    bool isCosOrSinOfTheta = IsCosOrSinOfTheta(child, reductionContext, theta, &coefficient);
+    if (isCosOrSinOfTheta) {
+      if (foundCosOrSin) {
+        foundCosOrSin = false;
+        break;
+      }
+      foundCosOrSin = true;
+      continue;
+    }
+    int thetaDeg = child.polynomialDegree(reductionContext.context(), theta);
+    if (thetaDeg != 0) {
+      foundCosOrSin = false;
+      break;
+    }
+  }
+
+  if (!foundCosOrSin) {
+    m_shape = Shape::Undefined;
+    return;
+  }
+  double absValueCoefficient = std::fabs(coefficient);
+  if (absValueCoefficient < 1.0) {
+    m_shape = Shape::Ellipse;
+  } else if (absValueCoefficient > 1.0) {
+    m_shape = Shape::Hyperbola;
+  } else {
+    m_shape = Shape::Parabola;
+  }
 }
 
 ParametricConic::ParametricConic(const Expression& e, Context * context) {

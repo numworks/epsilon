@@ -392,6 +392,25 @@ const FunctionType * ContinuousFunctionProperties::CartesianEquationAnalysis(con
   return &FunctionTypes::k_cartesianEquationWithTwoSubCurves;
 }
 
+const FunctionType * ContinuousFunctionProperties::PolarFunctionAnalysis(const Expression& reducedEquation, Context * context) {
+  assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
+
+  PolarConic conicProperties = PolarConic(reducedEquation, context, Function::k_unknownName);
+  switch (conicProperties.conicType().shape) {
+  case Conic::Shape::Hyperbola:
+    return &FunctionTypes::k_polarHyperbolaFunctionType;
+  case Conic::Shape::Parabola:
+    return &FunctionTypes::k_polarParabolaFunctionType;
+  case Conic::Shape::Ellipse:
+    return &FunctionTypes::k_polarEllipseFunctionType;
+  case Conic::Shape::Circle:
+    return &FunctionTypes::k_polarCircleFunctionType;
+  default:
+    // A conic could not be identified.
+    return &FunctionTypes::k_polarFunctionType;
+  }
+}
+
 bool ContinuousFunctionProperties::IsExplicitEquation(const Expression equation, CodePoint symbol) {
   /* An equation is explicit if it is a comparison between the given symbol and
    * something that does not depend on it. For example, using 'y' symbol:

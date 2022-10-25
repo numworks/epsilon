@@ -96,6 +96,7 @@ public:
 private:
   static const FunctionType * CartesianFunctionAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context);
   static const FunctionType * CartesianEquationAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context, int xDeg, int yDeg, Poincare::TrinaryBoolean highestCoefficientIsPositive);
+  static const FunctionType * PolarFunctionAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context);
 
   // If equation has a NonNull coeff. Can also compute last coeff sign.
   static bool HasNonNullCoefficients(const Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::TrinaryBoolean * highestDegreeCoefficientIsPositive);

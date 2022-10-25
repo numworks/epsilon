@@ -82,13 +82,6 @@ public:
   CurveParameterType getCurveParameterType() const override { return CurveParameterType::Parametric; }
 };
 
-class PolarFunctionType final : public FunctionType {
-public:
-  constexpr PolarFunctionType() : FunctionType(I18n::Message::PolarType) {}
-  SymbolType symbolType() const override { return SymbolType::Theta; }
-  CurveParameterType getCurveParameterType() const override { return CurveParameterType::Polar; }
-};
-
 class CartesianEquationType : public FunctionType {
 public:
   constexpr CartesianEquationType(I18n::Message message, bool hasTwoSubCurves = false, bool isAlongY = false) :
@@ -134,6 +127,24 @@ private:
   const CurveParameterType m_curveParameterType;
 };
 
+class PolarFunctionType : public FunctionType {
+public:
+  constexpr PolarFunctionType(I18n::Message message) : FunctionType(message) {}
+  SymbolType symbolType() const override { return SymbolType::Theta; }
+  CurveParameterType getCurveParameterType() const override { return CurveParameterType::Polar; }
+};
+
+class PolarConicFunctionType final : public PolarFunctionType {
+public:
+  constexpr PolarConicFunctionType(I18n::Message message, Poincare::Conic::Shape conicShape) :
+    PolarFunctionType(message),
+    m_conicShape(conicShape)
+  {}
+  Poincare::Conic::Shape conicShape() const override { return m_conicShape; }
+private:
+  Poincare::Conic::Shape m_conicShape;
+};
+
 // ====== ALL FUNCTION TYPES ======
 
 class FunctionTypes {
@@ -157,7 +168,11 @@ private:
   constexpr static ParametricFunctionType k_parametricFunctionType = ParametricFunctionType();
 
   // Polar
-  constexpr static PolarFunctionType k_polarFunctionType = PolarFunctionType();
+  constexpr static PolarFunctionType k_polarFunctionType = PolarFunctionType(I18n::Message::PolarType);
+  constexpr static PolarFunctionType k_polarEllipseFunctionType = PolarConicFunctionType(I18n::Message::EllipseType, Poincare::Conic::Shape::Ellipse);
+  constexpr static PolarFunctionType k_polarCircleFunctionType = PolarConicFunctionType(I18n::Message::CircleType, Poincare::Conic::Shape::Circle);
+  constexpr static PolarFunctionType k_polarHyperbolaFunctionType = PolarConicFunctionType(I18n::Message::HyperbolaType, Poincare::Conic::Shape::Hyperbola);
+  constexpr static PolarFunctionType k_polarParabolaFunctionType = PolarConicFunctionType(I18n::Message::ParabolaType, Poincare::Conic::Shape::Parabola);
 
   // Cartesian function
   // TODO: Update messages.

@@ -1,4 +1,7 @@
 #include "hypothesis_controller.h"
+#include "inference/app.h"
+#include "inference/statistic/input_controller.h"
+#include "inference/text_helpers.h"
 #include <apps/apps_container.h>
 #include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
@@ -12,11 +15,9 @@
 #include <shared/poincare_helpers.h>
 #include <string.h>
 
-#include "inference/statistic/input_controller.h"
-#include "inference/app.h"
-#include "inference/text_helpers.h"
+using namespace Escher;
 
-using namespace Inference;
+namespace Inference {
 
 HypothesisController::HypothesisController(Escher::StackViewController * parent,
                                            InputController * inputController,
@@ -172,4 +173,6 @@ void HypothesisController::loadHypothesisParam() {
   m_ha.reload();
   resetMemoization();
   m_selectableTableView.reloadData();
+}
+
 }

@@ -1,14 +1,14 @@
+#include "inference/app.h"
+#include "inference/text_helpers.h"
+#include "test/hypothesis_controller.h"
 #include "type_controller.h"
-
 #include <apps/i18n.h>
 #include <assert.h>
 #include <escher/view_controller.h>
 #include <ion/events.h>
 #include <poincare/print.h>
 
-#include "test/hypothesis_controller.h"
-#include "inference/app.h"
-#include "inference/text_helpers.h"
+using namespace Escher;
 
 namespace Inference {
 

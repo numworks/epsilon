@@ -8,13 +8,13 @@ namespace Inference {
 
 class InputHomogeneityController : public InputCategoricalController {
 public:
-  InputHomogeneityController(StackViewController * parent, Escher::ViewController * homogeneityResultsController, HomogeneityTest * statistic, InputEventHandlerDelegate * inputEventHandlerDelegate);
+  InputHomogeneityController(Escher::StackViewController * parent, Escher::ViewController * homogeneityResultsController, HomogeneityTest * statistic, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
 
   // ViewController
   const char * title() override { return I18n::translate(I18n::Message::InputHomogeneityControllerTitle); }
 
   // SelectableTableViewDelegate
-  void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
+  void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 
 private:
   int indexOfSignificanceCell() const override { return k_indexOfTableCell + 1; }

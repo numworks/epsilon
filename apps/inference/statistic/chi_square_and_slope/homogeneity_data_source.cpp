@@ -1,8 +1,9 @@
 #include "homogeneity_data_source.h"
-
 #include <escher/even_odd_editable_text_cell.h>
 #include <poincare/print.h>
 #include <string.h>
+
+using namespace Escher;
 
 namespace Inference {
 

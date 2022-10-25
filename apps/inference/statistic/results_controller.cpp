@@ -1,5 +1,6 @@
 #include "results_controller.h"
-
+#include "inference/app.h"
+#include "inference/text_helpers.h"
 #include <apps/i18n.h>
 #include <escher/input_event_handler_delegate.h>
 #include <escher/invocation.h>
@@ -7,10 +8,9 @@
 #include <escher/text_field_delegate.h>
 #include <poincare/print.h>
 
-#include "inference/app.h"
-#include "inference/text_helpers.h"
+using namespace Escher;
 
-using namespace Inference;
+namespace Inference {
 
 ResultsController::ResultsController(Escher::StackViewController * parent,
                                      Statistic * statistic,
@@ -70,4 +70,6 @@ bool ResultsController::ButtonAction(void * c, void * s) {
 
 void ResultsController::initCell(ExpressionCellWithBufferWithMessage, void * cell, int index) {
   static_cast<ExpressionCellWithBufferWithMessage *>(cell)->setParentResponder(&m_tableView);
+}
+
 }

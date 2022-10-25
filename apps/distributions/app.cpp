@@ -1,10 +1,10 @@
 #include "app.h"
-
-#include <apps/apps_container.h>
-#include <apps/shared/text_field_delegate_app.h>
-#include <apps/exam_mode_configuration.h>
-
 #include "distributions_icon.h"
+#include <apps/apps_container.h>
+#include <apps/exam_mode_configuration.h>
+#include <apps/shared/text_field_delegate_app.h>
+
+using namespace Escher;
 
 namespace Distributions {
 
@@ -66,4 +66,4 @@ void App::Snapshot::reset() {
   m_pageQueue.reset();
 }
 
-}  // namespace Distributions
+}

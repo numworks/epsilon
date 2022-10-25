@@ -1,13 +1,13 @@
 #include "app.h"
-
-#include <apps/apps_container.h>
-#include <apps/shared/text_field_delegate_app.h>
-#include <apps/exam_mode_configuration.h>
-
-#include "models/statistic/homogeneity_test.h"
-#include "inference_icon.h"
 #include "images/confidence_interval.h"
 #include "images/significance_test.h"
+#include "inference_icon.h"
+#include "models/statistic/homogeneity_test.h"
+#include <apps/apps_container.h>
+#include <apps/exam_mode_configuration.h>
+#include <apps/shared/text_field_delegate_app.h>
+
+using namespace Escher;
 
 namespace Inference {
 
@@ -142,4 +142,4 @@ bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
   return !isStoreMenuOpen() || !record.hasExtension(Ion::Storage::lisExtension);
 }
 
-}  // namespace Inference
+}

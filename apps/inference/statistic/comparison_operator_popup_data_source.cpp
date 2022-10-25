@@ -1,7 +1,9 @@
 #include "comparison_operator_popup_data_source.h"
-#include <poincare/print.h>
 #include "inference/app.h"
 #include "inference/text_helpers.h"
+#include <poincare/print.h>
+
+using namespace Escher;
 
 namespace Inference {
 

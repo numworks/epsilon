@@ -6,8 +6,6 @@
 #include <kandinsky/context.h>
 #include <kandinsky/rect.h>
 
-using namespace Escher;
-
 namespace Escher {
 
 /* Simple HighlightCell with a solid color. */

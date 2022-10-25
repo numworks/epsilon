@@ -16,7 +16,7 @@ public:
    * without ever destroying them. As such, we make sure to call it only once
    * in the constructor. */
   void initView() override {}
-  KDColor tabBackgroundColor() const override { return Palette::GrayDark; }
+  KDColor tabBackgroundColor() const override { return Escher::Palette::GrayDark; }
 
 
 private:
@@ -32,7 +32,7 @@ private:
     void stackOpenPage(ViewController * nextPage) override { tabController()->stackOpenPage(nextPage); }
 
     // SelectableTableViewDelegate
-    void tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
+    void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
 
     void setMode(ResultHomogeneityTableCell::Mode mode) { m_resultHomogeneityTable.setMode(mode); }
 
@@ -48,7 +48,7 @@ private:
       Escher::ViewController(responder),
       m_tableController(tableController)
     {}
-    View * view() override { return m_tableController->view(); }
+    Escher::View * view() override { return m_tableController->view(); }
     void didBecomeFirstResponder() override { m_tableController->didBecomeFirstResponder(); }
     void viewWillAppear() override { m_tableController->viewWillAppear(); }
 

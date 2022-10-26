@@ -33,7 +33,7 @@ jobs:
       - uses: numworks/setup-arm-toolchain@latest
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.SHELLY_ANN_PAT }}
+          token: ${{ secrets.PAT }}
           submodules: true
       - run: make MODEL=n0110 epsilon.dfu
       - run: make MODEL=n0110 epsilon.onboarding.dfu
@@ -50,7 +50,7 @@ jobs:
       - uses: numworks/setup-arm-toolchain@latest
       - uses: actions/checkout@v2
         with:
-          token: ${{ secrets.SHELLY_ANN_PAT }}
+          token: ${{ secrets.PAT }}
           submodules: true
       - run: make MODEL=n0120 epsilon.dfu
       - run: make MODEL=n0120 epsilon.onboarding.dfu

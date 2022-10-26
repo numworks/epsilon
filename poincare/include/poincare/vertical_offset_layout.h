@@ -62,6 +62,7 @@ private:
   bool protectedIsIdenticalTo(Layout l) override;
 
   LayoutNode * indiceLayout() { return childAtIndex(0); }
+  int baseOffsetInParent() const { return m_horizontalPosition == HorizontalPosition::Prefix ? +1 : -1; }
   LayoutNode * baseLayout();
 
   VerticalPosition m_verticalPosition : 1;

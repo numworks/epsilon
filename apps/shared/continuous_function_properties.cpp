@@ -414,7 +414,7 @@ const FunctionType * ContinuousFunctionProperties::PolarFunctionAnalysis(const E
 
   double angle = 0.0;
   double coefficientBeforeTheta = 1.0;
-  if (!denominator.isUninitialized() && Trigonometry::IsCosOrSinOfSymbol(denominator, reductionContext, Function::k_unknownName, nullptr, &coefficientBeforeTheta, &angle) && coefficientBeforeTheta == 1.0) {
+  if (!denominator.isUninitialized() && Trigonometry::IsCosOrSinOfSymbol(denominator, reductionContext, Function::k_unknownName, false, nullptr, &coefficientBeforeTheta, &angle) && coefficientBeforeTheta == 1.0) {
     if (angle == 0.0 || angle == M_PI) {
       return &FunctionTypes::k_polarVerticalLineType;
     }

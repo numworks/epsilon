@@ -611,34 +611,31 @@ std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, 
   return c;
 }
 
- bool Trigonometry::IsCosOrSinOfSymbol(const Expression& e, ExpressionNode::ReductionContext reductionContext, const char * symbol, double * coefficientBeforeCos, double * coefficientBeforeSymbol, double * angle) {
-  if (e.type() == ExpressionNode::Type::Multiplication) {
-    // Check if expression is a*b*cos(theta+constant)
-    double coefficient = 1.0;
+ bool Trigonometry::IsCosOrSinOfSymbol(const Expression& e, ExpressionNode::ReductionContext reductionContext, const char * symbol, bool acceptAddition, double * coefficientBeforeCos, double * coefficientBeforeSymbol, double * angle) {
+  if (e.type() == ExpressionNode::Type::Multiplication || (acceptAddition && e.type() == ExpressionNode::Type::Addition)) {
+    /* Check if expression is a*b*cos(theta+constant) or if
+     * expression is a*cos(theta+b)+constant */
     int nChildren = e.numberOfChildren();
-    bool foundCosOrSin = false;
     for (int i = 0; i < nChildren; i++) {
       Expression child = e.childAtIndex(i);
-      double tempCoef;
-      bool isCosOrSinOfTheta = IsCosOrSinOfSymbol(child, reductionContext, symbol, &tempCoef, coefficientBeforeSymbol, angle);
-      if (isCosOrSinOfTheta) {
-        if (foundCosOrSin) {
-          return false;
-        }
-        foundCosOrSin = true;
-        coefficient *= tempCoef;
+      if(!IsCosOrSinOfSymbol(child, reductionContext, symbol, acceptAddition, coefficientBeforeCos, coefficientBeforeSymbol, angle)) {
         continue;
       }
-      int thetaDeg = child.polynomialDegree(reductionContext.context(), symbol);
-      if (thetaDeg != 0) {
+      if (nChildren == 1) {
+        return true;
+      }
+      Expression clone = e.clone();
+      NAryExpression eWithoutCos = static_cast<NAryExpression&>(clone);
+      eWithoutCos.removeChildAtIndexInPlace(i);
+      if (eWithoutCos.polynomialDegree(reductionContext.context(), symbol) != 0) {
         return false;
       }
-      coefficient *= child.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+      if (coefficientBeforeCos && e.type() == ExpressionNode::Type::Multiplication) {
+        *coefficientBeforeCos *= eWithoutCos.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+      }
+      return true;
     }
-    if (coefficientBeforeCos) {
-      *coefficientBeforeCos = coefficient;
-    }
-    return foundCosOrSin;
+    return false;
   }
 
   if (coefficientBeforeCos) {

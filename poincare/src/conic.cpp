@@ -1,4 +1,5 @@
 #include <poincare/conic.h>
+#include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/polynomial.h>
 #include <poincare/preferences.h>
@@ -459,8 +460,67 @@ PolarConic::PolarConic(const Expression& e, Context * context, const char * thet
   }
 }
 
-ParametricConic::ParametricConic(const Expression& e, Context * context) {
-  // TODO
+ParametricConic::ParametricConic(const Expression& e, Context * context, const char * symbol) {
+  Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
+  Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
+  Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric;
+  // Reduce Conic for analysis
+  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForAnalysis);
+  Expression reducedExpression = e.cloneAndReduce(reductionContext);
+  assert(reducedExpression.type() == ExpressionNode::Type::Matrix
+        && static_cast<Matrix&>(reducedExpression).numberOfColumns() == 1
+        && static_cast<Matrix&>(reducedExpression).numberOfRows() == 2);
+
+  const Expression xOfT = reducedExpression.childAtIndex(0);
+  const Expression yOfT = reducedExpression.childAtIndex(1);
+
+  int degOfTinX = xOfT.polynomialDegree(context, symbol);
+  int degOfTinY = yOfT.polynomialDegree(context, symbol);
+
+  // Detect parabola (x , y) = (a*t+b , c*t^2+d)
+  if ((degOfTinX == 1 && degOfTinY == 2) || (degOfTinX == 2 && degOfTinY == 1)) {
+    m_shape = Shape::Parabola;
+    return;
+  }
+
+  if (degOfTinX >= 0 || degOfTinY >= 0) {
+    m_shape = Shape::Undefined;
+    return;
+  }
+
+  /* Detect other conics:
+   * Circle: (x , y) = (A*cos(B*t+C)+D , A*cos(B*t+E)+F)
+   * Ellipse: (x , y) = (A*cos(B*t+C)+D , G*cos(B*t+E)+F)
+   *
+   * TODO: Hyperbolas are not detected for now.
+   * Hyperbola: (x , y) = (A*sec(B*t+C)+D , G*tan(B*t+E)+F)
+   * */
+
+  // Detect if x(t) = a*cos(b*t+c)+d, same for y(t)
+  double xCoefficientBeforeCos;
+  double xCoefficientBeforeSymbol;
+  if (!Trigonometry::IsCosOrSinOfSymbol(xOfT, reductionContext, symbol, true, &xCoefficientBeforeCos, &xCoefficientBeforeSymbol)) {
+    m_shape = Shape::Undefined;
+    return;
+  }
+
+  double yCoefficientBeforeCos;
+  double yCoefficientBeforeSymbol;
+  if (!Trigonometry::IsCosOrSinOfSymbol(yOfT, reductionContext, symbol, true, &yCoefficientBeforeCos, &yCoefficientBeforeSymbol)) {
+    m_shape = Shape::Undefined;
+    return;
+  }
+
+  if (yCoefficientBeforeSymbol != xCoefficientBeforeSymbol) {
+    m_shape = Shape::Undefined;
+    return;
+  }
+
+  if (yCoefficientBeforeCos == xCoefficientBeforeCos) {
+    m_shape = Shape::Circle;
+    return;
+  }
+  m_shape = Shape::Ellipse;
 }
 
 }

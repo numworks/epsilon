@@ -148,6 +148,7 @@ class Expression : public TreeHandle {
   friend class SymbolNode;
   friend class UnitNode;
 
+  friend class PolarConic;
   friend class SimplificationHelper;
 
 public:

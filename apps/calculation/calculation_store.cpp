@@ -314,7 +314,9 @@ void CalculationStore::recomputeHeights(HeightComputer heightComputer) {
 bool CalculationStore::preferencesMightHaveChanged(Poincare::Preferences * preferences) {
   // Track settings that might invalidate HistoryCells heights
   if (m_inUsePreferences.combinatoricSymbols() == preferences->combinatoricSymbols()
-    && m_inUsePreferences.numberOfSignificantDigits() == preferences->numberOfSignificantDigits()) {
+    && m_inUsePreferences.numberOfSignificantDigits() == preferences->numberOfSignificantDigits()
+    && m_inUsePreferences.logarithmBasePosition() == preferences->logarithmBasePosition())
+  {
     return false;
   }
   m_inUsePreferences = *preferences;

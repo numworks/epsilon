@@ -67,6 +67,10 @@ public:
     Portuguese = 5,
     Undefined = 6, // Undefined must be the last ExamMode.
   };
+  enum class LogarithmBasePosition : uint8_t {
+    BottomRight = 0,
+    TopLeft,
+  };
 
   constexpr static int k_numberOfExamModes = 6;
   static_assert(static_cast<int>(ExamMode::IBTest) == 3, "Preferences::ExamMode::IBTest != 3 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
@@ -117,6 +121,8 @@ public:
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) { m_numberOfSignificantDigits = numberOfSignificantDigits; }
   bool mixedFractionsAreEnabled() const { return m_mixedFractionsAreEnabled; }
   void enableMixedFractions(MixedFractions enable) { m_mixedFractionsAreEnabled = static_cast<bool>(enable); }
+  LogarithmBasePosition logarithmBasePosition() const { return m_logarithmBasePosition; }
+  void setLogarithmBasePosition(LogarithmBasePosition position) { m_logarithmBasePosition = position; }
 
   static_assert((int8_t)Preferences::ExamMode::Off == 0 && (int8_t)Preferences::ExamMode::Unknown < 0, "Preferences::isInExamMode() relies on exam modes order");
   bool isInExamMode() const { return (int8_t)examMode() > 0; }
@@ -148,6 +154,7 @@ private:
   mutable ExamMode m_examMode;
   mutable PressToTestParams m_pressToTestParams;
   mutable bool m_mixedFractionsAreEnabled;
+  mutable LogarithmBasePosition m_logarithmBasePosition;
   /* Settings that alter layouts should be tracked by
    * CalculationStore::preferencesMightHaveChanged */
 };

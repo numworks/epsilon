@@ -9,6 +9,7 @@ void GlobalPreferences::setCountry(I18n::Country country) {
   m_country = country;
   Poincare::Preferences::sharedPreferences()->setCombinatoricSymbols(combinatoricsSymbols());
   Poincare::Preferences::sharedPreferences()->enableMixedFractions(mixedFractions());
+  Poincare::Preferences::sharedPreferences()->setLogarithmBasePosition(logarithmBasePosition());
 }
 
 void GlobalPreferences::setBrightnessLevel(int brightnessLevel) {

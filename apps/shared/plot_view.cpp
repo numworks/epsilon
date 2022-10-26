@@ -118,17 +118,16 @@ static KDCoordinate relativePositionToOffset(AbstractPlotView::RelativePosition 
   }
 }
 
-static KDPoint computeOrigin(const AbstractPlotView * plotView, KDSize size, Coordinate2D<float> xy, AbstractPlotView::RelativePosition xPosition, AbstractPlotView::RelativePosition yPosition, bool ignoreMargin) {
+static KDPoint computeOrigin(Coordinate2D<float> xy, KDSize size, AbstractPlotView::RelativePosition xPosition, AbstractPlotView::RelativePosition yPosition, bool ignoreMargin) {
   assert(plotView);
-  Coordinate2D<float> p = plotView->floatToPixel2D(xy);
-  KDCoordinate x = std::round(p.x1()) + relativePositionToOffset(xPosition, size.width(), ignoreMargin);
-  KDCoordinate y = std::round(p.x2()) + relativePositionToOffset(yPosition, size.height(), ignoreMargin);
+  KDCoordinate x = std::round(xy.x1()) + relativePositionToOffset(xPosition, size.width(), ignoreMargin);
+  KDCoordinate y = std::round(xy.x2()) + relativePositionToOffset(yPosition, size.height(), ignoreMargin);
   return KDPoint(x, y);
 }
 
 KDRect AbstractPlotView::labelRect(const char * label, Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, bool ignoreMargin) const {
   KDSize labelSize = KDFont::Font(k_font)->stringSize(label);
-  KDPoint labelOrigin = computeOrigin(this, labelSize, xy, xPosition, yPosition, ignoreMargin);
+  KDPoint labelOrigin = computeOrigin(floatToPixel2D(xy), labelSize, xPosition, yPosition, ignoreMargin);
   return KDRect(labelOrigin, labelSize);
 }
 
@@ -145,7 +144,7 @@ void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * labe
 
 void AbstractPlotView::drawLayout(KDContext * ctx, KDRect rect, Layout layout, Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin) const {
   KDSize layoutSize = layout.layoutSize(k_font);
-  KDPoint layoutOrigin = computeOrigin(this, layoutSize, xy, xPosition, yPosition, ignoreMargin);
+  KDPoint layoutOrigin = computeOrigin(floatToPixel2D(xy), layoutSize, xPosition, yPosition, ignoreMargin);
   if (KDRect(layoutOrigin, layoutSize).intersects(rect)) {
     layout.draw(ctx, layoutOrigin, k_font, color, backgroundColor());
   }

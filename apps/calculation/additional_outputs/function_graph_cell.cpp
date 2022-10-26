@@ -36,9 +36,9 @@ void FunctionAxis<N>::drawAxis(const AbstractPlotView * plotView, KDContext * ct
   // Draw the usual graduations
   PlotPolicy::SimpleAxis::drawAxis(plotView, ctx, rect, axis);
   // Draw the dashed lines since they are the ticks of the special labels
-  plotView->drawStraightSegment(ctx, rect, otherAxis, t, 0.0f, other, k_color, 1, 3);
+  plotView->drawDashedStraightSegment(ctx, rect, otherAxis, t, 0.0f, other, k_specialLabelsColor);
   // Draw the special label
-  PlotPolicy::AbstractLabeledAxis::drawLabel(N, t, plotView, ctx, rect, axis, k_color);
+  PlotPolicy::AbstractLabeledAxis::drawLabel(N, t, plotView, ctx, rect, axis, k_specialLabelsColor);
 }
 
 template<size_t N>

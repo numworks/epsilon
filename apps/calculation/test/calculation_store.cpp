@@ -485,6 +485,7 @@ QUIZ_CASE(calculation_involving_sequence) {
 }
 
 bool operator ==(const AdditionalInformations &a, const AdditionalInformations &b) {
+  // TODO C++20 Use a default comparison operator
   return a.integer == b.integer && a.rational == b.rational && a.trigonometry == b.trigonometry && a.unit == b.unit && a.matrix == b.matrix && a.vector == b.vector && a.complex == b.complex && a.function == b.function;
 }
 

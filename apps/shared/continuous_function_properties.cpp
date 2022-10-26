@@ -443,6 +443,26 @@ const FunctionType * ContinuousFunctionProperties::PolarFunctionAnalysis(const E
 
 const FunctionType * ContinuousFunctionProperties::ParametricFunctionAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context) {
   assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
+
+  // Detect lines
+  assert(reducedEquation.type() == ExpressionNode::Type::Matrix
+        && static_cast<const Matrix&>(reducedEquation).numberOfColumns() == 1
+        && static_cast<const Matrix&>(reducedEquation).numberOfRows() == 2);
+
+  const Expression xOfT = reducedEquation.childAtIndex(0);
+  const Expression yOfT = reducedEquation.childAtIndex(1);
+  int degOfTinX = xOfT.polynomialDegree(context, Function::k_unknownName);
+  int degOfTinY = yOfT.polynomialDegree(context, Function::k_unknownName);
+  if (degOfTinX == 0 && degOfTinY != 0) {
+    return &FunctionTypes::k_parametricVerticalLineType;
+  }
+  if (degOfTinY == 0 && degOfTinX != 0) {
+    return &FunctionTypes::k_parametricHorizontalLineType;
+  }
+  if (degOfTinX == 1 && degOfTinY == 1) {
+    return &FunctionTypes::k_parametricLineType;
+  }
+
   // Detect polar conics
   ParametricConic conicProperties = ParametricConic(reducedEquation, context, Function::k_unknownName);
   switch (conicProperties.conicType().shape) {

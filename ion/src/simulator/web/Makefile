@@ -37,9 +37,9 @@ endif
 
 DEFAULT = epsilon.zip
 
-$(addprefix $(BUILD_DIR)/ion/src/simulator/web/,calculator.html calculator.css): ion/src/simulator/shared/layout.json ion/src/simulator/web/layout.py | $$(@D)/.
+$(addprefix $(BUILD_DIR)/ion/src/simulator/web/,calculator.html calculator.css): ion/src/simulator/shared/layout.json ion/src/simulator/web/css_html_layout.py | $$(@D)/.
 	$(call rule_label,LAYOUT)
-	$(Q) $(PYTHON) ion/src/simulator/web/layout.py --html $(BUILD_DIR)/ion/src/simulator/web/calculator.html --css $(BUILD_DIR)/ion/src/simulator/web/calculator.css $<
+	$(Q) $(PYTHON) ion/src/simulator/web/css_html_layout.py --html $(BUILD_DIR)/ion/src/simulator/web/calculator.html --css $(BUILD_DIR)/ion/src/simulator/web/calculator.css $<
 
 $(BUILD_DIR)/ion/src/simulator/web/simulator.html: $(addprefix $(BUILD_DIR)/ion/src/simulator/web/,calculator.html calculator.css)
 

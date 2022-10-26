@@ -1,14 +1,14 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_RATIONAL_LIST_CONTROLLER_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_RATIONAL_LIST_CONTROLLER_H
 
-#include "expressions_list_controller.h"
+#include "chainable_expressions_list_controller.h"
 
 namespace Calculation {
 
-class RationalListController : public ExpressionsListController {
+class RationalListController : public ChainableExpressionsListController {
 public:
   RationalListController(EditExpressionController * editExpressionController) :
-    ExpressionsListController(editExpressionController) {}
+    ChainableExpressionsListController(editExpressionController) {}
 
   void setExpression(Poincare::Expression e) override;
 

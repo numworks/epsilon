@@ -30,11 +30,11 @@ float Expression::Approximate(const TypeBlock * block) {
     case BlockType::Constant:
       return Constant::Value(block);
     case BlockType::Addition:
-      Approximation::MapAndReduce(block, Addition::Reduce);
+      return Approximation::MapAndReduce(block, Addition::Reduce);
     case BlockType::Division:
-      Approximation::MapAndReduce(block, Division::Reduce);
+      return Approximation::MapAndReduce(block, Division::Reduce);
     case BlockType::Subtraction:
-      Approximation::MapAndReduce(block, Subtraction::Reduce);
+      return Approximation::MapAndReduce(block, Subtraction::Reduce);
     default:
       assert(false);
   };
@@ -53,15 +53,15 @@ void Expression::ProjectionReduction(TypeBlock * block, TypeBlock * (*PushProjec
     childrenReferences[indexedNode.m_index] = EditionReference(indexedNode.m_node);
   }
   // Move first child
-  childrenReferences[0].insertTreeAfter(multiplication);
+  childrenReferences[0].insertTreeAfterNode(multiplication);
   // Create empty ^ (or *)
   EditionReference power(PushInverse());
   // Move second child
-  childrenReferences[1].insertTreeAfter(power);
+  childrenReferences[1].insertTreeAfterNode(power);
   // Complete: a * b^-1 (or a + b * -1)
   Node::Push<IntegerShort>(-1);
-  // Remove / node (or -)
-  division.removeNode();
+  // Replace single-noded division (or subtraction) by the new multiplication (or addition)
+  division.replaceNodeByTree(multiplication);
 }
 
 }

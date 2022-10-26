@@ -46,7 +46,7 @@ IntegerHandler Rational::Denominator(const TypeBlock * block) {
       return IntegerHandler(RationalShort::DenominatorValue(block));
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig:
-      return IntegerHandler(RationalBig::DenominatorDigits(block), RationalBig::DenominatorNumberOfDigits(block), true);
+      return IntegerHandler(RationalBig::DenominatorDigits(block), RationalBig::DenominatorNumberOfDigits(block), false);
     default:
       assert(false);
   }

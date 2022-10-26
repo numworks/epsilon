@@ -22,15 +22,15 @@ void testChildrenIterator() {
   std::cout << "\n---------------- Edit children forward ----------------" << std::endl;
   constexpr Tree integer = 42_n;
   for (NodeIterator::IndexedNode indexedNode : NodeIterator(mult).forwardEditableChildren()) {
-    EditionReference(indexedNode.m_node).replaceTreeBy(integer);
+    EditionReference(indexedNode.m_node).replaceTreeByNode(integer);
   }
 
   print();
 
-  std::cout << "\n---------------- Scan children backward ----------------" << std::endl;
+  std::cout << "\n---------------- Edit children backward ----------------" << std::endl;
   constexpr Tree pi = u'π'_n;
   for (NodeIterator::IndexedNode indexedNode : NodeIterator(mult).backwardsEditableChildren()) {
-    EditionReference(indexedNode.m_node).replaceTreeBy(pi);
+    EditionReference(indexedNode.m_node).replaceTreeByNode(pi);
   }
 
   print();

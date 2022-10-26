@@ -95,8 +95,7 @@ void Node::logAttributes(std::ostream & stream) const {
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig:
     case BlockType::Float:
-      // TODO
-      // stream << " value=\"" << Number::approximate() << "\"";
+      stream << " value=\"" << Expression::Approximate(m_block) << "\"";
       return;
     case BlockType::Constant:
       stream << " value=\"" << Constant::Value(m_block) << "\"";

@@ -31,25 +31,31 @@ public:
   int numberOfDescendants(bool includeSelf) const { return node().numberOfDescendants(includeSelf); }
 
   /* Edition operations on Node */
-  void replaceNodeBy(EditionReference t) { replaceNodeBy(t.node()); }
-  void replaceNodeBy(Node n) { replaceBy(n, false); }
-  void replaceTreeBy(EditionReference t) { replaceTreeBy(t.node()); }
-  void replaceTreeBy(Node n) { replaceBy(n, true); }
-  void insertNodeAfter(EditionReference t) { insertNodeAfter(t.node()); }
-  void insertNodeAfter(Node n) { insert(n, false, false); }
-  void insertTreeAfter(EditionReference t) { insertTreeAfter(t.node()); }
-  void insertTreeAfter(Node n) { insert(n, false, true); }
-  void insertNodeBefore(EditionReference t) { insertNodeBefore(t.node()); }
-  void insertNodeBefore(Node n) { insert(n, true, false); }
-  void insertTreeBefore(EditionReference t) { insertTreeBefore(t.node()); }
-  void insertTreeBefore(Node n) { insert(n, true, true); }
+  void insertNodeAfterNode(Node n) { insert(n, false, false); }
+  void insertTreeAfterNode(Node n) { insert(n, false, true); }
+  void insertNodeBeforeNode(Node n) { insert(n, true, false); }
+  void insertTreeBeforeNode(Node n) { insert(n, true, true); }
+  void replaceNodeByNode(Node n) { replaceBy(n, false, false); }
+  void replaceNodeByTree(Node n) { replaceBy(n, false, true); }
+  void replaceTreeByNode(Node n) { replaceBy(n, true, false); }
+  void replaceTreeByTree(Node n) { replaceBy(n, true, true); }
   void removeNode() { remove(false); }
   void removeTree() { remove(true); }
 
+  // Edition operations on EditionReference
+  void insertNodeAfterNode(EditionReference t) { insertNodeAfterNode(t.node()); }
+  void insertTreeAfterNode(EditionReference t) { insertTreeAfterNode(t.node()); }
+  void insertNodeBeforeNode(EditionReference t) { insertNodeBeforeNode(t.node()); }
+  void insertTreeBeforeNode(EditionReference t) { insertTreeBeforeNode(t.node()); }
+  void replaceNodeByNode(EditionReference t) { replaceNodeByNode(t.node()); }
+  void replaceNodeByTree(EditionReference t) { replaceNodeByTree(t.node()); }
+  void replaceTreeByNode(EditionReference t) { replaceTreeByNode(t.node()); }
+  void replaceTreeByTree(EditionReference t) { replaceTreeByTree(t.node()); }
+
 private:
-  void insert(Node n, bool before, bool insertTree);
-  void replaceBy(Node n, bool replaceTrees);
-  void remove(bool removeTree);
+  void insert(Node n, bool before, bool isTree);
+  void replaceBy(Node n, bool oldIsTree, bool newIsTree);
+  void remove(bool isTree);
   uint16_t m_identifier;
 };
 

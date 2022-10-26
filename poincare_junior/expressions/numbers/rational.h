@@ -10,7 +10,7 @@ class Rational final {
 public:
   static IntegerHandler Numerator(const TypeBlock * block);
   static IntegerHandler Denominator(const TypeBlock * block);
-  static bool IsNegative(TypeBlock * block);
+
   static EditionReference Addition(Block * b1, Block * b2);
 };
 

@@ -5,7 +5,7 @@
 namespace Poincare {
 
 void Division::BasicReduction(TypeBlock * block) {
-  assert(block->type() == BlockType::Subtraction);
+  assert(block->type() == BlockType::Division);
   Expression::ProjectionReduction(block,
       []() { return Node::Push<Multiplication>(2).block(); },
       []() { return Node::Push<Power>().block(); }

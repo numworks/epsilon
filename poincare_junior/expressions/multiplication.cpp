@@ -17,11 +17,11 @@ TypeBlock * Multiplication::DistributeOverAddition(TypeBlock * block) {
         // Find addition child to replace with
         EditionReference additionChildCopy = EditionReference(additionCopy.childAtIndex(indexedAdditionChild.m_index));
         // Replace addition per its child
-        additionCopy.replaceTreeBy(additionChildCopy);
+        additionCopy.replaceTreeByTree(additionChildCopy);
         assert(multCopy.block()->type() == BlockType::Multiplication);
         Multiplication::DistributeOverAddition(multCopy.block());
       }
-      mult.replaceTreeBy(add);
+      mult.replaceTreeByTree(add);
       return add.block();
     }
   }

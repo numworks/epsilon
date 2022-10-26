@@ -37,25 +37,16 @@ public:
     ExactAndApproximateToggle
   };
 
-  class AdditionalInformations {
-  public:
-    enum Type {
-      None = 0,
-      Integer = 1,
-      Rational = 2,
-      Trigonometry = 4,
-      Unit = 8,
-      Matrix = 16,
-      Vector = 32,
-      Complex = 64,
-      Function = 128
-    };
-    AdditionalInformations(Type type = Type::None) : m_type(type) {}
-    bool isNone() const { return m_type == Type::None; }
-    bool contains(Type type) const { return m_type & type; }
-    void set(Type type) { m_type = static_cast<Type>(m_type | type); }
-  private:
-    Type m_type;
+  struct AdditionalInformations {
+    bool integer : 1;
+    bool rational : 1;
+    bool trigonometry : 1;
+    bool unit : 1;
+    bool matrix : 1;
+    bool vector : 1;
+    bool complex : 1;
+    bool function : 1;
+    bool isNone() const { return !(integer || rational || trigonometry || unit || matrix || vector || complex || function); }
   };
 
   static bool DisplaysExact(DisplayOutput d) { return d != DisplayOutput::ApproximateOnly; }

@@ -135,6 +135,9 @@ int InfixPrefix(
         assert(typeOfParenthesis == SerializationHelper::ParenthesisType::None);
     }
     if (typeOfParenthesis != SerializationHelper::ParenthesisType::None) {
+      if (typeOfParenthesis == SerializationHelper::ParenthesisType::Braces) {
+        numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointSystem);
+      }
       numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, openingCodePoint);
     }
     if (numberOfChar >= bufferSize-1) {
@@ -195,6 +198,9 @@ int InfixPrefix(
 
   if (prefix && typeOfParenthesis != SerializationHelper::ParenthesisType::None) {
     // Add the closing parenthesis
+    if (typeOfParenthesis == SerializationHelper::ParenthesisType::Braces) {
+      numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointSystem);
+    }
     numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, closingCodePoint);
     if (numberOfChar >= bufferSize-1) {
        assert(buffer[bufferSize - 1] == 0);

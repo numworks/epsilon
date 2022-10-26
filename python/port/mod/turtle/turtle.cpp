@@ -83,7 +83,7 @@ void Turtle::circle(mp_int_t radius, mp_float_t angle) {
         // Keyboard interruption. Return now to let MicroPython process it.
         return;
       }
-      setHeadingPrivate(oldHeading+std::copysign(angle*progress, radius));
+      setHeadingPrivate(oldHeading+std::copysign(angle*progress, angle*radius));
     }
     forward(1);
     setHeading(oldHeading+angle);

@@ -39,7 +39,7 @@ size_t Tokenizer::popWhile(PopTest popTest) {
 
 static bool IsNonDigitalIdentifierMaterial(const CodePoint c) {
   // CodePointSystem is used to parse dependencies
-  return c.isLatinLetter() || c == UCodePointSystem || c == '_' || c == UCodePointDegreeSign || c == '\'' || c == '"' || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
+  return c.isLatinLetter() || c == '_' || c == UCodePointDegreeSign || c == '\'' || c == '"' || c.isGreekCapitalLetter() || (c.isGreekSmallLetter() && c != UCodePointGreekSmallLetterPi);
 }
 
 bool Tokenizer::IsIdentifierMaterial(const CodePoint c) {
@@ -190,6 +190,11 @@ Token Tokenizer::popToken() {
     }
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder.previousCodePoint();
+    if (m_poppingSystemToken) {
+      /* A system code point was popped, meaning the current identifier is a
+       * system identifier and should begin with a system code point. */
+      m_decoder.previousCodePoint();
+    }
     assert(m_numberOfStoredIdentifiers == 0); // assert we're done with previous tokenization
     fillIdentifiersList();
     assert(m_numberOfStoredIdentifiers > 0);

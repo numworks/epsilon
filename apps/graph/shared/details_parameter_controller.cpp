@@ -54,7 +54,7 @@ void DetailsParameterController::willDisplayCellForIndex(HighlightCell * cell, i
   if (index == 0) {
     myCell->setMessage(I18n::Message::CurveType);
     myCell->setSubLabelMessage(I18n::Message::Default);
-    myCell->setAccessoryText(I18n::translate(function()->properties().message()));
+    myCell->setAccessoryText(I18n::translate(function()->properties().caption()));
   } else {
     myCell->setMessage(detailsTitle(index - 1));
     double value = detailsValue(index - 1);

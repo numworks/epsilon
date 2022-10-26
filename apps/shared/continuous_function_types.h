@@ -38,10 +38,10 @@ public:
     Polar
   };
 
-  constexpr FunctionType(I18n::Message message) : m_message(message) {}
+  constexpr FunctionType(I18n::Message caption) : m_caption(caption) {}
 
   virtual bool isInitialized() const { return true; }
-  I18n::Message message() const { assert(isInitialized()); return m_message; }
+  I18n::Message caption() const { assert(isInitialized()); return m_caption; }
   virtual Status status() const { assert(isInitialized()); return Status::Enabled; }
   virtual SymbolType symbolType() const { assert(isInitialized()); return SymbolType::Unknown; }
   virtual int numberOfSubCurves() const { assert(isInitialized()); return 1; }
@@ -51,7 +51,14 @@ public:
   virtual CurveParameterType getCurveParameterType() const { assert(isInitialized()); return CurveParameterType::Default; }
 
 private:
-  const I18n::Message m_message;
+  /* TODO:
+   * There are a lot of partially duplicated captions, like
+   * "Polar equation of an ellipse" which shares half of its caption with
+   * "Parametric equation of an ellipse" and the other half with
+   * "Polar equation of a circle".
+   * Only "Polar equation %s", "Parametric equation %s", "of a circle" and
+   * "of an ellipse" could be stored. */
+  const I18n::Message m_caption;
 };
 
 class UninitializedFunctionType final : public FunctionType {
@@ -62,8 +69,8 @@ public:
 
 class ErrorFunctionType final : public FunctionType {
 public:
-  constexpr ErrorFunctionType(I18n::Message message, Status status, SymbolType symbol) :
-    FunctionType(message),
+  constexpr ErrorFunctionType(I18n::Message caption, Status status, SymbolType symbol) :
+    FunctionType(caption),
     m_status(status),
     m_symbolType(symbol)
   {}
@@ -77,8 +84,8 @@ private:
 
 class CartesianEquationType : public FunctionType {
 public:
-  constexpr CartesianEquationType(I18n::Message message, bool hasTwoSubCurves = false, bool isAlongY = false) :
-    FunctionType(message),
+  constexpr CartesianEquationType(I18n::Message caption, bool hasTwoSubCurves = false, bool isAlongY = false) :
+    FunctionType(caption),
     m_hasTwoSubCurves(hasTwoSubCurves),
     m_isAlongY(isAlongY)
   {}
@@ -94,13 +101,13 @@ private:
 
 class CartesianFunctionType final : public CartesianEquationType {
 public:
-  constexpr CartesianFunctionType(I18n::Message message) : CartesianEquationType(message, false, false) {}
+  constexpr CartesianFunctionType(I18n::Message caption) : CartesianEquationType(caption, false, false) {}
 };
 
 class ConicEquationType final : public CartesianEquationType {
 public:
-  constexpr ConicEquationType(I18n::Message message, Poincare::Conic::Shape conicType, bool hasTwoSubCurves) :
-    CartesianEquationType(message, hasTwoSubCurves, false),
+  constexpr ConicEquationType(I18n::Message caption, Poincare::Conic::Shape conicType, bool hasTwoSubCurves) :
+    CartesianEquationType(caption, hasTwoSubCurves, false),
     m_conicShape(conicType)
   {}
   Poincare::Conic::Shape conicShape() const override { return m_conicShape; }
@@ -110,8 +117,8 @@ private:
 
 class LineEquationType final : public CartesianEquationType {
 public:
-  constexpr LineEquationType(I18n::Message message, bool isAlongY, CurveParameterType curveParameterType) :
-    CartesianEquationType(message, false, isAlongY),
+  constexpr LineEquationType(I18n::Message caption, bool isAlongY, CurveParameterType curveParameterType) :
+    CartesianEquationType(caption, false, isAlongY),
     m_curveParameterType(curveParameterType)
   {}
   bool isLine() const override { return true; }
@@ -122,15 +129,15 @@ private:
 
 class PolarFunctionType : public FunctionType {
 public:
-  constexpr PolarFunctionType(I18n::Message message) : FunctionType(message) {}
+  constexpr PolarFunctionType(I18n::Message caption) : FunctionType(caption) {}
   SymbolType symbolType() const override { return SymbolType::Theta; }
   CurveParameterType getCurveParameterType() const override { return CurveParameterType::Polar; }
 };
 
 class PolarConicFunctionType final : public PolarFunctionType {
 public:
-  constexpr PolarConicFunctionType(I18n::Message message, Poincare::Conic::Shape conicShape) :
-    PolarFunctionType(message),
+  constexpr PolarConicFunctionType(I18n::Message caption, Poincare::Conic::Shape conicShape) :
+    PolarFunctionType(caption),
     m_conicShape(conicShape)
   {}
   Poincare::Conic::Shape conicShape() const override { return m_conicShape; }
@@ -140,15 +147,15 @@ private:
 
 class ParametricFunctionType : public FunctionType {
 public:
-  constexpr ParametricFunctionType(I18n::Message message) : FunctionType(message) {}
+  constexpr ParametricFunctionType(I18n::Message caption) : FunctionType(caption) {}
   SymbolType symbolType() const override { return SymbolType::T; }
   CurveParameterType getCurveParameterType() const override { return CurveParameterType::Parametric; }
 };
 
 class ParametricConicFunctionType final : public ParametricFunctionType {
 public:
-  constexpr ParametricConicFunctionType(I18n::Message message, Poincare::Conic::Shape conicShape) :
-    ParametricFunctionType(message),
+  constexpr ParametricConicFunctionType(I18n::Message caption, Poincare::Conic::Shape conicShape) :
+    ParametricFunctionType(caption),
     m_conicShape(conicShape)
   {}
   Poincare::Conic::Shape conicShape() const override { return m_conicShape; }
@@ -176,49 +183,49 @@ private:
   constexpr static ErrorFunctionType k_undefinedPolarFunctionType = ErrorFunctionType(I18n::Message::UndefinedType, FunctionType::Status::Undefined, FunctionType::SymbolType::Theta);
 
   // Parametric
-  constexpr static ParametricFunctionType k_parametricFunctionType = ParametricFunctionType(I18n::Message::ParametricType);
-  constexpr static ParametricFunctionType k_parametricLineType = ParametricFunctionType(I18n::Message::LineType);
-  constexpr static ParametricFunctionType k_parametricHorizontalLineType = ParametricFunctionType(I18n::Message::HorizontalLineType);
-  constexpr static ParametricFunctionType k_parametricVerticalLineType = ParametricFunctionType(I18n::Message::VerticalLineType);
+  constexpr static ParametricFunctionType k_parametricFunctionType = ParametricFunctionType(I18n::Message::ParametricEquationType);
+  constexpr static ParametricFunctionType k_parametricLineType = ParametricFunctionType(I18n::Message::ParametricLineType);
+  constexpr static ParametricFunctionType k_parametricHorizontalLineType = ParametricFunctionType(I18n::Message::ParametricHorizontalLineType);
+  constexpr static ParametricFunctionType k_parametricVerticalLineType = ParametricFunctionType(I18n::Message::ParametricVerticalLineType);
   // Parametric conics
-  constexpr static ParametricFunctionType k_parametricEllipseFunctionType = ParametricConicFunctionType(I18n::Message::EllipseType, Poincare::Conic::Shape::Ellipse);
-  constexpr static ParametricFunctionType k_parametricCircleFunctionType = ParametricConicFunctionType(I18n::Message::CircleType, Poincare::Conic::Shape::Circle);
-  constexpr static ParametricFunctionType k_parametricHyperbolaFunctionType = ParametricConicFunctionType(I18n::Message::HyperbolaType, Poincare::Conic::Shape::Hyperbola);
-  constexpr static ParametricFunctionType k_parametricParabolaFunctionType = ParametricConicFunctionType(I18n::Message::ParabolaType, Poincare::Conic::Shape::Parabola);
+  constexpr static ParametricFunctionType k_parametricEllipseFunctionType = ParametricConicFunctionType(I18n::Message::ParametricEllipseType, Poincare::Conic::Shape::Ellipse);
+  constexpr static ParametricFunctionType k_parametricCircleFunctionType = ParametricConicFunctionType(I18n::Message::ParametricCircleType, Poincare::Conic::Shape::Circle);
+  constexpr static ParametricFunctionType k_parametricHyperbolaFunctionType = ParametricConicFunctionType(I18n::Message::ParametricHyperbolaType, Poincare::Conic::Shape::Hyperbola);
+  constexpr static ParametricFunctionType k_parametricParabolaFunctionType = ParametricConicFunctionType(I18n::Message::ParametricParabolaType, Poincare::Conic::Shape::Parabola);
 
   // Polar
-  constexpr static PolarFunctionType k_polarFunctionType = PolarFunctionType(I18n::Message::PolarType);
-  constexpr static PolarFunctionType k_polarLineType = PolarFunctionType(I18n::Message::LineType);
-  constexpr static PolarFunctionType k_polarHorizontalLineType = PolarFunctionType(I18n::Message::HorizontalLineType);
-  constexpr static PolarFunctionType k_polarVerticalLineType = PolarFunctionType(I18n::Message::VerticalLineType);
+  constexpr static PolarFunctionType k_polarFunctionType = PolarFunctionType(I18n::Message::PolarEquationType);
+  constexpr static PolarFunctionType k_polarLineType = PolarFunctionType(I18n::Message::PolarLineType);
+  constexpr static PolarFunctionType k_polarHorizontalLineType = PolarFunctionType(I18n::Message::PolarHorizontalLineType);
+  constexpr static PolarFunctionType k_polarVerticalLineType = PolarFunctionType(I18n::Message::PolarVerticalLineType);
   // Polar conics
-  constexpr static PolarFunctionType k_polarEllipseFunctionType = PolarConicFunctionType(I18n::Message::EllipseType, Poincare::Conic::Shape::Ellipse);
-  constexpr static PolarFunctionType k_polarCircleFunctionType = PolarConicFunctionType(I18n::Message::CircleType, Poincare::Conic::Shape::Circle);
-  constexpr static PolarFunctionType k_polarHyperbolaFunctionType = PolarConicFunctionType(I18n::Message::HyperbolaType, Poincare::Conic::Shape::Hyperbola);
-  constexpr static PolarFunctionType k_polarParabolaFunctionType = PolarConicFunctionType(I18n::Message::ParabolaType, Poincare::Conic::Shape::Parabola);
+  constexpr static PolarFunctionType k_polarEllipseFunctionType = PolarConicFunctionType(I18n::Message::PolarEllipseType, Poincare::Conic::Shape::Ellipse);
+  constexpr static PolarFunctionType k_polarCircleFunctionType = PolarConicFunctionType(I18n::Message::PolarCircleType, Poincare::Conic::Shape::Circle);
+  constexpr static PolarFunctionType k_polarHyperbolaFunctionType = PolarConicFunctionType(I18n::Message::PolarHyperbolaType, Poincare::Conic::Shape::Hyperbola);
+  constexpr static PolarFunctionType k_polarParabolaFunctionType = PolarConicFunctionType(I18n::Message::PolarParabolaType, Poincare::Conic::Shape::Parabola);
 
   // Cartesian function
-  // TODO: Update messages.
-  constexpr static CartesianFunctionType k_cartesianFunctionType = CartesianFunctionType(I18n::Message::CartesianType);
-  constexpr static CartesianFunctionType k_piecewiseFunctionType = CartesianFunctionType(I18n::Message::ColorBlue);
-  constexpr static CartesianFunctionType k_linearFunctionType = CartesianFunctionType(I18n::Message::ColorGreen);
-  constexpr static CartesianFunctionType k_affineFunctionType = CartesianFunctionType(I18n::Message::ColorRed);
-  constexpr static CartesianFunctionType k_constantFunctionType = CartesianFunctionType(I18n::Message::ColorYellowDark);
-  constexpr static CartesianFunctionType k_polynomialFunctionType = CartesianFunctionType(I18n::Message::ColorOrange);
-  constexpr static CartesianFunctionType k_trigonometricFunctionType = CartesianFunctionType(I18n::Message::ColorMagenta);
-  constexpr static CartesianFunctionType k_exponentialFunctionType = CartesianFunctionType(I18n::Message::ColorPink);
-  constexpr static CartesianFunctionType k_logarithmicFunctionType = CartesianFunctionType(I18n::Message::Ceiling);
-  constexpr static CartesianFunctionType k_rationalFunctionType = CartesianFunctionType(I18n::Message::Rounding);
+  // TODO: Update captions.
+  constexpr static CartesianFunctionType k_cartesianFunctionType = CartesianFunctionType(I18n::Message::FunctionType);
+  constexpr static CartesianFunctionType k_piecewiseFunctionType = CartesianFunctionType(I18n::Message::PiecewiseType);
+  constexpr static CartesianFunctionType k_linearFunctionType = CartesianFunctionType(I18n::Message::LinearType);
+  constexpr static CartesianFunctionType k_affineFunctionType = CartesianFunctionType(I18n::Message::AffineType);
+  constexpr static CartesianFunctionType k_constantFunctionType = CartesianFunctionType(I18n::Message::ConstantType);
+  constexpr static CartesianFunctionType k_polynomialFunctionType = CartesianFunctionType(I18n::Message::PolynomialType);
+  constexpr static CartesianFunctionType k_trigonometricFunctionType = CartesianFunctionType(I18n::Message::TrigonometricType);
+  constexpr static CartesianFunctionType k_exponentialFunctionType = CartesianFunctionType(I18n::Message::ExponentialType);
+  constexpr static CartesianFunctionType k_logarithmicFunctionType = CartesianFunctionType(I18n::Message::LogarithmicType);
+  constexpr static CartesianFunctionType k_rationalFunctionType = CartesianFunctionType(I18n::Message::RationalType);
 
   // Cartesian equation types
   // y = f(x)
-  constexpr static CartesianFunctionType k_simpleCartesianEquationType = CartesianFunctionType(/* TODO: Change message */I18n::Message::CartesianType);
+  constexpr static CartesianFunctionType k_simpleCartesianEquationType = CartesianFunctionType(I18n::Message::EquationType);
   // y = ax + b
   constexpr static LineEquationType k_lineEquation = LineEquationType(I18n::Message::LineType, false, FunctionType::CurveParameterType::Line);
   // y = a
   constexpr static LineEquationType k_horizontalLineEquation = LineEquationType(I18n::Message::HorizontalLineType, false,  FunctionType::CurveParameterType::HorizontalLine);
   // y^2 = f(x)
-  constexpr static CartesianEquationType k_cartesianEquationWithTwoSubCurves = CartesianEquationType(I18n::Message::OtherType, true);
+  constexpr static CartesianEquationType k_cartesianEquationWithTwoSubCurves = CartesianEquationType(I18n::Message::EquationType, true);
   // Conics
   constexpr static ConicEquationType k_circleEquation = ConicEquationType(I18n::Message::CircleType, Poincare::Conic::Shape::Circle, true);
   constexpr static ConicEquationType k_ellipseEquation = ConicEquationType(I18n::Message::EllipseType, Poincare::Conic::Shape::Ellipse, true);
@@ -227,11 +234,11 @@ private:
   constexpr static ConicEquationType k_hyperbolaEquationWithTwoSubCurves = ConicEquationType(I18n::Message::HyperbolaType, Poincare::Conic::Shape::Hyperbola, true);
   constexpr static ConicEquationType k_hyperbolaEquationWithOneSubCurve = ConicEquationType(I18n::Message::HyperbolaType, Poincare::Conic::Shape::Hyperbola, false);
   // x = f(y)
-  constexpr static CartesianEquationType k_cartesianEquationAlongY = CartesianEquationType(I18n::Message::InverseType, false, true);
+  constexpr static CartesianEquationType k_cartesianEquationAlongY = CartesianEquationType(I18n::Message::EquationType, false, true);
   // x = a
   constexpr static LineEquationType k_verticalLine = LineEquationType(I18n::Message::VerticalLineType, true, FunctionType::CurveParameterType::VerticalLine);
   // x^2 = f(y)
-  constexpr static CartesianEquationType k_cartesianEquationAlongYWithTwoSubCurves = CartesianEquationType(I18n::Message::InverseType, true, true);
+  constexpr static CartesianEquationType k_cartesianEquationAlongYWithTwoSubCurves = CartesianEquationType(I18n::Message::EquationType, true, true);
 };
 
 }

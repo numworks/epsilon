@@ -89,7 +89,7 @@ private:
   constexpr static size_t k_maxSizeOfNamedModel = Poincare::Helpers::StringLength(k_models[static_cast<int>(Model::Piecewise)]) - 1 + Shared::ContinuousFunction::k_maxDefaultNameSize;
   // Expression cells
   constexpr static I18n::Message k_modelDescriptions[k_numberOfExpressionModels] = {
-    I18n::Message::LineEquationTitle, I18n::Message::CartesianNamedTemplate, I18n::Message::LineType, I18n::Message::LineType, I18n::Message::InequationType, I18n::Message::InverseType,  I18n::Message::ConicNamedTemplate, I18n::Message::ParametricType, I18n::Message::PolarType, I18n::Message::PiecewiseFunction
+    I18n::Message::LineEquationTitle, I18n::Message::CartesianNamedTemplate, I18n::Message::LineType, I18n::Message::LineType, I18n::Message::InequalityType, I18n::Message::InverseFunction,  I18n::Message::ConicNamedTemplate, I18n::Message::ParametricEquationType, I18n::Message::PolarEquationType, I18n::Message::PiecewiseFunction
   };
   // The models list depends on the current country
   static const Model * Models();

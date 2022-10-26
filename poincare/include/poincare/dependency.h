@@ -60,7 +60,7 @@ public:
   // Parser utils
   static Expression UntypedBuilder(Expression children);
   static_assert(UCodePointSystem == 0x14, "UCodePointSystem value was modified");
-  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("dep\x14", 2, &UntypedBuilder);
+  constexpr static Expression::FunctionHelper s_functionHelper = Expression::FunctionHelper("\u0014dep", 2, &UntypedBuilder);
 };
 
 }

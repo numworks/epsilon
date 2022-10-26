@@ -160,15 +160,15 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
      * are used to avoid confusion with lists. */
     int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, UCodePointSystem);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-    numberOfChar += SerializationHelper::CodePoint(buffer, bufferSize, '{');
+    numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '{');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-    numberOfChar += const_cast<VerticalOffsetLayoutNode *>(this)->indiceLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
+    numberOfChar += const_cast<VerticalOffsetLayoutNode *>(this)->indiceLayout()->serialize(buffer + numberOfChar, bufferSize - numberOfChar, floatDisplayMode, numberOfSignificantDigits);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
-    numberOfChar += SerializationHelper::CodePoint(buffer, bufferSize, UCodePointSystem);
+    numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, UCodePointSystem);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
-    numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, '}');
+    numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '}');
     return std::min(numberOfChar, bufferSize-1);
   }
 

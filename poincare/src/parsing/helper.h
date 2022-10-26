@@ -55,6 +55,7 @@ private:
      * { acos, arccos } -> take acos as reference for position
      * { asin, arcsin } -> take arcsin as reference for position
      * */
+    &Dependency::s_functionHelper, // \x14dep
     &AbsoluteValue::s_functionHelper, // abs
     &ArcCosine::s_functionHelper, // acos, arccos
     &ArcCotangent::s_functionHelper, // arccot
@@ -76,7 +77,6 @@ private:
     &Cotangent::s_functionHelper, // cot
     &VectorCross::s_functionHelper, // cross
     &Cosecant::s_functionHelper, // csc
-    &Dependency::s_functionHelper, // dep
     &Determinant::s_functionHelper, // det
     &Derivative::s_functionHelperFirstOrder, // diff
     &Derivative::s_functionHelper, // diff

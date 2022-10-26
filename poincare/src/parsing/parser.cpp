@@ -611,11 +611,11 @@ void Parser::parseReservedFunction(Expression & leftHandSide, Token::Type stoppi
 
 void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper) {
   AliasesList aliasesList = (**functionHelper).aliasesList();
-  if (aliasesList.contains("log") && popTokenIfType(Token::LeftBrace)) {
+  if (aliasesList.contains("log") && popTokenIfType(Token::LeftSystemBrace)) {
     // Special case for the log function (e.g. "log{2}(8)")
-    Expression base = parseUntil(Token::RightBrace);
+    Expression base = parseUntil(Token::RightSystemBrace);
     if (m_status != Status::Progress) {
-    } else if (!popTokenIfType(Token::RightBrace)) {
+    } else if (!popTokenIfType(Token::RightSystemBrace)) {
       m_status = Status::Error; // Right brace missing.
     } else {
       Expression parameter = parseFunctionParameters();
@@ -728,7 +728,7 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
 }
 
 void Parser::parseSequence(Expression & leftHandSide, const char * name, Token::Type rightDelimiter) {
-  assert(m_nextToken.type() == ((rightDelimiter == Token::RightBrace) ? Token::LeftBrace : Token::LeftParenthesis));
+  assert(m_nextToken.type() == ((rightDelimiter == Token::RightSystemBrace) ? Token::LeftSystemBrace : Token::LeftParenthesis));
   popToken(); // Pop the left delimiter
   Expression rank = parseUntil(rightDelimiter);
   if (m_status != Status::Progress) {
@@ -777,17 +777,17 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
   }
 
   if (idType == Context::SymbolAbstractType::Sequence
-        || (idType == Context::SymbolAbstractType::None && m_nextToken.type() == Token::LeftBrace)) {
+        || (idType == Context::SymbolAbstractType::None && m_nextToken.type() == Token::LeftSystemBrace)) {
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or has an unknown type and is followed
      * by braces, it's a sequence call. */
-    if (m_nextToken.type() != Token::LeftBrace && m_nextToken.type() != Token::LeftParenthesis) {
+    if (m_nextToken.type() != Token::LeftSystemBrace && m_nextToken.type() != Token::LeftParenthesis) {
       /* If the identifier is a sequence but not followed by braces, it can
        * also be followed by parenthesis. If not, it's a syntax error. */
       m_status = Status::Error;
       return;
     }
-    parseSequence(leftHandSide, name,  m_nextToken.type() == Token::LeftBrace ? Token::RightBrace : Token::RightParenthesis);
+    parseSequence(leftHandSide, name,  m_nextToken.type() == Token::LeftSystemBrace ? Token::RightSystemBrace : Token::RightParenthesis);
     return;
   }
 

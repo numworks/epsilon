@@ -156,13 +156,18 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
       return bufferSize-1;
     }
 
-    // If the layout is a subscript, write "{indice}"
-    int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '{');
+    /* If the layout is a subscript, write "\x14{indice\x14}". System braces
+     * are used to avoid confusion with lists. */
+    int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, UCodePointSystem);
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
+    numberOfChar += SerializationHelper::CodePoint(buffer, bufferSize, '{');
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
     numberOfChar += const_cast<VerticalOffsetLayoutNode *>(this)->indiceLayout()->serialize(buffer+numberOfChar, bufferSize-numberOfChar, floatDisplayMode, numberOfSignificantDigits);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
 
+    numberOfChar += SerializationHelper::CodePoint(buffer, bufferSize, UCodePointSystem);
+    if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize-numberOfChar, '}');
     return std::min(numberOfChar, bufferSize-1);
   }

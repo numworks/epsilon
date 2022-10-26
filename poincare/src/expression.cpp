@@ -1329,6 +1329,7 @@ Expression Expression::FunctionHelper::build(Expression children) const {
 
 int ExpressionNode::numberOfNumericalValues() const {
   constexpr int error = -1;
+  assert(type() != ExpressionNode::Type::Dependency);
   if (isRandom()) {
     return error;
   }

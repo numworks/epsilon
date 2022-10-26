@@ -133,9 +133,9 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
   }
 }
 
-Conic ContinuousFunction::getConicParameters(Context * context) const {
-  assert(properties().isConic());
-  return Conic(expressionReducedForAnalysis(context), context, k_unknownName);
+CartesianConic ContinuousFunction::cartesianConicParameters(Context * context) const {
+  assert(properties().isConic() && properties().isCartesian());
+  return CartesianConic(expressionReducedForAnalysis(context), context, k_unknownName);
 }
 
 double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, double cursorX, double cursorY, Context * context) const {

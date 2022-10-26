@@ -72,7 +72,7 @@ public:
   // Compute line parameters (slope and intercept) from ContinuousFunction
   void getLineParameters(double * slope, double * intercept, Poincare::Context * context) const;
   // Compute conic parameters from ContinuousFunction
-  Poincare::Conic getConicParameters(Poincare::Context * context) const;
+  Poincare::CartesianConic cartesianConicParameters(Poincare::Context * context) const;
   /* Return the number of subcurves to plot.
    * Warning : This function needs the solutions to have been computed in the
    * (expensive) expressionReduced method before yielding a non-zero result.

@@ -89,8 +89,11 @@ void DetailsParameterController::setRecord(Ion::Storage::Record record) {
       double slope, intercept;
       f->getLineParameters(&slope, &intercept, context);
       setLineDetailsValues(slope, intercept);
-    } else if (f->properties().isConic()) {
-      setConicDetailsValues(f->getConicParameters(context));
+    } else if (f->properties().isConic() && f->properties().isCartesian()) {
+      /* For now this is only implemented for cartesian conics but could also
+       * be for polar and parametric conics. */
+      CartesianConic c = f->cartesianConicParameters(context);
+      setConicDetailsValues(&c);
     }
   }
 }
@@ -102,18 +105,21 @@ int DetailsParameterController::detailsNumberOfSections() const {
   if (functionIsNonVerticalLine()) {
     return ExamModeConfiguration::lineDetailsAreForbidden() ? 0 : k_lineDetailsSections;
   }
-  if (!function()->properties().isConic()) {
+  Shared::ContinuousFunctionProperties properties = function()->properties();
+  if (!properties.isConic() || !properties.isCartesian()) {
+    /* For now this is only implemented for cartesian conics but could also
+     * be for polar and parametric conics. */
     return 0;
   }
-  switch (function()->properties().conicType()) {
-  case Conic::Type::Circle:
+  switch (properties.conicShape()) {
+  case Conic::Shape::Circle:
     return k_circleDetailsSections;
-  case Conic::Type::Ellipse:
+  case Conic::Shape::Ellipse:
     return k_ellipseDetailsSections;
-  case Conic::Type::Parabola:
+  case Conic::Shape::Parabola:
     return k_parabolaDetailsSections;
   default:
-    assert(function()->properties().conicType() == Conic::Type::Hyperbola);
+    assert(properties.conicShape() == Conic::Shape::Hyperbola);
     return k_hyperbolaDetailsSections;
   }
 }
@@ -136,8 +142,8 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
     return k_titles[i];
   }
 
-  switch (function()->properties().conicType()) {
-    case Conic::Type::Circle: {
+  switch (function()->properties().conicShape()) {
+    case Conic::Shape::Circle: {
       constexpr I18n::Message k_titles[k_circleDetailsSections] = {
           I18n::Message::CircleRadiusTitle,
           I18n::Message::CenterAbscissaTitle,
@@ -145,7 +151,7 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
       };
       return k_titles[i];
     }
-    case Conic::Type::Ellipse: {
+    case Conic::Shape::Ellipse: {
       constexpr I18n::Message k_titles[k_ellipseDetailsSections] = {
           I18n::Message::EllipseSemiMajorAxisTitle,
           I18n::Message::EllipseSemiMinorAxisTitle,
@@ -156,7 +162,7 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
       };
       return k_titles[i];
     }
-    case Conic::Type::Parabola: {
+    case Conic::Shape::Parabola: {
       constexpr I18n::Message k_titles[k_parabolaDetailsSections] = {
           I18n::Message::ParabolaParameterTitle,
           I18n::Message::ParabolaVertexAbscissaTitle,
@@ -165,7 +171,7 @@ I18n::Message DetailsParameterController::detailsTitle(int i) const {
       return k_titles[i];
     }
     default: {
-      assert(function()->properties().conicType() == Conic::Type::Hyperbola);
+      assert(function()->properties().conicShape() == Conic::Shape::Hyperbola);
       constexpr I18n::Message k_titles[k_hyperbolaDetailsSections] = {
           I18n::Message::HyperbolaSemiMajorAxisTitle,
           I18n::Message::HyperbolaSemiMinorAxisTitle,
@@ -189,8 +195,8 @@ I18n::Message DetailsParameterController::detailsDescription(int i) const {
     };
     return k_descriptions[i];
   }
-  switch (function()->properties().conicType()) {
-    case Conic::Type::Circle: {
+  switch (function()->properties().conicShape()) {
+    case Conic::Shape::Circle: {
       constexpr I18n::Message k_descriptions[k_circleDetailsSections] = {
           I18n::Message::CircleRadiusDescription,
           I18n::Message::CenterAbscissaDescription,
@@ -198,7 +204,7 @@ I18n::Message DetailsParameterController::detailsDescription(int i) const {
       };
       return k_descriptions[i];
     }
-    case Conic::Type::Ellipse: {
+    case Conic::Shape::Ellipse: {
       constexpr I18n::Message k_descriptions[k_ellipseDetailsSections] = {
           I18n::Message::EllipseSemiMajorAxisDescription,
           I18n::Message::EllipseSemiMinorAxisDescription,
@@ -209,7 +215,7 @@ I18n::Message DetailsParameterController::detailsDescription(int i) const {
       };
       return k_descriptions[i];
     }
-    case Conic::Type::Parabola: {
+    case Conic::Shape::Parabola: {
       constexpr I18n::Message k_descriptions[k_parabolaDetailsSections] = {
           I18n::Message::ParabolaParameterDescription,
           I18n::Message::ParabolaVertexAbscissaDescription,
@@ -218,7 +224,7 @@ I18n::Message DetailsParameterController::detailsDescription(int i) const {
       return k_descriptions[i];
     }
     default: {
-      assert(function()->properties().conicType() == Conic::Type::Hyperbola);
+      assert(function()->properties().conicShape() == Conic::Shape::Hyperbola);
       constexpr I18n::Message k_descriptions[k_hyperbolaDetailsSections] = {
           I18n::Message::HyperbolaSemiMajorAxisDescription,
           I18n::Message::HyperbolaSemiMinorAxisDescription,
@@ -239,40 +245,40 @@ void DetailsParameterController::setLineDetailsValues(double slope, double inter
   m_detailValues[2] = intercept;
 }
 
-void DetailsParameterController::setConicDetailsValues(Poincare::Conic conic) {
-  Conic::Type type = function()->properties().conicType();
+void DetailsParameterController::setConicDetailsValues(Poincare::Conic * conic) {
+  Conic::Shape type = function()->properties().conicShape();
   double cx, cy;
-  if (type == Conic::Type::Parabola) {
-    conic.getSummit(&cx, &cy);
+  if (type == Conic::Shape::Parabola) {
+    conic->getSummit(&cx, &cy);
   } else {
-    conic.getCenter(&cx, &cy);
+    conic->getCenter(&cx, &cy);
   }
-  if (type == Conic::Type::Circle) {
-    m_detailValues[0] = conic.getRadius();
+  if (type == Conic::Shape::Circle) {
+    m_detailValues[0] = conic->getRadius();
     m_detailValues[1] = cx;
     m_detailValues[2] = cy;
     return;
   }
-  if (type == Conic::Type::Ellipse) {
-    m_detailValues[0] = conic.getSemiMajorAxis();
-    m_detailValues[1] = conic.getSemiMinorAxis();
-    m_detailValues[2] = conic.getLinearEccentricity();
-    m_detailValues[3] = conic.getEccentricity();
+  if (type == Conic::Shape::Ellipse) {
+    m_detailValues[0] = conic->getSemiMajorAxis();
+    m_detailValues[1] = conic->getSemiMinorAxis();
+    m_detailValues[2] = conic->getLinearEccentricity();
+    m_detailValues[3] = conic->getEccentricity();
     m_detailValues[4] = cx;
     m_detailValues[5] = cy;
     return;
   }
-  if (type == Conic::Type::Parabola) {
-    m_detailValues[0] = conic.getParameter();
+  if (type == Conic::Shape::Parabola) {
+    m_detailValues[0] = conic->getParameter();
     m_detailValues[1] = cx;
     m_detailValues[2] = cy;
     return;
   }
-  assert(type == Conic::Type::Hyperbola);
-  m_detailValues[0] = conic.getSemiMajorAxis();
-  m_detailValues[1] = conic.getSemiMinorAxis();
-  m_detailValues[2] = conic.getLinearEccentricity();
-  m_detailValues[3] = conic.getEccentricity();
+  assert(type == Conic::Shape::Hyperbola);
+  m_detailValues[0] = conic->getSemiMajorAxis();
+  m_detailValues[1] = conic->getSemiMinorAxis();
+  m_detailValues[2] = conic->getLinearEccentricity();
+  m_detailValues[3] = conic->getEccentricity();
   m_detailValues[4] = cx;
   m_detailValues[5] = cy;
   return;

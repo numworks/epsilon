@@ -368,16 +368,15 @@ const FunctionType * ContinuousFunctionProperties::CartesianEquationAnalysis(con
     /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
      * details. Otherwise, try to identify a conic.
      * For instance, x*y=1 as an hyperbola. */
-    Conic equationConic = Conic(reducedEquation, context, Function::k_unknownName);
-    Conic::Type ctype = equationConic.getConicType();
-    switch (ctype) {
-    case Conic::Type::Hyperbola:
+    CartesianConic equationConic = CartesianConic(reducedEquation, context, Function::k_unknownName);
+    switch (equationConic.conicType().shape) {
+    case Conic::Shape::Hyperbola:
       return yDeg > 1 ? &FunctionTypes::k_hyperbolaEquationWithTwoSubCurves : &FunctionTypes::k_hyperbolaEquationWithOneSubCurve;
-    case Conic::Type::Parabola:
+    case Conic::Shape::Parabola:
       return yDeg > 1 ? &FunctionTypes::k_parabolaEquationWithTwoSubCurves : &FunctionTypes::k_parabolaEquationWithOneSubCurve;
-    case Conic::Type::Ellipse:
+    case Conic::Shape::Ellipse:
       return &FunctionTypes::k_ellipseEquation;
-    case Conic::Type::Circle:
+    case Conic::Shape::Circle:
       return &FunctionTypes::k_circleEquation;
     default:;
       // A conic could not be identified.

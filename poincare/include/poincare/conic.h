@@ -8,7 +8,8 @@ namespace Poincare {
 
 class Conic {
 public:
-  enum class Type : uint8_t {
+
+  enum class Shape : uint8_t {
     Hyperbola = 0,
     Parabola,
     Ellipse,
@@ -16,28 +17,63 @@ public:
     Undefined,
     Unknown,
   };
-  // Extract A,B,C,D,E,F parameters
-  Conic(const Expression e, Context * context, const char * x = "x", const char * y = "y");
-  // Return conic type from parameters
-  Type getConicType() const { return m_type; }
+
+  enum class CoordinateType : uint8_t {
+    Cartesian = 0,
+    Polar,
+    Parametric
+  };
+
+  typedef struct {
+    CoordinateType coordinateType;
+    Shape shape;
+  } Type;
+
+  Conic() : m_shape(Shape::Unknown) {}
+  Type conicType() const { return {coordinateType(), m_shape}; }
+
+  /* TODO: Make these methods virtual pure and mplement them for PolarConics
+   * and ParametricConics when DetailsParameterController will need to display
+   * details for all types of conic. */
+
   // Conic Eccentricity
-  double getEccentricity() const;
+  virtual double getEccentricity() const { assert(false); return 0.0; }
   // Conic Center
-  void getCenter(double * cx, double * cy) const;
+  virtual void getCenter(double * cx, double * cy) const { assert(false);}
   // Ellipse or Hyperbola's semi major axis
-  double getSemiMajorAxis() const;
+  virtual double getSemiMajorAxis() const { assert(false); return 0.0; }
   // Ellipse or Hyperbola's linear eccentricity
-  double getLinearEccentricity() const;
+  virtual double getLinearEccentricity() const { assert(false); return 0.0; }
   // Ellipse or Hyperbola's semi minor axis
-  double getSemiMinorAxis() const;
+  virtual double getSemiMinorAxis() const { assert(false); return 0.0; }
   // Parabola's parameter
-  double getParameter() const;
+  virtual double getParameter() const { assert(false); return 0.0; }
   // Coordinates of Parabola's summit (relative to parameters' center)
-  void getSummit(double * sx, double * sy) const;
+  virtual void getSummit(double * sx, double * sy) const { assert(false); }
   // Circle's radius
-  double getRadius() const;
+  virtual double getRadius() const { assert(false); return 0.0; }
+
+protected:
+  virtual CoordinateType coordinateType() const = 0;
+  Shape m_shape;
+};
+
+class CartesianConic : public Conic {
+public:
+  // Extract A,B,C,D,E,F parameters
+  CartesianConic(const Expression e, Context * context, const char * x = "x", const char * y = "y");
+  double getEccentricity() const override;
+  void getCenter(double * cx, double * cy) const override;
+  double getSemiMajorAxis() const override;
+  double getLinearEccentricity() const override;
+  double getSemiMinorAxis() const override;
+  double getParameter() const override;
+  void getSummit(double * sx, double * sy) const override;
+  double getRadius() const override;
 
 private:
+  CoordinateType coordinateType() const override { return CoordinateType::Cartesian; }
+
   // Thereshold under which a parameter is considered null
   constexpr static double k_tolerance = 10.0*DBL_EPSILON;
   // Return target if |target-value| is neglectable compared to |amplitude|
@@ -74,7 +110,22 @@ private:
   double m_cx;
   double m_cy;
   double m_r;
-  Type m_type;
+};
+
+class PolarConic : public Conic {
+public:
+  constexpr static const char * k_tetha = "θ";
+  PolarConic(const Expression& e, Context * context);
+private:
+  CoordinateType coordinateType() const override { return CoordinateType::Polar; }
+};
+
+class ParametricConic : public Conic {
+public:
+  constexpr static const char * k_t = "t";
+  ParametricConic(const Expression& e, Context * context);
+private:
+  CoordinateType coordinateType() const override { return CoordinateType::Parametric; }
 };
 
 }  // namespace Poincare

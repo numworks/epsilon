@@ -136,7 +136,7 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
         setFunctionType(&FunctionTypes::k_unhandledParametricFunctionType);
         return;
       }
-      setFunctionType(&FunctionTypes::k_parametricFunctionType);
+      setFunctionType(ParametricFunctionAnalysis(analysedEquation, context));
       return;
     }
 
@@ -438,6 +438,25 @@ const FunctionType * ContinuousFunctionProperties::PolarFunctionAnalysis(const E
   default:
     // A conic could not be identified.
     return &FunctionTypes::k_polarFunctionType;
+  }
+}
+
+const FunctionType * ContinuousFunctionProperties::ParametricFunctionAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context) {
+  assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
+  // Detect polar conics
+  ParametricConic conicProperties = ParametricConic(reducedEquation, context, Function::k_unknownName);
+  switch (conicProperties.conicType().shape) {
+  case Conic::Shape::Hyperbola:
+    return &FunctionTypes::k_parametricHyperbolaFunctionType;
+  case Conic::Shape::Parabola:
+    return &FunctionTypes::k_parametricParabolaFunctionType;
+  case Conic::Shape::Ellipse:
+    return &FunctionTypes::k_parametricEllipseFunctionType;
+  case Conic::Shape::Circle:
+    return &FunctionTypes::k_parametricCircleFunctionType;
+  default:
+    // A conic could not be identified.
+    return &FunctionTypes::k_parametricFunctionType;
   }
 }
 

@@ -121,8 +121,7 @@ private:
 
 class ParametricConic : public Conic {
 public:
-  constexpr static const char * k_t = "t";
-  ParametricConic(const Expression& e, Context * context);
+  ParametricConic(const Expression& e, Context * context, const char * symbol = "t");
 private:
   CoordinateType coordinateType() const override { return CoordinateType::Parametric; }
 };

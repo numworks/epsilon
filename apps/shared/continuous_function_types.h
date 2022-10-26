@@ -75,13 +75,6 @@ private:
   const SymbolType m_symbolType;
 };
 
-class ParametricFunctionType final : public FunctionType {
-public:
-  constexpr ParametricFunctionType() : FunctionType(I18n::Message::ParametricType) {}
-  SymbolType symbolType() const override { return SymbolType::T; }
-  CurveParameterType getCurveParameterType() const override { return CurveParameterType::Parametric; }
-};
-
 class CartesianEquationType : public FunctionType {
 public:
   constexpr CartesianEquationType(I18n::Message message, bool hasTwoSubCurves = false, bool isAlongY = false) :
@@ -145,6 +138,24 @@ private:
   Poincare::Conic::Shape m_conicShape;
 };
 
+class ParametricFunctionType : public FunctionType {
+public:
+  constexpr ParametricFunctionType(I18n::Message message) : FunctionType(message) {}
+  SymbolType symbolType() const override { return SymbolType::T; }
+  CurveParameterType getCurveParameterType() const override { return CurveParameterType::Parametric; }
+};
+
+class ParametricConicFunctionType final : public ParametricFunctionType {
+public:
+  constexpr ParametricConicFunctionType(I18n::Message message, Poincare::Conic::Shape conicShape) :
+    ParametricFunctionType(message),
+    m_conicShape(conicShape)
+  {}
+  Poincare::Conic::Shape conicShape() const override { return m_conicShape; }
+private:
+  Poincare::Conic::Shape m_conicShape;
+};
+
 // ====== ALL FUNCTION TYPES ======
 
 class FunctionTypes {
@@ -165,7 +176,15 @@ private:
   constexpr static ErrorFunctionType k_undefinedPolarFunctionType = ErrorFunctionType(I18n::Message::UndefinedType, FunctionType::Status::Undefined, FunctionType::SymbolType::Theta);
 
   // Parametric
-  constexpr static ParametricFunctionType k_parametricFunctionType = ParametricFunctionType();
+  constexpr static ParametricFunctionType k_parametricFunctionType = ParametricFunctionType(I18n::Message::ParametricType);
+  constexpr static ParametricFunctionType k_parametricLineType = ParametricFunctionType(I18n::Message::LineType);
+  constexpr static ParametricFunctionType k_parametricHorizontalLineType = ParametricFunctionType(I18n::Message::HorizontalLineType);
+  constexpr static ParametricFunctionType k_parametricVerticalLineType = ParametricFunctionType(I18n::Message::VerticalLineType);
+  // Parametric conics
+  constexpr static ParametricFunctionType k_parametricEllipseFunctionType = ParametricConicFunctionType(I18n::Message::EllipseType, Poincare::Conic::Shape::Ellipse);
+  constexpr static ParametricFunctionType k_parametricCircleFunctionType = ParametricConicFunctionType(I18n::Message::CircleType, Poincare::Conic::Shape::Circle);
+  constexpr static ParametricFunctionType k_parametricHyperbolaFunctionType = ParametricConicFunctionType(I18n::Message::HyperbolaType, Poincare::Conic::Shape::Hyperbola);
+  constexpr static ParametricFunctionType k_parametricParabolaFunctionType = ParametricConicFunctionType(I18n::Message::ParabolaType, Poincare::Conic::Shape::Parabola);
 
   // Polar
   constexpr static PolarFunctionType k_polarFunctionType = PolarFunctionType(I18n::Message::PolarType);

@@ -5,6 +5,7 @@ namespace Poincare {
 
 class RationalBig final {
 public:
+  /* | RATIONAL_(POS/NEG)_BIG TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... | NUMBER DIGITS | RATIONAL_(POS/NEG)_BIG TAG TAG | */
   constexpr static size_t k_numberOfMetaBlocksInNode = 5;
   static const uint8_t * NumeratorDigits(const TypeBlock * block) { return reinterpret_cast<const uint8_t *>(block->nextNth(3)); }
   static const uint8_t * DenominatorDigits(const TypeBlock * block) { return reinterpret_cast<const uint8_t *>(block->nextNth(3 + NumeratorNumberOfDigits(block))); }

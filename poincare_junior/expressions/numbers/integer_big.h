@@ -7,8 +7,8 @@
 namespace Poincare {
 
 class IntegerBig final {
-  /* | INTEGER_BIG TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... | NUMBER DIGITS | INTEGER_BIG TAG | */
-public:
+  /* | INTEGER_(POS/NEG)_BIG TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... | NUMBER DIGITS | INTEGER_(POS/NEG)_BIG TAG TAG | */
+  public:
   constexpr static size_t k_numberOfMetaBlocksInNode = 4;
   constexpr static bool CreateBlockAtIndex(Block * block, size_t blockIndex, int value) {
     if (blockIndex == 0) {

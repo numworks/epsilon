@@ -508,8 +508,8 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("sin(π)", {.trigonometry = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("sin(iπ)", {.complex = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("ln(2)", {.function = true}, &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas("2^3", {.function = true, .integer = true}, &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas(".5^2", {.function = true, .rational = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("2^3", {.integer = true, .function = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas(".5^2", {.rational = true, .function = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("e^3", {.function = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("tan(π/2)", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("[[1]]", {.vector = true}, &globalContext, &store);

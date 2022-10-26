@@ -373,10 +373,14 @@ void ContinuousFunction::setTAuto(bool tAuto) {
   }
   /* Domain either was or will be auto. Reset values anyway in case model has
    * been updated or angle unit changed. */
-  recordData()->setTMin(autoTMin());
-  recordData()->setTMax(autoTMax());
   recordData()->setTAuto(tAuto);
   setCache(nullptr);
+  if (tAuto) {
+    // No need to update Tmin or Tmax since the auto value will be returned
+    return;
+  }
+  recordData()->setTMin(autoTMin());
+  recordData()->setTMax(autoTMax());
 }
 
 float ContinuousFunction::autoTMax() const {

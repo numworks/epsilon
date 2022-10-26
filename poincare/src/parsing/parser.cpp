@@ -108,6 +108,7 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
     &Parser::parseRightwardsArrow,      // Token::RightwardsArrow
     &Parser::parseAssigmentEqual,       // Token::AssignmentEqual
     &Parser::parseUnexpected,           // Token::RightSystemParenthesis
+    &Parser::parseUnexpected,           // Token::RightSystemBrace
     &Parser::parseUnexpected,           // Token::RightBracket
     &Parser::parseUnexpected,           // Token::RightParenthesis
     &Parser::parseUnexpected,           // Token::RightBrace
@@ -135,6 +136,7 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
     &Parser::parseLeftParenthesis,      // Token::LeftParenthesis
     &Parser::parseList,                 // Token::LeftBrace
     &Parser::parseLeftSystemParenthesis,// Token::LeftSystemParenthesis
+    &Parser::parseLeftSystemParenthesis,// Token::LeftSystemBrace
     &Parser::parseEmpty,                // Token::Empty
     &Parser::parseConstant,             // Token::Constant
     &Parser::parseNumber,               // Token::Number

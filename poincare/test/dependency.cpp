@@ -90,7 +90,7 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
   /* Dependencies are not bubbled up out of an integral, but they are still
    * present inside the integral. */
   assert_reduce_and_store("1→f(x)");
-  assert_expression_simplify_to_with_dependencies("int(f(x)+f(a),x,0,1)", "int(dep\u0014(2,{x,a}),x,0,1)", {""});
+  assert_expression_simplify_to_with_dependencies("int(f(x)+f(a),x,0,1)", "int(\u0014dep(2,{x,a}),x,0,1)", {""});
   assert_reduce_and_store("1/0→a");
   assert_expression_simplify_to_with_dependencies("int(f(x)+f(a),x,0,1)", Undefined::Name(), {""});
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
@@ -99,7 +99,7 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
   /* If the derivation is not handled properly, the symbol x could be reduced
    * to undef. */
   assert_reduce_and_store("x→f(x)");
-  assert_expression_simplify_to_with_dependencies("int(diff(f(x),x,x),x,0,1)", "int(dep\u0014(1,{x}),x,0,1)", {""});
+  assert_expression_simplify_to_with_dependencies("int(diff(f(x),x,x),x,0,1)", "int(\u0014dep(1,{x}),x,0,1)", {""});
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 
   /* When trimming dependencies, we must be able to recognize unreduced
@@ -118,7 +118,7 @@ QUIZ_CASE(poincare_dependency_sequence) {
   Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithFullNameAndDataChunks("u.seq", reinterpret_cast<const void **>(&emptyString), 0, 0);
   assert_reduce_and_store("3→f(x)");
   // Sequence are kept in dependency
-  assert_expression_simplify_to_with_dependencies("f(u(2))", "3", {"u{2}"});
+  assert_expression_simplify_to_with_dependencies("f(u(2))", "3", {"u\u0014{2\u0014}"});
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("u.seq").destroy();
 }

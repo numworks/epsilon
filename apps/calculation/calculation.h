@@ -46,7 +46,7 @@ public:
     bool vector : 1;
     bool complex : 1;
     bool function : 1;
-    bool isNone() const { return !(integer || rational || trigonometry || unit || matrix || vector || complex || function); }
+    bool isEmpty() const { return !(integer || rational || trigonometry || unit || matrix || vector || complex || function); }
   };
 
   static bool DisplaysExact(DisplayOutput d) { return d != DisplayOutput::ApproximateOnly; }

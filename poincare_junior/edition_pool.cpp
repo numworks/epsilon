@@ -2,7 +2,7 @@
 #include "cache_pool.h"
 #include "edition_pool.h"
 #include "exception_checkpoint.h"
-#include "utils.h"
+#include <utils.h>
 
 namespace Poincare {
 
@@ -98,7 +98,7 @@ void EditionPool::moveBlocks(Block * destination, Block * source, size_t numberO
   uint8_t * src = reinterpret_cast<uint8_t *>(source);
   uint8_t * dst = reinterpret_cast<uint8_t *>(destination);
   size_t len = numberOfBlocks * sizeof(Block);
-  Utils::Rotate(dst, src, len);
+  Memory::Rotate(dst, src, len);
   m_referenceTable.updateNodes(
       [](uint16_t * offset, Block * testedBlock, Block * dst, Block * src, int nbOfBlocks) {
         if (testedBlock >= src && testedBlock < src + nbOfBlocks) {

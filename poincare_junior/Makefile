@@ -8,6 +8,10 @@ include build/defaults.mak
 include build/platform.$(PLATFORM).mak
 include build/toolchain.$(TOOLCHAIN).mak
 
+include poincare_junior/utils/Makefile
+
+poincare_junior_src += $(utils_src)
+
 poincare_junior_src += $(addprefix poincare_junior/,\
   expressions/numbers/integer.o \
   expressions/numbers/integer_handler.o \
@@ -37,7 +41,6 @@ poincare_junior_src += $(addprefix poincare_junior/,\
   node.o \
   pool.o \
   type_block.o \
-  utils.o \
 )
 
 poincare_junior_src += ion/src/simulator/shared/crc32.o
@@ -53,6 +56,8 @@ junior.elf: $(poincare_junior_src)
 
 .PHONY: clean
 clean:
+	rm -f poincare_junior/*/*/*.o
+	rm -f poincare_junior/*/*/*.d
 	rm -f poincare_junior/*/*.o
 	rm -f poincare_junior/*/*.d
 	rm -f poincare_junior/*.o

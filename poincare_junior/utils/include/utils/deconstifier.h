@@ -1,10 +1,5 @@
-#ifndef POINCARE_UTILS_H
-#define POINCARE_UTILS_H
-
-#include <stddef.h>
-#include <stdint.h>
-
-namespace Poincare {
+#ifndef UTILS_DECONSTIFIER_H
+#define UTILS_DECONSTIFIER_H
 
 namespace Utils {
 
@@ -23,18 +18,6 @@ constexpr inline T * DeconstifyPtr(ConstActionByPointer<T, Args...> action, T * 
 template <typename T, typename ...Args>
 constexpr inline T DeconstifyObj(ConstActionByObject<T, Args...> action, T * object, Args... args) {
   return T((object->*action)(args...));
-}
-
-typedef void (*Swap) (int i, int j, void * context, int numberOfElements);
-typedef bool (*Compare) (int i, int j, void * context, int numberOfElements);
-
-size_t AlignedSize(size_t realSize, size_t alignment);
-size_t Gcd(size_t a, size_t b);
-bool Rotate(uint8_t * dst, uint8_t * src, size_t len);
-void Sort(Swap swap, Compare compare, void * context, int numberOfElements);
-int ExtremumIndex(Compare compare, void * context, int numberOfElements, bool minimum);
-bool FloatIsGreater(float xI, float xJ, bool nanIsGreatest);
-
 }
 
 }

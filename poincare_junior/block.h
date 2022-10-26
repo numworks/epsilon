@@ -8,7 +8,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "utils.h"
+#include <utils.h>
 
 namespace Poincare {
 

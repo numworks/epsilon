@@ -125,23 +125,19 @@ AppIterator & AppIterator::operator++() {
   return *this;
 }
 
-bool s_externalAppsVisible = false; // After reset, external apps are not visible
 
 AppIterator Apps::begin() const {
   uint8_t * storageStart = &_external_apps_flash_start;
   assert(nextSectorAlignedAddress(storageStart) == storageStart);
-  if (!s_externalAppsVisible || !appAtAddress(storageStart)) {
+  if (!appAtAddress(storageStart)) {
     return end();
   }
   return AppIterator(storageStart);
 }
 
 void setVisible() {
-  s_externalAppsVisible = true;
   if (numberOfApps() > 0) {
     Device::Board::enableExternalApps(); // Display pop-up
-  } else {
-    s_externalAppsVisible = false;
   }
 }
 
@@ -155,11 +151,9 @@ int numberOfApps() {
 }
 
 void deleteApps() {
-  s_externalAppsVisible = true;
   for (App a : Apps()) {
     a.eraseMagicCode();
   }
-  s_externalAppsVisible = false;
 }
 
 }

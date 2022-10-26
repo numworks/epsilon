@@ -119,7 +119,6 @@ static KDCoordinate relativePositionToOffset(AbstractPlotView::RelativePosition 
 }
 
 static KDPoint computeOrigin(Coordinate2D<float> xy, KDSize size, AbstractPlotView::RelativePosition xPosition, AbstractPlotView::RelativePosition yPosition, bool ignoreMargin) {
-  assert(plotView);
   KDCoordinate x = std::round(xy.x1()) + relativePositionToOffset(xPosition, size.width(), ignoreMargin);
   KDCoordinate y = std::round(xy.x2()) + relativePositionToOffset(yPosition, size.height(), ignoreMargin);
   return KDPoint(x, y);

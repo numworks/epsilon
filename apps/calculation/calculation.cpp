@@ -275,9 +275,9 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   }
   AdditionalInformations additionalInformations = {};
   // We want a single numerical value and to avoid showing the identity function
-  bool isInterestingFunction = !i.isNumber() && i.type() != ExpressionNode::Type::ConstantMaths && !(i.type() == ExpressionNode::Type::Opposite && i.childAtIndex(0).isNumber());
+  bool isInterestingFunction = !i.isNumber() && i.type() != ExpressionNode::Type::ConstantMaths && !(i.type() == ExpressionNode::Type::Opposite && (i.childAtIndex(0).isNumber() || i.childAtIndex(0).type() == ExpressionNode::Type::ConstantMaths));
   assert(!a.isUndefined());
-  if (isInterestingFunction && a.type() != ExpressionNode::Type::Nonreal  && i.type() != ExpressionNode::Type::ConstantMaths && i.numberOfNumericalValues() == 1) {
+  if (isInterestingFunction && a.type() != ExpressionNode::Type::Nonreal && i.numberOfNumericalValues() == 1) {
     additionalInformations.function = true;
   }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {

@@ -4,6 +4,7 @@
 #include <apps/exam_mode_configuration.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
+#include <poincare/trigonometry.h>
 
 using namespace Poincare;
 
@@ -395,6 +396,35 @@ const FunctionType * ContinuousFunctionProperties::CartesianEquationAnalysis(con
 const FunctionType * ContinuousFunctionProperties::PolarFunctionAnalysis(const Expression& reducedEquation, Context * context) {
   assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
 
+  /* Detect polar lines
+   * 1/sinOrCos(theta + B) --> Line
+   * 1/cos(theta) --> Vertical line
+   * 1/cos(theta + pi/2) --> Horizontal line
+   *
+   * TODO: Polar lines are badly plotted by the Grapher app so this is not
+   * very useful.
+   */
+  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context);
+  Expression denominator, numerator;
+  if (reducedEquation.type() == ExpressionNode::Type::Multiplication) {
+    static_cast<const Multiplication&>(reducedEquation).splitIntoNormalForm(numerator, denominator, reductionContext);
+  } else if (reducedEquation.type() == ExpressionNode::Type::Power && reducedEquation.childAtIndex(1).isMinusOne()) {
+    denominator = reducedEquation.childAtIndex(0);
+  }
+
+  double angle = 0.0;
+  double coefficientBeforeTheta = 1.0;
+  if (!denominator.isUninitialized() && Trigonometry::IsCosOrSinOfSymbol(denominator, reductionContext, Function::k_unknownName, nullptr, &coefficientBeforeTheta, &angle) && coefficientBeforeTheta == 1.0) {
+    if (angle == 0.0 || angle == M_PI) {
+      return &FunctionTypes::k_polarVerticalLineType;
+    }
+    if (angle == M_PI_2 || angle == M_PI + M_PI_2) {
+      return &FunctionTypes::k_polarHorizontalLineType;
+    }
+    return &FunctionTypes::k_polarLineType;
+  }
+
+  // Detect polar conics
   PolarConic conicProperties = PolarConic(reducedEquation, context, Function::k_unknownName);
   switch (conicProperties.conicType().shape) {
   case Conic::Shape::Hyperbola:

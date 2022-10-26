@@ -50,7 +50,7 @@ HistoryViewCell::HistoryViewCell(Responder * parentResponder) :
   Responder(parentResponder),
   m_calculationCRC32(0),
   m_calculationDisplayOutput(Calculation::DisplayOutput::Unknown),
-  m_calculationAdditionInformations(Calculation::AdditionalInformations::None),
+  m_calculationAdditionInformations({}),
   m_inputView(this, k_inputViewHorizontalMargin, k_inputOutputViewsVerticalMargin),
   m_scrollableOutputView(this),
   m_calculationExpanded(false),

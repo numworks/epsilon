@@ -242,7 +242,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
    * return any additional outputs for them to avoid bothering with special
    * cases. */
   if (i.isUninitialized() || o.isUninitialized() || i.type() == ExpressionNode::Type::Store || a.type() == ExpressionNode::Type::Undefined) {
-    return AdditionalInformations();
+    return AdditionalInformations {};
   }
   /* Trigonometry additional results are displayed if either input or output is a sin or a cos. Indeed, we want to capture both cases:
    * - > input: cos(60)
@@ -252,7 +252,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
    * However if the result is complex, it is treated as a complex result instead
    */
   if (!isComplex && (i.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine}) || o.isOfType({ExpressionNode::Type::Cosine, ExpressionNode::Type::Sine}))) {
-    return AdditionalInformations(AdditionalInformations::Type::Trigonometry);
+    return AdditionalInformations {.trigonometry = true};
   }
   if (o.hasUnit()) {
     Expression unit;
@@ -260,32 +260,32 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     double value = PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
     if (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences()->unitFormat())
         || UnitComparison::ShouldDisplayUnitComparison(value, unit)) {
-      return AdditionalInformations(AdditionalInformations::Type::Unit);
+      return AdditionalInformations {.unit = true};
     }
-    return AdditionalInformations();
+    return AdditionalInformations {};
   }
   if (o.type() == ExpressionNode::Type::Matrix) {
     if (static_cast<const Matrix&>(o).vectorType() != Array::VectorType::None) {
-      return AdditionalInformations(AdditionalInformations::Type::Vector);
+      return AdditionalInformations {.vector = true};
     }
-    return AdditionalInformations(AdditionalInformations::Type::Matrix);
+    return AdditionalInformations {.matrix = true};
   }
   if (isComplex) {
-    return AdditionalInformations(AdditionalInformations::Type::Complex);
+    return AdditionalInformations {.complex = true};
   }
-  AdditionalInformations additionalInformations;
+  AdditionalInformations additionalInformations = {};
   // We want a single numerical value and to avoid showing the identity function
   bool isInterestingFunction = !i.isNumber() && i.type() != ExpressionNode::Type::ConstantMaths && !(i.type() == ExpressionNode::Type::Opposite && i.childAtIndex(0).isNumber());
   if (isInterestingFunction && a.type() != ExpressionNode::Type::Nonreal  && i.type() != ExpressionNode::Type::ConstantMaths && i.numberOfNumericalValues() == 1) {
-    additionalInformations.set(AdditionalInformations::Type::Function);
+    additionalInformations.function = true;
   }
   if (o.isBasedIntegerCappedBy(k_maximalIntegerWithAdditionalInformation)) {
-    additionalInformations.set(AdditionalInformations::Type::Integer);
+    additionalInformations.integer = true;
     return additionalInformations;
   }
   // Find forms like [12]/[23] or -[12]/[23]
   if (o.isDivisionOfIntegers() || (o.type() == ExpressionNode::Type::Opposite && o.childAtIndex(0).isDivisionOfIntegers())) {
-    additionalInformations.set(AdditionalInformations::Type::Rational);
+    additionalInformations.rational = true;
     return additionalInformations;
   }
   return additionalInformations;

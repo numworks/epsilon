@@ -122,21 +122,21 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
         ListController * vc = nullptr;
         ExpiringPointer<Calculation> focusCalculation = calculationAtIndex(focusRow);
         Expression e = focusCalculation->exactOutput();
-        if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Complex)) {
+        if (additionalInformations.complex) {
           vc = &m_complexController;
-        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Trigonometry)) {
+        } else if (additionalInformations.trigonometry) {
           vc = &m_trigonometryController;
           // Find which of the input or output is the cosine/sine
           ExpressionNode::Type t = e.type();
           e = t == ExpressionNode::Type::Cosine || t == ExpressionNode::Type::Sine ? e : calculationAtIndex(focusRow)->input();
-        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Function)) {
+        } else if (additionalInformations.function) {
           e = focusCalculation->input();
           vc = &m_functionController;
-          if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Integer)) {
+          if (additionalInformations.integer) {
             Expression output = focusCalculation->exactOutput();
             m_integerController.setExpression(output);
             m_functionController.setTail(&m_integerController);
-          } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Rational)) {
+          } else if (additionalInformations.rational) {
             Expression output = focusCalculation->exactOutput();
             Expression input = focusCalculation->input();
             m_rationalController.setExpression(isFractionInput(input) ? input : output);
@@ -144,19 +144,19 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           } else {
             m_functionController.setTail(nullptr);
           }
-        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Integer)) {
+        } else if (additionalInformations.integer) {
           vc = &m_integerController;
-        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Rational)) {
+        } else if (additionalInformations.rational) {
           Expression focusInput = focusCalculation->input();
           if (isFractionInput(focusInput)) {
             e = focusInput;
           }
           vc = &m_rationalController;
-        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Unit)) {
+        } else if (additionalInformations.unit) {
           vc = &m_unitController;
-        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Vector)) {
+        } else if (additionalInformations.vector) {
           vc = &m_vectorController;
-        } else if (additionalInformations.contains(Calculation::AdditionalInformations::Type::Matrix)) {
+        } else if (additionalInformations.matrix) {
           vc = &m_matrixController;
         }
         if (vc) {

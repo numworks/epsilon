@@ -17,7 +17,9 @@ namespace USB {
 
 void Calculator::leave(uint32_t leaveAddress) {
   if (leaveAddress >= reinterpret_cast<uint32_t>(&_external_apps_flash_start) && leaveAddress < reinterpret_cast<uint32_t>(&_external_apps_flash_end)) {
-    Ion::ExternalApps::setVisible();
+  if (Ion::ExternalApps::numberOfApps() > 0) {
+    Board::enableExternalApps(); // Display pop-up
+  }
     return;
   }
   Board::switchExecutableSlot(leaveAddress);

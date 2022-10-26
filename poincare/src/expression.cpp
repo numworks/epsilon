@@ -1328,17 +1328,21 @@ Expression Expression::FunctionHelper::build(Expression children) const {
 }
 
 int ExpressionNode::numberOfNumericalValues() const {
-  constexpr int error = -1;
+  constexpr int k_error = -1;
   assert(type() != ExpressionNode::Type::Dependency);
   if (isRandom()) {
-    return error;
+    return k_error;
   }
   if (isNumber()) {
-    return std::isfinite(static_cast<const NumberNode*>(this)->doubleApproximation()) ? 1 : error;
+    return std::isfinite(static_cast<const NumberNode*>(this)->doubleApproximation()) ? 1 : k_error;
   }
   if (type() == ExpressionNode::Type::Power) {
     int base = childAtIndex(0)->numberOfNumericalValues();
-    return base != 0 ? base : childAtIndex(1)->numberOfNumericalValues();
+    int exponent = childAtIndex(1)->numberOfNumericalValues();
+    if (base == k_error || exponent == k_error) {
+      return k_error;
+    }
+    return base != 0 ? base : exponent;
   }
   if (type() == ExpressionNode::Type::ConstantMaths) {
     const ConstantNode * constant = static_cast<const ConstantNode*>(this);
@@ -1348,8 +1352,8 @@ int ExpressionNode::numberOfNumericalValues() const {
   int n = 0;
   for (ExpressionNode * child : children()) {
     int childValue = child->numberOfNumericalValues();
-    if (childValue == error) {
-      return error;
+    if (childValue == k_error) {
+      return k_error;
     }
     n += childValue;
   }

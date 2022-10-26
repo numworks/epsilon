@@ -33,7 +33,7 @@ public:
   {}
 
   // Getters
-  I18n::Message message() const { return isEquality() ? m_plotType->message() : I18n::Message::InequationType;  }
+  I18n::Message caption() const { return isEquality() ? m_plotType->caption() : I18n::Message::InequalityType;  }
   bool isInitialized() const { return m_plotType->isInitialized(); }
   FunctionType::Status status() const { return m_plotType->status(); }
   FunctionType::SymbolType symbolType() const { return m_plotType->symbolType(); }

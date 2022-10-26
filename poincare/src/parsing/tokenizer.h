@@ -19,7 +19,8 @@ public:
   Tokenizer(const char * text, ParsingContext * parsingContext, const char * textEnd = nullptr) :
     m_decoder(text, text, textEnd),
     m_parsingContext(parsingContext),
-    m_numberOfStoredIdentifiers(0)
+    m_numberOfStoredIdentifiers(0),
+    m_poppingSystemToken(false)
   {}
   Token popToken();
 
@@ -132,6 +133,7 @@ private:
    * long strings. */
   Token m_storedIdentifiersList[k_maxNumberOfIdentifiersInList];
   int m_numberOfStoredIdentifiers;
+  bool m_poppingSystemToken;
 };
 
 }

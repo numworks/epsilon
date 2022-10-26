@@ -138,6 +138,17 @@ Token Tokenizer::popToken() {
    * popNumber and popIdentifiersString). */
   const char * start = m_decoder.stringPosition();
 
+  /* A leading UCodePointSystem transforms the next token into its system
+   * counterpart. */
+  bool nextCodePointIsSystem = false;
+  nextCodePoint([](CodePoint cp) { return cp == UCodePointSystem; }, &nextCodePointIsSystem);
+  if (nextCodePointIsSystem) {
+    m_poppingSystemToken = true;
+    Token result = popToken();
+    m_poppingSystemToken = false;
+    return result;
+  }
+
   /* If the next code point is the start of a number, we do not want to pop it
    * because popNumber needs this code point. */
   bool nextCodePointIsNeitherDotNorDigit = true;
@@ -252,9 +263,9 @@ Token Tokenizer::popToken() {
   case ']':
     return Token(Token::RightBracket);
   case '{':
-    return Token(Token::LeftBrace);
+    return m_poppingSystemToken ? Token(Token::LeftSystemBrace) : Token(Token::LeftBrace);
   case '}':
-    return Token(Token::RightBrace);
+    return m_poppingSystemToken ? Token(Token::RightSystemBrace) : Token(Token::RightBrace);
   case UCodePointSquareRoot: {
     Token result(Token::ReservedFunction);
     result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c));

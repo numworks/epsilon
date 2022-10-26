@@ -169,6 +169,10 @@ private:
 
   // Polar
   constexpr static PolarFunctionType k_polarFunctionType = PolarFunctionType(I18n::Message::PolarType);
+  constexpr static PolarFunctionType k_polarLineType = PolarFunctionType(I18n::Message::LineType);
+  constexpr static PolarFunctionType k_polarHorizontalLineType = PolarFunctionType(I18n::Message::HorizontalLineType);
+  constexpr static PolarFunctionType k_polarVerticalLineType = PolarFunctionType(I18n::Message::VerticalLineType);
+  // Polar conics
   constexpr static PolarFunctionType k_polarEllipseFunctionType = PolarConicFunctionType(I18n::Message::EllipseType, Poincare::Conic::Shape::Ellipse);
   constexpr static PolarFunctionType k_polarCircleFunctionType = PolarConicFunctionType(I18n::Message::CircleType, Poincare::Conic::Shape::Circle);
   constexpr static PolarFunctionType k_polarHyperbolaFunctionType = PolarConicFunctionType(I18n::Message::HyperbolaType, Poincare::Conic::Shape::Hyperbola);

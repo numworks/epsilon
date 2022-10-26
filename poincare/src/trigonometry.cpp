@@ -611,6 +611,67 @@ std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, 
   return c;
 }
 
+ bool Trigonometry::IsCosOrSinOfSymbol(const Expression& e, ExpressionNode::ReductionContext reductionContext, const char * symbol, double * coefficientBeforeCos, double * coefficientBeforeSymbol, double * angle) {
+  if (e.type() == ExpressionNode::Type::Multiplication) {
+    // Check if expression is a*b*cos(theta+constant)
+    double coefficient = 1.0;
+    int nChildren = e.numberOfChildren();
+    bool foundCosOrSin = false;
+    for (int i = 0; i < nChildren; i++) {
+      Expression child = e.childAtIndex(i);
+      double tempCoef;
+      bool isCosOrSinOfTheta = IsCosOrSinOfSymbol(child, reductionContext, symbol, &tempCoef, coefficientBeforeSymbol, angle);
+      if (isCosOrSinOfTheta) {
+        if (foundCosOrSin) {
+          return false;
+        }
+        foundCosOrSin = true;
+        coefficient *= tempCoef;
+        continue;
+      }
+      int thetaDeg = child.polynomialDegree(reductionContext.context(), symbol);
+      if (thetaDeg != 0) {
+        return false;
+      }
+      coefficient *= child.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    }
+    if (coefficientBeforeCos) {
+      *coefficientBeforeCos = coefficient;
+    }
+    return foundCosOrSin;
+  }
+
+  if (coefficientBeforeCos) {
+    *coefficientBeforeCos = 1.0;
+  }
+
+  // Check is expression is cos(theta+constant)
+  if (e.type() != ExpressionNode::Type::Sine && e.type() != ExpressionNode::Type::Cosine) {
+    return false;
+  }
+
+  Expression child = e.childAtIndex(0);
+  int thetaDeg = child.polynomialDegree(reductionContext.context(), symbol);
+  if (thetaDeg != 1) {
+    return false;
+  }
+  Expression coefficients[2]; // Only 2 coefficients since child has degree 1
+  child.getPolynomialReducedCoefficients(symbol, coefficients, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation());
+
+  if (angle) {
+    *angle = coefficients[0].approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+    if (e.type() == ExpressionNode::Type::Sine) {
+      *angle -= M_PI_2;
+    }
+    *angle = std::fmod(*angle, 2 * M_PI);
+  }
+
+  if (coefficientBeforeSymbol) {
+    *coefficientBeforeSymbol = coefficients[1].approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
+  }
+  return true;
+}
+
 template std::complex<float> Trigonometry::ConvertToRadian<float>(std::complex<float>, Preferences::AngleUnit);
 template std::complex<double> Trigonometry::ConvertToRadian<double>(std::complex<double>, Preferences::AngleUnit);
 template std::complex<float> Trigonometry::ConvertRadianToAngleUnit<float>(std::complex<float>, Preferences::AngleUnit);

@@ -2,6 +2,7 @@
 #include <poincare/multiplication.h>
 #include <poincare/polynomial.h>
 #include <poincare/preferences.h>
+#include <poincare/trigonometry.h>
 #include <algorithm>
 
 /* Double comparison is extensively used in Conics's methods for performances.
@@ -401,53 +402,6 @@ double CartesianConic::getRadius() const {
   return std::sqrt(1 / m_a);
 }
 
-static bool IsCosOrSinOfTheta(const Expression& e, ExpressionNode::ReductionContext reductionContext, const char * theta, double * coefficientBeforeCos = nullptr) {
-  if (e.type() == ExpressionNode::Type::Multiplication) {
-    // Check if expression is a*b*cos(theta+constant)
-    double coefficient = 1.0;
-    int nChildren = e.numberOfChildren();
-    bool foundCosOrSin = false;
-    for (int i = 0; i < nChildren; i++) {
-      Expression child = e.childAtIndex(i);
-      double tempCoef;
-      bool isCosOrSinOfTheta = IsCosOrSinOfTheta(child, reductionContext, theta, &tempCoef);
-      if (isCosOrSinOfTheta) {
-        if (foundCosOrSin) {
-          return false;
-        }
-        foundCosOrSin = true;
-        coefficient *= tempCoef;
-        continue;
-      }
-      int thetaDeg = child.polynomialDegree(reductionContext.context(), theta);
-      if (thetaDeg != 0) {
-        return false;
-      }
-      coefficient *= child.approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
-    }
-    if (coefficientBeforeCos) {
-      *coefficientBeforeCos = coefficient;
-    }
-    return foundCosOrSin;
-  }
-
-  if (coefficientBeforeCos) {
-    *coefficientBeforeCos = 1.0;
-  }
-  // Check is expression is cos(theta+constant)
-  if (e.type() != ExpressionNode::Type::Sine && e.type() != ExpressionNode::Type::Cosine) {
-    return false;
-  }
-  Expression child = e.childAtIndex(0);
-  int thetaDeg = child.polynomialDegree(reductionContext.context(), theta);
-  if (thetaDeg != 1) {
-    return false;
-  }
-  Expression coefficients[2]; // Only 2 coefficients since child has degree 1
-  child.getPolynomialReducedCoefficients(theta, coefficients, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation());
-  return coefficients[1].isOne();
-}
-
 PolarConic::PolarConic(const Expression& e, Context * context, const char * theta) {
   Preferences::ComplexFormat complexFormat = Preferences::sharedPreferences()->complexFormat();
   Preferences::AngleUnit angleUnit = Preferences::sharedPreferences()->angleUnit();
@@ -468,7 +422,7 @@ PolarConic::PolarConic(const Expression& e, Context * context, const char * thet
   }
 
   // Detect the pattern r = cos/sin(theta)
-  if (IsCosOrSinOfTheta(reducedExpression, reductionContext, theta)) {
+  if (Trigonometry::IsCosOrSinOfSymbol(reducedExpression, reductionContext, theta)) {
     m_shape = Shape::Circle;
     return;
   }
@@ -487,15 +441,16 @@ PolarConic::PolarConic(const Expression& e, Context * context, const char * thet
     return;
   }
 
-  // Check that the denominator is of the form a+b+c+k*cos(theta)
+  // Check that the denominator is of the form a+b+c+k*cos(theta + p)
   int nChildren = denominator.numberOfChildren();
   bool foundCosOrSin = false;
-  double coefficient;
+  double coefficientBeforeCos;
   for (int i = 0; i < nChildren; i++) {
     Expression child = denominator.childAtIndex(i);
-    bool isCosOrSinOfTheta = IsCosOrSinOfTheta(child, reductionContext, theta, &coefficient);
+    double coefficientBeforeTheta = 1.0;
+    bool isCosOrSinOfTheta = Trigonometry::IsCosOrSinOfSymbol(child, reductionContext, theta, &coefficientBeforeCos, &coefficientBeforeTheta);
     if (isCosOrSinOfTheta) {
-      if (foundCosOrSin) {
+      if (foundCosOrSin || coefficientBeforeTheta != 1.0) {
         foundCosOrSin = false;
         break;
       }
@@ -513,7 +468,7 @@ PolarConic::PolarConic(const Expression& e, Context * context, const char * thet
     m_shape = Shape::Undefined;
     return;
   }
-  double absValueCoefficient = std::fabs(coefficient);
+  double absValueCoefficient = std::fabs(coefficientBeforeCos);
   if (absValueCoefficient < 1.0) {
     m_shape = Shape::Ellipse;
   } else if (absValueCoefficient > 1.0) {

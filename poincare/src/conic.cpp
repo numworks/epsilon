@@ -1,4 +1,5 @@
 #include <poincare/conic.h>
+#include <poincare/addition.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/polynomial.h>
@@ -449,6 +450,26 @@ PolarConic::PolarConic(const Expression& e, Context * context, const char * thet
     m_shape = Shape::Undefined;
     return;
   }
+
+  /* Denominator can be of the form a+b*cos(theta) and needs to be turned
+   * into 1 + (b/a)*cos(theta) */
+  denominator = denominator.cloneAndReduce(reductionContext);
+  if (denominator.type() != ExpressionNode::Type::Addition) {
+    m_shape = Shape::Undefined;
+    return;
+  }
+
+  // Remove the cos term of the denominator
+  int nChildren = denominator.numberOfChildren();
+  for (int i = nChildren - 1; i >= 0; i--) { // The cos is often at the end
+    if (denominator.childAtIndex(i).polynomialDegree(context, theta) != 0) {
+      static_cast<Addition&>(denominator).removeChildAtIndexInPlace(i);
+      break;
+    }
+  }
+  // All theta terms should have been removed
+  assert(denominator.polynomialDegree(context, theta) == 0);
+  coefficientBeforeCos /= denominator.approximateToScalar<double>(context, complexFormat, angleUnit);
 
   double absValueCoefficient = std::fabs(coefficientBeforeCos);
   if (absValueCoefficient < 1.0) {

@@ -116,6 +116,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       }
     } else {
       assert(subviewType == SubviewType::Ellipsis);
+      /* Only function results can be chained (with integer or rational).
+       * TODO: Refactor to avoid writing an if for each parent * child. */
       UserCircuitBreakerCheckpoint checkpoint;
       if (CircuitBreakerRun(checkpoint)) {
         Calculation::AdditionalInformations additionalInformations = selectedCell->additionalInformations();

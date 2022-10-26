@@ -115,7 +115,7 @@ void TypeParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   const char * subscripts[3] = {"n", "n+1", "n+2"};
   m_layouts[j] = HorizontalLayout::Builder(
         CodePointLayout::Builder(nextName[0]),
-        VerticalOffsetLayout::Builder(LayoutHelper::String(subscripts[j], strlen(subscripts[j])), VerticalOffsetLayoutNode::Position::Subscript)
+        VerticalOffsetLayout::Builder(LayoutHelper::String(subscripts[j], strlen(subscripts[j])), VerticalOffsetLayoutNode::VerticalPosition::Subscript)
       );
   ExpressionTableCellWithMessage * myCell = static_cast<ExpressionTableCellWithMessage *>(cell);
   myCell->setLayout(m_layouts[j]);

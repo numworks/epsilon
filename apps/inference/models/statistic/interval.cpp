@@ -76,7 +76,7 @@ Poincare::Layout Interval::intervalCriticalValueSymbol() {
       testCriticalValueSymbol(),
       Poincare::VerticalOffsetLayout::Builder(
           Poincare::CodePointLayout::Builder('*'),
-          Poincare::VerticalOffsetLayoutNode::Position::Superscript));
+          Poincare::VerticalOffsetLayoutNode::VerticalPosition::Superscript));
 }
 
 

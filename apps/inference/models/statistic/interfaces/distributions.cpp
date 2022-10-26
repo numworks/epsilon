@@ -54,7 +54,7 @@ Poincare::Layout DistributionChi2::TestCriticalValueSymbol() {
       Poincare::CodePointLayout::Builder(UCodePointGreekSmallLetterChi),
       Poincare::VerticalOffsetLayout::Builder(
           Poincare::CodePointLayout::Builder('2'),
-          Poincare::VerticalOffsetLayoutNode::Position::Superscript));
+          Poincare::VerticalOffsetLayoutNode::VerticalPosition::Superscript));
 }
 
 float DistributionChi2::CanonicalDensityFunction(float x, double degreesOfFreedom) {

@@ -25,7 +25,7 @@ Layout CubicModel::layout() {
       CodePointLayout::Builder('x'),
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('3'),
-        VerticalOffsetLayoutNode::Position::Superscript
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript
       ),
       CodePointLayout::Builder('+'),
       CodePointLayout::Builder('b'),
@@ -33,7 +33,7 @@ Layout CubicModel::layout() {
       CodePointLayout::Builder('x'),
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('2'),
-        VerticalOffsetLayoutNode::Position::Superscript
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript
       ),
       CodePointLayout::Builder('+'),
       CodePointLayout::Builder('c'),

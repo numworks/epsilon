@@ -148,7 +148,7 @@ Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
   Layout logLayout = String("log", 3);
   assert(logLayout.type() != LayoutNode::Type::HorizontalLayout);
   HorizontalLayout resultLayout = HorizontalLayout::Builder(logLayout);
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::Position::Subscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::VerticalPosition::Subscript);
   resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
   resultLayout.addOrMergeChildAtIndex(Parentheses(argument, false), resultLayout.numberOfChildren(), true);
   return std::move(resultLayout);
@@ -157,7 +157,7 @@ Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
 HorizontalLayout LayoutHelper::CodePointSubscriptCodePointLayout(CodePoint base, CodePoint subscript) {
   return HorizontalLayout::Builder(
       CodePointLayout::Builder(base),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder(subscript), VerticalOffsetLayoutNode::Position::Subscript));
+      VerticalOffsetLayout::Builder(CodePointLayout::Builder(subscript), VerticalOffsetLayoutNode::VerticalPosition::Subscript));
 }
 
 }

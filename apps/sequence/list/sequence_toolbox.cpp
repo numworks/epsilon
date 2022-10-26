@@ -89,7 +89,7 @@ void SequenceToolbox::buildExtraCellsLayouts(const char * sequenceName, int recu
       const char * indice = j == 0 ? "n" : "n+1";
       m_addedCellLayout[m_numberOfAddedCells++] = HorizontalLayout::Builder(
           CodePointLayout::Builder(Shared::SequenceStore::k_sequenceNames[i][0]),
-          VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice)), VerticalOffsetLayoutNode::Position::Subscript)
+          VerticalOffsetLayout::Builder(LayoutHelper::String(indice, strlen(indice)), VerticalOffsetLayoutNode::VerticalPosition::Subscript)
         );
     }
   }

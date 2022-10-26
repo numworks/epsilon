@@ -9,21 +9,27 @@ namespace Poincare {
 class VerticalOffsetLayoutNode final : public LayoutNode {
   friend class HigherOrderDerivativeLayoutNode;
 public:
-  enum class Position {
-    Subscript,
+  enum class VerticalPosition : uint8_t {
+    Subscript = 0,
     Superscript
   };
+  enum class HorizontalPosition : uint8_t {
+    Prefix = 0,
+    Suffix
+  };
 
-  VerticalOffsetLayoutNode(Position position = Position::Superscript) :
+  VerticalOffsetLayoutNode(VerticalPosition verticalPosition = VerticalPosition::Superscript, HorizontalPosition horizontalPosition = HorizontalPosition::Suffix) :
     LayoutNode(),
-    m_position(position)
+    m_verticalPosition(verticalPosition),
+    m_horizontalPosition(horizontalPosition)
   {}
 
   // Layout
   Type type() const override { return Type::VerticalOffsetLayout; }
 
   // VerticalOffsetLayoutNode
-  Position position() const { return m_position; }
+  VerticalPosition verticalPosition() const { return m_verticalPosition; }
+  HorizontalPosition horizontalPosition() const { return m_horizontalPosition; }
 
   // LayoutNode
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
@@ -32,7 +38,7 @@ public:
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  bool mustHaveLeftSibling() const override { return true; }
+  bool mustHaveLeftSibling() const override { return m_horizontalPosition == HorizontalPosition::Suffix; }
   bool canBeOmittedMultiplicationRightFactor() const override { return false; }
 
   // TreeNode
@@ -40,31 +46,34 @@ public:
   int numberOfChildren() const override { return 1; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
-    stream << (m_position == Position::Subscript ? "Subscript" : "Superscript");
+    stream << (verticalPosition() == VerticalPosition::Subscript ? "Subscript" : "Superscript");
   }
 #endif
 
-protected:
+private:
   // LayoutNode
+  constexpr static KDCoordinate k_indiceHeight = 10;
+  constexpr static KDCoordinate k_separationMargin = 5;
+
   KDSize computeSize(KDFont::Size font) override;
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
-private:
-  constexpr static KDCoordinate k_indiceHeight = 10;
-  constexpr static KDCoordinate k_separationMargin = 5;
   bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {}
   bool protectedIsIdenticalTo(Layout l) override;
+
   LayoutNode * indiceLayout() { return childAtIndex(0); }
   LayoutNode * baseLayout();
-  Position m_position;
+
+  VerticalPosition m_verticalPosition : 1;
+  HorizontalPosition m_horizontalPosition : 1;
 };
 
 class VerticalOffsetLayout final : public Layout {
 public:
-  static VerticalOffsetLayout Builder(Layout l, VerticalOffsetLayoutNode::Position position);
+  static VerticalOffsetLayout Builder(Layout l, VerticalOffsetLayoutNode::VerticalPosition verticalPosition, VerticalOffsetLayoutNode::HorizontalPosition horizontalPosition = VerticalOffsetLayoutNode::HorizontalPosition::Suffix);
   VerticalOffsetLayout() = delete;
-  VerticalOffsetLayoutNode::Position position() const { return static_cast<VerticalOffsetLayoutNode *>(node())->position(); }
+  VerticalOffsetLayoutNode::VerticalPosition verticalPosition() const { return static_cast<VerticalOffsetLayoutNode *>(node())->verticalPosition(); }
 };
 
 }

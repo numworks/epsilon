@@ -27,7 +27,7 @@ QUIZ_CASE(poincare_layout_constructors) {
   EmptyLayout e23 = EmptyLayout::Builder();
   EmptyLayout e24 = EmptyLayout::Builder();
   SumLayout e25 = SumLayout::Builder(e21, e22, e23, e24);
-  VerticalOffsetLayout e26 = VerticalOffsetLayout::Builder(e25, VerticalOffsetLayoutNode::Position::Superscript);
+  VerticalOffsetLayout e26 = VerticalOffsetLayout::Builder(e25, VerticalOffsetLayoutNode::VerticalPosition::Superscript);
   CodePointLayout e27 = CodePointLayout::Builder('t');
   FirstOrderDerivativeLayout e28 = FirstOrderDerivativeLayout::Builder(e15, e27, e26);
   HigherOrderDerivativeLayout e29 = HigherOrderDerivativeLayout::Builder(e15, e27, e26, e21);
@@ -54,9 +54,9 @@ QUIZ_CASE(poincare_layout_comparison) {
   quiz_assert(!e5.isIdenticalTo(e7));
   quiz_assert(!e5.isIdenticalTo(e0));
 
-  Layout e8 = VerticalOffsetLayout::Builder(e5, VerticalOffsetLayoutNode::Position::Superscript);
-  Layout e9 = VerticalOffsetLayout::Builder(e6, VerticalOffsetLayoutNode::Position::Superscript);
-  Layout e10 = VerticalOffsetLayout::Builder(NthRootLayout::Builder(CodePointLayout::Builder('a')), VerticalOffsetLayoutNode::Position::Subscript);
+  Layout e8 = VerticalOffsetLayout::Builder(e5, VerticalOffsetLayoutNode::VerticalPosition::Superscript);
+  Layout e9 = VerticalOffsetLayout::Builder(e6, VerticalOffsetLayoutNode::VerticalPosition::Superscript);
+  Layout e10 = VerticalOffsetLayout::Builder(NthRootLayout::Builder(CodePointLayout::Builder('a')), VerticalOffsetLayoutNode::VerticalPosition::Subscript);
   quiz_assert(e8.isIdenticalTo(e9));
   quiz_assert(!e8.isIdenticalTo(e10));
   quiz_assert(!e8.isIdenticalTo(e0));
@@ -136,7 +136,7 @@ QUIZ_CASE(poincare_layout_power) {
    * */
   Layout l2 = HorizontalLayout::Builder(
       CodePointLayout::Builder('1'),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript));
+      VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::VerticalPosition::Superscript));
   LayoutCursor c2(l2.childAtIndex(1), LayoutCursor::Position::Right);
   c2.addEmptySquarePowerLayout(nullptr);
   assert_layout_serialize_to(l2, "(1^\u00122\u0013)^\u00122\u0013");
@@ -147,7 +147,7 @@ QUIZ_CASE(poincare_layout_power) {
    * */
   Layout l3 = HorizontalLayout::Builder(ParenthesisLayout::Builder(HorizontalLayout::Builder(
     CodePointLayout::Builder('1'),
-    VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript)
+    VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::VerticalPosition::Superscript)
   )));
   LayoutCursor c3(l3, LayoutCursor::Position::Right);
   c3.moveLeft(nullptr);

@@ -34,7 +34,7 @@ Layout ExponentialModel::layout() {
       base,
       VerticalOffsetLayout::Builder(
         exponent,
-        VerticalOffsetLayoutNode::Position::Superscript
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript
       )
     });
   }

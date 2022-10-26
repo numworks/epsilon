@@ -132,7 +132,7 @@ QUIZ_CASE(poincare_layout_serialization) {
         CodePointLayout::Builder('2'),
         VerticalOffsetLayout::Builder(
           LayoutHelper::StringToCodePointsLayout("x+5", 3),
-          VerticalOffsetLayoutNode::Position::Superscript)),
+          VerticalOffsetLayoutNode::VerticalPosition::Superscript)),
       "2^\x12x+5\x13");
 
   // Piecewise layout

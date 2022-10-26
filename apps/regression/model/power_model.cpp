@@ -19,7 +19,7 @@ Layout PowerModel::layout() {
       CodePointLayout::Builder('x'),
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('b'),
-        VerticalOffsetLayoutNode::Position::Superscript
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript
       ),
     });
   }

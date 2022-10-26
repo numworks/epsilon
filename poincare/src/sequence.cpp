@@ -42,7 +42,7 @@ Layout SequenceNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   Layout rank = childAtIndex(0)->createLayout(floatDisplayMode, numberOfSignificantDigits, context);
   return HorizontalLayout::Builder(
     CodePointLayout::Builder(name()[0]),
-    VerticalOffsetLayout::Builder(rank, VerticalOffsetLayoutNode::Position::Subscript));
+    VerticalOffsetLayout::Builder(rank, VerticalOffsetLayoutNode::VerticalPosition::Subscript));
 }
 
 int SequenceNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

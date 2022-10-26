@@ -23,7 +23,7 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   events_platform.cpp \
   framebuffer.cpp \
   keyboard.cpp \
-  layout.cpp \
+  layout.py \
   main.cpp \
   persisting_bytes.cpp \
   random.cpp \
@@ -38,6 +38,18 @@ $(addprefix $(BUILD_DIR),ion/src/simulator/assets/background.jpg): ion/src/simul
 	$(Q) convert -crop 1358x2673+239+16 $< $@
 ion_simulator_assets_paths += $(addprefix $(BUILD_DIR),ion/src/simulator/assets/background.jpg)
 simulator_app_deps += $(ion_simulator_assets_paths)
+
+# layout.cpp generation
+
+$(eval $(call rule_for, \
+  LAYOUT, \
+  ion/src/simulator/shared/layout.cpp, \
+  $(addprefix ion/src/simulator/shared/,layout.json layout.py), \
+  $$(PYTHON) ion/src/simulator/shared/layout.py -i $$< -o $$@, \
+  global \
+))
+
+$(call object_for,$(ion_src)): $(BUILD_DIR)/ion/src/simulator/shared/layout.cpp
 
 include ion/src/simulator/$(TARGET)/Makefile
 include ion/src/simulator/external/Makefile

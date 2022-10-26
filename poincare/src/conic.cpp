@@ -422,7 +422,7 @@ PolarConic::PolarConic(const Expression& e, Context * context, const char * thet
   }
 
   // Detect the pattern r = cos/sin(theta)
-  if (Trigonometry::IsCosOrSinOfSymbol(reducedExpression, reductionContext, theta)) {
+  if (Trigonometry::IsCosOrSinOfSymbol(reducedExpression, reductionContext, theta, false)) {
     m_shape = Shape::Circle;
     return;
   }
@@ -442,32 +442,13 @@ PolarConic::PolarConic(const Expression& e, Context * context, const char * thet
   }
 
   // Check that the denominator is of the form a+b+c+k*cos(theta + p)
-  int nChildren = denominator.numberOfChildren();
-  bool foundCosOrSin = false;
   double coefficientBeforeCos;
-  for (int i = 0; i < nChildren; i++) {
-    Expression child = denominator.childAtIndex(i);
-    double coefficientBeforeTheta = 1.0;
-    bool isCosOrSinOfTheta = Trigonometry::IsCosOrSinOfSymbol(child, reductionContext, theta, &coefficientBeforeCos, &coefficientBeforeTheta);
-    if (isCosOrSinOfTheta) {
-      if (foundCosOrSin || coefficientBeforeTheta != 1.0) {
-        foundCosOrSin = false;
-        break;
-      }
-      foundCosOrSin = true;
-      continue;
-    }
-    int thetaDeg = child.polynomialDegree(reductionContext.context(), theta);
-    if (thetaDeg != 0) {
-      foundCosOrSin = false;
-      break;
-    }
-  }
-
-  if (!foundCosOrSin) {
+  double coefficientBeforeTheta;
+  if (!Trigonometry::IsCosOrSinOfSymbol(denominator, reductionContext, theta, true, &coefficientBeforeCos, &coefficientBeforeTheta) || coefficientBeforeTheta != 1.0) {
     m_shape = Shape::Undefined;
     return;
   }
+
   double absValueCoefficient = std::fabs(coefficientBeforeCos);
   if (absValueCoefficient < 1.0) {
     m_shape = Shape::Ellipse;

@@ -271,7 +271,7 @@ bool HistoryController::calculationAtIndexToggles(int index) {
 void HistoryController::setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX, int previousSelectedY) {
   // Avoid selecting non-displayed ellipsis
   HistoryViewCell * selectedCell = static_cast<HistoryViewCell *>(m_selectableTableView.selectedCell());
-  if (subviewType == SubviewType::Ellipsis && selectedCell && selectedCell->additionalInformations().isNone()) {
+  if (subviewType == SubviewType::Ellipsis && selectedCell && selectedCell->additionalInformations().isEmpty()) {
     subviewType = SubviewType::Output;
   }
   HistoryViewCellDataSource::setSelectedSubviewType(subviewType, sameCell, previousSelectedX, previousSelectedY);

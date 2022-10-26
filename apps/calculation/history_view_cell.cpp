@@ -205,7 +205,7 @@ void HistoryViewCell::computeSubviewFrames(KDCoordinate frameWidth, KDCoordinate
 
   /* To compute if the calculation is on a single line, use the expanded width
    * if there is both an exact and an approximate layout. */
-  m_calculationSingleLine = ViewsCanBeSingleLine(inputSize.width(), m_scrollableOutputView.minimalSizeForOptimalDisplayFullSize().width(), !m_calculationAdditionInformations.isNone());
+  m_calculationSingleLine = ViewsCanBeSingleLine(inputSize.width(), m_scrollableOutputView.minimalSizeForOptimalDisplayFullSize().width(), !m_calculationAdditionInformations.isEmpty());
 
   KDCoordinate inputY = k_margin;
   KDCoordinate outputY = k_margin;

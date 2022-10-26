@@ -183,6 +183,19 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
       BasedInteger::Builder(3));
   assert_parsed_layout_is(l, e);
 
+  /* 3
+   *  log(2) */
+  l = HorizontalLayout::Builder({
+      VerticalOffsetLayout::Builder(CodePointLayout::Builder('3'), VerticalOffsetLayoutNode::VerticalPosition::Superscript, VerticalOffsetLayoutNode::HorizontalPosition::Prefix),
+      StringLayout::Builder("log"),
+      ParenthesisLayout::Builder(CodePointLayout::Builder('2'))
+      });
+  e = Logarithm::Builder(
+      BasedInteger::Builder(2),
+      BasedInteger::Builder(3));
+  assert_parsed_layout_is(l, e);
+
+
   // root(5,3)
   l = NthRootLayout::Builder(
       CodePointLayout::Builder('5'),

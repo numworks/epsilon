@@ -136,7 +136,7 @@ Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide)
     &Parser::parseLeftParenthesis,      // Token::LeftParenthesis
     &Parser::parseList,                 // Token::LeftBrace
     &Parser::parseLeftSystemParenthesis,// Token::LeftSystemParenthesis
-    &Parser::parseLeftSystemParenthesis,// Token::LeftSystemBrace
+    &Parser::parseLeftSystemBrace,// Token::LeftSystemBrace
     &Parser::parseEmpty,                // Token::Empty
     &Parser::parseConstant,             // Token::Constant
     &Parser::parseNumber,               // Token::Number
@@ -563,6 +563,24 @@ void Parser::parseLeftParenthesis(Expression & leftHandSide, Token::Type stoppin
 
 void Parser::parseLeftSystemParenthesis(Expression & leftHandSide, Token::Type stoppingType) {
   defaultParseLeftParenthesis(true, leftHandSide, stoppingType);
+}
+
+void Parser::parseLeftSystemBrace(Expression & leftHandSide, Token::Type stoppingType) {
+  assert(leftHandSide.isUninitialized());
+  /* A leading system brace is the result of serializing a NL logarithm. */
+  Expression indice = parseUntil(Token::Type::RightSystemBrace);
+  if (!indice.isUninitialized() && popTokenIfType(Token::Type::RightSystemBrace)) {
+    const Expression::FunctionHelper * const * functionHelper = ParsingHelper::GetReservedFunction(m_nextToken.text(), m_nextToken.length());
+    if (functionHelper && (**functionHelper).aliasesList().contains("log") && popTokenIfType(Token::Type::ReservedFunction)) {
+      Expression parameter = parseFunctionParameters();
+      if (!parameter.isUninitialized() && parameter.numberOfChildren() == 1) {
+        leftHandSide = Logarithm::Builder(parameter.childAtIndex(0), indice);
+        return;
+      }
+    }
+  }
+  m_status = Status::Error;
+  return;
 }
 
 void Parser::parseBang(Expression & leftHandSide, Token::Type stoppingType) {

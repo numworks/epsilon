@@ -2,6 +2,7 @@
 #include <poincare/code_point_layout.h>
 #include <poincare/combined_code_points_layout.h>
 #include <poincare/horizontal_layout.h>
+#include <poincare/logarithm.h>
 #include <poincare/parenthesis_layout.h>
 #include <poincare/string_layout.h>
 #include <poincare/vertical_offset_layout.h>
@@ -145,11 +146,23 @@ Layout LayoutHelper::CodePointsToLayout(const CodePoint * buffer, int bufferLen)
 }
 
 Layout LayoutHelper::Logarithm(Layout argument, Layout index) {
-  Layout logLayout = String("log", 3);
+  constexpr const char * k_logName = LogarithmNode::k_functionName;
+  constexpr int k_logNameLength = Helpers::StringLength(k_logName);
+  Layout logLayout = String(k_logName, k_logNameLength);
   assert(logLayout.type() != LayoutNode::Type::HorizontalLayout);
   HorizontalLayout resultLayout = HorizontalLayout::Builder(logLayout);
+
+  int baseIndex;
   VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::VerticalPosition::Subscript);
-  resultLayout.addChildAtIndex(offsetLayout, resultLayout.numberOfChildren(), resultLayout.numberOfChildren(), nullptr);
+  if (Preferences::sharedPreferences()->logarithmBasePosition() == Preferences::LogarithmBasePosition::TopLeft) {
+    baseIndex = 0;
+    offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::VerticalPosition::Superscript, VerticalOffsetLayoutNode::HorizontalPosition::Prefix);
+  } else {
+    baseIndex = resultLayout.numberOfChildren();
+    offsetLayout = VerticalOffsetLayout::Builder(index, VerticalOffsetLayoutNode::VerticalPosition::Subscript, VerticalOffsetLayoutNode::HorizontalPosition::Suffix);
+  }
+
+  resultLayout.addChildAtIndex(offsetLayout, baseIndex, resultLayout.numberOfChildren(), nullptr);
   resultLayout.addOrMergeChildAtIndex(Parentheses(argument, false), resultLayout.numberOfChildren(), true);
   return std::move(resultLayout);
 }

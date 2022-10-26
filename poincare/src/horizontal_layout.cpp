@@ -373,8 +373,16 @@ void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * curso
   /* If the child to remove was at index 0 and its right sibling must have a left
    * sibling (e.g. a VerticalOffsetLayout), add an empty layout at index 0 */
 
-  if (!force && index == 0 && numberOfChildren() > 0 && childAtIndex(0)->mustHaveLeftSibling()) {
-    Layout(this).addChildAtIndex(EmptyLayout::Builder(), 0, numberOfChildren(), cursor);
+  int currentNumberOfChildren = numberOfChildren();
+  if (force || currentNumberOfChildren == 0) {
+    return;
+  }
+
+  if ((index == 0 && childAtIndex(index)->mustHaveLeftSibling())
+   || (index == currentNumberOfChildren && childAtIndex(index - 1)->mustHaveRightSibling())
+   /* Both children relying on each other for sizes and baselines causes inifinite loops. */
+   || (index < currentNumberOfChildren && index > 0 && childAtIndex(index - 1)->mustHaveRightSibling() && childAtIndex(index)->mustHaveLeftSibling())) {
+    Layout(this).addChildAtIndex(EmptyLayout::Builder(), index, currentNumberOfChildren, cursor);
   }
 }
 
@@ -508,8 +516,8 @@ void HorizontalLayout::addChildAtIndex(Layout l, int index, int currentNumberOfC
   if (!removeEmptyChildren
       || !l.isEmpty()
       || numberOfChildren() == 0
-      || (index < numberOfChildren()
-        && childAtIndex(index).mustHaveLeftSibling()))
+      || (index < numberOfChildren() && childAtIndex(index).mustHaveLeftSibling())
+      || (index > 0 && childAtIndex(index - 1).mustHaveRightSibling()))
   {
     makePermanentIfBracket(l.node(), index > 0, index < currentNumberOfChildren - 1);
     Layout::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
@@ -557,7 +565,8 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
         && h.childAtIndex(0).isEmpty()
         && childrenNumber > 1
         && h.childAtIndex(1).mustHaveLeftSibling()
-        && newIndex > 0)
+        && newIndex > 0
+        && !childAtIndex(newIndex - 1).mustHaveRightSibling())
     {
       /* If the first added child is Empty because its right sibling needs a
        * left sibling, remove it if any previous child could be such a left

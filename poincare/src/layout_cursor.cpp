@@ -354,9 +354,11 @@ void LayoutCursor::privateAddEmptyPowerLayout(VerticalOffsetLayout v) {
 bool LayoutCursor::baseForNewPowerLayout() {
   /* Returns true if the layout on the left of the pointed layout is suitable to
    * be the base of a new power layout: the base layout should be anything but
-   * an horizontal layout with no child. */
+   * an horizontal layout with no child, that does not need a right sibling. */
   if (m_position == Position::Right) {
-    return !(m_layout.type() == LayoutNode::Type::HorizontalLayout && m_layout.numberOfChildren() == 0);
+    return !((m_layout.type() == LayoutNode::Type::HorizontalLayout && m_layout.numberOfChildren() == 0)
+          || m_layout.mustHaveRightSibling()
+          || (m_layout.numberOfChildren() > 0 && m_layout.childAtIndex(m_layout.numberOfChildren() - 1).mustHaveRightSibling()));
   } else {
     assert(m_position == Position::Left);
     if (m_layout.type() == LayoutNode::Type::HorizontalLayout) {
@@ -372,7 +374,8 @@ bool LayoutCursor::baseForNewPowerLayout() {
     LayoutCursor equivalentLayoutCursor = m_layout.equivalentCursor(this);
     if (equivalentLayoutCursor.layout().isUninitialized()
         || (equivalentLayoutCursor.layout().type() == LayoutNode::Type::HorizontalLayout
-          && equivalentLayoutCursor.position() == Position::Left))
+          && equivalentLayoutCursor.position() == Position::Left)
+        || (equivalentLayoutCursor.position() == Position::Right && !equivalentLayoutCursor.baseForNewPowerLayout()))
     {
       return false;
     }

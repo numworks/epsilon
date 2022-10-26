@@ -295,6 +295,8 @@ void Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChi
   HorizontalLayout horizontalAbsorbingChild = HorizontalLayout(static_cast<HorizontalLayoutNode *>(absorbingChild.node()));
   if (direction == HorizontalDirection::Right && idxInParent < numberOfSiblings - 1) {
     canCollapse = !(p.childAtIndex(idxInParent+1).mustHaveLeftSibling());
+  } else if (direction == HorizontalDirection::Left && idxInParent > 0) {
+    canCollapse = !(p.childAtIndex(idxInParent - 1).mustHaveRightSibling());
   }
   Layout sibling;
   bool forceCollapse = false;
@@ -314,7 +316,7 @@ void Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChi
       /* If the collapse direction is Left and the next sibling to be collapsed
        * must have a left sibling, force the collapsing of this needed left
        * sibling. */
-      forceCollapse = direction == HorizontalDirection::Left && sibling.mustHaveLeftSibling();
+      forceCollapse = (direction == HorizontalDirection::Left && sibling.mustHaveLeftSibling()) ||(direction == HorizontalDirection::Right && sibling.mustHaveRightSibling());
       p.removeChildAtIndex(siblingIndex, nullptr);
       int newIndex = direction == HorizontalDirection::Right ? absorbingChild.numberOfChildren() : 0;
       horizontalAbsorbingChild.addOrMergeChildAtIndex(sibling, newIndex, true);

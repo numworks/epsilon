@@ -4,6 +4,7 @@
 #include <poincare/layout_cursor.h>
 #include <poincare/layout.h>
 #include <poincare/matrix_layout.h>
+#include <poincare/vertical_offset_layout.h>
 #include <ion/display.h>
 
 namespace Poincare {
@@ -157,6 +158,14 @@ bool LayoutNode::addGraySquaresToAllGridAncestors() {
   bool result = false;
   changeGraySquaresOfAllGridRelatives(true, true, &result);
   return result;
+}
+
+bool LayoutNode::mustHaveLeftSibling() const {
+  return type() == Type::VerticalOffsetLayout && static_cast<const VerticalOffsetLayoutNode *>(this)->horizontalPosition() == VerticalOffsetLayoutNode::HorizontalPosition::Suffix;
+}
+
+bool LayoutNode::mustHaveRightSibling() const {
+  return type() == Type::VerticalOffsetLayout && static_cast<const VerticalOffsetLayoutNode *>(this)->horizontalPosition() == VerticalOffsetLayoutNode::HorizontalPosition::Prefix;
 }
 
 bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {

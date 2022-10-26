@@ -56,6 +56,7 @@ public:
   typedef TrinaryBoolean (*LayoutTest)(const Layout l);
   Layout recursivelyMatches(LayoutTest test) const;
   bool mustHaveLeftSibling() const { return const_cast<Layout *>(this)->node()->mustHaveLeftSibling(); }
+  bool mustHaveRightSibling() const { return const_cast<Layout *>(this)->node()->mustHaveRightSibling(); }
   bool isEmpty() const { return const_cast<Layout *>(this)->node()->isEmpty(); }
   bool isCollapsable(int * numberOfOpenParenthesis, bool goingLeft) const { return const_cast<Layout *>(this)->node()->isCollapsable(numberOfOpenParenthesis, goingLeft); }
   int leftCollapsingAbsorbingChildIndex() const { return const_cast<Layout *>(this)->node()->leftCollapsingAbsorbingChildIndex(); }

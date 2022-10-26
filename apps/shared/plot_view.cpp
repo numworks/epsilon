@@ -118,41 +118,35 @@ static KDCoordinate relativePositionToOffset(AbstractPlotView::RelativePosition 
   }
 }
 
-static bool computeOriginAndShouldDraw(KDPoint * origin, const AbstractPlotView * plotView, KDSize size, KDRect rect, Coordinate2D<float> xy, AbstractPlotView::RelativePosition xPosition, AbstractPlotView::RelativePosition yPosition, bool ignoreMargin) {
-  assert(origin && plotView);
+static KDPoint computeOrigin(const AbstractPlotView * plotView, KDSize size, Coordinate2D<float> xy, AbstractPlotView::RelativePosition xPosition, AbstractPlotView::RelativePosition yPosition, bool ignoreMargin) {
+  assert(plotView);
   Coordinate2D<float> p = plotView->floatToPixel2D(xy);
   KDCoordinate x = std::round(p.x1()) + relativePositionToOffset(xPosition, size.width(), ignoreMargin);
   KDCoordinate y = std::round(p.x2()) + relativePositionToOffset(yPosition, size.height(), ignoreMargin);
-  *origin = KDPoint(x, y);
-  return KDRect(*origin, size).intersects(rect);
+  return KDPoint(x, y);
 }
 
 KDRect AbstractPlotView::labelRect(const char * label, Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, bool ignoreMargin) const {
   KDSize labelSize = KDFont::Font(k_font)->stringSize(label);
-  KDPoint labelOrigin = KDPointZero;
-  computeOriginAndShouldDraw(&labelOrigin, this, labelSize, KDRectZero, xy, xPosition, yPosition, ignoreMargin);
+  KDPoint labelOrigin = computeOrigin(this, labelSize, xy, xPosition, yPosition, ignoreMargin);
   return KDRect(labelOrigin, labelSize);
 }
 
-void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * label, Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin) const {
-  KDSize labelSize = KDFont::Font(k_font)->stringSize(label);
-  KDPoint labelOrigin = KDPointZero;
-  if (computeOriginAndShouldDraw(&labelOrigin, this, labelSize, rect, xy, xPosition, yPosition, ignoreMargin)) {
-    ctx->drawString(label, labelOrigin, k_font, color, backgroundColor());
+void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * label, const KDRect labelRect, KDColor color) const {
+  if (labelRect.intersects(rect)) {
+    ctx->drawString(label, labelRect.origin(), k_font, color, backgroundColor());
   }
 }
 
-void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * label, const KDRect labelRect, KDColor color) const {
-  if (labelRect == KDRectZero) {
-    return;
-  }
-  ctx->drawString(label, labelRect.origin(), k_font, color, backgroundColor());
+void AbstractPlotView::drawLabel(KDContext * ctx, KDRect rect, const char * label, Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin) const {
+  KDRect thisLabelRect = labelRect(label, xy, xPosition, yPosition, ignoreMargin);
+  drawLabel(ctx, rect, label, thisLabelRect, color);
 }
 
 void AbstractPlotView::drawLayout(KDContext * ctx, KDRect rect, Layout layout, Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin) const {
   KDSize layoutSize = layout.layoutSize(k_font);
-  KDPoint layoutOrigin = KDPointZero;
-  if (computeOriginAndShouldDraw(&layoutOrigin, this, layoutSize, rect, xy, xPosition, yPosition, ignoreMargin)) {
+  KDPoint layoutOrigin = computeOrigin(this, layoutSize, xy, xPosition, yPosition, ignoreMargin);
+  if (KDRect(layoutOrigin, layoutSize).intersects(rect)) {
     layout.draw(ctx, layoutOrigin, k_font, color, backgroundColor());
   }
 }

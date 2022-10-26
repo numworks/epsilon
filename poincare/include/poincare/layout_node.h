@@ -129,6 +129,8 @@ public:
   bool removeGraySquaresFromAllGridAncestors();
   bool removeGraySquaresFromAllGridChildren();
   bool addGraySquaresToAllGridAncestors();
+  bool mustHaveLeftSibling() const;
+  bool mustHaveRightSibling() const;
   /* A layout has text if it is not empty and it is not an horizontal layout
    * with no child or with one child with no text. */
   virtual bool hasText() const { return true; }
@@ -144,9 +146,6 @@ public:
    * with an omitted multiplication sign. For instance, an absolute value layout
    * returns true, because |3|2 means |3|*2. A '+' CodePointLayout returns false,
    * because +'something' nevers means +*'something'. */
-  virtual bool mustHaveLeftSibling() const { return false; }
-  /* For now, mustHaveLeftSibling and isVerticalOffset behave the same, but code
-   * is clearer with different names. */
   virtual bool isEmpty() const { return false; }
   virtual bool hasUpperLeftIndex() const { return false; }
   virtual Layout XNTLayout(int childIndex = -1) const;

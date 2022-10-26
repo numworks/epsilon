@@ -38,7 +38,6 @@ public:
   void moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
-  bool mustHaveLeftSibling() const override { return m_horizontalPosition == HorizontalPosition::Suffix; }
   bool canBeOmittedMultiplicationRightFactor() const override { return false; }
 
   // TreeNode

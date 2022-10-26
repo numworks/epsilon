@@ -300,11 +300,11 @@ private:
         m_tAuto(true) {}
     bool displayDerivative() const { return m_displayDerivative; }
     void setDisplayDerivative(bool display) { m_displayDerivative = display; }
-    float tMin() const { return m_domain.min(); }
-    float tMax() const { return m_domain.max(); }
+    float tMin() const { assert(!m_tAuto); return m_domain.min(); }
+    float tMax() const { assert(!m_tAuto); return m_domain.max(); }
     bool tAuto() const { return m_tAuto; }
-    void setTMin(float tMin) { m_domain.setMin(tMin); }
-    void setTMax(float tMax) { m_domain.setMax(tMax); }
+    void setTMin(float tMin) { assert(!m_tAuto); m_domain.setMin(tMin); }
+    void setTMax(float tMax) { assert(!m_tAuto); m_domain.setMax(tMax); }
     void setTAuto(bool tAuto) { m_tAuto = tAuto; }
 
   private:

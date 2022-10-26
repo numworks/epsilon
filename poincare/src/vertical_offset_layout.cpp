@@ -119,9 +119,15 @@ void VerticalOffsetLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
         cursor->setPosition(LayoutCursor::Position::Right);
         parentRef.removeChildAtIndex(indexInParent, cursor);
         // WARNING: do not call "this" afterwards
-        cursor->setLayout(parentRef.childAtIndex(indexInParent-1));
+        int baseOffset = baseOffsetInParent();
+        if (baseOffset > 0) {
+          /* This was before its base, meaning the index of the base changed
+           * when me removed this. */
+          baseOffset--;
+        }
+        cursor->setLayout(parentRef.childAtIndex(indexInParent + baseOffset));
         cursor->setPosition(LayoutCursor::Position::Right);
-        parentRef.removeChildAtIndex(indexInParent-1, cursor);
+        parentRef.removeChildAtIndex(indexInParent + baseOffset, cursor);
         return;
       }
       // Case: Empty indice only. Delete the layout.
@@ -269,13 +275,7 @@ LayoutNode * VerticalOffsetLayoutNode::baseLayout() {
   assert(parentNode != nullptr);
   assert(parentNode->type() == Type::HorizontalLayout);
   int idxInParent = parentNode->indexOfChild(this);
-  if (horizontalPosition() == HorizontalPosition::Suffix) {
-    assert(idxInParent > 0);
-    return parentNode->childAtIndex(idxInParent - 1);
-  } else {
-    assert(idxInParent < parentNode->numberOfChildren() - 1);
-    return parentNode->childAtIndex(idxInParent + 1);
-  }
+  return parentNode->childAtIndex(idxInParent + baseOffsetInParent());
 }
 
 bool VerticalOffsetLayoutNode::protectedIsIdenticalTo(Layout l) {

@@ -55,7 +55,7 @@ private:
   // Set the detail values for a line
   void setLineDetailsValues(double slope, double intercept);
   // Set the detail values for a conic
-  void setConicDetailsValues(Poincare::Conic conic);
+  void setConicDetailsValues(Poincare::Conic * conic);
 
   Escher::StackViewController * stackController() const;
   Escher::MessageTableCellWithMessageWithBuffer m_cells[k_numberOfDataPoints];

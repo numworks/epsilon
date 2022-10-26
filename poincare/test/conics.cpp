@@ -14,7 +14,7 @@ Conic getConicFromExpression(const char * expression) {
 
 void quiz_assert_undefined(const char * expression) {
   Conic conic = getConicFromExpression(expression);
-  quiz_assert(conic.getConicType() == Conic::Type::Undefined);
+  quiz_assert(conic.getConicType() == Conic::Shape::Undefined);
 }
 
 void quiz_assert_conic_parameter_is(double observed, double expected) {
@@ -27,7 +27,7 @@ void quiz_assert_circle(const char * expression,
                         double cx = 0.0,
                         double cy = 0.0) {
   Conic conic = getConicFromExpression(expression);
-  quiz_assert(conic.getConicType() == Conic::Type::Circle);
+  quiz_assert(conic.getConicType() == Conic::Shape::Circle);
   double x, y;
   conic.getCenter(&x, &y);
   quiz_assert_conic_parameter_is(x, cx);
@@ -44,7 +44,7 @@ void quiz_assert_ellipse(const char * expression,
                          double cx = 0.0,
                          double cy = 0.0) {
   Conic conic = getConicFromExpression(expression);
-  quiz_assert(conic.getConicType() == Conic::Type::Ellipse);
+  quiz_assert(conic.getConicType() == Conic::Shape::Ellipse);
   double x, y;
   conic.getCenter(&x, &y);
   quiz_assert_conic_parameter_is(x, cx);
@@ -64,7 +64,7 @@ void quiz_assert_hyperbola(const char * expression,
                            double cx = 0.0,
                            double cy = 0.0) {
   Conic conic = getConicFromExpression(expression);
-  quiz_assert(conic.getConicType() == Conic::Type::Hyperbola);
+  quiz_assert(conic.getConicType() == Conic::Shape::Hyperbola);
   double x, y;
   conic.getCenter(&x, &y);
   quiz_assert_conic_parameter_is(x, cx);
@@ -81,7 +81,7 @@ void quiz_assert_parabola(const char * expression,
                           double sx = 0.0,
                           double sy = 0.0) {
   Conic conic = getConicFromExpression(expression);
-  quiz_assert(conic.getConicType() == Conic::Type::Parabola);
+  quiz_assert(conic.getConicType() == Conic::Shape::Parabola);
   double x, y;
   conic.getSummit(&x, &y);
   quiz_assert_conic_parameter_is(x, sx);
@@ -150,25 +150,25 @@ QUIZ_CASE(poincare_conics_general) {
 
 void quiz_assert_same_circle(const char * canonicForm, const char * offCenteredForm, double cx, double cy) {
   Conic conic = getConicFromExpression(canonicForm);
-  quiz_assert(conic.getConicType() == Conic::Type::Circle);
+  quiz_assert(conic.getConicType() == Conic::Shape::Circle);
   quiz_assert_circle(offCenteredForm, conic.getRadius(), cx, cy);
 }
 
 void quiz_assert_same_ellipse(const char * canonicForm, const char * offCenteredForm, double cx, double cy) {
   Conic conic = getConicFromExpression(canonicForm);
-  quiz_assert(conic.getConicType() == Conic::Type::Ellipse);
+  quiz_assert(conic.getConicType() == Conic::Shape::Ellipse);
   quiz_assert_ellipse(offCenteredForm, conic.getEccentricity(), conic.getLinearEccentricity(), conic.getSemiMajorAxis(), conic.getSemiMinorAxis(), cx, cy);
 }
 
 void quiz_assert_same_hyperbola(const char * canonicForm, const char * offCenteredForm, double cx, double cy) {
   Conic conic = getConicFromExpression(canonicForm);
-  quiz_assert(conic.getConicType() == Conic::Type::Hyperbola);
+  quiz_assert(conic.getConicType() == Conic::Shape::Hyperbola);
   quiz_assert_hyperbola(offCenteredForm, conic.getEccentricity(), conic.getLinearEccentricity(), conic.getSemiMajorAxis(), conic.getSemiMinorAxis(), cx, cy);
 }
 
 void quiz_assert_same_parabola(const char * canonicForm, const char * offCenteredForm, double cx, double cy) {
   Conic conic = getConicFromExpression(canonicForm);
-  quiz_assert(conic.getConicType() == Conic::Type::Parabola);
+  quiz_assert(conic.getConicType() == Conic::Shape::Parabola);
   quiz_assert_parabola(offCenteredForm, conic.getParameter(), cx, cy);
 }
 

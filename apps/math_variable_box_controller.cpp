@@ -256,8 +256,14 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
     char openingChar = m_currentPage == Page::Function ? '(' : '{';
     char closingChar = m_currentPage == Page::Function ? ')' : '}';
     assert(nameLength < nameToHandleMaxSize);
+    if (m_currentPage == Page::Sequence) {
+      nameLength += UTF8Decoder::CodePointToChars(UCodePointSystem, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
+    }
     nameLength += UTF8Decoder::CodePointToChars(openingChar, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
     nameLength += UTF8Decoder::CodePointToChars(UCodePointEmpty, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
+    if (m_currentPage == Page::Sequence) {
+      nameLength += UTF8Decoder::CodePointToChars(UCodePointSystem, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
+    }
     nameLength += UTF8Decoder::CodePointToChars(closingChar, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
     assert(nameLength < nameToHandleMaxSize);
     nameToHandle[nameLength] = 0;

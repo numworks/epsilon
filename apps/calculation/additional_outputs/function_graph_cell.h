@@ -18,7 +18,7 @@ public:
 private:
   constexpr static int k_labelAvoidanceMargin = 2;
   constexpr static int k_labelsPrecision = Poincare::Preferences::VeryShortNumberOfSignificantDigits;
-  constexpr static KDColor k_color = Escher::Palette::Red;
+  constexpr static KDColor k_specialLabelsColor = Escher::Palette::Red;
 
   // AbstractLabeledAxis
   bool labelWillBeDisplayed(int i, KDRect labelRect) const override;

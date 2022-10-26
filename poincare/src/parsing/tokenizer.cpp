@@ -47,6 +47,8 @@ bool Tokenizer::IsIdentifierMaterial(const CodePoint c) {
 }
 
 size_t Tokenizer::popIdentifiersString() {
+  /* An identifier can start with a single UCodePointSystem. */
+  nextCodePoint([](CodePoint cp) { return cp == UCodePointSystem; });
   return popWhile([](CodePoint c) { return IsIdentifierMaterial(c); });
 }
 

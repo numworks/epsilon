@@ -130,14 +130,8 @@ KDRect AbstractLabeledAxis::labelRect(int i, float t, const AbstractPlotView * p
 
 void AbstractLabeledAxis::drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis, KDColor color) const {
   const char * text = label(i);
-  if (m_hidden || text[0] == '\0') {
-    return;
-  }
   KDRect thisLabelRect = labelRect(i, t, plotView, axis);
-  if (thisLabelRect == KDRectZero) {
-    return;
-  }
-  if (labelWillBeDisplayed(i, thisLabelRect)) {
+  if (thisLabelRect.intersects(rect) && labelWillBeDisplayed(i, thisLabelRect)) {
     plotView->drawLabel(ctx, rect, text, thisLabelRect, color);
   }
 }

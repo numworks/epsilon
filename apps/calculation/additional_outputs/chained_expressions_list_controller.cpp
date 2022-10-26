@@ -12,6 +12,13 @@ ChainedExpressionsListController::ChainedExpressionsListController(EditExpressio
 {
 }
 
+void ChainedExpressionsListController::viewDidDisappear() {
+  if (m_tail) {
+    m_tail->viewDidDisappear();
+  }
+  ExpressionsListController::viewDidDisappear();
+}
+
 int ChainedExpressionsListController::reusableCellCount(int type) {
   return k_maxNumberOfRows + (m_tail ? m_tail->reusableCellCount(type) : 0);
 }

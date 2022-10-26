@@ -43,7 +43,7 @@ void FunctionListController::setExpression(Poincare::Expression e) {
 }
 
 void FunctionListController::viewDidDisappear() {
-  ExpressionsListController::viewDidDisappear();
+  IllustratedExpressionsListController::viewDidDisappear();
   m_model.tidy();
 }
 

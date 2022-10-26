@@ -14,6 +14,9 @@ public:
   ChainedExpressionsListController(EditExpressionController * editExpressionController, Escher::SelectableTableViewDelegate * delegate = nullptr);
   void setTail(ExpressionsListController * tail) { m_tail = tail; }
 
+  // Responder
+  void viewDidDisappear() override;
+
   // MemoizedListViewDataSource
   int reusableCellCount(int type) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;

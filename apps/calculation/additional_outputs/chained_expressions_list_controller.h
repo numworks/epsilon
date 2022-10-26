@@ -3,7 +3,7 @@
 
 #include <poincare/expression.h>
 #include <apps/i18n.h>
-#include "expressions_list_controller.h"
+#include "chainable_expressions_list_controller.h"
 
 namespace Calculation {
 
@@ -12,7 +12,7 @@ namespace Calculation {
 class ChainedExpressionsListController : public ExpressionsListController {
 public:
   ChainedExpressionsListController(EditExpressionController * editExpressionController, Escher::SelectableTableViewDelegate * delegate = nullptr);
-  void setTail(ExpressionsListController * tail) { m_tail = tail; }
+  void setTail(ChainableExpressionsListController * tail) { m_tail = tail; }
 
   // Responder
   void viewDidDisappear() override;
@@ -29,7 +29,7 @@ public:
 protected:
   int textAtIndex(char * buffer, size_t bufferSize, int index) override;
 private:
-  ExpressionsListController * m_tail;
+  ChainableExpressionsListController * m_tail;
 };
 
 }

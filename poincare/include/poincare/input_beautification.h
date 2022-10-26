@@ -119,7 +119,7 @@ private:
     { /* exp( */
       Power::s_exponentialFunctionHelper.aliasesList(),
       [](Layout builderParameter) {
-        return static_cast<Layout>(HorizontalLayout::Builder(CodePointLayout::Builder('e'), VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Position::Superscript)));
+        return static_cast<Layout>(HorizontalLayout::Builder(CodePointLayout::Builder('e'), VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Superscript)));
       }
     },
     { /* floor( */

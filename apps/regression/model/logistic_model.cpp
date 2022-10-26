@@ -29,7 +29,7 @@ Layout LogisticModel::layout() {
             CodePointLayout::Builder(UCodePointMiddleDot),
             CodePointLayout::Builder('x')
           }),
-          VerticalOffsetLayoutNode::Position::Superscript
+          VerticalOffsetLayoutNode::VerticalPosition::Superscript
         )
       })
     );

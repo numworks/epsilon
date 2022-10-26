@@ -25,7 +25,7 @@ Layout QuadraticModel::layout() {
       CodePointLayout::Builder('x'),
       VerticalOffsetLayout::Builder(
         CodePointLayout::Builder('2'),
-        VerticalOffsetLayoutNode::Position::Superscript
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript
       ),
       CodePointLayout::Builder('+'),
       CodePointLayout::Builder('b'),

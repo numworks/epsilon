@@ -144,7 +144,7 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
             CodePointLayout::Builder('5'),
             CodePointLayout::Builder('2')
           ),
-          VerticalOffsetLayoutNode::Position::Subscript
+          VerticalOffsetLayoutNode::VerticalPosition::Subscript
         ),
         ParenthesisLayout::Builder(HorizontalLayout::Builder(CodePointLayout::Builder('6')))
       });
@@ -231,7 +231,7 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
   constexpr static const char * text15 = "exp(";
   l = HorizontalLayout::Builder({
         CodePointLayout::Builder('e'),
-        VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Position::Superscript)
+        VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Superscript)
       });
   assert_inserted_text_turns_into(text15, l);
 

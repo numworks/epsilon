@@ -83,7 +83,7 @@ Layout DoubleDataFieldWithSubscriptSymbol::fieldSymbolLayout() const {
   HorizontalLayout res = HorizontalLayout::Builder(DataField::fieldSymbolLayout());
   const char * subscript = I18n::translate(fieldSubscript());
   if (subscript[0] != '\0') {
-    res.addOrMergeChildAtIndex(VerticalOffsetLayout::Builder(LayoutHelper::String(subscript), VerticalOffsetLayoutNode::Position::Subscript), 1, false);
+    res.addOrMergeChildAtIndex(VerticalOffsetLayout::Builder(LayoutHelper::String(subscript), VerticalOffsetLayoutNode::VerticalPosition::Subscript), 1, false);
   }
   return std::move(res);
 }
@@ -178,7 +178,7 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z, int) const {
       if (conf[index] == 0) {
         continue;
       }
-      Layout term = HorizontalLayout::Builder(Integer(n).createLayout(), CodePointLayout::Builder(k_lSymbols[l]), VerticalOffsetLayout::Builder(Integer(conf[index]).createLayout(), VerticalOffsetLayoutNode::Position::Superscript));
+      Layout term = HorizontalLayout::Builder(Integer(n).createLayout(), CodePointLayout::Builder(k_lSymbols[l]), VerticalOffsetLayout::Builder(Integer(conf[index]).createLayout(), VerticalOffsetLayoutNode::VerticalPosition::Superscript));
       res.addOrMergeChildAtIndex(term, res.numberOfChildren(), false);
     }
   }

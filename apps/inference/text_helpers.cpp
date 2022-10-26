@@ -19,11 +19,11 @@ Poincare::Layout XOneMinusXTwoLayout() {
   HorizontalLayout x1 = HorizontalLayout::Builder(
       CombinedCodePointsLayout::Builder('x', UCodePointCombiningOverline),
       VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
-                                    VerticalOffsetLayoutNode::Position::Subscript));
+                                    VerticalOffsetLayoutNode::VerticalPosition::Subscript));
   HorizontalLayout x2 = HorizontalLayout::Builder(
       CombinedCodePointsLayout::Builder('x', UCodePointCombiningOverline),
       VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
-                                    VerticalOffsetLayoutNode::Position::Subscript));
+                                    VerticalOffsetLayoutNode::VerticalPosition::Subscript));
   HorizontalLayout res = HorizontalLayout::Builder(CodePointLayout::Builder('-'));
   res.addOrMergeChildAtIndex(x2, 1, true);
   res.addOrMergeChildAtIndex(x1, 0, true);

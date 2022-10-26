@@ -416,7 +416,7 @@ ParameterRepresentation TwoMeans::ZParameterRepresentationAtIndex(int i) {
       Poincare::HorizontalLayout x1 = Poincare::HorizontalLayout::Builder(
           CombinedCodePointsLayout::Builder('x', UCodePointCombiningOverline),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
+                                        VerticalOffsetLayoutNode::VerticalPosition::Subscript));
       return ParameterRepresentation{x1, I18n::Message::Sample1Mean};
     }
     case ParamsOrder::n1: {
@@ -433,7 +433,7 @@ ParameterRepresentation TwoMeans::ZParameterRepresentationAtIndex(int i) {
       Poincare::HorizontalLayout x2 = Poincare::HorizontalLayout::Builder(
           CombinedCodePointsLayout::Builder('x', UCodePointCombiningOverline),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
+                                        VerticalOffsetLayoutNode::VerticalPosition::Subscript));
       return ParameterRepresentation{x2, I18n::Message::Sample2Mean};
     }
     case ParamsOrder::n2: {
@@ -548,11 +548,11 @@ Poincare::Layout TwoProportions::EstimateLayout(Poincare::Layout * layout) {
     Poincare::HorizontalLayout p1 = Poincare::HorizontalLayout::Builder(
         CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex),
         VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
-          VerticalOffsetLayoutNode::Position::Subscript));
+          VerticalOffsetLayoutNode::VerticalPosition::Subscript));
     Poincare::HorizontalLayout p2 = Poincare::HorizontalLayout::Builder(
         CombinedCodePointsLayout::Builder('p', UCodePointCombiningCircumflex),
         VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
-          VerticalOffsetLayoutNode::Position::Subscript));
+          VerticalOffsetLayoutNode::VerticalPosition::Subscript));
     /* we build a nested layout instead of a flat one to be able to retrieve p1
        and p2 from it when needed by the estimates of the TwoProportionTest */
     Poincare::HorizontalLayout res = Poincare::HorizontalLayout::Builder(
@@ -621,28 +621,28 @@ ParameterRepresentation TwoProportions::ParameterRepresentationAtIndex(int i) {
       Poincare::HorizontalLayout x1 = Poincare::HorizontalLayout::Builder(
           CodePointLayout::Builder('x'),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
+                                        VerticalOffsetLayoutNode::VerticalPosition::Subscript));
       return ParameterRepresentation{x1, I18n::Message::SuccessSample1};
     }
     case ParamsOrder::n1: {
       Poincare::HorizontalLayout n1 = Poincare::HorizontalLayout::Builder(
           CodePointLayout::Builder('n'),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('1'),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
+                                        VerticalOffsetLayoutNode::VerticalPosition::Subscript));
       return ParameterRepresentation{n1, I18n::Message::Sample1Size};
     }
     case ParamsOrder::x2: {
       Poincare::HorizontalLayout x2 = Poincare::HorizontalLayout::Builder(
           CodePointLayout::Builder('x'),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
+                                        VerticalOffsetLayoutNode::VerticalPosition::Subscript));
       return ParameterRepresentation{x2, I18n::Message::SuccessSample2};
     }
     case ParamsOrder::n2: {
       Poincare::HorizontalLayout n2 = Poincare::HorizontalLayout::Builder(
           CodePointLayout::Builder('n'),
           VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'),
-                                        VerticalOffsetLayoutNode::Position::Subscript));
+                                        VerticalOffsetLayoutNode::VerticalPosition::Subscript));
       return ParameterRepresentation{n2, I18n::Message::Sample2Size};
     }
   }

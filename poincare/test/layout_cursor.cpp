@@ -49,7 +49,7 @@ QUIZ_CASE(poincare_layout_cursor_computation) {
       EmptyLayout::Builder(),
       VerticalOffsetLayout::Builder(
         EmptyLayout::Builder(),
-        VerticalOffsetLayoutNode::Position::Superscript)
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript)
       );
   e = Power::Builder(EmptyExpression::Builder(), EmptyExpression::Builder());
   assert_inserted_layout_points_to(l, &e, l.childAtIndex(0));

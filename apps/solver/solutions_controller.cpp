@@ -112,7 +112,7 @@ SolutionsController::SolutionsController(Responder * parentResponder, EquationSt
   m_delta2Layout = Poincare::HorizontalLayout::Builder(
     LayoutHelper::String(delta, lenDelta),
     LayoutHelper::String(equalB, strlen(equalB)),
-    VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript),
+    VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::VerticalPosition::Superscript),
     LayoutHelper::String("-4ac", 4)
   );
   m_delta3Layout = LayoutHelper::String(delta, lenDelta);

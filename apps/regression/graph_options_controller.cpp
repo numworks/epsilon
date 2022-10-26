@@ -37,7 +37,7 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Esch
       {Poincare::CodePointLayout::Builder('r'),
        Poincare::VerticalOffsetLayout::Builder(
            Poincare::CodePointLayout::Builder('2'),
-           Poincare::VerticalOffsetLayoutNode::Position::Superscript)}));
+           Poincare::VerticalOffsetLayoutNode::VerticalPosition::Superscript)}));
 }
 
 void GraphOptionsController::removeRegression() {

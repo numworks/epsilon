@@ -121,7 +121,7 @@ void Sequence::setInitialRank(int rank) {
 Poincare::Layout Sequence::nameLayout() {
   return HorizontalLayout::Builder(
       CodePointLayout::Builder(fullName()[0]),
-      VerticalOffsetLayout::Builder(CodePointLayout::Builder(symbol()), VerticalOffsetLayoutNode::Position::Subscript)
+      VerticalOffsetLayout::Builder(CodePointLayout::Builder(symbol()), VerticalOffsetLayoutNode::VerticalPosition::Subscript)
     );
 }
 
@@ -380,16 +380,16 @@ void Sequence::DefinitionModel::buildName(Sequence * sequence) {
   if (sequence->type() == Type::Explicit) {
     m_name = HorizontalLayout::Builder(
         CodePointLayout::Builder(name),
-        VerticalOffsetLayout::Builder(LayoutHelper::String("n", 1), VerticalOffsetLayoutNode::Position::Subscript));
+        VerticalOffsetLayout::Builder(LayoutHelper::String("n", 1), VerticalOffsetLayoutNode::VerticalPosition::Subscript));
   } else if (sequence->type() == Type::SingleRecurrence) {
     m_name = HorizontalLayout::Builder(
         CodePointLayout::Builder(name),
-        VerticalOffsetLayout::Builder(LayoutHelper::String("n+1", 3), VerticalOffsetLayoutNode::Position::Subscript));
+        VerticalOffsetLayout::Builder(LayoutHelper::String("n+1", 3), VerticalOffsetLayoutNode::VerticalPosition::Subscript));
   } else {
     assert(sequence->type() == Type::DoubleRecurrence);
     m_name = HorizontalLayout::Builder(
         CodePointLayout::Builder(name),
-        VerticalOffsetLayout::Builder(LayoutHelper::String("n+2", 3), VerticalOffsetLayoutNode::Position::Subscript));
+        VerticalOffsetLayout::Builder(LayoutHelper::String("n+2", 3), VerticalOffsetLayoutNode::VerticalPosition::Subscript));
   }
 }
 
@@ -417,7 +417,7 @@ void Sequence::InitialConditionModel::buildName(Sequence * sequence) {
   Layout indexLayout = LayoutHelper::String(buffer, strlen(buffer));
   m_name = HorizontalLayout::Builder(
       CodePointLayout::Builder(sequence->fullName()[0]),
-      VerticalOffsetLayout::Builder(indexLayout, VerticalOffsetLayoutNode::Position::Subscript));
+      VerticalOffsetLayout::Builder(indexLayout, VerticalOffsetLayoutNode::VerticalPosition::Subscript));
 }
 
 template double Sequence::templatedApproximateAtAbscissa<double>(double, SequenceContext*) const;

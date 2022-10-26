@@ -241,7 +241,7 @@ bool InputBeautification::BeautifyFractionIntoDerivativeIfPossible(Layout parent
 
 bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPossible(Layout parent, int indexOfLastAddedLayout, LayoutCursor * layoutCursor, bool forceCursorRightOfText) {
   Layout lastAddedLayout = parent.childAtIndex(indexOfLastAddedLayout);
-  if (lastAddedLayout.type() != LayoutNode::Type::VerticalOffsetLayout || static_cast<VerticalOffsetLayout&>(lastAddedLayout).position() != VerticalOffsetLayoutNode::Position::Superscript) {
+  if (lastAddedLayout.type() != LayoutNode::Type::VerticalOffsetLayout || static_cast<VerticalOffsetLayout&>(lastAddedLayout).verticalPosition() != VerticalOffsetLayoutNode::VerticalPosition::Superscript) {
     return false;
   }
   Layout firstOrderDerivativeLayout = parent.parent();

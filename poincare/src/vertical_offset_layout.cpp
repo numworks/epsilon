@@ -55,7 +55,7 @@ void VerticalOffsetLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * sho
 }
 
 void VerticalOffsetLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (m_position == Position::Superscript) {
+  if (verticalPosition() == VerticalPosition::Superscript) {
     // Case: Superscript.
     if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
       // Case: Right. Move to the indice.
@@ -81,7 +81,7 @@ void VerticalOffsetLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * should
 }
 
 void VerticalOffsetLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
-  if (m_position == Position::Subscript) {
+  if (verticalPosition() == VerticalPosition::Subscript) {
     // Case: Subscript.
     if (cursor->isEquivalentTo(LayoutCursor(this, LayoutCursor::Position::Right))) {
       // Case: Right. Move to the indice.
@@ -147,7 +147,7 @@ void VerticalOffsetLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 }
 
 int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
-  if (m_position == Position::Subscript) {
+  if (verticalPosition() == VerticalPosition::Subscript || horizontalPosition() == HorizontalPosition::Prefix) {
     if (bufferSize == 0) {
       return bufferSize-1;
     }
@@ -172,7 +172,7 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
     return std::min(numberOfChar, bufferSize-1);
   }
 
-  assert(m_position == Position::Superscript);
+  assert(verticalPosition() == VerticalPosition::Superscript);
   // If the layout is a superscript, write: '^' 'System(' indice 'System)'
   int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, '^');
   if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
@@ -187,7 +187,7 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
 KDSize VerticalOffsetLayoutNode::computeSize(KDFont::Size font) {
   KDSize indiceSize = indiceLayout()->layoutSize(font);
   KDCoordinate width = indiceSize.width();
-  if (m_position == Position::Superscript) {
+  if (verticalPosition() == VerticalPosition::Superscript) {
     LayoutNode * parentNode = parent();
     assert(parentNode != nullptr);
     assert(parentNode->type() == Type::HorizontalLayout);
@@ -201,7 +201,7 @@ KDSize VerticalOffsetLayoutNode::computeSize(KDFont::Size font) {
 }
 
 KDCoordinate VerticalOffsetLayoutNode::computeBaseline(KDFont::Size font) {
-  if (m_position == Position::Subscript) {
+  if (verticalPosition() == VerticalPosition::Subscript) {
     return baseLayout()->baseline(font);
   } else {
     return indiceLayout()->layoutSize(font).height() - k_indiceHeight + baseLayout()->baseline(font);
@@ -210,10 +210,10 @@ KDCoordinate VerticalOffsetLayoutNode::computeBaseline(KDFont::Size font) {
 
 KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child, KDFont::Size font) {
   assert(child == indiceLayout());
-  if (m_position == Position::Superscript) {
+  if (verticalPosition() == VerticalPosition::Superscript) {
     return KDPointZero;
   }
-  assert(m_position == Position::Subscript);
+  assert(verticalPosition() == VerticalPosition::Subscript);
   return KDPoint(0, baseLayout()->layoutSize(font).height() - k_indiceHeight);
 }
 
@@ -222,7 +222,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
     return true;
   }
   VerticalOffsetLayoutNode * verticalOffsetSibling = static_cast<VerticalOffsetLayoutNode *>(sibling);
-  if (verticalOffsetSibling->position() != Position::Superscript) {
+  if (verticalOffsetSibling->verticalPosition() != VerticalPosition::Superscript) {
     return true;
   }
   /* A power will be inserted next to another power. To avoid ambiguity between
@@ -269,19 +269,24 @@ LayoutNode * VerticalOffsetLayoutNode::baseLayout() {
   assert(parentNode != nullptr);
   assert(parentNode->type() == Type::HorizontalLayout);
   int idxInParent = parentNode->indexOfChild(this);
-  assert(idxInParent > 0);
-  return parentNode->childAtIndex(idxInParent - 1);
+  if (horizontalPosition() == HorizontalPosition::Suffix) {
+    assert(idxInParent > 0);
+    return parentNode->childAtIndex(idxInParent - 1);
+  } else {
+    assert(idxInParent < parentNode->numberOfChildren() - 1);
+    return parentNode->childAtIndex(idxInParent + 1);
+  }
 }
 
 bool VerticalOffsetLayoutNode::protectedIsIdenticalTo(Layout l) {
   assert(l.type() == Type::VerticalOffsetLayout);
   VerticalOffsetLayoutNode * n = static_cast<VerticalOffsetLayoutNode *>(l.node());
-  return position() == n->position() && LayoutNode::protectedIsIdenticalTo(l);
+  return verticalPosition() == n->verticalPosition() && horizontalPosition() == n->horizontalPosition() && LayoutNode::protectedIsIdenticalTo(l);
 }
 
-VerticalOffsetLayout VerticalOffsetLayout::Builder(Layout l, VerticalOffsetLayoutNode::Position position) {
+VerticalOffsetLayout VerticalOffsetLayout::Builder(Layout l, VerticalOffsetLayoutNode::VerticalPosition verticalPosition, VerticalOffsetLayoutNode::HorizontalPosition horizontalPosition) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(VerticalOffsetLayoutNode));
-  VerticalOffsetLayoutNode * node = new (bufferNode) VerticalOffsetLayoutNode(position);
+  VerticalOffsetLayoutNode * node = new (bufferNode) VerticalOffsetLayoutNode(verticalPosition, horizontalPosition);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
   h.replaceChildAtIndexInPlace(0, l);
   return static_cast<VerticalOffsetLayout &>(h);

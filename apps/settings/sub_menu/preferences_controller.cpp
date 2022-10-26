@@ -100,7 +100,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       const char * superscript = "iθ";
       return HorizontalLayout::Builder(
           LayoutHelper::String(base, strlen(base)),
-          VerticalOffsetLayout::Builder(LayoutHelper::String(superscript, strlen(superscript)), VerticalOffsetLayoutNode::Position::Superscript)
+          VerticalOffsetLayout::Builder(LayoutHelper::String(superscript, strlen(superscript)), VerticalOffsetLayoutNode::VerticalPosition::Superscript)
         );
     }
 

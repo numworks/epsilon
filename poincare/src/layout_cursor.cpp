@@ -127,7 +127,7 @@ LayoutCursor LayoutCursor::selectAtDirection(Direction direction, bool * shouldR
 
 void LayoutCursor::addEmptyExponentialLayout(Context * context) {
   EmptyLayout emptyLayout = EmptyLayout::Builder();
-  VerticalOffsetLayout verticalLayout = VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::Position::Superscript);
+  VerticalOffsetLayout verticalLayout = VerticalOffsetLayout::Builder(emptyLayout, VerticalOffsetLayoutNode::VerticalPosition::Superscript);
   HorizontalLayout sibling = HorizontalLayout::Builder(
       CodePointLayout::Builder('e'),
       verticalLayout);
@@ -156,14 +156,14 @@ void LayoutCursor::addEmptySquareRootLayout(Context * context) {
 }
 
 void LayoutCursor::addEmptyPowerLayout(Context * context) {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::Position::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
   m_layout = offsetLayout.childAtIndex(0);
   InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(offsetLayout, this, context);
 }
 
 void LayoutCursor::addEmptySquarePowerLayout(Context * context) {
-  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::Position::Superscript);
+  VerticalOffsetLayout offsetLayout = VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::VerticalPosition::Superscript);
   privateAddEmptyPowerLayout(offsetLayout);
   m_layout = offsetLayout;
   m_position = Position::Right;
@@ -179,7 +179,7 @@ void LayoutCursor::addEmptyTenPowerLayout(Context * context) {
       CodePointLayout::Builder('0'),
       VerticalOffsetLayout::Builder(
         emptyLayout,
-        VerticalOffsetLayoutNode::Position::Superscript));
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript));
   m_layout.addSibling(this, sibling, false);
   m_layout = emptyLayout;
   InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(multiplicationSign, this, context);

@@ -81,7 +81,7 @@ $(BUILD_DIR)/ion/src/$(PLATFORM)/shared/flash/$(MODEL)/board.ld: ion/src/$(PLATF
 # to rebuild bootloader.elf with the kernel configuration. As such, we force
 # this rule to always run, knowing that the recursive MAKE will perform the
 # right amount of work.
-$(BUILD_DIR)/trampoline.o: $(BUILD_DIR)/bootloader.o # This is a hack because grouped target (&:) doesn't seem to work as we think...
+$(BUILD_DIR)/trampoline.o: $(BUILD_DIR)/bootloader.o # This is a workaround because grouped target (&:) is part of Make version > 4.2
 $(BUILD_DIR)/bootloader.o: force_remake
 	$(MAKE) FIRMWARE_COMPONENT=bootloader bootloader.elf
 	$(Q) $(OBJCOPY) -O binary -R .trampoline -R .pseudo_otp $(subst $(FIRMWARE_COMPONENT),bootloader,$(BUILD_DIR))/bootloader.elf $(BUILD_DIR)/bootloader.bin

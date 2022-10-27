@@ -35,6 +35,9 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           submodules: true
+      - run: git submodule deinit -f --all
+      - run: make MODEL=n0110 userland.A.dfu userland.B.dfu # Make sure that userland is buildable without any submodule
+      - run: git submodule update --init
       - run: make MODEL=n0110 epsilon.dfu
       - run: make MODEL=n0110 epsilon.onboarding.dfu
       - run: make MODEL=n0110 epsilon.onboarding.update.dfu
@@ -52,6 +55,9 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           submodules: true
+      - run: git submodule deinit -f --all
+      - run: make MODEL=n0120 userland.A.dfu userland.B.dfu # Make sure that userland is buildable without any submodule
+      - run: git submodule update --init
       - run: make MODEL=n0120 epsilon.dfu
       - run: make MODEL=n0120 epsilon.onboarding.dfu
       - run: make MODEL=n0120 epsilon.onboarding.update.dfu

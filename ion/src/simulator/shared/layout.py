@@ -151,16 +151,18 @@ def print_key(f, key_values, shape):
 def print_keys(f, background_values):
     key_values = background_values["keys"]
 
-    keys_dict = {
-        "HorizontalArrow": [0, 3],
-        "VerticalArrow": [1, 2],
-        "Round": [4, 5],
-        "LargeSquircle": [6, 7] + list(range(30,35)) + list(range(36,41)) + list(range(42,47)) + list(range(48,53)),
-        "SmallSquircle": list(range(12,30))
-    }
-    for k in keys_dict:
-      for v in keys_dict[k]:
-        print_key(f, key_values[str(v)], k)
+    keys = [
+        ["HorizontalArrow", [0]],
+        ["VerticalArrow", [1, 2]],
+        ["HorizontalArrow", [3]],
+        ["Round", [4, 5]],
+        ["LargeSquircle", [6, 7]],
+        ["SmallSquircle", list(range(12,30))],
+        ["LargeSquircle", list(range(30,35)) + list(range(36,41)) + list(range(42,47)) + list(range(48,53))]
+        ]
+    for k in keys:
+      for v in k[1]:
+        print_key(f, key_values[str(v)], k[0])
 
 def print_after_keys(f):
     f.write("};\n")

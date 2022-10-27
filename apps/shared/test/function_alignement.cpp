@@ -25,6 +25,7 @@ void interactWithRecordMember(SequenceStore * store, Ion::Storage::Record rec) {
 void interactWithRecordMember(Graph::ContinuousFunctionStore * store, Ion::Storage::Record rec) {
   ContinuousFunction * fct = store->modelForRecord(rec).pointer();
   // Setting m_min from record member m_domain, which has a 2-byte alignment
+  fct->setTAuto(false);
   fct->setTMin(3.0f);
   interactWithBaseRecordMember<ContinuousFunction>(fct);
 }

@@ -81,7 +81,18 @@ void ExpressionsListController::setExpression(Poincare::Expression e) {
 
 int ExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  return m_layouts[index].serializeParsedExpression(buffer, bufferSize, App::app()->localContext());
+  ScrollableThreeExpressionsView::SubviewPosition position =  m_cells[index].selectedSubviewPosition();
+  Layout layout;
+  if (position == ScrollableThreeExpressionsView::SubviewPosition::Left) {
+    layout = m_layouts[index];
+  } else if (position == ScrollableThreeExpressionsView::SubviewPosition::Center) {
+    layout = m_exactLayouts[index];
+  } else {
+    assert(position == ScrollableThreeExpressionsView::SubviewPosition::Right);
+    layout = m_approximatedLayouts[index];
+  }
+  assert(!layout.isUninitialized());
+  return layout.serializeParsedExpression(buffer, bufferSize, App::app()->localContext());
 }
 
 Poincare::Layout ExpressionsListController::getLayoutFromExpression(Expression e, Context * context, Poincare::Preferences * preferences) {

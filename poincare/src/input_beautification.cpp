@@ -4,8 +4,10 @@
 namespace Poincare {
 
 void InputBeautification::ApplyBeautificationBetweenIndexes(Layout parent, int firstIndex, int indexAfterLast, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText, bool forceBeautification) {
+  assert(!parent.isUninitialized() && firstIndex >= 0);
   // Beautify from right to left
   int i = indexAfterLast - 1;
+  assert(i < parent.numberOfChildren());
   while (i >= firstIndex) {
     Layout child = parent.childAtIndex(i);
     if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(child.type())) {

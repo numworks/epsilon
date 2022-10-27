@@ -64,7 +64,7 @@ install_macos_binary_deps() {
 }
 
 install_linux_binary_deps() {
-  apt-get install \
+  sudo apt-get install \
     build-essential \
     git \
     imagemagick \
@@ -78,7 +78,7 @@ install_linux_binary_deps() {
     python3-pip
 
   if [[ "${INSTALL_ARM_GCC-0}" == "1" ]]; then
-    apt-get install gcc-arm-none-eabi binutils-arm-none-eabi
+    sudo apt-get install gcc-arm-none-eabi binutils-arm-none-eabi
   fi
 }
 

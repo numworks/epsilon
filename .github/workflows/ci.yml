@@ -17,7 +17,7 @@ jobs:
     steps:
       - run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v2
-      - run: sudo build/setup.sh --only-simulator
+      - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=android
       - run: make PLATFORM=simulator TARGET=android epsilon.apk
       - run: make PLATFORM=simulator TARGET=android test.apk
@@ -33,7 +33,7 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           submodules: true
-      - run: sudo build/setup.sh
+      - run: build/setup.sh
       - run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable # Hide the submodule for some checks
       - run: make MODEL=n0110 userland.A.dfu userland.B.dfu # Make sure that userland is buildable without any submodule
       - run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
@@ -54,7 +54,7 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           submodules: true
-      - run: sudo build/setup.sh
+      - run: build/setup.sh
       - run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable # Hide the submodule for some checks
       - run: make MODEL=n0120 userland.A.dfu userland.B.dfu # Make sure that userland is buildable without any submodule
       - run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
@@ -92,7 +92,7 @@ jobs:
         with:
           sdk: 1.39.16-fastcomp
       - uses: actions/checkout@v2
-      - run: sudo build/setup.sh --only-simulator
+      - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=web epsilon.zip test.js
       - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
@@ -104,7 +104,7 @@ jobs:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v2
-      - run: sudo build/setup.sh --only-simulator
+      - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator ASAN=1 epsilon.bin test.bin
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
       - uses: actions/upload-artifact@master

@@ -36,7 +36,7 @@ install_python_deps() {
   python3 -m venv .venv
   .venv/bin/pip3 install \
     lz4 \
-    pyelftools
+    pyelftools \
     pypng \
     stringcase
 }

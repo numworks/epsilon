@@ -20,6 +20,6 @@ Optionally, this ELF file can reference a `eadk_external_data` symbol that will 
 ## Some examples
 
 Don't hesitate to browse our sample apps:
- - In [pure C](https://github.com/numworks/epsilon-sample-app), which is probably the easiest to start with
+ - In [pure C](https://github.com/numworks/epsilon-sample-app-c), which is probably the easiest to start with
  - In [C++](https://github.com/numworks/epsilon-sample-app-cpp)
- - In [Rust](https://github.com/numworks/epsilon-sample-app-cpp)
+ - In [Rust](https://github.com/numworks/epsilon-sample-app-rust)

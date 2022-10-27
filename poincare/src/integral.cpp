@@ -99,10 +99,14 @@ Evaluation<T> IntegralNode::templatedApproximate(const ApproximationContext& app
    * these thresholds to deal with big but finite bounds */
   constexpr T leftOpenThreshold = -1000.0;
   constexpr T rightOpenThreshold = 1000.0;
+  T start, end, scale = 1.0;
+  if (a > b) {
+    scale = -1.0;
+    std::swap(a, b);
+  }
   Substitution<T> substitution;
   substitution.originA = a;
   substitution.originB = b;
-  T start, end, scale = 1.0;
   if (a < leftOpenThreshold) {
     if (b > rightOpenThreshold) {
       substitution.type = Substitution<T>::Type::RealLine;
@@ -113,14 +117,14 @@ Evaluation<T> IntegralNode::templatedApproximate(const ApproximationContext& app
       substitution.type = Substitution<T>::Type::LeftOpen;
       start = std::isfinite(a) ? (a-b+1.0)/(b-a+1.0) : -1.0;
       end = 1.0;
-      scale = 2.0;
+      scale *= 2.0;
     }
   } else {
     if (b > rightOpenThreshold) {
       substitution.type = Substitution<T>::Type::RightOpen;
       start = std::isfinite(b) ? (a-b+1.0)/(b-a+1.0) : -1.0;
       end = 1.0;
-      scale = 2.0;
+      scale *= 2.0;
     } else {
       substitution.type = Substitution<T>::Type::None;
       start = a;

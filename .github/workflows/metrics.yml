@@ -24,7 +24,7 @@ jobs:
           ref:  ${{ steps.common_ancestor.outputs.commit_sha }}
           path: base
       - name: Install dependencies
-        run: sudo build/setup.sh
+        run: build/setup.sh
       - name: Build common ancestor for N0110
         # build the largest target
         run: make -C base bootloader.elf && make -C base kernel.onboarding.beta.allow3rdparty.A.elf && make -C base userland.onboarding.beta.allow3rdparty.A.elf

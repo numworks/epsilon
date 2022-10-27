@@ -36,11 +36,12 @@ jobs:
           token: ${{ secrets.PAT }}
           submodules: true
       - run: git submodule deinit -f --all
-      - run: make MODEL=n0110 userland.A.dfu # Make sure that userland is buildable without any submodule
-      - run: make MODEL=n0110 userland.B.dfu
+      - run: make MODEL=n0110 userland.A.dfu userland.B.dfu # Make sure that userland is buildable without any submodule
       - run: git submodule update --init
       - run: make MODEL=n0110 epsilon.dfu
+      - run: make MODEL=n0110 epsilon.allow3rdparty.dfu
       - run: make MODEL=n0110 epsilon.onboarding.dfu
+      - run: make MODEL=n0110 epsilon.onboarding.allow3rdparty.dfu
       - run: make MODEL=n0110 epsilon.onboarding.update.dfu
       - run: make MODEL=n0110 epsilon.onboarding.beta.dfu
       - run: make MODEL=n0110 epsilon.onboarding.beta.allow3rdparty.dfu
@@ -57,14 +58,15 @@ jobs:
           token: ${{ secrets.PAT }}
           submodules: true
       - run: git submodule deinit -f --all
-      - run: make MODEL=n0120 userland.A.dfu # Make sure that userland is buildable without any submodule
-      - run: make MODEL=n0120 userland.B.dfu
+      - run: make MODEL=n0120 userland.A.dfu userland.B.dfu # Make sure that userland is buildable without any submodule
       - run: git submodule update --init
       - run: make MODEL=n0120 epsilon.dfu
+      - run: make MODEL=n0120 epsilon.allow3rdparty.dfu
       - run: make MODEL=n0120 epsilon.onboarding.dfu
+      - run: make MODEL=n0120 epsilon.onboarding.allow3rdparty.dfu
       - run: make MODEL=n0120 epsilon.onboarding.update.dfu
       - run: make MODEL=n0120 epsilon.onboarding.beta.dfu
-      - run: make MODEL=n0120 epsilon.onboarding.allow3rdparty.dfu
+      - run: make MODEL=n0120 epsilon.onboarding.beta.allow3rdparty.dfu
       - run: make MODEL=n0120 flasher.dfu
       - run: make MODEL=n0120 bench.ram.dfu
   windows:

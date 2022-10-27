@@ -2,6 +2,11 @@
 
 EADK is the software development kit to build independent, external apps for Epsilon. With EADK, you'll be able to build NWA files that you will then be able to [load on your NumWorks calculator](https://my.numworks.com/apps).
 
+## Versions
+
+The sources correspond to the js code embedded in **nwlink@0.0.15**.
+There are designed to work with epsilon build with **EXTERNAL_APPS_API_LEVEL = 0**.
+
 ## Functions you may use
 
 All the functions you can use are in `eadk.h`. They should hopefully all be pretty self-explanatory.

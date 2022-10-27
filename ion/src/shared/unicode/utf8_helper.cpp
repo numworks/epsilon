@@ -511,7 +511,7 @@ void CountGlyphsInLine(const char * text, int * before, int * after, const char 
   UTF8Helper::PerformAtCodePoints(afterLocation, UCodePointLineFeed, nullptr, countGlyph, after, 0, 0, UCodePointLineFeed);
 }
 
-bool IsPrefixCaseInsensitiveNoCombining(const char * a, const char * b) {
+const char * PrefixCaseInsensitiveNoCombining(const char * a, const char * b) {
   UTF8Decoder aDecoder(a);
   UTF8Decoder bDecoder(b);
   CodePoint a0 = aDecoder.nextCodePoint(), b0 = bDecoder.nextCodePoint();
@@ -527,13 +527,21 @@ bool IsPrefixCaseInsensitiveNoCombining(const char * a, const char * b) {
         b0 = b0.getChar() - 'a' + 'A';
       }
       if (a0 != b0) {
-        return false;
+        return nullptr;
       }
       a0 = aDecoder.nextCodePoint();
       b0 = bDecoder.nextCodePoint();
     }
   }
-  return true;
+  while (b0.isCombining()) {
+    b0 = bDecoder.nextCodePoint();
+  }
+  bDecoder.previousCodePoint();
+  return bDecoder.stringPosition();
+}
+
+bool IsPrefixCaseInsensitiveNoCombining(const char * a, const char * b) {
+  return static_cast<bool>(PrefixCaseInsensitiveNoCombining(a, b));
 }
 
 }

@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
-      - run: pip3 install lz4 pypng stringcase
       - run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v2
+      - run: build/setup.sh
       - run: make PLATFORM=simulator TARGET=android
       - run: make PLATFORM=simulator TARGET=android epsilon.apk
       - run: make PLATFORM=simulator TARGET=android test.apk
@@ -28,13 +28,12 @@ jobs:
   n0110:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
-      - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
-      - run: pip3 install lz4 pypng stringcase
       - uses: numworks/setup-arm-toolchain@latest
       - uses: actions/checkout@v2
         with:
           token: ${{ secrets.PAT }}
           submodules: true
+      - run: build/setup.sh
       - run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable # Hide the submodule for some checks
       - run: make MODEL=n0110 userland.A.dfu userland.B.dfu # Make sure that userland is buildable without any submodule
       - run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
@@ -50,13 +49,12 @@ jobs:
   n0120:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
-      - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
-      - run: pip3 install lz4 pypng stringcase
       - uses: numworks/setup-arm-toolchain@latest
       - uses: actions/checkout@v2
         with:
           token: ${{ secrets.PAT }}
           submodules: true
+      - run: build/setup.sh
       - run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable # Hide the submodule for some checks
       - run: make MODEL=n0120 userland.A.dfu userland.B.dfu # Make sure that userland is buildable without any submodule
       - run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
@@ -78,8 +76,7 @@ jobs:
     steps:
       - uses: msys2/setup-msys2@v2
       - uses: actions/checkout@v2
-      - run: pacman -S --noconfirm mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config make mingw-w64-x86_64-python3 mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng mingw-w64-x86_64-imagemagick mingw-w64-x86_64-librsvg mingw-w64-x86_64-inkscape mingw-w64-x86_64-python3-pip mingw-w64-x86_64-python-lz4
-      - run: pip3 install pypng stringcase
+      - run: build/setup.sh
       - run: make PLATFORM=simulator
       - run: make PLATFORM=simulator epsilon.exe
       - run: make PLATFORM=simulator test.exe
@@ -94,8 +91,8 @@ jobs:
       - uses: numworks/setup-emscripten@v1
         with:
           sdk: 1.39.16-fastcomp
-      - run: pip3 install lz4 pypng stringcase
       - uses: actions/checkout@v2
+      - run: build/setup.sh
       - run: make PLATFORM=simulator TARGET=web epsilon.zip test.js
       - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
@@ -106,9 +103,8 @@ jobs:
   linux:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
-      - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
-      - run: pip3 install lz4 pypng stringcase
       - uses: actions/checkout@v2
+      - run: build/setup.sh
       - run: make PLATFORM=simulator ASAN=1 epsilon.bin test.bin
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
@@ -120,8 +116,8 @@ jobs:
     runs-on: macOS-latest
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
-      - run: brew install numworks/tap/epsilon-sdk
       - uses: actions/checkout@v2
+      - run: build/setup.sh
       - run: make PLATFORM=simulator
       - run: make PLATFORM=simulator epsilon.app
       - run: make PLATFORM=simulator ARCH=x86_64 test.bin
@@ -134,8 +130,8 @@ jobs:
     runs-on: macOS-latest
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
-      - run: brew install numworks/tap/epsilon-sdk
       - uses: actions/checkout@v2
+      - run: build/setup.sh
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.ipa
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 test.ipa

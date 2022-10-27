@@ -7,8 +7,6 @@ jobs:
   binary-size:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
-      - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
-      - run: pip3 install lz4 pypng stringcase pyelftools
       - name: Install ARM toolchain
         uses: numworks/setup-arm-toolchain@latest
       - name: Fetch target branch and PR branch
@@ -25,6 +23,8 @@ jobs:
           submodules: true
           ref:  ${{ steps.common_ancestor.outputs.commit_sha }}
           path: base
+      - name: Install dependencies
+        run: build/setup.sh
       - name: Build common ancestor for N0110
         # build the largest target
         run: make -C base bootloader.elf && make -C base kernel.onboarding.beta.allow3rdparty.A.elf && make -C base userland.onboarding.beta.allow3rdparty.A.elf

@@ -242,7 +242,7 @@ void Layout::addSibling(LayoutCursor * cursor, Layout sibling, bool moveCursor) 
     return;
   }
   if (cursor->position() == LayoutCursor::Position::Left) {
-    replaceWithJuxtapositionOf(sibling, *this, cursor);
+    replaceWithJuxtapositionOf(sibling, *this, cursor, moveCursor);
   } else {
     assert(cursor->position() == LayoutCursor::Position::Right);
     replaceWithJuxtapositionOf(*this, sibling, cursor);

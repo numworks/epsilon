@@ -75,7 +75,8 @@ install_linux_binary_deps() {
     libxext-dev \
     pkg-config \
     python3 \
-    python3-pip
+    python3-pip \
+    python3-venv
 
   if [[ "${INSTALL_ARM_GCC-0}" == "1" ]]; then
     sudo apt-get install gcc-arm-none-eabi binutils-arm-none-eabi

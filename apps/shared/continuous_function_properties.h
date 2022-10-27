@@ -55,6 +55,7 @@ public:
   bool canHaveCustomDomain() const { return !isAlongY() && isEquality(); }
 
   bool isConic() const { return conicShape() != Poincare::Conic::Shape::Undefined; }
+  bool isNotCartesianParabolaOrHyperbola() const { return !isCartesian() || (conicShape() != Poincare::Conic::Shape::Parabola && conicShape() != Poincare::Conic::Shape::Hyperbola); }
   bool isHyperbolaWithTwoSubCurves() const { return m_plotType == &FunctionTypes::k_hyperbolaEquationWithTwoSubCurves; }
 
   // Wether to draw a dotted or solid line (Strict inequalities).

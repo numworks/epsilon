@@ -188,10 +188,10 @@ private:
   constexpr static ParametricFunctionType k_parametricHorizontalLineType = ParametricFunctionType(I18n::Message::ParametricHorizontalLineType);
   constexpr static ParametricFunctionType k_parametricVerticalLineType = ParametricFunctionType(I18n::Message::ParametricVerticalLineType);
   // Parametric conics
-  constexpr static ParametricFunctionType k_parametricEllipseFunctionType = ParametricConicFunctionType(I18n::Message::ParametricEllipseType, Poincare::Conic::Shape::Ellipse);
-  constexpr static ParametricFunctionType k_parametricCircleFunctionType = ParametricConicFunctionType(I18n::Message::ParametricCircleType, Poincare::Conic::Shape::Circle);
-  constexpr static ParametricFunctionType k_parametricHyperbolaFunctionType = ParametricConicFunctionType(I18n::Message::ParametricHyperbolaType, Poincare::Conic::Shape::Hyperbola);
-  constexpr static ParametricFunctionType k_parametricParabolaFunctionType = ParametricConicFunctionType(I18n::Message::ParametricParabolaType, Poincare::Conic::Shape::Parabola);
+  constexpr static ParametricConicFunctionType k_parametricEllipseFunctionType = ParametricConicFunctionType(I18n::Message::ParametricEllipseType, Poincare::Conic::Shape::Ellipse);
+  constexpr static ParametricConicFunctionType k_parametricCircleFunctionType = ParametricConicFunctionType(I18n::Message::ParametricCircleType, Poincare::Conic::Shape::Circle);
+  constexpr static ParametricConicFunctionType k_parametricHyperbolaFunctionType = ParametricConicFunctionType(I18n::Message::ParametricHyperbolaType, Poincare::Conic::Shape::Hyperbola);
+  constexpr static ParametricConicFunctionType k_parametricParabolaFunctionType = ParametricConicFunctionType(I18n::Message::ParametricParabolaType, Poincare::Conic::Shape::Parabola);
 
   // Polar
   constexpr static PolarFunctionType k_polarFunctionType = PolarFunctionType(I18n::Message::PolarEquationType);
@@ -199,10 +199,10 @@ private:
   constexpr static PolarFunctionType k_polarHorizontalLineType = PolarFunctionType(I18n::Message::PolarHorizontalLineType);
   constexpr static PolarFunctionType k_polarVerticalLineType = PolarFunctionType(I18n::Message::PolarVerticalLineType);
   // Polar conics
-  constexpr static PolarFunctionType k_polarEllipseFunctionType = PolarConicFunctionType(I18n::Message::PolarEllipseType, Poincare::Conic::Shape::Ellipse);
-  constexpr static PolarFunctionType k_polarCircleFunctionType = PolarConicFunctionType(I18n::Message::PolarCircleType, Poincare::Conic::Shape::Circle);
-  constexpr static PolarFunctionType k_polarHyperbolaFunctionType = PolarConicFunctionType(I18n::Message::PolarHyperbolaType, Poincare::Conic::Shape::Hyperbola);
-  constexpr static PolarFunctionType k_polarParabolaFunctionType = PolarConicFunctionType(I18n::Message::PolarParabolaType, Poincare::Conic::Shape::Parabola);
+  constexpr static PolarConicFunctionType k_polarEllipseFunctionType = PolarConicFunctionType(I18n::Message::PolarEllipseType, Poincare::Conic::Shape::Ellipse);
+  constexpr static PolarConicFunctionType k_polarCircleFunctionType = PolarConicFunctionType(I18n::Message::PolarCircleType, Poincare::Conic::Shape::Circle);
+  constexpr static PolarConicFunctionType k_polarHyperbolaFunctionType = PolarConicFunctionType(I18n::Message::PolarHyperbolaType, Poincare::Conic::Shape::Hyperbola);
+  constexpr static PolarConicFunctionType k_polarParabolaFunctionType = PolarConicFunctionType(I18n::Message::PolarParabolaType, Poincare::Conic::Shape::Parabola);
 
   // Cartesian function
   // TODO: Update captions.

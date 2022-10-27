@@ -304,9 +304,9 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
   FunctionType::SymbolType symbolType = symbolTypeAtColumn(&i);
   int index = 1;
-  int numberOfActiveFunctionsOfSymbolType = functionStore()->numberOfActiveFunctionsOfSymbolType(symbolType);
-  for (int k = 0; k < numberOfActiveFunctionsOfSymbolType; k++) {
-    Ion::Storage::Record record = functionStore()->activeRecordOfSymbolTypeAtIndex(symbolType, k);
+  int numberOfActiveFunctionsInTableOfSymbolType = functionStore()->numberOfActiveFunctionsInTableOfSymbolType(symbolType);
+  for (int k = 0; k < numberOfActiveFunctionsInTableOfSymbolType; k++) {
+    Ion::Storage::Record record = functionStore()->activeRecordOfSymbolTypeInTableAtIndex(symbolType, k);
     const int numberOfColumnsForCurrentRecord = numberOfColumnsForRecord(record);
     if (index <= i && i < index + numberOfColumnsForCurrentRecord) {
       ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);

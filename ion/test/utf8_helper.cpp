@@ -361,8 +361,8 @@ QUIZ_CASE(ion_utf8_helper_end_of_word) {
   assert_end_of_word_is(test_sentence + 8, test_sentence + 10);
 }
 
-void assert_is_prefix(const char * a, const char * b) {
-  quiz_assert(UTF8Helper::IsPrefixCaseInsensitiveNoCombining(a, b));
+void assert_is_prefix(const char * a, const char * b, const char * c) {
+  quiz_assert(strcmp(UTF8Helper::PrefixCaseInsensitiveNoCombining(a, b), c) == 0);
 }
 
 void assert_is_not_prefix(const char * a, const char * b) {
@@ -370,9 +370,12 @@ void assert_is_not_prefix(const char * a, const char * b) {
 }
 
 QUIZ_CASE(ion_utf8_helper_is_prefix) {
-  assert_is_prefix("pre", "prefix");
-  assert_is_prefix("calc", "CALCULATOR");
-  assert_is_prefix("he", "Hélium");
+  /* Beware the "é" character below must be a combined character not the usual,
+   * single codepoint "é". */
+  assert_is_prefix("pre", "prefix", "fix");
+  assert_is_prefix("calc", "CALCULATOR", "ULATOR");
+  assert_is_prefix("he", "Hélium", "lium");
+  assert_is_prefix("hél", "Hélium", "ium");
   assert_is_not_prefix("prefix", "pre");
   assert_is_not_prefix("cla", "CALCULATOR");
   assert_is_not_prefix("ha", "hélium");

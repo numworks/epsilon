@@ -15,13 +15,13 @@ void SuggestionTextField::ContentView::drawRect(KDContext * ctx, KDRect rect) co
   AbstractTextField::ContentView::drawRect(ctx, rect);
   if (m_suggestion) {
     assert(strlen(m_suggestion) >= editedTextLength());
-    ctx->drawString(m_suggestion + editedTextLength(), glyphFrameAtPosition(text(), text() + editedTextLength()).origin(), m_font, Palette::GrayDark, KDColorWhite);
+    ctx->drawString(suggestionSuffix(), glyphFrameAtPosition(text(), text() + editedTextLength()).origin(), m_font, Palette::GrayDark, KDColorWhite);
   }
 }
 
 KDSize SuggestionTextField::ContentView::minimalSizeForOptimalDisplay() const {
   KDSize size = AbstractTextField::ContentView::minimalSizeForOptimalDisplay();
-  return m_suggestion ? KDSize(size.width() + KDFont::Font(m_font)->stringSize(m_suggestion + editedTextLength()).width(), size.height()) : size;
+  return m_suggestion ? KDSize(size.width() + KDFont::Font(m_font)->stringSize(suggestionSuffix()).width(), size.height()) : size;
 }
 
 void SuggestionTextField::ContentView::setSuggestion(const char * suggestion) {

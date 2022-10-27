@@ -7,6 +7,7 @@ import zlib # for CRC-32 calculation
 import subprocess
 import re
 import argparse
+import os
 
 # arm-none-eabi-objdump -h -w file.elf
 # arm-none-eabi-objcopy -O binary -j .data file.elf file.bin
@@ -44,8 +45,8 @@ def generate_dfu_file(targets, usb_vid_pid, dfu_file):
   data += struct.pack('<I', crc)
   open(dfu_file, 'wb+').write(data)
 
-def bin_file(block):
-    return "firmware" + block['name'] + ".bin"
+def bin_file_for_path(elf_file, name_extension = ""):
+    return "firmware." + os.path.splitext(os.path.basename(elf_file))[0] + "_" + name_extension + ".bin"
 
 def print_sections(sections):
     for s in sections:
@@ -60,12 +61,12 @@ def print_block(block, address, dataSize):
   print("\n")
 
 def elf2target_single_block(elf_file, verbose):
-  single_block = {'name': "single block", 'sections': loadable_sections(elf_file)}
+  single_block = {'sections': loadable_sections(elf_file)}
   # Early escape for empty blocks
   if not single_block['sections']:
       sys.stderr.write("Error: the elf file " + elf_file + "has no loadable section\n")
       sys.exit(-1)
-  subprocess.call(["arm-none-eabi-objcopy", "-O", "binary", elf_file, bin_file(single_block)])
+  subprocess.call(["arm-none-eabi-objcopy", "-O", "binary", elf_file, bin_file_for_path(elf_file)])
   address = min([section['lma'] for section in single_block['sections']])
   # We turn ITCM flash addresses to equivalent AXIM flash addresses because
   # ITCM address cannot be written and are physically equivalent to AXIM flash
@@ -73,11 +74,11 @@ def elf2target_single_block(elf_file, verbose):
   if (address >= 0x00200000 and address < 0x00210000):
     address = address - 0x00200000 + 0x08000000
 
-  data = open(bin_file(single_block), "rb").read()
+  data = open(bin_file_for_path(elf_file), "rb").read()
   target = {'address': address, 'data': data}
   if verbose:
     print_block(single_block, address, len(data))
-  subprocess.call(["rm", bin_file(single_block)])
+  subprocess.call(["rm", bin_file_for_path(elf_file)])
   return target
 
 def standard_elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose):
@@ -109,9 +110,9 @@ def customized_elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose):
   for i in [0,1]:
     kernel_elf_file = kernel_elf_files[i]
     userland_elf_file = userland_elf_files[i]
-    persisting_bytes_block = {'name': "persisting_bytes", 'sections': loadable_sections(kernel_elf_file, "", "persisting_bytes_buffer")}
-    kernel_block = {'name': "kernel", 'sections': [s for s in loadable_sections(kernel_elf_file) if s not in persisting_bytes_block['sections']]}
-    userland_block = {'name': "userland", 'sections': [s for s in loadable_sections(userland_elf_file)]}
+    persisting_bytes_block = {'sections': loadable_sections(kernel_elf_file, "", "persisting_bytes_buffer")}
+    kernel_block = {'sections': [s for s in loadable_sections(kernel_elf_file) if s not in persisting_bytes_block['sections']]}
+    userland_block = {'sections': [s for s in loadable_sections(userland_elf_file)]}
     blocks = {'persisting_bytes': persisting_bytes_block, 'kernel': kernel_block, 'userland': userland_block}
     block_names = blocks.keys();
     for name in block_names:
@@ -122,19 +123,20 @@ def customized_elf2dfu(elf_files, usb_vid_pid, dfu_file, verbose):
         sys.exit(-1)
       # Fill the address field of each block
       elf_file = userland_elf_file if name == "userland" else kernel_elf_file
-      subprocess.call(["arm-none-eabi-objcopy", "-O", "binary"]+[item for sublist in [["-j", s['name']] for s in block['sections']] for item in sublist]+[elf_file, bin_file(block)])
+      blocks[name]['bin_file'] = bin_file_for_path(elf_file, name)
+      subprocess.call(["arm-none-eabi-objcopy", "-O", "binary"]+[item for sublist in [["-j", s['name']] for s in block['sections']] for item in sublist]+[elf_file, blocks[name]['bin_file']])
       blocks[name]['address'] = min([s['lma'] for s in block['sections']])
 
     for name in block_names:
       block = blocks[name]
-      data = open(bin_file(block), "rb").read()
+      data = open(blocks[name]['bin_file'], "rb").read()
       targets.append({'address': block['address'], 'data': data})
       if verbose:
         print_block(block, block['address'], len(data),)
 
     for name in block_names:
       block = blocks[name]
-      subprocess.call(["rm", bin_file(block)])
+      subprocess.call(["rm", blocks[name]['bin_file']])
 
   generate_dfu_file([targets], usb_vid_pid, dfu_file)
 

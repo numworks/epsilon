@@ -4,3 +4,4 @@ build/device/**/*.pyc
 ion/src/simulator/android/.gradle/
 ion/src/simulator/ios/GoogleAnalyticsServices/
 .gradle/
+.venv/

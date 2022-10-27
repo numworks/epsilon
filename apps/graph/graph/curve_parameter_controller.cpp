@@ -89,7 +89,7 @@ void CurveParameterController::willDisplayCellForIndex(HighlightCell *cell, int 
 
 float CurveParameterController::parameterAtIndex(int index) {
   if (isDerivative(index)) {
-    assert(function()->plotType() == ContinuousFunction::PlotType::Cartesian);
+    assert(function()->canDisplayDerivative());
     return function()->approximateDerivative(m_cursor->x(), App::app()->localContext());
   }
   return function()->evaluateCurveParameter(index, m_cursor->t(), m_cursor->x(), m_cursor->y(), App::app()->localContext());

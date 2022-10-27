@@ -265,7 +265,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     TreeHandle mainParentHandle = newChild.commonAncestorWith(firstInsertedChild, false);
     Layout mainParentLayout = static_cast<Layout&>(mainParentHandle);
     assert(!mainParentLayout.isUninitialized());
-    // Set the first and last insterted children to have the same parent
+    // Set the first and last inserted children to have the same parent
     while (firstInsertedChild.parent() != mainParentLayout) {
       firstInsertedChild = firstInsertedChild.parent();
     }
@@ -279,29 +279,48 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
 }
 
 void LayoutCursor::addLayoutAndMoveCursor(Layout l, Context * context, bool withinBeautification) {
+  bool layoutWillBeMerged = l.type() == LayoutNode::Type::HorizontalLayout;
+  int layoutNumberOfChildren = l.numberOfChildren();
+
+  // Compute these values before adding siblings
+  Layout parent = m_layout.parent();
+  bool simpleLayoutInsertion = !parent.isUninitialized() && parent.type() == LayoutNode::Type::HorizontalLayout;
+  int mergeIndex = simpleLayoutInsertion ? parent.indexOfChild(m_layout) + (m_position == Position::Right) : 0;
+
   m_layout.addSibling(this, l, true);
-  if (!withinBeautification) {
-    bool layoutWillBeMerged = l.type() == LayoutNode::Type::HorizontalLayout;
-    Layout parent = m_layout.parent();
-    int mergeLength = layoutWillBeMerged ? l.numberOfChildren() : 1;
-    int mergeIndex;
-    if (parent.isUninitialized()) {
-      parent = m_layout;
-      mergeIndex = m_position == Position::Left ? 0 : parent.numberOfChildren();
-    } else {
-      mergeIndex = parent.indexOfChild(m_layout) + (m_position == Position::Right);
-    }
+  if (withinBeautification) {
+    return;
+  }
+  // Parent may have changed
+  parent = m_layout.parent();
+  int mergeLength;
+  if (simpleLayoutInsertion && !parent.isUninitialized() && parent.type() == LayoutNode::Type::HorizontalLayout) {
+    /* Layout has been merged within the parent horizontal layout. Optimize
+     * the beautification since the newly inserted layout positions are known
+     */
+    mergeLength = layoutNumberOfChildren;
     int parentNumberOfChildren = parent.numberOfChildren();
     if (mergeIndex + mergeLength > parentNumberOfChildren) {
-      /* Cap mergeLength in case other layouts have been merged, like empty
+      /* Cap mergeLength in case some layouts have been merged, like empty
        * layouts for example. */
       mergeLength = parentNumberOfChildren - mergeIndex;
     }
-    InputBeautification::ApplyBeautificationBetweenIndexes(parent, mergeIndex, mergeIndex + mergeLength, this, context);
-    if (!layoutWillBeMerged) {
-      assert(!l.isUninitialized());
-      l.collapseSiblings(this);
+  } else {
+    /* We don't know how much the layout has changed and apply the
+     * beautification to the entire parent layout.
+     * TODO : Handle more situations to avoid calling multiple time
+     * ApplyBeautificationBetweenIndexes with too large indexes. */
+    if (parent.isUninitialized()) {
+      // No parent, apply beautification on m_layout instead
+      parent = m_layout;
     }
+    mergeIndex = 0;
+    mergeLength = parent.numberOfChildren();
+  }
+  InputBeautification::ApplyBeautificationBetweenIndexes(parent, mergeIndex, mergeIndex + mergeLength, this, context);
+  if (!layoutWillBeMerged) {
+    assert(!l.isUninitialized());
+    l.collapseSiblings(this);
   }
 }
 

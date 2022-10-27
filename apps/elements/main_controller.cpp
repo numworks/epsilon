@@ -145,6 +145,8 @@ bool MainController::textFieldDidHandleEvent(Escher::AbstractTextField * textFie
         /* Update suggestion text */
         ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();
         m_view.bannerView()->textField()->setSuggestion(dataSource->suggestedElementName());
+      } else {
+        m_view.bannerView()->textField()->setSuggestion(nullptr);
       }
     }
     m_view.elementsView()->reload();

@@ -130,7 +130,11 @@ void TreeHandle::swapChildrenInPlace(int i, int j) {
 
 #if POINCARE_TREE_LOG
 void TreeHandle::log() const {
-  node()->log(std::cout);
+  if (isUninitialized()) {
+    std::cout << "\n<Uninitialized TreeHandle/>";
+  } else {
+    node()->log(std::cout);
+  }
   std::cout << std::endl;
 }
 #endif

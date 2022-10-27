@@ -35,9 +35,9 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           submodules: true
-      - run: git submodule deinit -f --all
+      - run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable # Hide the submodule for some checks
       - run: make MODEL=n0110 userland.A.dfu userland.B.dfu # Make sure that userland is buildable without any submodule
-      - run: git submodule update --init
+      - run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
       - run: make MODEL=n0110 epsilon.dfu
       - run: make MODEL=n0110 epsilon.allow3rdparty.dfu
       - run: make MODEL=n0110 epsilon.onboarding.dfu
@@ -57,9 +57,9 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           submodules: true
-      - run: git submodule deinit -f --all
+      - run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable # Hide the submodule for some checks
       - run: make MODEL=n0120 userland.A.dfu userland.B.dfu # Make sure that userland is buildable without any submodule
-      - run: git submodule update --init
+      - run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
       - run: make MODEL=n0120 epsilon.dfu
       - run: make MODEL=n0120 epsilon.allow3rdparty.dfu
       - run: make MODEL=n0120 epsilon.onboarding.dfu

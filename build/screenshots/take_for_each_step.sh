@@ -13,19 +13,7 @@ output_folder=${3:-screenshots}
 
 mkdir -p $output_folder
 
-HEADER_SIZE=15
-
-original_size=$(stat -f %z ${state_file})
-size=$original_size
-
-while [ $size -gt $HEADER_SIZE ]
-do
-  event=$(xxd -p -l1 -s $(( size - 1)) ${state_file})
-  output=${output_folder}/img-`printf %03d $(( size - HEADER_SIZE ))`-${event}.png
-  echo $output
-  ./${epsilon} --headless --load-state-file <(head -c${size} ${state_file}) --take-screenshot ${output} > /dev/null
-  size=$(( size - 1 ))
-done
+./${epsilon} --headless --load-state-file ${state_file} --take-all-screenshots ${output_folder} > /dev/null
 
 echo ${output_folder}/bug.gif
 convert -loop 0 ${output_folder}/img*.png ${output_folder}/bug.gif

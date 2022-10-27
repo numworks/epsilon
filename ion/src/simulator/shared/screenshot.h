@@ -7,12 +7,16 @@ namespace Simulator {
 class Screenshot {
  public:
   Screenshot(const char * path = nullptr);
-  void init(const char * path);
+  void initEachStep(const char * path) { init(path, true); }
+  void init(const char * path, bool eachStep = false);
+  void captureStep();
   void capture();
   static Screenshot * commandlineScreenshot();
 
  private:
   const char * m_path;
+  int m_stepNumber;
+  bool m_eachStep;
 };
 
 }  // namespace Simulator

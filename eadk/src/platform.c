@@ -63,7 +63,7 @@ int _close(int file) {
 
 int _write(int file, char * ptr, int len) {
   static eadk_point_t location = {0, 0};
-  //location = eadk_display_draw_string(ptr, location, false, eadk_color_black, eadk_color_white, len); // Ideal scenario: returns location, takes len as input
+  // TODO: location = eadk_display_draw_string(ptr, location, false, eadk_color_black, eadk_color_white, len); // Ideal scenario: returns location, takes len as input
   eadk_display_draw_string(ptr, location, false, eadk_color_black, eadk_color_white);
   return len;
 }

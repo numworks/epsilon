@@ -26,8 +26,8 @@ install_binary_deps() {
       install_windows_binary_deps
       ;;
     *)
-      echo "Unknown operating system $OSTYPE"
-      exit -1
+      echo "Unknown operating system $OSTYPE" >&2
+      exit 1
       ;;
   esac
 }

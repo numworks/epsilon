@@ -18,7 +18,7 @@ bool ContinuousFunctionStore::displaysFunctionsToNormalize(int * nbActiveFunctio
     *nbActiveFunctions = numberOfActiveFunctions();
   }
   // Normalization isn't enforced on Parabola and Hyperbola for a better zooms
-  return numberOfActiveFunctionsWithProperty(&ContinuousFunctionProperties::isConic) != 0;
+  return numberOfActiveFunctionsWithProperty(&ContinuousFunctionProperties::isNotCartesianParabolaOrHyperbola) != 0;
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {

@@ -51,7 +51,7 @@ int IntervalParameterSelectorController::numberOfRows() const {
   Shared::FunctionType::SymbolType symbolType;
   while (symbolTypeIndex < k_numberOfSymbolTypes) {
     symbolType = static_cast<Shared::FunctionType::SymbolType>(symbolTypeIndex);
-    bool symbolTypeIsShown = App::app()->functionStore()->numberOfActiveFunctionsOfSymbolType(symbolType) > 0;
+    bool symbolTypeIsShown = App::app()->functionStore()->numberOfActiveFunctionsInTableOfSymbolType(symbolType) > 0;
     rowCount += symbolTypeIsShown;
     symbolTypeIndex++;
   }
@@ -75,7 +75,7 @@ Shared::FunctionType::SymbolType IntervalParameterSelectorController::symbolType
   Shared::FunctionType::SymbolType symbolType;
   do {
     symbolType = static_cast<Shared::FunctionType::SymbolType>(symbolTypeIndex);
-    bool symbolTypeIsShown = App::app()->functionStore()->numberOfActiveFunctionsOfSymbolType(symbolType) > 0;
+    bool symbolTypeIsShown = App::app()->functionStore()->numberOfActiveFunctionsInTableOfSymbolType(symbolType) > 0;
     if (symbolTypeIsShown && rowCount == j) {
       break;
     }

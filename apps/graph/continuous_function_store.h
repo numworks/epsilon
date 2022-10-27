@@ -21,8 +21,8 @@ public:
   }
   bool displaysNonCartesianFunctions(int * nbActiveFunctions = nullptr) const;
   bool displaysFunctionsToNormalize(int * nbActiveFunctions = nullptr) const;
-  int numberOfActiveFunctionsOfSymbolType(Shared::FunctionType::SymbolType symbolType) const {
-    return numberOfModelsSatisfyingTest(&IsFunctionActiveOfSymbolType, &symbolType);
+  int numberOfActiveFunctionsInTableOfSymbolType(Shared::FunctionType::SymbolType symbolType) const {
+    return numberOfModelsSatisfyingTest(&IsFunctionActiveInTableOfSymbolType, &symbolType);
   }
   typedef bool (Shared::ContinuousFunctionProperties::*HasProperty)() const;
   int numberOfActiveFunctionsWithProperty(HasProperty propertyFunction) const {
@@ -37,8 +37,8 @@ public:
   Ion::Storage::Record activeRecordInTableAtIndex(int i) const {
     return recordSatisfyingTestAtIndex(i, &IsFunctionActiveInTable, nullptr);
   }
-  Ion::Storage::Record activeRecordOfSymbolTypeAtIndex(Shared::FunctionType::SymbolType symbolType, int i) const {
-    return recordSatisfyingTestAtIndex(i, &IsFunctionActiveOfSymbolType, &symbolType);
+  Ion::Storage::Record activeRecordOfSymbolTypeInTableAtIndex(Shared::FunctionType::SymbolType symbolType, int i) const {
+    return recordSatisfyingTestAtIndex(i, &IsFunctionActiveInTableOfSymbolType, &symbolType);
   }
   Shared::ExpiringPointer<Shared::ContinuousFunction> modelForRecord(Ion::Storage::Record record) const {
     return Shared::ExpiringPointer<Shared::ContinuousFunction>(static_cast<Shared::ContinuousFunction *>(privateModelForRecord(record)));
@@ -52,16 +52,16 @@ private:
     // An active function must be defined
     return IsFunctionActive(model, context) && static_cast<Shared::ContinuousFunction *>(model)->isActiveInTable();
   }
-  static bool IsFunctionActiveOfSymbolType(Shared::ExpressionModelHandle * model, void * context) {
+  static bool IsFunctionActiveAndHasProperty(Shared::ExpressionModelHandle * model, void * context) {
+    HasProperty propertyFunction = *static_cast<HasProperty *>(context);
+    return IsFunctionActive(model, context) && (static_cast<Shared::ContinuousFunction *>(model)->properties().*propertyFunction)();
+  }
+  static bool IsFunctionActiveInTableOfSymbolType(Shared::ExpressionModelHandle * model, void * context) {
     Shared::FunctionType::SymbolType symbolType = *static_cast<Shared::FunctionType::SymbolType *>(context);
     return IsFunctionActiveInTable(model, context) && symbolType == static_cast<Shared::ContinuousFunction *>(model)->properties().symbolType();
   }
   static bool IsFunctionIntersectable(Shared::ExpressionModelHandle * model, void * context) {
     return static_cast<Shared::ContinuousFunction *>(model)->isIntersectable();
-  }
-  static bool IsFunctionActiveAndHasProperty(Shared::ExpressionModelHandle * model, void * context) {
-    HasProperty propertyFunction = *static_cast<HasProperty *>(context);
-    return IsFunctionActiveInTable(model, context) && (static_cast<Shared::ContinuousFunction *>(model)->properties().*propertyFunction)();
   }
   int maxNumberOfMemoizedModels() const override { return k_maxNumberOfMemoizedModels; }
   const char * modelExtension() const override { return Ion::Storage::funcExtension; }

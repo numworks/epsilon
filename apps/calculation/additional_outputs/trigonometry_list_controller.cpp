@@ -1,15 +1,7 @@
 #include "trigonometry_list_controller.h"
 #include "../app.h"
 #include "apps/shared/poincare_helpers.h"
-#include "poincare/expression_node.h"
-#include <poincare/variable_context.h>
-#include <poincare/symbol.h>
-#include <poincare/multiplication.h>
-#include <poincare/sine.h>
-#include <poincare/cosine.h>
-#include <poincare/tangent.h>
-#include <poincare/unit.h>
-#include <poincare/unit_convert.h>
+#include "poincare_expressions.h"
 #include "poincare/layout_helper.h"
 #include "../../shared/poincare_helpers.h"
 
@@ -34,8 +26,13 @@ void TrigonometryListController::setExpression(Poincare::Expression e) {
   Shared::PoincareHelpers::ReduceAndRemoveUnit(&copy, context, ExpressionNode::ReductionTarget::User, &unit);
   assert(unit.isUninitialized() || static_cast<Unit &>(unit).representative()->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector());
   e = copy;
-  // float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(copy, &context);
-  // TODO modulo 2 pi    handleEvent should not insert cos(θ)
+  Expression twoPi = Multiplication::Builder(Rational::Builder(2), Poincare::Constant::Builder("π"));
+  e = Multiplication::Builder(FracPart::Builder(Division::Builder(e, twoPi.clone())), twoPi.clone());
+  Shared::PoincareHelpers::CloneAndReduce(&e, context, ExpressionNode::ReductionTarget::User);
+  if (e.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart; })) {
+    e = Shared::PoincareHelpers::Approximate<double>(e, context);
+  }
+  // TODO handleEvent should not insert cos(θ)
   m_layouts[index] = LayoutHelper::String("θ");
   Expression radian = Unit::Builder(Unit::k_angleRepresentatives + Unit::k_radianRepresentativeIndex);
   Expression degrees = Unit::Builder(Unit::k_angleRepresentatives + Unit::k_degreeRepresentativeIndex);

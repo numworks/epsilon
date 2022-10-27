@@ -3,6 +3,17 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+INSTALL_ARM_GCC=1
+if [[ "${1-}" == "--only-simulator" ]]; then
+  INSTALL_ARM_GCC=0
+fi
+if [ -x "$(command -v arm-none-eabi-gcc)" ]; then
+  # We don't reinstall arm-none-eabi-gcc as the user may want to use a custom
+  # version. For example, this is what the setup-arm-toolchain action will do on
+  # GitHub.
+  INSTALL_ARM_GCC=0
+fi
+
 install_binary_deps() {
   case $OSTYPE in
     linux*)
@@ -23,12 +34,14 @@ install_binary_deps() {
 
 install_python_deps() {
   python3 -m venv .venv
-  .venv/bin/pip3 install pypng lz4 stringcase
+  .venv/bin/pip3 install \
+    lz4 \
+    pyelftools
+    pypng \
+    stringcase
 }
 
 install_macos_binary_deps() {
-  echo "Installing binary dependencies for macOS"
-
   if ! [ -x "$(command -v git)" ]; then
     xcode-select --install
   fi
@@ -42,9 +55,12 @@ install_macos_binary_deps() {
     imagemagick \
     libpng \
     libusb
-    numworks/tap/arm-none-eabi-gcc \
     pkg-config \
-    python3 \
+    python3
+
+  if [[ "${INSTALL_ARM_GCC-0}" == "1" ]]; then
+    brew install numworks/tap/arm-none-eabi-gcc
+  fi
 }
 
 install_linux_binary_deps() {
@@ -61,10 +77,7 @@ install_linux_binary_deps() {
     python3 \
     python3-pip
 
-  if ! [ -x "$(command -v arm-none-eabi-gcc)" ]; then
-    # We don't automatically install those packages as the user may want to use
-    # a more recent version. For example, this is what the setup-arm-toolchain
-    # action will do on GitHub.
+  if [[ "${INSTALL_ARM_GCC-0}" == "1" ]]; then
     apt-get install gcc-arm-none-eabi binutils-arm-none-eabi
   fi
 }
@@ -84,6 +97,10 @@ install_windows_binary_deps() {
     mingw-w64-x86_64-pkg-config \
     mingw-w64-x86_64-python3 \
     mingw-w64-x86_64-python3-pip
+
+  if [[ "${INSTALL_ARM_GCC-0}" == "1" ]]; then
+    echo "Please head to https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads and download the latest Windows (mingw-w64-i686) hosted cross toolchains for AArch32 bare-metal targets (arm-none-eabi)"
+  fi
 }
 
 install_binary_deps

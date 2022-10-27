@@ -17,7 +17,7 @@ jobs:
     steps:
       - run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v2
-      - run: build/setup.sh
+      - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=android
       - run: make PLATFORM=simulator TARGET=android epsilon.apk
       - run: make PLATFORM=simulator TARGET=android test.apk
@@ -76,7 +76,7 @@ jobs:
     steps:
       - uses: msys2/setup-msys2@v2
       - uses: actions/checkout@v2
-      - run: build/setup.sh
+      - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator
       - run: make PLATFORM=simulator epsilon.exe
       - run: make PLATFORM=simulator test.exe
@@ -92,7 +92,7 @@ jobs:
         with:
           sdk: 1.39.16-fastcomp
       - uses: actions/checkout@v2
-      - run: build/setup.sh
+      - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=web epsilon.zip test.js
       - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
@@ -104,7 +104,7 @@ jobs:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v2
-      - run: build/setup.sh
+      - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator ASAN=1 epsilon.bin test.bin
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
@@ -117,7 +117,7 @@ jobs:
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
       - uses: actions/checkout@v2
-      - run: build/setup.sh
+      - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator
       - run: make PLATFORM=simulator epsilon.app
       - run: make PLATFORM=simulator ARCH=x86_64 test.bin
@@ -131,7 +131,7 @@ jobs:
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
       - uses: actions/checkout@v2
-      - run: build/setup.sh
+      - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.ipa
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 test.ipa

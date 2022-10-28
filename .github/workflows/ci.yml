@@ -34,9 +34,12 @@ jobs:
           token: ${{ secrets.PAT }}
           submodules: true
       - run: build/setup.sh
-      - run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable # Hide the submodule for some checks
-      - run: make MODEL=n0110 userland.A.dfu userland.B.dfu # Make sure that userland is buildable without any submodule
-      - run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
+      - name: Disable epsilon-core submodule
+        run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable
+      - name: Build userland
+        run: make MODEL=n0110 userland.A.dfu userland.B.dfu
+      - name: Restore epsilon-core submodule
+        run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
       - run: make MODEL=n0110 epsilon.dfu
       - run: make MODEL=n0110 epsilon.allow3rdparty.dfu
       - run: make MODEL=n0110 epsilon.onboarding.dfu
@@ -55,9 +58,12 @@ jobs:
           token: ${{ secrets.PAT }}
           submodules: true
       - run: build/setup.sh
-      - run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable # Hide the submodule for some checks
-      - run: make MODEL=n0120 userland.A.dfu userland.B.dfu # Make sure that userland is buildable without any submodule
-      - run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
+      - name: Disable epsilon-core submodule
+        run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable
+      - name: Build userland
+        run: make MODEL=n0110 userland.A.dfu userland.B.dfu
+      - name: Restore epsilon-core submodule
+        run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
       - run: make MODEL=n0120 epsilon.dfu
       - run: make MODEL=n0120 epsilon.allow3rdparty.dfu
       - run: make MODEL=n0120 epsilon.onboarding.dfu

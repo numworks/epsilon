@@ -230,6 +230,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, "2×√(2)", "2.828427125", "2.8284271247462", &globalContext, &store);
   assertCalculationIs("cos(45×_°)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, "√(2)/2", "0.7071067812", "0.70710678118655", &globalContext, &store);
   assertCalculationIs("cos(π/4×_rad)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, "√(2)/2", "0.7071067812", "0.70710678118655", &globalContext, &store);
+  assertCalculationIs("cos(50×_°)", DisplayOutput::ExactAndApproximate, EqualSign::Unknown, "cos(50)", "0.6427876097", "0.64278760968654", &globalContext, &store);
   assertCalculationIs("binompdf(2,3,0.5)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "0.375", "0.375", &globalContext, &store);
   assertCalculationIs("1+2%", DisplayOutput::ExactAndApproximateToggle, EqualSign::Equal, "1×(1+2/100)", "1.02", "1.02", &globalContext, &store);
   assertCalculationIs("1-(1/3)%", DisplayOutput::ExactAndApproximateToggle, EqualSign::Approximation, "1×(1-\u00121/3\u0013/100)", "0.9966666667", "0.99666666666667", &globalContext, &store);

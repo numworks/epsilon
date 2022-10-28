@@ -235,7 +235,7 @@ static bool IsLinearCombinationOfPattern(const Expression& e, Context * context,
       bool childIsConstant = currentChild.polynomialDegree(context, Function::k_unknownName) == 0;
       bool isPattern = !childIsConstant && IsLinearCombinationOfPattern(currentChild, context, testFunction);
       if (patternHasBeenDetected && isPattern) {
-        // There can't be a multiplication of the pattern with itslef
+        // There can't be a multiplication of the pattern with itself
         return false;
       }
       if (!isPattern && !childIsConstant) {

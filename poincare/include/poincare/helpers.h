@@ -1,6 +1,7 @@
 #ifndef POINCARE_HELPERS_H
 #define POINCARE_HELPERS_H
 
+#include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <cmath>
@@ -38,6 +39,16 @@ constexpr int StringLength(const char * string) {
 
 constexpr inline bool EqualOrBothNan(double a, double b) {
   return a == b || (std::isnan(a) && std::isnan(b));
+}
+
+constexpr static int CeilLog2(uint8_t n) {
+  assert(n > 1);
+  int nBits = 1;
+  n--;
+  while (n >>= 1) {
+    nBits++;
+  }
+  return nBits;
 }
 
 }

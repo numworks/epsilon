@@ -134,7 +134,7 @@ bool ListController::layoutRepresentsParametricFunction(Poincare::Layout l) cons
 bool ListController::completeEquation(InputEventHandler * equationField, CodePoint symbol) {
   // Retrieve the edited function
   ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(modelStore()->recordAtIndex(selectedRow()));
-  if (f->isNull() || f->properties().status() == FunctionType::Status::Undefined) {
+  if (f->isNull() || f->properties().status() == ContinuousFunctionProperties::Status::Undefined) {
     // Function is new or undefined, complete the equation with a default name
     constexpr size_t k_bufferSize = Shared::ContinuousFunction::k_maxDefaultNameSize + sizeof("(x)=") - 1;
     char buffer[k_bufferSize];

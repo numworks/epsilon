@@ -1,10 +1,10 @@
 #ifndef SHARED_CONTINUOUS_FUNCTION_PROPERTIES_H
 #define SHARED_CONTINUOUS_FUNCTION_PROPERTIES_H
 
-#include "continuous_function_types.h"
 #include <apps/i18n.h>
 #include <poincare/comparison.h>
 #include <poincare/conic.h>
+#include <poincare/helpers.h>
 
 /* ContinuousFunctionProperties is an object containing:
  *  - A pointer to a const function type
@@ -27,28 +27,61 @@ public:
   // Units are not handled when plotting function. The default unit does not matters
   constexpr static Poincare::Preferences::UnitFormat k_defaultUnitFormat = Poincare::Preferences::UnitFormat::Metric;
 
-  ContinuousFunctionProperties() :
-    m_plotType(&FunctionTypes::k_uninitializedFunctionType),
-    m_equationType(Poincare::ComparisonNode::OperatorType::Equal)
-  {}
+  // === Properties ===
+  enum class Status : uint8_t {
+    Enabled = 0,
+    Undefined,
+    Unhandled,
+    Banned,
+    NumberOfStatus
+  };
+
+  constexpr static size_t k_numberOfSymbolTypes = 3;
+  // Order impact order of columns in Graph/Values
+  enum class SymbolType : uint8_t {
+    X = 0,
+    Theta,
+    T,
+    Unknown,
+    NumberOfSymbolTypes
+  };
+
+  enum class CurveParameterType : uint8_t {
+    Default,
+    CartesianFunction,
+    Line,
+    HorizontalLine,
+    VerticalLine,
+    Parametric,
+    Polar,
+    NumberOfCurveParameterTypes
+  };
+
+  ContinuousFunctionProperties() { reset(); }
+
+  bool isInitialized() const { return m_isInitialized; }
 
   // Getters
-  I18n::Message caption() const { return isEquality() ? m_plotType->caption() : I18n::Message::InequalityType;  }
-  bool isInitialized() const { return m_plotType->isInitialized(); }
-  FunctionType::Status status() const { return m_plotType->status(); }
-  FunctionType::SymbolType symbolType() const { return m_plotType->symbolType(); }
-  int numberOfSubCurves() const { return m_plotType->numberOfSubCurves(); }
-  bool isAlongY() const { return m_plotType->isAlongY(); }
-  Poincare::Conic::Shape conicShape() const { return m_plotType->conicShape(); }
-  bool isLine() const { return m_plotType->isLine(); }
-  FunctionType::CurveParameterType getCurveParameterType() const { return m_plotType->getCurveParameterType(); }
+  I18n::Message caption() const { assert(isInitialized()); return isEquality() ? m_caption : I18n::Message::InequalityType; }
+  Status status() const { assert(isInitialized()); return static_cast<Status>(m_propertiesBitField.m_status); }
+  Poincare::ComparisonNode::OperatorType equationType() const { assert(isInitialized()); return static_cast<Poincare::ComparisonNode::OperatorType>(m_propertiesBitField.m_equationType); }
+  SymbolType symbolType() const { assert(isInitialized()); return static_cast<SymbolType>(m_propertiesBitField.m_symbolType); }
+  CurveParameterType getCurveParameterType() const { assert(isInitialized()); return static_cast<CurveParameterType>(m_propertiesBitField.m_curveParameterType); }
+  int numberOfSubCurves() const { assert(isInitialized()); return m_propertiesBitField.m_hasTwoSubCurves ? 2 : 1; }
+  Poincare::Conic::Shape conicShape() const { assert(isInitialized()); return static_cast<Poincare::Conic::Shape>(m_propertiesBitField.m_conicShape); }
+  bool isAlongY() const { assert(isInitialized()); return m_propertiesBitField.m_isAlongY; }
+  bool isLine() const { assert(isInitialized()); return m_propertiesBitField.m_isLine; }
+
+  // Update
+  void reset();
+  void update(const Poincare::Expression reducedEquation, const Poincare::Expression inputEquation, Poincare::Context * context, Poincare::ComparisonNode::OperatorType precomputedOperatorType, SymbolType precomputedFunctionSymbol);
 
   // Properties
-  bool canBeActive() const { return status() == FunctionType::Status::Enabled; }
+  bool canBeActive() const { return status() == Status::Enabled; }
 
-  bool isCartesian() const { return symbolType() == FunctionType::SymbolType::X; }
-  bool isParametric() const { return symbolType() == FunctionType::SymbolType::T; }
-  bool isPolar() const { return symbolType() == FunctionType::SymbolType::Theta; }
+  bool isCartesian() const { return symbolType() == SymbolType::X; }
+  bool isParametric() const { return symbolType() == SymbolType::T; }
+  bool isPolar() const { return symbolType() == SymbolType::Theta; }
   bool isEquality() const { return equationType() == Poincare::ComparisonNode::OperatorType::Equal;}
 
   bool canBeActiveInTable() const { return !isAlongY() && numberOfSubCurves() == 1 && isEquality(); }
@@ -56,7 +89,7 @@ public:
 
   bool isConic() const { return conicShape() != Poincare::Conic::Shape::Undefined; }
   bool isNotCartesianParabolaOrHyperbola() const { return !isCartesian() || (conicShape() != Poincare::Conic::Shape::Parabola && conicShape() != Poincare::Conic::Shape::Hyperbola); }
-  bool isHyperbolaWithTwoSubCurves() const { return m_plotType == &FunctionTypes::k_hyperbolaEquationWithTwoSubCurves; }
+  bool isCartesianHyperbolaWithTwoSubCurves() const { return conicShape() == Poincare::Conic::Shape::Hyperbola && isCartesian() && numberOfSubCurves() == 2; }
 
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool plotIsDotted() const { return equationType() == Poincare::ComparisonNode::OperatorType::Superior ||  equationType() == Poincare::ComparisonNode::OperatorType::Inferior;}
@@ -82,34 +115,49 @@ public:
   };
 
   AreaType areaType() const;
-
-  static I18n::Message MessageForSymbolType(FunctionType::SymbolType symbolType);
+  static I18n::Message MessageForSymbolType(SymbolType symbolType);
   I18n::Message symbolMessage() const { return MessageForSymbolType(symbolType()); }
 
-  // Equation type
-  Poincare::ComparisonNode::OperatorType equationType() const { assert(isInitialized()); return m_equationType; }
   CodePoint equationSymbol() const { return Poincare::ComparisonNode::ComparisonCodePoint(equationType()); }
 
-  // Update
-  void update(const Poincare::Expression reducedEquation, const Poincare::Expression inputEquation, Poincare::Context * context, Poincare::ComparisonNode::OperatorType precomputedOperatorType, FunctionType::SymbolType precomputedFunctionSymbol);
-  void reset() { m_plotType = &FunctionTypes::k_uninitializedFunctionType; }
-
 private:
-  static const FunctionType * CartesianFunctionAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context);
-  static const FunctionType * CartesianEquationAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context, int xDeg, int yDeg, Poincare::TrinaryBoolean highestCoefficientIsPositive);
-  static const FunctionType * PolarFunctionAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context);
-  static const FunctionType * ParametricFunctionAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context);
+  // Update
+  void setCartesianFunctionProperties(const Poincare::Expression& reducedEquation, Poincare::Context * context);
+  void setCartesianEquationProperties(const Poincare::Expression& reducedEquation, Poincare::Context * context, int xDeg, int yDeg, Poincare::TrinaryBoolean highestCoefficientIsPositive);
+  void setPolarFunctionProperties(const Poincare::Expression& reducedEquation, Poincare::Context * context);
+  void setParametricFunctionProperties(const Poincare::Expression& reducedEquation, Poincare::Context * context);
 
   // If equation has a NonNull coeff. Can also compute last coeff sign.
   static bool HasNonNullCoefficients(const Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::TrinaryBoolean * highestDegreeCoefficientIsPositive);
   // If equation should be allowed when implicit plots are forbidden.
   static bool IsExplicitEquation(const Poincare::Expression equation, CodePoint symbol);
 
-  void setEquationType(Poincare::ComparisonNode::OperatorType equationType) { m_equationType = equationType; }
-  void setFunctionType(const FunctionType * plotType) { m_plotType = plotType; }
+  // Setters
+  void setCaption(I18n::Message caption) { m_caption = caption; }
+  void setStatus(Status status) { m_propertiesBitField.m_status = static_cast<uint8_t>(status); }
+  void setErrorStatusAndUpdateCaption(Status status);
+  void setEquationType(Poincare::ComparisonNode::OperatorType type) { m_propertiesBitField.m_equationType = static_cast<uint8_t>(type); }
+  void setSymbolType(SymbolType type) { m_propertiesBitField.m_symbolType = static_cast<uint8_t>(type); }
+  void setCurveParameterType(CurveParameterType type) { m_propertiesBitField.m_curveParameterType = static_cast<uint8_t>(type); }
+  void setHasTwoSubCurves(bool hasTwoSubCurves) { m_propertiesBitField.m_hasTwoSubCurves = hasTwoSubCurves; }
+  void setConicShape(Poincare::Conic::Shape shape) { m_propertiesBitField.m_conicShape = static_cast<uint8_t>(shape); }
+  void setIsAlongY(bool isAlongY) { m_propertiesBitField.m_isAlongY = isAlongY; }
+  void setIsLine(bool isLine) { m_propertiesBitField.m_isLine = isLine; }
 
-  const FunctionType * m_plotType;
-  Poincare::ComparisonNode::OperatorType m_equationType;
+  struct PropertiesBitField { // Current size : 3 bytes
+    /* Status */ uint8_t m_status : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(Status::NumberOfStatus));
+    /* Poincare::ComparisonNode::OperatorType */ uint8_t m_equationType : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(Poincare::ComparisonNode::OperatorType::NumberOfTypes));
+    /* Symbol */ uint8_t m_symbolType : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(SymbolType::NumberOfSymbolTypes));
+    /* CurveParameterType */ uint8_t m_curveParameterType : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(CurveParameterType::NumberOfCurveParameterTypes));
+    /* Poincare::Conic::Shape */ uint8_t m_conicShape : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(Poincare::Conic::Shape::NumberOfShapes));
+    bool m_hasTwoSubCurves : 1;
+    bool m_isAlongY : 1;
+    bool m_isLine : 1;
+  };
+
+  PropertiesBitField m_propertiesBitField;
+  I18n::Message m_caption;
+  bool m_isInitialized;
 };
 
 }

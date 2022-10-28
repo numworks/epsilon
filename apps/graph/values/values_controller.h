@@ -48,7 +48,7 @@ public:
   }
 
 private:
-  constexpr static size_t k_maxNumberOfSymbolTypes = Shared::FunctionType::k_numberOfSymbolTypes;
+  constexpr static size_t k_maxNumberOfSymbolTypes = Shared::ContinuousFunctionProperties::k_numberOfSymbolTypes;
   constexpr static int k_maxNumberOfDisplayableFunctions = 4;
   constexpr static int k_maxNumberOfDisplayableSymbolTypes = 2;
   constexpr static int k_maxNumberOfDisplayableAbscissaCells = k_maxNumberOfDisplayableSymbolTypes * k_maxNumberOfDisplayableRows;
@@ -93,7 +93,7 @@ private:
   int numberOfColumnsForSymbolType(int symbolTypeIndex) const;
   int numberOfAbscissaColumnsBeforeColumn(int column) const;
   int numberOfValuesColumns() const override;
-  Shared::FunctionType::SymbolType symbolTypeAtColumn(int * i) const;
+  Shared::ContinuousFunctionProperties::SymbolType symbolTypeAtColumn(int * i) const;
 
   // Function evaluation memoization
   constexpr static int k_valuesCellBufferSize = 2*Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)+3; // The largest buffer holds (-1.234567E-123;-1.234567E-123)

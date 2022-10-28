@@ -140,9 +140,9 @@ CartesianConic ContinuousFunction::cartesianConicParameters(Context * context) c
 
 double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, double cursorX, double cursorY, Context * context) const {
   switch (properties().symbolType()) {
-  case FunctionType::SymbolType::T:
+  case ContinuousFunctionProperties::SymbolType::T:
     return index == 0 ? cursorT : index == 1 ? evaluateXYAtParameter(cursorT, context).x1() : evaluateXYAtParameter(cursorT, context).x2();
-  case FunctionType::SymbolType::Theta:
+  case ContinuousFunctionProperties::SymbolType::Theta:
     return index == 0 ? cursorT : evaluate2DAtParameter(cursorT, context).x2();
   default:
     // The subcurve number would need to be passed down here to properly assert
@@ -596,7 +596,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
 }
 
 Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(const Ion::Storage::Record * record, Poincare::Context * context) const {
-  FunctionType::SymbolType computedFunctionSymbol = FunctionType::SymbolType::Unknown;
+  ContinuousFunctionProperties::SymbolType computedFunctionSymbol = ContinuousFunctionProperties::SymbolType::Unknown;
   ComparisonNode::OperatorType computedEquationType = ComparisonNode::OperatorType::Equal;
   Expression result = expressionEquation(record, context, &computedEquationType, &computedFunctionSymbol);
   if (!result.isUndefined()) {
@@ -646,12 +646,12 @@ bool isValidNamedLeftExpression(const Expression e, ComparisonNode::OperatorType
              && functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_parametricSymbol)));
 }
 
-Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context, ComparisonNode::OperatorType * computedEquationType, FunctionType::SymbolType * computedFunctionSymbol) const {
+Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context, ComparisonNode::OperatorType * computedEquationType, ContinuousFunctionProperties::SymbolType * computedFunctionSymbol) const {
   Expression result = ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
     return Undefined::Builder();
   }
-  FunctionType::SymbolType tempFunctionSymbol = FunctionType::SymbolType::Unknown;
+  ContinuousFunctionProperties::SymbolType tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::Unknown;
   ComparisonNode::OperatorType equationType;
   if (!ComparisonNode::IsBinaryComparison(result, &equationType) || equationType == ComparisonNode::OperatorType::NotEqual) {
     /* Happens when the input text is too long and "f(x)=" can't be inserted
@@ -676,10 +676,10 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
       Expression functionSymbol = leftExpression.childAtIndex(0);
       // Set the model's plot type.
       if (functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol))) {
-        tempFunctionSymbol = FunctionType::SymbolType::T;
+        tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::T;
       } else {
         assert(functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol)));
-        tempFunctionSymbol = FunctionType::SymbolType::X;
+        tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::X;
       }
       result = result.childAtIndex(1);
       isUnnamedFunction = false;
@@ -690,7 +690,7 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
     }
   } else if (leftExpression.isIdenticalTo(Symbol::Builder(k_radiusSymbol))) {
     result = result.childAtIndex(1);
-    tempFunctionSymbol = FunctionType::SymbolType::Theta;
+    tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::Theta;
     isUnnamedFunction = false;
   }
   if (computedFunctionSymbol) {

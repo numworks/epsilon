@@ -14,17 +14,17 @@ ContinuousFunctionProperties::CurveParameter ContinuousFunctionProperties::getCu
   assert(canBeActive());
   using namespace I18n;
   switch(getCurveParameterType()) {
-  case FunctionType::CurveParameterType::CartesianFunction:
+  case CurveParameterType::CartesianFunction:
     return {index == 0 ? Message::X : Message::Default, true, .isPreimage = index == 1};
-  case FunctionType::CurveParameterType::Line:
+  case CurveParameterType::Line:
     return {index == 0 ? Message::X : Message::Y, true, .isPreimage = index == 1};
-  case FunctionType::CurveParameterType::HorizontalLine:
+  case CurveParameterType::HorizontalLine:
     return {index == 0 ? Message::X : Message::Y, index == 0};
-  case FunctionType::CurveParameterType::VerticalLine:
+  case CurveParameterType::VerticalLine:
     return {index == 0 ? Message::X : Message::Y, index == 1};
-  case FunctionType::CurveParameterType::Parametric:
+  case CurveParameterType::Parametric:
     return {index == 0 ? Message::T : index == 1 ? Message::XOfT : Message::YOfT, index == 0};
-  case FunctionType::CurveParameterType::Polar:
+  case CurveParameterType::Polar:
     return {index == 0 ? Message::Theta : Message::R, index == 0};
   default:
     // Conics
@@ -34,61 +34,94 @@ ContinuousFunctionProperties::CurveParameter ContinuousFunctionProperties::getCu
 
 ContinuousFunctionProperties::AreaType ContinuousFunctionProperties::areaType() const {
   assert(isInitialized());
-  if (!canBeActive() || m_equationType == ComparisonNode::OperatorType::Equal) {
+  if (!canBeActive() || equationType() == ComparisonNode::OperatorType::Equal) {
     return AreaType::None;
   }
   // To draw y^2>a, the area plotted should be Outside and not Above.
-  if (m_equationType == ComparisonNode::OperatorType::Inferior || m_equationType == ComparisonNode::OperatorType::InferiorEqual) {
+  if (equationType() == ComparisonNode::OperatorType::Inferior || equationType() == ComparisonNode::OperatorType::InferiorEqual) {
     return numberOfSubCurves() == 1 ? AreaType::Below : AreaType::Inside;
   }
-  assert(m_equationType == ComparisonNode::OperatorType::Superior || m_equationType == ComparisonNode::OperatorType::SuperiorEqual);
+  assert(equationType() == ComparisonNode::OperatorType::Superior || equationType() == ComparisonNode::OperatorType::SuperiorEqual);
   return numberOfSubCurves() == 1 ? AreaType::Above : AreaType::Outside;
 }
 
 CodePoint ContinuousFunctionProperties::symbol() const {
   switch (symbolType()) {
-  case FunctionType::SymbolType::T:
+  case SymbolType::T:
     return k_parametricSymbol;
-  case FunctionType::SymbolType::Theta:
+  case SymbolType::Theta:
     return k_polarSymbol;
   default:
-    assert(symbolType() == FunctionType::SymbolType::X);
+    assert(symbolType() == SymbolType::X);
     return k_cartesianSymbol;
   }
 }
 
-I18n::Message ContinuousFunctionProperties::MessageForSymbolType(FunctionType::SymbolType symbolType) {
+I18n::Message ContinuousFunctionProperties::MessageForSymbolType(SymbolType symbolType) {
   switch (symbolType) {
-  case FunctionType::SymbolType::T:
+  case SymbolType::T:
     return I18n::Message::T;
-  case FunctionType::SymbolType::Theta:
+  case SymbolType::Theta:
     return I18n::Message::Theta;
   default:
-    assert(symbolType == FunctionType::SymbolType::X);
+    assert(symbolType == SymbolType::X);
     return I18n::Message::X;
   }
 }
 
-void ContinuousFunctionProperties::update(const Poincare::Expression reducedEquation, const Poincare::Expression inputEquation, Context * context, ComparisonNode::OperatorType precomputedOperatorType, FunctionType::SymbolType precomputedFunctionSymbol) {
- if (ExamModeConfiguration::inequalityGraphingIsForbidden() && precomputedOperatorType != ComparisonNode::OperatorType::Equal) {
-    setFunctionType(&FunctionTypes::k_bannedFunctionType);
+void ContinuousFunctionProperties::reset() {
+  m_isInitialized = false;
+  setCaption((I18n::Message)0);
+  setStatus(Status::Enabled);
+  setEquationType(Poincare::ComparisonNode::OperatorType::Equal);
+  setSymbolType(SymbolType::Unknown);
+  setCurveParameterType(CurveParameterType::Default);
+  setConicShape(Poincare::Conic::Shape::Undefined);
+  setHasTwoSubCurves(false);
+  setIsAlongY(false);
+  setIsLine(false);
+}
+
+void ContinuousFunctionProperties::setErrorStatusAndUpdateCaption(Status status) {
+  assert(status != Status::Enabled);
+  setStatus(status);
+  switch (status) {
+  case Status::Banned:
+    setCaption(I18n::Message::Disabled);
+    return;
+  case Status::Undefined:
+    setCaption(I18n::Message::UndefinedType);
+    return;
+  default:
+    assert(status == Status::Unhandled);
+    setCaption(I18n::Message::UnhandledType);
+    return;
+  }
+}
+
+void ContinuousFunctionProperties::update(const Poincare::Expression reducedEquation, const Poincare::Expression inputEquation, Context * context, ComparisonNode::OperatorType precomputedOperatorType, SymbolType precomputedFunctionSymbol) {
+  reset();
+  m_isInitialized = true;
+
+  /* Symbol was precomputed if the expression is a function of type "f(x)=",
+   * "f(t)=" or "r=" (for polar functions). */
+  bool isCartesianEquation = precomputedFunctionSymbol == SymbolType::Unknown;
+  if (isCartesianEquation) {
+    precomputedFunctionSymbol = SymbolType::X;
+  }
+
+  setSymbolType(precomputedFunctionSymbol);
+  setEquationType(precomputedOperatorType);
+
+  if (ExamModeConfiguration::inequalityGraphingIsForbidden() && precomputedOperatorType != ComparisonNode::OperatorType::Equal) {
+    setErrorStatusAndUpdateCaption(Status::Banned);
     return;
   }
 
   assert(!reducedEquation.isUninitialized());
   if (reducedEquation.type() == ExpressionNode::Type::Undefined) {
-    // Equation is undefined, preserve symbol.
-    switch (precomputedFunctionSymbol) {
-    case FunctionType::SymbolType::T:
-      setFunctionType(&FunctionTypes::k_undefinedParametricFunctionType);
-      return;
-    case FunctionType::SymbolType::Theta:
-      setFunctionType(&FunctionTypes::k_undefinedPolarFunctionType);
-      return;
-    default:
-      setFunctionType(&FunctionTypes::k_undefinedCartesianFunctionType);
-      return;
-    }
+    setErrorStatusAndUpdateCaption(Status::Undefined);
+    return;
   }
 
   Expression analysedEquation = reducedEquation;
@@ -97,51 +130,36 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
     analysedEquation = reducedEquation.childAtIndex(0);
   }
 
-  setEquationType(precomputedOperatorType);
-
   // Compute equation's degree regarding y.
   int yDeg = analysedEquation.polynomialDegree(context, k_ordinateName);
-
-  /* Symbol was precomputed if the expression is a function of type "f(x)=",
-   * "f(t)=" or "r=" (for polar functions). */
-  if (precomputedFunctionSymbol != FunctionType::SymbolType::Unknown) {
+  if (!isCartesianEquation) {
     // There should be no y symbol. Inequations are handled on cartesians only
-    if (yDeg > 0 || (precomputedOperatorType != ComparisonNode::OperatorType::Equal && precomputedFunctionSymbol != FunctionType::SymbolType::X)) {
-      // We distinguish the Unhandled type so that x/θ/t symbol is preserved.
-      switch (precomputedFunctionSymbol) {
-      case FunctionType::SymbolType::T:
-        setFunctionType(&FunctionTypes::k_unhandledParametricFunctionType);
-        return;
-      case FunctionType::SymbolType::Theta:
-        setFunctionType(&FunctionTypes::k_unhandledPolarFunctionType);
-        return;
-      default:
-        setFunctionType(&FunctionTypes::k_unhandledCartesianFunctionType);
-        return;
-      }
+    if (yDeg > 0 || (precomputedOperatorType != ComparisonNode::OperatorType::Equal && precomputedFunctionSymbol != SymbolType::X)) {
+      setErrorStatusAndUpdateCaption(Status::Unhandled);
+      return;
     }
 
-    if (precomputedFunctionSymbol == FunctionType::SymbolType::X) {
-      setFunctionType(ContinuousFunctionProperties::CartesianFunctionAnalysis(analysedEquation, context));
+    if (precomputedFunctionSymbol == SymbolType::X) {
+      setCartesianFunctionProperties(analysedEquation, context);
       return;
     }
 
     assert(precomputedOperatorType == ComparisonNode::OperatorType::Equal);
 
-    if (precomputedFunctionSymbol == FunctionType::SymbolType::T) {
+    if (precomputedFunctionSymbol == SymbolType::T) {
       if (analysedEquation.type() != ExpressionNode::Type::Matrix
           || static_cast<const Matrix &>(analysedEquation).numberOfRows() != 2
           || static_cast<const Matrix &>(analysedEquation).numberOfColumns() != 1) {
         // Invalid parametric format
-        setFunctionType(&FunctionTypes::k_unhandledParametricFunctionType);
+        setStatus(Status::Unhandled);
         return;
       }
-      setFunctionType(ParametricFunctionAnalysis(analysedEquation, context));
+      setParametricFunctionProperties(analysedEquation, context);
       return;
     }
 
-    assert(precomputedFunctionSymbol == FunctionType::SymbolType::Theta);
-    setFunctionType(PolarFunctionAnalysis(analysedEquation, context));
+    assert(precomputedFunctionSymbol == SymbolType::Theta);
+    setPolarFunctionProperties(analysedEquation, context);
     return;
   }
 
@@ -152,7 +170,7 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
   bool willBeAlongY = !willBeAlongX && ((xDeg == 1) || (xDeg == 2));
   if (!willBeAlongX && !willBeAlongY) {
     // Any equation with such a y and x degree won't be handled anyway.
-    setFunctionType(&FunctionTypes::k_unhandledCartesianFunctionType);
+    setErrorStatusAndUpdateCaption(Status::Unhandled);
     return;
   }
 
@@ -162,7 +180,7 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
       || analysedEquation.hasComplexI(context)) {
     // The equation must have at least one nonNull coefficient.
     // TODO : Accept equations such as y=re(i)
-    setFunctionType(&FunctionTypes::k_unhandledCartesianFunctionType);
+    setErrorStatusAndUpdateCaption(Status::Unhandled);
     return;
   }
 
@@ -171,7 +189,7 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
       /* Are unhandled equation with :
        * - An unknown highest coefficient sign: sign must be strict and constant
        * - A non polynomial x coefficient in a quadratic equation on y. */
-      setFunctionType(&FunctionTypes::k_unhandledCartesianFunctionType);
+      setErrorStatusAndUpdateCaption(Status::Unhandled);
       return;
     }
     if (highestCoefficientIsPositive == TrinaryBoolean::False) {
@@ -184,12 +202,12 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
   if (ExamModeConfiguration::implicitPlotsAreForbidden()) {
     CodePoint symbol = willBeAlongX ? k_ordinateSymbol : UCodePointUnknown;
     if (!IsExplicitEquation(inputEquation, symbol)) {
-      setFunctionType(&FunctionTypes::k_bannedFunctionType);
+      setErrorStatusAndUpdateCaption(Status::Banned);
       return;
     }
   }
 
-  setFunctionType(CartesianEquationAnalysis(analysedEquation, context, xDeg, yDeg, highestCoefficientIsPositive));
+  setCartesianEquationProperties(analysedEquation, context, xDeg, yDeg, highestCoefficientIsPositive);
 }
 
 typedef bool (*PatternTest)(const Expression& e, Context * context);
@@ -247,8 +265,11 @@ static bool IsRationalFunction(const Expression& e, Context * context) {
   return denominatorDegree >= 0 && numeratorDegree >= 0;
 }
 
-const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(const Expression& reducedEquation, Context * context) {
+void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expression& reducedEquation, Context * context) {
   assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
+  assert(status() == Status::Enabled && isCartesian());
+
+  setCurveParameterType(CurveParameterType::CartesianFunction);
 
   // f(x) = piecewise(...)
   if (reducedEquation.recursivelyMatches(
@@ -257,23 +278,31 @@ const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(con
     },
     context))
   {
-    return &FunctionTypes::k_piecewiseFunctionType;
+    setCaption(I18n::Message::PiecewiseType);
+    return;
   }
 
   int xDeg = reducedEquation.polynomialDegree(context, Function::k_unknownName);
   // f(x) = a
   if (xDeg == 0) {
-    return &FunctionTypes::k_constantFunctionType;
+    setCaption(I18n::Message::ConstantType);
+    return;
   }
 
   // f(x) = a*x + b
   if (xDeg == 1) {
-    return reducedEquation.type() == ExpressionNode::Type::Addition ? &FunctionTypes::k_affineFunctionType : &FunctionTypes::k_linearFunctionType;
+    if (reducedEquation.type() == ExpressionNode::Type::Addition) {
+      setCaption(I18n::Message::AffineType);
+    } else {
+      setCaption(I18n::Message::LinearType);
+    }
+    return;
   }
 
   // f(x) = a*x^n + b*x^ + ... + z
   if (xDeg > 1) {
-    return &FunctionTypes::k_polynomialFunctionType;
+    setCaption(I18n::Message::PolynomialType);
+    return;
   }
 
   // f(x) = a*cos(b*x+c) + d*sin(e*x+f) + g*tan(h*x+k) + z
@@ -285,7 +314,8 @@ const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(con
             && e.childAtIndex(0).polynomialDegree(context, Function::k_unknownName) == 1;
     }))
   {
-    return &FunctionTypes::k_trigonometricFunctionType;
+    setCaption(I18n::Message::TrigonometricType);
+    return;
   }
 
   // f(x) = a*logk(b*x+c) + d*logM(e*x+f) + ... + z
@@ -297,7 +327,8 @@ const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(con
             && e.childAtIndex(0).polynomialDegree(context, Function::k_unknownName) == 1;
     }))
   {
-    return &FunctionTypes::k_logarithmicFunctionType;
+    setCaption(I18n::Message::LogarithmicType);
+    return;
   }
 
   // f(x) = a*exp(b*x+c) + d
@@ -314,20 +345,23 @@ const FunctionType * ContinuousFunctionProperties::CartesianFunctionAnalysis(con
             && e.childAtIndex(1).polynomialDegree(context, Function::k_unknownName) == 1;
     }))
   {
-    return &FunctionTypes::k_exponentialFunctionType;
+    setCaption(I18n::Message::ExponentialType);
+    return;
   }
 
   // f(x) = polynomial/polynomial
   if (IsLinearCombinationOfPattern(reducedEquation, context, &IsRationalFunction)) {
-    return &FunctionTypes::k_rationalFunctionType;
+    setCaption(I18n::Message::RationalType);
+    return;
   }
 
   // Others
-  return &FunctionTypes::k_cartesianFunctionType;
+  setCaption(I18n::Message::FunctionType);
 }
 
-const FunctionType * ContinuousFunctionProperties::CartesianEquationAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context, int xDeg, int yDeg, TrinaryBoolean highestCoefficientIsPositive) {
+void ContinuousFunctionProperties::setCartesianEquationProperties(const Poincare::Expression& reducedEquation, Poincare::Context * context, int xDeg, int yDeg, TrinaryBoolean highestCoefficientIsPositive) {
   assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
+  assert(status() == Status::Enabled && isCartesian());
 
   /* We can rely on x and y degree to identify plot type :
    * | y  | x  | Status
@@ -345,56 +379,71 @@ const FunctionType * ContinuousFunctionProperties::CartesianEquationAnalysis(con
    * Other cases should have been escaped before.
    */
 
+  setCaption(I18n::Message::EquationType);
+
   if (yDeg != 1 && yDeg != 2) { // function is along Y
+    setIsAlongY(true);
+    setCaption(I18n::Message::EquationType);
     if (xDeg == 2) {
-      return &FunctionTypes::k_cartesianEquationAlongYWithTwoSubCurves;
+      setHasTwoSubCurves(true);
+    } else if (yDeg == 0) {
+      setCaption(I18n::Message::VerticalLineType);
+      setIsLine(true);
+      setCurveParameterType(CurveParameterType::VerticalLine);
+    } else {
+      assert(xDeg == 1);
     }
-    if (yDeg == 0) {
-      return &FunctionTypes::k_verticalLine;
-    }
-    assert(xDeg == 1);
-    return &FunctionTypes::k_cartesianEquationAlongY;
+    return;
   }
 
   if (yDeg == 1 && xDeg == 0) {
-    return &FunctionTypes::k_horizontalLineEquation;
+    setCaption(I18n::Message::HorizontalLineType);
+    setIsLine(true);
+    setCurveParameterType(CurveParameterType::HorizontalLine);
+    return;
   }
 
   if (yDeg == 1 && xDeg == 1 && highestCoefficientIsPositive != TrinaryBoolean::Unknown) {
     // An Unknown y coefficient sign might mean it depends on x (y*x = ...)
-    return &FunctionTypes::k_lineEquation;
+    setCaption(I18n::Message::LineType);
+    setIsLine(true);
+    setCurveParameterType(CurveParameterType::Line);
+    return;
   }
+
+  setHasTwoSubCurves(yDeg > 1);
+  setCurveParameterType(yDeg > 1 ? CurveParameterType::Default : CurveParameterType::CartesianFunction);
 
   if (yDeg >= 1 && xDeg >= 1 && xDeg <= 2 && !ExamModeConfiguration::implicitPlotsAreForbidden()) {
     /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
      * details. Otherwise, try to identify a conic.
      * For instance, x*y=1 as an hyperbola. */
     CartesianConic equationConic = CartesianConic(reducedEquation, context, Function::k_unknownName);
-    switch (equationConic.conicType().shape) {
+    setConicShape(equationConic.conicType().shape);
+    switch (conicShape()) {
     case Conic::Shape::Hyperbola:
-      return yDeg > 1 ? &FunctionTypes::k_hyperbolaEquationWithTwoSubCurves : &FunctionTypes::k_hyperbolaEquationWithOneSubCurve;
+      setCaption(I18n::Message::HyperbolaType);
+      return;
     case Conic::Shape::Parabola:
-      return yDeg > 1 ? &FunctionTypes::k_parabolaEquationWithTwoSubCurves : &FunctionTypes::k_parabolaEquationWithOneSubCurve;
+      setCaption(I18n::Message::ParabolaType);
+      return;
     case Conic::Shape::Ellipse:
-      return &FunctionTypes::k_ellipseEquation;
+      setCaption(I18n::Message::EllipseType);
+      return;
     case Conic::Shape::Circle:
-      return &FunctionTypes::k_circleEquation;
+      setCaption(I18n::Message::CircleType);
+      return;
     default:;
       // A conic could not be identified.
     }
   }
-
-  if (yDeg == 1) {
-    return &FunctionTypes::k_simpleCartesianEquationType;
-  }
-
-  assert(yDeg == 2);
-  // Unknown type that we are able to plot anyway.
-  return &FunctionTypes::k_cartesianEquationWithTwoSubCurves;
 }
 
-const FunctionType * ContinuousFunctionProperties::PolarFunctionAnalysis(const Expression& reducedEquation, Context * context) {
+void ContinuousFunctionProperties::setPolarFunctionProperties(const Expression& reducedEquation, Context * context) {
   assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
+  assert(status() == Status::Enabled && isPolar());
+
+  setCurveParameterType(CurveParameterType::Polar);
 
   /* Detect polar lines
    * 1/sinOrCos(theta + B) --> Line
@@ -416,67 +465,85 @@ const FunctionType * ContinuousFunctionProperties::PolarFunctionAnalysis(const E
   double coefficientBeforeTheta = 1.0;
   if (!denominator.isUninitialized() && Trigonometry::IsCosOrSinOfSymbol(denominator, reductionContext, Function::k_unknownName, false, nullptr, &coefficientBeforeTheta, &angle) && coefficientBeforeTheta == 1.0) {
     if (angle == 0.0 || angle == M_PI) {
-      return &FunctionTypes::k_polarVerticalLineType;
+      setCaption(I18n::Message::PolarVerticalLineType);
+      return;
     }
     if (angle == M_PI_2 || angle == M_PI + M_PI_2) {
-      return &FunctionTypes::k_polarHorizontalLineType;
+      setCaption(I18n::Message::PolarHorizontalLineType);
+      return;
     }
-    return &FunctionTypes::k_polarLineType;
+    setCaption(I18n::Message::PolarLineType);
+    return;
   }
 
   // Detect polar conics
   PolarConic conicProperties = PolarConic(reducedEquation, context, Function::k_unknownName);
-  switch (conicProperties.conicType().shape) {
+  setConicShape(conicProperties.conicType().shape);
+  switch (conicShape()) {
   case Conic::Shape::Hyperbola:
-    return &FunctionTypes::k_polarHyperbolaFunctionType;
+    setCaption(I18n::Message::PolarHyperbolaType);
+    return;
   case Conic::Shape::Parabola:
-    return &FunctionTypes::k_polarParabolaFunctionType;
+    setCaption(I18n::Message::PolarParabolaType);
+    return;
   case Conic::Shape::Ellipse:
-    return &FunctionTypes::k_polarEllipseFunctionType;
+    setCaption(I18n::Message::PolarEllipseType);
+    return;
   case Conic::Shape::Circle:
-    return &FunctionTypes::k_polarCircleFunctionType;
+    setCaption(I18n::Message::PolarCircleType);
+    return;
   default:
     // A conic could not be identified.
-    return &FunctionTypes::k_polarFunctionType;
+    setCaption(I18n::Message::PolarEquationType);
   }
 }
 
-const FunctionType * ContinuousFunctionProperties::ParametricFunctionAnalysis(const Poincare::Expression& reducedEquation, Poincare::Context * context) {
+void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincare::Expression& reducedEquation, Poincare::Context * context) {
   assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
-
-  // Detect lines
+  assert(status() == Status::Enabled && isParametric());
   assert(reducedEquation.type() == ExpressionNode::Type::Matrix
         && static_cast<const Matrix&>(reducedEquation).numberOfColumns() == 1
         && static_cast<const Matrix&>(reducedEquation).numberOfRows() == 2);
 
+  setCurveParameterType(CurveParameterType::Parametric);
+
+  // Detect lines
   const Expression xOfT = reducedEquation.childAtIndex(0);
   const Expression yOfT = reducedEquation.childAtIndex(1);
   int degOfTinX = xOfT.polynomialDegree(context, Function::k_unknownName);
   int degOfTinY = yOfT.polynomialDegree(context, Function::k_unknownName);
   if (degOfTinX == 0 && degOfTinY != 0) {
-    return &FunctionTypes::k_parametricVerticalLineType;
+    setCaption(I18n::Message::ParametricVerticalLineType);
+    return;
   }
   if (degOfTinY == 0 && degOfTinX != 0) {
-    return &FunctionTypes::k_parametricHorizontalLineType;
+    setCaption(I18n::Message::ParametricHorizontalLineType);
+    return;
   }
   if (degOfTinX == 1 && degOfTinY == 1) {
-    return &FunctionTypes::k_parametricLineType;
+    setCaption(I18n::Message::ParametricLineType);
+    return;
   }
 
   // Detect polar conics
   ParametricConic conicProperties = ParametricConic(reducedEquation, context, Function::k_unknownName);
-  switch (conicProperties.conicType().shape) {
+  setConicShape(conicProperties.conicType().shape);
+  switch (conicShape()) {
   case Conic::Shape::Hyperbola:
-    return &FunctionTypes::k_parametricHyperbolaFunctionType;
+    setCaption(I18n::Message::ParametricHyperbolaType);
+    return;
   case Conic::Shape::Parabola:
-    return &FunctionTypes::k_parametricParabolaFunctionType;
+    setCaption(I18n::Message::ParametricParabolaType);
+    return;
   case Conic::Shape::Ellipse:
-    return &FunctionTypes::k_parametricEllipseFunctionType;
+    setCaption(I18n::Message::ParametricEllipseType);
+    return;
   case Conic::Shape::Circle:
-    return &FunctionTypes::k_parametricCircleFunctionType;
+    setCaption(I18n::Message::ParametricCircleType);
+    return;
   default:
     // A conic could not be identified.
-    return &FunctionTypes::k_parametricFunctionType;
+    setCaption(I18n::Message::ParametricEquationType);
   }
 }
 

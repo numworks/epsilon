@@ -244,7 +244,7 @@ private:
     Poincare::Expression originalEquation(const Ion::Storage::Record * record, CodePoint symbol) const;
     /* Return the expression representing the equation
      * (turns "f(x)=xy" into "xy" and "xy=a" into "xy-a") */
-    Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context, Poincare::ComparisonNode::OperatorType * computedEquationType = nullptr, FunctionType::SymbolType * computedFunctionSymbol = nullptr) const;
+    Poincare::Expression expressionEquation(const Ion::Storage::Record * record, Poincare::Context * context, Poincare::ComparisonNode::OperatorType * computedEquationType = nullptr, ContinuousFunctionProperties::SymbolType * computedFunctionSymbol = nullptr) const;
     // Return the derivative of the expression to plot.
     Poincare::Expression expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
     // Rename the record if needed. Record pointer might get corrupted.

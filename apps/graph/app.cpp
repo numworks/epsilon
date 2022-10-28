@@ -27,7 +27,7 @@ App * App::Snapshot::unpack(Container * container) {
 
 void App::Snapshot::reset() {
   Shared::FunctionApp::Snapshot::reset();
-  for (size_t i = 0; i < FunctionType::k_numberOfSymbolTypes; i++) {
+  for (size_t i = 0; i < ContinuousFunctionProperties::k_numberOfSymbolTypes; i++) {
     m_interval[i].reset();
   }
 }

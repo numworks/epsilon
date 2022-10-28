@@ -16,7 +16,7 @@ jobs:
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
       - run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=android epsilon.apk test.apk
       - uses: actions/upload-artifact@master
@@ -30,7 +30,7 @@ jobs:
         model: [n0110, n0120]
     steps:
       - uses: numworks/setup-arm-toolchain@latest
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
           submodules: true
@@ -55,7 +55,7 @@ jobs:
          shell: msys2 {0}
     steps:
       - uses: msys2/setup-msys2@v2
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator epsilon.exe test.exe
       - run: cmd /c output\release\simulator\windows\test.exe --headless --limit-stack-usage
@@ -69,7 +69,7 @@ jobs:
       - uses: numworks/setup-emscripten@v1
         with:
           sdk: 1.39.16-fastcomp
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=web epsilon.zip test.js
       - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
@@ -81,7 +81,7 @@ jobs:
   linux:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator ASAN=1 epsilon.bin test.bin
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
@@ -94,7 +94,7 @@ jobs:
     runs-on: macOS-latest
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator epsilon.app
       - run: make PLATFORM=simulator ARCH=x86_64 test.bin
@@ -107,7 +107,7 @@ jobs:
     runs-on: macOS-latest
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.ipa test.ipa
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 APPLE_PLATFORM=ios-simulator

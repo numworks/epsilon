@@ -12,6 +12,7 @@ state_file=$2
 output_folder=${3:-screenshots}
 
 mkdir -p $output_folder
+rm ${output_folder}/img*.png
 
 ./${epsilon} --headless --load-state-file ${state_file} --take-all-screenshots ${output_folder} > /dev/null
 

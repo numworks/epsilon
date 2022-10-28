@@ -59,7 +59,7 @@ jobs:
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator epsilon.exe test.exe
       - run: cmd /c output\release\simulator\windows\test.exe --headless --limit-stack-usage
-      - uses: actions/upload-artifact@master
+      - uses: actions/upload-artifact@v3
         with:
           name: epsilon-windows.exe
           path: output/release/simulator/windows/epsilon.exe
@@ -73,7 +73,7 @@ jobs:
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=web epsilon.zip test.js
       - run: timeout 5m node output/release/simulator/web/test.js --headless --limit-stack-usage
-      - uses: actions/upload-artifact@master
+      - uses: actions/upload-artifact@v3
         with:
           name: epsilon-web.zip
           path: output/release/simulator/web/epsilon.zip
@@ -85,7 +85,7 @@ jobs:
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator ASAN=1 epsilon.bin test.bin
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
-      - uses: actions/upload-artifact@master
+      - uses: actions/upload-artifact@v3
         if: ${{ ! endswith(github.repository, '/epsilon-internal') }}
         with:
           name: epsilon-linux.bin
@@ -99,7 +99,7 @@ jobs:
       - run: make PLATFORM=simulator epsilon.app
       - run: make PLATFORM=simulator ARCH=x86_64 test.bin
       - run: output/release/simulator/macos/x86_64/test.bin --headless --limit-stack-usage
-      - uses: actions/upload-artifact@master
+      - uses: actions/upload-artifact@v3
         with:
           name: epsilon-macos.zip
           path: output/release/simulator/macos/epsilon.app
@@ -111,7 +111,7 @@ jobs:
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.ipa test.ipa
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 APPLE_PLATFORM=ios-simulator
-      - uses: actions/upload-artifact@master
+      - uses: actions/upload-artifact@v3
         with:
           name: epsilon-ios.ipa
           path: output/release/simulator/ios/epsilon.ipa

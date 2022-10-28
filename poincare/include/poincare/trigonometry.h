@@ -32,7 +32,7 @@ public:
   static Expression table(const Expression e, ExpressionNode::Type type,  const ExpressionNode::ReductionContext& reductionContext); // , Function f, bool inverse
   template <typename T> static std::complex<T> ConvertToRadian(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   template <typename T> static std::complex<T> ConvertRadianToAngleUnit(const std::complex<T> c, Preferences::AngleUnit angleUnit);
-  /* Detect if expression is of the form A*cos/sin(Bx+C) + K
+  /* Detect if expression is of the form A*cosOrSin(Bx+C) + K
    * The return coefficient is A.
    * The returned angle is the value between 0 and 2pi such as the expression
    * is of the form A*cos(Bx+angle) + K

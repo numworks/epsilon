@@ -31,8 +31,15 @@ T HypergeometricDistribution::CumulativeDistributiveInverseForProbability(T prob
     return NAN;
   }
   constexpr T precision = Float<T>::Epsilon();
-  if (std::abs(probability) < precision) {
+  if (probability < precision) {
+    // We can have 0 successes only if there are enough failures
+    if (n > N - K) {
+      return 0;
+    }
     return NAN;
+  }
+  if (1.0 - probability < precision) {
+    return std::min(n, K);
   }
   T proba = probability;
   const void * pack[3] = { &N, &K, &n };

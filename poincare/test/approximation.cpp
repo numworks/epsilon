@@ -1157,6 +1157,10 @@ QUIZ_CASE(poincare_approximation_probability) {
   assert_expression_approximates_to<double>("hgeomcdfrange(13,15,40,20,30)", "0.60937014162821");
   assert_expression_approximates_to<double>("invhgeom(.5,4,2,3)", "1");
   assert_expression_approximates_to<double>("invhgeom(.6,40,20,30)", "15");
+  assert_expression_approximates_to<double>("invhgeom(-1,4,2,3)", "undef");
+  assert_expression_approximates_to<double>("invhgeom(0,4,2,2)", "undef");
+  assert_expression_approximates_to<double>("invhgeom(0,4,2,3)", "0");
+  assert_expression_approximates_to<double>("invhgeom(1,4,2,3)", "2");
 
   assert_expression_approximates_to<double>("normcdf(5, 7, 0.3162)", "1.265256ᴇ-10", Radian, MetricUnitFormat, Cartesian, 7);
 

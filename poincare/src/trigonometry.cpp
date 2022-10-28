@@ -185,9 +185,10 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ExpressionN
     if (unitRef.representative()->dimensionVector() != Unit::AngleRepresentative::Default().dimensionVector()) {
       return e.replaceWithUndefinedInPlace();
     }
-    // The child has been converted to radians already by the reduction
-    reductionContext.setAngleUnit(Preferences::AngleUnit::Radian);
-    assert(unitRef.representative()->isBaseUnit());
+    // The child has been converted to radians, turn it into the current unit
+    if (reductionContext.angleUnit() != Preferences::AngleUnit::Radian) {
+      e.replaceChildAtIndexInPlace(0, Multiplication::Builder(e.childAtIndex(0), UnitConversionFactor(Preferences::AngleUnit::Radian, reductionContext.angleUnit()).shallowReduce(reductionContext)).shallowReduce(reductionContext));
+    }
   }
 
   // Step 1. Try finding an easy standard calculation reduction

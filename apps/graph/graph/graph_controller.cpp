@@ -79,9 +79,9 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
       }
       if (f->isIntersectable()) {
         ContinuousFunction * mainF = f.operator->();
-        for (int j = 0; j < nbFunctions; j++) {
+        for (int j = i + 1; j < nbFunctions; j++) {
           ExpiringPointer<ContinuousFunction> g = store->modelForRecord(store->activeRecordAtIndex(j));
-          if (i == j || !g->isIntersectable() || g->basedOnCostlyAlgorithms(context)) {
+          if (!g->isIntersectable() || g->basedOnCostlyAlgorithms(context)) {
             continue;
           }
           zoom.fitIntersections(evaluator, mainF, evaluator, g.operator->());

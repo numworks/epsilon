@@ -51,12 +51,14 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
     returnedExpression = Subtraction::Builder(simplifiedInput.childAtIndex(0), simplifiedInput.childAtIndex(1));
     returnedExpression = returnedExpression.cloneAndReduce(ExpressionNode::ReductionContext(contextToUse, Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), Preferences::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), expressionInputWithoutFunctions, context), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), reductionTarget));
   } else {
-    assert(simplifiedInput.type() == ExpressionNode::Type::Boolean);
-    /* The equality was reduced which means the equality was either
-     * always true or always false.
-     * Return 1 if it's false (since it's equivalent to the equation 1 = 0),
-     * and return 0 if it's true (since it's equivalent to 0 = 0). */
-    returnedExpression = static_cast<const Boolean&>(simplifiedInput).value() ? Rational::Builder(0) : Rational::Builder(1);
+    assert(simplifiedInput.type() == ExpressionNode::Type::Boolean || simplifiedInput.type() == ExpressionNode::Type::List);
+    /* The equality has disappeared after reduction. This may be because:
+     * - the comparison was always true or false (e.g. 1 = 0) and has been
+     *   reduced to a boolean.
+     * - the equal sign has been distributed inside a list
+     * Return 1 if the equation has no solution (since it is equivalent to
+     * 1 = 0) or 0 if it has infinite solutions. */
+    returnedExpression = simplifiedInput.type() == ExpressionNode::Type::Boolean && static_cast<Boolean &>(simplifiedInput).value() ? Rational::Builder(0) : Rational::Builder(1);
   }
   return returnedExpression;
 }

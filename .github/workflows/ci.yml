@@ -36,17 +36,14 @@ jobs:
       - run: build/setup.sh
       - name: Disable epsilon-core submodule
         run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable
-      - name: Build userland
-        run: make MODEL=n0110 userland.A.dfu userland.B.dfu
+      - name: Build userlands
+        # Since both slots have the exact same amount of Flash reserved, it is pointless to build both the A and B elfs for every variant.
+        # As an exception,  because we'll build epsilon.dfu that on both userland.A.elf and userland.B.elf, we still build those here
+        # TODO: It is also probably useless to build so many variants
+        run: make MODEL=n0110 userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf
       - name: Restore epsilon-core submodule
         run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
       - run: make MODEL=n0110 epsilon.dfu
-      - run: make MODEL=n0110 epsilon.allow3rdparty.dfu
-      - run: make MODEL=n0110 epsilon.onboarding.dfu
-      - run: make MODEL=n0110 epsilon.onboarding.allow3rdparty.dfu
-      - run: make MODEL=n0110 epsilon.onboarding.update.dfu
-      - run: make MODEL=n0110 epsilon.onboarding.beta.dfu
-      - run: make MODEL=n0110 epsilon.onboarding.beta.allow3rdparty.dfu
       - run: make MODEL=n0110 flasher.dfu
       - run: make MODEL=n0110 bench.ram.dfu
   n0120:

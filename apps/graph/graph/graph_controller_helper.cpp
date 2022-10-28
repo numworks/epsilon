@@ -35,7 +35,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     assert(subCurveIndex != nullptr);
     // previousXY will be needed for conic's special horizontal cursor moves.
     specialConicCursorMove = std::isfinite(function->evaluateXYAtParameter(t, context, *subCurveIndex).x2());
-    if (*subCurveIndex == 1 && function->properties().isHyperbolaWithTwoSubCurves()) {
+    if (*subCurveIndex == 1 && !function->properties().isHyperbolaWithTwoSubCurves()) {
       // On the sub curve, pressing left actually moves the cursor right
       dir *= -1.0;
     }

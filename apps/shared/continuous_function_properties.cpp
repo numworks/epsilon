@@ -2,6 +2,7 @@
 #include "continuous_function.h"
 #include <poincare/constant.h>
 #include <apps/exam_mode_configuration.h>
+#include <poincare/division.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/trigonometry.h>
@@ -520,7 +521,10 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincar
     setCaption(I18n::Message::ParametricHorizontalLineType);
     return;
   }
-  if (degOfTinX == 1 && degOfTinY == 1) {
+  Expression quotient = Division::Builder(xOfT.clone(), yOfT.clone());
+  quotient = quotient.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
+  // TODO: Some lines are not detected like (x, y) = (3*ln(t), 4*ln(t)+1)
+  if (quotient.polynomialDegree(context, Function::k_unknownName) == 0) {
     setCaption(I18n::Message::ParametricLineType);
     return;
   }

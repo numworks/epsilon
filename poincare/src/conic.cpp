@@ -520,28 +520,31 @@ ParametricConic::ParametricConic(const Expression& e, Context * context, const c
   // Detect if x(t) = a*cos(b*t+c)+d, same for y(t)
   double xCoefficientBeforeCos;
   double xCoefficientBeforeSymbol;
-  if (!Trigonometry::IsCosOrSinOfSymbol(xOfT, reductionContext, symbol, true, &xCoefficientBeforeCos, &xCoefficientBeforeSymbol)) {
+  double xAngle;
+  if (!Trigonometry::IsCosOrSinOfSymbol(xOfT, reductionContext, symbol, true, &xCoefficientBeforeCos, &xCoefficientBeforeSymbol, &xAngle)) {
     m_shape = Shape::Undefined;
     return;
   }
 
   double yCoefficientBeforeCos;
   double yCoefficientBeforeSymbol;
-  if (!Trigonometry::IsCosOrSinOfSymbol(yOfT, reductionContext, symbol, true, &yCoefficientBeforeCos, &yCoefficientBeforeSymbol)) {
+  double yAngle;
+  if (!Trigonometry::IsCosOrSinOfSymbol(yOfT, reductionContext, symbol, true, &yCoefficientBeforeCos, &yCoefficientBeforeSymbol, &yAngle)) {
     m_shape = Shape::Undefined;
     return;
   }
 
-  if (yCoefficientBeforeSymbol != xCoefficientBeforeSymbol) {
-    m_shape = Shape::Undefined;
-    return;
+  if (yCoefficientBeforeSymbol == xCoefficientBeforeSymbol) {
+    if (std::fabs(yCoefficientBeforeCos) == std::fabs(xCoefficientBeforeCos) && std::fabs(xAngle - yAngle) == M_PI_2) {
+      m_shape = Shape::Circle;
+      return;
+    }
+    if (xAngle != yAngle) {
+      m_shape = Shape::Ellipse;
+      return;
+    }
   }
-
-  if (yCoefficientBeforeCos == xCoefficientBeforeCos) {
-    m_shape = Shape::Circle;
-    return;
-  }
-  m_shape = Shape::Ellipse;
+  m_shape = Shape::Undefined;
 }
 
 }

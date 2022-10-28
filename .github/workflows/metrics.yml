@@ -35,6 +35,8 @@ jobs:
           submodules: true
           ref: ${{ github.event.pull_request.head.sha }}
           path: head
+      - name: Install dependencies
+        run: build/setup.sh
       - name: Build head for N0110
         run: make -C head bootloader.elf && make -C head kernel.onboarding.beta.allow3rdparty.A.elf && make -C head userland.onboarding.beta.allow3rdparty.A.elf
       - name: Binary size summary

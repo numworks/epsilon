@@ -24,10 +24,10 @@ jobs:
           ref:  ${{ steps.common_ancestor.outputs.commit_sha }}
           path: base
       - name: Install dependencies
-        run: build/setup.sh
+        run: cd base && build/setup.sh
       - name: Build common ancestor for N0110
         # build the largest target
-        run: make -C base bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf userland.onboarding.beta.allow3rdparty.A.elf
+        run: cd base && make bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf userland.onboarding.beta.allow3rdparty.A.elf
       - name: Find head of PR
         uses: actions/checkout@v2
         with:
@@ -36,15 +36,15 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           path: head
       - name: Install dependencies
-        run: build/setup.sh
+        run: cd head && build/setup.sh
       - name: Build head for N0110
-        run: make -C head bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf userland.onboarding.beta.allow3rdparty.A.elf
+        run: cd head && make bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf userland.onboarding.beta.allow3rdparty.A.elf
       - name: Binary size summary
         id: binary_size_summary
-        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.A.elf base/output/release/device/n0110/userland/userland.A.elf @Head head/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/userland/userland.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)"
+        run: echo "::set-output name=table::$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.A.elf base/output/release/device/n0110/userland/userland.A.elf @Head head/output/release/device/n0110/kernel/kernel.A.elf head/output/release/device/n0110/userland/userland.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)"
       - name: Binary size N0110
         id: binary_size_n0110
-        run: echo "::set-output name=table::$(python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/bootloader/bootloader.elf base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/bootloader/bootloader.elf head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)"
+        run: echo "::set-output name=table::$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/bootloader/bootloader.elf base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/bootloader/bootloader.elf head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)"
       - name: Add comment
         uses: actions/github-script@v3.0.0
         with:

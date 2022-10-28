@@ -362,7 +362,7 @@ QUIZ_CASE(ion_utf8_helper_end_of_word) {
 }
 
 void assert_is_prefix(const char * a, const char * b, const char * c) {
-  quiz_assert(strcmp(UTF8Helper::PrefixCaseInsensitiveNoCombining(a, b), c) == 0);
+  quiz_assert(strcmp(UTF8Helper::SuffixCaseInsensitiveNoCombining(a, b), c) == 0);
 }
 
 void assert_is_not_prefix(const char * a, const char * b) {

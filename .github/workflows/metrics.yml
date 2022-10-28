@@ -10,14 +10,14 @@ jobs:
       - name: Install ARM toolchain
         uses: numworks/setup-arm-toolchain@latest
       - name: Fetch target branch and PR branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Find most recent ancestor of PR and target branch
         id: common_ancestor
         run: echo "::set-output name=commit_sha::$(git merge-base ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})"
       - name: Checkout to most recent ancestor
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
           submodules: true
@@ -29,7 +29,7 @@ jobs:
         # build the largest target
         run: cd base && make bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf userland.onboarding.beta.allow3rdparty.A.elf
       - name: Find head of PR
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT }}
           submodules: true

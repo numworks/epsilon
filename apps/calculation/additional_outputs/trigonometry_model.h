@@ -21,7 +21,7 @@ public:
   float yRange() const;
 
   void setAngle(float f) { m_angle = f; }
-  float angle() const { return m_angle*(float)M_PI/(float)Poincare::Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit()); }
+  float angle() const { return m_angle; }
 private:
   constexpr static KDCoordinate width =  Ion::Display::Width - Escher::Metric::PopUpRightMargin - Escher::Metric::PopUpLeftMargin - 2;
   constexpr static KDCoordinate halfWidth = width / 2;

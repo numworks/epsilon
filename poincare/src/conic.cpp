@@ -1,8 +1,10 @@
 #include <poincare/conic.h>
 #include <poincare/addition.h>
+#include <poincare/division.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/polynomial.h>
+#include <poincare/power.h>
 #include <poincare/preferences.h>
 #include <poincare/trigonometry.h>
 #include <algorithm>
@@ -498,8 +500,17 @@ ParametricConic::ParametricConic(const Expression& e, Context * context, const c
   int degOfTinX = xOfT.polynomialDegree(context, symbol);
   int degOfTinY = yOfT.polynomialDegree(context, symbol);
 
-  // Detect parabola (x , y) = (a*t+b , c*t^2+d)
-  if ((degOfTinX == 1 && degOfTinY == 2) || (degOfTinX == 2 && degOfTinY == 1)) {
+  // Detect parabola (x , y) = (a*f(t) , b*f(t)^2)
+  // TODO: This does not detect parabolas of the form (a*f(t)+c, b*f(t)^2+d)
+  Expression quotient = Division::Builder(xOfT.clone(), yOfT.clone());
+  quotient = quotient.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
+  if (quotient.polynomialDegree(context, symbol) == 1) {
+    m_shape = Shape::Parabola;
+    return;
+  }
+  Expression inverseQuotient = Power::Builder(quotient, Rational::Builder(-1));
+  inverseQuotient = inverseQuotient.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
+  if (inverseQuotient.polynomialDegree(context, symbol) == 1) {
     m_shape = Shape::Parabola;
     return;
   }

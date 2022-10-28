@@ -21,7 +21,7 @@ jobs:
       - name: Checkout to most recent ancestor
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.SHELLY_ANN_PAT }}
+          token: ${{ secrets.PAT }}
           submodules: true
           ref:  ${{ steps.common_ancestor.outputs.commit_sha }}
           path: base
@@ -31,7 +31,7 @@ jobs:
       - name: Find head of PR
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.SHELLY_ANN_PAT }}
+          token: ${{ secrets.PAT }}
           submodules: true
           ref: ${{ github.event.pull_request.head.sha }}
           path: head

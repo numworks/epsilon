@@ -410,11 +410,12 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(const Expression& 
   double angle = 0.0;
   double coefficientBeforeTheta = 1.0;
   if (!denominator.isUninitialized() && Trigonometry::IsCosOrSinOfSymbol(denominator, reductionContext, Function::k_unknownName, false, nullptr, &coefficientBeforeTheta, &angle) && coefficientBeforeTheta == 1.0) {
-    if (angle == 0.0 || angle == M_PI) {
+    double positiveAngle = std::fabs(angle);
+    if (positiveAngle == 0.0 || positiveAngle == M_PI) {
       setCaption(I18n::Message::PolarVerticalLineType);
       return;
     }
-    if (angle == M_PI_2 || angle == M_PI + M_PI_2) {
+    if (positiveAngle == M_PI_2 || positiveAngle == M_PI + M_PI_2) {
       setCaption(I18n::Message::PolarHorizontalLineType);
       return;
     }

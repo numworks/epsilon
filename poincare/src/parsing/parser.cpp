@@ -645,6 +645,7 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
   if (hasCaret) {
     Expression base = parseUntil(endDelimiterOfPower);
     if (m_status != Status::Progress) {
+      return;
     } else if (!popTokenIfType(endDelimiterOfPower)) {
       m_status = Status::Error;
       return;

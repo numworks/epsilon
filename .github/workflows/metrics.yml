@@ -1,7 +1,7 @@
 name: Metrics
 on: [pull_request_target]
 env:
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }} EMBED_EXTRA_DATA=1
 
 jobs:
   binary-size:

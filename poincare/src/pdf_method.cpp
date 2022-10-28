@@ -21,7 +21,8 @@ Expression PDFMethod::shallowReduce(Expression * abscissae, const Distribution *
   if (static_cast<Rational &>(x).isNegative()
       && (distribution->hasType(Distribution::Type::Binomial)
           | distribution->hasType(Distribution::Type::Poisson)
-          | distribution->hasType(Distribution::Type::Geometric))) {
+          | distribution->hasType(Distribution::Type::Geometric)
+          | distribution->hasType(Distribution::Type::Hypergeometric))) {
     Expression result = Rational::Builder(0);
     expression->replaceWithInPlace(result);
     return result;

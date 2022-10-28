@@ -70,10 +70,12 @@ Expression InverseMethod::shallowReduce(Expression * x, const Distribution * dis
       return result;
     }
 
-    // Normal and Student (all distributions with real line support)
-    Expression result = Infinity::Builder(is0);
-    expression->replaceWithInPlace(result);
-    return result;
+    if (distribution->hasType(Distribution::Type::Normal) || distribution->hasType(Distribution::Type::Student)) {
+      // Normal and Student (all distributions with real line support)
+      Expression result = Infinity::Builder(is0);
+      expression->replaceWithInPlace(result);
+      return result;
+    }
   }
 
   // expectedValue if a == 0.5 and continuous and symmetrical

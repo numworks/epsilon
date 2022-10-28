@@ -18,9 +18,7 @@ jobs:
       - run: $ANDROID_HOME/tools/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v2
       - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator TARGET=android
-      - run: make PLATFORM=simulator TARGET=android epsilon.apk
-      - run: make PLATFORM=simulator TARGET=android test.apk
+      - run: make PLATFORM=simulator TARGET=android epsilon.apk test.apk
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-android.apk
@@ -59,9 +57,7 @@ jobs:
       - uses: msys2/setup-msys2@v2
       - uses: actions/checkout@v2
       - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator
-      - run: make PLATFORM=simulator epsilon.exe
-      - run: make PLATFORM=simulator test.exe
+      - run: make PLATFORM=simulator epsilon.exe test.exe
       - run: cmd /c output\release\simulator\windows\test.exe --headless --limit-stack-usage
       - uses: actions/upload-artifact@master
         with:
@@ -100,7 +96,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator
       - run: make PLATFORM=simulator epsilon.app
       - run: make PLATFORM=simulator ARCH=x86_64 test.bin
       - run: output/release/simulator/macos/x86_64/test.bin --headless --limit-stack-usage
@@ -114,9 +109,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0
-      - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.ipa
-      - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 test.ipa
+      - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 epsilon.ipa test.ipa
       - run: make PLATFORM=simulator TARGET=ios EPSILON_TELEMETRY=0 APPLE_PLATFORM=ios-simulator
       - uses: actions/upload-artifact@master
         with:

@@ -31,7 +31,7 @@ void CurveParameterController::viewWillAppear() {
 }
 
 bool CurveParameterController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 1)) {
+  if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 1 + hasCobweb())) {
     switch (selectedRow()) {
       case 0:
       {

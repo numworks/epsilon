@@ -34,29 +34,29 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
   Context * contextToUse = replaceFunctionsButNotSymbols ? &emptyContext : context;
 
   // Reduce the expression
-  Expression expressionRed = expressionInputWithoutFunctions;
-  PoincareHelpers::CloneAndSimplify(&expressionRed, contextToUse, reductionTarget);
+  Expression simplifiedInput = expressionInputWithoutFunctions;
+  PoincareHelpers::CloneAndSimplify(&simplifiedInput, contextToUse, reductionTarget);
 
-  if (expressionRed.type() == ExpressionNode::Type::Nonreal) {
+  if (simplifiedInput.type() == ExpressionNode::Type::Nonreal) {
     returnedExpression = Nonreal::Builder();
-  } else if (expressionRed.recursivelyMatches(
+  } else if (simplifiedInput.recursivelyMatches(
         [](const Expression e, Context * context) {
           return e.type() == ExpressionNode::Type::Undefined || e.type() == ExpressionNode::Type::Infinity || Expression::IsMatrix(e, context);
         },
         contextToUse))
   {
     returnedExpression = Undefined::Builder();
-  } else if (ComparisonNode::IsBinaryEquality(expressionRed)) {
+  } else if (ComparisonNode::IsBinaryEquality(simplifiedInput)) {
     Preferences * preferences = Preferences::sharedPreferences();
-    returnedExpression = Subtraction::Builder(expressionRed.childAtIndex(0), expressionRed.childAtIndex(1));
+    returnedExpression = Subtraction::Builder(simplifiedInput.childAtIndex(0), simplifiedInput.childAtIndex(1));
     returnedExpression = returnedExpression.cloneAndReduce(ExpressionNode::ReductionContext(contextToUse, Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), Preferences::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), expressionInputWithoutFunctions, context), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), reductionTarget));
   } else {
-    assert(expressionRed.type() == ExpressionNode::Type::Boolean);
+    assert(simplifiedInput.type() == ExpressionNode::Type::Boolean);
     /* The equality was reduced which means the equality was either
      * always true or always false.
      * Return 1 if it's false (since it's equivalent to the equation 1 = 0),
      * and return 0 if it's true (since it's equivalent to 0 = 0). */
-    returnedExpression = static_cast<const Boolean&>(expressionRed).value() ? Rational::Builder(0) : Rational::Builder(1);
+    returnedExpression = static_cast<const Boolean&>(simplifiedInput).value() ? Rational::Builder(0) : Rational::Builder(1);
   }
   return returnedExpression;
 }

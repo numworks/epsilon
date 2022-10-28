@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+      - run: build/setup.sh
       - name: Compare screenshot images
         run: ./build/screenshots/compare.sh MAKEFLAGS="-j32 PLATFORM=simulator DEBUG=1" tests/screenshots_dataset/scenari/ tests/screenshots_dataset/reference_images/ ${{ github.event.pull_request.head.sha }}
       - name: Gather screenshots

@@ -88,8 +88,11 @@ public:
   bool canHaveCustomDomain() const { return !isAlongY() && isEquality(); }
 
   bool isConic() const { return conicShape() != Poincare::Conic::Shape::Undefined; }
-  bool isNotCartesianParabolaOrHyperbola() const { return !isCartesian() || (conicShape() != Poincare::Conic::Shape::Parabola && conicShape() != Poincare::Conic::Shape::Hyperbola); }
   bool isCartesianHyperbolaWithTwoSubCurves() const { return conicShape() == Poincare::Conic::Shape::Hyperbola && isCartesian() && numberOfSubCurves() == 2; }
+
+  /* Normalization isn't enforced on Parabola and Hyperbola for a better zooms.
+   * It is on Circle and Ellipses so that they don't look like each other. */
+  bool enforcePlotNormalization() const { return isPolar() || isParametric() || conicShape() == Poincare::Conic::Shape::Circle || conicShape() == Poincare::Conic::Shape::Ellipse; }
 
   // Wether to draw a dotted or solid line (Strict inequalities).
   bool plotIsDotted() const { return equationType() == Poincare::ComparisonNode::OperatorType::Superior ||  equationType() == Poincare::ComparisonNode::OperatorType::Inferior;}

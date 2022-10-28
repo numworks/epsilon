@@ -17,8 +17,7 @@ bool ContinuousFunctionStore::displaysFunctionsToNormalize(int * nbActiveFunctio
   if (nbActiveFunctions != nullptr) {
     *nbActiveFunctions = numberOfActiveFunctions();
   }
-  // Normalization isn't enforced on Parabola and Hyperbola for a better zooms
-  return numberOfActiveFunctionsWithProperty(&ContinuousFunctionProperties::isNotCartesianParabolaOrHyperbola) != 0;
+  return numberOfActiveFunctionsWithProperty(&ContinuousFunctionProperties::enforcePlotNormalization) != 0;
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {

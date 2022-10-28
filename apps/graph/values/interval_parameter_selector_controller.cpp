@@ -35,7 +35,7 @@ bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) 
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     StackViewController * stack = (StackViewController *)parentResponder();
     Shared::IntervalParameterController * controller = App::app()->valuesController()->intervalParameterController();
-    Shared::FunctionType::SymbolType symbolType = symbolTypeAtRow(selectedRow());
+    Shared::ContinuousFunctionProperties::SymbolType symbolType = symbolTypeAtRow(selectedRow());
     controller->setTitle(messageForType(symbolType));
     setStartEndMessages(controller, symbolType);
     controller->setInterval(App::app()->intervalForSymbolType(symbolType));
@@ -48,9 +48,9 @@ bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) 
 int IntervalParameterSelectorController::numberOfRows() const {
   int rowCount = 0;
   size_t symbolTypeIndex = 0;
-  Shared::FunctionType::SymbolType symbolType;
+  Shared::ContinuousFunctionProperties::SymbolType symbolType;
   while (symbolTypeIndex < k_numberOfSymbolTypes) {
-    symbolType = static_cast<Shared::FunctionType::SymbolType>(symbolTypeIndex);
+    symbolType = static_cast<Shared::ContinuousFunctionProperties::SymbolType>(symbolTypeIndex);
     bool symbolTypeIsShown = App::app()->functionStore()->numberOfActiveFunctionsInTableOfSymbolType(symbolType) > 0;
     rowCount += symbolTypeIsShown;
     symbolTypeIndex++;
@@ -65,16 +65,16 @@ HighlightCell * IntervalParameterSelectorController::reusableCell(int index) {
 
 void IntervalParameterSelectorController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   assert(0 <= index && index < numberOfRows());
-  Shared::FunctionType::SymbolType symbolType = symbolTypeAtRow(index);
+  Shared::ContinuousFunctionProperties::SymbolType symbolType = symbolTypeAtRow(index);
   static_cast<MessageTableCellWithChevron *>(cell)->setMessage(messageForType(symbolType));
 }
 
-Shared::FunctionType::SymbolType IntervalParameterSelectorController::symbolTypeAtRow(int j) const {
+Shared::ContinuousFunctionProperties::SymbolType IntervalParameterSelectorController::symbolTypeAtRow(int j) const {
   int rowCount = 0;
   size_t symbolTypeIndex = 0;
-  Shared::FunctionType::SymbolType symbolType;
+  Shared::ContinuousFunctionProperties::SymbolType symbolType;
   do {
-    symbolType = static_cast<Shared::FunctionType::SymbolType>(symbolTypeIndex);
+    symbolType = static_cast<Shared::ContinuousFunctionProperties::SymbolType>(symbolTypeIndex);
     bool symbolTypeIsShown = App::app()->functionStore()->numberOfActiveFunctionsInTableOfSymbolType(symbolType) > 0;
     if (symbolTypeIsShown && rowCount == j) {
       break;
@@ -85,28 +85,28 @@ Shared::FunctionType::SymbolType IntervalParameterSelectorController::symbolType
   return symbolType;
 }
 
-I18n::Message IntervalParameterSelectorController::messageForType(Shared::FunctionType::SymbolType symbolType) {
+I18n::Message IntervalParameterSelectorController::messageForType(Shared::ContinuousFunctionProperties::SymbolType symbolType) {
   switch (symbolType) {
-  case Shared::FunctionType::SymbolType::X:
+  case Shared::ContinuousFunctionProperties::SymbolType::X:
     return I18n::Message::IntervalX;
-  case Shared::FunctionType::SymbolType::T:
+  case Shared::ContinuousFunctionProperties::SymbolType::T:
     return I18n::Message::IntervalT;
   default:
-    assert(symbolType == Shared::FunctionType::SymbolType::Theta);
+    assert(symbolType == Shared::ContinuousFunctionProperties::SymbolType::Theta);
     return I18n::Message::IntervalTheta;
   }
 }
 
-void IntervalParameterSelectorController::setStartEndMessages(Shared::IntervalParameterController * controller, Shared::FunctionType::SymbolType symbolType) {
+void IntervalParameterSelectorController::setStartEndMessages(Shared::IntervalParameterController * controller, Shared::ContinuousFunctionProperties::SymbolType symbolType) {
   switch (symbolType) {
-  case Shared::FunctionType::SymbolType::X:
+  case Shared::ContinuousFunctionProperties::SymbolType::X:
     controller->setStartEndMessages(I18n::Message::XStart, I18n::Message::XEnd);
     return;
-  case Shared::FunctionType::SymbolType::T:
+  case Shared::ContinuousFunctionProperties::SymbolType::T:
     controller->setStartEndMessages(I18n::Message::TStart, I18n::Message::TEnd);
     return;
   default:
-    assert(symbolType == Shared::FunctionType::SymbolType::Theta);
+    assert(symbolType == Shared::ContinuousFunctionProperties::SymbolType::Theta);
     controller->setStartEndMessages(I18n::Message::ThetaStart, I18n::Message::ThetaEnd);
   }
 }

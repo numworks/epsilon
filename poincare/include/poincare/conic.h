@@ -16,6 +16,7 @@ public:
     Circle,
     Undefined,
     Unknown,
+    NumberOfShapes
   };
 
   enum class CoordinateType : uint8_t {

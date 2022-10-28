@@ -75,8 +75,8 @@ KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
   KDCoordinate columnWidth;
   KDCoordinate maxColumnWidth = MaxColumnWidth();
   int tempI = i;
-  FunctionType::SymbolType symbol = symbolTypeAtColumn(&tempI);
-  if (tempI > 0 && symbol == FunctionType::SymbolType::T) {
+  ContinuousFunctionProperties::SymbolType symbol = symbolTypeAtColumn(&tempI);
+  if (tempI > 0 && symbol == ContinuousFunctionProperties::SymbolType::T) {
     // Default width is larger for parametric functions
     columnWidth = ApproximatedParametricCellSize().width();
   } else {
@@ -120,9 +120,9 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
   }
   for (int i = 0; i < nColumns; i++) {
     int tempI = i;
-    FunctionType::SymbolType symbol = symbolTypeAtColumn(&tempI);
+    ContinuousFunctionProperties::SymbolType symbol = symbolTypeAtColumn(&tempI);
     if (!m_exactValuesAreActivated) {
-     if (symbol != FunctionType::SymbolType::T || j >= numberOfElementsInColumn(i) + 1) {
+     if (symbol != ContinuousFunctionProperties::SymbolType::T || j >= numberOfElementsInColumn(i) + 1) {
       /* Height is constant when exact result is not displayed and
        * either there is no parametric function or it's the last row
        * of the column. */
@@ -302,7 +302,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative) {
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
-  FunctionType::SymbolType symbolType = symbolTypeAtColumn(&i);
+  ContinuousFunctionProperties::SymbolType symbolType = symbolTypeAtColumn(&i);
   int index = 1;
   int numberOfActiveFunctionsInTableOfSymbolType = functionStore()->numberOfActiveFunctionsInTableOfSymbolType(symbolType);
   for (int k = 0; k < numberOfActiveFunctionsInTableOfSymbolType; k++) {
@@ -357,13 +357,13 @@ int ValuesController::numberOfValuesColumns() const {
   return numberOfColumns() - numberOfAbscissaColumnsBeforeColumn(-1);
 }
 
-FunctionType::SymbolType ValuesController::symbolTypeAtColumn(int * i) const {
+ContinuousFunctionProperties::SymbolType ValuesController::symbolTypeAtColumn(int * i) const {
   size_t symbolTypeIndex = 0;
   while (*i >= numberOfColumnsForSymbolType(symbolTypeIndex)) {
     *i -= numberOfColumnsForSymbolType(symbolTypeIndex++);
     assert(symbolTypeIndex < k_maxNumberOfSymbolTypes);
   }
-  return static_cast<FunctionType::SymbolType>(symbolTypeIndex);
+  return static_cast<ContinuousFunctionProperties::SymbolType>(symbolTypeIndex);
 }
 
 // Function evaluation memoization

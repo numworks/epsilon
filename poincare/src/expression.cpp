@@ -255,6 +255,60 @@ bool Expression::IsDiscontinuous(const Expression e, Context * context) {
           }, context));
 }
 
+bool Expression::IsRationalFunction(const Expression& e, Context * context, const char * symbol) {
+  if (e.type() != ExpressionNode::Type::Multiplication && e.type() != ExpressionNode::Type::Power) {
+    return false;
+  }
+  Expression numerator, denominator;
+  static_cast<const Multiplication&>(e).splitIntoNormalForm(numerator, denominator, ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
+  int denominatorDegree;
+  assert(!numerator.isUninitialized());
+  if (denominator.isUninitialized()) {
+    denominatorDegree = 0;
+  } else {
+    denominatorDegree = denominator.polynomialDegree(context, symbol);
+  }
+  int numeratorDegree = numerator.polynomialDegree(context, symbol);
+  return denominatorDegree >= 0 && numeratorDegree >= 0;
+}
+
+bool Expression::isLinearCombinationOfFunction(Context * context, PatternTest testFunction, const char * symbol) const {
+  if (testFunction(*this, context, symbol) || polynomialDegree(context, symbol) == 0) {
+    return true;
+  }
+  if (type() == ExpressionNode::Type::Addition) {
+    int n = numberOfChildren();
+    assert(n > 0);
+    for (int i = 0; i < n; i++) {
+      if (!childAtIndex(i).isLinearCombinationOfFunction(context, testFunction, symbol)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  if (type() == ExpressionNode::Type::Multiplication) {
+    int n = numberOfChildren();
+    assert(n > 0);
+    bool patternHasBeenDetected = false;
+    for (int i = 0; i < n; i++) {
+      Expression currentChild = childAtIndex(i);
+      bool childIsConstant = currentChild.polynomialDegree(context, symbol) == 0;
+      bool isPattern = !childIsConstant && currentChild.isLinearCombinationOfFunction(context, testFunction, symbol);
+      if (patternHasBeenDetected && isPattern) {
+        // There can't be a multiplication of the pattern with itself
+        return false;
+      }
+      if (!isPattern && !childIsConstant) {
+        // The coefficients must have a degree 0
+        return false;
+      }
+      patternHasBeenDetected = patternHasBeenDetected || isPattern;
+    }
+    return patternHasBeenDetected;
+  }
+  return false;
+}
+
 bool containsVariables(const Expression e, char * variables, int maxVariableSize) {
   if (e.type() == ExpressionNode::Type::Symbol) {
     int index = 0;

@@ -211,61 +211,6 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
   setCartesianEquationProperties(analysedEquation, context, xDeg, yDeg, highestCoefficientIsPositive);
 }
 
-typedef bool (*PatternTest)(const Expression& e, Context * context);
-static bool IsLinearCombinationOfPattern(const Expression& e, Context * context, PatternTest testFunction) {
-  if (testFunction(e, context) || e.polynomialDegree(context, Function::k_unknownName) == 0) {
-    return true;
-  }
-  if (e.type() == ExpressionNode::Type::Addition) {
-    int n = e.numberOfChildren();
-    assert(n > 0);
-    for (int i = 0; i < n; i++) {
-      if (!IsLinearCombinationOfPattern(e.childAtIndex(i), context, testFunction)) {
-        return false;
-      }
-    }
-    return true;
-  }
-  if (e.type() == ExpressionNode::Type::Multiplication) {
-    int n = e.numberOfChildren();
-    assert(n > 0);
-    bool patternHasBeenDetected = false;
-    for (int i = 0; i < n; i++) {
-      Expression currentChild = e.childAtIndex(i);
-      bool childIsConstant = currentChild.polynomialDegree(context, Function::k_unknownName) == 0;
-      bool isPattern = !childIsConstant && IsLinearCombinationOfPattern(currentChild, context, testFunction);
-      if (patternHasBeenDetected && isPattern) {
-        // There can't be a multiplication of the pattern with itself
-        return false;
-      }
-      if (!isPattern && !childIsConstant) {
-        // The coefficients must have a degree 0
-        return false;
-      }
-      patternHasBeenDetected = patternHasBeenDetected || isPattern;
-    }
-    return patternHasBeenDetected;
-  }
-  return false;
-}
-
-static bool IsRationalFunction(const Expression& e, Context * context) {
-  if (e.type() != ExpressionNode::Type::Multiplication && e.type() != ExpressionNode::Type::Power) {
-    return false;
-  }
-  Expression numerator, denominator;
-  static_cast<const Multiplication&>(e).splitIntoNormalForm(numerator, denominator, ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
-  int denominatorDegree;
-  assert(!numerator.isUninitialized());
-  if (denominator.isUninitialized()) {
-    denominatorDegree = 0;
-  } else {
-    denominatorDegree = denominator.polynomialDegree(context, Function::k_unknownName);
-  }
-  int numeratorDegree = numerator.polynomialDegree(context, Function::k_unknownName);
-  return denominatorDegree >= 0 && numeratorDegree >= 0;
-}
-
 void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expression& reducedEquation, Context * context) {
   assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
   assert(status() == Status::Enabled && isCartesian());
@@ -307,51 +252,51 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expressi
   }
 
   // f(x) = a*cos(b*x+c) + d*sin(e*x+f) + g*tan(h*x+k) + z
-  if (IsLinearCombinationOfPattern(
-    reducedEquation,
+  if (reducedEquation.isLinearCombinationOfFunction(
     context,
-    [](const Expression& e, Context * context) {
+    [](const Expression& e, Context * context, const char * symbol) {
       return (e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Sine || e.type() == ExpressionNode::Type::Tangent)
-            && e.childAtIndex(0).polynomialDegree(context, Function::k_unknownName) == 1;
-    }))
+            && e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
+    },
+    Function::k_unknownName))
   {
     setCaption(I18n::Message::TrigonometricType);
     return;
   }
 
   // f(x) = a*logk(b*x+c) + d*logM(e*x+f) + ... + z
-  if (IsLinearCombinationOfPattern(
-    reducedEquation,
+  if (reducedEquation.isLinearCombinationOfFunction(
     context,
-    [](const Expression& e, Context * context) {
+    [](const Expression& e, Context * context, const char * symbol) {
       return e.type() == ExpressionNode::Type::Logarithm
-            && e.childAtIndex(0).polynomialDegree(context, Function::k_unknownName) == 1;
-    }))
+            && e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
+    },
+    Function::k_unknownName))
   {
     setCaption(I18n::Message::LogarithmicType);
     return;
   }
 
   // f(x) = a*exp(b*x+c) + d
-  if (IsLinearCombinationOfPattern(
-    reducedEquation,
+  if (reducedEquation.isLinearCombinationOfFunction(
     context,
-    [](const Expression& e, Context * context) {
+    [](const Expression& e, Context * context, const char * symbol) {
       if (e.type() != ExpressionNode::Type::Power) {
         return false;
       }
       Expression base = e.childAtIndex(0);
       return base.type() == ExpressionNode::Type::ConstantMaths
             && static_cast<Constant&>(base).isExponentialE()
-            && e.childAtIndex(1).polynomialDegree(context, Function::k_unknownName) == 1;
-    }))
+            && e.childAtIndex(1).polynomialDegree(context, symbol) == 1;
+    },
+    Function::k_unknownName))
   {
     setCaption(I18n::Message::ExponentialType);
     return;
   }
 
   // f(x) = polynomial/polynomial
-  if (IsLinearCombinationOfPattern(reducedEquation, context, &IsRationalFunction)) {
+  if (reducedEquation.isLinearCombinationOfFunction(context, &Expression::IsRationalFunction, Function::k_unknownName)) {
     setCaption(I18n::Message::RationalType);
     return;
   }

@@ -214,6 +214,11 @@ public:
   static bool IsInfinity(const Expression e, Context * context);
   static bool IsPercent(const Expression e, Context * context);
   static bool IsDiscontinuous(const Expression e, Context * context);
+
+  typedef bool (*PatternTest)(const Expression& e, Context * context, const char * symbol);
+  static bool IsRationalFunction(const Expression& e, Context * context, const char * symbol);
+  bool isLinearCombinationOfFunction(Context * context, PatternTest testFunction, const char * symbol) const;
+
   /* polynomialDegree returns:
    * - (-1) if the expression is not a polynomial
    * - the degree of the polynomial otherwise */

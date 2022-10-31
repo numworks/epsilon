@@ -339,15 +339,15 @@ void InteractiveCurveViewRange::privateSetZoomAuto(bool xAuto, bool yAuto) {
 }
 
 void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool computeY) {
-  if (!m_delegate) {
-    return;
-  }
-
   if (offscreenYAxis() != 0.f) {
     /* The Navigation window was exited without being cleaned up, probably
      * because the User pressed the Home button.
      * We reset the value here to prevent skewing the grid unit. */
     setOffscreenYAxis(0.f);
+  }
+
+  if (!(m_delegate && (computeX || computeY))) {
+    return;
   }
 
   /* If m_zoomNormalize was left active, xGridUnit() would return the value of

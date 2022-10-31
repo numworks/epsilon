@@ -49,7 +49,9 @@ a.action svg {
   position: relative;
   display: inline-block;
   text-align: left;
+  margin-top: 30px;
 }
+
 .calculator-container img {
   /* Rely on the img content to set the dimensions */
   max-height: 92.0vh;

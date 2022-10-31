@@ -11,10 +11,10 @@ function Calculator(emModule) {
   var emModule = (typeof emModule === 'undefined') ? {} : emModule;
   var calculatorElement = emModule.element || document.querySelector('.calculator');
   if (document.querySelector("picture > img").currentSrc.endsWith(".webp")) {
-    calculatorElement.style.top = "0.5%";
-    calculatorElement.style.left = "8%";
-    calculatorElement.style.width = "84%";
-    calculatorElement.style.height = "89.5%";
+    calculatorElement.style.top = "0.6%";
+    calculatorElement.style.left = "7.9%";
+    calculatorElement.style.width = "84.1%";
+    calculatorElement.style.height = "89.1%";
   }
 
   var mainCanvas = calculatorElement.querySelector("canvas");

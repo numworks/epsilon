@@ -138,6 +138,12 @@ void InteractiveCurveViewController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
 
   m_interactiveRange->computeRanges();
+  if (!m_interactiveRange->zoomAuto()) {
+    /* InteractiveCurveViewRange already refreshes the cursor when requiring an
+     * update to the bottom margin. If auto is off, the margin is never updated
+     * and the cursor risks being out of place. */
+    refreshCursor();
+  }
 
   *m_rangeVersion = rangeVersion();
 

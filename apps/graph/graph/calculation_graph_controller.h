@@ -22,7 +22,7 @@ public:
   void setRecord(Ion::Storage::Record record);
 
 protected:
-  float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(bannerView()->minimalSizeForOptimalDisplay().height()); }
+  float cursorBottomMarginRatio() const override { return cursorBottomMarginRatioForBannerHeight(m_bannerView->minimalSizeForOptimalDisplay().height()); }
   BannerView * bannerView() override { return m_bannerView; }
   void reloadBannerView() override;
   int numberOfSignificantDigits() const override { return Poincare::Preferences::VeryLargeNumberOfSignificantDigits; }
@@ -43,6 +43,9 @@ private:
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::AbstractPlotView * curveView() override { return m_graphView; }
+  // Prevent horizontal panning to preserve search interval
+  float cursorRightMarginRatio() const override { return 0.0f; }
+  float cursorLeftMarginRatio() const override { return 0.0f; }
 };
 
 }

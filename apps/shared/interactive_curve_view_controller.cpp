@@ -41,7 +41,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
 }
 
-float InteractiveCurveViewController::addMargin(float y, float range, bool isVertical, bool isMin) {
+float InteractiveCurveViewController::addMargin(float y, float range, bool isVertical, bool isMin) const {
   return DefaultAddMargin(y, range, isVertical, isMin, cursorTopMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), cursorRightMarginRatio());
 }
 

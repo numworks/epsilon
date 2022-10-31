@@ -44,8 +44,8 @@ protected:
   FunctionGraphView * m_graphView;
 
 private:
-  float cursorTopMarginRatio() override { return 0.06f; }
-  float cursorBottomMarginRatio() override { return 0.28f; }
+  float cursorTopMarginRatio() const override { return 0.06f; }
+  float cursorBottomMarginRatio() const override { return 0.28f; }
   bool handleLeftRightEvent(Ion::Events::Event event) override;
   bool handleEnter() override;
   void reloadBannerView() override;

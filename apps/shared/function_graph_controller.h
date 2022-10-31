@@ -34,8 +34,8 @@ protected:
     constexpr static KDFont::Size k_font = KDFont::Size::Large;
   };
 
-  float cursorTopMarginRatio() override { return 0.068f; }
-  float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(bannerView()->minimalSizeForOptimalDisplay().height()); }
+  float cursorTopMarginRatio() const override { return 0.068f; }
+  float cursorBottomMarginRatio() const override { return cursorBottomMarginRatioForBannerHeight(const_cast<FunctionGraphController *>(this)->bannerView()->minimalSizeForOptimalDisplay().height()); }
   void reloadBannerView() override;
   bool openMenuForCurveAtIndex(int index) override;
   bool moveCursorVertically(int direction) override;

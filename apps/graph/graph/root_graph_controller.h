@@ -12,9 +12,6 @@ public:
   TELEMETRY_ID("Root");
 private:
   Poincare::Solver<double>::Interest specialInterest() const override { return Poincare::Solver<double>::Interest::Root; }
-  // Prevent horizontal panning to preserve search interval
-  float cursorRightMarginRatio() override { return 0.0f; }
-  float cursorLeftMarginRatio() override { return 0.0f; }
 };
 
 }

@@ -10,6 +10,13 @@ function Calculator(emModule) {
   // Configure emModule
   var emModule = (typeof emModule === 'undefined') ? {} : emModule;
   var calculatorElement = emModule.element || document.querySelector('.calculator');
+  if (document.querySelector("picture > img").currentSrc.endsWith(".webp")) {
+    calculatorElement.style.top = "0.5%";
+    calculatorElement.style.left = "8%";
+    calculatorElement.style.width = "84%";
+    calculatorElement.style.height = "89.5%";
+  }
+
   var mainCanvas = calculatorElement.querySelector("canvas");
   if (typeof emModule.mirrorCanvas === 'undefined') {
     /* If emModule.mirrorCanvas is defined as null, don't do anything */

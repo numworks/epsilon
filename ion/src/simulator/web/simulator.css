@@ -50,7 +50,7 @@ a.action svg {
   display: inline-block;
   text-align: left;
 }
-.calculator-container > img {
+.calculator-container img {
   /* Rely on the img content to set the dimensions */
   max-height: 92.0vh;
   max-width: 100%;

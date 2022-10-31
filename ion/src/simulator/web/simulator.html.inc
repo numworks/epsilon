@@ -14,7 +14,11 @@
     <div class="row">
       <div class="col-calculator">
         <div class="calculator-container">
-          <img src="background.webp" alt="NumWorks Calculator">
+          <picture>
+            <source srcset="background.webp" type="image/webp">
+            <source srcset="background.jpg" type="image/jpeg">
+            <img src="background.jpg" alt="NumWorks Calculator">
+          </picture>
 #include "calculator.html"
           <div class="actions">
             <a id="action-fullscreen" class="action">

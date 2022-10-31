@@ -69,11 +69,11 @@ a.action svg {
 
 .calculator-container .actions {
     position: absolute;
-    top: 94.0vh;
     text-align: center;
     left: 0;
     right: 0;
     margin-left: 20px; /* Center the buttons - compensate the 10px margin below */
+    margin-top: -15%;
 }
 
 .calculator-container .actions a {

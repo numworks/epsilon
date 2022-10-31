@@ -11,7 +11,6 @@ class PointsOfInterestCache {
 public:
   PointsOfInterestCache() : m_start(NAN), m_end(NAN) {}
 
-  bool isUpToDate() const { return m_record.checksum() == m_checksum; }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   Poincare::Range1D setBoundsAndCompute(float start, float end);
   Poincare::PointOfInterest<double> pointAtIndex(int i) const { return m_list.pointAtIndex(i); }
@@ -51,6 +50,7 @@ private:
   void append(double x, double y, Poincare::Solver<double>::Interest, Poincare::Range1D * dirtyRange, uint32_t data = 0);
 
   Ion::Storage::Record m_record;
+  Ion::Storage::Record m_computedRecord;
   uint32_t m_checksum;
   float m_start;
   float m_end;

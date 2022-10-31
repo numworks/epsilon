@@ -128,9 +128,9 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
     setZoomAuto(false);
   }
   MemoizedCurveViewRange::protectedSetXMax(xMax() + x, false, k_maxFloat);
-  MemoizedCurveViewRange::protectedSetXMin(xMin() + x, k_maxFloat);
+  MemoizedCurveViewRange::protectedSetXMin(xMin() + x, true, k_maxFloat);
   MemoizedCurveViewRange::protectedSetYMax(yMax() + y, false, k_maxFloat);
-  MemoizedCurveViewRange::protectedSetYMin(yMin() + y, k_maxFloat);
+  MemoizedCurveViewRange::protectedSetYMin(yMin() + y, true, k_maxFloat);
 }
 
 void InteractiveCurveViewRange::normalize() {

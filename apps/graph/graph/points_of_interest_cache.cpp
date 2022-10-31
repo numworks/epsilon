@@ -25,9 +25,9 @@ Range1D PointsOfInterestCache::setBoundsAndCompute(float start, float end) {
 
   Range1D dirtyRange;
 
-  uint32_t checksum = m_record.checksum();
-  if (m_checksum != checksum) {
-    /* Discard the old results if the  record has changed. */
+  uint32_t checksum = Ion::Storage::FileSystem::sharedFileSystem()->checksum();
+  if (m_checksum != checksum || m_computedRecord != m_record) {
+    /* Discard the old results if anything in the storage has changed. */
     m_start = m_end = NAN;
     if (!m_list.isUninitialized() && m_list.numberOfPoints() > 0) {
       dirtyRange = Range1D(pointAtIndex(0).x(), pointAtIndex(m_list.numberOfPoints() - 1).x());
@@ -56,7 +56,8 @@ Range1D PointsOfInterestCache::setBoundsAndCompute(float start, float end) {
     }
   }
 
-  m_checksum = m_record.checksum();
+  m_checksum = checksum;
+  m_computedRecord = m_record;
   return dirtyRange;
 }
 

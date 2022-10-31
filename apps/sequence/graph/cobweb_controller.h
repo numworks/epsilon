@@ -26,7 +26,7 @@ public:
   bool isRecordSuitable() const;
 private:
   void setStep(int step);
-  float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(bannerView()->minimalSizeForOptimalDisplay().height()); }
+  float cursorBottomMarginRatio() const override { return cursorBottomMarginRatioForBannerHeight(m_bannerView->minimalSizeForOptimalDisplay().height()); }
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return &m_graphRange; }
   Shared::AbstractPlotView * curveView() override { return &m_graphView; }
   Shared::XYBannerView * bannerView() override { return m_bannerView; };

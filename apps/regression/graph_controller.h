@@ -56,7 +56,7 @@ private:
   bool selectedSeriesIsScatterPlot() const { return m_store->seriesRegressionType(*m_selectedSeriesIndex) == Model::Type::None; }
 
   // SimpleInteractiveCurveViewController
-  float cursorBottomMarginRatio() override { return cursorBottomMarginRatioForBannerHeight(m_bannerView.minimalSizeForOptimalDisplay().height()); }
+  float cursorBottomMarginRatio() const override { return cursorBottomMarginRatioForBannerHeight(m_bannerView.minimalSizeForOptimalDisplay().height()); }
   void reloadBannerView() override;
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
   Shared::AbstractPlotView * curveView() override;

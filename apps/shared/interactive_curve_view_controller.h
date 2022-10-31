@@ -78,7 +78,7 @@ private:
   void refreshCursor();
 
   // InteractiveCurveViewRangeDelegate
-  float addMargin(float x, float range, bool isVertical, bool isMin) override;
+  float addMargin(float x, float range, bool isVertical, bool isMin) const override;
   void updateZoomButtons() override;
   void updateBottomMargin() override { refreshCursor(); }
 

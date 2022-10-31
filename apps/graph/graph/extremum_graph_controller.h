@@ -12,10 +12,6 @@ public:
   TELEMETRY_ID("Minimum");
 private:
   Poincare::Solver<double>::Interest specialInterest() const override { return Poincare::Solver<double>::Interest::LocalMinimum; }
-
-  // Prevent horizontal panning to preserve search interval
-  float cursorRightMarginRatio() override { return 0.0f; }
-  float cursorLeftMarginRatio() override { return 0.0f; }
 };
 
 class MaximumGraphController : public CalculationGraphController {
@@ -25,10 +21,6 @@ public:
   TELEMETRY_ID("Maximum");
 private:
   Poincare::Solver<double>::Interest specialInterest() const override { return Poincare::Solver<double>::Interest::LocalMaximum; }
-
-  // Prevent horizontal panning to preserve search interval
-  float cursorRightMarginRatio() override { return 0.0f; }
-  float cursorLeftMarginRatio() override { return 0.0f; }
 };
 
 }

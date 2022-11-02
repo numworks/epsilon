@@ -74,9 +74,10 @@ bool ExpressionField::didCreateEmptyFraction() {
   Layout fraction;
   if (pointedLayout.parent().type() == LayoutNode::Type::FractionLayout) {
     fraction = pointedLayout.parent();
-  } else {
-    assert(pointedLayout.parent().type() == LayoutNode::Type::HorizontalLayout && pointedLayout.parent().numberOfChildren() == 1 && pointedLayout.parent().parent().type() == LayoutNode::Type::FractionLayout);
+  } else if (pointedLayout.parent().type() == LayoutNode::Type::HorizontalLayout && pointedLayout.parent().numberOfChildren() == 1 && pointedLayout.parent().parent().type() == LayoutNode::Type::FractionLayout) {
     fraction = pointedLayout.parent().parent();
+  } else {
+    return false;
   }
   assert(fraction.type() == LayoutNode::Type::FractionLayout);
   return fraction.childAtIndex(0).isEmpty() && fraction.childAtIndex(1).isEmpty();

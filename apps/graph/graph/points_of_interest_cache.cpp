@@ -99,7 +99,9 @@ void PointsOfInterestCache::computeBetween(float start, float end, Range1D * dir
 
   if (start < 0.f && 0.f < end) {
     Coordinate2D<double> xy = f->evaluateXYAtParameter(0., context);
-    append(xy.x1(), xy.x2(), Solver<double>::Interest::YIntercept, dirtyRange);
+    if (std::isfinite(xy.x2())) {
+      append(xy.x1(), xy.x2(), Solver<double>::Interest::YIntercept, dirtyRange);
+    }
   }
 
   typedef Coordinate2D<double> (Solver<double>::*NextSolution)(Expression e);
@@ -139,6 +141,7 @@ void PointsOfInterestCache::computeBetween(float start, float end, Range1D * dir
 }
 
 void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest, Range1D * dirtyRange, uint32_t data) {
+  assert(std::isfinite(x) && std::isfinite(y));
   m_list.append(x, y, data, interest);
   dirtyRange->extend(x);
 }

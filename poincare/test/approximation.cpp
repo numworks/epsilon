@@ -633,6 +633,7 @@ QUIZ_CASE(poincare_approximation_integral) {
   assert_expression_approximates_to<double>("int(1/x,x,1,1000000)", "13.81551056", Radian, MetricUnitFormat, Cartesian, 10); // #1104
   assert_expression_approximates_to<double>("int(e^(-x)/√(x),x,0,inf)", "1.7724", Radian, MetricUnitFormat, Cartesian, 5); // poor precision
   assert_expression_approximates_to<double>("int(1,x,inf,0)", "undef"); // had performance issues
+  assert_expression_approximates_to<double>("int(e^(-x),x,inf,0)", "-1");
 
   // singularities
   assert_expression_approximates_to<double>("int(ln(x)*√(x),x,0,1)", "-0.444444444444", Radian, MetricUnitFormat, Cartesian, 12);

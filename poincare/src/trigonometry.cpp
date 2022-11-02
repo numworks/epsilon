@@ -611,14 +611,14 @@ std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, 
   return c;
 }
 
- bool Trigonometry::IsCosOrSinOfSymbol(const Expression& e, ExpressionNode::ReductionContext reductionContext, const char * symbol, bool acceptAddition, double * coefficientBeforeCos, double * coefficientBeforeSymbol, double * angle) {
+ bool Trigonometry::DetectLinearPatternOfCosOrSin(const Expression& e, ExpressionNode::ReductionContext reductionContext, const char * symbol, bool acceptAddition, double * coefficientBeforeCos, double * coefficientBeforeSymbol, double * angle) {
   if (e.type() == ExpressionNode::Type::Multiplication || (acceptAddition && e.type() == ExpressionNode::Type::Addition)) {
     /* Check if expression is a*b*cos(theta+constant) or if
      * expression is a*cos(theta+b)+constant */
     int nChildren = e.numberOfChildren();
     for (int i = 0; i < nChildren; i++) {
       Expression child = e.childAtIndex(i);
-      if(!IsCosOrSinOfSymbol(child, reductionContext, symbol, acceptAddition, coefficientBeforeCos, coefficientBeforeSymbol, angle)) {
+      if(!DetectLinearPatternOfCosOrSin(child, reductionContext, symbol, acceptAddition, coefficientBeforeCos, coefficientBeforeSymbol, angle)) {
         continue;
       }
       if (nChildren == 1) {

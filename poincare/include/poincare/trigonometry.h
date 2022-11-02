@@ -32,12 +32,18 @@ public:
   static Expression table(const Expression e, ExpressionNode::Type type,  const ExpressionNode::ReductionContext& reductionContext); // , Function f, bool inverse
   template <typename T> static std::complex<T> ConvertToRadian(const std::complex<T> c, Preferences::AngleUnit angleUnit);
   template <typename T> static std::complex<T> ConvertRadianToAngleUnit(const std::complex<T> c, Preferences::AngleUnit angleUnit);
+
   /* Detect if expression is of the form A*cosOrSin(Bx+C) + K
    * The return coefficient is A.
    * The returned angle is the value between 0 and 2pi such as the expression
    * is of the form A*cos(Bx+angle) + K
-   * K can be non-null only if acceptAddition = true */
-  static bool IsCosOrSinOfSymbol(const Expression& e, ExpressionNode::ReductionContext reductionContext, const char * symbol, bool acceptAddition, double * coefficientBeforeCos = nullptr, double * coefficientBeforeSymbol = nullptr, double * angle = nullptr);
+   * K can be non-null only if acceptAddition = true
+   *
+   * TODO: This function is very specific and used only in poincare/conic.cpp
+   * and shared/continuous_function_properties.cpp to detect some precise
+   * function patterns. It needs a refactor and could maybe be factorized with
+   * Expression::isLinearCombinationOfFunction */
+  static bool DetectLinearPatternOfCosOrSin(const Expression& e, ExpressionNode::ReductionContext reductionContext, const char * symbol, bool acceptAddition, double * coefficientBeforeCos = nullptr, double * coefficientBeforeSymbol = nullptr, double * angle = nullptr);
 private:
   static bool ExpressionIsTangentOrInverseOfTangent(const Expression & e, bool inverse);
 };

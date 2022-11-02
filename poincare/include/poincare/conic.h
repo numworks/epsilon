@@ -33,7 +33,7 @@ public:
   Conic() : m_shape(Shape::Unknown) {}
   Type conicType() const { return {coordinateType(), m_shape}; }
 
-  /* TODO: Make these methods virtual pure and mplement them for PolarConics
+  /* TODO: Make these methods virtual pure and implement them for PolarConics
    * and ParametricConics when DetailsParameterController will need to display
    * details for all types of conic. */
 

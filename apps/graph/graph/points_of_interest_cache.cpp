@@ -131,11 +131,12 @@ void PointsOfInterestCache::computeBetween(float start, float end, Range1D * dir
     }
     Expression e2 = g->expressionReduced(context);
     Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);
-    Coordinate2D<double> intersection = solver.nextIntersection(e, e2);
+    Expression diff;
+    Coordinate2D<double> intersection = solver.nextIntersection(e, e2, &diff);
     while (std::isfinite(intersection.x1())) {
       assert(sizeof(record) == sizeof(uint32_t));
       append(intersection.x1(), intersection.x2(), Solver<double>::Interest::Intersection, dirtyRange, *reinterpret_cast<uint32_t *>(&record));
-      intersection = solver.nextIntersection(e, e2);
+      intersection = solver.nextIntersection(e, e2, &diff);
     }
   }
 }

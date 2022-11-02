@@ -110,11 +110,17 @@ Coordinate2D<T> Solver<T>::nextMinimum(Expression e) {
 }
 
 template<typename T>
-Coordinate2D<T> Solver<T>::nextIntersection(Expression e1, Expression e2) {
-  Expression subtraction = Subtraction::Builder(e1, e2);
-  ExpressionNode::ReductionContext reductionContext(m_context, m_complexFormat, m_angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForAnalysis);
-  subtraction = subtraction.cloneAndSimplify(reductionContext);
-  nextRoot(subtraction);
+Coordinate2D<T> Solver<T>::nextIntersection(Expression e1, Expression e2, Expression * memoizedDifference) {
+  if (!memoizedDifference) {
+    Expression diff;
+    return nextIntersection(e1, e2, &diff);
+  }
+  assert(memoizedDifference);
+  if (memoizedDifference->isUninitialized()) {
+    ExpressionNode::ReductionContext reductionContext(m_context, m_complexFormat, m_angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForAnalysis);
+    *memoizedDifference = Subtraction::Builder(e1, e2).cloneAndSimplify(reductionContext);
+  }
+  nextRoot(*memoizedDifference);
   if (m_lastInterest == Interest::Root) {
     m_lastInterest = Interest::Intersection;
     m_yResult = e1.approximateWithValueForSymbol<T>(m_unknown, m_xStart, m_context, m_complexFormat, m_angleUnit);
@@ -328,7 +334,7 @@ template Solver<double>::Solver(double, double, const char *, Context *, Prefere
 template Coordinate2D<double> Solver<double>::next(FunctionEvaluation, const void *, BracketTest, HoneResult);
 template Coordinate2D<double> Solver<double>::nextRoot(Expression);
 template Coordinate2D<double> Solver<double>::nextMinimum(Expression);
-template Coordinate2D<double> Solver<double>::nextIntersection(Expression, Expression);
+template Coordinate2D<double> Solver<double>::nextIntersection(Expression, Expression, Expression *);
 template void Solver<double>::stretch();
 template Coordinate2D<double> Solver<double>::BrentMaximum(FunctionEvaluation, const void *, double, double, Interest, double);
 

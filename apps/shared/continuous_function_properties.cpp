@@ -80,7 +80,6 @@ void ContinuousFunctionProperties::reset() {
   setConicShape(k_defaultConicShape);
   setHasTwoSubCurves(k_defaultHasTwoSubCurves);
   setIsAlongY(k_defaultIsAlongY);
-  setIsLine(k_defaultIsLine);
 }
 
 void ContinuousFunctionProperties::setErrorStatusAndUpdateCaption(Status status) {
@@ -334,7 +333,6 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(const Poincare
       setHasTwoSubCurves(true);
     } else if (yDeg == 0) {
       setCaption(I18n::Message::VerticalLineType);
-      setIsLine(true);
       setCurveParameterType(CurveParameterType::VerticalLine);
     } else {
       assert(xDeg == 1);
@@ -344,7 +342,6 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(const Poincare
 
   if (yDeg == 1 && xDeg == 0) {
     setCaption(I18n::Message::HorizontalLineType);
-    setIsLine(true);
     setCurveParameterType(CurveParameterType::HorizontalLine);
     return;
   }
@@ -352,7 +349,6 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(const Poincare
   if (yDeg == 1 && xDeg == 1 && highestCoefficientIsPositive != TrinaryBoolean::Unknown) {
     // An Unknown y coefficient sign might mean it depends on x (y*x = ...)
     setCaption(I18n::Message::LineType);
-    setIsLine(true);
     setCurveParameterType(CurveParameterType::Line);
     return;
   }

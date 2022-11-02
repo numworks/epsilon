@@ -72,15 +72,15 @@ I18n::Message ContinuousFunctionProperties::MessageForSymbolType(SymbolType symb
 
 void ContinuousFunctionProperties::reset() {
   m_isInitialized = false;
-  setCaption((I18n::Message)0);
-  setStatus(Status::Enabled);
-  setEquationType(Poincare::ComparisonNode::OperatorType::Equal);
-  setSymbolType(SymbolType::Unknown);
-  setCurveParameterType(CurveParameterType::Default);
-  setConicShape(Poincare::Conic::Shape::Undefined);
-  setHasTwoSubCurves(false);
-  setIsAlongY(false);
-  setIsLine(false);
+  setCaption(k_defaultCaption);
+  setStatus(k_defaultStatus);
+  setEquationType(k_defaultEquationType);
+  setSymbolType(k_defaultSymbolType);
+  setCurveParameterType(k_defaultCurveParameterType);
+  setConicShape(k_defaultConicShape);
+  setHasTwoSubCurves(k_defaultHasTwoSubCurves);
+  setIsAlongY(k_defaultIsAlongY);
+  setIsLine(k_defaultIsLine);
 }
 
 void ContinuousFunctionProperties::setErrorStatusAndUpdateCaption(Status status) {

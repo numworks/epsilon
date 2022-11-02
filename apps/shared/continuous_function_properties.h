@@ -57,6 +57,16 @@ public:
     NumberOfCurveParameterTypes
   };
 
+  constexpr static I18n::Message k_defaultCaption = (I18n::Message)0;
+  constexpr static Status k_defaultStatus = Status::Enabled;
+  constexpr static Poincare::ComparisonNode::OperatorType k_defaultEquationType = Poincare::ComparisonNode::OperatorType::Equal;
+  constexpr static SymbolType k_defaultSymbolType = SymbolType::Unknown;
+  constexpr static CurveParameterType k_defaultCurveParameterType = CurveParameterType::Default;
+  constexpr static Poincare::Conic::Shape k_defaultConicShape = Poincare::Conic::Shape::Undefined;
+  constexpr static bool k_defaultHasTwoSubCurves = false;
+  constexpr static bool k_defaultIsAlongY = false;
+  constexpr static bool k_defaultIsLine = false;
+
   ContinuousFunctionProperties() { reset(); }
 
   bool isInitialized() const { return m_isInitialized; }

@@ -6,7 +6,8 @@ KDRect KDContext::relativeRect(KDRect rect) {
 }
 
 KDRect KDContext::absoluteFillRect(KDRect rect) {
-  return rect.translatedBy(m_origin).intersectedWith(m_clippingRect);
+  // If rect is huge, it is safer to intersect it first and then translate it
+  return rect.intersectedWith(m_clippingRect.translatedBy(m_origin.opposite())).translatedBy(m_origin);
 }
 
 void KDContext::fillRect(KDRect rect, KDColor color) {

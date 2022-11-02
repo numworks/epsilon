@@ -26,7 +26,7 @@ private:
 void assert_ranges_equal(Range1D observed, Range1D expected) {
   /* The range computed by Poincare::Zoom can differ from the ideal range
    * because:
-   * - the function is only sampled a finite nnumber of times, and can miss the
+   * - the function is only sampled a finite number of times, and can miss the
    *   peaks and valleys.
    * - searching for points of interest is done in single precision, without
    *   the use of Brent's methods to refine the points.*/

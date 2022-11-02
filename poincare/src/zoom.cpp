@@ -244,17 +244,19 @@ Range2D Zoom::prettyRange() const {
 
 void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone) {
   assert(leftInterrupted && rightInterrupted);
+
+  /* Pick margin large enough to detect an extremum around zero, for some
+   * particularly flat function such as (x+10)(x-10). */
+  constexpr float k_marginAroundZero = 1e-2f;
+
   float c = m_bounds.center();
-  float d = std::max(Solver<float>::k_minimalAbsoluteStep, std::fabs(c * Solver<float>::k_relativePrecision));
+  float d = std::max(k_marginAroundZero, std::fabs(c * Solver<float>::k_relativePrecision));
   *rightInterrupted = fitWithSolverHelper(c + d, m_bounds.max(), evaluator, aux, test, hone);
   *leftInterrupted = fitWithSolverHelper(c - d, m_bounds.min(), evaluator, aux, test, hone);
 
-  /* Pick d2 large enough to detect an extremum around zero, for some
-   * particularly flat function such as (x+10)(x-10). */
-  constexpr float d2 = 1e-2f;
-  Coordinate2D<float> p1(c - d2, evaluator(c - d2, aux));
+  Coordinate2D<float> p1(c - d, evaluator(c - d, aux));
   Coordinate2D<float> p2(c, evaluator(c, aux));
-  Coordinate2D<float> p3(c + d2, evaluator(c + d2, aux));
+  Coordinate2D<float> p3(c + d, evaluator(c + d, aux));
   if (pointIsInterestingHelper(p1, p2, p3, aux) != Solver<float>::Interest::None) {
     m_interestingRange.extend(p2);
   }

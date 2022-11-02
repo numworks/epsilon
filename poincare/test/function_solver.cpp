@@ -63,6 +63,13 @@ Coordinate2D<double> R(double x) { return Coordinate2D<double>(x, 0.); }
 Coordinate2D<double> XY(double x, double y) { return Coordinate2D<double>(x, y); }
 
 QUIZ_CASE(poincare_solver_roots) {
+  assert_roots_are("x", -10., 10., { R(0.) });
+  assert_roots_are("x×(x-1)", 0., 10., { R(1.) });
+  assert_roots_are("x^2+2x+1", -10., 10., { R(-1.) });
+  assert_roots_are("(x-100)×(x-101)", 0., 200., { R(100.), R(101.) });
+  assert_roots_are("x^2/((x-1)(x+1))", -10., 10., { R(0.) });
+  assert_roots_are("(x-5)^2/((x-6)(x-4))", -10., 10., { R(5.) });
+  assert_roots_are("(x+1)^2/(x^2×(x+2))", -10., 10., { R(-1.) });
   assert_roots_are("cos(x)", 0., 500., { R(90.), R(270.), R(450.) });
   assert_roots_are("cos(x)", 500., 0., { R(450.), R(270.), R(90.) });
   assert_roots_are("x^2", -1., 100., { R(0.) });
@@ -72,10 +79,16 @@ QUIZ_CASE(poincare_solver_roots) {
   // TODO assert_roots_are("0", -1., 100., { ... });
   assert_roots_are("log(x^2/(0.01-x))+4.8", -10., 10., { R(-0.00040611049837290978), R(0.00039026156644829873) });
   assert_roots_are("csc(x)+tan(2×x)", 6., -6., { R(5.127216097883478), R(3.687536352063443), R(2.5956489551161432), R(1.1559692092961089), R(-1.1559692092961089), R(-2.5956489551161432), R(-3.687536352063443), R(-5.127216097883478) }, Radian);
+  // TODO assert_roots_are("1/(x-100)^2-10000", 0., 10000., { R(99.99), R(100.01) });
+
+  assert_roots_are("1", -10., 10., {});
   assert_roots_are("3", -1., 100., {});
+  assert_roots_are("1/x", -10., 10., {});
   assert_roots_are("e^x", -1000., -800., {});
   assert_roots_are("x", 1e208, 1e208, {});
-  // TODO assert_roots_are("1/(x-100)^2-10000", 0., 10000., { R(99.99), R(100.01) });
+  assert_roots_are("(x+1)×ln(x)", 0., -10., {});
+  assert_roots_are("x^(1/x)", -123., 123., {});
+  assert_roots_are("x^x", -1e-2, 1e-2, {});
 }
 
 QUIZ_CASE(poincare_solver_minima) {

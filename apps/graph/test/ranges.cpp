@@ -40,7 +40,7 @@ private:
 };
 
 template <size_t N>
-void assert_best_range_is(const char * const (&definitions)[N], ContinuousFunction::PlotType const (&plotTypes)[N], float targetXMin, float targetXMax, float targetYMin, float targetYMax, Poincare::Preferences::AngleUnit angleUnit = Radian) {
+void assert_best_range_is(const char * const (&definitions)[N], float targetXMin, float targetXMax, float targetYMin, float targetYMax, Poincare::Preferences::AngleUnit angleUnit = Radian) {
   assert(std::isfinite(targetXMin) && std::isfinite(targetXMax) && std::isfinite(targetYMin) && std::isfinite(targetYMax)
       && targetXMin < targetXMax && targetYMin < targetYMax);
 
@@ -50,7 +50,7 @@ void assert_best_range_is(const char * const (&definitions)[N], ContinuousFuncti
   InteractiveCurveViewRange graphRange(&graphController);
 
   for (size_t i = 0; i < N; i++) {
-    addFunction(definitions[i], plotTypes[i], graphController.functionStore(), graphController.context());
+    addFunction(definitions[i], graphController.functionStore(), graphController.context());
   }
   graphRange.setZoomAuto(true);
   graphRange.computeRanges();
@@ -66,72 +66,67 @@ void assert_best_range_is(const char * const (&definitions)[N], ContinuousFuncti
   graphController.functionStore()->removeAll();
 }
 
-void assert_best_cartesian_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin, float targetYMax, Poincare::Preferences::AngleUnit angleUnit = Radian, ContinuousFunction::PlotType plotType = Cartesian) {
+void assert_best_range_is(const char * definition, float targetXMin, float targetXMax, float targetYMin, float targetYMax, Poincare::Preferences::AngleUnit angleUnit = Radian) {
   const char * definitionArray[1] = { definition };
-  ContinuousFunction::PlotType plotTypeArray[1] = { plotType };
-  assert_best_range_is(definitionArray, plotTypeArray, targetXMin, targetXMax, targetYMin, targetYMax, angleUnit);
+  assert_best_range_is(definitionArray, targetXMin, targetXMax, targetYMin, targetYMax, angleUnit);
 }
 
 QUIZ_CASE(graph_ranges_single_function) {
   Preferences::ComplexFormat previousComplexFormat = Preferences::sharedPreferences()->complexFormat();
   Preferences::sharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Cartesian);
 
-  assert_best_cartesian_range_is("f(x)=undef", -10, 10, -5.66249943, 4.96249962, Radian, ContinuousFunction::PlotType::Undefined);
-  assert_best_cartesian_range_is("f(x)=x!", -10, 10, -5.66249943, 4.96249962);
-  assert_best_cartesian_range_is("f(x)=abs(x)", -10, 10, -1.702784, 8.922215);
+  assert_best_range_is("f(x)=undef", -10, 10, -5.66249943, 4.96249962, Radian);
+  assert_best_range_is("f(x)=x!", -10, 10, -5.66249943, 4.96249962);
+  assert_best_range_is("f(x)=abs(x)", -10, 10, -1.702784, 8.922215);
 
-  assert_best_cartesian_range_is("f(x)=0", -10, 10, -5.66249943, 4.96249962);
-  assert_best_cartesian_range_is("f(x)=1", -10, 10, -4.66249943, 5.96249962);
-  assert_best_cartesian_range_is("f(x)=-100", -10, 10, -105.662506, -95.0375061);
-  assert_best_cartesian_range_is("f(x)=0.01", -10, 10, -5.66249943, 4.96249962);
-  assert_best_cartesian_range_is("f(x)=x", -10, 10, -5.66249943, 4.96249962);
-  assert_best_cartesian_range_is("f(x)=x+1", -12, 10, -6.14374924, 5.54374981);
-  assert_best_cartesian_range_is("f(x)=-x+5", -7, 16, -6.10937452, 6.10937452);
-  assert_best_cartesian_range_is("f(x)=x/2+2", -15, 8, -6.10937452, 6.10937452);
-  assert_best_cartesian_range_is("f(x)=x^2", -10, 10, -7, 40);
-  assert_best_cartesian_range_is("f(x)=x^3", -10, 10, -5.16249943, 5.46249962);
-  assert_best_cartesian_range_is("f(x)=-2x^6", -10, 10, -16000, 2000);
-  assert_best_cartesian_range_is("f(x)=3x^2+x+10", -12, 11, -50, 260);
+  assert_best_range_is("f(x)=0", -10, 10, -5.66249943, 4.96249962);
+  assert_best_range_is("f(x)=1", -10, 10, -4.66249943, 5.96249962);
+  assert_best_range_is("f(x)=-100", -10, 10, -105.662506, -95.0375061);
+  assert_best_range_is("f(x)=0.01", -10, 10, -5.66249943, 4.96249962);
+  assert_best_range_is("f(x)=x", -10, 10, -5.66249943, 4.96249962);
+  assert_best_range_is("f(x)=x+1", -12, 10, -6.14374924, 5.54374981);
+  assert_best_range_is("f(x)=-x+5", -7, 16, -6.10937452, 6.10937452);
+  assert_best_range_is("f(x)=x/2+2", -15, 8, -6.10937452, 6.10937452);
+  assert_best_range_is("f(x)=x^2", -10, 10, -7, 40);
+  assert_best_range_is("f(x)=x^3", -10, 10, -5.16249943, 5.46249962);
+  assert_best_range_is("f(x)=-2x^6", -10, 10, -16000, 2000);
+  assert_best_range_is("f(x)=3x^2+x+10", -12, 11, -50, 260);
 
-  assert_best_cartesian_range_is("f(x)=1/x", -4, 4, -2.27499962, 1.97499979);
-  assert_best_cartesian_range_is("f(x)=1/(1-x)", -2.9000001, 4.9000001, -2.12187481, 2.0218749);
-  assert_best_cartesian_range_is("f(x)=1/(x^2+1)", -3.10000014, 3.10000014, -1.24687481, 2.046875);
+  assert_best_range_is("f(x)=1/x", -4, 4, -2.27499962, 1.97499979);
+  assert_best_range_is("f(x)=1/(1-x)", -2.9000001, 4.9000001, -2.12187481, 2.0218749);
+  assert_best_range_is("f(x)=1/(x^2+1)", -3.10000014, 3.10000014, -1.24687481, 2.046875);
 
-  assert_best_cartesian_range_is("f(x)=sin(x)", -15, 15, -1.39999998, 1.20000005, Radian);
-  assert_best_cartesian_range_is("f(x)=cos(x)", -1000, 1000, -1.39999998, 1.20000005, Degree);
-  assert_best_cartesian_range_is("f(x)=tan(x)", -900, 900, -3.5, 3.10000014, Gradian);
-  assert_best_cartesian_range_is("f(x)=tan(x-100)", -1100, 1100, -3.9000001, 3.4000001, Gradian);
+  assert_best_range_is("f(x)=sin(x)", -15, 15, -1.39999998, 1.20000005, Radian);
+  assert_best_range_is("f(x)=cos(x)", -1000, 1000, -1.39999998, 1.20000005, Degree);
+  assert_best_range_is("f(x)=tan(x)", -900, 900, -3.5, 3.10000014, Gradian);
+  assert_best_range_is("f(x)=tan(x-100)", -1100, 1100, -3.9000001, 3.4000001, Gradian);
 
-  assert_best_cartesian_range_is("f(x)=e^x", -10, 10, -1.71249962, 8.91249943);
-  assert_best_cartesian_range_is("f(x)=e^x+4", -10, 10, 2.28750038, 12.9124994);
-  assert_best_cartesian_range_is("f(x)=e^(-x)", -10, 10, -1.71249962, 8.91249943);
-  assert_best_cartesian_range_is("f(x)=(1-x)e^(1/(1-x))", -1.62682521, 2.726825, -3, 5.0999999);
-  assert_best_cartesian_range_is("f(x)=(e^x-1)/(e^x+1)", -3.7, 3.7, -2.115625, 1.815625);
+  assert_best_range_is("f(x)=e^x", -10, 10, -1.71249962, 8.91249943);
+  assert_best_range_is("f(x)=e^x+4", -10, 10, 2.28750038, 12.9124994);
+  assert_best_range_is("f(x)=e^(-x)", -10, 10, -1.71249962, 8.91249943);
+  assert_best_range_is("f(x)=(1-x)e^(1/(1-x))", -1.62682521, 2.726825, -3, 5.0999999);
+  assert_best_range_is("f(x)=(e^x-1)/(e^x+1)", -3.7, 3.7, -2.115625, 1.815625);
 
-  assert_best_cartesian_range_is("f(x)=ln(x)", -1.9, 6.8, -2.36093712, 2.26093721);
-  assert_best_cartesian_range_is("f(x)=log(x)", -0.9, 3.1, -1.5125, 0.6125);
+  assert_best_range_is("f(x)=ln(x)", -1.9, 6.8, -2.36093712, 2.26093721);
+  assert_best_range_is("f(x)=log(x)", -0.9, 3.1, -1.5125, 0.6125);
 
-  assert_best_cartesian_range_is("f(x)=√(x)", -3, 9, -1.83749962, 4.53749943);
-  assert_best_cartesian_range_is("f(x)=√(x-1)", -2, 10, -1.8875, 4.4875);
-  assert_best_cartesian_range_is("f(x)=√(x^2+1)-x", -10, 10, -1.26249981, 9.36249924);
-  assert_best_cartesian_range_is("f(x)=root(x,3)", -0.8, 2.9, -0.332812428, 1.63281238);
-  assert_best_cartesian_range_is("f(x)=root(x^3+1,3)-x", -2, 2.29999995, -0.392187476, 1.89218748);
-  assert_best_cartesian_range_is("f(x)=x^x", -0.9, 3.1, -1.3, 7.7);
+  assert_best_range_is("f(x)=√(x)", -3, 9, -1.83749962, 4.53749943);
+  assert_best_range_is("f(x)=√(x-1)", -2, 10, -1.8875, 4.4875);
+  assert_best_range_is("f(x)=√(x^2+1)-x", -10, 10, -1.26249981, 9.36249924);
+  assert_best_range_is("f(x)=root(x,3)", -0.8, 2.9, -0.332812428, 1.63281238);
+  assert_best_range_is("f(x)=root(x^3+1,3)-x", -2, 2.29999995, -0.392187476, 1.89218748);
+  assert_best_range_is("f(x)=x^x", -0.9, 3.1, -1.3, 7.7);
   // TODO : Fix ranges for (x-1)^(x-1) with any complex format
-  assert_best_cartesian_range_is("f(x)=(x-1)^(x-1)", -66.4319, 37.4319458, -23.0888424, 32.0888443);
+  assert_best_range_is("f(x)=(x-1)^(x-1)", -66.4319, 37.4319458, -23.0888424, 32.0888443);
 
   // Ranges with Real complex format
   Preferences::sharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Real);
-  assert_best_cartesian_range_is("f(x)=root(x,3)", -3.7, 3.7, -2.1156249, 1.81562483);
+  assert_best_range_is("f(x)=root(x,3)", -3.7, 3.7, -2.1156249, 1.81562483);
   // TODO : Fix ranges for x^x with real complex format
-  assert_best_cartesian_range_is("f(x)=x^x", -11, 6, -1.71562457, 7.31562424);
+  assert_best_range_is("f(x)=x^x", -11, 6, -1.71562457, 7.31562424);
 
   // Vertical line
-  {
-    const char * definition[1] = { "x=-1" };
-    ContinuousFunction::PlotType type[1] = { ContinuousFunction::PlotType::VerticalLine };
-    assert_best_range_is(definition, type, -11, 9, -5.66249943, 4.962499);
-  }
+  assert_best_range_is("x=-1", -11, 9, -5.66249943, 4.962499);
 
   // Restore previous complex format
   Preferences::sharedPreferences()->setComplexFormat(previousComplexFormat);
@@ -140,23 +135,19 @@ QUIZ_CASE(graph_ranges_single_function) {
 QUIZ_CASE(graph_ranges_several_functions) {
   {
     const char * definitions[] = {"f(x)=e^x", "g(x)=ln(x)"};
-    ContinuousFunction::PlotType types[] = {Cartesian, Cartesian};
-    assert_best_range_is(definitions, types, -1.9, 6.8, -8, 35);
+    assert_best_range_is(definitions, -1.9, 6.8, -8, 35);
   }
   {
     const char * definitions[] = {"f(x)=x/2+2", "g(x)=-x+5"};
-    ContinuousFunction::PlotType types[] = {Cartesian, Cartesian};
-    assert_best_range_is(definitions, types, -16, 17, -5.76562405, 11.765624);
+    assert_best_range_is(definitions, -16, 17, -5.76562405, 11.765624);
   }
   {
     const char * definitions[] = {"r=sin(θ)", "r=cos(θ)"};
-    ContinuousFunction::PlotType types[] = {Polar, Polar};
-    assert_best_range_is(definitions, types, -1.63235319, 2.13235331, -0.800000011, 1.20000005);
+    assert_best_range_is(definitions, -1.63235319, 2.13235331, -0.800000011, 1.20000005);
   }
   {
     const char * definitions[] = {"f(x)=e^(i×x)", "g(t)=[[re(f(t))][im(f(t))]]"};
-    ContinuousFunction::PlotType types[] = {Cartesian, Parametric};
-    assert_best_range_is(definitions, types, -2.44705892, 2.44705892, -1.4, 1.2);
+    assert_best_range_is(definitions, -2.44705892, 2.44705892, -1.4, 1.2);
   }
 }
 

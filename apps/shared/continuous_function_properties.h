@@ -62,7 +62,7 @@ public:
   constexpr static SymbolType k_defaultSymbolType = SymbolType::X;
   constexpr static CurveParameterType k_defaultCurveParameterType = CurveParameterType::Default;
   constexpr static Poincare::Conic::Shape k_defaultConicShape = Poincare::Conic::Shape::Undefined;
-  constexpr static bool k_defaultHasTwoSubCurves = false;
+  constexpr static bool k_defaultIsOfDegreeTwo = false;
   constexpr static bool k_defaultIsAlongY = false;
 
   ContinuousFunctionProperties() { reset(); }
@@ -75,7 +75,7 @@ public:
   Poincare::ComparisonNode::OperatorType equationType() const { assert(isInitialized()); return static_cast<Poincare::ComparisonNode::OperatorType>(m_propertiesBitField.m_equationType); }
   SymbolType symbolType() const { assert(isInitialized()); return static_cast<SymbolType>(m_propertiesBitField.m_symbolType); }
   CurveParameterType getCurveParameterType() const { assert(isInitialized()); return static_cast<CurveParameterType>(m_propertiesBitField.m_curveParameterType); }
-  int numberOfSubCurves() const { assert(isInitialized()); return m_propertiesBitField.m_hasTwoSubCurves ? 2 : 1; }
+  bool isOfDegreeTwo() const { assert(isInitialized()); return m_propertiesBitField.m_isOfDegreeTwo; }
   Poincare::Conic::Shape conicShape() const { assert(isInitialized()); return static_cast<Poincare::Conic::Shape>(m_propertiesBitField.m_conicShape); }
   bool isAlongY() const { assert(isInitialized()); return m_propertiesBitField.m_isAlongY; }
 
@@ -91,12 +91,12 @@ public:
   bool isPolar() const { return symbolType() == SymbolType::Theta; }
   bool isEquality() const { return equationType() == Poincare::ComparisonNode::OperatorType::Equal;}
 
-  bool canBeActiveInTable() const { return !isAlongY() && numberOfSubCurves() == 1 && isEquality(); }
+  bool canBeActiveInTable() const { return !isAlongY() && !isOfDegreeTwo() && isEquality(); }
   bool canHaveCustomDomain() const { return !isAlongY() && isEquality(); }
 
   bool isLine() const { return getCurveParameterType() == CurveParameterType::VerticalLine || getCurveParameterType() == CurveParameterType::HorizontalLine || getCurveParameterType() == CurveParameterType::Line; }
   bool isConic() const { return conicShape() != Poincare::Conic::Shape::Undefined; }
-  bool isCartesianHyperbolaWithTwoSubCurves() const { return conicShape() == Poincare::Conic::Shape::Hyperbola && isCartesian() && numberOfSubCurves() == 2; }
+  bool isCartesianHyperbolaOfDegreeTwo() const { return conicShape() == Poincare::Conic::Shape::Hyperbola && isCartesian() && isOfDegreeTwo(); }
 
   /* Normalization isn't enforced on Parabola and Hyperbola for a better zooms.
    * It is on Circle and Ellipses so that they don't look like each other. */
@@ -150,8 +150,8 @@ private:
   void setEquationType(Poincare::ComparisonNode::OperatorType type) { m_propertiesBitField.m_equationType = static_cast<uint8_t>(type); }
   void setSymbolType(SymbolType type) { m_propertiesBitField.m_symbolType = static_cast<uint8_t>(type); }
   void setCurveParameterType(CurveParameterType type) { m_propertiesBitField.m_curveParameterType = static_cast<uint8_t>(type); }
-  void setHasTwoSubCurves(bool hasTwoSubCurves) { m_propertiesBitField.m_hasTwoSubCurves = hasTwoSubCurves; }
   void setConicShape(Poincare::Conic::Shape shape) { m_propertiesBitField.m_conicShape = static_cast<uint8_t>(shape); }
+  void setIsOfDegreeTwo(bool isOfDegreeTwo) { m_propertiesBitField.m_isOfDegreeTwo = isOfDegreeTwo; }
   void setIsAlongY(bool isAlongY) { m_propertiesBitField.m_isAlongY = isAlongY; }
 
   struct PropertiesBitField { // Current size : 2 bytes
@@ -160,7 +160,7 @@ private:
     /* Symbol */ uint8_t m_symbolType : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(SymbolType::NumberOfSymbolTypes));
     /* CurveParameterType */ uint8_t m_curveParameterType : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(CurveParameterType::NumberOfCurveParameterTypes));
     /* Poincare::Conic::Shape */ uint8_t m_conicShape : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(Poincare::Conic::Shape::NumberOfShapes));
-    bool m_hasTwoSubCurves : 1;
+    bool m_isOfDegreeTwo : 1;
     bool m_isAlongY : 1;
   };
 

@@ -86,6 +86,11 @@ Coordinate2D<T> Solver<T>::nextRoot(Expression e) {
     return nextRoot(e.childAtIndex(0));
 
   default:
+    if (e.isNull(m_context) == TrinaryBoolean::False) {
+      registerSolution(Coordinate2D<T>(), Interest::None);
+      return Coordinate2D<T>();
+    }
+
     Coordinate2D<T> res = next(e, EvenOrOddRootInBracket, CompositeBrentForRoot);
     if (lastInterest() != Interest::None) {
       m_lastInterest = Interest::Root;
@@ -96,6 +101,11 @@ Coordinate2D<T> Solver<T>::nextRoot(Expression e) {
 
 template<typename T>
 Coordinate2D<T> Solver<T>::nextMinimum(Expression e) {
+  /* TODO We could add a layer of formal resolution:
+   * - use the derivative (could be an optional argument to avoid recomputing
+   *   it every time)
+   * - since d(f°g) = dg×df°g, if f is known to be monotonous (i.e. df≠0), look
+   *   for the extrema of g. */
   return next(e, MinimumInBracket, SolverAlgorithms::BrentMinimum);
 }
 

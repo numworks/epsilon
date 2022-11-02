@@ -289,22 +289,19 @@ bool Expression::isLinearCombinationOfFunction(Context * context, PatternTest te
   if (type() == ExpressionNode::Type::Multiplication) {
     int n = numberOfChildren();
     assert(n > 0);
-    bool patternHasBeenDetected = false;
+    bool patternHasAlreadyBeenDetected = false;
     for (int i = 0; i < n; i++) {
       Expression currentChild = childAtIndex(i);
       bool childIsConstant = currentChild.polynomialDegree(context, symbol) == 0;
-      bool isPattern = !childIsConstant && currentChild.isLinearCombinationOfFunction(context, testFunction, symbol);
-      if (patternHasBeenDetected && isPattern) {
-        // There can't be a multiplication of the pattern with itself
+      bool childIsPattern = currentChild.isLinearCombinationOfFunction(context, testFunction, symbol);
+      if (!childIsConstant && (!childIsPattern || patternHasAlreadyBeenDetected)) {
+        /* The coefficient must have a degree 0 if it's not the pattern
+         * and there can't be a multiplication of the pattern with itself */
         return false;
       }
-      if (!isPattern && !childIsConstant) {
-        // The coefficients must have a degree 0
-        return false;
-      }
-      patternHasBeenDetected = patternHasBeenDetected || isPattern;
+      patternHasAlreadyBeenDetected = patternHasAlreadyBeenDetected || (childIsPattern && !childIsConstant);
     }
-    return patternHasBeenDetected;
+    return patternHasAlreadyBeenDetected;
   }
   return false;
 }

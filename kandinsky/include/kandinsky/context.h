@@ -34,7 +34,7 @@ public:
 
   // Line. Not anti-aliased.
   void drawLine(KDPoint p1, KDPoint p2, KDColor c);
-  void drawAntialiasedLine(KDPoint p1, KDPoint p2, KDColor c, KDColor background);
+  void drawAntialiasedLine(KDPoint p1, KDPoint p2, KDColor c, KDColor background) { drawAntialiasedLine(p1.x(), p1.y(), p2.x(), p2.y(), c, background); }
   void drawAntialiasedLine(float x1, float y1, float x2, float y2, KDColor c, KDColor background);
 
   // Rect

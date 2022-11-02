@@ -21,6 +21,8 @@ void Zoom::HorizontalAsymptoteHelper::update(Coordinate2D<float> p, float slope)
 // Zoom - Public
 
 Range2D Zoom::Sanitize(Range2D range, float normalYXRatio, float maxFloat) {
+  /* Values for tMin and tMax actually do not matter here, as no function will
+   * be evaluated to generate this zoom. */
   Zoom zoom(-maxFloat, maxFloat, normalYXRatio, nullptr);
   zoom.m_interestingRange = range;
   return zoom.range(maxFloat, false);
@@ -38,8 +40,9 @@ Range2D Zoom::range(float maxFloat, bool forceNormalization) const {
     result.setRatio(m_normalRatio, false);
   }
 
-  // Condition inverted to account for NANs
-  assert(!(result.xMin() > m_interestingRange.xMin()) && !(m_interestingRange.xMax() > result.xMax()) && !(result.yMin() > m_interestingRange.yMin()) && !(m_interestingRange.yMax() > result.yMax()));
+  assert(!const_cast<Zoom *>(this)->m_interestingRange.x().isValid() || (result.xMin() <= m_interestingRange.xMin() && m_interestingRange.xMax() <= result.xMax()));
+  assert(!const_cast<Zoom *>(this)->m_interestingRange.y().isValid() || (result.yMin() <= m_interestingRange.yMin() && m_interestingRange.yMax() <= result.yMax()));
+  assert(result.x().isValid() && result.y().isValid() && !result.x().isEmpty() && !result.y().isEmpty());
   return result;
 }
 
@@ -60,6 +63,9 @@ void Zoom::fitPointsOfInterest(Function2DWithContext f, const void * model) {
   };
   bool leftInterrupted, rightInterrupted;
   fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator, &params, PointIsInteresting, HonePoint);
+  /* If the search has been interrupted, the curve is supposed to have an
+   * infinite number of points in this direction. An horizontal asymptote
+   * would be the result of a sampling artifact and can be discarded. */
   if (!leftInterrupted) {
     m_interestingRange.extend(asymptotes.left());
   }
@@ -83,6 +89,8 @@ void Zoom::fitIntersections(Function2DWithContext f1, const void * model1, Funct
   };
   Solver<float>::HoneResult hone = [](Solver<float>::FunctionEvaluation f, const void * aux, float, float b, Solver<float>::Interest, float) {
     const Parameters * p = static_cast<const Parameters *>(aux);
+    /* Return the faraway point (i.e. b) to avoid finding the same intersection
+     * twice. */
     return p->f1(b, p->model1, p->context);
   };
   bool dummy;
@@ -90,7 +98,7 @@ void Zoom::fitIntersections(Function2DWithContext f1, const void * model1, Funct
 }
 
 void Zoom::fitMagnitude(Function2DWithContext f, const void * model) {
-  /* We comute the log mean value of the expression, which gives an idea of the
+  /* We compute the log mean value of the expression, which gives an idea of the
    * order of magnitude of the function, to crop the Y axis. */
   constexpr float aboutZero = Solver<float>::k_minimalAbsoluteStep;
   Range1D sample;
@@ -144,29 +152,38 @@ Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a, Coordina
 }
 
 Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest interest, float precision) {
+  /* Use a simple dichotomy in [a,b] to hone in on the point of interest
+   * without using the costly Brent methods. */
   constexpr int k_numberOfIterations = 10; // TODO Tune
-  bool convex = true;
-  float c = 0.5f * (a + b);
-  Coordinate2D<float> pa(a, f(a, aux)), pb(b, f(b, aux)), pc(c, f(c, aux));
+  bool continuous = true;
+  /* Define three points m, u and v such that a < u < m < v < b. Then, we can
+   * determine wether the point of interest exists on [a,m] or [m,b]. */
+  float m = 0.5f * (a + b);
+  Coordinate2D<float> pa(a, f(a, aux)), pb(b, f(b, aux)), pm(m, f(m, aux));
   Coordinate2D<float> pu, pv;
 
   for (int i = 0; i < k_numberOfIterations; i++) {
-    pu.setX1(0.5f * (pa.x1() + pc.x1()));
+    pu.setX1(0.5f * (pa.x1() + pm.x1()));
     pu.setX2(f(pu.x1(), aux));
-    pv.setX1(0.5f * (pc.x1() + pb.x1()));
+    pv.setX1(0.5f * (pm.x1() + pb.x1()));
     pv.setX2(f(pv.x1(), aux));
 
-    convex = std::fabs(pu.x2() - pc.x2()) <= std::fabs(pa.x2() - pc.x2()) && std::fabs(pv.x2() - pc.x2()) <= std::fabs(pb.x2() - pc.x2());
+    continuous = std::fabs(pu.x2() - pm.x2()) <= std::fabs(pa.x2() - pm.x2()) && std::fabs(pv.x2() - pm.x2()) <= std::fabs(pb.x2() - pm.x2());
 
-    if (pointIsInterestingHelper(pc, pv, pb, aux) != Solver<float>::Interest::None || pointIsInterestingHelper(pa, pu, pc, aux) == Solver<float>::Interest::None) {
-      pa = pc;
-      pc = pv;
+    /* Select the interval that contains the point of interest. If, because of
+     * some artefacts, both or neither contains a point, we favor the interval
+     * on the far side (i.e. [m,b]) to avoid finding the same point twice. */
+    if (pointIsInterestingHelper(pm, pv, pb, aux) != Solver<float>::Interest::None || pointIsInterestingHelper(pa, pu, pm, aux) == Solver<float>::Interest::None) {
+      pa = pm;
+      pm = pv;
     } else {
-      pb = pc;
-      pc = pu;
+      pb = pm;
+      pm = pu;
     }
   }
-  return Coordinate2D<float>(pb.x1(), interest == Solver<float>::Interest::Root ? 0.f : convex ? pb.x2() : NAN);
+  /* If the function is discontinuous around the solution (e.g. 1/x^2), we
+   * discard the y value to avoid zooming in on diverging points. */
+  return Coordinate2D<float>(pb.x1(), interest == Solver<float>::Interest::Root ? 0.f : continuous ? pb.x2() : NAN);
 }
 
 Range1D Zoom::sanitizedXRange() const {
@@ -197,6 +214,12 @@ Range2D Zoom::prettyRange() const {
   float yLengthNormalized = xLength * m_normalRatio;
   constexpr float k_minimalXCoverage = 0.8f;
   constexpr float k_minimalYCoverage = 0.3f;
+  /* yCanBeNormalized is true if:
+   * - a normalized Y range can fit the interesting Y range. We only count the
+   *   interesting Y range for this part as discarding the part that comes from
+   *   the magnitude is not an issue.
+   * - the Y range (interesting + magnitude) makes up for at least 30% of the normalized Y
+   *   range (i.e. the curve does not appear squeezed). */
   bool yCanBeNormalized = yLengthNormalized * k_minimalYCoverage <= yLength && thisRange.y().length() <= yLengthNormalized;
   if (!yRange.isValid() || yLength == 0.f || yCanBeNormalized) {
     float yCenter = yRange.center();
@@ -240,6 +263,16 @@ void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver
 bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone) {
   constexpr int k_maxPointsOnOneSide = 20;
   constexpr int k_maxPointsIfInfinite = 5;
+
+  /* Search for points of interest in one direction, up to a certain number.
+   * - k_maxPointsOnOneSide is the absolute maximum number of points we are
+   *   allowed to find. It is high enough to correctly zoom on a tenth degree
+   *   polynomial.
+   * - if we find more the k_maxPointsOnOneSide points, we assume that there
+   *   are an infinite number of points. As such there is no need to display
+   *   all of them, and we only register up to k_maxPointsIfInfinite. This
+   *   trick improves the display of periodic function, which would otherwise
+   *   appear cramped. */
 
   Solver<float> solver(start, end);
   Range2D tempRange;

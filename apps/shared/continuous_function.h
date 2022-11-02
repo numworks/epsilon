@@ -13,6 +13,7 @@
 #include "function.h"
 #include "continuous_function_properties.h"
 #include "range_1D.h"
+#include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
 #include <poincare/conic.h>
 #include <poincare/comparison.h>
@@ -73,12 +74,8 @@ public:
   void getLineParameters(double * slope, double * intercept, Poincare::Context * context) const;
   // Compute conic parameters from ContinuousFunction
   Poincare::CartesianConic cartesianConicParameters(Poincare::Context * context) const;
-  /* Return the number of subcurves to plot.
-   * Warning : This function needs the solutions to have been computed in the
-   * (expensive) expressionReduced method before yielding a non-zero result.
-   * numberOfSubCurves shouldn't be called at stages where the expressionReduced
-   * has not been executed yet. */
-  int numberOfSubCurves() const override { return properties().numberOfSubCurves(); }
+  // Return the number of subcurves to plot.
+  int numberOfSubCurves() const override { return m_model.numberOfSubCurves(this); }
 
   /* Expression */
 
@@ -255,6 +252,7 @@ private:
     void tidyDownstreamPoolFrom(char * treePoolCursor) const override;
     // m_plotType getter
     ContinuousFunctionProperties properties() const { return m_properties; }
+    int numberOfSubCurves(const Ion::Storage::Record * record) const;
     // Reset m_plotType to Uninitialized type
     void resetProperties() const { m_properties.reset(); }
 

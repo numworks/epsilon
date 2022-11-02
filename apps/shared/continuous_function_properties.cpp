@@ -40,10 +40,10 @@ ContinuousFunctionProperties::AreaType ContinuousFunctionProperties::areaType() 
   }
   // To draw y^2>a, the area plotted should be Outside and not Above.
   if (equationType() == ComparisonNode::OperatorType::Inferior || equationType() == ComparisonNode::OperatorType::InferiorEqual) {
-    return numberOfSubCurves() == 1 ? AreaType::Below : AreaType::Inside;
+    return isOfDegreeTwo() ? AreaType::Inside : AreaType::Below;
   }
   assert(equationType() == ComparisonNode::OperatorType::Superior || equationType() == ComparisonNode::OperatorType::SuperiorEqual);
-  return numberOfSubCurves() == 1 ? AreaType::Above : AreaType::Outside;
+  return isOfDegreeTwo() ? AreaType::Outside : AreaType::Above;
 }
 
 CodePoint ContinuousFunctionProperties::symbol() const {
@@ -78,7 +78,7 @@ void ContinuousFunctionProperties::reset() {
   setSymbolType(k_defaultSymbolType);
   setCurveParameterType(k_defaultCurveParameterType);
   setConicShape(k_defaultConicShape);
-  setHasTwoSubCurves(k_defaultHasTwoSubCurves);
+  setIsOfDegreeTwo(k_defaultIsOfDegreeTwo);
   setIsAlongY(k_defaultIsAlongY);
 }
 
@@ -323,7 +323,7 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(const Poincare
     setIsAlongY(true);
     setCaption(I18n::Message::EquationType);
     if (xDeg == 2) {
-      setHasTwoSubCurves(true);
+      setIsOfDegreeTwo(true);
     } else if (yDeg == 0) {
       setCaption(I18n::Message::VerticalLineType);
       setCurveParameterType(CurveParameterType::VerticalLine);
@@ -332,6 +332,8 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(const Poincare
     }
     return;
   }
+
+  assert(yDeg == 2 || yDeg == 1);
 
   if (yDeg == 1 && xDeg == 0) {
     setCaption(I18n::Message::HorizontalLineType);
@@ -346,10 +348,10 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(const Poincare
     return;
   }
 
-  setHasTwoSubCurves(yDeg > 1);
-  setCurveParameterType(yDeg > 1 ? CurveParameterType::Default : CurveParameterType::CartesianFunction);
+  setIsOfDegreeTwo(yDeg == 2);
+  setCurveParameterType(yDeg == 2 ? CurveParameterType::Default : CurveParameterType::CartesianFunction);
 
-  if (yDeg >= 1 && xDeg >= 1 && xDeg <= 2 && !ExamModeConfiguration::implicitPlotsAreForbidden()) {
+  if (xDeg >= 1 && xDeg <= 2 && !ExamModeConfiguration::implicitPlotsAreForbidden()) {
     /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
      * details. Otherwise, try to identify a conic.
      * For instance, x*y=1 as an hyperbola. */

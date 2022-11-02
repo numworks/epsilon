@@ -35,7 +35,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     assert(subCurveIndex != nullptr);
     // previousXY will be needed for conic's special horizontal cursor moves.
     specialConicCursorMove = std::isfinite(function->evaluateXYAtParameter(t, context, *subCurveIndex).x2());
-    if (*subCurveIndex == 1 && !function->properties().isCartesianHyperbolaWithTwoSubCurves()) {
+    if (*subCurveIndex == 1 && !function->properties().isCartesianHyperbolaOfDegreeTwo()) {
       // On the sub curve, pressing left actually moves the cursor right
       dir *= -1.0;
     }
@@ -99,7 +99,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   Coordinate2D<double> xy = function->evaluateXYAtParameter(t, context, subCurveIndexValue);
 
   if (specialConicCursorMove && std::isnan(xy.x2())) {
-    if (function->properties().isCartesianHyperbolaWithTwoSubCurves()) {
+    if (function->properties().isCartesianHyperbolaOfDegreeTwo()) {
       // Hyperbolas have an undefined section along-side the x axis.
       double previousT = t;
       int tries = 0;

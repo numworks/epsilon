@@ -41,7 +41,7 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
 
 ContinuousFunctionProperties ContinuousFunction::properties() const {
   if (!m_model.properties().isInitialized()) {
-    // Computing the expression equation will update the unknown plot type.
+    // Computing the expression equation will update the function properties
     expressionReducedForAnalysis(AppsContainerHelper::sharedAppsContainerGlobalContext());
   }
   assert(m_model.properties().isInitialized());
@@ -155,11 +155,10 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, dou
 
 void ContinuousFunction::updateModel(Context * context, bool wasCartesian) {
   setCache(nullptr);
-  // Reset model's plot type. expressionReducedForAnalysis() will update plotType
-  m_model.resetProperties();
-  expressionReducedForAnalysis(context);
-  assert(properties().isInitialized());
-  if (wasCartesian != m_model.properties().isCartesian() || !properties().canHaveCustomDomain()) {
+  m_model.resetProperties(); // Reset model's properties.
+  properties(); // update properties.
+  assert(m_model.properties().isInitialized());
+  if (wasCartesian != properties().isCartesian() || !properties().canHaveCustomDomain()) {
     // The definition's domain must be reset.
     setTAuto(true);
   }
@@ -493,6 +492,10 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
   if (m_expression.isUninitialized()) {
     // Retrieve the expression equation's expression.
     m_expression = expressionReducedForAnalysis(record, context);
+    if (properties().status() != ContinuousFunctionProperties::Status::Enabled) {
+      m_expression = Undefined::Builder();
+      return m_expression;
+    }
     Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(record, context), angleUnit(record, context));
     if (!properties().isPolar() && (record->fullName() == nullptr || record->fullName()[0] == k_unnamedRecordFirstChar)) {
       /* Function isn't named, m_expression currently is an expression in y or x
@@ -529,6 +532,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
           false);
       } else if (degree == 2) {
         // Equation is of degree 2, each root is a subcurve to plot.
+        assert(m_properties.isOfDegreeTwo());
         Expression root1, root2, delta;
         int solutions = Polynomial::QuadraticPolynomialRoots(
             coefficients[2],
@@ -727,7 +731,7 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
   if (m_expressionDerivate.isUninitialized()) {
     Expression expression = expressionReduced(record, context).clone();
     // Derivative isn't available on curves with multiple subcurves
-    if (properties().numberOfSubCurves() > 1) {
+    if (numberOfSubCurves(record) > 1) {
       m_expressionDerivate = Undefined::Builder();
     } else {
       m_expressionDerivate = Derivative::Builder(expression, Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
@@ -826,6 +830,20 @@ void ContinuousFunction::Model::tidyDownstreamPoolFrom(char * treePoolCursor) co
     m_expressionDerivate = Expression();
   }
   ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);
+}
+
+int ContinuousFunction::Model::numberOfSubCurves(const Ion::Storage::Record * record) const {
+  if (properties().isCartesian()) {
+    Expression e = expressionReduced(record, AppsContainerHelper::sharedAppsContainerGlobalContext());
+    if (e.type() == ExpressionNode::Type::Matrix) {
+      assert(properties().isOfDegreeTwo());
+      assert(static_cast<Matrix&>(e).numberOfColumns() == 1);
+      // We could handle any number of subcurves and any number of rows
+      assert(static_cast<Matrix&>(e).numberOfRows() == 2);
+      return static_cast<Matrix&>(e).numberOfRows();
+    }
+  }
+  return 1;
 }
 
 void * ContinuousFunction::Model::expressionAddress(const Ion::Storage::Record * record) const {

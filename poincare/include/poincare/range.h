@@ -24,8 +24,8 @@ public:
 
   float min() const { return m_min; }
   float max() const { return m_max; }
-  void setMin(float t, float limit = k_maxFloat) { privateSet(t, &m_min, limit); }
-  void setMax(float t, float limit = k_maxFloat) { privateSet(t, &m_max, limit); }
+  void setMin(float t, float limit = k_maxFloat) { privateSet(t, true, limit); }
+  void setMax(float t, float limit = k_maxFloat) { privateSet(t, false, limit); }
 
   float length() const { return m_max - m_min; }
   float center() const { return 0.5f * (m_min + m_max); }
@@ -33,7 +33,7 @@ public:
   void zoom(float ratio, float center);
 
 private:
-  void privateSet(float t, float * bound, float limit);
+  void privateSet(float t, bool isMin, float limit);
 
   float m_min, m_max;
 };

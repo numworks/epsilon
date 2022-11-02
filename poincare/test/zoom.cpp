@@ -115,7 +115,7 @@ QUIZ_CASE(poincare_zoom_fit_intersections) {
    * uses less refinements. */
   assert_intersections_range_is("sin(x)", "cos(x)", Range2D(-7.413, 7.413, -0.904, 0.904));
   assert_intersections_range_is("x/2+2", "2x-1", Range2D(2, 2, 3, 3));
-  assert_intersections_range_is("x^2", "-x^2/3+x", Range2D(0, 0.75, 0, 0.616));
+  assert_intersections_range_is("x^2", "-x^2/3+x", Range2D(0, 0.75, 0, 0.563));
 
   // assert_intersections_range_is(Range2D);
 }

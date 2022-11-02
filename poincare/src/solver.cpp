@@ -192,6 +192,7 @@ T Solver<T>::minimalStep(T x) const {
 template<typename T>
 bool Solver<T>::validSolution(T x) const {
   T minStep = minimalStep(m_xStart);
+  /* NAN is implicitly handled by the comparisons. */
   return m_xStart < m_xEnd ? m_xStart + minStep < x && x < m_xEnd : m_xEnd < x && x < m_xStart - minStep;
 }
 

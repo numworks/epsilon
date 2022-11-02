@@ -65,7 +65,6 @@ public:
   constexpr static Poincare::Conic::Shape k_defaultConicShape = Poincare::Conic::Shape::Undefined;
   constexpr static bool k_defaultHasTwoSubCurves = false;
   constexpr static bool k_defaultIsAlongY = false;
-  constexpr static bool k_defaultIsLine = false;
 
   ContinuousFunctionProperties() { reset(); }
 
@@ -80,7 +79,6 @@ public:
   int numberOfSubCurves() const { assert(isInitialized()); return m_propertiesBitField.m_hasTwoSubCurves ? 2 : 1; }
   Poincare::Conic::Shape conicShape() const { assert(isInitialized()); return static_cast<Poincare::Conic::Shape>(m_propertiesBitField.m_conicShape); }
   bool isAlongY() const { assert(isInitialized()); return m_propertiesBitField.m_isAlongY; }
-  bool isLine() const { assert(isInitialized()); return m_propertiesBitField.m_isLine; }
 
   // Update
   void reset();
@@ -97,6 +95,7 @@ public:
   bool canBeActiveInTable() const { return !isAlongY() && numberOfSubCurves() == 1 && isEquality(); }
   bool canHaveCustomDomain() const { return !isAlongY() && isEquality(); }
 
+  bool isLine() const { return getCurveParameterType() == CurveParameterType::VerticalLine || getCurveParameterType() == CurveParameterType::HorizontalLine || getCurveParameterType() == CurveParameterType::Line; }
   bool isConic() const { return conicShape() != Poincare::Conic::Shape::Undefined; }
   bool isCartesianHyperbolaWithTwoSubCurves() const { return conicShape() == Poincare::Conic::Shape::Hyperbola && isCartesian() && numberOfSubCurves() == 2; }
 
@@ -155,9 +154,8 @@ private:
   void setHasTwoSubCurves(bool hasTwoSubCurves) { m_propertiesBitField.m_hasTwoSubCurves = hasTwoSubCurves; }
   void setConicShape(Poincare::Conic::Shape shape) { m_propertiesBitField.m_conicShape = static_cast<uint8_t>(shape); }
   void setIsAlongY(bool isAlongY) { m_propertiesBitField.m_isAlongY = isAlongY; }
-  void setIsLine(bool isLine) { m_propertiesBitField.m_isLine = isLine; }
 
-  struct PropertiesBitField { // Current size : 3 bytes
+  struct PropertiesBitField { // Current size : 2 bytes
     /* Status */ uint8_t m_status : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(Status::NumberOfStatus));
     /* Poincare::ComparisonNode::OperatorType */ uint8_t m_equationType : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(Poincare::ComparisonNode::OperatorType::NumberOfTypes));
     /* Symbol */ uint8_t m_symbolType : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(SymbolType::NumberOfSymbolTypes));
@@ -165,7 +163,6 @@ private:
     /* Poincare::Conic::Shape */ uint8_t m_conicShape : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(Poincare::Conic::Shape::NumberOfShapes));
     bool m_hasTwoSubCurves : 1;
     bool m_isAlongY : 1;
-    bool m_isLine : 1;
   };
 
   PropertiesBitField m_propertiesBitField;

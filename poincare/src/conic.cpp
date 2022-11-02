@@ -426,7 +426,7 @@ PolarConic::PolarConic(const Expression& e, Context * context, const char * thet
   }
 
   // Detect the pattern r = cos/sin(theta)
-  if (Trigonometry::IsCosOrSinOfSymbol(reducedExpression, reductionContext, theta, false)) {
+  if (Trigonometry::DetectLinearPatternOfCosOrSin(reducedExpression, reductionContext, theta, false)) {
     m_shape = Shape::Circle;
     return;
   }
@@ -448,7 +448,7 @@ PolarConic::PolarConic(const Expression& e, Context * context, const char * thet
   // Check that the denominator is of the form a+b+c+k*cos(theta + p)
   double coefficientBeforeCos;
   double coefficientBeforeTheta;
-  if (!Trigonometry::IsCosOrSinOfSymbol(denominator, reductionContext, theta, true, &coefficientBeforeCos, &coefficientBeforeTheta) || coefficientBeforeTheta != 1.0) {
+  if (!Trigonometry::DetectLinearPatternOfCosOrSin(denominator, reductionContext, theta, true, &coefficientBeforeCos, &coefficientBeforeTheta) || coefficientBeforeTheta != 1.0) {
     m_shape = Shape::Undefined;
     return;
   }
@@ -532,7 +532,7 @@ ParametricConic::ParametricConic(const Expression& e, Context * context, const c
   double xCoefficientBeforeCos;
   double xCoefficientBeforeSymbol;
   double xAngle;
-  if (!Trigonometry::IsCosOrSinOfSymbol(xOfT, reductionContext, symbol, true, &xCoefficientBeforeCos, &xCoefficientBeforeSymbol, &xAngle)) {
+  if (!Trigonometry::DetectLinearPatternOfCosOrSin(xOfT, reductionContext, symbol, true, &xCoefficientBeforeCos, &xCoefficientBeforeSymbol, &xAngle)) {
     m_shape = Shape::Undefined;
     return;
   }
@@ -540,7 +540,7 @@ ParametricConic::ParametricConic(const Expression& e, Context * context, const c
   double yCoefficientBeforeCos;
   double yCoefficientBeforeSymbol;
   double yAngle;
-  if (!Trigonometry::IsCosOrSinOfSymbol(yOfT, reductionContext, symbol, true, &yCoefficientBeforeCos, &yCoefficientBeforeSymbol, &yAngle)) {
+  if (!Trigonometry::DetectLinearPatternOfCosOrSin(yOfT, reductionContext, symbol, true, &yCoefficientBeforeCos, &yCoefficientBeforeSymbol, &yAngle)) {
     m_shape = Shape::Undefined;
     return;
   }

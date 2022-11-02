@@ -1,64 +1,53 @@
 #ifndef CALCULATION_ADDITIONAL_OUTPUTS_TRIGONOMETRY_MODEL_H
 #define CALCULATION_ADDITIONAL_OUTPUTS_TRIGONOMETRY_MODEL_H
 
-#include "../../shared/curve_view_range.h"
-#include "illustrated_list_controller.h"
-#include <complex>
-#include <poincare/trigonometry.h>
+#include <escher/metric.h>
+#include <apps/shared/curve_view_range.h>
 
 namespace Calculation {
 
+/*  We want the circles to fall exactly on pixels for the graph to be sharp.
+    To match the mockup these integral values are the best :
+
+    px -> math
+     2 -> -2
+    67 -> -1
+   132 ->  0
+   197 ->  1
+   262 ->  2
+
+   Since the curve view is 264 pixels wide we need to set :
+   xMax - xMin = 264 * (2 - (-2)) / (261 - 1)
+*/
+
 class TrigonometryModel : public Shared::CurveViewRange {
 public:
-  TrigonometryModel();
+  TrigonometryModel() : Shared::CurveViewRange(), m_angle(NAN) {}
+
   // CurveViewRange
-  float xMin() const override { return -2 - 2*(4.f/260.f); }
-  float xMax() const override { return xRange() + xMin(); }
-  float yMin() const override { return yCenter() - yHalfRange(); }
-  float yMax() const override { return yCenter() + yHalfRange(); }
+  // xMin should be 2 pixels left to the point -2.0
+  float xMin() const override { return -2.f - 2 * k_targetRatio; }
+  float xMax() const override { return xMin() + xRange(); }
+  float yMin() const override { return yCenter() - yRange() / 2.f; }
+  float yMax() const override { return yCenter() + yRange() / 2.f; }
 
-  float xRange() const { return 4.f * 263.f/ 260.f; }
-  float yRange() const;
-
-  void setAngle(float f) { m_angle = f; }
   float angle() const { return m_angle; }
+  void setAngle(float f) { m_angle = f; }
+
 private:
-  constexpr static KDCoordinate width =  Ion::Display::Width - Escher::Metric::PopUpRightMargin - Escher::Metric::PopUpLeftMargin - 2;
-  constexpr static KDCoordinate halfWidth = width / 2;
-  constexpr static float k_xHalfRange = 2;//(float)width / (halfWidth + 1.f);
+  constexpr static float k_targetRatio = 4.f / 260.f; // see above
+  constexpr static float k_width =  Ion::Display::Width - Escher::Metric::PopUpRightMargin - Escher::Metric::PopUpLeftMargin - Escher::Metric::CellSeparatorThickness * 2;
+  static_assert(k_width == 264, "Trigonometry model is built with the assumption that the graph view is 264 pixels wide.");
+
   // We center the yRange around the semi-circle where the angle is
   float yCenter() const { return std::sin(angle()) >= 0.0f ? 0.5f : -0.5f; }
-
-  /* We want to normalize the displayed trigonometry circle:
-   * - On the X axis, we display 4.4 units on an available pixel width of
-   *   (Ion::Display::Width - Escher::Metric::PopUpRightMargin
-   *    - Escher::Metric::PopUpLeftMargin)
-   * - On the Y axis, the available pixel height is
-   *   IllustratedListController::k_illustrationHeight
-   */
-  float yHalfRange() const;
+  // -1 to reflect the -1 in PlotView::graphWidth
+  float xRange() const { return (k_width - 1) * k_targetRatio; }
+  float yRange() const;
 
   float m_angle;
 };
 
 }
 
-/* The curve view is 264 pixels wide
-   we want to fall exactly on pixels when drawing integral points
-   mockup
-   1 -> -2
-   69 -> -1
-   132 -> 0
-   195 -> 1
-   263 -> 2
-
-   1 -> -2
-   66 -> 1
-   131 -> 0
-   196 -> 1
-   261 -> 2
-
-   4 -> 260
-   xMax - xMin = 4*264/260
-*/
 #endif

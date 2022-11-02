@@ -3,18 +3,10 @@
 
 namespace Calculation {
 
-TrigonometryModel::TrigonometryModel() :
-  Shared::CurveViewRange(),
-  m_angle(NAN)
-{
-}
-
-float TrigonometryModel::yHalfRange() const {
-  return yRange() / 2.f;
-}
-
 float TrigonometryModel::yRange() const {
-  return (TrigonometryListController::k_illustrationHeight - 2) * xRange() / 263.f;
+  // With the cell overlap, only one separator needs to be counted
+  constexpr static float k_height = TrigonometryListController::k_illustrationHeight - Escher::Metric::CellSeparatorThickness;
+  return (k_height - 1) * k_targetRatio;
 }
 
 }

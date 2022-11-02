@@ -82,16 +82,13 @@ protected:
   constexpr static KDColor k_color = KDColorBlack;
 };
 
-class SimpleAxis {
+class SimpleAxis : public PlainAxis {
 public:
   void drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis) const;
   virtual void reloadAxis(AbstractPlotView *, AbstractPlotView::Axis axis) {}
-  bool isAxis() const { return true; }
   virtual void setOtherAxis(bool other) {}
 
 protected:
-  constexpr static KDColor k_color = KDColorBlack;
-
   virtual float tickPosition(int i, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
   virtual float tickStep(const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const;
   virtual void drawLabel(int i, float t, const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis axis, KDColor color = k_color) const {}

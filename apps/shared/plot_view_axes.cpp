@@ -43,7 +43,6 @@ void WithGrid::drawGridLines(const AbstractPlotView * plotView, KDContext * ctx,
 // WithPolarGrid
 
 void WithPolarGrid::drawPolarCircles(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
-  // assert(m_curveViewRange->xGridUnit() == m_curveViewRange->yGridUnit());
   float step = plotView->range()->xGridUnit();
   /* We translate the pixel coordinates into floats, adding/subtracting 1 to
    * account for conversion errors. */
@@ -56,9 +55,9 @@ void WithPolarGrid::drawPolarCircles(const AbstractPlotView * plotView, KDContex
   float yAbsoluteMin = std::fabs(std::max(yMin, -yMax));
   float xAbsoluteMax = std::max(-xMin, xMax);
   float yAbsoluteMax = std::max(-yMin, yMax);
-  const int start = ((xMin*xMax <= 0) ? yAbsoluteMin : xAbsoluteMin)/step;
-  const int end = std::sqrt(xAbsoluteMax * xAbsoluteMax + yAbsoluteMax * yAbsoluteMax)/step;
-  bool originInFrame = (xMin*xMax <= 0) && (yMin*yMax <= 0);
+  const int start = ((xMin * xMax <= 0) ? yAbsoluteMin : xAbsoluteMin) / step;
+  const int end = std::sqrt(xAbsoluteMax * xAbsoluteMax + yAbsoluteMax * yAbsoluteMax) / step;
+  bool originInFrame = (xMin * xMax <= 0) && (yMin * yMax <= 0);
   for (int i = originInFrame ? 1 : start; i <= end; i++) {
     plotView->drawCircle(ctx, rect, {0.f, 0.f}, i * step, i % 2 ? k_lightColor : k_boldColor);
   }
@@ -141,7 +140,7 @@ void SimpleAxis::drawAxis(const AbstractPlotView * plotView, KDContext * ctx, KD
   assert(plotView);
 
   // - Draw plain axis
-  plotView->drawStraightSegment(ctx, rect, axis, 0.f, -INFINITY, INFINITY, k_color);
+  PlainAxis::drawAxis(plotView, ctx, rect, axis);
 
   // - Draw ticks and eventual labels
   /* Do not draw ticks on the vertical axis if the axis itself is not visible,

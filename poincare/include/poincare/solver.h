@@ -56,7 +56,10 @@ public:
   Coordinate2D<T> nextRoot(FunctionEvaluation f, const void * aux) { return next(f, aux, EvenOrOddRootInBracket, CompositeBrentForRoot); }
   Coordinate2D<T> nextMinimum(Expression e);
   Coordinate2D<T> nextMaximum(Expression e) { return next(e, MaximumInBracket, BrentMaximum); }
-  Coordinate2D<T> nextIntersection(Expression e1, Expression e2);
+  /* Caller of nextIntersection may provide a place to store the difference
+   * between the two expressions, in case the method needs to be called several
+   * times in a row. */
+  Coordinate2D<T> nextIntersection(Expression e1, Expression e2, Expression * memoizedDifference = nullptr);
   /* Stretch the interval to include the previous bounds. This allows finding
    * solutions in [xStart,xEnd], as otherwise all resolution is done on an open
    * interval. */

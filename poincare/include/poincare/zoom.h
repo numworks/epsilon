@@ -21,10 +21,16 @@ public:
 
   typedef Coordinate2D<float> (*Function2DWithContext)(float, const void *, Context *);
 
+  /* Sanitize will turn any random range into a range fit for display (see
+   * comment on range() method below), that includes the original range. */
   static Range2D Sanitize(Range2D range, float normalRatio, float maxFloat);
   static Range2D DefaultRange(float normalRatio, float maxFloat) { return Sanitize(Range2D(), normalRatio, maxFloat); }
 
-  Zoom(float tMin, float tMax, float normalRatio, Context * context) : m_bounds(tMin, tMax), m_context(context), m_normalRatio(normalRatio) {}
+  Zoom(float tMin, float tMax, float normalRatio, Context * context) : m_bounds(tMin, tMax), m_context(context), m_normalRatio(normalRatio) {
+    /* The calculator screen is wider than it is high, but nothing in Zoom
+     * relies on this assumption. */
+    // assert(m_normalRatio < 1.f);
+  }
 
   /* This method is guaranteed to return a displayable range, that is a range
    * with non-nan bounds, and non-empty axes of some minimal length, with
@@ -40,6 +46,18 @@ public:
 
 private:
   class HorizontalAsymptoteHelper {
+    /* This helper is used to keep track of the slope at each step of the
+     * search for points of interest, in order to detect horizontal asymptotes.
+     * - if the bound is INFINITY, no slope greater than the threshold has been
+     *   found yet.
+     * - if the bound is NAN, the last slope was greater than the threshold,
+     *   and finding a slope lower than the threshold will mark the beginning
+     *   of an asymptote.
+     * - if the bound is finite, we have found an asymptote ; finding a slope
+     *   greater than the threshold will invalidate it.
+     * We introduce hysteresis to avoid constantly finding and invalidating
+     * asymptotes on functions such as y=0.2x, which oscillates around the
+     * threshold due to imprecisions. */
   public:
     HorizontalAsymptoteHelper(float center) : m_center(center), m_left(-INFINITY, NAN), m_right(INFINITY, NAN) {}
 

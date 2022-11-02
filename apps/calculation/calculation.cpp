@@ -241,7 +241,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
    * from creating new expressions with store node as a child. We don't
    * return any additional outputs for them to avoid bothering with special
    * cases. */
-  if (i.isUninitialized() || o.isUninitialized() || i.type() == ExpressionNode::Type::Store || a.isUndefined()) {
+  if (i.isUninitialized() || o.isUninitialized() || i.type() == ExpressionNode::Type::Store || o.type() == ExpressionNode::Type::List || a.isUndefined()) {
     return AdditionalInformations {};
   }
   /* Trigonometry additional results are displayed if either input or output is a sin or a cos. Indeed, we want to capture both cases:

@@ -519,6 +519,8 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("transpose(identity(2))", {.matrix = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("[[cos(π/3),-sin(π/3)][sin(π/3),cos(π/3)]]", {.matrix = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("√(-1)", {}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("{1}", {}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("{i}", {}, &globalContext, &store);
   assertMainCalculationOutputIs("i→z", "i", &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("z+1", {.complex = true}, &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("z.exp").destroy();

@@ -66,23 +66,6 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
   }
 }
 
-bool ExpressionField::didCreateEmptyFraction() {
-  Layout pointedLayout = m_layoutField.cursor()->layout();
-  if (!pointedLayout.isEmpty()) {
-    return false;
-  }
-  Layout fraction;
-  if (pointedLayout.parent().type() == LayoutNode::Type::FractionLayout) {
-    fraction = pointedLayout.parent();
-  } else if (pointedLayout.parent().type() == LayoutNode::Type::HorizontalLayout && pointedLayout.parent().numberOfChildren() == 1 && pointedLayout.parent().parent().type() == LayoutNode::Type::FractionLayout) {
-    fraction = pointedLayout.parent().parent();
-  } else {
-    return false;
-  }
-  assert(fraction.type() == LayoutNode::Type::FractionLayout);
-  return fraction.childAtIndex(0).isEmpty() && fraction.childAtIndex(1).isEmpty();
-}
-
 bool ExpressionField::handleDivision() {
   assert(m_divisionCycleWithAns != Poincare::TrinaryBoolean::Unknown);
   bool mixedFractionsEnabled = Poincare::Preferences::sharedPreferences()->mixedFractionsAreEnabled();
@@ -138,7 +121,7 @@ bool ExpressionField::handleDivision() {
         if (editionIn1D) {
           // 1D: Start -> DenominatorOfEmptyFraction
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
-        } else if (didCreateEmptyFraction()) {
+        } else if (m_layoutField.cursor()->isInsideEmptyFraction()) {
           // 2D: Start -> NumeratorOfEmptyFraction
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
         }

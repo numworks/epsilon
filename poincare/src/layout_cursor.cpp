@@ -317,6 +317,22 @@ void LayoutCursor::clearLayout() {
   m_layout = rootLayoutR;
 }
 
+bool LayoutCursor::isInsideEmptyFraction() const {
+  if (!m_layout.isEmpty()) {
+    return false;
+  }
+  Layout fraction;
+  if (m_layout.parent().type() == LayoutNode::Type::FractionLayout) {
+    fraction = m_layout.parent();
+  } else if (m_layout.parent().type() == LayoutNode::Type::HorizontalLayout && m_layout.parent().numberOfChildren() == 1 && m_layout.parent().parent().type() == LayoutNode::Type::FractionLayout) {
+    fraction = m_layout.parent().parent();
+  } else {
+    return false;
+  }
+  assert(fraction.type() == LayoutNode::Type::FractionLayout);
+  return fraction.childAtIndex(0).isEmpty() && fraction.childAtIndex(1).isEmpty();
+}
+
 /* Private */
 
 KDCoordinate LayoutCursor::layoutHeight(KDFont::Size font) {

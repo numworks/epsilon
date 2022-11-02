@@ -67,18 +67,14 @@ Coordinate2D<T> Solver<T>::nextRoot(Expression e) {
 
   switch (type) {
   case ExpressionNode::Type::Multiplication:
-    /* x*y = 0 => x = 0 or y = 0
-     * Check the result in case another term is undefined,
-     * e.g. (x+1)*ln(x) for x =- 1*/
+    /* x*y = 0 => x = 0 or y = 0 */
     registerSolution(nextRootInMultiplication(e), Interest::Root);
     return result();
 
   case ExpressionNode::Type::Power:
   case ExpressionNode::Type::NthRoot:
   case ExpressionNode::Type::Division:
-    /* f(x,y) = 0 => x = 0
-     * Check the result as some values of y may invalidate it (e.g. x^(1/x)
-     * or (x-1)/ln(x)). */
+    /* f(x,y) = 0 => x = 0 */
     registerSolution(nextPossibleRootInChild(e, 0), Interest::Root);
     return result();
 
@@ -257,6 +253,10 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(Expression e, int childIndex)
   Expression child = e.childAtIndex(childIndex);
   T xRoot = solver.nextRoot(child).x1();
   while (std::isfinite(xRoot)) {
+    /* Check the result in case another term is undefined,
+     * e.g. (x+1)*ln(x) for x =- 1.
+     * This comparison relies on the fact that it is false for a NAN
+     * approximation. */
     if (std::fabs(e.approximateWithValueForSymbol<T>(m_unknown, xRoot, m_context, m_complexFormat, m_angleUnit)) < NullTolerance(xRoot)) {
       return Coordinate2D<T>(xRoot, k_zero);
     }

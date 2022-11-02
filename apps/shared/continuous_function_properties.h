@@ -42,7 +42,6 @@ public:
     X = 0,
     Theta,
     T,
-    Unknown,
     NumberOfSymbolTypes
   };
 
@@ -60,7 +59,7 @@ public:
   constexpr static I18n::Message k_defaultCaption = (I18n::Message)0;
   constexpr static Status k_defaultStatus = Status::Enabled;
   constexpr static Poincare::ComparisonNode::OperatorType k_defaultEquationType = Poincare::ComparisonNode::OperatorType::Equal;
-  constexpr static SymbolType k_defaultSymbolType = SymbolType::Unknown;
+  constexpr static SymbolType k_defaultSymbolType = SymbolType::X;
   constexpr static CurveParameterType k_defaultCurveParameterType = CurveParameterType::Default;
   constexpr static Poincare::Conic::Shape k_defaultConicShape = Poincare::Conic::Shape::Undefined;
   constexpr static bool k_defaultHasTwoSubCurves = false;
@@ -82,7 +81,7 @@ public:
 
   // Update
   void reset();
-  void update(const Poincare::Expression reducedEquation, const Poincare::Expression inputEquation, Poincare::Context * context, Poincare::ComparisonNode::OperatorType precomputedOperatorType, SymbolType precomputedFunctionSymbol);
+  void update(const Poincare::Expression reducedEquation, const Poincare::Expression inputEquation, Poincare::Context * context, Poincare::ComparisonNode::OperatorType precomputedOperatorType, SymbolType precomputedFunctionSymbol, bool isCartesianEquation);
 
   // Properties
   bool canBeActive() const { return status() == Status::Enabled; }

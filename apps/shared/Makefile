@@ -53,7 +53,6 @@ app_shared_src = $(addprefix apps/shared/,\
   formula_template_menu_controller.cpp \
   function_app.cpp \
   function_banner_delegate.cpp \
-  function_curve_parameter_controller.cpp \
   function_go_to_parameter_controller.cpp \
   function_graph_controller.cpp \
   function_graph_view.cpp \

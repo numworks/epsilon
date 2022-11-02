@@ -3,16 +3,16 @@
 
 namespace Poincare {
 
-void InputBeautification::ApplyBeautificationBetweenIndexes(Layout parent, int firstIndex, int indexAfterLast, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText, bool forceBeautification) {
+void InputBeautification::ApplyBeautificationBetweenIndexes(HorizontalLayout parent, int firstIndex, int indexAfterLast, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText, bool forceBeautification) {
   assert(!parent.isUninitialized() && firstIndex >= 0);
   // Beautify from right to left
   int i = indexAfterLast - 1;
   assert(i < parent.numberOfChildren());
   while (i >= firstIndex) {
     Layout child = parent.childAtIndex(i);
-    if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(child.type())) {
-      Layout childrenOfParenthesisContainer = child.childAtIndex(0).type() == LayoutNode::Type::HorizontalLayout ? child.childAtIndex(0) : child;
-      ApplyBeautificationBetweenIndexes(childrenOfParenthesisContainer, 0, childrenOfParenthesisContainer.numberOfChildren(), layoutCursor, context, forceCursorRightOfText, true);
+    if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(child.type()) && child.childAtIndex(0).type() == LayoutNode::Type::HorizontalLayout) {
+      Layout childrenOfParenthesisContainer = child.childAtIndex(0);
+      ApplyBeautificationBetweenIndexes(static_cast<HorizontalLayout&>(childrenOfParenthesisContainer), 0, childrenOfParenthesisContainer.numberOfChildren(), layoutCursor, context, forceCursorRightOfText, true);
     }
     i = InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(child, layoutCursor, context, forceCursorRightOfText, forceBeautification);
     assert(i >= 0);

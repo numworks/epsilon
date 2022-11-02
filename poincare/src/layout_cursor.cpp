@@ -265,6 +265,9 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     TreeHandle mainParentHandle = newChild.commonAncestorWith(firstInsertedChild, false);
     Layout mainParentLayout = static_cast<Layout&>(mainParentHandle);
     assert(!mainParentLayout.isUninitialized());
+    if (mainParentLayout.type() != LayoutNode::Type::HorizontalLayout) {
+      return;
+    }
     // Set the first and last inserted children to have the same parent
     while (firstInsertedChild.parent() != mainParentLayout) {
       firstInsertedChild = firstInsertedChild.parent();
@@ -274,7 +277,8 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     }
     int firstInsertedIndex = mainParentLayout.indexOfChild(firstInsertedChild);
     int indexAfterLastInstertedChild = mainParentLayout.indexOfChild(newChild) + 1;
-    InputBeautification::ApplyBeautificationBetweenIndexes(mainParentLayout, firstInsertedIndex, indexAfterLastInstertedChild, this, context, forceCursorRightOfText);
+    assert(mainParentLayout.type() == LayoutNode::Type::HorizontalLayout);
+    InputBeautification::ApplyBeautificationBetweenIndexes(static_cast<HorizontalLayout&>(mainParentLayout), firstInsertedIndex, indexAfterLastInstertedChild, this, context, forceCursorRightOfText);
   }
 }
 
@@ -291,13 +295,15 @@ void LayoutCursor::addLayoutAndMoveCursor(Layout l, Context * context, bool with
   if (m_layout.type() == LayoutNode::Type::HorizontalLayout && m_position == Position::Right) {
     layoutToBeautify = m_layout;
     beautifyEndIndex = m_layout.numberOfChildren();
-  } else {
+  } else if (!m_layout.parent().isUninitialized() && m_layout.parent().type() == LayoutNode::Type::HorizontalLayout) {
     layoutToBeautify = m_layout.parent();
-    assert(!layoutToBeautify.isUninitialized());
     beautifyEndIndex = layoutToBeautify.indexOfChild(m_layout) + (m_position == Position::Right);
   }
-  int beautifyStartIndex = std::max(beautifyEndIndex - insertedNumberOfChildren, 0);
-  InputBeautification::ApplyBeautificationBetweenIndexes(layoutToBeautify, beautifyStartIndex, beautifyEndIndex, this, context);
+  if (!layoutToBeautify.isUninitialized()) {
+    int beautifyStartIndex = std::max(beautifyEndIndex - insertedNumberOfChildren, 0);
+    assert(layoutToBeautify.type() == LayoutNode::Type::HorizontalLayout);
+    InputBeautification::ApplyBeautificationBetweenIndexes(static_cast<HorizontalLayout&>(layoutToBeautify), beautifyStartIndex, beautifyEndIndex, this, context);
+  }
   if (!insertedLayoutWillBeMerged) {
     assert(!l.isUninitialized());
     l.collapseSiblings(this);

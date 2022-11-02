@@ -18,7 +18,7 @@ namespace Poincare {
 
 class InputBeautification {
 public:
-  static void ApplyBeautificationBetweenIndexes(Layout parent, int firstIndex, int lastIndex, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText = false, bool forceBeautification = false);
+  static void ApplyBeautificationBetweenIndexes(HorizontalLayout parent, int firstIndex, int lastIndex, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText = false, bool forceBeautification = false);
 
   /* Will apply "convertWhenInputted" rules on lastAddedLayout
    * Will apply "convertWhenFollowedByANonIdentifierChar" and
@@ -37,6 +37,11 @@ private:
     BeautifiedLayoutBuilder layoutBuilder;
   };
 
+  /* Warning : Beatification input is applied within HorizontalLayouts only.
+   * This excludes beautification of single char inputs that have not yet been
+   * placed within an HorizontalLayouts (such as |*_|, _ being the cursor). This
+   * means that BeautificationRule on 1 char aliases isn't always ensured.
+   * Currently, "*" is the only beautification affected. */
   constexpr static const BeautificationRule convertWhenInputted[] = {
     // Comparison operators
     {"<=", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointInferiorEqual)); }},

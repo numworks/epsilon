@@ -70,7 +70,7 @@ public:
   bool isInitialized() const { return m_isInitialized; }
 
   // Getters
-  I18n::Message caption() const { assert(isInitialized()); return isEquality() ? m_caption : I18n::Message::InequalityType; }
+  I18n::Message caption() const { assert(isInitialized()); return (!isEquality() && canBeActive()) ?  I18n::Message::InequalityType : m_caption; }
   Status status() const { assert(isInitialized()); return static_cast<Status>(m_propertiesBitField.m_status); }
   Poincare::ComparisonNode::OperatorType equationType() const { assert(isInitialized()); return static_cast<Poincare::ComparisonNode::OperatorType>(m_propertiesBitField.m_equationType); }
   SymbolType symbolType() const { assert(isInitialized()); return static_cast<SymbolType>(m_propertiesBitField.m_symbolType); }

@@ -196,7 +196,7 @@ T Solver<T>::nextX(T x, T direction) const {
    *   interest are more likely to be close to the unit, rather than be
    *   around 1e6 or 1e-4.
    *
-   * As such we use a formula of the form t+dt = t * (φ(log|t|) + α)
+   * As such we use a formula of the form t+dt = t * φ(log|t|)
    * The geometric growth ensures we do not over-sample on large intervals,
    * and the term φ allows increasing the ratio in "less interesting" areas.
    *
@@ -218,16 +218,27 @@ T Solver<T>::nextX(T x, T direction) const {
   T stepSign = x < direction ? static_cast<T>(1.) : static_cast<T>(-1.);
 
   T magnitude = std::log(std::fabs(x));
-  if (!std::isfinite(magnitude)) {
+  if (!std::isfinite(magnitude) || minStep >= maxStep) {
+    /* minStep can be greater than maxStep if we are operating on a very small
+     * intervals of very large numbers */
     return x + stepSign * minStep;
   }
+  /* We define a piecewise function φ such that:
+   * - φ is constant on [-1,2] and return baseGrowthSpeed, making t progress
+   *   geometrically from 0.1 to 100.
+   * - φ varies continuously from baseGrowthSpeed, to maximalGrowthSpeed at ∞.
+   * The particular shape used there (an exponential of the negative cubed
+   * magnitude) provides a smooth transition up until log|t|~±8. */
   T ratio;
   if (lowerTypicalMagnitude < magnitude && magnitude < upperTypicalMagnitude) {
     ratio = baseGrowthSpeed;
   } else {
-    T exponent = magnitude < lowerTypicalMagnitude ? magnitude - lowerTypicalMagnitude : upperTypicalMagnitude - magnitude;
-    ratio = maximalGrowthSpeed - (maximalGrowthSpeed - baseGrowthSpeed) * std::exp(growthSpeedAcceleration * std::pow(exponent, 3.));
+    T magnitudeDelta = magnitude < lowerTypicalMagnitude ? lowerTypicalMagnitude  - magnitude : magnitude - upperTypicalMagnitude;
+    assert(magnitudeDelta > 0);
+    ratio = maximalGrowthSpeed - (maximalGrowthSpeed - baseGrowthSpeed) * std::exp(growthSpeedAcceleration *  - std::pow(magnitudeDelta, 3.));
   }
+  /* If the next step is toward zero, divide the postion, overwise multiply. */
+  assert(ratio > static_cast<T>(1.));
   T x2 = (x < direction) == (x < k_zero) ? x / ratio : x * ratio;
   if (std::fabs(x - x2) > maxStep) {
     x2 = x + stepSign * maxStep;

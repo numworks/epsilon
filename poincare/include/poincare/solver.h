@@ -73,6 +73,9 @@ private:
 
   constexpr static T k_NAN = static_cast<T>(NAN);
   constexpr static T k_zero = static_cast<T>(0.);
+  /* We use k_minimalPracticalStep (10^-6) when stepping around zero instead of
+   * k_minimalAbsoluteStep (~10^-8), to avoid wasting time with too many very
+   * precise computations. */
   constexpr static T k_minimalPracticalStep = std::max(static_cast<T>(1e-6), k_minimalAbsoluteStep);
   constexpr static T k_absolutePrecision = k_relativePrecision * k_minimalAbsoluteStep;
 

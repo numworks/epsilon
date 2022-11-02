@@ -114,7 +114,7 @@ App::App(Snapshot * snapshot) :
 
 CodePoint App::XNT() {
   int selectedFunctionIndex = m_listController.selectedRow();
-  if (selectedFunctionIndex >= 0) {
+  if (!isStoreMenuOpen() && selectedFunctionIndex >= 0) {
     assert(selectedFunctionIndex < functionStore()->numberOfModels());
     Ion::Storage::Record record = functionStore()->recordAtIndex(selectedFunctionIndex);
     return functionStore()->modelForRecord(record)->symbol();

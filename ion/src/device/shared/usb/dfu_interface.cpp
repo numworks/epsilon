@@ -1,6 +1,5 @@
 #include "dfu_interface.h"
 #include <shared/drivers/board_shared.h>
-#include <shared/drivers/flash_erase.h>
 #include <shared/drivers/flash_information.h>
 #include <shared/drivers/flash_write_with_interruptions.h>
 #include <ion/timing.h>
@@ -214,9 +213,9 @@ void DFUInterface::eraseMemoryIfNeeded() {
 
   bool erased = true;
   if (m_erasePage == Flash::TotalNumberOfSectors()) {
-    Flash::MassErase();
+    Flash::MassEraseWithInterruptions(false);
   } else {
-    erased = Flash::EraseSector(m_erasePage);
+    erased = Flash::EraseSectorWithInterruptions(m_erasePage, false);
   }
   if (!erased) {
     // Unrecognized or unwritable sector

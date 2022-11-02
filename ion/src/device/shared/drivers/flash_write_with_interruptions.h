@@ -8,6 +8,8 @@ namespace Ion {
 namespace Device {
 namespace Flash {
 
+void MassEraseWithInterruptions(bool handleInterruptsAndCache);
+bool EraseSectorWithInterruptions(int i, bool handleInterruptsAndCache);
 bool WriteMemoryWithInterruptions(uint8_t * destination, const uint8_t * source, size_t length, bool handleInterruptsAndCache);
 
 }

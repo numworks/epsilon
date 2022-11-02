@@ -2,7 +2,7 @@
 #include <shared/drivers/board_shared.h>
 #include <shared/drivers/flash_erase.h>
 #include <shared/drivers/flash_information.h>
-#include <shared/drivers/flash_write.h>
+#include <shared/drivers/flash_write_with_interruptions.h>
 #include <ion/timing.h>
 #include <string.h>
 
@@ -240,7 +240,7 @@ void DFUInterface::writeOnMemory() {
     int writeSector = Flash::SectorAtAddress(m_writeAddress);
     bool written = false;
     if (writeSector >= 0) {
-      written = Flash::WriteMemory(reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBuffer, m_largeBufferLength);
+      written = Flash::WriteMemoryWithInterruptions(reinterpret_cast<uint8_t *>(m_writeAddress), m_largeBuffer, m_largeBufferLength, false);
     }
     if (!written) {
       // Invalid write address

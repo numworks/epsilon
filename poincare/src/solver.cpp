@@ -189,7 +189,7 @@ T Solver<T>::nextX(T x, T direction) const {
    * from the following criteria:
    * - using a fixed step would either lead to poor precision close to zero or
    *   prohibitive computation times on large intervals.
-   * - we assume that for a typical function, distance between to points of
+   * - we assume that for a typical function, distance between two points of
    *   interest is of the same magnitude as their abscissa ; as such, we want
    *   to sample with the same density on ]-10,10[ and ]-1000,1000[.
    * - we further assume that for a typical *high-school* function, points of

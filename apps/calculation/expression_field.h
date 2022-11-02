@@ -26,7 +26,6 @@ private:
   };
 
   bool fieldContainsSingleMinusSymbol() const;
-  bool didCreateEmptyFraction();
   bool handleDivision();
 
   DivisionCycleStep m_currentStep;

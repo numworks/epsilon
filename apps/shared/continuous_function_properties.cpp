@@ -99,16 +99,9 @@ void ContinuousFunctionProperties::setErrorStatusAndUpdateCaption(Status status)
   }
 }
 
-void ContinuousFunctionProperties::update(const Poincare::Expression reducedEquation, const Poincare::Expression inputEquation, Context * context, ComparisonNode::OperatorType precomputedOperatorType, SymbolType precomputedFunctionSymbol) {
+void ContinuousFunctionProperties::update(const Poincare::Expression reducedEquation, const Poincare::Expression inputEquation, Context * context, ComparisonNode::OperatorType precomputedOperatorType, SymbolType precomputedFunctionSymbol, bool isCartesianEquation) {
   reset();
   m_isInitialized = true;
-
-  /* Symbol was precomputed if the expression is a function of type "f(x)=",
-   * "f(t)=" or "r=" (for polar functions). */
-  bool isCartesianEquation = precomputedFunctionSymbol == SymbolType::Unknown;
-  if (isCartesianEquation) {
-    precomputedFunctionSymbol = SymbolType::X;
-  }
 
   setSymbolType(precomputedFunctionSymbol);
   setEquationType(precomputedOperatorType);

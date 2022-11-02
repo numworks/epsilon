@@ -596,9 +596,10 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
 }
 
 Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(const Ion::Storage::Record * record, Poincare::Context * context) const {
-  ContinuousFunctionProperties::SymbolType computedFunctionSymbol = ContinuousFunctionProperties::SymbolType::Unknown;
-  ComparisonNode::OperatorType computedEquationType = ComparisonNode::OperatorType::Equal;
-  Expression result = expressionEquation(record, context, &computedEquationType, &computedFunctionSymbol);
+  ContinuousFunctionProperties::SymbolType computedFunctionSymbol = ContinuousFunctionProperties::k_defaultSymbolType;
+  ComparisonNode::OperatorType computedEquationType = ContinuousFunctionProperties::k_defaultEquationType;
+  bool isCartesianEquation = false;
+  Expression result = expressionEquation(record, context, &computedEquationType, &computedFunctionSymbol, &isCartesianEquation);
   if (!result.isUndefined()) {
     Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(record, context), angleUnit(record, context));
     PoincareHelpers::CloneAndReduce(
@@ -611,7 +612,7 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(con
   }
   if (!m_properties.isInitialized()) {
     // Use the computed equation to update the plot type.
-    m_properties.update(result, originalEquation(record, UCodePointUnknown), context, computedEquationType, computedFunctionSymbol);
+    m_properties.update(result, originalEquation(record, UCodePointUnknown), context, computedEquationType, computedFunctionSymbol, isCartesianEquation);
   }
   return result;
 }
@@ -646,12 +647,12 @@ bool isValidNamedLeftExpression(const Expression e, ComparisonNode::OperatorType
              && functionSymbol.isIdenticalTo(Symbol::Builder(ContinuousFunction::k_parametricSymbol)));
 }
 
-Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context, ComparisonNode::OperatorType * computedEquationType, ContinuousFunctionProperties::SymbolType * computedFunctionSymbol) const {
+Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context, ComparisonNode::OperatorType * computedEquationType, ContinuousFunctionProperties::SymbolType * computedFunctionSymbol, bool * isCartesianEquation) const {
   Expression result = ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
     return Undefined::Builder();
   }
-  ContinuousFunctionProperties::SymbolType tempFunctionSymbol = ContinuousFunctionProperties::SymbolType::Unknown;
+  ContinuousFunctionProperties::SymbolType tempFunctionSymbol = ContinuousFunctionProperties::k_defaultSymbolType;
   ComparisonNode::OperatorType equationType;
   if (!ComparisonNode::IsBinaryComparison(result, &equationType) || equationType == ComparisonNode::OperatorType::NotEqual) {
     /* Happens when the input text is too long and "f(x)=" can't be inserted
@@ -695,6 +696,9 @@ Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Rec
   }
   if (computedFunctionSymbol) {
     *computedFunctionSymbol = tempFunctionSymbol;
+  }
+  if (isCartesianEquation) {
+    *isCartesianEquation = isUnnamedFunction;
   }
   if (isUnnamedFunction) {
     result = Subtraction::Builder(leftExpression, result.childAtIndex(1));

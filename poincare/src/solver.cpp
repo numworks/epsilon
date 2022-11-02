@@ -299,6 +299,8 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, Fu
 
   if (std::isnan(x)) {
     m_lastInterest = Interest::None;
+    m_xStart = k_NAN;
+    m_yResult = k_NAN;
   } else {
     assert(validSolution(x));
     m_xStart = x;

@@ -5,7 +5,7 @@
 #include "interactive_curve_view_controller.h"
 #include "function_store.h"
 #include "function_graph_view.h"
-#include "function_curve_parameter_controller.h"
+#include "with_record.h"
 
 namespace Shared {
 

@@ -132,11 +132,7 @@ bool ExpressionField::handleDivision() {
       case DivisionCycleStep::Start :
         handled = ::ExpressionField::handleEvent(event);
         /* In 1D we always cycle
-         * In 2D we cycle only if the default handleEvent created an empty fraction, to avoid the cases:
-         *   - when we press Division after an expression, the default handleEvent creates a fraction with 
-         *     the expression at the numerator and the cursor at the denominator
-         *   - when we press Division before an expression, the default handleEvent creates a fraction with 
-         *     the expresion at the  denominator and the cursor at the numerator */
+         * In 2D we cycle only if the default handleEvent created an empty fraction */
         if (editionIn1D) {
           // 1D: Start -> DenominatorOfEmptyFraction
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;

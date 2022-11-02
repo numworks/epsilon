@@ -68,8 +68,9 @@ bool ExpressionField::fieldContainsSingleMinusSymbol() const {
 
 bool ExpressionField::didCreateEmptyFraction() {
   Layout pointedLayout = m_layoutField.cursor()->layout();
-  assert(pointedLayout.isEmpty());
-
+  if (!pointedLayout.isEmpty()) {
+    return false;
+  }
   Layout fraction;
   if (pointedLayout.parent().type() == LayoutNode::Type::FractionLayout) {
     fraction = pointedLayout.parent();

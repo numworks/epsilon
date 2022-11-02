@@ -22,19 +22,17 @@ void Range1D::zoom(float ratio, float center) {
   m_max = (m_max - center) * ratio + center;
 }
 
-void Range1D::privateSet(float t, float * bound, float limit) {
+void Range1D::privateSet(float t, bool isMin, float limit) {
   if (std::isnan(t)) {
     m_min = t;
     m_max = t;
     return;
   }
 
-  assert(bound == &m_min || bound == &m_max);
-  bool isMin = bound == &m_min;
-  float * other = isMin ? &m_max : &m_min;
+  float * bound = isMin ? &m_min : &m_max;
   *bound = std::clamp(t, -limit, limit);
   if (!(m_min <= m_max)) {
-    *other = *bound;
+    (isMin ? m_max : m_min) = *bound;
   }
   if (length() < k_minLength) {
     float l = std::max(DefaultLengthAt(m_min), k_minLength);

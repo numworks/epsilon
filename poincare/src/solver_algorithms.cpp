@@ -148,7 +148,7 @@ Coordinate2D<double> SolverAlgorithms::BrentRoot(Solver<double>::FunctionEvaluat
     if (std::fabs(e) >= tol1 && std::fabs(fa) > std::fabs(fb)) {
       double s = fb / fa;
       double p = 2. * xm * s;
-      double q  = 1. - s;
+      double q = 1. - s;
       if (a != c) {
         q = fa / fc;
         double r = fb / fc;
@@ -291,7 +291,7 @@ Coordinate2D<double> SolverAlgorithms::BrentMinimum(Solver<double>::FunctionEval
   return Coordinate2D<double>(NAN, NAN);
 }
 
-// Explicit template instanciations
+// Explicit template instantiations
 
 template float SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(float * probability, Solver<float>::FunctionEvaluation f, const void * aux);
 template double SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction(double * probability, Solver<double>::FunctionEvaluation f, const void * aux);

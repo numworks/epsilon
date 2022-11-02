@@ -61,21 +61,21 @@ Range1D PointsOfInterestCache::setBoundsAndCompute(float start, float end) {
   return dirtyRange;
 }
 
-PointOfInterest<double> PointsOfInterestCache::firstPointInDirection(double start, double end, Solver<double>::Interest interest) const {
+PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, double end, Solver<double>::Interest interest) const {
   assert(start != end);
-  PointOfInterest<double> previous(nullptr);
-  for (const PointOfInterest<double> & p : filter(interest)) {
+  PointOfInterest previous(nullptr);
+  for (const PointOfInterest & p : filter(interest)) {
     double x = p.x();
     if (x >= start) {
       if (start > end) {
         break;
       } else if (x > start) {
-        return x < end ? p : PointOfInterest<double>(nullptr);
+        return x < end ? p : PointOfInterest(nullptr);
       }
     }
     previous = p;
   }
-  return (previous.isUninitialized() || previous.x() > end) ? previous : PointOfInterest<double>(nullptr);
+  return (previous.isUninitialized() || previous.x() > end) ? previous : PointOfInterest(nullptr);
 }
 
 void PointsOfInterestCache::stripOutOfBounds() {

@@ -118,7 +118,7 @@ void GraphView::drawForeground(KDContext * ctx, KDRect rect) const {
   Axis axis = f->isAlongY() ? Axis::Vertical : Axis::Horizontal;
 
   PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterest();
-  for (const PointOfInterest<double> & p : pointsOfInterest->filter(m_interest)) {
+  for (const PointOfInterest & p : pointsOfInterest->filter(m_interest)) {
     Coordinate2D<float> xy = axis == Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
     drawDot(ctx, rect, Dots::Size::Tiny, xy, Palette::GrayDarkest);
   }

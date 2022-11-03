@@ -31,9 +31,10 @@ jobs:
     steps:
       - uses: numworks/setup-arm-toolchain@latest
       - uses: actions/checkout@v3
+        id: checkout
         with:
-          token: ${{ secrets.PAT }}
-          submodules: true
+          token: ${{ secrets.PAT || github.token }}
+          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh
       - name: Disable epsilon-core submodule
         run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable
@@ -44,9 +45,7 @@ jobs:
         run: make MODEL=${{ matrix.model }} userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf
       - name: Restore epsilon-core submodule
         run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
-      - run: make MODEL=${{ matrix.model }} epsilon.dfu
-      - run: make MODEL=${{ matrix.model }} flasher.dfu
-      - run: make MODEL=${{ matrix.model }} bench.ram.dfu
+      - run: make MODEL=${{ matrix.model }} epsilon.dfu flasher.dfu bench.ram.dfu
   windows:
     runs-on: windows-latest
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}

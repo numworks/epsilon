@@ -500,17 +500,22 @@ ParametricConic::ParametricConic(const Expression& e, Context * context, const c
   int degOfTinX = xOfT.polynomialDegree(context, symbol);
   int degOfTinY = yOfT.polynomialDegree(context, symbol);
 
-  // Detect parabola (x , y) = (a*f(t) , b*f(t)^2)
-  // TODO: This does not detect parabolas of the form (a*f(t)+c, b*f(t)^2+d)
-  Expression quotient = Division::Builder(xOfT.clone(), yOfT.clone());
-  quotient = quotient.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
-  if (quotient.polynomialDegree(context, symbol) == 1) {
+  if ((degOfTinX == 1 && degOfTinY == 2) || (degOfTinX == 2 && degOfTinY == 1)) {
     m_shape = Shape::Parabola;
     return;
   }
-  Expression inverseQuotient = Power::Builder(quotient, Rational::Builder(-1));
-  inverseQuotient = inverseQuotient.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
-  if (inverseQuotient.polynomialDegree(context, symbol) == 1) {
+
+  // Detect parabola (x , y) = (a*f(t) , b*f(t)^2)
+  // TODO: This does not detect parabolas of the form (a*f(t)+c, b*f(t)^2+d)
+  Expression quotientWithXSquared = Division::Builder(Power::Builder(xOfT.clone(), Rational::Builder(2)), yOfT.clone());
+  quotientWithXSquared = quotientWithXSquared.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
+  if (quotientWithXSquared.polynomialDegree(context, symbol) == 0) {
+    m_shape = Shape::Parabola;
+    return;
+  }
+  Expression quotientWithYSquared = Division::Builder(Power::Builder(yOfT.clone(), Rational::Builder(2)), xOfT.clone());
+  quotientWithYSquared = quotientWithYSquared.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
+  if (quotientWithYSquared.polynomialDegree(context, symbol) == 0) {
     m_shape = Shape::Parabola;
     return;
   }
@@ -521,8 +526,9 @@ ParametricConic::ParametricConic(const Expression& e, Context * context, const c
   }
 
   /* Detect other conics:
-   * Circle: (x , y) = (A*cos(B*t+C)+D , A*cos(B*t+E)+F)
-   * Ellipse: (x , y) = (A*cos(B*t+C)+D , G*cos(B*t+E)+F)
+   * Circle: (x , y) = (A*cos(B*t+C)+K , A*sin(B*t+C)+L)
+   * Ellipse: (x , y) = (A*cos(B*t+C)+K , D*cos(B*t+E)+L)
+   * with C != E
    *
    * TODO: Hyperbolas are not detected for now.
    * Hyperbola: (x , y) = (A*sec(B*t+C)+D , G*tan(B*t+E)+F)

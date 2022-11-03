@@ -20,7 +20,7 @@ protected:
   bool handleEvent(Ion::Events::Event event) override;
 
 private:
-  StoreMenuController m_storeController;
+  StoreMenuController m_storeMenuController;
 };
 
 }

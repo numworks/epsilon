@@ -89,12 +89,12 @@ void ExpressionFieldDelegateApp::storeValue(const char * text) {
   if (m_modalViewController.isDisplayingModal()) {
     return;
   }
-  m_storeController.setText(text);
-  m_storeController.open();
+  m_storeMenuController.setText(text);
+  m_storeMenuController.open();
 }
 
 bool ExpressionFieldDelegateApp::isStoreMenuOpen() {
-  return m_modalViewController.currentModalViewController() == &m_storeController;
+  return m_modalViewController.currentModalViewController() == &m_storeMenuController;
 }
 
 }

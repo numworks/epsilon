@@ -43,7 +43,7 @@ void assert_check_function_properties(const char * expression, FunctionPropertie
   store.removeAll();
 }
 
-QUIZ_CASE(graph_function_plot_type) {
+QUIZ_CASE(graph_function_properties) {
   // Test the plot type under different Press-to-test parameters :
   Preferences::PressToTestParams pressToTestParams = Preferences::k_inactivePressToTest;
   Poincare::Preferences::sharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Cartesian);
@@ -55,29 +55,79 @@ QUIZ_CASE(graph_function_plot_type) {
     pressToTestParams.m_implicitPlotsAreForbidden = noImplicitPlot;
     Poincare::Preferences::sharedPreferences()->setExamMode((noInequations || noImplicitPlot) ? Poincare::Preferences::ExamMode::PressToTest : Poincare::Preferences::ExamMode::Off, pressToTestParams);
 
+    // === Cartesian functions ====
+
     assert_check_function_properties(
-      "r=2",
+      "f(x)=cos(x)+ln(x)",
       FunctionProperties{
-        .m_caption = I18n::Message::PolarCircleType,
-        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
-        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar,
-        .m_conicShape = Poincare::Conic::Shape::Circle}
+        .m_caption = I18n::Message::FunctionType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
     );
 
     assert_check_function_properties(
-      "g(t)=[[cos(t)][t]]",
+      "f(x)=3-2/(1+π)",
       FunctionProperties{
-        .m_caption = I18n::Message::ParametricEquationType,
-        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
-        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric}
+        .m_caption = I18n::Message::ConstantType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
     );
 
     assert_check_function_properties(
-      "h(x)=log(x)",
+      "f(x)=-2x/(1+π)",
+      FunctionProperties{
+        .m_caption = I18n::Message::LinearType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
+    );
+
+    assert_check_function_properties(
+      "f(x)=-(2x-4/(1+π))",
+      FunctionProperties{
+        .m_caption = I18n::Message::AffineType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
+    );
+
+    assert_check_function_properties(
+      "f(x)=3x^5+(1/π-3)-(4x^3)/π",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolynomialType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
+    );
+
+    assert_check_function_properties(
+      "f(x)=3x^5+(1/π-3x^2)-(4x^3)/(πx+1)",
+      FunctionProperties{
+        .m_caption = I18n::Message::RationalType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
+    );
+
+    assert_check_function_properties(
+      "f(x)=3cos(5x)+(1/π-3)-((4sin(3x-1))/π)-(1/6)tan(2-1.3x)+x-x",
+      FunctionProperties{
+        .m_caption = I18n::Message::TrigonometricType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
+    );
+
+    assert_check_function_properties(
+      "f(x)=3ln(5x)+(1/π-3)-(4log(3x-1))/π",
       FunctionProperties{
         .m_caption = I18n::Message::LogarithmicType,
         .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
     );
+
+    assert_check_function_properties(
+      "f(x)=3e^(5x)+(1/π-3)-(4e^(3x-1))/π",
+      FunctionProperties{
+        .m_caption = I18n::Message::ExponentialType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
+    );
+
+    assert_check_function_properties(
+      "f(x)=piecewise(3x,x<0,2,x>0)",
+      FunctionProperties{
+        .m_caption = I18n::Message::PiecewiseType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
+    );
+
+    // === Cartesian equations ===
 
     assert_check_function_properties(
       "y=log(x)",
@@ -312,7 +362,199 @@ QUIZ_CASE(graph_function_plot_type) {
       ContinuousFunctionProperties::AreaType::Outside
     );
 
-    // Error status
+    // === Polar functions ===
+
+    assert_check_function_properties(
+      "r=θ",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarEquationType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar}
+    );
+
+    assert_check_function_properties(
+      "r=2",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarCircleType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar,
+        .m_conicShape = Poincare::Conic::Shape::Circle}
+    );
+
+    assert_check_function_properties(
+      "r=π/3cos(θ+5)",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarLineType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar}
+    );
+
+    assert_check_function_properties(
+      "r=π/3cos(θ)",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarVerticalLineType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar}
+    );
+
+    assert_check_function_properties(
+      "r=π/3sin(θ)",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarHorizontalLineType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar}
+    );
+
+    assert_check_function_properties(
+      "r=1.2cos(θ-3.1)",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarCircleType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar,
+        .m_conicShape = Poincare::Conic::Shape::Circle}
+    );
+
+    assert_check_function_properties(
+      "r=2/(1+0.2cos(θ-3.1))",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarEllipseType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar,
+        .m_conicShape = Poincare::Conic::Shape::Ellipse}
+    );
+
+    assert_check_function_properties(
+      "r=π/(5-4cos(θ+1))",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarEllipseType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar,
+        .m_conicShape = Poincare::Conic::Shape::Ellipse}
+    );
+
+    assert_check_function_properties(
+      "r=2/(1+2cos(θ-3.1))",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarHyperbolaType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar,
+        .m_conicShape = Poincare::Conic::Shape::Hyperbola}
+    );
+
+    assert_check_function_properties(
+      "r=1/(0.2-cos(θ-3.1))",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarHyperbolaType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar,
+        .m_conicShape = Poincare::Conic::Shape::Hyperbola}
+    );
+
+    assert_check_function_properties(
+      "r=2/(1+cos(θ-3.1))",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarParabolaType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar,
+        .m_conicShape = Poincare::Conic::Shape::Parabola}
+    );
+
+    assert_check_function_properties(
+      "r=1/(1+cos(2θ))",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarEquationType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar}
+    );
+
+    // === Parametric functions ===
+
+    assert_check_function_properties(
+      "g(t)=[[cos(t)][t]]",
+      FunctionProperties{
+        .m_caption = I18n::Message::ParametricEquationType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric}
+    );
+
+    assert_check_function_properties(
+      "g(t)=[[-3][2ln(t)]]",
+      FunctionProperties{
+        .m_caption = I18n::Message::VerticalLineType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric}
+    );
+
+    assert_check_function_properties(
+      "g(t)=[[3cos(t)][2]]",
+      FunctionProperties{
+        .m_caption = I18n::Message::HorizontalLineType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric}
+    );
+
+    assert_check_function_properties(
+      "g(t)=[[3t-4][t/π]]",
+      FunctionProperties{
+        .m_caption = I18n::Message::ParametricLineType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric}
+    );
+
+    assert_check_function_properties(
+      "g(t)=[[3cos(t)][-5cos(t)]]",
+      FunctionProperties{
+        .m_caption = I18n::Message::ParametricLineType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric}
+    );
+
+    assert_check_function_properties(
+      "g(t)=[[5+t-3.1t^2][-2t+1]]",
+      FunctionProperties{
+        .m_caption = I18n::Message::ParametricParabolaType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric,
+        .m_conicShape = Poincare::Conic::Shape::Parabola}
+    );
+
+    assert_check_function_properties(
+      "g(t)=[[3(ln(t))^2][-2ln(t)]]",
+      FunctionProperties{
+        .m_caption = I18n::Message::ParametricParabolaType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric,
+        .m_conicShape = Poincare::Conic::Shape::Parabola}
+    );
+
+    assert_check_function_properties(
+      "g(t)=[[4cos(5t-2)+6][3cos(5t+6)-20]]",
+      FunctionProperties{
+        .m_caption = I18n::Message::ParametricEllipseType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric,
+        .m_conicShape = Poincare::Conic::Shape::Ellipse}
+    );
+
+    assert_check_function_properties( // Not an ellipse
+      "g(t)=[[4cos(5t-2)+6][3cos(5t-2)-20]]",
+      FunctionProperties{
+        .m_caption = I18n::Message::ParametricEquationType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric}
+    );
+
+    assert_check_function_properties(
+      "g(t)=[[3cos(5t-2)+6][-3sin(5t-2)-20]]",
+      FunctionProperties{
+        .m_caption = I18n::Message::ParametricCircleType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric,
+        .m_conicShape = Poincare::Conic::Shape::Circle}
+    );
+
+    // === Error status ===
+
     assert_check_function_properties(
       "",
       FunctionProperties{
@@ -366,7 +608,8 @@ QUIZ_CASE(graph_function_plot_type) {
 
     assert_check_function_properties("y=i*x+1", k_unhandledCartesian);
 
-    // Updated complex format
+    // === Updated complex format ===
+
     assert(Poincare::Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Cartesian);
     assert_check_function_properties("y=(√(-1))^2", k_horizontalLineProperties);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
@@ -395,7 +638,7 @@ QUIZ_CASE(graph_function_plot_type) {
   Poincare::Preferences::sharedPreferences()->setExamMode(Poincare::Preferences::ExamMode::Off);
 }
 
-QUIZ_CASE(graph_function_plot_type_with_predefined_variables) {
+QUIZ_CASE(graph_function_properties_with_predefined_variables) {
 
     constexpr static FunctionProperties k_horizontalLineProperties = FunctionProperties{
       .m_caption = I18n::Message::HorizontalLineType,

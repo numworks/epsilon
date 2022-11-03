@@ -216,7 +216,7 @@ public:
   static bool IsDiscontinuous(const Expression e, Context * context);
 
   typedef bool (*PatternTest)(const Expression& e, Context * context, const char * symbol);
-  static bool IsRationalFunction(const Expression& e, Context * context, const char * symbol);
+  static bool IsRationalFraction(const Expression& e, Context * context, const char * symbol);
   bool isLinearCombinationOfFunction(Context * context, PatternTest testFunction, const char * symbol) const;
 
   /* polynomialDegree returns:

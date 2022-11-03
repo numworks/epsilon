@@ -255,7 +255,7 @@ bool Expression::IsDiscontinuous(const Expression e, Context * context) {
           }, context));
 }
 
-bool Expression::IsRationalFunction(const Expression& e, Context * context, const char * symbol) {
+bool Expression::IsRationalFraction(const Expression& e, Context * context, const char * symbol) {
   if (e.type() != ExpressionNode::Type::Multiplication && e.type() != ExpressionNode::Type::Power) {
     return false;
   }

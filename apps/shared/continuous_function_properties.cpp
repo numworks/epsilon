@@ -275,7 +275,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expressi
   }
 
   // f(x) = polynomial/polynomial
-  if (analyzedExpression.isLinearCombinationOfFunction(context, &Expression::IsRationalFunction, Function::k_unknownName)) {
+  if (analyzedExpression.isLinearCombinationOfFunction(context, &Expression::IsRationalFraction, Function::k_unknownName)) {
     setCaption(I18n::Message::RationalType);
     return;
   }

@@ -707,3 +707,41 @@ QUIZ_CASE(poincare_expression_update_angle_unit) {
   assert_update_angle_unit("45gon+15gon", Preferences::AngleUnit::Radian, Preferences::AngleUnit::Gradian);
   assert_update_angle_unit("45rad+15°", Preferences::AngleUnit::Gradian, Preferences::AngleUnit::Gradian);
 }
+
+void assert_is_linear_combination_of_pattern(const char * expression, Expression::PatternTest testFunction, const char * symbol = "x") {
+  Shared::GlobalContext context;
+  Expression e = parse_expression(expression, &context, false);
+  e = e.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(&context));
+  quiz_assert_print_if_failure(e.isLinearCombinationOfFunction(&context, testFunction, symbol), expression);
+}
+
+void assert_is_linear_pattern_of_sin_or_cos(const char * expression, bool acceptAddition, double coefficientBeforeCos, double coefficientBeforeSymbol, double angle, const char * symbol = "x") {
+  Shared::GlobalContext context;
+  Expression e = parse_expression(expression, &context, false);
+  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(&context);
+  e = e.cloneAndReduce(reductionContext);
+  double computedCoefBeforeCos;
+  double computedCoefBeforeSymbol;
+  double computedAngle;
+  quiz_assert_print_if_failure(Trigonometry::DetectLinearPatternOfCosOrSin(e, reductionContext, symbol, acceptAddition, &computedCoefBeforeCos, &computedCoefBeforeSymbol, &computedAngle), expression);
+  quiz_assert_print_if_failure(computedCoefBeforeCos == coefficientBeforeCos, expression);
+  quiz_assert_print_if_failure(computedCoefBeforeSymbol == coefficientBeforeSymbol, expression);
+  quiz_assert_print_if_failure(computedAngle == angle, expression);
+}
+
+QUIZ_CASE(poincare_expression_is_linear_combination_of_pattern) {
+  assert_is_linear_combination_of_pattern("1+(1/x)", &Expression::IsRationalFraction);
+  assert_is_linear_combination_of_pattern("(πx^2-3x^5)/(1-x)", &Expression::IsRationalFraction);
+
+  assert_is_linear_combination_of_pattern(
+    "4log(6x)+3cos(1)-πlog(2x-4)",
+    [](const Expression& e, Context * context, const char * symbol) {
+      return e.type() == ExpressionNode::Type::Logarithm
+             && e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
+    }
+  );
+
+  assert_is_linear_pattern_of_sin_or_cos("5*cos(3x+2)", false, 5.0, 3.0, 2.0);
+  assert_is_linear_pattern_of_sin_or_cos("1-cos(3x+2)/5", true, -0.2, 3.0, 2.0);
+  assert_is_linear_pattern_of_sin_or_cos("sin(x)", true, 1.0, 1.0, -1.0*M_PI_2);
+}

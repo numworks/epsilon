@@ -21,6 +21,12 @@ void StoreMenuController::open() {
   Container::activeApp()->displayModalViewController(this, KDContext::k_alignCenter, KDContext::k_alignCenter, 0, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
 }
 
+void StoreMenuController::close() {
+  // TODO: See comment in StoreMenuController::setText
+  AbstractTextField::FillDraftTextBuffer(m_savedDraftTextBuffer);
+  Container::activeApp()->dismissModalViewController();
+}
+
 void StoreMenuController::InnerListController::didBecomeFirstResponder() {
   m_selectableTableView.selectCellAtLocation(0, 0);
   m_selectableTableView.reloadData();
@@ -36,7 +42,7 @@ StoreMenuController::StoreMenuController() :
       StoreMenuController * storeMenu = static_cast<StoreMenuController*>(context);
       // Close the warning and then the store menu which are both modals
       storeMenu->dismissModalViewController();
-      Container::activeApp()->dismissModalViewController();
+      storeMenu->close();
       return true;
     }, this),
     Invocation([](void * context, void * sender) {
@@ -60,6 +66,13 @@ void StoreMenuController::didBecomeFirstResponder() {
 
 void StoreMenuController::setText(const char * text) {
   m_preventReload = true;
+  /* TODO: Currently there can't be two TextField edited at the same time
+   * since all TextFields share the same draft buffer.
+   * To be safe, the draft buffer is copied into m_savedDraftTextBuffer
+   * before beginning the edition of store menu input.
+   * This method is not ideal, and the behaviour of TextField should be
+   * reworked so that multiple fields can be edited at the same time. */
+  AbstractTextField::DumpDraftTextBuffer(m_savedDraftTextBuffer, AbstractTextField::MaxBufferSize());
   m_cell.expressionField()->setEditing(true);
   m_cell.expressionField()->setText(text);
   m_cell.expressionField()->handleEventWithText("→");
@@ -113,7 +126,7 @@ bool StoreMenuController::parseAndStore(const char * text) {
     reducedExp.replaceChildAtIndexInPlace(0, Shared::PoincareHelpers::ApproximateKeepingUnits<double>(reducedExp.childAtIndex(0), Container::activeApp()->localContext()));
   }
   Store store = static_cast<Store&>(reducedExp);
-  Container::activeApp()->dismissModalViewController();
+  close();
   store.storeValueForSymbol(Container::activeApp()->localContext());
   return true;
 }
@@ -134,12 +147,12 @@ bool StoreMenuController::layoutFieldDidAbortEditing(Escher::LayoutField * layou
    * to set the flag to avoid reloadData from happening which would otherwise
    * setFirstResponder on the store menu while it is hidden. */
   m_preventReload = true;
-  Container::activeApp()->dismissModalViewController();
+  close();
   return true;
 }
 
 bool StoreMenuController::textFieldDidAbortEditing(Escher::AbstractTextField * textField) {
-  Container::activeApp()->dismissModalViewController();
+  close();
   return true;
 }
 

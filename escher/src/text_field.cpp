@@ -21,6 +21,25 @@ namespace Escher {
 static char s_draftTextBuffer[AbstractTextField::MaxBufferSize()];
 static size_t s_currentDraftTextLength;
 
+size_t AbstractTextField::DumpDraftTextBuffer(char * buffer, size_t bufferSize) {
+  size_t result = 0;
+  if (buffer) {
+    assert(s_currentDraftTextLength < bufferSize);
+    result = strlcpy(buffer, s_draftTextBuffer, bufferSize);
+  }
+  s_draftTextBuffer[0] = 0;
+  s_currentDraftTextLength = 0;
+  return result;
+}
+
+size_t AbstractTextField::FillDraftTextBuffer(const char * src, size_t srcLength) {
+ if (srcLength < 0) {
+  srcLength = strlen(src);
+ }
+ s_currentDraftTextLength = strlcpy(s_draftTextBuffer, src, MaxBufferSize());
+ return s_currentDraftTextLength;
+}
+
 /* AbstractTextField::ContentView */
 
 AbstractTextField::ContentView::ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
@@ -129,8 +148,7 @@ void AbstractTextField::ContentView::reinitDraftTextBuffer() {
   /* We first need to clear the buffer, otherwise setCursorLocation might do
    * various operations on a buffer with maybe non-initialized content, such as
    * stringSize, etc. Those operation might be perilous on non-UTF8 content. */
-  s_draftTextBuffer[0] = 0;
-  s_currentDraftTextLength = 0;
+  AbstractTextField::DumpDraftTextBuffer();
   setCursorLocation(s_draftTextBuffer);
 }
 

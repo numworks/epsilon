@@ -37,7 +37,7 @@ void Controller::ContentView::reload() {
 
 void Controller::ContentView::reloadBottomRow(SimpleTableViewDataSource * dataSource, int lastIconColumn) {
   /* We mark the missing icons on the last row as dirty. */
-  for (int i = lastIconColumn; i < dataSource->numberOfColumns(); i++) {
+  for (int i = lastIconColumn + 1; i < dataSource->numberOfColumns(); i++) {
     markRectAsDirty(KDRect(dataSource->columnWidth(0)*i, dataSource->rowHeight(0), dataSource->columnWidth(0), dataSource->rowHeight(0)));
   }
 }

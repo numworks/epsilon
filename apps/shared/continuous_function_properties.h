@@ -2,6 +2,7 @@
 #define SHARED_CONTINUOUS_FUNCTION_PROPERTIES_H
 
 #include <apps/i18n.h>
+#include <ion/bit_helper.h>
 #include <poincare/comparison.h>
 #include <poincare/conic.h>
 #include <poincare/helpers.h>
@@ -154,12 +155,18 @@ private:
   void setIsOfDegreeTwo(bool isOfDegreeTwo) { m_propertiesBitField.m_isOfDegreeTwo = isOfDegreeTwo; }
   void setIsAlongY(bool isAlongY) { m_propertiesBitField.m_isAlongY = isAlongY; }
 
+  constexpr static size_t k_numberOfBitsForStatus = Ion::BitHelper::numberOfBitsToRepresentNumberStrictlyInferiorTo(static_cast<unsigned int>(Status::NumberOfStatus));
+  constexpr static size_t k_numberOfBitsForEquationType = Ion::BitHelper::numberOfBitsToRepresentNumberStrictlyInferiorTo(static_cast<unsigned int>(Poincare::ComparisonNode::OperatorType::NumberOfTypes));
+  constexpr static size_t k_numberOfBitsForSymbolType = Ion::BitHelper::numberOfBitsToRepresentNumberStrictlyInferiorTo(static_cast<unsigned int>(SymbolType::NumberOfSymbolTypes));
+  constexpr static size_t k_numberOfBitsForCurveParameterType = Ion::BitHelper::numberOfBitsToRepresentNumberStrictlyInferiorTo(static_cast<unsigned int>(CurveParameterType::NumberOfCurveParameterTypes));
+  constexpr static size_t k_numberOfBitsForConicShape = Ion::BitHelper::numberOfBitsToRepresentNumberStrictlyInferiorTo(static_cast<unsigned int>(Poincare::Conic::Shape::NumberOfShapes));
+
   struct PropertiesBitField { // Current size : 2 bytes
-    /* Status */ uint8_t m_status : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(Status::NumberOfStatus));
-    /* Poincare::ComparisonNode::OperatorType */ uint8_t m_equationType : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(Poincare::ComparisonNode::OperatorType::NumberOfTypes));
-    /* Symbol */ uint8_t m_symbolType : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(SymbolType::NumberOfSymbolTypes));
-    /* CurveParameterType */ uint8_t m_curveParameterType : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(CurveParameterType::NumberOfCurveParameterTypes));
-    /* Poincare::Conic::Shape */ uint8_t m_conicShape : Poincare::Helpers::CeilLog2(static_cast<uint8_t>(Poincare::Conic::Shape::NumberOfShapes));
+    /* Status */ uint8_t m_status : k_numberOfBitsForStatus;
+    /* Poincare::ComparisonNode::OperatorType */ uint8_t m_equationType : k_numberOfBitsForEquationType;
+    /* Symbol */ uint8_t m_symbolType : k_numberOfBitsForSymbolType;
+    /* CurveParameterType */ uint8_t m_curveParameterType : k_numberOfBitsForCurveParameterType;
+    /* Poincare::Conic::Shape */ uint8_t m_conicShape : k_numberOfBitsForConicShape;
     bool m_isOfDegreeTwo : 1;
     bool m_isAlongY : 1;
   };

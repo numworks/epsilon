@@ -60,7 +60,8 @@ void assert_data_statistics_equal_to(
   quiz_assert(range >= 0.0);
   quiz_assert(variance >= 0.0);
   quiz_assert(standardDeviation >= 0.0);
-  quiz_assert(sampleStandardDeviation >= 0.0);
+  // Handle NaN sampleStandardDeviation
+  quiz_assert(!(sampleStandardDeviation < 0.0));
   quiz_assert(squaredValueSum >= 0.0);
 
   // Compare the statistics
@@ -913,6 +914,84 @@ QUIZ_CASE(data_statistics) {
       trueUpperOutliers9,
       totalUpperOutliers9,
       /* maxValue */ -996.85840734641,
+      true);
+
+   /* 1 4
+    * 0 1 */
+
+  constexpr int listLength10 = 2;
+  double v10[listLength10] = {1.0, 4.0};
+  double n10[listLength10] = {0.0, 1.0};
+  setStoreData(&store, v10, n10, listLength10, k_defaultSeriesIndex);
+  constexpr int numberOfModes10 = 1;
+  double modes10[numberOfModes10] = {4.0};
+  assert_data_statistics_equal_to(
+      &store,
+      listLength10,
+      /* sumOfOccurrences */ 1.0,
+      /* range */ 0.0,
+      /* mean */ 4.0,
+      /* variance */ 0.0,
+      /* standardDeviation */ 0.0,
+      /* sampleStandardDeviation */ NAN,
+      /* sum */ 4.0,
+      /* squaredValueSum */ 16.0,
+      numberOfModes10,
+      modes10,
+      /* modesFrequency */ 1.0);
+
+  constexpr int totalCumulatedFrequency10 = listLength10;
+  double trueCumulatedFrequencyValues10[totalCumulatedFrequency10] = {1.0, 4.0};
+  double trueCumulatedFrequencyResults10[totalCumulatedFrequency10] = {0.0, 100.0};
+  assert_data_cumulated_frequency(&store, listLength10, trueCumulatedFrequencyValues10, trueCumulatedFrequencyResults10, totalCumulatedFrequency10);
+
+  constexpr int totalNormalProbability10 = 1;
+  double trueNormalProbabilityValues10[totalNormalProbability10] = {4.0};
+  double trueNormalProbabilityResults10[totalNormalProbability10] = {0.0};
+  assert_data_normal_probability(&store, listLength10, trueNormalProbabilityValues10, trueNormalProbabilityResults10, totalNormalProbability10);
+
+  constexpr int totalLowerOutliers10 = 0;
+  double trueLowerOutliers10[totalLowerOutliers10] = {};
+  constexpr int totalUpperOutliers10 = 0;
+  double trueUpperOutliers10[totalUpperOutliers10] = {};
+  // SublistMethod
+  assert_data_box_plot(
+      &store,
+      listLength10,
+      /* quartileRange */ 0.0,
+      /* minValue */ 4.0,
+      trueLowerOutliers10,
+      totalLowerOutliers10,
+      /* lowerFence */ 4.0,
+      /* lowerWhisker */ 4.0,
+      /* firstQuartile */ 4.0,
+      /* median */ 4.0,
+      /* thirdQuartile */ 4.0,
+      /* upperWhisker */ 4.0,
+      /* upperFence */ 4.0,
+      trueUpperOutliers10,
+      totalUpperOutliers10,
+      /* maxValue */ 4.0,
+      false);
+
+  // FrequencyMethod
+  assert_data_box_plot(
+      &store,
+      listLength10,
+      /* quartileRange */ 0.0,
+      /* minValue */ 4.0,
+      trueLowerOutliers10,
+      totalLowerOutliers10,
+      /* lowerFence */ 4.0,
+      /* lowerWhisker */ 4.0,
+      /* firstQuartile */ 4.0,
+      /* median */ 4.0,
+      /* thirdQuartile */ 4.0,
+      /* upperWhisker */ 4.0,
+      /* upperFence */ 4.0,
+      trueUpperOutliers10,
+      totalUpperOutliers10,
+      /* maxValue */ 4.0,
       true);
 
   // Empty out the store

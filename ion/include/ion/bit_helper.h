@@ -50,7 +50,8 @@ constexpr inline size_t indexOfMostSignificantBit(unsigned int i) {
 }
 
 constexpr inline size_t numberOfBitsToCountUpTo(unsigned int i) {
-  return i < 2 ? 0 : indexOfMostSignificantBit(i - 1);
+  assert(i >= 2);
+  return indexOfMostSignificantBit(i - 1);
 }
 
 }  // namespace BitHelper

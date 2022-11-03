@@ -12,20 +12,20 @@ constexpr static size_t k_numberOfBitsInByte = 8;
 constexpr static size_t k_numberOfBitsInInt = sizeof(int) * k_numberOfBitsInByte;
 
 template <typename T>
-size_t numberOfBitsInType() {
+constexpr size_t numberOfBitsInType() {
   return sizeof(T) * k_numberOfBitsInByte;
 }
 
 template <typename T>
-bool bitAtIndex(T mask, size_t i) {
+constexpr bool bitAtIndex(T mask, size_t i) {
   assert(i >= 0 && i < numberOfBitsInType<T>());
   return (mask >> i) & 1U;
 }
 
 template <typename T>
-void setBitAtIndex(T & mask, size_t i, bool b) {
+constexpr void setBitAtIndex(T & mask, size_t i, bool b) {
   assert(i < numberOfBitsInType<T>());
-  constexpr static T one = 1;
+  T one = 1;
   if (b) {
     mask |= (one << i);
   } else {
@@ -33,16 +33,24 @@ void setBitAtIndex(T & mask, size_t i, bool b) {
   }
 }
 
-inline size_t countLeadingZeros(unsigned int i) {
+constexpr inline size_t countLeadingZeros(unsigned int i) {
   return __builtin_clz(i);
 }
 
-inline size_t countTrailingZeros(unsigned int i) {
+constexpr inline size_t countTrailingZeros(unsigned int i) {
   return __builtin_ctz(i);
 }
 
-inline size_t numberOfOnes(unsigned int i) {
+constexpr inline size_t numberOfOnes(unsigned int i) {
   return __builtin_popcount(i);
+}
+
+constexpr inline size_t indexOfMostSignificantBit(unsigned int i) {
+  return numberOfBitsInType<unsigned int>() - countLeadingZeros(i);
+}
+
+constexpr inline size_t numberOfBitsToRepresentNumberStrictlyInferiorTo(unsigned int i) {
+  return i < 2 ? 0 : indexOfMostSignificantBit(i - 1);
 }
 
 }  // namespace BitHelper

@@ -49,7 +49,7 @@ constexpr inline size_t indexOfMostSignificantBit(unsigned int i) {
   return numberOfBitsInType<unsigned int>() - countLeadingZeros(i);
 }
 
-constexpr inline size_t numberOfBitsToRepresentNumberStrictlyInferiorTo(unsigned int i) {
+constexpr inline size_t numberOfBitsToCountUpTo(unsigned int i) {
   return i < 2 ? 0 : indexOfMostSignificantBit(i - 1);
 }
 

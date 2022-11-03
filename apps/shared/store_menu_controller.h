@@ -20,6 +20,8 @@ public:
   // PervasiveBox
   void open() override;
 
+  void close();
+
   // Responder
   void didBecomeFirstResponder() override;
 
@@ -55,6 +57,8 @@ private:
 
   bool parseAndStore(const char * text);
   void openAbortWarning();
+
+  char m_savedDraftTextBuffer[Escher::AbstractTextField::MaxBufferSize()];
   Escher::StackViewController m_stackViewController;
   InnerListController m_listController;
   Escher::EditableExpressionCell m_cell;

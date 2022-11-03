@@ -21,6 +21,9 @@ class AbstractTextField : public TextInput, public EditableField {
 public:
   constexpr static int MaxBufferSize() { return ContentView::k_maxBufferSize; }
 
+  static size_t DumpDraftTextBuffer(char * buffer = nullptr, size_t bufferSize = 0);
+  static size_t FillDraftTextBuffer(const char * src, size_t srcLength = -1);
+
   AbstractTextField(Responder * parentResponder, View * contentView, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);
 
   // Responder

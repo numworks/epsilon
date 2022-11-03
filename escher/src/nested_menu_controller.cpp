@@ -96,6 +96,8 @@ void NestedMenuController::viewWillAppear() {
   if (checksum != m_savedChecksum) {
     m_savedChecksum = checksum;
     returnToRootMenu();
+  } else if (numberOfRows() == 0) {
+    returnToRootMenu();
   } else {
     loadState(m_lastState);
   }

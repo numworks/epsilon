@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
       - name: Find most recent ancestor of PR and target branch
         id: common_ancestor
-        run: echo "::set-output name=commit_sha::$(git merge-base ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})"
+        run: echo "commit_sha=$(git merge-base ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})" >> $GITHUB_OUTPUT
       - name: Checkout to most recent ancestor
         uses: actions/checkout@v3
         with:
@@ -41,10 +41,10 @@ jobs:
         run: cd head && make bootloader.elf && make kernel.onboarding.beta.allow3rdparty.A.elf && make userland.onboarding.beta.allow3rdparty.A.elf
       - name: Binary size summary
         id: binary_size_summary
-        run: echo "::set-output name=table::$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)"
+        run: echo "table=$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" >> $GITHUB_OUTPUT
       - name: Binary size N0110
         id: binary_size_n0110
-        run: echo "::set-output name=table::$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/bootloader/bootloader.elf base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/bootloader/bootloader.elf head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)"
+        run: echo "table=$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/device/n0110/bootloader/bootloader.elf base/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/device/n0110/bootloader/bootloader.elf head/output/release/device/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/device/n0110/userland/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" >> $GITHUB_OUTPUT
       - name: Add comment
         uses: actions/github-script@v6
         with:

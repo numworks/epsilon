@@ -268,8 +268,8 @@ template<typename T>
 Coordinate2D<T> Solver<T>::nextPossibleRootInChild(Expression e, int childIndex) const {
   Solver<T> solver(this);
   Expression child = e.childAtIndex(childIndex);
-  T xRoot = solver.nextRoot(child).x1();
-  while (std::isfinite(xRoot)) {
+  T xRoot;
+  while (std::isfinite(xRoot = solver.nextRoot(child).x1())) { // assignment in condition
     /* Check the result in case another term is undefined,
      * e.g. (x+1)*ln(x) for x =- 1.
      * This comparison relies on the fact that it is false for a NAN
@@ -277,7 +277,6 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(Expression e, int childIndex)
     if (std::fabs(e.approximateWithValueForSymbol<T>(m_unknown, xRoot, m_context, m_complexFormat, m_angleUnit)) < NullTolerance(xRoot)) {
       return Coordinate2D<T>(xRoot, k_zero);
     }
-    xRoot = solver.nextRoot(child).x1();
   }
   return Coordinate2D<T>(k_NAN, k_NAN);
 }

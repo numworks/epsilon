@@ -19,9 +19,9 @@ namespace Escher {
 
 class AbstractTextField : public TextInput, public EditableField {
 public:
-  AbstractTextField(Responder * parentResponder, View * contentView, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);
+  constexpr static int MaxBufferSize() { return ContentView::k_maxBufferSize; }
 
-  constexpr static int maxBufferSize() { return ContentView::k_maxBufferSize; }
+  AbstractTextField(Responder * parentResponder, View * contentView, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

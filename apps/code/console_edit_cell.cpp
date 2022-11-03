@@ -14,7 +14,7 @@ ConsoleEditCell::ConsoleEditCell(Responder * parentResponder, InputEventHandlerD
   HighlightCell(),
   Responder(parentResponder),
   m_promptView(GlobalPreferences::sharedGlobalPreferences()->font(), nullptr, KDContext::k_alignLeft, KDContext::k_alignCenter),
-  m_textField(this, nullptr, TextField::maxBufferSize(), TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, GlobalPreferences::sharedGlobalPreferences()->font())
+  m_textField(this, nullptr, TextField::MaxBufferSize(), TextField::MaxBufferSize(), inputEventHandlerDelegate, delegate, GlobalPreferences::sharedGlobalPreferences()->font())
 {
 }
 

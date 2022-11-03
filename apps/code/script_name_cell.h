@@ -15,7 +15,7 @@ public:
   ScriptNameCell(Escher::Responder * parentResponder = nullptr, Escher::TextFieldDelegate * delegate = nullptr) :
     Escher::EvenOddCell(),
     Escher::Responder(parentResponder),
-    m_textField(k_extensionLength, this, m_textBody, Escher::TextField::maxBufferSize(), Escher::TextField::maxBufferSize(), nullptr, delegate)
+    m_textField(k_extensionLength, this, m_textBody, Escher::TextField::MaxBufferSize(), Escher::TextField::MaxBufferSize(), nullptr, delegate)
   {
     m_textBody[0] = 0;
   }
@@ -48,7 +48,7 @@ private:
   void layoutSubviews(bool force = false) override;
 
   Shared::TextFieldWithExtension m_textField;
-  char m_textBody[Escher::TextField::maxBufferSize()];
+  char m_textBody[Escher::TextField::MaxBufferSize()];
 };
 
 }

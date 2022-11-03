@@ -80,7 +80,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
      * Lengths :  b         ib                      ia          a
      * As maxBufferSize is lower than k_maxLineChars, there is no need to check
      * for inserted lines between "\n...\n" */
-    static_assert(TextField::maxBufferSize() < k_maxLineChars, "Pasting text might cause content rect overflow.");
+    static_assert(TextField::MaxBufferSize() < k_maxLineChars, "Pasting text might cause content rect overflow.");
 
     // Counting line text lengths before and after insertion.
     int b = 0;

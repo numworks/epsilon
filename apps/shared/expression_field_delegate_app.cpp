@@ -30,7 +30,7 @@ bool ExpressionFieldDelegateApp::layoutFieldDidReceiveEvent(LayoutField * layout
      * not displayed, like:
      * - 2a
      * - log_{2}(x) */
-    constexpr int bufferSize = TextField::maxBufferSize();
+    constexpr int bufferSize = TextField::MaxBufferSize();
     char buffer[bufferSize];
     int length = layoutField->layout().serializeForParsing(buffer, bufferSize);
     if (length >= bufferSize-1) {

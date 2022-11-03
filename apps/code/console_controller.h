@@ -77,7 +77,7 @@ public:
 private:
   constexpr static const char * k_importCommand1 = "from ";
   constexpr static const char * k_importCommand2 = " import *";
-  constexpr static size_t k_maxImportCommandSize = 5 + 9 + Escher::TextField::maxBufferSize(); // strlen(k_importCommand1) + strlen(k_importCommand2) + TextField::maxBufferSize()
+  constexpr static size_t k_maxImportCommandSize = 5 + 9 + Escher::TextField::MaxBufferSize(); // strlen(k_importCommand1) + strlen(k_importCommand2) + TextField::MaxBufferSize()
   constexpr static int k_lineCellType = 0;
   constexpr static int k_editCellType = 1;
   constexpr static int k_numberOfLineCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(KDFont::GlyphHeight(KDFont::Size::Small));

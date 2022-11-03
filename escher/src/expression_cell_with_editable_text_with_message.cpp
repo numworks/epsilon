@@ -12,7 +12,7 @@ ExpressionCellWithEditableTextWithMessage::ExpressionCellWithEditableTextWithMes
       m_textField(this,
                   m_textBody,
                   sizeof(m_textBody),
-                  Escher::TextField::maxBufferSize(),
+                  Escher::TextField::MaxBufferSize(),
                   inputEventHandlerDelegate,
                   this,
                   KDFont::Size::Large,

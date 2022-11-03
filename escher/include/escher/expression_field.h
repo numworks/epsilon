@@ -48,7 +48,7 @@ protected:
   TextField m_textField;
   LayoutField m_layoutField;
 private:
-  constexpr static int k_textFieldBufferSize = TextField::maxBufferSize();
+  constexpr static int k_textFieldBufferSize = TextField::MaxBufferSize();
   constexpr static KDCoordinate k_minimalHeight = 37;
   constexpr static KDCoordinate k_maximalHeight = 0.6*Ion::Display::Height;
   constexpr static KDCoordinate k_horizontalMargin = 5;

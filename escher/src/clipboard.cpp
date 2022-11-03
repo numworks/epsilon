@@ -13,7 +13,7 @@ Clipboard * Clipboard::SharedClipboard() {
 }
 
 void Clipboard::store(const char * storedText, int length) {
-  int maxSize = TextField::maxBufferSize();
+  int maxSize = TextField::MaxBufferSize();
   if (length == -1 || length + 1 > maxSize) {
     // Make sure the text isn't truncated in the middle of a code point.
     length = std::min(maxSize - 1, static_cast<int>(strlen(storedText)));
@@ -55,7 +55,7 @@ const char * Clipboard::storedText() {
   };
 
   /* Size is maxBufferSize - 1 to ensure null termination. */
-  UTF8Helper::TryAndReplacePatternsInStringByPatterns(m_textBuffer, TextField::maxBufferSize() - 1, textPairs, numberOfPairs, true);
+  UTF8Helper::TryAndReplacePatternsInStringByPatterns(m_textBuffer, TextField::MaxBufferSize() - 1, textPairs, numberOfPairs, true);
   return m_textBuffer;
 }
 

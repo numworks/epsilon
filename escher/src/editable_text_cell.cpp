@@ -10,7 +10,7 @@ EditableTextCell::EditableTextCell(Responder * parentResponder, InputEventHandle
    KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :
   HighlightCell(),
   Responder(parentResponder),
-  m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize, TextField::maxBufferSize(), inputEventHandlerDelegate, delegate, font, horizontalAlignment, verticalAlignment, textColor, backgroundColor)
+  m_textField(this, m_textBody, Poincare::PrintFloat::k_maxFloatCharSize, TextField::MaxBufferSize(), inputEventHandlerDelegate, delegate, font, horizontalAlignment, verticalAlignment, textColor, backgroundColor)
 {
   m_textBody[0] = 0;
 }

@@ -33,7 +33,7 @@ void SuggestionTextField::ContentView::setSuggestion(const char * suggestion) {
 
 SuggestionTextField::SuggestionTextField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate) :
   AbstractTextField(parentResponder, &m_contentView, inputEventHandlerDelegate, delegate),
-  m_contentView(nullptr, maxBufferSize(), maxBufferSize(), KDFont::Size::Large, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite)
+  m_contentView(nullptr, MaxBufferSize(), MaxBufferSize(), KDFont::Size::Large, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite)
 {}
 
 bool SuggestionTextField::handleEvent(Ion::Events::Event event) {

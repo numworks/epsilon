@@ -104,7 +104,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
     } else if (type == k_regressionEquationCellType) {
       Poincare::Layout l = m_regressionEquationCell.layout();
       if (!l.isUninitialized()) {
-        constexpr int bufferSize = TextField::maxBufferSize();
+        constexpr int bufferSize = TextField::MaxBufferSize();
         char buffer[bufferSize];
         l.serializeParsedExpression(buffer, bufferSize, nullptr);
         if (event == Ion::Events::Sto || event == Ion::Events::Var) {

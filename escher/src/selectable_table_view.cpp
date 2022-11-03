@@ -259,7 +259,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     }
     Poincare::Layout l = cell->layout();
     if (!l.isUninitialized()) {
-      constexpr int bufferSize = TextField::maxBufferSize();
+      constexpr int bufferSize = TextField::MaxBufferSize();
       char buffer[bufferSize];
       l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {

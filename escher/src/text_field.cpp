@@ -18,7 +18,7 @@
 #include <algorithm>
 
 namespace Escher {
-static char s_draftTextBuffer[AbstractTextField::maxBufferSize()];
+static char s_draftTextBuffer[AbstractTextField::MaxBufferSize()];
 
 /* AbstractTextField::ContentView */
 
@@ -601,7 +601,7 @@ bool AbstractTextField::handleEventWithText(const char * eventText, bool indenta
 
   if (eventText[0] != 0) {
     // Remove the Empty code points
-    constexpr int bufferSize = AbstractTextField::maxBufferSize();
+    constexpr int bufferSize = AbstractTextField::MaxBufferSize();
     char buffer[bufferSize];
     {
       CodePoint c[] = {UCodePointEmpty, '\n'};
@@ -659,7 +659,7 @@ bool AbstractTextField::handleStoreEvent() {
   }
   if (!nonEditableContentView()->selectionIsEmpty()) {
     const char * start = nonEditableContentView()->selectionStart();
-    static_assert(TextField::maxBufferSize() == Escher::Clipboard::k_bufferSize);
+    static_assert(TextField::MaxBufferSize() == Escher::Clipboard::k_bufferSize);
     char buffer[Escher::Clipboard::k_bufferSize];
     strlcpy(buffer, start, nonEditableContentView()->selectionEnd() - start + 1);
     Container::activeApp()->storeValue(buffer);

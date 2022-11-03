@@ -134,10 +134,10 @@ public:
 
 private:
   // Update
-  void setCartesianFunctionProperties(const Poincare::Expression& reducedEquation, Poincare::Context * context);
-  void setCartesianEquationProperties(const Poincare::Expression& reducedEquation, Poincare::Context * context, int xDeg, int yDeg, Poincare::TrinaryBoolean highestCoefficientIsPositive);
-  void setPolarFunctionProperties(const Poincare::Expression& reducedEquation, Poincare::Context * context);
-  void setParametricFunctionProperties(const Poincare::Expression& reducedEquation, Poincare::Context * context);
+  void setCartesianFunctionProperties(const Poincare::Expression& analyzedExpression, Poincare::Context * context);
+  void setCartesianEquationProperties(const Poincare::Expression& analyzedExpression, Poincare::Context * context, int xDeg, int yDeg, Poincare::TrinaryBoolean highestCoefficientIsPositive);
+  void setPolarFunctionProperties(const Poincare::Expression& analyzedExpression, Poincare::Context * context);
+  void setParametricFunctionProperties(const Poincare::Expression& analyzedExpression, Poincare::Context * context);
 
   // If equation has a NonNull coeff. Can also compute last coeff sign.
   static bool HasNonNullCoefficients(const Poincare::Expression equation, const char * symbolName, Poincare::Context * context, Poincare::TrinaryBoolean * highestDegreeCoefficientIsPositive);

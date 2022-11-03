@@ -117,14 +117,14 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
     return;
   }
 
-  Expression analysedEquation = reducedEquation;
+  Expression analyzedExpression = reducedEquation;
   if (reducedEquation.type() == ExpressionNode::Type::Dependency) {
     // Do not handle dependencies for now.
-    analysedEquation = reducedEquation.childAtIndex(0);
+    analyzedExpression = reducedEquation.childAtIndex(0);
   }
 
   // Compute equation's degree regarding y.
-  int yDeg = analysedEquation.polynomialDegree(context, k_ordinateName);
+  int yDeg = analyzedExpression.polynomialDegree(context, k_ordinateName);
   if (!isCartesianEquation) {
     // There should be no y symbol. Inequations are handled on cartesians only
     if (yDeg > 0 || (precomputedOperatorType != ComparisonNode::OperatorType::Equal && precomputedFunctionSymbol != SymbolType::X)) {
@@ -133,31 +133,31 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
     }
 
     if (precomputedFunctionSymbol == SymbolType::X) {
-      setCartesianFunctionProperties(analysedEquation, context);
+      setCartesianFunctionProperties(analyzedExpression, context);
       return;
     }
 
     assert(precomputedOperatorType == ComparisonNode::OperatorType::Equal);
 
     if (precomputedFunctionSymbol == SymbolType::T) {
-      if (analysedEquation.type() != ExpressionNode::Type::Matrix
-          || static_cast<const Matrix &>(analysedEquation).numberOfRows() != 2
-          || static_cast<const Matrix &>(analysedEquation).numberOfColumns() != 1) {
+      if (analyzedExpression.type() != ExpressionNode::Type::Matrix
+          || static_cast<const Matrix &>(analyzedExpression).numberOfRows() != 2
+          || static_cast<const Matrix &>(analyzedExpression).numberOfColumns() != 1) {
         // Invalid parametric format
         setStatus(Status::Unhandled);
         return;
       }
-      setParametricFunctionProperties(analysedEquation, context);
+      setParametricFunctionProperties(analyzedExpression, context);
       return;
     }
 
     assert(precomputedFunctionSymbol == SymbolType::Theta);
-    setPolarFunctionProperties(analysedEquation, context);
+    setPolarFunctionProperties(analyzedExpression, context);
     return;
   }
 
   // Compute equation's degree regarding x.
-  int xDeg = analysedEquation.polynomialDegree(context, Function::k_unknownName);
+  int xDeg = analyzedExpression.polynomialDegree(context, Function::k_unknownName);
 
   bool willBeAlongX = (yDeg == 1) || (yDeg == 2);
   bool willBeAlongY = !willBeAlongX && ((xDeg == 1) || (xDeg == 2));
@@ -169,8 +169,8 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
 
   const char * symbolName = willBeAlongX ? k_ordinateName : Function::k_unknownName;
   TrinaryBoolean highestCoefficientIsPositive = TrinaryBoolean::Unknown;
-  if (!HasNonNullCoefficients(analysedEquation, symbolName, context, &highestCoefficientIsPositive)
-      || analysedEquation.hasComplexI(context)) {
+  if (!HasNonNullCoefficients(analyzedExpression, symbolName, context, &highestCoefficientIsPositive)
+      || analyzedExpression.hasComplexI(context)) {
     // The equation must have at least one nonNull coefficient.
     // TODO : Accept equations such as y=re(i)
     setErrorStatusAndUpdateCaption(Status::Unhandled);
@@ -200,17 +200,17 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
     }
   }
 
-  setCartesianEquationProperties(analysedEquation, context, xDeg, yDeg, highestCoefficientIsPositive);
+  setCartesianEquationProperties(analyzedExpression, context, xDeg, yDeg, highestCoefficientIsPositive);
 }
 
-void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expression& reducedEquation, Context * context) {
-  assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
+void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expression& analyzedExpression, Context * context) {
+  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(status() == Status::Enabled && isCartesian());
 
   setCurveParameterType(CurveParameterType::CartesianFunction);
 
   // f(x) = piecewise(...)
-  if (reducedEquation.recursivelyMatches(
+  if (analyzedExpression.recursivelyMatches(
     [](const Expression e, Context * context) {
       return e.type() == ExpressionNode::Type::PiecewiseOperator;
     },
@@ -220,7 +220,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expressi
     return;
   }
 
-  int xDeg = reducedEquation.polynomialDegree(context, Function::k_unknownName);
+  int xDeg = analyzedExpression.polynomialDegree(context, Function::k_unknownName);
   // f(x) = a
   if (xDeg == 0) {
     setCaption(I18n::Message::ConstantType);
@@ -229,7 +229,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expressi
 
   // f(x) = a*x + b
   if (xDeg == 1) {
-    if (reducedEquation.type() == ExpressionNode::Type::Addition) {
+    if (analyzedExpression.type() == ExpressionNode::Type::Addition) {
       setCaption(I18n::Message::AffineType);
     } else {
       setCaption(I18n::Message::LinearType);
@@ -244,7 +244,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expressi
   }
 
   // f(x) = a*cos(b*x+c) + d*sin(e*x+f) + g*tan(h*x+k) + z
-  if (reducedEquation.isLinearCombinationOfFunction(
+  if (analyzedExpression.isLinearCombinationOfFunction(
     context,
     [](const Expression& e, Context * context, const char * symbol) {
       return (e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Sine || e.type() == ExpressionNode::Type::Tangent)
@@ -257,7 +257,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expressi
   }
 
   // f(x) = a*logk(b*x+c) + d*logM(e*x+f) + ... + z
-  if (reducedEquation.isLinearCombinationOfFunction(
+  if (analyzedExpression.isLinearCombinationOfFunction(
     context,
     [](const Expression& e, Context * context, const char * symbol) {
       return e.type() == ExpressionNode::Type::Logarithm
@@ -270,7 +270,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expressi
   }
 
   // f(x) = a*exp(b*x+c) + d
-  if (reducedEquation.isLinearCombinationOfFunction(
+  if (analyzedExpression.isLinearCombinationOfFunction(
     context,
     [](const Expression& e, Context * context, const char * symbol) {
       if (e.type() != ExpressionNode::Type::Power) {
@@ -288,7 +288,7 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expressi
   }
 
   // f(x) = polynomial/polynomial
-  if (reducedEquation.isLinearCombinationOfFunction(context, &Expression::IsRationalFunction, Function::k_unknownName)) {
+  if (analyzedExpression.isLinearCombinationOfFunction(context, &Expression::IsRationalFunction, Function::k_unknownName)) {
     setCaption(I18n::Message::RationalType);
     return;
   }
@@ -297,8 +297,8 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expressi
   setCaption(I18n::Message::FunctionType);
 }
 
-void ContinuousFunctionProperties::setCartesianEquationProperties(const Poincare::Expression& reducedEquation, Poincare::Context * context, int xDeg, int yDeg, TrinaryBoolean highestCoefficientIsPositive) {
-  assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
+void ContinuousFunctionProperties::setCartesianEquationProperties(const Poincare::Expression& analyzedExpression, Poincare::Context * context, int xDeg, int yDeg, TrinaryBoolean highestCoefficientIsPositive) {
+  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(status() == Status::Enabled && isCartesian());
 
   /* We can rely on x and y degree to identify plot type :
@@ -355,7 +355,7 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(const Poincare
     /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
      * details. Otherwise, try to identify a conic.
      * For instance, x*y=1 as an hyperbola. */
-    CartesianConic equationConic = CartesianConic(reducedEquation, context, Function::k_unknownName);
+    CartesianConic equationConic = CartesianConic(analyzedExpression, context, Function::k_unknownName);
     setConicShape(equationConic.conicType().shape);
     switch (conicShape()) {
     case Conic::Shape::Hyperbola:
@@ -376,8 +376,8 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(const Poincare
   }
 }
 
-void ContinuousFunctionProperties::setPolarFunctionProperties(const Expression& reducedEquation, Context * context) {
-  assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
+void ContinuousFunctionProperties::setPolarFunctionProperties(const Expression& analyzedExpression, Context * context) {
+  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(status() == Status::Enabled && isPolar());
 
   setCurveParameterType(CurveParameterType::Polar);
@@ -392,10 +392,10 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(const Expression& 
    */
   ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context);
   Expression denominator, numerator;
-  if (reducedEquation.type() == ExpressionNode::Type::Multiplication) {
-    static_cast<const Multiplication&>(reducedEquation).splitIntoNormalForm(numerator, denominator, reductionContext);
-  } else if (reducedEquation.type() == ExpressionNode::Type::Power && reducedEquation.childAtIndex(1).isMinusOne()) {
-    denominator = reducedEquation.childAtIndex(0);
+  if (analyzedExpression.type() == ExpressionNode::Type::Multiplication) {
+    static_cast<const Multiplication&>(analyzedExpression).splitIntoNormalForm(numerator, denominator, reductionContext);
+  } else if (analyzedExpression.type() == ExpressionNode::Type::Power && analyzedExpression.childAtIndex(1).isMinusOne()) {
+    denominator = analyzedExpression.childAtIndex(0);
   }
 
   double angle = 0.0;
@@ -415,7 +415,7 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(const Expression& 
   }
 
   // Detect polar conics
-  PolarConic conicProperties = PolarConic(reducedEquation, context, Function::k_unknownName);
+  PolarConic conicProperties = PolarConic(analyzedExpression, context, Function::k_unknownName);
   setConicShape(conicProperties.conicType().shape);
   switch (conicShape()) {
   case Conic::Shape::Hyperbola:
@@ -436,18 +436,18 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(const Expression& 
   }
 }
 
-void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincare::Expression& reducedEquation, Poincare::Context * context) {
-  assert(reducedEquation.type() != ExpressionNode::Type::Dependency);
+void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincare::Expression& analyzedExpression, Poincare::Context * context) {
+  assert(analyzedExpression.type() != ExpressionNode::Type::Dependency);
   assert(status() == Status::Enabled && isParametric());
-  assert(reducedEquation.type() == ExpressionNode::Type::Matrix
-        && static_cast<const Matrix&>(reducedEquation).numberOfColumns() == 1
-        && static_cast<const Matrix&>(reducedEquation).numberOfRows() == 2);
+  assert(analyzedExpression.type() == ExpressionNode::Type::Matrix
+        && static_cast<const Matrix&>(analyzedExpression).numberOfColumns() == 1
+        && static_cast<const Matrix&>(analyzedExpression).numberOfRows() == 2);
 
   setCurveParameterType(CurveParameterType::Parametric);
 
   // Detect lines
-  const Expression xOfT = reducedEquation.childAtIndex(0);
-  const Expression yOfT = reducedEquation.childAtIndex(1);
+  const Expression xOfT = analyzedExpression.childAtIndex(0);
+  const Expression yOfT = analyzedExpression.childAtIndex(1);
   int degOfTinX = xOfT.polynomialDegree(context, Function::k_unknownName);
   int degOfTinY = yOfT.polynomialDegree(context, Function::k_unknownName);
   if (degOfTinX == 0 && degOfTinY != 0) {
@@ -472,7 +472,7 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincar
   }
 
   // Detect polar conics
-  ParametricConic conicProperties = ParametricConic(reducedEquation, context, Function::k_unknownName);
+  ParametricConic conicProperties = ParametricConic(analyzedExpression, context, Function::k_unknownName);
   setConicShape(conicProperties.conicType().shape);
   switch (conicShape()) {
   case Conic::Shape::Hyperbola:

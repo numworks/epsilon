@@ -58,7 +58,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   ContinuousFunctionStore * store = functionStore();
   int nbFunctions = store->numberOfActiveFunctions();
   constexpr float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
-  Range1D xBounds = computeX ? Range1D(-k_maxFloat, k_maxFloat) : originalRange.x();
+  Range1D xBounds = computeX ? Range1D(-k_maxFloat, k_maxFloat) : *originalRange.x();
 
   for (int i = 0; i < nbFunctions; i++) {
     ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
@@ -105,7 +105,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   }
 
   Range2D newRange = zoom.range(k_maxFloat, defaultRangeIsNormalized());
-  return Range2D((computeX ? newRange : originalRange).x(), (computeY ? newRange : originalRange).y());
+  return Range2D(*(computeX ? newRange : originalRange).x(), *(computeY ? newRange : originalRange).y());
 }
 
 bool GraphController::handleZoom(Ion::Events::Event event) {

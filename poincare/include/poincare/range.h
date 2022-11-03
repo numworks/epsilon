@@ -51,10 +51,10 @@ public:
   float yMin() const { return m_y.min(); }
   float yMax() const { return m_y.max(); }
 
-  Range1D & x() { return m_x; }
-  Range1D & y() { return m_y; }
-  const Range1D & x() const { return m_x; }
-  const Range1D & y() const { return m_y; }
+  Range1D * x() { return &m_x; }
+  Range1D * y() { return &m_y; }
+  const Range1D * x() const { return &m_x; }
+  const Range1D * y() const { return &m_y; }
 
   Coordinate2D<float> center() const { return Coordinate2D<float>(m_x.center(), m_y.center()); }
   float ratio() const { return m_y.length() / m_x.length(); }

@@ -36,7 +36,7 @@ protected:
 private:
   constexpr static float k_defaultGridUnit = 2.f;
 
-  void privateSet(float f, float limit, Poincare::Range1D & range1D, void (Poincare::Range1D::*setter)(float, float), bool updateGridUnit, float * gridUnit);
+  void privateSet(float f, float limit, Poincare::Range1D * range1D, void (Poincare::Range1D::*setter)(float, float), bool updateGridUnit, float * gridUnit);
 
   // Window bounds of the data
   Poincare::Range2D m_range;

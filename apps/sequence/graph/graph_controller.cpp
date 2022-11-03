@@ -81,9 +81,9 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   Range2D result;
   if (computeX) {
     float xMin = interestingXMin();
-    result.x() = Range1D(xMin, xMin + k_defaultXHalfRange);
+    *result.x() = Range1D(xMin, xMin + k_defaultXHalfRange);
   } else {
-    result.x() = originalRange.x();
+    *result.x() = *originalRange.x();
   }
   if (computeY) {
     Zoom zoom(result.xMin(), result.xMax(), InteractiveCurveViewRange::NormalYXRatio(), textFieldDelegateApp()->localContext());
@@ -92,7 +92,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
       Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
       zoom.fitFullFunction(evaluator, s);
     }
-    result.y() = zoom.range(InteractiveCurveViewRange::k_maxFloat, false).y();
+    *result.y() = *zoom.range(InteractiveCurveViewRange::k_maxFloat, false).y();
   }
   return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(), InteractiveCurveViewRange::k_maxFloat);
 }

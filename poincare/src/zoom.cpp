@@ -54,27 +54,35 @@ void Zoom::fitFullFunction(Function2DWithContext f, const void * model) {
   }
 }
 
-void Zoom::fitPointsOfInterest(Function2DWithContext f, const void * model) {
+Coordinate2D<float> flipped(Coordinate2D<float> xy, bool flip) {
+  return flip ? Coordinate2D<float>(xy.x2(), xy.x1()) : xy;
+}
+
+void Zoom::fitPointsOfInterest(Function2DWithContext f, const void * model, bool vertical) {
   HorizontalAsymptoteHelper asymptotes(m_bounds.center());
-  InterestParameters params = { .f = f, .model = model, .context = m_context, .asymptotes = &asymptotes };
+  float (Coordinate2D<float>::*ordinate)() const = vertical ? &Coordinate2D<float>::x1 : &Coordinate2D<float>::x2;
+  InterestParameters params = { .f = f, .model = model, .context = m_context, .asymptotes = &asymptotes, .ordinate = ordinate };
   Solver<float>::FunctionEvaluation evaluator = [](float t, const void * aux) {
     const InterestParameters * p = static_cast<const InterestParameters *>(aux);
-    return p->f(t, p->model, p->context).x2(); // TODO Zoom could also work for x=f(y) functions
+    return (p->f(t, p->model, p->context).*p->ordinate)();
   };
   bool leftInterrupted, rightInterrupted;
-  fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator, &params, PointIsInteresting, HonePoint);
+  fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator, &params, PointIsInteresting, HonePoint, vertical);
   /* If the search has been interrupted, the curve is supposed to have an
    * infinite number of points in this direction. An horizontal asymptote
    * would be the result of a sampling artifact and can be discarded. */
   if (!leftInterrupted) {
-    m_interestingRange.extend(asymptotes.left());
+    m_interestingRange.extend(flipped(asymptotes.left(), vertical));
   }
   if (!rightInterrupted) {
-    m_interestingRange.extend(asymptotes.right());
+    m_interestingRange.extend(flipped(asymptotes.right(), vertical));
   }
 }
 
-void Zoom::fitIntersections(Function2DWithContext f1, const void * model1, Function2DWithContext f2, const void * model2) {
+void Zoom::fitIntersections(Function2DWithContext f1, const void * model1, Function2DWithContext f2, const void * model2, bool vertical) {
+  /* TODO Function x=f(y) are not intersectable right now, there is no need to
+   * handle this case yet. */
+  assert(!vertical);
   struct Parameters {
     Function2DWithContext f1;
     Function2DWithContext f2;
@@ -94,10 +102,10 @@ void Zoom::fitIntersections(Function2DWithContext f1, const void * model1, Funct
     return p->f1(b, p->model1, p->context);
   };
   bool dummy;
-  fitWithSolver(&dummy, &dummy, evaluator, &params, Solver<float>::EvenOrOddRootInBracket, hone);
+  fitWithSolver(&dummy, &dummy, evaluator, &params, Solver<float>::EvenOrOddRootInBracket, hone, vertical);
 }
 
-void Zoom::fitMagnitude(Function2DWithContext f, const void * model) {
+void Zoom::fitMagnitude(Function2DWithContext f, const void * model, bool vertical) {
   /* We compute the log mean value of the expression, which gives an idea of the
    * order of magnitude of the function, to crop the Y axis. */
   constexpr float aboutZero = Solver<float>::k_minimalAbsoluteStep;
@@ -105,11 +113,14 @@ void Zoom::fitMagnitude(Function2DWithContext f, const void * model) {
   float nSum = 0.f, pSum = 0.f;
   int nPop = 0, pPop = 0;
 
-  Range1D xRange = sanitizedXRange();
+  float (Coordinate2D<float>::*ordinate)() const = vertical ? &Coordinate2D<float>::x1 : &Coordinate2D<float>::x2;
+  Range2D saneRange = sanitizedRange();
+  Range1D xRange = *(vertical ? saneRange.y() : saneRange.x());
   float step = xRange.length() / (k_sampleSize - 1);
+
   for (int i = 0; i < k_sampleSize; i++) {
     float x = xRange.min() + i * step;
-    float y = f(x, model, m_context).x2(); // TODO Zoom could also work for x=f(y) functions
+    float y = (f(x, model, m_context).*ordinate)();
     sample.extend(y);
     float yAbs = std::fabs(y);
     if (!(yAbs > aboutZero)) { // Negated to account for NANs
@@ -124,10 +135,11 @@ void Zoom::fitMagnitude(Function2DWithContext f, const void * model) {
       pPop++;
     }
   }
+  Range1D * magnitudeRange = vertical ? m_magnitudeRange.x() : m_magnitudeRange.y();
   float yMax = pPop > 0 ? std::min(sample.max(), std::exp(pSum / pPop  + 1.f)) : sample.max();
-  m_magnitudeYRange.extend(yMax);
+  magnitudeRange->extend(yMax);
   float yMin = nPop > 0 ? std::max(sample.min(), -std::exp(nSum / nPop  + 1.f)) : sample.min();
-  m_magnitudeYRange.extend(yMin);
+  magnitudeRange->extend(yMin);
 }
 
 // Zoom - Private
@@ -191,25 +203,32 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const v
   return Coordinate2D<float>(pb.x1(), interest == Solver<float>::Interest::Root ? 0.f : continuous ? pb.x2() : NAN);
 }
 
-Range1D Zoom::sanitizedXRange() const {
-  if (!m_interestingRange.x()->isValid()) {
-    assert(!m_interestingRange.y()->isValid());
-    return Range1D(-Range1D::k_defaultHalfLength, Range1D::k_defaultHalfLength);
+static Range1D sanitationHelper(Range1D range, const Range1D * other, float ratio) {
+  assert(other);
+  if (!range.isValid()) {
+    range = Range1D(0.f, 0.f);
   }
-  if (m_interestingRange.x()->isEmpty()) {
-    float c = m_interestingRange.xMin();
-    return Range1D(c - Range1D::k_defaultHalfLength, c + Range1D::k_defaultHalfLength);
+  if (range.isEmpty()) {
+    float c = range.min();
+    float otherLength = other->length();
+    float d = otherLength == 0.f ? Range1D::k_defaultHalfLength : ratio * 0.5f * otherLength;
+    range = Range1D(c - d, c + d);
   }
-  // FIXME Add margin around interesting range ?
-  return *m_interestingRange.x();
+  return range;
+}
+
+Range2D Zoom::sanitizedRange() const {
+  Range1D xRange = sanitationHelper(*m_interestingRange.x(), m_interestingRange.y(), 1.f / m_normalRatio);
+  Range1D yRange = sanitationHelper(*m_interestingRange.y(), &xRange, m_normalRatio);
+  return Range2D(xRange, yRange);
 }
 
 Range2D Zoom::prettyRange() const {
-  Range1D xRange = sanitizedXRange();
-
-  Range1D yRange = *m_interestingRange.y();
-  yRange.extend(m_magnitudeYRange.min());
-  yRange.extend(m_magnitudeYRange.max());
+  Range2D saneRange = sanitizedRange();
+  saneRange.extend(Coordinate2D<float>(m_magnitudeRange.xMin(), m_magnitudeRange.yMin()));
+  saneRange.extend(Coordinate2D<float>(m_magnitudeRange.xMax(), m_magnitudeRange.yMax()));
+  Range1D xRange = *saneRange.x();
+  Range1D yRange = *saneRange.y();
 
   float xLength = xRange.length();
   float yLength = yRange.length();
@@ -245,7 +264,7 @@ Range2D Zoom::prettyRange() const {
   return Range2D(xRange, yRange);
 }
 
-void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone) {
+void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical) {
   assert(leftInterrupted && rightInterrupted);
 
   /* Pick margin large enough to detect an extremum around zero, for some
@@ -254,18 +273,18 @@ void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver
 
   float c = m_bounds.center();
   float d = std::max(k_marginAroundZero, std::fabs(c * Solver<float>::k_relativePrecision));
-  *rightInterrupted = fitWithSolverHelper(c + d, m_bounds.max(), evaluator, aux, test, hone);
-  *leftInterrupted = fitWithSolverHelper(c - d, m_bounds.min(), evaluator, aux, test, hone);
+  *rightInterrupted = fitWithSolverHelper(c + d, m_bounds.max(), evaluator, aux, test, hone, vertical);
+  *leftInterrupted = fitWithSolverHelper(c - d, m_bounds.min(), evaluator, aux, test, hone, vertical);
 
   Coordinate2D<float> p1(c - d, evaluator(c - d, aux));
   Coordinate2D<float> p2(c, evaluator(c, aux));
   Coordinate2D<float> p3(c + d, evaluator(c + d, aux));
   if (pointIsInterestingHelper(p1, p2, p3, aux) != Solver<float>::Interest::None) {
-    m_interestingRange.extend(p2);
+    m_interestingRange.extend(flipped(p2, vertical));
   }
 }
 
-bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone) {
+bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical) {
   constexpr int k_maxPointsOnOneSide = 20;
   constexpr int k_maxPointsIfInfinite = 5;
 
@@ -284,7 +303,7 @@ bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEv
   int n = 0;
   Coordinate2D<float> p;
   while (std::isfinite((p = solver.next(evaluator, aux, test, hone)).x1())) { // assignment in condition
-    m_interestingRange.extend(p);
+    m_interestingRange.extend(flipped(p, vertical));
     n++;
     if (n == k_maxPointsIfInfinite) {
       tempRange = m_interestingRange;

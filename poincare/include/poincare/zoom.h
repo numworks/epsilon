@@ -39,10 +39,10 @@ public:
   void setBounds(float min, float max) { m_bounds = Range1D(min, max); }
   /* These three functions will extend both X and Y axes. */
   void fitFullFunction(Function2DWithContext f, const void * model);
-  void fitPointsOfInterest(Function2DWithContext f, const void * model);
-  void fitIntersections(Function2DWithContext f1, const void * model1, Function2DWithContext f2, const void * model2);
+  void fitPointsOfInterest(Function2DWithContext f, const void * model, bool vertical = false);
+  void fitIntersections(Function2DWithContext f1, const void * model1, Function2DWithContext f2, const void * model2, bool vertical = false);
   /* This function will only touch the Y axis. */
-  void fitMagnitude(Function2DWithContext f, const void * model);
+  void fitMagnitude(Function2DWithContext f, const void * model, bool vertical = false);
 
 private:
   class HorizontalAsymptoteHelper {
@@ -81,6 +81,7 @@ private:
     const void * model;
     Context * context;
     HorizontalAsymptoteHelper * asymptotes;
+    float (Coordinate2D<float>::*ordinate)() const;
   };
 
   constexpr static size_t k_sampleSize = Ion::Display::Width / 2;
@@ -89,17 +90,17 @@ private:
   static Solver<float>::Interest PointIsInteresting(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c, const void * aux);
   static Coordinate2D<float> HonePoint(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest, float precision);
 
-  Range1D sanitizedXRange() const;
+  Range2D sanitizedRange() const;
   Range2D prettyRange() const;
-  void fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone);
+  void fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical);
   /* Return true if the search was interrupted because too many points were
    * found. */
-  bool fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone);
+  bool fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical);
 
   /* m_interestingRange is edited by fitFullFunction, fitPointsOfInterest and
    * fitIntersections, and will always be included in the final range. */
   Range2D m_interestingRange;
-  Range1D m_magnitudeYRange;
+  Range2D m_magnitudeRange;
   Range1D m_bounds;
   Context * m_context;
   float m_normalRatio;

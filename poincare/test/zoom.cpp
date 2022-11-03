@@ -17,7 +17,6 @@ public:
 
   Zoom * zoom() { return &m_zoom; }
   Range2D interestingRange() const { return m_zoom.m_interestingRange; }
-  Range1D magnitudeYRange() const { return m_zoom.m_magnitudeYRange; }
 
 private:
   Zoom m_zoom;

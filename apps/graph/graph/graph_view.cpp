@@ -112,7 +112,7 @@ void GraphView::drawForeground(KDContext * ctx, KDRect rect) const {
   }
   ContinuousFunctionStore * functionStore = App::app()->functionStore();
   ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(m_selectedRecord);
-  if (f->plotType() != ContinuousFunction::PlotType::Cartesian) {
+  if (!f->properties().isCartesian()) {
     return;
   }
   Axis axis = f->isAlongY() ? Axis::Vertical : Axis::Horizontal;

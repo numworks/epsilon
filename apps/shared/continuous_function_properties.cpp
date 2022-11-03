@@ -451,11 +451,16 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincar
   int degOfTinX = xOfT.polynomialDegree(context, Function::k_unknownName);
   int degOfTinY = yOfT.polynomialDegree(context, Function::k_unknownName);
   if (degOfTinX == 0 && degOfTinY != 0) {
-    setCaption(I18n::Message::ParametricVerticalLineType);
+    /* The same text as cartesian equation is used because the caption
+     * "Parametric equation of a vertical line" is too long to fit
+     * the 37 max chars limit in every language.
+     * This can be changed later if more chars are available. */
+    setCaption(I18n::Message::VerticalLineType);
     return;
   }
   if (degOfTinY == 0 && degOfTinX != 0) {
-    setCaption(I18n::Message::ParametricHorizontalLineType);
+    /* Same comment as above. */
+    setCaption(I18n::Message::HorizontalLineType);
     return;
   }
   Expression quotient = Division::Builder(xOfT.clone(), yOfT.clone());
@@ -471,7 +476,8 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincar
   setConicShape(conicProperties.conicType().shape);
   switch (conicShape()) {
   case Conic::Shape::Hyperbola:
-    setCaption(I18n::Message::ParametricHyperbolaType);
+    // For now, these are not detected and there is no caption for it.
+    assert(false);
     return;
   case Conic::Shape::Parabola:
     setCaption(I18n::Message::ParametricParabolaType);

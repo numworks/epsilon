@@ -243,19 +243,6 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expressi
     return;
   }
 
-  // f(x) = a*cos(b*x+c) + d*sin(e*x+f) + g*tan(h*x+k) + z
-  if (analyzedExpression.isLinearCombinationOfFunction(
-    context,
-    [](const Expression& e, Context * context, const char * symbol) {
-      return (e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Sine || e.type() == ExpressionNode::Type::Tangent)
-            && e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
-    },
-    Function::k_unknownName))
-  {
-    setCaption(I18n::Message::TrigonometricType);
-    return;
-  }
-
   // f(x) = a*logk(b*x+c) + d*logM(e*x+f) + ... + z
   if (analyzedExpression.isLinearCombinationOfFunction(
     context,
@@ -290,6 +277,23 @@ void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expressi
   // f(x) = polynomial/polynomial
   if (analyzedExpression.isLinearCombinationOfFunction(context, &Expression::IsRationalFunction, Function::k_unknownName)) {
     setCaption(I18n::Message::RationalType);
+    return;
+  }
+
+  // f(x) = a*cos(b*x+c) + d*sin(e*x+f) + g*tan(h*x+k) + z
+  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context);
+  // tan(x) is reduced to sin(x)/cos(x) unless the target is User
+  reductionContext.setTarget(ExpressionNode::ReductionTarget::User);
+  Expression userReducedExpression = analyzedExpression.cloneAndReduce(reductionContext);
+  if (userReducedExpression.isLinearCombinationOfFunction(
+    context,
+    [](const Expression& e, Context * context, const char * symbol) {
+      return (e.type() == ExpressionNode::Type::Cosine || e.type() == ExpressionNode::Type::Sine || e.type() == ExpressionNode::Type::Tangent)
+            && e.childAtIndex(0).polynomialDegree(context, symbol) == 1;
+    },
+    Function::k_unknownName))
+  {
+    setCaption(I18n::Message::TrigonometricType);
     return;
   }
 
@@ -463,9 +467,14 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincar
     setCaption(I18n::Message::HorizontalLineType);
     return;
   }
+  if (degOfTinX == 1 && degOfTinY == 1) {
+    setCaption(I18n::Message::ParametricLineType);
+    return;
+  }
   Expression quotient = Division::Builder(xOfT.clone(), yOfT.clone());
   quotient = quotient.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
-  // TODO: Some lines are not detected like (x, y) = (3*ln(t), 4*ln(t)+1)
+  /* TODO: Some lines are not detected like (x, y) = (3*ln(t), 4*ln(t)+1)
+   * because of the +1 */
   if (quotient.polynomialDegree(context, Function::k_unknownName) == 0) {
     setCaption(I18n::Message::ParametricLineType);
     return;

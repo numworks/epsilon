@@ -184,7 +184,7 @@ void LayoutField::ContentView::copySelection(Context * context, bool intoStoreMe
     }
     return;
   }
-  constexpr int bufferSize = TextField::maxBufferSize();
+  constexpr int bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
 
   if (m_selectionStart == m_selectionEnd) {

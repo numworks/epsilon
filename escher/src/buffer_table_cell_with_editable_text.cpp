@@ -12,7 +12,7 @@ BufferTableCellWithEditableText::BufferTableCellWithEditableText(
     m_textField(this,
                 m_textBody,
                 Poincare::PrintFloat::k_maxFloatCharSize,
-                TextField::maxBufferSize(),
+                TextField::MaxBufferSize(),
                 inputEventHandlerDelegate,
                 textFieldDelegate,
                 KDFont::Size::Large,

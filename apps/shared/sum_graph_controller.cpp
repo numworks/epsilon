@@ -194,7 +194,7 @@ Poincare::Expression SumGraphController::createSumExpression(double startSum, do
 SumGraphController::LegendView::LegendView(SumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol) :
   m_sum(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle, k_font),
   m_legend(k_font, I18n::Message::Default, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle),
-  m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize, TextField::maxBufferSize(), inputEventHandlerDelegate, controller, k_font,
+  m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize, TextField::MaxBufferSize(), inputEventHandlerDelegate, controller, k_font,
                  KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle),
   m_sumSymbol(sumSymbol)
 {

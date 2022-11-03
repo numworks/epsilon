@@ -5,7 +5,7 @@
 
 class Constant {
 public:
-  constexpr static int MaxSerializedExpressionSize = 2*Escher::TextField::maxBufferSize();
+  constexpr static int MaxSerializedExpressionSize = 2*Escher::TextField::MaxBufferSize();
 };
 
 #endif

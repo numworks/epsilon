@@ -105,7 +105,7 @@ private:
   void setHeights(KDCoordinate height, KDCoordinate expandedHeight);
 
   /* Buffers holding text expressions have to be longer than the text written
-   * by user (of maximum length TextField::maxBufferSize()) because when we
+   * by user (of maximum length TextField::MaxBufferSize()) because when we
    * print an expression we add omitted signs (multiplications, parenthesis...) */
   DisplayOutput m_displayOutput;
   KDCoordinate m_height __attribute__((packed));

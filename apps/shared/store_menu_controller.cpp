@@ -119,7 +119,7 @@ bool StoreMenuController::parseAndStore(const char * text) {
 }
 
 bool StoreMenuController::layoutFieldDidFinishEditing(Escher::LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) {
-  constexpr size_t bufferSize = TextField::maxBufferSize();
+  constexpr size_t bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
   layoutR.serializeForParsing(buffer, bufferSize);
   return parseAndStore(buffer);

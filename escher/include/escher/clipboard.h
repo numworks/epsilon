@@ -12,7 +12,7 @@ public:
   void store(const char * storedText, int length = -1);
   const char * storedText();
   void reset();
-  constexpr static int k_bufferSize = TextField::maxBufferSize();
+  constexpr static int k_bufferSize = TextField::MaxBufferSize();
 protected:
   char m_textBuffer[k_bufferSize];
 };

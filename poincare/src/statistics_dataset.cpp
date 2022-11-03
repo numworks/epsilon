@@ -131,7 +131,11 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight, int * upperIndex) con
   T cumulatedWeight = 0.0;
   for (int i = 0; i < datasetLength(); i++) {
     elementSortedIndex = i;
-    cumulatedWeight += weightAtIndex(indexAtSortedIndex(i));
+    T elementWeight = weightAtIndex(indexAtSortedIndex(i));
+    if (elementWeight == static_cast<T>(0.0)) {
+      continue;
+    }
+    cumulatedWeight += elementWeight;
     if (cumulatedWeight >= weight - epsilon) {
       break;
     }

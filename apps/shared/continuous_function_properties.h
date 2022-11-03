@@ -155,11 +155,11 @@ private:
   void setIsOfDegreeTwo(bool isOfDegreeTwo) { m_propertiesBitField.m_isOfDegreeTwo = isOfDegreeTwo; }
   void setIsAlongY(bool isAlongY) { m_propertiesBitField.m_isAlongY = isAlongY; }
 
-  constexpr static size_t k_numberOfBitsForStatus = Ion::BitHelper::numberOfBitsToRepresentNumberStrictlyInferiorTo(static_cast<unsigned int>(Status::NumberOfStatus));
-  constexpr static size_t k_numberOfBitsForEquationType = Ion::BitHelper::numberOfBitsToRepresentNumberStrictlyInferiorTo(static_cast<unsigned int>(Poincare::ComparisonNode::OperatorType::NumberOfTypes));
-  constexpr static size_t k_numberOfBitsForSymbolType = Ion::BitHelper::numberOfBitsToRepresentNumberStrictlyInferiorTo(static_cast<unsigned int>(SymbolType::NumberOfSymbolTypes));
-  constexpr static size_t k_numberOfBitsForCurveParameterType = Ion::BitHelper::numberOfBitsToRepresentNumberStrictlyInferiorTo(static_cast<unsigned int>(CurveParameterType::NumberOfCurveParameterTypes));
-  constexpr static size_t k_numberOfBitsForConicShape = Ion::BitHelper::numberOfBitsToRepresentNumberStrictlyInferiorTo(static_cast<unsigned int>(Poincare::Conic::Shape::NumberOfShapes));
+  constexpr static size_t k_numberOfBitsForStatus = Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<unsigned int>(Status::NumberOfStatus));
+  constexpr static size_t k_numberOfBitsForEquationType = Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<unsigned int>(Poincare::ComparisonNode::OperatorType::NumberOfTypes));
+  constexpr static size_t k_numberOfBitsForSymbolType = Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<unsigned int>(SymbolType::NumberOfSymbolTypes));
+  constexpr static size_t k_numberOfBitsForCurveParameterType = Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<unsigned int>(CurveParameterType::NumberOfCurveParameterTypes));
+  constexpr static size_t k_numberOfBitsForConicShape = Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<unsigned int>(Poincare::Conic::Shape::NumberOfShapes));
 
   struct PropertiesBitField { // Current size : 2 bytes
     /* Status */ uint8_t m_status : k_numberOfBitsForStatus;

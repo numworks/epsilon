@@ -37,6 +37,7 @@ public:
    * bounds smaller than maxFloat in absolute value. */
   Range2D range(float maxFloat, bool forceNormalization) const;
   void setBounds(float min, float max) { m_bounds = Range1D(min, max); }
+  void setForcedRange(Range2D range) { m_forcedRange = range; }
   /* These three functions will extend both X and Y axes. */
   void fitFullFunction(Function2DWithContext f, const void * model);
   void fitPointsOfInterest(Function2DWithContext f, const void * model, bool vertical = false);
@@ -91,7 +92,7 @@ private:
   static Coordinate2D<float> HonePoint(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest, float precision);
 
   Range2D sanitizedRange() const;
-  Range2D prettyRange() const;
+  Range2D prettyRange(bool forceNormalization) const;
   void fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical);
   /* Return true if the search was interrupted because too many points were
    * found. */
@@ -101,6 +102,7 @@ private:
    * fitIntersections, and will always be included in the final range. */
   Range2D m_interestingRange;
   Range2D m_magnitudeRange;
+  Range2D m_forcedRange;
   Range1D m_bounds;
   Context * m_context;
   float m_normalRatio;

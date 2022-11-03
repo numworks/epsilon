@@ -60,6 +60,8 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   constexpr float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
   Range1D xBounds = computeX ? Range1D(-k_maxFloat, k_maxFloat) : *originalRange.x();
   Range1D yBounds = computeY ? Range1D(-k_maxFloat, k_maxFloat) : *originalRange.y();
+  Range2D forcedRange = Range2D(computeX ? Range1D() : *originalRange.x(), computeY ? Range1D() : *originalRange.y());
+  zoom.setForcedRange(forcedRange);
 
   for (int i = 0; i < nbFunctions; i++) {
     ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));

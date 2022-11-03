@@ -30,18 +30,14 @@ Range2D Zoom::Sanitize(Range2D range, float normalYXRatio, float maxFloat) {
 
 Range2D Zoom::range(float maxFloat, bool forceNormalization) const {
   Range2D result;
-  Range2D pretty = prettyRange();
+  Range2D pretty = prettyRange(forceNormalization);
   result.x()->setMin(pretty.xMin(), maxFloat);
   result.x()->setMax(pretty.xMax(), maxFloat);
   result.y()->setMin(pretty.yMin(), maxFloat);
   result.y()->setMax(pretty.yMax(), maxFloat);
 
-  if (forceNormalization) {
-    result.setRatio(m_normalRatio, false);
-  }
-
-  assert(m_interestingRange.x()->isValid() || (result.xMin() <= m_interestingRange.xMin() && m_interestingRange.xMax() <= result.xMax()));
-  assert(m_interestingRange.y()->isValid() || (result.yMin() <= m_interestingRange.yMin() && m_interestingRange.yMax() <= result.yMax()));
+  assert(!m_interestingRange.x()->isValid() || (result.xMin() <= m_interestingRange.xMin() && m_interestingRange.xMax() <= result.xMax()));
+  assert(!m_interestingRange.y()->isValid() || (result.yMin() <= m_interestingRange.yMin() && m_interestingRange.yMax() <= result.yMax()));
   assert(result.x()->isValid() && result.y()->isValid() && !result.x()->isEmpty() && !result.y()->isEmpty());
   return result;
 }
@@ -218,50 +214,70 @@ static Range1D sanitationHelper(Range1D range, const Range1D * other, float rati
 }
 
 Range2D Zoom::sanitizedRange() const {
-  Range1D xRange = sanitationHelper(*m_interestingRange.x(), m_interestingRange.y(), 1.f / m_normalRatio);
-  Range1D yRange = sanitationHelper(*m_interestingRange.y(), &xRange, m_normalRatio);
+  Range1D xRange = m_forcedRange.x()->isValid() ? *m_forcedRange.x() : sanitationHelper(*m_interestingRange.x(), m_interestingRange.y(), 1.f / m_normalRatio);
+  Range1D yRange = m_forcedRange.y()->isValid() ? *m_forcedRange.y() : sanitationHelper(*m_interestingRange.y(), &xRange, m_normalRatio);
   return Range2D(xRange, yRange);
 }
 
-Range2D Zoom::prettyRange() const {
+Range2D Zoom::prettyRange(bool forceNormalization) const {
+  assert(!forceNormalization || !m_forcedRange.x()->isValid() || !m_forcedRange.y()->isValid());
+
   Range2D saneRange = sanitizedRange();
   saneRange.extend(Coordinate2D<float>(m_magnitudeRange.xMin(), m_magnitudeRange.yMin()));
   saneRange.extend(Coordinate2D<float>(m_magnitudeRange.xMax(), m_magnitudeRange.yMax()));
-  Range1D xRange = *saneRange.x();
-  Range1D yRange = *saneRange.y();
 
-  float xLength = xRange.length();
-  float yLength = yRange.length();
+  float xLength = saneRange.x()->length();
+  float yLength = saneRange.y()->length();
   float xLengthNormalized = yLength / m_normalRatio;
   float yLengthNormalized = xLength * m_normalRatio;
   constexpr float k_minimalXCoverage = 0.8f;
   constexpr float k_minimalYCoverage = 0.3f;
-  /* yCanBeNormalized is true if:
+
+  /* Y can be normalized if:
    * - a normalized Y range can fit the interesting Y range. We only count the
    *   interesting Y range for this part as discarding the part that comes from
    *   the magnitude is not an issue.
-   * - the Y range (interesting + magnitude) makes up for at least 30% of the normalized Y
-   *   range (i.e. the curve does not appear squeezed). */
-  bool yCanBeNormalized = yLengthNormalized * k_minimalYCoverage <= yLength && m_interestingRange.y()->length() <= yLengthNormalized;
-  if (!yRange.isValid() || yLength == 0.f || yCanBeNormalized) {
-    float yCenter = yRange.center();
-    if (!std::isfinite(yCenter)) {
-      yCenter = 0.f;
-    }
-    if (yCenter - 0.5f * yLengthNormalized > m_interestingRange.yMin()) {
-      yRange = Range1D(m_interestingRange.yMin(), m_interestingRange.yMin() + yLengthNormalized);
-    } else if (yCenter + 0.5f * yLengthNormalized < m_interestingRange.yMax()) {
-      yRange = Range1D(m_interestingRange.yMax() - yLengthNormalized, m_interestingRange.yMax());
-    } else {
-      yRange = Range1D(yCenter - 0.5f * yLengthNormalized, yCenter + 0.5f * yLengthNormalized);
-    }
-  } else if (xLengthNormalized * k_minimalXCoverage <= xLength && xLength <= xLengthNormalized) {
-    float xCenter = xRange.center();
-    xRange = Range1D(xCenter - xLengthNormalized * 0.5f, xCenter + xLengthNormalized * 0.5f);
+   * - the Y range (interesting + magnitude) makes up for at least 30% of the
+   *   normalized Y range (i.e. the curve does not appear squeezed). */
+  bool xLengthCompatibleWithNormalization = xLengthNormalized * k_minimalXCoverage <= xLength && m_interestingRange.x()->length() <= xLengthNormalized;
+  bool yLengthCompatibleWithNormalization = yLengthNormalized * k_minimalYCoverage <= yLength && m_interestingRange.y()->length() <= yLengthNormalized;
+
+  bool normalizeX = !m_forcedRange.x()->isValid() && (forceNormalization || xLengthCompatibleWithNormalization);
+  bool normalizeY = !m_forcedRange.y()->isValid() && (forceNormalization || yLengthCompatibleWithNormalization);
+  if (normalizeX && normalizeY) {
+    /* Both axes are good candidates for normalization, pick the one that does
+     * not lead to the range beign shrinked. */
+    normalizeX = xLength < xLengthNormalized;
+    normalizeY = yLength < yLengthNormalized;
+  }
+  if (!(normalizeX || normalizeY)) {
+    return saneRange;
+  }
+  assert(normalizeX != normalizeY);
+
+  Range1D * rangeToEdit;
+  const Range1D * interestingRange;
+  float normalLength;
+  if (normalizeX) {
+    rangeToEdit = saneRange.x();
+    interestingRange = m_interestingRange.x();
+    normalLength = xLengthNormalized;
+  } else {
+    rangeToEdit = saneRange.y();
+    interestingRange = m_interestingRange.y();
+    normalLength = yLengthNormalized;
+  }
+  float c = rangeToEdit->center();
+  float d = 0.5f * normalLength;
+  if (c - d > interestingRange->min()) {
+    *rangeToEdit = Range1D(interestingRange->min(), interestingRange->min() + normalLength);
+  } else if (c + d < interestingRange->max()) {
+    *rangeToEdit = Range1D(interestingRange->max() - normalLength, interestingRange->max());
+  } else {
+    *rangeToEdit = Range1D(c - d, c + d);
   }
 
-  assert(xRange.isValid() && !xRange.isEmpty() && yRange.isValid() && !yRange.isEmpty());
-  return Range2D(xRange, yRange);
+  return saneRange;
 }
 
 void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical) {

@@ -68,12 +68,12 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     if (f->basedOnCostlyAlgorithms(context)) {
       continue;
     }
-    if (f->plotType() == ContinuousFunction::PlotType::Polar || f->plotType() == ContinuousFunction::PlotType::Parametric) {
+    if (f->properties().isPolar() || f->properties().isParametric()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
       zoom.setBounds(f->tMin(), f->tMax());
       zoom.fitFullFunction(evaluator, f.operator->());
     } else {
-      assert(f->isAlongXOrY());
+      assert(f->properties().isCartesian());
       bool alongY = f->isAlongY();
       Range1D * bounds = alongY ? &yBounds : &xBounds;
       zoom.setBounds(bounds->min(), bounds->max());
@@ -99,7 +99,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     zoom.setBounds(xBounds.min(), xBounds.max());
     for (int i = 0; i < nbFunctions; i++) {
       ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
-      if (f->basedOnCostlyAlgorithms(context) || !f->isAlongXOrY()) {
+      if (f->basedOnCostlyAlgorithms(context) || !f->properties().isCartesian()) {
         continue;
       }
       bool alongY = f->isAlongY();

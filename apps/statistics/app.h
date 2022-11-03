@@ -46,6 +46,8 @@ public:
   }
   TELEMETRY_ID("Statistics");
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
+  Escher::NestedMenuController * variableBox() override;
+
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
   int activeViewControllerIndex() const override { return GraphViewModel::IndexOfGraphView(snapshot()->graphViewModel()->selectedGraphView()); }

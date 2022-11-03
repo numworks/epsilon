@@ -45,6 +45,8 @@ public:
   TELEMETRY_ID("Regression");
   RegressionController * regressionController() { return &m_regressionController; }
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
+  Escher::NestedMenuController * variableBox() override;
+
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
   bool storageWillChangeForRecord(Ion::Storage::Record) override;

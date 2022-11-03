@@ -29,8 +29,9 @@ Range1D PointsOfInterestCache::setBoundsAndCompute(float start, float end) {
   if (m_checksum != checksum || m_computedRecord != m_record) {
     /* Discard the old results if anything in the storage has changed. */
     m_start = m_end = NAN;
-    if (!m_list.isUninitialized() && m_list.numberOfPoints() > 0) {
-      dirtyRange = Range1D(pointAtIndex(0).x(), pointAtIndex(m_list.numberOfPoints() - 1).x());
+    int nPoints = m_list.isUninitialized() ? 0 : m_list.numberOfPoints();
+    if (nPoints > 0) {
+      dirtyRange = Range1D(pointAtIndex(0).x(), pointAtIndex(nPoints - 1).x());
     }
     m_list.init();
   }

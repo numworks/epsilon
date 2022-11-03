@@ -23,15 +23,7 @@ float ComplexModel::rangeBound(float direction, bool horizontal) const {
   if (std::isnan(value) || std::isinf(value) || value == 0.0f) {
     return direction * maxFactor;
   }
-  float r1 = minFactor * value;
-  float r2 = maxFactor * value;
-  Range1D range1D(r2, r2);
-  if (value >= 0.f) {
-    range1D.setMin(r1);
-  } else {
-    range1D.setMax(r1);
-  }
-
+  Range1D range1D = Range1D::RangeBetween(minFactor * value, maxFactor * value);
   return direction >= 0.0f ? range1D.max() : range1D.min();
 }
 

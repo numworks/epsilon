@@ -16,6 +16,9 @@ public:
   constexpr static float k_defaultHalfLength = 10.f;
 
   static float DefaultLengthAt(float t) { return std::pow(10.f, IEEE754<float>::exponentBase10(t) - 1.f); }
+  /* Given any two numbers, RangeBetween will return a range with bounds no
+   * more than limit, and length no less than k_minLength. */
+  static Range1D RangeBetween(float a, float b, float limit = k_maxFloat);
 
   constexpr Range1D(float min = NAN, float max = NAN) : m_min(min), m_max(max) { assert(m_min <= m_max || (std::isnan(m_min) && std::isnan(max))); }
 

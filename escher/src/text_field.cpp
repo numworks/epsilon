@@ -32,12 +32,10 @@ size_t AbstractTextField::DumpDraftTextBuffer(char * buffer, size_t bufferSize) 
   return result;
 }
 
-size_t AbstractTextField::FillDraftTextBuffer(const char * src, size_t srcLength) {
- if (srcLength < 0) {
-  srcLength = strlen(src);
- }
- s_currentDraftTextLength = strlcpy(s_draftTextBuffer, src, MaxBufferSize());
- return s_currentDraftTextLength;
+size_t AbstractTextField::FillDraftTextBuffer(const char * src) {
+  assert(strlen(src) < MaxBufferSize());
+  s_currentDraftTextLength = strlcpy(s_draftTextBuffer, src, MaxBufferSize());
+  return s_currentDraftTextLength;
 }
 
 /* AbstractTextField::ContentView */

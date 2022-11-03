@@ -22,7 +22,7 @@ public:
   constexpr static int MaxBufferSize() { return ContentView::k_maxBufferSize; }
 
   static size_t DumpDraftTextBuffer(char * buffer = nullptr, size_t bufferSize = 0);
-  static size_t FillDraftTextBuffer(const char * src, size_t srcLength = -1);
+  static size_t FillDraftTextBuffer(const char * src);
 
   AbstractTextField(Responder * parentResponder, View * contentView, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);
 

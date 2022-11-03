@@ -23,6 +23,7 @@ private:
   const char * symbol() const override { return k_symbol; }
   I18n::Message messageAtIndex(int index) override;
   Escher::HighlightCell * illustrationCell() override { return &m_graphCell; }
+  void appendLine(int index, const char * formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences);
   TrigonometryGraphCell m_graphCell;
   TrigonometryModel m_model;
 };

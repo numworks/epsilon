@@ -230,6 +230,7 @@ int SelectableTableView::indexOfNextSelectableColumn(int delta) {
 }
 
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
+  assert(dataSource()->numberOfRows() > 0);
   int step = Ion::Events::longPressFactor();
   if (event == Ion::Events::Down) {
     return selectCellAtClippedLocation(selectedColumn(), indexOfNextSelectableRow(step));

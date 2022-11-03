@@ -63,7 +63,7 @@ CodePoint UTF8Decoder::previousCodePoint() {
   assert(leadingOnes > 1 && leadingOnes <= 4);
   assert(m_stringPosition >= m_string);
 
-  result+= last_k_bits(*m_stringPosition, 8-leadingOnes-1) << (6*i);
+  result+= last_k_bits(*m_stringPosition, 8 - leadingOnes - 1) << (6 * i);
   return CodePoint(result);
 }
 

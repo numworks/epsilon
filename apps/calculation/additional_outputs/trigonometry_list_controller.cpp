@@ -32,8 +32,10 @@ void TrigonometryListController::setExpression(Expression e) {
 
   // Compute angle modulus 2π
   Expression twoPi = Multiplication::Builder(Rational::Builder(2), Poincare::Constant::Builder("π"));
+  // Use the reduction of frac part to compute mod 1 on rationals
   e = Multiplication::Builder(FracPart::Builder(Division::Builder(e, twoPi.clone())), twoPi.clone());
   Shared::PoincareHelpers::CloneAndReduce(&e, context, ExpressionNode::ReductionTarget::User);
+  // If frac part is still there, the exact angle is probably not interesting
   if (e.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart; })) {
     e = Shared::PoincareHelpers::Approximate<double>(e, context);
   }

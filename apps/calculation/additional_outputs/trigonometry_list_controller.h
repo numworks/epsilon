@@ -14,6 +14,9 @@ public:
     m_graphCell(&m_model) {}
   void setExpression(Poincare::Expression e) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
+
+  /* See comment in parent class for why we need this. Since we need to display
+   * fractions of radians in the angle cell, we reduce the graph further. */
   constexpr static KDCoordinate k_illustrationHeight = 105;
 private:
   constexpr static char k_symbol[] = "θ";

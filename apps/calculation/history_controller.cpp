@@ -135,8 +135,10 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
             e = e.childAtIndex(0);
           } else if (Trigonometry::isDirectTrigonometryFunction(focusInput)) {
             e = focusInput.childAtIndex(0);
+          } else {
+            // input or output is inverse trigonometric function use e as is
+            assert(Trigonometry::isInverseTrigonometryFunction(focusInput) || Trigonometry::isInverseTrigonometryFunction(e));
           }
-          // else input or output is inverse trigonometric function use e as is
         } else if (additionalInformations.function) {
           e = focusCalculation->input();
           vc = &m_functionController;

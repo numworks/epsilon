@@ -51,10 +51,6 @@ int ChainedExpressionsListController::numberOfRows() const {
   return ExpressionsListController::numberOfRows() + (m_tail ? m_tail->numberOfRows() : 0);
 }
 
-void ChainedExpressionsListController::setExpression(Poincare::Expression e) {
-  ExpressionsListController::setExpression(e);
-}
-
 int ChainedExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
   int numberOfOwnedCells = ExpressionsListController::numberOfRows();
   if (index >= numberOfOwnedCells) {

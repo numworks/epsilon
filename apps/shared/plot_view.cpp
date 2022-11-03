@@ -188,7 +188,7 @@ double AbstractPlotView::angleFromPoint(KDPoint point) const {
   double x = pixelToFloat(Axis::Horizontal, point.x());
   double y = pixelToFloat(Axis::Vertical, point.y());
   double angle = std::atan2(y, x);
-  return angle<0 ? angle + 2 * M_PI : angle;
+  return angle < 0 ? angle + 2 * M_PI : angle;
 }
 
 void AbstractPlotView::drawArc(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> center, float radius, float angleStart, float angleEnd, KDColor color) const {
@@ -202,22 +202,20 @@ void AbstractPlotView::drawArc(KDContext * ctx, KDRect rect, Poincare::Coordinat
   int i = 0;
   bool isLastSegment = false;
   double tMin = 0;
-  double tMax = 2*M_PI;
+  double tMax = 2 * M_PI;
   if (!rect.contains(KDPoint(floatToPixel(Axis::Horizontal, 0.f),floatToPixel(Axis::Vertical, 0.f)))) {
+    // TODO: factorise with Graph::GraphView::drawPolar
     double t1 = angleFromPoint(rect.bottomRight());
     double t2 = angleFromPoint(rect.topRight());
     double t3 = angleFromPoint(rect.bottomLeft());
     double t4 = angleFromPoint(rect.topLeft());
-    /* The area between tMin and tMax (modulo π) is the only area where
-     * something needs to be plotted. */
     tMin = std::min({t1, t2, t3, t4});
     tMax = std::max({t1, t2, t3, t4});
+    // Does the angle cross the positive x axis ?
     if (tMax - tMin > M_PI) {
-      // we should draw between tMax and tMin
-      // tStart = std::max(tStart, tMin);
-      // tEnd = std::min(tEnd, tMax);
+      // Are we not in the recursive call already ?
       if (angleStart < tMin) {
-        tMin = t3;// - 2*M_PI;
+        tMin = t3;
         tMax = t4;
         drawArc(ctx, rect, center, radius, tMin, angleEnd, color);
         angleEnd = tMax;

@@ -7,6 +7,7 @@
 
 namespace Calculation {
 
+// TODO: use IllustratedExpressionList and remove IllustratedList
 class ComplexListController : public IllustratedListController {
 public:
   ComplexListController(EditExpressionController * editExpressionController) :

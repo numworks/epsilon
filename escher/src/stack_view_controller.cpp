@@ -278,6 +278,7 @@ void StackViewController::viewDidDisappear() {
     vc->viewDidDisappear();
   }
   m_isVisible = false;
+  m_view.m_contentView = nullptr;
 }
 
 bool StackViewController::shouldStoreHeaderOnStack(ViewController * vc, int index) {

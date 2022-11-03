@@ -630,7 +630,7 @@ void Parser::parseReservedFunction(Expression & leftHandSide, Token::Type stoppi
 void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper) {
   AliasesList aliasesList = (**functionHelper).aliasesList();
   if (aliasesList.contains("log") && popTokenIfType(Token::LeftSystemBrace)) {
-    // Special case for the log function (e.g. "log{2}(8)")
+    // Special case for the log function (e.g. "log\x14{2\x14}(8)")
     Expression base = parseUntil(Token::RightSystemBrace);
     if (m_status != Status::Progress) {
     } else if (!popTokenIfType(Token::RightSystemBrace)) {

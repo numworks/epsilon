@@ -76,7 +76,7 @@ protected:
     // TextInput::ContentView
     const char * text() const override;
     const char * editedText() const override;
-    size_t editedTextLength() const override { return m_currentDraftTextLength; }
+    size_t editedTextLength() const override;
     /* If the text to be appended is too long to be added without overflowing the
      * buffer, nothing is done (not even adding few letters from the text to reach
      * the maximum buffer capacity) and false is returned. */
@@ -106,7 +106,6 @@ protected:
     char * m_textBuffer;
     size_t m_textBufferSize;
     size_t m_draftTextBufferSize;
-    size_t m_currentDraftTextLength;
     KDColor m_textColor;
     KDColor m_backgroundColor;
     bool m_isEditing;

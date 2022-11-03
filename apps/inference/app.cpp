@@ -20,6 +20,12 @@ App * App::Snapshot::unpack(Container * container) {
   return new (container->currentAppBuffer()) App(this, static_cast<AppsContainer *>(container)->globalContext());
 }
 
+NestedMenuController * App::variableBox() {
+  MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
+  varBox->lockDeleteEvent(MathVariableBoxController::Page::List);
+  return varBox;
+}
+
 App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
     ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
     m_testGraphController(&m_stackViewController, static_cast<Test *>(snapshot->statistic())),

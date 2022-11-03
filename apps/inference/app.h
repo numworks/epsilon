@@ -81,6 +81,8 @@ public:
   int numberOfSubApps() const override { return static_cast<int>(Statistic::SubApp::NumberOfSubApps); }
 
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
+  Escher::NestedMenuController * variableBox() override;
+
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }

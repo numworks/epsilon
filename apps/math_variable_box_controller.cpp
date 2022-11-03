@@ -66,7 +66,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
     selectCellAtLocation(selectedColumn(), newSelectedRow);
     resetMemoization();
     m_selectableTableView.reloadData();
-    if (numberOfElements(m_currentPage) == 0) {
+    if (numberOfRows() == 0) {
       returnToRootMenu();
     }
     return true;

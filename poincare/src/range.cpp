@@ -4,6 +4,13 @@ namespace Poincare {
 
 // Range1D
 
+Range1D Range1D::RangeBetween(float a, float b, float limit) {
+  assert(std::isfinite(a) && std::isfinite(b));
+  Range1D res(a, a);
+  (res.*(b < a ? &Range1D::setMin : &Range1D::setMax))(b, limit);
+  return res;
+}
+
 void Range1D::extend(float t) {
   if (!std::isfinite(t)) {
     return;

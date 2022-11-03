@@ -31,18 +31,18 @@ Range2D Zoom::Sanitize(Range2D range, float normalYXRatio, float maxFloat) {
 Range2D Zoom::range(float maxFloat, bool forceNormalization) const {
   Range2D result;
   Range2D pretty = prettyRange();
-  result.x().setMin(pretty.xMin(), maxFloat);
-  result.x().setMax(pretty.xMax(), maxFloat);
-  result.y().setMin(pretty.yMin(), maxFloat);
-  result.y().setMax(pretty.yMax(), maxFloat);
+  result.x()->setMin(pretty.xMin(), maxFloat);
+  result.x()->setMax(pretty.xMax(), maxFloat);
+  result.y()->setMin(pretty.yMin(), maxFloat);
+  result.y()->setMax(pretty.yMax(), maxFloat);
 
   if (forceNormalization) {
     result.setRatio(m_normalRatio, false);
   }
 
-  assert(!const_cast<Zoom *>(this)->m_interestingRange.x().isValid() || (result.xMin() <= m_interestingRange.xMin() && m_interestingRange.xMax() <= result.xMax()));
-  assert(!const_cast<Zoom *>(this)->m_interestingRange.y().isValid() || (result.yMin() <= m_interestingRange.yMin() && m_interestingRange.yMax() <= result.yMax()));
-  assert(result.x().isValid() && result.y().isValid() && !result.x().isEmpty() && !result.y().isEmpty());
+  assert(m_interestingRange.x()->isValid() || (result.xMin() <= m_interestingRange.xMin() && m_interestingRange.xMax() <= result.xMax()));
+  assert(m_interestingRange.y()->isValid() || (result.yMin() <= m_interestingRange.yMin() && m_interestingRange.yMax() <= result.yMax()));
+  assert(result.x()->isValid() && result.y()->isValid() && !result.x()->isEmpty() && !result.y()->isEmpty());
   return result;
 }
 
@@ -192,24 +192,22 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const v
 }
 
 Range1D Zoom::sanitizedXRange() const {
-  Range2D thisRange = m_interestingRange; // Copy for const-ness
-  if (!thisRange.x().isValid()) {
-    assert(!thisRange.y().isValid());
+  if (!m_interestingRange.x()->isValid()) {
+    assert(!m_interestingRange.y()->isValid());
     return Range1D(-Range1D::k_defaultHalfLength, Range1D::k_defaultHalfLength);
   }
-  if (thisRange.x().isEmpty()) {
-    float c = thisRange.x().min();
+  if (m_interestingRange.x()->isEmpty()) {
+    float c = m_interestingRange.xMin();
     return Range1D(c - Range1D::k_defaultHalfLength, c + Range1D::k_defaultHalfLength);
   }
   // FIXME Add margin around interesting range ?
-  return thisRange.x();
+  return *m_interestingRange.x();
 }
 
 Range2D Zoom::prettyRange() const {
-  Range2D thisRange = m_interestingRange; // Copy for const-ness
   Range1D xRange = sanitizedXRange();
 
-  Range1D yRange = thisRange.y();
+  Range1D yRange = *m_interestingRange.y();
   yRange.extend(m_magnitudeYRange.min());
   yRange.extend(m_magnitudeYRange.max());
 
@@ -225,16 +223,16 @@ Range2D Zoom::prettyRange() const {
    *   the magnitude is not an issue.
    * - the Y range (interesting + magnitude) makes up for at least 30% of the normalized Y
    *   range (i.e. the curve does not appear squeezed). */
-  bool yCanBeNormalized = yLengthNormalized * k_minimalYCoverage <= yLength && thisRange.y().length() <= yLengthNormalized;
+  bool yCanBeNormalized = yLengthNormalized * k_minimalYCoverage <= yLength && m_interestingRange.y()->length() <= yLengthNormalized;
   if (!yRange.isValid() || yLength == 0.f || yCanBeNormalized) {
     float yCenter = yRange.center();
     if (!std::isfinite(yCenter)) {
       yCenter = 0.f;
     }
-    if (yCenter - 0.5f * yLengthNormalized > thisRange.yMin()) {
-      yRange = Range1D(thisRange.yMin(), thisRange.yMin() + yLengthNormalized);
-    } else if (yCenter + 0.5f * yLengthNormalized < thisRange.yMax()) {
-      yRange = Range1D(thisRange.yMax() - yLengthNormalized, thisRange.yMax());
+    if (yCenter - 0.5f * yLengthNormalized > m_interestingRange.yMin()) {
+      yRange = Range1D(m_interestingRange.yMin(), m_interestingRange.yMin() + yLengthNormalized);
+    } else if (yCenter + 0.5f * yLengthNormalized < m_interestingRange.yMax()) {
+      yRange = Range1D(m_interestingRange.yMax() - yLengthNormalized, m_interestingRange.yMax());
     } else {
       yRange = Range1D(yCenter - 0.5f * yLengthNormalized, yCenter + 0.5f * yLengthNormalized);
     }

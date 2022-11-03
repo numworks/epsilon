@@ -15,7 +15,7 @@ namespace Shared {
 
 bool InteractiveCurveViewRange::isOrthonormal() const {
   Range2D range = memoizedRange();
-  range = Range2D(range.x(), Range1D(range.yMin(), range.yMax() + offscreenYAxis()));
+  range = Range2D(*range.x(), Range1D(range.yMin(), range.yMax() + offscreenYAxis()));
   return range.ratioIs(NormalYXRatio());
 }
 
@@ -94,13 +94,13 @@ float InteractiveCurveViewRange::yGridUnit() const {
 
 void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   Range2D thisRange = memoizedRange();
-  float dy = thisRange.y().length();
-  if (ratio * std::min(thisRange.x().length(), dy) < Range1D::k_minLength) {
+  float dy = thisRange.y()->length();
+  if (ratio * std::min(thisRange.x()->length(), dy) < Range1D::k_minLength) {
     return;
   }
-  Coordinate2D<float> center(std::isfinite(x) ? x : thisRange.x().center(), std::isfinite(y) ? y : thisRange.y().center());
+  Coordinate2D<float> center(std::isfinite(x) ? x : thisRange.x()->center(), std::isfinite(y) ? y : thisRange.y()->center());
   thisRange.zoom(ratio, center);
-  assert(thisRange.x().isValid() && thisRange.y().isValid());
+  assert(thisRange.x()->isValid() && thisRange.y()->isValid());
   setZoomAuto(false);
   MemoizedCurveViewRange::protectedSetXMin(thisRange.xMin(), false, k_maxFloat);
   MemoizedCurveViewRange::protectedSetXMax(thisRange.xMax(), true, k_maxFloat);
@@ -108,7 +108,7 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   MemoizedCurveViewRange::protectedSetYMax(thisRange.yMax(), true, k_maxFloat);
   /* The factor will typically be equal to ratio, unless yMax and yMin are
    * close to the maximal values. */
-  float yRatio = thisRange.y().length() / dy;
+  float yRatio = thisRange.y()->length() / dy;
   m_offscreenYAxis *= yRatio;
   setZoomNormalize(isOrthonormal());
 }
@@ -370,8 +370,8 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
 
     Range2D newRangeWithMargins = m_delegate->addMargins(newRange);
     newRangeWithMargins = Range2D(
-        computeX ? newRangeWithMargins.x() : Range1D(xMin(), xMax()),
-        computeY ? newRangeWithMargins.y() : Range1D(yMin(), yMax()));
+        computeX ? *newRangeWithMargins.x() : Range1D(xMin(), xMax()),
+        computeY ? *newRangeWithMargins.y() : Range1D(yMin(), yMax()));
     if (newRange.ratioIs(NormalYXRatio())) {
       newRangeWithMargins.setRatio(NormalYXRatio(), false);
       assert(newRangeWithMargins.ratioIs(NormalYXRatio()));

@@ -39,8 +39,8 @@ void assert_ranges_equal(Range1D observed, Range1D expected) {
 }
 
 void assert_ranges_equal(Range2D observed, Range2D expected) {
-  assert_ranges_equal(observed.x(), expected.x());
-  assert_ranges_equal(observed.y(), expected.y());
+  assert_ranges_equal(*observed.x(), *expected.x());
+  assert_ranges_equal(*observed.y(), *expected.y());
 }
 
 Coordinate2D<float> expressionEvaluator(float t, const void * model, Context * context) {

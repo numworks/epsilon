@@ -59,6 +59,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   int nbFunctions = store->numberOfActiveFunctions();
   constexpr float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
   Range1D xBounds = computeX ? Range1D(-k_maxFloat, k_maxFloat) : *originalRange.x();
+  Range1D yBounds = computeY ? Range1D(-k_maxFloat, k_maxFloat) : *originalRange.y();
 
   for (int i = 0; i < nbFunctions; i++) {
     ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
@@ -69,13 +70,15 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
       zoom.setBounds(f->tMin(), f->tMax());
       zoom.fitFullFunction(evaluator, f.operator->());
-    } else if (!f->isAlongY()) { // TODO Update Zoom to handle x=f(y) functions
+    } else {
       assert(f->isAlongXOrY());
-      zoom.setBounds(xBounds.min(), xBounds.max());
-      zoom.fitPointsOfInterest(evaluator, f.operator->());
+      bool alongY = f->isAlongY();
+      Range1D * bounds = alongY ? &yBounds : &xBounds;
+      zoom.setBounds(bounds->min(), bounds->max());
+      zoom.fitPointsOfInterest(evaluator, f.operator->(), alongY);
       if (f->numberOfSubCurves() > 1) {
         assert(f->numberOfSubCurves() == 2);
-        zoom.fitPointsOfInterest(evaluatorSecondCurve, f.operator->());
+        zoom.fitPointsOfInterest(evaluatorSecondCurve, f.operator->(), alongY);
       }
       if (f->isIntersectable()) {
         ContinuousFunction * mainF = f.operator->();
@@ -94,12 +97,13 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     zoom.setBounds(xBounds.min(), xBounds.max());
     for (int i = 0; i < nbFunctions; i++) {
       ExpiringPointer<ContinuousFunction> f = store->modelForRecord(store->activeRecordAtIndex(i));
-      if (f->basedOnCostlyAlgorithms(context) || f->isAlongY() || !f->isAlongXOrY()) {
+      if (f->basedOnCostlyAlgorithms(context) || !f->isAlongXOrY()) {
         continue;
       }
-      zoom.fitMagnitude(evaluator, f.operator->());
+      bool alongY = f->isAlongY();
+      zoom.fitMagnitude(evaluator, f.operator->(), alongY);
       if (f->numberOfSubCurves() > 1) {
-        zoom.fitMagnitude(evaluatorSecondCurve, f.operator->());
+        zoom.fitMagnitude(evaluatorSecondCurve, f.operator->(), alongY);
       }
     }
   }

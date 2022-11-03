@@ -32,15 +32,17 @@ ion_src += $(addprefix ion/src/shared/, \
 # TODO EMILIE: tidy makefiles: these following should go in ion/src/device/Makefile?
 
 ion_device_bench_src += $(addprefix ion/src/shared/, \
+  dummy/assert.cpp \
   console_line.cpp \
   decompress.cpp \
   layout_events.cpp \
   unicode/code_point.cpp\
   unicode/utf8_decoder.cpp \
   unicode/utf8_helper.cpp \
-  )
-
+)
 ion_device_bench_src += ion/src/external/lz4/lz4.c
+
+ion_device_flasher_src += ion/src/shared/dummy/assert.cpp
 
 ion_device_kernel_src += $(addprefix ion/src/shared/, \
   console_line.cpp:+kernelassert \
@@ -54,7 +56,6 @@ ion_device_kernel_src += $(addprefix ion/src/shared/, \
   unicode/utf8_decoder.cpp:+kernelassert \
   unicode/utf8_helper.cpp:+kernelassert \
 )
-
 ion_device_kernel_src += ion/src/external/lz4/lz4.c
 
 ion_device_bootloader_src += $(addprefix ion/src/shared/, \

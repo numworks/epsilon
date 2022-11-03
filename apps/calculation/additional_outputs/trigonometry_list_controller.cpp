@@ -47,22 +47,22 @@ void TrigonometryListController::setExpression(Expression e) {
   m_approximatedLayouts[index] = getLayoutFromExpression(UnitConvert::Builder(inRadian, degrees), context, &preferencesRadian);
   index++;
 
-  auto appendLine = [&](const char * formula, Expression expression) {
-    m_layouts[index] = LayoutHelper::String(formula);
-    m_exactLayouts[index] = getLayoutFromExpression(expression, context, &preferencesRadian);
-    m_approximatedLayouts[index] = getLayoutFromExpression(expression.approximate<double>(context, preferencesRadian.complexFormat(), preferencesRadian.angleUnit()), context, preferences);
-    index++;
-  };
-
-  appendLine("cos(θ)", Cosine::Builder(e));
-  appendLine("sin(θ)", Sine::Builder(e));
-  appendLine("tan(θ)", Tangent::Builder(e));
+  appendLine(index++, "cos(θ)", Cosine::Builder(e), context, &preferencesRadian);
+  appendLine(index++, "sin(θ)", Sine::Builder(e), context, &preferencesRadian);
+  appendLine(index++, "tan(θ)", Tangent::Builder(e), context, &preferencesRadian);
   
   // Set illustration
   float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(e, context);
   m_model.setAngle(angle);
   setShowIllustration(true);
 }
+
+void TrigonometryListController::appendLine(int index, const char * formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences) {
+  m_layouts[index] = LayoutHelper::String(formula);
+  m_exactLayouts[index] = getLayoutFromExpression(expression, context, preferences);
+  m_approximatedLayouts[index] = getLayoutFromExpression(expression.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit()), context, preferences);
+  index++;
+};
 
 KDCoordinate TrigonometryListController::nonMemoizedRowHeight(int j) {
   if (typeAtIndex(j) == k_illustrationCellType) {

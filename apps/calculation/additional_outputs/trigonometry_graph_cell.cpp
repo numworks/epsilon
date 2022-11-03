@@ -22,16 +22,13 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDCont
 
   // - Draw angle arc and label
   float angle = m_model->angle();
+  assert(0 <= angle && angle < 2 * M_PI);
   constexpr float k_arcRatio = 0.2;
   constexpr float k_labelRatio = 0.32;
-  bool labelOnLine = std::abs(angle) < M_PI/30.f || std::abs(M_PI - angle) < M_PI/30.f;
-  plotView->drawLabel(ctx, rect, "θ", {k_labelRatio * std::cos(angle/2), k_labelRatio * std::sin(angle/2)}, AbstractPlotView::RelativePosition::There, labelOnLine ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::There, Palette::Red);
+  bool labelOnLine = std::fabs(angle) < M_PI / 30.f || std::fabs(M_PI - angle) < M_PI / 30.f;
+  plotView->drawLabel(ctx, rect, "θ", {k_labelRatio * std::cos(angle / 2), k_labelRatio * std::sin(angle/2)}, AbstractPlotView::RelativePosition::There, labelOnLine ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::There, Palette::Red);
   // Draw the arc
-  if (angle < 0) {
-    drawArcOfEllipse(plotView, ctx, rect, {0.f, 0.f}, k_arcRatio, k_arcRatio, angle, 0.0f, Palette::Red);
-  } else {
-    drawArcOfEllipse(plotView, ctx, rect, {0.f, 0.f}, k_arcRatio, k_arcRatio, 0.0f, angle, Palette::Red);
-  }
+  drawArcOfEllipse(plotView, ctx, rect, {0.f, 0.f}, k_arcRatio, k_arcRatio, 0.0f, angle, Palette::Red);
 
   // - Draw "sin(θ)" and "cos(θ)" labels
   plotView->drawLabel(ctx, rect, "sin(θ)", Coordinate2D<float>(0.f, s), c >= 0.f ? AbstractPlotView::RelativePosition::Before : AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::There, Palette::Red);

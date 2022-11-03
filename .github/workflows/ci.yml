@@ -66,7 +66,7 @@ jobs:
   web:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
-      - uses: numworks/setup-emscripten@v1
+      - uses: numworks/setup-emscripten@latest
         with:
           sdk: 1.39.16-fastcomp
       - uses: actions/checkout@v3

@@ -283,11 +283,10 @@ bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEv
 
   Solver<float> solver(start, end);
   Range2D tempRange;
-  Coordinate2D<float> p = solver.next(evaluator, aux, test, hone);
   int n = 0;
-  while (solver.lastInterest() != Solver<float>::Interest::None) {
+  Coordinate2D<float> p;
+  while (std::isfinite((p = solver.next(evaluator, aux, test, hone)).x1())) { // assignment in condition
     m_interestingRange.extend(p);
-    p = solver.next(evaluator, aux, test, hone);
     n++;
     if (n == k_maxPointsIfInfinite) {
       tempRange = m_interestingRange;

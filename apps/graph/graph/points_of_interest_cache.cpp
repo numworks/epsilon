@@ -108,10 +108,9 @@ void PointsOfInterestCache::computeBetween(float start, float end, Range1D * dir
   NextSolution methodsNext[] = { &Solver<double>::nextRoot, &Solver<double>::nextMinimum, &Solver<double>::nextMaximum };
   for (NextSolution next : methodsNext) {
     Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);
-    Coordinate2D<double> solution = (solver.*next)(e);
-    while (std::isfinite(solution.x1())) {
+    Coordinate2D<double> solution;
+    while (std::isfinite((solution = (solver.*next)(e)).x1())) { // assignment in condition
       append(solution.x1(), solution.x2(), solver.lastInterest(), dirtyRange);
-      solution = (solver.*next)(e);
     }
   }
 
@@ -132,11 +131,10 @@ void PointsOfInterestCache::computeBetween(float start, float end, Range1D * dir
     Expression e2 = g->expressionReduced(context);
     Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);
     Expression diff;
-    Coordinate2D<double> intersection = solver.nextIntersection(e, e2, &diff);
-    while (std::isfinite(intersection.x1())) {
+    Coordinate2D<double> intersection;
+    while (std::isfinite((intersection = solver.nextIntersection(e, e2, &diff)).x1())) { // assignment in condition
       assert(sizeof(record) == sizeof(uint32_t));
       append(intersection.x1(), intersection.x2(), Solver<double>::Interest::Intersection, dirtyRange, *reinterpret_cast<uint32_t *>(&record));
-      intersection = solver.nextIntersection(e, e2, &diff);
     }
   }
 }

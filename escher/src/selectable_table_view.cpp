@@ -227,9 +227,9 @@ int SelectableTableView::lastSelectableColumn() {
 int SelectableTableView::indexOfNextSelectableRow(int delta) {
   assert(selectedColumn() >= 0 && selectedColumn() < dataSource()->numberOfColumns());
   int row = selectedRow();
-  int step = delta > 0 ? 1 : -1;
-  int firstRow = firstSelectableRow();
-  int lastRow = lastSelectableRow();
+  const int step = delta > 0 ? 1 : -1;
+  const int firstRow = firstSelectableRow();
+  const int lastRow = lastSelectableRow();
   while (delta) {
     row += step;
     if (row < firstRow) {
@@ -249,9 +249,9 @@ int SelectableTableView::indexOfNextSelectableRow(int delta) {
 int SelectableTableView::indexOfNextSelectableColumn(int delta) {
   assert(selectedRow() >= 0 && selectedRow() < dataSource()->numberOfRows());
   int column = selectedColumn();
-  int step = delta > 0 ? 1 : -1;
-  int firstColumn = firstSelectableColumn();
-  int lastColumn = lastSelectableColumn();
+  const int step = delta > 0 ? 1 : -1;
+  const int firstColumn = firstSelectableColumn();
+  const int lastColumn = lastSelectableColumn();
   while (delta) {
     column += step;
     if (column < firstColumn) {

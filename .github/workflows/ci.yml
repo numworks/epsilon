@@ -31,12 +31,16 @@ jobs:
     steps:
       - uses: numworks/setup-arm-toolchain@latest
       - uses: actions/checkout@v3
-        id: checkout
         with:
           token: ${{ secrets.PAT || github.token }}
           submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh
+      - name: Check for epsilon-core
+        id: epsilon-core
+        run: "[[ -e ion/src/device/epsilon-core/.gitignore ]]"
+        continue-on-error: true
       - name: Disable epsilon-core submodule
+        if: ${{ steps.epsilon-core.outcome == 'success' }}
         run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable
       - name: Build userlands
         # Since both slots have the exact same amount of Flash reserved, it is pointless to build both the A and B elfs for every variant.
@@ -44,8 +48,14 @@ jobs:
         # TODO: It is also probably useless to build so many variants
         run: make MODEL=${{ matrix.model }} userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf
       - name: Restore epsilon-core submodule
+        if: ${{ steps.epsilon-core.outcome == 'success' }}
         run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
-      - run: make MODEL=${{ matrix.model }} epsilon.dfu flasher.dfu bench.ram.dfu
+      - if: ${{ steps.epsilon-core.outcome == 'success' }}
+        run: make MODEL=${{ matrix.model }} epsilon.dfu
+      - if: ${{ steps.epsilon-core.outcome == 'success' }}
+        run: make MODEL=${{ matrix.model }} flasher.dfu
+      - if: ${{ steps.epsilon-core.outcome == 'success' }}
+        run: make MODEL=${{ matrix.model }} bench.ram.dfu
   windows:
     runs-on: windows-latest
     if: ${{ ! endswith(github.repository, '/epsilon-internal') }}

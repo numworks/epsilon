@@ -36,9 +36,9 @@ private:
   void switchToSelectedApp();
 
   // Conversion index <--> column/row
-  int columnIndex(int iconIndex) const { return iconIndex % numberOfColumns(); }
-  int rowIndex(int iconIndex) const { return iconIndex / numberOfColumns(); }
-  int iconIndex(int columnIndex, int rowIndex) const { return rowIndex * numberOfColumns() + columnIndex; }
+  int columnIndex(int iconIndex) const { return iconIndex % k_numberOfColumns; }
+  int rowIndex(int iconIndex) const { return iconIndex / k_numberOfColumns; }
+  int iconIndex(int columnIndex, int rowIndex) const { return rowIndex * k_numberOfColumns + columnIndex; }
   int appIndex(int columnIndex, int rowIndex) const { return iconIndex(columnIndex, rowIndex) + 1; }
   int lastIconColumn() { return columnIndex(numberOfIcons() - 1); }
   

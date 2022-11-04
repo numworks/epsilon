@@ -73,7 +73,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     return m_view.selectableTableView()->selectCellAtLocation(0, selectionDataSource()->selectedRow() + 1);
   }
   if (event == Ion::Events::Left && selectionDataSource()->selectedRow() > 0) {
-    return m_view.selectableTableView()->selectCellAtLocation(numberOfColumns() - 1, selectionDataSource()->selectedRow() - 1);
+    return m_view.selectableTableView()->selectCellAtLocation(k_numberOfColumns - 1, selectionDataSource()->selectedRow() - 1);
   }
   // Handle keys from 0 to 9
   char eventText[Ion::Events::EventData::k_maxDataSize] = {0};
@@ -109,7 +109,7 @@ View * Controller::view() {
 }
 
 int Controller::numberOfRows() const {
-  return ((numberOfIcons() - 1) / numberOfColumns()) + 1;
+  return ((numberOfIcons() - 1) / k_numberOfColumns) + 1;
 }
 
 int Controller::numberOfColumns() const {

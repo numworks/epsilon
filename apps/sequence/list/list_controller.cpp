@@ -228,7 +228,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     footer()->setSelectedButton(0);
     return true;
   }
-  if (event == Ion::Events::Backspace) {
+  if (event == Ion::Events::Backspace && !isAddEmptyRow(selectedRow())) {
     Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
     if (removeModelRow(record)) {
       int newSelectedRow = selectedRow() >= numberOfRows() ? numberOfRows() -1 : selectedRow();

@@ -23,6 +23,7 @@ public:
       return ScrollableThreeExpressionsCell::setHighlighted(highlight);
     }
     Escher::TableCell::setHighlighted(highlight);
+    m_view.setBackgroundColor(defaultBackgroundColor());
     m_view.evenOddCell()->setHighlighted(highlight);
     m_subLabelView.setBackgroundColor(defaultBackgroundColor());
   }

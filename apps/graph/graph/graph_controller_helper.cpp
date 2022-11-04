@@ -144,9 +144,11 @@ void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shar
 }
 
 bool GraphControllerHelper::snapToInterestAndUpdateBanner(double * t, double start, double end) {
+  assert(cursorView());
   PointOfInterest nextPointOfInterest = App::app()->graphController()->pointsOfInterest()->firstPointInDirection(start, end);
   Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
   if (!std::isfinite(nextPointOfInterestXY.x1())) {
+    cursorView()->setHighlighted(false);
     return false;
   }
   /* Snap to a point of interest, and display its type in the banner. */
@@ -171,6 +173,7 @@ bool GraphControllerHelper::snapToInterestAndUpdateBanner(double * t, double sta
     break;
   }
   bannerView()->setInterestMessage(interestMessage);
+  cursorView()->setHighlighted(true);
   return true;
 }
 

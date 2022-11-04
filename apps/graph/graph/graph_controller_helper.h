@@ -3,6 +3,7 @@
 
 #include "banner_view.h"
 #include <apps/shared/curve_view_cursor.h>
+#include <apps/shared/memoized_cursor_view.h>
 #include <apps/shared/interactive_curve_view_range.h>
 
 namespace Graph {
@@ -13,6 +14,7 @@ protected:
   bool snapToInterestAndUpdateBanner(double * t, double start, double end);
   void reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record);
   virtual BannerView * bannerView() = 0;
+  virtual Shared::MemoizedCursorView * cursorView() { return nullptr; }
 
 private:
   constexpr static float k_snapFactor = 1.5f;

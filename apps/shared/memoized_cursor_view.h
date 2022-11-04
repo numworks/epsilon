@@ -2,6 +2,7 @@
 #define SHARED_MEMOIZED_CURSOR_VIEW_H
 
 #include "cursor_view.h"
+#include <escher/palette.h>
 
 namespace Shared {
 
@@ -11,6 +12,7 @@ public:
   void drawRect(KDContext * ctx, KDRect rect) const override;
   KDSize minimalSizeForOptimalDisplay() const override;
   void setColor(KDColor color);
+  void setHighlighted(bool highlighted) { m_highlighted = highlighted; }
   void setCursorFrame(KDRect frame, bool force) override;
   void resetMemoization() const { m_underneathPixelBufferLoaded = false; }
 protected:
@@ -18,7 +20,7 @@ protected:
   virtual KDCoordinate size() const = 0;
   virtual KDColor * underneathPixelBuffer() const = 0;
   void markRectAsDirty(KDRect rect) override;
-  KDColor color() const { return m_color; }
+  KDColor color() const { return m_highlighted ? Escher::Palette::GrayDarkest : m_color; }
   mutable bool m_underneathPixelBufferLoaded;
 private:
   KDColor m_color;

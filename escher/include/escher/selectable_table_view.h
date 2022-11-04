@@ -20,25 +20,28 @@ public:
   SelectableTableView(Responder * parentResponder, TableViewDataSource * dataSource,
       SelectableTableViewDataSource * selectionDataSource = nullptr, SelectableTableViewDelegate * delegate = nullptr);
   template <typename T> SelectableTableView(T * p) : SelectableTableView(p, p, p) {};
+
   void setDelegate(SelectableTableViewDelegate * delegate) { m_delegate = delegate; }
   int selectedRow() { return m_selectionDataSource->selectedRow(); }
   int selectedColumn() { return m_selectionDataSource->selectedColumn(); }
   void selectRow(int j) { m_selectionDataSource->selectRow(j); }
   void selectColumn(int i) { m_selectionDataSource->selectColumn(i); }
+
+  HighlightCell * selectedCell();
   bool cellIsSelectable(HighlightCell * cell);
   int firstSelectableRow();
   int indexOfNextSelectableColumnOrRow(int delta, bool row);
   int indexOfNextSelectableRow(int delta);
   int indexOfNextSelectableColumn(int delta);
-  void reloadData(bool setFirstResponder = true, bool setSelection = true);
-  bool handleEvent(Ion::Events::Event event) override;
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
-  void willExitResponderChain(Responder * nextFirstResponder) override;
-  void deselectTable(bool withinTemporarySelection = false);
   bool selectCellAtLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
   bool selectCellAtClippedLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
-  HighlightCell * selectedCell();
+  bool handleEvent(Ion::Events::Event event) override;
   void unhighlightSelectedCell();
+  void deselectTable(bool withinTemporarySelection = false);
+  void reloadData(bool setFirstResponder = true, bool setSelection = true);
+
+  void didEnterResponderChain(Responder * previousFirstResponder) override;
+  void willExitResponderChain(Responder * nextFirstResponder) override;
 protected:
   SelectableTableViewDataSource * m_selectionDataSource;
   SelectableTableViewDelegate * m_delegate;

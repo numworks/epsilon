@@ -109,11 +109,18 @@ def html(layout):
   screen = layout["screen"]
   background = layout["background"]
   html = ''
-  html += '<div class="calculator loading">\n'
-  html += '  <div class="loader"><span></span></div>\n'
-  html += '  <canvas tabindex="1"></canvas>\n'
+  html += '<div class="calculator-container">\n'
+  html += '  <picture>\n'
+  html += '    <source srcset="background.webp" type="image/webp">\n'
+  html += '    <source srcset="background.jpg" type="image/jpeg">\n'
+  html += '    <img src="background.jpg" alt="NumWorks Calculator">\n'
+  html += '  </picture>\n'
+  html += '  <div class="calculator loading">\n'
+  html += '    <div class="loader"><span></span></div>\n'
+  html += '    <canvas tabindex="1"></canvas>\n'
   for key in layout["keys"]:
-    html += '  <span data-key="%s"></span>\n' % key
+    html += '    <span data-key="%s"></span>\n' % key
+  html += '  </div>'
   html += '</div>'
   return html
 

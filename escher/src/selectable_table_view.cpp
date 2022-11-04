@@ -21,50 +21,66 @@ SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewD
   );
 }
 
-void SelectableTableView::reloadData(bool setFirstResponder, bool setSelection) {
-  dataSource()->initCellSize(this);
-  int col = selectedColumn();
-  int row = selectedRow();
-  // TODO: remove setSelection? (Cf comment in DynamicCellsDataSource)
-  if (setSelection) {
-    deselectTable(true);
+HighlightCell * SelectableTableView::selectedCell() {
+  if (selectedColumn() < 0 || selectedRow() < 0 || selectedColumn() >= dataSource()->numberOfColumns() || selectedRow() >= dataSource()->numberOfRows()) {
+    return nullptr;
   }
-  /* FIXME: The problem with calling deselectTable is that at this point in time
-   * the datasource's model is very likely to have changed. Therefore it's
-   * rather complicated to get a pointer to the currently selected cell (in
-   * order to deselect it). */
-  /* As a workaround, datasources can reset the highlighted state in their
-   * willDisplayCell callback. */
-  TableView::layoutSubviews();
-  if (setSelection) {
-    selectCellAtLocation(col, row, setFirstResponder, true);
-  }
+  return cellAtLocation(selectedColumn(), selectedRow());
 }
 
-void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
-  int col = selectedColumn();
-  int row = std::max(selectedRow(), firstSelectableRow());
-  selectColumn(0);
-  selectRow(-1);
-  selectCellAtLocation(col, row);
+bool SelectableTableView::cellIsSelectable(HighlightCell * cell) {
+  /* There is 2 cases:
+   * - In the case of non reusable cells: all cells are valid pointers but they are not all selectable
+   *   --> the condition we want to test is cell->isSelectable()
+   * - In the case of reusable cells: visible cells are valid pointers and they are all selectable, and 
+   *   other cells are nullptr but they also are selectable. 
+   *   --> we don't want to test any condition here, but since the 2 cases are handled together here,
+   *   we need to add || !cell in the condition
+   * TODO: split the class hierarchy earlier */
+  return !cell || cell->isSelectable();
 }
 
-void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder) {
-  if (nextFirstResponder != nullptr) {
-    unhighlightSelectedCell();
+int SelectableTableView::firstSelectableRow() {
+  if (dataSource()->numberOfRows() == 0) {
+    return 0;
   }
+  for (int row = 0, end = dataSource()->numberOfRows(); row < end; row++) {
+    HighlightCell * cell = cellAtLocation(selectedColumn(), row);
+    if (cellIsSelectable(cell)) {
+      return row;
+    }
+  }
+  assert(false);
+  return -1;
 }
 
-void SelectableTableView::deselectTable(bool withinTemporarySelection) {
-  unhighlightSelectedCell();
-  int previousSelectedCellX = selectedColumn();
-  int previousSelectedCellY = selectedRow();
-  selectColumn(0);
-  selectRow(-1);
-  if (m_delegate) {
-    m_delegate->tableViewDidChangeSelection(this, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
-    m_delegate->tableViewDidChangeSelectionAndDidScroll(this, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
+int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, bool row) {
+  assert(selectedCell());
+  // Let's call our variable cow, as a shortcut for col-or-row
+  int cow = row ? selectedRow() : selectedColumn();
+  int selectableCow = cow;
+  const int step = delta > 0 ? 1 : -1;
+  const int lastCow = row ? dataSource()->numberOfRows() - 1 : dataSource()->numberOfColumns() - 1;
+  while (delta) {
+    cow += step;
+    if (cow < 0 || cow > lastCow) {
+      return selectableCow;
+    }
+    HighlightCell * cell = row ? cellAtLocation(selectedColumn(), cow) : cellAtLocation(cow, selectedRow());
+    if (cellIsSelectable(cell)) {
+      selectableCow = cow;
+      delta -= step;
+    }
   }
+  return cow;
+}
+
+int SelectableTableView::indexOfNextSelectableRow(int delta) {
+  return indexOfNextSelectableColumnOrRow(delta, true);
+}
+
+int SelectableTableView::indexOfNextSelectableColumn(int delta) {
+  return indexOfNextSelectableColumnOrRow(delta, false);
 }
 
 bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstResponder, bool withinTemporarySelection) {
@@ -133,68 +149,6 @@ bool SelectableTableView::selectCellAtClippedLocation(int i, int j, bool setFirs
   return selectCellAtLocation(i, j, setFirstResponder, withinTemporarySelection);
 }
 
-HighlightCell * SelectableTableView::selectedCell() {
-  if (selectedColumn() < 0 || selectedRow() < 0 || selectedColumn() >= dataSource()->numberOfColumns() || selectedRow() >= dataSource()->numberOfRows()) {
-    return nullptr;
-  }
-  return cellAtLocation(selectedColumn(), selectedRow());
-}
-
-bool SelectableTableView::cellIsSelectable(HighlightCell * cell) {
-  /* There is 2 cases:
-   * - In the case of non reusable cells: all cells are valid pointers but they are not all selectable
-   *   --> the condition we want to test is cell->isSelectable()
-   * - In the case of reusable cells: visible cells are valid pointers and they are all selectable, and 
-   *   other cells are nullptr but they also are selectable. 
-   *   --> we don't want to test any condition here, but since the 2 cases are handled together here,
-   *   we need to add || !cell in the condition
-   * TODO: split the class hierarchy earlier */
-  return !cell || cell->isSelectable();
-}
-
-int SelectableTableView::firstSelectableRow() {
-  if (dataSource()->numberOfRows() == 0) {
-    return 0;
-  }
-  for (int row = 0, end = dataSource()->numberOfRows(); row < end; row++) {
-    HighlightCell * cell = cellAtLocation(selectedColumn(), row);
-    if (cellIsSelectable(cell)) {
-      return row;
-    }
-  }
-  assert(false);
-  return -1;
-}
-
-int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, bool row) {
-  assert(selectedCell());
-  // Let's call our variable cow, as a shortcut for col-or-row
-  int cow = row ? selectedRow() : selectedColumn();
-  int selectableCow = cow;
-  const int step = delta > 0 ? 1 : -1;
-  const int lastCow = row ? dataSource()->numberOfRows() - 1 : dataSource()->numberOfColumns() - 1;
-  while (delta) {
-    cow += step;
-    if (cow < 0 || cow > lastCow) {
-      return selectableCow;
-    }
-    HighlightCell * cell = row ? cellAtLocation(selectedColumn(), cow) : cellAtLocation(cow, selectedRow());
-    if (cellIsSelectable(cell)) {
-      selectableCow = cow;
-      delta -= step;
-    }
-  }
-  return cow;
-}
-
-int SelectableTableView::indexOfNextSelectableRow(int delta) {
-  return indexOfNextSelectableColumnOrRow(delta, true);
-}
-
-int SelectableTableView::indexOfNextSelectableColumn(int delta) {
-  return indexOfNextSelectableColumnOrRow(delta, false);
-}
-
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   assert(dataSource()->numberOfRows() > 0);
   int step = Ion::Events::longPressFactor();
@@ -254,6 +208,52 @@ void SelectableTableView::unhighlightSelectedCell() {
     if (previousCell) {
       previousCell->setHighlighted(false);
     }
+  }
+}
+
+void SelectableTableView::deselectTable(bool withinTemporarySelection) {
+  unhighlightSelectedCell();
+  int previousSelectedCellX = selectedColumn();
+  int previousSelectedCellY = selectedRow();
+  selectColumn(0);
+  selectRow(-1);
+  if (m_delegate) {
+    m_delegate->tableViewDidChangeSelection(this, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
+    m_delegate->tableViewDidChangeSelectionAndDidScroll(this, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
+  }
+}
+
+void SelectableTableView::reloadData(bool setFirstResponder, bool setSelection) {
+  dataSource()->initCellSize(this);
+  int col = selectedColumn();
+  int row = selectedRow();
+  // TODO: remove setSelection? (Cf comment in DynamicCellsDataSource)
+  if (setSelection) {
+    deselectTable(true);
+  }
+  /* FIXME: The problem with calling deselectTable is that at this point in time
+   * the datasource's model is very likely to have changed. Therefore it's
+   * rather complicated to get a pointer to the currently selected cell (in
+   * order to deselect it). */
+  /* As a workaround, datasources can reset the highlighted state in their
+   * willDisplayCell callback. */
+  TableView::layoutSubviews();
+  if (setSelection) {
+    selectCellAtLocation(col, row, setFirstResponder, true);
+  }
+}
+
+void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
+  int col = selectedColumn();
+  int row = std::max(selectedRow(), firstSelectableRow());
+  selectColumn(0);
+  selectRow(-1);
+  selectCellAtLocation(col, row);
+}
+
+void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder) {
+  if (nextFirstResponder != nullptr) {
+    unhighlightSelectedCell();
   }
 }
 

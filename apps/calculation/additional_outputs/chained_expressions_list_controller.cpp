@@ -7,11 +7,6 @@ using namespace Escher;
 
 namespace Calculation {
 
-ChainedExpressionsListController::ChainedExpressionsListController(EditExpressionController * editExpressionController,  Escher::SelectableTableViewDelegate * delegate) :
-  ExpressionsListController(editExpressionController, delegate)
-{
-}
-
 void ChainedExpressionsListController::viewDidDisappear() {
   if (m_tail) {
     m_tail->viewDidDisappear();

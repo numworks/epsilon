@@ -10,7 +10,7 @@ namespace Calculation {
 
 class ExpressionsListController : public ListController {
 public:
-  ExpressionsListController(EditExpressionController * editExpressionController, Escher::SelectableTableViewDelegate * delegate = nullptr);
+  ExpressionsListController(EditExpressionController * editExpressionController, bool highlightWholeCells, Escher::SelectableTableViewDelegate * delegate = nullptr);
 
   // Responder
   void viewDidDisappear() override;

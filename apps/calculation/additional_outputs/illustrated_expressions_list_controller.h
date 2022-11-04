@@ -11,7 +11,7 @@ namespace Calculation {
 class IllustratedExpressionsListController : public ChainedExpressionsListController, public Escher::SelectableTableViewDelegate {
 public:
   IllustratedExpressionsListController(EditExpressionController * editExpressionController) :
-    ChainedExpressionsListController(editExpressionController, this) {}
+    ChainedExpressionsListController(editExpressionController, false, this) {}
 
   // Responder
   void didEnterResponderChain(Responder * previousFirstResponder) override;

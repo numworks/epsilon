@@ -8,7 +8,7 @@ namespace Calculation {
 class RationalListController : public ChainableExpressionsListController {
 public:
   RationalListController(EditExpressionController * editExpressionController) :
-    ChainableExpressionsListController(editExpressionController) {}
+    ChainableExpressionsListController(editExpressionController, true) {}
 
   void setExpression(Poincare::Expression e) override;
 

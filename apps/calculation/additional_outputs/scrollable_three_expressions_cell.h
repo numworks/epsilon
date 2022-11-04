@@ -27,23 +27,26 @@ public:
     m_contentCell.setShowEqual(showEqual);
   }
   SubviewPosition leftMostPosition();
+  void setHighlightWholeCell(bool highlightWholeCell) { m_contentCell.setHighlightWholeCell(highlightWholeCell); }
 private:
   class ContentCell : public Shared::AbstractScrollableMultipleExpressionsView::ContentCell {
     friend ScrollableThreeExpressionsView;
   public:
     using Shared::AbstractScrollableMultipleExpressionsView::ContentCell::ContentCell;
-    KDColor backgroundColor() const override { return KDColorWhite; }
+    KDColor backgroundColor() const override { return m_highlightWholeCell ? defaultBackgroundColor() : KDColorWhite; }
     void setEven(bool even) override { return; }
     Escher::ExpressionView * leftExpressionView() const override { return const_cast<ExpressionWithEqualSignView *>(&m_leftExpressionView); }
     void setShowEqual(bool showEqual) {
       m_leftExpressionView.setShowEqual(showEqual);
     }
+    void setHighlightWholeCell(bool highlightWholeCell) { m_highlightWholeCell = highlightWholeCell; };
 
   private:
     ExpressionWithEqualSignView m_leftExpressionView;
+    bool m_highlightWholeCell;
   };
 
-  ContentCell *  contentCell() override { return &m_contentCell; };
+  ContentCell * contentCell() override { return &m_contentCell; };
   const ContentCell * constContentCell() const override { return &m_contentCell; };
   ContentCell m_contentCell;
 };
@@ -79,7 +82,7 @@ public:
   void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame) {
     return m_view.subviewFrames(leftFrame, centerFrame, approximateSignFrame, rightFrame);
   }
-private:
+protected:
   ScrollableThreeExpressionsView m_view;
 };
 

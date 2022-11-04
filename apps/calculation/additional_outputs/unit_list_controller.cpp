@@ -11,7 +11,7 @@ using namespace Shared;
 namespace Calculation {
 
 UnitListController::UnitListController(EditExpressionController * editExpressionController) :
-  ExpressionsListController(editExpressionController),
+  ExpressionsListController(editExpressionController, true),
   m_numberOfExpressionCells(0),
   m_numberOfBufferCells(0),
   m_bufferCells{},

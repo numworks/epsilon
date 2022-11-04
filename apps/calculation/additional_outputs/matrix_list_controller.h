@@ -8,7 +8,7 @@ namespace Calculation {
 class MatrixListController : public ExpressionsListController {
 public:
   MatrixListController(EditExpressionController * editExpressionController) :
-    ExpressionsListController(editExpressionController) {}
+    ExpressionsListController(editExpressionController, true) {}
 
   void setExpression(Poincare::Expression e) override;
 

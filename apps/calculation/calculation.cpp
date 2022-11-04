@@ -263,9 +263,6 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   }
   if (o.hasUnit()) {
     AdditionalInformations additionalInformations = {};
-    if (!isComplex && preferences->displayMode() != Preferences::PrintFloatMode::Scientific) {
-      additionalInformations.scientificNotation = true;
-    }
     Expression unit;
     PoincareHelpers::ReduceAndRemoveUnit(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User, &unit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
     double value = PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());

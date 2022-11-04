@@ -4,21 +4,7 @@
 IOS_MOBILE_PROVISION ?= build/artifacts/NumWorks_Graphing_Calculator_Distribution.mobileprovision
 EMCC ?= emcc
 
-define file_check
-@ if test ! -f $(1); \
-  then \
-  echo "Missing file: $(1)"; \
-  exit 1; \
-fi
-endef
-
-define command_check
-@ if ! command -v $(1) > /dev/null; \
-  then \
-  echo "Missing command: $(1), did you forget to source?"; \
-  exit 1; \
-fi
-endef
+include build/file_checker.mak
 
 .PHONY: all
 all:

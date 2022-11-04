@@ -8,6 +8,7 @@ default:
 # be remade
 .PHONY: force_remake
 
+include build/file_checker.mak
 include build/config.mak
 include build/defaults.mak
 include build/platform.$(PLATFORM).mak

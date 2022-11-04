@@ -60,8 +60,7 @@ void assert_data_statistics_equal_to(
   quiz_assert(range >= 0.0);
   quiz_assert(variance >= 0.0);
   quiz_assert(standardDeviation >= 0.0);
-  // Handle NaN sampleStandardDeviation
-  quiz_assert(!(sampleStandardDeviation < 0.0));
+  quiz_assert(std::isnan(sampleStandardDeviation) || sampleStandardDeviation >= 0.0);
   quiz_assert(squaredValueSum >= 0.0);
 
   // Compare the statistics

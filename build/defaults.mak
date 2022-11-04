@@ -1,6 +1,6 @@
 HOSTCC = gcc
 HOSTCXX = g++
-PYTHON = .venv/bin/python3
+PYTHON = $(if $(shell $(call folder_check,.venv)),python3,.venv/bin/python3)
 
 SFLAGS += -DEPSILON_GETOPT=$(EPSILON_GETOPT)
 SFLAGS += -DEPSILON_TELEMETRY=$(EPSILON_TELEMETRY)

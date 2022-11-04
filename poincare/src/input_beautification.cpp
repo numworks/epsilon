@@ -14,7 +14,7 @@ void InputBeautification::ApplyBeautificationBetweenIndexes(HorizontalLayout par
       Layout childrenOfParenthesisContainer = child.childAtIndex(0);
       ApplyBeautificationBetweenIndexes(static_cast<HorizontalLayout&>(childrenOfParenthesisContainer), 0, childrenOfParenthesisContainer.numberOfChildren(), layoutCursor, context, forceCursorRightOfText, true);
     }
-    i = InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(child, layoutCursor, context, forceCursorRightOfText, forceBeautification);
+    i = InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(child, layoutCursor, context, forceCursorRightOfText, forceBeautification, true);
     assert(i >= 0);
     i--;
   }
@@ -24,7 +24,7 @@ static bool IsPipeKeyLayout(Layout l) {
   return l.type() == LayoutNode::Type::CodePointLayout && static_cast<CodePointLayout&>(l).codePoint() == '|';
 }
 
-int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText, bool forceBeautification) {
+int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText, bool forceBeautification, bool preventAlteringParent) {
   Layout parent = lastAddedLayout.parent();
   assert(!parent.isUninitialized());
   int indexOfLastAddedLayout = parent.indexOfChild(lastAddedLayout);
@@ -49,7 +49,7 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
     return indexOfLastAddedLayout - 1; // (d/dx)(<-lastAddedLayout
   }
 
-  if (BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPossible(parent, indexOfLastAddedLayout, layoutCursor, forceCursorRightOfText)) {
+  if (!preventAlteringParent && BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPossible(parent, indexOfLastAddedLayout, layoutCursor, forceCursorRightOfText)) {
     return -1; // This modifies the parent.
   }
 

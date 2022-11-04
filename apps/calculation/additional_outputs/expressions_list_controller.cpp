@@ -9,7 +9,7 @@ namespace Calculation {
 
 /* Expressions list controller */
 
-ExpressionsListController::ExpressionsListController(EditExpressionController * editExpressionController,  bool highlightWholeCells, Escher::SelectableTableViewDelegate * delegate) :
+ExpressionsListController::ExpressionsListController(EditExpressionController * editExpressionController, bool highlightWholeCells, Escher::SelectableTableViewDelegate * delegate) :
   ListController(editExpressionController, delegate)
 {
   for (int i = 0; i < k_maxNumberOfRows; i++) {

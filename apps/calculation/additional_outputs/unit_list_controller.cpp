@@ -14,7 +14,6 @@ UnitListController::UnitListController(EditExpressionController * editExpression
   ExpressionsListController(editExpressionController, true),
   m_numberOfExpressionCells(0),
   m_numberOfBufferCells(0),
-  m_bufferCells{},
   m_referenceValues{nullptr, nullptr},
   m_SIValue(0.0)
 {

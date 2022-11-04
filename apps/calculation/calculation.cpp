@@ -271,7 +271,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
       additionalInformations.unit = true;
       return additionalInformations;
     }
-    return AdditionalInformations {};
+    return additionalInformations;
   }
   if (o.type() == ExpressionNode::Type::Matrix) {
     if (static_cast<const Matrix&>(o).vectorType() != Array::VectorType::None) {

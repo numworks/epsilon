@@ -135,8 +135,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           vc = &m_vectorController;
         } else if (additionalInformations.matrix) {
           vc = &m_matrixController;
-        }
-        if (additionalInformations.trigonometry) {
+        } else if (additionalInformations.trigonometry) {
           vc = &m_trigonometryController;
           // Find the angle
           Expression focusInput = focusCalculation->input();
@@ -161,14 +160,14 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           vc->setExactAndApproximateExpression(e, a);
         }
         if (additionalInformations.function) {
-          assert(vc == &m_integerController || vc == &m_rationalController);
+          assert(vc == nullptr || vc == &m_integerController || vc == &m_rationalController);
           ChainableExpressionsListController * tail = static_cast<ChainableExpressionsListController*>(vc);
           m_functionController.setTail(tail);
           vc = &m_functionController;
           vc->setExpression(focusCalculation->input());
         } else if (additionalInformations.scientificNotation) {
           // TODO function and scientific ?
-          assert(vc == &m_integerController || vc == &m_rationalController);
+          assert(vc == nullptr || vc == &m_integerController || vc == &m_rationalController);
           ChainableExpressionsListController * tail = static_cast<ChainableExpressionsListController*>(vc);
           m_scientificNotationListController.setTail(tail);
           vc = &m_scientificNotationListController;

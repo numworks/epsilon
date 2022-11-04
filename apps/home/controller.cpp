@@ -125,6 +125,7 @@ KDCoordinate Controller::defaultColumnWidth() {
 }
 
 HighlightCell * Controller::reusableCell(int index) {
+  assert(0 <= index && index < k_maxNumberOfCells);
   return &m_cells[index];
 }
 

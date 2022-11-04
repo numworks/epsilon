@@ -42,11 +42,15 @@ Range2D Zoom::range(float maxFloat, bool forceNormalization) const {
   return result;
 }
 
+void Zoom::fitPoint(Coordinate2D<float> xy) {
+  m_interestingRange.extend(xy);
+}
+
 void Zoom::fitFullFunction(Function2DWithContext f, const void * model) {
   float step = m_bounds.length() / (k_sampleSize - 1);
   for (size_t i = 0; i < k_sampleSize; i++) {
     float t = m_bounds.min() + step * i;
-    m_interestingRange.extend(f(t, model, m_context));
+    fitPoint(f(t, model, m_context));
   }
 }
 
@@ -68,10 +72,10 @@ void Zoom::fitPointsOfInterest(Function2DWithContext f, const void * model, bool
    * infinite number of points in this direction. An horizontal asymptote
    * would be the result of a sampling artifact and can be discarded. */
   if (!leftInterrupted) {
-    m_interestingRange.extend(flipped(asymptotes.left(), vertical));
+    fitPoint(flipped(asymptotes.left(), vertical));
   }
   if (!rightInterrupted) {
-    m_interestingRange.extend(flipped(asymptotes.right(), vertical));
+    fitPoint(flipped(asymptotes.right(), vertical));
   }
 }
 
@@ -296,7 +300,7 @@ void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver
   Coordinate2D<float> p2(c, evaluator(c, aux));
   Coordinate2D<float> p3(c + d, evaluator(c + d, aux));
   if (pointIsInterestingHelper(p1, p2, p3, aux) != Solver<float>::Interest::None) {
-    m_interestingRange.extend(flipped(p2, vertical));
+    fitPoint(flipped(p2, vertical));
   }
 }
 
@@ -319,7 +323,7 @@ bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEv
   int n = 0;
   Coordinate2D<float> p;
   while (std::isfinite((p = solver.next(evaluator, aux, test, hone)).x1())) { // assignment in condition
-    m_interestingRange.extend(flipped(p, vertical));
+    fitPoint(flipped(p, vertical));
     n++;
     if (n == k_maxPointsIfInfinite) {
       tempRange = m_interestingRange;

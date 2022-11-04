@@ -1333,6 +1333,7 @@ QUIZ_CASE(poincare_simplification_functions_of_matrices) {
 
 QUIZ_CASE(poincare_simplification_store) {
   assert_parsed_expression_simplify_to("1+2→x", "3→x");
+  assert_parsed_expression_simplify_to("0.2→f(x)", "0.2→f(x)", SystemForAnalysis);
   assert_parsed_expression_simplify_to("0.1+0.2→x", "3/10→x");
   assert_parsed_expression_simplify_to("a→x", "a→x");
   assert_parsed_expression_simplify_to("a→x", "undef→x", User, Radian, MetricUnitFormat, Cartesian, ReplaceAllSymbolsWithDefinitionsOrUndefined);

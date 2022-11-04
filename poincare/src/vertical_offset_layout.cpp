@@ -111,6 +111,7 @@ void VerticalOffsetLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     assert(cursor->position() == LayoutCursor::Position::Left);
     Layout parentRef(parent());
     LayoutNode * base = baseLayout();
+    int baseOffset = baseOffsetInParent();
     if (indiceLayout()->isEmpty()) {
       int indexInParent = parentRef.node()->indexOfChild(this);
       if (base->isEmpty()) {
@@ -119,7 +120,6 @@ void VerticalOffsetLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
         cursor->setPosition(LayoutCursor::Position::Right);
         parentRef.removeChildAtIndex(indexInParent, cursor);
         // WARNING: do not call "this" afterwards
-        int baseOffset = baseOffsetInParent();
         if (baseOffset > 0) {
           /* This was before its base, meaning the index of the base changed
            * when me removed this. */
@@ -250,8 +250,9 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
     parentRef.removeChild(child, nullptr, true);
     h.addChildAtIndex(child, 0, n++, nullptr);
   }
-  if (h.numberOfChildren() == 0 || h.childAtIndex(0).type() == Type::VerticalOffsetLayout) {
-    EmptyLayout e = EmptyLayout::Builder();
+  if (n == 0 || h.childAtIndex(0).type() == Type::VerticalOffsetLayout) {
+    EmptyLayoutNode::Visibility visibility = n == 0 ? EmptyLayoutNode::Visibility::Never : EmptyLayoutNode::Visibility::On;
+    EmptyLayout e = EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, visibility);
     h.addChildAtIndex(e, 0, n++, nullptr);
   }
   ParenthesisLayout parentheses = ParenthesisLayout::Builder(h);

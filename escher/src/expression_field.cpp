@@ -125,6 +125,13 @@ bool ExpressionField::inputViewHeightDidChange() {
   return didChange;
 }
 
+void ExpressionField::reload() {
+  if (!editionIsInTextField()) {
+    m_layoutField.reload(KDSizeZero);
+  }
+  // Currently used only for its baseline effect, useless on textField
+}
+
 bool ExpressionField::handleEventWithText(const char * text, bool indentation, bool forceCursorRightOfText) {
   if (editionIsInTextField()) {
     return m_textField.handleEventWithText(text, indentation, forceCursorRightOfText);

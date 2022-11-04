@@ -11,7 +11,7 @@ namespace Calculation {
 
 class ChainedExpressionsListController : public ExpressionsListController {
 public:
-  ChainedExpressionsListController(EditExpressionController * editExpressionController, Escher::SelectableTableViewDelegate * delegate = nullptr);
+  using ExpressionsListController::ExpressionsListController;
   void setTail(ChainableExpressionsListController * tail) { m_tail = tail; }
 
   // Responder

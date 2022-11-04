@@ -8,7 +8,7 @@ namespace Calculation {
 class ScientificNotationListController : public ChainedExpressionsListController {
 public:
   ScientificNotationListController(EditExpressionController * editExpressionController) :
-    ChainedExpressionsListController(editExpressionController) {}
+    ChainedExpressionsListController(editExpressionController, true) {}
 
   void setExactAndApproximateExpression(Poincare::Expression exactExpression, Poincare::Expression approximateExpression) override;
 private:

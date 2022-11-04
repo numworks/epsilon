@@ -65,6 +65,8 @@ private:
   int baseOffsetInParent() const { return m_horizontalPosition == HorizontalPosition::Prefix ? +1 : -1; }
   LayoutNode * baseLayout();
 
+  /* Since both enums can be represented on one bit each, use the bitfield
+   * syntax to let the compiler cram them into one byte instead of two. */
   VerticalPosition m_verticalPosition : 1;
   HorizontalPosition m_horizontalPosition : 1;
 };

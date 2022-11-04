@@ -162,8 +162,8 @@ int VerticalOffsetLayoutNode::serialize(char * buffer, int bufferSize, Preferenc
       return bufferSize-1;
     }
 
-    /* If the layout is a subscript, write "\x14{indice\x14}". System braces
-     * are used to avoid confusion with lists. */
+    /* If the layout is a subscript or a prefix, write "\x14{indice\x14}".
+     * System braces are used to avoid confusion with lists. */
     int numberOfChar = SerializationHelper::CodePoint(buffer, bufferSize, UCodePointSystem);
     if (numberOfChar >= bufferSize-1) { return bufferSize-1; }
     numberOfChar += SerializationHelper::CodePoint(buffer + numberOfChar, bufferSize - numberOfChar, '{');

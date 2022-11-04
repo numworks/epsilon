@@ -59,7 +59,7 @@ constexpr static CodePoint UCodePointEmpty                    = 0x11; // Used to
  * (e.g. '\x14{' is a left sytem brace) or flagging identifier that should not
  * be input by the user (e.g. '\x14dep' for dependencies). System parentheses
  * could be represented by '\x14(' and '\x14)', but the alternative makes
- * serialization more compact, and we do not need \x12 and \x1" for anything
+ * serialization more compact, and we do not need \x12 and \x13 for anything
  * else. */
 constexpr static CodePoint UCodePointLeftSystemParenthesis    = 0x12;
 constexpr static CodePoint UCodePointRightSystemParenthesis   = 0x13;

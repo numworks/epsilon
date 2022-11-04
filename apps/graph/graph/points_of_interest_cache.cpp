@@ -100,7 +100,7 @@ void PointsOfInterestCache::computeBetween(float start, float end, Range1D * dir
 
   if (start < 0.f && 0.f < end) {
     Coordinate2D<double> xy = f->evaluateXYAtParameter(0., context);
-    if (std::isfinite(xy.x2())) {
+    if (std::isfinite(xy.x1()) && std::isfinite(xy.x2())) {
       append(xy.x1(), xy.x2(), Solver<double>::Interest::YIntercept, dirtyRange);
     }
   }

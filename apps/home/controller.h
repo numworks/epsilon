@@ -14,22 +14,22 @@ class Controller : public Escher::ViewController, public Escher::SimpleTableView
 public:
   Controller(Escher::Responder * parentResponder, Escher::SelectableTableViewDataSource * selectionDataSource);
 
-  Escher::View * view() override;
+  Escher::View * view() override { return &m_view; }
 
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   TELEMETRY_ID("");
 
-  int numberOfRows() const override;
-  int numberOfColumns() const override;
+  int numberOfRows() const override { return ((numberOfIcons() - 1) / k_numberOfColumns) + 1; }
+  int numberOfColumns() const override { return k_numberOfColumns; }
   Escher::HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() const override;
+  int reusableCellCount() const override { return k_maxNumberOfCells; }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 private:
   // SimpleTableViewDataSource
-  KDCoordinate defaultRowHeight() override;
-  KDCoordinate defaultColumnWidth() override;
+  KDCoordinate defaultRowHeight() override { return k_cellHeight; }
+  KDCoordinate defaultColumnWidth() override { return k_cellWidth; }
 
   int numberOfIcons() const;
   Escher::SelectableTableViewDataSource * selectionDataSource() const;
@@ -46,13 +46,13 @@ private:
   public:
     ContentView(Controller * controller, Escher::SelectableTableViewDataSource * selectionDataSource);
     Escher::SelectableTableView * selectableTableView();
-    void drawRect(KDContext * ctx, KDRect rect) const override;
-    void reload();
+    void drawRect(KDContext * ctx, KDRect rect) const override { ctx->fillRect(bounds(), KDColorWhite); }
+    void reload() { markRectAsDirty(bounds()); }
     void reloadBottomRow(SimpleTableViewDataSource * dataSource, int lastIconColumn);
   private:
-    int numberOfSubviews() const override;
+    int numberOfSubviews() const override { return 1; }
     View * subviewAtIndex(int index) override;
-    void layoutSubviews(bool force = false) override;
+    void layoutSubviews(bool force = false) override { m_selectableTableView.setFrame(bounds(), force); }
     Escher::SelectableTableView m_selectableTableView;
   };
   constexpr static KDCoordinate k_sideMargin = 4;

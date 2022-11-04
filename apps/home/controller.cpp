@@ -27,14 +27,6 @@ SelectableTableView * Controller::ContentView::selectableTableView() {
   return &m_selectableTableView;
 }
 
-void Controller::ContentView::drawRect(KDContext * ctx, KDRect rect) const {
-  ctx->fillRect(bounds(), KDColorWhite);
-}
-
-void Controller::ContentView::reload() {
-  markRectAsDirty(bounds());
-}
-
 void Controller::ContentView::reloadBottomRow(SimpleTableViewDataSource * dataSource, int lastIconColumn) {
   /* We mark the missing icons on the last row as dirty. */
   for (int i = lastIconColumn + 1; i < dataSource->numberOfColumns(); i++) {
@@ -42,17 +34,9 @@ void Controller::ContentView::reloadBottomRow(SimpleTableViewDataSource * dataSo
   }
 }
 
-int Controller::ContentView::numberOfSubviews() const {
-  return 1;
-}
-
 View * Controller::ContentView::subviewAtIndex(int index) {
   assert(index == 0);
   return &m_selectableTableView;
-}
-
-void Controller::ContentView::layoutSubviews(bool force) {
-  m_selectableTableView.setFrame(bounds(), force);
 }
 
 Controller::Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource) :
@@ -104,33 +88,9 @@ void Controller::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(m_view.selectableTableView());
 }
 
-View * Controller::view() {
-  return &m_view;
-}
-
-int Controller::numberOfRows() const {
-  return ((numberOfIcons() - 1) / k_numberOfColumns) + 1;
-}
-
-int Controller::numberOfColumns() const {
-  return k_numberOfColumns;
-}
-
-KDCoordinate Controller::defaultRowHeight() {
-  return k_cellHeight;
-}
-
-KDCoordinate Controller::defaultColumnWidth() {
-  return k_cellWidth;
-}
-
 HighlightCell * Controller::reusableCell(int index) {
   assert(0 <= index && index < k_maxNumberOfCells);
   return &m_cells[index];
-}
-
-int Controller::reusableCellCount() const {
-  return k_maxNumberOfCells;
 }
 
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

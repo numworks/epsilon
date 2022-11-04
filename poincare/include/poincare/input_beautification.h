@@ -28,7 +28,7 @@ public:
    *
    * Returns the index of the leftmost beautified layout in parent
    * returns -1 if the parent was altered. */
-  static int ApplyBeautificationLeftOfLastAddedLayout(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText = false, bool forceBeautification = false);
+  static int ApplyBeautificationLeftOfLastAddedLayout(Layout lastAddedLayout, LayoutCursor * layoutCursor, Context * context, bool forceCursorRightOfText = false, bool forceBeautification = false, bool preventAlteringParent = false);
 
 private:
   typedef Layout (*BeautifiedLayoutBuilder) (Layout builderParameter);

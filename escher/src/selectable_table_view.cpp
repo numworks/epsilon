@@ -198,7 +198,7 @@ void SelectableTableView::unhighlightSelectedCell() {
   if (!selectedCell()) {
     return;
   }
-  HighlightCell * cell = cellAtLocation(selectedColumn(), selectedRow());
+  HighlightCell * cell = selectedCell();
   /* Previous cell does not always exist.
    * For example, unhighlightSelectedCell can be called twice:
    * - from selectCellAtLocation

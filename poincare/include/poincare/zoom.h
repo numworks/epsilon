@@ -38,7 +38,8 @@ public:
   Range2D range(float maxFloat, bool forceNormalization) const;
   void setBounds(float min, float max) { m_bounds = Range1D(min, max); }
   void setForcedRange(Range2D range) { m_forcedRange = range; }
-  /* These three functions will extend both X and Y axes. */
+  /* These four functions will extend both X and Y axes. */
+  void fitPoint(Coordinate2D<float> xy);
   void fitFullFunction(Function2DWithContext f, const void * model);
   void fitPointsOfInterest(Function2DWithContext f, const void * model, bool vertical = false);
   void fitIntersections(Function2DWithContext f1, const void * model1, Function2DWithContext f2, const void * model2, bool vertical = false);

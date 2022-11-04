@@ -528,11 +528,12 @@ Expression Multiplication::shallowBeautify(const ExpressionNode::ReductionContex
         assert(divisionUnit.isUninitialized());
         division = division.shallowReduce(reductionContext).shallowBeautify(reductionContext);
         result = Multiplication::Builder(division, toUnit);
-        assert(!result.isUninitialized());
-        self.replaceWithInPlace(result);
-        return result;
+      } else {
+        result = Multiplication::Builder(self.clone().shallowBeautify(reductionContext), units);
       }
-      return Multiplication::Builder(self.shallowBeautify(reductionContext), units);
+      assert(!result.isUninitialized());
+      self.replaceWithInPlace(result);
+      return result;
     }
 
     if (unitConversionMode == ExpressionNode::UnitConversion::Default) {

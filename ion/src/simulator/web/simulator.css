@@ -25,31 +25,12 @@ body.fullscreen .col-calculator {
   float: left;
 }
 
-a.action {
-  display: block;
-  width: 4%;
-  padding: 1.5% 3%;
-  border: 1px solid black;
-  border-radius: 100px;
-  cursor: pointer;
-  opacity: 0.65;
-}
-
-a.action:hover {
-  opacity: 1.0;
-  background-color: rgba(0,0,0,0.125);
-}
-
-a.action svg {
-  display: block;
-}
-
 .calculator-container {
   margin: 0 auto;
   position: relative;
   display: inline-block;
   text-align: left;
-  margin-top: 30px;
+  margin-top: 2vh;
 }
 
 .calculator-container img {
@@ -67,16 +48,29 @@ a.action svg {
   height: 100%;
 }
 
-.calculator-container .actions {
-    position: absolute;
-    text-align: center;
-    left: 0;
-    right: 0;
-    margin-left: 20px; /* Center the buttons - compensate the 10px margin below */
-    margin-top: -15%;
+.actions {
+  position: relative;
+  margin-left: 20px; /* Center the buttons - compensate the 10px margin below */
+  margin-top: -5vh;
 }
 
-.calculator-container .actions a {
+a.action {
   display: inline-block;
   margin-right: 10px;
+  height: 2vh;
+  aspect-ratio: 1.2;
+  padding: 1vh 2vh;
+  border: 1px solid black;
+  border-radius: 100px;
+  cursor: pointer;
+  opacity: 0.65;
+}
+
+a.action:hover {
+  opacity: 1.0;
+  background-color: rgba(0,0,0,0.125);
+}
+
+a.action svg {
+  display: block;
 }

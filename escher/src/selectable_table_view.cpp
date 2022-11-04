@@ -140,21 +140,25 @@ HighlightCell * SelectableTableView::selectedCell() {
   return cellAtLocation(selectedColumn(), selectedRow());
 }
 
+bool SelectableTableView::cellIsSelectable(HighlightCell * cell) {
+  /* There is 2 cases:
+   * - In the case of non reusable cells: all cells are valid pointers but they are not all selectable
+   *   --> the condition we want to test is cell->isSelectable()
+   * - In the case of reusable cells: visible cells are valid pointers and they are all selectable, and 
+   *   other cells are nullptr but they also are selectable. 
+   *   --> we don't want to test any condition here, but since the 2 cases are handled together here,
+   *   we need to add || !cell in the condition
+   * TODO: split the class hierarchy earlier */
+  return !cell || cell->isSelectable();
+}
+
 int SelectableTableView::firstSelectableRow() {
   if (dataSource()->numberOfRows() == 0) {
     return 0;
   }
   for (int row = 0, end = dataSource()->numberOfRows(); row < end; row++) {
     HighlightCell * cell = cellAtLocation(selectedColumn(), row);
-    /* There is 2 cases:
-     * - In the case of non reusable cells: all cells are valid pointers but they are not all selectable
-     *   --> the condition we want to test is cell->isSelectable()
-     * - In the case of reusable cells: visible cells are valid pointers and they are all selectable, and 
-     *   other cells are nullptr but they also are selectable. 
-     *   --> we don't want to test any condition here, but since the 2 cases are handled together here,
-     *   we need to add || !cell in the condition
-     * TODO: split the class hierarchy earlier */
-    if (!cell || cell->isSelectable()) {
+    if (cellIsSelectable(cell)) {
       return row;
     }
   }
@@ -175,7 +179,7 @@ int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, bool row) {
       return selectableCow;
     }
     HighlightCell * cell = row ? cellAtLocation(selectedColumn(), cow) : cellAtLocation(cow, selectedRow());
-    if (!cell || cell->isSelectable()) {
+    if (cellIsSelectable(cell)) {
       selectableCow = cow;
       delta -= step;
     }

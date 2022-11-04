@@ -25,6 +25,7 @@ public:
   int selectedColumn() { return m_selectionDataSource->selectedColumn(); }
   void selectRow(int j) { m_selectionDataSource->selectRow(j); }
   void selectColumn(int i) { m_selectionDataSource->selectColumn(i); }
+  bool cellIsSelectable(HighlightCell * cell);
   int firstSelectableRow();
   int indexOfNextSelectableColumnOrRow(int delta, bool row);
   int indexOfNextSelectableRow(int delta);

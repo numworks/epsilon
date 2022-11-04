@@ -37,9 +37,9 @@ private:
     BeautifiedLayoutBuilder layoutBuilder;
   };
 
-  /* Warning : Beatification input is applied within HorizontalLayouts only.
+  /* TODO : Beautification input is applied within HorizontalLayouts only.
    * This excludes beautification of single char inputs that have not yet been
-   * placed within an HorizontalLayouts (such as |*_|, _ being the cursor). This
+   * placed within a HorizontalLayouts (such as |*_|, _ being the cursor). This
    * means that BeautificationRule on 1 char aliases isn't always ensured.
    * Currently, "*" is the only beautification affected. */
   constexpr static const BeautificationRule convertWhenInputted[] = {
@@ -145,14 +145,14 @@ private:
       [](Layout builderParameter) {
         /* WARNING: The implementation of ReplaceEmptyLayoutsWithParameters
          * needs the created layout to have empty layouts where the parameters
-         * should be insterted. Since Piecewise operator does not have a fixed
+         * should be inserted. Since Piecewise operator does not have a fixed
          * number of children, the implementation is not perfect.
          * Indeed, if the layout_field is currently filled with "4, x>0, 5",
          * and "piecewise(" is inserted left of it, "piecewise(4, x>0, 5)"
          * won't be beautified, since the piecewise layout does not have
          * 3 empty children.
          * This is a fringe case though, and everything works fine when
-         * "piecewise(" is insterted with nothing on its right. */
+         * "piecewise(" is inserted with nothing on its right. */
         PiecewiseOperatorLayout layout = PiecewiseOperatorLayout::Builder();
         layout.addRow(EmptyLayout::Builder());
         return static_cast<Layout>(layout);

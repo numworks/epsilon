@@ -355,9 +355,9 @@ bool LayoutCursor::baseForNewPowerLayout() {
   /* Returns true if the layout on the left of the pointed layout is suitable to
    * be the base of a new power layout: the base layout should be anything but
    * an horizontal layout with no child, that does not need a right sibling.
-   * Indeed, as VerticalOffsetLayout relies on its left sibling to compute its
-   * height and position, the base cannot rely on its right sibling (i.e. the
-   * vertical offset) for the same info. */
+   * Indeed, as a Power VerticalOffsetLayout relies on its left sibling to
+   * compute its height and position, the base cannot rely on its right sibling
+   * (i.e. the vertical offset) for the same info. */
   if (m_position == Position::Right) {
     return !((m_layout.type() == LayoutNode::Type::HorizontalLayout && m_layout.numberOfChildren() == 0)
           || m_layout.mustHaveRightSibling()

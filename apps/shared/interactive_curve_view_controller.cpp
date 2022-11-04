@@ -160,14 +160,21 @@ void InteractiveCurveViewController::refreshCursor() {
    * reloading banner view needs an updated cursor to load the right data. */
   double t = m_cursor->t();
   bool cursorHasAPosition = !std::isnan(t);
+  bool cursorIsValid = true;
+
   if (cursorHasAPosition && selectedModelIsValid()) {
     // Move the cursor onto the selected curve
     Poincare::Coordinate2D<double> xy = selectedModelXyValues(t);
     m_cursor->moveTo(t, xy.x1(), xy.x2());
+  } else {
+    cursorIsValid = false;
   }
-  if (!cursorHasAPosition || !isCursorVisible()) {
+  cursorIsValid = cursorIsValid && isCursorVisible();
+
+  if (!cursorIsValid) {
     initCursorParameters();
   }
+
   reloadBannerView();
 }
 

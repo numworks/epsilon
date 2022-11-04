@@ -234,7 +234,7 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
   float yLength = saneRange.y()->length();
   float xLengthNormalized = yLength / m_normalRatio;
   float yLengthNormalized = xLength * m_normalRatio;
-  constexpr float k_minimalXCoverage = 0.8f;
+  constexpr float k_minimalXCoverage = 0.3f;
   constexpr float k_minimalYCoverage = 0.3f;
 
   /* Y can be normalized if:

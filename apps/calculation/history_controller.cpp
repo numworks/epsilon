@@ -161,15 +161,15 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           vc->setExactAndApproximateExpression(e, a);
         }
         if (additionalInformations.function) {
-          assert(vc != &m_complexController);
-          ExpressionsListController * tail = static_cast<ExpressionsListController*>(vc);
+          assert(vc == &m_integerController || vc == &m_rationalController);
+          ChainableExpressionsListController * tail = static_cast<ChainableExpressionsListController*>(vc);
           m_functionController.setTail(tail);
           vc = &m_functionController;
           vc->setExpression(focusCalculation->input());
         } else if (additionalInformations.scientificNotation) {
           // TODO function and scientific ?
-          assert(vc != &m_complexController);
-          ExpressionsListController * tail = static_cast<ExpressionsListController*>(vc);
+          assert(vc == &m_integerController || vc == &m_rationalController);
+          ChainableExpressionsListController * tail = static_cast<ChainableExpressionsListController*>(vc);
           m_scientificNotationListController.setTail(tail);
           vc = &m_scientificNotationListController;
           vc->setExactAndApproximateExpression(e, a);

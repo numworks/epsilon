@@ -196,13 +196,6 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
 
 void SelectableTableView::unhighlightSelectedCell() {
   HighlightCell * cell = selectedCell();
-  /* Previous cell does not always exist.
-   * For example, unhighlightSelectedCell can be called twice:
-   * - from selectCellAtLocation
-   * - and then from m_delegate->tableViewDidChangeSelection inside unhighlightSelectedCell
-   * The first call selects an invisible cell. At the time of the second call,
-   * the selected cell might be still invisible because scrolling happens
-   * after. */
   if (cell) {
     cell->setHighlighted(false);
   }

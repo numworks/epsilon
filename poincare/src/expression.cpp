@@ -838,7 +838,7 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
 Expression Expression::cloneAndSimplify(ExpressionNode::ReductionContext reductionContext) {
   bool reduceFailure = false;
   Expression e = cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
-  if (reduceFailure) {
+  if (reduceFailure || (type() == ExpressionNode::Type::Store && !static_cast<const Store *>(this)->isTrulyReducedInShallowReduce())) {
     // We can't beautify unreduced expression
     return e;
   }

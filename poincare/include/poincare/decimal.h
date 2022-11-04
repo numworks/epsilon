@@ -63,7 +63,6 @@ public:
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
 
   // Simplification
-  Expression shallowBeautify(const ReductionContext& reductionContext) override;
   Expression shallowReduce(const ReductionContext& reductionContext) override;
   LayoutShape leftLayoutShape() const override { assert(!m_negative); return LayoutShape::Decimal; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::Decimal; }
@@ -109,7 +108,6 @@ private:
   static Decimal Builder(size_t size, const Integer & m, int e);
   // Simplification
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  Expression shallowBeautify();
 };
 
 }

@@ -46,6 +46,7 @@ private:
 
   // GraphControllerHelper
   BannerView * bannerView() override { return &m_bannerView; }
+  Shared::MemoizedCursorView * cursorView() override { return &m_cursorView; }
   void jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) override;
 
   void selectFunctionWithCursor(int functionIndex, bool willBeVisible) override;

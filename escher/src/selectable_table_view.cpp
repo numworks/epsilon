@@ -198,7 +198,7 @@ void SelectableTableView::unhighlightSelectedCell() {
   if (!selectedCell()) {
     return;
   }
-  HighlightCell * previousCell = cellAtLocation(selectedColumn(), selectedRow());
+  HighlightCell * cell = cellAtLocation(selectedColumn(), selectedRow());
   /* Previous cell does not always exist.
    * For example, unhighlightSelectedCell can be called twice:
    * - from selectCellAtLocation
@@ -206,8 +206,8 @@ void SelectableTableView::unhighlightSelectedCell() {
    * The first call selects an invisible cell. At the time of the second call,
    * the selected cell might be still invisible because scrolling happens
    * after. */
-  if (previousCell) {
-    previousCell->setHighlighted(false);
+  if (cell) {
+    cell->setHighlighted(false);
   }
 }
 

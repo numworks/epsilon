@@ -47,7 +47,7 @@ public:
     bool complex : 1;
     bool function : 1;
     bool scientificNotation : 1;
-    bool isEmpty() const { return !(integer || rational || trigonometry || unit || matrix || vector || complex || function); }
+    bool isEmpty() const { return !(integer || rational || trigonometry || unit || matrix || vector || complex || function || scientificNotation); }
   };
 
   static bool DisplaysExact(DisplayOutput d) { return d != DisplayOutput::ApproximateOnly; }

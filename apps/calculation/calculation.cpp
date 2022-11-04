@@ -269,7 +269,6 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     if (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences()->unitFormat())
         || UnitComparison::ShouldDisplayUnitComparison(value, unit)) {
       additionalInformations.unit = true;
-      return additionalInformations;
     }
     return additionalInformations;
   }

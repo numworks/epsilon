@@ -76,6 +76,7 @@ void ExpressionsListController::setExpression(Poincare::Expression e) {
     m_layouts[i] = Layout();
     m_exactLayouts[i] = Layout();
     m_approximatedLayouts[i] = Layout();
+    m_cells[i].setSelectedSubviewPosition(ScrollableThreeExpressionsView::SubviewPosition::Left);
   }
   m_expression = e;
 }

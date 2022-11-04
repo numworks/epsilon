@@ -15,14 +15,18 @@ InputEventHandlerDelegateApp::InputEventHandlerDelegateApp(Snapshot * snapshot, 
 {
 }
 
-PervasiveBox * InputEventHandlerDelegateApp::toolbox() {
+NestedMenuController * InputEventHandlerDelegateApp::toolbox() {
   return AppsContainer::sharedAppsContainer()->mathToolbox();
 }
 
-PervasiveBox * InputEventHandlerDelegateApp::variableBox() {
+NestedMenuController * InputEventHandlerDelegateApp::variableBox() {
   MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
   varBox->lockDeleteEvent(MathVariableBoxController::Page::RootMenu);
   return varBox;
+}
+
+bool InputEventHandlerDelegateApp::isVarBoxMenuOpen() {
+  return m_modalViewController.currentModalViewController() == static_cast<ViewController *>(variableBox());
 }
 
 }

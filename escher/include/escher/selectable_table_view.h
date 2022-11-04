@@ -26,9 +26,6 @@ public:
   void selectRow(int j) { m_selectionDataSource->selectRow(j); }
   void selectColumn(int i) { m_selectionDataSource->selectColumn(i); }
   int firstSelectableRow();
-  int firstSelectableColumn();
-  int lastSelectableRow();
-  int lastSelectableColumn();
   int indexOfNextSelectableRow(int delta);
   int indexOfNextSelectableColumn(int delta);
   void reloadData(bool setFirstResponder = true, bool setSelection = true);

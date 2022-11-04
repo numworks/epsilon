@@ -162,88 +162,20 @@ int SelectableTableView::firstSelectableRow() {
   return -1;
 }
 
-int SelectableTableView::firstSelectableColumn() {
-  if (dataSource()->numberOfColumns() == 0) {
-    return 0;
-  }
-  for (int column = 0, end = dataSource()->numberOfColumns(); column < end; column++) {
-    HighlightCell * cell = cellAtLocation(column, selectedRow());
-    /* There is 2 cases:
-     * - In the case of non reusable cells: all cells are valid pointers but they are not all selectable
-     *   --> the condition we want to test is cell->isSelectable()
-     * - In the case of reusable cells: visible cells are valid pointers and they are all selectable, and 
-     *   other cells are nullptr but they also are selectable. 
-     *   --> we don't want to test any condition here, but since the 2 cases are handled together here,
-     *   we need to add || !cell in the condition
-     * TODO: split the class hierarchy earlier */
-    if (!cell || cell->isSelectable()) {
-      return column;
-    }
-  }
-  assert(false);
-  return -1;
-}
-
-int SelectableTableView::lastSelectableRow() {
-  if (dataSource()->numberOfRows() == 0) {
-    return 0;
-  }
-  for (int row = dataSource()->numberOfRows() - 1; row >= 0; row--) {
-    HighlightCell * cell = cellAtLocation(selectedColumn(), row);
-    /* There is 2 cases:
-     * - In the case of non reusable cells: all cells are valid pointers but they are not all selectable
-     *   --> the condition we want to test is cell->isSelectable()
-     * - In the case of reusable cells: visible cells are valid pointers and they are all selectable, and 
-     *   other cells are nullptr but they also are selectable. 
-     *   --> we don't want to test any condition here, but since the 2 cases are handled together here,
-     *   we need to add || !cell in the condition
-     * TODO: split the class hierarchy earlier */
-    if (!cell || cell->isSelectable()) {
-      return row;
-    }
-  }
-  assert(false);
-  return -1;
-}
-
-int SelectableTableView::lastSelectableColumn() {
-  if (dataSource()->numberOfColumns() == 0) {
-    return 0;
-  }
-  for (int column = dataSource()->numberOfColumns() - 1; column >= 0; column--) {
-    HighlightCell * cell = cellAtLocation(column, selectedRow());
-    /* There is 2 cases:
-     * - In the case of non reusable cells: all cells are valid pointers but they are not all selectable
-     *   --> the condition we want to test is cell->isSelectable()
-     * - In the case of reusable cells: visible cells are valid pointers and they are all selectable, and 
-     *   other cells are nullptr but they also are selectable. 
-     *   --> we don't want to test any condition here, but since the 2 cases are handled together here,
-     *   we need to add || !cell in the condition
-     * TODO: split the class hierarchy earlier */
-    if (!cell || cell->isSelectable()) {
-      return column;
-    }
-  }
-  assert(false);
-  return -1;
-}
-
 int SelectableTableView::indexOfNextSelectableRow(int delta) {
   assert(selectedCell());
   int row = selectedRow();
+  int selectableRow = row;
   const int step = delta > 0 ? 1 : -1;
-  const int firstRow = firstSelectableRow();
-  const int lastRow = lastSelectableRow();
+  const int lastRow = dataSource()->numberOfRows() - 1;
   while (delta) {
     row += step;
-    if (row < firstRow) {
-      return firstRow;
-    }
-    if (row > lastRow) {
-      return lastRow;
+    if (row < 0 || row > lastRow) {
+      return selectableRow;
     }
     HighlightCell * cell = cellAtLocation(selectedColumn(), row);
     if (!cell || cell->isSelectable()) {
+      selectableRow = row;
       delta -= step;
     }
   }
@@ -253,19 +185,17 @@ int SelectableTableView::indexOfNextSelectableRow(int delta) {
 int SelectableTableView::indexOfNextSelectableColumn(int delta) {
   assert(selectedCell());
   int column = selectedColumn();
+  int selectableColumn = column;
   const int step = delta > 0 ? 1 : -1;
-  const int firstColumn = firstSelectableColumn();
-  const int lastColumn = lastSelectableColumn();
+  const int lastColumn = dataSource()->numberOfColumns() - 1;
   while (delta) {
     column += step;
-    if (column < firstColumn) {
-      return firstColumn;
-    }
-    if (column > lastColumn) {
-      return lastColumn;
+    if (column < 0 || column > lastColumn) {
+      return selectableColumn;
     }
     HighlightCell * cell = cellAtLocation(column, selectedRow());
     if (!cell || cell->isSelectable()) {
+      selectableColumn = column;
       delta -= step;
     }
   }

@@ -21,10 +21,10 @@ public:
       SelectableTableViewDataSource * selectionDataSource = nullptr, SelectableTableViewDelegate * delegate = nullptr);
   template <typename T> SelectableTableView(T * p) : SelectableTableView(p, p, p) {};
   void setDelegate(SelectableTableViewDelegate * delegate) { m_delegate = delegate; }
-  int selectedRow();
-  int selectedColumn();
-  void selectRow(int j);
-  void selectColumn(int i);
+  int selectedRow() { return m_selectionDataSource->selectedRow(); }
+  int selectedColumn() { return m_selectionDataSource->selectedColumn(); }
+  void selectRow(int j) { m_selectionDataSource->selectRow(j); }
+  void selectColumn(int i) { m_selectionDataSource->selectColumn(i); }
   int firstSelectableRow();
   int firstSelectableColumn();
   int lastSelectableRow();

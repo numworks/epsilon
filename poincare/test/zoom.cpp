@@ -115,6 +115,17 @@ QUIZ_CASE(poincare_zoom_fit_intersections) {
   assert_intersections_range_is("sin(x)", "cos(x)", Range2D(-7.413, 7.413, -0.904, 0.904));
   assert_intersections_range_is("x/2+2", "2x-1", Range2D(2, 2, 3, 3));
   assert_intersections_range_is("x^2", "-x^2/3+x", Range2D(0, 0.75, 0, 0.563));
+}
 
-  // assert_intersections_range_is(Range2D);
+void assert_sanitized_range_is(Range2D inputRange, Range2D expectedRange) {
+  assert_ranges_equal(Zoom::Sanitize(inputRange, k_normalRatio, k_maxFloat), expectedRange);
+}
+
+QUIZ_CASE(poincare_zoom_sanitation) {
+  assert_ranges_equal(Zoom::DefaultRange(k_normalRatio, k_maxFloat), Range2D(-10, 10, -4.42358822, 4.42358822));
+  assert_ranges_equal(Zoom::DefaultRange(1, k_maxFloat), Range2D(-10, 10, -10, 10));
+
+  assert_sanitized_range_is(Range2D(Range1D(-5, 5), Range1D()), Range2D(-5, 5, -2.211794, 2.211794));
+  assert_sanitized_range_is(Range2D(), Zoom::DefaultRange(k_normalRatio, k_maxFloat));
+  assert_sanitized_range_is(Range2D(0, 0, 0, 0), Zoom::DefaultRange(k_normalRatio, k_maxFloat));
 }

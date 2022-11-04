@@ -206,7 +206,7 @@ static Range1D sanitationHelper(Range1D range, const Range1D * other, float rati
   }
   if (range.isEmpty()) {
     float c = range.min();
-    float otherLength = other->length();
+    float otherLength = other->isValid() ? other->length() : 0.f;
     float d = otherLength == 0.f ? Range1D::k_defaultHalfLength : ratio * 0.5f * otherLength;
     range = Range1D(c - d, c + d);
   }

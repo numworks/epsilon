@@ -134,7 +134,7 @@ bool SelectableTableView::selectCellAtClippedLocation(int i, int j, bool setFirs
 }
 
 HighlightCell * SelectableTableView::selectedCell() {
-  if (selectedColumn() < 0 || selectedRow() < 0) {
+  if (selectedColumn() < 0 || selectedRow() < 0 || selectedColumn() >= dataSource()->numberOfColumns() || selectedRow() >= dataSource()->numberOfRows()) {
     return nullptr;
   }
   return cellAtLocation(selectedColumn(), selectedRow());
@@ -229,7 +229,7 @@ int SelectableTableView::lastSelectableColumn() {
 }
 
 int SelectableTableView::indexOfNextSelectableRow(int delta) {
-  assert(selectedColumn() >= 0 && selectedColumn() < dataSource()->numberOfColumns());
+  assert(selectedCell());
   int row = selectedRow();
   const int step = delta > 0 ? 1 : -1;
   const int firstRow = firstSelectableRow();
@@ -251,7 +251,7 @@ int SelectableTableView::indexOfNextSelectableRow(int delta) {
 }
 
 int SelectableTableView::indexOfNextSelectableColumn(int delta) {
-  assert(selectedRow() >= 0 && selectedRow() < dataSource()->numberOfRows());
+  assert(selectedCell());
   int column = selectedColumn();
   const int step = delta > 0 ? 1 : -1;
   const int firstColumn = firstSelectableColumn();

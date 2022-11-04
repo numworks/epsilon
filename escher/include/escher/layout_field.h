@@ -15,6 +15,7 @@
 namespace Escher {
 
 class LayoutField : public ScrollableView, public ScrollViewDataSource, public EditableField {
+  friend class ExpressionField;
 public:
   LayoutField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate = nullptr, KDFont::Size font = KDFont::Size::Large) :
     ScrollableView(parentResponder, &m_contentView, this),

@@ -62,6 +62,7 @@ StoreMenuController::StoreMenuController() :
 
 void StoreMenuController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_listController);
+  m_cell.expressionField()->reload();
 }
 
 void StoreMenuController::setText(const char * text) {

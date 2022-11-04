@@ -12,24 +12,22 @@ using namespace Shared;
 namespace Calculation {
 
 void ScientificNotationListController::setExactAndApproximateExpression(Poincare::Expression e, Poincare::Expression a) {
-  Preferences * preferences = Preferences::sharedPreferences();
-  Preferences::PrintFloatMode previousMode = preferences->displayMode();
-  preferences->setDisplayMode(Preferences::PrintFloatMode::Scientific);
+  Preferences preferences = *Preferences::sharedPreferences();
+  preferences.setDisplayMode(Preferences::PrintFloatMode::Scientific);
   Context * context = App::app()->localContext();
-  int index = 0;
-  Layout exactResult = PoincareHelpers::CreateLayout(a, context);
-  Expression value = a.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit());
+  Layout historyResult = PoincareHelpers::CreateLayout(a, context, Preferences::sharedPreferences());
+  Expression value = PoincareHelpers::Approximate<double>(e, context, &preferences);
   if (value.isUndefined()) {
     // Units can't be approximated, we remove them temporarily
     Expression units;
     value = a.removeUnit(&units);
-    value = Multiplication::Builder(value.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit()), units);
+    value = PoincareHelpers::Approximate<double>(value, context, &preferences);
+    value = Multiplication::Builder(value, units);
   }
-  Layout scientific = PoincareHelpers::CreateLayout(value, context);
-  if (!exactResult.isIdenticalTo(scientific)) {
-    m_layouts[index++] = scientific;
+  Layout scientific = PoincareHelpers::CreateLayout(value, context, &preferences);
+  if (!historyResult.isIdenticalTo(scientific)) {
+    m_layouts[0] = scientific;
   }
-  preferences->setDisplayMode(previousMode);
 }
 
 I18n::Message ScientificNotationListController::messageAtIndex(int index) {

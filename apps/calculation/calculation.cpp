@@ -262,7 +262,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     return AdditionalInformations {.trigonometry = true};
   }
   if (o.hasUnit()) {
-    AdditionalInformations additionalInformations;
+    AdditionalInformations additionalInformations = {};
     if (!isComplex && preferences->displayMode() != Preferences::PrintFloatMode::Scientific) {
       additionalInformations.scientificNotation = true;
     }

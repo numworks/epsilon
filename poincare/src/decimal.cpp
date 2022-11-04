@@ -456,7 +456,7 @@ Expression Decimal::shallowReduce(ExpressionNode::ReductionContext reductionCont
 }
 
 Expression Decimal::shallowBeautify() {
-  if (isPositive() == TrinaryBoolean::True) {
+  if (isPositive() == TrinaryBoolean::False) {
     Expression abs = setSign(true);
     Opposite o = Opposite::Builder();
     replaceWithInPlace(o);

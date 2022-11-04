@@ -1603,6 +1603,7 @@ QUIZ_CASE(poincare_simplification_unit_conversion) {
   assert_parsed_expression_simplify_to("1000000_cm", "10×_km", User, Degree, MetricUnitFormat, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, DefaultUnitConversion);
   assert_parsed_expression_simplify_to("1000000_cm", "1000000×_cm", User, Degree, MetricUnitFormat, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, NoUnitConversion);
   assert_parsed_expression_simplify_to("1000000_cm", "10000×_m", User, Degree, MetricUnitFormat, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, InternationalSystemUnitConversion);
+  assert_parsed_expression_simplify_to("(-1/2)'", "-π/21600×_rad", User, Degree, MetricUnitFormat, Cartesian, ReplaceAllDefinedSymbolsWithDefinition, InternationalSystemUnitConversion);
 }
 
 QUIZ_CASE(poincare_simplification_user_function) {

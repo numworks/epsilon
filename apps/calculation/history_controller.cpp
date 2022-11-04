@@ -126,9 +126,17 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
         ListController * vc = nullptr;
         ExpiringPointer<Calculation> focusCalculation = calculationAtIndex(focusRow);
         Expression e = focusCalculation->exactOutput();
+        Expression a = focusCalculation->approximateOutput(Calculation::NumberOfSignificantDigits::Maximal);
         if (additionalInformations.complex) {
           vc = &m_complexController;
-        } else if (additionalInformations.trigonometry) {
+        } else if (additionalInformations.unit) {
+          vc = &m_unitController;
+        } else if (additionalInformations.vector) {
+          vc = &m_vectorController;
+        } else if (additionalInformations.matrix) {
+          vc = &m_matrixController;
+        }
+        if (additionalInformations.trigonometry) {
           vc = &m_trigonometryController;
           // Find the angle
           Expression focusInput = focusCalculation->input();
@@ -140,39 +148,6 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
             // input or output is inverse trigonometric function use e as is
             assert(Trigonometry::isInverseTrigonometryFunction(focusInput) || Trigonometry::isInverseTrigonometryFunction(e));
           }
-        } else if (additionalInformations.function) {
-          e = focusCalculation->input();
-          vc = &m_functionController;
-          if (additionalInformations.integer) {
-            Expression output = focusCalculation->exactOutput();
-            m_integerController.setExpression(output);
-            m_functionController.setTail(&m_integerController);
-          } else if (additionalInformations.rational) {
-            Expression output = focusCalculation->exactOutput();
-            Expression input = focusCalculation->input();
-            m_rationalController.setExpression(isFractionInput(input) ? input : output);
-            m_functionController.setTail(&m_rationalController);
-          } else {
-            m_functionController.setTail(nullptr);
-          }
-        } else if (additionalInformations.scientificNotation) {
-          vc = &m_scientificNotationListController;
-          if (additionalInformations.integer) {
-            Expression output = focusCalculation->exactOutput();
-            m_integerController.setExpression(output);
-            m_scientificNotationListController.setTail(&m_integerController);
-          } else if (additionalInformations.rational) {
-            Expression output = focusCalculation->exactOutput();
-            Expression input = focusCalculation->input();
-            m_rationalController.setExpression(isFractionInput(input) ? input : output);
-            m_scientificNotationListController.setTail(&m_rationalController);
-          } else if (additionalInformations.unit) {
-            Expression output = focusCalculation->exactOutput();
-            m_unitController.setExpression(output);
-            m_scientificNotationListController.setTail(&m_unitController);
-          } else {
-            m_scientificNotationListController.setTail(nullptr);
-          }
         } else if (additionalInformations.integer) {
           vc = &m_integerController;
         } else if (additionalInformations.rational) {
@@ -181,16 +156,25 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
             e = focusInput;
           }
           vc = &m_rationalController;
-        } else if (additionalInformations.unit) {
-          vc = &m_unitController;
-        } else if (additionalInformations.vector) {
-          vc = &m_vectorController;
-        } else if (additionalInformations.matrix) {
-          vc = &m_matrixController;
         }
         if (vc) {
-          assert(!e.isUninitialized());
-          vc->setExactAndApproximateExpression(e, calculationAtIndex(focusRow)->approximateOutput(Calculation::NumberOfSignificantDigits::Maximal));
+          vc->setExactAndApproximateExpression(e, a);
+        }
+        if (additionalInformations.function) {
+          assert(vc != &m_complexController);
+          ExpressionsListController * tail = static_cast<ExpressionsListController*>(vc);
+          m_functionController.setTail(tail);
+          vc = &m_functionController;
+          vc->setExpression(focusCalculation->input());
+        } else if (additionalInformations.scientificNotation) {
+          // TODO function and scientific ?
+          assert(vc != &m_complexController);
+          ExpressionsListController * tail = static_cast<ExpressionsListController*>(vc);
+          m_scientificNotationListController.setTail(tail);
+          vc = &m_scientificNotationListController;
+          vc->setExactAndApproximateExpression(e, a);
+        }
+        if (vc) {
           Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
         }
       }

@@ -513,15 +513,27 @@ void HorizontalLayout::addOrMergeChildAtIndex(Layout l, int index, bool removeEm
 }
 
 void HorizontalLayout::addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor, bool removeEmptyChildren) {
-  if (!removeEmptyChildren
-      || !l.isEmpty()
-      || numberOfChildren() == 0
-      || (index < numberOfChildren() && childAtIndex(index).mustHaveLeftSibling())
-      || (index > 0 && childAtIndex(index - 1).mustHaveRightSibling()))
+  if (l.isEmpty()
+      && removeEmptyChildren
+      && numberOfChildren() > 0
+      && (index == numberOfChildren() || !childAtIndex(index).mustHaveLeftSibling())
+      && (index == 0 || !childAtIndex(index - 1).mustHaveRightSibling()))
   {
-    makePermanentIfBracket(l.node(), index > 0, index < currentNumberOfChildren - 1);
-    Layout::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
+    return;
   }
+
+  if ((index == 0 && l.mustHaveLeftSibling()) || (index == numberOfChildren() && l.mustHaveRightSibling())) {
+    // If a layout must have left and right siblings, this if should be split
+    assert(l.mustHaveLeftSibling() != l.mustHaveRightSibling());
+    addChildAtIndex(EmptyLayout::Builder(), index, numberOfChildren(), cursor, false);
+    assert(childAtIndex(index).type() == LayoutNode::Type::EmptyLayout);
+    index += l.mustHaveLeftSibling();
+  }
+
+  currentNumberOfChildren = numberOfChildren();
+
+  makePermanentIfBracket(l.node(), index > 0, index < currentNumberOfChildren - 1);
+  Layout::addChildAtIndex(l, index, currentNumberOfChildren, cursor);
 }
 
 void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool removeEmptyChildren, LayoutCursor * cursor) {

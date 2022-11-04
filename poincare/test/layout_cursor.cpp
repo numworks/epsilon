@@ -190,6 +190,17 @@ QUIZ_CASE(poincare_layout_parentheses) {
   }
 
   /*
+   * 2|^3 -> "(" -> 2(|[]^3)  [] == empty layout
+   */
+  {
+    Layout l = HorizontalLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayout::Builder(CodePointLayout::Builder('3'), VerticalOffsetLayoutNode::VerticalPosition::Superscript));
+    LayoutCursor c(l.childAtIndex(0), LayoutCursor::Position::Right);
+    c.insertText("(", nullptr);
+    assert_layout_serialize_to(l, "2(^\u00123\u0013)");
+    quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(1).childAtIndex(0), LayoutCursor::Position::Left)));
+  }
+
+  /*
    * (123)| -> BACKSPACE -> (123|)
    * */
   {

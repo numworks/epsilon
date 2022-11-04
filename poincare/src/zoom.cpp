@@ -246,7 +246,7 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
   bool normalizeY = !m_forcedRange.y()->isValid() && (forceNormalization || yLengthCompatibleWithNormalization);
   if (normalizeX && normalizeY) {
     /* Both axes are good candidates for normalization, pick the one that does
-     * not lead to the range beign shrinked. */
+     * not lead to the range being shrunk. */
     normalizeX = xLength < xLengthNormalized;
     normalizeY = yLength < yLengthNormalized;
   }

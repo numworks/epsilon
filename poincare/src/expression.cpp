@@ -260,8 +260,19 @@ bool Expression::IsRationalFraction(const Expression& e, Context * context, cons
   if (e.type() != ExpressionNode::Type::Multiplication && e.type() != ExpressionNode::Type::Power) {
     return false;
   }
+
+  ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context);
+
   Expression numerator, denominator;
-  static_cast<const Multiplication&>(e).splitIntoNormalForm(numerator, denominator, ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
+
+  if (e.type() == ExpressionNode::Type::Power) {
+    denominator = e.denominator(reductionContext);
+    numerator = denominator.isUninitialized() ? e : Rational::Builder(1);
+  } else {
+    assert(e.type() == ExpressionNode::Type::Multiplication);
+    static_cast<const Multiplication&>(e).splitIntoNormalForm(numerator, denominator, reductionContext);
+  }
+
   int denominatorDegree;
   assert(!numerator.isUninitialized());
   if (denominator.isUninitialized()) {

@@ -195,8 +195,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
 }
 
 void SelectableTableView::unhighlightSelectedCell() {
-  if (selectedColumn() >= 0 && selectedColumn() < dataSource()->numberOfColumns() &&
-      selectedRow() >= 0 && selectedRow() < dataSource()->numberOfRows()) {
+  if (selectedCell()) {
     HighlightCell * previousCell = cellAtLocation(selectedColumn(), selectedRow());
     /* Previous cell does not always exist.
      * For example, unhighlightSelectedCell can be called twice:

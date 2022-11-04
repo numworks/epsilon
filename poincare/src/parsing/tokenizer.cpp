@@ -49,7 +49,7 @@ bool Tokenizer::IsIdentifierMaterial(const CodePoint c) {
 size_t Tokenizer::popIdentifiersString() {
   /* An identifier can start with a single UCodePointSystem. */
   nextCodePoint([](CodePoint cp) { return cp == UCodePointSystem; });
-  return popWhile([](CodePoint c) { return IsIdentifierMaterial(c); });
+  return popWhile(IsIdentifierMaterial);
 }
 
 size_t Tokenizer::popDigits() {
@@ -186,7 +186,7 @@ Token Tokenizer::popToken() {
       /* If currently popping an implicit addition, we have already
        * checked that any identifier is a unit. */
       Token result(Token::Unit);
-      result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c) + popWhile([](CodePoint c) { return IsNonDigitalIdentifierMaterial(c); }));
+      result.setString(start, UTF8Decoder::CharSizeOfCodePoint(c) + popWhile(IsNonDigitalIdentifierMaterial));
       assert(Unit::CanParse(result.text(), result.length(), nullptr, nullptr));
       return result;
     }
@@ -360,7 +360,10 @@ Token Tokenizer::popLongestRightMostIdentifier(const char * stringStart, const c
 
 static bool stringIsACodePointFollowedByNumbers(const char * string, size_t length) {
   UTF8Decoder tempDecoder(string);
-  tempDecoder.nextCodePoint();
+  CodePoint c = tempDecoder.nextCodePoint();
+  if (!IsNonDigitalIdentifierMaterial(c)) {
+    return false;
+  }
   while (tempDecoder.stringPosition() < string + length) {
     CodePoint c = tempDecoder.nextCodePoint();
     if (!c.isDecimalDigit()) {

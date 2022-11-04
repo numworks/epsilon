@@ -403,6 +403,7 @@ QUIZ_CASE(poincare_parsing_units) {
   assert_parsed_expression_is("3\"+a\"", Addition::Builder(Multiplication::Builder(BasedInteger::Builder(3), arcsecond), Multiplication::Builder(Symbol::Builder("a", 1), arcsecond.clone())));
   assert_parsed_expression_is("3\"abc\"", Multiplication::Builder(BasedInteger::Builder(3), Symbol::Builder("\"abc\"", 5)));
   assert_parsed_expression_is("x\"abc\"", Multiplication::Builder(Symbol::Builder("x", 1), Symbol::Builder("\"abc\"", 5)));
+  assert_text_not_parsable("\"0");
 
   // Implicit addition
   Expression minute = Expression::Parse("_min", nullptr);

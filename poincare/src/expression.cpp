@@ -628,13 +628,15 @@ bool Expression::hasUnit() const {
   return recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Unit; }, nullptr, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
 }
 
-bool Expression::hasPureAngleUnit(bool expressionIsAlreadyReduced) const {
+bool Expression::hasPureAngleUnit(bool expressionIsAlreadyReduced, Context * context) const {
   Expression thisClone = clone();
   Expression units;
   if (expressionIsAlreadyReduced) {
     thisClone.removeUnit(&units);
   } else {
-    thisClone.reduceAndRemoveUnit(ExpressionNode::ReductionContext(), &units);
+    ExpressionNode::ReductionContext reductionContext;
+    reductionContext.setContext(context);
+    thisClone.reduceAndRemoveUnit(reductionContext, &units);
   }
   return units.isPureAngleUnit();
 }

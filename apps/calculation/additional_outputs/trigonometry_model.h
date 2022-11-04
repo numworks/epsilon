@@ -17,7 +17,7 @@ namespace Calculation {
    262 ->  2
 
    Since the curve view is 264 pixels wide we need to set :
-   xMax - xMin = 264 * (2 - (-2)) / (261 - 1)
+   xMax - xMin = 264 * (2 - (-2)) / (262 - 2)
 */
 
 class TrigonometryModel : public Shared::CurveViewRange {

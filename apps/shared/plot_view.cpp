@@ -213,12 +213,29 @@ void AbstractPlotView::drawArc(KDContext * ctx, KDRect rect, Poincare::Coordinat
     tMax = std::max({t1, t2, t3, t4});
     // Does the angle cross the positive x axis ?
     if (tMax - tMin > M_PI) {
-      // Are we not in the recursive call already ?
+      /* When we are in this situation
+       *
+       *
+       *     t4             t2 = tMin
+       *      +-------------+
+       *      |             |     angleStart
+       *  0- -|- - - - - - -|- - -
+       *      |             |     angleEnd
+       *      |             |
+       *      +-------------+
+       *     t3             t1 = tMax
+       *
+       *
+       * We split the drawing in two parts :
+       * - from t3 to angleEnd with a recursive call
+       * - from angleStart to t4 with the body of this function
+       *
+       * TODO: make sure it works with all angleStart and angleEnd
+       */
       if (angleStart < tMin) {
-        tMin = t3;
-        tMax = t4;
-        drawArc(ctx, rect, center, radius, tMin, angleEnd, color);
-        angleEnd = tMax;
+        // Are we not in the recursive call already ?
+        drawArc(ctx, rect, center, radius, t3, angleEnd, color);
+        angleEnd = t4;
       }
     } else {
       angleStart = std::max(angleStart, (float)tMin);

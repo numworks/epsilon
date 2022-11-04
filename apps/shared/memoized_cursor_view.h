@@ -18,9 +18,11 @@ protected:
   virtual KDCoordinate size() const = 0;
   virtual KDColor * underneathPixelBuffer() const = 0;
   void markRectAsDirty(KDRect rect) override;
-  KDColor m_color;
+  KDColor color() const { return m_color; }
   mutable bool m_underneathPixelBufferLoaded;
 private:
+  KDColor m_color;
+  bool m_highlighted;
   bool eraseCursorIfPossible();
 };
 

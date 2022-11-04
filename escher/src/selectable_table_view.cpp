@@ -162,44 +162,33 @@ int SelectableTableView::firstSelectableRow() {
   return -1;
 }
 
-int SelectableTableView::indexOfNextSelectableRow(int delta) {
+int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, bool row) {
   assert(selectedCell());
-  int row = selectedRow();
-  int selectableRow = row;
+  // Let's call our variable cow, as a shortcut for col-or-row
+  int cow = row ? selectedRow() : selectedColumn();
+  int selectableCow = cow;
   const int step = delta > 0 ? 1 : -1;
-  const int lastRow = dataSource()->numberOfRows() - 1;
+  const int lastCow = row ? dataSource()->numberOfRows() - 1 : dataSource()->numberOfColumns() - 1;
   while (delta) {
-    row += step;
-    if (row < 0 || row > lastRow) {
-      return selectableRow;
+    cow += step;
+    if (cow < 0 || cow > lastCow) {
+      return selectableCow;
     }
-    HighlightCell * cell = cellAtLocation(selectedColumn(), row);
+    HighlightCell * cell = row ? cellAtLocation(selectedColumn(), cow) : cellAtLocation(cow, selectedRow());
     if (!cell || cell->isSelectable()) {
-      selectableRow = row;
+      selectableCow = cow;
       delta -= step;
     }
   }
-  return row;
+  return cow;
+}
+
+int SelectableTableView::indexOfNextSelectableRow(int delta) {
+  return indexOfNextSelectableColumnOrRow(delta, true);
 }
 
 int SelectableTableView::indexOfNextSelectableColumn(int delta) {
-  assert(selectedCell());
-  int column = selectedColumn();
-  int selectableColumn = column;
-  const int step = delta > 0 ? 1 : -1;
-  const int lastColumn = dataSource()->numberOfColumns() - 1;
-  while (delta) {
-    column += step;
-    if (column < 0 || column > lastColumn) {
-      return selectableColumn;
-    }
-    HighlightCell * cell = cellAtLocation(column, selectedRow());
-    if (!cell || cell->isSelectable()) {
-      selectableColumn = column;
-      delta -= step;
-    }
-  }
-  return column;
+  return indexOfNextSelectableColumnOrRow(delta, false);
 }
 
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {

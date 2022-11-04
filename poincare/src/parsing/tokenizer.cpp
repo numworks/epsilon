@@ -195,7 +195,9 @@ Token Tokenizer::popToken() {
     if (m_poppingSystemToken) {
       /* A system code point was popped, meaning the current identifier is a
        * system identifier and should begin with a system code point. */
-      m_decoder.previousCodePoint();
+      CodePoint previousSystemCodePoint = m_decoder.previousCodePoint();
+      assert(previousSystemCodePoint == UCodePointSystem);
+      (void)previousSystemCodePoint;
     }
     assert(m_numberOfStoredIdentifiers == 0); // assert we're done with previous tokenization
     fillIdentifiersList();
@@ -332,6 +334,11 @@ Token Tokenizer::popLongestRightMostIdentifier(const char * stringStart, const c
     stringStart = nextTokenStart;
     tokenLength = *stringEnd - stringStart;
     tokenType = stringTokenType(stringStart, &tokenLength);
+    if (m_poppingSystemToken && tokenType == Token::Undefined) {
+      /* Never break up a system identifier into pieces ; it should either be
+       * recognized or throw a syntax error. */
+      break;
+    }
     decoder.nextCodePoint();
     nextTokenStart = decoder.stringPosition();
   }
@@ -430,6 +437,7 @@ Token::Type Tokenizer::stringTokenType(const char * string, size_t * length) con
   }
   bool hasUnitOnlyCodePoint = UTF8Helper::HasCodePoint(string, UCodePointDegreeSign, string + *length) || UTF8Helper::HasCodePoint(string, '\'', string + *length) || UTF8Helper::HasCodePoint(string, '"', string + *length);
   if (!hasUnitOnlyCodePoint // CustomIdentifiers can't contain °, ' or "
+      && !m_poppingSystemToken
       && (m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment
         || m_parsingContext->context() == nullptr
         || m_parsingContext->context()->expressionTypeForIdentifier(string, *length) != Context::SymbolAbstractType::None)) {

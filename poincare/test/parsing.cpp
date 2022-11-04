@@ -542,6 +542,9 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_text_not_parsable("quo()");
   assert_text_not_parsable("log(1,2,3)");
   assert_text_not_parsable("sinh^\u0012-1\u0013(2)");
+  assert_parsed_expression_is("\u0014dep(x,{})", Dependency::Builder(Symbol::Builder("x", 1), List::Builder()));
+  assert_text_not_parsable("\u0014cos(x)");
+  assert_text_not_parsable("\u0014cod(x)");
 
   // Squared reserved functions
   assert_parsed_expression_is("cos^\u00122\u0013(1)", Power::Builder(Cosine::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));

@@ -334,7 +334,7 @@ KDRect HorizontalLayoutNode::relativeSelectionRect(const Layout * selectionStart
 bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) {
   if (m_numberOfChildren > 0) {
     HorizontalLayout thisRef(this);
-    thisRef.removeEmptyChildBeforeInsertionAtIndex(index, currentNumberOfChildren, !l->mustHaveLeftSibling(), cursor);
+    thisRef.removeEmptyChildBeforeInsertionAtIndex(index, currentNumberOfChildren, !l->mustHaveLeftSibling(), !l->mustHaveRightSibling(), cursor);
     *currentNumberOfChildren = thisRef.numberOfChildren();
   }
   return true;
@@ -564,13 +564,16 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
   /* Remove any empty child that would be next to the inserted layout.
    * If the layout to insert starts with a vertical offset layout, any empty
    * layout child directly on the left of the inserted layout (if there is one)
-   * should not be removed: it will be the base for the VerticalOffsetLayout. */
-  bool shouldRemoveOnLeft = h.numberOfChildren() == 0 ? true : !(h.childAtIndex(0).mustHaveLeftSibling());
-  removeEmptyChildBeforeInsertionAtIndex(&newIndex, nullptr, shouldRemoveOnLeft);
+   * should not be removed: it will be the base for the VerticalOffsetLayout,
+   * and conversely for a VerticalOffsetLayout that needs a base on its right. */
+  int childrenNumber = h.numberOfChildren();
+  bool shouldRemoveOnLeft = childrenNumber == 0 ? true : !(h.childAtIndex(0).mustHaveLeftSibling());
+  bool shouldRemoveOnRight = childrenNumber == 0 ? true : !(h.childAtIndex(childrenNumber - 1).mustHaveRightSibling());
+  removeEmptyChildBeforeInsertionAtIndex(&newIndex, nullptr, shouldRemoveOnLeft, shouldRemoveOnRight);
   assert(newIndex >= 0 && newIndex <= numberOfChildren());
 
   // Merge the horizontal layout
-  int childrenNumber = h.numberOfChildren();
+  childrenNumber = h.numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
     int n = numberOfChildren();
     if (i == 0
@@ -629,12 +632,12 @@ void HorizontalLayout::serializeChildren(int firstIndex, int lastIndex, char * b
   static_cast<HorizontalLayoutNode *>(node())->serializeChildrenBetweenIndexes(buffer, bufferSize, Poincare::Preferences::sharedPreferences()->displayMode(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), true, firstIndex, lastIndex);
 }
 
-void HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor) {
+void HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, bool shouldRemoveOnRight, LayoutCursor * cursor) {
   int childrenCount = currentNumberOfChildren == nullptr ? numberOfChildren() : *currentNumberOfChildren;
   assert(*index >= 0 && *index <= childrenCount);
   /* If empty, remove the child that would be on the right of the inserted
    * layout. */
-  if (*index < childrenCount) {
+  if (shouldRemoveOnRight && *index < childrenCount) {
     Layout c = childAtIndex(*index);
     if (c.isEmpty()) {
       removeChild(c, cursor, true);

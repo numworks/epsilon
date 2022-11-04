@@ -96,7 +96,7 @@ public:
 
   KDRect relativeSelectionRect(const Layout * selectionStart, const Layout * selectionEnd, KDFont::Size font) const { return static_cast<HorizontalLayoutNode *>(node())->relativeSelectionRect(selectionStart, selectionEnd, font); }
 private:
-  void removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, LayoutCursor * cursor = nullptr);
+  void removeEmptyChildBeforeInsertionAtIndex(int * index, int * currentNumberOfChildren, bool shouldRemoveOnLeft, bool shouldRemoveOnRight, LayoutCursor * cursor = nullptr);
 };
 
 }

@@ -145,7 +145,7 @@ void App::Snapshot::reset() {
 }
 
 bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
-  return !isStoreMenuOpen() || !record.hasExtension(Ion::Storage::lisExtension);
+  return !(isVarBoxMenuOpen() || isStoreMenuOpen()) || !record.hasExtension(Ion::Storage::lisExtension);
 }
 
 }

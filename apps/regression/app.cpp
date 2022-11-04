@@ -48,7 +48,7 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 }
 
 bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
-  return !isStoreMenuOpen() || !record.hasExtension(Ion::Storage::lisExtension);
+  return !(isVarBoxMenuOpen() || isStoreMenuOpen()) || !record.hasExtension(Ion::Storage::lisExtension);
 }
 
 NestedMenuController * App::variableBox() {

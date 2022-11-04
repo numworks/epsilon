@@ -41,7 +41,7 @@ const App::Descriptor * App::Snapshot::descriptor() const {
 bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
   /* Prevent functions from being (re)defined from the store menu.
    * Variables can be changed even if they are used in functions. */
-  return !isStoreMenuOpen() || !record.hasExtension(Ion::Storage::funcExtension);
+  return !(isVarBoxMenuOpen() || isStoreMenuOpen()) || !record.hasExtension(Ion::Storage::funcExtension);
 }
 
 void App::storageDidChangeForRecord(Ion::Storage::Record record) {

@@ -1,34 +1,49 @@
 #include "function_model.h"
 #include "../app.h"
+#include <apps/shared/function.h>
+#include <poincare/zoom.h>
 #include <algorithm>
 
+using namespace Poincare;
+
 namespace Calculation {
+
+static Context * context() { return App::app()->localContext(); }
 
 void FunctionModel::setParameters(Poincare::Expression function, float abscissa) {
   m_function = function;
   m_abscissa = abscissa;
-  constexpr static char k_unknownName[2] = {UCodePointUnknown, 0};
-  m_ordinate = Shared::PoincareHelpers::ApproximateWithValueForSymbol<float>(m_function, k_unknownName, abscissa, App::app()->localContext());
+  m_ordinate = Shared::PoincareHelpers::ApproximateWithValueForSymbol<float>(m_function, Shared::Function::k_unknownName, abscissa, context());
   recomputeViewRange();
 };
 
 void FunctionModel::recomputeViewRange() {
-  // TODO: to be replaced using the new zoom API
-  const float x = m_abscissa * 2;
-  const float y = m_ordinate * 2;
+  Zoom zoom(-1 * Range1D::k_maxFloat, Range1D::k_maxFloat, 1 / k_xyRatio, context());
 
-  float width = std::abs(x);
-  float height = std::abs(y);
-  bool verticallyCapped = height * k_xyRatio > width;
-  float ratio = verticallyCapped ? height/k_height : width/k_width;
+  Zoom::Function2DWithContext evaluator = [](float t, const void * model, Context * context) {
+    const Expression * f = static_cast<const Expression *>(model);
+    return Coordinate2D<float>(t, Shared::PoincareHelpers::ApproximateWithValueForSymbol<float>(*f, Shared::Function::k_unknownName, t, context));
+  };
+  zoom.fitPointsOfInterest(evaluator, static_cast<void *>(&m_function));
 
-  float xMargin = k_marginInPixels*ratio + (verticallyCapped ? (height * k_xyRatio - width) / 2.f : 0.f);
-  float yMargin = k_marginInPixels*ratio + (verticallyCapped ? 0.f : (width / k_xyRatio - height) / 2.f);
+  zoom.fitPoint(Coordinate2D<float>(m_abscissa, m_ordinate));
+  zoom.fitPoint(Coordinate2D<float>(0.0, 0.0));
 
-  setXMin(std::min(0.f, x) - xMargin);
-  setXMax(std::max(0.f, x) + xMargin);
-  setYMin(std::min(0.f, y) - yMargin);
-  setYMax(std::max(0.f, y) + yMargin);
+  Range2D range = zoom.range(Range1D::k_maxFloat, false);
+
+  float widthPixelRatio =  range.x()->length() / k_width;
+  float rightMargin = (range.xMax() - m_abscissa) / widthPixelRatio;
+  float leftMargin = (m_abscissa - range.xMin()) / widthPixelRatio;
+
+  setXMin(range.xMin() - (leftMargin >= k_marginInPixels ? 0.0 : k_marginInPixels * widthPixelRatio));
+  setXMax(range.xMax() + (rightMargin >= k_marginInPixels ? 0.0 : k_marginInPixels * widthPixelRatio));
+
+  float heigthPixelRatio =  range.y()->length() / k_height;
+  float topMargin = (range.yMax() - m_ordinate) / heigthPixelRatio;
+  float bottomMargin = (m_ordinate - range.yMin()) / heigthPixelRatio;
+
+  setYMin(range.yMin() - (bottomMargin >= k_marginInPixels ? 0.0 : k_marginInPixels * heigthPixelRatio));
+  setYMax(range.yMax() + (topMargin >= k_marginInPixels ? 0.0 : k_marginInPixels * heigthPixelRatio));
 }
 
 }

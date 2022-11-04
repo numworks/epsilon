@@ -114,10 +114,6 @@ Expression DecimalNode::shallowReduce(const ReductionContext& reductionContext) 
   return Decimal(this).shallowReduce(reductionContext);
 }
 
-Expression DecimalNode::shallowBeautify(const ReductionContext& reductionContext) {
-  return Decimal(this).shallowBeautify();
-}
-
 Layout DecimalNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   char buffer[k_maxBufferSize];
   int numberOfChars = convertToText(buffer, k_maxBufferSize, floatDisplayMode, numberOfSignificantDigits);
@@ -453,17 +449,6 @@ Expression Decimal::shallowReduce(ExpressionNode::ReductionContext reductionCont
   );
   replaceWithInPlace(result);
   return result.deepReduce(reductionContext);
-}
-
-Expression Decimal::shallowBeautify() {
-  if (isPositive() == TrinaryBoolean::False) {
-    Expression abs = setSign(true);
-    Opposite o = Opposite::Builder();
-    replaceWithInPlace(o);
-    o.replaceChildAtIndexInPlace(0, abs);
-    return std::move(o);
-  }
-  return *this;
 }
 
 template Decimal Decimal::Decimal::Builder(double);

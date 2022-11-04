@@ -273,14 +273,9 @@ bool Expression::IsRationalFraction(const Expression& e, Context * context, cons
     static_cast<const Multiplication&>(e).splitIntoNormalForm(numerator, denominator, reductionContext);
   }
 
-  int denominatorDegree;
   assert(!numerator.isUninitialized());
-  if (denominator.isUninitialized()) {
-    denominatorDegree = 0;
-  } else {
-    denominatorDegree = denominator.polynomialDegree(context, symbol);
-  }
   int numeratorDegree = numerator.polynomialDegree(context, symbol);
+  int denominatorDegree = denominator.isUninitialized() ? 0 : denominator.polynomialDegree(context, symbol);
   return denominatorDegree >= 0 && numeratorDegree >= 0;
 }
 

@@ -64,8 +64,8 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   size_t length = Ion::Events::copyText(static_cast<uint8_t>(event), eventText, Ion::Events::EventData::k_maxDataSize);
   if (length == 1 && eventText[0] >= '0' && eventText[0] <= '9') {
     int iconIndex = eventText[0] == '0' ? numberOfIcons() - 1 : eventText[0] - '1';
-    int col = columnIndex(iconIndex);
-    int row = rowIndex(iconIndex);
+    int col = columnOfIconAtIndex(iconIndex);
+    int row = rowOfIconAtIndex(iconIndex);
     if (col == m_view.selectableTableView()->selectedColumn() && row == m_view.selectableTableView()->selectedRow()) {
       // We were already on the selected app
       switchToSelectedApp();
@@ -75,8 +75,8 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   }
   // Handle Down when less than 3 icons at last row
   if (event == Ion::Events::Down && selectionDataSource()->selectedRow() == numberOfRows() - 2) {
-    assert(selectionDataSource()->selectedColumn() > lastIconColumn()); // Otherwise would have been handled by SelectableTableView
-    return m_view.selectableTableView()->selectCellAtLocation(lastIconColumn(), numberOfRows() - 1);
+    assert(selectionDataSource()->selectedColumn() > columnOfLastIcon()); // Otherwise would have been handled by SelectableTableView
+    return m_view.selectableTableView()->selectCellAtLocation(columnOfLastIcon(), numberOfRows() - 1);
   }
   return false;
 }
@@ -96,7 +96,7 @@ HighlightCell * Controller::reusableCell(int index) {
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {
   AppCell * appCell = static_cast<AppCell *>(cell);
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  int appIdx = appIndex(i, j);
+  int appIdx = indexOfAppAtColumnAndRow(i, j);
   if (appIdx >= container->numberOfApps()) {
     appCell->setVisible(false);
   } else {
@@ -128,7 +128,7 @@ void Controller::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t
    * the redrawing takes time and is visible at scrolling. Here, we avoid the 
    * background complete redrawing but the code is a bit clumsy. */
   if (t->selectedRow() == numberOfRows() - 1) {
-    m_view.reloadBottomRow(this, lastIconColumn());
+    m_view.reloadBottomRow(this, columnOfLastIcon());
   }
 }
 
@@ -138,7 +138,7 @@ SelectableTableViewDataSource * Controller::selectionDataSource() const {
 
 void Controller::switchToSelectedApp() {
   AppsContainer * container = AppsContainer::sharedAppsContainer();
-  int appIdx = appIndex(selectionDataSource()->selectedColumn(), selectionDataSource()->selectedRow());
+  int appIdx = indexOfAppAtColumnAndRow(selectionDataSource()->selectedColumn(), selectionDataSource()->selectedRow());
   Poincare::Preferences::ExamMode examMode = Poincare::Preferences::sharedPreferences()->examMode();
   if (appIdx < container->numberOfBuiltinApps()) {
     ::App::Snapshot * selectedSnapshot = container->appSnapshotAtIndex(PermutedAppSnapshotIndex(appIdx));

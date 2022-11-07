@@ -386,6 +386,7 @@ bool AppsContainer::storageWillChangeForRecord(const Ion::Storage::Record record
 }
 
 void AppsContainer::storageDidChangeForRecord(const Ion::Storage::Record record) {
+  m_globalContext.storageDidChangeForRecord(record);
   if (s_activeApp) {
     s_activeApp->storageDidChangeForRecord(record);
   }

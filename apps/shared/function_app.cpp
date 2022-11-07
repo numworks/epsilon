@@ -26,6 +26,7 @@ bool FunctionApp::storageWillChangeForRecord(Ion::Storage::Record record) {
 }
 
 void FunctionApp::storageDidChangeForRecord(Ion::Storage::Record record) {
+  // SequenceStore is actually already invalidated by the globalContext (see TODO in GlobalContext)
   functionStore()->storageDidChangeForRecord(record);
   if (record.isNull() || record.hasExtension(functionStore()->modelExtension())) {
     return;

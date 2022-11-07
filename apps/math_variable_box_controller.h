@@ -35,7 +35,6 @@ public:
     Sequence = 5,
     sizeOfEnum = 6 // use this value only to know the number of pages
   };
-  void lockDeleteEvent(Page page) { m_lockPageDelete = page; }
 
 private:
   constexpr static int k_maxNumberOfDisplayedRows = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(Escher::TableCell::k_minimalLargeFontCellHeight, Escher::Metric::PopUpTopMargin + Escher::Metric::StackTitleHeight);
@@ -62,7 +61,6 @@ private:
   // Return false if destruction is prevented by the app
   bool destroyRecordAtRowIndex(int rowIndex);
   Page m_currentPage;
-  Page m_lockPageDelete;
   Escher::ExpressionTableCellWithExpression m_leafCells[k_maxNumberOfDisplayedRows];
   Escher::MessageTableCellWithChevron m_nodeCells[k_numberOfMenuRows];
   Escher::MessageTableCell m_defineVariableCell;

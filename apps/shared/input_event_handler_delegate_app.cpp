@@ -20,9 +20,7 @@ NestedMenuController * InputEventHandlerDelegateApp::toolbox() {
 }
 
 NestedMenuController * InputEventHandlerDelegateApp::variableBox() {
-  MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
-  varBox->lockDeleteEvent(MathVariableBoxController::Page::RootMenu);
-  return varBox;
+  return AppsContainer::sharedAppsContainer()->variableBoxController();
 }
 
 bool InputEventHandlerDelegateApp::isVarBoxMenuOpen() {

@@ -5,14 +5,15 @@ namespace Poincare {
 // Range1D
 
 Range1D Range1D::RangeBetween(float a, float b, float limit) {
-  assert(std::isfinite(a) && std::isfinite(b));
+  assert(!std::isnan(a) && !std::isnan(b));
+  a = std::clamp(a, -limit, limit);
   Range1D res(a, a);
   (res.*(b < a ? &Range1D::setMin : &Range1D::setMax))(b, limit);
   return res;
 }
 
 void Range1D::extend(float t) {
-  if (!std::isfinite(t)) {
+  if (std::isnan(t)) {
     return;
   }
   /* Using this syntax for the comparison takes care of the NAN. */
@@ -39,7 +40,7 @@ void Range1D::privateSet(float t, bool isMin, float limit) {
   assert(limit > 0.0);
   *bound = std::clamp(t, -limit, limit);
   if (!(m_min <= m_max)) {
-    (isMin ? m_max : m_min) = (std::isfinite(*bound) ? *bound : -*bound);
+    (isMin ? m_max : m_min) = *bound;
   }
   if (length() < k_minLength) {
     float l = std::max(DefaultLengthAt(m_min), k_minLength);
@@ -49,7 +50,7 @@ void Range1D::privateSet(float t, bool isMin, float limit) {
       m_min -= l;
     }
   }
-  assert(isValid() && !isEmpty());
+  assert(isValid() && !(isEmpty() && std::isfinite(m_max)));
 }
 
 // Range2D

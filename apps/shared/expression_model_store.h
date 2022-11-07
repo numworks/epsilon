@@ -16,6 +16,7 @@ public:
   ExpressionModelStore();
 
   // Getters
+  virtual const char * modelExtension() const = 0;
   // Override with -1 for an unbounded max number of models.
   virtual int maxNumberOfModels() const { return maxNumberOfMemoizedModels(); }
   int numberOfModels() const;
@@ -49,7 +50,6 @@ private:
   void resetMemoizedModelsExceptRecord(const Ion::Storage::Record record = Ion::Storage::Record()) const;
   virtual ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record) const = 0;
   virtual ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const = 0;
-  virtual const char * modelExtension() const = 0;
   /* When the required model is not present, we override the
    * m_oldestMemoizedIndex model. This actually overrides the oldest memoized
    * model because models are all reset at the same time. Otherwise, we should

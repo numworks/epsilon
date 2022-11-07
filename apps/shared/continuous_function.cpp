@@ -34,15 +34,15 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
    * away because the baseName pointer might be corrupted later on.
    * Indeed, the baseName can point in the Pool, which can be altered during
    * the record creation, because the FunctionStore will have its memoization
-   * reset. */
+   * reset.
+   * Creating an empty record with the base name computes and saves the CRC32
+   * of the name, so that the baseName variable is not needed anymore after
+   * calling the method "createRecordWithExtension". */
   Ion::Storage::Record record = Ion::Storage::Record(baseName, Ion::Storage::funcExtension);
   RecordDataBuffer data(Escher::Palette::nextDataColor(&s_colorIndex));
   *error = Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension(baseName, Ion::Storage::funcExtension, &data, sizeof(data));
-  if (*error != Ion::Storage::Record::ErrorStatus::None) {
-    return ContinuousFunction();
-  }
   // Return the ContinuousFunction with the new record
-  return ContinuousFunction(record);
+  return ContinuousFunction(*error == Ion::Storage::Record::ErrorStatus::None ? record : Record());
 }
 
 ContinuousFunctionProperties ContinuousFunction::properties() const {

@@ -30,7 +30,6 @@ public:
   HighlightCell * selectedCell();
   bool cellIsSelectable(HighlightCell * cell);
   int firstSelectableRow();
-  int indexOfNextSelectableColumnOrRow(int delta, bool row);
   int indexOfNextSelectableRow(int delta);
   int indexOfNextSelectableColumn(int delta);
   bool selectCellAtLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
@@ -45,6 +44,8 @@ public:
 protected:
   SelectableTableViewDataSource * m_selectionDataSource;
   SelectableTableViewDelegate * m_delegate;
+private:
+  int indexOfNextSelectableColumnOrRow(int delta, bool row);
 };
 
 }

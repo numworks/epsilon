@@ -1,6 +1,8 @@
 kernel_src = $(ion_device_kernel_src) $(liba_kernel_src)
 kernel_test_src = $(kernel_src)
 
+ASSERTIONS = $(DEVELOPMENT)
+
 ifeq ($(ASSERTIONS),1)
 KERNEL_ASSERT_FLAVOR = kernelassert
 kernel_src += $(kandinsky_src)

@@ -504,6 +504,14 @@ QUIZ_CASE(sequence_context) {
   assert_expression_simplifies_approximates_to<double>("f(u(2))", "undef");
 
   store->removeAll();
+  assert_reduce_and_store("3→a");
+  addSequence(store, Sequence::Type::Explicit, "a+1", nullptr, nullptr, sequenceContext);
+  assert_expression_simplifies_approximates_to<double>("u(34)", "4");
+  assert_reduce_and_store("-3→a");
+  assert_expression_simplifies_approximates_to<double>("u(34)", "-2");
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
+
+  store->removeAll();
   store->tidyDownstreamPoolFrom();
 }
 

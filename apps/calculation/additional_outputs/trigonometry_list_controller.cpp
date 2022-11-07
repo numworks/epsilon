@@ -50,7 +50,7 @@ void TrigonometryListController::setExpression(Expression e) {
   appendLine(index++, "cos(θ)", Cosine::Builder(e), context, &preferencesRadian);
   appendLine(index++, "sin(θ)", Sine::Builder(e), context, &preferencesRadian);
   appendLine(index++, "tan(θ)", Tangent::Builder(e), context, &preferencesRadian);
-  
+
   // Set illustration
   float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(e, context);
   m_model.setAngle(angle);
@@ -59,8 +59,11 @@ void TrigonometryListController::setExpression(Expression e) {
 
 void TrigonometryListController::appendLine(int index, const char * formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences) {
   m_layouts[index] = LayoutHelper::String(formula);
-  m_exactLayouts[index] = getLayoutFromExpression(expression, context, preferences);
-  m_approximatedLayouts[index] = getLayoutFromExpression(expression.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit()), context, preferences);
+  Layout exact = getLayoutFromExpression(expression, context, preferences);
+  Layout approximated = getLayoutFromExpression(expression.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit()), context, preferences);
+  // Make it editable to have Horiz(CodePoint("-"),CodePoint("1") == String("-1")
+  m_exactLayouts[index] = exact.isIdenticalTo(approximated, true) ? Layout() : exact;
+  m_approximatedLayouts[index] = approximated;
   index++;
 };
 

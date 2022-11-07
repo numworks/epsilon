@@ -58,18 +58,21 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
    *   The deletion on the current page is locked
    * - The empty controller is displayed
    */
-  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu && m_lockPageDelete != m_currentPage) {
+  if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
     int rowIndex = selectedRow();
-    m_selectableTableView.deselectTable();
-    destroyRecordAtRowIndex(rowIndex);
-    int newSelectedRow = rowIndex >= numberOfRows() ? numberOfRows()-1 : rowIndex;
-    selectCellAtLocation(selectedColumn(), newSelectedRow);
-    resetMemoization();
-    m_selectableTableView.reloadData();
-    if (numberOfRows() == 0) {
-      returnToRootMenu();
+    if (destroyRecordAtRowIndex(rowIndex)) {
+      m_selectableTableView.deselectTable();
+      int newSelectedRow = rowIndex >= numberOfRows() ? numberOfRows()-1 : rowIndex;
+      selectCellAtLocation(selectedColumn(), newSelectedRow);
+      resetMemoization();
+      m_selectableTableView.reloadData();
+      if (numberOfRows() == 0) {
+        returnToRootMenu();
+      }
+      return true;
+    } else {
+      // TODO : The record deletion has been denied. Add a warning.
     }
-    return true;
   }
   if (m_currentPage == Page::RootMenu && m_defineVariableCell.ShouldEnterOnEvent(event) && selectedRow() == defineVariableCellIndex()) {
     Container::activeApp()->dismissModalViewController();
@@ -358,16 +361,22 @@ void MathVariableBoxController::resetVarBoxMemoization() {
   m_firstMemoizedLayoutIndex = 0;
 }
 
-void MathVariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
-  // Destroy the record
-  recordAtIndex(rowIndex).destroy();
+bool MathVariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
+  {
+    Storage::Record record = recordAtIndex(rowIndex);
+    if (!Container::activeApp()->storageWillChangeForRecord(record)) {
+      return false;
+    }
+    record.destroy();
+  }
   // Shift the memoization if needed
   if (rowIndex >= m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows) {
     // The deleted row is after the memoization
-    return;
+    return true;
   }
   for (int i = std::max(0, rowIndex - m_firstMemoizedLayoutIndex); i < k_maxNumberOfDisplayedRows - 1; i++) {
     m_layouts[i] = m_layouts[i+1];
   }
   m_layouts[k_maxNumberOfDisplayedRows - 1] = Layout();
+  return true;
 }

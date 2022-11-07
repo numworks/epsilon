@@ -59,7 +59,8 @@ private:
   const char * extension() const;
   Ion::Storage::Record recordAtIndex(int rowIndex);
   void resetVarBoxMemoization();
-  void destroyRecordAtRowIndex(int rowIndex);
+  // Return false if destruction is prevented by the app
+  bool destroyRecordAtRowIndex(int rowIndex);
   Page m_currentPage;
   Page m_lockPageDelete;
   Escher::ExpressionTableCellWithExpression m_leafCells[k_maxNumberOfDisplayedRows];

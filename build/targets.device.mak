@@ -3,8 +3,6 @@ dfu_targets = $(addprefix $(BUILD_DIR)/,$(addsuffix .dfu,$(epsilon_target_varian
 .PHONY: $(dfu_targets)
 $(dfu_targets): TARGET_STEM = $(subst .epsilon,,$(patsubst $(BUILD_DIR)/%.dfu,.%,$@))
 
-ASSERTIONS = $(DEVELOPMENT)
-
 define target_variants_for_component
 $(subst .epsilon,,$(addprefix $(1).,$(epsilon_target_variants)))
 endef

@@ -82,7 +82,7 @@ public:
   constexpr static int k_maxNumberOfCoefficients = 100;
 
   // Expression
-  Expression shallowReduce(Context * context);
+  Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
 
 private:
   MatrixNode * node() const { return static_cast<MatrixNode *>(Expression::node()); }

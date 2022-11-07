@@ -839,7 +839,7 @@ Expression Multiplication::shallowReduce(ExpressionNode::ReductionContext reduct
       }
     }
     replaceWithInPlace(resultMatrix);
-    return resultMatrix.shallowReduce(context);
+    return resultMatrix.shallowReduce(reductionContext);
   }
 
   // Gather like terms together

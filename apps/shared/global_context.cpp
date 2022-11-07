@@ -23,6 +23,11 @@ SequenceStore * GlobalContext::sequenceStore() {
   return &sequenceStore;
 }
 
+void GlobalContext::storageDidChangeForRecord(Ion::Storage::Record record) {
+  m_sequenceContext.resetCache();
+  GlobalContext::sequenceStore()->storageDidChangeForRecord(record);
+}
+
 bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {
   return SymbolAbstractRecordWithBaseName(baseName).isNull();
 }

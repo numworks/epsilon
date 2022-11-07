@@ -33,6 +33,7 @@ public:
   SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override;
   bool setExpressionForSymbolAbstract(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol) override;
   static SequenceStore * sequenceStore();
+  void storageDidChangeForRecord(const Ion::Storage::Record record);
   SequenceContext * sequenceContext() { return &m_sequenceContext; }
   void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) override;
 private:

@@ -60,7 +60,7 @@ int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, bool row) {
   int cow = row ? selectedRow() : selectedColumn();
   int selectableCow = cow;
   const int step = delta > 0 ? 1 : -1;
-  const int lastCow = row ? dataSource()->numberOfRows() - 1 : dataSource()->numberOfColumns() - 1;
+  const int lastCow = (row ? dataSource()->numberOfRows() : dataSource()->numberOfColumns()) - 1;
   while (delta) {
     cow += step;
     if (cow < 0 || cow > lastCow) {

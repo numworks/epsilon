@@ -29,7 +29,7 @@ HighlightCell * SelectableTableView::selectedCell() {
 }
 
 bool SelectableTableView::cellIsSelectable(HighlightCell * cell) {
-  /* There is 2 cases:
+  /* There are 2 cases:
    * - In the case of non reusable cells: all cells are valid pointers but they are not all selectable
    *   --> the condition we want to test is cell->isSelectable()
    * - In the case of reusable cells: visible cells are valid pointers and they are all selectable, and 

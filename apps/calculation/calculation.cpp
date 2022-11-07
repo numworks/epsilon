@@ -256,9 +256,13 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
    * However if the result is complex, it is treated as a complex result instead
    */
   if (!isComplex && (Trigonometry::isDirectTrigonometryFunction(i) || Trigonometry::isDirectTrigonometryFunction(o))) {
-    return AdditionalInformations {.directTrigonometry = true};
+    // Check that the angle is real.
+    if (!i.childAtIndex(0).hasDefinedComplexApproximation(nullptr, Preferences::ComplexFormat::Cartesian, preferences->angleUnit())) {
+      return AdditionalInformations {.directTrigonometry = true};
+    }
   }
   if (!isComplex && (Trigonometry::isInverseTrigonometryFunction(i) || Trigonometry::isInverseTrigonometryFunction(o))) {
+    // The angle cannot be complex since Expression a isn't
     return AdditionalInformations {.inverseTrigonometry = true};
   }
   if (o.hasUnit()) {

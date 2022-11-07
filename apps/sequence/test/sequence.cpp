@@ -508,6 +508,7 @@ QUIZ_CASE(sequence_context) {
   addSequence(store, Sequence::Type::Explicit, "a+1", nullptr, nullptr, sequenceContext);
   assert_expression_simplifies_approximates_to<double>("u(34)", "4");
   assert_reduce_and_store("-3→a");
+  globalContext.storageDidChangeForRecord(Ion::Storage::Record("a.exp"));
   assert_expression_simplifies_approximates_to<double>("u(34)", "-2");
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
 

@@ -1,5 +1,5 @@
-#ifndef GRAPH_SHARED_DOMAIN_PARAMATER_CONTROLLER_H
-#define GRAPH_SHARED_DOMAIN_PARAMATER_CONTROLLER_H
+#ifndef GRAPH_SHARED_DOMAIN_PARAMETER_CONTROLLER_H
+#define GRAPH_SHARED_DOMAIN_PARAMETER_CONTROLLER_H
 
 #include <apps/shared/continuous_function.h>
 #include <apps/shared/expiring_pointer.h>

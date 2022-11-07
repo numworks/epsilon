@@ -167,7 +167,7 @@ Ion::Storage::Record::ErrorStatus ExpressionModel::setExpressionContent(Ion::Sto
   newData.size = std::max(previousDataSize, newDataSize);
   Ion::Storage::Record::ErrorStatus error = record->setValue(newData);
   if (error != Ion::Storage::Record::ErrorStatus::None) {
-    assert(error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
+    assert(error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable || error == Ion::Storage::Record::ErrorStatus::CanceledByDelegate);
     return error;
   }
   // Prepare the new data content

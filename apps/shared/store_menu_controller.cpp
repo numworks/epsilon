@@ -127,8 +127,9 @@ bool StoreMenuController::parseAndStore(const char * text) {
     reducedExp.replaceChildAtIndexInPlace(0, Shared::PoincareHelpers::ApproximateKeepingUnits<double>(reducedExp.childAtIndex(0), Container::activeApp()->localContext()));
   }
   Store store = static_cast<Store&>(reducedExp);
-  close();
+  // Update the store before closing so that isStoreMenuOpen can be used
   store.storeValueForSymbol(Container::activeApp()->localContext());
+  close();
   return true;
 }
 

@@ -37,7 +37,8 @@ public:
   Snapshot * snapshot() const {
     return static_cast<Snapshot *>(Escher::App::snapshot());
   }
-  void storageDidChangeForRecord(Ion::Storage::Record record) override;
+  bool storageWillChangeForRecord(Ion::Storage::Record) override;
+  void storageDidChangeForRecord(Ion::Storage::Record) override;
   virtual FunctionStore * functionStore() { return snapshot()->functionStore(); }
   virtual ValuesController * valuesController() = 0;
   virtual Escher::InputViewController * inputViewController() = 0;

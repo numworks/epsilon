@@ -47,8 +47,6 @@ public:
 
   TELEMETRY_ID("Graph");
   CodePoint XNT() override;
-  bool storageWillChangeForRecord(Ion::Storage::Record) override;
-  void storageDidChangeForRecord(Ion::Storage::Record) override;
   ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }
   Shared::Interval * intervalForSymbolType(Shared::ContinuousFunctionProperties::SymbolType symbolType) { return snapshot()->intervalForSymbolType(symbolType); }
   ValuesController * valuesController() override { return &m_valuesController; }

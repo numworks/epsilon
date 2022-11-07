@@ -20,6 +20,7 @@ public:
   constexpr static float k_largeUnitMantissa = 5.f;
 
   typedef Coordinate2D<float> (*Function2DWithContext)(float, const void *, Context *);
+  typedef Coordinate2D<double> (*Function2DWithContextDouble)(double, const void *, Context *);
 
   /* Sanitize will turn any random range into a range fit for display (see
    * comment on range() method below), that includes the original range. */
@@ -41,7 +42,7 @@ public:
   /* These four functions will extend both X and Y axes. */
   void fitPoint(Coordinate2D<float> xy, bool flipped = false);
   void fitFullFunction(Function2DWithContext f, const void * model);
-  void fitPointsOfInterest(Function2DWithContext f, const void * model, bool vertical = false);
+  void fitPointsOfInterest(Function2DWithContext f, const void * model, bool vertical = false, Function2DWithContextDouble fDouble = nullptr);
   void fitIntersections(Function2DWithContext f1, const void * model1, Function2DWithContext f2, const void * model2, bool vertical = false);
   /* This function will only touch the Y axis. */
   void fitMagnitude(Function2DWithContext f, const void * model, bool vertical = false);
@@ -80,10 +81,12 @@ private:
 
   struct InterestParameters {
     Function2DWithContext f;
+    Function2DWithContextDouble fDouble;
     const void * model;
     Context * context;
     HorizontalAsymptoteHelper * asymptotes;
     float (Coordinate2D<float>::*ordinate)() const;
+    double (Coordinate2D<double>::*ordinateDouble)() const;
   };
 
   constexpr static size_t k_sampleSize = Ion::Display::Width / 2;
@@ -94,10 +97,10 @@ private:
 
   Range2D sanitizedRange() const;
   Range2D prettyRange(bool forceNormalization) const;
-  void fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical);
+  void fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical, Solver<double>::FunctionEvaluation fDouble = nullptr);
   /* Return true if the search was interrupted because too many points were
    * found. */
-  bool fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical);
+  bool fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical, Solver<double>::FunctionEvaluation fDouble);
 
   /* m_interestingRange is edited by fitFullFunction, fitPointsOfInterest and
    * fitIntersections, and will always be included in the final range. */

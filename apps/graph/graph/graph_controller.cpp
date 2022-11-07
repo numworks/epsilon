@@ -43,16 +43,16 @@ void GraphController::didBecomeFirstResponder() {
   refreshPointsOfInterest();
 }
 
-Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange) const {
-  Zoom::Function2DWithContext evaluator = [](float t, const void * model, Context * context) {
-    const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
-    return f->evaluateXYAtParameter(t, context);
-  };
-  Zoom::Function2DWithContext evaluatorSecondCurve = [](float t, const void * model, Context * context) {
-    const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
-    return f->evaluateXYAtParameter(t, context, 1);
-  };
+template <typename T> Coordinate2D<T> evaluator(T t, const void * model, Context * context) {
+  const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
+  return f->evaluateXYAtParameter(t, context);
+}
+template <typename T> Coordinate2D<T> evaluatorSecondCurve(T t, const void * model, Context * context) {
+  const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
+  return f->evaluateXYAtParameter(t, context, 1);
+}
 
+Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange) const {
   Context * context = App::app()->localContext();
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context, k_maxFloat);
   ContinuousFunctionStore * store = functionStore();
@@ -70,16 +70,16 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     if (f->properties().isPolar() || f->properties().isParametric()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
       zoom.setBounds(f->tMin(), f->tMax());
-      zoom.fitFullFunction(evaluator, f.operator->());
+      zoom.fitFullFunction(evaluator<float>, f.operator->());
     } else {
       assert(f->properties().isCartesian());
       bool alongY = f->isAlongY();
       Range1D * bounds = alongY ? &yBounds : &xBounds;
       zoom.setBounds(bounds->min(), bounds->max());
-      zoom.fitPointsOfInterest(evaluator, f.operator->(), alongY);
+      zoom.fitPointsOfInterest(evaluator<float>, f.operator->(), alongY, evaluator<double>);
       if (f->numberOfSubCurves() > 1) {
         assert(f->numberOfSubCurves() == 2);
-        zoom.fitPointsOfInterest(evaluatorSecondCurve, f.operator->(), alongY);
+        zoom.fitPointsOfInterest(evaluatorSecondCurve<float>, f.operator->(), alongY, evaluatorSecondCurve<double>);
       }
       if (f->isIntersectable()) {
         ContinuousFunction * mainF = f.operator->();
@@ -88,7 +88,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
           if (!g->isIntersectable() || g->basedOnCostlyAlgorithms(context)) {
             continue;
           }
-          zoom.fitIntersections(evaluator, mainF, evaluator, g.operator->());
+          zoom.fitIntersections(evaluator<float>, mainF, evaluator<float>, g.operator->());
         }
       }
     }

@@ -93,7 +93,7 @@ void ExpressionFieldDelegateApp::storeValue(const char * text) {
   m_storeMenuController.open();
 }
 
-bool ExpressionFieldDelegateApp::isStoreMenuOpen() {
+bool ExpressionFieldDelegateApp::isStoreMenuOpen() const {
   return m_modalViewController.currentModalViewController() == &m_storeMenuController;
 }
 

@@ -30,13 +30,19 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
   static int s_colorIndex = 0;
   assert(baseName != nullptr);
   // Create the record
+  /* WARNING: We create an empty record with the baseName and extension right
+   * away because the baseName pointer might be corrupted later on.
+   * Indeed, the baseName can point in the Pool, which can be altered during
+   * the record creation, because the FunctionStore will have its memoization
+   * reset. */
+  Ion::Storage::Record record = Ion::Storage::Record(baseName, Ion::Storage::funcExtension);
   RecordDataBuffer data(Escher::Palette::nextDataColor(&s_colorIndex));
   *error = Ion::Storage::FileSystem::sharedFileSystem()->createRecordWithExtension(baseName, Ion::Storage::funcExtension, &data, sizeof(data));
   if (*error != Ion::Storage::Record::ErrorStatus::None) {
     return ContinuousFunction();
   }
   // Return the ContinuousFunction with the new record
-  return ContinuousFunction(Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(baseName, Ion::Storage::funcExtension));
+  return ContinuousFunction(record);
 }
 
 ContinuousFunctionProperties ContinuousFunction::properties() const {

@@ -16,7 +16,9 @@ int HyperbolicSineNode::serialize(char * buffer, int bufferSize, Preferences::Pr
 
 template<typename T>
 Complex<T> HyperbolicSineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
-  return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::sinh(c), c));
+  /* If c is real and large (over 100.0), the float evaluation of std::sinh
+   * will return image = NaN when it should be 0.0. */
+  return Complex<T>::Builder(ApproximationHelper::MakeResultRealIfInputIsReal<T>(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::sinh(c), c), c));
 }
 
 bool HyperbolicSineNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {

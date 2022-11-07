@@ -16,7 +16,9 @@ int HyperbolicCosineNode::serialize(char * buffer, int bufferSize, Preferences::
 
 template<typename T>
 Complex<T> HyperbolicCosineNode::computeOnComplex(const std::complex<T> c, Preferences::ComplexFormat, Preferences::AngleUnit angleUnit) {
-  return Complex<T>::Builder(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::cosh(c), c));
+  /* If c is real and large (over 100.0), the float evaluation of std::cosh
+   * will return image = NaN when it should be 0.0. */
+  return Complex<T>::Builder(ApproximationHelper::MakeResultRealIfInputIsReal<T>(ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable(std::cosh(c), c), c));
 }
 
 bool HyperbolicCosineNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {

@@ -79,6 +79,10 @@ template <typename T> std::complex<T> ApproximationHelper::NeglectRealOrImaginar
   return result;
 }
 
+template <typename T> std::complex<T> ApproximationHelper::MakeResultRealIfInputIsReal(std::complex<T> result, std::complex<T> input) {
+  return input.imag() == static_cast<T>(0.0) ? std::complex<T>(result.real(), static_cast<T>(0.0)) : result;
+}
+
 template<typename T> ListComplex<T> ElementWiseOnListAndComplex(const ListComplex<T> l, const std::complex<T> c, Preferences::ComplexFormat complexFormat, ApproximationHelper::ComplexAndComplexReduction<T> computeOnComplexes, bool complexFirst) {
   if (l.isUndefined()) {
     return ListComplex<T>::Undefined();
@@ -314,6 +318,8 @@ template uint32_t Poincare::ApproximationHelper::PositiveIntegerApproximationIfP
 
 template std::complex<float> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<float>(std::complex<float>,std::complex<float>,std::complex<float>,bool);
 template std::complex<double> Poincare::ApproximationHelper::NeglectRealOrImaginaryPartIfNeglectable<double>(std::complex<double>,std::complex<double>,std::complex<double>,bool);
+template std::complex<float> Poincare::ApproximationHelper::MakeResultRealIfInputIsReal<float>(std::complex<float>,std::complex<float>);
+template std::complex<double> Poincare::ApproximationHelper::MakeResultRealIfInputIsReal<double>(std::complex<double>,std::complex<double>);
 
 template Poincare::Evaluation<float> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexesCompute<float> compute, Poincare::ApproximationHelper::BooleansCompute<float> booleansCompute, bool mapOnList, void * context);
 template Poincare::Evaluation<double> Poincare::ApproximationHelper::Map(const Poincare::ExpressionNode * expression, const ExpressionNode::ApproximationContext&, Poincare::ApproximationHelper::ComplexesCompute<double> compute, Poincare::ApproximationHelper::BooleansCompute<double> booleansCompute, bool mapOnList, void * context);

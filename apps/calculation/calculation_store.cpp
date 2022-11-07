@@ -155,7 +155,11 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
         if (isVariable && Utils::ShouldOnlyDisplayApproximation(input, exactValue, context)) {
           store.replaceChildAtIndexInPlace(0, approximatedValue);
         }
-        outputs[0] = store.storeValueForSymbol(context);
+        store.storeValueForSymbol(context);
+        outputs[0] = context->expressionForSymbolAbstract(store.symbol(), false);
+        if (outputs[0].isUninitialized()) {
+          outputs[0] = Undefined::Builder();
+        }
         outputs[1] = approximatedValue;
       }
       if (ExamModeConfiguration::unitsAreForbidden() && outputs[1].hasUnit()) {

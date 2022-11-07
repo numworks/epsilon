@@ -47,7 +47,7 @@ public:
   // Expression
   void deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  Expression storeValueForSymbol(Context * context) const;
+  bool storeValueForSymbol(Context * context) const;
 
 private:
   StoreNode * node() const { return static_cast<StoreNode *>(Expression::node()); }

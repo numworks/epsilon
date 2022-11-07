@@ -128,7 +128,9 @@ bool StoreMenuController::parseAndStore(const char * text) {
   }
   Store store = static_cast<Store&>(reducedExp);
   // Update the store before closing so that isStoreMenuOpen can be used
-  store.storeValueForSymbol(Container::activeApp()->localContext());
+  if (!store.storeValueForSymbol(Container::activeApp()->localContext())) {
+    // TODO : The record deletion has been denied. Add a warning.
+  }
   close();
   return true;
 }

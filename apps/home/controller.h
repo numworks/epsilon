@@ -36,11 +36,11 @@ private:
   void switchToSelectedApp();
 
   // Conversion index <--> column/row
-  int columnIndex(int iconIndex) const { return iconIndex % k_numberOfColumns; }
-  int rowIndex(int iconIndex) const { return iconIndex / k_numberOfColumns; }
-  int iconIndex(int columnIndex, int rowIndex) const { return rowIndex * k_numberOfColumns + columnIndex; }
-  int appIndex(int columnIndex, int rowIndex) const { return iconIndex(columnIndex, rowIndex) + 1; }
-  int lastIconColumn() { return columnIndex(numberOfIcons() - 1); }
+  int columnOfIconAtIndex(int iconIndex) const { return iconIndex % k_numberOfColumns; }
+  int rowOfIconAtIndex(int iconIndex) const { return iconIndex / k_numberOfColumns; }
+  int indexOfIconAtColumnAndRow(int column, int row) const { return row * k_numberOfColumns + column; }
+  int indexOfAppAtColumnAndRow(int column, int row) const { return indexOfIconAtColumnAndRow(column, row) + 1; }
+  int columnOfLastIcon() { return columnOfIconAtIndex(numberOfIcons() - 1); }
   
   class ContentView : public Escher::View {
   public:

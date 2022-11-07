@@ -30,8 +30,8 @@ public:
   HighlightCell * selectedCell();
   bool cellIsSelectable(HighlightCell * cell);
   int firstSelectableRow();
-  int indexOfNextSelectableRow(int delta);
-  int indexOfNextSelectableColumn(int delta);
+  int indexOfNextSelectableRow(int delta) { return indexOfNextSelectableColumnOrRow(delta, true); }
+  int indexOfNextSelectableColumn(int delta) { return indexOfNextSelectableColumnOrRow(delta, false); }
   bool selectCellAtLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
   bool selectCellAtClippedLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
   bool handleEvent(Ion::Events::Event event) override;

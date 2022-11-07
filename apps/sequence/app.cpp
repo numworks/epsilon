@@ -51,6 +51,10 @@ bool App::isAcceptableExpression(const Poincare::Expression exp) {
   return ExpressionFieldDelegateApp::isAcceptableExpression(exp) && exp.type() != ExpressionNode::Type::Comparison;
 }
 
+bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
+  return !(isVarBoxMenuOpen() || isStoreMenuOpen()) || !record.hasExtension(Ion::Storage::seqExtension);
+}
+
 App::App(Snapshot * snapshot) :
   FunctionApp(snapshot, &m_inputViewController),
   m_listController(&m_listFooter, this, &m_listHeader, &m_listFooter),

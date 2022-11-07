@@ -36,15 +36,9 @@ Expression Store::shallowReduce(ExpressionNode::ReductionContext reductionContex
   return *this;
 }
 
-Expression Store::storeValueForSymbol(Context * context) const {
+bool Store::storeValueForSymbol(Context * context) const {
   assert(!value().isUninitialized());
-  context->setExpressionForSymbolAbstract(value(), symbol());
-  Expression storedExpression = context->expressionForSymbolAbstract(symbol(), false);
-
-  if (storedExpression.isUninitialized()) {
-    return Undefined::Builder();
-  }
-  return storedExpression;
+  return context->setExpressionForSymbolAbstract(value(), symbol());
 }
 
 }

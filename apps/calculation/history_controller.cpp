@@ -174,6 +174,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           vc->setExactAndApproximateExpression(e, a);
         }
         if (vc) {
+          assert(vc->numberOfRows() > 0);
           Container::activeApp()->displayModalViewController(vc, 0.f, 0.f, Metric::PopUpTopMargin, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
         }
       }

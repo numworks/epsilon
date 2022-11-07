@@ -531,6 +531,7 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("√(-1)", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("{1}", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("{i}", {}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("ln(3+4)", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("cos(i)", {}, &globalContext, &store);
   assertMainCalculationOutputIs("i→z", "i", &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("z+1", {.complex = true}, &globalContext, &store);

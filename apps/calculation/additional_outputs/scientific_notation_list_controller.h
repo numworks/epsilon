@@ -7,11 +7,15 @@ namespace Calculation {
 
 class ScientificNotationListController : public ChainedExpressionsListController {
 public:
+  static bool HasAdditionalOutputs(Poincare::Expression approximateExpression);
+
   ScientificNotationListController(EditExpressionController * editExpressionController) :
     ChainedExpressionsListController(editExpressionController, true) {}
 
   void setExactAndApproximateExpression(Poincare::Expression exactExpression, Poincare::Expression approximateExpression) override;
 private:
+  static Poincare::Layout ScientificLayout(Poincare::Expression approximateExpression);
+
   I18n::Message messageAtIndex(int index) override;
 };
 

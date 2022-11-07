@@ -1,11 +1,12 @@
-#include "calculation.h"
-#include "../shared/poincare_helpers.h"
-#include "../shared/scrollable_multiple_expressions_view.h"
-#include "../shared/utils.h"
-#include "../global_preferences.h"
-#include "../exam_mode_configuration.h"
 #include "app.h"
+#include "additional_outputs/scientific_notation_list_controller.h"
+#include "calculation.h"
 #include "poincare/expression_node.h"
+#include <apps/global_preferences.h>
+#include <apps/exam_mode_configuration.h>
+#include <apps/shared/poincare_helpers.h>
+#include <apps/shared/scrollable_multiple_expressions_view.h>
+#include <apps/shared/utils.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/matrix.h>
 #include <poincare/undefined.h>
@@ -287,7 +288,9 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   }
   AdditionalInformations additionalInformations = {};
   if (a.type() != ExpressionNode::Type::Nonreal && preferences->displayMode() != Preferences::PrintFloatMode::Scientific) {
-    additionalInformations.scientificNotation = true;
+    // There should be no units at this point
+    assert(!a.hasUnit());
+    additionalInformations.scientificNotation = ScientificNotationListController::HasAdditionalOutputs(a);
   }
   // We want a single numerical value and to avoid showing the identity function
   bool isInterestingFunction = !i.isNumber() && i.type() != ExpressionNode::Type::ConstantMaths && !(i.type() == ExpressionNode::Type::Opposite && (i.childAtIndex(0).isNumber() || i.childAtIndex(0).type() == ExpressionNode::Type::ConstantMaths));

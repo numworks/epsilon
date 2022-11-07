@@ -48,8 +48,8 @@ void assert_tokenizes_as_undefined_token(const char * string) {
   }
 }
 
-void assert_text_not_parsable(const char * text) {
-  Expression result = Expression::Parse(text, nullptr);
+void assert_text_not_parsable(const char * text, Context * context = nullptr) {
+  Expression result = Expression::Parse(text, context);
   quiz_assert_print_if_failure(result.isUninitialized(), text);
 }
 
@@ -510,6 +510,12 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("log(1,2)", Logarithm::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("log\u0014{2\u0014}(1)", Logarithm::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)));
   assert_parsed_expression_is("\u0014{3\u0014}log(7)", Logarithm::Builder(BasedInteger::Builder(7), BasedInteger::Builder(3)));
+  assert_parsed_expression_is("5\u0014{3\u0014}log(7)", Multiplication::Builder(BasedInteger::Builder(5), Logarithm::Builder(BasedInteger::Builder(7), BasedInteger::Builder(3))));
+  {
+    Shared::GlobalContext context;
+    // A context is passed so that the expression is not parsed as a sequence
+    assert_text_not_parsable("og\u0014{2\u0014}(1)", &context);
+  }
   assert_parsed_expression_is("norm(1)", VectorNorm::Builder(BasedInteger::Builder(1)));
   assert_parsed_expression_is("permute(2,1)", PermuteCoefficient::Builder(BasedInteger::Builder(2),BasedInteger::Builder(1)));
   assert_text_not_parsable("piecewise(2,1+1,3)");

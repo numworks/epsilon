@@ -260,6 +260,7 @@ void Parser::isThereImplicitOperator() {
     m_nextToken.is(Token::LeftSystemParenthesis) ||
     m_nextToken.is(Token::LeftBracket) ||
     m_nextToken.is(Token::LeftBrace) ||
+    m_nextToken.is(Token::LeftSystemBrace) ||
     m_nextToken.is(Token::ImplicitAdditionBetweenUnits)
   );
 }
@@ -566,7 +567,10 @@ void Parser::parseLeftSystemParenthesis(Expression & leftHandSide, Token::Type s
 }
 
 void Parser::parseLeftSystemBrace(Expression & leftHandSide, Token::Type stoppingType) {
-  assert(leftHandSide.isUninitialized());
+  if (!leftHandSide.isUninitialized()) {
+    m_status = Status::Error;
+    return;
+  }
   /* A leading system brace is the result of serializing a NL logarithm. */
   Expression indice = parseUntil(Token::Type::RightSystemBrace);
   if (!indice.isUninitialized() && popTokenIfType(Token::Type::RightSystemBrace)) {

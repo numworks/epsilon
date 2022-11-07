@@ -42,8 +42,8 @@ Range2D Zoom::range(float maxFloat, bool forceNormalization) const {
   return result;
 }
 
-void Zoom::fitPoint(Coordinate2D<float> xy) {
-  m_interestingRange.extend(xy);
+void Zoom::fitPoint(Coordinate2D<float> xy, bool flipped) {
+  m_interestingRange.extend(flipped ? Coordinate2D<float>(xy.x2(), xy.x1()) : xy);
 }
 
 void Zoom::fitFullFunction(Function2DWithContext f, const void * model) {
@@ -52,10 +52,6 @@ void Zoom::fitFullFunction(Function2DWithContext f, const void * model) {
     float t = m_bounds.min() + step * i;
     fitPoint(f(t, model, m_context));
   }
-}
-
-Coordinate2D<float> flipped(Coordinate2D<float> xy, bool flip) {
-  return flip ? Coordinate2D<float>(xy.x2(), xy.x1()) : xy;
 }
 
 void Zoom::fitPointsOfInterest(Function2DWithContext f, const void * model, bool vertical) {
@@ -72,10 +68,10 @@ void Zoom::fitPointsOfInterest(Function2DWithContext f, const void * model, bool
    * infinite number of points in this direction. An horizontal asymptote
    * would be the result of a sampling artifact and can be discarded. */
   if (!leftInterrupted) {
-    fitPoint(flipped(asymptotes.left(), vertical));
+    fitPoint(asymptotes.left(), vertical);
   }
   if (!rightInterrupted) {
-    fitPoint(flipped(asymptotes.right(), vertical));
+    fitPoint(asymptotes.right(), vertical);
   }
 }
 
@@ -300,7 +296,7 @@ void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver
   Coordinate2D<float> p2(c, evaluator(c, aux));
   Coordinate2D<float> p3(c + d, evaluator(c + d, aux));
   if (pointIsInterestingHelper(p1, p2, p3, aux) != Solver<float>::Interest::None) {
-    fitPoint(flipped(p2, vertical));
+    fitPoint(p2, vertical);
   }
 }
 
@@ -323,7 +319,7 @@ bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEv
   int n = 0;
   Coordinate2D<float> p;
   while (std::isfinite((p = solver.next(evaluator, aux, test, hone)).x1())) { // assignment in condition
-    fitPoint(flipped(p, vertical));
+    fitPoint(p, vertical);
     n++;
     if (n == k_maxPointsIfInfinite) {
       tempRange = m_interestingRange;

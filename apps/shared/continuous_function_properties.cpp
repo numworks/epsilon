@@ -133,6 +133,14 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
     }
 
     if (precomputedFunctionSymbol == SymbolType::X) {
+      /* TODO: this check won't work if the matrix is not bubbled up but at
+       * least it can't be confused with the use of a matrix to store
+       * subcurves. Replace it with a proper type inference ? */
+      if (analyzedExpression.type() == ExpressionNode::Type::Matrix
+          || analyzedExpression.type() == ExpressionNode::Type::List) {
+        setErrorStatusAndUpdateCaption(Status::Undefined);
+        return;
+      }
       setCartesianFunctionProperties(analyzedExpression, context);
       return;
     }

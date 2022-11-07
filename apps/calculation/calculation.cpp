@@ -255,11 +255,11 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
    *   > output: cos(2)
    * However if the result is complex, it is treated as a complex result instead
    */
-  if (!isComplex && (Trigonometry::isDirectTrigonometryFunction(i)
-                  || Trigonometry::isInverseTrigonometryFunction(i)
-                  || Trigonometry::isDirectTrigonometryFunction(o)
-                  || Trigonometry::isInverseTrigonometryFunction(o))) {
-    return AdditionalInformations {.trigonometry = true};
+  if (!isComplex && (Trigonometry::isDirectTrigonometryFunction(i) || Trigonometry::isDirectTrigonometryFunction(o))) {
+    return AdditionalInformations {.directTrigonometry = true};
+  }
+  if (!isComplex && (Trigonometry::isInverseTrigonometryFunction(i) || Trigonometry::isInverseTrigonometryFunction(o))) {
+    return AdditionalInformations {.inverseTrigonometry = true};
   }
   if (o.hasUnit()) {
     AdditionalInformations additionalInformations = {};

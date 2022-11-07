@@ -40,14 +40,15 @@ public:
   struct AdditionalInformations {
     bool integer : 1;
     bool rational : 1;
-    bool trigonometry : 1;
+    bool directTrigonometry : 1;
+    bool inverseTrigonometry : 1;
     bool unit : 1;
     bool matrix : 1;
     bool vector : 1;
     bool complex : 1;
     bool function : 1;
     bool scientificNotation : 1;
-    bool isEmpty() const { return !(integer || rational || trigonometry || unit || matrix || vector || complex || function || scientificNotation); }
+    bool isEmpty() const { return !(integer || rational || directTrigonometry || inverseTrigonometry || unit || matrix || vector || complex || function || scientificNotation); }
   };
 
   static bool DisplaysExact(DisplayOutput d) { return d != DisplayOutput::ApproximateOnly; }

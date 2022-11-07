@@ -487,7 +487,7 @@ QUIZ_CASE(calculation_involving_sequence) {
 
 bool operator ==(const AdditionalInformations &a, const AdditionalInformations &b) {
   // TODO C++20 Use a default comparison operator
-  return a.integer == b.integer && a.rational == b.rational && a.trigonometry == b.trigonometry && a.unit == b.unit && a.matrix == b.matrix && a.vector == b.vector && a.complex == b.complex && a.function == b.function && a.scientificNotation == b.scientificNotation;
+  return a.integer == b.integer && a.rational == b.rational && a.directTrigonometry == b.directTrigonometry && a.inverseTrigonometry == b.inverseTrigonometry && a.unit == b.unit && a.matrix == b.matrix && a.vector == b.vector && a.complex == b.complex && a.function == b.function && a.scientificNotation == b.scientificNotation;
 }
 
 void assertCalculationAdditionalResultTypeHas(const char * input, const AdditionalInformations additionalInformationType, Context * context, CalculationStore * store) {
@@ -506,7 +506,8 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("π-π", {.integer = true, .scientificNotation = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("2/24", {.rational = true, .scientificNotation = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("1+i", {.complex = true}, &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas("sin(π)", {.trigonometry = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("sin(π)", {.directTrigonometry = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("acos(0.5)", {.inverseTrigonometry = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("sin(iπ)", {.complex = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("ln(2)", {.function = true, .scientificNotation = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("2^3", {.integer = true, .function = true, .scientificNotation = true}, &globalContext, &store);

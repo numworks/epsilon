@@ -2142,6 +2142,8 @@ QUIZ_CASE(poincare_simplification_logical_operators) {
   assert_parsed_expression_simplify_to("not undef", Undefined::Name());
   assert_parsed_expression_simplify_to("True and 2 = 2 ", "True");
   assert_parsed_expression_simplify_to("(True and 2) = 2", Undefined::Name());
+
+  assert_parsed_expression_simplify_to("3×not True", Undefined::Name());
 }
 
 QUIZ_CASE(poincare_simplification_piecewise_operator) {

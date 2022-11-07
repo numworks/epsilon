@@ -23,7 +23,7 @@ protected:
   //                                       " "+"nand"+" "+nullTermination
   virtual const char * operatorName() const = 0;
 private:
-  LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::BoundaryPunctuation; }
+  LayoutShape leftLayoutShape() const override { return LayoutShape::Default; }
   bool childAtIndexNeedsUserParentheses(const Expression & child, int childIndex) const override;
 };
 

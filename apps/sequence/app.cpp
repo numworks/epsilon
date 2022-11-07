@@ -74,10 +74,4 @@ App::App(Snapshot * snapshot) :
 {
 }
 
-NestedMenuController * App::variableBox() {
-  MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
-  varBox->lockDeleteEvent(MathVariableBoxController::Page::Sequence);
-  return varBox;
-}
-
 }

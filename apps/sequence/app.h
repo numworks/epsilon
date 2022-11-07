@@ -50,7 +50,6 @@ public:
   // TODO: override variableBox to lock sequence in the variable box once they appear there
   // NestedMenuController * variableBox(InputEventHandler * textInput) override;
   CodePoint XNT() override { return 'n'; }
-  Escher::NestedMenuController * variableBox() override;
   Shared::SequenceContext * localContext() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceContext(); }
   Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceStore(); }
   Shared::Interval * interval() { return snapshot()->interval(); }

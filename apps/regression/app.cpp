@@ -51,12 +51,6 @@ bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
   return !(isVarBoxMenuOpen() || isStoreMenuOpen()) || !record.hasExtension(Ion::Storage::lisExtension);
 }
 
-NestedMenuController * App::variableBox() {
-  MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
-  varBox->lockDeleteEvent(MathVariableBoxController::Page::List);
-  return varBox;
-}
-
 App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   ExpressionFieldDelegateApp(snapshot, &m_inputViewController),
   m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(), snapshot->regressionTypes()),

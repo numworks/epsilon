@@ -122,10 +122,4 @@ CodePoint App::XNT() {
   return ContinuousFunction::k_cartesianSymbol;
 }
 
-NestedMenuController * App::variableBox() {
-  MathVariableBoxController * varBox = AppsContainer::sharedAppsContainer()->variableBoxController();
-  varBox->lockDeleteEvent(MathVariableBoxController::Page::Function);
-  return varBox;
-}
-
 }

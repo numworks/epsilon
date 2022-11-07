@@ -23,7 +23,6 @@ using namespace Escher;
 MathVariableBoxController::MathVariableBoxController() :
   NestedMenuController(nullptr, I18n::Message::Variables),
   m_currentPage(Page::RootMenu),
-  m_lockPageDelete(Page::RootMenu),
   m_defineVariableCell(I18n::Message::DefineVariable),
   m_firstMemoizedLayoutIndex(0)
 {

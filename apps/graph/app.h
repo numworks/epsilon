@@ -47,7 +47,6 @@ public:
 
   TELEMETRY_ID("Graph");
   CodePoint XNT() override;
-  Escher::NestedMenuController * variableBox() override;
   bool storageWillChangeForRecord(Ion::Storage::Record) override;
   void storageDidChangeForRecord(Ion::Storage::Record) override;
   ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }

@@ -75,14 +75,6 @@ int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, bool row) {
   return cow;
 }
 
-int SelectableTableView::indexOfNextSelectableRow(int delta) {
-  return indexOfNextSelectableColumnOrRow(delta, true);
-}
-
-int SelectableTableView::indexOfNextSelectableColumn(int delta) {
-  return indexOfNextSelectableColumnOrRow(delta, false);
-}
-
 bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstResponder, bool withinTemporarySelection) {
   if (i < 0 || i >= dataSource()->numberOfColumns()) {
     return false;

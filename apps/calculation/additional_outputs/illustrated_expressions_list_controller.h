@@ -10,8 +10,8 @@ namespace Calculation {
 
 class IllustratedExpressionsListController : public ChainedExpressionsListController, public Escher::SelectableTableViewDelegate {
 public:
-  IllustratedExpressionsListController(EditExpressionController * editExpressionController) :
-    ChainedExpressionsListController(editExpressionController, false, this) {}
+  IllustratedExpressionsListController(EditExpressionController * editExpressionController, bool highlightWholeCells = false) :
+    ChainedExpressionsListController(editExpressionController, highlightWholeCells, this) {}
 
   // Responder
   void didEnterResponderChain(Responder * previousFirstResponder) override;

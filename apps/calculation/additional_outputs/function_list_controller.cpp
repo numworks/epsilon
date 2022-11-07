@@ -35,8 +35,7 @@ void FunctionListController::setExpression(Poincare::Expression e) {
   PoincareHelpers::CloneAndReduce(&reducedExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
   m_model.setParameters(reducedExpression, abscissa);
 
-  m_layouts[0] = LayoutHelper::String("y");
-  m_approximatedLayouts[0] = e.replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol)).createLayout(preferences->displayMode(), preferences->numberOfSignificantDigits(), context);
+  m_layouts[0] = HorizontalLayout::Builder(LayoutHelper::String("y="), e.replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol)).createLayout(preferences->displayMode(), preferences->numberOfSignificantDigits(), context));
 
   illustrationCell()->reloadCell();
   setShowIllustration(true);

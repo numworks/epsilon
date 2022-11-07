@@ -24,9 +24,8 @@ public:
       m_stackViewController(stackViewController),
       m_typeViewController(typeViewController),
       m_typeButton(typeButtonParentResponder, I18n::Message::StatisticsGraphType,
-                   Escher::Invocation(
-                       [](void * context, void * sender) {
-                         GraphButtonRowDelegate * delegate = static_cast<GraphButtonRowDelegate *>(context);
+                   Escher::Invocation::Builder<GraphButtonRowDelegate>(
+                     [](GraphButtonRowDelegate * delegate, void * sender) {
                          delegate->pushTypeController();
                          return true;
                        }, this), KDFont::Size::Small)

@@ -38,15 +38,13 @@ StoreMenuController::StoreMenuController() :
   m_listController(this),
   m_cell(this, nullptr, this, this),
   m_abortController(
-    Invocation([](void * context, void * sender) {
-      StoreMenuController * storeMenu = static_cast<StoreMenuController*>(context);
+    Invocation::Builder<StoreMenuController>([](StoreMenuController * storeMenu, void * sender) {
       // Close the warning and then the store menu which are both modals
       storeMenu->dismissModalViewController();
       storeMenu->close();
       return true;
     }, this),
-    Invocation([](void * context, void * sender) {
-      StoreMenuController * storeMenu = static_cast<StoreMenuController*>(context);
+    Invocation::Builder<StoreMenuController>([](StoreMenuController * storeMenu, void * sender) {
       storeMenu->dismissModalViewController();
       return true;
     }, this),

@@ -30,7 +30,7 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override;
   const char * title() override;
   void didBecomeFirstResponder() override;
-  static bool ButtonAction(void * c, void * s);
+  static bool ButtonAction(ResultsController * controller, void * s);
   Escher::View * view() override { return &m_contentView; }
 
   void initCell(ExpressionCellWithBufferWithMessage, void * cell, int index) override;

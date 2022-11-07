@@ -15,9 +15,9 @@ IntervalParameterController::IntervalParameterController(Responder * parentRespo
   m_title(I18n::Message::IntervalSet),
   m_startMessage(I18n::Message::XStart),
   m_endMessage(I18n::Message::XEnd),
-  m_confirmPopUpController(Invocation([](void * context, void * sender) {
+  m_confirmPopUpController(Invocation::Builder<IntervalParameterController>([](IntervalParameterController * controller, void * sender) {
     Container::activeApp()->dismissModalViewController();
-    ((IntervalParameterController *)context)->stackController()->pop();
+    controller->stackController()->pop();
     return true;
   }, this))
 {

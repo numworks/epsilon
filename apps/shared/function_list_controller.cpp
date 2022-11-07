@@ -9,14 +9,12 @@ namespace Shared {
 FunctionListController::FunctionListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, I18n::Message text) :
   ExpressionModelListController(parentResponder, text),
   ButtonRowDelegate(header, footer),
-  m_plotButton(this, I18n::Message::Plot, Invocation([](void * context, void * sender) {
-      FunctionListController * list = (FunctionListController *)context;
+  m_plotButton(this, I18n::Message::Plot, Invocation::Builder<FunctionListController>([](FunctionListController * list, void * sender) {
       TabViewController * tabController = list->tabController();
       tabController->setActiveTab(1);
       return true;
     }, this), KDFont::Size::Small, Palette::PurpleBright),
-  m_valuesButton(this, I18n::Message::DisplayValues, Invocation([](void * context, void * sender) {
-      FunctionListController * list = (FunctionListController *)context;
+  m_valuesButton(this, I18n::Message::DisplayValues, Invocation::Builder<FunctionListController>([](FunctionListController * list, void * sender) {
       TabViewController * tabController = list->tabController();
       tabController->setActiveTab(2);
       return true;

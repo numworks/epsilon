@@ -18,7 +18,7 @@ ResultsHomogeneityController::ResultsHomogeneityController(Escher::StackViewCont
 // ResultsTableController
 
 ResultsHomogeneityController::ResultsTableController::ResultsTableController(Escher::ViewController * resultsController, HomogeneityTest * statistic) :
-  CategoricalController(nullptr, resultsController, Invocation(&CategoricalController::ButtonAction, this)),
+  CategoricalController(nullptr, resultsController, Invocation::Builder<CategoricalController>(&CategoricalController::ButtonAction, this)),
   m_resultHomogeneityTable(&m_selectableTableView, this, statistic)
 {}
 

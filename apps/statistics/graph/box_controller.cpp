@@ -12,8 +12,7 @@ BoxController::BoxController(Responder * parentResponder, ButtonRowController * 
   MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store),
   m_view(store, &m_selectedIndex),
   m_boxParameterController(nullptr, store, &m_selectedIndex),
-  m_parameterButton(this, I18n::Message::StatisticsGraphSettings, Invocation([](void * context, void * sender) {
-    BoxController * boxController = static_cast<BoxController * >(context);
+  m_parameterButton(this, I18n::Message::StatisticsGraphSettings, Invocation::Builder<BoxController>([](BoxController * boxController, void * sender) {
     boxController->stackController()->push(boxController->boxParameterController());
     return true;
   }, this), KDFont::Size::Small)

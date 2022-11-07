@@ -35,7 +35,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   Escher::HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override { return 3; }
-  static bool ButtonAction(void * c, void * s);
+  static bool ButtonAction(HypothesisController * controller, void * s);
 
   bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
   bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField,

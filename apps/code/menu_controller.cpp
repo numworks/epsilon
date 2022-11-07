@@ -16,8 +16,7 @@ MenuController::MenuController(Responder * parentResponder, App * pythonDelegate
   RegularHeightTableViewDataSource(),
   ButtonRowDelegate(nullptr, footer),
   m_scriptStore(scriptStore),
-  m_consoleButton(this, I18n::Message::Console, Invocation([](void * context, void * sender) {
-        MenuController * menu = (MenuController *)context;
+  m_consoleButton(this, I18n::Message::Console, Invocation::Builder<MenuController>([](MenuController * menu, void * sender) {
         menu->consoleController()->setAutoImport(true);
         menu->stackViewController()->push(menu->consoleController());
         return true;

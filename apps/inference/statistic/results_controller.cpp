@@ -22,7 +22,7 @@ ResultsController::ResultsController(Escher::StackViewController * parent,
       m_tableView(this, &m_resultsDataSource, this, &m_contentView),
       m_title(KDFont::Size::Small, I18n::Message::CalculatedValues, KDContext::k_alignCenter, KDContext::k_alignCenter, Palette::GrayDark, Palette::WallScreen),
       m_contentView(&m_tableView, &m_resultsDataSource, &m_title),
-      m_resultsDataSource(&m_tableView, statistic, Escher::Invocation(&ResultsController::ButtonAction, this), this),
+      m_resultsDataSource(&m_tableView, statistic, Invocation::Builder<ResultsController>(&ResultsController::ButtonAction, this), this),
       m_statistic(statistic),
       m_testGraphController(testGraphController),
       m_intervalGraphController(intervalGraphController) {
@@ -52,8 +52,7 @@ const char * ResultsController::title() {
   return m_titleBuffer;
 }
 
-bool ResultsController::ButtonAction(void * c, void * s) {
-  ResultsController * controller = static_cast<ResultsController *>(c);
+bool ResultsController::ButtonAction(ResultsController * controller, void * s) {
   if (!controller->m_statistic->isGraphable()) {
     App::app()->displayWarning(I18n::Message::InvalidValues);
     return false;

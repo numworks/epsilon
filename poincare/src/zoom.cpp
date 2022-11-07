@@ -62,16 +62,21 @@ void Zoom::fitFullFunction(Function2DWithContext f, const void * model) {
   }
 }
 
-void Zoom::fitPointsOfInterest(Function2DWithContext f, const void * model, bool vertical) {
+void Zoom::fitPointsOfInterest(Function2DWithContext f, const void * model, bool vertical, Function2DWithContextDouble fDouble) {
   HorizontalAsymptoteHelper asymptotes(m_bounds.center());
   float (Coordinate2D<float>::*ordinate)() const = vertical ? &Coordinate2D<float>::x1 : &Coordinate2D<float>::x2;
-  InterestParameters params = { .f = f, .model = model, .context = m_context, .asymptotes = &asymptotes, .ordinate = ordinate };
+  double (Coordinate2D<double>::*ordinateDouble)() const = vertical ? &Coordinate2D<double>::x1 : &Coordinate2D<double>::x2;
+  InterestParameters params = { .f = f, .fDouble = fDouble, .model = model, .context = m_context, .asymptotes = &asymptotes, .ordinate = ordinate, .ordinateDouble = ordinateDouble };
   Solver<float>::FunctionEvaluation evaluator = [](float t, const void * aux) {
     const InterestParameters * p = static_cast<const InterestParameters *>(aux);
     return (p->f(t, p->model, p->context).*p->ordinate)();
   };
+  Solver<double>::FunctionEvaluation evaluatorDouble = [](double t, const void * aux) {
+    const InterestParameters * p = static_cast<const InterestParameters *>(aux);
+    return (p->fDouble(t, p->model, p->context).*p->ordinateDouble)();
+  };
   bool leftInterrupted, rightInterrupted;
-  fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator, &params, PointIsInteresting, HonePoint, vertical);
+  fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator, &params, PointIsInteresting, HonePoint, vertical, evaluatorDouble);
   /* If the search has been interrupted, the curve is supposed to have an
    * infinite number of points in this direction. An horizontal asymptote
    * would be the result of a sampling artifact and can be discarded. */
@@ -289,7 +294,7 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
   return saneRange;
 }
 
-void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical) {
+void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical, Solver<double>::FunctionEvaluation fDouble) {
   assert(leftInterrupted && rightInterrupted);
 
   /* Pick margin large enough to detect an extremum around zero, for some
@@ -298,8 +303,8 @@ void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver
 
   float c = m_bounds.center();
   float d = std::max(k_marginAroundZero, std::fabs(c * Solver<float>::k_relativePrecision));
-  *rightInterrupted = fitWithSolverHelper(c + d, m_bounds.max(), evaluator, aux, test, hone, vertical);
-  *leftInterrupted = fitWithSolverHelper(c - d, m_bounds.min(), evaluator, aux, test, hone, vertical);
+  *rightInterrupted = fitWithSolverHelper(c + d, m_bounds.max(), evaluator, aux, test, hone, vertical, fDouble);
+  *leftInterrupted = fitWithSolverHelper(c - d, m_bounds.min(), evaluator, aux, test, hone, vertical, fDouble);
 
   Coordinate2D<float> p1(c - d, evaluator(c - d, aux));
   Coordinate2D<float> p2(c, evaluator(c, aux));
@@ -309,7 +314,7 @@ void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver
   }
 }
 
-bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical) {
+bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical, Solver<double>::FunctionEvaluation fDouble) {
   constexpr int k_maxPointsOnOneSide = 20;
   constexpr int k_maxPointsIfInfinite = 5;
 
@@ -328,6 +333,15 @@ bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEv
   int n = 0;
   Coordinate2D<float> p;
   while (std::isfinite((p = solver.next(evaluator, aux, test, hone)).x1())) { // assignment in condition
+    if (solver.lastInterest() == Solver<float>::Interest::Discontinuity) {
+      assert(std::isnan(p.x2()) && std::isfinite(p.x1()));
+      if (std::isfinite(fDouble(p.x1(), aux))) {
+        /* The function evaluates to NAN in single-precision only. It is likely
+         * we have reached the limits of the float type, such as when
+         * evaluating y=(e^x-1)/(e^x+1) for x~90 (which leads to ∞/∞). */
+        break;
+      }
+    }
     fitPoint(p, vertical);
     n++;
     if (n == k_maxPointsIfInfinite) {

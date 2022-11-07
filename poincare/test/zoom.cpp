@@ -43,19 +43,19 @@ void assert_ranges_equal(Range2D observed, Range2D expected, const char * errorM
   assert_ranges_equal(*observed.y(), *expected.y(), errorMessage);
 }
 
-Coordinate2D<float> expressionEvaluator(float t, const void * model, Context * context) {
+template <typename T> Coordinate2D<T> expressionEvaluator(T t, const void * model, Context * context) {
   const Expression * e = static_cast<const Expression *>(model);
   if (e->type() == ExpressionNode::Type::Matrix) {
-    return Coordinate2D<float>(e->childAtIndex(0).approximateWithValueForSymbol(k_symbol, t, context, Real, Radian), e->childAtIndex(1).approximateWithValueForSymbol(k_symbol, t, context, Real, Radian));
+    return Coordinate2D<T>(e->childAtIndex(0).approximateWithValueForSymbol(k_symbol, t, context, Real, Radian), e->childAtIndex(1).approximateWithValueForSymbol(k_symbol, t, context, Real, Radian));
   }
-  return Coordinate2D<float>(t, e->approximateWithValueForSymbol(k_symbol, t, context, Real, Radian));
+  return Coordinate2D<T>(t, e->approximateWithValueForSymbol(k_symbol, t, context, Real, Radian));
 }
 
 void assert_full_function_range_is(const char * expression, Range1D bounds, Range2D expectedRange) {
   Shared::GlobalContext context;
   Expression e = parse_expression(expression, &context, false);
   ZoomTest zoom(bounds, &context);
-  zoom.zoom()->fitFullFunction(expressionEvaluator, &e);
+  zoom.zoom()->fitFullFunction(expressionEvaluator<float>, &e);
   assert_ranges_equal(zoom.interestingRange(), expectedRange, expression);
 }
 
@@ -73,7 +73,7 @@ void assert_points_of_interest_range_is(const char * expression, Range2D expecte
   Shared::GlobalContext context;
   Expression e = parse_expression(expression, &context, false);
   ZoomTest zoom(Range1D(-k_maxFloat, k_maxFloat), &context);
-  zoom.zoom()->fitPointsOfInterest(expressionEvaluator, &e);
+  zoom.zoom()->fitPointsOfInterest(expressionEvaluator<float>, &e, false, expressionEvaluator<double>);
   assert_ranges_equal(zoom.interestingRange(), expectedRange, expression);
 }
 
@@ -96,7 +96,8 @@ QUIZ_CASE(poincare_zoom_fit_points_of_interest) {
   assert_points_of_interest_range_is("sin(x)", Range2D(-8.028, 8.028, -1, 1));
   assert_points_of_interest_range_is("cos(x+1)+2", Range2D(-13.850, 15.240, 1, 3));
   assert_points_of_interest_range_is("x*ln(x)", Range2D(0, 1, -0.368, 0));
-  // FIXME assert_points_of_interest_range_is("(e^x-1)/(e^x+1)", Range2D());
+  assert_points_of_interest_range_is("(e^x-1)/(e^x+1)", Range2D(-2.309, 2.309, -0.819, 0.819));
+  assert_points_of_interest_range_is("10-1/(3^x)", Range2D(-2.096, 1.723, 0, 9.849));
   // FIXME assert_points_of_interest_range_is("x^x", Range2D());
   // FIXME assert_points_of_interest_range_is("root(x^3+1,3)-x", Range2D());
   // FIXME : Interest_range isn't good but this function used to raise asserts.

@@ -39,10 +39,7 @@ ComplexNode<T>::ComplexNode(std::complex<T> c) :
 
 template<typename T>
 T ComplexNode<T>::ToScalar(const std::complex<T> c) {
-    if (c.imag() == static_cast<T>(0.0)) {
-    return c.real();
-  }
-  return NAN;
+  return c.imag() == static_cast<T>(0.0) ? c.real() : NAN;
 }
 
 template<typename T>

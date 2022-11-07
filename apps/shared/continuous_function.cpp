@@ -155,7 +155,7 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, dou
      */
     assert(numberOfSubCurves() > 1
           || (Poincare::Helpers::EqualOrBothNan(evaluateXYAtParameter(cursorT, context).x1(), cursorX)
-              && (Poincare::Helpers::EqualOrBothNan(evaluateXYAtParameter(cursorT, context).x2(), cursorY) || std::isinf(cursorY)))); //
+              && (Poincare::Helpers::EqualOrBothNan(evaluateXYAtParameter(cursorT, context).x2(), cursorY) || std::isinf(cursorY))));
     return index == 0 ? cursorX : cursorY;
   }
 }

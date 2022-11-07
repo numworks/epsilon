@@ -135,17 +135,17 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           vc = &m_vectorController;
         } else if (additionalInformations.matrix) {
           vc = &m_matrixController;
-        } else if (additionalInformations.trigonometry) {
+        } else if (additionalInformations.directTrigonometry || additionalInformations.inverseTrigonometry) {
           vc = &m_trigonometryController;
-          // Find the angle
-          Expression focusInput = focusCalculation->input();
-          if (Trigonometry::isDirectTrigonometryFunction(e)) {
-            e = e.childAtIndex(0);
-          } else if (Trigonometry::isDirectTrigonometryFunction(focusInput)) {
-            e = focusInput.childAtIndex(0);
-          } else {
-            // input or output is inverse trigonometric function use e as is
-            assert(Trigonometry::isInverseTrigonometryFunction(focusInput) || Trigonometry::isInverseTrigonometryFunction(e));
+          if (additionalInformations.directTrigonometry) {
+            // Find the angle
+            if (Trigonometry::isDirectTrigonometryFunction(e)) {
+              e = e.childAtIndex(0);
+            } else {
+              Expression focusInput = focusCalculation->input();
+              assert(Trigonometry::isDirectTrigonometryFunction(focusInput));
+              e = focusInput.childAtIndex(0);
+            }
           }
         } else if (additionalInformations.integer) {
           vc = &m_integerController;

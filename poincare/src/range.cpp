@@ -35,11 +35,11 @@ void Range1D::privateSet(float t, bool isMin, float limit) {
     m_max = t;
     return;
   }
-
   float * bound = isMin ? &m_min : &m_max;
+  assert(limit > 0.0);
   *bound = std::clamp(t, -limit, limit);
   if (!(m_min <= m_max)) {
-    (isMin ? m_max : m_min) = *bound;
+    (isMin ? m_max : m_min) = (std::isfinite(*bound) ? *bound : -*bound);
   }
   if (length() < k_minLength) {
     float l = std::max(DefaultLengthAt(m_min), k_minLength);

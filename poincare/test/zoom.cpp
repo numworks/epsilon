@@ -88,7 +88,7 @@ QUIZ_CASE(poincare_zoom_fit_points_of_interest) {
   assert_points_of_interest_range_is("√(x^2+1)-x", Range2D(1.483, 1.483, 0.306, 0.306));
   assert_points_of_interest_range_is("x(x-1)(x-2)(x-3)(x-4)(x-5)", Range2D(0, 5, -16.901, 5.046));
   assert_points_of_interest_range_is("1/x", Range2D(-2.416, 2.416, -0.414, 0.414));
-  // FIXME assert_points_of_interest_range_is("1+(x+1)^(-4)", Range2D(-3.082, 0.911, 1.053, 115527.992));
+  assert_points_of_interest_range_is("1+(x+1)^(-4)", Range2D(-3.073, 0.911, 1.053, 1.075));
   assert_points_of_interest_range_is("2+1/(x^2+x+1)", Range2D(-2.663, 1.558, 2.184, 3.333));
   assert_points_of_interest_range_is("√(x)", Range2D(0, 7.422, 0, 2.724));
   assert_points_of_interest_range_is("√(x+1)-2", Range2D(-1.000, 6.237, 0.000, 0.690));

@@ -148,13 +148,13 @@ double ContinuousFunction::evaluateCurveParameter(int index, double cursorT, dou
     /* TODO: This assert is weird for two reasons:
      * - The subcurve number would need to be passed down here to properly
      *   assert
-     * - Sometimes cursorY value is inf while evaluateXYAtParameter does not
-     *   return an inf value. This is because CurveViewCursor has a m_maxValue
-     *   beyond which the cursorY value is set to inf.
+     * - Sometimes cursorX or cursorY value is inf while evaluateXYAtParameter
+     *   does not return an inf value. This is because CurveViewCursor has a
+     *   m_maxValue beyond which the cursorY value is set to inf.
      *   Example: f(x) = 200 000 000
      */
     assert(numberOfSubCurves() > 1
-          || (Poincare::Helpers::EqualOrBothNan(evaluateXYAtParameter(cursorT, context).x1(), cursorX)
+          || ((Poincare::Helpers::EqualOrBothNan(evaluateXYAtParameter(cursorT, context).x1(), cursorX) || std::isinf(cursorX))
               && (Poincare::Helpers::EqualOrBothNan(evaluateXYAtParameter(cursorT, context).x2(), cursorY) || std::isinf(cursorY))));
     return index == 0 ? cursorX : cursorY;
   }

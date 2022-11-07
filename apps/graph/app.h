@@ -59,20 +59,9 @@ public:
 private:
   App(Snapshot * snapshot);
   ListController m_listController;
-  Escher::ButtonRowController m_listFooter;
-  Escher::ButtonRowController m_listHeader;
-  Escher::StackViewController m_listStackViewController;
   GraphController m_graphController;
-  Escher::AlternateEmptyViewController m_graphAlternateEmptyViewController;
-  Escher::ButtonRowController m_graphHeader;
-  Escher::StackViewController m_graphStackViewController;
   ValuesController m_valuesController;
   FunctionColumnParameterController m_functionParameterController;
-  Escher::AlternateEmptyViewController m_valuesAlternateEmptyViewController;
-  Escher::ButtonRowController m_valuesHeader;
-  Escher::StackViewController m_valuesStackViewController;
-  Escher::TabViewController m_tabViewController;
-  Escher::InputViewController m_inputViewController;
 };
 
 }

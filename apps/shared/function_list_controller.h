@@ -7,10 +7,13 @@
 #include <escher/highlight_cell.h>
 #include "list_parameter_controller.h"
 #include "expression_model_list_controller.h"
+#include "input_event_handler_delegate.h"
+#include "layout_field_delegate.h"
+#include "text_field_delegate.h"
 
 namespace Shared {
 
-class FunctionListController : public ExpressionModelListController, public Escher::ButtonRowDelegate {
+class FunctionListController : public ExpressionModelListController, public Escher::ButtonRowDelegate, public Shared::InputEventHandlerDelegate, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate {
 public:
   FunctionListController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::ButtonRowController * footer, I18n::Message text);
 

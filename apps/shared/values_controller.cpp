@@ -25,7 +25,7 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
   m_abscissaParameterController(this, this)
 {}
 
-void ValuesController::setupSelectableTableViewAndCells(InputEventHandlerDelegate * inputEventHandlerDelegate) {
+void ValuesController::setupSelectableTableViewAndCells(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate) {
   int numberOfAbscissaCells = abscissaCellsCount();
   for (int i = 0; i < numberOfAbscissaCells; i++) {
     EvenOddEditableTextCell * c = abscissaCells(i);

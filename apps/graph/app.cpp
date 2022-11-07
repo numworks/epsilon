@@ -107,22 +107,11 @@ void App::Snapshot::tidy() {
 }
 
 App::App(Snapshot * snapshot) :
-  FunctionApp(snapshot, &m_inputViewController),
+  FunctionApp(snapshot, &m_listController, &m_graphController, &m_valuesController),
   m_listController(&m_listFooter, &m_listHeader, &m_listFooter, &m_graphController, &m_functionParameterController),
-  m_listFooter(&m_listHeader, &m_listController, &m_listController, ButtonRowController::Position::Bottom, ButtonRowController::Style::EmbossedGray),
-  m_listHeader(&m_listStackViewController, &m_listFooter, &m_listController),
-  m_listStackViewController(&m_tabViewController, &m_listHeader, Escher::StackViewController::Style::WhiteUniform),
   m_graphController(&m_graphAlternateEmptyViewController, this, snapshot->graphRange(), snapshot->cursor(), snapshot->indexFunctionSelectedByCursor(), snapshot->rangeVersion(), &m_graphHeader),
-  m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
-  m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
-  m_graphStackViewController(&m_tabViewController, &m_graphHeader, Escher::StackViewController::Style::WhiteUniform),
   m_valuesController(&m_valuesAlternateEmptyViewController, this, &m_valuesHeader, &m_functionParameterController),
-  m_functionParameterController(this, I18n::Message::FunctionColor, I18n::Message::DeleteExpression, &m_inputViewController, &m_graphController, &m_valuesController),
-  m_valuesAlternateEmptyViewController(&m_valuesHeader, &m_valuesController, &m_valuesController),
-  m_valuesHeader(&m_valuesStackViewController, &m_valuesAlternateEmptyViewController, &m_valuesController),
-  m_valuesStackViewController(&m_tabViewController, &m_valuesHeader, Escher::StackViewController::Style::WhiteUniform),
-  m_tabViewController(&m_inputViewController, snapshot, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
-  m_inputViewController(&m_modalViewController, &m_tabViewController, &m_listController, &m_listController, &m_listController)
+  m_functionParameterController(this, I18n::Message::FunctionColor, I18n::Message::DeleteExpression, &m_inputViewController, &m_graphController, &m_valuesController)
 {
 }
 

@@ -4,9 +4,6 @@
 #include <apps/i18n.h>
 #include <apps/shared/sequence_store.h>
 #include <apps/shared/function_list_controller.h>
-#include <apps/shared/input_event_handler_delegate.h>
-#include <apps/shared/layout_field_delegate.h>
-#include <apps/shared/text_field_delegate.h>
 #include <escher/table_view_data_source.h>
 #include "list_parameter_controller.h"
 #include "sequence_toolbox.h"
@@ -15,7 +12,7 @@
 
 namespace Sequence {
 
-class ListController : public Shared::FunctionListController, public Shared::InputEventHandlerDelegate, public Shared::TextFieldDelegate, public Shared::LayoutFieldDelegate, public Escher::TableViewDataSource {
+class ListController : public Shared::FunctionListController, public Escher::TableViewDataSource {
 public:
   ListController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Escher::ButtonRowController * footer);
   const char * title() override { return I18n::translate(I18n::Message::SequenceTab); }

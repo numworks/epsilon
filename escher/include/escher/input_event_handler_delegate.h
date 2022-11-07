@@ -7,7 +7,7 @@ namespace Escher {
 
 class InputEventHandlerDelegate {
 public:
-  virtual PervasiveBox * toolbox()  = 0;
+  virtual PervasiveBox * toolbox() = 0;
   virtual PervasiveBox * variableBox() = 0;
 };
 

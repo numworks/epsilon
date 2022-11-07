@@ -23,7 +23,7 @@ using namespace Shared;
 namespace Sequence {
 
 void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
-  assert(m_sequence);
+  assert(!m_record.isNull());
   assert(rect.height() < k_maxHeight);
   if (shouldUpdate()) {
     /* If previous step is already drawn, we can remove the dot, the gray line
@@ -39,17 +39,19 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
       }
     }
   }
+  SequenceStore * sequenceStore = App::app()->functionStore();
+  ExpiringPointer<Shared::Sequence> sequence = sequenceStore->modelForRecord(m_record);
   constexpr int bufferSize = k_textMaxLength + 1;
   char name[bufferSize] = {};
-  int nameLength = m_sequence->name(name, bufferSize);
-  KDColor fadedColor = KDColor::Blend(m_sequence->color(), KDColorWhite, k_curveFadeRatio);
+  int nameLength = sequence->name(name, bufferSize);
+  KDColor fadedColor = KDColor::Blend(sequence->color(), KDColorWhite, k_curveFadeRatio);
   Poincare::Context * context = App::app()->localContext();
   /* ExpressionModels are using Symbol(UCodePointUnknown=0x1) as their symbol in
    * a recursive definition, n is Symbol(0x1)
    * and u(n) is Poincare::Sequence('u', Symbol(0x1)) */
   Poincare::Sequence sequenceSymbol = Poincare::Sequence::Builder(name, strlen(name), Poincare::Symbol::Builder(UCodePointUnknown));
   Poincare::Symbol variable = Poincare::Symbol::Builder(UCodePointUnknown);
-  Poincare::Expression function = m_sequence->expressionClone().replaceSymbolWithExpression(sequenceSymbol, variable);
+  Poincare::Expression function = sequence->expressionClone().replaceSymbolWithExpression(sequenceSymbol, variable);
   Curve2DEvaluation<float> evaluateFunction =
     [](float t, void * model, void * context) {
       Poincare::Expression * e = (Poincare::Expression *)model;
@@ -66,23 +68,23 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
   }
   bool increasing = shouldUpdate() && m_cachedStep == m_step - 1;
   int initialStep = increasing ? m_cachedStep : (shouldUpdate() ? m_step : 0);
-  int rank = m_sequence->initialRank() + initialStep;
-  float x = increasing ? m_x : m_sequence->evaluateXYAtParameter(static_cast<float>(rank), context).x2();
-  float y = rank == m_sequence->initialRank() ? 0 : x;
-  float uOfX = m_sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
+  int rank = sequence->initialRank() + initialStep;
+  float x = increasing ? m_x : sequence->evaluateXYAtParameter(static_cast<float>(rank), context).x2();
+  float y = rank == sequence->initialRank() ? 0 : x;
+  float uOfX = sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
   KDMeasuringContext measuringContext(*ctx);
   for (int i = initialStep; i < m_step; i++) {
     rank++;
     measuringContext.reset();
-    plotView->drawDashedStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color());
+    plotView->drawDashedStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, sequence->color());
     m_verticalLineCache[i].save(ctx, measuringContext.writtenRect());
-    plotView->drawDashedStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, m_sequence->color());
+    plotView->drawDashedStraightSegment(ctx, rect, AbstractPlotView::Axis::Vertical, x, y, uOfX, sequence->color());
     y = uOfX;
-    float uOfuOfX = m_sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
+    float uOfuOfX = sequence->evaluateXYAtParameter(static_cast<float>(rank+1), context).x2();
     measuringContext.reset();
-    plotView->drawDashedStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color());
+    plotView->drawDashedStraightSegment(&measuringContext, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, sequence->color());
     m_horizontalLineCache[i].save(ctx, measuringContext.writtenRect());
-    plotView->drawDashedStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, m_sequence->color());
+    plotView->drawDashedStraightSegment(ctx, rect, AbstractPlotView::Axis::Horizontal, y, x, uOfX, sequence->color());
     x = uOfX;
     uOfX = uOfuOfX;
   }

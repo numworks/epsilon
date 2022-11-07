@@ -321,7 +321,7 @@ void ValuesController::resetLayoutMemoization() {
     assert(valueCell);
     valueCell->setLayout(Layout());
   }
-  const int numberOfFunctionRows = numberOfValuesColumns();
+  const int numberOfFunctionRows = maxNumberOfFunctions();
   for (int i = 0; i < numberOfFunctionRows; i++) {
     ExpressionFunctionTitleCell * titleCell = functionTitleCells(i);
     assert(titleCell);

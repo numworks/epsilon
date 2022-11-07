@@ -9,9 +9,8 @@ using namespace Escher;
 
 ExamPopUpController::ExamPopUpController() :
   Shared::MessagePopUpController(
-    Invocation(
-      [](void * context, void * sender) {
-        ExamPopUpController * controller = (ExamPopUpController *)context;
+    Invocation::Builder<ExamPopUpController>(
+      [](ExamPopUpController * controller, void * sender) {
         Poincare::Preferences::ExamMode mode = controller->targetExamMode();
         Poincare::Preferences::ExamMode previousMode = Poincare::Preferences::sharedPreferences()->examMode();
         assert(mode != Poincare::Preferences::ExamMode::Unknown);

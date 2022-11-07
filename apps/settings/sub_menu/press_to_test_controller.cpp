@@ -17,12 +17,11 @@ PressToTestController::PressToTestController(Responder * parentResponder) :
   m_bottomMessageView(KDFont::Size::Small, I18n::Message::ToDeactivatePressToTest1, KDContext::k_alignCenter, KDContext::k_alignCenter, KDColorBlack, Palette::WallScreen),
   m_view(&m_selectableTableView, this, &m_topMessageView, &m_bottomMessageView),
   m_tempPressToTestParams{},
-  m_activateButton(&m_selectableTableView, I18n::Message::ActivateTestMode, Invocation([](void * context, void * sender) {
-    AppsContainer::sharedAppsContainer()->displayExamModePopUp(Preferences::ExamMode::PressToTest, static_cast<PressToTestController *>(context)->getPressToTestParams());
+  m_activateButton(&m_selectableTableView, I18n::Message::ActivateTestMode, Invocation::Builder<PressToTestController>([](PressToTestController * controller, void * sender) {
+    AppsContainer::sharedAppsContainer()->displayExamModePopUp(Preferences::ExamMode::PressToTest, controller->getPressToTestParams());
     return true; }, this)),
-  m_confirmPopUpController(Invocation([](void * context, void * sender) {
+  m_confirmPopUpController(Invocation::Builder<PressToTestController>([](PressToTestController * controller, void * sender) {
     Container::activeApp()->dismissModalViewController();
-    PressToTestController * controller = static_cast<PressToTestController *>(context);
     controller->resetController();
     static_cast<StackViewController *>(controller->parentResponder())->pop();
     return true; }, this))

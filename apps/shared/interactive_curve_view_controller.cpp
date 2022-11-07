@@ -19,18 +19,15 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   m_rangeParameterController(this, inputEventHandlerDelegate, interactiveRange),
   m_zoomParameterController(this, interactiveRange, curveView),
   m_interactiveRange(interactiveRange),
-  m_autoButton(this, I18n::Message::DefaultSetting, Invocation([](void * context, void * sender) {
-    InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
+  m_autoButton(this, I18n::Message::DefaultSetting, Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
     graphController->autoButtonAction();
     return true;
   }, this), &m_autoDotView, KDFont::Size::Small),
-  m_navigationButton(this, I18n::Message::Navigate, Invocation([](void * context, void * sender) {
-    InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
+  m_navigationButton(this, I18n::Message::Navigate, Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
     graphController->navigationButtonAction();
     return true;
   }, this), KDFont::Size::Small),
-  m_rangeButton(this, I18n::Message::Axis, Invocation([](void * context, void * sender) {
-    InteractiveCurveViewController * graphController = (InteractiveCurveViewController *) context;
+  m_rangeButton(this, I18n::Message::Axis, Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
     graphController->rangeParameterController()->setRange(graphController->interactiveCurveViewRange());
     StackViewController * stack = graphController->stackController();
     stack->push(graphController->rangeParameterController());
@@ -345,8 +342,7 @@ void InteractiveCurveViewController::navigationButtonAction() {
 }
 
 Invocation InteractiveCurveViewController::calculusButtonInvocation() {
-  return Invocation([](void * context, void * sender) {
-    InteractiveCurveViewController * graphController = static_cast<InteractiveCurveViewController *>(context);
+  return Invocation::Builder<InteractiveCurveViewController>([](InteractiveCurveViewController * graphController, void * sender) {
     if (graphController->curveSelectionController()->numberOfRows() > 1) {
       graphController->stackController()->push(graphController->curveSelectionController());
     } else {

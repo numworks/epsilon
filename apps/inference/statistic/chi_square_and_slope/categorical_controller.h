@@ -23,7 +23,7 @@ class CategoricalController : public Escher::SelectableListViewController<Escher
 public:
   CategoricalController(Escher::Responder * parent, Escher::ViewController * nextController, Escher::Invocation invocation);
 
-  static bool ButtonAction(void * c, void * s);
+  static bool ButtonAction(CategoricalController * controller, void * s);
 
   // Responder
   void didBecomeFirstResponder() override;
@@ -69,7 +69,7 @@ public:
   // Responder
   void didEnterResponderChain(Responder * previousResponder) override;
 
-  static bool ButtonAction(void * c, void * s);
+  static bool ButtonAction(InputCategoricalController * controller, void * s);
 
   // ViewController
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return Escher::ViewController::TitlesDisplay::DisplayLastTitle; }

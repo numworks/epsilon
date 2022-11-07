@@ -22,8 +22,8 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   SelectableListViewController(parentResponder),
   m_brightnessCell(I18n::Message::Default),
   m_popUpCell(I18n::Message::Default),
-  m_resetButton(&m_selectableTableView, I18n::Message::ResetCalculator, Invocation([](void * context, void * sender) {
-    static_cast<MainController *>(context)->m_resetController.presentModally();
+  m_resetButton(&m_selectableTableView, I18n::Message::ResetCalculator, Invocation::Builder<MainController>([](MainController * controller, void * sender) {
+    controller->m_resetController.presentModally();
     return true;
   }, this)),
   m_preferencesController(this),
@@ -34,7 +34,7 @@ MainController::MainController(Responder * parentResponder, InputEventHandlerDel
   m_testModeController(this, this),
   m_aboutController(this),
   m_resetController(
-    Invocation([](void * context, void * sender) {
+    Invocation::Builder<MainController>([](MainController * controller, void * sender) {
       Ion::Reset::core();
       return true;
       }, this),

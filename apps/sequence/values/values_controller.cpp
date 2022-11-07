@@ -13,8 +13,7 @@ namespace Sequence {
 ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header),
   m_intervalParameterController(this, inputEventHandlerDelegate),
-  m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
-    ValuesController * valuesController = (ValuesController *) context;
+  m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation::Builder<ValuesController>([](ValuesController * valuesController, void * sender) {
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     IntervalParameterController * controller = valuesController->intervalParameterController();
     controller->setInterval(valuesController->intervalAtColumn(valuesController->selectedColumn()));

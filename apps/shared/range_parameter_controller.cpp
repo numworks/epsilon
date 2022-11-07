@@ -12,14 +12,13 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
   SelectableListViewController(parentResponder),
   m_interactiveRange(interactiveRange),
   m_tempInteractiveRange(*interactiveRange),
-  m_okButton(&m_selectableTableView, I18n::Message::Ok, Invocation([](void * context, void * sender) {
-    RangeParameterController * parameterController = static_cast<RangeParameterController *>(context);
+  m_okButton(&m_selectableTableView, I18n::Message::Ok, Invocation::Builder<RangeParameterController>([](RangeParameterController * parameterController, void * sender) {
     parameterController->buttonAction();
     return true;
   }, this)),
-  m_confirmPopUpController(Invocation([](void * context, void * sender) {
+  m_confirmPopUpController(Invocation::Builder<RangeParameterController>([](RangeParameterController * controller, void * sender) {
     Container::activeApp()->dismissModalViewController();
-    ((RangeParameterController *)context)->stackController()->pop();
+    controller->stackController()->pop();
     return true;
   }, this)),
   m_singleInteractiveCurveViewRangeController(parentResponder, inputEventHandlerDelegate, &m_tempInteractiveRange, &m_confirmPopUpController)

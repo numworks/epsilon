@@ -12,9 +12,9 @@ namespace Statistics {
 HistogramParameterController::HistogramParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store) :
   FloatParameterController<double>(parentResponder),
   m_store(store),
-  m_confirmPopUpController(Invocation([](void * context, void * sender) {
+  m_confirmPopUpController(Invocation::Builder<HistogramParameterController>([](HistogramParameterController * controller, void * sender) {
     Container::activeApp()->dismissModalViewController();
-    ((HistogramParameterController *)context)->stackController()->pop();
+    controller->stackController()->pop();
     return true;
   }, this))
 {

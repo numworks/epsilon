@@ -26,8 +26,7 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   m_functionParameterController(functionParameterController),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_derivativeParameterController(this),
-  m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation([](void * context, void * sender) {
-    ValuesController * valuesController = (ValuesController *) context;
+  m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation::Builder<ValuesController>([](ValuesController * valuesController, void * sender) {
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
     IntervalParameterSelectorController * intervalSelectorController = valuesController->intervalParameterSelectorController();
     if (intervalSelectorController->numberOfRows() == 1) {
@@ -41,8 +40,7 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
     stack->push(intervalSelectorController);
     return true;
   }, this), k_cellFont),
-  m_exactValuesButton(this, I18n::Message::ExactResults, Invocation([](void * context, void * sender) {
-    ValuesController * valuesController = (ValuesController *) context;
+  m_exactValuesButton(this, I18n::Message::ExactResults, Invocation::Builder<ValuesController>([](ValuesController * valuesController, void * sender) {
     valuesController->exactValuesButtonAction();
     return true;
   }, this), &m_exactValuesDotView, k_cellFont),

@@ -23,8 +23,7 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Esch
   m_residualPlotCell(I18n::Message::ResidualPlot),
   m_xParameterCell(I18n::Message::XPrediction),
   m_yParameterCell(I18n::Message::YPrediction),
-  m_removeRegressionCell(&(this->m_selectableTableView), I18n::Message::RemoveRegression, Invocation([](void * context, void * sender) {
-      GraphOptionsController * controller = (GraphOptionsController *) context;
+  m_removeRegressionCell(&(this->m_selectableTableView), I18n::Message::RemoveRegression, Invocation::Builder<GraphOptionsController>([](GraphOptionsController * controller, void * sender) {
       controller->removeRegression();
       return true;
     }, this)),

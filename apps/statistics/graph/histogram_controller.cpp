@@ -22,8 +22,7 @@ HistogramController::HistogramController(Responder * parentResponder, Escher::In
   m_histogramRange(store),
   m_storeVersion(storeVersion),
   m_histogramParameterController(nullptr, inputEventHandlerDelegate, store),
-  m_parameterButton(this, I18n::Message::StatisticsGraphSettings, Invocation([](void * context, void * sender) {
-    HistogramController * histogramController = static_cast<HistogramController * >(context);
+  m_parameterButton(this, I18n::Message::StatisticsGraphSettings, Invocation::Builder<HistogramController>([](HistogramController * histogramController, void * sender) {
     histogramController->stackController()->push(histogramController->histogramParameterController());
     return true;
   }, this), KDFont::Size::Small)

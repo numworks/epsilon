@@ -30,7 +30,7 @@ HypothesisController::HypothesisController(Escher::StackViewController * parent,
       m_operatorDataSource(test),
       m_h0(&m_selectableTableView, handler, this),
       m_ha(&m_selectableTableView, &m_operatorDataSource, this),
-      m_next(&m_selectableTableView, I18n::Message::Next, Escher::Invocation(&HypothesisController::ButtonAction, this)),
+      m_next(&m_selectableTableView, I18n::Message::Next, Invocation::Builder<HypothesisController>(&HypothesisController::ButtonAction, this)),
       m_test(test) {
   Poincare::Layout h0 = Poincare::HorizontalLayout::Builder(
       Poincare::CodePointLayout::Builder('H'),
@@ -155,8 +155,7 @@ void HypothesisController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData(true);
 }
 
-bool HypothesisController::ButtonAction(void * c, void * s) {
-  HypothesisController * controller = static_cast<HypothesisController *>(c);
+bool HypothesisController::ButtonAction(HypothesisController * controller, void * s) {
   if (controller->m_test->significanceTestType() == SignificanceTestType::Slope) {
     controller->stackOpenPage(controller->m_inputSlopeController);
   } else {

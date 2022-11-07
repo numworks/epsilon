@@ -32,8 +32,7 @@ bool CategoricalController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-bool CategoricalController::ButtonAction(void * c, void * s) {
-  CategoricalController * controller = static_cast<CategoricalController *>(c);
+bool CategoricalController::ButtonAction(CategoricalController * controller, void * s) {
   controller->stackOpenPage(controller->m_nextController);
   return true;
 }
@@ -122,7 +121,7 @@ InputCategoricalController::InputCategoricalController(
     ViewController * nextController,
     Statistic * statistic,
     InputEventHandlerDelegate * inputEventHandlerDelegate) :
-      CategoricalController(parent, nextController, Invocation(&InputCategoricalController::ButtonAction, this)),
+  CategoricalController(parent, nextController, Invocation::Builder<InputCategoricalController>(&InputCategoricalController::ButtonAction, this)),
       m_statistic(statistic),
       m_innerSignificanceCell(&m_selectableTableView, inputEventHandlerDelegate, this),
       m_significanceCell(&m_innerSignificanceCell)
@@ -149,14 +148,13 @@ void InputCategoricalController::didEnterResponderChain(Responder * previousResp
   PrintValueInTextHolder(m_statistic->threshold(), m_innerSignificanceCell.textField(), true, true);
 }
 
-bool InputCategoricalController::ButtonAction(void * c, void * s) {
-  InputCategoricalController * controller = static_cast<InputCategoricalController *>(c);
+bool InputCategoricalController::ButtonAction(InputCategoricalController * controller, void * s) {
   if (!controller->m_statistic->validateInputs()) {
     App::app()->displayWarning(I18n::Message::InvalidInputs);
     return false;
   }
   controller->m_statistic->compute();
-  return CategoricalController::ButtonAction(c, s);
+  return CategoricalController::ButtonAction(controller, s);
 }
 
 void InputCategoricalController::tableViewDataSourceDidChangeSize() {

@@ -17,7 +17,6 @@ constexpr CodePoint ListController::k_equationSymbols[];
 
 ListController::ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, GraphController * graphController, FunctionParameterController * functionParameterController) :
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),
-  Shared::InputEventHandlerDelegate(),
   m_selectableTableView(this, this, this, this),
   m_parameterController(functionParameterController),
   m_modelsParameterController(this, nullptr, this),

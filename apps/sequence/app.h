@@ -1,7 +1,6 @@
 #ifndef SEQUENCE_APP_H
 #define SEQUENCE_APP_H
 
-#include <escher/alternate_empty_view_controller.h>
 #include "../shared/sequence_context.h"
 #include "../shared/sequence_store.h"
 #include "graph/graph_controller.h"
@@ -65,19 +64,8 @@ public:
 private:
   App(Snapshot * snapshot);
   ListController m_listController;
-  Escher::ButtonRowController m_listFooter;
-  Escher::ButtonRowController m_listHeader;
-  Escher::StackViewController m_listStackViewController;
   GraphController m_graphController;
-  Escher::AlternateEmptyViewController m_graphAlternateEmptyViewController;
-  Escher::ButtonRowController m_graphHeader;
-  Escher::StackViewController m_graphStackViewController;
   ValuesController m_valuesController;
-  Escher::AlternateEmptyViewController m_valuesAlternateEmptyViewController;
-  Escher::ButtonRowController m_valuesHeader;
-  Escher::StackViewController m_valuesStackViewController;
-  Escher::TabViewController m_tabViewController;
-  Escher::InputViewController m_inputViewController;
 };
 
 }

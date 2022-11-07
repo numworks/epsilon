@@ -16,7 +16,7 @@ using namespace Escher;
 
 namespace Shared {
 
-SumGraphController::SumGraphController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * graphView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol) :
+SumGraphController::SumGraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * graphView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol) :
   SimpleInteractiveCurveViewController(parentResponder, cursor),
   m_step(Step::FirstParameter),
   m_graphRange(range),
@@ -191,7 +191,7 @@ Poincare::Expression SumGraphController::createSumExpression(double startSum, do
 
 /* Legend View */
 
-SumGraphController::LegendView::LegendView(SumGraphController * controller, InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol) :
+SumGraphController::LegendView::LegendView(SumGraphController * controller, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, CodePoint sumSymbol) :
   m_sum(KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle, k_font),
   m_legend(k_font, I18n::Message::Default, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, Palette::GrayMiddle),
   m_editableZone(controller, m_textBuffer, k_editableZoneBufferSize, TextField::MaxBufferSize(), inputEventHandlerDelegate, controller, k_font,

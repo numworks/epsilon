@@ -28,6 +28,10 @@ void App::Snapshot::reset() {
 
 void App::storageDidChangeForRecord(Ion::Storage::Record record) {
   equationStore()->storageDidChangeForRecord(record);
+  if (record.isNull()) {
+    return;
+  }
+  m_stackViewController.popUntilDepth(1, true);
 }
 
 void App::Snapshot::tidy() {

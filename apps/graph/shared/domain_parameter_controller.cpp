@@ -95,7 +95,7 @@ bool DomainParameterController::setParameterAtIndex(int parameterIndex, float f)
   /* Setting Min (or Max) parameter can alter the previously set Max
    * (or Min) parameter if Max <= Min. It also disable the auto domain. */
   m_autoParam = false;
-  parameterIndex == 1 ? m_rangeParam.setMin(f) : m_rangeParam.setMax(f);
+  parameterIndex == 1 ? m_rangeParam.setMin(f, INFINITY) : m_rangeParam.setMax(f, INFINITY);
   return true;
 }
 

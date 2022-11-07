@@ -1,5 +1,6 @@
 #include <poincare/zoom.h>
 #include <poincare/trinary_boolean.h>
+#include <poincare/solver_algorithms.h>
 #include <string.h>
 
 namespace Poincare {
@@ -175,41 +176,42 @@ Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a, Coordina
 Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest interest, float precision) {
   /* Use a simple dichotomy in [a,b] to hone in on the point of interest
    * without using the costly Brent methods. */
-  constexpr int k_numberOfIterations = 10; // TODO Tune
-  bool continuous = false;
-  /* Define three points m, u and v such that a < u < m < v < b. Then, we can
-   * determine wether the point of interest exists on [a,m] or [m,b]. */
-  float m = 0.5f * (a + b);
-  Coordinate2D<float> pa(a, f(a, aux)), pb(b, f(b, aux)), pm(m, f(m, aux));
-  Coordinate2D<float> pu, pv;
+  constexpr int k_numberOfIterations = 9; // TODO Tune
+  constexpr float k_goldenRatio = static_cast<float>(SolverAlgorithms::k_goldenRatio);
+
+  /* Define two points u and v such that a < u < v < b. Then, we can
+   * determine wether the point of interest exists on [a,v] or [u,b].
+   * We use the golden ratio to split the range as it has the properties of
+   * keeping the ratio between iterations while only recomputing one point. */
+  float u = a + k_goldenRatio * (b - a);
+  float v = b - (u - a);
+  Coordinate2D<float> pa(a, f(a, aux)),  pb(b, f(b, aux)), pu(u, f(u, aux)), pv(v, f(v, aux));
 
   for (int i = 0; i < k_numberOfIterations; i++) {
-    pu.setX1(0.5f * (pa.x1() + pm.x1()));
-    pu.setX2(f(pu.x1(), aux));
-    pv.setX1(0.5f * (pm.x1() + pb.x1()));
-    pv.setX2(f(pv.x1(), aux));
-
-    if (i == k_numberOfIterations - 1) {
-      /* A continuous function should not diverge as we get closer to its
-       * extremum, meaning the ordinates of the points should get closer to
-       * one another. */
-      continuous = std::fabs(pu.x2() - pm.x2()) <= std::fabs(pa.x2() - pm.x2()) && std::fabs(pv.x2() - pm.x2()) <= std::fabs(pb.x2() - pm.x2());
-    }
-
     /* Select the interval that contains the point of interest. If, because of
-     * some artefacts, both or neither contains a point, we favor the interval
+     * some artifacts, both or neither contains a point, we favor the interval
      * on the far side (i.e. [m,b]) to avoid finding the same point twice. */
-    if (pointIsInterestingHelper(pm, pv, pb, aux) != Solver<float>::Interest::None || pointIsInterestingHelper(pa, pu, pm, aux) == Solver<float>::Interest::None) {
-      pa = pm;
-      pm = pv;
+    if (pointIsInterestingHelper(pu, pv, pb, aux) != Solver<float>::Interest::None) {
+      pa = pu;
+      pu = pv;
+      float newV = pb.x1() - (pu.x1() - pa.x1());
+      pv = Coordinate2D<float>(newV, f(newV, aux));
+    } else if (pointIsInterestingHelper(pa, pu, pv, aux) != Solver<float>::Interest::None) {
+      pb = pv;
+      pv = pu;
+      float newU = pa.x1() + (pb.x1() - pv.x1());
+      pu = Coordinate2D<float>(newU, f(newU, aux));
     } else {
-      pb = pm;
-      pm = pu;
+      break;
     }
   }
+
+  constexpr float k_tolerance = 1.f / Solver<float>::k_relativePrecision;
+  bool discontinuous = (interest == Solver<float>::Interest::LocalMinimum || interest == Solver<float>::Interest::LocalMaximum)
+    && (std::max((pu.x2() - pa.x2()) / (pu.x1() - pa.x1()), (pv.x2() - pb.x2()) / (pv.x1() - pb.x1())) > k_tolerance);
   /* If the function is discontinuous around the solution (e.g. 1/x^2), we
    * discard the y value to avoid zooming in on diverging points. */
-  return Coordinate2D<float>(pb.x1(), interest == Solver<float>::Interest::Root ? 0.f : continuous ? pb.x2() : NAN);
+  return Coordinate2D<float>(pb.x1(), interest == Solver<float>::Interest::Root ? 0.f : discontinuous ? NAN : pb.x2());
 }
 
 static Range1D sanitationHelper(Range1D range, const Range1D * other, float ratio) {

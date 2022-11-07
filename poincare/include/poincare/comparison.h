@@ -60,7 +60,7 @@ private:
   int numberOfOperators() const { assert(m_numberOfOperands >= 2); return m_numberOfOperands - 1; }
 
   // Layout
-  LayoutShape leftLayoutShape() const override { assert(false); return LayoutShape::BoundaryPunctuation; };
+  LayoutShape leftLayoutShape() const override { return LayoutShape::Default; };
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
 

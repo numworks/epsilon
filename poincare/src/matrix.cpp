@@ -30,7 +30,7 @@ int MatrixNode::polynomialDegree(Context * context, const char * symbolName) con
 }
 
 Expression MatrixNode::shallowReduce(const ReductionContext& reductionContext) {
-  return Matrix(this).shallowReduce(reductionContext.context());
+  return Matrix(this).shallowReduce(reductionContext);
 }
 
 Layout MatrixNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
@@ -534,9 +534,13 @@ Matrix Matrix::cross(Matrix * b, const ExpressionNode::ReductionContext& reducti
   return matrix;
 }
 
-Expression Matrix::shallowReduce(Context * context) {
-  if (node()->hasMatrixOrListChild(context)) {
+Expression Matrix::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+  if (node()->hasMatrixOrListChild(reductionContext.context())) {
     return replaceWithUndefinedInPlace();
+  }
+  Expression e = SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
+  if (!e.isUninitialized()) {
+    return e;
   }
   return *this;
 }

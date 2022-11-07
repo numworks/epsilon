@@ -61,6 +61,8 @@ public:
     return &m_inputViewController;
   }
   bool isAcceptableExpression(const Poincare::Expression expression) override;
+  bool storageWillChangeForRecord(Ion::Storage::Record) override;
+
 private:
   App(Snapshot * snapshot);
   ListController m_listController;

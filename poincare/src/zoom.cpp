@@ -36,8 +36,16 @@ Range2D Zoom::range(float maxFloat, bool forceNormalization) const {
   result.y()->setMin(pretty.yMin(), maxFloat);
   result.y()->setMax(pretty.yMax(), maxFloat);
 
-  assert(!m_interestingRange.x()->isValid() || (result.xMin() <= m_interestingRange.xMin() && m_interestingRange.xMax() <= result.xMax()));
-  assert(!m_interestingRange.y()->isValid() || (result.yMin() <= m_interestingRange.yMin() && m_interestingRange.yMax() <= result.yMax()));
+  assert(!m_interestingRange.x()->isValid()
+        || ((result.xMin() <= m_interestingRange.xMin()
+            || !std::isfinite(m_interestingRange.xMin()))
+           && (m_interestingRange.xMax() <= result.xMax()
+            || !std::isfinite(m_interestingRange.xMax()))));
+  assert(!m_interestingRange.y()->isValid()
+        || ((result.yMin() <= m_interestingRange.yMin()
+            || !std::isfinite(m_interestingRange.yMin()))
+           && (m_interestingRange.yMax() <= result.yMax()
+            || !std::isfinite(m_interestingRange.yMax()))));
   assert(result.x()->isValid() && result.y()->isValid() && !result.x()->isEmpty() && !result.y()->isEmpty());
   return result;
 }

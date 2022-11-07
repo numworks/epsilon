@@ -39,7 +39,7 @@ public:
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
   Poincare::Context * localContext() override { return &m_context; }
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
-  void storageDidChangeForRecord(const Ion::Storage::Record record) override;
+  void storageDidChangeForRecord(Ion::Storage::Record record) override;
   EquationStore * equationStore() { return snapshot()->equationStore(); }
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
   Escher::ViewController * solutionsControllerStack() { return &m_alternateEmptyViewController; }

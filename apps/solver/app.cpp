@@ -26,7 +26,7 @@ void App::Snapshot::reset() {
   m_equationStore.removeAll();
 }
 
-void App::storageDidChangeForRecord(const Ion::Storage::Record record) {
+void App::storageDidChangeForRecord(Ion::Storage::Record record) {
   equationStore()->storageDidChangeForRecord(record);
 }
 

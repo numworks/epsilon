@@ -25,6 +25,7 @@ private:
   constexpr static float k_xyRatio = static_cast<float>(k_width) / static_cast<float>(k_height);
 
   void recomputeViewRange();
+  static float RangeMargin(bool maxMargin, float rangeBound, float value, float pixelRatio);
 
   Poincare::Expression m_function;
   float m_abscissa;

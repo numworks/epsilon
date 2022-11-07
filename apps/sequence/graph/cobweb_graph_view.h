@@ -18,7 +18,7 @@ protected:
    * after a OnOff. */
   bool shouldUpdate() const { return m_cachedStep != k_emptyCache && m_cachedStep != m_step; }
   constexpr static int8_t k_emptyCache = - 2;
-  Shared::Sequence * m_sequence;
+  Ion::Storage::Record m_record;
   int8_t m_step;
   mutable int8_t m_cachedStep;
 
@@ -50,7 +50,7 @@ class CobwebGraphView : public Shared::PlotView<CobwebAxesPolicy, CobwebPlotPoli
 public:
   CobwebGraphView(Shared::InteractiveCurveViewRange * graphRange,
     Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView);
-  void setSequence(Shared::Sequence * sequence) { m_sequence = sequence; }
+  void setRecord(Ion::Storage::Record record) { m_record = record; }
   void setStep(int step) { m_step = step; }
   void resetCachedStep() { m_cachedStep = k_emptyCache; };
 private:

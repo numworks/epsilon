@@ -53,6 +53,7 @@ void TrigonometryListController::setExpression(Expression e) {
 
   // Set illustration
   float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(e, context);
+  assert(std::isfinite(angle));
   m_model.setAngle(angle);
   setShowIllustration(true);
 }

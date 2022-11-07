@@ -17,6 +17,11 @@ void FunctionModel::setParameters(Poincare::Expression function, float abscissa)
   recomputeViewRange();
 };
 
+float FunctionModel::RangeMargin(bool maxMargin, float rangeBound, float value, float pixelRatio) {
+  float currentMargin = (maxMargin ? (rangeBound - std::max(value, 0.0f)) : (std::min(value, 0.0f) - rangeBound)) / pixelRatio;
+  return currentMargin >= k_marginInPixels ? 0.0 : k_marginInPixels * pixelRatio;
+}
+
 void FunctionModel::recomputeViewRange() {
   Zoom zoom(-1 * Range1D::k_maxFloat, Range1D::k_maxFloat, 1 / k_xyRatio, context());
 
@@ -32,18 +37,12 @@ void FunctionModel::recomputeViewRange() {
   Range2D range = zoom.range(Range1D::k_maxFloat, false);
 
   float widthPixelRatio =  range.x()->length() / k_width;
-  float rightMargin = (range.xMax() - std::max(m_abscissa, 0.0f)) / widthPixelRatio;
-  float leftMargin = (std::min(m_abscissa, 0.0f) - range.xMin()) / widthPixelRatio;
-
-  setXMin(range.xMin() - (leftMargin >= k_marginInPixels ? 0.0 : k_marginInPixels * widthPixelRatio));
-  setXMax(range.xMax() + (rightMargin >= k_marginInPixels ? 0.0 : k_marginInPixels * widthPixelRatio));
-
   float heigthPixelRatio =  range.y()->length() / k_height;
-  float topMargin = (range.yMax() - std::max(m_ordinate, 0.0f)) / heigthPixelRatio;
-  float bottomMargin = (std::min(m_ordinate, 0.0f) - range.yMin()) / heigthPixelRatio;
 
-  setYMin(range.yMin() - (bottomMargin >= k_marginInPixels ? 0.0 : k_marginInPixels * heigthPixelRatio));
-  setYMax(range.yMax() + (topMargin >= k_marginInPixels ? 0.0 : k_marginInPixels * heigthPixelRatio));
+  setXMin(range.xMin() - RangeMargin(false, range.xMin(), m_abscissa, widthPixelRatio));
+  setXMax(range.xMax() + RangeMargin(true, range.xMax(), m_abscissa, widthPixelRatio));
+  setYMin(range.yMin() - RangeMargin(false, range.yMin(), m_ordinate, heigthPixelRatio));
+  setYMax(range.yMax() + RangeMargin(true, range.yMax(), m_ordinate, heigthPixelRatio));
 }
 
 }

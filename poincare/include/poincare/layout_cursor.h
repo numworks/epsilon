@@ -119,7 +119,7 @@ public:
   void performBackspace() { m_layout.deleteBeforeCursor(this); }
   void clearLayout();
 
-  bool isInsideEmptyFraction() const;
+  bool isAtNumeratorOfEmptyFraction() const;
 
 private:
   constexpr static KDCoordinate k_cursorHeight = 18;

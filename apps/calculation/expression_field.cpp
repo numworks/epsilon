@@ -121,7 +121,7 @@ bool ExpressionField::handleDivision() {
         if (editionIn1D) {
           // 1D: Start -> DenominatorOfEmptyFraction
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
-        } else if (m_layoutField.cursor()->isInsideEmptyFraction()) {
+        } else if (m_layoutField.cursor()->isAtNumeratorOfEmptyFraction()) {
           // 2D: Start -> NumeratorOfEmptyFraction
           m_currentStep = DivisionCycleStep::NumeratorOfEmptyFraction;
         }

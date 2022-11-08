@@ -89,8 +89,8 @@ void Controller::didBecomeFirstResponder() {
 }
 
 HighlightCell * Controller::reusableCell(int index) {
-  assert(0 <= index && index < k_maxNumberOfCells);
-  return &m_cells[index];
+  assert(0 <= index && index < reusableCellCount());
+  return &m_reusableCells[index];
 }
 
 void Controller::willDisplayCellAtLocation(HighlightCell * cell, int i, int j) {

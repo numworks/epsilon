@@ -2,6 +2,7 @@
 #include "additional_outputs/scientific_notation_helper.h"
 #include "calculation.h"
 #include "poincare/expression_node.h"
+#include <apps/apps_container_helper.h>
 #include <apps/global_preferences.h>
 #include <apps/exam_mode_configuration.h>
 #include <apps/shared/poincare_helpers.h>
@@ -272,11 +273,12 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
       return AdditionalInformations {.directTrigonometry = true};
     }
   }
+  Context * globalContext = AppsContainerHelper::sharedAppsContainerGlobalContext();
   if (o.hasUnit()) {
     AdditionalInformations additionalInformations = {};
     Expression unit;
-    PoincareHelpers::ReduceAndRemoveUnit(&o, App::app()->localContext(), ExpressionNode::ReductionTarget::User, &unit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
-    double value = PoincareHelpers::ApproximateToScalar<double>(o, App::app()->localContext());
+    PoincareHelpers::ReduceAndRemoveUnit(&o, globalContext, ExpressionNode::ReductionTarget::User, &unit, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, ExpressionNode::UnitConversion::None);
+    double value = PoincareHelpers::ApproximateToScalar<double>(o, globalContext);
     if (Unit::ShouldDisplayAdditionalOutputs(value, unit, GlobalPreferences::sharedGlobalPreferences()->unitFormat())
         || UnitComparison::ShouldDisplayUnitComparison(value, unit)) {
       additionalInformations.unit = true;
@@ -296,7 +298,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   if (a.type() != ExpressionNode::Type::Nonreal && preferences->displayMode() != Preferences::PrintFloatMode::Scientific) {
     // There should be no units at this point
     assert(!a.hasUnit());
-    additionalInformations.scientificNotation = ScientificNotationHelper::HasAdditionalOutputs(a);
+    additionalInformations.scientificNotation = ScientificNotationHelper::HasAdditionalOutputs(a, globalContext);
   }
   // We want a single numerical value and to avoid showing the identity function
   bool isInterestingFunction = !i.isNumber() && i.type() != ExpressionNode::Type::ConstantMaths && !(i.type() == ExpressionNode::Type::Opposite && (i.childAtIndex(0).isNumber() || i.childAtIndex(0).type() == ExpressionNode::Type::ConstantMaths));

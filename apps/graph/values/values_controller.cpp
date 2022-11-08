@@ -402,7 +402,12 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     return;
   }
   // Compute approximate result
-  Expression approximation = PoincareHelpers::Approximate<double>(exactResult, context);
+  Expression approximation;
+  if (isDerivative) {
+    approximation = Float<double>::Builder(function->approximateDerivative(abscissa, context));
+  } else {
+    approximation = PoincareHelpers::Approximate<double>(exactResult, context);
+  }
   *memoizedLayoutAtIndex(index) = approximation.createLayout(Preferences::PrintFloatMode::Decimal, Preferences::VeryLargeNumberOfSignificantDigits, context);
 
 }

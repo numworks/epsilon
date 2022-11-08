@@ -1,11 +1,13 @@
 #include "scientific_notation_list_controller.h"
 #include "scientific_notation_helper.h"
+#include "../app.h"
 
 namespace Calculation {
 
 void ScientificNotationListController::setExactAndApproximateExpression(Poincare::Expression e, Poincare::Expression a) {
-  assert(ScientificNotationHelper::HasAdditionalOutputs(a));
-  m_layouts[0] = ScientificNotationHelper::ScientificLayout(a);
+  Poincare::Context * context = App::app()->localContext();
+  assert(ScientificNotationHelper::HasAdditionalOutputs(a, context));
+  m_layouts[0] = ScientificNotationHelper::ScientificLayout(a, context);
 }
 
 I18n::Message ScientificNotationListController::messageAtIndex(int index) {

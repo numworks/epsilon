@@ -1,6 +1,5 @@
 #include "scientific_notation_helper.h"
 #include <apps/shared/poincare_helpers.h>
-#include "../app.h"
 
 using namespace Poincare;
 
@@ -8,17 +7,15 @@ namespace Calculation {
 
 namespace ScientificNotationHelper {
 
-bool HasAdditionalOutputs(Expression a) {
-  Context * context = App::app()->localContext();
+bool HasAdditionalOutputs(Expression a, Context * context) {
   Layout historyResult = Shared::PoincareHelpers::CreateLayout(a, context, Preferences::sharedPreferences());
-  return !historyResult.isIdenticalTo(ScientificLayout(a));
+  return !historyResult.isIdenticalTo(ScientificLayout(a, context));
 }
 
-Layout ScientificLayout(Expression a) {
+Layout ScientificLayout(Expression a, Context * context) {
   assert(!a.hasUnit());
   Preferences preferences = *Preferences::sharedPreferences();
   preferences.setDisplayMode(Preferences::PrintFloatMode::Scientific);
-  Context * context = App::app()->localContext();
   return Shared::PoincareHelpers::CreateLayout(a, context, &preferences);
 }
 

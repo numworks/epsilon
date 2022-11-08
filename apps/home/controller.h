@@ -23,7 +23,7 @@ public:
   int numberOfRows() const override { return ((numberOfIcons() - 1) / k_numberOfColumns) + 1; }
   int numberOfColumns() const override { return k_numberOfColumns; }
   Escher::HighlightCell * reusableCell(int index) override;
-  int reusableCellCount() const override { return k_maxNumberOfCells; }
+  int reusableCellCount() const override { return k_numberOfReusableCells; }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 private:
@@ -59,11 +59,11 @@ private:
   constexpr static KDCoordinate k_bottomMargin = 14;
   constexpr static KDCoordinate k_indicatorMargin = 61;
   constexpr static int k_numberOfColumns = 3;
-  constexpr static int k_maxNumberOfCells = 12;
+  constexpr static int k_numberOfReusableCells = 12;
   constexpr static int k_cellHeight = 104;
   constexpr static int k_cellWidth = 104;
   ContentView m_view;
-  AppCell m_cells[k_maxNumberOfCells];
+  AppCell m_reusableCells[k_numberOfReusableCells];
 };
 
 }

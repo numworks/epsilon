@@ -16,8 +16,8 @@ using namespace Escher;
 
 namespace Regression {
 
-GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, CurveViewCursor * cursor, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex) :
-  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, store, &m_view, cursor, rangeVersion),
+GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, CurveViewCursor * cursor, int * selectedDotIndex, int * selectedSeriesIndex) :
+  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, store, &m_view, cursor),
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(store, m_cursor, &m_bannerView, &m_cursorView),
   m_store(store),
@@ -326,10 +326,6 @@ bool GraphController::moveCursorVertically(int direction) {
 
   // There was no suitable selection
   return false;
-}
-
-uint32_t GraphController::rangeVersion() {
-  return m_store->rangeChecksum();
 }
 
 int GraphController::selectedCurveRelativePosition() const {

@@ -20,7 +20,7 @@ class InteractiveCurveViewController : public SimpleInteractiveCurveViewControll
 public:
   constexpr static int k_graphControllerStackDepth = 1;
 
-  InteractiveCurveViewController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, uint32_t * rangeVersion);
+  InteractiveCurveViewController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor);
 
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::NeverDisplayOwnTitle; }
@@ -37,7 +37,6 @@ public:
   Responder * defaultController() override;
 
   void viewWillAppear() override;
-  void viewDidDisappear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
@@ -52,7 +51,6 @@ protected:
   virtual Escher::StackViewController * stackController() const;
   virtual void initCursorParameters() = 0;
   virtual bool moveCursorVertically(int direction) = 0;
-  virtual uint32_t rangeVersion() = 0;
   bool isCursorVisible();
   virtual bool selectedModelIsValid() const = 0;
   virtual Poincare::Coordinate2D<double> selectedModelXyValues(double t) const = 0;
@@ -91,7 +89,6 @@ private:
    * ie m_interactiveRange->zoomAuto(). */
   bool autoButtonAction();
 
-  uint32_t * m_rangeVersion;
   RangeParameterController m_rangeParameterController;
   FunctionZoomAndPanCurveViewController m_zoomParameterController;
   InteractiveCurveViewRange * m_interactiveRange;

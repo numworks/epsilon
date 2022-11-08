@@ -108,12 +108,6 @@ bool CurveParameterController::confirmParameterAtIndex(int parameterIndex, doubl
   m_cursor->moveTo(f, xy.x1(), xy.x2());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
   m_graphRange->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
-  /* The range might have evolved to center around the cursor but we don't want
-   * to reinit the cursor position when displaying the graph controller. To
-   * prevent this, we update the snapshot range version in order to make the
-   * graph controller as if the range has not evolved since last appearance. */
-  uint32_t * snapshotRangeVersion = App::app()->snapshot()->rangeVersion();
-  *snapshotRangeVersion = m_graphRange->rangeChecksum();
   return true;
 }
 

@@ -23,7 +23,6 @@ const Image * App::Descriptor::icon() const {
 
 App::Snapshot::Snapshot() :
   m_graphSelectedDotIndex(-1),
-  m_rangeVersion(0),
   m_selectedSeriesIndex(-1),
   m_regressionTypes{Model::Type::None, Model::Type::None, Model::Type::None}
 {
@@ -36,7 +35,6 @@ App * App::Snapshot::unpack(Container * container) {
 }
 
 void App::Snapshot::reset() {
-  m_rangeVersion = 0;
   setActiveTab(0);
   memset(m_regressionTypes, 0, sizeof(m_regressionTypes));
 }
@@ -57,7 +55,7 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
   m_calculationController(&m_calculationAlternateEmptyViewController, &m_calculationHeader, &m_store),
   m_calculationAlternateEmptyViewController(&m_calculationHeader, &m_calculationController, &m_calculationController),
   m_calculationHeader(&m_tabViewController, &m_calculationAlternateEmptyViewController, &m_calculationController),
-  m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, &m_store, snapshot->cursor(), snapshot->rangeVersion(), snapshot->graphSelectedDotIndex(), snapshot->selectedSeriesIndex()),
+  m_graphController(&m_graphAlternateEmptyViewController, this, &m_graphHeader, &m_store, snapshot->cursor(), snapshot->graphSelectedDotIndex(), snapshot->selectedSeriesIndex()),
   m_graphAlternateEmptyViewController(&m_graphHeader, &m_graphController, &m_graphController),
   m_graphHeader(&m_graphStackViewController, &m_graphAlternateEmptyViewController, &m_graphController),
   m_graphStackViewController(&m_tabViewController, &m_graphHeader, Escher::StackViewController::Style::WhiteUniform),

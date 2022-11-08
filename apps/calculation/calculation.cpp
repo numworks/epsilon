@@ -1,5 +1,5 @@
 #include "app.h"
-#include "additional_outputs/scientific_notation_list_controller.h"
+#include "additional_outputs/scientific_notation_helper.h"
 #include "calculation.h"
 #include "poincare/expression_node.h"
 #include <apps/global_preferences.h>
@@ -296,7 +296,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   if (a.type() != ExpressionNode::Type::Nonreal && preferences->displayMode() != Preferences::PrintFloatMode::Scientific) {
     // There should be no units at this point
     assert(!a.hasUnit());
-    additionalInformations.scientificNotation = ScientificNotationListController::HasAdditionalOutputs(a);
+    additionalInformations.scientificNotation = ScientificNotationHelper::HasAdditionalOutputs(a);
   }
   // We want a single numerical value and to avoid showing the identity function
   bool isInterestingFunction = !i.isNumber() && i.type() != ExpressionNode::Type::ConstantMaths && !(i.type() == ExpressionNode::Type::Opposite && (i.childAtIndex(0).isNumber() || i.childAtIndex(0).type() == ExpressionNode::Type::ConstantMaths));

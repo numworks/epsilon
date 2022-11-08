@@ -11,11 +11,10 @@ using namespace Poincare;
 
 namespace Shared {
 
-InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, uint32_t * rangeVersion) :
+InteractiveCurveViewController::InteractiveCurveViewController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor) :
   SimpleInteractiveCurveViewController(parentResponder, cursor),
   ButtonRowDelegate(header, nullptr),
   m_selectedSubCurveIndex(0),
-  m_rangeVersion(rangeVersion),
   m_rangeParameterController(this, inputEventHandlerDelegate, interactiveRange),
   m_zoomParameterController(this, interactiveRange, curveView),
   m_interactiveRange(interactiveRange),
@@ -142,8 +141,6 @@ void InteractiveCurveViewController::viewWillAppear() {
     refreshCursor();
   }
 
-  *m_rangeVersion = rangeVersion();
-
   if (!curveView()->hasFocus()) {
     curveView()->setFocus(true);
     header()->setSelectedButton(-1);
@@ -173,10 +170,6 @@ void InteractiveCurveViewController::refreshCursor() {
   }
 
   reloadBannerView();
-}
-
-void InteractiveCurveViewController::viewDidDisappear() {
-  *m_rangeVersion = rangeVersion();
 }
 
 void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirstResponder) {
@@ -330,7 +323,6 @@ bool InteractiveCurveViewController::autoButtonAction() {
   m_interactiveRange->computeRanges();
   refreshCursor();
   if (m_interactiveRange->zoomAuto()) {
-    *m_rangeVersion = rangeVersion();
     setCurveViewAsMainView(true, true);
   }
   return m_interactiveRange->zoomAuto();

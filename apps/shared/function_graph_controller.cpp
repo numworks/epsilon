@@ -15,8 +15,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-FunctionGraphController::FunctionGraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion) :
-  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor, rangeVersion),
+FunctionGraphController::FunctionGraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, InteractiveCurveViewRange * interactiveRange, AbstractPlotView * curveView, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor) :
+  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, interactiveRange, curveView, cursor),
   m_calculusButton(this, I18n::Message::GraphCalculus, calculusButtonInvocation(), k_font),
   m_indexFunctionSelectedByCursor(indexFunctionSelectedByCursor)
 {
@@ -166,10 +166,6 @@ Poincare::Coordinate2D<double> FunctionGraphController::selectedModelXyValues(do
 
 AbstractPlotView * FunctionGraphController::curveView() {
   return functionGraphView();
-}
-
-uint32_t FunctionGraphController::rangeVersion() {
-  return interactiveCurveViewRange()->rangeChecksum();
 }
 
 Coordinate2D<double> FunctionGraphController::xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex) const {

@@ -14,7 +14,7 @@ namespace Regression {
 class GraphController : public Shared::InteractiveCurveViewController {
 
 public:
-  GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Store * store, Shared::CurveViewCursor * cursor, uint32_t * rangeVersion, int * selectedDotIndex, int * selectedSeriesIndex);
+  GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Store * store, Shared::CurveViewCursor * cursor, int * selectedDotIndex, int * selectedSeriesIndex);
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
@@ -65,7 +65,6 @@ private:
   void initCursorParameters() override;
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
-  uint32_t rangeVersion() override;
   int selectedCurveRelativePosition() const override;
   bool closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const override;
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double x, Poincare::Context * context, int subCurveIndex = 0) const override;

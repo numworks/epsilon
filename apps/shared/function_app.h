@@ -20,7 +20,6 @@ public:
   public:
     Snapshot();
     CurveViewCursor * cursor() { return &m_cursor; }
-    uint32_t * rangeVersion() { return &m_rangeVersion; }
     virtual FunctionStore * functionStore() = 0;
     int * indexFunctionSelectedByCursor() { return &m_indexFunctionSelectedByCursor; }
     void reset() override;
@@ -28,7 +27,6 @@ public:
     CurveViewCursor m_cursor;
   private:
     int m_indexFunctionSelectedByCursor;
-    uint32_t m_rangeVersion;
   };
   static FunctionApp * app() {
     return static_cast<FunctionApp *>(Escher::Container::activeApp());

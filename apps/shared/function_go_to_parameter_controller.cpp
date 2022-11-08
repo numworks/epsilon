@@ -22,12 +22,6 @@ bool FunctionGoToParameterController::confirmParameterAtIndex(int parameterIndex
   f = FunctionBannerDelegate::GetValueDisplayedOnBanner(f, app->localContext(), Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
   m_graphController->moveCursorAndCenterIfNeeded(f);
 
-  /* The range might have evolved to center around the cursor but we don't want
-   * to reinit the cursor position when displaying the graph controller. To
-   * prevent this, we update the snapshot range version in order to make the
-   * graph controller as if the range has not evolved since last appearance. */
-  uint32_t * snapshotRangeVersion = static_cast<FunctionApp::Snapshot *>(app->snapshot())->rangeVersion();
-  *snapshotRangeVersion = m_graphRange->rangeChecksum();
   return true;
 }
 

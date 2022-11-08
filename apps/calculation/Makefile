@@ -5,6 +5,7 @@ app_calculation_test_src += $(addprefix apps/calculation/,\
   calculation.cpp \
   calculation_store.cpp \
   additional_outputs/unit_comparison_helper.cpp \
+  additional_outputs/scientific_notation_helper.cpp \
 )
 
 app_calculation_src = $(addprefix apps/calculation/,\

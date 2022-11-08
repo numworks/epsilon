@@ -30,7 +30,7 @@ PreimageGraphController::PreimageGraphController(
 
 Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(double start, double max, Context * context) {
   Solver<double> solver = PoincareHelpers::Solver(start, max, ContinuousFunction::k_unknownName, context);
-  Expression f = functionStore()->modelForRecord(m_record)->expressionClone();
+  Expression f = functionStore()->modelForRecord(m_record)->expressionReduced(context);
   return solver.nextIntersection(Float<double>::Builder(m_image), f);
 }
 

@@ -339,11 +339,6 @@ void AbstractTextField::setText(const char * text) {
 bool AbstractTextField::privateHandleEvent(Ion::Events::Event event) {
   // Handle Toolbox or Var event
   if (handleBoxEvent(event)) {
-    if (!isEditing()) {
-      reinitDraftTextBuffer();
-      setEditing(true);
-      m_delegate->textFieldDidStartEditing(this);
-    }
     return true;
   }
   if (isEditing() && shouldFinishEditing(event)) {

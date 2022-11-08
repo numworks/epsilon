@@ -26,7 +26,7 @@ bool AutocompletedBracketPairLayoutNode::willAddSibling(LayoutCursor * cursor, L
    * bracket, do not inserted it, as though the user had closed it manually.
    * e.g. (1+2]| -> ")" -> (1+2)| instead of [(1+2))|*/
   AutocompletedBracketPairLayoutNode * bracketSibling = sibling->type() == type() ? static_cast<AutocompletedBracketPairLayoutNode *>(sibling) : nullptr;
-  bool ignoreSibling = bracketSibling && bracketSibling->m_insertedAs == insertionSide;
+  bool ignoreSibling = bracketSibling && bracketSibling->m_insertedAs == insertionSide && bracketSibling->childAtIndex(0)->type() == LayoutNode::Type::EmptyLayout;
   if (ignoreSibling && insertionSide == Side::Left) {
     cursor->setPosition(LayoutCursor::Position::Left);
     cursor->setLayout(Layout(childLayout()));

@@ -256,15 +256,21 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
    *   > output: cos(2)
    * However if the result is complex, it is treated as a complex result instead
    */
-  if (!isComplex && (Trigonometry::isDirectTrigonometryFunction(i) || Trigonometry::isDirectTrigonometryFunction(o))) {
-    // Check that the angle is real.
-    if (!i.childAtIndex(0).hasDefinedComplexApproximation(nullptr, Preferences::ComplexFormat::Cartesian, preferences->angleUnit())) {
+  if (!isComplex) {
+    if (Trigonometry::isInverseTrigonometryFunction(i) || Trigonometry::isInverseTrigonometryFunction(o)) {
+      // The angle cannot be complex since Expression a isn't
+      return AdditionalInformations {.inverseTrigonometry = true};
+    }
+    Expression directExpression;
+    if (Trigonometry::isDirectTrigonometryFunction(i)) {
+      directExpression = i;
+    } else if (Trigonometry::isDirectTrigonometryFunction(o)) {
+      directExpression = o;
+    }
+    if (!directExpression.isUninitialized() && !directExpression.childAtIndex(0).hasDefinedComplexApproximation(nullptr, Preferences::ComplexFormat::Cartesian, preferences->angleUnit())) {
+      // The angle must be real.
       return AdditionalInformations {.directTrigonometry = true};
     }
-  }
-  if (!isComplex && (Trigonometry::isInverseTrigonometryFunction(i) || Trigonometry::isInverseTrigonometryFunction(o))) {
-    // The angle cannot be complex since Expression a isn't
-    return AdditionalInformations {.inverseTrigonometry = true};
   }
   if (o.hasUnit()) {
     AdditionalInformations additionalInformations = {};

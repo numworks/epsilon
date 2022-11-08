@@ -62,6 +62,9 @@ void FunctionApp::storageDidChangeForRecord(Ion::Storage::Record record) {
     return;
   }
 #endif
+  /* Prematurally dismiss the modal view to be able to pop/push on the
+   * TabViewController without messing around with the first responder. */
+  dismissModalViewController();
   int tab = m_tabViewController.activeTab();
   StackViewController * tabStacks[] = {&m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController};
   assert(0 <= tab && tab < 3);
@@ -76,13 +79,6 @@ void FunctionApp::storageDidChangeForRecord(Ion::Storage::Record record) {
   ViewController * activeViewController = tabStacks[tab]->topViewController();
   tabStacks[tab]->pop();
   tabStacks[tab]->push(activeViewController);
-  /* Pushing the active controller has properly set up the first responder, but
-   * it will be overriden by the modal being dismissed.
-   * e.g. The store menu is summoned from the graph, its previous responder is
-   * the TextField. Then a variable is stored that disables all functions.
-   * After a push, the first responder will be the Tab controller, and we want
-   * it to stay that way after the modal view dismissal. */
-  m_modalViewController.setPreviousResponder(firstResponder());
 }
 
 FunctionApp::FunctionApp(Snapshot * snapshot, Shared::FunctionListController * listController, Shared::FunctionGraphController * graphController, Shared::ValuesController * valuesController) :

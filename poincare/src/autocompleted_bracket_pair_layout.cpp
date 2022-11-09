@@ -187,6 +187,7 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
   Layout thisRef(this);
   Layout childRef(childLayout());
   Layout parentRef = thisRef.parent();
+  bool parentIsHorizontalLayout = parentRef.type() == Type::HorizontalLayout;
   assert(!parentRef.isUninitialized());
   int thisIndex = parentRef.indexOfChild(thisRef);
   bool willDisappear = isTemporary(OtherSide(side));
@@ -200,20 +201,23 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
   bool parentWillDisappear = topMostBracket->isTemporary(OtherSide(side));
 
   if (side == Side::Left) {
-    if (thisIndex > 0) {
-      /* e.g. 12(|34) -> [12|34) */
-      return LayoutCursor(parentRef.childAtIndex(thisIndex - 1), LayoutCursor::Position::Right);
+    if (parentIsHorizontalLayout) {
+      if (thisIndex > 0) {
+        /* e.g. 12(|34) -> [12|34) */
+        return LayoutCursor(parentRef.childAtIndex(thisIndex - 1), LayoutCursor::Position::Right);
+      }
+      if (willDisappear || parentWillDisappear) {
+        /* e.g. (|12] -> |12 or ((|12)] -> (|12) or ((|)] -> (|) */
+        return LayoutCursor(childOnSide(Side::Left), LayoutCursor::Position::Left);
+      }
     }
-    if (willDisappear || parentWillDisappear) {
-      /* e.g. (|12] -> |12 or ((|12)] -> (|12) or ((|)] -> (|) */
-      return LayoutCursor(childOnSide(Side::Left), LayoutCursor::Position::Left);
-    }
+    assert(!willDisappear);
     /* e.g. (|12) -> |[12) */
     return LayoutCursor(thisRef, LayoutCursor::Position::Left);
   }
 
   assert(side == Side::Right);
-  if (!childRef.isEmpty()) {
+  if (!parentIsHorizontalLayout || !childRef.isEmpty()) {
     /* e.g. (12)| -> (12|] */
     return LayoutCursor(childOnSide(Side::Right), LayoutCursor::Position::Right);
   }

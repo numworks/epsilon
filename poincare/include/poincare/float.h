@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-/* Float reprensents an approximated number. This class is use to avoid turning
+/* Float represents an approximated number. This class is use to avoid turning
  * float/double into Decimal back and forth because performances are
  * dramatically affected when doing so. For instance, when plotting a graph, we
  * need to set a float/double value for a symbol and approximate an expression

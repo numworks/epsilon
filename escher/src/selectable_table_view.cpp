@@ -29,64 +29,66 @@ HighlightCell * SelectableTableView::selectedCell() {
   return cellAtLocation(selectedColumn(), selectedRow());
 }
 
-bool SelectableTableView::cellIsSelectable(HighlightCell * cell) {
-  /* There are 2 cases:
-   * - In the case of non reusable cells: all cells are valid pointers but they are not all selectable
-   *   --> the condition we want to test is cell->isSelectable()
-   * - In the case of reusable cells: visible cells are valid pointers and they are all selectable, and 
-   *   other cells are nullptr but they also are selectable. 
-   *   --> we don't want to test any condition here, but since the 2 cases are handled together here,
-   *   we need to add || !cell in the condition
-   * TODO: split the class hierarchy earlier */
-  return !cell || cell->isSelectable();
-}
-
-int SelectableTableView::firstSelectableRow() {
-  if (dataSource()->numberOfRows() == 0) {
+int SelectableTableView::firstOrLastSelectableColumnOrRow(bool first, bool searchForRow) {
+  int nColumnsOrRow = searchForRow ? dataSource()->numberOfRows() : dataSource()->numberOfColumns();
+  if (nColumnsOrRow == 0) {
     return 0;
   }
-  for (int row = 0, end = dataSource()->numberOfRows(); row < end; row++) {
-    HighlightCell * cell = cellAtLocation(selectedColumn(), row);
-    if (cellIsSelectable(cell)) {
-      return row;
+  int firstIndex = first ? 0 : nColumnsOrRow - 1;
+  for (int cow = firstIndex; first ? cow < nColumnsOrRow : cow >= 0; first ? cow++ : cow--) {
+    bool isSelectable = searchForRow ? cellAtLocationIsSelectable(selectedColumn(), cow) : cellAtLocationIsSelectable(cow, selectedRow());
+    if (isSelectable) {
+      return cow;
     }
   }
   assert(false);
   return -1;
 }
 
-int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, bool row) {
-  assert(selectedCell());
+int SelectableTableView::indexOfNextSelectableColumnOrRow(int delta, int col, int row, bool searchForRow) {
+  assert((searchForRow && col < dataSource()->numberOfColumns() && col >= 0)
+          || (!searchForRow && row < dataSource()->numberOfRows() && row >= 0));
+  assert(delta != 0);
   // Let's call our variable cow, as a shortcut for col-or-row
-  int cow = row ? selectedRow() : selectedColumn();
-  int selectableCow = cow;
-  const int step = delta > 0 ? 1 : -1;
-  const int lastCow = (row ? dataSource()->numberOfRows() : dataSource()->numberOfColumns()) - 1;
+  int cow = searchForRow ? row : col;
+  int selectableCow = -1;
+  int step = delta > 0 ? 1 : -1;
+  const int lastCow = (searchForRow ? dataSource()->numberOfRows() : dataSource()->numberOfColumns()) - 1;
   while (delta) {
     cow += step;
     if (cow < 0 || cow > lastCow) {
-      return selectableCow;
+      if (selectableCow >= 0) {
+        return selectableCow;
+      }
+      return firstOrLastSelectableColumnOrRow(delta < 0, searchForRow);
     }
-    HighlightCell * cell = row ? cellAtLocation(selectedColumn(), cow) : cellAtLocation(cow, selectedRow());
-    if (cellIsSelectable(cell)) {
+    bool cellIsSelectable = searchForRow ? cellAtLocationIsSelectable(col, cow) : cellAtLocationIsSelectable(cow, row);
+    if (cellIsSelectable) {
       selectableCow = cow;
       delta -= step;
     }
   }
-  return cow;
+  return selectableCow;
 }
 
-bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstResponder, bool withinTemporarySelection) {
-  if (i < 0 || i >= dataSource()->numberOfColumns()) {
+bool SelectableTableView::selectCellAtLocation(int col, int row, bool setFirstResponder, bool withinTemporarySelection) {
+  if (row < 0 || col < 0 || row >= dataSource()->numberOfRows() || col >= dataSource()->numberOfColumns()) {
     return false;
   }
-  if (j < 0 || j >= dataSource()->numberOfRows()) {
-    return false;
+
+  if (!cellAtLocationIsSelectable(col, row)) {
+    /* If the cell is not selectable, go down by default.
+     * This behaviour is only implemented for Explicit
+     */
+    row = indexOfNextSelectableRow(1, col, row);
   }
+  // There should always be at least 1 selectable cell in the column
+  assert(cellAtLocationIsSelectable(col, row));
+
   int previousColumn = selectedColumn();
   int previousRow = selectedRow();
-  selectColumn(i);
-  selectRow(j);
+  selectColumn(col);
+  selectRow(row);
 
   /* The delegate is notified:
    * - after changing the selected cell but before scrolling: for instance,
@@ -115,6 +117,7 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
   if (selectedRow() >= 0) {
     scrollToCell(selectedColumn(), selectedRow());
   }
+
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelectionAndDidScroll(this, previousColumn, previousRow, withinTemporarySelection);
   }
@@ -132,30 +135,32 @@ bool SelectableTableView::selectCellAtLocation(int i, int j, bool setFirstRespon
   return true;
 }
 
-bool SelectableTableView::selectCellAtClippedLocation(int i, int j, bool setFirstResponder, bool withinTemporarySelection) {
-  i = std::clamp(i, 0, dataSource()->numberOfColumns() - 1);
-  j = std::clamp(j, 0, dataSource()->numberOfRows() - 1);
-  if (j == selectedRow() && i == selectedColumn()) {
+bool SelectableTableView::selectCellAtClippedLocation(int col, int row, bool setFirstResponder, bool withinTemporarySelection) {
+  col = std::clamp(col, 0, dataSource()->numberOfColumns() - 1);
+  row = std::clamp(row, 0, dataSource()->numberOfRows() - 1);
+  if (row == selectedRow() && col == selectedColumn()) {
     // Cell was already selected.
     return false;
   }
-  return selectCellAtLocation(i, j, setFirstResponder, withinTemporarySelection);
+  return selectCellAtLocation(col, row, setFirstResponder, withinTemporarySelection);
 }
 
 bool SelectableTableView::handleEvent(Ion::Events::Event event) {
   assert(dataSource()->numberOfRows() > 0);
   int step = Ion::Events::longPressFactor();
+  int col = selectedColumn();
+  int row = selectedRow();
   if (event == Ion::Events::Down) {
-    return selectCellAtClippedLocation(selectedColumn(), indexOfNextSelectableRow(step));
+    return selectCellAtClippedLocation(col, indexOfNextSelectableRow(step, col, row));
   }
   if (event == Ion::Events::Up) {
-    return selectCellAtClippedLocation(selectedColumn(), indexOfNextSelectableRow(-step));
+    return selectCellAtClippedLocation(col, indexOfNextSelectableRow(-step, col, row));
   }
   if (event == Ion::Events::Left) {
-    return selectCellAtClippedLocation(indexOfNextSelectableColumn(-step), selectedRow());
+    return selectCellAtClippedLocation(indexOfNextSelectableColumn(-step, col, row), row);
   }
   if (event == Ion::Events::Right) {
-    return selectCellAtClippedLocation(indexOfNextSelectableColumn(step), selectedRow());
+    return selectCellAtClippedLocation(indexOfNextSelectableColumn(step, col, row), row);
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto || event == Ion::Events::Var) {
     HighlightCell * cell = selectedCell();
@@ -228,7 +233,7 @@ void SelectableTableView::reloadData(bool setFirstResponder, bool setSelection) 
 
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
   int col = selectedColumn();
-  int row = std::max(selectedRow(), firstSelectableRow());
+  int row = selectedRow();
   selectColumn(0);
   selectRow(-1);
   selectCellAtLocation(col, row);

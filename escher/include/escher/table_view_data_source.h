@@ -19,6 +19,14 @@ public:
   virtual int numberOfRows() const = 0;
   virtual int numberOfColumns() const = 0;
   virtual void willDisplayCellAtLocation(HighlightCell * cell, int i, int j);
+  virtual bool cellAtLocationIsSelectable(int i, int j) {
+    /* TODO: This can not check if cellAtLocation(i, j)->isSelectable(),
+     * because cellAtLocation can return nullptr if the reusableCell is
+     * not populated yet.
+     * isSelectable() should maybe belong to dataSource and not cell. */
+    assert(i >= 0 && i < numberOfColumns() && j >= 0 && j < numberOfRows());
+    return true;
+  }
 
   KDCoordinate columnWidth(int i);
   KDCoordinate rowHeight(int j);

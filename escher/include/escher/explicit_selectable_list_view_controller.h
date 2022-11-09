@@ -13,6 +13,9 @@ namespace Escher {
 class ExplicitSelectableListViewController : public SelectableListViewController<MemoizedListViewDataSource> {
 public:
   using SelectableListViewController::SelectableListViewController;
+  bool cellAtLocationIsSelectable(int i, int j) override {
+    return TableViewDataSource::cellAtLocationIsSelectable(i, j) && cell(j)->isSelectable();
+  }
   int typeAtIndex(int index) const override final { return index; }
   int reusableCellCount(int type) override final { return 1; }
   HighlightCell * reusableCell(int index, int type) override final { return cell(type); }

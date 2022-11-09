@@ -3,6 +3,7 @@
 
 #include "code_point.h"
 #include <stddef.h>
+#include <string.h>
 #include <assert.h>
 
 /* UTF-8 encodes all valid code points using at most 4 bytes (= 28 bits), the
@@ -42,6 +43,7 @@ public:
   const char * nextGlyphPosition();
   const char * previousGlyphPosition();
   const char * stringPosition() const { return m_stringPosition; }
+  const char * stringEnd() const { return m_stringEnd ? m_stringEnd : m_string + strlen(m_string); }
   void setPosition(const char * position);
   constexpr static size_t CharSizeOfCodePoint(CodePoint c) {
     return c <= 0x7F ? 1 : (c <= 0x7FF ? 2 : (c <= 0xFFFF ? 3 : 4));

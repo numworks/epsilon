@@ -28,12 +28,9 @@ public:
   void selectColumn(int i) { m_selectionDataSource->selectColumn(i); }
 
   HighlightCell * selectedCell();
-  bool cellIsSelectable(HighlightCell * cell);
-  int firstSelectableRow();
-  int indexOfNextSelectableRow(int delta) { return indexOfNextSelectableColumnOrRow(delta, true); }
-  int indexOfNextSelectableColumn(int delta) { return indexOfNextSelectableColumnOrRow(delta, false); }
-  bool selectCellAtLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
-  bool selectCellAtClippedLocation(int i, int j, bool setFirstResponder = true, bool withinTemporarySelection = false);
+  bool selectCellAtLocation(int col, int row, bool setFirstResponder = true, bool withinTemporarySelection = false);
+  bool selectCellAtClippedLocation(int col, int row, bool setFirstResponder = true, bool withinTemporarySelection = false);
+
   bool handleEvent(Ion::Events::Event event) override;
   void unhighlightSelectedCell();
   void deselectTable(bool withinTemporarySelection = false);
@@ -41,11 +38,18 @@ public:
 
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
+
 protected:
   SelectableTableViewDataSource * m_selectionDataSource;
   SelectableTableViewDelegate * m_delegate;
+
 private:
-  int indexOfNextSelectableColumnOrRow(int delta, bool row);
+  bool cellAtLocationIsSelectable(int col, int row) { return dataSource()->cellAtLocationIsSelectable(col, row); }
+  int indexOfNextSelectableColumnOrRow(int delta, int currentCol, int currentRow, bool searchForRow);
+  int indexOfNextSelectableRow(int delta, int currentColumn, int currentRow) { return indexOfNextSelectableColumnOrRow(delta, currentColumn, currentRow, true); }
+  int indexOfNextSelectableColumn(int delta, int currentColumn, int currentRow) { return indexOfNextSelectableColumnOrRow(delta, currentColumn, currentRow, false); }
+  int firstSelectableColumnOrRow(bool searchForRoww);
+  int firstOrLastSelectableColumnOrRow(bool first, bool searchForRow);
 };
 
 }

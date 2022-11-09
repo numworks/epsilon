@@ -1,6 +1,7 @@
 #include "helper.h"
 #include <apps/shared/global_context.h>
 #include <poincare/zoom.h>
+#include <cmath>
 
 using namespace Poincare;
 
@@ -61,7 +62,7 @@ void assert_full_function_range_is(const char * expression, Range1D bounds, Rang
 QUIZ_CASE(poincare_zoom_fit_full_function) {
   assert_full_function_range_is("1", Range1D(-10, 10), Range2D(-10, 10, 1, 1));
   assert_full_function_range_is("x", Range1D(-10, 10), Range2D(-10, 10, -10, 10));
-  assert_full_function_range_is("e^x", Range1D(-10, 10), Range2D(-10, 10, std::exp(-10), std::exp(10)));
+  assert_full_function_range_is("e^x", Range1D(-10, 10), Range2D(-10, 10, std::exp(-10.f), std::exp(10.f)));
   assert_full_function_range_is("1+1/x", Range1D(0.1, 2), Range2D(0.1, 2, 1.5, 11));
   assert_full_function_range_is("[[cos(x)][sin(x)]]", Range1D(0, 2 * M_PI), Range2D(-1, 1, -1, 1));
   assert_full_function_range_is("[[-x^2+1][-2x]]", Range1D(0, 1), Range2D(0, 1, -2, 0));

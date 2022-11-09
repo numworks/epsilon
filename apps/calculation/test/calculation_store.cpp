@@ -519,6 +519,8 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("[[1][2][3]]", {.vector = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("transpose(identity(2))", {.matrix = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("[[cos(π/3),-sin(π/3)][sin(π/3),cos(π/3)]]", {.matrix = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("345nV", {.unit = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas("223m^3", {.unit = true}, &globalContext, &store);
 
   assertCalculationAdditionalResultTypeHas("1/400", {.rational = true, .scientificNotation = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("400", {.integer = true,.scientificNotation = true}, &globalContext, &store);

@@ -26,6 +26,7 @@ public:
 
   // Rewind tokenizer
   const char * currentPosition() { return m_decoder.stringPosition(); }
+  const char * endPosition() { return m_decoder.stringEnd(); }
   void goToPosition(const char * position) {
     /* WARNING:
      * Sometimes the decoder will be one char after the null terminating zero.

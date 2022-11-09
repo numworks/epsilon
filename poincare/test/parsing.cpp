@@ -623,8 +623,12 @@ QUIZ_CASE(poincare_parsing_parse_store) {
 QUIZ_CASE(poincare_parsing_parse_unit_convert) {
   Expression ton = Expression::Parse("_t", nullptr);
   Expression kilogram = Expression::Parse("_kg", nullptr);
+  Expression degree = Expression::Parse("_°", nullptr);
+  Expression minute = Expression::Parse("_'", nullptr);
+  Expression radian = Expression::Parse("_rad", nullptr);
   assert_parsed_expression_is("3t→kg", UnitConvert::Builder(Multiplication::Builder(BasedInteger::Builder(3), ton), kilogram));
   assert_parsed_expression_is("3t→kg^2", UnitConvert::Builder(Multiplication::Builder(BasedInteger::Builder(3), ton), Power::Builder(kilogram, BasedInteger::Builder(2))));
+  assert_parsed_expression_is("3°4'→rad", UnitConvert::Builder(Addition::Builder(Multiplication::Builder(BasedInteger::Builder(3), degree), Multiplication::Builder(BasedInteger::Builder(4), minute)), radian));
   assert_text_not_parsable("1→_m");
   assert_text_not_parsable("2t→3kg");
   assert_text_not_parsable("1→2");

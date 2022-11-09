@@ -9,8 +9,9 @@
 namespace Poincare {
 
 Expression Parser::parse() {
-  const char * rightwardsArrowPosition = UTF8Helper::CodePointSearch(m_tokenizer.currentPosition(), UCodePointRightwardsArrow);
-  if (*rightwardsArrowPosition != 0) {
+  const char * endPosition = m_tokenizer.endPosition();
+  const char * rightwardsArrowPosition = UTF8Helper::CodePointSearch(m_tokenizer.currentPosition(), UCodePointRightwardsArrow, endPosition);
+  if (rightwardsArrowPosition != endPosition) {
     return parseExpressionWithRightwardsArrow(rightwardsArrowPosition);
   }
   Expression result = initializeFirstTokenAndParseUntilEnd();

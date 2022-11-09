@@ -346,15 +346,15 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
     setOffscreenYAxis(0.f);
   }
 
-  if (!(m_delegate && (computeX || computeY))) {
-    return;
-  }
-
   /* If m_zoomNormalize was left active, xGridUnit() would return the value of
    * yGridUnit, even if the range were not truly normalized. We use
    * setZoomNormalize to refresh the button in case the graph does not end up
    * normalized. */
   setZoomNormalize(false);
+
+  if (!(m_delegate && (computeX || computeY))) {
+    return;
+  }
 
   Poincare::UserCircuitBreakerCheckpoint checkpoint;
   if (CircuitBreakerRun(checkpoint)) {

@@ -103,8 +103,8 @@ void TableView::ContentView::reloadCellAtLocation(int i, int j, bool forceSetFra
 
 int TableView::ContentView::typeOfSubviewAtIndex(int index) const {
   assert(index >= 0);
-  int i = absoluteColumnNumberFromSubviewIndex(index);
-  int j = absoluteRowNumberFromSubviewIndex(index);
+  int i = absoluteColumnIndexFromSubviewIndex(index);
+  int j = absoluteRowIndexFromSubviewIndex(index);
   int type = m_dataSource->typeAtLocation(i, j);
   return type;
 }
@@ -154,8 +154,8 @@ void TableView::ContentView::layoutSubviews(bool force, bool updateCellContent) 
    * recomputed at each step of the for loop. */
   for (int index = 0; index < numberOfSubviews(); index++) {
     View * cell = subviewAtIndex(index);
-    int i = absoluteColumnNumberFromSubviewIndex(index);
-    int j = absoluteRowNumberFromSubviewIndex(index);
+    int i = absoluteColumnIndexFromSubviewIndex(index);
+    int j = absoluteRowIndexFromSubviewIndex(index);
     if (updateCellContent) {
       m_dataSource->willDisplayCellAtLocation(static_cast<HighlightCell *>(cell), i, j);
     }

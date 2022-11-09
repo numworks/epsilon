@@ -66,8 +66,8 @@ protected:
 
     /* These two methods transform a positive index (of subview for instance)
      * into coordinates that refer to the data source entire table */
-    int absoluteColumnNumberFromSubviewIndex(int index) const { return (index % numberOfDisplayableColumns()) + columnsScrollingOffset(); }
-    int absoluteRowNumberFromSubviewIndex(int index) const { return (index / numberOfDisplayableColumns()) + rowsScrollingOffset(); }
+    int absoluteColumnIndexFromSubviewIndex(int index) const { return (index % numberOfDisplayableColumns()) + columnsScrollingOffset(); }
+    int absoluteRowIndexFromSubviewIndex(int index) const { return (index / numberOfDisplayableColumns()) + rowsScrollingOffset(); }
     int typeOfSubviewAtIndex(int index) const;
     /* This method transform a index (of subview for instance) into an index
      * refering to the set of cells of type "type". */

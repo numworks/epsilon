@@ -426,7 +426,8 @@ PolarConic::PolarConic(const Expression& e, Context * context, const char * thet
   }
 
   // Detect the pattern r = cos/sin(theta)
-  if (Trigonometry::DetectLinearPatternOfCosOrSin(reducedExpression, reductionContext, theta, false)) {
+  double coefBeforeTheta;
+  if (Trigonometry::DetectLinearPatternOfCosOrSin(reducedExpression, reductionContext, theta, false, nullptr, &coefBeforeTheta) && coefBeforeTheta == 1.0) {
     m_shape = Shape::Circle;
     return;
   }

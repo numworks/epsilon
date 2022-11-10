@@ -23,18 +23,18 @@ void Zoom::HorizontalAsymptoteHelper::update(Coordinate2D<float> p, float slope)
 Range2D Zoom::Sanitize(Range2D range, float normalYXRatio, float maxFloat) {
   /* Values for tMin and tMax actually do not matter here, as no function will
    * be evaluated to generate this zoom. */
-  Zoom zoom(-maxFloat, maxFloat, normalYXRatio, nullptr);
+  Zoom zoom(-maxFloat, maxFloat, normalYXRatio, nullptr, maxFloat);
   zoom.m_interestingRange = range;
-  return zoom.range(maxFloat, false);
+  return zoom.range(false);
 }
 
-Range2D Zoom::range(float maxFloat, bool forceNormalization) const {
+Range2D Zoom::range(bool forceNormalization) const {
   Range2D result;
   Range2D pretty = prettyRange(forceNormalization);
-  result.x()->setMin(pretty.xMin(), maxFloat);
-  result.x()->setMax(pretty.xMax(), maxFloat);
-  result.y()->setMin(pretty.yMin(), maxFloat);
-  result.y()->setMax(pretty.yMax(), maxFloat);
+  result.x()->setMin(pretty.xMin(), m_maxFloat);
+  result.x()->setMax(pretty.xMax(), m_maxFloat);
+  result.y()->setMin(pretty.yMin(), m_maxFloat);
+  result.y()->setMax(pretty.yMax(), m_maxFloat);
 
   assert(!m_interestingRange.x()->isValid()
         || ((result.xMin() <= m_interestingRange.xMin()
@@ -51,7 +51,7 @@ Range2D Zoom::range(float maxFloat, bool forceNormalization) const {
 }
 
 void Zoom::fitPoint(Coordinate2D<float> xy, bool flipped) {
-  m_interestingRange.extend(flipped ? Coordinate2D<float>(xy.x2(), xy.x1()) : xy);
+  m_interestingRange.extend(flipped ? Coordinate2D<float>(xy.x2(), xy.x1()) : xy, m_maxFloat);
 }
 
 void Zoom::fitFullFunction(Function2DWithContext f, const void * model) {
@@ -125,7 +125,7 @@ void Zoom::fitMagnitude(Function2DWithContext f, const void * model, bool vertic
   for (int i = 0; i < k_sampleSize; i++) {
     float x = xRange.min() + i * step;
     float y = (f(x, model, m_context).*ordinate)();
-    sample.extend(y);
+    sample.extend(y, m_maxFloat);
     float yAbs = std::fabs(y);
     if (!(yAbs > aboutZero)) { // Negated to account for NANs
       continue;
@@ -141,9 +141,9 @@ void Zoom::fitMagnitude(Function2DWithContext f, const void * model, bool vertic
   }
   Range1D * magnitudeRange = vertical ? m_magnitudeRange.x() : m_magnitudeRange.y();
   float yMax = pPop > 0 ? std::min(sample.max(), std::exp(pSum / pPop  + 1.f)) : sample.max();
-  magnitudeRange->extend(yMax);
+  magnitudeRange->extend(yMax, m_maxFloat);
   float yMin = nPop > 0 ? std::max(sample.min(), -std::exp(nSum / nPop  + 1.f)) : sample.min();
-  magnitudeRange->extend(yMin);
+  magnitudeRange->extend(yMin, m_maxFloat);
 }
 
 // Zoom - Private
@@ -231,8 +231,8 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
   assert(!forceNormalization || !m_forcedRange.x()->isValid() || !m_forcedRange.y()->isValid());
 
   Range2D saneRange = sanitizedRange();
-  saneRange.extend(Coordinate2D<float>(m_magnitudeRange.xMin(), m_magnitudeRange.yMin()));
-  saneRange.extend(Coordinate2D<float>(m_magnitudeRange.xMax(), m_magnitudeRange.yMax()));
+  saneRange.extend(Coordinate2D<float>(m_magnitudeRange.xMin(), m_magnitudeRange.yMin()), m_maxFloat);
+  saneRange.extend(Coordinate2D<float>(m_magnitudeRange.xMax(), m_magnitudeRange.yMax()), m_maxFloat);
 
   float xLength = saneRange.x()->length();
   float yLength = saneRange.y()->length();
@@ -276,6 +276,7 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
     normalLength = yLengthNormalized;
   }
   float c = rangeToEdit->center();
+  assert(std::isfinite(c));
   float d = 0.5f * normalLength;
   if (c - d > interestingRange->min()) {
     *rangeToEdit = Range1D(interestingRange->min(), interestingRange->min() + normalLength);

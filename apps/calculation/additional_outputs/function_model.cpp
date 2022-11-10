@@ -23,7 +23,8 @@ float FunctionModel::RangeMargin(bool maxMargin, float rangeBound, float value, 
 }
 
 void FunctionModel::recomputeViewRange() {
-  Zoom zoom(-1 * Range1D::k_maxFloat, Range1D::k_maxFloat, 1 / k_xyRatio, context());
+  constexpr float k_maxFloat = Range1D::k_maxFloat;
+  Zoom zoom(-k_maxFloat, k_maxFloat, 1 / k_xyRatio, context(), k_maxFloat);
 
   Zoom::Function2DWithContext evaluator = [](float t, const void * model, Context * context) {
     const Expression * f = static_cast<const Expression *>(model);
@@ -34,7 +35,7 @@ void FunctionModel::recomputeViewRange() {
   zoom.fitPoint(Coordinate2D<float>(m_abscissa, m_ordinate));
   zoom.fitPoint(Coordinate2D<float>(0.0f, 0.0f));
 
-  Range2D range = zoom.range(Range1D::k_maxFloat, false);
+  Range2D range = zoom.range(false);
 
   float widthPixelRatio =  range.x()->length() / k_width;
   float heigthPixelRatio =  range.y()->length() / k_height;

@@ -14,7 +14,7 @@ constexpr float k_maxFloat = 1e8f;
 /* Class befriended by Poincare::Zoom to be able to read its members. */
 class ZoomTest {
 public:
-  ZoomTest(Range1D bounds, Context * context) : m_zoom(bounds.min(), bounds.max(), k_normalRatio, context) {}
+  ZoomTest(Range1D bounds, Context * context) : m_zoom(bounds.min(), bounds.max(), k_normalRatio, context, Range1D::k_maxFloat) {}
 
   Zoom * zoom() { return &m_zoom; }
   Range2D interestingRange() const { return m_zoom.m_interestingRange; }
@@ -99,6 +99,8 @@ QUIZ_CASE(poincare_zoom_fit_points_of_interest) {
   // FIXME assert_points_of_interest_range_is("(e^x-1)/(e^x+1)", Range2D());
   // FIXME assert_points_of_interest_range_is("x^x", Range2D());
   // FIXME assert_points_of_interest_range_is("root(x^3+1,3)-x", Range2D());
+  // FIXME : Interest_range isn't good but this function used to raise asserts.
+  assert_points_of_interest_range_is("sum((((-1)^k)*(x^(2k+1)))/((2k+1)!),k,0,4)", Range2D(-448000, 448000, -1, 1));
 }
 
 void assert_intersections_range_is(const char * expression1, const char * expression2, Range2D expectedRange) {

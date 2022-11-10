@@ -12,6 +12,7 @@ namespace Graph {
 
 GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion, ButtonRowController * header) :
   FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, rangeVersion),
+  m_pointsOfInterest(k_maxFloat),
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
@@ -54,10 +55,9 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   };
 
   Context * context = App::app()->localContext();
-  Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context);
+  Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context, k_maxFloat);
   ContinuousFunctionStore * store = functionStore();
   int nbFunctions = store->numberOfActiveFunctions();
-  constexpr float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
   Range1D xBounds = computeX ? Range1D(-k_maxFloat, k_maxFloat) : *originalRange.x();
   Range1D yBounds = computeY ? Range1D(-k_maxFloat, k_maxFloat) : *originalRange.y();
   Range2D forcedRange = Range2D(computeX ? Range1D() : *originalRange.x(), computeY ? Range1D() : *originalRange.y());
@@ -110,7 +110,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     }
   }
 
-  Range2D newRange = zoom.range(k_maxFloat, defaultRangeIsNormalized());
+  Range2D newRange = zoom.range(defaultRangeIsNormalized());
   return Range2D(*(computeX ? newRange : originalRange).x(), *(computeY ? newRange : originalRange).y());
 }
 

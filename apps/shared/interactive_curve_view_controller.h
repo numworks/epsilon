@@ -46,6 +46,8 @@ public:
   virtual void moveCursorAndCenterIfNeeded(double t);
 
 protected:
+  constexpr static float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
+
   Responder * tabController() const;
   virtual Escher::StackViewController * stackController() const;
   virtual void initCursorParameters() = 0;

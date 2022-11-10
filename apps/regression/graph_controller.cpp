@@ -384,16 +384,16 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     int numberOfPairs = m_store->numberOfPairsOfSeries(series);
     for (int pair = 0; pair < numberOfPairs; pair++) {
       float x = m_store->get(series, 0, pair);
-      xRange.extend(x);
+      xRange.extend(x, k_maxFloat);
       if (computeX || (originalRange.xMin() <= x && x <= originalRange.xMax())) {
         float y = m_store->get(series, 1, pair);
-        yRange.extend(y);
+        yRange.extend(y, k_maxFloat);
       }
     }
   }
 
   Range2D result(computeX ? xRange : *originalRange.x(), computeY ? yRange : *originalRange.y());
-  return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(), InteractiveCurveViewRange::k_maxFloat);
+  return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
 }
 
 }

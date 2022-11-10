@@ -143,7 +143,7 @@ void PointsOfInterestCache::computeBetween(float start, float end, Range1D * dir
 void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest, Range1D * dirtyRange, uint32_t data) {
   assert(std::isfinite(x) && std::isfinite(y));
   m_list.append(x, y, data, interest);
-  dirtyRange->extend(x);
+  dirtyRange->extend(x, m_maxFloat);
 }
 
 }

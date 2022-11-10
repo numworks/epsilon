@@ -86,15 +86,15 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     *result.x() = *originalRange.x();
   }
   if (computeY) {
-    Zoom zoom(result.xMin(), result.xMax(), InteractiveCurveViewRange::NormalYXRatio(), textFieldDelegateApp()->localContext());
+    Zoom zoom(result.xMin(), result.xMax(), InteractiveCurveViewRange::NormalYXRatio(), textFieldDelegateApp()->localContext(), k_maxFloat);
     int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
     for (int i = 0; i < nbOfActiveModels; i++) {
       Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
       zoom.fitFullFunction(evaluator, s);
     }
-    *result.y() = *zoom.range(InteractiveCurveViewRange::k_maxFloat, false).y();
+    *result.y() = *zoom.range(false).y();
   }
-  return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(), InteractiveCurveViewRange::k_maxFloat);
+  return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
 }
 
 Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(int j) const {

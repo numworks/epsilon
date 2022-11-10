@@ -28,7 +28,7 @@ QUIZ_CASE(poincare_range_1d_geometry) {
 }
 
 void assert_range_extends_to(Range1D r1, float p, Range1D r2) {
-  r1.extend(p);
+  r1.extend(p, Range1D::k_maxFloat);
   quiz_assert(Helpers::EqualOrBothNan(r1.min(), r2.min()));
   quiz_assert(Helpers::EqualOrBothNan(r1.max(), r2.max()));
 }
@@ -42,6 +42,7 @@ QUIZ_CASE(poincare_range_1d_extend) {
   assert_range_extends_to(Range1D(-12, -11.5), -11.7, Range1D(-12, -11.5));
   assert_range_extends_to(Range1D(-100, 100), 200, Range1D(-100, 200));
   assert_range_extends_to(Range1D(-100, 200), -200, Range1D(-200, 200));
+  assert_range_extends_to(Range1D(-1, 3), 1e36, Range1D(-1, Range1D::k_maxFloat));
 }
 
 void assert_range_zooms_to(Range1D r1, float r, float c, Range1D r2) {

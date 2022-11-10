@@ -26,7 +26,7 @@ public:
   static Range2D Sanitize(Range2D range, float normalRatio, float maxFloat);
   static Range2D DefaultRange(float normalRatio, float maxFloat) { return Sanitize(Range2D(), normalRatio, maxFloat); }
 
-  Zoom(float tMin, float tMax, float normalRatio, Context * context) : m_bounds(tMin, tMax), m_context(context), m_normalRatio(normalRatio) {
+  Zoom(float tMin, float tMax, float normalRatio, Context * context, float maxFloat) : m_bounds(tMin, tMax), m_context(context), m_normalRatio(normalRatio), m_maxFloat(maxFloat) {
     /* The calculator screen is wider than it is high, but nothing in Zoom
      * relies on this assumption. */
     // assert(m_normalRatio < 1.f);
@@ -35,7 +35,7 @@ public:
   /* This method is guaranteed to return a displayable range, that is a range
    * with non-nan bounds, and non-empty axes of some minimal length, with
    * bounds smaller than maxFloat in absolute value. */
-  Range2D range(float maxFloat, bool forceNormalization) const;
+  Range2D range(bool forceNormalization) const;
   void setBounds(float min, float max) { m_bounds = Range1D(min, max); }
   void setForcedRange(Range2D range) { m_forcedRange = range; }
   /* These four functions will extend both X and Y axes. */
@@ -107,6 +107,7 @@ private:
   Range1D m_bounds;
   Context * m_context;
   float m_normalRatio;
+  const float m_maxFloat;
 };
 
 }

@@ -32,7 +32,7 @@ public:
 
   float length() const { return m_max - m_min; }
   float center() const { return 0.5f * (m_min + m_max); }
-  void extend(float t);
+  void extend(float t, float limit);
   void zoom(float ratio, float center);
 
 private:
@@ -59,7 +59,7 @@ public:
   Coordinate2D<float> center() const { return Coordinate2D<float>(m_x.center(), m_y.center()); }
   float ratio() const { return m_y.length() / m_x.length(); }
   bool ratioIs(float r) const;
-  void extend(Coordinate2D<float> p) { m_x.extend(p.x1()); m_y.extend(p.x2()); }
+  void extend(Coordinate2D<float> p, float limit) { m_x.extend(p.x1(), limit); m_y.extend(p.x2(), limit); }
   void zoom(float ratio, Coordinate2D<float> p) { m_x.zoom(ratio, p.x1()); m_y.zoom(ratio, p.x2()); }
   void setRatio(float r, bool shrink);
 

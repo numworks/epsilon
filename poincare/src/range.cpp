@@ -12,10 +12,11 @@ Range1D Range1D::RangeBetween(float a, float b, float limit) {
   return res;
 }
 
-void Range1D::extend(float t) {
+void Range1D::extend(float t, float limit) {
   if (std::isnan(t)) {
     return;
   }
+  t = std::clamp(t, -limit, limit);
   /* Using this syntax for the comparison takes care of the NAN. */
   if (!(t >= m_min)) {
     m_min = t;

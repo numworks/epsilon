@@ -9,7 +9,7 @@ namespace Graph {
 
 class PointsOfInterestCache {
 public:
-  PointsOfInterestCache() : m_start(NAN), m_end(NAN) {}
+  PointsOfInterestCache(float maxFloat) : m_start(NAN), m_end(NAN), m_maxFloat(maxFloat) {}
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   Poincare::Range1D setBoundsAndCompute(float start, float end);
@@ -54,6 +54,7 @@ private:
   uint32_t m_checksum;
   float m_start;
   float m_end;
+  const float m_maxFloat;
   Poincare::PointsOfInterestList m_list;
 };
 

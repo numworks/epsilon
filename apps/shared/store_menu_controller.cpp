@@ -22,8 +22,6 @@ void StoreMenuController::open() {
 }
 
 void StoreMenuController::close() {
-  // TODO: See comment in StoreMenuController::setText
-  AbstractTextField::FillDraftTextBuffer(m_savedDraftTextBuffer);
   Container::activeApp()->dismissModalViewController();
 }
 
@@ -56,6 +54,7 @@ StoreMenuController::StoreMenuController() :
   /* We need to set the width early since minimalSizeForOptimalDisplay will be
    * called before willDisplayCell. */
   m_cell.setFrame(KDRect(0, 0, Ion::Display::Width - Metric::PopUpLeftMargin - Metric::PopUpRightMargin, 0), false);
+  m_cell.expressionField()->setTextEditionBuffer(m_savedDraftTextBuffer, AbstractTextField::MaxBufferSize());
 }
 
 void StoreMenuController::didBecomeFirstResponder() {
@@ -65,13 +64,6 @@ void StoreMenuController::didBecomeFirstResponder() {
 
 void StoreMenuController::setText(const char * text) {
   m_preventReload = true;
-  /* TODO: Currently there can't be two TextField edited at the same time
-   * since all TextFields share the same draft buffer.
-   * To be safe, the draft buffer is copied into m_savedDraftTextBuffer
-   * before beginning the edition of store menu input.
-   * This method is not ideal, and the behaviour of TextField should be
-   * reworked so that multiple fields can be edited at the same time. */
-  AbstractTextField::DumpDraftTextBuffer(m_savedDraftTextBuffer, AbstractTextField::MaxBufferSize());
   m_cell.expressionField()->setEditing(true);
   m_cell.expressionField()->setText(text);
   m_cell.expressionField()->handleEventWithText("→");

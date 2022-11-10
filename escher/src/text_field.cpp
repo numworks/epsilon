@@ -21,23 +21,6 @@ namespace Escher {
 static char s_draftTextBuffer[AbstractTextField::MaxBufferSize()];
 static size_t s_currentDraftTextLength;
 
-size_t AbstractTextField::DumpDraftTextBuffer(char * buffer, size_t bufferSize) {
-  size_t result = 0;
-  if (buffer) {
-    assert(s_currentDraftTextLength < bufferSize);
-    result = strlcpy(buffer, s_draftTextBuffer, bufferSize);
-  }
-  s_draftTextBuffer[0] = 0;
-  s_currentDraftTextLength = 0;
-  return result;
-}
-
-size_t AbstractTextField::FillDraftTextBuffer(const char * src) {
-  assert(strlen(src) < MaxBufferSize());
-  s_currentDraftTextLength = strlcpy(s_draftTextBuffer, src, MaxBufferSize());
-  return s_currentDraftTextLength;
-}
-
 /* AbstractTextField::ContentView */
 
 AbstractTextField::ContentView::ContentView(char * textBuffer, size_t textBufferSize, size_t draftTextBufferSize, KDFont::Size font, float horizontalAlignment, float verticalAlignment, KDColor textColor, KDColor backgroundColor) :

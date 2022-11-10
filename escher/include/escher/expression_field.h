@@ -33,6 +33,7 @@ public:
   void restoreContent(const char * buffer, size_t size);
   void setBackgroundColor(KDColor backgroundColor);
   void putCursorLeftOfField();
+  void setTextEditionBuffer(char * buffer, size_t bufferSize) { m_textField.setEditionBuffer(buffer, bufferSize); }
 
   /* View */
   int numberOfSubviews() const override { return 1; }

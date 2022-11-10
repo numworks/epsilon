@@ -21,9 +21,6 @@ class AbstractTextField : public TextInput, public EditableField {
 public:
   constexpr static int MaxBufferSize() { return ContentView::k_maxBufferSize; }
 
-  static size_t DumpDraftTextBuffer(char * buffer = nullptr, size_t bufferSize = 0);
-  static size_t FillDraftTextBuffer(const char * src);
-
   AbstractTextField(Responder * parentResponder, View * contentView, InputEventHandlerDelegate * inputEventHandlerDelegate, TextFieldDelegate * delegate);
 
   // Responder
@@ -56,6 +53,7 @@ public:
   void setTextColor(KDColor textColor);
   size_t insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, size_t bufferLength);
   bool cursorAtEndOfText() const { return isEditing() && cursorLocation() == text() + draftTextLength(); }
+  void setEditionBuffer(char * buffer, size_t bufferSize) { contentView()->setEditionBuffer(buffer, bufferSize); }
 
 protected:
   class ContentView : public TextInput::ContentView {

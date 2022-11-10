@@ -77,7 +77,7 @@ void App::storageDidChangeForRecord(Ion::Storage::Record record) {
   if (!shouldUpdateFunctions) {
     return;
   }
-  ViewController * tabs[] = {&m_listController, &m_graphController, &m_valuesController};
+
   StackViewController * tabStacks[] = {&m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController};
   int tab = m_tabViewController.activeTab();
   assert(0 <= tab && tab < 3);
@@ -85,11 +85,20 @@ void App::storageDidChangeForRecord(Ion::Storage::Record record) {
     /* Close the details/curve menu/calculation views (minimum...)/column header
      * since they may not make sense with the updated function. */
     tabStacks[tab]->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
-  } else {
-    /* Reload the current tab. */
-    tabs[tab]->viewDidDisappear();
-    tabs[tab]->viewWillAppear();
   }
+  /* Changing the storage may have deactivated all active functions. We pop
+   * then push to make sur the graph gets updated to its empty counterpart if
+   * necessary. */
+  ViewController * activeViewController = tabStacks[tab]->topViewController();
+  tabStacks[tab]->pop();
+  tabStacks[tab]->push(activeViewController);
+  /* Pushing the active controller has properly set up the first responder, but
+   * it will be overriden by the modal being dismissed.
+   * e.g. The store menu is summoned from the graph, its previous responder is
+   * the TextField. Then a variable is stored that disables all functions.
+   * After a push, the first responder will be the Tab controller, and we want
+   * it to stay that way after the modal view dismissal. */
+  m_modalViewController.setPreviousResponder(firstResponder());
 }
 
 void App::Snapshot::tidy() {

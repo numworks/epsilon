@@ -8,6 +8,7 @@
 #include <poincare/list_complex.h>
 #include <poincare/multiplication.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/undefined.h>
 
 namespace Poincare {
@@ -146,6 +147,13 @@ Expression List::shallowReduce(ExpressionNode::ReductionContext reductionContext
       return replaceWithUndefinedInPlace();
     }
   }
+
+  // Bubble up dependencies of children
+  Expression e = SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
+  if (!e.isUninitialized()) {
+    return e;
+  }
+
   /* We bypass the reduction to undef in case of undef children, as {undef} and
    * undef are different objects. */
   return *this;

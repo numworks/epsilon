@@ -1,4 +1,5 @@
 #include "exports.h"
+#include "../shared/display.h"
 #include "../shared/journal.h"
 #include "../shared/keyboard.h"
 #include "../shared/window.h"
@@ -13,6 +14,7 @@ const char * IonPatchLevel() {
 }
 
 void IonDisplayForceRefresh() {
+  Ion::Simulator::Display::prepareScreenshot();
   Ion::Simulator::Window::setNeedsRefresh();
   Ion::Simulator::Window::refresh();
 }

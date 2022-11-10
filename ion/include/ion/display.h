@@ -32,6 +32,9 @@ void POSTPushMulticolor(int rootNumberTiles, int tileSize);
 void saveScreenshot();
 void copyScreenshot();
 
+#if !PLATFORM_DEVICE
+void registerScreenshotDelegate(void(*)(void));
+#endif
 }
 }
 

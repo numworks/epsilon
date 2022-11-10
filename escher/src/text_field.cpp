@@ -47,7 +47,8 @@ AbstractTextField::ContentView::ContentView(char * textBuffer, size_t textBuffer
   m_draftTextBufferSize(draftTextBufferSize),
   m_textColor(textColor),
   m_backgroundColor(backgroundColor),
-  m_isEditing(false)
+  m_isEditing(false),
+  m_useDraftBuffer(true)
 {
   if (textBuffer == nullptr) {
     m_textBuffer = s_draftTextBuffer;
@@ -76,7 +77,8 @@ void AbstractTextField::ContentView::drawRect(KDContext * ctx, KDRect rect) cons
   if (selectionIsEmpty()) {
     ctx->drawString(text(), glyphFrameAtPosition(text(), text()).origin(), m_font, m_textColor, backgroundColor);
   } else {
-    int selectionOffset = m_selectionStart - s_draftTextBuffer;
+    assert(m_isEditing);
+    int selectionOffset = m_selectionStart - editedText();
     const char * textToDraw = text();
     // Draw the non selected text on the left of the selection
     ctx->drawString(textToDraw, glyphFrameAtPosition(text(), text()).origin(), m_font, m_textColor, backgroundColor, selectionOffset);
@@ -91,25 +93,22 @@ void AbstractTextField::ContentView::drawRect(KDContext * ctx, KDRect rect) cons
 }
 
 const char * AbstractTextField::ContentView::text() const {
-  return const_cast<const char *>(m_isEditing ? s_draftTextBuffer : m_textBuffer);
+  return const_cast<const char *>(m_isEditing && m_useDraftBuffer ? s_draftTextBuffer : m_textBuffer);
 }
 
 const char * AbstractTextField::ContentView::editedText() const {
-  return s_draftTextBuffer;
+  assert(m_useDraftBuffer || (m_textBuffer != nullptr && m_textBuffer != s_draftTextBuffer));
+  return m_useDraftBuffer ? s_draftTextBuffer : m_textBuffer;
 }
 
 size_t AbstractTextField::ContentView::editedTextLength() const {
-  return s_currentDraftTextLength;
+  return m_useDraftBuffer ? s_currentDraftTextLength : strlen(m_textBuffer);
 }
 
 void AbstractTextField::ContentView::setText(const char * text) {
   size_t textRealLength = strlen(text);
-  size_t maxBufferSize = m_textBufferSize;
-  char * buffer = m_textBuffer;
-  if (m_isEditing) {
-    maxBufferSize = m_draftTextBufferSize;
-    buffer = s_draftTextBuffer;
-  }
+  size_t maxBufferSize = editionBufferSize();
+  char * buffer = const_cast<char *>(this->text());
   if (textRealLength > maxBufferSize - 1) {
     // The text was too long to be copied
     // TODO Maybe add a warning for the user?
@@ -120,7 +119,7 @@ void AbstractTextField::ContentView::setText(const char * text) {
   // Copy the text
   strlcpy(buffer, text, maxBufferSize);
   // Update the draft text length
-  if (m_isEditing || m_textBuffer == s_draftTextBuffer) {
+  if (buffer == s_draftTextBuffer) {
     s_currentDraftTextLength = textLength;
   }
   markRectAsDirty(bounds());
@@ -132,11 +131,15 @@ void AbstractTextField::ContentView::setEditing(bool isEditing) {
   }
   resetSelection();
   m_isEditing = isEditing;
-  s_currentDraftTextLength = strlen(s_draftTextBuffer);
-  if (m_cursorLocation < s_draftTextBuffer
-      || m_cursorLocation > s_draftTextBuffer + s_currentDraftTextLength)
+  const char * buffer = editedText();
+  size_t textLength = strlen(buffer);
+  if (buffer == const_cast<const char *>(s_draftTextBuffer)) {
+    s_currentDraftTextLength = textLength;
+  }
+  if (m_cursorLocation < buffer
+      || m_cursorLocation > buffer + textLength)
   {
-    m_cursorLocation = s_draftTextBuffer + s_currentDraftTextLength;
+    m_cursorLocation = buffer + textLength;
   }
   markRectAsDirty(bounds());
   layoutSubviews();
@@ -146,30 +149,40 @@ void AbstractTextField::ContentView::reinitDraftTextBuffer() {
   /* We first need to clear the buffer, otherwise setCursorLocation might do
    * various operations on a buffer with maybe non-initialized content, such as
    * stringSize, etc. Those operation might be perilous on non-UTF8 content. */
-  AbstractTextField::DumpDraftTextBuffer();
-  setCursorLocation(s_draftTextBuffer);
+  if (m_useDraftBuffer) {
+    s_draftTextBuffer[0] = 0;
+    s_currentDraftTextLength = 0;
+  } else {
+    m_textBuffer[0] = 0;
+  }
+  setCursorLocation(editedText());
 }
 
 bool AbstractTextField::ContentView::insertTextAtLocation(const char * text, char * location, int textLen) {
   assert(m_isEditing);
 
+  char * buffer = const_cast<char *>(editedText());
+  size_t editedLength = editedTextLength();
+
   size_t textLength = textLen < 0 ? strlen(text) : (size_t)textLen;
   // TODO when paste fails because of a too big message, create a pop-up
-  if (s_currentDraftTextLength + textLength >= m_draftTextBufferSize || textLength == 0) {
+  if (editedLength + textLength >= editionBufferSize() || textLength == 0) {
     return false;
   }
 
-  memmove(location + textLength, location, (s_draftTextBuffer + s_currentDraftTextLength + 1) - location);
+  memmove(location + textLength, location, (buffer + editedLength + 1) - location);
 
   // Caution! One byte will be overridden by the null-terminating char of strlcpy
-  size_t copySize = std::min(textLength + 1, static_cast<size_t>((s_draftTextBuffer + m_draftTextBufferSize) - location));
+  size_t copySize = std::min(textLength + 1, static_cast<size_t>((buffer + editionBufferSize()) - location));
   char * overridenByteLocation = location + copySize - 1;
   char overridenByte = *overridenByteLocation;
   strlcpy(location, text, copySize);
   *overridenByteLocation = overridenByte;
-  s_currentDraftTextLength += copySize-1; // Do no count the null-termination
+  if (buffer == s_draftTextBuffer) {
+    s_currentDraftTextLength += copySize-1; // Do no count the null-termination
+  }
 
-  reloadRectFromPosition(m_horizontalAlignment == 0.0f ? location : s_draftTextBuffer);
+  reloadRectFromPosition(m_horizontalAlignment == 0.0f ? location : buffer);
   return true;
 }
 
@@ -185,24 +198,28 @@ KDSize AbstractTextField::ContentView::minimalSizeForOptimalDisplay() const {
 bool AbstractTextField::ContentView::removePreviousGlyph() {
   assert(m_isEditing);
 
+  char * buffer = const_cast<char *>(editedText());
+
   if (m_horizontalAlignment > 0.0f) {
     /* Reload the view. If we do it later, the text beins supposedly shorter, we
      * will not clean the first char. */
-    reloadRectFromPosition(s_draftTextBuffer);
+    reloadRectFromPosition(buffer);
   }
   // Remove the glyph if possible
-  int removedLength = UTF8Helper::RemovePreviousGlyph(s_draftTextBuffer, const_cast<char *>(cursorLocation()));
+  int removedLength = UTF8Helper::RemovePreviousGlyph(buffer, const_cast<char *>(cursorLocation()));
   if (removedLength == 0) {
-    assert(cursorLocation() == s_draftTextBuffer);
+    assert(cursorLocation() == buffer);
     return false;
   }
 
-  // Update the draft buffer length
-  s_currentDraftTextLength-= removedLength;
-  assert(s_draftTextBuffer[s_currentDraftTextLength] == 0);
+  if (buffer == s_draftTextBuffer) {
+    // Update the draft buffer length
+    s_currentDraftTextLength-= removedLength;
+    assert(s_draftTextBuffer[s_currentDraftTextLength] == 0);
+  }
 
   // Set the cursor location and reload the view
-  assert(cursorLocation() - removedLength >= s_draftTextBuffer);
+  assert(cursorLocation() - removedLength >= buffer);
   setCursorLocation(cursorLocation() - removedLength);
   if (m_horizontalAlignment == 0.0f) {
     reloadRectFromPosition(cursorLocation());
@@ -213,12 +230,15 @@ bool AbstractTextField::ContentView::removePreviousGlyph() {
 
 bool AbstractTextField::ContentView::removeEndOfLine() {
   assert(m_isEditing);
-  size_t lengthToCursor = (size_t)(cursorLocation() - s_draftTextBuffer);
-  if (s_currentDraftTextLength == lengthToCursor) {
+  char * buffer = const_cast<char *>(editedText());
+  size_t lengthToCursor = (size_t)(cursorLocation() - buffer);
+  if (editedTextLength() == lengthToCursor) {
     return false;
   }
-  reloadRectFromPosition(m_horizontalAlignment == 0.0f ? cursorLocation() : s_draftTextBuffer);
-  s_currentDraftTextLength = lengthToCursor;
+  reloadRectFromPosition(m_horizontalAlignment == 0.0f ? cursorLocation() : buffer);
+  if (buffer == s_draftTextBuffer) {
+    s_currentDraftTextLength = lengthToCursor;
+  }
   *(const_cast<char *>(cursorLocation())) = 0;
   layoutSubviews();
   return true;
@@ -228,27 +248,38 @@ void AbstractTextField::ContentView::willModifyTextBuffer() {
   assert(m_isEditing);
   /* This method should be called when the buffer is modified outside the
    * content view, for instance from the textfield directly. */
-  reloadRectFromPosition(s_draftTextBuffer);
+  reloadRectFromPosition(editedText());
 }
 
 void AbstractTextField::ContentView::didModifyTextBuffer() {
   /* This method should be called when the buffer is modified outside the
    * content view, for instance from the textfield directly. */
-  s_currentDraftTextLength = strlen(s_draftTextBuffer);
+  if (m_useDraftBuffer) {
+    s_currentDraftTextLength = strlen(s_draftTextBuffer);
+  }
   layoutSubviews();
+}
+
+void AbstractTextField::ContentView::setEditionBuffer(char * buffer, size_t bufferSize) {
+  m_textBuffer = buffer;
+  m_textBufferSize = bufferSize;
+  m_useDraftBuffer = false;
 }
 
 size_t AbstractTextField::ContentView::deleteSelection() {
   assert(!selectionIsEmpty());
   assert(m_isEditing);
   size_t removedLength = m_selectionEnd - m_selectionStart;
-  strlcpy(const_cast<char *>(m_selectionStart), m_selectionEnd, m_draftTextBufferSize - (m_selectionStart - s_draftTextBuffer));
+  char * buffer = const_cast<char *>(editedText());
+  strlcpy(const_cast<char *>(m_selectionStart), m_selectionEnd, editionBufferSize() - (m_selectionStart - buffer));
   /* We cannot call resetSelection() because m_selectionStart and m_selectionEnd
    * are invalid */
   m_selectionStart = nullptr;
   m_selectionEnd = nullptr;
-  assert(removedLength <= s_currentDraftTextLength);
-  s_currentDraftTextLength -= removedLength;
+  if (buffer == s_draftTextBuffer) {
+    assert(removedLength <= s_currentDraftTextLength);
+    s_currentDraftTextLength -= removedLength;
+  }
   return removedLength;
 }
 
@@ -258,6 +289,10 @@ void AbstractTextField::ContentView::layoutSubviews(bool force) {
     return;
   }
   TextInput::ContentView::layoutSubviews(force);
+}
+
+size_t AbstractTextField::ContentView::editionBufferSize() const {
+  return m_useDraftBuffer ? m_draftTextBufferSize : m_textBufferSize;
 }
 
 KDRect AbstractTextField::ContentView::glyphFrameAtPosition(const char * buffer, const char * position) const {

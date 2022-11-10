@@ -99,12 +99,14 @@ protected:
     size_t draftTextBufferSize() const { return m_draftTextBufferSize; }
     void willModifyTextBuffer();
     void didModifyTextBuffer();
+    void setEditionBuffer(char * buffer, size_t bufferSize);
 
   protected:
     KDRect glyphFrameAtPosition(const char * buffer, const char * position) const override;
 
   private:
     void layoutSubviews(bool force = false) override;
+    size_t editionBufferSize() const;
 
     char * m_textBuffer;
     size_t m_textBufferSize;
@@ -112,6 +114,7 @@ protected:
     KDColor m_textColor;
     KDColor m_backgroundColor;
     bool m_isEditing;
+    bool m_useDraftBuffer;
   };
 
   const ContentView * nonEditableContentView() const override = 0;

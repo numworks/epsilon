@@ -24,7 +24,6 @@ public:
   virtual void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) const;
 
   Poincare::Preferences::ComplexFormat complexFormat(const Ion::Storage::Record * record, Poincare::Context * context) const;
-  Poincare::Preferences::AngleUnit angleUnit(const Ion::Storage::Record * record, Poincare::Context * context) const;
 protected:
   // Setters helper
   virtual Poincare::Expression buildExpressionFromText(const char * c, CodePoint symbol = 0, Poincare::Context * context = nullptr) const;
@@ -47,21 +46,10 @@ private:
     Complex = 0,
     Any = 1,
   };
-  enum class MemoizedAngleUnit : int8_t {
-    NotMemoized = -1,
-    Radian = 0,
-    Degree = 1,
-    Gradian = 2,
-    Any = 3
-  };
-  static_assert(static_cast<int>(MemoizedAngleUnit::Radian) == static_cast<int>(Poincare::Preferences::AngleUnit::Radian), "Angle unit in preferences and expression model don't match.");
-  static_assert(static_cast<int>(MemoizedAngleUnit::Degree) == static_cast<int>(Poincare::Preferences::AngleUnit::Degree), "Angle unit in preferences and expression model don't match.");
-  static_assert(static_cast<int>(MemoizedAngleUnit::Gradian) == static_cast<int>(Poincare::Preferences::AngleUnit::Gradian), "Angle unit in preferences and expression model don't match.");
 
   /* Memoize complex format and angle unit to avoid recomputing them each time
    * the model is approximated (when it's plotted for example). */
   mutable MemoizedComplexFormat m_expressionComplexFormat;
-  mutable MemoizedAngleUnit m_expressionAngleUnit;
 };
 
 }

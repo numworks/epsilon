@@ -33,9 +33,6 @@ public:
   Poincare::Preferences::ComplexFormat complexFormat(Poincare::Context * context) const {
     return model()->complexFormat(this, context);
   }
-  Poincare::Preferences::AngleUnit angleUnit(Poincare::Context * context) const {
-    return model()->angleUnit(this, context);
-  }
 protected:
   ExpressionModel * editableModel() { return const_cast<ExpressionModel *>(model()); }
   virtual const ExpressionModel * model() const = 0;

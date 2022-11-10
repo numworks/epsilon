@@ -173,8 +173,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(co
      */
     Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
     Poincare::Preferences::ComplexFormat complexFormat = Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionToStore, this);
-    Poincare::Preferences::AngleUnit angleUnit = Poincare::Preferences::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), expressionToStore, this);
-    expressionToStore = expressionToStore.approximateKeepingUnits<double>(Poincare::ExpressionNode::ReductionContext(this, complexFormat, angleUnit, GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, Poincare::ExpressionNode::UnitConversion::Default));
+    expressionToStore = expressionToStore.approximateKeepingUnits<double>(Poincare::ExpressionNode::ReductionContext(this, complexFormat, preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined, Poincare::ExpressionNode::UnitConversion::Default));
   }
   ExpressionNode::Type type = expressionToStore.type();
   const char * extension;

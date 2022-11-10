@@ -243,12 +243,14 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 
   assertCalculationIs("(1/6)_g", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1.666666667×_dg", "1.6666666666667×_dg", &globalContext, &store);
   assertCalculationIs("(1/6)_L_kg", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1.666666667×_dg×_m^3", "1.6666666666667×_dg×_m^3", &globalContext, &store);
-  assertCalculationIs("(1/6)_rad", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "1/6×_rad", "0.1666666667×_rad", "0.16666666666667×_rad", &globalContext, &store);
+  assertCalculationIs("(π/6)_rad", DisplayOutput::ApproximateOnly, EqualSign::Approximation, nullptr, "30×_°", "30×_°", &globalContext, &store);
   assertCalculationIs("(1/11)_°", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "60/11×_'", "5.454545455×_'", "5.4545454545455×_'", &globalContext, &store);
+  Preferences::sharedPreferences()->setAngleUnit(Preferences::AngleUnit::Radian);
   assertCalculationIs("(1/6)_rad^(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "0.1666666667×_rad^\u0012-1\u0013", "0.16666666666667×_rad^\u0012-1\u0013", &globalContext, &store);
   assertCalculationIs("diff(x^2,x,3)_rad", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "6×_rad", "6×_rad", &globalContext, &store);
   assertCalculationIs("(1/6)_rad→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "1/6×_rad", "0.1666666667×_rad", "0.16666666666667×_rad", &globalContext, &store);
   assertCalculationIs("diff(x^2,x,3)_rad→a", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "6×_rad", "6×_rad", &globalContext, &store);
+  Preferences::sharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
 
   Poincare::Preferences::ExamMode previousExamMode = Poincare::Preferences::sharedPreferences()->examMode();

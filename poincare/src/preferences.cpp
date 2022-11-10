@@ -27,10 +27,9 @@ Preferences * Preferences::sharedPreferences() {
   return &preferences;
 }
 
-Preferences Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(ComplexFormat complexFormat, AngleUnit angleUnit, Preferences * preferences) {
+Preferences Preferences::ClonePreferencesWithNewComplexFormat(ComplexFormat complexFormat, Preferences * preferences) {
   Preferences result = *preferences;
   result.setComplexFormat(complexFormat);
-  result.setAngleUnit(angleUnit);
   return result;
 }
 
@@ -39,51 +38,6 @@ Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     return k_defautComplexFormatIfNotReal;
   }
   return complexFormat;
-}
-
-Preferences::AngleUnit Preferences::UpdatedAngleUnitWithExpressionInput(AngleUnit angleUnit, const Expression & exp, Context * context, bool * forceChange) {
-  struct AngleInformations {
-    bool hasTrigonometry;
-    bool hasRadians;
-    bool hasDegrees;
-    bool hasGradians;
-  };
-  AngleInformations angleInformations = {};
-  exp.recursivelyMatches(
-    [](const Expression e, Context * context, void * data) {
-      AngleInformations * angleInformations = static_cast<AngleInformations*>(data);
-      angleInformations->hasTrigonometry = angleInformations->hasTrigonometry || e.isOfType({
-          ExpressionNode::Type::Sine, ExpressionNode::Type::Cosine, ExpressionNode::Type::Tangent,
-          ExpressionNode::Type::Secant, ExpressionNode::Type::Cosecant, ExpressionNode::Type::Cotangent
-        });
-      if (e.type() != ExpressionNode::Type::Unit) {
-        return TrinaryBoolean::Unknown;
-      }
-      const Unit::Representative * representative = static_cast<const Unit &>(e).representative();
-      angleInformations->hasRadians = angleInformations->hasRadians || representative == &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
-      angleInformations->hasGradians = angleInformations->hasGradians || representative == &Unit::k_angleRepresentatives[Unit::k_gradianRepresentativeIndex];
-      angleInformations->hasDegrees =
-        angleInformations->hasDegrees
-        || representative == &Unit::k_angleRepresentatives[Unit::k_degreeRepresentativeIndex]
-        || representative == &Unit::k_angleRepresentatives[Unit::k_arcMinuteRepresentativeIndex]
-        || representative == &Unit::k_angleRepresentatives[Unit::k_arcSecondRepresentativeIndex];
-      return TrinaryBoolean::Unknown;
-    },
-    context,
-    ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, static_cast<void*>(&angleInformations));
-
-  bool forceChangeResult = false;
-  Preferences::AngleUnit result = angleUnit;
-  if (!angleInformations.hasTrigonometry && (angleInformations.hasDegrees + angleInformations.hasRadians + angleInformations.hasGradians == 1))
-  {
-    // Exactly one among hasDegree, hasRadians and hasGradians is true
-    forceChangeResult = true;
-    result = angleInformations.hasDegrees ? Preferences::AngleUnit::Degree : (angleInformations.hasGradians ? Preferences::AngleUnit::Gradian : Preferences::AngleUnit::Radian);
-  }
-  if (forceChange) {
-    *forceChange = forceChangeResult;
-  }
-  return result;
 }
 
 void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {

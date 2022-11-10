@@ -628,7 +628,7 @@ bool Expression::hasUnit() const {
   return recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Unit; }, nullptr, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
 }
 
-bool Expression::hasPureAngleUnit(bool expressionIsAlreadyReduced, Context * context) const {
+bool Expression::isInRadians(bool expressionIsAlreadyReduced, Context * context) const {
   Expression thisClone = clone();
   Expression units;
   if (expressionIsAlreadyReduced) {
@@ -638,7 +638,7 @@ bool Expression::hasPureAngleUnit(bool expressionIsAlreadyReduced, Context * con
     reductionContext.setContext(context);
     thisClone.reduceAndRemoveUnit(reductionContext, &units);
   }
-  return units.isPureAngleUnit();
+  return !units.isUninitialized() && unit.type() == ExpressionNode::Type::Unit && unit.convert<Unit>().representative() == &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
 }
 
 bool Expression::isPureAngleUnit() const {

@@ -43,7 +43,7 @@ bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expres
           ExpressionNode::Type::DistributionDispatcher,
         });
       }, context)
-    || (exactOutput.hasUnit() && !exactOutput.hasPureAngleUnit(false, context));
+    || (exactOutput.hasUnit() && !exactOutput.isInRadians(false, context));
 }
 
 bool ShouldOnlyDisplayExactOutput(Poincare::Expression input) {

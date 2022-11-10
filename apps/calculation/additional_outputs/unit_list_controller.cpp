@@ -94,12 +94,19 @@ void UnitListController::setExpression(Poincare::Expression e) {
       ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   int numberOfExpressions = Unit::SetAdditionalExpressions(units, value, expressions, k_maxNumberOfExpressionCells, reductionContext, m_expression);
 
-  // 2. SI units only
-  assert(numberOfExpressions < k_maxNumberOfExpressionCells - 1);
-  expressions[numberOfExpressions] = m_expression;
-  Shared::PoincareHelpers::CloneAndSimplify(&expressions[numberOfExpressions], App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::InternationalSystem);
-  Expression siExpression = expressions[numberOfExpressions]; // Remember for later (part II)
-  numberOfExpressions++;
+  Expression siExpression;
+  const Unit::Representative * representative = units.type() == ExpressionNode::Type::Unit ? static_cast<Unit &>(units).representative() : UnitNode::Representative::RepresentativeForDimension(UnitNode::Vector<int>::FromBaseUnits(units));
+  if (representative->dimensionVector() != Unit::AngleRepresentative::Default().dimensionVector()) {
+    // 2. SI units only
+    assert(numberOfExpressions < k_maxNumberOfExpressionCells - 1);
+    expressions[numberOfExpressions] = m_expression;
+    Shared::PoincareHelpers::CloneAndSimplify(&expressions[numberOfExpressions], App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::InternationalSystem);
+    siExpression = expressions[numberOfExpressions]; // Remember for later (part II)
+    numberOfExpressions++;
+  } else {
+    // Needs to be defined for the unit comparison but is not used with angles
+    siExpression = m_expression;
+  }
 
   /* 3. Get rid of duplicates
    * We find duplicates by comparing the serializations, to eliminate
@@ -145,6 +152,15 @@ void UnitListController::setExpression(Poincare::Expression e) {
   for (size_t i = 0; i < k_maxNumberOfExpressionCells; i++) {
     if (!expressions[i].isUninitialized()) {
       m_layouts[i] = Shared::PoincareHelpers::CreateLayout(expressions[i], App::app()->localContext());
+      // Radians may have two layouts to display
+      if (expressions[i].isInRadians(false, App::app()->localContext())) {
+        Layout approximated = Shared::PoincareHelpers::CreateLayout(expressions[i].approximateKeepingUnits<double>(reductionContext), App::app()->localContext());
+        if (!approximated.isIdenticalTo(m_layouts[i], true)) {
+          m_exactLayouts[i] = m_layouts[i];
+          m_layouts[i] = Layout();
+          m_approximatedLayouts[i] = approximated;
+        }
+      }
     }
   }
 

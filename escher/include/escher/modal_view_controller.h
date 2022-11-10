@@ -22,8 +22,11 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
   ViewController * currentModalViewController() const { return m_currentModalViewController; };
+  void setPreviousResponder(Responder * responder) { m_previousResponder = responder; }
+
 protected:
   void reloadView();
+
 private:
   class ContentView : public View {
   public:
@@ -50,6 +53,7 @@ private:
     KDCoordinate m_bottomMargin;
     KDCoordinate m_rightMargin;
   };
+
   ContentView m_contentView;
   Responder * m_previousResponder;
   ViewController * m_currentModalViewController;

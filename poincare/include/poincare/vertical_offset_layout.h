@@ -57,7 +57,7 @@ private:
   KDSize computeSize(KDFont::Size font) override;
   KDCoordinate computeBaseline(KDFont::Size font) override;
   KDPoint positionOfChild(LayoutNode * child, KDFont::Size font) override;
-  bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
+  bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) override;
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override {}
   bool protectedIsIdenticalTo(Layout l) override;
 

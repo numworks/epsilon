@@ -223,11 +223,11 @@ KDPoint VerticalOffsetLayoutNode::positionOfChild(LayoutNode * child, KDFont::Si
   return KDPoint(0, baseLayout()->layoutSize(font).height() - k_indiceHeight);
 }
 
-bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
+bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) {
   if (sibling->type() != Type::VerticalOffsetLayout) {
     return true;
   }
-  VerticalOffsetLayoutNode * verticalOffsetSibling = static_cast<VerticalOffsetLayoutNode *>(sibling);
+  VerticalOffsetLayoutNode * verticalOffsetSibling = static_cast<VerticalOffsetLayoutNode *>(sibling->node());
   if (verticalOffsetSibling->verticalPosition() != VerticalPosition::Superscript) {
     return true;
   }
@@ -235,7 +235,6 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
    * a^(b^c) and (a^b)^c when representing a^b^c, add parentheses to make (a^b)^c. */
   Layout thisRef = Layout(this);
   Layout parentRef = Layout(parent());
-  Layout siblingRef = Layout(sibling);
   assert(parentRef.type() == Type::HorizontalLayout);
   int thisIndex = parentRef.indexOfChild(thisRef);
   int leftParenthesisIndex = thisIndex - 1;
@@ -259,7 +258,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode 
   parentRef.addChildAtIndex(parentheses, leftParenthesisIndex + 1, parentRef.numberOfChildren(), nullptr);
   /* Handle the sibling insertion, as the index might have changed after
    * collapsing nodes inside the parenthesis. */
-  parentRef.addChildAtIndex(siblingRef, leftParenthesisIndex + 2, parentRef.numberOfChildren(), nullptr);
+  parentRef.addChildAtIndex(*sibling, leftParenthesisIndex + 2, parentRef.numberOfChildren(), nullptr);
   if (!parentheses.parent().isUninitialized()) {
     if (cursor->position() == LayoutCursor::Position::Left) {
       cursor->setLayout(h);

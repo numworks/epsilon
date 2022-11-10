@@ -240,4 +240,18 @@ QUIZ_CASE(poincare_layout_parentheses) {
     assert_layout_serialize_to(l, "(3)");
     quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(0).childAtIndex(0).childAtIndex(0), LayoutCursor::Position::Left)));
   }
+  /*
+   * sqrt((3]|) -> ")" -> sqrt((3))
+   */
+  {
+    Layout l = HorizontalLayout::Builder(
+      NthRootLayout::Builder(HorizontalLayout::Builder(
+        ParenthesisLayout::Builder(HorizontalLayout::Builder(
+            CodePointLayout::Builder('3'))))));
+    static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).childAtIndex(0).childAtIndex(0).node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Right, true);
+    LayoutCursor c(l.childAtIndex(0).childAtIndex(0), LayoutCursor::Position::Right);
+    c.insertText(")", nullptr);
+    assert_layout_serialize_to(l, "√\u0012(3)\u0013");
+    quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(0).childAtIndex(0).childAtIndex(0), LayoutCursor::Position::Right)));
+  }
 }

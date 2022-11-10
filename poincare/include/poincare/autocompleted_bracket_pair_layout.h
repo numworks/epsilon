@@ -21,7 +21,7 @@ public:
   size_t size() const override { return sizeof(AutocompletedBracketPairLayoutNode); }
 
   // LayoutNode
-  bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
+  bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) override;
   void deleteBeforeCursor(LayoutCursor * cursor) override;
 
   bool isTemporary(Side side) const { return side == Side::Left ? m_leftIsTemporary : m_rightIsTemporary; }

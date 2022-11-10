@@ -197,8 +197,8 @@ void Layout::addChildAtIndex(Layout l, int index, int currentNumberOfChildren, L
   }
 }
 
-void Layout::addSibling(LayoutCursor * cursor, Layout sibling, bool moveCursor) {
-  if (!node()->willAddSibling(cursor, sibling.node(), moveCursor)) {
+void Layout::addSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) {
+  if (!node()->willAddSibling(cursor, sibling, moveCursor)) {
     return;
   }
   /* The layout must have a parent, because HorizontalLayout's
@@ -238,14 +238,14 @@ void Layout::addSibling(LayoutCursor * cursor, Layout sibling, bool moveCursor) 
     }
 
     // Else, let the parent add the sibling.
-    HorizontalLayout(static_cast<HorizontalLayoutNode *>(p.node())).addOrMergeChildAtIndex(sibling, siblingIndex, true, moveCursor ? cursor : nullptr);
+    HorizontalLayout(static_cast<HorizontalLayoutNode *>(p.node())).addOrMergeChildAtIndex(*sibling, siblingIndex, true, moveCursor ? cursor : nullptr);
     return;
   }
   if (cursor->position() == LayoutCursor::Position::Left) {
-    replaceWithJuxtapositionOf(sibling, *this, cursor, moveCursor);
+    replaceWithJuxtapositionOf(*sibling, *this, cursor, moveCursor);
   } else {
     assert(cursor->position() == LayoutCursor::Position::Right);
-    replaceWithJuxtapositionOf(*this, sibling, cursor);
+    replaceWithJuxtapositionOf(*this, *sibling, cursor);
   }
 }
 

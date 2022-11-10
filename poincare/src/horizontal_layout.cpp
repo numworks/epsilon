@@ -351,7 +351,11 @@ bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * siblin
     siblingIndex = nChildren - 1;
   }
   if (nChildren == 0 || childAtIndex(siblingIndex)->willAddSibling(cursor, sibling, moveCursor)) {
+    bool layoutWillBeMerged = sibling->type() == LayoutNode::Type::HorizontalLayout;
     thisRef.addOrMergeChildAtIndex(*sibling, newChildIndex, true, cursor);
+    if (layoutWillBeMerged) {
+      *sibling = thisRef;
+    }
   }
   return false;
 }

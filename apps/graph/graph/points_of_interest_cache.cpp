@@ -19,7 +19,7 @@ PointsOfInterestCache::Iterator & PointsOfInterestCache::Iterator::operator++() 
 
 // PointsOfInterestCache
 
-Range1D PointsOfInterestCache::setBoundsAndCompute(float start, float end) {
+Range1D PointsOfInterestCache::setBoundsAndCompute(float start, float end, float maxFloat) {
   assert(start < end);
   assert(!m_record.isNull());
 
@@ -47,13 +47,13 @@ Range1D PointsOfInterestCache::setBoundsAndCompute(float start, float end) {
   }
 
   if (start > oldEnd || end < oldStart || std::isnan(oldEnd) || std::isnan(oldStart)) {
-    computeBetween(start, end, &dirtyRange);
+    computeBetween(start, end, maxFloat, &dirtyRange);
   } else {
     if (start < oldStart) {
-      computeBetween(start, oldStart, &dirtyRange);
+      computeBetween(start, oldStart, maxFloat, &dirtyRange);
     }
     if (end > oldEnd) {
-      computeBetween(oldEnd, end, &dirtyRange);
+      computeBetween(oldEnd, end, maxFloat, &dirtyRange);
     }
   }
 
@@ -90,7 +90,7 @@ void PointsOfInterestCache::stripOutOfBounds() {
   }
 }
 
-void PointsOfInterestCache::computeBetween(float start, float end, Range1D * dirtyRange) {
+void PointsOfInterestCache::computeBetween(float start, float end, float maxFloat, Range1D * dirtyRange) {
   assert(!m_list.isUninitialized());
 
   ContinuousFunctionStore * store = App::app()->functionStore();
@@ -101,7 +101,7 @@ void PointsOfInterestCache::computeBetween(float start, float end, Range1D * dir
   if (start < 0.f && 0.f < end) {
     Coordinate2D<double> xy = f->evaluateXYAtParameter(0., context);
     if (std::isfinite(xy.x1()) && std::isfinite(xy.x2())) {
-      append(xy.x1(), xy.x2(), Solver<double>::Interest::YIntercept, dirtyRange);
+      append(xy.x1(), xy.x2(), maxFloat, Solver<double>::Interest::YIntercept, dirtyRange);
     }
   }
 
@@ -111,7 +111,7 @@ void PointsOfInterestCache::computeBetween(float start, float end, Range1D * dir
     Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);
     Coordinate2D<double> solution;
     while (std::isfinite((solution = (solver.*next)(e)).x1())) { // assignment in condition
-      append(solution.x1(), solution.x2(), solver.lastInterest(), dirtyRange);
+      append(solution.x1(), solution.x2(), maxFloat, solver.lastInterest(), dirtyRange);
     }
   }
 
@@ -135,15 +135,15 @@ void PointsOfInterestCache::computeBetween(float start, float end, Range1D * dir
     Coordinate2D<double> intersection;
     while (std::isfinite((intersection = solver.nextIntersection(e, e2, &diff)).x1())) { // assignment in condition
       assert(sizeof(record) == sizeof(uint32_t));
-      append(intersection.x1(), intersection.x2(), Solver<double>::Interest::Intersection, dirtyRange, *reinterpret_cast<uint32_t *>(&record));
+      append(intersection.x1(), intersection.x2(), maxFloat, Solver<double>::Interest::Intersection, dirtyRange, *reinterpret_cast<uint32_t *>(&record));
     }
   }
 }
 
-void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest, Range1D * dirtyRange, uint32_t data) {
+void PointsOfInterestCache::append(double x, double y, float maxFloat, Solver<double>::Interest interest, Range1D * dirtyRange, uint32_t data) {
   assert(std::isfinite(x) && std::isfinite(y));
   m_list.append(x, y, data, interest);
-  dirtyRange->extend(x, m_maxFloat);
+  dirtyRange->extend(x, maxFloat);
 }
 
 }

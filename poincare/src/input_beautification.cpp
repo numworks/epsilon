@@ -208,7 +208,7 @@ int InputBeautification::BeautifyPipeKey(Layout parent, int indexOfPipeKey, Layo
     parent.removeChild(pipeKey, cursorToUse);
     Layout toInsert = k_absoluteValueRule.layoutBuilder(Layout());
     cursorToUse->addLayoutAndMoveCursor(toInsert, nullptr);
-    return indexOfPipeKey;
+    return indexOfMatchingPipeKey;
   }
   // Case 2: number of pipes is even, beautify |...| as a whole.
   // Put layouts between pipe and its next pipe neighbour in a layout

@@ -63,7 +63,12 @@ void App::storageDidChangeForRecord(Ion::Storage::Record record) {
      * implemented but the best solution is to rework recursivelyMatches to make
      * it aware of parametered expressions. */
     if (f.recursivelyMatches([](const Expression e, Context * context, void * symbol) {
-      return e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol&>(e).isIdenticalTo(*static_cast<Symbol*>(symbol));
+      if (e.isUninitialized()) {
+      /* A function's expression can be uninitialized if we are storing from a
+       * varbox opened while editing a function for the first time. */
+        return TrinaryBoolean::False;
+      }
+      return e.type() == ExpressionNode::Type::Symbol && static_cast<const Symbol&>(e).isIdenticalTo(*static_cast<Symbol*>(symbol)) ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
     }, context(), ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol, &symbol)) {
       shouldUpdateFunctions = true;
       break;

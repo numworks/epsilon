@@ -171,7 +171,7 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const v
   /* Use a simple dichotomy in [a,b] to hone in on the point of interest
    * without using the costly Brent methods. */
   constexpr int k_numberOfIterations = 10; // TODO Tune
-  bool continuous;
+  bool continuous = false;
   /* Define three points m, u and v such that a < u < m < v < b. Then, we can
    * determine wether the point of interest exists on [a,m] or [m,b]. */
   float m = 0.5f * (a + b);

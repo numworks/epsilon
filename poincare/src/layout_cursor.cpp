@@ -291,7 +291,7 @@ void LayoutCursor::addLayoutAndMoveCursor(Layout l, Context * context, bool with
     return;
   }
   Layout layoutToBeautify;
-  int beautifyEndIndex;
+  int beautifyEndIndex = 0;
   if (m_layout.type() == LayoutNode::Type::HorizontalLayout && m_position == Position::Right) {
     layoutToBeautify = m_layout;
     beautifyEndIndex = m_layout.numberOfChildren();

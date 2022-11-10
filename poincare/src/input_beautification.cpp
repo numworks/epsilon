@@ -169,7 +169,7 @@ bool InputBeautification::ShouldBeBeautifiedWhenInputted(Layout parent, int inde
   // Compare the code points input with the the pattern
   for (int i = 0; i < length; i++) {
     Layout child = parent.childAtIndex(indexOfLastAddedLayout - (length - 1) + i);
-    if (child.type() != LayoutNode::Type::CodePointLayout || static_cast<CodePointLayout&>(child).codePoint() != pattern[i]) {
+    if (child.type() != LayoutNode::Type::CodePointLayout || static_cast<CodePointLayout&>(child).codePoint() != CodePoint(pattern[i])) {
       return false;
     }
   }

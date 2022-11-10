@@ -253,7 +253,7 @@ T Sequence::approximateToNextRank(int n, SequenceContext * sqctx, int sequenceIn
     }
   }
   // Update angle unit and complex format
-  Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(sqctx), angleUnit(sqctx));
+  Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(sqctx));
   switch (type()) {
     case Type::Explicit:
     {

@@ -49,7 +49,7 @@ Expression Equation::Model::standardForm(const Storage::Record * record, Context
   } else if (ComparisonNode::IsBinaryEquality(simplifiedInput)) {
     Preferences * preferences = Preferences::sharedPreferences();
     returnedExpression = Subtraction::Builder(simplifiedInput.childAtIndex(0), simplifiedInput.childAtIndex(1));
-    returnedExpression = returnedExpression.cloneAndReduce(ExpressionNode::ReductionContext(contextToUse, Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), Preferences::UpdatedAngleUnitWithExpressionInput(preferences->angleUnit(), expressionInputWithoutFunctions, context), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), reductionTarget));
+    returnedExpression = returnedExpression.cloneAndReduce(ExpressionNode::ReductionContext(contextToUse, Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), expressionInputWithoutFunctions, contextToUse), preferences->angleUnit(), GlobalPreferences::sharedGlobalPreferences()->unitFormat(), reductionTarget));
   } else {
     assert(simplifiedInput.type() == ExpressionNode::Type::Boolean || simplifiedInput.type() == ExpressionNode::Type::List);
     /* The equality has disappeared after reduction. This may be because:

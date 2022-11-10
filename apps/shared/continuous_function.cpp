@@ -109,7 +109,7 @@ bool ContinuousFunction::isNamed() const {
 
 bool ContinuousFunction::isDiscontinuousBetweenFloatValues(float x1, float x2, Poincare::Context * context) const {
   Expression equation = expressionReduced(context);
-  return equation.isDiscontinuousBetweenValuesForSymbol(k_unknownName, x1, x2, context, complexFormat(context), angleUnit(context));
+  return equation.isDiscontinuousBetweenValuesForSymbol(k_unknownName, x1, x2, context, complexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
 }
 
 void ContinuousFunction::getLineParameters(double * slope, double * intercept, Context * context) const {
@@ -119,7 +119,7 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
   Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
   // Separate the two line coefficients for approximation.
   int d = equation.getPolynomialReducedCoefficients(
-      k_unknownName, coefficients, context, complexFormat(context), angleUnit(context),
+      k_unknownName, coefficients, context, complexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit(),
       ContinuousFunctionProperties::k_defaultUnitFormat,
       ExpressionNode::SymbolicComputation::
           ReplaceAllSymbolsWithDefinitionsOrUndefined);
@@ -130,11 +130,11 @@ void ContinuousFunction::getLineParameters(double * slope, double * intercept, C
     *slope = NAN;
     *intercept = NAN;
   } else {
-    *intercept = coefficients[0].approximateToScalar<double>(context, complexFormat(context), angleUnit(context));
+    *intercept = coefficients[0].approximateToScalar<double>(context, complexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
     if (d == 0) {
       *slope = 0.0;
     } else {
-      *slope = coefficients[1].approximateToScalar<double>(context, complexFormat(context), angleUnit(context));
+      *slope = coefficients[1].approximateToScalar<double>(context, complexFormat(context), Poincare::Preferences::sharedPreferences()->angleUnit());
     }
   }
 }
@@ -204,7 +204,7 @@ double ContinuousFunction::approximateDerivative(double x, Context * context, in
   // Derivative is simplified once and for all
   Expression derivate = expressionDerivateReduced(context);
   assert(subCurveIndex == 0);
-  Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(context), angleUnit(context));
+  Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(context));
   return PoincareHelpers::ApproximateWithValueForSymbol(derivate, k_unknownName, x, context, &preferences, false);
 }
 
@@ -282,7 +282,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(T t, Context * 
   if (!properties().isPolar()) {
     return x1x2;
   }
-  const T angle = x1x2.x1() * M_PI / Trigonometry::PiInAngleUnit(angleUnit(context));
+  const T angle = x1x2.x1() * M_PI / Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit());
   return Coordinate2D<T>(x1x2.x2() * std::cos(angle),
                          x1x2.x2() * std::sin(angle));
 }
@@ -293,7 +293,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(T t, Context
     return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
   Expression e = expressionReduced(context);
-  Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(context), angleUnit(context));
+  Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(context));
   if (!properties().isParametric()) {
     if (numberOfSubCurves() >= 2) {
       assert(e.numberOfChildren() > subCurveIndex);
@@ -333,7 +333,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
       m_expression = Undefined::Builder();
       return m_expression;
     }
-    Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(record, context), angleUnit(record, context));
+    Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(record, context));
     if (!properties().isPolar() && (record->fullName() == nullptr || record->fullName()[0] == k_unnamedRecordFirstChar)) {
       /* Function isn't named, m_expression currently is an expression in y or x
        * such as y = x. We extract the solution by solving in y or x. */
@@ -442,7 +442,7 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(con
   bool isCartesianEquation = false;
   Expression result = expressionEquation(record, context, &computedEquationType, &computedFunctionSymbol, &isCartesianEquation);
   if (!result.isUndefined()) {
-    Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(record, context), angleUnit(record, context));
+    Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(record, context));
     PoincareHelpers::CloneAndReduce(
         &result,
         context,
@@ -572,7 +572,7 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
       m_expressionDerivate = Undefined::Builder();
     } else {
       m_expressionDerivate = Derivative::Builder(expression, Symbol::Builder(UCodePointUnknown), Symbol::Builder(UCodePointUnknown));
-      Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormatAndAngleUnit(complexFormat(record, context), angleUnit(record, context));
+      Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(record, context));
       /* On complex functions, this step can take a significant time.
       * A workaround could be to identify big functions to skip simplification
       * at the cost of possible inaccurate evaluations (such as diff(abs(x),x,0)

@@ -693,21 +693,6 @@ QUIZ_CASE(poincare_expression_continuous) {
   assert_is_continuous_between_values("x+randint(1,10)", 2.43f, 2.45f, false);
 }
 
-void assert_update_angle_unit(const char * expression, Preferences::AngleUnit initial, Preferences::AngleUnit updated) {
-  Shared::GlobalContext context;
-  Expression e = parse_expression(expression, &context, false);
-  quiz_assert_print_if_failure(Preferences::UpdatedAngleUnitWithExpressionInput(initial, e, &context) == updated, expression);
-}
-
-QUIZ_CASE(poincare_expression_update_angle_unit) {
-  assert_update_angle_unit("45°+15°", Preferences::AngleUnit::Radian, Preferences::AngleUnit::Degree);
-  assert_update_angle_unit("(15°+45rad)+15°", Preferences::AngleUnit::Radian, Preferences::AngleUnit::Radian);
-  assert_update_angle_unit("45rad+15°", Preferences::AngleUnit::Degree, Preferences::AngleUnit::Degree);
-  assert_update_angle_unit("45rad+15rad", Preferences::AngleUnit::Degree, Preferences::AngleUnit::Radian);
-  assert_update_angle_unit("45gon+15gon", Preferences::AngleUnit::Radian, Preferences::AngleUnit::Gradian);
-  assert_update_angle_unit("45rad+15°", Preferences::AngleUnit::Gradian, Preferences::AngleUnit::Gradian);
-}
-
 void assert_is_linear_combination_of_pattern(const char * expression, Expression::PatternTest testFunction, bool truthValue = true, const char * symbol = "x") {
   Shared::GlobalContext context;
   Expression e = parse_expression(expression, &context, false);

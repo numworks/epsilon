@@ -822,7 +822,6 @@ Expression Expression::ParseAndSimplify(const char * text, Context * context, Pr
     return Undefined::Builder();
   }
   complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
-  angleUnit = Preferences::UpdatedAngleUnitWithExpressionInput(angleUnit, exp, context);
   exp = exp.cloneAndSimplify(ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::User, symbolicComputation, unitConversion));
   assert(!exp.isUninitialized());
   return exp;
@@ -833,7 +832,6 @@ void Expression::ParseAndSimplifyAndApproximate(const char * text, Expression * 
   Expression exp = Parse(text, context, false);
   *parsedExpression = exp;
   complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
-  angleUnit = Preferences::UpdatedAngleUnitWithExpressionInput(angleUnit, exp, context);
   if (exp.isUninitialized()) {
     *simplifiedExpression = Undefined::Builder();
     *approximateExpression = Undefined::Builder();
@@ -1172,7 +1170,6 @@ template<typename U>
 U Expression::ParseAndSimplifyAndApproximateToScalar(const char * text, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ExpressionNode::SymbolicComputation symbolicComputation) {
   Expression exp = ParseAndSimplify(text, context, complexFormat, angleUnit, unitFormat, symbolicComputation);
   complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(complexFormat, exp, context);
-  angleUnit = Preferences::UpdatedAngleUnitWithExpressionInput(angleUnit, exp, context);
   assert(!exp.isUninitialized());
   return exp.approximateToScalar<U>(context, complexFormat, angleUnit);
 }

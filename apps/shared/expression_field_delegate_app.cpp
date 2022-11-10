@@ -81,6 +81,7 @@ bool ExpressionFieldDelegateApp::isAcceptableExpression(const Expression exp) {
 bool ExpressionFieldDelegateApp::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Sto) {
     storeValue();
+    return true;
   }
   return TextFieldDelegateApp::handleEvent(event);
 }

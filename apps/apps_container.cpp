@@ -32,6 +32,13 @@ AppsContainer::AppsContainer() :
 {
   m_emptyBatteryWindow.setFrame(KDRectScreen, false);
   Ion::Storage::FileSystem::sharedFileSystem()->setDelegate(this);
+#if !PLATFORM_DEVICE
+  Ion::Display::registerScreenshotDelegate([]() {
+    AppsContainer * container = sharedAppsContainer();
+    container->m_blinkTimer.forceCursorVisible();
+    container->window()->redraw();
+  });
+#endif
   Shared::RecordRestrictiveExtensions::registerRestrictiveExtensionsToSharedStorage();
 }
 
@@ -176,13 +183,10 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
   }
 #if !PLATFORM_DEVICE
   if (event == Ion::Events::SaveScreenshot) {
-    m_blinkTimer.forceCursorVisible();
-    window()->redraw();
+    // Ion will call the delegate to make the cursor visible
     Ion::Display::saveScreenshot();
     return true;
   } else if (event == Ion::Events::CopyScreenshot) {
-    m_blinkTimer.forceCursorVisible();
-    window()->redraw();
     Ion::Display::copyScreenshot();
     return true;
   }

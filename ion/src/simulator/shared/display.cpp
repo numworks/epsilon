@@ -8,26 +8,12 @@
 
 namespace Ion {
 
-namespace Display {
-
-void saveScreenshot() {
-#if ION_SIMULATOR_FILES
-  Simulator::Actions::saveScreenshot();
-#endif
-}
-
-void copyScreenshot() {
-#if ION_SIMULATOR_FILES
-  Simulator::Actions::copyScreenshot();
-#endif
-}
-
-}
 
 namespace Simulator {
 namespace Display {
 
 static SDL_Texture * sFramebufferTexture = nullptr;
+static void(*sScreenshotDelegate)() = nullptr;
 
 void init(SDL_Renderer * renderer) {
   Framebuffer::setActive(true);
@@ -58,6 +44,35 @@ void draw(SDL_Renderer * renderer, SDL_Rect * rect) {
   SDL_RenderCopy(renderer, sFramebufferTexture, nullptr, rect);
 }
 
+void prepareScreenshot() {
+  if (sScreenshotDelegate) {
+    sScreenshotDelegate();
+  }
+}
+
 }
 }
+
+namespace Display {
+
+void registerScreenshotDelegate(void (*delegate)()) {
+  Simulator::Display::sScreenshotDelegate = delegate;
+}
+
+void saveScreenshot() {
+#if ION_SIMULATOR_FILES
+  Simulator::Display::prepareScreenshot();
+  Simulator::Actions::saveScreenshot();
+#endif
+}
+
+void copyScreenshot() {
+#if ION_SIMULATOR_FILES
+  Simulator::Display::prepareScreenshot();
+  Simulator::Actions::copyScreenshot();
+#endif
+}
+
+}
+
 }

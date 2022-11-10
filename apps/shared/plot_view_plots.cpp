@@ -99,6 +99,8 @@ WithCurves::CurveDrawing::CurveDrawing(Curve2D curve, void * context, float tSta
   m_tStart(tStart),
   m_tEnd(tEnd),
   m_tStep(tStep),
+  m_patternStart(NAN),
+  m_patternEnd(NAN),
   m_color(color),
   m_axis(AbstractPlotView::Axis::Horizontal),
   m_thick(thick),

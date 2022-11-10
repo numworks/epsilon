@@ -9,10 +9,10 @@ namespace Graph {
 
 class PointsOfInterestCache {
 public:
-  PointsOfInterestCache(float maxFloat) : m_start(NAN), m_end(NAN), m_maxFloat(maxFloat) {}
+  PointsOfInterestCache() : m_start(NAN), m_end(NAN) {}
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }
-  Poincare::Range1D setBoundsAndCompute(float start, float end);
+  Poincare::Range1D setBoundsAndCompute(float start, float end, float maxFloat);
   Poincare::PointOfInterest pointAtIndex(int i) const { return m_list.pointAtIndex(i); }
   Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None) const;
 
@@ -46,15 +46,14 @@ public:
 
 private:
   void stripOutOfBounds();
-  void computeBetween(float start, float end, Poincare::Range1D * dirtyRange);
-  void append(double x, double y, Poincare::Solver<double>::Interest, Poincare::Range1D * dirtyRange, uint32_t data = 0);
+  void computeBetween(float start, float end, float maxFloat, Poincare::Range1D * dirtyRange);
+  void append(double x, double y, float maxFloat, Poincare::Solver<double>::Interest, Poincare::Range1D * dirtyRange, uint32_t data = 0);
 
   Ion::Storage::Record m_record;
   Ion::Storage::Record m_computedRecord;
   uint32_t m_checksum;
   float m_start;
   float m_end;
-  const float m_maxFloat;
   Poincare::PointsOfInterestList m_list;
 };
 

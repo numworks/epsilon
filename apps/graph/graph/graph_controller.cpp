@@ -12,7 +12,6 @@ namespace Graph {
 
 GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, uint32_t * rangeVersion, ButtonRowController * header) :
   FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor, rangeVersion),
-  m_pointsOfInterest(k_maxFloat),
   m_bannerView(this, inputEventHandlerDelegate, this),
   m_view(curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
@@ -298,10 +297,10 @@ void GraphController::refreshPointsOfInterest() {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
   if (f->isAlongY()) {
-    m_pointsOfInterest.setBoundsAndCompute(m_graphRange->yMin(), m_graphRange->yMax());
+    m_pointsOfInterest.setBoundsAndCompute(m_graphRange->yMin(), m_graphRange->yMax(), k_maxFloat);
     m_view.reload();
   } else {
-    Range1D dirtyRange = m_pointsOfInterest.setBoundsAndCompute(m_graphRange->xMin(), m_graphRange->xMax());
+    Range1D dirtyRange = m_pointsOfInterest.setBoundsAndCompute(m_graphRange->xMin(), m_graphRange->xMax(), k_maxFloat);
     if (dirtyRange.isValid()) {
       float dotRadius = (Dots::LargeDotDiameter * m_view.pixelWidth()) * 0.5f;
       m_view.reloadBetweenBounds(dirtyRange.min() - dotRadius, dirtyRange.max() + dotRadius);

@@ -9,6 +9,7 @@ class Approximation final {
 public:
   typedef float (*Reductor)(float, float);
   static float MapAndReduce(const TypeBlock * block, Reductor reductor);
+  static float Approximate(
 };
 
 }

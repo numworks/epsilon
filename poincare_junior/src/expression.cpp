@@ -1,4 +1,4 @@
-#include "expressions/expression.h"
+#include <poincare-junior/include/expression.h>
 #include "expressions/expressions.h"
 #include "expression_reference.h"
 #include "cache_pool.h"
@@ -6,9 +6,9 @@
 namespace Poincare {
 
 // TODO dummy parse
-ExpressionReference ExpressionReference::Parse(const char * textInput) {
+Expression Expression::Parse(const char * textInput) {
   // textInput == (1-2)/3/4
-  return ExpressionReference([](const char * text){
+  return Expression([](const char * text){
       Node::Push<Division>();
       Node::Push<Division>();
       Node::Push<Subtraction>();
@@ -19,8 +19,8 @@ ExpressionReference ExpressionReference::Parse(const char * textInput) {
     }, textInput);
 }
 
-ExpressionReference ExpressionReference::CreateBasicReduction(void * expressionAddress) {
-  return ExpressionReference(
+Expression Expression::CreateBasicReduction(void * expressionAddress) {
+  return Expression(
     [](Node tree) {
       tree.recursivelyEdit([](Node node) {
           Expression::BasicReduction(node.block());
@@ -29,7 +29,7 @@ ExpressionReference ExpressionReference::CreateBasicReduction(void * expressionA
     expressionAddress);
 }
 
-float ExpressionReference::approximate(float x) const {
+float Expression::approximate(float x) const {
   float res;
   send(
     [](const Node tree, void * res) {

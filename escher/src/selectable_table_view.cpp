@@ -22,10 +22,6 @@ SelectableTableView::SelectableTableView(Responder * parentResponder, TableViewD
 }
 
 HighlightCell * SelectableTableView::selectedCell() {
-  assert(selectedColumn() < dataSource()->numberOfColumns() && selectedRow() < dataSource()->numberOfRows());
-  if (selectedColumn() < 0 || selectedRow() < 0) {
-    return nullptr;
-  }
   return cellAtLocation(selectedColumn(), selectedRow());
 }
 

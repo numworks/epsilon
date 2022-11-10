@@ -20,7 +20,7 @@ public:
   virtual void lockMemoization(bool state) const {}
 };
 
-/* Use RegularTableSize1DManager if the height or with is constant.
+/* Use RegularTableSize1DManager if the height or width is constant.
  * The main advantage of this class is to compute cumulatedSizeAtIndex
  * and indexAfterCumulatedSize without going through a for-loop and adding
  * n-times for the same value. */

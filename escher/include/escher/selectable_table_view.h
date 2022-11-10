@@ -45,6 +45,24 @@ protected:
 
 private:
   bool cellAtLocationIsSelectable(int col, int row) { return dataSource()->cellAtLocationIsSelectable(col, row); }
+  /* This function searches (for delta = n) :
+   * - The n-th next selectable row in the currentCol starting from currentRow
+   *   if searchForRow = true
+   * - The n-th next selectable col in the currentRow starting from currentCol
+   *   if searchForRow = false
+   * If delta < 0, it searches backwards.
+   * If the found index goes out of bounds, return the last valid index.
+   *
+   * Examples:
+   * delta = 2, searchForRow = false (only currentRow is displayed)
+   * o = selectable, x = non selectable
+   *
+   * Col index: | 0 | 1 | 2 | 3 | 4 |
+   * Example 1: | o | o | x | o | o | currentCol = 0 -> resultCol = 3
+   * Example 2: | o | x | x | o | o | currentCol = 0 -> resultCol = 4
+   * Example 3: | o | x | x | o | x | currentCol = 2 -> resultCol = 3
+   * Example 4: | o | x | x | o | x | currentCol = 4 -> resultCol = 3
+   * */
   int indexOfNextSelectableColumnOrRow(int delta, int currentCol, int currentRow, bool searchForRow);
   int indexOfNextSelectableRow(int delta, int currentColumn, int currentRow) { return indexOfNextSelectableColumnOrRow(delta, currentColumn, currentRow, true); }
   int indexOfNextSelectableColumn(int delta, int currentColumn, int currentRow) { return indexOfNextSelectableColumnOrRow(delta, currentColumn, currentRow, false); }

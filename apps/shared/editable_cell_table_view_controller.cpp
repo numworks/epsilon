@@ -91,11 +91,6 @@ void EditableCellTableViewController::willDisplayCellAtLocationWithDisplayMode(H
   // The cell is editable
   if (cellAtLocationIsEditable(i, j)) {
     EvenOddEditableTextCell * myEditableValueCell = static_cast<EvenOddEditableTextCell *>(cell);
-    /* Cell should not be in edition mode. Otherwise, the cell background is
-     * white whichever it is an odd or even cell and we do not want to redraw
-     * the cell twice (in the even/odd color and then in white) to avoid screen
-     * blinking. */
-    assert(!myEditableValueCell->editableTextCell()->textField()->isEditing());
     const int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(Preferences::VeryLargeNumberOfSignificantDigits);
     char buffer[bufferSize];
     // Special case 1: last row and NaN

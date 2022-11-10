@@ -1,5 +1,5 @@
 #include "multiplication.h"
-#include "../node_iterator.h"
+#include <poincare_junior/src/memory/node_iterator.h>
 
 namespace Poincare {
 

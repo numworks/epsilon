@@ -1,6 +1,6 @@
 #include "print.h"
-#include <poincare_junior/node_iterator.h>
-#include <poincare_junior/constexpr_node.h>
+#include <poincare_junior/src/memory/node_iterator.h>
+#include <poincare_junior/src/memory/constexpr_node.h>
 
 using namespace Poincare;
 

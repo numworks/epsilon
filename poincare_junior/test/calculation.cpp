@@ -1,5 +1,5 @@
 #include "print.h"
-#include <poincare_junior/expression_reference.h>
+#include <poincare_junior/include/expression.h>
 
 using namespace Poincare;
 
@@ -18,16 +18,16 @@ class Calculation {
 public:
   Calculation(const char * textInput);
   TypeBlock * input() { return m_input; }
-  Poincare::ExpressionReference output() { return m_output; }
+  Poincare::Expression output() { return m_output; }
 private:
   constexpr static int k_bufferSize = 128;
   TypeBlock m_input[k_bufferSize];
-  Poincare::ExpressionReference m_output;
+  Poincare::Expression m_output;
 };
 
 Calculation::Calculation(const char * textInput) {
-  ExpressionReference::Parse(textInput).dumpAt(m_input);
-  m_output = ExpressionReference::CreateBasicReduction(m_input);
+  Expression::Parse(textInput).dumpAt(m_input);
+  m_output = Expression::CreateBasicReduction(m_input);
 }
 
 void testCalculation() {
@@ -39,15 +39,15 @@ void testCalculation() {
 
 // Check SharedPointer
 
-ExpressionReference expressionViolatingLifetimeOfData() {
+Expression expressionViolatingLifetimeOfData() {
   char input[20] = "1+2";
-  ExpressionReference e = ExpressionReference::Parse(input);
+  Expression e = Expression::Parse(input);
   // Corrupt the data source
   input[0] = 'a';
   return e;
 }
 
 void testRunTimeCrashIllFormedExpression() {
-  ExpressionReference e = expressionViolatingLifetimeOfData();
+  Expression e = expressionViolatingLifetimeOfData();
   e.log();
 }

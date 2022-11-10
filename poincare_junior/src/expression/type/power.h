@@ -2,11 +2,11 @@
 #define POINCARE_EXPRESSIONS_POWER_H
 
 #include <cmath>
-#include "expression.h"
+#include <poincare_junior/src/expression/expression.h>
 
 namespace Poincare {
 
-class Power final : public Expression {
+class Power final : public EExpression {
 public:
   constexpr static bool CreateBlockAtIndex(Block * block, size_t blockIndex) {
     assert(blockIndex == 0);

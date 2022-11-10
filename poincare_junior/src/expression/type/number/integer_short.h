@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSIONS_NUMBER_INTEGER_SHORT_H
 #define POINCARE_EXPRESSIONS_NUMBER_INTEGER_SHORT_H
 
-#include "../../type_block.h"
+#include <poincare_junior/src/memory/type_block.h>
 
 namespace Poincare {
 

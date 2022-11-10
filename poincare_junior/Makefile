@@ -12,37 +12,39 @@ include poincare_junior/utils/Makefile
 
 poincare_junior_src += $(utils_src)
 
-poincare_junior_src += $(addprefix poincare_junior/,\
-  expressions/numbers/integer.o \
-  expressions/numbers/integer_handler.o \
-  expressions/numbers/rational.o \
-  expressions/addition.o \
-  expressions/approximation.o \
-  expressions/constant.o \
-  expressions/division.o \
-  expressions/expression.o \
-  expressions/multiplication.o \
-  expressions/n_ary.o \
-  expressions/power.o \
-  expressions/subtraction.o \
-  test/calculation.o \
-  test/constexpr.o \
-  test/edition_pool_overflow.o \
-  test/elementary_tree_manipulations.o \
-  test/graph.o \
-  test/main.o \
-  test/node_iterator.o \
-  cache_pool.o \
-  cache_reference.o \
-  edition_pool.o \
-  edition_reference.o \
-  exception_checkpoint.o \
-  expression_reference.o \
-  node.o \
-  pool.o \
-  type_block.o \
+poincare_junior_src += $(addprefix poincare_junior/src/,\
+  expression.o \
+  expression/approximation.o \
+  expression/expression.o \
+  expression/type/number/integer.o \
+  expression/type/number/integer_handler.o \
+  expression/type/number/rational.o \
+  expression/type/addition.o \
+  expression/type/constant.o \
+  expression/type/division.o \
+  expression/type/multiplication.o \
+  expression/type/n_ary.o \
+  expression/type/power.o \
+  expression/type/subtraction.o \
+  memory/cache_pool.o \
+  memory/cache_reference.o \
+  memory/edition_pool.o \
+  memory/edition_reference.o \
+  memory/exception_checkpoint.o \
+  memory/node.o \
+  memory/pool.o \
+  memory/type_block.o \
 )
 
+poincare_junior_src += $(addprefix poincare_junior/test/,\
+  calculation.o \
+  constexpr.o \
+  edition_pool_overflow.o \
+  elementary_tree_manipulations.o \
+  graph.o \
+  main.o \
+  node_iterator.o \
+)
 poincare_junior_src += ion/src/simulator/shared/crc32.o
 poincare_junior_src += ion/src/shared/crc32_eat_byte.o
 
@@ -56,6 +58,10 @@ junior.elf: $(poincare_junior_src)
 
 .PHONY: clean
 clean:
+	rm -f poincare_junior/*/*/*/*/*.o
+	rm -f poincare_junior/*/*/*/*/*.d
+	rm -f poincare_junior/*/*/*/*.o
+	rm -f poincare_junior/*/*/*/*.d
 	rm -f poincare_junior/*/*/*.o
 	rm -f poincare_junior/*/*/*.d
 	rm -f poincare_junior/*/*.o

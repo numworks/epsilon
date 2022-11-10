@@ -1,5 +1,5 @@
 #include "subtraction.h"
-#include "../node.h"
+#include <poincare_junior/src/memory/node.h>
 
 namespace Poincare {
 

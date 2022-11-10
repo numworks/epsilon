@@ -19,7 +19,7 @@ Node Node::Push(Types... args) {
   return Node(newNode);
 }
 
-#if POINCARE_TREE_LOG
+#if POINCARE_MEMORY_TREE_LOG
 void Node::log(std::ostream & stream, bool recursive, int indentation, bool verbose) const {
   stream << "\n";
   for (int i = 0; i < indentation; ++i) {
@@ -95,7 +95,7 @@ void Node::logAttributes(std::ostream & stream) const {
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig:
     case BlockType::Float:
-      stream << " value=\"" << Expression::Approximate(m_block) << "\"";
+      stream << " value=\"" << EExpression::Approximate(m_block) << "\"";
       return;
     case BlockType::Constant:
       stream << " value=\"" << Constant::Value(m_block) << "\"";

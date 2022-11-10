@@ -1,7 +1,7 @@
-#ifndef POINCARE_NODE_H
-#define POINCARE_NODE_H
+#ifndef POINCARE_MEMORY_NODE_H
+#define POINCARE_MEMORY_NODE_H
 
-#include "expressions/expressions.h"
+#include <poincare_junior/src/expression/expressions.h>
 
 namespace Poincare {
 
@@ -24,7 +24,7 @@ public:
   bool operator==(const Node& n) const { return n.m_block == m_block; }
   bool operator!=(const Node& n) { return n.m_block != m_block; }
 
-#if POINCARE_TREE_LOG
+#if POINCARE_MEMORY_TREE_LOG
   void log(std::ostream & stream, bool recursive = true, int indentation = 0, bool verbose = true) const;
   void logName(std::ostream & stream) const;
   void logAttributes(std::ostream & stream) const;

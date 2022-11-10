@@ -1,4 +1,4 @@
-#include "poincare_junior/constexpr_node.h"
+#include <poincare_junior/src/memory/constexpr_node.h>
 #include "print.h"
 
 namespace Constants {
@@ -18,7 +18,7 @@ void playWithConstexprNodes() {
   editionPool->initFromTree(node);
 
   Node valueMod = editionPool->initFromTree(Sub(value, 12_n));
-  Expression::BasicReduction(valueMod.block());
+  EExpression::BasicReduction(valueMod.block());
 
   print();
 }

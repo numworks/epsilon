@@ -1,9 +1,9 @@
-#ifndef POINCARE_POOL_H
-#define POINCARE_POOL_H
+#ifndef POINCARE_MEMORY_POOL_H
+#define POINCARE_MEMORY_POOL_H
 
 #include "type_block.h"
 #include "node.h"
-#if POINCARE_TREE_LOG
+#if POINCARE_MEMORY_TREE_LOG
 #include <iostream>
 #endif
 
@@ -41,7 +41,7 @@ protected:
     Pool * m_pool;
   };
 
-#if POINCARE_TREE_LOG
+#if POINCARE_MEMORY_TREE_LOG
 public:
   void flatLog(std::ostream & stream);
   void treeLog(std::ostream & stream, bool verbose = true);

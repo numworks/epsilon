@@ -1,12 +1,12 @@
 #ifndef POINCARE_EXPRESSIONS_CONSTANT_H
 #define POINCARE_EXPRESSIONS_CONSTANT_H
 
-#include "expression.h"
-#include "../value_block.h"
+#include <poincare_junior/src/expression/expression.h>
+#include <poincare_junior/src/memory/value_block.h>
 
 namespace Poincare {
 
-class Constant final : public Expression {
+class Constant final : public EExpression {
 public:
   enum class Type : uint8_t {
     Pi,

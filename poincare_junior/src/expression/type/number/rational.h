@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSIONS_RATIONAL_H
 #define POINCARE_EXPRESSIONS_RATIONAL_H
 
-#include "../../edition_reference.h"
+#include <poincare_junior/src/memory/edition_reference.h>
 #include "integer_handler.h"
 
 namespace Poincare {

@@ -1,5 +1,5 @@
 #include "print.h"
-#include <poincare_junior/cache_reference.h>
+#include <poincare_junior/src/memory/cache_reference.h>
 
 using namespace Poincare;
 

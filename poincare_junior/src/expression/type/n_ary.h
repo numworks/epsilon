@@ -1,12 +1,12 @@
 #ifndef POINCARE_EXPRESSIONS_N_ARY_H
 #define POINCARE_EXPRESSIONS_N_ARY_H
 
-#include "expression.h"
-#include "../value_block.h"
+#include <poincare_junior/src/expression/expression.h>
+#include <poincare_junior/src/memory/value_block.h>
 
 namespace Poincare {
 
-class NAry : public Expression {
+class NAry : public EExpression {
 public:
   static constexpr size_t k_numberOfBlocksInNode = 3;
 protected:

@@ -1,5 +1,5 @@
-#ifndef POINCARE_CHECKPOINT_H
-#define POINCARE_CHECKPOINT_H
+#ifndef POINCARE_MEMORY_CHECKPOINT_H
+#define POINCARE_MEMORY_CHECKPOINT_H
 
 #include "edition_pool.h"
 

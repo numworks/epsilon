@@ -1,5 +1,5 @@
-#ifndef POINCARE_VALUE_BLOCK_H
-#define POINCARE_VALUE_BLOCK_H
+#ifndef POINCARE_MEMORY_VALUE_BLOCK_H
+#define POINCARE_MEMORY_VALUE_BLOCK_H
 
 #include "block.h"
 #include "type_block.h"

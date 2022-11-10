@@ -31,7 +31,7 @@ bool Pool::ReferenceTable::reset() {
 
 // Pool
 
-#if POINCARE_TREE_LOG
+#if POINCARE_MEMORY_TREE_LOG
 void Pool::flatLog(std::ostream & stream) {
   stream << "<Pool format=\"flat\" size=\"" << size()  << "\">";
   for (const Node node : allNodes()) {

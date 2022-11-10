@@ -109,7 +109,7 @@ size_t CacheReference::treeSize() const {
   return result;
 }
 
-#if POINCARE_TREE_LOG
+#if POINCARE_MEMORY_TREE_LOG
 void CacheReference::log() {
   std::cout << "id: " << m_id;
   send(

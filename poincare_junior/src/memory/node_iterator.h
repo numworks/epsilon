@@ -1,5 +1,5 @@
-#ifndef POINCARE_NODE_ITERATOR_H
-#define POINCARE_NODE_ITERATOR_H
+#ifndef POINCARE_MEMORY_NODE_ITERATOR_H
+#define POINCARE_MEMORY_NODE_ITERATOR_H
 
 #include "edition_reference.h"
 

@@ -1,7 +1,7 @@
 #include <iostream>
-#include <poincare_junior/expressions/expressions.h>
-#include <poincare_junior/cache_pool.h>
-#include <poincare_junior/edition_pool.h>
+#include <poincare_junior/src/expression/expressions.h>
+#include <poincare_junior/src/memory/cache_pool.h>
+#include <poincare_junior/src/memory/edition_pool.h>
 
 using namespace Poincare;
 

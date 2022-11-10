@@ -1,12 +1,12 @@
 #include "approximation.h"
 #include "expression.h"
-#include "numbers/rational.h"
-#include "../edition_reference.h"
-#include "../node_iterator.h"
+#include <poincare_junior/src/expression/type/number/rational.h>
+#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/node_iterator.h>
 
 namespace Poincare {
 
-void Expression::BasicReduction(TypeBlock * block) {
+void EExpression::BasicReduction(TypeBlock * block) {
   // TODO: Macro to automatically generate switch
   switch (block->type()) {
     case BlockType::Addition:
@@ -22,7 +22,7 @@ void Expression::BasicReduction(TypeBlock * block) {
   }
 }
 
-float Expression::Approximate(const TypeBlock * block) {
+float EExpression::Approximate(const TypeBlock * block) {
   if (block->isRational()) {
     return Rational::Numerator(block).approximate() / Rational::Denominator(block).approximate();
   }
@@ -40,12 +40,12 @@ float Expression::Approximate(const TypeBlock * block) {
   };
 }
 
-void Expression::ProjectionReduction(TypeBlock * block, TypeBlock * (*PushProjectedExpression)(), TypeBlock * (*PushInverse)()) {
+void EExpression::ProjectionReduction(TypeBlock * block, TypeBlock * (*PushProjectedEExpression)(), TypeBlock * (*PushInverse)()) {
   /* Rule a / b --> a * b^-1 (or a - b --> a + b * -1) */
   // Create a reference for future needs
   EditionReference division = EditionReference(Node(block));
   // Create empty * (or +)
-  EditionReference multiplication(PushProjectedExpression());
+  EditionReference multiplication(PushProjectedEExpression());
   // Get references to children
   assert(Node(block).numberOfChildren() == 2);
   EditionReference childrenReferences[2];

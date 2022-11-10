@@ -1,6 +1,6 @@
 #include "print.h"
-#include <poincare_junior/edition_reference.h>
-#include <poincare_junior/node_iterator.h>
+#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/node_iterator.h>
 
 using namespace Poincare;
 
@@ -41,7 +41,7 @@ void elementaryTreeManipulation() {
 
   std::cout << "\n---------------- Projection to internal nodes 1-2/3 ----------------" << std::endl;
   subtraction.recursivelyEdit([](Node node) {
-      Expression::BasicReduction(node.block());
+      EExpression::BasicReduction(node.block());
     });
   print();
 }

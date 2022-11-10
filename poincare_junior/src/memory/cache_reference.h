@@ -1,5 +1,5 @@
-#ifndef POINCARE_CACHE_REFERENCE_H
-#define POINCARE_CACHE_REFERENCE_H
+#ifndef POINCARE_MEMORY_CACHE_REFERENCE_H
+#define POINCARE_MEMORY_CACHE_REFERENCE_H
 
 #include "node.h"
 
@@ -52,7 +52,7 @@ public:
 
   void dumpAt(void * address);
   size_t treeSize() const;
-#if POINCARE_TREE_LOG
+#if POINCARE_MEMORY_TREE_LOG
   void log();
 #endif
 

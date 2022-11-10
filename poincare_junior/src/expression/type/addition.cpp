@@ -1,13 +1,13 @@
 #include "addition.h"
-#include "../edition_reference.h"
-#include "../node_iterator.h"
+#include <poincare_junior/src/memory/edition_reference.h>
+#include <poincare_junior/src/memory/node_iterator.h>
 
 namespace Poincare {
 
 #if 0
-Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionContext) {
+EExpression Addition::shallowReduce(EExpressionNode::ReductionContext reductionContext) {
   {
-    Expression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext, SimplificationHelper::BooleanReduction::UndefinedOnBooleans);
+    EExpression e = SimplificationHelper::defaultShallowReduce(*this, &reductionContext, SimplificationHelper::BooleanReduction::UndefinedOnBooleans);
     if (!e.isUninitialized()) {
       return e;
     }
@@ -29,11 +29,11 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
    * denominator before being reduced with the other terms of parent addition.)
    * */
   mergeSameTypeChildrenInPlace();
-  Expression parentOfThis = parent();
-  while (!parentOfThis.isUninitialized() && parentOfThis.type() == ExpressionNode::Type::Parenthesis) {
+  EExpression parentOfThis = parent();
+  while (!parentOfThis.isUninitialized() && parentOfThis.type() == EExpressionNode::Type::Parenthesis) {
     parentOfThis = parentOfThis.parent();
   }
-  if (!parentOfThis.isUninitialized() && (parentOfThis.type() == ExpressionNode::Type::Addition || parentOfThis.type() == ExpressionNode::Type::Subtraction)) {
+  if (!parentOfThis.isUninitialized() && (parentOfThis.type() == EExpressionNode::Type::Addition || parentOfThis.type() == EExpressionNode::Type::Subtraction)) {
     return *this;
   }
 
@@ -41,10 +41,10 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   assert(childrenCount > 1);
 
   // Step 2: Sort the children
-  sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context(), reductionContext.shouldCheckMatrices());
+  sortChildrenInPlace([](const EExpressionNode * e1, const EExpressionNode * e2) { return EExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context(), reductionContext.shouldCheckMatrices());
 
  // Step 3 : Distribute the addition over lists
-  Expression distributed = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
+  EExpression distributed = SimplificationHelper::distributeReductionOverLists(*this, reductionContext);
   if (!distributed.isUninitialized()) {
     return distributed;
   }
@@ -52,14 +52,14 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   /* Step 4: Handle the units. All children should have the same unit, otherwise
    * the result is not homogeneous. */
   {
-    Expression unit;
+    EExpression unit;
     if (childAtIndex(0).removeUnit(&unit).isUndefined()) {
       return replaceWithUndefinedInPlace();
     }
     const bool hasUnit = !unit.isUninitialized();
     for (int i = 1; i < childrenCount; i++) {
-      Expression otherUnit;
-      Expression childI = childAtIndex(i).removeUnit(&otherUnit);
+      EExpression otherUnit;
+      EExpression childI = childAtIndex(i).removeUnit(&otherUnit);
       if (childI.isUndefined()
           || hasUnit == otherUnit.isUninitialized()
           || (hasUnit && !unit.isIdenticalTo(otherUnit)))
@@ -71,8 +71,8 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
       /* The Tree is now free of units
        * Recurse to run the reduction, then create the result
        * result = MUL( addition, unit1, unit2...) */
-      Expression addition = shallowReduce(reductionContext);
-      assert((addition.type() != ExpressionNode::Type::Nonreal && addition.type() != ExpressionNode::Type::Undefined));
+      EExpression addition = shallowReduce(reductionContext);
+      assert((addition.type() != EExpressionNode::Type::Nonreal && addition.type() != EExpressionNode::Type::Undefined));
       Multiplication result = Multiplication::Builder(unit);
       // In case `unit` was a multiplication of units, flatten
       result.mergeSameTypeChildrenInPlace();
@@ -86,7 +86,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
    * Thanks to the simplification order, all matrix children (if any) are the
    * last children. */
   {
-    Expression lastChild = childAtIndex(childrenCount - 1);
+    EExpression lastChild = childAtIndex(childrenCount - 1);
     if (lastChild.deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
       if (!childAtIndex(0).deepIsMatrix(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
         /* If there is a matrix in the children, the last child is a matrix. If
@@ -94,7 +94,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
          * addition of a matrix and a scalar. */
         return replaceWithUndefinedInPlace();
       }
-      if (lastChild.type() != ExpressionNode::Type::Matrix) {
+      if (lastChild.type() != EExpressionNode::Type::Matrix) {
         /* All children are matrices that are not of type Matrix (for instance a
          * ConfidenceInterval that cannot be reduced). We cannot reduce the
          * addition more. */
@@ -106,7 +106,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
       int m = resultMatrix.numberOfColumns();
       // Scan to add the other children, which are  matrices
       for (int i = childrenCount - 2; i >= 0; i--) {
-        if (childAtIndex(i).type() != ExpressionNode::Type::Matrix) {
+        if (childAtIndex(i).type() != EExpressionNode::Type::Matrix) {
           break;
         }
         Matrix currentMatrix = childAtIndex(i).convert<Matrix>();
@@ -118,9 +118,9 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
         }
         // Dispatch the current matrix children in the created addition matrix
         for (int j = 0; j < n*m; j++) {
-          Expression resultEntryJ = resultMatrix.childAtIndex(j);
-          Expression currentEntryJ = currentMatrix.childAtIndex(j);
-          if (resultEntryJ.type() == ExpressionNode::Type::Addition) {
+          EExpression resultEntryJ = resultMatrix.childAtIndex(j);
+          EExpression currentEntryJ = currentMatrix.childAtIndex(j);
+          if (resultEntryJ.type() == EExpressionNode::Type::Addition) {
             static_cast<Addition &>(resultEntryJ).addChildAtIndexInPlace(currentEntryJ, resultEntryJ.numberOfChildren(), resultEntryJ.numberOfChildren());
           } else {
             Addition a = Addition::Builder(resultEntryJ, currentEntryJ);
@@ -140,8 +140,8 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
    * next to each other at this point. */
   int i = 0;
   while (i < numberOfChildren()-1) {
-    Expression e1 = childAtIndex(i);
-    Expression e2 = childAtIndex(i+1);
+    EExpression e1 = childAtIndex(i);
+    EExpression e2 = childAtIndex(i+1);
     if (e1.isNumber() && e2.isNumber()) {
       Number r1 = static_cast<Number&>(e1);
       Number r2 = static_cast<Number&>(e2);
@@ -159,11 +159,11 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
 
   // Step 6.2: factorize sin^2+cos^2
   for (int i = 0; i < numberOfChildren(); i++) {
-    Expression baseOfSquaredCos;
+    EExpression baseOfSquaredCos;
     // Find y*cos^2(x)
     if (TermHasSquaredCos(childAtIndex(i), reductionContext, baseOfSquaredCos)) {
       // Try to find y*sin^2(x) and turn sum into y
-      Expression additionWithFactorizedSumOfSquaredTrigFunction = factorizeSquaredTrigFunction(baseOfSquaredCos, reductionContext);
+      EExpression additionWithFactorizedSumOfSquaredTrigFunction = factorizeSquaredTrigFunction(baseOfSquaredCos, reductionContext);
       if (!additionWithFactorizedSumOfSquaredTrigFunction.isUninitialized()) {
         // If it's initialized, it means that the pattern was found
         return additionWithFactorizedSumOfSquaredTrigFunction;
@@ -172,7 +172,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   }
 
   // Factorizing terms might have created dependencies.
-  Expression eBubbledUp = SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
+  EExpression eBubbledUp = SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
   if (!eBubbledUp.isUninitialized()) {
     // bubbleUpDependencies shallowReduces the expression
     return eBubbledUp;
@@ -184,8 +184,8 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
    * though. */
   i = 0;
   while (i < numberOfChildren()) {
-    Expression e = childAtIndex(i);
-    if (e.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(e).isZero() && numberOfChildren() > 1) {
+    EExpression e = childAtIndex(i);
+    if (e.type() == EExpressionNode::Type::Rational && static_cast<Rational&>(e).isZero() && numberOfChildren() > 1) {
       removeChildAtIndexInPlace(i);
       continue;
     }
@@ -193,7 +193,7 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   }
 
   // Step 8: Let's remove the addition altogether if it has a single child
-  Expression result = squashUnaryHierarchyInPlace();
+  EExpression result = squashUnaryHierarchyInPlace();
   if (result != *this) {
     return result;
   }
@@ -212,8 +212,8 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
     Addition real = *this; // we store all real parts in 'real'
     i = numberOfChildren() - 1;
     while (i >= 0) {
-      Expression c = childAtIndex(i);
-      if (c.type() == ExpressionNode::Type::ComplexCartesian) {
+      EExpression c = childAtIndex(i);
+      if (c.type() == EExpressionNode::Type::ComplexCartesian) {
         real.replaceChildAtIndexInPlace(i, c.childAtIndex(0));
         imag.addChildAtIndexInPlace(c.childAtIndex(1), imag.numberOfChildren(), imag.numberOfChildren());
       } else {
@@ -234,8 +234,8 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
   /* Step 10: Let's put everything under a common denominator.
    * This step is done only for ReductionTarget::User if the parent expression
    * is not an addition. */
-  Expression p = result.parent();
-  if (reductionContext.target() == ExpressionNode::ReductionTarget::User && result == *this && (p.isUninitialized() || p.type() != ExpressionNode::Type::Addition)) {
+  EExpression p = result.parent();
+  if (reductionContext.target() == EExpressionNode::ReductionTarget::User && result == *this && (p.isUninitialized() || p.type() != EExpressionNode::Type::Addition)) {
     // squashUnaryHierarchy didn't do anything: we're not an unary hierarchy
      result = factorizeOnCommonDenominator(reductionContext);
   }

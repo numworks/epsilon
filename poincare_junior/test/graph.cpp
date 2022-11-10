@@ -1,5 +1,5 @@
 #include "print.h"
-#include <poincare_junior/expression_reference.h>
+#include <poincare_junior/include/expression.h>
 
 using namespace Poincare;
 
@@ -12,12 +12,12 @@ public:
 private:
   constexpr static int k_bufferSize = 128;
   char m_functionText[k_bufferSize];
-  Poincare::ExpressionReference m_function;
+  Poincare::Expression m_function;
 };
 
 Graph::Graph(const char * text) {
   strlcpy(m_functionText, text, k_bufferSize);
-  m_function = Poincare::ExpressionReference::Parse(m_functionText);
+  m_function = Poincare::Expression::Parse(m_functionText);
 }
 
 float Graph::approximateAtAbscissa(float x) const {

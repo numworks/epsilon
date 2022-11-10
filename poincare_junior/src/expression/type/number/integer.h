@@ -4,7 +4,7 @@
 #include "integer_big.h"
 #include "integer_handler.h"
 #include "integer_short.h"
-#include "../../edition_reference.h"
+#include <poincare_junior/src/memory/edition_reference.h>
 
 namespace Poincare {
 

@@ -1,11 +1,11 @@
 #ifndef POINCARE_EXPRESSIONS_EXPRESSION_H
 #define POINCARE_EXPRESSIONS_EXPRESSION_H
 
-#include "../type_block.h"
+#include <poincare_junior/src/memory/type_block.h>
 
 namespace Poincare {
 
-class Expression {
+class EExpression {
 public:
   static void BasicReduction(TypeBlock * block);
   static void ShallowBeautify(TypeBlock * block) {}
@@ -15,14 +15,14 @@ public:
   // reduceMatrix?
   // diff?
   // Policy based Design:
-  // ExpressionInterface<LayoutPolicy, SimplificationPolicy>...
+  // EExpressionInterface<LayoutPolicy, SimplificationPolicy>...
   // What about decreasing v-table sizes?
-  // ExpressionInterface
-  // InternalExpressionInterface
-  // AlgebraicExpressionInterface, FunctionExpressionInterface etc?
+  // EExpressionInterface
+  // InternalEExpressionInterface
+  // AlgebraicEExpressionInterface, FunctionEExpressionInterface etc?
 protected:
   // TODO: tidy somewhere else
-  static void ProjectionReduction(TypeBlock * block, TypeBlock * (*PushProjectedExpression)(), TypeBlock * (*PushInverse)());
+  static void ProjectionReduction(TypeBlock * block, TypeBlock * (*PushProjectedEExpression)(), TypeBlock * (*PushInverse)());
 };
 
 }

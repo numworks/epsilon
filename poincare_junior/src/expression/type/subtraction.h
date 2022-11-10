@@ -1,11 +1,11 @@
 #ifndef POINCARE_EXPRESSIONS_SUBTRACTION_H
 #define POINCARE_EXPRESSIONS_SUBTRACTION_H
 
-#include "expression.h"
+#include <poincare_junior/src/expression/expression.h>
 
 namespace Poincare {
 
-class Subtraction final : public Expression {
+class Subtraction final : public EExpression {
 public:
   constexpr static size_t k_numberOfBlocksInNode = 1;
   constexpr static bool CreateBlockAtIndex(Block * block, size_t blockIndex) {

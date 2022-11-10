@@ -1,8 +1,8 @@
-#ifndef POINCARE_CONSTEXPR_NODE_H
-#define POINCARE_CONSTEXPR_NODE_H
+#ifndef POINCARE_MEMORY_CONSTEXPR_NODE_H
+#define POINCARE_MEMORY_CONSTEXPR_NODE_H
 
-#include "expressions/expressions.h"
 #include "node.h"
+#include <poincare_junior/src/expression/expressions.h>
 #include "type_block.h"
 
 namespace Poincare {

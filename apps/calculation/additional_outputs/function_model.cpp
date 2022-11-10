@@ -1,6 +1,7 @@
 #include "function_model.h"
 #include "../app.h"
 #include <apps/shared/function.h>
+#include <apps/shared/interactive_curve_view_range.h>
 #include <poincare/zoom.h>
 #include <algorithm>
 
@@ -23,7 +24,7 @@ float FunctionModel::RangeMargin(bool maxMargin, float rangeBound, float value, 
 }
 
 void FunctionModel::recomputeViewRange() {
-  constexpr float k_maxFloat = Range1D::k_maxFloat;
+  constexpr float k_maxFloat = Shared::InteractiveCurveViewRange::k_maxFloat;
   Zoom zoom(-k_maxFloat, k_maxFloat, 1 / k_xyRatio, context(), k_maxFloat);
 
   Zoom::Function2DWithContext evaluator = [](float t, const void * model, Context * context) {

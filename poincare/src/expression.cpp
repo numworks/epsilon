@@ -638,7 +638,7 @@ bool Expression::isInRadians(bool expressionIsAlreadyReduced, Context * context)
     reductionContext.setContext(context);
     thisClone.reduceAndRemoveUnit(reductionContext, &units);
   }
-  return !units.isUninitialized() && unit.type() == ExpressionNode::Type::Unit && unit.convert<Unit>().representative() == &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
+  return !units.isUninitialized() && units.type() == ExpressionNode::Type::Unit && units.convert<Unit>().representative() == &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
 }
 
 bool Expression::isPureAngleUnit() const {

@@ -503,16 +503,10 @@ Expression UnitNode::AngleRepresentative::convertInto(Expression value, const Un
 int UnitNode::AngleRepresentative::setAdditionalExpressionsWithExactValue(Expression exactValue, double value, Expression * dest, int availableLength, const ExpressionNode::ReductionContext& reductionContext) const {
   assert(availableLength >= 2);
   int numberOfResults = 0;
-  // Conversion to radians should be added to all other units.
-  if (this != representativesOfSameDimension() + Unit::k_radianRepresentativeIndex) {
-    const Representative * radian = representativesOfSameDimension() + Unit::k_radianRepresentativeIndex;
-    dest[numberOfResults++] = convertInto(exactValue, radian, reductionContext);
-  }
   // Conversion to degrees should be added to all units not degree related
   if (this == representativesOfSameDimension() + Unit::k_radianRepresentativeIndex || this == representativesOfSameDimension() + Unit::k_gradianRepresentativeIndex) {
     const Representative * degree = representativesOfSameDimension() + Unit::k_degreeRepresentativeIndex;
-    dest[numberOfResults++] = convertInto(exactValue, degree, reductionContext);
-    return numberOfResults;
+    dest[numberOfResults++] = convertInto(exactValue, degree, reductionContext).approximateKeepingUnits<double>(reductionContext);
   }
   // Degrees related units should show their decomposition in DMS
   const Unit splitUnits[] = {
@@ -523,6 +517,11 @@ int UnitNode::AngleRepresentative::setAdditionalExpressionsWithExactValue(Expres
   Expression split = Unit::BuildSplit(value, splitUnits, sizeof(splitUnits)/sizeof(Unit), reductionContext);
   if (!split.isUndefined()) {
     dest[numberOfResults++] = split;
+  }
+  // Conversion to radians should be added to all other units.
+  if (this != representativesOfSameDimension() + Unit::k_radianRepresentativeIndex) {
+    const Representative * radian = representativesOfSameDimension() + Unit::k_radianRepresentativeIndex;
+    dest[numberOfResults++] = convertInto(exactValue, radian, reductionContext);
   }
   return numberOfResults;
 }

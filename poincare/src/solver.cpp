@@ -248,7 +248,7 @@ T Solver<T>::nextX(T x, T direction) const {
   } else {
     T magnitudeDelta = magnitude < lowerTypicalMagnitude ? lowerTypicalMagnitude  - magnitude : magnitude - upperTypicalMagnitude;
     assert(magnitudeDelta > 0);
-    ratio = maximalGrowthSpeed - (maximalGrowthSpeed - baseGrowthSpeed) * std::exp(growthSpeedAcceleration *  - std::pow(magnitudeDelta, 3.));
+    ratio = maximalGrowthSpeed - (maximalGrowthSpeed - baseGrowthSpeed) * std::exp(growthSpeedAcceleration *  - std::pow(magnitudeDelta, static_cast<T>(3.)));
   }
   /* If the next step is toward zero, divide the postion, overwise multiply. */
   assert(ratio > static_cast<T>(1.));

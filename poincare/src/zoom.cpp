@@ -122,7 +122,7 @@ void Zoom::fitMagnitude(Function2DWithContext f, const void * model, bool vertic
   Range1D xRange = *(vertical ? saneRange.y() : saneRange.x());
   float step = xRange.length() / (k_sampleSize - 1);
 
-  for (int i = 0; i < k_sampleSize; i++) {
+  for (size_t i = 0; i < k_sampleSize; i++) {
     float x = xRange.min() + i * step;
     float y = (f(x, model, m_context).*ordinate)();
     sample.extend(y, m_maxFloat);

@@ -288,7 +288,7 @@ void GraphController::moveCursorAndCenterIfNeeded(double t) {
   bannerView()->setInterestMessage(I18n::Message::Default);
   FunctionGraphController::moveCursorAndCenterIfNeeded(t);
   double dummy;
-  if (snapToInterestAndUpdateBanner(&dummy, std::nextafter(m_cursor->t(), -INFINITY), std::nextafter(m_cursor->t(), INFINITY))) {
+  if (snapToInterestAndUpdateBanner(&dummy, std::nextafter(m_cursor->t(), -static_cast<double>(INFINITY)), std::nextafter(m_cursor->t(), static_cast<double>(INFINITY)))) {
     reloadBannerView();
   }
 }

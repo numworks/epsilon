@@ -156,7 +156,7 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
 /* Operative symbol between two expressions depends on the layout shape on the
  * left and the right of the operator:
  *
- *               | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction |   Default
+ * Left  \ Right | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction |   Default
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
  * Decimal       |    ×    |    ×    |     ø     |      ×      |       ×       |  ×   |    ×    |    ×     |      •
  * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+-------------
@@ -240,19 +240,7 @@ CodePoint MultiplicationNode::CodePointForOperatorSymbol(MultiplicationSymbol sy
   }
 }
 
-CodePoint MultiplicationNode::operatorSymbol() const {
-  int sign = -1;
-  int childrenNumber = numberOfChildren();
-  for (int i = 0; i < childrenNumber - 1; i++) {
-    /* The operator symbol must be the same for all operands of the multiplication.
-     * If one operator has to be '×', they will all be '×'. Idem for '·'. */
-    sign = std::max(sign, static_cast<int>(OperatorSymbolBetween(childAtIndex(i)->rightLayoutShape(), childAtIndex(i+1)->leftLayoutShape())));
-  }
-  assert(sign >= 0);
-  return CodePointForOperatorSymbol(static_cast<MultiplicationSymbol>(sign));
-}
-
-static bool ExpressionIsUnit(Expression e, bool * shouldLockMargin) {
+static bool ExpressionIsUnit(Expression e, bool * shouldLockMargin = nullptr) {
   Expression unitExpression;
   if (e.type() == ExpressionNode::Type::Unit) {
     unitExpression = e;
@@ -265,6 +253,26 @@ static bool ExpressionIsUnit(Expression e, bool * shouldLockMargin) {
     *shouldLockMargin = Unit::ForceMarginLeftOfUnit(static_cast<Unit&>(unitExpression));
   }
   return true;
+}
+
+CodePoint MultiplicationNode::operatorSymbol() const {
+  int sign = -1;
+  int childrenNumber = numberOfChildren();
+  for (int i = 0; i < childrenNumber - 1; i++) {
+    /* The operator symbol must be the same for all operands of the multiplication.
+     * If one operator has to be '×', they will all be '×'. Idem for '·'. */
+    Expression left = childAtIndex(i);
+    Expression right = childAtIndex(i+1);
+    MultiplicationSymbol symbol;
+    if (ExpressionIsUnit(right)) {
+      symbol = ExpressionIsUnit(left) ? MultiplicationSymbol::MiddleDot : MultiplicationSymbol::Empty;
+    } else {
+      symbol = OperatorSymbolBetween(left.rightLayoutShape(), right.leftLayoutShape());
+    }
+    sign = std::max(sign, static_cast<int>(symbol));
+  }
+  assert(sign >= 0);
+  return CodePointForOperatorSymbol(static_cast<MultiplicationSymbol>(sign));
 }
 
 Layout MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
@@ -288,7 +296,7 @@ Layout MultiplicationNode::createLayout(Preferences::PrintFloatMode floatDisplay
         rightLayout.setMargin(false);
         return symbolLayout;
       }
-      if (rightIsUnit && OperatorSymbolBetween(left.rightLayoutShape(), right.leftLayoutShape()) == MultiplicationSymbol::Empty) {
+      if (rightIsUnit) {
         // Unit on the right: don't display useless symbol and force margin
         rightLayout.setMargin(true);
         rightLayout.lockMargin(forceMarginOfRightUnit);

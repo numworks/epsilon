@@ -56,7 +56,7 @@ protected:
 
 private:
   bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) override;
-  bool willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) override;
+  bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) override;
   bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) override;
   void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
   bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override;

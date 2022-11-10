@@ -94,8 +94,15 @@ public:
   }
 
   // Tree modification
-  // Add
-  void addSibling(LayoutCursor * cursor, Layout sibling, bool moveCursor);
+  /* Add.
+   * If addSibling merges the sibling instead of adding it, the sibling pointer
+   * is replaced with the layout it was merged into.
+   * Example:
+   * '(' is a permanent parenthesis and ']' a temporary one.
+   * '(4+5]' + ')' -> '(4+5)'
+   * The new ')' sibling is merged with the parenthesis node, so sibling
+   * now contains the whole parenthesis. */
+  void addSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor);
   // Replace
   void replaceChild(Layout oldChild, Layout newChild, LayoutCursor * cursor = nullptr, bool force = false);
   void replaceChildWithEmpty(Layout oldChild, LayoutCursor * cursor = nullptr);

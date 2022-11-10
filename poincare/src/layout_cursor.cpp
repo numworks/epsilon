@@ -131,14 +131,14 @@ void LayoutCursor::addEmptyExponentialLayout(Context * context) {
   HorizontalLayout sibling = HorizontalLayout::Builder(
       CodePointLayout::Builder('e'),
       verticalLayout);
-  m_layout.addSibling(this, sibling, false);
+  m_layout.addSibling(this, &sibling, false);
   m_layout = emptyLayout;
   InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(verticalLayout, this, context);
 }
 
 void LayoutCursor::addEmptyMatrixLayout(Context * context) {
   MatrixLayout matrixLayout = MatrixLayout::EmptySquaredMatrixBuilder();
-  m_layout.addSibling(this, matrixLayout, false);
+  m_layout.addSibling(this, &matrixLayout, false);
   m_layout = matrixLayout.childAtIndex(0);
   m_position = Position::Right;
   InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(matrixLayout, this, context);
@@ -148,7 +148,7 @@ void LayoutCursor::addEmptySquareRootLayout(Context * context) {
   // TODO: add a horizontal layout only if several children
   HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
   NthRootLayout newChild = NthRootLayout::Builder(child1);
-  m_layout.addSibling(this, newChild, false);
+  m_layout.addSibling(this, &newChild, false);
   m_layout = newChild.childAtIndex(0);
   m_position = Position::Left;
   InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(newChild, this, context);
@@ -180,7 +180,7 @@ void LayoutCursor::addEmptyTenPowerLayout(Context * context) {
       VerticalOffsetLayout::Builder(
         emptyLayout,
         VerticalOffsetLayoutNode::VerticalPosition::Superscript));
-  m_layout.addSibling(this, sibling, false);
+  m_layout.addSibling(this, &sibling, false);
   m_layout = emptyLayout;
   InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(multiplicationSign, this, context);
 }
@@ -189,7 +189,7 @@ void LayoutCursor::addFractionLayoutAndCollapseSiblings(Context * context) {
   HorizontalLayout child1 = HorizontalLayout::Builder(EmptyLayout::Builder());
   HorizontalLayout child2 = HorizontalLayout::Builder(EmptyLayout::Builder());
   FractionLayout newChild = FractionLayout::Builder(child1, child2);
-  m_layout.addSibling(this, newChild, true);
+  m_layout.addSibling(this, &newChild, true);
   InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(newChild, this, context);
   Layout(newChild.node()).collapseSiblings(this);
 }
@@ -229,23 +229,21 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
       pointedChild = newChild;
     }
     if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(newChild.type())) {
+      Layout newChildRef = Layout(newChild.node());
       static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->setInsertionSide(bracketSide);
-      m_layout.addSibling(this, newChild, true);
-      if (!newChild.parent().isUninitialized()) {
+      m_layout.addSibling(this, &newChild, true);
+      assert(!newChild.parent().isUninitialized());
+      assert(AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(newChild.type()));
+      if (newChildRef == newChild) {
+        // The inserted bracket was not merged with another one.
         newChild = static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->balanceAfterInsertion(bracketSide, this);
         if (!firstInsertedChild.isUninitialized() && firstInsertedChild.parent().isUninitialized()) {
           // firstInsertedChild was altered by balanceAfterInsertion
           firstInsertedChild = newChild;
         }
-      } else if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(m_layout.type())) {
-        newChild = m_layout;
-      } else {
-        // Assert crashes if the newChild was altered and not found after that
-        assert(AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(m_layout.parent().type()));
-        newChild = m_layout.parent();
       }
     } else {
-      m_layout.addSibling(this, newChild, true);
+      m_layout.addSibling(this, &newChild, true);
     }
     if (firstInsertedChild.isUninitialized()) {
       firstInsertedChild = newChild;
@@ -286,7 +284,7 @@ void LayoutCursor::addLayoutAndMoveCursor(Layout l, Context * context, bool with
   bool insertedLayoutWillBeMerged = l.type() == LayoutNode::Type::HorizontalLayout;
   int insertedNumberOfChildren = insertedLayoutWillBeMerged ? l.numberOfChildren() : 1;
 
-  m_layout.addSibling(this, l, true);
+  m_layout.addSibling(this, &l, true);
   if (withinBeautification) {
     return;
   }
@@ -364,13 +362,13 @@ KDCoordinate LayoutCursor::layoutHeight(KDFont::Size font) {
 void LayoutCursor::privateAddEmptyPowerLayout(VerticalOffsetLayout v) {
   // If there is already a base
   if (baseForNewPowerLayout()) {
-    m_layout.addSibling(this, v, true);
+    m_layout.addSibling(this, &v, true);
     return;
   }
   // Else, add an empty base
   EmptyLayout e = EmptyLayout::Builder();
   HorizontalLayout newChild = HorizontalLayout::Builder(e, v);
-  m_layout.addSibling(this, newChild, true);
+  m_layout.addSibling(this, &newChild, true);
 }
 
 bool LayoutCursor::baseForNewPowerLayout() {

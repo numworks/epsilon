@@ -340,7 +340,7 @@ bool HorizontalLayoutNode::willAddChildAtIndex(LayoutNode * l, int * index, int 
   return true;
 }
 
-bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * sibling, bool moveCursor) {
+bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) {
   HorizontalLayout thisRef(this);
   int nChildren = numberOfChildren();
   int newChildIndex, siblingIndex;
@@ -351,7 +351,7 @@ bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, LayoutNode * si
     siblingIndex = nChildren - 1;
   }
   if (nChildren == 0 || childAtIndex(siblingIndex)->willAddSibling(cursor, sibling, moveCursor)) {
-    thisRef.addOrMergeChildAtIndex(sibling, newChildIndex, true, cursor);
+    thisRef.addOrMergeChildAtIndex(*sibling, newChildIndex, true, cursor);
   }
   return false;
 }

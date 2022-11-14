@@ -37,12 +37,15 @@ SuggestionTextField::SuggestionTextField(Responder * parentResponder, InputEvent
 {}
 
 bool SuggestionTextField::handleEvent(Ion::Events::Event event) {
-  if (cursorAtEndOfText() && m_contentView.suggestion() && event == Ion::Events::Left) {
+  if (cursorAtEndOfText() && m_contentView.suggestion() && (event == Ion::Events::Left || event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftUp)) {
     // Dismiss suggestion on Left press
     m_contentView.setSuggestion(nullptr);
     return true;
   }
-  return AbstractTextField::handleEvent(event);
+  bool result = AbstractTextField::handleEvent(event);
+  // If a suggestion remains, cursor must be at the end of the text
+  assert(!m_contentView.suggestion() || cursorAtEndOfText());
+  return result;
 }
 
 void SuggestionTextField::commitSuggestion() {

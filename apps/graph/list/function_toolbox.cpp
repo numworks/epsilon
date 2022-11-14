@@ -106,6 +106,12 @@ int FunctionToolbox::typeAtIndex(int index) const {
   return MathToolbox::typeAtIndex(index);
 }
 
+/* TODO: This mimics SequenceToolbox::controlChecksum.
+ * FunctionToolbox and SequenceToolbox should be factorized. */
+int FunctionToolbox::controlChecksum() const {
+  return MathToolbox::controlChecksum() + numberOfAddedCells() * Preferences::k_numberOfExamModes * I18n::NumberOfCountries;
+}
+
 bool FunctionToolbox::selectAddedCell(int selectedRow) {
   /* Longest text is "-inf" */
   constexpr int bufferSize = Infinity::NameSize(true);

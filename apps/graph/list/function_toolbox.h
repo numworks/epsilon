@@ -33,7 +33,7 @@ protected:
     assert(index >= addedCellsAtRoot());
     return MathToolbox::messageTreeModelAtIndex(index - addedCellsAtRoot());
   }
-
+  int controlChecksum() const override;
 private:
   constexpr static int k_addedCellType = 2;
   constexpr static int k_maxNumberOfAddedCells = 2;

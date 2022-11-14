@@ -257,6 +257,7 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
    *   > output: cos(2)
    * However if the result is complex, it is treated as a complex result instead
    */
+  Context * globalContext = AppsContainerHelper::sharedAppsContainerGlobalContext();
   if (!isComplex) {
     if (Trigonometry::isInverseTrigonometryFunction(i) || Trigonometry::isInverseTrigonometryFunction(o)) {
       // The angle cannot be complex since Expression a isn't
@@ -268,12 +269,11 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     } else if (Trigonometry::isDirectTrigonometryFunction(o)) {
       directExpression = o;
     }
-    if (!directExpression.isUninitialized() && !directExpression.childAtIndex(0).hasDefinedComplexApproximation(nullptr, Preferences::ComplexFormat::Cartesian, preferences->angleUnit())) {
+    if (!directExpression.isUninitialized() && !directExpression.childAtIndex(0).hasDefinedComplexApproximation(globalContext, Preferences::ComplexFormat::Cartesian, preferences->angleUnit())) {
       // The angle must be real.
       return AdditionalInformations {.directTrigonometry = true};
     }
   }
-  Context * globalContext = AppsContainerHelper::sharedAppsContainerGlobalContext();
   if (o.hasUnit()) {
     AdditionalInformations additionalInformations = {};
     Expression unit;

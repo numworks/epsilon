@@ -124,6 +124,9 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
   if (Record::NameIsEmpty(recordName)) {
     return Record::ErrorStatus::NonCompliantName;
   }
+  if (m_delegate && !m_delegate->storageWillChangeForRecordName(recordName)) {
+    return Record::ErrorStatus::CanceledByDelegate;
+  }
   size_t totalSize = 0;
   for (size_t i=0; i<numberOfChunks; i++) {
     totalSize += sizeChunks[i];
@@ -140,7 +143,9 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
      * difference of size between the two of available space. */
    return notifyFullnessToDelegate();
   }
-  if (m_delegate && !m_delegate->storageWillChangeForRecord(recordWithSameName)) {
+  if (sameNameRecordSize != 0 && m_delegate && !m_delegate->storageWillChangeForRecordName(recordWithSameName.name())) {
+    /* The other record couldn't be changed anyway. This takes priority over the
+     * NameTaken error to prevent the other record deletion. */
     return Record::ErrorStatus::CanceledByDelegate;
   }
   /* WARNING : This relies on the fact that when you create a python script or
@@ -315,7 +320,7 @@ Record::ErrorStatus FileSystem::setNameOfRecord(Record * record, Record::Name na
     // Name has not changed
     return Record::ErrorStatus::None;
   }
-  if (m_delegate && !m_delegate->storageWillChangeForRecord(*record)) {
+  if (m_delegate && !m_delegate->storageWillChangeForRecordName(record->name())) {
     return Record::ErrorStatus::CanceledByDelegate;
   }
   /* If you do not verifiy that the name has not changed if the previous 'if'
@@ -368,7 +373,7 @@ Record::ErrorStatus FileSystem::setValueOfRecord(Record record, Record::Data dat
     if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+previousRecordSize, newRecordSize-previousRecordSize)) {
       return notifyFullnessToDelegate();
     }
-    if (m_delegate && !m_delegate->storageWillChangeForRecord(record)) {
+    if (m_delegate && !m_delegate->storageWillChangeForRecordName(record.name())) {
       return Record::ErrorStatus::CanceledByDelegate;
     }
     record_size_t nameSize = Record::SizeOfName(name);

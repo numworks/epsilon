@@ -46,8 +46,8 @@ const App::Descriptor * App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
-bool App::storageWillChangeForRecord(Ion::Storage::Record record) {
-  return !(isVarBoxMenuOpen() || isStoreMenuOpen()) || !record.hasExtension(Ion::Storage::lisExtension);
+bool App::storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) {
+  return !(isVarBoxMenuOpen() || isStoreMenuOpen()) || strcmp(recordName.extension, Ion::Storage::lisExtension) != 0;
 }
 
 App::App(Snapshot * snapshot, Poincare::Context * parentContext) :

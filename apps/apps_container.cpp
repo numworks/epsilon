@@ -382,9 +382,9 @@ void AppsContainer::activateExamMode(Poincare::Preferences::ExamMode examMode) {
   }
 }
 
-bool AppsContainer::storageWillChangeForRecord(const Ion::Storage::Record record) {
+bool AppsContainer::storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) {
   if (s_activeApp) {
-    return s_activeApp->storageWillChangeForRecord(record);
+    return s_activeApp->storageWillChangeForRecordName(recordName);
   }
   return true;
 }

@@ -363,7 +363,7 @@ void MathVariableBoxController::resetVarBoxMemoization() {
 bool MathVariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
   {
     Storage::Record record = recordAtIndex(rowIndex);
-    if (!Container::activeApp()->storageWillChangeForRecord(record)) {
+    if (!Container::activeApp()->storageWillChangeForRecordName(record.name())) {
       return false;
     }
     record.destroy();

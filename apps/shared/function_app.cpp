@@ -15,12 +15,12 @@ void FunctionApp::Snapshot::reset() {
   setActiveTab(0);
 }
 
-bool FunctionApp::storageWillChangeForRecord(Ion::Storage::Record record) {
+bool FunctionApp::storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) {
   /* Prevent functions from being (re)defined from the store menu.
    * Variables can be changed even if they are used in functions.
    * Warning: this has no effect on Sequence yet: we can't define sequences
    * from the store menu.  */
-  return !(isVarBoxMenuOpen() || isStoreMenuOpen()) || !record.hasExtension(functionStore()->modelExtension());
+  return !(isVarBoxMenuOpen() || isStoreMenuOpen()) || strcmp(recordName.extension, functionStore()->modelExtension()) != 0;
 }
 
 void FunctionApp::storageDidChangeForRecord(Ion::Storage::Record record) {

@@ -52,7 +52,7 @@ public:
   void redrawWindow();
   void activateExamMode(Poincare::Preferences::ExamMode examMode);
   // Ion::Storage::StorageDelegate
-  bool storageWillChangeForRecord(const Ion::Storage::Record record) override;
+  bool storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) override;
   void storageDidChangeForRecord(const Ion::Storage::Record record) override;
   void storageIsFull() override;
 #if EPSILON_GETOPT

@@ -23,24 +23,24 @@ private:
   Zoom m_zoom;
 };
 
-void assert_ranges_equal(Range1D observed, Range1D expected) {
+void assert_ranges_equal(Range1D observed, Range1D expected, const char * errorMessage = "") {
   /* The range computed by Poincare::Zoom can differ from the ideal range
    * because:
    * - the function is only sampled a finite number of times, and can miss the
    *   peaks and valleys.
    * - searching for points of interest is done in single precision, without
    *   the use of Brent's methods to refine the points.*/
-  quiz_assert(observed.isValid() == expected.isValid());
+  quiz_assert_print_if_failure(observed.isValid() == expected.isValid(), errorMessage);
   if (expected.isValid()) {
     float dl = std::max(k_rangeTolerance * std::max(expected.length(), std::fabs(expected.center())), FLT_EPSILON);
-    quiz_assert(std::fabs(observed.min() - expected.min()) <= dl);
-    quiz_assert(std::fabs(observed.max() - expected.max()) <= dl);
+    quiz_assert_print_if_failure(std::fabs(observed.min() - expected.min()) <= dl, errorMessage);
+    quiz_assert_print_if_failure(std::fabs(observed.max() - expected.max()) <= dl, errorMessage);
   }
 }
 
-void assert_ranges_equal(Range2D observed, Range2D expected) {
-  assert_ranges_equal(*observed.x(), *expected.x());
-  assert_ranges_equal(*observed.y(), *expected.y());
+void assert_ranges_equal(Range2D observed, Range2D expected, const char * errorMessage = "") {
+  assert_ranges_equal(*observed.x(), *expected.x(), errorMessage);
+  assert_ranges_equal(*observed.y(), *expected.y(), errorMessage);
 }
 
 Coordinate2D<float> expressionEvaluator(float t, const void * model, Context * context) {
@@ -56,7 +56,7 @@ void assert_full_function_range_is(const char * expression, Range1D bounds, Rang
   Expression e = parse_expression(expression, &context, false);
   ZoomTest zoom(bounds, &context);
   zoom.zoom()->fitFullFunction(expressionEvaluator, &e);
-  assert_ranges_equal(zoom.interestingRange(), expectedRange);
+  assert_ranges_equal(zoom.interestingRange(), expectedRange, expression);
 }
 
 QUIZ_CASE(poincare_zoom_fit_full_function) {
@@ -74,7 +74,7 @@ void assert_points_of_interest_range_is(const char * expression, Range2D expecte
   Expression e = parse_expression(expression, &context, false);
   ZoomTest zoom(Range1D(-k_maxFloat, k_maxFloat), &context);
   zoom.zoom()->fitPointsOfInterest(expressionEvaluator, &e);
-  assert_ranges_equal(zoom.interestingRange(), expectedRange);
+  assert_ranges_equal(zoom.interestingRange(), expectedRange, expression);
 }
 
 QUIZ_CASE(poincare_zoom_fit_points_of_interest) {
@@ -109,7 +109,7 @@ void assert_intersections_range_is(const char * expression1, const char * expres
   Expression e2 = parse_expression(expression2, &context, false);
   ZoomTest zoom(Range1D(-k_maxFloat, k_maxFloat), &context);
   zoom.zoom()->fitIntersections(expressionEvaluator, &e1, expressionEvaluator, &e2);
-  assert_ranges_equal(zoom.interestingRange(), expectedRange);
+  assert_ranges_equal(zoom.interestingRange(), expectedRange, expression1);
 }
 
 QUIZ_CASE(poincare_zoom_fit_intersections) {

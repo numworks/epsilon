@@ -15,6 +15,8 @@ public:
     Right = 1,
   };
 
+  Side oppositeSide(Side s) { return s == Side::Left ? Side::Right : Side::Left; }
+
   AutocompletedBracketPairLayoutNode() : m_leftIsTemporary(false), m_rightIsTemporary(false), m_insertedAs(Side::Left) {}
 
   // TreeNode

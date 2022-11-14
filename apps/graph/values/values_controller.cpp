@@ -191,7 +191,7 @@ int ValuesController::fillColumnName(int columnIndex, char * buffer) {
     constexpr size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
     int size = functionTitleLayout(columnIndex).serializeParsedExpression(buffer, bufferNameSize, textFieldDelegateApp()->localContext());
     // Serialization may have introduced system parentheses.
-    SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer, bufferNameSize - 1);
+    SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(buffer, bufferNameSize - 1);
     return size;
   }
   return Shared::ValuesController::fillColumnName(columnIndex, buffer);

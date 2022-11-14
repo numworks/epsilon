@@ -8,17 +8,27 @@
 
 namespace Poincare {
 
-void SerializationHelper::ReplaceSystemParenthesesByUserParentheses(char * buffer, int length) {
+void SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(char * buffer, int length) {
   assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointLeftSystemParenthesis == 1));
   assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointRightSystemParenthesis == 1));
   assert(UTF8Decoder::CharSizeOfCodePoint('(' == 1));
   assert(UTF8Decoder::CharSizeOfCodePoint(')' == 1));
+  assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointSystem == 1));
+  assert(UTF8Decoder::CharSizeOfCodePoint('{' == 1));
+  assert(UTF8Decoder::CharSizeOfCodePoint('}' == 1));
+
   assert(length == -1 || length > 0);
 
   int offset = 0;
   char c = *(buffer + offset);
+  bool pendingSystemCodePoint = false;
   while (c != 0) {
-    if (c == UCodePointLeftSystemParenthesis) {
+    if (pendingSystemCodePoint && (c == '{' || c == '}')) {
+      *(buffer + offset) = c == '{' ? '(' : ')';
+      strlcpy(buffer + offset - 1, buffer + offset, strlen(buffer + offset) + 1);
+      length--;
+      offset--;
+    } else if (c == UCodePointLeftSystemParenthesis) {
       *(buffer + offset) = '(';
     } else if (c == UCodePointRightSystemParenthesis) {
       *(buffer + offset) = ')';
@@ -27,6 +37,7 @@ void SerializationHelper::ReplaceSystemParenthesesByUserParentheses(char * buffe
     if (length >= 0 && offset > length - 1) {
       break;
     }
+    pendingSystemCodePoint = c == UCodePointSystem;
     c = *(buffer + offset);
   }
 }

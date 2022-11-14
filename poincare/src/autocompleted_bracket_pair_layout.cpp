@@ -205,15 +205,13 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
   bool parentWillDisappear = topMostBracket->isTemporary(OtherSide(side));
 
   if (side == Side::Left) {
-    if (parentIsHorizontalLayout) {
-      if (thisIndex > 0) {
-        /* e.g. 12(|34) -> [12|34) */
-        return LayoutCursor(parentRef.childAtIndex(thisIndex - 1), LayoutCursor::Position::Right);
-      }
-      if (willDisappear || parentWillDisappear) {
-        /* e.g. (|12] -> |12 or ((|12)] -> (|12) or ((|)] -> (|) */
-        return LayoutCursor(childOnSide(Side::Left), LayoutCursor::Position::Left);
-      }
+    if (parentIsHorizontalLayout && thisIndex > 0) {
+      /* e.g. 12(|34) -> [12|34) */
+      return LayoutCursor(parentRef.childAtIndex(thisIndex - 1), LayoutCursor::Position::Right);
+    }
+    if (willDisappear || parentWillDisappear) {
+      /* e.g. (|12] -> |12 or ((|12)] -> (|12) or ((|)] -> (|) */
+      return LayoutCursor(childOnSide(Side::Left), LayoutCursor::Position::Left);
     }
     assert(!willDisappear);
     /* e.g. (|12) -> |[12) */

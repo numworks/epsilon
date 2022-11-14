@@ -60,5 +60,5 @@ QUIZ_CASE(poincare_range_1d_zoom) {
   assert_range_zooms_to(Range1D(-1, 1), 2, -1, Range1D(-1, 3));
   assert_range_zooms_to(Range1D(-1, 1), 2, 1, Range1D(-3, 1));
   assert_range_zooms_to(Range1D(-8, 6), 0.5, 0, Range1D(-4, 3));
-  assert_range_zooms_to(Range1D(-25, 2), 0.333333333333, -1, Range1D(-9, 0));
+  assert_range_zooms_to(Range1D(-25, 3), 0.25, -1, Range1D(-7, 0));
 }

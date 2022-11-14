@@ -224,13 +224,13 @@ T Solver<T>::nextX(T x, T direction) const {
   constexpr T growthSpeedAcceleration = static_cast<T>(1e-2);
   /* Increase density between 0.1 and 100 */
   constexpr T lowerTypicalMagnitude = static_cast<T>(-1.);
-  constexpr T upperTypicalMagnitude = static_cast<T>(2.);
+  constexpr T upperTypicalMagnitude = static_cast<T>(3.);
 
   T maxStep = maximalStep();
   T minStep = minimalStep(x);
   T stepSign = x < direction ? static_cast<T>(1.) : static_cast<T>(-1.);
 
-  T magnitude = std::log(std::fabs(x));
+  T magnitude = std::log10(std::fabs(x));
   if (!std::isfinite(magnitude) || minStep >= maxStep) {
     /* minStep can be greater than maxStep if we are operating on a very small
      * intervals of very large numbers */

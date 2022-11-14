@@ -97,6 +97,7 @@ QUIZ_CASE(poincare_zoom_fit_points_of_interest) {
   assert_points_of_interest_range_is("cos(x+1)+2", Range2D(-13.850, 15.240, 1, 3));
   assert_points_of_interest_range_is("x*ln(x)", Range2D(0, 1, -0.368, 0));
   assert_points_of_interest_range_is("(e^x-1)/(e^x+1)", Range2D(-2.309, 2.309, -0.819, 0.819));
+  assert_points_of_interest_range_is("(e^x-1)*(e^x+1)^(-1)", Range2D(-2.309, 2.309, -0.819, 0.819));
   assert_points_of_interest_range_is("10-1/(3^x)", Range2D(-2.096, 1.723, 0, 9.849));
   // FIXME assert_points_of_interest_range_is("x^x", Range2D());
   // FIXME assert_points_of_interest_range_is("root(x^3+1,3)-x", Range2D());

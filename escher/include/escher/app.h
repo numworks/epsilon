@@ -69,7 +69,7 @@ public:
   virtual int numberOfTimers() { return 0; }
   virtual Timer * timerAtIndex(int i) { assert(false); return nullptr; }
   virtual Poincare::Context * localContext() { return nullptr; }
-  virtual bool storageWillChangeForRecord(Ion::Storage::Record) { return true; }
+  virtual bool storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) { return true; }
   virtual void storageDidChangeForRecord(Ion::Storage::Record) {}
 #if EPSILON_TELEMETRY
   virtual const char * telemetryId() const { return nullptr; }

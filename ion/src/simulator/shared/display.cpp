@@ -13,7 +13,7 @@ namespace Simulator {
 namespace Display {
 
 static SDL_Texture * sFramebufferTexture = nullptr;
-static void(*sScreenshotDelegate)() = nullptr;
+static void (*sScreenshotCallback)() = nullptr;
 
 void init(SDL_Renderer * renderer) {
   Framebuffer::setActive(true);
@@ -44,9 +44,9 @@ void draw(SDL_Renderer * renderer, SDL_Rect * rect) {
   SDL_RenderCopy(renderer, sFramebufferTexture, nullptr, rect);
 }
 
-void prepareScreenshot() {
-  if (sScreenshotDelegate) {
-    sScreenshotDelegate();
+void prepareForScreenshot() {
+  if (sScreenshotCallback) {
+    sScreenshotCallback();
   }
 }
 
@@ -55,20 +55,20 @@ void prepareScreenshot() {
 
 namespace Display {
 
-void registerScreenshotDelegate(void (*delegate)()) {
-  Simulator::Display::sScreenshotDelegate = delegate;
+void setScreenshotCallback(void (*callback)()) {
+  Simulator::Display::sScreenshotCallback = callback;
 }
 
 void saveScreenshot() {
 #if ION_SIMULATOR_FILES
-  Simulator::Display::prepareScreenshot();
+  Simulator::Display::prepareForScreenshot();
   Simulator::Actions::saveScreenshot();
 #endif
 }
 
 void copyScreenshot() {
 #if ION_SIMULATOR_FILES
-  Simulator::Display::prepareScreenshot();
+  Simulator::Display::prepareForScreenshot();
   Simulator::Actions::copyScreenshot();
 #endif
 }

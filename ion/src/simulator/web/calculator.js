@@ -50,7 +50,7 @@ function Calculator(emModule) {
       });
     },
     screenshot: function(callback) {
-      this._IonDisplayForceRefresh();
+      this._IonDisplayPrepareForScreenshot();
       return mainCanvas.toBlob(callback);
     }
   };

@@ -200,15 +200,15 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("(1/2)^-1", "2");
   assert_parsed_expression_simplify_to("√(2)×√(3)", "√(6)");
   assert_parsed_expression_simplify_to("2×2^π", "2×2^π");
-  assert_parsed_expression_simplify_to("M^3×P×M^(-3)", "\u0014dep(P,{1/M^3})");
-  assert_parsed_expression_simplify_to("M^3×M^(-3)", "\u0014dep(1,{1/M^3})");
+  assert_parsed_expression_simplify_to("M^3×P×M^(-3)", "\u0014dep(P,{1/M})");
+  assert_parsed_expression_simplify_to("M^3×M^(-3)", "\u0014dep(1,{1/M})");
   assert_parsed_expression_simplify_to("2^π×(1/2)^π", "1");
   assert_parsed_expression_simplify_to("(x+1)×(x+2)", "x^2+3×x+2");
   assert_parsed_expression_simplify_to("(x+1)×(x-1)", "x^2-1");
   assert_parsed_expression_simplify_to("11π/(22π+11π)", "1/3");
   assert_parsed_expression_simplify_to("11/(22π+11π)", "1/\u00123×π\u0013");
   assert_parsed_expression_simplify_to("-11/(22π+11π)", "-1/\u00123×π\u0013");
-  assert_parsed_expression_simplify_to("M^2×P×M^(-2)×P^(-2)", "\u0014dep(1/P,{1/M^2})");
+  assert_parsed_expression_simplify_to("M^2×P×M^(-2)×P^(-2)", "\u0014dep(1/P,{1/M})");
   assert_parsed_expression_simplify_to("M^(-1)×P^(-1)", "1/\u0012M×P\u0013");
   assert_parsed_expression_simplify_to("x+x", "2×x");
   assert_parsed_expression_simplify_to("2×x+x", "3×x");
@@ -244,6 +244,7 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("x/√(x)", "\u0014dep(√(x),{1/√(x)})", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "x",SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "\u0014dep(x,{√(x)})", User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("2*3^x*3^(-x)", "\u0014dep(2,{x})");
 }
 
   /* Some of these are currently not tested because their units are weirdly

@@ -94,13 +94,14 @@ QUIZ_CASE(poincare_zoom_fit_points_of_interest) {
   assert_points_of_interest_range_is("√(x+1)-2", Range2D(-1.000, 6.237, 0.000, 0.690));
   assert_points_of_interest_range_is("ln(x)", Range2D(0, 5.792, 0, 1.756));
   assert_points_of_interest_range_is("sin(x)", Range2D(-8.028, 8.028, -1, 1));
+  assert_points_of_interest_range_is("sin(π*x/180)", Range2D(-450, 450, -1, 1));
   assert_points_of_interest_range_is("cos(x+1)+2", Range2D(-13.850, 15.240, 1, 3));
   assert_points_of_interest_range_is("x*ln(x)", Range2D(0, 1, -0.368, 0));
   assert_points_of_interest_range_is("(e^x-1)/(e^x+1)", Range2D(-2.309, 2.309, -0.819, 0.819));
   assert_points_of_interest_range_is("(e^x-1)*(e^x+1)^(-1)", Range2D(-2.309, 2.309, -0.819, 0.819));
   assert_points_of_interest_range_is("10-1/(3^x)", Range2D(-2.096, 1.723, 0, 9.849));
   // FIXME assert_points_of_interest_range_is("x^x", Range2D());
-  // FIXME assert_points_of_interest_range_is("root(x^3+1,3)-x", Range2D());
+  assert_points_of_interest_range_is("root(x^3+1,3)-x", Range2D(-1.733, 1.478, 0.119, 1.587));
   assert_points_of_interest_range_is("sum((((-1)^k)*(x^(2k+1)))/((2k+1)!),k,0,4)", Range2D(-4.968, 4.968, -1, 1));
 }
 
@@ -118,7 +119,7 @@ QUIZ_CASE(poincare_zoom_fit_intersections) {
    * uses less refinements. */
   assert_intersections_range_is("sin(x)", "cos(x)", Range2D(-7.413, 7.413, -0.904, 0.904));
   assert_intersections_range_is("x/2+2", "2x-1", Range2D(2, 2, 3, 3));
-  assert_intersections_range_is("x^2", "-x^2/3+x", Range2D(0, 0.75, 0, 0.563));
+  assert_intersections_range_is("x^2", "-x^2/3+x", Range2D(0, 0.78, 0, 0.608));
 }
 
 void assert_sanitized_range_is(Range2D inputRange, Range2D expectedRange) {

@@ -321,18 +321,17 @@ bool LayoutCursor::isAtNumeratorOfEmptyFraction() const {
   if (!m_layout.isEmpty()) {
     return false;
   }
-  Layout fraction;
+  Layout fractionChildWithCursor;
   if (m_layout.parent().type() == LayoutNode::Type::FractionLayout) {
-    fraction = m_layout.parent();
-    if (fraction.indexOfChild(m_layout) != 0) {
-      return false;
-    }
+    fractionChildWithCursor = m_layout;
   } else if (m_layout.parent().type() == LayoutNode::Type::HorizontalLayout && m_layout.parent().numberOfChildren() == 1 && m_layout.parent().parent().type() == LayoutNode::Type::FractionLayout) {
-    fraction = m_layout.parent().parent();
-    if (fraction.indexOfChild(m_layout.parent()) != 0) {
-      return false;
-    }
+    fractionChildWithCursor = m_layout.parent();
   } else {
+    return false;
+  }
+  Layout fraction = fractionChildWithCursor.parent();
+  // Check if cursor at numerator of fraction
+  if (fraction.indexOfChild(fractionChildWithCursor) != 0) {
     return false;
   }
   assert(fraction.type() == LayoutNode::Type::FractionLayout);

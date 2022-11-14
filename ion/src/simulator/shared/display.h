@@ -12,7 +12,7 @@ void shutdown();
 
 void draw(SDL_Renderer * renderer, SDL_Rect * rect);
 
-void prepareScreenshot();
+void prepareForScreenshot();
 
 }
 }

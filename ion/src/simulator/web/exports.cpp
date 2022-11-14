@@ -13,8 +13,8 @@ const char * IonPatchLevel() {
   return Ion::patchLevel();
 }
 
-void IonDisplayForceRefresh() {
-  Ion::Simulator::Display::prepareScreenshot();
+void IonDisplayPrepareForScreenshot() {
+  Ion::Simulator::Display::prepareForScreenshot();
   Ion::Simulator::Window::setNeedsRefresh();
   Ion::Simulator::Window::refresh();
 }

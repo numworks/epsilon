@@ -6,7 +6,7 @@ CPP = cpp
 EMSCRIPTEN_ASYNC_SYMBOLS = \
 SAFE_HEAP_LOAD \
 SAFE_HEAP_STORE \
-_IonDisplayForceRefresh\
+_IonDisplayPrepareForScreenshot\
 _IonEventsEmscriptenKeyDown \
 _IonEventsEmscriptenKeyUp \
 _IonEventsEmscriptenPushEvent \
@@ -147,4 +147,4 @@ EMSCRIPTEN_MODULARIZE ?= 1
 LDFLAGS += -s MODULARIZE=$(EMSCRIPTEN_MODULARIZE) -s 'EXPORT_NAME="Epsilon"' --memory-init-file 0
 
 SFLAGS += $(EMFLAGS)
-LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonSimulatorKeyboardKeyDown", "_IonSimulatorKeyboardKeyUp", "_IonSimulatorEventsPushEvent", "_IonSoftwareVersion", "_IonPatchLevel", "_IonDisplayForceRefresh"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["UTF8ToString"]'
+LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonSimulatorKeyboardKeyDown", "_IonSimulatorKeyboardKeyUp", "_IonSimulatorEventsPushEvent", "_IonSoftwareVersion", "_IonPatchLevel", "_IonDisplayPrepareForScreenshot"]' -s EXTRA_EXPORTED_RUNTIME_METHODS='["UTF8ToString"]'

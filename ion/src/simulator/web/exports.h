@@ -7,7 +7,7 @@ extern "C" {
 
 const char * IonSoftwareVersion();
 const char * IonPatchLevel();
-void IonDisplayForceRefresh();
+void IonDisplayPrepareForScreenshot();
 void IonSimulatorKeyboardKeyDown(int keyNumber);
 void IonSimulatorKeyboardKeyUp(int keyNumber);
 void IonSimulatorEventsPushEvent(int eventNumber);

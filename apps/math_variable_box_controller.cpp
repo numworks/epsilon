@@ -254,13 +254,19 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
   size_t nameLength = SymbolAbstract::TruncateExtension(nameToHandle, record.fullName(), nameToHandleMaxSize);
 
   if (m_currentPage == Page::Function || m_currentPage == Page::Sequence) {
-    /* Add parentheses to functions and sequences.
-     * Sequences will subsequently be parsed and turned into u\x14{\x14}
-     * if inserted in a LayoutField. */
+    // Add parentheses to a function name, and braces to a sequence
+    char openingChar = m_currentPage == Page::Function ? '(' : '{';
+    char closingChar = m_currentPage == Page::Function ? ')' : '}';
     assert(nameLength < nameToHandleMaxSize);
-    nameLength += UTF8Decoder::CodePointToChars('(', nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
+    if (m_currentPage == Page::Sequence) {
+      nameLength += UTF8Decoder::CodePointToChars(UCodePointSystem, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
+    }
+    nameLength += UTF8Decoder::CodePointToChars(openingChar, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
     nameLength += UTF8Decoder::CodePointToChars(UCodePointEmpty, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
-    nameLength += UTF8Decoder::CodePointToChars(')', nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
+    if (m_currentPage == Page::Sequence) {
+      nameLength += UTF8Decoder::CodePointToChars(UCodePointSystem, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
+    }
+    nameLength += UTF8Decoder::CodePointToChars(closingChar, nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1);
     assert(nameLength < nameToHandleMaxSize);
     nameToHandle[nameLength] = 0;
   }

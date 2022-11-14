@@ -170,7 +170,15 @@ Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a, Coordina
   const InterestParameters * params = static_cast<const InterestParameters *>(aux);
   float slope = (c.x2() - a.x2()) / (c.x1() - a.x1());
   params->asymptotes->update(c, slope);
-  return pointIsInterestingHelper(a, b, c, aux);
+  Solver<float>::Interest res = pointIsInterestingHelper(a, b, c, aux);
+  constexpr float k_tolerance = Solver<float>::k_relativePrecision;
+  /* The function can be subject to fluctuation when outputting very small
+   * values when compared to its input, for instance when subtracting two very
+   * close large numbers. These fluctuations should not be detected as extrema. */
+  if ((res == Solver<float>::Interest::LocalMinimum || res == Solver<float>::Interest::LocalMaximum) && std::fabs((a.x2() - b.x2()) / b.x1()) < k_tolerance) {
+    return Solver<float>::Interest::None;
+  }
+  return res;
 }
 
 Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest interest, float precision) {

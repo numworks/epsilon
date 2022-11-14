@@ -199,19 +199,38 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
   Layout pointedChild;
   Layout firstInsertedChild;
   UTF8Decoder decoder(text);
+
   CodePoint codePoint = decoder.nextCodePoint();
   if (codePoint == UCodePointNull) {
     return;
   }
-  assert(!codePoint.isCombining());
+
+  // Step 1: Insert text
   while (codePoint != UCodePointNull) {
+    assert(!codePoint.isCombining());
     if (codePoint == UCodePointEmpty) {
       codePoint = decoder.nextCodePoint();
       assert(!codePoint.isCombining());
       continue;
     }
+
     AutocompletedBracketPairLayoutNode::Side bracketSide = AutocompletedBracketPairLayoutNode::Side::Left;
-    if (codePoint == '(' || codePoint == UCodePointLeftSystemParenthesis) {
+    if (codePoint == UCodePointSystem) {
+      /* System braces are converted to subscript */
+      CodePoint nextCodePoint = decoder.nextCodePoint();
+      if (nextCodePoint == '{') {
+        newChild = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Subscript);
+      } else if (nextCodePoint == '}') {
+        // Leave the subscript
+        bool shouldRecompute = false;
+        moveRight(&shouldRecompute);
+        codePoint = decoder.nextCodePoint();
+        continue;
+      } else {
+        // UCodePointSystem should not be inserted.
+        assert(false);
+      }
+    } else if (codePoint == '(' || codePoint == UCodePointLeftSystemParenthesis) {
       newChild = ParenthesisLayout::Builder();
     } else if (codePoint == ')' || codePoint == UCodePointRightSystemParenthesis) {
       newChild = ParenthesisLayout::Builder();
@@ -224,10 +243,12 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     } else {
       newChild = CodePointLayout::Builder(codePoint);
     }
+
     if (forceCursorLeftOfText && pointedChild.isUninitialized()) {
       // Point to first non empty codePoint inserted
       pointedChild = newChild;
     }
+
     if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(newChild.type())) {
       Layout newChildRef = newChild;
       static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->setInsertionSide(bracketSide);
@@ -245,19 +266,30 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     } else {
       m_layout.addSibling(this, &newChild, true);
     }
+
+    if (newChild.type() == LayoutNode::Type::VerticalOffsetLayout) {
+      // Place cursor inside subscript
+      assert(newChild.numberOfChildren() == 1 && newChild.childAtIndex(0).type() == LayoutNode::Type::EmptyLayout);
+      m_layout = newChild.childAtIndex(0);
+    }
+
     if (firstInsertedChild.isUninitialized()) {
       firstInsertedChild = newChild;
     }
+
     // Get the next code point
     codePoint = decoder.nextCodePoint();
     while (codePoint.isCombining()) {
       codePoint = decoder.nextCodePoint();
     }
   }
+
   if (!forceCursorRightOfText && !pointedChild.isUninitialized() && !pointedChild.parent().isUninitialized()) {
     m_layout = pointedChild;
     m_position = forceCursorLeftOfText ? Position::Left : Position::Right;
   }
+
+  // Step 2: Apply beautification
   if (!firstInsertedChild.isUninitialized()) {
     // Find the common parent of first and last inserted children
     TreeHandle mainParentHandle = newChild.commonAncestorWith(firstInsertedChild, false);

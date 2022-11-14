@@ -647,7 +647,7 @@ bool AbstractTextField::handleEventWithText(const char * eventText, bool indenta
       }
     }
     // Replace System parentheses (used to keep layout tree structure) by normal parentheses
-    Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(buffer);
+    Poincare::SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(buffer);
 
     if (insertTextAtLocation(buffer, const_cast<char *>(cursorLocation()))) {
       /* The cursor position depends on the text as we sometimes want to position

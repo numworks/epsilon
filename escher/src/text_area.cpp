@@ -569,7 +569,7 @@ bool TextArea::ContentView::insertTextAtLocation(const char * text, char * locat
 
   m_text.insertText(text, textLen, location);
   // Replace System parentheses (used to keep layout tree structure) by normal parentheses
-  Poincare::SerializationHelper::ReplaceSystemParenthesesByUserParentheses(location, textLen);
+  Poincare::SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(location, textLen);
   reloadRectFromPosition(location, lineBreak);
   return true;
 }

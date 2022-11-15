@@ -56,14 +56,14 @@ private:
   private:
     int numberOfSubviews() const override { return 1; }
     View * subviewAtIndex(int index) override;
-    void layoutSubviews(bool force = false) override { m_selectableTableView.setFrame(bounds(), force); }
+    void layoutSubviews(bool force = false) override;
     Escher::SelectableTableView m_selectableTableView;
   };
   constexpr static KDCoordinate k_sideMargin = 4;
   constexpr static KDCoordinate k_bottomMargin = 14;
   constexpr static KDCoordinate k_indicatorMargin = 61;
   constexpr static int k_numberOfColumns = 3;
-  constexpr static int k_numberOfReusableCells = 9;
+  constexpr static int k_numberOfReusableCells = 6;
   constexpr static int k_cellHeight = 104;
   constexpr static int k_cellWidth = 104;
   ContentView m_view;

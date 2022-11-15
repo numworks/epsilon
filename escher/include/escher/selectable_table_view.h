@@ -44,7 +44,7 @@ protected:
   SelectableTableViewDelegate * m_delegate;
 
 private:
-  bool cellAtLocationIsSelectable(int col, int row) { return dataSource()->cellAtLocationIsSelectable(col, row); }
+  bool cellAtLocationIsSelectable(int col, int row) { return dataSource()->cellAtLocationIsSelectable(cellAtLocation(col, row), col, row); }
   /* This function searches (for delta = n) :
    * - The n-th next selectable row in the currentCol starting from currentRow
    *   if searchForRow = true

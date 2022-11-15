@@ -253,7 +253,7 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPo
   }
   Layout firstOrderDerivative = parent.parent();
   Layout derivativeOrder = lastAddedLayout.childAtIndex(0);
-  parent.removeChildAtIndex(indexOfLastAddedLayout, nullptr, true);
+  parent.removeChildAtIndex(indexOfLastAddedLayout, nullptr, false);
   HigherOrderDerivativeLayout newDerivative = HigherOrderDerivativeLayout::Builder(firstOrderDerivative.childAtIndex(0), firstOrderDerivative.childAtIndex(1), firstOrderDerivative.childAtIndex(2), derivativeOrder);
   firstOrderDerivative.replaceWithInPlace(newDerivative);
   if (layoutCursor->layout().isUninitialized() || layoutCursor->layout().parent().isUninitialized()) {

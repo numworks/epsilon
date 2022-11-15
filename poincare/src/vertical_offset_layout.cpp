@@ -111,26 +111,10 @@ void VerticalOffsetLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     assert(cursor->position() == LayoutCursor::Position::Left);
     Layout parentRef(parent());
     LayoutNode * base = baseLayout();
-    int baseOffset = baseOffsetInParent();
     if (indiceLayout()->isEmpty()) {
       int indexInParent = parentRef.node()->indexOfChild(this);
-      if (base->isEmpty()) {
-        // Case: Empty base and indice. Remove the base and the indice layouts.
-        cursor->setLayoutNode(this);
-        cursor->setPosition(LayoutCursor::Position::Right);
-        parentRef.removeChildAtIndex(indexInParent, cursor);
-        // WARNING: do not call "this" afterwards
-        if (baseOffset > 0) {
-          /* This was before its base, meaning the index of the base changed
-           * when me removed this. */
-          baseOffset--;
-        }
-        cursor->setLayout(parentRef.childAtIndex(indexInParent + baseOffset));
-        cursor->setPosition(LayoutCursor::Position::Right);
-        parentRef.removeChildAtIndex(indexInParent + baseOffset, cursor);
-        return;
-      }
-      // Case: Empty indice only. Delete the layout.
+      /* Case: Empty indice. Delete the layout. If the base was empty, it will
+       * be deleted too in the HorizontalLayout::didRemoveChildAtIndex callback. */
       cursor->setLayoutNode(base);
       cursor->setPosition(LayoutCursor::Position::Right);
       parentRef.removeChildAtIndex(indexInParent, cursor);

@@ -374,20 +374,37 @@ bool HorizontalLayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor
 }
 
 void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) {
-  /* If the child to remove was at index 0 and its right sibling must have a left
-   * sibling (e.g. a VerticalOffsetLayout), add an empty layout at index 0 */
-
   int currentNumberOfChildren = numberOfChildren();
   if (force || currentNumberOfChildren == 0) {
     return;
   }
 
+  /* If the removed child was the last valid sibling of a layout that requires
+   * a left or right sibling, add an empty layout. */
   if ((index == 0 && childAtIndex(index)->mustHaveLeftSibling())
    || (index == currentNumberOfChildren && childAtIndex(index - 1)->mustHaveRightSibling())
    /* Both children relying on each other for sizes and baselines causes inifinite loops. */
-   || (index < currentNumberOfChildren && index > 0 && childAtIndex(index - 1)->mustHaveRightSibling() && childAtIndex(index)->mustHaveLeftSibling())) {
+   || (index < currentNumberOfChildren && index > 0 && childAtIndex(index - 1)->mustHaveRightSibling() && childAtIndex(index)->mustHaveLeftSibling()))
+  {
     Layout(this).addChildAtIndex(EmptyLayout::Builder(), index, currentNumberOfChildren, cursor);
+    return;
   }
+
+  /* If an empty layout was required by a now deleted sibling, remove it. */
+  int emptyChildIndex;
+  if (index < currentNumberOfChildren && childAtIndex(index)->type() == Type::EmptyLayout) {
+    emptyChildIndex = index;
+  } else if (index > 0 && childAtIndex(index - 1)->type() == Type::EmptyLayout) {
+    emptyChildIndex = index - 1;
+  } else {
+    return;
+  }
+  if (!((emptyChildIndex > 0 && childAtIndex(emptyChildIndex - 1)->mustHaveRightSibling())
+     || (emptyChildIndex + 1 < currentNumberOfChildren && childAtIndex(emptyChildIndex + 1)->mustHaveLeftSibling())))
+  {
+    Layout(this).removeChild(Layout(childAtIndex(emptyChildIndex)), cursor);
+  }
+
 }
 
 static void makePermanentIfBracket(LayoutNode * l, bool hasLeftSibling, bool hasRightSibling) {

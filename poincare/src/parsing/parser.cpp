@@ -1041,7 +1041,8 @@ bool Parser::generateMixedFractionIfNeeded(Expression & leftHandSide) {
     m_waitingSlashForMixedFraction = true;
     Expression rightHandSide = parseUntil(Token::LeftBrace);
     m_waitingSlashForMixedFraction = false;
-    if (rightHandSide.type() == ExpressionNode::Type::Division
+    if (!rightHandSide.isUninitialized()
+        && rightHandSide.type() == ExpressionNode::Type::Division
         && IsIntegerBaseTenOrEmptyExpression(rightHandSide.childAtIndex(0))
         && IsIntegerBaseTenOrEmptyExpression(rightHandSide.childAtIndex(1))) {
       // The following expression looks like "int/int" -> it's a mixedFraction

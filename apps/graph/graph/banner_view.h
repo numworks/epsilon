@@ -21,7 +21,10 @@ public:
   void setDisplayParameters(bool showInterest, bool showDerivative, bool showTangent);
 
 private:
-  int numberOfSubviews() const override { return XYBannerView::k_numberOfSubviews + hasInterestMessage() + m_showDerivative + m_showTangent; };
+  int numberOfSubviews() const override {
+    // there are 3 views for tangent (aView, bView, tangentEquationView)
+    return XYBannerView::k_numberOfSubviews + hasInterestMessage() + m_showDerivative + 3 * m_showTangent;
+  };
   Escher::View * subviewAtIndex(int index) override;
   bool lineBreakBeforeSubview(Escher::View * subview) const override;
   bool hasInterestMessage() const { return m_showInterest && m_interestView.text()[0] != '\0'; }

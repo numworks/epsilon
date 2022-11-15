@@ -27,7 +27,8 @@ App::Snapshot::Snapshot() :
   m_regressionTypes{Model::Type::None, Model::Type::None, Model::Type::None}
 {
   // Register X1, X2, X3, Y1, Y2, Y3 as reserved names to the sharedStorage.
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNameVerifier()->registerArrayOfReservedNames(Store::k_columnNames, Ion::Storage::lisExtension, Shared::DoublePairStore::k_numberOfSeries, sizeof(Store::k_columnNames) / sizeof(char *));
+  static_assert(sizeof(DoublePairStore::k_regressionColumNames) / sizeof(char *) == 2, "Number of reserved lists in regression changed.");
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNameVerifier()->registerArrayOfReservedNames(DoublePairStore::k_regressionColumNames, Ion::Storage::lisExtension, Shared::DoublePairStore::k_numberOfSeries, sizeof(DoublePairStore::k_regressionColumNames) / sizeof(char *));
 }
 
 App * App::Snapshot::unpack(Container * container) {

@@ -16,6 +16,16 @@ MemoizedCurveViewRange::MemoizedCurveViewRange() :
   m_yGridUnit(k_defaultGridUnit)
 {}
 
+void MemoizedCurveViewRange::protectedSetX(Poincare::Range1D x, float limit) {
+  protectedSetXMin(x.min(), false, limit);
+  protectedSetXMax(x.max(), true, limit);
+}
+
+void MemoizedCurveViewRange::protectedSetY(Poincare::Range1D y, float limit) {
+  protectedSetYMin(y.min(), false, limit);
+  protectedSetYMax(y.max(), true, limit);
+}
+
 void MemoizedCurveViewRange::privateSet(float f, float limit, Range1D * range1D, void (Range1D::*setter)(float, float), bool updateGridUnit, float * gridUnit) {
   (range1D->*setter)(f, limit);
   *gridUnit = updateGridUnit ? (gridUnit == &m_xGridUnit ? CurveViewRange::xGridUnit() : CurveViewRange::yGridUnit()) : 0.f;

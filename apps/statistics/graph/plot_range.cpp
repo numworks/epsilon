@@ -25,10 +25,8 @@ void PlotRange::calibrate(KDCoordinate width, KDCoordinate height, KDCoordinate 
     yTopOffset = yBottomOffset = (yMin != 0.0f ? std::fabs(yMin) : 1.0f);
   }
 
-  MemoizedCurveViewRange::protectedSetXMin(seriesXMin - xSideOffset, false, INFINITY);
-  MemoizedCurveViewRange::protectedSetXMax(seriesXMax + xSideOffset);
-  MemoizedCurveViewRange::protectedSetYMin(yMin - yBottomOffset, false, INFINITY);
-  MemoizedCurveViewRange::protectedSetYMax(yMax + yTopOffset);
+  protectedSetX(Poincare::Range1D(seriesXMin - xSideOffset, seriesXMax + xSideOffset), INFINITY);
+  protectedSetY(Poincare::Range1D(yMin - yBottomOffset,  yMax + yTopOffset), INFINITY);
 }
 
 }

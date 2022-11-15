@@ -13,8 +13,12 @@ namespace Escher {
 class ExplicitSelectableListViewController : public SelectableListViewController<MemoizedListViewDataSource> {
 public:
   using SelectableListViewController::SelectableListViewController;
-  bool cellAtLocationIsSelectable(int i, int j) override {
-    return TableViewDataSource::cellAtLocationIsSelectable(i, j) && cell(j)->isSelectable();
+  bool cellAtLocationIsSelectable(HighlightCell * cell, int i, int j) override {
+    /* This controller owns all its cells so even if cell == nullptr, it can
+     * check if the cell is selectable or not. */
+    assert(!cell || cell == this->cell(j));
+    // this->cell() is used because cell() is ambiguous with the cell variable
+    return TableViewDataSource::cellAtLocationIsSelectable(cell, i, j) && this->cell(j)->isSelectable();
   }
   int typeAtIndex(int index) const override final { return index; }
   int reusableCellCount(int type) override final { return 1; }

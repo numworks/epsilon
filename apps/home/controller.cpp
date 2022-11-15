@@ -18,9 +18,9 @@ Controller::ContentView::ContentView(Controller * controller, SelectableTableVie
   m_selectableTableView(controller, controller, selectionDataSource, controller)
 {
   m_selectableTableView.setVerticalCellOverlap(0);
-  m_selectableTableView.setMargins(0, k_sideMargin, k_bottomMargin, k_sideMargin);
+  m_selectableTableView.setMargins(0, k_sideMargin, 0, k_sideMargin);
   m_selectableTableView.setBackgroundColor(KDColorWhite);
-  m_selectableTableView.decorator()->setVerticalMargins(k_indicatorMargin, k_indicatorMargin);
+  m_selectableTableView.decorator()->setVerticalMargins(k_indicatorMargin, k_indicatorMargin - k_bottomMargin);
 }
 
 SelectableTableView * Controller::ContentView::selectableTableView() {
@@ -37,6 +37,15 @@ void Controller::ContentView::reloadBottomRow(SimpleTableViewDataSource * dataSo
 View * Controller::ContentView::subviewAtIndex(int index) {
   assert(index == 0);
   return &m_selectableTableView;
+}
+
+void Controller::ContentView::layoutSubviews(bool force) {
+  /* Selectable table view's bottom margin is used for vertical scroll: we scroll to the selected
+   * cell's farthest pixel + bottom margin. For home app, instead of having a bottom bargin, we
+   * reduce the frame of the selectable table view and ContentView::drawRect will take care of
+   * drawing the white pixels at the bottom of the screen. */
+  KDRect frame = KDRect(KDPointZero, m_frame.width(), m_frame.height() - k_bottomMargin);
+  m_selectableTableView.setFrame(frame, force);
 }
 
 Controller::Controller(Responder * parentResponder, SelectableTableViewDataSource * selectionDataSource) :

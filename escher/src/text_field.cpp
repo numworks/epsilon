@@ -657,7 +657,7 @@ bool AbstractTextField::handleEventWithText(const char * eventText, bool indenta
       if (forceCursorRightOfText) {
         nextCursorLocation+= strlen(buffer);
       } else {
-        nextCursorLocation+= TextInputHelpers::CursorPositionInCommand(eventText) - eventText;
+        nextCursorLocation+= TextInputHelpers::CursorIndexInCommand(eventText);
       }
       setCursorLocation(nextCursorLocation);
     }

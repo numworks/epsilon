@@ -131,6 +131,10 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
   if (!insertTextAtLocation(text, insertionPosition)) {
     return true;
   }
+  assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointSystem) == 1);
+  /* Code point system are removed when text is inserted so the text length
+   * must be updated. */
+  addedTextLength = addedTextLength - UTF8Helper::CountOccurrences(text, UCodePointSystem);
 
   // Insert the indentation
   if (indentation) {
@@ -151,17 +155,17 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
         insertionPosition + addedTextLength);
   }
   const char * endOfInsertedText = insertionPosition + addedTextLength + totalIndentationSize;
-  const char * cursorPositionInCommand = TextInputHelpers::CursorPositionInCommand(insertionPosition, endOfInsertedText);
+  size_t cursorIndexInCommand = TextInputHelpers::CursorIndexInCommand(insertionPosition, endOfInsertedText);
 
   // Remove the Empty code points
   UTF8Helper::RemoveCodePoint(insertionPosition, UCodePointEmpty, &endOfInsertedText, endOfInsertedText);
 
   // Set the cursor location
-  /* In theory, we should also update cursorPositionInCommand after removing
+  /* In theory, we should also update cursorIndexInCommand after removing
    * the empty code points. But in practice, we never need to remove empty code
    * points before a cursor we want to keep. */
-  assert(forceCursorRightOfText || !UTF8Helper::HasCodePoint(insertionPosition, UCodePointEmpty, cursorPositionInCommand - 1));
-  const char * nextCursorLocation = forceCursorRightOfText ? endOfInsertedText : cursorPositionInCommand;
+  assert(forceCursorRightOfText || !UTF8Helper::HasCodePoint(insertionPosition, UCodePointEmpty, insertionPosition + cursorIndexInCommand - 1));
+  const char * nextCursorLocation = forceCursorRightOfText ? endOfInsertedText : insertionPosition + cursorIndexInCommand;
   setCursorLocation(nextCursorLocation);
 
   return true;

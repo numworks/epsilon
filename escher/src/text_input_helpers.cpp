@@ -5,21 +5,24 @@
 namespace Escher {
 namespace TextInputHelpers {
 
-const char * CursorPositionInCommand(const char * text, const char * stoppingPosition) {
+size_t CursorIndexInCommand(const char * text, const char * stoppingPosition, bool ignoreCodePointSytem) {
   assert(stoppingPosition == nullptr || text <= stoppingPosition);
   UTF8Decoder decoder(text);
   const char * currentPointer = text;
+  int numberOfIgnoredChar = 0;
   CodePoint codePoint = decoder.nextCodePoint();
   while ((stoppingPosition == nullptr || currentPointer < stoppingPosition) && codePoint != UCodePointNull) {
-    if (codePoint == UCodePointEmpty) {
-      return currentPointer;
-    }
-    //TODO make sure changing empty / ' order was OK
-    if (codePoint == '\'') {
+    if (ignoreCodePointSytem && codePoint == UCodePointSystem) {
+      assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointSystem) == 1);
+      numberOfIgnoredChar++;
+    } else if (codePoint == UCodePointEmpty) {
+      return currentPointer - text - numberOfIgnoredChar;
+    } else if (codePoint == '\'') {
+      //TODO make sure changing empty / ' order was OK
       currentPointer = decoder.stringPosition();
       codePoint = decoder.nextCodePoint();
       if (codePoint == '\'') {
-        return currentPointer;
+        return currentPointer - text - numberOfIgnoredChar;
       }
       // Continue because we already incremented codePoint
       continue;
@@ -27,7 +30,7 @@ const char * CursorPositionInCommand(const char * text, const char * stoppingPos
     currentPointer = decoder.stringPosition();
     codePoint = decoder.nextCodePoint();
   }
-  return currentPointer;
+  return currentPointer - text - numberOfIgnoredChar;
 }
 
 }

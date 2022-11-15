@@ -109,7 +109,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     }
   }
 
-  Range2D newRange = zoom.range(defaultRangeIsNormalized());
+  Range2D newRange = zoom.range(true, defaultRangeIsNormalized());
   return Range2D(*(computeX ? newRange : originalRange).x(), *(computeY ? newRange : originalRange).y());
 }
 

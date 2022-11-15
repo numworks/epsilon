@@ -34,8 +34,10 @@ public:
 
   /* This method is guaranteed to return a displayable range, that is a range
    * with non-nan bounds, and non-empty axes of some minimal length, with
-   * bounds smaller than maxFloat in absolute value. */
-  Range2D range(bool forceNormalization) const;
+   * bounds smaller than maxFloat in absolute value.
+   * If beautify is false, the range will only be sanitized, without attempting
+   * to improve its ratio. */
+  Range2D range(bool beautify, bool forceNormalization) const;
   void setBounds(float min, float max) { m_bounds = Range1D(min, max); }
   void setForcedRange(Range2D range) { m_forcedRange = range; }
   /* These four functions will extend both X and Y axes. */

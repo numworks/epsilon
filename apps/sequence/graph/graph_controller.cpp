@@ -92,7 +92,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
       Shared::Sequence * s = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i));
       zoom.fitFullFunction(evaluator, s);
     }
-    *result.y() = *zoom.range(false).y();
+    *result.y() = *zoom.range(true, false).y();
   }
   return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
 }

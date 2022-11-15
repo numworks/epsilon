@@ -24,8 +24,8 @@ void CurveViewRange::protectedNormalize(bool canChangeX, bool canChangeY, bool c
   GraphController * delegate = static_cast<GraphController *>(m_delegate);
   float interestingXMin = delegate->interestingXMin();
   float xRange = xMax() - xMin();
-  MemoizedCurveViewRange::protectedSetXMin(interestingXMin - k_displayLeftMarginRatio * xRange, false, INFINITY);
-  MemoizedCurveViewRange::protectedSetXMax(xMin() + xRange, true, k_maxFloat);
+  float xMin = interestingXMin - k_displayLeftMarginRatio * xRange;
+  protectedSetX(Range1D(xMin, xMin + xRange), k_maxFloat);
 }
 
 }

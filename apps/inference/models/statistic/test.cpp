@@ -136,10 +136,8 @@ void Test::computeCurveViewRange(float transition, bool zoomSide) {
   float height = std::exp(interpolate(std::log(computeYMax()), std::log(targetYMax), transition));
   float yMax = height;
   float yMin =  -k_displayBottomMarginRatio * height;
-  protectedSetXMin(xMin, false);
-  protectedSetXMax(xMax);
-  protectedSetYMin(yMin, false);
-  protectedSetYMax(yMax);
+  protectedSetX(Poincare::Range1D(xMin, xMax));
+  protectedSetY(Poincare::Range1D(yMin, yMax));
 }
 
 }  // namespace Inference

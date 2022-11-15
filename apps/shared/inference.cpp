@@ -6,10 +6,8 @@ Inference::Inference() : MemoizedCurveViewRange() {
 }
 
 void Inference::computeCurveViewRange() {
-  protectedSetXMin(computeXMin(), false);
-  protectedSetXMax(computeXMax(), true);
-  protectedSetYMin(computeYMin(), false);
-  protectedSetYMax(computeYMax(), true);
+  protectedSetX(Poincare::Range1D(computeXMin(), computeXMax()));
+  protectedSetY(Poincare::Range1D(computeYMin(), computeYMax()));
 }
 
 bool Inference::authorizedParameterAtIndex(double x, int index) const {

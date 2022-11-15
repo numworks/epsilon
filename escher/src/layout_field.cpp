@@ -446,7 +446,7 @@ bool LayoutField::handleEventWithText(const char * text, bool indentation, bool 
   }
   // Single keys are not parsed to avoid changing " or g to _" or _g
   // TODO: currently using char is sufficient but utf8 would be proper
-  Expression resultExpression = (text[0] != 0 && text[1] != 0) ? Expression::Parse(text, delegateContext()) : Expression();
+  Expression resultExpression = (text[0] != 0 && text[1] != 0) ? Expression::Parse(text, nullptr) : Expression();
   // If first inserted character was empty, cursor must be left of layout
   bool forceCursorLeftOfText = !forceCursorRightOfText && text[0] == UCodePointEmpty;
   if (resultExpression.isUninitialized()) {

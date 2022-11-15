@@ -796,7 +796,6 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
    * Fortunately, merged layouts' children are not modified by the merge, so it
    * is ok to compute their pointed layout before adding them.
    * */
-
   if (!forceCursorRightOfLayout) {
     if (!layoutWillBeMerged && !forceCursorLeftOfText) {
       assert(cursorMergedLayout.isUninitialized());
@@ -807,10 +806,8 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
     m_contentView.cursor()->setLayout(cursorMergedLayout);
     // If forceCursorLeftOfText, position cursor left of first merged layout.
     m_contentView.cursor()->setPosition(forceCursorLeftOfText ? LayoutCursor::Position::Left : LayoutCursor::Position::Right);
-  } else if (!layoutWillBeMerged) {
-    m_contentView.cursor()->setLayout(layoutR);
-    m_contentView.cursor()->setPosition(LayoutCursor::Position::Right);
   }
+  assert(m_contentView.cursor()->layout().hasAncestor(layout(), true));
 
   // Handle matrices
   cursor->layout().addGraySquaresToAllGridAncestors();

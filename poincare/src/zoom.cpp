@@ -26,12 +26,12 @@ Range2D Zoom::Sanitize(Range2D range, float normalYXRatio, float maxFloat) {
    * be evaluated to generate this zoom. */
   Zoom zoom(-maxFloat, maxFloat, normalYXRatio, nullptr, maxFloat);
   zoom.m_interestingRange = range;
-  return zoom.range(false);
+  return zoom.range(false, false);
 }
 
-Range2D Zoom::range(bool forceNormalization) const {
+Range2D Zoom::range(bool beautify, bool forceNormalization) const {
   Range2D result;
-  Range2D pretty = prettyRange(forceNormalization);
+  Range2D pretty = beautify ? prettyRange(forceNormalization) : sanitizedRange();
   result.x()->setMin(pretty.xMin(), m_maxFloat);
   result.x()->setMax(pretty.xMax(), m_maxFloat);
   result.y()->setMin(pretty.yMin(), m_maxFloat);

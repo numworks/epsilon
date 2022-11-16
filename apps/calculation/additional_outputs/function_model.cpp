@@ -23,15 +23,16 @@ float FunctionModel::RangeMargin(bool maxMargin, float rangeBound, float value, 
   return currentMargin >= k_marginInPixels ? 0.0 : k_marginInPixels * pixelRatio;
 }
 
+template<typename T> static Coordinate2D<T> evaluator(T t, const void * model, Context * context) {
+  const Expression * f = static_cast<const Expression *>(model);
+  return Coordinate2D<T>(t, Shared::PoincareHelpers::ApproximateWithValueForSymbol<T>(*f, Shared::Function::k_unknownName, t, context));
+}
+
 void FunctionModel::recomputeViewRange() {
   constexpr float k_maxFloat = Shared::InteractiveCurveViewRange::k_maxFloat;
   Zoom zoom(-k_maxFloat, k_maxFloat, 1 / k_xyRatio, context(), k_maxFloat);
 
-  Zoom::Function2DWithContext evaluator = [](float t, const void * model, Context * context) {
-    const Expression * f = static_cast<const Expression *>(model);
-    return Coordinate2D<float>(t, Shared::PoincareHelpers::ApproximateWithValueForSymbol<float>(*f, Shared::Function::k_unknownName, t, context));
-  };
-  zoom.fitPointsOfInterest(evaluator, static_cast<void *>(&m_function));
+  zoom.fitPointsOfInterest(evaluator<float>, &m_function, false, evaluator<double>);
 
   zoom.fitPoint(Coordinate2D<float>(m_abscissa, m_ordinate));
   zoom.fitPoint(Coordinate2D<float>(0.0f, 0.0f));

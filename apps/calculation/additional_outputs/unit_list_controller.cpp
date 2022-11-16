@@ -153,7 +153,7 @@ void UnitListController::setExpression(Poincare::Expression e) {
     if (!expressions[i].isUninitialized()) {
       m_layouts[i] = Shared::PoincareHelpers::CreateLayout(expressions[i], App::app()->localContext());
       // Radians may have two layouts to display
-      if (expressions[i].isInRadians(false, App::app()->localContext())) {
+      if (expressions[i].isInRadians(true, App::app()->localContext())) {
         Layout approximated = Shared::PoincareHelpers::CreateLayout(expressions[i].approximateKeepingUnits<double>(reductionContext), App::app()->localContext());
         if (!approximated.isIdenticalTo(m_layouts[i], true)) {
           m_exactLayouts[i] = m_layouts[i];

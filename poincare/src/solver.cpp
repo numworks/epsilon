@@ -243,7 +243,7 @@ T Solver<T>::nextX(T x, T direction) const {
    * The particular shape used there (an exponential of the negative cubed
    * magnitude) provides a smooth transition up until log|t|~±8. */
   T ratio;
-  if (lowerTypicalMagnitude < magnitude && magnitude < upperTypicalMagnitude) {
+  if (lowerTypicalMagnitude <= magnitude && magnitude <= upperTypicalMagnitude) {
     ratio = baseGrowthSpeed;
   } else {
     T magnitudeDelta = magnitude < lowerTypicalMagnitude ? lowerTypicalMagnitude  - magnitude : magnitude - upperTypicalMagnitude;

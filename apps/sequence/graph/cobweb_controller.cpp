@@ -66,18 +66,17 @@ void CobwebController::setupRange() {
   /* Compute the bounding rect of the maximum number of values we will want to
    * draw such that we never need to move the view. */
   SequenceContext * sequenceContext = App::app()->localContext();
-  InteractiveCurveViewRange range;
+  Zoom zoom(0.f, INFINITY, InteractiveCurveViewRange::NormalYXRatio(), sequenceContext, InteractiveCurveViewRange::k_maxFloat);
   for (int step = 0; step < CobwebGraphView::k_maximumNumberOfSteps; step++) {
     float value = sequence()->evaluateXYAtParameter(static_cast<float>(step + sequence()->initialRank()), sequenceContext).x2();
-    if (step == 0) {
-      range.setXMin(value);
-      range.setXMax(value);
-      range.setYMin(0);
-      range.setYMax(0);
-    } else {
-      range.zoomOutToMakePointVisible(value, value, k_margin, k_margin, k_margin, k_margin);
-    }
+    zoom.fitPoint(Coordinate2D<float>(value, step == 0 ? 0.f : value), false, k_margin, k_margin, k_margin, k_margin);
   }
+  Range2D zoomRange = zoom.range(false, false);
+  InteractiveCurveViewRange range;
+  range.setXMin(zoomRange.xMin());
+  range.setXMax(zoomRange.xMax());
+  range.setYMin(zoomRange.yMin());
+  range.setYMax(zoomRange.yMax());
   m_graphRange = range;
   m_graphView.reload();
 }

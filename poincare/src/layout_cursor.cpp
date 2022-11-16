@@ -206,7 +206,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
   }
 
   // Step 1: Insert text
-  int currentSubscriptDeepness = 0;
+  int currentSubscriptDepth = 0;
   while (codePoint != UCodePointNull) {
     assert(!codePoint.isCombining());
     if (codePoint == UCodePointEmpty) {
@@ -221,12 +221,12 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
       CodePoint nextCodePoint = decoder.nextCodePoint();
       if (nextCodePoint == '{') {
         newChild = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Subscript);
-        currentSubscriptDeepness++;
+        currentSubscriptDepth++;
       } else {
         // UCodePointSystem should be inserted only for system braces
-        assert(nextCodePoint == '}' && currentSubscriptDeepness > 0);
+        assert(nextCodePoint == '}' && currentSubscriptDepth > 0);
         // Leave the subscript
-        currentSubscriptDeepness--;
+        currentSubscriptDepth--;
         Layout subscript = m_layout;
         while (subscript.type() != LayoutNode::Type::VerticalOffsetLayout) {
           subscript = subscript.parent();
@@ -290,7 +290,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
       codePoint = decoder.nextCodePoint();
     }
   }
-  assert(currentSubscriptDeepness == 0);
+  assert(currentSubscriptDepth == 0);
 
   if (!forceCursorRightOfText && !pointedChild.isUninitialized() && !pointedChild.parent().isUninitialized()) {
     m_layout = pointedChild;

@@ -262,6 +262,7 @@ void FileSystem::destroyRecordsWithExtension(const char * extension) {
 }
 
 bool FileSystem::handleCompetingRecord(Record::Name recordName, bool destroyRecordWithSameFullName, bool notifyDelegate) {
+  assert(!m_delegate || m_delegate->storageWillChangeForRecordName(recordName));
   Record sameNameRecord = Record(recordName);
   if (isNameOfRecordTaken(sameNameRecord)) {
     if (destroyRecordWithSameFullName) {
@@ -275,7 +276,7 @@ bool FileSystem::handleCompetingRecord(Record::Name recordName, bool destroyReco
     return true;
   }
   RecordNameVerifier::OverrideStatus result = m_recordNameVerifier.canOverrideRecordWithNewExtension(competingRecord, recordName.extension);
-  if (result == RecordNameVerifier::OverrideStatus::Forbidden) {
+  if (result == RecordNameVerifier::OverrideStatus::Forbidden || (m_delegate && !m_delegate->storageWillChangeForRecordName(competingRecord.name()))) {
     return false;
   }
   if (result == RecordNameVerifier::OverrideStatus::Allowed) {
@@ -321,7 +322,7 @@ Record::ErrorStatus FileSystem::setNameOfRecord(Record * record, Record::Name na
   if (m_delegate && !m_delegate->storageWillChangeForRecordName(record->name())) {
     return Record::ErrorStatus::CanceledByDelegate;
   }
-  /* If you do not verifiy that the name has not changed if the previous 'if'
+  /* If you do not verify that the name has not changed if the previous 'if'
    * this will return false, and see the name as taken. */
   if (!handleCompetingRecord(name, false)) {
     return Record::ErrorStatus::NameTaken;
@@ -389,6 +390,7 @@ void FileSystem::destroyRecord(Record record, bool notifyDelegate) {
   if (record.isNull()) {
     return;
   }
+  assert(!m_delegate || m_delegate->storageWillChangeForRecordName(record.name()));
   char * p = pointerOfRecord(record);
   if (p != nullptr) {
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
@@ -522,7 +524,7 @@ Record FileSystem::privateRecordBasedNamedWithExtensions(const char * baseName, 
 }
 
 bool FileSystem::recordNameHasBaseNameAndOneOfTheseExtensions(Record::Name name, const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult) {
-    assert(name.baseName);
+  assert(name.baseName);
   if (!Record::NameIsEmpty(name) && strncmp(baseName, name.baseName, baseNameLength) == 0 && static_cast<size_t>(baseNameLength) == name.baseNameLength) {
     for (size_t i = 0; i < numberOfExtensions; i++) {
       if (strcmp(name.extension, extensions[i]) == 0) {

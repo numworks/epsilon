@@ -25,6 +25,10 @@ public:
   Escher::HighlightCell * reusableCell(int index) override;
   int reusableCellCount() const override { return k_numberOfReusableCells; }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
+  bool cellAtLocationIsSelectable(Escher::HighlightCell * cell, int column, int row) override {
+    assert(column >= 0 && column < numberOfColumns() && row >= 0 && row < numberOfRows());
+    return row < numberOfRows() - 1 || column <= columnOfLastIcon();
+  }
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
 private:
   // SimpleTableViewDataSource
@@ -41,7 +45,7 @@ private:
   int indexOfIconAtColumnAndRow(int column, int row) const { return row * k_numberOfColumns + column; }
   int indexOfAppAtColumnAndRow(int column, int row) const { return indexOfIconAtColumnAndRow(column, row) + 1; }
   int columnOfLastIcon() { return columnOfIconAtIndex(numberOfIcons() - 1); }
-  
+
   class ContentView : public Escher::View {
   public:
     ContentView(Controller * controller, Escher::SelectableTableViewDataSource * selectionDataSource);

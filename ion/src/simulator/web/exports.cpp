@@ -13,7 +13,8 @@ const char * IonPatchLevel() {
   return Ion::patchLevel();
 }
 
-void IonDisplayPrepareForScreenshot() {
+void IonDisplayForceRefresh() {
+  // Also prepare for a screenshot (force the blinking cursor to be visible)
   Ion::Simulator::Display::prepareForScreenshot();
   Ion::Simulator::Window::setNeedsRefresh();
   Ion::Simulator::Window::refresh();

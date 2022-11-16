@@ -133,7 +133,7 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
   }
   size_t recordSize = sizeOfRecordWithName(recordName, totalSize);
   Record recordWithSameName(recordName);
-  /* pointerOfRecord wiil find the record with same name in the FileSystem.
+  /* pointerOfRecord will find the record with same name in the FileSystem.
    * If the record does not already exist, pointerOfRecord == nullptr and
    * sameNameRecordSize == 0 */
   size_t sameNameRecordSize = sizeOfRecordStarting(pointerOfRecord(recordWithSameName));
@@ -143,11 +143,9 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
      * difference of size between the two of available space. */
    return notifyFullnessToDelegate();
   }
-  if (sameNameRecordSize != 0 && m_delegate && !m_delegate->storageWillChangeForRecordName(recordWithSameName.name())) {
-    /* The other record couldn't be changed anyway. This takes priority over the
-     * NameTaken error to prevent the other record deletion. */
-    return Record::ErrorStatus::CanceledByDelegate;
-  }
+  /* No need to call storageWillChangeForRecordName as long as
+   * recordWithSameName is identical to recordName */
+  assert(sameNameRecordSize == 0 || !m_delegate || strcmp(recordWithSameName.name().extension, recordName.extension) == 0);
   /* WARNING : This relies on the fact that when you create a python script or
    * a function, you first create it with a placeholder name and then let the
    * user set its name through setNameOfRecord. */

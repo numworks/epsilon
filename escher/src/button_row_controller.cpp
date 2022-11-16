@@ -145,7 +145,19 @@ void ButtonRowController::ContentView::drawRect(KDContext * ctx, KDRect rect) co
 }
 
 bool ButtonRowController::ContentView::setSelectedButton(int selectedButton) {
-  if (selectedButton < -1 || selectedButton >= numberOfButtons() || selectedButton == m_selectedButton) {
+  /* WARNING:
+   * selectedButton >= 0 is checked before selectedButton >= numberOfButtons()
+   * to avoid calling numberOfButtons in some case.
+   * For example, when the Graph app overflows the pool and return to home,
+   * the selectedButton is set to -1.
+   * Since numberOfButtons() depends on the number of active functions, which
+   * depends on the reduced expression of each function, which computation is
+   * what made the pool overflow in the first place, numberOfButtons() cannot
+   * be called.
+   * To avoid this scenario, the check for selectedButton >= numberOfButtons()
+   * is skipped when selectedButton == -1.
+   */
+  if (selectedButton < -1 || (selectedButton >= 0 && selectedButton >= numberOfButtons()) || selectedButton == m_selectedButton) {
     return false;
   }
   if (m_selectedButton >= 0) {

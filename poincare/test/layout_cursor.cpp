@@ -254,4 +254,16 @@ QUIZ_CASE(poincare_layout_parentheses) {
     assert_layout_serialize_to(l, "√\u0012(3)\u0013");
     quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(0).childAtIndex(0).childAtIndex(0), LayoutCursor::Position::Right)));
   }
+  /*
+   * |[} -> "{}" -> {}|{}
+   */
+  {
+    Layout l = HorizontalLayout::Builder(
+      CurlyBraceLayout::Builder());
+    static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
+    LayoutCursor c(l.childAtIndex(0), LayoutCursor::Position::Left);
+    c.addLayoutAndMoveCursor(CurlyBraceLayout::Builder(), nullptr);
+    assert_layout_serialize_to(l, "{}{}");
+    quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(1), LayoutCursor::Position::Left)));
+  }
 }

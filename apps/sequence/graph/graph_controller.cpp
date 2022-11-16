@@ -73,7 +73,7 @@ void GraphController::moveToRank(int n) {
 }
 
 Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange) const {
-  Zoom::Function2DWithContext evaluator = [](float x, const void * model, Context * context) {
+  Zoom::Function2DWithContext<float> evaluator = [](float x, const void * model, Context * context) {
     const Shared::Sequence * s = static_cast<const Shared::Sequence *>(model);
     return s->evaluateXYAtParameter(x, context);
   };

@@ -19,8 +19,7 @@ public:
   constexpr static float k_mediumUnitMantissa = 2.f;
   constexpr static float k_largeUnitMantissa = 5.f;
 
-  typedef Coordinate2D<float> (*Function2DWithContext)(float, const void *, Context *);
-  typedef Coordinate2D<double> (*Function2DWithContextDouble)(double, const void *, Context *);
+  template<typename T> using Function2DWithContext = Coordinate2D<T> (*)(T, const void *, Context *);
 
   /* Sanitize will turn any random range into a range fit for display (see
    * comment on range() method below), that includes the original range. */
@@ -41,11 +40,11 @@ public:
   void setForcedRange(Range2D range) { m_forcedRange = range; }
   /* These four functions will extend both X and Y axes. */
   void fitPoint(Coordinate2D<float> xy, bool flipped = false);
-  void fitFullFunction(Function2DWithContext f, const void * model);
-  void fitPointsOfInterest(Function2DWithContext f, const void * model, bool vertical = false, Function2DWithContextDouble fDouble = nullptr);
-  void fitIntersections(Function2DWithContext f1, const void * model1, Function2DWithContext f2, const void * model2, bool vertical = false);
+  void fitFullFunction(Function2DWithContext<float> f, const void * model);
+  void fitPointsOfInterest(Function2DWithContext<float> f, const void * model, bool vertical = false, Function2DWithContext<double> fDouble = nullptr);
+  void fitIntersections(Function2DWithContext<float> f1, const void * model1, Function2DWithContext<float> f2, const void * model2, bool vertical = false);
   /* This function will only touch the Y axis. */
-  void fitMagnitude(Function2DWithContext f, const void * model, bool vertical = false);
+  void fitMagnitude(Function2DWithContext<float> f, const void * model, bool vertical = false);
 
 private:
   class HorizontalAsymptoteHelper {
@@ -80,8 +79,8 @@ private:
   };
 
   struct InterestParameters {
-    Function2DWithContext f;
-    Function2DWithContextDouble fDouble;
+    Function2DWithContext<float> f;
+    Function2DWithContext<double> fDouble;
     const void * model;
     Context * context;
     HorizontalAsymptoteHelper * asymptotes;

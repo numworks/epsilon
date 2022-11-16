@@ -55,7 +55,7 @@ void Zoom::fitPoint(Coordinate2D<float> xy, bool flipped) {
   m_interestingRange.extend(flipped ? Coordinate2D<float>(xy.x2(), xy.x1()) : xy, m_maxFloat);
 }
 
-void Zoom::fitFullFunction(Function2DWithContext f, const void * model) {
+void Zoom::fitFullFunction(Function2DWithContext<float> f, const void * model) {
   float step = m_bounds.length() / (k_sampleSize - 1);
   for (size_t i = 0; i < k_sampleSize; i++) {
     float t = m_bounds.min() + step * i;
@@ -63,7 +63,7 @@ void Zoom::fitFullFunction(Function2DWithContext f, const void * model) {
   }
 }
 
-void Zoom::fitPointsOfInterest(Function2DWithContext f, const void * model, bool vertical, Function2DWithContextDouble fDouble) {
+void Zoom::fitPointsOfInterest(Function2DWithContext<float> f, const void * model, bool vertical, Function2DWithContext<double> fDouble) {
   HorizontalAsymptoteHelper asymptotes(m_bounds.center());
   float (Coordinate2D<float>::*ordinate)() const = vertical ? &Coordinate2D<float>::x1 : &Coordinate2D<float>::x2;
   double (Coordinate2D<double>::*ordinateDouble)() const = vertical ? &Coordinate2D<double>::x1 : &Coordinate2D<double>::x2;
@@ -89,13 +89,13 @@ void Zoom::fitPointsOfInterest(Function2DWithContext f, const void * model, bool
   }
 }
 
-void Zoom::fitIntersections(Function2DWithContext f1, const void * model1, Function2DWithContext f2, const void * model2, bool vertical) {
+void Zoom::fitIntersections(Function2DWithContext<float> f1, const void * model1, Function2DWithContext<float> f2, const void * model2, bool vertical) {
   /* TODO Function x=f(y) are not intersectable right now, there is no need to
    * handle this case yet. */
   assert(!vertical);
   struct Parameters {
-    Function2DWithContext f1;
-    Function2DWithContext f2;
+    Function2DWithContext<float> f1;
+    Function2DWithContext<float> f2;
     const void * model1;
     const void * model2;
     Context * context;
@@ -115,7 +115,7 @@ void Zoom::fitIntersections(Function2DWithContext f1, const void * model1, Funct
   fitWithSolver(&dummy, &dummy, evaluator, &params, Solver<float>::EvenOrOddRootInBracket, hone, vertical);
 }
 
-void Zoom::fitMagnitude(Function2DWithContext f, const void * model, bool vertical) {
+void Zoom::fitMagnitude(Function2DWithContext<float> f, const void * model, bool vertical) {
   /* We compute the log mean value of the expression, which gives an idea of the
    * order of magnitude of the function, to crop the Y axis. */
   constexpr float aboutZero = Solver<float>::k_minimalAbsoluteStep;
@@ -215,6 +215,8 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const v
   }
 
   constexpr float k_tolerance = 1.f / Solver<float>::k_relativePrecision;
+  /* Most functions will taper off near a local extremum. If the slope
+   * diverges, it is more likely we have found an even vertical asymptote. */
   bool discontinuous = (interest == Solver<float>::Interest::LocalMinimum || interest == Solver<float>::Interest::LocalMaximum)
     && (std::max((pu.x2() - pa.x2()) / (pu.x1() - pa.x1()), (pv.x2() - pb.x2()) / (pv.x1() - pb.x1())) > k_tolerance);
   /* If the function is discontinuous around the solution (e.g. 1/x^2), we
@@ -348,7 +350,7 @@ bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEv
         /* The function evaluates to NAN in single-precision only. It is likely
          * we have reached the limits of the float type, such as when
          * evaluating y=(e^x-1)/(e^x+1) for x~90 (which leads to ∞/∞). */
-        break;
+        return false;
       }
     }
     fitPoint(p, vertical);

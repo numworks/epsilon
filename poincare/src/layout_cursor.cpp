@@ -206,6 +206,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
   }
 
   // Step 1: Insert text
+  int currentSubscriptDeepness = 0;
   while (codePoint != UCodePointNull) {
     assert(!codePoint.isCombining());
     if (codePoint == UCodePointEmpty) {
@@ -220,15 +221,21 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
       CodePoint nextCodePoint = decoder.nextCodePoint();
       if (nextCodePoint == '{') {
         newChild = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Subscript);
-      } else if (nextCodePoint == '}') {
+        currentSubscriptDeepness++;
+      } else {
+        // UCodePointSystem should be inserted only for system braces
+        assert(nextCodePoint == '}' && currentSubscriptDeepness > 0);
         // Leave the subscript
-        bool shouldRecompute = false;
-        moveRight(&shouldRecompute);
+        currentSubscriptDeepness--;
+        Layout subscript = m_layout;
+        while (subscript.type() != LayoutNode::Type::VerticalOffsetLayout) {
+          subscript = subscript.parent();
+          assert(!subscript.isUninitialized());
+        }
+        m_layout = subscript;
+        m_position = Position::Right;
         codePoint = decoder.nextCodePoint();
         continue;
-      } else {
-        // UCodePointSystem should not be inserted.
-        assert(false);
       }
     } else if (codePoint == '(' || codePoint == UCodePointLeftSystemParenthesis) {
       newChild = ParenthesisLayout::Builder();
@@ -283,6 +290,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
       codePoint = decoder.nextCodePoint();
     }
   }
+  assert(currentSubscriptDeepness == 0);
 
   if (!forceCursorRightOfText && !pointedChild.isUninitialized() && !pointedChild.parent().isUninitialized()) {
     m_layout = pointedChild;

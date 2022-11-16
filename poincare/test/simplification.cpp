@@ -245,6 +245,7 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "x",SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "\u0014dep(x,{√(x)})", User, Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("2*3^x*3^(-x)", "\u0014dep(2,{x})");
+  assert_parsed_expression_simplify_to("10-1/(3^x)", "\u001210×3^x-1\u0013/3^x");
 }
 
   /* Some of these are currently not tested because their units are weirdly

@@ -343,8 +343,7 @@ bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEv
   int n = 0;
   Coordinate2D<float> p;
   while (std::isfinite((p = solver.next(evaluator, aux, test, hone)).x1())) { // assignment in condition
-    if (solver.lastInterest() == Solver<float>::Interest::Discontinuity) {
-      assert(std::isnan(p.x2()) && std::isfinite(p.x1()));
+    if (solver.lastInterest() == Solver<float>::Interest::Discontinuity && std::isnan(p.x2())) {
       if (std::isfinite(fDouble(p.x1(), aux))) {
         /* The function evaluates to NAN in single-precision only. It is likely
          * we have reached the limits of the float type, such as when

@@ -14,10 +14,9 @@ public:
     Left = 0,
     Right = 1,
   };
+  static Side OtherSide(Side side) { return side == Side::Left ? Side::Right : Side::Left; }
 
-  Side oppositeSide(Side s) { return s == Side::Left ? Side::Right : Side::Left; }
-
-  AutocompletedBracketPairLayoutNode() : m_leftIsTemporary(false), m_rightIsTemporary(false), m_insertedAs(Side::Left) {}
+  AutocompletedBracketPairLayoutNode() : m_leftIsTemporary(false), m_rightIsTemporary(false) {}
 
   // TreeNode
   size_t size() const override { return sizeof(AutocompletedBracketPairLayoutNode); }
@@ -31,25 +30,30 @@ public:
   // Returns Layout(this), or the bracket layout that replaced this
   Layout balanceAfterInsertion(Side insertedSide, LayoutCursor * cursor);
   void makePermanent(Side side);
-  void setInsertionSide(Side side) { m_insertedAs = side; }
 
 protected:
   KDColor bracketColor(Side side, KDColor fg, KDColor bg) const { return isTemporary(side) ? KDColor::Blend(fg, bg, k_temporaryBlendAlpha) : fg; }
 
+#if POINCARE_TREE_LOG
+  void logAttributes(std::ostream & stream) const override {
+    stream << " left=\"" << (m_leftIsTemporary ? "temporary" : "permanent") << "\"";
+    stream << " right=\"" << (m_rightIsTemporary ? "temporary" : "permanent") << "\"";
+    // stream << " insertedAs=\"" << (m_insertedAs == Side::Left ? "left" : "right") << "\"";
+  }
+#endif
+
 private:
   constexpr static uint8_t k_temporaryBlendAlpha = 0x60;
 
-  static Side OtherSide(Side side) { return side == Side::Left ? Side::Right : Side::Left; }
 
   AutocompletedBracketPairLayoutNode * autocompletedParent() const;
   LayoutNode * childOnSide(Side side) const;
-  bool makeTemporary(Side side, LayoutCursor * cursor);
+  bool makeTemporary(Side side, LayoutCursor * cursor, bool force = false);
   void absorbSiblings(Side side, LayoutCursor * cursor);
   LayoutCursor cursorAfterDeletion(Side side) const;
 
   bool m_leftIsTemporary : 1;
   bool m_rightIsTemporary : 1;
-  Side m_insertedAs : 1;
 };
 
 }

@@ -68,7 +68,11 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     }
 
     float tStep = dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
-    if (!snapToInterestAndUpdateBanner(&t, t, t + tStep * k_snapFactor)) {
+    if (snapToInterestAndUpdateBannerAndCursor(cursor, t, t + tStep * k_snapFactor)) {
+        // Cursor should have been updated by snapToInterest
+        assert(tCursorPosition != cursor->t());
+        return true;
+    } else {
       t += tStep;
       assert(std::round(static_cast<float>(t)/pixelWidth) != std::round(static_cast<float>(tCursorPosition)/pixelWidth));
       /* assert that it moved at least of 1 pixel.
@@ -131,20 +135,29 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   return true;
 }
 
-void GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record) {
+double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record) {
+
+  double derivative = 0.0;
+  // Force derivative to 0 if cursor is at an extremum
+  PointOfInterest pointOfInterest = App::app()->graphController()->pointsOfInterest()->pointOfInterestAtAbscissa(cursor->x());
+  if (pointOfInterest.isUninitialized() || (pointOfInterest.interest() != Solver<double>::Interest::LocalMaximum && pointOfInterest.interest() != Solver<double>::Interest::LocalMinimum)) {
+    ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
+    derivative = function->approximateDerivative(cursor->x(), App::app()->localContext());
+  }
+
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
   int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize);
   assert(function->canDisplayDerivative());
-  Poincare::Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar, "=%*.*ed",
-    function->approximateDerivative(cursor->x(), App::app()->localContext()), Poincare::Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits());
+  Poincare::Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar, "=%*.*ed", derivative, Poincare::Preferences::sharedPreferences()->displayMode(), Preferences::sharedPreferences()->numberOfSignificantDigits());
   bannerView()->derivativeView()->setText(buffer);
   bannerView()->reload();
+
+  return derivative;
 }
 
-bool GraphControllerHelper::snapToInterestAndUpdateBanner(double * t, double start, double end) {
-
+bool GraphControllerHelper::snapToInterestAndUpdateBannerAndCursor(Shared::CurveViewCursor * cursor, double start, double end) {
   PointOfInterest nextPointOfInterest = App::app()->graphController()->pointsOfInterest()->firstPointInDirection(start, end);
   Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
   if (!std::isfinite(nextPointOfInterestXY.x1())) {
@@ -152,7 +165,6 @@ bool GraphControllerHelper::snapToInterestAndUpdateBanner(double * t, double sta
     return false;
   }
   /* Snap to a point of interest, and display its type in the banner. */
-  *t = nextPointOfInterestXY.x1();
   I18n::Message interestMessage;
   switch (nextPointOfInterest.interest()) {
   case Solver<double>::Interest::Root:
@@ -174,6 +186,8 @@ bool GraphControllerHelper::snapToInterestAndUpdateBanner(double * t, double sta
   }
   bannerView()->setInterestMessage(interestMessage);
   graphView()->cursorView()->setHighlighted(true);
+  // Ensure that the cursor is on the exact point of interest value
+  cursor->moveTo(nextPointOfInterestXY.x1(), nextPointOfInterestXY.x1(), nextPointOfInterestXY.x2());
   return true;
 }
 

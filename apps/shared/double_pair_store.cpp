@@ -341,6 +341,10 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
   return crc;
 }
 
+double DoublePairStore::defaultValue(int series, int i, int j) const {
+  return (i == 0 && j > 1) ? 2 * get(series, i, j-1) - get(series, i, j-2) : defaultValueForColumn1();
+}
+
 bool DoublePairStore::updateSeries(int series, bool delayUpdate) {
   assert(series >= 0 && series < k_numberOfSeries);
   if (delayUpdate) {

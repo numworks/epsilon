@@ -46,10 +46,11 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   actions.cpp \
   state_file.cpp \
   screenshot.cpp \
-  window_position_cached.cpp \
   platform_files.cpp \
 )
 SFLAGS += -DION_SIMULATOR_FILES=1
+ION_SIMULATOR_WINDOW_SETUP ?= ion/src/simulator/shared/window_position_cached.cpp
 else
-ion_src += ion/src/simulator/shared/dummy/window_position.cpp
+ION_SIMULATOR_WINDOW_SETUP ?= ion/src/simulator/shared/dummy/window_position.cpp
 endif
+ion_src += $(ION_SIMULATOR_WINDOW_SETUP)

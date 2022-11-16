@@ -1,4 +1,5 @@
 ION_SIMULATOR_FILES = 1
+ION_SIMULATOR_WINDOW_SETUP = ion/src/simulator/macos/window.mm
 
 ion_src += $(addprefix ion/src/simulator/macos/, \
   platform_files.mm \

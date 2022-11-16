@@ -22,6 +22,8 @@ public:
 
   constexpr Range1D(float min = NAN, float max = NAN) : m_min(min), m_max(max) { assert(m_min <= m_max || (std::isnan(m_min) && std::isnan(max))); }
 
+  bool operator !=(const Range1D & other) const { return m_min != other.m_min || m_max != other.m_max; }
+
   bool isValid() const { assert(std::isnan(m_min) == std::isnan(m_max)); return !std::isnan(m_min); }
   bool isEmpty() const { return m_min == m_max; }
 
@@ -45,6 +47,8 @@ class Range2D {
 public:
   constexpr Range2D(Range1D x, Range1D y) : m_x(x), m_y(y) {}
   constexpr Range2D(float xMin = NAN, float xMax = NAN, float yMin = NAN, float yMax = NAN) : Range2D(Range1D(xMin, xMax), Range1D(yMin, yMax)) {}
+
+  bool operator !=(const Range2D & other) const { return m_x != other.m_x || m_y != other.m_y; }
 
   float xMin() const { return m_x.min(); }
   float xMax() const { return m_x.max(); }

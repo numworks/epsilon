@@ -51,15 +51,47 @@ Range2D Zoom::range(bool beautify, bool forceNormalization) const {
   return result;
 }
 
-void Zoom::fitPoint(Coordinate2D<float> xy, bool flipped) {
-  m_interestingRange.extend(flipped ? Coordinate2D<float>(xy.x2(), xy.x1()) : xy, m_maxFloat);
+static Range1D computeNewBoundsAfterZoomingOut(float t, Range1D oldRange, float minMargin, float maxMargin, float limit) {
+  oldRange.extend(t, limit);
+  /* When we zoom out, we want to recompute both the xMin and xMax so that
+   * previous values that where within margins bounds stay in it, even if
+   * the xRange increased.
+   *
+   * |-------------|----------------------------|------------|
+   * ^new min (X)                                            ^new max (Y)
+   *               ^old min (A)                 ^old max (B)
+   *        ^min margin (r)                            ^max margin (R)
+   *
+   * We have to solve the equation system:
+   * Y - B = R * (Y - X)
+   * A - X = r * (Y - X)
+   *
+   * We find the formulas:
+   * X = A - (r * (B - A) / (1 - (R + r)))
+   * Y = B + (R * (B - A) / (1 - (R + r)))
+   */
+  assert(minMargin + maxMargin < 1.f);
+  float k = oldRange.length() / (1.f - (minMargin + maxMargin));
+  float newMin = oldRange.min() - k * minMargin;
+  float newMax = oldRange.max() + k * maxMargin;
+  return Range1D(newMin, newMax);
+}
+
+void Zoom::fitPoint(Coordinate2D<float> xy, bool flipped, float leftMargin, float rightMargin, float bottomMargin, float topMargin) {
+  float xL = m_interestingRange.x()->length(), yL = m_interestingRange.y()->length();
+  Range1D xRWithoutMargins(m_interestingRange.xMin() + leftMargin * xL, m_interestingRange.xMax() - rightMargin * xL);
+  Range1D yRWithoutMargins(m_interestingRange.yMin() + bottomMargin * yL, m_interestingRange.yMax() - topMargin * yL);
+  Range1D xR = computeNewBoundsAfterZoomingOut(xy.x1(), xRWithoutMargins, leftMargin, rightMargin, m_maxFloat);
+  Range1D yR = computeNewBoundsAfterZoomingOut(xy.x2(), yRWithoutMargins, bottomMargin, topMargin, m_maxFloat);
+  privateFitPoint(Coordinate2D<float>(xR.min(), yR.min()), flipped);
+  privateFitPoint(Coordinate2D<float>(xR.max(), yR.max()), flipped);
 }
 
 void Zoom::fitFullFunction(Function2DWithContext<float> f, const void * model) {
   float step = m_bounds.length() / (k_sampleSize - 1);
   for (size_t i = 0; i < k_sampleSize; i++) {
     float t = m_bounds.min() + step * i;
-    fitPoint(f(t, model, m_context));
+    privateFitPoint(f(t, model, m_context));
   }
 }
 
@@ -82,10 +114,10 @@ void Zoom::fitPointsOfInterest(Function2DWithContext<float> f, const void * mode
    * infinite number of points in this direction. An horizontal asymptote
    * would be the result of a sampling artifact and can be discarded. */
   if (!leftInterrupted) {
-    fitPoint(asymptotes.left(), vertical);
+    privateFitPoint(asymptotes.left(), vertical);
   }
   if (!rightInterrupted) {
-    fitPoint(asymptotes.right(), vertical);
+    privateFitPoint(asymptotes.right(), vertical);
   }
 }
 
@@ -322,7 +354,7 @@ void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver
   Coordinate2D<float> p2(c, evaluator(c, aux));
   Coordinate2D<float> p3(c + d, evaluator(c + d, aux));
   if (pointIsInterestingHelper(p1, p2, p3, aux) != Solver<float>::Interest::None) {
-    fitPoint(p2, vertical);
+    privateFitPoint(p2, vertical);
   }
 }
 
@@ -353,7 +385,7 @@ bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEv
         return false;
       }
     }
-    fitPoint(p, vertical);
+    privateFitPoint(p, vertical);
     n++;
     if (n == k_maxPointsIfInfinite) {
       tempRange = m_interestingRange;
@@ -363,6 +395,10 @@ bool Zoom::fitWithSolverHelper(float start, float end, Solver<float>::FunctionEv
     }
   }
   return false;
+}
+
+void Zoom::privateFitPoint(Coordinate2D<float> xy, bool flipped) {
+  m_interestingRange.extend(flipped ? Coordinate2D<float>(xy.x2(), xy.x1()) : xy, m_maxFloat);
 }
 
 }

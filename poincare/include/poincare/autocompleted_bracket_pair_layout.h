@@ -38,7 +38,6 @@ protected:
   void logAttributes(std::ostream & stream) const override {
     stream << " left=\"" << (m_leftIsTemporary ? "temporary" : "permanent") << "\"";
     stream << " right=\"" << (m_rightIsTemporary ? "temporary" : "permanent") << "\"";
-    // stream << " insertedAs=\"" << (m_insertedAs == Side::Left ? "left" : "right") << "\"";
   }
 #endif
 

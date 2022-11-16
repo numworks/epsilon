@@ -143,11 +143,6 @@ bool InputCategoricalController::textFieldDidFinishEditing(AbstractTextField * t
   return handleEditedValue(indexOfEditedParameterAtIndex(m_selectableTableView.selectedRow()), p, textField, event);
 }
 
-void InputCategoricalController::didEnterResponderChain(Responder * previousResponder) {
-  categoricalTableCell()->recomputeDimensions();
-  PrintValueInTextHolder(m_statistic->threshold(), m_innerSignificanceCell.textField(), true, true);
-}
-
 bool InputCategoricalController::ButtonAction(InputCategoricalController * controller, void * s) {
   if (!controller->m_statistic->validateInputs()) {
     App::app()->displayWarning(I18n::Message::InvalidInputs);
@@ -155,6 +150,12 @@ bool InputCategoricalController::ButtonAction(InputCategoricalController * contr
   }
   controller->m_statistic->compute();
   return CategoricalController::ButtonAction(controller, s);
+}
+
+void InputCategoricalController::viewWillAppear() {
+  categoricalTableCell()->recomputeDimensions();
+  PrintValueInTextHolder(m_statistic->threshold(), m_innerSignificanceCell.textField(), true, true);
+  CategoricalController::viewWillAppear();
 }
 
 void InputCategoricalController::tableViewDataSourceDidChangeSize() {

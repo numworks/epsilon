@@ -28,6 +28,7 @@ bool InputSlopeController::handleEvent(Ion::Events::Event event) {
 
 void InputSlopeController::viewWillAppear() {
   m_slopeTableCell.willAppear();
+  InputCategoricalController::viewWillAppear();
 }
 
 }

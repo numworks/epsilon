@@ -66,12 +66,10 @@ public:
   bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
-  // Responder
-  void didEnterResponderChain(Responder * previousResponder) override;
-
   static bool ButtonAction(InputCategoricalController * controller, void * s);
 
   // ViewController
+  void viewWillAppear() override;
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return Escher::ViewController::TitlesDisplay::DisplayLastTitle; }
 
   // DynamicSizeTableViewDataSourceDelegate

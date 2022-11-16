@@ -493,6 +493,13 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
 }
 
 bool Addition::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+  {
+    Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
+    if (!e.isUninitialized()) {
+      return true;
+    }
+  }
+
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
     derivateChildAtIndexInPlace(i, reductionContext, symbol, symbolValue);

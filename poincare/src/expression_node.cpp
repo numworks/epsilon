@@ -3,6 +3,7 @@
 #include <poincare/addition.h>
 #include <poincare/arc_tangent.h>
 #include <poincare/complex_cartesian.h>
+#include <poincare/derivative.h>
 #include <poincare/division.h>
 #include <poincare/power.h>
 #include <poincare/rational.h>
@@ -102,7 +103,8 @@ Expression ExpressionNode::shallowBeautify(const ReductionContext& reductionCont
 }
 
 bool ExpressionNode::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
-  return Expression(this).defaultDidDerivate();
+  Expression e = Derivative::DefaultDerivate(Expression(this), reductionContext, symbol);
+  return !e.isUninitialized();
 }
 
 Expression ExpressionNode::unaryFunctionDifferential(const ReductionContext& reductionContext) {

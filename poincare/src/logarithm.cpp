@@ -286,6 +286,13 @@ Integer Logarithm::simplifyLogarithmIntegerBaseInteger(Integer i, Integer & base
 
 bool Logarithm::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   assert(numberOfChildren() == 2);
+  {
+    Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
+    if (!e.isUninitialized()) {
+      return true;
+    }
+  }
+
   /* We do nothing if the base is a function of the derivation variable, as the
    * log is then not an unary function anymore.
    * TODO : Check whether we want to deal with the case log(..., f(x)). */

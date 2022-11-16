@@ -526,7 +526,6 @@ private:
   Expression shallowReduceUsingApproximation(const ExpressionNode::ReductionContext& reductionContext);
   Expression defaultShallowBeautify() { return *this; }
 
-  bool defaultDidDerivate() { return false; }
   Expression defaultUnaryFunctionDifferential() { return *this; }
 
   /* Approximation */

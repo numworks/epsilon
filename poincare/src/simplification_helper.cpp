@@ -7,6 +7,7 @@
 #include <poincare/parametered_expression.h>
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
+#include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <poincare/nonreal.h>
 #include <assert.h>

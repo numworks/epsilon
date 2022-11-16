@@ -713,6 +713,13 @@ Expression Multiplication::denominator(const ExpressionNode::ReductionContext& r
 }
 
 bool Multiplication::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+  {
+    Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
+    if (!e.isUninitialized()) {
+      return true;
+    }
+  }
+
   Addition resultingAddition = Addition::Builder();
   int numberOfTerms = numberOfChildren();
   assert (numberOfTerms > 0);

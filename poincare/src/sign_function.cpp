@@ -1,6 +1,7 @@
 #include <poincare/sign_function.h>
 #include <poincare/symbol_abstract.h>
 #include <poincare/complex_cartesian.h>
+#include <poincare/derivative.h>
 #include <poincare/float.h>
 #include <poincare/layout_helper.h>
 #include <poincare/rational.h>
@@ -101,6 +102,13 @@ Expression SignFunction::shallowReduce(ExpressionNode::ReductionContext reductio
 }
 
 bool SignFunction::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+  {
+    Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
+    if (!e.isUninitialized()) {
+      return true;
+    }
+  }
+
   /* This function derivate is equal to 0 everywhere but in 0 where
    * it's not defined.
    * We approximate it's child to know if it is equal to 0

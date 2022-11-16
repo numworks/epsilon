@@ -1132,6 +1132,13 @@ Expression Power::shallowBeautify(const ExpressionNode::ReductionContext& reduct
 }
 
 bool Power::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+  {
+    Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
+    if (!e.isUninitialized()) {
+      return true;
+    }
+  }
+
   /* Generalized power derivation formula
    * (f^g)` = (e^(g * ln(f)))`
    *       = (g * ln(f))` * f^g

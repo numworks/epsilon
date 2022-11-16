@@ -128,6 +128,13 @@ Expression AbsoluteValue::shallowReduce(ExpressionNode::ReductionContext reducti
 
 // Derivate of |f(x)| is f'(x)*sg(x) (and undef in 0) = f'(x)*(f(x)/|f(x)|)
 bool AbsoluteValue::derivate(const ExpressionNode::ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
+  {
+    Expression e = Derivative::DefaultDerivate(*this, reductionContext, symbol);
+    if (!e.isUninitialized()) {
+      return true;
+    }
+  }
+
   Expression f = childAtIndex(0);
   Multiplication result = Multiplication::Builder();
   result.addChildAtIndexInPlace(Derivative::Builder(f.clone(),

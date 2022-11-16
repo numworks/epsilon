@@ -249,10 +249,10 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
   Expression derivandAsDependency = derivand.clone();
 
   /* Use reduction target SystemForAnalysis when derivating,
-   * because we don't want to have false reductions such as 
-   * arccot(x) -> arctan(1/x) 
-   * This will not impact the function derivate since it only 
-   * use the angle unit of the reduction context, but it will 
+   * because we don't want to have false reductions such as
+   * arccot(x) -> arctan(1/x)
+   * This will not impact the function derivate since it only
+   * use the angle unit of the reduction context, but it will
    * impact the function deepReduce */
   ExpressionNode::ReductionTarget initialTarget = reductionContext.target();
   reductionContext.setTarget(ExpressionNode::ReductionTarget::SystemForAnalysis);
@@ -310,10 +310,27 @@ Expression Derivative::shallowReduce(ExpressionNode::ReductionContext reductionC
 }
 
 void Derivative::DerivateUnaryFunction(Expression function, Symbol symbol, Expression symbolValue, const ExpressionNode::ReductionContext& reductionContext) {
+  {
+    Expression e = Derivative::DefaultDerivate(function, reductionContext, symbol);
+    if (!e.isUninitialized()) {
+      return;
+    }
+  }
+
   Expression df = function.unaryFunctionDifferential(reductionContext);
   Expression g = function.childAtIndex(0);
   Expression dg = g.derivate(reductionContext, symbol, symbolValue) ? function.childAtIndex(0) : Derivative::Builder(function.childAtIndex(0), symbol.clone().convert<Symbol>(), symbolValue.clone());
   function.replaceWithInPlace(Multiplication::Builder(df, dg));
+}
+
+Expression Derivative::DefaultDerivate(Expression function, const ExpressionNode::ReductionContext& reductionContext, Symbol symbol) {
+  int polynomialDegree = function.polynomialDegree(reductionContext.context(), symbol.name());
+  if (polynomialDegree == 0) {
+    Expression result = Rational::Builder(0);
+    function.replaceWithInPlace(result);
+    return result;
+  }
+  return Expression();
 }
 
 Expression Derivative::UntypedBuilder(Expression children) {

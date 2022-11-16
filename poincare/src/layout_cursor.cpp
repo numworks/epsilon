@@ -258,7 +258,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
 
     if (AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(newChild.type())) {
       Layout newChildRef = newChild;
-      static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->setInsertionSide(bracketSide);
+      static_cast<AutocompletedBracketPairLayoutNode *>(newChild.node())->setTemporary(AutocompletedBracketPairLayoutNode::OtherSide(bracketSide), true);
       m_layout.addSibling(this, &newChild, true);
       assert(!newChild.parent().isUninitialized());
       assert(AutocompletedBracketPairLayoutNode::IsAutoCompletedBracketPairType(newChild.type()));

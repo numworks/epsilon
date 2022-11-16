@@ -212,73 +212,25 @@ bool InteractiveCurveViewRange::panToMakePointVisible(float x, float y, float to
   return moved;
 }
 
-static void ComputeNewBoundsAfterZoomingOut(float x, float minBoundWithMargin, float maxBoundWithMargin, float minBoundMarginRatio, float maxBoundMarginRatio, float * newMinBound, float * newMaxBound) {
-  // One of the bounds within margins becomes x
-  if (x < minBoundWithMargin) {
-    minBoundWithMargin = x;
-  } else {
-    assert(x > maxBoundWithMargin);
-    maxBoundWithMargin = x;
-  }
-  /* When we zoom out, we want to recompute both the xMin and xMax so that
-   * previous values that where within margins bounds stay in it, even if
-   * the xRange increased.
-   *
-   * |-------------|----------------------------|------------|
-   * ^newMinBound (X)                                        ^newMaxBound (Y)
-   *               ^minBoundwithMargin (A)      ^maxBoundwithMargin (B)
-   *        ^minMarginRatio (r)                       ^maxMarginRatio (R)
-   *
-   * We have to solve the equation system:
-   * maxMargin = maxMarginRatio * (newMaxBound - newMinBound)
-   * minMargin = minMarginRation * (newMaxBound - newMinBound)
-   * which is equivalent to:
-   * Y - B = R * (Y - X)
-   * A - X = r * (Y - X)
-   *
-   * We find the formulas:
-   * X = A - (r * (B - A) / (1 - (R + r)))
-   * Y = B + (R * (B - A) / (1 - (R + r)))
-   */
-  assert(maxBoundMarginRatio < 0.5 && minBoundMarginRatio < 0.5);
-  *newMinBound = minBoundWithMargin - (minBoundMarginRatio * (maxBoundWithMargin - minBoundWithMargin) / (1 - (maxBoundMarginRatio + minBoundMarginRatio)));
-  *newMaxBound = maxBoundWithMargin + (maxBoundMarginRatio * (maxBoundWithMargin - minBoundWithMargin) / (1 - (maxBoundMarginRatio + minBoundMarginRatio)));
-}
-
 bool InteractiveCurveViewRange::zoomOutToMakePointVisible(float x, float y, float topMarginRatio, float rightMarginRatio, float bottomMarginRatio, float leftMarginRatio) {
-  bool moved = false;
-  if (!std::isinf(x) && !std::isnan(x)) {
-    const float xRange = xMax() - xMin();
-    const float xMinWithMargin = xMin() + leftMarginRatio * xRange;
-    const float xMaxWithMargin = xMax() - rightMarginRatio * xRange;
-    if (x < xMinWithMargin || x > xMaxWithMargin) {
-      moved = true;
-      float newXMin, newXMax;
-      ComputeNewBoundsAfterZoomingOut(x, xMinWithMargin, xMaxWithMargin, leftMarginRatio, rightMarginRatio, &newXMin, &newXMax);
-      protectedSetX(Range1D(newXMin, newXMax), k_maxFloat);
-    }
-  }
-  if (!std::isinf(y) && !std::isnan(y)) {
-    const float yRange = yMax() - yMin();
-    const float yMinWithMargin = yMin() + bottomMarginRatio * yRange;
-    const float yMaxWithMargin = yMax() - topMarginRatio * yRange;
-    if (y < yMinWithMargin || y > yMaxWithMargin) {
-      moved = true;
-      float newYMin, newYMax;
-      ComputeNewBoundsAfterZoomingOut(y, yMinWithMargin, yMaxWithMargin, bottomMarginRatio, topMarginRatio, &newYMin, &newYMax);
-      protectedSetY(Range1D(newYMin, newYMax), k_maxFloat);
-    }
-  }
+  Zoom zoom(-k_maxFloat, k_maxFloat, NormalYXRatio(), nullptr, k_maxFloat);
+  zoom.fitPoint(Coordinate2D<float>(xMin(), yMin()));
+  zoom.fitPoint(Coordinate2D<float>(xMax(), yMax()));
+  zoom.fitPoint(Coordinate2D<float>(x, y), false, leftMarginRatio, rightMarginRatio, bottomMarginRatio, topMarginRatio);
+  Range2D newRange = zoom.range(false, false);
 
-  if (moved) {
+  bool move = newRange != memoizedRange();
+  protectedSetX(*newRange.x(), k_maxFloat);
+  protectedSetY(*newRange.y(), k_maxFloat);
+
+  if (move) {
     setZoomAuto(false);
+    /* Zomming out to a point greater than the maximum range of 10^8 could make the
+     * graph not normalized.*/
+    setZoomNormalize(isOrthonormal());
   }
 
-  /* Zomming out to a point greater than the maximum range of 10^8 could make the
-   * graph not normalized.*/
-  setZoomNormalize(isOrthonormal());
-
-  return moved;
+  return move;
 }
 
 void InteractiveCurveViewRange::protectedNormalize(bool canChangeX, bool canChangeY, bool canShrink) {

@@ -41,7 +41,7 @@ public:
   void setBounds(float min, float max) { m_bounds = Range1D(min, max); }
   void setForcedRange(Range2D range) { m_forcedRange = range; }
   /* These four functions will extend both X and Y axes. */
-  void fitPoint(Coordinate2D<float> xy, bool flipped = false);
+  void fitPoint(Coordinate2D<float> xy, bool flipped = false, float leftMargin = 0.f, float rightMargin = 0.f, float bottomMargin = 0.f, float topMargin = 0.f);
   void fitFullFunction(Function2DWithContext<float> f, const void * model);
   void fitPointsOfInterest(Function2DWithContext<float> f, const void * model, bool vertical = false, Function2DWithContext<double> fDouble = nullptr);
   void fitIntersections(Function2DWithContext<float> f1, const void * model1, Function2DWithContext<float> f2, const void * model2, bool vertical = false);
@@ -102,6 +102,7 @@ private:
   /* Return true if the search was interrupted because too many points were
    * found. */
   bool fitWithSolverHelper(float start, float end, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical, Solver<double>::FunctionEvaluation fDouble);
+  void privateFitPoint(Coordinate2D<float> xy, bool flipped = false);
 
   /* m_interestingRange is edited by fitFullFunction, fitPointsOfInterest and
    * fitIntersections, and will always be included in the final range. */

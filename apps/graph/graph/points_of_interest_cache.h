@@ -15,6 +15,7 @@ public:
   Poincare::Range1D setBoundsAndCompute(float start, float end, float maxFloat);
   Poincare::PointOfInterest pointAtIndex(int i) const { return m_list.pointAtIndex(i); }
   Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None) const;
+  Poincare::PointOfInterest pointOfInterestAtAbscissa(double x) const;
 
   /* The following classes and methods are used to iterate other a certain type
    * of points of interest. */

@@ -277,9 +277,8 @@ bool GraphController::moveCursorVertically(int direction) {
   double t = m_cursor->t();
   constexpr static int k_snapStep = 100;
   double dt = (m_graphRange->xMax() - m_graphRange->xMin()) / k_snapStep;
-  if (moved && snapToInterestAndUpdateBanner(&t, t - dt, t + dt)) {
-    Coordinate2D<double> xy = xyValues(indexFunctionSelectedByCursor(), t, App::app()->localContext(), m_selectedSubCurveIndex);
-    m_cursor->moveTo(t, xy.x1(), xy.x2());
+  if (moved) {
+    snapToInterestAndUpdateBannerAndCursor(m_cursor, t - dt, t + dt);
   }
   return true;
 }
@@ -287,8 +286,7 @@ bool GraphController::moveCursorVertically(int direction) {
 void GraphController::moveCursorAndCenterIfNeeded(double t) {
   bannerView()->setInterestMessage(I18n::Message::Default);
   FunctionGraphController::moveCursorAndCenterIfNeeded(t);
-  double dummy;
-  if (snapToInterestAndUpdateBanner(&dummy, std::nextafter(m_cursor->t(), -static_cast<double>(INFINITY)), std::nextafter(m_cursor->t(), static_cast<double>(INFINITY)))) {
+  if (snapToInterestAndUpdateBannerAndCursor(m_cursor, std::nextafter(m_cursor->t(), -static_cast<double>(INFINITY)), std::nextafter(m_cursor->t(), static_cast<double>(INFINITY)))) {
     reloadBannerView();
   }
 }

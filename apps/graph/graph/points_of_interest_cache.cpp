@@ -79,6 +79,17 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, doubl
   return (previous.isUninitialized() || previous.x() > end) ? previous : PointOfInterest(nullptr);
 }
 
+PointOfInterest PointsOfInterestCache::pointOfInterestAtAbscissa(double x) const {
+  for (const PointOfInterest & p : filter()) {
+    double currentX = p.x();
+    if (x == currentX) {
+      return p;
+    }
+  }
+  return PointOfInterest(nullptr);
+}
+
+
 void PointsOfInterestCache::stripOutOfBounds() {
   assert(!m_list.isUninitialized());
 

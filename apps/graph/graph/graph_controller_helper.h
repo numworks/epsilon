@@ -4,6 +4,7 @@
 #include "banner_view.h"
 #include "graph_view.h"
 #include <apps/shared/curve_view_cursor.h>
+#include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/interactive_curve_view_range.h>
 
 namespace Graph {
@@ -11,10 +12,12 @@ namespace Graph {
 class GraphControllerHelper {
 protected:
   bool privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, float pixelWidth, int scrollSpeed = 1, int * subCurveIndex = nullptr);
-  bool snapToInterestAndUpdateBanner(double * t, double start, double end);
-  void reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record);
+  bool snapToInterestAndUpdateBannerAndCursor(Shared::CurveViewCursor * cursor, double start, double end);
+  // Returns the derivative displayed in banner
+  double reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record);
   virtual BannerView * bannerView() = 0;
   virtual GraphView * graphView() = 0;
+  virtual Shared::FunctionBannerDelegate * functionBannerDelegate() = 0;
 
 private:
   constexpr static float k_snapFactor = 1.5f;

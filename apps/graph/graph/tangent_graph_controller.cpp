@@ -67,21 +67,19 @@ void TangentGraphController::reloadBannerView() {
     return;
   }
   FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, Shared::FunctionApp::app()->functionStore(), AppsContainerHelper::sharedAppsContainerGlobalContext());
-  GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
+  double coefficientA = GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
-  Poincare::Context * context = textFieldDelegateApp()->localContext();
 
   int precision = numberOfSignificantDigits();
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);
   assert(function->canDisplayDerivative());
-  double y = function->approximateDerivative(m_cursor->x(), context);
-  Poincare::Print::CustomPrintf(buffer, bufferSize, "a=%*.*ed", y, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "a=%*.*ed", coefficientA, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
   m_bannerView->aView()->setText(buffer);
 
   assert(function->properties().isCartesian());
-  y = -y*m_cursor->x()+function->evaluate2DAtParameter(m_cursor->x(), context).x2();
-  Poincare::Print::CustomPrintf(buffer, bufferSize, "b=%*.*ed", y, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
+  double coefficientB = -coefficientA * m_cursor->x() + m_cursor->y();
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "b=%*.*ed", coefficientB, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
   m_bannerView->bView()->setText(buffer);
   m_bannerView->reload();
 }

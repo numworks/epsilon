@@ -107,7 +107,8 @@ public:
   virtual bool valueValidInColumn(double value, int relativeColumn) const { return !std::isnan(value); }
 protected:
   void initListsInPool();
-  virtual double defaultValue(int series, int i, int j) const = 0;
+  double defaultValue(int series, int i, int j) const;
+  virtual double defaultValueForColumn1() const = 0;
   bool m_validSeries[k_numberOfSeries];
   Poincare::FloatList<double> m_dataLists[k_numberOfSeries][k_numberOfColumnsPerSeries];
 private:

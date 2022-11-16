@@ -146,7 +146,7 @@ private:
   int computeRelativeColumnAndSeries(int * i) const;
 
   // DoublePairStore
-  double defaultValue(int series, int i, int j) const override;
+  double defaultValueForColumn1() const override { return 1.0; }
   /* Find the i-th distinct value (if i is -1, browse the entire series) from
    * start to end (ordered by value).
    * Retrieve the i-th value and the number distinct values encountered.

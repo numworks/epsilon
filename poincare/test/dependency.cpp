@@ -134,7 +134,7 @@ QUIZ_CASE(poincare_dependency_power) {
 
 QUIZ_CASE(poincare_dependency_multiplication) {
   assert_expression_simplify_to_with_dependencies("ln(x)-ln(x)", "0", {"ln(x)"});
-  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
+  assert_expression_simplify_to_with_dependencies("0*randint(1,0)", Undefined::Name(), {""});
 }
 
 QUIZ_CASE(poincare_dependency_trigonometry) {

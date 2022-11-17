@@ -77,8 +77,4 @@ void App::willBecomeInactive() {
   m_modalViewController.viewDidDisappear();
 }
 
-View * App::modalView() {
-  return m_modalViewController.view();
-}
-
 }

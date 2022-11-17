@@ -220,6 +220,7 @@ void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewContro
     if (i == 0) {
       vc->viewDidDisappear();
     }
+    didExitPage(vc);
   }
 }
 

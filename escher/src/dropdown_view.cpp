@@ -113,7 +113,7 @@ void Dropdown::DropdownPopupController::selectRow(int row) {
 }
 
 void Dropdown::DropdownPopupController::close() {
-  Container::activeApp()->modalViewController()->dismissModalViewController();
+  Container::activeApp()->modalViewController()->dismissModal();
 }
 
 KDPoint Dropdown::DropdownPopupController::topLeftCornerForSelection(View * originView) {

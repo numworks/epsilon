@@ -381,7 +381,7 @@ bool VariableBoxController::selectLeaf(int rowIndex) {
 
   insertAutocompletionResultAtIndex(rowIndex - (m_displaySubtitles ? cumulatedOriginsCount : 0));
 
-  Container::activeApp()->modalViewController()->dismissModalViewController();
+  Container::activeApp()->modalViewController()->dismissModal();
   return true;
 }
 

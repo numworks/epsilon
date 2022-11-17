@@ -15,12 +15,12 @@ public:
   void didBecomeFirstResponder() override;
   void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0, bool growingOnly = false);
-  void reloadModalViewController();
-  void dismissModalViewController();
+  void reloadModal();
+  void dismissModal();
   bool isDisplayingModal() const;
-  void dismissPotentialModalViewController() {
+  void dismissPotentialModal() {
     if (isDisplayingModal()) {
-      dismissModalViewController();
+      dismissModal();
     }
   }
   void initView() override;

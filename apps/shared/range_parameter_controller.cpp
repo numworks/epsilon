@@ -17,7 +17,7 @@ RangeParameterController::RangeParameterController(Responder * parentResponder, 
     return true;
   }, this)),
   m_confirmPopUpController(Invocation::Builder<RangeParameterController>([](RangeParameterController * controller, void * sender) {
-    Container::activeApp()->modalViewController()->dismissModalViewController();
+    Container::activeApp()->modalViewController()->dismissModal();
     controller->stackController()->pop();
     return true;
   }, this)),

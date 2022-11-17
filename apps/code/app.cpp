@@ -93,7 +93,7 @@ bool App::handleEvent(Ion::Events::Event event) {
     /* We need to return true here because we want to actually exit from the
      * input run loop, which requires ending a dispatchEvent cycle. */
     m_consoleController.terminateInputLoop();
-    m_modalViewController.dismissPotentialModalViewController();
+    m_modalViewController.dismissPotentialModal();
     Ion::USB::clearEnumerationInterrupt();
     return true;
   }

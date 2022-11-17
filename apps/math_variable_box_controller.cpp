@@ -74,7 +74,7 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
     }
   }
   if (m_currentPage == Page::RootMenu && m_defineVariableCell.ShouldEnterOnEvent(event) && selectedRow() == defineVariableCellIndex()) {
-    Container::activeApp()->modalViewController()->dismissModalViewController();
+    Container::activeApp()->modalViewController()->dismissModal();
     sender()->handleStoreEvent();
     return true;
   }
@@ -273,7 +273,7 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
 
   // Handle the text
   sender()->handleEventWithText(nameToHandle);
-  Container::activeApp()->modalViewController()->dismissModalViewController();
+  Container::activeApp()->modalViewController()->dismissModal();
   return true;
 }
 

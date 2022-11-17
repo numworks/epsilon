@@ -28,7 +28,7 @@ ExamPopUpController::ExamPopUpController() :
           container->activateExamMode(mode);
         }
         container->refreshPreferences();
-        Container::activeApp()->modalViewController()->dismissModalViewController();
+        Container::activeApp()->modalViewController()->dismissModal();
         if (container->activeApp()->snapshot() != container->onBoardingAppSnapshot()) {
           container->switchToBuiltinApp(container->homeAppSnapshot());
         }
@@ -56,7 +56,7 @@ void ExamPopUpController::viewDidDisappear() {
 
 bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::USBEnumeration) {
-    Container::activeApp()->modalViewController()->dismissModalViewController();
+    Container::activeApp()->modalViewController()->dismissModal();
     return false;
   }
   return MessagePopUpController::handleEvent(event);

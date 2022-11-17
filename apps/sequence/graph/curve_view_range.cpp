@@ -25,6 +25,7 @@ void CurveViewRange::protectedNormalize(bool canChangeX, bool canChangeY, bool c
   float interestingXMin = delegate->interestingXMin();
   float xRange = xMax() - xMin();
   float xMin = interestingXMin - k_displayLeftMarginRatio * xRange;
+  assert(std::isfinite(xMin));
   protectedSetX(Range1D(xMin, xMin + xRange), k_maxFloat);
 }
 

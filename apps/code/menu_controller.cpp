@@ -45,7 +45,7 @@ StackViewController * MenuController::stackViewController() {
 }
 
 void MenuController::willExitResponderChain(Responder * nextFirstResponder) {
-  privateWillExitAppOrResponderChain();
+  forceTextFieldEditionToAbort();
 }
 
 void MenuController::didBecomeFirstResponder() {
@@ -151,7 +151,7 @@ void MenuController::scriptContentEditionDidFinish() {
 }
 
 void MenuController::willExitApp() {
-  privateWillExitAppOrResponderChain();
+  forceTextFieldEditionToAbort();
   m_editorController.willExitApp();
 }
 
@@ -372,7 +372,7 @@ bool MenuController::privateTextFieldDidAbortEditing(AbstractTextField * textFie
   return true;
 }
 
-void MenuController::privateWillExitAppOrResponderChain() {
+void MenuController::forceTextFieldEditionToAbort() {
   int selectedRow = m_selectableTableView.selectedRow();
   int selectedColumn = m_selectableTableView.selectedColumn();
   if (selectedRow >= 0 && selectedRow < m_scriptStore->numberOfScripts() && selectedColumn == 0) {

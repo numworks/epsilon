@@ -61,7 +61,7 @@ public:
 
   virtual void didBecomeActive(Window * window);
   virtual void willBecomeInactive();
-  View * modalView();
+  View * modalView() { return m_modalViewController.view(); }
   ModalViewController * modalViewController() { return &m_modalViewController; }
   virtual void willOpenPage(ViewController * controller) {}
   virtual void didExitPage(ViewController * controller) {}

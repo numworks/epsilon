@@ -169,7 +169,7 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
       /* TODO : The additionally deleted child could be at the right of l.
        * In that case i should simply decrement and this step should be skipped.
        */
-      i -= removedChildren + 1;
+      i -= removedChildren - 1;
     }
     child.addOrMergeChildAtIndex(l, injectionIndex, true, cursor);
   }

@@ -58,6 +58,11 @@ bool VariableBoxController::handleEvent(Ion::Events::Event event) {
 }
 
 void VariableBoxController::didBecomeFirstResponder() {
+  /* Code::VariableBoxController should always be called from an environment
+   * where Python has already been inited. This way, we do not deinit Python
+   * when leaving the VariableBoxController, so we do not lose the environment
+   * that was loaded when entering the VariableBoxController. */
+  assert(App::app()->pythonIsInited());
   if (displayEmptyControllerIfNeeded()) {
     /* displayEmptyControllerIfNeeded() sets the empty view
      * controller as first responder when varbox is empty */

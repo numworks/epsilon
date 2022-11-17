@@ -18,6 +18,11 @@ public:
   void reloadModalViewController();
   void dismissModalViewController();
   bool isDisplayingModal() const;
+  void dismissPotentialModalViewController() {
+    if (isDisplayingModal()) {
+      dismissModalViewController();
+    }
+  }
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;

@@ -55,7 +55,7 @@ public:
   Responder * firstResponder() { return m_firstResponder; }
   virtual bool processEvent(Ion::Events::Event event);
   void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
-    KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
+    KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0, bool growingOnly = false);
   void dismissModalViewController();
   void displayWarning(I18n::Message warningMessage1, I18n::Message warningMessage2 = (I18n::Message) 0, bool specialExitKeys = false);
 

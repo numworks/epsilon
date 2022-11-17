@@ -73,8 +73,8 @@ public:
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
 private:
-  // Worst case is -1.2345678901234E-1000
-  constexpr static int k_maxBufferSize = PrintFloat::k_numberOfStoredSignificantDigits+1+1+1+1+4+1;
+  // Worst case is -1.2345678901234ᴇ-1000 (the small capital E is two chars)
+  constexpr static int k_maxBufferSize = PrintFloat::k_numberOfStoredSignificantDigits+1+1+2+1+4+1;
 
   int convertToText(char * buffer, int bufferSize, Preferences::PrintFloatMode mode, int numberOfSignificantDigits) const;
   template<typename T> T templatedApproximate() const;

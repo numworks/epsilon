@@ -140,8 +140,11 @@ void ModalViewController::dismissModalViewController() {
     return;
   }
   m_currentModalViewController->viewDidDisappear();
-  Container::activeApp()->setFirstResponder(m_previousResponder);
+  /* Order matters: dismissing modal before calling setFirstResponder enable
+   * the new first responder to rely on the modal state to decide its course of
+   * action. */
   m_contentView.dismissModalView();
+  Container::activeApp()->setFirstResponder(m_previousResponder);
   m_currentModalViewController = nullptr;
 }
 

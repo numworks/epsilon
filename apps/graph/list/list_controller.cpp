@@ -223,19 +223,6 @@ bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion
 
 /* Responder */
 
-void ListController::didBecomeFirstResponder() {
-  if (selectedRow() == -1) {
-    selectCellAtLocation(0, 0);
-  } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
-  }
-  if (selectedRow() >= numberOfRows()) {
-    selectCellAtLocation(selectedColumn(), numberOfRows()-1);
-  }
-  footer()->setSelectedButton(-1);
-  Container::activeApp()->setFirstResponder(selectableTableView());
-}
-
 KDCoordinate ListController::expressionRowHeight(int j) {
   if (typeAtIndex(j) == k_addNewModelType) {
     return Shared::FunctionListController::expressionRowHeight(j);

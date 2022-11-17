@@ -12,13 +12,13 @@ public:
   virtual KDCoordinate horizontalBorderHeight() { return 0; }
 private:
   KDCoordinate nonMemoizedCumulatedWidthFromIndex(int i) override {
-    return Escher::TableViewDataSource::nonMemoizedCumulatedWidthFromIndex(i) + (i == numberOfColumns() ? i - 1 : i) * verticalBorderWidth();
+    return Escher::TableViewDataSource::nonMemoizedCumulatedWidthFromIndex(i) + (i == numberOfColumns() && i > 0 ? i - 1 : i) * verticalBorderWidth();
   }
   KDCoordinate nonMemoizedCumulatedHeightFromIndex(int j) override {
     return Escher::TableViewDataSource::nonMemoizedCumulatedHeightFromIndex(j) + j * horizontalBorderHeight();
   }
 };
 
-}  // namespace Inference
+} // namespace Inference
 
 #endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_BORDERED_TABLE_VIEW_DATA_SOURCE_H */

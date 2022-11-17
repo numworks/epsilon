@@ -34,7 +34,16 @@ void LayoutNode::draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor exp
   KDColor backColor = isSelected ? selectionColor : backgroundColor;
   KDPoint renderingAbsoluteOrigin = absoluteOrigin(font).translatedBy(p);
   KDPoint renderingOrginWithMargin = absoluteOriginWithMargin(font).translatedBy(p);
-  ctx->fillRect(KDRect(renderingOrginWithMargin, layoutSize(font)), backColor);
+  KDSize size = layoutSize(font);
+
+  if (size.height() <= 0 || size.width() <= 0
+      || size.height() > KDCOORDINATE_MAX - renderingAbsoluteOrigin.y()
+      || size.width() > KDCOORDINATE_MAX - renderingAbsoluteOrigin.x()) {
+    // Layout size overflows KDCoordinate
+    return;
+  }
+
+  ctx->fillRect(KDRect(renderingOrginWithMargin, size), backColor);
   render(ctx, renderingAbsoluteOrigin, font, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);
   for (LayoutNode * l : children()) {
     l->draw(ctx, p, font, expressionColor, backColor, selectionStart, selectionEnd, selectionColor);

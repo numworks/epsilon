@@ -331,9 +331,11 @@ size_t AbstractTextField::draftTextLength() const {
 void AbstractTextField::setText(const char * text) {
   reloadScroll();
   contentView()->setText(text);
-  /* Set the cursor location here and not in ContentView::setText so that
-   * TextInput::willSetCursorLocation is called. */
-  setCursorLocation(contentView()->editedText()+strlen(text));
+  if (contentView()->text() == contentView()->editedText()) {
+    /* Set the cursor location here and not in ContentView::setText so that
+     * TextInput::willSetCursorLocation is called. */
+    setCursorLocation(contentView()->editedText()+strlen(text));
+  }
 }
 
 bool AbstractTextField::privateHandleEvent(Ion::Events::Event event) {

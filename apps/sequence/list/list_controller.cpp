@@ -194,19 +194,6 @@ void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
 
 /* Responder */
 
-void ListController::didBecomeFirstResponder() {
-  if (selectedRow() == -1) {
-    selectCellAtLocation(1, 0);
-  } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
-  }
-  if (selectedRow() >= numberOfRows()) {
-    selectCellAtLocation(selectedColumn(), numberOfRows()-1);
-  }
-  footer()->setSelectedButton(-1);
-  Container::activeApp()->setFirstResponder(selectableTableView());
-}
-
 bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (selectedRow() == -1) {

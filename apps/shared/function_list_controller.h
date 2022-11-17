@@ -26,6 +26,7 @@ public:
   /* Responder */
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
+  void didBecomeFirstResponder() override;
 
   /* ViewController */
   ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::NeverDisplayOwnTitle; }
@@ -35,6 +36,7 @@ protected:
   Escher::TabViewController * tabController() const;
 private:
   Escher::InputViewController * inputController() override;
+  virtual int initialColumnToSelect() const = 0;
   virtual ListParameterController * parameterController() = 0;
   virtual int maxNumberOfDisplayableRows() = 0;
   virtual Escher::HighlightCell * functionCells(int index) = 0;

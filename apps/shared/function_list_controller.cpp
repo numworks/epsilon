@@ -53,6 +53,19 @@ void FunctionListController::willExitResponderChain(Responder * nextFirstRespond
   }
 }
 
+void FunctionListController::didBecomeFirstResponder() {
+  if (selectedRow() == -1) {
+    selectCellAtLocation(initialColumnToSelect(), 0);
+  } else {
+    selectCellAtLocation(selectedColumn(), selectedRow());
+  }
+  if (selectedRow() >= numberOfExpressionRows()) {
+    selectCellAtLocation(selectedColumn(), numberOfExpressionRows()-1);
+  }
+  footer()->setSelectedButton(-1);
+  Container::activeApp()->setFirstResponder(selectableTableView());
+}
+
 /* ExpressionModelListController */
 
 StackViewController * FunctionListController::stackController() const {

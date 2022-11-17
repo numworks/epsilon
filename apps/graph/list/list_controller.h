@@ -28,7 +28,6 @@ public:
   // TextFieldDelegate
   bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
   // Responder
-  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   // ExpressionModelListController
   KDCoordinate expressionRowHeight(int j) override;
@@ -41,6 +40,9 @@ private:
   // 6 rows of undefined empty functions
   constexpr static int k_maxNumberOfDisplayableRows = 6;
   constexpr static CodePoint k_equationSymbols[] = { '=', '>', '<', UCodePointSuperiorEqual, UCodePointInferiorEqual};
+
+  // Responder
+  int initialColumnToSelect() const override { return 0; }
 
   // ExpressionModelListController
   void resetSizesMemoization() override { resetMemoization(); }

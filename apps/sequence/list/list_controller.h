@@ -31,7 +31,6 @@ public:
   int reusableCellCount(int type) override { return type > k_expressionCellType ? 1 : maxNumberOfDisplayableRows(); }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   /* Responder */
-  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   /* ViewController */
   Escher::View * view() override { return &m_selectableTableView; }
@@ -61,6 +60,9 @@ private:
   constexpr static KDCoordinate k_expressionCellVerticalMargin = Escher::Metric::BigCellMargin;
   /* Row numbers */
   constexpr static int k_maxNumberOfRows = 3*Shared::SequenceStore::k_maxNumberOfSequences;
+
+  // Responder
+  int initialColumnToSelect() const override { return 1; }
 
   // TableViewDataSource
   KDCoordinate nonMemoizedColumnWidth(int i) override;

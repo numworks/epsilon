@@ -22,7 +22,7 @@ void StoreMenuController::open() {
 }
 
 void StoreMenuController::close() {
-  Container::activeApp()->dismissModalViewController();
+  Container::activeApp()->modalViewController()->dismissModalViewController();
 }
 
 void StoreMenuController::InnerListController::didBecomeFirstResponder() {

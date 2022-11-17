@@ -55,10 +55,6 @@ void App::displayModalViewController(ViewController * vc, float verticalAlignmen
   m_modalViewController.displayModalViewController(vc, verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin, growingOnly);
 }
 
-void App::dismissModalViewController() {
-  m_modalViewController.dismissModalViewController();
-}
-
 void App::displayWarning(I18n::Message warningMessage1, I18n::Message warningMessage2, bool specialExitKeys) {
   m_warningController.setLabel(warningMessage1, warningMessage2, specialExitKeys);
   displayModalViewController(&m_warningController, KDContext::k_alignCenter, KDContext::k_alignCenter);

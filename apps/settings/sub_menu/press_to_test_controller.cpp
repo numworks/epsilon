@@ -21,7 +21,7 @@ PressToTestController::PressToTestController(Responder * parentResponder) :
     AppsContainer::sharedAppsContainer()->displayExamModePopUp(Preferences::ExamMode::PressToTest, controller->getPressToTestParams());
     return true; }, this)),
   m_confirmPopUpController(Invocation::Builder<PressToTestController>([](PressToTestController * controller, void * sender) {
-    Container::activeApp()->dismissModalViewController();
+    Container::activeApp()->modalViewController()->dismissModalViewController();
     controller->resetController();
     static_cast<StackViewController *>(controller->parentResponder())->pop();
     return true; }, this))

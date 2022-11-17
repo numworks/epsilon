@@ -51,7 +51,7 @@ PromptController::PromptController(const I18n::Message * messages, const KDColor
 
 bool PromptController::handleEvent(Ion::Events::Event event) {
   if (event != Ion::Events::Back && event != Ion::Events::OnOff && event != Ion::Events::USBPlug && event != Ion::Events::USBEnumeration) {
-    Container::activeApp()->dismissModalViewController();
+    Container::activeApp()->modalViewController()->dismissModalViewController();
     AppsContainer * appsContainer = AppsContainer::sharedAppsContainer();
     if (appsContainer->activeApp()->snapshot() == appsContainer->onBoardingAppSnapshot()) {
       appsContainer->switchToBuiltinApp(appsContainer->appSnapshotAtIndex(0));

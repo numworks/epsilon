@@ -693,7 +693,7 @@ bool MathToolbox::selectLeaf(int selectedRow) {
     text = textToInsert;
   }
   sender()->handleEventWithText(text);
-  Container::activeApp()->dismissModalViewController();
+  Container::activeApp()->modalViewController()->dismissModalViewController();
   return true;
 }
 

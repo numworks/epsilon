@@ -109,10 +109,7 @@ void IntervalParameterController::buttonAction() {
   m_interval->setParameters(*SharedTempIntervalParameters());
   m_interval->forceRecompute();
   StackViewController * stack = stackController();
-  stack->pop();
-  if (stack->depth() > 1) {
-    stack->pop();
-  }
+  stack->popUntilDepth(1, true);
 }
 
 }

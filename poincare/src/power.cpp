@@ -1031,7 +1031,7 @@ Expression Power::shallowReduce(ExpressionNode::ReductionContext reductionContex
           numerator = Subtraction::Builder(m1, m2);
         }
         if (denominator.isOverflow() || factor1.isOverflow() || factor2.isOverflow() || pq1.isOverflow() || pq2.isOverflow()) {
-          return Expression(); // Escape
+          return *this; // Escape
         }
         numerator = numerator.deepReduce(reductionContext);
         Integer one(1);

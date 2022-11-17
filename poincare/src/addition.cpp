@@ -61,7 +61,10 @@ Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
     while (i < result.numberOfChildren()) {
       Layout child = result.childAtIndex(i);
       if (child.type() == LayoutNode::Type::CodePointLayout && static_cast<CodePointLayout&>(child).codePoint() == '+') {
-        result.removeChildAtIndex(i, nullptr);
+        int deletedChildren = result.removeChildAtIndex(i, nullptr);
+        (void)deletedChildren;
+        // Assert only one child has been removed
+        assert(deletedChildren == 1);
         i--;
       }
       i++;

@@ -216,7 +216,10 @@ int InputBeautification::BeautifyPipeKey(Layout parent, int indexOfPipeKey, Layo
   HorizontalLayout insideAbsoluteValue = HorizontalLayout::Builder();
   for (int i = 0; i < numberOfChildrenToVisit; i++) {
     Layout l = parent.childAtIndex(indexOfMatchingPipeKey + 1);
-    parent.removeChild(l, nullptr);
+    int removedChildren = parent.removeChild(l, nullptr);
+    (void)removedChildren;
+    // Assert only one child has been removed
+    assert(removedChildren == 1);
     insideAbsoluteValue.addOrMergeChildAtIndex(l, insideAbsoluteValue.numberOfChildren(), true, nullptr);
   }
   builderParameter = insideAbsoluteValue;
@@ -293,7 +296,10 @@ int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout p
   // Remove layout
   LayoutCursor tempCursor = *layoutCursor; // avoid altering the cursor by copying it.
   for (int i = endIndex; i >= startIndex; i--) {
-    parent.removeChildAtIndex(i, &tempCursor, true);
+    int removedChildren = parent.removeChildAtIndex(i, &tempCursor, true);
+    (void)removedChildren;
+    // Assert only one child has been removed
+    assert(removedChildren == 1);
   }
   if (!forceCursorRightOfText && isBeautifyingFunction) {
     // Put the cursor inside the beautified function.

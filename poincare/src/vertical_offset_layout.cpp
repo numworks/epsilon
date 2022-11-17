@@ -230,7 +230,10 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * si
   int n = 0;
   for (int i = thisIndex - (cursor->position() == LayoutCursor::Position::Left); i > leftParenthesisIndex; i--) {
     Layout child = parentRef.childAtIndex(i);
-    parentRef.removeChild(child, nullptr, true);
+    int removedChildren = parentRef.removeChild(child, nullptr, true);
+    (void)removedChildren;
+    // Assert only one child has been removed
+    assert(removedChildren == 1);
     h.addChildAtIndex(child, 0, n++, nullptr);
   }
   if (n == 0 || h.childAtIndex(0).type() == Type::VerticalOffsetLayout) {

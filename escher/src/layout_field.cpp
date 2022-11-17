@@ -239,7 +239,10 @@ void LayoutField::ContentView::deleteSelection() {
       int firstIndex = selectionParent.indexOfChild(m_selectionStart);
       int lastIndex = m_selectionStart == m_selectionEnd ? firstIndex : selectionParent.indexOfChild(m_selectionEnd);
       for (int i = lastIndex; i >= firstIndex; i--) {
-        static_cast<HorizontalLayout&>(selectionParent).removeChildAtIndex(i, &m_cursor, false);
+        int deletedChildren = static_cast<HorizontalLayout&>(selectionParent).removeChildAtIndex(i, &m_cursor, false);
+        (void)deletedChildren;
+        // Assert only one child has been removed
+        assert(deletedChildren == 1);
       }
     } else {
       // Only one child can be selected

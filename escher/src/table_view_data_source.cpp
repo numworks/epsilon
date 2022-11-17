@@ -9,11 +9,12 @@ KDCoordinate TableViewDataSource::columnWidth(int i) {
   if (columnWidthManager()) {
     KDCoordinate result = columnWidthManager()->computeSizeAtIndex(i);
     if (result != TableSize1DManager::k_undefinedSize) {
+      assert(result >= 0);
       return result;
     }
   }
   KDCoordinate result = nonMemoizedColumnWidth(i);
-  assert(result != TableSize1DManager::k_undefinedSize);
+  assert(result >= 0);
   return result;
 }
 
@@ -21,11 +22,12 @@ KDCoordinate TableViewDataSource::rowHeight(int j) {
   if (rowHeightManager()) {
     KDCoordinate result = rowHeightManager()->computeSizeAtIndex(j);
     if (result != TableSize1DManager::k_undefinedSize) {
+      assert(result >= 0);
       return result;
     }
   }
   KDCoordinate result = nonMemoizedRowHeight(j);
-  assert(result != TableSize1DManager::k_undefinedSize);
+  assert(result >= 0);
   return result;
 }
 
@@ -33,34 +35,42 @@ KDCoordinate TableViewDataSource::cumulatedWidthFromIndex(int i) {
   if (columnWidthManager()) {
     KDCoordinate result = columnWidthManager()->computeCumulatedSizeAtIndex(i, defaultColumnWidth());
     if (result != TableSize1DManager::k_undefinedSize) {
+      assert(result >= 0);
       return result;
     }
   }
-  return nonMemoizedCumulatedWidthFromIndex(i);
+  KDCoordinate result = nonMemoizedCumulatedWidthFromIndex(i);
+  assert(result >= 0);
+  return result;
 }
 
 KDCoordinate TableViewDataSource::cumulatedHeightFromIndex(int j) {
   if (rowHeightManager()) {
     KDCoordinate result = rowHeightManager()->computeCumulatedSizeAtIndex(j, defaultRowHeight());
     if (result != TableSize1DManager::k_undefinedSize) {
+      assert(result >= 0);
       return result;
     }
   }
-  return nonMemoizedCumulatedHeightFromIndex(j);
+  KDCoordinate result = nonMemoizedCumulatedHeightFromIndex(j);
+  assert(result >= 0);
+  return result;
 }
 
 KDCoordinate TableViewDataSource::nonMemoizedCumulatedWidthFromIndex(int i) {
-  int result = 0;
+  KDCoordinate result = 0;
   for (int k = 0; k < i; k++) {
     result += columnWidth(k);
+    assert(result >= 0);
   }
   return result;
 }
 
 KDCoordinate TableViewDataSource::nonMemoizedCumulatedHeightFromIndex(int j) {
-  int result = 0;
+  KDCoordinate result = 0;
   for (int k = 0; k < j; k++) {
     result += rowHeight(k);
+    assert(result >= 0);
   }
   return result;
 }

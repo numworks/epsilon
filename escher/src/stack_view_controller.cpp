@@ -191,7 +191,7 @@ void StackViewController::push(ViewController * vc) {
 
 void StackViewController::pop() {
   assert(m_numberOfChildren > 0);
-  Container::activeApp()->modalViewController()->dismissPotentialModal();
+  dismissPotentialModal();
   ViewController * vc = topViewController();
   m_numberOfChildren--;
   setupActiveViewController();
@@ -209,7 +209,7 @@ void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewContro
   if (depth >= m_numberOfChildren) {
     return;
   }
-  Container::activeApp()->modalViewController()->dismissPotentialModal();
+  dismissPotentialModal();
   int numberOfFramesReleased = m_numberOfChildren - depth;
   ViewController * vc;
   for (int i = 0; i < numberOfFramesReleased; i++) {
@@ -313,6 +313,10 @@ void StackViewController::didExitPage(ViewController * controller) const {
 
 void StackViewController::willOpenPage(ViewController * controller) const {
   Container::activeApp()->willOpenPage(controller);
+}
+
+void StackViewController::dismissPotentialModal() {
+  Container::activeApp()->modalViewController()->dismissPotentialModal();
 }
 
 }  // namespace Escher

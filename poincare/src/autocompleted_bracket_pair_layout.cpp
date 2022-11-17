@@ -86,7 +86,9 @@ void AutocompletedBracketPairLayoutNode::makePermanent(Side side) {
 Layout AutocompletedBracketPairLayoutNode::balanceAfterInsertion(Side insertedSide, LayoutCursor * cursor) {
   assert(cursor);
   Layout thisRef(this);
-  makeTemporary(OtherSide(insertedSide), cursor, true);
+  // Try to move the inserted temporary bracket up into parents
+  setTemporary(OtherSide(insertedSide), false);
+  makeTemporary(OtherSide(insertedSide), cursor);
   if (insertedSide == Side::Left) {
     cursor->setPosition(LayoutCursor::Position::Left);
     cursor->setLayout(thisRef.childAtIndex(0));
@@ -111,8 +113,8 @@ AutocompletedBracketPairLayoutNode * AutocompletedBracketPairLayoutNode::autocom
   return nullptr;
 }
 
-bool AutocompletedBracketPairLayoutNode::makeTemporary(Side side, LayoutCursor * cursor, bool force) {
-  if (!force && isTemporary(side)) {
+bool AutocompletedBracketPairLayoutNode::makeTemporary(Side side, LayoutCursor * cursor) {
+  if (isTemporary(side)) {
     return false;
   }
   Layout thisRef(this);

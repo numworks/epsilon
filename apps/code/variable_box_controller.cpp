@@ -57,18 +57,7 @@ bool VariableBoxController::handleEvent(Ion::Events::Event event) {
   return NestedMenuController::handleEvent(event);
 }
 
-void VariableBoxController::didEnterResponderChain(Responder * previousFirstResponder) {
-  /* Code::VariableBoxController should always be called from an environment
-   * where Python has already been inited. This way, we do not deinit Python
-   * when leaving the VariableBoxController, so we do not lose the environment
-   * that was loaded when entering the VariableBoxController. */
-  assert(App::app()->pythonIsInited());
-  /* displayEmptyControllerIfNeeded() sets the empty view
-   * controller as first responder when varbox is empty */
-  displayEmptyControllerIfNeeded();
-}
-
-void VariableBoxController::didBecomeFirstResponder() { 
+void VariableBoxController::didBecomeFirstResponder() {
   if (displayEmptyControllerIfNeeded()) {
     /* displayEmptyControllerIfNeeded() sets the empty view
      * controller as first responder when varbox is empty */

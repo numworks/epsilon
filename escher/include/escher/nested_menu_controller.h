@@ -98,6 +98,8 @@ private:
   // NestedMenuController implementations will not interact with the app pages
   void didExitPage(ViewController * controller) const override {}
   void willOpenPage(ViewController * controller) const override {}
+  // NestedMenuController is itself a modal, poping shouldn't dismiss it
+  void dismissPotentialModal() override {}
   BreadcrumbController m_breadcrumbController;
   ListController m_listController;
   Ion::RingBuffer<StackState, k_maxModelTreeDepth> m_stack;

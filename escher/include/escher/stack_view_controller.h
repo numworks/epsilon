@@ -82,6 +82,7 @@ private:
   void updateStack(ViewController::TitlesDisplay titleDisplay);
   virtual void didExitPage(ViewController * controller) const;
   virtual void willOpenPage(ViewController * controller) const;
+  virtual void dismissPotentialModal();
   ViewController * m_childrenController[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   bool m_isVisible;

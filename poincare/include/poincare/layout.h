@@ -116,8 +116,8 @@ protected:
   // Add
   void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor);
   // Remove
-  void removeChild(Layout l, LayoutCursor * cursor, bool force = false);
-  void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false);
+  int removeChild(Layout l, LayoutCursor * cursor, bool force = false);
+  int removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false);
 private:
   // Tree modification
   enum class HorizontalDirection {

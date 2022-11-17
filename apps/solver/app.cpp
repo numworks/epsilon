@@ -31,9 +31,6 @@ void App::storageDidChangeForRecord(Ion::Storage::Record record) {
   if (record.isNull()) {
     return;
   }
-  /* Prematurally dismiss the modal view to be able to pop/push on the
-   * TabViewController without messing around with the first responder. */
-  modalViewController()->dismissModal();
   m_stackViewController.popUntilDepth(1, true);
 }
 

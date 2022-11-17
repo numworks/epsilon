@@ -190,8 +190,8 @@ void StackViewController::push(ViewController * vc) {
 }
 
 void StackViewController::pop() {
-  assert(!Container::activeApp()->modalViewController()->isDisplayingModal());
   assert(m_numberOfChildren > 0);
+  Container::activeApp()->modalViewController()->dismissPotentialModal();
   ViewController * vc = topViewController();
   m_numberOfChildren--;
   setupActiveViewController();
@@ -201,7 +201,6 @@ void StackViewController::pop() {
 }
 
 void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewController) {
-  assert(!Container::activeApp()->modalViewController()->isDisplayingModal());
   /* If final active view is meant to disappear afterward, there is no need to
    * call setupActiveViewController(), which layouts the final view.
    * For example, shouldSetupTopViewController should be set to false if push,
@@ -210,6 +209,7 @@ void StackViewController::popUntilDepth(int depth, bool shouldSetupTopViewContro
   if (depth >= m_numberOfChildren) {
     return;
   }
+  Container::activeApp()->modalViewController()->dismissPotentialModal();
   int numberOfFramesReleased = m_numberOfChildren - depth;
   ViewController * vc;
   for (int i = 0; i < numberOfFramesReleased; i++) {

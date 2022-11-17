@@ -60,9 +60,6 @@ void FunctionApp::storageDidChangeForRecord(Ion::Storage::Record record) {
     return;
   }
 #endif
-  /* Prematurally dismiss the modal view to be able to pop/push on the
-   * TabViewController without messing around with the first responder. */
-  modalViewController()->dismissModal();
   int tab = m_tabViewController.activeTab();
   StackViewController * tabStacks[] = {&m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController};
   assert(0 <= tab && tab < 3);

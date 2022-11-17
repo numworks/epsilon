@@ -35,6 +35,8 @@ public:
   constexpr static KDCoordinate k_margin = Escher::Metric::CommonSmallMargin;
   constexpr static KDCoordinate k_inputOutputViewsVerticalMargin = k_margin;
   constexpr static KDCoordinate k_inputViewHorizontalMargin = Shared::AbstractScrollableMultipleExpressionsView::k_horizontalMargin;
+  constexpr static KDCoordinate k_maxCellHeight = Ion::Display::Height * 2;
+
   static KDCoordinate Height(Calculation * calculation, Poincare::Context * context, bool expanded);
   HistoryViewCell(Responder * parentResponder = nullptr);
   static bool ViewsCanBeSingleLine(KDCoordinate inputViewWidth, KDCoordinate outputViewWidth, bool ellipsis);

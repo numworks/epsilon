@@ -42,8 +42,13 @@ KDCoordinate HistoryViewCell::Height(Calculation * calculation, Poincare::Contex
   KDRect ellipsisFrame = KDRectZero;
   KDRect inputFrame = KDRectZero;
   KDRect outputFrame = KDRectZero;
-  cell.computeSubviewFrames(Ion::Display::Width, KDCOORDINATE_MAX, &ellipsisFrame, &inputFrame, &outputFrame);
-  return k_margin + inputFrame.unionedWith(outputFrame).height() + k_margin;
+  cell.computeSubviewFrames(Ion::Display::Width, k_maxCellHeight, &ellipsisFrame, &inputFrame, &outputFrame);
+  KDCoordinate result = k_margin + inputFrame.unionedWith(outputFrame).height() + k_margin;
+  if (result < 0 || result > k_maxCellHeight) {
+    // if result < 0, result overflowed KDCOORDINATE_MAX
+    return k_maxCellHeight;
+  }
+  return result;
 }
 
 HistoryViewCell::HistoryViewCell(Responder * parentResponder) :

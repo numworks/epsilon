@@ -81,7 +81,7 @@ private:
   void numberedDefaultScriptName(char * buffer);
   void updateAddScriptRowDisplay();
   bool privateTextFieldDidAbortEditing(Escher::AbstractTextField * textField, bool menuControllerStaysInResponderChain);
-  void privateWillExitAppOrResponderChain();
+  void forceTextFieldEditionToAbort();
   ScriptStore * m_scriptStore;
   ScriptNameCell m_scriptCells[k_maxNumberOfDisplayableScriptCells];
   Escher::EvenOddCellWithEllipsis m_scriptParameterCells[k_maxNumberOfDisplayableScriptCells];

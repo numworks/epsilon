@@ -120,7 +120,7 @@ View * ModalViewController::view() {
   return &m_contentView;
 }
 
-bool ModalViewController::isDisplayingModal() {
+bool ModalViewController::isDisplayingModal() const {
   return m_contentView.isDisplayingModal();
 }
 

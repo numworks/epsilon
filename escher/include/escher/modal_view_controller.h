@@ -17,7 +17,7 @@ public:
     KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0, bool growingOnly = false);
   void reloadModalViewController();
   void dismissModalViewController();
-  bool isDisplayingModal();
+  bool isDisplayingModal() const;
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;

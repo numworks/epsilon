@@ -135,11 +135,11 @@ void ModalViewController::displayModalViewController(ViewController * vc, float 
   Container::activeApp()->setFirstResponder(vc);
 }
 
-void ModalViewController::reloadModalViewController() {
+void ModalViewController::reloadModal() {
   m_contentView.layoutSubviews();
 }
 
-void ModalViewController::dismissModalViewController() {
+void ModalViewController::dismissModal() {
   if (!isDisplayingModal()) {
     return;
   }
@@ -163,7 +163,7 @@ bool ModalViewController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (event == Ion::Events::Back || event == Ion::Events::Home) {
-    dismissModalViewController();
+    dismissModal();
     /* If Home is pressed, dismiss the modal view but still
     * propagate the event so that the app is properly closed. */
     return event != Ion::Events::Home;

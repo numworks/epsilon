@@ -22,7 +22,7 @@ void StoreMenuController::open() {
 }
 
 void StoreMenuController::close() {
-  Container::activeApp()->modalViewController()->dismissModalViewController();
+  Container::activeApp()->modalViewController()->dismissModal();
 }
 
 void StoreMenuController::InnerListController::didBecomeFirstResponder() {
@@ -38,12 +38,12 @@ StoreMenuController::StoreMenuController() :
   m_abortController(
     Invocation::Builder<StoreMenuController>([](StoreMenuController * storeMenu, void * sender) {
       // Close the warning and then the store menu which are both modals
-      storeMenu->dismissModalViewController();
+      storeMenu->dismissModal();
       storeMenu->close();
       return true;
     }, this),
     Invocation::Builder<StoreMenuController>([](StoreMenuController * storeMenu, void * sender) {
-      storeMenu->dismissModalViewController();
+      storeMenu->dismissModal();
       return true;
     }, this),
     I18n::Message::Warning, I18n::Message::Ok, I18n::Message::Cancel
@@ -86,7 +86,7 @@ void StoreMenuController::layoutFieldDidChangeSize(LayoutField * layoutField) {
    * layout but it will also call layoutFieldDidChangeSize. We set this
    * boolean to break the cycle. */
   m_preventReload = true;
-  Container::activeApp()->modalViewController()->reloadModalViewController();
+  Container::activeApp()->modalViewController()->reloadModal();
   m_preventReload = false;
 }
 
@@ -97,7 +97,7 @@ void StoreMenuController::openAbortWarning() {
    * the warning. We could save a reload by moving the centering logic after the
    * embedded pop-up. */
   displayModalViewController(&m_abortController, KDContext::k_alignCenter, KDContext::k_alignCenter);
-  Container::activeApp()->modalViewController()->reloadModalViewController();
+  Container::activeApp()->modalViewController()->reloadModal();
 }
 
 bool StoreMenuController::parseAndStore(const char * text) {

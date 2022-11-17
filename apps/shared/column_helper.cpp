@@ -15,7 +15,7 @@ namespace Shared {
 ClearColumnHelper::ClearColumnHelper() :
   m_confirmPopUpController(Invocation::Builder<ClearColumnHelper>([](ClearColumnHelper * param, void * parent){
     param->clearSelectedColumn();
-    Container::activeApp()->modalViewController()->dismissModalViewController();
+    Container::activeApp()->modalViewController()->dismissModal();
     param->table()->reloadData();
     return true;
   }, this))

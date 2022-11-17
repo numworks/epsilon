@@ -104,7 +104,7 @@ bool SequenceToolbox::selectAddedCell(int selectedRow){
   char buffer[bufferSize];
   m_addedCellLayout[selectedRow].serializeParsedExpression(buffer, bufferSize, nullptr); // No need of context here
   sender()->handleEventWithText(buffer);
-  Container::activeApp()->modalViewController()->dismissModalViewController();
+  Container::activeApp()->modalViewController()->dismissModal();
   return true;
 }
 

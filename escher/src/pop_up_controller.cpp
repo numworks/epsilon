@@ -105,7 +105,7 @@ MessagePopUpController::MessagePopUpController(Invocation OkInvocation, I18n::Me
     PopUpController(OkInvocation,
                     Invocation(
                       [](void * context, void * sender) {
-                        Container::activeApp()->modalViewController()->dismissModalViewController();
+                        Container::activeApp()->modalViewController()->dismissModal();
                         return true;
                       }, &m_contentView),
                     warningMessage, okMessage, cancelMessage, &m_messageTextView)
@@ -133,7 +133,7 @@ BufferPopUpController::BufferPopUpController(Invocation OkInvocation, I18n::Mess
   PopUpController(OkInvocation,
                   Invocation(
                     [](void * context, void * sender) {
-                      Container::activeApp()->modalViewController()->dismissModalViewController();
+                      Container::activeApp()->modalViewController()->dismissModal();
                       return true;
                     }, &m_contentView),
                   warningMessage, okMessage, cancelMessage, &m_bufferTextView)

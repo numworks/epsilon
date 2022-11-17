@@ -39,7 +39,7 @@ bool InputViewController::isEditing() {
 
 void InputViewController::abortEditionAndDismiss() {
   m_expressionFieldController.expressionField()->setEditing(false);
-  dismissModalViewController();
+  dismissModal();
 }
 
 bool InputViewController::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
@@ -90,7 +90,7 @@ void InputViewController::layoutFieldDidChangeSize(LayoutField * layoutField) {
   if (m_expressionFieldController.expressionField()->inputViewHeightDidChange()) {
     /* Reload the whole view only if the ExpressionField's height did actually
      * change. */
-    reloadModalViewController();
+    reloadModal();
   } else {
     /* The input view is already at maximal size so we do not need to relayout
      * the view underneath, but the view inside the input view might still need
@@ -111,7 +111,7 @@ PervasiveBox * InputViewController::variableBox() {
 
 bool InputViewController::inputViewDidFinishEditing() {
   if (m_successAction.perform(this)) {
-    dismissModalViewController();
+    dismissModal();
     return true;
   }
   return false;
@@ -119,7 +119,7 @@ bool InputViewController::inputViewDidFinishEditing() {
 
 void InputViewController::inputViewDidAbortEditing() {
   m_failureAction.perform(this);
-  dismissModalViewController();
+  dismissModal();
 }
 
 }

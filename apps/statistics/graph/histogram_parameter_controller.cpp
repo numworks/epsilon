@@ -13,7 +13,7 @@ HistogramParameterController::HistogramParameterController(Responder * parentRes
   FloatParameterController<double>(parentResponder),
   m_store(store),
   m_confirmPopUpController(Invocation::Builder<HistogramParameterController>([](HistogramParameterController * controller, void * sender) {
-    Container::activeApp()->modalViewController()->dismissModalViewController();
+    Container::activeApp()->modalViewController()->dismissModal();
     controller->stackController()->pop();
     return true;
   }, this))

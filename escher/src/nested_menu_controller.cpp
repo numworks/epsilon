@@ -124,13 +124,13 @@ bool NestedMenuController::handleEvent(Ion::Events::Event event) {
   }
   if ((event == Ion::Events::Toolbox && isToolbox()) || (event == Ion::Events::Var && !isToolbox())) {
     if (stackDepth() == 0) {
-      Container::activeApp()->modalViewController()->dismissModalViewController();
+      Container::activeApp()->modalViewController()->dismissModal();
       return true;
     }
     return returnToRootMenu();
   }
   if ((event == Ion::Events::Var && isToolbox()) || (event == Ion::Events::Toolbox && !isToolbox())) {
-    Container::activeApp()->modalViewController()->dismissModalViewController();
+    Container::activeApp()->modalViewController()->dismissModal();
     assert(sender());
     return sender()->handleBoxEvent(event);
   }

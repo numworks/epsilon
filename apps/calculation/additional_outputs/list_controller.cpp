@@ -38,7 +38,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
      * clears the Poincare pool from the layouts used to display the pop-up.
      * Thereby it frees memory to do Poincare computations required by
      * insertTextBody. */
-    Container::activeApp()->dismissModalViewController();
+    Container::activeApp()->modalViewController()->dismissModalViewController();
     m_editExpressionController->insertTextBody(buffer);
     return true;
   }

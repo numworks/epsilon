@@ -12,7 +12,7 @@ namespace Graph {
 DomainParameterController::DomainParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate) :
   Shared::SingleRangeController(parentResponder, inputEventHandlerDelegate, &m_confirmPopUpController),
   m_confirmPopUpController(Invocation::Builder<DomainParameterController>([](DomainParameterController * controller, void * sender) {
-    Container::activeApp()->dismissModalViewController();
+    Container::activeApp()->modalViewController()->dismissModalViewController();
     controller->pop(false);
     return true;
   }, this))

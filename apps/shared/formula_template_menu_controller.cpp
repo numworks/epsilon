@@ -67,7 +67,7 @@ bool FormulaTemplateMenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     int i = selectedRow();
     Layout templateLayout = i == 0 ? Layout() : m_layouts[i - 1];
-    Container::activeApp()->dismissModalViewController();
+    Container::activeApp()->modalViewController()->dismissModalViewController();
     m_storeColumnHelper->fillFormulaInputWithTemplate(templateLayout);
     return true;
   }

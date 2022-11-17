@@ -78,7 +78,7 @@ bool WarningController::handleEvent(Ion::Events::Event event) {
   if (m_exitOnOKBackEXEOnly && !(event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Back)) {
     return true;
   }
-  Container::activeApp()->dismissModalViewController();
+  Container::activeApp()->modalViewController()->dismissModalViewController();
   return true;
 }
 

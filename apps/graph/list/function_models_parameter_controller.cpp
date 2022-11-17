@@ -123,7 +123,7 @@ bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
     bool success = m_listController->editSelectedRecordWithText(ModelWithDefaultName(model, buffer, k_maxSizeOfNamedModel));
     assert(success);
     (void) success; // Silence warnings
-    Container::activeApp()->dismissModalViewController();
+    Container::activeApp()->modalViewController()->dismissModalViewController();
     m_listController->editExpression(Ion::Events::OK);
     return true;
   }

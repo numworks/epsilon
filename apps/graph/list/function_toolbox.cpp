@@ -118,7 +118,7 @@ bool FunctionToolbox::selectAddedCell(int selectedRow) {
   char buffer[bufferSize];
   m_addedCellLayout[selectedRow].serializeForParsing(buffer, bufferSize);
   sender()->handleEventWithText(buffer);
-  Container::activeApp()->dismissModalViewController();
+  Container::activeApp()->modalViewController()->dismissModalViewController();
   return true;
 }
 

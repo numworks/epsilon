@@ -104,13 +104,13 @@ void Dependency::addDependency(Expression newDependency) {
    * and will disappear in the next reduction. */
 }
 
-void Dependency::extractDependencies(List l) {
+Expression Dependency::extractDependencies(List l) {
   int previousNumberOfChildren = l.numberOfChildren();
 
   Expression dependencies = childAtIndex(k_indexOfDependenciesList);
   if (dependencies.isUndefined()) {
     l.addChildAtIndexInPlace(dependencies, previousNumberOfChildren, previousNumberOfChildren);
-    return;
+    return *this;
   }
 
   assert(dependencies.type() == ExpressionNode::Type::List);
@@ -132,7 +132,9 @@ void Dependency::extractDependencies(List l) {
     }
   }
 
-  replaceWithInPlace(childAtIndex(0));
+  Expression newRef = childAtIndex(0);
+  replaceWithInPlace(newRef);
+  return newRef;
 }
 
 Expression Dependency::UntypedBuilder(Expression children) {

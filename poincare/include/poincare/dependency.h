@@ -51,8 +51,8 @@ public:
   int numberOfDependencies() const { return childAtIndex(k_indexOfDependenciesList).numberOfChildren(); }
   void addDependency(Expression newDependency);
 
-  /* Store the dependecies in m and replace the dependency node with the true expression. */
-  void extractDependencies(List l);
+  /* Store the dependecies in l and replace the dependency node with the true expression. */
+  Expression extractDependencies(List l);
   bool dependencyRecursivelyMatches(ExpressionTrinaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const { return childAtIndex(0).recursivelyMatches(test, context, replaceSymbols, auxiliary); }
 
   Expression removeUselessDependencies(const ExpressionNode::ReductionContext& reductionContext);

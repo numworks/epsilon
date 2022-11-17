@@ -1197,6 +1197,14 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
   if (undefined) {
     return Undefined::Builder();
   }
+  List dependencies = List::Builder();
+  if (ra.type() == ExpressionNode::Type::Dependency) {
+    ra = static_cast<Dependency &>(ra).extractDependencies(dependencies);
+  }
+  if (tb.type() == ExpressionNode::Type::Dependency) {
+    tb = static_cast<Dependency &>(tb).extractDependencies(dependencies);
+  }
+  Expression result;
   switch (complexFormat) {
     case Preferences::ComplexFormat::Real:
     case Preferences::ComplexFormat::Cartesian:
@@ -1219,14 +1227,15 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
           imag.shallowAddMissingParenthesis();
         }
       }
-      Expression result;
       if (imag.isUninitialized()) {
-        return real;
+        result = real;
+        break;
       } else if (real.isUninitialized()) {
         if (isNegativeTb) {
           result = Opposite::Builder(imag);
         } else {
-          return imag;
+          result = imag;
+          break;
         }
       } else if (isNegativeTb) {
         result = Subtraction::Builder(real, imag);
@@ -1234,7 +1243,7 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         result = Addition::Builder(real, imag);
       }
       result.shallowAddMissingParenthesis();
-      return result;
+      break;
     }
     default:
     {
@@ -1265,16 +1274,20 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
         exp.shallowAddMissingParenthesis();
       }
       if (exp.isUninitialized()) {
-        return norm;
+        result = norm;
       } else if (norm.isUninitialized()) {
-        return exp;
+        result = exp;
       } else {
-        Expression result = Multiplication::Builder(norm, exp);
+        result = Multiplication::Builder(norm, exp);
         result.shallowAddMissingParenthesis();
-        return result;
       }
     }
   }
+
+  if (dependencies.numberOfChildren() > 0) {
+    result = Dependency::Builder(result, dependencies);
+  }
+  return result;
 }
 
 static Expression maker(Expression children, int nbChildren, TreeNode::Initializer initializer, size_t size) {

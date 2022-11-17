@@ -81,11 +81,11 @@ public:
 
   void addChildAtIndex(Layout l, int index, int currentNumberOfChildren, LayoutCursor * cursor, bool removeEmptyChildren = false);
   // Remove puts a child at the end of the pool
-  void removeChild(Layout l, LayoutCursor * cursor, bool force = false) {
-    Layout::removeChild(l, cursor, force);
+  int removeChild(Layout l, LayoutCursor * cursor, bool force = false) {
+    return Layout::removeChild(l, cursor, force);
   }
-  void removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false) {
-    Layout::removeChildAtIndex(index, cursor, force);
+  int removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false) {
+    return Layout::removeChildAtIndex(index, cursor, force);
   }
   void addOrMergeChildAtIndex(Layout l, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);
   void mergeChildrenAtIndex(HorizontalLayout h, int index, bool removeEmptyChildren, LayoutCursor * cursor = nullptr);

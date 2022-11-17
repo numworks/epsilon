@@ -661,8 +661,7 @@ void HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int * index, int *
   if (shouldRemoveOnRight && *index < childrenCount) {
     Layout c = childAtIndex(*index);
     if (c.isEmpty()) {
-      removeChild(c, cursor, true);
-      childrenCount--;
+      childrenCount -= removeChild(c, cursor, true);
       if (currentNumberOfChildren != nullptr) {
         *currentNumberOfChildren = childrenCount;
       }
@@ -673,9 +672,9 @@ void HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int * index, int *
   if (shouldRemoveOnLeft && *index - 1 >= 0 && *index - 1 < childrenCount) {
     Layout c = childAtIndex(*index - 1);
     if (c.isEmpty()) {
-      removeChild(c, cursor, true);
-      *index = *index - 1;
-      childrenCount--;
+      int removedChildren = removeChild(c, cursor, true);
+      *index -= removedChildren;
+      childrenCount -= removedChildren;
       if (currentNumberOfChildren != nullptr) {
         *currentNumberOfChildren = childrenCount;
       }

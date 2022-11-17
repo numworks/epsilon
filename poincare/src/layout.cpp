@@ -249,9 +249,10 @@ void Layout::addSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor
   }
 }
 
-void Layout::removeChild(Layout l, LayoutCursor * cursor, bool force) {
+int Layout::removeChild(Layout l, LayoutCursor * cursor, bool force) {
+  int previousChildrenNumber = numberOfChildren();
   if (!node()->willRemoveChild(l.node(), cursor, force)) {
-    return;
+    return previousChildrenNumber - numberOfChildren();
   }
   assert(hasChild(l));
   int index = indexOfChild(l);
@@ -273,10 +274,11 @@ void Layout::removeChild(Layout l, LayoutCursor * cursor, bool force) {
     }
   }
   node()->didRemoveChildAtIndex(index, cursor, force);
+  return previousChildrenNumber - numberOfChildren();
 }
 
-void  Layout::removeChildAtIndex(int index, LayoutCursor * cursor, bool force) {
-  removeChild(childAtIndex(index), cursor, force);
+int Layout::removeChildAtIndex(int index, LayoutCursor * cursor, bool force) {
+  return removeChild(childAtIndex(index), cursor, force);
 }
 
 void Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex) {
@@ -320,10 +322,9 @@ void Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChi
       p.removeChildAtIndex(siblingIndex, nullptr);
       int newIndex = direction == HorizontalDirection::Right ? absorbingChild.numberOfChildren() : 0;
       horizontalAbsorbingChild.addOrMergeChildAtIndex(sibling, newIndex, true);
-      numberOfSiblings--;
-      if (direction == HorizontalDirection::Left) {
-        idxInParent--;
-      }
+      // removeChildAtIndex may have removed more than one child.
+      numberOfSiblings = p.numberOfChildren();
+      idxInParent = p.indexOfChild(*this);
     } else {
       break;
     }

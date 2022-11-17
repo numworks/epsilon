@@ -45,15 +45,7 @@ StackViewController * MenuController::stackViewController() {
 }
 
 void MenuController::willExitResponderChain(Responder * nextFirstResponder) {
-  int selectedRow = m_selectableTableView.selectedRow();
-  int selectedColumn = m_selectableTableView.selectedColumn();
-  if (selectedRow >= 0 && selectedRow < m_scriptStore->numberOfScripts() && selectedColumn == 0) {
-    TextField * tf = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell())->textField();
-    if (tf->isEditing()) {
-      tf->setEditing(false);
-      privateTextFieldDidAbortEditing(tf, false);
-    }
-  }
+  privateWillExitAppOrResponderChain();
 }
 
 void MenuController::didBecomeFirstResponder() {
@@ -159,6 +151,7 @@ void MenuController::scriptContentEditionDidFinish() {
 }
 
 void MenuController::willExitApp() {
+  privateWillExitAppOrResponderChain();
   m_editorController.willExitApp();
 }
 
@@ -377,6 +370,18 @@ bool MenuController::privateTextFieldDidAbortEditing(AbstractTextField * textFie
   }
   AppsContainer::sharedAppsContainer()->setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   return true;
+}
+
+void MenuController::privateWillExitAppOrResponderChain() {
+  int selectedRow = m_selectableTableView.selectedRow();
+  int selectedColumn = m_selectableTableView.selectedColumn();
+  if (selectedRow >= 0 && selectedRow < m_scriptStore->numberOfScripts() && selectedColumn == 0) {
+    TextField * tf = static_cast<ScriptNameCell *>(m_selectableTableView.selectedCell())->textField();
+    if (tf->isEditing()) {
+      tf->setEditing(false);
+      privateTextFieldDidAbortEditing(tf, false);
+    }
+  }
 }
 
 }

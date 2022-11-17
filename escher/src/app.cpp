@@ -50,11 +50,11 @@ void App::setFirstResponder(Responder * responder) {
 }
 
 void App::displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
-    KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin) {
+    KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin, bool growingOnly) {
   if (m_modalViewController.isDisplayingModal()) {
     m_modalViewController.dismissModalViewController();
   }
-  m_modalViewController.displayModalViewController(vc, verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin);
+  m_modalViewController.displayModalViewController(vc, verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin, growingOnly);
 }
 
 void App::dismissModalViewController() {

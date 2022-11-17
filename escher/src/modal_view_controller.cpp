@@ -64,7 +64,10 @@ void ModalViewController::ContentView::layoutSubviews(bool force) {
   if (m_isDisplayingModal) {
     assert(m_currentModalView != nullptr);
     KDRect oldFrame = m_currentModalView->m_frame;
-    KDRect modalFrame = modalViewFrame().unionedWith(oldFrame);
+    KDRect modalFrame = modalViewFrame();
+    if (m_modalGrowingOnly) {
+      modalFrame = modalFrame.unionedWith(oldFrame);
+    }
     m_regularView->setFrame(modalFrame == bounds() ? KDRectZero : bounds(), force);
     m_currentModalView->setFrame(modalFrame, force || oldFrame == modalFrame);
   } else {
@@ -76,7 +79,7 @@ void ModalViewController::ContentView::layoutSubviews(bool force) {
 }
 
 void ModalViewController::ContentView::presentModalView(View * modalView, float verticalAlignment, float horizontalAlignment,
-  KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin) {
+  KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin, bool growingOnly) {
   m_isDisplayingModal = true;
   m_currentModalView = modalView;
   m_horizontalAlignment = horizontalAlignment;
@@ -85,6 +88,7 @@ void ModalViewController::ContentView::presentModalView(View * modalView, float 
   m_leftMargin = leftMargin;
   m_bottomMargin = bottomMargin;
   m_rightMargin = rightMargin;
+  m_modalGrowingOnly = growingOnly;
   layoutSubviews();
 }
 
@@ -121,12 +125,12 @@ bool ModalViewController::isDisplayingModal() {
 }
 
 void ModalViewController::displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
-  KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin) {
+  KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin, bool growingOnly) {
   m_currentModalViewController = vc;
   vc->setParentResponder(this);
   m_previousResponder = Container::activeApp()->firstResponder();
   m_currentModalViewController->initView();
-  m_contentView.presentModalView(vc->view(), verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin);
+  m_contentView.presentModalView(vc->view(), verticalAlignment, horizontalAlignment, topMargin, leftMargin, bottomMargin, rightMargin, growingOnly);
   m_currentModalViewController->viewWillAppear();
   Container::activeApp()->setFirstResponder(vc);
 }

@@ -18,7 +18,7 @@ StoreMenuController::InnerListController::InnerListController(StoreMenuControlle
 }
 
 void StoreMenuController::open() {
-  Container::activeApp()->displayModalViewController(this, KDContext::k_alignCenter, KDContext::k_alignCenter, 0, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin);
+  Container::activeApp()->displayModalViewController(this, KDContext::k_alignCenter, KDContext::k_alignCenter, 0, Metric::PopUpLeftMargin, 0, Metric::PopUpRightMargin, true);
 }
 
 void StoreMenuController::close() {

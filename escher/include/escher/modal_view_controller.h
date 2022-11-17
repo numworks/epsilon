@@ -14,7 +14,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void displayModalViewController(ViewController * vc, float verticalAlignment, float horizontalAlignment,
-    KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0,  KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0);
+    KDCoordinate topMargin = 0, KDCoordinate leftMargin = 0, KDCoordinate bottomMargin = 0, KDCoordinate rightMargin = 0, bool growingOnly = false);
   void reloadModalViewController();
   void dismissModalViewController();
   bool isDisplayingModal();
@@ -36,7 +36,7 @@ private:
     View * subviewAtIndex(int index) override;
     void layoutSubviews(bool force = false) override;
     void presentModalView(View * modalView, float verticalAlignment, float horizontalAlignment,
-      KDCoordinate topMargin, KDCoordinate leftMargin,  KDCoordinate bottomMargin, KDCoordinate rightMargin);
+      KDCoordinate topMargin, KDCoordinate leftMargin, KDCoordinate bottomMargin, KDCoordinate rightMargin, bool growingOnly);
     void dismissModalView();
     bool isDisplayingModal() const;
     void reload();
@@ -52,6 +52,7 @@ private:
     KDCoordinate m_leftMargin;
     KDCoordinate m_bottomMargin;
     KDCoordinate m_rightMargin;
+    bool m_modalGrowingOnly;
   };
 
   ContentView m_contentView;

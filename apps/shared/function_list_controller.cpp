@@ -64,6 +64,11 @@ void FunctionListController::didBecomeFirstResponder() {
   }
   footer()->setSelectedButton(-1);
   Container::activeApp()->setFirstResponder(selectableTableView());
+
+  InputViewController * inputViewController = Shared::FunctionApp::app()->inputViewController();
+  if (inputViewController->isDisplayingModal()) {
+    Container::activeApp()->setFirstResponder(inputViewController);
+  }
 }
 
 /* ExpressionModelListController */

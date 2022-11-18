@@ -280,18 +280,24 @@ int Layout::removeChildAtIndex(int index, LayoutCursor * cursor, bool force) {
   return removeChild(childAtIndex(index), cursor, force);
 }
 
-void Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex) {
+bool Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor) {
   Layout p = parent();
   if (p.isUninitialized() || p.type() != LayoutNode::Type::HorizontalLayout) {
-    return;
+    return false;
   }
   int idxInParent = p.indexOfChild(*this);
   int numberOfSiblings = p.numberOfChildren();
   int numberOfOpenParenthesis = 0;
   bool canCollapse = true;
   Layout absorbingChild = childAtIndex(absorbingChildIndex);
-  if (absorbingChild.isUninitialized() || absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
-    return;
+  if (absorbingChild.isUninitialized() || !absorbingChild.isEmpty()) {
+    return false;
+  }
+  if (absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
+    Layout horizontal = HorizontalLayout::Builder();
+    replaceChild(absorbingChild, horizontal, cursor, true);
+    horizontal.addChildAtIndexInPlace(absorbingChild, 0, 0);
+    absorbingChild = horizontal;
   }
   HorizontalLayout horizontalAbsorbingChild = HorizontalLayout(static_cast<HorizontalLayoutNode *>(absorbingChild.node()));
   if (direction == HorizontalDirection::Right && idxInParent < numberOfSiblings - 1) {
@@ -328,32 +334,16 @@ void Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChi
       break;
     }
   }
+  return true;
 }
 
 void Layout::collapseSiblings(LayoutCursor * cursor) {
-  Layout rootLayout = root();
   bool collapsed = false;
-
-  auto collapse = [this, cursor](HorizontalDirection side, int index) -> bool {
-    Layout absorbingChild = childAtIndex(index);
-    // TODO: add a horizontal layout only if several siblings.
-    if (!absorbingChild.isEmpty()) {
-      return false;
-    }
-    if (absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
-      Layout horRef = HorizontalLayout::Builder();
-      replaceChild(absorbingChild, horRef, cursor, true);
-      horRef.addChildAtIndexInPlace(absorbingChild, 0, 0);
-    }
-    collapseOnDirection(side, index);
-    return true;
-  };
-
   if (node()->shouldCollapseSiblingsOnRight()) {
-    collapsed |= collapse(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex());
+    collapsed |= collapseOnDirection(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex(), cursor);
   }
   if (node()->shouldCollapseSiblingsOnLeft()) {
-    collapsed |= collapse(HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex());
+    collapsed |= collapseOnDirection(HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex(), cursor);
   }
   if (collapsed) {
     node()->didCollapseSiblings(cursor);

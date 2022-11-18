@@ -124,7 +124,7 @@ private:
     Left,
     Right
   };
-  void collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex);
+  bool collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor);
 };
 
 template<typename T, typename U, int N, typename Parent>

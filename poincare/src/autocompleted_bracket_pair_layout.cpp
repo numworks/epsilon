@@ -152,27 +152,22 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
   assert(childLayout()->type() == Type::HorizontalLayout);
   HorizontalLayout child = HorizontalLayout(static_cast<HorizontalLayoutNode *>(childLayout()));
 
-  int injectionIndex, removalStart, removalEnd;
+  int injectionIndex, removalIndex, removalEnd;
   if (side == Side::Left) {
     injectionIndex = 0;
-    removalStart = thisIndex - 1;
+    removalIndex = thisIndex - 1;
     removalEnd = 0;
   } else {
     injectionIndex = child.isEmpty() ? 0 : child.numberOfChildren();
-    removalStart = h.numberOfChildren() - 1;
+    removalIndex = h.numberOfChildren() - 1;
     removalEnd = thisIndex + 1;
   }
-  for (int i = removalStart; i >= removalEnd; i--) {
-    Layout l = h.childAtIndex(i);
-    int removedChildren = h.removeChild(l, cursor);
-    if (removedChildren != 1) {
-      /* TODO : The additionally deleted child could be at the right of l.
-       * In that case i should simply decrement and this step should be skipped.
-       */
-      i -= removedChildren - 1;
-    }
+  while (removalIndex >= removalEnd) {
+    Layout l = h.childAtIndex(removalIndex);
+    removalIndex -= 1 + h.removeChild(l, cursor);
     child.addOrMergeChildAtIndex(l, injectionIndex, true, cursor);
   }
+  assert(removalIndex == removalEnd - 1);
   if (child.numberOfChildren() == 0) {
     thisRef.replaceChild(child, EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Never));
   }

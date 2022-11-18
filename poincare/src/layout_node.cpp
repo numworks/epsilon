@@ -177,12 +177,12 @@ bool LayoutNode::mustHaveRightSibling() const {
   return type() == Type::VerticalOffsetLayout && static_cast<const VerticalOffsetLayoutNode *>(this)->horizontalPosition() == VerticalOffsetLayoutNode::HorizontalPosition::Prefix;
 }
 
-bool LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
+int LayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
   if (!force) {
     Layout(this).replaceChildWithEmpty(Layout(l), cursor);
-    return false;
+    return 0;
   }
-  return true;
+  return -1;
 }
 
 Layout LayoutNode::makeEditable() {

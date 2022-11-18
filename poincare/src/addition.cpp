@@ -57,18 +57,15 @@ Layout AdditionNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
   Layout result = LayoutHelper::Infix(Addition(this), floatDisplayMode, numberOfSignificantDigits, "+", context);
   if (displayImplicitAdditionBetweenUnits(result)) {
     // Remove the '+'
-    int i = 0;
-    while (i < result.numberOfChildren()) {
+    int i = result.numberOfChildren() - 1;
+    while (i >= 0) {
       Layout child = result.childAtIndex(i);
       if (child.type() == LayoutNode::Type::CodePointLayout && static_cast<CodePointLayout&>(child).codePoint() == '+') {
-        int deletedChildren = result.removeChildAtIndex(i, nullptr);
-        (void)deletedChildren;
-        // Assert only one child has been removed
-        assert(deletedChildren == 1);
-        i--;
+        i -= result.removeChildAtIndex(i, nullptr);
       }
-      i++;
+      i--;
     }
+    assert(i == -1);
   }
   return result;
 }

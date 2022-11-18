@@ -205,7 +205,7 @@ int InputBeautification::BeautifyPipeKey(Layout parent, int indexOfPipeKey, Layo
       // Do not alter cursor if forced right of text
       cursorToUse = &tempCursor;
     }
-    parent.removeChild(pipeKey, cursorToUse);
+    indexOfMatchingPipeKey -= parent.removeChild(pipeKey, cursorToUse);
     Layout toInsert = k_absoluteValueRule.layoutBuilder(Layout());
     cursorToUse->addLayoutAndMoveCursor(toInsert, nullptr);
     return indexOfMatchingPipeKey;
@@ -214,18 +214,16 @@ int InputBeautification::BeautifyPipeKey(Layout parent, int indexOfPipeKey, Layo
   // Put layouts between pipe and its next pipe neighbour in a layout
   int numberOfChildrenToVisit = indexOfPipeKey - indexOfMatchingPipeKey - 1;
   HorizontalLayout insideAbsoluteValue = HorizontalLayout::Builder();
-  for (int i = 0; i < numberOfChildrenToVisit; i++) {
-    Layout l = parent.childAtIndex(indexOfMatchingPipeKey + 1);
-    int removedChildren = parent.removeChild(l, nullptr);
-    (void)removedChildren;
-    // Assert only one child has been removed
-    assert(removedChildren == 1);
-    insideAbsoluteValue.addOrMergeChildAtIndex(l, insideAbsoluteValue.numberOfChildren(), true, nullptr);
+  while (numberOfChildrenToVisit > 0) {
+    Layout l = parent.childAtIndex(indexOfMatchingPipeKey + numberOfChildrenToVisit);
+    // TODO : It should be asserted no layout has been removed right of l
+    numberOfChildrenToVisit -= 1 + parent.removeChild(l, nullptr);
+    insideAbsoluteValue.addOrMergeChildAtIndex(l, 0, true, nullptr);
   }
-  builderParameter = insideAbsoluteValue;
-  parent.removeChild(pipeKey, nullptr);
-  /* No need to beautifiy as a function since the args are already absorbed. */
-  RemoveLayoutsBetweenIndexAndReplaceWithPattern(parent, indexOfMatchingPipeKey, indexOfMatchingPipeKey, k_absoluteValueRule, cursor, false, forceCursorRightOfText, builderParameter);
+  assert(numberOfChildrenToVisit == 0);
+  indexOfMatchingPipeKey -= parent.removeChild(pipeKey, nullptr);
+  /* No need to beautify as a function since the args are already absorbed. */
+  RemoveLayoutsBetweenIndexAndReplaceWithPattern(parent, indexOfMatchingPipeKey, indexOfMatchingPipeKey, k_absoluteValueRule, cursor, false, forceCursorRightOfText, insideAbsoluteValue);
   return indexOfMatchingPipeKey;
 }
 
@@ -256,7 +254,7 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrderDerivativeIfPo
   }
   Layout firstOrderDerivative = parent.parent();
   Layout derivativeOrder = lastAddedLayout.childAtIndex(0);
-  parent.removeChildAtIndex(indexOfLastAddedLayout, nullptr, false);
+  indexOfLastAddedLayout -= parent.removeChildAtIndex(indexOfLastAddedLayout, nullptr, false);
   HigherOrderDerivativeLayout newDerivative = HigherOrderDerivativeLayout::Builder(firstOrderDerivative.childAtIndex(0), firstOrderDerivative.childAtIndex(1), firstOrderDerivative.childAtIndex(2), derivativeOrder);
   firstOrderDerivative.replaceWithInPlace(newDerivative);
   if (layoutCursor->layout().isUninitialized() || layoutCursor->layout().parent().isUninitialized()) {
@@ -295,12 +293,10 @@ int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout p
   }
   // Remove layout
   LayoutCursor tempCursor = *layoutCursor; // avoid altering the cursor by copying it.
-  for (int i = endIndex; i >= startIndex; i--) {
-    int removedChildren = parent.removeChildAtIndex(i, &tempCursor, true);
-    (void)removedChildren;
-    // Assert only one child has been removed
-    assert(removedChildren == 1);
+  while (endIndex >= startIndex) {
+    endIndex -= 1 + parent.removeChildAtIndex(endIndex, &tempCursor, true);
   }
+  assert(endIndex == startIndex - 1);
   if (!forceCursorRightOfText && isBeautifyingFunction) {
     // Put the cursor inside the beautified function.
     Expression dummy;

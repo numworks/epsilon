@@ -154,8 +154,11 @@ public:
   virtual bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) { return true; }
   virtual bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) { return true; }
   virtual void didReplaceChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
-  virtual bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force);
-  virtual void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) {}
+  /* Return the number of additional children deleted left of the layout if
+   * something has been deleted, -1 otherwise. */
+  virtual int willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force);
+  // Return the number of additional children deleted left of the index
+  virtual int didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) { return 0; }
 
   virtual Layout makeEditable();
 

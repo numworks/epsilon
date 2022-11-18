@@ -360,23 +360,22 @@ bool HorizontalLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * siblin
   return false;
 }
 
-bool HorizontalLayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
+int HorizontalLayoutNode::willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) {
   if (!force && numberOfChildren() == 1) {
     assert(childAtIndex(0) == l);
     LayoutNode * p = parent();
     if (p != nullptr) {
-      Layout(p).removeChild(HorizontalLayout(this), cursor);
+      return Layout(p).removeChild(HorizontalLayout(this), cursor);
       // WARNING: Do not call "this" afterwards
-      return false;
     }
   }
-  return true;
+  return -1;
 }
 
-void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) {
+int HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) {
   int currentNumberOfChildren = numberOfChildren();
   if (force || currentNumberOfChildren == 0) {
-    return;
+    return 0;
   }
 
   /* If the removed child was the last valid sibling of a layout that requires
@@ -387,7 +386,7 @@ void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * curso
    || (index < currentNumberOfChildren && index > 0 && childAtIndex(index - 1)->mustHaveRightSibling() && childAtIndex(index)->mustHaveLeftSibling()))
   {
     Layout(this).addChildAtIndex(EmptyLayout::Builder(), index, currentNumberOfChildren, cursor);
-    return;
+    return 0;
   }
 
   /* If an empty layout was required by a now deleted sibling, remove it. */
@@ -397,14 +396,18 @@ void HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * curso
   } else if (index > 0 && childAtIndex(index - 1)->type() == Type::EmptyLayout) {
     emptyChildIndex = index - 1;
   } else {
-    return;
+    return 0;
   }
   if (!((emptyChildIndex > 0 && childAtIndex(emptyChildIndex - 1)->mustHaveRightSibling())
      || (emptyChildIndex + 1 < currentNumberOfChildren && childAtIndex(emptyChildIndex + 1)->mustHaveLeftSibling())))
   {
-    Layout(this).removeChild(Layout(childAtIndex(emptyChildIndex)), cursor);
+    bool deletedSiblingIsLeftOfLayout = emptyChildIndex < index;
+    /* This assert ensure we do not have to account for anything deleted right
+     * of emptyChildIndex. */
+    assert(!deletedSiblingIsLeftOfLayout || emptyChildIndex == index - 1);
+    return deletedSiblingIsLeftOfLayout + Layout(this).removeChild(Layout(childAtIndex(emptyChildIndex)), cursor);
   }
-
+  return 0;
 }
 
 static void makePermanentIfBracket(LayoutNode * l, bool hasLeftSibling, bool hasRightSibling) {
@@ -433,6 +436,7 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
       /* If the new layout is empty and the horizontal layout has other
        * children, just remove the old child. */
       thisRef.removeChild(oldChild, nullptr);
+      assert(numberOfChildren() > 0);
       if (cursor != nullptr) {
         if (oldChildIndex == 0) {
           cursor->setLayout(thisRef);
@@ -499,7 +503,7 @@ bool HorizontalLayoutNode::willReplaceChild(LayoutNode * oldChild, LayoutNode * 
     if (!oldChildRemovedAtMerge) {
       assert(!cursor || cursor->layout().node() != oldChild);
       // Do not alter the cursor. It should already be well-placed
-      thisRef.removeChild(oldChildRef, nullptr, true);
+      indexForInsertion -= thisRef.removeChild(oldChildRef, nullptr, true);
     }
     thisRef.mergeChildrenAtIndex(newChildRef, indexForInsertion, true);
     // WARNING: do not call "this" afterwards
@@ -661,7 +665,8 @@ void HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int * index, int *
   if (shouldRemoveOnRight && *index < childrenCount) {
     Layout c = childAtIndex(*index);
     if (c.isEmpty()) {
-      childrenCount -= removeChild(c, cursor, true);
+      removeChild(c, cursor, true);
+      childrenCount = numberOfChildren();
       if (currentNumberOfChildren != nullptr) {
         *currentNumberOfChildren = childrenCount;
       }
@@ -672,12 +677,11 @@ void HorizontalLayout::removeEmptyChildBeforeInsertionAtIndex(int * index, int *
   if (shouldRemoveOnLeft && *index - 1 >= 0 && *index - 1 < childrenCount) {
     Layout c = childAtIndex(*index - 1);
     if (c.isEmpty()) {
-      int removedChildren = removeChild(c, cursor, true);
-      *index -= removedChildren;
-      childrenCount -= removedChildren;
+      *index -= 1 + removeChild(c, cursor, true);
       if (currentNumberOfChildren != nullptr) {
-        *currentNumberOfChildren = childrenCount;
+        *currentNumberOfChildren = numberOfChildren();
       }
+      assert(*index >= 0 && *index <= numberOfChildren());
     }
   }
 }

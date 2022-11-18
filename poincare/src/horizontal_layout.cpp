@@ -565,7 +565,6 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
   int newIndex = index;
   bool margin = h.node()->leftMargin() > 0;
   bool marginIsLocked = h.node()->marginIsLocked();
-  bool firstAddedChild = true;
   // Remove h if it is a child
   int indexOfh = indexOfChild(h);
   if (indexOfh >= 0) {
@@ -601,34 +600,35 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
   childrenNumber = h.numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
     int n = numberOfChildren();
-    if (i == 0
-        && h.childAtIndex(0).isEmpty()
-        && childrenNumber > 1
-        && h.childAtIndex(1).mustHaveLeftSibling()
-        && newIndex > 0
-        && !childAtIndex(newIndex - 1).mustHaveRightSibling())
-    {
-      /* If the first added child is Empty because its right sibling needs a
-       * left sibling, remove it if any previous child could be such a left
-       * sibling. */
-      continue;
-    }
-    if (!removeEmptyChildren
-        || !h.childAtIndex(i).isEmpty()
-        || (n > 0 && childAtIndex(0).mustHaveLeftSibling())
-        || (i < childrenNumber-1 && h.childAtIndex(i+1).mustHaveLeftSibling()))
-    {
-      Layout c = h.childAtIndex(i);
-      makePermanentIfBracket(c.node(), newIndex > 0, newIndex < n || i  < childrenNumber - 1);
-      addChildAtIndexInPlace(c, newIndex, n);
-      if (firstAddedChild) {
-        LayoutNode * l = childAtIndex(newIndex).node();
-        l->setMargin(margin);
-        l->lockMargin(marginIsLocked);
+    Layout c = h.childAtIndex(i);
+    bool firstAddedChild = (i == 0);
+    bool lastAddedChild = (i == childrenNumber - 1);
+    bool hasPreviousLayout = newIndex > 0;
+    bool hasFollowingLayout = newIndex < n;
+    if (c.isEmpty()) {
+      bool nextInsertedLayoutMustHaveLeftSibling = (!lastAddedChild && h.childAtIndex(i + 1).mustHaveLeftSibling());
+      bool followingLayoutMustHaveLeftSibling = (hasFollowingLayout && childAtIndex(newIndex).mustHaveLeftSibling());
+      bool previousLayoutMustHaveRightSibling = (hasPreviousLayout && childAtIndex(newIndex - 1).mustHaveRightSibling());
+      /* Remove empty layout if :
+       * - The first added child is Empty because its right sibling needs a left
+       *   sibling, and the previous layout could be such a left sibling. */
+      if ((firstAddedChild && !lastAddedChild && nextInsertedLayoutMustHaveLeftSibling && hasPreviousLayout && !previousLayoutMustHaveRightSibling)
+      /* - The last added child is Empty because its left sibling needs a right
+       *   sibling, and the following layout could be such a right sibling. */
+       || (lastAddedChild && !firstAddedChild && previousLayoutMustHaveRightSibling && hasFollowingLayout && !followingLayoutMustHaveLeftSibling)
+      /* - No sibling layout needs an empty layout. */
+       || (removeEmptyChildren && !previousLayoutMustHaveRightSibling && !nextInsertedLayoutMustHaveLeftSibling && !followingLayoutMustHaveLeftSibling)) {
+        continue;
       }
-      firstAddedChild = false;
-      newIndex++;
     }
+    makePermanentIfBracket(c.node(), hasPreviousLayout, hasFollowingLayout || !lastAddedChild);
+    addChildAtIndexInPlace(c, newIndex, n);
+    if (firstAddedChild) {
+      LayoutNode * l = childAtIndex(newIndex).node();
+      l->setMargin(margin);
+      l->lockMargin(marginIsLocked);
+    }
+    newIndex++;
   }
 
   // Set the cursor

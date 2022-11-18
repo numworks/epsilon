@@ -333,30 +333,27 @@ void Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChi
 void Layout::collapseSiblings(LayoutCursor * cursor) {
   Layout rootLayout = root();
   bool collapsed = false;
-  if (node()->shouldCollapseSiblingsOnRight()) {
-    Layout absorbingChild = childAtIndex(rightCollapsingAbsorbingChildIndex());
+
+  auto collapse = [this, cursor](HorizontalDirection side, int index) -> bool {
+    Layout absorbingChild = childAtIndex(index);
     // TODO: add a horizontal layout only if several siblings.
-    if (absorbingChild.isEmpty()) {
-      if (absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
-        Layout horRef = HorizontalLayout::Builder();
-        replaceChild(absorbingChild, horRef, cursor, true);
-        horRef.addChildAtIndexInPlace(absorbingChild, 0, 0);
-      }
-      collapsed = true;
-      collapseOnDirection(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex());
+    if (!absorbingChild.isEmpty()) {
+      return false;
     }
+    if (absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
+      Layout horRef = HorizontalLayout::Builder();
+      replaceChild(absorbingChild, horRef, cursor, true);
+      horRef.addChildAtIndexInPlace(absorbingChild, 0, 0);
+    }
+    collapseOnDirection(side, index);
+    return true;
+  };
+
+  if (node()->shouldCollapseSiblingsOnRight()) {
+    collapsed |= collapse(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex());
   }
   if (node()->shouldCollapseSiblingsOnLeft()) {
-    Layout absorbingChild = childAtIndex(leftCollapsingAbsorbingChildIndex());
-    if (absorbingChild.isEmpty()) {
-      if (absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
-        Layout horRef = HorizontalLayout::Builder();
-        replaceChild(absorbingChild, horRef, cursor, true);
-        horRef.addChildAtIndexInPlace(absorbingChild, 0, 0);
-      }
-      collapsed = true;
-      collapseOnDirection(HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex());
-    }
+    collapsed |= collapse(HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex());
   }
   if (collapsed) {
     node()->didCollapseSiblings(cursor);

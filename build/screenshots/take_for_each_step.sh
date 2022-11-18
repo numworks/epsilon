@@ -17,6 +17,6 @@ rm ${output_folder}/img*.png
 ./${epsilon} --headless --load-state-file ${state_file} --take-all-screenshots ${output_folder} > /dev/null
 
 echo ${output_folder}/bug.gif
-convert -loop 0 ${output_folder}/img*.png ${output_folder}/bug.gif
+convert -loop 0 -set delay '%[fx:t==(n-1) ? 175 : 35]' ${output_folder}/img*.png ${output_folder}/bug.gif
 
 echo "All done, screenshots taken in ${output_folder}/"

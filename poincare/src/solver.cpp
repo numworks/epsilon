@@ -35,7 +35,20 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketT
     p3.setX1(nextX(p2.x1(), end()));
     p3.setX2(f(p3.x1(), aux));
 
-    Interest interest = test(p1, p2, p3, aux);
+    Interest interest = Interest::None;
+    /* If no interest was found and there is a discontinuity in the interval,
+     * make the interval thinner, since it might be the discontinuity that
+     * prevents the interest to be found. */
+    while ((interest = test(p1, p2, p3, aux)) == Interest::None && // assignment in condition
+           p3.x1() - p1.x1() >= 2 * k_minimalPracticalStep &&
+           DiscontinuityInBracket(p1, p2, p3, aux) == Interest::Discontinuity)
+    {
+      p1.setX1((p1.x1() + p2.x1()) / 2.0);
+      p1.setX2(f(p1.x1(), aux));
+      p3.setX1((p3.x1() + p2.x1()) / 2.0);
+      p3.setX2(f(p3.x1(), aux));
+    }
+
     if (interest != Interest::None) {
       Coordinate2D<T> solution = hone(f, aux, p1.x1(), p3.x1(), interest, k_absolutePrecision);
       if (std::isfinite(solution.x1()) && validSolution(solution.x1())) {

@@ -60,7 +60,7 @@ Expression Parser::parseExpressionWithRightwardsArrow(const char * rightwardsArr
   m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Assignment);
   m_tokenizer.goToPosition(rightwardsArrowPosition + UTF8Decoder::CharSizeOfCodePoint(UCodePointRightwardsArrow));
   Expression rightHandSide = initializeFirstTokenAndParseUntilEnd();
-  if (m_nextToken.is(Token::EndOfStream)
+  if (m_nextToken.is(Token::Type::EndOfStream)
      && !rightHandSide.isUninitialized()
      && (rightHandSide.type() == ExpressionNode::Type::Symbol   // RightHandSide must be symbol or function.
         || (rightHandSide.type() == ExpressionNode::Type::Function
@@ -80,7 +80,7 @@ Expression Parser::parseExpressionWithRightwardsArrow(const char * rightwardsArr
     }
     // Parse leftHandSide
     m_nextToken = m_tokenizer.popToken();
-    Expression leftHandSide = parseUntil(Token::RightwardsArrow);
+    Expression leftHandSide = parseUntil(Token::Type::RightwardsArrow);
     if (m_status != Status::Error) {
       m_status = Status::Success;
       result = Store::Builder(leftHandSide, static_cast<SymbolAbstract&>(rightHandSide));
@@ -93,7 +93,7 @@ Expression Parser::parseExpressionWithRightwardsArrow(const char * rightwardsArr
 
 Expression Parser::initializeFirstTokenAndParseUntilEnd() {
   m_nextToken = m_tokenizer.popToken();
-  Expression result = parseUntil(Token::EndOfStream);
+  Expression result = parseUntil(Token::Type::EndOfStream);
   if (m_status == Status::Progress) {
     m_status = Status::Success;
     return result;
@@ -105,95 +105,95 @@ Expression Parser::initializeFirstTokenAndParseUntilEnd() {
 Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide) {
   typedef void (Parser::*TokenParser)(Expression & leftHandSide, Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
-    &Parser::parseUnexpected,           // Token::EndOfStream
-    &Parser::parseRightwardsArrow,      // Token::RightwardsArrow
-    &Parser::parseAssigmentEqual,       // Token::AssignmentEqual
-    &Parser::parseUnexpected,           // Token::RightSystemParenthesis
-    &Parser::parseUnexpected,           // Token::RightSystemBrace
-    &Parser::parseUnexpected,           // Token::RightBracket
-    &Parser::parseUnexpected,           // Token::RightParenthesis
-    &Parser::parseUnexpected,           // Token::RightBrace
-    &Parser::parseUnexpected,           // Token::Comma
-    &Parser::parseNorOperator,          // Token::Nor
-    &Parser::parseXorOperator,          // Token::Xor
-    &Parser::parseOrOperator,           // Token::Or
-    &Parser::parseNandOperator,         // Token::Nand
-    &Parser::parseAndOperator,          // Token::And
-    &Parser::parseLogicalOperatorNot,   // Token::Not
-    &Parser::parseComparisonOperator,   // Token::ComparisonOperator
-    &Parser::parseNorthEastArrow,       // Token::NorthEastArrow
-    &Parser::parseSouthEastArrow,       // Token::SouthEastArrow
-    &Parser::parsePlus,                 // Token::Plus
-    &Parser::parseMinus,                // Token::Minus
-    &Parser::parseTimes,                // Token::Times
-    &Parser::parseSlash,                // Token::Slash
-    &Parser::parseImplicitTimes,        // Token::ImplicitTimes
-    &Parser::parsePercent,              // Token::Percent
-    &Parser::parseCaret,                // Token::Caret
-    &Parser::parseBang,                 // Token::Bang
-    &Parser::parseCaretWithParenthesis, // Token::CaretWithParenthesis
-    &Parser::parseImplicitAdditionBetweenUnits, // Token::ImplicitAdditionBetweenUnits
-    &Parser::parseMatrix,               // Token::LeftBracket
-    &Parser::parseLeftParenthesis,      // Token::LeftParenthesis
-    &Parser::parseList,                 // Token::LeftBrace
-    &Parser::parseLeftSystemParenthesis,// Token::LeftSystemParenthesis
-    &Parser::parseLeftSystemBrace,// Token::LeftSystemBrace
-    &Parser::parseEmpty,                // Token::Empty
-    &Parser::parseConstant,             // Token::Constant
-    &Parser::parseNumber,               // Token::Number
-    &Parser::parseNumber,               // Token::BinaryNumber
-    &Parser::parseNumber,               // Token::HexadecimalNumber
-    &Parser::parseUnit,                 // Token::Unit
-    &Parser::parseReservedFunction,     // Token::ReservedFunction
-    &Parser::parseSpecialIdentifier,    // Token::SpecialIdentifier
-    &Parser::parseCustomIdentifier,     // Token::CustomIdentifier
-    &Parser::parseUnexpected            // Token::Undefined
+    &Parser::parseUnexpected,           // Token::Type::EndOfStream
+    &Parser::parseRightwardsArrow,      // Token::Type::RightwardsArrow
+    &Parser::parseAssigmentEqual,       // Token::Type::AssignmentEqual
+    &Parser::parseUnexpected,           // Token::Type::RightSystemParenthesis
+    &Parser::parseUnexpected,           // Token::Type::RightSystemBrace
+    &Parser::parseUnexpected,           // Token::Type::RightBracket
+    &Parser::parseUnexpected,           // Token::Type::RightParenthesis
+    &Parser::parseUnexpected,           // Token::Type::RightBrace
+    &Parser::parseUnexpected,           // Token::Type::Comma
+    &Parser::parseNorOperator,          // Token::Type::Nor
+    &Parser::parseXorOperator,          // Token::Type::Xor
+    &Parser::parseOrOperator,           // Token::Type::Or
+    &Parser::parseNandOperator,         // Token::Type::Nand
+    &Parser::parseAndOperator,          // Token::Type::And
+    &Parser::parseLogicalOperatorNot,   // Token::Type::Not
+    &Parser::parseComparisonOperator,   // Token::Type::ComparisonOperator
+    &Parser::parseNorthEastArrow,       // Token::Type::NorthEastArrow
+    &Parser::parseSouthEastArrow,       // Token::Type::SouthEastArrow
+    &Parser::parsePlus,                 // Token::Type::Plus
+    &Parser::parseMinus,                // Token::Type::Minus
+    &Parser::parseTimes,                // Token::Type::Times
+    &Parser::parseSlash,                // Token::Type::Slash
+    &Parser::parseImplicitTimes,        // Token::Type::ImplicitTimes
+    &Parser::parsePercent,              // Token::Type::Percent
+    &Parser::parseCaret,                // Token::Type::Caret
+    &Parser::parseBang,                 // Token::Type::Bang
+    &Parser::parseCaretWithParenthesis, // Token::Type::CaretWithParenthesis
+    &Parser::parseImplicitAdditionBetweenUnits, // Token::Type::ImplicitAdditionBetweenUnits
+    &Parser::parseMatrix,               // Token::Type::LeftBracket
+    &Parser::parseLeftParenthesis,      // Token::Type::LeftParenthesis
+    &Parser::parseList,                 // Token::Type::LeftBrace
+    &Parser::parseLeftSystemParenthesis,// Token::Type::LeftSystemParenthesis
+    &Parser::parseLeftSystemBrace,// Token::Type::LeftSystemBrace
+    &Parser::parseEmpty,                // Token::Type::Empty
+    &Parser::parseConstant,             // Token::Type::Constant
+    &Parser::parseNumber,               // Token::Type::Number
+    &Parser::parseNumber,               // Token::Type::BinaryNumber
+    &Parser::parseNumber,               // Token::Type::HexadecimalNumber
+    &Parser::parseUnit,                 // Token::Type::Unit
+    &Parser::parseReservedFunction,     // Token::Type::ReservedFunction
+    &Parser::parseSpecialIdentifier,    // Token::Type::SpecialIdentifier
+    &Parser::parseCustomIdentifier,     // Token::Type::CustomIdentifier
+    &Parser::parseUnexpected            // Token::Type::Undefined
   };
-  static_assert(tokenParsers[Token::EndOfStream] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::RightwardsArrow] == &Parser::parseRightwardsArrow, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::AssignmentEqual] == &Parser::parseAssigmentEqual, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::RightSystemParenthesis] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::RightBracket] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::RightParenthesis] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::RightBrace] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Comma] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Nor] == &Parser::parseNorOperator, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Xor] == &Parser::parseXorOperator, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Or] == &Parser::parseOrOperator, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Nand] == &Parser::parseNandOperator, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::And] == &Parser::parseAndOperator, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Not] == &Parser::parseLogicalOperatorNot, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::ComparisonOperator] == &Parser::parseComparisonOperator, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::NorthEastArrow] == &Parser::parseNorthEastArrow, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::SouthEastArrow] == &Parser::parseSouthEastArrow, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Plus] == &Parser::parsePlus, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Minus] == &Parser::parseMinus, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Times] == &Parser::parseTimes, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Slash] == &Parser::parseSlash, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::ImplicitTimes] == &Parser::parseImplicitTimes, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Percent] == &Parser::parsePercent, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Caret] == &Parser::parseCaret, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Bang] == &Parser::parseBang, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::CaretWithParenthesis] == &Parser::parseCaretWithParenthesis, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::ImplicitAdditionBetweenUnits] == &Parser::parseImplicitAdditionBetweenUnits, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::LeftBracket] == &Parser::parseMatrix, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::LeftParenthesis] == &Parser::parseLeftParenthesis, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::LeftBrace] == &Parser::parseList, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::LeftSystemParenthesis] == &Parser::parseLeftSystemParenthesis, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Empty] == &Parser::parseEmpty, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Constant] == &Parser::parseConstant, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Number] == &Parser::parseNumber, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::BinaryNumber] == &Parser::parseNumber, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::HexadecimalNumber] == &Parser::parseNumber, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Unit] == &Parser::parseUnit, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::ReservedFunction] == &Parser::parseReservedFunction, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::SpecialIdentifier] == &Parser::parseSpecialIdentifier, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::CustomIdentifier] == &Parser::parseCustomIdentifier, "Wrong order of TokenParsers");
-  static_assert(tokenParsers[Token::Undefined] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::EndOfStream)] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::RightwardsArrow)] == &Parser::parseRightwardsArrow, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::AssignmentEqual)] == &Parser::parseAssigmentEqual, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::RightSystemParenthesis)] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::RightBracket)] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::RightParenthesis)] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::RightBrace)] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Comma)] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Nor)] == &Parser::parseNorOperator, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Xor)] == &Parser::parseXorOperator, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Or)] == &Parser::parseOrOperator, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Nand)] == &Parser::parseNandOperator, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::And)] == &Parser::parseAndOperator, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Not)] == &Parser::parseLogicalOperatorNot, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::ComparisonOperator)] == &Parser::parseComparisonOperator, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::NorthEastArrow)] == &Parser::parseNorthEastArrow, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::SouthEastArrow)] == &Parser::parseSouthEastArrow, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Plus)] == &Parser::parsePlus, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Minus)] == &Parser::parseMinus, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Times)] == &Parser::parseTimes, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Slash)] == &Parser::parseSlash, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::ImplicitTimes)] == &Parser::parseImplicitTimes, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Percent)] == &Parser::parsePercent, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Caret)] == &Parser::parseCaret, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Bang)] == &Parser::parseBang, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::CaretWithParenthesis)] == &Parser::parseCaretWithParenthesis, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::ImplicitAdditionBetweenUnits)] == &Parser::parseImplicitAdditionBetweenUnits, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::LeftBracket)] == &Parser::parseMatrix, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::LeftParenthesis)] == &Parser::parseLeftParenthesis, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::LeftBrace)] == &Parser::parseList, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::LeftSystemParenthesis)] == &Parser::parseLeftSystemParenthesis, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Empty)] == &Parser::parseEmpty, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Constant)] == &Parser::parseConstant, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Number)] == &Parser::parseNumber, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::BinaryNumber)] == &Parser::parseNumber, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::HexadecimalNumber)] == &Parser::parseNumber, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Unit)] == &Parser::parseUnit, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::ReservedFunction)] == &Parser::parseReservedFunction, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::SpecialIdentifier)] == &Parser::parseSpecialIdentifier, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::CustomIdentifier)] == &Parser::parseCustomIdentifier, "Wrong order of TokenParsers");
+  static_assert(tokenParsers[static_cast<int>(Token::Type::Undefined)] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
 
   do {
     popToken();
-    (this->*(tokenParsers[m_currentToken.type()]))(leftHandSide, stoppingType);
+    (this->*(tokenParsers[static_cast<int>(m_currentToken.type())]))(leftHandSide, stoppingType);
   } while (m_status == Status::Progress && nextTokenHasPrecedenceOver(stoppingType));
   return leftHandSide;
 }
@@ -204,7 +204,7 @@ void Parser::popToken() {
     m_pendingImplicitOperator = false;
   } else {
     m_currentToken = m_nextToken;
-    if (m_currentToken.is(Token::EndOfStream)) {
+    if (m_currentToken.is(Token::Type::EndOfStream)) {
       /* Avoid reading out of buffer (calling popToken would read the character
        * after EndOfStream) */
       m_status = Status::Error; // Expression misses a rightHandSide
@@ -217,9 +217,9 @@ void Parser::popToken() {
 bool Parser::popTokenIfType(Token::Type type) {
   /* The method called with the Token::Types
    * (Left and Right) Braces, Bracket, Parenthesis and Comma.
-   * Never with Token::ImplicitTimes.
+   * Never with Token::Type::ImplicitTimes.
    * If this assumption is not satisfied anymore, change the following to handle ImplicitTimes. */
-  assert(type != Token::ImplicitTimes && !m_pendingImplicitOperator);
+  assert(type != Token::Type::ImplicitTimes && !m_pendingImplicitOperator);
   bool tokenTypesCoincide = m_nextToken.is(type);
   if (tokenTypesCoincide) {
     popToken();
@@ -246,28 +246,28 @@ void Parser::isThereImplicitOperator() {
   /* This function is called at the end of
    * parseNumber, parseSpecialIdentifier, parseReservedFunction, parseUnit,
    * parseFactorial, parseMatrix, parseLeftParenthesis, parseCustomIdentifier
-   * in order to check whether it should be followed by a Token::ImplicitTimes.
+   * in order to check whether it should be followed by a Token::Type::ImplicitTimes.
    * In that case, m_pendingImplicitOperator is set to true,
    * so that popToken, popTokenIfType, nextTokenHasPrecedenceOver can handle
    * implicit multiplication. */
   m_pendingImplicitOperator = (
-    m_nextToken.is(Token::Number) ||
-    m_nextToken.is(Token::Constant) ||
-    m_nextToken.is(Token::Unit) ||
-    m_nextToken.is(Token::ReservedFunction) ||
-    m_nextToken.is(Token::SpecialIdentifier) ||
-    m_nextToken.is(Token::CustomIdentifier) ||
-    m_nextToken.is(Token::LeftParenthesis) ||
-    m_nextToken.is(Token::LeftSystemParenthesis) ||
-    m_nextToken.is(Token::LeftBracket) ||
-    m_nextToken.is(Token::LeftBrace) ||
-    m_nextToken.is(Token::LeftSystemBrace) ||
-    m_nextToken.is(Token::ImplicitAdditionBetweenUnits)
+    m_nextToken.is(Token::Type::Number) ||
+    m_nextToken.is(Token::Type::Constant) ||
+    m_nextToken.is(Token::Type::Unit) ||
+    m_nextToken.is(Token::Type::ReservedFunction) ||
+    m_nextToken.is(Token::Type::SpecialIdentifier) ||
+    m_nextToken.is(Token::Type::CustomIdentifier) ||
+    m_nextToken.is(Token::Type::LeftParenthesis) ||
+    m_nextToken.is(Token::Type::LeftSystemParenthesis) ||
+    m_nextToken.is(Token::Type::LeftBracket) ||
+    m_nextToken.is(Token::Type::LeftBrace) ||
+    m_nextToken.is(Token::Type::LeftSystemBrace) ||
+    m_nextToken.is(Token::Type::ImplicitAdditionBetweenUnits)
   );
 }
 
 Token::Type Parser::implicitOperatorType() {
-  return m_parsingContext.parsingMethod() == ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits && m_currentToken.type() == Token::Unit ? Token::Plus : Token::ImplicitTimes;
+  return m_parsingContext.parsingMethod() == ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits && m_currentToken.type() == Token::Type::Unit ? Token::Type::Plus : Token::Type::ImplicitTimes;
 }
 
 void Parser::parseUnexpected(Expression & leftHandSide, Token::Type stoppingType) {
@@ -312,14 +312,14 @@ void Parser::parseMinus(Expression & leftHandSide, Token::Type stoppingType) {
 void Parser::privateParsePlusAndMinus(Expression & leftHandSide, bool plus, Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {
     // +2 = 2, -2 = -2
-    Expression rightHandSide = parseUntil(std::max(stoppingType, Token::Minus));
+    Expression rightHandSide = parseUntil(std::max(stoppingType, Token::Type::Minus));
     if (m_status == Status::Progress) {
       leftHandSide = plus ? rightHandSide : Opposite::Builder(rightHandSide);
     }
     return;
   }
   Expression rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Minus)) {
+  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus)) {
     if (rightHandSide.type() == ExpressionNode::Type::PercentSimple && rightHandSide.childAtIndex(0).type() != ExpressionNode::Type::PercentSimple) {
       /* The condition checks if the percent does not contain a percent because
        * "4+3%%" should be parsed as "4+((3/100)/100)" rather than "4↗0.03%" */
@@ -349,7 +349,7 @@ void Parser::parseSouthEastArrow(Expression & leftHandSide, Token::Type stopping
 
 void Parser::privateParseEastArrow(Expression & leftHandSide, bool north, Token::Type stoppingType) {
   Expression rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Minus)) {
+  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Minus)) {
     if (rightHandSide.type() == ExpressionNode::Type::PercentSimple && rightHandSide.childAtIndex(0).type() != ExpressionNode::Type::PercentSimple) {
       leftHandSide = PercentAddition::Builder(leftHandSide, north ? rightHandSide.childAtIndex(0) : Opposite::Builder(rightHandSide.childAtIndex(0)));
       return;
@@ -360,11 +360,11 @@ void Parser::privateParseEastArrow(Expression & leftHandSide, bool north, Token:
 }
 
 void Parser::parseTimes(Expression & leftHandSide, Token::Type stoppingType) {
-  privateParseTimes(leftHandSide, Token::Times);
+  privateParseTimes(leftHandSide, Token::Type::Times);
 }
 
 void Parser::parseImplicitTimes(Expression & leftHandSide, Token::Type stoppingType) {
-  privateParseTimes(leftHandSide, Token::ImplicitTimes);
+  privateParseTimes(leftHandSide, Token::Type::ImplicitTimes);
 }
 
 void Parser::parseImplicitAdditionBetweenUnits(Expression & leftHandSide, Token::Type stoppingType) {
@@ -383,7 +383,7 @@ void Parser::parseImplicitAdditionBetweenUnits(Expression & leftHandSide, Token:
 
 void Parser::parseSlash(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Slash)) {
+  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Slash)) {
     leftHandSide = Division::Builder(leftHandSide, rightHandSide);
   }
 }
@@ -402,7 +402,7 @@ void Parser::privateParseTimes(Expression & leftHandSide, Token::Type stoppingTy
 
 void Parser::parseCaret(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::ImplicitTimes)) {
+  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::ImplicitTimes)) {
     leftHandSide = Power::Builder(leftHandSide, rightHandSide);
   }
 }
@@ -438,7 +438,7 @@ void Parser::parseComparisonOperator(Expression & leftHandSide, Token::Type stop
   ComparisonNode::OperatorType operatorType;
   assert(ComparisonNode::IsComparisonOperatorString(m_currentToken.text(), m_currentToken.length(), nullptr));
   ComparisonNode::IsComparisonOperatorString(m_currentToken.text(), m_currentToken.length(), &operatorType);
-  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::ComparisonOperator)) {
+  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::ComparisonOperator)) {
     if (leftHandSide.type() == ExpressionNode::Type::Comparison) {
       Comparison leftComparison = static_cast<Comparison&>(leftHandSide);
       leftHandSide = leftComparison.addComparison(operatorType, rightHandSide);
@@ -454,7 +454,7 @@ void Parser::parseAssigmentEqual(Expression & leftHandSide, Token::Type stopping
     return;
   }
   Expression rightHandSide;
-  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::AssignmentEqual)) {
+  if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::AssignmentEqual)) {
     leftHandSide = Comparison::Builder(leftHandSide, ComparisonNode::OperatorType::Equal, rightHandSide);
   }
 }
@@ -486,7 +486,7 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
     return;
   }
 
-  if (!m_nextToken.is(Token::EndOfStream)
+  if (!m_nextToken.is(Token::Type::EndOfStream)
     || rightHandSide.isUninitialized()
     || !rightHandSide.isCombinationOfUnits()
     || !leftHandSide.hasUnit()) {
@@ -505,7 +505,7 @@ void Parser::parseLogicalOperatorNot(Expression & leftHandSide, Token::Type stop
     return;
   }
   // Parse until Not so that not A and B = (not A) and B
-  Expression rightHandSide = parseUntil(std::max(stoppingType, Token::Not));
+  Expression rightHandSide = parseUntil(std::max(stoppingType, Token::Type::Not));
   if (m_status != Status::Progress) {
     return;
   }
@@ -525,12 +525,12 @@ void Parser::parseBinaryLogicalOperator(BinaryLogicalOperatorNode::OperatorType 
    * Or, Nor and Xor have same precedence */
   Token::Type newStoppingType;
   if (operatorType == BinaryLogicalOperatorNode::OperatorType::And || operatorType == BinaryLogicalOperatorNode::OperatorType::Nand) {
-    static_assert(Token::Nand < Token::And, "Wrong And/Nand precedence.");
-    newStoppingType = Token::And;
+    static_assert(Token::Type::Nand < Token::Type::And, "Wrong And/Nand precedence.");
+    newStoppingType = Token::Type::And;
   } else {
     assert(operatorType == BinaryLogicalOperatorNode::OperatorType::Or || operatorType == BinaryLogicalOperatorNode::OperatorType::Nor || operatorType == BinaryLogicalOperatorNode::OperatorType::Xor);
-    static_assert(Token::Nor < Token::Or && Token::Xor < Token::Or, "Wrong Or/Nor/Xor precedence.");
-    newStoppingType = Token::Or;
+    static_assert(Token::Type::Nor < Token::Type::Or && Token::Type::Xor < Token::Type::Or, "Wrong Or/Nor/Xor precedence.");
+    newStoppingType = Token::Type::Or;
   }
   Expression rightHandSide = parseUntil(std::max(stoppingType, newStoppingType));
   if (m_status != Status::Progress) {
@@ -634,11 +634,11 @@ void Parser::parseReservedFunction(Expression & leftHandSide, Token::Type stoppi
 
 void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expression::FunctionHelper * const * functionHelper) {
   AliasesList aliasesList = (**functionHelper).aliasesList();
-  if (aliasesList.contains("log") && popTokenIfType(Token::LeftSystemBrace)) {
+  if (aliasesList.contains("log") && popTokenIfType(Token::Type::LeftSystemBrace)) {
     // Special case for the log function (e.g. "log\x14{2\x14}(8)")
-    Expression base = parseUntil(Token::RightSystemBrace);
+    Expression base = parseUntil(Token::Type::RightSystemBrace);
     if (m_status != Status::Progress) {
-    } else if (!popTokenIfType(Token::RightSystemBrace)) {
+    } else if (!popTokenIfType(Token::Type::RightSystemBrace)) {
       m_status = Status::Error; // Right brace missing.
     } else {
       Expression parameter = parseFunctionParameters();
@@ -656,13 +656,13 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
   Token::Type endDelimiterOfPower;
   bool hasCaret = false;
   bool squareFunction = false;
-  if (popTokenIfType(Token::CaretWithParenthesis)) {
+  if (popTokenIfType(Token::Type::CaretWithParenthesis)) {
     hasCaret = true;
-    endDelimiterOfPower = Token::RightSystemParenthesis;
-  } else if (popTokenIfType(Token::Caret)) {
+    endDelimiterOfPower = Token::Type::RightSystemParenthesis;
+  } else if (popTokenIfType(Token::Type::Caret)) {
     hasCaret = true;
-    endDelimiterOfPower = Token::RightParenthesis;
-    if (!popTokenIfType(Token::LeftParenthesis)) {
+    endDelimiterOfPower = Token::Type::RightParenthesis;
+    if (!popTokenIfType(Token::Type::LeftParenthesis)) {
       m_status = Status::Error; // Exponent should be parenthesed
       return;
     }
@@ -751,7 +751,7 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
 }
 
 void Parser::parseSequence(Expression & leftHandSide, const char * name, Token::Type rightDelimiter) {
-  assert(m_nextToken.type() == ((rightDelimiter == Token::RightSystemBrace) ? Token::LeftSystemBrace : Token::LeftParenthesis));
+  assert(m_nextToken.type() == ((rightDelimiter == Token::Type::RightSystemBrace) ? Token::Type::LeftSystemBrace : Token::Type::LeftParenthesis));
   popToken(); // Pop the left delimiter
   Expression rank = parseUntil(rightDelimiter);
   if (m_status != Status::Progress) {
@@ -800,23 +800,23 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
   }
 
   if (idType == Context::SymbolAbstractType::Sequence
-        || (idType == Context::SymbolAbstractType::None && m_nextToken.type() == Token::LeftSystemBrace)) {
+        || (idType == Context::SymbolAbstractType::None && m_nextToken.type() == Token::Type::LeftSystemBrace)) {
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or has an unknown type and is followed
      * by braces, it's a sequence call. */
-    if (m_nextToken.type() != Token::LeftSystemBrace && m_nextToken.type() != Token::LeftParenthesis) {
+    if (m_nextToken.type() != Token::Type::LeftSystemBrace && m_nextToken.type() != Token::Type::LeftParenthesis) {
       /* If the identifier is a sequence but not followed by braces, it can
        * also be followed by parenthesis. If not, it's a syntax error. */
       m_status = Status::Error;
       return;
     }
-    parseSequence(leftHandSide, name,  m_nextToken.type() == Token::LeftSystemBrace ? Token::RightSystemBrace : Token::RightParenthesis);
+    parseSequence(leftHandSide, name,  m_nextToken.type() == Token::Type::LeftSystemBrace ? Token::Type::RightSystemBrace : Token::Type::RightParenthesis);
     return;
   }
 
   // If the identifier is not followed by parentheses, it is a symbol
-  if (!popTokenIfType(Token::LeftParenthesis)) {
-    if (!popTokenIfType(Token::LeftSystemParenthesis)) {
+  if (!popTokenIfType(Token::Type::LeftParenthesis)) {
+    if (!popTokenIfType(Token::Type::LeftSystemParenthesis)) {
       leftHandSide = Symbol::Builder(name, length);
       return;
     }
@@ -859,7 +859,7 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
   if (m_parsingContext.parsingMethod() == ParsingContext::ParsingMethod::Assignment
       && result.type() == ExpressionNode::Type::Function
       && parameter.type() == ExpressionNode::Type::Symbol
-      && m_nextToken.type() == Token::AssignmentEqual) {
+      && m_nextToken.type() == Token::Type::AssignmentEqual) {
     /* Stop parsing for assignment to ensure that, frow now on xy is
      * understood as x*y.
      * For example, "func(x) = xy" -> left of the =, we parse for assignment so
@@ -888,8 +888,8 @@ Expression Parser::parseFunctionParameters() {
   bool poppedParenthesisIsSystem = false;
   /* The function parentheses can be system parentheses, if serialized using
    * SerializationHelper::Prefix.*/
-  if (!popTokenIfType(Token::LeftParenthesis)) {
-    if (!popTokenIfType(Token::LeftSystemParenthesis)) {
+  if (!popTokenIfType(Token::Type::LeftParenthesis)) {
+    if (!popTokenIfType(Token::Type::LeftSystemParenthesis)) {
       m_status = Status::Error; // Left parenthesis missing.
       return Expression();
     }
@@ -918,7 +918,7 @@ void Parser::parseMatrix(Expression & leftHandSide, Token::Type stoppingType) {
   Matrix matrix = Matrix::Builder();
   int numberOfRows = 0;
   int numberOfColumns = 0;
-  while (!popTokenIfType(Token::RightBracket)) {
+  while (!popTokenIfType(Token::Type::RightBracket)) {
     Expression row = parseVector();
     if (m_status != Status::Progress) {
       return;
@@ -940,7 +940,7 @@ void Parser::parseMatrix(Expression & leftHandSide, Token::Type stoppingType) {
 }
 
 Expression Parser::parseVector() {
-  if (!popTokenIfType(Token::LeftBracket)) {
+  if (!popTokenIfType(Token::Type::LeftBracket)) {
     m_status = Status::Error; // Left bracket missing.
     return Expression();
   }
@@ -949,7 +949,7 @@ Expression Parser::parseVector() {
     // There has been an error during the parsing of the comma separated list
     return Expression();
   }
-  if (!popTokenIfType(Token::RightBracket)) {
+  if (!popTokenIfType(Token::Type::RightBracket)) {
     m_status = Status::Error; // Right bracket missing.
     return Expression();
   }
@@ -960,13 +960,13 @@ Expression Parser::parseCommaSeparatedList() {
   List commaSeparatedList = List::Builder();
   int length = 0;
   do {
-    Expression item = parseUntil(Token::Comma);
+    Expression item = parseUntil(Token::Type::Comma);
     if (m_status != Status::Progress) {
       return Expression();
     }
     commaSeparatedList.addChildAtIndexInPlace(item, length, length);
     length++;
-  } while (popTokenIfType(Token::Comma));
+  } while (popTokenIfType(Token::Type::Comma));
   return std::move(commaSeparatedList);
 }
 
@@ -996,13 +996,13 @@ void Parser::parseList(Expression & leftHandSide, Token::Type stoppingType) {
     return;
   }
   Expression result;
-  if (!popTokenIfType(Token::RightBrace)) {
+  if (!popTokenIfType(Token::Type::RightBrace)) {
     result = parseCommaSeparatedList();
     if (m_status != Status::Progress) {
       // There has been an error during the parsing of the comma separated list
       return;
     }
-    if (!popTokenIfType(Token::RightBrace)) {
+    if (!popTokenIfType(Token::Type::RightBrace)) {
       m_status = Status::Error; // Right brace missing.
       return;
     }
@@ -1039,7 +1039,7 @@ bool Parser::generateMixedFractionIfNeeded(Expression & leftHandSide) {
       // The next token is either a number, a system parenthesis or empty
       && (m_nextToken.is(Token::Type::LeftSystemParenthesis) || m_nextToken.is(Token::Type::Number) || m_nextToken.is(Token::Type::Empty))) {
     m_waitingSlashForMixedFraction = true;
-    Expression rightHandSide = parseUntil(Token::LeftBrace);
+    Expression rightHandSide = parseUntil(Token::Type::LeftBrace);
     m_waitingSlashForMixedFraction = false;
     if (!rightHandSide.isUninitialized()
         && rightHandSide.type() == ExpressionNode::Type::Division

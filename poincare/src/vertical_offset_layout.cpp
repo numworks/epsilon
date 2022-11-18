@@ -112,12 +112,11 @@ void VerticalOffsetLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
     Layout parentRef(parent());
     LayoutNode * base = baseLayout();
     if (indiceLayout()->isEmpty()) {
-      int indexInParent = parentRef.node()->indexOfChild(this);
       /* Case: Empty indice. Delete the layout. If the base was empty, it will
        * be deleted too in the HorizontalLayout::didRemoveChildAtIndex callback. */
       cursor->setLayoutNode(base);
       cursor->setPosition(LayoutCursor::Position::Right);
-      parentRef.removeChildAtIndex(indexInParent, cursor);
+      parentRef.removeChild(this, cursor);
       // WARNING: do not call "this" afterwards
       return;
     }
@@ -228,14 +227,13 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * si
   }
   HorizontalLayout h = HorizontalLayout::Builder();
   int n = 0;
-  for (int i = thisIndex - (cursor->position() == LayoutCursor::Position::Left); i > leftParenthesisIndex; i--) {
+  int i = thisIndex - (cursor->position() == LayoutCursor::Position::Left);
+  while (i > leftParenthesisIndex) {
     Layout child = parentRef.childAtIndex(i);
-    int removedChildren = parentRef.removeChild(child, nullptr, true);
-    (void)removedChildren;
-    // Assert only one child has been removed
-    assert(removedChildren == 1);
+    i -= 1 + parentRef.removeChild(child, nullptr, true);
     h.addChildAtIndex(child, 0, n++, nullptr);
   }
+  assert(n == 0 || i == leftParenthesisIndex);
   if (n == 0 || h.childAtIndex(0).type() == Type::VerticalOffsetLayout) {
     EmptyLayoutNode::Visibility visibility = n == 0 ? EmptyLayoutNode::Visibility::Never : EmptyLayoutNode::Visibility::On;
     EmptyLayout e = EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, visibility);

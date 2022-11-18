@@ -166,7 +166,7 @@ void Layout::replaceWithJuxtapositionOf(Layout leftChild, Layout rightChild, Lay
       cursor->setPosition(LayoutCursor::Position::Left);
     }
   }
-  p.removeChild(*this, cursor->layout() == *this ? cursor : nullptr, true);
+  idxInParent -= p.removeChild(*this, cursor->layout() == *this ? cursor : nullptr, true);
   castedParent.addOrMergeChildAtIndex(rightChild, idxInParent, true);
   castedParent.addOrMergeChildAtIndex(leftChild, idxInParent, true, putCursorInTheMiddle ? cursor : nullptr);
 }
@@ -250,9 +250,9 @@ void Layout::addSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor
 }
 
 int Layout::removeChild(Layout l, LayoutCursor * cursor, bool force) {
-  int previousChildrenNumber = numberOfChildren();
-  if (!node()->willRemoveChild(l.node(), cursor, force)) {
-    return previousChildrenNumber - numberOfChildren();
+  int childrenRemovedLeftOfIndex = node()->willRemoveChild(l.node(), cursor, force);
+  if (childrenRemovedLeftOfIndex != -1) {
+    return childrenRemovedLeftOfIndex;
   }
   assert(hasChild(l));
   int index = indexOfChild(l);
@@ -273,8 +273,7 @@ int Layout::removeChild(Layout l, LayoutCursor * cursor, bool force) {
       }
     }
   }
-  node()->didRemoveChildAtIndex(index, cursor, force);
-  return previousChildrenNumber - numberOfChildren();
+  return node()->didRemoveChildAtIndex(index, cursor, force);
 }
 
 int Layout::removeChildAtIndex(int index, LayoutCursor * cursor, bool force) {
@@ -319,7 +318,7 @@ void Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChi
        * must have a left sibling, force the collapsing of this needed left
        * sibling. */
       forceCollapse = (direction == HorizontalDirection::Left && sibling.mustHaveLeftSibling()) ||(direction == HorizontalDirection::Right && sibling.mustHaveRightSibling());
-      p.removeChildAtIndex(siblingIndex, nullptr);
+      siblingIndex -= p.removeChild(sibling, nullptr);
       int newIndex = direction == HorizontalDirection::Right ? absorbingChild.numberOfChildren() : 0;
       horizontalAbsorbingChild.addOrMergeChildAtIndex(sibling, newIndex, true);
       // removeChildAtIndex may have removed more than one child.

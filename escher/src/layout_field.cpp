@@ -237,13 +237,11 @@ void LayoutField::ContentView::deleteSelection() {
     // Remove the selected children or replace it with an empty layout.
     if (selectionParent.type() == LayoutNode::Type::HorizontalLayout) {
       int firstIndex = selectionParent.indexOfChild(m_selectionStart);
-      int lastIndex = m_selectionStart == m_selectionEnd ? firstIndex : selectionParent.indexOfChild(m_selectionEnd);
-      for (int i = lastIndex; i >= firstIndex; i--) {
-        int deletedChildren = static_cast<HorizontalLayout&>(selectionParent).removeChildAtIndex(i, &m_cursor, false);
-        (void)deletedChildren;
-        // Assert only one child has been removed
-        assert(deletedChildren == 1);
+      int i = m_selectionStart == m_selectionEnd ? firstIndex : selectionParent.indexOfChild(m_selectionEnd);
+      while (i >= firstIndex) {
+        i -= 1 + static_cast<HorizontalLayout&>(selectionParent).removeChildAtIndex(i, &m_cursor, false);
       }
+      assert(i == firstIndex - 1);
     } else {
       // Only one child can be selected
       assert(m_selectionStart == m_selectionEnd);

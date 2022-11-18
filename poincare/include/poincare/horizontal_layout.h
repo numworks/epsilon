@@ -57,8 +57,8 @@ protected:
 private:
   bool willAddChildAtIndex(LayoutNode * l, int * index, int * currentNumberOfChildren, LayoutCursor * cursor) override;
   bool willAddSibling(LayoutCursor * cursor, Layout * sibling, bool moveCursor) override;
-  bool willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) override;
-  void didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
+  int willRemoveChild(LayoutNode * l, LayoutCursor * cursor, bool force) override;
+  int didRemoveChildAtIndex(int index, LayoutCursor * cursor, bool force) override;
   bool willReplaceChild(LayoutNode * oldChild, LayoutNode * newChild, LayoutCursor * cursor, bool force) override;
   void render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = KDColorRed) override;
   // See comment on NAryExpressionNode

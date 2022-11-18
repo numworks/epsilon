@@ -6,7 +6,7 @@ HANDY_TARGETS_EXTENSIONS += zip html
 htmlpack_targets = .\
 
 define rule_htmlpack
-$$(BUILD_DIR)/htmlpack$(1)zip: $$(addprefix $$(BUILD_DIR)/ion/src/simulator/web/,calculator.html calculator.css) $$(BUILD_DIR)/epsilon$(1)js ion/src/simulator/web/calculator.js ion/src/simulator/assets/background.webp $(BUILD_DIR)ion/src/simulator/assets/background.jpg $(BUILD_DIR)ion/src/simulator/assets/background-no-shadow.webp
+$$(BUILD_DIR)/htmlpack$(1)zip: $$(addprefix $$(BUILD_DIR)/ion/src/simulator/web/,calculator.html calculator.css) $$(BUILD_DIR)/epsilon$(1)js ion/src/simulator/web/calculator.js ion/src/simulator/assets/background.webp $(BUILD_DIR)ion/src/simulator/assets/background.jpg $(BUILD_DIR)ion/src/simulator/assets/background_no_shadow.webp
 endef
 
 $(foreach target,$(htmlpack_targets),$(eval $(call rule_htmlpack,$(target))))

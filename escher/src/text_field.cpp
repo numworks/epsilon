@@ -569,6 +569,8 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
   if (!didHandleEvent) {
     didHandleEvent = privateHandleEvent(event);
   }
+
+  // Here, text only changed if something was deleted
   return m_delegate->textFieldDidHandleEvent(this, didHandleEvent, strlen(text()) != previousTextLength);
 }
 
@@ -619,8 +621,6 @@ bool AbstractTextField::privateHandleSelectEvent(Ion::Events::Event event) {
 }
 
 bool AbstractTextField::handleEventWithText(const char * eventText, bool indentation, bool forceCursorRightOfText) {
-  size_t previousTextLength = strlen(text());
-
   if (!isEditing()) {
     reinitDraftTextBuffer();
     setEditing(true);
@@ -664,7 +664,7 @@ bool AbstractTextField::handleEventWithText(const char * eventText, bool indenta
       setCursorLocation(nextCursorLocation);
     }
   }
-  return m_delegate->textFieldDidHandleEvent(this, true, strlen(text()) != previousTextLength);
+  return m_delegate->textFieldDidHandleEvent(this, true, true);
 }
 
 void AbstractTextField::removeWholeText() {

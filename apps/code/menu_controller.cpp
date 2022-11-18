@@ -297,7 +297,7 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField * textField, co
   return false;
 }
 
-bool MenuController::textFieldDidHandleEvent(AbstractTextField * textField, bool returnValue, bool textSizeDidChange) {
+bool MenuController::textFieldDidHandleEvent(AbstractTextField * textField, bool returnValue, bool textDidChange) {
   int scriptExtensionLength = 1 + strlen(ScriptStore::k_scriptExtension);
   if (textField->isEditing()) {
     const char * maxPointerLocation = textField->text() + textField->draftTextLength() - scriptExtensionLength;

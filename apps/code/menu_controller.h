@@ -57,7 +57,7 @@ public:
   bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override {
     return privateTextFieldDidAbortEditing(textField, true);
   }
-  bool textFieldDidHandleEvent(Escher::AbstractTextField * textField, bool returnValue, bool textSizeDidChange) override;
+  bool textFieldDidHandleEvent(Escher::AbstractTextField * textField, bool returnValue, bool textDidChange) override;
 
   /* ButtonRowDelegate */
   int numberOfButtons(Escher::ButtonRowController::Position position) const override { return 1; }

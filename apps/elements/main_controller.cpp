@@ -141,8 +141,8 @@ bool MainController::textFieldDidAbortEditing(Escher::AbstractTextField * textFi
   return false;
 }
 
-bool MainController::textFieldDidHandleEvent(Escher::AbstractTextField * textField, bool returnValue, bool textSizeDidChange) {
-  if (textSizeDidChange) {
+bool MainController::textFieldDidHandleEvent(Escher::AbstractTextField * textField, bool returnValue, bool textDidChange) {
+  if (textDidChange) {
     if (textField->isEditing()) {
       if (textField->draftTextLength() == 0) {
         textField->setEditing(false);

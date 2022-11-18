@@ -20,7 +20,7 @@ public:
   bool textFieldDidAbortEditing(AbstractTextField * textField) override;
   bool textFieldDidHandleEvent(AbstractTextField * textField,
                                bool returnValue,
-                               bool textSizeDidChange) override;
+                               bool textDidChange) override;
   void textFieldDidStartEditing(AbstractTextField * textField) override;
 
 private:

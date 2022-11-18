@@ -51,7 +51,6 @@ body.fullscreen .col-calculator {
 .actions {
   position: relative;
   margin-left: 20px; /* Center the buttons - compensate the 10px margin below */
-  margin-top: -5vh;
 }
 
 a.action {

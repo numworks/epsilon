@@ -31,8 +31,8 @@ ion_src += $(addprefix ion/src/simulator/shared/, \
   window.cpp \
 )
 
-ion_simulator_assets_paths = $(addprefix ion/src/simulator/assets/,background.webp horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png)
-$(addprefix $(BUILD_DIR),$(addprefix ion/src/simulator/assets/,background.jpg background_no_shadow.webp)): ion/src/simulator/assets/background.webp
+ion_simulator_assets_paths = $(addprefix ion/src/simulator/assets/,background_with_shadow.webp horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png)
+$(addprefix $(BUILD_DIR),$(addprefix ion/src/simulator/assets/,background.jpg background_no_shadow.webp)): ion/src/simulator/assets/background_with_shadow.webp
 	$(call rule_label,CONVERT)
 	$(Q) mkdir -p $(dir $@)
 	$(Q) convert -crop 1005x1977+93+11 -resize 1160x2220 $< $@

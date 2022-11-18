@@ -32,11 +32,11 @@ void elementaryTreeManipulation() {
   print();
 
   std::cout << "\n---------------- Create 1-2/3 ----------------" << std::endl;
-  Node subtraction = Node::Push<Subtraction>();
-  Node::Push<IntegerShort>(1);
-  Node::Push<Division>();
-  Node::Push<IntegerShort>(2);
-  Node::Push<IntegerShort>(3);
+  Node subtraction = Node::Push<BlockType::Subtraction>();
+  Node::Push<BlockType::IntegerShort>(1);
+  Node::Push<BlockType::Division>();
+  Node::Push<BlockType::IntegerShort>(2);
+  Node::Push<BlockType::IntegerShort>(3);
   print();
 
   std::cout << "\n---------------- Projection to internal nodes 1-2/3 ----------------" << std::endl;

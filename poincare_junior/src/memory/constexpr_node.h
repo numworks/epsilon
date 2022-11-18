@@ -1,78 +1,76 @@
-#ifndef POINCARE_MEMORY_CONSTEXPR_NODE_H
-#define POINCARE_MEMORY_CONSTEXPR_NODE_H
+#ifndef POINCARE_MEMORY_TREE_CONSTRUCTOR_H
+#define POINCARE_MEMORY_TREE_CONSTRUCTOR_H
 
+#include "node_constructor.h"
 #include "node.h"
-#include <poincare_junior/src/expression/expressions.h>
-#include "type_block.h"
 
 namespace Poincare {
 
 #warning Ensure that we can't use it in a non-constexpr mode
 // TODO Use consteval? We should ensure one way or another that the number of specialized class is limited and used for constexpr methods only. Meaning that no code should be emited at runtime...
 
+
 template <unsigned N>
 class Tree {
 public:
   constexpr Tree() {}
-  constexpr Block * blockAtIndex(size_t i) { return &m_blocks[i]; }
+  constexpr Block & operator[] (size_t n) { return m_blocks[n]; }
   constexpr operator Node() const { return Node(const_cast<TypeBlock *>(m_blocks)); }
 private:
   // Using this instead of a Block[N] simplifies up casting in constexprs
   TypeBlock m_blocks[N];
 };
 
-typedef bool (*BlockCreator)(Block *, size_t, uint8_t);
+template<unsigned ...Len> static constexpr auto Add(const Tree<Len> (&...children)) { return MakeTree<BlockType::Addition>(children...); }
 
-template<unsigned NumberOfBlocksInNode, unsigned ...Len>
-constexpr static auto MakeTree(BlockCreator blockCreator, const Tree<Len> (&...nodes)) {
+template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Div(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Division>(child1, child2); }
+
+template<unsigned ...Len> static constexpr auto Mult(const Tree<Len> (&...children)) { return MakeTree<BlockType::Multiplication>(children...); }
+
+template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Pow(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Power>(child1, child2); }
+
+template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Sub(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Subtraction>(child1, child2); }
+
+template<BlockType type, unsigned ...Len>
+constexpr static auto MakeTree(const Tree<Len> (&...nodes)) {
   // Compute the total length of the children
   constexpr unsigned k_numberOfChildren = sizeof...(Len);
   constexpr unsigned k_numberOfChildrenBlocks = (... + Len);
+  constexpr size_t numberOfBlocksInNode = TypeBlock::NumberOfMetaBlocks(type);
 
-  Tree<k_numberOfChildrenBlocks + NumberOfBlocksInNode> tree;
-  size_t i = 0;
-  while (!blockCreator(tree.blockAtIndex(i), i, k_numberOfChildren)) {
-    i++; // TODO factorize
-  }
+  Tree<k_numberOfChildrenBlocks + numberOfBlocksInNode> tree;
+  CreateNode<type>(tree, k_numberOfChildren);
 
-  size_t blockIndex = NumberOfBlocksInNode;
+  size_t blockIndex = numberOfBlocksInNode;
   for (Node node : {static_cast<Node>(nodes)...}) {
     // We can't use node.copyTreeTo(tree.blockAtIndex(blockIndex++)) because memcpy isn't constexpr
     // TODO: use constexpr version of memcpy in copyTreeTo?
     for (size_t i = 0; i < node.treeSize(); i++) {
-      *(tree.blockAtIndex(blockIndex++)) = *(node.block() + i);
+      tree[blockIndex++] = *(node.block() + i);
     }
   }
   return tree;
 }
 
-template<unsigned ...Len> static constexpr auto Add(const Tree<Len> (&...children)) { return MakeTree<Addition::k_numberOfBlocksInNode>(Addition::CreateBlockAtIndex, children...); }
-
-template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Div(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<Division::k_numberOfBlocksInNode>([](Block * b, size_t i, uint8_t nb) { return Division::CreateBlockAtIndex(b, i); }, child1, child2); }
-
-template<unsigned ...Len> static constexpr auto Mult(const Tree<Len> (&...children)) { return MakeTree<Multiplication::k_numberOfBlocksInNode>(Multiplication::CreateBlockAtIndex, children...); }
-
-template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Pow(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<Power::k_numberOfBlocksInNode>([](Block * b, size_t i, uint8_t nb) { return Power::CreateBlockAtIndex(b, i); }, child1, child2); }
-
-template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Sub(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<Subtraction::k_numberOfBlocksInNode>([](Block * b, size_t i, uint8_t nb) { return Subtraction::CreateBlockAtIndex(b, i); }, child1, child2); }
-
-static constexpr Tree<Constant::k_numberOfBlocksInNode> operator "" _n(char16_t name) {
-  Tree<Constant::k_numberOfBlocksInNode> result;
+template <BlockType blockType, unsigned N, typename... Types>
+constexpr static void CreateNode(Tree<N> tree, Types... args) {
   size_t i = 0;
-  while (!Constant::CreateBlockAtIndex(result.blockAtIndex(i), i, name)) {
-    i++; // TODO factorize
+  while (!NodeConstructor::CreateBlockAtIndexForType<blockType>(&tree[i], i, args...)) {
+    i++;
   }
-  return result;
 }
 
-static constexpr Tree<3> operator "" _n(unsigned long long value) {
+constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> operator "" _n(char16_t name) {
+  Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> tree;
+  CreateNode<BlockType::Constant>(tree, name);
+  return tree;
+}
+
+constexpr Tree<3> operator "" _n(unsigned long long value) {
   assert(value != 0 && value != -1 && value != 1 && value != 2); // TODO: make this robust
   assert(value < 128); // TODO: handle negative small numbers?
   Tree<3> tree;
-  size_t i = 0;
-  while (!IntegerShort::CreateBlockAtIndex(tree.blockAtIndex(i), i, value)) {
-    i++; // TODO factorize
-  }
+  CreateNode<BlockType::IntegerShort>(tree, static_cast<int8_t>(value));
   return tree;
 }
 

@@ -8,7 +8,7 @@ TypeBlock * Multiplication::DistributeOverAddition(TypeBlock * block) {
   for (NodeIterator::IndexedNode indexedNode : NodeIterator(Node(block)).forwardEditableChildren()) {
     if (indexedNode.m_node.block()->type() == BlockType::Addition) {
       // Create new addition that will be filled in the following loop
-      EditionReference add = EditionReference(Node(Node::Push<Addition>(indexedNode.m_node.numberOfChildren())));
+      EditionReference add = EditionReference(Node(Node::Push<BlockType::Addition>(indexedNode.m_node.numberOfChildren())));
       for (NodeIterator::IndexedNode indexedAdditionChild : NodeIterator(indexedNode.m_node).forwardEditableChildren()) {
         // Copy a multiplication
         EditionReference multCopy = mult.clone();

@@ -1,5 +1,5 @@
 #include <poincare_junior/include/expression.h>
-#include <poincare_junior/src/expression/expressions.h>
+#include <poincare_junior/src/expression/expression.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 
 namespace Poincare {
@@ -8,13 +8,13 @@ namespace Poincare {
 Expression Expression::Parse(const char * textInput) {
   // textInput == (1-2)/3/4
   return Expression([](const char * text){
-      Node::Push<Division>();
-      Node::Push<Division>();
-      Node::Push<Subtraction>();
-      Node::Push<IntegerShort>(1);
-      Node::Push<IntegerShort>(2);
-      Node::Push<IntegerShort>(3);
-      Node::Push<IntegerShort>(4);
+      Node::Push<BlockType::Division>();
+      Node::Push<BlockType::Division>();
+      Node::Push<BlockType::Subtraction>();
+      Node::Push<BlockType::IntegerShort>(1);
+      Node::Push<BlockType::IntegerShort>(2);
+      Node::Push<BlockType::IntegerShort>(3);
+      Node::Push<BlockType::IntegerShort>(4);
     }, textInput);
 }
 

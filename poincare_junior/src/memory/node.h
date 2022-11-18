@@ -1,7 +1,7 @@
 #ifndef POINCARE_MEMORY_NODE_H
 #define POINCARE_MEMORY_NODE_H
 
-#include <poincare_junior/src/expression/expressions.h>
+#include "type_block.h"
 
 namespace Poincare {
 
@@ -15,7 +15,7 @@ namespace Poincare {
 
 class Node {
 public:
-  template <typename T, typename... Types>
+  template <BlockType blockType, typename... Types>
   static Node Push(Types... args);
 
   constexpr Node(TypeBlock * block = nullptr) : m_block(block) {}
@@ -71,39 +71,31 @@ public:
   bool hasSibling(const Node e) const;
 
   constexpr size_t nodeSize(bool head = true) const {
-    // TODO: generate this switch using a C Macro
-    switch (type()) {
-      case BlockType::IntegerShort:
-        return IntegerShort::k_numberOfBlocksInNode;
+    BlockType t = type();
+    size_t numberOfMetaBlocks = TypeBlock::NumberOfMetaBlocks(t);
+    switch (t) {
       case BlockType::IntegerPosBig:
       case BlockType::IntegerNegBig:
       {
-        return IntegerBig::k_numberOfMetaBlocksInNode + IntegerBig::NumberOfDigits(block(), head);
+        uint8_t numberOfDigits = static_cast<uint8_t>(*(head ? m_block->next() : m_block->previous()));
+        return numberOfMetaBlocks + numberOfDigits;
       }
-      case BlockType::RationalShort:
-        return RationalShort::k_numberOfBlocksInNode;
       case BlockType::RationalPosBig:
       case BlockType::RationalNegBig:
       {
-        const TypeBlock * b = block();
         if (!head) {
-          b = static_cast<const TypeBlock *>(b->previousNth(RationalBig::NumberOfDigitsFromTail(b) + RationalBig::k_numberOfMetaBlocksInNode - 1));
+          uint8_t numberOfDigits = static_cast<uint8_t>(*(m_block->previous()));
+          return numberOfMetaBlocks + numberOfDigits;
         }
-        return RationalBig::k_numberOfMetaBlocksInNode + RationalBig::NumeratorNumberOfDigits(b) + RationalBig::DenominatorNumberOfDigits(b);
+        uint8_t numeratorNumberOfDigits = static_cast<uint8_t>(*(m_block->next()));
+        uint8_t denominatorNumberOfDigits = static_cast<uint8_t>(*(m_block->nextNth(2)));
+        return numberOfMetaBlocks + numeratorNumberOfDigits + denominatorNumberOfDigits;
       }
-      case BlockType::Float:
-        return sizeof(float)/sizeof(uint8_t);
-      case BlockType::Addition:
-      case BlockType::Multiplication:
-        return NAry::k_numberOfBlocksInNode;
-      case BlockType::Constant:
-        return Constant::k_numberOfBlocksInNode;
       default:
-        return 1;
+        return numberOfMetaBlocks;
     }
   }
   constexpr int numberOfChildren() const {
-    // TODO: generate this switch using a C Macro
     switch (type()) {
       case BlockType::Addition:
       case BlockType::Multiplication:

@@ -5,6 +5,21 @@
 
 namespace Poincare {
 
+  /* Node description by type:
+   * - IntegerShort
+   * | INTEGER_SHORT TAG | SIGNED DIGIT0 | INTEGER_SHORT TAG |
+   *
+   *  - Integer(Pos/Neg)Big
+   *  | INTEGER_(POS/NEG)_BIG TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... | NUMBER DIGITS | INTEGER_(POS/NEG)_BIG TAG TAG |
+   *
+   * - RationShort
+   * | RATIONAL_SHORT TAG | SIGNED DIGIT | UNSIGNED DIGIT | RATIONAL_SHORT TAG |
+   *
+   * - Rational(Pos/Neg)Big
+   * | RATIONAL_(POS/NEG)_BIG TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... | NUMBER DIGITS | RATIONAL_(POS/NEG)_BIG TAG TAG |
+   *
+   * */
+
 enum class BlockType : uint8_t {
 // InternalExpression
   Zero = 0,
@@ -48,6 +63,30 @@ public:
   bool isRational() const { return isOfType({BlockType::RationalShort, BlockType::RationalPosBig, BlockType::RationalNegBig}) || isInteger(); }
   bool isNumber() const { return isOfType({BlockType::Float}) || isRational(); }
   bool isExpression() const { return m_content < static_cast<uint8_t>(BlockType::NumberOfExpressions); }
+
+  constexpr static size_t NumberOfMetaBlocks(BlockType type) {
+    switch (type) {
+      case BlockType::IntegerShort:
+        return 3;
+      case BlockType::IntegerPosBig:
+      case BlockType::IntegerNegBig:
+        return 4;
+      case BlockType::RationalShort:
+        return 4;
+      case BlockType::RationalPosBig:
+      case BlockType::RationalNegBig:
+        return 5;
+      case BlockType::Float:
+        return 2 + sizeof(float)/sizeof(uint8_t);
+      case BlockType::Addition:
+      case BlockType::Multiplication:
+        return 3;
+      case BlockType::Constant:
+        return 3;
+      default:
+        return 1;
+    };
+  }
 
 };
 

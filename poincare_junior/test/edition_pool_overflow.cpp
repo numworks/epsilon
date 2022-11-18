@@ -8,7 +8,7 @@ void createTree() {
 }
 
 void createSmallTree() {
-  Node::Push<Constant>(u'π');
+  Node::Push<BlockType::Constant>(u'π');
 }
 
 CacheReference createTreeInCache(CacheReference::Initializer initializer) {

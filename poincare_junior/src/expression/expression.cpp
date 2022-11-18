@@ -59,7 +59,7 @@ void EExpression::ProjectionReduction(TypeBlock * block, TypeBlock * (*PushProje
   // Move second child
   childrenReferences[1].insertTreeAfterNode(power);
   // Complete: a * b^-1 (or a + b * -1)
-  Node::Push<IntegerShort>(-1);
+  Node::Push<BlockType::IntegerShort>(-1);
   // Replace single-noded division (or subtraction) by the new multiplication (or addition)
   division.replaceNodeByTree(multiplication);
 }

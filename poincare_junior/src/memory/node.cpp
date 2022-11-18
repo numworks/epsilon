@@ -1,19 +1,21 @@
 #include "cache_pool.h"
 #include "edition_reference.h"
-#include "node.h"
+#include "node_constructor.h"
 #include "node_iterator.h"
+#include <poincare_junior/src/expression/expressions.h>
 
 namespace Poincare {
 
-template <typename T, typename... Types>
+template <BlockType blockType, typename... Types>
 Node Node::Push(Types... args) {
   EditionPool * pool = EditionPool::sharedEditionPool();
   TypeBlock * newNode = static_cast<TypeBlock *>(pool->lastBlock());
-  Block block;
+
   size_t i = 0;
   bool endOfNode = false;
   do {
-    endOfNode = T::CreateBlockAtIndex(&block, i++, args...);
+    Block block;
+    endOfNode = NodeConstructor::CreateBlockAtIndexForType<blockType>(&block, i++, args...);
     pool->pushBlock(block);
   } while (!endOfNode);
   return Node(newNode);
@@ -242,10 +244,9 @@ const Node Node::previousRelative(bool parent) const {
 
 }
 
-template Poincare::Node Poincare::Node::Push<Poincare::Addition, int>(int);
-template Poincare::Node Poincare::Node::Push<Poincare::Division>();
-template Poincare::Node Poincare::Node::Push<Poincare::Multiplication, int>(int);
-template Poincare::Node Poincare::Node::Push<Poincare::Power>();
-template Poincare::Node Poincare::Node::Push<Poincare::Subtraction>();
-template Poincare::Node Poincare::Node::Push<Poincare::Constant, char16_t>(char16_t);
-template Poincare::Node Poincare::Node::Push<Poincare::IntegerShort, int>(int);
+template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Addition, int>(int);
+template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Multiplication, int>(int);
+template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Power>();
+template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Subtraction>();
+template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Division>();
+template Poincare::Node Poincare::Node::Push<Poincare::BlockType::IntegerShort, int>(int);

@@ -16,16 +16,6 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression.o \
   expression/approximation.o \
   expression/expression.o \
-  expression/type/number/integer.o \
-  expression/type/number/integer_handler.o \
-  expression/type/number/rational.o \
-  expression/type/addition.o \
-  expression/type/constant.o \
-  expression/type/division.o \
-  expression/type/multiplication.o \
-  expression/type/n_ary.o \
-  expression/type/power.o \
-  expression/type/subtraction.o \
   memory/cache_pool.o \
   memory/cache_reference.o \
   memory/edition_pool.o \
@@ -37,6 +27,10 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
 )
 
 poincare_junior_src += $(addprefix poincare_junior/test/,\
+  constexpr.o \
+)
+
+poincare_junior_src2 += $(addprefix poincare_junior/test/,\
   calculation.o \
   constexpr.o \
   edition_pool_overflow.o \

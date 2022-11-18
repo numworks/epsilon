@@ -34,8 +34,8 @@ public:
     m_parsingContext(context, parsingMethod),
     m_status(Status::Progress),
     m_tokenizer(text, &m_parsingContext, textEnd),
-    m_currentToken(Token(Token::Undefined)),
-    m_nextToken(Token(Token::Undefined)),
+    m_currentToken(Token(Token::Type::Undefined)),
+    m_nextToken(Token(Token::Type::Undefined)),
     m_pendingImplicitOperator(false),
     m_waitingSlashForMixedFraction(false)
   {}
@@ -110,7 +110,7 @@ private:
   bool generateMixedFractionIfNeeded(Expression & leftHandSide);
   // Allows you to rewind to previous position
   void rememberCurrentParsingPosition(const char ** tokenizerPosition, Token * storedCurrentToken = nullptr, Token * storedNextToken = nullptr);
-  void restorePreviousParsingPosition(const char * tokenizerPosition, Token storedCurrentToken = Token(Token::Undefined), Token storedNextToken = Token(Token::Undefined));
+  void restorePreviousParsingPosition(const char * tokenizerPosition, Token storedCurrentToken = Token(Token::Type::Undefined), Token storedNextToken = Token(Token::Type::Undefined));
   // Data members
   ParsingContext m_parsingContext;
   Status m_status;

@@ -14,7 +14,7 @@ namespace Poincare {
 
 class Token {
 public:
-  enum Type {
+  enum class Type {
     // Ordered from lower to higher precedence to make Parser's job easier
     EndOfStream = 0, // Must be the first
     RightwardsArrow,
@@ -71,7 +71,7 @@ public:
   Type type() const { return m_type; }
   void setType(Type t) { m_type = t; }
   bool is(Type t) const { return m_type == t; }
-  bool isNumber() const { return m_type == Type::Number || m_type == Type::BinaryNumber || m_type == HexadecimalNumber; }
+  bool isNumber() const { return m_type == Type::Number || m_type == Type::BinaryNumber || m_type == Type::HexadecimalNumber; }
   bool isEndOfStream() const { return is(Type::EndOfStream); }
 
   Expression expression() const { return m_expression; }

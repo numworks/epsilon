@@ -38,27 +38,27 @@ bool ParsingHelper::IsSpecialIdentifierName(const char * name, size_t nameLength
 
 bool ParsingHelper::IsLogicalOperator(const char * name, size_t nameLength, Token::Type * returnType) {
   if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(name, nameLength, LogicalOperatorNotNode::k_name) == 0) {
-    *returnType = Token::Not;
+    *returnType = Token::Type::Not;
     return true;
   }
   BinaryLogicalOperatorNode::OperatorType operatorType;
   if (BinaryLogicalOperatorNode::IsBinaryLogicalOperator(name, nameLength, &operatorType)) {
     switch (operatorType) {
     case BinaryLogicalOperatorNode::OperatorType::And:
-      *returnType = Token::And;
+      *returnType = Token::Type::And;
       break;
     case BinaryLogicalOperatorNode::OperatorType::Or:
-      *returnType = Token::Or;
+      *returnType = Token::Type::Or;
       break;
     case BinaryLogicalOperatorNode::OperatorType::Xor:
-      *returnType = Token::Xor;
+      *returnType = Token::Type::Xor;
       break;
     case BinaryLogicalOperatorNode::OperatorType::Nand:
-      *returnType = Token::Nand;
+      *returnType = Token::Type::Nand;
       break;
     default:
       assert(operatorType == BinaryLogicalOperatorNode::OperatorType::Nor);
-      *returnType = Token::Nor;
+      *returnType = Token::Type::Nor;
     }
     return true;
   }

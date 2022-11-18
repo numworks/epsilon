@@ -100,15 +100,15 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
   ParsingContext parsingContext(context, ParsingContext::ParsingMethod::Classic);
   Tokenizer tokenizer = Tokenizer(identifiersString, &parsingContext);
   Token currentIdentifier = tokenizer.popToken();
-  Token nextIdentifier = Token(Token::Undefined);
+  Token nextIdentifier = Token(Token::Type::Undefined);
   bool layoutAfterIdentifiersIsParenthesis = parent.numberOfChildren() > lastIndexOfIdentifier + 1 && parent.childAtIndex(lastIndexOfIdentifier + 1).type() == LayoutNode::Type::ParenthesisLayout;
-  while (currentIdentifier.type() != Token::EndOfStream) {
+  while (currentIdentifier.type() != Token::Type::EndOfStream) {
     nextIdentifier = tokenizer.popToken();
     int numberOfLayoutsAddedOrRemoved = 0;
     // Try to beautify each token.
 
     // Beautify inf, pi and theta
-    if (currentIdentifier.type() == Token::Constant || currentIdentifier.type() == Token::CustomIdentifier || currentIdentifier.type() == Token::SpecialIdentifier) {
+    if (currentIdentifier.type() == Token::Type::Constant || currentIdentifier.type() == Token::Type::CustomIdentifier || currentIdentifier.type() == Token::Type::SpecialIdentifier) {
       for (BeautificationRule beautificationRule : convertWhenFollowedByANonIdentifierChar) {
         int comparison = CompareAndBeautifyIdentifier(currentIdentifier.text(), currentIdentifier.length(), beautificationRule, parent, firstIndexOfIdentifier, &numberOfLayoutsAddedOrRemoved, layoutCursor, false, forceCursorRightOfText);
         if (comparison <= 0) { // Break if equal or past the alphabetical order
@@ -119,9 +119,9 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
 
     // Beautify logN(..)
         // Check if next token is a number
-    if (nextIdentifier.type() == Token::Number
+    if (nextIdentifier.type() == Token::Type::Number
         // Check if current token is a function
-        && currentIdentifier.type() == Token::ReservedFunction
+        && currentIdentifier.type() == Token::Type::ReservedFunction
         // Check if a parenthesis follows the identifier
         && layoutAfterIdentifiersIsParenthesis
         // Check if logN is at the end of the identifiers string
@@ -135,9 +135,9 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
     }
 
     // Beautify functions
-    if (currentIdentifier.type() == Token::ReservedFunction
+    if (currentIdentifier.type() == Token::Type::ReservedFunction
         // Only the last token can be a function
-        && nextIdentifier.type() == Token::EndOfStream
+        && nextIdentifier.type() == Token::Type::EndOfStream
         // Check if a parenthesis follows the identifier
         && layoutAfterIdentifiersIsParenthesis) {
       assert(numberOfLayoutsAddedOrRemoved == 0);

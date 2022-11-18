@@ -13,7 +13,6 @@
 namespace Ion {
 namespace Simulator {
 
-#ifndef NDEBUG
 // Constexpr for event name drawing
 constexpr static KDFont::Size k_fontSize = KDFont::Size::Large;
 constexpr static int k_glyphWidth = KDFont::GlyphWidth(k_fontSize);
@@ -21,7 +20,6 @@ constexpr static int k_glyphHeight = KDFont::GlyphHeight(k_fontSize);
 constexpr static int k_margin = 6;
 constexpr static KDColor k_backgroundColor = KDColorBlack;
 constexpr static KDColor k_glyphColor = KDColorWhite;
-#endif
 
 Screenshot::Screenshot(const char * path) { init(path); }
 
@@ -67,26 +65,22 @@ static void drawEventNameInBuffer(Events::Event e, KDColor * pixelsBuffer, int w
 #endif
 
 void Screenshot::capture(Events::Event nextEvent) {
+  constexpr static int k_maxHeight = Display::Height + k_glyphHeight + 2 * k_margin;
+  constexpr static int k_width = Display::Width;
   int height = Display::Height;
-  int width = Display::Width;
-#ifndef NDEBUG
-  bool drawEvent = nextEvent != Events::None;
-  if (drawEvent) {
-    height += k_glyphHeight + 2 * k_margin;
-  }
-#endif
 
-  KDColor pixelsBuffer[height * width];
-  for (int i = 0; i < Display::Height * width; i++) {
+  KDColor pixelsBuffer[k_maxHeight * k_width];
+  for (int i = 0; i < height * k_width; i++) {
     pixelsBuffer[i] = Simulator::Framebuffer::address()[i];
   }
 
 #ifndef NDEBUG
-  if (drawEvent) {
-    for (int i = Display::Height * width; i < height * width; i++) {
+  if (nextEvent != Events::None) {
+    height = k_maxHeight;
+    for (int i = Display::Height * k_width; i < height * k_width; i++) {
       pixelsBuffer[i] = k_backgroundColor;
     }
-    drawEventNameInBuffer(nextEvent, pixelsBuffer, width, height, k_margin, Display::Height + k_margin);
+    drawEventNameInBuffer(nextEvent, pixelsBuffer, k_width, height, k_margin, Display::Height + k_margin);
   }
 #endif
 
@@ -94,10 +88,10 @@ void Screenshot::capture(Events::Event nextEvent) {
     char path[1024];
     std::sprintf(path, "%s/img-%04d.png", m_path, m_stepNumber++);
 
-    Simulator::Platform::saveImage(pixelsBuffer, width,
+    Simulator::Platform::saveImage(pixelsBuffer, k_width,
                                    height, m_eachStep ? path : m_path);
   } else if (!Simulator::Window::isHeadless()) {
-    Simulator::Platform::copyImageToClipboard(pixelsBuffer, width, height);
+    Simulator::Platform::copyImageToClipboard(pixelsBuffer, k_width, height);
   }
 }
 

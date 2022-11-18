@@ -92,13 +92,13 @@ Event getEvent(int * timeout) {
       Simulator::Screenshot::commandlineScreenshot()->capture();
 #endif
     } else {
-#if ION_SIMULATOR_FILES
-      // Save step screenshot
-      Simulator::Screenshot::commandlineScreenshot()->captureStep();
-#endif
       res = sSourceJournal->popEvent();
 #if ESCHER_LOG_EVENTS_NAME
       Ion::Console::writeLine("(From state file) ", false);
+#endif
+#if ION_SIMULATOR_FILES
+      // Save step screenshot
+      Simulator::Screenshot::commandlineScreenshot()->captureStep(res);
 #endif
     }
   }

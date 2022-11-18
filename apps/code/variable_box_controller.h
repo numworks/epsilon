@@ -18,6 +18,7 @@ public:
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
+  void didEnterResponderChain(Responder * previousFirstResponder) override;
 
   /* MemoizedListViewDataSource */
   KDCoordinate nonMemoizedRowHeight(int j) override;

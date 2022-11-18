@@ -111,7 +111,7 @@ def html(layout):
   html = ''
   html += '<div class="calculator-container">\n'
   html += '  <picture>\n'
-  html += '    <source srcset="background.webp" type="image/webp">\n'
+  html += '    <source srcset="background_with_shadow.webp" type="image/webp">\n'
   html += '    <source srcset="background.jpg" type="image/jpeg">\n'
   html += '    <img src="background.jpg" alt="NumWorks Calculator">\n'
   html += '  </picture>\n'

@@ -35,7 +35,7 @@ ion_simulator_assets_paths = $(addprefix ion/src/simulator/assets/,background.we
 $(addprefix $(BUILD_DIR),$(addprefix ion/src/simulator/assets/,background.jpg background-no-shadow.webp)): ion/src/simulator/assets/background.webp
 	$(call rule_label,CONVERT)
 	$(Q) mkdir -p $(dir $@)
-	$(Q) convert -crop 1005x1977+93+11 -resize 580x1110 $< $@
+	$(Q) convert -crop 1005x1977+93+11 -resize 1160x2220 $< $@
 ion_simulator_assets_paths += $(addprefix $(BUILD_DIR),$(addprefix ion/src/simulator/assets/,background.jpg background-no-shadow.webp))
 simulator_app_deps += $(ion_simulator_assets_paths)
 

@@ -64,7 +64,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
   m_approximatedLayouts[index] = approximated;
   index++;
 
-  if (!norm.isUndefined() && approximatedNorm.isNull(context) == TrinaryBoolean::False) {
+  if (!norm.isUndefined() && approximatedNorm.isNull(context) == TrinaryBoolean::False && !Expression::IsInfinity(approximatedNorm, context)) {
     // 2. Normalized vector
     m_indexMessageMap[index] = messageIndex++;
     Expression normalized = Division::Builder(m_expression, norm);

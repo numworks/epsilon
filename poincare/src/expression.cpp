@@ -271,14 +271,15 @@ bool Expression::IsRationalFraction(const Expression& e, Context * context, cons
 
   if (e.type() == ExpressionNode::Type::Power) {
     denominator = e.denominator(reductionContext);
-    numerator = denominator.isUninitialized() ? e : Rational::Builder(1);
+    if (denominator.isUninitialized()) {
+      numerator = e;
+    }
   } else {
     assert(e.type() == ExpressionNode::Type::Multiplication);
     static_cast<const Multiplication&>(e).splitIntoNormalForm(numerator, denominator, reductionContext);
   }
 
-  assert(!numerator.isUninitialized());
-  int numeratorDegree = numerator.polynomialDegree(context, symbol);
+  int numeratorDegree = numerator.isUninitialized() ? 0 : numerator.polynomialDegree(context, symbol);
   int denominatorDegree = denominator.isUninitialized() ? 0 : denominator.polynomialDegree(context, symbol);
   return denominatorDegree >= 0 && numeratorDegree >= 0;
 }

@@ -100,6 +100,13 @@ QUIZ_CASE(graph_function_properties) {
     );
 
     assert_check_function_properties(
+      "f(x)=1/(3x)",
+      FunctionProperties{
+        .m_caption = I18n::Message::RationalType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
+    );
+
+    assert_check_function_properties(
       "f(x)=3cos(5x)+(1/π-3)-((4sin(3x-1))/π)-(1/6)tan(2-1.3x)+x-x",
       FunctionProperties{
         .m_caption = I18n::Message::TrigonometricType,

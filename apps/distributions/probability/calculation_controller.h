@@ -54,7 +54,7 @@ public:
   /* TextField delegate */
   bool textFieldDidHandleEvent(Escher::AbstractTextField * textField,
                                bool returnValue,
-                               bool textSizeDidChange) override;
+                               bool textDidChange) override;
   bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField,
                                     Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField,

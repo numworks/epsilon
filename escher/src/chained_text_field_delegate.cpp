@@ -26,9 +26,9 @@ bool ChainedTextFieldDelegate::textFieldDidAbortEditing(AbstractTextField * text
 
 bool ChainedTextFieldDelegate::textFieldDidHandleEvent(AbstractTextField * textField,
                                                        bool returnValue,
-                                                       bool textSizeDidChange) {
+                                                       bool textDidChange) {
   return m_parentDelegate
-             ? m_parentDelegate->textFieldDidHandleEvent(textField, returnValue, textSizeDidChange)
+             ? m_parentDelegate->textFieldDidHandleEvent(textField, returnValue, textDidChange)
              : false;
 }
 

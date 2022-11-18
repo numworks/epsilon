@@ -32,6 +32,7 @@ public:
   ViewController * topViewController();
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
+  void didEnterResponderChain(Responder * previousFirstResponder) override;
   void didBecomeFirstResponder() override;
   void initView() override;
   void viewWillAppear() override;
@@ -80,12 +81,13 @@ private:
   void setupActiveViewController();
   bool shouldStoreHeaderOnStack(ViewController * vc, int index);
   void updateStack(ViewController::TitlesDisplay titleDisplay);
+  void dismissPotentialModal();
   virtual void didExitPage(ViewController * controller) const;
   virtual void willOpenPage(ViewController * controller) const;
-  virtual void dismissPotentialModal();
   ViewController * m_childrenController[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   bool m_isVisible;
+  bool m_displayedAsModal;
   /* Represents the stacks to display, _starting from the end_.
    * m_headersDisplayMask = 0b11111011   ->  shouldn't display m_stackViews[numberOfStacks - 1 - 2]. */
   uint8_t m_headersDisplayMask;

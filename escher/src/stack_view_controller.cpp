@@ -157,6 +157,7 @@ StackViewController::StackViewController(Responder * parentResponder, ViewContro
     m_view(style, extendVertically),
     m_numberOfChildren(0),
     m_isVisible(false),
+    m_displayedAsModal(false),
     m_headersDisplayMask(~0)
 {
   m_childrenController[m_numberOfChildren++] = rootViewController;
@@ -252,6 +253,10 @@ void StackViewController::setupActiveViewController() {
   }
 }
 
+void StackViewController::didEnterResponderChain(Responder * previousFirstResponder) {
+  m_displayedAsModal = Container::activeApp()->modalViewController()->isDisplayingModal();
+}
+
 void StackViewController::didBecomeFirstResponder() {
   ViewController * vc = topViewController();
   Container::activeApp()->setFirstResponder(vc);
@@ -316,7 +321,9 @@ void StackViewController::willOpenPage(ViewController * controller) const {
 }
 
 void StackViewController::dismissPotentialModal() {
-  Container::activeApp()->modalViewController()->dismissPotentialModal();
+  if (!m_displayedAsModal) {
+    Container::activeApp()->modalViewController()->dismissPotentialModal();
+  }
 }
 
 }  // namespace Escher

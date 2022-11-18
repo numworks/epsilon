@@ -332,26 +332,35 @@ void Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChi
 
 void Layout::collapseSiblings(LayoutCursor * cursor) {
   Layout rootLayout = root();
+  bool collapsed = false;
   if (node()->shouldCollapseSiblingsOnRight()) {
     Layout absorbingChild = childAtIndex(rightCollapsingAbsorbingChildIndex());
     // TODO: add a horizontal layout only if several siblings.
-    if (absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
-      Layout horRef = HorizontalLayout::Builder();
-      replaceChild(absorbingChild, horRef, cursor, true);
-      horRef.addChildAtIndexInPlace(absorbingChild, 0, 0);
+    if (absorbingChild.isEmpty()) {
+      if (absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
+        Layout horRef = HorizontalLayout::Builder();
+        replaceChild(absorbingChild, horRef, cursor, true);
+        horRef.addChildAtIndexInPlace(absorbingChild, 0, 0);
+      }
+      collapsed = true;
+      collapseOnDirection(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex());
     }
-    collapseOnDirection(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex());
   }
   if (node()->shouldCollapseSiblingsOnLeft()) {
     Layout absorbingChild = childAtIndex(leftCollapsingAbsorbingChildIndex());
-    if (absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
-      Layout horRef = HorizontalLayout::Builder();
-      replaceChild(absorbingChild, horRef, cursor, true);
-      horRef.addChildAtIndexInPlace(absorbingChild, 0, 0);
+    if (absorbingChild.isEmpty()) {
+      if (absorbingChild.type() != LayoutNode::Type::HorizontalLayout) {
+        Layout horRef = HorizontalLayout::Builder();
+        replaceChild(absorbingChild, horRef, cursor, true);
+        horRef.addChildAtIndexInPlace(absorbingChild, 0, 0);
+      }
+      collapsed = true;
+      collapseOnDirection(HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex());
     }
-    collapseOnDirection(HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex());
   }
-  node()->didCollapseSiblings(cursor);
+  if (collapsed) {
+    node()->didCollapseSiblings(cursor);
+  }
 }
 
 }

@@ -1,7 +1,7 @@
 /* Same as flash.ld but everything is linked in internal flash */
 
 MEMORY {
-  INTERNAL_FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 64K
+  INTERNAL_FLASH (rx) : ORIGIN = 0x00200000, LENGTH = 64K
   SRAM (rw)  : ORIGIN = 0x20000000, LENGTH = 256K
 }
 

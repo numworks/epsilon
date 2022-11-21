@@ -29,10 +29,6 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
 )
 
 poincare_junior_src += $(addprefix poincare_junior/test/,\
-  constexpr.o \
-)
-
-poincare_junior_src2 += $(addprefix poincare_junior/test/,\
   calculation.o \
   constexpr.o \
   edition_pool_overflow.o \

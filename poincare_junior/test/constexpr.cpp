@@ -1,3 +1,4 @@
+#include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/memory/constexpr_node.h>
 #include "print.h"
 
@@ -18,7 +19,7 @@ void playWithConstexprNodes() {
   editionPool->initFromTree(node);
 
   Node valueMod = editionPool->initFromTree(Sub(value, 12_n));
-  EExpression::BasicReduction(valueMod.block());
+  Simplification::BasicReduction(valueMod.block());
 
   print();
 }

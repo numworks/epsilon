@@ -325,6 +325,8 @@ bool Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChi
        * sibling. */
       forceCollapse = (direction == HorizontalDirection::Left && sibling.mustHaveLeftSibling()) ||(direction == HorizontalDirection::Right && sibling.mustHaveRightSibling());
       siblingIndex -= p.removeChild(sibling, nullptr);
+      // siblingIndex is decremented in case it is used later.
+      (void)siblingIndex;
       int newIndex = direction == HorizontalDirection::Right ? absorbingChild.numberOfChildren() : 0;
       horizontalAbsorbingChild.addOrMergeChildAtIndex(sibling, newIndex, true);
       // removeChildAtIndex may have removed more than one child.

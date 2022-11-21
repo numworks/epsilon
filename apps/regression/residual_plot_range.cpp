@@ -24,7 +24,7 @@ void ResidualPlotRange::calibrate(double xMin, double xMax, double yMin, double 
   double heightRatio = static_cast<double>(bannerHeight) / static_cast<double>(height);
   double yRangeMin = (yVisibleRangeMin - yRangeMax * heightRatio) / (1 - heightRatio);
 
-  protectedSetX(Poincare::Range1D(yRangeMin, yRangeMax));
+  protectedSetY(Poincare::Range1D(yRangeMin, yRangeMax));
 }
 
 void ResidualPlotRange::stretchRangeIfTooClose(double * min, double * max) const {

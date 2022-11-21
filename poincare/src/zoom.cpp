@@ -10,6 +10,9 @@ namespace Poincare {
 void Zoom::HorizontalAsymptoteHelper::update(Coordinate2D<float> p, float slope) {
   Coordinate2D<float> * bound = p.x1() < m_center ? &m_left : &m_right;
   slope = std::fabs(slope);
+  if (!std::isfinite(slope)) {
+    return;
+  }
   if (std::isnan(bound->x1())) {
     if (slope < k_threshold - k_hysteresis) {
       *bound = p;

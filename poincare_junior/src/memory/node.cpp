@@ -246,6 +246,7 @@ const Node Node::previousRelative(bool parent) const {
 
 template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Addition, int>(int);
 template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Multiplication, int>(int);
+template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Constant, char16_t>(char16_t);
 template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Power>();
 template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Subtraction>();
 template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Division>();

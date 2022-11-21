@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_CONSTANT_H
 #define POINCARE_EXPRESSION_CONSTANT_H
 
+#include <assert.h>
 #include <stdint.h>
 
 namespace Poincare {

@@ -39,7 +39,7 @@ constexpr static auto MakeTree(const Tree<Len> (&...nodes)) {
   constexpr size_t numberOfBlocksInNode = TypeBlock::NumberOfMetaBlocks(type);
 
   Tree<k_numberOfChildrenBlocks + numberOfBlocksInNode> tree;
-  CreateNode<type>(tree, k_numberOfChildren);
+  CreateNode<type>(&tree, k_numberOfChildren);
 
   size_t blockIndex = numberOfBlocksInNode;
   for (Node node : {static_cast<Node>(nodes)...}) {
@@ -53,16 +53,16 @@ constexpr static auto MakeTree(const Tree<Len> (&...nodes)) {
 }
 
 template <BlockType blockType, unsigned N, typename... Types>
-constexpr static void CreateNode(Tree<N> tree, Types... args) {
+constexpr static void CreateNode(Tree<N> * tree, Types... args) {
   size_t i = 0;
-  while (!NodeConstructor::CreateBlockAtIndexForType<blockType>(&tree[i], i, args...)) {
+  while (!NodeConstructor::CreateBlockAtIndexForType<blockType>(&(*tree)[i], i, args...)) {
     i++;
   }
 }
 
 constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> operator "" _n(char16_t name) {
   Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> tree;
-  CreateNode<BlockType::Constant>(tree, name);
+  CreateNode<BlockType::Constant>(&tree, name);
   return tree;
 }
 
@@ -70,7 +70,7 @@ constexpr Tree<3> operator "" _n(unsigned long long value) {
   assert(value != 0 && value != -1 && value != 1 && value != 2); // TODO: make this robust
   assert(value < 128); // TODO: handle negative small numbers?
   Tree<3> tree;
-  CreateNode<BlockType::IntegerShort>(tree, static_cast<int8_t>(value));
+  CreateNode<BlockType::IntegerShort>(&tree, static_cast<int8_t>(value));
   return tree;
 }
 

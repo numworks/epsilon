@@ -608,54 +608,91 @@ void assert_additional_results_compute_to(const char * expression, const char * 
 QUIZ_CASE(poincare_expression_additional_results) {
   // Time
   assert_additional_results_compute_to("3×_s", nullptr, 0);
-  const char * array1[1] = {"1×_min+1×_s"};
-  assert_additional_results_compute_to("61×_s", array1, 1);
-  const char * array2[1] = {"1×_day+10×_h+17×_min+36×_s"};
-  assert_additional_results_compute_to("123456×_s", array2, 1);
-  const char * array3[1] = {"7×_day"};
-  assert_additional_results_compute_to("1×_week", array3, 1);
+  {
+    const char * array[1] = {"1×_min+1×_s"};
+    assert_additional_results_compute_to("61×_s", array, 1);
+  }
+  {
+    const char * array[1] = {"1×_day+10×_h+17×_min+36×_s"};
+    assert_additional_results_compute_to("123456×_s", array, 1);
+  }
+  {
+    const char * array[1] = {"7×_day"};
+    assert_additional_results_compute_to("1×_week", array, 1);
+  }
 
   // Distance
-  const char * array4[1] = {"19×_mi+853×_yd+1×_ft+7×_in"};
-  assert_additional_results_compute_to("1234567×_in", array4, 1, Imperial);
-  const char * array5[1] = {"1×_yd+7.700787×_in"};
-  assert_additional_results_compute_to("1.11×_m", array5, 1, Imperial);
+  {
+    const char * array[1] = {"19×_mi+853×_yd+1×_ft+7×_in"};
+    assert_additional_results_compute_to("1234567×_in", array, 1, Imperial);
+  }
+  {
+    const char * array[1] = {"1×_yd+7.700787×_in"};
+    assert_additional_results_compute_to("1.11×_m", array, 1, Imperial);
+  }
   assert_additional_results_compute_to("1.11×_m", nullptr, 0, MetricUnitFormat);
 
   // Masses
-  const char * array6[1] = {"1×_shtn+240×_lb"};
-  assert_additional_results_compute_to("1×_lgtn", array6, 1, Imperial);
-  const char * array7[1] = {"2×_lb+3.273962×_oz"};
-  assert_additional_results_compute_to("1×_kg", array7, 1, Imperial);
+  {
+    const char * array[1] = {"1×_shtn+240×_lb"};
+    assert_additional_results_compute_to("1×_lgtn", array, 1, Imperial);
+  }
+  {
+    const char * array[1] = {"2×_lb+3.273962×_oz"};
+    assert_additional_results_compute_to("1×_kg", array, 1, Imperial);
+  }
   assert_additional_results_compute_to("1×_kg", nullptr, 0, MetricUnitFormat);
 
   // Temperatures
-  const char * array14[2] = {"-273.15×_°C", "-459.67×_°F"};
-  assert_additional_results_compute_to("0×_K", array14, 2, MetricUnitFormat);
-  const char * array15[2] = {"-279.67×_°F", "-173.15×_°C"};
-  assert_additional_results_compute_to("100×_K", array15, 2, Imperial);
-  const char * array16[2] = {"12.02×_°F", "262.05×_K"};
-  assert_additional_results_compute_to("-11.1×_°C", array16, 2);
-  const char * array17[2] = {"-20×_°C", "253.15×_K"};
-  assert_additional_results_compute_to("-4×_°F", array17, 2);
+  {
+    const char * array[2] = {"-273.15×_°C", "-459.67×_°F"};
+    assert_additional_results_compute_to("0×_K", array, 2, MetricUnitFormat);
+  }
+  {
+    const char * array[2] = {"-279.67×_°F", "-173.15×_°C"};
+    assert_additional_results_compute_to("100×_K", array, 2, Imperial);
+  }
+  {
+    const char * array[2] = {"12.02×_°F", "262.05×_K"};
+    assert_additional_results_compute_to("-11.1×_°C", array, 2);
+  }
+  {
+    const char * array[2] = {"-20×_°C", "253.15×_K"};
+    assert_additional_results_compute_to("-4×_°F", array, 2);
+  }
 
   // Energy
-  const char * array8[3] = {"3.6×_MJ", "1×_kW×_h", "2.246943ᴇ13×_TeV"};
-  assert_additional_results_compute_to("3.6×_MN_m", array8, 3);
+  {
+    const char * array[3] = {"3.6×_MJ", "1×_kW×_h", "2.246943ᴇ13×_TeV"};
+    assert_additional_results_compute_to("3.6×_MN_m", array, 3);
+  }
 
   // Volume
-  const char * array9[2] = {"264×_gal+1×_pt+0.7528377×_cup", "1000×_L"};
-  assert_additional_results_compute_to("1×_m^3", array9, 2, Imperial);
-  const char * array10[2] = {"48×_gal+1×_pt+1.5625×_cup", "182.5426×_L"};
-  assert_additional_results_compute_to("12345×_tbsp", array10, 2, Imperial);
-  const char * array11[2] = {"182.5426×_L"};
-  assert_additional_results_compute_to("12345×_tbsp", array11, 1, MetricUnitFormat);
+  {
+    const char * array[2] = {"264×_gal+1×_pt+0.7528377×_cup", "1000×_L"};
+    assert_additional_results_compute_to("1×_m^3", array, 2, Imperial);
+  }
+  {
+    const char * array[2] = {"48×_gal+1×_pt+1.5625×_cup", "182.5426×_L"};
+    assert_additional_results_compute_to("12345×_tbsp", array, 2, Imperial);
+  }
+  {
+    const char * array[2] = {"182.5426×_L"};
+    assert_additional_results_compute_to("12345×_tbsp", array, 1, MetricUnitFormat);
+  }
 
   // Speed
-  const char * array12[1] = {"3.6×_km×_h^\x12-1\x13"};
-  assert_additional_results_compute_to("1×_m/_s", array12, 1, MetricUnitFormat);
-  const char * array13[2] = {"2.236936×_mi×_h^\x12-1\x13", "3.6×_km×_h^\x12-1\x13"};
-  assert_additional_results_compute_to("1×_m/_s", array13, 2, Imperial);
+  {
+    const char * array[1] = {"3.6×_km×_h^\x12-1\x13"};
+    assert_additional_results_compute_to("1×_m/_s", array, 1, MetricUnitFormat);
+  }
+  {
+    const char * array[2] = {"2.236936×_mi×_h^\x12-1\x13", "3.6×_km×_h^\x12-1\x13"};
+    assert_additional_results_compute_to("1×_m/_s", array, 2, Imperial);
+  }
+
+  // No additional result
+  assert_additional_results_compute_to("rad×s^(1/2)", nullptr, 0);
 }
 
 void assert_list_length_in_children_is(const char * definition, int targetLength) {

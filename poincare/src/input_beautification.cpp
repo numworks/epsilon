@@ -149,10 +149,7 @@ int InputBeautification::ApplyBeautificationLeftOfLastAddedLayout(Layout lastAdd
       }
     }
 
-    /* TODO/WARGNING:
-     * This assumes that the identifier has only 1-char long codepoints (which
-     * is the case for all beautified identifiers for now) */
-    firstIndexOfIdentifier += currentIdentifier.length() + numberOfLayoutsAddedOrRemoved;
+    firstIndexOfIdentifier += UTF8Helper::StringGlyphLength(currentIdentifier.text(), currentIdentifier.length()) + numberOfLayoutsAddedOrRemoved;
     currentIdentifier = nextIdentifier;
   }
   return result;

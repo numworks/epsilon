@@ -202,7 +202,7 @@ bool InteractiveCurveViewController::textFieldDidReceiveEvent(AbstractTextField 
 }
 
 void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
-  Coordinate2D<double> xy = xyValues(selectedCurveRelativePosition(), t, textFieldDelegateApp()->localContext(), 0);
+  Coordinate2D<double> xy = xyValues(selectedCurveIndex(false), t, textFieldDelegateApp()->localContext(), 0);
   m_cursor->moveTo(t, xy.x1(), xy.x2());
   reloadBannerView();
   if (!isCursorVisible()) {

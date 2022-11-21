@@ -50,7 +50,7 @@ protected:
   virtual int nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * subCurveIndex) const {
     return closestCurveIndexVertically(goingUp, currentSelectedCurve, context, currentSubCurveIndex, subCurveIndex);
   }
-  int selectedCurveRelativePosition() const override { return *m_indexFunctionSelectedByCursor; }
+  int selectedCurveIndex(bool relativeIndex = true) const override { return *m_indexFunctionSelectedByCursor; }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
   int numberOfSubCurves(int curveIndex) const override;
   bool isAlongY(int curveIndex) const override;

@@ -65,7 +65,7 @@ bool GraphController::textFieldDidFinishEditing(AbstractTextField * textField, c
 }
 
 void GraphController::moveToRank(int n) {
-  double y = xyValues(selectedCurveRelativePosition(), n, textFieldDelegateApp()->localContext()).x2();
+  double y = xyValues(selectedCurveIndex(), n, textFieldDelegateApp()->localContext()).x2();
   m_cursor->moveTo(n, n, y);
   interactiveCurveViewRange()->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   reloadBannerView();

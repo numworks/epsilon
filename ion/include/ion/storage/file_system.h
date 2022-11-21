@@ -100,7 +100,7 @@ private:
   typedef bool (*RecordFilter)(Record::Name name, const void * auxiliary);
   static bool ExtensionOnlyFilter(Record::Name name, const void * auxiliary) { return true; };
   static bool FirstCharFilter(Record::Name name, const void * auxiliary) {
-    assert(auxiliary != nullptr);
+    assert(auxiliary);
     return name.baseName[0] != *static_cast<const char *>(auxiliary);
   };
   // Private record counters and getters

@@ -109,15 +109,17 @@ template<>
 UnitNode::Vector<int> UnitNode::Vector<int>::FromBaseUnits(const Expression baseUnits) {
   /* Returns the vector of Base units with integer exponents. If rational, the
    * closest integer will be used. */
-  Vector<int> vector = {
+  Vector<int> nullVector = {
     .time               = 0,
     .distance           = 0,
+    .angle              = 0,
     .mass               = 0,
     .current            = 0,
     .temperature        = 0,
     .amountOfSubstance  = 0,
     .luminuousIntensity = 0,
   };
+  Vector<int> vector = nullVector;
   int numberOfFactors;
   int factorIndex = 0;
   Expression factor;
@@ -140,7 +142,7 @@ UnitNode::Vector<int> UnitNode::Vector<int>::FromBaseUnits(const Expression base
         /* If non-integer exponents are found, we round a null vector so that
          * Multiplication::shallowBeautify will not attempt to find derived
          * units. */
-        return vector;
+        return nullVector;
       }
       /* We limit to INT_MAX / 3 because an exponent might get bigger with
        * simplification. As a worst case scenario, (_s²_m²_kg/_A²)^n should be
@@ -873,7 +875,8 @@ int Unit::SetAdditionalExpressions(Expression units, double value, Expression * 
     ExpressionNode::ReductionContext childContext = reductionContext;
     childContext.setUnitConversion(ExpressionNode::UnitConversion::None);
     exactValue = exactValue.reduceAndRemoveUnit(childContext, &unit);
-    return static_cast<const AngleRepresentative*>(unit.convert<Unit>().representative())->setAdditionalExpressionsWithExactValue(exactValue, value, dest, availableLength, reductionContext);
+    assert(unit.type() == ExpressionNode::Type::Unit);
+    return static_cast<const AngleRepresentative*>(static_cast<Unit &>(unit).representative())->setAdditionalExpressionsWithExactValue(exactValue, value, dest, availableLength, reductionContext);
   }
   return representative->setAdditionalExpressions(value, dest, availableLength, reductionContext);
 }

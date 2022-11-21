@@ -633,16 +633,12 @@ bool Expression::hasUnit() const {
   return recursivelyMatches([](const Expression e, Context * context) { return e.type() == ExpressionNode::Type::Unit; }, nullptr, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
 }
 
-bool Expression::isInRadians(bool expressionIsAlreadyReduced, Context * context) const {
+bool Expression::isInRadians(Context * context) const {
   Expression thisClone = clone();
   Expression units;
-  if (expressionIsAlreadyReduced) {
-    thisClone.removeUnit(&units);
-  } else {
-    ExpressionNode::ReductionContext reductionContext;
-    reductionContext.setContext(context);
-    thisClone.reduceAndRemoveUnit(reductionContext, &units);
-  }
+  ExpressionNode::ReductionContext reductionContext;
+  reductionContext.setContext(context);
+  thisClone.reduceAndRemoveUnit(reductionContext, &units);
   return !units.isUninitialized() && units.type() == ExpressionNode::Type::Unit && units.convert<Unit>().representative() == &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
 }
 

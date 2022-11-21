@@ -80,13 +80,13 @@ uint32_t FileSystem::checksum() {
 void FileSystem::notifyChangeToDelegate(const Record record) const {
   m_lastRecordRetrieved = Record(nullptr);
   m_lastRecordRetrievedPointer = nullptr;
-  if (m_delegate != nullptr) {
+  if (m_delegate) {
     m_delegate->storageDidChangeForRecord(record);
   }
 }
 
 Record::ErrorStatus FileSystem::notifyFullnessToDelegate() const {
-  if (m_delegate != nullptr) {
+  if (m_delegate) {
     m_delegate->storageIsFull();
   }
   return Record::ErrorStatus::NotEnoughSpaceAvailable;
@@ -222,7 +222,7 @@ Record FileSystem::recordNamed(Record::Name name) {
   }
   Record r = Record(name);
   char * p = pointerOfRecord(r);
-  if (p != nullptr) {
+  if (p) {
     return r;
   }
   return Record();
@@ -246,7 +246,7 @@ void FileSystem::destroyAllRecords() {
 void FileSystem::destroyRecordsWithExtension(const char * extension) {
   char * currentRecordStart = (char *)m_buffer;
   bool didChange = false;
-  while (currentRecordStart != nullptr && sizeOfRecordStarting(currentRecordStart) != 0) {
+  while (currentRecordStart && sizeOfRecordStarting(currentRecordStart) != 0) {
     Record::Name currentName = nameOfRecordStarting(currentRecordStart);
     if (!Record::NameIsEmpty(currentName) && strcmp(currentName.extension, extension) == 0) {
       Record currentRecord(currentName);
@@ -303,7 +303,7 @@ FileSystem::FileSystem() :
 
 Record::Name FileSystem::nameOfRecord(const Record record) const {
   char * p = pointerOfRecord(record);
-  if (p != nullptr) {
+  if (p) {
     return nameOfRecordStarting(p);
   }
   return Record::EmptyName();
@@ -329,7 +329,7 @@ Record::ErrorStatus FileSystem::setNameOfRecord(Record * record, Record::Name na
   }
   size_t nameSize = Record::SizeOfName(name);
   char * p = pointerOfRecord(oldRecord);
-  if (p != nullptr) {
+  if (p) {
     size_t previousNameSize = Record::SizeOfName(nameOfRecordStarting(p));
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
     size_t newRecordSize = previousRecordSize-previousNameSize+nameSize;
@@ -351,7 +351,7 @@ Record::ErrorStatus FileSystem::setNameOfRecord(Record * record, Record::Name na
 
 Record::Data FileSystem::valueOfRecord(const Record record) {
   char * p = pointerOfRecord(record);
-  if (p != nullptr) {
+  if (p) {
     Record::Name name = nameOfRecordStarting(p);
     record_size_t size = sizeOfRecordStarting(p);
     const void * value = valueOfRecordStarting(p);
@@ -365,7 +365,7 @@ Record::ErrorStatus FileSystem::setValueOfRecord(Record record, Record::Data dat
   /* TODO: if data.buffer == p, assert that size hasn't change and do not do any
    * memcopy, but still notify the delegate. Beware of scripts and the accordion
    * routine.*/
-  if (p != nullptr) {
+  if (p) {
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
     Record::Name name = nameOfRecordStarting(p);
     size_t newRecordSize = sizeOfRecordWithName(name, data.size);
@@ -392,7 +392,7 @@ void FileSystem::destroyRecord(Record record, bool notifyDelegate) {
   }
   assert(!m_delegate || m_delegate->storageWillChangeForRecordName(record.name()));
   char * p = pointerOfRecord(record);
-  if (p != nullptr) {
+  if (p) {
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
     slideBuffer(p+previousRecordSize, -previousRecordSize);
     if (notifyDelegate) {
@@ -406,7 +406,7 @@ char * FileSystem::pointerOfRecord(const Record record) const {
     return nullptr;
   }
   if (!m_lastRecordRetrieved.isNull() && record == m_lastRecordRetrieved) {
-    assert(m_lastRecordRetrievedPointer != nullptr);
+    assert(m_lastRecordRetrievedPointer);
     return m_lastRecordRetrievedPointer;
   }
   for (char * p : *this) {
@@ -421,14 +421,14 @@ char * FileSystem::pointerOfRecord(const Record record) const {
 }
 
 FileSystem::record_size_t FileSystem::sizeOfRecordStarting(char * start) const {
-  if (start == nullptr) {
+  if (!start) {
     return 0;
   }
   return StorageHelper::unalignedShort(start);
 }
 
 const void * FileSystem::valueOfRecordStarting(char * start) const {
-  if (start == nullptr) {
+  if (!start) {
     return nullptr;
   }
   char * currentChar = start + sizeof(record_size_t);
@@ -437,7 +437,7 @@ const void * FileSystem::valueOfRecordStarting(char * start) const {
 }
 
 Record::Name FileSystem::nameOfRecordStarting(char * start) const {
-   if (start == nullptr) {
+   if (!start) {
     return Record::EmptyName();
    }
     return Record::CreateRecordNameFromFullName(start + sizeof(record_size_t));
@@ -508,7 +508,7 @@ bool FileSystem::slideBuffer(char * position, int delta) {
 
 Record FileSystem::privateRecordBasedNamedWithExtensions(const char * baseName, int baseNameLength, const char * const extensions[], size_t numberOfExtensions, const char * * extensionResult) {
   Record::Name lastRetrievedRecordName = nameOfRecordStarting(m_lastRecordRetrievedPointer);
-  if (m_lastRecordRetrievedPointer != nullptr && recordNameHasBaseNameAndOneOfTheseExtensions(lastRetrievedRecordName, baseName, baseNameLength, extensions, numberOfExtensions, extensionResult)) {
+  if (m_lastRecordRetrievedPointer && recordNameHasBaseNameAndOneOfTheseExtensions(lastRetrievedRecordName, baseName, baseNameLength, extensions, numberOfExtensions, extensionResult)) {
     return m_lastRecordRetrieved;
   }
   for (char * p : *this) {
@@ -517,7 +517,7 @@ Record FileSystem::privateRecordBasedNamedWithExtensions(const char * baseName, 
       return Record(currentName);
     }
   }
-  if (extensionResult != nullptr) {
+  if (extensionResult) {
     *extensionResult = nullptr;
   }
   return Record();
@@ -528,7 +528,7 @@ bool FileSystem::recordNameHasBaseNameAndOneOfTheseExtensions(Record::Name name,
   if (!Record::NameIsEmpty(name) && strncmp(baseName, name.baseName, baseNameLength) == 0 && static_cast<size_t>(baseNameLength) == name.baseNameLength) {
     for (size_t i = 0; i < numberOfExtensions; i++) {
       if (strcmp(name.extension, extensions[i]) == 0) {
-        if (extensionResult != nullptr) {
+        if (extensionResult) {
           *extensionResult = extensions[i];
         }
         return true;

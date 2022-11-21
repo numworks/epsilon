@@ -68,7 +68,7 @@ public:
   void destroy();
   bool hasExtension(const char * extension) {
     const char * thisExtension = name().extension;
-    return thisExtension == nullptr ? false : strcmp(thisExtension, extension) == 0;
+    return thisExtension ? strcmp(thisExtension, extension) == 0 : false;
   }
   // Record::Name
   static Name CreateRecordNameFromFullName(const char * fullName);

@@ -8,7 +8,7 @@ namespace Ion {
 namespace Storage {
 
 Record::Name Record::CreateRecordNameFromFullName(const char * fullName) {
-  if (fullName == nullptr || fullName[0] == 0) {
+  if (!fullName || fullName[0] == 0) {
     return EmptyName();
   }
   const char * dotChar = UTF8Helper::CodePointSearch(fullName, k_dotChar);
@@ -29,7 +29,7 @@ size_t Record::SizeOfName(Record::Name name) {
 }
 
 bool Record::NameIsEmpty(Name name) {
-  return name.baseName == nullptr || name.extension == nullptr;
+  return !(name.baseName && name.extension);
 }
 
 Record::Record(Record::Name name) {

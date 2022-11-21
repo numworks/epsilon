@@ -204,7 +204,9 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(const 
   ContinuousFunction model = ContinuousFunction(recordToSet);
   bool wasCartesian = model.properties().isCartesian();
   error = model.setExpressionContent(equation);
-  model.updateModel(this, wasCartesian);
+  if (error == Ion::Storage::Record::ErrorStatus::None) {
+    model.updateModel(this, wasCartesian);
+  }
   return error;
 }
 

@@ -838,11 +838,11 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
     result = ListSlice::Builder(parameter.childAtIndex(0), parameter.childAtIndex(1), Symbol::Builder(name, length));
   } else if (numberOfParameters == 1) {
     parameter = parameter.childAtIndex(0);
-    if (idType == Context::SymbolAbstractType::List) {
-      result = ListElement::Builder(parameter, Symbol::Builder(name, length));
-    } else if (parameter.type() == ExpressionNode::Type::Symbol && strncmp(static_cast<SymbolAbstract&>(parameter).name(), name, length) == 0) {
+    if (parameter.type() == ExpressionNode::Type::Symbol && strncmp(static_cast<SymbolAbstract&>(parameter).name(), name, length) == 0) {
       m_status = Status::Error; // Function and variable must have distinct names.
       return;
+    } else if (idType == Context::SymbolAbstractType::List) {
+      result = ListElement::Builder(parameter, Symbol::Builder(name, length));
     } else {
       result = Function::Builder(name, length, parameter);
     }

@@ -13,8 +13,11 @@ parser.add_argument('assets', metavar='asset', type=str, nargs='+', help='The li
 parser.add_argument('-o', help='The file to generate')
 args = parser.parse_args()
 
+def asset_basename_symbol(asset):
+    return os.path.splitext(asset)[0].replace("-", "_")
+
 def print_asset(f, asset):
-    asset_basename = os.path.splitext(asset)[0]
+    asset_basename = asset_basename_symbol(asset)
     f.write(".global _ion_simulator_" + asset_basename + "_start\n")
     f.write(".global _ion_simulator_" + asset_basename + "_end\n")
     f.write("_ion_simulator_" + asset_basename + "_start:\n")
@@ -28,12 +31,12 @@ def print_assembly(files, path):
     f.close()
 
 def print_declaration(f, asset):
-    asset_basename = os.path.splitext(asset)[0]
+    asset_basename = asset_basename_symbol(asset)
     f.write("extern unsigned char _ion_simulator_" + asset_basename + "_start;\n")
     f.write("extern unsigned char _ion_simulator_" + asset_basename + "_end;\n")
 
 def print_mapping(f, asset):
-    asset_basename = os.path.splitext(asset)[0]
+    asset_basename = asset_basename_symbol(asset)
     f.write('ResourceMap("' + asset + '", &_ion_simulator_' + asset_basename +'_start, &_ion_simulator_' + asset_basename + '_end),\n')
 
 def print_header(files, path):

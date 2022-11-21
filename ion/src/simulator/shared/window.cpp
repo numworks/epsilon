@@ -41,8 +41,8 @@ void init() {
       Ion::Display::Width, Ion::Display::Height,
       0  // Default flags: no high-dpi, not resizeable.
 #else
-      458,
-      888,  // Otherwise use a default size that makes the screen pixel-perfect
+      perfectWidth, perfectHeight,  // Otherwise use a default size that makes
+                                    // the screen pixel-perfect
       SDL_WINDOW_ALLOW_HIGHDPI
 #if EPSILON_SDL_FULLSCREEN
           | SDL_WINDOW_FULLSCREEN

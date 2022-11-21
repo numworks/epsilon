@@ -1,5 +1,6 @@
 #include <poincare_junior/include/expression.h>
-#include <poincare_junior/src/expression/expression.h>
+#include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 
 namespace Poincare {
@@ -22,7 +23,7 @@ Expression Expression::CreateBasicReduction(void * expressionAddress) {
   return Expression(
     [](Node tree) {
       tree.recursivelyEdit([](Node node) {
-          EExpression::BasicReduction(node.block());
+          Simplification::BasicReduction(node.block());
         });
     },
     expressionAddress);
@@ -33,7 +34,7 @@ float Expression::approximate(float x) const {
   send(
     [](const Node tree, void * res) {
       float * result = static_cast<float *>(res);
-      *result = EExpression::Approximate(tree.block());
+      *result = Approximation::To<float>(tree.block());
     },
     &res
   );

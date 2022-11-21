@@ -2,7 +2,7 @@
 #include "edition_reference.h"
 #include "node_constructor.h"
 #include "node_iterator.h"
-#include <poincare_junior/src/expression/expressions.h>
+#include <poincare_junior/src/expression/approximation.h>
 
 namespace Poincare {
 
@@ -97,10 +97,10 @@ void Node::logAttributes(std::ostream & stream) const {
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig:
     case BlockType::Float:
-      stream << " value=\"" << EExpression::Approximate(m_block) << "\"";
+      stream << " value=\"" << Approximation::To<float>(m_block) << "\"";
       return;
     case BlockType::Constant:
-      stream << " value=\"" << Constant::Value(m_block) << "\"";
+      stream << " value=\"" << Approximation::To<float>(m_block) << "\"";
       return;
     default:
       return;

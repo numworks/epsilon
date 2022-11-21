@@ -1,8 +1,8 @@
-#ifndef POINCARE_EXPRESSIONS_RATIONAL_H
-#define POINCARE_EXPRESSIONS_RATIONAL_H
+#ifndef POINCARE_EXPRESSION_RATIONAL_H
+#define POINCARE_EXPRESSION_RATIONAL_H
 
 #include <poincare_junior/src/memory/edition_reference.h>
-#include "integer_handler.h"
+#include "integer.h"
 
 namespace Poincare {
 
@@ -17,3 +17,4 @@ public:
 }
 
 #endif
+

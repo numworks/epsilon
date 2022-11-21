@@ -13,9 +13,11 @@ include poincare_junior/utils/Makefile
 poincare_junior_src += $(utils_src)
 
 poincare_junior_src += $(addprefix poincare_junior/src/,\
-  expression.o \
   expression/approximation.o \
-  expression/expression.o \
+  expression/integer.o \
+  expression/rational.o \
+  expression/simplification.o \
+  expression.o \
   memory/cache_pool.o \
   memory/cache_reference.o \
   memory/edition_pool.o \

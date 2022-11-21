@@ -65,6 +65,14 @@ Do we?
 
 13th October: what is the +/- of interfaces?
 
+Policy based Design?
+  // EExpressionInterface<LayoutPolicy, SimplificationPolicy>...
+  // What about decreasing v-table sizes?
+  // EExpressionInterface
+  // InternalEExpressionInterface
+  // AlgebraicEExpressionInterface, FunctionEExpressionInterface etc?
+p
+
 Let define:
 N number of block types
 F number of functions
@@ -80,6 +88,8 @@ C-style switch requires:
 FxN < Nx(F + 1)
 
 We'll go for C-style.
+
+
 
 ## Interruption
 

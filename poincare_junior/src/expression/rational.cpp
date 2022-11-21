@@ -16,15 +16,29 @@ IntegerHandler Rational::Numerator(const TypeBlock * block) {
     case BlockType::Half:
       return IntegerHandler(1);
     case BlockType::IntegerShort:
-      return IntegerHandler(IntegerShort::Value(block));
+    {
+      int8_t value = static_cast<int8_t>(*(block->next()));
+      return IntegerHandler(value);
+    }
     case BlockType::IntegerPosBig:
     case BlockType::IntegerNegBig:
-      return IntegerHandler(IntegerBig::Digits(block), IntegerBig::NumberOfDigits(block), type == BlockType::IntegerNegBig);
+    {
+      uint8_t numberOfDigits = static_cast<uint8_t>(*(block->next()));
+      const uint8_t * digits = reinterpret_cast<const uint8_t *>(block->nextNth(2));
+      return IntegerHandler(digits, numberOfDigits, type == BlockType::IntegerNegBig);
+    }
     case BlockType::RationalShort:
-      return IntegerHandler(RationalShort::NumeratorValue(block));
+    {
+      int8_t value = static_cast<int8_t>(*(block->next()));
+      return IntegerHandler(value);
+    }
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig:
-      return IntegerHandler(RationalBig::NumeratorDigits(block), RationalBig::NumeratorNumberOfDigits(block), type == BlockType::RationalNegBig);
+    {
+      uint8_t numberOfDigits = static_cast<uint8_t>(*(block->next()));
+      const uint8_t * digits = reinterpret_cast<const uint8_t *>(block->nextNth(3));
+      return IntegerHandler(digits, numberOfDigits, type == BlockType::RationalNegBig);
+    }
     default:
       assert(false);
   }
@@ -43,10 +57,18 @@ IntegerHandler Rational::Denominator(const TypeBlock * block) {
     case BlockType::Half:
       return IntegerHandler(2);
     case BlockType::RationalShort:
-      return IntegerHandler(RationalShort::DenominatorValue(block));
+    {
+      uint8_t value = static_cast<uint8_t>(*(block->next()));
+      return IntegerHandler(value);
+    }
     case BlockType::RationalPosBig:
     case BlockType::RationalNegBig:
-      return IntegerHandler(RationalBig::DenominatorDigits(block), RationalBig::DenominatorNumberOfDigits(block), false);
+    {
+      uint8_t numeratorNumberOfDigits = static_cast<uint8_t>(*(block->next()));
+      uint8_t denominatorNumberOfDigits = static_cast<uint8_t>(*(block->nextNth(2)));
+      const uint8_t * digits = reinterpret_cast<const uint8_t *>(block->nextNth(3 + numeratorNumberOfDigits));
+      return IntegerHandler(digits, denominatorNumberOfDigits, false);
+    }
     default:
       assert(false);
   }

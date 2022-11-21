@@ -1,8 +1,7 @@
-#ifndef POINCARE_EXPRESSIONS_INTEGER_HANDLER_H
-#define POINCARE_EXPRESSIONS_INTEGER_HANDLER_H
+#ifndef POINCARE_EXPRESSION_INTEGER_H
+#define POINCARE_EXPRESSION_INTEGER_H
 
-#include "assert.h"
-#include "stdint.h"
+#include <poincare_junior/src/memory/edition_reference.h>
 
 namespace Poincare {
 
@@ -17,16 +16,24 @@ public:
   IntegerHandler(const uint8_t * digits, uint8_t numberOfDigits, bool negative) : m_negative(negative), m_digitAccessor({.m_digits = digits}), m_numberOfDigits(numberOfDigits) {}
   IntegerHandler(int32_t value) : IntegerHandler(value < 0 ? -value : value, value < 0) {}
   IntegerHandler(uint32_t value, bool negative = false) : m_negative(negative), m_digitAccessor({.m_digit = value}), m_numberOfDigits(value != 0 ? 1 : 0) {}
-  float approximate();
+
+  template <typename T>
+  T to();
 private:
   bool m_negative;
   union Digits {
     const uint8_t * m_digits;
-    uint32_t m_digit;
+    native_uint_t m_digit;
   };
   Digits m_digitAccessor;
   uint8_t m_numberOfDigits;
 };
+
+class Integer {
+public:
+  static EditionReference Addition(IntegerHandler a, IntegerHandler b);
+};
+
 
 }
 

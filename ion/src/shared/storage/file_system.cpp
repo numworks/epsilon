@@ -221,11 +221,7 @@ Record FileSystem::recordNamed(Record::Name name) {
     return Record();
   }
   Record r = Record(name);
-  char * p = pointerOfRecord(r);
-  if (p) {
-    return r;
-  }
-  return Record();
+  return pointerOfRecord(r) ? r : Record();
 }
 
 Record FileSystem::recordBaseNamedWithExtensions(const char * baseName, const char * const extensions[], size_t numberOfExtensions) {
@@ -303,10 +299,7 @@ FileSystem::FileSystem() :
 
 Record::Name FileSystem::nameOfRecord(const Record record) const {
   char * p = pointerOfRecord(record);
-  if (p) {
-    return nameOfRecordStarting(p);
-  }
-  return Record::EmptyName();
+  return p ? nameOfRecordStarting(p) : Record::EmptyName();
 }
 
 Record::ErrorStatus FileSystem::setNameOfRecord(Record * record, Record::Name name) {
@@ -421,10 +414,7 @@ char * FileSystem::pointerOfRecord(const Record record) const {
 }
 
 FileSystem::record_size_t FileSystem::sizeOfRecordStarting(char * start) const {
-  if (!start) {
-    return 0;
-  }
-  return StorageHelper::unalignedShort(start);
+  return start ? StorageHelper::unalignedShort(start) : 0;
 }
 
 const void * FileSystem::valueOfRecordStarting(char * start) const {
@@ -437,11 +427,8 @@ const void * FileSystem::valueOfRecordStarting(char * start) const {
 }
 
 Record::Name FileSystem::nameOfRecordStarting(char * start) const {
-   if (!start) {
-    return Record::EmptyName();
-   }
-    return Record::CreateRecordNameFromFullName(start + sizeof(record_size_t));
-  }
+  return start ? Record::CreateRecordNameFromFullName(start + sizeof(record_size_t)) : Record::EmptyName();
+}
 
 
 size_t FileSystem::overrideSizeAtPosition(char * position, record_size_t size) {

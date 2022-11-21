@@ -19,6 +19,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
 
   assert(numberOfChar < k_textBufferSize);
   buffer[numberOfChar++] = '\0';
+  bannerView()->abscissaValue()->setEditing(false);
   bannerView()->abscissaValue()->setText(buffer);
 
   numberOfChar = function->nameWithArgument(buffer, k_textBufferSize);

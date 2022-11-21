@@ -96,16 +96,16 @@ void UnitListController::setExpression(Poincare::Expression e) {
 
   Expression siExpression;
   const Unit::Representative * representative = units.type() == ExpressionNode::Type::Unit ? static_cast<Unit &>(units).representative() : UnitNode::Representative::RepresentativeForDimension(UnitNode::Vector<int>::FromBaseUnits(units));
-  if (representative->dimensionVector() != Unit::AngleRepresentative::Default().dimensionVector()) {
+  if (representative && representative->dimensionVector() == Unit::AngleRepresentative::Default().dimensionVector()) {
+    // Needs to be defined for the unit comparison but is not used with angles
+    siExpression = m_expression;
+  } else {
     // 2. SI units only
     assert(numberOfExpressions < k_maxNumberOfExpressionCells - 1);
     expressions[numberOfExpressions] = m_expression;
     Shared::PoincareHelpers::CloneAndSimplify(&expressions[numberOfExpressions], App::app()->localContext(), ExpressionNode::ReductionTarget::User, Poincare::ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, Poincare::ExpressionNode::UnitConversion::InternationalSystem);
     siExpression = expressions[numberOfExpressions]; // Remember for later (part II)
     numberOfExpressions++;
-  } else {
-    // Needs to be defined for the unit comparison but is not used with angles
-    siExpression = m_expression;
   }
 
   /* 3. Get rid of duplicates

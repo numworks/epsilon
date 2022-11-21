@@ -359,14 +359,14 @@ Record::ErrorStatus FileSystem::setValueOfRecord(Record record, Record::Data dat
    * memcopy, but still notify the delegate. Beware of scripts and the accordion
    * routine.*/
   if (p) {
+    if (m_delegate && !m_delegate->storageWillChangeForRecordName(record.name())) {
+      return Record::ErrorStatus::CanceledByDelegate;
+    }
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
     Record::Name name = nameOfRecordStarting(p);
     size_t newRecordSize = sizeOfRecordWithName(name, data.size);
     if (newRecordSize >= k_maxRecordSize || !slideBuffer(p+previousRecordSize, newRecordSize-previousRecordSize)) {
       return notifyFullnessToDelegate();
-    }
-    if (m_delegate && !m_delegate->storageWillChangeForRecordName(record.name())) {
-      return Record::ErrorStatus::CanceledByDelegate;
     }
     record_size_t nameSize = Record::SizeOfName(name);
     overrideSizeAtPosition(p, newRecordSize);

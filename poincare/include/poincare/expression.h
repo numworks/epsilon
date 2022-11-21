@@ -258,7 +258,7 @@ public:
   Expression removeUnit(Expression * unit) { return node()->removeUnit(unit); }
   bool hasUnit() const;
   // True if has only rad or ° as unit.
-  bool isInRadians(bool expressionIsAlreadyReduced, Context * context) const;
+  bool isInRadians(Context * context) const;
   bool isPureAngleUnit() const;
 
   /* Complex */

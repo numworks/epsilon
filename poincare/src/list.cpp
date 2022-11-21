@@ -57,7 +57,7 @@ int ListNode::extremumIndex(const ApproximationContext& approximationContext, bo
       return -1;
     }
     bool newIsGreater = Helpers::FloatIsGreater(newValue, currentExtremumValue, minimum);
-    if ((minimum && !newIsGreater) || (!minimum && newIsGreater)) {
+    if (returnIndex < 0 || (minimum && !newIsGreater) || (!minimum && newIsGreater)) {
       returnIndex = i;
       currentExtremumValue = newValue;
     }

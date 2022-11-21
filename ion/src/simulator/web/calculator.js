@@ -10,13 +10,6 @@ function Calculator(emModule) {
   // Configure emModule
   var emModule = (typeof emModule === 'undefined') ? {} : emModule;
   var calculatorElement = emModule.element || document.querySelector('.calculator');
-  if (document.querySelector("picture > img").currentSrc.endsWith(".webp")) {
-    calculatorElement.style.top = "0.6%";
-    calculatorElement.style.left = "7.9%";
-    calculatorElement.style.width = "84.1%";
-    calculatorElement.style.height = "89.1%";
-  }
-
   var mainCanvas = calculatorElement.querySelector("canvas");
   if (typeof emModule.mirrorCanvas === 'undefined') {
     /* If emModule.mirrorCanvas is defined as null, don't do anything */
@@ -97,6 +90,26 @@ function Calculator(emModule) {
     span.addEventListener('pointerdown', downHandler);
     span.addEventListener('pointerup', upHandler);
   });
+
+  function resizeImgForWebp(img) {
+    if (img.currentSrc.endsWith(".webp")) {
+      calculatorElement.style.top = "0.6%";
+      calculatorElement.style.left = "7.9%";
+      calculatorElement.style.width = "84.1%";
+      calculatorElement.style.height = "89.1%";
+    }
+  }
+
+  var calculatorImg = document.querySelector("picture > img");
+  // On Chrome, the img may take time to load the currentSrc, so we need to add
+  // a callback.
+  if (calculatorImg.complete) {
+    resizeImgForWebp(calculatorImg);
+  } else {
+    calculatorImg.onload = function() {
+      resizeImgForWebp(calculatorImg);
+    }
+  }
 }
 
 if (typeof exports === 'object' && typeof module === 'object') {

@@ -111,22 +111,29 @@ FunctionStore * FunctionGraphController::functionStore() const {
   return FunctionApp::app()->functionStore();
 }
 
+void FunctionGraphController::computeDefaultPositionForFunctionAtIndex(int index, double * t, Coordinate2D<double> * xy) {
+  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(index);
+  ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
+  *t = defaultCursorT(record);
+  *xy = function->evaluateXYAtParameter(*t, textFieldDelegateApp()->localContext(), 0);
+}
+
 void FunctionGraphController::initCursorParameters() {
-  Poincare::Context * context = textFieldDelegateApp()->localContext();
   const int activeFunctionsCount = numberOfCurves();
   assert(activeFunctionsCount > 0);
   int functionIndex = 0;
   Coordinate2D<double> xy;
   double t;
+
   do {
-    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(functionIndex);
-    ExpiringPointer<Function> firstFunction = functionStore()->modelForRecord(record);
-    t = defaultCursorT(record);
-    xy = firstFunction->evaluateXYAtParameter(t, context, 0);
+    computeDefaultPositionForFunctionAtIndex(functionIndex, &t, &xy);
   } while ((std::isnan(xy.x2()) || std::isinf(xy.x2())) && ++functionIndex < activeFunctionsCount);
+
   if (functionIndex == activeFunctionsCount) {
     functionIndex = 0;
+    computeDefaultPositionForFunctionAtIndex(functionIndex, &t, &xy);
   }
+
   m_cursor->moveTo(t, xy.x1(), xy.x2());
   selectFunctionWithCursor(functionIndex, false);
 }

@@ -71,6 +71,8 @@ private:
   virtual Escher::ViewController * curveParameterController() = 0;
   virtual WithRecord * curveParameterControllerWithRecord() = 0;
 
+  void computeDefaultPositionForFunctionAtIndex(int index, double * t, Poincare::Coordinate2D<double> * xy);
+
   Escher::AbstractButtonCell m_calculusButton;
   int * m_indexFunctionSelectedByCursor;
 };

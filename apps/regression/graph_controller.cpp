@@ -328,10 +328,13 @@ bool GraphController::moveCursorVertically(int direction) {
   return false;
 }
 
-int GraphController::selectedCurveRelativePosition() const {
+int GraphController::selectedCurveIndex(bool relativeIndex) const {
   int res = *m_selectedSeriesIndex;
   if (res < 0) {
     return -1;
+  }
+  if (!relativeIndex) {
+    return res;
   }
   for (int i = 0; i < *m_selectedSeriesIndex; i++) {
     if (!m_store->seriesIsValid(i)) {

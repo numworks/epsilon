@@ -54,7 +54,7 @@ protected:
   bool isCursorVisible();
   virtual bool selectedModelIsValid() const = 0;
   virtual Poincare::Coordinate2D<double> selectedModelXyValues(double t) const = 0;
-  bool openMenu() { return openMenuForCurveAtIndex(selectedCurveRelativePosition()); };
+  bool openMenu() { return openMenuForCurveAtIndex(selectedCurveIndex()); };
   virtual CurveSelectionController * curveSelectionController() const = 0;
   virtual Escher::AbstractButtonCell * calculusButton() const = 0;
   Escher::Invocation calculusButtonInvocation();
@@ -62,7 +62,7 @@ protected:
   // Closest vertical curve helper
   int closestCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex = 0, int * subCurveIndex = nullptr) const;
   virtual bool closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const;
-  virtual int selectedCurveRelativePosition() const = 0;
+  virtual int selectedCurveIndex(bool relativeIndex = true) const = 0;
   virtual Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const = 0;
   virtual bool suitableYValue(double y) const { return true; }
   virtual int numberOfCurves() const = 0;

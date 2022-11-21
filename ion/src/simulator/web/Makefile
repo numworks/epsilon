@@ -47,7 +47,7 @@ $(BUILD_DIR)/epsilon%zip: $(BUILD_DIR)/epsilon%js $(BUILD_DIR)/ion/src/simulator
 	@rm -rf $(basename $@)
 	@mkdir -p $(basename $@)
 	@cp $< $(basename $@)/epsilon.js
-	@cp ion/src/simulator/assets/background_with_shadow.webp $(basename $@)/
+	@cp ion/src/simulator/assets/background-with-shadow.webp $(basename $@)/
 	@cp $(BUILD_DIR)/ion/src/simulator/assets/background.jpg $(basename $@)/
 	@cp $(BUILD_DIR)/ion/src/simulator/web/simulator.html $(basename $@)/
 	$(call rule_label,ZIP)

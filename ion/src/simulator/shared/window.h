@@ -7,6 +7,9 @@ namespace Ion {
 namespace Simulator {
 namespace Window {
 
+constexpr static int perfectWidth = 458;
+constexpr static int perfectHeight = 888;
+
 void init();
 void shutdown();
 

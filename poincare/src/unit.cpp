@@ -738,7 +738,7 @@ Layout UnitNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int 
      || (context->canRemoveUnderscoreToUnits()
          && context->expressionTypeForIdentifier(buffer+1, strlen(buffer)-1) == Context::SymbolAbstractType::None)) {
     // If the unit is not a defined variable, do not display the '_'
-    assert(string[0] = '_');
+    assert(string[0] == '_');
     string++;
     stringLen--;
   }

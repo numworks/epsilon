@@ -2,20 +2,12 @@ extern "C" {
 #include "../include/eadk/eadk.h"
 }
 
-static uint32_t trampolineFunctionsOrigin() {
-  void * programCounter;
-  asm volatile ("mov %[pc], pc" : [pc] "=r" (programCounter) :);
-  // Find the running slot from the PC
-  uint32_t slotStart = (uint32_t)programCounter & (~(0x400000 - 1));
-  // Find the trampoline address start
-  uint32_t kernelSize = 0x10000;
-  uint32_t userlandHeaderSize = 4 + 8 + 4 + 4 + 4 + 4 + 4 + 4 + 4;
-  uint32_t isrOffset = 4 + 4;
-  return slotStart + kernelSize + userlandHeaderSize + isrOffset;
+extern "C" {
+extern char _userland_trampoline_address;
 }
 
 static uint32_t trampolineFunctionAddress(int index) {
-  static uint32_t origin = trampolineFunctionsOrigin();
+  static uint32_t origin = _userland_trampoline_address;
   return origin + index * 4;
 }
 

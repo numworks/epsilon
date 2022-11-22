@@ -51,7 +51,9 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView * plotView, KD
   }
 
   CurveViewRange * range = plotView->range();
-  double xAlpha = m_test->thresholdAbscissa(op, factor);
+  float xAlpha = m_test->thresholdAbscissa(op, factor);
+  xAlpha = std::clamp(xAlpha, range->xMin(), range->xMax());
+  z = std::clamp(z, range->xMin(), range->xMax());
   /* We can draw one of the two following combination of patterns (reversed for
    * ComparisonOperator::Lower):
    * - No pattern | Stripes   | Stripes&Highlight

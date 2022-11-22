@@ -18,10 +18,8 @@ public:
 
 private:
   static constexpr CodePoint k_symbol = 'x';
-  static constexpr char k_symbolChar[] = {k_symbol, 0};
   constexpr static int k_maxNumberOfOutputRows = 1;
 
-  const char * symbol() const override { return k_symbolChar; }
   Escher::HighlightCell * illustrationCell() override { return &m_graphCell; }
   I18n::Message messageAtIndex(int index) override;
 

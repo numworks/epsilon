@@ -19,11 +19,9 @@ public:
    * fractions of radians in the angle cell, we reduce the graph further. */
   constexpr static KDCoordinate k_illustrationHeight = 105;
 private:
-  constexpr static char k_symbol[] = "θ";
-  const char * symbol() const override { return k_symbol; }
+  constexpr static CodePoint k_symbol = u'θ';
   I18n::Message messageAtIndex(int index) override;
   Escher::HighlightCell * illustrationCell() override { return &m_graphCell; }
-  void appendLine(int index, const char * formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences);
   TrigonometryGraphCell m_graphCell;
   TrigonometryModel m_model;
 };

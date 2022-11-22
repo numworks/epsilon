@@ -3,6 +3,7 @@
 #include "illustrated_expressions_list_controller.h"
 #include <poincare/exception_checkpoint.h>
 #include <poincare/symbol.h>
+#include <apps/shared/poincare_helpers.h>
 #include "../app.h"
 
 using namespace Poincare;
@@ -72,17 +73,19 @@ void IllustratedExpressionsListController::tableViewDidChangeSelectionAndDidScro
   }
 }
 
-Poincare::VariableContext IllustratedExpressionsListController::illustratedExpressionsListContext() {
-  // Create variable context containing expression for symbol
-  VariableContext context = VariableContext(symbol(), App::app()->localContext());
-  assert(!m_expression.isUninitialized() && !m_expression.wasErasedByException());
-  context.setExpressionForSymbolAbstract(m_expression, Poincare::Symbol::Builder(symbol(), strlen(symbol())));
-  return context;
-}
-
 int IllustratedExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
   assert(index >= showIllustration());
   return ChainedExpressionsListController::textAtIndex(buffer, bufferSize, index - showIllustration());
 }
+
+void IllustratedExpressionsListController::appendLine(int index, Poincare::Expression formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences) {
+  m_layouts[index] = Shared::PoincareHelpers::CreateLayout(formula, context);
+  Layout exact = getLayoutFromExpression(expression, context, preferences);
+  Layout approximated = getLayoutFromExpression(expression.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit()), context, preferences);
+  // Make it editable to have Horiz(CodePoint("-"),CodePoint("1") == String("-1")
+  m_exactLayouts[index] = exact.isIdenticalTo(approximated, true) ? Layout() : exact;
+  m_approximatedLayouts[index] = approximated;
+  index++;
+};
 
 }

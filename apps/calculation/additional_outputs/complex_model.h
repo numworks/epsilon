@@ -2,7 +2,7 @@
 #define CALCULATION_ADDITIONAL_OUTPUTS_COMPLEX_MODEL_H
 
 #include "../../shared/curve_view_range.h"
-#include "illustrated_list_controller.h"
+#include "illustrated_expressions_list_controller.h"
 #include <complex>
 
 namespace Calculation {
@@ -43,7 +43,7 @@ public:
   constexpr static float k_maxHorizontalMarginFactor = 2.0f;
   // Vertical range
   constexpr static KDCoordinate k_width = Ion::Display::Width - Escher::Metric::PopUpRightMargin - Escher::Metric::PopUpLeftMargin;
-  constexpr static KDCoordinate k_height = IllustratedListController::k_illustrationHeight;
+  constexpr static KDCoordinate k_height = IllustratedExpressionsListController::k_illustrationHeight;
   constexpr static KDCoordinate k_unit = k_width/3;
   /*
    *  VerticalMaring = k_height - k_unit

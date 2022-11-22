@@ -18,11 +18,9 @@ public:
 
   void setExactAndApproximateExpression(Poincare::Expression exactExpression, Poincare::Expression approximateExpression) override;
 private:
-  constexpr static char k_symbol[] = "z";
-  const char * symbol() const override { return k_symbol; }
+  constexpr static CodePoint k_symbol = 'z';
   Escher::HighlightCell * illustrationCell() override { return &m_complexGraphCell; }
   I18n::Message messageAtIndex(int index) override { return I18n::Message::Default; };
-  void appendLine(int index, Poincare::Expression formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences);
   ComplexGraphCell m_complexGraphCell;
   ComplexModel m_model;
 };

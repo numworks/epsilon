@@ -35,12 +35,13 @@ public:
 protected:
   constexpr static uint8_t k_illustrationCellType = 0;
   constexpr static uint8_t k_expressionCellType = 1;
-  Poincare::VariableContext illustratedExpressionsListContext();
   bool showIllustration() const { return m_showIllustration; }
   void setShowIllustration(bool showIllustration) { m_showIllustration = showIllustration; }
+  /* Helper to emulate the previous behavior that used a calculation store to
+   * add lines in the format func(arg) = exact ~ approx */
+  void appendLine(int index, Poincare::Expression formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences);
 private:
   int textAtIndex(char * buffer, size_t bufferSize, int index) override;
-  virtual const char * symbol() const = 0;
   // Cells
   virtual Escher::HighlightCell * illustrationCell() = 0;
   bool m_showIllustration;

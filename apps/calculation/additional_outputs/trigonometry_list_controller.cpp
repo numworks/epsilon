@@ -9,8 +9,6 @@ using namespace Poincare;
 
 namespace Calculation {
 
-constexpr char TrigonometryListController::k_symbol[];
-
 void TrigonometryListController::setExpression(Expression e) {
   IllustratedExpressionsListController::setExpression(e);
 
@@ -47,9 +45,10 @@ void TrigonometryListController::setExpression(Expression e) {
   m_approximatedLayouts[index] = getLayoutFromExpression(UnitConvert::Builder(inRadian, degrees), context, &preferencesRadian);
   index++;
 
-  appendLine(index++, "cos(θ)", Cosine::Builder(e), context, &preferencesRadian);
-  appendLine(index++, "sin(θ)", Sine::Builder(e), context, &preferencesRadian);
-  appendLine(index++, "tan(θ)", Tangent::Builder(e), context, &preferencesRadian);
+  Expression theta = Symbol::Builder(k_symbol);
+  appendLine(index++, Cosine::Builder(theta.clone()), Cosine::Builder(e), context, &preferencesRadian);
+  appendLine(index++, Sine::Builder(theta.clone()), Sine::Builder(e), context, &preferencesRadian);
+  appendLine(index++, Tangent::Builder(theta), Tangent::Builder(e), context, &preferencesRadian);
 
   // Set illustration
   float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(e, context);
@@ -57,16 +56,6 @@ void TrigonometryListController::setExpression(Expression e) {
   m_model.setAngle(angle);
   setShowIllustration(true);
 }
-
-void TrigonometryListController::appendLine(int index, const char * formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences) {
-  m_layouts[index] = LayoutHelper::String(formula);
-  Layout exact = getLayoutFromExpression(expression, context, preferences);
-  Layout approximated = getLayoutFromExpression(expression.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit()), context, preferences);
-  // Make it editable to have Horiz(CodePoint("-"),CodePoint("1") == String("-1")
-  m_exactLayouts[index] = exact.isIdenticalTo(approximated, true) ? Layout() : exact;
-  m_approximatedLayouts[index] = approximated;
-  index++;
-};
 
 KDCoordinate TrigonometryListController::nonMemoizedRowHeight(int j) {
   if (typeAtIndex(j) == k_illustrationCellType) {

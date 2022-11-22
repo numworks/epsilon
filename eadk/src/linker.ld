@@ -32,6 +32,7 @@ SECTIONS {
   } >FLASH
 
   .rodata : {
+    _userland_trampoline_address = {{ trampolineStart }};
     *(.rodata)
     *(.rodata.*)
     _eadk_app_end = .;

@@ -31,13 +31,7 @@ MenuController::MenuController(Escher::StackViewController * parentResponder, st
     cellAtIndex(i++)->setImage(img);
   }
 
-  KDCoordinate availableHeight = Escher::Metric::DisplayHeightWithoutTitleBar;
-  m_selectableTableView.setTopMargin(0);
-  m_selectableTableView.setBottomMargin(0);
-  m_selectableTableView.setFrame(KDRect(0, 0, Ion::Display::Width, availableHeight), true);
-  KDCoordinate tableHeight = m_selectableTableView.minimalSizeForOptimalDisplay().height();
-  assert(tableHeight < availableHeight);
-  m_selectableTableView.setTopMargin((availableHeight - tableHeight) / 2);
+  centerTable(Escher::Metric::DisplayHeightWithoutTitleBar);
 }
 
 void MenuController::stackOpenPage(Escher::ViewController * nextPage) {

@@ -14,6 +14,7 @@ MenuController::MenuController(Escher::StackViewController * parentResponder, In
   cellAtIndex(k_indexOfSimpleInterest)->setSubtitle(I18n::Message::SimpleInterestDescription);
   cellAtIndex(k_indexOfCompoundInterest)->setMessage(I18n::Message::CompoundInterest);
   cellAtIndex(k_indexOfCompoundInterest)->setSubtitle(I18n::Message::CompoundInterestDescription);
+  centerTable(Escher::Metric::DisplayHeightWithoutTitleBar);
 }
 
 void MenuController::didBecomeFirstResponder() {

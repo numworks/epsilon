@@ -17,6 +17,8 @@ public:
   SelectableViewController(Responder * parentResponder) :
     ViewController(parentResponder)
   {}
+protected:
+  void centerTable(KDCoordinate availableHeight);
 };
 
 template <typename DataSource>

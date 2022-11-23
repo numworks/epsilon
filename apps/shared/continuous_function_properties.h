@@ -130,7 +130,7 @@ public:
   static I18n::Message MessageForSymbolType(SymbolType symbolType);
   I18n::Message symbolMessage() const { return MessageForSymbolType(symbolType()); }
 
-  CodePoint equationSymbol() const { return Poincare::ComparisonNode::ComparisonCodePoint(equationType()); }
+  const char * equationSymbol() const { return Poincare::ComparisonNode::ComparisonOperatorString(equationType()); }
 
 private:
   // Update

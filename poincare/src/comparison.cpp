@@ -1,6 +1,7 @@
 #include <poincare/comparison.h>
 #include <poincare/boolean.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/combined_code_points_layout.h>
 #include <poincare/float.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/layout_helper.h>
@@ -8,67 +9,49 @@
 #include <poincare/serialization_helper.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/subtraction.h>
-#include <ion/unicode/utf8_decoder.h>
 #include <assert.h>
 
 namespace Poincare {
 
-CodePoint ComparisonNode::ComparisonCodePoint(OperatorType type) {
-  switch (type) {
-  case OperatorType::Equal:
-    return '=';
-  case OperatorType::NotEqual:
-    return UCodePointNotEqual;
-  case OperatorType::Superior:
-    return '>';
-  case OperatorType::Inferior:
-    return '<';
-  case OperatorType::SuperiorEqual:
-    return UCodePointSuperiorEqual;
-  default:
-    assert(type == OperatorType::InferiorEqual);
-    return UCodePointInferiorEqual;
-  }
+const char * ComparisonNode::ComparisonOperatorString(OperatorType type) {
+  OperatorString result = k_operatorStrings[static_cast<int>(type)];
+  assert(result.type == type);
+  return result.mainString;
 }
 
-bool ComparisonNode::IsComparisonOperatorCodePoint(CodePoint c, OperatorType * returnType) {
-  for (int t = 0; t < static_cast<int>(OperatorType::NumberOfTypes); t++) {
-    OperatorType currentType = static_cast<OperatorType>(t);
-    if (c == ComparisonCodePoint(currentType)) {
-      if (returnType) {
-        *returnType = currentType;
+Layout ComparisonNode::ComparisonOperatorLayout(OperatorType type) {
+  Layout result = LayoutHelper::StringToCodePointsLayout(ComparisonOperatorString(type), strlen(ComparisonOperatorString(type)));
+  assert(result.type() == LayoutNode::Type::CodePointLayout || result.type() == LayoutNode::Type::CombinedCodePointsLayout);
+  return result;
+}
+
+bool ComparisonNode::IsComparisonOperatorString(const char * s, const char * stringEnd, OperatorType * returnType, size_t * returnLength) {
+  int maxOperatorLength = stringEnd - s;
+  int lengthOfFoundOperator = 0;
+  OperatorType typeOfFoundOperator;
+  for (int i = 0; i < static_cast<int>(OperatorType::NumberOfTypes); i++) {
+    const char * currentOperatorString = k_operatorStrings[i].mainString;
+    // Loop twice, once on the main string, the other on the alternative string
+    for (int k = 0; k < 2; k++) {
+      int operatorLength = strlen(currentOperatorString);
+      if (operatorLength <= maxOperatorLength
+          && operatorLength > lengthOfFoundOperator
+          && strncmp(s, currentOperatorString, operatorLength) == 0) {
+        lengthOfFoundOperator = operatorLength;
+        typeOfFoundOperator = k_operatorStrings[i].type;
       }
-      return true;
-    }
-  }
-  return false;
-}
-
-bool ComparisonNode::IsComparisonOperatorString(const char * s, size_t length, OperatorType * returnType) {
-  UTF8Decoder decoder(s);
-  CodePoint operatorCodePoint = decoder.nextCodePoint();
-  size_t lengthOfOperator = UTF8Decoder::CharSizeOfCodePoint(operatorCodePoint);
-  if (lengthOfOperator < length) {
-    CodePoint secondOperatorCodePoint = decoder.nextCodePoint();
-    lengthOfOperator += UTF8Decoder::CharSizeOfCodePoint(secondOperatorCodePoint);
-    if (secondOperatorCodePoint == '=') {
-      switch (operatorCodePoint) {
-      case '!':
-        operatorCodePoint = UCodePointNotEqual;
-        break;
-      case '>':
-        operatorCodePoint = UCodePointSuperiorEqual;
-        break;
-      case '<':
-        operatorCodePoint = UCodePointInferiorEqual;
+      currentOperatorString = k_operatorStrings[i].alternativeString;
+      if (!currentOperatorString) {
         break;
       }
     }
   }
-  if (lengthOfOperator == length) {
-    return IsComparisonOperatorCodePoint(operatorCodePoint, returnType);
+  if (lengthOfFoundOperator == 0) {
+    return false;
   }
-  return false;
+  *returnLength = lengthOfFoundOperator;
+  *returnType = typeOfFoundOperator;
+  return true;
 }
 
 
@@ -141,13 +124,8 @@ size_t ComparisonNode::size() const {
 void ComparisonNode::logAttributes(std::ostream & stream) const {
   stream << " operators=\"";
   int nOperators = numberOfOperators();
-  constexpr static size_t maxLengthOfOperator = UTF8Decoder::CharSizeOfCodePoint(UCodePointInferiorEqual);
-  char buffer[maxLengthOfOperator + 1];
   for(int i = 0; i < nOperators; i++ ) {
-    CodePoint c = ComparisonCodePoint(m_operatorsList[i]);
-    UTF8Decoder::CodePointToChars(c, buffer, maxLengthOfOperator);
-    buffer[UTF8Decoder::CharSizeOfCodePoint(c)] = 0;
-    stream << " " << buffer;
+    stream << " " << ComparisonOperatorString(m_operatorsList[i]);
   }
   stream << " \"";
 }
@@ -157,7 +135,7 @@ Layout ComparisonNode::createLayout(Preferences::PrintFloatMode floatDisplayMode
   HorizontalLayout result = HorizontalLayout::Builder();
   for (int i = 0; i < m_numberOfOperands - 1; i++) {
     result.addOrMergeChildAtIndex(childAtIndex(i)->createLayout(floatDisplayMode, numberOfSignificantDigits, context), result.numberOfChildren(), false);
-    Layout operatorLayout = CodePointLayout::Builder(ComparisonCodePoint(m_operatorsList[i]));
+    Layout operatorLayout = ComparisonOperatorLayout(m_operatorsList[i]);
     operatorLayout.setMargin(true);
     result.addChildAtIndex(operatorLayout, result.numberOfChildren(), result.numberOfChildren(), nullptr);
   }
@@ -172,7 +150,7 @@ int ComparisonNode::serialize(char * buffer, int bufferSize, Preferences::PrintF
   for (int i = 0; i < m_numberOfOperands; i++) {
     if (i > 0) {
       // Write the operator
-      numberOfChar += SerializationHelper::CodePoint(buffer+numberOfChar, bufferSize - numberOfChar, ComparisonCodePoint(m_operatorsList[i - 1]));
+      numberOfChar += strlcpy(buffer + numberOfChar, ComparisonOperatorString(m_operatorsList[i - 1]), bufferSize - numberOfChar);
       if (numberOfChar >= bufferSize-1) {
         assert(buffer[bufferSize - 1] == 0);
         return bufferSize - 1;

@@ -436,8 +436,11 @@ void Parser::parseComparisonOperator(Expression & leftHandSide, Token::Type stop
   }
   Expression rightHandSide;
   ComparisonNode::OperatorType operatorType;
-  assert(ComparisonNode::IsComparisonOperatorString(m_currentToken.text(), m_currentToken.length(), nullptr));
-  ComparisonNode::IsComparisonOperatorString(m_currentToken.text(), m_currentToken.length(), &operatorType);
+  size_t operatorLength;
+  bool check = ComparisonNode::IsComparisonOperatorString(m_currentToken.text(), m_currentToken.text() + m_currentToken.length(), &operatorType, &operatorLength);
+  assert(check);
+  assert(m_currentToken.length() == operatorLength);
+  (void)check;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::ComparisonOperator)) {
     if (leftHandSide.type() == ExpressionNode::Type::Comparison) {
       Comparison leftComparison = static_cast<Comparison&>(leftHandSide);

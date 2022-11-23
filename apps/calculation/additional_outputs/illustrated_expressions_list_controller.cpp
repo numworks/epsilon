@@ -85,7 +85,6 @@ void IllustratedExpressionsListController::appendLine(int index, Poincare::Expre
   // Make it editable to have Horiz(CodePoint("-"),CodePoint("1") == String("-1")
   m_exactLayouts[index] = exact.isIdenticalTo(approximated, true) ? Layout() : exact;
   m_approximatedLayouts[index] = approximated;
-  index++;
 };
 
 }

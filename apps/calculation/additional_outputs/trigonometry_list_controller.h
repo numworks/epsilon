@@ -19,7 +19,7 @@ public:
    * fractions of radians in the angle cell, we reduce the graph further. */
   constexpr static KDCoordinate k_illustrationHeight = 105;
 private:
-  constexpr static CodePoint k_symbol = u'θ';
+  constexpr static CodePoint k_symbol = UCodePointGreekSmallLetterTheta;
   I18n::Message messageAtIndex(int index) override;
   Escher::HighlightCell * illustrationCell() override { return &m_graphCell; }
   TrigonometryGraphCell m_graphCell;

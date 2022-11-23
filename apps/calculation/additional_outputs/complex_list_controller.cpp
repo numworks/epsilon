@@ -32,9 +32,9 @@ void ComplexListController::setExactAndApproximateExpression(Poincare::Expressio
   Expression e = exactExpression;
   Expression z = Symbol::Builder(k_symbol);
   size_t index = 0;
-  appendLine(index++, AbsoluteValue::Builder(z.clone()), AbsoluteValue::Builder(e), context, &preferencesComplex);
-  appendLine(index++, ComplexArgument::Builder(z.clone()), ComplexArgument::Builder(e), context, &preferencesComplex);
-  appendLine(index++, RealPart::Builder(z.clone()), RealPart::Builder(e), context, &preferencesComplex);
+  appendLine(index++, AbsoluteValue::Builder(z), AbsoluteValue::Builder(e), context, &preferencesComplex);
+  appendLine(index++, ComplexArgument::Builder(z), ComplexArgument::Builder(e), context, &preferencesComplex);
+  appendLine(index++, RealPart::Builder(z), RealPart::Builder(e), context, &preferencesComplex);
   appendLine(index++, ImaginaryPart::Builder(z), ImaginaryPart::Builder(e), context, &preferencesComplex);
 
   // Set Complex illustration

@@ -7,7 +7,7 @@ extern char _userland_trampoline_address;
 }
 
 static uint32_t trampolineFunctionAddress(int index) {
-  static uint32_t origin = _userland_trampoline_address;
+  static uint32_t origin = reinterpret_cast<uint32_t>(&_userland_trampoline_address);
   return origin + index * 4;
 }
 

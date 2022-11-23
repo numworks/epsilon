@@ -44,7 +44,7 @@ QUIZ_CASE(poincare_layout_cursor_computation) {
   e = Cosine::Builder(EmptyExpression::Builder());
   assert_inserted_layout_points_to(l, &e, l.childAtIndex(1).childAtIndex(0));
 
-  // •^•
+  // ▯^▯
   l = HorizontalLayout::Builder(
       EmptyLayout::Builder(),
       VerticalOffsetLayout::Builder(
@@ -54,7 +54,7 @@ QUIZ_CASE(poincare_layout_cursor_computation) {
   e = Power::Builder(EmptyExpression::Builder(), EmptyExpression::Builder());
   assert_inserted_layout_points_to(l, &e, l.childAtIndex(0));
 
-  // int(•, x, •, •)
+  // int(▯, x, ▯, ▯)
   l = IntegralLayout::Builder(
       EmptyLayout::Builder(),
       CodePointLayout::Builder('x'),
@@ -107,7 +107,7 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
   }
 
   /*
-   * [[|1,▒][▒,▒]] -> "Backspace" -> |1
+   * [[|1,▯][▯,▯]] -> "Backspace" -> |1
    * */
   {
     HorizontalLayout layout = HorizontalLayout::Builder(
@@ -190,7 +190,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
   }
 
   /*
-   * 2|^3 -> "(" -> 2(|[]^3)  [] == empty layout
+   * 2|^3 -> "(" -> 2(|▯^3)  ▯ == empty layout
    */
   {
     Layout l = HorizontalLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayout::Builder(CodePointLayout::Builder('3'), VerticalOffsetLayoutNode::VerticalPosition::Superscript));
@@ -267,7 +267,7 @@ QUIZ_CASE(poincare_layout_parentheses) {
     quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(1), LayoutCursor::Position::Left)));
   }
   /*
-   * [▒#▒)| -> BACKSPACE -> ▒#▒|  ▒ == empty layout, # == prefix superscript
+   * [▯§▯)| -> BACKSPACE -> ▯§▯|  ▯ == empty layout, § == prefix superscript
    */
   {
     Layout l = HorizontalLayout::Builder(
@@ -282,5 +282,23 @@ QUIZ_CASE(poincare_layout_parentheses) {
     c.performBackspace();
     assert_layout_serialize_to(l, "\u0014{\u0014}");
     quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(1), LayoutCursor::Position::Right)));
+  }
+  /*
+   * (▯§▯)|12 -> BACKSPACE -> (▯§|12]  ▯ == empty layout, § == prefix superscript
+   */
+  {
+    Layout l = HorizontalLayout::Builder(
+      ParenthesisLayout::Builder(HorizontalLayout::Builder(
+        VerticalOffsetLayout::Builder(EmptyLayout::Builder(),
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript, VerticalOffsetLayoutNode::HorizontalPosition::Prefix),
+        EmptyLayout::Builder()
+      )),
+      CodePointLayout::Builder('1'),
+      CodePointLayout::Builder('2')
+    );
+    LayoutCursor c(l.childAtIndex(0), LayoutCursor::Position::Right);
+    c.performBackspace();
+    assert_layout_serialize_to(l, "(\u0014{\u0014}12)");
+    quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(0).childAtIndex(0).childAtIndex(1), LayoutCursor::Position::Left)));
   }
 }

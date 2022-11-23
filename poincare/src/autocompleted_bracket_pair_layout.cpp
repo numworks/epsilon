@@ -57,6 +57,7 @@ void AutocompletedBracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * curso
 
   LayoutCursor nextCursor = cursorAfterDeletion(deletionSide);
   makeTemporary(deletionSide, cursor);
+  assert(!nextCursor.layout().parent().isUninitialized());
   cursor->setTo(&nextCursor);
 }
 
@@ -166,6 +167,16 @@ void AutocompletedBracketPairLayoutNode::absorbSiblings(Side side, LayoutCursor 
     Layout l = h.childAtIndex(removalIndex);
     removalIndex -= 1 + h.removeChild(l, cursor);
     child.addOrMergeChildAtIndex(l, injectionIndex, true, cursor);
+    /* InjectionIndex usually stays the same. Sometimes, an empty layout may
+     * have been removed while inserting l. For example :
+     * (1§▯|) absorbing 234| -> (1§|4) absorbing 23|4 -> (1§|34) absorbing 2|34
+     * with § being the prefix superscript and ▯ an empty layout
+     * TODO : addOrMergeChildAtIndex should take &injectionIndex and update it
+     *        itself. */
+    int injectedIndex = child.indexOfChild(l);
+    if (injectedIndex >= 0) {
+      injectionIndex = injectedIndex;
+    }
   }
   assert(removalIndex == removalEnd - 1);
   if (child.numberOfChildren() == 0) {
@@ -209,7 +220,7 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
 
   if (side == Side::Left) {
     if (parentIsHorizontalLayout && thisIndex > 0) {
-      /* e.g. 12(|34) -> [12|34) */
+      /* e.g. 12(|34) -> [12|34) or 12(|▯^3) -> [12|^3) */
       return LayoutCursor(parentRef.childAtIndex(thisIndex - 1), LayoutCursor::Position::Right);
     }
     if (willDisappear || parentWillDisappear) {
@@ -223,6 +234,10 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
 
   assert(side == Side::Right);
   if (!parentIsHorizontalLayout || !childRef.isEmpty()) {
+    if (parentRef.numberOfChildren() > thisIndex + 1) {
+      /* e.g. (12)|3 -> (12|3] or (1§▯)|23 -> (1§|23] */
+      return LayoutCursor(parentRef.childAtIndex(thisIndex + 1), LayoutCursor::Position::Left);
+    }
     /* e.g. (12)| -> (12|] */
     return LayoutCursor(childOnSide(Side::Right), LayoutCursor::Position::Right);
   }

@@ -145,7 +145,7 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::subviewFrames(KDRec
     KDSize approximateSignSize = m_approximateSign.minimalSizeForOptimalDisplay();
     *centerFrame = KDRect(currentWidth, viewBaseline - centerBaseline, centerSize);
     currentWidth += AbstractScrollableMultipleExpressionsView::k_horizontalMargin + centerSize.width();
-    *approximateSignFrame = KDRect(currentWidth, viewBaseline - approximateSignSize.height()/2, approximateSignSize);
+    *approximateSignFrame = displayApproximateSign() ? KDRect(currentWidth, viewBaseline - approximateSignSize.height()/2, approximateSignSize) : KDRectZero;
     currentWidth += AbstractScrollableMultipleExpressionsView::k_horizontalMargin + approximateSignSize.width();
   }
 

@@ -14,21 +14,15 @@ public:
   HighlightCell();
 
   bool isVisible() const override { return m_state != State::Hidden; }
-  virtual void setVisible(bool visible) {
-    if (m_state == State::Hidden && visible) {
-      m_state = State::Visible;
-    } else if (!visible) {
-      m_state = State::Hidden;
-    }
-  }
+  virtual void setVisible(bool visible);
   void show() { setVisible(true); }
   void hide() { setVisible(false); }
 
   bool isSelectable() { return isVisible() && protectedIsSelectable(); }
 
   virtual void setHighlighted(bool highlight);
-  void setHighlightedWithoutReload(bool highlight);
-  virtual void reloadCell();
+  void setHighlightedWithoutReload(bool highlight) { m_state = highlight ? State::Highlighted : State::Visible; }
+  virtual void reloadCell() { markRectAsDirty(bounds()); }
   virtual Responder * responder() { return nullptr; }
   virtual const char * text() const { return nullptr; }
   virtual Poincare::Layout layout() const { return Poincare::Layout(); }

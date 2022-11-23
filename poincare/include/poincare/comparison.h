@@ -2,6 +2,7 @@
 #define POINCARE_COMPARISON_EXPRESSION_H
 
 #include <poincare/expression.h>
+#include <ion/unicode/utf8_decoder.h>
 
 /* This class can have any number of children.
  * This implements "x = y", "1 < x <= y" and any other sequence of comparisons
@@ -24,9 +25,11 @@ public:
     // Value to know size of enum. Do not use and leave at the end
     NumberOfTypes
   };
-  static CodePoint ComparisonCodePoint(OperatorType type);
-  static bool IsComparisonOperatorCodePoint(CodePoint c, OperatorType * returnType = nullptr);
-  static bool IsComparisonOperatorString(const char * s, size_t length, OperatorType * returnType = nullptr);
+
+  static const char * ComparisonOperatorString(OperatorType type);
+  static Layout ComparisonOperatorLayout(OperatorType type);
+  static bool IsComparisonOperatorString(const char * s, const char * stringEnd, OperatorType * returnType, size_t * returnLength);
+
   static OperatorType SwitchInferiorSuperior(OperatorType type);
 
   static bool IsBinaryComparison(Expression e, OperatorType * returnType = nullptr);
@@ -52,6 +55,22 @@ public:
   OperatorType * listOfOperators() { return m_operatorsList; }
 
 private:
+  struct OperatorString {
+    OperatorType type;
+    const char * mainString;
+    const char * alternativeString;
+  };
+
+  constexpr static OperatorString k_operatorStrings[] = {
+    {OperatorType::Equal, "=", nullptr},
+    {OperatorType::NotEqual, "≠", "!="}, // NFKD norm on "≠"
+    {OperatorType::Superior, ">", nullptr},
+    {OperatorType::Inferior, "<", nullptr},
+    {OperatorType::SuperiorEqual, "≥", ">="},
+    {OperatorType::InferiorEqual, "≤", "<="}
+  };
+  static_assert(sizeof(k_operatorStrings)/sizeof(OperatorString) == static_cast<int>(OperatorType::NumberOfTypes), "Missing string for comparison operator.");
+
   /* This constructor takes its last operator separately so that you can
    * copy another ComparisonNode and add an operator at the end of it. */
   ComparisonNode(int numberOfOperands, OperatorType * operatorsListButTheLast, OperatorType lastOperatorOfList);

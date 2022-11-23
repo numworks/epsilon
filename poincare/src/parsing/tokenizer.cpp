@@ -223,22 +223,23 @@ Token Tokenizer::popToken() {
     assert(c != '.');
     return Token(typeForCodePoint[c - '(']);
   }
-  if (c == '=' && m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment) {
+
+  ComparisonNode::OperatorType comparisonOperatorType;
+  size_t comparisonOperatorLength;
+  if (ComparisonNode::IsComparisonOperatorString(start, m_decoder.stringEnd(), &comparisonOperatorType, &comparisonOperatorLength)) {
     /* Change precedence of equal when assigning a function.
      * This ensures that "f(x) = x and 1" is parsed as
      * "f(x) = (x and 1)" and not "(f(x) = x) and 1" */
-    return Token(Token::Type::AssignmentEqual);
-  }
-  if (ComparisonNode::IsComparisonOperatorCodePoint(c)) {
-    Token result(Token::Type::ComparisonOperator);
-    size_t sizeOfOperator = UTF8Decoder::CharSizeOfCodePoint(c);
-    if ((c == '<' || c == '>') && canPopCodePoint('=')) {
-      // Pop '=' if '<=' or '>='
-      sizeOfOperator += UTF8Decoder::CharSizeOfCodePoint('=');
-    }
-    result.setString(start, sizeOfOperator);
+    Token result(
+      comparisonOperatorType == ComparisonNode::OperatorType::Equal && m_parsingContext->parsingMethod() == ParsingContext::ParsingMethod::Assignment ?
+      Token::Type::AssignmentEqual :
+      Token::Type::ComparisonOperator
+    );
+    result.setString(start, comparisonOperatorLength);
+    m_decoder.setPosition(start + comparisonOperatorLength);
     return result;
   }
+
   switch (c) {
   case UCodePointMultiplicationSign:
   case UCodePointMiddleDot:
@@ -253,14 +254,8 @@ Token Tokenizer::popToken() {
     }
     return Token(Token::Type::Caret);
   }
-  case '!': {
-    if (canPopCodePoint('=')) {
-      Token result(Token::Type::ComparisonOperator);
-      result.setString(start, UTF8Decoder::CharSizeOfCodePoint('!') + UTF8Decoder::CharSizeOfCodePoint('='));
-      return result;
-    }
+  case '!':
     return Token(Token::Type::Bang);
-  }
   case UCodePointNorthEastArrow:
     return Token(Token::Type::NorthEastArrow);
   case UCodePointSouthEastArrow:

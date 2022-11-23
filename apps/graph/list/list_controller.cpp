@@ -148,9 +148,8 @@ bool ListController::completeEquation(InputEventHandler * equationField, CodePoi
   assert(!f->properties().isPolar() || f->properties().isEquality());
   char buffer[k_bufferSize];
   size_t nameLength = f->nameWithArgument(buffer, k_bufferSize);
-  nameLength += UTF8Decoder::CodePointToChars(f->properties().equationSymbol(), buffer + nameLength, k_bufferSize - nameLength);
+  nameLength += strlcpy(buffer + nameLength, f->properties().equationSymbol(), k_bufferSize - nameLength);
   assert(nameLength < k_bufferSize);
-  buffer[nameLength] = 0;
   return equationField->handleEventWithText(buffer);
 }
 

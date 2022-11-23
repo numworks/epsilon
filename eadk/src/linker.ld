@@ -5,6 +5,8 @@ MEMORY {
 
 ENTRY(_start);
 
+_userland_trampoline_address = {{ trampolineStart }};
+
 SECTIONS {
   .eadk_app_info ORIGIN(FLASH) : {
     LONG(0xDEC0BEBA);
@@ -32,7 +34,6 @@ SECTIONS {
   } >FLASH
 
   .rodata : {
-    _userland_trampoline_address = {{ trampolineStart }};
     *(.rodata)
     *(.rodata.*)
     _eadk_app_end = .;

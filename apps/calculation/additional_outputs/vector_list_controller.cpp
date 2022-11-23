@@ -88,7 +88,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
       }
       m_indexMessageMap[index] = messageIndex++;
       m_layouts[index] = LayoutHelper::String("θ");
-      m_approximatedLayouts[index] = getLayoutFromExpression(angle, context, preferences);
+      m_exactLayouts[index] = getLayoutFromExpression(angle, context, preferences);
       index++;
     }
   }

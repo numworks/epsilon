@@ -66,6 +66,7 @@ protected:
       return m_selectedSubviewPosition;
     }
     void setSelectedSubviewPosition(SubviewPosition subviewPosition);
+    bool displayApproximateSign() const { return displayCenter() && !m_rightExpressionView.layout().isUninitialized(); }
     bool displayCenter() const { return m_displayCenter && !m_centeredExpressionView.layout().isUninitialized(); }
     bool displayableCenter() const { return m_displayableCenter && !m_centeredExpressionView.layout().isUninitialized(); }
     void setDisplayCenter(bool display);

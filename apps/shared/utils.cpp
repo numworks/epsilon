@@ -8,6 +8,26 @@ namespace Shared {
 
 namespace Utils {
 
+bool ShouldNeverDisplayReduction(Poincare::Expression input, Poincare::Context * context) {
+  return input.recursivelyMatches(
+      [](const Expression e, Context * c) {
+        return e.isOfType({
+          ExpressionNode::Type::ConstantPhysics,
+          ExpressionNode::Type::Randint,
+          ExpressionNode::Type::RandintNoRepeat,
+          ExpressionNode::Type::Random,
+          ExpressionNode::Type::Round,
+          ExpressionNode::Type::FracPart,
+          ExpressionNode::Type::Integral,
+          ExpressionNode::Type::Product,
+          ExpressionNode::Type::Sum,
+          ExpressionNode::Type::Derivative,
+          ExpressionNode::Type::Sequence,
+          ExpressionNode::Type::DistributionDispatcher,
+        });
+      }, context);
+}
+
 bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context) {
     // Exact output with remaining dependency are not displayed to avoid 2 ≈ undef
   return exactOutput.type() == ExpressionNode::Type::Dependency
@@ -26,23 +46,7 @@ bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expres
         }, context)
     /* If the input contains the following types, we only display the
       * approximate output. Same if it contains an unit other than an angle. */
-    || input.recursivelyMatches(
-      [](const Expression e, Context * c) {
-        return e.isOfType({
-          ExpressionNode::Type::ConstantPhysics,
-          ExpressionNode::Type::Randint,
-          ExpressionNode::Type::RandintNoRepeat,
-          ExpressionNode::Type::Random,
-          ExpressionNode::Type::Round,
-          ExpressionNode::Type::FracPart,
-          ExpressionNode::Type::Integral,
-          ExpressionNode::Type::Product,
-          ExpressionNode::Type::Sum,
-          ExpressionNode::Type::Derivative,
-          ExpressionNode::Type::Sequence,
-          ExpressionNode::Type::DistributionDispatcher,
-        });
-      }, context)
+    || ShouldNeverDisplayReduction(input, context)
     || (exactOutput.hasUnit() && !exactOutput.isInRadians(context));
 }
 

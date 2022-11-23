@@ -209,8 +209,9 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
   int currentSubscriptDepth = 0;
   while (codePoint != UCodePointNull) {
     assert(!codePoint.isCombining());
+    CodePoint nextCodePoint = decoder.nextCodePoint();
     if (codePoint == UCodePointEmpty) {
-      codePoint = decoder.nextCodePoint();
+      codePoint = nextCodePoint;
       assert(!codePoint.isCombining());
       continue;
     }
@@ -218,10 +219,10 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     AutocompletedBracketPairLayoutNode::Side bracketSide = AutocompletedBracketPairLayoutNode::Side::Left;
     if (codePoint == UCodePointSystem) {
       /* System braces are converted to subscript */
-      CodePoint nextCodePoint = decoder.nextCodePoint();
       if (nextCodePoint == '{') {
         newChild = VerticalOffsetLayout::Builder(EmptyLayout::Builder(), VerticalOffsetLayoutNode::VerticalPosition::Subscript);
         currentSubscriptDepth++;
+        nextCodePoint = decoder.nextCodePoint();
       } else {
         // UCodePointSystem should be inserted only for system braces
         assert(nextCodePoint == '}' && currentSubscriptDepth > 0);
@@ -247,6 +248,9 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
     } else if (codePoint == '}') {
       newChild = CurlyBraceLayout::Builder();
       bracketSide = AutocompletedBracketPairLayoutNode::Side::Right;
+    } else if (nextCodePoint.isCombining()) {
+      newChild = CombinedCodePointsLayout::Builder(codePoint, nextCodePoint);
+      nextCodePoint = decoder.nextCodePoint();
     } else {
       newChild = CodePointLayout::Builder(codePoint);
     }
@@ -284,11 +288,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
       firstInsertedChild = newChild;
     }
 
-    // Get the next code point
-    codePoint = decoder.nextCodePoint();
-    while (codePoint.isCombining()) {
-      codePoint = decoder.nextCodePoint();
-    }
+    codePoint = nextCodePoint;
   }
   assert(currentSubscriptDepth == 0);
 

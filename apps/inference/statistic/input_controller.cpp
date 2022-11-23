@@ -39,7 +39,7 @@ void InputController::InputTitle(Escher::ViewController * vc, Statistic * statis
   if (statistic->hasHypothesisParameters()) {
     // H0:<first symbol>=<firstParam> Ha:<first symbol><operator symbol><firstParams> α=<threshold>
     const char * symbol = statistic->hypothesisSymbol();
-    const char * op = HypothesisParams::strForComparisonOp(statistic->hypothesisParams()->comparisonOperator());
+    const char * op = Poincare::ComparisonNode::ComparisonOperatorString(statistic->hypothesisParams()->comparisonOperator());
     StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(vc->parentResponder());
     if (stackViewControllerResponder->topViewController() != vc) {
       Poincare::Print::CustomPrintf(titleBuffer, titleBufferSize, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed",

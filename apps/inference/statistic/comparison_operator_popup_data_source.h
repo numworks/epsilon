@@ -11,6 +11,8 @@ namespace Inference {
 
 class ComparisonOperatorPopupDataSource : public Escher::ListViewDataSource {
 public:
+  static Poincare::ComparisonNode::OperatorType OperatorTypeForRow(int row);
+
   ComparisonOperatorPopupDataSource(Test * test) : m_test(test) {}
   int numberOfRows() const override { return k_numberOfOperators; }
   int reusableCellCount(int type) override { return k_numberOfOperators; }

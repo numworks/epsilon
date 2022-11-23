@@ -59,10 +59,10 @@ bool Test::canRejectNull() {
   return pValue() <= m_threshold;
 }
 
-double Test::thresholdAbscissa(HypothesisParams::ComparisonOperator op, double factor) const {
-  assert(op != HypothesisParams::ComparisonOperator::Different);
+double Test::thresholdAbscissa(Poincare::ComparisonNode::OperatorType  op, double factor) const {
+  assert(op != Poincare::ComparisonNode::OperatorType::NotEqual);
   double t = factor * threshold();
-  return cumulativeDistributiveInverseForProbability(op == HypothesisParams::ComparisonOperator::Lower ? t : 1.0 - t);
+  return cumulativeDistributiveInverseForProbability(op == Poincare::ComparisonNode::OperatorType::Inferior ? t : 1.0 - t);
 }
 
 void Test::resultAtIndex(int index, double * value, Poincare::Layout * message, I18n::Message * subMessage, int * precision) {
@@ -100,19 +100,19 @@ static float interpolate(float a, float b, float alpha) {
 }
 
 bool Test::hasTwoSides() {
-  return hypothesisParams()->comparisonOperator() == HypothesisParams::ComparisonOperator::Different;
+  return hypothesisParams()->comparisonOperator() == Poincare::ComparisonNode::OperatorType::NotEqual;
 }
 
 void Test::computeCurveViewRange(float transition, bool zoomSide) {
   // Transition goes from 0 (default view) to 1 (zoomed view)
   float alpha;
   float z = testCriticalValue();
-  if (hypothesisParams()->comparisonOperator() != HypothesisParams::ComparisonOperator::Different) {
+  if (hypothesisParams()->comparisonOperator() != Poincare::ComparisonNode::OperatorType::NotEqual) {
     alpha = thresholdAbscissa(hypothesisParams()->comparisonOperator());
   } else if (zoomSide) {
-    alpha = thresholdAbscissa(HypothesisParams::ComparisonOperator::Higher);
+    alpha = thresholdAbscissa(Poincare::ComparisonNode::OperatorType::Superior);
   } else {
-    alpha = thresholdAbscissa(HypothesisParams::ComparisonOperator::Lower);
+    alpha = thresholdAbscissa(Poincare::ComparisonNode::OperatorType::Inferior);
     z *= -1;
   }
   float margin = std::abs(alpha - z) * k_displayZoomedInHorizontalMarginRatio;

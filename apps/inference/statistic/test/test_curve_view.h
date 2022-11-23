@@ -12,9 +12,9 @@ public:
 
 protected:
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
-  void drawZLabelAndZGraduation(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float x, HypothesisParams::ComparisonOperator op) const;
+  void drawZLabelAndZGraduation(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float x, Poincare::ComparisonNode::OperatorType op) const;
   void drawLabelAndGraduation(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float x, Poincare::Layout layout) const;
-  void drawTestCurve(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float z, HypothesisParams::ComparisonOperator op, double factor = 1.0) const;
+  void drawTestCurve(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float z, Poincare::ComparisonNode::OperatorType op, double factor = 1.0) const;
 
   Test * m_test;
 };

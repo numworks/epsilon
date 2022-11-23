@@ -483,7 +483,7 @@ int UnitNode::DistanceRepresentative::setAdditionalExpressions(double value, Exp
   return 1;
 }
 
-const UnitNode::Representative * UnitNode::AngleRepresentative::standardRepresentative(double value, double exponent, const ExpressionNode::ReductionContext& reductionContext, const Prefix * * prefix) const {
+const UnitNode::Representative * UnitNode::AngleRepresentative::DefaultRepresentative(const ExpressionNode::ReductionContext& reductionContext) {
   if (reductionContext.angleUnit() == Poincare::Preferences::AngleUnit::Radian) {
     return &Unit::k_angleRepresentatives[Unit::k_radianRepresentativeIndex];
   }
@@ -491,7 +491,14 @@ const UnitNode::Representative * UnitNode::AngleRepresentative::standardRepresen
     return &Unit::k_angleRepresentatives[Unit::k_gradianRepresentativeIndex];
   }
   assert(reductionContext.angleUnit() == Poincare::Preferences::AngleUnit::Degree);
-  return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_arcSecondRepresentativeIndex, 3, prefix);
+  return &Unit::k_angleRepresentatives[Unit::k_degreeRepresentativeIndex];
+}
+
+const UnitNode::Representative * UnitNode::AngleRepresentative::standardRepresentative(double value, double exponent, const ExpressionNode::ReductionContext& reductionContext, const Prefix * * prefix) const {
+  if (reductionContext.angleUnit() == Poincare::Preferences::AngleUnit::Degree) {
+    return DefaultFindBestRepresentative(value, exponent, representativesOfSameDimension() + Unit::k_arcSecondRepresentativeIndex, 3, prefix);
+  }
+  return DefaultRepresentative(reductionContext);
 }
 
 Expression UnitNode::AngleRepresentative::convertInto(Expression value, const UnitNode::Representative * other , const ExpressionNode::ReductionContext& reductionContext) const {

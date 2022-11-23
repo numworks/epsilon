@@ -489,7 +489,7 @@ void Parser::parseRightwardsArrow(Expression & leftHandSide, Token::Type stoppin
   if (!m_nextToken.is(Token::Type::EndOfStream)
     || rightHandSide.isUninitialized()
     || !rightHandSide.isCombinationOfUnits()
-    || !leftHandSide.hasUnit()) {
+    || (!leftHandSide.hasUnit() && !rightHandSide.isPureAngleUnit())) {
     /* UnitConvert expect a unit on the right and an expression with units
       * on the left */
     m_status = Status::Error;

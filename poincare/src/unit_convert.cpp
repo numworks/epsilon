@@ -5,6 +5,7 @@
 #include <poincare/float.h>
 #include <poincare/infinity.h>
 #include <poincare/multiplication.h>
+#include <poincare/power.h>
 #include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
@@ -88,8 +89,19 @@ Expression UnitConvert::shallowBeautify(const ExpressionNode::ReductionContext& 
   Expression divisionUnit;
   division = division.reduceAndRemoveUnit(reductionContext, &divisionUnit);
   if (!divisionUnit.isUninitialized()) {
-    // The left and right members are not homogeneous
-    return replaceWithUndefinedInPlace();
+    if (unit.isPureAngleUnit()) {
+      // Try again with the current angle unit
+      Unit currentAngleUnit = Unit::Builder(UnitNode::AngleRepresentative::DefaultRepresentative(reductionContext));
+      division = Multiplication::Builder(division, divisionUnit, currentAngleUnit);
+      divisionUnit = Expression();
+      division = division.reduceAndRemoveUnit(reductionContext, &divisionUnit);
+      if (!divisionUnit.isUninitialized()) {
+        return replaceWithUndefinedInPlace();
+      }
+    } else {
+      // The left and right members are not homogeneous
+      return replaceWithUndefinedInPlace();
+    }
   }
   Expression result = Multiplication::Builder(division, unit);
   replaceWithInPlace(result);

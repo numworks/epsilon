@@ -245,7 +245,11 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("(1/6)_L_kg", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "1.666666667×_dg×_m^3", "1.6666666666667×_dg×_m^3", &globalContext, &store);
   assertCalculationIs("(π/6)_rad", DisplayOutput::ApproximateOnly, EqualSign::Approximation, nullptr, "30×_°", "30×_°", &globalContext, &store);
   assertCalculationIs("(1/11)_°", DisplayOutput::ApproximateOnly, EqualSign::Approximation, nullptr, "5.454545455×_'", "5.4545454545455×_'", &globalContext, &store);
+  assertCalculationIs("180→rad", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "1×π×_rad", "3.141592654×_rad", "3.1415926535898×_rad", &globalContext, &store);
+  assertCalculationIs("45→gon", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "50×_gon", "50×_gon", &globalContext, &store);
   Preferences::sharedPreferences()->setAngleUnit(Preferences::AngleUnit::Radian);
+  assertCalculationIs("π/2→°", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "90×_°", "90×_°", &globalContext, &store);
+  assertCalculationIs("πrad/2→°", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "90×_°", "90×_°", &globalContext, &store);
   assertCalculationIs("(1/6)_rad^(-1)", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "0.1666666667×_rad^\u0012-1\u0013", "0.16666666666667×_rad^\u0012-1\u0013", &globalContext, &store);
   assertCalculationIs("diff(x^2,x,3)_rad", DisplayOutput::ApproximateOnly, EqualSign::Unknown, nullptr, "6×_rad", "6×_rad", &globalContext, &store);
   assertCalculationIs("(1/6)_rad→a", DisplayOutput::ExactAndApproximate, EqualSign::Approximation, "1/6×_rad", "0.1666666667×_rad", "0.16666666666667×_rad", &globalContext, &store);

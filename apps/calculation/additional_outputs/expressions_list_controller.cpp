@@ -86,7 +86,12 @@ int ExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, int
   ScrollableThreeExpressionsView::SubviewPosition position =  m_cells[index].selectedSubviewPosition();
   Layout layout;
   if (position == ScrollableThreeExpressionsView::SubviewPosition::Left) {
-    layout = m_layouts[index];
+    // If the line is formula = exact ~ approx, insert exact instead of formula
+    if (!m_exactLayouts[index].isUninitialized() && !m_approximatedLayouts[index].isUninitialized()) {
+      layout = m_exactLayouts[index];
+    } else {
+      layout = m_layouts[index];
+    }
   } else if (position == ScrollableThreeExpressionsView::SubviewPosition::Center) {
     layout = m_exactLayouts[index];
   } else {

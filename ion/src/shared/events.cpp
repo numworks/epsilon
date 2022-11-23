@@ -69,6 +69,7 @@ Keyboard::State sCurrentKeyboardState(0);
 uint64_t sKeysSeenUp = -1;
 bool sLastEventShift = false;
 bool sLastEventAlpha = false;
+bool sEventIsRepeating = false;
 
 void resetKeyboardState() {
   sKeysSeenUp = -1;
@@ -111,6 +112,7 @@ Event sharedGetEvent(int * timeout) {
       }
 
       if (keysSeenTransitioningFromUpToDown != 0) {
+        sEventIsRepeating = false;
         resetLongPress();
         /* The key that triggered the event corresponds to the first non-zero bit
          * in "match". This is a rather simple logic operation for the which many
@@ -137,7 +139,7 @@ Event sharedGetEvent(int * timeout) {
                           && sLastEventShift == (sCurrentKeyboardState.keyDown(Keyboard::Key::Shift) || (sLastEventShift && lock))
                           && sLastEventAlpha == (sCurrentKeyboardState.keyDown(Keyboard::Key::Alpha) || lock);
     if (isRepeatableEvent) {
-      delayForRepeat = isRepeating() ? delayBetweenRepeat : delayBeforeRepeat;
+      delayForRepeat = sEventIsRepeating ? delayBetweenRepeat : delayBeforeRepeat;
       maximumDelay = std::min(maximumDelay, delayForRepeat);
     }
 
@@ -156,6 +158,7 @@ Event sharedGetEvent(int * timeout) {
      * always been zero. In other words, no new key has been pressed. */
     if (elapsedTime >= delayForRepeat) {
       assert(isRepeatableEvent);
+      sEventIsRepeating = true;
       Ion::Events::incrementLongPress();
       return sLastEvent;
     }

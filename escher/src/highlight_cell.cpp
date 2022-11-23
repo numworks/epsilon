@@ -8,6 +8,14 @@ HighlightCell::HighlightCell() :
 {
 }
 
+void HighlightCell::setVisible(bool visible) {
+  if (m_state == State::Hidden && visible) {
+    m_state = State::Visible;
+  } else if (!visible) {
+    m_state = State::Hidden;
+  }
+}
+
 void HighlightCell::setHighlighted(bool highlight) {
   // An hidden cell might be deselected but not selected
   assert(m_state != State::Hidden || !highlight);
@@ -16,14 +24,6 @@ void HighlightCell::setHighlighted(bool highlight) {
     HighlightCell::setHighlightedWithoutReload(highlight);
     reloadCell();
   }
-}
-
-void HighlightCell::setHighlightedWithoutReload(bool highlight) {
-  m_state = highlight ? State::Highlighted : State::Visible;
-}
-
-void HighlightCell::reloadCell() {
-  markRectAsDirty(bounds());
 }
 
 }

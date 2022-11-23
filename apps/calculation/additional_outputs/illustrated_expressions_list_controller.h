@@ -37,8 +37,7 @@ protected:
   constexpr static uint8_t k_expressionCellType = 1;
   bool showIllustration() const { return m_showIllustration; }
   void setShowIllustration(bool showIllustration) { m_showIllustration = showIllustration; }
-  /* Helper to emulate the previous behavior that used a calculation store to
-   * add lines in the format func(arg) = exact ~ approx */
+  /* Helper to add a line in the format func(arg) = exact ~ approx */
   void appendLine(int index, Poincare::Expression formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences);
 private:
   int textAtIndex(char * buffer, size_t bufferSize, int index) override;

@@ -46,8 +46,8 @@ void TrigonometryListController::setExpression(Expression e) {
   index++;
 
   Expression theta = Symbol::Builder(k_symbol);
-  appendLine(index++, Cosine::Builder(theta.clone()), Cosine::Builder(e), context, &preferencesRadian);
-  appendLine(index++, Sine::Builder(theta.clone()), Sine::Builder(e), context, &preferencesRadian);
+  appendLine(index++, Cosine::Builder(theta), Cosine::Builder(e), context, &preferencesRadian);
+  appendLine(index++, Sine::Builder(theta), Sine::Builder(e), context, &preferencesRadian);
   appendLine(index++, Tangent::Builder(theta), Tangent::Builder(e), context, &preferencesRadian);
 
   // Set illustration

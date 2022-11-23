@@ -79,6 +79,7 @@ public:
   bool isOfDegreeTwo() const { assert(isInitialized()); return m_propertiesBitField.m_isOfDegreeTwo; }
   Poincare::Conic::Shape conicShape() const { assert(isInitialized()); return static_cast<Poincare::Conic::Shape>(m_propertiesBitField.m_conicShape); }
   bool isAlongY() const { assert(isInitialized()); return m_propertiesBitField.m_isAlongY; }
+  bool hideDetails() const { assert(isInitialized()); return m_propertiesBitField.m_hideDetails; }
 
   // Update
   void reset();
@@ -154,6 +155,7 @@ private:
   void setConicShape(Poincare::Conic::Shape shape) { m_propertiesBitField.m_conicShape = static_cast<uint8_t>(shape); }
   void setIsOfDegreeTwo(bool isOfDegreeTwo) { m_propertiesBitField.m_isOfDegreeTwo = isOfDegreeTwo; }
   void setIsAlongY(bool isAlongY) { m_propertiesBitField.m_isAlongY = isAlongY; }
+  void setHideDetails(bool hideDetails) { m_propertiesBitField.m_hideDetails = hideDetails; }
 
   constexpr static size_t k_numberOfBitsForStatus = Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<unsigned int>(Status::NumberOfStatus));
   constexpr static size_t k_numberOfBitsForEquationType = Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<unsigned int>(Poincare::ComparisonNode::OperatorType::NumberOfTypes));
@@ -169,6 +171,7 @@ private:
     /* Poincare::Conic::Shape */ uint8_t m_conicShape : k_numberOfBitsForConicShape;
     bool m_isOfDegreeTwo : 1;
     bool m_isAlongY : 1;
+    bool m_hideDetails : 1;
   };
 
   PropertiesBitField m_propertiesBitField;

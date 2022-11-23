@@ -113,6 +113,8 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
   }
 
   bool genericCaptionOnly = !inputEquation.isUninitialized() && Shared::Utils::ShouldNeverDisplayReduction(inputEquation, context);;
+  setHideDetails(genericCaptionOnly);
+
   assert(!reducedEquation.isUninitialized());
   if (reducedEquation.type() == ExpressionNode::Type::Undefined) {
     setErrorStatusAndUpdateCaption(Status::Undefined);

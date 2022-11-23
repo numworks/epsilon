@@ -7,6 +7,7 @@ namespace Shared {
 
 namespace Utils {
 
+bool ShouldNeverDisplayReduction(Poincare::Expression input, Poincare::Context * context);
 bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context);
 bool ShouldOnlyDisplayExactOutput(Poincare::Expression input);
 

@@ -83,6 +83,7 @@ private:
   constexpr static int k_numberOfLineCells = Escher::Metric::MinimalNumberOfScrollableRowsToFillDisplayHeight(KDFont::GlyphHeight(KDFont::Size::Small));
   constexpr static int k_outputAccumulationBufferSize = 1000;
   static_assert(ConsoleStore::k_historySize > k_outputAccumulationBufferSize, "Accumulation buffer of console is larger than history");
+  static_assert(k_outputAccumulationBufferSize < KDCOORDINATE_MAX / KDFont::GlyphWidth(KDFont::Size::Large), "Accumulation buffer of console is too long for large font");
 
   // RegularListViewDataSource
   KDCoordinate defaultRowHeight() override;

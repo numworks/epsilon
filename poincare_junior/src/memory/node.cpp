@@ -3,8 +3,7 @@
 #include "node_constructor.h"
 #include "node_iterator.h"
 #include <poincare_junior/src/expression/approximation.h>
-
-#include "constexpr_node.h"
+#include "tree_constructor.h"
 
 namespace Poincare {
 

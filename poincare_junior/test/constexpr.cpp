@@ -1,5 +1,5 @@
 #include <poincare_junior/src/expression/simplification.h>
-#include <poincare_junior/src/memory/constexpr_node.h>
+#include <poincare_junior/src/memory/tree_constructor.h>
 #include "print.h"
 
 namespace Constants {

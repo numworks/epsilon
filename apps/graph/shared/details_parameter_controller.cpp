@@ -99,7 +99,7 @@ void DetailsParameterController::setRecord(Ion::Storage::Record record) {
 }
 
 int DetailsParameterController::detailsNumberOfSections() const {
-  if (m_record.isNull()) {
+  if (m_record.isNull() || function()->properties().hideDetails()) {
     return 0;
   }
   if (functionIsNonVerticalLine()) {

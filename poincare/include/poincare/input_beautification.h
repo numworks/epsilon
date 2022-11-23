@@ -3,6 +3,7 @@
 
 #include <poincare/layout.h>
 #include <poincare/binomial_coefficient.h>
+#include <poincare/comparison.h>
 #include <poincare/conjugate.h>
 #include <poincare/derivative.h>
 #include <poincare/integral.h>
@@ -44,8 +45,9 @@ private:
    * Currently, "*" is the only beautification affected. */
   constexpr static const BeautificationRule convertWhenInputted[] = {
     // Comparison operators
-    {"<=", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointInferiorEqual)); }},
-    {">=", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointSuperiorEqual)); }},
+    {"<=", [](Layout builderParameter) { return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(ComparisonNode::OperatorType::InferiorEqual)); }},
+    {">=", [](Layout builderParameter) { return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(ComparisonNode::OperatorType::SuperiorEqual)); }},
+    {"!=", [](Layout builderParameter) { return static_cast<Layout>(ComparisonNode::ComparisonOperatorLayout(ComparisonNode::OperatorType::NotEqual)); }},
     // Special char
     {"->", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointRightwardsArrow)); }},
     {"*", [](Layout builderParameter) { return static_cast<Layout>(CodePointLayout::Builder(UCodePointMultiplicationSign)); }},

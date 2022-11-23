@@ -113,20 +113,7 @@ bool HypothesisController::textFieldDidAbortEditing(AbstractTextField * textFiel
 }
 
 void HypothesisController::onDropdownSelected(int selectedRow) {
-  HypothesisParams::ComparisonOperator op;
-  switch (selectedRow) {
-    case 0:
-      op = HypothesisParams::ComparisonOperator::Lower;
-      break;
-    case 1:
-      op = HypothesisParams::ComparisonOperator::Different;
-      break;
-    default:
-      assert(selectedRow == 2);
-      op = HypothesisParams::ComparisonOperator::Higher;
-      break;
-  }
-  m_test->hypothesisParams()->setComparisonOperator(op);
+  m_test->hypothesisParams()->setComparisonOperator(ComparisonOperatorPopupDataSource::OperatorTypeForRow(selectedRow));
 }
 
 const char * HypothesisController::symbolPrefix() {

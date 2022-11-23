@@ -58,7 +58,7 @@ public:
   /* Returns the value above/below (depending on the operator) which the probability
    * of landing is inferior to a given significance level. */
   bool canRejectNull();
-  double thresholdAbscissa(HypothesisParams::ComparisonOperator op, double factor = 1.0) const;
+  double thresholdAbscissa(Poincare::ComparisonNode::OperatorType op, double factor = 1.0) const;
 
   // Output
   int numberOfResults() const override { return 2 + numberOfEstimates() + hasDegreeOfFreedom(); }

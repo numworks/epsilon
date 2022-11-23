@@ -46,7 +46,7 @@ define use_dfu_symbol_file
   add-symbol-file output/release/device/n0100/userland/ion/src/device/shared/usb/dfu.elf 0x20038000
 end
 
-define use_external_app_symbol_file
+define use_relocatable_symbol_file
 # Discard previous symbol file
   symbol-file
 # Load new symbol file

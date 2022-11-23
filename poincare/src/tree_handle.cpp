@@ -2,6 +2,9 @@
 #include <poincare/ghost.h>
 #include <poincare_expressions.h>
 #include <poincare_layouts.h>
+#if POINCARE_TREE_LOG
+#include <iostream>
+#endif
 
 namespace Poincare {
 
@@ -130,12 +133,10 @@ void TreeHandle::swapChildrenInPlace(int i, int j) {
 
 #if POINCARE_TREE_LOG
 void TreeHandle::log() const {
-  if (isUninitialized()) {
-    std::cout << "\n<Uninitialized TreeHandle/>";
-  } else {
-    node()->log(std::cout);
+  if (!isUninitialized()) {
+    return node()->log();
   }
-  std::cout << std::endl;
+  std::cout << "\n<Uninitialized TreeHandle/>" << std::endl;
 }
 #endif
 

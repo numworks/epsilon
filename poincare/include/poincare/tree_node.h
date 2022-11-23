@@ -7,6 +7,7 @@
 #include <stdint.h>
 #if POINCARE_TREE_LOG
 #include <ostream>
+#include <iostream>
 #endif
 #include <poincare/helpers.h>
 #include <poincare/preferences.h>
@@ -176,6 +177,7 @@ public:
   virtual void logNodeName(std::ostream & stream) const = 0;
   virtual void logAttributes(std::ostream & stream) const {}
   void log(std::ostream & stream, bool recursive = true, int indentation = 0, bool verbose = true);
+  void log() { log(std::cout); std::cout << std::endl; }
 #endif
 
   static bool IsValidIdentifier(uint16_t id) { return id < NoNodeIdentifier; }

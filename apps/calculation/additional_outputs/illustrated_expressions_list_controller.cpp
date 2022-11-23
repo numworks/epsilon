@@ -78,7 +78,7 @@ int IllustratedExpressionsListController::textAtIndex(char * buffer, size_t buff
   return ChainedExpressionsListController::textAtIndex(buffer, bufferSize, index - showIllustration());
 }
 
-void IllustratedExpressionsListController::appendLine(int index, Poincare::Expression formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences) {
+void IllustratedExpressionsListController::setLineAtIndex(int index, Poincare::Expression formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences) {
   m_layouts[index] = Shared::PoincareHelpers::CreateLayout(formula, context);
   Layout exact = getLayoutFromExpression(expression, context, preferences);
   Layout approximated = getLayoutFromExpression(expression.approximate<double>(context, preferences->complexFormat(), preferences->angleUnit()), context, preferences);

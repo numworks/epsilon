@@ -38,7 +38,7 @@ protected:
   bool showIllustration() const { return m_showIllustration; }
   void setShowIllustration(bool showIllustration) { m_showIllustration = showIllustration; }
   /* Helper to add a line in the format func(arg) = exact ~ approx */
-  void appendLine(int index, Poincare::Expression formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences);
+  void setLineAtIndex(int index, Poincare::Expression formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences);
 private:
   int textAtIndex(char * buffer, size_t bufferSize, int index) override;
   // Cells

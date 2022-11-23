@@ -46,9 +46,9 @@ void TrigonometryListController::setExpression(Expression e) {
   index++;
 
   Expression theta = Symbol::Builder(k_symbol);
-  appendLine(index++, Cosine::Builder(theta), Cosine::Builder(e), context, &preferencesRadian);
-  appendLine(index++, Sine::Builder(theta), Sine::Builder(e), context, &preferencesRadian);
-  appendLine(index++, Tangent::Builder(theta), Tangent::Builder(e), context, &preferencesRadian);
+  setLineAtIndex(index++, Cosine::Builder(theta), Cosine::Builder(e), context, &preferencesRadian);
+  setLineAtIndex(index++, Sine::Builder(theta), Sine::Builder(e), context, &preferencesRadian);
+  setLineAtIndex(index++, Tangent::Builder(theta), Tangent::Builder(e), context, &preferencesRadian);
 
   // Set illustration
   float angle = Shared::PoincareHelpers::ApproximateToScalar<float>(e, context);

@@ -6,6 +6,7 @@
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/trigonometry.h>
+#include <apps/shared/utils.h>
 
 using namespace Poincare;
 
@@ -111,6 +112,7 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
     return;
   }
 
+  bool genericCaptionOnly = !inputEquation.isUninitialized() && Shared::Utils::ShouldNeverDisplayReduction(inputEquation, context);;
   assert(!reducedEquation.isUninitialized());
   if (reducedEquation.type() == ExpressionNode::Type::Undefined) {
     setErrorStatusAndUpdateCaption(Status::Undefined);
@@ -138,6 +140,9 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
         return;
       }
       setCartesianFunctionProperties(analyzedExpression, context);
+      if (genericCaptionOnly) {
+        setCaption(I18n::Message::FunctionType);
+      }
       return;
     }
 
@@ -152,11 +157,17 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
         return;
       }
       setParametricFunctionProperties(analyzedExpression, context);
+      if (genericCaptionOnly) {
+        setCaption(I18n::Message::ParametricEquationType);
+      }
       return;
     }
 
     assert(precomputedFunctionSymbol == SymbolType::Theta);
     setPolarFunctionProperties(analyzedExpression, context);
+    if (genericCaptionOnly) {
+      setCaption(I18n::Message::PolarEquationType);
+    }
     return;
   }
 
@@ -205,6 +216,9 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
   }
 
   setCartesianEquationProperties(analyzedExpression, context, xDeg, yDeg, highestCoefficientIsPositive);
+  if (genericCaptionOnly) {
+    setCaption(I18n::Message::EquationType);
+  }
 }
 
 void ContinuousFunctionProperties::setCartesianFunctionProperties(const Expression& analyzedExpression, Context * context) {

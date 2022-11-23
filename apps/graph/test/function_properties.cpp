@@ -134,6 +134,13 @@ QUIZ_CASE(graph_function_properties) {
         .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
     );
 
+    assert_check_function_properties(
+      "f(x)=diff(x^2,x,x)",
+      FunctionProperties{
+        .m_caption = I18n::Message::FunctionType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
+    );
+
     // === Cartesian equations ===
 
     assert_check_function_properties(
@@ -333,6 +340,13 @@ QUIZ_CASE(graph_function_properties) {
           .m_isOfDegreeTwo = false
         }
     );
+    assert_check_function_properties(
+      "y=diff(x^2,x,x)",
+      FunctionProperties{
+        .m_caption = I18n::Message::EquationType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Line,
+      }
+    );
 
     constexpr static FunctionProperties k_twoSubCurves = FunctionProperties{
       .m_caption = I18n::Message::EquationType,
@@ -355,9 +369,9 @@ QUIZ_CASE(graph_function_properties) {
         },
       ContinuousFunctionProperties::AreaType::Outside
     );
+
     assert_check_function_properties(
       "(y-x+x^2)^2>=0",
-
       (noInequations || noImplicitPlot) ?
         k_bannedProperties :
         FunctionProperties{
@@ -474,6 +488,14 @@ QUIZ_CASE(graph_function_properties) {
         .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar}
     );
 
+    assert_check_function_properties(
+      "r=diff(x^2,x,θ)",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarEquationType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar}
+    );
+
     // === Parametric functions ===
 
     assert_check_function_properties(
@@ -558,6 +580,14 @@ QUIZ_CASE(graph_function_properties) {
         .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
         .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric,
         .m_conicShape = Poincare::Conic::Shape::Circle}
+    );
+
+    assert_check_function_properties(
+      "g(t)=[[diff(x,x,t)][t]]",
+      FunctionProperties{
+        .m_caption = I18n::Message::ParametricEquationType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric}
     );
 
     // === Error status ===

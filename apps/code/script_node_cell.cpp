@@ -5,9 +5,11 @@ using namespace Escher;
 
 namespace Code {
 
-constexpr char ScriptNodeCell::k_parentheses[];
-constexpr char ScriptNodeCell::k_parenthesesWithEmpty[];
-constexpr int ScriptNodeCell::k_maxNumberOfCharsInLabel;
+ScriptNodeCell::ScriptNodeCell() :
+  TableCell(),
+  m_labelView(KDFont::Size::Large, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, k_maxNumberOfCharsInLabel),
+  m_subLabelView(KDFont::Size::Small, KDContext::k_alignLeft, KDContext::k_alignCenter, Escher::Palette::GrayDark)
+{}
 
 void ScriptNodeCell::setScriptNode(ScriptNode * node) {
   /* Use a temporary buffer to crop label name, as strlen(node->name()) may be
@@ -21,15 +23,11 @@ void ScriptNodeCell::setScriptNode(ScriptNode * node) {
   m_labelView.setText(temp_buffer);
 
   if (node->type() == ScriptNode::Type::WithParentheses) {
-    m_labelView.appendText(ScriptNodeCell::k_parentheses);
+    m_labelView.appendText(k_parentheses);
   }
 
   m_subLabelView.setText(node->description() != nullptr ? node->description() : "");
   reloadCell();
-}
-
-const View * ScriptNodeCell::subLabelView() const {
-  return m_subLabelView.text()[0] != 0 ? &m_subLabelView : nullptr;
 }
 
 void ScriptNodeCell::setHighlighted(bool highlight) {

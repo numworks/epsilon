@@ -163,13 +163,10 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     if (cell == nullptr) {
       return false;
     }
-    if ((event == Ion::Events::Sto || event == Ion::Events::Var) && !cell->cellTypeIsStorable()) {
-      return false;
-    }
     const char * text = cell->text();
     if (text) {
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-        return Container::activeApp()->storeValue(text);
+        return Container::activeApp()->storeValue(text, cell->cellTypeIsStorable());
       }
       Escher::Clipboard::SharedClipboard()->store(text);
       return true;
@@ -180,7 +177,7 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
       char buffer[bufferSize];
       l.serializeParsedExpression(buffer, bufferSize, m_delegate == nullptr ? nullptr : m_delegate->context());
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {
-        return Container::activeApp()->storeValue(buffer);
+        return Container::activeApp()->storeValue(buffer, cell->cellTypeIsStorable());
       }
       Escher::Clipboard::SharedClipboard()->store(buffer);
       return true;

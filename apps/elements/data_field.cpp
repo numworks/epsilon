@@ -5,7 +5,6 @@
 #include <poincare/float.h>
 #include <poincare/horizontal_layout.h>
 #include <poincare/multiplication.h>
-#include <poincare/undefined.h>
 #include <poincare/vertical_offset_layout.h>
 
 using namespace Poincare;
@@ -32,7 +31,7 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   Preferences::PrintFloatMode floatDisplayMode = Preferences::sharedPreferences()->displayMode();
   double v = getDouble(z);
   if (!std::isfinite(v)) {
-    return Undefined::Builder().createLayout(floatDisplayMode, significantDigits, nullptr);
+    return LayoutHelper::String(I18n::translate(I18n::Message::UnknownValue));
   }
 
   Expression value = Float<double>::Builder(v);
@@ -93,8 +92,7 @@ Layout DoubleDataFieldWithSubscriptSymbol::fieldSymbolLayout() const {
 Layout ADataField::getLayout(AtomicNumber z, int) const {
   uint16_t a = ElementsDataBase::NumberOfMass(z);
   if (a == ElementData::k_AUnknown) {
-    Preferences::PrintFloatMode floatDisplayMode = Preferences::sharedPreferences()->displayMode();
-    return Undefined::Builder().createLayout(floatDisplayMode, k_defaultSignificantDigits, nullptr);
+    return LayoutHelper::String(I18n::translate(I18n::Message::UnknownValue));
   }
   return Integer(ElementsDataBase::NumberOfMass(z)).createLayout();
 }

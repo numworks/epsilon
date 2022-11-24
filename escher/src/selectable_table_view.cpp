@@ -163,6 +163,9 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     if (cell == nullptr) {
       return false;
     }
+    if ((event == Ion::Events::Sto || event == Ion::Events::Var) && !cell->cellTypeIsStorable()) {
+      return false;
+    }
     const char * text = cell->text();
     if (text) {
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {

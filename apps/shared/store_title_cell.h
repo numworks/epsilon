@@ -11,6 +11,7 @@ public:
   StoreTitleCell();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;
+  bool cellTypeIsStorable() const override { return false; }
 private:
   void didSetSeparator() override;
 };

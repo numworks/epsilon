@@ -175,6 +175,7 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
  * Default       |    •    |    •    |     •     |      •      |       •       |  •   |    •    |    •     |  ø   |      •
  *
  * Two Units are separated by a •, Unit on the left is treated according to its type
+ * } followed by ( uses a ×
  * */
 
 MultiplicationNode::MultiplicationSymbol MultiplicationNode::OperatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNode::LayoutShape right) {
@@ -265,7 +266,10 @@ CodePoint MultiplicationNode::operatorSymbol() const {
     Expression left = childAtIndex(i);
     Expression right = childAtIndex(i+1);
     MultiplicationSymbol symbol;
-    if (ExpressionIsUnit(right)) {
+    if (left.isOfType({ExpressionNode::Type::List}) && right.isOfType({ExpressionNode::Type::Parenthesis})) {
+      // Exception to avoid confusion between list access and list * parenthesis
+      symbol = MultiplicationSymbol::MultiplicationSign;
+    } else if (ExpressionIsUnit(right)) {
       symbol = ExpressionIsUnit(left) ? MultiplicationSymbol::MiddleDot : MultiplicationSymbol::Empty;
     } else {
       symbol = OperatorSymbolBetween(left.rightLayoutShape(), right.leftLayoutShape());

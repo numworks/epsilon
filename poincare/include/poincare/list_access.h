@@ -24,7 +24,11 @@ public:
 
 private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, symbolChild()->name(), SerializationHelper::ParenthesisType::Classic, U - 1);
+    int written = childAtIndex(k_listChildIndex)->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+    if (written == -1 || bufferSize - written <= 0) {
+      return -1;
+    }
+    return written + SerializationHelper::Prefix(this, buffer + written, bufferSize - written, floatDisplayMode, numberOfSignificantDigits, "", SerializationHelper::ParenthesisType::Classic, U - 1);
   }
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
 
@@ -33,8 +37,6 @@ private:
   Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(approximationContext); }
   Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(approximationContext); }
   template<typename T> Evaluation<T> templatedApproximate(const ApproximationContext& approximationContext) const;
-
-  SymbolNode * symbolChild() const { assert(childAtIndex(k_listChildIndex)->type() == Type::Symbol); return static_cast<SymbolNode *>(childAtIndex(k_listChildIndex)); }
 };
 
 class ListElement : public Expression {

@@ -203,20 +203,17 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::EXE) {
     return handleEventWithText("\n");
   }
-  if (event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto) {
+  if (event == Ion::Events::Sto) {
+    return true;
+  }
+  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
     if (contentView()->selectionIsEmpty()) {
       return false;
     }
     const char * start = contentView()->selectionStart();
-    if (event == Ion::Events::Sto) {
-      char buffer[Escher::Clipboard::k_bufferSize];
-      strlcpy(buffer, start, std::min<size_t>(contentView()->selectionEnd() - start + 1, Escher::Clipboard::k_bufferSize));
-      Container::activeApp()->storeValue(buffer);
-    } else {
-      Escher::Clipboard::SharedClipboard()->store(start, contentView()->selectionEnd() - start);
-      if (event == Ion::Events::Cut) {
-        deleteSelection();
-      }
+    Escher::Clipboard::SharedClipboard()->store(start, contentView()->selectionEnd() - start);
+    if (event == Ion::Events::Cut) {
+      deleteSelection();
     }
     return true;
   }

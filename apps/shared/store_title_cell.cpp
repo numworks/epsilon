@@ -2,6 +2,11 @@
 
 namespace Shared {
 
+StoreTitleCell::StoreTitleCell() :
+  BufferFunctionTitleCell(KDFont::Size::Small),
+  Separable()
+{}
+
 void StoreTitleCell::drawRect(KDContext * ctx, KDRect rect) const {
   BufferFunctionTitleCell::drawRect(ctx, rect);
   // Draw the separator

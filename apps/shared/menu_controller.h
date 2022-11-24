@@ -9,7 +9,7 @@
 
 namespace Shared {
 
-constexpr int k_menuControllerMaxNumberOfCells = 3;
+constexpr int k_menuControllerMaxNumberOfCells = 2;
 
 class MenuControllerDelegate {
 public:

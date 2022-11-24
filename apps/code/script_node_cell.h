@@ -17,16 +17,12 @@ public:
   // Labels can be formed from user variables, a char limit is enforced.
   constexpr static int k_maxNumberOfCharsInLabel = (Ion::Display::Width - Escher::Metric::PopUpLeftMargin - 2 * Escher::Metric::CellSeparatorThickness - Escher::Metric::CellLeftMargin - Escher::Metric::CellRightMargin - Escher::Metric::PopUpRightMargin) / KDFont::GlyphWidth(KDFont::Size::Large);
   static_assert(k_maxNumberOfCharsInLabel < Escher::BufferTextView::k_maxNumberOfChar, "k_maxNumberOfCharsInLabel is too high");
-  ScriptNodeCell() :
-    TableCell(),
-    m_labelView(KDFont::Size::Large, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite, k_maxNumberOfCharsInLabel),
-    m_subLabelView(KDFont::Size::Small, KDContext::k_alignLeft, KDContext::k_alignCenter, Escher::Palette::GrayDark)
-  {}
+  ScriptNodeCell();
   void setScriptNode(ScriptNode * node);
 
   /* TableCell */
   const Escher::View * labelView() const override { return &m_labelView; }
-  const Escher::View * subLabelView() const override;
+  const Escher::View * subLabelView() const override { return m_subLabelView.text()[0] != 0 ? &m_subLabelView : nullptr; }
 
   /* HighlightCell */
   void setHighlighted(bool highlight) override;

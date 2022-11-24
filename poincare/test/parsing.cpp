@@ -332,6 +332,17 @@ QUIZ_CASE(poincare_parse_lists) {
   assert_text_not_parsable("{,2,3}");
 }
 
+QUIZ_CASE(poincare_parse_lists_access) {
+  {
+    Expression elements[] = { BasedInteger::Builder(2) };
+    assert_parsed_expression_is("{2}(1)", ListElement::Builder(BasedInteger::Builder(1), BuildList(elements)));
+  }
+  {
+    Expression elements[] = { BasedInteger::Builder(3), BasedInteger::Builder(4), BasedInteger::Builder(5) };
+    assert_parsed_expression_is("{3,4,5}(1,2)", ListSlice::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2), BuildList(elements)));
+  }
+}
+
 QUIZ_CASE(poincare_parsing_constants) {
   for (ConstantNode::ConstantInfo info : Constant::k_constants) {
     for (const char * constantNameAlias : info.aliasesList()) {

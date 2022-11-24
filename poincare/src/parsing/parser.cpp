@@ -1013,7 +1013,25 @@ void Parser::parseList(Expression & leftHandSide, Token::Type stoppingType) {
     result = List::Builder();
   }
   leftHandSide = result;
-  isThereImplicitOperator();
+  if (popTokenIfType(Token::Type::LeftParenthesis)) {
+    Expression parameter = parseCommaSeparatedList();
+    if (m_status != Status::Progress || !popTokenIfType(Token::Type::RightParenthesis)) {
+      return;
+    }
+    int numberOfParameters = parameter.numberOfChildren();
+    if (numberOfParameters == 2) {
+      result = ListSlice::Builder(parameter.childAtIndex(0), parameter.childAtIndex(1), result);
+    } else if (numberOfParameters == 1) {
+      parameter = parameter.childAtIndex(0);
+      result = ListElement::Builder(parameter, result);
+    } else {
+      m_status = Status::Error;
+      return;
+    }
+    leftHandSide = result;
+  } else {
+    isThereImplicitOperator();
+  }
 }
 
 bool IsIntegerBaseTenOrEmptyExpression(Expression e) {

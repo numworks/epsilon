@@ -490,8 +490,8 @@ void ConsoleController::flushOutputAccumulationBufferToStore() {
 
 void ConsoleController::appendTextToOutputAccumulationBuffer(const char * text, size_t length) {
   constexpr static int k_maxLength = k_outputAccumulationBufferSize - 1;
-  int lengthOfAccumulatedText = strlen(m_outputAccumulationBuffer);
-  int spaceLeft = k_maxLength - lengthOfAccumulatedText;
+  size_t lengthOfAccumulatedText = strlen(m_outputAccumulationBuffer);
+  size_t spaceLeft = k_maxLength - lengthOfAccumulatedText;
   if (length <= spaceLeft) {
     memcpy(&m_outputAccumulationBuffer[lengthOfAccumulatedText], text, length);
     m_outputAccumulationBuffer[lengthOfAccumulatedText + length] = 0;
@@ -502,7 +502,7 @@ void ConsoleController::appendTextToOutputAccumulationBuffer(const char * text, 
    * and add "..." at the end */
   memcpy(&m_outputAccumulationBuffer[lengthOfAccumulatedText], text, spaceLeft);
   m_outputAccumulationBuffer[k_maxLength] = 0;
-  constexpr static int k_strLenOfDots = 3 * sizeof('.');
+  constexpr static size_t k_strLenOfDots = 3 * sizeof('.');
   int indexOfDots = k_maxLength - k_strLenOfDots;
   while (UTF8Decoder::IsInTheMiddleOfACodePoint(m_outputAccumulationBuffer[indexOfDots])) {
     indexOfDots--;

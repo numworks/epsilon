@@ -74,7 +74,7 @@ public:
     Iterator end() const { return Iterator(m_node.nextTree()); }
   };
 
-  class BackwardsConstChildren final : public ScanConstChildren {
+  class BackwardConstChildren final : public ScanConstChildren {
  public:
     using ScanConstChildren::ScanConstChildren;
     class Iterator : public ScanConstChildren::Iterator {
@@ -122,7 +122,7 @@ public:
   };
 
   /* This code is UGLY, please do something. */
-  class BackwardsEditableChildren final : public ScanEditableChildren {
+  class BackwardEditableChildren final : public ScanEditableChildren {
   public:
     using ScanEditableChildren::ScanEditableChildren;
     class Iterator final : public ScanEditableChildren::Iterator {
@@ -157,10 +157,10 @@ public:
   };
 
   ForwardConstChildren forwardConstChildren() { return ForwardConstChildren(m_node); }
-  BackwardsConstChildren backwardsConstChildren() { return BackwardsConstChildren(m_node); }
+  BackwardConstChildren backwardConstChildren() { return BackwardConstChildren(m_node); }
 
   ForwardEditableChildren forwardEditableChildren() { return ForwardEditableChildren(m_node); }
-  BackwardsEditableChildren backwardsEditableChildren() { return BackwardsEditableChildren(m_node); }
+  BackwardEditableChildren backwardEditableChildren() { return BackwardEditableChildren(m_node); }
 
 private:
   const Node m_node;

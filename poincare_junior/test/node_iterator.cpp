@@ -15,7 +15,7 @@ void testChildrenIterator() {
   }
 
   std::cout << "\n---------------- Scan children backward ----------------" << std::endl;
-  for (const NodeIterator::IndexedNode indexedNode : NodeIterator(mult).backwardsConstChildren()) {
+  for (const NodeIterator::IndexedNode indexedNode : NodeIterator(mult).backwardConstChildren()) {
     indexedNode.m_node.log(std::cout);
   }
 
@@ -29,7 +29,7 @@ void testChildrenIterator() {
 
   std::cout << "\n---------------- Edit children backward ----------------" << std::endl;
   constexpr Tree pi = u'π'_n;
-  for (NodeIterator::IndexedNode indexedNode : NodeIterator(mult).backwardsEditableChildren()) {
+  for (NodeIterator::IndexedNode indexedNode : NodeIterator(mult).backwardEditableChildren()) {
     EditionReference(indexedNode.m_node).replaceTreeByNode(pi);
   }
 

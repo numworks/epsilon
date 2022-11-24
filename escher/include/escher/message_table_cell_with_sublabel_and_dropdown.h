@@ -32,6 +32,7 @@ public:
     MessageTableCellWithMessage::setHighlighted(highlight);
   }
   bool forceAlignLabelAndAccessory() const override { return true; }
+  bool cellTypeIsStorable() const override { return false; }
 
 private:
   Dropdown m_dropdown;

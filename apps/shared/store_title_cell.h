@@ -8,10 +8,7 @@ namespace Shared {
 
 class StoreTitleCell : public BufferFunctionTitleCell, public Separable {
 public:
-  StoreTitleCell() :
-    BufferFunctionTitleCell(KDFont::Size::Small),
-    Separable()
-  {}
+  StoreTitleCell();
   void drawRect(KDContext * ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;
 private:

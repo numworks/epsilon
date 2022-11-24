@@ -14,7 +14,7 @@ public:
   {}
 
   Poincare::Context::SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override {
-  return m_store->isColumnName(identifier, length) ? Poincare::Context::SymbolAbstractType::Symbol : Poincare::ContextWithParent::expressionTypeForIdentifier(identifier, length);
+  return m_store->isColumnName(identifier, length) ? Poincare::Context::SymbolAbstractType::List : Poincare::ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }
 
 private:

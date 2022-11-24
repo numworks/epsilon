@@ -25,7 +25,6 @@ void FunctionGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext 
       m_context->tidyDownstreamPoolFrom();
     }
   }
-  drawForeground(ctx, rect);
 }
 
 bool FunctionGraphPolicy::allFunctionsInterrupted() const {

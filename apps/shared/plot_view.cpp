@@ -328,8 +328,14 @@ View * AbstractPlotView::subviewAtIndex(int i) {
   if (i == 0 && banner) {
     return banner;
   }
-  assert(cursorView() && ((i == 1 && banner) || (i == 0 && !banner)));
-  return cursorView();
+  i -= (banner != nullptr);
+  View * cursor = cursorView();
+  if (i == 0 && cursor) {
+    return cursor;
+  }
+  i -= (cursor != nullptr);
+  assert(i == 0 && ornamentView());
+  return ornamentView();
 }
 
 void AbstractPlotView::layoutSubviews(bool force) {
@@ -347,6 +353,10 @@ void AbstractPlotView::layoutSubviews(bool force) {
   CursorView * cursor = cursorView();
   if (cursor) {
     cursor->setCursorFrame(cursorFrame(), force);
+  }
+  View * ornament = ornamentView();
+  if (ornament) {
+    ornament->setFrame(bounds(), force);
   }
 }
 

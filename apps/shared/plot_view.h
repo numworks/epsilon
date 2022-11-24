@@ -97,8 +97,9 @@ private:
   constexpr static int8_t k_stampIndexNoDash = -1;
   constexpr static KDCoordinate k_tickHalfLength = 2;
 
+  virtual Escher::View * ornamentView() const { return nullptr; }
   // Escher::View
-  int numberOfSubviews() const override { return (bannerView() != nullptr) + (cursorView() != nullptr); }
+  int numberOfSubviews() const override { return (bannerView() != nullptr) + (cursorView() != nullptr) + (ornamentView() != nullptr); }
   Escher::View * subviewAtIndex(int i) override;
   void layoutSubviews(bool force = false) override;
 

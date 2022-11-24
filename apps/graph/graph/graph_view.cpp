@@ -9,8 +9,9 @@ using namespace Shared;
 namespace Graph {
 
 GraphView::GraphView(InteractiveCurveViewRange * graphRange,
-  CurveViewCursor * cursor, Shared::BannerView * bannerView, CursorView * cursorView) :
+  CurveViewCursor * cursor, Shared::BannerView * bannerView, CursorView * cursorView, InterestView * interestView) :
   FunctionGraphView(graphRange, cursor, bannerView, cursorView),
+  m_interestView(interestView),
   m_tangent(false)
 {}
 
@@ -103,25 +104,6 @@ void GraphView::drawRecord(int i, KDContext * ctx, KDRect rect) const {
   }
   assert(f->properties().isCartesian());
   drawCartesian(ctx, rect, f.operator->(), record, tCacheMin, tmax, tCacheStep, discontinuityEvaluation, axis, rectMin, rectMax);
-}
-
-void GraphView::drawForeground(KDContext * ctx, KDRect rect) const {
-  // Draw points of interest above all the curves.
-  if (!hasFocus()) {
-    return;
-  }
-  ContinuousFunctionStore * functionStore = App::app()->functionStore();
-  ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(m_selectedRecord);
-  if (!f->properties().isCartesian()) {
-    return;
-  }
-  Axis axis = f->isAlongY() ? Axis::Vertical : Axis::Horizontal;
-
-  PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterest();
-  for (const PointOfInterest & p : pointsOfInterest->filter(m_interest)) {
-    Coordinate2D<float> xy = axis == Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
-    drawDot(ctx, rect, Dots::Size::Tiny, xy, Palette::GrayDarkest);
-  }
 }
 
 void GraphView::tidyModel(int i) const {

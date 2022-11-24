@@ -17,7 +17,6 @@ protected:
 
   virtual int numberOfDrawnRecords() const = 0;
   virtual void drawRecord(int i, KDContext *, KDRect) const = 0;
-  virtual void drawForeground(KDContext *, KDRect) const {}
   virtual void tidyModel(int i) const = 0;
 
   bool allFunctionsInterrupted() const;

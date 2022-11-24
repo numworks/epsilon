@@ -5,6 +5,7 @@
 #include "curve_parameter_controller.h"
 #include "graph_controller_helper.h"
 #include "graph_view.h"
+#include "interest_view.h"
 #include "points_of_interest_cache.h"
 #include "../continuous_function_store.h"
 #include <apps/shared/with_record.h>
@@ -26,7 +27,7 @@ public:
   bool handleZoom(Ion::Events::Event event) override;
 
   bool displayDerivativeInBanner() const;
-  PointsOfInterestCache * pointsOfInterest() { return &m_pointsOfInterest; }
+  PointsOfInterestCache * pointsOfInterest();
 
 private:
   class FunctionSelectionController : public Shared::FunctionGraphController::FunctionSelectionController {
@@ -67,15 +68,17 @@ private:
 
   bool defaultRangeIsNormalized() const { return functionStore()->displaysFunctionsToNormalize(); }
   void interestingFunctionRange(Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
-  void refreshPointsOfInterest();
+  void computePointsOfInterest();
 
   PointsOfInterestCache m_pointsOfInterest;
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;
+  InterestView m_interestView;
   GraphView m_view;
   Shared::InteractiveCurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;
   FunctionSelectionController m_functionSelectionController;
+  bool m_recomputeInterest;
 };
 
 }

@@ -18,6 +18,7 @@ app_graph_src = $(addprefix apps/graph/,\
   graph/graph_controller_helper.cpp \
   graph/graph_view.cpp \
   graph/integral_graph_controller.cpp \
+  graph/interest_view.cpp \
   graph/intersection_graph_controller.cpp \
   graph/points_of_interest_cache.cpp \
   graph/preimage_graph_controller.cpp\

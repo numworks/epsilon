@@ -12,7 +12,7 @@ public:
   bool layoutFieldShouldFinishEditing(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   bool layoutFieldDidReceiveEvent(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
   bool isAcceptableExpression(const Poincare::Expression expression) override;
-  void storeValue(const char * text = "") override;
+  bool storeValue(const char * text = "") override;
 
 protected:
   ExpressionFieldDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);

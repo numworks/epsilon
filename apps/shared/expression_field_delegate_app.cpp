@@ -86,12 +86,13 @@ bool ExpressionFieldDelegateApp::handleEvent(Ion::Events::Event event) {
   return TextFieldDelegateApp::handleEvent(event);
 }
 
-void ExpressionFieldDelegateApp::storeValue(const char * text) {
+bool ExpressionFieldDelegateApp::storeValue(const char * text) {
   if (m_modalViewController.isDisplayingModal()) {
-    return;
+    return false;
   }
   m_storeMenuController.setText(text);
   m_storeMenuController.open();
+  return true;
 }
 
 bool ExpressionFieldDelegateApp::isStoreMenuOpen() const {

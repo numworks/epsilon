@@ -64,7 +64,7 @@ public:
   ModalViewController * modalViewController() { return &m_modalViewController; }
   virtual void willOpenPage(ViewController * controller) {}
   virtual void didExitPage(ViewController * controller) {}
-  virtual bool storeValue(const char * text = "") { return false; }
+  virtual bool storeValue(const char * text = "", bool cellTypeIsStorable = true) { return false; }
   virtual int numberOfTimers() { return 0; }
   virtual Timer * timerAtIndex(int i) { assert(false); return nullptr; }
   virtual Poincare::Context * localContext() { return nullptr; }

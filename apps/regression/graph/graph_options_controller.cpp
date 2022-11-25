@@ -16,7 +16,7 @@ using namespace Escher;
 namespace Regression {
 
 GraphOptionsController::GraphOptionsController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
-  SelectableListViewController(parentResponder),
+  ExplicitSelectableListViewController(parentResponder),
   m_changeRegressionCell(I18n::Message::RegressionModel),
   m_regressionEquationCell(&m_selectableTableView, I18n::Message::RegressionEquation),
   m_r2Cell(&m_selectableTableView, I18n::Message::Default, KDFont::Size::Large),
@@ -57,6 +57,9 @@ void GraphOptionsController::didBecomeFirstResponder() {
 }
 
 void GraphOptionsController::viewWillAppear() {
+  m_regressionEquationCell.setVisible(displayRegressionEquationCell());
+  m_r2Cell.setVisible(displayR2Cell());
+  m_residualPlotCell.setVisible(displayResidualPlotCell());
   // m_regressionEquationCell may have changed size
   m_regressionEquationCell.reloadScroll();
   resetMemoization();
@@ -72,35 +75,32 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
     return true;
   }
 
-  int type = typeAtIndex(selectedRow());
+  HighlightCell * cell = selectedCell();
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
-    switch (type) {
-    case k_changeRegressionCellType: {
+    if (cell == &m_changeRegressionCell) {
         RegressionController * controller = App::app()->regressionController();
         controller->setSeries(m_graphController->selectedSeriesIndex());
         controller->setDisplayedFromDataTab(false);
         stack->push(controller);
         return true;
-      }
-    case k_residualPlotCellType:
+    } else if (cell == &m_residualPlotCell) {
       m_residualPlotCellController.setSeries(m_graphController->selectedSeriesIndex());
       stack->push(&m_residualPlotCellController);
       return true;
-    case k_xParameterCellType:
-    case k_yParameterCellType:
-      m_goToParameterController.setXPrediction(type == k_xParameterCellType);
+    } else if (cell == &m_xParameterCell || cell == &m_yParameterCell) {
+      m_goToParameterController.setXPrediction(cell == &m_xParameterCell);
       stack->push(&m_goToParameterController);
       return true;
     }
   } else if ((event == Ion::Events::Copy || event == Ion::Events::Cut) || event == Ion::Events::Sto || event == Ion::Events::Var) {
-    if (type == k_r2CellType) {
+    if (cell == &m_r2Cell) {
       if (event == Ion::Events::Sto || event == Ion::Events::Var) {
         App::app()->storeValue(m_r2Cell.text());
       } else {
         Escher::Clipboard::SharedClipboard()->store(m_r2Cell.text());
       }
       return true;
-    } else if (type == k_regressionEquationCellType) {
+    } else if (cell == &m_regressionEquationCell) {
       Poincare::Layout l = m_regressionEquationCell.layout();
       if (!l.isUninitialized()) {
         constexpr int bufferSize = TextField::MaxBufferSize();
@@ -118,8 +118,8 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-HighlightCell * GraphOptionsController::reusableCell(int index, int type) {
-  assert(type >= 0 && type < k_maxNumberOfRows);
+HighlightCell * GraphOptionsController::cell(int index) {
+  assert(index >= 0 && index < k_maxNumberOfRows);
   HighlightCell * reusableCells[k_maxNumberOfRows] = {
     &m_changeRegressionCell,
     &m_regressionEquationCell,
@@ -129,34 +129,19 @@ HighlightCell * GraphOptionsController::reusableCell(int index, int type) {
     &m_yParameterCell,
     &m_removeRegressionCell,
   };
-  return reusableCells[type];
-}
-
-int GraphOptionsController::typeAtIndex(int index) const {
-  static_assert(k_regressionEquationCellType < k_r2CellType && k_r2CellType < k_residualPlotCellType, "This type order is assumed.");
-  if (index >= k_regressionEquationCellType && !displayRegressionEquationCell()) {
-    index++;
-  }
-  if (index >= k_r2CellType && !displayR2Cell()) {
-    index++;
-  }
-  if (index >= k_residualPlotCellType && !displayResidualPlotCell()) {
-    index++;
-  }
-  return index;
+  return reusableCells[index];
 }
 
 void GraphOptionsController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   int series = m_graphController->selectedSeriesIndex();
   Regression::Model * model = m_store->modelForSeries(series);
-  int type = typeAtIndex(index);
-  if (type == k_changeRegressionCellType) {
+  if (cell == &m_changeRegressionCell) {
     m_changeRegressionCell.setSubtitle(model->name());
     return;
   }
   const int significantDigits = Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode = Poincare::Preferences::sharedPreferences()->displayMode();
-  if (type == k_regressionEquationCellType) {
+  if (cell == &m_regressionEquationCell) {
     // Regression equation uses at most 5 coefficients and a few chars (Quartic)
     constexpr int bufferSize = (Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::PrintFloat::k_numberOfStoredSignificantDigits)-1)*5 + sizeof("y=·x^4+·x^3+·x^2+·x+");
     char buffer[bufferSize] = "y=";
@@ -166,7 +151,7 @@ void GraphOptionsController::willDisplayCellForIndex(HighlightCell * cell, int i
     assert(length < bufferSize - bufferOffset);
     (void) length;
     m_regressionEquationCell.setLayout(Poincare::LayoutHelper::StringToCodePointsLayout(buffer, strlen(buffer)));
-  } else if (type == k_r2CellType) {
+  } else if (cell == &m_r2Cell) {
     constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
     char buffer[bufferSize];
     double value = m_store->determinationCoefficientForSeries(series, m_graphController->globalContext());

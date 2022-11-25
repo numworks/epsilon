@@ -6,6 +6,12 @@ using namespace Escher;
 
 namespace Calculation {
 
+void ScrollableThreeExpressionsView::ContentCell::reloadTextColor() {
+  KDColor color = displayCenter() && !rightIsStrictlyEqual() ? Palette::GrayVeryDark : KDColorBlack;
+  rightExpressionView()->setTextColor(color);
+  approximateSign()->setTextColor(color);
+}
+
 void ScrollableThreeExpressionsView::resetMemoization() {
   setLayouts(Poincare::Layout(), Poincare::Layout(), Poincare::Layout());
 }

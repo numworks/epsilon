@@ -45,7 +45,7 @@ protected:
     ContentCell(float horizontalAlignment = KDContext::k_alignLeft, KDFont::Size font = KDFont::Size::Large);
     KDColor backgroundColor() const override;
     void setHighlighted(bool highlight) override;
-    void reloadTextColor();
+    virtual void reloadTextColor();
     KDSize minimalSizeForOptimalDisplay() const override;
     KDSize minimalSizeForOptimalDisplayFullSize() const;
     KDFont::Size font() const {
@@ -69,6 +69,7 @@ protected:
     bool displayApproximateSign() const { return displayCenter() && !m_rightExpressionView.layout().isUninitialized(); }
     bool displayCenter() const { return m_displayCenter && !m_centeredExpressionView.layout().isUninitialized(); }
     bool displayableCenter() const { return m_displayableCenter && !m_centeredExpressionView.layout().isUninitialized(); }
+    bool rightIsStrictlyEqual() const { return m_rightIsStrictlyEqual; }
     void setDisplayCenter(bool display);
     void setDisplayableCenter(bool displayable) {m_displayableCenter = displayable;}
     void setRightIsStrictlyEqual(bool isEqual);

@@ -45,9 +45,7 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::updateSubviewsBackg
 }
 
 void AbstractScrollableMultipleExpressionsView::ContentCell::reloadTextColor() {
-  KDColor color = displayCenter() && !m_rightIsStrictlyEqual ? Palette::GrayVeryDark : KDColorBlack;
-  m_rightExpressionView.setTextColor(color);
-  approximateSign()->setTextColor(color);
+  m_rightExpressionView.setTextColor(displayCenter() ? Palette::GrayVeryDark : KDColorBlack);
 }
 
 KDSize AbstractScrollableMultipleExpressionsView::ContentCell::minimalSizeForOptimalDisplay() const {
@@ -71,8 +69,8 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::setDisplayCenter(bo
 
 void AbstractScrollableMultipleExpressionsView::ContentCell::setRightIsStrictlyEqual(bool isEqual) {
   m_rightIsStrictlyEqual = isEqual;
-  reloadTextColor();
   approximateSign()->setMessage(isEqual ? I18n::Message::Equal : I18n::Message::AlmostEqual);
+  reloadTextColor();
 }
 
 Poincare::Layout AbstractScrollableMultipleExpressionsView::ContentCell::layoutAtPosition(SubviewPosition position) const {

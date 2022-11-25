@@ -36,9 +36,9 @@ bool handlePreemption(bool) {
   return false;
 }
 
-void setPendingKeyboardStateIfPreemtive(Keyboard::State state) {}
+void setPreemptiveKeyboardState(Keyboard::State state) {}
 
-void resetPendingKeyboardState() {}
+void resetPreemptiveKeyboardState() {}
 
 /* getPlatformEvent defined in ./events_platform.cpp */
 

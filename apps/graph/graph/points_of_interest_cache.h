@@ -11,9 +11,10 @@ class PointsOfInterestCache {
 public:
   PointsOfInterestCache() : m_start(NAN), m_end(NAN) {}
 
+  Poincare::List list() { return m_list.list(); }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   Ion::Storage::Record currentRecord() const { return m_record; }
-
+  PointsOfInterestCache clone() const;
   Poincare::Range1D setBounds(float start, float end);
   Poincare::PointOfInterest computePointAtIndex(int i);
   Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);

@@ -121,7 +121,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       /* Only function results can be chained (with integer or rational).
        * TODO: Refactor to avoid writing an if for each parent * child. */
       UserCircuitBreakerCheckpoint checkpoint;
-      if (CircuitBreakerRun(checkpoint)) {
+      if (BackCircuitBreakerRun(checkpoint)) {
         Calculation::AdditionalInformations additionalInformations = selectedCell->additionalInformations();
         ListController * vc = nullptr;
         ExpiringPointer<Calculation> focusCalculation = calculationAtIndex(focusRow);

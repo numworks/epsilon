@@ -458,7 +458,7 @@ EvenOddExpressionCell * ValuesController::valueCells(int j) {
 
   {
     UserCircuitBreakerCheckpoint checkpoint;
-    if (CircuitBreakerRun(checkpoint)) {
+    if (BackCircuitBreakerRun(checkpoint)) {
       activateExactValues(true);
       m_selectableTableView.reloadData();
       return true;

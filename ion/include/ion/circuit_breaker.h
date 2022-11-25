@@ -8,8 +8,10 @@ namespace Ion {
 namespace CircuitBreaker {
 
 enum class CheckpointType : uint8_t {
+  // Sorted by order of priority
   Home = 0, // Checkpoint where the code jumps on Home Event
-  User = 1, // Checkpoint where the code jumps on Back Event if the device is stalling
+  Back = 1, // Checkpoint where the code jumps on Back Event if the device is stalling
+  AnyKey = 2, // Checkpoint where the code jumps on any keyboard Event if the device is stalling
   NumberOfCheckpoints
 };
 

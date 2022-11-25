@@ -2,12 +2,12 @@
 #define REGRESSION_GRAPH_CONTROLLER_H
 
 #include "banner_view.h"
-#include "store.h"
+#include "../store.h"
 #include "graph_options_controller.h"
 #include "graph_view.h"
-#include "../shared/interactive_curve_view_controller.h"
-#include "../shared/curve_view_cursor.h"
-#include "../shared/round_cursor_view.h"
+#include <apps/shared/interactive_curve_view_controller.h>
+#include <apps/shared/curve_view_cursor.h>
+#include <apps/shared/round_cursor_view.h>
 
 namespace Regression {
 

@@ -1,5 +1,5 @@
 #include "graph_options_controller.h"
-#include "app.h"
+#include "../app.h"
 #include "graph_controller.h"
 #include "regression_controller.h"
 #include <poincare/layout_helper.h>

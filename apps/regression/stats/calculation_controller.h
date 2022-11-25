@@ -4,7 +4,7 @@
 #include <escher/even_odd_expression_cell.h>
 #include <escher/even_odd_message_text_cell.h>
 #include <poincare/preferences.h>
-#include "store.h"
+#include "../store.h"
 #include "column_title_cell.h"
 #include "even_odd_double_buffer_text_cell_with_separator.h"
 #include <apps/shared/separator_even_odd_buffer_text_cell.h>

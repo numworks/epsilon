@@ -1,7 +1,7 @@
 #ifndef REGRESSION_RESIDUAL_PLOT_CURVE_VIEW_H
 #define REGRESSION_RESIDUAL_PLOT_CURVE_VIEW_H
 
-#include "store.h"
+#include "../store.h"
 #include <apps/shared/plot_view_policies.h>
 
 namespace Regression {

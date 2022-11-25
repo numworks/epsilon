@@ -1,8 +1,8 @@
-#include "app.h"
+#include "../app.h"
 #include "graph_controller.h"
 #include <apps/apps_container_helper.h>
-#include "../shared/function_banner_delegate.h"
-#include "../shared/poincare_helpers.h"
+#include <apps/shared/function_banner_delegate.h>
+#include <apps/shared/poincare_helpers.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 #include <poincare/layout_helper.h>

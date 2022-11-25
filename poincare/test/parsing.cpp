@@ -689,6 +689,7 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is("2{1,2}", Multiplication::Builder(BasedInteger::Builder(2), BuildList(l1)));
   Expression l2[] = {BasedInteger::Builder(1), BasedInteger::Builder(2)};
   assert_parsed_expression_is("{1,2}2", Multiplication::Builder(BuildList(l2), BasedInteger::Builder(2)));
+  assert_parsed_expression_is("\u0014{2\u0014}log(3)log\u0014{2\u0014}(3)", Multiplication::Builder(Logarithm::Builder(BasedInteger::Builder(3),BasedInteger::Builder(2)), Logarithm::Builder(BasedInteger::Builder(3),BasedInteger::Builder(2))));
 }
 
 QUIZ_CASE(poincare_parsing_adding_missing_parentheses) {

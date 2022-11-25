@@ -27,7 +27,10 @@ public:
   bool handleZoom(Ion::Events::Event event) override;
 
   bool displayDerivativeInBanner() const;
-  PointsOfInterestCache * pointsOfInterest();
+  PointsOfInterestCache * pointsOfInterestForRecord(Ion::Storage::Record record);
+  PointsOfInterestCache * pointsOfInterestForSelectedRecord() {
+    return pointsOfInterestForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
+  }
 
 private:
   class FunctionSelectionController : public Shared::FunctionGraphController::FunctionSelectionController {
@@ -68,9 +71,8 @@ private:
 
   bool defaultRangeIsNormalized() const { return functionStore()->displaysFunctionsToNormalize(); }
   void interestingFunctionRange(Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
-  void setInterestRange();
+  void setInterestRangeForRecord(Ion::Storage::Record record);
 
-  PointsOfInterestCache m_pointsOfInterest;
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;
   InterestView m_interestView;
@@ -78,6 +80,9 @@ private:
   Shared::InteractiveCurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;
   FunctionSelectionController m_functionSelectionController;
+  constexpr static int k_numberOfCaches = 5;
+  // TODO: Erase caches when store checksum changed
+  Ion::RingBuffer<PointsOfInterestCache, k_numberOfCaches> m_pointsOfInterest;
 };
 
 }

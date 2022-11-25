@@ -52,7 +52,7 @@ double AreaBetweenCurvesGraphController::cursorNextStep(double position, int dir
   double nextX = IntegralGraphController::cursorNextStep(position, direction);
   constexpr double snapFactor = 1.5;
   double nextSnap = position + snapFactor * (nextX - position);
-  Coordinate2D<double> nextIntersection = App::app()->graphController()->pointsOfInterest()->firstPointInDirection(position, nextSnap, Solver<double>::Interest::Intersection).xy();
+  Coordinate2D<double> nextIntersection = App::app()->graphController()->pointsOfInterestForRecord(selectedRecord())->firstPointInDirection(position, nextSnap, Solver<double>::Interest::Intersection).xy();
   if (std::isfinite(nextIntersection.x1())) {
     return nextIntersection.x1();
   }

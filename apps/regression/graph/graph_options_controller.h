@@ -3,14 +3,15 @@
 
 #include <apps/shared/curve_view_cursor.h>
 #include <apps/shared/button_with_separator.h>
+#include <escher/button_cell.h>
 #include <escher/explicit_selectable_list_view_controller.h>
 #include <escher/expression_table_cell_with_message.h>
 #include <escher/expression_table_cell_with_message_with_buffer.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
 #include <escher/message_table_cell.h>
 #include <escher/message_table_cell_with_chevron.h>
+#include <escher/spacer_cell.h>
 #include "go_to_parameter_controller.h"
-#include "message_table_cell_with_chevron_with_separator.h"
 #include "residual_plot_controller.h"
 #include "../store.h"
 
@@ -34,7 +35,7 @@ public:
   Escher::HighlightCell * cell(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
-  constexpr static int k_maxNumberOfRows = 7;
+  constexpr static int k_maxNumberOfRows = 9;
 
   bool displayRegressionEquationCell() const;
   bool displayR2Cell() const;
@@ -44,9 +45,11 @@ private:
   Escher::ExpressionTableCellWithMessage m_regressionEquationCell;
   Escher::ExpressionTableCellWithMessageWithBuffer m_r2Cell;
   Escher::MessageTableCell m_residualPlotCell;
-  MessageTableCellWithChevronWithSeparator m_xParameterCell;
+  Escher::SpacerCell m_spacerCell1;
+  Escher::MessageTableCellWithChevron m_xParameterCell;
   Escher::MessageTableCellWithChevron m_yParameterCell;
-  Shared::ButtonWithSeparator m_removeRegressionCell;
+  Escher::SpacerCell m_spacerCell2;
+  Escher::ButtonCell m_removeRegressionCell;
   GoToParameterController m_goToParameterController;
   ResidualPlotController m_residualPlotCellController;
   Store * m_store;

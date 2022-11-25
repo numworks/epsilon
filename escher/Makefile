@@ -10,6 +10,7 @@ escher_src += $(addprefix escher/src/,\
   bordered.cpp \
   bordering_view.cpp \
   buffer_text_view.cpp \
+  button_cell.cpp \
   button_state.cpp \
   button_row_controller.cpp \
   buffer_table_cell.cpp \

@@ -125,8 +125,10 @@ HighlightCell * GraphOptionsController::cell(int index) {
     &m_regressionEquationCell,
     &m_r2Cell,
     &m_residualPlotCell,
+    &m_spacerCell1,
     &m_xParameterCell,
     &m_yParameterCell,
+    &m_spacerCell2,
     &m_removeRegressionCell,
   };
   return reusableCells[index];

@@ -59,11 +59,19 @@ void Interval::clear() {
   m_needCompute = true;
 }
 
+void Interval::translateTo(double newStart) {
+  double previousStart = m_parameters.start();
+  m_parameters.setStart(newStart);
+  m_parameters.setEnd(m_parameters.end() + newStart - previousStart);
+  m_parameters.setStep(1.0);
+  m_needCompute = true;
+}
+
 void Interval::computeElements() {
   if (!m_needCompute) {
     return;
   }
-  if (m_parameters.start() > m_parameters.end()) {
+  if (isEmpty()) {
     m_numberOfElements = 0;
   } else {
     m_numberOfElements = m_parameters.step() > 0 ? 1 + (m_parameters.end() - m_parameters.start())/m_parameters.step() : k_maxNumberOfElements;

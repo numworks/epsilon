@@ -31,6 +31,8 @@ public:
   void forceRecompute(){ m_needCompute = true;}
   void reset();
   void clear();
+  void translateTo(double newStart);
+  bool isEmpty() const { return m_parameters.start() > m_parameters.end(); }
   constexpr static int k_maxNumberOfElements = 101;
 private:
   void computeElements();

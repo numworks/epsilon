@@ -2,6 +2,7 @@
 #include "../app.h"
 #include <assert.h>
 #include <algorithm>
+#include <apps/global_preferences.h>
 
 using namespace Shared;
 using namespace Poincare;
@@ -107,7 +108,9 @@ void ListController::editExpression(int sequenceDefinition, Ion::Events::Event e
         ListController * myController = static_cast<ListController *>(context);
         InputViewController * myInputViewController = (InputViewController *)sender;
         const char * textBody = myInputViewController->textBody();
-        return myController->editSelectedRecordWithText(textBody);
+        bool res = myController->editSelectedRecordWithText(textBody);
+        App::app()->snapshot()->updateInterval();
+        return res;
         },
         [](void * context, void * sender){
         return true;
@@ -227,7 +230,9 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       selectableTableView()->reloadData();
     }
     if (modelStore()->numberOfModels() == 0) {
-      App::app()->snapshot()->setIntervalModifiedByUser(false);
+      App::app()->snapshot()->resetInterval();
+    } else {
+      App::app()->snapshot()->updateInterval();
     }
     return true;
   }

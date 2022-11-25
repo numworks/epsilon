@@ -1,5 +1,6 @@
 #include "app.h"
 #include "../apps_container.h"
+#include <apps/global_preferences.h>
 #include "sequence_icon.h"
 #include "../shared/global_context.h"
 
@@ -20,7 +21,10 @@ const Image * App::Descriptor::icon() const {
   return ImageStore::SequenceIcon;
 }
 
-App::Snapshot::Snapshot() : Shared::FunctionApp::Snapshot::Snapshot() {
+App::Snapshot::Snapshot() : 
+  Shared::FunctionApp::Snapshot::Snapshot(),
+  m_intervalModifiedByUser(false)
+{
   // Register u, v and w as reserved names to the sharedStorage.
   Ion::Storage::FileSystem::sharedFileSystem()->recordNameVerifier()->registerArrayOfReservedNames(Shared::SequenceStore::k_sequenceNames, Ion::Storage::seqExtension, 0, sizeof(Shared::SequenceStore::k_sequenceNames) / sizeof(char *));
 }
@@ -29,9 +33,28 @@ App * App::Snapshot::unpack(Container * container) {
   return new (container->currentAppBuffer()) App(this);
 }
 
+void App::Snapshot::resetInterval() {
+  m_interval.reset();
+  m_interval.parameters()->setStart(GlobalPreferences::sharedGlobalPreferences()->sequencesInitialRank());
+  m_interval.forceRecompute();
+  App::app()->snapshot()->setIntervalModifiedByUser(false);
+}
+
+void App::Snapshot::updateInterval() {
+  if (!intervalModifiedByUser()) {
+    int smallestInitRank = functionStore()->smallestInitialRank();
+    if (smallestInitRank < Shared::Sequence::k_maxInitialRank && smallestInitRank != interval()->parameters()->start()) {
+      interval()->translateTo(smallestInitRank);
+    }
+  }
+  if (interval()->isEmpty()) {
+    resetInterval();
+  }
+}
+
 void App::Snapshot::reset() {
   Shared::FunctionApp::Snapshot::reset();
-  m_interval.reset();
+  resetInterval();
 }
 
 constexpr static App::Descriptor sDescriptor;

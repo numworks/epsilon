@@ -75,11 +75,6 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
 // Model getters
 
 Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
-  int index = GlobalPreferences::sharedGlobalPreferences()->sequencesInitialRank();
-  if (App::app()->interval()->parameters()->start() != index && !App::app()->snapshot()->intervalModifiedByUser() && App::app()->functionStore()->smallestInitialRank() >= index) {
-    App::app()->interval()->parameters()->setStart(index);
-    App::app()->interval()->forceRecompute();
-  }
   return App::app()->interval();
 }
 

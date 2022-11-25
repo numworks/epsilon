@@ -38,10 +38,7 @@ bool ListParameterController::textFieldDidFinishEditing(AbstractTextField * text
     return false;
   }
   sequence()->setInitialRank(index);
-  if (index < App::app()->interval()->parameters()->start()) {
-    App::app()->interval()->parameters()->setStart(index);
-    App::app()->interval()->forceRecompute();
-  }
+  App::app()->snapshot()->updateInterval();
   // Invalidate sequence context cache when changing sequence type
   App::app()->localContext()->resetCache();
   m_selectableTableView.reloadCellAtLocation(0, selectedRow());

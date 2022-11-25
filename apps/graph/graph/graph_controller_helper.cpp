@@ -142,7 +142,7 @@ double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Sh
   double derivative = 0.0;
 
   // Force derivative to 0 if cursor is at an extremum
-  PointOfInterest pointOfInterest = App::app()->graphController()->pointsOfInterest()->pointOfInterestAtAbscissa(cursor->x());
+  PointOfInterest pointOfInterest = App::app()->graphController()->pointsOfInterestForRecord(record)->pointOfInterestAtAbscissa(cursor->x());
   if (pointOfInterest.isUninitialized() || (pointOfInterest.interest() != Solver<double>::Interest::LocalMaximum && pointOfInterest.interest() != Solver<double>::Interest::LocalMinimum)) {
     derivative = function->approximateDerivative(cursor->x(), App::app()->localContext());
   }
@@ -159,7 +159,7 @@ double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Sh
 }
 
 bool GraphControllerHelper::snapToInterestAndUpdateBannerAndCursor(Shared::CurveViewCursor * cursor, double start, double end) {
-  PointOfInterest nextPointOfInterest = App::app()->graphController()->pointsOfInterest()->firstPointInDirection(start, end);
+  PointOfInterest nextPointOfInterest = App::app()->graphController()->pointsOfInterestForSelectedRecord()->firstPointInDirection(start, end);
   Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
   if (!std::isfinite(nextPointOfInterestXY.x1())) {
     graphView()->cursorView()->setHighlighted(false);

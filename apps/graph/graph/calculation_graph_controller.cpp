@@ -79,7 +79,7 @@ Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAb
 }
 
 Poincare::Coordinate2D<double> CalculationGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context) {
-  return App::app()->graphController()->pointsOfInterest()->firstPointInDirection(start, max, specialInterest()).xy();
+  return App::app()->graphController()->pointsOfInterestForSelectedRecord()->firstPointInDirection(start, max, specialInterest()).xy();
 }
 
 ContinuousFunctionStore * CalculationGraphController::functionStore() const {

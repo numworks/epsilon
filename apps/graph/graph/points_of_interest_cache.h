@@ -12,6 +12,7 @@ public:
   PointsOfInterestCache() : m_start(NAN), m_end(NAN) {}
 
   void setRecord(Ion::Storage::Record record) { m_record = record; }
+  Ion::Storage::Record currentRecord() const { return m_record; }
 
   Poincare::Range1D setBounds(float start, float end);
   Poincare::PointOfInterest computePointAtIndex(int i);

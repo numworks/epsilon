@@ -113,14 +113,20 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   return Range2D(*(computeX ? newRange : originalRange).x(), *(computeY ? newRange : originalRange).y());
 }
 
-PointsOfInterestCache * GraphController::pointsOfInterest() {
-  return &m_pointsOfInterest;
+PointsOfInterestCache * GraphController::pointsOfInterestForRecord(Ion::Storage::Record record) {
+  for (int i = 0; i < m_pointsOfInterest.length(); i++) {
+    if (m_pointsOfInterest.elementAtIndex(i)->currentRecord() == record) {
+      return m_pointsOfInterest.elementAtIndex(i);
+    }
+  }
+  // No cache was set with this record
+  return nullptr;
 }
 
 bool GraphController::handleZoom(Ion::Events::Event event) {
   bool res = FunctionGraphController::handleZoom(event);
   if (res) {
-    setInterestRange();
+    setInterestRangeForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
   }
   return res;
 }
@@ -144,8 +150,7 @@ void GraphController::selectFunctionWithCursor(int functionIndex, bool willBeVis
 
   // Compute points of interest
   if (willBeVisible) {
-    m_pointsOfInterest.setRecord(record);
-    setInterestRange();
+    setInterestRangeForRecord(record);
     m_view.reload(false, true);
   }
 }
@@ -169,7 +174,7 @@ bool GraphController::displayDerivativeInBanner() const {
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  setInterestRange();
+  setInterestRangeForRecord(record);
   bool result = privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
   return result;
 }
@@ -296,15 +301,21 @@ void GraphController::moveCursorAndCenterIfNeeded(double t) {
   }
 }
 
-void GraphController::setInterestRange() {
-  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+void GraphController::setInterestRangeForRecord(Ion::Storage::Record record) {
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
+  PointsOfInterestCache * cache = pointsOfInterestForRecord(record);
+  if (!cache) {
+    PointsOfInterestCache newCache;
+    newCache.setRecord(record);
+    m_pointsOfInterest.push(newCache);
+    cache = m_pointsOfInterest.elementAtIndex(m_pointsOfInterest.length() - 1);
+  }
   if (f->isAlongY()) {
-    m_pointsOfInterest.setBounds(m_graphRange->yMin(), m_graphRange->yMax());
+    cache->setBounds(m_graphRange->yMin(), m_graphRange->yMax());
   } else {
     float tMin = f->tMin();
     float tMax = f->tMax();
-    m_pointsOfInterest.setBounds(std::clamp(m_graphRange->xMin(), tMin, tMax), std::clamp(m_graphRange->xMax(), tMin, tMax));
+    cache->setBounds(std::clamp(m_graphRange->xMin(), tMin, tMax), std::clamp(m_graphRange->xMax(), tMin, tMax));
   }
 }
 

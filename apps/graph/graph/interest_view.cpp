@@ -19,7 +19,7 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
   }
 
   AbstractPlotView::Axis axis = f->isAlongY() ? AbstractPlotView::Axis::Vertical : AbstractPlotView::Axis::Horizontal;
-  PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterest();
+  PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterestForRecord(m_parentView->selectedRecord());
   PointOfInterest p = pointsOfInterest->computePointAtIndex(0);
   int i = 0;
   while (!p.isUninitialized()) {

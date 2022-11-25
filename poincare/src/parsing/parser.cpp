@@ -1015,7 +1015,11 @@ void Parser::parseList(Expression & leftHandSide, Token::Type stoppingType) {
   leftHandSide = result;
   if (popTokenIfType(Token::Type::LeftParenthesis)) {
     Expression parameter = parseCommaSeparatedList();
-    if (m_status != Status::Progress || !popTokenIfType(Token::Type::RightParenthesis)) {
+    if (m_status != Status::Progress) {
+      return;
+    }
+    if (!popTokenIfType(Token::Type::RightParenthesis)) {
+      m_status = Status::Error; // Right parenthesis missing.
       return;
     }
     int numberOfParameters = parameter.numberOfChildren();
@@ -1029,9 +1033,8 @@ void Parser::parseList(Expression & leftHandSide, Token::Type stoppingType) {
       return;
     }
     leftHandSide = result;
-  } else {
-    isThereImplicitOperator();
   }
+  isThereImplicitOperator();
 }
 
 bool IsIntegerBaseTenOrEmptyExpression(Expression e) {

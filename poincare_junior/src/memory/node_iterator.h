@@ -16,6 +16,9 @@ class NodeIterator {
    * current child if you're going backwards). */
 
 public:
+  // TODO: clean the implementation to use the more beautiful API:
+  // NodeIterator::Children(Direction::Forward, Editable::False)
+
   class ConstChildrenScanner {
   public:
     ConstChildrenScanner(const Node node) : m_node(node) {}
@@ -39,7 +42,7 @@ public:
     const Node m_node;
   };
 
-  class ForwardConstScanner final : public ConstChildrenScanner {
+  class ForwardConstChildrenScanner final : public ConstChildrenScanner {
  public:
     using ConstChildrenScanner::ConstChildrenScanner;
     class Iterator : public ConstChildrenScanner::Iterator {
@@ -52,7 +55,7 @@ public:
     Iterator end() const { return Iterator(Node(), m_node.numberOfChildren()); }
   };
 
-  class BackwardConstScanner final : public ConstChildrenScanner {
+  class BackwardConstChildrenScanner final : public ConstChildrenScanner {
   public:
     using ConstChildrenScanner::ConstChildrenScanner;
     class Iterator : public ConstChildrenScanner::Iterator {
@@ -95,7 +98,7 @@ public:
     Node m_node;
   };
 
-  class ForwardEditableScanner final : public EditableChildrenScanner {
+  class ForwardEditableChildrenScanner final : public EditableChildrenScanner {
     using EditableChildrenScanner::EditableChildrenScanner;
   public:
     class Iterator final : public EditableChildrenScanner::Iterator {
@@ -110,7 +113,7 @@ public:
   };
 
   /* This code is UGLY, please do something. */
-  class BackwardEditableScanner final : public EditableChildrenScanner {
+  class BackwardEditableChildrenScanner final : public EditableChildrenScanner {
   public:
     using EditableChildrenScanner::EditableChildrenScanner;
     class Iterator final : public EditableChildrenScanner::Iterator {
@@ -144,18 +147,18 @@ public:
     Iterator end() const { return Iterator(Node(), -1); }
   };
 
-  static ForwardConstScanner ForwardConstChildren(const Node node) { return ForwardConstScanner(node); }
-  static BackwardConstScanner BackwardConstChildren(const Node node) { return BackwardConstScanner(node); }
+  static ForwardConstChildrenScanner ForwardConstChildren(const Node node) { return ForwardConstChildrenScanner(node); }
+  static BackwardConstChildrenScanner BackwardConstChildren(const Node node) { return BackwardConstChildrenScanner(node); }
 
-  static ForwardEditableScanner ForwardEditableChildren(EditionReference reference) { return ForwardEditableScanner(reference); }
-  static BackwardEditableScanner BackwardEditableChildren(EditionReference reference) { return BackwardEditableScanner(reference); }
+  static ForwardEditableChildrenScanner ForwardEditableChildren(EditionReference reference) { return ForwardEditableChildrenScanner(reference); }
+  static BackwardEditableChildrenScanner BackwardEditableChildren(EditionReference reference) { return BackwardEditableChildrenScanner(reference); }
 };
 
 class TwoNodesIterator : public NodeIterator {
 public:
-  class ForwardConstScanner final {
+  class ForwardConstChildrenScanner final {
   public:
-    ForwardConstScanner(const Node node0, const Node node1) : m_nodes{node0, node1} {}
+    ForwardConstChildrenScanner(const Node node0, const Node node1) : m_nodes{node0, node1} {}
     class Iterator {
     public:
       Iterator(const Node node0, const Node node1, int index) : m_nodes{node0, node1}, m_index(index) {}
@@ -179,9 +182,9 @@ public:
   };
 
 
-  class ForwardEditableScanner final {
+  class ForwardEditableChildrenScanner final {
   public:
-    ForwardEditableScanner(EditionReference ref0, EditionReference ref1) : m_nodes{ref0.node(), ref1.node()} {}
+    ForwardEditableChildrenScanner(EditionReference ref0, EditionReference ref1) : m_nodes{ref0.node(), ref1.node()} {}
 
     class Iterator {
     public:
@@ -214,8 +217,8 @@ public:
     Node m_nodes[2];
   };
 
-  static ForwardConstScanner ForwardConstChildren(const Node node0, const Node node1) { return ForwardConstScanner(node0, node1); }
-  static ForwardEditableScanner ForwardEditableChildren(EditionReference ref0, EditionReference ref1) { return ForwardEditableScanner(ref0, ref1); }
+  static ForwardConstChildrenScanner ForwardConstChildren(const Node node0, const Node node1) { return ForwardConstChildrenScanner(node0, node1); }
+  static ForwardEditableChildrenScanner ForwardEditableChildren(EditionReference ref0, EditionReference ref1) { return ForwardEditableChildrenScanner(ref0, ref1); }
 private:
   const Node m_secondNode;
 };

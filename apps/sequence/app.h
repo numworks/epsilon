@@ -39,12 +39,8 @@ public:
     Shared::Interval m_interval;
     bool m_intervalModifiedByUser;
   };
-  static App * app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
-  Snapshot * snapshot() const {
-    return static_cast<Snapshot *>(Escher::App::snapshot());
-  }
+  static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
+  Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   TELEMETRY_ID("Sequence");
   // TODO: override variableBox to lock sequence in the variable box once they appear there
   // NestedMenuController * variableBox(InputEventHandler * textInput) override;
@@ -52,12 +48,8 @@ public:
   Shared::SequenceContext * localContext() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceContext(); }
   Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceStore(); }
   Shared::Interval * interval() { return snapshot()->interval(); }
-  ValuesController * valuesController() override {
-    return &m_valuesController;
-  }
-  Escher::InputViewController * inputViewController() override {
-    return &m_inputViewController;
-  }
+  ValuesController * valuesController() override { return &m_valuesController; }
+  Escher::InputViewController * inputViewController() override { return &m_inputViewController; }
   bool isAcceptableExpression(const Poincare::Expression expression) override;
 
 private:

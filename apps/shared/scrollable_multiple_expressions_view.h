@@ -31,14 +31,14 @@ public:
   void setSelectedSubviewPosition(SubviewPosition subviewPosition) {
     contentCell()->setSelectedSubviewPosition(subviewPosition);
   }
-  bool displayCenter() const { return constContentCell()->displayCenter(); }
+  bool displayCenter() const { return contentCell()->displayCenter(); }
   void setDisplayCenter(bool display);
   void setDisplayableCenter(bool displayable) { contentCell()->setDisplayableCenter(displayable); }
   void reloadScroll();
   bool handleEvent(Ion::Events::Event event) override;
-  Poincare::Layout layout() const { return constContentCell()->layout(); }
-  Poincare::Layout layoutAtPosition(SubviewPosition position) const { return constContentCell()->layoutAtPosition(position); }
-  KDCoordinate baseline() const { return constContentCell()->baseline(); }
+  Poincare::Layout layout() const { return contentCell()->layout(); }
+  Poincare::Layout layoutAtPosition(SubviewPosition position) const { return contentCell()->layoutAtPosition(position); }
+  KDCoordinate baseline() const { return contentCell()->baseline(); }
 protected:
   class ContentCell : public Escher::EvenOddCell {
   public:
@@ -93,7 +93,7 @@ protected:
     float m_horizontalAlignment;
   };
   virtual ContentCell * contentCell() = 0;
-  virtual const ContentCell * constContentCell() const = 0;
+  virtual const ContentCell * contentCell() const = 0;
 };
 
 class ScrollableTwoExpressionsView : public AbstractScrollableMultipleExpressionsView {
@@ -112,7 +112,7 @@ public:
   KDFont::Size font() const { return m_contentCell.font(); }
 private:
   ContentCell *  contentCell() override { return &m_contentCell; };
-  const ContentCell *  constContentCell() const override { return &m_contentCell; };
+  const ContentCell * contentCell() const override { return &m_contentCell; };
   ContentCell m_contentCell;
 };
 

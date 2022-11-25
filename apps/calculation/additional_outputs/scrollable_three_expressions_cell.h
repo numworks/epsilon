@@ -43,7 +43,7 @@ private:
   };
 
   ContentCell * contentCell() override { return &m_contentCell; };
-  const ContentCell * constContentCell() const override { return &m_contentCell; };
+  const ContentCell * contentCell() const override { return &m_contentCell; };
   ContentCell m_contentCell;
 };
 

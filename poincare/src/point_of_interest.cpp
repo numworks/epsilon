@@ -25,12 +25,11 @@ PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
 
 void PointsOfInterestList::append(double x, double y, uint32_t data, typename Solver<double>::Interest interest) {
   assert(!m_list.isUninitialized());
-  int i = 0;
   int n = m_list.numberOfChildren();
-  while (i < n && pointAtIndex(i).x() < x) {
+  /*while (i < n && pointAtIndex(i).x() < x) {
     i++;
-  }
-  m_list.addChildAtIndexInPlace(PointOfInterest::Builder(x, y, interest, data), i, n);
+  }*/
+  m_list.addChildAtIndexInPlace(PointOfInterest::Builder(x, y, interest, data), n, n);
 }
 
 }

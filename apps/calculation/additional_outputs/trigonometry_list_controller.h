@@ -14,6 +14,7 @@ public:
     m_graphCell(&m_model) {}
   void setExpression(Poincare::Expression e) override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
+  void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
   /* See comment in parent class for why we need this. Since we need to display
    * fractions of radians in the angle cell, we reduce the graph further. */
@@ -24,6 +25,7 @@ private:
   Escher::HighlightCell * illustrationCell() override { return &m_graphCell; }
   TrigonometryGraphCell m_graphCell;
   TrigonometryModel m_model;
+  bool m_anglesAreEqual;
 };
 
 }

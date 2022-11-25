@@ -9,8 +9,8 @@ class ScrollableTwoExpressionsCell : public Escher::EvenOddCell, public Escher::
 public:
   ScrollableTwoExpressionsCell(Escher::Responder * parentResponder = nullptr, float horizontalAlignment = KDContext::k_alignLeft, KDFont::Size font = KDFont::Size::Large);
   void setLayouts(Poincare::Layout exactLayout, Poincare::Layout approximateLayout);
-  void setEqualMessage(I18n::Message equalSignMessage) {
-    return m_view.setEqualMessage(equalSignMessage);
+  void setRightIsStrictlyEqual(bool isEqual) {
+    return m_view.setRightIsStrictlyEqual(isEqual);
   }
   void setHighlighted(bool highlight) override;
   void setEven(bool even) override;

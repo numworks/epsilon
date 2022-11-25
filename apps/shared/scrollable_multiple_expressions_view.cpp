@@ -45,11 +45,9 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::updateSubviewsBackg
 }
 
 void AbstractScrollableMultipleExpressionsView::ContentCell::reloadTextColor() {
-  if (displayCenter()) {
-    m_rightExpressionView.setTextColor(Palette::GrayVeryDark);
-  } else {
-    m_rightExpressionView.setTextColor(KDColorBlack);
-  }
+  KDColor color = displayCenter() && !m_rightIsStrictlyEqual ? Palette::GrayVeryDark : KDColorBlack;
+  m_rightExpressionView.setTextColor(color);
+  approximateSign()->setTextColor(color);
 }
 
 KDSize AbstractScrollableMultipleExpressionsView::ContentCell::minimalSizeForOptimalDisplay() const {
@@ -69,6 +67,12 @@ void AbstractScrollableMultipleExpressionsView::ContentCell::setDisplayCenter(bo
   m_displayCenter = display;
   reloadTextColor();
   layoutSubviews();
+}
+
+void AbstractScrollableMultipleExpressionsView::ContentCell::setRightIsStrictlyEqual(bool isEqual) {
+  m_rightIsStrictlyEqual = isEqual;
+  reloadTextColor();
+  approximateSign()->setMessage(isEqual ? I18n::Message::Equal : I18n::Message::AlmostEqual);
 }
 
 Poincare::Layout AbstractScrollableMultipleExpressionsView::ContentCell::layoutAtPosition(SubviewPosition position) const {
@@ -256,10 +260,6 @@ void AbstractScrollableMultipleExpressionsView::setLayouts(Poincare::Layout left
      * because we fixed setLayouts (updateLeftLayout, updateCenterLayout and
      * updateRightLayout are now sometimes false). */
   }
-}
-
-void AbstractScrollableMultipleExpressionsView::setEqualMessage(I18n::Message equalSignMessage) {
-  contentCell()->approximateSign()->setMessage(equalSignMessage);
 }
 
 void AbstractScrollableMultipleExpressionsView::reloadScroll() {

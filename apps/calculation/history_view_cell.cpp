@@ -326,8 +326,8 @@ void HistoryViewCell::setCalculation(Calculation * calculation, bool expanded, P
   m_scrollableOutputView.setDisplayableCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximateToggle);
   m_scrollableOutputView.setDisplayCenter(m_calculationDisplayOutput == Calculation::DisplayOutput::ExactAndApproximate || m_calculationExpanded);
   m_scrollableOutputView.setLayouts(Poincare::Layout(), exactOutputLayout, approximateOutputLayout);
-  I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
-  m_scrollableOutputView.setEqualMessage(equalMessage);
+  bool isEqual = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal;
+  m_scrollableOutputView.setRightIsStrictlyEqual(isEqual);
 
   /* The displayed input and outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */

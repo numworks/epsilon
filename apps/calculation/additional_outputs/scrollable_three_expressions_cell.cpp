@@ -58,8 +58,8 @@ void ScrollableThreeExpressionsView::setCalculation(Calculation * calculation, P
 
   }
   setLayouts(inputLayout, exactOutputLayout, approximateOutputLayout);
-  I18n::Message equalMessage = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal ? I18n::Message::Equal : I18n::Message::AlmostEqual;
-  setEqualMessage(equalMessage);
+  bool isEqual = calculation->exactAndApproximateDisplayedOutputsAreEqual(context) == Calculation::EqualSign::Equal;
+  setRightIsStrictlyEqual(isEqual);
 
   /* The displayed input and outputs have changed. We need to re-layout the cell
    * and re-initialize the scroll. */

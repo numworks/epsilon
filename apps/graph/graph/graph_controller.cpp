@@ -302,7 +302,9 @@ void GraphController::setInterestRange() {
   if (f->isAlongY()) {
     m_pointsOfInterest.setBounds(m_graphRange->yMin(), m_graphRange->yMax());
   } else {
-    m_pointsOfInterest.setBounds(m_graphRange->xMin(), m_graphRange->xMax());
+    float tMin = f->tMin();
+    float tMax = f->tMax();
+    m_pointsOfInterest.setBounds(std::clamp(m_graphRange->xMin(), tMin, tMax), std::clamp(m_graphRange->xMax(), tMin, tMax));
   }
 }
 

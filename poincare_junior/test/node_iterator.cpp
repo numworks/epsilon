@@ -35,4 +35,23 @@ void testChildrenIterator() {
   }
 
   print();
+
+  Node secondMult = createSimpleExpression();
+  print();
+
+  std::cout << "\n---------------- Scan two nodes children forward ----------------" << std::endl;
+  int counter = 0;
+  for (const std::pair<Node, Node> nodes : TwoNodesIterator::ForwardConstChildren(mult, secondMult)) {
+    std::cout << "\n\nbtChildren indexed " << counter++ << std::endl;
+    std::get<0>(nodes).log(std::cout);
+    std::get<1>(nodes).log(std::cout);
+  }
+  print();
+
+  std::cout << "\n---------------- Edit two nodes children forward ----------------" << std::endl;
+  for (std::pair<EditionReference, EditionReference> refs : TwoNodesIterator::ForwardEditableChildren(mult, secondMult)) {
+    std::get<0>(refs).replaceTreeByNode(integer);
+    std::get<1>(refs).replaceTreeByNode(pi);
+  }
+  print();
 }

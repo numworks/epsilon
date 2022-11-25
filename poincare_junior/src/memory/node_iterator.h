@@ -151,7 +151,75 @@ public:
   static BackwardEditableScanner BackwardEditableChildren(EditionReference reference) { return BackwardEditableScanner(reference); }
 };
 
+class TwoNodesIterator : public NodeIterator {
+public:
+  class ForwardConstScanner final {
+  public:
+    ForwardConstScanner(const Node node0, const Node node1) : m_nodes{node0, node1} {}
+    class Iterator {
+    public:
+      Iterator(const Node node0, const Node node1, int index) : m_nodes{node0, node1}, m_index(index) {}
+      std::pair<Node, Node> operator*() { return std::pair<Node, Node>(m_nodes[0], m_nodes[1]); }
+      bool operator!=(const Iterator& it) const { return m_index != it.m_index; }
+      Iterator & operator++() {
+        for (Node & node : m_nodes) {
+          node = node.nextTree();
+        }
+        m_index++;
+        return *this;
+      }
+    private:
+      Node m_nodes[2];
+      int m_index;
+    };
+    Iterator begin() const { return Iterator(m_nodes[0].nextNode(), m_nodes[1].nextNode(), 0); }
+    Iterator end() const { return Iterator(Node(), Node(), std::min(m_nodes[0].numberOfChildren(), m_nodes[1].numberOfChildren())); }
+  private:
+    Node m_nodes[2];
+  };
+
+
+  class ForwardEditableScanner final {
+  public:
+    ForwardEditableScanner(EditionReference ref0, EditionReference ref1) : m_nodes{ref0.node(), ref1.node()} {}
+
+    class Iterator {
+    public:
+      Iterator(const Node node0, const Node node1) {
+        setNode(0, node0);
+        setNode(1, node1);
+      }
+      const std::pair<EditionReference, EditionReference> operator*() { return std::pair<EditionReference, EditionReference>(EditionReference(getNode(0)), EditionReference(getNode(1))); }
+      bool operator!=(Iterator& it) { return (getNode(0) != it.getNode(0) || getNode(1) != it.getNode(1)); } // We stop iterating as soon as we reach the last child of either node
+      Iterator & operator++() {
+        for (size_t i = 0; i < sizeof(m_references)/sizeof(m_references[0]); i++) {
+          setNode(i, getNode(i).nextTree());
+        }
+        return *this;
+      }
+    private:
+      /* Hack: we keep a reference to a block right before (or after) the
+       * currenNode to handle cases where the current node is replaced by
+       * another one. The assertion that the previous children aren't modified
+       * ensure the validity of this hack. */
+      constexpr static int delta = 1;
+      Node getNode(int index) { return Node(m_references[index].node().block() + delta); }
+      void setNode(int index, Node node) { m_references[index] = EditionReference(Node(node.block() - delta)); }
+      EditionReference m_references[2];
+    };
+
+    Iterator begin() const { return Iterator(m_nodes[0].nextNode(), m_nodes[1].nextNode()); }
+    Iterator end() const { return Iterator(m_nodes[0].nextTree(), m_nodes[1].nextTree()); }
+  private:
+    Node m_nodes[2];
+  };
+
+  static ForwardConstScanner ForwardConstChildren(const Node node0, const Node node1) { return ForwardConstScanner(node0, node1); }
+  static ForwardEditableScanner ForwardEditableChildren(EditionReference ref0, EditionReference ref1) { return ForwardEditableScanner(ref0, ref1); }
+private:
+  const Node m_secondNode;
+};
+
 }
 
 #endif
-

@@ -89,6 +89,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
         t = FunctionBannerDelegate::GetValueDisplayedOnBanner(t, context, Preferences::sharedPreferences()->numberOfSignificantDigits(), pixelWidth, false);
       }
     }
+    // Snap to interest could have corrupted ExpiringPointer
+    function = App::app()->functionStore()->modelForRecord(record);
   } else {
     /* If function is not along X or Y, the cursor speed along t should not
      * depend on pixelWidth since the t interval can be very small even if the

@@ -3,8 +3,8 @@
 
 #include <escher/message_table_cell_with_expression.h>
 #include <escher/selectable_list_view_controller.h>
-#include "model/model.h"
-#include "store.h"
+#include "../model/model.h"
+#include "../store.h"
 #include <apps/i18n.h>
 #include <apps/global_preferences.h>
 

@@ -4,11 +4,11 @@
 #include <escher/tab_view_controller.h>
 #include <escher/tab_view_data_source.h>
 #include "../shared/expression_field_delegate_app.h"
-#include "calculation_controller.h"
-#include "graph_controller.h"
-#include "regression_controller.h"
+#include "data/store_controller.h"
+#include "graph/graph_controller.h"
+#include "graph/regression_controller.h"
+#include "stats/calculation_controller.h"
 #include "store.h"
-#include "store_controller.h"
 #include "../shared/shared_app.h"
 
 namespace Regression {

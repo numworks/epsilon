@@ -1,9 +1,9 @@
 #ifndef REGRESSION_STORE_CONTROLLER_H
 #define REGRESSION_STORE_CONTROLLER_H
 
-#include "store.h"
+#include "../store.h"
 #include "store_parameter_controller.h"
-#include "../shared/store_controller.h"
+#include <apps/shared/store_controller.h>
 
 namespace Regression {
 

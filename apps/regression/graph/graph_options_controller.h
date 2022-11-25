@@ -12,7 +12,7 @@
 #include "go_to_parameter_controller.h"
 #include "message_table_cell_with_chevron_with_separator.h"
 #include "residual_plot_controller.h"
-#include "store.h"
+#include "../store.h"
 
 namespace Regression {
 

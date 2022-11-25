@@ -23,20 +23,20 @@ app_regression_test_src += $(addprefix apps/regression/model/,\
 
 app_regression_src = $(addprefix apps/regression/,\
   app.cpp \
-  banner_view.cpp \
-  calculation_controller.cpp \
-  column_title_cell.cpp \
-  even_odd_double_buffer_text_cell_with_separator.cpp \
-  graph_controller.cpp \
-  graph_options_controller.cpp \
-  graph_view.cpp \
-  go_to_parameter_controller.cpp \
-  regression_controller.cpp \
-  residual_plot_controller.cpp \
-  residual_plot_curve_view.cpp \
-  residual_plot_range.cpp \
-  store_controller.cpp \
-  store_parameter_controller.cpp \
+  stats/calculation_controller.cpp \
+  stats/column_title_cell.cpp \
+  stats/even_odd_double_buffer_text_cell_with_separator.cpp \
+  graph/banner_view.cpp \
+  graph/graph_controller.cpp \
+  graph/graph_options_controller.cpp \
+  graph/graph_view.cpp \
+  graph/go_to_parameter_controller.cpp \
+  graph/regression_controller.cpp \
+  graph/residual_plot_controller.cpp \
+  graph/residual_plot_curve_view.cpp \
+  graph/residual_plot_range.cpp \
+  data/store_controller.cpp \
+  data/store_parameter_controller.cpp \
 )
 
 app_regression_src += $(app_regression_test_src)

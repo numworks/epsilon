@@ -2,9 +2,8 @@
 #define REGRESSION_STORE_PARAMETER_CONTROLLER_H
 
 #include <escher/message_table_cell_with_chevron_and_message.h>
-#include "regression_controller.h"
-#include "store.h"
-#include "../shared/store_parameter_controller.h"
+#include "../store.h"
+#include <apps/shared/store_parameter_controller.h>
 
 namespace Regression {
 

@@ -1,8 +1,8 @@
 #ifndef REGRESSION_GO_TO_PARAMETER_CONTROLLER_H
 #define REGRESSION_GO_TO_PARAMETER_CONTROLLER_H
 
-#include "../shared/go_to_parameter_controller.h"
-#include "store.h"
+#include <apps/shared/go_to_parameter_controller.h>
+#include "../store.h"
 
 namespace Regression {
 

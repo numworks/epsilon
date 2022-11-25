@@ -1,5 +1,5 @@
 #include "graph_view.h"
-#include "model/model.h"
+#include "../model/model.h"
 #include <apps/apps_container_helper.h>
 #include <poincare/context.h>
 #include <assert.h>

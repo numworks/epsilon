@@ -1,7 +1,7 @@
 #ifndef REGRESSION_GRAPH_VIEW_H
 #define REGRESSION_GRAPH_VIEW_H
 
-#include "store.h"
+#include "../store.h"
 #include <apps/constant.h>
 #include <apps/shared/plot_view_policies.h>
 

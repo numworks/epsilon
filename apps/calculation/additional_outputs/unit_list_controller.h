@@ -33,7 +33,7 @@ private:
 
   I18n::Message messageAtIndex(int index) override;
   void fillBufferCellAtIndex(Escher::BufferTableCellWithMessage * bufferCell, int index);
-  int textAtIndex(char * buffer, size_t bufferSize, int index) override;
+  int textAtIndex(char * buffer, size_t bufferSize, Escher::HighlightCell * cell, int index) override;
 
   int m_numberOfExpressionCells;
   int m_numberOfBufferCells;

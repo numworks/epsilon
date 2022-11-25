@@ -81,9 +81,9 @@ void ExpressionsListController::setExpression(Poincare::Expression e) {
   m_expression = e;
 }
 
-int ExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
+int ExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, HighlightCell * cell, int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  ScrollableThreeExpressionsView::SubviewPosition position =  m_cells[index].selectedSubviewPosition();
+  ScrollableThreeExpressionsView::SubviewPosition position = static_cast<ScrollableThreeExpressionsCellWithMessage*>(cell)->selectedSubviewPosition();
   Layout layout;
   if (position == ScrollableThreeExpressionsView::SubviewPosition::Left) {
     // If the line is formula = exact, insert exact instead of formula

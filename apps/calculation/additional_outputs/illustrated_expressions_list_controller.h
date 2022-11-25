@@ -40,7 +40,7 @@ protected:
   /* Helper to add a line in the format func(arg) = exact ~ approx */
   void setLineAtIndex(int index, Poincare::Expression formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences);
 private:
-  int textAtIndex(char * buffer, size_t bufferSize, int index) override;
+  int textAtIndex(char * buffer, size_t bufferSize, Escher::HighlightCell * cell, int index) override;
   // Cells
   virtual Escher::HighlightCell * illustrationCell() = 0;
   bool m_showIllustration;

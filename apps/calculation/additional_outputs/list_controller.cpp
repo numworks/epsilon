@@ -33,7 +33,8 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(selectedRow() >= 0);
     char buffer[Constant::MaxSerializedExpressionSize];
-    textAtIndex(buffer, Constant::MaxSerializedExpressionSize, selectedRow());
+    HighlightCell * cell = m_listController.selectableTableView()->cellAtLocation(0, selectedRow());
+    textAtIndex(buffer, Constant::MaxSerializedExpressionSize, cell, selectedRow());
     /* The order is important here: we dismiss the pop-up first because it
      * clears the Poincare pool from the layouts used to display the pop-up.
      * Thereby it frees memory to do Poincare computations required by

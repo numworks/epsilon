@@ -73,9 +73,9 @@ void IllustratedExpressionsListController::tableViewDidChangeSelectionAndDidScro
   }
 }
 
-int IllustratedExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
+int IllustratedExpressionsListController::textAtIndex(char * buffer, size_t bufferSize, HighlightCell * cell, int index) {
   assert(index >= showIllustration());
-  return ChainedExpressionsListController::textAtIndex(buffer, bufferSize, index - showIllustration());
+  return ChainedExpressionsListController::textAtIndex(buffer, bufferSize, cell, index - showIllustration());
 }
 
 void IllustratedExpressionsListController::setLineAtIndex(int index, Poincare::Expression formula, Poincare::Expression expression, Poincare::Context * context, Poincare::Preferences * preferences) {

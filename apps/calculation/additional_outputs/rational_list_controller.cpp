@@ -51,8 +51,8 @@ I18n::Message RationalListController::messageAtIndex(int index) {
   }
 }
 
-int RationalListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
-  int length = ExpressionsListController::textAtIndex(buffer, bufferSize, index);
+int RationalListController::textAtIndex(char * buffer, size_t bufferSize, Escher::HighlightCell * cell, int index) {
+  int length = ExpressionsListController::textAtIndex(buffer, bufferSize, cell, index);
   if (index == 1) {
     // Get rid of the left part of the equality
     char * equalPosition = strchr(buffer, '=');

@@ -29,7 +29,7 @@ public:
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int numberOfRows() const override;
 protected:
-  int textAtIndex(char * buffer, size_t bufferSize, int index) override;
+  int textAtIndex(char * buffer, size_t bufferSize, Escher::HighlightCell * cell, int index) override;
 private:
   ChainableExpressionsListController * m_tail;
 };

@@ -51,6 +51,7 @@ public:
   int numberOfPoints() const { return m_list.numberOfChildren(); }
   Poincare::PointOfInterest pointAtIndex(int i) const;
   void append(double x, double y, uint32_t data, typename Solver<double>::Interest interest);
+  void sort();
 
 private:
   List m_list;

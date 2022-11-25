@@ -13,6 +13,7 @@
 #include <poincare/division.h>
 #include <poincare/matrix.h>
 #include <poincare/matrix_transpose.h>
+#include <poincare/symbol.h>
 #include <poincare/vector_norm.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/horizontal_layout.h>
@@ -59,10 +60,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
   m_indexMessageMap[index] = messageIndex++;
   Layout exact = getLayoutFromExpression(norm, context, preferences);
   Expression approximatedNorm = PoincareHelpers::Approximate<double>(norm, context);
-  Layout approximated =  getLayoutFromExpression(approximatedNorm, context, preferences);
-  m_exactLayouts[index] = approximated.isIdenticalTo(exact) ? Layout() : exact;
-  m_approximatedLayouts[index] = approximated;
-  index++;
+  setLineAtIndex(index++, Expression(), norm, context, preferences);
 
   if (!norm.isUndefined() && approximatedNorm.isNull(context) == TrinaryBoolean::False && !Expression::IsInfinity(approximatedNorm, context)) {
     // 2. Normalized vector
@@ -70,7 +68,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
     Expression normalized = Division::Builder(m_expression, norm);
     PoincareHelpers::CloneAndReduce(&normalized, context, k_target, k_symbolicComputation);
     assert(normalized.type() == ExpressionNode::Type::Matrix);
-    m_layouts[index++] = getLayoutFromExpression(normalized, context, preferences);
+    setLineAtIndex(index++, Expression(), normalized, context, preferences);
     if (is2D) {
       // 3. Angle with x-axis
       Expression x = static_cast<Matrix &>(vector).matrixChild(0, 0);
@@ -87,9 +85,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
         angle = Subtraction::Builder(Multiplication::Builder(Rational::Builder(2), Poincare::Constant::Builder("π")), angle);
       }
       m_indexMessageMap[index] = messageIndex++;
-      m_layouts[index] = LayoutHelper::String("θ");
-      m_exactLayouts[index] = getLayoutFromExpression(angle, context, preferences);
-      index++;
+      setLineAtIndex(index++, Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta), angle, context, preferences);
     }
   }
 

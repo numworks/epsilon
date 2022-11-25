@@ -6,6 +6,7 @@
 #include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/layout.h>
+#include <poincare/matrix.h>
 
 namespace Regression {
 
@@ -30,7 +31,8 @@ public:
     LinearApbx      = 13,
   };
   constexpr static int k_numberOfModels = 14;
-  constexpr static int k_maxNumberOfCoefficients = 5; // This has to verify: k_maxNumberOfCoefficients < Matrix::k_maxNumberOfCoefficients
+  constexpr static int k_maxNumberOfCoefficients = 5;
+  static_assert(k_maxNumberOfCoefficients*k_maxNumberOfCoefficients <= Poincare::Matrix::k_maxNumberOfChildren, "Model needs bigger than allowed matrixes");
   virtual Poincare::Layout layout() = 0;
 
   Poincare::Expression simplifiedExpression(double * modelCoefficients, Poincare::Context * context);

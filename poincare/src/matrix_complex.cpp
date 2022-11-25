@@ -59,10 +59,10 @@ std::complex<T> MatrixComplexNode<T>::trace() const {
 
 template<typename T>
 std::complex<T> MatrixComplexNode<T>::determinant() const {
-  if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfCoefficients) {
+  if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfChildren) {
     return std::complex<T>(NAN, NAN);
   }
-  std::complex<T> operandsCopy[Matrix::k_maxNumberOfCoefficients];
+  std::complex<T> operandsCopy[Matrix::k_maxNumberOfChildren];
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
     operandsCopy[i] = complexAtIndex(i); // Returns complex<T>(NAN, NAN) if Node type is not Complex
@@ -74,10 +74,10 @@ std::complex<T> MatrixComplexNode<T>::determinant() const {
 
 template<typename T>
 MatrixComplex<T> MatrixComplexNode<T>::inverse() const {
-  if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfCoefficients) {
+  if (numberOfRows() != numberOfColumns() || numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfChildren) {
     return MatrixComplex<T>::Undefined();
   }
-  std::complex<T> operandsCopy[Matrix::k_maxNumberOfCoefficients];
+  std::complex<T> operandsCopy[Matrix::k_maxNumberOfChildren];
   int i = 0;
   for (EvaluationNode<T> * c : this->children()) {
     if (c->type() != EvaluationNode<T>::Type::Complex) {
@@ -111,10 +111,10 @@ MatrixComplex<T> MatrixComplexNode<T>::transpose() const {
 template<typename T>
 MatrixComplex<T> MatrixComplexNode<T>::ref(bool reduced) const {
   // Compute Matrix Row Echelon Form
-  if (numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfCoefficients) {
+  if (numberOfChildren() == 0 || numberOfChildren() > Matrix::k_maxNumberOfChildren) {
     return MatrixComplex<T>::Undefined();
   }
-  std::complex<T> operandsCopy[Matrix::k_maxNumberOfCoefficients];
+  std::complex<T> operandsCopy[Matrix::k_maxNumberOfChildren];
   int childrenNumber = numberOfChildren();
   for (int i = 0; i < childrenNumber; i++) {
     operandsCopy[i] = complexAtIndex(i); // Returns complex<T>(NAN, NAN) if Node type is not Complex

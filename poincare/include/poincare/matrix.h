@@ -51,6 +51,10 @@ class Matrix final : public Expression {
   template<typename T> friend class MatrixComplexNode;
   friend class GlobalContext;
 public:
+  /* Cap the matrix's size for inverse and determinant computation.
+   * TODO: Find another solution */
+  constexpr static int k_maxNumberOfChildren = 100;
+
   Matrix(const MatrixNode * node) : Expression(node) {}
   static Matrix Builder() { return TreeHandle::NAryBuilder<Matrix, MatrixNode>(); }
 
@@ -78,8 +82,6 @@ public:
   Expression norm(const ExpressionNode::ReductionContext& reductionContext) const;
   Expression dot(Matrix * b, const ExpressionNode::ReductionContext& reductionContext) const;
   Matrix cross(Matrix * b, const ExpressionNode::ReductionContext& reductionContext) const;
-  // TODO: find another solution for inverse and determinant (avoid capping the matrix)
-  constexpr static int k_maxNumberOfCoefficients = 100;
 
   // Expression
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);

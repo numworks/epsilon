@@ -36,7 +36,7 @@ Range1D PointsOfInterestCache::setBounds(float start, float end) {
   return Range1D(0.0, 1.0);
 }
 
-Poincare::PointOfInterest PointsOfInterestCache::pointAtIndex(int i) {
+Poincare::PointOfInterest PointsOfInterestCache::computePointAtIndex(int i) {
   while (i >= m_list.numberOfPoints() && m_computedEnd < m_end) {
     computeBetween(m_computedEnd, std::clamp(m_computedEnd + step(), m_start, m_end));
   }

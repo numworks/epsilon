@@ -14,7 +14,7 @@ public:
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 
   Poincare::Range1D setBounds(float start, float end);
-  Poincare::PointOfInterest pointAtIndex(int i);
+  Poincare::PointOfInterest computePointAtIndex(int i);
   Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);
   Poincare::PointOfInterest pointOfInterestAtAbscissa(double x);
 

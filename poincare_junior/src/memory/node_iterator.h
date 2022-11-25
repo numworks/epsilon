@@ -156,9 +156,9 @@ public:
 
 class TwoNodesIterator : public NodeIterator {
 public:
-  class ForwardConstChildrenScanner final {
+  class ConstChildrenScanner {
   public:
-    ForwardConstChildrenScanner(const Node node0, const Node node1) : m_nodes{node0, node1} {}
+    ConstChildrenScanner(const Node node0, const Node node1) : m_nodes{node0, node1} {}
     class Iterator {
     public:
       Iterator(const Node node0, const Node node1, int index) : m_nodes{node0, node1}, m_index(index) {}
@@ -166,21 +166,45 @@ public:
       bool operator!=(const Iterator& it) const { return m_index != it.m_index; }
       Iterator & operator++() {
         for (Node & node : m_nodes) {
-          node = node.nextTree();
+          node = incrNode(node);
         }
         m_index++;
         return *this;
       }
     private:
+      virtual Node incrNode(Node node) = 0;
       Node m_nodes[2];
       int m_index;
     };
-    Iterator begin() const { return Iterator(m_nodes[0].nextNode(), m_nodes[1].nextNode(), 0); }
-    Iterator end() const { return Iterator(Node(), Node(), std::min(m_nodes[0].numberOfChildren(), m_nodes[1].numberOfChildren())); }
-  private:
+  protected:
     Node m_nodes[2];
   };
 
+  class ForwardConstChildrenScanner final : public ConstChildrenScanner {
+ public:
+    using ConstChildrenScanner::ConstChildrenScanner;
+    class Iterator : public ConstChildrenScanner::Iterator {
+    public:
+      using ConstChildrenScanner::Iterator::Iterator;
+    private:
+      Node incrNode(Node node) override { return node.nextTree(); }
+    };
+    Iterator begin() const { return Iterator(m_nodes[0].nextNode(), m_nodes[1].nextNode(), 0); }
+    Iterator end() const { return Iterator(Node(), Node(), std::min(m_nodes[0].numberOfChildren(), m_nodes[1].numberOfChildren())); }
+  };
+
+  class BackwardConstChildrenScanner final : public ConstChildrenScanner {
+  public:
+    using ConstChildrenScanner::ConstChildrenScanner;
+    class Iterator : public ConstChildrenScanner::Iterator {
+    public:
+      using ConstChildrenScanner::Iterator::Iterator;
+    private:
+      Node incrNode(Node node) override { return node.previousTree(); }
+    };
+    Iterator begin() const { return Iterator(m_nodes[0].nextTree().previousNode(), m_nodes[1].nextTree().previousNode(), 0); }
+    Iterator end() const { return Iterator(Node(), Node(), std::min(m_nodes[0].numberOfChildren(), m_nodes[1].numberOfChildren())); }
+  };
 
   class ForwardEditableChildrenScanner final {
   public:
@@ -218,6 +242,7 @@ public:
   };
 
   static ForwardConstChildrenScanner ForwardConstChildren(const Node node0, const Node node1) { return ForwardConstChildrenScanner(node0, node1); }
+  static BackwardConstChildrenScanner BackwardConstChildren(const Node node0, const Node node1) { return BackwardConstChildrenScanner(node0, node1); }
   static ForwardEditableChildrenScanner ForwardEditableChildren(EditionReference ref0, EditionReference ref1) { return ForwardEditableChildrenScanner(ref0, ref1); }
 private:
   const Node m_secondNode;

@@ -9,9 +9,6 @@
 
 namespace Calculation {
 
-/* TODO There is factorizable code between this and Calculation::HistoryViewCell
- * (at least setCalculation). */
-
 class ScrollableThreeExpressionsView : public Shared::AbstractScrollableMultipleExpressionsView {
 public:
   ScrollableThreeExpressionsView(Responder * parentResponder) : Shared::AbstractScrollableMultipleExpressionsView(parentResponder, &m_contentCell) {
@@ -19,7 +16,6 @@ public:
     setBackgroundColor(KDColorWhite);
   }
   void resetMemoization();
-  void setCalculation(Calculation * calculation, Poincare::Context * context, bool canChangeDisplayOutput);
   void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame) {
     return m_contentCell.subviewFrames(leftFrame, centerFrame, approximateSignFrame, rightFrame);
   }
@@ -53,7 +49,6 @@ private:
 
 class ScrollableThreeExpressionsCell : public Escher::TableCell, public Escher::Responder {
 public:
-  static KDCoordinate Height(Calculation * calculation, Poincare::Context * context);
   ScrollableThreeExpressionsCell() :
     Responder(nullptr),
     m_view(this) {}
@@ -73,16 +68,11 @@ public:
 
   void setHighlighted(bool highlight) override { m_view.evenOddCell()->setHighlighted(highlight); }
   void resetMemoization() { m_view.resetMemoization(); }
-  void setCalculation(Calculation * calculation, Poincare::Context * context, bool canChangeDisplayOutput = false);
-  void setDisplayCenter(bool display);
   void setRightIsStrictlyEqual(bool isEqual) { m_view.setRightIsStrictlyEqual(isEqual); }
   ScrollableThreeExpressionsView::SubviewPosition selectedSubviewPosition() { return m_view.selectedSubviewPosition(); }
   void setSelectedSubviewPosition(ScrollableThreeExpressionsView::SubviewPosition subviewPosition) { m_view.setSelectedSubviewPosition(subviewPosition); }
 
   void reinitSelection();
-  void subviewFrames(KDRect * leftFrame, KDRect * centerFrame, KDRect * approximateSignFrame, KDRect * rightFrame) {
-    return m_view.subviewFrames(leftFrame, centerFrame, approximateSignFrame, rightFrame);
-  }
 protected:
   ScrollableThreeExpressionsView m_view;
 };

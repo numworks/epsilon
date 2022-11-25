@@ -573,13 +573,14 @@ void Parser::parseLeftSystemBrace(Expression & leftHandSide, Token::Type stoppin
     return;
   }
   /* A leading system brace is the result of serializing a NL logarithm. */
-  Expression indice = parseUntil(Token::Type::RightSystemBrace);
-  if (!indice.isUninitialized() && popTokenIfType(Token::Type::RightSystemBrace)) {
+  Expression index = parseUntil(Token::Type::RightSystemBrace);
+  if (!index.isUninitialized() && popTokenIfType(Token::Type::RightSystemBrace)) {
     const Expression::FunctionHelper * const * functionHelper = ParsingHelper::GetReservedFunction(m_nextToken.text(), m_nextToken.length());
     if (functionHelper && (**functionHelper).aliasesList().contains("log") && popTokenIfType(Token::Type::ReservedFunction)) {
       Expression parameter = parseFunctionParameters();
       if (!parameter.isUninitialized() && parameter.numberOfChildren() == 1) {
-        leftHandSide = Logarithm::Builder(parameter.childAtIndex(0), indice);
+        leftHandSide = Logarithm::Builder(parameter.childAtIndex(0), index);
+        isThereImplicitOperator();
         return;
       }
     }

@@ -14,7 +14,7 @@ public:
 
 private:
   I18n::Message messageAtIndex(int index) override;
-  int textAtIndex(char * buffer, size_t bufferSize, int index) override;
+  int textAtIndex(char * buffer, size_t bufferSize, Escher::HighlightCell * cell, int index) override;
 };
 
 }

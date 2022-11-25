@@ -206,10 +206,10 @@ void UnitListController::fillBufferCellAtIndex(Escher::BufferTableCellWithMessag
   bufferCell->setMessageWithPlaceholders(messageInCell, floatToTextBuffer);
 }
 
-int UnitListController::textAtIndex(char * buffer, size_t bufferSize, int index) {
+int UnitListController::textAtIndex(char * buffer, size_t bufferSize, HighlightCell * cell, int index) {
   assert(index >= 0);
   if (index < m_numberOfExpressionCells) {
-    return ExpressionsListController::textAtIndex(buffer, bufferSize, index);
+    return ExpressionsListController::textAtIndex(buffer, bufferSize, cell, index);
   }
   index = index - m_numberOfExpressionCells;
   assert(index < m_numberOfBufferCells);

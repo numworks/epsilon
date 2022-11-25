@@ -28,7 +28,7 @@ public:
     // WARNING: Default only uses exactExpression
     setExpression(exactExpression);
   }
-  virtual int textAtIndex(char * buffer, size_t bufferSize, int index) = 0;
+  virtual int textAtIndex(char * buffer, size_t bufferSize, Escher::HighlightCell * cell, int index) = 0;
 
 protected:
   class InnerListController : public ViewController {

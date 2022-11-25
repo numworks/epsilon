@@ -48,26 +48,42 @@ Poincare::PointOfInterest PointsOfInterestCache::computePointAtIndex(int i) {
 
 PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, double end, Solver<double>::Interest interest) {
   assert(start != end);
-  PointOfInterest p;
-  if (start > end) {
-    return p;
+  m_list.sort();
+  int n = m_list.numberOfPoints();
+  int direction = start > end ? -1 : 1;
+  int firstIndex = 0;
+  int lastIndex = n - 1;
+  if (direction < 0) {
+    std::swap(firstIndex, lastIndex);
   }
-  int i = 0;
-  do {
-    p = pointAtIndex(i);
-    i++;
-  } while (!p.isUninitialized() && p.interest() != interest && (p.x() <= start || p.x() > end));
-  return p;
+  for (int i = firstIndex; direction * i <= direction * lastIndex; i += direction) {
+    PointOfInterest p = m_list.pointAtIndex(i);
+    if (direction * p.x() <= direction * start) {
+      continue;
+    }
+    if (direction * p.x() >= direction * end) {
+      break;
+    }
+    if (interest == Solver<double>::Interest::None || interest == p.interest()) {
+      return p;
+    }
+  }
+  return PointOfInterest();
 }
 
 PointOfInterest PointsOfInterestCache::pointOfInterestAtAbscissa(double x) {
-  PointOfInterest p;
-  int i = 0;
-  do {
-    p = pointAtIndex(i);
-    i++;
-  } while (!p.isUninitialized() && p.x() != x);
-  return p;
+  m_list.sort();
+  int n = m_list.numberOfPoints();
+  for (int i = 0; i < n; i++) {
+    PointOfInterest p = m_list.pointAtIndex(i);
+    if (p.x() == x) {
+      return p;
+    }
+    if (p.x() > x) {
+      break;
+    }
+  }
+  return PointOfInterest();
 }
 
 

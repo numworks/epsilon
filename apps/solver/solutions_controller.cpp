@@ -259,7 +259,7 @@ void SolutionsController::willDisplayCellAtLocation(HighlightCell * cell, int i,
         Poincare::Layout exactLayout = m_equationStore->exactSolutionLayoutsAtIndexAreIdentical(j) ? Poincare::Layout() : m_equationStore->exactSolutionLayoutAtIndex(j, true);
         valueCell->setLayouts(exactLayout, m_equationStore->exactSolutionLayoutAtIndex(j, false));
         if (!exactLayout.isUninitialized()) {
-          valueCell->setEqualMessage(m_equationStore->exactSolutionLayoutsAtIndexAreEqual(j) ? I18n::Message::Equal : I18n::Message::AlmostEqual);
+          valueCell->setRightIsStrictlyEqual(m_equationStore->exactSolutionLayoutsAtIndexAreEqual(j));
         }
       }
     } else {

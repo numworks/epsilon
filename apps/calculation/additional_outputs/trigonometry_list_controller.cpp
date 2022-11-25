@@ -62,7 +62,7 @@ void TrigonometryListController::setExpression(Expression e) {
 
 void TrigonometryListController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
   if (index == 1) {
-    static_cast<ScrollableThreeExpressionsCell*>(cell)->setEqualMessage(m_anglesAreEqual ? I18n::Message::Equal : I18n::Message::AlmostEqual);
+    static_cast<ScrollableThreeExpressionsCell*>(cell)->setRightIsStrictlyEqual(m_anglesAreEqual);
   }
   return IllustratedExpressionsListController::willDisplayCellForIndex(cell, index);
 }

@@ -24,7 +24,7 @@ public:
     return contentCell();
   }
   void setLayouts(Poincare::Layout leftLayout, Poincare::Layout centerlayout, Poincare::Layout rightLayout);
-  void setEqualMessage(I18n::Message equalSignMessage);
+  void setRightIsStrictlyEqual(bool isEqual) { contentCell()->setRightIsStrictlyEqual(isEqual); }
   SubviewPosition selectedSubviewPosition() {
     return contentCell()->selectedSubviewPosition();
   }
@@ -71,6 +71,7 @@ protected:
     bool displayableCenter() const { return m_displayableCenter && !m_centeredExpressionView.layout().isUninitialized(); }
     void setDisplayCenter(bool display);
     void setDisplayableCenter(bool displayable) {m_displayableCenter = displayable;}
+    void setRightIsStrictlyEqual(bool isEqual);
     void layoutSubviews(bool force = false) override;
     int numberOfSubviews() const override;
     Poincare::Layout layout() const override { return layoutAtPosition(m_selectedSubviewPosition); }
@@ -88,6 +89,7 @@ protected:
     SubviewPosition m_selectedSubviewPosition;
     bool m_displayCenter;
     bool m_displayableCenter;
+    bool m_rightIsStrictlyEqual;
     float m_horizontalAlignment;
   };
   virtual ContentCell * contentCell() = 0;

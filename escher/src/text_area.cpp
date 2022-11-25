@@ -1,6 +1,5 @@
 #include <escher/text_area.h>
 #include <escher/clipboard.h>
-#include <escher/container.h>
 #include <escher/text_input_helpers.h>
 #include <ion/events.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -202,9 +201,6 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::EXE) {
     return handleEventWithText("\n");
-  }
-  if (event == Ion::Events::Sto) {
-    return true;
   }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
     if (contentView()->selectionIsEmpty()) {

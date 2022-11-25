@@ -26,6 +26,8 @@ public:
   public:
     Snapshot();
     App * unpack(Escher::Container * container) override;
+    void resetInterval();
+    void updateInterval();
     void reset() override;
     const Descriptor * descriptor() const override;
     Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceStore(); }

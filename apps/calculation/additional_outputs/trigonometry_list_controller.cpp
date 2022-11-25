@@ -36,6 +36,9 @@ void TrigonometryListController::setExpression(Expression e) {
   // If frac part is still there, the exact angle is probably not interesting
   if (e.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart; })) {
     e = Shared::PoincareHelpers::Approximate<double>(e, context);
+    m_anglesAreEqual = false;
+  } else {
+    m_anglesAreEqual = true;
   }
   m_layouts[index] = LayoutHelper::String("θ");
   Expression radian = Unit::Builder(Unit::k_angleRepresentatives + Unit::k_radianRepresentativeIndex);
@@ -55,6 +58,13 @@ void TrigonometryListController::setExpression(Expression e) {
   assert(std::isfinite(angle));
   m_model.setAngle(angle);
   setShowIllustration(true);
+}
+
+void TrigonometryListController::willDisplayCellForIndex(Escher::HighlightCell * cell, int index) {
+  if (index == 1) {
+    static_cast<ScrollableThreeExpressionsCell*>(cell)->setEqualMessage(m_anglesAreEqual ? I18n::Message::Equal : I18n::Message::AlmostEqual);
+  }
+  return IllustratedExpressionsListController::willDisplayCellForIndex(cell, index);
 }
 
 KDCoordinate TrigonometryListController::nonMemoizedRowHeight(int j) {

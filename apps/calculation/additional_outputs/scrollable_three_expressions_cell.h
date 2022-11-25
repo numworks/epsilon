@@ -75,6 +75,7 @@ public:
   void resetMemoization() { m_view.resetMemoization(); }
   void setCalculation(Calculation * calculation, Poincare::Context * context, bool canChangeDisplayOutput = false);
   void setDisplayCenter(bool display);
+  void setEqualMessage(I18n::Message message) { m_view.setEqualMessage(message); }
   ScrollableThreeExpressionsView::SubviewPosition selectedSubviewPosition() { return m_view.selectedSubviewPosition(); }
   void setSelectedSubviewPosition(ScrollableThreeExpressionsView::SubviewPosition subviewPosition) { m_view.setSelectedSubviewPosition(subviewPosition); }
 

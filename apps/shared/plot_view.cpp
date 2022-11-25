@@ -356,7 +356,7 @@ void AbstractPlotView::layoutSubviews(bool force) {
   }
   View * ornament = ornamentView();
   if (ornament) {
-    ornament->setFrame(bounds(), force);
+    ornament->setFrame(banner ? bounds().differencedWith(bannerFrame()) : bounds(), force);
   }
 }
 

@@ -1,5 +1,6 @@
 #include "edition_reference.h"
 #include "edition_pool.h"
+#include "node_iterator.h"
 #include <string.h>
 
 namespace Poincare {
@@ -16,6 +17,13 @@ Node EditionReference::node() const {
 
 EditionReference EditionReference::clone() const {
   return EditionReference(EditionPool::sharedEditionPool()->initFromTree(node()));
+}
+
+void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
+  for (std::pair<EditionReference, int> child : NodeIterator::ForwardEditableChildren(*this)) {
+    std::get<EditionReference>(child).recursivelyEdit(treeFunction);
+  }
+  (*treeFunction)(*this);
 }
 
 void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {

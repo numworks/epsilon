@@ -114,8 +114,6 @@ public:
   // Recursive helper
   typedef void (*InPlaceConstTreeFunction)(const Node node);
   void recursivelyGet(InPlaceConstTreeFunction treeFunction) const;
-  typedef void (*InPlaceTreeFunction)(Node node);
-  void recursivelyEdit(InPlaceTreeFunction treeFunction);
 
 private:
   const Node previousRelative(bool parent) const;

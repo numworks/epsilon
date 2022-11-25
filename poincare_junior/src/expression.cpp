@@ -2,6 +2,7 @@
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/memory/cache_pool.h>
+#include <poincare_junior/src/memory/edition_reference.h>
 
 namespace Poincare {
 
@@ -22,8 +23,8 @@ Expression Expression::Parse(const char * textInput) {
 Expression Expression::CreateBasicReduction(void * expressionAddress) {
   return Expression(
     [](Node tree) {
-      tree.recursivelyEdit([](Node node) {
-          Simplification::BasicReduction(node.block());
+      EditionReference(tree).recursivelyEdit([](EditionReference reference) {
+          Simplification::BasicReduction(reference.node().block());
         });
     },
     expressionAddress);

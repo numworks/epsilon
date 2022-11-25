@@ -29,9 +29,9 @@ T Approximation::To(const TypeBlock * block) {
 template<typename T>
 T Approximation::MapAndReduce(const TypeBlock * block, Reductor<T> reductor) {
   T res;
-  for (const NodeIterator::IndexedNode indexedNode : NodeIterator(Node(block)).forwardConstChildren()) {
-    T app = Approximation::To<T>(indexedNode.m_node.block());
-    if (indexedNode.m_index == 0) {
+  for (const std::pair<Node, int> indexedNode : NodeIterator::ForwardConstChildren(Node(block))) {
+    T app = Approximation::To<T>(std::get<Node>(indexedNode).block());
+    if (std::get<int>(indexedNode) == 0) {
       res = app;
     } else {
       res = reductor(res, app);

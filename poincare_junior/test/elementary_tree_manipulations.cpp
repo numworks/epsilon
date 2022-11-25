@@ -41,8 +41,8 @@ void elementaryTreeManipulation() {
   print();
 
   std::cout << "\n---------------- Projection to internal nodes 1-2/3 ----------------" << std::endl;
-  subtraction.recursivelyEdit([](Node node) {
-      Simplification::BasicReduction(node.block());
+  EditionReference(subtraction).recursivelyEdit([](EditionReference reference) {
+      Simplification::BasicReduction(reference.node().block());
     });
   print();
 }

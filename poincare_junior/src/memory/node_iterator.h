@@ -16,118 +16,106 @@ class NodeIterator {
    * current child if you're going backwards). */
 
 public:
-  NodeIterator(const Node node) : m_node(node) {}
-
-  struct IndexedNode {
-    Node m_node;
-    int m_index;
-  };
-
-  class ScanChildren {
+  class ConstChildrenScanner {
   public:
-    ScanChildren(const Node node) : m_node(node) {}
+    ConstChildrenScanner(const Node node) : m_node(node) {}
+
     class Iterator {
     public:
-      Iterator(int index = 0) : m_index(index) {}
-      const IndexedNode operator*() { return {.m_node = getNode(), .m_index = m_index}; }
-      bool operator!=(const Iterator& it) const { return (getConstNode() != it.getConstNode()); }
+      Iterator(const Node node, int index) : m_node(node), m_index(index) {}
+      const std::pair<Node, int> operator*() { return std::pair<Node, int>(m_node, m_index); }
+      bool operator!=(const Iterator& it) const { return (m_index != it.m_index); }
+      Iterator & operator++() {
+        m_node = incrNode(m_node);
+        m_index++;
+        return *this;
+      }
+    private:
+      virtual Node incrNode(Node node) = 0;
+      Node m_node;
+      int m_index;
+    };
+  protected:
+    const Node m_node;
+  };
+
+  class ForwardConstScanner final : public ConstChildrenScanner {
+ public:
+    using ConstChildrenScanner::ConstChildrenScanner;
+    class Iterator : public ConstChildrenScanner::Iterator {
+    public:
+      using ConstChildrenScanner::Iterator::Iterator;
+    private:
+      Node incrNode(Node node) override { return node.nextTree(); }
+    };
+    Iterator begin() const { return Iterator(m_node.nextNode(), 0); }
+    Iterator end() const { return Iterator(Node(), m_node.numberOfChildren()); }
+  };
+
+  class BackwardConstScanner final : public ConstChildrenScanner {
+  public:
+    using ConstChildrenScanner::ConstChildrenScanner;
+    class Iterator : public ConstChildrenScanner::Iterator {
+    public:
+      using ConstChildrenScanner::Iterator::Iterator;
+    private:
+      Node incrNode(Node node) override { return node.previousTree(); }
+    };
+    Iterator begin() const { return Iterator(m_node.nextTree().previousNode(), 0); }
+    Iterator end() const { return Iterator(Node(), m_node.numberOfChildren()); }
+  };
+
+  class EditableChildrenScanner {
+  public:
+    EditableChildrenScanner(EditionReference reference) : m_node(reference.node()) {}
+    class Iterator {
+    public:
+      Iterator(EditionReference reference = EditionReference(), int index = 0) : m_reference(reference), m_index(index) {}
+      std::pair<EditionReference, int> operator*() { return std::pair<EditionReference, int>(EditionReference(getNode()), m_index); }
+      bool operator!=(const Iterator& it) const { return (const_cast<Iterator *>(this)->getNode() != const_cast<Iterator *>(&it)->getNode()); }
       Iterator & operator++() {
         setNode(incrNode(getNode()));
         m_index++;
         return *this;
       }
     protected:
-      virtual Node getNode() = 0;
-      const Node getConstNode() const { return const_cast<Iterator *>(this)->getNode(); }
-      virtual void setNode(Node node) = 0;
-      int m_index;
-    private:
-      virtual Node incrNode(Node node) = 0;
-    };
-  protected:
-    const Node m_node;
-  };
-
-  class ScanConstChildren : public ScanChildren {
-  public:
-    using ScanChildren::ScanChildren;
-    class Iterator : public ScanChildren::Iterator {
-    public:
-      Iterator(const Node node) : ScanChildren::Iterator(), m_node(node) {}
-    private:
-      Node getNode() override { return m_node; }
-      void setNode(Node node) override { m_node = node; }
-      Node m_node;
-    };
-  };
-
-  class ForwardConstChildren final : public ScanConstChildren {
- public:
-    using ScanConstChildren::ScanConstChildren;
-    class Iterator : public ScanConstChildren::Iterator {
-    public:
-      using ScanConstChildren::Iterator::Iterator;
-    private:
-      Node incrNode(Node node) override { return node.nextTree(); }
-    };
-    Iterator begin() const { return Iterator(m_node.nextNode()); }
-    Iterator end() const { return Iterator(m_node.nextTree()); }
-  };
-
-  class BackwardConstChildren final : public ScanConstChildren {
- public:
-    using ScanConstChildren::ScanConstChildren;
-    class Iterator : public ScanConstChildren::Iterator {
-    public:
-      using ScanConstChildren::Iterator::Iterator;
-    private:
-      Node incrNode(Node node) override { return node.previousTree(); }
-    };
-    Iterator begin() const { return Iterator(m_node.nextTree().previousNode()); }
-    Iterator end() const { return Iterator(Node()); }
-  };
-
-  class ScanEditableChildren : public ScanChildren {
-  public:
-    using ScanChildren::ScanChildren;
-    class Iterator : public ScanChildren::Iterator {
-    public:
-      Iterator(EditionReference reference = EditionReference(), int index = 0) : ScanChildren::Iterator(index), m_reference(reference) {}
-      IndexedNode operator*() { return {.m_node = getNode(), .m_index = m_index}; }
-    protected:
       /* Hack: we keep a reference to a block right before (or after) the
        * currenNode to handle cases where the current node is replaced by
        * another one. The assertion that the previous children aren't modified
        * ensure the validity of this hack. */
-      Node getNode() override { return Node(m_reference.node().block() + delta()); }
-      void setNode(Node node) override { m_reference = EditionReference(Node(node.block() - delta())); }
+      virtual Node getNode() { return Node(m_reference.node().block() + delta()); }
+      virtual void setNode(Node node) { m_reference = EditionReference(Node(node.block() - delta())); }
       EditionReference m_reference;
+      int m_index;
     private:
+      virtual Node incrNode(Node node) = 0;
       virtual int delta() = 0;
     };
+  protected:
+    Node m_node;
   };
 
-  class ForwardEditableChildren final : public ScanEditableChildren {
-    using ScanEditableChildren::ScanEditableChildren;
+  class ForwardEditableScanner final : public EditableChildrenScanner {
+    using EditableChildrenScanner::EditableChildrenScanner;
   public:
-    class Iterator final : public ScanEditableChildren::Iterator {
+    class Iterator final : public EditableChildrenScanner::Iterator {
     public:
-      Iterator(const Node node) : ScanEditableChildren::Iterator() { setNode(node); }
+      Iterator(Node node) : EditableChildrenScanner::Iterator() { setNode(node); }
     private:
       Node incrNode(Node node) override { return node.nextTree(); }
       int delta() override { return 1; }
     };
-    Iterator begin() const { return Iterator(m_node.nextNode()); }
-    Iterator end() const { return Iterator(m_node.nextTree()); }
+    Iterator begin() { return Iterator(m_node.nextNode()); }
+    Iterator end() { return Iterator(m_node.nextTree()); }
   };
 
   /* This code is UGLY, please do something. */
-  class BackwardEditableChildren final : public ScanEditableChildren {
+  class BackwardEditableScanner final : public EditableChildrenScanner {
   public:
-    using ScanEditableChildren::ScanEditableChildren;
-    class Iterator final : public ScanEditableChildren::Iterator {
+    using EditableChildrenScanner::EditableChildrenScanner;
+    class Iterator final : public EditableChildrenScanner::Iterator {
     public:
-      Iterator(const Node node, int index) : ScanEditableChildren::Iterator(EditionReference(node), index) {}
+      Iterator(Node node, int index) : EditableChildrenScanner::Iterator(EditionReference(node), index) {}
     private:
       Node getNode() override {
         if (m_index < 0) {
@@ -139,7 +127,7 @@ public:
            * node. */
           return m_reference.node().nextTree().previousNode();
         }
-        return ScanEditableChildren::Iterator::getNode();
+        return EditableChildrenScanner::Iterator::getNode();
       }
       void setNode(Node node) override {
         if (node.isUninitialized()) {
@@ -147,7 +135,7 @@ public:
           m_index = -2;
           return;
         }
-        ScanEditableChildren::Iterator::setNode(node);
+        EditableChildrenScanner::Iterator::setNode(node);
       }
       Node incrNode(Node node) override { return node.previousTree(); }
       int delta() override { return -1; }
@@ -156,14 +144,11 @@ public:
     Iterator end() const { return Iterator(Node(), -1); }
   };
 
-  ForwardConstChildren forwardConstChildren() { return ForwardConstChildren(m_node); }
-  BackwardConstChildren backwardConstChildren() { return BackwardConstChildren(m_node); }
+  static ForwardConstScanner ForwardConstChildren(const Node node) { return ForwardConstScanner(node); }
+  static BackwardConstScanner BackwardConstChildren(const Node node) { return BackwardConstScanner(node); }
 
-  ForwardEditableChildren forwardEditableChildren() { return ForwardEditableChildren(m_node); }
-  BackwardEditableChildren backwardEditableChildren() { return BackwardEditableChildren(m_node); }
-
-private:
-  const Node m_node;
+  static ForwardEditableScanner ForwardEditableChildren(EditionReference reference) { return ForwardEditableScanner(reference); }
+  static BackwardEditableScanner BackwardEditableChildren(EditionReference reference) { return BackwardEditableScanner(reference); }
 };
 
 }

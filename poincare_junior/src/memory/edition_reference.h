@@ -21,6 +21,10 @@ public:
   uint16_t identifier() const { return m_identifier; }
 
   /* Hierarchy */
+  EditionReference nextNode() { return EditionReference(node().nextNode()); }
+  EditionReference nextTree() { return EditionReference(node().nextTree()); }
+  EditionReference previousNode() { return EditionReference(node().previousNode()); }
+  EditionReference previousTree() { return EditionReference(node().previousTree()); }
   bool hasChild(EditionReference t) const { return node().hasChild(t.node()); }
   bool hasSibling(EditionReference t) const { return node().hasSibling(t.node()); }
   bool hasAncestor(EditionReference t, bool includeSelf) const { return node().hasAncestor(t.node(), includeSelf); }
@@ -51,6 +55,9 @@ public:
   void replaceNodeByTree(EditionReference t) { replaceNodeByTree(t.node()); }
   void replaceTreeByNode(EditionReference t) { replaceTreeByNode(t.node()); }
   void replaceTreeByTree(EditionReference t) { replaceTreeByTree(t.node()); }
+
+  typedef void (*InPlaceTreeFunction)(EditionReference reference);
+  void recursivelyEdit(InPlaceTreeFunction treeFunction);
 
 private:
   void insert(Node n, bool before, bool isTree);

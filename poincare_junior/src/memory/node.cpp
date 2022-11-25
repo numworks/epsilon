@@ -37,12 +37,12 @@ void Node::log(std::ostream & stream, bool recursive, int indentation, bool verb
   logAttributes(stream);
   bool tagIsClosed = false;
   if (recursive) {
-    for (const NodeIterator::IndexedNode child : NodeIterator(*this).forwardConstChildren()) {
+    for (const std::pair<Node, int> child : NodeIterator::ForwardConstChildren(*this)) {
       if (!tagIsClosed) {
         stream << ">";
         tagIsClosed = true;
       }
-      child.m_node.log(stream, recursive, indentation + 1, verbose);
+      std::get<Node>(child).log(stream, recursive, indentation + 1, verbose);
     }
   }
   if (tagIsClosed) {
@@ -150,9 +150,9 @@ int Node::numberOfDescendants(bool includeSelf) const {
 }
 
 const Node Node::childAtIndex(int i) const {
-  for (const NodeIterator::IndexedNode indexedChild : NodeIterator(*this).forwardConstChildren()) {
-    if (indexedChild.m_index == i) {
-      return indexedChild.m_node;
+  for (const std::pair<Node, int> indexedChild : NodeIterator::ForwardConstChildren(*this)) {
+    if (std::get<int>(indexedChild) == i) {
+      return std::get<Node>(indexedChild);
     }
   }
   return Node();
@@ -180,8 +180,8 @@ int Node::indexInParent() const {
 }
 
 bool Node::hasChild(const Node child) const {
-  for (const NodeIterator::IndexedNode indexedChild : NodeIterator(*this).forwardConstChildren()) {
-    if (child == indexedChild.m_node) {
+  for (const std::pair<Node, int> indexedChild : NodeIterator::ForwardConstChildren(*this)) {
+    if (child == std::get<Node>(indexedChild)) {
       return true;
     }
   }
@@ -204,8 +204,8 @@ bool Node::hasSibling(const Node sibling) const {
   if (p == Node()) {
     return false;
   }
-  for (const NodeIterator::IndexedNode indexedChild : NodeIterator(p).forwardConstChildren()) {
-    if (indexedChild.m_node == sibling) {
+  for (const std::pair<Node, int> indexedChild : NodeIterator::ForwardConstChildren(p)) {
+    if (std::get<Node>(indexedChild) == sibling) {
       return true;
     }
   }
@@ -213,15 +213,8 @@ bool Node::hasSibling(const Node sibling) const {
 }
 
 void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
-  for (const NodeIterator::IndexedNode child : NodeIterator(*this).forwardConstChildren()) {
-    child.m_node.recursivelyGet(treeFunction);
-  }
-  (*treeFunction)(*this);
-}
-
-void Node::recursivelyEdit(InPlaceTreeFunction treeFunction) {
-  for (NodeIterator::IndexedNode child : NodeIterator(*this).forwardEditableChildren()) {
-    child.m_node.recursivelyEdit(treeFunction);
+  for (const std::pair<Node, int> child : NodeIterator::ForwardConstChildren(*this)) {
+    std::get<Node>(child).recursivelyGet(treeFunction);
   }
   (*treeFunction)(*this);
 }

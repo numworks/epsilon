@@ -33,7 +33,8 @@ bool UserCircuitBreakerCheckpoint::setActive(Ion::CircuitBreaker::Status status)
 
 void UserCircuitBreakerCheckpoint::discard() {
   if (isCurrentCircuitBreakerCheckpoint()) {
-    Ion::CircuitBreaker::unsetCheckpoint(Ion::CircuitBreaker::CheckpointType::User);
+    Ion::CircuitBreaker::unsetCheckpoint(Ion::CircuitBreaker::CheckpointType::Back);
+    Ion::CircuitBreaker::unsetCheckpoint(Ion::CircuitBreaker::CheckpointType::AnyKey);
     setCurrentCircuitBreakerCheckpoint(nullptr);
   }
 }

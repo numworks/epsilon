@@ -14,8 +14,8 @@ bool sharedIsDefined(uint8_t eventId);
 /* Platform specific functions */
 
 bool handlePreemption(bool stalling);
-void setPendingKeyboardStateIfPreemtive(Keyboard::State s);
-void resetPendingKeyboardState();
+void setPreemptiveKeyboardState(Keyboard::State s);
+void resetPreemptiveKeyboardState();
 void resetKeyboardState();
 
 Event getPlatformEvent();

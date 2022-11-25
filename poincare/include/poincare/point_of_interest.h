@@ -47,6 +47,7 @@ class PointsOfInterestList {
 public:
   List list() const { return m_list; }
   void init() { m_list = List::Builder(); }
+  void setList(List list) { m_list = list; }
   bool isUninitialized() const { return m_list.isUninitialized(); }
   int numberOfPoints() const { return m_list.numberOfChildren(); }
   Poincare::PointOfInterest pointAtIndex(int i) const;

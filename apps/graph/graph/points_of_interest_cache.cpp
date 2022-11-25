@@ -9,6 +9,13 @@ namespace Graph {
 
 // PointsOfInterestCache
 
+PointsOfInterestCache PointsOfInterestCache::clone() const {
+  PointsOfInterestCache result = *this;
+  Expression cloneList = result.list().clone();
+  result.m_list.setList(static_cast<List&>(cloneList));
+  return result;
+}
+
 Range1D PointsOfInterestCache::setBounds(float start, float end) {
   assert(start < end);
   assert(!m_record.isNull());
@@ -157,6 +164,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
       append(intersection.x1(), intersection.x2(), Solver<double>::Interest::Intersection,  *reinterpret_cast<uint32_t *>(&record));
     }
   }
+
 }
 
 void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest,uint32_t data) {

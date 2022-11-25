@@ -17,7 +17,7 @@ void FunctionGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext 
       continue;
     }
     UserCircuitBreakerCheckpoint checkpoint;
-    if (CircuitBreakerRun(checkpoint)) {
+    if (BackCircuitBreakerRun(checkpoint)) {
       drawRecord(i, ctx, rect);
     } else {
       setFunctionInterrupted(i);

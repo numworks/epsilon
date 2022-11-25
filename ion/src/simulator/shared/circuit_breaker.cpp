@@ -5,7 +5,7 @@ namespace Ion {
 namespace CircuitBreaker {
 
 Status sStatus = Status::Interrupted;
-constexpr static int k_numberOfCheckpointTypes = 3;
+constexpr static int k_numberOfCheckpointTypes = static_cast<uint8_t>(CheckpointType::NumberOfCheckpoints); // 3
 bool sCheckpointsSet[k_numberOfCheckpointTypes] = {false, false, false};
 jmp_buf sBuffers[k_numberOfCheckpointTypes];
 jmp_buf sDummyBuffer;
@@ -22,7 +22,14 @@ bool hasCheckpoint(CheckpointType type) {
   return sCheckpointsSet[static_cast<uint8_t>(type)];
 }
 
+void unsetLowerCheckpoints(CheckpointType type) {
+  for (int i = static_cast<int>(type) + 1; i < k_numberOfCheckpointTypes; i++) {
+    unsetCheckpoint(static_cast<CheckpointType>(i));
+  }
+}
+
 void unsetCheckpoint(CheckpointType type) {
+  unsetLowerCheckpoints(type);
   sCheckpointsSet[static_cast<uint8_t>(type)] = false;
 }
 
@@ -37,9 +44,7 @@ void loadCheckpoint(CheckpointType type) {
   }
   sLoadCheckpointInterrupted = false;
   sStatus = Status::Interrupted;
-  if (type == CheckpointType::Home) {
-    unsetCheckpoint(CheckpointType::User);
-  }
+  unsetLowerCheckpoints(type);
   longjmp(sBuffers[static_cast<uint8_t>(type)], 1);
 }
 

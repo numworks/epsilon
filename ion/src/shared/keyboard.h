@@ -7,6 +7,7 @@ namespace Ion {
 namespace Keyboard {
 
 void resetMemoizedState();
+void pushState(State state);
 void keyboardWasScanned(State state);
 
 }

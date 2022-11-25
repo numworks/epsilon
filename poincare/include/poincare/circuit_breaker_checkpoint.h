@@ -10,7 +10,9 @@
  *
  */
 
-#define CircuitBreakerRun(checkpoint) (CheckpointRun(checkpoint, Ion::CircuitBreaker::setCheckpoint(Ion::CircuitBreaker::CheckpointType::User)))
+#define BackCircuitBreakerRun(checkpoint) (CheckpointRun(checkpoint, Ion::CircuitBreaker::setCheckpoint(Ion::CircuitBreaker::CheckpointType::Back)))
+
+#define AnyKeyCircuitBreakerRun(checkpoint) (CheckpointRun(checkpoint, Ion::CircuitBreaker::setCheckpoint(Ion::CircuitBreaker::CheckpointType::AnyKey)))
 
 namespace Poincare {
 
@@ -34,4 +36,3 @@ private:
 }
 
 #endif
-

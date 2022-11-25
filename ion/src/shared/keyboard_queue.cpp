@@ -10,12 +10,12 @@ Queue * Queue::sharedQueue() {
   return &sQueue;
 }
 
-void Queue::flush(bool resetPending) {
+void Queue::flush(bool resetPreemptiveState) {
   reset();
   Keyboard::resetMemoizedState();
   Events::resetKeyboardState();
-  if (resetPending) {
-    Events::resetPendingKeyboardState();
+  if (resetPreemptiveState) {
+    Events::resetPreemptiveKeyboardState();
   }
 }
 

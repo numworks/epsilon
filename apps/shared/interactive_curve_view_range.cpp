@@ -292,7 +292,7 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
 
   if (m_delegate && (computeX || computeY)) {
     Poincare::UserCircuitBreakerCheckpoint checkpoint;
-    if (CircuitBreakerRun(checkpoint)) {
+    if (BackCircuitBreakerRun(checkpoint)) {
       Range2D newRange = computeX || computeY ? m_delegate->optimalRange(computeX, computeY, memoizedRange()) : Range2D();
 
       if (computeX) {

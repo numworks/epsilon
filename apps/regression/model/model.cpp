@@ -1,9 +1,8 @@
 #include "model.h"
 #include "../store.h"
-#include "../../shared/poincare_helpers.h"
+#include <apps/shared/poincare_helpers.h>
 #include <poincare/decimal.h>
 #include <poincare/float.h>
-#include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <cmath>
 
@@ -172,7 +171,6 @@ int Model::solveLinearSystem(double * solutions, double * coefficients, double *
   for (int i = 0; i < n * n; i++) {
     coefficientsSave[i] = coefficients[i];
   }
-  assert(k_maxNumberOfCoefficients < Matrix::k_maxNumberOfCoefficients);
   int inverseResult = Matrix::ArrayInverse(coefficients, n, n);
   int numberOfMatrixModifications = 0;
   while (inverseResult < 0 && numberOfMatrixModifications < k_maxMatrixInversionFixIterations) {

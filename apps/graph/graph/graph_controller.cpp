@@ -17,8 +17,7 @@ GraphController::GraphController(Responder * parentResponder, Escher::InputEvent
   m_view(curveViewRange, m_cursor, &m_bannerView, &m_cursorView, &m_interestView),
   m_graphRange(curveViewRange),
   m_curveParameterController(inputEventHandlerDelegate, curveViewRange, &m_bannerView, m_cursor, &m_view, this),
-  m_functionSelectionController(this),
-  m_recomputeInterest(true)
+  m_functionSelectionController(this)
 {
   m_graphRange->setDelegate(this);
 }
@@ -115,16 +114,13 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
 }
 
 PointsOfInterestCache * GraphController::pointsOfInterest() {
-  if(m_recomputeInterest) {
-    computePointsOfInterest();
-  }
   return &m_pointsOfInterest;
 }
 
 bool GraphController::handleZoom(Ion::Events::Event event) {
   bool res = FunctionGraphController::handleZoom(event);
   if (res) {
-    computePointsOfInterest();
+    setInterestRange();
   }
   return res;
 }
@@ -149,7 +145,8 @@ void GraphController::selectFunctionWithCursor(int functionIndex, bool willBeVis
   // Compute points of interest
   if (willBeVisible) {
     m_pointsOfInterest.setRecord(record);
-    m_recomputeInterest = true;
+    setInterestRange();
+    m_view.reload(false, true);
   }
 }
 
@@ -172,7 +169,7 @@ bool GraphController::displayDerivativeInBanner() const {
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  computePointsOfInterest();
+  setInterestRange();
   bool result = privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
   return result;
 }
@@ -288,7 +285,6 @@ bool GraphController::moveCursorVertically(int direction) {
   if (moved) {
     snapToInterestAndUpdateBannerAndCursor(m_cursor, t - dt, t + dt);
   } */
-  m_view.reload(false, true);
   return true;
 }
 
@@ -300,15 +296,14 @@ void GraphController::moveCursorAndCenterIfNeeded(double t) {
   }
 }
 
-void GraphController::computePointsOfInterest() {
+void GraphController::setInterestRange() {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
   if (f->isAlongY()) {
-    m_pointsOfInterest.setBoundsAndCompute(m_graphRange->yMin(), m_graphRange->yMax(), k_maxFloat);
+    m_pointsOfInterest.setBounds(m_graphRange->yMin(), m_graphRange->yMax());
   } else {
-    m_pointsOfInterest.setBoundsAndCompute(m_graphRange->xMin(), m_graphRange->xMax(), k_maxFloat);
+    m_pointsOfInterest.setBounds(m_graphRange->xMin(), m_graphRange->xMax());
   }
-  m_recomputeInterest = false;
 }
 
 }

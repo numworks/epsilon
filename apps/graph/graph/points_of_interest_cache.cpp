@@ -7,38 +7,23 @@ using namespace Shared;
 
 namespace Graph {
 
-// PointsOfInterestCache::Iterator
-
-PointsOfInterestCache::Iterator & PointsOfInterestCache::Iterator::operator++() {
-  int n = m_list->m_list.numberOfPoints();
-  do {
-    ++m_index;
-  } while (m_interest != Solver<double>::Interest::None && m_index < n && m_list->pointAtIndex(m_index).interest() != m_interest);
-  return *this;
-}
-
 // PointsOfInterestCache
 
-Range1D PointsOfInterestCache::setBoundsAndCompute(float start, float end, float maxFloat) {
+Range1D PointsOfInterestCache::setBounds(float start, float end) {
   assert(start < end);
   assert(!m_record.isNull());
-
-  Range1D dirtyRange;
 
   uint32_t checksum = Ion::Storage::FileSystem::sharedFileSystem()->checksum();
   if (m_checksum != checksum || m_computedRecord != m_record) {
     /* Discard the old results if anything in the storage has changed. */
-    m_start = m_end = NAN;
-    int nPoints = m_list.isUninitialized() ? 0 : m_list.numberOfPoints();
-    if (nPoints > 0) {
-      dirtyRange = Range1D(pointAtIndex(0).x(), pointAtIndex(nPoints - 1).x());
-    }
+    m_computedStart = m_computedEnd = start;
     m_list.init();
   }
 
-  float oldStart = m_start, oldEnd = m_end;
   m_start = start;
   m_end = end;
+  m_computedEnd = std::clamp(m_computedEnd, start, end);
+  m_computedStart = std::clamp(m_computedStart, start, end);
 
   if (m_list.isUninitialized()) {
     m_list.init();
@@ -46,47 +31,43 @@ Range1D PointsOfInterestCache::setBoundsAndCompute(float start, float end, float
     stripOutOfBounds();
   }
 
-  if (start > oldEnd || end < oldStart || std::isnan(oldEnd) || std::isnan(oldStart)) {
-    computeBetween(start, end, maxFloat, &dirtyRange);
-  } else {
-    if (start < oldStart) {
-      computeBetween(start, oldStart, maxFloat, &dirtyRange);
-    }
-    if (end > oldEnd) {
-      computeBetween(oldEnd, end, maxFloat, &dirtyRange);
-    }
-  }
-
   m_checksum = checksum;
   m_computedRecord = m_record;
-  return dirtyRange;
+  return Range1D(0.0, 1.0);
 }
 
-PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, double end, Solver<double>::Interest interest) const {
+Poincare::PointOfInterest PointsOfInterestCache::pointAtIndex(int i) {
+  while (i >= m_list.numberOfPoints() && m_computedEnd < m_end) {
+    computeBetween(m_computedEnd, std::clamp(m_computedEnd + step(), m_start, m_end));
+  }
+  while (i >= m_list.numberOfPoints() && m_computedStart > m_start) {
+    computeBetween(std::clamp(m_computedStart - step(), m_start, m_end), m_computedStart);
+  }
+  return i < m_list.numberOfPoints() ? m_list.pointAtIndex(i) : PointOfInterest();
+}
+
+PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, double end, Solver<double>::Interest interest) {
   assert(start != end);
-  PointOfInterest previous(nullptr);
-  for (const PointOfInterest & p : filter(interest)) {
-    double x = p.x();
-    if (x >= start) {
-      if (start > end) {
-        break;
-      } else if (x > start) {
-        return x < end ? p : PointOfInterest(nullptr);
-      }
-    }
-    previous = p;
+  PointOfInterest p;
+  if (start > end) {
+    return p;
   }
-  return (previous.isUninitialized() || previous.x() > end) ? previous : PointOfInterest(nullptr);
+  int i = 0;
+  do {
+    p = pointAtIndex(i);
+    i++;
+  } while (!p.isUninitialized() && p.interest() != interest && (p.x() <= start || p.x() > end));
+  return p;
 }
 
-PointOfInterest PointsOfInterestCache::pointOfInterestAtAbscissa(double x) const {
-  for (const PointOfInterest & p : filter()) {
-    double currentX = p.x();
-    if (x == currentX) {
-      return p;
-    }
-  }
-  return PointOfInterest(nullptr);
+PointOfInterest PointsOfInterestCache::pointOfInterestAtAbscissa(double x) {
+  PointOfInterest p;
+  int i = 0;
+  do {
+    p = pointAtIndex(i);
+    i++;
+  } while (!p.isUninitialized() && p.x() != x);
+  return p;
 }
 
 
@@ -94,15 +75,24 @@ void PointsOfInterestCache::stripOutOfBounds() {
   assert(!m_list.isUninitialized());
 
   for (int i = m_list.numberOfPoints() - 1; i >= 0; i--) {
-    float x = static_cast<float>(pointAtIndex(i).x());
+    float x = static_cast<float>(m_list.pointAtIndex(i).x());
     if (x < m_start || m_end < x) {
       m_list.list().removeChildAtIndexInPlace(i);
     }
   }
 }
 
-void PointsOfInterestCache::computeBetween(float start, float end, float maxFloat, Range1D * dirtyRange) {
+void PointsOfInterestCache::computeBetween(float start, float end) {
   assert(!m_list.isUninitialized());
+
+  // TODO: Check that start and end are not completely out of [m_computedStart, m_computedEnd]
+  // assert(end == m_computedEnd || start == m_computedStart);
+  if (start < m_computedStart && end == m_computedStart) {
+    m_computedStart = start;
+  }
+  if (start == m_computedEnd && end > m_computedEnd) {
+    m_computedEnd = end;
+  }
 
   ContinuousFunctionStore * store = App::app()->functionStore();
   Context * context = App::app()->localContext();
@@ -112,7 +102,7 @@ void PointsOfInterestCache::computeBetween(float start, float end, float maxFloa
   if (!f->isAlongY() && start < 0.f && 0.f < end) {
     Coordinate2D<double> xy = f->evaluateXYAtParameter(0., context);
     if (std::isfinite(xy.x1()) && std::isfinite(xy.x2())) {
-      append(xy.x1(), xy.x2(), maxFloat, Solver<double>::Interest::YIntercept, dirtyRange);
+      append(xy.x1(), xy.x2(), Solver<double>::Interest::YIntercept);
     }
   }
 
@@ -120,9 +110,10 @@ void PointsOfInterestCache::computeBetween(float start, float end, float maxFloa
   NextSolution methodsNext[] = { &Solver<double>::nextRoot, &Solver<double>::nextMinimum, &Solver<double>::nextMaximum };
   for (NextSolution next : methodsNext) {
     Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);
+    solver.stretch();
     Coordinate2D<double> solution;
     while (std::isfinite((solution = (solver.*next)(e)).x1())) { // assignment in condition
-      append(solution.x1(), solution.x2(), maxFloat, solver.lastInterest(), dirtyRange);
+      append(solution.x1(), solution.x2(), solver.lastInterest());
     }
   }
 
@@ -142,19 +133,19 @@ void PointsOfInterestCache::computeBetween(float start, float end, float maxFloa
     }
     Expression e2 = g->expressionReduced(context);
     Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);
+    solver.stretch();
     Expression diff;
     Coordinate2D<double> intersection;
     while (std::isfinite((intersection = solver.nextIntersection(e, e2, &diff)).x1())) { // assignment in condition
       assert(sizeof(record) == sizeof(uint32_t));
-      append(intersection.x1(), intersection.x2(), maxFloat, Solver<double>::Interest::Intersection, dirtyRange, *reinterpret_cast<uint32_t *>(&record));
+      append(intersection.x1(), intersection.x2(), Solver<double>::Interest::Intersection,  *reinterpret_cast<uint32_t *>(&record));
     }
   }
 }
 
-void PointsOfInterestCache::append(double x, double y, float maxFloat, Solver<double>::Interest interest, Range1D * dirtyRange, uint32_t data) {
+void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest,uint32_t data) {
   assert(std::isfinite(x) && std::isfinite(y));
   m_list.append(x, y, data, interest);
-  dirtyRange->extend(x, maxFloat);
 }
 
 }

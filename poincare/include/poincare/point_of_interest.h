@@ -30,6 +30,7 @@ class PointOfInterest : public TreeHandle {
 public:
   static PointOfInterest Builder(double x, double y, typename Solver<double>::Interest interest, uint32_t data);
 
+  PointOfInterest() : TreeHandle(nullptr) {}
   PointOfInterest(PointOfInterestNode * node) : TreeHandle(node) {}
 
   double x() const { return node()->m_x; }

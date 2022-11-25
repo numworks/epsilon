@@ -68,7 +68,7 @@ private:
 
   bool defaultRangeIsNormalized() const { return functionStore()->displaysFunctionsToNormalize(); }
   void interestingFunctionRange(Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
-  void computePointsOfInterest();
+  void setInterestRange();
 
   PointsOfInterestCache m_pointsOfInterest;
   Shared::RoundCursorView m_cursorView;
@@ -78,7 +78,6 @@ private:
   Shared::InteractiveCurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;
   FunctionSelectionController m_functionSelectionController;
-  bool m_recomputeInterest;
 };
 
 }

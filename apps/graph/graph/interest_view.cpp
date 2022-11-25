@@ -20,9 +20,14 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
 
   AbstractPlotView::Axis axis = f->isAlongY() ? AbstractPlotView::Axis::Vertical : AbstractPlotView::Axis::Horizontal;
   PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterest();
-  for (const PointOfInterest & p : pointsOfInterest->filter(m_interest)) {
-    Coordinate2D<float> xy = axis == AbstractPlotView::Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
-    m_parentView->drawDot(ctx, rect, Dots::Size::Tiny, xy, Escher::Palette::GrayDarkest);
+  PointOfInterest p = pointsOfInterest->pointAtIndex(0);
+  int i = 0;
+  while (!p.isUninitialized()) {
+    if (m_interest == Poincare::Solver<double>::Interest::None || m_interest == p.interest()) {
+      Coordinate2D<float> xy = axis == AbstractPlotView::Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
+      m_parentView->drawDot(ctx, rect, Dots::Size::Tiny, xy, Escher::Palette::GrayDarkest);
+    }
+    p = pointsOfInterest->pointAtIndex(++i);
   }
 }
 

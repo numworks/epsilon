@@ -38,6 +38,7 @@ private:
     void setHighlightWholeCell(bool highlightWholeCell) { m_highlightWholeCell = highlightWholeCell; };
 
   private:
+    void reloadTextColor() override;
     ExpressionWithEqualSignView m_leftExpressionView;
     bool m_highlightWholeCell;
   };

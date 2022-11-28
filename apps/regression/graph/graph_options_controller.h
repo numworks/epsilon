@@ -29,8 +29,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
-  void initCellSize(Escher::TableView * view) override;
-  void fillCell(Escher::HighlightCell * cell);
+  void fillCell(Escher::HighlightCell * cell) override;
 
   // MemoizedListViewDataSource
   int numberOfRows() const override { return k_maxNumberOfRows; }

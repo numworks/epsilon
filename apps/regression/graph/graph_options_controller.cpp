@@ -69,16 +69,6 @@ void GraphOptionsController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-void GraphOptionsController::initCellSize(Escher::TableView * view) {
-  for (int i = 0; i < k_maxNumberOfRows; i++) {
-    HighlightCell * cellI = cell(i);
-    if (cellI->isVisible()) {
-      fillCell(cellI);
-    }
-  }
-  ExplicitSelectableListViewController::initCellSize(view);
-}
-
 bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   if (event == Ion::Events::Left && stack->depth() > Shared::InteractiveCurveViewController::k_graphControllerStackDepth + 1) {

@@ -27,6 +27,7 @@ void MemoizedCurveViewRange::protectedSetY(Poincare::Range1D y, float limit) {
 }
 
 void MemoizedCurveViewRange::privateSet(float f, float limit, Range1D * range1D, void (Range1D::*setter)(float, float), bool updateGridUnit, float * gridUnit) {
+  assert(!std::isnan(f));
   (range1D->*setter)(f, limit);
   *gridUnit = updateGridUnit ? (gridUnit == &m_xGridUnit ? CurveViewRange::xGridUnit() : CurveViewRange::yGridUnit()) : 0.f;
 }

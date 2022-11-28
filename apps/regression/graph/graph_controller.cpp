@@ -140,6 +140,11 @@ void GraphController::reloadBannerView() {
     // Display MeanDot before x= and y=
     m_bannerView.setDisplayParameters(true, true, !coefficientsAreDefined);
     m_bannerView.otherView()->setText(I18n::translate(I18n::Message::MeanDot));
+  } else if (modelType == Model::Type::None) {
+    // Display correlation coefficient
+    m_bannerView.setDisplayParameters(true, false, !coefficientsAreDefined);
+    Poincare::Print::CustomPrintf(buffer, k_bannerViewTextBufferSize, "r=%*.*ed", m_store->correlationCoefficient(*m_selectedSeriesIndex), displayMode, significantDigits);
+    m_bannerView.otherView()->setText(buffer);
   } else {
     // Nothing else to display
     m_bannerView.setDisplayParameters(false, false, !coefficientsAreDefined);

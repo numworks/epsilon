@@ -317,6 +317,7 @@ void GraphController::setInterestRangeForRecord(Ion::Storage::Record record) {
     float tMax = f->tMax();
     cache->setBounds(std::clamp(m_graphRange->xMin(), tMin, tMax), std::clamp(m_graphRange->xMax(), tMin, tMax));
   }
+  m_interestView.dirty();
 }
 
 }

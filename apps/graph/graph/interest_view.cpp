@@ -42,6 +42,11 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
     checkpoint.discard();
     *pointsOfInterestCache = pointsOfInterestCacheClone;
 
+    i++;
+    if (std::isnan(dotCoordinates.x1()) || std::isnan(dotCoordinates.x2())) {
+      continue;
+    }
+
     // Draw the dot
     CursorView * cursor = static_cast<MemoizedCursorView *>(m_parentView->cursorView());
     // If the point of interest is below the cursor, do not draw it
@@ -50,8 +55,11 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
 
     }
 
-    i++;
   } while (!p.isUninitialized());
+}
+
+void InterestView::dirty() {
+  markRectAsDirty(m_parentView->bounds());
 }
 
 }

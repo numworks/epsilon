@@ -17,7 +17,7 @@ public:
   Escher::BufferTextView * derivativeView() { return &m_derivativeView; }
   Escher::BufferTextView * aView() { return &m_aView; }
   Escher::BufferTextView * bView() { return &m_bView; }
-  void setInterestMessage(I18n::Message message) { m_interestView.setMessage(message); }
+  void setInterestMessage(I18n::Message message) { m_interestMessageView.setMessage(message); }
   void setDisplayParameters(bool showInterest, bool showDerivative, bool showTangent);
 
 private:
@@ -27,9 +27,9 @@ private:
   };
   Escher::View * subviewAtIndex(int index) override;
   bool lineBreakBeforeSubview(Escher::View * subview) const override;
-  bool hasInterestMessage() const { return m_showInterest && m_interestView.text()[0] != '\0'; }
+  bool hasInterestMessage() const { return m_showInterest && m_interestMessageView.text()[0] != '\0'; }
 
-  Escher::MessageTextView m_interestView;
+  Escher::MessageTextView m_interestMessageView;
   Escher::BufferTextView m_derivativeView;
   Escher::MessageTextView m_tangentEquationView;
   Escher::BufferTextView m_aView;

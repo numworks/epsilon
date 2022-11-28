@@ -43,6 +43,7 @@ public:
   Shared::ExpiringPointer<Shared::ContinuousFunction> modelForRecord(Ion::Storage::Record record) const {
     return Shared::ExpiringPointer<Shared::ContinuousFunction>(static_cast<Shared::ContinuousFunction *>(privateModelForRecord(record)));
   }
+  int indexOfRecordAmongActiveRecords(Ion::Storage::Record record) const;
   Shared::ContinuousFunctionCache * cacheAtIndex(int i) const { return (i < Shared::ContinuousFunctionCache::k_numberOfAvailableCaches) ? m_functionCaches + i : nullptr; }
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
   int maxNumberOfModels() const override { return k_maxNumberOfModels; }

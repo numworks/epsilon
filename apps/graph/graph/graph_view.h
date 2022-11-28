@@ -23,6 +23,8 @@ public:
   void tidyModel(int i) const override;
   void setFocus(bool focus) override;
 
+  bool recordWasInterrupted(Ion::Storage::Record record) const;
+
   void drawTangent(bool tangent) { m_tangent = tangent; }
   void setInterest(Poincare::Solver<double>::Interest interest) { m_interestView->setInterest(interest); }
 

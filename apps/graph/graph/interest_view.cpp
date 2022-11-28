@@ -14,8 +14,9 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
     return;
   }
   ContinuousFunctionStore * functionStore = App::app()->functionStore();
-  ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(m_parentView->selectedRecord());
-  if (!f->properties().isCartesian()) {
+  Ion::Storage::Record selectedRecord = m_parentView->selectedRecord();
+  ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(selectedRecord);
+  if (!f->properties().isCartesian() || m_parentView->recordWasInterrupted(selectedRecord)) {
     return;
   }
 

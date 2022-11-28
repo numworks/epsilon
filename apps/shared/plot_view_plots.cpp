@@ -111,6 +111,8 @@ WithCurves::CurveDrawing::CurveDrawing(Curve2D curve, void * context, float tSta
   if (m_tStart > m_tEnd) {
     std::swap(m_tStart, m_tEnd);
   }
+  // Assert that the chosen step is not too small (ad-hoc value)
+  assert((m_tEnd - m_tStart) / m_tStep < 10e5);
 }
 
 void WithCurves::CurveDrawing::setPatternOptions(Pattern pattern, float patternStart, float patternEnd, Curve2D patternLowerBound, Curve2D patternUpperBound, bool patternWithoutCurve, AbstractPlotView::Axis axis) {

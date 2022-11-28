@@ -129,7 +129,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
     }
   }
 
-  typedef Coordinate2D<double> (Solver<double>::*NextSolution)(Expression e);
+  typedef Coordinate2D<double> (Solver<double>::*NextSolution)(const Expression & e);
   NextSolution methodsNext[] = { &Solver<double>::nextRoot, &Solver<double>::nextMinimum, &Solver<double>::nextMaximum };
   for (NextSolution next : methodsNext) {
     Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);

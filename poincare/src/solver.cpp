@@ -50,7 +50,7 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketT
 }
 
 template<typename T>
-Coordinate2D<T> Solver<T>::next(Expression e, BracketTest test, HoneResult hone) {
+Coordinate2D<T> Solver<T>::next(const Expression & e, BracketTest test, HoneResult hone) {
   assert(m_unknown && m_unknown[0] != '\0');
   FunctionEvaluationParameters parameters = { .context = m_context, .unknown = m_unknown, .expression = e, .complexFormat = m_complexFormat, .angleUnit = m_angleUnit };
   FunctionEvaluation f = [](T x, const void * aux) {
@@ -62,7 +62,7 @@ Coordinate2D<T> Solver<T>::next(Expression e, BracketTest test, HoneResult hone)
 }
 
 template<typename T>
-Coordinate2D<T> Solver<T>::nextRoot(Expression e) {
+Coordinate2D<T> Solver<T>::nextRoot(const Expression & e) {
   ExpressionNode::Type type = e.type();
 
   switch (type) {
@@ -100,7 +100,7 @@ Coordinate2D<T> Solver<T>::nextRoot(Expression e) {
 }
 
 template<typename T>
-Coordinate2D<T> Solver<T>::nextMinimum(Expression e) {
+Coordinate2D<T> Solver<T>::nextMinimum(const Expression & e) {
   /* TODO We could add a layer of formal resolution:
    * - use the derivative (could be an optional argument to avoid recomputing
    *   it every time)
@@ -110,7 +110,7 @@ Coordinate2D<T> Solver<T>::nextMinimum(Expression e) {
 }
 
 template<typename T>
-Coordinate2D<T> Solver<T>::nextIntersection(Expression e1, Expression e2, Expression * memoizedDifference) {
+Coordinate2D<T> Solver<T>::nextIntersection(const Expression & e1, const Expression & e2, Expression * memoizedDifference) {
   if (!memoizedDifference) {
     Expression diff;
     return nextIntersection(e1, e2, &diff);
@@ -118,7 +118,7 @@ Coordinate2D<T> Solver<T>::nextIntersection(Expression e1, Expression e2, Expres
   assert(memoizedDifference);
   if (memoizedDifference->isUninitialized()) {
     ExpressionNode::ReductionContext reductionContext(m_context, m_complexFormat, m_angleUnit, Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForAnalysis);
-    *memoizedDifference = Subtraction::Builder(e1, e2).cloneAndSimplify(reductionContext);
+    *memoizedDifference = Subtraction::Builder(e1.clone(), e2.clone()).cloneAndSimplify(reductionContext);
   }
   nextRoot(*memoizedDifference);
   if (m_lastInterest == Interest::Root) {
@@ -265,7 +265,7 @@ T Solver<T>::nextX(T x, T direction) const {
 }
 
 template<typename T>
-Coordinate2D<T> Solver<T>::nextPossibleRootInChild(Expression e, int childIndex) const {
+Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Expression & e, int childIndex) const {
   Solver<T> solver(this);
   Expression child = e.childAtIndex(childIndex);
   T xRoot;
@@ -282,7 +282,7 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(Expression e, int childIndex)
 }
 
 template<typename T>
-Coordinate2D<T> Solver<T>::nextRootInMultiplication(Expression e) const {
+Coordinate2D<T> Solver<T>::nextRootInMultiplication(const Expression & e) const {
   assert(e.type() == ExpressionNode::Type::Multiplication);
   T xRoot = k_NAN;
   int n = e.numberOfChildren();
@@ -332,9 +332,9 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, Fu
 
 template Solver<double>::Solver(double, double, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);
 template Coordinate2D<double> Solver<double>::next(FunctionEvaluation, const void *, BracketTest, HoneResult);
-template Coordinate2D<double> Solver<double>::nextRoot(Expression);
-template Coordinate2D<double> Solver<double>::nextMinimum(Expression);
-template Coordinate2D<double> Solver<double>::nextIntersection(Expression, Expression, Expression *);
+template Coordinate2D<double> Solver<double>::nextRoot(const Expression &);
+template Coordinate2D<double> Solver<double>::nextMinimum(const Expression &);
+template Coordinate2D<double> Solver<double>::nextIntersection(const Expression &, const Expression &, Expression *);
 template void Solver<double>::stretch();
 template Coordinate2D<double> Solver<double>::BrentMaximum(FunctionEvaluation, const void *, double, double, Interest, double);
 

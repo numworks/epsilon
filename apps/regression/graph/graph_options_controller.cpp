@@ -7,6 +7,7 @@
 #include <poincare/vertical_offset_layout.h>
 #include <poincare/horizontal_layout.h>
 #include <escher/clipboard.h>
+#include <apps/exam_mode_configuration.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 
@@ -158,11 +159,18 @@ void GraphOptionsController::fillCell(HighlightCell * cell) {
     (void) length;
     m_regressionEquationCell.setLayout(Poincare::LayoutHelper::StringToCodePointsLayout(buffer, strlen(buffer)));
   } else if (cell == &m_rCell || cell == &m_r2Cell) {
+    ExpressionTableCellWithMessageWithBuffer * rCell = static_cast<ExpressionTableCellWithMessageWithBuffer*>(cell);
+    if (ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
+      rCell->setTextColor(Palette::GrayDark);
+      rCell->setSubLabelMessage(I18n::Message::Disabled);
+      rCell->setAccessoryText("");
+      return;
+    }
     constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
     char buffer[bufferSize];
     double value = cell == &m_rCell ? m_store->correlationCoefficient(series) : m_store->determinationCoefficientForSeries(series, m_graphController->globalContext());
     Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, significantDigits, displayMode);
-    (cell == &m_rCell ? m_rCell : m_r2Cell).setAccessoryText(buffer);
+    rCell->setAccessoryText(buffer);
   }
 }
 

@@ -35,7 +35,7 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Esch
 {
   m_rCell.setLayout(Poincare::CodePointLayout::Builder('r'));
   m_r2Cell.setLayout(Poincare::HorizontalLayout::Builder(
-      {Poincare::CodePointLayout::Builder('r'),
+      {Poincare::CodePointLayout::Builder('R'),
        Poincare::VerticalOffsetLayout::Builder(
            Poincare::CodePointLayout::Builder('2'),
            Poincare::VerticalOffsetLayoutNode::VerticalPosition::Superscript)}));

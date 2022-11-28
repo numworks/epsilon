@@ -236,6 +236,8 @@ Token Tokenizer::popToken() {
       Token::Type::ComparisonOperator
     );
     result.setString(start, comparisonOperatorLength);
+    /* Set decoder after comparison operator in case not all codepoints
+     * were popped. */
     m_decoder.setPosition(start + comparisonOperatorLength);
     return result;
   }

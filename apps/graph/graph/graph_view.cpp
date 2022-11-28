@@ -32,6 +32,10 @@ void GraphView::setFocus(bool focus) {
   FunctionGraphView::setFocus(focus);
 }
 
+bool GraphView::recordWasInterrupted(Ion::Storage::Record record) const {
+  return functionWasInterrupted(App::app()->functionStore()->indexOfRecordAmongActiveRecords(record));
+}
+
 int GraphView::numberOfDrawnRecords() const {
   return App::app()->functionStore()->numberOfActiveFunctions();
 }

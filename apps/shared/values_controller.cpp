@@ -390,6 +390,7 @@ Layout ValuesController::memoizedLayoutForCell(int i, int j) {
 
 void ValuesController::clearSelectedColumn() {
    intervalAtColumn(selectedColumn())->clear();
+   resetMemoization();
 }
 
 void ValuesController::setClearPopUpContent() {

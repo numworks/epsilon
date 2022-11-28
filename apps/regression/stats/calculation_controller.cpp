@@ -132,14 +132,27 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       }
       return;
     }
-    I18n::Message titles[5][k_numberOfHeaderColumns] = {
+    assert(maxNumberOfCoefficients() > 0);
+    int coefficientNameIndex = j - numberOfRowsBeforeCoefficients - 1;
+    if (!shouldDisplayMCoefficient()) {
+      // Skip CoefficientM
+      coefficientNameIndex++;
+      assert(shouldDisplayACoefficient());
+    } else if (coefficientNameIndex > 0 && !shouldDisplayACoefficient()) {
+      // Skip CoefficientA
+      coefficientNameIndex++;
+    }
+    constexpr int k_maxNumberOfDistinctCoefficients = 6;
+    assert(coefficientNameIndex < k_maxNumberOfDistinctCoefficients);
+    I18n::Message titles[k_maxNumberOfDistinctCoefficients][k_numberOfHeaderColumns] = {
+      { I18n::Message::CoefficientM, I18n::Message::M },
       { I18n::Message::CoefficientA, I18n::Message::A },
       { I18n::Message::CoefficientB, I18n::Message::B },
       { I18n::Message::CoefficientC, I18n::Message::C },
       { I18n::Message::CoefficientD, I18n::Message::D },
       { I18n::Message::CoefficientE, I18n::Message::E }
     };
-    myCell->setMessage(titles[j - numberOfRowsBeforeCoefficients - 1][i]);
+    myCell->setMessage(titles[coefficientNameIndex][i]);
     return;
   }
 
@@ -256,15 +269,28 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
       }
     } else {
       // Fill the current coefficient if needed
-      int currentNumberOfCoefs = m_store->modelForSeries(seriesNumber)->numberOfCoefficients();
-      if (j > k_regressionCellIndex + currentNumberOfCoefs) {
+      int numberOfCoefficients = m_store->modelForSeries(seriesNumber)->numberOfCoefficients();
+      int coefficientIndex = j - k_regressionCellIndex - 1;
+      if (shouldDisplayMCoefficient()) {
+        if (m_store->seriesRegressionType(seriesNumber) != Model::Type::LinearAxpb) {
+          // Skip the "m" coefficient row
+          coefficientIndex--;
+        } else if (coefficientIndex > 0 && shouldDisplayACoefficient()) {
+          // With "mx+b", a coefficientIndex 1 corresponds to "b"
+          coefficientIndex = (coefficientIndex == 2) ? 1 : -1;
+        }
+        // Otherwise, model's coefficients are of same order as displayed.
+      } else {
+        assert(shouldDisplayACoefficient());
+      }
+      if (coefficientIndex < 0 || coefficientIndex >= numberOfCoefficients) {
         bufferCell->setText(I18n::translate(I18n::Message::Dash));
         return;
       } else {
         double * coefficients = m_store->coefficientsForSeries(seriesNumber, globContext);
         constexpr int bufferSize = PrintFloat::charSizeForFloatsWithPrecision(numberSignificantDigits);
         char buffer[bufferSize];
-        PoincareHelpers::ConvertFloatToText<double>(coefficients[j - k_regressionCellIndex - 1], buffer, bufferSize, numberSignificantDigits);
+        PoincareHelpers::ConvertFloatToText<double>(coefficients[coefficientIndex], buffer, bufferSize, numberSignificantDigits);
         bufferCell->setText(buffer);
         return;
       }
@@ -365,13 +391,50 @@ bool CalculationController::hasSeriesDisplaying(DisplayCondition condition) cons
 }
 
 int CalculationController::maxNumberOfCoefficients() const {
+  return shouldDisplayMCoefficient() + shouldDisplayACoefficient() + maxNumberOfBCDECoefficients();
+}
+
+int CalculationController::maxNumberOfBCDECoefficients() const {
   int maxNumberCoefficients = 0;
   int numberOfDefinedSeries = m_store->numberOfValidSeries();
+  /* "mx+b" is the only model having a "m": coefficient. It is only available in
+   * Variant1 of RegressionModelOrder. */
   for (int i = 0; i < numberOfDefinedSeries; i++) {
-    int currentNumberOfCoefs = m_store->modelForSeries(m_store->indexOfKthValidSeries(i))->numberOfCoefficients();
-    maxNumberCoefficients = std::max(maxNumberCoefficients, currentNumberOfCoefs);
+    int series = m_store->indexOfKthValidSeries(i);
+    int numberOfCoefficients = m_store->modelForSeries(series)->numberOfCoefficients();
+    // Ignore the first coefficient A or M
+    maxNumberCoefficients = std::max(maxNumberCoefficients, numberOfCoefficients - 1);
   }
   return maxNumberCoefficients;
+}
+
+bool CalculationController::shouldDisplayMCoefficient() const {
+  if (GlobalPreferences::sharedGlobalPreferences()->regressionModelOrder() != CountryPreferences::RegressionModelOrder::Variant1) {
+    // LinearAxpb is displayed as mx+b in Variant1 only
+    return false;
+  }
+  int numberOfDefinedSeries = m_store->numberOfValidSeries();
+  for (int i = 0; i < numberOfDefinedSeries; i++) {
+    int series = m_store->indexOfKthValidSeries(i);
+    if (m_store->seriesRegressionType(series) == Model::Type::LinearAxpb) {
+      // This series needs a M coefficient.
+      return true;
+    }
+  }
+  return false;
+}
+
+bool CalculationController::shouldDisplayACoefficient() const {
+  bool canDisplayM = (GlobalPreferences::sharedGlobalPreferences()->regressionModelOrder() == CountryPreferences::RegressionModelOrder::Variant1);
+  int numberOfDefinedSeries = m_store->numberOfValidSeries();
+  for (int i = 0; i < numberOfDefinedSeries; i++) {
+    int series = m_store->indexOfKthValidSeries(i);
+    if (!(canDisplayM && m_store->seriesRegressionType(series) == Model::Type::LinearAxpb) && m_store->modelForSeries(series)->numberOfCoefficients() > 0) {
+      // This series needs a A coefficient.
+      return true;
+    }
+  }
+  return false;
 }
 
 void CalculationController::resetMemoization(bool force) {

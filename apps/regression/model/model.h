@@ -31,7 +31,7 @@ public:
     LinearApbx      = 13,
   };
   constexpr static int k_numberOfModels = 14;
-  constexpr static int k_maxNumberOfCoefficients = 5;
+  constexpr static int k_maxNumberOfCoefficients = 5; // Quartic model
   static_assert(k_maxNumberOfCoefficients*k_maxNumberOfCoefficients <= Poincare::Matrix::k_maxNumberOfChildren, "Model needs bigger than allowed matrixes");
   virtual Poincare::Layout layout() = 0;
 

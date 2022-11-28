@@ -52,8 +52,8 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView * plotView, KD
 
   CurveViewRange * range = plotView->range();
   float xAlpha = m_test->thresholdAbscissa(op, factor);
-  xAlpha = std::clamp(xAlpha, range->xMin(), range->xMax());
-  z = std::clamp(z, range->xMin(), range->xMax());
+  float clampedXAlpha = std::clamp(xAlpha, range->xMin(), range->xMax());
+  float clampedZ = std::clamp(z, range->xMin(), range->xMax());
   /* We can draw one of the two following combination of patterns (reversed for
    * ComparisonOperator::Lower):
    * - No pattern | Stripes   | Stripes&Highlight
@@ -68,13 +68,13 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView * plotView, KD
     patternBoth = Pattern(true, false, false, true, Palette::PurpleBright, Palette::YellowDark);
     singleCurveStart = range->xMin();
     if (z < xAlpha) {
-      singleStart = z;
+      singleStart = clampedZ;
       patternSingle = Pattern(Palette::YellowDark);
-      bothStart = xAlpha;
+      bothStart = clampedXAlpha;
     } else {
-      singleStart = xAlpha;
+      singleStart = clampedXAlpha;
       patternSingle = Pattern(true, false, false, true, Palette::PurpleBright);
-      bothStart = z;
+      bothStart = clampedZ;
     }
     singleStart -= plotView->pixelWidth();
     singleCurveEnd = singleEnd = bothStart;
@@ -83,13 +83,13 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView * plotView, KD
     patternBoth = Pattern(true, false, true, false, Palette::PurpleBright, Palette::YellowDark);
     bothStart = range->xMin();
     if (z < xAlpha) {
-      bothEnd = z;
+      bothEnd = clampedZ;
       patternSingle = Pattern(true, false, true, false, Palette::PurpleBright);
-      singleEnd = xAlpha;
+      singleEnd = clampedXAlpha;
     } else {
-      bothEnd = xAlpha;
+      bothEnd = clampedXAlpha;
       patternSingle = Pattern(Palette::YellowDark);
-      singleEnd = z;
+      singleEnd = clampedZ;
     }
     singleCurveStart = singleStart = bothEnd;
     singleCurveEnd = range->xMax();

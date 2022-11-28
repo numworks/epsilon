@@ -52,16 +52,16 @@ public:
   Coordinate2D<T> result() const { return lastInterest() == Interest::None ? Coordinate2D<T>(k_NAN, k_NAN) : Coordinate2D<T>(start(), m_yResult); }
   /* These methods will return the solution in ]xStart,xEnd[ (or ]xEnd,xStart[)
    * closest to xStart, or NAN if it does not exist. */
-  Coordinate2D<T> next(Expression e, BracketTest test, HoneResult hone);
+  Coordinate2D<T> next(const Expression & e, BracketTest test, HoneResult hone);
   Coordinate2D<T> next(FunctionEvaluation f, const void * aux, BracketTest test, HoneResult hone);
-  Coordinate2D<T> nextRoot(Expression e);
+  Coordinate2D<T> nextRoot(const Expression & e);
   Coordinate2D<T> nextRoot(FunctionEvaluation f, const void * aux) { return next(f, aux, EvenOrOddRootInBracket, CompositeBrentForRoot); }
-  Coordinate2D<T> nextMinimum(Expression e);
-  Coordinate2D<T> nextMaximum(Expression e) { return next(e, MaximumInBracket, BrentMaximum); }
+  Coordinate2D<T> nextMinimum(const Expression & e);
+  Coordinate2D<T> nextMaximum(const Expression & e) { return next(e, MaximumInBracket, BrentMaximum); }
   /* Caller of nextIntersection may provide a place to store the difference
    * between the two expressions, in case the method needs to be called several
    * times in a row. */
-  Coordinate2D<T> nextIntersection(Expression e1, Expression e2, Expression * memoizedDifference = nullptr);
+  Coordinate2D<T> nextIntersection(const Expression & e1, const Expression & e2, Expression * memoizedDifference = nullptr);
   /* Stretch the interval to include the previous bounds. This allows finding
    * solutions in [xStart,xEnd], as otherwise all resolution is done on an open
    * interval. */
@@ -92,8 +92,8 @@ private:
   T minimalStep(T x) const;
   bool validSolution(T x) const;
   T nextX(T x, T direction) const;
-  Coordinate2D<T> nextPossibleRootInChild(Expression e, int childIndex) const;
-  Coordinate2D<T> nextRootInMultiplication(Expression m) const;
+  Coordinate2D<T> nextPossibleRootInChild(const Expression & e, int childIndex) const;
+  Coordinate2D<T> nextRootInMultiplication(const Expression & m) const;
   void registerSolution(Coordinate2D<T> solution, Interest interest, FunctionEvaluation f = nullptr, const void * aux = nullptr);
 
   T m_xStart;

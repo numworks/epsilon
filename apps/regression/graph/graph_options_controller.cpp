@@ -19,6 +19,7 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Esch
   ExplicitSelectableListViewController(parentResponder),
   m_changeRegressionCell(I18n::Message::RegressionModel),
   m_regressionEquationCell(&m_selectableTableView, I18n::Message::RegressionEquation),
+  m_rCell(&m_selectableTableView, I18n::Message::Default, KDFont::Size::Large),
   m_r2Cell(&m_selectableTableView, I18n::Message::Default, KDFont::Size::Large),
   m_residualPlotCell(I18n::Message::ResidualPlot),
   m_xParameterCell(I18n::Message::XPrediction),
@@ -32,6 +33,7 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Esch
   m_store(store),
   m_graphController(graphController)
 {
+  m_rCell.setLayout(Poincare::CodePointLayout::Builder('r'));
   m_r2Cell.setLayout(Poincare::HorizontalLayout::Builder(
       {Poincare::CodePointLayout::Builder('r'),
        Poincare::VerticalOffsetLayout::Builder(
@@ -58,6 +60,7 @@ void GraphOptionsController::didBecomeFirstResponder() {
 
 void GraphOptionsController::viewWillAppear() {
   m_regressionEquationCell.setVisible(displayRegressionEquationCell());
+  m_rCell.setVisible(displayRCell());
   m_r2Cell.setVisible(displayR2Cell());
   m_residualPlotCell.setVisible(displayResidualPlotCell());
   // m_regressionEquationCell may have changed size
@@ -124,6 +127,7 @@ HighlightCell * GraphOptionsController::cell(int index) {
     &m_changeRegressionCell,
     &m_regressionEquationCell,
     &m_r2Cell,
+    &m_rCell,
     &m_residualPlotCell,
     &m_spacerCell1,
     &m_xParameterCell,
@@ -153,17 +157,22 @@ void GraphOptionsController::willDisplayCellForIndex(HighlightCell * cell, int i
     assert(length < bufferSize - bufferOffset);
     (void) length;
     m_regressionEquationCell.setLayout(Poincare::LayoutHelper::StringToCodePointsLayout(buffer, strlen(buffer)));
-  } else if (cell == &m_r2Cell) {
+  } else if (cell == &m_rCell || cell == &m_r2Cell) {
     constexpr int bufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
     char buffer[bufferSize];
-    double value = m_store->determinationCoefficientForSeries(series, m_graphController->globalContext());
+    double value = cell == &m_rCell ? m_store->correlationCoefficient(series) : m_store->determinationCoefficientForSeries(series, m_graphController->globalContext());
     Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(value, buffer, bufferSize, significantDigits, displayMode);
-    m_r2Cell.setAccessoryText(buffer);
+    (cell == &m_rCell ? m_rCell : m_r2Cell).setAccessoryText(buffer);
   }
 }
 
 bool GraphOptionsController::displayRegressionEquationCell() const {
   return m_store->coefficientsAreDefined(m_graphController->selectedSeriesIndex(), m_graphController->globalContext());
+}
+
+bool GraphOptionsController::displayRCell() const {
+  Model::Type type = m_store->seriesRegressionType(m_graphController->selectedSeriesIndex());
+  return (type == Regression::Model::Type::LinearApbx || type == Regression::Model::Type::LinearAxpb) && displayRegressionEquationCell();
 }
 
 bool GraphOptionsController::displayR2Cell() const {

@@ -35,14 +35,16 @@ public:
   Escher::HighlightCell * cell(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
-  constexpr static int k_maxNumberOfRows = 9;
+  constexpr static int k_maxNumberOfRows = 10;
 
   bool displayRegressionEquationCell() const;
+  bool displayRCell() const;
   bool displayR2Cell() const;
   bool displayResidualPlotCell() const;
 
   Escher::MessageTableCellWithChevronAndMessage m_changeRegressionCell;
   Escher::ExpressionTableCellWithMessage m_regressionEquationCell;
+  Escher::ExpressionTableCellWithMessageWithBuffer m_rCell;
   Escher::ExpressionTableCellWithMessageWithBuffer m_r2Cell;
   Escher::MessageTableCell m_residualPlotCell;
   Escher::SpacerCell m_spacerCell1;

@@ -1,63 +1,82 @@
 #ifndef POINCARE_MEMORY_NODE_ITERATOR_H
 #define POINCARE_MEMORY_NODE_ITERATOR_H
 
+#include <array>
 #include "edition_reference.h"
 #include <utils/enums.h>
 
 namespace Poincare {
 
-/*
- * Four types of iterators depending on:
- * - the scanning direction: forward or backward
- * - the editability of the children
- * You can use the editable scan only for trees located in the editable pool.
- * When doing so you can only edit the children downstream (the children after
- * the current child if you're going forwards and the children before the
- * current child if you're going backwards). */
+class MultipleNodesIterator {
 
-class Iterator {
-public:
-  template <ScanDirection direction, Editable isEditable, typename T>
-  class ChildrenScanner {
+  /* Generic templated scanners and iterators, please choose:
+   * - the scanning direction: forward or backward
+   * - the editability of nodes: True or False
+   * - the number of nodes we're iterating through
+   *
+   * The typename T is always:
+   * T = EditionReference if Editable::True
+   * T = const Node if Editable::False
+   *
+   * For instance: ChildrenScanner<ScanDirection::Forward, Editable::True, EditionReference, 2>
+   * is a scanner concomittantly iterating through 2 nodes' children.
+   *
+   * Please note:
+   * You can use the editable scan only for trees located in the editable pool.
+   * When doing so you can only edit the children downstream (the children after
+   * the current child if you're going forwards and the children before the
+   * current child if you're going backwards).
+   */
+protected:
+  /* Iterator */
+
+  template <ScanDirection direction, Editable isEditable, typename T, size_t N>
+  class Iterator {
   public:
-    ChildrenScanner(T node);
-
-    class Iterator {
-    public:
-      std::pair<T, int> operator*();
-      bool operator!=(Iterator& it);
-      Iterator & operator++();
-    };
-
-    Iterator begin() const;
-    Iterator end() const;
-  };
-
-  template<typename T, int N>
-  class ConstIterator {
-  public:
-    std::pair<T, int> operator*() { return std::pair<T, int>(convert(), m_index); }
-    bool operator!=(ConstIterator& it) { return (m_index != it.m_index); }
-    ConstIterator & operator++() {
-      for (Node & node : m_nodes) {
-        node = incrNode(node);
-      }
-      m_index++;
-      return *this;
-    }
-  protected:
-    const Node m_nodes[N];
+    Iterator(std::array<T,N> array, int index) : m_array(array), m_index(index) {}
+    std::pair<std::array<T,N>, int> operator*();
+    bool operator!=(Iterator& it);
+    Iterator<direction, isEditable, T, N> & operator++();
   private:
-    T convert();
-    virtual Node incrNode() = 0;
+    std::array<T,N> m_array;
     int m_index;
   };
 
-  template<typename T, int N>
-  class EditableIterator {
+  /* Iterator specialization */
+
+#if 0
+  template <ScanDirection direction, size_t N>
+  class Iterator<direction, Editable::False, const Node, N> {
   public:
-    std::pair<T, int> operator*() { return std::pair<T, int>(convert(), m_index); }
-    bool operator!=(EditableIterator& it) {
+    std::pair<std::array<const Node,N>, int> operator*() { return std::pair(m_array, m_index); }
+    bool operator!=(Iterator<direction, Editable::False, const Node, N>& it) { return (m_index != it.m_index); }
+    Iterator<direction, Editable::False, const Node, N> & operator++() {
+      for (Node & node : m_array) {
+        node = incrNode(node);
+      }
+      m_index++;:
+      return *this;
+    }
+  };
+
+  template<size_t N>
+  class Iterator<ScanDirection::Forward, Editable::False, const Node, N> {
+  private:
+    Node incrNode(Node node) { return node.nextTree(); }
+  };
+
+  template<size_t N>
+  class Iterator<ScanDirection::Backward, Editable::False, const Node, N> {
+  private:
+    Node incrNode(Node node) { return node.previousTree(); }
+  };
+
+
+  template<ScanDirection direction, size_t N>
+  class Iterator<direction, Editable::True, EditionReference, N> {
+  public:
+    std::pair<std::array<EditionReference,N>, int> operator*() { return std::pair(m_array, m_index); }
+    bool operator!=(Iterator<direction, Editable::True, EditionReference, N>& it) {
       for (size_t i = 0; i < N; i++) {
         if (getNode(i) == it.getNode(i)) {
           return false;
@@ -65,239 +84,251 @@ public:
       }
       return true;
     }
-    EditableIterator & operator++() {
+    Iterator<direction, Editable::True, EditionReference, N> & operator++() {
       for (size_t i = 0; i < N; i++) {
         setNode(i, incrNode(getNode(i)));
       }
       m_index++;
       return *this;
     }
-  protected:
+  private:
     /* Hack: we keep a reference to a block right before (or after) the
      * currenNode to handle cases where the current node is replaced by
      * another one. The assertion that the previous children aren't modified
      * ensure the validity of this hack. */
-    virtual Node getNode(int index) { return Node(m_references[index].node().block() + offset()); }
-    virtual void setNode(int index Node node) { m_references[index] = EditionReference(Node(node.block() - offset())); }
-    T convert();
-    virtual Node incrNode(Node node) = 0;
-    virtual int offset() = 0;
-    EditionReference m_references[N];
-    int m_index;
+    Node getNode(int index);
+    void setNode(int index, Node node);
+    Node incrNode(Node node);
   };
+
+  template<size_t N>
+  class Iterator<ScanDirection::Forward, Editable::True, EditionReference, N> {
+  public:
+    Iterator<ScanDirection::Forward, Editable::True, EditionReference, N>() : m_referencesArray(), m_index(0) {
+      for (size_t i = 0; i < N; i++) {
+        setNode(i, m_referencesArray[i]);
+      }
+    }
+
+  private:
+    Node getNode(int index) { return Node(m_referencesArray[index].node().block() + static_cast<int>(ScanDirection::Forward)()); }
+    void setNode(int index, Node node) { m_referencesArray[index] = EditionReference(Node(node.block() - static_cast<int>(ScanDirection::Forward))); }
+    Node incrNode(Node node) { return node.nextTree(); }
+  };
+
+  template<size_t N>
+  class Iterator<ScanDirection::Backward, Editable::True, EditionReference, N> {
+  public:
+  private:
+    /* This code is UGLY, please do something. */
+    Node getNode(int index) {
+      if (m_index < 0) {
+        // Special case: end iterator
+        return Node();
+      } else if (m_index == 0) {
+        /* We can't keep a reference outside the scanned tree so we create
+         * an edge case for the right most child: it's referenced by the parent
+         * node. */
+        return m_referencesArray[index].node().nextTree().previousNode();
+      }
+      return Node(m_references[index].node().block() + static_cast<int>(ScanDirection::Backward)());
+    }
+    void setNode(int index, Node node) {
+      if (node.isUninitialized()) {
+        // Special case: end iterator
+        m_index = -2;
+        return;
+      }
+      m_references[index] = EditionReference(Node(node.block() - static_cast<int>(ScanDirection::Backward)));
+    }
+    Node incrNode(Node node) { return node.previousTree(); }
+  };
+
+#endif
+public:
+  /* Scanner */
+
+  template <ScanDirection direction, Editable isEditable, typename T, size_t N>
+  class ChildrenScanner {
+  public:
+    ChildrenScanner(std::array<T,N> array) : m_array(array) {}
+    Iterator<direction,isEditable,T,N> begin() const;
+    Iterator<direction,isEditable,T,N>  end() const;
+
+  protected:
+    using Action = T (*)(T);
+    std::array<T,N> mapAction(Action action) {
+      std::array<T,N> newArray;
+      for (size_t i = 0; i < N; i++) {
+        newArray[i] = action(m_array[i]);
+      }
+      return newArray;
+    }
+    std::array<T,N> m_array;
+  };
+
+  /* Scanner specialization */
+
+#if 0
+  template <ScanDirection direction, size_t N>
+  static Iterator<direction,Editable::False,const Node,N> ConstEndIterator(std::array<const Node,N> array) {
+    uint8_t nbOfChildren = UINT8_MAX;
+    for (size_t i = 0; i < N; i++) {
+      nbOfChildren = std::min(nbOfChildren, array[i].numberOfChildren());
+    }
+    return Iterator<direction,Editable::False,const Node,N>(
+        std::array<const Node, N>(),
+        nbOfChildren
+      );
+  }
+
+  template <size_t N>
+  class ChildrenScanner<ScanDirection::Forward, Editable::False, const Node, N> {
+  public:
+    Iterator<ScanDirection::Forward,Editable::False,const Node,N>  begin() const {
+      return Iterator<ScanDirection::Forward,Editable::False,const Node,N>(
+          mapAction([](const Node node) { return node.nextNode(); }),
+          0
+        );
+    }
+    Iterator<ScanDirection::Forward,Editable::False,const Node,N> end() const { return ConstEndIterator<ScanDirection::Forward, N>(m_array); }
+  private:
+    std::array<const Node,N> m_array;
+  };
+
+  template <size_t N>
+  class ChildrenScanner<ScanDirection::Backward, Editable::False, const Node, N> {
+  public:
+    Iterator<ScanDirection::Forward,Editable::False,const Node,N>  begin() const {
+      return Iterator<ScanDirection::Forward,Editable::False,const Node,N>(
+          mapAction([](const Node node) { return node.nextTree().previousNode(); }),
+          0
+        );
+    }
+  };
+
+  template <size_t N>
+  class ChildrenScanner<ScanDirection::Forward, Editable::True, EditionReference, N> {
+  public:
+    Iterator<ScanDirection::Forward,Editable::True,EditionReference,N>  begin() const {
+      return Iterator<ScanDirection::Forward,Editable::True,EditionReference,N>(
+          mapAction([](const Node node) { return node.nextNode(); }),
+          0
+        );
+    }
+    Iterator<ScanDirection::Forward,Editable::True,EditionReference,N> end() const {
+      return Iterator<ScanDirection::Forward,Editable::True,EditionReference,N>(
+          mapAction([](const Node node) { return node.nextTree(); }),
+          0
+        );
+    }
+  };
+
+  template <size_t N>
+  class ChildrenScanner<ScanDirection::Backward, Editable::True, EditionReference, N> {
+  public:
+    Iterator<ScanDirection::Backward,Editable::True,EditionReference,N>  begin() const {
+      return Iterator<ScanDirection::Forward,Editable::True,EditionReference,N>(
+          mapAction([](const Node node) { return node; }),
+          0
+        );
+    }
+    Iterator<ScanDirection::Backward,Editable::True,EditionReference,N> end() const {
+      return Iterator<ScanDirection::Forward,Editable::True,EditionReference,N>(
+          std::array<EditionReference, N>(),
+          -1
+        );
+    }
+  };
+#endif
+  template <ScanDirection direction, Editable isEditable, typename T, size_t N>
+  static ChildrenScanner<direction, isEditable, T, N> Children(std::array<T,N> array) { return ChildrenScanner<direction, isEditable, T, N>(array); }
+
+  /* Workaround: don't emit the undefined Children<ScanDirection::?, Editable::False, Node, N>
+   * but fallback to Children<ScanDirection::?, Editable::False, const Node, N>. */
+  //template <ScanDirection direction, Editable::False, const Node, N>
+  //static ChildrenScanner<direction, Editable::False, const Node> Children(Node node) { return ChildrenScanner<direction, Editable::False, const Node>(node); }
 };
 
-class NodeIterator : Iterator {
+
+class NodeIterator : public MultipleNodesIterator {
+private:
+  template <ScanDirection direction, Editable isEditable, typename T>
+  class Iterator {
+  public:
+    Iterator(MultipleNodesIterator::Iterator<direction, isEditable, T, 1> iterator) : m_iterator(iterator) {}
+    std::pair<T, int> operator*() { return std::pair(std::get<0>(*m_iterator)[0], std::get<1>(*m_iterator)); }
+    bool operator!=(Iterator& it) { return m_iterator != it.m_iterator; }
+    Iterator<direction, isEditable, T> & operator++() {
+      m_iterator.operator++();
+      return *this;
+    }
+  private:
+    MultipleNodesIterator::Iterator<direction, isEditable, T, 1> m_iterator;
+  };
 public:
-  template<>
-  class ConstIterator<const Node, 1> {
+  template <ScanDirection direction, Editable isEditable, typename T>
+  class ChildrenScanner {
   public:
-    ConstIterator(const Node node, int index) : m_nodes{node}, m_index(index) {}
-  private:
-    const Node convert() { return m_nodes[0]; }
-  };
+    ChildrenScanner(T node) : m_scanner(std::array<T,1>({node})) {}
+    Iterator<direction,isEditable,T> begin() const { return Iterator<direction,isEditable,T>(m_scanner.begin()); }
+    Iterator<direction,isEditable,T>  end() const { return Iterator<direction,isEditable,T>(m_scanner.end()); }
 
-  template <>
-  class ChildrenScanner<ScanDirection::Forward, Editable::False, const Node> {
-  public:
-    ChildrenScanner(const Node node) : m_node(node) {}
-
-    class Iterator : public ConstIterator<const Node, 1> {
-    public:
-      using ConstIterator<const Node, 1>::ConstIterator<const Node, 1>;
-    private:
-      Node incrNode(Node node) override { return node.nextTree(); }
-    };
-
-    Iterator begin() const { return Iterator(m_node.nextNode(), 0); }
-    Iterator end() const { return Iterator(Node(), m_node.numberOfChildren()); }
-
-  private:
-    const Node m_node;
-  };
-
-  template <>
-  class ChildrenScanner<ScanDirection::Backward, Editable::False, const Node> {
-  public:
-    ChildrenScanner(const Node node) : m_node(node) {}
-
-    class Iterator : public ConstIterator {
-    public:
-      using ConstIterator::ConstIterator;
-    private:
-      Node incrNode(Node node) override { return node.previousTree(); }
-    };
-
-    Iterator begin() const { return Iterator(m_node.nextTree().previousNode(), 0); }
-    Iterator end() const { return Iterator(Node(), m_node.numberOfChildren()); }
-
-  private:
-    const Node m_node;
-  };
-
-  template<>
-  class EditableIterator<EditionReference, 1> {
-  public:
-    EditableIterator(EditionReference reference, int index) : m_references{reference}, m_index(index) {}
-  private:
-    EditionReference convert() { return m_references[1]; }
-  };
-
-  template <>
-  class ChildrenScanner<ScanDirection::Forward, Editable::True, EditionReference> {
-  public:
-    ChildrenScanner(EditionReference reference) : m_reference(reference) {}
-
-    class Iterator : public EditableIterator<EditionReference, 1> {
-    public:
-      Iterator(Node node, int index = 0) : EditableIterator<EditionReference, 1>() { setNode(node); }
-    private:
-      Node incrNode(Node node) override { return node.nextTree(); }
-      int offset() override { return static_cast<int>(ScanDirection::Forward); }
-    };
-
-    Iterator begin() const { return Iterator(m_reference.node().nextNode()); }
-    Iterator end() const { return Iterator(m_reference.node().nextTree()); }
-
-  private:
-    EditionReference m_reference;
-  };
-
-  /* This code is UGLY, please do something. */
-  template <>
-  class ChildrenScanner<ScanDirection::Backward, Editable::True, EditionReference> {
-  public:
-    ChildrenScanner(EditionReference reference) : m_reference(reference) {}
-
-    class Iterator : public EditableIterator<EditionReference, 1> {
-    public:
-      using EditableIterator<EditionReference, 1>::EditableIterator<EditionReference, 1>;
-    private:
-      Node getNode() override {
-        if (m_index < 0) {
-          // Special case: end iterator
-          return Node();
-        } else if (m_index == 0) {
-          /* We can't keep a reference outside the scanned tree so we create
-           * an edge case for the right most child: it's referenced by the parent
-           * node. */
-          return m_reference.node().nextTree().previousNode();‡
-        }
-        return EditableIterator::getNode();
-      }
-      void setNode(Node node) override {
-        if (node.isUninitialized()) {
-          // Special case: end iterator
-          m_index = -2;
-          return;
-        }
-        EditableIterator::setNode(node);
-      }
-      Node incrNode(Node node) override { return node.previousTree(); }
-      int offset() override { return static_cast<int>(ScanDirection::Backward); }
-    };
-
-    Iterator begin() const { return Iterator(m_reference, 0); }
-    Iterator end() const { return Iterator(EditionReference(), -1); }
-
-  private:
-    EditionReference m_reference;
+  protected:
+    MultipleNodesIterator::ChildrenScanner<direction, isEditable, T, 1> m_scanner;
   };
 
   template <ScanDirection direction, Editable isEditable, typename T>
   static ChildrenScanner<direction, isEditable, T> Children(T node) { return ChildrenScanner<direction, isEditable, T>(node); }
-
-  /* Workaround: don't emit the undefined Children<ScanDirection::?, Editable::False, Node>
-   * but fallback to Children<ScanDirection::?, Editable::False, const Node>. */
-  template <ScanDirection direction, Editable isEditable>
-  static ChildrenScanner<direction, isEditable, const Node> Children(Node node) { return ChildrenScanner<direction, isEditable, const Node>(node); }
 };
 
-class TwoNodesIterator {
-public:
-  template<>
-  class ConstIterator<std::pair<const Node, const Node>, 2> {
-  public:
-    ConstIterator(const Node node0, const Node node1 int index) : m_nodes{node0, node1}, m_index(index) {}
-  private:
-    const Node convert() { return std::make_pair<const Node, const Node>(m_nodes[0], m_nodes[1]); }
-  };
+/* Specializations MultipleNodesIterator::ChildrenScanner */
 
-  template <>
-  class ChildrenScanner<ScanDirection::Forward, Editable::False, std::pair<const Node, const Node>> {
-  public:
-    ChildrenScanner(std::pair<const Node, const Node> nodes) : m_nodes(nodes) {}
-
-    class Iterator : public ConstIterator<std::pair<const Node, const Node>, 2> {
-    public:
-      using ConstIterator<std::pair<const Node, const Node>, 2>::ConstIterator<std::pair<const Node, const Node>, 2>;
-    private:
-      Node incrNode(Node node) override { return m_node.nextTree(); }
-    };
-
-    Iterator begin() const { return Iterator(m_nodes.get<0>().nextNode(), m_nodes.get<1>().nextNode(), 0); }
-    Iterator end() const { return Iterator(Node(), Node(), std::min(m_nodes[0].numberOfChildren(), m_nodes[1].numberOfChildren())); }
-
-  private:
-    std::pair<const Node, const Node> m_node;
-  };
-
-  template <>
-  class ChildrenScanner<ScanDirection::Backward, Editable::False, std::pair<const Node, const Node>> {
-  public:
-    ChildrenScanner(std::pair<const Node, const Node> nodes) : m_nodes(nodes) {}
-
-    class Iterator : public ConstIterator<std::pair<const Node, const Node>, 2> {
-    public:
-      using ConstIterator<std::pair<const Node, const Node>, 2>::ConstIterator<std::pair<const Node, const Node>, 2>;
-    private:
-      Node incrNode(Node node) override { return m_node.previousTree(); }
-    };
-
-    Iterator begin() const { return Iterator(m_nodes.get<0>().nextTree().previousNode(), m_nodes.get<1>().nextTree().previousNode(), 0); }
-    Iterator end() const { return Iterator(Node(), Node(), std::min(m_nodes[0].numberOfChildren(), m_nodes[1].numberOfChildren())); }
-
-  private:
-    std::pair<const Node, const Node> m_nodes;
-  };
-
-  template<>
-  class EditableIterator<std::pair<EditionReference,EditionReference>, 2> {
-  public:
-    EditableIterator() : m_references{}, m_index(0) {}
-  private:
-    std::pair<EditionReference,EditionReference> convert() { return std::make_pair(m_references[0], m_references[1]); }
-  };
-
-  template <>
-  class ChildrenScanner<ScanDirection::Forward, Editable::True, std::pair<EditionReference,EditionReference>> {
-  public:
-    ChildrenScanner(std::pair<EditionReference, EditionReference> references) : m_references(references) {}
-
-    class Iterator : public EditableIterator<std::pair<EditionReference,EditionReference>, 2> {
-    public:
-      Iterator(EditionReference reference0, EditionReference reference1) {
-        setNode(0, reference0.node());
-        setNode(1, reference1.node());
-      }
-    private:
-      Node incrNode(Node node) override { return node.nextTree(); }
-      int offset() override { return static_cast<int>(ScanDirection::Forward); }
-    };
-
-    Iterator begin() const { return Iterator(m_reference.node().nextNode()); }
-    Iterator end() const { return Iterator(m_reference.node().nextTree()); }
-
-    Iterator begin() const { return Iterator(m_references.get<0>().nextNode(), m_references.get<1>().nextNode()); }
-    Iterator end() const { return Iterator(m_references.get<0>().nextTree(), m_references.get<1>().nextTree()); }
-  private:
-    std::pair<EditionReference, EditionReference> m_references;
-  };
-
-  template <ScanDirection direction, Editable isEditable, typename T>
-  static ChildrenScanner<direction, isEditable, std::pair<T,T>> Children(T node0, T node1) { return ChildrenScanner<direction, isEditable, std::pair<T,T>>(std::make_pair(node0, node1)); }
-};
-
+#if 0
+template <ScanDirection direction, size_t N>
+MultipleNodesIterator::Iterator<direction, Editable::False, const Node, N> MultipleNodesIterator::ChildrenScanner<direction, Editable::False, const Node, N>::end() const {
+  uint8_t nbOfChildren = UINT8_MAX;
+  for (size_t i = 0; i < N; i++) {
+    nbOfChildren = std::min(nbOfChildren, m_array[i].numberOfChildren());
+  }
+  return Iterator<direction ,Editable::False,const Node, N>(
+      std::array<const Node, N>(),
+      nbOfChildren
+    );
 }
 
+template <ScanDirection direction, Editable isEditable, typename T, size_t N>
+MultipleNodesIterator::Iterator<direction,isEditable,T,N> MultipleNodesIterator::ChildrenScanner<direction,isEditable,T,N>::begin() const {
+  return Iterator<direction,isEditable, T,N>(
+      std::array<T, N>(),
+      23
+      );
+ }
+
+template <size_t N>
+MultipleNodesIterator::Iterator<ScanDirection::Forward,Editable::False,const Node,N> MultipleNodesIterator::ChildrenScanner<ScanDirection::Backward, Editable::False, const Node, N>::begin() const {
+  return Iterator<ScanDirection::Forward,Editable::False,const Node,N>(
+      mapAction([](const Node node) { return node.nextTree().previousNode(); }),
+      0
+      );
+}
+
+/* Specializations MultipleNodesIterator::Iterator */
+
+template <ScanDirection direction, size_t N>
+std::pair<std::array<const Node,N> MultipleNodesIterator::Iterator<direction, Editable::False, const Node, N>::operator*() { return std::pair(m_array, m_index); }
+
+template <ScanDirection direction, size_t N>
+bool MultipleNodesIterator::Iterator<direction, Editable::False, const Node, N>::operator!=(Iterator<direction, Editable::False, const Node, N>& it) { return (m_index != it.m_index); }
+
+template <ScanDirection direction, size_t N>
+Iterator<direction, Editable::False, const Node, N> & MultipleNodesIterator::Iterator<direction, Editable::False, const Node, N>::operator++() {
+  for (Node & node : m_array) {
+    node = incrNode(node);
+  }
+  m_index++;
+  return *this;
+}
+#endif
+}
 #endif

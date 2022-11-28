@@ -124,6 +124,10 @@ void GraphController::reloadBannerView() {
 
   // If any coefficient is NAN, display that data is not suitable
   bool coefficientsAreDefined = m_store->coefficientsAreDefined(*m_selectedSeriesIndex, globalContext());
+  if (coefficientsAreDefined && *m_selectedDotIndex < 0 && selectedSeriesIsScatterPlot()) {
+    // Regression model has been removed, reinitialize cursor
+    initCursorParameters();
+  }
   bool displayMean = (*m_selectedDotIndex == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex));
   bool displayEquation = (*m_selectedDotIndex < 0);
   char buffer[k_bannerViewTextBufferSize];

@@ -1,20 +1,11 @@
 #include "proportional_model.h"
 #include "../store.h"
-#include <poincare/layout_helper.h>
 #include <poincare/print.h>
 #include <assert.h>
 
 using namespace Poincare;
 
 namespace Regression {
-
-Layout ProportionalModel::layout() {
-  if (m_layout.isUninitialized()) {
-    const char * s = "a·x";
-    m_layout = LayoutHelper::StringToCodePointsLayout(s, strlen(s));
-  }
-  return m_layout;
-}
 
 int ProportionalModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
   return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed·x",

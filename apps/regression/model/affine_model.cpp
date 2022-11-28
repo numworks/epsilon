@@ -1,19 +1,11 @@
 #include "affine_model.h"
 #include "../store.h"
-#include <poincare/layout_helper.h>
 #include <poincare/print.h>
 #include <assert.h>
 
 using namespace Poincare;
 
 namespace Regression {
-
-Layout AffineModel::layout() {
-  if (m_layout.isUninitialized()) {
-    m_layout = LayoutHelper::StringToCodePointsLayout(layoutString(), strlen(layoutString()));
-  }
-  return m_layout;
-}
 
 int AffineModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
   return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, equationTemplate(),

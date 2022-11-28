@@ -2,7 +2,6 @@
 #include <apps/regression/store.h>
 #include "../../shared/poincare_helpers.h"
 #include <poincare/addition.h>
-#include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
 #include <poincare/number.h>
 #include <poincare/power.h>
@@ -20,14 +19,6 @@ namespace Regression {
 
 static double toRadians() {
   return M_PI / Trigonometry::PiInAngleUnit(Poincare::Preferences::sharedPreferences()->angleUnit());
-}
-
-Layout TrigonometricModel::layout() {
-  if (m_layout.isUninitialized()) {
-    const char * s = "a·sin(b·x+c)+d";
-    m_layout = LayoutHelper::StringToCodePointsLayout(s, strlen(s));
-  }
-  return m_layout;
 }
 
 int TrigonometricModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {

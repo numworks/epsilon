@@ -3,6 +3,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/decimal.h>
 #include <poincare/float.h>
+#include <poincare/layout_helper.h>
 #include <poincare/multiplication.h>
 #include <cmath>
 
@@ -10,6 +11,14 @@ using namespace Poincare;
 using namespace Shared;
 
 namespace Regression {
+
+Layout Model::layout() {
+  if (m_layout.isUninitialized()) {
+    const char * layoutString = I18n::translate(formulaMessage()) + sizeof("y=") - 1;
+    m_layout = LayoutHelper::StringToCodePointsLayout(layoutString, strlen(layoutString));
+  }
+  return m_layout;
+}
 
 Poincare::Expression Model::simplifiedExpression(double * modelCoefficients, Poincare::Context * context) {
   Expression e = expression(modelCoefficients);

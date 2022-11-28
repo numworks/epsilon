@@ -1,6 +1,5 @@
 #include "logarithmic_model.h"
 #include "../store.h"
-#include <poincare/layout_helper.h>
 #include <poincare/print.h>
 #include <cmath>
 #include <assert.h>
@@ -8,14 +7,6 @@
 using namespace Poincare;
 
 namespace Regression {
-
-Layout LogarithmicModel::layout() {
-  if (m_layout.isUninitialized()) {
-    const char * s = "a+b·ln(x)";
-    m_layout = LayoutHelper::StringToCodePointsLayout(s, strlen(s));
-  }
-  return m_layout;
-}
 
 int LogarithmicModel::buildEquationTemplate(char * buffer, size_t bufferSize, double * modelCoefficients, int significantDigits, Poincare::Preferences::PrintFloatMode displayMode) const {
   return Poincare::Print::SafeCustomPrintf(buffer, bufferSize, "%*.*ed%+*.*ed·ln(x)",

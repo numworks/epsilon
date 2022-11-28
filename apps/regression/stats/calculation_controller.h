@@ -72,6 +72,9 @@ private:
   bool hasSeriesDisplaying(DisplayCondition condition) const;
   bool shouldSeriesDisplay(int series, DisplayCondition condition) const;
   int maxNumberOfCoefficients() const;
+  bool shouldDisplayMCoefficient() const;
+  bool shouldDisplayACoefficient() const;
+  int maxNumberOfBCDECoefficients() const;
   void resetMemoization(bool force = true) override;
 
   Escher::EvenOddMessageTextCell m_titleCells[k_maxNumberOfDisplayableRows];

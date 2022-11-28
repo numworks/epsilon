@@ -12,7 +12,7 @@ BannerView::BannerView(
   TextFieldDelegate * textFieldDelegate
 ) :
   Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
-  m_interestView(k_font, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
+  m_interestMessageView(k_font, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_derivativeView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_tangentEquationView(k_font, I18n::Message::LinearRegressionFormula, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_aView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
@@ -29,7 +29,7 @@ View * BannerView::subviewAtIndex(int index) {
   assert(0 <= index && index < numberOfSubviews());
   if (hasInterestMessage()) {
     if (index == 0) {
-      return &m_interestView;
+      return &m_interestMessageView;
     } else {
       index--;
     }

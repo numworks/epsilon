@@ -208,6 +208,9 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
   // Step 1: Insert text
   int currentSubscriptDepth = 0;
   while (codePoint != UCodePointNull) {
+    /* This assert triggers either if there are two combining codepoints
+     * after a normal one, or if there is nothing before a combining code point
+     */
     assert(!codePoint.isCombining());
     CodePoint nextCodePoint = decoder.nextCodePoint();
     if (codePoint == UCodePointEmpty) {

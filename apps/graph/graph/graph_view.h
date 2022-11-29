@@ -13,6 +13,8 @@ public:
 
   // FunctionGraphView
   void reload(bool resetInterrupted = false, bool force = false) override;
+  void drawRect(KDContext * ctx, KDRect rect) const override;
+
   /* We override setAreaHighlightColor to make it reload nothing as the
    * highlightColor and the non-highlightColor are identical in the graph view
    * of the application graph. We thereby avoid to uselessly reload some part

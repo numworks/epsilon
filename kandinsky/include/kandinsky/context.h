@@ -13,6 +13,8 @@ public:
   constexpr static float k_alignTop = 0.;
   constexpr static float k_alignBottom = 1.;
 
+  KDPoint origin() const { return m_origin; }
+  KDRect clippingRect() const { return m_clippingRect; }
   void setOrigin(KDPoint origin) { m_origin = origin; }
   void setClippingRect(KDRect clippingRect) { m_clippingRect = clippingRect; }
 

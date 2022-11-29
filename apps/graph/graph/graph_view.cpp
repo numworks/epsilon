@@ -24,6 +24,11 @@ void GraphView::reload(bool resetInterrupted, bool force) {
   return FunctionGraphView::reload(resetInterrupted, force);
 }
 
+void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
+  m_interestView->resetNumberOfDrawnDots();
+  FunctionGraphView::drawRect(ctx, rect);
+}
+
 void GraphView::setFocus(bool focus) {
   if (focus != hasFocus()) {
     /* Points of interest change visibility when the focus changes. */

@@ -23,7 +23,6 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
   AbstractPlotView::Axis axis = f->isAlongY() ? AbstractPlotView::Axis::Vertical : AbstractPlotView::Axis::Horizontal;
   PointsOfInterestCache * pointsOfInterestCache = App::app()->graphController()->pointsOfInterestForRecord(m_parentView->selectedRecord());
   PointOfInterest p;
-  int i = 0;
   do {
     Coordinate2D<float> dotCoordinates = Coordinate2D<float>(NAN, NAN);
 
@@ -33,7 +32,7 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
     // Clone the cache to prevent modifying the pool before the checkpoint
     PointsOfInterestCache pointsOfInterestCacheClone = pointsOfInterestCache->clone();
     if (AnyKeyCircuitBreakerRun(checkpoint)) {
-      p = pointsOfInterestCacheClone.computePointAtIndex(i);
+      p = pointsOfInterestCacheClone.computePointAtIndex(m_numberOfDrawnDots);
       if (!p.isUninitialized() && (m_interest == Poincare::Solver<double>::Interest::None || m_interest == p.interest())) {
         dotCoordinates = axis == AbstractPlotView::Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
       }
@@ -43,17 +42,23 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
     checkpoint.discard();
     *pointsOfInterestCache = pointsOfInterestCacheClone;
 
-    i++;
+    m_numberOfDrawnDots++;
     if (std::isnan(dotCoordinates.x1()) || std::isnan(dotCoordinates.x2())) {
       continue;
     }
 
     // Draw the dot
-    CursorView * cursor = static_cast<MemoizedCursorView *>(m_parentView->cursorView());
-    // If the point of interest is below the cursor, do not draw it
-    if (!cursor->frame().intersects(m_parentView->dotRect(k_dotsSize, dotCoordinates))) {
-      m_parentView->drawDot(ctx, rect, k_dotsSize, dotCoordinates, Escher::Palette::GrayDarkest);
-
+    MemoizedCursorView * cursor = static_cast<MemoizedCursorView *>(m_parentView->cursorView());
+    // If the point of interest is below the cursor, erase it and redraw it
+    KDRect cursorFrame = cursor->frame();
+    bool redrawCursor = cursorFrame.intersects(m_parentView->dotRect(k_dotsSize, dotCoordinates));
+    if (redrawCursor) {
+      // Erase cursor and make rect dirty
+      cursor->setCursorFrame(cursorFrame, true);
+    }
+    m_parentView->drawDot(ctx, rect, k_dotsSize, dotCoordinates, Escher::Palette::GrayDarkest);
+    if (redrawCursor) {
+      cursor->redrawCursor(rect);
     }
 
   } while (!p.isUninitialized());

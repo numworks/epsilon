@@ -14,6 +14,7 @@ public:
   void setColor(KDColor color);
   void setCursorFrame(KDRect frame, bool force) override;
   void resetMemoization() const { m_underneathPixelBufferLoaded = false; }
+  void redrawCursor(KDRect rect);
 protected:
   virtual void drawCursor(KDContext * ctx, KDRect rect) const = 0;
   virtual KDCoordinate size() const = 0;

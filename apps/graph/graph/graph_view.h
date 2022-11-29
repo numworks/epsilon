@@ -39,6 +39,8 @@ private:
   void drawPolar(KDContext * ctx, KDRect rect, Shared::ContinuousFunction * f, float tMin, float tMax, float tStep, DiscontinuityTest discontinuity) const;
   void drawParametric(KDContext * ctx, KDRect rect, Shared::ContinuousFunction * f, float tMin, float tMax, float tStep, DiscontinuityTest discontinuity) const;
 
+  KDRect boundsWithoutBanner() const;
+
   mutable int m_areaIndex;
   mutable InterestView * m_interestView;
   bool m_tangent;

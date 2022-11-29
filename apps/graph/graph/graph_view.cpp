@@ -17,15 +17,16 @@ GraphView::GraphView(InteractiveCurveViewRange * graphRange,
 
 void GraphView::reload(bool resetInterrupted, bool force) {
   if (m_tangent) {
-    assert(m_banner);
-    KDRect dirtyZone(KDRect(0, 0, bounds().width(), bounds().height() - m_banner->bounds().height()));
-    markRectAsDirty(dirtyZone);
+    markRectAsDirty(boundsWithoutBanner());
   }
   return FunctionGraphView::reload(resetInterrupted, force);
 }
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
-  m_interestView->resetPointIndex();
+  if (rect.intersectedWith(boundsWithoutBanner()) == boundsWithoutBanner()) {
+    // If the whole curve is redrawn, all points of interest need a redraw
+    m_interestView->resetPointIndex();
+  }
   FunctionGraphView::drawRect(ctx, rect);
 }
 
@@ -335,6 +336,11 @@ void GraphView::drawParametric(KDContext * ctx, KDRect rect, ContinuousFunction 
   CurveDrawing plot(Curve2D(evaluateXY<float>, f), context(), tStart, tEnd, tStep, f->color());
   plot.setPrecisionOptions(false, nullptr, discontinuity);
   plot.draw(this, ctx, rect);
+}
+
+KDRect GraphView::boundsWithoutBanner() const {
+  assert(m_banner);
+  return KDRect(0, 0, bounds().width(), bounds().height() - m_banner->bounds().height());
 }
 
 }

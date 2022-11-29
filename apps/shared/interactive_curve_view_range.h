@@ -81,8 +81,6 @@ protected:
   /* This method only updates the zoomNormalize status, and does not change either the auto statuses or the intrinsic Y range. */
   virtual void protectedNormalize(bool canChangeX, bool canChangeY, bool canShrink);
 
-  void rangeHasBeenUpdated() override { m_delegate->rangeHasBeenUpdated(); }
-
   InteractiveCurveViewRangeDelegate * m_delegate;
 
 private:

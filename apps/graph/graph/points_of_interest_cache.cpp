@@ -16,12 +16,12 @@ PointsOfInterestCache PointsOfInterestCache::clone() const {
   return result;
 }
 
-Range1D PointsOfInterestCache::setBounds(float start, float end) {
+void PointsOfInterestCache::setBounds(float start, float end) {
   assert(start < end);
   assert(!m_record.isNull());
 
   uint32_t checksum = Ion::Storage::FileSystem::sharedFileSystem()->checksum();
-  if (m_checksum != checksum || m_computedRecord != m_record) {
+  if (m_checksum != checksum) {
     /* Discard the old results if anything in the storage has changed. */
     m_computedStart = m_computedEnd = start;
     m_list.init();
@@ -39,8 +39,6 @@ Range1D PointsOfInterestCache::setBounds(float start, float end) {
   }
 
   m_checksum = checksum;
-  m_computedRecord = m_record;
-  return Range1D(0.0, 1.0);
 }
 
 void PointsOfInterestCache::computeNextStep() {

@@ -30,7 +30,6 @@ void MemoizedCurveViewRange::privateSet(float f, float limit, Range1D * range1D,
   assert(!std::isnan(f));
   (range1D->*setter)(f, limit);
   *gridUnit = updateGridUnit ? (gridUnit == &m_xGridUnit ? CurveViewRange::xGridUnit() : CurveViewRange::yGridUnit()) : 0.f;
-  rangeHasBeenUpdated();
 }
 
 }

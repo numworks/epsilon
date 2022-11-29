@@ -131,7 +131,7 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left || event == Ion::Events::Back) {
     // Deselect table because select cell will change anyway
     m_selectableTableView.deselectTable();
-    if (!Preferences::sharedPreferences()->isInExamMode() && m_tempPressToTestParams.m_value != Preferences::k_inactivePressToTest.m_value) {
+    if (!Preferences::sharedPreferences()->isInExamMode() && !(m_tempPressToTestParams == Preferences::k_inactivePressToTest)) {
       // Scroll to validation cell if m_confirmPopUpController is discarded.
       selectCellAtLocation(0, numberOfRows() - 1);
       // Open pop-up to confirm discarding values

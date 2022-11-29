@@ -57,7 +57,7 @@ void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {
     }
     assert(m_examMode != ExamMode::Unknown
         && m_examMode != ExamMode::Undefined
-        && (m_examMode == ExamMode::PressToTest || m_pressToTestParams.m_value == k_inactivePressToTest.m_value));
+        && (m_examMode == ExamMode::PressToTest || m_pressToTestParams == k_inactivePressToTest));
   } else {
     assert(ExamPersistingBytes(m_examMode, m_pressToTestParams).m_value == Ion::PersistingBytes::read());
   }
@@ -75,10 +75,10 @@ Preferences::PressToTestParams Preferences::pressToTestParams() const {
 
 void Preferences::setExamMode(ExamMode mode, PressToTestParams newPressToTestParams) {
   assert(mode != ExamMode::Unknown && mode < ExamMode::Undefined);
-  assert(mode == ExamMode::PressToTest || newPressToTestParams.m_value == k_inactivePressToTest.m_value);
+  assert(mode == ExamMode::PressToTest || newPressToTestParams == k_inactivePressToTest);
   ExamMode currentMode = examMode();
   PressToTestParams currentPressToTestParams = pressToTestParams();
-  if (currentMode == mode && currentPressToTestParams.m_value == newPressToTestParams.m_value) {
+  if (currentMode == mode && currentPressToTestParams == newPressToTestParams) {
     return;
   }
   ExamPersistingBytes newPB(mode, newPressToTestParams);

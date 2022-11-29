@@ -150,37 +150,53 @@ void AbstractPlotView::drawLayout(KDContext * ctx, KDRect rect, Layout layout, C
   }
 }
 
-void AbstractPlotView::drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Poincare::Coordinate2D<float> xy, KDColor color) const {
+KDRect AbstractPlotView::dotRect(Dots::Size size, Poincare::Coordinate2D<float> xy) const {
   KDCoordinate diameter = 0;
-  const uint8_t * mask = nullptr;
   switch (size) {
   case Dots::Size::Tiny:
     diameter = Dots::TinyDotDiameter;
-    mask = (const uint8_t *)Dots::TinyDotMask;
     break;
   case Dots::Size::Small:
     diameter = Dots::SmallDotDiameter;
-    mask = (const uint8_t *)Dots::SmallDotMask;
     break;
   case Dots::Size::Medium:
     diameter = Dots::MediumDotDiameter;
-    mask = (const uint8_t *)Dots::MediumDotMask;
     break;
   default:
     assert(size == Dots::Size::Large);
     diameter = Dots::LargeDotDiameter;
-    mask = (const uint8_t *)Dots::LargeDotMask;
   }
   assert(diameter <= Dots::LargeDotDiameter);
-
   /* If circle has an even diameter, out of the four center pixels, the bottom
    * left one will be placed at (x, y) */
   Coordinate2D<float> pF = floatToPixel2D(xy);
   KDPoint p(std::round(pF.x1()) - (diameter - 1) / 2, std::round(pF.x2()) - diameter / 2);
-  KDRect dotRect(p.x(), p.y(), diameter, diameter);
-  if (rect.intersects(dotRect)) {
+  return KDRect(p.x(), p.y(), diameter, diameter);
+}
+
+void AbstractPlotView::drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Poincare::Coordinate2D<float> xy, KDColor color) const {
+  const uint8_t * mask = nullptr;
+  switch (size) {
+  case Dots::Size::Tiny:
+    mask = (const uint8_t *)Dots::TinyDotMask;
+    break;
+  case Dots::Size::Small:
+    mask = (const uint8_t *)Dots::SmallDotMask;
+    break;
+  case Dots::Size::Medium:
+    mask = (const uint8_t *)Dots::MediumDotMask;
+    break;
+  default:
+    assert(size == Dots::Size::Large);
+    mask = (const uint8_t *)Dots::LargeDotMask;
+  }
+
+  /* If circle has an even diameter, out of the four center pixels, the bottom
+   * left one will be placed at (x, y) */
+  KDRect rectForDot = dotRect(size, xy);
+  if (rect.intersects(rectForDot)) {
     KDColor workingBuffer[Dots::LargeDotDiameter * Dots::LargeDotDiameter];
-    ctx->blendRectWithMask(dotRect, color, mask, workingBuffer);
+    ctx->blendRectWithMask(rectForDot, color, mask, workingBuffer);
   }
 }
 

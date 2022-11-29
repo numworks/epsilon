@@ -55,6 +55,7 @@ public:
   KDPoint pointFromPointInView(View * view, KDPoint point);
 
   KDRect bounds() const;
+  KDRect frame() const { return m_frame; }
   virtual bool isVisible() const { return true; }
 
   virtual View * subview(int index);

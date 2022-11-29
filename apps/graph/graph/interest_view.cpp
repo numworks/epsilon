@@ -25,7 +25,11 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
   while (!p.isUninitialized()) {
     if (m_interest == Poincare::Solver<double>::Interest::None || m_interest == p.interest()) {
       Coordinate2D<float> xy = axis == AbstractPlotView::Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
-      m_parentView->drawDot(ctx, rect, Dots::Size::Tiny, xy, Escher::Palette::GrayDarkest);
+      bool redrawCursorAfterDot = false;
+      CursorView * cursor = static_cast<MemoizedCursorView *>(m_parentView->cursorView());
+      if (!cursor->frame().intersects(m_parentView->dotRect(k_dotsSize, xy))) {
+        m_parentView->drawDot(ctx, rect, k_dotsSize, xy, Escher::Palette::GrayDarkest);
+      }
     }
     p = pointsOfInterest->computePointAtIndex(++i);
   }

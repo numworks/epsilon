@@ -75,6 +75,7 @@ public:
   void drawLabel(KDContext * ctx, KDRect rect, const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;
   void drawLabel(KDContext * ctx, KDRect rect, const char * label, KDRect labelRect, KDColor color) const;
   void drawLayout(KDContext * ctx, KDRect rect, Poincare::Layout layout, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, KDColor color, bool ignoreMargin = false) const;
+  KDRect dotRect(Dots::Size size, Poincare::Coordinate2D<float> xy) const;
   void drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Poincare::Coordinate2D<float> xy, KDColor color) const;
   void drawArc(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> center, float radius, float angleStart, float angleEnd, KDColor color) const;
   void drawCircle(KDContext * ctx, KDRect rect, Poincare::Coordinate2D<float> center, float radius, KDColor color) const { drawArc(ctx, rect, center, radius, 0.f, 2 * M_PI, color); }

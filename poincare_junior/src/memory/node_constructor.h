@@ -62,7 +62,7 @@ private:
   }
 
   // TODO move
-  constexpr static uint8_t DigitAtIndex(uint8_t value, int index) {
+  constexpr static uint8_t DigitAtIndex(unsigned int value, int index) {
     int maskOffset = index * 8;
     assert(maskOffset <= sizeof(int)/sizeof(uint8_t) * 8);
     return value & (0xFF << maskOffset);

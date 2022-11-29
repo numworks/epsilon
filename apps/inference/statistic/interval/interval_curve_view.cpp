@@ -58,7 +58,7 @@ void IntervalPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext *
    *  */
 
   float graduationTopLength = plotView->pixelHeight() * k_intervalBoundHalfHeight;
-  float top = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, rect.top());
+  float top = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, plotView->bounds().top());
   float bot = 0.0f;
   // The main interval is the confidence level the user input
   float estimate = m_interval->estimate();

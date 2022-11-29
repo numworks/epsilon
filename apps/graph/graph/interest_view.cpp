@@ -24,32 +24,37 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
   PointsOfInterestCache * pointsOfInterestCache = App::app()->graphController()->pointsOfInterestForRecord(m_parentView->selectedRecord());
   PointOfInterest p;
   do {
-    Coordinate2D<float> dotCoordinates = Coordinate2D<float>(NAN, NAN);
-
-    /* Use a checkpoint each time a dot is computed so that plot can be
-     * navigated in parallel of computation. */
-    UserCircuitBreakerCheckpoint checkpoint;
-    // Clone the cache to prevent modifying the pool before the checkpoint
-    PointsOfInterestCache pointsOfInterestCacheClone = pointsOfInterestCache->clone();
-    if (AnyKeyCircuitBreakerRun(checkpoint)) {
-      p = pointsOfInterestCacheClone.computePointAtIndex(m_numberOfDrawnDots);
-      if (!p.isUninitialized() && (m_interest == Poincare::Solver<double>::Interest::None || m_interest == p.interest())) {
-        dotCoordinates = axis == AbstractPlotView::Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
+    // Compute more points of interest if necessary
+    while (m_nextPointIndex >= pointsOfInterestCache->numberOfPoints() && !pointsOfInterestCache->isFullyComputed()) {
+      /* Use a checkpoint each time a step is computed so that plot can be
+       * navigated in parallel of computation. */
+      UserCircuitBreakerCheckpoint checkpoint;
+      // Clone the cache to prevent modifying the pool before the checkpoint
+      PointsOfInterestCache pointsOfInterestCacheClone = pointsOfInterestCache->clone();
+      if (AnyKeyCircuitBreakerRun(checkpoint)) {
+        pointsOfInterestCacheClone.computeNextStep();
+      } else {
+        return;
       }
-    } else {
-      break;
+      checkpoint.discard();
+      *pointsOfInterestCache = pointsOfInterestCacheClone;
     }
-    checkpoint.discard();
-    *pointsOfInterestCache = pointsOfInterestCacheClone;
 
-    m_numberOfDrawnDots++;
-    if (std::isnan(dotCoordinates.x1()) || std::isnan(dotCoordinates.x2())) {
+    if (m_nextPointIndex >= pointsOfInterestCache->numberOfPoints()) {
+      return;
+    }
+
+    p = pointsOfInterestCache->pointAtIndex(m_nextPointIndex);
+    m_nextPointIndex++;
+
+    if (m_interest != Poincare::Solver<double>::Interest::None && m_interest != p.interest()) {
       continue;
     }
 
     // Draw the dot
+    Coordinate2D<float> dotCoordinates = axis == AbstractPlotView::Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
+    // If the dot is below the cursor, erase the cursor and redraw it
     MemoizedCursorView * cursor = static_cast<MemoizedCursorView *>(m_parentView->cursorView());
-    // If the point of interest is below the cursor, erase it and redraw it
     KDRect cursorFrame = cursor->frame();
     bool redrawCursor = cursorFrame.intersects(m_parentView->dotRect(k_dotsSize, dotCoordinates));
     if (redrawCursor) {
@@ -61,7 +66,7 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
       cursor->redrawCursor(rect);
     }
 
-  } while (!p.isUninitialized());
+  } while (1);
 }
 
 void InterestView::dirty() {

@@ -15,8 +15,14 @@ public:
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   Ion::Storage::Record currentRecord() const { return m_record; }
   PointsOfInterestCache clone() const;
+
   Poincare::Range1D setBounds(float start, float end);
-  Poincare::PointOfInterest computePointAtIndex(int i);
+  void computeNextStep();
+  bool isFullyComputed() const { return m_start == m_computedStart && m_end == m_computedEnd; }
+
+  int numberOfPoints() const { return m_list.numberOfPoints(); }
+  Poincare::PointOfInterest pointAtIndex(int i) const { return m_list.pointAtIndex(i); }
+
   Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);
   Poincare::PointOfInterest pointOfInterestAtAbscissa(double x);
 

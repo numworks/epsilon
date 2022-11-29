@@ -2,6 +2,7 @@
 #define POINCARE_PREFERENCES_H
 
 #include <poincare/context.h>
+#include <ion/bit_helper.h>
 #include <assert.h>
 #include <stdint.h>
 
@@ -57,8 +58,8 @@ public:
     Disabled = false,
     Enabled = true
   };
-  enum class ExamMode : int8_t {
-    Unknown = -1,
+  enum class ExamMode : uint8_t {
+    // ExamMode is encoded on 4 bits in the Persisting Bytes
     Off = 0,
     Standard = 1,
     Dutch = 2,
@@ -66,6 +67,7 @@ public:
     PressToTest = 4,
     Portuguese = 5,
     Undefined = 6, // Undefined must be the last ExamMode.
+    Unknown = 0b1111,
   };
   enum class LogarithmBasePosition : uint8_t {
     BottomRight = 0,
@@ -76,15 +78,18 @@ public:
   static_assert(static_cast<int>(ExamMode::IBTest) == 3, "Preferences::ExamMode::IBTest != 3 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
   static_assert(static_cast<int>(ExamMode::PressToTest) == 4, "Preferences::ExamMode::PressToTest != 4 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
   static_assert(k_numberOfExamModes == static_cast<int>(ExamMode::Undefined), "Preferences::ExamMode::Undefined should be last but the number of exam modes does not match.");
-  static_assert(static_cast<ExamMode>(0xFF) == ExamMode::Unknown, "0xFF persisting bytes must be parsed as Unknown.");
+  static_assert(k_numberOfExamModes < 8, "The exam mode should be coded on 4 bits with one bit == 1 if and only if mode is Unknown");
+  static_assert(Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<int>(ExamMode::Undefined)) < Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<int>(ExamMode::Unknown)), "There should be one bit that is up only for Unknown");
   /* Params are false if the feature is activated (allowed) and true if
    * forbidden. */
-  typedef union {
-    uint8_t m_value;
+  union PressToTestParams {
+    uint16_t m_value;
     /* Warning: The order of allocation of bit-fields within a unit (high-order
      * to low-order or low-order to high-order) is implementation-defined. The
      * alignment of the addressable storage unit is unspecified. */
     struct {
+      ExamMode m_examMode: 4;
+
       bool m_equationSolverIsForbidden: 1;
       bool m_inequalityGraphingIsForbidden: 1;
       bool m_implicitPlotsAreForbidden: 1;
@@ -93,9 +98,10 @@ public:
       bool m_basedLogarithmIsForbidden: 1;
       bool m_sumIsForbidden: 1;
       bool m_exactResultsAreForbidden: 1;
+      bool m_elementsAppIsForbidden: 1;
     };
-  } PressToTestParams;
-  static_assert(sizeof(PressToTestParams) == sizeof(uint8_t), "PressToTestParams can have 8 params at most");
+  };
+  static_assert(sizeof(PressToTestParams) == sizeof(uint16_t), "PressToTestParams can have 12 params at most");
   /* By default, a PressToTestParams has all parameters set to false. */
   constexpr static PressToTestParams k_inactivePressToTest = PressToTestParams({0});
 
@@ -123,11 +129,12 @@ public:
   LogarithmBasePosition logarithmBasePosition() const { return m_logarithmBasePosition; }
   void setLogarithmBasePosition(LogarithmBasePosition position) { m_logarithmBasePosition = position; }
 
-  static_assert((int8_t)Preferences::ExamMode::Off == 0 && (int8_t)Preferences::ExamMode::Unknown < 0, "Preferences::isInExamMode() relies on exam modes order");
+  static_assert((int8_t)Preferences::ExamMode::Off == 0, "Preferences::isInExamMode() relies on exam modes order");
   bool isInExamMode() const { return (int8_t)examMode() > 0; }
   ExamMode examMode() const;
   PressToTestParams pressToTestParams() const;
   void setExamMode(ExamMode examMode, PressToTestParams pressToTestParams = k_inactivePressToTest);
+  bool elementsAppIsForbidden() const;
   bool equationSolverIsForbidden() const;
   bool inequalityGraphingIsForbidden() const;
   bool implicitPlotsAreForbidden() const;

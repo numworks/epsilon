@@ -169,7 +169,7 @@ KDColor ExamModeConfiguration::examModeColor(Preferences::ExamMode mode) {
 bool ExamModeConfiguration::appIsForbidden(I18n::Message appName) {
   Preferences::ExamMode mode = Preferences::sharedPreferences()->examMode();
   bool pythonDutchExam = appName == I18n::Message::CodeApp && mode == Preferences::ExamMode::Dutch;
-  bool elementsPortugueseAndDutchExam = appName == I18n::Message::ElementsApp && (mode == Preferences::ExamMode::Portuguese || mode == Preferences::ExamMode::Dutch);
+  bool elementsPortugueseAndDutchExam = appName == I18n::Message::ElementsApp && (mode == Preferences::ExamMode::Portuguese || mode == Preferences::ExamMode::Dutch || Preferences::sharedPreferences()->elementsAppIsForbidden());
   bool solverForbidden = appName == I18n::Message::SolverApp && Preferences::sharedPreferences()->equationSolverIsForbidden();
   return pythonDutchExam || elementsPortugueseAndDutchExam || solverForbidden;
 }

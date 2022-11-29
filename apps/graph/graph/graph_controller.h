@@ -24,7 +24,7 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   Poincare::Range2D optimalRange(bool computeX, bool computeY, Poincare::Range2D originalRange) const override;
-  bool handleZoom(Ion::Events::Event event) override;
+  void rangeHasBeenUpdated() override;
 
   bool displayDerivativeInBanner() const;
   PointsOfInterestCache * pointsOfInterestForRecord(Ion::Storage::Record record);

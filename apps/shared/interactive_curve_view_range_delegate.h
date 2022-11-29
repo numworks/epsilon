@@ -23,6 +23,7 @@ public:
   virtual void updateBottomMargin() = 0;
   virtual void updateZoomButtons() = 0;
   virtual void tidyModels() = 0;
+  virtual void rangeHasBeenUpdated() {};
 };
 
 }

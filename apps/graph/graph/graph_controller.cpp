@@ -113,6 +113,10 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   return Range2D(*(computeX ? newRange : originalRange).x(), *(computeY ? newRange : originalRange).y());
 }
 
+void GraphController::rangeHasBeenUpdated() {
+  setInterestRangeForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
+}
+
 PointsOfInterestCache * GraphController::pointsOfInterestForRecord(Ion::Storage::Record record) {
   for (int i = 0; i < m_pointsOfInterest.length(); i++) {
     if (m_pointsOfInterest.elementAtIndex(i)->currentRecord() == record) {
@@ -121,14 +125,6 @@ PointsOfInterestCache * GraphController::pointsOfInterestForRecord(Ion::Storage:
   }
   // No cache was set with this record
   return nullptr;
-}
-
-bool GraphController::handleZoom(Ion::Events::Event event) {
-  bool res = FunctionGraphController::handleZoom(event);
-  if (res) {
-    setInterestRangeForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
-  }
-  return res;
 }
 
 Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(int j) const {
@@ -174,9 +170,7 @@ bool GraphController::displayDerivativeInBanner() const {
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  setInterestRangeForRecord(record);
-  bool result = privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
-  return result;
+  return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
 }
 
 int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * nextSubCurveIndex) const {

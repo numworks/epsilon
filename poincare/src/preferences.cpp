@@ -1,7 +1,6 @@
 #include <poincare/preferences.h>
 #include <poincare/expression.h>
 #include <poincare/unit.h>
-#include <ion/include/ion/persisting_bytes.h>
 #include <assert.h>
 
 namespace Poincare {
@@ -42,10 +41,9 @@ Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
 
 void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {
   if (m_examMode == ExamMode::Unknown) {
-    Ion::PersistingBytes::PersistingBytesInt pb = Ion::PersistingBytes::read();
+    ExamPersistingBytes pb(Ion::PersistingBytes::read());
     static_assert(sizeof(pb) == sizeof(uint16_t), "Exam mode encoding on persisting bytes has changed.");
-    ExamPersistingBytes epb = {.m_value = pb};
-    ExamMode mode = epb.m_examMode;
+    ExamMode mode = pb.mode();
     assert(static_cast<uint8_t>(mode) >= static_cast<uint8_t>(ExamMode::Off) && static_cast<uint8_t>(mode) < static_cast<uint8_t>(ExamMode::Undefined));
 
     if (mode == ExamMode::Unknown) {
@@ -55,11 +53,13 @@ void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {
       m_pressToTestParams = k_inactivePressToTest;
     } else {
       m_examMode = mode;
-      m_pressToTestParams = PressToTestParams {.m_value = epb.m_params};
+      m_pressToTestParams = pb.params();
     }
     assert(m_examMode != ExamMode::Unknown
         && m_examMode != ExamMode::Undefined
         && (m_examMode == ExamMode::PressToTest || m_pressToTestParams.m_value == k_inactivePressToTest.m_value));
+  } else {
+    assert(ExamPersistingBytes(m_examMode, m_pressToTestParams).m_value == Ion::PersistingBytes::read());
   }
 }
 
@@ -81,7 +81,7 @@ void Preferences::setExamMode(ExamMode mode, PressToTestParams newPressToTestPar
   if (currentMode == mode && currentPressToTestParams.m_value == newPressToTestParams.m_value) {
     return;
   }
-  ExamPersistingBytes newPB = {.m_examMode = mode, .m_params = currentPressToTestParams.m_value};
+  ExamPersistingBytes newPB(mode, newPressToTestParams);
   Ion::PersistingBytes::write(newPB.m_value);
   m_examMode = mode;
   m_pressToTestParams = newPressToTestParams;

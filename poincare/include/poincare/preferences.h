@@ -3,6 +3,7 @@
 
 #include <poincare/context.h>
 #include <ion/bit_helper.h>
+#include <ion/include/ion/persisting_bytes.h>
 #include <assert.h>
 #include <stdint.h>
 
@@ -100,7 +101,13 @@ public:
     };
   };
   union ExamPersistingBytes {
+    ExamPersistingBytes(Ion::PersistingBytes::PersistingBytesInt pb) : m_value(pb) {}
+    ExamPersistingBytes(ExamMode mode, PressToTestParams params) : m_examMode(mode), m_params(params.m_value) {}
+
+    ExamMode mode() const { return m_examMode; }
+    PressToTestParams params() const { return PressToTestParams({m_params}); }
     uint16_t m_value;
+  private:
     struct {
       ExamMode m_examMode: 4;
       uint16_t m_params : 12;

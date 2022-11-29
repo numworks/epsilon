@@ -7,27 +7,46 @@
 
 namespace Poincare {
 
+/* Usage
+ *
+ * Iterate backwards through on node's children:
+
+  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Backward, NoEditable>(node)) {
+    Node child = std::get<Node>(indexedNode);
+    int index = std::get<int>(indexedNode);
+    ...
+  }
+
+  * Iterator forwards concomittantly through 2 nodes' children
+
+
+  for (std::pair<std::array<EditionReference, 2>, int> indexedRefs : MultipleNodesIterator::Children<Forward, Editable, 2>(std::array<EditionReference, 2>({node0, node1}))) {
+    EditionReference childOfNode0 = std::get<0>(indexedRefs)[0];
+    EditionReference childOfNode1 = std::get<0>(indexedRefs)[1];
+    int index = std::get<int>(indexedNode);
+    ...
+  }
+
+ * */
+
 class MultipleNodesIterator {
 
-  /* Generic templated scanners and iterators, please choose:
-   * - the scanning direction: forward or backward
-   * - the editability of nodes: True or False
-   * - the number of nodes we're iterating through
-   *
-   * The typename T is always:
-   * T = EditionReference if Editable::True
-   * T = const Node if Editable::False
-   *
-   * For instance: ChildrenScanner<ScanDirection::Forward, Editable::True, EditionReference, 2>
-   * is a scanner concomittantly iterating through 2 nodes' children.
-   *
-   * Please note:
-   * You can use the editable scan only for trees located in the editable pool.
-   * When doing so you can only edit the children downstream (the children after
-   * the current child if you're going forwards and the children before the
-   * current child if you're going backwards).
-   */
-protected:
+/* Generic iterators, please choose:
+ * - the scanning direction: forward or backward
+ * - the editability of nodes: True or False
+ * - the number of nodes we're iterating through
+ *
+ * For instance: ChildrenScanner<Forward, Editable, 2> is a scanner concomittantly iterating through 2 nodes' children.
+ *
+ * Please note:
+ * You can use the editable scan only for trees located in the editable pool.
+ * When doing so you can only edit the children downstream (the children after
+ * the current child if you're going forwards and the children before the
+ * current child if you're going backwards).
+ */
+
+protected: // templates force us to define some protected classes firstA
+
   /* Iterator */
 
   template <typename DirectionPolicy, typename EditablePolicy, size_t N>
@@ -36,7 +55,7 @@ protected:
     typedef typename EditablePolicy::NodeType NodeType;
     typedef std::array<NodeType ,N> ArrayType;
 
-    Iterator(ArrayType array, int index) : m_array(convertToArrayType(convertFromArrayType(array), offset())), m_index(index) {}
+    Iterator(std::array<Node, N> array, int index) : m_array(convertToArrayType(array, offset())), m_index(index) {}
     std::pair<ArrayType, int> operator*() { return std::pair(convertToArrayType(convertFromArrayType(m_array, offset())), m_index); }
     bool operator!=(Iterator<DirectionPolicy, EditablePolicy, N> & it) { return equality(m_array, m_index, it.m_array, it.m_index); }
     Iterator<DirectionPolicy, EditablePolicy, N> & operator++() {
@@ -56,40 +75,6 @@ protected:
     int m_index;
   };
 
-
-#if 0
-
-
-
-  template<size_t N>
-  class Iterator<ScanDirection::Backward, Editable::True, EditionReference, N> {
-  public:
-  private:
-    /* This code is UGLY, please do something. */
-    Node getNode(int index) {
-      if (m_index < 0) {
-        // Special case: end iterator
-        return Node();
-      } else if (m_index == 0) {
-        /* We can't keep a reference outside the scanned tree so we create
-         * an edge case for the right most child: it's referenced by the parent
-         * node. */
-        return m_referencesArray[index].node().nextTree().previousNode();
-      }
-      return Node(m_references[index].node().block() + static_cast<int>(ScanDirection::Backward)());
-    }
-    void setNode(int index, Node node) {
-      if (node.isUninitialized()) {
-        // Special case: end iterator
-        m_index = -2;
-        return;
-      }
-      m_references[index] = EditionReference(Node(node.block() - static_cast<int>(ScanDirection::Backward)));
-    }
-    Node incrNode(Node node) { return node.previousTree(); }
-  };
-
-#endif
 public:
   /* Scanner */
 
@@ -100,10 +85,10 @@ public:
     typedef std::array<NodeType ,N> ArrayType;
 
     ChildrenScanner(ArrayType array) : m_array(array) {}
-    Iterator<DirectionPolicy, EditablePolicy, N> begin() const { return Iterator<DirectionPolicy, EditablePolicy, N>(convertToArrayType(firstElement(convertFromArrayType(m_array, offset())), offset()), 0); }
+    Iterator<DirectionPolicy, EditablePolicy, N> begin() const { return Iterator<DirectionPolicy, EditablePolicy, N>(firstElement(convertFromArrayType(m_array)), 0); }
     Iterator<DirectionPolicy, EditablePolicy, N> end() const {
-      std::array<Node, N> nodeArray = convertFromArrayType(m_array, offset());
-      return Iterator<DirectionPolicy, EditablePolicy, N>(convertToArrayType(lastElement(nodeArray), offset()), lastIndex(nodeArray)); }
+      std::array<Node, N> nodeArray = convertFromArrayType(m_array);
+      return Iterator<DirectionPolicy, EditablePolicy, N>(lastElement(nodeArray), lastIndex(nodeArray)); }
 
   protected:
     using EditablePolicy::convertFromArrayType;
@@ -124,6 +109,11 @@ public:
     }
 
   };
+
+  template <typename DirectionPolicy, typename EditablePolicy, size_t N>
+  static ChildrenScanner<DirectionPolicy, EditablePolicy, N> Children(std::array<typename EditablePolicy::NodeType, N> array) { return ChildrenScanner<DirectionPolicy, EditablePolicy, N>(array); }
+
+  /* Policies */
 
   class NoEditablePolicy {
   public:
@@ -147,7 +137,7 @@ public:
     template <size_t N>
     bool equality(ArrayType<N> array0, int index0, ArrayType<N>array1, int index1) const {
       for (size_t i = 0; i < N; i++) {
-        if (array0[i].node() == array1[i].node()) {
+        if (array0[i] == array1[i]) {
           return false;
         }
       }
@@ -165,7 +155,7 @@ public:
     }
     template<size_t N>
     ArrayType<N> convertToArrayType(std::array<Node, N> array, int offset = 0) const {
-      return Array::MapAction<Node, NodeType, N>(array, &offset, [](Node node, void * offset) { return EditionReference(Node(node.block() - *static_cast<int *>(offset))); });
+      return Array::MapAction<Node, NodeType, N>(array, &offset, [](Node node, void * offset) { return node.isUninitialized() ? EditionReference() : EditionReference(Node(node.block() - *static_cast<int *>(offset))); });
     }
   };
 
@@ -196,20 +186,12 @@ public:
 
     int offset() const { return -1; }
   };
-
-
-  /* Scanner specialization */
-
-  template <typename DirectionPolicy, typename EditablePolicy, size_t N>
-  static ChildrenScanner<DirectionPolicy, EditablePolicy, N> Children(std::array<typename EditablePolicy::NodeType, N> array) { return ChildrenScanner<DirectionPolicy, EditablePolicy, N>(array); }
-
-  /* Workaround: don't emit the undefined Children<ScanDirection::?, Editable::False, Node, N>
-   * but fallback to Children<ScanDirection::?, Editable::False, const Node, N>. */
-  //template <ScanDirection direction, Editable::False, const Node, N>
-  //static ChildrenScanner<direction, Editable::False, const Node> Children(Node node) { return ChildrenScanner<direction, Editable::False, const Node>(node); }
 };
 
 class NodeIterator : public MultipleNodesIterator {
+
+/* Ensure lighter syntax for one node iterator */
+
 private:
   template <typename DirectionPolicy, typename EditablePolicy>
   class Iterator {
@@ -233,7 +215,6 @@ public:
     ChildrenScanner(NodeType node) : m_scanner(std::array<NodeType, 1>({node})) {}
     Iterator<DirectionPolicy, EditablePolicy> begin() const { return Iterator<DirectionPolicy, EditablePolicy>(m_scanner.begin()); }
     Iterator<DirectionPolicy, EditablePolicy>  end() const { return Iterator<DirectionPolicy, EditablePolicy>(m_scanner.end()); }
-
   protected:
     MultipleNodesIterator::ChildrenScanner<DirectionPolicy, EditablePolicy, 1> m_scanner;
   };
@@ -248,4 +229,5 @@ typedef MultipleNodesIterator::NoEditablePolicy NoEditable;
 typedef MultipleNodesIterator::EditablePolicy Editable;
 
 }
+
 #endif

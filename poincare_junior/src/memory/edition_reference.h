@@ -2,18 +2,21 @@
 #define POINCARE_MEMORY_EDITION_REFERENCE_H
 
 #include "node.h"
+#include "edition_pool.h"
 
 namespace Poincare {
 
 class EditionReference {
 
 public:
-  EditionReference(Node node = Node());
+  EditionReference() : m_identifier(EditionPool::ReferenceTable::NoNodeIdentifier) {}
+  EditionReference(Node node);
 
   /* Comparison */
-  inline bool operator==(const EditionReference & t) const { return m_identifier == t.identifier(); }
-  inline bool operator!=(const EditionReference & t) const { return m_identifier != t.identifier(); }
+  inline bool operator==(const EditionReference & t) const { return m_identifier == t.identifier() || (!isUninitialized() && !t.isUninitialized() && node() == t.node()); }
+  inline bool operator!=(const EditionReference & t) const { return m_identifier != t.identifier() && (isUninitialized() || t.isUninitialized() || node() != t.node()); }
 
+  bool isUninitialized() const { return m_identifier == EditionPool::ReferenceTable::NoNodeIdentifier; }
   Node node() const;
   TypeBlock * block() { return node().block(); }
   EditionReference clone() const;

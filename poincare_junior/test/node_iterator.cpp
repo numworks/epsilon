@@ -27,8 +27,8 @@ void testChildrenIterator() {
 
   print();
 
-  std::cout << "\n---------------- Edit children backward ----------------" << std::endl;
   constexpr Tree pi = u'π'_n;
+  std::cout << "\n---------------- Edit children backward ----------------" << std::endl;
   for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Backward, Editable>(ref)) {
     std::get<EditionReference>(indexedRef).replaceTreeByNode(pi);
   }
@@ -38,9 +38,10 @@ void testChildrenIterator() {
   Node secondMult = createSimpleExpression();
   print();
 
+
   std::cout << "\n---------------- Scan two nodes children forward ----------------" << std::endl;
   for (std::pair<std::array<Node, 2>, int> indexedArray : MultipleNodesIterator::Children<Forward, NoEditable, 2>(std::array<Node, 2>({mult, secondMult}))) {
-    std::cout << "\n\nbtChildren indexed " << std::get<1>(indexedArray) << std::endl;
+    std::cout << "\n\nChildren indexed " << std::get<1>(indexedArray) << std::endl;
     std::get<0>(indexedArray)[0].log(std::cout);
     std::get<0>(indexedArray)[1].log(std::cout);
   }
@@ -48,7 +49,7 @@ void testChildrenIterator() {
 
   std::cout << "\n---------------- Scan two nodes children backward ----------------" << std::endl;
   for (std::pair<std::array<Node, 2>, int> indexedArray : MultipleNodesIterator::Children<Backward, NoEditable, 2>(std::array<Node, 2>({mult, secondMult}))) {
-    std::cout << "\n\nbtChildren indexed " << std::get<1>(indexedArray) << std::endl;
+    std::cout << "\n\nChildren indexed " << std::get<1>(indexedArray) << std::endl;
     std::get<0>(indexedArray)[0].log(std::cout);
     std::get<0>(indexedArray)[1].log(std::cout);
   }

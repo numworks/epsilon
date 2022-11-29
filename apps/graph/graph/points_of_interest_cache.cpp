@@ -106,13 +106,12 @@ void PointsOfInterestCache::stripOutOfBounds() {
 
 void PointsOfInterestCache::computeBetween(float start, float end) {
   assert(!m_list.isUninitialized());
+  assert((end == m_computedStart && start < m_computedStart) || (start == m_computedEnd && end > m_computedEnd));
+  assert(start >= m_start && end <= m_end);
 
-  // TODO: Check that start and end are not completely out of [m_computedStart, m_computedEnd]
-  // assert(end == m_computedEnd || start == m_computedStart);
-  if (start < m_computedStart && end == m_computedStart) {
+  if (start < m_computedStart) {
     m_computedStart = start;
-  }
-  if (start == m_computedEnd && end > m_computedEnd) {
+  } else if (end > m_computedEnd) {
     m_computedEnd = end;
   }
 

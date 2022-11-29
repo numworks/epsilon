@@ -118,6 +118,8 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
     m_computedEnd = end;
   }
 
+  float searchStep = Solver<double>::MaximalStep(m_start - m_end);
+
   ContinuousFunctionStore * store = App::app()->functionStore();
   Context * context = App::app()->localContext();
   ExpiringPointer<ContinuousFunction> f = store->modelForRecord(m_record);
@@ -133,7 +135,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
   typedef Coordinate2D<double> (Solver<double>::*NextSolution)(const Expression & e);
   NextSolution methodsNext[] = { &Solver<double>::nextRoot, &Solver<double>::nextMinimum, &Solver<double>::nextMaximum };
   for (NextSolution next : methodsNext) {
-    Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);
+    Solver<double> solver = PoincareHelpers::Solver<double>(start, end, searchStep, ContinuousFunction::k_unknownName, context);
     solver.stretch();
     Coordinate2D<double> solution;
     while (std::isfinite((solution = (solver.*next)(e)).x1())) { // assignment in condition
@@ -156,7 +158,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
       continue;
     }
     Expression e2 = g->expressionReduced(context);
-    Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);
+    Solver<double> solver = PoincareHelpers::Solver<double>(start, end, searchStep, ContinuousFunction::k_unknownName, context);
     solver.stretch();
     Expression diff;
     Coordinate2D<double> intersection;

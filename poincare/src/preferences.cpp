@@ -44,8 +44,8 @@ void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {
   if (m_examMode == ExamMode::Unknown) {
     Ion::PersistingBytes::PersistingBytesInt pb = Ion::PersistingBytes::read();
     static_assert(sizeof(pb) == sizeof(uint16_t), "Exam mode encoding on persisting bytes has changed.");
-    PressToTestParams params = {.m_value = pb};
-    ExamMode mode = params.m_examMode;
+    ExamPersistingBytes epb = {.m_value = pb};
+    ExamMode mode = epb.m_examMode;
     assert(static_cast<uint8_t>(mode) >= static_cast<uint8_t>(ExamMode::Off) && static_cast<uint8_t>(mode) < static_cast<uint8_t>(ExamMode::Undefined));
 
     if (mode == ExamMode::Unknown) {
@@ -55,13 +55,11 @@ void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {
       m_pressToTestParams = k_inactivePressToTest;
     } else {
       m_examMode = mode;
-      m_pressToTestParams = params;
+      m_pressToTestParams = PressToTestParams {.m_value = epb.m_params};
     }
     assert(m_examMode != ExamMode::Unknown
         && m_examMode != ExamMode::Undefined
-        && (m_examMode == ExamMode::PressToTest || params.m_value == k_inactivePressToTest.m_value));
-  } else {
-    assert(m_pressToTestParams.m_value == Ion::PersistingBytes::read());
+        && (m_examMode == ExamMode::PressToTest || m_pressToTestParams.m_value == k_inactivePressToTest.m_value));
   }
 }
 
@@ -77,14 +75,14 @@ Preferences::PressToTestParams Preferences::pressToTestParams() const {
 
 void Preferences::setExamMode(ExamMode mode, PressToTestParams newPressToTestParams) {
   assert(mode != ExamMode::Unknown && mode < ExamMode::Undefined);
-  // assert(mode == ExamMode::PressToTest || newPressToTestParams.m_value == k_inactivePressToTest.m_value);
+  assert(mode == ExamMode::PressToTest || newPressToTestParams.m_value == k_inactivePressToTest.m_value);
   ExamMode currentMode = examMode();
   PressToTestParams currentPressToTestParams = pressToTestParams();
   if (currentMode == mode && currentPressToTestParams.m_value == newPressToTestParams.m_value) {
     return;
   }
-  newPressToTestParams.m_examMode = mode;
-  Ion::PersistingBytes::write(newPressToTestParams.m_value);
+  ExamPersistingBytes newPB = {.m_examMode = mode, .m_params = currentPressToTestParams.m_value};
+  Ion::PersistingBytes::write(newPB.m_value);
   m_examMode = mode;
   m_pressToTestParams = newPressToTestParams;
 }

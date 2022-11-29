@@ -88,8 +88,6 @@ public:
      * to low-order or low-order to high-order) is implementation-defined. The
      * alignment of the addressable storage unit is unspecified. */
     struct {
-      ExamMode m_examMode: 4;
-
       bool m_equationSolverIsForbidden: 1;
       bool m_inequalityGraphingIsForbidden: 1;
       bool m_implicitPlotsAreForbidden: 1;
@@ -101,7 +99,14 @@ public:
       bool m_elementsAppIsForbidden: 1;
     };
   };
-  static_assert(sizeof(PressToTestParams) == sizeof(uint16_t), "PressToTestParams can have 12 params at most");
+  union ExamPersistingBytes {
+    uint16_t m_value;
+    struct {
+      ExamMode m_examMode: 4;
+      uint16_t m_params : 12;
+    };
+  };
+  static_assert(sizeof(ExamPersistingBytes) == sizeof(uint16_t), "PressToTestParams can have 12 params at most");
   /* By default, a PressToTestParams has all parameters set to false. */
   constexpr static PressToTestParams k_inactivePressToTest = PressToTestParams({0});
 

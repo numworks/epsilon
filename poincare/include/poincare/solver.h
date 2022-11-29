@@ -32,6 +32,7 @@ public:
   constexpr static T k_minimalAbsoluteStep = 2. * Helpers::SquareRoot(2. * k_relativePrecision);
 
   static T NullTolerance(T x) { return std::max(k_relativePrecision, k_relativePrecision * std::fabs(x)) * static_cast<T>(10.); }
+  static T MaximalStep(T intervalAmplitude);
 
   // BracketTest default implementations
   constexpr static Interest BoolToInterest(bool v, Interest t, Interest f = Interest::None) { return v ? t : f; }
@@ -43,7 +44,9 @@ public:
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */
-  Solver(T xStart, T xEnd, const char * unknown = nullptr, Context * context = nullptr, Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
+  Solver(T xStart, T xEnd, T maximalXStep, const char * unknown = nullptr, Context * context = nullptr, Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
+  Solver(T xStart, T xEnd, const char * unknown = nullptr, Context * context = nullptr, Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian) :
+    Solver<T>(xStart, xEnd, MaximalStep(xEnd - xStart), unknown, context, complexFormat, angleUnit) {}
   Solver(const Solver<T> * other);
 
   T start() const { return m_xStart; }
@@ -88,7 +91,7 @@ private:
   static Coordinate2D<T> BrentMaximum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
   static Coordinate2D<T> CompositeBrentForRoot(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
 
-  T maximalStep() const;
+  T maximalStep() const { return m_maximalXStep; }
   T minimalStep(T x) const;
   bool validSolution(T x) const;
   T nextX(T x, T direction) const;
@@ -98,6 +101,7 @@ private:
 
   T m_xStart;
   T m_xEnd;
+  T m_maximalXStep;
   T m_yResult;
   Context * m_context;
   const char * m_unknown;

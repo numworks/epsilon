@@ -54,6 +54,9 @@ KDCoordinate PressToTestController::nonMemoizedRowHeight(int j) {
 
 void PressToTestController::setParamAtIndex(int index, bool value) {
   switch (LabelAtIndex(index)) {
+    case I18n::Message::PressToTestExactResults:
+      m_tempPressToTestParams.m_exactResultsAreForbidden = value;
+      break;
     case I18n::Message::PressToTestEquationSolver:
       m_tempPressToTestParams.m_equationSolverIsForbidden = value;
       break;
@@ -62,6 +65,9 @@ void PressToTestController::setParamAtIndex(int index, bool value) {
       break;
     case I18n::Message::PressToTestImplicitPlots:
       m_tempPressToTestParams.m_implicitPlotsAreForbidden = value;
+      break;
+    case I18n::Message::PressToTestElements:
+      m_tempPressToTestParams.m_elementsAppIsForbidden = value;
       break;
     case I18n::Message::PressToTestStatDiagnostics:
       m_tempPressToTestParams.m_statsDiagnosticsAreForbidden = value;
@@ -75,9 +81,6 @@ void PressToTestController::setParamAtIndex(int index, bool value) {
     case I18n::Message::PressToTestSum:
       m_tempPressToTestParams.m_sumIsForbidden = value;
       break;
-    case I18n::Message::PressToTestExactResults:
-      m_tempPressToTestParams.m_exactResultsAreForbidden = value;
-      break;
     default:
       assert(false);
   }
@@ -85,12 +88,16 @@ void PressToTestController::setParamAtIndex(int index, bool value) {
 
 bool PressToTestController::getParamAtIndex(int index) {
   switch (LabelAtIndex(index)) {
+    case I18n::Message::PressToTestExactResults:
+      return m_tempPressToTestParams.m_exactResultsAreForbidden;
     case I18n::Message::PressToTestEquationSolver:
       return m_tempPressToTestParams.m_equationSolverIsForbidden;
     case I18n::Message::PressToTestInequalityGraphing:
       return m_tempPressToTestParams.m_inequalityGraphingIsForbidden;
     case I18n::Message::PressToTestImplicitPlots:
       return m_tempPressToTestParams.m_implicitPlotsAreForbidden;
+    case I18n::Message::PressToTestElements:
+      return m_tempPressToTestParams.m_elementsAppIsForbidden;
     case I18n::Message::PressToTestStatDiagnostics:
       return m_tempPressToTestParams.m_statsDiagnosticsAreForbidden;
     case I18n::Message::PressToTestVectors:
@@ -99,8 +106,6 @@ bool PressToTestController::getParamAtIndex(int index) {
       return m_tempPressToTestParams.m_basedLogarithmIsForbidden;
     case I18n::Message::PressToTestSum:
       return m_tempPressToTestParams.m_sumIsForbidden;
-    case I18n::Message::PressToTestExactResults:
-      return m_tempPressToTestParams.m_exactResultsAreForbidden;
     default:
       assert(false);
       return false;
@@ -206,6 +211,7 @@ I18n::Message PressToTestController::LabelAtIndex(int i) {
     I18n::Message::PressToTestEquationSolver,
     I18n::Message::PressToTestInequalityGraphing,
     I18n::Message::PressToTestImplicitPlots,
+    I18n::Message::PressToTestElements,
     I18n::Message::PressToTestStatDiagnostics,
     I18n::Message::PressToTestVectors,
     I18n::Message::PressToTestLogBaseA,

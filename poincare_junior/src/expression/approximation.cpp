@@ -29,7 +29,7 @@ T Approximation::To(const TypeBlock * block) {
 template<typename T>
 T Approximation::MapAndReduce(const TypeBlock * block, Reductor<T> reductor) {
   T res;
-  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<ScanDirection::Forward, Editable::False>(Node(block))) {
+  for (std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(Node(block))) {
     T app = Approximation::To<T>(std::get<Node>(indexedNode).block());
     if (std::get<int>(indexedNode) == 0) {
       res = app;

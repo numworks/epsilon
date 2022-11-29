@@ -37,7 +37,7 @@ void Node::log(std::ostream & stream, bool recursive, int indentation, bool verb
   logAttributes(stream);
   bool tagIsClosed = false;
   if (recursive) {
-    for (const std::pair<Node, int> child : NodeIterator::Children<ScanDirection::Forward, Editable::False>(*this)) {
+    for (const std::pair<Node, int> child : NodeIterator::Children<Forward, NoEditable>(*this)) {
       if (!tagIsClosed) {
         stream << ">";
         tagIsClosed = true;
@@ -150,7 +150,7 @@ int Node::numberOfDescendants(bool includeSelf) const {
 }
 
 const Node Node::childAtIndex(int i) const {
-  for (const std::pair<Node, int> indexedChild : NodeIterator::Children<ScanDirection::Forward, Editable::False>(*this)) {
+  for (const std::pair<Node, int> indexedChild : NodeIterator::Children<Forward, NoEditable>(*this)) {
     if (std::get<int>(indexedChild) == i) {
       return std::get<Node>(indexedChild);
     }
@@ -180,7 +180,7 @@ int Node::indexInParent() const {
 }
 
 bool Node::hasChild(const Node child) const {
-  for (const std::pair<Node, int> indexedChild : NodeIterator::Children<ScanDirection::Forward, Editable::False>(*this)) {
+  for (const std::pair<Node, int> indexedChild : NodeIterator::Children<Forward, NoEditable>(*this)) {
     if (child == std::get<Node>(indexedChild)) {
       return true;
     }
@@ -204,7 +204,7 @@ bool Node::hasSibling(const Node sibling) const {
   if (p == Node()) {
     return false;
   }
-  for (const std::pair<Node, int> indexedChild : NodeIterator::Children<ScanDirection::Forward, Editable::False>(p)) {
+  for (const std::pair<Node, int> indexedChild : NodeIterator::Children<Forward, NoEditable>(p)) {
     if (std::get<Node>(indexedChild) == sibling) {
       return true;
     }
@@ -213,7 +213,7 @@ bool Node::hasSibling(const Node sibling) const {
 }
 
 void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
-  for (const std::pair<Node, int> child : NodeIterator::Children<ScanDirection::Forward, Editable::False>(*this)) {
+  for (const std::pair<Node, int> child : NodeIterator::Children<Forward, NoEditable>(*this)) {
     std::get<Node>(child).recursivelyGet(treeFunction);
   }
   (*treeFunction)(*this);

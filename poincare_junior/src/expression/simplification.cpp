@@ -34,11 +34,11 @@ void Simplification::SubtractionReduction(TypeBlock * block) {
 
 TypeBlock * Simplification::DistributeMultiplicationOverAddition(TypeBlock * block) {
   EditionReference mult = EditionReference(Node(block));
-  for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<ScanDirection::Forward, Editable::True>(mult)) {
+  for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(mult)) {
     if (std::get<EditionReference>(indexedRef).node().block()->type() == BlockType::Addition) {
       // Create new addition that will be filled in the following loop
       EditionReference add = EditionReference(Node(Node::Push<BlockType::Addition>(std::get<EditionReference>(indexedRef).node().numberOfChildren())));
-      for (std::pair<EditionReference, int> indexedAdditionChild : NodeIterator::Children<ScanDirection::Forward, Editable::True>(std::get<EditionReference>(indexedRef))) {
+      for (std::pair<EditionReference, int> indexedAdditionChild : NodeIterator::Children<Forward, Editable>(std::get<EditionReference>(indexedRef))) {
         // Copy a multiplication
         EditionReference multCopy = mult.clone();
         // Find the addition to be replaced
@@ -60,7 +60,7 @@ TypeBlock * Simplification::DistributeMultiplicationOverAddition(TypeBlock * blo
 TypeBlock * Simplification::Flatten(TypeBlock * block) {
   uint8_t numberOfChildren = 0;
   EditionReference ref = EditionReference(Node(block));
-  for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<ScanDirection::Forward, Editable::True>(ref)) {
+  for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(ref)) {
     if (block->type() == std::get<EditionReference>(indexedRef).node().block()->type()) {
       EditionReference nAry = EditionReference(Node(Flatten(std::get<EditionReference>(indexedRef).node().block())));
       numberOfChildren += nAry.node().numberOfChildren();
@@ -83,7 +83,7 @@ void Simplification::ProjectionReduction(TypeBlock * block, TypeBlock * (*PushPr
   // Get references to children
   assert(Node(block).numberOfChildren() == 2);
   EditionReference childrenReferences[2];
-  for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<ScanDirection::Forward, Editable::True>(division)) {
+  for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(division)) {
     childrenReferences[std::get<int>(indexedRef)] = std::get<EditionReference>(indexedRef);
   }
   // Move first child

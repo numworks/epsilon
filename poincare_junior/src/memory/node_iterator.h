@@ -3,7 +3,7 @@
 
 #include <array>
 #include "edition_reference.h"
-#include <utils/enums.h>
+#include <utils/array.h>
 
 namespace Poincare {
 
@@ -30,91 +30,36 @@ class MultipleNodesIterator {
 protected:
   /* Iterator */
 
-  template <ScanDirection direction, Editable isEditable, typename T, size_t N>
-  class Iterator {
+  template <typename DirectionPolicy, typename EditablePolicy, size_t N>
+  class Iterator : private DirectionPolicy, private EditablePolicy {
   public:
-    Iterator(std::array<T,N> array, int index) : m_array(array), m_index(index) {}
-    std::pair<std::array<T,N>, int> operator*();
-    bool operator!=(Iterator& it);
-    Iterator<direction, isEditable, T, N> & operator++();
-  private:
-    std::array<T,N> m_array;
-    int m_index;
-  };
+    typedef typename EditablePolicy::NodeType NodeType;
+    typedef std::array<NodeType ,N> ArrayType;
 
-  /* Iterator specialization */
-
-#if 0
-  template <ScanDirection direction, size_t N>
-  class Iterator<direction, Editable::False, const Node, N> {
-  public:
-    std::pair<std::array<const Node,N>, int> operator*() { return std::pair(m_array, m_index); }
-    bool operator!=(Iterator<direction, Editable::False, const Node, N>& it) { return (m_index != it.m_index); }
-    Iterator<direction, Editable::False, const Node, N> & operator++() {
-      for (Node & node : m_array) {
-        node = incrNode(node);
-      }
-      m_index++;:
-      return *this;
-    }
-  };
-
-  template<size_t N>
-  class Iterator<ScanDirection::Forward, Editable::False, const Node, N> {
-  private:
-    Node incrNode(Node node) { return node.nextTree(); }
-  };
-
-  template<size_t N>
-  class Iterator<ScanDirection::Backward, Editable::False, const Node, N> {
-  private:
-    Node incrNode(Node node) { return node.previousTree(); }
-  };
-
-
-  template<ScanDirection direction, size_t N>
-  class Iterator<direction, Editable::True, EditionReference, N> {
-  public:
-    std::pair<std::array<EditionReference,N>, int> operator*() { return std::pair(m_array, m_index); }
-    bool operator!=(Iterator<direction, Editable::True, EditionReference, N>& it) {
-      for (size_t i = 0; i < N; i++) {
-        if (getNode(i) == it.getNode(i)) {
-          return false;
-        }
-      }
-      return true;
-    }
-    Iterator<direction, Editable::True, EditionReference, N> & operator++() {
-      for (size_t i = 0; i < N; i++) {
-        setNode(i, incrNode(getNode(i)));
-      }
+    Iterator(ArrayType array, int index) : m_array(convertToArrayType(convertFromArrayType(array), offset())), m_index(index) {}
+    std::pair<ArrayType, int> operator*() { return std::pair(convertToArrayType(convertFromArrayType(m_array, offset())), m_index); }
+    bool operator!=(Iterator<DirectionPolicy, EditablePolicy, N> & it) { return equality(m_array, m_index, it.m_array, it.m_index); }
+    Iterator<DirectionPolicy, EditablePolicy, N> & operator++() {
+      m_array = convertToArrayType(incrementeArray(convertFromArrayType(m_array, offset())), offset());
       m_index++;
       return *this;
     }
-  private:
-    /* Hack: we keep a reference to a block right before (or after) the
-     * currenNode to handle cases where the current node is replaced by
-     * another one. The assertion that the previous children aren't modified
-     * ensure the validity of this hack. */
-    Node getNode(int index);
-    void setNode(int index, Node node);
-    Node incrNode(Node node);
-  };
-
-  template<size_t N>
-  class Iterator<ScanDirection::Forward, Editable::True, EditionReference, N> {
-  public:
-    Iterator<ScanDirection::Forward, Editable::True, EditionReference, N>() : m_referencesArray(), m_index(0) {
-      for (size_t i = 0; i < N; i++) {
-        setNode(i, m_referencesArray[i]);
-      }
-    }
 
   private:
-    Node getNode(int index) { return Node(m_referencesArray[index].node().block() + static_cast<int>(ScanDirection::Forward)()); }
-    void setNode(int index, Node node) { m_referencesArray[index] = EditionReference(Node(node.block() - static_cast<int>(ScanDirection::Forward))); }
-    Node incrNode(Node node) { return node.nextTree(); }
+    using EditablePolicy::equality;
+    using EditablePolicy::convertToArrayType;
+    using EditablePolicy::convertFromArrayType;
+    using DirectionPolicy::incrementeArray;
+    using DirectionPolicy::offset;
+
+    ArrayType m_array;
+    int m_index;
   };
+
+
+#if 0
+
+
 
   template<size_t N>
   class Iterator<ScanDirection::Backward, Editable::True, EditionReference, N> {
@@ -148,101 +93,115 @@ protected:
 public:
   /* Scanner */
 
-  template <ScanDirection direction, Editable isEditable, typename T, size_t N>
-  class ChildrenScanner {
+  template <typename DirectionPolicy, typename EditablePolicy, size_t N>
+  class ChildrenScanner : private DirectionPolicy, private EditablePolicy {
   public:
-    ChildrenScanner(std::array<T,N> array) : m_array(array) {}
-    Iterator<direction,isEditable,T,N> begin() const;
-    Iterator<direction,isEditable,T,N>  end() const;
+    typedef typename EditablePolicy::NodeType NodeType;
+    typedef std::array<NodeType ,N> ArrayType;
+
+    ChildrenScanner(ArrayType array) : m_array(array) {}
+    Iterator<DirectionPolicy, EditablePolicy, N> begin() const { return Iterator<DirectionPolicy, EditablePolicy, N>(convertToArrayType(firstElement(convertFromArrayType(m_array, offset())), offset()), 0); }
+    Iterator<DirectionPolicy, EditablePolicy, N> end() const {
+      std::array<Node, N> nodeArray = convertFromArrayType(m_array, offset());
+      return Iterator<DirectionPolicy, EditablePolicy, N>(convertToArrayType(lastElement(nodeArray), offset()), lastIndex(nodeArray)); }
 
   protected:
-    using Action = T (*)(T);
-    std::array<T,N> mapAction(Action action) {
-      std::array<T,N> newArray;
+    using EditablePolicy::convertFromArrayType;
+    using EditablePolicy::convertToArrayType;
+    using DirectionPolicy::firstElement;
+    using DirectionPolicy::lastElement;
+    using DirectionPolicy::offset;
+
+    ArrayType m_array;
+
+  private:
+    int lastIndex(std::array<Node, N> array) const {
+      uint8_t nbOfChildren = UINT8_MAX;
       for (size_t i = 0; i < N; i++) {
-        newArray[i] = action(m_array[i]);
+        nbOfChildren = std::min<uint8_t>(nbOfChildren, array[i].numberOfChildren());
       }
-      return newArray;
+      return nbOfChildren;
     }
-    std::array<T,N> m_array;
+
   };
+
+  class NoEditablePolicy {
+  public:
+    typedef Node NodeType;
+    template<size_t N> using ArrayType = std::array<NodeType, N>;
+  protected:
+    template <size_t N>
+    bool equality(ArrayType<N> array0, int index0, ArrayType<N>array1, int index1) const { return (index0 != index1); }
+
+    template<size_t N>
+    std::array<Node, N> convertFromArrayType(ArrayType<N> array, int offset = 0) const { return array; }
+    template<size_t N>
+    ArrayType<N> convertToArrayType(std::array<Node, N> array, int offset = 0) const { return array; }
+  };
+
+  class EditablePolicy {
+  public:
+    typedef EditionReference NodeType;
+    template<size_t N> using ArrayType = std::array<NodeType, N>;
+  protected:
+    template <size_t N>
+    bool equality(ArrayType<N> array0, int index0, ArrayType<N>array1, int index1) const {
+      for (size_t i = 0; i < N; i++) {
+        if (array0[i].node() == array1[i].node()) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    /* Hack: we keep a reference to a block right before (or after) the
+     * currenNode to handle cases where the current node is replaced by
+     * another one. The assertion that the previous children aren't modified
+     * ensure the validity of this hack. */
+
+    template<size_t N>
+    std::array<Node, N> convertFromArrayType(ArrayType<N> array, int offset = 0) const {
+      return Array::MapAction<NodeType, Node, N>(array, &offset, [](NodeType reference, void * offset) { return Node(reference.node().block() + *static_cast<int *>(offset)); });
+    }
+    template<size_t N>
+    ArrayType<N> convertToArrayType(std::array<Node, N> array, int offset = 0) const {
+      return Array::MapAction<Node, NodeType, N>(array, &offset, [](Node node, void * offset) { return EditionReference(Node(node.block() - *static_cast<int *>(offset))); });
+    }
+  };
+
+  class ForwardPolicy {
+  protected:
+    template<size_t N>
+    std::array<Node, N> firstElement(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return node.nextNode(); }); }
+
+    template<size_t N>
+    std::array<Node, N> lastElement(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return node.nextTree(); }); }
+
+    template<size_t N>
+    std::array<Node, N> incrementeArray(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return node.nextTree(); }); }
+
+    int offset() const { return 1; }
+  };
+
+  class BackwardPolicy {
+  protected:
+    template<size_t N>
+    std::array<Node, N> firstElement(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return node.nextTree().previousNode(); }); }
+
+    template<size_t N>
+    std::array<Node, N> lastElement(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return Node(); }); }
+
+    template<size_t N>
+    std::array<Node, N> incrementeArray(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return node.previousTree(); }); }
+
+    int offset() const { return -1; }
+  };
+
 
   /* Scanner specialization */
 
-#if 0
-  template <ScanDirection direction, size_t N>
-  static Iterator<direction,Editable::False,const Node,N> ConstEndIterator(std::array<const Node,N> array) {
-    uint8_t nbOfChildren = UINT8_MAX;
-    for (size_t i = 0; i < N; i++) {
-      nbOfChildren = std::min(nbOfChildren, array[i].numberOfChildren());
-    }
-    return Iterator<direction,Editable::False,const Node,N>(
-        std::array<const Node, N>(),
-        nbOfChildren
-      );
-  }
-
-  template <size_t N>
-  class ChildrenScanner<ScanDirection::Forward, Editable::False, const Node, N> {
-  public:
-    Iterator<ScanDirection::Forward,Editable::False,const Node,N>  begin() const {
-      return Iterator<ScanDirection::Forward,Editable::False,const Node,N>(
-          mapAction([](const Node node) { return node.nextNode(); }),
-          0
-        );
-    }
-    Iterator<ScanDirection::Forward,Editable::False,const Node,N> end() const { return ConstEndIterator<ScanDirection::Forward, N>(m_array); }
-  private:
-    std::array<const Node,N> m_array;
-  };
-
-  template <size_t N>
-  class ChildrenScanner<ScanDirection::Backward, Editable::False, const Node, N> {
-  public:
-    Iterator<ScanDirection::Forward,Editable::False,const Node,N>  begin() const {
-      return Iterator<ScanDirection::Forward,Editable::False,const Node,N>(
-          mapAction([](const Node node) { return node.nextTree().previousNode(); }),
-          0
-        );
-    }
-  };
-
-  template <size_t N>
-  class ChildrenScanner<ScanDirection::Forward, Editable::True, EditionReference, N> {
-  public:
-    Iterator<ScanDirection::Forward,Editable::True,EditionReference,N>  begin() const {
-      return Iterator<ScanDirection::Forward,Editable::True,EditionReference,N>(
-          mapAction([](const Node node) { return node.nextNode(); }),
-          0
-        );
-    }
-    Iterator<ScanDirection::Forward,Editable::True,EditionReference,N> end() const {
-      return Iterator<ScanDirection::Forward,Editable::True,EditionReference,N>(
-          mapAction([](const Node node) { return node.nextTree(); }),
-          0
-        );
-    }
-  };
-
-  template <size_t N>
-  class ChildrenScanner<ScanDirection::Backward, Editable::True, EditionReference, N> {
-  public:
-    Iterator<ScanDirection::Backward,Editable::True,EditionReference,N>  begin() const {
-      return Iterator<ScanDirection::Forward,Editable::True,EditionReference,N>(
-          mapAction([](const Node node) { return node; }),
-          0
-        );
-    }
-    Iterator<ScanDirection::Backward,Editable::True,EditionReference,N> end() const {
-      return Iterator<ScanDirection::Forward,Editable::True,EditionReference,N>(
-          std::array<EditionReference, N>(),
-          -1
-        );
-    }
-  };
-#endif
-  template <ScanDirection direction, Editable isEditable, typename T, size_t N>
-  static ChildrenScanner<direction, isEditable, T, N> Children(std::array<T,N> array) { return ChildrenScanner<direction, isEditable, T, N>(array); }
+  template <typename DirectionPolicy, typename EditablePolicy, size_t N>
+  static ChildrenScanner<DirectionPolicy, EditablePolicy, N> Children(std::array<typename EditablePolicy::NodeType, N> array) { return ChildrenScanner<DirectionPolicy, EditablePolicy, N>(array); }
 
   /* Workaround: don't emit the undefined Children<ScanDirection::?, Editable::False, Node, N>
    * but fallback to Children<ScanDirection::?, Editable::False, const Node, N>. */
@@ -250,85 +209,43 @@ public:
   //static ChildrenScanner<direction, Editable::False, const Node> Children(Node node) { return ChildrenScanner<direction, Editable::False, const Node>(node); }
 };
 
-
 class NodeIterator : public MultipleNodesIterator {
 private:
-  template <ScanDirection direction, Editable isEditable, typename T>
+  template <typename DirectionPolicy, typename EditablePolicy>
   class Iterator {
   public:
-    Iterator(MultipleNodesIterator::Iterator<direction, isEditable, T, 1> iterator) : m_iterator(iterator) {}
-    std::pair<T, int> operator*() { return std::pair(std::get<0>(*m_iterator)[0], std::get<1>(*m_iterator)); }
+    Iterator(MultipleNodesIterator::Iterator<DirectionPolicy, EditablePolicy, 1> iterator) : m_iterator(iterator) {}
+    std::pair<typename EditablePolicy::NodeType, int> operator*() { return std::pair(std::get<0>(*m_iterator)[0], std::get<1>(*m_iterator)); }
     bool operator!=(Iterator& it) { return m_iterator != it.m_iterator; }
-    Iterator<direction, isEditable, T> & operator++() {
+    Iterator<DirectionPolicy, EditablePolicy> & operator++() {
       m_iterator.operator++();
       return *this;
     }
   private:
-    MultipleNodesIterator::Iterator<direction, isEditable, T, 1> m_iterator;
+    MultipleNodesIterator::Iterator<DirectionPolicy, EditablePolicy, 1> m_iterator;
   };
+
 public:
-  template <ScanDirection direction, Editable isEditable, typename T>
+  template <typename DirectionPolicy, typename EditablePolicy>
   class ChildrenScanner {
   public:
-    ChildrenScanner(T node) : m_scanner(std::array<T,1>({node})) {}
-    Iterator<direction,isEditable,T> begin() const { return Iterator<direction,isEditable,T>(m_scanner.begin()); }
-    Iterator<direction,isEditable,T>  end() const { return Iterator<direction,isEditable,T>(m_scanner.end()); }
+    typedef typename EditablePolicy::NodeType NodeType;
+    ChildrenScanner(NodeType node) : m_scanner(std::array<NodeType, 1>({node})) {}
+    Iterator<DirectionPolicy, EditablePolicy> begin() const { return Iterator<DirectionPolicy, EditablePolicy>(m_scanner.begin()); }
+    Iterator<DirectionPolicy, EditablePolicy>  end() const { return Iterator<DirectionPolicy, EditablePolicy>(m_scanner.end()); }
 
   protected:
-    MultipleNodesIterator::ChildrenScanner<direction, isEditable, T, 1> m_scanner;
+    MultipleNodesIterator::ChildrenScanner<DirectionPolicy, EditablePolicy, 1> m_scanner;
   };
 
-  template <ScanDirection direction, Editable isEditable, typename T>
-  static ChildrenScanner<direction, isEditable, T> Children(T node) { return ChildrenScanner<direction, isEditable, T>(node); }
+  template <typename DirectionPolicy, typename EditablePolicy>
+  static ChildrenScanner<DirectionPolicy, EditablePolicy> Children(typename EditablePolicy::NodeType node) { return ChildrenScanner<DirectionPolicy, EditablePolicy>(node); }
 };
 
-/* Specializations MultipleNodesIterator::ChildrenScanner */
+typedef MultipleNodesIterator::ForwardPolicy Forward;
+typedef MultipleNodesIterator::BackwardPolicy Backward;
+typedef MultipleNodesIterator::NoEditablePolicy NoEditable;
+typedef MultipleNodesIterator::EditablePolicy Editable;
 
-#if 0
-template <ScanDirection direction, size_t N>
-MultipleNodesIterator::Iterator<direction, Editable::False, const Node, N> MultipleNodesIterator::ChildrenScanner<direction, Editable::False, const Node, N>::end() const {
-  uint8_t nbOfChildren = UINT8_MAX;
-  for (size_t i = 0; i < N; i++) {
-    nbOfChildren = std::min(nbOfChildren, m_array[i].numberOfChildren());
-  }
-  return Iterator<direction ,Editable::False,const Node, N>(
-      std::array<const Node, N>(),
-      nbOfChildren
-    );
-}
-
-template <ScanDirection direction, Editable isEditable, typename T, size_t N>
-MultipleNodesIterator::Iterator<direction,isEditable,T,N> MultipleNodesIterator::ChildrenScanner<direction,isEditable,T,N>::begin() const {
-  return Iterator<direction,isEditable, T,N>(
-      std::array<T, N>(),
-      23
-      );
- }
-
-template <size_t N>
-MultipleNodesIterator::Iterator<ScanDirection::Forward,Editable::False,const Node,N> MultipleNodesIterator::ChildrenScanner<ScanDirection::Backward, Editable::False, const Node, N>::begin() const {
-  return Iterator<ScanDirection::Forward,Editable::False,const Node,N>(
-      mapAction([](const Node node) { return node.nextTree().previousNode(); }),
-      0
-      );
-}
-
-/* Specializations MultipleNodesIterator::Iterator */
-
-template <ScanDirection direction, size_t N>
-std::pair<std::array<const Node,N> MultipleNodesIterator::Iterator<direction, Editable::False, const Node, N>::operator*() { return std::pair(m_array, m_index); }
-
-template <ScanDirection direction, size_t N>
-bool MultipleNodesIterator::Iterator<direction, Editable::False, const Node, N>::operator!=(Iterator<direction, Editable::False, const Node, N>& it) { return (m_index != it.m_index); }
-
-template <ScanDirection direction, size_t N>
-Iterator<direction, Editable::False, const Node, N> & MultipleNodesIterator::Iterator<direction, Editable::False, const Node, N>::operator++() {
-  for (Node & node : m_array) {
-    node = incrNode(node);
-  }
-  m_index++;
-  return *this;
-}
-#endif
 }
 #endif

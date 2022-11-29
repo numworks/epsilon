@@ -20,7 +20,7 @@ EditionReference EditionReference::clone() const {
 }
 
 void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
-  for (std::pair<EditionReference, int> child : NodeIterator::Children<ScanDirection::Forward, Editable::True>(*this)) {
+  for (std::pair<EditionReference, int> child : NodeIterator::Children<Forward, Editable>(*this)) {
     std::get<EditionReference>(child).recursivelyEdit(treeFunction);
   }
   (*treeFunction)(*this);

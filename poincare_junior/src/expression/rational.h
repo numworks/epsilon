@@ -8,10 +8,10 @@ namespace Poincare {
 
 class Rational final {
 public:
-  static IntegerHandler Numerator(const TypeBlock * block);
-  static IntegerHandler Denominator(const TypeBlock * block);
+  static IntegerHandler Numerator(const Node node);
+  static IntegerHandler Denominator(const Node node);
 
-  static EditionReference Addition(Block * b1, Block * b2);
+  static EditionReference Addition(Node n0, Node n1);
 };
 
 }

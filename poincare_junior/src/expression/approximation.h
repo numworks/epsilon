@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_APPROXIMATION_H
 
 #include <cmath>
-#include <poincare_junior/src/memory/type_block.h>
+#include <poincare_junior/src/memory/node.h>
 
 namespace Poincare {
 
@@ -16,7 +16,7 @@ namespace Poincare {
 class Approximation final {
 public:
   template <typename T>
-  static T To(const TypeBlock * block);
+  static T To(const Node node);
 
   template <typename T>
   static T FloatAddition(T a, T b) { return a + b; }
@@ -32,7 +32,7 @@ private:
   template <typename T>
   using Reductor = T (*)(T,T);
   template <typename T>
-  static T MapAndReduce(const TypeBlock * block, Reductor<T> reductor);
+  static T MapAndReduce(const Node node, Reductor<T> reductor);
 };
 
 }

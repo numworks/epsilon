@@ -24,7 +24,7 @@ Expression Expression::CreateBasicReduction(void * expressionAddress) {
   return Expression(
     [](Node tree) {
       EditionReference(tree).recursivelyEdit([](EditionReference reference) {
-          Simplification::BasicReduction(reference.node().block());
+          Simplification::BasicReduction(reference.node());
         });
     },
     expressionAddress);
@@ -35,7 +35,7 @@ float Expression::approximate(float x) const {
   send(
     [](const Node tree, void * res) {
       float * result = static_cast<float *>(res);
-      *result = Approximation::To<float>(tree.block());
+      *result = Approximation::To<float>(tree);
     },
     &res
   );

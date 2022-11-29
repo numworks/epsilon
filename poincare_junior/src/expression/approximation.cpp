@@ -6,31 +6,31 @@
 namespace Poincare {
 
 template<typename T>
-T Approximation::To(const TypeBlock * block) {
-  if (block->isRational()) {
-    return Rational::Numerator(block).to<T>() / Rational::Denominator(block).to<T>();
+T Approximation::To(const Node node) {
+  if (node.block()->isRational()) {
+    return Rational::Numerator(node).to<T>() / Rational::Denominator(node).to<T>();
   }
-  switch (block->type()) {
+  switch (node.type()) {
     case BlockType::Constant:
-      return Constant::To<T>(static_cast<Constant::Type>(static_cast<uint8_t>(*block->next())));
+      return Constant::To<T>(static_cast<Constant::Type>(static_cast<uint8_t>(*(node.block()->next()))));
     case BlockType::Addition:
-      return Approximation::MapAndReduce(block, FloatAddition<T>);
+      return Approximation::MapAndReduce(node, FloatAddition<T>);
     case BlockType::Multiplication:
-      return Approximation::MapAndReduce(block, FloatMultiplication<T>);
+      return Approximation::MapAndReduce(node, FloatMultiplication<T>);
     case BlockType::Division:
-      return Approximation::MapAndReduce(block, FloatDivision<T>);
+      return Approximation::MapAndReduce(node, FloatDivision<T>);
     case BlockType::Subtraction:
-      return Approximation::MapAndReduce(block, FloatSubtraction<T>);
+      return Approximation::MapAndReduce(node, FloatSubtraction<T>);
     default:
       assert(false);
   };
 }
 
 template<typename T>
-T Approximation::MapAndReduce(const TypeBlock * block, Reductor<T> reductor) {
+T Approximation::MapAndReduce(const Node node, Reductor<T> reductor) {
   T res;
-  for (std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(Node(block))) {
-    T app = Approximation::To<T>(std::get<Node>(indexedNode).block());
+  for (std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(node)) {
+    T app = Approximation::To<T>(std::get<Node>(indexedNode));
     if (std::get<int>(indexedNode) == 0) {
       res = app;
     } else {
@@ -42,5 +42,5 @@ T Approximation::MapAndReduce(const TypeBlock * block, Reductor<T> reductor) {
 
 }
 
-template float Poincare::Approximation::To<float>(Poincare::TypeBlock const*);
-template double Poincare::Approximation::To<double>(Poincare::TypeBlock const*);
+template float Poincare::Approximation::To<float>(const Poincare::Node);
+template double Poincare::Approximation::To<double>(const Poincare::Node);

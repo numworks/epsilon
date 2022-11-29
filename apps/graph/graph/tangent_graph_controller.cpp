@@ -67,17 +67,15 @@ void TangentGraphController::reloadBannerView() {
     return;
   }
   FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(m_cursor, m_record, Shared::FunctionApp::app()->functionStore(), AppsContainerHelper::sharedAppsContainerGlobalContext());
-  double coefficientA = GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
+
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
-
   int precision = numberOfSignificantDigits();
-  ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(m_record);
-  assert(function->canDisplayDerivative());
+
+  double coefficientA = GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record);
   Poincare::Print::CustomPrintf(buffer, bufferSize, "a=%*.*ed", coefficientA, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
   m_bannerView->aView()->setText(buffer);
 
-  assert(function->properties().isCartesian());
   double coefficientB = -coefficientA * m_cursor->x() + m_cursor->y();
   Poincare::Print::CustomPrintf(buffer, bufferSize, "b=%*.*ed", coefficientB, Poincare::Preferences::sharedPreferences()->displayMode(), precision);
   m_bannerView->bView()->setText(buffer);

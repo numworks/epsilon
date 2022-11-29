@@ -319,7 +319,7 @@ void AppsContainer::reloadTitleBarView() {
 }
 
 void AppsContainer::displayExamModePopUp(Poincare::Preferences::ExamMode mode, Poincare::Preferences::PressToTestParams pressToTestParams) {
-  assert(pressToTestParams.m_value == Poincare::Preferences::k_inactivePressToTest.m_value || mode == Poincare::Preferences::ExamMode::PressToTest);
+  assert(pressToTestParams == Poincare::Preferences::k_inactivePressToTest || mode == Poincare::Preferences::ExamMode::PressToTest);
   m_examPopUpController.setTargetExamMode(mode);
   m_examPopUpController.setTargetPressToTestParams(pressToTestParams);
   m_examPopUpController.presentModally();

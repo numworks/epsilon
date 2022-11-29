@@ -84,6 +84,9 @@ public:
   /* Params are false if the feature is activated (allowed) and true if
    * forbidden. */
   union PressToTestParams {
+    bool operator==(PressToTestParams other) {
+      return m_value == other.m_value;
+    }
     uint16_t m_value;
     /* Warning: The order of allocation of bit-fields within a unit (high-order
      * to low-order or low-order to high-order) is implementation-defined. The

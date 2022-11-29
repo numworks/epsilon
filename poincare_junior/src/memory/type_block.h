@@ -37,10 +37,14 @@ enum class BlockType : uint8_t {
   Float,
   NumberOfNumbersExpression,
 
-  Addition = NumberOfNumbersExpression,
+  Constant = NumberOfNumbersExpression,
+  Addition,
   Multiplication,
   Power,
-  Constant,
+  Factorial,
+  UserSymbol,
+  UserFunction,
+  UserSequence,
 // Expression
   Subtraction,
   Division,
@@ -90,6 +94,9 @@ public:
   constexpr BlockType type() const {
     return static_cast<BlockType>(m_content);
   }
+
+  constexpr bool isExpression() const { return m_content < static_cast<uint8_t>(BlockType::NumberOfExpressions); }
+
   constexpr bool isOfType(std::initializer_list<BlockType> types) const {
     BlockType thisType = type();
     for (BlockType t : types) {
@@ -103,7 +110,7 @@ public:
   constexpr bool isInteger() const { return isOfType({BlockType::Zero, BlockType::One, BlockType::Two, BlockType::Half, BlockType::MinusOne, BlockType::IntegerShort, BlockType::IntegerPosBig, BlockType::IntegerNegBig}); }
   constexpr bool isRational() const { return isOfType({BlockType::RationalShort, BlockType::RationalPosBig, BlockType::RationalNegBig}) || isInteger(); }
   constexpr bool isNumber() const { return isOfType({BlockType::Float}) || isRational(); }
-  constexpr bool isExpression() const { return m_content < static_cast<uint8_t>(BlockType::NumberOfExpressions); }
+  constexpr bool isUserNamed() const { return isOfType({BlockType::UserFunction, BlockType::UserSequence, BlockType::UserSymbol}); }
 
   constexpr static size_t NumberOfMetaBlocks(BlockType type) {
     switch (type) {

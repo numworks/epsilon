@@ -113,18 +113,32 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
   return Range2D(*(computeX ? newRange : originalRange).x(), *(computeY ? newRange : originalRange).y());
 }
 
-void GraphController::rangeHasBeenUpdated() {
-  setInterestRangeForRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
-}
-
 PointsOfInterestCache * GraphController::pointsOfInterestForRecord(Ion::Storage::Record record) {
+  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
+  PointsOfInterestCache * cache = nullptr;
   for (int i = 0; i < m_pointsOfInterest.length(); i++) {
-    if (m_pointsOfInterest.elementAtIndex(i)->currentRecord() == record) {
-      return m_pointsOfInterest.elementAtIndex(i);
+    if (m_pointsOfInterest.elementAtIndex(i)->record() == record) {
+      cache = m_pointsOfInterest.elementAtIndex(i);
+      break;
     }
   }
-  // No cache was set with this record
-  return nullptr;
+
+  if (!cache) {
+    PointsOfInterestCache newCache(record);
+    m_pointsOfInterest.push(newCache);
+    cache = m_pointsOfInterest.elementAtIndex(m_pointsOfInterest.length() - 1);
+  }
+
+  // Set bounds of cache
+  if (f->isAlongY()) {
+    cache->setBounds(m_graphRange->yMin(), m_graphRange->yMax());
+  } else {
+    float tMin = f->tMin();
+    float tMax = f->tMax();
+    cache->setBounds(std::clamp(m_graphRange->xMin(), tMin, tMax), std::clamp(m_graphRange->xMax(), tMin, tMax));
+  }
+
+  return cache;
 }
 
 Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(int j) const {
@@ -144,9 +158,8 @@ void GraphController::selectFunctionWithCursor(int functionIndex, bool willBeVis
   m_cursorView.setColor(f->color());
   m_view.selectRecord(record);
 
-  // Compute points of interest
+  // Reload for points of interest
   if (willBeVisible) {
-    setInterestRangeForRecord(record);
     m_view.reload(false, true);
   }
 }
@@ -293,25 +306,6 @@ void GraphController::moveCursorAndCenterIfNeeded(double t) {
   if (snapToInterestAndUpdateBannerAndCursor(m_cursor, std::nextafter(m_cursor->t(), -static_cast<double>(INFINITY)), std::nextafter(m_cursor->t(), static_cast<double>(INFINITY)))) {
     reloadBannerView();
   }
-}
-
-void GraphController::setInterestRangeForRecord(Ion::Storage::Record record) {
-  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
-  PointsOfInterestCache * cache = pointsOfInterestForRecord(record);
-  if (!cache) {
-    PointsOfInterestCache newCache;
-    newCache.setRecord(record);
-    m_pointsOfInterest.push(newCache);
-    cache = m_pointsOfInterest.elementAtIndex(m_pointsOfInterest.length() - 1);
-  }
-  if (f->isAlongY()) {
-    cache->setBounds(m_graphRange->yMin(), m_graphRange->yMax());
-  } else {
-    float tMin = f->tMin();
-    float tMax = f->tMax();
-    cache->setBounds(std::clamp(m_graphRange->xMin(), tMin, tMax), std::clamp(m_graphRange->xMax(), tMin, tMax));
-  }
-  m_interestView.dirty();
 }
 
 }

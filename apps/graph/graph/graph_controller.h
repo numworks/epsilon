@@ -24,7 +24,6 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   Poincare::Range2D optimalRange(bool computeX, bool computeY, Poincare::Range2D originalRange) const override;
-  void rangeHasBeenUpdated() override;
 
   bool displayDerivativeInBanner() const;
   PointsOfInterestCache * pointsOfInterestForRecord(Ion::Storage::Record record);
@@ -71,7 +70,6 @@ private:
 
   bool defaultRangeIsNormalized() const { return functionStore()->displaysFunctionsToNormalize(); }
   void interestingFunctionRange(Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin, float tMax, float step, float * xm, float * xM, float * ym, float * yM) const;
-  void setInterestRangeForRecord(Ion::Storage::Record record);
 
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;

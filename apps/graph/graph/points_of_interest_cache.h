@@ -9,14 +9,14 @@ namespace Graph {
 
 class PointsOfInterestCache {
 public:
-  PointsOfInterestCache() : m_start(NAN), m_end(NAN) {}
+  PointsOfInterestCache(Ion::Storage::Record record) : m_record(record), m_start(NAN), m_end(NAN) {}
+  PointsOfInterestCache() : PointsOfInterestCache(Ion::Storage::Record()) {}
 
   Poincare::List list() { return m_list.list(); }
-  void setRecord(Ion::Storage::Record record) { m_record = record; }
-  Ion::Storage::Record currentRecord() const { return m_record; }
+  Ion::Storage::Record record() const { return m_record; }
   PointsOfInterestCache clone() const;
 
-  Poincare::Range1D setBounds(float start, float end);
+  void setBounds(float start, float end);
   void computeNextStep();
   bool isFullyComputed() const { return m_start == m_computedStart && m_end == m_computedEnd; }
 
@@ -35,7 +35,6 @@ private:
   void append(double x, double y, Poincare::Solver<double>::Interest, uint32_t data = 0);
 
   Ion::Storage::Record m_record;
-  Ion::Storage::Record m_computedRecord;
   uint32_t m_checksum;
   float m_start;
   float m_end;

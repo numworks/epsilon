@@ -43,20 +43,21 @@ Range1D PointsOfInterestCache::setBounds(float start, float end) {
   return Range1D(0.0, 1.0);
 }
 
-Poincare::PointOfInterest PointsOfInterestCache::computePointAtIndex(int i) {
-  while (i >= m_list.numberOfPoints() && m_computedEnd < m_end) {
+void PointsOfInterestCache::computeNextStep() {
+  if (m_computedEnd < m_end) {
     computeBetween(m_computedEnd, std::clamp(m_computedEnd + step(), m_start, m_end));
+    return;
   }
-  while (i >= m_list.numberOfPoints() && m_computedStart > m_start) {
+  if (m_computedStart > m_start) {
     computeBetween(std::clamp(m_computedStart - step(), m_start, m_end), m_computedStart);
+    return;
   }
-  return i < m_list.numberOfPoints() ? m_list.pointAtIndex(i) : PointOfInterest();
 }
 
 PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, double end, Solver<double>::Interest interest) {
   assert(start != end);
   m_list.sort();
-  int n = m_list.numberOfPoints();
+  int n = numberOfPoints();
   int direction = start > end ? -1 : 1;
   int firstIndex = 0;
   int lastIndex = n - 1;
@@ -64,7 +65,7 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, doubl
     std::swap(firstIndex, lastIndex);
   }
   for (int i = firstIndex; direction * i <= direction * lastIndex; i += direction) {
-    PointOfInterest p = m_list.pointAtIndex(i);
+    PointOfInterest p = pointAtIndex(i);
     if (direction * p.x() <= direction * start) {
       continue;
     }
@@ -80,9 +81,9 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, doubl
 
 PointOfInterest PointsOfInterestCache::pointOfInterestAtAbscissa(double x) {
   m_list.sort();
-  int n = m_list.numberOfPoints();
+  int n = numberOfPoints();
   for (int i = 0; i < n; i++) {
-    PointOfInterest p = m_list.pointAtIndex(i);
+    PointOfInterest p = pointAtIndex(i);
     if (p.x() == x) {
       return p;
     }
@@ -97,8 +98,8 @@ PointOfInterest PointsOfInterestCache::pointOfInterestAtAbscissa(double x) {
 void PointsOfInterestCache::stripOutOfBounds() {
   assert(!m_list.isUninitialized());
 
-  for (int i = m_list.numberOfPoints() - 1; i >= 0; i--) {
-    float x = static_cast<float>(m_list.pointAtIndex(i).x());
+  for (int i = numberOfPoints() - 1; i >= 0; i--) {
+    float x = static_cast<float>(pointAtIndex(i).x());
     if (x < m_start || m_end < x) {
       m_list.list().removeChildAtIndexInPlace(i);
     }

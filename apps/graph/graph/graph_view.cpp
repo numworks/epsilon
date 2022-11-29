@@ -25,7 +25,7 @@ void GraphView::reload(bool resetInterrupted, bool force) {
 }
 
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
-  m_interestView->resetNumberOfDrawnDots();
+  m_interestView->resetPointIndex();
   FunctionGraphView::drawRect(ctx, rect);
 }
 

@@ -290,42 +290,40 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
    * normalized. */
   setZoomNormalize(false);
 
-  if (!(m_delegate && (computeX || computeY))) {
-    return;
-  }
+  if (m_delegate && (computeX || computeY)) {
+    Poincare::UserCircuitBreakerCheckpoint checkpoint;
+    if (CircuitBreakerRun(checkpoint)) {
+      Range2D newRange = computeX || computeY ? m_delegate->optimalRange(computeX, computeY, memoizedRange()) : Range2D();
 
-  Poincare::UserCircuitBreakerCheckpoint checkpoint;
-  if (CircuitBreakerRun(checkpoint)) {
-    Range2D newRange = computeX || computeY ? m_delegate->optimalRange(computeX, computeY, memoizedRange()) : Range2D();
+      if (computeX) {
+        protectedSetX(*newRange.x(), k_maxFloat);
+      }
+      /* We notify the delegate to refresh the cursor's position and update the
+       * bottom margin (which depends on the banner height). */
+      m_delegate->updateBottomMargin();
 
-    if (computeX) {
+      Range2D newRangeWithMargins = m_delegate->addMargins(newRange);
+      newRangeWithMargins = Range2D(
+          computeX ? *newRangeWithMargins.x() : Range1D(xMin(), xMax()),
+          computeY ? *newRangeWithMargins.y() : Range1D(yMin(), yMax()));
+      if (newRange.ratioIs(NormalYXRatio())) {
+        newRangeWithMargins.setRatio(NormalYXRatio(), false);
+        assert(newRangeWithMargins.ratioIs(NormalYXRatio()));
+      }
+
+      if (computeX) {
+        protectedSetX(*newRangeWithMargins.x(), k_maxFloat);
+      }
+      if (computeY) {
+        protectedSetY(*newRangeWithMargins.y(), k_maxFloat);
+      }
+
+    } else {
+      m_delegate->tidyModels();
+      Range2D newRange = Zoom::DefaultRange(NormalYXRatio(), k_maxFloat);
       protectedSetX(*newRange.x(), k_maxFloat);
+      protectedSetY(*newRange.y(), k_maxFloat);
     }
-    /* We notify the delegate to refresh the cursor's position and update the
-     * bottom margin (which depends on the banner height). */
-    m_delegate->updateBottomMargin();
-
-    Range2D newRangeWithMargins = m_delegate->addMargins(newRange);
-    newRangeWithMargins = Range2D(
-        computeX ? *newRangeWithMargins.x() : Range1D(xMin(), xMax()),
-        computeY ? *newRangeWithMargins.y() : Range1D(yMin(), yMax()));
-    if (newRange.ratioIs(NormalYXRatio())) {
-      newRangeWithMargins.setRatio(NormalYXRatio(), false);
-      assert(newRangeWithMargins.ratioIs(NormalYXRatio()));
-    }
-
-    if (computeX) {
-      protectedSetX(*newRangeWithMargins.x(), k_maxFloat);
-    }
-    if (computeY) {
-      protectedSetY(*newRangeWithMargins.y(), k_maxFloat);
-    }
-
-  } else {
-    m_delegate->tidyModels();
-    Range2D newRange = Zoom::DefaultRange(NormalYXRatio(), k_maxFloat);
-    protectedSetX(*newRange.x(), k_maxFloat);
-    protectedSetY(*newRange.y(), k_maxFloat);
   }
 
   setZoomNormalize(isOrthonormal());

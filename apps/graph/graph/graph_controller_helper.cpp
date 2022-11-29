@@ -136,16 +136,15 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
 }
 
 double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record) {
-
+  ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
   double derivative = 0.0;
+
   // Force derivative to 0 if cursor is at an extremum
   PointOfInterest pointOfInterest = App::app()->graphController()->pointsOfInterest()->pointOfInterestAtAbscissa(cursor->x());
   if (pointOfInterest.isUninitialized() || (pointOfInterest.interest() != Solver<double>::Interest::LocalMaximum && pointOfInterest.interest() != Solver<double>::Interest::LocalMinimum)) {
-    ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
     derivative = function->approximateDerivative(cursor->x(), App::app()->localContext());
   }
 
-  ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
   int numberOfChar = function->derivativeNameWithArgument(buffer, bufferSize);

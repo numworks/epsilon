@@ -23,9 +23,10 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
   AbstractPlotView::Axis axis = f->isAlongY() ? AbstractPlotView::Axis::Vertical : AbstractPlotView::Axis::Horizontal;
   PointsOfInterestCache * pointsOfInterestCache = App::app()->graphController()->pointsOfInterestForRecord(m_parentView->selectedRecord());
   PointOfInterest p;
+  int i = 0;
   do {
     // Compute more points of interest if necessary
-    while (m_nextPointIndex >= pointsOfInterestCache->numberOfPoints() && !pointsOfInterestCache->isFullyComputed()) {
+    while (i >= pointsOfInterestCache->numberOfPoints() && !pointsOfInterestCache->isFullyComputed()) {
       /* Use a checkpoint each time a step is computed so that plot can be
        * navigated in parallel of computation. */
       UserCircuitBreakerCheckpoint checkpoint;
@@ -40,12 +41,16 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
       *pointsOfInterestCache = pointsOfInterestCacheClone;
     }
 
-    if (m_nextPointIndex >= pointsOfInterestCache->numberOfPoints()) {
+    if (i >= pointsOfInterestCache->numberOfPoints()) {
       return;
     }
 
-    p = pointsOfInterestCache->pointAtIndex(m_nextPointIndex);
-    m_nextPointIndex++;
+    p = pointsOfInterestCache->pointAtIndex(i);
+    bool wasAlreadyDrawn = i < m_nextPointIndex;
+    i++;
+    if (!wasAlreadyDrawn) {
+      m_nextPointIndex = i;
+    }
 
     if (m_interest != Poincare::Solver<double>::Interest::None && m_interest != p.interest()) {
       continue;
@@ -53,10 +58,15 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
 
     // Draw the dot
     Coordinate2D<float> dotCoordinates = axis == AbstractPlotView::Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
+    KDRect dotRect = m_parentView->dotRect(k_dotsSize, dotCoordinates);
+    // If the dot interescts the parent dirty rect, force the redraw
+    if (!dotRect.intersects(m_parentView->dirtyRect()) && wasAlreadyDrawn) {
+      continue;
+    }
     // If the dot is below the cursor, erase the cursor and redraw it
     MemoizedCursorView * cursor = static_cast<MemoizedCursorView *>(m_parentView->cursorView());
     KDRect cursorFrame = cursor->frame();
-    bool redrawCursor = cursorFrame.intersects(m_parentView->dotRect(k_dotsSize, dotCoordinates));
+    bool redrawCursor = cursorFrame.intersects(dotRect);
     if (redrawCursor) {
       // Erase cursor and make rect dirty
       cursor->setCursorFrame(cursorFrame, true);

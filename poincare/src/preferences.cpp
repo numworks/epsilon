@@ -44,24 +44,24 @@ void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {
   if (m_examMode == ExamMode::Unknown) {
     Ion::PersistingBytes::PersistingBytesInt pb = Ion::PersistingBytes::read();
     static_assert(sizeof(pb) == sizeof(uint16_t), "Exam mode encoding on persisting bytes has changed.");
-    uint8_t params = pb & 0xFF;
-    uint8_t mode = pb >> 8;
-    assert(mode >= static_cast<uint8_t>(ExamMode::Off) && mode < static_cast<uint8_t>(ExamMode::Undefined));
+    PressToTestParams params = {.m_value = pb};
+    ExamMode mode = params.m_examMode;
+    assert(static_cast<uint8_t>(mode) >= static_cast<uint8_t>(ExamMode::Off) && static_cast<uint8_t>(mode) < static_cast<uint8_t>(ExamMode::Undefined));
 
-    if (mode == static_cast<uint8_t>(ExamMode::Unknown)) {
+    if (mode == ExamMode::Unknown) {
       /* PersistingBytes are invalid, most likely because of a botched update
        * with a version that supports a different exam mode encoding. */
       m_examMode = ExamMode::Off;
       m_pressToTestParams = k_inactivePressToTest;
     } else {
-      m_examMode = static_cast<ExamMode>(mode);
-      m_pressToTestParams = PressToTestParams({params});
+      m_examMode = mode;
+      m_pressToTestParams = params;
     }
     assert(m_examMode != ExamMode::Unknown
         && m_examMode != ExamMode::Undefined
-        && (m_examMode == ExamMode::PressToTest || params == k_inactivePressToTest.m_value));
+        && (m_examMode == ExamMode::PressToTest || params.m_value == k_inactivePressToTest.m_value));
   } else {
-    assert((m_pressToTestParams.m_value | (static_cast<uint8_t>(m_examMode) << 8)) == Ion::PersistingBytes::read());
+    assert(m_pressToTestParams.m_value == Ion::PersistingBytes::read());
   }
 }
 
@@ -77,15 +77,21 @@ Preferences::PressToTestParams Preferences::pressToTestParams() const {
 
 void Preferences::setExamMode(ExamMode mode, PressToTestParams newPressToTestParams) {
   assert(mode != ExamMode::Unknown && mode < ExamMode::Undefined);
-  assert(mode == ExamMode::PressToTest || newPressToTestParams.m_value == k_inactivePressToTest.m_value);
+  // assert(mode == ExamMode::PressToTest || newPressToTestParams.m_value == k_inactivePressToTest.m_value);
   ExamMode currentMode = examMode();
   PressToTestParams currentPressToTestParams = pressToTestParams();
   if (currentMode == mode && currentPressToTestParams.m_value == newPressToTestParams.m_value) {
     return;
   }
-  Ion::PersistingBytes::write(newPressToTestParams.m_value | (static_cast<uint8_t>(mode) << 8));
+  newPressToTestParams.m_examMode = mode;
+  Ion::PersistingBytes::write(newPressToTestParams.m_value);
   m_examMode = mode;
   m_pressToTestParams = newPressToTestParams;
+}
+
+bool Preferences::elementsAppIsForbidden() const {
+  assert(examMode() == ExamMode::PressToTest || !pressToTestParams().m_elementsAppIsForbidden);
+  return pressToTestParams().m_elementsAppIsForbidden;
 }
 
 bool Preferences::equationSolverIsForbidden() const {

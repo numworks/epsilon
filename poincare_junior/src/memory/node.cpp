@@ -249,3 +249,4 @@ template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Power>();
 template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Subtraction>();
 template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Division>();
 template Poincare::Node Poincare::Node::Push<Poincare::BlockType::IntegerShort, int>(int);
+template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Float, float>(float);

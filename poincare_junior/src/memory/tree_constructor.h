@@ -74,6 +74,12 @@ constexpr Tree<3> operator "" _n(unsigned long long value) {
   return tree;
 }
 
+constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> operator "" _fn(long double value) {
+  Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Float)> tree;
+  CreateNode<BlockType::Float>(&tree, static_cast<float>(value));
+  return tree;
+}
+
 }
 
 #endif

@@ -2,6 +2,7 @@
 #define POINCARE_MEMORY_NODE_CONSTRUCTOR_H
 
 #include <poincare_junior/src/expression/constant.h>
+#include <utils/bit.h>
 #include "value_block.h"
 
 namespace Poincare {
@@ -43,6 +44,11 @@ private:
   }
 
   template <>
+  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::Float>(Block * block, size_t blockIndex, float value) {
+    return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, BlockType::Float, SubFloatAtIndex(value, 0), SubFloatAtIndex(value, 1), SubFloatAtIndex(value, 2), SubFloatAtIndex(value, 3));
+  }
+
+  template <>
   constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::IntegerPosBig>(Block * block, size_t blockIndex, unsigned int value) {
     return CreateIntegerBlockAtIndexForType(block, blockIndex, BlockType::IntegerPosBig, value);
   }
@@ -63,9 +69,17 @@ private:
 
   // TODO move
   constexpr static uint8_t DigitAtIndex(unsigned int value, int index) {
-    int maskOffset = index * 8;
-    assert(maskOffset <= sizeof(int)/sizeof(uint8_t) * 8);
-    return value & (0xFF << maskOffset);
+    return Bit::getByteAtIndex(value, index);
+  }
+
+  // TODO move?
+  union FloatMemory {
+    float m_float;
+    uint32_t m_int;
+  };
+  constexpr static uint8_t SubFloatAtIndex(float value, int index) {
+    FloatMemory f = {.m_float = value};
+    return Bit::getByteAtIndex(f.m_int, index);
   }
 
   constexpr static bool CreateIntegerBlockAtIndexForType(Block * block, size_t blockIndex, BlockType type, unsigned int value) {

@@ -116,7 +116,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
 PointsOfInterestCache * GraphController::pointsOfInterestForRecord(Ion::Storage::Record record) {
   ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
   PointsOfInterestCache * cache = nullptr;
-  for (int i = 0; i < m_pointsOfInterest.length(); i++) {
+  for (int i = 0; i < static_cast<int>(m_pointsOfInterest.length()); i++) {
     if (m_pointsOfInterest.elementAtIndex(i)->record() == record) {
       cache = m_pointsOfInterest.elementAtIndex(i);
       break;

@@ -15,7 +15,7 @@ namespace Shared {
 
 class ColumnParameterController;
 
-class EditableCellTableViewController : public TabTableController , public Escher::TableViewDataSource, public TextFieldDelegate, public ClearColumnHelper, public PrefaceTableViewDelegate {
+class EditableCellTableViewController : public TabTableController , public Escher::TableViewDataSource, public TextFieldDelegate, public ClearColumnHelper, public PrefacedTableViewDelegate {
 public:
   EditableCellTableViewController(Responder * parentResponder);
   bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
@@ -32,7 +32,7 @@ public:
 
   virtual int numberOfRowsAtColumn(int i) const = 0;
 
-  // PrefaceTableViewDelegate
+  // PrefacedTableViewDelegate
   KDCoordinate maxPrefaceHeight() const override { return 3 * k_cellHeight; }
 
 protected:

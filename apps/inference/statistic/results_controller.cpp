@@ -45,7 +45,12 @@ ViewController::TitlesDisplay ResultsController::titlesDisplay() {
 const char * ResultsController::title() {
   m_titleBuffer[0] = 0;
   StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(parentResponder());
-  m_statistic->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer), stackViewControllerResponder->topViewController() != this);
+  bool resultsIsTopPage = stackViewControllerResponder->topViewController() != this;
+  if (resultsIsTopPage && m_statistic->subApp() == Statistic::SubApp::Interval) {
+    m_intervalGraphController->interval()->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer), resultsIsTopPage);
+  } else {
+    m_statistic->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer), resultsIsTopPage);
+  }
   if (m_titleBuffer[0] == 0) {
     return nullptr;
   }

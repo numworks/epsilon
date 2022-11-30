@@ -6,7 +6,6 @@
 #include "expression_function_title_cell.h"
 #include "interval.h"
 #include "interval_parameter_controller.h"
-#include "prefaced_table_view.h"
 #include "values_parameter_controller.h"
 #include <apps/i18n.h>
 #include <escher/alternate_empty_view_delegate.h>

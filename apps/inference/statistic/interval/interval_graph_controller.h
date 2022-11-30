@@ -15,7 +15,7 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override;
   const char * title() override;
   Escher::View * view() override { return &m_graphView; }
-  void didBecomeFirstResponder() override;
+  void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   Interval * interval() { return m_intervalBuffer.interval(); }
   void resetSelectedInterval();

@@ -21,7 +21,7 @@ const char * IntervalGraphController::title() {
   return m_titleBuffer;
 }
 
-void IntervalGraphController::didBecomeFirstResponder() {
+void IntervalGraphController::viewWillAppear() {
   m_originalInterval->computeCurveViewRange();
   // Copy the interval into a local buffer
   memcpy((void*)&m_intervalBuffer, (void*)m_originalInterval, sizeof(IntervalBuffer));

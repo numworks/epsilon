@@ -17,14 +17,8 @@ using namespace Poincare;
 namespace Shared {
 
 EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder) :
-  TabTableController(parentResponder),
-  m_prefacedView(0, this, &m_selectableTableView, this, nullptr, this),
-  m_selectableTableView(this, this, this, this, &m_prefacedView)
-{
-  m_prefacedView.setBackgroundColor(Palette::WallScreenDark);
-  m_prefacedView.setCellOverlap(0, 0);
-  m_prefacedView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-}
+  TabTableController(parentResponder)
+{}
 
 bool EditableCellTableViewController::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {
   return TextFieldDelegate::textFieldShouldFinishEditing(textField, event)

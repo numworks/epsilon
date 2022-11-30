@@ -23,12 +23,48 @@
 
 namespace Inference {
 
-// Buffers for dynamic allocation
+/* Buffers for dynamic allocation
+ * The union is divided in two since intervals are currently much smaller than
+ * the HomogeneityTest. */
+
+union IntervalBuffer {
+  IntervalBuffer() {
+    new (&m_oneMeanTInterval) OneMeanTInterval();
+    interval()->initParameters();
+  }
+  ~IntervalBuffer() { interval()->~Interval(); }
+  // Rule of 5
+  IntervalBuffer(const IntervalBuffer& other) = delete;
+  IntervalBuffer(IntervalBuffer&& other) = delete;
+  IntervalBuffer& operator=(const IntervalBuffer& other) = delete;
+  IntervalBuffer& operator=(IntervalBuffer&& other) = delete;
+
+  Interval * interval() { return reinterpret_cast<Interval *>(this); }
+  OneMeanTInterval m_oneMeanTInterval;
+  OneMeanZInterval m_oneMeanZInterval;
+  OneProportionZInterval m_oneProportionZInterval;
+  PooledTwoMeansTInterval m_pooledTwoMeansTInterval;
+  TwoMeansTInterval m_twoMeansTInterval;
+  TwoMeansZInterval m_twoMeansZInterval;
+  TwoProportionsZInterval m_twoProportionsZInterval;
+};
+
+union TestBuffer {
+  OneMeanTTest m_oneMeanTTest;
+  OneMeanZTest m_oneMeanZTest;
+  OneProportionZTest m_oneProportionZTest;
+  PooledTwoMeansTTest m_pooledTwoMeansTTest;
+  TwoMeansTTest m_twoMeansTTest;
+  TwoMeansZTest m_twoMeansZTest;
+  TwoProportionsZTest m_twoProportionsZTest;
+  GoodnessTest m_goodnessTest;
+  HomogeneityTest m_homogeneityTest;
+};
 
 union StatisticBuffer {
 public:
   StatisticBuffer() {
-    new (&m_oneMeanTInterval) OneMeanTInterval();
+    new (&m_intervalBuffer.m_oneMeanTInterval) OneMeanTInterval();
     statistic()->initParameters();
   }
   ~StatisticBuffer() { statistic()->~Statistic(); }
@@ -40,22 +76,8 @@ public:
 
   Statistic * statistic() { return reinterpret_cast<Statistic *>(this); }
 private:
-  OneMeanTInterval m_oneMeanTInterval;
-  OneMeanTTest m_oneMeanTTest;
-  OneMeanZInterval m_oneMeanZInterval;
-  OneMeanZTest m_oneMeanZTest;
-  OneProportionZInterval m_oneProportionZInterval;
-  OneProportionZTest m_oneProportionZTest;
-  PooledTwoMeansTInterval m_pooledTwoMeansTInterval;
-  PooledTwoMeansTTest m_pooledTwoMeansTTest;
-  TwoMeansTInterval m_twoMeansTInterval;
-  TwoMeansTTest m_twoMeansTTest;
-  TwoMeansZInterval m_twoMeansZInterval;
-  TwoMeansZTest m_twoMeansZTest;
-  TwoProportionsZInterval m_twoProportionsZInterval;
-  TwoProportionsZTest m_twoProportionsZTest;
-  GoodnessTest m_goodnessTest;
-  HomogeneityTest m_homogeneityTest;
+  IntervalBuffer m_intervalBuffer;
+  TestBuffer m_testBuffer;
 };
 
 }  // namespace Inference

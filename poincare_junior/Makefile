@@ -32,6 +32,7 @@ poincare_junior_src += $(addprefix poincare_junior/test/,\
   constexpr.o \
   edition_pool_overflow.o \
   elementary_tree_manipulations.o \
+  expression_simplification.o \
   graph.o \
   main.o \
   node_iterator.o \

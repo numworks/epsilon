@@ -37,7 +37,7 @@ protected:
     virtual Node nodeForIdentifier(uint16_t id) const;
     virtual bool reset();
   protected:
-    uint16_t m_nodeForIdentifierOffset[Pool::k_maxNumberOfReferences];
+    uint16_t m_nodeOffsetForIdentifier[Pool::k_maxNumberOfReferences];
     uint16_t m_length;
     Pool * m_pool;
   };

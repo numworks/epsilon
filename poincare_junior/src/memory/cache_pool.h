@@ -36,8 +36,8 @@ private:
   /* The identifiers are taken from 0 to 2^16 - 2 (0xFFFF being reserved for
    * NoNodeIdentifier).
    * The implementation of the reference table ensures that:
-   * - the order of identifiers respects the order of the trees
-   * - the oldest trees have smallest identifiers
+   * - the order of identifiers (% k_maxIdentifier) respects the order of the trees
+   * - the oldest trees have smallest identifiers % k_maxIdentifier
    * - the identifiers are allocated on a ring buffer from 0 to 2^16 - 2
    *   (0xFFFF being reserved for NoNodeIdentifier). We keep at maximum
    *   k_maxNumberOfBlocks identifers.

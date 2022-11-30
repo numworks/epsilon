@@ -42,7 +42,7 @@ Block * CachePool::ReferenceTable::freeOldestBlocks(int numberOfRequiredFreeBloc
   }
   removeFirstReferences(newFirstIndex);
   for (int i = 0; i < m_length; i++) {
-    m_nodeForIdentifierOffset[i] -= numberOfFreedBlocks;
+    m_nodeOffsetForIdentifier[i] -= numberOfFreedBlocks;
   }
   return Pool::ReferenceTable::nodeForIdentifier(0).block();
 }
@@ -57,7 +57,7 @@ bool CachePool::ReferenceTable::reset() {
 }
 
 void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex) {
-  memmove(&m_nodeForIdentifierOffset[0], &m_nodeForIdentifierOffset[newFirstIndex], sizeof(uint16_t) * (m_length - newFirstIndex));
+  memmove(&m_nodeOffsetForIdentifier[0], &m_nodeOffsetForIdentifier[newFirstIndex], sizeof(uint16_t) * (m_length - newFirstIndex));
   m_length -= newFirstIndex;
 }
 

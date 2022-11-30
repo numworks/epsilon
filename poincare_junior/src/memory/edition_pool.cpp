@@ -25,7 +25,7 @@ void EditionPool::reinit(TypeBlock * firstBlock, size_t size) {
 void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function, Block * contextSelection1, Block * contextSelection2, int contextAlteration) {
   Block * first = static_cast<Block *>(m_pool->firstBlock());
   for (int i = 0; i < m_length; i++) {
-    function(&m_nodeForIdentifierOffset[i], m_nodeForIdentifierOffset[i] + first, contextSelection1, contextSelection2, contextAlteration);
+    function(&m_nodeOffsetForIdentifier[i], m_nodeOffsetForIdentifier[i] + first, contextSelection1, contextSelection2, contextAlteration);
   }
 }
 

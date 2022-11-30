@@ -150,6 +150,11 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
     solver.stretch();
     Coordinate2D<double> solution;
     while (std::isfinite((solution = (solver.*next)(e)).x1())) { // assignment in condition
+      /* Ensure that the solution is in [start, end), even if the interval was
+       * stretched. */
+      if (!solution.x1IsIn(start, end, true, false)) {
+        continue;
+      }
       append(solution.x1(), solution.x2(), solver.lastInterest());
     }
   }
@@ -175,10 +180,14 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
     Coordinate2D<double> intersection;
     while (std::isfinite((intersection = solver.nextIntersection(e, e2, &diff)).x1())) { // assignment in condition
       assert(sizeof(record) == sizeof(uint32_t));
+      /* Ensure that the intersection is in [start, end), even if the interval
+       * was stretched. */
+      if (!intersection.x1IsIn(start, end, true, false)) {
+        continue;
+      }
       append(intersection.x1(), intersection.x2(), Solver<double>::Interest::Intersection,  *reinterpret_cast<uint32_t *>(&record));
     }
   }
-
 }
 
 void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest,uint32_t data) {

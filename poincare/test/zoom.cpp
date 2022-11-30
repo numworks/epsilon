@@ -103,6 +103,7 @@ QUIZ_CASE(poincare_zoom_fit_points_of_interest) {
   // FIXME assert_points_of_interest_range_is("x^x", Range2D());
   assert_points_of_interest_range_is("root(x^3+1,3)-x", Range2D(-1.733, 1.478, 0.119, 1.587));
   assert_points_of_interest_range_is("sum((((-1)^k)*(x^(2k+1)))/((2k+1)!),k,0,4)", Range2D(-4.968, 4.968, -1, 1));
+  assert_points_of_interest_range_is("200e^(x/5)(7+e^(x/5))^(-1)", Range2D(-18.68, 38.84, 0.6786, 199.4));
 }
 
 void assert_intersections_range_is(const char * expression1, const char * expression2, Range2D expectedRange) {

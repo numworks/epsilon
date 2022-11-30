@@ -273,18 +273,19 @@ static Range1D sanitationHelper(Range1D range, const Range1D * other, float rati
   return range;
 }
 
-Range2D Zoom::sanitizedRange() const {
-  Range1D xRange = m_forcedRange.x()->isValid() ? *m_forcedRange.x() : sanitationHelper(*m_interestingRange.x(), m_interestingRange.y(), 1.f / m_normalRatio);
-  Range1D yRange = m_forcedRange.y()->isValid() ? *m_forcedRange.y() : sanitationHelper(*m_interestingRange.y(), &xRange, m_normalRatio);
+Range2D Zoom::sanitize2DHelper(Range2D range) const {
+  Range1D xRange = m_forcedRange.x()->isValid() ? *m_forcedRange.x() : sanitationHelper(*range.x(), range.y(), 1.f / m_normalRatio);
+  Range1D yRange = m_forcedRange.y()->isValid() ? *m_forcedRange.y() : sanitationHelper(*range.y(), &xRange, m_normalRatio);
   return Range2D(xRange, yRange);
 }
 
 Range2D Zoom::prettyRange(bool forceNormalization) const {
   assert(!forceNormalization || !m_forcedRange.x()->isValid() || !m_forcedRange.y()->isValid());
 
-  Range2D saneRange = sanitizedRange();
+  Range2D saneRange = m_interestingRange;
   saneRange.extend(Coordinate2D<float>(m_magnitudeRange.xMin(), m_magnitudeRange.yMin()), m_maxFloat);
   saneRange.extend(Coordinate2D<float>(m_magnitudeRange.xMax(), m_magnitudeRange.yMax()), m_maxFloat);
+  saneRange = sanitize2DHelper(saneRange);
 
   float xLength = saneRange.x()->length();
   float yLength = saneRange.y()->length();

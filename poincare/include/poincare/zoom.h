@@ -96,7 +96,8 @@ private:
   static Solver<float>::Interest PointIsInteresting(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c, const void * aux);
   static Coordinate2D<float> HonePoint(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest, float precision);
 
-  Range2D sanitizedRange() const;
+  Range2D sanitize2DHelper(Range2D range) const;
+  Range2D sanitizedRange() const { return sanitize2DHelper(m_interestingRange); }
   Range2D prettyRange(bool forceNormalization) const;
   void fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical, Solver<double>::FunctionEvaluation fDouble = nullptr);
   /* Return true if the search was interrupted because too many points were

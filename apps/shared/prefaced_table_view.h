@@ -5,7 +5,7 @@
 #include <escher/selectable_table_view.h>
 
 /* This class is used to add a "preface" to a selectable table : one of its
- * row will appear on the left of the screen if it should go out of frame.
+ * row will appear on top of the screen if it should go out of frame.
  * It uses a secondary table view, which it syncs up to the selectable table
  * by intercepting callbacks to its delegate. */
 

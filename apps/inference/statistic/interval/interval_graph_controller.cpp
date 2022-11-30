@@ -45,6 +45,7 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Up || event == Ion::Events::Down) {
     selectAdjacentInterval(event == Ion::Events::Up);
+    m_graphView.conclusionView()->setInterval(interval()->estimate(), interval()->marginOfError());
     m_graphView.reload(true);
     static_cast<Escher::StackViewController*>(parentResponder())->controllerView()->reload();
     return true;

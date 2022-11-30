@@ -19,7 +19,18 @@ public:
   void setX1(T x1) { m_x1 = x1; }
   void setX2(T x2) { m_x2 = x2; }
 
+  bool x1IsIn(T start, T end, bool includeStart = false, bool includeEnd = false) {
+    return coordinateIsIn(true, start, end, includeStart, includeEnd);
+  }
+  bool x2IsIn(T start, T end, bool includeStart = false, bool includeEnd = false) {
+    return coordinateIsIn(false, start, end, includeStart, includeEnd);
+  }
+
 private:
+  bool coordinateIsIn(bool x1, T start, T end, bool includeStart, bool includeEnd) {
+    T var = x1 ? m_x1 : m_x2;
+    return (var > start || (includeStart && var == start)) && (var < end || (includeEnd && var == end));
+  }
   T m_x1;
   T m_x2;
 };

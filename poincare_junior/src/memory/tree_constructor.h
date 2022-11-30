@@ -66,6 +66,25 @@ constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> operator "" _
   return tree;
 }
 
+constexpr Tree<1> operator "" _sn(unsigned long long value) { // single-block node
+  Tree<1> tree;
+  BlockType type;
+  switch (value) {
+    case 0:
+      CreateNode<BlockType::Zero>(&tree);
+      break;
+    case 1:
+      CreateNode<BlockType::One>(&tree);
+      break;
+    case 2:
+      CreateNode<BlockType::Two>(&tree);
+      break;
+    default:
+      assert(false);
+  }
+  return tree;
+}
+
 constexpr Tree<3> operator "" _n(unsigned long long value) {
   assert(value != 0 && value != -1 && value != 1 && value != 2); // TODO: make this robust
   assert(value < 128); // TODO: handle negative small numbers?

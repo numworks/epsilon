@@ -5,8 +5,6 @@
 #include <escher/regular_table_view_data_source.h>
 #include <escher/stack_view_controller.h>
 #include "column_helper.h"
-#include "editable_cell_selectable_table_view.h"
-#include "prefaced_table_view.h"
 #include "text_field_delegate.h"
 #include "tab_table_controller.h"
 #include "column_parameter_controller.h"
@@ -15,13 +13,11 @@ namespace Shared {
 
 class ColumnParameterController;
 
-class EditableCellTableViewController : public TabTableController , public Escher::TableViewDataSource, public TextFieldDelegate, public ClearColumnHelper, public PrefacedTableViewDelegate {
+class EditableCellTableViewController : public TabTableController , public Escher::TableViewDataSource, public TextFieldDelegate, public ClearColumnHelper {
 public:
   EditableCellTableViewController(Responder * parentResponder);
   bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
-
-  Escher::View * view() override { return &m_prefacedView; }
 
   int numberOfRows() const override;
   void willDisplayCellAtLocationWithDisplayMode(Escher::HighlightCell * cell, int i, int j, Poincare::Preferences::PrintFloatMode mode);
@@ -31,9 +27,6 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
 
   virtual int numberOfRowsAtColumn(int i) const = 0;
-
-  // PrefacedTableViewDelegate
-  KDCoordinate maxPrefaceHeight() const override { return 3 * k_cellHeight; }
 
 protected:
   constexpr static KDFont::Size k_cellFont = KDFont::Size::Small;
@@ -51,8 +44,6 @@ protected:
   // ClearColumnHelper
   Escher::SelectableTableView * table() override { return selectableTableView(); }
 
-  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
-
   /* Poor's man diamond inheritance */
   virtual Escher::SelectableViewController * columnParameterController() = 0;
   virtual Shared::ColumnParameters * columnParameters() = 0;
@@ -61,9 +52,6 @@ protected:
   virtual void setTitleCellStyle(Escher::HighlightCell * cell, int columnIndex) = 0;
   virtual void reloadEditedCell(int column, int row) { selectableTableView()->reloadCellAtLocation(column, row); }
   virtual bool checkDataAtLocation(double floatBody, int columnIndex, int rowIndex) const { return true; }
-
-  PrefacedTableView m_prefacedView;
-  EditableCellSelectableTableView m_selectableTableView;
 
 private:
   virtual void didChangeCell(int column, int row) {}

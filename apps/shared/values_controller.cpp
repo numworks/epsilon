@@ -17,13 +17,19 @@ namespace Shared {
 
 ValuesController::ValuesController(Responder * parentResponder, ButtonRowController * header) :
   EditableCellTableViewController(parentResponder),
+  m_prefacedView(0, this, &m_selectableTableView, this, nullptr, this),
+  m_selectableTableView(this, this, this, this, &m_prefacedView),
   ButtonRowDelegate(header, nullptr),
   m_numberOfColumns(0),
   m_numberOfColumnsNeedUpdate(true),
   m_firstMemoizedColumn(INT_MAX),
   m_firstMemoizedRow(INT_MAX),
   m_abscissaParameterController(this, this)
-{}
+{
+  m_prefacedView.setBackgroundColor(Palette::WallScreenDark);
+  m_prefacedView.setCellOverlap(0, 0);
+  m_prefacedView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+}
 
 void ValuesController::setupSelectableTableViewAndCells(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate) {
   int numberOfAbscissaCells = abscissaCellsCount();

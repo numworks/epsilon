@@ -4,10 +4,12 @@
 #include <escher/button_row_controller.h>
 #include <escher/stack_view_controller.h>
 #include "double_pair_store.h"
+#include "editable_cell_selectable_table_view.h"
 #include "editable_cell_table_view_controller.h"
 #include "layout_field_delegate.h"
 #include "input_event_handler_delegate.h"
 #include "layout_field_delegate.h"
+#include "prefaced_table_view.h"
 #include "store_cell.h"
 #include "store_parameter_controller.h"
 #include "store_title_cell.h"
@@ -19,7 +21,7 @@ public:
   StoreController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, Escher::ButtonRowController * header, Poincare::Context * parentContext);
   TELEMETRY_ID("Store");
 
-  //TextFieldDelegate
+  // TextFieldDelegate
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
   // TableViewDataSource
@@ -30,6 +32,7 @@ public:
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   // ViewController
+  Escher::View * view() override { return &m_prefacedView; }
   const char * title() override;
 
   // Responder
@@ -63,6 +66,10 @@ protected:
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
   int numberOfElementsInColumn(int columnIndex) const override;
 
+  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
+
+  PrefacedTableView m_prefacedView;
+  EditableCellSelectableTableView m_selectableTableView;
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
 

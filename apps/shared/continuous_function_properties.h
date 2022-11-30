@@ -163,7 +163,7 @@ private:
   constexpr static size_t k_numberOfBitsForCurveParameterType = Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<unsigned int>(CurveParameterType::NumberOfCurveParameterTypes));
   constexpr static size_t k_numberOfBitsForConicShape = Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<unsigned int>(Poincare::Conic::Shape::NumberOfShapes));
 
-  struct PropertiesBitField { // Current size : 2 bytes
+  struct PropertiesBitField {
     /* Status */ uint8_t m_status : k_numberOfBitsForStatus;
     /* Poincare::ComparisonNode::OperatorType */ uint8_t m_equationType : k_numberOfBitsForEquationType;
     /* Symbol */ uint8_t m_symbolType : k_numberOfBitsForSymbolType;
@@ -174,8 +174,8 @@ private:
     bool m_hideDetails : 1;
   };
 
-  PropertiesBitField m_propertiesBitField;
   I18n::Message m_caption;
+  PropertiesBitField m_propertiesBitField;
   bool m_isInitialized;
 };
 

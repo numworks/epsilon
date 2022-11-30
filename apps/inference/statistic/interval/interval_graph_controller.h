@@ -5,6 +5,7 @@
 #include <escher/view_controller.h>
 #include "inference/statistic/interval/interval_graph_view.h"
 #include "inference/constants.h"
+#include "inference/models/statistic_buffer.h"
 
 namespace Inference {
 
@@ -16,12 +17,17 @@ public:
   Escher::View * view() override { return &m_graphView; }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
+  Interval * interval() { return m_intervalBuffer.interval(); }
+  void resetSelectedInterval();
+  void selectAdjacentInterval(bool goUp);
 
 private:
   constexpr static int k_titleBufferSize = sizeof("ME=") + Constants::k_shortFloatNumberOfChars;
   char m_titleBuffer[k_titleBufferSize];
+  IntervalBuffer m_intervalBuffer;
   IntervalGraphView m_graphView;
-  Interval * m_interval;
+  Interval * m_originalInterval;
+  int m_selectedIntervalIndex;
 };
 
 }  // namespace Inference

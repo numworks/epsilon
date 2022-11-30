@@ -9,10 +9,9 @@ namespace Inference {
 
 class IntervalGraphView : public Escher::View {
 public:
-  IntervalGraphView(Interval * interval) : m_curveView(interval) {}
+  IntervalGraphView(Interval * interval, int * selectedIndex) : m_curveView(interval, selectedIndex) {}
   void drawRect(KDContext * ctx, KDRect rect) const override;
-  void reload(bool resetSelectedInterval, bool force = false);
-  void selectAdjacentInterval(bool goUp);
+  void reload(bool force = false);
 private:
   constexpr static int k_conclusionViewHeight = 50;
 

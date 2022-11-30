@@ -36,18 +36,16 @@ protected:
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
 
   Interval * m_interval;
-  int m_selectedIntervalIndex;
+  int * m_selectedIntervalIndex;
 };
 
 class IntervalCurveView : public Shared::PlotView<IntervalAxes, IntervalPlotPolicy, Shared::PlotPolicy::NoBanner, Shared::PlotPolicy::NoCursor> {
 public:
-  IntervalCurveView(Interval * interval);
+  IntervalCurveView(Interval * interval, int * selectedIndex);
 
   // AbstractPlotView
   void reload(bool resetInterruption = false, bool force = false) override;
 
-  void resetSelectedInterval();
-  void selectAdjacentInterval(bool goUp) { m_selectedIntervalIndex = (goUp && m_selectedIntervalIndex == 0) || (!goUp && m_selectedIntervalIndex + 1 == Interval::k_numberOfDisplayedIntervals) ? m_selectedIntervalIndex : m_selectedIntervalIndex + (goUp ? -1 : 1); }
   void selectedIntervalEstimateAndMarginOfError(float * estimate, float * marginOfError);
 
 private:

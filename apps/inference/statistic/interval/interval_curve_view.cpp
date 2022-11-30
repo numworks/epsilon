@@ -67,7 +67,7 @@ void IntervalPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext *
   for (int i = 0; i < Interval::k_numberOfDisplayedIntervals; i++) {
     float verticalPosition = top - (top - bot) * (i + 1) / (Interval::k_numberOfDisplayedIntervals + 1);
     float threshold = Interval::DisplayedIntervalThresholdAtIndex(mainThreshold, i);
-    bool isMainInterval = (i == m_selectedIntervalIndex);
+    bool isMainInterval = (i == *m_selectedIntervalIndex);
     // Temporarily set the interval to compute the margin of error
     m_interval->setThreshold(threshold);
     m_interval->compute();
@@ -98,31 +98,28 @@ void IntervalPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext *
 
 // IntervalCurveView
 
-IntervalCurveView::IntervalCurveView(Interval * interval) :
+IntervalCurveView::IntervalCurveView(Interval * interval, int * selectedIndex) :
   PlotView(interval)
 {
   // IntervalPlotPolicy
   m_interval = interval;
+  m_selectedIntervalIndex = selectedIndex;
 }
 
 void IntervalCurveView::reload(bool resetInterruption, bool force) {
   /* Set the interval so that the axis displays the right bounds. */
   float mainThreshold = m_interval->threshold();
-  m_interval->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(m_interval->threshold(), m_selectedIntervalIndex));
+  m_interval->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(m_interval->threshold(), *m_selectedIntervalIndex));
   m_interval->compute();
   AbstractPlotView::reload(resetInterruption, force);
   m_interval->setThreshold(mainThreshold);
   m_interval->compute();
 }
 
-void IntervalCurveView::resetSelectedInterval() {
-  m_selectedIntervalIndex = Interval::MainDisplayedIntervalThresholdIndex(m_interval->threshold());
-}
-
 void IntervalCurveView::selectedIntervalEstimateAndMarginOfError(float * estimate, float * marginOfError) {
   float mainThreshold = m_interval->threshold();
   // Temporarily set the interval to compute the selected one
-  m_interval->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(m_interval->threshold(), m_selectedIntervalIndex));
+  m_interval->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(m_interval->threshold(), *m_selectedIntervalIndex));
   m_interval->compute();
   *estimate = m_interval->estimate();
   *marginOfError = m_interval->marginOfError();

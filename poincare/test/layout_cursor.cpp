@@ -284,21 +284,22 @@ QUIZ_CASE(poincare_layout_parentheses) {
     quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(1), LayoutCursor::Position::Right)));
   }
   /*
-   * (▯§▯)|12 -> BACKSPACE -> (▯§|12]  ▯ == empty layout, § == prefix superscript
+   * (1§▯)|23 -> BACKSPACE -> (1§|23]  ▯ == empty layout, § == prefix superscript
    */
   {
     Layout l = HorizontalLayout::Builder(
       ParenthesisLayout::Builder(HorizontalLayout::Builder(
-        VerticalOffsetLayout::Builder(EmptyLayout::Builder(),
-        VerticalOffsetLayoutNode::VerticalPosition::Superscript, VerticalOffsetLayoutNode::HorizontalPosition::Prefix),
+        VerticalOffsetLayout::Builder(
+          CodePointLayout::Builder('1'),
+          VerticalOffsetLayoutNode::VerticalPosition::Superscript, VerticalOffsetLayoutNode::HorizontalPosition::Prefix),
         EmptyLayout::Builder()
       )),
-      CodePointLayout::Builder('1'),
-      CodePointLayout::Builder('2')
+      CodePointLayout::Builder('2'),
+      CodePointLayout::Builder('3')
     );
     LayoutCursor c(l.childAtIndex(0), LayoutCursor::Position::Right);
     c.performBackspace();
-    assert_layout_serialize_to(l, "(\u0014{\u0014}12)");
+    assert_layout_serialize_to(l, "(\u0014{1\u0014}23)");
     quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(0).childAtIndex(0).childAtIndex(1), LayoutCursor::Position::Left)));
   }
 }

@@ -14,6 +14,7 @@ constexpr uint8_t k_MaxNumberOfStacks = 7;
 static_assert(k_MaxNumberOfStacks < 8, "Bit mask representation relies on less than 8 stacks (uint8_t).");
 
 class StackViewController : public ViewController {
+  class ControllerView;
 public:
   enum class Style {
     GrayGradation,
@@ -29,6 +30,7 @@ public:
 
   int depth() const { return m_numberOfChildren; }
   View * view() override { return &m_view; }
+  ControllerView * controllerView() { return &m_view; }
   ViewController * topViewController();
   const char * title() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -51,6 +53,7 @@ private:
     void setContentView(View * view);
     void setupHeadersBorderOverlaping(bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor);
     void pushStack(ViewController * controller);
+    void reload() { markRectAsDirty(bounds()); }
     void resetStack() { m_stackViews.reset(); }
   protected:
 #if ESCHER_VIEW_LOGGING

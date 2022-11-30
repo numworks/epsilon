@@ -25,7 +25,6 @@ public:
   int execute(ActionWithContext action, void * subAction, const void * data);
 
   constexpr static int k_maxNumberOfBlocks = 512;
-  constexpr static int k_maxNumberOfCachedTrees = 32;
 
   TypeBlock * firstBlock() override { return m_referenceTable.isEmpty() ? nullptr : static_cast<TypeBlock *>(&m_pool[0]); }
   TypeBlock * lastBlock() override { return m_referenceTable.isEmpty() ? static_cast<TypeBlock *>(&m_pool[0]) : m_referenceTable.lastNode().nextTree().block(); }
@@ -60,10 +59,11 @@ private:
     Node lastNode() const;
     bool reset() override;
   private:
+    constexpr static uint16_t k_maxIdentifier = UINT16_MAX + 1 - NumberOfSpecialIdentifier;
     uint16_t nextIdentifier() { return idForIndex(m_length); }
     uint16_t idForIndex(uint16_t index) const {
       assert(index < k_maxNumberOfReferences);
-      return (static_cast<uint32_t>(m_startIdentifier) + index) % k_maxNumberOfReferences;
+      return (static_cast<uint32_t>(m_startIdentifier) + index) % k_maxIdentifier;
     }
     uint16_t indexForId(uint16_t id) const { return (id + k_maxNumberOfReferences - m_startIdentifier) % k_maxNumberOfReferences; }
     void removeFirstReferences(uint16_t newFirstIndex);

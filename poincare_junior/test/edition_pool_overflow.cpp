@@ -21,6 +21,8 @@ CacheReference createTreeInCache(CacheReference::Initializer initializer) {
   return tree;
 }
 
+// TODO: test the invalid reference has been invalidated?
+
 void testOverflowEditionPool() {
   std::cout << "---------------- Fill cache with copies until almost full" << std::endl;
   CacheReference tree(createTree);

@@ -26,7 +26,6 @@ void IntervalGraphController::viewWillAppear() {
   // Copy the interval into a local buffer
   memcpy((void*)&m_intervalBuffer, (void*)m_originalInterval, sizeof(IntervalBuffer));
   resetSelectedInterval();
-  m_graphView.reload();
 }
 
 bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
@@ -45,8 +44,6 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Up || event == Ion::Events::Down) {
     selectAdjacentInterval(event == Ion::Events::Up);
-    m_graphView.conclusionView()->setInterval(interval()->estimate(), interval()->marginOfError());
-    m_graphView.reload(true);
     static_cast<Escher::StackViewController*>(parentResponder())->controllerView()->reload();
     return true;
   }
@@ -57,10 +54,17 @@ void IntervalGraphController::selectAdjacentInterval(bool goUp) {
   m_selectedIntervalIndex = (goUp && m_selectedIntervalIndex == 0) || (!goUp && m_selectedIntervalIndex + 1 == Interval::k_numberOfDisplayedIntervals) ? m_selectedIntervalIndex : m_selectedIntervalIndex + (goUp ? -1 : 1);
   interval()->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(m_originalInterval->threshold(), m_selectedIntervalIndex));
   interval()->compute();
+  intervalDidChange();
 }
 
 void IntervalGraphController::resetSelectedInterval() {
   m_selectedIntervalIndex = Interval::MainDisplayedIntervalThresholdIndex(m_originalInterval->threshold());
+  intervalDidChange();
+}
+
+void IntervalGraphController::intervalDidChange() {
+  m_graphView.conclusionView()->setInterval(interval()->estimate(), interval()->marginOfError());
+  m_graphView.reload();
 }
 
 }  // namespace Inference

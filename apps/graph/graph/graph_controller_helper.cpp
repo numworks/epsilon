@@ -19,7 +19,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   double tMin = function->tMin();
   double tMax = function->tMax();
   int functionsCount = -1;
-  bannerView()->setInterestMessage(I18n::Message::Default);
+  bannerView()->setInterestMessage(I18n::Message::Default, graphView()->cursorView());
 
   if (((direction > 0 && std::abs(t-tMax) < DBL_EPSILON)
         || (direction < 0 && std::abs(t-tMin) < DBL_EPSILON))
@@ -162,7 +162,6 @@ bool GraphControllerHelper::snapToInterestAndUpdateBannerAndCursor(Shared::Curve
   PointOfInterest nextPointOfInterest = App::app()->graphController()->pointsOfInterestForSelectedRecord()->firstPointInDirection(start, end);
   Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
   if (!std::isfinite(nextPointOfInterestXY.x1())) {
-    graphView()->cursorView()->setHighlighted(false);
     return false;
   }
   /* Snap to a point of interest, and display its type in the banner. */
@@ -185,8 +184,7 @@ bool GraphControllerHelper::snapToInterestAndUpdateBannerAndCursor(Shared::Curve
     interestMessage = I18n::Message::Intersection;
     break;
   }
-  bannerView()->setInterestMessage(interestMessage);
-  graphView()->cursorView()->setHighlighted(true);
+  bannerView()->setInterestMessage(interestMessage, graphView()->cursorView());
   // Ensure that the cursor is on the exact point of interest value
   cursor->moveTo(nextPointOfInterestXY.x1(), nextPointOfInterestXY.x1(), nextPointOfInterestXY.x2());
   return true;

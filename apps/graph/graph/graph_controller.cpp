@@ -288,7 +288,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
 }
 
 bool GraphController::moveCursorVertically(int direction) {
-  bannerView()->setInterestMessage(I18n::Message::Default);
+  bannerView()->setInterestMessage(I18n::Message::Default, graphView()->cursorView());
   bool moved = FunctionGraphController::moveCursorVertically(direction);
   if (!moved) {
     return false;
@@ -303,7 +303,7 @@ bool GraphController::moveCursorVertically(int direction) {
 }
 
 void GraphController::moveCursorAndCenterIfNeeded(double t) {
-  bannerView()->setInterestMessage(I18n::Message::Default);
+  bannerView()->setInterestMessage(I18n::Message::Default, graphView()->cursorView());
   FunctionGraphController::moveCursorAndCenterIfNeeded(t);
   if (snapToInterestAndUpdateBannerAndCursor(m_cursor, std::nextafter(m_cursor->t(), -static_cast<double>(INFINITY)), std::nextafter(m_cursor->t(), static_cast<double>(INFINITY)))) {
     reloadBannerView();

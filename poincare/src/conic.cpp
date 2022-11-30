@@ -388,7 +388,8 @@ double CartesianConic::getParameter() const {
   // Conic must be canonically rotated, and A must be 1.0
   assert(isCanonical());
   assert(m_shape == Shape::Parabola);
-  return std::abs(m_e) / 2;
+  double defaultParameter = std::abs(m_e) / 2;
+  return Preferences::sharedPreferences()->parabolaParameter() == Preferences::ParabolaParameter::FocalLength ? defaultParameter / 2 : defaultParameter;
 }
 
 void CartesianConic::getSummit(double * sx, double * sy) const {

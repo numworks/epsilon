@@ -51,7 +51,7 @@ int Simplification::Compare(const Node node0, const Node node1) {
       case BlockType::Factorial:
         return CompareFirstChild(node0, node1, ScanDirection::Forward);
       default:
-        return false;
+        return -1;
     }
   }
 }

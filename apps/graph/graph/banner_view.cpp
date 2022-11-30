@@ -19,6 +19,11 @@ BannerView::BannerView(
   m_bView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor())
 {}
 
+void BannerView::setInterestMessage(I18n::Message message, Shared::CursorView * cursor) {
+  m_interestMessageView.setMessage(message);
+  cursor->setHighlighted(message != I18n::Message::Default);
+}
+
 void BannerView::setDisplayParameters(bool showInterest, bool showDerivative, bool showTangent) {
   m_showInterest = showInterest;
   m_showDerivative = showDerivative;

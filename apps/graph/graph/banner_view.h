@@ -2,6 +2,7 @@
 #define GRAPH_BANNER_VIEW_H
 
 #include <escher/message_text_view.h>
+#include "../../shared/cursor_view.h"
 #include "../../shared/xy_banner_view.h"
 
 namespace Graph {
@@ -17,7 +18,7 @@ public:
   Escher::BufferTextView * derivativeView() { return &m_derivativeView; }
   Escher::BufferTextView * aView() { return &m_aView; }
   Escher::BufferTextView * bView() { return &m_bView; }
-  void setInterestMessage(I18n::Message message) { m_interestMessageView.setMessage(message); }
+  void setInterestMessage(I18n::Message message, Shared::CursorView * cursor);
   void setDisplayParameters(bool showInterest, bool showDerivative, bool showTangent);
 
 private:

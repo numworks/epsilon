@@ -248,3 +248,10 @@ So we choose to do this when 3n < N.
 
  Parcours des enfants optimals ??
  */
+
+
+## Rules for developping
+
+Avoid childAtIndex: use nextTree() or NodeIterator
+
+When editing children of a tree, iterate in the right direction to always change the downstream children

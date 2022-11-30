@@ -206,11 +206,19 @@ Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a, Coordina
   float slope = (c.x2() - a.x2()) / (c.x1() - a.x1());
   params->asymptotes->update(c, slope);
   Solver<float>::Interest res = pointIsInterestingHelper(a, b, c, aux);
-  constexpr float k_tolerance = Solver<float>::k_relativePrecision;
-  /* The function can be subject to fluctuation when outputting very small
-   * values when compared to its input, for instance when subtracting two very
-   * close large numbers. These fluctuations should not be detected as extrema. */
-  if ((res == Solver<float>::Interest::LocalMinimum || res == Solver<float>::Interest::LocalMaximum) && std::fabs((a.x2() - b.x2()) / b.x1()) < k_tolerance) {
+  /* Filter out variations that are caused by:
+   * - loss of significance when outputting very small values compared to the
+   *   parameter.
+   * - rounding errors, when two similar values are rounded in different
+   *   directions.
+   * The tolerance is chosen to be as small as possible while still being large
+   * enough to give good results in practice. Since callers of Zoom do not rely
+   *on high levels of precision, this can be increased if need be.
+   * FIXME Tolerance for detecting approximation errors should be computed by
+   * analysing the input expression. */
+  constexpr float k_tolerance = 4.f * Solver<float>::k_relativePrecision;
+  if ((res == Solver<float>::Interest::LocalMinimum || res == Solver<float>::Interest::LocalMaximum)
+   && (std::fabs((a.x2() - b.x2()) / b.x1()) < k_tolerance || std::fabs((a.x2() - b.x2()) / b.x2()) < k_tolerance)) {
     return Solver<float>::Interest::None;
   }
   return res;

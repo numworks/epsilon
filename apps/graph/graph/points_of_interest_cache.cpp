@@ -52,6 +52,20 @@ void PointsOfInterestCache::computeNextStep() {
   }
 }
 
+int PointsOfInterestCache::numberOfPoints(Poincare::Solver<double>::Interest interest) const {
+  int n = numberOfPoints();
+  if (interest == Poincare::Solver<double>::Interest::None) {
+    return n;
+  }
+  int result = 0;
+  for (int i = 0; i < n; i++) {
+    if (pointAtIndex(i).interest() == interest) {
+      result++;
+    }
+  }
+  return result;
+}
+
 PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, double end, Solver<double>::Interest interest) {
   assert(start != end);
   m_list.sort();

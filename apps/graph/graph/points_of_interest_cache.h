@@ -21,6 +21,7 @@ public:
   bool isFullyComputed() const { return m_start == m_computedStart && m_end == m_computedEnd; }
 
   int numberOfPoints() const { return m_list.numberOfPoints(); }
+  int numberOfPoints(Poincare::Solver<double>::Interest interest) const;
   Poincare::PointOfInterest pointAtIndex(int i) const { return m_list.pointAtIndex(i); }
 
   Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);

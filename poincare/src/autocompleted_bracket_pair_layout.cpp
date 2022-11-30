@@ -233,19 +233,16 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
   }
 
   assert(side == Side::Right);
-  if (!parentIsHorizontalLayout || !childRef.isEmpty()) {
-    if (parentRef.numberOfChildren() > thisIndex + 1) {
-      /* e.g. (12)|3 -> (12|3] or (1§▯)|23 -> (1§|23] */
-      return LayoutCursor(parentRef.childAtIndex(thisIndex + 1), LayoutCursor::Position::Left);
-    }
+  if (thisIndex < parentRef.numberOfChildren() - 1) {
+    assert(!(willDisappear && parentIsHorizontalLayout && childRef.isEmpty()));
+    /* e.g. ()|34 -> (|34] or (12)|3 -> (12|3] or (1§▯)|23 -> (1§|23] */
+    return LayoutCursor(parentRef.childAtIndex(thisIndex + 1), LayoutCursor::Position::Left);
+  }
+  if (!(parentIsHorizontalLayout && childRef.isEmpty())) {
     /* e.g. (12)| -> (12|] */
     return LayoutCursor(childOnSide(Side::Right), LayoutCursor::Position::Right);
   }
   assert(!willDisappear);
-  if (thisIndex < parentRef.numberOfChildren() - 1) {
-    /* e.g. ()|34 -> (|34] */
-    return LayoutCursor(parentRef.childAtIndex(thisIndex + 1), LayoutCursor::Position::Left);
-  }
   /* e.g. ()| -> (|] */
   return LayoutCursor(childOnSide(Side::Left), LayoutCursor::Position::Left);
 }

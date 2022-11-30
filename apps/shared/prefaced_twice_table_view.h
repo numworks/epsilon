@@ -7,7 +7,7 @@ namespace Shared {
 
 class PrefacedTwiceTableView : public PrefacedTableView {
 public:
-  PrefacedTwiceTableView(int prefaceRow, int prefaceColumn, Escher::Responder * parentResponder, Escher::SelectableTableView * mainTableView, Escher::TableViewDataSource * cellsDataSource, Escher::SelectableTableViewDelegate * delegate = nullptr, PrefaceTableViewDelegate * prefaceTableViewDelegate = nullptr);
+  PrefacedTwiceTableView(int prefaceRow, int prefaceColumn, Escher::Responder * parentResponder, Escher::SelectableTableView * mainTableView, Escher::TableViewDataSource * cellsDataSource, Escher::SelectableTableViewDelegate * delegate = nullptr, PrefacedTableViewDelegate * prefacedTableViewDelegate = nullptr);
 
   void setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left) override;
   void setBackgroundColor(KDColor color) override;

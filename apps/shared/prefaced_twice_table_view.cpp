@@ -4,8 +4,8 @@ using namespace Escher;
 
 namespace Shared {
 
-PrefacedTwiceTableView::PrefacedTwiceTableView(int prefaceRow, int prefaceColumn, Escher::Responder * parentResponder, Escher::SelectableTableView * mainTableView, Escher::TableViewDataSource * cellsDataSource, Escher::SelectableTableViewDelegate * delegate, PrefaceTableViewDelegate * prefaceTableViewDelegate) :
-  PrefacedTableView(prefaceRow, parentResponder, mainTableView, cellsDataSource, delegate, prefaceTableViewDelegate),
+PrefacedTwiceTableView::PrefacedTwiceTableView(int prefaceRow, int prefaceColumn, Escher::Responder * parentResponder, Escher::SelectableTableView * mainTableView, Escher::TableViewDataSource * cellsDataSource, Escher::SelectableTableViewDelegate * delegate, PrefacedTableViewDelegate * prefacedTableViewDelegate) :
+  PrefacedTableView(prefaceRow, parentResponder, mainTableView, cellsDataSource, delegate, prefacedTableViewDelegate),
   m_columnPrefaceDataSource(prefaceColumn, cellsDataSource),
   m_columnPrefaceView(&m_columnPrefaceDataSource, &m_columnPrefaceDataSource),
   m_storedXMargin(0)

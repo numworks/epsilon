@@ -18,11 +18,11 @@ public:
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   Interval * interval() { return m_intervalBuffer.interval(); }
-  void resetSelectedInterval();
-  void selectAdjacentInterval(bool goUp);
-
 private:
   constexpr static int k_titleBufferSize = sizeof("ME=") + Constants::k_shortFloatNumberOfChars;
+  void resetSelectedInterval();
+  void selectAdjacentInterval(bool goUp);
+  void intervalDidChange();
   char m_titleBuffer[k_titleBufferSize];
   IntervalBuffer m_intervalBuffer;
   IntervalGraphView m_graphView;

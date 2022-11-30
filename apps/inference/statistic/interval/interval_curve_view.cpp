@@ -116,16 +116,4 @@ void IntervalCurveView::reload(bool resetInterruption, bool force) {
   m_interval->compute();
 }
 
-void IntervalCurveView::selectedIntervalEstimateAndMarginOfError(float * estimate, float * marginOfError) {
-  float mainThreshold = m_interval->threshold();
-  // Temporarily set the interval to compute the selected one
-  m_interval->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(m_interval->threshold(), *m_selectedIntervalIndex));
-  m_interval->compute();
-  *estimate = m_interval->estimate();
-  *marginOfError = m_interval->marginOfError();
-  // Restore initial threshold and interval
-  m_interval->setThreshold(mainThreshold);
-  m_interval->compute();
-}
-
 }  // namespace Inference

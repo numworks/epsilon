@@ -46,8 +46,6 @@ public:
   // AbstractPlotView
   void reload(bool resetInterruption = false, bool force = false) override;
 
-  void selectedIntervalEstimateAndMarginOfError(float * estimate, float * marginOfError);
-
 private:
   KDColor backgroundColor() const override { return Escher::Palette::WallScreen; }
 };

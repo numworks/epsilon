@@ -9,9 +9,6 @@ void IntervalGraphView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 void IntervalGraphView::reload(bool force) {
-  float estimate, marginOfError;
-  m_curveView.selectedIntervalEstimateAndMarginOfError(&estimate, &marginOfError);
-  m_conclusionView.setInterval(estimate, marginOfError);
   layoutSubviews();
   m_curveView.reload(false, force);
   m_conclusionView.reload();

@@ -10,6 +10,7 @@ void GlobalPreferences::setCountry(I18n::Country country) {
   Poincare::Preferences::sharedPreferences()->setCombinatoricSymbols(combinatoricsSymbols());
   Poincare::Preferences::sharedPreferences()->enableMixedFractions(mixedFractions());
   Poincare::Preferences::sharedPreferences()->setLogarithmBasePosition(logarithmBasePosition());
+  Poincare::Preferences::sharedPreferences()->setParabolaParameter(parabolaParameter());
 }
 
 void GlobalPreferences::setBrightnessLevel(int brightnessLevel) {

@@ -88,7 +88,8 @@ public:
     Poincare::Preferences::MixedFractions mixedFractions,
     RegressionModelOrder regressionModelOrder,
     GraphTemplatesLayout graphTemplatesLayout,
-    Poincare::Preferences::LogarithmBasePosition logarithmBasePosition
+    Poincare::Preferences::LogarithmBasePosition logarithmBasePosition,
+    Poincare::Preferences::ParabolaParameter parabolaParameter
     ) :
     m_availableExamModes(availableExamModes),
     m_homeAppsLayout(homeAppsLayout),
@@ -105,7 +106,8 @@ public:
     m_mixedFractions(mixedFractions),
     m_regressionModelOrder(regressionModelOrder),
     m_graphTemplatesLayout(graphTemplatesLayout),
-    m_logarithmBasePosition(logarithmBasePosition)
+    m_logarithmBasePosition(logarithmBasePosition),
+    m_parabolaParameter(parabolaParameter)
   {}
 
   constexpr AvailableExamModes availableExamModes() const { return m_availableExamModes; }
@@ -124,6 +126,7 @@ public:
   constexpr RegressionModelOrder regressionModelOrder() const { return m_regressionModelOrder; }
   constexpr GraphTemplatesLayout graphTemplatesLayout() const { return m_graphTemplatesLayout; }
   constexpr Poincare::Preferences::LogarithmBasePosition logarithmBasePosition() const { return m_logarithmBasePosition; }
+  constexpr Poincare::Preferences::ParabolaParameter parabolaParameter() const { return m_parabolaParameter; }
 
 private:
   const AvailableExamModes m_availableExamModes;
@@ -142,6 +145,7 @@ private:
   const RegressionModelOrder m_regressionModelOrder;
   const GraphTemplatesLayout m_graphTemplatesLayout;
   const Poincare::Preferences::LogarithmBasePosition m_logarithmBasePosition;
+  const Poincare::Preferences::ParabolaParameter m_parabolaParameter;
 };
 
 #endif

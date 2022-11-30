@@ -29,6 +29,7 @@ public:
   CountryPreferences::RegressionModelOrder regressionModelOrder() const { return preferences().regressionModelOrder(); }
   CountryPreferences::GraphTemplatesLayout graphTemplatesLayout() const { return preferences().graphTemplatesLayout(); }
   Poincare::Preferences::LogarithmBasePosition logarithmBasePosition() const { return preferences().logarithmBasePosition(); }
+  Poincare::Preferences::ParabolaParameter parabolaParameter() const { return preferences().parabolaParameter(); }
   int sequencesInitialRank() const;
 
   const char * openIntervalChar(bool left) const {

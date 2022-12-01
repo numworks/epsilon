@@ -5,20 +5,44 @@
 
 namespace Poincare {
 
-  /* Node description by type:
-   * - IntegerShort
-   * | INTEGER_SHORT TAG | SIGNED DIGIT0 | INTEGER_SHORT TAG |
-   *
-   *  - Integer(Pos/Neg)Big
-   *  | INTEGER_(POS/NEG)_BIG TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... | NUMBER DIGITS | INTEGER_(POS/NEG)_BIG TAG TAG |
-   *
-   * - RationShort
-   * | RATIONAL_SHORT TAG | SIGNED DIGIT | UNSIGNED DIGIT | RATIONAL_SHORT TAG |
-   *
-   * - Rational(Pos/Neg)Big
-   * | RATIONAL_(POS/NEG)_BIG TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... | NUMBER DIGITS | RATIONAL_(POS/NEG)_BIG TAG TAG |
-   *
-   * */
+/* TODO:
+ * - Are Zero, One etc useful?
+ * - Short integers could be coded on n-bytes (with n static) instead of 1-byte. Choosing n = 4 and aligning the node could be useful?
+ * - algining all nodes on 4 bytes might speed up every computation
+*/
+
+/* Node description by type:
+ * - Zero Z (same for One, Two, Half, MinusOne)
+ * | Z TAG |
+ *
+ * - IntegerShort IS
+ * | IS TAG | SIGNED DIGIT0 | IS TAG |
+ *
+ * - Integer(Pos/Neg)Big IB
+ * | IB TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... | NUMBER DIGITS | IB |
+ *
+ * - RationShort RS
+ * | RS TAG | SIGNED DIGIT | UNSIGNED DIGIT | RS TAG |
+ *
+ * - Rational(Pos/Neg)Big RB
+ * | RB TAG | NUMBER NUMERATOR_DIGITS | NUMBER_DENOMINATOR_DIGITS | UNSIGNED NUMERATOR DIGIT0 | ... | UNSIGNED DENOMINATOR_DIGIT0 | ... | NUMBER DIGITS | RB |
+ *
+ * - Float F
+ * | F TAG | VALUE (4 bytes) | F TAG |
+ *
+ * - Constant C
+ * | C TAG | TYPE | C TAG |
+ *
+ * - Addition A, Multiplication M, HorizontalLayout HL
+ * | A TAG | NUMBER OF CHILDREN | A TAG |
+ *
+ * - Power P, Factorial F, Subtraction S, Division D
+ * | P TAG |
+ *
+ * - UserSymbol, UserFunction, UserSequence
+ * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | US TAG |
+ *
+ * */
 
 enum class BlockType : uint8_t {
 // InternalExpression

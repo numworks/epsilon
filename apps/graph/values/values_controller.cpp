@@ -128,7 +128,7 @@ KDSize ValuesController::CellSizeWithLayout(Layout l) {
 
 KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
   KDCoordinate columnWidth;
-  KDCoordinate maxColumnWidth = MaxColumnWidth();
+  KDCoordinate maxColumnWidth = k_maxColumnWidth;
   int tempI = i;
   ContinuousFunctionProperties::SymbolType symbol = symbolTypeAtColumn(&tempI);
   if (tempI > 0 && symbol == ContinuousFunctionProperties::SymbolType::T) {
@@ -160,7 +160,7 @@ KDCoordinate ValuesController::nonMemoizedColumnWidth(int i) {
 
 KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
   KDCoordinate rowHeight = Shared::ValuesController::defaultRowHeight();
-  KDCoordinate maxRowHeight = MaxRowHeight();
+  KDCoordinate maxRowHeight = k_maxRowHeight;
   int nColumns = numberOfColumns();
   if (j == 0) {
     for (int i = 0; i < nColumns; i++) {
@@ -322,7 +322,7 @@ int ValuesController::numberOfColumnsForAbscissaColumn(int column) {
 void ValuesController::updateSizeMemoizationForColumnAfterIndexChanged(int column, KDCoordinate columnPreviousWidth, int row) {
   // Update the size only if column becomes larger
   if (m_exactValuesAreActivated) {
-    KDCoordinate minimalWidthForColumn = std::min(MaxColumnWidth(), CellSizeWithLayout(memoizedLayoutForCell(column, row)).width());
+    KDCoordinate minimalWidthForColumn = std::min(k_maxColumnWidth, CellSizeWithLayout(memoizedLayoutForCell(column, row)).width());
     if (columnPreviousWidth < minimalWidthForColumn) {
       m_widthManager.updateMemoizationForIndex(column, columnPreviousWidth, minimalWidthForColumn);
     }

@@ -43,6 +43,15 @@ void GraphController::didBecomeFirstResponder() {
   m_view.selectRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
 }
 
+bool GraphController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Idle) {
+    // Compute the points of interest when the user is not active
+    m_interestView.resumePointsOfInterestDrawing();
+    return true;
+  }
+  return Shared::FunctionGraphController::handleEvent(event);
+}
+
 template <typename T> Coordinate2D<T> evaluator(T t, const void * model, Context * context) {
   const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
   return f->evaluateXYAtParameter(t, context);
@@ -183,8 +192,6 @@ bool GraphController::displayDerivativeInBanner() const {
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
-  // Redraw the points of interest in case the computation was interrupted
-  m_interestView.dirty();
   return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
 }
 

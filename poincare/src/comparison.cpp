@@ -185,6 +185,7 @@ Evaluation<T> ComparisonNode::templatedApproximate(const ApproximationContext& a
     }
     std::complex<T> difference = firstChildApprox.complexAtIndex(0) - secondChildApprox.complexAtIndex(0);
     T scalarDifference = ComplexNode<T>::ToScalar(difference);
+    T epsilon = std::max(std::fabs(firstChildApprox.toScalar()), std::fabs(secondChildApprox.toScalar())) * Float<T>::Epsilon();
     TrinaryBoolean chidlrenAreEqual;
     TrinaryBoolean leftChildIsGreater;
     if (std::isnan(scalarDifference)) {
@@ -193,8 +194,8 @@ Evaluation<T> ComparisonNode::templatedApproximate(const ApproximationContext& a
     } else {
       /* leftChildIsGreater is always used in combination with childrenAreEqual
        * so the fact that it's strictly greater or not is not important. */
-      leftChildIsGreater = BinaryToTrinaryBool(scalarDifference >= 0.0);
-      chidlrenAreEqual = BinaryToTrinaryBool(std::fabs(scalarDifference) < Float<T>::EpsilonLax());
+      leftChildIsGreater = BinaryToTrinaryBool(scalarDifference > 0.0);
+      chidlrenAreEqual = BinaryToTrinaryBool(std::fabs(scalarDifference) <= epsilon);
     }
     TrinaryBoolean truthValue = TruthValueOfOperator(m_operatorsList[i - 1], chidlrenAreEqual, leftChildIsGreater);
     switch (truthValue) {

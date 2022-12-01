@@ -20,7 +20,7 @@ namespace Graph {
 class ValuesController : public Shared::ValuesController, public Escher::SelectableTableViewDelegate, public Shared::PrefacedTableViewDelegate {
 public:
   ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, FunctionColumnParameterController * functionParameterController);
-  bool displayExactValues() const;
+  bool displayButtonExactValues() const;
 
   // View controller
   Escher::View * view() override { return &m_prefacedTableView; }
@@ -31,7 +31,7 @@ public:
   int typeAtLocation(int i, int j) override;
 
   // ButtonRowDelegate
-  int numberOfButtons(Escher::ButtonRowController::Position) const override { return isEmpty() ? 0 : 1 + displayExactValues(); }
+  int numberOfButtons(Escher::ButtonRowController::Position) const override { return isEmpty() ? 0 : 1 + displayButtonExactValues(); }
   Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
 
   // AlternateEmptyViewDelegate

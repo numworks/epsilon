@@ -116,11 +116,10 @@ void assert_intersections_range_is(const char * expression1, const char * expres
 }
 
 QUIZ_CASE(poincare_zoom_fit_intersections) {
-  /* Intersection ranges are more tentative as the search for intersections
-   * uses less refinements. */
-  assert_intersections_range_is("sin(x)", "cos(x)", Range2D(-7.413, 7.413, -0.904, 0.904));
+  assert_intersections_range_is("sin(x)", "cos(x)", Range2D(-14.93, 13.37, -0.7128, 0.7170));
   assert_intersections_range_is("x/2+2", "2x-1", Range2D(2, 2, 3, 3));
-  assert_intersections_range_is("x^2", "-x^2/3+x", Range2D(0, 0.78, 0, 0.608));
+  assert_intersections_range_is("x^2", "-x^2/3+x", Range2D(0, 0.75, 0, 0.5631));
+  assert_intersections_range_is("tan(x)", "x", Range2D(-4.498, 4.498, -4.585, 4.585));
 }
 
 void assert_sanitized_range_is(Range2D inputRange, Range2D expectedRange) {

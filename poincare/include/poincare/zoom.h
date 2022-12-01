@@ -90,11 +90,19 @@ private:
     double (Coordinate2D<double>::*ordinateDouble)() const;
   };
 
+  struct IntersectionParameters {
+    Function2DWithContext<float> f1;
+    Function2DWithContext<float> f2;
+    const void * model1;
+    const void * model2;
+    Context * context;
+  };
+
   constexpr static size_t k_sampleSize = Ion::Display::Width / 2;
 
-  // Static methods for the Solver API
   static Solver<float>::Interest PointIsInteresting(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c, const void * aux);
   static Coordinate2D<float> HonePoint(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest, float precision);
+  static Coordinate2D<float> HoneIntersection(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest, float precision);
 
   Range2D sanitize2DHelper(Range2D range) const;
   Range2D sanitizedRange() const { return sanitize2DHelper(m_interestingRange); }

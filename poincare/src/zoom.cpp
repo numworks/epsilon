@@ -128,26 +128,13 @@ void Zoom::fitIntersections(Function2DWithContext<float> f1, const void * model1
   /* TODO Function x=f(y) are not intersectable right now, there is no need to
    * handle this case yet. */
   assert(!vertical);
-  struct Parameters {
-    Function2DWithContext<float> f1;
-    Function2DWithContext<float> f2;
-    const void * model1;
-    const void * model2;
-    Context * context;
-  };
-  Parameters params = { .f1 = f1, .f2 = f2, .model1 = model1, .model2 = model2, .context = m_context };
+  IntersectionParameters params = { .f1 = f1, .f2 = f2, .model1 = model1, .model2 = model2, .context = m_context };
   Solver<float>::FunctionEvaluation evaluator = [](float t, const void * aux) {
-    const Parameters * p = static_cast<const Parameters *>(aux);
+    const IntersectionParameters * p = static_cast<const IntersectionParameters *>(aux);
     return p->f1(t, p->model1, p->context).x2() - p->f2(t, p->model2, p->context).x2();
   };
-  Solver<float>::HoneResult hone = [](Solver<float>::FunctionEvaluation f, const void * aux, float, float b, Solver<float>::Interest, float) {
-    const Parameters * p = static_cast<const Parameters *>(aux);
-    /* Return the faraway point (i.e. b) to avoid finding the same intersection
-     * twice. */
-    return p->f1(b, p->model1, p->context);
-  };
   bool dummy;
-  fitWithSolver(&dummy, &dummy, evaluator, &params, Solver<float>::EvenOrOddRootInBracket, hone, vertical);
+  fitWithSolver(&dummy, &dummy, evaluator, &params, Solver<float>::EvenOrOddRootInBracket, HoneIntersection, vertical);
 }
 
 void Zoom::fitMagnitude(Function2DWithContext<float> f, const void * model, bool vertical) {
@@ -224,7 +211,7 @@ Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a, Coordina
   return res;
 }
 
-Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest interest, float precision) {
+static void honeHelper(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest interest, Solver<float>::BracketTest test, Coordinate2D<float> * pa, Coordinate2D<float> * pu, Coordinate2D<float> * pv, Coordinate2D<float> * pb) {
   /* Use a simple dichotomy in [a,b] to hone in on the point of interest
    * without using the costly Brent methods. */
   constexpr int k_numberOfIterations = 9; // TODO Tune
@@ -236,26 +223,34 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const v
    * keeping the ratio between iterations while only recomputing one point. */
   float u = a + k_goldenRatio * (b - a);
   float v = b - (u - a);
-  Coordinate2D<float> pa(a, f(a, aux)),  pb(b, f(b, aux)), pu(u, f(u, aux)), pv(v, f(v, aux));
+  *pa = Coordinate2D<float>(a, f(a, aux));
+  *pb = Coordinate2D<float>(b, f(b, aux));
+  *pu = Coordinate2D<float>(u, f(u, aux));
+  *pv = Coordinate2D<float>(v, f(v, aux));
 
   for (int i = 0; i < k_numberOfIterations; i++) {
     /* Select the interval that contains the point of interest. If, because of
      * some artifacts, both or neither contains a point, we favor the interval
      * on the far side (i.e. [m,b]) to avoid finding the same point twice. */
-    if (pointIsInterestingHelper(pu, pv, pb, aux) != Solver<float>::Interest::None) {
-      pa = pu;
-      pu = pv;
-      float newV = pb.x1() - (pu.x1() - pa.x1());
-      pv = Coordinate2D<float>(newV, f(newV, aux));
-    } else if (pointIsInterestingHelper(pa, pu, pv, aux) != Solver<float>::Interest::None) {
-      pb = pv;
-      pv = pu;
-      float newU = pa.x1() + (pb.x1() - pv.x1());
-      pu = Coordinate2D<float>(newU, f(newU, aux));
+    if (test(*pu, *pv, *pb, aux) != Solver<float>::Interest::None) {
+      *pa = *pu;
+      *pu = *pv;
+      float newV = pb->x1() - (pu->x1() - pa->x1());
+      *pv = Coordinate2D<float>(newV, f(newV, aux));
+    } else if (test(*pa, *pu, *pv, aux) != Solver<float>::Interest::None) {
+      *pb = *pv;
+      *pv = *pu;
+      float newU = pa->x1() + (pb->x1() - pv->x1());
+      *pu = Coordinate2D<float>(newU, f(newU, aux));
     } else {
       break;
     }
   }
+}
+
+Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest interest, float precision) {
+  Coordinate2D<float> pa, pu, pv, pb;
+  honeHelper(f, aux, a, b, interest, pointIsInterestingHelper, &pa, &pu, &pv, &pb);
 
   constexpr float k_tolerance = 1.f / Solver<float>::k_relativePrecision;
   /* Most functions will taper off near a local extremum. If the slope
@@ -265,6 +260,25 @@ Coordinate2D<float> Zoom::HonePoint(Solver<float>::FunctionEvaluation f, const v
   /* If the function is discontinuous around the solution (e.g. 1/x^2), we
    * discard the y value to avoid zooming in on diverging points. */
   return Coordinate2D<float>(pb.x1(), interest == Solver<float>::Interest::Root ? 0.f : discontinuous ? NAN : pb.x2());
+}
+
+Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f, const void * aux, float a, float b, Solver<float>::Interest interest, float precision) {
+  Coordinate2D<float> pa, pu, pv, pb;
+  honeHelper(f, aux, a, b, interest, Solver<float>::EvenOrOddRootInBracket, &pa, &pu, &pv, &pb);
+
+  /* We must make sure the "root" we've found is not an odd vertical asymptote.
+   * We only select roots that are lower than an arbitrary threshold. The
+   * value of the threshold itself does not require fine tuning as the
+   * functions we want to filter out will diverge most of the time.
+   * FIXME This test will fail when confronted with discontinuous functions
+   * that do not have asymptotes. */
+  constexpr float k_threshold = 1.f;
+  if (!(std::fabs(pb.x2()) < k_threshold)) {
+    return Coordinate2D<float>();
+  }
+
+  const IntersectionParameters * p = static_cast<const IntersectionParameters *>(aux);
+  return p->f1(pb.x1(), p->model1, p->context);
 }
 
 static Range1D sanitationHelper(Range1D range, const Range1D * other, float ratio) {

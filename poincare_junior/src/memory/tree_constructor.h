@@ -10,9 +10,6 @@
 
 namespace Poincare {
 
-#warning Ensure that we can't use it in a non-constexpr mode
-// TODO Use consteval? We should ensure one way or another that the number of specialized class is limited and used for constexpr methods only. Meaning that no code should be emited at runtime...
-
 // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
 // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
 
@@ -54,7 +51,7 @@ constexpr static auto MakeChildren(Tree<N> * tree, size_t blockIndex, const Tree
 }
 
 template<BlockType type, unsigned ...Len>
-constexpr static auto MakeTree(const Tree<Len> (&...nodes)) {
+consteval static auto MakeTree(const Tree<Len> (&...nodes)) {
   // Compute the total length of the children
   constexpr unsigned k_numberOfChildren = sizeof...(Len);
   constexpr unsigned k_numberOfChildrenBlocks = (0 + ... + Len);
@@ -67,19 +64,19 @@ constexpr static auto MakeTree(const Tree<Len> (&...nodes)) {
   return tree;
 }
 
-template<unsigned ...Len> static constexpr auto Add(const Tree<Len> (&...children)) { return MakeTree<BlockType::Addition>(children...); }
+template<unsigned ...Len> static consteval auto Add(const Tree<Len> (&...children)) { return MakeTree<BlockType::Addition>(children...); }
 
-template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Div(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Division>(child1, child2); }
+template<unsigned L1, unsigned L2> static consteval Tree<L1+L2+1> Div(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Division>(child1, child2); }
 
-template<unsigned ...Len> static constexpr auto Mult(const Tree<Len> (&...children)) { return MakeTree<BlockType::Multiplication>(children...); }
+template<unsigned ...Len> static consteval auto Mult(const Tree<Len> (&...children)) { return MakeTree<BlockType::Multiplication>(children...); }
 
 template<unsigned ...Len> static constexpr auto Set(const Tree<Len> (&...children)) { return MakeTree<BlockType::Set>(children...); }
 
-template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Pow(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Power>(child1, child2); }
+template<unsigned L1, unsigned L2> static consteval Tree<L1+L2+1> Pow(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Power>(child1, child2); }
 
-template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Sub(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Subtraction>(child1, child2); }
+template<unsigned L1, unsigned L2> static consteval Tree<L1+L2+1> Sub(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Subtraction>(child1, child2); }
 
-template<unsigned ...Len> static constexpr auto Pol(std::array<uint8_t, sizeof...(Len) - 1> exponents, const Tree<Len> (&...coefficients)) {
+template<unsigned ...Len> static consteval auto Pol(std::array<uint8_t, sizeof...(Len) - 1> exponents, const Tree<Len> (&...coefficients)) {
   // Compute the total length of the children
   constexpr unsigned k_numberOfChildren = sizeof...(Len);
   constexpr unsigned k_numberOfChildrenBlocks = (0 + ... + Len);

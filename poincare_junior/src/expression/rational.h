@@ -11,7 +11,8 @@ public:
   static IntegerHandler Numerator(const Node node);
   static IntegerHandler Denominator(const Node node);
 
-  static EditionReference Addition(Node n0, Node n1);
+  // In-place??
+  static EditionReference Addition(EditionReference n0, EditionReference n1);
 };
 
 }

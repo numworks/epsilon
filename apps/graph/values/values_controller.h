@@ -2,6 +2,7 @@
 #define GRAPH_VALUES_CONTROLLER_H
 
 #include "../continuous_function_store.h"
+#include <apps/shared/editable_cell_selectable_table_view.h>
 #include <apps/shared/expression_function_title_cell.h>
 #include <apps/shared/interval_parameter_controller.h>
 #include <apps/shared/scrollable_two_expressions_cell.h>
@@ -16,11 +17,12 @@
 
 namespace Graph {
 
-class ValuesController : public Shared::ValuesController, public Escher::SelectableTableViewDelegate {
+class ValuesController : public Shared::ValuesController, public Escher::SelectableTableViewDelegate, public Shared::PrefacedTableViewDelegate {
 public:
   ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, FunctionColumnParameterController * functionParameterController);
 
   // View controller
+  Escher::View * view() override { return &m_prefacedView; }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   int typeAtLocation(int i, int j) override;
   void viewDidDisappear() override;
@@ -46,6 +48,9 @@ public:
   IntervalParameterSelectorController * intervalParameterSelectorController() {
     return &m_intervalParameterSelectorController;
   }
+
+  // PrefacedTableViewDelegate
+  KDCoordinate maxPrefaceHeight() const override { return 3 * k_cellHeight; }
 
 private:
   constexpr static size_t k_maxNumberOfSymbolTypes = Shared::ContinuousFunctionProperties::k_numberOfSymbolTypes;
@@ -74,6 +79,7 @@ private:
   int maxNumberOfCells() override { return k_maxNumberOfDisplayableCells; }
   int maxNumberOfFunctions() override { return k_maxNumberOfDisplayableFunctions; }
   void reloadEditedCell(int column, int row) override;
+  Shared::PrefacedTableView * prefacedView() override { return &m_prefacedView; }
 
   // Memoization
   void updateNumberOfColumns() const override;
@@ -134,6 +140,11 @@ private:
 
   bool exactValuesButtonAction();
   void activateExactValues(bool activate);
+
+  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
+  
+  Shared::PrefacedTableView m_prefacedView;
+  Shared::EditableCellSelectableTableView m_selectableTableView;
 
   mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];
   Shared::ExpressionFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableFunctions];

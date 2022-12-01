@@ -31,6 +31,10 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   FunctionGraphView::drawRect(ctx, rect);
 }
 
+int GraphView::selectedRecordIndex() const {
+  return App::app()->functionStore()->indexOfRecordAmongActiveRecords(m_selectedRecord);
+}
+
 void GraphView::setFocus(bool focus) {
   if (focus != hasFocus()) {
     /* Points of interest change visibility when the focus changes. */

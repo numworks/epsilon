@@ -15,6 +15,7 @@ public:
   // FunctionGraphView
   void reload(bool resetInterrupted = false, bool force = false) override;
   void drawRect(KDContext * ctx, KDRect rect) const override;
+  int selectedRecordIndex() const override;
 
   /* We override setAreaHighlightColor to make it reload nothing as the
    * highlightColor and the non-highlightColor are identical in the graph view

@@ -113,7 +113,7 @@ private:
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   int numberOfColumnsForSymbolType(int symbolTypeIndex) const;
   int numberOfAbscissaColumnsBeforeColumn(int column) const;
-  Shared::ContinuousFunctionProperties::SymbolType symbolTypeAtColumn(int * i) const;
+  Shared::ContinuousFunctionProperties::SymbolType symbolTypeAtColumn(int * column) const;
   
   Shared::PrefacedTableView m_prefacedTableView;
   Shared::EditableCellSelectableTableView m_selectableTableView;

@@ -3,6 +3,7 @@
 
 #include <apps/shared/editable_cell_selectable_table_view.h>
 #include <apps/shared/expression_function_title_cell.h>
+#include <apps/shared/prefaced_twice_table_view.h>
 #include <apps/shared/sequence_store.h>
 #include <apps/shared/values_controller.h>
 #include "interval_parameter_controller.h"
@@ -14,7 +15,7 @@ public:
   ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header);
 
   // ViewController
-  Escher::View * view() override { return &m_prefacedTableView; }
+  Escher::View * view() override { return &m_prefacedTwiceTableView; }
 
   // ButtonRowDelegate
   Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
@@ -41,7 +42,7 @@ private:
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override {
     setDefaultStartEndMessages();
   }
-  Shared::PrefacedTableView * prefacedView() override { return &m_prefacedTableView; }
+  Shared::PrefacedTableView * prefacedView() override { return &m_prefacedTwiceTableView; }
 
   void setDefaultStartEndMessages();
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
@@ -93,7 +94,7 @@ private:
   int fillColumnName(int columnIndex, char * buffer) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
 
-  Shared::PrefacedTableView m_prefacedTableView;
+  Shared::PrefacedTwiceTableView m_prefacedTwiceTableView;
   Shared::EditableCellSelectableTableView m_selectableTableView;
 
   Shared::ExpressionFunctionTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];

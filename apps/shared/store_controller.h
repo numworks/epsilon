@@ -32,7 +32,7 @@ public:
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
 
   // ViewController
-  Escher::View * view() override { return &m_prefacedView; }
+  Escher::View * view() override { return &m_prefacedTableView; }
   const char * title() override;
 
   // Responder
@@ -68,7 +68,7 @@ protected:
 
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
 
-  PrefacedTableView m_prefacedView;
+  PrefacedTableView m_prefacedTableView;
   EditableCellSelectableTableView m_selectableTableView;
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;

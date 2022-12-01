@@ -7,13 +7,13 @@ namespace Shared {
 DoublePairTableController::DoublePairTableController(Responder * parentResponder, ButtonRowController * header) :
   TabTableController(parentResponder),
   ButtonRowDelegate(header, nullptr),
-  m_prefacedView(0, 1, this, &m_selectableTableView, this, this),
-  m_selectableTableView(this, this, this, &m_prefacedView)
+  m_prefacedTwiceTableView(0, 1, this, &m_selectableTableView, this, this),
+  m_selectableTableView(this, this, this, &m_prefacedTwiceTableView)
 {
-  m_prefacedView.setCellOverlap(0, 0);
-  m_prefacedView.setBackgroundColor(Palette::WallScreenDark);
-  m_prefacedView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
-  m_prefacedView.setMarginDelegate(this);
+  m_prefacedTwiceTableView.setCellOverlap(0, 0);
+  m_prefacedTwiceTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_prefacedTwiceTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  m_prefacedTwiceTableView.setMarginDelegate(this);
 }
 
 bool DoublePairTableController::handleEvent(Ion::Events::Event event) {

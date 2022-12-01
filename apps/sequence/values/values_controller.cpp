@@ -45,16 +45,6 @@ int ValuesController::fillColumnName(int columnIndex, char * buffer) {
 
 // EditableCellTableViewController
 
-void ValuesController::setTitleCellText(HighlightCell * cell, int columnIndex) {
-  if (typeAtLocation(columnIndex,0) == k_functionTitleCellType) {
-    Shared::ExpressionFunctionTitleCell * myCell = static_cast<Shared::ExpressionFunctionTitleCell *>(cell);
-    Shared::Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(columnIndex));
-    myCell->setLayout(sequence->nameLayout());
-    return;
-  }
-  Shared::ValuesController::setTitleCellText(cell, columnIndex);
-}
-
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   assert(checkDataAtLocation(floatBody, columnIndex, rowIndex));
   return Shared::ValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);
@@ -65,6 +55,11 @@ bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int 
 Poincare::Layout * ValuesController::memoizedLayoutAtIndex(int i) {
   assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
   return &m_memoizedLayouts[i];
+}
+
+Poincare::Layout ValuesController::functionTitleLayout(int columnIndex) {
+  Shared::Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(columnIndex));
+  return sequence->nameLayout();
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {

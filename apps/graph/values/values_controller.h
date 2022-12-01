@@ -76,7 +76,6 @@ private:
   // EditableCellTableViewController
   void reloadEditedCell(int column, int row) override;
   void updateSizeMemoizationForRow(int row, KDCoordinate rowPreviousHeight) override { m_heightManager.updateMemoizationForIndex(row, rowPreviousHeight); }
-  void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
 
   // Shared::ValuesController
@@ -84,6 +83,7 @@ private:
   Ion::Storage::Record recordAtColumn(int i) override;
   void updateNumberOfColumns() const override;
   Poincare::Layout * memoizedLayoutAtIndex(int i) override;
+  Poincare::Layout functionTitleLayout(int columnIndex) override;
   Shared::PrefacedTableView * prefacedView() override { return &m_prefacedTableView; }
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
   int numberOfValuesColumns() const override { return numberOfColumns() - numberOfAbscissaColumnsBeforeColumn(-1); }
@@ -105,7 +105,6 @@ private:
   Escher::SelectableViewController * functionParameterController() override { return parameterController<Escher::SelectableViewController>(); }
   Shared::ColumnParameters * functionParameters() override { return parameterController<Shared::ColumnParameters>(); }
 
-  Poincare::Layout functionTitleLayout(int columnIndex);
   template <class T> T * parameterController();
   bool exactValuesButtonAction();
   void activateExactValues(bool activate);

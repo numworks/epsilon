@@ -1,5 +1,6 @@
 #include "graph_view.h"
 #include "../model/model.h"
+#include "../app.h"
 #include <apps/apps_container_helper.h>
 #include <poincare/context.h>
 #include <assert.h>
@@ -20,8 +21,16 @@ static Coordinate2D<float> evaluateRegression(float x, void * model, void * cont
 
 void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   Context * globalContext = AppsContainerHelper::sharedAppsContainerGlobalContext();
-
-  for (size_t series = 0; series < Store::k_numberOfSeries; series++) {
+  int selectedSeries = App::app()->graphController()->selectedSeriesIndex();
+  for (int s = 0; s <= Store::k_numberOfSeries; s++) {
+    // Draw the selected series last
+    if (s == selectedSeries) {
+      continue;
+    }
+    int series = s;
+    if (s == Store::k_numberOfSeries) {
+      series = selectedSeries;
+    }
     if (!m_store->seriesIsValid(series)) {
       continue;
     }
@@ -47,7 +56,7 @@ void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, K
 
 // GraphView
 
-GraphView::GraphView(Store * store, CurveViewCursor * cursor, BannerView * bannerView, Shared::CursorView * cursorView) :
+GraphView::GraphView(Store * store, CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView) :
   PlotView(store)
 {
   // RegressionPlotPolicy

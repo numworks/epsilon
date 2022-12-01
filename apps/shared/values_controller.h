@@ -2,9 +2,8 @@
 #define SHARED_VALUES_CONTROLLER_H
 
 #include "editable_cell_table_view_controller.h"
-#include "function_store.h"
-#include "editable_cell_selectable_table_view.h"
 #include "expression_function_title_cell.h"
+#include "function_store.h"
 #include "interval.h"
 #include "interval_parameter_controller.h"
 #include "prefaced_table_view.h"
@@ -18,12 +17,11 @@
 
 namespace Shared {
 
-class ValuesController : public EditableCellTableViewController, public Escher::ButtonRowDelegate,  public Escher::AlternateEmptyViewDefaultDelegate, public PrefacedTableViewDelegate {
+class ValuesController : public EditableCellTableViewController, public Escher::ButtonRowDelegate,  public Escher::AlternateEmptyViewDefaultDelegate {
 public:
   ValuesController(Escher::Responder * parentResponder, Escher::ButtonRowController * header);
 
   // View controller
-  Escher::View * view() override { return &m_prefacedView; }
   const char * title() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
@@ -50,9 +48,6 @@ public:
 
   // EditableCellTableViewController
   int numberOfRowsAtColumn(int i) const override;
-
-  // PrefacedTableViewDelegate
-  KDCoordinate maxPrefaceHeight() const override { return 3 * k_cellHeight; }
 
   virtual IntervalParameterController * intervalParameterController() = 0;
   void initializeInterval();
@@ -110,11 +105,8 @@ protected:
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
   void reloadEditedCell(int column, int row) override;
-  
-  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
-  
-  PrefacedTableView m_prefacedView;
-  EditableCellSelectableTableView m_selectableTableView;
+
+  virtual Shared::PrefacedTableView * prefacedView() = 0;
 
 private:
   // Specialization depending on the abscissa names (x, n, t...)

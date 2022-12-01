@@ -16,7 +16,7 @@ public:
   Pool & operator=(Pool &&) = delete;
   Pool & operator=(const Pool&) = delete;
 
-  Block * blockAtIndex(int i) { return firstBlock() + sizeof(Block) * i; }
+  Block * blockAtIndex(int i) { return firstBlock() + i; }
 
   bool contains(Block * block) { return block >= firstBlock() && block < lastBlock(); }
   virtual TypeBlock * firstBlock() = 0;

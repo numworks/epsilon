@@ -18,14 +18,14 @@ enum class Troolean : int8_t {
  * -------
  * F | T
  * U | U
- * T | T
+ * T | F
  *
  *       A AND B
  *              A
  *        | T | U | F |
  *        -------------
  *   | T || T | U | F |
- * B | U || U | U | F |
+ * B | U || U | U | F |
  *   | F || F | F | F |
  *
  *       A OR B
@@ -33,7 +33,7 @@ enum class Troolean : int8_t {
  *        | T | U | F |
  *        -------------
  *   | T || T | T | T |
- * B | U || T | U | U |
+ * B | U || T | U | U |
  *   | F || T | U | F |
  * */
 

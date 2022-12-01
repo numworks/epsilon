@@ -281,8 +281,7 @@ Layout ValuesController::functionTitleLayout(int columnIndex) {
 }
 
 void ValuesController::setStartEndMessages(Shared::IntervalParameterController * controller, int column) {
-  int c = column + 1;
-  m_intervalParameterSelectorController.setStartEndMessages(controller, symbolTypeAtColumn(&c));
+  m_intervalParameterSelectorController.setStartEndMessages(controller, symbolTypeAtColumn(&column));
 }
 
 int ValuesController::absoluteColumnForValuesColumn(int column) {

@@ -343,8 +343,6 @@ Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
 }
 
 I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
-  /* The paramater columnIndex should be the column index and symbolTypeAtColumn changes
-   * it to be the relative column index within the sub table. */
   return ContinuousFunctionProperties::MessageForSymbolType(symbolTypeAtColumn(&columnIndex));
 }
 
@@ -462,10 +460,11 @@ int ValuesController::numberOfAbscissaColumnsBeforeColumn(int column) const {
   return result;
 }
 
-ContinuousFunctionProperties::SymbolType ValuesController::symbolTypeAtColumn(int * i) const {
+ContinuousFunctionProperties::SymbolType ValuesController::symbolTypeAtColumn(int * column) const {
+  // column becomes the index of the column in the sub table (of symbol type)
   size_t symbolTypeIndex = 0;
-  while (*i >= numberOfColumnsForSymbolType(symbolTypeIndex)) {
-    *i -= numberOfColumnsForSymbolType(symbolTypeIndex++);
+  while (*column >= numberOfColumnsForSymbolType(symbolTypeIndex)) {
+    *column -= numberOfColumnsForSymbolType(symbolTypeIndex++);
     assert(symbolTypeIndex < k_maxNumberOfSymbolTypes);
   }
   return static_cast<ContinuousFunctionProperties::SymbolType>(symbolTypeIndex);

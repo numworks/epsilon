@@ -52,10 +52,10 @@ private:
   constexpr static int k_maxNumberOfDisplayableAbscissaCells = k_maxNumberOfDisplayableSymbolTypes * k_maxNumberOfDisplayableRows;
   constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableFunctions * k_maxNumberOfDisplayableRows;
   constexpr static int k_valuesCellBufferSize = 2 * Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) + 3; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
+  constexpr static KDCoordinate k_maxColumnWidth = 2 * k_cellWidth;
+  constexpr static KDCoordinate k_maxRowHeight = 5 * k_cellHeight;
   static KDSize ApproximatedParametricCellSize();
   static KDSize CellSizeWithLayout(Poincare::Layout l);
-  static KDCoordinate MaxColumnWidth() { return 2 * k_cellWidth; }
-  static KDCoordinate MaxRowHeight() { return 5 * k_cellHeight; }
 
   // TabTableController
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }

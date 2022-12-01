@@ -299,7 +299,11 @@ bool GraphController::moveCursorVertically(int direction) {
 
   if (validRegression) {
     // Select the regression
-    *m_selectedSeriesIndex = closestRegressionSeries;
+    if (*m_selectedSeriesIndex != closestRegressionSeries) {
+      *m_selectedSeriesIndex = closestRegressionSeries;
+      // Reload so that the selected series is on top
+      m_view.reload(false, true);
+    }
     *m_selectedDotIndex = -1;
     setRoundCrossCursorView();
     m_cursor->moveTo(x, x, yValue(*m_selectedSeriesIndex, x, context));
@@ -309,7 +313,11 @@ bool GraphController::moveCursorVertically(int direction) {
 
   if (validDot) {
     // Select the dot
-    *m_selectedSeriesIndex = closestDotSeries;
+    if (*m_selectedSeriesIndex != closestDotSeries) {
+      *m_selectedSeriesIndex = closestDotSeries;
+      // Reload so that the selected series is on top
+      m_view.reload(false, true);
+    }
     *m_selectedDotIndex = dotSelected;
     setRoundCrossCursorView();
     if (dotSelected == m_store->numberOfPairsOfSeries(*m_selectedSeriesIndex)) {

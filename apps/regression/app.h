@@ -43,6 +43,7 @@ public:
   TELEMETRY_ID("Regression");
   RegressionController * regressionController() { return &m_regressionController; }
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
+  GraphController * graphController() { return &m_graphController; }
 
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);

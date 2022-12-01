@@ -11,7 +11,9 @@ inline Node createSimpleExpression() {
   Node::Push<BlockType::IntegerShort>(1);
   Node::Push<BlockType::IntegerShort>(2);
   Node::Push<BlockType::IntegerShort>(3);
+  Node::Push<BlockType::Addition>(2);
   Node::Push<BlockType::IntegerShort>(4);
+  Node::Push<BlockType::IntegerShort>(5);
   return multiplication;
 }
 

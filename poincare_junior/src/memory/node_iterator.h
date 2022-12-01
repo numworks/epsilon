@@ -176,7 +176,7 @@ public:
   class BackwardPolicy {
   protected:
     template<size_t N>
-    std::array<Node, N> firstElement(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return node.nextTree().previousNode(); }); }
+    std::array<Node, N> firstElement(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return node.childAtIndex(node.numberOfChildren() - 1); }); }
 
     template<size_t N>
     std::array<Node, N> lastElement(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return Node(); }); }

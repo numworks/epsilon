@@ -26,7 +26,7 @@ public:
 
   // Properties
   Type type() const override{ return Type::PiecewiseOperator; }
-  int indexOfFirstTrueCondition(const ApproximationContext& approximationContext) const;
+  template<typename T> int indexOfFirstTrueCondition(const ApproximationContext& approximationContext) const;
 
 private:
   // Layout

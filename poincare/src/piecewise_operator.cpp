@@ -37,20 +37,21 @@ Expression PiecewiseOperatorNode::shallowReduce(const ReductionContext& reductio
 template<typename T>
 Evaluation<T> PiecewiseOperatorNode::templatedApproximate(const ApproximationContext& approximationContext) const {
   // TODO: Distribute on lists
-  int i = indexOfFirstTrueCondition(approximationContext);
+  int i = indexOfFirstTrueCondition<T>(approximationContext);
   if (i < 0) {
     return Complex<T>::Undefined();
   }
   return childAtIndex(i)->approximate(T(), approximationContext);
 }
 
+template<typename T>
 int PiecewiseOperatorNode::indexOfFirstTrueCondition(const ApproximationContext& approximationContext) const {
   int n = numberOfChildren();
   assert(n > 0);
   int i = 0;
   while (i + 1 < n) {
-    Evaluation<float> condition = childAtIndex(i + 1)->approximate(float(), approximationContext);
-    if (condition.type() == EvaluationNode<float>::Type::BooleanEvaluation && static_cast<BooleanEvaluation<float>&>(condition).value()) {
+    Evaluation<T> condition = childAtIndex(i + 1)->approximate(T(), approximationContext);
+    if (condition.type() == EvaluationNode<T>::Type::BooleanEvaluation && static_cast<BooleanEvaluation<T>&>(condition).value()) {
       return i;
     }
     i += 2;
@@ -125,10 +126,13 @@ int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(const char * 
   VariableContext variableContext = VariableContext(symbol, context);
   variableContext.setApproximationForVariable<float>(x);
   ExpressionNode::ApproximationContext approximationContext = ExpressionNode::ApproximationContext(&variableContext, complexFormat, angleUnit);
-  return static_cast<PiecewiseOperatorNode *>(node())->indexOfFirstTrueCondition(approximationContext);
+  return static_cast<PiecewiseOperatorNode *>(node())->indexOfFirstTrueCondition<float>(approximationContext);
 }
 
 template Evaluation<float> PiecewiseOperatorNode::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
 template Evaluation<double> PiecewiseOperatorNode::templatedApproximate<double>(const ApproximationContext& approximationContext) const;
+
+template int PiecewiseOperatorNode::indexOfFirstTrueCondition<float>(const ApproximationContext& approximationContext) const;
+template int PiecewiseOperatorNode::indexOfFirstTrueCondition<double>(const ApproximationContext& approximationContext) const;
 
 }

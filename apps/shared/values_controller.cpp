@@ -217,6 +217,30 @@ double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
   return intervalAtColumn(columnIndex)->element(rowIndex-1);
 }
 
+int ValuesController::valuesColumnForAbsoluteColumn(int column) {
+  // Subtract the abscissa column
+  assert(column < numberOfColumns() && column - 1 >= 0);
+  return column - 1;
+}
+
+int ValuesController::valuesRowForAbsoluteRow(int row) {
+  // Subtract the title row
+  assert(row - 1 >= 0);
+  return row - 1;
+}
+
+int ValuesController::absoluteColumnForValuesColumn(int column) {
+  // Add the abscissa column
+  assert(column >= 0 && column + 1 < numberOfColumns());
+  return column + 1;
+}
+
+int ValuesController::absoluteRowForValuesRow(int row) {
+  // Add the title row
+  assert(row >= 0);
+  return row + 1;
+}
+
 void ValuesController::didChangeCell(int column, int row) {
   /* Update the row memoization if it exists */
   // the first row is never reloaded as it corresponds to title row

@@ -120,10 +120,10 @@ private:
   /* Function evaluation memoization
    * The following 4 methods convert coordinate from the absolute table to the
    * table of values cell only and vice-versa. */
-  virtual int valuesColumnForAbsoluteColumn(int column) { return column - 1; } // Subtract the abscissa column
-  int valuesRowForAbsoluteRow(int row) { return row - 1; } // Subtract the title row
-  virtual int absoluteColumnForValuesColumn(int column) { return column + 1; } // Add the abscissa column
-  int absoluteRowForValuesRow(int row) { return row + 1; } // Add the title row
+  virtual int valuesColumnForAbsoluteColumn(int column);
+  int valuesRowForAbsoluteRow(int row);
+  virtual int absoluteColumnForValuesColumn(int column);
+  int absoluteRowForValuesRow(int row);
   /* Coordinates of createMemoizedLayout refer to the absolute table but the index
    * refers to the memoized table */
   virtual void createMemoizedLayout(int i, int j, int index) = 0;

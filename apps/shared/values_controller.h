@@ -43,7 +43,6 @@ public:
   int numberOfButtons(Escher::ButtonRowController::Position) const override { return isEmpty() ? 0 : 1; }
 
   // AlternateEmptyViewDelegate
-  bool isEmpty() const override { return numberOfColumns() <= 1; }
   Escher::Responder * defaultController() override { return tabController(); }
 
   // EditableCellTableViewController

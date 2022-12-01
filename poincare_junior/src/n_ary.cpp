@@ -13,12 +13,10 @@ EditionReference NAry::Flatten(EditionReference reference) {
   size_t numberOfChildren = 0;
   for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(reference)) {
     if (reference.node().type() == std::get<EditionReference>(indexedRef).node().type()) {
-      EditionReference nAry = EditionReference(Flatten(std::get<EditionReference>(indexedRef).node()));
-      numberOfChildren += nAry.node().numberOfChildren();
-      nAry.removeNode();
-    } else {
-      numberOfChildren++;
+      EditionReference nAry = std::get<EditionReference>(indexedRef);
+      std::get<EditionReference>(indexedRef).removeNode();
     }
+    numberOfChildren++;
   }
   SetNumberOfChildren(reference, numberOfChildren);
   return reference;

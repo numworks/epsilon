@@ -1,5 +1,6 @@
 #include "print.h"
 #include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/n_ary.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
@@ -44,5 +45,17 @@ void elementaryTreeManipulation() {
   EditionReference(subtraction).recursivelyEdit([](EditionReference reference) {
       Simplification::BasicReduction(reference.node().block());
     });
+  print();
+
+  std::cout << "\n---------------- Create 1+(2+3) ----------------" << std::endl;
+  Node addition = Node::Push<BlockType::Addition>(2);
+  Node::Push<BlockType::IntegerShort>(1);
+  Node::Push<BlockType::Addition>(2);
+  Node::Push<BlockType::IntegerShort>(2);
+  Node::Push<BlockType::IntegerShort>(3);
+  print();
+
+  std::cout << "\n---------------- Flatten 1+(2+3) ----------------" << std::endl;
+  NAry::Flatten(EditionReference(addition));
   print();
 }

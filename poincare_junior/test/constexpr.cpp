@@ -19,7 +19,7 @@ void playWithConstexprNodes() {
   editionPool->initFromTree(node);
 
   Node valueMod = editionPool->initFromTree(Sub(value, 12_n));
-  Simplification::BasicReduction(valueMod.block());
+  Simplification::BasicReduction(EditionReference(valueMod));
 
   print();
 }

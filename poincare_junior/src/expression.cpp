@@ -24,7 +24,7 @@ Expression Expression::CreateBasicReduction(void * expressionAddress) {
   return Expression(
     [](Node tree) {
       EditionReference(tree).recursivelyEdit([](EditionReference reference) {
-          Simplification::BasicReduction(reference.node());
+          Simplification::BasicReduction(reference);
         });
     },
     expressionAddress);

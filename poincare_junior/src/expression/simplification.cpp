@@ -120,43 +120,42 @@ int Simplification::CompareFirstChild(const Node node0, Node node1, ScanDirectio
   return 1;
 }
 
-void Simplification::BasicReduction(Node node) {
+void Simplification::BasicReduction(EditionReference reference) {
   // TODO: Macro to automatically generate switch
-  switch (node.type()) {
+  switch (reference.node().type()) {
     case BlockType::Division:
-      return DivisionReduction(node);
+      return DivisionReduction(reference);
     case BlockType::Subtraction:
-      return SubtractionReduction(node);
+      return SubtractionReduction(reference);
     default:
       return;
   }
 }
 
-void Simplification::DivisionReduction(Node node) {
-  assert(node.type() == BlockType::Division);
-  ProjectionReduction(node,
+void Simplification::DivisionReduction(EditionReference reference) {
+  assert(reference.node().type() == BlockType::Division);
+  ProjectionReduction(reference,
       []() { return Node::Push<BlockType::Multiplication>(2); },
       []() { return Node::Push<BlockType::Power>(); }
     );
 }
 
-void Simplification::SubtractionReduction(Node node) {
-  assert(node.type() == BlockType::Subtraction);
-  ProjectionReduction(node,
+void Simplification::SubtractionReduction(EditionReference reference) {
+  assert(reference.node().type() == BlockType::Subtraction);
+  ProjectionReduction(reference,
       []() { return Node::Push<BlockType::Addition>(2); },
       []() { return Node::Push<BlockType::Multiplication>(2); }
     );
 }
 
-Node Simplification::DistributeMultiplicationOverAddition(Node node) {
-  EditionReference mult = EditionReference(node);
-  for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(mult)) {
+EditionReference Simplification::DistributeMultiplicationOverAddition(EditionReference reference) {
+  for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(reference)) {
     if (std::get<EditionReference>(indexedRef).node().type() == BlockType::Addition) {
       // Create new addition that will be filled in the following loop
       EditionReference add = EditionReference(Node::Push<BlockType::Addition>(std::get<EditionReference>(indexedRef).node().numberOfChildren()));
       for (std::pair<EditionReference, int> indexedAdditionChild : NodeIterator::Children<Forward, Editable>(std::get<EditionReference>(indexedRef))) {
         // Copy a multiplication
-        EditionReference multCopy = mult.clone();
+        EditionReference multCopy = reference.clone();
         // Find the addition to be replaced
         EditionReference additionCopy = EditionReference(multCopy.node().childAtIndex(std::get<int>(indexedRef)));
         // Find addition child to replace with
@@ -166,21 +165,19 @@ Node Simplification::DistributeMultiplicationOverAddition(Node node) {
         assert(multCopy.node().type() == BlockType::Multiplication);
         DistributeMultiplicationOverAddition(multCopy.node());
       }
-      mult.replaceTreeByTree(add);
+      reference.replaceTreeByTree(add);
       return add.node();
     }
   }
-  return node;
+  return reference;
 }
 
-void Simplification::ProjectionReduction(Node node, Node (*PushProjectedEExpression)(), Node (*PushInverse)()) {
+void Simplification::ProjectionReduction(EditionReference division, Node (*PushProjectedEExpression)(), Node (*PushInverse)()) {
   /* Rule a / b --> a * b^-1 (or a - b --> a + b * -1) */
-  // Create a reference for future needs
-  EditionReference division = EditionReference(node);
   // Create empty * (or +)
   EditionReference multiplication(PushProjectedEExpression());
   // Get references to children
-  assert(node.numberOfChildren() == 2);
+  assert(division.node().numberOfChildren() == 2);
   EditionReference childrenReferences[2];
   for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(division)) {
     childrenReferences[std::get<int>(indexedRef)] = std::get<EditionReference>(indexedRef);

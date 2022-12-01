@@ -26,7 +26,7 @@ void elementaryTreeManipulation() {
   std::cout << "\n---------------- Develop (1+2)*3*4 ----------------" << std::endl;
   TypeBlock * root = editionPool->firstBlock();
   assert(root->type() == BlockType::Multiplication);
-  Simplification::DistributeMultiplicationOverAddition(root);
+  Simplification::DistributeMultiplicationOverAddition(EditionReference(root));
   print();
 
   std::cout << "\n---------------- Store developped 1*3*4+2*3*4 ----------------" << std::endl;
@@ -43,7 +43,7 @@ void elementaryTreeManipulation() {
 
   std::cout << "\n---------------- Projection to internal nodes 1-2/3 ----------------" << std::endl;
   EditionReference(subtraction).recursivelyEdit([](EditionReference reference) {
-      Simplification::BasicReduction(reference.node().block());
+      Simplification::BasicReduction(reference);
     });
   print();
 

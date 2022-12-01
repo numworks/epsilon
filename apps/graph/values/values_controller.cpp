@@ -230,20 +230,13 @@ void ValuesController::viewDidDisappear() {
   Shared::ValuesController::viewDidDisappear();
 }
 
-// AlternateEmptyViewDelegate
-
-bool ValuesController::isEmpty() const {
-  if (functionStore()->numberOfActiveFunctionsInTable() == 0) {
-    return true;
-  }
-  return false;
+bool ValuesController::displayExactValues() const {
+  // Above this value, the performances significantly drop.
+  return numberOfValuesColumns() <= ContinuousFunctionStore::k_maxNumberOfMemoizedModels;
 }
 
-I18n::Message ValuesController::emptyMessage() {
-  if (functionStore()->numberOfDefinedModels() == 0) {
-    return I18n::Message::NoFunction;
-  }
-  return I18n::Message::NoActivatedFunction;
+Escher::AbstractButtonCell * ValuesController::buttonAtIndex(int index, Escher::ButtonRowController::Position position) const {
+  return index == 0 && displayExactValues() ? const_cast<Escher::ButtonState *>(&m_exactValuesButton) : const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
 }
 
 // Values controller
@@ -356,10 +349,6 @@ int ValuesController::numberOfAbscissaColumnsBeforeColumn(int column) const {
   return result;
 }
 
-int ValuesController::numberOfValuesColumns() const {
-  return numberOfColumns() - numberOfAbscissaColumnsBeforeColumn(-1);
-}
-
 ContinuousFunctionProperties::SymbolType ValuesController::symbolTypeAtColumn(int * i) const {
   size_t symbolTypeIndex = 0;
   while (*i >= numberOfColumnsForSymbolType(symbolTypeIndex)) {
@@ -371,8 +360,9 @@ ContinuousFunctionProperties::SymbolType ValuesController::symbolTypeAtColumn(in
 
 // Function evaluation memoization
 
-int ValuesController::valuesColumnForAbsoluteColumn(int column) {
-  return column - numberOfAbscissaColumnsBeforeColumn(column);
+Poincare::Layout * ValuesController::memoizedLayoutAtIndex(int i) {
+  assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
+  return &m_memoizedLayouts[i];
 }
 
 int ValuesController::absoluteColumnForValuesColumn(int column) {
@@ -412,7 +402,6 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     approximation = PoincareHelpers::Approximate<double>(exactResult, context);
   }
   *memoizedLayoutAtIndex(index) = approximation.createLayout(Preferences::PrintFloatMode::Decimal, Preferences::VeryLargeNumberOfSignificantDigits, context);
-
 }
 
 // Parameter controllers
@@ -445,6 +434,16 @@ Shared::ExpressionFunctionTitleCell * ValuesController::functionTitleCells(int j
 EvenOddExpressionCell * ValuesController::valueCells(int j) {
   assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
   return &m_valueCells[j];
+}
+
+Escher::EvenOddEditableTextCell * ValuesController::abscissaCells(int j) {
+  assert (j >= 0 && j < k_maxNumberOfDisplayableAbscissaCells);
+  return &m_abscissaCells[j];
+}
+
+Escher::EvenOddMessageTextCell * ValuesController::abscissaTitleCells(int j) {
+  assert (j >= 0 && j < abscissaTitleCellsCount());
+  return &m_abscissaTitleCells[j];
 }
 
  bool ValuesController::exactValuesButtonAction() {

@@ -22,7 +22,7 @@ public:
   ValuesController(Escher::Responder * parentResponder, Escher::ButtonRowController * header);
 
   // View controller
-  const char * title() override;
+  const char * title() override { return I18n::translate(I18n::Message::ValuesTab); }
   void viewWillAppear() override;
   void viewDidDisappear() override;
   TELEMETRY_ID("Values");
@@ -40,11 +40,11 @@ public:
   int typeAtLocation(int i, int j) override;
 
   // ButtonRowDelegate
-  int numberOfButtons(Escher::ButtonRowController::Position) const override;
+  int numberOfButtons(Escher::ButtonRowController::Position) const override { return isEmpty() ? 0 : 1; }
 
   // AlternateEmptyViewDelegate
-  bool isEmpty() const override;
-  Escher::Responder * defaultController() override;
+  bool isEmpty() const override { return numberOfColumns() <= 1; }
+  Escher::Responder * defaultController() override { return tabController(); }
 
   // EditableCellTableViewController
   int numberOfRowsAtColumn(int i) const override;
@@ -78,7 +78,7 @@ protected:
   virtual Ion::Storage::Record recordAtColumn(int i);
 
   // Number of columns memoization
-  virtual void updateNumberOfColumns() const;
+  virtual void updateNumberOfColumns() const { m_numberOfColumns = 1 + functionStore()->numberOfActiveFunctions(); }
   mutable int m_numberOfColumns;
   mutable bool m_numberOfColumnsNeedUpdate;
 
@@ -116,9 +116,7 @@ private:
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
   virtual int numberOfValuesColumns() const { return functionStore()->numberOfActiveFunctions(); }
-  int maxNumberOfElements() const override {
-    return Interval::k_maxNumberOfElements;
-  };
+  int maxNumberOfElements() const override { return Interval::k_maxNumberOfElements; };
 
   /* Function evaluation memoization
    * The following 4 methods convert coordinate from the absolute table to the
@@ -152,7 +150,7 @@ private:
   virtual Shared::ColumnParameters * functionParameters() = 0;
 
   void clearSelectedColumn() override;
-  void setClearPopUpContent() override;
+  void setClearPopUpContent() override { m_confirmPopUpController.setMessageWithPlaceholders(I18n::Message::ClearTableConfirmation, ""); }
   bool isColumnClearable(int columnIndex) override { return typeAtLocation(columnIndex, 0) == k_abscissaTitleCellType; }
 
   ValuesParameterController m_abscissaParameterController;

@@ -42,10 +42,6 @@ void ValuesController::setupSelectableTableViewAndCells(Escher::InputEventHandle
 
 // View Controller
 
-const char * ValuesController::title() {
-  return I18n::translate(I18n::Message::ValuesTab);
-}
-
 void ValuesController::viewWillAppear() {
   EditableCellTableViewController::viewWillAppear();
   header()->setSelectedButton(-1);
@@ -186,28 +182,6 @@ int ValuesController::typeAtLocation(int i, int j) {
   return (i > 0) + 2 * (j > 0);
 }
 
-// ButtonRowDelegate
-
-int ValuesController::numberOfButtons(ButtonRowController::Position) const {
-  if (isEmpty()) {
-    return 0;
-  }
-  return 1;
-}
-
-// AlternateEmptyViewDelegate
-
-bool ValuesController::isEmpty() const {
-  if (numberOfColumns() <= 1) {
-    return true;
-  }
-  return false;
-}
-
-Responder * ValuesController::defaultController() {
-  return tabController();
-}
-
 // EditableCellTableViewController
 
 int ValuesController::numberOfRowsAtColumn(int i) const {
@@ -298,12 +272,6 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i) {
   return functionStore()->activeRecordAtIndex(i-1);
 }
 
-// Number of columns memoization
-
-void ValuesController::updateNumberOfColumns() const {
-  m_numberOfColumns = 1+functionStore()->numberOfActiveFunctions();
-}
-
 FunctionStore * ValuesController::functionStore() const {
   return FunctionApp::app()->functionStore();
 }
@@ -389,12 +357,8 @@ Layout ValuesController::memoizedLayoutForCell(int i, int j) {
 }
 
 void ValuesController::clearSelectedColumn() {
-   intervalAtColumn(selectedColumn())->clear();
-   resetMemoization();
-}
-
-void ValuesController::setClearPopUpContent() {
-  m_confirmPopUpController.setMessageWithPlaceholders(I18n::Message::ClearTableConfirmation, "");
+  intervalAtColumn(selectedColumn())->clear();
+  resetMemoization();
 }
 
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {

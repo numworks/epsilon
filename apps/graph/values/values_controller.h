@@ -28,26 +28,17 @@ public:
   void viewDidDisappear() override;
 
   // ButtonRowDelegate
-  bool displayExactValues() const {
-    // Above this value, the performances significantly drop.
-    return numberOfValuesColumns() <= ContinuousFunctionStore::k_maxNumberOfMemoizedModels;
-  }
+  bool displayExactValues() const;
   int numberOfButtons(Escher::ButtonRowController::Position) const override { return isEmpty() ? 0 : 1 + displayExactValues(); }
-  Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
-    return index == 0 && displayExactValues() ? const_cast<Escher::ButtonState *>(&m_exactValuesButton) : const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
-  }
+  Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
 
   // AlternateEmptyViewDelegate
-  bool isEmpty() const override;
-  I18n::Message emptyMessage() override;
+  bool isEmpty() const override { return functionStore()->numberOfActiveFunctionsInTable() == 0; }
+  I18n::Message emptyMessage() override { return functionStore()->numberOfDefinedModels() == 0 ? I18n::Message::NoFunction : I18n::Message::NoActivatedFunction; }
 
   // Parameters controllers getters
-  Shared::IntervalParameterController * intervalParameterController() override {
-    return &m_intervalParameterController;
-  }
-  IntervalParameterSelectorController * intervalParameterSelectorController() {
-    return &m_intervalParameterSelectorController;
-  }
+  Shared::IntervalParameterController * intervalParameterController() override { return &m_intervalParameterController; }
+  IntervalParameterSelectorController * intervalParameterSelectorController() { return &m_intervalParameterSelectorController; }
 
   // PrefacedTableViewDelegate
   KDCoordinate maxPrefaceHeight() const override { return 3 * k_cellHeight; }
@@ -98,20 +89,17 @@ private:
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   int numberOfColumnsForSymbolType(int symbolTypeIndex) const;
   int numberOfAbscissaColumnsBeforeColumn(int column) const;
-  int numberOfValuesColumns() const override;
+  int numberOfValuesColumns() const override { return numberOfColumns() - numberOfAbscissaColumnsBeforeColumn(-1); }
   Shared::ContinuousFunctionProperties::SymbolType symbolTypeAtColumn(int * i) const;
 
   // Function evaluation memoization
-  constexpr static int k_valuesCellBufferSize = 2*Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits)+3; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
-  Poincare::Layout * memoizedLayoutAtIndex(int i) override {
-    assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
-    return &m_memoizedLayouts[i];
-  }
+  constexpr static int k_valuesCellBufferSize = 2 * Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits) + 3; // The largest buffer holds (-1.234567E-123;-1.234567E-123)
+  Poincare::Layout * memoizedLayoutAtIndex(int i) override;
   int numberOfMemoizedColumn() override { return k_maxNumberOfDisplayableFunctions; }
   /* The conversion of column coordinates from the absolute table to the table
    * on only values cell depends on the number of abscissa columns which depends
    * on the number of different plot types in the table. */
-  int valuesColumnForAbsoluteColumn(int column) override;
+  int valuesColumnForAbsoluteColumn(int column) override { return column - numberOfAbscissaColumnsBeforeColumn(column); }
   int absoluteColumnForValuesColumn(int column) override;
   void createMemoizedLayout(int column, int row, int index) override;
 
@@ -134,9 +122,9 @@ private:
   Shared::ExpressionFunctionTitleCell * functionTitleCells(int j) override;
   Escher::EvenOddExpressionCell * valueCells(int j) override;
   int abscissaCellsCount() const override { return k_maxNumberOfDisplayableAbscissaCells; }
-  Escher::EvenOddEditableTextCell * abscissaCells(int j) override { assert (j >= 0 && j < k_maxNumberOfDisplayableAbscissaCells); return &m_abscissaCells[j]; }
+  Escher::EvenOddEditableTextCell * abscissaCells(int j) override;
   int abscissaTitleCellsCount() const override { return k_maxNumberOfDisplayableSymbolTypes; }
-  Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) override { assert (j >= 0 && j < abscissaTitleCellsCount()); return &m_abscissaTitleCells[j]; }
+  Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) override;
 
   bool exactValuesButtonAction();
   void activateExactValues(bool activate);

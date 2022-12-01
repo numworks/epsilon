@@ -70,6 +70,7 @@ uint64_t sKeysSeenUp = -1;
 bool sLastEventShift = false;
 bool sLastEventAlpha = false;
 bool sEventIsRepeating = false;
+bool sIdleWasSent = false;
 
 void resetKeyboardState() {
   sKeysSeenUp = -1;
@@ -77,7 +78,7 @@ void resetKeyboardState() {
   sLastKeyboardState = -1;
 }
 
-Event sharedGetEvent(int * timeout) {
+Event privateSharedGetEvent(int * timeout) {
   constexpr int delayBeforeRepeat = 200;
   constexpr int delayBetweenRepeat = 50;
   assert(*timeout > delayBeforeRepeat);
@@ -162,7 +163,18 @@ Event sharedGetEvent(int * timeout) {
       Ion::Events::incrementLongPress();
       return sLastEvent;
     }
+
   }
+}
+
+Event sharedGetEvent(int * timeout) {
+  Event event = privateSharedGetEvent(timeout);
+  if (event == None && !sIdleWasSent) {
+    sIdleWasSent = true;
+    return Idle;
+  }
+  sIdleWasSent = sIdleWasSent && event == None;
+  return event;
 }
 
 size_t sharedCopyText(uint8_t eventId, char * buffer, size_t bufferSize) {
@@ -179,7 +191,7 @@ bool sharedIsDefined(uint8_t eventId) {
   if (e.isKeyboardEvent()) {
     return s_dataForEvent[static_cast<uint8_t>(e)].isDefined();
   } else {
-    return (e == None || e == Termination || e == USBEnumeration || e == USBPlug || e == BatteryCharging || e == ExternalText);
+    return (e == None || e == Termination || e == USBEnumeration || e == USBPlug || e == BatteryCharging || e == ExternalText || e == Idle);
   }
 }
 

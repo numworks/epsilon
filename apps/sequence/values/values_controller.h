@@ -21,6 +21,7 @@ public:
   Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override { return const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton); }
 
   // AlternateEmptyViewDelegate
+  bool isEmpty() const override { return functionStore()->numberOfActiveFunctions() == 0; }
   I18n::Message emptyMessage() override { return functionStore()->numberOfDefinedModels() == 0 ? I18n::Message::NoSequence : I18n::Message::NoActivatedSequence; }
 
   // Shared::ValuesController

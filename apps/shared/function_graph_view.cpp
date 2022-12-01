@@ -12,16 +12,28 @@ namespace Shared {
 
 void FunctionGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   int n = numberOfDrawnRecords();
-  for (int i = 0; i < n; i++) {
-    if (functionWasInterrupted(i)) {
+  int selectedIndex = selectedRecordIndex();
+  for (int i = 0; i <= n; i++) {
+    // Draw the selected record last so that it's on top of others
+    if (i == selectedIndex) {
+      continue;
+    }
+    int index = i;
+    if (i == n) {
+      index = selectedIndex;
+      if (index < 0 || index >= n) {
+        break;
+      }
+    }
+    if (functionWasInterrupted(index)) {
       continue;
     }
     UserCircuitBreakerCheckpoint checkpoint;
     if (BackCircuitBreakerRun(checkpoint)) {
-      drawRecord(i, ctx, rect);
+      drawRecord(index, ctx, rect);
     } else {
-      setFunctionInterrupted(i);
-      tidyModel(i);
+      setFunctionInterrupted(index);
+      tidyModel(index);
       m_context->tidyDownstreamPoolFrom();
     }
   }

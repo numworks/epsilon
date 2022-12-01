@@ -18,6 +18,15 @@ public:
   Ion::Storage::Record activeRecordAtIndex(int i) const {
     return recordSatisfyingTestAtIndex(i, &IsFunctionActive, nullptr);
   }
+  int indexOfRecordAmongActiveRecords(Ion::Storage::Record record) const {
+    int n = numberOfActiveFunctions();
+    for (int i = 0; i < n; i++) {
+      if (activeRecordAtIndex(i) == record) {
+        return i;
+      }
+    }
+    return -1;
+  }
   ExpiringPointer<Function> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<Function>(static_cast<Function *>(privateModelForRecord(record))); }
 protected:
   static bool IsFunctionActive(ExpressionModelHandle * model, void * context) {

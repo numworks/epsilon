@@ -20,16 +20,6 @@ bool ContinuousFunctionStore::displaysFunctionsToNormalize(int * nbActiveFunctio
   return numberOfActiveFunctionsWithProperty(&ContinuousFunctionProperties::enforcePlotNormalization) != 0;
 }
 
-int ContinuousFunctionStore::indexOfRecordAmongActiveRecords(Ion::Storage::Record record) const {
-  int n = numberOfActiveFunctions();
-  for (int i = 0; i < n; i++) {
-    if (activeRecordAtIndex(i) == record) {
-      return i;
-    }
-  }
-  return -1;
-}
-
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
   char name[ContinuousFunction::k_maxDefaultNameSize];
   const char * const extensions[1] = { modelExtension() };

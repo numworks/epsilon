@@ -18,6 +18,7 @@ protected:
   virtual int numberOfDrawnRecords() const = 0;
   virtual void drawRecord(int i, KDContext *, KDRect) const = 0;
   virtual void tidyModel(int i) const = 0;
+  virtual int selectedRecordIndex() const = 0;
 
   bool allFunctionsInterrupted() const;
   bool functionWasInterrupted(int index) const;

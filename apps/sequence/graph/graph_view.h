@@ -14,6 +14,9 @@ public:
   int numberOfDrawnRecords() const override { return m_sequenceStore->numberOfActiveFunctions(); }
   void drawRecord(int i , KDContext * ctx, KDRect rect) const override;
   void tidyModel(int i) const override { m_sequenceStore->modelForRecord(m_sequenceStore->activeRecordAtIndex(i))->tidyDownstreamPoolFrom(); }
+  int selectedRecordIndex() const override {
+    return m_sequenceStore->indexOfRecordAmongActiveRecords(m_selectedRecord);
+  }
 
 private:
   Shared::SequenceStore * m_sequenceStore;

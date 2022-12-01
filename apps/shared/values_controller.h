@@ -93,7 +93,6 @@ protected:
    */
   void resetLayoutMemoization();
   virtual Poincare::Layout * memoizedLayoutAtIndex(int i) = 0;
-  virtual int numberOfMemoizedColumn() = 0;
   // Coordinates of memoizedLayoutForCell refer to the absolute table
   Poincare::Layout memoizedLayoutForCell(int i, int j);
 

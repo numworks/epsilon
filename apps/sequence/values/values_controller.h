@@ -49,7 +49,6 @@ private:
 
   // Shared::ValuesController
   Shared::SequenceStore * functionStore() const override { return static_cast<Shared::SequenceStore *>(Shared::ValuesController::functionStore()); }
-  int numberOfMemoizedColumn() override { return k_maxNumberOfDisplayableSequences; }
   Poincare::Layout * memoizedLayoutAtIndex(int i) override;
   Shared::PrefacedTableView * prefacedView() override { return &m_prefacedTwiceTableView; }
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override { setDefaultStartEndMessages(); }

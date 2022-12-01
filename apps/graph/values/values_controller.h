@@ -84,7 +84,6 @@ private:
   Ion::Storage::Record recordAtColumn(int i) override;
   void updateNumberOfColumns() const override;
   Poincare::Layout * memoizedLayoutAtIndex(int i) override;
-  int numberOfMemoizedColumn() override { return k_maxNumberOfDisplayableFunctions; }
   Shared::PrefacedTableView * prefacedView() override { return &m_prefacedTableView; }
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
   int numberOfValuesColumns() const override { return numberOfColumns() - numberOfAbscissaColumnsBeforeColumn(-1); }

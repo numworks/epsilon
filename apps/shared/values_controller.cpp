@@ -237,7 +237,7 @@ void ValuesController::didChangeCell(int column, int row) {
   }
 
   // Update the memoization of rows linked to the changed cell
-  int nbOfMemoizedColumns = numberOfMemoizedColumn();
+  int nbOfMemoizedColumns = maxNumberOfFunctions();
   int nbOfColumnsForAbscissa = numberOfColumnsForAbscissaColumn(abscissaColumn);
   for (int i = abscissaColumn+1; i < abscissaColumn+nbOfColumnsForAbscissa; i++) {
     int memoizedI = valuesColumnForAbsoluteColumn(i) - m_firstMemoizedColumn;
@@ -279,7 +279,7 @@ FunctionStore * ValuesController::functionStore() const {
 // Function evaluation memoization
 
 void ValuesController::resetLayoutMemoization() {
-  const int numberOfMemoizedCell = k_maxNumberOfDisplayableRows * numberOfMemoizedColumn();
+  const int numberOfMemoizedCell = k_maxNumberOfDisplayableRows * maxNumberOfFunctions();
   for (int i = 0; i < numberOfMemoizedCell; i++) {
     *memoizedLayoutAtIndex(i) = Layout();
   }
@@ -302,7 +302,7 @@ void ValuesController::resetLayoutMemoization() {
 }
 
 Layout ValuesController::memoizedLayoutForCell(int i, int j) {
-  const int nbOfMemoizedColumns = numberOfMemoizedColumn();
+  const int nbOfMemoizedColumns = maxNumberOfFunctions();
   // Conversion of coordinates from absolute table to values table
   int valuesI = valuesColumnForAbsoluteColumn(i);
   int valuesJ = valuesRowForAbsoluteRow(j);

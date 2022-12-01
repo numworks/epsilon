@@ -57,7 +57,7 @@ private:
     return CreateIntegerBlockAtIndexForType(block, blockIndex, BlockType::IntegerNegBig, value);
   }
 
-  // TODO move?
+  // TODO move to expression/integer.h
   constexpr static uint8_t NumberOfDigits(unsigned int value) {
     uint8_t numberOfDigits = 0;
     while (value && numberOfDigits < 4) {
@@ -67,12 +67,12 @@ private:
     return numberOfDigits;
   }
 
-  // TODO move
+  // TODO move to expression/integer.h
   constexpr static uint8_t DigitAtIndex(unsigned int value, int index) {
     return Bit::getByteAtIndex(value, index);
   }
 
-  // TODO move?
+  // TODO move to expression/float.h
   union FloatMemory {
     float m_float;
     uint32_t m_int;

@@ -21,6 +21,11 @@ CalculationGraphController::CalculationGraphController(Responder * parentRespond
 }
 
 bool CalculationGraphController::handleEvent(Ion::Events::Event event) {
+  if (event == Ion::Events::Idle) {
+    // Compute the points of interest when the user is not active
+    m_graphView->interestView()->resumePointsOfInterestDrawing();
+    return true;
+  }
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
     Escher::Clipboard::SharedClipboard()->store(m_bannerView->abscissaValue()->text());
     return true;
@@ -60,7 +65,7 @@ void CalculationGraphController::viewWillAppear() {
     reloadBannerView();
     m_graphRange->panToMakePointVisible(m_cursor->x(), m_cursor->y(), cursorTopMarginRatio(), cursorRightMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), curveView()->pixelWidth());
   }
-  m_graphView->setInterest(specialInterest());
+  m_graphView->interestView()->setInterest(specialInterest());
   m_graphView->reload();
 }
 

@@ -13,6 +13,16 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
   if (!m_parentView->hasFocus()) {
     return;
   }
+#if PLATFORM_DEVICE
+  bool shouldComputePoints = m_computePoints;
+  m_computePoints = false;
+#else
+  /* Always compute interest when the view is drawn if not on device since
+   * there is no slowness issue and it makes the fuzzing more reliable. */
+  bool shouldComputePoints = true;
+  (void) m_computePoints; // Silence compilator
+#endif
+
   ContinuousFunctionStore * functionStore = App::app()->functionStore();
   Ion::Storage::Record selectedRecord = m_parentView->selectedRecord();
   ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(selectedRecord);
@@ -26,7 +36,7 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
   int i = 0;
   do {
     // Compute more points of interest if necessary
-    while (i >= pointsOfInterestCache->numberOfPoints() && !pointsOfInterestCache->isFullyComputed()) {
+    while (shouldComputePoints && i >= pointsOfInterestCache->numberOfPoints() && !pointsOfInterestCache->isFullyComputed()) {
       /* Use a checkpoint each time a step is computed so that plot can be
        * navigated in parallel of computation. */
       UserCircuitBreakerCheckpoint checkpoint;
@@ -79,8 +89,11 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
   } while (1);
 }
 
-void InterestView::dirty() {
-  markRectAsDirty(m_parentView->bounds());
+void InterestView::resumePointsOfInterestDrawing() {
+#if PLATFORM_DEVICE
+  markRectAsDirty(bounds());
+  m_computePoints = true;
+#endif
 }
 
 }

@@ -28,7 +28,7 @@ public:
   bool recordWasInterrupted(Ion::Storage::Record record) const;
 
   void drawTangent(bool tangent) { m_tangent = tangent; }
-  void setInterest(Poincare::Solver<double>::Interest interest) { m_interestView->setInterest(interest); }
+  InterestView * interestView() { return m_interestView; }
 
 private:
   constexpr static int k_externRectMargin = 2;

@@ -34,14 +34,16 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
   initValueCells();
 }
 
+// ColumnHelper
+
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {
   /* The column names U_n, V_n, etc. are implemented as layout for now (see setTitleCellText of this file)
-   * Since there is no column parameters for these column, the fillColumnName is not yet implemented.
-   */
+   * Since there is no column parameters for these column, the fillColumnName is not yet implemented. */
   assert(typeAtLocation(columnIndex, 0) != k_functionTitleCellType);
   return Shared::ValuesController::fillColumnName(columnIndex, buffer);
 }
 
+// EditableCellTableViewController
 
 void ValuesController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   if (typeAtLocation(columnIndex,0) == k_functionTitleCellType) {
@@ -53,37 +55,12 @@ void ValuesController::setTitleCellText(HighlightCell * cell, int columnIndex) {
   Shared::ValuesController::setTitleCellText(cell, columnIndex);
 }
 
-// AlternateEmptyViewDelegate
-I18n::Message ValuesController::emptyMessage() {
-  if (functionStore()->numberOfDefinedModels() == 0) {
-    return I18n::Message::NoSequence;
-  }
-  return I18n::Message::NoActivatedSequence;
-}
-
-// ValuesController
-void ValuesController::setDefaultStartEndMessages() {
-  m_intervalParameterController.setStartEndMessages(I18n::Message::NStart, I18n::Message::NEnd);
-}
-
-I18n::Message ValuesController::valuesParameterMessageAtColumn(int columnIndex) const {
-  return I18n::Message::N;
-}
-
-// EditableCellViewController
-
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   assert(checkDataAtLocation(floatBody, columnIndex, rowIndex));
   return Shared::ValuesController::setDataAtLocation(std::round(floatBody), columnIndex, rowIndex);
 }
 
-// Model getters
-
-Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
-  return App::app()->interval();
-}
-
-// Function evaluation memoization
+// Shared::ValuesController
 
 Poincare::Layout * ValuesController::memoizedLayoutAtIndex(int i) {
   assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
@@ -99,7 +76,19 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   *memoizedLayoutAtIndex(index) = e.createLayout(Preferences::PrintFloatMode::Decimal, Preferences::VeryLargeNumberOfSignificantDigits, context);
 }
 
-// Cells & view
+Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
+  return App::app()->interval();
+}
+
+Shared::ExpressionFunctionTitleCell * ValuesController::functionTitleCells(int j) {
+  assert(j >= 0 && j < k_maxNumberOfDisplayableSequences);
+  return &m_sequenceTitleCells[j];
+}
+
+Escher::EvenOddExpressionCell * ValuesController::valueCells(int j) {
+  assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
+  return &m_valueCells[j];
+}
 
 Escher::EvenOddEditableTextCell * ValuesController::abscissaCells(int j) {
   assert (j >= 0 && j < k_maxNumberOfDisplayableRows);
@@ -111,14 +100,8 @@ Escher::EvenOddMessageTextCell * ValuesController::abscissaTitleCells(int j) {
   return &m_abscissaTitleCell;
 }
 
-Shared::ExpressionFunctionTitleCell * ValuesController::functionTitleCells(int j) {
-  assert(j >= 0 && j < k_maxNumberOfDisplayableSequences);
-  return &m_sequenceTitleCells[j];
-}
-
-Escher::EvenOddExpressionCell * ValuesController::valueCells(int j) {
-  assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
-  return &m_valueCells[j];
+void ValuesController::setDefaultStartEndMessages() {
+  m_intervalParameterController.setStartEndMessages(I18n::Message::NStart, I18n::Message::NEnd);
 }
 
 }

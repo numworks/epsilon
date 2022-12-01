@@ -281,23 +281,20 @@ Coordinate2D<float> Zoom::HoneIntersection(Solver<float>::FunctionEvaluation f, 
   return p->f1(pb.x1(), p->model1, p->context);
 }
 
-static Range1D sanitationHelper(Range1D range, const Range1D * other, float ratio) {
-  assert(other);
+static Range1D sanitationHelper(Range1D range, float defaultHalfLength) {
   if (!range.isValid()) {
     range = Range1D(0.f, 0.f);
   }
   if (range.isEmpty()) {
     float c = range.min();
-    float otherLength = other->isValid() ? other->length() : 0.f;
-    float d = otherLength == 0.f ? Range1D::k_defaultHalfLength : ratio * 0.5f * otherLength;
-    range = Range1D(c - d, c + d);
+    range = Range1D(c - defaultHalfLength, c + defaultHalfLength);
   }
   return range;
 }
 
 Range2D Zoom::sanitize2DHelper(Range2D range) const {
-  Range1D xRange = m_forcedRange.x()->isValid() ? *m_forcedRange.x() : sanitationHelper(*range.x(), range.y(), 1.f / m_normalRatio);
-  Range1D yRange = m_forcedRange.y()->isValid() ? *m_forcedRange.y() : sanitationHelper(*range.y(), &xRange, m_normalRatio);
+  Range1D xRange = m_forcedRange.x()->isValid() ? *m_forcedRange.x() : sanitationHelper(*range.x(), Range1D::k_defaultHalfLength);
+  Range1D yRange = m_forcedRange.y()->isValid() ? *m_forcedRange.y() : sanitationHelper(*range.y(), xRange.length() * 0.5f * m_normalRatio);
   return Range2D(xRange, yRange);
 }
 

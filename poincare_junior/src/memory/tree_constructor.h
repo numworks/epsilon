@@ -68,7 +68,6 @@ constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> operator "" _
 
 constexpr Tree<1> operator "" _sn(unsigned long long value) { // single-block node
   Tree<1> tree;
-  BlockType type;
   switch (value) {
     case 0:
       CreateNode<BlockType::Zero>(&tree);

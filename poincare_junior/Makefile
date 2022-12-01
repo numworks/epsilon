@@ -25,6 +25,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   memory/exception_checkpoint.o \
   memory/node.o \
   memory/pool.o \
+  n_ary.o \
 )
 
 poincare_junior_src += $(addprefix poincare_junior/test/,\

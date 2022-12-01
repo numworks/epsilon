@@ -131,6 +131,7 @@ public:
     return false;
   }
 
+  constexpr bool isNary() const { return isOfType({BlockType::Addition, BlockType::Multiplication, BlockType::HorizontalLayout}); }
   constexpr bool isInteger() const { return isOfType({BlockType::Zero, BlockType::One, BlockType::Two, BlockType::Half, BlockType::MinusOne, BlockType::IntegerShort, BlockType::IntegerPosBig, BlockType::IntegerNegBig}); }
   constexpr bool isRational() const { return isOfType({BlockType::RationalShort, BlockType::RationalPosBig, BlockType::RationalNegBig}) || isInteger(); }
   constexpr bool isNumber() const { return isOfType({BlockType::Float}) || isRational(); }

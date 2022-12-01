@@ -28,7 +28,6 @@ public:
   static void DivisionReduction(Node node);
   static void SubtractionReduction(Node node);
   static Node DistributeMultiplicationOverAddition(Node node);
-  static Node Flatten(Node node);
 private:
   static void ProjectionReduction(Node node, Node (*PushProjectedEExpression)(), Node (*PushInverse)());
 };

@@ -173,23 +173,6 @@ Node Simplification::DistributeMultiplicationOverAddition(Node node) {
   return node;
 }
 
-Node Simplification::Flatten(Node node) {
-  uint8_t numberOfChildren = 0;
-  EditionReference ref = EditionReference(node);
-  for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(ref)) {
-    if (node.type() == std::get<EditionReference>(indexedRef).node().type()) {
-      EditionReference nAry = EditionReference(Flatten(std::get<EditionReference>(indexedRef).node()));
-      numberOfChildren += nAry.node().numberOfChildren();
-      nAry.removeNode();
-    } else {
-      numberOfChildren++;
-    }
-  }
-  Block * numberOfChildrenBlock = node.block()->next();
-  *numberOfChildrenBlock = numberOfChildren;
-  return node;
-}
-
 void Simplification::ProjectionReduction(Node node, Node (*PushProjectedEExpression)(), Node (*PushInverse)()) {
   /* Rule a / b --> a * b^-1 (or a - b --> a + b * -1) */
   // Create a reference for future needs

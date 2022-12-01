@@ -43,13 +43,13 @@ private:
   int fillColumnName(int columnIndex, char * buffer) override;
 
   // EditableCellTableViewController
-  void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override; 
   bool checkDataAtLocation(double floatBody, int columnIndex, int rowIndex) const override { return floatBody >= 0.0; }
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
 
   // Shared::ValuesController
   Shared::SequenceStore * functionStore() const override { return static_cast<Shared::SequenceStore *>(Shared::ValuesController::functionStore()); }
   Poincare::Layout * memoizedLayoutAtIndex(int i) override;
+  Poincare::Layout functionTitleLayout(int columnIndex) override;
   Shared::PrefacedTableView * prefacedView() override { return &m_prefacedTwiceTableView; }
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override { setDefaultStartEndMessages(); }
   void createMemoizedLayout(int i, int j, int index) override;

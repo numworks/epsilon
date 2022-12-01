@@ -223,15 +223,6 @@ void ValuesController::reloadEditedCell(int column, int row) {
   Shared::ValuesController::reloadEditedCell(column, row);
 }
 
-void ValuesController::setTitleCellText(HighlightCell * cell, int columnIndex) {
-  if (typeAtLocation(columnIndex,0) == k_functionTitleCellType) {
-    ExpressionFunctionTitleCell * titleCell = static_cast<ExpressionFunctionTitleCell *>(cell);
-    titleCell->setLayout(functionTitleLayout(columnIndex));
-    return;
-  }
-  Shared::ValuesController::setTitleCellText(cell, columnIndex);
-}
-
 void ValuesController::setTitleCellStyle(HighlightCell * cell, int columnIndex) {
   if (typeAtLocation(columnIndex, 0)  == k_abscissaTitleCellType) {
     AbscissaTitleCell * myCell = static_cast<AbscissaTitleCell *>(cell);
@@ -269,6 +260,24 @@ void ValuesController::updateNumberOfColumns() const {
 Poincare::Layout * ValuesController::memoizedLayoutAtIndex(int i) {
   assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
   return &m_memoizedLayouts[i];
+}
+
+Layout ValuesController::functionTitleLayout(int columnIndex) {
+  assert(typeAtLocation(columnIndex, 0) == k_functionTitleCellType);
+  constexpr size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
+  char buffer[bufferNameSize];
+  bool isDerivative = false;
+  Ion::Storage::Record record = recordAtColumn(columnIndex, &isDerivative);
+  Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
+  if (isDerivative) {
+    function->derivativeNameWithArgument(buffer, bufferNameSize);
+    return StringLayout::Builder(buffer);
+  }
+  if (function->isNamed()) {
+    function->nameWithArgument(buffer, bufferNameSize);
+    return StringLayout::Builder(buffer);
+  }
+  return PoincareHelpers::CreateLayout(function->originalEquation(), textFieldDelegateApp()->localContext());
 }
 
 void ValuesController::setStartEndMessages(Shared::IntervalParameterController * controller, int column) {
@@ -360,24 +369,6 @@ Escher::EvenOddMessageTextCell * ValuesController::abscissaTitleCells(int j) {
 }
 
 // Graph::ValuesController
-
-Layout ValuesController::functionTitleLayout(int columnIndex) {
-  assert(typeAtLocation(columnIndex, 0) == k_functionTitleCellType);
-  constexpr size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
-  char buffer[bufferNameSize];
-  bool isDerivative = false;
-  Ion::Storage::Record record = recordAtColumn(columnIndex, &isDerivative);
-  Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
-  if (isDerivative) {
-    function->derivativeNameWithArgument(buffer, bufferNameSize);
-    return StringLayout::Builder(buffer);
-  }
-  if (function->isNamed()) {
-    function->nameWithArgument(buffer, bufferNameSize);
-    return StringLayout::Builder(buffer);
-  }
-  return PoincareHelpers::CreateLayout(function->originalEquation(), textFieldDelegateApp()->localContext());
-}
 
 template <class T>
 T * ValuesController::parameterController() {

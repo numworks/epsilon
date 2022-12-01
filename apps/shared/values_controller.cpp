@@ -367,6 +367,11 @@ int ValuesController::fillColumnName(int columnIndex, char * buffer) {
 }
 
 void ValuesController::setTitleCellText(HighlightCell * cell, int columnIndex) {
+  if (typeAtLocation(columnIndex,0) == k_functionTitleCellType) {
+    Shared::ExpressionFunctionTitleCell * myCell = static_cast<Shared::ExpressionFunctionTitleCell *>(cell);
+    myCell->setLayout(functionTitleLayout(columnIndex));
+    return;
+  }
   if (typeAtLocation(columnIndex,0) == k_abscissaTitleCellType) {
     EvenOddMessageTextCell * myTitleCell = static_cast<EvenOddMessageTextCell *>(cell);
     myTitleCell->setMessage(valuesParameterMessageAtColumn(columnIndex));

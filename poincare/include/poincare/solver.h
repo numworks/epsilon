@@ -31,6 +31,8 @@ public:
   constexpr static T k_relativePrecision = Float<T>::Epsilon();
   constexpr static T k_minimalAbsoluteStep = 2. * Helpers::SquareRoot(2. * k_relativePrecision);
 
+  static T NullTolerance(T x) { return std::max(k_relativePrecision, k_relativePrecision * std::fabs(x)) * static_cast<T>(10.); }
+
   // BracketTest default implementations
   constexpr static Interest BoolToInterest(bool v, Interest t, Interest f = Interest::None) { return v ? t : f; }
   static Interest OddRootInBracket(Coordinate2D<T> a, Coordinate2D<T> b, Coordinate2D<T> c, const void *) { return BoolToInterest((a.x2() < k_zero && k_zero < c.x2()) || (c.x2() < k_zero && k_zero < a.x2()), Interest::Root); }
@@ -82,7 +84,6 @@ private:
   constexpr static T k_minimalPracticalStep = std::max(static_cast<T>(1e-6), k_minimalAbsoluteStep);
   constexpr static T k_absolutePrecision = k_relativePrecision * k_minimalAbsoluteStep;
 
-  static T NullTolerance(T x) { return std::max(k_relativePrecision, k_relativePrecision * std::fabs(x)) * static_cast<T>(10.); }
   // Call SolverAlgorithms::BrentMinimum on the opposite evaluation
   static Coordinate2D<T> BrentMaximum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
   static Coordinate2D<T> CompositeBrentForRoot(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);

@@ -23,8 +23,8 @@ namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, FunctionColumnParameterController * functionParameterController) :
   Shared::ValuesController(parentResponder, header),
-  m_prefacedView(0, this, &m_selectableTableView, this, nullptr, this),
-  m_selectableTableView(this, this, this, this, &m_prefacedView),
+  m_prefacedTableView(0, this, &m_selectableTableView, this, nullptr, this),
+  m_selectableTableView(this, this, this, this, &m_prefacedTableView),
   m_functionParameterController(functionParameterController),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_derivativeParameterController(this),
@@ -50,9 +50,9 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   m_heightManager(this),
   m_exactValuesAreActivated(false)
 {
-  m_prefacedView.setBackgroundColor(Palette::WallScreenDark);
-  m_prefacedView.setCellOverlap(0, 0);
-  m_prefacedView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  m_prefacedTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_prefacedTableView.setCellOverlap(0, 0);
+  m_prefacedTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   initValueCells();
   m_exactValuesButton.setState(m_exactValuesAreActivated);
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);

@@ -24,7 +24,7 @@ public:
 
   // ViewController
   const char * title() override { return I18n::translate(I18n::Message::StatTab); }
-  Escher::View * view() override { return &m_prefacedView; }
+  Escher::View * view() override { return &m_prefacedTwiceTableView; }
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -46,7 +46,7 @@ protected:
   Escher::Responder * tabController() const override { return (parentResponder()->parentResponder()->parentResponder()); }
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
 
-  PrefacedTwiceTableView m_prefacedView;
+  PrefacedTwiceTableView m_prefacedTwiceTableView;
   Escher::SelectableTableView m_selectableTableView;
 };
 

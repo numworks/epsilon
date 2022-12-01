@@ -22,7 +22,7 @@ public:
   ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, FunctionColumnParameterController * functionParameterController);
 
   // View controller
-  Escher::View * view() override { return &m_prefacedView; }
+  Escher::View * view() override { return &m_prefacedTableView; }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   int typeAtLocation(int i, int j) override;
   void viewDidDisappear() override;
@@ -79,7 +79,7 @@ private:
   int maxNumberOfCells() override { return k_maxNumberOfDisplayableCells; }
   int maxNumberOfFunctions() override { return k_maxNumberOfDisplayableFunctions; }
   void reloadEditedCell(int column, int row) override;
-  Shared::PrefacedTableView * prefacedView() override { return &m_prefacedView; }
+  Shared::PrefacedTableView * prefacedView() override { return &m_prefacedTableView; }
 
   // Memoization
   void updateNumberOfColumns() const override;
@@ -143,7 +143,7 @@ private:
 
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   
-  Shared::PrefacedTableView m_prefacedView;
+  Shared::PrefacedTableView m_prefacedTableView;
   Shared::EditableCellSelectableTableView m_selectableTableView;
 
   mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];

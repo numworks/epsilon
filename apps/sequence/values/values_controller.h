@@ -18,17 +18,13 @@ public:
   Escher::View * view() override { return &m_prefacedTwiceTableView; }
 
   // ButtonRowDelegate
-  Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override {
-    return const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
-  }
+  Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override { return const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton); }
 
   // AlternateEmptyViewDelegate
   I18n::Message emptyMessage() override;
 
   // Parameters controllers getters
-  IntervalParameterController * intervalParameterController() override {
-    return &m_intervalParameterController;
-  }
+  IntervalParameterController * intervalParameterController() override { return &m_intervalParameterController; }
 
 private:
   constexpr static int k_maxNumberOfDisplayableSequences = 3;
@@ -39,9 +35,7 @@ private:
   Escher::TableSize1DManager * rowHeightManager() override { return &m_heightManager; }
 
   // ValuesController
-  void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override {
-    setDefaultStartEndMessages();
-  }
+  void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override { setDefaultStartEndMessages(); }
   Shared::PrefacedTableView * prefacedView() override { return &m_prefacedTwiceTableView; }
 
   void setDefaultStartEndMessages();
@@ -59,10 +53,7 @@ private:
 
   // Function evaluation memoization
   constexpr static int k_valuesCellBufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
-  Poincare::Layout * memoizedLayoutAtIndex(int i) override {
-    assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
-    return &m_memoizedLayouts[i];
-  }
+  Poincare::Layout * memoizedLayoutAtIndex(int i) override;
   int numberOfMemoizedColumn() override { return k_maxNumberOfDisplayableSequences; }
   void createMemoizedLayout(int i, int j, int index) override;
 
@@ -73,23 +64,11 @@ private:
   // Cells & view
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   int abscissaCellsCount() const override { return k_maxNumberOfDisplayableRows; }
-  Escher::EvenOddEditableTextCell * abscissaCells(int j) override {
-    assert (j >= 0 && j < k_maxNumberOfDisplayableRows);
-    return &m_abscissaCells[j];
-  }
+  Escher::EvenOddEditableTextCell * abscissaCells(int j) override;
   int abscissaTitleCellsCount() const override { return 1; }
-  Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) override {
-    assert (j >= 0 && j < abscissaTitleCellsCount());
-    return &m_abscissaTitleCell;
-  }
-  Shared::ExpressionFunctionTitleCell * functionTitleCells(int j) override {
-    assert(j >= 0 && j < k_maxNumberOfDisplayableSequences);
-    return &m_sequenceTitleCells[j];
-  }
-  Escher::EvenOddExpressionCell * valueCells(int j) override {
-    assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
-    return &m_valueCells[j];
-  }
+  Escher::EvenOddMessageTextCell * abscissaTitleCells(int j) override;
+  Shared::ExpressionFunctionTitleCell * functionTitleCells(int j) override;
+  Escher::EvenOddExpressionCell * valueCells(int j) override;
 
   int fillColumnName(int columnIndex, char * buffer) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;

@@ -85,6 +85,11 @@ Shared::Interval * ValuesController::intervalAtColumn(int columnIndex) {
 
 // Function evaluation memoization
 
+Poincare::Layout * ValuesController::memoizedLayoutAtIndex(int i) {
+  assert(i >= 0 && i < k_maxNumberOfDisplayableCells);
+  return &m_memoizedLayouts[i];
+}
+
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
   double abscissa = intervalAtColumn(column)->element(row-1); // Subtract the title row from row to get the element index
   Shared::ExpiringPointer<Shared::Sequence> sequence = functionStore()->modelForRecord(recordAtColumn(column));
@@ -92,6 +97,28 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   Coordinate2D<double> xy = sequence->evaluateXYAtParameter(abscissa, context);
   Float<double> e = Float<double>::Builder(xy.x2());
   *memoizedLayoutAtIndex(index) = e.createLayout(Preferences::PrintFloatMode::Decimal, Preferences::VeryLargeNumberOfSignificantDigits, context);
+}
+
+// Cells & view
+
+Escher::EvenOddEditableTextCell * ValuesController::abscissaCells(int j) {
+  assert (j >= 0 && j < k_maxNumberOfDisplayableRows);
+  return &m_abscissaCells[j];
+}
+
+Escher::EvenOddMessageTextCell * ValuesController::abscissaTitleCells(int j) {
+  assert (j >= 0 && j < abscissaTitleCellsCount());
+  return &m_abscissaTitleCell;
+}
+
+Shared::ExpressionFunctionTitleCell * ValuesController::functionTitleCells(int j) {
+  assert(j >= 0 && j < k_maxNumberOfDisplayableSequences);
+  return &m_sequenceTitleCells[j];
+}
+
+Escher::EvenOddExpressionCell * ValuesController::valueCells(int j) {
+  assert(j >= 0 && j < k_maxNumberOfDisplayableCells);
+  return &m_valueCells[j];
 }
 
 }

@@ -38,6 +38,8 @@ bool PlotController::moveSelectionVertically(int direction) {
   if (result && previousSeries != m_selectedSeries) {
     // Cursor has been moved into another curve, cursor must be switched
     moveCursorToSelectedIndex();
+    // Reload to draw selected curve on top
+    m_curveView.reload(false, true);
   }
   return result;
 }

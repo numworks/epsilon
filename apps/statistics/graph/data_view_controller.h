@@ -29,6 +29,7 @@ public:
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 
+  int selectedSeries() const { return m_selectedSeries; }
 protected:
   /* Some DataViewController implementations may have a stricter condition.
    * To simplify the code, views and ranges of controllers using this default

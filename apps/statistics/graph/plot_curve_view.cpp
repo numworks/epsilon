@@ -23,11 +23,15 @@ int LabeledAxisWithOptionalPercent::computeLabel(int i, const Shared::AbstractPl
 // PlotViewPolicy
 
 void PlotViewPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+  int selectedSeries = m_plotController->selectedSeries();
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
-    if (m_plotController->seriesIsValid(i)) {
+    if (selectedSeries != i && m_plotController->seriesIsValid(i)) {
       drawSeriesCurve(plotView, ctx, rect, i);
     }
   }
+  // Draw the selected curve last so that it's over the others
+  assert(m_plotController->seriesIsValid(selectedSeries));
+  drawSeriesCurve(plotView, ctx, rect, selectedSeries);
 }
 
 void PlotViewPolicy::drawSeriesCurve(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, int series) const {

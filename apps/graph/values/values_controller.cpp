@@ -58,7 +58,7 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
 }
 
-bool ValuesController::displayExactValues() const {
+bool ValuesController::displayButtonExactValues() const {
   // Above this value, the performances significantly drop.
   return numberOfValuesColumns() <= ContinuousFunctionStore::k_maxNumberOfMemoizedModels;
 }
@@ -105,7 +105,7 @@ int ValuesController::typeAtLocation(int i, int j) {
 // ButtonRowDelegate
 
 Escher::AbstractButtonCell * ValuesController::buttonAtIndex(int index, Escher::ButtonRowController::Position position) const {
-  return index == 0 && displayExactValues() ? const_cast<Escher::ButtonState *>(&m_exactValuesButton) : const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
+  return index == 0 && displayButtonExactValues() ? const_cast<Escher::ButtonState *>(&m_exactValuesButton) : const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
 }
 
 /* PRIVATE */

@@ -280,21 +280,30 @@ Layout ValuesController::functionTitleLayout(int columnIndex) {
   return PoincareHelpers::CreateLayout(function->originalEquation(), textFieldDelegateApp()->localContext());
 }
 
-void ValuesController::setStartEndMessages(Shared::IntervalParameterController * controller, int column) {
-  m_intervalParameterSelectorController.setStartEndMessages(controller, symbolTypeAtColumn(&column));
+int ValuesController::numberOfAbscissaColumnsBeforeAbsoluteColumn(int column) const {
+  int abscissaColumns = 0;
+  int symbolType = column < 0 ?  k_maxNumberOfSymbolTypes : (int)symbolTypeAtColumn(&column) + 1;
+  for (int symbolTypeIndex = 0; symbolTypeIndex < symbolType; symbolTypeIndex++) {
+    abscissaColumns += (m_numberOfValuesColumnsForType[symbolTypeIndex] > 0);
+  }
+  return abscissaColumns;
 }
 
-int ValuesController::absoluteColumnForValuesColumn(int column) {
+int ValuesController::numberOfAbscissaColumnsBeforeValuesColumn(int column) const {
   int abscissaColumns = 0;
   int valuesColumns = 0;
   size_t symbolTypeIndex = 0;
-  do {
+  while (valuesColumns <= column) {
     assert(symbolTypeIndex < k_maxNumberOfSymbolTypes);
     const int numberOfValuesColumnsForType = m_numberOfValuesColumnsForType[symbolTypeIndex++];
     valuesColumns += numberOfValuesColumnsForType;
     abscissaColumns += (numberOfValuesColumnsForType > 0);
-  } while (valuesColumns <= column);
-  return column + abscissaColumns;
+  }
+  return abscissaColumns;
+}
+
+void ValuesController::setStartEndMessages(Shared::IntervalParameterController * controller, int column) {
+  m_intervalParameterSelectorController.setStartEndMessages(controller, symbolTypeAtColumn(&column));
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
@@ -448,15 +457,6 @@ int ValuesController::numberOfColumnsForRecord(Ion::Storage::Record record) cons
 
 int ValuesController::numberOfColumnsForSymbolType(int symbolTypeIndex) const {
   return m_numberOfValuesColumnsForType[symbolTypeIndex] + (m_numberOfValuesColumnsForType[symbolTypeIndex] > 0); // Count abscissa column if there is one
-}
-
-int ValuesController::numberOfAbscissaColumnsBeforeColumn(int column) const {
-  int result = 0;
-  int symbolType = column < 0 ?  k_maxNumberOfSymbolTypes : (int)symbolTypeAtColumn(&column) + 1;
-  for (int symbolTypeIndex = 0; symbolTypeIndex < symbolType; symbolTypeIndex++) {
-    result += (m_numberOfValuesColumnsForType[symbolTypeIndex] > 0);
-  }
-  return result;
 }
 
 ContinuousFunctionProperties::SymbolType ValuesController::symbolTypeAtColumn(int * column) const {

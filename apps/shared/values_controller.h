@@ -78,7 +78,7 @@ protected:
   virtual Ion::Storage::Record recordAtColumn(int i);
 
   // Number of columns memoization
-  virtual void updateNumberOfColumns() const { m_numberOfColumns = 1 + functionStore()->numberOfActiveFunctions(); }
+  virtual void updateNumberOfColumns() const { m_numberOfColumns = numberOfAbscissaColumns() + functionStore()->numberOfActiveFunctions(); }
   mutable int m_numberOfColumns;
   mutable bool m_numberOfColumnsNeedUpdate;
 
@@ -108,6 +108,11 @@ protected:
 
   virtual Shared::PrefacedTableView * prefacedView() = 0;
 
+  virtual int numberOfAbscissaColumnsBeforeAbsoluteColumn(int column) const { return 1; }
+  virtual int numberOfAbscissaColumnsBeforeValuesColumn(int column) const { return 1; }
+  int numberOfAbscissaColumns() const { return numberOfAbscissaColumnsBeforeAbsoluteColumn(-1); }
+  int numberOfValuesColumns() const { return numberOfColumns() - numberOfAbscissaColumns(); }
+
 private:
   // Specialization depending on the abscissa names (x, n, t...)
   virtual void setStartEndMessages(Shared::IntervalParameterController * controller, int column) = 0;
@@ -115,15 +120,14 @@ private:
   // EditableCellTableViewController
   bool cellAtLocationIsEditable(int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;
-  virtual int numberOfValuesColumns() const { return functionStore()->numberOfActiveFunctions(); }
   int maxNumberOfElements() const override { return Interval::k_maxNumberOfElements; };
 
   /* Function evaluation memoization
    * The following 4 methods convert coordinate from the absolute table to the
    * table of values cell only and vice-versa. */
-  virtual int valuesColumnForAbsoluteColumn(int column);
+  int valuesColumnForAbsoluteColumn(int column);
   int valuesRowForAbsoluteRow(int row);
-  virtual int absoluteColumnForValuesColumn(int column);
+  int absoluteColumnForValuesColumn(int column);
   int absoluteRowForValuesRow(int row);
   /* Coordinates of createMemoizedLayout refer to the absolute table but the index
    * refers to the memoized table */

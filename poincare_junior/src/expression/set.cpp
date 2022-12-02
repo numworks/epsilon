@@ -34,7 +34,7 @@ EditionReference Set::Add(EditionReference set, Node expression) {
   return set;
 }
 
-EditionReference Set::Union(EditionReference set0, EditionReference set1) {
+static EditionReference MergeSets(EditionReference set0, EditionReference set1, bool removeChildrenOnlyInSet0, bool pilferSet1Children, bool removeCommonChildrenInSet0) {
   size_t numberOfChildren0 = set0.numberOfChildren();
   size_t numberOfChildren1 = set1.numberOfChildren();
   size_t numberOfChildren0ToScan = numberOfChildren0;
@@ -43,84 +43,60 @@ EditionReference Set::Union(EditionReference set0, EditionReference set1) {
   EditionReference currentChild1 = set1.nextNode();
   while (numberOfChildren0ToScan > 0 && numberOfChildren1ToScan > 0) {
     int comparison = Simplification::Compare(currentChild0.node(), currentChild1.node());
-    if (comparison >= 0) {
-      EditionReference nextChild1 = currentChild1.nextTree();
-      if (comparison > 0) {
-        currentChild0.insertTreeBeforeNode(currentChild1);
-      } else if (comparison == 0) {
-        currentChild1.removeTree();
-        numberOfChildren1--;
-      }
-      currentChild1 = nextChild1;
-      numberOfChildren1ToScan--;
-    } else {
-      currentChild0 = currentChild0.nextTree();
-      numberOfChildren0ToScan--;
-    }
-  }
-  set1.removeNode();
-  NAry::SetNumberOfChildren(set0, numberOfChildren0 + numberOfChildren1);
-  return set0;
-}
-
-EditionReference Set::Intersection(EditionReference set0, EditionReference set1) {
-  size_t numberOfChildren0 = set0.numberOfChildren();
-  size_t numberOfChildren1 = set1.numberOfChildren();
-  size_t numberOfChildren0ToScan = numberOfChildren0;
-  size_t numberOfChildren1ToScan = numberOfChildren1;
-  EditionReference currentChild0 = set0.nextNode();
-  EditionReference currentChild1 = set1.nextNode();
-  while (numberOfChildren0ToScan > 0 && numberOfChildren1ToScan > 0) {
-    int comparison = Simplification::Compare(currentChild0.node(), currentChild1.node());
-    if (comparison >= 0) {
-      currentChild1 = currentChild1.nextTree();
-      numberOfChildren1ToScan--;
-    }
-    if (comparison <= 0) {
+    if (comparison < 0) { // Increment child of set 0
       EditionReference nextChild0 = currentChild0.nextTree();
-      if (comparison < 0) {
+      if (removeChildrenOnlyInSet0) {
         currentChild0.removeTree();
         numberOfChildren0--;
       }
       currentChild0 = nextChild0;
       numberOfChildren0ToScan--;
     }
-
+    if (comparison == 0) { // Increment both children
+      EditionReference nextChild0 = currentChild0.nextTree();
+      EditionReference nextChild1 = currentChild1.nextTree();
+      if (removeCommonChildrenInSet0) {
+        currentChild0.removeTree();
+        numberOfChildren0--;
+      }
+      if (pilferSet1Children) {
+        currentChild1.removeTree();
+        numberOfChildren1--;
+      }
+      currentChild0 = nextChild0;
+      numberOfChildren0ToScan--;
+      currentChild1 = nextChild1;
+      numberOfChildren1ToScan--;
+    }
+    if (comparison > 0) { // Increment child of set 1
+      EditionReference nextChild1 = currentChild1.nextTree();
+      if (pilferSet1Children) {
+        currentChild0.insertTreeBeforeNode(currentChild1);
+      }
+      currentChild1 = nextChild1;
+      numberOfChildren1ToScan--;
+    }
   }
-  set1.removeTree();
-  NAry::SetNumberOfChildren(set0, numberOfChildren0);
+  if (pilferSet1Children) {
+    set1.removeNode();
+  } else {
+    set1.removeTree();
+    numberOfChildren1 = 0;
+  }
+  NAry::SetNumberOfChildren(set0, numberOfChildren0 + numberOfChildren1);
   return set0;
 }
 
-EditionReference Set::Difference(EditionReference set0, EditionReference set1) {
-  size_t numberOfChildren0 = set0.numberOfChildren();
-  size_t numberOfChildren1 = set1.numberOfChildren();
-  size_t numberOfChildren0ToScan = numberOfChildren0;
-  size_t numberOfChildren1ToScan = numberOfChildren1;
-  EditionReference currentChild0 = set0.nextNode();
-  EditionReference currentChild1 = set1.nextNode();
-  while (numberOfChildren0ToScan > 0 && numberOfChildren1ToScan > 0) {
-    int comparison = Simplification::Compare(currentChild0.node(), currentChild1.node());
-    if (comparison < 0) {
-      currentChild0 = currentChild0.nextTree();
-      numberOfChildren0ToScan--;
-    }
-    if (comparison == 0) {
-      EditionReference nextChild0 = currentChild0.nextTree();
-      currentChild0.removeTree();
-      numberOfChildren0--;
-      currentChild0 = nextChild0;
-      numberOfChildren0ToScan--;
-    }
-    if (comparison > 0) {
-      currentChild1 = currentChild1.nextTree();
-      numberOfChildren1ToScan--;
-    }
+EditionReference Set::Union(EditionReference set0, EditionReference set1) {
+  return MergeSets(set0, set1, false, true, false);
+}
 
-  }
-  set1.removeTree();
-  NAry::SetNumberOfChildren(set0, numberOfChildren0);
-  return set0;
+EditionReference Set::Intersection(EditionReference set0, EditionReference set1) {
+  return MergeSets(set0, set1, true, false, false);
+}
+
+EditionReference Set::Difference(EditionReference set0, EditionReference set1) {
+  return MergeSets(set0, set1, false, false, true);
 }
 
 }

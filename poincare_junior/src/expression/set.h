@@ -6,6 +6,9 @@
 namespace Poincare {
 
 class Set {
+/*
+ * Set elements are always ordered and unique
+ */
 public:
   static bool Includes(EditionReference set, Node expression);
   static EditionReference Add(EditionReference set, Node expression);

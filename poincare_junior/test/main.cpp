@@ -10,6 +10,7 @@ void testGraph();
 void playWithConstexprNodes();
 void testExpressionComparison();
 void testRunTimeCrashIllFormedExpression();
+void testSet();
 
 typedef void (*Test)();
 
@@ -18,7 +19,9 @@ void test(Test test, const char * title) {
   std::cout << title << std::endl;
   std::cout << "\n--------------------------------\n" << std::endl;
   test();
-  CachePool::sharedCachePool()->reset();
+  CachePool * cachePool = CachePool::sharedCachePool();
+  cachePool->reset();
+  cachePool->editionPool()->flush();
   std::cout << "\n--------------------------------\n" << std::endl;
   std::cout << "\n--------------------------------\n" << std::endl;
 }
@@ -26,6 +29,7 @@ void test(Test test, const char * title) {
 int main() {
   // Dummy call just to keep it in the executable and be able to call it from debugger
   intermediaryPrint();
+  test(testSet, "TEST SET");
 
   test(elementaryTreeManipulation, "ELEMENTARY TREE MANIPULATION");
   test(testChildrenIterator, "TEST NODE CHILDREN ITERATOR");

@@ -17,6 +17,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/integer.o \
   expression/rational.o \
   expression/simplification.o \
+  expression/set.o \
   expression.o \
   memory/cache_pool.o \
   memory/cache_reference.o \
@@ -37,6 +38,7 @@ poincare_junior_src += $(addprefix poincare_junior/test/,\
   graph.o \
   main.o \
   node_iterator.o \
+  set.o \
 )
 poincare_junior_src += ion/src/simulator/shared/crc32.o
 poincare_junior_src += ion/src/shared/crc32_eat_byte.o

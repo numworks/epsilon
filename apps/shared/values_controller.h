@@ -57,6 +57,7 @@ protected:
   constexpr static int k_editableValueCellType = 2;
   constexpr static int k_notEditableValueCellType = 3; // Must be last for Graph::ValuesController
   constexpr static int k_maxNumberOfDisplayableRows = 10;
+  constexpr static int k_numberOfTitleRows = 1;
 
   void initValueCells();
 

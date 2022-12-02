@@ -14,11 +14,11 @@
 
 namespace Escher {
 
-class LayoutField : public ScrollableView, public ScrollViewDataSource, public EditableField {
+class LayoutField : public WithBlinkingTextCursor<ScrollableView>, public ScrollViewDataSource, public EditableField {
   friend class ExpressionField;
 public:
   LayoutField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, LayoutFieldDelegate * delegate = nullptr, KDFont::Size font = KDFont::Size::Large) :
-    ScrollableView(parentResponder, &m_contentView, this),
+    WithBlinkingTextCursor<ScrollableView>(parentResponder, &m_contentView, this),
     EditableField(inputEventHandlerDelegate),
     m_contentView(font),
     m_insertionCursorEvent(Ion::Events::None),
@@ -75,6 +75,7 @@ private:
   void insertLayoutAtCursor(Poincare::Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout = false, bool forceCursorLeftOfText = false);
   bool eventShouldUpdateInsertionCursor(Ion::Events::Event event) { return event == m_insertionCursorEvent; }
   Poincare::Context * delegateContext() { return m_delegate ? m_delegate->context() : nullptr; }
+  TextCursorView * textCursorView() override { return m_contentView.textCursorView(); }
 
   class ContentView : public View {
   public:
@@ -101,6 +102,7 @@ private:
     void invalidateInsertionCursor() { m_insertionCursor = Poincare::LayoutCursor(); }
     void updateInsertionCursor();
     KDFont::Size font() const { return m_expressionView.font(); }
+    TextCursorView * textCursorView() { return &m_cursorView; }
 
   private:
     int numberOfSubviews() const override { return 2; }

@@ -10,9 +10,10 @@
 
 namespace Escher {
 
-class TextInput : public ScrollableView, public ScrollViewDataSource {
+class TextInput : public WithBlinkingTextCursor<ScrollableView>, public ScrollViewDataSource {
+  friend class ExpressionField;
 public:
-  TextInput(Responder * parentResponder, View * contentView) : ScrollableView(parentResponder, contentView, this) {}
+  TextInput(Responder * parentResponder, View * contentView) : WithBlinkingTextCursor<ScrollableView>(parentResponder, contentView, this) {}
   void setFont(KDFont::Size font) { contentView()->setFont(font); }
   const char * text() const { return nonEditableContentView()->text(); }
   bool removePreviousGlyph();
@@ -25,8 +26,8 @@ public:
   void deleteSelection();
   // Alignment
   void setAlignment(float horizontalAlignment, float verticalAlignment);
-protected:
 
+protected:
   class ContentView : public View {
   public:
     ContentView(KDFont::Size font,
@@ -48,6 +49,7 @@ protected:
     const char * cursorLocation() const { assert(m_cursorLocation != nullptr); return m_cursorLocation; }
     void setCursorLocation(const char * cursorLocation);
     KDRect cursorRect();
+    TextCursorView * textCursorView() { return &m_cursorView; }
 
     // Virtual text get/add/remove
     virtual const char * text() const = 0;
@@ -69,6 +71,7 @@ protected:
 
     // Reload
     void reloadRectFromPosition(const char * position, bool includeFollowingLines = false);
+
   protected:
     void layoutSubviews(bool force = false) override;
     void reloadRectFromAndToPositions(const char * start, const char * end);
@@ -104,9 +107,11 @@ protected:
   bool moveCursorRight(int step = 1);
   // all indicates if all the text on the left/right should be selected
   bool selectLeftRight(bool left, bool all, int step = 1);
+
 private:
   virtual void willSetCursorLocation(const char * * location) {}
   virtual bool privateRemoveEndOfLine();
+  TextCursorView * textCursorView() override { return contentView()->textCursorView(); }
 };
 
 }

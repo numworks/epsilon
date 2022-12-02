@@ -11,7 +11,7 @@ public:
   constexpr static uint32_t k_blinkPeriod = 600;
   static_assert(k_blinkPeriod > TickDuration, "BlinkTimer period is shorter than one tick.");
 
-  static void RegisterCursor(TextCursorView * cursor) { s_cursor = cursor; }
+  static void RegisterCursor(TextCursorView * cursor);
 
   BlinkTimer() : Timer(k_blinkPeriod / TickDuration) {}
 

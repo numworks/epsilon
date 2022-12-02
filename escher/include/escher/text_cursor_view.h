@@ -2,10 +2,14 @@
 #define ESCHER_TEXT_CURSOR_VIEW_H
 
 #include <escher/view.h>
+#include <escher/responder.h>
 
 namespace Escher {
 
 class TextCursorView : public View {
+  friend class BlinkTimer;
+  template <typename ResponderType>
+  friend class WithBlinkingTextCursor;
 public:
   constexpr static KDCoordinate k_width = 1;
 
@@ -17,14 +21,31 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
 
   KDRect frame() const { return m_frame; }
-  void switchVisible() { setVisible(!m_visible); }
-  void forceVisible() { setVisible(true); }
 
 private:
-  void layoutSubviews(bool force) override;
   void setVisible(bool visible);
+  void switchVisible() { setVisible(!m_visible); }
+  void setBlinking(bool blinking);
+  void layoutSubviews(bool force) override;
 
   bool m_visible;
+};
+
+template <typename ResponderType>
+class WithBlinkingTextCursor : public ResponderType {
+public:
+  using ResponderType::ResponderType;
+  void didBecomeFirstResponder() override {
+    textCursorView()->setBlinking(true);
+    ResponderType::didBecomeFirstResponder();
+  }
+  void willResignFirstResponder() override {
+    textCursorView()->setBlinking(false);
+    ResponderType::didBecomeFirstResponder();
+  }
+
+private:
+  virtual TextCursorView * textCursorView() = 0;
 };
 
 }

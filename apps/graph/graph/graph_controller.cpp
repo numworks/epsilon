@@ -295,7 +295,6 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
 }
 
 bool GraphController::moveCursorVertically(int direction) {
-  bannerView()->setInterestMessage(I18n::Message::Default, graphView()->cursorView());
   bool moved = FunctionGraphController::moveCursorVertically(direction);
   if (!moved) {
     return false;
@@ -304,17 +303,37 @@ bool GraphController::moveCursorVertically(int direction) {
   double t = m_cursor->t();
   double dt = (m_graphRange->xMax() - m_graphRange->xMin()) / k_snapStep;
   if (moved) {
-    snapToInterestAndUpdateBannerAndCursor(m_cursor, t - dt, t + dt);
+    snapToInterestAndUpdateCursor(m_cursor, t - dt, t + dt);
   }
   return true;
 }
 
 void GraphController::moveCursorAndCenterIfNeeded(double t) {
-  bannerView()->setInterestMessage(I18n::Message::Default, graphView()->cursorView());
   FunctionGraphController::moveCursorAndCenterIfNeeded(t);
-  if (snapToInterestAndUpdateBannerAndCursor(m_cursor, std::nextafter(m_cursor->t(), -static_cast<double>(INFINITY)), std::nextafter(m_cursor->t(), static_cast<double>(INFINITY)))) {
+  if (snapToInterestAndUpdateCursor(m_cursor, std::nextafter(m_cursor->t(), -static_cast<double>(INFINITY)), std::nextafter(m_cursor->t(), static_cast<double>(INFINITY)))) {
     reloadBannerView();
   }
+}
+
+void GraphController::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context) {
+  PointsOfInterestCache * pointsOfInterest = pointsOfInterestForRecord(record);
+  bannerView()->emptyInterestMessages(&m_cursorView);
+  if (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::Root)) {
+    bannerView()->addInterestMessage(I18n::Message::Zero, &m_cursorView);
+  }
+  if (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::Intersection)) {
+    bannerView()->addInterestMessage(I18n::Message::Intersection, &m_cursorView);
+  }
+  if (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::YIntercept)) {
+    bannerView()->addInterestMessage(I18n::Message::LineYInterceptDescription, &m_cursorView);
+  }
+  if (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::LocalMinimum)) {
+    bannerView()->addInterestMessage(I18n::Message::Minimum, &m_cursorView);
+  }
+  if (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::LocalMaximum)) {
+    bannerView()->addInterestMessage(I18n::Message::Maximum, &m_cursorView);
+  }
+  FunctionGraphController::reloadBannerViewForCursorOnFunction(cursor, record, functionStore, context);
 }
 
 }

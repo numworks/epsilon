@@ -18,19 +18,25 @@ public:
   Escher::BufferTextView * derivativeView() { return &m_derivativeView; }
   Escher::BufferTextView * aView() { return &m_aView; }
   Escher::BufferTextView * bView() { return &m_bView; }
-  void setInterestMessage(I18n::Message message, Shared::CursorView * cursor);
+  void addInterestMessage(I18n::Message message, Shared::CursorView * cursor);
+  void emptyInterestMessages(Shared::CursorView * cursor);
   void setDisplayParameters(bool showInterest, bool showDerivative, bool showTangent);
 
 private:
+  constexpr static int k_maxNumberOfInterests = 3;
   int numberOfSubviews() const override {
     // there are 3 views for tangent (aView, bView, tangentEquationView)
-    return XYBannerView::k_numberOfSubviews + hasInterestMessage() + m_showDerivative + 3 * m_showTangent;
+    return XYBannerView::k_numberOfSubviews + numberOfInterestMessages() + m_showDerivative + 3 * m_showTangent;
   };
   Escher::View * subviewAtIndex(int index) override;
   bool lineBreakBeforeSubview(Escher::View * subview) const override;
-  bool hasInterestMessage() const { return m_showInterest && m_interestMessageView.text()[0] != '\0'; }
+  int numberOfInterestMessages() const;
+  bool hasInterestMessage(int i) const {
+    assert(i >= 0 && i < k_maxNumberOfInterests);
+    return m_showInterest && m_interestMessageView[i].text()[0] != '\0';
+  }
 
-  Escher::MessageTextView m_interestMessageView;
+  Escher::MessageTextView m_interestMessageView[k_maxNumberOfInterests];
   Escher::BufferTextView m_derivativeView;
   Escher::MessageTextView m_tangentEquationView;
   Escher::BufferTextView m_aView;

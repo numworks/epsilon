@@ -22,7 +22,7 @@ public:
    * For instance, x displayed as 0.01 can at best be encoded to x=0.010...02 */
   static double GetValueDisplayedOnBanner(double t, Poincare::Context * context, int significantDigits, double deltaThreshold, bool roundToZero = false);
 protected:
-  void reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context);
+  virtual void reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context);
   virtual XYBannerView * bannerView() = 0;
   virtual int numberOfSignificantDigits() const { return Poincare::Preferences::sharedPreferences()->numberOfSignificantDigits(); }
 };

@@ -12,17 +12,32 @@ BannerView::BannerView(
   TextFieldDelegate * textFieldDelegate
 ) :
   Shared::XYBannerView(parentResponder, inputEventHandlerDelegate, textFieldDelegate),
-  m_interestMessageView(k_font, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_derivativeView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_tangentEquationView(k_font, I18n::Message::LinearRegressionFormula, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_aView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor()),
   m_bView(k_font, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor())
-{}
-
-void BannerView::setInterestMessage(I18n::Message message, Shared::CursorView * cursor) {
-  m_interestMessageView.setMessage(message);
-  cursor->setHighlighted(message != I18n::Message::Default);
+{
+  for (int i = 0; i < k_maxNumberOfInterests; i++) {
+    m_interestMessageView[i] = MessageTextView(k_font, I18n::Message::Default, KDContext::k_alignCenter, KDContext::k_alignCenter, TextColor(), BackgroundColor());
+  }
 }
+
+void BannerView::addInterestMessage(I18n::Message message, Shared::CursorView * cursor) {
+  int n = numberOfInterestMessages();
+  if (n == k_maxNumberOfInterests) {
+    return;
+  }
+  m_interestMessageView[n].setMessage(message);
+  cursor->setHighlighted(true);
+}
+
+void BannerView::emptyInterestMessages(Shared::CursorView * cursor) {
+  for (int i = 0; i < k_maxNumberOfInterests; i++) {
+    m_interestMessageView[i].setMessage(I18n::Message::Default);
+  }
+  cursor->setHighlighted(false);
+}
+
 
 void BannerView::setDisplayParameters(bool showInterest, bool showDerivative, bool showTangent) {
   m_showInterest = showInterest;
@@ -32,13 +47,13 @@ void BannerView::setDisplayParameters(bool showInterest, bool showDerivative, bo
 
 View * BannerView::subviewAtIndex(int index) {
   assert(0 <= index && index < numberOfSubviews());
-  if (hasInterestMessage()) {
-    if (index == 0) {
-      return &m_interestMessageView;
-    } else {
-      index--;
+  int n = numberOfInterestMessages();
+  for (int i = 0; i < n; i++) {
+    if (index == i) {
+      return m_interestMessageView + i;
     }
   }
+  index -= n;
 
   if (index < Shared::XYBannerView::k_numberOfSubviews) {
     return Shared::XYBannerView::subviewAtIndex(index);
@@ -50,6 +65,17 @@ View * BannerView::subviewAtIndex(int index) {
 bool BannerView::lineBreakBeforeSubview(View * subview) const {
   return subview == &m_tangentEquationView
       || Shared::XYBannerView::lineBreakBeforeSubview(subview);
+}
+
+int BannerView::numberOfInterestMessages() const {
+  int result = 0;
+  for (int i = 0; i < k_maxNumberOfInterests; i++) {
+    if (hasInterestMessage(i)) {
+      assert(result == i); // Interests messages should be filled in order
+      result++;
+    }
+  }
+  return result;
 }
 
 }

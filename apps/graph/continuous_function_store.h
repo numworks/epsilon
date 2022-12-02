@@ -61,7 +61,7 @@ private:
     return IsFunctionActiveInTable(model, context) && symbolType == static_cast<Shared::ContinuousFunction *>(model)->properties().symbolType();
   }
   static bool IsFunctionIntersectable(Shared::ExpressionModelHandle * model, void * context) {
-    return static_cast<Shared::ContinuousFunction *>(model)->isIntersectable();
+    return static_cast<Shared::ContinuousFunction *>(model)->shouldDisplayIntersections();
   }
   int maxNumberOfMemoizedModels() const override { return k_maxNumberOfMemoizedModels; }
   const char * modelExtension() const override { return Ion::Storage::funcExtension; }

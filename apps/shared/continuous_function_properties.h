@@ -100,6 +100,8 @@ public:
   bool isConic() const { return conicShape() != Poincare::Conic::Shape::Undefined; }
   bool isCartesianHyperbolaOfDegreeTwo() const { return conicShape() == Poincare::Conic::Shape::Hyperbola && isCartesian() && isOfDegreeTwo(); }
 
+  bool canComputeIntersectionsWithFunctionsAlongSameVariable() const { return isCartesian() && !isOfDegreeTwo(); }
+
   /* Normalization isn't enforced on Parabola and Hyperbola for a better zooms.
    * It is on Circle and Ellipses so that they don't look like each other. */
   bool enforcePlotNormalization() const { return isPolar() || isParametric() || conicShape() == Poincare::Conic::Shape::Circle || conicShape() == Poincare::Conic::Shape::Ellipse; }

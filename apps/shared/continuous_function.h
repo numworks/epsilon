@@ -63,12 +63,12 @@ public:
   bool isActiveInTable() const { return properties().canBeActiveInTable() && isActive(); }
   // If the ContinuousFunction is named ("f(x)=...")
   bool isNamed() const;
-  /* If we can compute the ContinuousFunction intersections.
+  /* If we can compute the ContinuousFunction intersections
    * isAlongY must be false, but it is checked by "isActiveInTable()".
    * TODO : Handle more types of curves ?
    * If intersections are implemented for verticalLines, isActiveInTable might
    * need a change. */
-  bool isIntersectable() const { return isActiveInTable() && properties().isCartesian(); }
+  bool shouldDisplayIntersections() const { return isActiveInTable() && properties().canComputeIntersectionsWithFunctionsAlongSameVariable(); }
   bool isDiscontinuousBetweenFloatValues(float x1, float x2, Poincare::Context * context) const;
   // Compute line parameters (slope and intercept) from ContinuousFunction
   void getLineParameters(double * slope, double * intercept, Poincare::Context * context) const;

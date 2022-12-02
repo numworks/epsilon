@@ -126,7 +126,7 @@ void PointsOfInterestCache::computeBetween(float start, float end, float maxFloa
     }
   }
 
-  if (!f->isIntersectable()) {
+  if (!f->shouldDisplayIntersections()) {
     return;
   }
 
@@ -137,7 +137,7 @@ void PointsOfInterestCache::computeBetween(float start, float end, float maxFloa
       continue;
     }
     ExpiringPointer<ContinuousFunction> g = store->modelForRecord(record);
-    if (!g->isIntersectable()) {
+    if (!g->shouldDisplayIntersections()) {
       continue;
     }
     Expression e2 = g->expressionReduced(context);

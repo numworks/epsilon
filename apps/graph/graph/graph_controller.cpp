@@ -81,11 +81,11 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
         assert(f->numberOfSubCurves() == 2);
         zoom.fitPointsOfInterest(evaluatorSecondCurve<float>, f.operator->(), alongY, evaluatorSecondCurve<double>);
       }
-      if (f->isIntersectable()) {
+      if (f->properties().canComputeIntersectionsWithFunctionsAlongSameVariable()) {
         ContinuousFunction * mainF = f.operator->();
         for (int j = i + 1; j < nbFunctions; j++) {
           ExpiringPointer<ContinuousFunction> g = store->modelForRecord(store->activeRecordAtIndex(j));
-          if (!g->isIntersectable() || g->basedOnCostlyAlgorithms(context)) {
+          if (!g->properties().canComputeIntersectionsWithFunctionsAlongSameVariable() || g->isAlongY() != alongY) {
             continue;
           }
           zoom.fitIntersections(evaluator<float>, mainF, evaluator<float>, g.operator->());

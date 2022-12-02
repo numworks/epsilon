@@ -501,10 +501,9 @@ Integer Integer::LogicalNot(const Integer &a, const Integer &num_bits)
   return uint_final;
 }
 
-Integer Integer::LogicalShiftLeft(const Integer &a, const Integer &shift, const Integer &num_bits)
+Integer Integer::LogicalShift(const Integer &a, const Integer &shift, const Integer &num_bits)
 {
   assert(!a.isNegative());
-  assert(!shift.isNegative());
   assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
   if (a.isOverflow() || shift.isOverflow())
   {
@@ -515,8 +514,14 @@ Integer Integer::LogicalShiftLeft(const Integer &a, const Integer &shift, const 
     return a;
   }
 
-  uint8_t points = shift.extractedInt();
-  Integer uint_final = a;
+  int8_t points = shift.extractedInt();
+  Integer uint_final = Truncate(a, num_bits);
+  if (uint_final.isZero())
+  {
+    return uint_final;
+  }
+
+  // Sift Left
   while (points > 0)
   {
     uint8_t power = (points >= 31) ? 31 : points;
@@ -524,33 +529,13 @@ Integer Integer::LogicalShiftLeft(const Integer &a, const Integer &shift, const 
     uint_final = uint_final.multiplyByPowerOf2(power);
     points -= power;
   }
-
-  return Truncate(uint_final, num_bits);
-}
-
-Integer Integer::LogicalShiftRight(const Integer &a, const Integer &shift, const Integer &num_bits)
-{
-  assert(!a.isNegative());
-  assert(!shift.isNegative());
-  assert(num_bits.isLowerThan(Integer(__INT8_MAX__)));
-  if (a.isOverflow() || shift.isOverflow())
+  //Shift Right
+  while (points < 0)
   {
-    return Overflow(false);
-  }
-
-  Integer uint_final = Truncate(a, num_bits); // Make sure input is at the correct precision
-  if (uint_final.isZero())
-  {
-    return uint_final;
-  }
-
-  uint8_t points = shift.extractedInt();
-  while (points > 0)
-  {
-    uint8_t power = (points >= 31) ? 31 : points;
+    uint8_t power = (-points >= 31) ? 31 : -points;
     //multiplyByPowerOf2 prohibits powers greater than 31...
     uint_final = uint_final.divideByPowerOf2(power);
-    points -= power;
+    points += power;
   }
 
   return Truncate(uint_final, num_bits);
@@ -629,17 +614,17 @@ Integer Integer::LogicalRotateRight(const Integer &a, const Integer &rotate, con
   }
 
   Integer num_bits_plus_1 = Addition(num_bits, Integer(1));
-  Integer rotate_mask = LogicalShiftLeft(Integer(1), rotate, num_bits_plus_1);
+  Integer rotate_mask = LogicalShift(Integer(1), rotate, num_bits_plus_1);
   rotate_mask = Subtraction(rotate_mask, Integer(1));
   Integer rotate_word = LogicalAndOrXor(uint_final, rotate_mask, Integer::LogicOperation::And, num_bits);
-
-  uint_final = LogicalShiftRight(uint_final, rotate, num_bits);
+  Integer rotate_neg = multiplication(rotate, Integer(-1));
+  uint_final = LogicalShift(uint_final, rotate_neg, num_bits);
 
   //only bother adding if the rotate word is non-zero
   if (!rotate_word.isZero())
   {
     Integer num_bits_minus_rotate = Subtraction(num_bits, rotate);
-    rotate_word = LogicalShiftLeft(rotate_word, num_bits_minus_rotate, num_bits);
+    rotate_word = LogicalShift(rotate_word, num_bits_minus_rotate, num_bits);
     uint_final = Addition(uint_final, rotate_word);
   }
 
@@ -664,14 +649,15 @@ Integer Integer::LogicalRotateLeft(const Integer &a, const Integer &rotate, cons
   }
 
   Integer num_bits_plus_1 = Addition(num_bits, Integer(1));
-  Integer rotate_mask = LogicalShiftLeft(Integer(1), rotate, num_bits_plus_1);
+  Integer rotate_mask = LogicalShift(Integer(1), rotate, num_bits_plus_1);
   rotate_mask = Subtraction(rotate_mask, Integer(1));
   Integer num_bits_minus_rotate = Subtraction(num_bits, rotate);
-  rotate_mask = LogicalShiftLeft(rotate_mask, num_bits_minus_rotate, num_bits);
+  rotate_mask = LogicalShift(rotate_mask, num_bits_minus_rotate, num_bits);
   Integer rotate_word = LogicalAndOrXor(uint_final, rotate_mask, Integer::LogicOperation::And, num_bits);
-  rotate_word = LogicalShiftRight(rotate_word, num_bits_minus_rotate, num_bits);
+  Integer num_bits_minus_rotate_neg = multiplication(num_bits_minus_rotate, Integer(-1));
+  rotate_word = LogicalShift(rotate_word, num_bits_minus_rotate_neg, num_bits);
 
-  uint_final = LogicalShiftLeft(uint_final, rotate, num_bits);
+  uint_final = LogicalShift(uint_final, rotate, num_bits);
 
   uint_final = Addition(uint_final, rotate_word);
 
@@ -704,8 +690,8 @@ Integer Integer::LogicalBitGet(const Integer &a, const Integer &bit)
   {
     return Overflow(false);
   }
-
-  Integer shifted = LogicalShiftRight(a, bit, Integer(__INT8_MAX_MINUS_1__));
+  Integer bit_neg = multiplication(bit, Integer(-1));
+  Integer shifted = LogicalShift(a, bit_neg, Integer(__INT8_MAX_MINUS_1__));
   return LogicalAndOrXor(shifted, Integer(1), Integer::LogicOperation::And, Integer(__INT8_MAX_MINUS_1__));
 }
 
@@ -719,7 +705,7 @@ Integer Integer::LogicalBitClear(const Integer &a, const Integer &bit)
     return Overflow(false);
   }
 
-  Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(__INT8_MAX_MINUS_1__));
+  Integer shifted = LogicalShift(Integer(1), bit, Integer(__INT8_MAX_MINUS_1__));
   shifted = LogicalNot(shifted, Integer(__INT8_MAX_MINUS_1__));
   return LogicalAndOrXor(a, shifted, Integer::LogicOperation::And, Integer(__INT8_MAX_MINUS_1__));
 }
@@ -734,7 +720,7 @@ Integer Integer::LogicalBitSet(const Integer &a, const Integer &bit)
     return Overflow(false);
   }
 
-  Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(__INT8_MAX_MINUS_1__));
+  Integer shifted = LogicalShift(Integer(1), bit, Integer(__INT8_MAX_MINUS_1__));
   return LogicalAndOrXor(a, shifted, Integer::LogicOperation::Or, Integer(__INT8_MAX_MINUS_1__));
 }
 
@@ -748,7 +734,7 @@ Integer Integer::LogicalBitFlip(const Integer &a, const Integer &bit)
     return Overflow(false);
   }
 
-  Integer shifted = LogicalShiftLeft(Integer(1), bit, Integer(__INT8_MAX_MINUS_1__));
+  Integer shifted = LogicalShift(Integer(1), bit, Integer(__INT8_MAX_MINUS_1__));
   return LogicalAndOrXor(a, shifted, Integer::LogicOperation::Xor, Integer(__INT8_MAX_MINUS_1__));
 }
 
@@ -836,7 +822,7 @@ Integer Integer::TwosComplementToBits(const Integer &a, const Integer &num_bits)
   if (sign.isOne())
   {
     // flip bits back to unsigned from two's comp
-    Integer bias = LogicalShiftLeft(Integer(1), num_bits, num_bits_plus_1);
+    Integer bias = LogicalShift(Integer(1), num_bits, num_bits_plus_1);
     bias.setNegative(true);
     Integer a_negative = Addition(a_truncated, bias);
     return a_negative;

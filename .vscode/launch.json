@@ -1,0 +1,52 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(lldb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/debug/simulator/macos/epsilon.app/Contents/MacOS/Epsilon",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "DEBUG",
+                    "value": "1"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "${defaultBuildTask}"
+        },
+        {
+            "name": "(lldb) Test",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/debug/simulator/macos/x86_64/test.headless.bin",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "DEBUG",
+                    "value": "1"
+                },
+                {
+                    "name": "ARCH",
+                    "value": "x86_64"
+                },
+                {
+                    "name": "TEST_MODE",
+                    "value": "1"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "lldb",
+            "preLaunchTask": "build tests",
+        }
+    ]
+}

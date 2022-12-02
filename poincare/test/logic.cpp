@@ -136,15 +136,15 @@ QUIZ_CASE(poincare_logic_sll_compare)
   Integer h0000_FFFF_FFFF_0000 = Integer("281474976645120");
   Integer hFFFF_FFFF_0000_0000 = Integer("18446744069414584320");
   Integer h1_0000_0000_0000_0000 = Integer("18446744073709551616");
-  assert_equal(Integer::LogicalShiftLeft(hFFFF_FFFF, Integer(0)), hFFFF_FFFF);
-  assert_equal(Integer::LogicalShiftLeft(Integer(0), Integer(6)), Integer(0));
-  assert_equal(Integer::LogicalShiftLeft(Integer(0), Integer(36)), Integer(0));
-  assert_equal(Integer::LogicalShiftLeft(h1_0000_0000, Integer(32)), Integer(0));
+  assert_equal(Integer::LogicalShift(hFFFF_FFFF, Integer(0)), hFFFF_FFFF);
+  assert_equal(Integer::LogicalShift(Integer(0), Integer(6)), Integer(0));
+  assert_equal(Integer::LogicalShift(Integer(0), Integer(36)), Integer(0));
+  assert_equal(Integer::LogicalShift(h1_0000_0000, Integer(32)), Integer(0));
   //explicit num_bits
-  assert_equal(Integer::LogicalShiftLeft(Integer(1), Integer(32), Integer(33)), h1_0000_0000);
-  assert_equal(Integer::LogicalShiftLeft(h0000_FFFF_FFFF_0000, Integer(16), Integer(64)), hFFFF_FFFF_0000_0000);
-  assert_equal(Integer::LogicalShiftLeft(h0000_FFFF_FFFF_0000, Integer(16), Integer(65)), hFFFF_FFFF_0000_0000);
-  assert_equal(Integer::LogicalShiftLeft(Integer(1), Integer(64), Integer(65)), h1_0000_0000_0000_0000);
+  assert_equal(Integer::LogicalShift(Integer(1), Integer(32), Integer(33)), h1_0000_0000);
+  assert_equal(Integer::LogicalShift(h0000_FFFF_FFFF_0000, Integer(16), Integer(64)), hFFFF_FFFF_0000_0000);
+  assert_equal(Integer::LogicalShift(h0000_FFFF_FFFF_0000, Integer(16), Integer(65)), hFFFF_FFFF_0000_0000);
+  assert_equal(Integer::LogicalShift(Integer(1), Integer(64), Integer(65)), h1_0000_0000_0000_0000);
 }
 
 QUIZ_CASE(poincare_logic_srl_compare)
@@ -154,17 +154,17 @@ QUIZ_CASE(poincare_logic_srl_compare)
   Integer h1_0000_0000 = Integer("4294967296");
   Integer h0000_FFFF_FFFF_0000 = Integer("281474976645120");
   Integer hFFFF_FFFF_0000_0000 = Integer("18446744069414584320");
-  assert_equal(Integer::LogicalShiftRight(hFFFF_FFFF, Integer(0)), hFFFF_FFFF);
-  assert_equal(Integer::LogicalShiftRight(Integer(0), Integer(6)), Integer(0));
-  assert_equal(Integer::LogicalShiftRight(Integer(0), Integer(36)), Integer(0));
-  assert_equal(Integer::LogicalShiftRight(h1_0000_0000, Integer(32)), Integer(0));
-  assert_equal(Integer::LogicalShiftRight(hFFFF_FFFF, Integer(32)), Integer(0));
-  assert_equal(Integer::LogicalShiftRight(hFFFF_FFFF, Integer(31)), Integer(1));
-  assert_equal(Integer::LogicalShiftRight(hFFFF_FFFF, Integer(30)), Integer(3));
+  assert_equal(Integer::LogicalShift(hFFFF_FFFF, Integer(-0)), hFFFF_FFFF);
+  assert_equal(Integer::LogicalShift(Integer(0), Integer(-6)), Integer(0));
+  assert_equal(Integer::LogicalShift(Integer(0), Integer(-36)), Integer(0));
+  assert_equal(Integer::LogicalShift(h1_0000_0000, Integer(-32)), Integer(0));
+  assert_equal(Integer::LogicalShift(hFFFF_FFFF, Integer(-32)), Integer(0));
+  assert_equal(Integer::LogicalShift(hFFFF_FFFF, Integer(-31)), Integer(1));
+  assert_equal(Integer::LogicalShift(hFFFF_FFFF, Integer(-30)), Integer(3));
   //explicit num_bits
-  assert_equal(Integer::LogicalShiftRight(h0000_FFFF_FFFF_0000, Integer(32), Integer(33)), Integer(1));
-  assert_equal(Integer::LogicalShiftRight(h0000_FFFF_FFFF_0000, Integer(32), Integer(64)), hFFFF);
-  assert_equal(Integer::LogicalShiftRight(h0000_FFFF_FFFF_0000, Integer(32), Integer(66)), hFFFF);
+  assert_equal(Integer::LogicalShift(h0000_FFFF_FFFF_0000, Integer(-32), Integer(33)), Integer(1));
+  assert_equal(Integer::LogicalShift(h0000_FFFF_FFFF_0000, Integer(-32), Integer(64)), hFFFF);
+  assert_equal(Integer::LogicalShift(h0000_FFFF_FFFF_0000, Integer(-32), Integer(66)), hFFFF);
 }
 
 QUIZ_CASE(poincare_logic_sra_compare)

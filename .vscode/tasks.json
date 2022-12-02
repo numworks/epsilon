@@ -1,0 +1,50 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "build simulator",
+			"command": "make",
+			"args": [
+				"PLATFORM=simulator",
+				"-j8"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"DEBUG": "1"
+				}
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"detail": "execute make",
+			"problemMatcher": []
+		},
+		{
+			"type": "shell",
+			"label": "build tests",
+			"command": "make",
+			"args": [
+				"PLATFORM=simulator",
+				"test.headless.bin",
+				"-j8"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}",
+				"env": {
+					"DEBUG": "1",
+					"ARCH": "x86_64",
+					"TEST_MODE": "1"
+				}
+			},
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"detail": "execute make test",
+			"problemMatcher": []
+		}
+	]
+}

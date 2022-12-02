@@ -1,3 +1,4 @@
 /output/
 /build/artifacts/
 build/device/**/*.pyc
+.DS_Store

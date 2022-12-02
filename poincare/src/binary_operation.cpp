@@ -337,7 +337,8 @@ namespace Poincare {
         return Undefined::Builder();
       }
     }
-
+    //used for logic shift (right)
+    Integer bq_neg = Integer::Multiplication(bq, Integer(-1));
 
     switch(t) {
       case ExpressionNode::Type::NotExplicit:
@@ -401,16 +402,16 @@ namespace Poincare {
         x = Integer::LogicalBitsClear(aq, bq, cq);
         break;
       case ExpressionNode::Type::ShiftLogicLeft:
-        x = Integer::LogicalShiftLeft(aq, bq);
+        x = Integer::LogicalShift(aq, bq);
         break;
       case ExpressionNode::Type::ShiftLogicLeftExplicit:
-        x = Integer::LogicalShiftLeft(aq, bq, cq);
+        x = Integer::LogicalShift(aq, bq, cq);
         break;
       case ExpressionNode::Type::ShiftLogicRight:
-        x = Integer::LogicalShiftRight(aq, bq);
+        x = Integer::LogicalShift(aq, bq_neg);
         break;
       case ExpressionNode::Type::ShiftLogicRightExplicit:
-        x = Integer::LogicalShiftRight(aq, bq, cq);
+        x = Integer::LogicalShift(aq, bq_neg, cq);
         break;
       case ExpressionNode::Type::ShiftArithmeticRight:
         x = Integer::LogicalShiftRightArithmetic(aq, bq);

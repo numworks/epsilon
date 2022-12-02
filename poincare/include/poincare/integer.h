@@ -150,8 +150,7 @@ public:
   // logical operations
   static Integer LogicalAndOrXor(const Integer &a, const Integer &b, LogicOperation operation, const Integer &num_bits = Integer(32));
   static Integer LogicalNot(const Integer &a, const Integer &num_bits = Integer(32));
-  static Integer LogicalShiftLeft(const Integer &a, const Integer &shift, const Integer &num_bits = Integer(32));
-  static Integer LogicalShiftRight(const Integer &a, const Integer &shift, const Integer &num_bits = Integer(32));
+  static Integer LogicalShift(const Integer &a, const Integer &shift, const Integer &num_bits = Integer(32));
   static Integer LogicalShiftRightArithmetic(const Integer &a, const Integer &shift, const Integer &num_bits = Integer(32));
   static Integer LogicalRotateRight(const Integer &a, const Integer &rotate, const Integer &num_bits = Integer(32));
   static Integer LogicalRotateLeft(const Integer &a, const Integer &rotate, const Integer &num_bits = Integer(32));

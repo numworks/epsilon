@@ -8,13 +8,13 @@ PrefacedTwiceTableView::PrefacedTwiceTableView(int prefaceRow, int prefaceColumn
   PrefacedTableView(prefaceRow, parentResponder, mainTableView, cellsDataSource, delegate, prefacedTableViewDelegate),
   m_columnPrefaceDataSource(prefaceColumn, cellsDataSource),
   m_columnPrefaceView(&m_columnPrefaceDataSource, &m_columnPrefaceDataSource),
-  m_storedXMargin(0)
+  m_mainTableViewLeftMargin(0)
 {
   m_columnPrefaceView.setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
 void PrefacedTwiceTableView::setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left) {
-  m_storedXMargin = left;
+  m_mainTableViewLeftMargin = left;
   m_columnPrefaceView.setTopMargin(top);
   m_columnPrefaceView.setBottomMargin(bottom);
   PrefacedTableView::setMargins(top, right, bottom, left);
@@ -47,8 +47,8 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
   bool hideColumnPreface = m_mainTableView->selectedRow() == -1 || m_columnPrefaceDataSource.prefaceFullyInFrame(m_mainTableView->contentOffset().x());
   if (hideColumnPreface) {
     m_columnPrefaceView.setFrame(KDRectZero, force);
-    m_mainTableView->setLeftMargin(m_storedXMargin);
-    m_rowPrefaceView.setLeftMargin(m_storedXMargin);
+    m_mainTableView->setLeftMargin(m_mainTableViewLeftMargin);
+    m_rowPrefaceView.setLeftMargin(m_mainTableViewLeftMargin);
     layoutSubviewsInRect(bounds(), force);
   } else {
     m_columnPrefaceView.setRightMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_columnPrefaceView, &m_columnPrefaceDataSource) : 0);

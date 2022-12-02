@@ -107,7 +107,7 @@ private:
 
   Escher::SelectableTableViewDelegate * m_mainTableDelegate;
   PrefacedTableViewDelegate * m_prefacedDelegate;
-  KDCoordinate m_storedMargin;
+  KDCoordinate m_mainTableViewTopMargin;
 };
 
 }

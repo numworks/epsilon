@@ -8,7 +8,6 @@ TextCursorView::~TextCursorView() {
 }
 
 void TextCursorView::drawRect(KDContext * ctx, KDRect rect) const {
-  BlinkTimer::RegisterCursor(const_cast<TextCursorView *>(this));
   if (m_visible) {
     KDCoordinate height = bounds().height();
     ctx->fillRect(KDRect(0, 0, k_width, height), KDColorBlack);
@@ -23,6 +22,14 @@ void TextCursorView::layoutSubviews(bool force) {
   /* Force the cursor to appears when its frame changes. This way, the user
    * does not lose sight of the cursor when moving around. */
   m_visible = true;
+}
+
+void TextCursorView::setBlinking(bool blinking) {
+  if (blinking) {
+    BlinkTimer::RegisterCursor(const_cast<TextCursorView *>(this));
+  } else {
+    BlinkTimer::RegisterCursor(nullptr);
+  }
 }
 
 void TextCursorView::setVisible(bool visible) {

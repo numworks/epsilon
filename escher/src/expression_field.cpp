@@ -12,7 +12,7 @@ ExpressionField::ExpressionField(Responder * parentResponder,
                                  InputEventHandlerDelegate * inputEventHandlerDelegate,
                                  TextFieldDelegate * textFieldDelegate,
                                  LayoutFieldDelegate * layoutFieldDelegate) :
-    Responder(parentResponder),
+    WithBlinkingTextCursor<Responder>(parentResponder),
     View(),
     m_textField(parentResponder,
                 nullptr,
@@ -104,6 +104,7 @@ bool ExpressionField::handleEvent(Ion::Events::Event event) {
 
 void ExpressionField::didBecomeFirstResponder() {
   m_inputViewMemoizedHeight = inputViewHeight();
+  WithBlinkingTextCursor<Responder>::didBecomeFirstResponder();
 }
 
 KDSize ExpressionField::minimalSizeForOptimalDisplay() const {

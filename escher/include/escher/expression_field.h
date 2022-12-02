@@ -10,7 +10,7 @@
 
 namespace Escher {
 
-class ExpressionField : public Responder, public View {
+class ExpressionField : public WithBlinkingTextCursor<Responder>, public View {
 public:
   ExpressionField(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandler, TextFieldDelegate * textFieldDelegate, LayoutFieldDelegate * layoutFieldDelegate);
 
@@ -49,6 +49,7 @@ public:
 protected:
   TextField m_textField;
   LayoutField m_layoutField;
+
 private:
   constexpr static int k_textFieldBufferSize = TextField::MaxBufferSize();
   constexpr static KDCoordinate k_minimalHeight = 37;
@@ -57,6 +58,9 @@ private:
   constexpr static KDCoordinate k_verticalMargin = 5;
   constexpr static KDCoordinate k_separatorThickness = Metric::CellSeparatorThickness;
   KDCoordinate inputViewHeight() const;
+  TextCursorView * textCursorView() override {
+    return editionIsInTextField() ? m_textField.textCursorView() : m_layoutField.textCursorView();
+  }
   KDCoordinate m_inputViewMemoizedHeight;
 };
 

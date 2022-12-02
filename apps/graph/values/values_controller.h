@@ -43,7 +43,7 @@ public:
   IntervalParameterSelectorController * intervalParameterSelectorController() { return &m_intervalParameterSelectorController; }
 
   // PrefacedTableViewDelegate
-  KDCoordinate maxPrefaceHeight() const override { return 3 * k_cellHeight; }
+  KDCoordinate maxRowPrefaceHeight() const override { return 3 * k_cellHeight; }
 
 private:
   constexpr static size_t k_maxNumberOfSymbolTypes = Shared::ContinuousFunctionProperties::k_numberOfSymbolTypes;

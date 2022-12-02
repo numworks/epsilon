@@ -27,6 +27,8 @@ template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Div(const Tree
 
 template<unsigned ...Len> static constexpr auto Mult(const Tree<Len> (&...children)) { return MakeTree<BlockType::Multiplication>(children...); }
 
+template<unsigned ...Len> static constexpr auto Set(const Tree<Len> (&...children)) { return MakeTree<BlockType::Set>(children...); }
+
 template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Pow(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Power>(child1, child2); }
 
 template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Sub(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Subtraction>(child1, child2); }
@@ -63,6 +65,20 @@ constexpr static void CreateNode(Tree<N> * tree, Types... args) {
 constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> operator "" _n(char16_t name) {
   Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> tree;
   CreateNode<BlockType::Constant>(&tree, name);
+  return tree;
+}
+
+// TODO: improve suffix format
+
+constexpr Tree<1> operator "" _nsn(unsigned long long value) { // single-block node
+  Tree<1> tree;
+  switch (value) {
+    case 1:
+      CreateNode<BlockType::MinusOne>(&tree);
+      break;
+    default:
+      assert(false);
+  }
   return tree;
 }
 

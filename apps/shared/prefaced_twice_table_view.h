@@ -42,7 +42,7 @@ private:
 
   ColumnPrefaceDataSource m_columnPrefaceDataSource;
   Escher::TableView m_columnPrefaceView;
-  KDCoordinate m_storedXMargin;
+  KDCoordinate m_mainTableViewLeftMargin;
 };
 
 }

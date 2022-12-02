@@ -12,7 +12,7 @@ namespace Shared {
   m_marginDelegate(nullptr),
   m_mainTableDelegate(delegate),
   m_prefacedDelegate(prefacedTableViewDelegate),
-  m_storedMargin(0)
+  m_mainTableViewTopMargin(0)
 {
   m_mainTableView->setParentResponder(parentResponder);
   m_mainTableView->setDelegate(this);
@@ -24,7 +24,7 @@ void PrefacedTableView::setMargins(KDCoordinate top, KDCoordinate right, KDCoord
   m_mainTableView->setRightMargin(right);
   m_mainTableView->setBottomMargin(bottom);
   m_mainTableView->setLeftMargin(left);
-  m_storedMargin = top;
+  m_mainTableViewTopMargin = top;
 
   m_rowPrefaceView.setLeftMargin(left);
   m_rowPrefaceView.setRightMargin(right);
@@ -64,14 +64,14 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   ScrollViewVerticalBar * verticalBar = static_cast<TableView::BarDecorator*>(m_mainTableView->decorator())->verticalBar();
 
   if (hideRowPreface) {
-    m_mainTableView->setTopMargin(m_storedMargin);
+    m_mainTableView->setTopMargin(m_mainTableViewTopMargin);
     m_mainTableView->setFrame(rect, force);
-    verticalBar->setTopMargin(rowPrefaceHeight + 2*m_storedMargin);
+    verticalBar->setTopMargin(rowPrefaceHeight + 2 * m_mainTableViewTopMargin);
   } else {
     m_rowPrefaceView.setBottomMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_rowPrefaceView, &m_rowPrefaceDataSource) : 0);
     m_mainTableView->setTopMargin(0);
     m_mainTableView->setFrame(KDRect(rect.x(), rect.y() + rowPrefaceHeight, rect.width(), rect.height() - rowPrefaceHeight), force);
-    verticalBar->setTopMargin(2*m_storedMargin);
+    verticalBar->setTopMargin(2 * m_mainTableViewTopMargin);
   }
 
   if (m_mainTableView->selectedRow() >= 0) {

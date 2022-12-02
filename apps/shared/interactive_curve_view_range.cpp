@@ -291,38 +291,39 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
   setZoomNormalize(false);
 
   if (m_delegate && (computeX || computeY)) {
-    Poincare::UserCircuitBreakerCheckpoint checkpoint;
-    if (BackCircuitBreakerRun(checkpoint)) {
-      Range2D newRange = computeX || computeY ? m_delegate->optimalRange(computeX, computeY, memoizedRange()) : Range2D();
+    Range2D newRange;
 
-      if (computeX) {
-        protectedSetX(*newRange.x(), k_maxFloat);
+    {
+      Poincare::UserCircuitBreakerCheckpoint checkpoint;
+      if (BackCircuitBreakerRun(checkpoint)) {
+        newRange = m_delegate->optimalRange(computeX, computeY, memoizedRange());
+      } else {
+        m_delegate->tidyModels();
+        newRange = Zoom::DefaultRange(NormalYXRatio(), k_maxFloat);
       }
-      /* We notify the delegate to refresh the cursor's position and update the
-       * bottom margin (which depends on the banner height). */
-      m_delegate->updateBottomMargin();
+    }
 
-      Range2D newRangeWithMargins = m_delegate->addMargins(newRange);
-      newRangeWithMargins = Range2D(
-          computeX ? *newRangeWithMargins.x() : Range1D(xMin(), xMax()),
-          computeY ? *newRangeWithMargins.y() : Range1D(yMin(), yMax()));
-      if (newRange.ratioIs(NormalYXRatio())) {
-        newRangeWithMargins.setRatio(NormalYXRatio(), false);
-        assert(newRangeWithMargins.ratioIs(NormalYXRatio()));
-      }
-
-      if (computeX) {
-        protectedSetX(*newRangeWithMargins.x(), k_maxFloat);
-      }
-      if (computeY) {
-        protectedSetY(*newRangeWithMargins.y(), k_maxFloat);
-      }
-
-    } else {
-      m_delegate->tidyModels();
-      Range2D newRange = Zoom::DefaultRange(NormalYXRatio(), k_maxFloat);
+    if (computeX) {
       protectedSetX(*newRange.x(), k_maxFloat);
-      protectedSetY(*newRange.y(), k_maxFloat);
+    }
+    /* We notify the delegate to refresh the cursor's position and update the
+      * bottom margin (which depends on the banner height). */
+    m_delegate->updateBottomMargin();
+
+    Range2D newRangeWithMargins = m_delegate->addMargins(newRange);
+    newRangeWithMargins = Range2D(
+        computeX ? *newRangeWithMargins.x() : Range1D(xMin(), xMax()),
+        computeY ? *newRangeWithMargins.y() : Range1D(yMin(), yMax()));
+    if (newRange.ratioIs(NormalYXRatio())) {
+      newRangeWithMargins.setRatio(NormalYXRatio(), false);
+      assert(newRangeWithMargins.ratioIs(NormalYXRatio()));
+    }
+
+    if (computeX) {
+      protectedSetX(*newRangeWithMargins.x(), k_maxFloat);
+    }
+    if (computeY) {
+      protectedSetY(*newRangeWithMargins.y(), k_maxFloat);
     }
   }
 

@@ -318,21 +318,24 @@ void GraphController::moveCursorAndCenterIfNeeded(double t) {
 void GraphController::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context) {
   PointsOfInterestCache * pointsOfInterest = pointsOfInterestForRecord(record);
   bannerView()->emptyInterestMessages(&m_cursorView);
-  if (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::Root)) {
-    bannerView()->addInterestMessage(I18n::Message::Zero, &m_cursorView);
-  }
-  if (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::Intersection)) {
-    bannerView()->addInterestMessage(I18n::Message::Intersection, &m_cursorView);
-  }
-  if (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::YIntercept)) {
-    bannerView()->addInterestMessage(I18n::Message::LineYInterceptDescription, &m_cursorView);
-  }
+  /* The interests are sorted from most important to lowest, in case there is
+   * not enough space on the banner to display all of them. */
   if (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::LocalMinimum)) {
     bannerView()->addInterestMessage(I18n::Message::Minimum, &m_cursorView);
   }
   if (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::LocalMaximum)) {
     bannerView()->addInterestMessage(I18n::Message::Maximum, &m_cursorView);
   }
+  if (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::Intersection)) {
+    bannerView()->addInterestMessage(I18n::Message::Intersection, &m_cursorView);
+  }
+  if (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::Root)) {
+    bannerView()->addInterestMessage(I18n::Message::Zero, &m_cursorView);
+  }
+  if (pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::YIntercept)) {
+    bannerView()->addInterestMessage(I18n::Message::LineYInterceptDescription, &m_cursorView);
+  }
+
   FunctionGraphController::reloadBannerViewForCursorOnFunction(cursor, record, functionStore, context);
 }
 

@@ -54,15 +54,14 @@ void EditionReference::remove(bool isTree) {
   EditionPool::sharedEditionPool()->removeBlocks(block(), isTree ? node().treeSize() : node().nodeSize());
 }
 
-void EditionReference::insert(Node n, bool before, bool isTree) {
-  Node destination = before ? n : n.nextNode();
+void EditionReference::insert(Node nodeToInsert, bool before, bool isTree) {
+  Node destination = before ? node() : nextNode().node();
   EditionPool * pool = EditionPool::sharedEditionPool();
-  size_t sizeToInsert = isTree ? node().treeSize() : node().nodeSize();
-  // TODO: should we handle !pool->contains(block())?
+  size_t sizeToInsert = isTree ? nodeToInsert.treeSize() : nodeToInsert.nodeSize();
   if (pool->contains(block())) {
-    pool->moveBlocks(destination.block(), block(), sizeToInsert);
+    pool->moveBlocks(destination.block(), nodeToInsert.block(), sizeToInsert);
   } else {
-    pool->insertBlocks(destination.block(), block(), sizeToInsert);
+    pool->insertBlocks(destination.block(), nodeToInsert.block(), sizeToInsert);
   }
 }
 

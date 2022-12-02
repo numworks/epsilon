@@ -38,10 +38,10 @@ public:
   int numberOfDescendants(bool includeSelf) const { return node().numberOfDescendants(includeSelf); }
 
   /* Edition operations on Node */
-  void insertNodeAfterNode(Node n) { insert(n, false, false); }
-  void insertTreeAfterNode(Node n) { insert(n, false, true); }
-  void insertNodeBeforeNode(Node n) { insert(n, true, false); }
-  void insertTreeBeforeNode(Node n) { insert(n, true, true); }
+  void insertNodeAfterNode(Node nodeToInsert) { insert(nodeToInsert, false, false); }
+  void insertTreeAfterNode(Node nodeToInsert) { insert(nodeToInsert, false, true); }
+  void insertNodeBeforeNode(Node nodeToInsert) { insert(nodeToInsert, true, false); }
+  void insertTreeBeforeNode(Node nodeToInsert) { insert(nodeToInsert, true, true); }
   void replaceNodeByNode(Node n) { replaceBy(n, false, false); }
   void replaceNodeByTree(Node n) { replaceBy(n, false, true); }
   void replaceTreeByNode(Node n) { replaceBy(n, true, false); }
@@ -50,10 +50,10 @@ public:
   void removeTree() { remove(true); }
 
   // Edition operations on EditionReference
-  void insertNodeAfterNode(EditionReference t) { insertNodeAfterNode(t.node()); }
-  void insertTreeAfterNode(EditionReference t) { insertTreeAfterNode(t.node()); }
-  void insertNodeBeforeNode(EditionReference t) { insertNodeBeforeNode(t.node()); }
-  void insertTreeBeforeNode(EditionReference t) { insertTreeBeforeNode(t.node()); }
+  void insertNodeAfterNode(EditionReference nodeToInsert) { insertNodeAfterNode(nodeToInsert.node()); }
+  void insertTreeAfterNode(EditionReference treeToInsert) { insertTreeAfterNode(treeToInsert.node()); }
+  void insertNodeBeforeNode(EditionReference nodeToInsert) { insertNodeBeforeNode(nodeToInsert.node()); }
+  void insertTreeBeforeNode(EditionReference treeToInsert) { insertTreeBeforeNode(treeToInsert.node()); }
   void replaceNodeByNode(EditionReference t) { replaceNodeByNode(t.node()); }
   void replaceNodeByTree(EditionReference t) { replaceNodeByTree(t.node()); }
   void replaceTreeByNode(EditionReference t) { replaceTreeByNode(t.node()); }
@@ -63,7 +63,7 @@ public:
   void recursivelyEdit(InPlaceTreeFunction treeFunction);
 
 private:
-  void insert(Node n, bool before, bool isTree);
+  void insert(Node nodeToInsert, bool before, bool isTree);
   void replaceBy(Node n, bool oldIsTree, bool newIsTree);
   void remove(bool isTree);
   uint16_t m_identifier;

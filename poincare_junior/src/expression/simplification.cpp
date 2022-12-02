@@ -183,11 +183,11 @@ void Simplification::ProjectionReduction(EditionReference division, Node (*PushP
     childrenReferences[std::get<int>(indexedRef)] = std::get<EditionReference>(indexedRef);
   }
   // Move first child
-  childrenReferences[0].insertTreeAfterNode(multiplication);
+  multiplication.insertTreeAfterNode(childrenReferences[0]);
   // Create empty ^ (or *)
   EditionReference power(PushInverse());
   // Move second child
-  childrenReferences[1].insertTreeAfterNode(power);
+  power.insertTreeAfterNode(childrenReferences[1]);
   // Complete: a * b^-1 (or a + b * -1)
   Node::Push<BlockType::IntegerShort>(-1);
   // Replace single-noded division (or subtraction) by the new multiplication (or addition)

@@ -28,6 +28,7 @@ public:
     return -1;
   }
   ExpiringPointer<Function> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<Function>(static_cast<Function *>(privateModelForRecord(record))); }
+  virtual KDColor colorForRecord(Ion::Storage::Record record) const = 0;
 protected:
   static bool IsFunctionActive(ExpressionModelHandle * model, void * context) {
     // An active function must be defined

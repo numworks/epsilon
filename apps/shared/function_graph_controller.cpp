@@ -68,6 +68,15 @@ void FunctionGraphController::selectFunctionWithCursor(int functionIndex, bool w
     m_selectedSubCurveIndex = 0;
     *m_indexFunctionSelectedByCursor = functionIndex;
   }
+
+  Ion::Storage::Record r = functionStore()->activeRecordAtIndex(functionIndex);
+  functionGraphView()->selectRecord(r);
+  functionGraphView()->cursorView()->setColor(functionStore()->colorForRecord(r));
+  // Force reload to display the selected function on top
+  if (willBeVisible) {
+    functionGraphView()->reload(false, true);
+  }
+
 }
 
 KDCoordinate FunctionGraphController::FunctionSelectionController::nonMemoizedRowHeight(int j) {

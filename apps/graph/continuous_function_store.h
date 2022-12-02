@@ -43,6 +43,7 @@ public:
   Shared::ExpiringPointer<Shared::ContinuousFunction> modelForRecord(Ion::Storage::Record record) const {
     return Shared::ExpiringPointer<Shared::ContinuousFunction>(static_cast<Shared::ContinuousFunction *>(privateModelForRecord(record)));
   }
+  KDColor colorForRecord(Ion::Storage::Record record) const override { return modelForRecord(record)->color(); }
   Shared::ContinuousFunctionCache * cacheAtIndex(int i) const { return (i < Shared::ContinuousFunctionCache::k_numberOfAvailableCaches) ? m_functionCaches + i : nullptr; }
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
   int maxNumberOfModels() const override { return k_maxNumberOfModels; }

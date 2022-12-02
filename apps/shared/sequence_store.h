@@ -21,7 +21,7 @@ public:
   /* If the sequences have been defined in a unusual order, recordAtIndex(0)
    * may not be the record for u. */
   Ion::Storage::Record recordAtNameIndex(int i) const { return Ion::Storage::FileSystem::sharedFileSystem()->recordBaseNamedWithExtension(k_sequenceNames[i], modelExtension()); }
-
+  KDColor colorForRecord(Ion::Storage::Record record) const override { return modelForRecord(record)->color(); }
 
   static int sequenceIndexForName(char name);
   static const char * firstAvailableName(size_t * nameIndex = nullptr);

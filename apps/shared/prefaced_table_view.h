@@ -13,7 +13,7 @@ namespace Shared {
 
 class PrefacedTableViewDelegate {
   public:
-    virtual KDCoordinate maxPrefaceHeight() const = 0;
+    virtual KDCoordinate maxRowPrefaceHeight() const = 0;
 };
 
 class PrefacedTableView : public Escher::View, public Escher::Responder, public Escher::SelectableTableViewDelegate {
@@ -38,7 +38,7 @@ public:
   };
 
   void setMarginDelegate(MarginDelegate * delegate) { m_marginDelegate = delegate; }
-  void resetDataSourceSizeMemoization() { m_prefaceDataSource.resetMemoization(); }
+  void resetDataSourceSizeMemoization() { m_rowPrefaceDataSource.resetMemoization(); }
 protected:
   class IntermediaryDataSource : public Escher::TableViewDataSource, public Escher::ScrollViewDataSource {
   public:
@@ -72,9 +72,9 @@ protected:
     Escher::TableViewDataSource * m_mainDataSource;
   };
 
-  class PrefaceDataSource : public IntermediaryDataSource {
+  class RowPrefaceDataSource : public IntermediaryDataSource {
   public:
-    PrefaceDataSource(int prefaceRow, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceRow(prefaceRow), m_rowHeigthManager(this) {}
+    RowPrefaceDataSource(int prefaceRow, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceRow(prefaceRow), m_rowHeigthManager(this) {}
 
     int prefaceRow() const { return m_prefaceRow; }
     bool prefaceFullyInFrame(int offset);
@@ -94,15 +94,15 @@ protected:
 
   void layoutSubviewsInRect(KDRect rect, bool force);
 
-  PrefaceDataSource m_prefaceDataSource;
-  Escher::TableView m_prefaceView;
+  RowPrefaceDataSource m_rowPrefaceDataSource;
+  Escher::TableView m_rowPrefaceView;
   Escher::SelectableTableView * m_mainTableView;
   MarginDelegate * m_marginDelegate;
 
 private:
   // View
   int numberOfSubviews() const override { return 2; }
-  Escher::View * subviewAtIndex(int index) override { return index == 0 ? m_mainTableView : &m_prefaceView; }
+  Escher::View * subviewAtIndex(int index) override { return index == 0 ? m_mainTableView : &m_rowPrefaceView; }
   void layoutSubviews(bool force = false) override;
 
   Escher::SelectableTableViewDelegate * m_mainTableDelegate;

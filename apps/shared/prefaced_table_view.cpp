@@ -6,8 +6,8 @@ namespace Shared {
 
   PrefacedTableView::PrefacedTableView(int prefaceRow, Responder * parentResponder, SelectableTableView * mainTableView, TableViewDataSource * cellsDataSource, SelectableTableViewDelegate * delegate, PrefacedTableViewDelegate * prefacedTableViewDelegate) :
   Escher::Responder(parentResponder),
-  m_prefaceDataSource(prefaceRow, cellsDataSource),
-  m_prefaceView(&m_prefaceDataSource, &m_prefaceDataSource),
+  m_rowPrefaceDataSource(prefaceRow, cellsDataSource),
+  m_rowPrefaceView(&m_rowPrefaceDataSource, &m_rowPrefaceDataSource),
   m_mainTableView(mainTableView),
   m_marginDelegate(nullptr),
   m_mainTableDelegate(delegate),
@@ -16,7 +16,7 @@ namespace Shared {
 {
   m_mainTableView->setParentResponder(parentResponder);
   m_mainTableView->setDelegate(this);
-  m_prefaceView.setDecoratorType(ScrollView::Decorator::Type::None);
+  m_rowPrefaceView.setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
 void PrefacedTableView::setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left) {
@@ -26,20 +26,20 @@ void PrefacedTableView::setMargins(KDCoordinate top, KDCoordinate right, KDCoord
   m_mainTableView->setLeftMargin(left);
   m_storedMargin = top;
 
-  m_prefaceView.setLeftMargin(left);
-  m_prefaceView.setRightMargin(right);
+  m_rowPrefaceView.setLeftMargin(left);
+  m_rowPrefaceView.setRightMargin(right);
 }
 
 void PrefacedTableView::setBackgroundColor(KDColor color) {
   m_mainTableView->setBackgroundColor(color);
-  m_prefaceView.setBackgroundColor(color);
+  m_rowPrefaceView.setBackgroundColor(color);
 }
 
 void PrefacedTableView::setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical) {
   m_mainTableView->setHorizontalCellOverlap(horizontal);
   m_mainTableView->setVerticalCellOverlap(vertical);
-  m_prefaceView.setHorizontalCellOverlap(horizontal);
-  m_prefaceView.setVerticalCellOverlap(vertical);
+  m_rowPrefaceView.setHorizontalCellOverlap(horizontal);
+  m_rowPrefaceView.setVerticalCellOverlap(vertical);
 }
 
 void PrefacedTableView::tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
@@ -58,19 +58,19 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(Escher::Selectab
 }
 
 void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
-  KDCoordinate prefaceHeight = m_prefaceView.minimalSizeForOptimalDisplay().height();
-  bool prefaceIsTooLarge = m_prefacedDelegate && prefaceHeight > m_prefacedDelegate->maxPrefaceHeight();
-  bool hidePreface = prefaceIsTooLarge || m_prefaceDataSource.prefaceFullyInFrame(m_mainTableView->contentOffset().y()) || m_mainTableView->selectedRow() == -1;
+  KDCoordinate rowPrefaceHeight = m_rowPrefaceView.minimalSizeForOptimalDisplay().height();
+  bool rowPrefaceIsTooLarge = m_prefacedDelegate && rowPrefaceHeight > m_prefacedDelegate->maxRowPrefaceHeight();
+  bool hideRowPreface = rowPrefaceIsTooLarge || m_rowPrefaceDataSource.prefaceFullyInFrame(m_mainTableView->contentOffset().y()) || m_mainTableView->selectedRow() == -1;
   ScrollViewVerticalBar * verticalBar = static_cast<TableView::BarDecorator*>(m_mainTableView->decorator())->verticalBar();
 
-  if (hidePreface) {
+  if (hideRowPreface) {
     m_mainTableView->setTopMargin(m_storedMargin);
     m_mainTableView->setFrame(rect, force);
-    verticalBar->setTopMargin(prefaceHeight + 2*m_storedMargin);
+    verticalBar->setTopMargin(rowPrefaceHeight + 2*m_storedMargin);
   } else {
-    m_prefaceView.setBottomMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_prefaceView, &m_prefaceDataSource) : 0);
+    m_rowPrefaceView.setBottomMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_rowPrefaceView, &m_rowPrefaceDataSource) : 0);
     m_mainTableView->setTopMargin(0);
-    m_mainTableView->setFrame(KDRect(rect.x(), rect.y() + prefaceHeight, rect.width(), rect.height() - prefaceHeight), force);
+    m_mainTableView->setFrame(KDRect(rect.x(), rect.y() + rowPrefaceHeight, rect.width(), rect.height() - rowPrefaceHeight), force);
     verticalBar->setTopMargin(2*m_storedMargin);
   }
 
@@ -79,11 +79,11 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
     m_mainTableView->scrollToCell(m_mainTableView->selectedColumn(), m_mainTableView->selectedRow());
   }
 
-  if (hidePreface) {
-    m_prefaceView.setFrame(KDRectZero, force);
+  if (hideRowPreface) {
+    m_rowPrefaceView.setFrame(KDRectZero, force);
   } else {
-    m_prefaceView.setContentOffset(KDPoint(m_mainTableView->contentOffset().x(), 0));
-    m_prefaceView.setFrame(KDRect(rect.x(), rect.y(), rect.width(), prefaceHeight), force);
+    m_rowPrefaceView.setContentOffset(KDPoint(m_mainTableView->contentOffset().x(), 0));
+    m_rowPrefaceView.setFrame(KDRect(rect.x(), rect.y(), rect.width(), rowPrefaceHeight), force);
   }
 }
 
@@ -139,7 +139,7 @@ int PrefacedTableView::IntermediaryDataSource::nonMemoizedIndexAfterCumulatedHei
   return result;
 }
 
-bool PrefacedTableView::PrefaceDataSource::prefaceFullyInFrame(int offset) {
+bool PrefacedTableView::RowPrefaceDataSource::prefaceFullyInFrame(int offset) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
   bool result = offset <= m_mainDataSource->cumulatedHeightBeforeIndex(m_prefaceRow);
@@ -147,7 +147,7 @@ bool PrefacedTableView::PrefaceDataSource::prefaceFullyInFrame(int offset) {
   return result;
 }
 
-KDCoordinate PrefacedTableView::PrefaceDataSource::nonMemoizedCumulatedHeightBeforeIndex(int j) {
+KDCoordinate PrefacedTableView::RowPrefaceDataSource::nonMemoizedCumulatedHeightBeforeIndex(int j) {
   // Do not alter main dataSource memoization
   assert(j == 0 || j == 1);
   m_mainDataSource->lockMemoization(true);
@@ -156,7 +156,7 @@ KDCoordinate PrefacedTableView::PrefaceDataSource::nonMemoizedCumulatedHeightBef
   return result;
 }
 
-int PrefacedTableView::PrefaceDataSource::nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY) {
+int PrefacedTableView::RowPrefaceDataSource::nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
   int result = offsetY < m_mainDataSource->rowHeight(m_prefaceRow) ? 0 : 1;

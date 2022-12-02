@@ -19,7 +19,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
   double tMin = function->tMin();
   double tMax = function->tMax();
   int functionsCount = -1;
-  bannerView()->setInterestMessage(I18n::Message::Default, graphView()->cursorView());
+  bannerView()->emptyInterestMessages(graphView()->cursorView());
 
   if (((direction > 0 && std::abs(t-tMax) < DBL_EPSILON)
         || (direction < 0 && std::abs(t-tMin) < DBL_EPSILON))
@@ -68,7 +68,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     }
 
     float tStep = dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
-    if (snapToInterestAndUpdateBannerAndCursor(cursor, t, t + tStep * k_snapFactor)) {
+    if (snapToInterestAndUpdateCursor(cursor, t, t + tStep * k_snapFactor)) {
         // Cursor should have been updated by snapToInterest
         assert(tCursorPosition != cursor->t());
         return true;
@@ -142,8 +142,8 @@ double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Sh
   double derivative = 0.0;
 
   // Force derivative to 0 if cursor is at an extremum
-  PointOfInterest pointOfInterest = App::app()->graphController()->pointsOfInterestForRecord(record)->pointOfInterestAtAbscissa(cursor->x());
-  if (pointOfInterest.isUninitialized() || (pointOfInterest.interest() != Solver<double>::Interest::LocalMaximum && pointOfInterest.interest() != Solver<double>::Interest::LocalMinimum)) {
+  PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterestForRecord(record);
+  if (!pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::LocalMaximum) && !pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::LocalMinimum)) {
     derivative = function->approximateDerivative(cursor->x(), App::app()->localContext());
   }
 
@@ -158,34 +158,12 @@ double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Sh
   return derivative;
 }
 
-bool GraphControllerHelper::snapToInterestAndUpdateBannerAndCursor(Shared::CurveViewCursor * cursor, double start, double end) {
+bool GraphControllerHelper::snapToInterestAndUpdateCursor(Shared::CurveViewCursor * cursor, double start, double end) {
   PointOfInterest nextPointOfInterest = App::app()->graphController()->pointsOfInterestForSelectedRecord()->firstPointInDirection(start, end);
   Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
   if (!std::isfinite(nextPointOfInterestXY.x1())) {
     return false;
   }
-  /* Snap to a point of interest, and display its type in the banner. */
-  I18n::Message interestMessage;
-  switch (nextPointOfInterest.interest()) {
-  case Solver<double>::Interest::Root:
-    interestMessage = I18n::Message::Zero;
-    break;
-  case Solver<double>::Interest::LocalMinimum:
-    interestMessage = I18n::Message::Minimum;
-    break;
-  case Solver<double>::Interest::LocalMaximum:
-    interestMessage = I18n::Message::Maximum;
-    break;
-  case Solver<double>::Interest::YIntercept:
-    interestMessage = I18n::Message::LineYInterceptDescription;
-    break;
-  default:
-    assert(nextPointOfInterest.interest() == Solver<double>::Interest::Intersection);
-    interestMessage = I18n::Message::Intersection;
-    break;
-  }
-  bannerView()->setInterestMessage(interestMessage, graphView()->cursorView());
-  // Ensure that the cursor is on the exact point of interest value
   cursor->moveTo(nextPointOfInterestXY.x1(), nextPointOfInterestXY.x1(), nextPointOfInterestXY.x2());
   return true;
 }

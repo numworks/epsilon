@@ -12,7 +12,7 @@ namespace Graph {
 class GraphControllerHelper {
 protected:
   bool privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, float pixelWidth, int scrollSpeed = 1, int * subCurveIndex = nullptr);
-  bool snapToInterestAndUpdateBannerAndCursor(Shared::CurveViewCursor * cursor, double start, double end);
+  bool snapToInterestAndUpdateCursor(Shared::CurveViewCursor * cursor, double start, double end);
   // Returns the derivative displayed in banner
   double reloadDerivativeInBannerViewForCursorOnFunction(Shared::CurveViewCursor * cursor, Ion::Storage::Record record);
   virtual BannerView * bannerView() = 0;

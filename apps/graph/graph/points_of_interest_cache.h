@@ -25,7 +25,7 @@ public:
   Poincare::PointOfInterest pointAtIndex(int i) const { return m_list.pointAtIndex(i); }
 
   Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);
-  Poincare::PointOfInterest pointOfInterestAtAbscissa(double x);
+  bool hasInterestAtCoordinates(double x, double y, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);
 
   float step() const { return (m_end - m_start) / k_numberOfSteps; }
 private:

@@ -91,19 +91,15 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, doubl
   return PointOfInterest();
 }
 
-PointOfInterest PointsOfInterestCache::pointOfInterestAtAbscissa(double x) {
-  m_list.sort();
+bool PointsOfInterestCache::hasInterestAtCoordinates(double x, double y, Solver<double>::Interest interest) {
   int n = numberOfPoints();
   for (int i = 0; i < n; i++) {
     PointOfInterest p = pointAtIndex(i);
-    if (p.x() == x) {
-      return p;
-    }
-    if (p.x() > x) {
-      break;
+    if (p.x() == x && p.y() == y && (interest == Solver<double>::Interest::None || p.interest() == interest)) {
+      return true;
     }
   }
-  return PointOfInterest();
+  return false;
 }
 
 

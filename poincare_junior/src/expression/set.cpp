@@ -5,8 +5,8 @@
 
 namespace Poincare {
 
-bool Set::Includes(EditionReference set, Node expression) {
-  for (auto [setChild, index] : NodeIterator::Children<Forward, NoEditable>(set.node())) {
+bool Set::Includes(const Node set, const Node expression) {
+  for (auto [setChild, index] : NodeIterator::Children<Forward, NoEditable>(set)) {
     if (Simplification::Compare(setChild, expression) == 0) {
       return true;
     }

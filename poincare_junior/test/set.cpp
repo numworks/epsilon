@@ -6,9 +6,6 @@
 using namespace Poincare;
 
 void testSet() {
-  CachePool * cachePool = CachePool::sharedCachePool();
-  EditionPool * editionPool = cachePool->editionPool();
-
   // Set::Add
   Node set0 = Node::Push<BlockType::Set>(0);
   Set::Add(set0, 1_sn);

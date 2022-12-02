@@ -3,7 +3,7 @@
 
 #include "node.h"
 
-namespace Poincare {
+namespace PoincareJ {
 
 class SharedPointer {
 public:

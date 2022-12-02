@@ -1,13 +1,14 @@
 #ifndef POINCARE_MEMORY_NODE_H
 #define POINCARE_MEMORY_NODE_H
 
+#include <utility>
 #include "type_block.h"
 
 #if POINCARE_MEMORY_TREE_LOG
 #include <iostream>
 #endif
 
-namespace Poincare {
+namespace PoincareJ {
 
 /* A block is a byte-long object containing either a type or some value.
  * Several blocks can form a node, like:

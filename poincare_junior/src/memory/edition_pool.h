@@ -3,7 +3,7 @@
 
 #include "pool.h"
 
-namespace Poincare {
+namespace PoincareJ {
 
 class EditionPool final : public Pool {
   friend class EditionReference;

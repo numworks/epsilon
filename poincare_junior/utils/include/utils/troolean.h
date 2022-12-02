@@ -2,6 +2,7 @@
 #define UTILS_TROOLEAN_H
 
 #include <stdint.h>
+#include <assert.h>
 
 enum class Troolean : int8_t {
   False = -1,

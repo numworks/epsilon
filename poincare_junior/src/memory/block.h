@@ -8,8 +8,10 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <utils.h>
+#include <assert.h>
+#include <initializer_list>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class Block {
 

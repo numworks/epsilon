@@ -6,7 +6,7 @@
 #include <utils/arithmetic.h>
 #include <utils/bit.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 /* WorkingBuffer */
 
@@ -531,5 +531,5 @@ uint8_t Integer::Uint8(const Node expression) {
 
 }
 
-template float Poincare::IntegerHandler::to<float>();
-template double Poincare::IntegerHandler::to<double>();
+template float PoincareJ::IntegerHandler::to<float>();
+template double PoincareJ::IntegerHandler::to<double>();

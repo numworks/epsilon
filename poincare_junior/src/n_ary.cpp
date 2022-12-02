@@ -1,7 +1,7 @@
 #include "n_ary.h"
 #include <poincare_junior/src/memory/node_iterator.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 void NAry::AddChildAtIndex(EditionReference nary, EditionReference child, int index) {
   if (index == nary.numberOfChildren()) {
@@ -27,9 +27,9 @@ void NAry::SetNumberOfChildren(EditionReference reference, size_t numberOfChildr
 
 EditionReference NAry::Flatten(EditionReference reference) {
   size_t numberOfChildren = 0;
-  for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(reference)) {
-    if (reference.type() == std::get<EditionReference>(indexedRef).type()) {
-      std::get<EditionReference>(indexedRef).removeNode();
+  for (auto [child, index] : NodeIterator::Children<Forward, Editable>(reference)) {
+    if (reference.node().type() == child.node().type()) {
+      child.removeNode();
     }
     numberOfChildren++;
   }

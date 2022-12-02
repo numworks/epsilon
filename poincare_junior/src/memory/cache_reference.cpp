@@ -2,7 +2,7 @@
 #include "cache_pool.h"
 #include <ion.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 // SharedPointer
 

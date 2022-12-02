@@ -8,7 +8,7 @@
 #include <utils/assert.h>
 #include <utils/print.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
 // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/

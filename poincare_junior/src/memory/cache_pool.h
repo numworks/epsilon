@@ -4,7 +4,7 @@
 #include "cache_reference.h"
 #include "edition_pool.h"
 
-namespace Poincare {
+namespace PoincareJ {
 
 class CachePool final : public Pool {
 /* The CachePool respects the following assertions:

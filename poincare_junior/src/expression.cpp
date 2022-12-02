@@ -4,7 +4,7 @@
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 // TODO dummy parse
 Expression Expression::Parse(const char * textInput) {

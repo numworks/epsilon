@@ -12,7 +12,7 @@
 
 #define ExceptionRun(checkpoint) (CheckpointRun(checkpoint, setjmp(*(checkpoint.jumpBuffer())) != 0))
 
-namespace Poincare {
+namespace PoincareJ {
 
 class ExceptionCheckpoint final : public Checkpoint {
 public:

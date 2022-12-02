@@ -4,7 +4,7 @@
 #include "node.h"
 #include "edition_pool.h"
 
-namespace Poincare {
+namespace PoincareJ {
 
 class EditionReference {
 

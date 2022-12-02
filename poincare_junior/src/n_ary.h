@@ -3,7 +3,7 @@
 
 #include <poincare_junior/src/memory/edition_reference.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class NAry {
 public:

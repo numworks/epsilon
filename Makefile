@@ -119,6 +119,7 @@ endif
 include ion/Makefile
 include kandinsky/Makefile
 include poincare/Makefile
+include poincare_junior/Makefile
 include python/Makefile
 include escher/Makefile
 include omg/Makefile

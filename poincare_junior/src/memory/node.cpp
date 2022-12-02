@@ -5,7 +5,7 @@
 #include <poincare_junior/src/expression/polynomial.h>
 #include <poincare_junior/src/expression/symbol.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 #if POINCARE_MEMORY_TREE_LOG
 void Node::log(std::ostream & stream, bool recursive, int indentation, bool verbose) const {
@@ -22,12 +22,12 @@ void Node::log(std::ostream & stream, bool recursive, int indentation, bool verb
   logAttributes(stream);
   bool tagIsClosed = false;
   if (recursive) {
-    for (const std::pair<Node, int> child : NodeIterator::Children<Forward, NoEditable>(*this)) {
+    for (const auto [child, index] : NodeIterator::Children<Forward, NoEditable>(*this)) {
       if (!tagIsClosed) {
         stream << ">";
         tagIsClosed = true;
       }
-      std::get<Node>(child).log(stream, recursive, indentation + 1, verbose);
+      child.log(stream, recursive, indentation + 1, verbose);
     }
   }
   if (tagIsClosed) {
@@ -141,9 +141,9 @@ int Node::numberOfDescendants(bool includeSelf) const {
 }
 
 const Node Node::childAtIndex(int i) const {
-  for (const std::pair<Node, int> indexedChild : NodeIterator::Children<Forward, NoEditable>(*this)) {
-    if (std::get<int>(indexedChild) == i) {
-      return std::get<Node>(indexedChild);
+  for (const auto [child, index] : NodeIterator::Children<Forward, NoEditable>(*this)) {
+    if (index == i) {
+      return child;
     }
   }
   return Node();
@@ -187,8 +187,8 @@ bool Node::hasSibling(const Node sibling) const {
   if (p == Node()) {
     return false;
   }
-  for (const std::pair<Node, int> indexedChild : NodeIterator::Children<Forward, NoEditable>(p)) {
-    if (std::get<Node>(indexedChild) == sibling) {
+  for (const auto& [child, index]: NodeIterator::Children<Forward, NoEditable>(p)) {
+    if (child == sibling) {
       return true;
     }
   }
@@ -196,8 +196,8 @@ bool Node::hasSibling(const Node sibling) const {
 }
 
 void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
-  for (const std::pair<Node, int> child : NodeIterator::Children<Forward, NoEditable>(*this)) {
-    std::get<Node>(child).recursivelyGet(treeFunction);
+  for (const auto& [child, index] : NodeIterator::Children<Forward, NoEditable>(*this)) {
+    child.recursivelyGet(treeFunction);
   }
   (*treeFunction)(*this);
 }

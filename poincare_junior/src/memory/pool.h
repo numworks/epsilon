@@ -1,13 +1,14 @@
 #ifndef POINCARE_MEMORY_POOL_H
 #define POINCARE_MEMORY_POOL_H
 
+#include <string.h>
 #include "type_block.h"
 #include "node.h"
 #if POINCARE_MEMORY_TREE_LOG
 #include <iostream>
 #endif
 
-namespace Poincare {
+namespace PoincareJ {
 
 class Pool {
 public:

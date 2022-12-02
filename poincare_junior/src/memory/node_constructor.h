@@ -7,7 +7,7 @@
 #include <utils/bit.h>
 #include "value_block.h"
 
-namespace Poincare {
+namespace PoincareJ {
 
 class NodeConstructor final {
 public:
@@ -44,41 +44,6 @@ private:
     return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, blockType, args...);
   }
 
-  template <>
-  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::Constant>(Block * block, size_t blockIndex, char16_t name) {
-    assert(Constant::Type(name) != Constant::Type::Undefined);
-    return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, BlockType::Constant, Constant::Type(name));
-  }
-
-  template <>
-  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::UserSymbol>(Block * block, size_t blockIndex, const char * name, size_t nameLength) {
-    size_t numberOfBlocks = TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol) + nameLength;
-    if (blockIndex == numberOfBlocks - 1) {
-      *block = TypeBlock(BlockType::UserSymbol);
-      return true;
-    }
-    if (blockIndex == 1 || blockIndex == numberOfBlocks - 2) {
-      *block = ValueBlock(nameLength);
-      return false;
-    }
-    *block = ValueBlock(name[blockIndex - 2]);
-    return false;
-  }
-
-  template <>
-  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::Float>(Block * block, size_t blockIndex, float value) {
-    return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, BlockType::Float, Float::SubFloatAtIndex(value, 0), Float::SubFloatAtIndex(value, 1), Float::SubFloatAtIndex(value, 2), Float::SubFloatAtIndex(value, 3));
-  }
-
-  template <>
-  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::IntegerPosBig>(Block * block, size_t blockIndex, uint64_t value) {
-    return CreateIntegerBlockAtIndexForType(block, blockIndex, BlockType::IntegerPosBig, value);
-  }
-  template <>
-  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::IntegerNegBig>(Block * block, size_t blockIndex, uint64_t value) {
-    return CreateIntegerBlockAtIndexForType(block, blockIndex, BlockType::IntegerNegBig, value);
-  }
-
   constexpr static bool CreateIntegerBlockAtIndexForType(Block * block, size_t blockIndex, BlockType type, uint64_t value) {
     uint8_t numberOfDigits = Integer::NumberOfDigits(value);
     assert(TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) == TypeBlock::NumberOfMetaBlocks(BlockType::IntegerNegBig));
@@ -94,9 +59,42 @@ private:
     *block = ValueBlock(Integer::DigitAtIndex(value, blockIndex - 2));
     return false;
   }
-};
 
+  template <>
+  constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Constant>(Block * block, size_t blockIndex, char16_t name) {
+    assert(Constant::Type(name) != Constant::Type::Undefined);
+    return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, BlockType::Constant, Constant::Type(name));
+  }
 
+  template <>
+  constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::UserSymbol>(Block * block, size_t blockIndex, const char * name, size_t nameLength) {
+    size_t numberOfBlocks = TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol) + nameLength;
+    if (blockIndex == numberOfBlocks - 1) {
+      *block = TypeBlock(BlockType::UserSymbol);
+      return true;
+    }
+    if (blockIndex == 1 || blockIndex == numberOfBlocks - 2) {
+      *block = ValueBlock(nameLength);
+      return false;
+    }
+    *block = ValueBlock(name[blockIndex - 2]);
+    return false;
+  }
+
+  template <>
+  constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::Float>(Block * block, size_t blockIndex, float value) {
+    return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, BlockType::Float, Float::SubFloatAtIndex(value, 0), Float::SubFloatAtIndex(value, 1), Float::SubFloatAtIndex(value, 2), Float::SubFloatAtIndex(value, 3));
+  }
+
+  template <>
+  constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::IntegerPosBig>(Block * block, size_t blockIndex, uint64_t value) {
+    return CreateIntegerBlockAtIndexForType(block, blockIndex, BlockType::IntegerPosBig, value);
+  }
+
+  template <>
+  constexpr bool NodeConstructor::SpecializedCreateBlockAtIndexForType<BlockType::IntegerNegBig>(Block * block, size_t blockIndex, uint64_t value) {
+    return CreateIntegerBlockAtIndexForType(block, blockIndex, BlockType::IntegerNegBig, value);
+  }
 }
 
 #endif

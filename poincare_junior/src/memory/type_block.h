@@ -3,7 +3,7 @@
 
 #include "block.h"
 
-namespace Poincare {
+namespace PoincareJ {
 
 /* TODO:
  * - Are Zero, One etc useful?

@@ -1,7 +1,7 @@
 #include "print.h"
 #include <poincare_junior/include/expression.h>
 
-using namespace Poincare;
+using namespace PoincareJ;
 
 // Dummy Plot class
 
@@ -12,12 +12,12 @@ public:
 private:
   constexpr static int k_bufferSize = 128;
   char m_functionText[k_bufferSize];
-  Poincare::Expression m_function;
+  PoincareJ::Expression m_function;
 };
 
 Graph::Graph(const char * text) {
   strlcpy(m_functionText, text, k_bufferSize);
-  m_function = Poincare::Expression::Parse(m_functionText);
+  m_function = PoincareJ::Expression::Parse(m_functionText);
 }
 
 float Graph::approximateAtAbscissa(float x) const {

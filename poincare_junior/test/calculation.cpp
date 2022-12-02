@@ -1,7 +1,7 @@
 #include "print.h"
 #include <poincare_junior/include/expression.h>
 
-using namespace Poincare;
+using namespace PoincareJ;
 
 // Dummy calculation class to simulate FileSystem or App::Snapshot
 
@@ -18,11 +18,11 @@ class Calculation {
 public:
   Calculation(const char * textInput);
   TypeBlock * input() { return m_input; }
-  Poincare::Expression output() { return m_output; }
+  PoincareJ::Expression output() { return m_output; }
 private:
   constexpr static int k_bufferSize = 128;
   TypeBlock m_input[k_bufferSize];
-  Poincare::Expression m_output;
+  PoincareJ::Expression m_output;
 };
 
 Calculation::Calculation(const char * textInput) {

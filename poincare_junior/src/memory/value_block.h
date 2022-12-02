@@ -4,7 +4,7 @@
 #include "block.h"
 #include "type_block.h"
 
-namespace Poincare {
+namespace PoincareJ {
 
 class ValueBlock : public Block {
 public:

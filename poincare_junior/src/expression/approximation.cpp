@@ -3,7 +3,7 @@
 #include "rational.h"
 #include <poincare_junior/src/memory/node_iterator.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 //TODO: tests
 
@@ -33,9 +33,9 @@ T Approximation::To(const Node node) {
 template<typename T>
 T Approximation::MapAndReduce(const Node node, Reductor<T> reductor) {
   T res;
-  for (std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(node)) {
-    T app = Approximation::To<T>(std::get<Node>(indexedNode));
-    if (std::get<int>(indexedNode) == 0) {
+  for (auto [child, index] : NodeIterator::Children<Forward, NoEditable>(node)) {
+    T app = Approximation::To<T>(child);
+    if (index == 0) {
       res = app;
     } else {
       res = reductor(res, app);
@@ -46,5 +46,5 @@ T Approximation::MapAndReduce(const Node node, Reductor<T> reductor) {
 
 }
 
-template float Poincare::Approximation::To<float>(const Poincare::Node);
-template double Poincare::Approximation::To<double>(const Poincare::Node);
+template float PoincareJ::Approximation::To<float>(const PoincareJ::Node);
+template double PoincareJ::Approximation::To<double>(const PoincareJ::Node);

@@ -3,7 +3,7 @@
 #include "exception_checkpoint.h"
 #include <string.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 // ReferenceTable
 

@@ -1,6 +1,6 @@
 #include "exception_checkpoint.h"
 
-namespace Poincare {
+namespace PoincareJ {
 
 ExceptionCheckpoint * ExceptionCheckpoint::s_topmostExceptionCheckpoint;
 

@@ -4,10 +4,6 @@ DEVELOPMENT ?= 1
 ARCH = arm64
 ASSERTIONS = 1
 
-include build/defaults.mak
-include build/platform.$(PLATFORM).mak
-include build/toolchain.$(TOOLCHAIN).mak
-
 include poincare_junior/utils/Makefile
 
 poincare_junior_src += $(utils_src)
@@ -48,25 +44,40 @@ poincare_junior_src += $(addprefix poincare_junior/test/,\
 poincare_junior_src += ion/src/simulator/shared/crc32.o
 poincare_junior_src += ion/src/shared/crc32_eat_byte.o
 
-SFLAGS += -DASSERTIONS=$(ASSERTIONS) -DPOINCARE_MEMORY_TREE_LOG=1 -Iion/include/ -Ikandinsky/include -Iomg/include
+tests_src += $(addprefix poincare_junior/src/,\
+  expression/approximation.cpp \
+  expression/integer.cpp \
+  expression/rational.cpp \
+  expression/simplification.cpp \
+  expression.cpp \
+  memory/cache_pool.cpp \
+  memory/cache_reference.cpp \
+  memory/edition_pool.cpp \
+  memory/edition_reference.cpp \
+  memory/exception_checkpoint.cpp \
+  memory/node.cpp \
+  memory/pool.cpp \
+  n_ary.cpp \
+)
 
-junior.elf: $(poincare_junior_src)
-	$(LD) $^ $(LDFLAGS) -o $@
+tests_src += $(addprefix poincare_junior/test/,\
+  junior.cpp \
+)
 
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(SFLAGS) -c $< -o $@
+tests_src += $(addprefix poincare_junior/utils/src/,\
+  arithmetic.cpp \
+  float.cpp \
+  memory.cpp \
+  list.cpp \
+)
+# tests_src += $(addprefix poincare_junior/test/,\
+  # calculation.cpp \
+  # constexpr.cpp \
+  # edition_pool_overflow.cpp \
+  # elementary_tree_manipulations.cpp \
+  # expression_simplification.cpp \
+  # graph.cpp \
+# )
 
-.PHONY: clean
-clean:
-	rm -f poincare_junior/*/*/*/*/*.o
-	rm -f poincare_junior/*/*/*/*/*.d
-	rm -f poincare_junior/*/*/*/*.o
-	rm -f poincare_junior/*/*/*/*.d
-	rm -f poincare_junior/*/*/*.o
-	rm -f poincare_junior/*/*/*.d
-	rm -f poincare_junior/*/*.o
-	rm -f poincare_junior/*/*.d
-	rm -f poincare_junior/*.o
-	rm -f poincare_junior/*.d
-	rm -f junior.elf
+#SFLAGS += -DASSERTIONS=$(ASSERTIONS) -DPOINCARE_MEMORY_TREE_LOG=1 -Iion/include/ -Ikandinsky/include
 

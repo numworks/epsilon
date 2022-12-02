@@ -4,7 +4,7 @@
 #include <cmath>
 #include <poincare_junior/src/memory/node.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 /* Approximation is implemented on all block types.
  * We could have asserted that we reduce before approximating (and thus

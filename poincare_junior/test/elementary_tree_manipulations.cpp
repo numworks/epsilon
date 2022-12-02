@@ -4,7 +4,7 @@
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
-using namespace Poincare;
+using namespace PoincareJ;
 
 inline EditionReference createSimpleExpression() {
   std::cout << "\n---------------- Create (1 + 2) * 3 * 4 ----------------" << std::endl;

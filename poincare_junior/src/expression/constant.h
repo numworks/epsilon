@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <stdint.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class Constant final {
 public:

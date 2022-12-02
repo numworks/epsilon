@@ -13,7 +13,7 @@
  * altered.
 
 void interruptableCode() {
-  Poincare::Checkpoint cp;
+  PoincareJ::Checkpoint cp;
   if (CheckpointRun(cp)) {
     CodeInvolvingLongComputationsOrLargeMemoryNeed();
   } else {
@@ -25,7 +25,7 @@ void interruptableCode() {
 
 #define CheckpointRun(checkpoint, activation) (checkpoint.setActive(activation))
 
-namespace Poincare {
+namespace PoincareJ {
 
 class Checkpoint {
 public:

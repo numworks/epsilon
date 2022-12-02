@@ -2,7 +2,7 @@
 #include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/value_block.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 // TODO: tests
 

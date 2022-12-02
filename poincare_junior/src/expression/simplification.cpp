@@ -1,7 +1,7 @@
 #include "simplification.h"
 #include <poincare_junior/src/memory/node_iterator.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 void Simplification::BasicReduction(EditionReference reference) {
   // TODO: Macro to automatically generate switch
@@ -32,17 +32,17 @@ void Simplification::SubtractionReduction(EditionReference reference) {
 }
 
 EditionReference Simplification::DistributeMultiplicationOverAddition(EditionReference reference) {
-  for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(reference)) {
-    if (std::get<EditionReference>(indexedRef).type() == BlockType::Addition) {
+  for (auto [child, index] : NodeIterator::Children<Forward, Editable>(reference)) {
+    if (child.type() == BlockType::Addition) {
       // Create new addition that will be filled in the following loop
-      EditionReference add = EditionReference(EditionReference::Push<BlockType::Addition>(std::get<EditionReference>(indexedRef).numberOfChildren()));
-      for (std::pair<EditionReference, int> indexedAdditionChild : NodeIterator::Children<Forward, Editable>(std::get<EditionReference>(indexedRef))) {
+      EditionReference add = EditionReference(EditionReference::Push<BlockType::Addition>(child.numberOfChildren()));
+      for (auto [additionChild, additionIndex] : NodeIterator::Children<Forward, Editable>(child)) {
         // Copy a multiplication
         EditionReference multCopy = EditionReference::Clone(reference);
         // Find the addition to be replaced
-        EditionReference additionCopy = EditionReference(multCopy.childAtIndex(std::get<int>(indexedRef)));
+        EditionReference additionCopy = EditionReference(multCopy.childAtIndex(index));
         // Find addition child to replace with
-        EditionReference additionChildCopy = EditionReference(additionCopy.childAtIndex(std::get<int>(indexedAdditionChild)));
+        EditionReference additionChildCopy = EditionReference(additionCopy.childAtIndex(additionIndex));
         // Replace addition per its child
         additionCopy.replaceTreeByTree(additionChildCopy);
         assert(multCopy.type() == BlockType::Multiplication);
@@ -62,8 +62,8 @@ void Simplification::ProjectionReduction(EditionReference division, EditionRefer
   // Get references to children
   assert(division.numberOfChildren() == 2);
   EditionReference childrenReferences[2];
-  for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(division)) {
-    childrenReferences[std::get<int>(indexedRef)] = std::get<EditionReference>(indexedRef);
+  for (auto [child, index] : NodeIterator::Children<Forward, Editable>(division)) {
+    childrenReferences[index] = child;
   }
   // Move first child
   multiplication.insertTreeAfterNode(childrenReferences[0]);

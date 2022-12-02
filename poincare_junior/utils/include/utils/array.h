@@ -1,6 +1,8 @@
 #ifndef UTILS_ARRAY_H
 #define UTILS_ARRAY_H
 
+#include <array>
+
 namespace Array {
 
 template<typename T, typename U>

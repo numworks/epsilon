@@ -6,7 +6,7 @@
 #include <utils/bit.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 /* Most significant digit last
  * */

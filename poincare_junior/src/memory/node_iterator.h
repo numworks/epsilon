@@ -2,10 +2,11 @@
 #define POINCARE_MEMORY_NODE_ITERATOR_H
 
 #include <array>
+#include <algorithm>
 #include "edition_reference.h"
 #include <utils/array.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 /* Usage
  *
@@ -194,7 +195,7 @@ private:
   class Iterator {
   public:
     Iterator(MultipleNodesIterator::Iterator<DirectionPolicy, EditablePolicy, 1> iterator) : m_iterator(iterator) {}
-    std::pair<typename EditablePolicy::NodeType, int> operator*() { return std::pair(std::get<0>(*m_iterator)[0], std::get<1>(*m_iterator)); }
+    std::pair<typename EditablePolicy::NodeType, int> operator*() { return std::pair((*m_iterator).first[0], (*m_iterator).second); }
     bool operator!=(Iterator& it) { return m_iterator != it.m_iterator; }
     Iterator<DirectionPolicy, EditablePolicy> & operator++() {
       m_iterator.operator++();

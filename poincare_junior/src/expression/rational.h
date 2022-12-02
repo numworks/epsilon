@@ -4,7 +4,7 @@
 #include <poincare_junior/src/memory/edition_reference.h>
 #include "integer.h"
 
-namespace Poincare {
+namespace PoincareJ {
 
 class Rational final {
 public:

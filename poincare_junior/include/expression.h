@@ -3,7 +3,7 @@
 
 #include <poincare_junior/src/memory/cache_reference.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class Expression final : public CacheReference {
 public:

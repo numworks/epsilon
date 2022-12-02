@@ -4,7 +4,7 @@
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
-using namespace Poincare;
+using namespace PoincareJ;
 
 #if POINCARE_MEMORY_TREE_LOG
 __attribute__((__used__)) inline void log_edition_pool(bool corruptedEditionPool = false) {

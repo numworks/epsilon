@@ -3,7 +3,7 @@
 
 namespace Utils {
 
-#warning Ensure that we don't emit multiple functions
+// TODO Ensure that we don't emit multiple functions
 
 template <typename T, typename ...Args> using ConstActionByPointer = const T * (T::*)(Args...) const;
 template <typename T, typename ...Args> using ConstActionByObject = const T (T::*)(Args...) const;

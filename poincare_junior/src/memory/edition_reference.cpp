@@ -4,7 +4,7 @@
 #include "node_iterator.h"
 #include <string.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 EditionReference::EditionReference(Node node) {
   EditionPool * pool = EditionPool::sharedEditionPool();
@@ -48,8 +48,8 @@ EditionReference::operator const Node() const {
 }
 
 void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
-  for (std::pair<EditionReference, int> child : NodeIterator::Children<Forward, Editable>(*this)) {
-    std::get<EditionReference>(child).recursivelyEdit(treeFunction);
+  for (auto [child, index] : NodeIterator::Children<Forward, Editable>(*this)) {
+    child.recursivelyEdit(treeFunction);
   }
   (*treeFunction)(*this);
 }

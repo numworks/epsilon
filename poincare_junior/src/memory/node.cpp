@@ -1,26 +1,9 @@
 #include "cache_pool.h"
 #include "edition_reference.h"
-#include "node_constructor.h"
 #include "node_iterator.h"
 #include <poincare_junior/src/expression/approximation.h>
-#include "tree_constructor.h"
 
 namespace Poincare {
-
-template <BlockType blockType, typename... Types>
-Node Node::Push(Types... args) {
-  EditionPool * pool = EditionPool::sharedEditionPool();
-  TypeBlock * newNode = static_cast<TypeBlock *>(pool->lastBlock());
-
-  size_t i = 0;
-  bool endOfNode = false;
-  do {
-    Block block;
-    endOfNode = NodeConstructor::CreateBlockAtIndexForType<blockType>(&block, i++, args...);
-    pool->pushBlock(block);
-  } while (!endOfNode);
-  return Node(newNode);
-}
 
 #if POINCARE_MEMORY_TREE_LOG
 void Node::log(std::ostream & stream, bool recursive, int indentation, bool verbose) const {
@@ -231,14 +214,3 @@ const Node Node::previousRelative(bool parent) const {
 }
 
 }
-
-template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Addition, int>(int);
-template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Multiplication, int>(int);
-template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Constant, char16_t>(char16_t);
-template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Power>();
-template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Subtraction>();
-template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Division>();
-template Poincare::Node Poincare::Node::Push<Poincare::BlockType::IntegerShort, int>(int);
-template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Float, float>(float);
-template Poincare::Node Poincare::Node::Push<Poincare::BlockType::MinusOne>();
-template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Set>(int);

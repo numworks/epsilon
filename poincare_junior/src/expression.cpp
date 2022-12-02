@@ -10,13 +10,13 @@ namespace Poincare {
 Expression Expression::Parse(const char * textInput) {
   // textInput == (1-2)/3/4
   return Expression([](const char * text){
-      Node::Push<BlockType::Division>();
-      Node::Push<BlockType::Division>();
-      Node::Push<BlockType::Subtraction>();
-      Node::Push<BlockType::IntegerShort>(1);
-      Node::Push<BlockType::IntegerShort>(2);
-      Node::Push<BlockType::IntegerShort>(3);
-      Node::Push<BlockType::IntegerShort>(4);
+      EditionReference::Push<BlockType::Division>();
+      EditionReference::Push<BlockType::Division>();
+      EditionReference::Push<BlockType::Subtraction>();
+      EditionReference::Push<BlockType::IntegerShort>(1);
+      EditionReference::Push<BlockType::IntegerShort>(2);
+      EditionReference::Push<BlockType::IntegerShort>(3);
+      EditionReference::Push<BlockType::IntegerShort>(4);
     }, textInput);
 }
 

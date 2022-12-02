@@ -29,7 +29,7 @@ public:
   static void SubtractionReduction(EditionReference reference);
   static EditionReference DistributeMultiplicationOverAddition(EditionReference reference);
 private:
-  static void ProjectionReduction(EditionReference reference, Node (*PushProjectedEExpression)(), Node (*PushInverse)());
+  static void ProjectionReduction(EditionReference reference, EditionReference (*PushProjectedEExpression)(), EditionReference (*PushInverse)());
 };
 }
 

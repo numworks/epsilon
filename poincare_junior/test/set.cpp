@@ -7,7 +7,7 @@ using namespace Poincare;
 
 void testSet() {
   // Set::Add
-  Node set0 = Node::Push<BlockType::Set>(0);
+  Node set0 = EditionReference::Push<BlockType::Set>(0).node();
   Set::Add(set0, 1_sn);
   Set::Add(set0, 2_sn);
   Set::Add(set0, 3_n);

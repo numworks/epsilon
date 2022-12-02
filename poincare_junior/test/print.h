@@ -1,19 +1,20 @@
 #include <iostream>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_pool.h>
+#include <poincare_junior/src/memory/edition_reference.h>
 
 using namespace Poincare;
 
-inline Node createSimpleExpression() {
+inline EditionReference createSimpleExpression() {
   std::cout << "\n---------------- Create (1 + 2) * 3 * 4 ----------------" << std::endl;
-  Node multiplication = Node::Push<BlockType::Multiplication>(3);
-  Node::Push<BlockType::Addition>(2);
-  Node::Push<BlockType::IntegerShort>(1);
-  Node::Push<BlockType::IntegerShort>(2);
-  Node::Push<BlockType::IntegerShort>(3);
-  Node::Push<BlockType::Addition>(2);
-  Node::Push<BlockType::IntegerShort>(4);
-  Node::Push<BlockType::IntegerShort>(5);
+  EditionReference multiplication = EditionReference::Push<BlockType::Multiplication>(3);
+  EditionReference::Push<BlockType::Addition>(2);
+  EditionReference::Push<BlockType::IntegerShort>(1);
+  EditionReference::Push<BlockType::IntegerShort>(2);
+  EditionReference::Push<BlockType::IntegerShort>(3);
+  EditionReference::Push<BlockType::Addition>(2);
+  EditionReference::Push<BlockType::IntegerShort>(4);
+  EditionReference::Push<BlockType::IntegerShort>(5);
   return multiplication;
 }
 

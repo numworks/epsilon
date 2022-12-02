@@ -1,5 +1,6 @@
 #include "edition_reference.h"
 #include "edition_pool.h"
+#include "node_constructor.h"
 #include "node_iterator.h"
 #include <string.h>
 
@@ -11,6 +12,21 @@ EditionReference::EditionReference(Node node) {
     node = pool->initFromTree(node);
   }
   m_identifier = EditionPool::sharedEditionPool()->referenceNode(node);
+}
+
+template <BlockType blockType, typename... Types>
+EditionReference EditionReference::Push(Types... args) {
+  EditionPool * pool = EditionPool::sharedEditionPool();
+  TypeBlock * newNode = static_cast<TypeBlock *>(pool->lastBlock());
+
+  size_t i = 0;
+  bool endOfNode = false;
+  do {
+    Block block;
+    endOfNode = NodeConstructor::CreateBlockAtIndexForType<blockType>(&block, i++, args...);
+    pool->pushBlock(block);
+  } while (!endOfNode);
+  return EditionReference(Node(newNode));
 }
 
 Node EditionReference::node() const {
@@ -70,3 +86,14 @@ void EditionReference::insert(Node nodeToInsert, bool before, bool isTree) {
 }
 
 }
+
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Addition, int>(int);
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Multiplication, int>(int);
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Constant, char16_t>(char16_t);
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Power>();
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Subtraction>();
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Division>();
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerShort, int>(int);
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Float, float>(float);
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::MinusOne>();
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Set>(int);

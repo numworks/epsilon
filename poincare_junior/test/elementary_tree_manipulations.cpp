@@ -34,28 +34,28 @@ void elementaryTreeManipulation() {
   print();
 
   std::cout << "\n---------------- Create 1-2/3 ----------------" << std::endl;
-  Node subtraction = Node::Push<BlockType::Subtraction>();
-  Node::Push<BlockType::IntegerShort>(1);
-  Node::Push<BlockType::Division>();
-  Node::Push<BlockType::IntegerShort>(2);
-  Node::Push<BlockType::IntegerShort>(3);
+  EditionReference subtraction = EditionReference::Push<BlockType::Subtraction>();
+  EditionReference::Push<BlockType::IntegerShort>(1);
+  EditionReference::Push<BlockType::Division>();
+  EditionReference::Push<BlockType::IntegerShort>(2);
+  EditionReference::Push<BlockType::IntegerShort>(3);
   print();
 
   std::cout << "\n---------------- Projection to internal nodes 1-2/3 ----------------" << std::endl;
-  EditionReference(subtraction).recursivelyEdit([](EditionReference reference) {
+  subtraction.recursivelyEdit([](EditionReference reference) {
       Simplification::BasicReduction(reference);
     });
   print();
 
   std::cout << "\n---------------- Create 1+(2+3) ----------------" << std::endl;
-  Node addition = Node::Push<BlockType::Addition>(2);
-  Node::Push<BlockType::IntegerShort>(1);
-  Node::Push<BlockType::Addition>(2);
-  Node::Push<BlockType::IntegerShort>(2);
-  Node::Push<BlockType::IntegerShort>(3);
+  EditionReference addition = EditionReference::Push<BlockType::Addition>(2);
+  EditionReference::Push<BlockType::IntegerShort>(1);
+  EditionReference::Push<BlockType::Addition>(2);
+  EditionReference::Push<BlockType::IntegerShort>(2);
+  EditionReference::Push<BlockType::IntegerShort>(3);
   print();
 
   std::cout << "\n---------------- Flatten 1+(2+3) ----------------" << std::endl;
-  NAry::Flatten(EditionReference(addition));
+  NAry::Flatten(addition);
   print();
 }

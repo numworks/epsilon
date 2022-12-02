@@ -15,9 +15,6 @@ namespace Poincare {
 
 class Node {
 public:
-  template <BlockType blockType, typename... Types>
-  static Node Push(Types... args);
-
   constexpr Node(TypeBlock * block = nullptr) : m_block(block) {}
   Node(const Block * block) : m_block(static_cast<TypeBlock *>(const_cast<Block *>(block))) {}
 

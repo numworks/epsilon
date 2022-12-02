@@ -12,6 +12,9 @@ public:
   EditionReference() : m_identifier(EditionPool::ReferenceTable::NoNodeIdentifier) {}
   EditionReference(Node node);
 
+  template <BlockType blockType, typename... Types>
+  static EditionReference Push(Types... args);
+
   /* Comparison */
   inline bool operator==(const EditionReference & t) const { return m_identifier == t.identifier() || (!isUninitialized() && !t.isUninitialized() && node() == t.node()); }
   inline bool operator!=(const EditionReference & t) const { return m_identifier != t.identifier() && (isUninitialized() || t.isUninitialized() || node() != t.node()); }

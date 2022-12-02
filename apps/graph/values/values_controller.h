@@ -85,10 +85,9 @@ private:
   Poincare::Layout * memoizedLayoutAtIndex(int i) override;
   Poincare::Layout functionTitleLayout(int columnIndex) override;
   Shared::PrefacedTableView * prefacedView() override { return &m_prefacedTableView; }
+  int numberOfAbscissaColumnsBeforeAbsoluteColumn(int column) const override;
+  int numberOfAbscissaColumnsBeforeValuesColumn(int column) const override;
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
-  int numberOfValuesColumns() const override { return numberOfColumns() - numberOfAbscissaColumnsBeforeColumn(-1); }
-  int valuesColumnForAbsoluteColumn(int column) override { return column - numberOfAbscissaColumnsBeforeColumn(column); }
-  int absoluteColumnForValuesColumn(int column) override;
   void createMemoizedLayout(int column, int row, int index) override;
   int numberOfColumnsForAbscissaColumn(int column) override;
   void updateSizeMemoizationForColumnAfterIndexChanged(int column, KDCoordinate columnPreviousWidth, int changedRow) override;
@@ -112,7 +111,6 @@ private:
   Shared::ExpiringPointer<Shared::ContinuousFunction> functionAtIndex(int column, int row, double * abscissa, bool * isDerivative);
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   int numberOfColumnsForSymbolType(int symbolTypeIndex) const;
-  int numberOfAbscissaColumnsBeforeColumn(int column) const;
   Shared::ContinuousFunctionProperties::SymbolType symbolTypeAtColumn(int * column) const;
   
   Shared::PrefacedTableView m_prefacedTableView;

@@ -218,9 +218,9 @@ double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
 }
 
 int ValuesController::valuesColumnForAbsoluteColumn(int column) {
-  // Subtract the abscissa column
-  assert(column < numberOfColumns() && column - 1 >= 0);
-  return column - 1;
+  // Subtract the abscissa columns
+  assert(column < numberOfColumns() && column - numberOfAbscissaColumnsBeforeAbsoluteColumn(column) >= 0);
+  return column - numberOfAbscissaColumnsBeforeAbsoluteColumn(column);
 }
 
 int ValuesController::valuesRowForAbsoluteRow(int row) {
@@ -230,9 +230,9 @@ int ValuesController::valuesRowForAbsoluteRow(int row) {
 }
 
 int ValuesController::absoluteColumnForValuesColumn(int column) {
-  // Add the abscissa column
-  assert(column >= 0 && column + 1 < numberOfColumns());
-  return column + 1;
+  // Add the abscissa columns
+  assert(column >= 0 && column + numberOfAbscissaColumnsBeforeValuesColumn(column) < numberOfColumns());
+  return column + numberOfAbscissaColumnsBeforeValuesColumn(column);
 }
 
 int ValuesController::absoluteRowForValuesRow(int row) {
@@ -293,7 +293,7 @@ StackViewController * ValuesController::stackController() const {
 
 Ion::Storage::Record ValuesController::recordAtColumn(int i) {
   assert(typeAtLocation(i, 0) == k_functionTitleCellType);
-  return functionStore()->activeRecordAtIndex(i-1);
+  return functionStore()->activeRecordAtIndex(i - numberOfAbscissaColumnsBeforeAbsoluteColumn(i));
 }
 
 FunctionStore * ValuesController::functionStore() const {

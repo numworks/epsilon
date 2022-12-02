@@ -82,9 +82,9 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
     selectedRow() <= numberOfElementsInColumn(selectedColumn())) {
     int row = selectedRow();
     int column = selectedColumn();
-    intervalAtColumn(column)->deleteElementAtIndex(row-1);
+    intervalAtColumn(column)->deleteElementAtIndex(row - k_numberOfTitleRows);
     // Reload memoization
-    int nRows = numberOfElementsInColumn(column) + 1;
+    int nRows = numberOfElementsInColumn(column) + k_numberOfTitleRows;
     for (int i = row; i < nRows; i++) {
       didChangeCell(column, i);
     }
@@ -133,7 +133,7 @@ void ValuesController::willDisplayCellAtLocation(HighlightCell * cell, int i, in
   // The cell is not a title cell and not editable
   if (typeAtLoc == k_notEditableValueCellType) {
     // Special case: last row
-    if (j == numberOfElementsInColumn(i) + 1) {
+    if (j == numberOfElementsInColumn(i) + k_numberOfTitleRows) {
       EmptyLayout emptyLayout = EmptyLayout::Builder();
       emptyLayout.setVisible(false);
       static_cast<EvenOddExpressionCell *>(cell)->setLayout(emptyLayout);
@@ -205,7 +205,7 @@ ColumnParameters * ValuesController::columnParameters() {
 
 bool ValuesController::setDataAtLocation(double floatBody, int columnIndex, int rowIndex) {
   assert(checkDataAtLocation(floatBody, columnIndex, rowIndex));
-  intervalAtColumn(columnIndex)->setElement(rowIndex-1, floatBody);
+  intervalAtColumn(columnIndex)->setElement(rowIndex - k_numberOfTitleRows, floatBody);
   return true;
 }
 
@@ -214,7 +214,7 @@ bool ValuesController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {
 }
 
 double ValuesController::dataAtLocation(int columnIndex, int rowIndex) {
-  return intervalAtColumn(columnIndex)->element(rowIndex-1);
+  return intervalAtColumn(columnIndex)->element(rowIndex - k_numberOfTitleRows);
 }
 
 int ValuesController::valuesColumnForAbsoluteColumn(int column) {
@@ -225,8 +225,8 @@ int ValuesController::valuesColumnForAbsoluteColumn(int column) {
 
 int ValuesController::valuesRowForAbsoluteRow(int row) {
   // Subtract the title row
-  assert(row - 1 >= 0);
-  return row - 1;
+  assert(row - k_numberOfTitleRows >= 0);
+  return row - k_numberOfTitleRows;
 }
 
 int ValuesController::absoluteColumnForValuesColumn(int column) {
@@ -238,7 +238,7 @@ int ValuesController::absoluteColumnForValuesColumn(int column) {
 int ValuesController::absoluteRowForValuesRow(int row) {
   // Add the title row
   assert(row >= 0);
-  return row + 1;
+  return row + k_numberOfTitleRows;
 }
 
 void ValuesController::didChangeCell(int column, int row) {

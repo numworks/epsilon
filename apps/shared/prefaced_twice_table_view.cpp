@@ -67,12 +67,12 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
 bool PrefacedTwiceTableView::ColumnPrefaceDataSource::prefaceFullyInFrame(int offset) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  bool result = offset <= m_mainDataSource->cumulatedWidthFromIndex(m_prefaceColumn);
+  bool result = offset <= m_mainDataSource->cumulatedWidthBeforeIndex(m_prefaceColumn);
   m_mainDataSource->lockMemoization(false);
   return result;
 }
 
-KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::nonMemoizedCumulatedWidthFromIndex(int i) {
+KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::nonMemoizedCumulatedWidthBeforeIndex(int i) {
   // Do not alter main dataSource memoization
   assert(i == 0 || i == 1);
   m_mainDataSource->lockMemoization(true);
@@ -81,7 +81,7 @@ KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::nonMemoizedCumulat
   return result;
 }
 
-int PrefacedTwiceTableView::ColumnPrefaceDataSource::nonMemoizedIndexFromCumulatedWidth(KDCoordinate offsetX) {
+int PrefacedTwiceTableView::ColumnPrefaceDataSource::nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
   int result = offsetX <= m_mainDataSource->columnWidth(m_prefaceColumn) ? 0 : 1;

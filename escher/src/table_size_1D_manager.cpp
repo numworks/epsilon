@@ -29,7 +29,7 @@ KDCoordinate MemoizedTableSize1DManager<N>::computeSizeAtIndex(int i) {
 }
 
 template <int N>
-KDCoordinate MemoizedTableSize1DManager<N>::computeCumulatedSizeAtIndex(int i, KDCoordinate defaultSize) {
+KDCoordinate MemoizedTableSize1DManager<N>::computeCumulatedSizeBeforeIndex(int i, KDCoordinate defaultSize) {
   int totalNumberOfLines = numberOfLines();
   if (i == totalNumberOfLines && m_memoizedTotalSize != k_undefinedSize) {
     // Total size is memoized to save time and preserve memoization.
@@ -43,7 +43,7 @@ KDCoordinate MemoizedTableSize1DManager<N>::computeCumulatedSizeAtIndex(int i, K
   if (m_memoizedCumulatedSizeOffset == k_undefinedSize) {
     // Memoized cumultaedSize is required and must be recomputed
     lockMemoization(true);
-    m_memoizedCumulatedSizeOffset = nonMemoizedCumulatedSizeFromIndex(m_memoizedIndexOffset);
+    m_memoizedCumulatedSizeOffset = nonMemoizedCumulatedSizeBeforeIndex(m_memoizedIndexOffset);
     lockMemoization(false);
   }
   // Search cumulatedSize around m_memoizedCumulatedSizeOffset
@@ -73,7 +73,7 @@ KDCoordinate MemoizedTableSize1DManager<N>::computeCumulatedSizeAtIndex(int i, K
 }
 
 template <int N>
-int MemoizedTableSize1DManager<N>::computeIndexFromCumulatedSize(KDCoordinate offset, KDCoordinate defaultSize) {
+int MemoizedTableSize1DManager<N>::computeIndexAfterCumulatedSize(KDCoordinate offset, KDCoordinate defaultSize) {
   if (offset < m_memoizedCumulatedSizeOffset / 2) {
     return k_undefinedSize;
   }
@@ -82,7 +82,7 @@ int MemoizedTableSize1DManager<N>::computeIndexFromCumulatedSize(KDCoordinate of
   if (m_memoizedCumulatedSizeOffset == k_undefinedSize) {
     // Memoized cumulatedSize is required and must be recomputed
     lockMemoization(true);
-    m_memoizedCumulatedSizeOffset = nonMemoizedCumulatedSizeFromIndex(m_memoizedIndexOffset);
+    m_memoizedCumulatedSizeOffset = nonMemoizedCumulatedSizeBeforeIndex(m_memoizedIndexOffset);
     lockMemoization(false);
   }
   // Search index around m_memoizedIndexOffset
@@ -261,8 +261,8 @@ KDCoordinate MemoizedColumnWidthManager<N>::nonMemoizedSizeAtIndex(int i) const 
 }
 
 template <int N>
-KDCoordinate MemoizedColumnWidthManager<N>::nonMemoizedCumulatedSizeFromIndex(int i) const {
-  return this->m_dataSource->nonMemoizedCumulatedWidthFromIndex(i);
+KDCoordinate MemoizedColumnWidthManager<N>::nonMemoizedCumulatedSizeBeforeIndex(int i) const {
+  return this->m_dataSource->nonMemoizedCumulatedWidthBeforeIndex(i);
 }
 
 template <int N>
@@ -281,8 +281,8 @@ KDCoordinate MemoizedRowHeightManager<N>::nonMemoizedSizeAtIndex(int i) const {
 }
 
 template <int N>
-KDCoordinate MemoizedRowHeightManager<N>::nonMemoizedCumulatedSizeFromIndex(int i) const {
-  return this->m_dataSource->nonMemoizedCumulatedHeightFromIndex(i);
+KDCoordinate MemoizedRowHeightManager<N>::nonMemoizedCumulatedSizeBeforeIndex(int i) const {
+  return this->m_dataSource->nonMemoizedCumulatedHeightBeforeIndex(i);
 }
 
 template class MemoizedTableSize1DManager<1>;

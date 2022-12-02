@@ -11,11 +11,11 @@ public:
   virtual KDCoordinate verticalBorderWidth() { return 0; }
   virtual KDCoordinate horizontalBorderHeight() { return 0; }
 private:
-  KDCoordinate nonMemoizedCumulatedWidthFromIndex(int i) override {
-    return Escher::TableViewDataSource::nonMemoizedCumulatedWidthFromIndex(i) + (i == numberOfColumns() && i > 0 ? i - 1 : i) * verticalBorderWidth();
+  KDCoordinate nonMemoizedCumulatedWidthBeforeIndex(int i) override {
+    return Escher::TableViewDataSource::nonMemoizedCumulatedWidthBeforeIndex(i) + (i == numberOfColumns() && i > 0 ? i - 1 : i) * verticalBorderWidth();
   }
-  KDCoordinate nonMemoizedCumulatedHeightFromIndex(int j) override {
-    return Escher::TableViewDataSource::nonMemoizedCumulatedHeightFromIndex(j) + j * horizontalBorderHeight();
+  KDCoordinate nonMemoizedCumulatedHeightBeforeIndex(int j) override {
+    return Escher::TableViewDataSource::nonMemoizedCumulatedHeightBeforeIndex(j) + j * horizontalBorderHeight();
   }
 };
 

@@ -55,7 +55,7 @@ protected:
     const char * className() const override { return "TableView::ContentView"; }
 #endif
   private:
-    KDCoordinate height() const { return m_dataSource->cumulatedHeightFromIndex(m_dataSource->numberOfRows()) + m_verticalCellOverlap; }
+    KDCoordinate height() const { return m_dataSource->cumulatedHeightBeforeIndex(m_dataSource->numberOfRows()) + m_verticalCellOverlap; }
     KDCoordinate width() const;
 
     int numberOfSubviews() const override { return numberOfDisplayableRows() * numberOfDisplayableColumns(); }

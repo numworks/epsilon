@@ -27,12 +27,8 @@ public:
 class RegularTableSize1DManager : public TableSize1DManager {
 public:
   KDCoordinate computeSizeAtIndex(int i) override { return k_undefinedSize; }
-  KDCoordinate computeCumulatedSizeAtIndex(int i, KDCoordinate defaultSize) override {
-    return defaultSize == k_undefinedSize ? k_undefinedSize : i * defaultSize;
-  }
-  int computeIndexFromCumulatedSize(KDCoordinate offset, KDCoordinate defaultSize) override {
-    return (defaultSize == k_undefinedSize || defaultSize == 0) ? defaultSize : (offset - 1) / defaultSize;
-  }
+  KDCoordinate computeCumulatedSizeAtIndex(int i, KDCoordinate defaultSize) override { return defaultSize == k_undefinedSize ? k_undefinedSize : i * defaultSize; }
+  int computeIndexFromCumulatedSize(KDCoordinate offset, KDCoordinate defaultSize) override { return (defaultSize == k_undefinedSize || defaultSize == 0) ? defaultSize : (offset - 1) / defaultSize; }
 };
 
 /* MemoizedTableSize1DManager are used for table which have a dynamically
@@ -46,9 +42,9 @@ public:
   MemoizedTableSize1DManager(TableViewDataSource * tableViewDataSource) :
     m_dataSource(tableViewDataSource),
     m_memoizationLockedLevel(0)
-   {
+  {
     resetMemoization(true);
-   }
+  }
   KDCoordinate computeSizeAtIndex(int i) override;
   KDCoordinate computeCumulatedSizeAtIndex(int i, KDCoordinate defaultSize) override;
   int computeIndexFromCumulatedSize(KDCoordinate offset, KDCoordinate defaultSize) override;

@@ -83,6 +83,8 @@ void Node::logName(std::ostream & stream) const {
     "UserSequence",
     "Subtraction",
     "Division",
+    "Set",
+    "List",
     "HorizontalLayout"
   };
   static_assert(sizeof(names)/sizeof(const char *) == static_cast<uint8_t>(BlockType::NumberOfTypes));
@@ -90,25 +92,13 @@ void Node::logName(std::ostream & stream) const {
 }
 
 void Node::logAttributes(std::ostream & stream) const {
-  switch (type()) {
-    case BlockType::Addition:
-    case BlockType::Multiplication:
-      stream << " numberOfChildren=\"" << numberOfChildren() << "\"";
-      return;
-    case BlockType::IntegerShort:
-    case BlockType::IntegerPosBig:
-    case BlockType::IntegerNegBig:
-    case BlockType::RationalShort:
-    case BlockType::RationalPosBig:
-    case BlockType::RationalNegBig:
-    case BlockType::Float:
-      stream << " value=\"" << Approximation::To<float>(m_block) << "\"";
-      return;
-    case BlockType::Constant:
-      stream << " value=\"" << Approximation::To<float>(m_block) << "\"";
-      return;
-    default:
-      return;
+  if (block()->isNAry()) {
+    stream << " numberOfChildren=\"" << numberOfChildren() << "\"";
+    return;
+  }
+  if (block()->isNumber() || type() == BlockType::Constant) {
+    stream << " value=\"" << Approximation::To<float>(m_block) << "\"";
+    return;
   }
 }
 
@@ -250,3 +240,5 @@ template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Subtraction>()
 template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Division>();
 template Poincare::Node Poincare::Node::Push<Poincare::BlockType::IntegerShort, int>(int);
 template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Float, float>(float);
+template Poincare::Node Poincare::Node::Push<Poincare::BlockType::MinusOne>();
+template Poincare::Node Poincare::Node::Push<Poincare::BlockType::Set>(int);

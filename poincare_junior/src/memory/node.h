@@ -96,10 +96,10 @@ public:
     }
   }
   constexpr int numberOfChildren() const {
+    if (block()->isNAry()) {
+      return static_cast<uint8_t>(*(m_block->next()));
+    }
     switch (type()) {
-      case BlockType::Addition:
-      case BlockType::Multiplication:
-        return static_cast<uint8_t>(*(m_block->next()));
       case BlockType::Power:
       case BlockType::Subtraction:
       case BlockType::Division:

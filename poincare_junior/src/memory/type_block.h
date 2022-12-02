@@ -33,13 +33,13 @@ namespace Poincare {
  * - Constant C
  * | C TAG | TYPE | C TAG |
  *
- * - Addition A, Multiplication M, HorizontalLayout HL
+ * - Addition A (same for Multiplication, Set, List, HorizontalLayout)
  * | A TAG | NUMBER OF CHILDREN | A TAG |
  *
- * - Power P, Factorial F, Subtraction S, Division D
+ * - Power P (same for Factorial, Subtraction, Division)
  * | P TAG |
  *
- * - UserSymbol, UserFunction, UserSequence
+ * - UserSymbol US (same for UserFunction, UserSequence)
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | US TAG |
  *
  * */
@@ -72,6 +72,8 @@ enum class BlockType : uint8_t {
 // Expression
   Subtraction,
   Division,
+  Set,
+  List,
   NumberOfExpressions,
 
   HorizontalLayout = NumberOfExpressions,
@@ -95,12 +97,18 @@ BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::RationalPosBig);
 BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::RationalNegBig);
 BLOCK_TYPE_IS_EXPRESSION_NUMBER(BlockType::Float);
 
+BLOCK_TYPE_IS_EXPRESSION(BlockType::Constant);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Addition);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Multiplication);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Power);
-BLOCK_TYPE_IS_EXPRESSION(BlockType::Constant);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::Factorial);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::UserSymbol);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::UserFunction);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::UserSequence);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Subtraction);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Division);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::Set);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::List);
 
 BLOCK_TYPE_IS_LAYOUT(BlockType::HorizontalLayout);
 
@@ -131,7 +139,7 @@ public:
     return false;
   }
 
-  constexpr bool isNary() const { return isOfType({BlockType::Addition, BlockType::Multiplication, BlockType::HorizontalLayout}); }
+  constexpr bool isNAry() const { return isOfType({BlockType::Addition, BlockType::Multiplication, BlockType::HorizontalLayout, BlockType::Set, BlockType::List}); }
   constexpr bool isInteger() const { return isOfType({BlockType::Zero, BlockType::One, BlockType::Two, BlockType::Half, BlockType::MinusOne, BlockType::IntegerShort, BlockType::IntegerPosBig, BlockType::IntegerNegBig}); }
   constexpr bool isRational() const { return isOfType({BlockType::RationalShort, BlockType::RationalPosBig, BlockType::RationalNegBig}) || isInteger(); }
   constexpr bool isNumber() const { return isOfType({BlockType::Float}) || isRational(); }
@@ -153,8 +161,13 @@ public:
         return 2 + sizeof(float)/sizeof(uint8_t);
       case BlockType::Addition:
       case BlockType::Multiplication:
-        return 3;
       case BlockType::Constant:
+      case BlockType::UserSymbol:
+      case BlockType::UserFunction:
+      case BlockType::UserSequence:
+      case BlockType::Set:
+      case BlockType::List:
+      case BlockType::HorizontalLayout:
         return 3;
       default:
         return 1;

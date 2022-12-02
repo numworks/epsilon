@@ -14,6 +14,7 @@ public:
 
   template <BlockType blockType, typename... Types>
   static EditionReference Push(Types... args);
+  static EditionReference Clone(const Node node);
 
   /* Comparison */
   inline bool operator==(const EditionReference & t) const { return m_identifier == t.identifier() || (!isUninitialized() && !t.isUninitialized() && node() == t.node()); }
@@ -22,7 +23,6 @@ public:
   bool isUninitialized() const { return m_identifier == EditionPool::ReferenceTable::NoNodeIdentifier; }
   Node node() const;
   TypeBlock * block() { return node().block(); }
-  EditionReference clone() const;
 
   uint16_t identifier() const { return m_identifier; }
 

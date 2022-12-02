@@ -29,14 +29,14 @@ EditionReference EditionReference::Push(Types... args) {
   return EditionReference(Node(newNode));
 }
 
+EditionReference EditionReference::Clone(const Node node) {
+  return EditionReference(EditionPool::sharedEditionPool()->initFromTree(node));
+}
+
 Node EditionReference::node() const {
   Node n = EditionPool::sharedEditionPool()->nodeForIdentifier(m_identifier);
   assert(!n.isUninitialized());
   return n;
-}
-
-EditionReference EditionReference::clone() const {
-  return EditionReference(EditionPool::sharedEditionPool()->initFromTree(node()));
 }
 
 void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {

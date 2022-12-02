@@ -155,7 +155,7 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(EditionRef
       EditionReference add = EditionReference(EditionReference::Push<BlockType::Addition>(std::get<EditionReference>(indexedRef).node().numberOfChildren()));
       for (std::pair<EditionReference, int> indexedAdditionChild : NodeIterator::Children<Forward, Editable>(std::get<EditionReference>(indexedRef))) {
         // Copy a multiplication
-        EditionReference multCopy = reference.clone();
+        EditionReference multCopy = EditionReference::Clone(reference.node());
         // Find the addition to be replaced
         EditionReference additionCopy = EditionReference(multCopy.node().childAtIndex(std::get<int>(indexedRef)));
         // Find addition child to replace with

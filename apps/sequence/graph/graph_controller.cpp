@@ -104,12 +104,6 @@ Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(int j) co
   return sequence->definitionName().clone();
 }
 
-void GraphController::selectFunctionWithCursor(int functionIndex, bool willBeVisible) {
-  FunctionGraphController::selectFunctionWithCursor(functionIndex, willBeVisible);
-  ExpiringPointer<Shared::Sequence> f = functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(functionIndex));
-  m_cursorView.setColor(f->color());
-}
-
 bool GraphController::openMenuForCurveAtIndex(int index) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(index);
   m_termSumController.setRecord(record);

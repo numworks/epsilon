@@ -159,19 +159,6 @@ Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(int j) co
   return LayoutHelper::String(buffer, size);
 }
 
-void GraphController::selectFunctionWithCursor(int functionIndex, bool willBeVisible) {
-  FunctionGraphController::selectFunctionWithCursor(functionIndex, willBeVisible);
-  Ion::Storage::Record record = functionStore()->activeRecordAtIndex(functionIndex);
-  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
-  m_cursorView.setColor(f->color());
-  m_view.selectRecord(record);
-
-  // Reload for points of interest
-  if (willBeVisible) {
-    m_view.reload(false, true);
-  }
-}
-
 bool GraphController::displayDerivativeInBanner() const {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
   return functionStore()->modelForRecord(record)->displayDerivative() &&

@@ -55,7 +55,6 @@ private:
 
   void jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) override;
 
-  void selectFunctionWithCursor(int functionIndex, bool willBeVisible) override;
   void reloadBannerView() override;
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
   int nextCurveIndexVertically(bool goingUp, int currentSelectedCurve, Poincare::Context * context, int currentSubCurveIndex, int * nextSubCurveIndex) const override;

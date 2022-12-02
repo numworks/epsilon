@@ -16,7 +16,7 @@ CalculationSelectableTableView::CalculationSelectableTableView(Responder * paren
 
 void CalculationSelectableTableView::scrollToBottom() {
   KDCoordinate contentOffsetX = contentOffset().x();
-  KDCoordinate contentOffsetY = dataSource()->cumulatedHeightFromIndex(dataSource()->numberOfRows()) - maxContentHeightDisplayableWithoutScrolling();
+  KDCoordinate contentOffsetY = dataSource()->cumulatedHeightBeforeIndex(dataSource()->numberOfRows()) - maxContentHeightDisplayableWithoutScrolling();
   setContentOffset(KDPoint(contentOffsetX, contentOffsetY));
 }
 
@@ -42,7 +42,7 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
   assert(cell);
   KDCoordinate contentOffsetX = contentOffset().x();
 
-  KDCoordinate contentOffsetY = dataSource()->cumulatedHeightFromIndex(j);
+  KDCoordinate contentOffsetY = dataSource()->cumulatedHeightBeforeIndex(j);
   if (cell->displaysSingleLine() && dataSource()->rowHeight(j) > maxContentHeightDisplayableWithoutScrolling()) {
     /* If we cannot display the full calculation, we display the selected
      * layout as close as possible to the top of the screen without drawing
@@ -52,15 +52,15 @@ void CalculationSelectableTableView::scrollToSubviewOfTypeOfCellAtLocation(Histo
      * display they entail :
      * (the selected cell is at index j)
      *
-     * 1 - cumulatedHeightFromIndex(j)
+     * 1 - cumulatedHeightBeforeIndex(j)
      *   Aligns the top of the cell with the top of the zone in which the
      *   history can be drawn.
      *
-     * 2 - (cumulatedHeightFromIndex(j+1)
+     * 2 - (cumulatedHeightBeforeIndex(j+1)
      *      - maxContentHeightDisplayableWithoutScrolling())
      *   Aligns the bottom of the cell with the top of the input field.
      *
-     * 3 - cumulatedHeightFromIndex(j) + baseline1 - baseline2
+     * 3 - cumulatedHeightBeforeIndex(j) + baseline1 - baseline2
      *   Aligns the top of the selected layout with the top of the screen (only
      *   used when the selected layout is the smallest).
      *

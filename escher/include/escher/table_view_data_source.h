@@ -31,14 +31,14 @@ public:
   KDCoordinate rowHeight(int j);
   /* return the number of pixels to include in offset to display the column i
    * at the top. */
-  KDCoordinate cumulatedWidthFromIndex(int i);
-  KDCoordinate cumulatedHeightFromIndex(int j);
+  KDCoordinate cumulatedWidthBeforeIndex(int i);
+  KDCoordinate cumulatedHeightBeforeIndex(int j);
   /* return the number of columns (starting with first ones) that can be fully
    * displayed in offsetX pixels.
    * Caution: if the offset is exactly the size of n columns, the function
    * returns n-1. */
-  int indexFromCumulatedWidth(KDCoordinate offsetX);
-  int indexFromCumulatedHeight(KDCoordinate offsetY);
+  int indexAfterCumulatedWidth(KDCoordinate offsetX);
+  int indexAfterCumulatedHeight(KDCoordinate offsetY);
   virtual HighlightCell * reusableCell(int index, int type) = 0;
   virtual int reusableCellCount(int type) = 0;
   virtual int typeAtLocation(int i, int j) = 0;
@@ -59,13 +59,13 @@ protected:
   /* TODO: These are virtual only for BorderTableViewDataSource and
    * PrefacedTableView. We might find a way to avoid having this in
    * the vtable ? */
-  virtual KDCoordinate nonMemoizedCumulatedWidthFromIndex(int i);
-  virtual KDCoordinate nonMemoizedCumulatedHeightFromIndex(int j);
-  virtual int nonMemoizedIndexFromCumulatedWidth(KDCoordinate offsetX);
-  virtual int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY);
+  virtual KDCoordinate nonMemoizedCumulatedWidthBeforeIndex(int i);
+  virtual KDCoordinate nonMemoizedCumulatedHeightBeforeIndex(int j);
+  virtual int nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX);
+  virtual int nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY);
 
   /* These handle the potential memoization of sizes, the computation of
-   * cumulatedXFromIndex, and the computation of indexFromCumulatedX.
+   * cumulatedXBeforeIndex, and the computation of indexAfterCumulatedX.
    * They can be left to nullptr, in which case these previous methods will
    * fallback on default implementation. But if the table is too large, it
    * might become laggy when scrolling down.

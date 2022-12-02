@@ -56,15 +56,15 @@ protected:
     KDCoordinate nonMemoizedColumnWidth(int i) override final;
     KDCoordinate nonMemoizedRowHeight(int j) override final;
 
-    KDCoordinate nonMemoizedCumulatedWidthFromIndex(int i) override;
-    KDCoordinate nonMemoizedCumulatedHeightFromIndex(int j) override;
+    KDCoordinate nonMemoizedCumulatedWidthBeforeIndex(int i) override;
+    KDCoordinate nonMemoizedCumulatedHeightBeforeIndex(int j) override;
 
     /* WARNING: This method works only if relativeColumn(i) == i.
      * Else, it should be overriden.*/
-    int nonMemoizedIndexFromCumulatedWidth(KDCoordinate offsetX) override;
+    int nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX) override;
     /* WARNING: This method works only if relativeRow(j) == j.
      * Else, it should be overriden.*/
-    int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) override;
+    int nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY) override;
 
     virtual int relativeColumn(int i) { return i; }
     virtual int relativeRow(int j) { return j; }
@@ -81,8 +81,8 @@ protected:
     int numberOfRows() const override { return 1; }
 
   private:
-    KDCoordinate nonMemoizedCumulatedHeightFromIndex(int j) override;
-    int nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) override;
+    KDCoordinate nonMemoizedCumulatedHeightBeforeIndex(int j) override;
+    int nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY) override;
 
     int relativeRow(int j) override { assert(j == 0 || j == 1); return m_prefaceRow + j; }
 

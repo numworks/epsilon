@@ -51,19 +51,19 @@ void CategoricalTableCell::drawRect(KDContext * ctx, KDRect rect) const {
   KDCoordinate height = bounds().height();
   for (int row = 0; row < data->numberOfRows() - 1; row++) {
     KDRect horizontalBorder = KDRect(0,
-        data->cumulatedHeightFromIndex(row) + data->rowHeight(row),
+        data->cumulatedHeightBeforeIndex(row) + data->rowHeight(row),
                                      width,
-                                     data->cumulatedHeightFromIndex(row + 1) -
-                                         data->cumulatedHeightFromIndex(row) -
+                                     data->cumulatedHeightBeforeIndex(row + 1) -
+                                         data->cumulatedHeightBeforeIndex(row) -
                                          data->rowHeight(row));
     ctx->fillRect(horizontalBorder.translatedBy(offset), m_selectableTableView.backgroundColor());
   }
 
   for (int column = 0; column < data->numberOfColumns() - 1; column++) {
-    KDRect verticalBorder = KDRect(data->cumulatedWidthFromIndex(column) + data->columnWidth(column),
+    KDRect verticalBorder = KDRect(data->cumulatedWidthBeforeIndex(column) + data->columnWidth(column),
                                    0,
-                                   data->cumulatedWidthFromIndex(column + 1) -
-                                       data->cumulatedWidthFromIndex(column) -
+                                   data->cumulatedWidthBeforeIndex(column + 1) -
+                                       data->cumulatedWidthBeforeIndex(column) -
                                        data->columnWidth(column),
                                    height - Metric::CellSeparatorThickness);
     ctx->fillRect(verticalBorder.translatedBy(offset), m_selectableTableView.backgroundColor());

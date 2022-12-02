@@ -31,33 +31,33 @@ KDCoordinate TableViewDataSource::rowHeight(int j) {
   return result;
 }
 
-KDCoordinate TableViewDataSource::cumulatedWidthFromIndex(int i) {
+KDCoordinate TableViewDataSource::cumulatedWidthBeforeIndex(int i) {
   if (columnWidthManager()) {
-    KDCoordinate result = columnWidthManager()->computeCumulatedSizeAtIndex(i, defaultColumnWidth());
+    KDCoordinate result = columnWidthManager()->computeCumulatedSizeBeforeIndex(i, defaultColumnWidth());
     if (result != TableSize1DManager::k_undefinedSize) {
       assert(result >= 0);
       return result;
     }
   }
-  KDCoordinate result = nonMemoizedCumulatedWidthFromIndex(i);
+  KDCoordinate result = nonMemoizedCumulatedWidthBeforeIndex(i);
   assert(result >= 0);
   return result;
 }
 
-KDCoordinate TableViewDataSource::cumulatedHeightFromIndex(int j) {
+KDCoordinate TableViewDataSource::cumulatedHeightBeforeIndex(int j) {
   if (rowHeightManager()) {
-    KDCoordinate result = rowHeightManager()->computeCumulatedSizeAtIndex(j, defaultRowHeight());
+    KDCoordinate result = rowHeightManager()->computeCumulatedSizeBeforeIndex(j, defaultRowHeight());
     if (result != TableSize1DManager::k_undefinedSize) {
       assert(result >= 0);
       return result;
     }
   }
-  KDCoordinate result = nonMemoizedCumulatedHeightFromIndex(j);
+  KDCoordinate result = nonMemoizedCumulatedHeightBeforeIndex(j);
   assert(result >= 0);
   return result;
 }
 
-KDCoordinate TableViewDataSource::nonMemoizedCumulatedWidthFromIndex(int i) {
+KDCoordinate TableViewDataSource::nonMemoizedCumulatedWidthBeforeIndex(int i) {
   KDCoordinate result = 0;
   for (int k = 0; k < i; k++) {
     result += columnWidth(k);
@@ -66,7 +66,7 @@ KDCoordinate TableViewDataSource::nonMemoizedCumulatedWidthFromIndex(int i) {
   return result;
 }
 
-KDCoordinate TableViewDataSource::nonMemoizedCumulatedHeightFromIndex(int j) {
+KDCoordinate TableViewDataSource::nonMemoizedCumulatedHeightBeforeIndex(int j) {
   KDCoordinate result = 0;
   for (int k = 0; k < j; k++) {
     result += rowHeight(k);
@@ -75,27 +75,27 @@ KDCoordinate TableViewDataSource::nonMemoizedCumulatedHeightFromIndex(int j) {
   return result;
 }
 
-int TableViewDataSource::indexFromCumulatedWidth(KDCoordinate offsetX) {
+int TableViewDataSource::indexAfterCumulatedWidth(KDCoordinate offsetX) {
   if (columnWidthManager()) {
-    int result = columnWidthManager()->computeIndexFromCumulatedSize(offsetX, defaultColumnWidth());
+    int result = columnWidthManager()->computeIndexAfterCumulatedSize(offsetX, defaultColumnWidth());
     if (result != TableSize1DManager::k_undefinedSize) {
       return result;
     }
   }
-  return nonMemoizedIndexFromCumulatedWidth(offsetX);
+  return nonMemoizedIndexAfterCumulatedWidth(offsetX);
 }
 
-int TableViewDataSource::indexFromCumulatedHeight(KDCoordinate offsetY) {
+int TableViewDataSource::indexAfterCumulatedHeight(KDCoordinate offsetY) {
   if (rowHeightManager()) {
-    int result = rowHeightManager()->computeIndexFromCumulatedSize(offsetY, defaultRowHeight());
+    int result = rowHeightManager()->computeIndexAfterCumulatedSize(offsetY, defaultRowHeight());
     if (result != TableSize1DManager::k_undefinedSize) {
       return result;
     }
   }
-  return nonMemoizedIndexFromCumulatedHeight(offsetY);
+  return nonMemoizedIndexAfterCumulatedHeight(offsetY);
 }
 
-int TableViewDataSource::nonMemoizedIndexFromCumulatedWidth(KDCoordinate offsetX) {
+int TableViewDataSource::nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX) {
   KDCoordinate cumulatedWidth = 0;
   int indexFromNonMemoizedCumulatedWidth = 0;
   int nColumns =  numberOfColumns();
@@ -105,7 +105,7 @@ int TableViewDataSource::nonMemoizedIndexFromCumulatedWidth(KDCoordinate offsetX
   return (cumulatedWidth < offsetX || offsetX == 0) ? indexFromNonMemoizedCumulatedWidth : indexFromNonMemoizedCumulatedWidth - 1;
 }
 
-int TableViewDataSource::nonMemoizedIndexFromCumulatedHeight(KDCoordinate offsetY) {
+int TableViewDataSource::nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY) {
   KDCoordinate cumulatedHeight = 0;
   int indexFromNonMemoizedCumulatedHeight = 0;
   int nRows = numberOfRows();

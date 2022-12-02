@@ -42,7 +42,7 @@ KDCoordinate DoublePairTableController::prefaceMargin(TableView * preface, Table
 
   for (int i = 0; i < numberOfColumns(); i++) {
     constexpr KDCoordinate maxMargin = Escher::Metric::TableSeparatorThickness;
-    KDCoordinate delta = prefaceRightSide - cumulatedWidthFromIndex(i);
+    KDCoordinate delta = prefaceRightSide - cumulatedWidthBeforeIndex(i);
     if (delta < 0) {
       return maxMargin;
     } else if (delta <= maxMargin) {

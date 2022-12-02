@@ -75,14 +75,16 @@ void InterestView::drawRect(KDContext * ctx, KDRect rect) const {
     }
     // If the dot is below the cursor, erase the cursor and redraw it
     MemoizedCursorView * cursor = static_cast<MemoizedCursorView *>(m_parentView->cursorView());
-    KDRect cursorFrame = cursor->frame();
+    KDRect cursorFrame = cursor ? cursor->frame() : KDRectZero;
     bool redrawCursor = cursorFrame.intersects(dotRect);
     if (redrawCursor) {
       // Erase cursor and make rect dirty
+      assert(cursor);
       cursor->setCursorFrame(cursorFrame, true);
     }
     m_parentView->drawDot(ctx, rect, k_dotsSize, dotCoordinates, Escher::Palette::GrayDarkest);
     if (redrawCursor) {
+      assert(cursor);
       cursor->redrawCursor(rect);
     }
 

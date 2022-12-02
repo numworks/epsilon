@@ -6,6 +6,10 @@
 namespace Poincare {
 
 EditionReference::EditionReference(Node node) {
+  EditionPool * pool = EditionPool::sharedEditionPool();
+  if (!pool->contains(node.block()) && node.block() != pool->lastBlock()) {
+    node = pool->initFromTree(node);
+  }
   m_identifier = EditionPool::sharedEditionPool()->referenceNode(node);
 }
 

@@ -57,7 +57,7 @@ public:
   constexpr static const char * epsilonWarningTitle = "Epsilon Slot";
 
   constexpr static const char * epsilonWarningMessage1 = "!! WARNING !! ";
-  constexpr static const char * epsilonWarningMessage2 = "This version of epsilon";
+  constexpr static const char * epsilonWarningMessage2 = "This version of Epsilon";
   constexpr static const char * epsilonWarningMessage3 = "can lock the calculator.";
   constexpr static const char * epsilonWarningMessage4 = "Proceed the boot ?";
   constexpr static const char * epsilonWarningMessage5 = "EXE - Yes";
@@ -72,7 +72,7 @@ public:
   constexpr static const char * aboutMessage4 = "and select the OS";
   constexpr static const char * aboutMessage5 = "to boot.";
 
-  constexpr static const char * bootloaderVersion = "Version 1.0.1 - FREED0M.19";
+  constexpr static const char * bootloaderVersion = "Version 1.0.2 - FREED0M.20";
 
   //USB NAMES
   constexpr static const char * usbUpsilonBootloader = "Upsilon Bootloader";

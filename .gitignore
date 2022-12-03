@@ -8,3 +8,5 @@ epsilon.map
 .gradle
 .idea/
 .vs
+.cache/
+compile_commands.json

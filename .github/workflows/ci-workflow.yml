@@ -161,7 +161,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
-      - run: make -j2 MODEL=n0110 bootloader.dfu
+      - run: make -j2 MODEL=n0110 bootloader
       - run: make -j2 epsilon.A.dfu epsilon.B.dfu
       - run: make -j2 epsilon.onboarding.A.dfu
       - run: make -j2 epsilon.onboarding.B.dfu
@@ -171,6 +171,11 @@ jobs:
       - run: make -j2 epsilon.onboarding.beta.B.dfu
       - run: make -j2 binpack
       - run: cp output/release/device/bootloader/binpack-bootloader-`git rev-parse HEAD | head -c 7`.tgz output/release/device/bootloader/binpack-bootloader.tgz
+      - run: |
+          gzip -d output/release/device/bootloader/binpack-bootloader.tgz
+          tar rvf output/release/device/bootloader/binpack-bootloader.tar output/release/device/n0110/bootloader.bin --transform 's,^output/release/device/n0110/bootloader.bin,binpack/bootloader.bin,'
+          gzip output/release/device/bootloader/binpack-bootloader.tar
+          mv output/release/device/bootloader/binpack-bootloader.tar.gz output/release/device/bootloader/binpack-bootloader.tgz
       - id: 'auth'
         if: ${{ github.event_name == 'push' && github.ref_name == 'upsilon-dev' && github.repository == 'UpsilonNumworks/Upsilon' }}
         uses: 'google-github-actions/auth@v0'

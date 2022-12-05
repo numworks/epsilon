@@ -47,7 +47,6 @@ public:
   Solver(T xStart, T xEnd, T maximalXStep, const char * unknown = nullptr, Context * context = nullptr, Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
   Solver(T xStart, T xEnd, const char * unknown = nullptr, Context * context = nullptr, Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian) :
     Solver<T>(xStart, xEnd, MaximalStep(xEnd - xStart), unknown, context, complexFormat, angleUnit) {}
-  Solver(const Solver<T> * other);
 
   T start() const { return m_xStart; }
   T end() const { return m_xEnd; }

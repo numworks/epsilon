@@ -18,11 +18,6 @@ Solver<T>::Solver(T xStart, T xEnd, T maximalXStep, const char * unknown, Contex
 {}
 
 template<typename T>
-Solver<T>::Solver(const Solver<T> * other) :
-  Solver(other->m_xStart, other->m_xEnd, other->m_maximalXStep, other->m_unknown, other->m_context, other->m_complexFormat, other->m_angleUnit)
-{}
-
-template<typename T>
 Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketTest test, HoneResult hone) {
   Coordinate2D<T> p1, p2(start(), f(start(), aux)), p3(nextX(p2.x1(), end()), k_NAN);
   p3.setX2(f(p3.x1(), aux));
@@ -280,7 +275,7 @@ T Solver<T>::nextX(T x, T direction) const {
 
 template<typename T>
 Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Expression & e, int childIndex) const {
-  Solver<T> solver(this);
+  Solver<T> solver = *this;
   Expression child = e.childAtIndex(childIndex);
   T xRoot;
   while (std::isfinite(xRoot = solver.nextRoot(child).x1())) { // assignment in condition

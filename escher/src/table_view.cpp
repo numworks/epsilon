@@ -167,14 +167,14 @@ void TableView::ContentView::layoutSubviews(bool force, bool updateCellContent) 
 
 int TableView::ContentView::numberOfDisplayableRows() const {
   int rowOffset = rowsScrollingOffset();
-  int cumulatedHeight = m_tableView->bounds().height() + (m_tableView->contentOffset().y() - m_tableView->topMargin());
+  int cumulatedHeight = m_tableView->bounds().height() + invisibleHeight();
   int cumulatedRowIndex = m_dataSource->indexAfterCumulatedHeight(cumulatedHeight);
   return std::min(m_dataSource->numberOfRows(), cumulatedRowIndex + 1) - rowOffset;
 }
 
 int TableView::ContentView::numberOfDisplayableColumns() const {
   int columnOffset = columnsScrollingOffset();
-  int cumulatedWidth = m_tableView->bounds().width() + m_tableView->contentOffset().x() - m_tableView->leftMargin();
+  int cumulatedWidth = m_tableView->bounds().width() + invisibleWidth();
   int cumulatedColumnIndex = m_dataSource->indexAfterCumulatedWidth(cumulatedWidth);
   return std::min(m_dataSource->numberOfColumns(), cumulatedColumnIndex + 1) - columnOffset;
 }
@@ -182,15 +182,13 @@ int TableView::ContentView::numberOfDisplayableColumns() const {
 int TableView::ContentView::rowsScrollingOffset() const {
   /* Here, we want to translate the offset at which our tableView is displaying
    * us into an integer offset we can use to ask cells to our data source. */
-  KDCoordinate invisibleHeight = std::max(m_tableView->contentOffset().y() - m_tableView->topMargin(), 0);
-  return m_dataSource->indexAfterCumulatedHeight(invisibleHeight);
+  return m_dataSource->indexAfterCumulatedHeight(invisibleHeight());
 }
 
 int TableView::ContentView::columnsScrollingOffset() const {
   /* Here, we want to translate the offset at which our tableView is displaying
    * us into an integer offset we can use to ask cells to our data source. */
-  KDCoordinate invisibleWidth = std::max(m_tableView->contentOffset().x() - m_tableView->leftMargin(), 0);
-  return m_dataSource->indexAfterCumulatedWidth(invisibleWidth);
+  return m_dataSource->indexAfterCumulatedWidth(invisibleWidth());
 }
 
 }

@@ -333,7 +333,7 @@ const char * ScrollView::className() const {
 
 void ScrollView::logAttributes(std::ostream &os) const {
   View::logAttributes(os);
-  os << " offset=\"" << (int)contentOffset().x << "," << (int)contentOffset().y << "\"";
+  os << " offset=\"" << (int)contentOffset().x() << "," << (int)contentOffset().y() << "\"";
 }
 #endif
 

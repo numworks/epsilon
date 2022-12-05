@@ -10,10 +10,6 @@ class ScrollViewIndicator : public View {
 public:
   ScrollViewIndicator();
 protected:
-#if ESCHER_VIEW_LOGGING
-  const char * className() const override;
-  void logAttributes(std::ostream &os) const override;
-#endif
   KDColor m_color;
 };
 
@@ -24,6 +20,10 @@ public:
   bool visible() const { return 0.0f < m_offset || m_visibleLength < 1.0f; }
 protected:
   constexpr static KDCoordinate k_indicatorThickness = Metric::ScrollViewBarThickness;
+#if ESCHER_VIEW_LOGGING
+  const char * className() const override;
+  void logAttributes(std::ostream &os) const override;
+#endif
   float m_offset;
   float m_visibleLength;
   KDColor m_trackColor;

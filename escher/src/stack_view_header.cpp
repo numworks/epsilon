@@ -33,7 +33,7 @@ const char * StackViewHeader::className() const {
 
 void StackViewHeader::logAttributes(std::ostream &os) const {
   View::logAttributes(os);
-  os << " name=\"" << m_name << "\"";
+  os << " name=\"" << m_controller->title() << "\"";
 }
 #endif
 

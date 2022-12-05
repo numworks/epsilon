@@ -115,11 +115,11 @@ void ScrollViewArrow::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 #if ESCHER_VIEW_LOGGING
-const char * ScrollViewIndicator::className() const {
-  return "ScrollViewIndicator";
+const char * ScrollViewBar::className() const {
+  return "ScrollViewBar";
 }
 
-void ScrollViewIndicator::logAttributes(std::ostream &os) const {
+void ScrollViewBar::logAttributes(std::ostream &os) const {
   View::logAttributes(os);
   os << " offset=\"" << m_offset << "\"";
   os << " visibleLength=\"" << m_visibleLength << "\"";

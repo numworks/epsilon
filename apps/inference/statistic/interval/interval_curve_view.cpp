@@ -98,7 +98,7 @@ void IntervalPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext *
 
 // IntervalCurveView
 
-IntervalCurveView::IntervalCurveView(Interval * interval, int * selectedIndex) :
+IntervalCurveView::IntervalCurveView(Interval * interval, const int * selectedIndex) :
   PlotView(interval)
 {
   // IntervalPlotPolicy

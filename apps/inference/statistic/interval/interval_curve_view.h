@@ -36,12 +36,12 @@ protected:
   void drawPlot(const Shared::AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
 
   Interval * m_interval;
-  int * m_selectedIntervalIndex;
+  const int * m_selectedIntervalIndex;
 };
 
 class IntervalCurveView : public Shared::PlotView<IntervalAxes, IntervalPlotPolicy, Shared::PlotPolicy::NoBanner, Shared::PlotPolicy::NoCursor> {
 public:
-  IntervalCurveView(Interval * interval, int * selectedIndex);
+  IntervalCurveView(Interval * interval, const int * selectedIndex);
 
   // AbstractPlotView
   void reload(bool resetInterruption = false, bool force = false) override;

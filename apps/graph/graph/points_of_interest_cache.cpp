@@ -19,7 +19,6 @@ PointsOfInterestCache PointsOfInterestCache::clone() const {
 
 void PointsOfInterestCache::setBounds(float start, float end) {
   assert(start < end);
-  assert(!m_record.isNull());
 
   uint32_t checksum = Ion::Storage::FileSystem::sharedFileSystem()->checksum();
   if (m_checksum != checksum) {
@@ -125,15 +124,14 @@ void PointsOfInterestCache::stripOutOfBounds() {
 void PointsOfInterestCache::computeNextStep() {
   if (m_computedEnd < m_end) {
     computeBetween(m_computedEnd, std::clamp(m_computedEnd + step(), m_start, m_end));
-    return;
-  }
-  if (m_computedStart > m_start) {
+  } else if (m_computedStart > m_start) {
     computeBetween(std::clamp(m_computedStart - step(), m_start, m_end), m_computedStart);
-    return;
   }
 }
 
 void PointsOfInterestCache::computeBetween(float start, float end) {
+  assert(!m_record.isNull());
+  assert(m_checksum == Ion::Storage::FileSystem::sharedFileSystem()->checksum());
   assert(!m_list.isUninitialized());
   assert((end == m_computedStart && start < m_computedStart) || (start == m_computedEnd && end > m_computedEnd));
   assert(start >= m_start && end <= m_end);

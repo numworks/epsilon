@@ -2,7 +2,6 @@
 #define ESCHER_MODAL_VIEW_CONTROLLER_H
 
 #include <escher/view_controller.h>
-#include <escher/stack_view.h>
 
 namespace Escher {
 

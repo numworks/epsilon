@@ -2,7 +2,7 @@
 #define ESCHER_STACK_VIEW_CONTROLLER_H
 
 #include <escher/view_controller.h>
-#include <escher/stack_view.h>
+#include <escher/stack_view_header.h>
 #include <escher/palette.h>
 #include <escher/solid_color_view.h>
 #include <ion/ring_buffer.h>
@@ -49,12 +49,12 @@ private:
     friend StackViewController;
   public:
     ControllerView(Style style, bool extendVertically);
-    int8_t numberOfStacks() const { return m_stackViews.length(); }
+    int8_t numberOfStacks() const { return m_stackViewHeaders.length(); }
     void setContentView(View * view);
     void setupHeadersBorderOverlaping(bool headersOverlapHeaders, bool headersOverlapContent, KDColor headersContentBorderColor);
     void pushStack(ViewController * controller);
     void reload() { markRectAsDirty(bounds()); }
-    void resetStack() { m_stackViews.reset(); }
+    void resetStack() { m_stackViewHeaders.reset(); }
   protected:
 #if ESCHER_VIEW_LOGGING
   const char * className() const override;
@@ -70,7 +70,7 @@ private:
     // Returns the index in m_stackViews for a given display index
     int stackHeaderIndex(int displayIndex);
 
-    Ion::RingBuffer<StackView, k_MaxNumberOfStacks> m_stackViews;
+    Ion::RingBuffer<StackViewHeader, k_MaxNumberOfStacks> m_stackViewHeaders;
     SolidColorView m_borderView;
     View * m_contentView;
     Style m_style;

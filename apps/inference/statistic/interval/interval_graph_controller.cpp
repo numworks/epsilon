@@ -51,7 +51,10 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
 }
 
 void IntervalGraphController::selectAdjacentInterval(bool goUp) {
-  m_selectedIntervalIndex = (goUp && m_selectedIntervalIndex == 0) || (!goUp && m_selectedIntervalIndex + 1 == Interval::k_numberOfDisplayedIntervals) ? m_selectedIntervalIndex : m_selectedIntervalIndex + (goUp ? -1 : 1);
+  if ((goUp && m_selectedIntervalIndex == 0) || (!goUp && m_selectedIntervalIndex + 1 == Interval::k_numberOfDisplayedIntervals)) {
+    return;
+  }
+  m_selectedIntervalIndex += goUp ? -1 : 1;
   interval()->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(m_originalInterval->threshold(), m_selectedIntervalIndex));
   interval()->compute();
   intervalDidChange();

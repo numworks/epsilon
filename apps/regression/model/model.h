@@ -32,7 +32,7 @@ public:
   };
   constexpr static int k_numberOfModels = 14;
   constexpr static int k_maxNumberOfCoefficients = 5; // Quartic model
-  static_assert(k_maxNumberOfCoefficients*k_maxNumberOfCoefficients <= Poincare::Matrix::k_maxNumberOfChildren, "Model needs bigger than allowed matrixes");
+  static_assert(k_maxNumberOfCoefficients*k_maxNumberOfCoefficients <= Poincare::Matrix::k_maxNumberOfChildren, "Model needs bigger than allowed matrices");
   virtual Poincare::Layout layout();
 
   Poincare::Expression simplifiedExpression(double * modelCoefficients, Poincare::Context * context);

@@ -335,33 +335,18 @@ void GraphView::drawParametric(KDContext * ctx, KDRect rect, ContinuousFunction 
   plot.draw(this, ctx, rect);
 }
 
-/* The behaviour is distinct between PLATFORM_DEVICE and SIMULATOR for two
- * reasons:
- * - First, it makes no sense to wait for an Idle event on simulator to draw
- *   interests since there is no slowness issue. If the Idle event was awaited,
- *   the user woud notice a bit of a latency before the points are drawn.
- * - Second, we want to be able to take screenshots of scenari with points
- *   of interests, and to test the feature with the fuzzer. When running
- *   a scenario, no Idle event is ever fired, so the points would never be
- *   drawn if the Idle event was awaited. */
 void GraphView::resumePointsOfInterestDrawing() {
-#if PLATFORM_DEVICE
   m_computePointsOfInterest = true;
   m_interestView.dirtyBounds();
-#endif
 }
 
 void GraphView::drawPointsOfInterest(KDContext * ctx, KDRect rect) {
   if (!hasFocus()) {
     return;
   }
-#if PLATFORM_DEVICE
+
   bool shouldComputePoints = m_computePointsOfInterest;
   m_computePointsOfInterest = false;
-#else
-  bool shouldComputePoints = true;
-  (void) m_computePointsOfInterest; // Silence compiler
-#endif
 
   ContinuousFunctionStore * functionStore = App::app()->functionStore();
   Ion::Storage::Record selectedRec = selectedRecord();

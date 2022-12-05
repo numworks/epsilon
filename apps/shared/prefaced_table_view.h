@@ -47,10 +47,10 @@ protected:
     // TableViewDataSource
     int numberOfRows() const override { return m_mainDataSource->numberOfRows(); }
     int numberOfColumns() const override { return m_mainDataSource->numberOfColumns(); }
-    void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override { m_mainDataSource->willDisplayCellAtLocation(cell, relativeColumn(i), relativeRow(j)); }
+    void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override { m_mainDataSource->willDisplayCellAtLocation(cell, columnIndexInMainDataSource(i), rowIndexInMainDataSource(j)); }
     Escher::HighlightCell * reusableCell(int index, int type) override { return m_mainDataSource->reusableCell(index, type); }
     int reusableCellCount(int type) override { return m_mainDataSource->reusableCellCount(type); }
-    int typeAtLocation(int i, int j) override { return m_mainDataSource->typeAtLocation(relativeColumn(i), relativeRow(j)); }
+    int typeAtLocation(int i, int j) override { return m_mainDataSource->typeAtLocation(columnIndexInMainDataSource(i), rowIndexInMainDataSource(j)); }
 
   protected:
     KDCoordinate nonMemoizedColumnWidth(int i) override final;
@@ -59,15 +59,15 @@ protected:
     KDCoordinate nonMemoizedCumulatedWidthBeforeIndex(int i) override;
     KDCoordinate nonMemoizedCumulatedHeightBeforeIndex(int j) override;
 
-    /* WARNING: This method works only if relativeColumn(i) == i.
+    /* WARNING: This method works only if columnIndexInMainDataSource(i) == i.
      * Else, it should be overriden.*/
     int nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX) override;
-    /* WARNING: This method works only if relativeRow(j) == j.
+    /* WARNING: This method works only if rowIndexInMainDataSource(j) == j.
      * Else, it should be overriden.*/
     int nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY) override;
 
-    virtual int relativeColumn(int i) { return i; }
-    virtual int relativeRow(int j) { return j; }
+    virtual int columnIndexInMainDataSource(int i) { return i; }
+    virtual int rowIndexInMainDataSource(int j) { return j; }
 
     Escher::TableViewDataSource * m_mainDataSource;
   };
@@ -84,7 +84,7 @@ protected:
     KDCoordinate nonMemoizedCumulatedHeightBeforeIndex(int j) override;
     int nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY) override;
 
-    int relativeRow(int j) override { assert(j == 0 || j == 1); return m_prefaceRow + j; }
+    int rowIndexInMainDataSource(int j) override { assert(j == 0 || j == 1); return m_prefaceRow + j; }
 
     Escher::TableSize1DManager * rowHeightManager() override { return &m_rowHeigthManager; }
 

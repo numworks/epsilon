@@ -78,9 +78,10 @@ KDRect TableView::ContentView::cellFrame(int i, int j) const {
     columnWidth = m_tableView->maxContentWidthDisplayableWithoutScrolling();
   }
   return KDRect(
-    m_dataSource->cumulatedWidthBeforeIndex(i), m_dataSource->cumulatedHeightBeforeIndex(j),
+    m_dataSource->cumulatedWidthBeforeIndex(i),
+    m_dataSource->cumulatedHeightBeforeIndex(j),
     columnWidth + m_horizontalCellOverlap,
-    m_dataSource->rowHeight(j) + m_verticalCellOverlap
+    rowHeight + m_verticalCellOverlap
   );
 }
 

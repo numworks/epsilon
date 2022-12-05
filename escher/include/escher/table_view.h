@@ -43,6 +43,8 @@ protected:
     void reloadCellAtLocation(int i, int j, bool forceSetFrame);
     HighlightCell * cellAtLocation(int i, int j);
     TableViewDataSource * dataSource() { return m_dataSource; }
+    KDCoordinate invisibleHeight() const { return std::max(m_tableView->contentOffset().y() - m_tableView->topMargin(), 0); }
+    KDCoordinate invisibleWidth() const { return std::max(m_tableView->contentOffset().x() - m_tableView->leftMargin(), 0); }
     int rowsScrollingOffset() const;
     int columnsScrollingOffset() const;
     int numberOfDisplayableRows() const;

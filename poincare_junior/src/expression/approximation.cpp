@@ -12,7 +12,7 @@ T Approximation::To(const Node node) {
   }
   switch (node.type()) {
     case BlockType::Constant:
-      return Constant::To<T>(static_cast<Constant::Type>(static_cast<uint8_t>(*(node.block()->next()))));
+      return Constant::To<T>(Constant::Type(node));
     case BlockType::Float:
       return *reinterpret_cast<float *>(node.block()->next());
     case BlockType::Addition:

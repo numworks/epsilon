@@ -1,4 +1,5 @@
 #include "approximation.h"
+#include "constant.h"
 #include "simplification.h"
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/node_iterator.h>
@@ -71,8 +72,7 @@ int Simplification::CompareNames(const Node node0, const Node node1) {
 }
 
 int Simplification::CompareConstants(const Node node0, const Node node1) {
-  // TODO
-  return 0;
+  return static_cast<uint8_t>(Constant::Type(node0)) - static_cast<uint8_t>(Constant::Type(node1));
 }
 
 template<typename ScanDirection>

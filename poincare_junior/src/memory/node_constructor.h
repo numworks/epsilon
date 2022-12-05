@@ -38,9 +38,8 @@ private:
 
   template <>
   constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::Constant>(Block * block, size_t blockIndex, char16_t name) {
-    Constant::Type type = name == 'e' ? Constant::Type::E : name == u'π' ? Constant::Type::Pi : Constant::Type::Undefined;
-    assert(type != Constant::Type::Undefined);
-    return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, BlockType::Constant, type);
+    assert(Constant::Type(name) != Constant::Type::Undefined);
+    return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, BlockType::Constant, Constant::Type(name));
   }
 
   template <>

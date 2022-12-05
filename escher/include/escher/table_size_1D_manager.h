@@ -28,7 +28,7 @@ class RegularTableSize1DManager : public TableSize1DManager {
 public:
   KDCoordinate computeSizeAtIndex(int i) override { return k_undefinedSize; }
   KDCoordinate computeCumulatedSizeBeforeIndex(int i, KDCoordinate defaultSize) override { return defaultSize == k_undefinedSize ? k_undefinedSize : i * defaultSize; }
-  int computeIndexAfterCumulatedSize(KDCoordinate offset, KDCoordinate defaultSize) override { return (defaultSize == k_undefinedSize || defaultSize == 0) ? defaultSize : (offset - 1) / defaultSize; }
+  int computeIndexAfterCumulatedSize(KDCoordinate offset, KDCoordinate defaultSize) override { return (defaultSize == k_undefinedSize || defaultSize == 0) ? defaultSize : offset / defaultSize; }
 };
 
 /* MemoizedTableSize1DManager are used for table which have a dynamically

@@ -96,23 +96,27 @@ int TableViewDataSource::indexAfterCumulatedHeight(KDCoordinate offsetY) {
 }
 
 int TableViewDataSource::nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX) {
+  int nColumns = numberOfColumns();
   KDCoordinate cumulatedWidth = 0;
-  int indexFromNonMemoizedCumulatedWidth = 0;
-  int nColumns =  numberOfColumns();
-  while (cumulatedWidth < offsetX && indexFromNonMemoizedCumulatedWidth < nColumns) {
-    cumulatedWidth += columnWidth(indexFromNonMemoizedCumulatedWidth++);
+  for (int i = 0; i < nColumns; i++) {
+    cumulatedWidth += columnWidth(i);
+    if (offsetX < cumulatedWidth) {
+      return i;
+    }
   }
-  return (cumulatedWidth < offsetX || offsetX == 0) ? indexFromNonMemoizedCumulatedWidth : indexFromNonMemoizedCumulatedWidth - 1;
+  return nColumns;
 }
 
 int TableViewDataSource::nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY) {
-  KDCoordinate cumulatedHeight = 0;
-  int indexFromNonMemoizedCumulatedHeight = 0;
   int nRows = numberOfRows();
-  while (cumulatedHeight < offsetY && indexFromNonMemoizedCumulatedHeight < nRows) {
-    cumulatedHeight += rowHeight(indexFromNonMemoizedCumulatedHeight++);
+  KDCoordinate cumulatedHeight = 0;
+  for (int i = 0; i < nRows; i++) {
+    cumulatedHeight += rowHeight(i);
+    if (offsetY < cumulatedHeight) {
+      return i;
+    }
   }
-  return (cumulatedHeight < offsetY || offsetY == 0) ? indexFromNonMemoizedCumulatedHeight : indexFromNonMemoizedCumulatedHeight - 1;
+  return nRows;
 }
 
 void TableViewDataSource::resetMemoization(bool force) {

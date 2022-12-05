@@ -159,7 +159,7 @@ KDCoordinate PrefacedTableView::PrefaceDataSource::nonMemoizedCumulatedHeightBef
 int PrefacedTableView::PrefaceDataSource::nonMemoizedIndexAfterCumulatedHeight(KDCoordinate offsetY) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  int result = offsetY <= m_mainDataSource->rowHeight(m_prefaceRow) ? 0 : 1;
+  int result = offsetY < m_mainDataSource->rowHeight(m_prefaceRow) ? 0 : 1;
   m_mainDataSource->lockMemoization(false);
   return result;
 }

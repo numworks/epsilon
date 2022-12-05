@@ -9,9 +9,10 @@ using namespace Shared;
 namespace Graph {
 
 GraphView::GraphView(InteractiveCurveViewRange * graphRange,
-  CurveViewCursor * cursor, Shared::BannerView * bannerView, CursorView * cursorView, InterestView * interestView) :
+  CurveViewCursor * cursor, Shared::BannerView * bannerView, CursorView * cursorView) :
   FunctionGraphView(graphRange, cursor, bannerView, cursorView),
-  m_interestView(interestView),
+  m_interestView(this),
+  m_nextPointOfInterestIndex(0),
   m_tangent(false)
 {}
 
@@ -25,7 +26,7 @@ void GraphView::reload(bool resetInterrupted, bool force) {
 void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
   if (rect.intersectedWith(boundsWithoutBanner()) == boundsWithoutBanner()) {
     // If the whole curve is redrawn, all points of interest need a redraw
-    m_interestView->resetPointIndex();
+    m_nextPointOfInterestIndex = 0;
   }
   FunctionGraphView::drawRect(ctx, rect);
 }
@@ -36,10 +37,6 @@ void GraphView::setFocus(bool focus) {
     markRectAsDirty(bounds());
   }
   FunctionGraphView::setFocus(focus);
-}
-
-bool GraphView::recordWasInterrupted(Ion::Storage::Record record) const {
-  return functionWasInterrupted(App::app()->functionStore()->indexOfRecordAmongActiveRecords(record));
 }
 
 int GraphView::numberOfDrawnRecords() const {
@@ -336,6 +333,93 @@ void GraphView::drawParametric(KDContext * ctx, KDRect rect, ContinuousFunction 
   CurveDrawing plot(Curve2D(evaluateXY<float>, f), context(), tStart, tEnd, tStep, f->color());
   plot.setPrecisionOptions(false, nullptr, discontinuity);
   plot.draw(this, ctx, rect);
+}
+
+/* The behaviour is distinct between PLATFORM_DEVICE and SIMULATOR for two
+ * reasons:
+ * - First, it makes no sense to wait for an Idle event on simulator to draw
+ *   interests since there is no slowness issue. If the Idle event was awaited,
+ *   the use woud notice a bit of a latency before the points are drawn.
+ * - Second, we want to be able to take screenshots of scenari with points
+ *   of interests, and to test the feature with the fuzzer. When running
+ *   a scenario, no Idle event is ever fired, so the points would never be
+ *   drawn if the Idle event was awaited. */
+void GraphView::resumePointsOfInterestDrawing() {
+#if PLATFORM_DEVICE
+  m_computePointsOfInterest = true;
+  m_interestView.dirtyBounds();
+#endif
+}
+
+void GraphView::drawPointsOfInterest(KDContext * ctx, KDRect rect) {
+  if (!hasFocus()) {
+    return;
+  }
+#if PLATFORM_DEVICE
+  bool shouldComputePoints = m_computePointsOfInterest;
+  m_computePointsOfInterest = false;
+#else
+  bool shouldComputePoints = true;
+  (void) m_computePointsOfInterest; // Silence compiler
+#endif
+
+  ContinuousFunctionStore * functionStore = App::app()->functionStore();
+  Ion::Storage::Record selectedRec = selectedRecord();
+  ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(selectedRec);
+  if (!f->properties().isCartesian() || functionWasInterrupted(functionStore->indexOfRecordAmongActiveRecords(selectedRec))) {
+    return;
+  }
+
+  AbstractPlotView::Axis axis = f->isAlongY() ? AbstractPlotView::Axis::Vertical : AbstractPlotView::Axis::Horizontal;
+  PointsOfInterestCache * pointsOfInterestCache = App::app()->graphController()->pointsOfInterestForRecord(selectedRec);
+  PointOfInterest p;
+  int i = 0;
+  do {
+    // Compute more points of interest if necessary
+    if (shouldComputePoints && !pointsOfInterestCache->computeUntilNthPoint(i)) {
+      // Computation was interrupted
+      return;
+    }
+
+    if (i >= pointsOfInterestCache->numberOfPoints()) {
+      return;
+    }
+
+    p = pointsOfInterestCache->pointAtIndex(i);
+    bool wasAlreadyDrawn = i < m_nextPointOfInterestIndex;
+    i++;
+    if (!wasAlreadyDrawn) {
+      m_nextPointOfInterestIndex = i;
+    }
+
+    if (m_interest != Poincare::Solver<double>::Interest::None && m_interest != p.interest()) {
+      continue;
+    }
+
+    // Draw the dot
+    Coordinate2D<float> dotCoordinates = axis == AbstractPlotView::Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
+
+    constexpr static Shared::Dots::Size k_dotSize = Shared::Dots::Size::Tiny;
+    KDRect rectForDot = dotRect(k_dotSize, dotCoordinates);
+    // If the dot interescts the dirty rect, force the redraw
+    if (!rectForDot.intersects(dirtyRect()) && wasAlreadyDrawn) {
+      continue;
+    }
+    // If the dot is below the cursor, erase the cursor and redraw it
+    KDRect frameOfCursor = cursorFrame();
+    bool redrawCursor = frameOfCursor.intersects(rectForDot);
+    if (redrawCursor) {
+      // Erase cursor and make rect dirty
+      assert(cursorView());
+      cursorView()->setCursorFrame(frameOfCursor, true);
+    }
+    drawDot(ctx, rect, k_dotSize, dotCoordinates, Escher::Palette::GrayDarkest);
+    if (redrawCursor) {
+      /* WARNING: We cannot assert that cursorView is a MemoizedCursorView
+       * but it is. */
+      static_cast<MemoizedCursorView *>(cursorView())->redrawCursor(rect);
+    }
+  } while (1);
 }
 
 KDRect GraphView::boundsWithoutBanner() const {

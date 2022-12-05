@@ -17,19 +17,21 @@ public:
   PointsOfInterestCache clone() const;
 
   void setBounds(float start, float end);
-  void computeNextStep();
   bool isFullyComputed() const { return m_start == m_computedStart && m_end == m_computedEnd; }
 
   int numberOfPoints() const { return m_list.numberOfPoints(); }
   int numberOfPoints(Poincare::Solver<double>::Interest interest) const;
   Poincare::PointOfInterest pointAtIndex(int i) const { return m_list.pointAtIndex(i); }
 
+  bool computeUntilNthPoint(int n);
+  void computeNextStep();
+
   Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);
   bool hasInterestAtCoordinates(double x, double y, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);
 
-  float step() const { return (m_end - m_start) / k_numberOfSteps; }
 private:
   constexpr static float k_numberOfSteps = 25.0;
+  float step() const { return (m_end - m_start) / k_numberOfSteps; }
 
   void stripOutOfBounds();
   void computeBetween(float start, float end);

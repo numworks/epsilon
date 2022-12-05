@@ -21,6 +21,28 @@ private:
   TypeBlock m_blocks[N];
 };
 
+template<BlockType type, unsigned ...Len>
+constexpr static auto MakeTree(const Tree<Len> (&...nodes)) {
+  // Compute the total length of the children
+  constexpr unsigned k_numberOfChildren = sizeof...(Len);
+  constexpr unsigned k_numberOfChildrenBlocks = (0 + ... + Len);
+  constexpr size_t numberOfBlocksInNode = TypeBlock::NumberOfMetaBlocks(type);
+
+  Tree<k_numberOfChildrenBlocks + numberOfBlocksInNode> tree;
+  CreateNode<type>(&tree, k_numberOfChildren);
+
+  size_t blockIndex = numberOfBlocksInNode;
+  std::initializer_list<Node> childrenNodes{static_cast<Node>(nodes)...};
+  for (Node node : childrenNodes) {
+    // We can't use node.copyTreeTo(tree.blockAtIndex(blockIndex++)) because memcpy isn't constexpr
+    // TODO: use constexpr version of memcpy in copyTreeTo?
+    for (size_t i = 0; i < node.treeSize(); i++) {
+      tree[blockIndex++] = *(node.block() + i);
+    }
+  }
+  return tree;
+}
+
 template<unsigned ...Len> static constexpr auto Add(const Tree<Len> (&...children)) { return MakeTree<BlockType::Addition>(children...); }
 
 template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Div(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Division>(child1, child2); }
@@ -32,27 +54,6 @@ template<unsigned ...Len> static constexpr auto Set(const Tree<Len> (&...childre
 template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Pow(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Power>(child1, child2); }
 
 template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Sub(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Subtraction>(child1, child2); }
-
-template<BlockType type, unsigned ...Len>
-constexpr static auto MakeTree(const Tree<Len> (&...nodes)) {
-  // Compute the total length of the children
-  constexpr unsigned k_numberOfChildren = sizeof...(Len);
-  constexpr unsigned k_numberOfChildrenBlocks = (... + Len);
-  constexpr size_t numberOfBlocksInNode = TypeBlock::NumberOfMetaBlocks(type);
-
-  Tree<k_numberOfChildrenBlocks + numberOfBlocksInNode> tree;
-  CreateNode<type>(&tree, k_numberOfChildren);
-
-  size_t blockIndex = numberOfBlocksInNode;
-  for (Node node : {static_cast<Node>(nodes)...}) {
-    // We can't use node.copyTreeTo(tree.blockAtIndex(blockIndex++)) because memcpy isn't constexpr
-    // TODO: use constexpr version of memcpy in copyTreeTo?
-    for (size_t i = 0; i < node.treeSize(); i++) {
-      tree[blockIndex++] = *(node.block() + i);
-    }
-  }
-  return tree;
-}
 
 template <BlockType blockType, unsigned N, typename... Types>
 constexpr static void CreateNode(Tree<N> * tree, Types... args) {

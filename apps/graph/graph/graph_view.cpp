@@ -339,7 +339,7 @@ void GraphView::drawParametric(KDContext * ctx, KDRect rect, ContinuousFunction 
  * reasons:
  * - First, it makes no sense to wait for an Idle event on simulator to draw
  *   interests since there is no slowness issue. If the Idle event was awaited,
- *   the use woud notice a bit of a latency before the points are drawn.
+ *   the user woud notice a bit of a latency before the points are drawn.
  * - Second, we want to be able to take screenshots of scenari with points
  *   of interests, and to test the feature with the fuzzer. When running
  *   a scenario, no Idle event is ever fired, so the points would never be

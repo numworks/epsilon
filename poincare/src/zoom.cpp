@@ -200,7 +200,7 @@ Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a, Coordina
    *   directions.
    * The tolerance is chosen to be as small as possible while still being large
    * enough to give good results in practice. Since callers of Zoom do not rely
-   *on high levels of precision, this can be increased if need be.
+   * on high levels of precision, this can be increased if need be.
    * FIXME Tolerance for detecting approximation errors should be computed by
    * analysing the input expression. */
   constexpr float k_tolerance = 4.f * Solver<float>::k_relativePrecision;

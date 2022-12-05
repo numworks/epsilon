@@ -167,16 +167,16 @@ void TableView::ContentView::layoutSubviews(bool force, bool updateCellContent) 
 
 int TableView::ContentView::numberOfDisplayableRows() const {
   int rowOffset = rowsScrollingOffset();
-  int cumulatedHeight = m_tableView->bounds().height() + invisibleHeight();
-  int cumulatedRowIndex = m_dataSource->indexAfterCumulatedHeight(cumulatedHeight);
-  return std::min(m_dataSource->numberOfRows(), cumulatedRowIndex + 1) - rowOffset;
+  int cumulatedHeightOfLastVisiblePixel = m_tableView->bounds().height() + invisibleHeight() - 1;
+  int cumulatedRowIndexOfLastVisiblePixel = m_dataSource->indexAfterCumulatedHeight(cumulatedHeightOfLastVisiblePixel);
+  return std::min(m_dataSource->numberOfRows(), cumulatedRowIndexOfLastVisiblePixel + 1) - rowOffset;
 }
 
 int TableView::ContentView::numberOfDisplayableColumns() const {
   int columnOffset = columnsScrollingOffset();
-  int cumulatedWidth = m_tableView->bounds().width() + invisibleWidth();
-  int cumulatedColumnIndex = m_dataSource->indexAfterCumulatedWidth(cumulatedWidth);
-  return std::min(m_dataSource->numberOfColumns(), cumulatedColumnIndex + 1) - columnOffset;
+  int cumulatedWidthOfLastVisiblePixel = m_tableView->bounds().width() + invisibleWidth() - 1;
+  int cumulatedColumnIndexOfLastVisiblePixel = m_dataSource->indexAfterCumulatedWidth(cumulatedWidthOfLastVisiblePixel);
+  return std::min(m_dataSource->numberOfColumns(), cumulatedColumnIndexOfLastVisiblePixel + 1) - columnOffset;
 }
 
 }

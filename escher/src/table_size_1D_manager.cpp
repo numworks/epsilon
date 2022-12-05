@@ -92,7 +92,7 @@ int MemoizedTableSize1DManager<N>::computeIndexAfterCumulatedSize(KDCoordinate o
     for (int i = m_memoizedIndexOffset; i < nLines; i++) {
       // From here on, memoization might be updated.
       cumulatedSize += sizeAtIndex(i);
-      if (offset <= cumulatedSize) {
+      if (offset < cumulatedSize) {
         return i;
       }
     }
@@ -101,7 +101,7 @@ int MemoizedTableSize1DManager<N>::computeIndexAfterCumulatedSize(KDCoordinate o
   for (int i = m_memoizedIndexOffset - 1; i >= 0; i--) {
     // From here on, memoization might be updated.
     cumulatedSize -= sizeAtIndex(i);
-    if (offset > cumulatedSize) {
+    if (offset >= cumulatedSize) {
       return i;
     }
   }

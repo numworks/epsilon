@@ -8,8 +8,9 @@
 namespace Graph {
 
 class GraphView : public Shared::FunctionGraphView, public Shared::PlotPolicy::WithCurves {
+  friend class InterestView;
 public:
-  GraphView(Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView, InterestView * interestView);
+  GraphView(Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView);
 
   // FunctionGraphView
   void reload(bool resetInterrupted = false, bool force = false) override;
@@ -25,24 +26,28 @@ public:
   void tidyModel(int i) const override;
   void setFocus(bool focus) override;
 
-  bool recordWasInterrupted(Ion::Storage::Record record) const;
+  void setInterest(Poincare::Solver<double>::Interest interest) { m_interest = interest; }
+  void resumePointsOfInterestDrawing();
 
   void drawTangent(bool tangent) { m_tangent = tangent; }
-  InterestView * interestView() { return m_interestView; }
 
 private:
   constexpr static int k_externRectMargin = 2;
 
   static bool FunctionIsDiscontinuousBetweenFloatValues(float x1, float x2, void * model, void * context);
-  Escher::View * ornamentView() const override { return m_interestView; }
+  Escher::View * ornamentView() const override { return &m_interestView; }
   void drawCartesian(KDContext * ctx, KDRect rect, Shared::ContinuousFunction * f, Ion::Storage::Record record, float tMin, float tMax, float tStep, DiscontinuityTest discontinuity, Axis axis, KDCoordinate rectMin, KDCoordinate rectMax) const;
   void drawPolar(KDContext * ctx, KDRect rect, Shared::ContinuousFunction * f, float tMin, float tMax, float tStep, DiscontinuityTest discontinuity) const;
   void drawParametric(KDContext * ctx, KDRect rect, Shared::ContinuousFunction * f, float tMin, float tMax, float tStep, DiscontinuityTest discontinuity) const;
+  void drawPointsOfInterest(KDContext * ctx, KDRect rect);
 
   KDRect boundsWithoutBanner() const;
 
   mutable int m_areaIndex;
-  mutable InterestView * m_interestView;
+  mutable InterestView m_interestView;
+  mutable int m_nextPointOfInterestIndex;
+  Poincare::Solver<double>::Interest m_interest;
+  bool m_computePointsOfInterest;
   bool m_tangent;
 };
 

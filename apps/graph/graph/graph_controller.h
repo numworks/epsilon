@@ -5,7 +5,6 @@
 #include "curve_parameter_controller.h"
 #include "graph_controller_helper.h"
 #include "graph_view.h"
-#include "interest_view.h"
 #include "points_of_interest_cache.h"
 #include "../continuous_function_store.h"
 #include <apps/shared/with_record.h>
@@ -77,7 +76,6 @@ private:
 
   Shared::RoundCursorView m_cursorView;
   BannerView m_bannerView;
-  InterestView m_interestView;
   GraphView m_view;
   Shared::InteractiveCurveViewRange * m_graphRange;
   CurveParameterController m_curveParameterController;

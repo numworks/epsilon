@@ -23,7 +23,7 @@ const char * AreaBetweenCurvesGraphController::title() {
 
 void AreaBetweenCurvesGraphController::viewWillAppear() {
   IntegralGraphController::viewWillAppear();
-  static_cast<GraphView *>(m_graphView)->interestView()->setInterest(Solver<double>::Interest::Intersection);
+  static_cast<GraphView *>(m_graphView)->setInterest(Solver<double>::Interest::Intersection);
 }
 
 void AreaBetweenCurvesGraphController::viewDidDisappear() {

@@ -92,6 +92,7 @@ public:
 
 protected:
   void setBannerOverlapsGraph(bool bannerOverlapsGraph) { m_bannerOverlapsGraph = bannerOverlapsGraph; }
+  virtual KDRect cursorFrame() = 0;
 
 private:
   constexpr static int8_t k_stampDashSize = 5;
@@ -110,7 +111,6 @@ private:
   virtual void drawPlot(KDContext * ctx, KDRect rect) const = 0;
   virtual KDRect bannerFrame() = 0;
   virtual void privateSetCursorView(CursorView *) = 0;
-  virtual KDRect cursorFrame() = 0;
 
   CurveViewRange * m_range;
   mutable int8_t m_stampDashIndex;
@@ -125,6 +125,10 @@ public:
   using AbstractPlotView::AbstractPlotView;
 
   CursorView * cursorView() const override final { return CCursor::cursorView(this); }
+
+protected:
+  KDRect cursorFrame() override final { return CCursor::cursorFrame(this); }
+
 private:
   void drawAxesAndGrid(KDContext * ctx, KDRect rect) const override final { CAxes::drawAxesAndGrid(this, ctx, rect); }
   void reloadAxes() override final { CAxes::reloadAxes(this); }
@@ -132,7 +136,6 @@ private:
   Escher::View * bannerView() const override final { return CBanner::bannerView(this); }
   KDRect bannerFrame() override final { return CBanner::bannerFrame(this); }
   void privateSetCursorView(CursorView * cursorView) override final { CCursor::privateSetCursorView(this, cursorView); }
-  KDRect cursorFrame() override final { return CCursor::cursorFrame(this); }
 };
 
 }

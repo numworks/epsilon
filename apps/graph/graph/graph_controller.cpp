@@ -13,8 +13,7 @@ namespace Graph {
 GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * curveViewRange, CurveViewCursor * cursor, int * indexFunctionSelectedByCursor, ButtonRowController * header) :
   FunctionGraphController(parentResponder, inputEventHandlerDelegate, header, curveViewRange, &m_view, cursor, indexFunctionSelectedByCursor),
   m_bannerView(this, inputEventHandlerDelegate, this),
-  m_interestView(&m_view),
-  m_view(curveViewRange, m_cursor, &m_bannerView, &m_cursorView, &m_interestView),
+  m_view(curveViewRange, m_cursor, &m_bannerView, &m_cursorView),
   m_graphRange(curveViewRange),
   m_curveParameterController(inputEventHandlerDelegate, curveViewRange, &m_bannerView, m_cursor, &m_view, this),
   m_functionSelectionController(this)
@@ -31,8 +30,8 @@ I18n::Message GraphController::emptyMessage() {
 
 void GraphController::viewWillAppear() {
   m_view.drawTangent(false);
+  m_view.setInterest(Solver<double>::Interest::None);
   m_cursorView.resetMemoization();
-  m_interestView.setInterest(Solver<double>::Interest::None);
   m_view.setCursorView(&m_cursorView);
   FunctionGraphController::viewWillAppear();
   selectFunctionWithCursor(indexFunctionSelectedByCursor(), true);
@@ -46,7 +45,7 @@ void GraphController::didBecomeFirstResponder() {
 bool GraphController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Idle) {
     // Compute the points of interest when the user is not active
-    m_interestView.resumePointsOfInterestDrawing();
+    m_view.resumePointsOfInterestDrawing();
     return true;
   }
   return Shared::FunctionGraphController::handleEvent(event);

@@ -1,5 +1,6 @@
 #include "points_of_interest_cache.h"
 #include "../app.h"
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <apps/shared/poincare_helpers.h>
 
 using namespace Poincare;
@@ -41,15 +42,22 @@ void PointsOfInterestCache::setBounds(float start, float end) {
   m_checksum = checksum;
 }
 
-void PointsOfInterestCache::computeNextStep() {
-  if (m_computedEnd < m_end) {
-    computeBetween(m_computedEnd, std::clamp(m_computedEnd + step(), m_start, m_end));
-    return;
+bool PointsOfInterestCache::computeUntilNthPoint(int n) {
+  while (n >= numberOfPoints() && !isFullyComputed()) {
+    /* Use a checkpoint each time a step is computed so that plot can be
+     * navigated in parallel of computation. */
+    UserCircuitBreakerCheckpoint checkpoint;
+    // Clone the cache to prevent modifying the pool before the checkpoint
+    PointsOfInterestCache cacheClone = clone();
+    if (AnyKeyCircuitBreakerRun(checkpoint)) {
+      cacheClone.computeNextStep();
+    } else {
+      return false;
+    }
+    checkpoint.discard();
+    *this = cacheClone;
   }
-  if (m_computedStart > m_start) {
-    computeBetween(std::clamp(m_computedStart - step(), m_start, m_end), m_computedStart);
-    return;
-  }
+  return true;
 }
 
 int PointsOfInterestCache::numberOfPoints(Poincare::Solver<double>::Interest interest) const {
@@ -111,6 +119,17 @@ void PointsOfInterestCache::stripOutOfBounds() {
     if (x < m_start || m_end < x) {
       m_list.list().removeChildAtIndexInPlace(i);
     }
+  }
+}
+
+void PointsOfInterestCache::computeNextStep() {
+  if (m_computedEnd < m_end) {
+    computeBetween(m_computedEnd, std::clamp(m_computedEnd + step(), m_start, m_end));
+    return;
+  }
+  if (m_computedStart > m_start) {
+    computeBetween(std::clamp(m_computedStart - step(), m_start, m_end), m_computedStart);
+    return;
   }
 }
 

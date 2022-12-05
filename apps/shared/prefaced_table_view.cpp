@@ -94,7 +94,7 @@ void PrefacedTableView::layoutSubviews(bool force) {
 KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedColumnWidth(int i) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  KDCoordinate result = m_mainDataSource->columnWidth(relativeColumn(i));
+  KDCoordinate result = m_mainDataSource->columnWidth(columnIndexInMainDataSource(i));
   m_mainDataSource->lockMemoization(false);
   return result;
 }
@@ -102,7 +102,7 @@ KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedColumnWidth(i
 KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedRowHeight(int j) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  KDCoordinate result = m_mainDataSource->rowHeight(relativeRow(j));
+  KDCoordinate result = m_mainDataSource->rowHeight(rowIndexInMainDataSource(j));
   m_mainDataSource->lockMemoization(false);
   return result;
 }
@@ -110,7 +110,7 @@ KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedRowHeight(int
 KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedCumulatedWidthBeforeIndex(int i) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  KDCoordinate result = m_mainDataSource->cumulatedWidthBeforeIndex(relativeColumn(i));
+  KDCoordinate result = m_mainDataSource->cumulatedWidthBeforeIndex(columnIndexInMainDataSource(i));
   m_mainDataSource->lockMemoization(false);
   return result;
 }
@@ -118,7 +118,7 @@ KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedCumulatedWidt
 KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedCumulatedHeightBeforeIndex(int j) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  KDCoordinate result = m_mainDataSource->cumulatedHeightBeforeIndex(relativeRow(j));
+  KDCoordinate result = m_mainDataSource->cumulatedHeightBeforeIndex(rowIndexInMainDataSource(j));
   m_mainDataSource->lockMemoization(false);
   return result;
 }

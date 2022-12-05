@@ -28,8 +28,8 @@ private:
     KDCoordinate nonMemoizedCumulatedWidthBeforeIndex(int i) override;
     int nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX) override;
 
-    int relativeColumn(int i) override { assert(i == 0 || i == 1); return m_prefaceColumn + i; }
-    int relativeRow(int j) override { return (m_prefaceRow >= 0 && j == indexAfterCumulatedHeight(offset().y())) ? m_prefaceRow : j; }
+    int columnIndexInMainDataSource(int i) override { assert(i == 0 || i == 1); return m_prefaceColumn + i; }
+    int rowIndexInMainDataSource(int j) override { return (m_prefaceRow >= 0 && j == indexAfterCumulatedHeight(offset().y())) ? m_prefaceRow : j; }
 
     const int m_prefaceColumn;
     int m_prefaceRow;

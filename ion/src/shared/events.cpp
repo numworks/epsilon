@@ -182,11 +182,14 @@ Event privateSharedGetEvent(int * timeout) {
 
 Event sharedGetEvent(int * timeout) {
   Event event = privateSharedGetEvent(timeout);
-  if (event == None && !sIdleWasSent) {
-    sIdleWasSent = true;
-    return Idle;
+  if (event == None) {
+    if (!sIdleWasSent) {
+      sIdleWasSent = true;
+      return Idle;
+    }
+  } else {
+    sIdleWasSent = false;
   }
-  sIdleWasSent = sIdleWasSent && event == None;
   return event;
 }
 

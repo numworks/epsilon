@@ -38,7 +38,7 @@ void StackViewController::ControllerView::pushStack(ViewController * vc) {
   KDColor textColor = Palette::GrayDarkMiddle;
   KDColor backgroundColor = KDColorWhite;
   KDColor separatorColor = Palette::GrayBright;
-  int numberOfStacks = m_stackViews.length();
+  int numberOfStacks = m_stackViewHeaders.length();
   if (m_style == Style::GrayGradation) {
     textColor = KDColorWhite;
     constexpr KDColor k_grayGradationColors[] = { Palette::PurpleBright, Palette::GrayDark, Palette::GrayDarkMiddle};
@@ -53,7 +53,7 @@ void StackViewController::ControllerView::pushStack(ViewController * vc) {
   } else {
     assert(m_style == Style::WhiteUniform);
   }
-  m_stackViews.push(StackView(vc, textColor, backgroundColor, separatorColor));
+  m_stackViewHeaders.push(StackViewHeader(vc, textColor, backgroundColor, separatorColor));
 }
 
 KDSize StackViewController::ControllerView::minimalSizeForOptimalDisplay() const {
@@ -62,7 +62,7 @@ KDSize StackViewController::ControllerView::minimalSizeForOptimalDisplay() const
   }
   KDSize size = m_contentView->minimalSizeForOptimalDisplay();
   int heightDiff = Metric::StackTitleHeight + (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
-  int numberOfStacks = m_stackViews.length();
+  int numberOfStacks = m_stackViewHeaders.length();
   assert(m_extendVertically || numberOfStacks > 0);
   return KDSize(size.width(), m_extendVertically ? 0 : (size.height() + heightDiff * numberOfStacks + Metric::CellSeparatorThickness));
 }
@@ -80,9 +80,9 @@ void StackViewController::ControllerView::layoutSubviews(bool force) {
   KDCoordinate width = m_frame.width();
   int heightOffset = 0;
   int heightDiff = Metric::StackTitleHeight + (m_headersOverlapHeaders ? 0 : Metric::CellSeparatorThickness);
-  int numberOfStacks = m_stackViews.length();
+  int numberOfStacks = m_stackViewHeaders.length();
   for (int i = 0; i < numberOfStacks; i++) {
-    m_stackViews.elementAtIndex(i)->setFrame(
+    m_stackViewHeaders.elementAtIndex(i)->setFrame(
         KDRect(0, heightOffset, width, Metric::StackTitleHeight + Metric::CellSeparatorThickness),
         force);
     heightOffset += heightDiff;
@@ -122,21 +122,21 @@ bool StackViewController::ControllerView::borderShouldOverlapContent() const {
    * has a different border color, and should not overlap with anything (second
    * header as well as content). In that case, we ensure that this additional
    * border will not override the first header stack's bottom border. */
-  int numberOfStacks = m_stackViews.length();
+  int numberOfStacks = m_stackViewHeaders.length();
   return m_headersOverlapContent && numberOfStacks > 0 && m_contentView &&
          (m_headersOverlapHeaders || numberOfStacks > 1);
 }
 
 int StackViewController::ControllerView::numberOfSubviews() const {
-  return m_stackViews.length() + (m_contentView == nullptr ? 0 : 1) +
+  return m_stackViewHeaders.length() + (m_contentView == nullptr ? 0 : 1) +
          (borderShouldOverlapContent() ? 1 : 0);
 }
 
 View * StackViewController::ControllerView::subviewAtIndex(int index) {
-  int numberOfStacks = m_stackViews.length();
+  int numberOfStacks = m_stackViewHeaders.length();
   if (index < numberOfStacks) {
     assert(index >= 0);
-    return m_stackViews.elementAtIndex(index);
+    return m_stackViewHeaders.elementAtIndex(index);
   }
   if (index == numberOfStacks) {
     return m_contentView;

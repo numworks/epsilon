@@ -1,6 +1,7 @@
 #ifndef ESCHER_EDITABLE_EXPRESSION_CELL_H
 #define ESCHER_EDITABLE_EXPRESSION_CELL_H
 
+#include <escher/bordered.h>
 #include <escher/responder.h>
 #include <escher/highlight_cell.h>
 #include <escher/metric.h>

@@ -1,5 +1,5 @@
-#ifndef ESCHER_STACK_VIEW_H
-#define ESCHER_STACK_VIEW_H
+#ifndef ESCHER_STACK_HEADER_VIEW_H
+#define ESCHER_STACK_HEADER_VIEW_H
 
 #include <escher/bordered.h>
 #include <escher/view.h>
@@ -7,9 +7,9 @@
 
 namespace Escher {
 
-class StackView : public View, public Bordered {
+class StackViewHeader : public View, public Bordered {
 public:
-  StackView(ViewController * controller = nullptr, KDColor textColor = KDColorBlack, KDColor = KDColorBlack, KDColor separatorColor = KDColorBlack);
+  StackViewHeader(ViewController * controller = nullptr, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorBlack, KDColor separatorColor = KDColorBlack);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
 protected:

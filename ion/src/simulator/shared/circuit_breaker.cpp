@@ -23,9 +23,14 @@ bool hasCheckpoint(CheckpointType type) {
 }
 
 void unsetLowerCheckpoints(CheckpointType type) {
-  for (int i = static_cast<int>(type) + 1; i < k_numberOfCheckpointTypes; i++) {
-    unsetCheckpoint(static_cast<CheckpointType>(i));
+  int lowerTypeIndex = static_cast<int>(type) + 1;
+  if (lowerTypeIndex >= k_numberOfCheckpointTypes) {
+    return;
   }
+  CheckpointType lowerType = static_cast<CheckpointType>(lowerTypeIndex);
+  /* type just need to be incremented since unsetCheckpoint will call
+   * unsetLowerCheckpoints again. */
+  unsetCheckpoint(static_cast<CheckpointType>(lowerType));
 }
 
 void unsetCheckpoint(CheckpointType type) {

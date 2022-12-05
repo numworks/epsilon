@@ -63,6 +63,7 @@ public:
 
 #if ESCHER_VIEW_LOGGING
   friend std::ostream &operator<<(std::ostream &os, View &view);
+  __attribute__((__used__)) void log() const;
 #endif
 protected:
   /* The whole point of the dirty-tracking mechanism is to identify which

@@ -171,17 +171,35 @@ void View::logAttributes(std::ostream &os) const {
 }
 
 std::ostream &operator<<(std::ostream &os, View &view) {
-  os << "<" << view.className();
-  view.logAttributes(os);
-  os << ">";
-  for (int i=0; i<view.numberOfSubviews(); i++) {
-    assert(view.subview(i)->m_superview == &view);
-    os << *view.subview(i);
+  // TODO find something better than this static variable, like a custom stream
+  static int indentColumn = 0;
+  constexpr static int bufferSize = 200;;
+  char indent[bufferSize];
+  for (int i = 0; i < indentColumn; i++) {
+    indent[i] = ' ';
   }
-  os << "</" << view.className() << ">";
+  indent[indentColumn] = 0;
+  os << indent << "<" << view.className();
+  view.logAttributes(os);
+  if (view.numberOfSubviews()) {
+    os << ">\n";
+    for (int i=0; i<view.numberOfSubviews(); i++) {
+      indentColumn += 2;
+      assert(view.subview(i)->m_superview == &view);
+      os << *view.subview(i) << '\n';
+      indentColumn -= 2;
+    }
+    os << indent << "</" << view.className() << ">";
+  } else {
+    os << "/>";
+  }
   return os;
 }
 
+void View::log() const {
+  // TODO << should use a const View but it requires a const subview
+  std::cout << *const_cast<View*>(this);
+}
 #endif
 
 }

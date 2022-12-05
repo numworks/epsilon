@@ -158,3 +158,13 @@ endef
 $(eval $(call depends_on_transparent_image,escher/src/dropdown_view.cpp,$(addprefix escher/image/,\
   caret.png \
 )))
+
+ifeq ($(DEBUG),1)
+  ifeq ($(PLATFORM),simulator)
+    ESCHER_VIEW_LOGGING ?= 1
+  endif
+endif
+
+ifdef ESCHER_VIEW_LOGGING
+SFLAGS += -DESCHER_VIEW_LOGGING=$(ESCHER_VIEW_LOGGING)
+endif

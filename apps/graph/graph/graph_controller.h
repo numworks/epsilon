@@ -81,7 +81,6 @@ private:
   CurveParameterController m_curveParameterController;
   FunctionSelectionController m_functionSelectionController;
   constexpr static int k_numberOfCaches = 5;
-  // TODO: Erase caches when store checksum changed
   Ion::RingBuffer<PointsOfInterestCache, k_numberOfCaches> m_pointsOfInterest;
 };
 

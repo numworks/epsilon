@@ -37,7 +37,7 @@ private:
   void computeBetween(float start, float end);
   void append(double x, double y, Poincare::Solver<double>::Interest, uint32_t data = 0);
 
-  Ion::Storage::Record m_record;
+  Ion::Storage::Record m_record; // This is not const because of the copy constructor
   uint32_t m_checksum;
   float m_start;
   float m_end;

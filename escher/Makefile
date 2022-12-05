@@ -77,6 +77,7 @@ escher_src += $(addprefix escher/src/,\
   selectable_list_view_controller.cpp \
   selectable_table_view.cpp \
   solid_color_view.cpp \
+  stack_view.cpp \
   stack_view_controller.cpp \
   stack_view_header.cpp \
   subapp_cell.cpp \

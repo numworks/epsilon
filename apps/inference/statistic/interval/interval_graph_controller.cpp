@@ -44,7 +44,7 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Up || event == Ion::Events::Down) {
     selectAdjacentInterval(event == Ion::Events::Up);
-    static_cast<Escher::StackViewController*>(parentResponder())->controllerView()->reload();
+    static_cast<Escher::StackViewController*>(parentResponder())->view()->reload();
     return true;
   }
   return false;

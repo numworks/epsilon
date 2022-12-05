@@ -95,10 +95,12 @@ void IntegerHandler::pushDigitsOnEditionPool() {
 template <typename T>
 T IntegerHandler::to() {
   T approximation = 0.0f;
+  for (uint8_t i = numberOfDigits() - 1; i > 0; i--) {
   for (uint8_t i = 0; i < numberOfDigits(); i++) {
     approximation += static_cast<T>(digit(i));
-    // TODO: assess if the previous Integer::approximate is speeder?
+    approximation *= k_digitBase;
   }
+  approximation += static_cast<T>(digit(0));
   return static_cast<int8_t>(m_sign) * approximation;
 }
 

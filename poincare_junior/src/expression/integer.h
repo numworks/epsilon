@@ -77,6 +77,7 @@ public:
   constexpr static uint8_t k_maxNumberOfDigits = 32;
   constexpr static uint8_t k_maxNumberOfNativeDigits = k_maxNumberOfDigits / sizeof(native_uint_t);
 private:
+  static constexpr float k_digitBase = 1 << sizeof(uint8_t) * Bit::k_numberOfBitsInByte;
   static int8_t Ucmp(const IntegerHandler & a, const IntegerHandler & b); // -1, 0, or 1
   /* Warning: Usum, Sum, Mult, Udiv return IntegerHandler whose digits pointer
    * is static working buffers. We could return EditionReference but we save the
@@ -99,6 +100,7 @@ private:
   bool usesImmediateDigit() const { return m_numberOfDigits == 1; }
   NonStrictSign m_sign;
   union Digits {
+    // In little-endian format
     const uint8_t * m_digits;
     uint8_t m_digit;
   };

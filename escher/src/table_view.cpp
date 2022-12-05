@@ -179,16 +179,4 @@ int TableView::ContentView::numberOfDisplayableColumns() const {
   return std::min(m_dataSource->numberOfColumns(), cumulatedColumnIndex + 1) - columnOffset;
 }
 
-int TableView::ContentView::rowsScrollingOffset() const {
-  /* Here, we want to translate the offset at which our tableView is displaying
-   * us into an integer offset we can use to ask cells to our data source. */
-  return m_dataSource->indexAfterCumulatedHeight(invisibleHeight());
-}
-
-int TableView::ContentView::columnsScrollingOffset() const {
-  /* Here, we want to translate the offset at which our tableView is displaying
-   * us into an integer offset we can use to ask cells to our data source. */
-  return m_dataSource->indexAfterCumulatedWidth(invisibleWidth());
-}
-
 }

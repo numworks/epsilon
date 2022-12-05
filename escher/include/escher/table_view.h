@@ -45,8 +45,8 @@ protected:
     TableViewDataSource * dataSource() { return m_dataSource; }
     KDCoordinate invisibleHeight() const { return std::max(m_tableView->contentOffset().y() - m_tableView->topMargin(), 0); }
     KDCoordinate invisibleWidth() const { return std::max(m_tableView->contentOffset().x() - m_tableView->leftMargin(), 0); }
-    int rowsScrollingOffset() const;
-    int columnsScrollingOffset() const;
+    int rowsScrollingOffset() const { return m_dataSource->indexAfterCumulatedHeight(invisibleHeight()); }
+    int columnsScrollingOffset() const { return m_dataSource->indexAfterCumulatedWidth(invisibleWidth()); }
     int numberOfDisplayableRows() const;
     int numberOfDisplayableColumns() const;
     KDRect cellFrame(int i, int j) const;

@@ -11,6 +11,7 @@ void playWithConstexprNodes();
 void testExpressionComparison();
 void testRunTimeCrashIllFormedExpression();
 void testSet();
+void testVariables();
 
 typedef void (*Test)();
 
@@ -30,6 +31,7 @@ int main() {
   // Dummy call just to keep it in the executable and be able to call it from debugger
   intermediaryPrint();
 
+  test(testVariables, "TEST VARIABLES");
   test(testSet, "TEST SET");
   test(elementaryTreeManipulation, "ELEMENTARY TREE MANIPULATION");
   test(testChildrenIterator, "TEST NODE CHILDREN ITERATOR");

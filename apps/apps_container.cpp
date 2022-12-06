@@ -32,13 +32,11 @@ AppsContainer::AppsContainer() :
 {
   m_emptyBatteryWindow.setFrame(KDRectScreen, false);
   Ion::Storage::FileSystem::sharedFileSystem()->setDelegate(this);
-#if !PLATFORM_DEVICE
   Ion::Display::setScreenshotCallback([]() {
     AppsContainer * container = sharedAppsContainer();
     container->m_blinkTimer.forceCursorVisible();
     container->window()->redraw();
   });
-#endif
   Shared::RecordRestrictiveExtensions::registerRestrictiveExtensionsToSharedStorage();
 }
 

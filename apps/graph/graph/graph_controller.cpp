@@ -59,6 +59,17 @@ template <typename T> Coordinate2D<T> evaluatorSecondCurve(T t, const void * mod
   const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
   return f->evaluateXYAtParameter(t, context, 1);
 }
+template <typename T, int coordinate> Coordinate2D<T> parametricExpressionEvaluator(T t, const void * model, Context * context) {
+  const Expression * e = static_cast<const Expression *>(model);
+  assert(e->numberOfChildren() == 2);
+  assert(coordinate == 0 || coordinate == 1);
+  T value = PoincareHelpers::ApproximateWithValueForSymbol<T>(e->childAtIndex(coordinate), ContinuousFunction::k_unknownName, t, context);
+  return Coordinate2D<T>(t, value);
+}
+template <typename T> Coordinate2D<T> polarExpressionEvaluator(T t, const void * model, Context * context) {
+  const Expression * e = static_cast<const Expression *>(model);
+  return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol<T>(*e, ContinuousFunction::k_unknownName, t, context));
+}
 
 Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange) const {
   Context * context = App::app()->localContext();
@@ -75,10 +86,29 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     if (f->basedOnCostlyAlgorithms(context)) {
       continue;
     }
-    if (f->properties().isPolar() || f->properties().isParametric()) {
+    if (f->properties().isPolar()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
       zoom.setBounds(f->tMin(), f->tMax());
       zoom.fitFullFunction(evaluator<float>, f.operator->());
+    } else if (f->properties().isParametric()) {
+      assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
+      Expression e = f->expressionReduced(context);
+      assert(e.type() == ExpressionNode::Type::Matrix && e.numberOfChildren() == 2);
+
+      // Compute the ordinate range of x(t) and y(t)
+      Range1D ranges[2];
+      Zoom::Function2DWithContext<float> floatEvaluators[2] = {parametricExpressionEvaluator<float, 0>, parametricExpressionEvaluator<float, 1>};
+      Zoom::Function2DWithContext<double> doubleEvaluators[2] = {parametricExpressionEvaluator<double, 0>, parametricExpressionEvaluator<double, 1>};
+      for (int coordinate = 0; coordinate < 2; coordinate++) {
+        Zoom zoomAlongCoordinate(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context, k_maxFloat);
+        zoomAlongCoordinate.setBounds(f->tMin(), f->tMax());
+        zoomAlongCoordinate.fitPointsOfInterest(floatEvaluators[coordinate], &e, false, doubleEvaluators[coordinate]);
+        ranges[coordinate] = *zoomAlongCoordinate.range(false, false).y();
+      }
+
+      // Fit the zoom to the range of x(t) and y(t)
+      zoom.fitPoint(Coordinate2D<float>(ranges[0].max(), ranges[1].max()));
+      zoom.fitPoint(Coordinate2D<float>(ranges[0].min(), ranges[1].min()));
     } else {
       assert(f->properties().isCartesian());
       bool alongY = f->isAlongY();

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -37,11 +37,11 @@
 
 static int ThreadEntry(SceSize args, void *argp)
 {
-    SDL_RunThread(*(void **) argp);
+    SDL_RunThread(*(SDL_Thread **) argp);
     return 0;
 }
 
-int SDL_SYS_CreateThread(SDL_Thread *thread, void *args)
+int SDL_SYS_CreateThread(SDL_Thread *thread)
 {
     SceKernelThreadInfo status;
     int priority = 32;
@@ -59,7 +59,7 @@ int SDL_SYS_CreateThread(SDL_Thread *thread, void *args)
         return SDL_SetError("sceKernelCreateThread() failed");
     }
 
-    sceKernelStartThread(thread->handle, 4, &args);
+    sceKernelStartThread(thread->handle, 4, &thread);
     return 0;
 }
 

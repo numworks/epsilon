@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -28,6 +28,7 @@
 #include "../core/windows/SDL_windows.h"
 #endif
 #if defined(__OS2__)
+#undef HAVE_SYSCTLBYNAME
 #define INCL_DOS
 #include <os2.h>
 #ifndef QSV_NUMPROCESSORS
@@ -49,7 +50,7 @@
 #endif
 #if defined(__MACOSX__) && (defined(__ppc__) || defined(__ppc64__))
 #include <sys/sysctl.h>         /* For AltiVec check */
-#elif defined(__OpenBSD__) && defined(__powerpc__)
+#elif (defined(__OpenBSD__) || defined(__FreeBSD__)) && defined(__powerpc__)
 #include <sys/param.h>
 #include <sys/sysctl.h> /* For AltiVec check */
 #include <machine/cpu.h>
@@ -67,6 +68,13 @@
 #ifndef AT_HWCAP
 #define AT_HWCAP 16
 #endif
+#ifndef AT_PLATFORM
+#define AT_PLATFORM 15
+#endif
+/* Prevent compilation error when including elf.h would also try to define AT_* as an enum */
+#ifndef AT_NULL
+#define AT_NULL 0
+#endif
 #ifndef HWCAP_NEON
 #define HWCAP_NEON (1 << 12)
 #endif
@@ -83,6 +91,15 @@
 #endif
 #endif
 
+#if defined(HAVE_ELF_AUX_INFO)
+#include <sys/auxv.h>
+#endif
+
+#ifdef __RISCOS__
+#include <kernel.h>
+#include <swis.h>
+#endif
+
 #define CPU_HAS_RDTSC   (1 << 0)
 #define CPU_HAS_ALTIVEC (1 << 1)
 #define CPU_HAS_MMX     (1 << 2)
@@ -96,6 +113,7 @@
 #define CPU_HAS_AVX2    (1 << 10)
 #define CPU_HAS_NEON    (1 << 11)
 #define CPU_HAS_AVX512F (1 << 12)
+#define CPU_HAS_ARM_SIMD (1 << 13)
 
 #if SDL_ALTIVEC_BLITTERS && HAVE_SETJMP && !__MACOSX__ && !__OpenBSD__
 /* This is the brute force way of detecting instruction sets...
@@ -301,9 +319,11 @@ CPU_haveAltiVec(void)
 {
     volatile int altivec = 0;
 #ifndef SDL_CPUINFO_DISABLED
-#if (defined(__MACOSX__) && (defined(__ppc__) || defined(__ppc64__))) || (defined(__OpenBSD__) && defined(__powerpc__))
+#if (defined(__MACOSX__) && (defined(__ppc__) || defined(__ppc64__))) || (defined(__OpenBSD__) && defined(__powerpc__)) || (defined(__FreeBSD__) && defined(__powerpc__))
 #ifdef __OpenBSD__
     int selectors[2] = { CTL_MACHDEP, CPU_ALTIVEC };
+#elif defined(__FreeBSD__)
+    int selectors[2] = { CTL_HW, PPC_FEATURE_HAS_ALTIVEC };
 #else
     int selectors[2] = { CTL_HW, HW_VECTORUNIT };
 #endif
@@ -325,6 +345,83 @@ CPU_haveAltiVec(void)
     return altivec;
 }
 
+#if defined(__ARM_ARCH) && (__ARM_ARCH >= 6)
+static int
+CPU_haveARMSIMD(void)
+{
+	return 1;
+}
+
+#elif !defined(__arm__)
+static int
+CPU_haveARMSIMD(void)
+{
+	return 0;
+}
+
+#elif defined(__LINUX__)
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <elf.h>
+
+static int
+CPU_haveARMSIMD(void)
+{
+    int arm_simd = 0;
+    int fd;
+
+    fd = open("/proc/self/auxv", O_RDONLY);
+    if (fd >= 0)
+    {
+        Elf32_auxv_t aux;
+        while (read(fd, &aux, sizeof aux) == sizeof aux)
+        {
+            if (aux.a_type == AT_PLATFORM)
+            {
+                const char *plat = (const char *) aux.a_un.a_val;
+                if (plat) {
+                    arm_simd = strncmp(plat, "v6l", 3) == 0 ||
+                               strncmp(plat, "v7l", 3) == 0;
+                }
+            }
+        }
+        close(fd);
+    }
+    return arm_simd;
+}
+
+#elif defined(__RISCOS__)
+
+static int
+CPU_haveARMSIMD(void)
+{
+	_kernel_swi_regs regs;
+	regs.r[0] = 0;
+	if (_kernel_swi(OS_PlatformFeatures, &regs, &regs) != NULL)
+		return 0;
+
+	if (!(regs.r[0] & (1<<31)))
+		return 0;
+
+	regs.r[0] = 34;
+	regs.r[1] = 29;
+	if (_kernel_swi(OS_PlatformFeatures, &regs, &regs) != NULL)
+		return 0;
+
+	return regs.r[0];
+}
+
+#else
+static int
+CPU_haveARMSIMD(void)
+{
+#warning SDL_HasARMSIMD is not implemented for this ARM platform. Write me.
+    return 0;
+}
+#endif
+
 #if defined(__LINUX__) && defined(__ARM_ARCH) && !defined(HAVE_GETAUXVAL)
 static int
 readProcAuxvForNeon(void)
@@ -345,7 +442,6 @@ readProcAuxvForNeon(void)
 }
 #endif
 
-
 static int
 CPU_haveNEON(void)
 {
@@ -361,15 +457,22 @@ CPU_haveNEON(void)
 #  endif
 /* All WinRT ARM devices are required to support NEON, but just in case. */
     return IsProcessorFeaturePresent(PF_ARM_NEON_INSTRUCTIONS_AVAILABLE) != 0;
-#elif !defined(__ARM_ARCH)
-    return 0;  /* not an ARM CPU at all. */
-#elif __ARM_ARCH >= 8
+#elif defined(__ARM_ARCH) && (__ARM_ARCH >= 8)
     return 1;  /* ARMv8 always has non-optional NEON support. */
-#elif defined(__APPLE__) && (__ARM_ARCH >= 7)
+#elif defined(__APPLE__) && defined(__ARM_ARCH) && (__ARM_ARCH >= 7)
     /* (note that sysctlbyname("hw.optional.neon") doesn't work!) */
     return 1;  /* all Apple ARMv7 chips and later have NEON. */
 #elif defined(__APPLE__)
     return 0;  /* assume anything else from Apple doesn't have NEON. */
+#elif defined(__OpenBSD__)
+    return 1;  /* OpenBSD only supports ARMv7 CPUs that have NEON. */
+#elif defined(HAVE_ELF_AUX_INFO) && defined(HWCAP_NEON)
+    unsigned long hasneon = 0;
+    if (elf_aux_info(AT_HWCAP, (void *)&hasneon, (int)sizeof(hasneon)) != 0)
+        return 0;
+    return ((hasneon & HWCAP_NEON) == HWCAP_NEON);
+#elif !defined(__arm__)
+    return 0;  /* not an ARM CPU at all. */
 #elif defined(__QNXNTO__)
     return SYSPAGE_ENTRY(cpuinfo)->flags & ARM_CPU_FLAG_NEON;
 #elif (defined(__LINUX__) || defined(__ANDROID__)) && defined(HAVE_GETAUXVAL)
@@ -383,6 +486,18 @@ CPU_haveNEON(void)
         if (cpu_family == ANDROID_CPU_FAMILY_ARM) {
             uint64_t cpu_features = android_getCpuFeatures();
             if ((cpu_features & ANDROID_CPU_ARM_FEATURE_NEON) != 0) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+#elif defined(__RISCOS__)
+    /* Use the VFPSupport_Features SWI to access the MVFR registers */
+    {
+        _kernel_swi_regs regs;
+        regs.r[0] = 0;
+        if (_kernel_swi(VFPSupport_Features, &regs, &regs) == NULL) {
+            if ((regs.r[2] & 0xFFF000) == 0x111000) {
                 return 1;
             }
         }
@@ -599,7 +714,7 @@ SDL_GetCPUCacheLineSize(void)
     const char *cpuType = SDL_GetCPUType();
     int a, b, c, d;
     (void) a; (void) b; (void) c; (void) d;
-    if (SDL_strcmp(cpuType, "GenuineIntel") == 0) {
+   if (SDL_strcmp(cpuType, "GenuineIntel") == 0 || SDL_strcmp(cpuType, "CentaurHauls") == 0 || SDL_strcmp(cpuType, "  Shanghai  ") == 0) {
         cpuid(0x00000001, a, b, c, d);
         return (((b >> 8) & 0xff) * 8);
     } else if (SDL_strcmp(cpuType, "AuthenticAMD") == 0 || SDL_strcmp(cpuType, "HygonGenuine") == 0) {
@@ -620,7 +735,7 @@ SDL_GetCPUFeatures(void)
     if (SDL_CPUFeatures == 0xFFFFFFFF) {
         CPU_calcCPUIDFeatures();
         SDL_CPUFeatures = 0;
-        SDL_SIMDAlignment = 4;  /* a good safe base value */
+        SDL_SIMDAlignment = sizeof(void *);  /* a good safe base value */
         if (CPU_haveRDTSC()) {
             SDL_CPUFeatures |= CPU_HAS_RDTSC;
         }
@@ -667,6 +782,10 @@ SDL_GetCPUFeatures(void)
         if (CPU_haveAVX512F()) {
             SDL_CPUFeatures |= CPU_HAS_AVX512F;
             SDL_SIMDAlignment = SDL_max(SDL_SIMDAlignment, 64);
+        }
+        if (CPU_haveARMSIMD()) {
+            SDL_CPUFeatures |= CPU_HAS_ARM_SIMD;
+            SDL_SIMDAlignment = SDL_max(SDL_SIMDAlignment, 16);
         }
         if (CPU_haveNEON()) {
             SDL_CPUFeatures |= CPU_HAS_NEON;
@@ -750,6 +869,12 @@ SDL_HasAVX512F(void)
 }
 
 SDL_bool
+SDL_HasARMSIMD(void)
+{
+    return CPU_FEATURE_AVAILABLE(CPU_HAS_ARM_SIMD);
+}
+
+SDL_bool
 SDL_HasNEON(void)
 {
     return CPU_FEATURE_AVAILABLE(CPU_HAS_NEON);
@@ -769,7 +894,7 @@ SDL_GetSystemRAM(void)
 #endif
 #ifdef HAVE_SYSCTLBYNAME
         if (SDL_SystemRAM <= 0) {
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__NetBSD__)
+#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__NetBSD__) || defined(__DragonFly__)
 #ifdef HW_REALMEM
             int mib[2] = {CTL_HW, HW_REALMEM};
 #else
@@ -803,6 +928,15 @@ SDL_GetSystemRAM(void)
             SDL_SystemRAM = (int) (sysram / 0x100000U);
         }
 #endif
+#ifdef __RISCOS__
+        if (SDL_SystemRAM <= 0) {
+            _kernel_swi_regs regs;
+            regs.r[0] = 0x108;
+            if (_kernel_swi(OS_Memory, &regs, &regs) == NULL) {
+                SDL_SystemRAM = (int)(regs.r[1] * regs.r[2] / (1024 * 1024));
+            }
+        }
+#endif
 #endif
     }
     return SDL_SystemRAM;
@@ -833,6 +967,58 @@ SDL_SIMDAlloc(const size_t len)
         retval += alignment - (((size_t) retval) % alignment);
         *(((void **) retval) - 1) = ptr;
     }
+    return retval;
+}
+
+void *
+SDL_SIMDRealloc(void *mem, const size_t len)
+{
+    const size_t alignment = SDL_SIMDGetAlignment();
+    const size_t padding = alignment - (len % alignment);
+    const size_t padded = (padding != alignment) ? (len + padding) : len;
+    Uint8 *retval = (Uint8*) mem;
+    void *oldmem = mem;
+    size_t memdiff = 0, ptrdiff;
+    Uint8 *ptr;
+
+    if (mem) {
+        void **realptr = (void **) mem;
+        realptr--;
+        mem = *(((void **) mem) - 1);
+
+        /* Check the delta between the real pointer and user pointer */
+        memdiff = ((size_t) oldmem) - ((size_t) mem);
+    }
+
+    ptr = (Uint8 *) SDL_realloc(mem, padded + alignment + sizeof (void *));
+
+    if (ptr == mem) {
+        return retval; /* Pointer didn't change, nothing to do */
+    }
+    if (ptr == NULL) {
+        return NULL; /* Out of memory, bail! */
+    }
+
+    /* Store the actual malloc pointer right before our aligned pointer. */
+    retval = ptr + sizeof (void *);
+    retval += alignment - (((size_t) retval) % alignment);
+
+    /* Make sure the delta is the same! */
+    if (mem) {
+        ptrdiff = ((size_t) retval) - ((size_t) ptr);
+        if (memdiff != ptrdiff) { /* Delta has changed, copy to new offset! */
+            oldmem = (void*) (((size_t) ptr) + memdiff);
+
+            /* Even though the data past the old `len` is undefined, this is the
+             * only length value we have, and it guarantees that we copy all the
+             * previous memory anyhow.
+             */
+            SDL_memmove(retval, oldmem, len);
+        }
+    }
+
+    /* Actually store the malloc pointer, finally. */
+    *(((void **) retval) - 1) = ptr;
     return retval;
 }
 
@@ -870,6 +1056,7 @@ main()
     printf("AVX: %d\n", SDL_HasAVX());
     printf("AVX2: %d\n", SDL_HasAVX2());
     printf("AVX-512F: %d\n", SDL_HasAVX512F());
+    printf("ARM SIMD: %d\n", SDL_HasARMSIMD());
     printf("NEON: %d\n", SDL_HasNEON());
     printf("RAM: %d MB\n", SDL_GetSystemRAM());
     return 0;

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -19,6 +19,7 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 #include "../../SDL_internal.h"
+#include "../../main/haiku/SDL_BApp.h"
 
 #if SDL_VIDEO_DRIVER_HAIKU
 
@@ -35,6 +36,8 @@ extern "C" {
 #include "SDL_bmodes.h"
 #include "SDL_bframebuffer.h"
 #include "SDL_bevents.h"
+
+#include <Url.h>
 
 /* FIXME: Undefined functions */
 //    #define HAIKU_PumpEvents NULL
@@ -123,13 +126,40 @@ HAIKU_CreateDevice(int devindex)
 
 VideoBootStrap HAIKU_bootstrap = {
     "haiku", "Haiku graphics",
-    HAIKU_Available, HAIKU_CreateDevice
+    HAIKU_CreateDevice
 };
 
 void HAIKU_DeleteDevice(SDL_VideoDevice * device)
 {
     SDL_free(device->driverdata);
     SDL_free(device);
+}
+
+static int HAIKU_ShowCursor(SDL_Cursor *cur)
+{
+	SDL_Mouse *mouse = SDL_GetMouse();
+	int show;
+	if (!mouse)
+		return 0;
+	show = (cur || !mouse->focus);
+	if (show) {
+		if (be_app->IsCursorHidden())
+			be_app->ShowCursor();
+	} else {
+		if (!be_app->IsCursorHidden())
+			be_app->HideCursor();
+	}
+	return 0;
+}
+
+static void HAIKU_MouseInit(_THIS)
+{
+	SDL_Mouse *mouse = SDL_GetMouse();
+	if (!mouse)
+		return;
+	mouse->ShowCursor = HAIKU_ShowCursor;
+	mouse->cur_cursor = (SDL_Cursor*)0x1;
+	mouse->def_cursor = (SDL_Cursor*)0x2;
 }
 
 int HAIKU_VideoInit(_THIS)
@@ -145,6 +175,8 @@ int HAIKU_VideoInit(_THIS)
     /* Init the keymap */
     HAIKU_InitOSKeymap();
 
+    HAIKU_MouseInit(_this);
+
 #if SDL_VIDEO_OPENGL
         /* testgl application doesn't load library, just tries to load symbols */
         /* is it correct? if so we have to load library here */
@@ -155,17 +187,21 @@ int HAIKU_VideoInit(_THIS)
     return (0);
 }
 
-int HAIKU_Available(void)
-{
-    return (1);
-}
-
 void HAIKU_VideoQuit(_THIS)
 {
 
     HAIKU_QuitModes(_this);
 
     SDL_QuitBeApp();
+}
+
+// just sticking this function in here so it's in a C++ source file.
+extern "C" { int HAIKU_OpenURL(const char *url); }
+int HAIKU_OpenURL(const char *url)
+{
+    BUrl burl(url);
+    const status_t rc = burl.OpenWithPreferredApplication(false);
+    return (rc == B_NO_ERROR) ? 0 : SDL_SetError("URL open failed (err=%d)", (int) rc);
 }
 
 #ifdef __cplusplus

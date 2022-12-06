@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -487,7 +487,7 @@ X11_InitModes_XRandR(_THIS)
                 display.desktop_mode = mode;
                 display.current_mode = mode;
                 display.driverdata = displaydata;
-                SDL_AddVideoDisplay(&display);
+                SDL_AddVideoDisplay(&display, SDL_FALSE);
             }
 
             X11_XRRFreeScreenResources(res);
@@ -807,7 +807,7 @@ X11_InitModes(_THIS)
         display.desktop_mode = mode;
         display.current_mode = mode;
         display.driverdata = displaydata;
-        SDL_AddVideoDisplay(&display);
+        SDL_AddVideoDisplay(&display, SDL_FALSE);
     }
 
 #if SDL_VIDEO_DRIVER_X11_XINERAMA

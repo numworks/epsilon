@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -99,8 +99,12 @@ int WIN_CreateWindowFramebuffer(_THIS, SDL_Window * window, Uint32 * format, voi
 int WIN_UpdateWindowFramebuffer(_THIS, SDL_Window * window, const SDL_Rect * rects, int numrects)
 {
     SDL_WindowData *data = (SDL_WindowData *) window->driverdata;
+    int i;
 
-    BitBlt(data->hdc, 0, 0, window->w, window->h, data->mdc, 0, 0, SRCCOPY);
+    for (i = 0; i < numrects; ++i) {
+        BitBlt(data->hdc, rects[i].x, rects[i].y, rects[i].w, rects[i].h,
+               data->mdc, rects[i].x, rects[i].y, SRCCOPY);
+    }
     return 0;
 }
 

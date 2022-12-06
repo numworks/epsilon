@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -49,12 +49,6 @@
 #include "SDL_rpievents_c.h"
 #include "SDL_rpiopengles.h"
 #include "SDL_rpimouse.h"
-
-static int
-RPI_Available(void)
-{
-    return 1;
-}
 
 static void
 RPI_Destroy(SDL_VideoDevice * device)
@@ -150,7 +144,6 @@ RPI_Create()
 VideoBootStrap RPI_bootstrap = {
     "RPI",
     "RPI Video Driver",
-    RPI_Available,
     RPI_Create
 };
 
@@ -203,7 +196,7 @@ AddDispManXDisplay(const int display_id)
 
     display.driverdata = data;
 
-    SDL_AddVideoDisplay(&display);
+    SDL_AddVideoDisplay(&display, SDL_FALSE);
 }
 
 int

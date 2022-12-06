@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -74,12 +74,6 @@ static void WIN_SuspendScreenSaver(_THIS)
 
 
 /* Windows driver bootstrap functions */
-
-static int
-WIN_Available(void)
-{
-    return (1);
-}
 
 static void
 WIN_DeleteDevice(SDL_VideoDevice * device)
@@ -224,7 +218,7 @@ WIN_CreateDevice(int devindex)
 
 
 VideoBootStrap WINDOWS_bootstrap = {
-    "windows", "SDL Windows video driver", WIN_Available, WIN_CreateDevice
+    "windows", "SDL Windows video driver", WIN_CreateDevice
 };
 
 int
@@ -386,7 +380,7 @@ SDL_DXGIGetOutputInfo(int displayIndex, int *adapterIndex, int *outputIndex)
     void *pDXGIDLL;
     char *displayName;
     int nAdapter, nOutput;
-    IDXGIFactory *pDXGIFactory;
+    IDXGIFactory *pDXGIFactory = NULL;
     IDXGIAdapter *pDXGIAdapter;
     IDXGIOutput* pDXGIOutput;
 

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -27,6 +27,7 @@
 #include "SDL_video.h"
 #include "SDL_mouse.h"
 #include "SDL_timer.h"
+#include "SDL_hints.h"
 #include "../SDL_sysvideo.h"
 #include "../SDL_pixels_c.h"
 
@@ -91,19 +92,7 @@ get_classname()
 
 /* X11 driver bootstrap functions */
 
-static int
-X11_Available(void)
-{
-    Display *display = NULL;
-    if (SDL_X11_LoadSymbols()) {
-        display = X11_XOpenDisplay(NULL);
-        if (display != NULL) {
-            X11_XCloseDisplay(display);
-        }
-        SDL_X11_UnloadSymbols();
-    }
-    return (display != NULL);
-}
+static int (*orig_x11_errhandler) (Display *, XErrorEvent *) = NULL;
 
 static void
 X11_DeleteDevice(SDL_VideoDevice * device)
@@ -113,6 +102,7 @@ X11_DeleteDevice(SDL_VideoDevice * device)
         device->Vulkan_UnloadLibrary(device);
     }
     if (data->display) {
+        X11_XSetErrorHandler(orig_x11_errhandler);
         X11_XCloseDisplay(data->display);
     }
     SDL_free(data->windowlist);
@@ -124,7 +114,6 @@ X11_DeleteDevice(SDL_VideoDevice * device)
 
 /* An error handler to reset the vidmode and then call the default handler. */
 static SDL_bool safety_net_triggered = SDL_FALSE;
-static int (*orig_x11_errhandler) (Display *, XErrorEvent *) = NULL;
 static int
 X11_SafetyNetErrHandler(Display * d, XErrorEvent * e)
 {
@@ -158,6 +147,7 @@ X11_CreateDevice(int devindex)
     SDL_VideoDevice *device;
     SDL_VideoData *data;
     const char *display = NULL; /* Use the DISPLAY environment variable */
+    Display *x11_display = NULL;
 
     if (!SDL_X11_LoadSymbols()) {
         return NULL;
@@ -166,6 +156,14 @@ X11_CreateDevice(int devindex)
     /* Need for threading gl calls. This is also required for the proprietary
         nVidia driver to be threaded. */
     X11_XInitThreads();
+
+    /* Open the display first to be sure that X11 is available */
+    x11_display = X11_XOpenDisplay(display);
+
+    if (!x11_display) {
+        SDL_X11_UnloadSymbols();
+        return NULL;
+    }
 
     /* Initialize all variables that we clean on shutdown */
     device = (SDL_VideoDevice *) SDL_calloc(1, sizeof(SDL_VideoDevice));
@@ -183,34 +181,7 @@ X11_CreateDevice(int devindex)
 
     data->global_mouse_changed = SDL_TRUE;
 
-    /* FIXME: Do we need this?
-       if ( (SDL_strncmp(X11_XDisplayName(display), ":", 1) == 0) ||
-       (SDL_strncmp(X11_XDisplayName(display), "unix:", 5) == 0) ) {
-       local_X11 = 1;
-       } else {
-       local_X11 = 0;
-       }
-     */
-    data->display = X11_XOpenDisplay(display);
-#ifdef SDL_VIDEO_DRIVER_X11_DYNAMIC
-    /* On some systems if linking without -lX11, it fails and you get following message.
-     * Xlib: connection to ":0.0" refused by server
-     * Xlib: XDM authorization key matches an existing client!
-     *
-     * It succeeds if retrying 1 second later
-     * or if running xhost +localhost on shell.
-     */
-    if (data->display == NULL) {
-        SDL_Delay(1000);
-        data->display = X11_XOpenDisplay(display);
-    }
-#endif
-    if (data->display == NULL) {
-        SDL_free(device->driverdata);
-        SDL_free(device);
-        SDL_SetError("Couldn't open X11 display");
-        return NULL;
-    }
+    data->display = x11_display;
 #ifdef X11_DEBUG
     X11_XSynchronize(data->display, True);
 #endif
@@ -276,16 +247,23 @@ X11_CreateDevice(int devindex)
     device->GL_GetSwapInterval = X11_GL_GetSwapInterval;
     device->GL_SwapWindow = X11_GL_SwapWindow;
     device->GL_DeleteContext = X11_GL_DeleteContext;
-#elif SDL_VIDEO_OPENGL_EGL
-    device->GL_LoadLibrary = X11_GLES_LoadLibrary;
-    device->GL_GetProcAddress = X11_GLES_GetProcAddress;
-    device->GL_UnloadLibrary = X11_GLES_UnloadLibrary;
-    device->GL_CreateContext = X11_GLES_CreateContext;
-    device->GL_MakeCurrent = X11_GLES_MakeCurrent;
-    device->GL_SetSwapInterval = X11_GLES_SetSwapInterval;
-    device->GL_GetSwapInterval = X11_GLES_GetSwapInterval;
-    device->GL_SwapWindow = X11_GLES_SwapWindow;
-    device->GL_DeleteContext = X11_GLES_DeleteContext;
+#endif
+#if SDL_VIDEO_OPENGL_EGL
+#if SDL_VIDEO_OPENGL_GLX
+    if (SDL_GetHintBoolean(SDL_HINT_VIDEO_X11_FORCE_EGL, SDL_FALSE)) {
+#endif
+        device->GL_LoadLibrary = X11_GLES_LoadLibrary;
+        device->GL_GetProcAddress = X11_GLES_GetProcAddress;
+        device->GL_UnloadLibrary = X11_GLES_UnloadLibrary;
+        device->GL_CreateContext = X11_GLES_CreateContext;
+        device->GL_MakeCurrent = X11_GLES_MakeCurrent;
+        device->GL_SetSwapInterval = X11_GLES_SetSwapInterval;
+        device->GL_GetSwapInterval = X11_GLES_GetSwapInterval;
+        device->GL_SwapWindow = X11_GLES_SwapWindow;
+        device->GL_DeleteContext = X11_GLES_DeleteContext;
+#if SDL_VIDEO_OPENGL_GLX
+    }
+#endif
 #endif
 
     device->SetClipboardText = X11_SetClipboardText;
@@ -309,7 +287,7 @@ X11_CreateDevice(int devindex)
 
 VideoBootStrap X11_bootstrap = {
     "x11", "SDL X11 video driver",
-    X11_Available, X11_CreateDevice
+    X11_CreateDevice
 };
 
 static int (*handler) (Display *, XErrorEvent *) = NULL;

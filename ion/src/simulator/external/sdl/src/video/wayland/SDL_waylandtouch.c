@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -25,7 +25,6 @@
 
 #ifdef SDL_VIDEO_DRIVER_WAYLAND_QT_TOUCH
 
-#include "SDL_log.h"
 #include "SDL_mouse.h"
 #include "SDL_keyboard.h"
 #include "SDL_waylandtouch.h"
@@ -192,7 +191,6 @@ WL_EXPORT const struct wl_interface qt_windowmanager_interface = {
 /* wayland-qt-windowmanager.c ENDS */
 
 /* wayland-qt-surface-extension.c BEGINS */
-extern const struct wl_interface qt_extended_surface_interface;
 #ifndef SDL_VIDEO_DRIVER_WAYLAND_DYNAMIC
 extern const struct wl_interface wl_surface_interface;
 #endif

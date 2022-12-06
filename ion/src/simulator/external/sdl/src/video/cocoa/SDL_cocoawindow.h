@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -113,10 +113,10 @@ struct SDL_WindowData
 {
     SDL_Window *window;
     NSWindow *nswindow;
-    NSView *sdlContentView; /* nil if window is created via CreateWindowFrom */
+    NSView *sdlContentView;
     NSMutableArray *nscontexts;
     SDL_bool created;
-    SDL_bool inWindowMove;
+    SDL_bool inWindowFullscreenTransition;
     Cocoa_WindowListener *listener;
     struct SDL_VideoData *videodata;
 #if SDL_VIDEO_OPENGL_EGL

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -18,12 +18,11 @@
      misrepresented as being the original software.
   3. This notice may not be removed or altered from any source distribution.
 */
-
 #include "../SDL_internal.h"
+
 #include "SDL_audio.h"
 #include "SDL_audio_c.h"
 #include "SDL_cpuinfo.h"
-#include "SDL_assert.h"
 
 #ifdef __ARM_NEON
 #define HAVE_NEON_INTRINSICS 1
@@ -614,7 +613,7 @@ static void SDLCALL
 SDL_Convert_F32_to_U8_SSE2(SDL_AudioCVT *cvt, SDL_AudioFormat format)
 {
     const float *src = (const float *) cvt->buf;
-    Uint8 *dst = (Uint8 *) cvt->buf;
+    Uint8 *dst = cvt->buf;
     int i;
 
     LOG_DEBUG_CONVERT("AUDIO_F32", "AUDIO_U8 (using SSE2)");

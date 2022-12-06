@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -42,6 +42,7 @@
 static int Emscripten_VideoInit(_THIS);
 static int Emscripten_SetDisplayMode(_THIS, SDL_VideoDisplay * display, SDL_DisplayMode * mode);
 static void Emscripten_VideoQuit(_THIS);
+static int Emscripten_GetDisplayUsableBounds(_THIS, SDL_VideoDisplay * display, SDL_Rect * rect);
 
 static int Emscripten_CreateWindow(_THIS, SDL_Window * window);
 static void Emscripten_SetWindowSize(_THIS, SDL_Window * window);
@@ -52,12 +53,6 @@ static void Emscripten_SetWindowTitle(_THIS, SDL_Window * window);
 
 
 /* Emscripten driver bootstrap functions */
-
-static int
-Emscripten_Available(void)
-{
-    return (1);
-}
 
 static void
 Emscripten_DeleteDevice(SDL_VideoDevice * device)
@@ -86,6 +81,7 @@ Emscripten_CreateDevice(int devindex)
     /* Set the function pointers */
     device->VideoInit = Emscripten_VideoInit;
     device->VideoQuit = Emscripten_VideoQuit;
+    device->GetDisplayUsableBounds = Emscripten_GetDisplayUsableBounds;
     device->SetDisplayMode = Emscripten_SetDisplayMode;
 
 
@@ -130,7 +126,7 @@ Emscripten_CreateDevice(int devindex)
 
 VideoBootStrap Emscripten_bootstrap = {
     EMSCRIPTENVID_DRIVER_NAME, "SDL emscripten video driver",
-    Emscripten_Available, Emscripten_CreateDevice
+    Emscripten_CreateDevice
 };
 
 
@@ -175,6 +171,22 @@ static void
 Emscripten_VideoQuit(_THIS)
 {
     Emscripten_FiniMouse();
+}
+
+static int
+Emscripten_GetDisplayUsableBounds(_THIS, SDL_VideoDisplay * display, SDL_Rect * rect)
+{
+    if (rect) {
+        rect->x = 0;
+        rect->y = 0;
+        rect->w = EM_ASM_INT_V({
+            return window.innerWidth;
+        });
+        rect->h = EM_ASM_INT_V({
+            return window.innerHeight;
+        });
+    }
+    return 0;
 }
 
 static void

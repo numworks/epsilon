@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -39,11 +39,11 @@
 #include <linux/input.h>
 
 #include "SDL.h"
-#include "SDL_assert.h"
 #include "SDL_endian.h"
 #include "SDL_scancode.h"
 #include "../../events/SDL_events_c.h"
 #include "../../events/scancodes_linux.h" /* adds linux_scancode_table */
+#include "../../core/linux/SDL_evdev_capabilities.h"
 #include "../../core/linux/SDL_udev.h"
 
 /* These are not defined in older Linux kernel headers */
@@ -446,18 +446,19 @@ SDL_EVDEV_translate_keycode(int keycode)
 {
     SDL_Scancode scancode = SDL_SCANCODE_UNKNOWN;
 
-    if (keycode < SDL_arraysize(linux_scancode_table))
+    if (keycode < SDL_arraysize(linux_scancode_table)) {
         scancode = linux_scancode_table[keycode];
 
-    if (scancode == SDL_SCANCODE_UNKNOWN) {
-        /* BTN_TOUCH is handled elsewhere, but we might still end up here if
-           you get an unexpected BTN_TOUCH from something SDL believes is not
-           a touch device. In this case, we'd rather not get a misleading
-           SDL_Log message about an unknown key. */
-        if (keycode != BTN_TOUCH) {
-            SDL_Log("The key you just pressed is not recognized by SDL. To help "
-                "get this fixed, please report this to the SDL forums/mailing list "
-                "<https://discourse.libsdl.org/> EVDEV KeyCode %d", keycode);
+        if (scancode == SDL_SCANCODE_UNKNOWN) {
+            /* BTN_TOUCH is handled elsewhere, but we might still end up here if
+               you get an unexpected BTN_TOUCH from something SDL believes is not
+               a touch device. In this case, we'd rather not get a misleading
+               SDL_Log message about an unknown key. */
+            if (keycode != BTN_TOUCH) {
+                SDL_Log("The key you just pressed is not recognized by SDL. To help "
+                    "get this fixed, please report this to the SDL forums/mailing list "
+                    "<https://discourse.libsdl.org/> EVDEV KeyCode %d", keycode);
+            }
         }
     }
 

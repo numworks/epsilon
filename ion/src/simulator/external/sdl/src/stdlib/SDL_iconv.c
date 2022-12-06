@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -37,7 +37,7 @@
    iconv() may or may not use const char ** for the inbuf param.
    If we get this wrong, it's just a warning, so no big deal.
 */
-#if defined(_XGP6) || defined(__APPLE__) || defined(__RISCOS__) || \
+#if defined(_XGP6) || defined(__APPLE__) || defined(__RISCOS__) || defined(__FREEBSD__) || \
     defined(__EMSCRIPTEN__) || \
     (defined(__GLIBC__) && ((__GLIBC__ > 2) || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 2)) || \
     (defined(_NEWLIB_VERSION)))
@@ -898,6 +898,7 @@ SDL_iconv_string(const char *tocode, const char *fromcode, const char *inbuf,
     SDL_memset(outbuf, 0, 4);
 
     while (inbytesleft > 0) {
+        const size_t oldinbytesleft = inbytesleft;
         retCode = SDL_iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
         switch (retCode) {
         case SDL_ICONV_E2BIG:
@@ -923,6 +924,11 @@ SDL_iconv_string(const char *tocode, const char *fromcode, const char *inbuf,
         case SDL_ICONV_ERROR:
             /* We can't continue... */
             inbytesleft = 0;
+            break;
+        }
+        /* Avoid infinite loops when nothing gets converted */
+        if (oldinbytesleft == inbytesleft)
+        {
             break;
         }
     }

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -30,7 +30,6 @@
 #include "SDL_audio_c.h"
 
 #include "SDL_loadso.h"
-#include "SDL_assert.h"
 #include "../SDL_dataqueue.h"
 #include "SDL_cpuinfo.h"
 
@@ -677,7 +676,7 @@ SDL_BuildAudioTypeCVTFromFloat(SDL_AudioCVT *cvt, const SDL_AudioFormat dst_fmt)
         }
 
         if (!filter) {
-            return SDL_SetError("No conversion from float to destination format available");
+            return SDL_SetError("No conversion from float to format 0x%.4x available", dst_fmt);
         }
 
         if (SDL_AddAudioCVTFilter(cvt, filter) < 0) {

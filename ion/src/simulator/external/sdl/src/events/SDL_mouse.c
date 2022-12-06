@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -22,14 +22,18 @@
 
 /* General mouse handling code for SDL */
 
-#include "SDL_assert.h"
 #include "SDL_hints.h"
 #include "SDL_timer.h"
 #include "SDL_events.h"
 #include "SDL_events_c.h"
+#include "../SDL_hints_c.h"
 #include "../video/SDL_sysvideo.h"
 #ifdef __WIN32__
 #include "../core/windows/SDL_windows.h"    // For GetDoubleClickTime()
+#endif
+#if defined(__OS2__)
+#define INCL_WIN
+#include <os2.h>
 #endif
 
 /* #define DEBUG_MOUSE */
@@ -53,6 +57,8 @@ SDL_MouseDoubleClickTimeChanged(void *userdata, const char *name, const char *ol
     } else {
 #ifdef __WIN32__
         mouse->double_click_time = GetDoubleClickTime();
+#elif defined(__OS2__)
+        mouse->double_click_time = WinQuerySysValue(HWND_DESKTOP, SV_DBLCLKTIME);
 #else
         mouse->double_click_time = 500;
 #endif
@@ -100,30 +106,21 @@ SDL_TouchMouseEventsChanged(void *userdata, const char *name, const char *oldVal
 {
     SDL_Mouse *mouse = (SDL_Mouse *)userdata;
 
-    if (hint && (*hint == '0' || SDL_strcasecmp(hint, "false") == 0)) {
-        mouse->touch_mouse_events = SDL_FALSE;
-    } else {
-        mouse->touch_mouse_events = SDL_TRUE;
-    }
+    mouse->touch_mouse_events = SDL_GetStringBoolean(hint, SDL_TRUE);
 }
 
 static void SDLCALL
 SDL_MouseTouchEventsChanged(void *userdata, const char *name, const char *oldValue, const char *hint)
 {
     SDL_Mouse *mouse = (SDL_Mouse *)userdata;
+    SDL_bool default_value;
 
-    if (hint == NULL || *hint == '\0') {
-        /* Default */
 #if defined(__ANDROID__) || (defined(__IPHONEOS__) && !defined(__TVOS__))
-        mouse->mouse_touch_events = SDL_TRUE;
+    default_value = SDL_TRUE;
 #else
-        mouse->mouse_touch_events = SDL_FALSE;
+    default_value = SDL_FALSE;
 #endif
-    } else if (*hint == '1' || SDL_strcasecmp(hint, "true") == 0) {
-        mouse->mouse_touch_events = SDL_TRUE;
-    } else {
-        mouse->mouse_touch_events = SDL_FALSE;
-    }
+    mouse->mouse_touch_events = SDL_GetStringBoolean(hint, default_value);
 
     if (mouse->mouse_touch_events) {
         SDL_AddTouch(SDL_MOUSE_TOUCHID, SDL_TOUCH_DEVICE_DIRECT, "mouse_input");
@@ -381,19 +378,16 @@ SDL_PrivateSendMouseMotion(SDL_Window * window, SDL_MouseID mouseID, int relativ
         yrel = y - mouse->last_y;
     }
 
-    /* Drop events that don't change state */
-    if (!xrel && !yrel) {
-#ifdef DEBUG_MOUSE
-        printf("Mouse event didn't change state - dropped!\n");
-#endif
-        return 0;
-    }
-
     /* Ignore relative motion when first positioning the mouse */
     if (!mouse->has_position) {
         xrel = 0;
         yrel = 0;
         mouse->has_position = SDL_TRUE;
+    } else if (!xrel && !yrel) {  /* Drop events that don't change state */
+#ifdef DEBUG_MOUSE
+        printf("Mouse event didn't change state - dropped!\n");
+#endif
+        return 0;
     }
 
     /* Ignore relative motion positioning the first touch */
@@ -733,23 +727,24 @@ Uint32
 SDL_GetGlobalMouseState(int *x, int *y)
 {
     SDL_Mouse *mouse = SDL_GetMouse();
-    int tmpx, tmpy;
 
-    /* make sure these are never NULL for the backend implementations... */
-    if (!x) {
-        x = &tmpx;
+    if (mouse->GetGlobalMouseState) {
+        int tmpx, tmpy;
+
+        /* make sure these are never NULL for the backend implementations... */
+        if (!x) {
+            x = &tmpx;
+        }
+        if (!y) {
+            y = &tmpy;
+        }
+
+        *x = *y = 0;
+
+        return mouse->GetGlobalMouseState(x, y);
+    } else {
+        return SDL_GetMouseState(x, y);
     }
-    if (!y) {
-        y = &tmpy;
-    }
-
-    *x = *y = 0;
-
-    if (!mouse->GetGlobalMouseState) {
-        return 0;
-    }
-
-    return mouse->GetGlobalMouseState(x, y);
 }
 
 void

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -28,9 +28,7 @@
 #include "SDL_events.h"
 
 #include "SDL_joystick.h"
-#include "SDL_assert.h"
 #include "SDL_timer.h"
-#include "SDL_log.h"
 #include "SDL_sysjoystick_c.h"
 #include "../SDL_joystick_c.h"
 
@@ -60,7 +58,7 @@ Emscripten_JoyStickConnected(int eventType, const EmscriptenGamepadEvent *gamepa
     SDL_zerop(item);
     item->index = gamepadEvent->index;
 
-    item->name = SDL_strdup(gamepadEvent->id);
+    item->name = SDL_CreateJoystickName(0, 0, NULL, gamepadEvent->id);
     if ( item->name == NULL ) {
         SDL_free(item);
         return 1;
@@ -288,6 +286,11 @@ EMSCRIPTEN_JoystickGetDevicePlayerIndex(int device_index)
     return -1;
 }
 
+static void
+EMSCRIPTEN_JoystickSetDevicePlayerIndex(int device_index, int player_index)
+{
+}
+
 static SDL_JoystickID
 EMSCRIPTEN_JoystickGetDeviceInstanceID(int device_index)
 {
@@ -300,7 +303,7 @@ EMSCRIPTEN_JoystickGetDeviceInstanceID(int device_index)
    It returns 0, or -1 if there is an error.
  */
 static int
-EMSCRIPTEN_JoystickOpen(SDL_Joystick * joystick, int device_index)
+EMSCRIPTEN_JoystickOpen(SDL_Joystick *joystick, int device_index)
 {
     SDL_joylist_item *item = JoystickByDeviceIndex(device_index);
 
@@ -332,7 +335,7 @@ EMSCRIPTEN_JoystickOpen(SDL_Joystick * joystick, int device_index)
  * and update joystick device state.
  */
 static void
-EMSCRIPTEN_JoystickUpdate(SDL_Joystick * joystick)
+EMSCRIPTEN_JoystickUpdate(SDL_Joystick *joystick)
 {
     EmscriptenGamepadEvent gamepadState;
     SDL_joylist_item *item = (SDL_joylist_item *) joystick->hwdata;
@@ -374,7 +377,7 @@ EMSCRIPTEN_JoystickUpdate(SDL_Joystick * joystick)
 
 /* Function to close a joystick after use */
 static void
-EMSCRIPTEN_JoystickClose(SDL_Joystick * joystick)
+EMSCRIPTEN_JoystickClose(SDL_Joystick *joystick)
 {
     SDL_joylist_item *item = (SDL_joylist_item *) joystick->hwdata;
     if (item) {
@@ -394,7 +397,37 @@ EMSCRIPTEN_JoystickGetDeviceGUID(int device_index)
 }
 
 static int
-EMSCRIPTEN_JoystickRumble(SDL_Joystick * joystick, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble, Uint32 duration_ms)
+EMSCRIPTEN_JoystickRumble(SDL_Joystick *joystick, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble)
+{
+    return SDL_Unsupported();
+}
+
+static int
+EMSCRIPTEN_JoystickRumbleTriggers(SDL_Joystick *joystick, Uint16 left_rumble, Uint16 right_rumble)
+{
+    return SDL_Unsupported();
+}
+
+static SDL_bool
+EMSCRIPTEN_JoystickGetGamepadMapping(int device_index, SDL_GamepadMapping *out)
+{
+    return SDL_FALSE;
+}
+
+static SDL_bool
+EMSCRIPTEN_JoystickHasLED(SDL_Joystick *joystick)
+{
+    return SDL_FALSE;
+}
+
+static int
+EMSCRIPTEN_JoystickSetLED(SDL_Joystick *joystick, Uint8 red, Uint8 green, Uint8 blue)
+{
+    return SDL_Unsupported();
+}
+
+static int
+EMSCRIPTEN_JoystickSetSensorsEnabled(SDL_Joystick *joystick, SDL_bool enabled)
 {
     return SDL_Unsupported();
 }
@@ -406,13 +439,19 @@ SDL_JoystickDriver SDL_EMSCRIPTEN_JoystickDriver =
     EMSCRIPTEN_JoystickDetect,
     EMSCRIPTEN_JoystickGetDeviceName,
     EMSCRIPTEN_JoystickGetDevicePlayerIndex,
+    EMSCRIPTEN_JoystickSetDevicePlayerIndex,
     EMSCRIPTEN_JoystickGetDeviceGUID,
     EMSCRIPTEN_JoystickGetDeviceInstanceID,
     EMSCRIPTEN_JoystickOpen,
     EMSCRIPTEN_JoystickRumble,
+    EMSCRIPTEN_JoystickRumbleTriggers,
+    EMSCRIPTEN_JoystickHasLED,
+    EMSCRIPTEN_JoystickSetLED,
+    EMSCRIPTEN_JoystickSetSensorsEnabled,
     EMSCRIPTEN_JoystickUpdate,
     EMSCRIPTEN_JoystickClose,
     EMSCRIPTEN_JoystickQuit,
+    EMSCRIPTEN_JoystickGetGamepadMapping
 };
 
 #endif /* SDL_JOYSTICK_EMSCRIPTEN */

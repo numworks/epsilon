@@ -1086,7 +1086,21 @@ Expression Expression::cloneAndReduce(ExpressionNode::ReductionContext reduction
   return cloneAndDeepReduceWithSystemCheckpoint(&reductionContext, &reduceFailure);
 }
 
-Expression Expression::deepReduce(const ExpressionNode::ReductionContext& reductionContext) {
+Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionContext) {
+  /* WARNING: This condition is to prevent logarithm of being expanded and
+   * create more complex expressions that either could not be integrated
+   * because it create terms of sums that are too big, or generate
+   * exponentially complex derivative when derivating multiple time.
+   * This can be set for Derivative and Integral because the exact result
+   * of these expression is never displayed to the user.
+   * Examples where it's useful:
+   *  - d^4/dx^4(log(x), x, x)
+   *  - int(ln(1.0025)*e^(x*ln(1.0025)+ln(200), x, 0, 1000)
+   * TODO: This solution is obviously not ideal and the simplification
+   * of logarithm should be reworked. */
+  if (type() == ExpressionNode::Type::Derivative || type() == ExpressionNode::Type::Integral) {
+    reductionContext.setAlwaysApproxLogarithm(true);
+  }
   deepReduceChildren(reductionContext);
   return shallowReduce(reductionContext);
 }

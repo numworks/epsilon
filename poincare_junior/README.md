@@ -245,10 +245,24 @@ So we choose to do this when 3n < N.
  - routine approximateToScalar
 
 
-
  Parcours des enfants optimals ??
- */
 
+## Random
+
+Félix's idea: replace all random nodes by indexed system variables. This way, several random() can't be factorized and expanding one random two several will give several nodes that are evaluated to the same value.
+
+## Dependency
+
+Root(expression, dependencies)?
+
+## Memoization of expression properties
+
+Memoize inside the node (??) some computed properties (for ex, the sign?) to avoid recomputing it n times.
+
+
+## Exam mode + non-CAS country
+
+Flag 'I used forbidden CAS' to be returned with all expressions' public methods?
 
 ## Rules for developping
 

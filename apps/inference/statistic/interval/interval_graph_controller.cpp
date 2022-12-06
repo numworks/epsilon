@@ -42,7 +42,7 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (event == Ion::Events::Up || event == Ion::Events::Down) {
+  if ((event == Ion::Events::Up && m_selectedIntervalIndex > 0) || (event == Ion::Events::Down && m_selectedIntervalIndex + 1 < Interval::k_numberOfDisplayedIntervals)) {
     selectAdjacentInterval(event == Ion::Events::Up);
     static_cast<Escher::StackViewController*>(parentResponder())->view()->reload();
     return true;
@@ -51,9 +51,6 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
 }
 
 void IntervalGraphController::selectAdjacentInterval(bool goUp) {
-  if ((goUp && m_selectedIntervalIndex == 0) || (!goUp && m_selectedIntervalIndex + 1 == Interval::k_numberOfDisplayedIntervals)) {
-    return;
-  }
   m_selectedIntervalIndex += goUp ? -1 : 1;
   interval()->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(m_originalInterval->threshold(), m_selectedIntervalIndex));
   interval()->compute();

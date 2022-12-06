@@ -172,7 +172,8 @@ jobs:
       - run: make -j2 binpack
       - run: cp output/release/device/bootloader/binpack-bootloader-`git rev-parse HEAD | head -c 7`.tgz output/release/device/bootloader/binpack-bootloader.tgz
       - run: cp output/release/device/n0110/bootloader.bin output/release/device/bootloader/binpack/
-      - run: cd output/release/device/bootloader && for binary in epsilon.onboarding*.bin; do shasum -a 256 -b binpack/${binary} > binpack/${binary}.sha256;done
+      - run: cp output/release/device/n0110/bootloader.bin output/release/device/bootloader/
+      - run: cd output/release/device/bootloader && for binary in *.bin; do shasum -a 256 -b binpack/${binary} > binpack/${binary}.sha256;done
       - run: cd output/release/device/bootloader && tar cvfz binpack-bootloader.tgz binpack/*
       - id: 'auth'
         if: ${{ github.event_name == 'push' && github.ref_name == 'upsilon-dev' && github.repository == 'UpsilonNumworks/Upsilon' }}

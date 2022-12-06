@@ -122,7 +122,7 @@ int Simplification::CompareFirstChild(const Node node0, Node node1, ScanDirectio
 
 void Simplification::BasicReduction(EditionReference reference) {
   // TODO: Macro to automatically generate switch
-  switch (reference.node().type()) {
+  switch (reference.type()) {
     case BlockType::Division:
       return DivisionReduction(reference);
     case BlockType::Subtraction:
@@ -133,7 +133,7 @@ void Simplification::BasicReduction(EditionReference reference) {
 }
 
 void Simplification::DivisionReduction(EditionReference reference) {
-  assert(reference.node().type() == BlockType::Division);
+  assert(reference.type() == BlockType::Division);
   ProjectionReduction(reference,
       []() { return EditionReference::Push<BlockType::Multiplication>(2); },
       []() { return EditionReference::Push<BlockType::Power>(); }
@@ -141,7 +141,7 @@ void Simplification::DivisionReduction(EditionReference reference) {
 }
 
 void Simplification::SubtractionReduction(EditionReference reference) {
-  assert(reference.node().type() == BlockType::Subtraction);
+  assert(reference.type() == BlockType::Subtraction);
   ProjectionReduction(reference,
       []() { return EditionReference::Push<BlockType::Addition>(2); },
       []() { return EditionReference::Push<BlockType::Multiplication>(2); }
@@ -150,7 +150,7 @@ void Simplification::SubtractionReduction(EditionReference reference) {
 
 EditionReference Simplification::DistributeMultiplicationOverAddition(EditionReference reference) {
   for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(reference)) {
-    if (std::get<EditionReference>(indexedRef).node().type() == BlockType::Addition) {
+    if (std::get<EditionReference>(indexedRef).type() == BlockType::Addition) {
       // Create new addition that will be filled in the following loop
       EditionReference add = EditionReference(EditionReference::Push<BlockType::Addition>(std::get<EditionReference>(indexedRef).node().numberOfChildren()));
       for (std::pair<EditionReference, int> indexedAdditionChild : NodeIterator::Children<Forward, Editable>(std::get<EditionReference>(indexedRef))) {
@@ -162,7 +162,7 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(EditionRef
         EditionReference additionChildCopy = EditionReference(additionCopy.childAtIndex(std::get<int>(indexedAdditionChild)));
         // Replace addition per its child
         additionCopy.replaceTreeByTree(additionChildCopy);
-        assert(multCopy.node().type() == BlockType::Multiplication);
+        assert(multCopy.type() == BlockType::Multiplication);
         DistributeMultiplicationOverAddition(multCopy.node());
       }
       reference.replaceTreeByTree(add);

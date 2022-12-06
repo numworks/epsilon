@@ -12,8 +12,7 @@ void NAry::SetNumberOfChildren(EditionReference reference, size_t numberOfChildr
 EditionReference NAry::Flatten(EditionReference reference) {
   size_t numberOfChildren = 0;
   for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(reference)) {
-    if (reference.node().type() == std::get<EditionReference>(indexedRef).node().type()) {
-      EditionReference nAry = std::get<EditionReference>(indexedRef);
+    if (reference.type() == std::get<EditionReference>(indexedRef).type()) {
       std::get<EditionReference>(indexedRef).removeNode();
     }
     numberOfChildren++;

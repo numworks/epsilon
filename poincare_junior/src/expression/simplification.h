@@ -28,6 +28,7 @@ public:
   static void DivisionReduction(EditionReference reference);
   static void SubtractionReduction(EditionReference reference);
   static EditionReference DistributeMultiplicationOverAddition(EditionReference reference);
+
 private:
   static void ProjectionReduction(EditionReference reference, EditionReference (*PushProjectedEExpression)(), EditionReference (*PushInverse)());
 };

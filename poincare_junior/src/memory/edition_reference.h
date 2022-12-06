@@ -23,6 +23,7 @@ public:
   bool isUninitialized() const { return m_identifier == EditionPool::ReferenceTable::NoNodeIdentifier; }
   Node node() const;
   TypeBlock * block() { return node().block(); }
+  BlockType type() const { return node().type(); }
 
   uint16_t identifier() const { return m_identifier; }
 

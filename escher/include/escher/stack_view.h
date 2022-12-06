@@ -14,7 +14,7 @@ public:
     PurpleWhite,
     WhiteUniform
   };
-  static constexpr uint8_t k_MaxNumberOfStacks = 7;
+  static constexpr uint8_t k_maxNumberOfStacks = 7;
 
   StackView(Style style, bool extendVertically);
   int8_t numberOfStacks() const { return m_stackHeaderViews.length(); }
@@ -38,7 +38,7 @@ private:
   // Returns the index in m_stackViews for a given display index
   int stackHeaderIndex(int displayIndex);
 
-  Ion::RingBuffer<StackHeaderView, k_MaxNumberOfStacks> m_stackHeaderViews;
+  Ion::RingBuffer<StackHeaderView, k_maxNumberOfStacks> m_stackHeaderViews;
   SolidColorView m_borderView;
   View * m_contentView;
   Style m_style;

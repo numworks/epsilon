@@ -46,11 +46,11 @@ public:
 
     Statistic * statistic() { return m_statisticBuffer.statistic(); }
 
-    Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> * pageQueue() { return &m_pageQueue; }
+    Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks> * pageQueue() { return &m_pageQueue; }
   private:
     friend App;
     // TODO: optimize size of Stack
-    Ion::RingBuffer<Escher::ViewController *, Escher::k_MaxNumberOfStacks> m_pageQueue;
+    Ion::RingBuffer<Escher::ViewController *, Escher::k_maxNumberOfStacks> m_pageQueue;
     StatisticBuffer m_statisticBuffer;
   };
 

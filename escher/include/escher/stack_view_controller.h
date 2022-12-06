@@ -8,8 +8,8 @@
 
 namespace Escher {
 
-constexpr uint8_t k_MaxNumberOfStacks = StackView::k_MaxNumberOfStacks;
-static_assert(k_MaxNumberOfStacks < 8, "Bit mask representation relies on less than 8 stacks (uint8_t).");
+constexpr uint8_t k_maxNumberOfStacks = StackView::k_maxNumberOfStacks;
+static_assert(k_maxNumberOfStacks < 8, "Bit mask representation relies on less than 8 stacks (uint8_t).");
 
 class StackViewController : public ViewController {
 public:
@@ -35,7 +35,7 @@ public:
   void setupHeadersBorderOverlaping(bool headersOverlapHeaders = true, bool headersOverlapContent = false, KDColor headersContentBorderColor = Palette::GrayBright) {
     m_view.setupHeadersBorderOverlaping(headersOverlapHeaders, headersOverlapContent, headersContentBorderColor);
   }
-  constexpr static uint8_t k_maxNumberOfChildren = k_MaxNumberOfStacks;
+  constexpr static uint8_t k_maxNumberOfChildren = k_maxNumberOfStacks;
 private:
   StackView m_view;
   void pushModel(ViewController * vc);

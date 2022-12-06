@@ -33,7 +33,7 @@ ViewController * StackViewController::topViewController() {
 }
 
 void StackViewController::push(ViewController * vc) {
-  assert(m_numberOfChildren < k_MaxNumberOfStacks);
+  assert(m_numberOfChildren < k_maxNumberOfStacks);
   /* Add the frame to the model */
   pushModel(vc);
   vc->initView();

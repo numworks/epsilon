@@ -88,12 +88,6 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
   if (mod & KMOD_ALT) {
     if (mod & KMOD_SHIFT) {
       switch (sym) {
-        case SDLK_s:
-          return Arcsine;
-        case SDLK_c:
-          return Arccosine;
-        case SDLK_t:
-          return Arctangent;
         case SDLK_e:
           return USBEnumeration;
         case SDLK_p:
@@ -107,20 +101,8 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
         return Var;
       case SDLK_x:
         return Exp;
-      case SDLK_n:
-        return Ln;
-      case SDLK_l:
-        return Log;
-      case SDLK_i:
-        return Imaginary;
       case SDLK_EQUALS:
         return Sto;
-      case SDLK_s:
-        return Sine;
-      case SDLK_c:
-        return Cosine;
-      case SDLK_t:
-        return Tangent;
       case SDLK_p:
         return Pi;
       case SDLK_r:
@@ -129,8 +111,6 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
         return Square;
       case SDLK_e:
         return EE;
-      case SDLK_a:
-        return Ans;
     }
   }
   switch(sym) {

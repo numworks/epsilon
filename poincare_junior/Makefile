@@ -13,6 +13,7 @@ include poincare_junior/utils/Makefile
 poincare_junior_src += $(utils_src)
 
 poincare_junior_src += $(addprefix poincare_junior/src/,\
+  expression/algebraic.o \
   expression/approximation.o \
   expression/integer.o \
   expression/polynomial.o \

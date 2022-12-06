@@ -157,7 +157,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: sudo apt-get install build-essential imagemagick libfreetype6-dev libjpeg-dev libpng-dev pkg-config
-      - uses: numworks/setup-arm-toolchain@2020-q2
+      - uses: numworks/setup-arm-toolchain@2022-08
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'

@@ -31,7 +31,7 @@ public:
   void didBecomeFirstResponder() override;
 
   // PrefacedTableView::MarginDelegate
-  KDCoordinate prefaceMargin(Escher::TableView * preface, Escher::TableViewDataSource * prefaceDataSource) override;
+  KDCoordinate columnPrefaceRightMargin(Escher::TableView * preface) override;
 
 protected:
   constexpr static int k_maxNumberOfDisplayableRows = 11;

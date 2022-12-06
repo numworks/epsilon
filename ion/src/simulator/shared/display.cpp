@@ -57,20 +57,6 @@ void setScreenshotCallback(void (*callback)()) {
   Simulator::Display::sScreenshotCallback = callback;
 }
 
-void saveScreenshot() {
-#if ION_SIMULATOR_FILES
-  Simulator::Display::prepareForScreenshot();
-  Simulator::Actions::saveScreenshot();
-#endif
-}
-
-void copyScreenshot() {
-#if ION_SIMULATOR_FILES
-  Simulator::Display::prepareForScreenshot();
-  Simulator::Actions::copyScreenshot();
-#endif
-}
-
 }
 
 }

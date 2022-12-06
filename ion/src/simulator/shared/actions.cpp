@@ -2,6 +2,7 @@
 
 #include <ion/display.h>
 
+#include "display.h"
 #include "framebuffer.h"
 #include "platform.h"
 #include "state_file.h"
@@ -35,11 +36,13 @@ void loadState() {
 #endif
 
 void copyScreenshot() {
+  Display::prepareForScreenshot();
   Screenshot s;
   s.capture();
 }
 
 void saveScreenshot() {
+  Display::prepareForScreenshot();
   Screenshot s(Platform::filePathForWriting("png"));
   s.capture();
 }

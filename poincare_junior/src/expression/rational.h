@@ -10,6 +10,9 @@ class Rational final {
 public:
   static IntegerHandler Numerator(const Node node);
   static IntegerHandler Denominator(const Node node);
+  static EditionReference PushNode(IntegerHandler numerator, IntegerHandler denominator);
+  static int Sign(const Node node) { return Numerator(node).sign(); }
+  static void SetSign(EditionReference reference, bool negative);
 
   // In-place??
   static EditionReference Addition(EditionReference n0, EditionReference n1);

@@ -1,4 +1,5 @@
 #include "rational.h"
+#include <poincare_junior/src/memory/value_block.h>
 
 namespace Poincare {
 
@@ -75,6 +76,41 @@ IntegerHandler Rational::Denominator(const Node node) {
     default:
       assert(false);
   }
+}
+
+EditionReference Rational::PushNode(IntegerHandler numerator, IntegerHandler denominator) {
+  assert(!denominator.isZero());
+  if (denominator.isOne()) {
+    return Integer::PushNode(numerator);
+  }
+  if (numerator.isOne() && denominator.isTwo()) {
+    return EditionReference::Push<BlockType::Half>();
+  }
+  if (numerator.isInt8() && denominator.isUint8()) {
+    return EditionReference::Push<BlockType::RationalShort>(static_cast<int8_t>(numerator), static_cast<uint8_t>(denominator));
+  }
+  EditionPool * pool = EditionPool::sharedEditionPool();
+  TypeBlock typeBlock = numerator.sign() < 0 ? RationalNegBigBlock : RationalPosBigBlock;
+  EditionReference reference = EditionReference(Node(pool->pushBlock(typeBlock)));
+  uint8_t numberOfDigitsOfNumerator = numerator.numberOfDigits();
+  uint8_t numberOfDigitsOfDenominator = numerator.numberOfDigits();
+  if (numberOfDigitsOfNumerator > UINT8_MAX - numberOfDigitsOfDenominator) {
+    // TODO: RAISE EXCEPTION rational overflows
+  }
+  pool->pushBlock(ValueBlock(numberOfDigitsOfNumerator));
+  pool->pushBlock(ValueBlock(numberOfDigitsOfDenominator));
+  numerator.pushDigitsOnEditionPool();
+  denominator.pushDigitsOnEditionPool();
+  pool->pushBlock(ValueBlock(numberOfDigitsOfNumerator + numberOfDigitsOfDenominator));
+  pool->pushBlock(typeBlock);
+  return reference;
+}
+
+void Rational::SetSign(EditionReference reference, bool negative) {
+  IntegerHandler numerator = Numerator(reference.node());
+  IntegerHandler denominator = Denominator(reference.node());
+  numerator.setSign(negative);
+  reference.replaceNodeByNode(PushNode(numerator, denominator));
 }
 
 }

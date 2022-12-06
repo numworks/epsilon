@@ -7,9 +7,9 @@
 
 namespace Escher {
 
-class StackViewHeader : public View, public Bordered {
+class StackHeaderView : public View, public Bordered {
 public:
-  StackViewHeader(ViewController * controller = nullptr, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorBlack, KDColor separatorColor = KDColorBlack);
+  StackHeaderView(ViewController * controller = nullptr, KDColor textColor = KDColorBlack, KDColor backgroundColor = KDColorBlack, KDColor separatorColor = KDColorBlack);
   void drawRect(KDContext * ctx, KDRect rect) const override;
 
 protected:

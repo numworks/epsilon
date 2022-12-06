@@ -1,4 +1,4 @@
-#include <escher/stack_view_header.h>
+#include <escher/stack_header_view.h>
 #include <escher/metric.h>
 extern "C" {
 #include <assert.h>
@@ -6,7 +6,7 @@ extern "C" {
 
 namespace Escher {
 
-StackViewHeader::StackViewHeader(ViewController * controller, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
+StackHeaderView::StackHeaderView(ViewController * controller, KDColor textColor, KDColor backgroundColor, KDColor separatorColor) :
   View(),
   m_textColor(textColor),
   m_backgroundColor(backgroundColor),
@@ -16,7 +16,7 @@ StackViewHeader::StackViewHeader(ViewController * controller, KDColor textColor,
   markRectAsDirty(bounds());
 }
 
-void StackViewHeader::drawRect(KDContext * ctx, KDRect rect) const {
+void StackHeaderView::drawRect(KDContext * ctx, KDRect rect) const {
   KDRect b = bounds();
   drawBorderOfRect(ctx, b, m_separatorColor);
   drawInnerRect(ctx, b, m_backgroundColor);
@@ -27,11 +27,11 @@ void StackViewHeader::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 #if ESCHER_VIEW_LOGGING
-const char * StackViewHeader::className() const {
+const char * StackHeaderView::className() const {
   return "StackViewHeader";
 }
 
-void StackViewHeader::logAttributes(std::ostream &os) const {
+void StackHeaderView::logAttributes(std::ostream &os) const {
   View::logAttributes(os);
   os << " name=\"" << m_controller->title() << "\"";
 }

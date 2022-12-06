@@ -33,5 +33,9 @@ void drawString(const char * text, KDPoint point, bool largeFont, KDColor textCo
   ctx->drawString(text, point, largeFont ? KDFont::Size::Large : KDFont::Size::Small, textColor, backgroundColor, 255);
 }
 
+void setScreenshotCallback(void(*)(void)) {
+
+}
+
 }
 }

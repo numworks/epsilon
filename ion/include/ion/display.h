@@ -30,8 +30,6 @@ int displayColoredTilingSize10();
 void POSTPushMulticolor(int rootNumberTiles, int tileSize);
 
 #if !PLATFORM_DEVICE
-void saveScreenshot();
-void copyScreenshot();
 void setScreenshotCallback(void(*)(void));
 #endif
 }

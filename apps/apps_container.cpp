@@ -181,16 +181,6 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
     didSuspend(true);
     return true;
   }
-#if !PLATFORM_DEVICE
-  if (event == Ion::Events::SaveScreenshot) {
-    // Ion will call the delegate to make the cursor visible
-    Ion::Display::saveScreenshot();
-    return true;
-  } else if (event == Ion::Events::CopyScreenshot) {
-    Ion::Display::copyScreenshot();
-    return true;
-  }
-#endif
   return false;
 }
 

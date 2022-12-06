@@ -102,7 +102,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * c
   measuringContext.reset();
   plotView->drawDot(&measuringContext, rect, Dots::Size::Medium, {x, y}, Escher::Palette::YellowDark);
   m_dotCache.save(ctx, measuringContext.writtenRect());
-  Poincare::Print::CustomPrintf(name + nameLength, bufferSize-nameLength, "(%i)", m_step);
+  Poincare::Print::CustomPrintf(name + nameLength, bufferSize-nameLength, "(%i)", rank);
   measuringContext.reset();
   plotView->drawLabel(&measuringContext, rect, name, {x, 0.f}, AbstractPlotView::RelativePosition::After, AbstractPlotView::RelativePosition::Before, Escher::Palette::GrayDark);
   m_textCache.save(ctx, measuringContext.writtenRect());

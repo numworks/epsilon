@@ -519,7 +519,7 @@ private:
    * mantissa is stored on 53 bits (2E308 can be stored exactly in IEEE754
    * representation but some smaller integers can't - like 2E308-1). */
   constexpr static double k_largestExactIEEE754Integer = 9007199254740992.0;
-  Expression deepReduce(const ExpressionNode::ReductionContext& reductionContext);
+  Expression deepReduce(ExpressionNode::ReductionContext reductionContext);
   void deepReduceChildren(const ExpressionNode::ReductionContext& reductionContext) {
     node()->deepReduceChildren(reductionContext);
   }

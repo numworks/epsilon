@@ -160,6 +160,15 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
     }
   }
 
+  /* TODO: If simplification is reworked, remove this.
+   * (see Expression::deepReduce comment) */
+  if (reductionContext.alwaysApproxLogarithm() &&
+      !recursivelyMatches(IsSymbolic, reductionContext.context())) {
+    Expression result = node()->approximate(double(), ExpressionNode::ApproximationContext(reductionContext, true)).complexToExpression(reductionContext.complexFormat());
+    replaceWithInPlace(result);
+    return result;
+  }
+
   // log(x^y, b)->y*log(x, b) if x>0
   if (c.type() == ExpressionNode::Type::Power && c.childAtIndex(0).isPositive(reductionContext.context()) == TrinaryBoolean::True) {
     Power p = static_cast<Power &>(c);

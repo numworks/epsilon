@@ -25,9 +25,11 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(1/x,x,x)", "-1/x^2");
 
   assert_reduces_to_formal_expression("diff(e^x,x,x)", "e^\u0012x\u0013");
-  assert_reduces_to_formal_expression("diff(2^x,x,x)", "2^x×ln(2)");
+  assert_reduces_to_formal_expression("diff(2^x,x,x)", "0.69314718055995×2^x");
+//assert_reduces_to_formal_expression("diff(2^x,x,x)", "2^x×ln(2)");
   assert_reduces_to_formal_expression("diff(ln(x),x,x)", "\u0014dep(1/x,{ln(x)})");
-  assert_reduces_to_formal_expression("diff(log(x),x,x)", "\u0014dep(1/\u0012x×ln(5)+x×ln(2)\u0013,{log(x)})");
+  assert_reduces_to_formal_expression("diff(log(x),x,x)", "\u0014dep(0.43429448190325/x,{log(x)})");
+//assert_reduces_to_formal_expression("diff(log(x),x,x)", "\u0014dep(1/\u0012x×ln(5)+x×ln(2)\u0013,{log(x)})");
 
   assert_reduces_to_formal_expression("diff(sin(x),x,x)", "\u0014dep(cos(x),{sin(x)})");
   assert_reduces_to_formal_expression("diff(sin(x),x,x)", "\u0014dep(\u0012π×cos(x)\u0013/180,{sin(x)})", Degree);
@@ -109,7 +111,8 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
 
   assert_reduces_for_approximation("diff(1/x,x,-2)", "-1/4");
   assert_reduces_for_approximation("diff(x^3+5*x^2,x,0)", "0");
-  assert_reduces_for_approximation("diff(5^(sin(x)),x,3)", "5^sin(3)×cos(3)×ln(5)");
+  assert_reduces_for_approximation("diff(5^(sin(x)),x,3)", "1.6094379124341×5^sin(3)×cos(3)");
+//assert_reduces_for_approximation("diff(5^(sin(x)),x,3)", "5^sin(3)×cos(3)×ln(5)");
   assert_reduces_for_approximation("diff((-1)^(4-2*2),x,3)", "0");
   assert_reduce_and_store("0→a");
   assert_reduces_for_approximation("diff((-1)^(a*x),x,3)", "0");

@@ -34,8 +34,8 @@ void DoublePairTableController::didBecomeFirstResponder() {
   TabTableController::didBecomeFirstResponder();
 }
 
-KDCoordinate DoublePairTableController::columnPrefaceRightMargin(TableView * preface) {
-  KDCoordinate actualOffset = offset().x() + (preface->bounds().isEmpty() ? preface->minimalSizeForOptimalDisplay().width() : 0);
+KDCoordinate DoublePairTableController::columnPrefaceRightMargin() {
+  KDCoordinate actualOffset = offset().x() + (m_prefacedTwiceTableView.columnPrefaceView()->bounds().isEmpty() ? m_prefacedTwiceTableView.columnPrefaceView()->minimalSizeForOptimalDisplay().width() : 0);
 
   for (int i = 0; i < numberOfColumns(); i++) {
     constexpr KDCoordinate maxMargin = Escher::Metric::TableSeparatorThickness;

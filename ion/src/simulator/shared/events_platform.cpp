@@ -63,7 +63,8 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
       switch (sym) {
 #if ION_SIMULATOR_FILES
         case SDLK_p:
-          return CopyScreenshot;
+          Simulator::Actions::copyScreenshot();
+          return None;
 #endif
       }
     }
@@ -79,7 +80,8 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
         Simulator::Actions::saveState();
         return None;
       case SDLK_p:
-        return SaveScreenshot;
+        Simulator::Actions::saveScreenshot();
+        return None;
 #endif
     }
   }

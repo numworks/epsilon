@@ -260,10 +260,6 @@ constexpr Event BatteryCharging = Event::Special(5);
 /* This event is only used in the simulator, to handle text that cannot be
  * associated with a key. */
 constexpr Event ExternalText = Event::Special(6);
-/* These events are used by the simulator to notify the AppsContainer that the
- * cursor must be made visible to appear on the screenshot. */
-constexpr Event SaveScreenshot = Event::Special(7);
-constexpr Event CopyScreenshot = Event::Special(8);
 
 inline bool canRepeatEvent(Event e) {
   return e == Events::Left

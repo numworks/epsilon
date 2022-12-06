@@ -7,8 +7,6 @@
 #include <string.h>
 
 namespace Ion {
-
-
 namespace Simulator {
 namespace Display {
 

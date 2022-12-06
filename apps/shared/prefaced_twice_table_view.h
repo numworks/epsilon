@@ -13,6 +13,8 @@ public:
   void setBackgroundColor(KDColor color) override;
   void setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical) override;
 
+  Escher::TableView * columnPrefaceView() { return &m_columnPrefaceView; }
+
 private:
   class ColumnPrefaceDataSource : public IntermediaryDataSource {
   public:

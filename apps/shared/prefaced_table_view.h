@@ -34,7 +34,7 @@ public:
 
   class MarginDelegate {
   public:
-    virtual KDCoordinate columnPrefaceRightMargin(Escher::TableView * preface) = 0;
+    virtual KDCoordinate columnPrefaceRightMargin() = 0;
   };
 
   void setMarginDelegate(MarginDelegate * delegate) { m_marginDelegate = delegate; }

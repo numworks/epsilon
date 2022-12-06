@@ -87,6 +87,9 @@ public:
     bool operator==(PressToTestParams other) {
       return m_value == other.m_value;
     }
+    bool isInactive() {
+      return *this == k_inactivePressToTest;
+    }
     uint16_t m_value;
     /* Warning: The order of allocation of bit-fields within a unit (high-order
      * to low-order or low-order to high-order) is implementation-defined. The
@@ -103,6 +106,8 @@ public:
       bool m_elementsAppIsForbidden: 1;
     };
   };
+  /* By default, a PressToTestParams has all parameters set to false. */
+  static constexpr PressToTestParams k_inactivePressToTest = PressToTestParams({0});
   union ExamPersistingBytes {
     ExamPersistingBytes(Ion::PersistingBytes::PersistingBytesInt pb) : m_value(pb) {}
     ExamPersistingBytes(ExamMode mode, PressToTestParams params) : m_examMode(mode), m_params(params.m_value) {}
@@ -116,8 +121,6 @@ public:
       uint16_t m_params : 12;
     };
   };
-  /* By default, a PressToTestParams has all parameters set to false. */
-  constexpr static PressToTestParams k_inactivePressToTest = PressToTestParams({0});
   static_assert(sizeof(ExamPersistingBytes) == sizeof(uint16_t), "ExamPersistingBytes should fit in two bytes");
 
   Preferences();

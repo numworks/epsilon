@@ -5,10 +5,10 @@
 namespace Poincare {
 
 template<typename T>
-Solver<T>::Solver(T xStart, T xEnd, T maximalXStep, const char * unknown, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) :
+Solver<T>::Solver(T xStart, T xEnd, const char * unknown, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) :
   m_xStart(xStart),
   m_xEnd(xEnd),
-  m_maximalXStep(maximalXStep),
+  m_maximalXStep(MaximalStep(xEnd - xStart)),
   m_yResult(k_NAN),
   m_context(context),
   m_unknown(unknown),
@@ -367,7 +367,7 @@ void Solver<T>::registerSolution(Coordinate2D<T> solution, Interest interest, Fu
 
 // Explicit template instanciations
 
-template Solver<double>::Solver(double, double, double, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);
+template Solver<double>::Solver(double, double, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);
 template Coordinate2D<double> Solver<double>::next(FunctionEvaluation, const void *, BracketTest, HoneResult);
 template Coordinate2D<double> Solver<double>::nextRoot(const Expression &);
 template Coordinate2D<double> Solver<double>::nextMinimum(const Expression &);
@@ -377,7 +377,7 @@ template Coordinate2D<double> Solver<double>::BrentMaximum(FunctionEvaluation, c
 template double Solver<double>::MaximalStep(double);
 
 template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>, const void *);
-template Solver<float>::Solver(float, float, float, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);
+template Solver<float>::Solver(float, float, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);
 template Coordinate2D<float> Solver<float>::next(FunctionEvaluation, const void *, BracketTest, HoneResult);
 template float Solver<float>::MaximalStep(float);
 

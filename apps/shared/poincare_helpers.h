@@ -192,12 +192,6 @@ inline Poincare::Solver<T> Solver(T xMin, T xMax, const char * unknown = nullptr
   return Poincare::Solver<T>(xMin, xMax, unknown, context, preferences->complexFormat(), preferences->angleUnit());
 }
 
-template<typename T>
-inline Poincare::Solver<T> Solver(T xMin, T xMax, T maximalXStep, const char * unknown = nullptr, Poincare::Context * context = nullptr) {
-  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
-  return Poincare::Solver<T>(xMin, xMax, maximalXStep, unknown, context, preferences->complexFormat(), preferences->angleUnit());
-}
-
 // Return the nearest number from t's representation with given precision.
 template <class T>
 inline T ValueOfFloatAsDisplayed(T t, int precision, Poincare::Context * context) {

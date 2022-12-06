@@ -3,6 +3,11 @@
 
 namespace Poincare {
 
+void NAry::AddChild(EditionReference nary, EditionReference child) {
+  nary.nextTree().insertTreeBeforeNode(child);
+  SetNumberOfChildren(nary, nary.numberOfChildren() + 1);
+}
+
 void NAry::SetNumberOfChildren(EditionReference reference, size_t numberOfChildren) {
   assert(numberOfChildren < UINT8_MAX);
   Block * numberOfChildrenBlock = reference.node().block()->next();

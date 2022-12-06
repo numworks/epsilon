@@ -44,14 +44,13 @@ public:
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */
-  Solver(T xStart, T xEnd, T maximalXStep, const char * unknown = nullptr, Context * context = nullptr, Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
-  Solver(T xStart, T xEnd, const char * unknown = nullptr, Context * context = nullptr, Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian) :
-    Solver<T>(xStart, xEnd, MaximalStep(xEnd - xStart), unknown, context, complexFormat, angleUnit) {}
+  Solver(T xStart, T xEnd, const char * unknown = nullptr, Context * context = nullptr, Preferences::ComplexFormat complexFormat = Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian);
 
   T start() const { return m_xStart; }
   T end() const { return m_xEnd; }
   Interest lastInterest() const { return m_lastInterest; }
   Coordinate2D<T> result() const { return lastInterest() == Interest::None ? Coordinate2D<T>(k_NAN, k_NAN) : Coordinate2D<T>(start(), m_yResult); }
+
   /* These methods will return the solution in ]xStart,xEnd[ (or ]xEnd,xStart[)
    * closest to xStart, or NAN if it does not exist. */
   Coordinate2D<T> next(const Expression & e, BracketTest test, HoneResult hone);
@@ -68,6 +67,7 @@ public:
    * solutions in [xStart,xEnd], as otherwise all resolution is done on an open
    * interval. */
   void stretch();
+  void setSearchStep(T step) { m_maximalXStep = step; }
 
 private:
   struct FunctionEvaluationParameters {

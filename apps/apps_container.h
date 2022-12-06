@@ -68,6 +68,7 @@ private:
   void resetShiftAlphaStatus();
   bool updateAlphaLock();
   void handleRunException(bool resetSnapshot);
+  static void ShowCursor();
 
   static const I18n::Message k_promptMessages[];
   static const KDColor k_promptColors[];

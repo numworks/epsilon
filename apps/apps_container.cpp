@@ -32,11 +32,6 @@ AppsContainer::AppsContainer() :
 {
   m_emptyBatteryWindow.setFrame(KDRectScreen, false);
   Ion::Storage::FileSystem::sharedFileSystem()->setDelegate(this);
-  Ion::Display::setScreenshotCallback([]() {
-    AppsContainer * container = sharedAppsContainer();
-    container->m_blinkTimer.forceCursorVisible();
-    container->window()->redraw();
-  });
   Shared::RecordRestrictiveExtensions::registerRestrictiveExtensionsToSharedStorage();
 }
 
@@ -204,6 +199,7 @@ void AppsContainer::switchToExternalApp(Ion::ExternalApps::App app) {
   Container::switchToBuiltinApp(nullptr);
   reloadTitleBarView();
   Ion::Events::setSpinner(false);
+  Ion::Display::setScreenshotCallback(nullptr);
   ExternalAppMain appStart = reinterpret_cast<ExternalAppMain>(app.entryPoint());
   if (appStart) {
     appStart();
@@ -252,6 +248,7 @@ void AppsContainer::run() {
   refreshPreferences();
   Ion::Power::selectStandbyMode(false);
   Ion::Events::setSpinner(true);
+  Ion::Display::setScreenshotCallback(ShowCursor);
 
   /* ExceptionCheckpoint stores the value of the stack pointer when setjump is
    * called. During a longjump, the stack pointer is set to this stored stack
@@ -281,6 +278,7 @@ void AppsContainer::run() {
     m_suspendTimer.reset();
     Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
     Ion::Events::setSpinner(true);
+    Ion::Display::setScreenshotCallback(ShowCursor);
     handleRunException(false);
   }
 
@@ -406,4 +404,10 @@ Timer * AppsContainer::containerTimerAtIndex(int i) {
 void AppsContainer::resetShiftAlphaStatus() {
   Ion::Events::setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus::Default);
   updateAlphaLock();
+}
+
+void AppsContainer::ShowCursor() {
+  AppsContainer * container = sharedAppsContainer();
+  container->m_blinkTimer.forceCursorVisible();
+  container->window()->redraw();
 }

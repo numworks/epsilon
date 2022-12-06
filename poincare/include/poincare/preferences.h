@@ -116,9 +116,9 @@ public:
       uint16_t m_params : 12;
     };
   };
-  static_assert(sizeof(ExamPersistingBytes) == sizeof(uint16_t), "PressToTestParams can have 12 params at most");
   /* By default, a PressToTestParams has all parameters set to false. */
   constexpr static PressToTestParams k_inactivePressToTest = PressToTestParams({0});
+  static_assert(sizeof(ExamPersistingBytes) == sizeof(uint16_t), "ExamPersistingBytes should fit in two bytes");
 
   Preferences();
   static Preferences * sharedPreferences();

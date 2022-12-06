@@ -40,6 +40,7 @@ Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
 }
 
 void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {
+  assert(ExamPersistingBytes(0xffff).mode() == ExamMode::Unknown);
   if (m_examMode == ExamMode::Unknown) {
     ExamPersistingBytes pb(Ion::PersistingBytes::read());
     static_assert(sizeof(pb) == sizeof(uint16_t), "Exam mode encoding on persisting bytes has changed.");

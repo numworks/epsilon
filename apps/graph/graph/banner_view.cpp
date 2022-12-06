@@ -48,10 +48,8 @@ void BannerView::setDisplayParameters(bool showInterest, bool showDerivative, bo
 View * BannerView::subviewAtIndex(int index) {
   assert(0 <= index && index < numberOfSubviews());
   int n = numberOfInterestMessages();
-  for (int i = 0; i < n; i++) {
-    if (index == i) {
-      return m_interestMessageView + i;
-    }
+  if (index < n) {
+    return m_interestMessageView + index;
   }
   index -= n;
 

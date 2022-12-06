@@ -51,7 +51,7 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
     m_rowPrefaceView.setLeftMargin(m_mainTableViewLeftMargin);
     layoutSubviewsInRect(bounds(), force);
   } else {
-    m_columnPrefaceView.setRightMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_columnPrefaceView, &m_columnPrefaceDataSource) : 0);
+    m_columnPrefaceView.setRightMargin(m_marginDelegate ? m_marginDelegate->columnPrefaceRightMargin(&m_columnPrefaceView) : 0);
     m_mainTableView->setLeftMargin(0);
     m_rowPrefaceView.setLeftMargin(0);
     KDCoordinate columnPrefaceWidth = m_columnPrefaceView.minimalSizeForOptimalDisplay().width();

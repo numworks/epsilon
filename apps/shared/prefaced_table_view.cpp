@@ -68,7 +68,6 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
     m_mainTableView->setFrame(rect, force);
     verticalBar->setTopMargin(rowPrefaceHeight + 2 * m_mainTableViewTopMargin);
   } else {
-    m_rowPrefaceView.setBottomMargin(m_marginDelegate ? m_marginDelegate->prefaceMargin(&m_rowPrefaceView, &m_rowPrefaceDataSource) : 0);
     m_mainTableView->setTopMargin(0);
     m_mainTableView->setFrame(KDRect(rect.x(), rect.y() + rowPrefaceHeight, rect.width(), rect.height() - rowPrefaceHeight), force);
     verticalBar->setTopMargin(2 * m_mainTableViewTopMargin);

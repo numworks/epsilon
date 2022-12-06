@@ -191,8 +191,6 @@ void AbstractPlotView::drawDot(KDContext * ctx, KDRect rect, Dots::Size size, Po
     mask = (const uint8_t *)Dots::LargeDotMask;
   }
 
-  /* If circle has an even diameter, out of the four center pixels, the bottom
-   * left one will be placed at (x, y) */
   KDRect rectForDot = dotRect(size, xy);
   if (rect.intersects(rectForDot)) {
     KDColor workingBuffer[Dots::LargeDotDiameter * Dots::LargeDotDiameter];

@@ -340,18 +340,20 @@ void AbstractPlotView::drawArrowhead(KDContext * ctx, KDRect rect, Coordinate2D<
 }
 
 View * AbstractPlotView::subviewAtIndex(int i) {
-  View * banner = bannerView();
-  if (i == 0 && banner) {
-    return banner;
+  View * subviews[] = { bannerView(), cursorView(), ornamentView() };
+  constexpr static int maxNumberOfSubviews = 3;
+  assert(numberOfSubviews() <= maxNumberOfSubviews);
+  for (int k = 0; k < maxNumberOfSubviews; k++) {
+    if (subviews[k] == nullptr) {
+      continue;
+    }
+    if (i == 0) {
+      return subviews[k];
+    }
+    i--;
   }
-  i -= (banner != nullptr);
-  View * cursor = cursorView();
-  if (i == 0 && cursor) {
-    return cursor;
-  }
-  i -= (cursor != nullptr);
-  assert(i == 0 && ornamentView());
-  return ornamentView();
+  assert(false);
+  return nullptr;
 }
 
 void AbstractPlotView::layoutSubviews(bool force) {

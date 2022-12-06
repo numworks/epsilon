@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -33,7 +33,6 @@
 #include "SDL_audio.h"
 #include "../SDL_audio_c.h"
 #include "SDL_diskaudio.h"
-#include "SDL_log.h"
 
 /* !!! FIXME: these should be SDL hints, not environment variables. */
 /* environment variables and defaults. */

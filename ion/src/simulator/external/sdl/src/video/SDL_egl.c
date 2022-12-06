@@ -1,6 +1,6 @@
 /*
  *  Simple DirectMedia Layer
- *  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+ *  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
  * 
  *  This software is provided 'as-is', without any express or implied
  *  warranty.  In no event will the authors be held liable for any damages
@@ -31,7 +31,6 @@
 #endif
 
 #include "SDL_sysvideo.h"
-#include "SDL_log.h"
 #include "SDL_egl_c.h"
 #include "SDL_loadso.h"
 #include "SDL_hints.h"
@@ -73,6 +72,13 @@
 #define DEFAULT_OGL_ES_PVR "libGLES_CM.dylib"   //???
 #define DEFAULT_OGL_ES "libGLESv1_CM.dylib"     //???
 
+#elif defined(__OpenBSD__)
+#define DEFAULT_OGL "libGL.so"
+#define DEFAULT_EGL "libEGL.so"
+#define DEFAULT_OGL_ES2 "libGLESv2.so"
+#define DEFAULT_OGL_ES_PVR "libGLES_CM.so"
+#define DEFAULT_OGL_ES "libGLESv1_CM.so"
+
 #else
 /* Desktop Linux */
 #define DEFAULT_OGL "libGL.so.1"
@@ -81,6 +87,10 @@
 #define DEFAULT_OGL_ES_PVR "libGLES_CM.so.1"
 #define DEFAULT_OGL_ES "libGLESv1_CM.so.1"
 #endif /* SDL_VIDEO_DRIVER_RPI */
+
+#if SDL_VIDEO_OPENGL
+#include "SDL_opengl.h"
+#endif
 
 /** If we happen to not have this defined because of an older EGL version, just define it 0x0
     as eglGetPlatformDisplayEXT will most likely be NULL if this is missing
@@ -142,12 +152,8 @@ int SDL_EGL_SetErrorEx(const char * message, const char * eglFunctionName, EGLin
 }
 
 /* EGL implementation of SDL OpenGL ES support */
-typedef enum {
-    SDL_EGL_DISPLAY_EXTENSION,
-    SDL_EGL_CLIENT_EXTENSION
-} SDL_EGL_ExtensionType;
 
-static SDL_bool SDL_EGL_HasExtension(_THIS, SDL_EGL_ExtensionType type, const char *ext)
+SDL_bool SDL_EGL_HasExtension(_THIS, SDL_EGL_ExtensionType type, const char *ext)
 {
     size_t ext_len;
     const char *ext_override;
@@ -222,25 +228,37 @@ static SDL_bool SDL_EGL_HasExtension(_THIS, SDL_EGL_ExtensionType type, const ch
 void *
 SDL_EGL_GetProcAddress(_THIS, const char *proc)
 {
-    static char procname[1024];
-    void *retval;
-    
-    /* eglGetProcAddress is busted on Android http://code.google.com/p/android/issues/detail?id=7681 */
-#if !defined(SDL_VIDEO_DRIVER_ANDROID)
-    if (_this->egl_data->eglGetProcAddress) {
+    const Uint32 eglver = (((Uint32) _this->egl_data->egl_version_major) << 16) | ((Uint32) _this->egl_data->egl_version_minor);
+    const SDL_bool is_egl_15_or_later = eglver >= ((((Uint32) 1) << 16) | 5);
+    void *retval = NULL;
+
+    /* EGL 1.5 can use eglGetProcAddress() for any symbol. 1.4 and earlier can't use it for core entry points. */
+    if (!retval && is_egl_15_or_later && _this->egl_data->eglGetProcAddress) {
+        retval = _this->egl_data->eglGetProcAddress(proc);
+    }
+
+    #ifndef __EMSCRIPTEN__  /* LoadFunction isn't needed on Emscripten and will call dlsym(), causing other problems. */
+    /* Try SDL_LoadFunction() first for EGL <= 1.4, or as a fallback for >= 1.5. */
+    if (!retval) {
+        static char procname[64];
+        retval = SDL_LoadFunction(_this->egl_data->egl_dll_handle, proc);
+        /* just in case you need an underscore prepended... */
+        if (!retval && (SDL_strlen(proc) < (sizeof (procname) - 1))) {
+            procname[0] = '_';
+            SDL_strlcpy(procname + 1, proc, sizeof (procname) - 1);
+            retval = SDL_LoadFunction(_this->egl_data->egl_dll_handle, procname);
+        }
+    }
+    #endif
+
+    /* Try eglGetProcAddress if we're on <= 1.4 and still searching... */
+    if (!retval && !is_egl_15_or_later && _this->egl_data->eglGetProcAddress) {
         retval = _this->egl_data->eglGetProcAddress(proc);
         if (retval) {
             return retval;
         }
     }
-#endif
-    
-    retval = SDL_LoadFunction(_this->egl_data->egl_dll_handle, proc);
-    if (!retval && SDL_strlen(proc) <= 1022) {
-        procname[0] = '_';
-        SDL_strlcpy(procname + 1, proc, 1022);
-        retval = SDL_LoadFunction(_this->egl_data->egl_dll_handle, procname);
-    }
+
     return retval;
 }
 
@@ -422,8 +440,13 @@ SDL_EGL_LoadLibraryOnly(_THIS, const char *egl_path)
     LOAD_FUNC(eglGetError);
     LOAD_FUNC_EGLEXT(eglQueryDevicesEXT);
     LOAD_FUNC_EGLEXT(eglGetPlatformDisplayEXT);
-
-    _this->gl_config.driver_loaded = 1;
+    /* Atomic functions */
+    LOAD_FUNC_EGLEXT(eglCreateSyncKHR);
+    LOAD_FUNC_EGLEXT(eglDestroySyncKHR);
+    LOAD_FUNC_EGLEXT(eglDupNativeFenceFDANDROID);
+    LOAD_FUNC_EGLEXT(eglWaitSyncKHR);
+    LOAD_FUNC_EGLEXT(eglClientWaitSyncKHR);
+    /* Atomic functions end */
 
     if (path) {
         SDL_strlcpy(_this->gl_config.driver_path, path, sizeof(_this->gl_config.driver_path) - 1);
@@ -434,29 +457,36 @@ SDL_EGL_LoadLibraryOnly(_THIS, const char *egl_path)
     return 0;
 }
 
+static void
+SDL_EGL_GetVersion(_THIS) {
+    if (_this->egl_data->eglQueryString) {
+        const char *egl_version = _this->egl_data->eglQueryString(_this->egl_data->egl_display, EGL_VERSION);
+        if (egl_version) {
+            int major = 0, minor = 0;
+            if (SDL_sscanf(egl_version, "%d.%d", &major, &minor) == 2) {
+                _this->egl_data->egl_version_major = major;
+                _this->egl_data->egl_version_minor = minor;
+            } else {
+                SDL_LogWarn(SDL_LOG_CATEGORY_VIDEO, "Could not parse EGL version string: %s", egl_version);
+            }
+        }
+    }
+}
+
 int
 SDL_EGL_LoadLibrary(_THIS, const char *egl_path, NativeDisplayType native_display, EGLenum platform)
 {
-    int egl_version_major = 0, egl_version_minor = 0;
+    int egl_version_major, egl_version_minor;
     int library_load_retcode = SDL_EGL_LoadLibraryOnly(_this, egl_path);
     if (library_load_retcode != 0) {
         return library_load_retcode;
     }
 
-    if (_this->egl_data->eglQueryString) {
-        /* EGL 1.5 allows querying for client version */
-        const char *egl_version = _this->egl_data->eglQueryString(EGL_NO_DISPLAY, EGL_VERSION);
-        if (egl_version != NULL) {
-            if (SDL_sscanf(egl_version, "%d.%d", &egl_version_major, &egl_version_minor) != 2) {
-                egl_version_major = 0;
-                egl_version_minor = 0;
-                SDL_LogWarn(SDL_LOG_CATEGORY_VIDEO, "Could not parse EGL version string: %s", egl_version);
-            }
-        }
-    }
+    /* EGL 1.5 allows querying for client version with EGL_NO_DISPLAY */
+    SDL_EGL_GetVersion(_this);
 
-    _this->egl_data->egl_version_major = egl_version_major;
-    _this->egl_data->egl_version_minor = egl_version_minor;
+    egl_version_major = _this->egl_data->egl_version_major;
+    egl_version_minor = _this->egl_data->egl_version_minor;
 
     if (egl_version_major == 1 && egl_version_minor == 5) {
         LOAD_FUNC(eglGetPlatformDisplay);
@@ -492,6 +522,9 @@ SDL_EGL_LoadLibrary(_THIS, const char *egl_path, NativeDisplayType native_displa
         return SDL_SetError("Could not initialize EGL");
     }
 #endif
+
+    /* Get the EGL version with a valid egl_display, for EGL <= 1.4 */
+    SDL_EGL_GetVersion(_this);
 
     _this->egl_data->is_offscreen = 0;
 
@@ -578,6 +611,9 @@ SDL_EGL_InitializeOffscreen(_THIS, int device)
         }
     }
 
+    /* Get the EGL version with a valid egl_display, for EGL <= 1.4 */
+    SDL_EGL_GetVersion(_this);
+
     _this->egl_data->is_offscreen = 1;
 
     return 0;
@@ -655,6 +691,7 @@ SDL_EGL_ChooseConfig(_THIS)
     EGLint found_configs = 0, value;
     /* 128 seems even nicer here */
     EGLConfig configs[128];
+    SDL_bool has_matching_format = SDL_FALSE;
     int i, j, best_bitdiff = -1, bitdiff;
    
     if (!_this->egl_data) {
@@ -738,11 +775,24 @@ SDL_EGL_ChooseConfig(_THIS)
         return SDL_EGL_SetError("Couldn't find matching EGL config", "eglChooseConfig");
     }
 
+    /* first ensure that a found config has a matching format, or the function will fall through. */
+    for (i = 0; i < found_configs; i++ ) {
+        if (_this->egl_data->egl_required_visual_id)
+        {
+            EGLint format;
+            _this->egl_data->eglGetConfigAttrib(_this->egl_data->egl_display,
+                                            configs[i],
+                                            EGL_NATIVE_VISUAL_ID, &format);
+            if (_this->egl_data->egl_required_visual_id == format)
+                has_matching_format = SDL_TRUE;
+        }
+    }
+
     /* eglChooseConfig returns a number of configurations that match or exceed the requested attribs. */
     /* From those, we select the one that matches our requirements more closely via a makeshift algorithm */
 
     for (i = 0; i < found_configs; i++ ) {
-        if (_this->egl_data->egl_required_visual_id)
+        if (has_matching_format && _this->egl_data->egl_required_visual_id)
         {
             EGLint format;
             _this->egl_data->eglGetConfigAttrib(_this->egl_data->egl_display,
@@ -919,6 +969,36 @@ SDL_EGL_CreateContext(_THIS, EGLSurface egl_surface)
         return NULL;
     }
 
+    /* Check whether making contexts current without a surface is supported.
+     * First condition: EGL must support it. That's the case for EGL 1.5
+     * or later, or if the EGL_KHR_surfaceless_context extension is present. */
+    if ((_this->egl_data->egl_version_major > 1) ||
+        ((_this->egl_data->egl_version_major == 1) && (_this->egl_data->egl_version_minor >= 5)) ||
+        SDL_EGL_HasExtension(_this, SDL_EGL_DISPLAY_EXTENSION, "EGL_KHR_surfaceless_context"))
+    {
+        /* Secondary condition: The client API must support it. */
+        if (profile_es) {
+            /* On OpenGL ES, the GL_OES_surfaceless_context extension must be
+             * present. */
+            if (SDL_GL_ExtensionSupported("GL_OES_surfaceless_context")) {
+                _this->gl_allow_no_surface = SDL_TRUE;
+            }
+#if SDL_VIDEO_OPENGL
+        } else {
+            /* Desktop OpenGL supports it by default from version 3.0 on. */
+            void (APIENTRY * glGetIntegervFunc) (GLenum pname, GLint * params);
+            glGetIntegervFunc = SDL_GL_GetProcAddress("glGetIntegerv");
+            if (glGetIntegervFunc) {
+                GLint v = 0;
+                glGetIntegervFunc(GL_MAJOR_VERSION, &v);
+                if (v >= 3) {
+                    _this->gl_allow_no_surface = SDL_TRUE;
+                }
+            }
+#endif
+        }
+    }
+
     return (SDL_GLContext) egl_context;
 }
 
@@ -934,7 +1014,7 @@ SDL_EGL_MakeCurrent(_THIS, EGLSurface egl_surface, SDL_GLContext context)
     /* The android emulator crashes badly if you try to eglMakeCurrent 
      * with a valid context and invalid surface, so we have to check for both here.
      */
-    if (!egl_context || !egl_surface) {
+    if (!egl_context || (!egl_surface && !_this->gl_allow_no_surface)) {
          _this->egl_data->eglMakeCurrent(_this->egl_data->egl_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
     } else {
         if (!_this->egl_data->eglMakeCurrent(_this->egl_data->egl_display,

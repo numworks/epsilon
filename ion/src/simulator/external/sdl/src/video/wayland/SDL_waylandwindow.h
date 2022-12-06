@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -88,6 +88,7 @@ extern void Wayland_SetWindowFullscreen(_THIS, SDL_Window * window,
                                         SDL_VideoDisplay * _display,
                                         SDL_bool fullscreen);
 extern void Wayland_MaximizeWindow(_THIS, SDL_Window * window);
+extern void Wayland_SetWindowGrab(_THIS, SDL_Window * window, SDL_bool grabbed);
 extern void Wayland_RestoreWindow(_THIS, SDL_Window * window);
 extern void Wayland_SetWindowBordered(_THIS, SDL_Window * window, SDL_bool bordered);
 extern int Wayland_CreateWindow(_THIS, SDL_Window *window);
@@ -98,6 +99,8 @@ extern void Wayland_DestroyWindow(_THIS, SDL_Window *window);
 extern SDL_bool
 Wayland_GetWindowWMInfo(_THIS, SDL_Window * window, SDL_SysWMinfo * info);
 extern int Wayland_SetWindowHitTest(SDL_Window *window, SDL_bool enabled);
+
+extern void Wayland_HandlePendingResize(SDL_Window *window);
 
 #endif /* SDL_waylandwindow_h_ */
 

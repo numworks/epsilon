@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -32,6 +32,13 @@
 #endif
 #include "../video/SDL_sysvideo.h"
 #include "SDL_syswm.h"
+
+#undef SDL_PRIs64
+#ifdef __WIN32__
+#define SDL_PRIs64  "I64d"
+#else
+#define SDL_PRIs64  "lld"
+#endif
 
 /* An arbitrary limit so we don't have unbounded growth */
 #define SDL_MAX_QUEUED_EVENTS   65535
@@ -83,6 +90,54 @@ static struct
     SDL_SysWMEntry *wmmsg_used;
     SDL_SysWMEntry *wmmsg_free;
 } SDL_EventQ = { NULL, { 1 }, { 0 }, 0, NULL, NULL, NULL, NULL, NULL };
+
+
+#if !SDL_JOYSTICK_DISABLED
+
+static SDL_bool SDL_update_joysticks = SDL_TRUE;
+
+static void
+SDL_CalculateShouldUpdateJoysticks()
+{
+    if (SDL_GetHintBoolean(SDL_HINT_AUTO_UPDATE_JOYSTICKS, SDL_TRUE) &&
+        (!SDL_disabled_events[SDL_JOYAXISMOTION >> 8] || SDL_JoystickEventState(SDL_QUERY))) {
+        SDL_update_joysticks = SDL_TRUE;
+    } else {
+        SDL_update_joysticks = SDL_FALSE;
+    }
+}
+
+static void SDLCALL
+SDL_AutoUpdateJoysticksChanged(void *userdata, const char *name, const char *oldValue, const char *hint)
+{
+    SDL_CalculateShouldUpdateJoysticks();
+}
+
+#endif /* !SDL_JOYSTICK_DISABLED */
+
+
+#if !SDL_SENSOR_DISABLED
+
+static SDL_bool SDL_update_sensors = SDL_TRUE;
+
+static void
+SDL_CalculateShouldUpdateSensors()
+{
+    if (SDL_GetHintBoolean(SDL_HINT_AUTO_UPDATE_SENSORS, SDL_TRUE) &&
+        !SDL_disabled_events[SDL_SENSORUPDATE >> 8]) {
+        SDL_update_sensors = SDL_TRUE;
+    } else {
+        SDL_update_sensors = SDL_FALSE;
+    }
+}
+
+static void SDLCALL
+SDL_AutoUpdateSensorsChanged(void *userdata, const char *name, const char *oldValue, const char *hint)
+{
+    SDL_CalculateShouldUpdateSensors();
+}
+
+#endif /* !SDL_SENSOR_DISABLED */
 
 
 /* 0 (default) means no logging, 1 means logging, 2 means logging with mouse and finger motion */
@@ -279,8 +334,8 @@ SDL_LogEvent(const SDL_Event *event)
 
         #define PRINT_FINGER_EVENT(event) \
             SDL_snprintf(details, sizeof (details), " (timestamp=%u touchid=%"SDL_PRIs64" fingerid=%"SDL_PRIs64" x=%f y=%f dx=%f dy=%f pressure=%f)", \
-                (uint) event->tfinger.timestamp, event->tfinger.touchId, \
-                event->tfinger.fingerId, event->tfinger.x, event->tfinger.y, \
+                (uint) event->tfinger.timestamp, (long long)event->tfinger.touchId, \
+                (long long)event->tfinger.fingerId, event->tfinger.x, event->tfinger.y, \
                 event->tfinger.dx, event->tfinger.dy, event->tfinger.pressure)
         SDL_EVENT_CASE(SDL_FINGERDOWN) PRINT_FINGER_EVENT(event); break;
         SDL_EVENT_CASE(SDL_FINGERUP) PRINT_FINGER_EVENT(event); break;
@@ -289,8 +344,8 @@ SDL_LogEvent(const SDL_Event *event)
 
         #define PRINT_DOLLAR_EVENT(event) \
             SDL_snprintf(details, sizeof (details), " (timestamp=%u touchid=%"SDL_PRIs64" gestureid=%"SDL_PRIs64" numfingers=%u error=%f x=%f y=%f)", \
-                (uint) event->dgesture.timestamp, event->dgesture.touchId, \
-                event->dgesture.gestureId, (uint) event->dgesture.numFingers, \
+                (uint) event->dgesture.timestamp, (long long)event->dgesture.touchId, \
+                (long long)event->dgesture.gestureId, (uint) event->dgesture.numFingers, \
                 event->dgesture.error, event->dgesture.x, event->dgesture.y);
         SDL_EVENT_CASE(SDL_DOLLARGESTURE) PRINT_DOLLAR_EVENT(event); break;
         SDL_EVENT_CASE(SDL_DOLLARRECORD) PRINT_DOLLAR_EVENT(event); break;
@@ -298,7 +353,7 @@ SDL_LogEvent(const SDL_Event *event)
 
         SDL_EVENT_CASE(SDL_MULTIGESTURE)
             SDL_snprintf(details, sizeof (details), " (timestamp=%u touchid=%"SDL_PRIs64" dtheta=%f ddist=%f x=%f y=%f numfingers=%u)",
-                (uint) event->mgesture.timestamp, event->mgesture.touchId,
+                (uint) event->mgesture.timestamp, (long long)event->mgesture.touchId,
                 event->mgesture.dTheta, event->mgesture.dDist,
                 event->mgesture.x, event->mgesture.y, (uint) event->mgesture.numFingers);
             break;
@@ -671,20 +726,24 @@ SDL_PumpEvents(void)
 {
     SDL_VideoDevice *_this = SDL_GetVideoDevice();
 
+    /* Release any keys held down from last frame */
+    SDL_ReleaseAutoReleaseKeys();
+
     /* Get events from the video subsystem */
     if (_this) {
         _this->PumpEvents(_this);
     }
+
 #if !SDL_JOYSTICK_DISABLED
     /* Check for joystick state change */
-    if ((!SDL_disabled_events[SDL_JOYAXISMOTION >> 8] || SDL_JoystickEventState(SDL_QUERY))) {
+    if (SDL_update_joysticks) {
         SDL_JoystickUpdate();
     }
 #endif
 
 #if !SDL_SENSOR_DISABLED
     /* Check for sensor state change */
-    if (!SDL_disabled_events[SDL_SENSORUPDATE >> 8]) {
+    if (SDL_update_sensors) {
         SDL_SensorUpdate();
     }
 #endif
@@ -728,7 +787,7 @@ SDL_WaitEventTimeout(SDL_Event * event, int timeout)
                 /* Timeout expired and no events */
                 return 0;
             }
-            SDL_Delay(10);
+            SDL_Delay(1);
             break;
         default:
             /* Has events */
@@ -936,6 +995,17 @@ SDL_EventState(Uint32 type, int state)
             /* Querying state... */
             break;
         }
+
+#if !SDL_JOYSTICK_DISABLED
+        if (state == SDL_DISABLE || state == SDL_ENABLE) {
+            SDL_CalculateShouldUpdateJoysticks();
+        }
+#endif
+#if !SDL_SENSOR_DISABLED
+        if (state == SDL_DISABLE || state == SDL_ENABLE) {
+            SDL_CalculateShouldUpdateSensors();
+        }
+#endif
     }
 
     /* turn off drag'n'drop support if we've disabled the events.
@@ -999,8 +1069,20 @@ SDL_SendKeymapChangedEvent(void)
 }
 
 int
+SDL_SendLocaleChangedEvent(void)
+{
+    return SDL_SendAppEvent(SDL_LOCALECHANGED);
+}
+
+int
 SDL_EventsInit(void)
 {
+#if !SDL_JOYSTICK_DISABLED
+    SDL_AddHintCallback(SDL_HINT_AUTO_UPDATE_JOYSTICKS, SDL_AutoUpdateJoysticksChanged, NULL);
+#endif
+#if !SDL_SENSOR_DISABLED
+    SDL_AddHintCallback(SDL_HINT_AUTO_UPDATE_SENSORS, SDL_AutoUpdateSensorsChanged, NULL);
+#endif
     SDL_AddHintCallback(SDL_HINT_EVENT_LOGGING, SDL_EventLoggingChanged, NULL);
     if (SDL_StartEventLoop() < 0) {
         SDL_DelHintCallback(SDL_HINT_EVENT_LOGGING, SDL_EventLoggingChanged, NULL);
@@ -1018,6 +1100,12 @@ SDL_EventsQuit(void)
     SDL_QuitQuit();
     SDL_StopEventLoop();
     SDL_DelHintCallback(SDL_HINT_EVENT_LOGGING, SDL_EventLoggingChanged, NULL);
+#if !SDL_JOYSTICK_DISABLED
+    SDL_DelHintCallback(SDL_HINT_AUTO_UPDATE_JOYSTICKS, SDL_AutoUpdateJoysticksChanged, NULL);
+#endif
+#if !SDL_SENSOR_DISABLED
+    SDL_DelHintCallback(SDL_HINT_AUTO_UPDATE_SENSORS, SDL_AutoUpdateSensorsChanged, NULL);
+#endif
 }
 
 /* vi: set ts=4 sw=4 expandtab: */

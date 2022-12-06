@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -23,14 +23,12 @@
  * @author Mark Callow, www.edgewise-consulting.com. Based on Jacob Lifshay's
  * SDL_x11vulkan.c.
  */
-
 #include "../../SDL_internal.h"
 
 #if SDL_VIDEO_VULKAN && SDL_VIDEO_DRIVER_COCOA
 
 #include "SDL_cocoavideo.h"
 #include "SDL_cocoawindow.h"
-#include "SDL_assert.h"
 
 #include "SDL_loadso.h"
 #include "SDL_cocoametalview.h"
@@ -237,7 +235,7 @@ SDL_bool Cocoa_Vulkan_CreateSurface(_THIS,
 
 void Cocoa_Vulkan_GetDrawableSize(_THIS, SDL_Window *window, int *w, int *h)
 {
-    Cocoa_Metal_GetDrawableSize(window, w, h);
+    Cocoa_Metal_GetDrawableSize(_this, window, w, h);
 }
 
 #endif

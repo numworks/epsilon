@@ -1,6 +1,7 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
+  Atomic KMSDRM backend by Manuel Alfayate Corchete <redwindwanderer@gmail.com>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -27,9 +28,6 @@
 
 #include "SDL_kmsdrmdyn.h"
 
-#if DEBUG_DYNAMIC_KMSDRM
-#include "SDL_log.h"
-#endif
 
 #ifdef SDL_VIDEO_DRIVER_KMSDRM_DYNAMIC
 
@@ -50,8 +48,8 @@ typedef struct
 #endif
 
 static kmsdrmdynlib kmsdrmlibs[] = {
-    {NULL, SDL_VIDEO_DRIVER_KMSDRM_DYNAMIC},
-    {NULL, SDL_VIDEO_DRIVER_KMSDRM_DYNAMIC_GBM}
+    {NULL, SDL_VIDEO_DRIVER_KMSDRM_DYNAMIC_GBM},
+    {NULL, SDL_VIDEO_DRIVER_KMSDRM_DYNAMIC}
 };
 
 static void *

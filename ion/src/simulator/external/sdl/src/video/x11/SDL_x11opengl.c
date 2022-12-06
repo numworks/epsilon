@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -23,7 +23,6 @@
 #if SDL_VIDEO_DRIVER_X11
 
 #include "SDL_x11video.h"
-#include "SDL_assert.h"
 #include "SDL_hints.h"
 
 /* GLX implementation of SDL OpenGL support */
@@ -32,11 +31,15 @@
 #include "SDL_loadso.h"
 #include "SDL_x11opengles.h"
 
-#if defined(__IRIX__)
-/* IRIX doesn't have a GL library versioning system */
+#if defined(__IRIX__) || defined(__NetBSD__) || defined(__OpenBSD__)
+/*
+ * IRIX doesn't have a GL library versioning system.
+ * NetBSD and OpenBSD have different GL library versions depending on how
+ * the library was installed.
+ */
 #define DEFAULT_OPENGL  "libGL.so"
 #elif defined(__MACOSX__)
-#define DEFAULT_OPENGL  "/usr/X11R6/lib/libGL.1.dylib"
+#define DEFAULT_OPENGL  "/opt/X11/lib/libGL.1.dylib"
 #elif defined(__QNXNTO__)
 #define DEFAULT_OPENGL  "libGL.so.3"
 #else
@@ -238,7 +241,8 @@ X11_GL_LoadLibrary(_THIS, const char *path)
     /* If we need a GL ES context and there's no  
      * GLX_EXT_create_context_es2_profile extension, switch over to X11_GLES functions  
      */
-    if (_this->gl_config.profile_mask == SDL_GL_CONTEXT_PROFILE_ES && 
+    if (((_this->gl_config.profile_mask == SDL_GL_CONTEXT_PROFILE_ES) ||
+         SDL_GetHintBoolean(SDL_HINT_VIDEO_X11_FORCE_EGL, SDL_FALSE)) &&
         X11_GL_UseEGL(_this) ) {
 #if SDL_VIDEO_OPENGL_EGL
         X11_GL_UnloadLibrary(_this);
@@ -649,8 +653,13 @@ SDL_bool
 X11_GL_UseEGL(_THIS)
 {
     SDL_assert(_this->gl_data != NULL);
-    SDL_assert(_this->gl_config.profile_mask == SDL_GL_CONTEXT_PROFILE_ES);
+    if (SDL_GetHintBoolean(SDL_HINT_VIDEO_X11_FORCE_EGL, SDL_FALSE))
+    {
+        /* use of EGL has been requested, even for desktop GL */
+        return SDL_TRUE;
+    }
 
+    SDL_assert(_this->gl_config.profile_mask == SDL_GL_CONTEXT_PROFILE_ES);
     return (SDL_GetHintBoolean(SDL_HINT_OPENGL_ES_DRIVER, SDL_FALSE)
             || _this->gl_config.major_version == 1 /* No GLX extension for OpenGL ES 1.x profiles. */
             || _this->gl_config.major_version > _this->gl_data->es_profile_max_supported_version.major

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -52,12 +52,6 @@ static void UIKit_VideoQuit(_THIS);
 
 /* DUMMY driver bootstrap functions */
 
-static int
-UIKit_Available(void)
-{
-    return 1;
-}
-
 static void UIKit_DeleteDevice(SDL_VideoDevice * device)
 {
     @autoreleasepool {
@@ -102,6 +96,7 @@ UIKit_CreateDevice(int devindex)
         device->DestroyWindow = UIKit_DestroyWindow;
         device->GetWindowWMInfo = UIKit_GetWindowWMInfo;
         device->GetDisplayUsableBounds = UIKit_GetDisplayUsableBounds;
+        device->GetDisplayDPI = UIKit_GetDisplayDPI;
 
 #if SDL_IPHONE_KEYBOARD
         device->HasScreenKeyboardSupport = UIKit_HasScreenKeyboardSupport;
@@ -116,6 +111,7 @@ UIKit_CreateDevice(int devindex)
         device->HasClipboardText = UIKit_HasClipboardText;
 
         /* OpenGL (ES) functions */
+#if SDL_VIDEO_OPENGL_ES || SDL_VIDEO_OPENGL_ES2
         device->GL_MakeCurrent      = UIKit_GL_MakeCurrent;
         device->GL_GetDrawableSize  = UIKit_GL_GetDrawableSize;
         device->GL_SwapWindow       = UIKit_GL_SwapWindow;
@@ -123,6 +119,7 @@ UIKit_CreateDevice(int devindex)
         device->GL_DeleteContext    = UIKit_GL_DeleteContext;
         device->GL_GetProcAddress   = UIKit_GL_GetProcAddress;
         device->GL_LoadLibrary      = UIKit_GL_LoadLibrary;
+#endif
         device->free = UIKit_DeleteDevice;
 
 #if SDL_VIDEO_VULKAN
@@ -137,6 +134,8 @@ UIKit_CreateDevice(int devindex)
 #if SDL_VIDEO_METAL
         device->Metal_CreateView = UIKit_Metal_CreateView;
         device->Metal_DestroyView = UIKit_Metal_DestroyView;
+        device->Metal_GetLayer = UIKit_Metal_GetLayer;
+        device->Metal_GetDrawableSize = UIKit_Metal_GetDrawableSize;
 #endif
 
         device->gl_config.accelerated = 1;
@@ -147,7 +146,7 @@ UIKit_CreateDevice(int devindex)
 
 VideoBootStrap UIKIT_bootstrap = {
     UIKITVID_DRIVER_NAME, "SDL UIKit video driver",
-    UIKit_Available, UIKit_CreateDevice
+    UIKit_CreateDevice
 };
 
 
@@ -159,12 +158,19 @@ UIKit_VideoInit(_THIS)
     if (UIKit_InitModes(_this) < 0) {
         return -1;
     }
+
+	SDL_InitGCKeyboard();
+	SDL_InitGCMouse();
+
     return 0;
 }
 
 void
 UIKit_VideoQuit(_THIS)
 {
+	SDL_QuitGCKeyboard();
+	SDL_QuitGCMouse();
+
     UIKit_QuitModes(_this);
 }
 
@@ -285,7 +291,7 @@ void SDL_NSLog(const char *text)
  */
 SDL_bool SDL_IsIPad(void)
 {
-    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+    return ([UIDevice currentDevice].userInterfaceIdiom == UIUserInterfaceIdiomPad);
 }
 
 #endif /* SDL_VIDEO_DRIVER_UIKIT */

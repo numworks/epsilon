@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -22,7 +22,8 @@
 
 /* This is the software implementation of the YUV texture support */
 
-#include "SDL_assert.h"
+#if SDL_HAVE_YUV
+
 
 #include "SDL_yuv_sw_c.h"
 
@@ -410,5 +411,7 @@ SDL_SW_DestroyYUVTexture(SDL_SW_YUVTexture * swdata)
         SDL_free(swdata);
     }
 }
+
+#endif /* SDL_HAVE_YUV */
 
 /* vi: set ts=4 sw=4 expandtab: */

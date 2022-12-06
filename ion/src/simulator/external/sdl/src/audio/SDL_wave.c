@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -22,22 +22,21 @@
 
 #ifdef HAVE_LIMITS_H
 #include <limits.h>
-#else
-#ifndef SIZE_MAX
-#define SIZE_MAX ((size_t)-1)
 #endif
 #ifndef INT_MAX
 /* Make a lucky guess. */
 #define INT_MAX SDL_MAX_SINT32
 #endif
+#ifndef SIZE_MAX
+#define SIZE_MAX ((size_t)-1)
 #endif
 
 /* Microsoft WAVE file loading routines */
 
-#include "SDL_log.h"
 #include "SDL_hints.h"
 #include "SDL_audio.h"
 #include "SDL_wave.h"
+#include "SDL_audio_c.h"
 
 /* Reads the value stored at the location of the f1 pointer, multiplies it
  * with the second argument and then stores the result to f1.
@@ -717,7 +716,7 @@ MS_ADPCM_Decode(WaveFile *file, Uint8 **audio_buf, Uint32 *audio_len)
         result = MS_ADPCM_DecodeBlockData(&state);
         if (result == -1) {
             /* Unexpected end. Stop decoding and return partial data if necessary. */
-            if (file->trunchint == TruncVeryStrict || file->trunchint == TruncVeryStrict) {
+            if (file->trunchint == TruncVeryStrict || file->trunchint == TruncStrict) {
                 SDL_free(state.output.data);
                 return SDL_SetError("Truncated data chunk");
             } else if (file->trunchint != TruncDropFrame) {
@@ -928,7 +927,7 @@ IMA_ADPCM_DecodeBlockHeader(ADPCM_DecoderState *state)
 {
     Sint16 step;
     Uint32 c;
-    Uint8 *cstate = state->cstate;
+    Uint8 *cstate = (Uint8 *) state->cstate;
 
     for (c = 0; c < state->channels; c++) {
         size_t o = state->block.pos + c * 4;
@@ -1114,7 +1113,7 @@ IMA_ADPCM_Decode(WaveFile *file, Uint8 **audio_buf, Uint32 *audio_len)
 
         if (result == -1) {
             /* Unexpected end. Stop decoding and return partial data if necessary. */
-            if (file->trunchint == TruncVeryStrict || file->trunchint == TruncVeryStrict) {
+            if (file->trunchint == TruncVeryStrict || file->trunchint == TruncStrict) {
                 SDL_free(state.output.data);
                 SDL_free(cstate);
                 return SDL_SetError("Truncated data chunk");
@@ -1334,7 +1333,8 @@ PCM_Init(WaveFile *file, size_t datalength)
     /* It wouldn't be that hard to support more exotic block sizes, but
      * the most common formats should do for now.
      */
-    if (format->blockalign * 8 != format->channels * format->bitspersample) {
+    /* Make sure we're a multiple of the blockalign, at least. */
+    if ((format->channels * format->bitspersample) % (format->blockalign * 8)) {
         return SDL_SetError("Unsupported block alignment");
     }
 
@@ -1560,7 +1560,7 @@ WaveReadPartialChunkData(SDL_RWops *src, WaveChunk *chunk, size_t length)
     }
 
     if (length > 0) {
-        chunk->data = SDL_malloc(length);
+        chunk->data = (Uint8 *) SDL_malloc(length);
         if (chunk->data == NULL) {
             return SDL_OutOfMemory();
         }
@@ -2080,6 +2080,8 @@ WaveLoad(SDL_RWops *src, WaveFile *file, SDL_AudioSpec *spec, Uint8 **audio_buf,
         }
         break;
     }
+
+    spec->silence = SDL_SilenceValueForFormat(spec->format);
 
     /* Report the end position back to the cleanup code. */
     if (RIFFlengthknown) {

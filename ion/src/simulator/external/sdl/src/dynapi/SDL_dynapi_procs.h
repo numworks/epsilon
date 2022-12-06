@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -48,7 +48,7 @@ SDL_DYNAPI_PROC(int,SDL_snprintf,(SDL_OUT_Z_CAP(b) char *a, size_t b, SDL_PRINTF
 #undef SDL_CreateThread
 #endif
 
-#if defined(__WIN32__) && !defined(HAVE_LIBC)
+#if defined(__WIN32__)
 SDL_DYNAPI_PROC(SDL_Thread*,SDL_CreateThread,(SDL_ThreadFunction a, const char *b, void *c, pfnSDL_CurrentBeginThread d, pfnSDL_CurrentEndThread e),(a,b,c,d,e),return)
 #elif defined(__OS2__)
 SDL_DYNAPI_PROC(SDL_Thread*,SDL_CreateThread,(SDL_ThreadFunction a, const char *b, void *c, pfnSDL_CurrentBeginThread d, pfnSDL_CurrentEndThread e),(a,b,c,d,e),return)
@@ -744,7 +744,7 @@ SDL_DYNAPI_PROC(SDL_bool,SDL_HasColorKey,(SDL_Surface *a),(a),return)
 #undef SDL_CreateThreadWithStackSize
 #endif
 
-#if defined(__WIN32__) && !defined(HAVE_LIBC)
+#if defined(__WIN32__)
 SDL_DYNAPI_PROC(SDL_Thread*,SDL_CreateThreadWithStackSize,(SDL_ThreadFunction a, const char *b, const size_t c, void *d, pfnSDL_CurrentBeginThread e, pfnSDL_CurrentEndThread f),(a,b,c,d,e,f),return)
 #elif defined(__OS2__)
 SDL_DYNAPI_PROC(SDL_Thread*,SDL_CreateThreadWithStackSize,(SDL_ThreadFunction a, const char *b, const size_t c, void *d, pfnSDL_CurrentBeginThread e, pfnSDL_CurrentEndThread f),(a,b,c,d,e,f),return)
@@ -783,3 +783,69 @@ SDL_DYNAPI_PROC(void*,SDL_LoadFile,(const char *a, size_t *b),(a,b),return)
 SDL_DYNAPI_PROC(SDL_MetalView,SDL_Metal_CreateView,(SDL_Window *a),(a),return)
 SDL_DYNAPI_PROC(void,SDL_Metal_DestroyView,(SDL_MetalView a),(a),)
 SDL_DYNAPI_PROC(int,SDL_LockTextureToSurface,(SDL_Texture *a, const SDL_Rect *b, SDL_Surface **c),(a,b,c),return)
+SDL_DYNAPI_PROC(SDL_bool,SDL_HasARMSIMD,(void),(),return)
+SDL_DYNAPI_PROC(char*,SDL_strtokr,(char *a, const char *b, char **c),(a,b,c),return)
+SDL_DYNAPI_PROC(wchar_t*,SDL_wcsstr,(const wchar_t *a, const wchar_t *b),(a,b),return)
+SDL_DYNAPI_PROC(int,SDL_wcsncmp,(const wchar_t *a, const wchar_t *b, size_t c),(a,b,c),return)
+SDL_DYNAPI_PROC(SDL_GameControllerType,SDL_GameControllerTypeForIndex,(int a),(a),return)
+SDL_DYNAPI_PROC(SDL_GameControllerType,SDL_GameControllerGetType,(SDL_GameController *a),(a),return)
+SDL_DYNAPI_PROC(SDL_GameController*,SDL_GameControllerFromPlayerIndex,(int a),(a),return)
+SDL_DYNAPI_PROC(void,SDL_GameControllerSetPlayerIndex,(SDL_GameController *a, int b),(a,b),)
+SDL_DYNAPI_PROC(SDL_Joystick*,SDL_JoystickFromPlayerIndex,(int a),(a),return)
+SDL_DYNAPI_PROC(void,SDL_JoystickSetPlayerIndex,(SDL_Joystick *a, int b),(a,b),)
+SDL_DYNAPI_PROC(int,SDL_SetTextureScaleMode,(SDL_Texture *a, SDL_ScaleMode b),(a,b),return)
+SDL_DYNAPI_PROC(int,SDL_GetTextureScaleMode,(SDL_Texture *a, SDL_ScaleMode *b),(a,b),return)
+SDL_DYNAPI_PROC(void,SDL_OnApplicationWillTerminate,(void),(),)
+SDL_DYNAPI_PROC(void,SDL_OnApplicationDidReceiveMemoryWarning,(void),(),)
+SDL_DYNAPI_PROC(void,SDL_OnApplicationWillResignActive,(void),(),)
+SDL_DYNAPI_PROC(void,SDL_OnApplicationDidEnterBackground,(void),(),)
+SDL_DYNAPI_PROC(void,SDL_OnApplicationWillEnterForeground,(void),(),)
+SDL_DYNAPI_PROC(void,SDL_OnApplicationDidBecomeActive,(void),(),)
+#ifdef __IPHONEOS__
+SDL_DYNAPI_PROC(void,SDL_OnApplicationDidChangeStatusBarOrientation,(void),(),)
+#endif
+#ifdef __ANDROID__
+SDL_DYNAPI_PROC(int,SDL_GetAndroidSDKVersion,(void),(),return)
+#endif
+SDL_DYNAPI_PROC(int,SDL_isupper,(int a),(a),return)
+SDL_DYNAPI_PROC(int,SDL_islower,(int a),(a),return)
+SDL_DYNAPI_PROC(int,SDL_JoystickAttachVirtual,(SDL_JoystickType a, int b, int c, int d),(a,b,c,d),return)
+SDL_DYNAPI_PROC(int,SDL_JoystickDetachVirtual,(int a),(a),return)
+SDL_DYNAPI_PROC(SDL_bool,SDL_JoystickIsVirtual,(int a),(a),return)
+SDL_DYNAPI_PROC(int,SDL_JoystickSetVirtualAxis,(SDL_Joystick *a, int b, Sint16 c),(a,b,c),return)
+SDL_DYNAPI_PROC(int,SDL_JoystickSetVirtualButton,(SDL_Joystick *a, int b, Uint8 c),(a,b,c),return)
+SDL_DYNAPI_PROC(int,SDL_JoystickSetVirtualHat,(SDL_Joystick *a, int b, Uint8 c),(a,b,c),return)
+SDL_DYNAPI_PROC(char*,SDL_GetErrorMsg,(char *a, int b),(a,b),return)
+SDL_DYNAPI_PROC(void,SDL_LockSensors,(void),(),)
+SDL_DYNAPI_PROC(void,SDL_UnlockSensors,(void),(),)
+SDL_DYNAPI_PROC(void*,SDL_Metal_GetLayer,(SDL_MetalView a),(a),return)
+SDL_DYNAPI_PROC(void,SDL_Metal_GetDrawableSize,(SDL_Window *a, int *b, int *c),(a,b,c),)
+SDL_DYNAPI_PROC(double,SDL_trunc,(double a),(a),return)
+SDL_DYNAPI_PROC(float,SDL_truncf,(float a),(a),return)
+SDL_DYNAPI_PROC(SDL_Locale *,SDL_GetPreferredLocales,(void),(),return)
+SDL_DYNAPI_PROC(void*,SDL_SIMDRealloc,(void *a, const size_t b),(a, b),return)
+#ifdef __ANDROID__
+SDL_DYNAPI_PROC(SDL_bool,SDL_AndroidRequestPermission,(const char *a),(a),return)
+#endif
+SDL_DYNAPI_PROC(int,SDL_OpenURL,(const char *a),(a),return)
+SDL_DYNAPI_PROC(SDL_bool,SDL_HasSurfaceRLE,(SDL_Surface *a),(a),return)
+SDL_DYNAPI_PROC(SDL_bool,SDL_GameControllerHasLED,(SDL_GameController *a),(a),return)
+SDL_DYNAPI_PROC(int,SDL_GameControllerSetLED,(SDL_GameController *a, Uint8 b, Uint8 c, Uint8 d),(a,b,c,d),return)
+SDL_DYNAPI_PROC(SDL_bool,SDL_JoystickHasLED,(SDL_Joystick *a),(a),return)
+SDL_DYNAPI_PROC(int,SDL_JoystickSetLED,(SDL_Joystick *a, Uint8 b, Uint8 c, Uint8 d),(a,b,c,d),return)
+SDL_DYNAPI_PROC(int,SDL_GameControllerRumbleTriggers,(SDL_GameController *a, Uint16 b, Uint16 c, Uint32 d),(a,b,c,d),return)
+SDL_DYNAPI_PROC(int,SDL_JoystickRumbleTriggers,(SDL_Joystick *a, Uint16 b, Uint16 c, Uint32 d),(a,b,c,d),return)
+SDL_DYNAPI_PROC(SDL_bool,SDL_GameControllerHasAxis,(SDL_GameController *a, SDL_GameControllerAxis b),(a,b),return)
+SDL_DYNAPI_PROC(SDL_bool,SDL_GameControllerHasButton,(SDL_GameController *a, SDL_GameControllerButton b),(a,b),return)
+SDL_DYNAPI_PROC(int,SDL_GameControllerGetNumTouchpads,(SDL_GameController *a),(a),return)
+SDL_DYNAPI_PROC(int,SDL_GameControllerGetNumTouchpadFingers,(SDL_GameController *a, int b),(a,b),return)
+SDL_DYNAPI_PROC(int,SDL_GameControllerGetTouchpadFinger,(SDL_GameController *a, int b, int c, Uint8 *d, float *e, float *f, float *g),(a,b,c,d,e,f,g),return)
+SDL_DYNAPI_PROC(Uint32,SDL_crc32,(Uint32 a, const void *b, size_t c),(a,b,c),return)
+SDL_DYNAPI_PROC(const char*,SDL_GameControllerGetSerial,(SDL_GameController *a),(a),return)
+SDL_DYNAPI_PROC(const char*,SDL_JoystickGetSerial,(SDL_Joystick *a),(a),return)
+SDL_DYNAPI_PROC(SDL_bool,SDL_GameControllerHasSensor,(SDL_GameController *a, SDL_SensorType b),(a,b),return)
+SDL_DYNAPI_PROC(int,SDL_GameControllerSetSensorEnabled,(SDL_GameController *a, SDL_SensorType b, SDL_bool c),(a,b,c),return)
+SDL_DYNAPI_PROC(SDL_bool,SDL_GameControllerIsSensorEnabled,(SDL_GameController *a, SDL_SensorType b),(a,b),return)
+SDL_DYNAPI_PROC(int,SDL_GameControllerGetSensorData,(SDL_GameController *a, SDL_SensorType b, float *c, int d),(a,b,c,d),return)
+SDL_DYNAPI_PROC(int,SDL_wcscasecmp,(const wchar_t *a, const wchar_t *b),(a,b),return)
+SDL_DYNAPI_PROC(int,SDL_wcsncasecmp,(const wchar_t *a, const wchar_t *b, size_t c),(a,b,c),return)

@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -198,6 +198,13 @@ SetBlendMode(DirectFB_RenderData * data, int blendMode,
             SDL_DFB_CHECK(destsurf->SetDstBlendFunction(destsurf, DSBF_SRCCOLOR));
 
             break;
+        case SDL_BLENDMODE_MUL:
+            data->blitFlags = DSBLIT_BLEND_ALPHACHANNEL;
+            data->drawFlags = DSDRAW_BLEND;
+            SDL_DFB_CHECK(destsurf->SetSrcBlendFunction(destsurf, DSBF_DESTCOLOR));
+            SDL_DFB_CHECK(destsurf->SetDstBlendFunction(destsurf, DSBF_INVSRCALPHA));
+
+            break;
         }
         data->lastBlendMode = blendMode;
     }
@@ -223,6 +230,7 @@ PrepareDraw(SDL_Renderer * renderer, const SDL_RenderCommand *cmd)
         break;
     case SDL_BLENDMODE_ADD:
     case SDL_BLENDMODE_MOD:
+    case SDL_BLENDMODE_MUL:
         r = ((int) r * (int) a) / 255;
         g = ((int) g * (int) a) / 255;
         b = ((int) b * (int) a) / 255;
@@ -550,6 +558,11 @@ DirectFB_UnlockTexture(SDL_Renderer * renderer, SDL_Texture * texture)
     }
 }
 
+static void
+DirectFB_SetTextureScaleMode()
+{
+}
+
 #if 0
 static void
 DirectFB_DirtyTexture(SDL_Renderer * renderer, SDL_Texture * texture,
@@ -613,7 +626,7 @@ DirectFB_QueueFillRects(SDL_Renderer * renderer, SDL_RenderCommand *cmd, const S
     }
 
     cmd->data.draw.count = count;
-    SDL_memcpy(verts, rects, count);
+    SDL_memcpy(verts, rects, len);
     return 0;
 }
 
@@ -966,6 +979,7 @@ DirectFB_CreateRenderer(SDL_Window * window, Uint32 flags)
     renderer->UpdateTexture = DirectFB_UpdateTexture;
     renderer->LockTexture = DirectFB_LockTexture;
     renderer->UnlockTexture = DirectFB_UnlockTexture;
+    renderer->SetTextureScaleMode = DirectFB_SetTextureScaleMode;
     renderer->QueueSetViewport = DirectFB_QueueSetViewport;
     renderer->QueueSetDrawColor = DirectFB_QueueSetViewport;  /* SetViewport and SetDrawColor are (currently) no-ops. */
     renderer->QueueDrawPoints = DirectFB_QueueDrawPoints;

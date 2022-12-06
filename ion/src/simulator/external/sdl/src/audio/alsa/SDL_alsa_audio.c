@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -32,7 +32,6 @@
 #include <signal.h>             /* For kill() */
 #include <string.h>
 
-#include "SDL_assert.h"
 #include "SDL_timer.h"
 #include "SDL_audio.h"
 #include "../SDL_audio_c.h"
@@ -340,7 +339,6 @@ swizzle_alsa_channels(_THIS, void *buffer, Uint32 bufferlen)
 static void
 no_swizzle(_THIS, void *buffer, Uint32 bufferlen)
 {
-    return;
 }
 #endif /* SND_CHMAP_API_VERSION */
 
@@ -349,7 +347,7 @@ static void
 ALSA_PlayDevice(_THIS)
 {
     const Uint8 *sample_buf = (const Uint8 *) this->hidden->mixbuf;
-    const int frame_size = (((int) SDL_AUDIO_BITSIZE(this->spec.format)) / 8) *
+    const int frame_size = ((SDL_AUDIO_BITSIZE(this->spec.format)) / 8) *
                                 this->spec.channels;
     snd_pcm_uframes_t frames_left = ((snd_pcm_uframes_t) this->spec.samples);
 
@@ -398,7 +396,7 @@ static int
 ALSA_CaptureFromDevice(_THIS, void *buffer, int buflen)
 {
     Uint8 *sample_buf = (Uint8 *) buffer;
-    const int frame_size = (((int) SDL_AUDIO_BITSIZE(this->spec.format)) / 8) *
+    const int frame_size = ((SDL_AUDIO_BITSIZE(this->spec.format)) / 8) *
                                 this->spec.channels;
     const int total_frames = buflen / frame_size;
     snd_pcm_uframes_t frames_left = total_frames;

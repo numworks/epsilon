@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -23,7 +23,6 @@
 #if SDL_VIDEO_DRIVER_UIKIT
 
 #include "SDL_video.h"
-#include "SDL_assert.h"
 #include "SDL_hints.h"
 #include "../SDL_sysvideo.h"
 #include "../../events/SDL_events_c.h"
@@ -180,7 +179,9 @@ SDL_HideHomeIndicatorHintChanged(void *userdata, const char *name, const char *o
     /* Don't run the game loop while a messagebox is up */
     if (!UIKit_ShowingMessageBox()) {
         /* See the comment in the function definition. */
+#if SDL_VIDEO_OPENGL_ES || SDL_VIDEO_OPENGL_ES2
         UIKit_GL_RestoreCurrentContext();
+#endif
 
         animationCallback(animationCallbackParam);
     }
@@ -286,7 +287,8 @@ SDL_HideHomeIndicatorHintChanged(void *userdata, const char *name, const char *o
     [center addObserver:self selector:@selector(textFieldTextDidChange:) name:UITextFieldTextDidChangeNotification object:nil];
 }
 
-- (NSArray *) keyCommands {
+- (NSArray *)keyCommands
+{
     NSMutableArray *commands = [[NSMutableArray alloc] init];
     [commands addObject:[UIKeyCommand keyCommandWithInput:UIKeyInputUpArrow modifierFlags:kNilOptions action:@selector(handleCommand:)]];
     [commands addObject:[UIKeyCommand keyCommandWithInput:UIKeyInputDownArrow modifierFlags:kNilOptions action:@selector(handleCommand:)]];
@@ -296,29 +298,26 @@ SDL_HideHomeIndicatorHintChanged(void *userdata, const char *name, const char *o
     return [NSArray arrayWithArray:commands];
 }
 
-- (void) handleCommand: (UIKeyCommand *) keyCommand {
+- (void)handleCommand:(UIKeyCommand *)keyCommand
+{
     SDL_Scancode scancode = SDL_SCANCODE_UNKNOWN;
+    NSString *input = keyCommand.input;
 
-    if (keyCommand.input == UIKeyInputUpArrow) {
+    if (input == UIKeyInputUpArrow) {
         scancode = SDL_SCANCODE_UP;
-    } else if (keyCommand.input == UIKeyInputDownArrow) {
+    } else if (input == UIKeyInputDownArrow) {
         scancode = SDL_SCANCODE_DOWN;
-    } else if (keyCommand.input == UIKeyInputLeftArrow) {
+    } else if (input == UIKeyInputLeftArrow) {
         scancode = SDL_SCANCODE_LEFT;
-    } else if (keyCommand.input == UIKeyInputRightArrow) {
+    } else if (input == UIKeyInputRightArrow) {
         scancode = SDL_SCANCODE_RIGHT;
-    } else if (keyCommand.input == UIKeyInputEscape) {
+    } else if (input == UIKeyInputEscape) {
         scancode = SDL_SCANCODE_ESCAPE;
     }
 
     if (scancode != SDL_SCANCODE_UNKNOWN) {
-        SDL_SendKeyboardKey(SDL_PRESSED, scancode);
-        SDL_SendKeyboardKey(SDL_RELEASED, scancode);
+        SDL_SendKeyboardKeyAutoRelease(scancode);
     }
-}
-
-- (void) downArrow: (UIKeyCommand *) keyCommand {
-    NSLog(@"down arrow!");
 }
 
 - (void)setView:(UIView *)view
@@ -340,8 +339,8 @@ SDL_HideHomeIndicatorHintChanged(void *userdata, const char *name, const char *o
     rotatingOrientation = YES;
     [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {}
                                  completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-                                     rotatingOrientation = NO;
-                                 }];
+        self->rotatingOrientation = NO;
+    }];
 }
 #else
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
@@ -410,36 +409,38 @@ SDL_HideHomeIndicatorHintChanged(void *userdata, const char *name, const char *o
     {
         NSUInteger len = changeText.length;
         if (len > 0) {
-            /* Go through all the characters in the string we've been sent and
-             * convert them to key presses */
-            int i;
-            for (i = 0; i < len; i++) {
-                unichar c = [changeText characterAtIndex:i];
-                SDL_Scancode code;
-                Uint16 mod;
+            if (!SDL_HardwareKeyboardKeyPressed()) {
+                /* Go through all the characters in the string we've been sent and
+                 * convert them to key presses */
+                int i;
+                for (i = 0; i < len; i++) {
+                    unichar c = [changeText characterAtIndex:i];
+                    SDL_Scancode code;
+                    Uint16 mod;
 
-                if (c < 127) {
-                    /* Figure out the SDL_Scancode and SDL_keymod for this unichar */
-                    code = unicharToUIKeyInfoTable[c].code;
-                    mod  = unicharToUIKeyInfoTable[c].mod;
-                } else {
-                    /* We only deal with ASCII right now */
-                    code = SDL_SCANCODE_UNKNOWN;
-                    mod = 0;
-                }
+                    if (c < 127) {
+                        /* Figure out the SDL_Scancode and SDL_keymod for this unichar */
+                        code = unicharToUIKeyInfoTable[c].code;
+                        mod  = unicharToUIKeyInfoTable[c].mod;
+                    } else {
+                        /* We only deal with ASCII right now */
+                        code = SDL_SCANCODE_UNKNOWN;
+                        mod = 0;
+                    }
 
-                if (mod & KMOD_SHIFT) {
-                    /* If character uses shift, press shift down */
-                    SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_LSHIFT);
-                }
+                    if (mod & KMOD_SHIFT) {
+                        /* If character uses shift, press shift */
+                        SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_LSHIFT);
+                    }
 
-                /* send a keydown and keyup even for the character */
-                SDL_SendKeyboardKey(SDL_PRESSED, code);
-                SDL_SendKeyboardKey(SDL_RELEASED, code);
+                    /* send a keydown and keyup even for the character */
+                    SDL_SendKeyboardKey(SDL_PRESSED, code);
+                    SDL_SendKeyboardKey(SDL_RELEASED, code);
 
-                if (mod & KMOD_SHIFT) {
-                    /* If character uses shift, press shift back up */
-                    SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_LSHIFT);
+                    if (mod & KMOD_SHIFT) {
+                        /* If character uses shift, release shift */
+                        SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_LSHIFT);
+                    }
                 }
             }
             SDL_SendKeyboardText([changeText UTF8String]);
@@ -490,8 +491,7 @@ SDL_HideHomeIndicatorHintChanged(void *userdata, const char *name, const char *o
         changeText = nil;
         if (textField.markedTextRange == nil) {
             /* it wants to replace text with nothing, ie a delete */
-            SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_BACKSPACE);
-            SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_BACKSPACE);
+            SDL_SendKeyboardKeyAutoRelease(SDL_SCANCODE_BACKSPACE);
         }
         if (textField.text.length < 16) {
             textField.text = obligateForBackspace;
@@ -505,8 +505,7 @@ SDL_HideHomeIndicatorHintChanged(void *userdata, const char *name, const char *o
 /* Terminates the editing session */
 - (BOOL)textFieldShouldReturn:(UITextField*)_textField
 {
-    SDL_SendKeyboardKey(SDL_PRESSED, SDL_SCANCODE_RETURN);
-    SDL_SendKeyboardKey(SDL_RELEASED, SDL_SCANCODE_RETURN);
+    SDL_SendKeyboardKeyAutoRelease(SDL_SCANCODE_RETURN);
     if (keyboardVisible &&
         SDL_GetHintBoolean(SDL_HINT_RETURN_KEY_HIDES_IME, SDL_FALSE)) {
          SDL_StopTextInput();

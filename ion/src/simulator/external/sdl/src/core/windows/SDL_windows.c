@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -24,7 +24,6 @@
 
 #include "SDL_windows.h"
 #include "SDL_error.h"
-#include "SDL_assert.h"
 
 #include <objbase.h>  /* for CoInitialize/CoUninitialize (Win32 only) */
 

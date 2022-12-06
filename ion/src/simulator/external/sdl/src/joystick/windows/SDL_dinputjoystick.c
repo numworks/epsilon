@@ -1,6 +1,6 @@
 /*
   Simple DirectMedia Layer
-  Copyright (C) 1997-2019 Sam Lantinga <slouken@libsdl.org>
+  Copyright (C) 1997-2020 Sam Lantinga <slouken@libsdl.org>
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -26,6 +26,7 @@
 
 #include "SDL_windowsjoystick_c.h"
 #include "SDL_dinputjoystick_c.h"
+#include "SDL_rawinputjoystick_c.h"
 #include "SDL_xinputjoystick_c.h"
 #include "../hidapi/SDL_hidapijoystick_c.h"
 
@@ -228,49 +229,170 @@ const DIDATAFORMAT SDL_c_dfDIJoystick2 = {
 static int
 SetDIerror(const char *function, HRESULT code)
 {
-    /*
-    return SDL_SetError("%s() [%s]: %s", function,
-    DXGetErrorString9A(code), DXGetErrorDescription9A(code));
-    */
     return SDL_SetError("%s() DirectX error 0x%8.8lx", function, code);
 }
 
+#if 0 /* Microsoft recommended implementation, but slower than checking raw devices */
+#define COBJMACROS
+#include <wbemidl.h>
+#include <oleauto.h>
+
+static const IID CLSID_WbemLocator = { 0x4590f811, 0x1d3a, 0x11d0,{ 0x89, 0x1f, 0x00, 0xaa, 0x00, 0x4b, 0x2e, 0x24 } };
+static const IID IID_IWbemLocator = { 0xdc12a687, 0x737f, 0x11cf,{ 0x88, 0x4d, 0x00, 0xaa, 0x00, 0x4b, 0x2e, 0x24 } };
+
 static SDL_bool
-SDL_IsXInputDevice(const GUID* pGuidProductFromDirectInput)
+WIN_IsXInputDevice(const WCHAR *name, const GUID* pGuidProductFromDirectInput)
 {
-    static GUID IID_ValveStreamingGamepad = { MAKELONG(0x28DE, 0x11FF), 0x0000, 0x0000, { 0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44 } };
-    static GUID IID_X360WiredGamepad = { MAKELONG(0x045E, 0x02A1), 0x0000, 0x0000, { 0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44 } };
-    static GUID IID_X360WirelessGamepad = { MAKELONG(0x045E, 0x028E), 0x0000, 0x0000, { 0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44 } };
-    static GUID IID_XOneWiredGamepad = { MAKELONG(0x045E, 0x02FF), 0x0000, 0x0000, { 0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44 } };
-    static GUID IID_XOneWirelessGamepad = { MAKELONG(0x045E, 0x02DD), 0x0000, 0x0000, { 0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44 } };
-    static GUID IID_XOneNewWirelessGamepad = { MAKELONG(0x045E, 0x02D1), 0x0000, 0x0000, { 0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44 } };
-    static GUID IID_XOneSWirelessGamepad = { MAKELONG(0x045E, 0x02EA), 0x0000, 0x0000, { 0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44 } };
-    static GUID IID_XOneSBluetoothGamepad = { MAKELONG(0x045E, 0x02E0), 0x0000, 0x0000, { 0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44 } };
-    static GUID IID_XOneEliteWirelessGamepad = { MAKELONG(0x045E, 0x02E3), 0x0000, 0x0000, { 0x00, 0x00, 0x50, 0x49, 0x44, 0x56, 0x49, 0x44 } };
+    IWbemLocator*           pIWbemLocator = NULL;
+    IEnumWbemClassObject*   pEnumDevices = NULL;
+    IWbemClassObject*       pDevices[20];
+    IWbemServices*          pIWbemServices = NULL;
+    BSTR                    bstrNamespace = NULL;
+    BSTR                    bstrDeviceID = NULL;
+    BSTR                    bstrClassName = NULL;
+    DWORD                   uReturned = 0;
+    SDL_bool                bIsXinputDevice = SDL_FALSE;
+    UINT                    iDevice = 0;
+    VARIANT                 var;
+    HRESULT                 hr;
 
-    static const GUID *s_XInputProductGUID[] = {
-        &IID_ValveStreamingGamepad,
-        &IID_X360WiredGamepad,         /* Microsoft's wired X360 controller for Windows. */
-        &IID_X360WirelessGamepad,      /* Microsoft's wireless X360 controller for Windows. */
-        &IID_XOneWiredGamepad,         /* Microsoft's wired Xbox One controller for Windows. */
-        &IID_XOneWirelessGamepad,      /* Microsoft's wireless Xbox One controller for Windows. */
-        &IID_XOneNewWirelessGamepad,   /* Microsoft's updated wireless Xbox One controller (w/ 3.5 mm jack) for Windows. */
-        &IID_XOneSWirelessGamepad,     /* Microsoft's wireless Xbox One S controller for Windows. */
-        &IID_XOneSBluetoothGamepad,    /* Microsoft's Bluetooth Xbox One S controller for Windows. */
-        &IID_XOneEliteWirelessGamepad  /* Microsoft's wireless Xbox One Elite controller for Windows. */
-    };
+    if (!SDL_XINPUT_Enabled()) {
+        return SDL_FALSE;
+    }
 
-    size_t iDevice;
+    if (SDL_wcsstr(name, L" XINPUT ") != NULL) {
+        /* This is a duplicate interface for a controller that will show up with XInput,
+           e.g. Xbox One Elite Series 2 in Bluetooth mode.
+         */
+        return SDL_TRUE;
+    }
+
+    SDL_zeroa(pDevices);
+
+    // Create WMI
+    hr = CoCreateInstance(&CLSID_WbemLocator,
+        NULL,
+        CLSCTX_INPROC_SERVER,
+        &IID_IWbemLocator,
+        (LPVOID*)&pIWbemLocator);
+    if (FAILED(hr) || pIWbemLocator == NULL)
+        goto LCleanup;
+
+    bstrNamespace = SysAllocString(L"\\\\.\\root\\cimv2"); if (bstrNamespace == NULL) goto LCleanup;
+    bstrClassName = SysAllocString(L"Win32_PNPEntity");   if (bstrClassName == NULL) goto LCleanup;
+    bstrDeviceID = SysAllocString(L"DeviceID");          if (bstrDeviceID == NULL)  goto LCleanup;
+
+    // Connect to WMI 
+    hr = IWbemLocator_ConnectServer(pIWbemLocator, bstrNamespace, NULL, NULL, 0L,
+        0L, NULL, NULL, &pIWbemServices);
+    if (FAILED(hr) || pIWbemServices == NULL) {
+        goto LCleanup;
+    }
+
+    // Switch security level to IMPERSONATE. 
+    CoSetProxyBlanket((IUnknown *)pIWbemServices, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, NULL,
+        RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE);
+
+    hr = IWbemServices_CreateInstanceEnum(pIWbemServices, bstrClassName, 0, NULL, &pEnumDevices);
+    if (FAILED(hr) || pEnumDevices == NULL)
+        goto LCleanup;
+
+    // Loop over all devices
+    for (;;) {
+        // Get 20 at a time
+        hr = IEnumWbemClassObject_Next(pEnumDevices, 10000, SDL_arraysize(pDevices), pDevices, &uReturned);
+        if (FAILED(hr)) {
+            goto LCleanup;
+        }
+        if (uReturned == 0) {
+            break;
+        }
+
+        for (iDevice = 0; iDevice < uReturned; iDevice++) {
+            // For each device, get its device ID
+            hr = IWbemClassObject_Get(pDevices[iDevice], bstrDeviceID, 0L, &var, NULL, NULL);
+            if (SUCCEEDED(hr) && var.vt == VT_BSTR && var.bstrVal != NULL) {
+                // Check if the device ID contains "IG_".  If it does, then it's an XInput device
+                // This information can not be found from DirectInput 
+                if (SDL_wcsstr(var.bstrVal, L"IG_")) {
+                    char *bstrVal = WIN_StringToUTF8(var.bstrVal);
+
+                    // If it does, then get the VID/PID from var.bstrVal
+                    DWORD dwPid = 0, dwVid = 0, dwVidPid;
+                    const char *strVid, *strPid;
+                    strVid = SDL_strstr(bstrVal, "VID_");
+                    if (strVid && SDL_sscanf(strVid, "VID_%4X", &dwVid) != 1)
+                        dwVid = 0;
+                    strPid = SDL_strstr(bstrVal, "PID_");
+                    if (strPid && SDL_sscanf(strPid, "PID_%4X", &dwPid) != 1)
+                        dwPid = 0;
+
+                    SDL_free(bstrVal);
+
+                    // Compare the VID/PID to the DInput device
+                    dwVidPid = MAKELONG(dwVid, dwPid);
+                    if (dwVidPid == pGuidProductFromDirectInput->Data1) {
+                        bIsXinputDevice = SDL_TRUE;
+                        goto LCleanup;
+                    }
+                }
+            }
+            IWbemClassObject_Release(pDevices[iDevice]);
+        }
+    }
+
+LCleanup:
+    if (bstrNamespace) {
+        SysFreeString(bstrNamespace);
+    }
+    if (bstrDeviceID) {
+        SysFreeString(bstrDeviceID);
+    }
+    if (bstrClassName) {
+        SysFreeString(bstrClassName);
+    }
+    for (iDevice = 0; iDevice < SDL_arraysize(pDevices); iDevice++) {
+        if (pDevices[iDevice]) {
+            IWbemClassObject_Release(pDevices[iDevice]);
+        }
+    }
+    if (pEnumDevices) {
+        IEnumWbemClassObject_Release(pEnumDevices);
+    }
+    if (pIWbemLocator) {
+        IWbemLocator_Release(pIWbemLocator);
+    }
+    if (pIWbemServices) {
+        IWbemServices_Release(pIWbemServices);
+    }
+
+    return bIsXinputDevice;
+}
+#endif /* 0 */
+
+static SDL_bool
+SDL_IsXInputDevice(const WCHAR *name, const GUID* pGuidProductFromDirectInput)
+{
     UINT i;
 
     if (!SDL_XINPUT_Enabled()) {
         return SDL_FALSE;
     }
 
-    /* Check for well known XInput device GUIDs */
-    /* This lets us skip RAWINPUT for popular devices. Also, we need to do this for the Valve Streaming Gamepad because it's virtualized and doesn't show up in the device list. */
-    for (iDevice = 0; iDevice < SDL_arraysize(s_XInputProductGUID); ++iDevice) {
-        if (SDL_memcmp(pGuidProductFromDirectInput, s_XInputProductGUID[iDevice], sizeof(GUID)) == 0) {
+    if (SDL_wcsstr(name, L" XINPUT ") != NULL) {
+        /* This is a duplicate interface for a controller that will show up with XInput,
+           e.g. Xbox One Elite Series 2 in Bluetooth mode.
+         */
+        return SDL_TRUE;
+    }
+
+    if (SDL_memcmp(&pGuidProductFromDirectInput->Data4[2], "PIDVID", 6) == 0) {
+        Uint16 vendor_id = (Uint16)LOWORD(pGuidProductFromDirectInput->Data1);
+        Uint16 product_id = (Uint16)HIWORD(pGuidProductFromDirectInput->Data1);
+        SDL_GameControllerType type = SDL_GetJoystickGameControllerType("", vendor_id, product_id, -1, 0, 0, 0);
+        if (type == SDL_CONTROLLER_TYPE_XBOX360 ||
+            type == SDL_CONTROLLER_TYPE_XBOXONE ||
+            (vendor_id == 0x28DE && product_id == 0x11FF)) {
             return SDL_TRUE;
         }
     }
@@ -297,7 +419,7 @@ SDL_IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 
     for (i = 0; i < SDL_RawDevListCount; i++) {
         RID_DEVICE_INFO rdi;
-        char devName[128];
+        char devName[MAX_PATH];
         UINT rdiSize = sizeof(rdi);
         UINT nameSize = SDL_arraysize(devName);
 
@@ -325,7 +447,7 @@ void FreeRumbleEffectData(DIEFFECT *effect)
     SDL_free(effect);
 }
 
-DIEFFECT *CreateRumbleEffectData(Sint16 magnitude, Uint32 duration_ms)
+DIEFFECT *CreateRumbleEffectData(Sint16 magnitude)
 {
     DIEFFECT *effect;
     DIPERIODIC *periodic;
@@ -338,7 +460,7 @@ DIEFFECT *CreateRumbleEffectData(Sint16 magnitude, Uint32 duration_ms)
     effect->dwSize = sizeof(*effect);
     effect->dwGain = 10000;
     effect->dwFlags = DIEFF_OBJECTOFFSETS;
-    effect->dwDuration = duration_ms * 1000; /* In microseconds. */
+    effect->dwDuration = SDL_MAX_RUMBLE_DURATION_MS * 1000; /* In microseconds. */
     effect->dwTriggerButton = DIEB_NOTRIGGER;
 
     effect->cAxes = 2;
@@ -383,7 +505,7 @@ SDL_DINPUT_JoystickInit(void)
     coinitialized = SDL_TRUE;
 
     result = CoCreateInstance(&CLSID_DirectInput8, NULL, CLSCTX_INPROC_SERVER,
-        &IID_IDirectInput8, (LPVOID)&dinput);
+        &IID_IDirectInput8, (LPVOID *)&dinput);
 
     if (FAILED(result)) {
         return SetDIerror("CoCreateInstance", result);
@@ -392,11 +514,15 @@ SDL_DINPUT_JoystickInit(void)
     /* Because we used CoCreateInstance, we need to Initialize it, first. */
     instance = GetModuleHandle(NULL);
     if (instance == NULL) {
+        IDirectInput8_Release(dinput);
+        dinput = NULL;
         return SDL_SetError("GetModuleHandle() failed with error code %lu.", GetLastError());
     }
     result = IDirectInput8_Initialize(dinput, instance, DIRECTINPUT_VERSION);
 
     if (FAILED(result)) {
+        IDirectInput8_Release(dinput);
+        dinput = NULL;
         return SetDIerror("IDirectInput::Initialize", result);
     }
     return 0;
@@ -414,6 +540,7 @@ EnumJoysticksCallback(const DIDEVICEINSTANCE * pdidInstance, VOID * pContext)
     Uint16 product = 0;
     Uint16 version = 0;
     WCHAR hidPath[MAX_PATH];
+    char *name;
 
     if (devtype == DI8DEVTYPE_SUPPLEMENTAL) {
         /* Add any supplemental devices that should be ignored here */
@@ -431,7 +558,7 @@ EnumJoysticksCallback(const DIDEVICEINSTANCE * pdidInstance, VOID * pContext)
         }
     }
 
-    if (SDL_IsXInputDevice(&pdidInstance->guidProduct)) {
+    if (SDL_IsXInputDevice(pdidInstance->tszProductName, &pdidInstance->guidProduct)) {
         return DIENUM_CONTINUE;  /* ignore XInput devices here, keep going. */
     }
 
@@ -478,8 +605,8 @@ EnumJoysticksCallback(const DIDEVICEINSTANCE * pdidInstance, VOID * pContext)
                 pPrevJoystick->pNext = pNewJoystick->pNext;
             }
 
-            // Update with new guid/etc, if it has changed
-            pNewJoystick->dxdevice = *pdidInstance;
+            /* Update with new guid/etc, if it has changed */
+            SDL_memcpy(&pNewJoystick->dxdevice, pdidInstance, sizeof(DIDEVICEINSTANCE));
 
             pNewJoystick->pNext = SYS_Joystick;
             SYS_Joystick = pNewJoystick;
@@ -498,23 +625,25 @@ EnumJoysticksCallback(const DIDEVICEINSTANCE * pdidInstance, VOID * pContext)
 
     SDL_zerop(pNewJoystick);
     SDL_wcslcpy(pNewJoystick->hidPath, hidPath, SDL_arraysize(pNewJoystick->hidPath));
-    pNewJoystick->joystickname = WIN_StringToUTF8(pdidInstance->tszProductName);
+    SDL_memcpy(&pNewJoystick->dxdevice, pdidInstance, sizeof(DIDEVICEINSTANCE));
+    SDL_memset(pNewJoystick->guid.data, 0, sizeof(pNewJoystick->guid.data));
+
+    if (SDL_memcmp(&pdidInstance->guidProduct.Data4[2], "PIDVID", 6) == 0) {
+        vendor = (Uint16)LOWORD(pdidInstance->guidProduct.Data1);
+        product = (Uint16)HIWORD(pdidInstance->guidProduct.Data1);
+    }
+
+    name = WIN_StringToUTF8(pdidInstance->tszProductName);
+    pNewJoystick->joystickname = SDL_CreateJoystickName(vendor, product, NULL, name);
+    SDL_free(name);
+
     if (!pNewJoystick->joystickname) {
         SDL_free(pNewJoystick);
         return DIENUM_CONTINUE; /* better luck next time? */
     }
 
-    SDL_memcpy(&(pNewJoystick->dxdevice), pdidInstance,
-        sizeof(DIDEVICEINSTANCE));
-
-    SDL_memset(pNewJoystick->guid.data, 0, sizeof(pNewJoystick->guid.data));
-
     guid16 = (Uint16 *)pNewJoystick->guid.data;
     if (SDL_memcmp(&pdidInstance->guidProduct.Data4[2], "PIDVID", 6) == 0) {
-        vendor = (Uint16)LOWORD(pdidInstance->guidProduct.Data1);
-        product = (Uint16)HIWORD(pdidInstance->guidProduct.Data1);
-        version = 0;
-
         *guid16++ = SDL_SwapLE16(SDL_HARDWARE_BUS_USB);
         *guid16++ = 0;
         *guid16++ = SDL_SwapLE16(vendor);
@@ -530,13 +659,23 @@ EnumJoysticksCallback(const DIDEVICEINSTANCE * pdidInstance, VOID * pContext)
     }
 
     if (SDL_ShouldIgnoreJoystick(pNewJoystick->joystickname, pNewJoystick->guid)) {
+        SDL_free(pNewJoystick->joystickname);
         SDL_free(pNewJoystick);
         return DIENUM_CONTINUE;
     }
 
 #ifdef SDL_JOYSTICK_HIDAPI
-    if (HIDAPI_IsDevicePresent(vendor, product, 0)) {
+    if (HIDAPI_IsDevicePresent(vendor, product, 0, pNewJoystick->joystickname)) {
         /* The HIDAPI driver is taking care of this device */
+        SDL_free(pNewJoystick->joystickname);
+        SDL_free(pNewJoystick);
+        return DIENUM_CONTINUE;
+    }
+#endif
+
+#ifdef SDL_JOYSTICK_RAWINPUT
+    if (RAWINPUT_IsDevicePresent(vendor, product, 0, pNewJoystick->joystickname)) {
+        /* The RAWINPUT driver is taking care of this device */
         SDL_free(pNewJoystick);
         return DIENUM_CONTINUE;
     }
@@ -557,6 +696,51 @@ SDL_DINPUT_JoystickDetect(JoyStick_DeviceData **pContext)
         SDL_RawDevList = NULL;
     }
     SDL_RawDevListCount = 0;
+}
+
+typedef struct
+{
+    Uint16 vendor;
+    Uint16 product;
+    Uint16 version;
+    SDL_bool present;
+} EnumJoystickPresentData;
+
+static BOOL CALLBACK
+EnumJoystickPresentCallback(const DIDEVICEINSTANCE * pdidInstance, VOID * pContext)
+{
+    EnumJoystickPresentData *data = (EnumJoystickPresentData *)pContext;
+    Uint16 vendor = 0;
+    Uint16 product = 0;
+    Uint16 version = 0;
+
+    if (SDL_memcmp(&pdidInstance->guidProduct.Data4[2], "PIDVID", 6) == 0) {
+        vendor = (Uint16)LOWORD(pdidInstance->guidProduct.Data1);
+        product = (Uint16)HIWORD(pdidInstance->guidProduct.Data1);
+        if (data->vendor == vendor && data->product == product && data->version == version) {
+            data->present = SDL_TRUE;
+            return DIENUM_STOP;
+        }
+    }
+    return DIENUM_CONTINUE;
+}
+
+SDL_bool
+SDL_DINPUT_JoystickPresent(Uint16 vendor, Uint16 product, Uint16 version)
+{
+    EnumJoystickPresentData data;
+
+    if (dinput == NULL) {
+        return SDL_FALSE;
+    }
+
+    data.vendor = vendor;
+    data.product = product;
+    data.version = version;
+    data.present = SDL_FALSE;
+    IDirectInput8_EnumDevices(dinput, DI8DEVCLASS_GAMECTRL, EnumJoystickPresentCallback, &data, DIEDFL_ATTACHEDONLY);
+
+    return data.present;
 }
 
 static BOOL CALLBACK
@@ -822,7 +1006,7 @@ SDL_DINPUT_JoystickOpen(SDL_Joystick * joystick, JoyStick_DeviceData *joystickde
 }
 
 static int
-SDL_DINPUT_JoystickInitRumble(SDL_Joystick * joystick, Sint16 magnitude, Uint32 duration_ms)
+SDL_DINPUT_JoystickInitRumble(SDL_Joystick * joystick, Sint16 magnitude)
 {
     HRESULT result;
 
@@ -844,7 +1028,7 @@ SDL_DINPUT_JoystickInitRumble(SDL_Joystick * joystick, Sint16 magnitude, Uint32 
     }
 
     /* Create the effect */
-    joystick->hwdata->ffeffect = CreateRumbleEffectData(magnitude, duration_ms);
+    joystick->hwdata->ffeffect = CreateRumbleEffectData(magnitude);
     if (!joystick->hwdata->ffeffect) {
         return SDL_OutOfMemory();
     }
@@ -858,7 +1042,7 @@ SDL_DINPUT_JoystickInitRumble(SDL_Joystick * joystick, Sint16 magnitude, Uint32 
 }
 
 int
-SDL_DINPUT_JoystickRumble(SDL_Joystick * joystick, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble, Uint32 duration_ms)
+SDL_DINPUT_JoystickRumble(SDL_Joystick * joystick, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble)
 {
     HRESULT result;
 
@@ -871,7 +1055,6 @@ SDL_DINPUT_JoystickRumble(SDL_Joystick * joystick, Uint16 low_frequency_rumble, 
 
     if (joystick->hwdata->ff_initialized) {
         DIPERIODIC *periodic = ((DIPERIODIC *)joystick->hwdata->ffeffect->lpvTypeSpecificParams);
-        joystick->hwdata->ffeffect->dwDuration = duration_ms * 1000; /* In microseconds. */
         periodic->dwMagnitude = CONVERT_MAGNITUDE(magnitude);
 
         result = IDirectInputEffect_SetParameters(joystick->hwdata->ffeffect_ref, joystick->hwdata->ffeffect, (DIEP_DURATION | DIEP_TYPESPECIFICPARAMS));
@@ -885,7 +1068,7 @@ SDL_DINPUT_JoystickRumble(SDL_Joystick * joystick, Uint16 low_frequency_rumble, 
             return SetDIerror("IDirectInputDevice8::SetParameters", result);
         }
     } else {
-        if (SDL_DINPUT_JoystickInitRumble(joystick, magnitude, duration_ms) < 0) {
+        if (SDL_DINPUT_JoystickInitRumble(joystick, magnitude) < 0) {
             return -1;
         }
         joystick->hwdata->ff_initialized = SDL_TRUE;
@@ -1123,6 +1306,12 @@ SDL_DINPUT_JoystickDetect(JoyStick_DeviceData **pContext)
 {
 }
 
+SDL_bool
+SDL_DINPUT_JoystickPresent(Uint16 vendor, Uint16 product, Uint16 version)
+{
+    return SDL_FALSE;
+}
+
 int
 SDL_DINPUT_JoystickOpen(SDL_Joystick * joystick, JoyStick_DeviceData *joystickdevice)
 {
@@ -1130,7 +1319,7 @@ SDL_DINPUT_JoystickOpen(SDL_Joystick * joystick, JoyStick_DeviceData *joystickde
 }
 
 int
-SDL_DINPUT_JoystickRumble(SDL_Joystick * joystick, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble, Uint32 duration_ms)
+SDL_DINPUT_JoystickRumble(SDL_Joystick * joystick, Uint16 low_frequency_rumble, Uint16 high_frequency_rumble)
 {
     return SDL_Unsupported();
 }

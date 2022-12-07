@@ -8,6 +8,8 @@ using namespace Poincare;
 namespace Shared {
 
 MemoizedCurveViewRange::MemoizedCurveViewRange() :
+  m_autoRange(Range1D(), Range1D()),
+  m_storeChecksumOfLastComputedAutoRange(0),
   /* FIXME Due to some impromptu reload, some controllers use the range before
    * setting its values, making it necessary to initialize it with some
    * contrived values. This should probably be reworked. */

@@ -35,7 +35,7 @@ private:
   constexpr static int k_externRectMargin = 2;
 
   static bool FunctionIsDiscontinuousBetweenFloatValues(float x1, float x2, void * model, void * context);
-  Escher::View * ornamentView() const override { return &m_interestView; }
+  Escher::View * ornamentView() const override { return const_cast<InterestView *>(&m_interestView); }
   void drawCartesian(KDContext * ctx, KDRect rect, Shared::ContinuousFunction * f, Ion::Storage::Record record, float tMin, float tMax, float tStep, DiscontinuityTest discontinuity, Axis axis, KDCoordinate rectMin, KDCoordinate rectMax) const;
   void drawPolar(KDContext * ctx, KDRect rect, Shared::ContinuousFunction * f, float tMin, float tMax, float tStep, DiscontinuityTest discontinuity) const;
   void drawParametric(KDContext * ctx, KDRect rect, Shared::ContinuousFunction * f, float tMin, float tMax, float tStep, DiscontinuityTest discontinuity) const;
@@ -44,7 +44,7 @@ private:
   KDRect boundsWithoutBanner() const;
 
   mutable int m_areaIndex;
-  mutable InterestView m_interestView;
+  InterestView m_interestView;
   mutable int m_nextPointOfInterestIndex;
   Poincare::Solver<double>::Interest m_interest;
   bool m_computePointsOfInterest;

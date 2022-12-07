@@ -63,11 +63,15 @@ void VectorListController::setExpression(Poincare::Expression e) {
       Expression y = static_cast<Matrix &>(vector).matrixChild(isColumn ? 1 : 0, isColumn ? 0 : 1);
       float xApproximation = PoincareHelpers::ApproximateToScalar<float>(x, context);
       float yApproximation = PoincareHelpers::ApproximateToScalar<float>(y, context);
-      m_model.setVector(xApproximation, yApproximation);
-      illustrationCell()->reloadCell();
+      if (std::isfinite(xApproximation*xApproximation + yApproximation*yApproximation) && (xApproximation != 0.f || yApproximation != 0.f)) {
+        m_model.setVector(xApproximation, yApproximation);
+        illustrationCell()->reloadCell();
+        setShowIllustration(true);
+      } else {
+        setShowIllustration(false);
+      }
       x = static_cast<Matrix &>(normalized).matrixChild(0, 0);
       y = static_cast<Matrix &>(normalized).matrixChild(isColumn ? 1 : 0, isColumn ? 0 : 1);
-      setShowIllustration(xApproximation != 0.f || yApproximation != 0.f);
       Expression angle = ArcCosine::Builder(x);
       if (y.isPositive(context) == TrinaryBoolean::False) {
         angle = Subtraction::Builder(Multiplication::Builder(Rational::Builder(2), Poincare::Constant::Builder("π")), angle);

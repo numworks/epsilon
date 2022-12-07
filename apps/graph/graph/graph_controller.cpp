@@ -324,8 +324,8 @@ void GraphController::reloadBannerViewForCursorOnFunction(CurveViewCursor * curs
 
   /* Cap number of significant digits for point of interest to be consistent
    * with CalculationGraphController */
-  bool hasPointOfInterest = bannerView()->numberOfInterestMessages() > 0;
-  FunctionGraphController::reloadBannerViewForCursorOnFunction(cursor, record, functionStore, context, hasPointOfInterest);
+  cappedNumberOfSignificantDigits = cappedNumberOfSignificantDigits || bannerView()->numberOfInterestMessages() > 0;
+  FunctionGraphController::reloadBannerViewForCursorOnFunction(cursor, record, functionStore, context, cappedNumberOfSignificantDigits);
 }
 
 }

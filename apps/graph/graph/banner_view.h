@@ -18,6 +18,7 @@ public:
   Escher::BufferTextView * derivativeView() { return &m_derivativeView; }
   Escher::BufferTextView * aView() { return &m_aView; }
   Escher::BufferTextView * bView() { return &m_bView; }
+  int numberOfInterestMessages() const;
   void addInterestMessage(I18n::Message message, Shared::CursorView * cursor);
   void emptyInterestMessages(Shared::CursorView * cursor);
   void setDisplayParameters(bool showInterest, bool showDerivative, bool showTangent);
@@ -30,7 +31,6 @@ private:
   };
   Escher::View * subviewAtIndex(int index) override;
   bool lineBreakBeforeSubview(Escher::View * subview) const override;
-  int numberOfInterestMessages() const;
   bool hasInterestMessage(int i) const {
     assert(i >= 0 && i < k_maxNumberOfInterests);
     return m_showInterest && m_interestMessageView[i].text()[0] != '\0';

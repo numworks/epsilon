@@ -301,7 +301,7 @@ void GraphController::moveCursorAndCenterIfNeeded(double t) {
   }
 }
 
-void GraphController::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context) {
+void GraphController::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context, bool cappedNumberOfSignificantDigits) {
   PointsOfInterestCache * pointsOfInterest = pointsOfInterestForRecord(record);
   bannerView()->emptyInterestMessages(&m_cursorView);
   /* The interests are sorted from most important to lowest, in case there is
@@ -322,7 +322,10 @@ void GraphController::reloadBannerViewForCursorOnFunction(CurveViewCursor * curs
     bannerView()->addInterestMessage(I18n::Message::LineYInterceptDescription, &m_cursorView);
   }
 
-  FunctionGraphController::reloadBannerViewForCursorOnFunction(cursor, record, functionStore, context);
+  /* Cap number of significant digits for point of interest to be consistent
+   * with CalculationGraphController */
+  bool hasPointOfInterest = bannerView()->numberOfInterestMessages() > 0;
+  FunctionGraphController::reloadBannerViewForCursorOnFunction(cursor, record, functionStore, context, hasPointOfInterest);
 }
 
 }

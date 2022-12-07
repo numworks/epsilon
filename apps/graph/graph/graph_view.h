@@ -10,7 +10,7 @@ namespace Graph {
 class GraphView : public Shared::FunctionGraphView, public Shared::PlotPolicy::WithCurves {
   friend class InterestView;
 public:
-  GraphView(Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView);
+  GraphView(Shared::InteractiveCurveViewRange * graphRange, Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::MemoizedCursorView * cursorView);
 
   // FunctionGraphView
   void reload(bool resetInterrupted = false, bool force = false) override;

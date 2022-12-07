@@ -2,6 +2,11 @@
 #include "../app.h"
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/layout_helper.h>
+#include <poincare/multiplication.h>
+#include <poincare/cosine.h>
+#include <poincare/sine.h>
+#include <poincare/matrix.h>
+#include <poincare/symbol.h>
 #include <algorithm>
 
 using namespace Poincare;
@@ -86,13 +91,22 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
     if (f->basedOnCostlyAlgorithms(context)) {
       continue;
     }
-    if (f->properties().isPolar()) {
-      assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
-      zoom.setBounds(f->tMin(), f->tMax());
-      zoom.fitFullFunction(evaluator<float>, f.operator->());
-    } else if (f->properties().isParametric()) {
+    if (f->properties().isPolar() || f->properties().isParametric()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
       Expression e = f->expressionReduced(context);
+      if (f->properties().isPolar()) {
+        // Turn r(theta) into f(theta) = [x(theta), y(theta)]
+        Expression theta = Symbol::Builder(ContinuousFunction::k_unknownName, strlen(ContinuousFunction::k_unknownName));
+        // x(theta) = cos(theta)*r(theta)
+        Expression firstRow = Multiplication::Builder(Cosine::Builder(theta.clone()), e.clone());
+        // y(theta) = sin(theta)*r(theta)
+        Expression secondRow = Multiplication::Builder(Sine::Builder(theta.clone()), e.clone());
+        Matrix parametricExpression = Matrix::Builder();
+        parametricExpression.addChildAtIndexInPlace(firstRow, 0, 0);
+        parametricExpression.addChildAtIndexInPlace(secondRow, 1, 1);
+        parametricExpression.setDimensions(2, 1);
+        e = parametricExpression;
+      }
       assert(e.type() == ExpressionNode::Type::Matrix && e.numberOfChildren() == 2);
 
       // Compute the ordinate range of x(t) and y(t)

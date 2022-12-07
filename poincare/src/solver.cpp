@@ -24,56 +24,32 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketT
   Coordinate2D<T> finalSolution;
   Interest finalInterest = Interest::None;
 
+  /* If the solver is in float, we want it to be fast so the fine search
+   * of interest around discontinuities is skipped. */
+  static bool searchMorePreciselyIfDiscontinuities = sizeof(T) == sizeof(double);
+
   while ((start() < p3.x1()) == (p3.x1() < end())) {
     p1 = p2;
     p2 = p3;
     p3.setX1(nextX(p2.x1(), end()));
     p3.setX2(f(p3.x1(), aux));
 
-    Coordinate2D<T> p1ForHone = p1;
-    Coordinate2D<T> p3ForHone = p3;
+    Coordinate2D<T> start = p1;
+    Coordinate2D<T> middle = p2;
+    Coordinate2D<T> end = p3;
     Interest interest = Interest::None;
-    if ((interest = test(p1, p2, p3, aux)) == Interest::None && // assignment in condition
-        DiscontinuityInBracket(p1, p2, p3, aux) == Interest::Discontinuity) {
+    if ((interest = test(start, middle, end, aux)) == Interest::None && // assignment in condition
+        searchMorePreciselyIfDiscontinuities &&
+        DiscontinuityInBracket(start, middle, end, aux) == Interest::Discontinuity) {
       /* If no interest was found and there is a discontinuity in the interval,
-       * search for the smallest interval that contains the discontinuity and
-       * then compute the interest outside of this interval. */
-      T minStep = minimalStep(p2.x1());
-      Coordinate2D<T> dummy(k_NAN, k_NAN);
-      Coordinate2D<T> lowerBoundOfDiscontinuity = p1;
-      Coordinate2D<T> middleOfDiscontinuity = p2;
-      Coordinate2D<T> upperBoundOfDiscontinuity = p3;
-      while (upperBoundOfDiscontinuity.x1() - lowerBoundOfDiscontinuity.x1() >= 2 * minStep)
-      {
-        if (DiscontinuityInBracket(lowerBoundOfDiscontinuity, dummy, middleOfDiscontinuity, aux) == Interest::Discontinuity) {
-          upperBoundOfDiscontinuity = middleOfDiscontinuity;
-          middleOfDiscontinuity.setX1((lowerBoundOfDiscontinuity.x1() + middleOfDiscontinuity.x1()) / 2.0);
-          middleOfDiscontinuity.setX2(f(middleOfDiscontinuity.x1(), aux));
-        } else {
-          assert(DiscontinuityInBracket(middleOfDiscontinuity, dummy, upperBoundOfDiscontinuity, aux) == Interest::Discontinuity);
-          lowerBoundOfDiscontinuity = middleOfDiscontinuity;
-          middleOfDiscontinuity.setX1((middleOfDiscontinuity.x1() + upperBoundOfDiscontinuity.x1()) / 2.0);
-          middleOfDiscontinuity.setX2(f(middleOfDiscontinuity.x1(), aux));
-        }
-        // assert that dummy has no impact
-        assert(DiscontinuityInBracket(lowerBoundOfDiscontinuity, middleOfDiscontinuity, upperBoundOfDiscontinuity, aux) == Interest::Discontinuity);
-      }
-      /* The smallest interval containing the discontinuity is found. Now
-       * recompute the interest. */
-      if (std::isnan(lowerBoundOfDiscontinuity.x2())) {
-        p1ForHone = upperBoundOfDiscontinuity;
-      } else {
-        assert(std::isnan(upperBoundOfDiscontinuity.x2()));
-        p3ForHone = lowerBoundOfDiscontinuity;
-      }
-      Coordinate2D<T> newP2;
-      newP2.setX1((p1ForHone.x1() + p3ForHone.x1()) / 2.0);
-      newP2.setX2(f(newP2.x1(), aux));
-      interest = test(p1ForHone, newP2, p3ForHone, aux);
+       * search for the largest interval that without discontinuity and
+       * then recompute the interest in this interval. */
+      ExcludeDiscontinuityFromBracket(&start, &middle, &end, f, aux, minimalStep(middle.x1()));
+      interest = test(start, middle, end, aux);
     }
 
     if (interest != Interest::None) {
-      Coordinate2D<T> solution = hone(f, aux, p1ForHone.x1(), p3ForHone.x1(), interest, k_absolutePrecision);
+      Coordinate2D<T> solution = hone(f, aux, start.x1(), end.x1(), interest, k_absolutePrecision);
       if (std::isfinite(solution.x1()) && validSolution(solution.x1())) {
         finalSolution = solution;
         finalInterest = interest;
@@ -213,6 +189,42 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f, const voi
     return res;
   }
   return Coordinate2D<T>(k_NAN, k_NAN);
+}
+
+template<typename T>
+void Solver<T>::ExcludeDiscontinuityFromBracket(Coordinate2D<T> * p1, Coordinate2D<T> * p2, Coordinate2D<T> * p3, FunctionEvaluation f, const void * aux, T minimalSizeOfInterval) {
+  assert(DiscontinuityInBracket(*p1, *p2, *p3, aux) == Interest::Discontinuity);
+  /* Search for the smallest interval that contains the discontinuity and
+   * return the largest interval that does not intersect with it. */
+  Coordinate2D<T> dummy(k_NAN, k_NAN);
+  Coordinate2D<T> lowerBoundOfDiscontinuity = *p1;
+  Coordinate2D<T> middleOfDiscontinuity = *p2;
+  Coordinate2D<T> upperBoundOfDiscontinuity = *p3;
+  while (upperBoundOfDiscontinuity.x1() - lowerBoundOfDiscontinuity.x1() >= minimalSizeOfInterval)
+  {
+    if (DiscontinuityInBracket(lowerBoundOfDiscontinuity, dummy, middleOfDiscontinuity, aux) == Interest::Discontinuity) {
+      upperBoundOfDiscontinuity = middleOfDiscontinuity;
+      middleOfDiscontinuity.setX1((lowerBoundOfDiscontinuity.x1() + middleOfDiscontinuity.x1()) / 2.0);
+      middleOfDiscontinuity.setX2(f(middleOfDiscontinuity.x1(), aux));
+    } else {
+      assert(DiscontinuityInBracket(middleOfDiscontinuity, dummy, upperBoundOfDiscontinuity, aux) == Interest::Discontinuity);
+      lowerBoundOfDiscontinuity = middleOfDiscontinuity;
+      middleOfDiscontinuity.setX1((middleOfDiscontinuity.x1() + upperBoundOfDiscontinuity.x1()) / 2.0);
+      middleOfDiscontinuity.setX2(f(middleOfDiscontinuity.x1(), aux));
+    }
+    // assert that dummy has no impact
+    assert(DiscontinuityInBracket(lowerBoundOfDiscontinuity, middleOfDiscontinuity, upperBoundOfDiscontinuity, aux) == Interest::Discontinuity);
+  }
+  /* The smallest interval containing the discontinuity is found. Now
+   * set p1, p2 and p3 outside of it. */
+  if (std::isnan(lowerBoundOfDiscontinuity.x2())) {
+    *p1 = upperBoundOfDiscontinuity;
+  } else {
+    assert(std::isnan(upperBoundOfDiscontinuity.x2()));
+    *p3 = lowerBoundOfDiscontinuity;
+  }
+  p2->setX1((p1->x1() + p3->x1()) / 2.0);
+  p2->setX2(f(p2->x1(), aux));
 }
 
 template<typename T>
@@ -375,6 +387,7 @@ template Coordinate2D<double> Solver<double>::nextIntersection(const Expression 
 template void Solver<double>::stretch();
 template Coordinate2D<double> Solver<double>::BrentMaximum(FunctionEvaluation, const void *, double, double, Interest, double);
 template double Solver<double>::MaximalStep(double);
+template void Solver<double>::ExcludeDiscontinuityFromBracket(Coordinate2D<double> * p1, Coordinate2D<double> * p2, Coordinate2D<double> * p3, FunctionEvaluation f, const void * aux, double minimalSizeOfInterval);
 
 template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>, const void *);
 template Solver<float>::Solver(float, float, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);

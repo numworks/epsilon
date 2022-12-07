@@ -90,6 +90,8 @@ private:
   static Coordinate2D<T> BrentMaximum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
   static Coordinate2D<T> CompositeBrentForRoot(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision);
 
+  static void ExcludeDiscontinuityFromBracket(Coordinate2D<T> * p1, Coordinate2D<T> * p2, Coordinate2D<T> * p3, FunctionEvaluation f, const void * aux, T minimalSizeOfInterval);
+
   T maximalStep() const { return m_maximalXStep; }
   T minimalStep(T x) const;
   bool validSolution(T x) const;

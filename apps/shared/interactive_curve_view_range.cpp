@@ -300,7 +300,16 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
     {
       Poincare::UserCircuitBreakerCheckpoint checkpoint;
       if (BackCircuitBreakerRun(checkpoint)) {
-        newRange = m_delegate->optimalRange(computeX, computeY, memoizedRange());
+        uint32_t storeChecksum = Ion::Storage::FileSystem::sharedFileSystem()->checksum();
+        if (computeX && computeY && m_storeChecksumOfLastComputedAutoRange == storeChecksum) {
+          newRange = m_autoRange;
+        } else {
+          newRange = m_delegate->optimalRange(computeX, computeY, memoizedRange());
+          if (computeX && computeY) {
+            m_autoRange = newRange;
+            m_storeChecksumOfLastComputedAutoRange = storeChecksum;
+          }
+        }
       } else {
         m_delegate->tidyModels();
         newRange = Zoom::DefaultRange(NormalYXRatio(), k_maxFloat);

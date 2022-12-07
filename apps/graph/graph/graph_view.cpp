@@ -9,7 +9,7 @@ using namespace Shared;
 namespace Graph {
 
 GraphView::GraphView(InteractiveCurveViewRange * graphRange,
-  CurveViewCursor * cursor, Shared::BannerView * bannerView, CursorView * cursorView) :
+  CurveViewCursor * cursor, Shared::BannerView * bannerView, MemoizedCursorView * cursorView) :
   FunctionGraphView(graphRange, cursor, bannerView, cursorView),
   m_interestView(this),
   m_nextPointOfInterestIndex(0),
@@ -401,7 +401,7 @@ void GraphView::drawPointsOfInterest(KDContext * ctx, KDRect rect) {
     drawDot(ctx, rect, k_dotSize, dotCoordinates, Escher::Palette::GrayDarkest);
     if (redrawCursor) {
       /* WARNING: We cannot assert that cursorView is a MemoizedCursorView
-       * but it is. */
+       * but it is thanks to the constructor. */
       static_cast<MemoizedCursorView *>(cursorView())->redrawCursor(rect);
     }
   } while (1);

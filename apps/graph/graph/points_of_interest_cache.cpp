@@ -18,7 +18,7 @@ PointsOfInterestCache PointsOfInterestCache::clone() const {
 }
 
 void PointsOfInterestCache::setBounds(float start, float end) {
-  assert(start < end);
+  assert(start <= end);
 
   uint32_t checksum = Ion::Storage::FileSystem::sharedFileSystem()->checksum();
   if (m_checksum != checksum) {

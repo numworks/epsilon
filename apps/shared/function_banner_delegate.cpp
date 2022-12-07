@@ -6,7 +6,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context) {
+void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor * cursor, Ion::Storage::Record record, FunctionStore * functionStore, Poincare::Context * context, bool cappedNumberOfSignificantDigits) {
   ExpiringPointer<Function> function = functionStore->modelForRecord(record);
   char buffer[k_textBufferSize];
   size_t numberOfChar = 0;
@@ -15,7 +15,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   strlcpy(buffer + numberOfChar, "=", k_textBufferSize - numberOfChar);
   bannerView()->abscissaSymbol()->setText(buffer);
 
-  numberOfChar = function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer, k_textBufferSize, numberOfSignificantDigits(), context, true);
+  numberOfChar = function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer, k_textBufferSize, numberOfSignificantDigits(cappedNumberOfSignificantDigits), context, true);
 
   assert(numberOfChar < k_textBufferSize);
   buffer[numberOfChar++] = '\0';
@@ -25,7 +25,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(CurveViewCursor
   numberOfChar = function->nameWithArgument(buffer, k_textBufferSize);
   assert(numberOfChar <= k_textBufferSize);
   numberOfChar += strlcpy(buffer+numberOfChar, "=", k_textBufferSize-numberOfChar);
-  numberOfChar += function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer+numberOfChar, k_textBufferSize-numberOfChar, numberOfSignificantDigits(), context, false);
+  numberOfChar += function->printValue(cursor->t(), cursor->x(),cursor->y(), buffer+numberOfChar, k_textBufferSize-numberOfChar, numberOfSignificantDigits(cappedNumberOfSignificantDigits), context, false);
   assert(numberOfChar < k_textBufferSize);
   buffer[numberOfChar++] = '\0';
   bannerView()->ordinateView()->setText(buffer);

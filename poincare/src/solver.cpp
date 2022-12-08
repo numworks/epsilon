@@ -26,7 +26,7 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketT
 
   /* If the solver is in float, we want it to be fast so the fine search
    * of interest around discontinuities is skipped. */
-  static bool searchMorePreciselyIfDiscontinuities = sizeof(T) == sizeof(double);
+  constexpr bool searchMorePreciselyIfDiscontinuities = sizeof(T) == sizeof(double);
 
   while ((start() < p3.x1()) == (p3.x1() < end())) {
     p1 = p2;

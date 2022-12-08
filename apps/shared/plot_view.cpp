@@ -338,7 +338,7 @@ void AbstractPlotView::drawArrowhead(KDContext * ctx, KDRect rect, Coordinate2D<
 }
 
 View * AbstractPlotView::subviewAtIndex(int i) {
-  constexpr static int maxNumberOfSubviews = 3;
+  constexpr int maxNumberOfSubviews = 3;
   View * subviews[maxNumberOfSubviews] = { bannerView(), cursorView(), ornamentView() };
   assert(numberOfSubviews() <= maxNumberOfSubviews);
   for (int k = 0; k < maxNumberOfSubviews; k++) {

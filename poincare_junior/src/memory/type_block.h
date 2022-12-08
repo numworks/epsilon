@@ -128,6 +128,7 @@ public:
   }
 
   constexpr bool isExpression() const { return m_content < static_cast<uint8_t>(BlockType::NumberOfExpressions); }
+  constexpr bool isLayout() const { return m_content >= static_cast<uint8_t>(BlockType::NumberOfExpressions) && m_content < static_cast<uint8_t>(BlockType::NumberOfTypes); }
 
   constexpr bool isOfType(std::initializer_list<BlockType> types) const {
     BlockType thisType = type();
@@ -140,8 +141,8 @@ public:
   }
 
   constexpr bool isNAry() const { return isOfType({BlockType::Addition, BlockType::Multiplication, BlockType::HorizontalLayout, BlockType::Set, BlockType::List}); }
-  constexpr bool isInteger() const { return isOfType({BlockType::Zero, BlockType::One, BlockType::Two, BlockType::Half, BlockType::MinusOne, BlockType::IntegerShort, BlockType::IntegerPosBig, BlockType::IntegerNegBig}); }
-  constexpr bool isRational() const { return isOfType({BlockType::RationalShort, BlockType::RationalPosBig, BlockType::RationalNegBig}) || isInteger(); }
+  constexpr bool isInteger() const { return isOfType({BlockType::Zero, BlockType::One, BlockType::Two, BlockType::MinusOne, BlockType::IntegerShort, BlockType::IntegerPosBig, BlockType::IntegerNegBig}); }
+  constexpr bool isRational() const { return isOfType({BlockType::Half, BlockType::RationalShort, BlockType::RationalPosBig, BlockType::RationalNegBig}) || isInteger(); }
   constexpr bool isNumber() const { return isOfType({BlockType::Float}) || isRational(); }
   constexpr bool isUserNamed() const { return isOfType({BlockType::UserFunction, BlockType::UserSequence, BlockType::UserSymbol}); }
 
@@ -196,6 +197,9 @@ constexpr TypeBlock PowerBlock = TypeBlock(BlockType::Power);
 constexpr TypeBlock ConstantBlock = TypeBlock(BlockType::Constant);
 constexpr TypeBlock SubtractionBlock = TypeBlock(BlockType::Subtraction);
 constexpr TypeBlock DivisionBlock = TypeBlock(BlockType::Division);
+constexpr TypeBlock SetBlock = TypeBlock(BlockType::Set);
+constexpr TypeBlock ListBlock = TypeBlock(BlockType::List);
+constexpr TypeBlock MinusOneBlock = TypeBlock(BlockType::MinusOne);
 
 }
 

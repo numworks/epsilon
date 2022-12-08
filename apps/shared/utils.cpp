@@ -29,25 +29,30 @@ bool ShouldNeverDisplayReduction(Poincare::Expression input, Poincare::Context *
 }
 
 bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context) {
-    // Exact output with remaining dependency are not displayed to avoid 2 ≈ undef
-  return exactOutput.type() == ExpressionNode::Type::Dependency
-    // Lists or Matrices with only nonreal/undefined children
-    || (exactOutput.isOfType({ExpressionNode::Type::List, ExpressionNode::Type::Matrix}) && exactOutput.allChildrenAreUndefined())
+
+  return
     // Force all outputs to be ApproximateOnly if required by the exam mode configuration
-    || ExamModeConfiguration::exactExpressionIsForbidden(exactOutput)
-      /* If the output contains the following types, we only display the
-       * approximate output. (this can occur for pi > 3 for example, since
-       * it's handled by approximation and not by reduction) */
-   || exactOutput.recursivelyMatches(
+    ExamModeConfiguration::exactExpressionIsForbidden(exactOutput) ||
+    // Lists or Matrices with only nonreal/undefined children
+    (exactOutput.isOfType({ExpressionNode::Type::List, ExpressionNode::Type::Matrix}) && exactOutput.allChildrenAreUndefined()) ||
+    /* 1. If the output contains a comparison, we only display the
+     * approximate output. (this can occur for pi > 3 for example, since
+     * it's handled by approximation and not by reduction)
+     * 2. If the output has remaining depencies, it is not displayed to avoid
+     * outputs like 5 ≈ undef and also because it could be a reduction
+     * that failed and was interrupted which can lead to dependencies not
+     * being properly bubbled-up */
+      exactOutput.recursivelyMatches(
         [](const Expression e, Context * c) {
           return e.isOfType({
-            ExpressionNode::Type::Comparison
+            ExpressionNode::Type::Comparison,
+            ExpressionNode::Type::Dependency
           });
-        }, context)
-    /* If the input contains the following types, we only display the
-      * approximate output. Same if it contains an unit other than an angle. */
-    || ShouldNeverDisplayReduction(input, context)
-    || (exactOutput.hasUnit() && !exactOutput.isInRadians(context));
+        },
+        context
+      ) ||
+      ShouldNeverDisplayReduction(input, context) ||
+      (exactOutput.hasUnit() && !exactOutput.isInRadians(context));
 }
 
 bool ShouldOnlyDisplayExactOutput(Poincare::Expression input) {

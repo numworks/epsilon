@@ -65,7 +65,7 @@ void StoreMenuController::didBecomeFirstResponder() {
 void StoreMenuController::setText(const char * text) {
   m_preventReload = true;
   m_cell.expressionField()->setEditing(true);
-  m_cell.expressionField()->setText(text);
+  m_cell.expressionField()->handleEventWithText(text);
   m_cell.expressionField()->handleEventWithText("→");
   if (text[0] == 0) {
     m_cell.expressionField()->putCursorLeftOfField();

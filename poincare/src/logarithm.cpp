@@ -162,11 +162,8 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
 
   /* TODO: If simplification is reworked, remove this.
    * (see Expression::deepReduce comment) */
-  if (reductionContext.alwaysApproxLogarithm() &&
-      !recursivelyMatches(IsSymbolic, reductionContext.context())) {
-    Expression result = node()->approximate(double(), ExpressionNode::ApproximationContext(reductionContext, true)).complexToExpression(reductionContext.complexFormat());
-    replaceWithInPlace(result);
-    return result;
+  if (!reductionContext.shouldExpandLogarithm()) {
+    return *this;
   }
 
   // log(x^y, b)->y*log(x, b) if x>0

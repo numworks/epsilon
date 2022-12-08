@@ -60,7 +60,7 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(Escher::Selectab
 void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   KDCoordinate rowPrefaceHeight = m_rowPrefaceView.minimalSizeForOptimalDisplay().height();
   bool rowPrefaceIsTooLarge = m_prefacedDelegate && rowPrefaceHeight > m_prefacedDelegate->maxRowPrefaceHeight();
-  bool hideRowPreface = rowPrefaceIsTooLarge || m_rowPrefaceDataSource.prefaceFullyInFrame(m_mainTableView->contentOffset().y()) || m_mainTableView->selectedRow() == -1;
+  bool hideRowPreface = rowPrefaceIsTooLarge || m_rowPrefaceDataSource.prefaceIsAfterOffset(m_mainTableView->contentOffset().y(), m_mainTableView->topMargin()) || m_mainTableView->selectedRow() == -1;
   ScrollViewVerticalBar * verticalBar = static_cast<TableView::BarDecorator*>(m_mainTableView->decorator())->verticalBar();
 
   if (hideRowPreface) {
@@ -138,10 +138,11 @@ int PrefacedTableView::IntermediaryDataSource::nonMemoizedIndexAfterCumulatedHei
   return result;
 }
 
-bool PrefacedTableView::RowPrefaceDataSource::prefaceFullyInFrame(int offset) {
+bool PrefacedTableView::RowPrefaceDataSource::prefaceIsAfterOffset(KDCoordinate offsetY, KDCoordinate topMargin) const {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  bool result = offset <= m_mainDataSource->cumulatedHeightBeforeIndex(m_prefaceRow);
+  // y offset includes top margin
+  bool result = offsetY - topMargin <= m_mainDataSource->cumulatedHeightBeforeIndex(m_prefaceRow);
   m_mainDataSource->lockMemoization(false);
   return result;
 }

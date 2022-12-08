@@ -15,10 +15,10 @@ private:
     return Escher::TableViewDataSource::nonMemoizedCumulatedWidthBeforeIndex(i) + (i == numberOfColumns() && i > 0 ? i - 1 : i) * verticalBorderWidth();
   }
   KDCoordinate nonMemoizedCumulatedHeightBeforeIndex(int j) override {
-    return Escher::TableViewDataSource::nonMemoizedCumulatedHeightBeforeIndex(j) + j * horizontalBorderHeight();
+    return Escher::TableViewDataSource::nonMemoizedCumulatedHeightBeforeIndex(j) + (j == numberOfRows() && j > 0 ? j - 1 : j) * horizontalBorderHeight();
   }
 };
 
-} // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_BORDERED_TABLE_VIEW_DATA_SOURCE_H */
+#endif

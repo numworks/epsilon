@@ -198,7 +198,7 @@ public:
 
   class ReductionContext : public ComputationContext {
   public:
-    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default, bool shouldExpandMultiplication = true, bool shouldCheckMatrices = true, bool alwaysApproxLogarithm = false) :
+    ReductionContext(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, ReductionTarget target, SymbolicComputation symbolicComputation = SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, UnitConversion unitConversion = UnitConversion::Default, bool shouldExpandMultiplication = true, bool shouldCheckMatrices = true, bool shouldExpandLogarithm = true) :
       ComputationContext(context, complexFormat, angleUnit),
       m_unitFormat(unitFormat),
       m_target(target),
@@ -206,7 +206,7 @@ public:
       m_unitConversion(unitConversion),
       m_shouldExpandMultiplication(shouldExpandMultiplication),
       m_shouldCheckMatrices(shouldCheckMatrices),
-      m_alwaysApproxLogarithm(alwaysApproxLogarithm)
+      m_shouldExpandLogarithm(shouldExpandLogarithm)
     {}
     ReductionContext() :
       ReductionContext(nullptr, Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit::Radian, Preferences::UnitFormat::Metric, ReductionTarget::User)
@@ -244,8 +244,8 @@ public:
     bool shouldExpandMultiplication() const { return m_shouldExpandMultiplication; }
     void setCheckMatrices(bool shouldCheckMatrices) { m_shouldCheckMatrices = shouldCheckMatrices; }
     bool shouldCheckMatrices() const { return m_shouldCheckMatrices; }
-    void setAlwaysApproxLogarithm(bool alwaysApproxLogarithm) { m_alwaysApproxLogarithm = alwaysApproxLogarithm; }
-    bool alwaysApproxLogarithm() const { return m_alwaysApproxLogarithm; }
+    void setExpandLogarithm(bool shouldExpandLogarithm) { m_shouldExpandLogarithm = shouldExpandLogarithm; }
+    bool shouldExpandLogarithm() const { return m_shouldExpandLogarithm; }
   private:
     Preferences::UnitFormat m_unitFormat;
     ReductionTarget m_target;
@@ -253,7 +253,7 @@ public:
     UnitConversion m_unitConversion;
     bool m_shouldExpandMultiplication;
     bool m_shouldCheckMatrices;
-    bool m_alwaysApproxLogarithm;
+    bool m_shouldExpandLogarithm;
   };
 
   class ApproximationContext : public ComputationContext {

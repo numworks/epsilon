@@ -1099,7 +1099,7 @@ Expression Expression::deepReduce(ExpressionNode::ReductionContext reductionCont
    * TODO: This solution is obviously not ideal and the simplification
    * of logarithm should be reworked. */
   if (type() == ExpressionNode::Type::Derivative || type() == ExpressionNode::Type::Integral) {
-    reductionContext.setAlwaysApproxLogarithm(true);
+    reductionContext.setExpandLogarithm(false);
   }
   deepReduceChildren(reductionContext);
   return shallowReduce(reductionContext);

@@ -33,14 +33,15 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
 
 poincare_junior_src += $(addprefix poincare_junior/test/,\
   calculation.o \
-  constexpr.o \
   edition_pool_overflow.o \
   elementary_tree_manipulations.o \
   expression_simplification.o \
   graph.o \
   main.o \
+  memory_elements.o \
+  memory_edition_pool.o \
+  memory_cache_pool.o \
   polynomial.o \
-  node_iterator.o \
   set.o \
 )
 poincare_junior_src += ion/src/simulator/shared/crc32.o

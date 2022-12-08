@@ -1,4 +1,5 @@
 #include <iostream>
+#include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
@@ -42,3 +43,62 @@ inline void intermediaryPrint() {
   editionPool->flatLog(std::cout);
   std::cout << "\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" << std::endl;
 }
+
+#if POINCARE_TREE_LOG
+inline void log_pools(bool corruptedEditionPool = false) {
+  CachePool * cachePool = CachePool::sharedCachePool();
+  EditionPool * editionPool = cachePool->editionPool();
+
+  std::cout << "\n========= CACHE POOL ===========" << std::endl;
+  cachePool->treeLog(std::cout);
+
+  std::cout << "\n========= EDITION POOL =========" << std::endl;
+  if (corruptedEditionPool) {
+    editionPool->flatLog(std::cout);
+  } else {
+    editionPool->treeLog(std::cout);
+  }
+  std::cout << "\=================================" << std::endl;
+}
+#endif
+
+inline void assert_pools_size(size_t cachePoolSize, size_t editionPoolSize) {
+  CachePool * cachePool = CachePool::sharedCachePool();
+  EditionPool * editionPool = cachePool->editionPool();
+  Pool * pools[] = {cachePool, editionPool};
+  size_t theoreticalSizes[] = {cachePoolSize, editionPoolSize};
+  for (size_t i = 0; i < sizeof(theoreticalSizes)/sizeof(size_t); i++) {
+#if POINCARE_TREE_LOG
+    const char * poolNames[] = {"cache pool", "edition Pool"};
+    if (pools[i]->size() != theoreticalSizes[i]) {
+      std::cout << "Expected "<< poolNames[i] <<" of size " << theoreticalSizes[i] << " but got " << pools[i]->size() << std::endl;
+      pools[i]->treeLog(std::cout);
+      assert(false);
+    }
+#else
+    assert(pools[i]->size() == theoreticalSizes[i]);
+#endif
+  }
+}
+
+inline void reset_pools() {
+  CachePool * cachePool = CachePool::sharedCachePool();
+  EditionPool * editionPool = cachePool->editionPool();
+  editionPool->flush();
+  cachePool->reset();
+}
+
+inline void assert_trees_are_equal(const Node tree0, const Node tree1) {
+  assert(Simplification::Compare(tree0, tree1) == 0);
+}
+
+inline void assert_node_equals_blocks(const Node node, std::initializer_list<Block> blocks) {
+  Block * block = node.block();
+  for (Block b : blocks) {
+    assert(*block == b);
+    block = block->next();
+  }
+  assert(node.treeSize() == blocks.size());
+}
+
+

@@ -2,16 +2,24 @@
 #include "print.h"
 
 void elementaryTreeManipulation();
-void testChildrenIterator();
 void testOverflowEditionPool();
 void testOverflowCacheIdentifiers();
 void testCalculation();
 void testGraph();
-void playWithConstexprNodes();
 void testExpressionComparison();
 void testRunTimeCrashIllFormedExpression();
 void testSet();
 void testVariables();
+void testBlock();
+void testTypeBlock();
+void testConstexprTreeConstructor();
+void testEditionNodeConstructor();
+void testNodeIterator();
+void testNode();
+void testNodeSize();
+void testEditionPool();
+void testEditionReference();
+void testCachePool();
 
 typedef void (*Test)();
 
@@ -31,15 +39,25 @@ int main() {
   // Dummy call just to keep it in the executable and be able to call it from debugger
   intermediaryPrint();
 
+  test(testBlock, "TEST BLOCK");
+  test(testTypeBlock, "TEST TYPE BLOCK");
+  test(testConstexprTreeConstructor, "TEST CONSTEXPR TREE CONSTRUCTOR");
+  test(testEditionNodeConstructor, "TEST EDITION NODE CONSTRUCTOR");
+  test(testNodeIterator, "TEST NODE ITERATOR");
+  test(testNode, "TEST NODE");
+  test(testNodeSize, "TEST NODE SIZE");
+  test(testEditionPool, "TEST EDITION POOL");
+  test(testEditionReference, "TEST EDITION REFERENCE");
+  test(testCachePool, "TEST CACHE POOL");
+
   test(testVariables, "TEST VARIABLES");
   test(testSet, "TEST SET");
+
   test(elementaryTreeManipulation, "ELEMENTARY TREE MANIPULATION");
-  test(testChildrenIterator, "TEST NODE CHILDREN ITERATOR");
   test(testOverflowEditionPool, "TEST OVERFLOW TREE EDITION POOL");
   test(testOverflowCacheIdentifiers, "TEST OVERFLOW CACHE IDENTIFIERS");
   test(testCalculation, "TEST DUMMY CALCULATION");
   test(testGraph, "TEST DUMMY GRAPH");
-  test(playWithConstexprNodes, "TEST CONSTEXPR NODES");
   test(testExpressionComparison, "TEST EXPRESSION COMPARISON");
   test(testRunTimeCrashIllFormedExpression, "TEST ILL-FORMED EXPRESSIONS");
 }

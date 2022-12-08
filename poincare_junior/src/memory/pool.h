@@ -31,9 +31,9 @@ protected:
     constexpr static uint16_t NoNodeIdentifier = 0xFFFF;
     constexpr static uint16_t NumberOfSpecialIdentifier = 1;
     ReferenceTable(Pool * pool) : m_length(0), m_pool(pool) {}
-    bool isFull() { return numberOfStoredNode() == Pool::k_maxNumberOfReferences; }
-    bool isEmpty() { return numberOfStoredNode() == 0; }
-    int numberOfStoredNode() const { return m_length; }
+    bool isFull() { return numberOfStoredNodes() == Pool::k_maxNumberOfReferences; }
+    bool isEmpty() { return numberOfStoredNodes() == 0; }
+    int numberOfStoredNodes() const { return m_length; }
     virtual uint16_t storeNode(Node node);
     virtual Node nodeForIdentifier(uint16_t id) const;
     virtual bool reset();

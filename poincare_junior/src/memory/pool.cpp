@@ -19,6 +19,8 @@ uint16_t Pool::ReferenceTable::storeNode(Node node) {
   // Increment first to make firstBlock != nullptr
   m_length++;
   m_nodeOffsetForIdentifier[m_length - 1] = static_cast<uint16_t>(node.block() - m_pool->firstBlock());
+  // Assertion requires valid firstBlock/lastBlock (so the order matters)
+  assert(node.block() >=  m_pool->firstBlock() && node.block() <=  m_pool->lastBlock());
   return m_length - 1;
 }
 

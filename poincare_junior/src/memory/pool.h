@@ -21,6 +21,7 @@ public:
   virtual TypeBlock * firstBlock() = 0;
   virtual Block * lastBlock() = 0;
   size_t size() { return firstBlock() ? lastBlock() - static_cast<Block *>(firstBlock()) : 0; }
+  size_t numberOfTrees();
 
   constexpr static int k_maxNumberOfReferences = 128;
 protected:

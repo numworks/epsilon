@@ -2,6 +2,16 @@
 
 namespace Poincare {
 
+size_t Pool::numberOfTrees() {
+  Block * currentBlock = firstBlock();
+  size_t result = 0;
+  while (currentBlock != lastBlock()) {
+    currentBlock = Node(currentBlock).nextTree().block();
+    result++;
+  }
+  return result;
+}
+
 // Reference Table
 
 uint16_t Pool::ReferenceTable::storeNode(Node node) {

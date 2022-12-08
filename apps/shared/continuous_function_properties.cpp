@@ -2,6 +2,7 @@
 #include "continuous_function.h"
 #include <poincare/constant.h>
 #include <apps/exam_mode_configuration.h>
+#include <poincare/addition.h>
 #include <poincare/division.h>
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
@@ -491,10 +492,16 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincar
     setCaption(I18n::Message::ParametricLineType);
     return;
   }
-  Expression quotient = Division::Builder(xOfT.clone(), yOfT.clone());
+  Expression variableX = xOfT.clone();
+  if (variableX.type() == ExpressionNode::Type::Addition) {
+    static_cast<Addition&>(variableX).removeConstantTerms(context, Function::k_unknownName);
+  }
+  Expression variableY = yOfT.clone();
+  if (variableY.type() == ExpressionNode::Type::Addition) {
+    static_cast<Addition&>(variableY).removeConstantTerms(context, Function::k_unknownName);
+  }
+  Expression quotient = Division::Builder(variableX, variableY);
   quotient = quotient.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context));
-  /* TODO: Some lines are not detected like (x, y) = (3*ln(t), 4*ln(t)+1)
-   * because of the +1 */
   if (quotient.polynomialDegree(context, Function::k_unknownName) == 0) {
     setCaption(I18n::Message::ParametricLineType);
     return;

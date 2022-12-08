@@ -156,6 +156,16 @@ int Addition::getPolynomialCoefficients(Context * context, const char * symbolNa
   return deg;
 }
 
+Expression Addition::removeConstantTerms(Context * context, const char * symbolName) {
+  for (int i = 0; i < numberOfChildren(); i++) {
+    if (childAtIndex(i).polynomialDegree(context, symbolName) == 0) {
+      removeChildAtIndexInPlace(i);
+      i--;
+    }
+  }
+  return *this;
+}
+
 Expression Addition::shallowBeautify(const ExpressionNode::ReductionContext& reductionContext) {
   /* Step 1 : Sort children in decreasing order of degree.
    * 1+x+x^3+y^2+x*y+sqrt(x) --> x^3+y^2+x*y+x+1+sqrt(x)

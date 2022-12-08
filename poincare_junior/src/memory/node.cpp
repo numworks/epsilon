@@ -92,7 +92,8 @@ void Node::copyTreeTo(void * address) const {
 }
 
 const Node Node::previousNode() const {
-  if (m_block == CachePool::sharedCachePool()->firstBlock()) {
+  CachePool * cache = CachePool::sharedCachePool();
+  if (m_block == cache->firstBlock() || (cache->size() == 0 && m_block == cache->lastBlock())) {
     return Node();
   }
   const Block * block = m_block->previous();
@@ -109,9 +110,9 @@ const Node Node::parent() const {
 
 const Node Node::root() const {
   Node ancestor = *this;
-  do {
+  while (ancestor.parent() != Node()) {
     ancestor = ancestor.parent();
-  } while (ancestor != Node());
+  }
   return ancestor;
 }
 
@@ -137,13 +138,10 @@ const Node Node::childAtIndex(int i) const {
 
 int Node::indexOfChild(const Node child) const {
   assert(child.m_block != nullptr);
-  int childrenCount = numberOfChildren();
-  Node childAtIndexi = nextNode();
-  for (int i = 0; i < childrenCount; i++) {
-    if (childAtIndexi == child) {
-      return i;
+  for (const std::pair<Node, int> indexedChild : NodeIterator::Children<Forward, NoEditable>(*this)) {
+    if (child == std::get<Node>(indexedChild)) {
+      return std::get<int>(indexedChild);
     }
-    childAtIndexi = childAtIndexi.nextNode();
   }
   return -1;
 }
@@ -157,12 +155,7 @@ int Node::indexInParent() const {
 }
 
 bool Node::hasChild(const Node child) const {
-  for (const std::pair<Node, int> indexedChild : NodeIterator::Children<Forward, NoEditable>(*this)) {
-    if (child == std::get<Node>(indexedChild)) {
-      return true;
-    }
-  }
-  return false;
+  return indexOfChild(child) >= 0;
 }
 
 bool Node::hasAncestor(const Node node, bool includeSelf) const {
@@ -199,17 +192,17 @@ void Node::recursivelyGet(InPlaceConstTreeFunction treeFunction) const {
 const Node Node::previousRelative(bool parent) const {
   Node currentNode = *this;
   Node closestSibling;
-  int nbOfChildrenToScan = 1;
+  int nbOfChildrenToScan = 0;
   do {
     currentNode = currentNode.previousNode();
-    if (currentNode == Node()) {
-      return Node();
+    if (currentNode.isUninitialized()) {
+      break;
     }
     nbOfChildrenToScan += currentNode.numberOfChildren() - 1;
-    if (nbOfChildrenToScan == 0) {
+    if (nbOfChildrenToScan == -1) {
       closestSibling = currentNode;
     }
-  } while (nbOfChildrenToScan <= 0);
+  } while (nbOfChildrenToScan < 0);
   return parent ? currentNode : closestSibling;
 }
 

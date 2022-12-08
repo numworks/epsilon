@@ -78,7 +78,7 @@ void EditionReference::insert(Node nodeToInsert, bool before, bool isTree) {
   Node destination = before ? node() : nextNode().node();
   EditionPool * pool = EditionPool::sharedEditionPool();
   size_t sizeToInsert = isTree ? nodeToInsert.treeSize() : nodeToInsert.nodeSize();
-  if (pool->contains(block())) {
+  if (pool->contains(nodeToInsert.block())) {
     pool->moveBlocks(destination.block(), nodeToInsert.block(), sizeToInsert);
   } else {
     pool->insertBlocks(destination.block(), nodeToInsert.block(), sizeToInsert);

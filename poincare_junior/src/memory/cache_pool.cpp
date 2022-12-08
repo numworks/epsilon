@@ -106,8 +106,9 @@ int CachePool::execute(ActionWithContext action, void * subAction, const void * 
   ExceptionCheckpoint checkpoint;
 start_execute:
   if (ExceptionRun(checkpoint)) {
-    m_editionPool.flush();
+    assert(m_editionPool.numberOfTrees() == 0);
     action(subAction, data);
+    assert(m_editionPool.numberOfTrees() <= 1);
     return storeEditedTree();
   } else {
     // TODO: assert that we don't delete last called treeForIdentifier otherwise can't copyTreeFromAddress if in cache...

@@ -87,7 +87,7 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
     quiz_assert(cursor.isEquivalentTo(LayoutCursor(layout.childAtIndex(1), LayoutCursor::Position::Right)));
   }
 
-  /*      ø
+  /*      ▯
    * 1 + --- -> "BackSpace" -> 1+|3
    *     |3
    * */
@@ -104,6 +104,24 @@ QUIZ_CASE(poincare_layout_cursor_delete) {
     cursor.performBackspace();
     assert_layout_serialize_to(layout, "1+3");
     quiz_assert(cursor.isEquivalentTo(LayoutCursor(layout.childAtIndex(1), LayoutCursor::Position::Right)));
+  }
+
+  /*      ▯
+   * 1 + --- -> "BackSpace" -> 1+|^2
+   *     |^2
+   * */
+  {
+    HorizontalLayout layout = HorizontalLayout::Builder(
+        CodePointLayout::Builder('1'),
+        CodePointLayout::Builder('+'),
+        FractionLayout::Builder(
+          EmptyLayout::Builder(),
+          VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::VerticalPosition::Superscript)
+          )
+        );
+    LayoutCursor cursor(layout.childAtIndex(2).childAtIndex(1), LayoutCursor::Position::Left);
+    cursor.performBackspace();
+    assert_layout_serialize_to(layout, "1+^\u00122\u0013");
   }
 
   /*

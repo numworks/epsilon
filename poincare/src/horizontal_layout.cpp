@@ -616,6 +616,8 @@ void HorizontalLayout::mergeChildrenAtIndex(HorizontalLayout h, int index, bool 
       /* - The last added child is Empty because its left sibling needs a right
        *   sibling, and the following layout could be such a right sibling. */
        || (lastAddedChild && !firstAddedChild && previousLayoutMustHaveRightSibling && hasFollowingLayout && !followingLayoutMustHaveLeftSibling)
+      /* - The following needs a left sibling but is already satisfied. */
+       || (lastAddedChild && followingLayoutMustHaveLeftSibling && hasPreviousLayout && !previousLayoutMustHaveRightSibling)
       /* - No sibling layout needs an empty layout. */
        || (removeEmptyChildren && !previousLayoutMustHaveRightSibling && !nextInsertedLayoutMustHaveLeftSibling && !followingLayoutMustHaveLeftSibling)) {
         continue;

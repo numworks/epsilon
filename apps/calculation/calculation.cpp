@@ -234,19 +234,19 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
   Expression i = input();
   Expression o = exactOutput();
   Expression a = approximateOutput(NumberOfSignificantDigits::Maximal);
-  /* Using the approximated output instead of the user input to guess the
-   * complex format makes additional results more consistent when the user has
-   * created complexes in Complex mode and then switched back to Real mode. */
-  Preferences::ComplexFormat complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), a, nullptr);
-  bool isComplex = a.hasDefinedComplexApproximation(nullptr, complexFormat, preferences->angleUnit());
   /* Special case for Store:
    * Store nodes have to be at the root of the expression, which prevents
    * from creating new expressions with store node as a child. We don't
    * return any additional outputs for them to avoid bothering with special
    * cases. */
-  if (i.isUninitialized() || o.isUninitialized() || i.type() == ExpressionNode::Type::Store || o.type() == ExpressionNode::Type::List || a.type() == ExpressionNode::Type::List || a.isUndefined()) {
+  if (i.isUninitialized() || o.isUninitialized() || i.type() == ExpressionNode::Type::Store || o.type() == ExpressionNode::Type::List || a.type() == ExpressionNode::Type::List || a.isUndefined() || a.recursivelyMatches([](const Expression e, Context * c) { return e.isOfType({ ExpressionNode::Type::Infinity }); }, nullptr)) {
     return AdditionalInformations {};
   }
+  /* Using the approximated output instead of the user input to guess the
+   * complex format makes additional results more consistent when the user has
+   * created complexes in Complex mode and then switched back to Real mode. */
+  Preferences::ComplexFormat complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(preferences->complexFormat(), a, nullptr);
+  bool isComplex = a.hasDefinedComplexApproximation(nullptr, complexFormat, preferences->angleUnit());
   /* Trigonometry additional results are displayed if either input or output is
    * a direct or inverse trigonometric function. Indeed, we want to capture both
    * cases:

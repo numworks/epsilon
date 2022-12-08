@@ -14,6 +14,8 @@
 #include "statistic/one_proportion_z_test.h"
 #include "statistic/pooled_two_means_t_interval.h"
 #include "statistic/pooled_two_means_t_test.h"
+#include "statistic/slope_t_interval.h"
+#include "statistic/slope_t_test.h"
 #include "statistic/two_means_t_interval.h"
 #include "statistic/two_means_t_test.h"
 #include "statistic/two_means_z_interval.h"
@@ -47,6 +49,7 @@ union IntervalBuffer {
   TwoMeansTInterval m_twoMeansTInterval;
   TwoMeansZInterval m_twoMeansZInterval;
   TwoProportionsZInterval m_twoProportionsZInterval;
+  SlopeTInterval m_slopeTInterval;
 };
 
 union TestBuffer {
@@ -59,6 +62,7 @@ union TestBuffer {
   TwoProportionsZTest m_twoProportionsZTest;
   GoodnessTest m_goodnessTest;
   HomogeneityTest m_homogeneityTest;
+  SlopeTTest m_slopeTTest;
 };
 
 union StatisticBuffer {

@@ -489,6 +489,14 @@ QUIZ_CASE(graph_function_properties) {
     );
 
     assert_check_function_properties(
+      "r=1/tan(θ)",
+      FunctionProperties{
+        .m_caption = I18n::Message::PolarEquationType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::Theta,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Polar}
+    );
+
+    assert_check_function_properties(
       "r=diff(x^2,x,θ)",
       FunctionProperties{
         .m_caption = I18n::Message::PolarEquationType,

@@ -69,7 +69,7 @@ CachePool * CachePool::sharedCachePool() {
 }
 
 uint16_t CachePool::storeEditedTree() {
-  if (m_editionPool.numberOfBlocks() == 0) {
+  if (m_editionPool.size() == 0) {
     return ReferenceTable::NoNodeIdentifier;
   }
   uint16_t id = m_referenceTable.storeNode(Node(lastBlock()));

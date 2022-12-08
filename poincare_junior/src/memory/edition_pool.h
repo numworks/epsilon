@@ -39,7 +39,6 @@ public:
   Block * blockAtIndex(int i) { return m_firstBlock + i * sizeof(Block); }
   size_t fullSize() const { return m_size; }
   void setNumberOfBlocks(int numberOfBlocks) { m_numberOfBlocks = numberOfBlocks; }
-  int numberOfBlocks() const { return m_numberOfBlocks; }
 
 private:
   // Pool memory

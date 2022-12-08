@@ -101,6 +101,9 @@ public:
   void sortChildrenInPlace(NAryExpressionNode::ExpressionOrder order, Context * context, bool canContainMatrices = true) {
     NAryExpression::sortChildrenInPlace(order, context, true, canContainMatrices);
   }
+  /* This helper removes terms that are not dependant of the given symbol.
+   * Beware that it is not the constant part ie what's left when symbol = 0 */
+  Expression removeConstantTerms(Context * context, const char * symbolName);
 
 private:
   static const Number NumeralFactor(const Expression & e);

@@ -547,6 +547,14 @@ QUIZ_CASE(graph_function_properties) {
     );
 
     assert_check_function_properties(
+      "g(t)=[[4cos(5t-2)+6][3cos(5t-2)-20]]",
+      FunctionProperties{
+        .m_caption = I18n::Message::ParametricLineType,
+        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric}
+    );
+
+    assert_check_function_properties(
       "g(t)=[[5+t-3.1t^2][-2t+1]]",
       FunctionProperties{
         .m_caption = I18n::Message::ParametricParabolaType,
@@ -571,14 +579,6 @@ QUIZ_CASE(graph_function_properties) {
         .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
         .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric,
         .m_conicShape = Poincare::Conic::Shape::Ellipse}
-    );
-
-    assert_check_function_properties( // Not an ellipse
-      "g(t)=[[4cos(5t-2)+6][3cos(5t-2)-20]]",
-      FunctionProperties{
-        .m_caption = I18n::Message::ParametricEquationType,
-        .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
-        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::Parametric}
     );
 
     assert_check_function_properties(

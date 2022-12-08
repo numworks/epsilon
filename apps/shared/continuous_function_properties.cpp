@@ -424,7 +424,7 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(const Expression& 
 
   double angle = 0.0;
   double coefficientBeforeTheta = 1.0;
-  if (!denominator.isUninitialized() && Trigonometry::DetectLinearPatternOfCosOrSin(denominator, reductionContext, Function::k_unknownName, false, nullptr, &coefficientBeforeTheta, &angle) && coefficientBeforeTheta == 1.0) {
+  if ((numerator.isUninitialized() || numerator.polynomialDegree(reductionContext.context(), Function::k_unknownName) == 0) && !denominator.isUninitialized() && Trigonometry::DetectLinearPatternOfCosOrSin(denominator, reductionContext, Function::k_unknownName, false, nullptr, &coefficientBeforeTheta, &angle) && abs(coefficientBeforeTheta) == 1.0) {
     double positiveAngle = std::fabs(angle);
     if (positiveAngle == 0.0 || positiveAngle == M_PI) {
       setCaption(I18n::Message::PolarVerticalLineType);

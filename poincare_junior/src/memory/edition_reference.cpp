@@ -94,6 +94,8 @@ template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::B
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Subtraction>();
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Division>();
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerShort, int>(int);
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerPosBig, int>(int);
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerNegBig, int>(int);
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Float, float>(float);
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::MinusOne>();
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Set>(int);

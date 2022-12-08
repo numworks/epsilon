@@ -32,13 +32,16 @@ constexpr static auto MakeTree(const Tree<Len> (&...nodes)) {
   CreateNode<type>(&tree, k_numberOfChildren);
 
   size_t blockIndex = numberOfBlocksInNode;
+  size_t childIndex = 0;
+  int childrenSizes[] = {Len...};
   std::initializer_list<Node> childrenNodes{static_cast<Node>(nodes)...};
   for (Node node : childrenNodes) {
     // We can't use node.copyTreeTo(tree.blockAtIndex(blockIndex++)) because memcpy isn't constexpr
     // TODO: use constexpr version of memcpy in copyTreeTo?
-    for (size_t i = 0; i < node.treeSize(); i++) {
+    for (size_t i = 0; i < childrenSizes[childIndex]; i++) {
       tree[blockIndex++] = *(node.block() + i);
     }
+    childIndex++;
   }
   return tree;
 }

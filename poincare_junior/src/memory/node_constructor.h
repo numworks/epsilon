@@ -33,6 +33,11 @@ private:
 
   template <BlockType blockType, typename... Types>
   constexpr static bool SpecializedCreateBlockAtIndexForType(Block * block, size_t blockIndex, Types... args) {
+    static_assert(blockType != BlockType::Constant &&
+                  blockType != BlockType::Float &&
+                  blockType != BlockType::IntegerPosBig &&
+                  blockType != BlockType::IntegerNegBig,
+                  "BlockType associated with specific specialized creators shouldn't end up in the default SpecializedCreateBlockAtIndexForType");
     return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, blockType, args...);
   }
 
@@ -48,11 +53,12 @@ private:
   }
 
   template <>
-  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::IntegerPosBig>(Block * block, size_t blockIndex, unsigned int value) {
+  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::IntegerPosBig>(Block * block, size_t blockIndex, int value) {
     return CreateIntegerBlockAtIndexForType(block, blockIndex, BlockType::IntegerPosBig, value);
   }
   template <>
-  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::IntegerNegBig>(Block * block, size_t blockIndex, unsigned int value) {
+  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::IntegerNegBig>(Block * block, size_t blockIndex, int value) {
+    value = std::abs(value);
     return CreateIntegerBlockAtIndexForType(block, blockIndex, BlockType::IntegerNegBig, value);
   }
 

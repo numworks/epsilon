@@ -247,7 +247,15 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
    * from creating new expressions with store node as a child. We don't
    * return any additional outputs for them to avoid bothering with special
    * cases. */
-  if (i.isUninitialized() || o.isUninitialized() || i.type() == ExpressionNode::Type::Store || o.type() == ExpressionNode::Type::List || a.type() == ExpressionNode::Type::List || a.isUndefined() || a.recursivelyMatches([](const Expression e, Context * c) { return e.isOfType({ ExpressionNode::Type::Infinity }); }, nullptr)) {
+  if (i.isUninitialized() ||
+      o.isUninitialized() ||
+      a.isUninitialized() ||
+      i.type() == ExpressionNode::Type::Store ||
+      o.type() == ExpressionNode::Type::List ||
+      a.type() == ExpressionNode::Type::List ||
+      a.isUndefined() ||
+      a.recursivelyMatches([](const Expression e, Context * c) { return e.isOfType({ ExpressionNode::Type::Infinity }); }, nullptr))
+  {
     return AdditionalInformations {};
   }
   /* Using the approximated output instead of the user input to guess the

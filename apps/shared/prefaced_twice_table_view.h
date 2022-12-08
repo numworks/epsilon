@@ -21,7 +21,7 @@ private:
     ColumnPrefaceDataSource(int prefaceColumn, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceColumn(prefaceColumn), m_prefaceRow(-1) {}
 
     void setPrefaceRow(int row) { m_prefaceRow = row; }
-    bool prefaceFullyInFrame(int offset);
+    bool prefaceIsAfterOffset(KDCoordinate offsetX, KDCoordinate leftMargin) const;
     int numberOfColumns() const override { return 1; }
     /* Calling relativeRow in rowHeight with this particular implementation
      * would cause an infinite loop. */

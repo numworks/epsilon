@@ -44,7 +44,7 @@ View * PrefacedTwiceTableView::subviewAtIndex(int index) {
 }
 
 void PrefacedTwiceTableView::layoutSubviews(bool force) {
-  bool hideColumnPreface = m_mainTableView->selectedRow() == -1 || m_columnPrefaceDataSource.prefaceFullyInFrame(m_mainTableView->contentOffset().x());
+  bool hideColumnPreface = m_mainTableView->selectedRow() == -1 || m_columnPrefaceDataSource.prefaceIsAfterOffset(m_mainTableView->contentOffset().x(), m_mainTableView->leftMargin());
   if (hideColumnPreface) {
     m_columnPrefaceView.setFrame(KDRectZero, force);
     m_mainTableView->setLeftMargin(m_mainTableViewLeftMargin);
@@ -64,10 +64,11 @@ void PrefacedTwiceTableView::layoutSubviews(bool force) {
   }
 }
 
-bool PrefacedTwiceTableView::ColumnPrefaceDataSource::prefaceFullyInFrame(int offset) {
+bool PrefacedTwiceTableView::ColumnPrefaceDataSource::prefaceIsAfterOffset(KDCoordinate offsetX, KDCoordinate leftMargin) const {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);
-  bool result = offset <= m_mainDataSource->cumulatedWidthBeforeIndex(m_prefaceColumn);
+  // x offset includes left margin
+  bool result = offsetX - leftMargin <= m_mainDataSource->cumulatedWidthBeforeIndex(m_prefaceColumn);
   m_mainDataSource->lockMemoization(false);
   return result;
 }

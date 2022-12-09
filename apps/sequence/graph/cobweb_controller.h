@@ -30,7 +30,8 @@ private:
   Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return &m_graphRange; }
   Shared::AbstractPlotView * curveView() override { return &m_graphView; }
   Shared::XYBannerView * bannerView() override { return m_bannerView; };
-  int rank() { return m_step + sequence()->initialRank(); }
+  int rankAtStep(int step) { return step + sequence()->initialRank(); }
+  int rankAtCurrentStep() { return rankAtStep(m_step); }
   void reloadBannerView() override;
   bool handleLeftRightEvent(Ion::Events::Event event) override;
   bool handleEnter() override;

@@ -17,7 +17,6 @@ void execute_push_tree_and_modify() {
   cachePool->execute(
       [](void * subAction, const void * data) {
         Node editedTree = EditionPool::sharedEditionPool()->initFromAddress(data);
-        log_pools();
         return (reinterpret_cast<Poincare::CacheReference::InitializerFromTree>(subAction))(editedTree);
       },
       reinterpret_cast<void *>(treeModifier),
@@ -63,12 +62,14 @@ void testCachePool() {
 void testCachePoolLimits() {
   /* test overflowing the edition pool */
   // 1. Almost fill the whole cache
+    // Fill the cache
   int maxNumberOfTreesInCache = CachePool::k_maxNumberOfBlocks/treeSize;
   for (int i = 0; i < maxNumberOfTreesInCache; i++) {
     editionPool->initFromTree(tree);
     cachePool->storeEditedTree();
   }
   assert_pools_sizes_are(maxNumberOfTreesInCache * treeSize, 0);
+
   // 2. Edit another tree triggering a cache invalidation
   execute_push_tree_and_modify();
   assert(cachePool->size() <= maxNumberOfTreesInCache * treeSize);
@@ -86,7 +87,58 @@ void testCachePoolLimits() {
   // 2. Edit and cache a new tree triggering a cache invalidation
   execute_push_tree_and_modify();
   assert_pools_sizes_are((Pool::k_maxNumberOfReferences - 1) * smallTreeSize + treeSize, 0);
+}
 
+void assert_check_cache_reference(CacheReference reference, std::initializer_list<const Node> cacheTrees) {
+  cachePool->reset();
+  assert(cachePool->numberOfTrees() == 0 && editionPool->size() == 0);
+  reference.send([](const Node tree, void * result) {}, nullptr);
+  assert_pool_contains(cachePool, cacheTrees);
+  assert(editionPool->size() == 0);
+  cachePool->reset();
+}
+
+void testCacheReference() {
+  // Constructors
+  CacheReference reference0([] (){ EditionReference::Push<BlockType::IntegerShort>(4); });
+  assert_check_cache_reference(reference0, {4_n});
+
+  CacheReference reference1([] (Node node){ EditionReference(node).replaceNodeByNode(5_n); }, static_cast<Node>(smallTree).block());
+  assert_check_cache_reference(reference1, {5_n});
+
+  CacheReference reference2(
+      [] (Node node){
+        EditionReference ref(node);
+        ref.insertNodeBeforeNode(EditionReference::Push<BlockType::Addition>(2));
+        ref.insertNodeAfterNode(6_n);
+      }, &reference1);
+  assert_check_cache_reference(reference2, {5_n, Add(5_n, 6_n)});
+
+  CacheReference reference3([] (const char * string){ EditionReference::Push<BlockType::Addition>(string[0] - '0'); }, "0");
+  assert_check_cache_reference(reference3, {Add()});
+}
+
+
+void testCacheReferenceInvalidation() {
+  CacheReference reference([] (){ EditionReference::Push<BlockType::IntegerShort>(4); });
+  reference.send([](const Node tree, void * result) {}, nullptr);
+  int identifier = reference.id();
+
+  // Fill the cache
+  int maxNumberOfTreesInCache = CachePool::k_maxNumberOfBlocks/treeSize;
+  for (int i = 0; i < maxNumberOfTreesInCache + 1; i++) {
+    CacheReference reference1([] (Node node){}, static_cast<Node>(tree).block());
+    reference1.send([](const Node tree, void * result) {}, nullptr);
+  }
+  assert_pools_sizes_are(maxNumberOfTreesInCache * treeSize, 0);
+  // reference has been invalidated
+  assert(cachePool->nodeForIdentifier(identifier).isUninitialized());
+  // reference is regenerated on demand
+  reference.send([](const Node tree, void * result) {}, nullptr);
+  assert_trees_are_equal(Node(cachePool->lastBlock()).previousTree(), 4_n);
 
   assert(false);
 }
+
+
+//TODO: test the invalid reference has been invalidated?

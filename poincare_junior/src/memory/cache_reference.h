@@ -56,6 +56,8 @@ public:
   void log();
 #endif
 
+  int id() const; // TODO: make private (public for tests)
+
 private:
   CacheReference(ActionWithContext initializer, void * subInitializer, const void * data
 #if ASSERTIONS
@@ -73,7 +75,6 @@ private:
 #endif
     {}
 
-  int id() const;
 
   mutable int m_id;
   ActionWithContext m_initializer;

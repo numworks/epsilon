@@ -21,6 +21,8 @@ void testEditionPool();
 void testEditionReference();
 void testCachePool();
 void testCachePoolLimits();
+void testCacheReference();
+void testCacheReferenceInvalidation();
 
 typedef void (*Test)();
 
@@ -50,6 +52,8 @@ int main() {
   test(testEditionReference, "TEST EDITION REFERENCE");
   test(testCachePool, "TEST CACHE POOL");
   test(testCachePoolLimits, "TEST CACHE POOL LIMITS");
+  test(testCacheReference, "TEST CACHE REFERENCE");
+  test(testCacheReferenceInvalidation, "TEST CACHE REFERENCE INVALIDATION");
 
   test(testVariables, "TEST VARIABLES");
   test(testSet, "TEST SET");

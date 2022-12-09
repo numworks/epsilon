@@ -48,7 +48,7 @@ protected:
     int numberOfRows() const override { return m_mainDataSource->numberOfRows(); }
     int numberOfColumns() const override { return m_mainDataSource->numberOfColumns(); }
     void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override { m_mainDataSource->willDisplayCellAtLocation(cell, columnIndexInMainDataSource(i), rowIndexInMainDataSource(j)); }
-    Escher::HighlightCell * reusableCell(int index, int type) override { return m_mainDataSource->reusableCell(index, type); }
+    Escher::HighlightCell * reusableCell(int index, int type) override;
     int reusableCellCount(int type) override { return m_mainDataSource->reusableCellCount(type); }
     int typeAtLocation(int i, int j) override { return m_mainDataSource->typeAtLocation(columnIndexInMainDataSource(i), rowIndexInMainDataSource(j)); }
 

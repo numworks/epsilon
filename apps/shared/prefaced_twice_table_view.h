@@ -27,6 +27,7 @@ private:
      * would cause an infinite loop. */
 
   private:
+    Escher::HighlightCell * reusableCell(int index, int type) override;
     KDCoordinate nonMemoizedCumulatedWidthBeforeIndex(int i) override;
     int nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX) override;
 

@@ -81,7 +81,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
 
 int CalculationController::numberOfRows() const {
   /* Rows for : title + Mean ... Variance + Number of points + Covariance + ∑xy
-   * + R + (Regression) + Coefficients + (R2) */
+   * + r + (Regression) + Coefficients + (R2) */
   return 1 + k_numberOfDoubleBufferCalculations + k_numberOfSingleBufferCalculations + 1 + hasSeriesDisplaying(&DisplayRegression) + numberOfDisplayedCoefficients() + hasSeriesDisplaying(&DisplayR2);
 }
 

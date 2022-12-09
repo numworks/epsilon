@@ -124,7 +124,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
 
 HighlightCell * GraphOptionsController::cell(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
-  HighlightCell * reusableCells[k_maxNumberOfRows] = {
+  HighlightCell * cells[k_maxNumberOfRows] = {
     &m_changeRegressionCell,
     &m_regressionEquationCell,
     &m_r2Cell,
@@ -136,7 +136,7 @@ HighlightCell * GraphOptionsController::cell(int index) {
     &m_spacerCell2,
     &m_removeRegressionCell,
   };
-  return reusableCells[index];
+  return cells[index];
 }
 
 void GraphOptionsController::fillCell(HighlightCell * cell) {

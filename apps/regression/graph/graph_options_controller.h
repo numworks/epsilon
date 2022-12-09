@@ -2,7 +2,6 @@
 #define REGRESSION_GRAPH_OPTIONS_CONTROLLER_H
 
 #include <apps/shared/curve_view_cursor.h>
-#include <apps/shared/button_with_separator.h>
 #include <escher/button_cell.h>
 #include <escher/explicit_selectable_list_view_controller.h>
 #include <escher/expression_table_cell_with_message.h>

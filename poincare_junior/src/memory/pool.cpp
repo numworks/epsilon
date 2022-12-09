@@ -4,6 +4,9 @@ namespace Poincare {
 
 size_t Pool::numberOfTrees() {
   Block * currentBlock = firstBlock();
+  if (!currentBlock) {
+    return 0;
+  }
   size_t result = 0;
   while (currentBlock != lastBlock()) {
     currentBlock = Node(currentBlock).nextTree().block();

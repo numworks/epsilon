@@ -30,7 +30,7 @@ public:
   TypeBlock * lastBlock() override { return  static_cast<TypeBlock *>(m_referenceTable.isEmpty() ? &m_blocks[0] : Node(&m_blocks[0] + m_referenceTable.lastOffset()).nextTree().block()); }
 private:
   CachePool();
-  void translate(uint16_t);
+  void translate(uint16_t offset, size_t cachePoolSize);
   void resetEditionPool();
 
   class ReferenceTable : public Pool::ReferenceTable {

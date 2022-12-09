@@ -20,7 +20,6 @@ Node CachePool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
 
 uint16_t CachePool::ReferenceTable::storeNode(Node node) {
   if (isFull()) {
-    m_startIdentifier++;
     removeFirstReferences(1, &node);
   }
   return idForIndex(Pool::ReferenceTable::storeNode(node));
@@ -55,16 +54,19 @@ bool CachePool::ReferenceTable::reset() {
 }
 
 void CachePool::ReferenceTable::removeFirstReferences(uint16_t newFirstIndex, Node * nodeToUpdate) {
-  uint16_t numberOfFreedBlocks = newFirstIndex == m_length ? m_pool->size() : m_nodeOffsetForIdentifier[newFirstIndex];
+  // Compute before corrupting the reference table
+  size_t cachePoolSize = m_pool->size();
+  uint16_t numberOfFreedBlocks = newFirstIndex == m_length ? cachePoolSize : m_nodeOffsetForIdentifier[newFirstIndex];
   memmove(&m_nodeOffsetForIdentifier[0], &m_nodeOffsetForIdentifier[newFirstIndex], sizeof(uint16_t) * (m_length - newFirstIndex));
   m_length -= newFirstIndex;
+  m_startIdentifier += newFirstIndex;
   for (int i = 0; i < m_length; i++) {
     m_nodeOffsetForIdentifier[i] -= numberOfFreedBlocks;
   }
   if (nodeToUpdate) {
     *nodeToUpdate = Node(nodeToUpdate->block() - numberOfFreedBlocks);
   }
-  static_cast<CachePool *>(m_pool)->translate(numberOfFreedBlocks);
+  static_cast<CachePool *>(m_pool)->translate(numberOfFreedBlocks, cachePoolSize);
 }
 
 // CachePool
@@ -125,9 +127,9 @@ void CachePool::resetEditionPool() {
   m_editionPool.reinit(lastBlock(), k_maxNumberOfBlocks - numberOfCachedBlocks);
 }
 
-void CachePool::translate(uint16_t offset) {
+void CachePool::translate(uint16_t offset, size_t cachePoolSize) {
   Block * newFirst = &m_blocks[0] + offset;
-  memmove(m_blocks, newFirst, (size() + m_editionPool.size()) * sizeof(Block));
+  memmove(m_blocks, newFirst, (cachePoolSize + m_editionPool.size()) * sizeof(Block));
   resetEditionPool();
 }
 

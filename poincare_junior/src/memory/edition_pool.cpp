@@ -19,12 +19,14 @@ Node EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
 void EditionPool::reinit(TypeBlock * firstBlock, size_t size) {
   m_firstBlock = firstBlock;
   m_size = size;
-  flush();
 }
 
 void EditionPool::ReferenceTable::updateNodes(AlterSelectedBlock function, Block * contextSelection1, Block * contextSelection2, int contextAlteration) {
   Block * first = static_cast<Block *>(m_pool->firstBlock());
   for (int i = 0; i < m_length; i++) {
+    if (m_nodeOffsetForIdentifier[i] == NoNodeIdentifier) {
+      continue;
+    }
     function(&m_nodeOffsetForIdentifier[i], m_nodeOffsetForIdentifier[i] + first, contextSelection1, contextSelection2, contextAlteration);
   }
 }

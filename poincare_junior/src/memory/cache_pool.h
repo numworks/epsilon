@@ -20,16 +20,17 @@ public:
 
   EditionPool * editionPool() { return &m_editionPool; }
   bool needFreeBlocks(int numberOfBlocks);
-  bool reset();
+  void reset();
 
   int execute(ActionWithContext action, void * subAction, const void * data);
 
   constexpr static int k_maxNumberOfBlocks = 512;
 
-  TypeBlock * firstBlock() override { return m_referenceTable.isEmpty() ? nullptr : static_cast<TypeBlock *>(&m_pool[0]); }
-  TypeBlock * lastBlock() override { return m_referenceTable.isEmpty() ? static_cast<TypeBlock *>(&m_pool[0]) : m_referenceTable.lastNode().nextTree().block(); }
+  TypeBlock * firstBlock() override { return m_referenceTable.isEmpty() ? nullptr : static_cast<TypeBlock *>(&m_blocks[0]); }
+  TypeBlock * lastBlock() override { return  static_cast<TypeBlock *>(m_referenceTable.isEmpty() ? &m_blocks[0] : Node(&m_blocks[0] + m_referenceTable.lastOffset()).nextTree().block()); }
 private:
   CachePool();
+  void translate(uint16_t);
   void resetEditionPool();
 
   class ReferenceTable : public Pool::ReferenceTable {
@@ -54,9 +55,9 @@ private:
     ReferenceTable(Pool * pool) : Pool::ReferenceTable(pool) {}
     Node nodeForIdentifier(uint16_t id) const override;
     uint16_t storeNode(Node node) override;
-    // Return the address of the new first block
-    Block * freeOldestBlocks(int numberOfRequiredFreeBlocks);
-    Node lastNode() const;
+    // Returns a boolean indicating if we can free numberOfRequiredFreeBlocks
+    bool freeOldestBlocks(int numberOfRequiredFreeBlocks);
+    uint16_t lastOffset() const;
     bool reset() override;
   private:
     constexpr static uint16_t k_maxIdentifier = UINT16_MAX + 1 - NumberOfSpecialIdentifier;
@@ -66,13 +67,13 @@ private:
       return (static_cast<uint32_t>(m_startIdentifier) + index) % k_maxIdentifier;
     }
     uint16_t indexForId(uint16_t id) const { return (id + k_maxNumberOfReferences - m_startIdentifier) % k_maxNumberOfReferences; }
-    void removeFirstReferences(uint16_t newFirstIndex);
+    void removeFirstReferences(uint16_t newFirstIndex, Node * nodeToUpdate = nullptr);
     uint16_t m_startIdentifier;
   };
 
   ReferenceTable m_referenceTable;
   EditionPool m_editionPool;
-  Block m_pool[k_maxNumberOfBlocks];
+  Block m_blocks[k_maxNumberOfBlocks];
 };
 
 }

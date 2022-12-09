@@ -68,7 +68,7 @@ public:
   constexpr static float k_displayWidthToSTDRatio = 5.f;
   constexpr static float k_displayZoomedInTopMarginRatio = 0.2f;
   constexpr static float k_displayZoomedInHorizontalMarginRatio = 0.3f;
-  void computeCurveViewRange(float transition, bool zoomSide);
+  bool computeCurveViewRange(float transition, bool zoomSide);
   bool hasTwoSides();
 
 protected:

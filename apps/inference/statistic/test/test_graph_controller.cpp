@@ -26,8 +26,8 @@ const char * TestGraphController::title() {
 void TestGraphController::didBecomeFirstResponder() {
   m_zoom = 0;
   m_zoomSide = true;
-  m_test->computeCurveViewRange(0, m_zoomSide);
-  m_graphView.setDisplayHint(true);
+  m_mayBeZoomed = m_test->computeCurveViewRange(0, m_zoomSide);
+  m_graphView.setDisplayHint(m_mayBeZoomed);
   m_graphView.reload();
 }
 
@@ -43,7 +43,7 @@ bool TestGraphController::handleEvent(Ion::Events::Event event) {
   } else if (event == Ion::Events::Idle || event == Ion::Events::Back || event == Ion::Events::Home || event == Ion::Events::OnOff) {
     return false;
   } else if (!m_graphView.displayHint() && event != Ion::Events::Shift && event != Ion::Events::Plus && event != Ion::Events::Minus && (!m_test->hasTwoSides() || (event != Ion::Events::Left && event != Ion::Events::Right))) {
-      m_graphView.setDisplayHint(true);
+      m_graphView.setDisplayHint(m_mayBeZoomed);
       m_graphView.reload();
       return true;
   } else {

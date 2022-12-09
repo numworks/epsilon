@@ -103,7 +103,7 @@ bool Test::hasTwoSides() {
   return hypothesisParams()->comparisonOperator() == Poincare::ComparisonNode::OperatorType::NotEqual;
 }
 
-void Test::computeCurveViewRange(float transition, bool zoomSide) {
+bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   // Transition goes from 0 (default view) to 1 (zoomed view)
   float alpha;
   float z = testCriticalValue();
@@ -120,7 +120,7 @@ void Test::computeCurveViewRange(float transition, bool zoomSide) {
     // Alpha or z is out of the view, don't try to zoom
     protectedSetX(Poincare::Range1D(computeXMin(), computeXMax()));
     protectedSetY(Poincare::Range1D(computeYMin(), computeYMax()));
-    return;
+    return false;
   }
   if (alpha == z) {
     // Arbitrary value to provide some zoom if we can't separate α and z
@@ -146,6 +146,7 @@ void Test::computeCurveViewRange(float transition, bool zoomSide) {
   if (std::isnan(xMax)) { xMax = FLT_MAX; }
   protectedSetX(Poincare::Range1D(xMin, xMax));
   protectedSetY(Poincare::Range1D(yMin, yMax));
+  return true;
 }
 
 }  // namespace Inference

@@ -33,7 +33,6 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
 
 poincare_junior_src += $(addprefix poincare_junior/test/,\
   calculation.o \
-  edition_pool_overflow.o \
   elementary_tree_manipulations.o \
   expression_simplification.o \
   graph.o \

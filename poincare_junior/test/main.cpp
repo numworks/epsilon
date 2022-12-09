@@ -20,6 +20,7 @@ void testNodeSize();
 void testEditionPool();
 void testEditionReference();
 void testCachePool();
+void testCachePoolLimits();
 
 typedef void (*Test)();
 
@@ -30,7 +31,6 @@ void test(Test test, const char * title) {
   test();
   CachePool * cachePool = CachePool::sharedCachePool();
   cachePool->reset();
-  cachePool->editionPool()->flush();
   std::cout << "\n--------------------------------\n" << std::endl;
   std::cout << "\n--------------------------------\n" << std::endl;
 }
@@ -49,13 +49,12 @@ int main() {
   test(testEditionPool, "TEST EDITION POOL");
   test(testEditionReference, "TEST EDITION REFERENCE");
   test(testCachePool, "TEST CACHE POOL");
+  test(testCachePoolLimits, "TEST CACHE POOL LIMITS");
 
   test(testVariables, "TEST VARIABLES");
   test(testSet, "TEST SET");
 
   test(elementaryTreeManipulation, "ELEMENTARY TREE MANIPULATION");
-  test(testOverflowEditionPool, "TEST OVERFLOW TREE EDITION POOL");
-  test(testOverflowCacheIdentifiers, "TEST OVERFLOW CACHE IDENTIFIERS");
   test(testCalculation, "TEST DUMMY CALCULATION");
   test(testGraph, "TEST DUMMY GRAPH");
   test(testExpressionComparison, "TEST EXPRESSION COMPARISON");

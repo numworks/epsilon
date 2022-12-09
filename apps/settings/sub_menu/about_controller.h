@@ -25,6 +25,9 @@ public:
 private:
   constexpr static int k_versionCellIndex = 0;
   constexpr static int k_hardwareTestCellIndex = 2;
+  #if TERMS_OF_USE
+  constexpr static int k_termsOfUseCellIndex = 3;
+  #endif
 
   Escher::MessageTableCellWithBuffer m_cells[k_totalNumberOfCell];
   Shared::MessagePopUpController m_hardwareTestPopUpController;

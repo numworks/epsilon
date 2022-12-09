@@ -37,5 +37,7 @@ void SVC_ATTRIBUTES setSpinner(bool spiner) {
   SVC_RETURNING_VOID(SVC_EVENTS_SET_SPINNER)
 }
 
+void openURL(const char * url) {}
+
 }
 }

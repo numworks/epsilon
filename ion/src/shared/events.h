@@ -20,6 +20,7 @@ void resetKeyboardState();
 
 Event getPlatformEvent();
 void didPressNewKey();
+void openURL(const char * url);
 bool waitForInterruptingEvent(int maximumDelay, int * timeout);
 
 }

@@ -1,6 +1,7 @@
 #include "../app.h"
 #include "graph_controller.h"
 #include <apps/apps_container_helper.h>
+#include <apps/exam_mode_configuration.h>
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/preferences.h>
@@ -140,7 +141,7 @@ void GraphController::reloadBannerView() {
     // Display MeanDot before x= and y=
     m_bannerView.setDisplayParameters(true, true, !coefficientsAreDefined);
     m_bannerView.otherView()->setText(I18n::translate(I18n::Message::MeanDot));
-  } else if (modelType == Model::Type::None) {
+  } else if (modelType == Model::Type::None && !ExamModeConfiguration::statsDiagnosticsAreForbidden()) {
     // Display correlation coefficient
     m_bannerView.setDisplayParameters(true, false, !coefficientsAreDefined);
     Poincare::Print::CustomPrintf(buffer, k_bannerViewTextBufferSize, "r=%*.*ed", m_store->correlationCoefficient(*m_selectedSeriesIndex), displayMode, significantDigits);

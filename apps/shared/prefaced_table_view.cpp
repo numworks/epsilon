@@ -74,7 +74,7 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   }
 
   if (m_mainTableView->selectedRow() >= 0) {
-    /* Scroll to update the content offset with the new margins. */
+    /* Scroll to update the content offset with the new frame. */
     m_mainTableView->scrollToCell(m_mainTableView->selectedColumn(), m_mainTableView->selectedRow());
   }
 

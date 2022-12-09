@@ -75,7 +75,7 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
 
   m_view.backgroundView()->setDefaultColor(Palette::HomeBackground);
 
-      
+
 #ifdef HOME_DISPLAY_EXTERNALS
     int index = External::Archive::indexFromName("wallpaper.obm");
     if(index > -1) {
@@ -85,6 +85,13 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
     }
 #endif
 }
+
+static constexpr Ion::Events::Event home_fast_navigation_events[] = {
+    Ion::Events::Seven, Ion::Events::Eight, Ion::Events::Nine,
+    Ion::Events::Four, Ion::Events::Five, Ion::Events::Six,
+    Ion::Events::One, Ion::Events::Two, Ion::Events::Three,
+    Ion::Events::Zero, Ion::Events::Dot, Ion::Events::EE
+};
 
 bool Controller::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
@@ -141,6 +148,21 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   }
   if (event == Ion::Events::Left && selectionDataSource()->selectedRow() > 0) {
     return m_view.selectableTableView()->selectCellAtLocation(numberOfColumns() - 1, selectionDataSource()->selectedRow() - 1);
+  }
+
+  // Handle fast home navigation
+  for(int i = 0; i < std::min((int) (sizeof(home_fast_navigation_events) / sizeof(Ion::Events::Event)), this->numberOfIcons()); i++) {
+    if (event == home_fast_navigation_events[i]) {
+      int row = i / k_numberOfColumns;
+      int column = i % k_numberOfColumns;
+      // Get if app is already selected
+      if (selectionDataSource()->selectedRow() == row && selectionDataSource()->selectedColumn() == column) {
+        // If app is already selected, launch it
+        return handleEvent(Ion::Events::OK);
+      }
+      // Else, select the app
+      return m_view.selectableTableView()->selectCellAtLocation(column, row);
+    }
   }
 
   return false;

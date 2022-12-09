@@ -59,7 +59,7 @@ void CobwebController::viewWillAppear() {
 }
 
 void CobwebController::viewDidDisappear() {
-  m_graphController->moveToRank(rank());
+  m_graphController->moveToRank(rankAtCurrentStep());
 }
 
 void CobwebController::setupRange() {
@@ -68,7 +68,7 @@ void CobwebController::setupRange() {
   SequenceContext * sequenceContext = App::app()->localContext();
   Zoom zoom(0.f, INFINITY, InteractiveCurveViewRange::NormalYXRatio(), sequenceContext, InteractiveCurveViewRange::k_maxFloat);
   for (int step = 0; step < CobwebGraphView::k_maximumNumberOfSteps; step++) {
-    float value = sequence()->evaluateXYAtParameter(static_cast<float>(step + sequence()->initialRank()), sequenceContext).x2();
+    float value = sequence()->evaluateXYAtParameter(static_cast<float>(rankAtStep(step)), sequenceContext).x2();
     zoom.fitPoint(Coordinate2D<float>(value, step == 0 ? 0.f : value), false, k_margin, k_margin, k_margin, k_margin);
   }
   Range2D zoomRange = zoom.range(false, false);
@@ -98,10 +98,10 @@ void CobwebController::reloadBannerView() {
   m_bannerView->abscissaSymbol()->setText("n=");
   constexpr int bufferSize = 20;
   char buffer[bufferSize];
-  Poincare::Print::CustomPrintf(buffer, bufferSize, "%i", rank());
+  Poincare::Print::CustomPrintf(buffer, bufferSize, "%i", rankAtCurrentStep());
   m_bannerView->abscissaValue()->setText(buffer);
   int nameLength = sequence()->nameWithArgument(buffer, bufferSize);
-  double u_n = sequence()->valueAtRank<double>(rank(), App::app()->localContext());
+  double u_n = sequence()->valueAtRank<double>(rankAtCurrentStep(), App::app()->localContext());
   Poincare::Print::CustomPrintf(buffer + nameLength, bufferSize - nameLength, "=%*.*ef", u_n, Preferences::PrintFloatMode::Decimal, Preferences::LargeNumberOfSignificantDigits);
   m_bannerView->ordinateView()->setText(buffer);
   m_bannerView->reload();
@@ -114,7 +114,7 @@ bool CobwebController::handleEnter() {
 bool CobwebController::handleZoom(Ion::Events::Event event) {
   m_initialZoom = false;
   float ratio = event == Ion::Events::Plus ? 1.f / k_zoomOutRatio : k_zoomOutRatio;
-  float value = sequence()->evaluateXYAtParameter(static_cast<float>(rank()), App::app()->localContext()).x2();
+  float value = sequence()->evaluateXYAtParameter(static_cast<float>(rankAtCurrentStep()), App::app()->localContext()).x2();
   interactiveCurveViewRange()->zoom(ratio, value, m_step ? value : 0.f);
   m_graphView.resetCachedStep();
   curveView()->reload(true);
@@ -126,7 +126,7 @@ bool CobwebController::updateStep(int delta) {
     return false;
   }
   m_step += delta;
-  double u_n = sequence()->valueAtRank<double>(rank(), App::app()->localContext());
+  double u_n = sequence()->valueAtRank<double>(rankAtCurrentStep(), App::app()->localContext());
   double x = u_n;
   double y = m_step == 0 ? 0.f : u_n;
   if (!m_initialZoom && interactiveCurveViewRange()->panToMakePointVisible(x, y, k_margin,  k_margin,  k_margin,  k_margin, m_graphView.pixelWidth())) {

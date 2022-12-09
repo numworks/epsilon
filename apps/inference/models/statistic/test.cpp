@@ -116,6 +116,12 @@ void Test::computeCurveViewRange(float transition, bool zoomSide) {
     z *= -1;
   }
   float margin = std::abs(alpha - z) * k_displayZoomedInHorizontalMarginRatio;
+  if (std::abs(alpha) > k_displayWidthToSTDRatio || std::abs(z) > k_displayWidthToSTDRatio) {
+    // Alpha or z is out of the view, don't try to zoom
+    protectedSetX(Poincare::Range1D(computeXMin(), computeXMax()));
+    protectedSetY(Poincare::Range1D(computeYMin(), computeYMax()));
+    return;
+  }
   if (alpha == z) {
     // Arbitrary value to provide some zoom if we can't separate α and z
     margin = 0.1;

@@ -58,11 +58,24 @@ inline void log_pools(bool corruptedEditionPool = false) {
   } else {
     editionPool->treeLog(std::cout);
   }
-  std::cout << "\=================================" << std::endl;
+  std::cout << "\n================================" << std::endl;
 }
 #endif
 
-inline void assert_pools_size(size_t cachePoolSize, size_t editionPoolSize) {
+inline void assert_node_equals_blocks(const Node node, std::initializer_list<Block> blocks) {
+  Block * block = node.block();
+  for (Block b : blocks) {
+    assert(*block == b);
+    block = block->next();
+  }
+  assert(node.treeSize() == blocks.size());
+}
+
+inline void assert_trees_are_equal(const Node tree0, const Node tree1) {
+  assert(Simplification::Compare(tree0, tree1) == 0);
+}
+
+inline void assert_pools_sizes_are(size_t cachePoolSize, size_t editionPoolSize) {
   CachePool * cachePool = CachePool::sharedCachePool();
   EditionPool * editionPool = cachePool->editionPool();
   Pool * pools[] = {cachePool, editionPool};
@@ -88,17 +101,11 @@ inline void reset_pools() {
   cachePool->reset();
 }
 
-inline void assert_trees_are_equal(const Node tree0, const Node tree1) {
-  assert(Simplification::Compare(tree0, tree1) == 0);
-}
-
-inline void assert_node_equals_blocks(const Node node, std::initializer_list<Block> blocks) {
-  Block * block = node.block();
-  for (Block b : blocks) {
-    assert(*block == b);
-    block = block->next();
+inline void assert_pool_contains(Pool * pool, std::initializer_list<const Node> nodes) {
+  Node tree(pool->firstBlock());
+  for (const Node n : nodes) {
+    assert_trees_are_equal(n, tree);
+    tree = tree.nextTree();
   }
-  assert(node.treeSize() == blocks.size());
+  assert(tree.block() == pool->lastBlock());
 }
-
-

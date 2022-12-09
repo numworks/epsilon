@@ -15,7 +15,7 @@ void testBlock() {
   editionPool->pushBlock(ValueBlock(4));
   editionPool->pushBlock(ValueBlock(-4));
   Block * lastBlock = editionPool->pushBlock(ZeroBlock);
-  assert_pools_size(0, 6);
+  assert_pools_sizes_are(0, 6);
 
   // Block navigation
   assert(*firstBlock->nextNth(5) == *firstBlock);

@@ -67,11 +67,27 @@ KDSize ScrollView::minimalSizeForOptimalDisplay() const {
   return KDSize(width, height);
 }
 
+void ScrollView::setTopMargin(KDCoordinate m) {
+  KDCoordinate translation = m - m_topMargin;
+  m_topMargin = m;
+  if (translation != 0 && contentOffset().y() != 0) {
+    setContentOffset(KDPoint(contentOffset().x(), std::max(0, contentOffset().y() + translation)));
+  }
+}
+
+void ScrollView::setLeftMargin(KDCoordinate m) {
+  KDCoordinate translation = m - m_leftMargin;
+  m_leftMargin = m;
+  if (translation != 0 && contentOffset().x() != 0) {
+    setContentOffset(KDPoint(std::max(0, contentOffset().x() + translation), contentOffset().y()));
+  }
+}
+
 void ScrollView::setMargins(KDCoordinate top, KDCoordinate right, KDCoordinate bottom, KDCoordinate left) {
-  m_topMargin = top;
-  m_rightMargin = right;
-  m_bottomMargin = bottom;
-  m_leftMargin = left;
+  setTopMargin(top);
+  setRightMargin(right);
+  setBottomMargin(bottom);
+  setLeftMargin(left);
 }
 
 void ScrollView::scrollToContentPoint(KDPoint p, bool allowOverscroll) {

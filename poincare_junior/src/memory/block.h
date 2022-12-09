@@ -1,7 +1,6 @@
 #ifndef POINCARE_MEMORY_BLOCK_H
 #define POINCARE_MEMORY_BLOCK_H
 
-#define POINCARE_MEMORY_TREE_LOG 1
 #if POINCARE_MEMORY_TREE_LOG
 #include <ostream>
 #endif

@@ -44,7 +44,7 @@ inline void intermediaryPrint() {
   std::cout << "\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" << std::endl;
 }
 
-#if POINCARE_TREE_LOG
+#if POINCARE_MEMORY_TREE_LOG
 inline void log_pools(bool corruptedEditionPool = false) {
   CachePool * cachePool = CachePool::sharedCachePool();
   EditionPool * editionPool = cachePool->editionPool();
@@ -68,7 +68,7 @@ inline void assert_pools_size(size_t cachePoolSize, size_t editionPoolSize) {
   Pool * pools[] = {cachePool, editionPool};
   size_t theoreticalSizes[] = {cachePoolSize, editionPoolSize};
   for (size_t i = 0; i < sizeof(theoreticalSizes)/sizeof(size_t); i++) {
-#if POINCARE_TREE_LOG
+#if POINCARE_MEMORY_TREE_LOG
     const char * poolNames[] = {"cache pool", "edition Pool"};
     if (pools[i]->size() != theoreticalSizes[i]) {
       std::cout << "Expected "<< poolNames[i] <<" of size " << theoreticalSizes[i] << " but got " << pools[i]->size() << std::endl;

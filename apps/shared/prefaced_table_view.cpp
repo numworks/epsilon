@@ -90,6 +90,18 @@ void PrefacedTableView::layoutSubviews(bool force) {
   layoutSubviewsInRect(bounds(), force);
 }
 
+HighlightCell * PrefacedTableView::IntermediaryDataSource::reusableCell(int index, int type) {
+  /* The prefaced view and the main view must have different reusable cells to avoid conflicts
+   * when layouting. In most cases, the preface needs cell types that will no longer be needed
+   * by the main datasource (for example title types). Thus we can directly use the reusable
+   * cells of main datasource.
+   * WARNING: if the preface needs the same types of cells than main datasource or another
+   * preface, this method should be overriden either:
+   *   - starting from the end of main datasource reusable cells if it doesn't create conflicts
+   *   - creating new reusable cells for the preface */
+  return m_mainDataSource->reusableCell(index, type);
+}
+
 KDCoordinate PrefacedTableView::IntermediaryDataSource::nonMemoizedColumnWidth(int i) {
   // Do not alter main dataSource memoization
   m_mainDataSource->lockMemoization(true);

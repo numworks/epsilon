@@ -73,6 +73,18 @@ bool PrefacedTwiceTableView::ColumnPrefaceDataSource::prefaceIsAfterOffset(KDCoo
   return result;
 }
 
+HighlightCell * PrefacedTwiceTableView::ColumnPrefaceDataSource::reusableCell(int index, int type) {
+  /* The prefaced view and the main view must have different reusable cells to avoid conflicts
+   * when layouting. To avoid creating a whole set of reusable cells for the prefaced view,
+   * we use a hack : there is enough reusable cells for "prefacedView + cropped mainView" in
+   * mainView, indeed we juste take the last ones for the prefacedView (mainView will takes
+   * the first ones).
+   * WARNING : this will works only because row preface uses the first ones (see comment in
+   * IntermediaryDataSource::reusableCell), this way there will not be conflicts between the
+   * two preface view. */
+  return m_mainDataSource->reusableCell(m_mainDataSource->reusableCellCount(type) - 1 - index, type);
+}
+
 KDCoordinate PrefacedTwiceTableView::ColumnPrefaceDataSource::nonMemoizedCumulatedWidthBeforeIndex(int i) {
   // Do not alter main dataSource memoization
   assert(i == 0 || i == 1);

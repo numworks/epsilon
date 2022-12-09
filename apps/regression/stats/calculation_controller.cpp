@@ -81,8 +81,8 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
 
 int CalculationController::numberOfRows() const {
   /* Rows for : title + Mean ... Variance + Number of points + Covariance + ∑xy
-   * + (Regression) + Coefficients + (R) + (R2) */
-  return 1 + k_numberOfDoubleBufferCalculations + k_numberOfSingleBufferCalculations + hasSeriesDisplaying(&DisplayRegression) + numberOfDisplayedCoefficients() + hasSeriesDisplaying(&DisplayR) + hasSeriesDisplaying(&DisplayR2);
+   * + R + (Regression) + Coefficients + (R2) */
+  return 1 + k_numberOfDoubleBufferCalculations + k_numberOfSingleBufferCalculations + 1 + hasSeriesDisplaying(&DisplayRegression) + numberOfDisplayedCoefficients() + hasSeriesDisplaying(&DisplayR2);
 }
 
 int CalculationController::numberOfColumns() const {
@@ -220,7 +220,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     return;
   }
   bool calculationIsR = (calculationIndex == k_maxNumberOfRows - 2);
-  if ((calculationIsR && !shouldSeriesDisplay(seriesNumber, DisplayR)) || (!calculationIsR && !shouldSeriesDisplay(seriesNumber, DisplayR2))) {
+  if (calculationIsR || (!calculationIsR && !shouldSeriesDisplay(seriesNumber, DisplayR2))) {
     bufferCell->setText(I18n::translate(I18n::Message::Dash));
     return;
   }
@@ -362,6 +362,13 @@ int CalculationController::getCalculationIndex(int j) const {
   assert(j > 0 && j < numberOfRows());
   // Ignore top row
   int calculationIndex = j - 1;
+  if (calculationIndex < k_numberOfBufferCalculations) {
+    return calculationIndex;
+  }
+  if (calculationIndex == k_numberOfBufferCalculations) {
+    // Correlation coefficient
+    return k_maxNumberOfRows - 2;
+  }
   bool displayRegression = hasSeriesDisplaying(&DisplayRegression);
   if (calculationIndex < k_numberOfBufferCalculations + displayRegression) {
     return calculationIndex;
@@ -382,13 +389,8 @@ int CalculationController::getCalculationIndex(int j) const {
     return calculationIndex;
   }
   calculationIndex += k_maxNumberOfDistinctCoefficients - 2 - displayedBCDECoeffs;
-  bool displayR = hasSeriesDisplaying(&DisplayR);
-  if (calculationIndex < k_numberOfBufferCalculations + 1 + k_maxNumberOfDistinctCoefficients + displayR) {
-    return calculationIndex;
-  }
-  calculationIndex += !displayR;
   assert(calculationIndex == k_maxNumberOfRows - 1 && hasSeriesDisplaying(&DisplayR2));
-  return calculationIndex;
+  return calculationIndex + 2;
 }
 
 bool CalculationController::shouldSeriesDisplay(int series, DisplayCondition condition) const {

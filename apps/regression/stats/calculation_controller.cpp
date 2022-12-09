@@ -220,7 +220,7 @@ void CalculationController::willDisplayCellAtLocation(HighlightCell * cell, int 
     return;
   }
   bool calculationIsR = (calculationIndex == k_maxNumberOfRows - 2);
-  if (calculationIsR || (!calculationIsR && !shouldSeriesDisplay(seriesNumber, DisplayR2))) {
+  if (!calculationIsR && !shouldSeriesDisplay(seriesNumber, DisplayR2)) {
     bufferCell->setText(I18n::translate(I18n::Message::Dash));
     return;
   }

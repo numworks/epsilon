@@ -369,28 +369,29 @@ int CalculationController::getCalculationIndex(int j) const {
     // Correlation coefficient
     return k_maxNumberOfRows - 2;
   }
+  calculationIndex -= 1;
   bool displayRegression = hasSeriesDisplaying(&DisplayRegression);
-  if (calculationIndex < k_numberOfBufferCalculations + 1 + displayRegression) {
+  if (calculationIndex < k_numberOfBufferCalculations + displayRegression) {
     return calculationIndex;
   }
   calculationIndex += !displayRegression;
   bool displayCoeffM = shouldDisplayMCoefficient();
-  if (calculationIndex < k_numberOfBufferCalculations + 2 + displayCoeffM) {
+  if (calculationIndex < k_numberOfBufferCalculations + 1 + displayCoeffM) {
     return calculationIndex;
   }
   calculationIndex += !displayCoeffM;
   bool displayCoeffA = shouldDisplayACoefficient();
-  if (calculationIndex < k_numberOfBufferCalculations + 3 + displayCoeffA) {
+  if (calculationIndex < k_numberOfBufferCalculations + 2 + displayCoeffA) {
     return calculationIndex;
   }
   calculationIndex += !displayCoeffA;
   int displayedBCDECoeffs = numberOfDisplayedBCDECoefficients();
-  if (calculationIndex < k_numberOfBufferCalculations + 4 + displayedBCDECoeffs) {
+  if (calculationIndex < k_numberOfBufferCalculations + 3 + displayedBCDECoeffs) {
     return calculationIndex;
   }
   calculationIndex += k_maxNumberOfDistinctCoefficients - 2 - displayedBCDECoeffs;
-  assert(calculationIndex == k_maxNumberOfRows - 1 && hasSeriesDisplaying(&DisplayR2));
-  return calculationIndex;
+  assert(calculationIndex == k_maxNumberOfRows - 2 && hasSeriesDisplaying(&DisplayR2));
+  return calculationIndex + 1;
 }
 
 bool CalculationController::shouldSeriesDisplay(int series, DisplayCondition condition) const {

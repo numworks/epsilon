@@ -10,6 +10,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <ion/keyboard/layout_events.h>
+#include <SDL.h>
 
 #if ESCHER_LOG_EVENTS_NAME
 #include <ion/console.h>
@@ -44,6 +45,10 @@ void resetPreemptiveKeyboardState() {}
 
 void didPressNewKey() {
   Simulator::Haptics::rumble();
+}
+
+void openURL(const char * url) {
+  SDL_OpenURL(url);
 }
 
 bool waitForInterruptingEvent(int maximumDelay, int * timeout) {

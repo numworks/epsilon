@@ -1,5 +1,6 @@
 #include "about_controller.h"
 #include "../../apps_container.h"
+#include <ion/src/shared/events.h>
 #include <assert.h>
 #include <cmath>
 
@@ -52,6 +53,12 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
       }
       return true;
     }
+    #if TERMS_OF_USE
+    if (selectedRow() == k_termsOfUseCellIndex) {
+      Ion::Events::openURL(I18n::translate(I18n::Message::TermsOfUseLink));
+      return true;
+    }
+    #endif
     return false;
   }
   return GenericSubController::handleEvent(event);

@@ -370,27 +370,27 @@ int CalculationController::getCalculationIndex(int j) const {
     return k_maxNumberOfRows - 2;
   }
   bool displayRegression = hasSeriesDisplaying(&DisplayRegression);
-  if (calculationIndex < k_numberOfBufferCalculations + displayRegression) {
+  if (calculationIndex < k_numberOfBufferCalculations + 1 + displayRegression) {
     return calculationIndex;
   }
   calculationIndex += !displayRegression;
   bool displayCoeffM = shouldDisplayMCoefficient();
-  if (calculationIndex < k_numberOfBufferCalculations + 1 + displayCoeffM) {
+  if (calculationIndex < k_numberOfBufferCalculations + 2 + displayCoeffM) {
     return calculationIndex;
   }
   calculationIndex += !displayCoeffM;
   bool displayCoeffA = shouldDisplayACoefficient();
-  if (calculationIndex < k_numberOfBufferCalculations + 2 + displayCoeffA) {
+  if (calculationIndex < k_numberOfBufferCalculations + 3 + displayCoeffA) {
     return calculationIndex;
   }
   calculationIndex += !displayCoeffA;
   int displayedBCDECoeffs = numberOfDisplayedBCDECoefficients();
-  if (calculationIndex < k_numberOfBufferCalculations + 3 + displayedBCDECoeffs) {
+  if (calculationIndex < k_numberOfBufferCalculations + 4 + displayedBCDECoeffs) {
     return calculationIndex;
   }
   calculationIndex += k_maxNumberOfDistinctCoefficients - 2 - displayedBCDECoeffs;
   assert(calculationIndex == k_maxNumberOfRows - 1 && hasSeriesDisplaying(&DisplayR2));
-  return calculationIndex + 2;
+  return calculationIndex;
 }
 
 bool CalculationController::shouldSeriesDisplay(int series, DisplayCondition condition) const {

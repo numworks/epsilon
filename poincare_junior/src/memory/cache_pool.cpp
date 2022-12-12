@@ -12,7 +12,7 @@ Node CachePool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
     return Node();
   }
   uint16_t index = indexForId(id);
-  if (index >= m_length) {
+  if (index == NoNodeIdentifier) {
     return Node();
   }
   return Pool::ReferenceTable::nodeForIdentifier(index);

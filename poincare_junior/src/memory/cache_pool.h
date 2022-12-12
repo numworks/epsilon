@@ -37,12 +37,12 @@ private:
   /* The identifiers are taken from 0 to 2^16 - 2 (0xFFFF being reserved for
    * NoNodeIdentifier).
    * The implementation of the reference table ensures that:
-   * - the order of identifiers (% k_maxIdentifier) respects the order of the trees
-   * - the oldest trees have smallest identifiers % k_maxIdentifier
-   * - the identifiers are allocated on a ring buffer from 0 to 2^16 - 2
-   *   (0xFFFF being reserved for NoNodeIdentifier). We keep at maximum
-   *   k_maxNumberOfBlocks identifers.
-   * - when the identifiers are full, we increment the start of the ring buffer,
+   * - the order of identifiers respects the order of the trees
+   * - the oldest trees have smallest identifiers
+   * - we never reach the k_maxIdentifier = 2^16 - 1
+   *   (0xFFFF being reserved for NoNodeIdentifier)
+   * - we keep at maximum k_maxNumberOfBlocks identifers.
+   * - when the identifiers are full, we increment the start recognized identifier,
    *   invalidating the oldest tree (with the smallest identifier).
    * - when we need free space on the cache, we invalidate the leftest trees
    *   (thereby oldest).
@@ -60,13 +60,21 @@ private:
     uint16_t lastOffset() const;
     bool reset() override;
   private:
-    constexpr static uint16_t k_maxIdentifier = UINT16_MAX + 1 - NumberOfSpecialIdentifier;
+    constexpr static uint16_t k_maxIdentifier = UINT16_MAX - NumberOfSpecialIdentifier;
+    static_assert(NoNodeIdentifier == UINT16_MAX, "Special identifier is not the last taken identifier");
     uint16_t nextIdentifier() { return idForIndex(m_length); }
     uint16_t idForIndex(uint16_t index) const {
       assert(index < k_maxNumberOfReferences);
-      return (static_cast<uint32_t>(m_startIdentifier) + index) % k_maxIdentifier;
+      assert(static_cast<uint32_t>(m_startIdentifier) + index <= k_maxIdentifier);
+      return static_cast<uint32_t>(m_startIdentifier) + index;
     }
-    uint16_t indexForId(uint16_t id) const { return (id + k_maxNumberOfReferences - m_startIdentifier) % k_maxNumberOfReferences; }
+    uint16_t indexForId(uint16_t id) const {
+      assert(static_cast<uint32_t>(m_startIdentifier) + m_length <= k_maxIdentifier);
+      if (id < m_startIdentifier || id >= m_startIdentifier + m_length) {
+        return NoNodeIdentifier;
+      }
+      return id - m_startIdentifier;
+    }
     void removeFirstReferences(uint16_t newFirstIndex, Node * nodeToUpdate = nullptr);
     uint16_t m_startIdentifier;
   };

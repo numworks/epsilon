@@ -1,6 +1,6 @@
 # This file is built manually by mimic-ing SDL's Xcode project
 
-SDL_SFLAGS += -fasm-blocks -fstrict-aliasing
+SDL_SFLAGS += -fasm-blocks -fstrict-aliasing -fobjc-weak
 SDL_SFLAGS += -Iion/src/simulator/external/sdl/src/video/khronos
 SDL_SFLAGS += -Iion/src/simulator/external/sdl/src/hidapi/hidapi
 
@@ -10,9 +10,12 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   file/cocoa/SDL_rwopsbundlesupport.m \
   filesystem/cocoa/SDL_sysfilesystem.m \
   haptic/darwin/SDL_syshaptic.c \
-  hidapi/mac/hid.c \
-  joystick/darwin/SDL_sysjoystick.c \
+  hidapi/SDL_hidapi.c \
+  locale/macosx/SDL_syslocale.m \
+  joystick/darwin/SDL_iokitjoystick.c \
+  joystick/iphoneos/SDL_mfijoystick.m \
   loadso/dlopen/SDL_sysloadso.c \
+  misc/macosx/SDL_sysurl.m \
   power/macosx/SDL_syspower.c \
   render/metal/SDL_render_metal.m \
   thread/pthread/SDL_syscond.c \
@@ -35,22 +38,6 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   video/cocoa/SDL_cocoavideo.m \
   video/cocoa/SDL_cocoavulkan.m \
   video/cocoa/SDL_cocoawindow.m \
-  video/x11/SDL_x11clipboard.c \
-  video/x11/SDL_x11dyn.c \
-  video/x11/SDL_x11events.c \
-  video/x11/SDL_x11framebuffer.c \
-  video/x11/SDL_x11keyboard.c \
-  video/x11/SDL_x11messagebox.c \
-  video/x11/SDL_x11modes.c \
-  video/x11/SDL_x11mouse.c \
-  video/x11/SDL_x11opengl.c \
-  video/x11/SDL_x11opengles.c \
-  video/x11/SDL_x11shape.c \
-  video/x11/SDL_x11touch.c \
-  video/x11/SDL_x11video.c \
-  video/x11/SDL_x11window.c \
-  video/x11/SDL_x11xinput2.c \
-  video/x11/imKStoUCS.c \
 )
 
 LDFLAGS += -weak_framework Metal
@@ -63,3 +50,5 @@ LDFLAGS += -framework CoreFoundation
 LDFLAGS += -framework Carbon
 LDFLAGS += -framework ForceFeedback
 LDFLAGS += -framework AudioToolbox
+LDFLAGS += -framework GameController
+LDFLAGS += -framework CoreHaptics

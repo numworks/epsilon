@@ -16,6 +16,7 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/SDL_mixer.c \
   audio/SDL_wave.c \
   audio/dummy/SDL_dummyaudio.c \
+  core/unix/SDL_poll.c \
   cpuinfo/SDL_cpuinfo.c \
   dynapi/SDL_dynapi.c \
   events/SDL_clipboardevents.c \
@@ -30,22 +31,37 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   events/SDL_windowevents.c \
   file/SDL_rwops.c \
   haptic/SDL_haptic.c \
-  haptic/dummy/SDL_syshaptic.c \
   joystick/SDL_gamecontroller.c \
   joystick/SDL_joystick.c \
+  joystick/hidapi/SDL_hidapi_gamecube.c \
   joystick/hidapi/SDL_hidapi_ps4.c \
+  joystick/hidapi/SDL_hidapi_ps5.c \
+  joystick/hidapi/SDL_hidapi_rumble.c \
+  joystick/hidapi/SDL_hidapi_steam.c \
   joystick/hidapi/SDL_hidapi_switch.c \
   joystick/hidapi/SDL_hidapi_xbox360.c \
+  joystick/hidapi/SDL_hidapi_xbox360w.c \
   joystick/hidapi/SDL_hidapi_xboxone.c \
   joystick/hidapi/SDL_hidapijoystick.c \
+  joystick/virtual/SDL_virtualjoystick.c \
+  joystick/dummy/SDL_sysjoystick.c \
+  locale/SDL_locale.c \
+  main/dummy/SDL_dummy_main.c \
+  misc/SDL_url.c \
   power/SDL_power.c \
+  render/SDL_d3dmath.c \
   render/SDL_render.c \
   render/SDL_yuv_sw.c \
+  render/direct3d/SDL_render_d3d.c \
+  render/direct3d/SDL_shaders_d3d.c \
+  render/direct3d11/SDL_render_d3d11.c \
+  render/direct3d11/SDL_shaders_d3d11.c \
   render/opengl/SDL_render_gl.c \
   render/opengl/SDL_shaders_gl.c \
   render/opengles/SDL_render_gles.c \
   render/opengles2/SDL_render_gles2.c \
   render/opengles2/SDL_shaders_gles2.c \
+  render/psp/SDL_render_psp.c \
   render/software/SDL_blendfillrect.c \
   render/software/SDL_blendline.c \
   render/software/SDL_blendpoint.c \
@@ -55,12 +71,14 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   render/software/SDL_rotate.c \
   sensor/SDL_sensor.c \
   sensor/dummy/SDL_dummysensor.c \
+  stdlib/SDL_crc32.c \
   stdlib/SDL_getenv.c \
   stdlib/SDL_iconv.c \
   stdlib/SDL_malloc.c \
   stdlib/SDL_qsort.c \
   stdlib/SDL_stdlib.c \
   stdlib/SDL_string.c \
+  stdlib/SDL_strtokr.c \
   thread/SDL_thread.c \
   timer/SDL_timer.c \
   video/SDL_RLEaccel.c \

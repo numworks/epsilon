@@ -19,7 +19,9 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   joystick/windows/SDL_windowsjoystick.c \
   joystick/windows/SDL_xinputjoystick.c \
   loadso/windows/SDL_sysloadso.c \
+  locale/windows/SDL_syslocale.c \
   main/windows/SDL_windows_main.c \
+  misc/windows/SDL_sysurl.c \
   power/windows/SDL_syspower.c \
   render/direct3d/SDL_render_d3d.c \
   render/direct3d/SDL_shaders_d3d.c \

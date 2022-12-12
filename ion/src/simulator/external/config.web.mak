@@ -4,6 +4,8 @@ SDL_SFLAGS += -std=gnu99
 sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/disk/SDL_diskaudio.c \
   audio/emscripten/SDL_emscriptenaudio.c \
+  haptic/dummy/SDL_syshaptic.c \
+  hidapi/SDL_hidapi.c \
   joystick/emscripten/SDL_sysjoystick.c \
   libm/e_atan2.c \
   libm/e_exp.c \
@@ -26,6 +28,8 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   libm/s_sin.c \
   libm/s_tan.c \
   loadso/dlopen/SDL_sysloadso.c \
+  locale/emscripten/SDL_syslocale.c \
+  misc/dummy/SDL_sysurl.c \
   thread/generic/SDL_syssem.c \
   thread/generic/SDL_systhread.c \
   thread/generic/SDL_systls.c \

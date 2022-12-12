@@ -134,7 +134,7 @@ void Zoom::fitIntersections(Function2DWithContext<float> f1, const void * model1
     return p->f1(t, p->model1, p->context).x2() - p->f2(t, p->model2, p->context).x2();
   };
   bool dummy;
-  fitWithSolver(&dummy, &dummy, evaluator, &params, Solver<float>::EvenOrOddRootInBracket, HoneIntersection, vertical);
+  fitWithSolver(&dummy, &dummy, evaluator, &params, Solver<float>::OddRootInBracket, HoneIntersection, vertical);
 }
 
 void Zoom::fitMagnitude(Function2DWithContext<float> f, const void * model, bool vertical) {

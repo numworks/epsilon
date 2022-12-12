@@ -32,6 +32,7 @@ $(dfu_targets): $(BUILD_DIR)/%.dfu: | $(BUILD_DIR)/.
 	  $(subst $(FIRMWARE_COMPONENT),kernel,$(subst debug,release,$(BUILD_DIR)))/kernel$(TARGET_STEM).B.elf \
 	  -o $@
 
+FLASHER_ADDRESS = $(if $(filter n0120,$(MODEL)),0x24030000,0x20030000)
 .PHONY: %_flash
 %_flash: $(BUILD_DIR)/%.dfu
 	@echo "DFU     $@"
@@ -43,7 +44,7 @@ $(dfu_targets): $(BUILD_DIR)/%.dfu: | $(BUILD_DIR)/.
 	$(Q) if [[ "$(DFU_SLAVE)" == *"0483:df11"* ]]; \
 	  then \
 	    $(MAKE) FIRMWARE_COMPONENT=flasher DEBUG=0 flasher.dfu; \
-	    $(PYTHON) build/device/dfu.py -s 0x20030000:leave -D $(subst epsilon,flasher,$(BUILD_DIR))/flasher.dfu; \
+	    $(PYTHON) build/device/dfu.py -s $(FLASHER_ADDRESS):leave -D $(subst epsilon,flasher,$(BUILD_DIR))/flasher.dfu; \
 	    sleep 2; \
 	fi
 	$(Q) $(PYTHON) build/device/dfu.py -D $(word 1,$^)

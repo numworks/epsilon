@@ -75,7 +75,8 @@ inline void assert_trees_are_equal(const Node tree0, const Node tree1) {
   assert(Simplification::Compare(tree0, tree1) == 0);
 }
 
-inline void assert_pools_sizes_are(size_t cachePoolSize, size_t editionPoolSize) {
+using FunctionSize = size_t (Pool::*)();
+inline void assert_pools_sizes_are(size_t cachePoolSize, size_t editionPoolSize, FunctionSize functionSize) {
   CachePool * cachePool = CachePool::sharedCachePool();
   EditionPool * editionPool = cachePool->editionPool();
   Pool * pools[] = {cachePool, editionPool};
@@ -83,15 +84,23 @@ inline void assert_pools_sizes_are(size_t cachePoolSize, size_t editionPoolSize)
   for (size_t i = 0; i < sizeof(theoreticalSizes)/sizeof(size_t); i++) {
 #if POINCARE_MEMORY_TREE_LOG
     const char * poolNames[] = {"cache pool", "edition Pool"};
-    if (pools[i]->size() != theoreticalSizes[i]) {
+    if ((pools[i]->*functionSize)() != theoreticalSizes[i]) {
       std::cout << "Expected "<< poolNames[i] <<" of size " << theoreticalSizes[i] << " but got " << pools[i]->size() << std::endl;
       pools[i]->treeLog(std::cout);
       assert(false);
     }
 #else
-    assert(pools[i]->size() == theoreticalSizes[i]);
+    assert((pools[i]->*functionSize)() == theoreticalSizes[i]);
 #endif
   }
+}
+
+inline void assert_pools_block_sizes_are(size_t cachePoolSize, size_t editionPoolSize) {
+  return assert_pools_sizes_are(cachePoolSize, editionPoolSize, &Pool::size);
+}
+
+inline void assert_pools_tree_sizes_are(size_t cachePoolSize, size_t editionPoolSize) {
+  return assert_pools_sizes_are(cachePoolSize, editionPoolSize, &Pool::numberOfTrees);
 }
 
 inline void reset_pools() {

@@ -27,36 +27,36 @@ void execute_push_tree_and_modify() {
 void testCachePool() {
   // storeEditedTree
   editionPool->initFromTree(tree);
-  assert_pools_sizes_are(0, treeSize);
+  assert_pools_tree_sizes_are(0, 1);
   cachePool->storeEditedTree();
-  assert_pools_sizes_are(treeSize, 0);
+  assert_pools_tree_sizes_are(1, 0);
 
   // needFreeBlocks
   editionPool->initFromTree(tree);
   cachePool->storeEditedTree();
-  assert_pools_sizes_are(2*treeSize, 0);
+  assert_pools_tree_sizes_are(2, 0);
   cachePool->needFreeBlocks(1);
-  assert_pools_sizes_are(treeSize, 0);
+  assert_pools_tree_sizes_are(1, 0);
   cachePool->needFreeBlocks(treeSize - 1);
-  assert_pools_sizes_are(0, 0);
+  assert_pools_tree_sizes_are(0, 0);
   for (int i = 0; i < 3; i++) {
     editionPool->initFromTree(tree);
     cachePool->storeEditedTree();
   }
-  assert_pools_sizes_are(3*treeSize, 0);
+  assert_pools_tree_sizes_are(3, 0);
   cachePool->needFreeBlocks(treeSize + 1);
-  assert_pools_sizes_are(treeSize, 0);
+  assert_pools_tree_sizes_are(1, 0);
 
   // reset
   editionPool->initFromTree(tree);
-  assert_pools_sizes_are(treeSize, treeSize);
+  assert_pools_tree_sizes_are(1, 1);
   cachePool->reset();
-  assert_pools_sizes_are(0, 0);
+  assert_pools_tree_sizes_are(0, 0);
 
   // execute
   execute_push_tree_and_modify();
   assert_pool_contains(cachePool, {Mult(3_n, 4_n)});
-  assert_pools_sizes_are(treeSize, 0);
+  assert_pools_tree_sizes_are(1, 0);
 }
 
 void testCachePoolLimits() {
@@ -68,11 +68,11 @@ void testCachePoolLimits() {
     editionPool->initFromTree(tree);
     cachePool->storeEditedTree();
   }
-  assert_pools_sizes_are(maxNumberOfTreesInCache * treeSize, 0);
+  assert_pools_tree_sizes_are(maxNumberOfTreesInCache, 0);
 
   // 2. Edit another tree triggering a cache invalidation
   execute_push_tree_and_modify();
-  assert(cachePool->size() <= maxNumberOfTreesInCache * treeSize);
+  assert(cachePool->numberOfTrees() < maxNumberOfTreesInCache);
   Node lastTree = Node(cachePool->lastBlock()).previousTree();
   assert_trees_are_equal(lastTree, Mult(3_n, 4_n));
 
@@ -83,18 +83,18 @@ void testCachePoolLimits() {
     editionPool->initFromTree(smallTree);
     cachePool->storeEditedTree();
   }
-  assert_pools_sizes_are(Pool::k_maxNumberOfReferences * smallTreeSize, 0);
+  assert_pools_tree_sizes_are(Pool::k_maxNumberOfReferences, 0);
   // 2. Edit and cache a new tree triggering a cache invalidation
   execute_push_tree_and_modify();
-  assert_pools_sizes_are((Pool::k_maxNumberOfReferences - 1) * smallTreeSize + treeSize, 0);
+  assert_pools_tree_sizes_are(Pool::k_maxNumberOfReferences, 0);
 }
 
 void assert_check_cache_reference(CacheReference reference, std::initializer_list<const Node> cacheTrees) {
   cachePool->reset();
-  assert(cachePool->numberOfTrees() == 0 && editionPool->size() == 0);
+  assert_pools_tree_sizes_are(0, 0);
   reference.send([](const Node tree, void * result) {}, nullptr);
   assert_pool_contains(cachePool, cacheTrees);
-  assert(editionPool->size() == 0);
+  assert_pools_tree_sizes_are(cacheTrees.size(), 0);
   cachePool->reset();
 }
 

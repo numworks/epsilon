@@ -18,13 +18,10 @@ public:
 private:
   class ColumnPrefaceDataSource : public IntermediaryDataSource {
   public:
-    ColumnPrefaceDataSource(int prefaceColumn, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceColumn(prefaceColumn), m_prefaceRow(-1) {}
+    ColumnPrefaceDataSource(int prefaceColumn, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceColumn(prefaceColumn) {}
 
-    void setPrefaceRow(int row) { m_prefaceRow = row; }
     bool prefaceIsAfterOffset(KDCoordinate offsetX, KDCoordinate leftMargin) const;
     int numberOfColumns() const override { return 1; }
-    /* Calling relativeRow in rowHeight with this particular implementation
-     * would cause an infinite loop. */
 
   private:
     Escher::HighlightCell * reusableCell(int index, int type) override;
@@ -32,19 +29,28 @@ private:
     int nonMemoizedIndexAfterCumulatedWidth(KDCoordinate offsetX) override;
 
     int columnIndexInMainDataSource(int i) override { assert(i == 0 || i == 1); return m_prefaceColumn + i; }
-    int rowIndexInMainDataSource(int j) override { return (m_prefaceRow >= 0 && j == indexAfterCumulatedHeight(offset().y())) ? m_prefaceRow : j; }
 
     const int m_prefaceColumn;
-    int m_prefaceRow;
+  };
+
+  class IntersectionPrefaceDataSource : public RowPrefaceDataSource {
+  public:
+    /* The implementation of this class (1 row and 1 column) is a hack to avoid the diamond problem.
+     * Indeed, IntersectionPrefaceDataSource should inherit from RowPrefaceDataSource (1 row) and
+     * ColumnPrefaceDataSource (1 column). The hack we chose is to inherit from RowPrefaceDataSource
+     * and take a ColumnPrefaceDataSource as m_mainDataSource. */
+    IntersectionPrefaceDataSource(int prefaceRow, ColumnPrefaceDataSource * columnDataSource) : RowPrefaceDataSource(prefaceRow, columnDataSource) {}
   };
 
   // View
-  int numberOfSubviews() const override { return 3; }
+  int numberOfSubviews() const override { return 4; }
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
   ColumnPrefaceDataSource m_columnPrefaceDataSource;
   Escher::TableView m_columnPrefaceView;
+  IntersectionPrefaceDataSource m_prefaceIntersectionDataSource;
+  Escher::TableView m_prefaceIntersectionView;
   KDCoordinate m_mainTableViewLeftMargin;
 };
 

@@ -8,6 +8,8 @@ PrefacedTwiceTableView::PrefacedTwiceTableView(int prefaceRow, int prefaceColumn
   PrefacedTableView(prefaceRow, parentResponder, mainTableView, cellsDataSource, delegate, prefacedTableViewDelegate),
   m_columnPrefaceDataSource(prefaceColumn, cellsDataSource),
   m_columnPrefaceView(&m_columnPrefaceDataSource, &m_columnPrefaceDataSource),
+  m_prefaceIntersectionDataSource(prefaceRow, &m_columnPrefaceDataSource),
+  m_prefaceIntersectionView(&m_prefaceIntersectionDataSource, &m_prefaceIntersectionDataSource),
   m_mainTableViewLeftMargin(0)
 {
   m_columnPrefaceView.setDecoratorType(ScrollView::Decorator::Type::None);
@@ -22,6 +24,7 @@ void PrefacedTwiceTableView::setMargins(KDCoordinate top, KDCoordinate right, KD
 
 void PrefacedTwiceTableView::setBackgroundColor(KDColor color) {
   m_columnPrefaceView.setBackgroundColor(color);
+  m_prefaceIntersectionView.setBackgroundColor(color);
   PrefacedTableView::setBackgroundColor(color);
 }
 
@@ -37,30 +40,40 @@ View * PrefacedTwiceTableView::subviewAtIndex(int index) {
     return m_mainTableView;
   case 1:
     return &m_rowPrefaceView;
-  default:
-    assert(index == 2);
+  case 2:
     return &m_columnPrefaceView;
+  default:
+    assert(index == 3);
+    return &m_prefaceIntersectionView;
   }
 }
 
 void PrefacedTwiceTableView::layoutSubviews(bool force) {
   bool hideColumnPreface = m_mainTableView->selectedRow() == -1 || m_columnPrefaceDataSource.prefaceIsAfterOffset(m_mainTableView->contentOffset().x(), m_mainTableView->leftMargin());
   if (hideColumnPreface) {
-    m_columnPrefaceView.setFrame(KDRectZero, force);
+    // Main table and row preface
     m_mainTableView->setLeftMargin(m_mainTableViewLeftMargin);
-    m_rowPrefaceView.setLeftMargin(m_mainTableViewLeftMargin);
+    m_rowPrefaceView.setLeftMargin(m_mainTableView->leftMargin());
     layoutSubviewsInRect(bounds(), force);
+
+    // Column preface and intersection preface
+    m_columnPrefaceView.setFrame(KDRectZero, force);
+    m_prefaceIntersectionView.setFrame(KDRectZero, force);
   } else {
     m_columnPrefaceView.setRightMargin(m_marginDelegate ? m_marginDelegate->columnPrefaceRightMargin() : 0);
-    m_mainTableView->setLeftMargin(0);
-    m_rowPrefaceView.setLeftMargin(0);
     KDCoordinate columnPrefaceWidth = m_columnPrefaceView.minimalSizeForOptimalDisplay().width();
+
+    // Main table and row preface
+    m_mainTableView->setLeftMargin(0);
+    m_rowPrefaceView.setLeftMargin(m_mainTableView->leftMargin());
     layoutSubviewsInRect(KDRect(columnPrefaceWidth, 0, bounds().width() - columnPrefaceWidth, bounds().height()), force);
 
+    // Column preface and intersection preface
     KDCoordinate rowPrefaceHeight = m_rowPrefaceView.bounds().height();
-    m_columnPrefaceDataSource.setPrefaceRow(rowPrefaceHeight == 0 ? -1 : m_rowPrefaceDataSource.prefaceRow());
-    m_columnPrefaceView.setContentOffset(KDPoint(0, m_mainTableView->contentOffset().y() - rowPrefaceHeight + m_columnPrefaceView.topMargin() - m_mainTableView->topMargin()));
-    m_columnPrefaceView.setFrame(KDRect(0, 0, columnPrefaceWidth, bounds().height()), force);
+    m_columnPrefaceView.setTopMargin(m_mainTableView->topMargin());
+    m_columnPrefaceView.setContentOffset(KDPoint(0, m_mainTableView->contentOffset().y()));
+    m_columnPrefaceView.setFrame(KDRect(0, rowPrefaceHeight, columnPrefaceWidth, bounds().height() - rowPrefaceHeight), force);
+    m_prefaceIntersectionView.setFrame(KDRect(0, 0, rowPrefaceHeight ? columnPrefaceWidth : 0, rowPrefaceHeight), force);
   }
 }
 

@@ -76,7 +76,6 @@ protected:
   public:
     RowPrefaceDataSource(int prefaceRow, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceRow(prefaceRow), m_rowHeigthManager(this) {}
 
-    int prefaceRow() const { return m_prefaceRow; }
     bool prefaceIsAfterOffset(KDCoordinate offsetY, KDCoordinate topMargin) const;
     int numberOfRows() const override { return 1; }
 

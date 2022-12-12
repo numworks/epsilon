@@ -6,6 +6,7 @@ namespace Simulator {
 namespace StateFile {
 
 void load(const char* filename);
+bool loadMemory(const char* buffer, size_t length);
 void save(const char* filename);
 
 }  // namespace StateFile

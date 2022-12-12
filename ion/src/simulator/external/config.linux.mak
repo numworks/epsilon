@@ -10,8 +10,11 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   file/SDL_rwops.c \
   filesystem/unix/SDL_sysfilesystem.c \
   haptic/dummy/SDL_syshaptic.c \
+  hidapi/SDL_hidapi.c \
   joystick/linux/SDL_sysjoystick.c \
   loadso/dlopen/SDL_sysloadso.c \
+  locale/unix/SDL_syslocale.c \
+  misc/dummy/SDL_sysurl.c \
   power/linux/SDL_syspower.c \
   render/opengl/SDL_render_gl.c \
   render/opengl/SDL_shaders_gl.c \

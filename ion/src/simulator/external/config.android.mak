@@ -6,8 +6,11 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   core/android/SDL_android.c \
   filesystem/android/SDL_sysfilesystem.c \
   haptic/android/SDL_syshaptic.c \
+  hidapi/android/hid.cpp \
   joystick/android/SDL_sysjoystick.c \
   loadso/dlopen/SDL_sysloadso.c \
+  locale/android/SDL_syslocale.c \
+  misc/android/SDL_sysurl.c \
   power/android/SDL_syspower.c \
   sensor/android/SDL_androidsensor.c \
   thread/pthread/SDL_syscond.c \
@@ -27,8 +30,6 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   video/android/SDL_androidvulkan.c \
   video/android/SDL_androidwindow.c \
 )
-
-sdl_src += ion/src/simulator/external/sdl/src/hidapi/android/hid.c
 
 # Build the android native library cpufeatures
 SDL_SFLAGS += -I$(NDK_PATH)/sources/android/cpufeatures

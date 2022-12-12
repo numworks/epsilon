@@ -6,8 +6,13 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/coreaudio/SDL_coreaudio.m \
   file/cocoa/SDL_rwopsbundlesupport.m \
   filesystem/cocoa/SDL_sysfilesystem.m \
+  haptic/dummy/SDL_syshaptic.c \
+  hidapi/SDL_hidapi.c \
   joystick/iphoneos/SDL_sysjoystick.m \
+  joystick/iphoneos/SDL_mfijoystick.m \
   loadso/dlopen/SDL_sysloadso.c \
+  locale/dummy/SDL_syslocale.c \
+  misc/ios/SDL_sysurl.m \
   power/uikit/SDL_syspower.m \
   render/metal/SDL_render_metal.m \
   sensor/coremotion/SDL_coremotionsensor.m \

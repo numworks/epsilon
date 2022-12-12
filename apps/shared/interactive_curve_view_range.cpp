@@ -106,7 +106,7 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
   protectedSetY(*thisRange.y(), k_maxFloat);
   /* The factor will typically be equal to ratio, unless yMax and yMin are
    * close to the maximal values. */
-  float yRatio = thisRange.y()->length() / dy;
+  float yRatio = memoizedRange().y()->length() / dy;
   m_offscreenYAxis *= yRatio;
   setZoomNormalize(isOrthonormal());
 }

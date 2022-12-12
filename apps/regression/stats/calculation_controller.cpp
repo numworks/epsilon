@@ -61,8 +61,15 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
       t->selectCellAtLocation(selectedColumn(), 1);
     }
   }
+}
+
+void CalculationController::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+  if (withinTemporarySelection) {
+    return;
+  }
   if (t->selectedColumn() > 1 && t->selectedRow() >= 0 && t->selectedRow() <= k_numberOfDoubleBufferCalculations) {
-    // If we are on a double text cell, we have to choose which subcell to select
+    /* If we are on a double text cell, we have to choose which subcell to select
+     * It has to be done after the scroll for the selectedCell to be defined */
     EvenOddDoubleBufferTextCellWithSeparator * myCell = (EvenOddDoubleBufferTextCellWithSeparator *)t->selectedCell();
     // Default selected subcell is the left one
     bool firstSubCellSelected = true;

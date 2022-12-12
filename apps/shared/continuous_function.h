@@ -227,7 +227,7 @@ private:
     // Return the derivative of the expression to plot.
     Poincare::Expression expressionDerivateReduced(const Ion::Storage::Record * record, Poincare::Context * context) const;
     // Rename the record if needed. Record pointer might get corrupted.
-    Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(Ion::Storage::Record * record, const char * c, Poincare::Context * context, CodePoint symbol);
+    Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(Ion::Storage::Record * record, Poincare::Context * context, CodePoint symbol) const;
     // Build the expression from text, handling f(x)=... cartesian equations
     Poincare::Expression buildExpressionFromText(const char * c, CodePoint symbol = 0, Poincare::Context * context = nullptr) const override;
     // Tidy the model

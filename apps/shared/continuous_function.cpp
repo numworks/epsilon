@@ -91,7 +91,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
   Ion::Storage::Record::ErrorStatus error = editableModel()->setContent(this, c, context, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
     updateModel(context, wasCartesian);
-    error = m_model.renameRecordIfNeeded(this, c, context, symbol());
+    error = m_model.renameRecordIfNeeded(this, context, symbol());
   }
   return error;
 }
@@ -447,7 +447,6 @@ Poincare::Expression ContinuousFunction::Model::expressionReducedForAnalysis(con
   return result;
 }
 
-
 Expression ContinuousFunction::Model::expressionClone(const Ion::Storage::Record * record) const {
   assert(record->fullName() != nullptr && record->fullName()[0] != k_unnamedRecordFirstChar);
   Expression e = ExpressionModel::expressionClone(record);
@@ -572,7 +571,7 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
   return m_expressionDerivate;
 }
 
-Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record * record, const char * c, Context * context, CodePoint symbol) {
+Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record * record,  Context * context, CodePoint symbol) const {
   Expression newExpression = originalEquation(record, symbol);
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
   if (record->hasExtension(Ion::Storage::funcExtension)) {

@@ -204,7 +204,7 @@ void NestedMenuController::loadState(NestedMenuController::StackState state) {
   m_selectableTableView.setContentOffset(KDPoint(scroll.x(), isStateValid ? state.verticalScroll() : 0));
 }
 
-void NestedMenuController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
+void NestedMenuController::tableViewDidChangeSelectionAndDidScroll(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   if (selectedRow() >= 0) {
     m_lastState = currentState(); // Persist current state
   }

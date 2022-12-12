@@ -125,7 +125,16 @@ __ZN6Escher8TextArea11handleEventEN3Ion6Events5EventE \
 __ZN6Escher15ExpressionField11handleEventEN3Ion6Events5EventE \
 __ZN3Ion14CircuitBreaker14loadCheckpointENS0_14CheckpointTypeE \
 _msleep \
-_SDL_Delay
+_SDL_Delay \
+_Emscripten_GLES_SwapWindow \
+_SDL_GL_SwapWindow \
+_GLES2_RenderPresent \
+_SDL_RenderPresent \
+__ZN3Ion9Simulator6Window7refreshEv \
+dynCall_vi \
+invoke_vi \
+Epsilon/asm.emterpret \
+resume
 
 EMTERPRETIFY_WHITELIST = $(foreach sym,$(EMSCRIPTEN_ASYNC_SYMBOLS),"$(sym)",)END
 EMFLAGS = -s PRECISE_F32=1 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST='[$(EMTERPRETIFY_WHITELIST:,END=)]'

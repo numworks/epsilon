@@ -118,27 +118,41 @@ void testCacheReference() {
   assert_check_cache_reference(reference3, {Add()});
 }
 
+void check_reference_invalidation_and_reconstruction(CacheReference reference, uint16_t identifier, Node node) {
+  // reference has been invalidated
+  assert(cachePool->nodeForIdentifier(identifier).isUninitialized());
+  // reference is regenerated on demand
+  reference.send([](const Node tree, void * result) {}, nullptr);
+  assert_trees_are_equal(Node(cachePool->lastBlock()).previousTree(), node);
+}
 
 void testCacheReferenceInvalidation() {
-  CacheReference reference([] (){ EditionReference::Push<BlockType::IntegerShort>(4); });
+  CacheReference reference([] (){ EditionReference::Push<BlockType::IntegerShort>(28); });
   reference.send([](const Node tree, void * result) {}, nullptr);
-  int identifier = reference.id();
+  uint16_t identifier = reference.id();
+  assert_pools_tree_sizes_are(1, 0);
 
+  /* Invalidation when cache memory overflows */
   // Fill the cache
   int maxNumberOfTreesInCache = CachePool::k_maxNumberOfBlocks/treeSize;
   for (int i = 0; i < maxNumberOfTreesInCache + 1; i++) {
     CacheReference reference1([] (Node node){}, static_cast<Node>(tree).block());
     reference1.send([](const Node tree, void * result) {}, nullptr);
   }
-  assert_pools_sizes_are(maxNumberOfTreesInCache * treeSize, 0);
-  // reference has been invalidated
-  assert(cachePool->nodeForIdentifier(identifier).isUninitialized());
-  // reference is regenerated on demand
+  // TODO: factorize
+  assert_pools_tree_sizes_are(maxNumberOfTreesInCache, 0);
+  check_reference_invalidation_and_reconstruction(reference, identifier, 28_n);
+
+  /* Invalidation when cache identifiers overflow */
+  // Fill the cache identifiers
+  cachePool->reset();
+  assert_pools_tree_sizes_are(0, 0);
   reference.send([](const Node tree, void * result) {}, nullptr);
-  assert_trees_are_equal(Node(cachePool->lastBlock()).previousTree(), 4_n);
-
-  assert(false);
+  identifier = reference.id();
+  for (int i = 0; i < Pool::k_maxNumberOfReferences; i++) {
+    CacheReference reference1([] (Node node){}, static_cast<Node>(smallTree).block());
+    reference1.send([](const Node tree, void * result) {}, nullptr);
+  }
+  assert_pools_tree_sizes_are(Pool::k_maxNumberOfReferences, 0);
+  check_reference_invalidation_and_reconstruction(reference, identifier, 28_n);
 }
-
-
-//TODO: test the invalid reference has been invalidated?

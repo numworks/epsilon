@@ -133,10 +133,11 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
 
 bool ExpressionModelListController::editSelectedRecordWithText(const char * text) {
   telemetryReportEvent("Edit", text);
-  didChangeModelsList();
   Ion::Storage::Record record = modelStore()->recordAtIndex(modelIndexForRow(selectedRow()));
   ExpiringPointer<ExpressionModelHandle> model = modelStore()->modelForRecord(record);
-  return (model->setContent(text, Container::activeApp()->localContext()) == Ion::Storage::Record::ErrorStatus::None);
+  bool result = (model->setContent(text, Container::activeApp()->localContext()) == Ion::Storage::Record::ErrorStatus::None);
+  didChangeModelsList();
+  return result;
 }
 
 bool ExpressionModelListController::removeModelRow(Ion::Storage::Record record) {

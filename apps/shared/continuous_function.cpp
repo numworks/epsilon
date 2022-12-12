@@ -45,6 +45,25 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
   return ContinuousFunction(*error == Ion::Storage::Record::ErrorStatus::None ? record : Record());
 }
 
+ContinuousFunction::ContinuousFunction(Ion::Storage::Record record) : Function(record), m_cache(nullptr) {
+  /* The name of the record might need an update atfter another expression
+   * on which this one depended was updated.
+   * Since each time a record is updated, all ContinuousFunctions are tidied
+   * and will be re-built later, it's safe to do it in this constructor.
+   * Example:
+   *  Expression 1: f(x)=x^2
+   *  Expression 2: f(x)=x
+   *  Here f(x)=x is treated as the equation x^2=x and its record name is ?1.
+   *  If Expression 1 is modified into: g(x)=x^2, the Expression 2 should
+   *  now be updated as the function f(x), so the record needs a renaming.
+   * */
+  if (!record.isNull()) {
+    Ion::Storage::Record::ErrorStatus error = updateNameIfNeeded(AppsContainerHelper::sharedAppsContainerGlobalContext());
+    assert(error == Ion::Storage::Record::ErrorStatus::None);
+    (void)error;
+  }
+}
+
 ContinuousFunctionProperties ContinuousFunction::properties() const {
   if (!m_model.properties().isInitialized()) {
     // Computing the expression equation will update the function properties
@@ -52,6 +71,10 @@ ContinuousFunctionProperties ContinuousFunction::properties() const {
   }
   assert(m_model.properties().isInitialized());
   return m_model.properties();
+}
+
+Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded(Context * context) {
+  return m_model.renameRecordIfNeeded(this, context);
 }
 
 int ContinuousFunction::nameWithArgument(char * buffer, size_t bufferSize) {
@@ -90,8 +113,19 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
    * ContinuousFunction::Model::buildExpressionFromText. */
   Ion::Storage::Record::ErrorStatus error = editableModel()->setContent(this, c, context, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
+    /* Temporarly rename record to avoid depending on its own value
+     * while the model is updated.
+     * Ex: If you turn "f(x)=x" into "(f(0)>0)"", the first time f(0) is
+     * reduced, expressionClone is called. expressionClone tries to find the
+     * second child of "f(x)=x" to return "x" Since now the record f.func
+     * contains (f(0)>0), there is no childAtIndex(1).
+     * By temporarly renaming the record, we ensure that it's non-existent
+     * in the context when f(0) is reduced. */
+    m_model.renameRecordIfNeeded(this, context);
+    // Update model
     updateModel(context, wasCartesian);
-    error = m_model.renameRecordIfNeeded(this, context, symbol());
+    // Set proper name
+    error = updateNameIfNeeded(context);
   }
   return error;
 }
@@ -477,6 +511,8 @@ bool isValidNamedLeftExpression(const Expression e, ComparisonNode::OperatorType
 }
 
 Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context, ComparisonNode::OperatorType * computedEquationType, ContinuousFunctionProperties::SymbolType * computedFunctionSymbol, bool * isCartesianEquation) const {
+  /* Use ExpressionModel::expressionClone because it does not alter
+   * the left-hand side of "f(x)=" and "f(t)=" */
   Expression result = ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
     return Undefined::Builder();
@@ -571,13 +607,17 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
   return m_expressionDerivate;
 }
 
-Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record * record,  Context * context, CodePoint symbol) const {
-  Expression newExpression = originalEquation(record, symbol);
+Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record * record,  Context * context) const {
+  Expression newExpression = ExpressionModel::expressionClone(record);
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
+  if (newExpression.isUninitialized()) {
+    /* The expression is not set, the record will be named later or is already
+     * correctly named by GlobalContext. */
+    return error;
+  }
   if (record->hasExtension(Ion::Storage::funcExtension)) {
     ComparisonNode::OperatorType newOperatorType;
-    if (!newExpression.isUninitialized()
-        && ComparisonNode::IsBinaryComparison(newExpression, &newOperatorType)
+    if (ComparisonNode::IsBinaryComparison(newExpression, &newOperatorType)
         && isValidNamedLeftExpression(newExpression.childAtIndex(0), newOperatorType)) {
       Expression function = newExpression.childAtIndex(0);
       error = Ion::Storage::Record::SetBaseNameWithExtension(record, static_cast<SymbolAbstract&>(function).name(), Ion::Storage::funcExtension);

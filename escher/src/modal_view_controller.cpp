@@ -46,7 +46,7 @@ View * ModalViewController::ContentView::subviewAtIndex(int index) {
 }
 
 KDRect ModalViewController::ContentView::modalViewFrame() const {
-  KDSize modalSize = m_isDisplayingModal ? m_currentModalView->minimalSizeForOptimalDisplay() : KDSize(0,0);
+  KDSize modalSize = m_isDisplayingModal ? m_currentModalView->minimalSizeForOptimalDisplay() : KDSizeZero;
   KDCoordinate availableHeight = bounds().height() - m_topMargin - m_bottomMargin;
   KDCoordinate modalHeight = modalSize.height();
   modalHeight = modalHeight == 0 ? availableHeight : std::min(modalHeight, availableHeight);

@@ -21,6 +21,6 @@ private:
   KDCoordinate m_height;
 };
 
-constexpr KDSize KDSizeZero = KDSize(0,0);
+constexpr KDSize KDSizeZero = KDSize(0, 0);
 
 #endif

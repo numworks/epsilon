@@ -141,6 +141,7 @@ void CalculationParameterController::willDisplayCellForIndex(HighlightCell * cel
 
 void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
+  selectRow(0);
   m_intersectionCell.setVisible(ShouldDisplayIntersection());
   m_areaCell.setVisible(ShouldDisplayAreaBetweenCurves());
   resetMemoization();

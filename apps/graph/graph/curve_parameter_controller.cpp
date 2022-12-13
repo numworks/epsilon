@@ -128,13 +128,13 @@ bool CurveParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell * cell = selectedCell();
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   if (cell == &m_calculationCell && m_calculationCell.ShouldEnterOnEvent(event)) {
-    m_calculationParameterController.setRecord(m_record);
+    m_calculationParameterController.setRecord(m_record); // Will select row at location 0
     stack->push(&m_calculationParameterController);
     return true;
   }
   if (cell == &m_optionsCell && m_optionsCell.ShouldEnterOnEvent(event)) {
     Shared::ListParameterController * details = App::app()->listController()->parameterController();
-    details->setRecord(m_record);
+    details->setRecord(m_record); // Will select cell at location (0,0)
     stack->push(details);
     return true;
   }

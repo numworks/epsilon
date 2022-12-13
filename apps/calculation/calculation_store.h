@@ -47,6 +47,7 @@ public:
   Poincare::Expression ansExpression(Poincare::Context * context);
   void recomputeHeights(HeightComputer heightComputer);
   bool preferencesMightHaveChanged(Poincare::Preferences * preferences);
+  void recover();
 
 private:
   class CalculationIterator {
@@ -69,6 +70,7 @@ private:
   Shared::ExpiringPointer<Calculation> emptyStoreAndPushUndef(Poincare::Context * context, HeightComputer heightComputer);
   size_t deleteOldestCalculation();
   char * addressOfPointerToCalculationOfIndex(int i) { assert(i <= m_numberOfCalculations); return m_buffer + m_bufferSize - (m_numberOfCalculations - i)*sizeof(Calculation *);}
+  void updateRecoveryData();
 
   // Memoization
   char * beginingOfMemoizationArea() {return addressOfPointerToCalculationOfIndex(0);};
@@ -77,7 +79,9 @@ private:
   char * const m_buffer;
   const int m_bufferSize;
   char * m_calculationAreaEnd;
+  char * m_recoveryCalculationAreaEnd;
   int m_numberOfCalculations;
+  int m_recoveryNumberOfCalculations;
   Poincare::Preferences m_inUsePreferences;
 };
 

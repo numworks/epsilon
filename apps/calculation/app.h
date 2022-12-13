@@ -24,6 +24,7 @@ public:
     App * unpack(Escher::Container * container) override;
     void reset() override;
     const Descriptor * descriptor() const override;
+    void tidy() override { m_calculationStore.recover(); }
     CalculationStore * calculationStore() { return &m_calculationStore; }
     char * cacheBuffer() { return m_cacheBuffer; }
     size_t * cacheBufferInformationAddress() { return &m_cacheBufferInformation; }

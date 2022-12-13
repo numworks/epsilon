@@ -31,7 +31,7 @@ namespace Poincare {
 class Checkpoint {
   friend class ExceptionCheckpoint;
 public:
-  static TreeNode * TopmostEndOfPool() { return s_topmost ? s_topmost->m_endOfPool : nullptr; }
+  static TreeNode * TopmostEndOfPool();
 
   Checkpoint() : m_parent(s_topmost), m_endOfPool(TreePool::sharedPool()->last()) {
     assert(!m_parent || m_endOfPool >= m_parent->m_endOfPool);

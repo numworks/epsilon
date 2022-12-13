@@ -3,7 +3,7 @@
 
 namespace Poincare {
 
-TreeNode * Checkpoint::TopmostEndOfPoolBeforeCheckpoint() {
+TreeNode * Checkpoint::TopmostEndOfPool() {
   return nullptr;
 }
 
@@ -11,7 +11,7 @@ bool ExceptionCheckpoint::setActive(bool interruption) {
   return false;
 }
 
-void ExceptionCheckpoint::rollback() {
+void ExceptionCheckpoint::rollbackException() {
 }
 
 void ExceptionCheckpoint::Raise() {

@@ -19,7 +19,9 @@ CalculationStore::CalculationStore(char * buffer, int size) :
   m_buffer(buffer),
   m_bufferSize(size),
   m_calculationAreaEnd(m_buffer),
+  m_recoveryCalculationAreaEnd(m_buffer),
   m_numberOfCalculations(0),
+  m_recoveryNumberOfCalculations(0),
   m_inUsePreferences(*Poincare::Preferences::sharedPreferences())
 {
   assert(m_buffer != nullptr);
@@ -48,6 +50,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
    */
 
   // Store a safe state to get back on in case of interruption.
+  updateRecoveryData();
   char * addressOfCalculation = m_calculationAreaEnd;
   int totalOlderCalculations = m_numberOfCalculations;
 
@@ -219,15 +222,13 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
     /* Silent static analyzer warning: these variables are used in case of
      * circuit breaker interruption (longjmp) but the compiler analyzer gets
      * lost in such cases. */
+    updateRecoveryData();
     (void)addressOfCalculation;
     (void)totalOlderCalculations;
     return calculation;
   } else {
     // Restore Calculation store in a safe state.
-    Ion::CircuitBreaker::lock();
-    m_calculationAreaEnd = addressOfCalculation;
-    m_numberOfCalculations = totalOlderCalculations;
-    Ion::CircuitBreaker::unlock();
+    recover();
     context->tidyDownstreamPoolFrom();
     return nullptr;
   }
@@ -255,6 +256,7 @@ void CalculationStore::deleteCalculationAtIndex(int i) {
   // Recompute pointer to calculations after the i'th
   recomputeMemoizedPointersAfterCalculationIndex(i);
   m_numberOfCalculations--;
+  updateRecoveryData();
   Ion::CircuitBreaker::unlock();
 }
 
@@ -369,6 +371,18 @@ void CalculationStore::recomputeMemoizedPointersAfterCalculationIndex(int index)
     c = nextCalc;
     index--;
   }
+}
+
+void CalculationStore::recover() {
+  Ion::CircuitBreaker::lock();
+  m_calculationAreaEnd = m_recoveryCalculationAreaEnd;
+  m_numberOfCalculations = m_recoveryNumberOfCalculations;
+  Ion::CircuitBreaker::unlock();
+}
+
+void CalculationStore::updateRecoveryData() {
+  m_recoveryCalculationAreaEnd = m_calculationAreaEnd;
+  m_recoveryNumberOfCalculations = m_numberOfCalculations;
 }
 
 }

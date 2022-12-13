@@ -41,5 +41,9 @@ int numberOfApps() {
 
 void deleteApps() {}
 
+bool allowThirdParty() {
+  return false;
+}
+
 }
 }

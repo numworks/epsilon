@@ -38,6 +38,7 @@ public:
 
 int numberOfApps();
 void deleteApps();
+bool allowThirdParty();
 
 }
 }

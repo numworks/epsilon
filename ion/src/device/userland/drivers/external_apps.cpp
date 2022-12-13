@@ -149,5 +149,9 @@ void deleteApps() {
   }
 }
 
+bool allowThirdParty() {
+  return true;
+}
+
 }
 }

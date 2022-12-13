@@ -33,13 +33,18 @@ bool AboutController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (selectedRow() == 0) {
       /* When pressing OK on the version cell, the display cycles between
-       * Epsilon version number, the commit hash for this build of Epsilon, and
-       * the PCB revision number. */
+       * Epsilon version number, the commit hash for this build of Epsilon, the
+       * PCB revision number, the flags used at compilation and the bootloader
+       * running on the device. */
       MessageTableCellWithBuffer * myCell = (MessageTableCellWithBuffer *)m_selectableTableView.selectedCell();
       const char * currentText = myCell->subLabelText();
       if (strcmp(currentText, Ion::patchLevel()) == 0) {
         myCell->setSubLabelText(Ion::pcbVersion());
       } else if (strcmp(currentText, Ion::pcbVersion()) == 0) {
+        myCell->setSubLabelText(Ion::compilationFlags());
+      } else if (strcmp(currentText, Ion::compilationFlags()) == 0) {
+        myCell->setSubLabelText(Ion::runningBootloader());
+      } else if (strcmp(currentText, Ion::runningBootloader()) == 0) {
         myCell->setSubLabelText(Ion::epsilonVersion());
       } else {
         assert(strcmp(currentText, Ion::epsilonVersion()) == 0);

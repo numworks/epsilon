@@ -121,8 +121,8 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       assert(subviewType == SubviewType::Ellipsis);
       /* Only function results can be chained (with integer or rational).
        * TODO: Refactor to avoid writing an if for each parent * child. */
-      UserCircuitBreakerCheckpoint checkpoint;
-      if (BackCircuitBreakerRun(checkpoint)) {
+      CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::Back);
+      if (CircuitBreakerRun(checkpoint)) {
         Calculation::AdditionalInformations additionalInformations = selectedCell->additionalInformations();
         ListController * vc = nullptr;
         ExpiringPointer<Calculation> focusCalculation = calculationAtIndex(focusRow);

@@ -51,8 +51,8 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
   char * addressOfCalculation = m_calculationAreaEnd;
   int totalOlderCalculations = m_numberOfCalculations;
 
-  UserCircuitBreakerCheckpoint checkpoint;
-  if (BackCircuitBreakerRun(checkpoint)) {
+  CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::Back);
+  if (CircuitBreakerRun(checkpoint)) {
     /* Compute ans now, before the buffer is updated and before the calculation
      * might be deleted */
     Expression ans = ansExpression(context);

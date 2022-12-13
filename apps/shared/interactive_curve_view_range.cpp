@@ -298,8 +298,8 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
     Range2D newRange;
 
     {
-      Poincare::UserCircuitBreakerCheckpoint checkpoint;
-      if (BackCircuitBreakerRun(checkpoint)) {
+      CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::Back);
+      if (CircuitBreakerRun(checkpoint)) {
         uint32_t storeChecksum = Ion::Storage::FileSystem::sharedFileSystem()->checksum();
         if (computeX && computeY && m_storeChecksumOfLastComputedAutoRange == storeChecksum) {
           newRange = m_autoRange;

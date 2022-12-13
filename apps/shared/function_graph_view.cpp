@@ -33,8 +33,8 @@ void FunctionGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext 
     willDrawRecordAtIndex(index, firstDrawnRecord);
     firstDrawnRecord = false;
 
-    UserCircuitBreakerCheckpoint checkpoint;
-    if (BackCircuitBreakerRun(checkpoint)) {
+    CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::Back);
+    if (CircuitBreakerRun(checkpoint)) {
       drawRecord(index, ctx, rect);
     } else {
       setFunctionInterrupted(index);

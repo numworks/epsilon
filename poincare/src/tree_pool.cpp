@@ -180,7 +180,7 @@ void TreePool::updateNodeForIdentifierFromNode(TreeNode * node) {
 }
 
 bool TreePool::IsAfterTopmostCheckpoint(TreeNode * node) {
-  return node >= Checkpoint::TopmostEndOfPoolBeforeCheckpoint();
+  return node >= Checkpoint::TopmostEndOfPool();
 }
 
 // Reset IdentifierStack, make all identifiers available

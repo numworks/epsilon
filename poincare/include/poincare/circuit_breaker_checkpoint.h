@@ -1,36 +1,32 @@
-#ifndef POINCARE_CIRCUIT_BREAKER_CHECKPOINT_H
-#define POINCARE_CIRCUIT_BREAKER_CHECKPOINT_H
+#ifndef POINCARE_CIRCUIT_BREAKER_CHECKPOINT
+#define POINCARE_CIRCUIT_BREAKER_CHECKPOINT
 
-#include <ion/circuit_breaker.h>
 #include <poincare/checkpoint.h>
+#include <ion/circuit_breaker.h>
 
-/* Usage: See comment in checkpoint.h
- *
- * To manually interrupt : CircuitBreakerCheckpoint::InterruptDueToReductionFailure();
- *
- */
-
-#define BackCircuitBreakerRun(checkpoint) (CheckpointRun(checkpoint, Ion::CircuitBreaker::setCheckpoint(Ion::CircuitBreaker::CheckpointType::Back)))
-
-#define AnyKeyCircuitBreakerRun(checkpoint) (CheckpointRun(checkpoint, Ion::CircuitBreaker::setCheckpoint(Ion::CircuitBreaker::CheckpointType::AnyKey)))
+#define CircuitBreakerRun(checkpoint) ( CheckpointRun(checkpoint, Ion::CircuitBreaker::setCheckpoint(checkpoint.type())) )
 
 namespace Poincare {
 
-class UserCircuitBreakerCheckpoint : public Checkpoint {
+class CircuitBreakerCheckpoint final : public Checkpoint {
 public:
-  using Checkpoint::Checkpoint;
-  ~UserCircuitBreakerCheckpoint();
+  CircuitBreakerCheckpoint(Ion::CircuitBreaker::CheckpointType type) : m_type(type) {}
+  /* The desctructor will call ~Checkpoint, and thus Checkpoint::discard(), so
+   * we call unset instead of discard. */
+  virtual ~CircuitBreakerCheckpoint() { unset(); }
+
+  Ion::CircuitBreaker::CheckpointType type() const { return m_type; }
   bool setActive(Ion::CircuitBreaker::Status status);
-  void discard();
-  static TreeNode * TopmostEndOfPoolBeforeCheckpoint() { return s_currentUserCircuitBreakerCheckpoint ? s_currentUserCircuitBreakerCheckpoint->getEndOfPoolBeforeCheckpoint() : nullptr; }
-  static void DiscardYoungerCircuitBreakerCheckpoints(TreeNode * node) { if (node < TopmostEndOfPoolBeforeCheckpoint()) { s_currentUserCircuitBreakerCheckpoint->discard(); } }
+  void discard() const override {
+    unset();
+    Checkpoint::discard();
+  }
+
 private:
-  void setCurrentCircuitBreakerCheckpoint(UserCircuitBreakerCheckpoint * checkpoint) { s_currentUserCircuitBreakerCheckpoint = checkpoint; }
-  bool isCurrentCircuitBreakerCheckpoint() const { return s_currentUserCircuitBreakerCheckpoint == this; }
-  /* Keep current s_topmostExceptionCheckpoint to be able to restore it in a
-   * valid state if CircuitBreakerCheckpoint is used. */
-  static Checkpoint * s_topmostExceptionCheckpoint;
-  static UserCircuitBreakerCheckpoint * s_currentUserCircuitBreakerCheckpoint;
+  void rollbackCircuitBreaker();
+  void unset() const { Ion::CircuitBreaker::unsetCheckpoint(m_type); }
+
+  Ion::CircuitBreaker::CheckpointType m_type;
 };
 
 }

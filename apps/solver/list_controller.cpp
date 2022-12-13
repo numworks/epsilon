@@ -172,8 +172,8 @@ void ListController::resolveEquations() {
   }
   // Tidy model before checkpoint, during which older TreeNodes can't be altered
   modelStore()->tidyDownstreamPoolFrom();
-  Poincare::UserCircuitBreakerCheckpoint checkpoint;
-  if (BackCircuitBreakerRun(checkpoint)) {
+  Poincare::CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::Back);
+  if (CircuitBreakerRun(checkpoint)) {
     bool resultWithoutUserDefinedSymbols = false;
     EquationStore::Error e = modelStore()->exactSolve(textFieldDelegateApp()->localContext(), &resultWithoutUserDefinedSymbols);
     switch (e) {

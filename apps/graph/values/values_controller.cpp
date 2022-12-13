@@ -420,8 +420,8 @@ T * ValuesController::parameterController() {
   }
 
   {
-    UserCircuitBreakerCheckpoint checkpoint;
-    if (BackCircuitBreakerRun(checkpoint)) {
+    CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::Back);
+    if (CircuitBreakerRun(checkpoint)) {
       activateExactValues(true);
       m_selectableTableView.reloadData();
       return true;

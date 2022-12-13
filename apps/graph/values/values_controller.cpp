@@ -23,8 +23,8 @@ namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, FunctionColumnParameterController * functionParameterController) :
   Shared::ValuesController(parentResponder, header),
-  m_prefacedTableView(0, this, &m_selectableTableView, this, nullptr, this),
-  m_selectableTableView(this, this, this, this, &m_prefacedTableView),
+  m_prefacedTwiceTableView(0, 0, this, &m_selectableTableView, this, nullptr, this),
+  m_selectableTableView(this, this, this, this, &m_prefacedTwiceTableView),
   m_functionParameterController(functionParameterController),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_derivativeParameterController(this),
@@ -50,9 +50,9 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   m_heightManager(this),
   m_exactValuesAreActivated(false)
 {
-  m_prefacedTableView.setBackgroundColor(Palette::WallScreenDark);
-  m_prefacedTableView.setCellOverlap(0, 0);
-  m_prefacedTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  m_prefacedTwiceTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_prefacedTwiceTableView.setCellOverlap(0, 0);
+  m_prefacedTwiceTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   initValueCells();
   m_exactValuesButton.setState(m_exactValuesAreActivated);
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
@@ -106,6 +106,30 @@ int ValuesController::typeAtLocation(int i, int j) {
 
 Escher::AbstractButtonCell * ValuesController::buttonAtIndex(int index, Escher::ButtonRowController::Position position) const {
   return index == 0 && displayButtonExactValues() ? const_cast<Escher::ButtonState *>(&m_exactValuesButton) : const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton);
+}
+
+// PrefacedTableViewDelegate
+
+int ValuesController::columnToFreeze() {
+  assert(numberOfColumns() > 0 && numberOfAbscissaColumns() > 0);
+  if (selectedRow() == -1 || numberOfAbscissaColumns() == 1) {
+    return 0;
+  }
+  int indexOfLastColumn = -1;
+  for (int symbolType = 0; symbolType < k_maxNumberOfSymbolTypes; symbolType++) {
+    int nbOfValuesColumns = m_numberOfValuesColumnsForType[symbolType];
+    if (nbOfValuesColumns == 0) {
+      continue;
+    }
+    int nbColumns = nbOfValuesColumns + 1;
+    assert(nbColumns == numberOfColumnsForSymbolType(symbolType));
+    indexOfLastColumn += nbColumns;
+    if (cumulatedWidthBeforeIndex(indexOfLastColumn) >= offset().x()) {
+      return indexOfLastColumn - nbOfValuesColumns;
+    }
+  }
+  assert(false);
+  return -1;
 }
 
 /* PRIVATE */

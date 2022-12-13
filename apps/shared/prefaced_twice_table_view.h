@@ -20,6 +20,8 @@ private:
   public:
     ColumnPrefaceDataSource(int prefaceColumn, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceColumn(prefaceColumn) {}
 
+    int prefaceColumn() const { return m_prefaceColumn; }
+    void setPrefaceColumn(int column) { m_prefaceColumn = column; }
     bool prefaceIsAfterOffset(KDCoordinate offsetX, KDCoordinate leftMargin) const;
     int numberOfColumns() const override { return 1; }
 
@@ -30,7 +32,7 @@ private:
 
     int columnIndexInMainDataSource(int i) override { assert(i == 0 || i == 1); return m_prefaceColumn + i; }
 
-    const int m_prefaceColumn;
+    int m_prefaceColumn;
   };
 
   class IntersectionPrefaceDataSource : public RowPrefaceDataSource {

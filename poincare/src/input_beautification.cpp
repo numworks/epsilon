@@ -210,7 +210,7 @@ int InputBeautification::BeautifyPipeKey(Layout parent, int indexOfPipeKey, Layo
   // Case 2: number of pipes is even, beautify |...| as a whole.
   // Put layouts between pipe and its next pipe neighbour in a layout
   int numberOfChildrenToVisit = indexOfPipeKey - indexOfMatchingPipeKey - 1;
-  HorizontalLayout insideAbsoluteValue = HorizontalLayout::Builder();
+  HorizontalLayout insideAbsoluteValue = HorizontalLayout::Builder(EmptyLayout::Builder());
   while (numberOfChildrenToVisit > 0) {
     Layout l = parent.childAtIndex(indexOfMatchingPipeKey + numberOfChildrenToVisit);
     // TODO : It should be asserted no layout has been removed right of l

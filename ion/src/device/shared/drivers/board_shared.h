@@ -16,6 +16,7 @@ uint32_t userlandEnd();
 uint32_t writableSRAMEndAddress();
 uint32_t writableSRAMStartAddress();
 bool isRunningSlotA();
+uint32_t securityLevel();
 
 }
 }

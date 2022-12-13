@@ -5,6 +5,7 @@
 #include <apps/shared/editable_cell_selectable_table_view.h>
 #include <apps/shared/expression_function_title_cell.h>
 #include <apps/shared/interval_parameter_controller.h>
+#include <apps/shared/prefaced_twice_table_view.h>
 #include <apps/shared/scrollable_two_expressions_cell.h>
 #include <apps/shared/store_cell.h>
 #include <apps/shared/values_controller.h>
@@ -23,7 +24,7 @@ public:
   bool displayButtonExactValues() const;
 
   // View controller
-  Escher::View * view() override { return &m_prefacedTableView; }
+  Escher::View * view() override { return &m_prefacedTwiceTableView; }
   void viewDidDisappear() override;
 
   // TableViewDataSource
@@ -44,6 +45,8 @@ public:
 
   // PrefacedTableViewDelegate
   KDCoordinate maxRowPrefaceHeight() const override { return 3 * k_cellHeight; }
+  int columnToFreeze() override;
+  int firstFeezableColumn() const override { return 0; }
 
 private:
   constexpr static size_t k_maxNumberOfSymbolTypes = Shared::ContinuousFunctionProperties::k_numberOfSymbolTypes;
@@ -84,7 +87,7 @@ private:
   void updateNumberOfColumns() const override;
   Poincare::Layout * memoizedLayoutAtIndex(int i) override;
   Poincare::Layout functionTitleLayout(int columnIndex) override;
-  Shared::PrefacedTableView * prefacedView() override { return &m_prefacedTableView; }
+  Shared::PrefacedTableView * prefacedView() override { return &m_prefacedTwiceTableView; }
   int numberOfAbscissaColumnsBeforeAbsoluteColumn(int column) const override;
   int numberOfAbscissaColumnsBeforeValuesColumn(int column) const override;
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
@@ -113,7 +116,7 @@ private:
   int numberOfColumnsForSymbolType(int symbolTypeIndex) const;
   Shared::ContinuousFunctionProperties::SymbolType symbolTypeAtColumn(int * column) const;
   
-  Shared::PrefacedTableView m_prefacedTableView;
+  Shared::PrefacedTwiceTableView m_prefacedTwiceTableView;
   Shared::EditableCellSelectableTableView m_selectableTableView;
   mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];
   Shared::ExpressionFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableFunctions];

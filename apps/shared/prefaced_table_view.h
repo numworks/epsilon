@@ -14,6 +14,8 @@ namespace Shared {
 class PrefacedTableViewDelegate {
   public:
     virtual KDCoordinate maxRowPrefaceHeight() const = 0;
+    virtual int columnToFreeze() = 0;
+    virtual int firstFeezableColumn() const = 0;
 };
 
 class PrefacedTableView : public Escher::View, public Escher::Responder, public Escher::SelectableTableViewDelegate {
@@ -97,6 +99,7 @@ protected:
   Escher::TableView m_rowPrefaceView;
   Escher::SelectableTableView * m_mainTableView;
   MarginDelegate * m_marginDelegate;
+  PrefacedTableViewDelegate * m_prefacedDelegate;
 
 private:
   // View
@@ -105,7 +108,6 @@ private:
   void layoutSubviews(bool force = false) override;
 
   Escher::SelectableTableViewDelegate * m_mainTableDelegate;
-  PrefacedTableViewDelegate * m_prefacedDelegate;
   KDCoordinate m_mainTableViewTopMargin;
 };
 

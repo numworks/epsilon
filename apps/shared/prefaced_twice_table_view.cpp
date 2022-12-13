@@ -49,10 +49,13 @@ View * PrefacedTwiceTableView::subviewAtIndex(int index) {
 }
 
 void PrefacedTwiceTableView::layoutSubviews(bool force) {
+  if (m_prefacedDelegate) {
+    m_columnPrefaceDataSource.setPrefaceColumn(m_prefacedDelegate->columnToFreeze());
+  }
   bool hideColumnPreface = m_mainTableView->selectedRow() == -1 || m_columnPrefaceDataSource.prefaceIsAfterOffset(m_mainTableView->contentOffset().x(), m_mainTableView->leftMargin());
   if (hideColumnPreface) {
     // Main table and row preface
-    m_mainTableView->setLeftMargin(m_mainTableViewLeftMargin);
+    m_mainTableView->setLeftMargin(m_prefacedDelegate && m_columnPrefaceDataSource.prefaceColumn() != m_prefacedDelegate->firstFeezableColumn() ? 0 : m_mainTableViewLeftMargin);
     m_rowPrefaceView.setLeftMargin(m_mainTableView->leftMargin());
     layoutSubviewsInRect(bounds(), force);
 

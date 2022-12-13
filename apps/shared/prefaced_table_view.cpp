@@ -10,8 +10,8 @@ namespace Shared {
   m_rowPrefaceView(&m_rowPrefaceDataSource, &m_rowPrefaceDataSource),
   m_mainTableView(mainTableView),
   m_marginDelegate(nullptr),
-  m_mainTableDelegate(delegate),
   m_prefacedDelegate(prefacedTableViewDelegate),
+  m_mainTableDelegate(delegate),
   m_mainTableViewTopMargin(0)
 {
   m_mainTableView->setParentResponder(parentResponder);

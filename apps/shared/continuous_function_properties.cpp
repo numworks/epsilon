@@ -469,13 +469,18 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincar
         && static_cast<const Matrix&>(analyzedExpression).numberOfRows() == 2);
 
   setCurveParameterType(CurveParameterType::Parametric);
+  setCaption(I18n::Message::ParametricEquationType);
 
   // Detect lines
   const Expression xOfT = analyzedExpression.childAtIndex(0);
   const Expression yOfT = analyzedExpression.childAtIndex(1);
   int degOfTinX = xOfT.polynomialDegree(context, Function::k_unknownName);
   int degOfTinY = yOfT.polynomialDegree(context, Function::k_unknownName);
-  if (degOfTinX == 0 && degOfTinY != 0) {
+  if (degOfTinX == 0) {
+    if (degOfTinY == 0) {
+      // The curve is a dot
+      return;
+    }
     /* The same text as cartesian equation is used because the caption
      * "Parametric equation of a vertical line" is too long to fit
      * the 37 max chars limit in every language.
@@ -483,7 +488,8 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincar
     setCaption(I18n::Message::VerticalLineType);
     return;
   }
-  if (degOfTinY == 0 && degOfTinX != 0) {
+  if (degOfTinY == 0) {
+    assert(degOfTinX != 0);
     /* Same comment as above. */
     setCaption(I18n::Message::HorizontalLineType);
     return;
@@ -492,6 +498,7 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincar
     setCaption(I18n::Message::ParametricLineType);
     return;
   }
+  assert(degOfTinX != 0 && degOfTinY != 0);
   Expression variableX = xOfT.clone();
   if (variableX.type() == ExpressionNode::Type::Addition) {
     static_cast<Addition&>(variableX).removeConstantTerms(context, Function::k_unknownName);
@@ -524,9 +531,8 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincar
   case Conic::Shape::Circle:
     setCaption(I18n::Message::ParametricCircleType);
     return;
-  default:
+  default:;
     // A conic could not be identified.
-    setCaption(I18n::Message::ParametricEquationType);
   }
 }
 

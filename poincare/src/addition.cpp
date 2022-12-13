@@ -163,6 +163,7 @@ Expression Addition::removeConstantTerms(Context * context, const char * symbolN
       i--;
     }
   }
+  assert(numberOfChildren() != 0);
   return *this;
 }
 

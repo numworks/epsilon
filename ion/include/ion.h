@@ -41,6 +41,8 @@ const char * fccId();
 constexpr static int k_serialNumberLength = 16;
 const char * serialNumber();
 const char * pcbVersion();
+const char * compilationFlags();
+const char * runningBootloader();
 
 // CRC32 : non xor-ed, non reversed, direct, polynomial 4C11DB7
 uint32_t crc32Word(const uint32_t * data, size_t length); // Only accepts whole 32bit values

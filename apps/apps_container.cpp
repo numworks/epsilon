@@ -5,6 +5,7 @@
 #include "global_preferences.h"
 #include "shared/record_restrictive_extensions_helper.h"
 #include <escher/clipboard.h>
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/init.h>
 #include <ion.h>
@@ -250,36 +251,43 @@ void AppsContainer::run() {
   Ion::Events::setSpinner(true);
   Ion::Display::setScreenshotCallback(ShowCursor);
 
-  /* ExceptionCheckpoint stores the value of the stack pointer when setjump is
-   * called. During a longjump, the stack pointer is set to this stored stack
-   * pointer value, so the method where we call setjump must remain in the call
-   * tree for the jump to work. */
-  Poincare::ExceptionCheckpoint ecp;
-  if (Ion::CircuitBreaker::setCheckpoint(Ion::CircuitBreaker::CheckpointType::Home) != Ion::CircuitBreaker::Status::Interrupted) {
-    if (ExceptionRun(ecp)) {
+  /* Setup the home checkpoint so that the exception chekpoint will be
+   * reactivated on a home interrupt. This way, the main exception checkpoint
+   * will keep the home checkpoint as parent. */
+  bool homeInterruptOcurred;
+  Poincare::CircuitBreakerCheckpoint homeCheckpoint(Ion::CircuitBreaker::CheckpointType::Home);
+  if (CircuitBreakerRun(homeCheckpoint)) {
+    homeInterruptOcurred = false;
+  } else {
+    homeInterruptOcurred = true;
+  }
+
+  Poincare::ExceptionCheckpoint exceptionCheckpoint;
+  if (ExceptionRun(exceptionCheckpoint)) {
+    if (homeInterruptOcurred) {
+      /* Reset backlight and suspend timers here, because a keyboard event has
+       * loaded the checkpoint and did not call AppsContainer::dispatchEvent */
+      m_backlightDimmingTimer.reset();
+      m_suspendTimer.reset();
+      Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
+      Ion::Events::setSpinner(true);
+      Ion::Display::setScreenshotCallback(ShowCursor);
+      handleRunException(false);
+    } else {
       /* Normal execution. The exception checkpoint must be created before
        * switching to the first app, because the first app might create nodes on
        * the pool. */
       switchToBuiltinApp(initialAppSnapshot());
-    } else {
-      /* We lock the Poincare pool until the application is destroyed (the pool
-       * is then asserted empty). This prevents from allocating new handles
-       * with the same identifiers as potential dangling handles (that have
-       * lost their nodes in the exception). */
-      Poincare::TreePool::Lock();
-      handleRunException(true);
-      Poincare::TreePool::Unlock();
-      s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
     }
   } else {
-    /* Reset backlight and suspend timers here, because a keyboard event has
-     * loaded the checkpoint and did not call AppsContainer::dispatchEvent */
-    m_backlightDimmingTimer.reset();
-    m_suspendTimer.reset();
-    Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());
-    Ion::Events::setSpinner(true);
-    Ion::Display::setScreenshotCallback(ShowCursor);
-    handleRunException(false);
+    /* We lock the Poincare pool until the application is destroyed (the pool
+     * is then asserted empty). This prevents from allocating new handles
+     * with the same identifiers as potential dangling handles (that have
+     * lost their nodes in the exception). */
+    Poincare::TreePool::Lock();
+    handleRunException(true);
+    Poincare::TreePool::Unlock();
+    s_activeApp->displayWarning(I18n::Message::PoolMemoryFull1, I18n::Message::PoolMemoryFull2, true);
   }
 
   Container::run();

@@ -102,7 +102,9 @@ public:
     NAryExpression::sortChildrenInPlace(order, context, true, canContainMatrices);
   }
   /* This helper removes terms that are not dependant of the given symbol.
-   * Beware that it is not the constant part ie what's left when symbol = 0 */
+   * Beware that it is not the constant part ie what's left when symbol = 0.
+   * WARNING: The expression MUST depend on the symbol. If degree == 0, it
+   * will crash. */
   Expression removeConstantTerms(Context * context, const char * symbolName);
 
 private:

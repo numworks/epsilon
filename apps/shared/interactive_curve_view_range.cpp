@@ -113,12 +113,16 @@ void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
 
 void InteractiveCurveViewRange::panWithVector(float x, float y) {
   Range1D xRange(xMin(), xMax());
-  xRange.setMin(xMin() + x);
-  xRange.setMax(xMax() + x);
+  xRange.setMin(xMin() + x, k_maxFloat);
+  xRange.setMax(xMax() + x, k_maxFloat);
+  if (xRange.min() != xMin() + x || xRange.max() != xMax() + x) {
+    return;
+  }
+
   Range1D yRange(yMin(), yMax());
-  yRange.setMin(yMin() + y);
-  yRange.setMax(yMax() + y);
-  if (xRange.min() != xMin() + x || xRange.max() != xMax() + x || yRange.min() != yMin() + y || yRange.max() != yMax() + y) {
+  yRange.setMin(yMin() + y, k_maxFloat);
+  yRange.setMax(yMax() + y, k_maxFloat);
+  if (yRange.min() != yMin() + y || yRange.max() != yMax() + y) {
     return;
   }
 

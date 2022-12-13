@@ -1,5 +1,5 @@
-#ifndef POINCARE_TREE_BY_REFERENCE_H
-#define POINCARE_TREE_BY_REFERENCE_H
+#ifndef POINCARE_TREE_HANDLE_H
+#define POINCARE_TREE_HANDLE_H
 
 #include <poincare/tree_pool.h>
 #include <initializer_list>

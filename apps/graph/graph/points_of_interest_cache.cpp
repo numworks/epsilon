@@ -45,10 +45,10 @@ bool PointsOfInterestCache::computeUntilNthPoint(int n) {
   while (n >= numberOfPoints() && !isFullyComputed()) {
     /* Use a checkpoint each time a step is computed so that plot can be
      * navigated in parallel of computation. */
-    UserCircuitBreakerCheckpoint checkpoint;
+    CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::AnyKey);
     // Clone the cache to prevent modifying the pool before the checkpoint
     PointsOfInterestCache cacheClone = clone();
-    if (AnyKeyCircuitBreakerRun(checkpoint)) {
+    if (CircuitBreakerRun(checkpoint)) {
       cacheClone.computeNextStep();
     } else {
       return false;

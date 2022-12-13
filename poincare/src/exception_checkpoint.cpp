@@ -2,32 +2,6 @@
 
 namespace Poincare {
 
-ExceptionCheckpoint * ExceptionCheckpoint::s_topmostExceptionCheckpoint;
-
-ExceptionCheckpoint::ExceptionCheckpoint() :
-  Checkpoint(),
-  m_parent(s_topmostExceptionCheckpoint)
-{
-}
-
-ExceptionCheckpoint::~ExceptionCheckpoint() {
-  s_topmostExceptionCheckpoint = m_parent;
-}
-
-bool ExceptionCheckpoint::setActive(bool interruption) {
-  if (!interruption) {
-    s_topmostExceptionCheckpoint = this;
-  }
-  return !interruption;
-}
-
-void ExceptionCheckpoint::rollback() {
-  Checkpoint::rollback();
-  // Reset CircuitBreakerCheckpoints depending on a later point in the pool.
-  UserCircuitBreakerCheckpoint::DiscardYoungerCircuitBreakerCheckpoints(getEndOfPoolBeforeCheckpoint());
-  longjmp(m_jumpBuffer, 1);
-}
-
 #if __EMSCRIPTEN__
 
 bool sInterrupted = false;
@@ -47,10 +21,24 @@ void ExceptionCheckpoint::Raise() {
 #else
 
 void ExceptionCheckpoint::Raise() {
-  assert(s_topmostExceptionCheckpoint != nullptr);
-  s_topmostExceptionCheckpoint->rollback();
+  assert(s_topmost != nullptr);
+  s_topmost->rollbackException();
   assert(false);
 }
 
 #endif
+
+bool ExceptionCheckpoint::setActive(bool interruption) {
+  if (!interruption) {
+    assert(s_topmost == m_parent);
+    s_topmost = this;
+  }
+  return !interruption;
+}
+
+void ExceptionCheckpoint::rollbackException() {
+  rollback();
+  longjmp(m_jumpBuffer, 1);
+}
+
 }

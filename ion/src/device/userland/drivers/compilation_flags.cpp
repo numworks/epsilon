@@ -11,7 +11,7 @@ namespace Ion {
 /*
  * We use an uint32_t as a bit array representing the compilation flags. The most significant 16 bits concern the kernel compilation and the least significant 16 bits concern the userland.
  *
- * bit 0: userland NDEBUG
+ * bit 0: userland DEBUG
  * bit 1: userland ASSERTIONS
  * bit 2: allow third-party
  * bit 3: running slot A
@@ -40,18 +40,15 @@ uint16_t userlandCompilationFlags() {
 #else
   bool debug = true;
 #endif
-  bool assertions = ASSERTIONS;
-  bool allow3rdParty = ExternalApps::allowThirdParty();
-  bool slotA = Device::Board::isRunningSlotA();
   assert(EXTERNAL_APPS_API_LEVEL < 0xFF); // Should the EXTERNAL_APPS_API_LEVEL exceed 0xFF, we'll find another way to represent it
   uint8_t externalAppsAPILevel = 0xFF & EXTERNAL_APPS_API_LEVEL;
   assert(Device::Board::securityLevel() < 0xFF); // Should the SECURITY_LEVEL exceed 0xFF, , we'll find another way to represent it
   uint8_t securityLevel = 0xFF & Device::Board::securityLevel();
 
-  return (debug & 0b1) |
-         (assertions & 0b10) |
-         (allow3rdParty & 0b100) |
-         (slotA & 0b1000) |
+  return debug |
+         (ASSERTIONS << 1) |
+         (ExternalApps::allowThirdParty() << 2) |
+         (Device::Board::isRunningSlotA() << 3) |
          (externalAppsAPILevel << 4) |
          (securityLevel << 8);
 }
@@ -79,7 +76,7 @@ void int2HexString(uint32_t i, char * buffer, size_t bufferSize) {
 
 const char * compilationFlags() {
   static char compilationFlagsBuffer[k_hexDigitPerByte * sizeof(uint32_t) + 1] = {0};
-  uint32_t flags = userlandCompilationFlags() | (kernelCompilationFlags() >> 16);
+  uint32_t flags = userlandCompilationFlags() | (kernelCompilationFlags() << 16);
   int2HexString(flags, compilationFlagsBuffer, sizeof(compilationFlagsBuffer));
   return compilationFlagsBuffer;
 }

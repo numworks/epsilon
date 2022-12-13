@@ -324,12 +324,16 @@ void WithHistogram::HistogramDrawing::setHighlightOptions(HighlightTest highligh
 
 void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   float rectMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.left());
+  float rectMinBinNumber = std::floor((rectMin - m_start) / m_width);
+  float rectMinLowerBound = m_start + rectMinBinNumber * m_width;
   float rectMax = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.right());
+  float rectMaxBinNumber = std::floor((rectMax - m_start) / m_width);
+  float rectMaxUpperBound = m_start + (rectMaxBinNumber + 1) * m_width;
   float step = std::max(plotView->pixelWidth(), m_width);
   KDCoordinate axisPixel = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Vertical, 0.f));
 
   float xPrevious = NAN;
-  for (float x = m_start; x < rectMax; x += step) {
+  for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += step) {
     if (x == xPrevious) {
       return;
     }
@@ -346,7 +350,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
     Coordinate2D<float> pxy = plotView->floatToPixel2D(Coordinate2D<float>(x, y));
     KDCoordinate pxLeft = std::round(pxy.x1());
     KDCoordinate pxRight = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, x + m_width));
-    if (pxRight + m_borderWidth < rectMin) {
+    if (pxRight + m_borderWidth < rect.left()) {
       continue;
     }
     KDCoordinate py = std::round(pxy.x2());

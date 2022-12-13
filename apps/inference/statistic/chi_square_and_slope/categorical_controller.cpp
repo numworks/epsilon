@@ -153,6 +153,7 @@ bool InputCategoricalController::ButtonAction(InputCategoricalController * contr
 }
 
 void InputCategoricalController::viewWillAppear() {
+  categoricalTableCell()->selectableTableView()->setContentOffset(KDPointZero);
   categoricalTableCell()->recomputeDimensions();
   PrintValueInTextHolder(m_statistic->threshold(), m_innerSignificanceCell.textField(), true, true);
   CategoricalController::viewWillAppear();

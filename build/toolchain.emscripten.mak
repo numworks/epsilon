@@ -32,6 +32,7 @@ __ZN3Ion6Events5EventC2ENS_8Keyboard3KeyEbb \
 __ZN3Ion6Events8getEventEPi \
 __ZN3Ion6Events14sharedGetEventEPi \
 __ZN3Ion6Events16popKeyboardStateEv \
+__ZN3Ion6Events21privateSharedGetEventEPi \
 __ZN3Ion6Events24waitForInterruptingEventEiPi \
 __ZN3Ion8Keyboard8popStateEv \
 __ZN3Ion6EventsL16sleepWithTimeoutEiPi \

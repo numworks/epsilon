@@ -577,7 +577,7 @@ void Parser::parseLeftSystemBrace(Expression & leftHandSide, Token::Type stoppin
   }
   /* A leading system brace is the result of serializing a NL logarithm. */
   Expression index = parseUntil(Token::Type::RightSystemBrace);
-  if (!index.isUninitialized() && popTokenIfType(Token::Type::RightSystemBrace)) {
+  if (m_status != Status::Error && !index.isUninitialized() && popTokenIfType(Token::Type::RightSystemBrace)) {
     const Expression::FunctionHelper * const * functionHelper = ParsingHelper::GetReservedFunction(m_nextToken.text(), m_nextToken.length());
     if (functionHelper && (**functionHelper).aliasesList().contains("log") && popTokenIfType(Token::Type::ReservedFunction)) {
       Expression parameter = parseFunctionParameters();

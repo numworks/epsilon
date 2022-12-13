@@ -25,6 +25,7 @@ ion_device_userland_svc_src += $(addprefix ion/src/device/userland/drivers/, \
   battery.cpp \
   board.cpp \
   circuit_breaker.cpp \
+  compilation_flags.cpp \
   crc32.cpp \
   display.cpp \
   events.cpp \
@@ -48,6 +49,6 @@ ion_device_userland_src += ion/src/shared/collect_registers.cpp
 
 $(call object_for,$(ion_device_userland_svc_src)): SFLAGS += -fno-lto
 
-$(call object_for,ion/src/device/userland/drivers/external_apps.cpp): SFLAGS += -DEXTERNAL_APPS_API_LEVEL=$(EXTERNAL_APPS_API_LEVEL)
+$(call object_for,ion/src/device/userland/drivers/external_apps.cpp ion/src/device/userland/drivers/compilation_flags.cpp): SFLAGS += -DEXTERNAL_APPS_API_LEVEL=$(EXTERNAL_APPS_API_LEVEL)
 
 ION_DEVICE_SFLAGS += -Iion/src/device/userland

@@ -323,7 +323,7 @@ void LayoutCursor::insertText(const char * text, Context * context, bool forceCu
   }
 }
 
-void LayoutCursor::addLayoutAndMoveCursor(Layout l, Context * context, bool withinBeautification) {
+void LayoutCursor::addLayoutAndMoveCursor(Layout l, Context * context, bool forceCursorRightOfLayout, bool withinBeautification) {
   bool insertedLayoutWillBeMerged = l.type() == LayoutNode::Type::HorizontalLayout;
   int insertedNumberOfChildren = insertedLayoutWillBeMerged ? l.numberOfChildren() : 1;
 
@@ -343,7 +343,7 @@ void LayoutCursor::addLayoutAndMoveCursor(Layout l, Context * context, bool with
   if (!layoutToBeautify.isUninitialized()) {
     int beautifyStartIndex = std::max(beautifyEndIndex - insertedNumberOfChildren, 0);
     assert(layoutToBeautify.type() == LayoutNode::Type::HorizontalLayout);
-    InputBeautification::ApplyBeautificationBetweenIndexes(static_cast<HorizontalLayout&>(layoutToBeautify), beautifyStartIndex, beautifyEndIndex, this, context);
+    InputBeautification::ApplyBeautificationBetweenIndexes(static_cast<HorizontalLayout&>(layoutToBeautify), beautifyStartIndex, beautifyEndIndex, this, context, forceCursorRightOfLayout);
   }
   if (!insertedLayoutWillBeMerged) {
     assert(!l.isUninitialized());

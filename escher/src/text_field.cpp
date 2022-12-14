@@ -31,6 +31,7 @@ AbstractTextField::ContentView::ContentView(char * textBuffer, size_t textBuffer
   m_textColor(textColor),
   m_backgroundColor(backgroundColor),
   m_isEditing(false),
+  m_isStalled(false),
   m_useDraftBuffer(true)
 {
   if (textBuffer == nullptr) {
@@ -115,6 +116,7 @@ void AbstractTextField::ContentView::setEditing(bool isEditing) {
     return;
   }
   resetSelection();
+  m_isStalled = false;
   m_isEditing = isEditing;
   const char * buffer = editedText();
   size_t textLength = strlen(buffer);
@@ -128,6 +130,14 @@ void AbstractTextField::ContentView::setEditing(bool isEditing) {
   }
   markRectAsDirty(bounds());
   layoutSubviews();
+}
+
+void AbstractTextField::ContentView::stallOrStopEditing() {
+  if (m_isStalled) {
+    setEditing(false);
+  } else if (isEditing()) {
+    m_isStalled = true;
+  }
 }
 
 void AbstractTextField::ContentView::reinitDraftTextBuffer() {
@@ -543,8 +553,13 @@ bool AbstractTextField::addXNTCodePoint(CodePoint xnt) {
   return handleEventWithText(buffer, false, true);
 }
 
+void AbstractTextField::willResignFirstResponder() {
+  contentView()->stallOrStopEditing();
+}
+
 bool AbstractTextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
+  contentView()->setStalled(false);
   size_t previousTextLength = strlen(text());
   bool didHandleEvent = false;
   if (privateHandleMoveEvent(event)) {

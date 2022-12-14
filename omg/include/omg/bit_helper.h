@@ -1,11 +1,11 @@
-#ifndef ION_BIT_HELPER_H
-#define ION_BIT_HELPER_H
+#ifndef OMG_BIT_HELPER_H
+#define OMG_BIT_HELPER_H
 
 #include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
 
-namespace Ion {
+namespace OMG {
 namespace BitHelper {
 
 constexpr static size_t k_numberOfBitsInByte = 8;
@@ -54,7 +54,7 @@ constexpr inline size_t numberOfBitsToCountUpTo(unsigned int i) {
   return indexOfMostSignificantBit(i - 1);
 }
 
-}  // namespace BitHelper
-}  // namespace Ion
+}
+}
 
-#endif /* ION_BIT_HELPER_H */
+#endif

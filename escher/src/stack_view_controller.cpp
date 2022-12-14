@@ -4,7 +4,7 @@ extern "C" {
 #include <escher/container.h>
 #include <escher/metric.h>
 #include <escher/stack_view_controller.h>
-#include <ion/bit_helper.h>
+#include <omg/bit_helper.h>
 
 namespace Escher {
 
@@ -150,7 +150,7 @@ bool StackViewController::shouldStoreHeaderOnStack(ViewController * vc, int inde
    * only while the controller is the last on the stack. */
   return vc->title() != nullptr &&
          vc->titlesDisplay() != ViewController::TitlesDisplay::NeverDisplayOwnTitle &&
-         Ion::BitHelper::bitAtIndex(m_headersDisplayMask, m_numberOfChildren - 1 - index);
+         OMG::BitHelper::bitAtIndex(m_headersDisplayMask, m_numberOfChildren - 1 - index);
 }
 
 void StackViewController::updateStack(ViewController::TitlesDisplay titleDisplay) {

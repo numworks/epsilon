@@ -92,4 +92,9 @@ FunctionApp::FunctionApp(Snapshot * snapshot, Shared::FunctionListController * l
 {
 }
 
+void FunctionApp::didBecomeActive(Escher::Window * windows) {
+  Escher::App::didBecomeActive(windows);
+  m_tabViewController.enterActiveTab();
+}
+
 }

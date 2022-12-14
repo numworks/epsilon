@@ -16,6 +16,7 @@ public:
   void setSelectedTab(int8_t index);
   void setActiveTab(int8_t index, bool enter = true);
   void setDisplayTabs(bool display) { m_view.setDisplayTabs(display); }
+  void enterActiveTab() { setActiveTab(activeTab()); }
   uint8_t numberOfTabs();
 
   const char * tabName(uint8_t index);

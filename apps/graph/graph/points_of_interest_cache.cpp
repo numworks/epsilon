@@ -74,7 +74,9 @@ int PointsOfInterestCache::numberOfPoints(Poincare::Solver<double>::Interest int
 }
 
 PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, double end, Solver<double>::Interest interest) {
-  assert(start != end);
+  if (start == end) {
+    return PointOfInterest();
+  }
   m_list.sort();
   int n = numberOfPoints();
   int direction = start > end ? -1 : 1;

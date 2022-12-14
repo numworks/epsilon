@@ -42,6 +42,7 @@ public:
   virtual Escher::InputViewController * inputViewController() = 0;
 protected:
   FunctionApp(Snapshot * snapshot, Shared::FunctionListController * listController, Shared::FunctionGraphController * graphController, Shared::ValuesController * valuesController);
+  void didBecomeActive(Escher::Window * window) override;
 
   Escher::ButtonRowController m_listFooter;
   Escher::ButtonRowController m_listHeader;

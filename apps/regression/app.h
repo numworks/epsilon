@@ -47,6 +47,7 @@ public:
 
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
+  void didBecomeActive(Escher::Window * window) override;
   bool storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) override;
   Store m_store;
   CalculationController m_calculationController;

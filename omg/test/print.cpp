@@ -9,7 +9,7 @@ void assert_int_prints_as(uint32_t integer, const char * result, Print::Base bas
   for (int i = 0; i < bufferSize; i++) {
     buffer[i] = 0;
   }
-  Print::Integer(base, integer, buffer, bufferSize);
+  Print::UInt32(base, integer, buffer, bufferSize);
   quiz_assert_print_if_failure(strcmp(result, buffer) == 0, result);
 }
 

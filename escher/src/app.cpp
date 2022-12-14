@@ -27,6 +27,10 @@ bool App::processEvent(Ion::Events::Event event) {
 }
 
 void App::setFirstResponder(Responder * responder) {
+  /* This flag is used only in DEBUG to ensure that didEnterResponderChain do
+   * not call setFirstResponder. */
+  static bool preventRecursion = false;
+  assert(!preventRecursion);
   if (m_firstResponder == responder) {
     return;
   }
@@ -35,10 +39,12 @@ void App::setFirstResponder(Responder * responder) {
   if (previousResponder) {
     Responder * commonAncestor = previousResponder->commonAncestorWith(m_firstResponder);
     Responder * leafResponder = previousResponder;
+    preventRecursion = true;
     while (leafResponder != commonAncestor) {
       leafResponder->willExitResponderChain(m_firstResponder);
       leafResponder = leafResponder->parentResponder();
     }
+    preventRecursion = false;
     previousResponder->willResignFirstResponder();
   }
   if (m_firstResponder) {
@@ -47,6 +53,7 @@ void App::setFirstResponder(Responder * responder) {
     int index = 0;
     Responder * commonAncestor = m_firstResponder->commonAncestorWith(previousResponder);
     Responder * leafResponder = m_firstResponder;
+    preventRecursion = true;
     while (leafResponder != commonAncestor) {
       assert(index < k_maxNumberOfResponders);
       responderStack[index++] = leafResponder;
@@ -55,6 +62,7 @@ void App::setFirstResponder(Responder * responder) {
     for(index--; index >= 0; index--) {
       responderStack[index]->didEnterResponderChain(previousResponder);
     }
+    preventRecursion = false;
     m_firstResponder->didBecomeFirstResponder();
   }
 }

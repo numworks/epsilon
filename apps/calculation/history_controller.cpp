@@ -232,12 +232,6 @@ void HistoryController::tableViewDidChangeSelectionAndDidScroll(SelectableTableV
     }
     setSelectedSubviewType(nextSelectedSubviewType, false, previousSelectedCellX, previousSelectedCellY);
   }
-  // The selectedCell may change during setSelectedSubviewType
-  HistoryViewCell * selectedCell = (HistoryViewCell *)(t->selectedCell());
-  if (selectedCell == nullptr) {
-    return;
-  }
-  Container::activeApp()->setFirstResponder(selectedCell);
 }
 
 int HistoryController::numberOfRows() const {
@@ -292,7 +286,7 @@ void HistoryController::historyViewCellDidChangeSelection(HistoryViewCell ** cel
   /* If the selection change triggers the toggling of the outputs, we update
    * the whole table as the height of the selected cell row might have changed. */
   if ((type == SubviewType::Output || previousType == SubviewType::Output) && (calculationAtIndexToggles(selectedRow()) || calculationAtIndexToggles(previousSelectedCellY))) {
-    m_selectableTableView.reloadData();
+    m_selectableTableView.reloadData(false);
   }
 
   // It might be necessary to scroll to the sub type if the cell overflows the screen

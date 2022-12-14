@@ -102,7 +102,7 @@ void ListController::didBecomeFirstResponder() {
 }
 
 void ListController::didEnterResponderChain(Responder * previousFirstResponder) {
-  selectableTableView()->reloadData();
+  selectableTableView()->reloadData(false);
   // Reload brace if the model store has evolved
   reloadBrace();
 }

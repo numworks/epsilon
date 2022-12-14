@@ -19,15 +19,8 @@ void VectorListController::setExpression(Poincare::Expression e) {
   assert(!m_expression.isUninitialized());
   static_assert(k_maxNumberOfRows >= k_maxNumberOfOutputRows, "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  Poincare::Preferences * preferences = Poincare::Preferences::sharedPreferences();
-  Poincare::Preferences::ComplexFormat currentComplexFormat = preferences->complexFormat();
-  if (currentComplexFormat == Poincare::Preferences::ComplexFormat::Real) {
-    /* Temporary change complex format to avoid all additional expressions to be
-     * "nonreal" (with [i] for instance). As additional results are computed from
-     * the output, which is built taking ComplexFormat into account, there are
-     * no risks of displaying additional results on an nonreal output. */
-    preferences->setComplexFormat(Poincare::Preferences::ComplexFormat::Cartesian);
-  }
+  Context * context = App::app()->localContext();
+  Poincare::Preferences preferencesCopy = Preferences::ClonePreferencesWithNewComplexFormat(Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(Poincare::Preferences::sharedPreferences()->complexFormat(), e, context));
 
   setShowIllustration(false);
 
@@ -39,24 +32,26 @@ void VectorListController::setExpression(Poincare::Expression e) {
   size_t index = 0;
   size_t messageIndex = 0;
 
-  Context * context = App::app()->localContext();
   constexpr static ExpressionNode::ReductionTarget k_target = ExpressionNode::ReductionTarget::SystemForApproximation;
   constexpr static ExpressionNode::SymbolicComputation k_symbolicComputation = ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined;
   // 1. Vector norm
   Expression norm = VectorNorm::Builder(m_expression);
   PoincareHelpers::CloneAndReduce(&norm, context, k_target, k_symbolicComputation);
   m_indexMessageMap[index] = messageIndex++;
-  Layout exact = getLayoutFromExpression(norm, context, preferences);
+  Layout exact = getLayoutFromExpression(norm, context, &preferencesCopy);
   Expression approximatedNorm = PoincareHelpers::Approximate<double>(norm, context);
-  setLineAtIndex(index++, Expression(), norm, context, preferences);
+  setLineAtIndex(index++, Expression(), norm, context, &preferencesCopy);
 
   if (!norm.isUndefined() && approximatedNorm.isNull(context) == TrinaryBoolean::False && !Expression::IsInfinity(approximatedNorm, context)) {
     // 2. Normalized vector
-    m_indexMessageMap[index] = messageIndex++;
     Expression normalized = Division::Builder(m_expression, norm);
     PoincareHelpers::CloneAndReduce(&normalized, context, k_target, k_symbolicComputation);
-    assert(normalized.type() == ExpressionNode::Type::Matrix);
-    setLineAtIndex(index++, Expression(), normalized, context, preferences);
+    if (normalized.type() != ExpressionNode::Type::Matrix) {
+      // The reduction might have failed
+      return;
+    }
+    m_indexMessageMap[index] = messageIndex++;
+    setLineAtIndex(index++, Expression(), normalized, context, &preferencesCopy);
     if (is2D) {
       // 3. Angle with x-axis
       Expression x = static_cast<Matrix &>(vector).matrixChild(0, 0);
@@ -77,12 +72,9 @@ void VectorListController::setExpression(Poincare::Expression e) {
         angle = Subtraction::Builder(Multiplication::Builder(Rational::Builder(2), Poincare::Constant::Builder("π")), angle);
       }
       m_indexMessageMap[index] = messageIndex++;
-      setLineAtIndex(index++, Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta), angle, context, preferences);
+      setLineAtIndex(index++, Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta), angle, context, &preferencesCopy);
     }
   }
-
-  // Reset complex format as before
-  preferences->setComplexFormat(currentComplexFormat);
 }
 
 I18n::Message VectorListController::messageAtIndex(int index) {

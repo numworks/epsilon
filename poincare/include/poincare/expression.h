@@ -175,6 +175,7 @@ public:
   bool isRationalOne() const;
   bool isOne() const;
   bool isMinusOne() const;
+  bool isInteger() const;
   bool isRandom() const { return node()->isRandom(); }
   bool isParameteredExpression() const { return node()->isParameteredExpression(); }
   bool isBasedIntegerCappedBy(const char * integerString) const;

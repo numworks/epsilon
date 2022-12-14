@@ -656,10 +656,10 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
     return;
   }
 
-  // Parse cos^-1(x) and cos^2(x)
+  // Parse cos^n(x)
   Token::Type endDelimiterOfPower;
   bool hasCaret = false;
-  bool squareFunction = false;
+  bool powerFunction = false;
   if (popTokenIfType(Token::Type::CaretWithParenthesis)) {
     hasCaret = true;
     endDelimiterOfPower = Token::Type::RightSystemParenthesis;
@@ -671,15 +671,16 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
       return;
     }
   }
+  Expression base;
   if (hasCaret) {
-    Expression base = parseUntil(endDelimiterOfPower);
+    base = parseUntil(endDelimiterOfPower);
     if (m_status != Status::Progress) {
       return;
     } else if (!popTokenIfType(endDelimiterOfPower)) {
       m_status = Status::Error;
       return;
     } else if (base.isMinusOne()) {
-      // Detect cos^-1(x)
+      // Detect cos^-1(x) --> arccos(x)
       const char * mainAlias = aliasesList.mainAlias();
       functionHelper = ParsingHelper::GetInverseFunction(mainAlias, strlen(mainAlias));
       if (!functionHelper) {
@@ -687,17 +688,15 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
         return;
       }
       aliasesList = (**functionHelper).aliasesList();
-    } else if (base.type() == ExpressionNode::Type::BasedInteger
-              && static_cast<BasedInteger &>(base).base() == Integer::Base::Decimal
-              && static_cast<BasedInteger &>(base).integer().isTwo()) {
-      // Detect cos^2(x)
-      if (!ParsingHelper::IsSquarableFunction(*functionHelper)) {
-        m_status = Status::Error; // This function can't be squared
+    } else if (base.isInteger()) {
+      // Detect cos^n(x) with n!=-1 --> (cos(x))^n
+      if (!ParsingHelper::IsPowerableFunction(*functionHelper)) {
+        m_status = Status::Error; // This function can't be powered
         return;
       }
-      squareFunction = true;
+      powerFunction = true;
     } else {
-      m_status = Status::Error; // This function has no inverse
+      m_status = Status::Error;
       return;
     }
   }
@@ -749,8 +748,8 @@ void Parser::privateParseReservedFunction(Expression & leftHandSide, const Expre
     m_status = Status::Error; // Incorrect parameter type or too few args
     return;
   }
-  if (squareFunction) {
-    leftHandSide = Power::Builder(leftHandSide, Rational::Builder(2));
+  if (powerFunction) {
+    leftHandSide = Power::Builder(leftHandSide, base);
   }
 }
 

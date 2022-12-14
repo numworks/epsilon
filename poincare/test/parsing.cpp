@@ -553,26 +553,25 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_text_not_parsable("\u0014cos(x)");
   assert_text_not_parsable("\u0014cod(x)");
 
-  // Squared reserved functions
-  assert_parsed_expression_is("cos^\u00122\u0013(1)", Power::Builder(Cosine::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("sin^\u00122\u0013(1)", Power::Builder(Sine::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("tan^\u00122\u0013(1)", Power::Builder(Tangent::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("arccos^\u00122\u0013(1)", Power::Builder(ArcCosine::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("arcsin^\u00122\u0013(1)", Power::Builder(ArcSine::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("arctan^\u00122\u0013(1)", Power::Builder(ArcTangent::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("cot^\u00122\u0013(1)", Power::Builder(Cotangent::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("sec^\u00122\u0013(1)", Power::Builder(Secant::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("csc^\u00122\u0013(1)", Power::Builder(Cosecant::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("arccot^\u00122\u0013(1)", Power::Builder(ArcCotangent::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("arcsec^\u00122\u0013(1)", Power::Builder(ArcSecant::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("arccsc^\u00122\u0013(1)", Power::Builder(ArcCosecant::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("cosh^\u00122\u0013(1)", Power::Builder(HyperbolicCosine::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("sinh^\u00122\u0013(1)", Power::Builder(HyperbolicSine::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("tanh^\u00122\u0013(1)", Power::Builder(HyperbolicTangent::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("arsinh^\u00122\u0013(1)", Power::Builder(HyperbolicArcSine::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("arcosh^\u00122\u0013(1)", Power::Builder(HyperbolicArcCosine::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_parsed_expression_is("artanh^\u00122\u0013(1)", Power::Builder(HyperbolicArcTangent::Builder(BasedInteger::Builder(1)),Rational::Builder(2)));
-  assert_text_not_parsable("cos^\u00123\u0013(2)");
+  // Powered reserved functions (integer powers other than -1)
+  assert_parsed_expression_is("cos^\u00120\u0013(1)", Power::Builder(Cosine::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(0)));
+  assert_parsed_expression_is("sin^\u00121\u0013(1)", Power::Builder(Sine::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(1)));
+  assert_parsed_expression_is("tan^\u00122\u0013(1)", Power::Builder(Tangent::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(2)));
+  assert_parsed_expression_is("arccos^\u00123\u0013(1)", Power::Builder(ArcCosine::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(3)));
+  assert_parsed_expression_is("arcsin^\u00124\u0013(1)", Power::Builder(ArcSine::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(4)));
+  assert_parsed_expression_is("arctan^\u00125\u0013(1)", Power::Builder(ArcTangent::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(5)));
+  assert_parsed_expression_is("cot^\u00126\u0013(1)", Power::Builder(Cotangent::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(6)));
+  assert_parsed_expression_is("sec^\u00127\u0013(1)", Power::Builder(Secant::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(7)));
+  assert_parsed_expression_is("csc^\u00128\u0013(1)", Power::Builder(Cosecant::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(8)));
+  assert_parsed_expression_is("arccot^\u00129\u0013(1)", Power::Builder(ArcCotangent::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(9)));
+  assert_parsed_expression_is("arcsec^\u001210\u0013(1)", Power::Builder(ArcSecant::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(10)));
+  assert_parsed_expression_is("arccsc^\u001211\u0013(1)", Power::Builder(ArcCosecant::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(11)));
+  assert_parsed_expression_is("cosh^\u0012-2\u0013(1)", Power::Builder(HyperbolicCosine::Builder(BasedInteger::Builder(1)),Opposite::Builder(BasedInteger::Builder(2))));
+  assert_parsed_expression_is("sinh^\u0012-3\u0013(1)", Power::Builder(HyperbolicSine::Builder(BasedInteger::Builder(1)),Opposite::Builder(BasedInteger::Builder(3))));
+  assert_parsed_expression_is("tanh^\u0012-4\u0013(1)", Power::Builder(HyperbolicTangent::Builder(BasedInteger::Builder(1)),Opposite::Builder(BasedInteger::Builder(4))));
+  assert_parsed_expression_is("arsinh^\u0012-5\u0013(1)", Power::Builder(HyperbolicArcSine::Builder(BasedInteger::Builder(1)),Opposite::Builder(BasedInteger::Builder(5))));
+  assert_parsed_expression_is("arcosh^\u0012-6\u0013(1)", Power::Builder(HyperbolicArcCosine::Builder(BasedInteger::Builder(1)),Opposite::Builder(BasedInteger::Builder(6))));
+  assert_parsed_expression_is("artanh^\u0012-7\u0013(1)", Power::Builder(HyperbolicArcTangent::Builder(BasedInteger::Builder(1)),Opposite::Builder(BasedInteger::Builder(7))));
   assert_text_not_parsable("ln^\u00122\u0013(2)");
 
   // Custom identifiers with storage

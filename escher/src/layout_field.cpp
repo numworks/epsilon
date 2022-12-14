@@ -795,6 +795,16 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
    *
    * Fortunately, merged layouts' children are not modified by the merge, so it
    * is ok to compute their pointed layout before adding them.
+   *
+   * WARNING / TODO:
+   * THE COMMENT ABOVE IS NOW DEPRECATED since merged layouts' children could
+   * be modified by the merge due to input beautification. There is a temporary
+   * solution implemented that leaves the cursor wherever it is if the right
+   * pointed layout can be retrieved.
+   * Ideally, the cursor position should not be handled here but directly in
+   * LayoutCursor::addLayoutAndMoveCursor. Also, the LayoutCursor methods and
+   * the way its moved when inserting a layout should probably be fully
+   * refactored.
    * */
   if (!forceCursorRightOfLayout) {
     if (!layoutWillBeMerged && !forceCursorLeftOfText) {
@@ -803,9 +813,14 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
       cursorMergedLayout = layoutR.layoutToPointWhenInserting(&correspondingExpression, &forceCursorLeftOfText);
     }
     assert(!cursorMergedLayout.isUninitialized());
-    m_contentView.cursor()->setLayout(cursorMergedLayout);
-    // If forceCursorLeftOfText, position cursor left of first merged layout.
-    m_contentView.cursor()->setPosition(forceCursorLeftOfText ? LayoutCursor::Position::Left : LayoutCursor::Position::Right);
+    /* If cursorMergedLayout has no ancestor in common with the current layout
+     * it means that the input was beautified. Since we can't know now where it
+     * should be, it's left where it is. */
+    if (cursorMergedLayout.hasAncestor(layout(), true)) {
+      m_contentView.cursor()->setLayout(cursorMergedLayout);
+      // If forceCursorLeftOfText, position cursor left of first merged layout.
+      m_contentView.cursor()->setPosition(forceCursorLeftOfText ? LayoutCursor::Position::Left : LayoutCursor::Position::Right);
+    }
   }
   assert(m_contentView.cursor()->layout().hasAncestor(layout(), true));
 

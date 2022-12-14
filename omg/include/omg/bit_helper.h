@@ -46,12 +46,12 @@ constexpr inline size_t numberOfOnes(unsigned int i) {
 }
 
 constexpr inline size_t indexOfMostSignificantBit(unsigned int i) {
-  return numberOfBitsInType<unsigned int>() - countLeadingZeros(i);
+  return numberOfBitsInType<unsigned int>() - countLeadingZeros(i) - 1;
 }
 
 constexpr inline size_t numberOfBitsToCountUpTo(unsigned int i) {
   assert(i >= 2);
-  return indexOfMostSignificantBit(i - 1);
+  return indexOfMostSignificantBit(i - 1) + 1;
 }
 
 }

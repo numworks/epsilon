@@ -33,7 +33,7 @@ void SelectableViewWithMessages::setMessages(I18n::Message * m, int numberOfMess
 }
 
 void SelectableViewWithMessages::reload() {
-  m_selectableTableView->reloadData();
+  m_selectableTableView->reloadData(false);
   layoutSubviews();
 }
 

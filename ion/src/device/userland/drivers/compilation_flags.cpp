@@ -1,6 +1,7 @@
 #include <drivers/svcall.h>
 #include <shared/drivers/board_shared.h>
 #include <ion.h>
+#include <omg/print.h>
 
 #if !defined(ASSERTIONS) || !defined(EXTERNAL_APPS_API_LEVEL)
 #error This file expects ASSERTIONS & EXTERNAL_APPS_API_LEVEL to be defined
@@ -53,37 +54,16 @@ uint16_t userlandCompilationFlags() {
          (securityLevel << 8);
 }
 
-// TODO: move to utils/ along with the bench hexNumber etc
-
-constexpr static size_t k_hexDigitPerByte = 2;
-
-char int2HexChar(uint8_t i) {
-  if (i < 10) {
-    return i + '0';
-  }
-  assert(i < 16);
-  return (i - 10) + 'A';
-}
-
-void int2HexString(uint32_t i, char * buffer, size_t bufferSize) {
-  size_t currentCharIndex = 0;
-  for (int offset = 28; offset >= 0; offset -= 4) {
-    assert(currentCharIndex < bufferSize - 1);
-    buffer[currentCharIndex++] = int2HexChar((i >> offset) & 0xF);
-  }
-  buffer[currentCharIndex] = 0;
-}
-
 const char * compilationFlags() {
-  static char compilationFlagsBuffer[k_hexDigitPerByte * sizeof(uint32_t) + 1] = {0};
+  static char compilationFlagsBuffer[OMG::Print::LengthOfUInt32(OMG::Print::Base::Hexadecimal) + 1] = {0};
   uint32_t flags = userlandCompilationFlags() | (kernelCompilationFlags() << 16);
-  int2HexString(flags, compilationFlagsBuffer, sizeof(compilationFlagsBuffer));
+  OMG::Print::UInt32(OMG::Print::Base::Hexadecimal, flags, compilationFlagsBuffer, sizeof(compilationFlagsBuffer));
   return compilationFlagsBuffer;
 }
 
 const char * runningBootloader() {
-  static char crcBuffer[k_hexDigitPerByte * sizeof(uint32_t) + 1] = {0};
-  int2HexString(bootloaderCRC32(), crcBuffer, sizeof(crcBuffer));
+  static char crcBuffer[OMG::Print::LengthOfUInt32(OMG::Print::Base::Hexadecimal) + 1] = {0};
+  OMG::Print::UInt32(OMG::Print::Base::Hexadecimal, bootloaderCRC32(), crcBuffer, sizeof(crcBuffer));
   return crcBuffer;
 }
 

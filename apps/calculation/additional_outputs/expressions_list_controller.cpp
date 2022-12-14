@@ -18,8 +18,9 @@ ExpressionsListController::ExpressionsListController(EditExpressionController * 
   }
 }
 
-void ExpressionsListController::didEnterResponderChain(Responder * previousFirstResponder) {
+void ExpressionsListController::didBecomeFirstResponder() {
   selectCellAtLocation(0, 0);
+  ListController::didBecomeFirstResponder();
 }
 
 int ExpressionsListController::reusableCellCount(int type) {

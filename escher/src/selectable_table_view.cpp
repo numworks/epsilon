@@ -225,12 +225,21 @@ void SelectableTableView::reloadData(bool setFirstResponder, bool setSelection) 
   }
 }
 
+void SelectableTableView::didBecomeFirstResponder() {
+  // TODO this is probably too much, setting the responder only should be sufficient
+  int col = selectedColumn();
+  int row = selectedRow();
+  selectColumn(0);
+  selectRow(-1);
+  selectCellAtLocation(col, row, true);
+}
+
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {
   int col = selectedColumn();
   int row = selectedRow();
   selectColumn(0);
   selectRow(-1);
-  selectCellAtLocation(col, row);
+  selectCellAtLocation(col, row, false);
 }
 
 void SelectableTableView::willExitResponderChain(Responder * nextFirstResponder) {

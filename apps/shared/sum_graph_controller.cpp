@@ -37,7 +37,7 @@ void SumGraphController::viewWillAppear() {
   makeCursorVisibleAndReload();
 }
 
-void SumGraphController::didEnterResponderChain(Responder * previousFirstResponder) {
+void SumGraphController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(m_legendView.textField());
 }
 

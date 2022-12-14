@@ -16,7 +16,7 @@ public:
   int activeIndex() const { return m_activeIndex; }
 
   View * view() override { return &m_view; }
-  void didEnterResponderChain(Responder * previousResponder) override;
+  void didBecomeFirstResponder() override;
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;

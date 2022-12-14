@@ -36,6 +36,7 @@ public:
   void deselectTable(bool withinTemporarySelection = false);
   void reloadData(bool setFirstResponder = true, bool setSelection = true);
 
+  void didBecomeFirstResponder() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
 

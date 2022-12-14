@@ -14,7 +14,7 @@ public:
 
   // Responder
   void viewDidDisappear() override;
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
+  void didBecomeFirstResponder() override;
 
   // MemoizedListViewDataSource
   int reusableCellCount(int type) override;

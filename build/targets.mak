@@ -7,7 +7,7 @@ HANDY_TARGETS_EXTENSIONS ?=
 
 # Epsilon base target
 
-base_src = $(ion_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src)
+base_src = $(ion_src) $(liba_src) $(kandinsky_src) $(escher_src) $(libaxx_src) $(poincare_src) $(python_src) $(omg_src)
 
 epsilon_src = $(base_src) $(apps_src)
 

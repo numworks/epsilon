@@ -2,7 +2,7 @@
 #define OMG_PRINT_H
 
 #include <assert.h>
-#include <ion/bit_helper.h>
+#include <omg/bit_helper.h>
 #include <stdint.h>
 
 namespace OMG {
@@ -27,7 +27,7 @@ inline char CharacterForDigit(Base base, uint8_t d) {
   return d + '0';
 }
 
-constexpr size_t LengthOfUInt32(Base base) { return Ion::BitHelper::numberOfBitsInType<uint32_t>() / Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<uint8_t>(base)); }
+constexpr size_t LengthOfUInt32(Base base) { return OMG::BitHelper::numberOfBitsInType<uint32_t>() / OMG::BitHelper::numberOfBitsToCountUpTo(static_cast<uint8_t>(base)); }
 
 int UInt32(Base base, uint32_t integer, char * buffer, int bufferSize);
 

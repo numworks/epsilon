@@ -2,8 +2,8 @@
 #define POINCARE_PREFERENCES_H
 
 #include <poincare/context.h>
-#include <ion/bit_helper.h>
 #include <ion/include/ion/persisting_bytes.h>
+#include <omg/bit_helper.h>
 #include <assert.h>
 #include <stdint.h>
 
@@ -84,7 +84,7 @@ public:
   static_assert(static_cast<int>(ExamMode::PressToTest) == 4, "Preferences::ExamMode::PressToTest != 4 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
   static_assert(k_numberOfExamModes == static_cast<int>(ExamMode::Undefined), "Preferences::ExamMode::Undefined should be last but the number of exam modes does not match.");
   static_assert(k_numberOfExamModes < 8, "Exam modes should be encoded with one more bit than the number of required bit so that the last bit is one if and only if the exam mode is Unknown");
-  static_assert(Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<int>(ExamMode::Undefined)) < Ion::BitHelper::numberOfBitsToCountUpTo(static_cast<int>(ExamMode::Unknown)), "There should be one bit that is up only for Unknown");
+  static_assert(OMG::BitHelper::numberOfBitsToCountUpTo(static_cast<int>(ExamMode::Undefined)) < OMG::BitHelper::numberOfBitsToCountUpTo(static_cast<int>(ExamMode::Unknown)), "There should be one bit that is up only for Unknown");
   /* Params are false if the feature is activated (allowed) and true if
    * forbidden. */
   union PressToTestParams {

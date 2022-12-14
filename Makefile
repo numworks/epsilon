@@ -87,6 +87,7 @@ include kandinsky/Makefile
 include poincare/Makefile
 include python/Makefile
 include escher/Makefile
+include omg/Makefile
 include eadk/Makefile
 # Executable Makefiles
 include apps/Makefile
@@ -96,7 +97,7 @@ include quiz/Makefile # Quiz needs to be included at the end
 # Define main and shortcut targets
 include build/targets.mak
 
-all_src = $(apps_src) $(escher_src) $(ion_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(runner_src) $(ion_device_flasher_src) $(ion_device_bench_src) $(tests_src)
+all_src = $(apps_src) $(escher_src) $(ion_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(runner_src) $(ion_device_flasher_src) $(ion_device_bench_src) $(tests_src) $(omg_src)
 
 # Ensure kandinsky fonts are generated first
 $(call object_for,$(all_src)): $(kandinsky_deps)

@@ -39,11 +39,18 @@ void App::setFirstResponder(Responder * responder) {
     previousResponder->willResignFirstResponder();
   }
   if (m_firstResponder) {
+    constexpr int k_maxNumberOfResponders = 32;
+    Responder * responderStack[k_maxNumberOfResponders];
+    int index = 0;
     Responder * commonAncestor = m_firstResponder->commonAncestorWith(previousResponder);
     Responder * leafResponder = m_firstResponder;
     while (leafResponder != commonAncestor) {
-      leafResponder->didEnterResponderChain(previousResponder);
+      assert(index < k_maxNumberOfResponders);
+      responderStack[index++] = leafResponder;
       leafResponder = leafResponder->parentResponder();
+    }
+    for(index--; index >= 0; index--) {
+      responderStack[index]->didEnterResponderChain(previousResponder);
     }
     m_firstResponder->didBecomeFirstResponder();
   }

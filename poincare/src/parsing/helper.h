@@ -19,8 +19,8 @@ public:
   static bool IsSpecialIdentifierName(const char * name, size_t nameLength);
   static bool IsLogicalOperator(const char * name, size_t nameLength, Token::Type * returnType);
   static bool IsParameteredExpression(const Expression::FunctionHelper * helper);
-  // True if f^2(x) = f(x)^2 (ex: cos^2(x) = cos(x)^2 but ln^2(x) != ln(x)^2)
-  static bool IsSquarableFunction(const Expression::FunctionHelper * helper);
+  // True if f^n(x) = f(x)^n for n != -1 (ex: cos^2(x) = cos(x)^2 but ln^2(x) != ln(x)^2)
+  static bool IsPowerableFunction(const Expression::FunctionHelper * helper);
 
   // This must be called with an identifier name
   typedef Expression (*IdentifierBuilder) ();

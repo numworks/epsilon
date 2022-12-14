@@ -76,7 +76,7 @@ bool ParsingHelper::IsParameteredExpression(const Expression::FunctionHelper * h
       || helper == &ListSum::s_functionHelper;
 }
 
-bool ParsingHelper::IsSquarableFunction(const Expression::FunctionHelper * helper) {
+bool ParsingHelper::IsPowerableFunction(const Expression::FunctionHelper * helper) {
   return helper == &ArcCosine::s_functionHelper
       || helper == &ArcCosecant::s_functionHelper
       || helper == &HyperbolicArcCosine::s_functionHelper

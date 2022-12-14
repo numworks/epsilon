@@ -91,6 +91,12 @@ bool Expression::isMinusOne() const {
       || (type() == ExpressionNode::Type::Rational && convert<const Rational>().isMinusOne());
 }
 
+bool Expression::isInteger() const {
+  return (type() == ExpressionNode::Type::BasedInteger)
+      || (type() == ExpressionNode::Type::Opposite && childAtIndex(0).isInteger())
+      || (type() == ExpressionNode::Type::Rational && convert<const Rational>().isInteger());
+}
+
 bool Expression::recursivelyMatches(ExpressionTrinaryTest test, Context * context, ExpressionNode::SymbolicComputation replaceSymbols, void * auxiliary) const {
   if (!context) {
     replaceSymbols = ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol;

@@ -146,10 +146,6 @@ void TabViewController::setSelectedTab(int8_t i) {
   m_dataSource->setSelectedTab(i);
 }
 
-void TabViewController::didEnterResponderChain(Responder * previousResponder) {
-  Container::activeApp()->setFirstResponder(activeViewController());
-}
-
 void TabViewController::didBecomeFirstResponder() {
   setSelectedTab(m_dataSource->activeTab());
 }
@@ -157,7 +153,6 @@ void TabViewController::didBecomeFirstResponder() {
 void TabViewController::willResignFirstResponder() {
   setSelectedTab(-1);
 }
-
 
 View * TabViewController::view() {
   return &m_view;

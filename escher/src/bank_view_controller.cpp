@@ -22,7 +22,7 @@ void BankViewController::setActiveIndex(int i) {
   m_view.setSubview(upcomingVC->view());
 }
 
-void BankViewController::didEnterResponderChain(Responder * previousResponder) {
+void BankViewController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(activeViewController());
 }
 

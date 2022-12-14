@@ -14,7 +14,7 @@ public:
     ChainedExpressionsListController(editExpressionController, highlightWholeCells, this) {}
 
   // Responder
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
+  void didBecomeFirstResponder() override;
 
   // MemoizedListViewDataSource
   int numberOfRows() const override;

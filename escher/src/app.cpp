@@ -27,6 +27,9 @@ bool App::processEvent(Ion::Events::Event event) {
 }
 
 void App::setFirstResponder(Responder * responder) {
+  if (m_firstResponder == responder) {
+    return;
+  }
   Responder * previousResponder = m_firstResponder;
   m_firstResponder = responder;
   if (previousResponder) {

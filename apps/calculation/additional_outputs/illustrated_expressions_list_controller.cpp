@@ -11,8 +11,9 @@ using namespace Escher;
 
 namespace Calculation {
 
-void IllustratedExpressionsListController::didEnterResponderChain(Responder * previousFirstResponder) {
+void IllustratedExpressionsListController::didBecomeFirstResponder() {
   selectCellAtLocation(0, showIllustration());
+  ListController::didBecomeFirstResponder();
 }
 
 int IllustratedExpressionsListController::numberOfRows() const {

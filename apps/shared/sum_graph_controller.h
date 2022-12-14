@@ -17,7 +17,7 @@ public:
   SumGraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, FunctionGraphView * curveView, InteractiveCurveViewRange * range, CurveViewCursor * cursor, CodePoint sumSymbol);
 
   void viewWillAppear() override;
-  void didEnterResponderChain(Responder * previousFirstResponder) override;
+  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 

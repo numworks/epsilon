@@ -119,15 +119,37 @@ void Matrix::addChildrenAsRowInPlace(TreeHandle t, int i) {
 }
 
 int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat, bool inPlace) {
-  Matrix m = inPlace ? *this : clone().convert<Matrix>();
+  Expression m;
   ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation);
-  m = m.rowCanonize(systemReductionContext, nullptr);
-  int rank = m.numberOfRows();
+
+  {
+    char * treePoolCursor = TreePool::sharedPool()->cursor();
+    ExceptionCheckpoint ecp;
+    if (ExceptionRun(ecp)) {
+      Matrix cannonizedM = clone().convert<Matrix>();
+      m = cannonizedM.rowCanonize(systemReductionContext, nullptr);
+    } else {
+      /* rowCanonize can create expression that are too big for the pool.
+       * If it's the case, compute the rank with approximated values. */
+      context->tidyDownstreamPoolFrom(treePoolCursor);
+      Expression mApproximation = approximate<double>(context, complexFormat, angleUnit);
+      assert(mApproximation.type() == ExpressionNode::Type::Matrix);
+      m = static_cast<Matrix&>(mApproximation).rowCanonize(systemReductionContext, nullptr);
+    }
+  }
+
+  assert(m.type() == ExpressionNode::Type::Matrix);
+  Matrix cannonizedMatrix = static_cast<Matrix&>(m);
+  if (inPlace) {
+    *this = cannonizedMatrix;
+  }
+
+  int rank = cannonizedMatrix.numberOfRows();
   int i = rank-1;
   while (i >= 0) {
-    int j = m.numberOfColumns()-1;
+    int j = cannonizedMatrix.numberOfColumns()-1;
     // TODO: Handle TrinaryBoolean::Unknown. See rowCanonize comment
-    while (j >= i && matrixChild(i,j).isNull(context) == TrinaryBoolean::True) {
+    while (j >= i && cannonizedMatrix.matrixChild(i,j).isNull(context) == TrinaryBoolean::True) {
       j--;
     }
     if (j <= i-1) {

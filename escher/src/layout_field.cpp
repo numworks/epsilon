@@ -736,6 +736,7 @@ void LayoutField::scrollToBaselinedRect(KDRect rect, KDCoordinate baseline) {
   scrollToContentRect(balancedRect, true);
 }
 
+// TODO: All the algorithm here should be mode in LayoutCursor::addLayoutAndMoveCursor
 void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression correspondingExpression, bool forceCursorRightOfLayout, bool forceCursorLeftOfText) {
   if (layoutR.isUninitialized()) {
     return;
@@ -769,7 +770,7 @@ void LayoutField::insertLayoutAtCursor(Layout layoutR, Poincare::Expression corr
   }
 
   // Add the layout. This puts the cursor at the right of the added layout
-  cursor->addLayoutAndMoveCursor(layoutR, delegateContext());
+  cursor->addLayoutAndMoveCursor(layoutR, delegateContext(), forceCursorRightOfLayout);
 
   /* Move the cursor if needed.
    *

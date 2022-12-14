@@ -204,7 +204,7 @@ int InputBeautification::BeautifyPipeKey(Layout parent, int indexOfPipeKey, Layo
     }
     indexOfMatchingPipeKey -= parent.removeChild(pipeKey, cursorToUse);
     Layout toInsert = k_absoluteValueRule.layoutBuilder(Layout());
-    cursorToUse->addLayoutAndMoveCursor(toInsert, nullptr);
+    cursorToUse->addLayoutAndMoveCursor(toInsert, nullptr, forceCursorRightOfText);
     return indexOfMatchingPipeKey;
   }
   // Case 2: number of pipes is even, beautify |...| as a whole.
@@ -306,7 +306,7 @@ int InputBeautification::RemoveLayoutsBetweenIndexAndReplaceWithPattern(Layout p
     layoutCursor->layout().addGraySquaresToAllGridAncestors();
   }
   // Replace input with pattern
-  tempCursor.addLayoutAndMoveCursor(inserted, nullptr, true);
+  tempCursor.addLayoutAndMoveCursor(inserted, nullptr, forceCursorRightOfText, true);
   if (layoutCursor->layout().isUninitialized() || !layoutCursor->layout().hasAncestor(parent, true)) {
     // Pointed layout has been deleted by beautification. Use the temp cursor.
     layoutCursor->setLayout(tempCursor.layout());

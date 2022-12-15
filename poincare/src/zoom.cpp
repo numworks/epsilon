@@ -174,6 +174,23 @@ void Zoom::fitMagnitude(Function2DWithContext<float> f, const void * model, bool
   magnitudeRange->extend(yMin, m_maxFloat);
 }
 
+void Zoom::fitBounds(Function2DWithContext<float> f, const void * model, bool vertical) {
+  float tMin = m_bounds.min(), tMax = m_bounds.max();
+  if (tMin >= m_maxFloat || tMax >= m_maxFloat) {
+    return;
+  }
+  // Fit the middle of the interval if it's finite
+  float tMiddle = (tMin + tMax) / 2;
+  Coordinate2D<float> middle(f(tMiddle, model, m_context));
+  Coordinate2D<float> pointToFit = vertical ? Coordinate2D<float>(tMiddle, middle.x1()) : Coordinate2D<float>(tMiddle, middle.x2());
+  privateFitPoint(pointToFit, vertical);
+
+ /* Set the default half length in case the middle is the only point
+  * in the interesting range */
+  float halfLength = (tMax - tMin) / 2;
+  m_defaultHalfLength = std::min(m_defaultHalfLength, halfLength);
+}
+
 // Zoom - Private
 
 static Solver<float>::Interest pointIsInterestingHelper(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c, const void * aux) {
@@ -293,7 +310,7 @@ static Range1D sanitationHelper(Range1D range, float defaultHalfLength) {
 }
 
 Range2D Zoom::sanitize2DHelper(Range2D range) const {
-  Range1D xRange = m_forcedRange.x()->isValid() ? *m_forcedRange.x() : sanitationHelper(*range.x(), Range1D::k_defaultHalfLength);
+  Range1D xRange = m_forcedRange.x()->isValid() ? *m_forcedRange.x() : sanitationHelper(*range.x(), m_defaultHalfLength);
   Range1D yRange = m_forcedRange.y()->isValid() ? *m_forcedRange.y() : sanitationHelper(*range.y(), xRange.length() * 0.5f * m_normalRatio);
   return Range2D(xRange, yRange);
 }

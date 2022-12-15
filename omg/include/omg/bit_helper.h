@@ -33,25 +33,37 @@ constexpr void setBitAtIndex(T & mask, size_t i, bool b) {
   }
 }
 
-constexpr inline size_t countLeadingZeros(unsigned int i) {
+constexpr inline size_t countLeadingZeros(uint32_t i) {
   return __builtin_clz(i);
 }
 
-constexpr inline size_t countTrailingZeros(unsigned int i) {
+constexpr inline size_t countTrailingZeros(uint32_t i) {
   return __builtin_ctz(i);
 }
 
-constexpr inline size_t numberOfOnes(unsigned int i) {
+constexpr inline size_t numberOfOnes(uint32_t i) {
   return __builtin_popcount(i);
 }
 
-constexpr inline size_t indexOfMostSignificantBit(unsigned int i) {
-  return numberOfBitsInType<unsigned int>() - countLeadingZeros(i) - 1;
+constexpr inline size_t indexOfMostSignificantBit(uint32_t i) {
+  return numberOfBitsInType<uint32_t>() - countLeadingZeros(i) - 1;
 }
 
-constexpr inline size_t numberOfBitsToCountUpTo(unsigned int i) {
+constexpr inline size_t numberOfBitsToCountUpTo(uint32_t i) {
   assert(i >= 2);
   return indexOfMostSignificantBit(i - 1) + 1;
+}
+
+template <typename T>
+uint8_t log2(T v) {
+  constexpr int nativeUnsignedIntegerBitCount = k_numberOfBitsInByte * sizeof(T);
+  static_assert(nativeUnsignedIntegerBitCount < 256, "uint8_t cannot contain the log2 of a templated class T");
+  for (uint8_t i = 0; i < nativeUnsignedIntegerBitCount; i++) {
+    if (v < (static_cast<T>(1) << i)) {
+      return i;
+    }
+  }
+  return numberOfBitsInType<T>();
 }
 
 }

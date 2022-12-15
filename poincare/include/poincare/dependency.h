@@ -19,7 +19,7 @@ public:
   // Properties
   Type type() const override { return Type::Dependency; }
   int polynomialDegree(Context * context, const char * symbolName) const override { return childAtIndex(0)->polynomialDegree(context, symbolName); }
-  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override { return childAtIndex(0)->getPolynomialCoefficients(context, symbolName, coefficients); }
+  int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const override;
 
   // Layout
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;

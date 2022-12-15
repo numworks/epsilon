@@ -20,6 +20,14 @@ bool DependencyNode::derivate(const ReductionContext& reductionContext, Symbol s
   assert(false); return false;
 }
 
+int DependencyNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
+  int result = childAtIndex(0)->getPolynomialCoefficients(context, symbolName, coefficients);
+  for (int i = 0; i < result; i++) {
+    coefficients[i] = Dependency::Builder(coefficients[i], Expression(childAtIndex(1)).convert<List>());
+  }
+  return result;
+}
+
 int DependencyNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   return SerializationHelper::Prefix(this, buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits, Dependency::s_functionHelper.aliasesList().mainAlias());
 }

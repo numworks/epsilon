@@ -37,17 +37,6 @@ namespace Poincare {
 static native_uint_t s_workingBuffer[Integer::k_maxNumberOfDigits + 1];
 static native_uint_t s_workingBufferDivision[Integer::k_maxNumberOfDigits + 1];
 
-uint8_t log2(native_uint_t v) {
-  constexpr int nativeUnsignedIntegerBitCount = 8*sizeof(native_uint_t);
-  static_assert(nativeUnsignedIntegerBitCount < 256, "uint8_t cannot contain the log2 of a native_uint_t");
-  for (uint8_t i=0; i<nativeUnsignedIntegerBitCount; i++) {
-    if (v < ((native_uint_t)1<<i)) {
-      return i;
-    }
-  }
-  return 32;
-}
-
 static inline int8_t sign(bool negative) {
   return 1 - 2*(int8_t)negative;
 }
@@ -290,7 +279,7 @@ T Integer::approximate() const {
 
   assert(numberOfDigits() > 0);
   native_uint_t lastDigit = digit(numberOfDigits()-1);
-  uint8_t numberOfBitsInLastDigit = log2(lastDigit);
+  uint8_t numberOfBitsInLastDigit = OMG::BitHelper::log2(lastDigit);
 
   bool sign = m_negative;
   uint16_t exponent = IEEE754<T>::exponentOffset();

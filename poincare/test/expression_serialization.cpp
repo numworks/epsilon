@@ -17,9 +17,9 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_serialization_based_integer) {
-  assert_expression_serialize_to(BasedInteger::Builder(Integer(23), Integer::Base::Decimal), "23");
-  assert_expression_serialize_to(BasedInteger::Builder(Integer(23), Integer::Base::Binary), "0b10111");
-  assert_expression_serialize_to(BasedInteger::Builder(Integer(23), Integer::Base::Hexadecimal), "0x17");
+  assert_expression_serialize_to(BasedInteger::Builder(Integer(23), OMG::Base::Decimal), "23");
+  assert_expression_serialize_to(BasedInteger::Builder(Integer(23), OMG::Base::Binary), "0b10111");
+  assert_expression_serialize_to(BasedInteger::Builder(Integer(23), OMG::Base::Hexadecimal), "0x17");
 }
 
 QUIZ_CASE(poincare_serialization_rational) {

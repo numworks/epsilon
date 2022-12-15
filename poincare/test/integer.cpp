@@ -19,9 +19,9 @@ QUIZ_CASE(poincare_integer_constructor) {
   Integer d((int64_t)1234567891011121314);
   Integer nd((int64_t)(-1234567891011121314));
   Integer e = Integer::Overflow(false);
-  Integer f("101011", 6, false, Integer::Base::Binary);
-  Integer g("A2B3", 4, false, Integer::Base::Hexadecimal);
-  Integer h("123", 3, false, Integer::Base::Decimal);
+  Integer f("101011", 6, false, OMG::Base::Binary);
+  Integer g("A2B3", 4, false, OMG::Base::Hexadecimal);
+  Integer h("123", 3, false, OMG::Base::Decimal);
 }
 
 static inline void assert_equal(const Integer i, const Integer j) {
@@ -215,7 +215,7 @@ QUIZ_CASE(poincare_integer_factorial) {
 // Simplify
 
 template<typename T>
-void assert_integer_evals_to(const char * i, T result, Integer::Base base = Integer::Base::Decimal) {
+void assert_integer_evals_to(const char * i, T result, OMG::Base base = OMG::Base::Decimal) {
   quiz_assert(Integer(i, strlen(i), false, base).approximate<T>() == result);
 }
 
@@ -273,14 +273,14 @@ QUIZ_CASE(poincare_integer_evaluate) {
 #pragma GCC diagnostic pop
 
   // Based Integer
-  assert_integer_evals_to("1011", 11.0f, Integer::Base::Binary);
-  assert_integer_evals_to("2A", 42.0f, Integer::Base::Hexadecimal);
-  assert_integer_evals_to("42", 42.0f, Integer::Base::Decimal);
+  assert_integer_evals_to("1011", 11.0f, OMG::Base::Binary);
+  assert_integer_evals_to("2A", 42.0f, OMG::Base::Hexadecimal);
+  assert_integer_evals_to("42", 42.0f, OMG::Base::Decimal);
 }
 
 //Serialize
 
-static inline void assert_integer_serializes_to(const Integer i, const char * serialization, Integer::Base base = Integer::Base::Decimal) {
+static inline void assert_integer_serializes_to(const Integer i, const char * serialization, OMG::Base base = OMG::Base::Decimal) {
   char buffer[500];
   i.serialize(buffer, 500, base);
   quiz_assert(strcmp(buffer, serialization) == 0);
@@ -290,9 +290,9 @@ QUIZ_CASE(poincare_integer_serialize) {
   assert_integer_serializes_to(Integer(-2), "-2");
   assert_integer_serializes_to(Integer("2345678909876"), "2345678909876");
   assert_integer_serializes_to(Integer("-2345678909876"), "-2345678909876");
-  assert_integer_serializes_to(Integer(9), "0b1001", Integer::Base::Binary);
-  assert_integer_serializes_to(Integer(9131), "0x23AB", Integer::Base::Hexadecimal);
-  assert_integer_serializes_to(Integer(123), "123", Integer::Base::Decimal);
+  assert_integer_serializes_to(Integer(9), "0b1001", OMG::Base::Binary);
+  assert_integer_serializes_to(Integer(9131), "0x23AB", OMG::Base::Hexadecimal);
+  assert_integer_serializes_to(Integer(123), "123", OMG::Base::Decimal);
   assert_integer_serializes_to(Integer("-2345678909876"), "-2345678909876");
   assert_integer_serializes_to(MaxInteger(), MaxIntegerString());
   assert_integer_serializes_to(OverflowedInteger(), Infinity::Name());

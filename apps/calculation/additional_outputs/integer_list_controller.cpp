@@ -11,15 +11,15 @@ using namespace Shared;
 
 namespace Calculation {
 
-Integer::Base baseAtIndex(int index) {
+OMG::Base baseAtIndex(int index) {
   switch (index) {
     case 0:
-      return Integer::Base::Decimal;
+      return OMG::Base::Decimal;
     case 1:
-      return Integer::Base::Hexadecimal;
+      return OMG::Base::Hexadecimal;
     default:
       assert(index == 2);
-      return Integer::Base::Binary;
+      return OMG::Base::Binary;
   }
 }
 

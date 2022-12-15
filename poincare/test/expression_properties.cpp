@@ -46,9 +46,9 @@
 using namespace Poincare;
 
 QUIZ_CASE(poincare_properties_is_number) {
-  quiz_assert(BasedInteger::Builder("2",Integer::Base::Binary).isNumber());
-  quiz_assert(BasedInteger::Builder("2",Integer::Base::Decimal).isNumber());
-  quiz_assert(BasedInteger::Builder("2",Integer::Base::Hexadecimal).isNumber());
+  quiz_assert(BasedInteger::Builder("2",OMG::Base::Binary).isNumber());
+  quiz_assert(BasedInteger::Builder("2",OMG::Base::Decimal).isNumber());
+  quiz_assert(BasedInteger::Builder("2",OMG::Base::Hexadecimal).isNumber());
   quiz_assert(Decimal::Builder("2",3).isNumber());
   quiz_assert(Float<float>::Builder(1.0f).isNumber());
   quiz_assert(Infinity::Builder(true).isNumber());
@@ -61,12 +61,12 @@ QUIZ_CASE(poincare_properties_is_number) {
 
 QUIZ_CASE(poincare_properties_is_number_zero) {
   Shared::GlobalContext context;
-  quiz_assert(BasedInteger::Builder("2",Integer::Base::Binary).isNull(&context) == TrinaryBoolean::False );
-  quiz_assert(BasedInteger::Builder("2",Integer::Base::Decimal).isNull(&context) == TrinaryBoolean::False );
-  quiz_assert(BasedInteger::Builder("2",Integer::Base::Hexadecimal).isNull(&context) == TrinaryBoolean::False );
-  quiz_assert(BasedInteger::Builder("0",Integer::Base::Binary).isNull(&context) == TrinaryBoolean::True );
-  quiz_assert(BasedInteger::Builder("0",Integer::Base::Decimal).isNull(&context) == TrinaryBoolean::True );
-  quiz_assert(BasedInteger::Builder("0",Integer::Base::Hexadecimal).isNull(&context) == TrinaryBoolean::True );
+  quiz_assert(BasedInteger::Builder("2",OMG::Base::Binary).isNull(&context) == TrinaryBoolean::False );
+  quiz_assert(BasedInteger::Builder("2",OMG::Base::Decimal).isNull(&context) == TrinaryBoolean::False );
+  quiz_assert(BasedInteger::Builder("2",OMG::Base::Hexadecimal).isNull(&context) == TrinaryBoolean::False );
+  quiz_assert(BasedInteger::Builder("0",OMG::Base::Binary).isNull(&context) == TrinaryBoolean::True );
+  quiz_assert(BasedInteger::Builder("0",OMG::Base::Decimal).isNull(&context) == TrinaryBoolean::True );
+  quiz_assert(BasedInteger::Builder("0",OMG::Base::Hexadecimal).isNull(&context) == TrinaryBoolean::True );
   quiz_assert(Decimal::Builder("2",3).isNull(&context) == TrinaryBoolean::False );
   quiz_assert(Decimal::Builder("0",0).isNull(&context) == TrinaryBoolean::True );
   quiz_assert(Float<float>::Builder(1.0f).isNull(&context) == TrinaryBoolean::False );
@@ -116,9 +116,9 @@ QUIZ_CASE(poincare_properties_is_parametered_expression) {
 }
 
 QUIZ_CASE(poincare_properties_is_rational_number) {
-  quiz_assert(BasedInteger::Builder("2",Integer::Base::Binary).isAlternativeFormOfRationalNumber());
-  quiz_assert(BasedInteger::Builder("2",Integer::Base::Decimal).isAlternativeFormOfRationalNumber());
-  quiz_assert(BasedInteger::Builder("2",Integer::Base::Hexadecimal).isAlternativeFormOfRationalNumber());
+  quiz_assert(BasedInteger::Builder("2",OMG::Base::Binary).isAlternativeFormOfRationalNumber());
+  quiz_assert(BasedInteger::Builder("2",OMG::Base::Decimal).isAlternativeFormOfRationalNumber());
+  quiz_assert(BasedInteger::Builder("2",OMG::Base::Hexadecimal).isAlternativeFormOfRationalNumber());
   quiz_assert(Decimal::Builder("2",3).isAlternativeFormOfRationalNumber());
   quiz_assert(Rational::Builder(2,3).isAlternativeFormOfRationalNumber());
   quiz_assert(Opposite::Builder(Rational::Builder(2,3)).isAlternativeFormOfRationalNumber());
@@ -211,9 +211,9 @@ QUIZ_CASE(poincare_properties_decimal_sign) {
 }
 
 QUIZ_CASE(poincare_properties_based_integer_sign) {
-  quiz_assert(BasedInteger::Builder(2, Integer::Base::Binary).isPositive() == TrinaryBoolean::True);
-  quiz_assert(BasedInteger::Builder(2, Integer::Base::Decimal).isPositive() == TrinaryBoolean::True);
-  quiz_assert(BasedInteger::Builder(2, Integer::Base::Hexadecimal).isPositive() == TrinaryBoolean::True);
+  quiz_assert(BasedInteger::Builder(2, OMG::Base::Binary).isPositive() == TrinaryBoolean::True);
+  quiz_assert(BasedInteger::Builder(2, OMG::Base::Decimal).isPositive() == TrinaryBoolean::True);
+  quiz_assert(BasedInteger::Builder(2, OMG::Base::Hexadecimal).isPositive() == TrinaryBoolean::True);
 }
 
 QUIZ_CASE(poincare_properties_rational_sign) {
@@ -232,7 +232,7 @@ QUIZ_CASE(poincare_properties_expression_sign) {
   quiz_assert(Ceiling::Builder(Rational::Builder(7,3)).isPositive(&context) == TrinaryBoolean::Unknown);
   quiz_assert(Floor::Builder(Rational::Builder(7,3)).isPositive(&context) == TrinaryBoolean::Unknown);
   quiz_assert(Round::Builder(Rational::Builder(7,3), Rational::Builder(1)).isPositive(&context) == TrinaryBoolean::True);
-  quiz_assert(Conjugate::Builder(ComplexCartesian::Builder(Rational::Builder(2, 3), BasedInteger::Builder(0, Integer::Base::Binary))).isPositive(&context) == TrinaryBoolean::True);
+  quiz_assert(Conjugate::Builder(ComplexCartesian::Builder(Rational::Builder(2, 3), BasedInteger::Builder(0, OMG::Base::Binary))).isPositive(&context) == TrinaryBoolean::True);
   quiz_assert(DivisionRemainder::Builder(Decimal::Builder(2.0), Decimal::Builder(3.0)).isPositive(&context) == TrinaryBoolean::True);
   quiz_assert(AbsoluteValue::Builder(Rational::Builder(-14)).isPositive(&context) == TrinaryBoolean::True);
   quiz_assert(FracPart::Builder(Rational::Builder(-7,3)).isPositive(&context) == TrinaryBoolean::True);

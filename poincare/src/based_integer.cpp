@@ -13,7 +13,7 @@ namespace Poincare {
 
 /* Based integer Node */
 
-BasedIntegerNode::BasedIntegerNode(const native_uint_t * digits, uint8_t size, Integer::Base base) :
+BasedIntegerNode::BasedIntegerNode(const native_uint_t * digits, uint8_t size, OMG::Base base) :
   NumberNode(),
   m_base(base),
   m_numberOfDigits(size)
@@ -84,12 +84,12 @@ Expression BasedIntegerNode::shallowReduce(const ReductionContext& reductionCont
 
 // Constructors
 
-BasedInteger BasedInteger::Builder(const char * digits, size_t length, Integer::Base base) {
+BasedInteger BasedInteger::Builder(const char * digits, size_t length, OMG::Base base) {
   Integer m(digits, length, false, base);
   return Builder(m, base);
 }
 
-BasedInteger BasedInteger::Builder(const Integer & m, Integer::Base base) {
+BasedInteger BasedInteger::Builder(const Integer & m, OMG::Base base) {
   void * bufferNode = TreePool::sharedPool()->alloc(BasedIntegerSize(m.numberOfDigits()));
   BasedIntegerNode * node = new (bufferNode) BasedIntegerNode(m.digits(), m.numberOfDigits(), base);
   TreeHandle h = TreeHandle::BuildWithGhostChildren(node);

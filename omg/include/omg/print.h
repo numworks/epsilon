@@ -3,21 +3,16 @@
 
 #include <assert.h>
 #include <omg/bit_helper.h>
+#include <omg/enums.h>
 #include <stdint.h>
 
 namespace OMG {
 
 /* TODO: merge Poincare::PrintInt, Poincare::PrintFloat and Poincare::Print
  * into Utils::Print
- * TODO: use Print::BinaryCharacterForDigit in poincare/src/integer.cpp */
+ */
 
 namespace Print {
-
-enum class Base : uint8_t {
-  Binary = 2,
-  Decimal = 10,
-  Hexadecimal = 16
-};
 
 inline char CharacterForDigit(Base base, uint8_t d) {
   assert(d >= 0 && d < static_cast<uint8_t>(base));
@@ -27,7 +22,22 @@ inline char CharacterForDigit(Base base, uint8_t d) {
   return d + '0';
 }
 
-constexpr size_t LengthOfUInt32(Base base) { return OMG::BitHelper::numberOfBitsInType<uint32_t>() / OMG::BitHelper::numberOfBitsToCountUpTo(static_cast<uint8_t>(base)); }
+inline uint8_t DigitForCharacter(char c) {
+  assert(c >= '0');
+  if (c <= '9') {
+    return c - '0';
+  }
+  if (c <= 'F') {
+    assert(c >= 'A');
+    return c - 'A' + 10;
+  }
+  assert(c >= 'a' && c <= 'f');
+  return c - 'a' + 10;
+}
+
+constexpr size_t MaxLengthOfUInt32(Base base) { return OMG::BitHelper::numberOfBitsInType<uint32_t>() / OMG::BitHelper::numberOfBitsToCountUpTo(static_cast<uint8_t>(base)); }
+
+constexpr size_t LengthOfUInt32(Base base, uint32_t integer) { return integer == 0 ? 1 : OMG::BitHelper::indexOfMostSignificantBit(integer) / OMG::BitHelper::numberOfBitsToCountUpTo(static_cast<uint8_t>(base)) + 1; }
 
 int UInt32(Base base, uint32_t integer, char * buffer, int bufferSize);
 

@@ -3,7 +3,7 @@
 
 using namespace OMG;
 
-void assert_int_prints_as(uint32_t integer, const char * result, Print::Base base) {
+void assert_int_prints_as(uint32_t integer, const char * result, Base base) {
   constexpr int bufferSize = OMG::BitHelper::numberOfBitsInType<uint32_t>() + 1;
   char buffer[bufferSize];
   for (int i = 0; i < bufferSize; i++) {
@@ -14,9 +14,9 @@ void assert_int_prints_as(uint32_t integer, const char * result, Print::Base bas
 }
 
 QUIZ_CASE(omg_print_integer) {
-  assert_int_prints_as(1, "00000000000000000000000000000001", Print::Base::Binary);
-  assert_int_prints_as(0, "00000000000000000000000000000000", Print::Base::Binary);
-  assert_int_prints_as(3, "00000000000000000000000000000011", Print::Base::Binary);
-  assert_int_prints_as(12, "0000000C", Print::Base::Hexadecimal);
-  assert_int_prints_as(17, "00000011", Print::Base::Hexadecimal);
+  assert_int_prints_as(1, "1", Base::Binary);
+  assert_int_prints_as(0, "0", Base::Binary);
+  assert_int_prints_as(3, "11", Base::Binary);
+  assert_int_prints_as(12, "C", Base::Hexadecimal);
+  assert_int_prints_as(17, "11", Base::Hexadecimal);
 }

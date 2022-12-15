@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include <limits.h>
+#include <omg/print.h>
 #include <poincare/horizontal_layout.h>
 
 namespace Poincare {
@@ -63,7 +64,7 @@ public:
   static Integer BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
   Integer(native_int_t i = 0);
   Integer(double_native_int_t i);
-  Integer(const char * digits, size_t length, bool negative, Base base = Base::Decimal);
+  Integer(const char * digits, size_t length, bool negative, OMG::Base base = OMG::Base::Decimal);
   Integer(const char * digits) : Integer(digits, strlen(digits), false) {}
   static Integer Overflow(bool negative) { return Integer(TreeNode::OverflowIdentifier, negative); }
 
@@ -101,10 +102,10 @@ public:
   void setNegative(bool negative) { m_negative = numberOfDigits() > 0 ? negative : false; } // 0 is always positive
 
   // Serialization
-  int serialize(char * buffer, int bufferSize, Base base = Base::Decimal) const;
+  int serialize(char * buffer, int bufferSize, OMG::Base base = OMG::Base::Decimal) const;
 
   // Layout
-  Layout createLayout(Base base = Base::Decimal) const;
+  Layout createLayout(OMG::Base base = OMG::Base::Decimal) const;
 
   // Approximation
   template<typename T> T approximate() const;
@@ -178,7 +179,7 @@ private:
 
   // Serialization
   typedef char (*CharacterForDigit)(uint8_t d);
-  int serializeInBinaryBase(char * buffer, int bufferSize, int bitsPerDigit, char symbol, CharacterForDigit charForDigit) const;
+  int serializeInBinaryBase(char * buffer, int bufferSize, char symbol, OMG::Base base) const;
   int serializeInDecimal(char * buffer, int bufferSize) const;
 
   /* buffer has to be k_maxNumberOfDigits+1 to allow temporary overflow (ie, in

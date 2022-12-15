@@ -168,11 +168,8 @@ public:
   bool basedLogarithmIsForbidden() const;
   bool sumIsForbidden() const;
   bool exactResultsAreForbidden() const;
-private:
-  constexpr static int k_pressToTestParamsPersistingByteIndex = 0;
-  constexpr static int k_examModePersistingByteIndex = 1;
-  static_assert(k_examModePersistingByteIndex == 1, "k_examModePersistingByteIndex != 1 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
 
+private:
   void updateExamModeFromPersistingBytesIfNeeded() const;
 
   AngleUnit m_angleUnit;

@@ -52,6 +52,8 @@ private:
   App(Snapshot * snapshot);
   // TextFieldDelegateApp
   bool isAcceptableExpression(const Poincare::Expression expression) override;
+  // ExpressionFieldDelegateApp
+  bool willStore(Poincare::Store store) override;
 
   // Controllers
   SolutionsController m_solutionsController;

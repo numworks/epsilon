@@ -2,11 +2,13 @@
 #define SHARED_EXPRESSION_FIELD_DELEGATE_APP_H
 
 #include "text_field_delegate_app.h"
+#include <poincare/store.h>
 #include <escher/layout_field_delegate.h>
 
 namespace Shared {
 
 class ExpressionFieldDelegateApp : public TextFieldDelegateApp, public Escher::LayoutFieldDelegate {
+  friend class ::StoreMenuController;
 public:
   virtual ~ExpressionFieldDelegateApp() = default;
   bool layoutFieldShouldFinishEditing(Escher::LayoutField * layoutField, Ion::Events::Event event) override;
@@ -18,6 +20,8 @@ protected:
   ExpressionFieldDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
   bool handleEvent(Ion::Events::Event event) override;
   bool isStoreMenuOpen() const;
+  virtual bool willStore(Poincare::Store store) { return true; };
+  virtual void didStore() {};
 
 private:
   StoreMenuController m_storeMenuController;

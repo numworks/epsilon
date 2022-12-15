@@ -19,6 +19,15 @@ ExpressionNode::Type ListAccessNode<2>::type() const {
   return Type::ListSlice;
 }
 
+template<int U>
+int ListAccessNode<U>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
+  int written = childAtIndex(k_listChildIndex)->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  if (written == -1 || bufferSize - written <= 0) {
+    return -1;
+  }
+  return written + SerializationHelper::Prefix(this, buffer + written, bufferSize - written, floatDisplayMode, numberOfSignificantDigits, "", SerializationHelper::ParenthesisType::Classic, U - 1);
+}
+
 template<>
 Layout ListAccessNode<1>::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   HorizontalLayout result = HorizontalLayout::Builder();
@@ -186,6 +195,8 @@ Expression ListSlice::shallowReduce(ExpressionNode::ReductionContext reductionCo
   return std::move(typedList);
 }
 
+template int ListAccessNode<1>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
+template int ListAccessNode<2>::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const;
 template Evaluation<float> ListAccessNode<1>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
 template Evaluation<float> ListAccessNode<2>::templatedApproximate<float>(const ApproximationContext& approximationContext) const;
 template Evaluation<double> ListAccessNode<1>::templatedApproximate<double>(const ApproximationContext& approximationContext) const;

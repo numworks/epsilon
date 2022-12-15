@@ -838,6 +838,8 @@ void Parser::privateParseCustomIdentifier(Expression & leftHandSide, const char 
   int numberOfParameters = parameter.numberOfChildren();
   Expression result;
   if (numberOfParameters == 2) {
+    /* If you change how list accesses are parsed, change it also in parseList
+     * or factorize it. */
     result = ListSlice::Builder(parameter.childAtIndex(0), parameter.childAtIndex(1), Symbol::Builder(name, length));
   } else if (numberOfParameters == 1) {
     parameter = parameter.childAtIndex(0);

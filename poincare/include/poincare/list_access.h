@@ -23,13 +23,7 @@ public:
   LayoutShape leftLayoutShape() const override { return LayoutShape::BoundaryPunctuation; };
 
 private:
-  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override {
-    int written = childAtIndex(k_listChildIndex)->serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
-    if (written == -1 || bufferSize - written <= 0) {
-      return -1;
-    }
-    return written + SerializationHelper::Prefix(this, buffer + written, bufferSize - written, floatDisplayMode, numberOfSignificantDigits, "", SerializationHelper::ParenthesisType::Classic, U - 1);
-  }
+  int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
 
   Expression shallowReduce(const ReductionContext& reductionContext) override;

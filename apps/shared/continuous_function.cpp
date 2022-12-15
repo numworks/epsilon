@@ -342,10 +342,13 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
        * Symbols are replaced to simplify roots. */
       Expression coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
       int degree = m_expression.getPolynomialReducedCoefficients(
-          willBeAlongX ? ContinuousFunctionProperties::k_ordinateName : k_unknownName, coefficients, context,
-          preferences.complexFormat(), preferences.angleUnit(), ContinuousFunctionProperties::k_defaultUnitFormat,
-          ExpressionNode::SymbolicComputation::
-              ReplaceAllDefinedSymbolsWithDefinition);
+          willBeAlongX ? ContinuousFunctionProperties::k_ordinateName : k_unknownName, coefficients,
+          context,
+          preferences.complexFormat(),
+          preferences.angleUnit(),
+          ContinuousFunctionProperties::k_defaultUnitFormat,
+          ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+          true);
       assert(!willBeAlongX || degree == yDegree);
       if (degree == 1) {
         Polynomial::LinearPolynomialRoots(

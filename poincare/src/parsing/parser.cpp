@@ -1018,7 +1018,7 @@ void Parser::parseList(Expression & leftHandSide, Token::Type stoppingType) {
 
 bool IsIntegerBaseTenOrEmptyExpression(Expression e) {
   return (e.type() == ExpressionNode::Type::BasedInteger
-            && static_cast<BasedInteger &>(e).base() == Integer::Base::Decimal)
+            && static_cast<BasedInteger &>(e).base() == OMG::Base::Decimal)
           || e.type() == ExpressionNode::Type::EmptyExpression;
 }
 bool Parser::generateMixedFractionIfNeeded(Expression & leftHandSide) {

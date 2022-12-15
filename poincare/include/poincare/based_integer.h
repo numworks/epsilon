@@ -9,10 +9,10 @@ namespace Poincare {
 
 class BasedIntegerNode final : public NumberNode {
 public:
-  BasedIntegerNode(const native_uint_t * digits, uint8_t size, Integer::Base base);
+  BasedIntegerNode(const native_uint_t * digits, uint8_t size, OMG::Base base);
 
   Integer integer() const;
-  Integer::Base base() const { return m_base; }
+  OMG::Base base() const { return m_base; }
 
   // TreeNode
   size_t size() const override;
@@ -45,8 +45,8 @@ public:
 private:
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
   Expression shallowReduce(const ReductionContext& reductionContext) override;
-  LayoutShape leftLayoutShape() const override { return m_base == Integer::Base::Decimal ? LayoutShape::Integer : LayoutShape::Default; }
-  Integer::Base m_base;
+  LayoutShape leftLayoutShape() const override { return m_base == OMG::Base::Decimal ? LayoutShape::Integer : LayoutShape::Default; }
+  OMG::Base m_base;
   uint8_t m_numberOfDigits;
   native_uint_t m_digits[0];
 };
@@ -56,15 +56,15 @@ class BasedInteger final : public Number {
 public:
   /* The constructor build a irreductible fraction */
   BasedInteger(const BasedIntegerNode * node) : Number(node) {}
-  static BasedInteger Builder(const char * digits, size_t size, Integer::Base base);
-  static BasedInteger Builder(const Integer & m, Integer::Base base = Integer::Base::Decimal);
+  static BasedInteger Builder(const char * digits, size_t size, OMG::Base base);
+  static BasedInteger Builder(const Integer & m, OMG::Base base = OMG::Base::Decimal);
 
   // TreeNode
   BasedIntegerNode * node() const { return static_cast<BasedIntegerNode *>(Number::node()); }
 
   // Properties
   Integer integer() const { return node()->integer(); }
-  Integer::Base base() const { return node()->base(); }
+  OMG::Base base() const { return node()->base(); }
 
 private:
   BasedIntegerNode * node() { return static_cast<BasedIntegerNode *>(Number::node()); }

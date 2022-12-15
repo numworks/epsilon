@@ -48,10 +48,6 @@ uint8_t log2(native_uint_t v) {
   return 32;
 }
 
-static inline char char_from_digit(native_uint_t digit) {
-  return '0'+digit;
-}
-
 static inline int8_t sign(bool negative) {
   return 1 - 2*(int8_t)negative;
 }
@@ -142,20 +138,7 @@ Integer::Integer(double_native_int_t i) {
   }
 }
 
-int integerFromCharDigit(char c) {
-  assert(c >= '0');
-  if (c <= '9') {
-    return c - '0';
-  }
-  if (c <= 'F') {
-    assert(c >= 'A');
-    return c - 'A' + 10;
-  }
-  assert(c >= 'a' && c <= 'f');
-    return c - 'a' + 10;
-}
-
-Integer::Integer(const char * digits, size_t length, bool negative, Base b) :
+Integer::Integer(const char * digits, size_t length, bool negative, OMG::Base b) :
   Integer(0)
 {
   if (digits != nullptr && UTF8Helper::CodePointIs(digits, '-')) {
@@ -167,7 +150,7 @@ Integer::Integer(const char * digits, size_t length, bool negative, Base b) :
     Integer base((int)b);
     for (size_t i = 0; i < length; i++) {
       *this = Multiplication(*this, base);
-      *this = Addition(*this, Integer(integerFromCharDigit(*digits)));
+      *this = Addition(*this, Integer(OMG::Print::DigitForCharacter(*digits)));
       digits++;
     }
   }
@@ -176,19 +159,7 @@ Integer::Integer(const char * digits, size_t length, bool negative, Base b) :
 
 // Serialization
 
-char binaryCharacterForDigit(uint8_t d) {
-  assert(d == 0 || d == 1);
-  return d == 0 ? '0' : '1';
-}
-
-char hexadecimalCharacterForDigit(uint8_t d) {
-  if (d >= 10) {
-    return 'A' + d - 10;
-  }
-  return d + '0';
-}
-
-int Integer::serialize(char * buffer, int bufferSize, Base base) const {
+int Integer::serialize(char * buffer, int bufferSize, OMG::Base base) const {
   if (bufferSize == 0) {
     return bufferSize-1;
   }
@@ -200,13 +171,13 @@ int Integer::serialize(char * buffer, int bufferSize, Base base) const {
     return PrintFloat::ConvertFloatToText<float>(m_negative ? -INFINITY : INFINITY, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal).CharLength;
   }
   switch (base) {
-    case Base::Binary:
-      return serializeInBinaryBase(buffer, bufferSize, 1, 'b', binaryCharacterForDigit);
-    case Base::Decimal:
+    case OMG::Base::Binary:
+      return serializeInBinaryBase(buffer, bufferSize, 'b', OMG::Base::Binary);
+    case OMG::Base::Decimal:
       return serializeInDecimal(buffer, bufferSize);
     default:
-      assert(base == Base::Hexadecimal);
-      return serializeInBinaryBase(buffer, bufferSize, 4, 'x', hexadecimalCharacterForDigit);
+      assert(base == OMG::Base::Hexadecimal);
+      return serializeInBinaryBase(buffer, bufferSize, 'x', OMG::Base::Hexadecimal);
   }
 }
 
@@ -225,7 +196,7 @@ int Integer::serializeInDecimal(char * buffer, int bufferSize) const {
 
   while (!(d.remainder.isZero() &&
         d.quotient.isZero())) {
-    char c = char_from_digit(d.remainder.isZero() ? 0 : d.remainder.digit(0));
+    char c = OMG::Print::CharacterForDigit(OMG::Base::Decimal, d.remainder.isZero() ? 0 : d.remainder.digit(0));
     if (length >= bufferSize-1) {
       return PrintFloat::ConvertFloatToText<float>(NAN, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength, PrintFloat::k_numberOfStoredSignificantDigits, Preferences::PrintFloatMode::Decimal).CharLength;
     }
@@ -244,7 +215,7 @@ int Integer::serializeInDecimal(char * buffer, int bufferSize) const {
   return length;
 }
 
-int Integer::serializeInBinaryBase(char * buffer, int bufferSize, int bitsPerDigit, char symbol, CharacterForDigit charForDigit) const {
+int Integer::serializeInBinaryBase(char * buffer, int bufferSize, char symbol, OMG::Base base) const {
   int currentChar = 0;
   // Check that we can at least write "0x0"
   if (bufferSize <= 4) {
@@ -263,44 +234,24 @@ int Integer::serializeInBinaryBase(char * buffer, int bufferSize, int bitsPerDig
   }
 
   // Compute the required bufferSize to print the integer
-  // TODO: share this code with exam mode new version
-  native_uint_t lastDigit = digit(nbOfDigits-1);
-  int minShift = 0;
-  int maxShift = 32;
-  while (maxShift > minShift+1) {
-    int shift = (minShift + maxShift)/2;
-    native_uint_t shifted = lastDigit >> shift;
-    if (shifted == 0) {
-      maxShift = shift;
-    } else {
-      minShift = shift;
-    }
-  }
-  int requiredBufferSize = ((nbOfDigits-1)*32+(maxShift+bitsPerDigit-1))/bitsPerDigit;
+  int requiredBufferSize = OMG::Print::MaxLengthOfUInt32(base) * (nbOfDigits - 1) + OMG::Print::LengthOfUInt32(base, digit(nbOfDigits - 1));
   // Don't forget 0x prefix and the null termination
   requiredBufferSize += 3;
   if (requiredBufferSize > bufferSize) {
     return bufferSize-1;
   }
 
-  currentChar = requiredBufferSize - 1;
-  buffer[currentChar--] = 0;
-  uint8_t first4bits = ((1 << bitsPerDigit) - 1);
-  for (int i = 0; i < nbOfDigits; i++) {
-    for (int j = 0; j < 32/bitsPerDigit; j++) {
-      char d = (digit(i) >> j*bitsPerDigit) & first4bits;
-      buffer[currentChar--] = charForDigit(d);
-      if (currentChar == 1) {
-        return requiredBufferSize-1;
-      }
-    }
+  buffer[requiredBufferSize - 1] = 0;
+  for (int i = nbOfDigits - 1; i >= 0; i--) {
+    currentChar += OMG::Print::UInt32(base, digit(i), buffer + currentChar, bufferSize - currentChar);
+    assert(currentChar < requiredBufferSize);
   }
-  return requiredBufferSize-1;
+  return requiredBufferSize - 1;
 }
 
 // Layout
 
-Layout Integer::createLayout(Base base) const {
+Layout Integer::createLayout(OMG::Base base) const {
   constexpr int bufferSize = k_maxNumberOfDigitsBase10 + 1;
   char buffer[bufferSize];
   int numberOfChars = serialize(buffer, bufferSize, base);

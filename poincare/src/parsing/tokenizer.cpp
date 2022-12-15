@@ -87,7 +87,7 @@ Token Tokenizer::popNumber() {
       size_t binaryOrHexaLength = binary ? popBinaryDigits() : popHexadecimalDigits();
       if (binaryOrHexaLength > 0) {
         Token result(binary ? Token::Type::BinaryNumber : Token::Type::HexadecimalNumber);
-        result.setExpression(BasedInteger::Builder(binaryOrHexaText, binaryOrHexaLength, binary ? Integer::Base::Binary : Integer::Base::Hexadecimal));
+        result.setExpression(BasedInteger::Builder(binaryOrHexaText, binaryOrHexaLength, binary ? OMG::Base::Binary : OMG::Base::Hexadecimal));
         result.setString(integralPartText, integralPartLength + 1 + binaryOrHexaLength);
         return result;
       } else {

@@ -161,8 +161,8 @@ QUIZ_CASE(poincare_parsing_parse_numbers) {
   assert_parsed_expression_is(MaxParsedIntegerString(), BasedInteger::Builder(MaxParsedIntegerString()));
 
   // Parsed Based integer
-  assert_parsed_expression_is("0b1011", BasedInteger::Builder("1011", 4, Integer::Base::Binary));
-  assert_parsed_expression_is("0x12AC", BasedInteger::Builder("12AC", 4, Integer::Base::Hexadecimal));
+  assert_parsed_expression_is("0b1011", BasedInteger::Builder("1011", 4, OMG::Base::Binary));
+  assert_parsed_expression_is("0x12AC", BasedInteger::Builder("12AC", 4, OMG::Base::Hexadecimal));
 
   // Integer parsed in Decimal because they overflow Integer
   assert_parsed_expression_is(ApproximatedParsedIntegerString(), Float<double>::Builder(1.0e30));

@@ -51,7 +51,7 @@ Number Number::ParseNumber(const char * integralPart, size_t integralLength, con
     if (i.isNotParsable(integralLength)) {
       return Number::FloatNumber(i.approximate<double>());
     } else {
-      return BasedInteger::Builder(i, Integer::Base::Decimal);
+      return BasedInteger::Builder(i, OMG::Base::Decimal);
     }
   }
   int exp;

@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "poincare_helpers.h"
 #include "text_field_delegate_app.h"
+#include <apps/shared/expression_field_delegate_app.h>
 
 using namespace Poincare;
 using namespace Escher;
@@ -101,27 +102,34 @@ void StoreMenuController::openAbortWarning() {
 }
 
 bool StoreMenuController::parseAndStore(const char * text) {
-  Expression input = Expression::Parse(text, Container::activeApp()->localContext());
+  Shared::ExpressionFieldDelegateApp * app = static_cast<Shared::ExpressionFieldDelegateApp*>(Container::activeApp());
+  Poincare::Context * context = app->localContext();
+  Expression input = Expression::Parse(text, context);
   if (input.isUninitialized()) {
     openAbortWarning();
     return false;
   }
   Expression reducedExp = input;
-  Shared::PoincareHelpers::CloneAndSimplify(&reducedExp, Container::activeApp()->localContext(), Poincare::ExpressionNode::ReductionTarget::User);
+  Shared::PoincareHelpers::CloneAndSimplify(&reducedExp, context, Poincare::ExpressionNode::ReductionTarget::User);
   if (reducedExp.type() != ExpressionNode::Type::Store) {
     openAbortWarning();
     return false;
   }
   bool isVariable = reducedExp.childAtIndex(1).type() == Poincare::ExpressionNode::Type::Symbol;
-  if (isVariable && Shared::Utils::ShouldOnlyDisplayApproximation(input, reducedExp, Container::activeApp()->localContext())) {
-    reducedExp.replaceChildAtIndexInPlace(0, Shared::PoincareHelpers::ApproximateKeepingUnits<double>(reducedExp.childAtIndex(0), Container::activeApp()->localContext()));
+  if (isVariable && Shared::Utils::ShouldOnlyDisplayApproximation(input, reducedExp, context)) {
+    reducedExp.replaceChildAtIndexInPlace(0, Shared::PoincareHelpers::ApproximateKeepingUnits<double>(reducedExp.childAtIndex(0), context));
   }
   Store store = static_cast<Store&>(reducedExp);
+  bool proceedToStore = app->willStore(store);
+  close();
+  if (!proceedToStore) {
+    return true;
+  }
   // Update the store before closing so that isStoreMenuOpen can be used
-  if (!store.storeValueForSymbol(Container::activeApp()->localContext())) {
+  if (!store.storeValueForSymbol(context)) {
     // TODO : The record deletion has been denied. Add a warning.
   }
-  close();
+  app->didStore();
   return true;
 }
 

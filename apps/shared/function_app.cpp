@@ -16,10 +16,6 @@ void FunctionApp::Snapshot::reset() {
 }
 
 bool FunctionApp::storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) {
-  /* Prevent functions from being (re)defined from the store menu.
-   * Variables can be changed even if they are used in functions.
-   * Warning: this has no effect on Sequence yet: we can't define sequences
-   * from the store menu.  */
   return !(isVarBoxMenuOpen() || isStoreMenuOpen()) || strcmp(recordName.extension, functionStore()->modelExtension()) != 0;
 }
 
@@ -29,6 +25,33 @@ void FunctionApp::storageDidChangeForRecord(Ion::Storage::Record record) {
   if (record.isNull() || record.hasExtension(functionStore()->modelExtension())) {
     return;
   }
+}
+
+bool FunctionApp::willStore(Store store) {
+  /* Prevent functions from being (re)defined from the store menu.
+   * Variables can be changed even if they are used in functions.
+   * Warning: this has no effect on Sequence yet: we can't define sequences
+   * from the store menu.  */
+  if (store.childAtIndex(1).type() == ExpressionNode::Type::Function) {
+    return false;
+  }
+  int tab = m_tabViewController.activeTab();
+  StackViewController * tabStacks[] = {&m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController};
+  assert(0 <= tab && tab < 3);
+  if (tabStacks[tab]->depth() > Shared::InteractiveCurveViewController::k_graphControllerStackDepth) {
+    /* Close the details/curve menu/calculation views (minimum...)/column header
+     * since they may not make sense with the updated function. */
+    tabStacks[tab]->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
+  }
+  /* Changing the storage may have deactivated all active functions. We pop
+   * then push to make sur the graph gets updated to its empty counterpart if
+   * necessary. */
+  m_activeControllerBeforeStore = tabStacks[tab]->topViewController();
+  tabStacks[tab]->pop();
+  return true;
+}
+
+void FunctionApp::didStore() {
   /* TODO: we could avoid updating the graph/values when the record doesn't
    * affect the store but it's hard to detect indirect dependencies:
    * 3 -> a
@@ -63,17 +86,10 @@ void FunctionApp::storageDidChangeForRecord(Ion::Storage::Record record) {
   int tab = m_tabViewController.activeTab();
   StackViewController * tabStacks[] = {&m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController};
   assert(0 <= tab && tab < 3);
-  if (tabStacks[tab]->depth() > Shared::InteractiveCurveViewController::k_graphControllerStackDepth) {
-    /* Close the details/curve menu/calculation views (minimum...)/column header
-     * since they may not make sense with the updated function. */
-    tabStacks[tab]->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
-  }
-  /* Changing the storage may have deactivated all active functions. We pop
-   * then push to make sur the graph gets updated to its empty counterpart if
-   * necessary. */
-  ViewController * activeViewController = tabStacks[tab]->topViewController();
-  tabStacks[tab]->pop();
-  tabStacks[tab]->push(activeViewController);
+  assert(m_activeControllerBeforeStore);
+  tabStacks[tab]->push(m_activeControllerBeforeStore);
+  m_activeControllerBeforeStore = nullptr;
+
 }
 
 FunctionApp::FunctionApp(Snapshot * snapshot, Shared::FunctionListController * listController, Shared::FunctionGraphController * graphController, Shared::ValuesController * valuesController) :

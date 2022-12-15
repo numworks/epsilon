@@ -26,12 +26,13 @@ void App::Snapshot::reset() {
   m_equationStore.removeAll();
 }
 
+bool App::willStore(Poincare::Store store) {
+  m_stackViewController.popUntilDepth(1, true);
+  return true;
+}
+
 void App::storageDidChangeForRecord(Ion::Storage::Record record) {
   equationStore()->storageDidChangeForRecord(record);
-  if (record.isNull()) {
-    return;
-  }
-  m_stackViewController.popUntilDepth(1, true);
 }
 
 void App::Snapshot::tidy() {

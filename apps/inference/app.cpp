@@ -142,4 +142,8 @@ bool App::storageWillChangeForRecordName(const Ion::Storage::Record::Name record
   return !(isVarBoxMenuOpen() || isStoreMenuOpen()) || strcmp(recordName.extension, Ion::Storage::lisExtension) != 0;
 }
 
+bool App::willStore(Poincare::Store store) {
+  return store.childAtIndex(0).type() != Poincare::ExpressionNode::Type::List;
+}
+
 }

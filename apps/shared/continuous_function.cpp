@@ -350,14 +350,13 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
           ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
           true);
       assert(!willBeAlongX || degree == yDegree);
+      ExpressionNode::ReductionContext reductionContext(context, preferences.complexFormat(), preferences.angleUnit(), Preferences::UnitFormat::Metric, ExpressionNode::ReductionTarget::SystemForAnalysis);
       if (degree == 1) {
         Polynomial::LinearPolynomialRoots(
           coefficients[1],
           coefficients[0],
           &m_expression,
-          context,
-          preferences.complexFormat(),
-          preferences.angleUnit(),
+          reductionContext,
           false);
       } else if (degree == 2) {
         // Equation is of degree 2, each root is a subcurve to plot.
@@ -370,9 +369,7 @@ Expression ContinuousFunction::Model::expressionReduced(const Ion::Storage::Reco
             &root1,
             &root2,
             &delta,
-            context,
-            preferences.complexFormat(),
-            preferences.angleUnit(),
+            reductionContext,
             false,
             false);
         if (solutions <= 1) {

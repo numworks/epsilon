@@ -16,12 +16,11 @@ void assert_roots_of_polynomial_are(const char * polynomial, const char * const 
   Expression deltaExp;
   Expression rootsExp[Expression::k_maxPolynomialDegree];
   int numberOfRoots;
-
   if (degree == 2) {
-    numberOfRoots = Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], rootsExp, rootsExp + 1, &deltaExp, &context, complexFormat, angleUnit);
+    numberOfRoots = Polynomial::QuadraticPolynomialRoots(coefficients[2], coefficients[1], coefficients[0], rootsExp, rootsExp + 1, &deltaExp, reductionContext);
   } else {
     assert(degree == 3);
-    numberOfRoots = Polynomial::CubicPolynomialRoots(coefficients[3], coefficients[2], coefficients[1], coefficients[0], rootsExp, rootsExp + 1, rootsExp + 2, &deltaExp, &context, complexFormat, angleUnit);
+    numberOfRoots = Polynomial::CubicPolynomialRoots(coefficients[3], coefficients[2], coefficients[1], coefficients[0], rootsExp, rootsExp + 1, rootsExp + 2, &deltaExp, reductionContext);
   }
 
   int targetNumberOfRoots = (N == 1 && roots[0][0] == '\0') ? 0 : N;

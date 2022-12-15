@@ -409,9 +409,6 @@ void ContinuousFunctionProperties::setPolarFunctionProperties(const Expression& 
    * 1/sinOrCos(theta + B) --> Line
    * 1/cos(theta) --> Vertical line
    * 1/cos(theta + pi/2) --> Horizontal line
-   *
-   * TODO: Polar lines are badly plotted by the Grapher app so this is not
-   * very useful.
    */
   ExpressionNode::ReductionContext reductionContext = ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(context);
   Expression denominator, numerator;

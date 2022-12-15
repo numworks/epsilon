@@ -156,26 +156,27 @@ MatrixComplex<T> MultiplicationNode::computeOnMatrices(const MatrixComplex<T> m,
 /* Operative symbol between two expressions depends on the layout shape on the
  * left and the right of the operator:
  *
- * Left  \ Right | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Root | NthRoot | Fraction | Unit |   Default
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
- * Decimal       |    ×    |    ×    |     ø     |      ×      |       ×       |  ×   |    ×    |    ×     |  ø   |      •
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
- * Integer       |    ×    |    ×    |     ø     |      •      |       ø       |  ø   |    •    |    ×     |  ø   |      •
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
- * OneLetter     |    ×    |    •    |     •     |      •      |       •       |  ø   |    •    |    ø     |  ø   |      •
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
- * MoreLetters   |    ×    |    •    |     •     |      •      |       •       |  ø   |    •    |    ø     |  ø   |      •
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
- * BundaryPunct. |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |  ø   |      •
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
- * Root          |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |  ø   |      •
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
- * Fraction      |    ×    |    ×    |     ø     |      ø      |       ø       |  ø   |    •    |    ×     |  ø   |      •
- * --------------+---------+---------+-----------+-------------+---------------+------+---------+----------+------+-------------
- * Default       |    •    |    •    |     •     |      •      |       •       |  •   |    •    |    •     |  ø   |      •
+ * Left  \ Right | Decimal | Integer | OneLetter | MoreLetters | BundaryPunct. | Brace | Root | NthRoot | Fraction | Unit |   Default
+ * --------------+---------+---------+-----------+-------------+---------------+-------+------+---------+----------+------+-------------
+ * Decimal       |    ×    |    ×    |     ø     |      ×      |       ×       |   ×   |  ×   |    ×    |    ×     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+-------+------+---------+----------+------+-------------
+ * Integer       |    ×    |    ×    |     ø     |      •      |       ø       |   ø   |  ø   |    •    |    ×     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+-------+------+---------+----------+------+-------------
+ * OneLetter     |    ×    |    •    |     •     |      •      |       •       |   •   |  ø   |    •    |    ø     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+-------+------+---------+----------+------+-------------
+ * MoreLetters   |    ×    |    •    |     •     |      •      |       •       |   •   |  ø   |    •    |    ø     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+-------+------+---------+----------+------+-------------
+ * BundaryPunct. |    ×    |    ×    |     ø     |      ø      |       ø       |   ø   |  ø   |    •    |    ×     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+-------+------+---------+----------+------+-------------
+ * Brace         |    ×    |    ×    |     ø     |      ø      |       ×       |   ø   |  ø   |    •    |    ×     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+-------+------+---------+----------+------+-------------
+ * Root          |    ×    |    ×    |     ø     |      ø      |       ø       |   ø   |  ø   |    •    |    ×     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+-------+------+---------+----------+------+-------------
+ * Fraction      |    ×    |    ×    |     ø     |      ø      |       ø       |   ø   |  ø   |    •    |    ×     |  ø   |      •
+ * --------------+---------+---------+-----------+-------------+---------------+-------+------+---------+----------+------+-------------
+ * Default       |    •    |    •    |     •     |      •      |       •       |   •   |  •   |    •    |    •     |  ø   |      •
  *
  * Two Units are separated by a •, Unit on the left is treated according to its type
- * } followed by ( uses a ×
  * */
 
 MultiplicationNode::MultiplicationSymbol MultiplicationNode::OperatorSymbolBetween(ExpressionNode::LayoutShape left, ExpressionNode::LayoutShape right) {
@@ -213,6 +214,11 @@ MultiplicationNode::MultiplicationSymbol MultiplicationNode::OperatorSymbolBetwe
         default:
           return MultiplicationSymbol::MiddleDot;
       }
+    case ExpressionNode::LayoutShape::Brace:
+      if (right == ExpressionNode::LayoutShape::BoundaryPunctuation) {
+        return MultiplicationSymbol::MultiplicationSign;
+      }
+      // fall-through
     default:
     //case ExpressionNode::LayoutShape::BoundaryPunctuation:
     //case ExpressionNode::LayoutShape::Fraction:
@@ -266,10 +272,7 @@ CodePoint MultiplicationNode::operatorSymbol() const {
     Expression left = childAtIndex(i);
     Expression right = childAtIndex(i+1);
     MultiplicationSymbol symbol;
-    if (left.isOfType({ExpressionNode::Type::List}) && right.isOfType({ExpressionNode::Type::Parenthesis})) {
-      // Exception to avoid confusion between list access and list * parenthesis
-      symbol = MultiplicationSymbol::MultiplicationSign;
-    } else if (ExpressionIsUnit(right)) {
+    if (ExpressionIsUnit(right)) {
       symbol = ExpressionIsUnit(left) ? MultiplicationSymbol::MiddleDot : MultiplicationSymbol::Empty;
     } else {
       symbol = OperatorSymbolBetween(left.rightLayoutShape(), right.leftLayoutShape());

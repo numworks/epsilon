@@ -357,6 +357,7 @@ public:
     OneLetter,
     MoreLetters,
     BoundaryPunctuation, // ( [ ∫
+    Brace,
     Root,
     NthRoot,
     Fraction,

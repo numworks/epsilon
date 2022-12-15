@@ -104,9 +104,7 @@ void StackViewController::setupActiveViewController() {
     vc->setParentResponder(this);
   }
   setupActiveView();
-  if (vc) {
-    Container::activeApp()->setFirstResponder(vc);
-  }
+  Container::activeApp()->setFirstResponder(vc);
 }
 
 void StackViewController::didEnterResponderChain(Responder * previousFirstResponder) {

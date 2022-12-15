@@ -187,10 +187,8 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
 
   const char * symbolName = willBeAlongX ? k_ordinateName : Function::k_unknownName;
   TrinaryBoolean highestCoefficientIsPositive = TrinaryBoolean::Unknown;
-  if (!HasNonNullCoefficients(analyzedExpression, symbolName, context, &highestCoefficientIsPositive)
-      || analyzedExpression.hasComplexI(context)) {
+  if (!HasNonNullCoefficients(analyzedExpression, symbolName, context, &highestCoefficientIsPositive)) {
     // The equation must have at least one nonNull coefficient.
-    // TODO : Accept equations such as y=re(i)
     setErrorStatusAndUpdateCaption(Status::Unhandled);
     return;
   }

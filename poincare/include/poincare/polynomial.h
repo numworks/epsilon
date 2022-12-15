@@ -8,11 +8,11 @@ namespace Poincare {
 
 class Polynomial {
 public:
-  static int LinearPolynomialRoots(Expression a, Expression b, Expression * root, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool beautifyRoots = true);
+  static int LinearPolynomialRoots(Expression a, Expression b, Expression * root, ExpressionNode::ReductionContext reductionContext, bool beautifyRoots = true);
 
-  static int QuadraticPolynomialRoots(Expression a, Expression b, Expression c, Expression * root1, Expression * root2, Expression * delta, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool approximateSolutions = false, bool beautifyRoots = true);
+  static int QuadraticPolynomialRoots(Expression a, Expression b, Expression c, Expression * root1, Expression * root2, Expression * delta, ExpressionNode::ReductionContext reductionContext, bool approximateSolutions = false, bool beautifyRoots = true);
 
-  static int CubicPolynomialRoots(Expression a, Expression b, Expression c, Expression d, Expression * root1, Expression * root2, Expression * root3, Expression * delta, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool * approximateSolutions = nullptr, bool beautifyRoots = true);
+  static int CubicPolynomialRoots(Expression a, Expression b, Expression c, Expression d, Expression * root1, Expression * root2, Expression * root3, Expression * delta, ExpressionNode::ReductionContext reductionContext, bool * approximateSolutions = nullptr, bool beautifyRoots = true);
 
 private:
   constexpr static int k_maxNumberOfNodesBeforeApproximatingDelta = 16;

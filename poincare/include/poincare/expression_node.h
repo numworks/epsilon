@@ -188,6 +188,7 @@ public:
     Context * context() const { return m_context; }
     void setContext(Context * context) { m_context = context; }
     Preferences::ComplexFormat complexFormat() const { return m_complexFormat; }
+    void setComplextFormat(Preferences::ComplexFormat complexFormat) { m_complexFormat = complexFormat; }
     Preferences::AngleUnit angleUnit() const { return m_angleUnit; }
     void setAngleUnit(Preferences::AngleUnit angleUnit) { m_angleUnit = angleUnit; }
   private:

@@ -229,6 +229,7 @@ tests_src += $(addprefix poincare/test/,\
   conics.cpp\
   context.cpp\
   erf_inv.cpp \
+  exam_mode.cpp \
   dependency.cpp\
   derivative.cpp\
   distribution.cpp\

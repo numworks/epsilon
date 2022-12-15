@@ -21,7 +21,7 @@ const Image * App::Descriptor::icon() const {
   return ImageStore::SequenceIcon;
 }
 
-App::Snapshot::Snapshot() : 
+App::Snapshot::Snapshot() :
   Shared::FunctionApp::Snapshot::Snapshot(),
   m_intervalModifiedByUser(false)
 {
@@ -37,7 +37,7 @@ void App::Snapshot::resetInterval() {
   m_interval.reset();
   m_interval.parameters()->setStart(GlobalPreferences::sharedGlobalPreferences()->sequencesInitialRank());
   m_interval.forceRecompute();
-  App::app()->snapshot()->setIntervalModifiedByUser(false);
+  setIntervalModifiedByUser(false);
 }
 
 void App::Snapshot::updateInterval() {

@@ -127,11 +127,16 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
       assert(f->properties().isCartesian());
       bool alongY = f->isAlongY();
       Range1D * bounds = alongY ? &yBounds : &xBounds;
-      zoom.setBounds(bounds->min(), bounds->max());
+      zoom.setBounds(
+        std::max(bounds->min(), f->tMin()),
+        std::min(bounds->max(), f->tMax())
+      );
       zoom.fitPointsOfInterest(evaluator<float>, f.operator->(), alongY, evaluator<double>);
+      zoom.fitBounds(evaluator<float>, f.operator->(), alongY);
       if (f->numberOfSubCurves() > 1) {
         assert(f->numberOfSubCurves() == 2);
         zoom.fitPointsOfInterest(evaluatorSecondCurve<float>, f.operator->(), alongY, evaluatorSecondCurve<double>);
+        zoom.fitBounds(evaluatorSecondCurve<float>, f.operator->(), alongY);
       }
       if (f->properties().canComputeIntersectionsWithFunctionsAlongSameVariable()) {
         ContinuousFunction * mainF = f.operator->();

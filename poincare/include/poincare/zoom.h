@@ -26,7 +26,7 @@ public:
   static Range2D Sanitize(Range2D range, float normalRatio, float maxFloat);
   static Range2D DefaultRange(float normalRatio, float maxFloat) { return Sanitize(Range2D(), normalRatio, maxFloat); }
 
-  Zoom(float tMin, float tMax, float normalRatio, Context * context, float maxFloat) : m_bounds(tMin, tMax), m_context(context), m_normalRatio(normalRatio), m_maxFloat(maxFloat) {
+  Zoom(float tMin, float tMax, float normalRatio, Context * context, float maxFloat) : m_bounds(tMin, tMax), m_context(context), m_defaultHalfLength(Range1D::k_defaultHalfLength), m_normalRatio(normalRatio), m_maxFloat(maxFloat) {
     /* The calculator screen is wider than it is high, but nothing in Zoom
      * relies on this assumption. */
     // assert(m_normalRatio < 1.f);
@@ -47,6 +47,7 @@ public:
   void fitIntersections(Function2DWithContext<float> f1, const void * model1, Function2DWithContext<float> f2, const void * model2, bool vertical = false);
   /* This function will only touch the Y axis. */
   void fitMagnitude(Function2DWithContext<float> f, const void * model, bool vertical = false);
+  void fitBounds(Function2DWithContext<float> f, const void * model, bool vertical = false);
 
 private:
   class HorizontalAsymptoteHelper {
@@ -120,6 +121,7 @@ private:
   Range2D m_forcedRange;
   Range1D m_bounds;
   Context * m_context;
+  float m_defaultHalfLength;
   float m_normalRatio;
   const float m_maxFloat;
 };

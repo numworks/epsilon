@@ -62,11 +62,13 @@ public:
   ScrollViewArrow(Side side);
   bool update(bool visible);
   void setBackgroundColor(KDColor c) { m_backgroundColor = c; }
+  void setFont(KDFont::Size font) { m_font = font; }
   void drawRect(KDContext * ctx, KDRect rect) const override;
 private:
   bool m_visible;
   const char m_arrow;
   KDColor m_backgroundColor;
+  KDFont::Size m_font;
 };
 
 }

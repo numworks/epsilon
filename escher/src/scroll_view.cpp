@@ -303,6 +303,13 @@ void ScrollView::ArrowDecorator::setBackgroundColor(KDColor c) {
   }
 }
 
+void ScrollView::ArrowDecorator::setFont(KDFont::Size font) {
+  m_topArrow.setFont(font);
+  m_rightArrow.setFont(font);
+  m_bottomArrow.setFont(font);
+  m_leftArrow.setFont(font);
+}
+
 ScrollView::Decorators::Decorators() {
   /* We need to initiate the Union at construction to avoid destructing an
    * uninitialized object when changing the decorator type. */

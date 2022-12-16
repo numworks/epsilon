@@ -21,7 +21,7 @@ public:
   );
   Poincare::Layout layout() const;
   KDFont::Size font() const { return m_expressionView.font(); }
-  void setFont(KDFont::Size font) { m_expressionView.setFont(font); }
+  void setFont(KDFont::Size font) { m_expressionView.setFont(font); setDecoratorFont(font); }
   void setLayout(Poincare::Layout layout);
   void setTextColor(KDColor color) { m_expressionView.setTextColor(color); }
   void setBackgroundColor(KDColor backgroundColor) override;

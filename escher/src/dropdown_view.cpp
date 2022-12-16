@@ -74,6 +74,7 @@ Dropdown::DropdownPopupController::DropdownPopupController(
     ViewController(parentResponder),
     m_listViewDataSource(listDataSource),
     m_memoizedCellWidth(-1),
+    m_selectionDataSource(),
     m_selectableTableView(this, this, &m_selectionDataSource),
     m_borderingView(&m_selectableTableView),
     m_callback(callback),

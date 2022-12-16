@@ -71,10 +71,6 @@ template <typename T, int coordinate> Coordinate2D<T> parametricExpressionEvalua
   T value = PoincareHelpers::ApproximateWithValueForSymbol<T>(e->childAtIndex(coordinate), ContinuousFunction::k_unknownName, t, context);
   return Coordinate2D<T>(t, value);
 }
-template <typename T> Coordinate2D<T> polarExpressionEvaluator(T t, const void * model, Context * context) {
-  const Expression * e = static_cast<const Expression *>(model);
-  return Coordinate2D<T>(t, PoincareHelpers::ApproximateWithValueForSymbol<T>(*e, ContinuousFunction::k_unknownName, t, context));
-}
 
 Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D originalRange) const {
   Context * context = App::app()->localContext();

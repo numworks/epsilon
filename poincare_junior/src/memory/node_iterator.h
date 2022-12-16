@@ -55,7 +55,7 @@ protected: // templates force us to define some protected classes firstA
     typedef typename EditablePolicy::NodeType NodeType;
     typedef std::array<NodeType ,N> ArrayType;
 
-    Iterator(std::array<Node, N> array, int index) : m_array(convertToArrayType(array, offset())), m_index(index) {}
+    Iterator(ArrayType array, int index) : m_array(array), m_index(index) {}
     std::pair<ArrayType, int> operator*() { return std::pair(convertToArrayType(convertFromArrayType(m_array, offset())), m_index); }
     bool operator!=(Iterator<DirectionPolicy, EditablePolicy, N> & it) { return equality(m_array, m_index, it.m_array, it.m_index); }
     Iterator<DirectionPolicy, EditablePolicy, N> & operator++() {
@@ -85,29 +85,18 @@ public:
     typedef std::array<NodeType ,N> ArrayType;
 
     ChildrenScanner(ArrayType array) : m_array(array) {}
-    Iterator<DirectionPolicy, EditablePolicy, N> begin() const { return Iterator<DirectionPolicy, EditablePolicy, N>(firstElement(convertFromArrayType(m_array)), 0); }
+    Iterator<DirectionPolicy, EditablePolicy, N> begin() const { return Iterator<DirectionPolicy, EditablePolicy, N>(convertToArrayType(firstElement(convertFromArrayType(m_array)), offset()), 0); }
     Iterator<DirectionPolicy, EditablePolicy, N> end() const {
-      std::array<Node, N> nodeArray = convertFromArrayType(m_array);
-      return Iterator<DirectionPolicy, EditablePolicy, N>(lastElement(nodeArray), lastIndex(nodeArray)); }
+      return Iterator<DirectionPolicy, EditablePolicy, N>(m_array, endIndex(convertFromArrayType(m_array))); }
 
   protected:
     using EditablePolicy::convertFromArrayType;
     using EditablePolicy::convertToArrayType;
+    using EditablePolicy::endIndex;
     using DirectionPolicy::firstElement;
-    using DirectionPolicy::lastElement;
     using DirectionPolicy::offset;
 
     ArrayType m_array;
-
-  private:
-    int lastIndex(std::array<Node, N> array) const {
-      uint8_t nbOfChildren = UINT8_MAX;
-      for (size_t i = 0; i < N; i++) {
-        nbOfChildren = std::min<uint8_t>(nbOfChildren, array[i].numberOfChildren());
-      }
-      return nbOfChildren;
-    }
-
   };
 
   template <typename DirectionPolicy, typename EditablePolicy, size_t N>
@@ -119,10 +108,17 @@ public:
   public:
     typedef Node NodeType;
     template<size_t N> using ArrayType = std::array<NodeType, N>;
+    template<size_t N>
+    int endIndex(std::array<Node, N> array) const {
+      uint8_t nbOfChildren = UINT8_MAX;
+      for (size_t i = 0; i < N; i++) {
+        nbOfChildren = std::min<uint8_t>(nbOfChildren, array[i].numberOfChildren());
+      }
+      return nbOfChildren;
+    }
   protected:
     template <size_t N>
     bool equality(ArrayType<N> array0, int index0, ArrayType<N>array1, int index1) const { return (index0 != index1); }
-
     template<size_t N>
     std::array<Node, N> convertFromArrayType(ArrayType<N> array, int offset = 0) const { return array; }
     template<size_t N>
@@ -134,14 +130,21 @@ public:
     typedef EditionReference NodeType;
     template<size_t N> using ArrayType = std::array<NodeType, N>;
   protected:
+    /* Special case for the end index:
+     * endIndex = -1 to trigger a special case on equality and recompute the
+     * minimal number of children of all node in the array. This has to be
+     * updated at each step since children might have been inserted or deleted. */
+    template <size_t N>
+    int endIndex(std::array<Node, N> array) const { return -1; }
     template <size_t N>
     bool equality(ArrayType<N> array0, int index0, ArrayType<N>array1, int index1) const {
-      for (size_t i = 0; i < N; i++) {
-        if (array0[i] == array1[i]) {
-          return false;
-        }
+      // the end element (idnex = -1) is always the second
+      assert(index0 >= 0);
+      if (index1 < 0) {
+        // Recompute the minimal number of children
+        index1 = NoEditablePolicy().endIndex(convertFromArrayType(array1));
       }
-      return true;
+      return index0 != index1;
     }
 
     /* Hack: we keep a reference to a block right before (or after) the
@@ -165,9 +168,6 @@ public:
     std::array<Node, N> firstElement(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return node.nextNode(); }); }
 
     template<size_t N>
-    std::array<Node, N> lastElement(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return node.nextTree(); }); }
-
-    template<size_t N>
     std::array<Node, N> incrementeArray(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return node.nextTree(); }); }
 
     int offset() const { return 1; }
@@ -177,9 +177,6 @@ public:
   protected:
     template<size_t N>
     std::array<Node, N> firstElement(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return node.childAtIndex(node.numberOfChildren() - 1); }); }
-
-    template<size_t N>
-    std::array<Node, N> lastElement(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return Node(); }); }
 
     template<size_t N>
     std::array<Node, N> incrementeArray(std::array<Node, N> array) const { return Array::MapAction<Node, Node, N>(array, nullptr, [](Node node, void * context) { return node.previousTree(); }); }

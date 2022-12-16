@@ -63,7 +63,7 @@ const char * compilationFlags() {
 }
 
 const char * runningBootloader() {
-  static char crcBuffer[OMG::Print::LengthOfUInt32(OMG::Base::Hexadecimal) + 1] = {0};
+  static char crcBuffer[OMG::Print::MaxLengthOfUInt32(OMG::Base::Hexadecimal) + 1] = {0};
   size_t length = OMG::Print::UInt32(OMG::Base::Hexadecimal, bootloaderCRC32(), crcBuffer, sizeof(crcBuffer));
   crcBuffer[length] = 0;
   return crcBuffer;

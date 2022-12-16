@@ -107,8 +107,8 @@ private:
     ListViewDataSource * m_listViewDataSource;
     PopupItemView m_popupViews[k_maxNumberOfPopupItems];
     KDCoordinate m_memoizedCellWidth;
-    SelectableTableView m_selectableTableView;
     SelectableTableViewDataSource m_selectionDataSource;
+    SelectableTableView m_selectableTableView;
     BorderingView m_borderingView;
     DropdownCallback * m_callback;
     Dropdown * m_dropdown;

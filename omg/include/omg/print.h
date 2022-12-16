@@ -9,7 +9,7 @@
 namespace OMG {
 
 /* TODO: merge Poincare::PrintInt, Poincare::PrintFloat and Poincare::Print
- * into Utils::Print
+ * into OMG::Print
  */
 
 namespace Print {

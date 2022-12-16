@@ -10,8 +10,7 @@
  * to forget the Checkpoint once the interruptable code is executed. Indeed,
  * the scope calls the checkpoint destructor, which invalidate the current
  * checkpoint.
- * Also, any node stored under TopmostEndOfPoolBeforeCheckpoint should not be
- * altered.
+ * Also, any node stored under TopmostEndOfPool should not be altered.
 
 void interruptableCode() {
   Poincare::Checkpoint cp;

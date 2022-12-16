@@ -13,6 +13,7 @@
 
 namespace Shared {
 
+class ContinuousFunctionStore;
 class GlobalContext final : public Poincare::Context {
 public:
   constexpr static const char * k_extensions[] = {Ion::Storage::expExtension, Ion::Storage::matExtension, Ion::Storage::funcExtension, Ion::Storage::lisExtension, Ion::Storage::seqExtension};
@@ -33,6 +34,7 @@ public:
   SymbolAbstractType expressionTypeForIdentifier(const char * identifier, int length) override;
   bool setExpressionForSymbolAbstract(const Poincare::Expression & expression, const Poincare::SymbolAbstract & symbol) override;
   static SequenceStore * sequenceStore();
+  static ContinuousFunctionStore * continuousFunctionStore();
   void storageDidChangeForRecord(const Ion::Storage::Record record);
   SequenceContext * sequenceContext() { return &m_sequenceContext; }
   void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr) override;

@@ -1,5 +1,5 @@
 #include "function_toolbox.h"
-#include "../continuous_function_store.h"
+#include <apps/shared/continuous_function_store.h>
 #include <poincare/code_point_layout.h>
 #include <poincare/infinity.h>
 #include <poincare/preferences.h>

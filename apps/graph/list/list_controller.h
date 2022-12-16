@@ -3,7 +3,7 @@
 
 #include "function_toolbox.h"
 #include "../shared/function_parameter_controller.h"
-#include "../continuous_function_store.h"
+#include <apps/shared/continuous_function_store.h>
 #include <apps/shared/function_list_controller.h>
 #include "function_models_parameter_controller.h"
 #include "../graph/graph_controller.h"
@@ -62,7 +62,7 @@ private:
   int maxNumberOfDisplayableRows() override;
   Escher::HighlightCell * functionCells(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int j) override;
-  ContinuousFunctionStore * modelStore() const override;
+  Shared::ContinuousFunctionStore * modelStore() const override;
   Escher::SelectableTableView m_selectableTableView;
   FunctionCell m_expressionCells[k_maxNumberOfDisplayableRows];
   FunctionParameterController * m_parameterController;

@@ -5,7 +5,7 @@
 #include <escher/message_table_cell_with_chevron.h>
 #include <escher/message_table_cell_with_editable_text.h>
 #include <escher/selectable_list_view_controller.h>
-#include "../continuous_function_store.h"
+#include <apps/shared/continuous_function_store.h>
 #include "../../shared/column_parameter_controller.h"
 
 namespace Graph {
@@ -23,7 +23,7 @@ public:
     m_record = record;
   }
 private:
-  ContinuousFunctionStore * functionStore();
+  Shared::ContinuousFunctionStore * functionStore();
   constexpr static int k_totalNumberOfCell = 1;
   Shared::ClearColumnHelper * clearColumnHelper() override;
   Escher::MessageTableCell m_hideColumn;

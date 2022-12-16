@@ -1,10 +1,6 @@
 apps += Graph::App
 app_headers += apps/graph/app.h
 
-app_graph_test_src = $(addprefix apps/graph/,\
-  continuous_function_store.cpp \
-)
-
 app_graph_src = $(addprefix apps/graph/,\
   app.cpp \
   graph/area_between_curves_graph_controller.cpp \

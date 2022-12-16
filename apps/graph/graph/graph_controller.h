@@ -6,7 +6,7 @@
 #include "graph_controller_helper.h"
 #include "graph_view.h"
 #include "points_of_interest_cache.h"
-#include "../continuous_function_store.h"
+#include <apps/shared/continuous_function_store.h>
 #include <apps/shared/with_record.h>
 #include <apps/shared/function_graph_controller.h>
 #include <apps/shared/curve_view_cursor.h>
@@ -64,7 +64,7 @@ private:
   CurveParameterController * curveParameterController() override { return &m_curveParameterController; }
   Shared::WithRecord * curveParameterControllerWithRecord() override { return &m_curveParameterController; }
   FunctionSelectionController * curveSelectionController() const override { return const_cast<FunctionSelectionController *>(&m_functionSelectionController); }
-  ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
+  Shared::ContinuousFunctionStore * functionStore() const override { return static_cast<Shared::ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
   bool moveCursorVertically(int direction) override;
   void moveCursorAndCenterIfNeeded(double t) override;
 

@@ -3,7 +3,7 @@
 
 #include "graph_view.h"
 #include "banner_view.h"
-#include "../continuous_function_store.h"
+#include <apps/shared/continuous_function_store.h>
 #include <apps/shared/simple_interactive_curve_view_controller.h>
 #include <apps/shared/function_banner_delegate.h>
 
@@ -31,7 +31,7 @@ protected:
     return Shared::FunctionBannerDelegate::numberOfSignificantDigits(true);
   }
 
-  ContinuousFunctionStore * functionStore() const;
+  Shared::ContinuousFunctionStore * functionStore() const;
   Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(double start, int direction);
   virtual Poincare::Solver<double>::Interest specialInterest() const { return Poincare::Solver<double>::Interest::None; }
   virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(double start, double max, Poincare::Context * context);

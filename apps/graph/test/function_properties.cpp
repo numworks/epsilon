@@ -651,8 +651,6 @@ QUIZ_CASE(graph_function_properties) {
 
     assert_check_function_properties("x*y^2=x", k_unhandledCartesian);
 
-    assert_check_function_properties("y=i*x+1", k_unhandledCartesian);
-
     // === Updated complex format ===
 
     assert(Poincare::Preferences::sharedPreferences()->complexFormat() == Preferences::ComplexFormat::Cartesian);
@@ -664,6 +662,14 @@ QUIZ_CASE(graph_function_properties) {
         .m_caption = I18n::Message::FunctionType,
         .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
     );
+    assert_check_function_properties(
+      "y=im(i*x+1)",
+      FunctionProperties{
+        .m_caption = I18n::Message::EquationType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction
+      }
+    );
+
 
     Poincare::Preferences::sharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Real);
     assert_check_function_properties("y=(√(-1))^2", k_unhandledCartesian);
@@ -674,8 +680,13 @@ QUIZ_CASE(graph_function_properties) {
         .m_caption = I18n::Message::FunctionType,
         .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction}
     );
-    // TODO : Handle this function
-    assert_check_function_properties("y=im(i*x+1)", k_unhandledCartesian);
+    assert_check_function_properties(
+      "y=im(i*x+1)",
+      FunctionProperties{
+        .m_caption = I18n::Message::EquationType,
+        .m_curveParameterType = ContinuousFunctionProperties::CurveParameterType::CartesianFunction
+      }
+    );
     // Restore preferences
     Poincare::Preferences::sharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Cartesian);
   }

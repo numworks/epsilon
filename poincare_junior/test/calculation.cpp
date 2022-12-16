@@ -34,7 +34,6 @@ void testCalculation() {
   Calculation calculation("(1-2)/3/4");
   std::cout << "\n---------------- Push Calculation (1-2)/3/4 ----------------" << std::endl;
   calculation.output().log();
-  print();
 }
 
 // Check SharedPointer

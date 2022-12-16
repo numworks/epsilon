@@ -43,6 +43,10 @@ public:
 private:
   // Pool memory
   bool checkForEnoughSpace(size_t numberOfRequiredBlock);
+#if POINCARE_MEMORY_TREE_LOG
+  const ReferenceTable * referenceTable() const override { return &m_referenceTable; }
+  const char * name() override { return "Edition"; }
+#endif
 
   class ReferenceTable : public Pool::ReferenceTable {
     /* The edition pool reference table stores the offset of the tree in the

@@ -16,7 +16,5 @@ void testVariables() {
   assert_get_variable_equals(Add(Pow(u'π'_n, 3_n), Mult(3_n, Pow(u'π'_n, 2_sn), u'e'_n), Mult(3_n, Pow(u'e'_n, 2_sn), u'π'_n), Pow(u'e'_n, 3_n)), Set(u'π'_n, u'e'_n));
   assert_get_variable_equals(42_n, Set());
   assert_get_variable_equals(Pow(u'π'_n, 1.2_fn), Set(Pow(u'π'_n, 1.2_fn)));
-
-  print();
 }
 

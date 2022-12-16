@@ -37,6 +37,10 @@ protected:
     virtual uint16_t storeNode(Node node);
     virtual Node nodeForIdentifier(uint16_t id) const;
     virtual bool reset();
+#if POINCARE_MEMORY_TREE_LOG
+    void treeLog(std::ostream & stream, bool verbose = true) const;
+    virtual uint16_t identifierForIndex(uint16_t index) const { return index; }
+#endif
   protected:
     uint16_t m_nodeOffsetForIdentifier[Pool::k_maxNumberOfReferences];
     uint16_t m_length;
@@ -45,10 +49,15 @@ protected:
 
 #if POINCARE_MEMORY_TREE_LOG
 public:
+  virtual const char * name() = 0;
   void flatLog(std::ostream & stream);
   void treeLog(std::ostream & stream, bool verbose = true);
+  virtual const ReferenceTable * referenceTable() const = 0;
+  void referencedTreeLog(std::ostream & stream, bool verbose = true) { return referenceTable()->treeLog(stream, verbose); }
   __attribute__((__used__)) void log() { treeLog(std::cout, false); }
+  __attribute__((__used__)) void logReferences() { referencedTreeLog(std::cout, false); }
   __attribute__((__used__)) void verboseLog() { treeLog(std::cout, true); }
+  __attribute__((__used__)) void verboseLogReferences() { referencedTreeLog(std::cout, true); }
 
 protected:
 

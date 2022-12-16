@@ -6,60 +6,28 @@
 
 using namespace Poincare;
 
-inline EditionReference createSimpleExpression() {
-  std::cout << "\n---------------- Create (1 + 2) * 3 * 4 ----------------" << std::endl;
-  EditionReference multiplication = EditionReference::Push<BlockType::Multiplication>(3);
-  EditionReference::Push<BlockType::Addition>(2);
-  EditionReference::Push<BlockType::IntegerShort>(1);
-  EditionReference::Push<BlockType::IntegerShort>(2);
-  EditionReference::Push<BlockType::IntegerShort>(3);
-  EditionReference::Push<BlockType::Addition>(2);
-  EditionReference::Push<BlockType::IntegerShort>(4);
-  EditionReference::Push<BlockType::IntegerShort>(5);
-  return multiplication;
-}
-
-inline void print() {
-  CachePool * cachePool = CachePool::sharedCachePool();
-  EditionPool * editionPool = cachePool->editionPool();
-
-  std::cout << "\n\n\n\nxxxxxxxxxxx MEMORY DUMP xxxxxxxxxxxx" << std::endl;
-  std::cout << "\n========= CACHE POOL =========" << std::endl;
-  cachePool->treeLog(std::cout);
-
-  std::cout << "\n========= EDITION POOL =========" << std::endl;
-  editionPool->treeLog(std::cout);
-  std::cout << "\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" << std::endl;
-}
-
-inline void intermediaryPrint() {
-  CachePool * cachePool = CachePool::sharedCachePool();
-  EditionPool * editionPool = cachePool->editionPool();
-
-  std::cout << "\n========= CACHE POOL =========" << std::endl;
-  cachePool->treeLog(std::cout);
-
-  std::cout << "\n========= INCOMPLETE EDITION POOL =========" << std::endl;
-  editionPool->flatLog(std::cout);
-  std::cout << "\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" << std::endl;
-}
-
 #if POINCARE_MEMORY_TREE_LOG
-inline void log_pools(bool corruptedEditionPool = false) {
-  CachePool * cachePool = CachePool::sharedCachePool();
-  EditionPool * editionPool = cachePool->editionPool();
-
-  std::cout << "\n========= CACHE POOL ===========" << std::endl;
-  cachePool->treeLog(std::cout);
-
-  std::cout << "\n========= EDITION POOL =========" << std::endl;
+__attribute__((__used__)) inline void log_edition_pool(bool corruptedEditionPool = false) {
+  EditionPool * editionPool = CachePool::sharedCachePool()->editionPool();
   if (corruptedEditionPool) {
     editionPool->flatLog(std::cout);
   } else {
     editionPool->treeLog(std::cout);
   }
-  std::cout << "\n================================" << std::endl;
 }
+
+__attribute__((__used__)) inline void log_edition_references() {
+  CachePool::sharedCachePool()->editionPool()->referencedTreeLog(std::cout);
+}
+
+ __attribute__((__used__)) inline void log_cache_pool() {
+  CachePool::sharedCachePool()->treeLog(std::cout);
+}
+
+ __attribute__((__used__)) inline void log_cache_references() {
+  CachePool::sharedCachePool()->referencedTreeLog(std::cout);
+}
+
 #endif
 
 inline void assert_node_equals_blocks(const Node node, std::initializer_list<Block> blocks) {

@@ -44,25 +44,43 @@ bool Pool::ReferenceTable::reset() {
   return true;
 }
 
+#if POINCARE_MEMORY_TREE_LOG
+void Pool::ReferenceTable::treeLog(std::ostream & stream, bool verbose) const {
+  stream << "<" << m_pool->name() << "Pool::References NumberOfStoredNode=\"" << numberOfStoredNodes()  << "\">";
+  for (size_t i = 0; i < m_length; i++) {
+    stream << "\n  <Reference id: " << identifierForIndex(i) << ">";
+    Node tree = Pool::ReferenceTable::nodeForIdentifier(i);
+    if (tree.isUninitialized()) {
+      stream << "\n    <Uninialized/>";
+    } else {
+      tree.log(stream, true, 2, verbose);
+    }
+  }
+  stream << "\n</" << m_pool->name() << "Pool::References>";
+  stream << std::endl;
+}
+
+#endif
+
 // Pool
 
 #if POINCARE_MEMORY_TREE_LOG
 void Pool::flatLog(std::ostream & stream) {
-  stream << "<Pool format=\"flat\" size=\"" << size()  << "\">";
+  stream << "<" << name() << "Pool format=\"flat\" size=\"" << size() << "\">";
   for (const Node node : allNodes()) {
     node.log(stream, false);
   }
-  stream << "</Pool>";
+  stream << "</" << name() << "Pool>";
   stream << std::endl;
 }
 
 void Pool::treeLog(std::ostream & stream, bool verbose) {
-  stream << "<Pool format=\"tree\" size=\"" << size() << "\">";
+  stream << "<" << name() << "Pool format=\"tree\" size=\"" << size() << "\">";
   for (const Node tree : trees()) {
     tree.log(stream, true, 1, verbose);
   }
   stream << std::endl;
-  stream << "</Pool>";
+  stream << "<" << name() << "/Pool>";
   stream << std::endl;
 }
 

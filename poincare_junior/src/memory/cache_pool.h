@@ -25,13 +25,16 @@ public:
   int execute(ActionWithContext action, void * subAction, const void * data);
 
   constexpr static int k_maxNumberOfBlocks = 512;
-
   TypeBlock * firstBlock() override { return m_referenceTable.isEmpty() ? nullptr : static_cast<TypeBlock *>(&m_blocks[0]); }
   TypeBlock * lastBlock() override { return  static_cast<TypeBlock *>(m_referenceTable.isEmpty() ? &m_blocks[0] : Node(&m_blocks[0] + m_referenceTable.lastOffset()).nextTree().block()); }
 private:
   CachePool();
   void translate(uint16_t offset, size_t cachePoolSize);
   void resetEditionPool();
+#if POINCARE_MEMORY_TREE_LOG
+  const ReferenceTable * referenceTable() const override { return &m_referenceTable; }
+  const char * name() override { return "Cache"; }
+#endif
 
   class ReferenceTable : public Pool::ReferenceTable {
   /* The identifiers are taken from 0 to 2^16 - 2 (0xFFFF being reserved for
@@ -60,6 +63,9 @@ private:
     uint16_t lastOffset() const;
     bool reset() override;
   private:
+#if POINCARE_MEMORY_TREE_LOG
+    uint16_t identifierForIndex(uint16_t index) const override { return idForIndex(index); }
+#endif
     constexpr static uint16_t k_maxIdentifier = UINT16_MAX - NumberOfSpecialIdentifier;
     static_assert(NoNodeIdentifier == UINT16_MAX, "Special identifier is not the last taken identifier");
     uint16_t nextIdentifier() { return idForIndex(m_length); }

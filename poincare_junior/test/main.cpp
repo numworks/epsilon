@@ -38,9 +38,6 @@ void test(Test test, const char * title) {
 }
 
 int main() {
-  // Dummy call just to keep it in the executable and be able to call it from debugger
-  intermediaryPrint();
-
   test(testBlock, "TEST BLOCK");
   test(testTypeBlock, "TEST TYPE BLOCK");
   test(testConstexprTreeConstructor, "TEST CONSTEXPR TREE CONSTRUCTOR");

@@ -9,23 +9,19 @@ using namespace Poincare;
 #if POINCARE_MEMORY_TREE_LOG
 __attribute__((__used__)) inline void log_edition_pool(bool corruptedEditionPool = false) {
   EditionPool * editionPool = CachePool::sharedCachePool()->editionPool();
-  if (corruptedEditionPool) {
-    editionPool->flatLog(std::cout);
-  } else {
-    editionPool->treeLog(std::cout);
-  }
+  editionPool->log(std::cout, corruptedEditionPool ? Pool::LogFormat::Flat : Pool::LogFormat::Tree, true);
 }
 
 __attribute__((__used__)) inline void log_edition_references() {
-  CachePool::sharedCachePool()->editionPool()->referencedTreeLog(std::cout);
+  CachePool::sharedCachePool()->editionPool()->logReferences(std::cout, Pool::LogFormat::Tree);
 }
 
  __attribute__((__used__)) inline void log_cache_pool() {
-  CachePool::sharedCachePool()->treeLog(std::cout);
+  CachePool::sharedCachePool()->log(std::cout, Pool::LogFormat::Tree, true);
 }
 
  __attribute__((__used__)) inline void log_cache_references() {
-  CachePool::sharedCachePool()->referencedTreeLog(std::cout);
+  CachePool::sharedCachePool()->logReferences(std::cout, Pool::LogFormat::Tree);
 }
 
 #endif
@@ -54,7 +50,7 @@ inline void assert_pools_sizes_are(size_t cachePoolSize, size_t editionPoolSize,
     const char * poolNames[] = {"cache pool", "edition Pool"};
     if ((pools[i]->*functionSize)() != theoreticalSizes[i]) {
       std::cout << "Expected "<< poolNames[i] <<" of size " << theoreticalSizes[i] << " but got " << pools[i]->size() << std::endl;
-      pools[i]->treeLog(std::cout);
+      pools[i]->log(std::cout, Pool::LogFormat::Tree, true);
       assert(false);
     }
 #else

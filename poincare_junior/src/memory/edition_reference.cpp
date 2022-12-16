@@ -14,6 +14,14 @@ EditionReference::EditionReference(Node node) {
   m_identifier = EditionPool::sharedEditionPool()->referenceNode(node);
 }
 
+#if POINCARE_MEMORY_TREE_LOG
+void EditionReference::log() const {
+    std::cout << "id: " << m_identifier;
+    node().log(std::cout, true, 1, true);
+    std::cout << std::endl;
+  }
+#endif
+
 template <BlockType blockType, typename... Types>
 EditionReference EditionReference::Push(Types... args) {
   EditionPool * pool = EditionPool::sharedEditionPool();

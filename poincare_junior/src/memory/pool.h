@@ -24,8 +24,13 @@ public:
   size_t numberOfTrees();
 
   constexpr static int k_maxNumberOfReferences = 128;
+#if POINCARE_MEMORY_TREE_LOG
+  enum class LogFormat {
+    Flat,
+    Tree
+  };
+#endif
 protected:
-
   class ReferenceTable {
   public:
     constexpr static uint16_t NoNodeIdentifier = 0xFFFF;
@@ -38,7 +43,7 @@ protected:
     virtual Node nodeForIdentifier(uint16_t id) const;
     virtual bool reset();
 #if POINCARE_MEMORY_TREE_LOG
-    void treeLog(std::ostream & stream, bool verbose = true) const;
+    void log(std::ostream & stream, LogFormat format, bool verbose = true) const;
     virtual uint16_t identifierForIndex(uint16_t index) const { return index; }
 #endif
   protected:
@@ -49,15 +54,13 @@ protected:
 
 #if POINCARE_MEMORY_TREE_LOG
 public:
+
   virtual const char * name() = 0;
-  void flatLog(std::ostream & stream);
-  void treeLog(std::ostream & stream, bool verbose = true);
+  void log(std::ostream & stream, LogFormat format, bool verbose);
   virtual const ReferenceTable * referenceTable() const = 0;
-  void referencedTreeLog(std::ostream & stream, bool verbose = true) { return referenceTable()->treeLog(stream, verbose); }
-  __attribute__((__used__)) void log() { treeLog(std::cout, false); }
-  __attribute__((__used__)) void logReferences() { referencedTreeLog(std::cout, false); }
-  __attribute__((__used__)) void verboseLog() { treeLog(std::cout, true); }
-  __attribute__((__used__)) void verboseLogReferences() { referencedTreeLog(std::cout, true); }
+  void logReferences(std::ostream & stream, LogFormat format, bool verbose = true) { return referenceTable()->log(stream, format, verbose); }
+  __attribute__((__used__)) void log() { log(std::cout, LogFormat::Tree, false); }
+  __attribute__((__used__)) void logReferences() { logReferences(std::cout, LogFormat::Tree, false); }
 
 protected:
 

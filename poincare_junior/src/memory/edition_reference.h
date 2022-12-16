@@ -12,6 +12,10 @@ public:
   EditionReference() : m_identifier(EditionPool::ReferenceTable::NoNodeIdentifier) {}
   EditionReference(Node node);
 
+#if POINCARE_MEMORY_TREE_LOG
+  __attribute__((__used__)) void log() const;
+#endif
+
   template <BlockType blockType, typename... Types>
   static EditionReference Push(Types... args);
   static EditionReference Clone(const Node node);

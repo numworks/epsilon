@@ -45,7 +45,7 @@ bool Pool::ReferenceTable::reset() {
 }
 
 #if POINCARE_MEMORY_TREE_LOG
-void Pool::ReferenceTable::treeLog(std::ostream & stream, bool verbose) const {
+void Pool::ReferenceTable::log(std::ostream & stream, LogFormat format, bool verbose) const {
   stream << "<" << m_pool->name() << "Pool::References NumberOfStoredNode=\"" << numberOfStoredNodes()  << "\">";
   for (size_t i = 0; i < m_length; i++) {
     stream << "\n  <Reference id: " << identifierForIndex(i) << ">";
@@ -53,8 +53,9 @@ void Pool::ReferenceTable::treeLog(std::ostream & stream, bool verbose) const {
     if (tree.isUninitialized()) {
       stream << "\n    <Uninialized/>";
     } else {
-      tree.log(stream, true, 2, verbose);
+      tree.log(stream, format == LogFormat::Tree, 2, verbose);
     }
+    stream << "\n  </Reference>";
   }
   stream << "\n</" << m_pool->name() << "Pool::References>";
   stream << std::endl;
@@ -65,19 +66,18 @@ void Pool::ReferenceTable::treeLog(std::ostream & stream, bool verbose) const {
 // Pool
 
 #if POINCARE_MEMORY_TREE_LOG
-void Pool::flatLog(std::ostream & stream) {
-  stream << "<" << name() << "Pool format=\"flat\" size=\"" << size() << "\">";
-  for (const Node node : allNodes()) {
-    node.log(stream, false);
-  }
-  stream << "</" << name() << "Pool>";
-  stream << std::endl;
-}
 
-void Pool::treeLog(std::ostream & stream, bool verbose) {
-  stream << "<" << name() << "Pool format=\"tree\" size=\"" << size() << "\">";
-  for (const Node tree : trees()) {
-    tree.log(stream, true, 1, verbose);
+void Pool::log(std::ostream & stream, LogFormat format, bool verbose) {
+  const char * formatName = format == LogFormat::Tree ? "tree" : "flat";
+  stream << "<" << name() << "Pool format=\"" << formatName << "\" size=\"" << size() << "\">";
+  if (format == LogFormat::Tree) {
+    for (const Node tree : trees()) {
+      tree.log(stream, true, 1, verbose);
+    }
+  } else {
+    for (const Node tree : allNodes()) {
+      tree.log(stream, false, 1, verbose);
+    }
   }
   stream << std::endl;
   stream << "<" << name() << "/Pool>";

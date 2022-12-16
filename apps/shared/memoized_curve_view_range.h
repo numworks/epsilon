@@ -37,8 +37,6 @@ protected:
   void protectedSetX(Poincare::Range1D x, float limit = Poincare::Range1D::k_maxFloat);
   void protectedSetY(Poincare::Range1D y, float limit = Poincare::Range1D::k_maxFloat);
 
-  Poincare::Range2D m_autoRange;
-  uint32_t m_storeChecksumOfLastComputedAutoRange;
 private:
   constexpr static float k_defaultGridUnit = 2.f;
 

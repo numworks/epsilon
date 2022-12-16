@@ -16,6 +16,8 @@ public:
   InteractiveCurveViewRange(InteractiveCurveViewRangeDelegate * delegate = nullptr) :
     MemoizedCurveViewRange(),
     m_delegate(delegate),
+    m_autoRange(Poincare::Range1D(), Poincare::Range1D()),
+    m_storeChecksumOfLastComputedAutoRange(0),
     m_offscreenYAxis(0.f),
     m_xAuto(true),
     m_yAuto(true),
@@ -88,6 +90,8 @@ private:
   void privateSetZoomAuto(bool xAuto, bool yAuto);
   void privateComputeRanges(bool computeX, bool computeY);
 
+  Poincare::Range2D m_autoRange;
+  uint32_t m_storeChecksumOfLastComputedAutoRange;
   float m_offscreenYAxis;
   bool m_xAuto;
   bool m_yAuto;

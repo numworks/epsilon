@@ -14,7 +14,7 @@ public:
   FunctionListController(EditExpressionController * editExpressionController) :
     IllustratedExpressionsListController(editExpressionController, true),
     m_graphCell(&m_model) {}
-  void setExpression(Poincare::Expression e) override;
+  void setExactAndApproximateExpression(Poincare::Expression exactExpression, Poincare::Expression approximateExpression) override;
   void viewDidDisappear() override;
 
 private:

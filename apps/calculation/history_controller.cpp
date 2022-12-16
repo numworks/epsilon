@@ -164,7 +164,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
           ChainableExpressionsListController * tail = static_cast<ChainableExpressionsListController*>(vc);
           m_functionController.setTail(tail);
           vc = &m_functionController;
-          vc->setExpression(focusCalculation->input());
+          vc->setExactAndApproximateExpression(focusCalculation->input(), a);
         } else if (additionalInformations.scientificNotation) {
           // TODO function and scientific ?
           assert(vc == nullptr || vc == &m_integerController || vc == &m_rationalController);

@@ -20,9 +20,11 @@ bool CircuitBreakerCheckpoint::setActive(Ion::CircuitBreaker::Status status) {
 }
 
 void CircuitBreakerCheckpoint::rollbackCircuitBreaker() {
+  /* The circuit breaker should have unset all lower types of checkpoints when
+   * jumping. */
+  assert(!Ion::CircuitBreaker::hasCheckpoint(static_cast<Ion::CircuitBreaker::CheckpointType>(static_cast<uint8_t>(type()) + 1)));
   /* At this point, checkpoints after this can be located in the unwound stack.
    * We must not call their methods. */
-  Ion::CircuitBreaker::unsetCheckpoint(static_cast<Ion::CircuitBreaker::CheckpointType>(static_cast<uint8_t>(type()) + 1));
   s_topmost = this;
   rollback();
 }

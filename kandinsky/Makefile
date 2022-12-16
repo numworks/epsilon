@@ -16,7 +16,6 @@ kandinsky_src += $(addprefix kandinsky/src/,\
   context_circle.cpp \
   font.cpp \
   framebuffer.cpp \
-  framebuffer_context.cpp \
   ion_context.cpp \
   point.cpp \
   rect.cpp \

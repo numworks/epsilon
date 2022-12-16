@@ -2,6 +2,7 @@ app_shared_test_src = $(addprefix apps/shared/,\
   continuous_function.cpp \
   continuous_function_cache.cpp \
   continuous_function_properties.cpp \
+  continuous_function_store.cpp \
   curve_selection_controller.cpp \
   curve_view_cursor.cpp \
   curve_view_range.cpp \
@@ -25,6 +26,7 @@ app_shared_test_src = $(addprefix apps/shared/,\
   plot_view_cursors.cpp \
   plot_view_plots.cpp \
   sequence.cpp \
+  sequence_cache_context.cpp \
   sequence_context.cpp \
   sequence_store.cpp \
   toolbox_helpers.cpp \
@@ -110,19 +112,6 @@ app_shared_src += $(app_shared_test_src)
 apps_src += $(app_shared_src)
 
 i18n_files += $(call i18n_with_universal_for,shared/colors)
-
-# The .cpp files could also be added to app_shared_test_src in their respective makefiles
-#     -> it would then be impossible to run the shared test alone
-app_shared_test_src += $(addprefix apps/graph/,\
-  continuous_function_store.cpp \
-)
-
-app_shared_test_src += $(addprefix apps/shared/,\
-  sequence.cpp \
-  sequence_cache_context.cpp \
-  sequence_context.cpp \
-  sequence_store.cpp \
-)
 
 tests_src += $(addprefix apps/shared/test/,\
   function_alignement.cpp \

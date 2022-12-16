@@ -1,7 +1,7 @@
 #ifndef GRAPH_VALUES_CONTROLLER_H
 #define GRAPH_VALUES_CONTROLLER_H
 
-#include "../continuous_function_store.h"
+#include <apps/shared/continuous_function_store.h>
 #include <apps/shared/expression_function_title_cell.h>
 #include <apps/shared/interval_parameter_controller.h>
 #include <apps/shared/scrollable_two_expressions_cell.h>
@@ -76,7 +76,7 @@ private:
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
 
   // Shared::ValuesController
-  ContinuousFunctionStore * functionStore() const override { return static_cast<ContinuousFunctionStore *>(Shared::ValuesController::functionStore()); }
+  Shared::ContinuousFunctionStore * functionStore() const override { return static_cast<Shared::ContinuousFunctionStore *>(Shared::ValuesController::functionStore()); }
   Ion::Storage::Record recordAtColumn(int i) override;
   void updateNumberOfColumns() const override;
   Poincare::Layout * memoizedLayoutAtIndex(int i) override;
@@ -108,7 +108,7 @@ private:
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   int numberOfColumnsForSymbolType(int symbolTypeIndex) const;
   Shared::ContinuousFunctionProperties::SymbolType symbolTypeAtColumn(int * column) const;
-  
+
   mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];
   Shared::ExpressionFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableFunctions];
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];

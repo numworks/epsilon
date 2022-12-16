@@ -19,11 +19,6 @@ bool FunctionApp::storageWillChangeForRecordName(const Ion::Storage::Record::Nam
   return !isVarBoxMenuOpen() || strcmp(recordName.extension, functionStore()->modelExtension()) != 0;
 }
 
-void FunctionApp::storageDidChangeForRecord(Ion::Storage::Record record) {
-  // SequenceStore is actually already invalidated by the globalContext (see TODO in GlobalContext)
-  functionStore()->storageDidChangeForRecord(record);
-}
-
 bool FunctionApp::willStore(Store store) {
   /* Prevent functions from being (re)defined from the store menu.
    * Variables can be changed even if they are used in functions.

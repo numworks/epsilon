@@ -1,6 +1,7 @@
 #include "global_context.h"
 #include <apps/apps_container.h>
 #include "continuous_function.h"
+#include "continuous_function_store.h"
 #include "sequence.h"
 #include "sequence_context.h"
 #include "poincare_helpers.h"
@@ -23,9 +24,15 @@ SequenceStore * GlobalContext::sequenceStore() {
   return &sequenceStore;
 }
 
+ContinuousFunctionStore * GlobalContext::continuousFunctionStore() {
+  static ContinuousFunctionStore continuousFunctionStore;
+  return &continuousFunctionStore;
+}
+
 void GlobalContext::storageDidChangeForRecord(Ion::Storage::Record record) {
   m_sequenceContext.resetCache();
   GlobalContext::sequenceStore()->storageDidChangeForRecord(record);
+  GlobalContext::continuousFunctionStore()->storageDidChangeForRecord(record);
 }
 
 bool GlobalContext::SymbolAbstractNameIsFree(const char * baseName) {

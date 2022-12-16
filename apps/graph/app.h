@@ -2,7 +2,7 @@
 #define GRAPH_APP_H
 
 #include <escher/alternate_empty_view_controller.h>
-#include "continuous_function_store.h"
+#include <apps/shared/continuous_function_store.h>
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
 #include "values/values_controller.h"
@@ -27,14 +27,13 @@ public:
     App * unpack(Escher::Container * container) override;
     void reset() override;
     const Descriptor * descriptor() const override;
-    ContinuousFunctionStore * functionStore() override { return &m_functionStore; }
+    Shared::ContinuousFunctionStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->continuousFunctionStore(); }
     Shared::InteractiveCurveViewRange * graphRange() { return &m_graphRange; }
     Shared::Interval * intervalForSymbolType(Shared::ContinuousFunctionProperties::SymbolType symbolType) {
       return m_interval + static_cast<size_t>(symbolType);
     }
   private:
     void tidy() override;
-    ContinuousFunctionStore m_functionStore;
     Shared::InteractiveCurveViewRange m_graphRange;
     Shared::Interval m_interval[Shared::ContinuousFunctionProperties::k_numberOfSymbolTypes];
   };
@@ -47,7 +46,7 @@ public:
 
   TELEMETRY_ID("Graph");
   CodePoint XNT() override;
-  ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }
+  Shared::ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }
   Shared::Interval * intervalForSymbolType(Shared::ContinuousFunctionProperties::SymbolType symbolType) { return snapshot()->intervalForSymbolType(symbolType); }
   ValuesController * valuesController() override { return &m_valuesController; }
   Escher::InputViewController * inputViewController() override { return &m_inputViewController; }

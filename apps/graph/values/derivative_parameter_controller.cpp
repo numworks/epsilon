@@ -39,7 +39,7 @@ HighlightCell * DerivativeParameterController::reusableCell(int index, int type)
   return &m_hideColumn;
 }
 
-ContinuousFunctionStore * DerivativeParameterController::functionStore() {
+Shared::ContinuousFunctionStore * DerivativeParameterController::functionStore() {
   return App::app()->functionStore();
 }
 

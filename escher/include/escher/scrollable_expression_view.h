@@ -9,14 +9,16 @@ namespace Escher {
 
 class ScrollableExpressionView : public ScrollableView, public ScrollViewDataSource {
 public:
-  ScrollableExpressionView(Responder * parentResponder,
-                           KDCoordinate leftRightMargin,
-                           KDCoordinate topBottomMargin,
-                           float horizontalAlignment = KDContext::k_alignLeft,
-                           float verticalAlignment = KDContext::k_alignCenter,
-                           KDColor textColor = KDColorBlack,
-                           KDColor backgroundColor = KDColorWhite,
-                           KDFont::Size font = KDFont::Size::Large);
+  ScrollableExpressionView(
+    Responder * parentResponder,
+    KDCoordinate leftRightMargin,
+    KDCoordinate topBottomMargin,
+    float horizontalAlignment = KDContext::k_alignLeft,
+    float verticalAlignment = KDContext::k_alignCenter,
+    KDColor textColor = KDColorBlack,
+    KDColor backgroundColor = KDColorWhite,
+    KDFont::Size font = KDFont::Size::Large
+  );
   Poincare::Layout layout() const;
   KDFont::Size font() const { return m_expressionView.font(); }
   void setFont(KDFont::Size font) { m_expressionView.setFont(font); }

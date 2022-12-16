@@ -22,7 +22,6 @@ public:
   void didBecomeFirstResponder() override;
   virtual void reloadScroll() { m_labelExpressionView.reloadScroll(); }
 private:
-  // Remove margins added by TableCell because they're already handled by ScrollableInputExactApproximateExpressionsView
   ScrollableExpressionView m_labelExpressionView;
 };
 

@@ -9,7 +9,7 @@ namespace Calculation {
 
 class FunctionModel : public Shared::MemoizedCurveViewRange {
 public:
-  void setParameters(Poincare::Expression function, float abscissa);
+  void setParameters(Poincare::Expression function, float abscissa, float ordinate);
   Poincare::Expression function() const { return m_function; }
   float abscissa() const { return m_abscissa; }
   float ordinate() const { return m_ordinate; }

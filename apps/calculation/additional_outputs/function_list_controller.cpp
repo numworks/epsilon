@@ -19,23 +19,30 @@ using namespace Shared;
 
 namespace Calculation {
 
-void FunctionListController::setExpression(Poincare::Expression e) {
-  ExpressionsListController::setExpression(e);
+void FunctionListController::setExactAndApproximateExpression(Poincare::Expression exactExpression, Poincare::Expression approximateExpression) {
+  ExpressionsListController::setExpression(exactExpression);
   assert(!m_expression.isUninitialized());
   static_assert(k_maxNumberOfRows >= k_maxNumberOfOutputRows, "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
   Preferences * preferences = Preferences::sharedPreferences();
   Context * context = App::app()->localContext();
 
-  float abscissa = e.getNumericalValue();
+  float abscissa = exactExpression.getNumericalValue();
   Symbol variable = Symbol::Builder(UCodePointUnknown);
-  e.replaceNumericalValuesWithSymbol(variable);
+  exactExpression.replaceNumericalValuesWithSymbol(variable);
 
-  Expression reducedExpression = e;
+  Expression reducedExpression = exactExpression;
   PoincareHelpers::CloneAndReduce(&reducedExpression, context, ExpressionNode::ReductionTarget::SystemForApproximation);
-  m_model.setParameters(reducedExpression, abscissa);
 
-  m_layouts[0] = HorizontalLayout::Builder(LayoutHelper::String("y="), e.replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol)).createLayout(preferences->displayMode(), preferences->numberOfSignificantDigits(), context));
+  /* Use the approximate expression to compute the ordinate to ensure that
+   * it's coherent with the output of the calculation.
+   * Sometimes when the reduction has some mistakes, the approximation of
+   * reducedExpression(abscissa) can differ for the approximateExpression.
+   */
+  float ordinate = PoincareHelpers::ApproximateToScalar<float>(approximateExpression, context);
+  m_model.setParameters(reducedExpression, abscissa, ordinate);
+
+  m_layouts[0] = HorizontalLayout::Builder(LayoutHelper::String("y="), exactExpression.replaceSymbolWithExpression(variable, Symbol::Builder(k_symbol)).createLayout(preferences->displayMode(), preferences->numberOfSignificantDigits(), context));
 
   illustrationCell()->reloadCell();
   setShowIllustration(true);

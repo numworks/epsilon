@@ -11,10 +11,10 @@ namespace Calculation {
 
 static Context * context() { return App::app()->localContext(); }
 
-void FunctionModel::setParameters(Poincare::Expression function, float abscissa) {
+void FunctionModel::setParameters(Poincare::Expression function, float abscissa, float ordinate) {
   m_function = function;
   m_abscissa = abscissa;
-  m_ordinate = Shared::PoincareHelpers::ApproximateWithValueForSymbol<float>(m_function, Shared::Function::k_unknownName, abscissa, context());
+  m_ordinate = ordinate;
   recomputeViewRange();
 };
 

@@ -3,7 +3,8 @@
 
 #include "calculation.h"
 #include <apps/shared/expiring_pointer.h>
-#include <poincare/print_float.h>
+#include <poincare/preferences.h>
+#include <stddef.h>
 
 namespace Calculation {
 
@@ -27,61 +28,53 @@ namespace Calculation {
 ^               ^               ^               ^               ^                                        ^
 m_buffer        p3              p2              p1              p0                                       a
 
-m_calculationAreaEnd = p0
-a = addressOfPointerToCalculation(0)
+a = pointerArea()
 */
 
 class CalculationStore {
 public:
-  CalculationStore();
-  CalculationStore(char * buffer, int size);
-  typedef KDCoordinate (*HeightComputer)(Calculation * c, Poincare::Context * context, bool expanded);
-  Shared::ExpiringPointer<Calculation> push(const char * text, Poincare::Context * context, HeightComputer heightComputer);
+  using HeightComputer = KDCoordinate (*)(Calculation *, Poincare::Context *, bool);
 
-  Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
-  void deleteCalculationAtIndex(int i);
-  void deleteAll();
-  int bufferSize() { return m_bufferSize; }
-  int remainingBufferSize() const { assert(m_calculationAreaEnd >= m_buffer); return m_bufferSize - (m_calculationAreaEnd - m_buffer) - m_numberOfCalculations*sizeof(Calculation*); }
+  CalculationStore(char * buffer, size_t bufferSize);
+
+  /* A Calculation does not count toward the number while it is being built and
+   * filled. */
   int numberOfCalculations() const { return m_numberOfCalculations; }
-  Poincare::Expression ansExpression(Poincare::Context * context);
-  void recomputeHeights(HeightComputer heightComputer);
-  bool preferencesMightHaveChanged(Poincare::Preferences * preferences);
-  void recover();
+  Shared::ExpiringPointer<Calculation> calculationAtIndex(int index) const;
+  Poincare::Expression ansExpression(Poincare::Context * context) const;
+  size_t bufferSize() const { return m_bufferSize; }
+  size_t remainingBufferSize() const { return spaceForNewCalculations(endOfCalculations()) + sizeof(Calculation *); }
+
+  Shared::ExpiringPointer<Calculation> push(const char * text, Poincare::Context * context, HeightComputer heightComputer);
+  void deleteCalculationAtIndex(int index) { privateDeleteCalculationAtIndex(index, endOfCalculations()); }
+  void deleteAll() { m_numberOfCalculations = 0; }
+  void recomputeHeightsIfPreferencesHaveChanged(Poincare::Preferences * preferences, HeightComputer heightComputer);
 
 private:
-  class CalculationIterator {
-  public:
-    CalculationIterator(const char * c) : m_calculation(reinterpret_cast<Calculation *>(const_cast<char *>(c))) {}
-    Calculation * operator*() { return m_calculation; }
-    bool operator!=(const CalculationIterator& it) const { return (m_calculation != it.m_calculation); }
-    CalculationIterator & operator++() {
-      m_calculation = m_calculation->next();
-      return *this;
-    }
-  protected:
-    Calculation * m_calculation;
-  };
+  static constexpr char * k_pushError = nullptr;
 
-  CalculationIterator begin() const { return CalculationIterator(m_buffer); }
-  CalculationIterator end() const { return CalculationIterator(m_calculationAreaEnd); }
+  static void SetCalculationHeights(Calculation * calculation, HeightComputer heightComputer, Poincare::Context * context) { calculation->setHeights(heightComputer(calculation, context, false), heightComputer(calculation, context, true)); }
 
-  bool pushSerializedExpression(Poincare::Expression e, char ** start, char * end, int numberOfSignificantDigits = Poincare::PrintFloat::k_numberOfStoredSignificantDigits);
-  Shared::ExpiringPointer<Calculation> emptyStoreAndPushUndef(Poincare::Context * context, HeightComputer heightComputer);
-  size_t deleteOldestCalculation();
-  char * addressOfPointerToCalculationOfIndex(int i) { assert(i <= m_numberOfCalculations); return m_buffer + m_bufferSize - (m_numberOfCalculations - i)*sizeof(Calculation *);}
-  void updateRecoveryData();
+  char * pointerArea() const { return m_buffer + m_bufferSize - m_numberOfCalculations * sizeof(Calculation *); }
+  char * * pointerArray() const { return reinterpret_cast<char * *>(pointerArea()); }
+  char * endOfCalculations() const { return numberOfCalculations() == 0 ? m_buffer : endOfCalculationAtIndex(0); }
+  char * endOfCalculationAtIndex(int index) const;
+  /* Account for the size of an additional pointer at the end of the buffer. */
+  size_t spaceForNewCalculations(char * currentEndOfCalculations) const { return (pointerArea() - currentEndOfCalculations) - sizeof(Calculation *); }
 
-  // Memoization
-  char * beginingOfMemoizationArea() {return addressOfPointerToCalculationOfIndex(0);};
-  void recomputeMemoizedPointersAfterCalculationIndex(int index);
+  size_t privateDeleteCalculationAtIndex(int index, char * shiftedMemoryEnd);
+  size_t deleteOldestCalculation(char * endOfTemporaryData) { return privateDeleteCalculationAtIndex(numberOfCalculations() - 1, endOfTemporaryData); }
+  Shared::ExpiringPointer<Calculation> errorPushUndefined(HeightComputer heightComputer);
+
+  /* Push helper methods return a pointer to the end of the pushed content, or
+   * k_pushError if the content was not pushed. */
+  char * pushEmptyCalculation(char * location);
+  char * pushSerializedExpression(char * location, Poincare::Expression e, int numberOfSignificantDigits);
+  char * pushUndefined(char * location);
 
   char * const m_buffer;
-  const int m_bufferSize;
-  char * m_calculationAreaEnd;
-  char * m_recoveryCalculationAreaEnd;
+  const size_t m_bufferSize;
   int m_numberOfCalculations;
-  int m_recoveryNumberOfCalculations;
   Poincare::Preferences m_inUsePreferences;
 };
 

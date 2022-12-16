@@ -113,6 +113,7 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
         Zoom zoomAlongCoordinate(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context, k_maxFloat);
         zoomAlongCoordinate.setBounds(f->tMin(), f->tMax());
         zoomAlongCoordinate.fitPointsOfInterest(floatEvaluators[coordinate], &e, false, doubleEvaluators[coordinate]);
+        zoomAlongCoordinate.fitBounds(floatEvaluators[coordinate], &e, false);
         ranges[coordinate] = *zoomAlongCoordinate.range(false, false).y();
       }
 

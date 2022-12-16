@@ -10,6 +10,7 @@ ScrollableExpressionView::ScrollableExpressionView(Responder * parentResponder, 
   m_expressionView(horizontalAlignment, verticalAlignment, textColor, backgroundColor, font)
 {
   setDecoratorType(ScrollView::Decorator::Type::Arrows);
+  setDecoratorFont(font);
   setMargins(
     topBottomMargin,
     leftRightMargin,

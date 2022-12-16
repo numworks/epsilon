@@ -48,6 +48,7 @@ public:
     virtual KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force, ScrollViewDelegate * delegate = nullptr) { return frame; }
     virtual void setBackgroundColor(KDColor c) {}
     virtual void setVerticalMargins(KDCoordinate top, KDCoordinate bottom) {}
+    virtual void setFont(KDFont::Size font) {}
   };
 
   class BarDecorator : public Decorator {
@@ -77,6 +78,7 @@ public:
     View * indicatorAtIndex(int index) override;
     KDRect layoutIndicators(KDSize content, KDPoint offset, KDRect frame, KDRect * dirtyRect1, KDRect * dirtyRect2, bool force, ScrollViewDelegate * delegate = nullptr) override;
     void setBackgroundColor(KDColor c) override;
+    void setFont(KDFont::Size font) override;
   private:
     ScrollViewArrow m_topArrow;
     ScrollViewArrow m_rightArrow;
@@ -88,6 +90,9 @@ public:
   void setDecoratorType(Decorator::Type t) {
     m_decoratorType = t;
     m_decorators.setActiveDecorator(t);
+  }
+  void setDecoratorFont(KDFont::Size font) {
+    m_decorators.activeDecorator()->setFont(font);
   }
   virtual void setBackgroundColor(KDColor c) {
     m_backgroundColor = c;

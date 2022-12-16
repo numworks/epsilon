@@ -93,7 +93,8 @@ void ScrollViewVerticalBar::drawRect(KDContext * ctx, KDRect rect) const {
 
 ScrollViewArrow::ScrollViewArrow(Side side) :
   m_visible(false),
-  m_arrow(side)
+  m_arrow(side),
+  m_font(KDFont::Size::Large)
 {
 }
 
@@ -111,7 +112,7 @@ void ScrollViewArrow::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->alignAndDrawString(arrowString, KDPointZero, m_frame.size(),
     (m_arrow == Top || m_arrow == Bottom) ? KDContext::k_alignCenter : KDContext::k_alignLeft,
     (m_arrow == Left || m_arrow == Right) ? KDContext::k_alignCenter : KDContext::k_alignTop,
-    KDFont::Size::Large, m_color, m_backgroundColor, m_visible);
+    m_font, m_color, m_backgroundColor, m_visible);
 }
 
 #if ESCHER_VIEW_LOGGING

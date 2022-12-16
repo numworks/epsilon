@@ -56,15 +56,15 @@ bool GraphController::handleEvent(Ion::Events::Event event) {
   return Shared::FunctionGraphController::handleEvent(event);
 }
 
-template <typename T> Coordinate2D<T> evaluator(T t, const void * model, Context * context) {
+template <typename T> static Coordinate2D<T> evaluator(T t, const void * model, Context * context) {
   const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
   return f->evaluateXYAtParameter(t, context);
 }
-template <typename T> Coordinate2D<T> evaluatorSecondCurve(T t, const void * model, Context * context) {
+template <typename T> static Coordinate2D<T> evaluatorSecondCurve(T t, const void * model, Context * context) {
   const ContinuousFunction * f = static_cast<const ContinuousFunction *>(model);
   return f->evaluateXYAtParameter(t, context, 1);
 }
-template <typename T, int coordinate> Coordinate2D<T> parametricExpressionEvaluator(T t, const void * model, Context * context) {
+template <typename T, int coordinate> static Coordinate2D<T> parametricExpressionEvaluator(T t, const void * model, Context * context) {
   const Expression * e = static_cast<const Expression *>(model);
   assert(e->numberOfChildren() == 2);
   assert(coordinate == 0 || coordinate == 1);

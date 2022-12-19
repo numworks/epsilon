@@ -225,32 +225,35 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * si
   while (leftParenthesisIndex >= 0 && parentRef.childAtIndex(leftParenthesisIndex).isCollapsable(&numberOfOpenParenthesis, true)) {
     leftParenthesisIndex--;
   }
+
+  if (cursor->position() == LayoutCursor::Position::Left) {
+    /* If b is insterted on the left of c in a^c, output (a^b)^c. */
+    parentRef.addChildAtIndex(*sibling, thisIndex, parentRef.numberOfChildren(), nullptr);
+  }
+
   HorizontalLayout h = HorizontalLayout::Builder();
   int n = 0;
-  int i = thisIndex - (cursor->position() == LayoutCursor::Position::Left);
+  int i = thisIndex;;
   while (i > leftParenthesisIndex) {
     Layout child = parentRef.childAtIndex(i);
     i -= 1 + parentRef.removeChild(child, nullptr, true);
     h.addChildAtIndex(child, 0, n++, nullptr);
   }
-  assert(n == 0 || i == leftParenthesisIndex);
-  if (n == 0) {
-    EmptyLayoutNode::Visibility visibility = n == 0 ? EmptyLayoutNode::Visibility::Never : EmptyLayoutNode::Visibility::On;
-    EmptyLayout e = EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, visibility);
-    h.addChildAtIndex(e, 0, n++, nullptr);
-  }
+  assert(n > 0 && i == leftParenthesisIndex);
   ParenthesisLayout parentheses = ParenthesisLayout::Builder(h);
   parentRef.addChildAtIndex(parentheses, leftParenthesisIndex + 1, parentRef.numberOfChildren(), nullptr);
-  /* Handle the sibling insertion, as the index might have changed after
-   * collapsing nodes inside the parenthesis. */
-  parentRef.addChildAtIndex(*sibling, leftParenthesisIndex + 2, parentRef.numberOfChildren(), nullptr);
-  if (!parentheses.parent().isUninitialized()) {
-    if (cursor->position() == LayoutCursor::Position::Left) {
-      cursor->setLayout(h);
-      cursor->setPosition(LayoutCursor::Position::Right);
-    } else {
-      cursor->setLayout(parentheses);
-    }
+
+  if (cursor->position() == LayoutCursor::Position::Right) {
+    /* If b is insterted on the right of c in a^c, output (a^c)^b. */
+    parentRef.addChildAtIndex(*sibling, leftParenthesisIndex + 2, parentRef.numberOfChildren(), nullptr);
+  }
+
+  assert(!parentheses.parent().isUninitialized());
+  if (cursor->position() == LayoutCursor::Position::Left) {
+    cursor->setLayout(h);
+    cursor->setPosition(LayoutCursor::Position::Right);
+  } else {
+    cursor->setLayout(parentheses);
   }
   return false;
 }

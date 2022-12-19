@@ -19,7 +19,7 @@ DoublePairTableController::DoublePairTableController(Responder * parentResponder
 bool DoublePairTableController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
-    Escher::Container::activeApp()->setFirstResponder(tabController());
+    tabController()->selectTab();
     return true;
   }
   return false;

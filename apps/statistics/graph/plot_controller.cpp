@@ -7,7 +7,7 @@ namespace Statistics {
 
 PlotController::PlotController(Escher::Responder * parentResponder,
                                Escher::ButtonRowController * header,
-                               Escher::Responder * tabController,
+                               Escher::TabViewController * tabController,
                                Escher::StackViewController * stackViewController,
                                Escher::ViewController * typeViewController,
                                Store * store) :

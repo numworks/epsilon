@@ -3,6 +3,7 @@
 
 #include <escher/button_row_controller.h>
 #include <escher/stack_view_controller.h>
+#include <escher/tab_view_controller.h>
 #include "double_pair_store.h"
 #include "editable_cell_table_view_controller.h"
 #include "layout_field_delegate.h"
@@ -57,7 +58,7 @@ protected:
    * deleted, except if you set authorizeNonEmptyRowDeletion = false. */
   virtual bool deleteCellValue(int series, int col, int row, bool authorizeNonEmptyRowDeletion = true);
   Escher::StackViewController * stackController() const override;
-  Escher::Responder * tabController() const override;
+  Escher::TabViewController * tabController() const override;
   bool checkDataAtLocation(double floatBody, int columnIndex, int rowIndex) const override;
   bool setDataAtLocation(double floatBody, int columnIndex, int rowIndex) override;
   double dataAtLocation(int columnIndex, int rowIndex) override;

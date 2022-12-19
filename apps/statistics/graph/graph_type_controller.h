@@ -6,6 +6,7 @@
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/responder.h>
 #include <escher/stack_view_controller.h>
+#include <escher/tab_view_controller.h>
 #include <apps/i18n.h>
 #include "graph_view_model.h"
 #include "../store.h"
@@ -16,7 +17,7 @@ constexpr int k_numberOfCells = 4;
 class GraphTypeController : public Escher::AlternateEmptyViewDefaultDelegate, public Escher::SelectableCellListPage<Escher::TransparentImageCellWithMessage, k_numberOfCells, Escher::RegularListViewDataSource> {
 public:
   GraphTypeController(Escher::Responder * parentResponder,
-                 Escher::Responder * tabController,
+                 Escher::TabViewController * tabController,
                  Escher::StackViewController * stackView,
                  Store * store,
                  GraphViewModel * graphViewModel);
@@ -32,7 +33,7 @@ public:
   const char * title() override { return I18n::translate(I18n::Message::StatisticsGraphType); }
 
 private:
-  Escher::Responder * m_tabController;
+  Escher::TabViewController * m_tabController;
   Escher::StackViewController * m_stackViewController;
   Store * m_store;
   GraphViewModel * m_graphViewModel;

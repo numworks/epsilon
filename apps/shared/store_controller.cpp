@@ -121,7 +121,7 @@ bool StoreController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
     assert(selectedRow() == -1);
-    Container::activeApp()->setFirstResponder(tabController());
+    tabController()->selectTab();
     return true;
   }
   if (event == Ion::Events::Backspace) {
@@ -175,8 +175,8 @@ StackViewController * StoreController::stackController() const {
   return static_cast<StackViewController *>(parentResponder()->parentResponder());
 }
 
-Responder * StoreController::tabController() const {
-  return (parentResponder()->parentResponder()->parentResponder());
+Escher::TabViewController * StoreController::tabController() const {
+  return static_cast<Escher::TabViewController *>(parentResponder()->parentResponder()->parentResponder());
 }
 
 bool StoreController::cellAtLocationIsEditable(int columnIndex, int rowIndex) {

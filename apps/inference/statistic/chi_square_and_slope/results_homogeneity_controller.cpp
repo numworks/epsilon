@@ -30,7 +30,7 @@ void ResultsHomogeneityController::ResultsTableController::viewWillAppear() {
 bool ResultsHomogeneityController::ResultsTableController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     m_resultHomogeneityTable.tableView()->deselectTable();
-    Escher::Container::activeApp()->setFirstResponder(tabController());
+    tabController()->selectTab();
     return true;
   }
   return false;
@@ -39,7 +39,7 @@ bool ResultsHomogeneityController::ResultsTableController::handleEvent(Ion::Even
 void ResultsHomogeneityController::ResultsTableController::tableViewDidChangeSelection(SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   if (m_resultHomogeneityTable.unselectTopLeftCell(t, previousSelectedCellX, previousSelectedCellY) && t->selectedColumn() == 0) {
     m_resultHomogeneityTable.tableView()->deselectTable();
-    Escher::Container::activeApp()->setFirstResponder(tabController());
+    tabController()->selectTab();
   }
 }
 

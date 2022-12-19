@@ -4,7 +4,7 @@
 
 namespace Statistics {
 
-DataViewController::DataViewController(Escher::Responder * parentResponder, Escher::Responder * tabController, Escher::ButtonRowController * header, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store) :
+DataViewController::DataViewController(Escher::Responder * parentResponder, Escher::TabViewController * tabController, Escher::ButtonRowController * header, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store) :
   ViewController(parentResponder),
   GraphButtonRowDelegate(header, stackViewController, this, typeViewController),
   m_store(store),
@@ -36,7 +36,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
   if (selectedButton >= 0) {
     if (event == Ion::Events::Up || event == Ion::Events::Back) {
       header()->setSelectedButton(-1);
-      Escher::Container::activeApp()->setFirstResponder(m_tabController);
+      m_tabController->selectTab();
       return true;
     }
     if (event == Ion::Events::Down && m_store->hasValidSeries(validSerieMethod())) {

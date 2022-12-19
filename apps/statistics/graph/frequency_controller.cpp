@@ -4,7 +4,7 @@
 
 namespace Statistics {
 
-FrequencyController::FrequencyController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store) :
+FrequencyController::FrequencyController(Escher::Responder * parentResponder, Escher::ButtonRowController * header, Escher::TabViewController * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store) :
     PlotController(parentResponder, header, tabController, stackViewController, typeViewController, store) {
   m_curveView.setCursorView(&m_cursorView);
 }

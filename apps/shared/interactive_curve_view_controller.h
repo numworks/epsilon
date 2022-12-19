@@ -4,6 +4,7 @@
 #include <escher/alternate_empty_view_delegate.h>
 #include <escher/button_row_controller.h>
 #include <escher/button_state.h>
+#include <escher/tab_view_controller.h>
 #include <escher/toggleable_dot_view.h>
 #include <escher/unequal_view.h>
 #include <poincare/coordinate_2D.h>
@@ -47,7 +48,7 @@ public:
 protected:
   constexpr static float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;
 
-  Responder * tabController() const;
+  Escher::TabViewController * tabController() const;
   virtual Escher::StackViewController * stackController() const;
   virtual void initCursorParameters() = 0;
   virtual bool moveCursorVertically(int direction) = 0;

@@ -7,6 +7,7 @@
 #include <escher/regular_table_view_data_source.h>
 #include <escher/button_row_controller.h>
 #include <escher/alternate_empty_view_controller.h>
+#include <escher/tab_view_controller.h>
 #include <apps/i18n.h>
 
 namespace Shared {
@@ -43,7 +44,7 @@ protected:
   KDCoordinate defaultRowHeight() override { return k_cellHeight; }
 
   virtual DoublePairStore * store() const = 0;
-  Escher::Responder * tabController() const override { return (parentResponder()->parentResponder()->parentResponder()); }
+  Escher::TabViewController * tabController() const override { return static_cast<Escher::TabViewController *>(parentResponder()->parentResponder()->parentResponder()); }
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
 
   PrefacedTwiceTableView m_prefacedTwiceTableView;

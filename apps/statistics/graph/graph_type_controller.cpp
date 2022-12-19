@@ -5,7 +5,7 @@
 using namespace Statistics;
 
 GraphTypeController::GraphTypeController(Escher::Responder * parentResponder,
-                               Escher::Responder * tabController,
+                               Escher::TabViewController * tabController,
                                Escher::StackViewController * stackView,
                                Store * store,
                                GraphViewModel * graphViewModel) :
@@ -31,7 +31,7 @@ bool GraphTypeController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::Up && selectedRow() == 0) || (event == Ion::Events::Back && m_store->graphViewHasBeenInvalidated())) {
     /* If m_store->graphViewHasBeenInvalidated(), there isn't a previously
      * selected graph view, so Back selects the tab instead. */
-    Escher::Container::activeApp()->setFirstResponder(m_tabController);
+    m_tabController->selectTab();
     return true;
   }
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {

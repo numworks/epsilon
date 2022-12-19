@@ -8,7 +8,7 @@ using namespace Escher;
 
 namespace Statistics {
 
-BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store) :
+BoxController::BoxController(Responder * parentResponder, ButtonRowController * header, TabViewController * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store) :
   MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store),
   m_view(store, &m_selectedIndex),
   m_boxParameterController(nullptr, store, &m_selectedIndex),

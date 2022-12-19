@@ -76,7 +76,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     if (selectedRow() == -1) {
       header()->setSelectedButton(-1);
-      Container::activeApp()->setFirstResponder(tabController());
+      tabController()->selectTab();
       return true;
     }
     selectableTableView()->deselectTable();
@@ -286,8 +286,8 @@ int ValuesController::numberOfElementsInColumn(int columnIndex) const {
 
 // Parent controller getters
 
-Responder * ValuesController::tabController() const {
-  return (parentResponder()->parentResponder()->parentResponder()->parentResponder());
+Escher::TabViewController * ValuesController::tabController() const {
+  return static_cast<Escher::TabViewController *>(parentResponder()->parentResponder()->parentResponder()->parentResponder());
 }
 
 StackViewController * ValuesController::stackController() const {

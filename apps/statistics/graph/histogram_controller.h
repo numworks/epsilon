@@ -15,7 +15,7 @@ public:
   HistogramController(Escher::Responder * parentResponder,
                       Escher::InputEventHandlerDelegate * inputEventHandlerDelegate,
                       Escher::ButtonRowController * header,
-                      Escher::Responder * tabController,
+                      Escher::TabViewController * tabController,
                       Escher::StackViewController * stackViewController,
                       Escher::ViewController * typeViewController,
                       Store * store,

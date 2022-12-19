@@ -14,6 +14,7 @@
 #include <escher/even_odd_editable_text_cell.h>
 #include <escher/even_odd_expression_cell.h>
 #include <escher/even_odd_message_text_cell.h>
+#include <escher/tab_view_controller.h>
 
 namespace Shared {
 
@@ -72,7 +73,7 @@ protected:
 
   // Parent controller getters
   Escher::StackViewController * stackController() const override;
-  Responder * tabController() const override;
+  Escher::TabViewController * tabController() const override;
 
   // Model getters
   virtual FunctionStore * functionStore() const;

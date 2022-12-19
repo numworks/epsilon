@@ -143,7 +143,7 @@ private:
   virtual Interval * intervalAtColumn(int columnIndex) = 0;
   virtual I18n::Message valuesParameterMessageAtColumn(int columnIndex) const = 0;
   virtual int maxNumberOfCells() = 0;
-  virtual int maxNumberOfFunctions() = 0;
+  virtual int maxNumberOfDisplayableFunctions() = 0;
   virtual ExpressionFunctionTitleCell * functionTitleCells(int j) = 0;
   virtual Escher::EvenOddExpressionCell * valueCells(int j) = 0;
   virtual int abscissaCellsCount() const = 0;

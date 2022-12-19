@@ -166,7 +166,7 @@ int ValuesController::reusableCellCount(int type) {
     case k_abscissaTitleCellType:
       return abscissaTitleCellsCount();
     case k_functionTitleCellType:
-      return maxNumberOfFunctions();
+      return maxNumberOfDisplayableFunctions();
     case k_editableValueCellType:
       return abscissaCellsCount();
     case k_notEditableValueCellType:
@@ -261,7 +261,7 @@ void ValuesController::didChangeCell(int column, int row) {
   }
 
   // Update the memoization of rows linked to the changed cell
-  int nbOfMemoizedColumns = maxNumberOfFunctions();
+  int nbOfMemoizedColumns = maxNumberOfDisplayableFunctions();
   int nbOfColumnsForAbscissa = numberOfColumnsForAbscissaColumn(abscissaColumn);
   for (int i = abscissaColumn+1; i < abscissaColumn+nbOfColumnsForAbscissa; i++) {
     int memoizedI = valuesColumnForAbsoluteColumn(i) - m_firstMemoizedColumn;
@@ -303,7 +303,7 @@ FunctionStore * ValuesController::functionStore() const {
 // Function evaluation memoization
 
 void ValuesController::resetLayoutMemoization() {
-  const int numberOfMemoizedCell = k_maxNumberOfDisplayableRows * maxNumberOfFunctions();
+  const int numberOfMemoizedCell = k_maxNumberOfDisplayableRows * maxNumberOfDisplayableFunctions();
   for (int i = 0; i < numberOfMemoizedCell; i++) {
     *memoizedLayoutAtIndex(i) = Layout();
   }
@@ -313,7 +313,7 @@ void ValuesController::resetLayoutMemoization() {
     assert(valueCell);
     valueCell->setLayout(Layout());
   }
-  const int numberOfFunctionRows = maxNumberOfFunctions();
+  const int numberOfFunctionRows = maxNumberOfDisplayableFunctions();
   for (int i = 0; i < numberOfFunctionRows; i++) {
     ExpressionFunctionTitleCell * titleCell = functionTitleCells(i);
     assert(titleCell);
@@ -326,7 +326,7 @@ void ValuesController::resetLayoutMemoization() {
 }
 
 Layout ValuesController::memoizedLayoutForCell(int i, int j) {
-  const int nbOfMemoizedColumns = maxNumberOfFunctions();
+  const int nbOfMemoizedColumns = maxNumberOfDisplayableFunctions();
   // Conversion of coordinates from absolute table to values table
   int valuesI = valuesColumnForAbsoluteColumn(i);
   int valuesJ = valuesRowForAbsoluteRow(j);

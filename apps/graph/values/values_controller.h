@@ -97,7 +97,7 @@ private:
   Shared::Interval * intervalAtColumn(int columnIndex) override;
   I18n::Message valuesParameterMessageAtColumn(int columnIndex) const override;
   int maxNumberOfCells() override { return k_maxNumberOfDisplayableCells; }
-  int maxNumberOfFunctions() override { return k_maxNumberOfDisplayableFunctions; }
+  int maxNumberOfDisplayableFunctions() override { return k_maxNumberOfDisplayableFunctions; }
   Shared::ExpressionFunctionTitleCell * functionTitleCells(int j) override;
   Escher::EvenOddExpressionCell * valueCells(int j) override;
   int abscissaCellsCount() const override { return k_maxNumberOfDisplayableAbscissaCells; }

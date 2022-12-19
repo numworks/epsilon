@@ -656,6 +656,11 @@ std::complex<T> Trigonometry::ConvertRadianToAngleUnit(const std::complex<T> c, 
   Expression coefficients[2]; // Only 2 coefficients since child has degree 1
   child.getPolynomialReducedCoefficients(symbol, coefficients, reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), reductionContext.unitFormat(), reductionContext.symbolicComputation());
 
+  if (coefficients[0].isUninitialized() || coefficients[1].isUninitialized()) {
+    // Reduction of coefficients failed
+    return false;
+  }
+
   if (angle) {
     *angle = coefficients[0].approximateToScalar<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit());
     if (e.type() == ExpressionNode::Type::Sine) {

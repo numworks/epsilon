@@ -115,6 +115,8 @@ protected:
     KDColor m_textColor;
     KDColor m_backgroundColor;
     bool m_isEditing;
+    /* The textfield is 'Stalling' when the edition has been interrupted (by a
+     * 'syntax error pop-up for instance) but should not be discarded. */
     bool m_isStalled;
     bool m_useDraftBuffer;
   };

@@ -4,6 +4,7 @@
 #include <poincare/parenthesis.h>
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
+#include <poincare/simplification_helper.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
 #include <cmath>
@@ -110,6 +111,13 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
   if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     return replaceWithUndefinedInPlace();
   }
+
+  // Bubble up dependencies of children
+  Expression e = SimplificationHelper::bubbleUpDependencies(*this, reductionContext);
+  if (!e.isUninitialized()) {
+    return e;
+  }
+
   if (reductionContext.symbolicComputation() == ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol) {
     return *this;
   }

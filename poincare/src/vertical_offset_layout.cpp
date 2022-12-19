@@ -234,7 +234,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * si
     h.addChildAtIndex(child, 0, n++, nullptr);
   }
   assert(n == 0 || i == leftParenthesisIndex);
-  if (n == 0 || h.childAtIndex(0).type() == Type::VerticalOffsetLayout) {
+  if (n == 0) {
     EmptyLayoutNode::Visibility visibility = n == 0 ? EmptyLayoutNode::Visibility::Never : EmptyLayoutNode::Visibility::On;
     EmptyLayout e = EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, visibility);
     h.addChildAtIndex(e, 0, n++, nullptr);

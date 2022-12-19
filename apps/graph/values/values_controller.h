@@ -2,10 +2,8 @@
 #define GRAPH_VALUES_CONTROLLER_H
 
 #include "../continuous_function_store.h"
-#include <apps/shared/editable_cell_selectable_table_view.h>
 #include <apps/shared/expression_function_title_cell.h>
 #include <apps/shared/interval_parameter_controller.h>
-#include <apps/shared/prefaced_twice_table_view.h>
 #include <apps/shared/scrollable_two_expressions_cell.h>
 #include <apps/shared/store_cell.h>
 #include <apps/shared/values_controller.h>
@@ -24,7 +22,6 @@ public:
   bool displayButtonExactValues() const;
 
   // View controller
-  Escher::View * view() override { return &m_prefacedTwiceTableView; }
   void viewDidDisappear() override;
 
   // TableViewDataSource
@@ -60,9 +57,6 @@ private:
   static KDSize ApproximatedParametricCellSize();
   static KDSize CellSizeWithLayout(Poincare::Layout l);
 
-  // TabTableController
-  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
-
   // TableViewDataSource
   /* Note: computing the total height and width of the table
    * when exact results are switched on is slow because all layouts
@@ -87,7 +81,6 @@ private:
   void updateNumberOfColumns() const override;
   Poincare::Layout * memoizedLayoutAtIndex(int i) override;
   Poincare::Layout functionTitleLayout(int columnIndex) override;
-  Shared::PrefacedTableView * prefacedView() override { return &m_prefacedTwiceTableView; }
   int numberOfAbscissaColumnsBeforeAbsoluteColumn(int column) const override;
   int numberOfAbscissaColumnsBeforeValuesColumn(int column) const override;
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
@@ -116,8 +109,6 @@ private:
   int numberOfColumnsForSymbolType(int symbolTypeIndex) const;
   Shared::ContinuousFunctionProperties::SymbolType symbolTypeAtColumn(int * column) const;
   
-  Shared::PrefacedTwiceTableView m_prefacedTwiceTableView;
-  Shared::EditableCellSelectableTableView m_selectableTableView;
   mutable int m_numberOfValuesColumnsForType[k_maxNumberOfSymbolTypes];
   Shared::ExpressionFunctionTitleCell m_functionTitleCells[k_maxNumberOfDisplayableFunctions];
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];

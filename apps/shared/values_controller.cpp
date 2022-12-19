@@ -20,10 +20,16 @@ ValuesController::ValuesController(Responder * parentResponder, ButtonRowControl
   ButtonRowDelegate(header, nullptr),
   m_numberOfColumns(0),
   m_numberOfColumnsNeedUpdate(true),
+  m_prefacedTwiceTableView(0, 0, this, &m_selectableTableView, this),
+  m_selectableTableView(this, this, this, this, &m_prefacedTwiceTableView),
   m_firstMemoizedColumn(INT_MAX),
   m_firstMemoizedRow(INT_MAX),
   m_abscissaParameterController(this, this)
-{}
+{
+  m_prefacedTwiceTableView.setBackgroundColor(Palette::WallScreenDark);
+  m_prefacedTwiceTableView.setCellOverlap(0, 0);
+  m_prefacedTwiceTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+}
 
 void ValuesController::setupSelectableTableViewAndCells(Escher::InputEventHandlerDelegate * inputEventHandlerDelegate) {
   int numberOfAbscissaCells = abscissaCellsCount();
@@ -320,7 +326,7 @@ void ValuesController::resetLayoutMemoization() {
     titleCell->setLayout(Layout());
   }
   resetMemoization(); // reset sizes memoization
-  prefacedView()->resetDataSourceSizeMemoization();
+  m_prefacedTwiceTableView.resetDataSourceSizeMemoization();
   m_firstMemoizedColumn = INT_MAX;
   m_firstMemoizedRow = INT_MAX;
 }

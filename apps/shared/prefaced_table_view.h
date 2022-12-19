@@ -34,6 +34,8 @@ public:
   virtual void setBackgroundColor(KDColor color);
   virtual void setCellOverlap(KDCoordinate horizontal, KDCoordinate vertical);
 
+  void setPrefaceDelegate(PrefacedTableViewDelegate * delegate) { m_prefacedDelegate = delegate; }
+
   class MarginDelegate {
   public:
     virtual KDCoordinate columnPrefaceRightMargin() = 0;

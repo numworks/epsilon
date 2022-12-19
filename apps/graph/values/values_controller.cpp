@@ -23,8 +23,6 @@ namespace Graph {
 
 ValuesController::ValuesController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, FunctionColumnParameterController * functionParameterController) :
   Shared::ValuesController(parentResponder, header),
-  m_prefacedTwiceTableView(0, 0, this, &m_selectableTableView, this, nullptr, this),
-  m_selectableTableView(this, this, this, this, &m_prefacedTwiceTableView),
   m_functionParameterController(functionParameterController),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_derivativeParameterController(this),
@@ -50,9 +48,7 @@ ValuesController::ValuesController(Responder * parentResponder, Escher::InputEve
   m_heightManager(this),
   m_exactValuesAreActivated(false)
 {
-  m_prefacedTwiceTableView.setBackgroundColor(Palette::WallScreenDark);
-  m_prefacedTwiceTableView.setCellOverlap(0, 0);
-  m_prefacedTwiceTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
+  m_prefacedTwiceTableView.setPrefaceDelegate(this);
   initValueCells();
   m_exactValuesButton.setState(m_exactValuesAreActivated);
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);

@@ -52,7 +52,7 @@ void CalculationController::tableViewDidChangeSelection(SelectableTableView * t,
   if (t->selectedRow() == 0 && t->selectedColumn() <= 1) {
     if (previousSelectedCellX <= 1 && previousSelectedCellY == 1) {
       selectableTableView()->deselectTable();
-      Container::activeApp()->setFirstResponder(tabController());
+      tabController()->selectTab();
     } else {
       t->selectCellAtLocation(selectedColumn(), 1);
     }

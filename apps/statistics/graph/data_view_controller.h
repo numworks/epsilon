@@ -1,6 +1,7 @@
 #ifndef STATISTICS_DATA_VIEW_CONTROLLER_H
 #define STATISTICS_DATA_VIEW_CONTROLLER_H
 
+#include <escher/tab_view_controller.h>
 #include <escher/view_controller.h>
 #include "graph_button_row_delegate.h"
 #include "data_view.h"
@@ -13,7 +14,7 @@ class DataViewController : public Escher::ViewController, public GraphButtonRowD
 public:
   DataViewController(
     Escher::Responder * parentResponder,
-    Escher::Responder * tabController,
+    Escher::TabViewController * tabController,
     Escher::ButtonRowController * header,
     Escher::StackViewController * stackViewController,
     Escher::ViewController * typeViewController,
@@ -55,7 +56,7 @@ protected:
   int m_selectedIndex;
 
 private:
-  Escher::Responder * m_tabController;
+  Escher::TabViewController * m_tabController;
 };
 
 }

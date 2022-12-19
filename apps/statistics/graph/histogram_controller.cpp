@@ -16,7 +16,7 @@ using namespace Escher;
 
 namespace Statistics {
 
-HistogramController::HistogramController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Responder * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, uint32_t * storeVersion) :
+HistogramController::HistogramController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, TabViewController * tabController, Escher::StackViewController * stackViewController, Escher::ViewController * typeViewController, Store * store, uint32_t * storeVersion) :
   MultipleDataViewController(parentResponder, tabController, header, stackViewController, typeViewController, store),
   m_view(store, &m_histogramRange),
   m_histogramRange(store),

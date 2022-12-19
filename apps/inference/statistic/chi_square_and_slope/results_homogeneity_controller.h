@@ -37,7 +37,7 @@ private:
     void setMode(ResultHomogeneityTableCell::Mode mode) { m_resultHomogeneityTable.setMode(mode); }
 
   private:
-    Escher::ViewController * tabController() { return static_cast<Escher::ViewController *>(parentResponder()->parentResponder()); }
+    Escher::TabViewController * tabController() { return static_cast<Escher::TabViewController *>(parentResponder()->parentResponder()); }
     CategoricalTableCell * categoricalTableCell() override { return &m_resultHomogeneityTable; }
     ResultHomogeneityTableCell m_resultHomogeneityTable;
   };

@@ -264,7 +264,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     }
     selectableTableView()->deselectTable();
     assert(selectedRow() == -1);
-    Container::activeApp()->setFirstResponder(tabController());
+    tabController()->selectTab();
     return true;
   }
   if (selectedRow() < 0) {

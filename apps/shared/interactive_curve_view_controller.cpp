@@ -67,7 +67,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
     }
     if (event == Ion::Events::Up) {
       header()->setSelectedButton(-1);
-      Container::activeApp()->setFirstResponder(tabController());
+      tabController()->selectTab();
       return true;
     }
     return false;
@@ -212,8 +212,8 @@ void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
   curveView()->reload();
 }
 
-Responder * InteractiveCurveViewController::tabController() const{
-  return (stackController()->parentResponder());
+Escher::TabViewController * InteractiveCurveViewController::tabController() const{
+  return static_cast<Escher::TabViewController *>(stackController()->parentResponder());
 }
 
 StackViewController * InteractiveCurveViewController::stackController() const{

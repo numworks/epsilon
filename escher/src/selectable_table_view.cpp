@@ -226,12 +226,11 @@ void SelectableTableView::reloadData(bool setFirstResponder, bool setSelection) 
 }
 
 void SelectableTableView::didBecomeFirstResponder() {
-  // TODO this is probably too much, setting the responder only should be sufficient
-  int col = selectedColumn();
-  int row = selectedRow();
-  selectColumn(0);
-  selectRow(-1);
-  selectCellAtLocation(col, row, true);
+  HighlightCell * cell = selectedCell();
+  if (cell && cell->responder()) {
+    // Update first responder
+    Container::activeApp()->setFirstResponder(cell->responder());
+  }
 }
 
 void SelectableTableView::didEnterResponderChain(Responder * previousFirstResponder) {

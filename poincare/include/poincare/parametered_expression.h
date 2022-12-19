@@ -14,7 +14,7 @@ class ParameteredExpressionNode : public ExpressionNode {
 public:
   // Expression
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression) override;
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) override;
+  Expression deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) override;
 
   // Expression properties
   int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const override;
@@ -49,7 +49,7 @@ public:
    * f(X)=diff(cos(x),x,X), X being an unknown. ReplaceUnknownInExpression does
    * that. */
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
+  Expression deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
   Symbol parameter();
 protected:
   ParameteredExpression(const ParameteredExpressionNode * node) : Expression(node) {}

@@ -34,8 +34,18 @@ int ExpressionNode::getPolynomialCoefficients(Context * context, const char * sy
   return Expression(this).defaultGetPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-Expression ExpressionNode::deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
-  return Expression(this).defaultReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
+bool ExpressionNode::involvesCircularity(Context * context, int maxDepth, const char * * visitedSymbols, int numberOfVisitedSymbols) {
+  int nChildren = numberOfChildren();
+  for (int i = 0; i < nChildren; i++) {
+    if (childAtIndex(i)->involvesCircularity(context, maxDepth, visitedSymbols, numberOfVisitedSymbols)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+Expression ExpressionNode::deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
+  return Expression(this).defaultReplaceReplaceableSymbols(context, isCircular, parameteredAncestorsCount, symbolicComputation);
 }
 
 int ExpressionNode::getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const {

@@ -37,7 +37,7 @@ private:
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) override;
+  Expression deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) override;
   LayoutShape leftLayoutShape() const override { return strlen(m_name) > 1 ? LayoutShape::MoreLetters : LayoutShape::OneLetter; };
   LayoutShape rightLayoutShape() const override { return LayoutShape::BoundaryPunctuation; }
 
@@ -56,7 +56,7 @@ public:
   // Simplification
   Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   Expression shallowReduce(ExpressionNode::ReductionContext reductionContext);
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
+  Expression deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
 };
 
 }

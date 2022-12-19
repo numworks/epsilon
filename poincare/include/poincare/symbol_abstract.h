@@ -47,6 +47,7 @@ public:
 protected:
   // Layout
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
+  bool involvesCircularity(Context * context, int maxDepth, const char * * visitedSymbols, int numberOfVisitedSymbols) override;
 
 private:
   virtual size_t nodeSize() const = 0;
@@ -73,11 +74,14 @@ public:
   static size_t TruncateExtension(char * dst, const char * src, size_t len);
   static bool matches(const SymbolAbstract & symbol, ExpressionTrinaryTest test, Context * context, void * auxiliary = nullptr);
   constexpr static size_t k_maxNameSize = 8;
+
 protected:
   SymbolAbstract(const SymbolAbstractNode * node) : Expression(node) {}
   template <typename T, typename U>
   static T Builder(const char * name, int length);
   SymbolAbstractNode * node() const { return static_cast<SymbolAbstractNode *>(Expression::node()); }
+  void checkForCircularityIfNeeded(Context * context, TrinaryBoolean * isCircular);
+
 private:
   static Expression Expand(const SymbolAbstract & symbol, Context * context, bool clone, ExpressionNode::SymbolicComputation symbolicComputation);
 };

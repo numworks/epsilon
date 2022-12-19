@@ -101,6 +101,8 @@ void AbstractTextField::ContentView::setText(const char * text) {
   int textLength = std::min(textRealLength, maxBufferSize - 1);
   // Copy the text
   strlcpy(buffer, text, maxBufferSize);
+  // Replace System parentheses (used to keep layout tree structure) by normal parentheses
+  Poincare::SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(buffer);
   // Update the draft text length
   if (buffer == s_draftTextBuffer) {
     s_currentDraftTextLength = textLength;

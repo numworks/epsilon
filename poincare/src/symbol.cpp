@@ -76,8 +76,8 @@ Expression SymbolNode::shallowReduce(const ReductionContext& reductionContext) {
   return Symbol(this).shallowReduce(reductionContext);
 }
 
-Expression SymbolNode::deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
-  return Symbol(this).deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
+Expression SymbolNode::deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
+  return Symbol(this).deepReplaceReplaceableSymbols(context, isCircular, parameteredAncestorsCount, symbolicComputation);
 }
 
 ExpressionNode::LayoutShape SymbolNode::leftLayoutShape() const {
@@ -216,7 +216,7 @@ int Symbol::getPolynomialCoefficients(Context * context, const char * symbolName
   return 0;
 }
 
-Expression Symbol::deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
+Expression Symbol::deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
   /* These two symbolic computations parameters make no sense in this method.
    * They are therefore not handled. */
   assert(symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined
@@ -239,6 +239,19 @@ Expression Symbol::deepReplaceReplaceableSymbols(Context * context, bool * isCir
     }
   }
 
+  /* Check for circularity only when a symbol/function is encountered so that
+   * it is not uselessly checked each time deepReplaceReplaceableSymbols is
+   * called.
+   * isCircularFromHere is used so that isCircular is not altered if this is
+   * not circular but a sibling of this is circular and was not checked yet. */
+  TrinaryBoolean isCircularFromHere = *isCircular;
+  checkForCircularityIfNeeded(context, &isCircularFromHere);
+  if (isCircularFromHere == TrinaryBoolean::True) {
+    *isCircular = isCircularFromHere;
+    return *this;
+  }
+  assert(isCircularFromHere == TrinaryBoolean::False);
+
   Expression e = context->expressionForSymbolAbstract(*this, true);
   if (e.isUninitialized()) {
     if (symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
@@ -247,18 +260,10 @@ Expression Symbol::deepReplaceReplaceableSymbols(Context * context, bool * isCir
     return replaceWithUndefinedInPlace();
   }
 
-  // Symbol is about to be replaced, decrement maxSymbolsToReplace
-  maxSymbolsToReplace--;
-  if (maxSymbolsToReplace < 0) {
-    // We replaced too many symbols and consider the expression to be circular
-    *isCircular = true;
-    return *this;
-  }
-
   replaceWithInPlace(e);
   /* Reset parameteredAncestorsCount, because outer local context is ignored
    * within symbol's expression. */
-  e = e.deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, 0, symbolicComputation);
+  e = e.deepReplaceReplaceableSymbols(context, &isCircularFromHere, 0, symbolicComputation);
   return e;
 }
 

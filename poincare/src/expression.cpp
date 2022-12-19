@@ -558,11 +558,11 @@ void Expression::defaultSetChildrenInPlace(Expression other) {
   }
 }
 
-Expression Expression::defaultReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
+Expression Expression::defaultReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
   int nbChildren = numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
-    childAtIndex(i).deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
-    if (*isCircular) {
+    childAtIndex(i).deepReplaceReplaceableSymbols(context, isCircular, parameteredAncestorsCount, symbolicComputation);
+    if (*isCircular == TrinaryBoolean::True) {
       // the expression is circularly defined, escape
       return *this;
     }
@@ -991,10 +991,11 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context,
   if (e.isUninitialized()) {
     return e;
   }
+
   // Replace all the symbols in depth.
-  bool isCircular = false;
-  e = e.deepReplaceReplaceableSymbols(context, &isCircular, k_maxSymbolReplacementsCount, 0, symbolicComputation);
-  if (!isCircular) {
+  TrinaryBoolean isCircular = TrinaryBoolean::Unknown;
+  e = e.deepReplaceReplaceableSymbols(context, &isCircular, 0, symbolicComputation);
+  if (isCircular != TrinaryBoolean::True) {
     return e;
   }
   /* Symbols are defined circularly (or likely to be if we made too many

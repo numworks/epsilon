@@ -121,6 +121,7 @@ class Expression : public TreeHandle {
   friend class SumAndProduct;
   friend class SumAndProductNode;
   friend class Symbol;
+  friend class SymbolAbstract;
   friend class SymbolAbstractNode;
   friend class Tangent;
   friend class Trigonometry;
@@ -472,8 +473,9 @@ protected:
    * indicates if it is circularly defined and has been interrupted.
    * SymbolicComputation defines how to handle functions and undefined symbols.
    */
-  Expression deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) { return node()->deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation); }
-  Expression defaultReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
+  bool involvesCircularity(Context * context, int maxDepth, const char * * visitedSymbols, int numberOfVisitedSymbols) { return node()->involvesCircularity(context, maxDepth, visitedSymbols, numberOfVisitedSymbols); }
+  Expression deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) { return node()->deepReplaceReplaceableSymbols(context, isCircular, parameteredAncestorsCount, symbolicComputation); }
+  Expression defaultReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
 
   /* Simplification */
   static void SimplifyAndApproximateChildren(Expression input, Expression * simplifiedOutput, Expression * approximateOutput, const ExpressionNode::ReductionContext& reductionContext);

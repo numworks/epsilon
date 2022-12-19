@@ -62,8 +62,8 @@ Expression FunctionNode::shallowReduce(const ReductionContext& reductionContext)
   return Function(this).shallowReduce(reductionContext); // This uses Symbol::shallowReduce
 }
 
-Expression FunctionNode::deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
-  return Function(this).deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
+Expression FunctionNode::deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, SymbolicComputation symbolicComputation) {
+  return Function(this).deepReplaceReplaceableSymbols(context, isCircular, parameteredAncestorsCount, symbolicComputation);
 }
 
 Evaluation<float> FunctionNode::approximate(SinglePrecision p, const ApproximationContext& approximationContext) const {
@@ -142,18 +142,29 @@ Expression Function::shallowReduce(ExpressionNode::ReductionContext reductionCon
   return result.deepReduce(reductionContext);
 }
 
-Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * isCircular, int maxSymbolsToReplace, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
+Expression Function::deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) {
   /* These two symbolic computations parameters make no sense in this method.
    * They are therefore not handled. */
   assert(symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithUndefined
     && symbolicComputation != ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol);
-  {
-    // Replace replaceable symbols in child
-    defaultReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
-    if (*isCircular) { // if the child is circularly defined, escape
-      return *this;
-    }
+
+  /* Check for circularity only when a symbol/function is encountered so that
+   * it is not uselessly checked each time deepReplaceReplaceableSymbols is
+   * called.
+   * isCircularFromHere is used so that isCircular is not altered if this is
+   * not circular but a sibling of this is circular and was not checked yet. */
+  TrinaryBoolean isCircularFromHere = *isCircular;
+  checkForCircularityIfNeeded(context, &isCircularFromHere);
+  if (isCircularFromHere == TrinaryBoolean::True) {
+    *isCircular = isCircularFromHere;
+    return *this;
   }
+  assert(isCircularFromHere == TrinaryBoolean::False);
+
+  // Replace replaceable symbols in child
+  defaultReplaceReplaceableSymbols(context, &isCircularFromHere, parameteredAncestorsCount, symbolicComputation);
+  assert(isCircularFromHere == TrinaryBoolean::False);
+
   Expression e = context->expressionForSymbolAbstract(*this, false);
   /* On undefined function, ReplaceDefinedFunctionsWithDefinitions is equivalent
    * to ReplaceAllDefinedSymbolsWithDefinition, like in shallowReduce. */
@@ -164,20 +175,12 @@ Expression Function::deepReplaceReplaceableSymbols(Context * context, bool * isC
     return replaceWithUndefinedInPlace();
   }
 
-  // Symbol is about to be replaced, decrement maxSymbolsToReplace
-  maxSymbolsToReplace--;
-  if (maxSymbolsToReplace < 0) {
-    // We replaced too many symbols and consider the expression to be circular
-    *isCircular = true;
-    return *this;
-  }
-
   // Build dependency to keep track of function's parameter
   Dependency d = Dependency::Builder(e);
   d.addDependency(childAtIndex(0));
   replaceWithInPlace(d);
 
-  e = e.deepReplaceReplaceableSymbols(context, isCircular, maxSymbolsToReplace, parameteredAncestorsCount, symbolicComputation);
+  e = e.deepReplaceReplaceableSymbols(context, &isCircularFromHere, parameteredAncestorsCount, symbolicComputation);
   return std::move(d);
 }
 

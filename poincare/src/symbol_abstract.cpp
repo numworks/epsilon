@@ -38,6 +38,38 @@ int SymbolAbstractNode::serialize(char * buffer, int bufferSize, Preferences::Pr
   return std::min<int>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
 }
 
+
+bool SymbolAbstractNode::involvesCircularity(Context * context, int maxDepth, const char * * visitedSymbols, int numberOfVisitedSymbols) {
+  // Check if this symbol has already been visited.
+  for (int i = 0; i < numberOfVisitedSymbols; i++) {
+    if (strcmp(name(), visitedSymbols[i]) == 0) {
+      return true;
+    }
+  }
+
+  // Check children of this (useful for function parameters)
+  if (ExpressionNode::involvesCircularity(context, maxDepth, visitedSymbols, numberOfVisitedSymbols)) {
+    return true;
+  }
+
+  // Check for circularity in the expression of the symbol and decrease depth
+  Expression e = context->expressionForSymbolAbstract(SymbolAbstract(this), false);
+
+  if (e.isUninitialized()) {
+    return false;
+  }
+
+  maxDepth--;
+  if (maxDepth < 0) {
+    /* We went too deep into the check and consider the expression to be
+     * circular. */
+    return true;
+  }
+  visitedSymbols[numberOfVisitedSymbols] = name();
+  numberOfVisitedSymbols++;
+  return e.involvesCircularity(context, maxDepth, visitedSymbols, numberOfVisitedSymbols);
+}
+
 template <typename T, typename U>
 T SymbolAbstract::Builder(const char * name, int length) {
   if (AliasesLists::k_thetaAliases.contains(name, length)) {
@@ -64,6 +96,14 @@ bool SymbolAbstract::matches(const SymbolAbstract & symbol, ExpressionTrinaryTes
   // Undefined symbols must be preserved.
   Expression e = SymbolAbstract::Expand(symbol, context, false, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition);
   return !e.isUninitialized() && e.recursivelyMatches(test, context, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol, auxiliary);
+}
+
+void SymbolAbstract::checkForCircularityIfNeeded(Context * context, TrinaryBoolean * isCircular) {
+  assert(*isCircular != TrinaryBoolean::True);
+  if (*isCircular == TrinaryBoolean::Unknown) {
+    const char * visitedSymbols[Expression::k_maxSymbolReplacementsCount];
+    *isCircular = BinaryToTrinaryBool(involvesCircularity(context, Expression::k_maxSymbolReplacementsCount, visitedSymbols, 0));
+  }
 }
 
 Expression SymbolAbstract::Expand(const SymbolAbstract & symbol, Context * context, bool clone, ExpressionNode::SymbolicComputation symbolicComputation) {

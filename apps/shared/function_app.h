@@ -55,7 +55,6 @@ protected:
   Escher::InputViewController m_inputViewController;
   Escher::ViewController * m_activeControllerBeforeStore;
 private:
-  void didBecomeActive(Escher::Window * window) override;
   bool willStore(Poincare::Store store) override;
   void didStore() override;
 

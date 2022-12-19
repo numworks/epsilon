@@ -13,6 +13,7 @@ public:
   TabViewController(Responder * parentResponder, TabViewDataSource * dataSource, ViewController * one, ViewController * two, ViewController * three, ViewController * four = nullptr);
   View * view() override;
   int activeTab() const;
+  void selectTab();
   void setSelectedTab(int8_t index);
   void setActiveTab(int8_t index, bool enter = true);
   void setDisplayTabs(bool display) { m_view.setDisplayTabs(display); }
@@ -57,6 +58,7 @@ private:
   ViewController * m_children[k_maxNumberOfChildren];
   uint8_t m_numberOfChildren;
   TabViewDataSource * m_dataSource;
+  bool m_isSelected;
 };
 
 }

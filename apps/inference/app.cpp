@@ -139,7 +139,7 @@ void App::Snapshot::reset() {
 }
 
 bool App::storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) {
-  return !(isVarBoxMenuOpen() || isStoreMenuOpen()) || strcmp(recordName.extension, Ion::Storage::lisExtension) != 0;
+  return !isVarBoxMenuOpen() || strcmp(recordName.extension, Ion::Storage::lisExtension) != 0;
 }
 
 bool App::willStore(Poincare::Store store) {

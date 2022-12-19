@@ -125,7 +125,6 @@ bool StoreMenuController::parseAndStore(const char * text) {
   if (!proceedToStore) {
     return true;
   }
-  // Update the store before closing so that isStoreMenuOpen can be used
   if (!store.storeValueForSymbol(context)) {
     // TODO : The record deletion has been denied. Add a warning.
   }

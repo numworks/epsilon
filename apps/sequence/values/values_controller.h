@@ -1,9 +1,7 @@
 #ifndef SEQUENCE_VALUES_CONTROLLER_H
 #define SEQUENCE_VALUES_CONTROLLER_H
 
-#include <apps/shared/editable_cell_selectable_table_view.h>
 #include <apps/shared/expression_function_title_cell.h>
-#include <apps/shared/prefaced_twice_table_view.h>
 #include <apps/shared/sequence_store.h>
 #include <apps/shared/values_controller.h>
 #include "interval_parameter_controller.h"
@@ -13,9 +11,6 @@ namespace Sequence {
 class ValuesController : public Shared::ValuesController {
 public:
   ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header);
-
-  // ViewController
-  Escher::View * view() override { return &m_prefacedTwiceTableView; }
 
   // ButtonRowDelegate
   Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override { return const_cast<Escher::AbstractButtonCell *>(&m_setIntervalButton); }
@@ -32,9 +27,6 @@ private:
   constexpr static int k_maxNumberOfDisplayableCells = k_maxNumberOfDisplayableSequences * k_maxNumberOfDisplayableRows;
   constexpr static int k_valuesCellBufferSize = Poincare::PrintFloat::charSizeForFloatsWithPrecision(Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
 
-  // TabTableController
-  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
-
   // TableViewDataSource
   Escher::TableSize1DManager * columnWidthManager() override { return &m_widthManager; }
   Escher::TableSize1DManager * rowHeightManager() override { return &m_heightManager; }
@@ -50,7 +42,6 @@ private:
   Shared::SequenceStore * functionStore() const override { return static_cast<Shared::SequenceStore *>(Shared::ValuesController::functionStore()); }
   Poincare::Layout * memoizedLayoutAtIndex(int i) override;
   Poincare::Layout functionTitleLayout(int columnIndex) override;
-  Shared::PrefacedTableView * prefacedView() override { return &m_prefacedTwiceTableView; }
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override { setDefaultStartEndMessages(); }
   void createMemoizedLayout(int i, int j, int index) override;
   Shared::Interval * intervalAtColumn(int columnIndex) override;
@@ -67,9 +58,6 @@ private:
   Shared::ColumnParameters * functionParameters() override { return nullptr; }
 
   void setDefaultStartEndMessages();
-
-  Shared::PrefacedTwiceTableView m_prefacedTwiceTableView;
-  Shared::EditableCellSelectableTableView m_selectableTableView;
 
   Shared::ExpressionFunctionTitleCell m_sequenceTitleCells[k_maxNumberOfDisplayableSequences];
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];

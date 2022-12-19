@@ -12,8 +12,6 @@ namespace Sequence {
 
 ValuesController::ValuesController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header) :
   Shared::ValuesController(parentResponder, header),
-  m_prefacedTwiceTableView(0, 0, this, &m_selectableTableView, this),
-  m_selectableTableView(this, this, this, this, &m_prefacedTwiceTableView),
   m_intervalParameterController(this, inputEventHandlerDelegate),
   m_setIntervalButton(this, I18n::Message::IntervalSet, Invocation::Builder<ValuesController>([](ValuesController * valuesController, void * sender) {
     StackViewController * stack = ((StackViewController *)valuesController->stackController());
@@ -26,9 +24,6 @@ ValuesController::ValuesController(Responder * parentResponder, InputEventHandle
     return true;
   }, this), k_cellFont)
 {
-  m_prefacedTwiceTableView.setBackgroundColor(Palette::WallScreenDark);
-  m_prefacedTwiceTableView.setCellOverlap(0, 0);
-  m_prefacedTwiceTableView.setMargins(k_margin, k_scrollBarMargin, k_scrollBarMargin, k_margin);
   setupSelectableTableViewAndCells(inputEventHandlerDelegate);
   setDefaultStartEndMessages();
   initValueCells();

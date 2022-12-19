@@ -403,7 +403,7 @@ void Parser::privateParseTimes(Expression & leftHandSide, Token::Type stoppingTy
 void Parser::parseCaret(Expression & leftHandSide, Token::Type stoppingType) {
   Expression rightHandSide;
   if (parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::ImplicitTimes)) {
-    leftHandSide = Power::Builder(leftHandSide, rightHandSide);
+    leftHandSide = Power::ChainedPowerBuilder(leftHandSide, rightHandSide);
   }
 }
 
@@ -425,7 +425,7 @@ void Parser::parseCaretWithParenthesis(Expression & leftHandSide, Token::Type st
     m_status = Status::Error; // Right system parenthesis missing
     return;
   }
-  leftHandSide = Power::Builder(leftHandSide, rightHandSide);
+  leftHandSide = Power::ChainedPowerBuilder(leftHandSide, rightHandSide);
   isThereImplicitOperator();
 }
 

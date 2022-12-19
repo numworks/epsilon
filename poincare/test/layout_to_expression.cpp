@@ -169,6 +169,21 @@ QUIZ_CASE(poincare_layout_to_expression_parsable) {
           BasedInteger::Builder(4))));
   assert_parsed_layout_is(l, e);
 
+  // 2^3^4
+  l = HorizontalLayout::Builder(
+      CodePointLayout::Builder('2'),
+      VerticalOffsetLayout::Builder(
+        HorizontalLayout::Builder(CodePointLayout::Builder('3')),
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript),
+      VerticalOffsetLayout::Builder(
+        HorizontalLayout::Builder(CodePointLayout::Builder('4')),
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript));
+  e = Power::Builder(
+        BasedInteger::Builder(2),
+        Power::Builder(
+          BasedInteger::Builder(3),
+          BasedInteger::Builder(4)));
+  assert_parsed_layout_is(l, e);
 
   // log_3(2)
   HorizontalLayout l1 = HorizontalLayout::Builder();

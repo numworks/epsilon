@@ -73,9 +73,4 @@ App::App(Snapshot * snapshot, Poincare::Context * parentContext) :
 {
 }
 
-void App::didBecomeActive(Escher::Window * windows) {
-  Escher::App::didBecomeActive(windows);
-  m_tabViewController.enterActiveTab();
-}
-
 }

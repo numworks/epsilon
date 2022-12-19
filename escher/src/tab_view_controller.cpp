@@ -62,7 +62,8 @@ const char * TabViewController::ContentView::className() const {
 
 TabViewController::TabViewController(Responder * parentResponder, TabViewDataSource * dataSource, ViewController * one, ViewController * two, ViewController * three, ViewController * four) :
   ViewController(parentResponder),
-  m_dataSource(dataSource)
+  m_dataSource(dataSource),
+  m_isSelected(false)
 {
   assert(one != nullptr);
   assert(two != nullptr || (three == nullptr && four == nullptr));
@@ -82,11 +83,16 @@ int TabViewController::activeTab() const {
   return m_dataSource->activeTab();
 }
 
+void TabViewController::selectTab() {
+  m_isSelected = true;
+  Container::activeApp()->setFirstResponder(this);
+}
+
 bool TabViewController::handleEvent(Ion::Events::Event event) {
   App * app = Container::activeApp();
   if (app->firstResponder() != this) {
     if (event == Ion::Events::Back) {
-      app->setFirstResponder(this);
+      selectTab();
       return true;
     }
     return false;
@@ -134,6 +140,7 @@ void TabViewController::setActiveTab(int8_t i, bool enter) {
   /* If enter is false, we switch to the ith tab but the focus stays on the tab
    * button. It is useful when pressing Back on a non-leftmost tab. */
   if (enter) {
+    m_isSelected = false;
     Container::activeApp()->setFirstResponder(activeVC);
   }
 }
@@ -148,6 +155,7 @@ void TabViewController::setSelectedTab(int8_t i) {
 
 void TabViewController::didBecomeFirstResponder() {
   setSelectedTab(m_dataSource->activeTab());
+  setActiveTab(m_dataSource->selectedTab(), !m_isSelected);
 }
 
 void TabViewController::willResignFirstResponder() {

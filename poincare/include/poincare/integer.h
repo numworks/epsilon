@@ -55,11 +55,6 @@ private:
 class Integer final : public TreeHandle {
   friend class BasedIntegerNode;
 public:
-  enum class Base : uint16_t {
-    Binary = 2,
-    Decimal = 10,
-    Hexadecimal = 16,
-  };
   /* Constructors & Destructors */
   static Integer BuildInteger(native_uint_t * digits, uint16_t numberOfDigits, bool negative, bool enableOverflow = false);
   Integer(native_int_t i = 0);

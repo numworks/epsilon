@@ -16,7 +16,7 @@ void FunctionApp::Snapshot::reset() {
 }
 
 bool FunctionApp::storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) {
-  return !(isVarBoxMenuOpen() || isStoreMenuOpen()) || strcmp(recordName.extension, functionStore()->modelExtension()) != 0;
+  return !isVarBoxMenuOpen() || strcmp(recordName.extension, functionStore()->modelExtension()) != 0;
 }
 
 void FunctionApp::storageDidChangeForRecord(Ion::Storage::Record record) {

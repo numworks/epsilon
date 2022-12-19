@@ -54,7 +54,7 @@ install_macos_binary_deps() {
     freetype \
     imagemagick \
     libpng \
-    libusb
+    libusb \
     pkg-config \
     python3
 

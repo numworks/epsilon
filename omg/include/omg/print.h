@@ -8,8 +8,10 @@
 
 namespace OMG {
 
-/* TODO: merge Poincare::PrintInt, Poincare::PrintFloat and Poincare::Print
- * into OMG::Print
+/* TODO:
+ * - merge Poincare::PrintInt into OMG::UInt32(Base::Decimal),
+ * - move Poincare::PrintFloat here
+ * - move Poincare::Print here
  */
 
 namespace Print {

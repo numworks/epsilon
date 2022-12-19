@@ -3,7 +3,7 @@
 namespace OMG {
 
 int Print::UInt32(Base base, uint32_t integer, char * buffer, int bufferSize) {
-  // TODO: implementation for Base::Decimal
+  assert(base != Base::Decimal);
   uint8_t baseValue = static_cast<uint8_t>(base);
   size_t numberOfBitsPerDigit = OMG::BitHelper::numberOfBitsInType<uint32_t>() / MaxLengthOfUInt32(base);
   size_t length = LengthOfUInt32(base, integer);

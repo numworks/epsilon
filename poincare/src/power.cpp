@@ -1228,6 +1228,15 @@ Expression Power::ExponentialBuilder(Expression children) {
   return Builder(Constant::Builder("e"), children.childAtIndex(0));
 }
 
+Expression Power::ChainedPowerBuilder(Expression leftSide, Expression rightSide) {
+  if (leftSide.type() == ExpressionNode::Type::Power) {
+    Power powerExponent = Power::Builder(leftSide.childAtIndex(1), rightSide);
+    leftSide.replaceChildAtIndexInPlace(1, powerExponent);
+    return leftSide;
+  }
+  return Power::Builder(leftSide, rightSide);
+}
+
 // Private
 
 // Simplification

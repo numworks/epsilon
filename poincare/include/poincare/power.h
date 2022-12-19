@@ -103,6 +103,8 @@ public:
   static Expression ExponentialBuilder(Expression children);
   constexpr static Expression::FunctionHelper s_exponentialFunctionHelper = Expression::FunctionHelper(k_exponentialName, 1, &ExponentialBuilder);
 
+  static Expression ChainedPowerBuilder(Expression leftSide, Expression rightSide);
+
 private:
   constexpr static int k_maxExactPowerMatrix = 100;
   constexpr static int k_maxNumberOfTermsInExpandedMultinome = 25;

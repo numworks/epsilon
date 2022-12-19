@@ -33,7 +33,7 @@ uint32_t userlandEnd() {
 }
 
 uint32_t securityLevel() {
-  return reinterpret_cast<uint32_t>(isRunningSlotA() ? Config::SlotAOrigin : Config::SlotBOrigin);
+  return *(reinterpret_cast<uint32_t *>(isRunningSlotA() ? Config::SlotAOrigin : Config::SlotBOrigin));
 }
 
 }

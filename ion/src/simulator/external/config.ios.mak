@@ -7,8 +7,7 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   file/cocoa/SDL_rwopsbundlesupport.m \
   filesystem/cocoa/SDL_sysfilesystem.m \
   haptic/dummy/SDL_syshaptic.c \
-  hidapi/SDL_hidapi.c \
-  joystick/iphoneos/SDL_sysjoystick.m \
+  hidapi/ios/hid.m \
   joystick/iphoneos/SDL_mfijoystick.m \
   loadso/dlopen/SDL_sysloadso.c \
   locale/dummy/SDL_syslocale.c \
@@ -47,3 +46,4 @@ LDFLAGS += -framework Metal
 LDFLAGS += -framework OpenGLES
 LDFLAGS += -framework QuartzCore
 LDFLAGS += -framework UIKit
+LDFLAGS += -framework CoreHaptics

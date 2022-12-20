@@ -112,7 +112,7 @@ int ValuesController::columnToFreeze() {
     return 0;
   }
   int indexOfLastColumn = -1;
-  for (int symbolType = 0; symbolType < k_maxNumberOfSymbolTypes; symbolType++) {
+  for (size_t symbolType = 0; symbolType < k_maxNumberOfSymbolTypes; symbolType++) {
     int nbOfValuesColumns = m_numberOfValuesColumnsForType[symbolType];
     if (nbOfValuesColumns == 0) {
       continue;

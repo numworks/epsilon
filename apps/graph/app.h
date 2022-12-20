@@ -58,7 +58,7 @@ private:
   ListController m_listController;
   GraphController m_graphController;
   ValuesController m_valuesController;
-  FunctionColumnParameterController m_functionParameterController;
+  FunctionParameterController m_functionParameterController;
 };
 
 }

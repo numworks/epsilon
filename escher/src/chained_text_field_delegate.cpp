@@ -38,4 +38,9 @@ void ChainedTextFieldDelegate::textFieldDidStartEditing(AbstractTextField * text
   }
 }
 
+bool ChainedTextFieldDelegate::textFieldIsEditable(AbstractTextField * textField) {
+  return m_parentDelegate ? m_parentDelegate->textFieldIsEditable(textField)
+                          : TextFieldDelegate::textFieldIsEditable(textField);
+}
+
 }  // namespace Escher

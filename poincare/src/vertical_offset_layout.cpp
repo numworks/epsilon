@@ -233,7 +233,7 @@ bool VerticalOffsetLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * si
 
   HorizontalLayout h = HorizontalLayout::Builder();
   int n = 0;
-  int i = thisIndex;;
+  int i = thisIndex;
   while (i > leftParenthesisIndex) {
     Layout child = parentRef.childAtIndex(i);
     i -= 1 + parentRef.removeChild(child, nullptr, true);

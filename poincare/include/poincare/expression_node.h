@@ -290,7 +290,7 @@ public:
   /*!*/ virtual Expression replaceSymbolWithExpression(const SymbolAbstract & symbol, const Expression & expression);
   virtual int polynomialDegree(Context * context, const char * symbolName) const;
   /*!*/ virtual int getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const;
-  virtual bool involvesCircularity(Context * context, int maxDepth, const char * * visitedSymbols, int numberOfVisitedSymbols);
+  virtual bool involvesCircularity(Context * context, int maxDepth, const char * * visitedFunctions, int numberOfVisitedFunctions);
   /*!*/ virtual Expression deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, SymbolicComputation symbolicComputation);
   typedef bool (*isVariableTest)(const char * c, Poincare::Context * context);
   virtual int getVariables(Context * context, isVariableTest isVariable, char * variables, int maxSizeVariable, int nextVariableIndex) const;

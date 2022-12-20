@@ -77,6 +77,7 @@ void App::setFirstResponder(Responder * responder) {
     }
 #ifndef NDEBUG
     preventRecursion = false;
+    (void) preventRecursion;
 #endif
     m_firstResponder->didBecomeFirstResponder();
   }

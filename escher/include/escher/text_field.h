@@ -38,7 +38,7 @@ public:
 
   // EditableField
   bool addXNTCodePoint(CodePoint defaultXNTCodePoint) override;
-  void setEditing(bool isEditing) override { contentView()->setEditing(isEditing); }
+  void setEditing(bool isEditing) override { assert(!isEditing || m_delegate->textFieldIsEditable(this)); contentView()->setEditing(isEditing); }
   bool isEditing() const override;
   bool shouldFinishEditing(Ion::Events::Event event) override;
 

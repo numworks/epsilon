@@ -562,21 +562,22 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
   contentView()->setStalled(false);
   size_t previousTextLength = strlen(text());
   bool didHandleEvent = false;
+  bool fieldIsEditbale = m_delegate->textFieldIsEditable(this);
   if (privateHandleMoveEvent(event)) {
     didHandleEvent = true;
   } else if (privateHandleSelectEvent(event)) {
     didHandleEvent = true;
   } else if (m_delegate->textFieldDidReceiveEvent(this, event)) {
     return true;
-  } else if (event == Ion::Events::Paste) {
+  } else if (fieldIsEditbale && event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::SharedClipboard()->storedText(), false, true);
-  } else if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
+  } else if (fieldIsEditbale && (event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     const char * previousText = contentView()->text();
     setEditing(true);
     m_delegate->textFieldDidStartEditing(this);
     setText(previousText);
     didHandleEvent = true;
-  } else {
+  } else if (fieldIsEditbale) {
     char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
     size_t eventTextLength = Ion::Events::copyText(static_cast<uint8_t>(event), buffer, Ion::Events::EventData::k_maxDataSize);
     if (eventTextLength > 0) {

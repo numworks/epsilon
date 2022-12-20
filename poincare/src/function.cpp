@@ -128,6 +128,9 @@ Expression Function::replaceSymbolWithExpression(const SymbolAbstract & symbol, 
   if (symbol.type() == ExpressionNode::Type::Function && hasSameNameAs(symbol)) {
     Expression value = expression.clone();
     Expression p = parent();
+    Expression variable = symbol.childAtIndex(0);
+    assert(variable.type() == ExpressionNode::Type::Symbol);
+    value = value.replaceSymbolWithExpression(variable.convert<Symbol>(), childAtIndex(0));
     if (!p.isUninitialized() && p.node()->childAtIndexNeedsUserParentheses(value, p.indexOfChild(*this))) {
       value = Parenthesis::Builder(value);
     }

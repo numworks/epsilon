@@ -416,6 +416,11 @@ QUIZ_CASE(calculation_symbolic_computation) {
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("b.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();
+
+  // 6 - Define function from their own expression
+  assertMainCalculationOutputIs("x+1→f(x)",            "x+1",   &globalContext, &store);
+  assertMainCalculationOutputIs("f(x^2)→f(x)",         "x^2+1", &globalContext, &store);
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 }
 
 QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {

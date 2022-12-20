@@ -113,19 +113,10 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c,
    * ContinuousFunction::Model::buildExpressionFromText. */
   Ion::Storage::Record::ErrorStatus error = editableModel()->setContent(this, c, context, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
-    /* Temporarly rename record to avoid depending on its own value
-     * while the model is updated.
-     * Ex: If you turn "f(x)=x" into "(f(0)>0)"", the first time f(0) is
-     * reduced, expressionClone is called. expressionClone tries to find the
-     * second child of "f(x)=x" to return "x" Since now the record f.func
-     * contains (f(0)>0), there is no childAtIndex(1).
-     * By temporarly renaming the record, we ensure that it's non-existent
-     * in the context when f(0) is reduced. */
-    m_model.renameRecordIfNeeded(this, context);
-    // Update model
-    updateModel(context, wasCartesian);
     // Set proper name
     error = updateNameIfNeeded(context);
+    // Update model
+    updateModel(context, wasCartesian);
   }
   return error;
 }

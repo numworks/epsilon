@@ -29,7 +29,7 @@ public:
   {}
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
-  const char * title() override { return m_titleBuffer; };
+  const char * title() override { return m_titleBuffer; }
 protected:
   Escher::StackViewController * stackView();
 

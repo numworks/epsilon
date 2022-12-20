@@ -19,9 +19,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  void setRecord(Ion::Storage::Record record) {
-    m_record = record;
-  }
+  void setRecord(Ion::Storage::Record record) { m_record = record; }
 private:
   Shared::ContinuousFunctionStore * functionStore();
   constexpr static int k_totalNumberOfCell = 1;

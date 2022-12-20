@@ -11,8 +11,7 @@ DerivativeParameterController::DerivativeParameterController(ValuesController * 
   ColumnParameterController(valuesController),
   m_hideColumn(I18n::Message::HideDerivativeColumn),
   m_valuesController(valuesController)
-{
-}
+{}
 
 Shared::ClearColumnHelper * DerivativeParameterController::clearColumnHelper() {
   return m_valuesController;

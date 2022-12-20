@@ -387,6 +387,7 @@ Layout ValuesController::memoizedLayoutForCell(int i, int j) {
 
 void ValuesController::clearSelectedColumn() {
   intervalAtColumn(selectedColumn())->clear();
+  selectCellAtLocation(selectedColumn(), 1);
   resetMemoization();
 }
 

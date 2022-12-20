@@ -2,8 +2,8 @@
 #include <shared/drivers/board_shared.h>
 #include <ion.h>
 
-#if !defined(NDEBUG) || !defined(ASSERTIONS) || !defined(EXTERNAL_APPS_API_LEVEL)
-#error This file expects NDEBUG, ASSERTIONS & EXTERNAL_APPS_API_LEVEL to be defined
+#if !defined(ASSERTIONS) || !defined(EXTERNAL_APPS_API_LEVEL)
+#error This file expects ASSERTIONS & EXTERNAL_APPS_API_LEVEL to be defined
 #endif
 
 namespace Ion {
@@ -35,7 +35,11 @@ uint32_t SVC_ATTRIBUTES bootloaderCRC32() {
 }
 
 uint16_t userlandCompilationFlags() {
-  bool ndebug = NDEBUG;
+#ifdef NDEBUG
+  bool debug = false;
+#else
+  bool debug = true;
+#endif
   bool assertions = ASSERTIONS;
   bool allow3rdParty = ExternalApps::allowThirdParty();
   bool slotA = Device::Board::isRunningSlotA();
@@ -44,7 +48,7 @@ uint16_t userlandCompilationFlags() {
   assert(Device::Board::securityLevel() < 0xFF); // Should the SECURITY_LEVEL exceed 0xFF, , we'll find another way to represent it
   uint8_t securityLevel = 0xFF & Device::Board::securityLevel();
 
-  return (ndebug & 0b1) |
+  return (debug & 0b1) |
          (assertions & 0b10) |
          (allow3rdParty & 0b100) |
          (slotA & 0b1000) |

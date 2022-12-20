@@ -63,20 +63,7 @@ bool HypothesisController::handleEvent(Ion::Events::Event event) {
 // TextFieldDelegate
 
 bool HypothesisController::textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) {
-  if (selectedRow() == 0 && m_test->significanceTestType() == SignificanceTestType::Slope) {
-    /* Shortcut the edition of Test t for slope hypothesis by catching the event
-     * before being given to the textfield. */
-    AppsContainer::activeApp()->setFirstResponder(&m_selectableTableView);
-    if (AppsContainer::activeApp()->processEvent(event)) {
-      return true;
-    }
-    // Return true on all events except those handled by the container to bypass the textfield
-    return event != Ion::Events::USBEnumeration &&
-           event != Ion::Events::USBPlug &&
-           event != Ion::Events::Home &&
-           event != Ion::Events::OnOff;
-  }
-  if ((event == Ion::Events::OK || event == Ion::Events::EXE) && !textField->isEditing()) {
+  if (textFieldIsEditable(textField) && (event == Ion::Events::OK || event == Ion::Events::EXE) && !textField->isEditing()) {
     // Remove prefix to edit text
     textField->setText(textField->text() + strlen(symbolPrefix()) + 1 /* = symbol */);
   }

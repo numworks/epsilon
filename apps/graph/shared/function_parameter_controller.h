@@ -1,6 +1,7 @@
 #ifndef GRAPH_SHARED_FUNCTION_PARAMETER_CONTROLLER_H
 #define GRAPH_SHARED_FUNCTION_PARAMETER_CONTROLLER_H
 
+#include <apps/shared/column_parameter_controller.h>
 #include <apps/shared/list_parameter_controller.h>
 #include <apps/exam_mode_configuration.h>
 #include <escher/message_table_cell_with_chevron_and_message.h>
@@ -11,9 +12,11 @@
 
 namespace Graph {
 
-class FunctionParameterController : public Shared::ListParameterController {
+class ValuesController;
+
+class FunctionParameterController : public Shared::ListParameterController, public Shared::ColumnParameters {
 public:
-  FunctionParameterController(Escher::Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphController * graphController);
+  FunctionParameterController(Escher::Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphController * graphController, ValuesController * valuesController);
   void setRecord(Ion::Storage::Record record) override;
   // MemoizedListViewDataSource
   Escher::HighlightCell * cell(int index) override;
@@ -28,11 +31,16 @@ private:
   bool displayDetails() const { return !ExamModeConfiguration::implicitPlotsAreForbidden() && m_detailsParameterController.detailsNumberOfSections() > 0; }
   bool displayDomain() const { return m_domainParameterController.isVisible() > 0; }
   Shared::ExpiringPointer<Shared::ContinuousFunction> function();
+
+  // ColumnParameters
+  Shared::ClearColumnHelper * clearColumnHelper() override;
+
   Escher::MessageTableCellWithChevronAndMessage m_detailsCell;
   Escher::MessageTableCellWithChevronAndBuffer m_functionDomainCell;
   Escher::MessageTableCellWithMessageWithSwitch m_derivativeCell;
   DetailsParameterController m_detailsParameterController;
   DomainParameterController m_domainParameterController;
+  ValuesController * m_valuesController;
 };
 
 }

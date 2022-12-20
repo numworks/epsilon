@@ -21,7 +21,7 @@ namespace Graph {
 
 /* PUBLIC */
 
-ValuesController::ValuesController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, FunctionColumnParameterController * functionParameterController) :
+ValuesController::ValuesController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, FunctionParameterController * functionParameterController) :
   Shared::ValuesController(parentResponder, header),
   m_functionParameterController(functionParameterController),
   m_intervalParameterController(this, inputEventHandlerDelegate),

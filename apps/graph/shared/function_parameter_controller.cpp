@@ -11,14 +11,14 @@ using namespace Escher;
 
 namespace Graph {
 
-FunctionParameterController::FunctionParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphController * graphController) :
+FunctionParameterController::FunctionParameterController(Responder * parentResponder, I18n::Message functionColorMessage, I18n::Message deleteFunctionMessage, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, GraphController * graphController, ValuesController * valuesController) :
   Shared::ListParameterController(parentResponder, functionColorMessage, deleteFunctionMessage),
   m_detailsCell(I18n::Message::Details),
   m_derivativeCell(I18n::Message::GraphDerivative),
   m_detailsParameterController(this),
-  m_domainParameterController(nullptr, inputEventHandlerDelegate)
-{
-}
+  m_domainParameterController(nullptr, inputEventHandlerDelegate),
+  m_valuesController(valuesController)
+{}
 
 const char * FunctionParameterController::title() {
   return I18n::translate(I18n::Message::Options);
@@ -111,6 +111,10 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
 
 ExpiringPointer<ContinuousFunction> FunctionParameterController::function() {
   return App::app()->functionStore()->modelForRecord(m_record);
+}
+
+Shared::ClearColumnHelper * FunctionParameterController::clearColumnHelper() {
+  return m_valuesController;
 }
 
 }

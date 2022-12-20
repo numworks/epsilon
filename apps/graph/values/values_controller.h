@@ -2,6 +2,7 @@
 #define GRAPH_VALUES_CONTROLLER_H
 
 #include <apps/shared/continuous_function_store.h>
+#include <apps/graph/shared/function_parameter_controller.h>
 #include <apps/shared/expression_function_title_cell.h>
 #include <apps/shared/interval_parameter_controller.h>
 #include <apps/shared/scrollable_two_expressions_cell.h>
@@ -9,7 +10,6 @@
 #include <apps/shared/values_controller.h>
 #include "abscissa_title_cell.h"
 #include "derivative_parameter_controller.h"
-#include "function_column_parameter_controller.h"
 #include "interval_parameter_selector_controller.h"
 #include <escher/button_state.h>
 #include <escher/toggleable_dot_view.h>
@@ -18,7 +18,7 @@ namespace Graph {
 
 class ValuesController : public Shared::ValuesController, public Escher::SelectableTableViewDelegate, public Shared::PrefacedTableViewDelegate {
 public:
-  ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, FunctionColumnParameterController * functionParameterController);
+  ValuesController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, FunctionParameterController * functionParameterController);
   bool displayButtonExactValues() const;
 
   // View controller
@@ -114,7 +114,7 @@ private:
   Escher::EvenOddExpressionCell m_valueCells[k_maxNumberOfDisplayableCells];
   AbscissaTitleCell m_abscissaTitleCells[k_maxNumberOfDisplayableSymbolTypes];
   Shared::StoreCell m_abscissaCells[k_maxNumberOfDisplayableAbscissaCells];
-  FunctionColumnParameterController * m_functionParameterController;
+  FunctionParameterController * m_functionParameterController;
   Shared::IntervalParameterController m_intervalParameterController;
   IntervalParameterSelectorController m_intervalParameterSelectorController;
   DerivativeParameterController m_derivativeParameterController;

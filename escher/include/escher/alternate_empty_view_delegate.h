@@ -14,7 +14,6 @@ class AlternateEmptyViewDelegate {
 public:
   virtual bool isEmpty() const = 0;
   virtual View * emptyView() = 0;
-  virtual Responder * defaultController() = 0;
 };
 
 class AlternateEmptyViewDefaultDelegate : public AlternateEmptyViewDelegate {

@@ -35,8 +35,6 @@ public:
   int numberOfButtons(Escher::ButtonRowController::Position position) const override;
   Escher::AbstractButtonCell * buttonAtIndex(int index, Escher::ButtonRowController::Position position) const override;
 
-  Responder * defaultController() override;
-
   void viewWillAppear() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;

@@ -19,8 +19,7 @@ void ColumnParameterController::viewWillAppear() {
 void ColumnParameters::initializeColumnParameters() {
   m_columnIndex = clearColumnHelper()->table()->selectedColumn();
   clearColumnHelper()->fillColumnName(m_columnIndex, m_columnNameBuffer);
-  Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),
-      I18n::translate(I18n::Message::ColumnOptions), m_columnNameBuffer);
+  Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer), I18n::translate(I18n::Message::ColumnOptions), m_columnNameBuffer);
 }
 
 Escher::StackViewController * ColumnParameterController::stackView() {

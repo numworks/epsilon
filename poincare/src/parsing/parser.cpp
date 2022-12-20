@@ -105,49 +105,49 @@ Expression Parser::initializeFirstTokenAndParseUntilEnd() {
 Expression Parser::parseUntil(Token::Type stoppingType, Expression leftHandSide) {
   typedef void (Parser::*TokenParser)(Expression & leftHandSide, Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
-    &Parser::parseUnexpected,           // Token::Type::EndOfStream
-    &Parser::parseRightwardsArrow,      // Token::Type::RightwardsArrow
-    &Parser::parseAssigmentEqual,       // Token::Type::AssignmentEqual
-    &Parser::parseUnexpected,           // Token::Type::RightSystemParenthesis
-    &Parser::parseUnexpected,           // Token::Type::RightSystemBrace
-    &Parser::parseUnexpected,           // Token::Type::RightBracket
-    &Parser::parseUnexpected,           // Token::Type::RightParenthesis
-    &Parser::parseUnexpected,           // Token::Type::RightBrace
-    &Parser::parseUnexpected,           // Token::Type::Comma
-    &Parser::parseNorOperator,          // Token::Type::Nor
-    &Parser::parseXorOperator,          // Token::Type::Xor
-    &Parser::parseOrOperator,           // Token::Type::Or
-    &Parser::parseNandOperator,         // Token::Type::Nand
-    &Parser::parseAndOperator,          // Token::Type::And
-    &Parser::parseLogicalOperatorNot,   // Token::Type::Not
-    &Parser::parseComparisonOperator,   // Token::Type::ComparisonOperator
-    &Parser::parseNorthEastArrow,       // Token::Type::NorthEastArrow
-    &Parser::parseSouthEastArrow,       // Token::Type::SouthEastArrow
-    &Parser::parsePlus,                 // Token::Type::Plus
-    &Parser::parseMinus,                // Token::Type::Minus
-    &Parser::parseTimes,                // Token::Type::Times
-    &Parser::parseSlash,                // Token::Type::Slash
-    &Parser::parseImplicitTimes,        // Token::Type::ImplicitTimes
-    &Parser::parsePercent,              // Token::Type::Percent
-    &Parser::parseCaret,                // Token::Type::Caret
-    &Parser::parseBang,                 // Token::Type::Bang
-    &Parser::parseCaretWithParenthesis, // Token::Type::CaretWithParenthesis
+    &Parser::parseUnexpected,                   // Token::Type::EndOfStream
+    &Parser::parseRightwardsArrow,              // Token::Type::RightwardsArrow
+    &Parser::parseAssigmentEqual,               // Token::Type::AssignmentEqual
+    &Parser::parseUnexpected,                   // Token::Type::RightSystemParenthesis
+    &Parser::parseUnexpected,                   // Token::Type::RightSystemBrace
+    &Parser::parseUnexpected,                   // Token::Type::RightBracket
+    &Parser::parseUnexpected,                   // Token::Type::RightParenthesis
+    &Parser::parseUnexpected,                   // Token::Type::RightBrace
+    &Parser::parseUnexpected,                   // Token::Type::Comma
+    &Parser::parseNorOperator,                  // Token::Type::Nor
+    &Parser::parseXorOperator,                  // Token::Type::Xor
+    &Parser::parseOrOperator,                   // Token::Type::Or
+    &Parser::parseNandOperator,                 // Token::Type::Nand
+    &Parser::parseAndOperator,                  // Token::Type::And
+    &Parser::parseLogicalOperatorNot,           // Token::Type::Not
+    &Parser::parseComparisonOperator,           // Token::Type::ComparisonOperator
+    &Parser::parseNorthEastArrow,               // Token::Type::NorthEastArrow
+    &Parser::parseSouthEastArrow,               // Token::Type::SouthEastArrow
+    &Parser::parsePlus,                         // Token::Type::Plus
+    &Parser::parseMinus,                        // Token::Type::Minus
+    &Parser::parseTimes,                        // Token::Type::Times
+    &Parser::parseSlash,                        // Token::Type::Slash
+    &Parser::parseImplicitTimes,                // Token::Type::ImplicitTimes
+    &Parser::parsePercent,                      // Token::Type::Percent
+    &Parser::parseCaret,                        // Token::Type::Caret
+    &Parser::parseBang,                         // Token::Type::Bang
+    &Parser::parseCaretWithParenthesis,         // Token::Type::CaretWithParenthesis
     &Parser::parseImplicitAdditionBetweenUnits, // Token::Type::ImplicitAdditionBetweenUnits
-    &Parser::parseMatrix,               // Token::Type::LeftBracket
-    &Parser::parseLeftParenthesis,      // Token::Type::LeftParenthesis
-    &Parser::parseList,                 // Token::Type::LeftBrace
-    &Parser::parseLeftSystemParenthesis,// Token::Type::LeftSystemParenthesis
-    &Parser::parseLeftSystemBrace,// Token::Type::LeftSystemBrace
-    &Parser::parseEmpty,                // Token::Type::Empty
-    &Parser::parseConstant,             // Token::Type::Constant
-    &Parser::parseNumber,               // Token::Type::Number
-    &Parser::parseNumber,               // Token::Type::BinaryNumber
-    &Parser::parseNumber,               // Token::Type::HexadecimalNumber
-    &Parser::parseUnit,                 // Token::Type::Unit
-    &Parser::parseReservedFunction,     // Token::Type::ReservedFunction
-    &Parser::parseSpecialIdentifier,    // Token::Type::SpecialIdentifier
-    &Parser::parseCustomIdentifier,     // Token::Type::CustomIdentifier
-    &Parser::parseUnexpected            // Token::Type::Undefined
+    &Parser::parseMatrix,                       // Token::Type::LeftBracket
+    &Parser::parseLeftParenthesis,              // Token::Type::LeftParenthesis
+    &Parser::parseList,                         // Token::Type::LeftBrace
+    &Parser::parseLeftSystemParenthesis,        // Token::Type::LeftSystemParenthesis
+    &Parser::parseLeftSystemBrace,              // Token::Type::LeftSystemBrace
+    &Parser::parseEmpty,                        // Token::Type::Empty
+    &Parser::parseConstant,                     // Token::Type::Constant
+    &Parser::parseNumber,                       // Token::Type::Number
+    &Parser::parseNumber,                       // Token::Type::BinaryNumber
+    &Parser::parseNumber,                       // Token::Type::HexadecimalNumber
+    &Parser::parseUnit,                         // Token::Type::Unit
+    &Parser::parseReservedFunction,             // Token::Type::ReservedFunction
+    &Parser::parseSpecialIdentifier,            // Token::Type::SpecialIdentifier
+    &Parser::parseCustomIdentifier,             // Token::Type::CustomIdentifier
+    &Parser::parseUnexpected                    // Token::Type::Undefined
   };
   static_assert(tokenParsers[static_cast<int>(Token::Type::EndOfStream)] == &Parser::parseUnexpected, "Wrong order of TokenParsers");
   static_assert(tokenParsers[static_cast<int>(Token::Type::RightwardsArrow)] == &Parser::parseRightwardsArrow, "Wrong order of TokenParsers");

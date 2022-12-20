@@ -34,10 +34,10 @@ int ExpressionNode::getPolynomialCoefficients(Context * context, const char * sy
   return Expression(this).defaultGetPolynomialCoefficients(context, symbolName, coefficients);
 }
 
-bool ExpressionNode::involvesCircularity(Context * context, int maxDepth, const char * * visitedSymbols, int numberOfVisitedSymbols) {
+bool ExpressionNode::involvesCircularity(Context * context, int maxDepth, const char * * visitedFunctions, int numberOfVisitedFunctions) {
   int nChildren = numberOfChildren();
   for (int i = 0; i < nChildren; i++) {
-    if (childAtIndex(i)->involvesCircularity(context, maxDepth, visitedSymbols, numberOfVisitedSymbols)) {
+    if (childAtIndex(i)->involvesCircularity(context, maxDepth, visitedFunctions, numberOfVisitedFunctions)) {
       return true;
     }
   }

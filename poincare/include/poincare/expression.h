@@ -121,7 +121,6 @@ class Expression : public TreeHandle {
   friend class SumAndProduct;
   friend class SumAndProductNode;
   friend class Symbol;
-  friend class SymbolAbstract;
   friend class SymbolAbstractNode;
   friend class Tangent;
   friend class Trigonometry;
@@ -473,7 +472,7 @@ protected:
    * indicates if it is circularly defined and has been interrupted.
    * SymbolicComputation defines how to handle functions and undefined symbols.
    */
-  bool involvesCircularity(Context * context, int maxDepth, const char * * visitedSymbols, int numberOfVisitedSymbols) { return node()->involvesCircularity(context, maxDepth, visitedSymbols, numberOfVisitedSymbols); }
+  bool involvesCircularity(Context * context, int maxDepth, const char * * visitedFunctions, int numberOfVisitedFunctions) { return node()->involvesCircularity(context, maxDepth, visitedFunctions, numberOfVisitedFunctions); }
   Expression deepReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation) { return node()->deepReplaceReplaceableSymbols(context, isCircular, parameteredAncestorsCount, symbolicComputation); }
   Expression defaultReplaceReplaceableSymbols(Context * context, TrinaryBoolean * isCircular, int parameteredAncestorsCount, ExpressionNode::SymbolicComputation symbolicComputation);
 

@@ -239,19 +239,6 @@ Expression Symbol::deepReplaceReplaceableSymbols(Context * context, TrinaryBoole
     }
   }
 
-  /* Check for circularity only when a symbol/function is encountered so that
-   * it is not uselessly checked each time deepReplaceReplaceableSymbols is
-   * called.
-   * isCircularFromHere is used so that isCircular is not altered if this is
-   * not circular but a sibling of this is circular and was not checked yet. */
-  TrinaryBoolean isCircularFromHere = *isCircular;
-  checkForCircularityIfNeeded(context, &isCircularFromHere);
-  if (isCircularFromHere == TrinaryBoolean::True) {
-    *isCircular = isCircularFromHere;
-    return *this;
-  }
-  assert(isCircularFromHere == TrinaryBoolean::False);
-
   Expression e = context->expressionForSymbolAbstract(*this, true);
   if (e.isUninitialized()) {
     if (symbolicComputation != ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined) {
@@ -260,10 +247,16 @@ Expression Symbol::deepReplaceReplaceableSymbols(Context * context, TrinaryBoole
     return replaceWithUndefinedInPlace();
   }
 
+  /* If symbols outside of parametered expressions can depend on each other,
+   * then circularity should be checked like in Function::involvesCircularity.
+   */
+  assert(!e.recursivelyMatches(IsSymbolic, nullptr, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol));
+
   replaceWithInPlace(e);
   /* Reset parameteredAncestorsCount, because outer local context is ignored
    * within symbol's expression. */
-  e = e.deepReplaceReplaceableSymbols(context, &isCircularFromHere, 0, symbolicComputation);
+  e = e.deepReplaceReplaceableSymbols(context, isCircular, 0, symbolicComputation);
+  assert(*isCircular != TrinaryBoolean::True);
   return e;
 }
 

@@ -223,11 +223,17 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
 
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {
   if (typeAtLocation(columnIndex, 0) == k_functionTitleCellType) {
+    bool isDerivative, hasName;
+    Layout functionTitle = functionTitleLayout(columnIndex, &isDerivative, &hasName);
     constexpr size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
-    int size = functionTitleLayout(columnIndex).serializeParsedExpression(buffer, bufferNameSize, textFieldDelegateApp()->localContext());
-    // Serialization may have introduced system parentheses.
-    SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(buffer, bufferNameSize - 1);
-    return size;
+    if (isDerivative || hasName) {
+      int size = functionTitle.serializeForParsing(buffer, bufferNameSize);
+      // Serialization may have introduced system parentheses.
+      SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(buffer, bufferNameSize - 1);
+      return size;
+    } else {
+      return strlcpy(buffer, "y", bufferNameSize);
+    }
   }
   return Shared::ValuesController::fillColumnName(columnIndex, buffer);
 }
@@ -282,18 +288,19 @@ Poincare::Layout * ValuesController::memoizedLayoutAtIndex(int i) {
   return &m_memoizedLayouts[i];
 }
 
-Layout ValuesController::functionTitleLayout(int columnIndex) {
+Layout ValuesController::functionTitleLayout(int columnIndex, bool * isDerivative, bool * hasName) {
   assert(typeAtLocation(columnIndex, 0) == k_functionTitleCellType);
   constexpr size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
   char buffer[bufferNameSize];
-  bool isDerivative = false;
-  Ion::Storage::Record record = recordAtColumn(columnIndex, &isDerivative);
+  *isDerivative = false;
+  Ion::Storage::Record record = recordAtColumn(columnIndex, isDerivative);
   Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
-  if (isDerivative) {
+  *hasName = function->isNamed();
+  if (*isDerivative) {
     function->derivativeNameWithArgument(buffer, bufferNameSize);
     return StringLayout::Builder(buffer);
   }
-  if (function->isNamed()) {
+  if (*hasName) {
     function->nameWithArgument(buffer, bufferNameSize);
     return StringLayout::Builder(buffer);
   }
@@ -462,6 +469,11 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative
   }
   assert(false);
   return nullptr;
+}
+
+Layout ValuesController::functionTitleLayout(int columnIndex) {
+  bool isDerivative, hasName;
+  return functionTitleLayout(columnIndex, &isDerivative, &hasName);
 }
 
 Shared::ExpiringPointer<ContinuousFunction> ValuesController::functionAtIndex(int column, int row, double * abscissa, bool * isDerivative) {

@@ -19,7 +19,7 @@ public:
   void viewWillAppear() override;
   TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayNoTitle; }
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   TELEMETRY_ID("Zoom");
 private:
   constexpr static KDCoordinate k_standardViewHeight = 174;

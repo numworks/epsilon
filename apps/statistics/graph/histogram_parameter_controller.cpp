@@ -46,7 +46,7 @@ void HistogramParameterController::willDisplayCellForIndex(HighlightCell * cell,
   FloatParameterController::willDisplayCellForIndex(cell, index);
 }
 
-bool HistogramParameterController::handleEvent(Ion::Events::Event event) {
+bool HistogramParameterController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Back && (extractParameterAtIndex(0) != parameterAtIndex(0) || extractParameterAtIndex(1) != parameterAtIndex(1))) {
     // Temporary values are different, open pop-up to confirm discarding values
     m_confirmPopUpController.presentModally();

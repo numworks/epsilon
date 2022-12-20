@@ -31,7 +31,7 @@ void IntervalParameterSelectorController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event event) {
+bool IntervalParameterSelectorController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     StackViewController * stack = (StackViewController *)parentResponder();
     Shared::IntervalParameterController * controller = App::app()->valuesController()->intervalParameterController();

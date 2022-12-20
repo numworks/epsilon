@@ -11,7 +11,7 @@ View * KeyboardTestController::view() {
   return &m_keyboardView;
 }
 
-bool KeyboardTestController::handleEvent(Ion::Events::Event event) {
+bool KeyboardTestController::handleEvent(Ion::Events::Event & event) {
   // Do not handle OnOff event to let the apps container redraw the screen
   if (event == Ion::Events::OnOff) {
     return false;

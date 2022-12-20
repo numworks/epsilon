@@ -31,7 +31,7 @@ void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
   m_contentView.layoutSubviews();
 }
 
-bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event) {
+bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Idle) {
     return false;
   }

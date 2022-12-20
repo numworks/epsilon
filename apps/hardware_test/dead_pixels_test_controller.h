@@ -14,7 +14,7 @@ public:
     m_view(KDColorBlack)
   {}
   Escher::View * view() override { return &m_view; }
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
 private:
   constexpr static int k_numberOfAdditionalColors = 4;
   constexpr static KDColor k_colors[k_numberOfAdditionalColors] = {KDColorRed, KDColorBlue, KDColorGreen, KDColorWhite}; // KDColorBlack is the first color, set in the constructor

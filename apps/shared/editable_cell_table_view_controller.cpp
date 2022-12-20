@@ -122,7 +122,7 @@ void EditableCellTableViewController::viewWillAppear() {
   }
 }
 
-bool EditableCellTableViewController::handleEvent(Ion::Events::Event event) {
+bool EditableCellTableViewController::handleEvent(Ion::Events::Event & event) {
   if ((event == Ion::Events::Backspace && selectedRow() == 0) || event == Ion::Events::Clear) {
     presentClearSelectedColumnPopupIfClearable();
     return true;

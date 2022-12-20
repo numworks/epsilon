@@ -24,7 +24,7 @@ void InterestMenuController::didBecomeFirstResponder() {
   m_contentView.reload();
 }
 
-bool InterestMenuController::handleEvent(Ion::Events::Event event) {
+bool InterestMenuController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     App::GetInterestData()->setUnknown(paramaterAtIndex(selectedRow()));
     stackOpenPage(m_interestController);

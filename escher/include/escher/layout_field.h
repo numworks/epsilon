@@ -52,7 +52,7 @@ public:
 
   /* Responder */
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   bool handleStoreEvent() override;
   // TODO: factorize with TextField (see TODO of EditableField)
   bool shouldFinishEditing(Ion::Events::Event event) override;

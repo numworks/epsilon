@@ -477,7 +477,7 @@ bool LayoutField::shouldFinishEditing(Ion::Events::Event event) {
   return false;
 }
 
-bool LayoutField::handleEvent(Ion::Events::Event event) {
+bool LayoutField::handleEvent(Ion::Events::Event & event) {
   bool didHandleEvent = false;
   KDSize previousSize = minimalSizeForOptimalDisplay();
   bool shouldRecomputeLayout = m_contentView.cursor()->showEmptyLayoutIfNeeded();

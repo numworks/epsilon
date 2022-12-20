@@ -19,7 +19,7 @@ public:
   Escher::View * view() override { return &m_solidColorView; }
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return Escher::ViewController::TitlesDisplay::DisplayNoTitle; }
 
 private:

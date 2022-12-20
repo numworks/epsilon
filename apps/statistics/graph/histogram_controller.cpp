@@ -33,7 +33,7 @@ AbstractButtonCell * HistogramController::buttonAtIndex(int index, ButtonRowCont
   return index == 0 ? GraphButtonRowDelegate::buttonAtIndex(index, position) : const_cast<AbstractButtonCell *>(&m_parameterButton);
 }
 
-bool HistogramController::handleEvent(Ion::Events::Event event) {
+bool HistogramController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Toolbox) {
     stackController()->push(histogramParameterController());
     return true;

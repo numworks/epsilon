@@ -18,7 +18,7 @@ public:
   const char * title() override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   int numberOfRows() const override;
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;

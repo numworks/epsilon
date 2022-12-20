@@ -16,7 +16,7 @@ class StoreController;
 class StoreParameterController : public ColumnParameterController {
 public:
   StoreParameterController(Escher::Responder * parentResponder, StoreColumnHelper * storeColumnHelper);
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   int numberOfRows() const override { return k_numberOfCells; }
   int reusableCellCount(int type) override { return 1; }
   int typeAtIndex(int index) const override { assert(index < k_numberOfCells); return index; }

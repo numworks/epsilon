@@ -12,7 +12,7 @@ public:
   ExamModeController(Escher::Responder * parentResponder);
   const char * title() override { return I18n::translate(I18n::Message::ExamMode); }
   Escher::View * view() override { return &m_contentView; }
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   TELEMETRY_ID("ExamMode");
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
   int numberOfRows() const override;

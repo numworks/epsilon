@@ -6,7 +6,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-bool ZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event) {
+bool ZoomAndPanCurveViewController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Left || event == Ion::Events::Right || event == Ion::Events::Up || event == Ion::Events::Down) {
     return handlePan(event);
   }

@@ -56,7 +56,7 @@ const char * HypothesisController::title() {
   return m_titleBuffer;
 }
 
-bool HypothesisController::handleEvent(Ion::Events::Event event) {
+bool HypothesisController::handleEvent(Ion::Events::Event & event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 

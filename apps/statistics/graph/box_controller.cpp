@@ -23,7 +23,7 @@ AbstractButtonCell * BoxController::buttonAtIndex(int index, ButtonRowController
   return index == 0 ? GraphButtonRowDelegate::buttonAtIndex(index, position) : const_cast<AbstractButtonCell *>(&m_parameterButton);
 }
 
-bool BoxController::handleEvent(Ion::Events::Event event) {
+bool BoxController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Toolbox) {
     stackController()->push(boxParameterController());
     return true;

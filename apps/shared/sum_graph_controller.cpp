@@ -41,7 +41,7 @@ void SumGraphController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(m_legendView.textField());
 }
 
-bool SumGraphController::handleEvent(Ion::Events::Event event) {
+bool SumGraphController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Back && m_step != Step::FirstParameter) {
     m_step = (Step)((int)m_step-1);
     if (m_step == Step::SecondParameter) {

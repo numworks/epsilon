@@ -197,7 +197,7 @@ void ListController::willDisplayCellAtLocation(HighlightCell * cell, int i, int 
 
 /* Responder */
 
-bool ListController::handleEvent(Ion::Events::Event event) {
+bool ListController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Up) {
     if (selectedRow() == -1) {
       footer()->setSelectedButton(-1);

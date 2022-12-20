@@ -17,7 +17,7 @@ class PressToTestController : public Escher::ViewController, public Escher::Memo
 public:
   PressToTestController(Escher::Responder * parentResponder);
   const char * title() override { return I18n::translate(I18n::Message::PressToTest); }
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   TELEMETRY_ID("PressToTest");
   void didBecomeFirstResponder() override;
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;

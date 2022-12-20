@@ -200,7 +200,7 @@ void ConsoleController::didBecomeFirstResponder() {
   }
 }
 
-bool ConsoleController::handleEvent(Ion::Events::Event event) {
+bool ConsoleController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (m_consoleStore.numberOfLines() > 0 && m_selectableTableView.selectedRow() < m_consoleStore.numberOfLines()) {
       const char * text = m_consoleStore.lineAtIndex(m_selectableTableView.selectedRow()).text();

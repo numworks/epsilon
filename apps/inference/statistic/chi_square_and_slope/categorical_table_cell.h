@@ -22,7 +22,7 @@ public:
 
   // Responder
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event e) override;
+  bool handleEvent(Ion::Events::Event & e) override;
 
   // View
   void drawRect(KDContext * ctx, KDRect rect) const override;
@@ -60,7 +60,7 @@ public:
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
   // Responder
-  bool handleEvent(Ion::Events::Event e) override;
+  bool handleEvent(Ion::Events::Event & e) override;
 
   // DynamicCellsDataSourceDelegate<Escher::EvenOddEditableTextCell>
   void initCell(Escher::EvenOddEditableTextCell, void * cell, int index) override;

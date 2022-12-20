@@ -50,7 +50,7 @@ void SingleRangeController::willDisplayCellForIndex(Escher::HighlightCell * cell
   FloatParameterController<float>::willDisplayCellForIndex(cell, index);
 }
 
-bool SingleRangeController::handleEvent(Ion::Events::Event event) {
+bool SingleRangeController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Left || event == Ion::Events::Back) {
     if (parametersAreDifferent()) {
       m_confirmPopUpController->presentModally();

@@ -124,7 +124,7 @@ bool CurveParameterController::textFieldDidFinishEditing(AbstractTextField * tex
   return true;
 }
 
-bool CurveParameterController::handleEvent(Ion::Events::Event event) {
+bool CurveParameterController::handleEvent(Ion::Events::Event & event) {
   HighlightCell * cell = selectedCell();
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   if (cell == &m_calculationCell && m_calculationCell.ShouldEnterOnEvent(event)) {

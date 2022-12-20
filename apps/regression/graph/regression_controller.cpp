@@ -59,7 +59,7 @@ void RegressionController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-bool RegressionController::handleEvent(Ion::Events::Event event) {
+bool RegressionController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(m_series > -1);
     m_store->setSeriesRegressionType(m_series, ModelTypeAtIndex(selectedRow()));

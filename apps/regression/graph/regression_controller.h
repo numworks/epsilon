@@ -21,7 +21,7 @@ public:
   TELEMETRY_ID("Regression");
 
   // Responder
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   void didBecomeFirstResponder() override;
 
   // MemoizedListViewDataSource

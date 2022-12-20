@@ -557,7 +557,7 @@ void AbstractTextField::willResignFirstResponder() {
   contentView()->stallOrStopEditing();
 }
 
-bool AbstractTextField::handleEvent(Ion::Events::Event event) {
+bool AbstractTextField::handleEvent(Ion::Events::Event & event) {
   assert(m_delegate != nullptr);
   contentView()->setStalled(false);
   size_t previousTextLength = strlen(text());

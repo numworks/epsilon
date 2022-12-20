@@ -31,7 +31,7 @@ void DataViewController::viewWillAppear() {
   dataView()->reload();
 }
 
-bool DataViewController::handleEvent(Ion::Events::Event event) {
+bool DataViewController::handleEvent(Ion::Events::Event & event) {
   int selectedButton = header()->selectedButton();
   if (selectedButton >= 0) {
     if (event == Ion::Events::Up || event == Ion::Events::Back) {

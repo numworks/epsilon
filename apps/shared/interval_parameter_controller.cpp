@@ -87,7 +87,7 @@ HighlightCell * IntervalParameterController::reusableParameterCell(int index, in
   return &m_intervalCells[index];
 }
 
-bool IntervalParameterController::handleEvent(Ion::Events::Event event) {
+bool IntervalParameterController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Left && stackController()->depth() > 2) {
     stackController()->pop();
     return true;

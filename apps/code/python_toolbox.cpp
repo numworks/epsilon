@@ -469,7 +469,7 @@ const ToolboxMessageTree * PythonToolbox::moduleChildren(const char * name, int 
   return nullptr;
 }
 
-bool PythonToolbox::handleEvent(Ion::Events::Event event) {
+bool PythonToolbox::handleEvent(Ion::Events::Event & event) {
   if (Toolbox::handleEvent(event)) {
     return true;
   }

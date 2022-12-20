@@ -27,7 +27,7 @@ void ResultsHomogeneityController::ResultsTableController::viewWillAppear() {
   CategoricalController::viewWillAppear();
 }
 
-bool ResultsHomogeneityController::ResultsTableController::handleEvent(Ion::Events::Event event) {
+bool ResultsHomogeneityController::ResultsTableController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Up) {
     m_resultHomogeneityTable.tableView()->deselectTable();
     tabController()->selectTab();

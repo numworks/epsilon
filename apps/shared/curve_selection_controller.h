@@ -50,7 +50,7 @@ public:
   Escher::View * view() override { return &m_selectableTableView; }
   void viewWillAppear() override { m_selectableTableView.reloadData(); }
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
 
 protected:
   // Add chevron

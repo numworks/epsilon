@@ -15,7 +15,7 @@ DetailsListController::DetailsListController(StackViewController * parentRespond
   m_view(&m_selectableTableView, this, &m_topElementView, &m_bottomMessageView)
 {}
 
-bool DetailsListController::handleEvent(Ion::Events::Event e) {
+bool DetailsListController::handleEvent(Ion::Events::Event & e) {
   if (e == Ion::Events::Plus || e == Ion::Events::Minus) {
     int step = e == Ion::Events::Plus ? 1 : -1;
     ElementsViewDataSource * dataSource = App::app()->elementsViewDataSource();

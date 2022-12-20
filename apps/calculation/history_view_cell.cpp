@@ -344,7 +344,7 @@ void HistoryViewCell::didBecomeFirstResponder() {
   }
 }
 
-bool HistoryViewCell::handleEvent(Ion::Events::Event event) {
+bool HistoryViewCell::handleEvent(Ion::Events::Event & event) {
   assert(m_dataSource != nullptr);
   HistoryViewCellDataSource::SubviewType type = m_dataSource->selectedSubviewType();
   assert(type != HistoryViewCellDataSource::SubviewType::None);

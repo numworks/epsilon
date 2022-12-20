@@ -42,7 +42,7 @@ void DistributionController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-bool DistributionController::handleEvent(Ion::Events::Event event) {
+bool DistributionController::handleEvent(Ion::Events::Event & event) {
   StackViewController * stack = (StackViewController *)parentResponder();
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     setDistributionAccordingToIndex(selectedRow());

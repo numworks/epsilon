@@ -30,7 +30,7 @@ const char * ParametersController::title() {
   return I18n::translate(m_distribution->title());
 }
 
-bool ParametersController::handleEvent(Ion::Events::Event event) {
+bool ParametersController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Left) {
     stackController()->pop();
     return true;

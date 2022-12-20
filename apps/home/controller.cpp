@@ -54,7 +54,7 @@ Controller::Controller(Responder * parentResponder, SelectableTableViewDataSourc
 {
 }
 
-bool Controller::handleEvent(Ion::Events::Event event) {
+bool Controller::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     switchToSelectedApp();
     return true;

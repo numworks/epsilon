@@ -28,7 +28,7 @@ void IntervalGraphController::viewWillAppear() {
   resetSelectedInterval();
 }
 
-bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
+bool IntervalGraphController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Copy || event == Ion::Events::Cut || event == Ion::Events::Sto || event == Ion::Events::Var) {
     // Copy confidence interval as matrix
     char copyBuffer[2 * Constants::k_shortBufferSize + 4];

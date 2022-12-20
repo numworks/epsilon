@@ -18,7 +18,7 @@ public:
   ResultController(Escher::StackViewController * parentResponder);
 
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event e) override;
+  bool handleEvent(Ion::Events::Event & e) override;
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastAndThirdToLast; }
   Escher::View * view() override { return &m_contentView; }

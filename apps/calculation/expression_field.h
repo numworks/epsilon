@@ -15,7 +15,7 @@ public:
     setLayoutInsertionCursorEvent(Ion::Events::Up);
   }
 protected:
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
 private:
   enum class DivisionCycleStep : uint8_t {
     Start = 0,

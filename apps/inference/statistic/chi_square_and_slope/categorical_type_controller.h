@@ -31,7 +31,7 @@ public:
   }
   void stackOpenPage(Escher::ViewController * nextPage) override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
 
   constexpr static int k_indexOfGoodnessCell = 0;
   constexpr static int k_indexOfHomogeneityCell = 1;

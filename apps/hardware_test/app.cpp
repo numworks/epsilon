@@ -60,7 +60,7 @@ ViewController * App::WizardViewController::childAtIndex(int i) {
   return children[i];
 }
 
-bool App::WizardViewController::handleEvent(Ion::Events::Event event) {
+bool App::WizardViewController::handleEvent(Ion::Events::Event & event) {
   // Do not handle OnOff event to let the apps container redraw the screen
   if (event == Ion::Events::OnOff) {
     return false;

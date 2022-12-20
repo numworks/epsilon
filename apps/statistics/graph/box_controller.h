@@ -29,7 +29,7 @@ public:
   bool moveSelectionHorizontally(int deltaIndex) override;
 
   // Responder
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
 
   TELEMETRY_ID("Box");
 private:

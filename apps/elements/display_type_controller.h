@@ -13,7 +13,7 @@ public:
   DisplayTypeController(Escher::StackViewController * stackController);
 
   // Escher::Responder
-  bool handleEvent(Ion::Events::Event e) override;
+  bool handleEvent(Ion::Events::Event & e) override;
   void didBecomeFirstResponder() override { Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView); }
 
   // Escher::ViewController

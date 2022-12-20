@@ -29,7 +29,7 @@ public:
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return Escher::ViewController::TitlesDisplay::DisplayLastTitle; }
 
   // Escher::Responder
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
 
   TELEMETRY_ID("ResidualPlotGraph");
 private:

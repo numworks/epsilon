@@ -50,7 +50,7 @@ VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   empty();
 }
 
-bool VariableBoxController::handleEvent(Ion::Events::Event event) {
+bool VariableBoxController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Left) {
     return true;
   }

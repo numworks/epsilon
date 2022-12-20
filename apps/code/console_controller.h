@@ -37,7 +37,7 @@ public:
   Escher::View * view() override { return &m_selectableTableView; }
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   Escher::ViewController::TitlesDisplay titlesDisplay() override { return Escher::ViewController::TitlesDisplay::DisplayNoTitle; }
   TELEMETRY_ID("Console");
 

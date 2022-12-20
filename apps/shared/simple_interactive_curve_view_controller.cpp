@@ -8,7 +8,7 @@ using namespace Escher;
 
 namespace Shared {
 
-bool SimpleInteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
+bool SimpleInteractiveCurveViewController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     return handleLeftRightEvent(event);
   }

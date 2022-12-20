@@ -16,7 +16,7 @@ DoublePairTableController::DoublePairTableController(Responder * parentResponder
   m_prefacedTwiceTableView.setMarginDelegate(this);
 }
 
-bool DoublePairTableController::handleEvent(Ion::Events::Event event) {
+bool DoublePairTableController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();
     tabController()->selectTab();

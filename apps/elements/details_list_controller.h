@@ -14,7 +14,7 @@ public:
   DetailsListController(Escher::StackViewController * parentResponder);
 
   // Escher::Responder
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   void didBecomeFirstResponder() override;
 
   // Escher::ViewController

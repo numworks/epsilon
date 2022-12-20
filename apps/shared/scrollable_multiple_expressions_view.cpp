@@ -277,7 +277,7 @@ void AbstractScrollableMultipleExpressionsView::setDisplayCenter(bool display) {
   layoutSubviews();
 }
 
-bool AbstractScrollableMultipleExpressionsView::handleEvent(Ion::Events::Event event) {
+bool AbstractScrollableMultipleExpressionsView::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Left || event == Ion::Events::Right ) {
     bool leftIsVisible = false;
     KDCoordinate leftWidth = 0;

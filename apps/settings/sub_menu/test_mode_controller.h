@@ -13,7 +13,7 @@ public:
   TELEMETRY_ID("TestMode");
   KDCoordinate nonMemoizedRowHeight(int j) override;
   Escher::HighlightCell * reusableCell(int index, int type) override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   int reusableCellCount(int type) override { return k_numberOfCells; };
   void didBecomeFirstResponder() override;
 private:

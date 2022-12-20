@@ -40,7 +40,7 @@ void GenericSubController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-bool GenericSubController::handleEvent(Ion::Events::Event event) {
+bool GenericSubController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Left) {
     stackController()->pop();
     return true;

@@ -15,7 +15,7 @@ public:
   void viewDidDisappear() override;
 
   // Responder
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
 
   //ListViewDataSource
   int numberOfRows() const override;

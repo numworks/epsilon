@@ -10,10 +10,12 @@ void assert_events_lead_to_selection(const Ion::Events::Event * events, int numb
   LayoutField field = LayoutField(nullptr, nullptr);
   field.setEditing(true);
   for (int i = 0; i < numberOfEvents; i++) {
-    field.handleEvent(events[i]);
+    Ion::Events::Event e = events[i];
+    field.handleEvent(e);
   }
   Clipboard::SharedClipboard()->reset();
-  field.handleEvent(Ion::Events::Copy);
+  Ion::Events::Event copy = Ion::Events::Copy;
+  field.handleEvent(copy);
   quiz_assert(strcmp(Clipboard::SharedClipboard()->storedText(), selectedParsedAndSerializedText) == 0);
 }
 

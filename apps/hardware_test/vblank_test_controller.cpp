@@ -6,7 +6,7 @@ using namespace Poincare;
 
 namespace HardwareTest {
 
-bool VBlankTestController::handleEvent(Ion::Events::Event event) {
+bool VBlankTestController::handleEvent(Ion::Events::Event & event) {
   // Do not handle OnOff event to let the apps container redraw the screen
   if (event == Ion::Events::OnOff) {
     return false;

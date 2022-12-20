@@ -203,6 +203,7 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("M^3×P×M^(-3)", "\u0014dep(P,{1/M})");
   assert_parsed_expression_simplify_to("M^3×M^(-3)", "\u0014dep(1,{1/M})");
   assert_parsed_expression_simplify_to("2^π×(1/2)^π", "1");
+  assert_parsed_expression_simplify_to("-iπ^3×(-iπ^3)×(-iπ^3)", "π^9×i");
   assert_parsed_expression_simplify_to("(x+1)×(x+2)", "x^2+3×x+2");
   assert_parsed_expression_simplify_to("(x+1)×(x-1)", "x^2-1");
   assert_parsed_expression_simplify_to("11π/(22π+11π)", "1/3");

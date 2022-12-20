@@ -511,8 +511,6 @@ bool isValidNamedLeftExpression(const Expression e, ComparisonNode::OperatorType
 }
 
 Expression ContinuousFunction::Model::expressionEquation(const Ion::Storage::Record * record, Context * context, ComparisonNode::OperatorType * computedEquationType, ContinuousFunctionProperties::SymbolType * computedFunctionSymbol, bool * isCartesianEquation) const {
-  /* Use ExpressionModel::expressionClone because it does not alter
-   * the left-hand side of "f(x)=" and "f(t)=" */
   Expression result = ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
     return Undefined::Builder();
@@ -608,6 +606,9 @@ Expression ContinuousFunction::Model::expressionDerivateReduced(const Ion::Stora
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record * record,  Context * context) const {
+  /* Use ExpressionModel::expressionClone because it does not alter
+   * the left-hand side of "f(x)=" and "f(t)=", which allows the name
+   * of the function to be found. */
   Expression newExpression = ExpressionModel::expressionClone(record);
   Ion::Storage::Record::ErrorStatus error = Ion::Storage::Record::ErrorStatus::None;
   if (newExpression.isUninitialized()) {

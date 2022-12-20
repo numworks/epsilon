@@ -9,7 +9,7 @@ namespace Graph {
 
 class PointsOfInterestCache {
 public:
-  PointsOfInterestCache(Ion::Storage::Record record) : m_record(record), m_start(NAN), m_end(NAN) {}
+  PointsOfInterestCache(Ion::Storage::Record record) : m_record(record), m_checksum(0), m_start(NAN), m_end(NAN) {}
   PointsOfInterestCache() : PointsOfInterestCache(Ion::Storage::Record()) {}
 
   Poincare::List list() { return m_list.list(); }

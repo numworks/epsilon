@@ -33,13 +33,12 @@ $(dfu_targets): $(BUILD_DIR)/%.dfu: | $(BUILD_DIR)/.
 	  -o $@
 
 
-define extract_address_from_board_h
+define extract_value_from_board_h
 $(shell sed -n -e 's/^.* $(1) = \(.*\);.*/\1/p' ion/src/device/include/$(MODEL)/config/board.h)
 endef
 
-FLASHER_ADDRESS = $$(( $(call extract_address_from_board_h,SRAMOrigin) + $(call extract_address_from_board_h,SRAMLength) - $(call extract_address_from_board_h,FlasherLength) ))
+FLASHER_ADDRESS = $$(( $(call extract_value_from_board_h,SRAMOrigin) + $(call extract_value_from_board_h,SRAMLength) - $(call extract_value_from_board_h,FlasherLength) ))
 
-#$(if $(filter n0120,$(MODEL)),0x24030000,0x20030000)
 .PHONY: %_flash
 %_flash: $(BUILD_DIR)/%.dfu
 	@echo "DFU     $@"

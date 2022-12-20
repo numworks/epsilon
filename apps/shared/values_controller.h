@@ -2,7 +2,6 @@
 #define SHARED_VALUES_CONTROLLER_H
 
 #include "editable_cell_table_view_controller.h"
-#include "editable_cell_selectable_table_view.h"
 #include "expression_function_title_cell.h"
 #include "function_store.h"
 #include "interval.h"
@@ -113,10 +112,7 @@ protected:
   int numberOfAbscissaColumns() const { return numberOfAbscissaColumnsBeforeAbsoluteColumn(-1); }
   int numberOfValuesColumns() const { return numberOfColumns() - numberOfAbscissaColumns(); }
 
-  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
-
   PrefacedTwiceTableView m_prefacedTwiceTableView;
-  EditableCellSelectableTableView m_selectableTableView;
 
 private:
   // Specialization depending on the abscissa names (x, n, t...)

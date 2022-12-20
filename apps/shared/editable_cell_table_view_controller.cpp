@@ -16,8 +16,9 @@ using namespace Poincare;
 
 namespace Shared {
 
-EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder) :
-  TabTableController(parentResponder)
+EditableCellTableViewController::EditableCellTableViewController(Responder * parentResponder, Escher::SelectableTableViewDelegate * delegate) :
+  TabTableController(parentResponder),
+  m_selectableTableView(this, this, this, this, delegate)
 {}
 
 bool EditableCellTableViewController::textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) {

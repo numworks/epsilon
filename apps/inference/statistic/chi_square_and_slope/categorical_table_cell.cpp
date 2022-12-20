@@ -25,7 +25,7 @@ void CategoricalTableCell::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(selectableTableView());
 }
 
-bool CategoricalTableCell::handleEvent(Ion::Events::Event e) {
+bool CategoricalTableCell::handleEvent(Ion::Events::Event & e) {
   if (e == Ion::Events::Left) {
     // Catch left event to avoid popping controller from StackViewController
     return true;
@@ -123,7 +123,7 @@ bool EditableCategoricalTableCell::textFieldDidFinishEditing(Escher::AbstractTex
   return true;
 }
 
-bool EditableCategoricalTableCell::handleEvent(Ion::Events::Event event) {
+bool EditableCategoricalTableCell::handleEvent(Ion::Events::Event & event) {
   int column = m_selectableTableView.selectedColumn();
   int row = m_selectableTableView.selectedRow();
   int cellType = tableViewDataSource()->typeAtLocation(column, row);

@@ -111,7 +111,7 @@ const char * FunctionModelsParameterController::ModelWithDefaultName(Model model
   return buffer;
 }
 
-bool FunctionModelsParameterController::handleEvent(Ion::Events::Event event) {
+bool FunctionModelsParameterController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Ion::Storage::Record::ErrorStatus error = App::app()->functionStore()->addEmptyModel();
     if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {

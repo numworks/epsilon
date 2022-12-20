@@ -35,7 +35,7 @@ public:
   void setDisplayCenter(bool display);
   void setDisplayableCenter(bool displayable) { contentCell()->setDisplayableCenter(displayable); }
   void reloadScroll();
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   Poincare::Layout layout() const { return contentCell()->layout(); }
   Poincare::Layout layoutAtPosition(SubviewPosition position) const { return contentCell()->layoutAtPosition(position); }
   KDCoordinate baseline() const { return contentCell()->baseline(); }

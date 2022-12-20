@@ -31,7 +31,7 @@ public:
   bool selectCellAtLocation(int col, int row, bool setFirstResponder = true, bool withinTemporarySelection = false);
   bool selectCellAtClippedLocation(int col, int row, bool setFirstResponder = true, bool withinTemporarySelection = false);
 
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   void unhighlightSelectedCell();
   void deselectTable(bool withinTemporarySelection = false);
   void reloadData(bool setFirstResponder = true, bool setSelection = true);

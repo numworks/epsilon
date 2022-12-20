@@ -71,7 +71,7 @@ void AreaBetweenCurvesParameterController::willDisplayCellForIndex(Escher::Highl
   static_cast<CurveSelectionCell *>(cell)->setLayout(function->layout().clone());
 }
 
-bool AreaBetweenCurvesParameterController::handleEvent(Ion::Events::Event event) {
+bool AreaBetweenCurvesParameterController::handleEvent(Ion::Events::Event & event) {
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   if (event == Ion::Events::Left) {
     stack->pop();

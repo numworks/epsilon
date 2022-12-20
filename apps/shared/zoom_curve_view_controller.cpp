@@ -7,7 +7,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-bool ZoomCurveViewController::handleEvent(Ion::Events::Event event) {
+bool ZoomCurveViewController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::OnOff) {
     /* If the display is turned on while all curves have been interrupted,
      * redrawing the curve view will be skipped. Since the frame info has been

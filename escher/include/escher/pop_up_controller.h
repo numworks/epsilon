@@ -21,7 +21,7 @@ public:
   PopUpController(Invocation OkInvocation, Invocation CancelInvocation, I18n::Message warningMessage, I18n::Message okMessage, I18n::Message cancelMessage, TextView * detailTextView);
   View * view() override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   void presentModally();
 protected:
   class ContentView : public View, public Responder {

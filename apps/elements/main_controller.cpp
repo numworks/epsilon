@@ -39,7 +39,7 @@ void MainController::activeDataFieldHasChanged() {
   m_view.bannerView()->reload();
 }
 
-bool MainController::handleEvent(Ion::Events::Event e) {
+bool MainController::handleEvent(Ion::Events::Event & e) {
   if (e == Ion::Events::OnOff) {
     /* ElementsView only redraws its background when appearing to avoid
      * blinking. Powering down will discard the background so we need to flag

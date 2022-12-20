@@ -30,7 +30,7 @@ public:
   // ListViewDataSource
   int numberOfRows() const override;
   Escher::HighlightCell * reusableCell(int i, int type) override { return &m_cells[i]; }
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int i) override;
 
   constexpr static int k_indexOfTTest = 0;

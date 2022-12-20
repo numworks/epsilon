@@ -38,7 +38,7 @@ void CurveSelectionController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-bool CurveSelectionController::handleEvent(Ion::Events::Event event) {
+bool CurveSelectionController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     m_graphController->openMenuForCurveAtIndex(selectedRow());
     return true;

@@ -59,7 +59,7 @@ void InteractiveCurveViewController::setCurveViewAsMainView(bool resetInterrupte
   curveView()->reload(resetInterrupted, forceReload);
 }
 
-bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
+bool InteractiveCurveViewController::handleEvent(Ion::Events::Event & event) {
   if (!curveView()->hasFocus()) {
     if (event == Ion::Events::Down) {
       setCurveViewAsMainView(false, false);

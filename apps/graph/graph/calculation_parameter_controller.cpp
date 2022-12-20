@@ -69,7 +69,7 @@ template<class T> void CalculationParameterController::push(T * controller, bool
   stack->push(controller);
 }
 
-bool CalculationParameterController::handleEvent(Ion::Events::Event event) {
+bool CalculationParameterController::handleEvent(Ion::Events::Event & event) {
   HighlightCell * cell = selectedCell();
   if (cell == &m_preimageCell && m_preimageCell.ShouldEnterOnEvent(event)) {
     push(&m_preimageParameterController, false);

@@ -169,7 +169,7 @@ void LocalizationController::viewWillAppear() {
   selectableTableView()->reloadData();
 }
 
-bool LocalizationController::handleEvent(Ion::Events::Event event) {
+bool LocalizationController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (mode() == Mode::Language) {
       GlobalPreferences::sharedGlobalPreferences()->setLanguage(static_cast<I18n::Language>(selectedRow()));

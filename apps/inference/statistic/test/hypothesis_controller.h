@@ -32,7 +32,7 @@ public:
   };
   const char * title() override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   Escher::HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override { return 3; }
   static bool ButtonAction(HypothesisController * controller, void * s);

@@ -10,7 +10,7 @@ class USBConnectedController : public Escher::ViewController {
 public:
   USBConnectedController();
   Escher::View * view() override { return &m_messageView; }
-  bool handleEvent(Ion::Events::Event event) override { return false; }
+  bool handleEvent(Ion::Events::Event & event) override { return false; }
 private:
   Shared::MessageView m_messageView;
 };

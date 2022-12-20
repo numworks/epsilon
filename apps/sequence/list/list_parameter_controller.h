@@ -32,7 +32,7 @@ public:
   int numberOfRows() const override { return numberOfNonInheritedCells() + Shared::ListParameterController::numberOfRows(); }
 private:
   void initialRankChanged(int value);
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   int numberOfNonInheritedCells() const { return 2; } // number of non inherited cells
   Shared::Sequence * sequence() { return static_cast<Shared::Sequence *>(function().pointer()); }
   Escher::MessageTableCellWithChevronAndExpression m_typeCell;

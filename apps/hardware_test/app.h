@@ -28,7 +28,7 @@ private:
     WizardViewController(Escher::Responder * parentResponder);
     int numberOfChildren() override;
     Escher::ViewController * childAtIndex(int i) override;
-    bool handleEvent(Ion::Events::Event event) override;
+    bool handleEvent(Ion::Events::Event & event) override;
   private:
     BatteryTestController m_batteryTestController;
     LCDTimingTestController m_lcdTimingTestController;

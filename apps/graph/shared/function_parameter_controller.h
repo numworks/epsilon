@@ -18,7 +18,7 @@ public:
   // MemoizedListViewDataSource
   Escher::HighlightCell * cell(int index) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   int numberOfRows() const override { return k_numberOfRows; }
   const char * title() override;
   TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayLastTwoTitles; }

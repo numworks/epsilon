@@ -43,7 +43,7 @@ void CurveParameterController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-bool CurveParameterController::handleEvent(Ion::Events::Event event) {
+bool CurveParameterController::handleEvent(Ion::Events::Event & event) {
   HighlightCell * cell = selectedCell();
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   if (cell == &m_sumCell && m_sumCell.ShouldEnterOnEvent(event)) {

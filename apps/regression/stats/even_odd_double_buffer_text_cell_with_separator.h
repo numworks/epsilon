@@ -30,7 +30,7 @@ public:
   int numberOfSubviews() const override;
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
 protected:
   bool m_firstTextSelected;
   Escher::EvenOddBufferTextCell m_firstBufferTextView;

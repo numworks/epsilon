@@ -28,7 +28,7 @@ public:
   // TextFieldDelegate
   bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
   // Responder
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   // ExpressionModelListController
   KDCoordinate expressionRowHeight(int j) override;
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }

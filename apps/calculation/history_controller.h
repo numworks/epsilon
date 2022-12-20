@@ -22,7 +22,7 @@ class HistoryController : public Escher::ViewController, public Escher::ListView
 public:
   HistoryController(EditExpressionController * editExpressionController, CalculationStore * calculationStore);
   Escher::View * view() override { return &m_selectableTableView; }
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   void viewWillAppear() override;
   TELEMETRY_ID("");
   void didBecomeFirstResponder() override;

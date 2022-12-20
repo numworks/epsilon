@@ -17,7 +17,7 @@ public:
   const char * title() override { return I18n::translate(I18n::Message::StatisticsGraphSettings); }
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 private:
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   Store * m_store;
   int * m_selectedBoxCalculation;
 };

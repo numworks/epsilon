@@ -13,7 +13,7 @@ int LocalizationController::indexOfCellToSelectOnReset() const {
     IndexOfCountry(I18n::DefaultCountryForLanguage[static_cast<uint8_t>(GlobalPreferences::sharedGlobalPreferences()->language())]);
 }
 
-bool LocalizationController::handleEvent(Ion::Events::Event event) {
+bool LocalizationController::handleEvent(Ion::Events::Event & event) {
   if (Shared::LocalizationController::handleEvent(event)) {
     if (mode() == Mode::Language) {
       setMode(Mode::Country);

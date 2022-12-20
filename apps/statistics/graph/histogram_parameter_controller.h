@@ -18,7 +18,7 @@ public:
 private:
   constexpr static int k_numberOfCells = 2;
   double extractParameterAtIndex(int index);
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   double parameterAtIndex(int index) override;
   bool confirmParameterAtIndex(int parameterIndex, double f);
   bool setParameterAtIndex(int parameterIndex, double f) override;

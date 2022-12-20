@@ -16,7 +16,7 @@ public:
   const char * title() override;
   Escher::View * view() override { return &m_graphView; }
   void viewWillAppear() override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   Interval * interval() { return m_intervalBuffer.interval(); }
 private:
   constexpr static int k_titleBufferSize = sizeof("ME=") + Constants::k_shortFloatNumberOfChars;

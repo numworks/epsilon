@@ -98,7 +98,7 @@ void ExpressionField::drawRect(KDContext * ctx, KDRect rect) const {
   ctx->fillRect(KDRect(0, 0, bounds().width(), k_separatorThickness), Palette::GrayMiddle);
 }
 
-bool ExpressionField::handleEvent(Ion::Events::Event event) {
+bool ExpressionField::handleEvent(Ion::Events::Event & event) {
   return editionIsInTextField() ? m_textField.handleEvent(event) : m_layoutField.handleEvent(event);
 }
 

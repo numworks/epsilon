@@ -78,7 +78,7 @@ bool ExpressionFieldDelegateApp::isAcceptableExpression(const Expression exp) {
   return !exp.isUninitialized() && exp.type() != ExpressionNode::Type::Store && TextFieldDelegateApp::ExpressionCanBeSerialized(exp, false, Poincare::Expression(), localContext());
 }
 
-bool ExpressionFieldDelegateApp::handleEvent(Ion::Events::Event event) {
+bool ExpressionFieldDelegateApp::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Sto) {
     storeValue();
     return true;

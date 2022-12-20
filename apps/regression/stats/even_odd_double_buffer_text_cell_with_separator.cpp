@@ -96,7 +96,7 @@ void EvenOddDoubleBufferTextCellWithSeparator::layoutSubviews(bool force) {
   m_secondBufferTextView.setFrame(KDRect(k_separatorWidth + width/2, 0, width - width/2, height), force);
 }
 
-bool EvenOddDoubleBufferTextCellWithSeparator::handleEvent(Ion::Events::Event event) {
+bool EvenOddDoubleBufferTextCellWithSeparator::handleEvent(Ion::Events::Event & event) {
   if (m_firstTextSelected && event == Ion::Events::Right) {
     selectFirstText(false);
     return true;

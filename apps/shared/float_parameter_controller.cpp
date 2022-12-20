@@ -57,7 +57,7 @@ void FloatParameterController<T>::viewDidDisappear() {
 }
 
 template<typename T>
-bool FloatParameterController<T>::handleEvent(Ion::Events::Event event) {
+bool FloatParameterController<T>::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Back) {
     stackController()->pop();
     return true;

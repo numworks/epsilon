@@ -32,7 +32,7 @@ public:
   /* ViewController */
   Escher::View * view() override { return &m_selectableTableView; }
   ViewController::TitlesDisplay titlesDisplay() override { return TitlesDisplay::NeverDisplayOwnTitle; }
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   TELEMETRY_ID("Menu");

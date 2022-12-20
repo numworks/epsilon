@@ -18,7 +18,7 @@ public:
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
 
   int typeAtIndex(int index) const override;
   int reusableCellCount(int type) override;

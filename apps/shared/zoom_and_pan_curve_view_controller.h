@@ -11,7 +11,7 @@ namespace Shared {
 class ZoomAndPanCurveViewController : public ZoomCurveViewController {
 public:
   ZoomAndPanCurveViewController(Responder * parentResponder) : ZoomCurveViewController(parentResponder) {}
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
 protected:
   virtual bool handlePan(Ion::Events::Event event);
   float xFocus() override { return interactiveCurveViewRange()->xCenter(); }

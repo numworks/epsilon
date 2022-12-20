@@ -13,7 +13,7 @@ public:
   IntervalParameterSelectorController();
   const char * title() override;
   void viewDidDisappear() override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;
   int reusableCellCount() const override { return k_numberOfSymbolTypes; }

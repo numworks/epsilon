@@ -4,7 +4,7 @@ using namespace Escher;
 
 namespace Statistics {
 
-bool CalculationSelectableTableView::handleEvent(Ion::Events::Event event) {
+bool CalculationSelectableTableView::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::Up && selectedColumn() <= 1 && selectedRow() == 1) {
     return false;
   }

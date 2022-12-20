@@ -10,7 +10,7 @@ class SerialNumberController : public Escher::ViewController {
 public:
   using Escher::ViewController::ViewController;
   Escher::View * view() override { return &m_barCodeView; }
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   void viewWillAppear() override;
 private:
   Code128BView m_barCodeView;

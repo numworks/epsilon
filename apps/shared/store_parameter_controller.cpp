@@ -24,7 +24,7 @@ void StoreParameterController::initializeColumnParameters() {
   m_sortCell.setSubLabelMessage(sortMessage());
 }
 
-bool StoreParameterController::handleEvent(Ion::Events::Event event) {
+bool StoreParameterController::handleEvent(Ion::Events::Event & event) {
   if (event != Ion::Events::OK && event != Ion::Events::EXE) {
     return false;
   }

@@ -17,7 +17,7 @@ public:
 
   ZoomCurveViewController(Escher::Responder * parentResponder) : Escher::ViewController(parentResponder) {}
   Escher::View * view() override { return curveView(); }
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
 protected:
   virtual bool handleZoom(Ion::Events::Event event);
   virtual bool handleEnter();

@@ -88,7 +88,7 @@ void TabViewController::selectTab() {
   Container::activeApp()->setFirstResponder(this);
 }
 
-bool TabViewController::handleEvent(Ion::Events::Event event) {
+bool TabViewController::handleEvent(Ion::Events::Event & event) {
   App * app = Container::activeApp();
   if (app->firstResponder() != this) {
     if (event == Ion::Events::Back) {

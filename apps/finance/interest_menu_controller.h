@@ -20,7 +20,7 @@ class InterestMenuController : public Escher::SelectableCellListPage<Escher::Mes
 public:
   InterestMenuController(Escher::StackViewController * parentResponder, InterestController * interestController);
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event e) override;
+  bool handleEvent(Ion::Events::Event & e) override;
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; }
   Escher::View * view() override { return &m_contentView; }

@@ -32,7 +32,7 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override;
   void didBecomeFirstResponder() override;
   void willExitResponderChain(Responder * nextFirstResponder) override;
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   int selectedButton();
   bool setSelectedButton(int selectedButton);
   void setMessageOfButtonAtIndex(I18n::Message message, int index);

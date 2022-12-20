@@ -26,7 +26,7 @@ public:
   int reusableCellCount(int type) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   /* Responder */
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event & event) override;
   void didBecomeFirstResponder() override;
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
   /* ViewController */

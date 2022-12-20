@@ -19,7 +19,7 @@ void DisplayTypeController::viewWillAppear() {
   selectCellAtLocation(0, fieldIndex);
 }
 
-bool DisplayTypeController::handleEvent(Ion::Events::Event e) {
+bool DisplayTypeController::handleEvent(Ion::Events::Event & e) {
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
     int index = selectedRow();
     App::app()->elementsViewDataSource()->setField(k_fields[index]);

@@ -43,7 +43,7 @@ void InterestController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData(true);
 }
 
-bool InterestController::handleEvent(Ion::Events::Event event) {
+bool InterestController::handleEvent(Ion::Events::Event & event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 

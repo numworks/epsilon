@@ -71,7 +71,7 @@ View * WarningController::view() {
   return &m_contentView;
 }
 
-bool WarningController::handleEvent(Ion::Events::Event event) {
+bool WarningController::handleEvent(Ion::Events::Event & event) {
   if (event == Ion::Events::OnOff || event == Ion::Events::USBPlug || event == Ion::Events::USBEnumeration || event == Ion::Events::Idle) {
     return false;
   }

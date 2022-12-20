@@ -64,10 +64,11 @@ void PrefacedTableView::layoutSubviewsInRect(KDRect rect, bool force) {
   ScrollViewVerticalBar * verticalBar = static_cast<TableView::BarDecorator*>(m_mainTableView->decorator())->verticalBar();
 
   if (hideRowPreface) {
-    m_mainTableView->setTopMargin(m_mainTableViewTopMargin);
+    m_mainTableView->setTopMargin(m_mainTableViewTopMargin); // WARNING: If preface row can change, top margin is dependant on row frozen (follow the implementation used for column preface)
     m_mainTableView->setFrame(rect, force);
     verticalBar->setTopMargin(rowPrefaceHeight + 2 * m_mainTableViewTopMargin);
   } else {
+    // WARNING: If we need a separator below the preface row, we should set a bottom margin for rowPrefaceView here (follow the implementation used for column preface)
     m_mainTableView->setTopMargin(0);
     m_mainTableView->setFrame(KDRect(rect.x(), rect.y() + rowPrefaceHeight, rect.width(), rect.height() - rowPrefaceHeight), force);
     verticalBar->setTopMargin(2 * m_mainTableViewTopMargin);

@@ -5,6 +5,7 @@
 #include <escher/regular_table_view_data_source.h>
 #include <escher/stack_view_controller.h>
 #include "column_helper.h"
+#include "editable_cell_selectable_table_view.h"
 #include "text_field_delegate.h"
 #include "tab_table_controller.h"
 #include "column_parameter_controller.h"
@@ -15,7 +16,7 @@ class ColumnParameterController;
 
 class EditableCellTableViewController : public TabTableController , public Escher::TableViewDataSource, public TextFieldDelegate, public ClearColumnHelper {
 public:
-  EditableCellTableViewController(Responder * parentResponder);
+  EditableCellTableViewController(Responder * parentResponder, Escher::SelectableTableViewDelegate * delegate = nullptr);
   bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
@@ -35,6 +36,9 @@ protected:
   constexpr static KDCoordinate k_margin = Escher::Metric::TableSeparatorThickness;
   constexpr static KDCoordinate k_scrollBarMargin = Escher::Metric::CommonRightMargin;
 
+  // TabTableController
+  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
+
   // TableViewDataSource
   KDCoordinate defaultRowHeight() override { return k_cellHeight; }
   KDCoordinate defaultColumnWidth() override { return k_cellWidth; }
@@ -52,6 +56,8 @@ protected:
   virtual void setTitleCellStyle(Escher::HighlightCell * cell, int columnIndex) = 0;
   virtual void reloadEditedCell(int column, int row) { selectableTableView()->reloadCellAtLocation(column, row); }
   virtual bool checkDataAtLocation(double floatBody, int columnIndex, int rowIndex) const { return true; }
+
+  EditableCellSelectableTableView m_selectableTableView;
 
 private:
   virtual void didChangeCell(int column, int row) {}

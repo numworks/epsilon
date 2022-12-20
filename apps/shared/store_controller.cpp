@@ -12,11 +12,10 @@ using namespace Escher;
 namespace Shared {
 
 StoreController::StoreController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, DoublePairStore * store, ButtonRowController * header, Context * parentContext) :
-  EditableCellTableViewController(parentResponder),
+  EditableCellTableViewController(parentResponder, &m_prefacedTableView),
   ButtonRowDelegate(header, nullptr),
   StoreColumnHelper(this, parentContext, this),
   m_prefacedTableView(0, this, &m_selectableTableView, this),
-  m_selectableTableView(this, this, this, this, &m_prefacedTableView),
   m_store(store)
   {
   m_prefacedTableView.setBackgroundColor(Palette::WallScreenDark);

@@ -4,7 +4,6 @@
 #include <escher/button_row_controller.h>
 #include <escher/stack_view_controller.h>
 #include "double_pair_store.h"
-#include "editable_cell_selectable_table_view.h"
 #include "editable_cell_table_view_controller.h"
 #include "layout_field_delegate.h"
 #include "input_event_handler_delegate.h"
@@ -66,10 +65,7 @@ protected:
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;
   int numberOfElementsInColumn(int columnIndex) const override;
 
-  Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
-
   PrefacedTableView m_prefacedTableView;
-  EditableCellSelectableTableView m_selectableTableView;
   StoreCell m_editableCells[k_maxNumberOfEditableCells];
   DoublePairStore * m_store;
 

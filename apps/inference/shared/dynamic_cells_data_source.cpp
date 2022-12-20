@@ -58,7 +58,7 @@ void DynamicCellsDataSource<T,N>::destroyCells() {
       Responder * cellResponder = m_cells[i].responder();
       Responder * appFirstResponder = App::app()->firstResponder();
       if (appFirstResponder && appFirstResponder->hasAncestor(cellResponder)) {
-        App::app()->setFirstResponder(cellResponder->parentResponder());
+        App::app()->setFirstResponder(nullptr);
       }
       m_cells[i].T::~T();
     }

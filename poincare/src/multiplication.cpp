@@ -1119,6 +1119,7 @@ Expression Multiplication::gatherLikeTerms(const ExpressionNode::ReductionContex
    * the simplification order, such terms are guaranteed to be next to each
    * other. */
   int i = 0;
+  bool gatheredTerms = false;
   List dependencies = List::Builder();
   while (i < numberOfChildren()-1) {
     Expression oi = childAtIndex(i);
@@ -1139,14 +1140,17 @@ Expression Multiplication::gatherLikeTerms(const ExpressionNode::ReductionContex
       if (childAtIndex(i).isUndefined()) {
         return replaceWithUndefinedInPlace();
       }
+      gatheredTerms = true;
       continue;
     } else if (TermHasNumeralBase(oi) && TermHasNumeralBase(oi1) && TermsHaveIdenticalExponent(oi, oi1)) {
       factorizeExponent(i, i+1, reductionContext);
+      gatheredTerms = true;
       continue;
     } else if (TermIsPowerOfRationals(oi) && TermIsPowerOfRationals(oi1)
             && !(oi.childAtIndex(1).convert<Rational>().isInteger() || oi1.childAtIndex(1).convert<Rational>().isInteger()))
     {
       if (gatherRationalPowers(i, i+1, reductionContext)) {
+        gatheredTerms = true;
         continue;
       }
     }
@@ -1159,6 +1163,11 @@ Expression Multiplication::gatherLikeTerms(const ExpressionNode::ReductionContex
     dep.replaceChildAtIndexInPlace(0, *this);
     shallowReduce(reductionContext);
     return dep.shallowReduce(reductionContext);
+  }
+
+  if (gatheredTerms) {
+    // Sort the children again in case gatherLikeTerms messed with the order
+    sortChildrenInPlace([](const ExpressionNode * e1, const ExpressionNode * e2) { return ExpressionNode::SimplificationOrder(e1, e2, true); }, reductionContext.context(), reductionContext.shouldCheckMatrices());
   }
 
   return Expression();

@@ -239,6 +239,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
       // Parameter column is selected
       if (event == Ion::Events::OK || event == Ion::Events::EXE) {
         // Open function parameter menu
+        m_parameterController->setUseColumnTitle(false);
         configureFunction(modelStore()->recordAtIndex(modelIndexForRow(selectedRow())));
         return true;
       }

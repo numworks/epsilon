@@ -25,6 +25,7 @@ public:
   int numberOfRows() const override { return k_numberOfRows; }
   const char * title() override;
   TitlesDisplay titlesDisplay() override { return TitlesDisplay::DisplayLastTwoTitles; }
+  void setUseColumnTitle(bool useColumnTitle) { m_useColumnTitle = useColumnTitle; }
 private:
   // Shared cells + m_detailsCell + m_functionDomainCell + m_derivativeCell
   static constexpr int k_numberOfRows = Shared::ListParameterController::k_numberOfSharedCells + 3;
@@ -33,6 +34,7 @@ private:
   Shared::ExpiringPointer<Shared::ContinuousFunction> function();
 
   // ColumnParameters
+  void initializeColumnParameters() override;
   Shared::ClearColumnHelper * clearColumnHelper() override;
 
   Escher::MessageTableCellWithChevronAndMessage m_detailsCell;
@@ -41,6 +43,7 @@ private:
   DetailsParameterController m_detailsParameterController;
   DomainParameterController m_domainParameterController;
   ValuesController * m_valuesController;
+  bool m_useColumnTitle;
 };
 
 }

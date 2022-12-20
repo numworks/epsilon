@@ -21,7 +21,7 @@ FunctionParameterController::FunctionParameterController(Responder * parentRespo
 {}
 
 const char * FunctionParameterController::title() {
-  return I18n::translate(I18n::Message::Options);
+  return m_useColumnTitle ? m_titleBuffer : I18n::translate(I18n::Message::Options);
 }
 
 HighlightCell * FunctionParameterController::cell(int index) {
@@ -111,6 +111,11 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
 
 ExpiringPointer<ContinuousFunction> FunctionParameterController::function() {
   return App::app()->functionStore()->modelForRecord(m_record);
+}
+
+void FunctionParameterController::initializeColumnParameters() {
+  setUseColumnTitle(true);
+  Shared::ColumnParameters::initializeColumnParameters();
 }
 
 Shared::ClearColumnHelper * FunctionParameterController::clearColumnHelper() {

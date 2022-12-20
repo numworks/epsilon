@@ -104,6 +104,7 @@ private:
   bool exactValuesButtonAction();
   void activateExactValues(bool activate);
   Ion::Storage::Record recordAtColumn(int i, bool * isDerivative);
+  Poincare::Layout functionTitleLayout(int columnIndex, bool * isDerivative, bool * hasName);
   Shared::ExpiringPointer<Shared::ContinuousFunction> functionAtIndex(int column, int row, double * abscissa, bool * isDerivative);
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   int numberOfColumnsForSymbolType(int symbolTypeIndex) const;

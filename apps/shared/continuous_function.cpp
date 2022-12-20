@@ -46,7 +46,7 @@ ContinuousFunction ContinuousFunction::NewModel(Ion::Storage::Record::ErrorStatu
 }
 
 ContinuousFunction::ContinuousFunction(Ion::Storage::Record record) : Function(record), m_cache(nullptr) {
-  /* The name of the record might need an update atfter another expression
+  /* The name of the record might need an update after another expression
    * on which this one depended was updated.
    * Since each time a record is updated, all ContinuousFunctions are tidied
    * and will be re-built later, it's safe to do it in this constructor.

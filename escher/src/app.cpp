@@ -29,8 +29,10 @@ bool App::processEvent(Ion::Events::Event event) {
 void App::setFirstResponder(Responder * responder) {
   /* This flag is used only in DEBUG to ensure that didEnterResponderChain do
    * not call setFirstResponder. */
+#ifndef NDEBUG
   static bool preventRecursion = false;
   assert(!preventRecursion);
+#endif
   if (m_firstResponder == responder) {
     return;
   }
@@ -39,12 +41,16 @@ void App::setFirstResponder(Responder * responder) {
   if (previousResponder) {
     Responder * commonAncestor = previousResponder->commonAncestorWith(m_firstResponder);
     Responder * leafResponder = previousResponder;
+#ifndef NDEBUG
     preventRecursion = true;
+#endif
     while (leafResponder != commonAncestor) {
       leafResponder->willExitResponderChain(m_firstResponder);
       leafResponder = leafResponder->parentResponder();
     }
+#ifndef NDEBUG
     preventRecursion = false;
+#endif
     previousResponder->willResignFirstResponder();
   }
   if (m_firstResponder) {
@@ -53,7 +59,9 @@ void App::setFirstResponder(Responder * responder) {
     int index = 0;
     Responder * commonAncestor = m_firstResponder->commonAncestorWith(previousResponder);
     Responder * leafResponder = m_firstResponder;
+#ifndef NDEBUG
     preventRecursion = true;
+#endif
     while (leafResponder != commonAncestor) {
       assert(index < k_maxNumberOfResponders);
       responderStack[index++] = leafResponder;
@@ -62,7 +70,9 @@ void App::setFirstResponder(Responder * responder) {
     for(index--; index >= 0; index--) {
       responderStack[index]->didEnterResponderChain(previousResponder);
     }
+#ifndef NDEBUG
     preventRecursion = false;
+#endif
     m_firstResponder->didBecomeFirstResponder();
   }
 }

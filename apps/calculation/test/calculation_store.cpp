@@ -421,6 +421,14 @@ QUIZ_CASE(calculation_symbolic_computation) {
   assertMainCalculationOutputIs("x+1→f(x)",            "x+1",   &globalContext, &store);
   assertMainCalculationOutputIs("f(x^2)→f(x)",         "x^2+1", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
+
+  // 7 - Circularly defined functions with exponential expression size growth
+  assertMainCalculationOutputIs("x→f(x)",         "x", &globalContext, &store);
+  assertMainCalculationOutputIs("f(xx)→g(x)", "f(x×x)", &globalContext, &store);
+  assertMainCalculationOutputIs("g(xx)→f(x)", "g(x×x)", &globalContext, &store);
+  assertMainCalculationOutputIs("g(2)",       "undef", &globalContext, &store);
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("g.func").destroy();
 }
 
 QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {

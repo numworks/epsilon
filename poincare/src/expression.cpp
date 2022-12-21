@@ -666,8 +666,9 @@ void Expression::SetEncounteredComplex(bool encounterComplex) {
 bool Expression::hasComplexI(Context * context, ExpressionNode::SymbolicComputation replaceSymbols) const {
   return !isUninitialized() && recursivelyMatches(
       [](const Expression e, Context * context) {
-        return e.type() == ExpressionNode::Type::ConstantMaths
-               && static_cast<const Constant &>(e).isConstant("i");
+        return (e.type() == ExpressionNode::Type::ConstantMaths &&
+                static_cast<const Constant &>(e).isConstant("i")) ||
+               e.type() == ExpressionNode::Type::ComplexCartesian;
       },
       context, replaceSymbols);
 }

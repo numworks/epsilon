@@ -42,6 +42,14 @@ namespace Poincare {
  * - UserSymbol US (same for UserFunction, UserSequence)
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | US TAG |
  *
+ * - Polynomial P = a0*x0^e0(x0)*x1^e0(x1)*... + a1*x0^e1(x0)*x1^e1(x1)*... +
+ *   n = number of variables
+ *   m = number of terms
+ *  | P TAG | n | m | e0(x0) | e0(x1) | ... | e1(x0) | e1(x1) | ... | n * m | P TAG |
+ *  This node has n+m children: the first n children describe the variables,
+ *  the next m children describe the coefficients.
+ *
+ *
  * */
 
 enum class BlockType : uint8_t {

@@ -130,6 +130,11 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   float targetXMax = std::max(alpha, z) + margin;
   float targetXCenter = (alpha + z) / 2;
   float targetYMax = std::max(evaluateAtAbscissa(alpha), evaluateAtAbscissa(z)) * (1 + k_displayZoomedInTopMarginRatio);
+  assert(targetYMax >= 0.f);
+  if (targetYMax == 0.f) {
+    // Arbitrary value to provide some zoom if targetYMax is null
+    targetYMax = 1.0f;
+  }
   float cMin = computeXMin();
   float cMax = computeXMax();
   // We want each zoom step to scale the width by the same factor
@@ -144,6 +149,7 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   float yMin =  -k_displayBottomMarginRatio * height;
   if (std::isnan(xMin)) { xMin = -FLT_MAX; }
   if (std::isnan(xMax)) { xMax = FLT_MAX; }
+  assert(std::isfinite(yMin) && std::isfinite(yMax));
   protectedSetX(Poincare::Range1D(xMin, xMax));
   protectedSetY(Poincare::Range1D(yMin, yMax));
   return true;

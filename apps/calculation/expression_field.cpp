@@ -9,7 +9,7 @@ using namespace Poincare;
 
 namespace Calculation {
 
-bool ExpressionField::handleEvent(Ion::Events::Event & event) {
+bool ExpressionField::handleEvent(Ion::Events::Event event) {
   if (event != Ion::Events::Division) {
     m_divisionCycleWithAns = Poincare::TrinaryBoolean::Unknown;
   }
@@ -133,8 +133,7 @@ bool ExpressionField::handleDivision() {
         if (editionIn1D) {
           // 1D: NumeratorOfEmptyFraction -> MixedFraction
           m_currentStep = DivisionCycleStep::MixedFraction;
-          Ion::Events::Event space;
-          handled = ::ExpressionField::handleEvent(space); // TODO : OR handleEventWithText(" ");
+          handled = ::ExpressionField::handleEvent(Ion::Events::Space); // TODO : OR handleEventWithText(" ");
           assert(handled);
           event = Ion::Events::Left;
         } else {
@@ -158,11 +157,9 @@ bool ExpressionField::handleDivision() {
         if (editionIn1D) {
           // 1D: MixedFraction -> DenominatorOfEmptyFraction
           m_currentStep = DivisionCycleStep::DenominatorOfEmptyFraction;
-          Ion::Events::Event right = Ion::Events::Right;
-          handled = ::ExpressionField::handleEvent(right); // TODO : OR m_textField.moveCursorRight(); but protected in TextInput
+          handled = ::ExpressionField::handleEvent(Ion::Events::Right); // TODO : OR m_textField.moveCursorRight(); but protected in TextInput
           assert(handled);
-          Ion::Events::Event backspace = Ion::Events::Backspace;
-          handled = ::ExpressionField::handleEvent(backspace); // TODO : OR m_textField.removePreviousGlyph();
+          handled = ::ExpressionField::handleEvent(Ion::Events::Backspace); // TODO : OR m_textField.removePreviousGlyph();
           assert(handled);
         } else {
           // 2D: MixedFraction -> NumeratorOfEmptyFraction

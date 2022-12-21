@@ -22,7 +22,7 @@ public:
   KDCoordinate nonMemoizedRowHeight(int j) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
 protected:

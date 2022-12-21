@@ -14,7 +14,7 @@ InputSlopeController::InputSlopeController(StackViewController * parent, ViewCon
   m_storeParameterController.selectRow(0);
 }
 
-bool InputSlopeController::handleEvent(Ion::Events::Event & event) {
+bool InputSlopeController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && selectedRow() == 0) {
     m_storeParameterController.initializeColumnParameters();
     m_storeParameterController.selectRow(0);

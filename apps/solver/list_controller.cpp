@@ -70,7 +70,7 @@ void ListController::willDisplayCellForIndex(HighlightCell * cell, int index) {
   cell->setHighlighted(index == selectedRow());
 }
 
-bool ListController::handleEvent(Ion::Events::Event & event) {
+bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up && selectedRow() == -1) {
     footer()->setSelectedButton(-1);
     selectableTableView()->selectCellAtLocation(0, numberOfRows()-1);

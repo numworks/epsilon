@@ -18,7 +18,7 @@ public:
 
 protected:
   ExpressionFieldDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   bool isStoreMenuOpen() const;
   virtual bool willStore(Poincare::Store store) { return true; };
   virtual void didStore() {};

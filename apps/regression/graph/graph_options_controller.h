@@ -25,7 +25,7 @@ public:
 
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; }
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void fillCell(Escher::HighlightCell * cell) override;

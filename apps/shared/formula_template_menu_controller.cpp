@@ -63,7 +63,7 @@ void FormulaTemplateMenuController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-bool FormulaTemplateMenuController::handleEvent(Ion::Events::Event & event) {
+bool FormulaTemplateMenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     int i = selectedRow();
     Layout templateLayout = i == 0 ? Layout() : m_layouts[i - 1];

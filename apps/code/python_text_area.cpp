@@ -411,7 +411,7 @@ void PythonTextArea::didBecomeFirstResponder() {
   }
 }
 
-bool PythonTextArea::handleEvent(Ion::Events::Event & event) {
+bool PythonTextArea::handleEvent(Ion::Events::Event event) {
   if (m_contentView.isAutocompleting()) {
     // Handle event with autocompletion
     if (event == Ion::Events::Right

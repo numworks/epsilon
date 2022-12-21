@@ -28,7 +28,7 @@ public:
   ViewController::TitlesDisplay titlesDisplay() override;
   int typeAtIndex(int i) const override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void buttonAction() override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
 

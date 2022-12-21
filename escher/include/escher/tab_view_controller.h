@@ -21,7 +21,7 @@ public:
   uint8_t numberOfTabs();
 
   const char * tabName(uint8_t index);
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void willResignFirstResponder() override;
   void initView() override;

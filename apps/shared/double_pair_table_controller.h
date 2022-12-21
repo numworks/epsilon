@@ -28,7 +28,7 @@ public:
   Escher::View * view() override { return &m_prefacedTwiceTableView; }
 
   // Responder
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
 
   // PrefacedTableView::MarginDelegate

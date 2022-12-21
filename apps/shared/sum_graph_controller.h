@@ -18,7 +18,7 @@ public:
 
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
 
   TELEMETRY_ID("Sum");

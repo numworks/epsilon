@@ -18,7 +18,7 @@ public:
   DetailsParameterController(Escher::Responder * parentResponder);
 
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 
   // ViewController
   const char * title() override;

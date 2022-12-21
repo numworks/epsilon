@@ -117,7 +117,7 @@ HighlightCell * NestedMenuController::reusableCell(int index, int type) {
   return nodeCellAtIndex(index);
 }
 
-bool NestedMenuController::handleEvent(Ion::Events::Event & event) {
+bool NestedMenuController::handleEvent(Ion::Events::Event event) {
   const int rowIndex = selectedRow();
   if ((event == Ion::Events::Back || event == Ion::Events::Left) && stackDepth() > 0) {
     return returnToPreviousMenu();

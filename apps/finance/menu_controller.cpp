@@ -21,7 +21,7 @@ void MenuController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
 }
 
-bool MenuController::handleEvent(Ion::Events::Event & event) {
+bool MenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     bool simpleInterestRowSelected = (selectedRow() == k_indexOfSimpleInterest);
     assert(simpleInterestRowSelected || selectedRow() == k_indexOfCompoundInterest);

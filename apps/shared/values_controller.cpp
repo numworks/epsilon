@@ -60,7 +60,7 @@ void ValuesController::viewDidDisappear() {
 
 // Responder
 
-bool ValuesController::handleEvent(Ion::Events::Event & event) {
+bool ValuesController::handleEvent(Ion::Events::Event event) {
   if (EditableCellTableViewController::handleEvent(event)) {
     return true;
   }

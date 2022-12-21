@@ -120,7 +120,7 @@ void RangeParameterController::viewDidDisappear() {
   }
 }
 
-bool RangeParameterController::handleEvent(Ion::Events::Event & event) {
+bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back
    && (m_interactiveRange->rangeChecksum() != m_tempInteractiveRange.rangeChecksum()
     || m_interactiveRange->xAuto() != m_tempInteractiveRange.xAuto()

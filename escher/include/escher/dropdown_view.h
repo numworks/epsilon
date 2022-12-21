@@ -56,7 +56,7 @@ public:
            ListViewDataSource * listDataSource,
            DropdownCallback * callback = nullptr);
   Responder * responder() override { return this; }
-  bool handleEvent(Ion::Events::Event & e) override;
+  bool handleEvent(Ion::Events::Event e) override;
   void registerCallback(DropdownCallback * callback) { m_popup.registerCallback(callback); }
   void reloadAllCells();
   void init();
@@ -80,7 +80,7 @@ private:
     // View Controller
     View * view() override { return &m_borderingView; }
     void didBecomeFirstResponder() override;
-    bool handleEvent(Ion::Events::Event & e) override;
+    bool handleEvent(Ion::Events::Event e) override;
     void registerCallback(DropdownCallback * callback) { m_callback = callback; }
     int selectedRow() { return m_selectionDataSource.selectedRow(); }
     void selectRow(int row);

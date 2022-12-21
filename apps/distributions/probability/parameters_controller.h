@@ -15,7 +15,7 @@ public:
   const char * title() override;
   ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; }
   Escher::View * view() override { return &m_contentView; }
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void reinitCalculation();
   void viewWillAppear() override;
   void viewDidDisappear() override;

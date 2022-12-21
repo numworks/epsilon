@@ -53,7 +53,7 @@ void MainController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-bool MainController::handleEvent(Ion::Events::Event & event) {
+bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences * globalPreferences = GlobalPreferences::sharedGlobalPreferences();
   int type = typeAtIndex(selectedRow());
 

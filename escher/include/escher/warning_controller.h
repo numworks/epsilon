@@ -14,7 +14,7 @@ public:
   void setLabel(I18n::Message message1, I18n::Message message2, bool specialExitKeys);
   const char * title() override;
   View * view() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 private:
   class ContentView : public SolidColorView {
   public:

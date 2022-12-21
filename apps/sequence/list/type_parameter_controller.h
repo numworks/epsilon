@@ -23,7 +23,7 @@ public:
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int j) override;
   void setRecord(Ion::Storage::Record record);
 private:

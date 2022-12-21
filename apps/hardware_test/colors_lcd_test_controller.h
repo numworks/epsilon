@@ -12,7 +12,7 @@ class ColorsLCDTestController : public Escher::ViewController {
 public:
   using Escher::ViewController::ViewController;
   Escher::View * view() override { return &m_view; }
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:
   class ContentView : public Escher::SolidColorView {

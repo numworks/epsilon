@@ -20,7 +20,7 @@ CalculationGraphController::CalculationGraphController(Responder * parentRespond
 {
 }
 
-bool CalculationGraphController::handleEvent(Ion::Events::Event & event) {
+bool CalculationGraphController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Idle) {
     // Compute the points of interest when the user is not active
     m_graphView->resumePointsOfInterestDrawing();

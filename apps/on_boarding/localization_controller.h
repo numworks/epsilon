@@ -12,7 +12,7 @@ public:
   int indexOfCellToSelectOnReset() const override;
   bool shouldDisplayTitle() const override { return mode() == Mode::Country; }
 
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 };
 
 }

@@ -59,7 +59,7 @@ public:
   View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   Shared::ScrollableTwoExpressionsView * outputView() { return &m_scrollableOutputView; }
   Escher::ScrollableExpressionView * inputView() { return &m_inputView; }
   Calculation::AdditionalInformations additionalInformations() const { return m_calculationAdditionInformations; }

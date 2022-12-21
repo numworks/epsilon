@@ -27,7 +27,7 @@ public:
 
   // Responder
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 
   // ScrollViewDelegate
   void scrollViewDidChangeOffset(ScrollViewDataSource * scrollViewDataSource) override;

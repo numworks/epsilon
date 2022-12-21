@@ -20,7 +20,7 @@ void DetailsParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-bool DetailsParameterController::handleEvent(Ion::Events::Event & event) {
+bool DetailsParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     return true;
   }

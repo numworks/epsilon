@@ -212,7 +212,7 @@ void ButtonRowController::setMessageOfButtonAtIndex(I18n::Message message, int i
   }
 }
 
-bool ButtonRowController::handleEvent(Ion::Events::Event & event) {
+bool ButtonRowController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left) {
     if (m_contentView.selectedButton() != 0) {
       setSelectedButton(m_contentView.selectedButton() - 1);

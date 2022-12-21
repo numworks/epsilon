@@ -17,7 +17,7 @@ HighlightCell * TestModeController::reusableCell(int index, int type) {
   return m_cells + index;
 }
 
-bool TestModeController::handleEvent(Ion::Events::Event & event) {
+bool TestModeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     m_mainController->pushModel(m_messageTreeModel->childAtIndex(selectedRow()));
     return true;

@@ -51,7 +51,7 @@ void TypeParameterController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-bool TypeParameterController::handleEvent(Ion::Events::Event & event) {
+bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     if (!m_record.isNull()) {
       Shared::Sequence::Type sequenceType = static_cast<Shared::Sequence::Type>(selectedRow());

@@ -76,7 +76,7 @@ void MenuController::viewWillAppear() {
   updateAddScriptRowDisplay();
 }
 
-bool MenuController::handleEvent(Ion::Events::Event & event) {
+bool MenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     m_selectableTableView.deselectTable();
     footer()->setSelectedButton(0);

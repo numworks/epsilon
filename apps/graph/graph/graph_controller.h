@@ -22,7 +22,7 @@ public:
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 
   Poincare::Range2D optimalRange(bool computeX, bool computeY, Poincare::Range2D originalRange) const override;
 

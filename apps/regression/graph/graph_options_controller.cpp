@@ -70,7 +70,7 @@ void GraphOptionsController::viewWillAppear() {
   m_selectableTableView.reloadData();
 }
 
-bool GraphOptionsController::handleEvent(Ion::Events::Event & event) {
+bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   if (event == Ion::Events::Left && stack->depth() > Shared::InteractiveCurveViewController::k_graphControllerStackDepth + 1) {
     /* We only allow popping with Left if there is another menu beneath this

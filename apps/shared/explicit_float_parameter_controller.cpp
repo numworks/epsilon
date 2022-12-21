@@ -45,7 +45,7 @@ void ExplicitFloatParameterController::viewDidDisappear() {
   }
 }
 
-bool ExplicitFloatParameterController::handleEvent(Ion::Events::Event & event) {
+bool ExplicitFloatParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back) {
     stackController()->pop();
     return true;

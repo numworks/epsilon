@@ -30,7 +30,7 @@ const char * ScriptParameterController::title() {
   return I18n::translate(m_pageTitle);
 }
 
-bool ScriptParameterController::handleEvent(Ion::Events::Event & event) {
+bool ScriptParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     Script s = m_script;
     switch (selectedRow()) {

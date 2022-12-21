@@ -32,7 +32,7 @@ public:
   TELEMETRY_ID("Histogram");
 
   // Responder
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 private:
   constexpr static int k_maxNumberOfBarsPerWindow = 100;
   constexpr static int k_maxIntervalLegendLength = 33;

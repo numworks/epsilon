@@ -80,7 +80,7 @@ void CalculationController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
 }
 
-bool CalculationController::handleEvent(Ion::Events::Event & event) {
+bool CalculationController::handleEvent(Ion::Events::Event event) {
   if (m_selectableTableView.selectedColumn() == 0 && event == Ion::Events::Down) {
     m_dropdown.open();
     return true;
@@ -226,8 +226,7 @@ void CalculationController::onDropdownSelected(int selectedRow) {
 
 bool CalculationController::popupDidReceiveEvent(Ion::Events::Event event, Responder * responder) {
   if (event == Ion::Events::Right) {
-    Ion::Events::Event ok = Ion::Events::OK;
-    return responder->handleEvent(ok);
+    return responder->handleEvent(Ion::Events::OK);
   }
   return false;
 }

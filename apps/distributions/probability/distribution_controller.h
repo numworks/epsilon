@@ -19,7 +19,7 @@ public:
                          ParametersController * parametersController);
   Escher::View * view() override { return &m_contentView; }
   void stackOpenPage(Escher::ViewController * nextPage) override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   TELEMETRY_ID("Distribution");
   int numberOfRows() const override { return k_totalNumberOfModels; }

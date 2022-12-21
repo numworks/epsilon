@@ -86,7 +86,7 @@ void ListParameterController::willDisplayCellForIndex(HighlightCell * cell, int 
   }
 }
 
-bool ListParameterController::handleEvent(Ion::Events::Event & event) {
+bool ListParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell * cell = selectedCell();
   if (cell == &m_typeCell && m_typeCell.ShouldEnterOnEvent(event)) {
     m_typeParameterController.setRecord(m_record);

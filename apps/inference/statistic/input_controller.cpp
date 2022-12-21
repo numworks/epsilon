@@ -125,7 +125,7 @@ Escher::HighlightCell * InputController::reusableParameterCell(int index, int ty
   return &m_significanceCell;
 }
 
-bool InputController::handleEvent(Ion::Events::Event & event) {
+bool InputController::handleEvent(Ion::Events::Event event) {
   // If the previous controller was the hypothesis controller, the pop on Left event is unable.
   return !m_statistic->hasHypothesisParameters() && popFromStackViewControllerOnLeftEvent(event);
 }

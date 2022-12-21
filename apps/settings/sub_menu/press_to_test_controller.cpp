@@ -123,7 +123,7 @@ void PressToTestController::setMessages() {
   }
 }
 
-bool PressToTestController::handleEvent(Ion::Events::Event & event) {
+bool PressToTestController::handleEvent(Ion::Events::Event event) {
   int row = selectedRow();
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && typeAtIndex(row) == k_switchCellType && !Preferences::sharedPreferences()->isInExamMode()) {
     assert(row >= 0 && row < k_numberOfSwitchCells);

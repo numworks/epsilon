@@ -54,7 +54,7 @@ void ExamPopUpController::viewDidDisappear() {
   }
 }
 
-bool ExamPopUpController::handleEvent(Ion::Events::Event & event) {
+bool ExamPopUpController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::USBEnumeration) {
     Container::activeApp()->modalViewController()->dismissModal();
     return false;

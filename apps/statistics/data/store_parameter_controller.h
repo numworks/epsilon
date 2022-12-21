@@ -14,7 +14,7 @@ class StoreParameterController : public Shared::StoreParameterController {
 public:
   StoreParameterController(Escher::Responder * parentResponder, StoreController * storeController, Store * m_store);
   void initializeColumnParameters() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
   int typeAtIndex(int index) const override;
   Escher::HighlightCell * reusableCell(int index, int type) override;

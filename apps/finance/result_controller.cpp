@@ -32,7 +32,7 @@ void ResultController::didBecomeFirstResponder() {
   m_contentView.reload();
 }
 
-bool ResultController::handleEvent(Ion::Events::Event & event) {
+bool ResultController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
     Escher::Clipboard::SharedClipboard()->store(cellAtIndex(0)->text());
     return true;

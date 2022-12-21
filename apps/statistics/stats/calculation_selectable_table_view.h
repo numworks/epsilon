@@ -8,7 +8,7 @@ namespace Statistics {
 class CalculationSelectableTableView : public Escher::SelectableTableView {
 public:
   using Escher::SelectableTableView::SelectableTableView;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 };
 
 }

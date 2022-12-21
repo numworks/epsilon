@@ -20,7 +20,7 @@ public:
   InterestController(Escher::StackViewController * parent, Escher::InputEventHandlerDelegate * handler, ResultController * resultController);
   const char * title() override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
   int typeAtIndex(int index) const override;
   KDCoordinate nonMemoizedRowHeight(int j) override;

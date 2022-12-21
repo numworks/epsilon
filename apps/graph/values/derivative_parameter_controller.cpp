@@ -18,7 +18,7 @@ Shared::ClearColumnHelper * DerivativeParameterController::clearColumnHelper() {
   return m_valuesController;
 }
 
-bool DerivativeParameterController::handleEvent(Ion::Events::Event & event) {
+bool DerivativeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(selectedRow() == 0);
     m_valuesController->selectCellAtLocation(m_valuesController->selectedColumn()-1, m_valuesController->selectedRow());

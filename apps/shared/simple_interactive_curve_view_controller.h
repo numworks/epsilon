@@ -13,7 +13,7 @@ class SimpleInteractiveCurveViewController : public ZoomCurveViewController, pub
 public:
   SimpleInteractiveCurveViewController(Escher::Responder * parentResponder, CurveViewCursor * cursor) : ZoomCurveViewController(parentResponder), m_cursor(cursor) {}
 
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
 
 protected:

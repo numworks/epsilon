@@ -18,7 +18,7 @@ void ColorParameterController::viewWillAppear() {
   selectRow(functionColorIndex);
 }
 
-bool ColorParameterController::handleEvent(Ion::Events::Event & event) {
+bool ColorParameterController::handleEvent(Ion::Events::Event event) {
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     KDColor selectedColor = ColorNames::k_colors[selectedRow()];

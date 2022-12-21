@@ -17,7 +17,7 @@ public:
   MenuController(Escher::StackViewController * parentResponder,
                     InterestMenuController * interestMenuController);
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event & e) override;
+  bool handleEvent(Ion::Events::Event e) override;
 
   constexpr static int k_indexOfSimpleInterest = 0;
   constexpr static int k_indexOfCompoundInterest = 1;

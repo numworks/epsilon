@@ -47,7 +47,7 @@ void GraphController::didBecomeFirstResponder() {
   m_view.selectRecord(functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor()));
 }
 
-bool GraphController::handleEvent(Ion::Events::Event & event) {
+bool GraphController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Idle) {
     // Compute the points of interest when the user is not active
     m_view.resumePointsOfInterestDrawing();

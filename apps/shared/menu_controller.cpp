@@ -44,7 +44,7 @@ void MenuController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData(true);
 }
 
-bool MenuController::handleEvent(Ion::Events::Event & event) {
+bool MenuController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     int selRow = selectedRow();
     m_delegate->selectSubApp(selRow);

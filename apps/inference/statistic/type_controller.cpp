@@ -31,7 +31,7 @@ void TypeController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData(true);
 }
 
-bool TypeController::handleEvent(Ion::Events::Event & event) {
+bool TypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     DistributionType type;
     int selRow = selectedRow();

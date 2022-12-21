@@ -31,7 +31,7 @@ void TestGraphController::didBecomeFirstResponder() {
   m_graphView.reload();
 }
 
-bool TestGraphController::handleEvent(Ion::Events::Event & event) {
+bool TestGraphController::handleEvent(Ion::Events::Event event) {
   if (!m_mayBeZoomed) {
     return false;
   }

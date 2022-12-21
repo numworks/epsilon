@@ -23,7 +23,7 @@ protected:
   constexpr static int k_totalNumberOfCell = 3;
   bool setParameterAtIndex(int parameterIndex, double f) override;
   Interval * m_interval;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 private:
   static Interval::IntervalParameters * SharedTempIntervalParameters();
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;

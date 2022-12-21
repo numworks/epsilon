@@ -25,7 +25,7 @@ public:
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
 
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 
   virtual int numberOfRowsAtColumn(int i) const = 0;
 

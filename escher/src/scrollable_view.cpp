@@ -12,7 +12,7 @@ ScrollableView::ScrollableView(Responder * parentResponder, View * view, ScrollV
   setDecoratorType(ScrollView::Decorator::Type::None);
 }
 
-bool ScrollableView::handleEvent(Ion::Events::Event & event) {
+bool ScrollableView::handleEvent(Ion::Events::Event event) {
   KDPoint translation = KDPointZero;
   KDCoordinate scrollStep = Ion::Events::longPressFactor() * Metric::ScrollStep;
   if (event == Ion::Events::Left) {

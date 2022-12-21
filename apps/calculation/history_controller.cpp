@@ -87,7 +87,7 @@ static bool isFractionInput(Expression e) {
   return isIntegerInput(num) && isIntegerInput(den);
 }
 
-bool HistoryController::handleEvent(Ion::Events::Event & event) {
+bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Down) {
     m_selectableTableView.deselectTable();
     Container::activeApp()->setFirstResponder(parentResponder());

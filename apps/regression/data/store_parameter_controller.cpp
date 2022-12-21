@@ -13,7 +13,7 @@ StoreParameterController::StoreParameterController(Responder * parentResponder, 
 {
 }
 
-bool StoreParameterController::handleEvent(Ion::Events::Event & event) {
+bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right)
         && typeAtIndex(selectedRow()) == k_changeRegressionCellType) {
     RegressionController * regressionController = App::app()->regressionController();

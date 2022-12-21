@@ -20,7 +20,7 @@ public:
 
   // Escher::Responder
   void didBecomeFirstResponder() override { Escher::Container::activeApp()->setFirstResponder(m_view.bannerView()->textField()); }
-  bool handleEvent(Ion::Events::Event & e) override;
+  bool handleEvent(Ion::Events::Event e) override;
 
   // ElementsViewDelegate
   void selectedElementHasChanged() override;

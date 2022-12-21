@@ -49,7 +49,7 @@ void TestController::didBecomeFirstResponder() {
   m_selectableTableView.reloadData();
 }
 
-bool TestController::handleEvent(Ion::Events::Event & event) {
+bool TestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     Escher::SelectableViewController * controller = nullptr;
     SignificanceTestType testType;

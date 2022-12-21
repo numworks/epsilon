@@ -25,7 +25,7 @@ private:
     ResultsTableController(Escher::ViewController * nextController, HomogeneityTest * statistic);
 
     // Responder
-    bool handleEvent(Ion::Events::Event & event) override;
+    bool handleEvent(Ion::Events::Event event) override;
 
     // ViewController
     void viewWillAppear() override;

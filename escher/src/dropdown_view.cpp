@@ -91,7 +91,7 @@ void Dropdown::DropdownPopupController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event & e) {
+bool Dropdown::DropdownPopupController::handleEvent(Ion::Events::Event e) {
   if (m_callback->popupDidReceiveEvent(e, this)) {
     return true;
   }
@@ -171,7 +171,7 @@ Dropdown::Dropdown(Responder * parentResponder,
   selectRow(0);
 }
 
-bool Dropdown::handleEvent(Ion::Events::Event & e) {
+bool Dropdown::handleEvent(Ion::Events::Event e) {
   if (e == Ion::Events::OK || e == Ion::Events::EXE) {
     open();
     return true;

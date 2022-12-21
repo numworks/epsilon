@@ -31,7 +31,7 @@ public:
   int reusableCellCount(int type) override { return type > k_expressionCellType ? 1 : maxNumberOfDisplayableRows(); }
   void willDisplayCellAtLocation(Escher::HighlightCell * cell, int i, int j) override;
   /* Responder */
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   /* ViewController */
   Escher::View * view() override { return &m_selectableTableView; }
   /* SelectableTableViewDelegate*/

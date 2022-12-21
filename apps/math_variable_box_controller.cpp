@@ -51,7 +51,7 @@ void MathVariableBoxController::viewDidDisappear() {
   resetVarBoxMemoization();
 }
 
-bool MathVariableBoxController::handleEvent(Ion::Events::Event & event) {
+bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
   /* We do not want to handle backspace event if:
    * - On the root menu page
    *   The deletion on the current page is locked

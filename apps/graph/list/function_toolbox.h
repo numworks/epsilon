@@ -20,7 +20,7 @@ public:
 
   void setAddedCellsContent(AddedCellsContent content);
 
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
   KDCoordinate nonMemoizedRowHeight(int index) override;
   int reusableCellCount(int type) override;

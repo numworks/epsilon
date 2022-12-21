@@ -27,7 +27,7 @@ public:
                  Statistic * statistic);
   void stackOpenPage(Escher::ViewController * nextPage) override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event & e) override;
+  bool handleEvent(Ion::Events::Event e) override;
   const char * title() override;
   int numberOfRows() const override;
   Escher::HighlightCell * reusableCell(int i, int type) override { return &m_cells[i]; }

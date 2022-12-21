@@ -30,7 +30,7 @@ void AbstractButtonCell::layoutSubviews(bool force) {
   m_messageTextView.setFrame(bounds(), force);
 }
 
-bool AbstractButtonCell::handleEvent(Ion::Events::Event & event) {
+bool AbstractButtonCell::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     m_invocation.perform(this);
     return true;

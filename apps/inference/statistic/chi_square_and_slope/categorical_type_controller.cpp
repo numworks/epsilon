@@ -35,7 +35,7 @@ void CategoricalTypeController::didBecomeFirstResponder() {
   Escher::Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-bool CategoricalTypeController::handleEvent(Ion::Events::Event & event) {
+bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Right) {
     Escher::ViewController * controller = nullptr;
     CategoricalType type;

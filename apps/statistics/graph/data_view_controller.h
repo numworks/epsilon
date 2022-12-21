@@ -26,7 +26,7 @@ public:
   void viewWillAppear() override final;
 
   // Responder
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Escher::Responder * previousFirstResponder) override;
   void willExitResponderChain(Escher::Responder * nextFirstResponder) override;
 

@@ -16,7 +16,7 @@ public:
   VariableBoxController(ScriptStore * scriptStore);
 
   /* Responder */
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
 

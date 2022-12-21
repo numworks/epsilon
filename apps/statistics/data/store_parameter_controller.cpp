@@ -32,7 +32,7 @@ void StoreParameterController::initializeColumnParameters() {
   assert(relativeColumnIndex == 2);
 }
 
-bool StoreParameterController::handleEvent(Ion::Events::Event & event) {
+bool StoreParameterController::handleEvent(Ion::Events::Event event) {
   int type = typeAtIndex(selectedRow());
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) && ((type == k_displayCumulatedFrequencyCellType || type == k_hideCumulatedFrequencyCellType))) {
     bool state = !m_store->displayCumulatedFrequenciesForSeries(m_storeColumnHelper->selectedSeries());

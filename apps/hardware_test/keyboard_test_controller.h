@@ -10,7 +10,7 @@ class KeyboardTestController : public Escher::ViewController {
 public:
   using Escher::ViewController::ViewController;
   Escher::View * view() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:
   KeyboardView m_keyboardView;

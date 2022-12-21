@@ -10,7 +10,7 @@ public:
   SuggestionTextField(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::TextFieldDelegate * delegate);
 
   // Escher::Responder
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 
   void setSuggestion(const char * suggestion) { m_contentView.setSuggestion(suggestion); }
   void commitSuggestion();

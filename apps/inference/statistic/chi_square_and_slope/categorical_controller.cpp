@@ -28,7 +28,7 @@ void CategoricalController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_selectableTableView);
 }
 
-bool CategoricalController::handleEvent(Ion::Events::Event & event) {
+bool CategoricalController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 

@@ -231,7 +231,7 @@ KDCoordinate ListController::expressionRowHeight(int j) {
   return tempCell.minimalSizeForOptimalDisplay().height();
 }
 
-bool ListController::handleEvent(Ion::Events::Event & event) {
+bool ListController::handleEvent(Ion::Events::Event event) {
   // Here we handle an additional parameter column, within FunctionCell's button
   if (selectedRow() >= 0 && selectedRow() <= numberOfRows() && !isAddEmptyRow(selectedRow())) {
     // Selected row is a function cell

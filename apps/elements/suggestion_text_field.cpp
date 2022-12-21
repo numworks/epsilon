@@ -36,7 +36,7 @@ SuggestionTextField::SuggestionTextField(Responder * parentResponder, InputEvent
   m_contentView(nullptr, MaxBufferSize(), MaxBufferSize(), KDFont::Size::Large, KDContext::k_alignLeft, KDContext::k_alignCenter, KDColorBlack, KDColorWhite)
 {}
 
-bool SuggestionTextField::handleEvent(Ion::Events::Event & event) {
+bool SuggestionTextField::handleEvent(Ion::Events::Event event) {
   if (cursorAtEndOfText() && m_contentView.suggestion() && (event == Ion::Events::Left || event == Ion::Events::ShiftLeft || event == Ion::Events::ShiftUp)) {
     // Dismiss suggestion on Left press
     m_contentView.setSuggestion(nullptr);

@@ -12,7 +12,7 @@ class GoToParameterController : public FloatParameterController<double> {
 public:
   GoToParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * graphRange, CurveViewCursor * cursor);
   int numberOfRows() const override { return 2; }
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 protected:
   void setParameterName(I18n::Message message) { m_parameterCell.setMessage(message); }
   void viewWillAppear() override;

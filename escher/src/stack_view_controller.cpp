@@ -116,7 +116,7 @@ void StackViewController::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(vc);
 }
 
-bool StackViewController::handleEvent(Ion::Events::Event & event) {
+bool StackViewController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back && m_numberOfChildren > 1) {
     pop();
     return true;

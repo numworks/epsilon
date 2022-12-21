@@ -29,7 +29,7 @@ public:
 
   // SelectableCellListPage
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   const char * title() override { return I18n::translate(I18n::Message::StatisticsGraphType); }
 
 private:

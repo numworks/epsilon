@@ -31,7 +31,7 @@ public:
 
   /* Responder */
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 
   /* ViewController */
   Escher::View * view() override { return &m_contentView; }

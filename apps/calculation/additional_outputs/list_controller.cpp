@@ -29,7 +29,7 @@ ListController::ListController(EditExpressionController * editExpressionControll
 {
 }
 
-bool ListController::handleEvent(Ion::Events::Event & event) {
+bool ListController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     assert(selectedRow() >= 0);
     char buffer[Constant::MaxSerializedExpressionSize];

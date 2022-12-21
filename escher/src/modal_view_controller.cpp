@@ -158,7 +158,7 @@ void ModalViewController::didBecomeFirstResponder() {
   );
 }
 
-bool ModalViewController::handleEvent(Ion::Events::Event & event) {
+bool ModalViewController::handleEvent(Ion::Events::Event event) {
   if (!m_contentView.isDisplayingModal()) {
     return false;
   }

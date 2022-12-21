@@ -10,7 +10,7 @@ EditableCellSelectableTableView::EditableCellSelectableTableView(EditableCellTab
   m_tableViewController(tableViewController)
 {}
 
-bool EditableCellSelectableTableView::handleEvent(Ion::Events::Event & event) {
+bool EditableCellSelectableTableView::handleEvent(Ion::Events::Event event) {
   int step = Ion::Events::longPressFactor();
   if (event == Ion::Events::Down) {
     return selectNonHiddenCellAtClippedLocation(selectedColumn(), selectedRow() + step);

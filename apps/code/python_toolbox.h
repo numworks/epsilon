@@ -17,7 +17,7 @@ public:
   const Escher::ToolboxMessageTree * moduleChildren(const char * name, int * numberOfNodes) const;
 
   // Toolbox
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 
   // MemoizedListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int j) override;

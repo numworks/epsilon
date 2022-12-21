@@ -23,7 +23,7 @@ public:
   MenuController(Escher::StackViewController * parentResponder, std::initializer_list<Escher::ViewController *> controllers, std::initializer_list<std::initializer_list<I18n::Message>> messages, std::initializer_list<const Escher::Image *> images, MenuControllerDelegate * delegate);
   void stackOpenPage(Escher::ViewController * nextPage) override;
   void didBecomeFirstResponder() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return m_delegate->numberOfSubApps(); }
 
 private:

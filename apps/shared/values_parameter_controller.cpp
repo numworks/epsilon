@@ -15,7 +15,7 @@ ValuesParameterController::ValuesParameterController(Responder * parentResponder
   m_valuesController(valuesController)
 { }
 
-bool ValuesParameterController::handleEvent(Ion::Events::Event & event) {
+bool ValuesParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE || (event == Ion::Events::Right && selectedRow() == 1)) {
     switch (selectedRow()) {
       case k_indexOfClearColumn:

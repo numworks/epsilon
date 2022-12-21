@@ -19,7 +19,7 @@ HighlightCell * GoToParameterController::reusableParameterCell(int index, int ty
   return &m_parameterCell;
 }
 
-bool GoToParameterController::handleEvent(Ion::Events::Event & event) {
+bool GoToParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left) {
     stackController()->pop();
     return true;

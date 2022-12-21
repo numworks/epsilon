@@ -25,7 +25,7 @@ public:
   StackView * view() override { return &m_view; }
   ViewController * topViewController();
   const char * title() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Responder * previousFirstResponder) override;
   void didBecomeFirstResponder() override;
   void initView() override;

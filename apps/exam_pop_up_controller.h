@@ -12,7 +12,7 @@ public:
   Poincare::Preferences::ExamMode targetExamMode() const { return m_targetExamMode; }
   Poincare::Preferences::PressToTestParams targetPressToTestParams() const { return m_targetPressToTestParams; }
   void viewDidDisappear() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 private:
   constexpr static int k_numberOfLines = 4;
   Poincare::Preferences::ExamMode m_targetExamMode;

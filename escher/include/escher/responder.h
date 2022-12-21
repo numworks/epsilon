@@ -8,7 +8,7 @@ namespace Escher {
 class Responder {
 public:
   Responder(Responder * parentResponder) : m_parentResponder(parentResponder) {}
-  virtual bool handleEvent(Ion::Events::Event & event) { return false; }; // Default implementation does nothing
+  virtual bool handleEvent(Ion::Events::Event event) { return false; }; // Default implementation does nothing
   virtual void didBecomeFirstResponder() {}
   virtual void willResignFirstResponder() {}
   virtual void didEnterResponderChain(Responder * previousFirstResponder) {}

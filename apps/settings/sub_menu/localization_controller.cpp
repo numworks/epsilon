@@ -12,7 +12,7 @@ int LocalizationController::indexOfCellToSelectOnReset() const {
     IndexOfCountry(GlobalPreferences::sharedGlobalPreferences()->country());
 }
 
-bool LocalizationController::handleEvent(Ion::Events::Event & event) {
+bool LocalizationController::handleEvent(Ion::Events::Event event) {
   if (Shared::LocalizationController::handleEvent(event) || event == Ion::Events::Left) {
     static_cast<StackViewController *>(parentResponder())->pop();
     return true;

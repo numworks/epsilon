@@ -44,7 +44,7 @@ void ListParameterController::setRecord(Ion::Storage::Record record) {
   selectCellAtLocation(0, 0);
 }
 
-bool ListParameterController::handleEvent(Ion::Events::Event & event) {
+bool ListParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell * cell = selectedCell();
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
 

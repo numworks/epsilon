@@ -21,10 +21,9 @@ void PopUpController::didBecomeFirstResponder() {
   m_contentView.setSelectedButton(0);
 }
 
-bool PopUpController::handleEvent(Ion::Events::Event & event) {
+bool PopUpController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back) {
-    Ion::Events::Event ok = Ion::Events::OK;
-    m_contentView.m_cancelButton.handleEvent(ok);
+    m_contentView.m_cancelButton.handleEvent(Ion::Events::OK);
     return true;
   }
   if (event == Ion::Events::Left && m_contentView.selectedButton() == 1) {

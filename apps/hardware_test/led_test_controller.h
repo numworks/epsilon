@@ -12,7 +12,7 @@ class LEDTestController : public Escher::ViewController {
 public:
   LEDTestController(Escher::Responder * parentResponder);
   Escher::View * view() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 private:
   class ContentView : public Escher::SolidColorView {

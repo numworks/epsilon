@@ -14,7 +14,7 @@ class AbstractButtonCell : public HighlightCell, public Responder {
 public:
   AbstractButtonCell(Responder * parentResponder, I18n::Message textBody, Invocation invocation, KDFont::Size font = KDFont::Size::Small, KDColor textColor = KDColorBlack);
   void setMessage(I18n::Message message);
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void setHighlighted(bool highlight) override;
   virtual KDColor highlightedBackgroundColor() const { return Palette::Select; }
   Responder * responder() override {

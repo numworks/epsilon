@@ -16,7 +16,7 @@ public:
 
   TextArea(Responder * parentResponder, View * contentView, KDFont::Size font = KDFont::Size::Large);
   void setDelegates(InputEventHandlerDelegate * inputEventHandlerDelegate, TextAreaDelegate * delegate) { m_inputEventHandlerDelegate = inputEventHandlerDelegate; m_delegate = delegate; }
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false) override;
   void setText(char * textBuffer, size_t textBufferSize);
 

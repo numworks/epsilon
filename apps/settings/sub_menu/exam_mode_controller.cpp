@@ -17,7 +17,7 @@ ExamModeController::ExamModeController(Responder * parentResponder) :
 {
 }
 
-bool ExamModeController::handleEvent(Ion::Events::Event & event) {
+bool ExamModeController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     AppsContainer::sharedAppsContainer()->displayExamModePopUp(examMode());
     return true;

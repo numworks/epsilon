@@ -170,7 +170,7 @@ bool TextArea::handleEventWithText(const char * text, bool indentation, bool for
   return true;
 }
 
-bool TextArea::handleEvent(Ion::Events::Event & event) {
+bool TextArea::handleEvent(Ion::Events::Event event) {
   if (m_delegate != nullptr && m_delegate->textAreaDidReceiveEvent(this, event)) {
     return true;
   }

@@ -85,7 +85,7 @@ void FunctionParameterController::willDisplayCellForIndex(HighlightCell * cell, 
   }
 }
 
-bool FunctionParameterController::handleEvent(Ion::Events::Event & event) {
+bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell * cell = selectedCell();
   StackViewController * stack = static_cast<StackViewController *>(parentResponder());
   // We want left to pop into graph -> calculate but not into list

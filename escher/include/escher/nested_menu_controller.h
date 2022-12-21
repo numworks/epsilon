@@ -20,7 +20,7 @@ public:
   void setTitle(I18n::Message title) { m_listController.setTitle(title); }
 
   // StackViewController
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override { Container::activeApp()->setFirstResponder(&m_listController); }
   void viewWillAppear() override;
   void viewDidDisappear() override;

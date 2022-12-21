@@ -30,7 +30,7 @@ extern const MessageTree s_model;
 class MainController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource> {
 public:
   MainController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate);
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
   void pushModel(const Escher::MessageTree * messageTreeModel);
   void didBecomeFirstResponder() override;
   int numberOfRows() const override;

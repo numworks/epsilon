@@ -37,7 +37,7 @@ public:
   const char * title() override;
   void didBecomeFirstResponder() override { Escher::Container::activeApp()->setFirstResponder(selectableTableView()); }
   void viewWillAppear() override;
-  bool handleEvent(Ion::Events::Event & event) override;
+  bool handleEvent(Ion::Events::Event event) override;
 
   int numberOfRows() const override { return (mode() == Mode::Country) ? I18n::NumberOfCountries : I18n::NumberOfLanguages; }
   KDCoordinate nonMemoizedRowHeight(int j) override;

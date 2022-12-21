@@ -23,7 +23,7 @@ bool DependencyNode::derivate(const ReductionContext& reductionContext, Symbol s
 int DependencyNode::getPolynomialCoefficients(Context * context, const char * symbolName, Expression coefficients[]) const {
   int result = childAtIndex(0)->getPolynomialCoefficients(context, symbolName, coefficients);
   for (int i = 0; i < result; i++) {
-    coefficients[i] = Dependency::Builder(coefficients[i], Expression(childAtIndex(1)).convert<List>());
+    coefficients[i] = Dependency::Builder(coefficients[i], Expression(childAtIndex(1)).clone().convert<List>());
   }
   return result;
 }

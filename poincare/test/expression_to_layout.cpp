@@ -26,6 +26,8 @@ QUIZ_CASE(poincare_expression_to_layout) {
   assert_parsed_expression_layouts_to("sum(1,n,2,3)", SumLayout::Builder(CodePointLayout::Builder('1'), CodePointLayout::Builder('n'), CodePointLayout::Builder('2'), CodePointLayout::Builder('3')));
   assert_parsed_expression_layouts_to("product(1,n,2,3)", ProductLayout::Builder(CodePointLayout::Builder('1'), CodePointLayout::Builder('n'), CodePointLayout::Builder('2'), CodePointLayout::Builder('3')));
   assert_parsed_expression_layouts_to("1^2", HorizontalLayout::Builder(CodePointLayout::Builder('1'), VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::VerticalPosition::Superscript)));
+  assert_parsed_expression_layouts_to("-1^2", HorizontalLayout::Builder(CodePointLayout::Builder('-'), ParenthesisLayout::Builder(HorizontalLayout::Builder(CodePointLayout::Builder('1'), VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::VerticalPosition::Superscript)))));
+  assert_parsed_expression_layouts_to("-x^2", HorizontalLayout::Builder(CodePointLayout::Builder('-'), CodePointLayout::Builder('x'), VerticalOffsetLayout::Builder(CodePointLayout::Builder('2'), VerticalOffsetLayoutNode::VerticalPosition::Superscript)));
 }
 
 void assert_expression_layouts_and_serializes_to(Expression expression, const char * serialization) {

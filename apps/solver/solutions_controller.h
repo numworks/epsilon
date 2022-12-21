@@ -8,6 +8,7 @@
 #include <escher/selectable_table_view.h>
 #include <escher/selectable_table_view_data_source.h>
 #include <escher/selectable_table_view_delegate.h>
+#include <escher/tab_view_controller.h>
 #include <escher/table_view_data_source.h>
 #include <ion.h>
 #include "equation_store.h"
@@ -29,6 +30,7 @@ public:
   /* AlternateEmptyViewDefaultDelegate */
   bool isEmpty() const override { return false; }  // View cannot be empty
   I18n::Message emptyMessage() override { assert(false); return static_cast<I18n::Message>(0); }
+  Escher::Responder * responderWhenEmpty() override { tabController()->selectTab(); return tabController(); }
   /* TableViewDataSource */
   int numberOfRows() const override;
   int numberOfColumns() const override { return 2; }
@@ -45,6 +47,7 @@ private:
   KDCoordinate nonMemoizedColumnWidth(int i) override { return i == 0 ? k_symbolCellWidth : k_valueCellWidth; }
   // TODO: Memoize the row height ?
   KDCoordinate nonMemoizedRowHeight(int j) override;
+  Escher::TabViewController * tabController() const { return static_cast<Escher::TabViewController *>(parentResponder()->parentResponder()); }
 
   class ContentView : public Escher::View {
   public:

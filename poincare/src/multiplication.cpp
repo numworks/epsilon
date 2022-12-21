@@ -1093,25 +1093,42 @@ void Multiplication::mergeInChildByFactorizingBase(int i, Expression e, const Ex
   }
 }
 
-void Multiplication::factorizeExponent(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {
+bool Multiplication::factorizeExponent(int i, int j, const ExpressionNode::ReductionContext& reductionContext) {
   /* This function factorizes children which share a common exponent. For
    * example, it turns Multiplication::Builder(2^x,3^x) into Multiplication::Builder(6^x). */
 
-  // Step 1: Find the new base
-  Expression m = Multiplication::Builder(Base(childAtIndex(i)), Base(childAtIndex(j))); // 2^x*3^x -> (2*3)^x -> 6^x
-  // Step 2: Get rid of one of the children
-  removeChildAtIndexInPlace(j);
-  // Step 3: Replace the other child
-  childAtIndex(i).replaceChildAtIndexInPlace(0, m);
-  // Step 4: Reduce expressions
-  m.shallowReduce(reductionContext);
-  Expression p = childAtIndex(i).shallowReduce(reductionContext); // 2^x*(1/2)^x -> (2*1/2)^x -> 1
-  /* Step 5: Reducing the new power might have turned it into a multiplication,
-   * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
-   * node with this. */
-  if (p.type() == ExpressionNode::Type::Multiplication) {
-    mergeChildrenAtIndexInPlace(p, i);
+  Expression thisAfterFactorization;
+  {
+    /* Multiplication can raise an exception is Base(child(i)) * Base(child(j))
+     * is too big. If it's the case, do not factorize exponents. */
+    char * treePoolCursor = TreePool::sharedPool()->cursor();
+    ExceptionCheckpoint ecp;
+    if (ExceptionRun(ecp)) {
+      Multiplication cloneOfThis = clone().convert<Multiplication>();
+      // Step 1: Find the new base
+      Expression m = Multiplication::Builder(Base(cloneOfThis.childAtIndex(i)), Base(cloneOfThis.childAtIndex(j))); // 2^x*3^x -> (2*3)^x -> 6^x
+      // Step 2: Get rid of one of the children
+      cloneOfThis.removeChildAtIndexInPlace(j);
+      // Step 3: Replace the other child
+      cloneOfThis.childAtIndex(i).replaceChildAtIndexInPlace(0, m);
+      // Step 4: Reduce expressions
+      m.shallowReduce(reductionContext);
+      Expression p = cloneOfThis.childAtIndex(i).shallowReduce(reductionContext); // 2^x*(1/2)^x -> (2*1/2)^x -> 1
+      /* Step 5: Reducing the new power might have turned it into a multiplication,
+       * ie: 12^(1/2) -> 2*3^(1/2). In that case, we need to merge the multiplication
+       * node with this. */
+      if (p.type() == ExpressionNode::Type::Multiplication) {
+        cloneOfThis.mergeChildrenAtIndexInPlace(p, i);
+      }
+      thisAfterFactorization = cloneOfThis;
+    } else {
+      return false;
+    }
   }
+  assert(thisAfterFactorization.type() == ExpressionNode::Type::Multiplication);
+  replaceWithInPlace(thisAfterFactorization);
+  *this = static_cast<Multiplication&>(thisAfterFactorization);
+  return true;
 }
 
 Expression Multiplication::gatherLikeTerms(const ExpressionNode::ReductionContext & reductionContext) {
@@ -1143,9 +1160,11 @@ Expression Multiplication::gatherLikeTerms(const ExpressionNode::ReductionContex
       gatheredTerms = true;
       continue;
     } else if (TermHasNumeralBase(oi) && TermHasNumeralBase(oi1) && TermsHaveIdenticalExponent(oi, oi1)) {
-      factorizeExponent(i, i+1, reductionContext);
-      gatheredTerms = true;
-      continue;
+      bool managedToFactorize = factorizeExponent(i, i+1, reductionContext);
+      if (managedToFactorize) {
+        gatheredTerms = true;
+        continue;
+      }
     } else if (TermIsPowerOfRationals(oi) && TermIsPowerOfRationals(oi1)
             && !(oi.childAtIndex(1).convert<Rational>().isInteger() || oi1.childAtIndex(1).convert<Rational>().isInteger()))
     {

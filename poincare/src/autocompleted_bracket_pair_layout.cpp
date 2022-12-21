@@ -236,6 +236,9 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
   if (thisIndex + 1 < parentRef.numberOfChildren()) {
     assert(!(willDisappear && parentIsHorizontalLayout && childRef.isEmpty()));
     if (parentRef.childAtIndex(thisIndex + 1).isEmpty() && thisIndex + 2 < parentRef.numberOfChildren()) {
+      /* TODO : This edge-case and maybe most of this method should disappear
+       *        once layouts are refactored and no more empty layout can be left
+       *        in this situation. */
       /* e.g. (1)|▯^2 -> (1|^2] */
       thisIndex ++;
     }

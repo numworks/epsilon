@@ -21,6 +21,7 @@ public:
   // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override { return !store()->hasValidSeries(); }
   I18n::Message emptyMessage() override { return I18n::Message::NoValueToCompute; }
+  Responder * responderWhenEmpty() override { tabController()->selectTab(); return tabController(); }
 
   // ViewController
   const char * title() override { return I18n::translate(I18n::Message::StatTab); }

@@ -44,6 +44,9 @@ public:
   // ButtonRowDelegate
   int numberOfButtons(Escher::ButtonRowController::Position) const override { return isEmpty() ? 0 : 1; }
 
+  // AlternateEmptyViewDelegate
+  Escher::Responder * responderWhenEmpty() override { tabController()->selectTab(); return tabController(); }
+
   // EditableCellTableViewController
   int numberOfRowsAtColumn(int i) const override;
 

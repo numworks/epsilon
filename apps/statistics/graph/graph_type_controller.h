@@ -25,6 +25,7 @@ public:
   // AlternateEmptyViewDefaultDelegate
   bool isEmpty() const override { return !m_store->hasValidSeries(); }
   I18n::Message emptyMessage() override { return I18n::Message::NoDataToPlot; }
+  Escher::Responder * responderWhenEmpty() override { m_tabController->selectTab(); return m_tabController; }
 
   // SelectableCellListPage
   void didBecomeFirstResponder() override;

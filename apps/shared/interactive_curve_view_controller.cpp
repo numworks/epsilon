@@ -123,6 +123,11 @@ AbstractButtonCell * InteractiveCurveViewController::buttonAtIndex(int index, Bu
   return (AbstractButtonCell *)buttons[index];
 }
 
+Responder * InteractiveCurveViewController::responderWhenEmpty() {
+  tabController()->selectTab();
+  return tabController();
+}
+
 void InteractiveCurveViewController::viewWillAppear() {
   /* Set to true in case we come from the Navigate menu. */
   static_cast<TabViewController *>(tabController())->setDisplayTabs(true);

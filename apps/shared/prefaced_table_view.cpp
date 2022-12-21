@@ -44,6 +44,9 @@ void PrefacedTableView::setCellOverlap(KDCoordinate horizontal, KDCoordinate ver
 
 void PrefacedTableView::tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   assert(t == m_mainTableView);
+  if (withinTemporarySelection) {
+    return;
+  }
   if (m_mainTableDelegate) {
     m_mainTableDelegate->tableViewDidChangeSelection(t, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
   }
@@ -51,6 +54,9 @@ void PrefacedTableView::tableViewDidChangeSelection(Escher::SelectableTableView 
 
 void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) {
   assert(t == m_mainTableView);
+  if (withinTemporarySelection) {
+    return;
+  }
   if (m_mainTableDelegate) {
     m_mainTableDelegate->tableViewDidChangeSelectionAndDidScroll(t, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
   }

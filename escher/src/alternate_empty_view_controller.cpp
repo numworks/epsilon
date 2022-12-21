@@ -60,27 +60,11 @@ ViewController::TitlesDisplay AlternateEmptyViewController::titlesDisplay() {
   return m_contentView.mainViewController()->titlesDisplay();
 }
 
-bool AlternateEmptyViewController::handleEvent(Ion::Events::Event & event) {
-  if (m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
-    if (event != Ion::Events::Home && event != Ion::Events::OnOff && event != Ion::Events::USBEnumeration && event != Ion::Events::Idle) {
-      if (!m_contentView.alternateEmptyViewDelegate()->responderWhenEmpty()) {
-        /* The default behaviour is to bubble up a Back event on any event. */
-        event = Ion::Events::Back;
-      }
-    }
-  }
-  return false;
-}
-
 void AlternateEmptyViewController::didBecomeFirstResponder() {
   if (!m_contentView.alternateEmptyViewDelegate()->isEmpty()) {
     Container::activeApp()->setFirstResponder(m_contentView.mainViewController());
   } else {
-    Responder * responder = m_contentView.alternateEmptyViewDelegate()->responderWhenEmpty();
-    if (responder) {
-      Container::activeApp()->setFirstResponder(responder);
-    }
-    // Otherwise, AlternateEmptyViewController stays the first responder
+    Container::activeApp()->setFirstResponder(m_contentView.alternateEmptyViewDelegate()->responderWhenEmpty());
   }
 }
 

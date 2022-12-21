@@ -233,8 +233,12 @@ LayoutCursor AutocompletedBracketPairLayoutNode::cursorAfterDeletion(Side side) 
   }
 
   assert(side == Side::Right);
-  if (thisIndex < parentRef.numberOfChildren() - 1) {
+  if (thisIndex + 1 < parentRef.numberOfChildren()) {
     assert(!(willDisappear && parentIsHorizontalLayout && childRef.isEmpty()));
+    if (parentRef.childAtIndex(thisIndex + 1).isEmpty() && thisIndex + 2 < parentRef.numberOfChildren()) {
+      /* e.g. (1)|▯^2 -> (1|^2] */
+      thisIndex ++;
+    }
     /* e.g. ()|34 -> (|34] or (12)|3 -> (12|3] or (1§▯)|23 -> (1§|23] */
     return LayoutCursor(parentRef.childAtIndex(thisIndex + 1), LayoutCursor::Position::Left);
   }

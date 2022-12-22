@@ -173,7 +173,7 @@ size_t ExpressionField::moveCursorAndDumpContent(char * buffer, size_t bufferSiz
       buffer[0] = 0;
       return 0;
     }
-    m_layoutField.putCursorRightOfLayout();
+    m_layoutField.putCursorOnOneSide(Poincare::LayoutCursor::Position::Right);
     size = m_layoutField.layout().size();
     currentContent = reinterpret_cast<char *>(m_layoutField.layout().node());
     returnValue = size;
@@ -190,7 +190,7 @@ void ExpressionField::putCursorLeftOfField() {
   if (editionIsInTextField()) {
     m_textField.setCursorLocation(m_textField.text());
   } else {
-    m_layoutField.putCursorLeftOfLayout();
+    m_layoutField.putCursorOnOneSide(Poincare::LayoutCursor::Position::Left);
   }
 }
 

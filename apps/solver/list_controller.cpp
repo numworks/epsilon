@@ -142,7 +142,7 @@ bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutRepresentsAnEquality(layoutField->layout())) {
-      layoutField->putCursorRightOfLayout();
+      layoutField->putCursorOnOneSide(Poincare::LayoutCursor::Position::Right);
       if (!layoutField->handleEventWithText("=0")) {
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
         return true;

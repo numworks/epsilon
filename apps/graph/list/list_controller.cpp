@@ -158,7 +158,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
   m_parameterColumnSelected = false;
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
     if (!layoutRepresentsAnEquation(layoutField->layout())) {
-      layoutField->putCursorLeftOfLayout();
+      layoutField->putCursorOnOneSide(Poincare::LayoutCursor::Position::Left);
       CodePoint symbol = layoutRepresentsPolarFunction(layoutField->layout())
                              ? ContinuousFunction::k_polarSymbol
                              : (layoutRepresentsParametricFunction(
@@ -167,7 +167,7 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
                                     : ContinuousFunction::k_cartesianSymbol);
       // Inserted Layout must be an equation
       if (!completeEquation(layoutField, symbol)) {
-        layoutField->putCursorRightOfLayout();
+        layoutField->putCursorOnOneSide(Poincare::LayoutCursor::Position::Right);
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
         return true;
       }

@@ -21,6 +21,21 @@ T IntegerHandler::to() {
 }
 
 EditionReference Integer::PushNode(IntegerHandler integer) {
+  if (integer.isZero()) {
+    return EditionReference::Push<BlockType::Zero>();
+  }
+  if (integer.isOne()) {
+    return EditionReference::Push<BlockType::One>();
+  }
+  if (integer.isTwo()) {
+    return EditionReference::Push<BlockType::Two>();
+  }
+  if (integer.isMinusOne()) {
+    return EditionReference::Push<BlockType::MinusOne>();
+  }
+  if (integer.isInt8()) {
+    return EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(integer));
+  }
   EditionPool * pool = EditionPool::sharedEditionPool();
   TypeBlock typeBlock = integer.sign() == StrictSign::Negative ? IntegerNegBigBlock : IntegerPosBigBlock;
   EditionReference reference = EditionReference(Node(pool->pushBlock(typeBlock)));

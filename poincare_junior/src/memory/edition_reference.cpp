@@ -108,4 +108,8 @@ template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::B
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::MinusOne>();
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Set>(int);
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Half>();
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Zero>();
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::One>();
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Two>();
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::RationalShort>(int8_t, uint8_t);
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerShort>(int8_t);

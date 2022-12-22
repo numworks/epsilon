@@ -176,7 +176,9 @@ void InteractiveCurveViewController::willExitResponderChain(Responder * nextFirs
     m_selectedSubCurveIndex = 0;
     curveView()->setFocus(false);
     header()->setSelectedButton(-1);
-    curveView()->reload();
+    /* The curve view controller will not be around to reset interruption when
+     * an OnOff event is fired, so they are reset now. */
+    curveView()->reload(true);
   }
 }
 

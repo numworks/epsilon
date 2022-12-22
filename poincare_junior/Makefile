@@ -38,8 +38,8 @@ poincare_junior_src += $(addprefix poincare_junior/test/,\
   graph.o \
   main.o \
   memory_elements.o \
-  memory_edition_pool.o \
-  memory_cache_pool.o \
+  memory_edition.o \
+  memory_cache.o \
   polynomial.o \
   set.o \
 )

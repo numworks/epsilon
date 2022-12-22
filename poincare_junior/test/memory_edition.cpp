@@ -81,6 +81,8 @@ void testEditionReference() {
   assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression1, 8_n, k_expression0, 10_n, 9_n});
 
   // Replacements
+  reference3.replaceNodeByNode(reference3);
+  assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression1, 8_n, k_expression0, 10_n, 9_n});
   reference3.replaceNodeByNode(11_n);
   assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression1, 11_n, k_expression0, 10_n, 9_n});
   reference3.replaceNodeByTree(k_expression1);

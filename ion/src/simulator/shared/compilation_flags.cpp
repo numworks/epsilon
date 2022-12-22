@@ -37,7 +37,7 @@ uint16_t userlandCompilationFlags() {
 const char * compilationFlags() {
   static char compilationFlagsBuffer[OMG::Print::MaxLengthOfUInt32(OMG::Base::Hexadecimal) + 1] = {0};
   uint32_t flags = userlandCompilationFlags();
-  size_t length = OMG::Print::UInt32(OMG::Base::Hexadecimal, flags, true, compilationFlagsBuffer, sizeof(compilationFlagsBuffer));
+  size_t length = OMG::Print::UInt32(OMG::Base::Hexadecimal, flags, OMG::Print::LeadingZeros::Keep, compilationFlagsBuffer, sizeof(compilationFlagsBuffer));
   compilationFlagsBuffer[length] = 0;
   return compilationFlagsBuffer;
 }

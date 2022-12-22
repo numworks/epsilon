@@ -232,8 +232,15 @@ int Integer::serializeInBinaryBase(char * buffer, int bufferSize, char symbol, O
 
   buffer[requiredBufferSize - 1] = 0;
   for (int i = nbOfDigits - 1; i >= 0; i--) {
-    // Print leading zeros except for first digit.
-    currentChar += OMG::Print::UInt32(base, digit(i), i != nbOfDigits - 1, buffer + currentChar, bufferSize - currentChar);
+    currentChar +=
+      OMG::Print::UInt32(
+        base,
+        digit(i),
+        // Print leading zeros except for first digit.
+        i == nbOfDigits - 1 ? OMG::Print::LeadingZeros::Trim : OMG::Print::LeadingZeros::Keep,
+        buffer + currentChar,
+        bufferSize - currentChar
+      );
     assert(currentChar < requiredBufferSize);
   }
   return requiredBufferSize - 1;

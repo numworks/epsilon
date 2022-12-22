@@ -1,6 +1,5 @@
 #include "print.h"
 #include <poincare_junior/src/expression/polynomial.h>
-#include <poincare_junior/src/expression/simplification.h>
 #include <poincare_junior/src/memory/tree_constructor.h>
 
 using namespace Poincare;
@@ -8,7 +7,7 @@ using namespace Poincare;
 void assert_polynomial_is_parsed(const Node node, const Node expectedVariables, uint8_t expectedDegree) {
   EditionReference variables = Polynomial::GetVariables(node);
   uint8_t degree = Polynomial::Degree(node, variables.node());
-  assert(Simplification::Compare(variables.node(), expectedVariables) == 0);
+  assert_trees_are_equal(variables.node(), expectedVariables);
   assert(degree == expectedDegree);
 }
 

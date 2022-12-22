@@ -1,13 +1,14 @@
 #include "set.h"
 #include <poincare_junior/src/n_ary.h>
-#include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
 namespace Poincare {
 
 bool Set::Includes(const Node set, const Node expression) {
   for (auto [setChild, index] : NodeIterator::Children<Forward, NoEditable>(set)) {
-    if (Simplification::Compare(setChild, expression) == 0) {
+    int comparison = Comparison::Compare(setChild, expression);
+    if (comparison == 0) {
       return true;
     }
   }
@@ -18,7 +19,7 @@ EditionReference Set::Add(EditionReference set, Node expression) {
   EditionReference child = set;
   for (auto [ref, index] : NodeIterator::Children<Forward, Editable>(set)) {
     child = ref;
-    int comparison = Simplification::Compare(ref.node(), expression);
+    int comparison = Comparison::Compare(ref.node(), expression);
     if (comparison == 0) {
       return set;
     } else if (comparison > 0) {
@@ -26,7 +27,7 @@ EditionReference Set::Add(EditionReference set, Node expression) {
       break;
     }
   }
-  if (child == set || Simplification::Compare(child.node(), expression) < 0) {
+  if (child == set || Comparison::Compare(child.node(), expression) < 0) {
     // Empty set or all elements are < expression
     child.nextTree().insertTreeBeforeNode(expression);
   }
@@ -42,7 +43,7 @@ static EditionReference MergeSets(EditionReference set0, EditionReference set1, 
   EditionReference currentChild0 = set0.nextNode();
   EditionReference currentChild1 = set1.nextNode();
   while (numberOfChildren0ToScan > 0 && numberOfChildren1ToScan > 0) {
-    int comparison = Simplification::Compare(currentChild0.node(), currentChild1.node());
+    int comparison = Comparison::Compare(currentChild0.node(), currentChild1.node());
     if (comparison < 0) { // Increment child of set 0
       EditionReference nextChild0 = currentChild0.nextTree();
       if (removeChildrenOnlyInSet0) {

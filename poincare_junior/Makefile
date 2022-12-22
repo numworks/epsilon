@@ -15,6 +15,7 @@ poincare_junior_src += $(utils_src)
 poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/algebraic.o \
   expression/approximation.o \
+  expression/comparison.o \
   expression/integer.o \
   expression/polynomial.o \
   expression/rational.o \
@@ -34,7 +35,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
 poincare_junior_src += $(addprefix poincare_junior/test/,\
   calculation.o \
   elementary_tree_manipulations.o \
-  expression_simplification.o \
+  expression_comparison.o \
   graph.o \
   main.o \
   memory_elements.o \

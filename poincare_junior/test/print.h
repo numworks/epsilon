@@ -1,5 +1,5 @@
 #include <iostream>
-#include <poincare_junior/src/expression/simplification.h>
+#include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
@@ -36,7 +36,7 @@ inline void assert_node_equals_blocks(const Node node, std::initializer_list<Blo
 }
 
 inline void assert_trees_are_equal(const Node tree0, const Node tree1) {
-  assert(Simplification::Compare(tree0, tree1) == 0);
+  assert(Comparison::AreEqual(tree0, tree1));
 }
 
 using FunctionSize = size_t (Pool::*)();

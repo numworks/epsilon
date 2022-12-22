@@ -56,7 +56,7 @@ public:
   size_t insertXNTChars(CodePoint defaultXNTCodePoint, char * buffer, size_t bufferLength);
   bool cursorAtEndOfText() const { return isEditing() && cursorLocation() == text() + draftTextLength(); }
   void setEditionBuffer(char * buffer, size_t bufferSize) { contentView()->setEditionBuffer(buffer, bufferSize); }
-  size_t dumpContent(char * buffer, size_t bufferSize);
+  size_t dumpContent(char * buffer, size_t bufferSize, size_t * cursorOffset);
 
 protected:
   class ContentView : public TextInput::ContentView {

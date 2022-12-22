@@ -39,7 +39,7 @@ public:
   void putCursorOnOneSide(Poincare::LayoutCursor::Position side);
   void setInsertionCursorEvent(Ion::Events::Event event) { m_insertionCursorEvent = event; }
   void setLayout(Poincare::Layout newLayout);
-  size_t dumpContent(char * buffer, size_t bufferSize);
+  size_t dumpContent(char * buffer, size_t bufferSize, size_t * cursorOffset, Poincare::LayoutCursor::Position * position);
 
   // ScrollableView
   void setBackgroundColor(KDColor c) override  {

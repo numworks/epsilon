@@ -150,8 +150,8 @@ KDCoordinate ExpressionField::inputViewHeight() const {
           std::max(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
 }
 
-size_t ExpressionField::dumpContent(char * buffer, size_t bufferSize) {
-  return editionIsInTextField() ? m_textField.dumpContent(buffer, bufferSize) : m_layoutField.dumpContent(buffer, bufferSize);
+size_t ExpressionField::dumpContent(char * buffer, size_t bufferSize, size_t * cursorOffset, LayoutCursor::Position * position) {
+  return editionIsInTextField() ? m_textField.dumpContent(buffer, bufferSize, cursorOffset) : m_layoutField.dumpContent(buffer, bufferSize, cursorOffset, position);
 }
 
 void ExpressionField::putCursorLeftOfField() {
@@ -162,7 +162,7 @@ void ExpressionField::putCursorLeftOfField() {
   }
 }
 
-void ExpressionField::restoreContent(const char * buffer, size_t size) {
+void ExpressionField::restoreContent(const char * buffer, size_t size, size_t * cursorOffset, Poincare::LayoutCursor::Position * position) {
   if (editionIsInTextField()) {
     if (size != 0 || buffer[0] == 0) {
       /* A size other than 0 means the buffer contains Layout information
@@ -171,12 +171,20 @@ void ExpressionField::restoreContent(const char * buffer, size_t size) {
       return;
     }
     setText(buffer);
+    if (*cursorOffset != -1) {
+      m_textField.setCursorLocation(m_textField.draftTextBuffer() + *cursorOffset);
+    }
     return;
   }
   if (size == 0) {
     return;
   }
   m_layoutField.setLayout(Layout::LayoutFromAddress(buffer, size));
+  if (*cursorOffset != -1) {
+    const LayoutNode * cursorNode = reinterpret_cast<const LayoutNode *>(reinterpret_cast<char *>(m_layoutField.layout().node()) + *cursorOffset);
+    m_layoutField.cursor()->setLayout(Layout(cursorNode));
+    m_layoutField.cursor()->setPosition(*position);
+  }
 }
 
 }

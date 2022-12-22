@@ -237,7 +237,6 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 
   // Exact output that have dependencies are not displayed
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown, "2", "2", "2", &globalContext, &store);
-  assertCalculationIs("f(sum(1/k,k,0,5))", DisplayOutput::ApproximateOnly, EqualSign::Unknown, "\U00000014dep(2,{sum(1/k,k,0,5)})", "undef", "undef", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("a.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("f.func").destroy();
 

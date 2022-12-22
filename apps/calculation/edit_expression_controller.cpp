@@ -14,8 +14,7 @@ EditExpressionController::ContentView::ContentView(Responder * parentResponder, 
   View(),
   m_mainView(subview),
   m_expressionField(parentResponder, inputEventHandlerDelegate, textFieldDelegate, layoutFieldDelegate)
-{
-}
+{}
 
 View * EditExpressionController::ContentView::subviewAtIndex(int index) {
   assert(index >= 0 && index < numberOfSubviews());
@@ -47,11 +46,13 @@ EditExpressionController::EditExpressionController(Responder * parentResponder, 
   m_calculationStore(calculationStore),
   m_contentView(this, static_cast<CalculationSelectableTableView *>(m_historyController->view()), inputEventHandlerDelegate, this, this)
 {
+  clearWorkingBuffer();
 }
 
 void EditExpressionController::insertTextBody(const char * text) {
   Container::activeApp()->setFirstResponder(this);
   m_contentView.expressionField()->handleEventWithText(text, false, true);
+  memoizeInput();
 }
 
 void EditExpressionController::didBecomeFirstResponder() {
@@ -62,7 +63,6 @@ void EditExpressionController::didBecomeFirstResponder() {
 
 void EditExpressionController::restoreInput() {
   m_contentView.expressionField()->restoreContent(m_cacheBuffer, *m_cacheBufferInformation);
-  clearCacheBuffer();
 }
 
 void EditExpressionController::memoizeInput() {
@@ -81,6 +81,13 @@ bool EditExpressionController::textFieldDidReceiveEvent(AbstractTextField * text
   return textFieldDelegateApp()->textFieldDidReceiveEvent(textField, event);
 }
 
+bool EditExpressionController::textFieldDidHandleEvent(Escher::AbstractTextField * textField, bool returnValue, bool textDidChange) {
+  if (textDidChange) {
+    memoizeInput();
+  }
+  return returnValue;
+}
+
 bool EditExpressionController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
   return inputViewDidFinishEditing(text, nullptr);
 }
@@ -95,6 +102,13 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(::LayoutField * layout
     return true;
   }
   return expressionFieldDelegateApp()->layoutFieldDidReceiveEvent(layoutField, event);
+}
+
+bool EditExpressionController::layoutFieldDidHandleEvent(Escher::LayoutField * layoutField, bool returnValue, bool layoutDidChange) {
+  if (layoutDidChange) {
+    memoizeInput();
+  }
+  return returnValue;
 }
 
 bool EditExpressionController::layoutFieldDidFinishEditing(::LayoutField * layoutField, Layout layoutR, Ion::Events::Event event) {
@@ -126,21 +140,21 @@ void EditExpressionController::reloadView() {
 }
 
 bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation) {
-  if (shouldDuplicateLastCalculation && m_cacheBuffer[0] != 0) {
-    /* The input text store in m_cacheBuffer might have been correct the first
+  if (shouldDuplicateLastCalculation && m_workingBuffer[0] != 0) {
+    /* The input text store in m_workingBuffer might have been correct the first
      * time but then be too long when replacing ans in another context */
     Shared::TextFieldDelegateApp * myApp = textFieldDelegateApp();
-    if (!myApp->isAcceptableText(m_cacheBuffer)) {
+    if (!myApp->isAcceptableText(m_workingBuffer)) {
       return true;
     }
-    if (m_calculationStore->push(m_cacheBuffer, myApp->localContext(), HistoryViewCell::Height).pointer()) {
+    if (m_calculationStore->push(m_workingBuffer, myApp->localContext(), HistoryViewCell::Height).pointer()) {
       m_historyController->reload();
       return true;
     }
   }
   if (event == Ion::Events::Up) {
     if (m_calculationStore->numberOfCalculations() > 0) {
-      clearCacheBuffer();
+      clearWorkingBuffer();
       m_contentView.expressionField()->setEditing(false, false);
       Container::activeApp()->setFirstResponder(m_historyController);
     }
@@ -158,14 +172,14 @@ bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layo
   Context * context = textFieldDelegateApp()->localContext();
   if (layoutR.isUninitialized()) {
     assert(text);
-    strlcpy(m_cacheBuffer, text, k_cacheBufferSize);
+    strlcpy(m_workingBuffer, text, k_cacheBufferSize);
   } else {
-    layoutR.serializeParsedExpression(m_cacheBuffer, k_cacheBufferSize, context);
+    layoutR.serializeParsedExpression(m_workingBuffer, k_cacheBufferSize, context);
   }
-  if (m_calculationStore->push(m_cacheBuffer, context, HistoryViewCell::Height).pointer()) {
+  if (m_calculationStore->push(m_workingBuffer, context, HistoryViewCell::Height).pointer()) {
     m_historyController->reload();
     m_contentView.expressionField()->setEditing(true, true);
-    telemetryReportEvent("Input", m_cacheBuffer);
+    telemetryReportEvent("Input", m_workingBuffer);
     return true;
   }
   return false;

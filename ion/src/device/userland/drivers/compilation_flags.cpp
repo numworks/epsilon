@@ -57,14 +57,14 @@ uint16_t userlandCompilationFlags() {
 const char * compilationFlags() {
   static char compilationFlagsBuffer[OMG::Print::MaxLengthOfUInt32(OMG::Base::Hexadecimal) + 1] = {0};
   uint32_t flags = userlandCompilationFlags() | (kernelCompilationFlags() << 16);
-  size_t length = OMG::Print::UInt32(OMG::Base::Hexadecimal, flags, true, compilationFlagsBuffer, sizeof(compilationFlagsBuffer));
+  size_t length = OMG::Print::UInt32(OMG::Base::Hexadecimal, flags, OMG::Print::LeadingZeros::Keep, compilationFlagsBuffer, sizeof(compilationFlagsBuffer));
   compilationFlagsBuffer[length] = 0;
   return compilationFlagsBuffer;
 }
 
 const char * runningBootloader() {
   static char crcBuffer[OMG::Print::MaxLengthOfUInt32(OMG::Base::Hexadecimal) + 1] = {0};
-  size_t length = OMG::Print::UInt32(OMG::Base::Hexadecimal, bootloaderCRC32(), true, crcBuffer, sizeof(crcBuffer));
+  size_t length = OMG::Print::UInt32(OMG::Base::Hexadecimal, bootloaderCRC32(), OMG::Print::LeadingZeros::Keep, crcBuffer, sizeof(crcBuffer));
   crcBuffer[length] = 0;
   return crcBuffer;
 }

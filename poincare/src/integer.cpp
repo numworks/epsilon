@@ -232,7 +232,8 @@ int Integer::serializeInBinaryBase(char * buffer, int bufferSize, char symbol, O
 
   buffer[requiredBufferSize - 1] = 0;
   for (int i = nbOfDigits - 1; i >= 0; i--) {
-    currentChar += OMG::Print::UInt32(base, digit(i), buffer + currentChar, bufferSize - currentChar);
+    // Print leading zeros except for first digit.
+    currentChar += OMG::Print::UInt32(base, digit(i), i != nbOfDigits - 1, buffer + currentChar, bufferSize - currentChar);
     assert(currentChar < requiredBufferSize);
   }
   return requiredBufferSize - 1;

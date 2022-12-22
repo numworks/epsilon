@@ -41,7 +41,7 @@ constexpr size_t MaxLengthOfUInt32(Base base) { return OMG::BitHelper::numberOfB
 
 constexpr size_t LengthOfUInt32(Base base, uint32_t integer) { return integer == 0 ? 1 : OMG::BitHelper::indexOfMostSignificantBit(integer) / OMG::BitHelper::numberOfBitsToCountUpTo(static_cast<uint8_t>(base)) + 1; }
 
-int UInt32(Base base, uint32_t integer, char * buffer, int bufferSize);
+int UInt32(Base base, uint32_t integer, bool printLeadingZeros, char * buffer, int bufferSize);
 
 }
 

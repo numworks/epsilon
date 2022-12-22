@@ -291,6 +291,7 @@ QUIZ_CASE(poincare_integer_serialize) {
   assert_integer_serializes_to(Integer("2345678909876"), "2345678909876");
   assert_integer_serializes_to(Integer("-2345678909876"), "-2345678909876");
   assert_integer_serializes_to(Integer(9), "0b1001", OMG::Base::Binary);
+  assert_integer_serializes_to(Integer((double_native_int_t)4000000000000), "0b111010001101010010100101000100000000000000", OMG::Base::Binary);
   assert_integer_serializes_to(Integer(9131), "0x23AB", OMG::Base::Hexadecimal);
   assert_integer_serializes_to(Integer(123), "123", OMG::Base::Decimal);
   assert_integer_serializes_to(Integer("-2345678909876"), "-2345678909876");

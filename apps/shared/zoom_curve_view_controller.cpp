@@ -17,6 +17,9 @@ bool ZoomCurveViewController::handleEvent(Ion::Events::Event event) {
      * the screen to be redrawn. */
     return false;
   }
+  if (!curveView()->hasFocus()) {
+    return false;
+  }
   if (event == Ion::Events::Plus || event == Ion::Events::Minus) {
     return handleZoom(event);
   }

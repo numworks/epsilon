@@ -29,6 +29,8 @@ public:
     CalculationStore * calculationStore() { return &m_calculationStore; }
     char * cacheBuffer() { return m_cacheBuffer; }
     size_t * cacheBufferInformationAddress() { return &m_cacheBufferInformation; }
+    size_t * cacheCursorOffset() { return &m_cacheCursorOffset; }
+    Poincare::LayoutCursor::Position * cacheCursorPosition() { return &m_cacheCursorPosition; }
 
   private:
     // Set the size of the buffer needed to store the calculations
@@ -38,6 +40,8 @@ public:
     char m_calculationBuffer[k_calculationBufferSize];
     char m_cacheBuffer[EditExpressionController::k_cacheBufferSize];
     size_t m_cacheBufferInformation;
+    size_t m_cacheCursorOffset;
+    Poincare::LayoutCursor::Position m_cacheCursorPosition;
   };
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }

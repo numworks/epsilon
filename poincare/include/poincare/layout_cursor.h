@@ -61,6 +61,7 @@ public:
 
   // Getters and setters
   Layout layout() { return m_layout; }
+  LayoutNode * layoutNode() { return m_layout.node(); }
 
   int layoutIdentifier() { return m_layout.identifier(); }
   void setLayout(Layout r) {
@@ -129,7 +130,6 @@ private:
     m_position(position)
   {}
 
-  LayoutNode * layoutNode() { return m_layout.node(); }
   void setLayoutNode(LayoutNode * n) {
     if (n->identifier() != m_layout.identifier()) {
       /* Compare the identifiers and not the nodes because m_layout might

@@ -29,8 +29,8 @@ public:
   void reload();
   bool handleEventWithText(const char * text, bool indentation = false, bool forceCursorRightOfText = false);
   void setLayoutInsertionCursorEvent(Ion::Events::Event event) { m_layoutField.setInsertionCursorEvent(event); }
-  size_t dumpContent(char * buffer, size_t bufferSize);
-  void restoreContent(const char * buffer, size_t size);
+  size_t dumpContent(char * buffer, size_t bufferSize, size_t * cursorOffset, Poincare::LayoutCursor::Position * position);
+  void restoreContent(const char * buffer, size_t size, size_t * cursorOffset, Poincare::LayoutCursor::Position * position);
   void setBackgroundColor(KDColor backgroundColor);
   void putCursorLeftOfField();
   void setTextEditionBuffer(char * buffer, size_t bufferSize) { m_textField.setEditionBuffer(buffer, bufferSize); }

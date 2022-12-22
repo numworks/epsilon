@@ -26,20 +26,6 @@ I18n::Message Sequence::parameterMessageName() const {
   return I18n::Message::N;
 }
 
-int Sequence::nameWithArgument(char * buffer, size_t bufferSize) {
-  int seqNameSize = name(buffer, bufferSize);
-  assert(seqNameSize > 0);
-  size_t result = seqNameSize;
-  assert(result <= bufferSize);
-  buffer[result++] = '(';
-  assert(result <= bufferSize);
-  assert(UTF8Decoder::CharSizeOfCodePoint(symbol()) <= 2);
-  result += UTF8Decoder::CodePointToChars(symbol(), buffer+result, bufferSize-result);
-  assert(result <= bufferSize);
-  result += strlcpy(buffer+result, ")", bufferSize-result);
-  return result;
-}
-
 int Sequence::nameWithArgumentAndType(char * buffer, size_t bufferSize) {
   int result = nameWithArgument(buffer, bufferSize);
   assert(result >= 1);

@@ -30,7 +30,6 @@ public:
   }
   I18n::Message parameterMessageName() const override;
   CodePoint symbol() const override { return 'n'; }
-  int nameWithArgument(char * buffer, size_t bufferSize) override;
   int nameWithArgumentAndType(char * buffer, size_t bufferSize);
   // MetaData getters
   Type type() const;

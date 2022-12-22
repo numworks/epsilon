@@ -15,6 +15,7 @@ public:
   virtual bool layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) = 0;
   virtual bool layoutFieldDidFinishEditing(LayoutField * layoutField, Poincare::Layout layoutR, Ion::Events::Event event) { return false; }
   virtual bool layoutFieldDidAbortEditing(LayoutField * layoutField) { return false; }
+  virtual bool layoutFieldDidHandleEvent(LayoutField * layoutField, bool returnValue, bool layoutDidChange) { return returnValue; }
   virtual void layoutFieldDidChangeSize(LayoutField * layoutField) {}
 };
 

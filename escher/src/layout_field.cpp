@@ -515,17 +515,16 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
   /* Hide empty layout only if the layout is being edited, otherwise the cursor
    * is not visible so any empty layout should be visible. */
   bool didHideLayouts = isEditing() && m_contentView.cursor()->hideEmptyLayoutIfNeeded();
-  if (!didHandleEvent) {
-    return false;
+  if (didHandleEvent) {
+    shouldRecomputeLayout = didHideLayouts || shouldRecomputeLayout;
+    if (!shouldRecomputeLayout) {
+      m_contentView.cursorPositionChanged();
+      scrollToCursor();
+    } else {
+      reload(previousSize);
+    }
   }
-  shouldRecomputeLayout = didHideLayouts || shouldRecomputeLayout;
-  if (!shouldRecomputeLayout) {
-    m_contentView.cursorPositionChanged();
-    scrollToCursor();
-  } else {
-    reload(previousSize);
-  }
-  return true;
+  return m_delegate ? m_delegate->layoutFieldDidHandleEvent(this, didHandleEvent, shouldRecomputeLayout): didHandleEvent;
 }
 
 void LayoutField::deleteSelection() {

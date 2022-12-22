@@ -79,21 +79,18 @@ Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionC
   int i = 0;
   while (i < totalNumberOfDependencies) {
     Expression e = dependencies.childAtIndex(i);
-    Expression approximation = e.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
-    /* WARNING: approximation could be undefined while it is not
-     * because of float approximation being less reliable than
-     * double. */
+    if (DeepIsSymbolic(e, reductionContext.context(), reductionContext.symbolicComputation())) {
+      /* If the dependency involves unresolved symbol/function/sequence,
+       * the approximation of the dependency could be undef while the
+       * whole expression is not, so the check is skipped.
+       * */
+      i++;
+      continue;
+    }
+
+    Expression approximation = e.approximate<double>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
     if (approximation.isUndefined()) {
-      ExpressionNode::SymbolicComputation symbolicComputation = reductionContext.symbolicComputation();
-      if (DeepIsSymbolic(e, reductionContext.context(), symbolicComputation)) {
-        /* We can't decide now that the main expression is undefined because its
-         * depencencies are. Indeed, the dependency might involve unresolved
-         * symbol/function/sequence (especially sequences that are not
-         * approximated while in reducing routine). */
-        i++;
-      } else {
-        return replaceWithUndefinedInPlace();
-      }
+      return replaceWithUndefinedInPlace();
     } else {
       static_cast<List &>(dependencies).removeChildAtIndexInPlace(i);
       totalNumberOfDependencies--;

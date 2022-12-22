@@ -188,7 +188,6 @@ int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView * plotView, 
 
 KDRect AbstractLabeledAxis::labelRect(int i, float t, const AbstractPlotView * plotView, AbstractPlotView::Axis axis) const {
   assert(i < numberOfLabels());
-  assert(t >= plotView->rangeMin(axis));
 
   const char * text = label(i);
   if (m_hidden || text[0] == '\0') {

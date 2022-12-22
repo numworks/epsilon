@@ -297,13 +297,16 @@ Layout ValuesController::functionTitleLayout(int columnIndex, bool * isDerivativ
   Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
   *hasName = function->isNamed();
   if (*isDerivative) {
+    // derivativeNameWithArgument is of the form "f'(x)" for named functions and "y'" for unamed functions
     function->derivativeNameWithArgument(buffer, bufferNameSize);
     return StringLayout::Builder(buffer);
   }
   if (*hasName) {
+    // nameWithArgument is of the form "f(x)" for named functions and "y" for unamed functions
     function->nameWithArgument(buffer, bufferNameSize);
     return StringLayout::Builder(buffer);
   }
+  // For unamed functions we don't want to display the name ("y") but the full equation
   return PoincareHelpers::CreateLayout(function->originalEquation(), textFieldDelegateApp()->localContext());
 }
 

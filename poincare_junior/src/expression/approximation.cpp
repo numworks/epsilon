@@ -5,6 +5,8 @@
 
 namespace Poincare {
 
+//TODO: tests
+
 template<typename T>
 T Approximation::To(const Node node) {
   if (node.block()->isRational()) {

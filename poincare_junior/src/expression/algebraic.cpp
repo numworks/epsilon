@@ -7,6 +7,8 @@
 
 namespace Poincare {
 
+//TODO: tests
+
 EditionReference Algebraic::Rationalize(EditionReference expression) {
   BlockType type = expression.type();
   if (type == BlockType::Power) {

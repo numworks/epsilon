@@ -67,6 +67,8 @@ private:
 class Integer {
 public:
   static EditionReference PushNode(IntegerHandler integer);
+  static bool IsUint8(const Node expression);
+  static uint8_t Uint8(const Node expression);
   static EditionReference Addition(IntegerHandler a, IntegerHandler b);
 };
 

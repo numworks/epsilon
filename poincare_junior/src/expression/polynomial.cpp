@@ -15,8 +15,8 @@ EditionReference Polynomial::GetVariables(const Node expression) {
   if (type == BlockType::Power) {
     Node base = expression.nextNode();
     Node exponant = base.nextTree();
-    if (exponant.block()->isInteger()) {
-      assert(exponant.type() != BlockType::Zero);
+    if (Integer::IsUint8(exponant)) {
+      assert(Integer::Uint8(exponant) > 1);
       EditionReference variables = EditionReference::Push<BlockType::Set>(1);
       EditionReference::Clone(base);
       return variables;

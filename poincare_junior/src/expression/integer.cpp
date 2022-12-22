@@ -46,6 +46,16 @@ EditionReference Integer::PushNode(IntegerHandler integer) {
   return reference;
 }
 
+// TODO: tests
+bool Integer::IsUint8(const Node expression) {
+  return expression.block()->isInteger() && Rational::Numerator(expression).isUint8();
+}
+
+uint8_t Integer::Uint8(const Node expression) {
+  assert(IsUint8(expression));
+  return static_cast<uint8_t>(Rational::Numerator(expression));
+}
+
 }
 
 template float Poincare::IntegerHandler::to<float>();

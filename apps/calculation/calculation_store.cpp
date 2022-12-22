@@ -22,7 +22,7 @@ CalculationStore::CalculationStore(char * buffer, size_t bufferSize) :
 {}
 
 ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(int index) const {
-  assert(0 <= index && index <= numberOfCalculations());
+  assert(0 <= index && index <= numberOfCalculations() - 1);
   Calculation * ptr = reinterpret_cast<Calculation *>(index == numberOfCalculations() - 1 ? m_buffer : endOfCalculationAtIndex(index + 1));
   return ExpiringPointer(ptr);
 }

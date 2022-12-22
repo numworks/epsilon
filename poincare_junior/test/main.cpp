@@ -7,6 +7,7 @@ void testOverflowCacheIdentifiers();
 void testCalculation();
 void testGraph();
 void testExpressionComparison();
+void testSubtree();
 void testRunTimeCrashIllFormedExpression();
 void testSet();
 void testPolynomialParsing();
@@ -59,6 +60,7 @@ int main() {
   test(testCalculation, "TEST DUMMY CALCULATION");
   test(testGraph, "TEST DUMMY GRAPH");
   test(testExpressionComparison, "TEST EXPRESSION COMPARISON");
+  test(testSubtree, "TEST SUBTREE");
   test(testRunTimeCrashIllFormedExpression, "TEST ILL-FORMED EXPRESSIONS");
 }
 

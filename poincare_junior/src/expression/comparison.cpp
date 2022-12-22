@@ -56,6 +56,19 @@ int Comparison::Compare(const Node node0, const Node node1) {
   }
 }
 
+bool Comparison::ContainsSubtree(const Node tree, const Node subtree) {
+  if (AreEqual(tree, subtree)) {
+    return true;
+  }
+  for (std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(tree)) {
+    Node child = std::get<Node>(indexedNode);
+    if (ContainsSubtree(child, subtree)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 int Comparison::CompareNumbers(const Node node0, const Node node1) {
   if (node0.block()->isRational() && node1.block()->isRational()) {
     // TODO

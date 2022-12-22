@@ -15,3 +15,21 @@ void testExpressionComparison() {
   assert_comparison_equals(Add(2_sn,u'π'_n), u'π'_n, 1);
   // TODO: complete
 }
+
+void assert_contain_subtree(const Node tree, const Node subtree) {
+  assert(Comparison::ContainsSubtree(tree, subtree));
+}
+
+void assert_not_contain_subtree(const Node tree, const Node subtree) {
+  assert(!Comparison::ContainsSubtree(tree, subtree));
+}
+
+void testSubtree() {
+  assert_contain_subtree(Add(2_sn, Mult(1_sn, 3_n)), Add(2_sn, Mult(1_sn, 3_n)));
+  assert_contain_subtree(Add(2_sn, Mult(1_sn, 3_n)), Mult(1_sn, 3_n));
+  assert_contain_subtree(Add(2_sn, Mult(1_sn, 3_n)), 3_n);
+
+  assert_not_contain_subtree(Add(2_sn, Mult(1_sn, 3_n)), 4_n);
+  assert_not_contain_subtree(Add(2_sn, Mult(1_sn, 3_n)), Mult(1_sn, 4_n));
+  assert_not_contain_subtree(Add(2_sn, Mult(1_sn, 3_n)), Add(2_sn, Mult(1_sn, 4_n)));
+}

@@ -14,6 +14,7 @@ public:
    */
   static int Compare(const Node node0, const Node node1);
   static bool AreEqual(const Node node0, const Node node1) { return Compare(node0, node1) == 0; }
+  static bool ContainsSubtree(const Node tree, const Node subtree);
 private:
   static int CompareNumbers(const Node node0, const Node node1);
   static int CompareNames(const Node node0, const Node node1);

@@ -236,7 +236,6 @@ int Integer::serializeInBinaryBase(char * buffer, int bufferSize, char symbol, O
       OMG::Print::UInt32(
         base,
         digit(i),
-        // Print leading zeros except for first digit.
         i == nbOfDigits - 1 ? OMG::Print::LeadingZeros::Trim : OMG::Print::LeadingZeros::Keep,
         buffer + currentChar,
         bufferSize - currentChar

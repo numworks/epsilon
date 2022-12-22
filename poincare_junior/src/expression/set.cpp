@@ -10,6 +10,8 @@ bool Set::Includes(const Node set, const Node expression) {
     int comparison = Comparison::Compare(setChild, expression);
     if (comparison == 0) {
       return true;
+    } else if (comparison > 0) {
+      break;
     }
   }
   return false;

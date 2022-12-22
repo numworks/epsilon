@@ -343,6 +343,18 @@ Context * LayoutField::context() const {
   return (m_delegate != nullptr) ? m_delegate->context() : nullptr;
 }
 
+size_t LayoutField::dumpContent(char * buffer, size_t bufferSize) {
+  assert(layoutHasNode());
+  size_t size = layout().size();
+  if (size > bufferSize) {
+    buffer[0] = 0;
+    size = 0;
+  } else {
+    memcpy(buffer, reinterpret_cast<char *>(layout().node()), size);
+  }
+  return size;
+}
+
 bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   if (!isEditing()) {
     setEditing(true);

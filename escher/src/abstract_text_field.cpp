@@ -258,6 +258,16 @@ void AbstractTextField::ContentView::setEditionBuffer(char * buffer, size_t buff
   m_useDraftBuffer = false;
 }
 
+size_t AbstractTextField::dumpContent(char * buffer, size_t bufferSize) {
+  size_t size = draftTextLength() + 1;
+  if (size > bufferSize) {
+    buffer[0] = 0;
+  } else {
+    memcpy(buffer, draftTextBuffer(), size);
+  }
+  return 0;
+}
+
 size_t AbstractTextField::ContentView::deleteSelection() {
   assert(!selectionIsEmpty());
   assert(m_isEditing);

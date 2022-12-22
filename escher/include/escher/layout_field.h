@@ -39,6 +39,7 @@ public:
   void putCursorOnOneSide(Poincare::LayoutCursor::Position side);
   void setInsertionCursorEvent(Ion::Events::Event event) { m_insertionCursorEvent = event; }
   void setLayout(Poincare::Layout newLayout);
+  size_t dumpContent(char * buffer, size_t bufferSize);
 
   // ScrollableView
   void setBackgroundColor(KDColor c) override  {
@@ -87,6 +88,7 @@ private:
     KDRect cursorRect() { return m_cursorView.frame(); }
     Poincare::LayoutCursor * cursor() { return &m_cursor; }
     const ExpressionView * expressionView() const { return &m_expressionView; }
+    ExpressionView * expressionView() { return &m_expressionView; }
     void clearLayout();
     // View
     KDSize minimalSizeForOptimalDisplay() const override;

@@ -96,6 +96,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     return true;
   }
+  Context * context = App::app()->localContext();
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     int focusRow = selectedRow();
     HistoryViewCell * selectedCell = (HistoryViewCell *)m_selectableTableView.selectedCell();
@@ -109,11 +110,11 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
       Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(focusRow);
       ScrollableTwoExpressionsView::SubviewPosition outputSubviewPosition = selectedCell->outputView()->selectedSubviewPosition();
       if (outputSubviewPosition == ScrollableTwoExpressionsView::SubviewPosition::Right
-          && !Utils::ShouldOnlyDisplayExactOutput(calculation->input()))
+          && calculation->displayOutput(context) != Calculation::DisplayOutput::ExactOnly)
       {
         editController->insertTextBody(calculation->approximateOutputText(Calculation::NumberOfSignificantDigits::Maximal));
       } else {
-        assert(calculation->displayOutput(nullptr) != Calculation::DisplayOutput::ApproximateOnly);
+        assert(calculation->displayOutput(context) != Calculation::DisplayOutput::ApproximateOnly);
         editController->insertTextBody(calculation->exactOutputText());
       }
     } else {
@@ -125,8 +126,9 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
         Calculation::AdditionalInformations additionalInformations = selectedCell->additionalInformations();
         ListController * vc = nullptr;
         ExpiringPointer<Calculation> focusCalculation = calculationAtIndex(focusRow);
-        Expression e = focusCalculation->exactOutput();
+        assert(focusCalculation->displayOutput(context) != Calculation::DisplayOutput::ExactOnly);
         Expression a = focusCalculation->approximateOutput(Calculation::NumberOfSignificantDigits::Maximal);
+        Expression e = focusCalculation->displayOutput(context) != Calculation::DisplayOutput::ApproximateOnly ? focusCalculation->exactOutput() : a;
         if (additionalInformations.complex) {
           vc = &m_complexController;
         } else if (additionalInformations.unit) {

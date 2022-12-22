@@ -61,8 +61,13 @@ void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
   int newSize = newIsTree ? newNode.treeSize() : newNode.nodeSize();
   Block * oldBlock = oldNode.block();
   Block * newBlock = newNode.block();
+  if (oldBlock == newBlock && oldIsTree == newIsTree) {
+    return;
+  }
   if (pool->contains(newNode.block())) {
-    if (oldIsTree && newNode.hasAncestor(oldNode, false)) {
+    assert(!(newIsTree && oldNode.hasAncestor(newNode, true))); // Fractal scheme
+    // newIsTree &&
+    if (oldIsTree && newNode.hasAncestor(oldNode, true)) {
       oldSize -= newSize;
     }
     pool->moveBlocks(oldBlock, newBlock, newSize);

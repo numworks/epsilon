@@ -66,7 +66,7 @@ void EditExpressionController::restoreInput() {
 }
 
 void EditExpressionController::memoizeInput() {
-  *m_cacheBufferInformation = m_contentView.expressionField()->moveCursorAndDumpContent(m_cacheBuffer, k_cacheBufferSize);
+  *m_cacheBufferInformation = m_contentView.expressionField()->dumpContent(m_cacheBuffer, k_cacheBufferSize);
 }
 
 void EditExpressionController::viewWillAppear() {

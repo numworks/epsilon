@@ -22,7 +22,7 @@ public:
    * application. */
   constexpr static int k_cacheBufferSize = (k_layoutBufferMaxSize < Constant::MaxSerializedExpressionSize) ? Constant::MaxSerializedExpressionSize : k_layoutBufferMaxSize;
 
-  EditExpressionController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, char * cacheBuffer, size_t * cacheBufferInformation, HistoryController * historyController, CalculationStore * calculationStore);
+  EditExpressionController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, HistoryController * historyController, CalculationStore * calculationStore);
 
   /* ViewController */
   Escher::View * view() override { return &m_contentView; }
@@ -69,8 +69,6 @@ private:
   void memoizeInput();
 
   char m_workingBuffer[k_layoutBufferMaxSize];
-  char * m_cacheBuffer;
-  size_t * m_cacheBufferInformation;
   HistoryController * m_historyController;
   CalculationStore * m_calculationStore;
   ContentView m_contentView;

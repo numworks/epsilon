@@ -38,10 +38,8 @@ void EditExpressionController::ContentView::reload() {
   markRectAsDirty(bounds());
 }
 
-EditExpressionController::EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, char * cacheBuffer, size_t * cacheBufferInformation, HistoryController * historyController, CalculationStore * calculationStore) :
+EditExpressionController::EditExpressionController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, HistoryController * historyController, CalculationStore * calculationStore) :
   ViewController(parentResponder),
-  m_cacheBuffer(cacheBuffer),
-  m_cacheBufferInformation(cacheBufferInformation),
   m_historyController(historyController),
   m_calculationStore(calculationStore),
   m_contentView(this, static_cast<CalculationSelectableTableView *>(m_historyController->view()), inputEventHandlerDelegate, this, this)
@@ -62,11 +60,11 @@ void EditExpressionController::didBecomeFirstResponder() {
 }
 
 void EditExpressionController::restoreInput() {
-  m_contentView.expressionField()->restoreContent(m_cacheBuffer, *m_cacheBufferInformation);
+  m_contentView.expressionField()->restoreContent(App::app()->snapshot()->cacheBuffer(), *App::app()->snapshot()->cacheBufferInformationAddress());
 }
 
 void EditExpressionController::memoizeInput() {
-  *m_cacheBufferInformation = m_contentView.expressionField()->dumpContent(m_cacheBuffer, k_cacheBufferSize);
+  *App::app()->snapshot()->cacheBufferInformationAddress() = m_contentView.expressionField()->dumpContent(App::app()->snapshot()->cacheBuffer(), k_cacheBufferSize);
 }
 
 void EditExpressionController::viewWillAppear() {

@@ -50,6 +50,8 @@ public:
   // TextFieldDelegateApp
   bool isAcceptableExpression(const Poincare::Expression expression) override;
 
+  Snapshot * snapshot() const { return static_cast<Snapshot *>(Shared::ExpressionFieldDelegateApp::snapshot()); }
+
 private:
   App(Snapshot * snapshot);
 

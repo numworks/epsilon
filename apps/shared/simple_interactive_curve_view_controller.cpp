@@ -9,7 +9,8 @@ using namespace Escher;
 namespace Shared {
 
 bool SimpleInteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::Left || event == Ion::Events::Right) {
+  if (curveView()->hasFocus() &&
+      (event == Ion::Events::Left || event == Ion::Events::Right)) {
     return handleLeftRightEvent(event);
   }
   return ZoomCurveViewController::handleEvent(event);

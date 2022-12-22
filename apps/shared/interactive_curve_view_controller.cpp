@@ -70,9 +70,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
       tabController()->selectTab();
       return true;
     }
-    return false;
-  }
-  if (event == Ion::Events::Down || event == Ion::Events::Up) {
+  } else if (event == Ion::Events::Down || event == Ion::Events::Up) {
     int direction = event == Ion::Events::Down ? -1 : 1;
     if (moveCursorVertically(direction)) {
       reloadBannerView();
@@ -90,8 +88,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
       return true;
     }
     return false;
-  }
-  if (event == Ion::Events::Toolbox) {
+  } else if (event == Ion::Events::Toolbox) {
     return openMenu();
   }
   return SimpleInteractiveCurveViewController::handleEvent(event);

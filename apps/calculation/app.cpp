@@ -44,7 +44,7 @@ App::Snapshot::Snapshot() : m_calculationStore(m_calculationBuffer, k_calculatio
 App::App(Snapshot * snapshot) :
   ExpressionFieldDelegateApp(snapshot, &m_editExpressionController),
   m_historyController(&m_editExpressionController, snapshot->calculationStore()),
-  m_editExpressionController(&m_modalViewController, this, snapshot->cacheBuffer(), snapshot->cacheBufferInformationAddress(), &m_historyController, snapshot->calculationStore())
+  m_editExpressionController(&m_modalViewController, this, &m_historyController, snapshot->calculationStore())
 {
 }
 

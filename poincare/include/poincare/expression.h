@@ -216,6 +216,7 @@ public:
   static bool IsPercent(const Expression e, Context * context);
   static bool IsDiscontinuous(const Expression e, Context * context);
   static bool IsSymbolic(const Expression e, Context * context);
+  static bool DeepIsSymbolic(const Expression e, Context * context, ExpressionNode::SymbolicComputation replaceSymbols);
 
   typedef bool (*PatternTest)(const Expression& e, Context * context, const char * symbol);
   static bool IsRationalFraction(const Expression& e, Context * context, const char * symbol);

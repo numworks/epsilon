@@ -9,7 +9,7 @@ void testGraph();
 void testExpressionComparison();
 void testRunTimeCrashIllFormedExpression();
 void testSet();
-void testVariables();
+void testPolynomialParsing();
 void testBlock();
 void testTypeBlock();
 void testConstexprTreeConstructor();
@@ -52,7 +52,7 @@ int main() {
   test(testCacheReference, "TEST CACHE REFERENCE");
   test(testCacheReferenceInvalidation, "TEST CACHE REFERENCE INVALIDATION");
 
-  test(testVariables, "TEST VARIABLES");
+  test(testPolynomialParsing, "TEST POLYNOMIAL PARSING");
   test(testSet, "TEST SET");
 
   test(elementaryTreeManipulation, "ELEMENTARY TREE MANIPULATION");

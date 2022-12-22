@@ -8,6 +8,7 @@ namespace Poincare {
 class Polynomial final {
 public:
   static EditionReference GetVariables(const Node expression);
+  static uint8_t Degree(const Node expression, const Node variables);
 #if 0
   Node PolynomialInterpretation
   Node RationalInterpretation --> list of 2 polynomial
@@ -16,13 +17,11 @@ public:
   sign
   compare
 
-  variables() --> S
   // General polynomial
   isMonomial(u,setOfGeneralVariables)
   isPolynomial(u,setOfGeneralVariables)
   coefficientMonomial(u, generalVariable)
   coefficient(u, generalVariable, exponent (int))
-  degree
   leadingCoefficient(u,generalVariable)
   collectTerms(u, S) //--> polynomial form in S
   ALGEBRAIC_EXPAND // Should we apply on all subexpressions? --> NO agit uniquement sur +*^

@@ -39,4 +39,32 @@ EditionReference Polynomial::GetVariables(const Node expression) {
   return variables;
 }
 
+uint8_t Polynomial::Degree(const Node expression, const Node variables) {
+  if (Set::Includes(variables, expression)) {
+    return 1;
+  }
+  BlockType type = expression.type();
+  if (type == BlockType::Power) {
+    Node base = expression.nextNode();
+    Node exponant = base.nextTree();
+    if (Integer::IsUint8(exponant) && Set::Includes(variables, base)) {
+      return Integer::Uint8(exponant);
+    }
+  }
+  uint8_t degree = 0;
+  if (type == BlockType::Addition || type == BlockType::Multiplication) {
+    for (std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(expression)) {
+      Node child = std::get<Node>(indexedNode);
+      uint8_t childDegree = Degree(child, variables);
+      if (type == BlockType::Addition) {
+        degree = std::max(degree, childDegree);
+      } else {
+        degree += childDegree;
+      }
+    }
+  }
+  // TODO assert(!Number::IsZero(expression));
+  return degree;
+}
+
 }

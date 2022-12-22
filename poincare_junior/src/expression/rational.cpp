@@ -27,7 +27,7 @@ IntegerHandler Rational::Numerator(const Node node) {
       Block * block = node.block();
       uint8_t numberOfDigits = static_cast<uint8_t>(*(block->next()));
       const uint8_t * digits = reinterpret_cast<const uint8_t *>(block->nextNth(2));
-      return IntegerHandler(digits, numberOfDigits, type == BlockType::IntegerNegBig);
+      return IntegerHandler(digits, numberOfDigits, type == BlockType::IntegerNegBig ? NonStrictSign::Negative : NonStrictSign::Positive);
     }
     case BlockType::RationalShort:
     {
@@ -40,7 +40,7 @@ IntegerHandler Rational::Numerator(const Node node) {
       Block * block = node.block();
       uint8_t numberOfDigits = static_cast<uint8_t>(*(block->next()));
       const uint8_t * digits = reinterpret_cast<const uint8_t *>(block->nextNth(3));
-      return IntegerHandler(digits, numberOfDigits, type == BlockType::RationalNegBig);
+      return IntegerHandler(digits, numberOfDigits, type == BlockType::RationalNegBig ? NonStrictSign::Negative : NonStrictSign::Positive);
     }
     default:
       assert(false);
@@ -71,7 +71,7 @@ IntegerHandler Rational::Denominator(const Node node) {
       uint8_t numeratorNumberOfDigits = static_cast<uint8_t>(*(block->next()));
       uint8_t denominatorNumberOfDigits = static_cast<uint8_t>(*(block->nextNth(2)));
       const uint8_t * digits = reinterpret_cast<const uint8_t *>(block->nextNth(3 + numeratorNumberOfDigits));
-      return IntegerHandler(digits, denominatorNumberOfDigits, false);
+      return IntegerHandler(digits, denominatorNumberOfDigits, NonStrictSign::Positive);
     }
     default:
       assert(false);
@@ -90,7 +90,7 @@ EditionReference Rational::PushNode(IntegerHandler numerator, IntegerHandler den
     return EditionReference::Push<BlockType::RationalShort>(static_cast<int8_t>(numerator), static_cast<uint8_t>(denominator));
   }
   EditionPool * pool = EditionPool::sharedEditionPool();
-  TypeBlock typeBlock = numerator.sign() < 0 ? RationalNegBigBlock : RationalPosBigBlock;
+  TypeBlock typeBlock = numerator.sign() == StrictSign::Negative ? RationalNegBigBlock : RationalPosBigBlock;
   EditionReference reference = EditionReference(Node(pool->pushBlock(typeBlock)));
   uint8_t numberOfDigitsOfNumerator = numerator.numberOfDigits();
   uint8_t numberOfDigitsOfDenominator = numerator.numberOfDigits();
@@ -106,10 +106,10 @@ EditionReference Rational::PushNode(IntegerHandler numerator, IntegerHandler den
   return reference;
 }
 
-void Rational::SetSign(EditionReference reference, bool negative) {
+void Rational::SetSign(EditionReference reference, NonStrictSign sign) {
   IntegerHandler numerator = Numerator(reference.node());
   IntegerHandler denominator = Denominator(reference.node());
-  numerator.setSign(negative);
+  numerator.setSign(sign);
   reference.replaceNodeByNode(PushNode(numerator, denominator));
 }
 

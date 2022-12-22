@@ -73,9 +73,9 @@ EditionReference Algebraic::NormalFormator(EditionReference expression, bool num
   BlockType type = expression.type();
   if (type == BlockType::Power) {
     EditionReference exponent = expression.childAtIndex(1);
-    bool negativeRationalExponent = exponent.block()->isRational() && Rational::Sign(exponent.node()) < 0;
-    if (negativeRationalExponent) {
-      Rational::SetSign(exponent, false);
+    bool negativeRationalExponent = exponent.block()->isRational() && Rational::Sign(exponent.node()) == StrictSign::Negative;
+    if (!numerator && negativeRationalExponent) {
+      Rational::SetSign(exponent, NonStrictSign::Positive);
     }
     EditionReference result = numerator == negativeRationalExponent ? EditionReference(1_sn) : expression; // TODO: BasicReduction(expression)
     expression.replaceTreeByTree(result);

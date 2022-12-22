@@ -335,7 +335,7 @@ void LayoutField::setLayout(Poincare::Layout newLayout) {
   m_contentView.clearLayout();
   KDSize previousSize = minimalSizeForOptimalDisplay();
   const_cast<ExpressionView *>(m_contentView.expressionView())->setLayout(newLayout.makeEditable());
-  putCursorRightOfLayout();
+  putCursorOnOneSide(LayoutCursor::Position::Right);
   reload(previousSize);
 }
 
@@ -370,16 +370,10 @@ bool LayoutField::addXNTCodePoint(CodePoint defaultXNTCodePoint) {
   return true;
 }
 
-void LayoutField::putCursorRightOfLayout() {
+void LayoutField::putCursorOnOneSide(LayoutCursor::Position side) {
   m_contentView.cursor()->showEmptyLayoutIfNeeded();
   m_contentView.cursor()->layout().removeGraySquaresFromAllGridAncestors();
-  m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), LayoutCursor::Position::Right));
-}
-
-void LayoutField::putCursorLeftOfLayout() {
-  m_contentView.cursor()->showEmptyLayoutIfNeeded();
-  m_contentView.cursor()->layout().removeGraySquaresFromAllGridAncestors();
-  m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), LayoutCursor::Position::Left));
+  m_contentView.setCursor(LayoutCursor(m_contentView.expressionView()->layout(), side));
 }
 
 void LayoutField::reload(KDSize previousSize) {

@@ -30,7 +30,7 @@ public:
   /* AlternateEmptyViewDefaultDelegate */
   bool isEmpty() const override { return false; }  // View cannot be empty
   I18n::Message emptyMessage() override { assert(false); return static_cast<I18n::Message>(0); }
-  Escher::Responder * responderWhenEmpty() override { tabController()->selectTab(); return tabController(); }
+  Escher::Responder * responderWhenEmpty() override;
   /* TableViewDataSource */
   int numberOfRows() const override;
   int numberOfColumns() const override { return 2; }

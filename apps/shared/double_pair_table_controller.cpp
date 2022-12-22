@@ -16,6 +16,10 @@ DoublePairTableController::DoublePairTableController(Responder * parentResponder
   m_prefacedTwiceTableView.setMarginDelegate(this);
 }
 
+Responder * DoublePairTableController::responderWhenEmpty() {
+  tabController()->selectTab(); return tabController();
+}
+
 bool DoublePairTableController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
     selectableTableView()->deselectTable();

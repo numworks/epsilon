@@ -187,6 +187,11 @@ int ValuesController::typeAtLocation(int i, int j) {
   return (i > 0) + 2 * (j > 0);
 }
 
+Responder * ValuesController::responderWhenEmpty() {
+  tabController()->selectTab();
+  return tabController();
+}
+
 // EditableCellTableViewController
 
 int ValuesController::numberOfRowsAtColumn(int i) const {

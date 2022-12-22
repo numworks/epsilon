@@ -22,6 +22,11 @@ GraphTypeController::GraphTypeController(Escher::Responder * parentResponder,
   }
 }
 
+Escher::Responder * GraphTypeController::responderWhenEmpty() {
+  m_tabController->selectTab();
+  return m_tabController;
+}
+
 void GraphTypeController::didBecomeFirstResponder() {
   selectRow(GraphViewModel::IndexOfGraphView(m_graphViewModel->selectedGraphView()));
   m_selectableTableView.reloadData(true);

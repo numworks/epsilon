@@ -95,6 +95,12 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Poincare:
 
     // Post-processing of some corner case expressions
     if (exactOutputExpression.type() == ExpressionNode::Type::Store) {
+      /* When a input contains a store it is kept by the reduction in the
+       * exact output and the actual store is performed here. The global
+       * context will perform the store and ensure that no symbol is kept in
+       * the definition of a variable.
+       * Once this is done we replace the output with the stored expression
+       * and approximate it to mimic the behaviour of normal computations. */
       Store storeExpression = reinterpret_cast<Store &>(exactOutputExpression);
       Expression exactStoredExpression = storeExpression.childAtIndex(0);
       Expression approximateStoredExpression = PoincareHelpers::ApproximateKeepingUnits<double>(exactStoredExpression, context);
@@ -114,8 +120,9 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Poincare:
       approximateOutputExpression = Undefined::Builder();
     }
 
-    /* Push the outputs: exact output, approximate input, and approximate input
-     * with less digits. If one is too big for the store, push undef instead. */
+    /* Push the outputs: exact output, and approximate output with maximum
+     * number of significant digits and displayed number of digits.
+     * If one is too big for the store, push undef instead. */
     for (int i = 0; i < Calculation::k_numberOfExpressions - 1; i++) {
       Expression e = i == 0 ? exactOutputExpression : approximateOutputExpression;
       int digits = i == Calculation::k_numberOfExpressions - 2 ? m_inUsePreferences.numberOfSignificantDigits() : maxNumberOfDigits;
@@ -162,6 +169,8 @@ void CalculationStore::recomputeHeightsIfPreferencesHaveChanged(Poincare::Prefer
   }
   m_inUsePreferences = *preferences;
   for (int i = 0; i < numberOfCalculations(); i++) {
+    /* The void context is used since there is no reasons for the
+     * heightComputer to resolve symbols */
     SetCalculationHeights(calculationAtIndex(i).pointer(), heightComputer, nullptr);
   }
 }
@@ -200,6 +209,8 @@ ExpiringPointer<Calculation> CalculationStore::errorPushUndefined(HeightComputer
   assert(m_buffer < cursor && cursor <= m_buffer + m_bufferSize - sizeof(Calculation *));
   *(pointerArray() - 1) = cursor;
   Calculation * ptr = reinterpret_cast<Calculation *>(m_buffer);
+  /* The void context is used since there is no reasons for the
+   * heightComputer to resolve symbols */
   SetCalculationHeights(ptr, heightComputer, nullptr);
   m_numberOfCalculations = 1;
   return ExpiringPointer<Calculation>(ptr);

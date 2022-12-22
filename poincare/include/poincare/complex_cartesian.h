@@ -49,8 +49,8 @@ public:
   static ComplexCartesian Builder(Expression child0, Expression child1) { return TreeHandle::FixedArityBuilder<ComplexCartesian, ComplexCartesianNode>({child0, child1}); }
 
   // Getters
-  Expression real() { return childAtIndex(0); }
-  Expression imag() { return childAtIndex(1); }
+  Expression real() const { return childAtIndex(0); }
+  Expression imag() const { return childAtIndex(1); }
 
   // Simplification
   Expression shallowBeautify(const ExpressionNode::ReductionContext& reductionContext);

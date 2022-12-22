@@ -4,6 +4,7 @@
 #include <poincare/addition.h>
 #include <poincare/based_integer.h>
 #include <poincare/code_point_layout.h>
+#include <poincare/complex_cartesian.h>
 #include <poincare/constant.h>
 #include <poincare/decimal.h>
 #include <poincare/dependency.h>
@@ -668,7 +669,8 @@ bool Expression::hasComplexI(Context * context, ExpressionNode::SymbolicComputat
       [](const Expression e, Context * context) {
         return (e.type() == ExpressionNode::Type::ConstantMaths &&
                 static_cast<const Constant &>(e).isConstant("i")) ||
-               e.type() == ExpressionNode::Type::ComplexCartesian;
+               (e.type() == ExpressionNode::Type::ComplexCartesian &&
+                static_cast<const ComplexCartesian&>(e).imag().isNull(context) != TrinaryBoolean::True);
       },
       context, replaceSymbols);
 }

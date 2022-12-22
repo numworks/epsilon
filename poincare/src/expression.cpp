@@ -264,6 +264,31 @@ bool Expression::IsDiscontinuous(const Expression e, Context * context) {
           }, context));
 }
 
+bool Expression::DeepIsSymbolic(const Expression e, Context * context, ExpressionNode::SymbolicComputation replaceSymbols) {
+  return e.recursivelyMatches(
+    [] (const Expression e, Context * context, void * auxiliary) {
+      if (e.isParameteredExpression()) {
+        // Do not check IsSymbolic for parametered child.
+        bool n = e.numberOfChildren();
+        ExpressionNode::SymbolicComputation * replaceSymbols = reinterpret_cast<ExpressionNode::SymbolicComputation *>(auxiliary);
+        for (int i = 0; i < n; i++) {
+          if (i == ParameteredExpression::ParameteredChildIndex() || i == ParameteredExpression::ParameterChildIndex()) {
+            continue;
+          }
+          if (DeepIsSymbolic(e.childAtIndex(i), context, *replaceSymbols)) {
+            return TrinaryBoolean::True;
+          }
+        }
+        return TrinaryBoolean::False;
+      }
+      return IsSymbolic(e, context) ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
+    },
+    context,
+    replaceSymbols,
+    reinterpret_cast<void *>(&replaceSymbols)
+  );
+}
+
 bool Expression::IsSymbolic(const Expression e, Context * context) {
   return e.isOfType({ ExpressionNode::Type::Symbol, ExpressionNode::Type::Function, ExpressionNode::Type::Sequence });
 }

@@ -768,3 +768,15 @@ QUIZ_CASE(poincare_expression_is_linear_combination_of_pattern) {
   assert_is_linear_pattern_of_sin_or_cos("1-cos(3x+2)/5", true, -0.2, 3.0, 2.0);
   assert_is_linear_pattern_of_sin_or_cos("sin(x)", true, 1.0, 1.0, -1.0*M_PI_2);
 }
+
+void assert_deep_is_symbolic(const char * expression, bool isSymbolic) {
+  Shared::GlobalContext context;
+  Expression e = parse_expression(expression, &context, false);
+  e = e.cloneAndReduce(ExpressionNode::ReductionContext::DefaultReductionContextForAnalysis(&context));
+  quiz_assert_print_if_failure(Expression::DeepIsSymbolic(e, &context, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol) == isSymbolic, expression);
+}
+
+QUIZ_CASE(poincare_expression_deep_is_symbolic) {
+  assert_deep_is_symbolic("2/cos(3x+2)", true);
+  assert_deep_is_symbolic("2/int(5x, x, 3, 4)", false);
+}

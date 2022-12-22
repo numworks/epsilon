@@ -250,7 +250,7 @@ Expression Symbol::deepReplaceReplaceableSymbols(Context * context, TrinaryBoole
   /* If symbols outside of parametered expressions can depend on each other,
    * then circularity should be checked like in Function::involvesCircularity.
    */
-  assert(!e.recursivelyMatches(IsSymbolic, nullptr, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol));
+  assert(!DeepIsSymbolic(e, nullptr, ExpressionNode::SymbolicComputation::DoNotReplaceAnySymbol));
 
   replaceWithInPlace(e);
   /* Reset parameteredAncestorsCount, because outer local context is ignored

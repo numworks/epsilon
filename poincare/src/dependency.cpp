@@ -80,9 +80,12 @@ Expression Dependency::shallowReduce(ExpressionNode::ReductionContext reductionC
   while (i < totalNumberOfDependencies) {
     Expression e = dependencies.childAtIndex(i);
     Expression approximation = e.approximate<float>(reductionContext.context(), reductionContext.complexFormat(), reductionContext.angleUnit(), true);
+    /* WARNING: approximation could be undefined while it is not
+     * because of float approximation being less reliable than
+     * double. */
     if (approximation.isUndefined()) {
       ExpressionNode::SymbolicComputation symbolicComputation = reductionContext.symbolicComputation();
-      if (e.recursivelyMatches(IsSymbolic, reductionContext.context(), symbolicComputation)) {
+      if (DeepIsSymbolic(e, reductionContext.context(), symbolicComputation)) {
         /* We can't decide now that the main expression is undefined because its
          * depencencies are. Indeed, the dependency might involve unresolved
          * symbol/function/sequence (especially sequences that are not

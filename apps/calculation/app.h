@@ -48,7 +48,6 @@ private:
   App(Snapshot * snapshot);
   HistoryController m_historyController;
   void didBecomeActive(Escher::Window * window) override;
-  void willBecomeInactive() override;
   EditExpressionController m_editExpressionController;
 };
 

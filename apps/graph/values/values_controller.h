@@ -80,7 +80,7 @@ private:
   Ion::Storage::Record recordAtColumn(int i) override;
   void updateNumberOfColumns() const override;
   Poincare::Layout * memoizedLayoutAtIndex(int i) override;
-  Poincare::Layout functionTitleLayout(int columnIndex) override;
+  Poincare::Layout functionTitleLayout(int columnIndex, bool forceShortVersion = false) override;
   int numberOfAbscissaColumnsBeforeAbsoluteColumn(int column) const override;
   int numberOfAbscissaColumnsBeforeValuesColumn(int column) const override;
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override;
@@ -104,7 +104,6 @@ private:
   bool exactValuesButtonAction();
   void activateExactValues(bool activate);
   Ion::Storage::Record recordAtColumn(int i, bool * isDerivative);
-  Poincare::Layout functionTitleLayout(int columnIndex, bool * isDerivative, bool * hasName);
   Shared::ExpiringPointer<Shared::ContinuousFunction> functionAtIndex(int column, int row, double * abscissa, bool * isDerivative);
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   int numberOfColumnsForSymbolType(int symbolTypeIndex) const;

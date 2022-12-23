@@ -19,6 +19,7 @@
 #include "poincare_helpers.h"
 #include <algorithm>
 #include "global_context.h"
+#include <poincare/string_layout.h>
 
 using namespace Poincare;
 
@@ -102,6 +103,16 @@ int ContinuousFunction::printValue(double cursorT, double cursorX, double cursor
     return PoincareHelpers::ConvertFloatToText<double>(evaluate2DAtParameter(cursorT, context).x2(), buffer, bufferSize, precision);
   }
   return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer, bufferSize, precision);
+}
+
+Poincare::Layout ContinuousFunction::titleLayout(Poincare::Context * context, bool shortVersion) {
+  if (shortVersion) {
+    constexpr size_t bufferNameSize = k_maxNameWithArgumentSize + 1;
+    char buffer[bufferNameSize];
+    nameWithArgument(buffer, bufferNameSize);
+    return StringLayout::Builder(buffer);
+  }
+  return PoincareHelpers::CreateLayout(originalEquation(), context);
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(const char * c, Context * context) {
@@ -220,6 +231,13 @@ double ContinuousFunction::approximateDerivative(double x, Context * context, in
   assert(subCurveIndex == 0);
   Preferences preferences = Preferences::ClonePreferencesWithNewComplexFormat(complexFormat(context));
   return PoincareHelpers::ApproximateWithValueForSymbol(derivate, k_unknownName, x, context, &preferences, false);
+}
+
+Poincare::Layout ContinuousFunction::derivativeTitleLayout() {
+  constexpr size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
+  char buffer[bufferNameSize];
+  derivativeNameWithArgument(buffer, bufferNameSize);
+  return StringLayout::Builder(buffer);
 }
 
 void ContinuousFunction::setTMin(float tMin) {

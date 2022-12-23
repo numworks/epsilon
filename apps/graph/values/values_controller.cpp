@@ -223,17 +223,12 @@ KDCoordinate ValuesController::nonMemoizedRowHeight(int j) {
 
 int ValuesController::fillColumnName(int columnIndex, char * buffer) {
   if (typeAtLocation(columnIndex, 0) == k_functionTitleCellType) {
-    bool isDerivative, hasName;
-    Layout functionTitle = functionTitleLayout(columnIndex, &isDerivative, &hasName);
+    Layout functionTitle = functionTitleLayout(columnIndex, true);
     constexpr size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
-    if (isDerivative || hasName) {
-      int size = functionTitle.serializeForParsing(buffer, bufferNameSize);
-      // Serialization may have introduced system parentheses.
-      SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(buffer, bufferNameSize - 1);
-      return size;
-    } else {
-      return strlcpy(buffer, "y", bufferNameSize);
-    }
+    int size = functionTitle.serializeForParsing(buffer, bufferNameSize);
+    // Serialization may have introduced system parentheses.
+    SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(buffer, bufferNameSize - 1);
+    return size;
   }
   return Shared::ValuesController::fillColumnName(columnIndex, buffer);
 }
@@ -288,26 +283,15 @@ Poincare::Layout * ValuesController::memoizedLayoutAtIndex(int i) {
   return &m_memoizedLayouts[i];
 }
 
-Layout ValuesController::functionTitleLayout(int columnIndex, bool * isDerivative, bool * hasName) {
+Layout ValuesController::functionTitleLayout(int columnIndex, bool forceShortVersion) {
   assert(typeAtLocation(columnIndex, 0) == k_functionTitleCellType);
-  constexpr size_t bufferNameSize = ContinuousFunction::k_maxNameWithArgumentSize + 1;
-  char buffer[bufferNameSize];
-  *isDerivative = false;
-  Ion::Storage::Record record = recordAtColumn(columnIndex, isDerivative);
+  bool isDerivative = false;
+  Ion::Storage::Record record = recordAtColumn(columnIndex, &isDerivative);
   Shared::ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
-  *hasName = function->isNamed();
-  if (*isDerivative) {
-    // derivativeNameWithArgument is of the form "f'(x)" for named functions and "y'" for unamed functions
-    function->derivativeNameWithArgument(buffer, bufferNameSize);
-    return StringLayout::Builder(buffer);
+  if (isDerivative) {
+    return function->derivativeTitleLayout();
   }
-  if (*hasName) {
-    // nameWithArgument is of the form "f(x)" for named functions and "y" for unamed functions
-    function->nameWithArgument(buffer, bufferNameSize);
-    return StringLayout::Builder(buffer);
-  }
-  // For unamed functions we don't want to display the name ("y") but the full equation
-  return PoincareHelpers::CreateLayout(function->originalEquation(), textFieldDelegateApp()->localContext());
+  return function->titleLayout(textFieldDelegateApp()->localContext(), forceShortVersion || function->isNamed());
 }
 
 int ValuesController::numberOfAbscissaColumnsBeforeAbsoluteColumn(int column) const {
@@ -472,11 +456,6 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i, bool * isDerivative
   }
   assert(false);
   return nullptr;
-}
-
-Layout ValuesController::functionTitleLayout(int columnIndex) {
-  bool isDerivative, hasName;
-  return functionTitleLayout(columnIndex, &isDerivative, &hasName);
 }
 
 Shared::ExpiringPointer<ContinuousFunction> ValuesController::functionAtIndex(int column, int row, double * abscissa, bool * isDerivative) {

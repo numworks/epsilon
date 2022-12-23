@@ -51,6 +51,8 @@ public:
   // If the ContinuousFunction has y for unknown symbol
   bool isAlongY() const override { return properties().isAlongY(); }
 
+  Poincare::Layout titleLayout(Poincare::Context * context, bool shortVersion);
+
   /* ExpressionModelHandle */
 
   Ion::Storage::Record::ErrorStatus setContent(const char * c, Poincare::Context * context) override;
@@ -111,6 +113,7 @@ public:
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
   // Approximate derivative at x, on given sub curve if there is one
   double approximateDerivative(double x, Poincare::Context * context, int subCurveIndex = 0) const;
+  Poincare::Layout derivativeTitleLayout();
 
   /* tMin, tMax and tAuto */
 

@@ -22,7 +22,7 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDCont
 
   // - Draw angle arc and label
   float angle = m_model->angle();
-  assert(0 <= angle && angle < 2 * M_PI);
+  assert(0 <= angle && angle < 2 * M_PI + Float<float>::EpsilonLax());
   constexpr float k_arcRatio = 0.2;
   constexpr float k_labelRatio = 0.32;
   bool labelOnLine = std::fabs(angle) < M_PI / 30.f || std::fabs(M_PI - angle) < M_PI / 30.f;

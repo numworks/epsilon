@@ -52,7 +52,7 @@ Poincare::Layout * ValuesController::memoizedLayoutAtIndex(int i) {
   return &m_memoizedLayouts[i];
 }
 
-Poincare::Layout ValuesController::functionTitleLayout(int columnIndex) {
+Poincare::Layout ValuesController::functionTitleLayout(int columnIndex, bool forceShortVersion) {
   Shared::Sequence * sequence = functionStore()->modelForRecord(recordAtColumn(columnIndex));
   return sequence->nameLayout();
 }

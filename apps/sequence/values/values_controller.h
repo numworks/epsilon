@@ -41,7 +41,7 @@ private:
   // Shared::ValuesController
   Shared::SequenceStore * functionStore() const override { return static_cast<Shared::SequenceStore *>(Shared::ValuesController::functionStore()); }
   Poincare::Layout * memoizedLayoutAtIndex(int i) override;
-  Poincare::Layout functionTitleLayout(int columnIndex) override;
+  Poincare::Layout functionTitleLayout(int columnIndex, bool forceShortVersion = false) override;
   void setStartEndMessages(Shared::IntervalParameterController * controller, int column) override { setDefaultStartEndMessages(); }
   void createMemoizedLayout(int i, int j, int index) override;
   Shared::Interval * intervalAtColumn(int columnIndex) override;

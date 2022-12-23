@@ -102,7 +102,7 @@ protected:
   Escher::SelectableViewController * columnParameterController() override;
   Shared::ColumnParameters * columnParameters() override;
 
-  virtual Poincare::Layout functionTitleLayout(int columnIndex) = 0;
+  virtual Poincare::Layout functionTitleLayout(int columnIndex, bool forceShortVersion = false) = 0;
   int fillColumnName(int columnIndex, char * buffer) override;
   void setTitleCellText(Escher::HighlightCell * titleCell, int columnIndex) override;
   void setTitleCellStyle(Escher::HighlightCell * titleCell, int columnIndex) override;

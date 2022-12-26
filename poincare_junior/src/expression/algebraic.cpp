@@ -12,9 +12,9 @@ namespace Poincare {
 EditionReference Algebraic::Rationalize(EditionReference expression) {
   if (expression.block()->isRational()) {
     EditionReference fraction = EditionReference::Push<BlockType::Multiplication>(2);
-    Integer::PushNode(Rational::Numerator(expression.node()));
+    Integer::PushNode(Rational::Numerator(expression));
     EditionReference::Push<BlockType::Power>();
-    Integer::PushNode(Rational::Denominator(expression.node()));
+    Integer::PushNode(Rational::Denominator(expression));
     EditionReference::Push<BlockType::MinusOne>();
     return fraction;
   }
@@ -43,7 +43,7 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
   for (std::pair<EditionReference, int> indexedNode : NodeIterator::Children<Forward, Editable>(expression)) {
     EditionReference child = std::get<EditionReference>(indexedNode);
     child = Rationalize(child);
-    EditionReference denominator = Denominator(EditionReference::Clone(child.node()));
+    EditionReference denominator = Denominator(EditionReference::Clone(child));
     NAry::AddChild(commonDenominator, denominator); // FIXME: do we need LCM?
   }
   // basic reduction commonDenominator
@@ -58,7 +58,7 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
     // Create Mult(child, commonDenominator) = a*b * b*d
     EditionReference multiplication = EditionReference::Push<BlockType::Multiplication>(1);
     child.insertNodeBeforeNode(multiplication);
-    child.nextTree().insertTreeBeforeNode(EditionReference::Clone(commonDenominator.node()));
+    child.nextTree().insertTreeBeforeNode(EditionReference::Clone(commonDenominator));
     // TODO basicReduction of child
   }
   // Create Mult(expression, Pow)
@@ -75,14 +75,14 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
 
 EditionReference Algebraic::NormalFormator(EditionReference expression, bool numerator) {
   if (expression.block()->isRational()) {
-    IntegerHandler ator = numerator ? Rational::Numerator(expression.node()) : Rational::Denominator(expression.node());
+    IntegerHandler ator = numerator ? Rational::Numerator(expression) : Rational::Denominator(expression);
     expression.replaceNodeByNode(Integer::PushNode(ator));
     return expression;
   }
   BlockType type = expression.type();
   if (type == BlockType::Power) {
     EditionReference exponent = expression.childAtIndex(1);
-    bool negativeRationalExponent = exponent.block()->isRational() && Rational::Sign(exponent.node()) == StrictSign::Negative;
+    bool negativeRationalExponent = exponent.block()->isRational() && Rational::Sign(exponent) == StrictSign::Negative;
     if (!numerator && negativeRationalExponent) {
       Rational::SetSign(exponent, NonStrictSign::Positive);
     }

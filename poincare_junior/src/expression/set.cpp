@@ -21,7 +21,7 @@ EditionReference Set::Add(EditionReference set, Node expression) {
   EditionReference child = set;
   for (auto [ref, index] : NodeIterator::Children<Forward, Editable>(set)) {
     child = ref;
-    int comparison = Comparison::Compare(ref.node(), expression);
+    int comparison = Comparison::Compare(ref, expression);
     if (comparison == 0) {
       return set;
     } else if (comparison > 0) {
@@ -29,7 +29,7 @@ EditionReference Set::Add(EditionReference set, Node expression) {
       break;
     }
   }
-  if (child == set || Comparison::Compare(child.node(), expression) < 0) {
+  if (child == set || Comparison::Compare(child, expression) < 0) {
     // Empty set or all elements are < expression
     child.nextTree().insertTreeBeforeNode(expression);
   }
@@ -57,7 +57,7 @@ static EditionReference MergeSets(EditionReference set0, EditionReference set1, 
     set0.nextTree().insertTreeBeforeNode(set1);
   }
   while (numberOfChildren0ToScan > 0 && numberOfChildren1ToScan > 0) {
-    int comparison = Comparison::Compare(currentChild0.node(), currentChild1.node());
+    int comparison = Comparison::Compare(currentChild0, currentChild1);
     if (comparison < 0) { // Increment child of set 0
       EditionReference nextChild0 = currentChild0.nextTree();
       if (removeChildrenOnlyInSet0) {

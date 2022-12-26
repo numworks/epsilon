@@ -14,13 +14,13 @@ void NAry::AddChildAtIndex(EditionReference nary, EditionReference child, int in
 
 void NAry::SetNumberOfChildren(EditionReference reference, size_t numberOfChildren) {
   assert(numberOfChildren < UINT8_MAX);
-  if (reference.node().nodeSize() > 1) {
+  if (static_cast<Node>(reference).nodeSize() > 1) {
     /* Increment the tail numberOfChildren block first because the nodeSize
      * computation might be altered by the head numberOfChildren Block. */
-    Block * numberOfChildrenBlock = reference.node().nextNode().block()->previousNth(2);
+    Block * numberOfChildrenBlock = reference.nextNode().block()->previousNth(2);
     *numberOfChildrenBlock = numberOfChildren;
   }
-  Block * numberOfChildrenBlock = reference.node().block()->next();
+  Block * numberOfChildrenBlock = reference.block()->next();
   *numberOfChildrenBlock = numberOfChildren;
 
 }

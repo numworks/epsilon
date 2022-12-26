@@ -154,7 +154,7 @@ public:
 
     template<size_t N>
     std::array<Node, N> convertFromArrayType(ArrayType<N> array, int offset = 0) const {
-      return Array::MapAction<NodeType, Node, N>(array, &offset, [](NodeType reference, void * offset) { return Node(reference.node().block() + *static_cast<int *>(offset)); });
+      return Array::MapAction<NodeType, Node, N>(array, &offset, [](NodeType reference, void * offset) { return Node(reference.block() + *static_cast<int *>(offset)); });
     }
     template<size_t N>
     ArrayType<N> convertToArrayType(std::array<Node, N> array, int offset = 0) const {

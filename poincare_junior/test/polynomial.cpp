@@ -6,9 +6,9 @@ using namespace Poincare;
 
 void assert_polynomial_is_parsed(const Node node, const Node expectedVariables, const Node expectedPolynomial) {
   EditionReference variables = PolynomialParser::GetVariables(node);
-  assert_trees_are_equal(variables.node(), expectedVariables);
+  assert_trees_are_equal(variables, expectedVariables);
   EditionReference ref(node);
-  EditionReference polynomial = PolynomialParser::RecursivelyParse(ref, variables.node());
+  EditionReference polynomial = PolynomialParser::RecursivelyParse(ref, variables);
   assert_trees_are_equal(polynomial, expectedPolynomial);
 }
 

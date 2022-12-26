@@ -58,13 +58,13 @@ void testEditionReference() {
   reference0 = EditionReference(k_expression0);
   assert(!reference0.isUninitialized());
   assert(reference0 != reference1);
-  reference1 = EditionReference(reference0.node());
+  reference1 = EditionReference(reference0);
   assert(reference0 == reference1);
   reference1 = EditionReference(k_expression1);
   assert(reference0 != reference1);
 
   // Constructors
-  EditionReference::Clone(reference0.node());
+  EditionReference::Clone(reference0);
   EditionReference reference3 = EditionReference::Push<BlockType::IntegerShort>(8);
   assert_pool_contains(editionPool, {k_expression0, k_expression1, k_expression0, 8_n});
 

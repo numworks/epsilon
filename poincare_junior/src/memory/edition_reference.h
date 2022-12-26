@@ -21,29 +21,29 @@ public:
   static EditionReference Clone(const Node node);
 
   /* Comparison */
-  inline bool operator==(const EditionReference & t) const { return m_identifier == t.identifier() || (!isUninitialized() && !t.isUninitialized() && node() == t.node()); }
-  inline bool operator!=(const EditionReference & t) const { return m_identifier != t.identifier() && (isUninitialized() || t.isUninitialized() || node() != t.node()); }
+  inline bool operator==(const EditionReference & t) const { return m_identifier == t.identifier() || (!isUninitialized() && !t.isUninitialized() && static_cast<Node>(*this) == static_cast<Node>(t)); }
+  inline bool operator!=(const EditionReference & t) const { return m_identifier != t.identifier() && (isUninitialized() || t.isUninitialized() || static_cast<Node>(*this) != static_cast<Node>(t)); }
 
   bool isUninitialized() const { return m_identifier == EditionPool::ReferenceTable::NoNodeIdentifier; }
-  Node node() const;
-  TypeBlock * block() { return node().block(); }
-  BlockType type() const { return node().type(); }
+  operator const Node() const;
+  TypeBlock * block() { return static_cast<Node>(*this).block(); }
+  BlockType type() const { return static_cast<Node>(*this).type(); }
 
   uint16_t identifier() const { return m_identifier; }
 
   /* Hierarchy */
-  EditionReference nextNode() { return EditionReference(node().nextNode()); }
-  EditionReference nextTree() { return EditionReference(node().nextTree()); }
-  EditionReference previousNode() { return EditionReference(node().previousNode()); }
-  EditionReference previousTree() { return EditionReference(node().previousTree()); }
-  bool hasChild(EditionReference t) const { return node().hasChild(t.node()); }
-  bool hasSibling(EditionReference t) const { return node().hasSibling(t.node()); }
-  bool hasAncestor(EditionReference t, bool includeSelf) const { return node().hasAncestor(t.node(), includeSelf); }
-  int numberOfChildren() const { return node().numberOfChildren(); }
-  int indexOfChild(EditionReference t) const { return node().indexOfChild(t.node()); }
-  EditionReference parent() const { return node().parent(); }
-  EditionReference childAtIndex(int i) const { return EditionReference(node().childAtIndex(i)); }
-  int numberOfDescendants(bool includeSelf) const { return node().numberOfDescendants(includeSelf); }
+  EditionReference nextNode() { return EditionReference(static_cast<Node>(*this).nextNode()); }
+  EditionReference nextTree() { return EditionReference(static_cast<Node>(*this).nextTree()); }
+  EditionReference previousNode() { return EditionReference(static_cast<Node>(*this).previousNode()); }
+  EditionReference previousTree() { return EditionReference(static_cast<Node>(*this).previousTree()); }
+  bool hasChild(EditionReference t) const { return static_cast<Node>(*this).hasChild(t); }
+  bool hasSibling(EditionReference t) const { return static_cast<Node>(*this).hasSibling(t); }
+  bool hasAncestor(EditionReference t, bool includeSelf) const { return static_cast<Node>(*this).hasAncestor(t, includeSelf); }
+  int numberOfChildren() const { return static_cast<Node>(*this).numberOfChildren(); }
+  int indexOfChild(EditionReference t) const { return static_cast<Node>(*this).indexOfChild(t); }
+  EditionReference parent() const { return static_cast<Node>(*this).parent(); }
+  EditionReference childAtIndex(int i) const { return EditionReference(static_cast<Node>(*this).childAtIndex(i)); }
+  int numberOfDescendants(bool includeSelf) const { return static_cast<Node>(*this).numberOfDescendants(includeSelf); }
 
   /* Edition operations on Node */
   void insertNodeAfterNode(Node nodeToInsert) { insert(nodeToInsert, false, false); }
@@ -60,14 +60,14 @@ public:
   void detachTree() { detach(true); }
 
   // Edition operations on EditionReference
-  void insertNodeAfterNode(EditionReference nodeToInsert) { insertNodeAfterNode(nodeToInsert.node()); }
-  void insertTreeAfterNode(EditionReference treeToInsert) { insertTreeAfterNode(treeToInsert.node()); }
-  void insertNodeBeforeNode(EditionReference nodeToInsert) { insertNodeBeforeNode(nodeToInsert.node()); }
-  void insertTreeBeforeNode(EditionReference treeToInsert) { insertTreeBeforeNode(treeToInsert.node()); }
-  void replaceNodeByNode(EditionReference t) { replaceNodeByNode(t.node()); }
-  void replaceNodeByTree(EditionReference t) { replaceNodeByTree(t.node()); }
-  void replaceTreeByNode(EditionReference t) { replaceTreeByNode(t.node()); }
-  void replaceTreeByTree(EditionReference t) { replaceTreeByTree(t.node()); }
+  void insertNodeAfterNode(EditionReference nodeToInsert) { insertNodeAfterNode(static_cast<Node>(nodeToInsert)); }
+  void insertTreeAfterNode(EditionReference treeToInsert) { insertTreeAfterNode(static_cast<Node>(treeToInsert)); }
+  void insertNodeBeforeNode(EditionReference nodeToInsert) { insertNodeBeforeNode(static_cast<Node>(nodeToInsert)); }
+  void insertTreeBeforeNode(EditionReference treeToInsert) { insertTreeBeforeNode(static_cast<Node>(treeToInsert)); }
+  void replaceNodeByNode(EditionReference t) { replaceNodeByNode(static_cast<Node>(t)); }
+  void replaceNodeByTree(EditionReference t) { replaceNodeByTree(static_cast<Node>(t)); }
+  void replaceTreeByNode(EditionReference t) { replaceTreeByNode(static_cast<Node>(t)); }
+  void replaceTreeByTree(EditionReference t) { replaceTreeByTree(static_cast<Node>(t)); }
 
   typedef void (*InPlaceTreeFunction)(EditionReference reference);
   void recursivelyEdit(InPlaceTreeFunction treeFunction);

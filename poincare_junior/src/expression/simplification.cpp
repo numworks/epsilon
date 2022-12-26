@@ -35,21 +35,21 @@ EditionReference Simplification::DistributeMultiplicationOverAddition(EditionRef
   for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(reference)) {
     if (std::get<EditionReference>(indexedRef).type() == BlockType::Addition) {
       // Create new addition that will be filled in the following loop
-      EditionReference add = EditionReference(EditionReference::Push<BlockType::Addition>(std::get<EditionReference>(indexedRef).node().numberOfChildren()));
+      EditionReference add = EditionReference(EditionReference::Push<BlockType::Addition>(std::get<EditionReference>(indexedRef).numberOfChildren()));
       for (std::pair<EditionReference, int> indexedAdditionChild : NodeIterator::Children<Forward, Editable>(std::get<EditionReference>(indexedRef))) {
         // Copy a multiplication
-        EditionReference multCopy = EditionReference::Clone(reference.node());
+        EditionReference multCopy = EditionReference::Clone(reference);
         // Find the addition to be replaced
-        EditionReference additionCopy = EditionReference(multCopy.node().childAtIndex(std::get<int>(indexedRef)));
+        EditionReference additionCopy = EditionReference(multCopy.childAtIndex(std::get<int>(indexedRef)));
         // Find addition child to replace with
         EditionReference additionChildCopy = EditionReference(additionCopy.childAtIndex(std::get<int>(indexedAdditionChild)));
         // Replace addition per its child
         additionCopy.replaceTreeByTree(additionChildCopy);
         assert(multCopy.type() == BlockType::Multiplication);
-        DistributeMultiplicationOverAddition(multCopy.node());
+        DistributeMultiplicationOverAddition(multCopy);
       }
       reference.replaceTreeByTree(add);
-      return add.node();
+      return add;
     }
   }
   return reference;
@@ -60,7 +60,7 @@ void Simplification::ProjectionReduction(EditionReference division, EditionRefer
   // Create empty * (or +)
   EditionReference multiplication(PushProjectedEExpression());
   // Get references to children
-  assert(division.node().numberOfChildren() == 2);
+  assert(division.numberOfChildren() == 2);
   EditionReference childrenReferences[2];
   for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(division)) {
     childrenReferences[std::get<int>(indexedRef)] = std::get<EditionReference>(indexedRef);

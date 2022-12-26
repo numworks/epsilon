@@ -101,24 +101,24 @@ void testConstexprTreeConstructor() {
 }
 
 void testEditionNodeConstructor() {
-  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerPosBig>(1232424242).node(), {TypeBlock(BlockType::IntegerPosBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerPosBig)});
-  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(1232424242).node(), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
-  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(-1232424242).node(), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
+  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerPosBig>(1232424242), {TypeBlock(BlockType::IntegerPosBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerPosBig)});
+  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(1232424242), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
+  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(-1232424242), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
 }
 
 void testNodeIterator() {
   constexpr Tree k_simpleExpression = Mult(Add(1_sn, 2_sn), 3_n, 4_n);
   EditionReference mult(k_simpleExpression);
-  size_t numberOfChildren = mult.node().numberOfChildren();
+  size_t numberOfChildren = mult.numberOfChildren();
   Node children[] = {Add(1_sn, 2_sn), 3_n, 4_n};
 
   // Scan children forward
-  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult.node())) {
+  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult)) {
     assert_trees_are_equal(std::get<Node>(indexedNode), children[std::get<int>(indexedNode)]);
   }
 
   // Scan children backward
-  for (const std::pair<Node, int>indexedNode : NodeIterator::Children<Backward, NoEditable>(mult.node())) {
+  for (const std::pair<Node, int>indexedNode : NodeIterator::Children<Backward, NoEditable>(mult)) {
     assert_trees_are_equal(std::get<Node>(indexedNode), children[numberOfChildren - 1 - std::get<int>(indexedNode)]);
   }
 
@@ -128,7 +128,7 @@ void testNodeIterator() {
     std::get<EditionReference>(indexedRef).replaceTreeByTree(newChildren[std::get<int>(indexedRef)]);
   }
   // Check edition
-  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult.node())) {
+  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult)) {
     assert_trees_are_equal(std::get<Node>(indexedNode), newChildren[std::get<int>(indexedNode)]);
   }
 
@@ -137,16 +137,16 @@ void testNodeIterator() {
     std::get<EditionReference>(indexedRef).replaceTreeByTree(newChildren[std::get<int>(indexedRef)]);
   }
   // Check edition
-  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult.node())) {
+  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult)) {
     assert_trees_are_equal(std::get<Node>(indexedNode), newChildren[numberOfChildren - 1 - std::get<int>(indexedNode)]);
   }
 
   constexpr Tree k_secondSimpleExpression = Mult(Add(1_sn, 2_sn), 3_n);
   EditionReference mult2(k_secondSimpleExpression);
-  size_t numberOfChildren2 = mult2.node().numberOfChildren();
+  size_t numberOfChildren2 = mult2.numberOfChildren();
   Node children2[] = {Add(1_sn, 2_sn), 3_n};
   // Scan two nodes children forward
-  for (std::pair<std::array<Node, 2>, int> indexedArray : MultipleNodesIterator::Children<Forward, NoEditable, 2>(std::array<Node, 2>({mult.node(), mult2.node()}))) {
+  for (std::pair<std::array<Node, 2>, int> indexedArray : MultipleNodesIterator::Children<Forward, NoEditable, 2>(std::array<Node, 2>({mult, mult2}))) {
     std::array<Node, 2> childrenPair = std::get<0>(indexedArray);
     int pairIndex = std::get<int>(indexedArray);
     assert_trees_are_equal(childrenPair[0], newChildren[numberOfChildren - 1 - pairIndex]);
@@ -154,7 +154,7 @@ void testNodeIterator() {
   }
 
   // Scan two nodes children backward
-  for (std::pair<std::array<Node, 2>, int> indexedArray : MultipleNodesIterator::Children<Backward, NoEditable, 2>(std::array<Node, 2>({mult.node(), mult2.node()}))) {
+  for (std::pair<std::array<Node, 2>, int> indexedArray : MultipleNodesIterator::Children<Backward, NoEditable, 2>(std::array<Node, 2>({mult, mult2}))) {
     std::array<Node, 2> childrenPair = std::get<0>(indexedArray);
     int pairIndex = std::get<int>(indexedArray);
     assert_trees_are_equal(childrenPair[0], newChildren[pairIndex]);
@@ -172,10 +172,10 @@ void testNodeIterator() {
   }
   // Check edition
   Node children1[] = {10_n, 11_n, 6_n};
-  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult.node())) {
+  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult)) {
     assert_trees_are_equal(std::get<Node>(indexedNode), children1[std::get<int>(indexedNode)]);
   }
-  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult2.node())) {
+  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult2)) {
     assert_trees_are_equal(std::get<Node>(indexedNode), newChildren2[std::get<int>(indexedNode)]);
   }
 
@@ -188,10 +188,10 @@ void testNodeIterator() {
   }
   // Check edition
   Node editedChildren1[] = {10_n, 11_n, 10_n};
-  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult.node())) {
+  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult)) {
     assert_trees_are_equal(std::get<Node>(indexedNode), editedChildren1[std::get<int>(indexedNode)]);
   }
-  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult2.node())) {
+  for (const std::pair<Node, int> indexedNode : NodeIterator::Children<Forward, NoEditable>(mult2)) {
     assert_trees_are_equal(std::get<Node>(indexedNode), newChildren2[numberOfChildren2 - 1 - std::get<int>(indexedNode)]);
   }
 }
@@ -202,7 +202,7 @@ void testNode() {
 
   // operator==
   Node node0 = 42_n;
-  Node node1 = EditionReference::Push<BlockType::IntegerShort>(42).node();
+  Node node1 = EditionReference::Push<BlockType::IntegerShort>(42);
   assert(node0 != node1 && *node0.block() == *node1.block());
   Node node2(editionPool->firstBlock());
   assert(node2 == node1);
@@ -210,8 +210,8 @@ void testNode() {
   // Node navigation
   constexpr Tree e1 = Mult(Add(1_sn, 2_sn), 3_n, 4_n);
   constexpr Tree e2 = Pow(5_n, 6_n);
-  Node n1 = EditionReference(e1).node();
-  Node n2 = EditionReference(e2).node();
+  Node n1 = EditionReference(e1);
+  Node n2 = EditionReference(e2);
   assert(n1.treeSize() == 14); // TODO: Magic Number
   assert_trees_are_equal(n1.nextNode(), Add(1_sn, 2_sn));
   assert_trees_are_equal(n1.nextTree(), e2);
@@ -232,9 +232,9 @@ void testNode() {
 }
 
 void testNodeSize() {
-  Node node = EditionReference::Push<BlockType::IntegerPosBig>(0x00FF0000).node();
+  Node node = EditionReference::Push<BlockType::IntegerPosBig>(0x00FF0000);
   assert(node.nodeSize() == 7);
-  node = EditionReference::Push<BlockType::IntegerNegBig>(0x0000FF00).node();
+  node = static_cast<Node>(EditionReference::Push<BlockType::IntegerNegBig>(0x0000FF00));
   assert(node.nodeSize() == 6);
 }
 

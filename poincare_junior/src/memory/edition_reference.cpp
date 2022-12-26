@@ -17,7 +17,7 @@ EditionReference::EditionReference(Node node) {
 #if POINCARE_MEMORY_TREE_LOG
 void EditionReference::log() const {
     std::cout << "id: " << m_identifier;
-    node().log(std::cout, true, 1, true);
+    static_cast<Node>(*this).log(std::cout, true, 1, true);
     std::cout << std::endl;
   }
 #endif
@@ -41,7 +41,7 @@ EditionReference EditionReference::Clone(const Node node) {
   return EditionReference(EditionPool::sharedEditionPool()->initFromTree(node));
 }
 
-Node EditionReference::node() const {
+EditionReference::operator const Node() const {
   Node n = EditionPool::sharedEditionPool()->nodeForIdentifier(m_identifier);
   assert(!n.isUninitialized());
   return n;
@@ -56,7 +56,7 @@ void EditionReference::recursivelyEdit(InPlaceTreeFunction treeFunction) {
 
 void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
   EditionPool * pool = EditionPool::sharedEditionPool();
-  Node oldNode = node();
+  Node oldNode = *this;
   int oldSize = oldIsTree ? oldNode.treeSize() : oldNode.nodeSize();
   int newSize = newIsTree ? newNode.treeSize() : newNode.nodeSize();
   Block * oldBlock = oldNode.block();
@@ -84,11 +84,11 @@ void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
 }
 
 void EditionReference::remove(bool isTree) {
-  EditionPool::sharedEditionPool()->removeBlocks(block(), isTree ? node().treeSize() : node().nodeSize());
+  EditionPool::sharedEditionPool()->removeBlocks(block(), isTree ? static_cast<Node>(*this).treeSize() : static_cast<Node>(*this).nodeSize());
 }
 
 void EditionReference::insert(Node nodeToInsert, bool before, bool isTree) {
-  Node destination = before ? node() : nextNode().node();
+  Node destination = before ? *this : nextNode();
   EditionPool * pool = EditionPool::sharedEditionPool();
   size_t sizeToInsert = isTree ? nodeToInsert.treeSize() : nodeToInsert.nodeSize();
   if (pool->contains(nodeToInsert.block())) {
@@ -101,8 +101,8 @@ void EditionReference::insert(Node nodeToInsert, bool before, bool isTree) {
 void EditionReference::detach(bool isTree) {
   EditionPool * pool = EditionPool::sharedEditionPool();
   Block * destination = pool->lastBlock();
-  size_t sizeToMove = isTree ? node().treeSize() : node().nodeSize();
-  pool->moveBlocks(destination, node().block(), sizeToMove);
+  size_t sizeToMove = isTree ? static_cast<Node>(*this).treeSize() : static_cast<Node>(*this).nodeSize();
+  pool->moveBlocks(destination, static_cast<Node>(*this).block(), sizeToMove);
 }
 
 }

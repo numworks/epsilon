@@ -109,8 +109,8 @@ EditionReference Rational::PushNode(IntegerHandler numerator, IntegerHandler den
 }
 
 void Rational::SetSign(EditionReference reference, NonStrictSign sign) {
-  IntegerHandler numerator = Numerator(reference.node());
-  IntegerHandler denominator = Denominator(reference.node());
+  IntegerHandler numerator = Numerator(reference);
+  IntegerHandler denominator = Denominator(reference);
   numerator.setSign(sign);
   reference.replaceNodeByNode(PushNode(numerator, denominator));
 }

@@ -7,8 +7,47 @@ namespace Poincare {
 
 class Polynomial final {
 public:
+  static uint8_t ExponantAtIndex(const Node polynomial, int index);
+  static void Add(EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial);
+};
+
+class PolynomialParser final {
+/* TODO: Polynomial could have their own sparse representation to speed up
+ * polynomial GCD, Grobner basis... But this would require to implement their
+ * own operations.
+ *
+ * MONOMIAL REPRESENTATION
+ * - Polynomial P = a0*x0^e0(x0)*x1^e0(x1)*... + a1*x0^e1(x0)*x1^e1(x1)*... +
+ *   n = number of variables
+ *   m = number of terms
+ *   ei(xi) are uint8_t
+ *   a0 are int32_t
+ *  | P TAG | n | m | e0(x0) | e0(x1) | ... | e1(x0) | e1(x1) | ... | a | n * m | P TAG |
+ *  This node has n children: the first n children describe the variables,
+ *  the next m children describe the coefficients.
+ *
+ *  RECURSIVE REPRESENTATION
+ *  List of (EditionReference, uint8_t)
+ */
+
+public:
   static EditionReference GetVariables(const Node expression);
-  static uint8_t Degree(const Node expression, const Node variables);
+  static EditionReference RecursivelyParse(EditionReference expression, EditionReference variables, size_t variableIndex = 0);
+  static EditionReference Parse(EditionReference expression, EditionReference variable);
+  //static uint8_t Degree(const Node expression, const Node variable);
+  //static EditionReference Coefficient(const Node expression, const Node variable, uint8_t exponant);
+  //static  LeadingCoefficient(const Node expression, const Node variable);
+  /* Parsing polynomial:
+   * - getVariables
+   * - n0 = degree in x0
+   * - a = coefficient in x0^n
+   * - n1 = degree in x1 of a
+   * - a = coefficent in x1^n1
+   *   when no variable anymore, a = coefficient of x0^n*x1^m
+   *
+   *   DECIDE monomial / recursive*/
+private:
+  static std::pair<EditionReference, uint8_t> ParseMonomial(EditionReference expression, EditionReference variable);
 #if 0
   Node PolynomialInterpretation
   Node RationalInterpretation --> list of 2 polynomial
@@ -54,7 +93,7 @@ for numerator and denominator:
 
 --> S2 = union of variables(P) U variables(Q)
 --> Pp2 = polynome(Pe), Qp2 = polynome(Qe)
---> polynome division Pp2/Qp2
+--> polynome division Pp2/Qp2 per GCD
 
 
 resultant

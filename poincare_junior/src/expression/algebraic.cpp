@@ -10,6 +10,14 @@ namespace Poincare {
 //TODO: tests
 
 EditionReference Algebraic::Rationalize(EditionReference expression) {
+  if (expression.block()->isRational()) {
+    EditionReference fraction = EditionReference::Push<BlockType::Multiplication>(2);
+    Integer::PushNode(Rational::Numerator(expression.node()));
+    EditionReference::Push<BlockType::Power>();
+    Integer::PushNode(Rational::Denominator(expression.node()));
+    EditionReference::Push<BlockType::MinusOne>();
+    return fraction;
+  }
   BlockType type = expression.type();
   if (type == BlockType::Power) {
     Rationalize(expression.childAtIndex(0));
@@ -53,15 +61,14 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
     child.nextTree().insertTreeBeforeNode(EditionReference::Clone(commonDenominator.node()));
     // TODO basicReduction of child
   }
-  // Create Pow(commonDenominator, -1)
-  EditionReference power = EditionReference::Push<BlockType::Power>();
-  commonDenominator.insertNodeBeforeNode(power);
-  commonDenominator.nextTree().insertTreeBeforeNode(1_nsn);
-  // TODO basicReduction of power
   // Create Mult(expression, Pow)
   EditionReference fraction = EditionReference::Push<BlockType::Multiplication>(2);
-  expression.insertNodeBeforeNode(fraction);
-  expression.nextTree().insertTreeBeforeNode(commonDenominator);
+  fraction.insertTreeAfterNode(expression);
+  // Create Pow(commonDenominator, -1)
+  EditionReference power = EditionReference::Push<BlockType::Power>();
+  power.insertTreeAfterNode(commonDenominator);
+  commonDenominator.nextTree().insertTreeBeforeNode(1_nsn);
+  // TODO basicReduction of power
   // TODO basicReduction of fraction
   return fraction;
 }

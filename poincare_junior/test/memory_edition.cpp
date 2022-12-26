@@ -97,6 +97,14 @@ void testEditionReference() {
   assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression0, k_expression1, 10_n, 9_n});
   reference1.removeTree();
   assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression1, 10_n, 9_n});
+
+  // Detach
+  reference3.childAtIndex(0).detachTree();
+  reference3.insertTreeAfterNode(13_n);
+  assert_pool_contains(editionPool, {k_expression0, 10_n, Pow(13_n, 7_n), 10_n, 9_n, Sub(5_n, 6_n)});
+  reference3.childAtIndex(1).detachNode();
+  reference3.insertTreeAfterNode(14_n);
+  assert_pool_contains(editionPool, {k_expression0, 10_n, Pow(14_n, 13_n), 10_n, 9_n, Sub(5_n, 6_n), 7_n});
 }
 
 void testEditionReferenceReallocation() {

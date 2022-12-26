@@ -98,6 +98,13 @@ void EditionReference::insert(Node nodeToInsert, bool before, bool isTree) {
   }
 }
 
+void EditionReference::detach(bool isTree) {
+  EditionPool * pool = EditionPool::sharedEditionPool();
+  Block * destination = pool->lastBlock();
+  size_t sizeToMove = isTree ? node().treeSize() : node().nodeSize();
+  pool->moveBlocks(destination, node().block(), sizeToMove);
+}
+
 }
 
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Addition, int>(int);

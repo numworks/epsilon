@@ -56,6 +56,8 @@ public:
   void replaceTreeByTree(Node n) { replaceBy(n, true, true); }
   void removeNode() { remove(false); }
   void removeTree() { remove(true); }
+  void detachNode() { detach(false); }
+  void detachTree() { detach(true); }
 
   // Edition operations on EditionReference
   void insertNodeAfterNode(EditionReference nodeToInsert) { insertNodeAfterNode(nodeToInsert.node()); }
@@ -73,6 +75,7 @@ public:
 private:
   void insert(Node nodeToInsert, bool before, bool isTree);
   void replaceBy(Node n, bool oldIsTree, bool newIsTree);
+  void detach(bool isTree);
   void remove(bool isTree);
   uint16_t m_identifier;
 };

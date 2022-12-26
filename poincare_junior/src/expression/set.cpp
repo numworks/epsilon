@@ -37,6 +37,14 @@ EditionReference Set::Add(EditionReference set, Node expression) {
   return set;
 }
 
+EditionReference Set::Pop(EditionReference set) {
+  assert(set.numberOfChildren() > 0);
+  EditionReference expression = set.nextNode();
+  expression.detachTree();
+  NAry::SetNumberOfChildren(set, set.numberOfChildren() - 1);
+  return expression;
+}
+
 static EditionReference MergeSets(EditionReference set0, EditionReference set1, bool removeChildrenOnlyInSet0, bool pilferSet1Children, bool removeCommonChildrenInSet0) {
   size_t numberOfChildren0 = set0.numberOfChildren();
   size_t numberOfChildren1 = set1.numberOfChildren();

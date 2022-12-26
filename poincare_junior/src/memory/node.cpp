@@ -68,6 +68,7 @@ void Node::logName(std::ostream & stream) const {
     "Division",
     "Set",
     "List",
+    "Polynomial",
     "HorizontalLayout"
   };
   static_assert(sizeof(names)/sizeof(const char *) == static_cast<uint8_t>(BlockType::NumberOfTypes));
@@ -77,6 +78,11 @@ void Node::logName(std::ostream & stream) const {
 void Node::logAttributes(std::ostream & stream) const {
   if (block()->isNAry()) {
     stream << " numberOfChildren=\"" << numberOfChildren() << "\"";
+    if (type() == BlockType::Polynomial) {
+      for (int i = 0; i < numberOfChildren(); i++) {
+        stream << " exponent(\"" << i << "\") = \"" << static_cast<int>(static_cast<uint8_t>(*(block()->nextNth(2 + i)))) << "\"";
+      }
+    }
     return;
   }
   if (block()->isNumber() || type() == BlockType::Constant) {

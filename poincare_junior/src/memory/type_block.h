@@ -42,14 +42,11 @@ namespace Poincare {
  * - UserSymbol US (same for UserFunction, UserSequence)
  * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | US TAG |
  *
- * - Polynomial P = a0*x0^e0(x0)*x1^e0(x1)*... + a1*x0^e1(x0)*x1^e1(x1)*... +
- *   n = number of variables
- *   m = number of terms
- *  | P TAG | n | m | e0(x0) | e0(x1) | ... | e1(x0) | e1(x1) | ... | n * m | P TAG |
- *  This node has n+m children: the first n children describe the variables,
- *  the next m children describe the coefficients.
- *
- *
+ * - Polynomial P = a0*x^e0 + ... + a1*x^e1 + ... +
+ *   n = number of terms
+ *  | P TAG | n | e0 | e1 | ... | n | P TAG |
+ *  This node has n children describing the coefficients.
+ *  Polynomials can be recursive (have polynomials children)
  * */
 
 enum class BlockType : uint8_t {
@@ -82,6 +79,7 @@ enum class BlockType : uint8_t {
   Division,
   Set,
   List,
+  Polynomial,
   NumberOfExpressions,
 
   HorizontalLayout = NumberOfExpressions,
@@ -117,6 +115,7 @@ BLOCK_TYPE_IS_EXPRESSION(BlockType::Subtraction);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Division);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::Set);
 BLOCK_TYPE_IS_EXPRESSION(BlockType::List);
+BLOCK_TYPE_IS_EXPRESSION(BlockType::Polynomial);
 
 BLOCK_TYPE_IS_LAYOUT(BlockType::HorizontalLayout);
 
@@ -148,7 +147,7 @@ public:
     return false;
   }
 
-  constexpr bool isNAry() const { return isOfType({BlockType::Addition, BlockType::Multiplication, BlockType::HorizontalLayout, BlockType::Set, BlockType::List}); }
+  constexpr bool isNAry() const { return isOfType({BlockType::Addition, BlockType::Multiplication, BlockType::HorizontalLayout, BlockType::Set, BlockType::List, BlockType::Polynomial}); }
   constexpr bool isInteger() const { return isOfType({BlockType::Zero, BlockType::One, BlockType::Two, BlockType::MinusOne, BlockType::IntegerShort, BlockType::IntegerPosBig, BlockType::IntegerNegBig}); }
   constexpr bool isRational() const { return isOfType({BlockType::Half, BlockType::RationalShort, BlockType::RationalPosBig, BlockType::RationalNegBig}) || isInteger(); }
   constexpr bool isNumber() const { return isOfType({BlockType::Float}) || isRational(); }
@@ -178,6 +177,8 @@ public:
       case BlockType::List:
       case BlockType::HorizontalLayout:
         return 3;
+      case BlockType::Polynomial:
+        return 4;
       default:
         return 1;
     };

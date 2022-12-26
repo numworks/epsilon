@@ -88,6 +88,11 @@ public:
         uint8_t denominatorNumberOfDigits = static_cast<uint8_t>(*(m_block->nextNth(2)));
         return numberOfMetaBlocks + numeratorNumberOfDigits + denominatorNumberOfDigits;
       }
+      case BlockType::Polynomial:
+      {
+        uint8_t numberOfChildren = static_cast<uint8_t>(*(head ? m_block->next() : m_block->previous()));
+        return numberOfMetaBlocks + numberOfChildren;
+      }
       default:
         return numberOfMetaBlocks;
     }

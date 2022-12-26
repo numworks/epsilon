@@ -23,16 +23,19 @@ void testPolynomialParsing() {
       /* polynomial */ // TODO Pol(exponentsPi, 1_sn, Pol(exponentsE0, 3_n), Pol(exponentsE1, 3_n), Pol(exponentsE2, 1_sn))
       /* polynomial */ Pol(exponentsPi, 1_sn, Pol(exponentsE0, Mult(3_n, 1_sn, 1_sn)), Pol(exponentsE1, Mult(3_n, 1_sn, 1_sn)), Pol(exponentsE2, 1_sn))
     );
-#if 0
+
   assert_polynomial_is_parsed(
       /* 42 */ 42_n,
       /* variables = {} */ Set(),
-      /* degree = 0 */ {}
+      /* polynomial */ 42_n
     );
+
+  uint8_t exponentPi[] = {1};
   assert_polynomial_is_parsed(
       /* π^1.2 */ Pow(u'π'_n, 1.2_fn),
       /* variables = {π^1.2} */ Set(Pow(u'π'_n, 1.2_fn)),
-      /* degree = 1 */ {1}
+      /* polynomial */ Pol(exponentPi, 1_sn)
     );
-#endif
+
+  // TODO: parse polynomial with float coefficients?
 }

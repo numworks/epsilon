@@ -10,7 +10,6 @@ static EditionPool * editionPool = cachePool->editionPool();
 static constexpr Tree tree = Add(3_n, 4_n);
 static size_t treeSize = static_cast<Node>(tree).treeSize();
 static constexpr Tree smallTree = 4_n;
-static size_t smallTreeSize = static_cast<Node>(smallTree).treeSize();
 
 void execute_push_tree_and_modify() {
   Poincare::CacheReference::InitializerFromTree treeModifier = [](Node tree) { EditionReference(tree).replaceNodeByNode(EditionReference::Push<BlockType::Multiplication>(2)); };

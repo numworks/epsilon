@@ -20,6 +20,7 @@ void testNode();
 void testNodeSize();
 void testEditionPool();
 void testEditionReference();
+void testEditionReferenceReallocation();
 void testCachePool();
 void testCachePoolLimits();
 void testCacheReference();
@@ -48,6 +49,7 @@ int main() {
   test(testNodeSize, "TEST NODE SIZE");
   test(testEditionPool, "TEST EDITION POOL");
   test(testEditionReference, "TEST EDITION REFERENCE");
+  test(testEditionReferenceReallocation, "TEST EDITION REFERENCE REALLOCATION");
   test(testCachePool, "TEST CACHE POOL");
   test(testCachePoolLimits, "TEST CACHE POOL LIMITS");
   test(testCacheReference, "TEST CACHE REFERENCE");

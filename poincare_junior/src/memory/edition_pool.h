@@ -33,7 +33,6 @@ public:
   Node initFromTree(const Node node) { return initFromAddress(static_cast<const void *>(node.block())); }
   Node initFromAddress(const void * address);
 
-  bool contains(Block * block) { return block >= firstBlock() && block < lastBlock(); }
   TypeBlock * firstBlock() override { return m_firstBlock; }
   Block * lastBlock() override { return m_firstBlock + m_numberOfBlocks; }
   Block * blockAtIndex(int i) { return m_firstBlock + i * sizeof(Block); }
@@ -60,6 +59,7 @@ private:
   public:
     ReferenceTable(Pool * pool) : Pool::ReferenceTable(pool) {}
     Node nodeForIdentifier(uint16_t id) const override;
+    uint16_t storeNode(Node node) override;
     typedef void (*AlterSelectedBlock)(uint16_t *, Block *, Block *, Block *, int);
     void updateNodes(AlterSelectedBlock function, Block * contextSelection1, Block * contextSelection2, int contextAlteration);
   };

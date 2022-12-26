@@ -10,11 +10,27 @@ namespace Poincare {
 
 Node EditionPool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
   Node n = Pool::ReferenceTable::nodeForIdentifier(id);
-  if (n.block() > m_pool->lastBlock()) {
+  if (!m_pool->contains(n.block()) && n.block() != m_pool->lastBlock()) {
+    /* The node has been corrupted, this is not referenced anymore. Referencing
+     * the last block is tolerated though. */
     return Node();
   }
   return n;
 }
+
+uint16_t EditionPool::ReferenceTable::storeNode(Node node) {
+  if (isFull()) {
+    Node n;
+    size_t index = 0;
+    do {
+      n = nodeForIdentifier(index++);
+    } while (!n.isUninitialized() && index < k_maxNumberOfReferences);
+    assert(n.isUninitialized()); // Otherwise, the pool is full with non-corrupted references; increment k_maxNumberOfReferences?
+    return storeNodeAtIndex(node, index - 1);
+  } else {
+    return storeNodeAtIndex(node, m_length);
+  }
+};
 
 void EditionPool::reinit(TypeBlock * firstBlock, size_t size) {
   m_firstBlock = firstBlock;

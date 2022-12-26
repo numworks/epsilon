@@ -98,3 +98,16 @@ void testEditionReference() {
   reference1.removeTree();
   assert_pool_contains(editionPool, {k_expression0, 10_n, k_expression1, 10_n, 9_n});
 }
+
+void testEditionReferenceReallocation() {
+  constexpr Tree k_expression = 1_sn;
+
+  EditionReference reference0(0_sn);
+  for (size_t i = 0; i < Pool::k_maxNumberOfReferences - 1; i++) {
+    EditionReference reference1(1_sn);
+  }
+  /* The reference table is now full but we can reference a new node of another
+   * one is out-dated. */
+  reference0.removeTree();
+  EditionReference reference2(2_sn);
+}

@@ -17,14 +17,16 @@ size_t Pool::numberOfTrees() {
 
 // Reference Table
 
-uint16_t Pool::ReferenceTable::storeNode(Node node) {
-  assert(!isFull());
-  // Increment first to make firstBlock != nullptr
-  m_length++;
-  m_nodeOffsetForIdentifier[m_length - 1] = static_cast<uint16_t>(node.block() - m_pool->firstBlock());
+uint16_t Pool::ReferenceTable::storeNodeAtIndex(Node node, size_t index) {
+  if (index >= m_length) {
+    assert(!isFull());
+    // Increment first to make firstBlock != nullptr
+    m_length++;
+  }
+  m_nodeOffsetForIdentifier[index] = static_cast<uint16_t>(node.block() - m_pool->firstBlock());
   // Assertion requires valid firstBlock/lastBlock (so the order matters)
   assert(node.block() >=  m_pool->firstBlock() && node.block() <=  m_pool->lastBlock());
-  return m_length - 1;
+  return index;
 }
 
 Node Pool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
@@ -50,7 +52,9 @@ void Pool::ReferenceTable::log(std::ostream & stream, LogFormat format, bool ver
   for (size_t i = 0; i < m_length; i++) {
     stream << "\n  <Reference id: " << identifierForIndex(i) << ">";
     Node tree = Pool::ReferenceTable::nodeForIdentifier(i);
-    if (tree.isUninitialized()) {
+    if (!m_pool->contains(tree.block())) {
+      stream << "\n    <Corrupted/>";
+    } else if (tree.isUninitialized()) {
       stream << "\n    <Uninialized/>";
     } else {
       tree.log(stream, format == LogFormat::Tree, 2, verbose);

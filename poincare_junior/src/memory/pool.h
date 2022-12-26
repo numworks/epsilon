@@ -18,6 +18,7 @@ public:
 
   Block * blockAtIndex(int i) { return firstBlock() + sizeof(Block) * i; }
 
+  bool contains(Block * block) { return block >= firstBlock() && block < lastBlock(); }
   virtual TypeBlock * firstBlock() = 0;
   virtual Block * lastBlock() = 0;
   size_t size() { return firstBlock() ? lastBlock() - static_cast<Block *>(firstBlock()) : 0; }
@@ -39,7 +40,7 @@ protected:
     bool isFull() { return numberOfStoredNodes() == Pool::k_maxNumberOfReferences; }
     bool isEmpty() const { return numberOfStoredNodes() == 0; }
     int numberOfStoredNodes() const { return m_length; }
-    virtual uint16_t storeNode(Node node);
+    virtual uint16_t storeNode(Node node) = 0;
     virtual Node nodeForIdentifier(uint16_t id) const;
     virtual bool reset();
 #if POINCARE_MEMORY_TREE_LOG
@@ -47,6 +48,7 @@ protected:
     virtual uint16_t identifierForIndex(uint16_t index) const { return index; }
 #endif
   protected:
+    uint16_t storeNodeAtIndex(Node node, size_t index);
     uint16_t m_nodeOffsetForIdentifier[Pool::k_maxNumberOfReferences];
     uint16_t m_length;
     Pool * m_pool;

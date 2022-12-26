@@ -22,7 +22,7 @@ uint16_t CachePool::ReferenceTable::storeNode(Node node) {
   if (isFull()) {
     removeFirstReferences(1, &node);
   }
-  return idForIndex(Pool::ReferenceTable::storeNode(node));
+  return idForIndex(Pool::ReferenceTable::storeNodeAtIndex(node, m_length));
 }
 
 bool CachePool::ReferenceTable::freeOldestBlocks(int numberOfRequiredFreeBlocks) {

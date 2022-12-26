@@ -33,11 +33,11 @@ EditionReference Integer::PushNode(IntegerHandler integer) {
   if (integer.isMinusOne()) {
     return EditionReference::Push<BlockType::MinusOne>();
   }
-  if (integer.isInt8()) {
+  if (integer.isSignedType<int8_t>()) {
     return EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(integer));
   }
   EditionPool * pool = EditionPool::sharedEditionPool();
-  TypeBlock typeBlock = integer.sign() == StrictSign::Negative ? IntegerNegBigBlock : IntegerPosBigBlock;
+  TypeBlock typeBlock(integer.sign() == StrictSign::Negative ? BlockType::IntegerNegBig : BlockType::IntegerPosBig);
   EditionReference reference = EditionReference(Node(pool->pushBlock(typeBlock)));
   pool->pushBlock(integer.numberOfDigits());
   integer.pushDigitsOnEditionPool();
@@ -47,8 +47,9 @@ EditionReference Integer::PushNode(IntegerHandler integer) {
 }
 
 // TODO: tests
+
 bool Integer::IsUint8(const Node expression) {
-  return expression.block()->isInteger() && Rational::Numerator(expression).isUint8();
+  return expression.block()->isInteger() && Rational::Numerator(expression).isUnsignedType<uint8_t>();
 }
 
 uint8_t Integer::Uint8(const Node expression) {

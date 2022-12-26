@@ -41,14 +41,18 @@ public:
     return m_numberOfDigits == 0;
   }
 
-  bool isInt8() const {
-    return m_numberOfDigits == 0 || (m_numberOfDigits <= 1 && digit(0) <= INT8_MAX);
+  template <typename T>
+  bool isSignedType() const {
+    size_t maxNumberOfDigits = sizeof(T)/sizeof(uint8_t);
+    return m_numberOfDigits < maxNumberOfDigits || (m_numberOfDigits == maxNumberOfDigits && digit(maxNumberOfDigits - 1) <= INT8_MAX);
   }
-  operator int8_t() const { assert(isInt8()); return numberOfDigits() == 0 ? 0 : static_cast<int8_t>(m_sign) * digit(0); }
-  bool isUint8() const {
-    return numberOfDigits() <= 1 && m_sign == NonStrictSign::Positive;
+  template <typename T>
+  bool isUnsignedType() const {
+    size_t maxNumberOfDigits = sizeof(T)/sizeof(uint8_t);
+    return m_numberOfDigits <= maxNumberOfDigits && m_sign == NonStrictSign::Positive;
   }
-  operator uint8_t() const { assert(isUint8()); return numberOfDigits() == 0 ? 0 : digit(0); }
+  operator int8_t() const { assert(isSignedType<int8_t>()); return numberOfDigits() == 0 ? 0 : static_cast<int8_t>(m_sign) * digit(0); }
+  operator uint8_t() const { assert(isUnsignedType<uint8_t>()); return numberOfDigits() == 0 ? 0 : digit(0); }
 
   void pushDigitsOnEditionPool();
   template <typename T>

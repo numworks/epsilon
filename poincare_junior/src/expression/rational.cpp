@@ -88,11 +88,11 @@ EditionReference Rational::PushNode(IntegerHandler numerator, IntegerHandler den
   if (numerator.isOne() && denominator.isTwo()) {
     return EditionReference::Push<BlockType::Half>();
   }
-  if (numerator.isInt8() && denominator.isUint8()) {
+  if (numerator.isSignedType<int8_t>() && denominator.isUnsignedType<uint8_t>()) {
     return EditionReference::Push<BlockType::RationalShort>(static_cast<int8_t>(numerator), static_cast<uint8_t>(denominator));
   }
   EditionPool * pool = EditionPool::sharedEditionPool();
-  TypeBlock typeBlock = numerator.sign() == StrictSign::Negative ? RationalNegBigBlock : RationalPosBigBlock;
+  TypeBlock typeBlock(numerator.sign() == StrictSign::Negative ? BlockType::RationalNegBig : BlockType::RationalPosBig);
   EditionReference reference = EditionReference(Node(pool->pushBlock(typeBlock)));
   uint8_t numberOfDigitsOfNumerator = numerator.numberOfDigits();
   uint8_t numberOfDigitsOfDenominator = numerator.numberOfDigits();

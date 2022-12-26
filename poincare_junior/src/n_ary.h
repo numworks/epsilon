@@ -7,7 +7,8 @@ namespace Poincare {
 
 class NAry {
 public:
-  static void AddChild(EditionReference nary, EditionReference child);
+  static void AddChild(EditionReference nary, EditionReference child) { return AddChildAtIndex(nary, child, nary.numberOfChildren()); }
+  static void AddChildAtIndex(EditionReference nary, EditionReference child, int index);
   static void SetNumberOfChildren(EditionReference reference, size_t numberOfChildren);
   static EditionReference Flatten(EditionReference reference);
 };

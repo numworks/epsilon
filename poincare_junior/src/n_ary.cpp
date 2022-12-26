@@ -3,15 +3,26 @@
 
 namespace Poincare {
 
-void NAry::AddChild(EditionReference nary, EditionReference child) {
-  nary.nextTree().insertTreeBeforeNode(child);
+void NAry::AddChildAtIndex(EditionReference nary, EditionReference child, int index) {
+  if (index == nary.numberOfChildren()) {
+    nary.nextTree().insertTreeBeforeNode(child);
+  } else {
+    nary.childAtIndex(index).nextTree().insertTreeBeforeNode(child);
+  }
   SetNumberOfChildren(nary, nary.numberOfChildren() + 1);
 }
 
 void NAry::SetNumberOfChildren(EditionReference reference, size_t numberOfChildren) {
   assert(numberOfChildren < UINT8_MAX);
+  if (reference.node().nodeSize() > 1) {
+    /* Increment the tail numberOfChildren block first because the nodeSize
+     * computation might be altered by the head numberOfChildren Block. */
+    Block * numberOfChildrenBlock = reference.node().nextNode().block()->previousNth(2);
+    *numberOfChildrenBlock = numberOfChildren;
+  }
   Block * numberOfChildrenBlock = reference.node().block()->next();
   *numberOfChildrenBlock = numberOfChildren;
+
 }
 
 EditionReference NAry::Flatten(EditionReference reference) {

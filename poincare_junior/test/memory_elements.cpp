@@ -89,21 +89,21 @@ void assert_tree_equals_blocks(Tree<N> tree, std::initializer_list<Block> blocks
 }
 
 void testConstexprTreeConstructor() {
-  assert_tree_equals_blocks(u'π'_n, {ConstantBlock, ValueBlock(static_cast<uint8_t>(Constant::Type::Pi)), ConstantBlock});
-  assert_tree_equals_blocks(2.0_fn, {FloatBlock, ValueBlock(0), ValueBlock(0), ValueBlock(0), ValueBlock(64), FloatBlock});
+  assert_tree_equals_blocks(u'π'_n, {TypeBlock(BlockType::Constant), ValueBlock(static_cast<uint8_t>(Constant::Type::Pi)), TypeBlock(BlockType::Constant)});
+  assert_tree_equals_blocks(2.0_fn, {TypeBlock(BlockType::Float), ValueBlock(0), ValueBlock(0), ValueBlock(0), ValueBlock(64), TypeBlock(BlockType::Float)});
   assert_tree_equals_blocks(1_nsn, {MinusOneBlock});
   assert_tree_equals_blocks(1_sn, {OneBlock});
-  assert_tree_equals_blocks(Add(1_sn, 2_sn), {AdditionBlock, ValueBlock(2), AdditionBlock, OneBlock, TwoBlock});
-  assert_tree_equals_blocks(Mult(1_sn, 2_sn, 1_nsn), {MultiplicationBlock, ValueBlock(3), MultiplicationBlock, OneBlock, TwoBlock, MinusOneBlock});
-  assert_tree_equals_blocks(Set(1_sn), {SetBlock, ValueBlock(1), SetBlock, OneBlock});
-  assert_tree_equals_blocks(Pow(1_sn, 2_sn), {PowerBlock, OneBlock, TwoBlock});
-  assert_tree_equals_blocks(Sub(1_sn, 2_sn), {SubtractionBlock, OneBlock, TwoBlock});
+  assert_tree_equals_blocks(Add(1_sn, 2_sn), {TypeBlock(BlockType::Addition), ValueBlock(2), TypeBlock(BlockType::Addition), OneBlock, TwoBlock});
+  assert_tree_equals_blocks(Mult(1_sn, 2_sn, 1_nsn), {TypeBlock(BlockType::Multiplication), ValueBlock(3), TypeBlock(BlockType::Multiplication), OneBlock, TwoBlock, MinusOneBlock});
+  assert_tree_equals_blocks(Set(1_sn), {TypeBlock(BlockType::Set), ValueBlock(1), TypeBlock(BlockType::Set), OneBlock});
+  assert_tree_equals_blocks(Pow(1_sn, 2_sn), {TypeBlock(BlockType::Power), OneBlock, TwoBlock});
+  assert_tree_equals_blocks(Sub(1_sn, 2_sn), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
 }
 
 void testEditionNodeConstructor() {
-  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerPosBig>(1232424242).node(), {IntegerPosBigBlock, ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), IntegerPosBigBlock});
-  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(1232424242).node(), {IntegerNegBigBlock, ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), IntegerNegBigBlock});
-  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(-1232424242).node(), {IntegerNegBigBlock, ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), IntegerNegBigBlock});
+  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerPosBig>(1232424242).node(), {TypeBlock(BlockType::IntegerPosBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerPosBig)});
+  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(1232424242).node(), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
+  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(-1232424242).node(), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
 }
 
 void testNodeIterator() {

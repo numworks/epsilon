@@ -190,24 +190,8 @@ static_assert(sizeof(TypeBlock) == sizeof(Block));
 constexpr TypeBlock ZeroBlock = TypeBlock(BlockType::Zero);
 constexpr TypeBlock OneBlock = TypeBlock(BlockType::One);
 constexpr TypeBlock TwoBlock = TypeBlock(BlockType::Two);
-constexpr TypeBlock HalfBlock = TypeBlock(BlockType::Half);
-constexpr TypeBlock MinusOne = TypeBlock(BlockType::MinusOne);
-constexpr TypeBlock IntegerShortBlock = TypeBlock(BlockType::IntegerShort);
-constexpr TypeBlock IntegerPosBigBlock = TypeBlock(BlockType::IntegerPosBig);
-constexpr TypeBlock IntegerNegBigBlock = TypeBlock(BlockType::IntegerNegBig);
-constexpr TypeBlock RationalShortBlock = TypeBlock(BlockType::RationalShort);
-constexpr TypeBlock RationalPosBigBlock = TypeBlock(BlockType::RationalPosBig);
-constexpr TypeBlock RationalNegBigBlock = TypeBlock(BlockType::RationalNegBig);
-constexpr TypeBlock FloatBlock = TypeBlock(BlockType::Float);
-constexpr TypeBlock AdditionBlock = TypeBlock(BlockType::Addition);
-constexpr TypeBlock MultiplicationBlock = TypeBlock(BlockType::Multiplication);
-constexpr TypeBlock PowerBlock = TypeBlock(BlockType::Power);
-constexpr TypeBlock ConstantBlock = TypeBlock(BlockType::Constant);
-constexpr TypeBlock SubtractionBlock = TypeBlock(BlockType::Subtraction);
-constexpr TypeBlock DivisionBlock = TypeBlock(BlockType::Division);
-constexpr TypeBlock SetBlock = TypeBlock(BlockType::Set);
-constexpr TypeBlock ListBlock = TypeBlock(BlockType::List);
 constexpr TypeBlock MinusOneBlock = TypeBlock(BlockType::MinusOne);
+constexpr TypeBlock HalfBlock = TypeBlock(BlockType::Half);
 
 }
 

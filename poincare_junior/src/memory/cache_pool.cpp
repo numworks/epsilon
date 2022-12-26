@@ -104,6 +104,7 @@ start_execute:
   if (ExceptionRun(checkpoint)) {
     assert(m_editionPool.numberOfTrees() == 0);
     action(subAction, data);
+    // Prevent edition action from leaking: an action create at most one tree
     assert(m_editionPool.numberOfTrees() <= 1);
     return storeEditedTree();
   } else {

@@ -19,6 +19,7 @@ private:
   static int CompareNumbers(const Node node0, const Node node1);
   static int CompareNames(const Node node0, const Node node1);
   static int CompareConstants(const Node node0, const Node node1);
+  static int ComparePolynomial(const Node node0, const Node node1);
   static int CompareChildren(const Node node0, const Node node1, ScanDirection scanDirection);
   static int CompareFirstChild(const Node node0, const Node node1, ScanDirection scanDirection);
 };

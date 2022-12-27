@@ -2,6 +2,7 @@
 #include "comparison.h"
 #include "constant.h"
 #include <poincare_junior/src/memory/node_iterator.h>
+#include "polynomial.h"
 
 namespace Poincare {
 
@@ -28,6 +29,8 @@ int Comparison::Compare(const Node node0, const Node node1) {
     switch (type0) {
       case BlockType::Constant:
         return CompareConstants(node0, node1);
+      case BlockType::Polynomial:
+        return ComparePolynomial(node0, node1);
       case BlockType::Addition:
       case BlockType::Multiplication:
         return CompareChildren(node0, node1, ScanDirection::Backward);
@@ -72,7 +75,7 @@ bool Comparison::ContainsSubtree(const Node tree, const Node subtree) {
 int Comparison::CompareNumbers(const Node node0, const Node node1) {
   if (node0.block()->isRational() && node1.block()->isRational()) {
     // TODO
-    //return Rational::NaturalOrder(block0, block1);
+    //return Rational::NaturalOrder(node0, node1);
   }
   float approximation = Approximation::To<float>(node0) - Approximation::To<float>(node1);
   return approximation == 0.0f ? 0 : (approximation > 0.0f ? 1 : -1);
@@ -87,12 +90,29 @@ int Comparison::CompareConstants(const Node node0, const Node node1) {
   return static_cast<uint8_t>(Constant::Type(node0)) - static_cast<uint8_t>(Constant::Type(node1));
 }
 
+int Comparison::ComparePolynomial(const Node node0, const Node node1) {
+  int childrenComparison = CompareChildren(node0, node1, ScanDirection::Forward);
+  if (childrenComparison != 0) {
+    return childrenComparison;
+  }
+  int numberOfTerms = Polynomial::NumberOfTerms(node0);
+  assert(numberOfTerms == Polynomial::NumberOfTerms(node1));
+  for (int i = 0; i < numberOfTerms; i++) {
+    uint8_t exponent0 = Polynomial::ExponantAtIndex(node0, i);
+    uint8_t exponent1 = Polynomial::ExponantAtIndex(node1, i);
+    if (exponent0 != exponent1) {
+      return exponent0 - exponent1;
+    }
+  }
+  return 0;
+}
+
 template<typename ScanDirection>
 int PrivateCompareChildren(const Node node0, const Node node1) {
   for (std::pair<std::array<Node, 2>, int> indexedNodes : MultipleNodesIterator::Children<ScanDirection, NoEditable, 2>({node0, node1})) {
     Node child0 = std::get<0>(indexedNodes)[0];
     Node child1 = std::get<0>(indexedNodes)[1];
-    int order = Comparison::Compare(child0.block(), child1.block());
+    int order = Comparison::Compare(child0, child1);
     if (order != 0) {
       return order;
     }

@@ -91,6 +91,20 @@ template<unsigned ...Len> static constexpr auto Pol(uint8_t exponents[sizeof...(
   return tree;
 }
 
+// TODO make suffixe literal?
+// Discard null-termination
+template<unsigned N> constexpr Tree<N - 1 + TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol)> Symb(const char (&name)[N]) {
+  Tree<N - 1 + TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol)> tree;
+  tree[0] = TypeBlock(BlockType::UserSymbol);
+  tree[1] = N - 1;
+  for (size_t i = 0; i < N - 1; i++) {
+    tree[2 + i] = name[i];
+  }
+  tree[1 + N] = N - 1;
+  tree[2  + N] = TypeBlock(BlockType::UserSymbol);
+  return tree;
+}
+
 constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> operator "" _n(char16_t name) {
   Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> tree;
   CreateNode<BlockType::Constant>(&tree, name);

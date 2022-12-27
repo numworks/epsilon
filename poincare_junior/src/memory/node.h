@@ -98,6 +98,11 @@ public:
         uint8_t numberOfTerms = static_cast<uint8_t>(*(head ? m_block->next() : m_block->previous())) - 1;
         return numberOfMetaBlocks + numberOfTerms;
       }
+      case BlockType::UserSymbol:
+      {
+        uint8_t numberOfChars = static_cast<uint8_t>(*(head ? m_block->next() : m_block->previous()));
+        return numberOfMetaBlocks + numberOfChars;
+      }
       default:
         return numberOfMetaBlocks;
     }

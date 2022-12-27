@@ -173,14 +173,14 @@ public:
       case BlockType::Addition:
       case BlockType::Multiplication:
       case BlockType::Constant:
-      case BlockType::UserSymbol:
-      case BlockType::UserFunction:
-      case BlockType::UserSequence:
       case BlockType::Set:
       case BlockType::List:
       case BlockType::HorizontalLayout:
         return 3;
       case BlockType::Polynomial:
+      case BlockType::UserSymbol:
+      case BlockType::UserFunction:
+      case BlockType::UserSequence:
         return 4;
       default:
         return 1;

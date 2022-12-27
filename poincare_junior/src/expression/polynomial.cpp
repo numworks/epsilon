@@ -8,8 +8,14 @@
 
 namespace Poincare {
 
+EditionReference Polynomial::PushEmpty(EditionReference variable) {
+  EditionReference pol = EditionReference::Push<BlockType::Polynomial>(1, 1);
+  pol.insertTreeAfterNode(variable);
+  return pol;
+}
+
 uint8_t Polynomial::ExponantAtIndex(const Node polynomial, int index) {
-  assert(index >= 0 && index < polynomial.numberOfChildren());
+  assert(index >= 0 && index < NumberOfTerms(polynomial));
   return static_cast<uint8_t>(*(polynomial.block()->nextNth(2 + index)));
 }
 
@@ -17,13 +23,13 @@ void Polynomial::Add(EditionReference polynomial, std::pair<EditionReference, ui
   EditionPool * pool = EditionPool::sharedEditionPool();
   uint8_t exponent = std::get<uint8_t>(monomial);
   EditionReference coefficient = std::get<EditionReference>(monomial);
-  int nbOfTerms = polynomial.numberOfChildren();
+  int nbOfTerms = NumberOfTerms(polynomial);
   for (int i = 0; i <= nbOfTerms; i++) {
     int16_t exponentOfChildI = i < nbOfTerms ? ExponantAtIndex(polynomial, i) : -1;
     if (exponent < exponentOfChildI) {
       continue;
     } else if (exponent == exponentOfChildI) {
-      EditionReference currentCoefficient = polynomial.childAtIndex(i);
+      EditionReference currentCoefficient = polynomial.childAtIndex(i + 1);
       if (currentCoefficient.type() == BlockType::Multiplication) {
         NAry::AddChild(currentCoefficient, coefficient);
       } else {
@@ -31,7 +37,7 @@ void Polynomial::Add(EditionReference polynomial, std::pair<EditionReference, ui
         currentCoefficient.nextTree().insertTreeBeforeNode(coefficient);
       }
     } else {
-      NAry::AddChildAtIndex(polynomial, coefficient, i);
+      NAry::AddChildAtIndex(polynomial, coefficient, i + 1);
       Block * exponentsAddress = polynomial.block() + 2;
       pool->insertBlock(exponentsAddress + i, ValueBlock(exponent));
     }
@@ -91,6 +97,10 @@ EditionReference PolynomialParser::RecursivelyParse(EditionReference expression,
   }
   expression = Parse(expression, variable);
   for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(expression)) {
+    if (std::get<int>(indexedRef) == 0) {
+      // Pass variable child
+      continue;
+    }
     EditionReference child = std::get<EditionReference>(indexedRef);
     RecursivelyParse(child, variables, variableIndex + 1);
   }
@@ -98,7 +108,7 @@ EditionReference PolynomialParser::RecursivelyParse(EditionReference expression,
 }
 
 EditionReference PolynomialParser::Parse(EditionReference expression, EditionReference variable) {
-  EditionReference polynomial(Pol());
+  EditionReference polynomial = Polynomial::PushEmpty(EditionReference::Clone(variable));
   BlockType type = expression.type();
   if (type == BlockType::Addition) {
     for (size_t i = 0 ; i < expression.numberOfChildren(); i++) {
@@ -111,7 +121,7 @@ EditionReference PolynomialParser::Parse(EditionReference expression, EditionRef
     expression.replaceNodeByTree(polynomial);
   } else {
     // Insert polynomial next to expression before it's parsed (and likely replaced)
-    expression.insertNodeBeforeNode(polynomial);
+    expression.insertTreeBeforeNode(polynomial);
     Polynomial::Add(polynomial, ParseMonomial(expression, variable));
   }
   return polynomial;

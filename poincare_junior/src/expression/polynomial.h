@@ -7,8 +7,23 @@ namespace Poincare {
 
 class Polynomial final {
 public:
+  static EditionReference PushEmpty(EditionReference variable);
+
+  // Getters
   static uint8_t ExponantAtIndex(const Node polynomial, int index);
+  static uint8_t Degree(const Node polynomial) { return ExponantAtIndex(polynomial, 0); }
+  static uint8_t NumberOfTerms(const Node polynomial) { return polynomial.numberOfChildren() - 1; }
+
+  // Setters
   static void Add(EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial);
+
+  // Computation
+  // Unit normal GCD of coefficients
+  static EditionReference Content(EditionReference polynomial);
+  // Pseudo-division
+  static EditionReference PseudoDivision(EditionReference pol0, EditionReference pol1);
+  // GCD
+  //static Edi
 };
 
 class PolynomialParser final {
@@ -33,7 +48,6 @@ class PolynomialParser final {
 public:
   static EditionReference GetVariables(const Node expression);
   static EditionReference RecursivelyParse(EditionReference expression, EditionReference variables, size_t variableIndex = 0);
-  static EditionReference Parse(EditionReference expression, EditionReference variable);
   //static uint8_t Degree(const Node expression, const Node variable);
   //static EditionReference Coefficient(const Node expression, const Node variable, uint8_t exponant);
   //static  LeadingCoefficient(const Node expression, const Node variable);
@@ -47,6 +61,7 @@ public:
    *
    *   DECIDE monomial / recursive*/
 private:
+  static EditionReference Parse(EditionReference expression, EditionReference variable);
   static std::pair<EditionReference, uint8_t> ParseMonomial(EditionReference expression, EditionReference variable);
 #if 0
   Node PolynomialInterpretation

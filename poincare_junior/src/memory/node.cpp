@@ -2,6 +2,7 @@
 #include "edition_reference.h"
 #include "node_iterator.h"
 #include <poincare_junior/src/expression/approximation.h>
+#include <poincare_junior/src/expression/polynomial.h>
 
 namespace Poincare {
 
@@ -79,7 +80,7 @@ void Node::logAttributes(std::ostream & stream) const {
   if (block()->isNAry()) {
     stream << " numberOfChildren=\"" << numberOfChildren() << "\"";
     if (type() == BlockType::Polynomial) {
-      for (int i = 0; i < numberOfChildren(); i++) {
+      for (int i = 0; i < Polynomial::NumberOfTerms(*this); i++) {
         stream << " exponent(\"" << i << "\") = \"" << static_cast<int>(static_cast<uint8_t>(*(block()->nextNth(2 + i)))) << "\"";
       }
     }

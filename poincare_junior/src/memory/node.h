@@ -90,8 +90,8 @@ public:
       }
       case BlockType::Polynomial:
       {
-        uint8_t numberOfChildren = static_cast<uint8_t>(*(head ? m_block->next() : m_block->previous()));
-        return numberOfMetaBlocks + numberOfChildren;
+        uint8_t numberOfTerms = static_cast<uint8_t>(*(head ? m_block->next() : m_block->previous())) - 1;
+        return numberOfMetaBlocks + numberOfTerms;
       }
       default:
         return numberOfMetaBlocks;

@@ -45,8 +45,11 @@ namespace Poincare {
  * - Polynomial P = a0*x^e0 + ... + a1*x^e1 + ... +
  *   n = number of terms
  *  | P TAG | n | e0 | e1 | ... | n | P TAG |
- *  This node has n children describing the coefficients.
+ *  This node has n + 1 children:
+ *  - the first child describes the variable x
+ *  - the n following children describe the coefficients.
  *  Polynomials can be recursive (have polynomials children)
+ *
  * */
 
 enum class BlockType : uint8_t {

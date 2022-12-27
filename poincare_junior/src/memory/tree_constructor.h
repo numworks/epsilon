@@ -71,26 +71,17 @@ template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Pow(const Tree
 
 template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Sub(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Subtraction>(child1, child2); }
 
-static constexpr auto Pol() {
-  Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Polynomial)> tree;
-  tree[0] = TypeBlock(BlockType::Polynomial);
-  tree[1] = 0;
-  tree[2] = 0;
-  tree[3] = TypeBlock(BlockType::Polynomial);
-  return tree;
-}
-
-template<unsigned ...Len> static constexpr auto Pol(uint8_t exponents[sizeof...(Len)], const Tree<Len> (&...coefficients)) {
+template<unsigned ...Len> static constexpr auto Pol(uint8_t exponents[sizeof...(Len) - 1], const Tree<Len> (&...coefficients)) {
   // Compute the total length of the children
   constexpr unsigned k_numberOfChildren = sizeof...(Len);
   constexpr unsigned k_numberOfChildrenBlocks = (0 + ... + Len);
-  constexpr size_t numberOfBlocksInNode = TypeBlock::NumberOfMetaBlocks(BlockType::Polynomial) + k_numberOfChildren;
+  constexpr size_t numberOfBlocksInNode = TypeBlock::NumberOfMetaBlocks(BlockType::Polynomial) + k_numberOfChildren - 1;
 
   Tree<k_numberOfChildrenBlocks + numberOfBlocksInNode> tree;
   size_t currentTreeIndex = 0;
   tree[currentTreeIndex++] = TypeBlock(BlockType::Polynomial);
   tree[currentTreeIndex++] = k_numberOfChildren;
-  for (size_t i = 0; i < k_numberOfChildren; i++) {
+  for (size_t i = 0; i < k_numberOfChildren - 1; i++) {
     tree[currentTreeIndex++] = exponents[i];
   }
   tree[currentTreeIndex++] = k_numberOfChildren;

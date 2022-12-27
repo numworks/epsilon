@@ -156,7 +156,7 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
           || static_cast<const Matrix &>(analyzedExpression).numberOfRows() != 2
           || static_cast<const Matrix &>(analyzedExpression).numberOfColumns() != 1) {
         // Invalid parametric format
-        setStatus(Status::Unhandled);
+        setErrorStatusAndUpdateCaption(Status::Unhandled);
         return;
       }
       setParametricFunctionProperties(analyzedExpression, context);

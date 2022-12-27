@@ -3,6 +3,10 @@
 
 #include "type_block.h"
 
+#if POINCARE_MEMORY_TREE_LOG
+#include <iostream>
+#endif
+
 namespace Poincare {
 
 /* A block is a byte-long object containing either a type or some value.
@@ -22,6 +26,7 @@ public:
   bool operator!=(const Node& n) { return n.m_block != m_block; }
 
 #if POINCARE_MEMORY_TREE_LOG
+  __attribute__((__used__)) void log() const { return log(std::cout); }
   void log(std::ostream & stream, bool recursive = true, int indentation = 0, bool verbose = true) const;
   void logName(std::ostream & stream) const;
   void logAttributes(std::ostream & stream) const;

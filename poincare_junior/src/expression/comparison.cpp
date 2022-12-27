@@ -98,8 +98,8 @@ int Comparison::ComparePolynomial(const Node node0, const Node node1) {
   int numberOfTerms = Polynomial::NumberOfTerms(node0);
   assert(numberOfTerms == Polynomial::NumberOfTerms(node1));
   for (int i = 0; i < numberOfTerms; i++) {
-    uint8_t exponent0 = Polynomial::ExponantAtIndex(node0, i);
-    uint8_t exponent1 = Polynomial::ExponantAtIndex(node1, i);
+    uint8_t exponent0 = Polynomial::ExponentAtIndex(node0, i);
+    uint8_t exponent1 = Polynomial::ExponentAtIndex(node1, i);
     if (exponent0 != exponent1) {
       return exponent0 - exponent1;
     }

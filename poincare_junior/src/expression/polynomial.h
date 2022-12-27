@@ -6,24 +6,50 @@
 namespace Poincare {
 
 class Polynomial final {
+friend class PolynomialParser;
 public:
   static EditionReference PushEmpty(EditionReference variable);
 
   // Getters
-  static uint8_t ExponantAtIndex(const Node polynomial, int index);
-  static uint8_t Degree(const Node polynomial) { return ExponantAtIndex(polynomial, 0); }
+  static uint8_t ExponentAtIndex(const Node polynomial, int index);
+  static uint8_t Degree(const Node polynomial) { return ExponentAtIndex(polynomial, 0); }
+  static EditionReference LeadingCoefficient(EditionReference polynomial) {
+    assert(NumberOfTerms(polynomial) > 0);
+    return polynomial.childAtIndex(1);
+  }
   static uint8_t NumberOfTerms(const Node polynomial) { return polynomial.numberOfChildren() - 1; }
+  static bool VariableIs(const Node polynomial, const Node variable);
 
   // Setters
-  static void Add(EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial);
+  static void SetExponentAtIndex(EditionReference polynomial, int index, uint8_t exponent);
+  static void InsertExponentAtIndex(EditionReference polynomial, int index, uint8_t exponent);
+  static void RemoveExponentAtIndex(EditionReference polynomial, int index);
 
+  // Operations
+  // *x^n
+  // * lambda
+  // monomial c*x^n
+  // si variable != --> polynom(biggest variable) * lambda
+  // si variable == --> plusieurs monomial
+  static void AddMonomial(EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial);
+  static EditionReference Addition(EditionReference polA, EditionReference polB);
+  static EditionReference Multiplication(EditionReference polA, EditionReference polB);
+  static EditionReference Subtraction(EditionReference polA, EditionReference polB);
+  //
+  // monomial multiplication
   // Computation
   // Unit normal GCD of coefficients
-  static EditionReference Content(EditionReference polynomial);
+  //static EditionReference Content(EditionReference polynomial);
   // Pseudo-division
-  static EditionReference PseudoDivision(EditionReference pol0, EditionReference pol1);
+  //static std::pair<EditionReference> PseudoDivision(EditionReference polA, EditionReference polB, EditionReference variables);
   // GCD
   //static Edi
+private:
+  // Discard null term and potentially discard the polynomial structure
+  static EditionReference Sanitize(EditionReference pol);
+  typedef void (*OperationMonomial)(EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial);
+  static EditionReference Operation(EditionReference polA, EditionReference polB, BlockType type, OperationMonomial operationMonomial);
+  static void MultiplicationMonomial(EditionReference pol, std::pair<EditionReference, uint8_t> monomial);
 };
 
 class PolynomialParser final {
@@ -49,7 +75,7 @@ public:
   static EditionReference GetVariables(const Node expression);
   static EditionReference RecursivelyParse(EditionReference expression, EditionReference variables, size_t variableIndex = 0);
   //static uint8_t Degree(const Node expression, const Node variable);
-  //static EditionReference Coefficient(const Node expression, const Node variable, uint8_t exponant);
+  //static EditionReference Coefficient(const Node expression, const Node variable, uint8_t exponent);
   //static  LeadingCoefficient(const Node expression, const Node variable);
   /* Parsing polynomial:
    * - getVariables

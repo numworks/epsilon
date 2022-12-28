@@ -272,10 +272,18 @@ bool Expression::DeepIsSymbolic(const Expression e, Context * context, Expressio
         bool n = e.numberOfChildren();
         ExpressionNode::SymbolicComputation * replaceSymbols = reinterpret_cast<ExpressionNode::SymbolicComputation *>(auxiliary);
         for (int i = 0; i < n; i++) {
-          if (i == ParameteredExpression::ParameteredChildIndex() || i == ParameteredExpression::ParameterChildIndex()) {
+          if (i == ParameteredExpression::ParameterChildIndex()) {
             continue;
           }
-          if (DeepIsSymbolic(e.childAtIndex(i), context, *replaceSymbols)) {
+          Expression childToAnalyze = e.childAtIndex(i);
+          if (i == ParameteredExpression::ParameteredChildIndex()) {
+            // Replace the parameter with '0' to analyze the child ignoring it
+            childToAnalyze = e.childAtIndex(i).clone();
+            Expression parameter = e.childAtIndex(ParameteredExpression::ParameterChildIndex());
+            assert(parameter.type() == ExpressionNode::Type::Symbol);
+            childToAnalyze = childToAnalyze.replaceSymbolWithExpression(static_cast<Symbol&>(parameter), Rational::Builder(0));
+          }
+          if (DeepIsSymbolic(childToAnalyze, context, *replaceSymbols)) {
             return TrinaryBoolean::True;
           }
         }

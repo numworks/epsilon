@@ -779,4 +779,7 @@ void assert_deep_is_symbolic(const char * expression, bool isSymbolic) {
 QUIZ_CASE(poincare_expression_deep_is_symbolic) {
   assert_deep_is_symbolic("2/cos(3x+2)", true);
   assert_deep_is_symbolic("2/int(5x, x, 3, 4)", false);
+  assert_deep_is_symbolic("2/int(5xy, x, 3, 4)", true);
+  assert_deep_is_symbolic("2/int(diff(xy, y, 2), x, 3, 4)", false);
+  assert_deep_is_symbolic("2/int(diff(xy^n, y, 2), x, 3, 4)", true);
 }

@@ -26,8 +26,7 @@ public:
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void willResignFirstResponder() override;
-  void modalViewWillSpoilFirstResponder() override { contentView()->setStalled(true); }
-  void modalViewDidRestoreFirstResponder() override { contentView()->setStalled(false); }
+  void modalViewAltersFirstResponder(FirstResponderAlteration alteration) override { contentView()->setStalled(alteration == FirstResponderAlteration::WillSpoil); }
 
   // ScrollView
   void setBackgroundColor(KDColor backgroundColor) override;

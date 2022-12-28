@@ -21,12 +21,8 @@ public:
   virtual int maxNumberOfModels() const { return maxNumberOfMemoizedModels(); }
   int numberOfModels() const;
   Ion::Storage::Record recordAtIndex(int i) const;
-  int numberOfDefinedModels() const {
-    return numberOfModelsSatisfyingTest(&isModelDefined, nullptr);
-  }
-  Ion::Storage::Record definedRecordAtIndex(int i) const {
-    return recordSatisfyingTestAtIndex(i, &isModelDefined, nullptr);
-  }
+  int numberOfDefinedModels() const { return numberOfModelsSatisfyingTest(&isModelDefined, nullptr); }
+  Ion::Storage::Record definedRecordAtIndex(int i) const { return recordSatisfyingTestAtIndex(i, &isModelDefined, nullptr); }
   ExpiringPointer<ExpressionModelHandle> modelForRecord(Ion::Storage::Record record) const { return ExpiringPointer<ExpressionModelHandle>(privateModelForRecord(record)); }
 
   // Add and Remove
@@ -37,15 +33,15 @@ public:
   // Other
   virtual void tidyDownstreamPoolFrom(char * treePoolCursor = nullptr);
   void storageDidChangeForRecord(const Ion::Storage::Record record) const { resetMemoizedModelsExceptRecord(record); }
+
 protected:
   virtual int maxNumberOfMemoizedModels() const = 0;
   typedef bool (*ModelTest)(ExpressionModelHandle * model, void * context);
   int numberOfModelsSatisfyingTest(ModelTest test, void * context) const;
   Ion::Storage::Record recordSatisfyingTestAtIndex(int i, ModelTest test, void * context) const;
-  static bool isModelDefined(ExpressionModelHandle * model, void * context) {
-    return model->isDefined();
-  }
+  static bool isModelDefined(ExpressionModelHandle * model, void * context) { return model->isDefined(); }
   ExpressionModelHandle * privateModelForRecord(Ion::Storage::Record record) const;
+
 private:
   void resetMemoizedModelsExceptRecord(const Ion::Storage::Record record = Ion::Storage::Record()) const;
   virtual ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record) const = 0;

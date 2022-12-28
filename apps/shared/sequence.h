@@ -1,7 +1,7 @@
 #ifndef APPS_SHARED_SEQUENCE_H
 #define APPS_SHARED_SEQUENCE_H
 
-#include "../shared/function.h"
+#include "function.h"
 #include <assert.h>
 
 #if __EMSCRIPTEN__
@@ -16,7 +16,7 @@ namespace Shared {
 
 class SequenceContext;
 
-class Sequence : public Shared::Function {
+class Sequence : public Function {
 friend class SequenceStore;
 public:
   enum class Type : uint8_t {
@@ -86,11 +86,11 @@ private:
 
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a Sequence. See comment in
-   * Shared::Function::RecordDataBuffer about packing. */
-  class __attribute__((packed)) RecordDataBuffer : public Shared::Function::RecordDataBuffer {
+   * Function::RecordDataBuffer about packing. */
+  class __attribute__((packed)) RecordDataBuffer : public Function::RecordDataBuffer {
   public:
     RecordDataBuffer(KDColor color) :
-      Shared::Function::RecordDataBuffer(color),
+      Function::RecordDataBuffer(color),
       m_type(Type::Explicit),
       m_initialRank(0),
       m_initialConditionSizes{0,0}
@@ -112,7 +112,7 @@ private:
     Type m_type;
     uint8_t m_initialRank;
 #if __EMSCRIPTEN__
-    // See comment about emscripten alignment in Shared::Function::RecordDataBuffer
+    // See comment about emscripten alignment in Function::RecordDataBuffer
     static_assert(sizeof(emscripten_align1_short) == sizeof(uint16_t), "emscripten_align1_short should have the same size as uint16_t");
     emscripten_align1_short m_initialConditionSizes[2];
 #else
@@ -120,9 +120,9 @@ private:
 #endif
   };
 
-  class SequenceModel : public Shared::ExpressionModel {
+  class SequenceModel : public ExpressionModel {
   public:
-    using Shared::ExpressionModel::ExpressionModel;
+    using ExpressionModel::ExpressionModel;
     Poincare::Layout name(Sequence * sequence);
     void tidyDownstreamPoolFrom(char * treePoolCursor) const override;
     void tidyName(char * treePoolCursor = nullptr) const;
@@ -162,7 +162,7 @@ private:
 
   template<typename T> T templatedApproximateAtAbscissa(T x, SequenceContext * sqctx) const;
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
-  const Shared::ExpressionModel * model() const override { return &m_definition; }
+  const ExpressionModel * model() const override { return &m_definition; }
   RecordDataBuffer * recordData() const;
   DefinitionModel m_definition;
   FirstInitialConditionModel m_firstInitialCondition;

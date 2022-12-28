@@ -1,15 +1,15 @@
 #ifndef APPS_SHARED_SEQUENCE_STORE_H
 #define APPS_SHARED_SEQUENCE_STORE_H
 
-#include "../shared/function_store.h"
+#include "function_store.h"
 #include "sequence.h"
 #include <stdint.h>
 
 namespace Shared {
 
-class SequenceStore : public Shared::FunctionStore {
+class SequenceStore : public FunctionStore {
 public:
-  using Shared::FunctionStore::FunctionStore;
+  using FunctionStore::FunctionStore;
   /* Sequence Store hold all its Sequences in an array. The Sequence pointers
    * return by modelForRecord are therefore non-expirable. We choose to return
    * Sequence * instead of ExpiringPointer<Sequence>. */
@@ -50,8 +50,8 @@ private:
    * m_sequences whatever the value of cacheIndex. We thus return a
    * ExpressionModelHandle pointer after setting the model as it won't be the
    * memoized model at cacheIndex. */
-  Shared::ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
-  Shared::ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
+  ExpressionModelHandle * setMemoizedModelAtIndex(int cacheIndex, Ion::Storage::Record record) const override;
+  ExpressionModelHandle * memoizedModelAtIndex(int cacheIndex) const override;
   mutable Sequence m_sequences[k_maxNumberOfSequences];
 };
 

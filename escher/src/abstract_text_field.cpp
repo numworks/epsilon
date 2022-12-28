@@ -1,4 +1,4 @@
-#include <escher/text_field.h>
+#include <escher/abstract_text_field.h>
 #include <escher/text_input_helpers.h>
 #include <escher/clipboard.h>
 #include <escher/container.h>
@@ -592,8 +592,8 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
 
   if ((event == Ion::Events::Sto && handleStoreEvent()) ||
       (fieldIsEditable &&
-       (isEditing() && privateHandleEventWhilEditing(event)) ||
-       handleBoxEvent(event)))
+       ((isEditing() && privateHandleEventWhilEditing(event)) ||
+        handleBoxEvent(event))))
   {
     return notifyDelegateAfterHandleEvent(true, previousTextLength);
   }

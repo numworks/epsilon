@@ -65,18 +65,36 @@ void Polynomial::AddMonomial(EditionReference polynomial, std::pair<EditionRefer
 }
 
 EditionReference Polynomial::Addition(EditionReference polA, EditionReference polB) {
-  return Operation(polA, polB, BlockType::Addition, AddMonomial);
+  return Operation(
+      polA,
+      polB,
+      BlockType::Addition,
+      AddMonomial,
+      [](EditionReference result, EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial) {
+        AddMonomial(polynomial, monomial);
+        result.replaceTreeByTree(polynomial);
+        return polynomial;
+      });
 }
 
 EditionReference Polynomial::Multiplication(EditionReference polA, EditionReference polB) {
-  return Operation(polA, polB, BlockType::Multiplication, MultiplicationMonomial);
+  return Operation(
+      polA,
+      polB,
+      BlockType::Multiplication,
+      MultiplicationMonomial,
+      [](EditionReference result, EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial) {
+        EditionReference polynomialClone = EditionReference::Clone(polynomial);
+        MultiplicationMonomial(polynomialClone, monomial);
+        return Addition(result, polynomialClone);
+      });
 }
 
 EditionReference Polynomial::Subtraction(EditionReference polA, EditionReference polB) {
   return Addition(polA, Multiplication(polB, EditionReference(&MinusOneBlock)));
 }
 
-EditionReference Polynomial::Operation(EditionReference polA, EditionReference polB, BlockType blockType, OperationMonomial operationMonomial) {
+EditionReference Polynomial::Operation(EditionReference polA, EditionReference polB, BlockType blockType, OperationMonomial operationMonomial, OperationReduce operationMonomialAndReduce) {
   if (polA.type() != BlockType::Polynomial) {
     if (polB.type() != BlockType::Polynomial) {
       EditionReference op = blockType == BlockType::Addition ? EditionReference::Push<BlockType::Addition>(2) : EditionReference::Push<BlockType::Multiplication>(2);
@@ -97,14 +115,17 @@ EditionReference Polynomial::Operation(EditionReference polA, EditionReference p
     size_t i = 0;
     uint8_t nbOfTermsB = NumberOfTerms(polB);
     variableB.removeTree();
+    EditionReference result(&ZeroBlock);
     while (i < nbOfTermsB) {
       EditionReference nextCoefficientB = coefficientB.nextTree();
-      operationMonomial(polA, std::make_pair(coefficientB, ExponentAtIndex(polB, i)));
+      result = operationMonomialAndReduce(result, polA, std::make_pair(coefficientB, ExponentAtIndex(polB, i)));
       coefficientB = nextCoefficientB;
       i++;
     }
     // polB children have been pilfered; remove the node and the variable child
     polB.removeNode();
+    polA.replaceTreeByTree(result);
+    polA = result;
   }
   return Sanitize(polA);
 }

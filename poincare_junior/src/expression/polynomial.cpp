@@ -53,13 +53,9 @@ void Polynomial::AddMonomial(EditionReference polynomial, std::pair<EditionRefer
       continue;
     } else if (exponent == exponentOfChildI) {
       EditionReference currentCoefficient = polynomial.childAtIndex(i + 1);
-      if (currentCoefficient.type() == BlockType::Addition) {
-        NAry::AddChild(currentCoefficient, coefficient);
-      } else {
-        currentCoefficient.insertNodeBeforeNode(EditionReference::Push<BlockType::Addition>(2));
-        currentCoefficient.nextTree().insertTreeBeforeNode(coefficient);
-      }
-      // TODO: call basicReduction on Addition
+      EditionReference previousChild = currentCoefficient.previousTree();
+      EditionReference addition = Polynomial::Addition(currentCoefficient, coefficient);
+      previousChild.nextTree().insertTreeBeforeNode(addition);
     } else {
       NAry::AddChildAtIndex(polynomial, coefficient, i + 1);
       InsertExponentAtIndex(polynomial, i, exponent);
@@ -96,14 +92,18 @@ EditionReference Polynomial::Operation(EditionReference polA, EditionReference p
     operationMonomial(polA, std::make_pair(polB, 0));
   } else {
     // Both polA and polB are polynom(x)
-    for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(polB)) {
-      if (std::get<int>(indexedRef) == 0) {
-        std::get<EditionReference>(indexedRef).removeTree();
-        continue;
-      }
-      operationMonomial(polA, std::make_pair(std::get<EditionReference>(indexedRef), ExponentAtIndex(polB, std::get<int>(indexedRef))));
+    EditionReference variableB = polB.nextNode();
+    EditionReference coefficientB = variableB.nextTree();
+    size_t i = 0;
+    uint8_t nbOfTermsB = NumberOfTerms(polB);
+    variableB.removeTree();
+    while (i < nbOfTermsB) {
+      EditionReference nextCoefficientB = coefficientB.nextTree();
+      operationMonomial(polA, std::make_pair(coefficientB, ExponentAtIndex(polB, i)));
+      coefficientB = nextCoefficientB;
+      i++;
     }
-    // polB children have been pilfered
+    // polB children have been pilfered; remove the node and the variable child
     polB.removeNode();
   }
   return Sanitize(polA);
@@ -118,13 +118,9 @@ void Polynomial::MultiplicationMonomial(EditionReference polynomial, std::pair<E
     SetExponentAtIndex(polynomial, i, ExponentAtIndex(polynomial, i) + exponent);
     // * coefficient
     EditionReference currentCoefficient = polynomial.childAtIndex(i + 1);
-    if (currentCoefficient.type() == BlockType::Multiplication) {
-      NAry::AddChild(currentCoefficient, coefficient);
-    } else {
-      currentCoefficient.insertNodeBeforeNode(EditionReference::Push<BlockType::Multiplication>(2));
-      currentCoefficient.nextTree().insertTreeBeforeNode(coefficient);
-    }
-    // TODO: call basicReduction on Multiplication
+    EditionReference previousChild = currentCoefficient.previousTree();
+    EditionReference multiplication = Polynomial::Multiplication(currentCoefficient, coefficient);
+    previousChild.nextTree().insertTreeBeforeNode(multiplication);
   }
 }
 
@@ -155,16 +151,18 @@ static void extractDegreeAndLeadingCoefficient(EditionReference pol, EditionRefe
 }
 */
 EditionReference Polynomial::Sanitize(EditionReference polynomial) {
-  for (std::pair<EditionReference, int> indexedRef : NodeIterator::Children<Forward, Editable>(polynomial)) {
-    if (std::get<int>(indexedRef) == 0) {
-      continue;
-    }
-    EditionReference child = std::get<EditionReference>(indexedRef);
-    if (child.type() == BlockType::Zero) {
-      child.removeTree();
-      RemoveExponentAtIndex(polynomial, std::get<int>(indexedRef) - 1);
+  uint8_t nbOfTerms = NumberOfTerms(polynomial);
+  size_t i = 0;
+  EditionReference coefficient = polynomial.childAtIndex(1);
+  while (i < nbOfTerms) {
+    EditionReference nextCoefficient = coefficient.nextTree();
+    if (coefficient.type() == BlockType::Zero) {
+      coefficient.removeTree();
+      RemoveExponentAtIndex(polynomial, i);
       NAry::SetNumberOfChildren(polynomial, polynomial.numberOfChildren() - 1);
     }
+    coefficient = nextCoefficient;
+    i++;
   }
   if (polynomial.numberOfChildren() == 1) {
     EditionReference result = EditionReference(&ZeroBlock);

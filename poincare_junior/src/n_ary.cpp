@@ -7,7 +7,7 @@ void NAry::AddChildAtIndex(EditionReference nary, EditionReference child, int in
   if (index == nary.numberOfChildren()) {
     nary.nextTree().insertTreeBeforeNode(child);
   } else {
-    nary.childAtIndex(index).nextTree().insertTreeBeforeNode(child);
+    nary.childAtIndex(index).insertTreeBeforeNode(child);
   }
   SetNumberOfChildren(nary, nary.numberOfChildren() + 1);
 }

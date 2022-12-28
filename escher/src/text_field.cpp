@@ -347,7 +347,7 @@ void AbstractTextField::setText(const char * text) {
   }
 }
 
-bool AbstractTextField::privateHandleEditionEvent(Ion::Events::Event event) {
+bool AbstractTextField::privateHandleEventWhilEditing(Ion::Events::Event event) {
   assert(isEditing());
   if (shouldFinishEditing(event)) {
     /* If textFieldDidFinishEditing displays a pop-up (because of an unvalid
@@ -591,8 +591,9 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
   }
 
   if ((event == Ion::Events::Sto && handleStoreEvent()) ||
-      (fieldIsEditable && isEditing() && privateHandleEditionEvent(event)) ||
-      (fieldIsEditable && handleBoxEvent(event)))
+      (fieldIsEditable &&
+       (isEditing() && privateHandleEventWhilEditing(event)) ||
+       handleBoxEvent(event)))
   {
     return notifyDelegateAfterHandleEvent(true, previousTextLength);
   }

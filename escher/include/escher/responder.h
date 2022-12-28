@@ -11,10 +11,12 @@ public:
   virtual bool handleEvent(Ion::Events::Event event) { return false; }; // Default implementation does nothing
   virtual void didBecomeFirstResponder() {}
   virtual void willResignFirstResponder() {}
-  virtual void modalViewWillSpoilFirstResponder() {}
-  virtual void modalViewDidRestoreFirstResponder() {}
   virtual void didEnterResponderChain(Responder * previousFirstResponder) {}
   virtual void willExitResponderChain(Responder * nextFirstResponder) {}
+
+  enum class FirstResponderAlteration { WillSpoil, DidRestore };
+  virtual void modalViewAltersFirstResponder(FirstResponderAlteration alteration) {}
+
   Responder * parentResponder() const { return m_parentResponder; }
   bool hasAncestor(Responder * responder) const;
   Responder * commonAncestorWith(Responder * responder);

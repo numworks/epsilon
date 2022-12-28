@@ -760,8 +760,7 @@ bool Expression::ExactAndApproximateExpressionsAreEqual(Expression exactExpressi
   /* Check deeply for equality, because the expression can be a list, a matrix
    * or a complex composed of rationals.
    * Ex: i/2 == 0.5i */
-  if (exactExpression.type() == approximateExpression.type()
-      && exactExpression.numberOfChildren() == approximateExpression.numberOfChildren()) {
+  if (exactExpression.type() == approximateExpression.type() && exactExpression.numberOfChildren() == approximateExpression.numberOfChildren()) {
     int nChildren = exactExpression.numberOfChildren();
     if (nChildren == 0) {
       return true;

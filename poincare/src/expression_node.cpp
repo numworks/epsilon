@@ -130,9 +130,9 @@ bool ExpressionNode::isOfType(std::initializer_list<ExpressionNode::Type> types)
   return false;
 }
 
-bool ExpressionNode::hasMatrixOrListChild(Context * context) const {
+bool ExpressionNode::hasMatrixOrListChild(Context * context, bool isReduced) const {
   for (ExpressionNode * c : children()) {
-    if (Expression(c).deepIsMatrix(context) || Expression(c).deepIsList(context)) {
+    if (Expression(c).deepIsMatrix(context, true, isReduced) || Expression(c).deepIsList(context)) {
       return true;
     }
   }

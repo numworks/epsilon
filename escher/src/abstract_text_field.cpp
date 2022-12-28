@@ -543,22 +543,17 @@ void AbstractTextField::willResignFirstResponder() {
   TextInput::willResignFirstResponder();
 }
 
-bool AbstractTextField::notifyDelegateAfterHandleEvent(bool didHandleEvent, size_t previousTextLength) {
-  /* Only the strlen are compared because this is called in a method that can
-   * only delete text, not modify it. */
-  return m_delegate->textFieldDidHandleEvent(this, didHandleEvent, strlen(text()) != previousTextLength);
-}
-
-
 bool AbstractTextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
   assert(!contentView()->isStalled());
   size_t previousTextLength = strlen(text());
   bool fieldIsEditable = m_delegate->textFieldIsEditable(this);
+  bool didHandleEvent = false;
 
   // Handle move and selection
   if (privateHandleMoveEvent(event) || privateHandleSelectEvent(event)) {
-    return notifyDelegateAfterHandleEvent(true, previousTextLength);
+    didHandleEvent = true;
+    goto notify_delegate_after_handle_event;
   }
 
   // Notify delegate
@@ -575,7 +570,8 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
         removeWholeText();
       }
     }
-    return notifyDelegateAfterHandleEvent(true, previousTextLength);
+    didHandleEvent = true;
+    goto notify_delegate_after_handle_event;
   }
 
   if (fieldIsEditable && event == Ion::Events::Paste) {
@@ -587,7 +583,8 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
     setEditing(true);
     m_delegate->textFieldDidStartEditing(this);
     setText(previousText);
-    return notifyDelegateAfterHandleEvent(true, previousTextLength);
+    didHandleEvent = true;
+    goto notify_delegate_after_handle_event;
   }
 
   if ((event == Ion::Events::Sto && handleStoreEvent()) ||
@@ -595,7 +592,8 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
        ((isEditing() && privateHandleEventWhilEditing(event)) ||
         handleBoxEvent(event))))
   {
-    return notifyDelegateAfterHandleEvent(true, previousTextLength);
+    didHandleEvent = true;
+    goto notify_delegate_after_handle_event;
   }
 
   if (fieldIsEditable) {
@@ -606,7 +604,11 @@ bool AbstractTextField::handleEvent(Ion::Events::Event event) {
     }
   }
 
-  return notifyDelegateAfterHandleEvent(false, previousTextLength);
+notify_delegate_after_handle_event:
+  /* Only the strlen are compared because this method does not reaches this
+   * point if the text was modified, only if it was not altered or if
+   * text was deleted. */
+  return m_delegate->textFieldDidHandleEvent(this, didHandleEvent, strlen(text()) != previousTextLength);
 }
 
 void AbstractTextField::scrollToCursor() {

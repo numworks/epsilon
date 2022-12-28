@@ -747,7 +747,7 @@ bool Expression::containsSameDependency(const Expression e, const ExpressionNode
   return false;
 }
 
-bool Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(Expression exactExpression, Expression approximateExpression) {
+bool Expression::ExactAndApproximateExpressionsAreEqual(Expression exactExpression, Expression approximateExpression) {
   if (approximateExpression.isAlternativeFormOfRationalNumber() && exactExpression.isAlternativeFormOfRationalNumber()) {
     /* The only case of exact and approximate expressions being different
     * but still equal, is when a rational is equal to a decimal.
@@ -767,7 +767,7 @@ bool Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(Expression exa
       return true;
     }
     for (int i = 0; i < nChildren; i++) {
-      if (!ExactAndApproximateBeautifiedExpressionsAreEqual(exactExpression.childAtIndex(i), approximateExpression.childAtIndex(i))) {
+      if (!ExactAndApproximateExpressionsAreEqual(exactExpression.childAtIndex(i), approximateExpression.childAtIndex(i))) {
         return false;
       }
     }

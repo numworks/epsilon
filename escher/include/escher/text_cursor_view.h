@@ -41,7 +41,7 @@ public:
   }
   void willResignFirstResponder() override {
     textCursorView()->setBlinking(false);
-    ResponderType::didBecomeFirstResponder();
+    ResponderType::willResignFirstResponder();
   }
 
 private:

@@ -131,11 +131,12 @@ protected:
 private:
   virtual void removeWholeText();
   void removePreviousGlyphIfRepetition(bool defaultXNTHasChanged);
-  bool privateHandleEvent(Ion::Events::Event event);
+  bool privateHandleEditionEvent(Ion::Events::Event event);
   bool privateHandleMoveEvent(Ion::Events::Event event);
   bool privateHandleSelectEvent(Ion::Events::Event event);
   bool handleStoreEvent() override;
   bool storeInClipboard() const;
+  bool notifyDelegateAfterHandleEvent(bool didHandleEvent, size_t previousTextLength);
 
   TextFieldDelegate * m_delegate;
 };

@@ -347,12 +347,9 @@ void AbstractTextField::setText(const char * text) {
   }
 }
 
-bool AbstractTextField::privateHandleEvent(Ion::Events::Event event) {
-  // Handle Toolbox or Var event
-  if (m_delegate->textFieldIsEditable(this) && handleBoxEvent(event)) {
-    return true;
-  }
-  if (isEditing() && shouldFinishEditing(event)) {
+bool AbstractTextField::privateHandleEditionEvent(Ion::Events::Event event) {
+  assert(isEditing());
+  if (shouldFinishEditing(event)) {
     /* If textFieldDidFinishEditing displays a pop-up (because of an unvalid
      * text for instance), the text field will call willResignFirstResponder.
      * This will call textFieldDidAbortEditing if the textfield is still editing,
@@ -378,24 +375,26 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event) {
     setEditing(true);
     return true;
   }
+
   /* If a move event was not caught before, we handle it here to avoid bubbling
    * the event up. */
-  if (isEditing()
-      && (event == Ion::Events::Up
-        || event == Ion::Events::Down
-        || event == Ion::Events::Left
-        || event == Ion::Events::Right))
+  if (event == Ion::Events::Up ||
+      event == Ion::Events::Down ||
+      event == Ion::Events::Left ||
+      event == Ion::Events::Right)
   {
     return true;
   }
-  if (event == Ion::Events::Backspace && isEditing()) {
+
+  if (event == Ion::Events::Backspace) {
     if (contentView()->selectionIsEmpty()) {
       return removePreviousGlyph();
     }
     deleteSelection();
     return true;
   }
-  if (event == Ion::Events::Back && isEditing()) {
+
+  if (event == Ion::Events::Back) {
     reinitDraftTextBuffer();
     resetSelection();
     setEditing(false);
@@ -403,7 +402,8 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event) {
     reloadScroll(true);
     return true;
   }
-  if (event == Ion::Events::Clear && isEditing()) {
+
+  if (event == Ion::Events::Clear) {
     if (!contentView()->selectionIsEmpty()) {
       deleteSelection();
     } else if (!removeEndOfLine()) {
@@ -411,19 +411,7 @@ bool AbstractTextField::privateHandleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
-    if (storeInClipboard() && event == Ion::Events::Cut) {
-      if (!contentView()->selectionIsEmpty()) {
-        deleteSelection();
-      } else {
-        removeWholeText();
-      }
-    }
-    return true;
-  }
-  if (event == Ion::Events::Sto) {
-    return handleStoreEvent();
-  }
+
   return false;
 }
 
@@ -555,39 +543,69 @@ void AbstractTextField::willResignFirstResponder() {
   TextInput::willResignFirstResponder();
 }
 
+bool AbstractTextField::notifyDelegateAfterHandleEvent(bool didHandleEvent, size_t previousTextLength) {
+  /* Only the strlen are compared because this is called in a method that can
+   * only delete text, not modify it. */
+  return m_delegate->textFieldDidHandleEvent(this, didHandleEvent, strlen(text()) != previousTextLength);
+}
+
+
 bool AbstractTextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
   assert(!contentView()->isStalled());
   size_t previousTextLength = strlen(text());
-  bool didHandleEvent = false;
-  bool fieldIsEditbale = m_delegate->textFieldIsEditable(this);
-  if (privateHandleMoveEvent(event)) {
-    didHandleEvent = true;
-  } else if (privateHandleSelectEvent(event)) {
-    didHandleEvent = true;
-  } else if (m_delegate->textFieldDidReceiveEvent(this, event)) {
+  bool fieldIsEditable = m_delegate->textFieldIsEditable(this);
+
+  // Handle move and selection
+  if (privateHandleMoveEvent(event) || privateHandleSelectEvent(event)) {
+    return notifyDelegateAfterHandleEvent(true, previousTextLength);
+  }
+
+  // Notify delegate
+  if (m_delegate->textFieldDidReceiveEvent(this, event)) {
     return true;
-  } else if (fieldIsEditbale && event == Ion::Events::Paste) {
+  }
+
+  // Handle copy, cut and paste
+  if (event == Ion::Events::Copy || (event == Ion::Events::Cut && fieldIsEditable)) {
+    if (storeInClipboard() && event == Ion::Events::Cut) {
+      if (!contentView()->selectionIsEmpty()) {
+        deleteSelection();
+      } else {
+        removeWholeText();
+      }
+    }
+    return notifyDelegateAfterHandleEvent(true, previousTextLength);
+  }
+
+  if (fieldIsEditable && event == Ion::Events::Paste) {
     return handleEventWithText(Clipboard::SharedClipboard()->storedText(), false, true);
-  } else if (fieldIsEditbale && (event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
+  }
+
+  if (fieldIsEditable && (event == Ion::Events::OK || event == Ion::Events::EXE) && !isEditing()) {
     const char * previousText = contentView()->text();
     setEditing(true);
     m_delegate->textFieldDidStartEditing(this);
     setText(previousText);
-    didHandleEvent = true;
-  } else if (fieldIsEditbale) {
+    return notifyDelegateAfterHandleEvent(true, previousTextLength);
+  }
+
+  if ((event == Ion::Events::Sto && handleStoreEvent()) ||
+      (fieldIsEditable && isEditing() && privateHandleEditionEvent(event)) ||
+      (fieldIsEditable && handleBoxEvent(event)))
+  {
+    return notifyDelegateAfterHandleEvent(true, previousTextLength);
+  }
+
+  if (fieldIsEditable) {
     char buffer[Ion::Events::EventData::k_maxDataSize] = {0};
     size_t eventTextLength = Ion::Events::copyText(static_cast<uint8_t>(event), buffer, Ion::Events::EventData::k_maxDataSize);
     if (eventTextLength > 0) {
       return handleEventWithText(buffer);
     }
   }
-  if (!didHandleEvent) {
-    didHandleEvent = privateHandleEvent(event);
-  }
 
-  // Here, text only changed if something was deleted
-  return m_delegate->textFieldDidHandleEvent(this, didHandleEvent, strlen(text()) != previousTextLength);
+  return notifyDelegateAfterHandleEvent(false, previousTextLength);
 }
 
 void AbstractTextField::scrollToCursor() {

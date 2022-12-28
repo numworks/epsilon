@@ -349,7 +349,7 @@ void AbstractTextField::setText(const char * text) {
 
 bool AbstractTextField::privateHandleEvent(Ion::Events::Event event) {
   // Handle Toolbox or Var event
-  if (handleBoxEvent(event)) {
+  if (m_delegate->textFieldIsEditable(this) && handleBoxEvent(event)) {
     return true;
   }
   if (isEditing() && shouldFinishEditing(event)) {

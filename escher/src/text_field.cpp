@@ -116,7 +116,6 @@ void AbstractTextField::ContentView::setEditing(bool isEditing) {
     return;
   }
   resetSelection();
-  m_isStalled = false;
   m_isEditing = isEditing;
   const char * buffer = editedText();
   size_t textLength = strlen(buffer);
@@ -133,10 +132,8 @@ void AbstractTextField::ContentView::setEditing(bool isEditing) {
 }
 
 void AbstractTextField::ContentView::stallOrStopEditing() {
-  if (m_isStalled) {
+  if (!m_isStalled) {
     setEditing(false);
-  } else if (isEditing()) {
-    m_isStalled = true;
   }
 }
 
@@ -555,11 +552,12 @@ bool AbstractTextField::addXNTCodePoint(CodePoint xnt) {
 
 void AbstractTextField::willResignFirstResponder() {
   contentView()->stallOrStopEditing();
+  TextInput::willResignFirstResponder();
 }
 
 bool AbstractTextField::handleEvent(Ion::Events::Event event) {
   assert(m_delegate != nullptr);
-  contentView()->setStalled(false);
+  assert(!contentView()->isStalled());
   size_t previousTextLength = strlen(text());
   bool didHandleEvent = false;
   bool fieldIsEditbale = m_delegate->textFieldIsEditable(this);

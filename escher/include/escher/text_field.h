@@ -26,6 +26,8 @@ public:
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void willResignFirstResponder() override;
+  void modalViewWillSpoilFirstResponder() override { contentView()->setStalled(true); }
+  void modalViewDidRestoreFirstResponder() override { contentView()->setStalled(false); }
 
   // ScrollView
   void setBackgroundColor(KDColor backgroundColor) override;
@@ -86,21 +88,24 @@ protected:
     bool removePreviousGlyph() override;
     bool removeEndOfLine() override;
     size_t deleteSelection() override;
-    void stallOrStopEditing();
 
     void setBackgroundColor(KDColor backgroundColor);
     KDColor backgroundColor() const { return m_backgroundColor; }
     void setTextColor(KDColor textColor);
+
     bool isEditing() const { return m_isEditing; }
     void setText(const char * text);
     void setEditing(bool isEditing);
-    void setStalled(bool isStalled) { m_isStalled = isStalled; }
     void reinitDraftTextBuffer();
     void setDraftTextBufferSize(size_t size) { assert(size <= k_maxBufferSize); m_draftTextBufferSize = size; }
     size_t draftTextBufferSize() const { return m_draftTextBufferSize; }
     void willModifyTextBuffer();
     void didModifyTextBuffer();
     void setEditionBuffer(char * buffer, size_t bufferSize);
+
+    void stallOrStopEditing();
+    bool isStalled() const { return m_isStalled; }
+    void setStalled(bool stalled) { m_isStalled = stalled; }
 
   protected:
     KDRect glyphFrameAtPosition(const char * buffer, const char * position) const override;

@@ -280,7 +280,7 @@ public:
   bool isIdenticalToWithoutParentheses(const Expression e) const;
   bool containsSameDependency(const Expression e, const ExpressionNode::ReductionContext& reductionContext) const;
 
-  static bool ExactAndApproximateBeautifiedExpressionsAreEqual(Expression exactExpression, Expression approximateExpression);
+  static bool ExactAndApproximateExpressionsAreEqual(Expression exactExpression, Expression approximateExpression);
 
   /* Layout Helper */
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context, bool forceStripMargin = false, bool nested = false) const;

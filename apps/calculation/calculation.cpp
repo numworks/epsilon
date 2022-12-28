@@ -216,7 +216,7 @@ Calculation::EqualSign Calculation::exactAndApproximateDisplayedOutputsAreEqual(
        * reduced so we need to reduce it again prior to computing equal sign */
       PoincareHelpers::CloneAndSimplify(&exactOutputExpression, context, Poincare::ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
     }
-    m_equalSign = Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(exactOutputExpression, approximateOutput(NumberOfSignificantDigits::UserDefined)) ? EqualSign::Equal : EqualSign::Approximation;
+    m_equalSign = Expression::ExactAndApproximateExpressionsAreEqual(exactOutputExpression, approximateOutput(NumberOfSignificantDigits::UserDefined)) ? EqualSign::Equal : EqualSign::Approximation;
     return m_equalSign;
   } else {
     /* Do not override m_equalSign in case there is enough room in the pool

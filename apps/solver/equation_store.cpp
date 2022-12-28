@@ -288,9 +288,9 @@ EquationStore::Error EquationStore::privateExactSolve(Poincare::Context * contex
       m_exactSolutionIdentity[solutionIndex] = ExamModeConfiguration::exactExpressionIsForbidden(exactSolutions[i]) || strcmp(exactBuffer, approximateBuffer) == 0;
       if (!m_exactSolutionIdentity[solutionIndex]) {
         /* We parse approximateBuffer instead of using directly exactSolutionsApproximations[i] because
-         * exactSolutionsApproximations[i] is Float and ExactAndApproximateBeautifiedExpressionsAreEqual
+         * exactSolutionsApproximations[i] is Float and ExactAndApproximateExpressionsAreEqual
          * is always false for Float. Indeed we Parse like in Calculation (see Calculation::approximateOutput) */
-        m_exactSolutionEquality[solutionIndex] = Expression::ExactAndApproximateBeautifiedExpressionsAreEqual(exactSolutions[i], Expression::Parse(approximateBuffer, nullptr));
+        m_exactSolutionEquality[solutionIndex] = Expression::ExactAndApproximateExpressionsAreEqual(exactSolutions[i], Expression::Parse(approximateBuffer, nullptr));
       }
       solutionIndex++;
     }

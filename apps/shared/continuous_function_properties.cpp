@@ -159,6 +159,12 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
         setErrorStatusAndUpdateCaption(Status::Unhandled);
         return;
       }
+      if (analyzedExpression.hasMatrixOrListChild(context, false)) {
+        /* Reduction might have failed.
+         * When reduction doesn't fail, a matrix  a matrix is reduced to undef. */
+        setErrorStatusAndUpdateCaption(Status::Undefined);
+        return;
+      }
       setParametricFunctionProperties(analyzedExpression, context);
       if (genericCaptionOnly) {
         setCaption(I18n::Message::ParametricEquationType);
@@ -462,6 +468,7 @@ void ContinuousFunctionProperties::setParametricFunctionProperties(const Poincar
   assert(analyzedExpression.type() == ExpressionNode::Type::Matrix
         && static_cast<const Matrix&>(analyzedExpression).numberOfColumns() == 1
         && static_cast<const Matrix&>(analyzedExpression).numberOfRows() == 2);
+  assert(!analyzedExpression.hasMatrixOrListChild(context, false));
 
   setCurveParameterType(CurveParameterType::Parametric);
   setCaption(I18n::Message::ParametricEquationType);

@@ -190,6 +190,7 @@ public:
   bool involvesDiscontinuousFunction(Context * context) const;
   bool isDiscontinuousBetweenValuesForSymbol(const char * symbol, float x1, float x2, Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit) const;
   bool hasBooleanValue() const;
+  bool hasMatrixOrListChild(Context * context, bool isReduced = true) const { return node()->hasMatrixOrListChild(context, isReduced); }
 
   /* recursivelyMatches will test each node recursively with the function
    * provided as argument. If the result is True, it will stop searching and
@@ -203,9 +204,7 @@ public:
   typedef bool (*ExpressionTestAuxiliary)(const Expression e, Context * context, void * auxiliary);
   bool recursivelyMatches(ExpressionTestAuxiliary test, Context * context = nullptr, ExpressionNode::SymbolicComputation replaceSymbols = ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, void * auxiliary = nullptr) const;
 
-  // WARNING: this method must be called on reduced (sorted) expressions
-  bool deepIsMatrix(Context * context, bool canContainMatrices = true) const;
-  /* Unlike deepIsMatrix, deepIsList can be called on unreduced expressions. */
+  bool deepIsMatrix(Context * context, bool canContainMatrices = true, bool isReduced = true) const;
   bool deepIsList(Context * context) const;
   // Set of ExpressionTest that can be used with recursivelyMatches
   static bool IsNAry(const Expression e, Context * context);

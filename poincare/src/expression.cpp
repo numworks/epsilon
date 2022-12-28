@@ -164,17 +164,16 @@ bool Expression::recursivelyMatches(ExpressionTestAuxiliary test, Context * cont
   return recursivelyMatches(ternary, context, replaceSymbols, &pack);
 }
 
-bool Expression::deepIsMatrix(Context * context, bool canContainMatrices) const {
+bool Expression::deepIsMatrix(Context * context, bool canContainMatrices, bool isReduced) const {
   if (!canContainMatrices) {
     return false;
   }
-  return recursivelyMatches([](const Expression e, Context * context, void *) {
-        if (IsMatrix(e, context)) { return TrinaryBoolean::True; }
-        // The children were sorted so any expression which is a matrix (deeply) would be at the end
-        if (IsNAry(e, context) && e.numberOfChildren() > 0) {
-          return e.childAtIndex(e.numberOfChildren() - 1).deepIsMatrix(context) ? TrinaryBoolean::True : TrinaryBoolean::False;
+  // Step 1: checks independant from isReduced
+  bool isMatrix = recursivelyMatches([](const Expression e, Context * context, void *) {
+        if (IsMatrix(e, context)) {
+          return TrinaryBoolean::True;
         }
-         /* Dependency are matrices only if their first child is a matrix */
+        // Dependency are matrices only if their first child is a matrix
         if (e.type() == ExpressionNode::Type::Dependency) {
            return e.childAtIndex(0).deepIsMatrix(context) ? TrinaryBoolean::True : TrinaryBoolean::False;
         }
@@ -183,6 +182,35 @@ bool Expression::deepIsMatrix(Context * context, bool canContainMatrices) const 
           return TrinaryBoolean::Unknown;
         }
         // Any other type is not a matrix
+        return TrinaryBoolean::False;
+      }, context);
+  if (isMatrix) {
+    return true;
+  }
+
+  /* Step 2: check that can be optimized when isReduced
+   * This cannot be factorized more because bool isReduced
+   * cannot be captured in recursivelyMatches. */
+  if (isReduced) {
+    return recursivelyMatches([](const Expression e, Context * context, void *) {
+        if (IsNAry(e, context) && e.numberOfChildren() > 0) {
+          /* If reduction didn't fail, the children were sorted so any
+           * expression which is a matrix (deeply) would be at the end. */
+          return e.childAtIndex(e.numberOfChildren() - 1).deepIsMatrix(context) ? TrinaryBoolean::True : TrinaryBoolean::False;
+        }
+        return TrinaryBoolean::False;
+      }, context);
+  }
+  return recursivelyMatches([](const Expression e, Context * context, void *) {
+        if (IsNAry(e, context) && e.numberOfChildren() > 0) {
+          /* If reduction might have failed, any expression which is
+           * a matrix could be at any index. */
+          for (int i = e.numberOfChildren() - 1; i >= 0; i--) {
+            if (e.childAtIndex(i).deepIsMatrix(context)) {
+              return TrinaryBoolean::True;
+            }
+          }
+        }
         return TrinaryBoolean::False;
       }, context);
  }

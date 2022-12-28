@@ -299,7 +299,7 @@ public:
    * See Addition::shallowBeautify - step 1. for more info. */
   virtual double degreeForSortingAddition(bool symbolsOnly) const { return symbolsOnly ? 0. : 1.; }
 
-  bool hasMatrixOrListChild(Context * context) const;
+  bool hasMatrixOrListChild(Context * context, bool isReduced = true) const;
 
   virtual Expression removeUnit(Expression * unit); // Only reduced nodes should answer
 

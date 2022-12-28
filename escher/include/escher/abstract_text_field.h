@@ -136,7 +136,6 @@ private:
   bool privateHandleSelectEvent(Ion::Events::Event event);
   bool handleStoreEvent() override;
   bool storeInClipboard() const;
-  bool notifyDelegateAfterHandleEvent(bool didHandleEvent, size_t previousTextLength);
 
   TextFieldDelegate * m_delegate;
 };

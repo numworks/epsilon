@@ -11,6 +11,7 @@ void testSubtree();
 void testRunTimeCrashIllFormedExpression();
 void testSet();
 void testPolynomialParsing();
+void testPolynomialOperations();
 void testBlock();
 void testTypeBlock();
 void testConstexprTreeConstructor();
@@ -56,6 +57,7 @@ int main() {
   test(testCacheReferenceInvalidation, "TEST CACHE REFERENCE INVALIDATION");
 
   test(testPolynomialParsing, "TEST POLYNOMIAL PARSING");
+  test(testPolynomialOperations, "TEST POLYNOMIAL OPERATIONS");
   test(testSet, "TEST SET");
 
   test(elementaryTreeManipulation, "ELEMENTARY TREE MANIPULATION");

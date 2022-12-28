@@ -1,6 +1,7 @@
 #ifndef POINCARE_MEMORY_TREE_CONSTRUCTOR_H
 #define POINCARE_MEMORY_TREE_CONSTRUCTOR_H
 
+#include <array>
 #include "node_constructor.h"
 #include "node.h"
 
@@ -71,7 +72,7 @@ template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Pow(const Tree
 
 template<unsigned L1, unsigned L2> static constexpr Tree<L1+L2+1> Sub(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Subtraction>(child1, child2); }
 
-template<unsigned ...Len> static constexpr auto Pol(uint8_t exponents[sizeof...(Len) - 1], const Tree<Len> (&...coefficients)) {
+template<unsigned ...Len> static constexpr auto Pol(std::array<uint8_t, sizeof...(Len) - 1> exponents, const Tree<Len> (&...coefficients)) {
   // Compute the total length of the children
   constexpr unsigned k_numberOfChildren = sizeof...(Len);
   constexpr unsigned k_numberOfChildrenBlocks = (0 + ... + Len);

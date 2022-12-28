@@ -100,6 +100,7 @@ LayoutCursor Layout::equivalentCursor(LayoutCursor * cursor) {
 }
 
 Layout Layout::childAtIndex(int i) const {
+  assert(i >= 0 && i < numberOfChildren());
   TreeHandle c = TreeHandle::childAtIndex(i);
   return static_cast<Layout &>(c);
 }

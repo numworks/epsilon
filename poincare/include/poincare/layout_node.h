@@ -92,7 +92,10 @@ public:
 
   // Tree
   LayoutNode * parent() const { return static_cast<LayoutNode *>(TreeNode::parent()); }
-  LayoutNode * childAtIndex(int i) const { return static_cast<LayoutNode *>(TreeNode::childAtIndex(i)); }
+  LayoutNode * childAtIndex(int i) const {
+    assert(i >= 0 && i < numberOfChildren());
+    return static_cast<LayoutNode *>(TreeNode::childAtIndex(i));
+  }
   LayoutNode * root() { return static_cast<LayoutNode *>(TreeNode::root()); }
 
   // Tree navigation

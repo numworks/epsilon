@@ -72,6 +72,7 @@ Expression Expression::ExpressionFromAddress(const void * address, size_t size) 
 /* Hierarchy */
 
 Expression Expression::childAtIndex(int i) const {
+  assert(i >= 0 && i < numberOfChildren());
   TreeHandle c = TreeHandle::childAtIndex(i);
   return static_cast<Expression &>(c);
 }

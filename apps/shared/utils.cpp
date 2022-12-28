@@ -55,14 +55,6 @@ bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expres
       (exactOutput.hasUnit() && !exactOutput.isInRadians(context));
 }
 
-bool ShouldOnlyDisplayExactOutput(Poincare::Expression input) {
-  /* If the input is a "store in a function", do not display the approximate
-   * result. This prevents x->f(x) from displaying x = undef. */
-  assert(!input.isUninitialized());
-  return input.type() == ExpressionNode::Type::Store
-    && input.childAtIndex(1).type() == ExpressionNode::Type::Function;
-}
-
 }
 
 }

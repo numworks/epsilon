@@ -144,6 +144,14 @@ void Calculation::setHeights(KDCoordinate height, KDCoordinate expandedHeight) {
   m_expandedHeight = expandedHeight;
 }
 
+static bool ShouldOnlyDisplayExactOutput(Poincare::Expression input) {
+  /* If the input is a "store in a function", do not display the approximate
+   * result. This prevents x->f(x) from displaying x = undef. */
+  assert(!input.isUninitialized());
+  return input.type() == ExpressionNode::Type::Store
+    && input.childAtIndex(1).type() == ExpressionNode::Type::Function;
+}
+
 Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   if (m_displayOutput != DisplayOutput::Unknown) {
     return m_displayOutput;
@@ -152,7 +160,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
   Expression outputExp = exactOutput();
   if (inputExp.isUninitialized()
    || outputExp.isUninitialized()
-   || Utils::ShouldOnlyDisplayExactOutput(inputExp))
+   || ShouldOnlyDisplayExactOutput(inputExp))
   {
     m_displayOutput = DisplayOutput::ExactOnly;
   } else if (

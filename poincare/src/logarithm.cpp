@@ -181,8 +181,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
   // log(x*y, b)->log(x,b)+log(y, b) if x,y>0
   if (c.type() == ExpressionNode::Type::Multiplication) {
     Addition a = Addition::Builder();
-    int childrenNumber = c.numberOfChildren();
-    for (int i = 0; i < childrenNumber-1; i++) {
+    for (int i = 0; i < c.numberOfChildren() - 1; i++) {
       Expression factor = c.childAtIndex(i);
       if (factor.isPositive(reductionContext.context()) == TrinaryBoolean::True) {
         Expression newLog = clone();
@@ -190,6 +189,7 @@ Expression Logarithm::shallowReduce(ExpressionNode::ReductionContext reductionCo
         newLog.replaceChildAtIndexInPlace(0, factor);
         a.addChildAtIndexInPlace(newLog, a.numberOfChildren(), a.numberOfChildren());
         newLog.shallowReduce(reductionContext);
+        i--;
       }
     }
     if (a.numberOfChildren() > 0) {

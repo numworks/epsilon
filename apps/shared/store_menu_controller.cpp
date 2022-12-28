@@ -2,7 +2,7 @@
 #include <escher/clipboard.h>
 #include <escher/invocation.h>
 #include <poincare/store.h>
-#include "utils.h"
+#include "expression_display_permissions.h"
 #include "poincare_helpers.h"
 #include "text_field_delegate_app.h"
 #include <apps/shared/expression_field_delegate_app.h>
@@ -116,7 +116,7 @@ bool StoreMenuController::parseAndStore(const char * text) {
     return false;
   }
   bool isVariable = reducedExp.childAtIndex(1).type() == Poincare::ExpressionNode::Type::Symbol;
-  if (isVariable && Shared::Utils::ShouldOnlyDisplayApproximation(input, reducedExp, context)) {
+  if (isVariable && Shared::ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(input, reducedExp, context)) {
     reducedExp.replaceChildAtIndexInPlace(0, Shared::PoincareHelpers::ApproximateKeepingUnits<double>(reducedExp.childAtIndex(0), context));
   }
   Store store = static_cast<Store&>(reducedExp);

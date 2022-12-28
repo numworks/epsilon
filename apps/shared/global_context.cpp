@@ -5,7 +5,7 @@
 #include "sequence.h"
 #include "sequence_context.h"
 #include "poincare_helpers.h"
-#include "utils.h"
+#include "expression_display_permissions.h"
 #include <poincare/rational.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/symbol.h>
@@ -174,7 +174,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForActualSymbol(co
   Expression expressionToStore = expression;
   PoincareHelpers::CloneAndSimplify(&expressionToStore, this, ExpressionNode::ReductionTarget::User, ExpressionNode::SymbolicComputation::ReplaceAllSymbolsWithDefinitionsOrUndefined);
   // Do not store exact derivative, etc.
-  if (Utils::ShouldOnlyDisplayApproximation(expression, expressionToStore, this)) {
+  if (ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(expression, expressionToStore, this)) {
     /* "approximateKeepingUnits" is called because the expression might contain
      * units, and juste calling "approximate" would return undef
      */

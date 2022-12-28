@@ -9,7 +9,7 @@
 #include <poincare/square_bracket_pair_layout.h>
 #include <poincare/string_layout.h>
 #include <apps/shared/poincare_helpers.h>
-#include <apps/shared/utils.h>
+#include <apps/shared/expression_display_permissions.h>
 #include <apps/constant.h>
 #include "../app.h"
 
@@ -331,7 +331,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
   abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
   PoincareHelpers::CloneAndSimplify(&exactResult, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
-  if (m_exactValuesAreActivated && !isDerivative && !Utils::ShouldOnlyDisplayApproximation(function->originalEquation(), exactResult, context)) {
+  if (m_exactValuesAreActivated && !isDerivative && !ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(function->originalEquation(), exactResult, context)) {
     // Do not show exact expressions in certain cases
     *memoizedLayoutAtIndex(index) = exactResult.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, context);
     return;

@@ -5,7 +5,7 @@
 
 namespace Shared {
 
-namespace Utils {
+namespace ExpressionDisplayPermissions {
 
 bool ShouldNeverDisplayReduction(Poincare::Expression input, Poincare::Context * context);
 bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context);

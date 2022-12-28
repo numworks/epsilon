@@ -8,6 +8,7 @@ app_shared_test_src = $(addprefix apps/shared/,\
   curve_view_range.cpp \
   dots.cpp \
   double_pair_store.cpp \
+  expression_display_permissions.cpp \
   expression_model.cpp \
   expression_model_handle.cpp \
   expression_model_store.cpp \
@@ -30,7 +31,6 @@ app_shared_test_src = $(addprefix apps/shared/,\
   sequence_context.cpp \
   sequence_store.cpp \
   toolbox_helpers.cpp \
-  utils.cpp \
   zoom_and_pan_curve_view_controller.cpp \
   zoom_curve_view_controller.cpp \
 )
@@ -49,6 +49,7 @@ app_shared_src = $(addprefix apps/shared/,\
   editable_cell_selectable_table_view.cpp \
   editable_cell_table_view_controller.cpp \
   explicit_float_parameter_controller.cpp \
+  expression_display_permissions.cpp \
   expression_field_delegate_app.cpp \
   expression_function_title_cell.cpp \
   expression_model_list_controller.cpp \
@@ -101,7 +102,6 @@ app_shared_src = $(addprefix apps/shared/,\
   text_field_delegate.cpp \
   text_field_delegate_app.cpp \
   text_field_with_extension.cpp \
-  utils.cpp \
   values_controller.cpp \
   values_parameter_controller.cpp \
   vertical_cursor_view.cpp \

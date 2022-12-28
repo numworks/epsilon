@@ -66,12 +66,11 @@ void EditionReference::replaceBy(Node newNode, bool oldIsTree, bool newIsTree) {
   }
   if (pool->contains(newNode.block())) {
     assert(!(newIsTree && oldNode.hasAncestor(newNode, true))); // Fractal scheme
-    // newIsTree &&
     if (oldIsTree && newNode.hasAncestor(oldNode, true)) {
       oldSize -= newSize;
     }
     pool->moveBlocks(oldBlock, newBlock, newSize);
-    pool->removeBlocks(oldBlock + newSize, oldSize);
+    pool->removeBlocks(oldBlock > newBlock ? oldBlock : oldBlock + newSize, oldSize);
   } else {
     size_t minSize = std::min(oldSize, newSize);
     memcpy(oldBlock, newBlock, minSize);

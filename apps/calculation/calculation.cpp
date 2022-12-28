@@ -7,7 +7,7 @@
 #include <apps/exam_mode_configuration.h>
 #include <apps/shared/poincare_helpers.h>
 #include <apps/shared/scrollable_multiple_expressions_view.h>
-#include <apps/shared/utils.h>
+#include <apps/shared/expression_display_permissions.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/matrix.h>
 #include <poincare/undefined.h>
@@ -176,7 +176,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context * context) {
    || (strcmp(approximateOutputText(NumberOfSignificantDigits::Maximal), Undefined::Name()) == 0
     && strcmp(inputText(), exactOutputText()) == 0)
       // All other conditions are factorized within PoincareHelpers
-   || Utils::ShouldOnlyDisplayApproximation(inputExp, outputExp, context))
+   || ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(inputExp, outputExp, context))
   {
     m_displayOutput = DisplayOutput::ApproximateOnly;
   } else if (inputExp.recursivelyMatches(Expression::IsApproximate, context)

@@ -8,7 +8,7 @@
 #include "../exam_mode_configuration.h"
 #include <assert.h>
 #include <ion/circuit_breaker.h>
-#include <apps/shared/utils.h>
+#include <apps/shared/expression_display_permissions.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -152,7 +152,7 @@ ExpiringPointer<Calculation> CalculationStore::push(const char * text, Context *
         bool isVariable = store.childAtIndex(1).type() == Poincare::ExpressionNode::Type::Symbol;
         Expression exactValue = store.childAtIndex(0);
         Expression approximatedValue = PoincareHelpers::ApproximateKeepingUnits<double>(exactValue, context);
-        if (isVariable && Utils::ShouldOnlyDisplayApproximation(input, exactValue, context)) {
+        if (isVariable && ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(input, exactValue, context)) {
           store.replaceChildAtIndexInPlace(0, approximatedValue);
         }
         store.storeValueForSymbol(context);

@@ -1,6 +1,6 @@
 #include "history_controller.h"
 #include "app.h"
-#include "../shared/utils.h"
+#include "../shared/expression_display_permissions.h"
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/trigonometry.h>

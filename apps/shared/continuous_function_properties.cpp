@@ -7,7 +7,7 @@
 #include <poincare/matrix.h>
 #include <poincare/multiplication.h>
 #include <poincare/trigonometry.h>
-#include <apps/shared/utils.h>
+#include <apps/shared/expression_display_permissions.h>
 
 using namespace Poincare;
 
@@ -113,7 +113,7 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
     return;
   }
 
-  bool genericCaptionOnly = !inputEquation.isUninitialized() && Shared::Utils::ShouldNeverDisplayReduction(inputEquation, context);;
+  bool genericCaptionOnly = !inputEquation.isUninitialized() && Shared::ExpressionDisplayPermissions::ShouldNeverDisplayReduction(inputEquation, context);;
   setHideDetails(genericCaptionOnly);
 
   assert(!reducedEquation.isUninitialized());

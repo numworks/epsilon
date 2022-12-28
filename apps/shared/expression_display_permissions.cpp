@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "expression_display_permissions.h"
 #include <apps/exam_mode_configuration.h>
 #include <poincare/unit.h>
 
@@ -6,7 +6,7 @@ using namespace Poincare;
 
 namespace Shared {
 
-namespace Utils {
+namespace ExpressionDisplayPermissions {
 
 bool ShouldNeverDisplayReduction(Poincare::Expression input, Poincare::Context * context) {
   return input.recursivelyMatches(
@@ -29,7 +29,6 @@ bool ShouldNeverDisplayReduction(Poincare::Expression input, Poincare::Context *
 }
 
 bool ShouldOnlyDisplayApproximation(Poincare::Expression input, Poincare::Expression exactOutput, Poincare::Context * context) {
-
   return
     // Force all outputs to be ApproximateOnly if required by the exam mode configuration
     ExamModeConfiguration::exactExpressionIsForbidden(exactOutput) ||

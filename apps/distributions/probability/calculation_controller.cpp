@@ -158,11 +158,9 @@ bool CalculationController::textFieldDidHandleEvent(::AbstractTextField * textFi
                                                     bool returnValue,
                                                     bool textDidChange) {
   if (returnValue && textDidChange) {
-    /* We do not reload the responder because the first responder might be the
-     * toolbox (or the variable  box) and reloading the responder would corrupt
-     * the first responder. */
-    bool shouldUpdateFirstResponder = Container::activeApp()->firstResponder() == textField;
-    m_selectableTableView.reloadData(shouldUpdateFirstResponder);
+    /* We do not reload the responder because it would setEditing(false)
+     * the textField and the input would not be handled properly. */
+    m_selectableTableView.reloadData(false);
     // The textField frame might have increased which forces to reload the textField scroll
     textField->scrollToCursor();
   }

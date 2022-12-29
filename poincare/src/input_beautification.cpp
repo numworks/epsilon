@@ -198,7 +198,7 @@ int InputBeautification::BeautifyPipeKey(Layout parent, int indexOfPipeKey, Layo
     indexOfMatchingPipeKey = indexOfPipeKey;
     LayoutCursor tempCursor = *cursor;
     LayoutCursor * cursorToUse = cursor;
-    if (forceCursorRightOfText) {
+    if (forceCursorRightOfText && tempCursor.layout() != pipeKey) {
       // Do not alter cursor if forced right of text
       cursorToUse = &tempCursor;
     }

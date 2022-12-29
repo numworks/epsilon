@@ -199,7 +199,6 @@ void SelectableTableView::deselectTable(bool withinTemporarySelection) {
   int previousSelectedCellY = selectedRow();
   selectColumn(0);
   selectRow(-1);
-  setContentOffset(KDPointZero);
   if (m_delegate) {
     m_delegate->tableViewDidChangeSelection(this, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
     m_delegate->tableViewDidChangeSelectionAndDidScroll(this, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);

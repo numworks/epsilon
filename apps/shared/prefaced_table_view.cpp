@@ -54,6 +54,9 @@ void PrefacedTableView::tableViewDidChangeSelectionAndDidScroll(Escher::Selectab
   if (m_mainTableDelegate) {
     m_mainTableDelegate->tableViewDidChangeSelectionAndDidScroll(t, previousSelectedCellX, previousSelectedCellY, withinTemporarySelection);
   }
+  if (m_mainTableView->selectedRow() == -1) {
+    m_mainTableView->setContentOffset(KDPointZero);
+  }
   layoutSubviews();
 }
 

@@ -13,6 +13,7 @@ namespace Shared {
 void FunctionGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   int n = numberOfDrawnRecords();
   int selectedIndex = selectedRecordIndex();
+  bool firstDrawnRecord = true;
   for (int i = 0; i <= n; i++) {
     // Draw the selected record last so that it's on top of others
     if (i == selectedIndex) {
@@ -28,6 +29,10 @@ void FunctionGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext 
     if (functionWasInterrupted(index)) {
       continue;
     }
+
+    willDrawRecordAtIndex(index, firstDrawnRecord);
+    firstDrawnRecord = false;
+
     UserCircuitBreakerCheckpoint checkpoint;
     if (BackCircuitBreakerRun(checkpoint)) {
       drawRecord(index, ctx, rect);

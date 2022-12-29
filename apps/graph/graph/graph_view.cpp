@@ -47,11 +47,22 @@ int GraphView::numberOfDrawnRecords() const {
   return App::app()->functionStore()->numberOfActiveFunctions();
 }
 
-void GraphView::drawRecord(int i, KDContext * ctx, KDRect rect) const {
-  if (i == 0) {
+void GraphView::willDrawRecordAtIndex(int i, bool isFirstDrawnRecord) const {
+  if (isFirstDrawnRecord) {
     m_areaIndex = 0;
   }
+  /* drawRecord is interruptible so it should not modify the pool before
+   * a checkpoint.
+   * But when the FunctionStore memoization is full, the method
+   * activeRecordAtIndex destroys an old ContinuousFunction model to memoize
+   * the current one, which modifies the pool before checkpoint.
+   * To avoid this, activeRecordAtIndex is called here once, so that
+   * it is in the Store memoization before being drawn.
+   */
+  App::app()->functionStore()->activeRecordAtIndex(i);
+}
 
+void GraphView::drawRecord(int i, KDContext * ctx, KDRect rect) const {
   ContinuousFunctionStore * functionStore = App::app()->functionStore();
   Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
   ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);

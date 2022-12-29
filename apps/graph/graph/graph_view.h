@@ -23,6 +23,7 @@ public:
    * of the graph where the area under the curve is colored. */
   void setAreaHighlightColor(bool highlightColor) override {};
   int numberOfDrawnRecords() const override;
+  void willDrawRecordAtIndex(int i, bool isFirstDrawnRecord) const override;
   void drawRecord(int i, KDContext *, KDRect) const override;
   void tidyModel(int i) const override;
   void setFocus(bool focus) override;

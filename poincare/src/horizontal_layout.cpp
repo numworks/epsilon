@@ -399,7 +399,9 @@ int HorizontalLayoutNode::didRemoveChildAtIndex(int index, LayoutCursor * cursor
     return 0;
   }
   if (!((emptyChildIndex > 0 && childAtIndex(emptyChildIndex - 1)->mustHaveRightSibling())
-     || (emptyChildIndex + 1 < currentNumberOfChildren && childAtIndex(emptyChildIndex + 1)->mustHaveLeftSibling())))
+     || (emptyChildIndex + 1 < currentNumberOfChildren && childAtIndex(emptyChildIndex + 1)->mustHaveLeftSibling())
+     // If the empty layout is the only child, we don't want to delete it
+     || (currentNumberOfChildren == 1)))
   {
     bool deletedSiblingIsLeftOfLayout = emptyChildIndex < index;
     /* This assert ensure we do not have to account for anything deleted right

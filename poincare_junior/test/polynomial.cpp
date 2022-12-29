@@ -56,4 +56,12 @@ void testPolynomialOperations() {
    * (y^2) + ((y+1)x + 1 = (y+1)x + y^2 + 1 */
   assert_trees_are_equal(Polynomial::Addition(EditionReference(Pol({2}, Symb("y"), 1_sn)), EditionReference(Pol({1,0}, Symb("x"), Pol({1,0}, Symb("y"), 1_sn, 1_sn), 1_sn))), Pol({1, 0}, Symb("x"), Pol({1,0}, Symb("y"), 1_sn, 1_sn), Pol({2,0}, Symb("y"), 1_sn, 1_sn)));
   CachePool::sharedCachePool()->editionPool()->flush();
+
+  // A = x^2y^2 + x
+  polA = Pol({2,1}, Symb("x"), Pol({2}, Symb("y"), 1_sn), 1_sn);
+  // B = xy + 1
+  polB = Pol({1,0}, Symb("x"), Pol({1}, Symb("y"), 1_sn), 1_sn);
+  auto [quotient, remainder] = Polynomial::PseudoDivision(polA, polB);
+  assert_trees_are_equal(quotient, Pol({1, 0}, Symb("x"), Pol({1}, Symb("y"), 1_sn), Sub(0_sn, 1_sn)));
+  assert_trees_are_equal(remainder, Pol({1, 0}, Symb("x"), 1_n, 1_n));
 }

@@ -64,6 +64,7 @@ private:
   void reloadView();
   void clearWorkingBuffer() { m_workingBuffer[0] = 0; }
   bool inputViewDidReceiveEvent(Ion::Events::Event event, bool shouldDuplicateLastCalculation);
+  bool inputViewDidHandleEvent(bool returnValue);
   bool inputViewDidFinishEditing(const char * text, Poincare::Layout layoutR);
   bool inputViewDidAbortEditing(const char * text);
   void memoizeInput();

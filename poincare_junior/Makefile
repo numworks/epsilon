@@ -21,6 +21,7 @@ poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/rational.o \
   expression/simplification.o \
   expression/set.o \
+  expression/symbol.o \
   expression.o \
   memory/cache_pool.o \
   memory/cache_reference.o \

@@ -3,6 +3,7 @@
 #include "node_iterator.h"
 #include <poincare_junior/src/expression/approximation.h>
 #include <poincare_junior/src/expression/polynomial.h>
+#include <poincare_junior/src/expression/symbol.h>
 
 namespace Poincare {
 
@@ -87,8 +88,13 @@ void Node::logAttributes(std::ostream & stream) const {
     return;
   }
   if (block()->isNumber() || type() == BlockType::Constant) {
-    stream << " value=\"" << Approximation::To<float>(m_block) << "\"";
+    stream << " value=\"" << Approximation::To<float>(*this) << "\"";
     return;
+  }
+  if (block()->isUserNamed()) {
+    char buffer[64];
+    Symbol::GetName(*this, buffer, sizeof(buffer));
+    stream << " value=\"" << buffer << "\"";
   }
 }
 

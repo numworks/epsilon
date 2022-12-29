@@ -3,6 +3,7 @@
 #include "constant.h"
 #include <poincare_junior/src/memory/node_iterator.h>
 #include "polynomial.h"
+#include "symbol.h"
 
 namespace Poincare {
 
@@ -82,8 +83,12 @@ int Comparison::CompareNumbers(const Node node0, const Node node1) {
 }
 
 int Comparison::CompareNames(const Node node0, const Node node1) {
-  // TODO
-  return 0;
+  int stringComparison = strncmp(Symbol::NonNullTerminatedName(node0), Symbol::NonNullTerminatedName(node1), std::min(Symbol::Length(node0), Symbol::Length(node1)) + 1);
+  if (stringComparison == 0) {
+    int delta = Symbol::Length(node0) - Symbol::Length(node1);
+    return delta > 0 ? 1 : (delta == 0 ? 0 : -1);
+  }
+  return stringComparison;
 }
 
 int Comparison::CompareConstants(const Node node0, const Node node1) {

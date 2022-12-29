@@ -35,14 +35,17 @@ public:
   void setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX = -1, int previousSelectedY = -1) override;
   void tableViewDidChangeSelectionAndDidScroll(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection = false) override;
   void recomputeHistoryCellHeightsIfNeeded() { m_calculationStore->recomputeHeightsIfPreferencesHaveChanged(Poincare::Preferences::sharedPreferences(), HistoryViewCell::Height); }
+
 private:
   KDCoordinate nonMemoizedRowHeight(int j) override;
+
   int storeIndex(int i) { return numberOfRows() - i - 1; }
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int i);
-  CalculationSelectableTableView * selectableTableView();
   bool calculationAtIndexToggles(int index);
   void historyViewCellDidChangeSelection(HistoryViewCell ** cell, HistoryViewCell ** previousCell, int previousSelectedCellX, int previousSelectedCellY, SubviewType type, SubviewType previousType) override;
+
   constexpr static int k_maxNumberOfDisplayedRows = 8;
+
   CalculationSelectableTableView m_selectableTableView;
   HistoryViewCell m_calculationHistory[k_maxNumberOfDisplayedRows];
   CalculationStore * m_calculationStore;

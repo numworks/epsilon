@@ -52,5 +52,8 @@ void testPolynomialOperations() {
   assert_trees_are_equal(Polynomial::Multiplication(EditionReference(polA), EditionReference(polB)), EditionReference(Pol({5, 4, 3, 2, 1, 0}, Symb("x"), Mult(1_sn, 1_sn), Pol({1}, Symb("y"), Mult(3_n, 1_sn)), Pol({2, 1, 0}, Symb("y"), Mult(2_sn, 1_sn), Add( Mult(1_sn, 1_sn), Mult(7_n, 1_sn)), Mult(1_sn, 1_sn)), Pol({3, 2, 0}, Symb("y"),  Mult(3_n, 2_sn), Mult(3_n, 7_n), Mult(1_sn, 23_n)), Pol({3, 2, 1}, Symb("y"), Mult(1_sn, 2_sn), Add(Mult(1_sn, 2_sn), Mult(1_sn, 7_n)), Add(Mult(1_sn, 7_n), Mult(3_n, 23_n))), Pol({1, 0}, Symb("y"), Mult(1_sn, 23_n), Mult(1_sn, 23_n)))));
   CachePool::sharedCachePool()->editionPool()->flush();
 
-  /* */
+  /* Test variable order:
+   * (y^2) + ((y+1)x + 1 = (y+1)x + y^2 + 1 */
+  assert_trees_are_equal(Polynomial::Addition(EditionReference(Pol({2}, Symb("y"), 1_sn)), EditionReference(Pol({1,0}, Symb("x"), Pol({1,0}, Symb("y"), 1_sn, 1_sn), 1_sn))), Pol({1, 0}, Symb("x"), Pol({1,0}, Symb("y"), 1_sn, 1_sn), Pol({2,0}, Symb("y"), 1_sn, 1_sn)));
+  CachePool::sharedCachePool()->editionPool()->flush();
 }

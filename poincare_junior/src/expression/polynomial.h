@@ -17,8 +17,14 @@ public:
     assert(NumberOfTerms(polynomial) > 0);
     return polynomial.childAtIndex(1);
   }
-  static uint8_t NumberOfTerms(const Node polynomial) { return polynomial.numberOfChildren() - 1; }
-  static bool VariableIs(const Node polynomial, const Node variable);
+  static uint8_t NumberOfTerms(const Node polynomial) {
+    assert(polynomial.type() == BlockType::Polynomial);
+    return polynomial.numberOfChildren() - 1;
+  }
+  static EditionReference Variable(const Node polynomial) {
+    assert(polynomial.type() == BlockType::Polynomial);
+    return polynomial.childAtIndex(0);
+  }
 
   // Setters
   static void SetExponentAtIndex(EditionReference polynomial, int index, uint8_t exponent);
@@ -32,6 +38,7 @@ public:
   // si variable != --> polynom(biggest variable) * lambda
   // si variable == --> plusieurs monomial
   static void AddMonomial(EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial);
+  // Operations consume both polynomials
   static EditionReference Addition(EditionReference polA, EditionReference polB);
   static EditionReference Multiplication(EditionReference polA, EditionReference polB);
   static EditionReference Subtraction(EditionReference polA, EditionReference polB);

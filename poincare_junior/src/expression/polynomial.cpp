@@ -21,11 +21,6 @@ uint8_t Polynomial::ExponentAtIndex(const Node polynomial, int index) {
   return static_cast<uint8_t>(*(polynomial.block()->nextNth(2 + index)));
 }
 
-bool Polynomial::VariableIs(const Node polynomial, const Node variable) {
-  assert(polynomial.numberOfChildren() > 0);
-  return Comparison::AreEqual(polynomial.childAtIndex(0), variable);
-}
-
 void Polynomial::SetExponentAtIndex(EditionReference polynomial, int index, uint8_t exponent) {
   Block * exponentsAddress = polynomial.block() + 2;
   *(exponentsAddress + index) = exponent;
@@ -104,9 +99,11 @@ EditionReference Polynomial::Operation(EditionReference polA, EditionReference p
     }
     return Operation(polB, polA, blockType, operationMonomial, operationMonomialAndReduce);
   }
-  assert(polA.numberOfChildren() > 0);
-  EditionReference x = polA.childAtIndex(0);
-  if (polB.type() != BlockType::Polynomial || !VariableIs(polB, x)) {
+  EditionReference x = Variable(polA);
+  if (polB.type() == BlockType::Polynomial && Comparison::Compare(x, Variable(polB)) > 0) {
+    return Operation(polB, polA, blockType, operationMonomial, operationMonomialAndReduce);
+  }
+  if (polB.type() != BlockType::Polynomial || !Comparison::AreEqual(x, Variable(polB))) {
     operationMonomial(polA, std::make_pair(polB, 0));
   } else {
     // Both polA and polB are polynom(x)

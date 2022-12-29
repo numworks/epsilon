@@ -135,7 +135,11 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
         zoom.fitPointsOfInterest(evaluatorSecondCurve<float>, f.operator->(), alongY, evaluatorSecondCurve<double>);
         zoom.fitBounds(evaluatorSecondCurve<float>, f.operator->(), alongY);
       }
-      if (f->properties().canComputeIntersectionsWithFunctionsAlongSameVariable()) {
+
+      /* Do not compute intersections if store is full because re-creating a
+       * ContinuousFunction object each time a new function is intersected
+       * is very slow. */
+      if (!store->memoizationIsFull() && f->properties().canComputeIntersectionsWithFunctionsAlongSameVariable()) {
         ContinuousFunction * mainF = f.operator->();
         for (int j = i + 1; j < nbFunctions; j++) {
           ExpiringPointer<ContinuousFunction> g = store->modelForRecord(store->activeRecordAtIndex(j));

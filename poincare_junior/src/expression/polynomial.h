@@ -9,6 +9,7 @@ class Polynomial final {
 friend class PolynomialParser;
 public:
   static EditionReference PushEmpty(EditionReference variable);
+  static EditionReference PushMonomial(EditionReference variable, uint8_t exponent, EditionReference coefficient = EditionReference(&OneBlock));
 
   // Getters
   static uint8_t ExponentAtIndex(const Node polynomial, int index);
@@ -48,7 +49,7 @@ public:
   // Unit normal GCD of coefficients
   //static EditionReference Content(EditionReference polynomial);
   // Pseudo-division
-  //static std::pair<EditionReference> PseudoDivision(EditionReference polA, EditionReference polB, EditionReference variables);
+  static std::pair<EditionReference, EditionReference> PseudoDivision(EditionReference polA, EditionReference polB);
   // GCD
   //static Edi
 private:

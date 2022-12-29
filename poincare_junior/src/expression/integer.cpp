@@ -57,6 +57,11 @@ uint8_t Integer::Uint8(const Node expression) {
   return static_cast<uint8_t>(Rational::Numerator(expression));
 }
 
+std::pair<EditionReference, EditionReference> Integer::Division(IntegerHandler a, IntegerHandler b) {
+  // TODO
+  return std::make_pair(EditionReference(&OneBlock), EditionReference(&TwoBlock));
+}
+
 }
 
 template float Poincare::IntegerHandler::to<float>();

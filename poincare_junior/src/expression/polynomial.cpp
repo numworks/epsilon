@@ -1,6 +1,6 @@
 #include "comparison.h"
-#include "integer.h"
 #include "polynomial.h"
+#include "rational.h"
 #include "set.h"
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/tree_constructor.h>
@@ -13,6 +13,12 @@ namespace Poincare {
 EditionReference Polynomial::PushEmpty(EditionReference variable) {
   EditionReference pol = EditionReference::Push<BlockType::Polynomial>(1, 1);
   pol.insertTreeAfterNode(variable);
+  return pol;
+}
+
+EditionReference Polynomial::PushMonomial(EditionReference variable, uint8_t exponent, EditionReference coefficient) {
+  EditionReference pol = PushEmpty(variable);
+  AddMonomial(pol, std::make_pair(coefficient, exponent));
   return pol;
 }
 
@@ -145,7 +151,7 @@ void Polynomial::MultiplicationMonomial(EditionReference polynomial, std::pair<E
 }
 
 static void extractDegreeAndLeadingCoefficient(EditionReference pol, EditionReference x,  uint8_t * degree, EditionReference * coefficient) {
-  if (Polynomial::VariableIs(pol, x)) {
+  if (Comparison::AreEqual(x, Polynomial::Variable(pol))) {
     *degree = Polynomial::Degree(pol);
     *coefficient = Polynomial::LeadingCoefficient(pol);
   } else {
@@ -154,22 +160,46 @@ static void extractDegreeAndLeadingCoefficient(EditionReference pol, EditionRefe
   }
 }
 
-/*std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(EditionReference polA, EditionReference polB, EditionReference variables) {
-  if (variables.numberOfChildren() == 0) {
-    assert(polA.block().isInteger() && polB.block().isInteger());
-    auto [quotient, remainder] = Integer::Division(polA, polB);
+std::pair<EditionReference, EditionReference> Polynomial::PseudoDivision(EditionReference polA, EditionReference polB) {
+  if (polA.type() != BlockType::Polynomial && polB.type() != BlockType::Polynomial) {
+    assert(polA.block()->isInteger() && polB.block()->isInteger());
+    auto [quotient, remainder] = Integer::Division(Rational::Numerator(polA), Rational::Numerator(polB));
+    polB.removeTree();
     if (remainder.type() == BlockType::Zero) {
-      return std::make_pair(quotient, EditionReference(&ZeroBlock));
+      polA.removeTree();
+      return std::make_pair(quotient, remainder);
     }
-    return std::make_pair(EditionReference(&ZeroBlock), pol0);
+    quotient.removeTree();
+    remainder.removeTree();
+    return std::make_pair(EditionReference(&ZeroBlock), polA);
   }
-  EditionReference x = Set::Pop(variables);
+  if (polA.type() != BlockType::Polynomial) {
+    polB.removeTree();
+    return std::make_pair(EditionReference(&ZeroBlock), polA);
+  }
+  EditionReference x = Variable(polA);
+  if (polB.type() == BlockType::Polynomial && Comparison::Compare(x, Variable(polB)) > 0) {
+    x = Variable(polB);
+  }
   uint8_t degreeA, degreeB;
   EditionReference leadingCoeffA, leadingCoeffB;
-  extractDegreeAndLeadingCoefficient(polA, x, &degreeA, &leadingCoeffA):
-  extractDegreeAndLeadingCoefficient(polB, x, &degreeB, &leadingCoeffB):
+  extractDegreeAndLeadingCoefficient(polA, x, &degreeA, &leadingCoeffA);
+  extractDegreeAndLeadingCoefficient(polB, x, &degreeB, &leadingCoeffB);
+  EditionReference currentQuotient(&ZeroBlock);
+  while (degreeA >= degreeB) {
+    auto [quotient, remainder] = PseudoDivision(leadingCoeffA, leadingCoeffB);
+    if (remainder.type() != BlockType::Zero) {
+      break;
+    }
+    EditionReference xPowerDegAMinusDegB = Polynomial::PushMonomial(x, degreeA - degreeB);
+    currentQuotient = Polynomial::Addition(currentQuotient, Polynomial::Multiplication(EditionReference::Clone(quotient), EditionReference::Clone(xPowerDegAMinusDegB)));
+    polA = Polynomial::Subtraction(polA, Polynomial::Multiplication(quotient, Polynomial::Multiplication(polB, xPowerDegAMinusDegB)));
+    extractDegreeAndLeadingCoefficient(polA, x, &degreeA, &leadingCoeffA);
+  }
+  polB.removeTree();
+  return std::make_pair(currentQuotient, polA);
 }
-*/
+
 EditionReference Polynomial::Sanitize(EditionReference polynomial) {
   uint8_t nbOfTerms = NumberOfTerms(polynomial);
   size_t i = 0;

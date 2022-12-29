@@ -74,6 +74,7 @@ public:
   static bool IsUint8(const Node expression);
   static uint8_t Uint8(const Node expression);
   static EditionReference Addition(IntegerHandler a, IntegerHandler b);
+  static std::pair<EditionReference, EditionReference> Division(IntegerHandler a, IntegerHandler b);
 };
 
 

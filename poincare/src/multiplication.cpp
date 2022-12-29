@@ -1101,7 +1101,6 @@ bool Multiplication::factorizeExponent(int i, int j, const ExpressionNode::Reduc
   {
     /* Multiplication can raise an exception is Base(child(i)) * Base(child(j))
      * is too big. If it's the case, do not factorize exponents. */
-    char * treePoolCursor = TreePool::sharedPool()->cursor();
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
       Multiplication cloneOfThis = clone().convert<Multiplication>();

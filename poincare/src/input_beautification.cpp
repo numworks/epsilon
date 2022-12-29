@@ -333,6 +333,16 @@ static Layout DeepSearchEmptyLayout(Layout l, int * nSkips) {
   return Layout();
 }
 
+static int DeepNumberOfEmptyLayouts(Layout l) {
+  int currentNumberOfEmptyFound = 0;
+  int dummy = 0;
+  while (!DeepSearchEmptyLayout(l, &dummy).isUninitialized()) {
+    currentNumberOfEmptyFound++;
+    dummy = currentNumberOfEmptyFound;
+  }
+  return currentNumberOfEmptyFound;
+}
+
 Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(Layout layoutToModify, Layout parent, int parenthesisIndexInParent, bool isParameteredExpression) {
   Layout parenthesis = parent.childAtIndex(parenthesisIndexInParent);
   assert(parenthesis.type() == LayoutNode::Type::ParenthesisLayout);
@@ -356,11 +366,9 @@ Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(Layout layoutToMod
         // This parameter can't be empty
         layoutToReplace = layoutToModify.childAtIndex(numberOfParameters);
       } else {
-        if (currentParameter.isEmpty()) {
-          /* Parameter is empty, so it is skipped next time an empty layout
-           * is searched. */
-          numberOfEmptyLayoutsToSkip++;
-        }
+        /* Count empty layouts in parameter, so that they are skipped next time
+         * an empty layout is searched. */
+        numberOfEmptyLayoutsToSkip += DeepNumberOfEmptyLayouts(currentParameter);
         layoutToReplace = DeepSearchEmptyLayout(layoutToModify, &tempNumberOfEmptyLayoutsToSkip);
       }
       if (layoutToReplace.isUninitialized()) {

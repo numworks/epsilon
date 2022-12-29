@@ -320,6 +320,15 @@ QUIZ_CASE(poincare_input_beautification_after_inserting_text) {
         )
       });
   assert_inserted_text_turns_into(text25, l);
+
+  // Beautification containing empty layouts
+  constexpr static const char * text26 = "int((),x,(),())";
+  l = HorizontalLayout::Builder(IntegralLayout::Builder(
+        HorizontalLayout::Builder(ParenthesisLayout::Builder(HorizontalLayout::Builder(EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Never)))),
+        HorizontalLayout::Builder(CodePointLayout::Builder('x')),
+        HorizontalLayout::Builder(ParenthesisLayout::Builder(HorizontalLayout::Builder(EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Never)))),
+        HorizontalLayout::Builder(ParenthesisLayout::Builder(HorizontalLayout::Builder(EmptyLayout::Builder(EmptyLayoutNode::Color::Yellow, EmptyLayoutNode::Visibility::Never))))));
+  assert_inserted_text_turns_into(text26, l);
 }
 
 typedef void (LayoutCursor::*AddLayoutPointer)(Context * context);

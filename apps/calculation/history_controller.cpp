@@ -33,6 +33,10 @@ HistoryController::HistoryController(EditExpressionController * editExpressionCo
 }
 
 void HistoryController::reload() {
+  // Ensure that the total height never overflows KDCoordinate
+  while (m_selectableTableView.minimalSizeForOptimalDisplay().height() >= KDCOORDINATE_MAX - 2 * HistoryViewCell::k_maxCellHeight) {
+    m_calculationStore->deleteCalculationAtIndex(m_calculationStore->numberOfCalculations() - 1);
+  }
   /* When reloading, we might not used anymore cell that hold previous layouts.
    * We clean them all before reloading their content to avoid taking extra
    * useless space in the Poincare pool. */
@@ -273,7 +277,6 @@ bool HistoryController::calculationAtIndexToggles(int index) {
   Context * context = App::app()->localContext();
   return index >= 0 && index < m_calculationStore->numberOfCalculations() && calculationAtIndex(index)->displayOutput(context) == Calculation::DisplayOutput::ExactAndApproximateToggle;
 }
-
 
 void HistoryController::setSelectedSubviewType(SubviewType subviewType, bool sameCell, int previousSelectedX, int previousSelectedY) {
   // Avoid selecting non-displayed ellipsis

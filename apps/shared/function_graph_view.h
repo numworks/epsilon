@@ -16,6 +16,7 @@ protected:
   void drawPlot(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
 
   virtual int numberOfDrawnRecords() const = 0;
+  virtual void willDrawRecordAtIndex(int i, bool isFirstDrawnRecord) const {}
   virtual void drawRecord(int i, KDContext *, KDRect) const = 0;
   virtual void tidyModel(int i) const = 0;
   virtual int selectedRecordIndex() const = 0;

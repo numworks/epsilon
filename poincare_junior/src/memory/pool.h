@@ -24,7 +24,6 @@ public:
   size_t size() { return firstBlock() ? lastBlock() - static_cast<Block *>(firstBlock()) : 0; }
   size_t numberOfTrees();
 
-  constexpr static int k_maxNumberOfReferences = 128;
 #if POINCARE_MEMORY_TREE_LOG
   enum class LogFormat {
     Flat,
@@ -37,7 +36,7 @@ protected:
     constexpr static uint16_t NoNodeIdentifier = 0xFFFF;
     constexpr static uint16_t NumberOfSpecialIdentifier = 1;
     ReferenceTable(Pool * pool) : m_length(0), m_pool(pool) {}
-    bool isFull() { return numberOfStoredNodes() == Pool::k_maxNumberOfReferences; }
+    bool isFull() { return numberOfStoredNodes() == maxNumberOfReferences(); }
     bool isEmpty() const { return numberOfStoredNodes() == 0; }
     int numberOfStoredNodes() const { return m_length; }
     virtual uint16_t storeNode(Node node) = 0;
@@ -49,7 +48,8 @@ protected:
 #endif
   protected:
     uint16_t storeNodeAtIndex(Node node, size_t index);
-    uint16_t m_nodeOffsetForIdentifier[Pool::k_maxNumberOfReferences];
+    virtual size_t maxNumberOfReferences() = 0;
+    virtual uint16_t * nodeOffsetArray() = 0;
     uint16_t m_length;
     Pool * m_pool;
   };

@@ -23,7 +23,7 @@ uint16_t Pool::ReferenceTable::storeNodeAtIndex(Node node, size_t index) {
     // Increment first to make firstBlock != nullptr
     m_length++;
   }
-  m_nodeOffsetForIdentifier[index] = static_cast<uint16_t>(node.block() - m_pool->firstBlock());
+  nodeOffsetArray()[index] = static_cast<uint16_t>(node.block() - m_pool->firstBlock());
   // Assertion requires valid firstBlock/lastBlock (so the order matters)
   assert(node.block() >=  m_pool->firstBlock() && node.block() <=  m_pool->lastBlock());
   return index;
@@ -34,7 +34,7 @@ Node Pool::ReferenceTable::nodeForIdentifier(uint16_t id) const {
     return Node();
   }
   assert(id < m_length);
-  return Node(m_pool->firstBlock() + m_nodeOffsetForIdentifier[id]);
+  return Node(m_pool->firstBlock() + const_cast<Pool::ReferenceTable *>(this)->nodeOffsetArray()[id]);
 }
 
 bool Pool::ReferenceTable::reset() {

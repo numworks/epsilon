@@ -24,9 +24,11 @@ public:
 
   int execute(ActionWithContext action, void * subAction, const void * data);
 
-  constexpr static int k_maxNumberOfBlocks = 512;
   TypeBlock * firstBlock() override { return m_referenceTable.isEmpty() ? nullptr : static_cast<TypeBlock *>(&m_blocks[0]); }
   TypeBlock * lastBlock() override { return  static_cast<TypeBlock *>(m_referenceTable.isEmpty() ? &m_blocks[0] : Node(&m_blocks[0] + m_referenceTable.lastOffset()).nextTree().block()); }
+
+  constexpr static int k_maxNumberOfBlocks = 1024;
+  constexpr static int k_maxNumberOfReferences = 128;
 private:
   CachePool();
   void translate(uint16_t offset, size_t cachePoolSize);
@@ -63,6 +65,8 @@ private:
     uint16_t lastOffset() const;
     bool reset() override;
   private:
+    size_t maxNumberOfReferences() override { return CachePool::k_maxNumberOfReferences; }
+    uint16_t * nodeOffsetArray() override { return m_nodeOffsetForIdentifier; }
 #if POINCARE_MEMORY_TREE_LOG
     uint16_t identifierForIndex(uint16_t index) const override { return idForIndex(index); }
 #endif
@@ -82,6 +86,7 @@ private:
       return id - m_startIdentifier;
     }
     void removeFirstReferences(uint16_t newFirstIndex, Node * nodeToUpdate = nullptr);
+    uint16_t m_nodeOffsetForIdentifier[CachePool::k_maxNumberOfReferences];
     uint16_t m_startIdentifier;
   };
 

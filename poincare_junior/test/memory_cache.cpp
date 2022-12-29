@@ -78,14 +78,14 @@ void testCachePoolLimits() {
   /* test overflowing the cache identifier */
   cachePool->reset();
   // 1. Fill the cache with the max number of identifiers
-  for (int i = 0; i < Pool::k_maxNumberOfReferences; i++) {
+  for (int i = 0; i < CachePool::k_maxNumberOfReferences; i++) {
     editionPool->initFromTree(smallTree);
     cachePool->storeEditedTree();
   }
-  assert_pools_tree_sizes_are(Pool::k_maxNumberOfReferences, 0);
+  assert_pools_tree_sizes_are(CachePool::k_maxNumberOfReferences, 0);
   // 2. Edit and cache a new tree triggering a cache invalidation
   execute_push_tree_and_modify();
-  assert_pools_tree_sizes_are(Pool::k_maxNumberOfReferences, 0);
+  assert_pools_tree_sizes_are(CachePool::k_maxNumberOfReferences, 0);
 }
 
 void assert_check_cache_reference(CacheReference reference, std::initializer_list<const Node> cacheTrees) {
@@ -148,10 +148,10 @@ void testCacheReferenceInvalidation() {
   assert_pools_tree_sizes_are(0, 0);
   reference.send([](const Node tree, void * result) {}, nullptr);
   identifier = reference.id();
-  for (int i = 0; i < Pool::k_maxNumberOfReferences; i++) {
+  for (int i = 0; i < CachePool::k_maxNumberOfReferences; i++) {
     CacheReference reference1([] (Node node){}, static_cast<Node>(smallTree).block());
     reference1.send([](const Node tree, void * result) {}, nullptr);
   }
-  assert_pools_tree_sizes_are(Pool::k_maxNumberOfReferences, 0);
+  assert_pools_tree_sizes_are(CachePool::k_maxNumberOfReferences, 0);
   check_reference_invalidation_and_reconstruction(reference, identifier, 28_n);
 }

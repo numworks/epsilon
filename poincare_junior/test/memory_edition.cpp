@@ -111,7 +111,7 @@ void testEditionReferenceReallocation() {
   constexpr Tree k_expression = 1_sn;
 
   EditionReference reference0(0_sn);
-  for (size_t i = 0; i < Pool::k_maxNumberOfReferences - 1; i++) {
+  for (size_t i = 0; i < EditionPool::k_maxNumberOfReferences - 1; i++) {
     EditionReference reference1(1_sn);
   }
   /* The reference table is now full but we can reference a new node of another

@@ -39,6 +39,7 @@ public:
   size_t fullSize() const { return m_size; }
   void setNumberOfBlocks(int numberOfBlocks) { m_numberOfBlocks = numberOfBlocks; }
 
+  constexpr static int k_maxNumberOfReferences = 1024;
 private:
   // Pool memory
   bool checkForEnoughSpace(size_t numberOfRequiredBlock);
@@ -62,6 +63,10 @@ private:
     uint16_t storeNode(Node node) override;
     typedef void (*AlterSelectedBlock)(uint16_t *, Block *, Block *, Block *, int);
     void updateNodes(AlterSelectedBlock function, Block * contextSelection1, Block * contextSelection2, int contextAlteration);
+  private:
+    size_t maxNumberOfReferences() override { return EditionPool::k_maxNumberOfReferences; }
+    uint16_t * nodeOffsetArray() override { return m_nodeOffsetForIdentifier; }
+    uint16_t m_nodeOffsetForIdentifier[EditionPool::k_maxNumberOfReferences];
   };
 
   ReferenceTable m_referenceTable;

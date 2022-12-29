@@ -515,7 +515,7 @@ int UnitNode::AngleRepresentative::setAdditionalExpressionsWithExactValue(Expres
   // Conversion to degrees should be added to all units not degree related
   if (this == representativesOfSameDimension() + Unit::k_radianRepresentativeIndex || this == representativesOfSameDimension() + Unit::k_gradianRepresentativeIndex) {
     const Representative * degree = representativesOfSameDimension() + Unit::k_degreeRepresentativeIndex;
-    dest[numberOfResults++] = convertInto(exactValue, degree, reductionContext).approximateKeepingUnits<double>(reductionContext);
+    dest[numberOfResults++] = convertInto(exactValue.clone(), degree, reductionContext).approximateKeepingUnits<double>(reductionContext);
   }
   // Degrees related units should show their decomposition in DMS
   const Unit splitUnits[] = {

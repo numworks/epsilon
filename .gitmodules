@@ -1,6 +1,6 @@
 [submodule "apps/rpn"]
 	path = apps/rpn
-	url = https://github.com/Lauryy06/Upsilon-RPN.git
+	url = https://github.com/UpsilonNumworks/Upsilon-RPN.git
 [submodule "apps/atomic"]
 	path = apps/atomic
-	url = https://github.com/Lauryy06/atomic
+	url = https://github.com/UpsilonNumworks/atomic

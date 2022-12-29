@@ -48,7 +48,7 @@ private:
   // Discard null term and potentially discard the polynomial structure
   static EditionReference Sanitize(EditionReference pol);
   typedef void (*OperationMonomial)(EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial);
-  typedef EditionReference (*OperationReduce)(EditionReference result, EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial);
+  typedef EditionReference (*OperationReduce)(EditionReference result, EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial, bool isLastTerm);
   static EditionReference Operation(EditionReference polA, EditionReference polB, BlockType type, OperationMonomial operationMonomial, OperationReduce operationMonomialAndReduce);
   static void MultiplicationMonomial(EditionReference pol, std::pair<EditionReference, uint8_t> monomial);
 };

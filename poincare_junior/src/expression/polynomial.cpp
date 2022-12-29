@@ -70,7 +70,7 @@ EditionReference Polynomial::Addition(EditionReference polA, EditionReference po
       polB,
       BlockType::Addition,
       AddMonomial,
-      [](EditionReference result, EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial) {
+      [](EditionReference result, EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial, bool isLastTerm) {
         AddMonomial(polynomial, monomial);
         result.replaceTreeByTree(polynomial);
         return polynomial;
@@ -83,8 +83,8 @@ EditionReference Polynomial::Multiplication(EditionReference polA, EditionRefere
       polB,
       BlockType::Multiplication,
       MultiplicationMonomial,
-      [](EditionReference result, EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial) {
-        EditionReference polynomialClone = EditionReference::Clone(polynomial);
+      [](EditionReference result, EditionReference polynomial, std::pair<EditionReference, uint8_t> monomial, bool isLastTerm) {
+        EditionReference polynomialClone = isLastTerm ? polynomial : EditionReference::Clone(polynomial);
         MultiplicationMonomial(polynomialClone, monomial);
         return Addition(result, polynomialClone);
       });
@@ -102,7 +102,7 @@ EditionReference Polynomial::Operation(EditionReference polA, EditionReference p
       op.insertTreeAfterNode(polA);
       return op; // TODO: basicReduction
     }
-    return Multiplication(polB, polA);
+    return Operation(polB, polA, blockType, operationMonomial, operationMonomialAndReduce);
   }
   assert(polA.numberOfChildren() > 0);
   EditionReference x = polA.childAtIndex(0);
@@ -118,13 +118,13 @@ EditionReference Polynomial::Operation(EditionReference polA, EditionReference p
     EditionReference result(&ZeroBlock);
     while (i < nbOfTermsB) {
       EditionReference nextCoefficientB = coefficientB.nextTree();
-      result = operationMonomialAndReduce(result, polA, std::make_pair(coefficientB, ExponentAtIndex(polB, i)));
+      result = operationMonomialAndReduce(result, polA, std::make_pair(coefficientB, ExponentAtIndex(polB, i)), i == nbOfTermsB - 1);
       coefficientB = nextCoefficientB;
       i++;
     }
     // polB children have been pilfered; remove the node and the variable child
     polB.removeNode();
-    polA.replaceTreeByTree(result);
+    // polA has been merged in result
     polA = result;
   }
   return Sanitize(polA);
@@ -140,7 +140,9 @@ void Polynomial::MultiplicationMonomial(EditionReference polynomial, std::pair<E
     // * coefficient
     EditionReference currentCoefficient = polynomial.childAtIndex(i + 1);
     EditionReference previousChild = currentCoefficient.previousTree();
-    EditionReference multiplication = Polynomial::Multiplication(currentCoefficient, coefficient);
+    // Avoid one cloning for last term
+    EditionReference coeffClone = i == nbOfTerms - 1 ? coefficient : EditionReference::Clone(coefficient);
+    EditionReference multiplication = Polynomial::Multiplication(currentCoefficient, coeffClone);
     previousChild.nextTree().insertTreeBeforeNode(multiplication);
   }
 }
@@ -179,8 +181,8 @@ EditionReference Polynomial::Sanitize(EditionReference polynomial) {
     EditionReference nextCoefficient = coefficient.nextTree();
     if (coefficient.type() == BlockType::Zero) {
       coefficient.removeTree();
-      RemoveExponentAtIndex(polynomial, i);
       NAry::SetNumberOfChildren(polynomial, polynomial.numberOfChildren() - 1);
+      RemoveExponentAtIndex(polynomial, i);
     }
     coefficient = nextCoefficient;
     i++;

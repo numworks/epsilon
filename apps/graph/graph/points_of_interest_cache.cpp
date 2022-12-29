@@ -175,7 +175,10 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
     }
   }
 
-  if (!f->shouldDisplayIntersections()) {
+  /* Do not compute intersections if store is full because re-creating a
+   * ContinuousFunction object each time a new function is intersected
+   * is very slow. */
+  if (store->memoizationIsFull() || !f->shouldDisplayIntersections()) {
     return;
   }
 

@@ -82,10 +82,7 @@ bool EditExpressionController::textFieldDidReceiveEvent(AbstractTextField * text
 }
 
 bool EditExpressionController::textFieldDidHandleEvent(Escher::AbstractTextField * textField, bool returnValue, bool textDidChange) {
-  if (textDidChange) {
-    memoizeInput();
-  }
-  return returnValue;
+  return inputViewDidHandleEvent(returnValue);
 }
 
 bool EditExpressionController::textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) {
@@ -105,10 +102,7 @@ bool EditExpressionController::layoutFieldDidReceiveEvent(::LayoutField * layout
 }
 
 bool EditExpressionController::layoutFieldDidHandleEvent(Escher::LayoutField * layoutField, bool returnValue, bool layoutDidChange) {
-  if (layoutDidChange) {
-    memoizeInput();
-  }
-  return returnValue;
+  return inputViewDidHandleEvent(returnValue);
 }
 
 bool EditExpressionController::layoutFieldDidFinishEditing(::LayoutField * layoutField, Layout layoutR, Ion::Events::Event event) {
@@ -166,6 +160,15 @@ bool EditExpressionController::inputViewDidReceiveEvent(Ion::Events::Event event
     return true;
   }
   return false;
+}
+
+bool EditExpressionController::inputViewDidHandleEvent(bool returnValue) {
+  /* Memoize on all handled event, even if the text did not change, to properly
+   * update the cursor position. */
+  if (returnValue) {
+    memoizeInput();
+  }
+  return returnValue;
 }
 
 bool EditExpressionController::inputViewDidFinishEditing(const char * text, Layout layoutR) {

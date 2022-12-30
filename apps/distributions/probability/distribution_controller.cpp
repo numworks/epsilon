@@ -1,9 +1,5 @@
 #include "distribution_controller.h"
-
-#include <assert.h>
-
-#include <new>
-
+#include "../app.h"
 #include "../images/binomial_icon.h"
 #include "../images/chi_squared_icon.h"
 #include "../images/exponential_icon.h"
@@ -14,21 +10,20 @@
 #include "../images/poisson_icon.h"
 #include "../images/student_icon.h"
 #include "../images/uniform_icon.h"
-#include "distributions/app.h"
+#include <assert.h>
+#include <new>
 
 using namespace Escher;
 
 namespace Distributions {
 
-DistributionController::DistributionController(Escher::StackViewController * parentResponder,
-                                               Distribution * distribution,
-                                               ParametersController * parametersController) :
-      Escher::SelectableListViewController<Escher::SimpleListViewDataSource>(parentResponder),
-      m_contentView(&m_selectableTableView, I18n::Message::ChooseDistribution),
-      m_distribution(distribution),
-      m_parametersController(parametersController) {
+DistributionController::DistributionController(Escher::StackViewController * parentResponder, Distribution * distribution, ParametersController * parametersController) :
+  Escher::SelectableListViewController<Escher::SimpleListViewDataSource>(parentResponder),
+  m_contentView(&m_selectableTableView, I18n::Message::ChooseDistribution),
+  m_distribution(distribution),
+  m_parametersController(parametersController)
+{
   assert(m_distribution != nullptr);
-
   // Init selection
   selectRow(0);
 }
@@ -88,6 +83,11 @@ void DistributionController::willDisplayCellForIndex(HighlightCell * cell, int i
   };
   myCell->setImage(images[index]);
   myCell->reloadCell();
+}
+
+KDCoordinate DistributionController::defaultRowHeight() {
+  DistributionCell cell;
+  return heightForCellAtIndexWithWidthInit(&cell, 0);
 }
 
 void DistributionController::setDistributionAccordingToIndex(int index) {

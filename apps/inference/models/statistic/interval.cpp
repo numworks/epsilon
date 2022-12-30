@@ -20,23 +20,23 @@ Interval::~Interval() {
   tidy();
 }
 
-void Interval::setGraphTitle(char * buffer, size_t bufferSize) const {
+void Interval::setGraphTitleForValue(double marginOfError, char * buffer, size_t bufferSize) const {
   const char * format = I18n::translate(I18n::Message::StatisticGraphControllerIntervalTitleFormat);
-  Poincare::Print::CustomPrintf(buffer, bufferSize, format, marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+  Poincare::Print::CustomPrintf(buffer, bufferSize, format, marginOfError, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-void Interval::setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const {
+void Interval::setResultTitleForValues(double estimate, double threshold, char * buffer, size_t bufferSize, bool resultIsTopPage) const {
   const char * confidence = I18n::translate(I18n::Message::Confidence);
   if (resultIsTopPage) {
     Poincare::Print::CustomPrintf(buffer, bufferSize, "%s=%*.*ed %s=%*.*ed",
         estimateSymbol(),
-        estimate(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+        estimate, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
         confidence,
-        threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+        threshold, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   } else {
     Poincare::Print::CustomPrintf(buffer, bufferSize, "%s=%*.*ed",
         confidence,
-        threshold(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+        threshold, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
   }
 }
 

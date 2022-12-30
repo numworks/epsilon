@@ -83,8 +83,14 @@ Record::ErrorStatus Record::setValue(Data data) {
   return Storage::FileSystem::sharedFileSystem()->setValueOfRecord(*this, data);
 }
 
-void Record::destroy() {
+bool Record::safeDestroy() {
   return Storage::FileSystem::sharedFileSystem()->destroyRecord(*this);
+}
+
+void Record::destroy() {
+  bool canDestroy = safeDestroy();
+  assert(canDestroy);
+  (void) canDestroy;
 }
 
 Record::ErrorStatus Record::SetBaseNameWithExtension(Record * record, const char * baseName, const char * extension) {

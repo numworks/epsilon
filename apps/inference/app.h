@@ -85,8 +85,7 @@ public:
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
-  bool storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) override;
-  bool willStore(Poincare::Store store) override;
+  bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const override;
 
   // Controllers
   TestGraphController m_testGraphController;

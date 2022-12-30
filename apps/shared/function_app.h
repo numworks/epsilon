@@ -35,12 +35,18 @@ public:
   Snapshot * snapshot() const {
     return static_cast<Snapshot *>(Escher::App::snapshot());
   }
-  bool storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) override;
-  virtual FunctionStore * functionStore() { return snapshot()->functionStore(); }
+
+  virtual FunctionStore * functionStore() const { return snapshot()->functionStore(); }
   virtual ValuesController * valuesController() = 0;
   virtual Escher::InputViewController * inputViewController() = 0;
+
+  void prepareForIntrusiveStorageChange() override;
+  void concludeIntrusiveStorageChange() override;
+
 protected:
   FunctionApp(Snapshot * snapshot, Shared::FunctionListController * listController, Shared::FunctionGraphController * graphController, Shared::ValuesController * valuesController);
+
+  bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const override;
 
   Escher::ButtonRowController m_listFooter;
   Escher::ButtonRowController m_listHeader;
@@ -54,10 +60,6 @@ protected:
   Escher::TabViewController m_tabViewController;
   Escher::InputViewController m_inputViewController;
   Escher::ViewController * m_activeControllerBeforeStore;
-private:
-  bool willStore(Poincare::Store store) override;
-  void didStore() override;
-
 };
 
 }

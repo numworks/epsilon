@@ -114,7 +114,7 @@ private:
   Record::ErrorStatus setNameOfRecord(Record * record, Record::Name name);
   Record::Data valueOfRecord(const Record record);
   Record::ErrorStatus setValueOfRecord(const Record record, Record::Data data);
-  void destroyRecord(const Record record, bool notifyDelegate = true);
+  bool destroyRecord(const Record record, bool notifyDelegate = true);
 
   /* Getters on address in buffer */
   char * pointerOfRecord(const Record record) const;

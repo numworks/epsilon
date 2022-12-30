@@ -21,12 +21,15 @@
  * Multiple App can exist at once.
  * */
 
+class AppsContainer;
+
 namespace Escher {
 
 class Container;
 class InputEventHandler;
 
 class App : public Responder {
+  friend class ::AppsContainer;
 public:
   class Descriptor {
   public:
@@ -68,11 +71,11 @@ public:
   virtual int numberOfTimers() { return 0; }
   virtual Timer * timerAtIndex(int i) { assert(false); return nullptr; }
   virtual Poincare::Context * localContext() { return nullptr; }
-  virtual bool storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) { return true; }
-  virtual void storageDidChangeForRecord(Ion::Storage::Record) {}
+
 #if EPSILON_TELEMETRY
   virtual const char * telemetryId() const { return nullptr; }
 #endif
+
 protected:
   App(Snapshot * snapshot, ViewController * rootViewController, I18n::Message warningMessage = (I18n::Message)0) :
     Responder(nullptr),
@@ -82,6 +85,10 @@ protected:
     m_warningController(this, warningMessage)
   {}
   ModalViewController m_modalViewController;
+
+  virtual bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const { return true; }
+  virtual void storageDidChangeForRecord(Ion::Storage::Record) {}
+
 private:
   Responder * m_firstResponder;
   Snapshot * m_snapshot;

@@ -124,7 +124,7 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
   if (Record::NameIsEmpty(recordName)) {
     return Record::ErrorStatus::NonCompliantName;
   }
-  if (m_delegate && !m_delegate->storageWillChangeForRecordName(recordName)) {
+  if (m_delegate && !m_delegate->storageCanChangeForRecordName(recordName)) {
     return Record::ErrorStatus::CanceledByDelegate;
   }
   size_t totalSize = 0;
@@ -143,7 +143,7 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
      * difference of size between the two of available space. */
    return notifyFullnessToDelegate();
   }
-  /* No need to call storageWillChangeForRecordName as long as
+  /* No need to call storageCanChangeForRecordName as long as
    * recordWithSameName is identical to recordName */
   assert(sameNameRecordSize == 0 || !m_delegate || strcmp(recordWithSameName.name().extension, recordName.extension) == 0);
   /* WARNING : This relies on the fact that when you create a python script or
@@ -172,9 +172,9 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(Record::Name recordNa
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
   Record r = Record(recordName);
-  notifyChangeToDelegate(r);
   m_lastRecordRetrieved = r;
   m_lastRecordRetrievedPointer = newRecordAddress;
+  notifyChangeToDelegate(r);
   return Record::ErrorStatus::None;
 }
 
@@ -258,11 +258,13 @@ void FileSystem::destroyRecordsWithExtension(const char * extension) {
 }
 
 bool FileSystem::handleCompetingRecord(Record::Name recordName, bool destroyRecordWithSameFullName, bool notifyDelegate) {
-  assert(!m_delegate || m_delegate->storageWillChangeForRecordName(recordName));
+  assert(!m_delegate || m_delegate->storageCanChangeForRecordName(recordName));
   Record sameNameRecord = Record(recordName);
   if (isNameOfRecordTaken(sameNameRecord)) {
     if (destroyRecordWithSameFullName) {
-      destroyRecord(sameNameRecord, notifyDelegate);
+      bool canDestroy = destroyRecord(sameNameRecord, notifyDelegate);
+      assert(canDestroy);
+      (void)canDestroy;
       return true;
     }
     return false;
@@ -272,11 +274,13 @@ bool FileSystem::handleCompetingRecord(Record::Name recordName, bool destroyReco
     return true;
   }
   RecordNameVerifier::OverrideStatus result = m_recordNameVerifier.canOverrideRecordWithNewExtension(competingRecord, recordName.extension);
-  if (result == RecordNameVerifier::OverrideStatus::Forbidden || (m_delegate && !m_delegate->storageWillChangeForRecordName(competingRecord.name()))) {
+  if (result == RecordNameVerifier::OverrideStatus::Forbidden || (m_delegate && !m_delegate->storageCanChangeForRecordName(competingRecord.name()))) {
     return false;
   }
   if (result == RecordNameVerifier::OverrideStatus::Allowed) {
-    destroyRecord(competingRecord, notifyDelegate);
+    bool canDestroy = destroyRecord(competingRecord, notifyDelegate);
+    assert(canDestroy);
+    (void)canDestroy;
   }
   return true;
 }
@@ -312,7 +316,7 @@ Record::ErrorStatus FileSystem::setNameOfRecord(Record * record, Record::Name na
     // Name has not changed
     return Record::ErrorStatus::None;
   }
-  if (m_delegate && !m_delegate->storageWillChangeForRecordName(record->name())) {
+  if (m_delegate && !m_delegate->storageCanChangeForRecordName(record->name())) {
     return Record::ErrorStatus::CanceledByDelegate;
   }
   /* If you do not verify that the name has not changed if the previous 'if'
@@ -359,7 +363,7 @@ Record::ErrorStatus FileSystem::setValueOfRecord(Record record, Record::Data dat
    * memcopy, but still notify the delegate. Beware of scripts and the accordion
    * routine.*/
   if (p) {
-    if (m_delegate && !m_delegate->storageWillChangeForRecordName(record.name())) {
+    if (m_delegate && !m_delegate->storageCanChangeForRecordName(record.name())) {
       return Record::ErrorStatus::CanceledByDelegate;
     }
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
@@ -379,11 +383,13 @@ Record::ErrorStatus FileSystem::setValueOfRecord(Record record, Record::Data dat
   return Record::ErrorStatus::RecordDoesNotExist;
 }
 
-void FileSystem::destroyRecord(Record record, bool notifyDelegate) {
+bool FileSystem::destroyRecord(Record record, bool notifyDelegate) {
   if (record.isNull()) {
-    return;
+    return true;
   }
-  assert(!m_delegate || m_delegate->storageWillChangeForRecordName(record.name()));
+  if (m_delegate && !m_delegate->storageCanChangeForRecordName(record.name())) {
+    return false;
+  }
   char * p = pointerOfRecord(record);
   if (p) {
     record_size_t previousRecordSize = sizeOfRecordStarting(p);
@@ -392,6 +398,7 @@ void FileSystem::destroyRecord(Record record, bool notifyDelegate) {
       notifyChangeToDelegate();
     }
   }
+  return true;
 }
 
 char * FileSystem::pointerOfRecord(const Record record) const {

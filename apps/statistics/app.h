@@ -57,8 +57,8 @@ private:
   void activeViewDidBecomeFirstResponder(Escher::ViewController * activeViewController) override;
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   void didBecomeActive(Escher::Window * window) override;
-  bool storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) override;
-  bool willStore(Poincare::Store store) override;
+  bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const override;
+
   Store m_store;
   CalculationController m_calculationController;
   Escher::AlternateEmptyViewController m_calculationAlternateEmptyViewController;

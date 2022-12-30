@@ -15,9 +15,10 @@ namespace Storage {
  * (for example when scrolling the functions list).
  * We thus decided to notify a delegate when the storage changes. */
 class StorageDelegate {
-public:
+  friend class FileSystem;
+protected:
   /* Return false to cancel change */
-  virtual bool storageWillChangeForRecordName(const Record::Name recordName) { return true; };
+  virtual bool storageCanChangeForRecordName(const Record::Name recordName) const { return true; };
   virtual void storageDidChangeForRecord(const Record record) = 0;
   virtual void storageIsFull() = 0;
 };

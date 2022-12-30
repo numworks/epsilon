@@ -39,12 +39,14 @@ public:
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
   Poincare::Context * localContext() override { return &m_context; }
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
-  void storageDidChangeForRecord(Ion::Storage::Record record) override;
+
   EquationStore * equationStore() { return snapshot()->equationStore(); }
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
   Escher::ViewController * solutionsControllerStack() { return &m_alternateEmptyViewController; }
   Escher::ViewController * intervalController() { return &m_intervalController; }
   SolutionsController * solutionsController() { return &m_solutionsController; }
+
+  void prepareForIntrusiveStorageChange() override;
 
   TELEMETRY_ID("Solver");
 
@@ -52,8 +54,9 @@ private:
   App(Snapshot * snapshot);
   // TextFieldDelegateApp
   bool isAcceptableExpression(const Poincare::Expression expression) override;
-  // ExpressionFieldDelegateApp
-  bool willStore(Poincare::Store store) override;
+
+  // Escher::App
+  void storageDidChangeForRecord(Ion::Storage::Record record) override;
 
   // Controllers
   SolutionsController m_solutionsController;

@@ -97,7 +97,9 @@ bool EmptyLayoutNode::willAddSibling(LayoutCursor * cursor, Layout * sibling, bo
 void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor, KDColor backgroundColor, Layout * selectionStart, Layout * selectionEnd, KDColor selectionColor) {
   if (isVisible()) {
     KDColor fillColor = m_color == Color::Yellow ? Escher::Palette::YellowDark : Escher::Palette::GrayBright;
-    ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(font), height(font)), fillColor);
+    KDCoordinate marginWidth = m_margins ? k_marginWidth : 0;
+    KDCoordinate marginHeight = m_margins ? k_marginHeight : 0;
+    ctx->fillRect(KDRect(p.x() + marginWidth, p.y() + marginHeight, width(font), height(font)), fillColor);
   }
 }
 

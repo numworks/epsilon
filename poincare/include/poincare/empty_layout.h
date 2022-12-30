@@ -34,6 +34,7 @@ public:
   void setColor(Color color) { m_color = color; }
   bool isVisible() const { return m_visibility == Visibility::On; }
   void setVisible(bool visible);
+  void enableToBeVisible() { m_visibility = Visibility::On; }
 
   // LayoutNode
   void deleteBeforeCursor(LayoutCursor * cursor) override;

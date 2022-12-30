@@ -131,7 +131,7 @@ protected:
 private:
   virtual void removeWholeText();
   void removePreviousGlyphIfRepetition(bool defaultXNTHasChanged);
-  bool privateHandleEventWhilEditing(Ion::Events::Event event);
+  bool privateHandleEventWhileEditing(Ion::Events::Event event);
   bool privateHandleMoveEvent(Ion::Events::Event event);
   bool privateHandleSelectEvent(Ion::Events::Event event);
   bool handleStoreEvent() override;

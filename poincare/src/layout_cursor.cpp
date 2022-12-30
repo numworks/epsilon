@@ -405,6 +405,9 @@ KDCoordinate LayoutCursor::layoutHeight(KDFont::Size font) {
 void LayoutCursor::privateAddEmptyPowerLayout(VerticalOffsetLayout v) {
   // If there is already a base
   if (baseForNewPowerLayout()) {
+    if (m_layout.type() == LayoutNode::Type::EmptyLayout) {
+      static_cast<EmptyLayoutNode *>(m_layout.node())->enableToBeVisible();
+    }
     m_layout.addSibling(this, &v, true);
     return;
   }

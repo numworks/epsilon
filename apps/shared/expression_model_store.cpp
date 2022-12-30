@@ -59,7 +59,6 @@ int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test, void * co
 }
 
 Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, ModelTest test, void * context) const {
-  assert(0 <= i && i < numberOfModelsSatisfyingTest(test, context));
   int count = 0;
   int index = 0;
   Ion::Storage::Record record;
@@ -72,6 +71,7 @@ Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(int i, Mo
       count++;
     }
   } while (true);
+  assert(!record.isNull());
   return record;
 }
 

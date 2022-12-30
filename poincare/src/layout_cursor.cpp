@@ -421,6 +421,18 @@ bool LayoutCursor::baseForNewPowerLayout() {
    * Indeed, as a Power VerticalOffsetLayout relies on its left sibling to
    * compute its height and position, the base cannot rely on its right sibling
    * (i.e. the vertical offset) for the same info. */
+  if (m_layout.isEmpty()) {
+    /* If the cursor is on the left of an empty layout, move it to the right of
+     * the EmptyLayout. It will take care of changing its color and adding a new
+     * row/column to its parent matrix if needed. */
+    if (m_layout.type() == LayoutNode::Type::HorizontalLayout) {
+      assert(m_layout.numberOfChildren() == 1);
+      m_layout = m_layout.childAtIndex(0);
+    }
+    assert(m_layout.type() == LayoutNode::Type::EmptyLayout);
+    m_position = Position::Right;
+    return true;
+  }
   if (m_position == Position::Right) {
     return !((m_layout.type() == LayoutNode::Type::HorizontalLayout && m_layout.numberOfChildren() == 0)
           || m_layout.mustHaveRightSibling()
@@ -429,13 +441,6 @@ bool LayoutCursor::baseForNewPowerLayout() {
     assert(m_position == Position::Left);
     if (m_layout.type() == LayoutNode::Type::HorizontalLayout) {
       return false;
-    }
-    if (m_layout.isEmpty()) {
-      /* If the cursor is on the left of an EmptyLayout, move it to its right,
-       * the empty layout will take care of changing its color and adding a new
-       * row/column to its parent matrix if needed. */
-      m_position = Position::Right;
-      return true;
     }
     LayoutCursor equivalentLayoutCursor = m_layout.equivalentCursor(this);
     if (equivalentLayoutCursor.layout().isUninitialized()

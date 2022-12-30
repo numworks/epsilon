@@ -98,7 +98,6 @@ void EmptyLayoutNode::render(KDContext * ctx, KDPoint p, KDFont::Size font, KDCo
   if (isVisible()) {
     KDColor fillColor = m_color == Color::Yellow ? Escher::Palette::YellowDark : Escher::Palette::GrayBright;
     ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(font), height(font)), fillColor);
-    ctx->fillRect(KDRect(p.x()+(m_margins ? k_marginWidth : 0), p.y()+(m_margins ? k_marginHeight : 0), width(font), height(font)), fillColor);
   }
 }
 

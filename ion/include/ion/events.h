@@ -276,6 +276,10 @@ inline bool canRepeatEvent(Event e) {
     || e == Events::ShiftDown;
 }
 
+inline static bool EventCanDiscardPopUp(Event e) {
+  return e != Events::Idle && e != Events::USBEnumeration && e != Events::USBPlug;
+}
+
 }
 }
 

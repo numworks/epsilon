@@ -440,7 +440,7 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
        * invalidate the ScriptNodes name pointers. */
       m_wasAutocompleting = true;
       removeAutocompletion();
-    } else {
+    } else if (Ion::Events::EventCanDiscardPopUp(event)) {
       removeAutocompletion();
       m_contentView.reloadRectFromPosition(m_contentView.cursorLocation(), false);
       if (event == Ion::Events::Back) {

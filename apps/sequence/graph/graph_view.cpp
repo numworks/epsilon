@@ -11,8 +11,7 @@ GraphView::GraphView(SequenceStore * sequenceStore, InteractiveCurveViewRange * 
   m_sequenceStore(sequenceStore)
 {}
 
-void GraphView::drawRecord(int i, KDContext * ctx, KDRect rect) const {
-  Ion::Storage::Record record = m_sequenceStore->activeRecordAtIndex(i);
+void GraphView::drawRecord(Ion::Storage::Record record, int index, KDContext * ctx, KDRect rect, bool firstDrawnRecord) const {
   Shared::Sequence * s = m_sequenceStore->modelForRecord(record);
 
   float xStep = std::ceil(pixelWidth());

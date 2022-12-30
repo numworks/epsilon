@@ -32,7 +32,7 @@ void GraphView::drawRect(KDContext * ctx, KDRect rect) const {
 }
 
 int GraphView::selectedRecordIndex() const {
-  return App::app()->functionStore()->indexOfRecordAmongActiveRecords(m_selectedRecord);
+  return functionStore()->indexOfRecordAmongActiveRecords(m_selectedRecord);
 }
 
 void GraphView::setFocus(bool focus) {
@@ -44,28 +44,15 @@ void GraphView::setFocus(bool focus) {
 }
 
 int GraphView::numberOfDrawnRecords() const {
-  return App::app()->functionStore()->numberOfActiveFunctions();
+  return functionStore()->numberOfActiveFunctions();
 }
 
-void GraphView::willDrawRecordAtIndex(int i, bool isFirstDrawnRecord) const {
-  if (isFirstDrawnRecord) {
+void GraphView::drawRecord(Ion::Storage::Record record, int index, KDContext * ctx, KDRect rect, bool firstDrawnRecord) const {
+  if (firstDrawnRecord) {
     m_areaIndex = 0;
   }
-  /* drawRecord is interruptible so it should not modify the pool before
-   * a checkpoint.
-   * But when the FunctionStore memoization is full, the method
-   * activeRecordAtIndex destroys an old ContinuousFunction model to memoize
-   * the current one, which modifies the pool before checkpoint.
-   * To avoid this, activeRecordAtIndex is called here once, so that
-   * it is in the Store memoization before being drawn.
-   */
-  App::app()->functionStore()->activeRecordAtIndex(i);
-}
 
-void GraphView::drawRecord(int i, KDContext * ctx, KDRect rect) const {
-  ContinuousFunctionStore * functionStore = App::app()->functionStore();
-  Ion::Storage::Record record = functionStore->activeRecordAtIndex(i);
-  ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(record);
+  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(record);
 
   Expression e = f->expressionReduced(context());
   ContinuousFunctionProperties::AreaType area = f->properties().areaType();
@@ -88,7 +75,7 @@ void GraphView::drawRecord(int i, KDContext * ctx, KDRect rect) const {
     }
   }
 
-  ContinuousFunctionCache * cch = functionStore->cacheAtIndex(i);
+  ContinuousFunctionCache * cch = functionStore()->cacheAtIndex(index);
   float tmin = f->tMin();
   float tmax = f->tMax();
   Axis axis = f->isAlongY() ? Axis::Vertical : Axis::Horizontal;
@@ -129,8 +116,11 @@ void GraphView::drawRecord(int i, KDContext * ctx, KDRect rect) const {
 }
 
 void GraphView::tidyModel(int i) const {
-  ContinuousFunctionStore * store = App::app()->functionStore();
-  store->modelForRecord(store->activeRecordAtIndex(i))->tidyDownstreamPoolFrom();
+  functionStore()->modelForRecord(functionStore()->activeRecordAtIndex(i))->tidyDownstreamPoolFrom();
+}
+
+ContinuousFunctionStore * GraphView::functionStore() const {
+  return App::app()->functionStore();
 }
 
 template<typename T>
@@ -184,7 +174,7 @@ void GraphView::drawCartesian(KDContext * ctx, KDRect rect, ContinuousFunction *
       if (m_secondSelectedRecord.isNull()) {
         patternLower = Curve2D(evaluateZero);
       } else {
-        ContinuousFunction * otherModel = App::app()->functionStore()->modelForRecord(m_secondSelectedRecord).operator->();
+        ContinuousFunction * otherModel = functionStore()->modelForRecord(m_secondSelectedRecord).operator->();
         patternLower = Curve2D(evaluateXY, otherModel);
         pattern = Pattern(m_areaIndex, KDColor::HSVBlend(f->color(), otherModel->color()));
       }
@@ -363,10 +353,9 @@ void GraphView::drawPointsOfInterest(KDContext * ctx, KDRect rect) {
   bool shouldComputePoints = m_computePointsOfInterest;
   m_computePointsOfInterest = false;
 
-  ContinuousFunctionStore * functionStore = App::app()->functionStore();
   Ion::Storage::Record selectedRec = selectedRecord();
-  ExpiringPointer<ContinuousFunction> f = functionStore->modelForRecord(selectedRec);
-  if (!f->properties().isCartesian() || functionWasInterrupted(functionStore->indexOfRecordAmongActiveRecords(selectedRec))) {
+  ExpiringPointer<ContinuousFunction> f = functionStore()->modelForRecord(selectedRec);
+  if (!f->properties().isCartesian() || functionWasInterrupted(functionStore()->indexOfRecordAmongActiveRecords(selectedRec))) {
     return;
   }
 

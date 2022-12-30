@@ -12,11 +12,12 @@ public:
 
   // FunctionGraphView
   int numberOfDrawnRecords() const override { return m_sequenceStore->numberOfActiveFunctions(); }
-  void drawRecord(int i , KDContext * ctx, KDRect rect) const override;
+  void drawRecord(Ion::Storage::Record record, int index, KDContext * ctx, KDRect rect, bool firstDrawnRecord) const override;
   void tidyModel(int i) const override { m_sequenceStore->modelForRecord(m_sequenceStore->activeRecordAtIndex(i))->tidyDownstreamPoolFrom(); }
   int selectedRecordIndex() const override {
     return m_sequenceStore->indexOfRecordAmongActiveRecords(m_selectedRecord);
   }
+  Shared::FunctionStore * functionStore() const override { return m_sequenceStore; }
 
 private:
   Shared::SequenceStore * m_sequenceStore;

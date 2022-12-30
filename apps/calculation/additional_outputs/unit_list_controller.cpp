@@ -145,13 +145,6 @@ void UnitListController::setExpression(Poincare::Expression e) {
     }
   }
 
-  /* TODO:
-   * If numberOfExpressions == 0, it might be because the SI reduction failed.
-   * Maybe a generic solution could be found, like for example just diplaying
-   * "undef" or "error" in the first row to indicate to the user that the
-   * calculation failed. */
-  assert(numberOfExpressions != 0);
-
   // Memoize number of expression cells
   m_numberOfExpressionCells = numberOfExpressions;
 
@@ -185,6 +178,13 @@ void UnitListController::setExpression(Poincare::Expression e) {
   m_SIValue = PoincareHelpers::ApproximateToScalar<double>(clone, App::app()->localContext());
   // 2. Set upper and lower reference values
   m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(m_SIValue, unit, m_referenceValues, &m_tableIndexForComparison);
+
+  /* TODO:
+   * If numberOfExpressions == 0, it might be because the SI reduction failed.
+   * Maybe a generic solution could be found, like for example just diplaying
+   * "undef" or "error" in the first row to indicate to the user that the
+   * calculation failed. */
+  assert(m_numberOfExpressionCells + m_numberOfBufferCells > 0);
 }
 
 I18n::Message UnitListController::messageAtIndex(int index) {

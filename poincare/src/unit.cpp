@@ -895,6 +895,7 @@ Expression Unit::BuildSplit(double value, const Unit * units, int length, const 
 
   double baseRatio = units->node()->representative()->ratio();
   double basedValue = value / baseRatio;
+  // WARNING: Maybe this should be compared to 0.0 instead of EpsilonLax ? (see below)
   if (std::isinf(value) || std::fabs(value) < Float<double>::EpsilonLax()) {
     return Multiplication::Builder(Number::FloatNumber(value), units[0]);
   }
@@ -910,10 +911,17 @@ Expression Unit::BuildSplit(double value, const Unit * units, int length, const 
       share = (share > 0.0) ? std::floor(share) : std::ceil(share);
     }
     remain -= share * factor;
-    if (std::abs(share) > Float<double>::EpsilonLax()) {
+    /* WARNING: Maybe this should be compared to 0.0 instead of EpsilonLax ?
+     *  What happens if basedValue >= EpsilonLax but share < EpsilonLax for
+     *  each unit of the split ?
+     *  Right now it's not a problem because there is no unit with a ratio
+     *  inferior to EpsilonLax but it might be if femto prefix is implemented.
+     *  (EpsilonLax = 10^-15 = femto)*/
+    if (std::abs(share) >= Float<double>::EpsilonLax()) {
       res.addChildAtIndexInPlace(Multiplication::Builder(Float<double>::Builder(share), units[i]), res.numberOfChildren(), res.numberOfChildren());
     }
   }
+  assert(res.numberOfChildren() > 0);
   ExpressionNode::ReductionContext keepUnitsContext(
       reductionContext.context(),
       reductionContext.complexFormat(),

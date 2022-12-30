@@ -2,6 +2,7 @@
 #define GRAPH_GRAPH_VIEW_H
 
 #include <apps/shared/continuous_function.h>
+#include <apps/shared/continuous_function_store.h>
 #include <apps/shared/function_graph_view.h>
 #include "interest_view.h"
 
@@ -23,10 +24,10 @@ public:
    * of the graph where the area under the curve is colored. */
   void setAreaHighlightColor(bool highlightColor) override {};
   int numberOfDrawnRecords() const override;
-  void willDrawRecordAtIndex(int i, bool isFirstDrawnRecord) const override;
-  void drawRecord(int i, KDContext *, KDRect) const override;
+  void drawRecord(Ion::Storage::Record record, int index, KDContext * ctx, KDRect rect, bool firstDrawnRecord) const override;
   void tidyModel(int i) const override;
   void setFocus(bool focus) override;
+  Shared::ContinuousFunctionStore * functionStore() const override;
 
   void setInterest(Poincare::Solver<double>::Interest interest) { m_interest = interest; }
   void resumePointsOfInterestDrawing();

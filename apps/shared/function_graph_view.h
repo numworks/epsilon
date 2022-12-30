@@ -17,9 +17,10 @@ protected:
 
   virtual int numberOfDrawnRecords() const = 0;
   virtual void willDrawRecordAtIndex(int i, bool isFirstDrawnRecord) const {}
-  virtual void drawRecord(int i, KDContext *, KDRect) const = 0;
+  virtual void drawRecord(Ion::Storage::Record record, int index, KDContext *, KDRect, bool firstDrawnRecord) const = 0;
   virtual void tidyModel(int i) const = 0;
   virtual int selectedRecordIndex() const = 0;
+  virtual FunctionStore * functionStore() const = 0;
 
   bool allFunctionsInterrupted() const;
   bool functionWasInterrupted(int index) const;

@@ -30,17 +30,18 @@ void FunctionGraphPolicy::drawPlot(const AbstractPlotView * plotView, KDContext 
       continue;
     }
 
-    willDrawRecordAtIndex(index, firstDrawnRecord);
-    firstDrawnRecord = false;
+    // Get the record before the checkpoint because it can change the pool
+    Ion::Storage::Record record = functionStore()->activeRecordAtIndex(index);
 
     CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::Back);
     if (CircuitBreakerRun(checkpoint)) {
-      drawRecord(index, ctx, rect);
+      drawRecord(record, index, ctx, rect, firstDrawnRecord);
     } else {
       setFunctionInterrupted(index);
       tidyModel(index);
       m_context->tidyDownstreamPoolFrom();
     }
+    firstDrawnRecord = false;
   }
 }
 

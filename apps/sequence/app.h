@@ -48,7 +48,7 @@ public:
   // NestedMenuController * variableBox(InputEventHandler * textInput) override;
   CodePoint XNT() override { return 'n'; }
   Shared::SequenceContext * localContext() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceContext(); }
-  Shared::SequenceStore * functionStore() override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceStore(); }
+  Shared::SequenceStore * functionStore() const override { return static_cast<Shared::GlobalContext *>(AppsContainerHelper::sharedAppsContainerGlobalContext())->sequenceStore(); }
   Shared::Interval * interval() { return snapshot()->interval(); }
   ValuesController * valuesController() override { return &m_valuesController; }
   Escher::InputViewController * inputViewController() override { return &m_inputViewController; }

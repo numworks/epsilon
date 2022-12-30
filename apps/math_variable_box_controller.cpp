@@ -1,6 +1,7 @@
 #include "math_variable_box_controller.h"
-#include "shared/global_context.h"
 #include "shared/continuous_function.h"
+#include "shared/input_event_handler_delegate_app.h"
+#include "shared/global_context.h"
 #include <escher/metric.h>
 #include <escher/message_table_cell_with_message.h>
 #include <ion/unicode/utf8_decoder.h>
@@ -60,6 +61,10 @@ bool MathVariableBoxController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Backspace && m_currentPage != Page::RootMenu) {
     int rowIndex = selectedRow();
     if (destroyRecordAtRowIndex(rowIndex)) {
+      if (Container::activeApp()->modalViewController()->currentModalViewController() != static_cast<const ViewController *>(this)) {
+        // The varbox was dismissed by prepareForIntrusiveStorageChange
+        return true;
+      }
       m_selectableTableView.deselectTable();
       int newSelectedRow = rowIndex >= numberOfRows() ? numberOfRows()-1 : rowIndex;
       selectCellAtLocation(selectedColumn(), newSelectedRow);
@@ -363,10 +368,13 @@ void MathVariableBoxController::resetVarBoxMemoization() {
 bool MathVariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
   {
     Storage::Record record = recordAtIndex(rowIndex);
-    if (!Container::activeApp()->storageWillChangeForRecordName(record.name())) {
+    Shared::InputEventHandlerDelegateApp * app = static_cast<Shared::InputEventHandlerDelegateApp*>(Container::activeApp());
+    app->prepareForIntrusiveStorageChange();
+    bool canDestroy = record.safeDestroy();
+    app->concludeIntrusiveStorageChange();
+    if (!canDestroy) {
       return false;
     }
-    record.destroy();
   }
   // Shift the memoization if needed
   if (rowIndex >= m_firstMemoizedLayoutIndex + k_maxNumberOfDisplayedRows) {

@@ -14,9 +14,18 @@ public:
   Escher::NestedMenuController * toolbox() override;
   Escher::NestedMenuController * variableBox() override;
 
+  virtual void prepareForIntrusiveStorageChange() {
+    assert(!m_intrusiveStorageChangeFlag);
+    m_intrusiveStorageChangeFlag = true;
+  }
+  virtual void concludeIntrusiveStorageChange() {
+    assert(m_intrusiveStorageChangeFlag);
+    m_intrusiveStorageChangeFlag = false;
+  }
+
 protected:
-  bool isVarBoxMenuOpen();
   InputEventHandlerDelegateApp(Snapshot * snapshot, Escher::ViewController * rootViewController);
+  bool m_intrusiveStorageChangeFlag;
 };
 
 }

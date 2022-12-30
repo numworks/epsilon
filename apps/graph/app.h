@@ -46,7 +46,7 @@ public:
 
   TELEMETRY_ID("Graph");
   CodePoint XNT() override;
-  Shared::ContinuousFunctionStore * functionStore() override { return snapshot()->functionStore(); }
+  Shared::ContinuousFunctionStore * functionStore() const override { return snapshot()->functionStore(); }
   Shared::Interval * intervalForSymbolType(Shared::ContinuousFunctionProperties::SymbolType symbolType) { return snapshot()->intervalForSymbolType(symbolType); }
   ValuesController * valuesController() override { return &m_valuesController; }
   Escher::InputViewController * inputViewController() override { return &m_inputViewController; }

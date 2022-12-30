@@ -15,35 +15,27 @@ void FunctionApp::Snapshot::reset() {
   setActiveTab(0);
 }
 
-bool FunctionApp::storageWillChangeForRecordName(const Ion::Storage::Record::Name recordName) {
-  return !isVarBoxMenuOpen() || strcmp(recordName.extension, functionStore()->modelExtension()) != 0;
-}
-
-bool FunctionApp::willStore(Store store) {
-  /* Prevent functions from being (re)defined from the store menu.
-   * Variables can be changed even if they are used in functions.
-   * Warning: this has no effect on Sequence yet: we can't define sequences
-   * from the store menu.  */
-  if (store.childAtIndex(1).type() == ExpressionNode::Type::Function) {
-    return false;
-  }
+void FunctionApp::prepareForIntrusiveStorageChange() {
+  ExpressionFieldDelegateApp::prepareForIntrusiveStorageChange();
+  assert(m_activeControllerBeforeStore == nullptr);
   int tab = m_tabViewController.activeTab();
   StackViewController * tabStacks[] = {&m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController};
   assert(0 <= tab && tab < 3);
   if (tabStacks[tab]->depth() > Shared::InteractiveCurveViewController::k_graphControllerStackDepth) {
     /* Close the details/curve menu/calculation views (minimum...)/column header
-     * since they may not make sense with the updated function. */
+    * since they may not make sense with the updated function. */
     tabStacks[tab]->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
   }
   /* Changing the storage may have deactivated all active functions. We pop
-   * then push to make sur the graph gets updated to its empty counterpart if
-   * necessary. */
+  * then push to make sur the graph gets updated to its empty counterpart if
+  * necessary. */
   m_activeControllerBeforeStore = tabStacks[tab]->topViewController();
   tabStacks[tab]->pop();
-  return true;
 }
 
-void FunctionApp::didStore() {
+void FunctionApp::concludeIntrusiveStorageChange() {
+  ExpressionFieldDelegateApp::concludeIntrusiveStorageChange();
+  assert(m_activeControllerBeforeStore);
   /* TODO: we could avoid updating the graph/values when the record doesn't
    * affect the store but it's hard to detect indirect dependencies:
    * 3 -> a
@@ -78,10 +70,17 @@ void FunctionApp::didStore() {
   int tab = m_tabViewController.activeTab();
   StackViewController * tabStacks[] = {&m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController};
   assert(0 <= tab && tab < 3);
-  assert(m_activeControllerBeforeStore);
   tabStacks[tab]->push(m_activeControllerBeforeStore);
   m_activeControllerBeforeStore = nullptr;
+}
 
+bool FunctionApp::storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const {
+  /* Prevent functions from being (re)defined from the store menu and the
+   * varBox.
+   * Variables can be changed even if they are used in functions.
+   * Warning: this has no effect on Sequence yet: we can't define sequences
+   * from the store menu.  */
+  return !m_intrusiveStorageChangeFlag || strcmp(recordName.extension, functionStore()->modelExtension()) != 0;;
 }
 
 FunctionApp::FunctionApp(Snapshot * snapshot, Shared::FunctionListController * listController, Shared::FunctionGraphController * graphController, Shared::ValuesController * valuesController) :
@@ -96,8 +95,8 @@ FunctionApp::FunctionApp(Snapshot * snapshot, Shared::FunctionListController * l
   m_valuesHeader(&m_valuesStackViewController, &m_valuesAlternateEmptyViewController, valuesController),
   m_valuesStackViewController(&m_tabViewController, &m_valuesHeader, Escher::StackViewController::Style::WhiteUniform),
   m_tabViewController(&m_inputViewController, snapshot, &m_listStackViewController, &m_graphStackViewController, &m_valuesStackViewController),
-  m_inputViewController(&m_modalViewController, &m_tabViewController, listController, listController, listController)
-{
-}
+  m_inputViewController(&m_modalViewController, &m_tabViewController, listController, listController, listController),
+  m_activeControllerBeforeStore(nullptr)
+{}
 
 }

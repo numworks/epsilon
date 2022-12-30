@@ -120,15 +120,12 @@ bool StoreMenuController::parseAndStore(const char * text) {
     reducedExp.replaceChildAtIndexInPlace(0, Shared::PoincareHelpers::ApproximateKeepingUnits<double>(reducedExp.childAtIndex(0), context));
   }
   Store store = static_cast<Store&>(reducedExp);
-  bool proceedToStore = app->willStore(store);
   close();
-  if (!proceedToStore) {
-    return true;
-  }
+  app->prepareForIntrusiveStorageChange();
   if (!store.storeValueForSymbol(context)) {
     // TODO : The record deletion has been denied. Add a warning.
   }
-  app->didStore();
+  app->concludeIntrusiveStorageChange();
   return true;
 }
 

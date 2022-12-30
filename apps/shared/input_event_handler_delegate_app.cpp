@@ -11,7 +11,8 @@ namespace Shared {
 
 InputEventHandlerDelegateApp::InputEventHandlerDelegateApp(Snapshot * snapshot, ViewController * rootViewController) :
   ::App(snapshot, rootViewController, I18n::Message::Warning),
-  InputEventHandlerDelegate()
+  InputEventHandlerDelegate(),
+  m_intrusiveStorageChangeFlag(false)
 {
 }
 
@@ -21,10 +22,6 @@ NestedMenuController * InputEventHandlerDelegateApp::toolbox() {
 
 NestedMenuController * InputEventHandlerDelegateApp::variableBox() {
   return AppsContainer::sharedAppsContainer()->variableBoxController();
-}
-
-bool InputEventHandlerDelegateApp::isVarBoxMenuOpen() {
-  return m_modalViewController.currentModalViewController() == static_cast<ViewController *>(variableBox());
 }
 
 }

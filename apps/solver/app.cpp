@@ -26,9 +26,9 @@ void App::Snapshot::reset() {
   m_equationStore.removeAll();
 }
 
-bool App::willStore(Poincare::Store store) {
+void App::prepareForIntrusiveStorageChange() {
+  ExpressionFieldDelegateApp::prepareForIntrusiveStorageChange();
   m_stackViewController.popUntilDepth(1, true);
-  return true;
 }
 
 void App::storageDidChangeForRecord(Ion::Storage::Record record) {

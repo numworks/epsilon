@@ -32,9 +32,11 @@ public:
   virtual void run();
   bool dispatchEvent(Ion::Events::Event event) override;
   virtual void switchToBuiltinApp(App::Snapshot * snapshot);
+
 protected:
   virtual Window * window() = 0;
   static App * s_activeApp;
+
 private:
   int numberOfTimers() override;
   Timer * timerAtIndex(int i) override;

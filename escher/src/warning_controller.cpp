@@ -72,7 +72,7 @@ View * WarningController::view() {
 }
 
 bool WarningController::handleEvent(Ion::Events::Event event) {
-  if (event == Ion::Events::OnOff || event == Ion::Events::USBPlug || event == Ion::Events::USBEnumeration || event == Ion::Events::Idle) {
+  if (!Ion::Events::EventCanDiscardPopUp(event) || event == Ion::Events::OnOff) {
     return false;
   }
   if (m_exitOnOKBackEXEOnly && !(event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Back)) {

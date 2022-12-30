@@ -161,7 +161,8 @@ void ContinuousFunctionProperties::update(const Poincare::Expression reducedEqua
       }
       if (analyzedExpression.hasMatrixOrListChild(context, false)) {
         /* Reduction might have failed.
-         * When reduction doesn't fail, a matrix  a matrix is reduced to undef. */
+         * When reduction doesn't fail, a matrix containing
+         * a matrix or a list is reduced to undef. */
         setErrorStatusAndUpdateCaption(Status::Undefined);
         return;
       }

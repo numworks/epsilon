@@ -47,7 +47,7 @@ const char * ResultsController::title() {
   StackViewController * stackViewControllerResponder = static_cast<StackViewController *>(parentResponder());
   bool resultsIsTopPage = stackViewControllerResponder->topViewController() != this;
   if (resultsIsTopPage && m_statistic->subApp() == Statistic::SubApp::Interval) {
-    m_intervalGraphController->interval()->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer), resultsIsTopPage);
+    m_intervalGraphController->setResultTitleForCurrentValues(m_titleBuffer, sizeof(m_titleBuffer), resultsIsTopPage);
   } else {
     m_statistic->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer), resultsIsTopPage);
   }

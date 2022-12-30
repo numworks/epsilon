@@ -17,16 +17,21 @@ public:
   Escher::View * view() override { return &m_graphView; }
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
-  Interval * interval() { return m_intervalBuffer.interval(); }
+  void setResultTitleForCurrentValues(char * buffer, size_t bufferSize, bool resultIsTopPage) const;
+
 private:
   constexpr static int k_titleBufferSize = sizeof("ME=") + Constants::k_shortFloatNumberOfChars;
   void resetSelectedInterval();
   void selectAdjacentInterval(bool goUp);
+  void saveIntervalValues();
   void intervalDidChange();
+
   char m_titleBuffer[k_titleBufferSize];
-  IntervalBuffer m_intervalBuffer;
   IntervalGraphView m_graphView;
-  Interval * m_originalInterval;
+  Interval * m_interval;
+  double m_currentEstimate;
+  double m_currentMarginOfError;
+  double m_currentThreshold;
   int m_selectedIntervalIndex;
 };
 

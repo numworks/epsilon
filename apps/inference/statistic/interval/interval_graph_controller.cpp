@@ -7,9 +7,11 @@ namespace Inference {
 
 IntervalGraphController::IntervalGraphController(Escher::StackViewController * stack, Interval * interval) :
       Escher::ViewController(stack),
-      m_intervalBuffer(),
       m_graphView(interval, &m_selectedIntervalIndex),
-      m_originalInterval(interval) {
+      m_interval(interval),
+      m_currentEstimate(0.0),
+      m_currentMarginOfError(0.0),
+      m_currentThreshold(0.0) {
 }
 
 Escher::ViewController::TitlesDisplay IntervalGraphController::titlesDisplay() {
@@ -17,14 +19,12 @@ Escher::ViewController::TitlesDisplay IntervalGraphController::titlesDisplay() {
 }
 
 const char * IntervalGraphController::title() {
-  interval()->setGraphTitle(m_titleBuffer, sizeof(m_titleBuffer));
+  m_interval->setGraphTitleForValue(m_currentMarginOfError, m_titleBuffer, sizeof(m_titleBuffer));
   return m_titleBuffer;
 }
 
 void IntervalGraphController::viewWillAppear() {
-  m_originalInterval->computeCurveViewRange();
-  // Copy the interval into a local buffer
-  memcpy(static_cast<void*>(&m_intervalBuffer), static_cast<void*>(m_originalInterval), sizeof(IntervalBuffer));
+  m_interval->computeCurveViewRange();
   resetSelectedInterval();
 }
 
@@ -33,8 +33,8 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
     // Copy confidence interval as matrix
     char copyBuffer[2 * Constants::k_shortBufferSize + 4];
     Poincare::Print::CustomPrintf(copyBuffer, sizeof(copyBuffer), "[[%*.*ed,%*.*ed]]",
-        interval()->estimate() - interval()->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
-        interval()->estimate() + interval()->marginOfError(), Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
+        m_currentEstimate - m_currentMarginOfError, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits,
+        m_currentEstimate + m_currentMarginOfError, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::ShortNumberOfSignificantDigits);
     if (event == Ion::Events::Sto || event == Ion::Events::Var) {
       App::app()->storeValue(copyBuffer);
     } else {
@@ -50,20 +50,37 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
+void IntervalGraphController::setResultTitleForCurrentValues(char * buffer, size_t bufferSize, bool resultIsTopPage) const {
+  m_interval->setResultTitleForValues(m_currentEstimate, m_currentThreshold, buffer, bufferSize, resultIsTopPage);
+}
+
 void IntervalGraphController::selectAdjacentInterval(bool goUp) {
   m_selectedIntervalIndex += goUp ? -1 : 1;
-  interval()->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(m_originalInterval->threshold(), m_selectedIntervalIndex));
-  interval()->compute();
+  double currentThreshold = m_interval->threshold();
+  /* Temporarly change the threshold to compute the values displayed in
+   * conclusionView, in titles and in the clipboard */
+  m_interval->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(currentThreshold, m_selectedIntervalIndex));
+  m_interval->compute();
+  saveIntervalValues();
+  m_interval->setThreshold(currentThreshold);
+  m_interval->compute();
   intervalDidChange();
 }
 
 void IntervalGraphController::resetSelectedInterval() {
-  m_selectedIntervalIndex = Interval::MainDisplayedIntervalThresholdIndex(m_originalInterval->threshold());
+  m_selectedIntervalIndex = Interval::MainDisplayedIntervalThresholdIndex(m_interval->threshold());
+  saveIntervalValues();
   intervalDidChange();
 }
 
+void IntervalGraphController::saveIntervalValues() {
+  m_currentEstimate = m_interval->estimate();
+  m_currentMarginOfError = m_interval->marginOfError();
+  m_currentThreshold = m_interval->threshold();
+}
+
 void IntervalGraphController::intervalDidChange() {
-  m_graphView.conclusionView()->setInterval(interval()->estimate(), interval()->marginOfError());
+  m_graphView.conclusionView()->setInterval(m_currentEstimate, m_currentMarginOfError);
   m_graphView.reload();
 }
 

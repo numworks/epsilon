@@ -34,8 +34,14 @@ public:
   I18n::Message tDistributionName() const override { return I18n::Message::TInterval; }
   I18n::Message tPooledDistributionName() const override { return I18n::Message::PooledTInterval; }
   I18n::Message zDistributionName() const override { return I18n::Message::ZInterval; }
-  void setGraphTitle(char * buffer, size_t bufferSize) const override;
-  void setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const override;
+  void setGraphTitle(char * buffer, size_t bufferSize) const override final {
+    setGraphTitleForValue(marginOfError(), buffer, bufferSize);
+  }
+  void setGraphTitleForValue(double marginOfError, char * buffer, size_t bufferSize) const;
+  void setResultTitle(char * buffer, size_t bufferSize, bool resultIsTopPage) const override final {
+    setResultTitleForValues(estimate(), threshold(), buffer, bufferSize, resultIsTopPage);
+  }
+  void setResultTitleForValues(double estimate, double threshold, char * buffer, size_t bufferSize, bool resultIsTopPage) const;
 
   float evaluateAtAbscissa(float x) const override { return canonicalDensityFunction((x - estimate()) / standardError()); }
   void initParameters() override { m_threshold = 0.95; }

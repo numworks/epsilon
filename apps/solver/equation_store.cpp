@@ -322,8 +322,11 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
   }
   Ab.setDimensions(m, n+1);
 
-  // Compute the rank of (A | b)
+  // Compute the rank of (A | b)
   int rankAb = Ab.rank(context, updatedComplexFormat(context), angleUnit, unitFormat, true);
+  if (rankAb == -1) {
+    return Error::EquationUndefined;
+  }
 
   // Initialize the number of solutions
   m_numberOfSolutions = INT_MAX;

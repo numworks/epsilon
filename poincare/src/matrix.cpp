@@ -133,7 +133,11 @@ int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Pr
        * If it's the case, compute the rank with approximated values. */
       context->tidyDownstreamPoolFrom(treePoolCursor);
       Expression mApproximation = approximate<double>(context, complexFormat, angleUnit);
-      assert(mApproximation.type() == ExpressionNode::Type::Matrix);
+      if (mApproximation.type() != ExpressionNode::Type::Matrix) {
+        /* The approximation was able to conclude that a coefficient is undef
+         * while the reduction could not. */
+        return -1;
+      }
       m = static_cast<Matrix&>(mApproximation).rowCanonize(systemReductionContext, nullptr);
     }
   }

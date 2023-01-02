@@ -97,6 +97,7 @@ private:
   bool validSolution(T x) const;
   T nextX(T x, T direction) const;
   Coordinate2D<T> nextPossibleRootInChild(const Expression & e, int childIndex) const;
+  Coordinate2D<T> nextRootInChildren(const Expression & e, Expression::ExpressionTestAuxiliary test, void * aux) const;
   Coordinate2D<T> nextRootInMultiplication(const Expression & m) const;
   void registerSolution(Coordinate2D<T> solution, Interest interest, FunctionEvaluation f = nullptr, const void * aux = nullptr);
 

@@ -331,17 +331,24 @@ Coordinate2D<T> Solver<T>::nextPossibleRootInChild(const Expression & e, int chi
 }
 
 template<typename T>
-Coordinate2D<T> Solver<T>::nextRootInMultiplication(const Expression & e) const {
-  assert(e.type() == ExpressionNode::Type::Multiplication);
+Coordinate2D<T> Solver<T>::nextRootInChildren(const Expression & e, Expression::ExpressionTestAuxiliary test, void * aux) const {
   T xRoot = k_NAN;
   int n = e.numberOfChildren();
   for (int i = 0; i < n; i++) {
-    T xRootChild = nextPossibleRootInChild(e, i).x1();
-    if (std::isfinite(xRootChild) && (!std::isfinite(xRoot) || std::fabs(m_xStart - xRootChild) < std::fabs(m_xStart - xRoot))) {
-      xRoot = xRootChild;
+    if (test(e.childAtIndex(i), m_context, aux)) {
+      T xRootChild = nextPossibleRootInChild(e, i).x1();
+      if (std::isfinite(xRootChild) && (!std::isfinite(xRoot) || std::fabs(m_xStart - xRootChild) < std::fabs(m_xStart - xRoot))) {
+        xRoot = xRootChild;
+      }
     }
   }
   return Coordinate2D<T>(xRoot, k_zero);
+}
+
+template<typename T>
+Coordinate2D<T> Solver<T>::nextRootInMultiplication(const Expression & e) const {
+  assert(e.type() == ExpressionNode::Type::Multiplication);
+  return nextRootInChildren(e, [](const Expression, Context *, void *) { return true; }, nullptr);
 }
 
 template<typename T>

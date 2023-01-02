@@ -239,9 +239,10 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
     return AdditionalInformations();
   }
   Preferences * preferences = Preferences::sharedPreferences();
+  Context * globalContext = AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression i = input();
-  Expression o = exactOutput();
   Expression a = approximateOutput(NumberOfSignificantDigits::Maximal);
+  Expression o = displayOutput(globalContext) != Calculation::DisplayOutput::ApproximateOnly ? exactOutput() : a;
   /* Special case for Store:
    * Store nodes have to be at the root of the expression, which prevents
    * from creating new expressions with store node as a child. We don't
@@ -273,7 +274,6 @@ Calculation::AdditionalInformations Calculation::additionalInformations() {
    *   > output: cos(2)
    * However if the result is complex, it is treated as a complex result instead
    */
-  Context * globalContext = AppsContainerHelper::sharedAppsContainerGlobalContext();
   if (!isComplex) {
     if (Trigonometry::isInverseTrigonometryFunction(i) || Trigonometry::isInverseTrigonometryFunction(o)) {
       // The angle cannot be complex since Expression a isn't

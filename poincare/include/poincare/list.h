@@ -23,8 +23,7 @@ public:
   // Layout
   int serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const override;
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const override;
-  LayoutShape leftLayoutShape() const override { return LayoutShape::Default; };
-  LayoutShape rightLayoutShape() const override { return LayoutShape::Brace; };
+  LayoutShape leftLayoutShape() const override { return LayoutShape::Brace; };
 
   // Simplification
   Expression shallowReduce(const ReductionContext& reductionContext) override;

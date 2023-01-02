@@ -18,4 +18,13 @@ enum class StrictSign : int8_t {
   Null = 0,
   Negative = -1
 };
+
+inline StrictSign InvertSign(StrictSign sign) {
+  return static_cast<StrictSign>(-static_cast<int8_t>(sign));
+}
+
+inline NonStrictSign InvertSign(NonStrictSign sign) {
+  return static_cast<NonStrictSign>(-static_cast<int8_t>(sign));
+}
+
 #endif

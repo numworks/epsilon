@@ -1,4 +1,5 @@
 #include "rational.h"
+#include <poincare_junior/src/memory/exception_checkpoint.h>
 #include <poincare_junior/src/memory/value_block.h>
 
 namespace Poincare {
@@ -9,7 +10,7 @@ IntegerHandler Rational::Numerator(const Node node) {
   BlockType type = node.type();
   switch (type) {
     case BlockType::Zero:
-      return IntegerHandler(0);
+      return IntegerHandler(static_cast<int8_t>(0));
     case BlockType::One:
       return IntegerHandler(1);
     case BlockType::Two:
@@ -83,7 +84,7 @@ IntegerHandler Rational::Denominator(const Node node) {
 EditionReference Rational::PushNode(IntegerHandler numerator, IntegerHandler denominator) {
   assert(!denominator.isZero());
   if (denominator.isOne()) {
-    return Integer::PushNode(numerator);
+    return numerator.pushOnEditionPool();
   }
   if (numerator.isOne() && denominator.isTwo()) {
     return EditionReference::Push<BlockType::Half>();
@@ -92,12 +93,14 @@ EditionReference Rational::PushNode(IntegerHandler numerator, IntegerHandler den
     return EditionReference::Push<BlockType::RationalShort>(static_cast<int8_t>(numerator), static_cast<uint8_t>(denominator));
   }
   EditionPool * pool = EditionPool::sharedEditionPool();
-  TypeBlock typeBlock(numerator.sign() == StrictSign::Negative ? BlockType::RationalNegBig : BlockType::RationalPosBig);
+  TypeBlock typeBlock(numerator.sign() == NonStrictSign::Negative ? BlockType::RationalNegBig : BlockType::RationalPosBig);
   EditionReference reference = EditionReference(Node(pool->pushBlock(typeBlock)));
   uint8_t numberOfDigitsOfNumerator = numerator.numberOfDigits();
   uint8_t numberOfDigitsOfDenominator = numerator.numberOfDigits();
   if (numberOfDigitsOfNumerator > UINT8_MAX - numberOfDigitsOfDenominator) {
-    // TODO: RAISE EXCEPTION rational overflows
+    // TODO: set error type to be "Unrepresentable rational"
+    ExceptionCheckpoint::Raise();
+    return EditionReference();
   }
   pool->pushBlock(ValueBlock(numberOfDigitsOfNumerator));
   pool->pushBlock(ValueBlock(numberOfDigitsOfDenominator));

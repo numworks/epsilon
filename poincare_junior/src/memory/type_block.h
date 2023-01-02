@@ -18,7 +18,7 @@ namespace Poincare {
  * - IntegerShort IS
  * | IS TAG | SIGNED DIGIT0 | IS TAG |
  *
- * - Integer(Pos/Neg)Big IB
+ * - Integer(Pos/Neg)Big IB: most significant digit last
  * | IB TAG | NUMBER DIGITS | UNSIGNED DIGIT0 | ... | NUMBER DIGITS | IB |
  *
  * - RationShort RS

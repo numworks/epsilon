@@ -12,10 +12,11 @@ namespace Poincare {
 EditionReference Algebraic::Rationalize(EditionReference expression) {
   if (expression.block()->isRational()) {
     EditionReference fraction = EditionReference::Push<BlockType::Multiplication>(2);
-    Integer::PushNode(Rational::Numerator(expression));
+    Rational::Numerator(expression).pushOnEditionPool();
     EditionReference::Push<BlockType::Power>();
-    Integer::PushNode(Rational::Denominator(expression));
+    Rational::Denominator(expression).pushOnEditionPool();
     EditionReference::Push<BlockType::MinusOne>();
+    expression.replaceTreeByTree(fraction);
     return fraction;
   }
   BlockType type = expression.type();
@@ -76,13 +77,13 @@ EditionReference Algebraic::RationalizeAddition(EditionReference expression) {
 EditionReference Algebraic::NormalFormator(EditionReference expression, bool numerator) {
   if (expression.block()->isRational()) {
     IntegerHandler ator = numerator ? Rational::Numerator(expression) : Rational::Denominator(expression);
-    expression.replaceNodeByNode(Integer::PushNode(ator));
+    expression.replaceNodeByNode(ator.pushOnEditionPool());
     return expression;
   }
   BlockType type = expression.type();
   if (type == BlockType::Power) {
     EditionReference exponent = expression.childAtIndex(1);
-    bool negativeRationalExponent = exponent.block()->isRational() && Rational::Sign(exponent) == StrictSign::Negative;
+    bool negativeRationalExponent = exponent.block()->isRational() && Rational::StrictSign(exponent) == StrictSign::Negative;
     if (!numerator && negativeRationalExponent) {
       Rational::SetSign(exponent, NonStrictSign::Positive);
     }

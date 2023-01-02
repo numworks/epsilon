@@ -358,6 +358,13 @@ Coordinate2D<T> Solver<T>::nextRootInMultiplication(const Expression & e) const 
 
 template<typename T>
 Coordinate2D<T> Solver<T>::nextRootInAddition(const Expression & e) const {
+  /* Special case for expressions of the form "f(x)^a+g(x)", with:
+   * - f(x) and g(x) sharing a root x0
+   * - f(x) being defined only on one side of x0
+   * - 0 < a < 1
+   * Since the expression does not change sign around x0, the usual numerical
+   * schemes won't work. We instead look for the zeroes of f, and check whether
+   * they are zeroes of the whole expression. */
   Expression::ExpressionTestAuxiliary test = [](const Expression e, Context * context, void * aux) {
     return e.recursivelyMatches([](const Expression e, Context * context, void * aux) {
           const Solver<T> * solver = static_cast<const Solver<T> *>(aux);

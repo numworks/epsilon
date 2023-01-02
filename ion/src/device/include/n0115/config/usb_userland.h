@@ -1,5 +1,5 @@
-#ifndef ION_DEVICE_N0115_CONFIG_USB_H
-#define ION_DEVICE_N0115_CONFIG_USB_H
+#ifndef ION_DEVICE_N0115_CONFIG_USB_USERLAND_H
+#define ION_DEVICE_N0115_CONFIG_USB_USERLAND_H
 
 namespace Ion {
 namespace Device {
@@ -21,8 +21,6 @@ constexpr static const char * InterfaceFlashStringDescriptorAuthenticatedSlotB =
 constexpr static const char * InterfaceFlashStringDescriptorThirdPartySlotA = "@Flash/0x90010000/63*064Kg";
 constexpr static const char * InterfaceFlashStringDescriptorThirdPartySlotB = "@Flash/0x90410000/63*064Kg";
 constexpr static const char * InterfaceSRAMStringDescriptor = "@SRAM/0x20000000/01*252Ke";
-
-constexpr static int BCDDevice = 0x0115;
 
 }
 }

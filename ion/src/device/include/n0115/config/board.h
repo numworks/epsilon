@@ -129,6 +129,9 @@ static_assert(STBootloaderStack < FlasherOffset, "The flasher overlaps ST bootlo
 constexpr uint32_t BenchLength = 0x20000; // 128KiB
 constexpr uint32_t BenchOffset = 0;
 
+constexpr uint32_t BackupSRAMOrigin = 0x40024000;
+constexpr uint32_t BackupSRAMLength = 0x1000; // 4kiB
+
 /* Signature */
 constexpr uint32_t SignedPayloadLength = 8;
 constexpr uint32_t CanaryLength = 4;

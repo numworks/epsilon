@@ -72,6 +72,7 @@ protected:
 
   // SimpleInteractiveCurveViewController
   bool handleEnter() override { return openMenu(); }
+  bool handleZoom(Ion::Events::Event event) override;
 
   int m_selectedSubCurveIndex;
 private:

@@ -37,26 +37,8 @@ InteractiveCurveViewController::InteractiveCurveViewController(Responder * paren
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
 }
 
-float InteractiveCurveViewController::addMargin(float y, float range, bool isVertical, bool isMin) const {
-  return DefaultAddMargin(y, range, isVertical, isMin, cursorTopMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), cursorRightMarginRatio());
-}
-
-void InteractiveCurveViewController::updateZoomButtons() {
-  m_autoButton.setState(m_interactiveRange->zoomAuto());
-  m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
-  header()->reloadButtons();
-}
-
 const char * InteractiveCurveViewController::title() {
   return I18n::translate(I18n::Message::GraphTab);
-}
-
-void InteractiveCurveViewController::setCurveViewAsMainView(bool resetInterrupted, bool forceReload) {
-  header()->setSelectedButton(-1);
-  curveView()->setFocus(true);
-  Container::activeApp()->setFirstResponder(this);
-  reloadBannerView();
-  curveView()->reload(resetInterrupted, forceReload);
 }
 
 bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
@@ -316,6 +298,32 @@ int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, in
 
 bool InteractiveCurveViewController::closestCurveIndexIsSuitable(int newIndex, int currentIndex, int newSubIndex, int currentSubIndex) const {
   return newIndex != currentIndex || newSubIndex != currentSubIndex;
+}
+
+bool InteractiveCurveViewController::handleZoom(Ion::Events::Event event) {
+  if (!curveView()->hasFocus()) {
+    return false;
+  }
+  return SimpleInteractiveCurveViewController::handleZoom(event);
+}
+
+
+float InteractiveCurveViewController::addMargin(float y, float range, bool isVertical, bool isMin) const {
+  return DefaultAddMargin(y, range, isVertical, isMin, cursorTopMarginRatio(), cursorBottomMarginRatio(), cursorLeftMarginRatio(), cursorRightMarginRatio());
+}
+
+void InteractiveCurveViewController::updateZoomButtons() {
+  m_autoButton.setState(m_interactiveRange->zoomAuto());
+  m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
+  header()->reloadButtons();
+}
+
+void InteractiveCurveViewController::setCurveViewAsMainView(bool resetInterrupted, bool forceReload) {
+  header()->setSelectedButton(-1);
+  curveView()->setFocus(true);
+  Container::activeApp()->setFirstResponder(this);
+  reloadBannerView();
+  curveView()->reload(resetInterrupted, forceReload);
 }
 
 bool InteractiveCurveViewController::autoButtonAction() {

@@ -31,4 +31,4 @@ double SlopeTStatistic::computeStandardError() const {
   return std::sqrt((1.0/(n - 2.0)) * leastSquaredSum(0) / squaredOffsettedValueSumOfColumn(0, 0, false, xMean));
 }
 
-}  // namespace Inference
+}

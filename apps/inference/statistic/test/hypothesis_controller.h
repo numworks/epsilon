@@ -75,6 +75,6 @@ private:
   Test * m_test;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_TEST_HYPOTHESIS_CONTROLLER_H */
+#endif

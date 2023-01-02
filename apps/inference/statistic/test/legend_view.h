@@ -41,6 +41,6 @@ private:
   StripedDotView m_alphaIcon;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_TEST_LEGEND_VIEW_H */
+#endif

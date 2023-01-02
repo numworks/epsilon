@@ -24,6 +24,6 @@ private:
   IntervalConclusionView m_conclusionView;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_INTERVAL_GRAPH_VIEW_H */
+#endif

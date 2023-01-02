@@ -46,6 +46,6 @@ private:
   double m_params[TwoProportions::k_numberOfParams];
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_TWO_PROPORTIONS_Z_INTERVAL_H */
+#endif

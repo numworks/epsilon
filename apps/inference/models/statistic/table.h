@@ -36,6 +36,6 @@ protected:
   int index2DToIndex(int row, int column) const;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_CHI2_TEST_H */
+#endif

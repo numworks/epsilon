@@ -54,6 +54,6 @@ private:
   Statistic * m_statistic;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_TEST_CONTROLLER_H */
+#endif

@@ -29,4 +29,4 @@ void IntervalConclusionView::setInterval(double center, double marginOfError) {
            marginOfError, Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::LargeNumberOfSignificantDigits);
 }
 
-}  // namespace Inference
+}

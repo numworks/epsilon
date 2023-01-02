@@ -82,6 +82,6 @@ private:
   ContributionsController m_contributionsController;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULTS_HOMOGENEITY_CONTROLLER_H */
+#endif

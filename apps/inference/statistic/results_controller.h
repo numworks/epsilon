@@ -50,6 +50,6 @@ protected:
   char m_titleBuffer[k_titleBufferSize];
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_RESULTS_CONTROLLER_H */
+#endif

@@ -155,4 +155,4 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   return true;
 }
 
-}  // namespace Inference
+}

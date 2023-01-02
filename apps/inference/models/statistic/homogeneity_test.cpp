@@ -207,4 +207,4 @@ bool HomogeneityTest::validateInputs() {
   return std::fabs(total) >= DBL_MIN;
 }
 
-}  // namespace Inference
+}

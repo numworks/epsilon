@@ -119,6 +119,6 @@ protected:
   double m_degreesOfFreedom;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_STATISTIC_H */
+#endif

@@ -108,4 +108,4 @@ void GoodnessTest::setObservedValue(int index, double value) {
   parametersArray()[index2DToIndex(index, 0)] = value;
 }
 
-}  // namespace Inference
+}

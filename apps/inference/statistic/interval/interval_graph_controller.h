@@ -35,5 +35,5 @@ private:
   int m_selectedIntervalIndex;
 };
 
-}  // namespace Inference
-#endif /* INFERENCE_STATISTIC_INTERVAL_INTERVAL_GRAPH_CONTROLLER_H */
+}
+#endif

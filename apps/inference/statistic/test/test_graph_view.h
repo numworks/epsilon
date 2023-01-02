@@ -31,7 +31,6 @@ private:
   ZoomHintView m_zoom_hint;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_TEST_GRAPH_VIEW_H */
-
+#endif

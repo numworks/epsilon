@@ -41,4 +41,4 @@ void MessageTableCellWithSeparator::setHighlighted(bool highlight) {
   m_innerCell.setHighlighted(highlight);
 }
 
-}  // namespace Inference
+}

@@ -32,4 +32,4 @@ void ComparisonOperatorPopupDataSource::willDisplayCellForIndex(Escher::Highligh
   bufferCell->setText(buffer);
 }
 
-}  // namespace Inference
+}

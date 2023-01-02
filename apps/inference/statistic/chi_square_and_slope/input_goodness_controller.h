@@ -33,6 +33,6 @@ private:
   GoodnessTableCell m_goodnessTableCell;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_GOODNESS_CONTROLLER_H */
+#endif

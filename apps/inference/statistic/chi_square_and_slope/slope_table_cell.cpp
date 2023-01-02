@@ -31,4 +31,4 @@ InputViewController * SlopeTableCell::inputViewController() {
   return App::app()->inputViewController();
 }
 
-}  // namespace Inference
+}

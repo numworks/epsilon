@@ -50,6 +50,6 @@ private:
   KDColor backgroundColor() const override { return Escher::Palette::WallScreen; }
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_INTERVAL_INTERVAL_CURVE_VIEW_H */
+#endif

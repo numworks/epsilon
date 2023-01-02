@@ -41,4 +41,4 @@ bool Statistic::Initialize(Statistic * statistic, SubApp subApp) {
   return true;
 }
 
-}  // namespace Inference
+}

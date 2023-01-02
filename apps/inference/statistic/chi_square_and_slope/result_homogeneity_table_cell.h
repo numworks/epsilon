@@ -48,6 +48,6 @@ private:
   Mode m_mode;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULT_HOMOGENEITY_TABLE_CELL_H */
+#endif

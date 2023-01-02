@@ -34,6 +34,6 @@ private:
   Index2D initialDimensions() const override { return Index2D{.row = 1, .col = 2}; }
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_ONE_MEAN_T_TEST_H */
+#endif

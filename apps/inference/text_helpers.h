@@ -26,6 +26,6 @@ void PrintValueInTextHolder(double value, TextHolder * textField, bool forbidNAN
 
 Poincare::Layout XOneMinusXTwoLayout();
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_TEXT_HELPERS_H */
+#endif

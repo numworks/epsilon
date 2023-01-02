@@ -16,6 +16,6 @@ public:
   void reload() { markRectAsDirty(bounds()); }
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_INTERVAL_INTERVAL_CONCLUSION_VIEW_H */
+#endif

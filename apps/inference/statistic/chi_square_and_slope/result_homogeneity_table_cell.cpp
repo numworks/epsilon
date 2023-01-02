@@ -77,4 +77,4 @@ void ResultHomogeneityTableCell::destroyCells() {
   DynamicCellsDataSource<EvenOddBufferTextCell, k_homogeneityTableNumberOfReusableHeaderCells>::destroyCells();
 }
 
-}  // namespace Inference
+}

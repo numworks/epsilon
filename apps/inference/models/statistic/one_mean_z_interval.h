@@ -42,6 +42,6 @@ private:
   double m_params[OneMean::k_numberOfParams];
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_ONE_MEAN_Z_INTERVAL_H */
+#endif

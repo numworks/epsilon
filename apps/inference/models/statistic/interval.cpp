@@ -185,4 +185,4 @@ void Interval::resultAtIndex(int index, double * value, Poincare::Layout * messa
   }
 }
 
-}  // namespace Inference
+}

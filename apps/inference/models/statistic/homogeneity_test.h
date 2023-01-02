@@ -64,6 +64,6 @@ private:
   int m_numberOfResultColumns;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_HOMOGENEITY_TEST_H */
+#endif

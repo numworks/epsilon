@@ -15,8 +15,8 @@ constexpr int k_largeBufferSize = Poincare::PrintFloat::charSizeForFloatsWithPre
 constexpr int k_shortFloatNumberOfChars = k_shortBufferSize - 1;
 constexpr int k_largeFloatNumberOfChars = k_largeBufferSize - 1;
 
-}  // namespace Constants
+}
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_CONSTANTS_H */
+#endif

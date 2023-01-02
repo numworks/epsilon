@@ -32,6 +32,6 @@ private:
   Test * m_test;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_COMPARISON_OPERATOR_POPUP_DATA_SOURCE_H */
+#endif

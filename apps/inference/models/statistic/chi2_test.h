@@ -66,6 +66,6 @@ private:
   }
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_CHI2_TEST_H */
+#endif

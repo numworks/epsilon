@@ -67,4 +67,4 @@ int Table::index2DToIndex(int row, int column) const {
   return column + row * maxNumberOfColumns();
 }
 
-}  // namespace Inference
+}

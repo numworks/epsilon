@@ -52,4 +52,4 @@ void LegendView::layoutSubviews(bool force) {
   m_alphaLabel.setFrame(KDRect(k_diameter + k_marginBetween, secondRowY, aLabelSize), force);
 }
 
-}  // namespace Inference
+}

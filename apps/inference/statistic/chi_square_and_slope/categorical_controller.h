@@ -96,6 +96,6 @@ protected:
   Escher::CellWithMargins m_significanceCell;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_CATEGORICAL_CONTROLLER_H */
+#endif

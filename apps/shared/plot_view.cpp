@@ -46,7 +46,7 @@ static float clippedFloat(float f) {
 }
 
 float AbstractPlotView::floatToPixel(Axis axis, float f) const {
-  float res = (axis == Axis::Horizontal) ? ((f - m_range->xMin()) / pixelWidth()) : ((m_range->yMax() - f) / pixelHeight());
+  float res = axis == Axis::Horizontal ? (f - m_range->xMin()) / pixelWidth() : (m_range->yMax() - f) / pixelHeight();
   return clippedFloat(res);
 }
 

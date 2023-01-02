@@ -84,6 +84,11 @@ Coordinate2D<T> Solver<T>::nextRoot(const Expression & e) {
     registerSolution(nextRootInMultiplication(e), Interest::Root);
     return result();
 
+  case ExpressionNode::Type::Addition:
+  case ExpressionNode::Type::Subtraction:
+    registerSolution(nextRootInAddition(e), Interest::Root);
+    return result();
+
   case ExpressionNode::Type::Power:
   case ExpressionNode::Type::NthRoot:
   case ExpressionNode::Type::Division:
@@ -349,6 +354,37 @@ template<typename T>
 Coordinate2D<T> Solver<T>::nextRootInMultiplication(const Expression & e) const {
   assert(e.type() == ExpressionNode::Type::Multiplication);
   return nextRootInChildren(e, [](const Expression, Context *, void *) { return true; }, nullptr);
+}
+
+template<typename T>
+Coordinate2D<T> Solver<T>::nextRootInAddition(const Expression & e) const {
+  Expression::ExpressionTestAuxiliary test = [](const Expression e, Context * context, void * aux) {
+    return e.recursivelyMatches([](const Expression e, Context * context, void * aux) {
+          const Solver<T> * solver = static_cast<const Solver<T> *>(aux);
+          T exponent = k_NAN;
+          if (e.type() == ExpressionNode::Type::SquareRoot) {
+          exponent = static_cast<T>(0.5);
+          } else if (e.type() == ExpressionNode::Type::Power) {
+          exponent = e.childAtIndex(1).approximateToScalar<T>(context, solver->m_complexFormat, solver->m_angleUnit);
+          } else if (e.type() == ExpressionNode::Type::NthRoot) {
+          exponent = static_cast<T>(1.) / e.childAtIndex(1).approximateToScalar<T>(context, solver->m_complexFormat, solver->m_angleUnit);
+          }
+          if (std::isnan(exponent)) {
+          return false;
+          }
+          return k_zero < exponent && exponent < static_cast<T>(1.);
+        },
+        context,
+        ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition,
+        aux);
+  };
+  T xChildrenRoot = nextRootInChildren(e, test, const_cast<Solver<T> *>(this)).x1();
+  Solver<T> solver = *this;
+  T xRoot = solver.next(e, EvenOrOddRootInBracket, CompositeBrentForRoot).x1();
+  if (!std::isfinite(xRoot) || std::fabs(xChildrenRoot - m_xStart) < std::fabs(xRoot - m_xStart)) {
+    xRoot = xChildrenRoot;
+  }
+  return Coordinate2D<T>(xRoot, k_zero);
 }
 
 template<typename T>

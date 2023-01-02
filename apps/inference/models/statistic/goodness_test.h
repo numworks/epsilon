@@ -35,7 +35,8 @@ public:
 
   constexpr static int k_maxNumberOfColumns = 2;
 private:
-  constexpr static int k_maxNumberOfRows = 10;
+  // Largest number of rows such that HomogeneityTest still takes more space.
+  constexpr static int k_maxNumberOfRows = 90;
   /* It is not usefull to be able to set a degree of freedom much bigger than
    * the number of rows anyway. */
   constexpr static int k_maxDegreeOfFreedom = 10000;

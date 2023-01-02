@@ -58,6 +58,6 @@ private:
   double m_input[k_maxNumberOfRows * k_maxNumberOfColumns];
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_GOODNESS_TEST_H */
+#endif

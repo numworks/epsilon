@@ -55,6 +55,6 @@ private:
   mutable Poincare::Layout m_p2Layout;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_TWO_PROPORTIONS_Z_TEST_H */
+#endif

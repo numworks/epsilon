@@ -31,5 +31,5 @@ private:
   int m_zoom;
 };
 
-}  // namespace Inference
-#endif /* INFERENCE_STATISTIC_TEST_TEST_GRAPH_CONTROLLER_H */
+}
+#endif

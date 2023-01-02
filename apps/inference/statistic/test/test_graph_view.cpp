@@ -23,5 +23,5 @@ Escher::View * TestGraphView::subviewAtIndex(int i) {
   return subviews[i];
 }
 
-}  // namespace Inference
+}
 

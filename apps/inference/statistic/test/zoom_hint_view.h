@@ -29,6 +29,6 @@ private:
   Escher::KeyView m_legendPictograms[k_numberOfTokens];
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_TEST_HINT_VIEW_H */
+#endif

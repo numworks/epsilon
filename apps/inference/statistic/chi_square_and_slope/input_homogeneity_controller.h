@@ -23,6 +23,6 @@ private:
   InputHomogeneityTableCell m_inputHomogeneityTable;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_HOMOGENEITY_CONTROLLER_H */
+#endif

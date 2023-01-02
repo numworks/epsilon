@@ -94,6 +94,6 @@ private:
   float largestMarginOfError();
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_INTERVAL_H */
+#endif

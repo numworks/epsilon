@@ -45,4 +45,4 @@ int GoodnessTableCell::fillColumnName(int column, char * buffer) {
   return strlcpy(buffer, I18n::translate(k_columnHeaders[column]), Shared::ColumnParameterController::k_titleBufferSize);
 }
 
-}  // namespace Inference
+}

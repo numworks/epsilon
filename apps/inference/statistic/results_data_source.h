@@ -32,6 +32,6 @@ private:
   Shared::ButtonWithSeparator m_next;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_RESULTS_DATA_SOURCE_H */
+#endif

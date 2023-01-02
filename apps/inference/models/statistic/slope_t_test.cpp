@@ -10,4 +10,4 @@ void SlopeTTest::compute() {
   m_pValue = SignificanceTest::ComputePValue(this);
 }
 
-}  // namespace Inference
+}

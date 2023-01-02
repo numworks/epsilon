@@ -58,4 +58,4 @@ bool TestGraphController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-}  // namespace Inference
+}

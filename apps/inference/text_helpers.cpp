@@ -30,4 +30,4 @@ Poincare::Layout XOneMinusXTwoLayout() {
   return std::move(res);
 }
 
-}  // namespace Inference
+}

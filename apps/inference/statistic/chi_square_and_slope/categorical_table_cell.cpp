@@ -242,4 +242,4 @@ void DoubleColumnTableCell::willDisplayCellAtLocation(Escher::HighlightCell * ce
   willDisplayValueCellAtLocation(myCell->editableTextCell()->textField(), myCell, i, j - 1, tableModel());
 }
 
-}  // namespace Inference
+}

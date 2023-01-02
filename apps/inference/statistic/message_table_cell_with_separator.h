@@ -28,6 +28,6 @@ private:
   mutable Escher::MessageTableCellWithEditableTextWithMessage m_innerCell;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_MESSAGE_TABLE_CELL_WITH_SEPARATOR_H */
+#endif

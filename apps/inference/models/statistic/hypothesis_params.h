@@ -23,6 +23,6 @@ private:
   Poincare::ComparisonNode::OperatorType m_operator;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_HYPOTHESIS_PARAMS_H */
+#endif

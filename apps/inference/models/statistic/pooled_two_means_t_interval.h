@@ -12,6 +12,6 @@ public:
   void compute() override { PooledTwoMeans::ComputeInterval(this); }
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_POOLED_TWO_MEANS_INTERVAL_H */
+#endif

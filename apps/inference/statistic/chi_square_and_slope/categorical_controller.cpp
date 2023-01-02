@@ -192,4 +192,4 @@ bool InputCategoricalController::handleEditedValue(int i, double p, AbstractText
   return true;
 }
 
-}  // namespace Inference
+}

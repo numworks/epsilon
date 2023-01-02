@@ -48,6 +48,6 @@ private:
   double m_params[TwoMeans::k_numberOfParams];
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_TWO_MEANS_T_TEST_H */
+#endif

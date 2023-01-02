@@ -41,6 +41,6 @@ private:
   DynamicSizeTableViewDataSourceDelegate * m_dynamicDatSourceDelegate;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_DYNAMIC_SIZE_TABLE_VIEW_DATA_SOURCE_H */
+#endif

@@ -38,6 +38,6 @@ private:
   Escher::Dropdown m_dropdown;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_EXPRESSION_CELL_WITH_SUBLABEL_AND_DROPDOWN_H */
+#endif

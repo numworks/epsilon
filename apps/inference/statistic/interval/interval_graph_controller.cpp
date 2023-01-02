@@ -84,4 +84,4 @@ void IntervalGraphController::intervalDidChange() {
   m_graphView.reload();
 }
 
-}  // namespace Inference
+}

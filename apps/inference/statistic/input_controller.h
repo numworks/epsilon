@@ -61,6 +61,6 @@ private:
   MessageTableCellWithSeparator m_significanceCell;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_INPUT_CONTROLLER_H */
+#endif

@@ -49,6 +49,6 @@ private:
 
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_ONE_MEAN_T_TEST_H */
+#endif

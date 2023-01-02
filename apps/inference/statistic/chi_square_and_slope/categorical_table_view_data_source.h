@@ -32,6 +32,6 @@ protected:
   KDCoordinate nonMemoizedRowHeight(int j) override { return k_rowHeight; }
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_TABLE_VIEW_DATA_SOURCE_H */
+#endif

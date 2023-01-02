@@ -49,6 +49,6 @@ constexpr int k_maxNumberOfExpressionCellsWithEditableTextWithMessage = k_inputC
 constexpr int k_resultDataSourceNumberOfReusableCells = 5;
 constexpr int k_maxNumberOfExpressionCellsWithBufferWithMessage = k_resultDataSourceNumberOfReusableCells;
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_SHARED_DYNAMIC_CELLS_DATA_SOURCE_H */
+#endif

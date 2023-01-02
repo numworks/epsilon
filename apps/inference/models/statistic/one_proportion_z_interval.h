@@ -46,6 +46,6 @@ private:
   double m_params[OneProportion::k_numberOfParams];
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_ONE_PROPORTION_Z_INTERVAL_H */
+#endif

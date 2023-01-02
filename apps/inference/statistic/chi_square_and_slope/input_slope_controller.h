@@ -51,6 +51,6 @@ private:
   SlopeColumnParameterController m_storeParameterController;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_SLOPE_CONTROLLER_H */
+#endif

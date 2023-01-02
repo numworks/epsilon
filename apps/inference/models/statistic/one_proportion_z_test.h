@@ -52,6 +52,7 @@ private:
   double m_params[OneProportion::k_numberOfParams];
   mutable Poincare::Layout m_estimateLayout;
 };
-}  // namespace Inference
 
-#endif /* INFERENCE_MODELS_STATISTIC_ONE_PROPORTION_Z_TEST_H */
+}
+
+#endif

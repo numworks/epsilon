@@ -14,6 +14,6 @@ public:
   void compute() override { PooledTwoMeans::ComputeTest(this); }
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_POOLED_TWO_MEANS_TEST_H */
+#endif

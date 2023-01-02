@@ -73,4 +73,4 @@ int ResultsDataSource::typeAtIndex(int index) const {
   return k_resultCellType;
 }
 
-}  // namespace Inference
+}

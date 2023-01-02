@@ -56,6 +56,6 @@ private:
   Escher::SolidColorCell m_topLeftCell;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_HOMOGENEITY_DATA_SOURCE_H */
+#endif

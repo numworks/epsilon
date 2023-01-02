@@ -28,6 +28,6 @@ private:
   Shared::BufferFunctionTitleCell m_header[SlopeTStatistic::k_maxNumberOfColumns];
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_SLOPE_TABLE_CELL_H */
+#endif

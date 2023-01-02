@@ -84,6 +84,6 @@ private:
   enum ResultOrder { Z, PValue, TestDegree };
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_MODELS_STATISTIC_TEST_H */
+#endif

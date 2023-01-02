@@ -111,6 +111,6 @@ private:
   virtual Escher::HighlightCell * headerCell(int index) = 0;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_TABLE_CELL_H */
+#endif

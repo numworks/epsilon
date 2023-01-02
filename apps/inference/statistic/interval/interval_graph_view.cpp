@@ -28,4 +28,4 @@ Escher::View * IntervalGraphView::subviewAtIndex(int i) {
   return subviews[i];
 }
 
-}  // namespace Inference
+}

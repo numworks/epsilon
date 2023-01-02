@@ -42,5 +42,5 @@ private:
   InputHomogeneityController * m_inputHomogeneityController;
 };
 
-}  // namespace Inference
-#endif /* INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_CATEGORICAL_TYPE_CONTROLLER_H */
+}
+#endif

@@ -116,4 +116,4 @@ void IntervalCurveView::reload(bool resetInterruption, bool force) {
   m_interval->compute();
 }
 
-}  // namespace Inference
+}

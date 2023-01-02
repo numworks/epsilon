@@ -23,6 +23,6 @@ private:
   Escher::BufferTextView m_labelView;
 };
 
-}  // namespace Inference
+}
 
-#endif /* INFERENCE_STATISTIC_EXPRESSION_CELL_WITH_BUFFER_WITH_MESSAGE_H */
+#endif

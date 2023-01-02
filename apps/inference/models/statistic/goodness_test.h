@@ -36,6 +36,9 @@ public:
   constexpr static int k_maxNumberOfColumns = 2;
 private:
   constexpr static int k_maxNumberOfRows = 10;
+  /* It is not usefull to be able to set a degree of freedom much bigger than
+   * the number of rows anyway. */
+  constexpr static int k_maxDegreeOfFreedom = 10000;
 
   // Statistic
   void setParameterAtIndex(double p, int i) override;

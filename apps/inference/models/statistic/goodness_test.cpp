@@ -79,7 +79,7 @@ bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
     // Expected value should not be null
     return false;
   }
-  if (i == indexOfDegreeOfFreedom() && (p != std::round(p) || p < 1.0)) {
+  if (i == indexOfDegreeOfFreedom() && (p != std::round(p) || p < 1.0 || p > k_maxDegreeOfFreedom)) {
     return false;
   }
   return Chi2Test::authorizedParameterAtIndex(p, i);

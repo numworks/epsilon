@@ -629,6 +629,8 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
   const ToolboxMessageTree * messageTree = messageTreeModelAtIndex(index);
   KDColor textColor = isMessageTreeDisabled(messageTree) ? Palette::GrayDark : KDColorBlack;
   if (messageTree->numberOfChildren() == 0) {
+    assert(static_cast<void *>(m_nodeCells) > static_cast<void *>(cell) ||
+           static_cast<void *>(cell) >= static_cast<void *>(m_nodeCells + k_maxNumberOfDisplayedRows));
     // Message is leaf
     if (GlobalPreferences::sharedGlobalPreferences()->listsStatsOrderInToolbox() == CountryPreferences::ListsStatsOrderInToolbox::Alternate && m_messageTreeModel->childrenList() == listsStatsChildren) {
       // We are in lists stats sub-menu
@@ -659,6 +661,8 @@ void MathToolbox::willDisplayCellForIndex(HighlightCell * cell, int index) {
     myCell->setSubLabelMessage(messageTree->text());
     myCell->setTextColor(textColor);
   } else {
+    assert(static_cast<void *>(m_leafCells) > static_cast<void *>(cell) ||
+           static_cast<void *>(cell) >= static_cast<void *>(m_leafCells + k_maxNumberOfDisplayedRows));
     // Message is a submenu
     MessageTableCell * typedCell = static_cast<MessageTableCell *>(cell);
     typedCell->setTextColor(textColor);

@@ -46,7 +46,6 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   joystick/virtual/SDL_virtualjoystick.c \
   joystick/dummy/SDL_sysjoystick.c \
   locale/SDL_locale.c \
-  main/dummy/SDL_dummy_main.c \
   misc/SDL_url.c \
   power/SDL_power.c \
   render/SDL_d3dmath.c \

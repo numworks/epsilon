@@ -29,6 +29,7 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   libm/s_tan.c \
   loadso/dlopen/SDL_sysloadso.c \
   locale/emscripten/SDL_syslocale.c \
+  main/dummy/SDL_dummy_main.c \
   misc/dummy/SDL_sysurl.c \
   thread/generic/SDL_syssem.c \
   thread/generic/SDL_systhread.c \

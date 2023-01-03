@@ -14,6 +14,7 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   joystick/linux/SDL_sysjoystick.c \
   loadso/dlopen/SDL_sysloadso.c \
   locale/unix/SDL_syslocale.c \
+  main/dummy/SDL_dummy_main.c \
   misc/dummy/SDL_sysurl.c \
   power/linux/SDL_syspower.c \
   render/opengl/SDL_render_gl.c \

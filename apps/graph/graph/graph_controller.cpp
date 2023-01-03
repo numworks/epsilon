@@ -137,9 +137,21 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
       }
 
       /* Special case for piecewise functions: we want to display the branch
-       * edges even if the behaviour is not "interesting". */
-      Expression p = f->expressionReduced(context);
-      if (p.type() == ExpressionNode::Type::PiecewiseOperator) {
+       * edges even if the behaviour is not "interesting".
+       * FIXME For simplicity's sake, only the first piecewise operator will
+       * have its conditions fitted. It is assumed that expressions containing
+       * more than one piecewise will be rare. */
+      Expression p;
+      Expression::ExpressionTestAuxiliary yieldPiecewise = [](const Expression e, Context *, void * auxiliary) {
+        if (e.type() == ExpressionNode::Type::PiecewiseOperator) {
+          *static_cast<Expression *>(auxiliary) = e;
+          return true;
+        } else {
+          return false;
+        }
+      };
+      if (f->expressionReduced(context).recursivelyMatches(yieldPiecewise, context, ExpressionNode::SymbolicComputation::ReplaceAllDefinedSymbolsWithDefinition, &p)) {
+        assert(!p.isUninitialized() && p.type() == ExpressionNode::Type::PiecewiseOperator);
         zoom.fitConditions(static_cast<PiecewiseOperator &>(p), evaluator<float>, f.operator->(), ContinuousFunction::k_unknownName, Preferences::sharedPreferences()->complexFormat(), Preferences::sharedPreferences()->angleUnit(), alongY);
       }
 

@@ -80,7 +80,7 @@ bool FunctionApp::storageCanChangeForRecordName(const Ion::Storage::Record::Name
    * Variables can be changed even if they are used in functions.
    * Warning: this has no effect on Sequence yet: we can't define sequences
    * from the store menu.  */
-  return !m_intrusiveStorageChangeFlag || strcmp(recordName.extension, functionStore()->modelExtension()) != 0;;
+  return !m_intrusiveStorageChangeFlag || strcmp(recordName.extension, functionStore()->modelExtension()) != 0;
 }
 
 FunctionApp::FunctionApp(Snapshot * snapshot, Shared::FunctionListController * listController, Shared::FunctionGraphController * graphController, Shared::ValuesController * valuesController) :

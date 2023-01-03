@@ -137,6 +137,34 @@ void Zoom::fitIntersections(Function2DWithContext<float> f1, const void * model1
   fitWithSolver(&dummy, &dummy, evaluator, &params, Solver<float>::OddRootInBracket, HoneIntersection, vertical);
 }
 
+void Zoom::fitConditions(PiecewiseOperator p, Function2DWithContext<float> fullFunction, const void * model, const char * symbol, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool vertical) {
+  struct ConditionsParameters {
+    Zoom * zoom;
+    PiecewiseOperator p;
+    const char * symbol;
+    Preferences::ComplexFormat complexFormat;
+    Preferences::AngleUnit angleUnit;
+    Function2DWithContext<float> fullFunction;
+    const void * model;
+    bool vertical;
+  };
+  const ConditionsParameters params = { .zoom = this, .p = p, .symbol = symbol, .complexFormat = complexFormat, .angleUnit = angleUnit, .fullFunction = fullFunction, .model = model, .vertical = vertical };
+  Solver<float>::FunctionEvaluation evaluator = [](float t, const void * aux) {
+    const ConditionsParameters * params = static_cast<const ConditionsParameters *>(aux);
+    return static_cast<float>(params->p.indexOfFirstTrueConditionWithValueForSymbol(params->symbol, t, params->zoom->m_context, params->complexFormat, params->angleUnit));
+  };
+  Solver<float>::BracketTest test = [](Coordinate2D<float> a, Coordinate2D<float>, Coordinate2D<float> c, const void *) {
+    return Solver<float>::BoolToInterest(a.x2() != c.x2(), Solver<float>::Interest::Discontinuity);
+  };
+  Solver<float>::HoneResult hone = [](Solver<float>::FunctionEvaluation, const void * aux, float a, float b, Solver<float>::Interest, float) {
+    const ConditionsParameters * params = static_cast<const ConditionsParameters *>(aux);
+    params->zoom->fitPoint(params->fullFunction(a, params->model, params->zoom->m_context), params->vertical);
+    return params->fullFunction(b, params->model, params->zoom->m_context);
+  };
+  bool dummy;
+  fitWithSolver(&dummy, &dummy, evaluator, &params, test, hone, vertical);
+}
+
 void Zoom::fitMagnitude(Function2DWithContext<float> f, const void * model, bool vertical) {
   /* We compute the log mean value of the expression, which gives an idea of the
    * order of magnitude of the function, to crop the Y axis. */

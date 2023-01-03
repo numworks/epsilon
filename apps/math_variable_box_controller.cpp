@@ -370,7 +370,7 @@ bool MathVariableBoxController::destroyRecordAtRowIndex(int rowIndex) {
     Storage::Record record = recordAtIndex(rowIndex);
     Shared::InputEventHandlerDelegateApp * app = static_cast<Shared::InputEventHandlerDelegateApp*>(Container::activeApp());
     app->prepareForIntrusiveStorageChange();
-    bool canDestroy = record.safeDestroy();
+    bool canDestroy = record.tryToDestroy();
     app->concludeIntrusiveStorageChange();
     if (!canDestroy) {
       return false;

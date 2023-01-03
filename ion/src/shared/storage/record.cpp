@@ -83,12 +83,12 @@ Record::ErrorStatus Record::setValue(Data data) {
   return Storage::FileSystem::sharedFileSystem()->setValueOfRecord(*this, data);
 }
 
-bool Record::safeDestroy() {
+bool Record::tryToDestroy() {
   return Storage::FileSystem::sharedFileSystem()->destroyRecord(*this);
 }
 
 void Record::destroy() {
-  bool canDestroy = safeDestroy();
+  bool canDestroy = tryToDestroy();
   assert(canDestroy);
   (void) canDestroy;
 }

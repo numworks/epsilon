@@ -65,10 +65,10 @@ public:
   const char * fullName() const;
   Data value() const;
   ErrorStatus setValue(Data data);
-  /* destroy asserts that the record can be destroyed while safeDestroy returns
+  /* destroy asserts that the record can be destroyed while tryToDestroy returns
    * false if it's not the case. */
   void destroy();
-  bool safeDestroy();
+  bool tryToDestroy();
   bool hasExtension(const char * extension) {
     const char * thisExtension = name().extension;
     return thisExtension ? strcmp(thisExtension, extension) == 0 : false;

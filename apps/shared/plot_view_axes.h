@@ -136,7 +136,7 @@ public:
 
 protected:
   size_t numberOfLabels() const override { return N; }
-  char * mutableLabel(int i) override { assert(i < N); return m_labels[i]; }
+  char * mutableLabel(int i) override { assert(static_cast<size_t>(i) < N); return m_labels[i]; }
   char m_labels[N][k_labelBufferMaxSize];
 };
 

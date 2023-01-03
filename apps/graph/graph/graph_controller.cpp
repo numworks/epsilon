@@ -136,6 +136,13 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
         zoom.fitBounds(evaluatorSecondCurve<float>, f.operator->(), alongY);
       }
 
+      /* Special case for piecewise functions: we want to display the branch
+       * edges even if the behaviour is not "interesting". */
+      Expression p = f->expressionReduced(context);
+      if (p.type() == ExpressionNode::Type::PiecewiseOperator) {
+        zoom.fitConditions(static_cast<PiecewiseOperator &>(p), evaluator<float>, f.operator->(), ContinuousFunction::k_unknownName, Preferences::sharedPreferences()->complexFormat(), Preferences::sharedPreferences()->angleUnit(), alongY);
+      }
+
       /* Do not compute intersections if store is full because re-creating a
        * ContinuousFunction object each time a new function is intersected
        * is very slow. */

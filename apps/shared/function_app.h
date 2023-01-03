@@ -40,13 +40,13 @@ public:
   virtual ValuesController * valuesController() = 0;
   virtual Escher::InputViewController * inputViewController() = 0;
 
+  bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const override;
   void prepareForIntrusiveStorageChange() override;
   void concludeIntrusiveStorageChange() override;
 
 protected:
   FunctionApp(Snapshot * snapshot, Shared::FunctionListController * listController, Shared::FunctionGraphController * graphController, Shared::ValuesController * valuesController);
 
-  bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const override;
 
   Escher::ButtonRowController m_listFooter;
   Escher::ButtonRowController m_listHeader;

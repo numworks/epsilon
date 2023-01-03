@@ -29,7 +29,6 @@ class Container;
 class InputEventHandler;
 
 class App : public Responder {
-  friend class ::AppsContainer;
 public:
   class Descriptor {
   public:
@@ -72,6 +71,9 @@ public:
   virtual Timer * timerAtIndex(int i) { assert(false); return nullptr; }
   virtual Poincare::Context * localContext() { return nullptr; }
 
+  virtual bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const { return true; }
+  virtual void storageDidChangeForRecord(Ion::Storage::Record) {}
+
 #if EPSILON_TELEMETRY
   virtual const char * telemetryId() const { return nullptr; }
 #endif
@@ -85,9 +87,6 @@ protected:
     m_warningController(this, warningMessage)
   {}
   ModalViewController m_modalViewController;
-
-  virtual bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const { return true; }
-  virtual void storageDidChangeForRecord(Ion::Storage::Record) {}
 
 private:
   Responder * m_firstResponder;

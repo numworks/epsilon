@@ -16,7 +16,7 @@ public:
 
   static void PrepareForCaching(void * fun, ContinuousFunctionCache * cache, float tMin, float tStep);
 
-  ContinuousFunctionCache() { clear(); }
+  ContinuousFunctionCache() : m_tMin(0) { clear(); }
 
   float step() const { return m_tStep; }
   void clear();

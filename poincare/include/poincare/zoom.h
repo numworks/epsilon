@@ -1,6 +1,7 @@
 #ifndef POINCARE_ZOOM_H
 #define POINCARE_ZOOM_H
 
+#include <poincare/piecewise_operator.h>
 #include <poincare/range.h>
 #include <poincare/solver.h>
 #include <ion/display.h>
@@ -45,6 +46,7 @@ public:
   void fitFullFunction(Function2DWithContext<float> f, const void * model);
   void fitPointsOfInterest(Function2DWithContext<float> f, const void * model, bool vertical = false, Function2DWithContext<double> fDouble = nullptr);
   void fitIntersections(Function2DWithContext<float> f1, const void * model1, Function2DWithContext<float> f2, const void * model2, bool vertical = false);
+  void fitConditions(PiecewiseOperator p, Function2DWithContext<float> fullFunction, const void * model, const char * symbol, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool vertical = false);
   /* This function will only touch the Y axis. */
   void fitMagnitude(Function2DWithContext<float> f, const void * model, bool vertical = false);
   void fitBounds(Function2DWithContext<float> f, const void * model, bool vertical = false);

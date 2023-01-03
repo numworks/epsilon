@@ -87,6 +87,9 @@ int MemoizedTableSize1DManager<N>::computeIndexAfterCumulatedSize(KDCoordinate o
   }
   // Search index around m_memoizedIndexOffset
   KDCoordinate cumulatedSize = m_memoizedCumulatedSizeOffset;
+  if (offset == cumulatedSize) {
+    return m_memoizedIndexOffset;
+  }
   if (offset > m_memoizedCumulatedSizeOffset) {
     int nLines = numberOfLines();
     for (int i = m_memoizedIndexOffset; i < nLines; i++) {

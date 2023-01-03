@@ -320,4 +320,35 @@ QUIZ_CASE(poincare_layout_parentheses) {
     assert_layout_serialize_to(l, "(\u0014{1\u0014}23)");
     quiz_assert(c.isEquivalentTo(LayoutCursor(l.childAtIndex(0).childAtIndex(0).childAtIndex(1), LayoutCursor::Position::Left)));
   }
+  /*
+   * [1§▯)|^23 -> BACKSPACE -> 1§|▯^23  ▯ == empty layout, § == prefix superscript
+   */
+  {
+    Layout l = HorizontalLayout::Builder(
+      ParenthesisLayout::Builder(HorizontalLayout::Builder(
+        VerticalOffsetLayout::Builder(
+          CodePointLayout::Builder('1'),
+          VerticalOffsetLayoutNode::VerticalPosition::Superscript, VerticalOffsetLayoutNode::HorizontalPosition::Prefix),
+        EmptyLayout::Builder()
+      )),
+      VerticalOffsetLayout::Builder(
+        CodePointLayout::Builder('2'),
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript),
+      CodePointLayout::Builder('3')
+    );
+    static_cast<ParenthesisLayoutNode *>(l.childAtIndex(0).node())->setTemporary(AutocompletedBracketPairLayoutNode::Side::Left, true);
+    LayoutCursor c(l.childAtIndex(0), LayoutCursor::Position::Right);
+    c.performBackspace();
+    Layout l2 = HorizontalLayout::Builder(
+      VerticalOffsetLayout::Builder(
+        CodePointLayout::Builder('1'),
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript, VerticalOffsetLayoutNode::HorizontalPosition::Prefix),
+      EmptyLayout::Builder(),
+      VerticalOffsetLayout::Builder(
+        CodePointLayout::Builder('2'),
+        VerticalOffsetLayoutNode::VerticalPosition::Superscript),
+      CodePointLayout::Builder('3')
+    );
+    quiz_assert(l.isIdenticalTo(l2));
+  }
 }

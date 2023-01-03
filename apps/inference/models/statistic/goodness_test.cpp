@@ -2,8 +2,11 @@
 #include <float.h>
 #include <poincare/print.h>
 #include <inference/models/statistic/interfaces/significance_tests.h>
+#include "homogeneity_test.h"
 
 namespace Inference {
+
+static_assert(sizeof(GoodnessTest) < sizeof(HomogeneityTest), "Make sure this size increase was decided");
 
 GoodnessTest::GoodnessTest() {
   for (int i = 0; i < k_maxNumberOfRows * k_maxNumberOfColumns; i++) {

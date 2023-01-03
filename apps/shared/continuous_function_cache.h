@@ -70,7 +70,7 @@ private:
 
 
   void invalidateBetween(int iInf, int iSup);
-  void setRange(ContinuousFunction * function, float tMin, float tStep);
+  void setRange(float tMin, float tStep);
   int indexForParameter(const ContinuousFunction * function, float t, int curveIndex) const;
   Poincare::Coordinate2D<float> valuesAtIndex(const ContinuousFunction * function, Poincare::Context * context, float t, int i, int curveIndex);
   void pan(ContinuousFunction * function, float newTMin);

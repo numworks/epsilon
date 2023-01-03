@@ -19,7 +19,7 @@
       <string>iPhoneOS</string>
     </array>
     <key>LSRequiresIPhoneOS</key>
-    <false/>
+    <true/>
     <key>UIDeviceFamily</key>
     <array>
       <integer>1</integer>
@@ -43,9 +43,5 @@
       <string>UIInterfaceOrientationLandscapeLeft</string>
       <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
-    <key>CFBundleDisplayName</key>
-    <string>Numworks</string>
-    <key>CFBundleVersion</key>
-    <string>1.0</string>
   </dict>
 </plist>

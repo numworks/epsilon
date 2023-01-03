@@ -334,13 +334,13 @@ static Layout DeepSearchEmptyLayout(Layout l, int * nSkips) {
 }
 
 static int DeepNumberOfEmptyLayouts(Layout l) {
+  int totalNumberOfEmptyFound = 0;
   int currentNumberOfEmptyFound = 0;
-  int dummy = 0;
-  while (!DeepSearchEmptyLayout(l, &dummy).isUninitialized()) {
-    currentNumberOfEmptyFound++;
-    dummy = currentNumberOfEmptyFound;
+  while (!DeepSearchEmptyLayout(l, &currentNumberOfEmptyFound).isUninitialized()) {
+    totalNumberOfEmptyFound++;
+    currentNumberOfEmptyFound = totalNumberOfEmptyFound;
   }
-  return currentNumberOfEmptyFound;
+  return totalNumberOfEmptyFound;
 }
 
 Layout InputBeautification::ReplaceEmptyLayoutsWithParameters(Layout layoutToModify, Layout parent, int parenthesisIndexInParent, bool isParameteredExpression) {

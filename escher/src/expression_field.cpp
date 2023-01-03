@@ -150,7 +150,7 @@ KDCoordinate ExpressionField::inputViewHeight() const {
           std::max(k_minimalHeight, m_layoutField.minimalSizeForOptimalDisplay().height())));
 }
 
-size_t ExpressionField::dumpContent(char * buffer, size_t bufferSize, size_t * cursorOffset, LayoutCursor::Position * position) {
+size_t ExpressionField::dumpContent(char * buffer, size_t bufferSize, int * cursorOffset, LayoutCursor::Position * position) {
   return editionIsInTextField() ? m_textField.dumpContent(buffer, bufferSize, cursorOffset) : m_layoutField.dumpContent(buffer, bufferSize, cursorOffset, position);
 }
 
@@ -162,7 +162,7 @@ void ExpressionField::putCursorLeftOfField() {
   }
 }
 
-void ExpressionField::restoreContent(const char * buffer, size_t size, size_t * cursorOffset, Poincare::LayoutCursor::Position * position) {
+void ExpressionField::restoreContent(const char * buffer, size_t size, int * cursorOffset, Poincare::LayoutCursor::Position * position) {
   if (editionIsInTextField()) {
     if (size != 0 || buffer[0] == 0) {
       /* A size other than 0 means the buffer contains Layout information

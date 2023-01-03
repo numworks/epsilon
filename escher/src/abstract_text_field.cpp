@@ -258,7 +258,7 @@ void AbstractTextField::ContentView::setEditionBuffer(char * buffer, size_t buff
   m_useDraftBuffer = false;
 }
 
-size_t AbstractTextField::dumpContent(char * buffer, size_t bufferSize, size_t * cursorOffset) {
+size_t AbstractTextField::dumpContent(char * buffer, size_t bufferSize, int * cursorOffset) {
   size_t size = draftTextLength() + 1;
   if (size > bufferSize) {
     buffer[0] = 0;

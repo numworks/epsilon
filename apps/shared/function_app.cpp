@@ -23,12 +23,12 @@ void FunctionApp::prepareForIntrusiveStorageChange() {
   assert(0 <= tab && tab < 3);
   if (tabStacks[tab]->depth() > Shared::InteractiveCurveViewController::k_graphControllerStackDepth) {
     /* Close the details/curve menu/calculation views (minimum...)/column header
-    * since they may not make sense with the updated function. */
+     * since they may not make sense with the updated function. */
     tabStacks[tab]->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
   }
   /* Changing the storage may have deactivated all active functions. We pop
-  * then push to make sur the graph gets updated to its empty counterpart if
-  * necessary. */
+   * then push to make sur the graph gets updated to its empty counterpart if
+   * necessary. */
   m_activeControllerBeforeStore = tabStacks[tab]->topViewController();
   tabStacks[tab]->pop();
 }

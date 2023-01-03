@@ -44,7 +44,11 @@ public:
   static App * app() {
     return static_cast<App *>(Escher::Container::activeApp());
   }
+
   TELEMETRY_ID("Statistics");
+
+  bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const override;
+
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
 
 private:
@@ -57,7 +61,6 @@ private:
   void activeViewDidBecomeFirstResponder(Escher::ViewController * activeViewController) override;
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
   void didBecomeActive(Escher::Window * window) override;
-  bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const override;
 
   Store m_store;
   CalculationController m_calculationController;

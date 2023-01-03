@@ -56,6 +56,7 @@ public:
 
   static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
   void didBecomeActive(Escher::Window * window) override;
+  bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const override;
 
   // Navigation
   void willOpenPage(Escher::ViewController * controller) override;
@@ -85,7 +86,6 @@ public:
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);
   Snapshot * snapshot() const { return static_cast<Snapshot *>(Escher::App::snapshot()); }
-  bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const override;
 
   // Controllers
   TestGraphController m_testGraphController;

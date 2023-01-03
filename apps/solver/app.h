@@ -46,6 +46,7 @@ public:
   Escher::ViewController * intervalController() { return &m_intervalController; }
   SolutionsController * solutionsController() { return &m_solutionsController; }
 
+  void storageDidChangeForRecord(Ion::Storage::Record record) override;
   void prepareForIntrusiveStorageChange() override;
 
   TELEMETRY_ID("Solver");
@@ -54,9 +55,6 @@ private:
   App(Snapshot * snapshot);
   // TextFieldDelegateApp
   bool isAcceptableExpression(const Poincare::Expression expression) override;
-
-  // Escher::App
-  void storageDidChangeForRecord(Ion::Storage::Record record) override;
 
   // Controllers
   SolutionsController m_solutionsController;

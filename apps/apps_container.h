@@ -52,6 +52,11 @@ public:
   void redrawWindow();
   void activateExamMode(Poincare::Preferences::ExamMode examMode);
 
+  // Ion::Storage::StorageDelegate
+  bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const override;
+  void storageDidChangeForRecord(const Ion::Storage::Record record) override;
+  void storageIsFull() override;
+
 #if EPSILON_GETOPT
   void setInitialAppSnapshot(Escher::App::Snapshot * snapshot) { m_initialAppSnapshot = snapshot; }
 #endif
@@ -60,10 +65,6 @@ protected:
   int numberOfExternalApps() { return Ion::ExternalApps::numberOfApps(); }
 
 private:
-  // Ion::Storage::StorageDelegate
-  bool storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const override;
-  void storageDidChangeForRecord(const Ion::Storage::Record record) override;
-  void storageIsFull() override;
 
   Escher::Window * window() override;
   int numberOfContainerTimers() override;

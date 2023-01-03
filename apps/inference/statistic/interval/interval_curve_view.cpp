@@ -17,8 +17,14 @@ void IntervalAxis::reloadAxis(AbstractPlotView * plotView, AbstractPlotView::Axi
   Interval * plotInterval = interval(plotView);
   float low = plotInterval->estimate() - plotInterval->marginOfError();
   float high = plotInterval->estimate() + plotInterval->marginOfError();
+
+  /* If ticks are too close, labels might overlap.
+   * If ticks are at the exact same position, values and thus labels should
+   * be the same and drawing both labels at the same position should not
+   * create a visual artifact. This hack enables us to avoid creating another bool. */
   float spaceBetweenBounds = plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, high) - plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, low);
-  m_realignLabels = spaceBetweenBounds <= k_glyphLength * KDFont::GlyphWidth(AbstractPlotView::k_font);
+  m_realignLabels = 0 < spaceBetweenBounds && spaceBetweenBounds <= k_glyphLength * KDFont::GlyphWidth(AbstractPlotView::k_font);
+  assert(spaceBetweenBounds > 0 || low == high);
 
   convertFloatToText(low, m_labels[0], k_bufferSize);
   convertFloatToText(high, m_labels[1], k_bufferSize);

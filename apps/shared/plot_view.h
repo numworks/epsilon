@@ -60,7 +60,6 @@ public:
   float floatToPixel(Axis axis, float f) const;
   float pixelToFloat(Axis axis, KDCoordinate c) const;
   Poincare::Coordinate2D<float> floatToPixel2D(Poincare::Coordinate2D<float> p) const { return Poincare::Coordinate2D<float>(floatToPixel(Axis::Horizontal, p.x1()), floatToPixel(Axis::Vertical, p.x2())); }
-  Poincare::Coordinate2D<float> pixelToFloat2D(Poincare::Coordinate2D<float> xy) const { return Poincare::Coordinate2D<float>(pixelToFloat(Axis::Horizontal, xy.x1()), pixelToFloat(Axis::Vertical, xy.x2())); }
   double angleFromPoint(KDPoint point) const;
   /* Compute the rect where a label will be drawn. */
   KDRect labelRect(const char * label, Poincare::Coordinate2D<float> xy, RelativePosition xPosition, RelativePosition yPosition, bool ignoreMargin = false) const;

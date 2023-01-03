@@ -123,7 +123,6 @@ int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Pr
   ExpressionNode::ReductionContext systemReductionContext = ExpressionNode::ReductionContext(context, complexFormat, angleUnit, unitFormat, ExpressionNode::ReductionTarget::SystemForApproximation);
 
   {
-    char * treePoolCursor = TreePool::sharedPool()->cursor();
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
       Matrix cannonizedM = clone().convert<Matrix>();
@@ -131,7 +130,6 @@ int Matrix::rank(Context * context, Preferences::ComplexFormat complexFormat, Pr
     } else {
       /* rowCanonize can create expression that are too big for the pool.
        * If it's the case, compute the rank with approximated values. */
-      context->tidyDownstreamPoolFrom(treePoolCursor);
       Expression mApproximation = approximate<double>(context, complexFormat, angleUnit);
       if (mApproximation.type() != ExpressionNode::Type::Matrix) {
         /* The approximation was able to conclude that a coefficient is undef

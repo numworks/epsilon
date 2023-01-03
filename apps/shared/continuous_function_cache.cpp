@@ -45,7 +45,7 @@ void ContinuousFunctionCache::PrepareForCaching(void * fun, ContinuousFunctionCa
   if (function->properties().isCartesian() && tStep != 0) {
     function->cache()->pan(function, tMin);
   }
-  function->cache()->setRange(function, tMin, tStep);
+  function->cache()->setRange(tMin, tStep);
 }
 
 void ContinuousFunctionCache::clear() {
@@ -91,7 +91,7 @@ void ContinuousFunctionCache::invalidateBetween(int iInf, int iSup) {
   }
 }
 
-void ContinuousFunctionCache::setRange(ContinuousFunction * function, float tMin, float tStep) {
+void ContinuousFunctionCache::setRange(float tMin, float tStep) {
   m_tMin = tMin;
   m_tStep = tStep;
 }

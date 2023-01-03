@@ -52,8 +52,8 @@ public:
   bool hasFocus() const { return m_focus; }
   float rangeMin(Axis axis) const { return axis == Axis::Horizontal ? m_range->xMin() : m_range->yMin(); }
   float rangeMax(Axis axis) const { return axis == Axis::Horizontal ? m_range->xMax() : m_range->yMax(); }
-  float graphWidth() const { return m_frame.width() - 1; }
-  float graphHeight() const { return m_frame.height() - 1 - (m_bannerOverlapsGraph ? 0 : bannerView()->bounds().height()); }
+  KDCoordinate graphWidth() const { return m_frame.width() - 1; }
+  KDCoordinate graphHeight() const { return m_frame.height() - 1 - (m_bannerOverlapsGraph ? 0 : bannerView()->bounds().height()); }
   float pixelWidth() const { return (m_range->xMax() - m_range->xMin()) / graphWidth(); }
   float pixelHeight() const { return (m_range->yMax() - m_range->yMin()) / graphHeight(); }
   float pixelLength(Axis axis) const { return axis == Axis::Horizontal ? pixelWidth() : pixelHeight(); }

@@ -343,7 +343,7 @@ Context * LayoutField::context() const {
   return (m_delegate != nullptr) ? m_delegate->context() : nullptr;
 }
 
-size_t LayoutField::dumpContent(char * buffer, size_t bufferSize, size_t * cursorOffset, Poincare::LayoutCursor::Position * position) {
+size_t LayoutField::dumpContent(char * buffer, size_t bufferSize, int * cursorOffset, Poincare::LayoutCursor::Position * position) {
   assert(layoutHasNode());
   size_t size = layout().size();
   if (size > bufferSize) {

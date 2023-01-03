@@ -47,6 +47,11 @@ public:
   void logNodeName(std::ostream & stream) const override {
     stream << (verticalPosition() == VerticalPosition::Subscript ? "Subscript" : "Superscript");
   }
+  void logAttributes(std::ostream & stream) const override {
+    if (m_horizontalPosition == HorizontalPosition::Prefix) {
+      stream << " prefix=\"1\"";
+    }
+  }
 #endif
 
 private:

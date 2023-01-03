@@ -15,6 +15,7 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   joystick/darwin/SDL_iokitjoystick.c \
   joystick/iphoneos/SDL_mfijoystick.m \
   loadso/dlopen/SDL_sysloadso.c \
+  main/dummy/SDL_dummy_main.c \
   misc/macosx/SDL_sysurl.m \
   power/macosx/SDL_syspower.c \
   render/metal/SDL_render_metal.m \

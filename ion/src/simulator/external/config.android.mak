@@ -10,6 +10,7 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   joystick/android/SDL_sysjoystick.c \
   loadso/dlopen/SDL_sysloadso.c \
   locale/android/SDL_syslocale.c \
+  main/dummy/SDL_dummy_main.c \
   misc/android/SDL_sysurl.c \
   power/android/SDL_syspower.c \
   sensor/android/SDL_androidsensor.c \

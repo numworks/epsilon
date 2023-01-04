@@ -290,7 +290,32 @@ double GraphController::defaultCursorT(Ion::Storage::Record record) {
   if (function->properties().isCartesian()) {
     return FunctionGraphController::defaultCursorT(record);
   }
-  return function->tMin();
+
+  assert(function->properties().isParametric() || function->properties().isPolar());
+  Poincare::Context * context = textFieldDelegateApp()->localContext();
+  float tMin = function->tMin(), tMax = function->tMax();
+  float tRange = tMax - tMin;
+  static int numberOfIterations = 5;
+  int currentIteration = 0;
+  float currentT;
+  Coordinate2D<float> currentXY;
+
+  do {
+    /* Start from tMin and place the cursor on each fourth of the interval
+      * until a t where the cursor is visible is found.
+      * currentT values will be tMin / tMin+0.25*tRange / tMin+0.5*tRange /
+      * tMin+0.75*tRange / tMax*/
+    currentT = tMin + ((float)currentIteration / (float)(numberOfIterations - 1)) * tRange;
+    // Using first subCurve for default cursor.
+    currentXY = function->evaluateXYAtParameter(currentT, context, 0);
+  } while (++currentIteration < numberOfIterations &&
+            !isCursorVisible(Coordinate2D<double>(currentXY)));
+
+  if (!isCursorVisible(Coordinate2D<double>(currentXY))) {
+    // If no positions make the cursor visible, return the middle value
+    currentT = tMin;
+  }
+  return currentT;
 }
 
 void GraphController::jumpToLeftRightCurve(double t, int direction, int functionsCount, Ion::Storage::Record record) {

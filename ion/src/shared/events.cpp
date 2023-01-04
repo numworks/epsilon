@@ -67,6 +67,9 @@ Event sLastEvent = Events::None;
 Keyboard::State sLastKeyboardState(0);
 Keyboard::State sCurrentKeyboardState(0);
 uint64_t sKeysSeenUp = -1;
+/* WARNING: It seems that if there are not exactly 3 bools here, the input
+ * repetition breaks on n0120, but we do not know why.
+ * */
 bool sLastEventShift = false;
 bool sLastEventAlpha = false;
 bool sIdleWasSent = false;

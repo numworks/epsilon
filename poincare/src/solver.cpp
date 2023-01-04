@@ -181,7 +181,8 @@ Coordinate2D<T> Solver<T>::BrentMaximum(FunctionEvaluation f, const void * aux, 
 template<typename T>
 Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision) {
   if (interest == Interest::Root) {
-    return SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, precision);
+    Coordinate2D<T> solution = SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, precision);
+    return std::fabs(solution.x2()) > NullTolerance(solution.x1()) ? Coordinate2D<T>() : solution;
   }
   Coordinate2D<T> res;
   if (interest == Interest::LocalMinimum) {

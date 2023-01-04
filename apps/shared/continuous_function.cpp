@@ -221,9 +221,9 @@ int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferS
   return numberOfChars + derivativeSize;
 }
 
-double ContinuousFunction::approximateDerivative(double x, Context * context, int subCurveIndex) const {
+double ContinuousFunction::approximateDerivative(double x, Context * context, int subCurveIndex, bool useDomain) const {
   assert(canDisplayDerivative());
-  if (x < tMin() || x > tMax() || isAlongY() || numberOfSubCurves() > 1) {
+  if ((useDomain && (x < tMin() || x > tMax())) || isAlongY() || numberOfSubCurves() > 1) {
     return NAN;
   }
   // Derivative is simplified once and for all

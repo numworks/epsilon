@@ -339,7 +339,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   // Compute approximate result
   Expression approximation;
   if (isDerivative) {
-    approximation = Float<double>::Builder(function->approximateDerivative(abscissa, context));
+    approximation = Float<double>::Builder(function->approximateDerivative(abscissa, context, 0, false));
   } else {
     approximation = PoincareHelpers::Approximate<double>(exactResult, context);
   }

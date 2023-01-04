@@ -112,7 +112,7 @@ public:
   // Insert derivative name with argument in buffer (f'(x) or y')
   int derivativeNameWithArgument(char * buffer, size_t bufferSize);
   // Approximate derivative at x, on given sub curve if there is one
-  double approximateDerivative(double x, Poincare::Context * context, int subCurveIndex = 0) const;
+  double approximateDerivative(double x, Poincare::Context * context, int subCurveIndex = 0, bool useDomain = true) const;
   Poincare::Layout derivativeTitleLayout();
 
   /* tMin, tMax and tAuto */

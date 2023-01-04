@@ -52,7 +52,7 @@ protected:
   virtual Escher::StackViewController * stackController() const;
   virtual void initCursorParameters() = 0;
   virtual bool moveCursorVertically(int direction) = 0;
-  bool isCursorVisible();
+  bool isCursorVisible(Poincare::Coordinate2D<double> position);
   virtual bool selectedModelIsValid() const = 0;
   virtual Poincare::Coordinate2D<double> selectedModelXyValues(double t) const = 0;
   bool openMenu() { return openMenuForCurveAtIndex(selectedCurveIndex()); };

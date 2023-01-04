@@ -25,7 +25,7 @@ public:
   void replaceValueAtIndex(T value, int index);
   void removeValueAtIndex(int index);
   T valueAtIndex(int index) const override;
-  int length() const override { return numberOfChildren(); }
+  int length() const override { return isUninitialized() ? 0: numberOfChildren(); }
 
   /* This replaces childAtIndex. Instead of being in linear time, it's
    * in constant time. */

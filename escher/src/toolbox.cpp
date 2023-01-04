@@ -64,6 +64,7 @@ bool Toolbox::returnToPreviousMenu() {
 }
 
 bool Toolbox::returnToRootMenu() {
+  m_selectableTableView.deselectTable();
   m_messageTreeModel = rootModel();
   return NestedMenuController::returnToRootMenu();
 }

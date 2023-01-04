@@ -35,7 +35,7 @@ public:
 
   constexpr static Axis OtherAxis(Axis axis) { return static_cast<Axis>(1 - static_cast<uint8_t>(axis)); }
 
-  AbstractPlotView(CurveViewRange * range) : m_range(range), m_stampDashIndex(k_stampIndexNoDash), m_bannerOverlapsGraph(true) {}
+  AbstractPlotView(CurveViewRange * range) : m_range(range), m_stampDashIndex(k_stampIndexNoDash), m_drawnRangeVersion(0), m_bannerOverlapsGraph(true), m_focus(false) {}
 
   // Escher::View
   void drawRect(KDContext * ctx, KDRect rect) const override;

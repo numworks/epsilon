@@ -1,4 +1,4 @@
-#include <utils/float.h>
+#include <omg/float.h>
 #include <cmath>
 
 bool Float::IsGreater(float xI, float xJ, bool nanIsGreatest) {

@@ -4,7 +4,7 @@
 #include <array>
 #include <algorithm>
 #include "edition_reference.h"
-#include <utils/array.h>
+#include <omg/array.h>
 
 namespace PoincareJ {
 

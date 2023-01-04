@@ -1,5 +1,5 @@
-#include <utils/arithmetic.h>
-#include <utils/memory.h>
+#include <omg/arithmetic.h>
+#include <omg/memory.h>
 #include <assert.h>
 
 size_t Memory::AlignedSize(size_t realSize, size_t alignment) {

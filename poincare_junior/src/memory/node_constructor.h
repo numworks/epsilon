@@ -4,7 +4,7 @@
 #include <poincare_junior/src/expression/constant.h>
 #include <poincare_junior/src/expression/float.h>
 #include <poincare_junior/src/expression/integer.h>
-#include <utils/bit.h>
+#include <omg/bit.h>
 #include "value_block.h"
 
 namespace PoincareJ {

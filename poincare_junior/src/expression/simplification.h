@@ -2,7 +2,7 @@
 #define POINCARE_EXPRESSION_SIMPLIFICATION_H
 
 #include <poincare_junior/src/memory/edition_reference.h>
-#include <utils/enums.h>
+#include <omg/enums.h>
 
 namespace PoincareJ {
 

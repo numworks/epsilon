@@ -1,4 +1,4 @@
-#include <utils/arithmetic.h>
+#include <omg/arithmetic.h>
 
 size_t Arithmetic::Gcd(size_t a, size_t b) {
   int i = a;

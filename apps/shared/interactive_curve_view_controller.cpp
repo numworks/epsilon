@@ -134,16 +134,14 @@ void InteractiveCurveViewController::refreshCursor() {
    * reloading banner view needs an updated cursor to load the right data. */
   double t = m_cursor->t();
   bool cursorHasAPosition = !std::isnan(t);
-  bool cursorIsValid = true;
+  bool cursorIsValid = false;
 
   if (cursorHasAPosition && selectedModelIsValid()) {
     // Move the cursor onto the selected curve
     Poincare::Coordinate2D<double> xy = selectedModelXyValues(t);
     m_cursor->moveTo(t, xy.x1(), xy.x2());
-  } else {
-    cursorIsValid = false;
+    cursorIsValid = isCursorVisible(xy);
   }
-  cursorIsValid = cursorIsValid && isCursorVisible();
 
   if (!cursorIsValid) {
     initCursorParameters();
@@ -187,7 +185,7 @@ void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
   Coordinate2D<double> xy = xyValues(selectedCurveIndex(false), t, textFieldDelegateApp()->localContext(), 0);
   m_cursor->moveTo(t, xy.x1(), xy.x2());
   reloadBannerView();
-  if (!isCursorVisible()) {
+  if (!isCursorVisible(xy)) {
     interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
     interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
   }
@@ -202,11 +200,11 @@ StackViewController * InteractiveCurveViewController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
 
-bool InteractiveCurveViewController::isCursorVisible() {
+bool InteractiveCurveViewController::isCursorVisible(Coordinate2D<double> position) {
   InteractiveCurveViewRange * range = interactiveCurveViewRange();
   float xRange = range->xMax() - range->xMin();
   float yRange = range->yMax() - range->yMin();
-  float x = m_cursor->x(), y = m_cursor->y();
+  double x = position.x1(), y = position.x2();
   return x >= range->xMin() + cursorLeftMarginRatio() * xRange
       && x <= range->xMax() - cursorRightMarginRatio() * xRange
       && (std::isnan(y)

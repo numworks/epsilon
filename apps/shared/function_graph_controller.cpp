@@ -101,19 +101,32 @@ void FunctionGraphController::reloadBannerView() {
 double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
-  float gridUnit = 2 * interactiveCurveViewRange()->xGridUnit();
+  float gridUnit = 2.0 * interactiveCurveViewRange()->xGridUnit();
+  float xMin = interactiveCurveViewRange()->xMin();
+  float xMax = interactiveCurveViewRange()->xMax();
 
-  float yMin = interactiveCurveViewRange()->yMin(), yMax = interactiveCurveViewRange()->yMax();
-  float middle = (interactiveCurveViewRange()->xMin()+interactiveCurveViewRange()->xMax())/2.0f;
-  float resLeft = gridUnit * std::floor(middle / gridUnit);
-  // Using first subCurve for default cursor.
-  float yLeft = function->evaluateXYAtParameter(resLeft, context, 0).x2();
-  float resRight = resLeft + gridUnit;
-  float yRight = function->evaluateXYAtParameter(resRight, context, 0).x2();
-  if ((yMin < yLeft && yLeft < yMax) || !(yMin < yRight && yRight < yMax)) {
-    return resLeft;
+  float middle = (interactiveCurveViewRange()->xMin() + interactiveCurveViewRange()->xMax()) / 2.0f;
+  middle = gridUnit * std::floor(middle / gridUnit);
+  float currentX, currentY;
+  int iterations = 0;
+  do {
+    /* Start from the middle and place the cursor on each grid unit until you
+     * find an x where the cursor is visible.
+     * currentX values will alternate over and under the middle value.
+     * Example: If the middle is 20 and grid unit is 5, cursorX values
+     * will be 20/15/25/10/30/05/35/00/40 etc. */
+    currentX = middle + (iterations % 2 == 0 ? 1 : -1) * ((iterations + 1)/ 2) * gridUnit;
+    // Using first subCurve for default cursor.
+    currentY = function->evaluateXYAtParameter(currentX, context, 0).x2();
+    iterations++;
+  } while (xMin < currentX && currentX < xMax &&
+           !isCursorVisible(Coordinate2D<double>(currentX, currentY)));
+
+  if (!isCursorVisible(Coordinate2D<double>(currentX, currentY))) {
+    // If no positions make the cursor visible, return the middle value
+    currentX = middle;
   }
-  return resRight;
+  return currentX;
 }
 
 FunctionStore * FunctionGraphController::functionStore() const {
@@ -136,7 +149,7 @@ void FunctionGraphController::initCursorParameters() {
 
   do {
     computeDefaultPositionForFunctionAtIndex(functionIndex, &t, &xy);
-  } while ((std::isnan(xy.x2()) || std::isinf(xy.x2())) && ++functionIndex < activeFunctionsCount);
+  } while ((std::isnan(xy.x2()) || std::isinf(xy.x2()) || !isCursorVisible(xy)) && ++functionIndex < activeFunctionsCount);
 
   if (functionIndex == activeFunctionsCount) {
     functionIndex = 0;

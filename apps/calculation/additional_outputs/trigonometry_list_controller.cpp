@@ -31,11 +31,21 @@ void TrigonometryListController::setExpression(Expression e) {
   // Compute angle modulus 2π
   Expression twoPi = Multiplication::Builder(Rational::Builder(2), Poincare::Constant::Builder("π"));
   // Use the reduction of frac part to compute mod 1 on rationals
-  e = Multiplication::Builder(FracPart::Builder(Division::Builder(e, twoPi.clone())), twoPi.clone());
-  Shared::PoincareHelpers::CloneAndReduce(&e, context, ExpressionNode::ReductionTarget::User);
+  Expression angleReduced = Multiplication::Builder(FracPart::Builder(Division::Builder(e, twoPi.clone())), twoPi.clone());
+  Shared::PoincareHelpers::CloneAndReduce(&angleReduced, context, ExpressionNode::ReductionTarget::User);
   // If frac part is still there, the exact angle is probably not interesting
-  if (e.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart; })) {
-    e = Shared::PoincareHelpers::Approximate<double>(e, context);
+  if (angleReduced.recursivelyMatches([] (const Expression e, Context * context) { return e.type() == ExpressionNode::Type::FracPart; })) {
+    /* Do not approximate the FracPart, which could lead to truncation error
+     * for large angles (e.g. frac(1e17/2pi) = 0). Instead find the angle with
+     * the same sine and cosine. */
+    Expression angleApproximate = ArcCosine::Builder(Cosine::Builder(e));
+    angleApproximate = Shared::PoincareHelpers::Approximate<double>(angleApproximate, context, &preferencesRadian);
+    /* acos has its values in [0,π[, use the sign of the sine to find the right
+     * semicircle. */
+    if (Shared::PoincareHelpers::ApproximateToScalar<double>(Sine::Builder(e), context, &preferencesRadian) < 0) {
+      angleApproximate = Shared::PoincareHelpers::Approximate<double>(Subtraction::Builder(twoPi.clone(), angleApproximate), context, &preferencesRadian);
+    }
+    e = angleApproximate;
     m_anglesAreEqual = false;
   } else {
     m_anglesAreEqual = true;

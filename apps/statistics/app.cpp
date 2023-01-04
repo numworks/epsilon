@@ -46,6 +46,10 @@ const App::Descriptor * App::Snapshot::descriptor() const {
   return &sDescriptor;
 }
 
+void App::Snapshot::tidy() {
+  app()->m_store.tidy();
+}
+
 bool App::storageCanChangeForRecordName(const Ion::Storage::Record::Name recordName) const {
   return !m_intrusiveStorageChangeFlag || strcmp(recordName.extension, Ion::Storage::lisExtension) != 0;
 }

@@ -39,6 +39,7 @@ void ConsoleEditCell::layoutSubviews(bool force) {
 
 void ConsoleEditCell::didBecomeFirstResponder() {
   Container::activeApp()->setFirstResponder(&m_textField);
+  m_textField.setEditing(true);
 }
 
 void ConsoleEditCell::setEditing(bool isEditing) {

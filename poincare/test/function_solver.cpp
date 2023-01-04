@@ -94,6 +94,8 @@ QUIZ_CASE(poincare_solver_roots) {
   assert_roots_are("(x+1)×ln(x)", 0., -10., {});
   assert_roots_are("x^(1/x)", -123., 123., {});
   assert_roots_are("x^x", -1e-2, 1e-2, {});
+  assert_roots_are("piecewise(-1,x<0,1)", -1, 1, {});
+  assert_roots_are("piecewise(1.23,x<=1,-3.45)", -10, 10, {});
 }
 
 QUIZ_CASE(poincare_solver_minima) {

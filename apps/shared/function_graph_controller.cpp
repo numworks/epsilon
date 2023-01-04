@@ -98,7 +98,7 @@ void FunctionGraphController::reloadBannerView() {
   reloadBannerViewForCursorOnFunction(m_cursor, record, functionStore(), AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
 
-double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {
+double FunctionGraphController::defaultCursorT(Ion::Storage::Record record, bool ignoreMargins) {
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
   float gridUnit = 2.0 * interactiveCurveViewRange()->xGridUnit();
@@ -120,9 +120,9 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record) {
     currentY = function->evaluateXYAtParameter(currentX, context, 0).x2();
     iterations++;
   } while (xMin < currentX && currentX < xMax &&
-           !isCursorVisible(Coordinate2D<double>(currentX, currentY)));
+           !isCursorVisibleAtPosition(Coordinate2D<float>(currentX, currentY), ignoreMargins));
 
-  if (!isCursorVisible(Coordinate2D<double>(currentX, currentY))) {
+  if (!isCursorVisibleAtPosition(Coordinate2D<float>(currentX, currentY), ignoreMargins)) {
     // If no positions make the cursor visible, return the middle value
     currentX = middle;
   }
@@ -133,14 +133,14 @@ FunctionStore * FunctionGraphController::functionStore() const {
   return FunctionApp::app()->functionStore();
 }
 
-void FunctionGraphController::computeDefaultPositionForFunctionAtIndex(int index, double * t, Coordinate2D<double> * xy) {
+void FunctionGraphController::computeDefaultPositionForFunctionAtIndex(int index, double * t, Coordinate2D<double> * xy, bool ignoreMargins) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(index);
   ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
-  *t = defaultCursorT(record);
+  *t = defaultCursorT(record, ignoreMargins);
   *xy = function->evaluateXYAtParameter(*t, textFieldDelegateApp()->localContext(), 0);
 }
 
-void FunctionGraphController::initCursorParameters() {
+void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
   const int activeFunctionsCount = numberOfCurves();
   assert(activeFunctionsCount > 0);
   int functionIndex = 0;
@@ -148,12 +148,12 @@ void FunctionGraphController::initCursorParameters() {
   double t;
 
   do {
-    computeDefaultPositionForFunctionAtIndex(functionIndex, &t, &xy);
-  } while ((std::isnan(xy.x2()) || std::isinf(xy.x2()) || !isCursorVisible(xy)) && ++functionIndex < activeFunctionsCount);
+    computeDefaultPositionForFunctionAtIndex(functionIndex, &t, &xy, ignoreMargins);
+  } while ((std::isnan(xy.x2()) || std::isinf(xy.x2()) || !isCursorVisibleAtPosition(xy, ignoreMargins)) && ++functionIndex < activeFunctionsCount);
 
   if (functionIndex == activeFunctionsCount) {
     functionIndex = 0;
-    computeDefaultPositionForFunctionAtIndex(functionIndex, &t, &xy);
+    computeDefaultPositionForFunctionAtIndex(functionIndex, &t, &xy, ignoreMargins);
   }
 
   m_cursor->moveTo(t, xy.x1(), xy.x2());

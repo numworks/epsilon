@@ -44,7 +44,7 @@ private:
   Shared::XYBannerView * bannerView() override { return &m_bannerView; }
   bool openMenuForCurveAtIndex(int index) override;
   bool moveCursorHorizontally(int direction, int scrollSpeed = 1) override;
-  double defaultCursorT(Ion::Storage::Record record) override;
+  double defaultCursorT(Ion::Storage::Record record, bool ignoreMargins) override;
   CurveViewRange * interactiveCurveViewRange() override { return m_graphRange; }
   Shared::SequenceStore * functionStore() const override { return static_cast<Shared::SequenceStore *>(Shared::FunctionGraphController::functionStore()); }
   GraphView * functionGraphView() override { return &m_view; }

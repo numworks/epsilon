@@ -224,7 +224,7 @@ bool GraphController::openMenuForCurveAtIndex(int index) {
 }
 
 // InteractiveCurveViewController
-void GraphController::initCursorParameters() {
+void GraphController::initCursorParameters(bool ignoreMargins) {
   double x, y;
   if (selectedSeriesIsScatterPlot()) {
     x = m_store->get(*m_selectedSeriesIndex, 0, 0);

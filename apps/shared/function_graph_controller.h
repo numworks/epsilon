@@ -43,7 +43,7 @@ protected:
   int indexFunctionSelectedByCursor() const { return *m_indexFunctionSelectedByCursor; }
   Escher::AbstractButtonCell * calculusButton() const override { return const_cast<Escher::AbstractButtonCell * >(&m_calculusButton); }
   void selectFunctionWithCursor(int functionIndex, bool willBeVisible);
-  virtual double defaultCursorT(Ion::Storage::Record record);
+  virtual double defaultCursorT(Ion::Storage::Record record, bool ignoreMargins);
   virtual FunctionStore * functionStore() const;
 
   // Closest vertical curve helper
@@ -54,7 +54,7 @@ protected:
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t, Poincare::Context * context, int subCurveIndex = 0) const override;
   int numberOfSubCurves(int curveIndex) const override;
   bool isAlongY(int curveIndex) const override;
-  void initCursorParameters() override;
+  void initCursorParameters(bool ignorMargins) override;
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
   AbstractPlotView * curveView() override;
@@ -71,7 +71,7 @@ private:
   virtual Escher::ViewController * curveParameterController() = 0;
   virtual WithRecord * curveParameterControllerWithRecord() = 0;
 
-  void computeDefaultPositionForFunctionAtIndex(int index, double * t, Poincare::Coordinate2D<double> * xy);
+  void computeDefaultPositionForFunctionAtIndex(int index, double * t, Poincare::Coordinate2D<double> * xy, bool ignoreMargins);
 
   Escher::AbstractButtonCell m_calculusButton;
   int * m_indexFunctionSelectedByCursor;

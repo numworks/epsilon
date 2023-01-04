@@ -66,7 +66,9 @@ template<class T> void CalculationParameterController::push(T * controller, bool
   if (pop) {
     stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
   }
-  stack->push(controller);
+  if (!pop || App::app()->functionStore()->modelForRecord(m_record)->isActive()) {
+    stack->push(controller);
+  }
 }
 
 bool CalculationParameterController::handleEvent(Ion::Events::Event event) {

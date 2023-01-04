@@ -182,6 +182,8 @@ template<typename T>
 Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision) {
   if (interest == Interest::Root) {
     Coordinate2D<T> solution = SolverAlgorithms::BrentRoot(f, aux, xMin, xMax, interest, precision);
+    /* Filter out roots that do not evaluate to zero. This can happen with
+     * functions such as y=floor(x)-0.5. */
     return std::fabs(solution.x2()) > NullTolerance(solution.x1()) ? Coordinate2D<T>() : solution;
   }
   Coordinate2D<T> res;

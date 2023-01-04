@@ -21,8 +21,8 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView * plotView, KDContext * ctx,
   // Draw the main box
   double firstQuart = m_store->firstQuartile(m_series);
   double thirdQuart = m_store->thirdQuartile(m_series);
-  KDCoordinate firstQuartilePixels = std::round(plotView->floatToPixel(Axis::Horizontal, firstQuart));
-  KDCoordinate thirdQuartilePixels = std::round(plotView->floatToPixel(Axis::Horizontal, thirdQuart));
+  KDCoordinate firstQuartilePixels = plotView->floatToPixelIndex(Axis::Horizontal, firstQuart);
+  KDCoordinate thirdQuartilePixels = plotView->floatToPixelIndex(Axis::Horizontal, thirdQuart);
   ctx->fillRect(KDRect(firstQuartilePixels, k_verticalSideSize, thirdQuartilePixels - firstQuartilePixels, BoxHeight(numberOfSeries)), color);
 
   // Draw the horizontal lines linking the box to the whiskers
@@ -76,7 +76,7 @@ void BoxPlotPolicy::drawBar(const AbstractPlotView * plotView, KDContext * ctx, 
 void BoxPlotPolicy::drawOutlier(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float calculation, float segmentOrd, KDColor color, bool isSelected) const {
   plotView->drawDot(ctx, rect, k_outlierDotSize, Coordinate2D<float>(calculation, segmentOrd), color);
   if (isSelected) {
-    KDCoordinate segmentOrdPixel = plotView->floatToPixel(Axis::Vertical, segmentOrd);
+    KDCoordinate segmentOrdPixel = plotView->floatToPixelIndex(Axis::Vertical, segmentOrd);
     float lowBound = plotView->pixelToFloat(Axis::Vertical, segmentOrdPixel + (k_outlierSize + 1)/2 + k_chevronMargin - 1);
     float upBound = plotView->pixelToFloat(Axis::Vertical, segmentOrdPixel - k_outlierSize/2 - k_chevronMargin);
     drawChevronSelection(plotView, ctx, rect, calculation, lowBound, upBound);
@@ -90,8 +90,8 @@ void BoxPlotPolicy::drawChevronSelection(const AbstractPlotView * plotView, KDCo
 
 void BoxPlotPolicy::drawChevron(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, float x, float y, KDColor color, bool up) const {
   // Place the chevron so that it points two pixels, the left one being (x, y).
-  KDCoordinate px = std::round(plotView->floatToPixel(Axis::Horizontal, x));
-  KDCoordinate py = std::round(plotView->floatToPixel(Axis::Vertical, y));
+  KDCoordinate px = plotView->floatToPixelIndex(Axis::Horizontal, x);
+  KDCoordinate py = plotView->floatToPixelIndex(Axis::Vertical, y);
   px += 1 - Chevrons::k_chevronWidth/2;
   py += (up ? 1 : -Chevrons::k_chevronHeight);
   KDRect dotRect(px, py, Chevrons::k_chevronWidth, Chevrons::k_chevronHeight);
@@ -122,7 +122,7 @@ void BoxView::reload(bool resetInterruption, bool force) {
 
 KDRect BoxView::selectedCalculationRect() const {
   float calculation = m_store->boxPlotCalculationAtIndex(m_series, *m_selectedBoxCalculation);
-  KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, calculation)) - k_leftSideSize;
+  KDCoordinate minX = floatToPixelIndex(Axis::Horizontal, calculation) - k_leftSideSize;
   KDCoordinate width = k_leftSideSize + k_rightSideSize;
   // Transpose the rect into parent's view coordinates
   return KDRect(minX, 0, width, BoxFrameHeight(m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultValidSeries))).translatedBy(m_frame.origin());
@@ -144,8 +144,8 @@ KDRect BoxView::rectToReload() {
 }
 
 KDRect BoxView::boxRect() const {
-  KDCoordinate minX = std::round(floatToPixel(Axis::Horizontal, m_store->minValue(m_series))) - k_leftSideSize;
-  KDCoordinate maxX = std::round(floatToPixel(Axis::Horizontal, m_store->maxValue(m_series))) + k_rightSideSize;
+  KDCoordinate minX = floatToPixelIndex(Axis::Horizontal, m_store->minValue(m_series)) - k_leftSideSize;
+  KDCoordinate maxX = floatToPixelIndex(Axis::Horizontal, m_store->maxValue(m_series)) + k_rightSideSize;
   return KDRect(minX, 0, maxX - minX, BoxFrameHeight(m_store->numberOfValidSeries(Shared::DoublePairStore::DefaultValidSeries)));
 }
 

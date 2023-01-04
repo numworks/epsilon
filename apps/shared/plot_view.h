@@ -58,6 +58,7 @@ public:
   float pixelHeight() const { return (m_range->yMax() - m_range->yMin()) / graphHeight(); }
   float pixelLength(Axis axis) const { return axis == Axis::Horizontal ? pixelWidth() : pixelHeight(); }
   float floatToPixel(Axis axis, float f) const;
+  KDCoordinate floatToPixelIndex(Axis axis, float f) const;
   float pixelToFloat(Axis axis, KDCoordinate c) const;
   Poincare::Coordinate2D<float> floatToPixel2D(Poincare::Coordinate2D<float> p) const { return Poincare::Coordinate2D<float>(floatToPixel(Axis::Horizontal, p.x1()), floatToPixel(Axis::Vertical, p.x2())); }
   double angleFromPoint(KDPoint point) const;

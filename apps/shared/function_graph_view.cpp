@@ -143,8 +143,8 @@ void FunctionGraphView::reloadBetweenBounds(float start, float end) {
   if (start == end) {
     return;
   }
-  float pixelLowerBound = floatToPixel(Axis::Horizontal, start) - 2.0f;
-  float pixelUpperBound = floatToPixel(Axis::Horizontal, end) + 4.0f;
+  KDCoordinate pixelLowerBound = floatToPixelIndex(Axis::Horizontal, start) - 2.0f;
+  KDCoordinate pixelUpperBound = floatToPixelIndex(Axis::Horizontal, end) + 4.0f;
   /* We exclude the banner frame from the dirty zone to avoid unnecessary
    * redrawing */
   KDRect dirtyZone(KDRect(pixelLowerBound, 0, pixelUpperBound - pixelLowerBound, bounds().height() - m_banner->bounds().height()));

@@ -128,8 +128,8 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   return true;
 }
 
-double GraphController::defaultCursorT(Ion::Storage::Record record) {
-  return std::fmax(0.0, std::round(Shared::FunctionGraphController::defaultCursorT(record)));
+double GraphController::defaultCursorT(Ion::Storage::Record record, bool ignoreMargins) {
+  return std::fmax(0.0, std::round(Shared::FunctionGraphController::defaultCursorT(record, ignoreMargins)));
 }
 
 }

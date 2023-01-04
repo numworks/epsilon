@@ -63,7 +63,7 @@ private:
   Shared::AbstractPlotView * curveView() override;
 
   // InteractiveCurveViewController
-  void initCursorParameters() override;
+  void initCursorParameters(bool ignoreMargins = false) override;
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
   int selectedCurveIndex(bool relativeIndex = true) const override;

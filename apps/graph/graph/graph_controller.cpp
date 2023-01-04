@@ -285,10 +285,10 @@ int GraphController::nextCurveIndexVertically(bool goingUp, int currentSelectedC
   return nextActiveFunctionIndex;
 }
 
-double GraphController::defaultCursorT(Ion::Storage::Record record) {
+double GraphController::defaultCursorT(Ion::Storage::Record record, bool ignoreMargins) {
   ExpiringPointer<ContinuousFunction> function = functionStore()->modelForRecord(record);
   if (function->properties().isCartesian()) {
-    return FunctionGraphController::defaultCursorT(record);
+    return FunctionGraphController::defaultCursorT(record, ignoreMargins);
   }
 
   assert(function->properties().isParametric() || function->properties().isPolar());
@@ -309,12 +309,13 @@ double GraphController::defaultCursorT(Ion::Storage::Record record) {
     // Using first subCurve for default cursor.
     currentXY = function->evaluateXYAtParameter(currentT, context, 0);
   } while (++currentIteration < numberOfIterations &&
-            !isCursorVisible(Coordinate2D<double>(currentXY)));
+            !isCursorVisibleAtPosition(currentXY, ignoreMargins));
 
-  if (!isCursorVisible(Coordinate2D<double>(currentXY))) {
+  if (!isCursorVisibleAtPosition(currentXY, ignoreMargins)) {
     // If no positions make the cursor visible, return the middle value
     currentT = tMin;
   }
+
   return currentT;
 }
 

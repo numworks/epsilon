@@ -50,9 +50,14 @@ protected:
 
   Escher::TabViewController * tabController() const;
   virtual Escher::StackViewController * stackController() const;
-  virtual void initCursorParameters() = 0;
+
+  virtual void initCursorParameters(bool ignoreMargins) = 0;
   virtual bool moveCursorVertically(int direction) = 0;
-  bool isCursorVisible(Poincare::Coordinate2D<double> position);
+  bool isCursorVisibleAtPosition(Poincare::Coordinate2D<float> position, bool ignoreMargins = false);
+  bool isCursorCurrentlyVisible(bool ignoreMargins = false) {
+    return isCursorVisibleAtPosition(Poincare::Coordinate2D<float>(m_cursor->x(), m_cursor->y()), ignoreMargins);
+  }
+
   virtual bool selectedModelIsValid() const = 0;
   virtual Poincare::Coordinate2D<double> selectedModelXyValues(double t) const = 0;
   bool openMenu() { return openMenuForCurveAtIndex(selectedCurveIndex()); };
@@ -77,12 +82,12 @@ protected:
   int m_selectedSubCurveIndex;
 private:
   constexpr static float k_viewHeight = Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::TabHeight - Escher::Metric::ButtonRowPlainStyleHeight - 1;
-  void refreshCursor();
+  void refreshCursor(bool ignoreMargins = false);
 
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isVertical, bool isMin) const override;
   void updateZoomButtons() override;
-  void updateBottomMargin() override { refreshCursor(); }
+  void marginsWillBeComputed() override { refreshCursor(true); }
 
   void setCurveViewAsMainView(bool resetInterrupted, bool forceReload);
 

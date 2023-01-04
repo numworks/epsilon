@@ -20,7 +20,7 @@ public:
   virtual Poincare::Range2D optimalRange(bool computeX, bool computeY, Poincare::Range2D originalRange) const = 0;
   virtual float addMargin(float x, float range, bool isVertical, bool isMin) const = 0;
   Poincare::Range2D addMargins(Poincare::Range2D range) const;
-  virtual void updateBottomMargin() = 0;
+  virtual void marginsWillBeComputed() = 0;
   virtual void updateZoomButtons() = 0;
   virtual void tidyModels() = 0;
 };

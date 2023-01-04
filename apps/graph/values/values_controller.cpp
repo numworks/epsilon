@@ -325,25 +325,23 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   bool isDerivative = false;
   Shared::ExpiringPointer<ContinuousFunction> function = functionAtIndex(column, row, &abscissa, &isDerivative);
   Poincare::Context * context = textFieldDelegateApp()->localContext();
-  // Compute exact result
-  Expression exactResult = function->expressionReduced(context);
-  Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
-  Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
-  abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
-  PoincareHelpers::CloneAndSimplify(&exactResult, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
-  if (m_exactValuesAreActivated && !isDerivative && !ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(function->originalEquation(), exactResult, context)) {
-    // Do not show exact expressions in certain cases
-    *memoizedLayoutAtIndex(index) = exactResult.createLayout(Poincare::Preferences::PrintFloatMode::Decimal, Poincare::Preferences::VeryLargeNumberOfSignificantDigits, context);
-    return;
-  }
-  // Compute approximate result
-  Expression approximation;
+  Expression result;
   if (isDerivative) {
-    approximation = Float<double>::Builder(function->approximateDerivative(abscissa, context, 0, false));
+    // Compute derivative approximate result
+    result = Float<double>::Builder(function->approximateDerivative(abscissa, context, 0, false));
   } else {
-    approximation = PoincareHelpers::Approximate<double>(exactResult, context);
+    // Compute exact result
+    result = function->expressionReduced(context);
+    Poincare::VariableContext abscissaContext = Poincare::VariableContext(Shared::Function::k_unknownName, context);
+    Poincare::Expression abscissaExpression = Poincare::Decimal::Builder<double>(abscissa);
+    abscissaContext.setExpressionForSymbolAbstract(abscissaExpression, Symbol::Builder(Shared::Function::k_unknownName, strlen(Shared::Function::k_unknownName)));
+    PoincareHelpers::CloneAndSimplify(&result, &abscissaContext, Poincare::ExpressionNode::ReductionTarget::User);
+    if (!m_exactValuesAreActivated || ExpressionDisplayPermissions::ShouldOnlyDisplayApproximation(function->originalEquation(), result, context)) {
+      // Do not show exact expressions in certain cases, use approximate result
+      result = PoincareHelpers::Approximate<double>(result, context);
+    }
   }
-  *memoizedLayoutAtIndex(index) = approximation.createLayout(Preferences::PrintFloatMode::Decimal, Preferences::VeryLargeNumberOfSignificantDigits, context);
+  *memoizedLayoutAtIndex(index) = result.createLayout(Preferences::PrintFloatMode::Decimal, Preferences::VeryLargeNumberOfSignificantDigits, context);
 }
 
 int ValuesController::numberOfColumnsForAbscissaColumn(int column) {

@@ -98,6 +98,18 @@ void Zoom::fitFullFunction(Function2DWithContext<float> f, const void * model) {
   }
 }
 
+static Solver<float>::Interest pointIsInterestingHelper(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c, const void * aux) {
+  Solver<float>::BracketTest tests[] = { Solver<float>::OddRootInBracket, Solver<float>::MinimumInBracket, Solver<float>::MaximumInBracket, Solver<float>::DiscontinuityInBracket };
+  Solver<float>::Interest interest = Solver<float>::Interest::None;
+  for (Solver<float>::BracketTest & test : tests) {
+    interest = test(a, b, c, aux);
+    if (interest != Solver<float>::Interest::None) {
+      break;
+    }
+  }
+  return interest;
+}
+
 void Zoom::fitPointsOfInterest(Function2DWithContext<float> f, const void * model, bool vertical, Function2DWithContext<double> fDouble) {
   HorizontalAsymptoteHelper asymptotes(m_bounds.center());
   float (Coordinate2D<float>::*ordinate)() const = vertical ? &Coordinate2D<float>::x1 : &Coordinate2D<float>::x2;
@@ -112,7 +124,7 @@ void Zoom::fitPointsOfInterest(Function2DWithContext<float> f, const void * mode
     return (p->fDouble(t, p->model, p->context).*p->ordinateDouble)();
   };
   bool leftInterrupted, rightInterrupted;
-  fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator, &params, PointIsInteresting, HonePoint, vertical, evaluatorDouble);
+  fitWithSolver(&leftInterrupted, &rightInterrupted, evaluator, &params, PointIsInteresting, HonePoint, vertical, evaluatorDouble, pointIsInterestingHelper);
   /* If the search has been interrupted, the curve is supposed to have an
    * infinite number of points in this direction. An horizontal asymptote
    * would be the result of a sampling artifact and can be discarded. */
@@ -220,18 +232,6 @@ void Zoom::fitBounds(Function2DWithContext<float> f, const void * model, bool ve
 }
 
 // Zoom - Private
-
-static Solver<float>::Interest pointIsInterestingHelper(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c, const void * aux) {
-  Solver<float>::BracketTest tests[] = { Solver<float>::OddRootInBracket, Solver<float>::MinimumInBracket, Solver<float>::MaximumInBracket, Solver<float>::DiscontinuityInBracket };
-  Solver<float>::Interest interest = Solver<float>::Interest::None;
-  for (Solver<float>::BracketTest & test : tests) {
-    interest = test(a, b, c, aux);
-    if (interest != Solver<float>::Interest::None) {
-      break;
-    }
-  }
-  return interest;
-}
 
 Solver<float>::Interest Zoom::PointIsInteresting(Coordinate2D<float> a, Coordinate2D<float> b, Coordinate2D<float> c, const void * aux) {
   const InterestParameters * params = static_cast<const InterestParameters *>(aux);
@@ -406,7 +406,7 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
   return saneRange;
 }
 
-void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical, Solver<double>::FunctionEvaluation fDouble) {
+void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver<float>::FunctionEvaluation evaluator, const void * aux, Solver<float>::BracketTest test, Solver<float>::HoneResult hone, bool vertical, Solver<double>::FunctionEvaluation fDouble, Solver<float>::BracketTest testForCenterOfInterval) {
   assert(leftInterrupted && rightInterrupted);
 
   /* Pick margin large enough to detect an extremum around zero, for some
@@ -421,7 +421,8 @@ void Zoom::fitWithSolver(bool * leftInterrupted, bool * rightInterrupted, Solver
   Coordinate2D<float> p1(c - d, evaluator(c - d, aux));
   Coordinate2D<float> p2(c, evaluator(c, aux));
   Coordinate2D<float> p3(c + d, evaluator(c + d, aux));
-  if (pointIsInterestingHelper(p1, p2, p3, aux) != Solver<float>::Interest::None) {
+  Solver<float>::Interest centerInterest = testForCenterOfInterval != nullptr ? testForCenterOfInterval(p1, p2, p3, aux) : test(p1, p2, p3, aux);
+  if (centerInterest != Solver<float>::Interest::None) {
     privateFitPoint(p2, vertical);
   }
 }

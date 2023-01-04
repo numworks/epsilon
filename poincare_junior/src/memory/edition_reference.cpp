@@ -106,21 +106,21 @@ void EditionReference::detach(bool isTree) {
 
 }
 
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Addition, int>(int);
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Multiplication, int>(int);
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Constant, char16_t>(char16_t);
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Power>();
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Subtraction>();
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Division>();
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerShort>(int8_t);
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerPosBig>(uint64_t);
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerNegBig>(uint64_t);
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Float, float>(float);
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::MinusOne>();
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Set>(int);
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Half>();
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Zero>();
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::One>();
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Two>();
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::RationalShort>(int8_t, uint8_t);
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Polynomial, int, int>(int, int);
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Addition, int>(int);
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Multiplication, int>(int);
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Constant, char16_t>(char16_t);
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Power>();
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Subtraction>();
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Division>();
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::IntegerShort>(int8_t);
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::IntegerPosBig>(uint64_t);
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::IntegerNegBig>(uint64_t);
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Float, float>(float);
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::MinusOne>();
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Set>(int);
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Half>();
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Zero>();
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::One>();
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Two>();
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::RationalShort>(int8_t, uint8_t);
+template PoincareJ::EditionReference PoincareJ::EditionReference::Push<PoincareJ::BlockType::Polynomial, int, int>(int, int);

@@ -5,7 +5,7 @@
 #include "rational.h"
 #include "simplification.h"
 
-namespace Poincare {
+namespace PoincareJ {
 
 //TODO: tests
 

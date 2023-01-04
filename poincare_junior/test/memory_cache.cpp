@@ -12,11 +12,11 @@ static size_t treeSize = static_cast<Node>(tree).treeSize();
 static constexpr Tree smallTree = "4"_n;
 
 void execute_push_tree_and_modify() {
-  Poincare::CacheReference::InitializerFromTree treeModifier = [](Node tree) { EditionReference(tree).replaceNodeByNode(EditionReference::Push<BlockType::Multiplication>(2)); };
+  PoincareJ::CacheReference::InitializerFromTree treeModifier = [](Node tree) { EditionReference(tree).replaceNodeByNode(EditionReference::Push<BlockType::Multiplication>(2)); };
   cachePool->execute(
       [](void * subAction, const void * data) {
         Node editedTree = EditionPool::sharedEditionPool()->initFromAddress(data);
-        return (reinterpret_cast<Poincare::CacheReference::InitializerFromTree>(subAction))(editedTree);
+        return (reinterpret_cast<PoincareJ::CacheReference::InitializerFromTree>(subAction))(editedTree);
       },
       reinterpret_cast<void *>(treeModifier),
       &tree

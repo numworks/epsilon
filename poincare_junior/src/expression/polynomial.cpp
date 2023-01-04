@@ -6,7 +6,7 @@
 #include <poincare_junior/src/memory/tree_constructor.h>
 #include <poincare_junior/src/n_ary.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 /* Polynomial */
 

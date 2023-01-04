@@ -3,7 +3,7 @@
 
 #include <poincare_junior/src/memory/node.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 class Symbol final {
 public:

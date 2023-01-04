@@ -3,7 +3,7 @@
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/memory/node_iterator.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 bool Set::Includes(const Node set, const Node expression) {
   for (auto [setChild, index] : NodeIterator::Children<Forward, NoEditable>(set)) {

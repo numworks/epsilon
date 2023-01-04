@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <string.h>
 
-namespace Poincare {
+namespace PoincareJ {
 
 void Symbol::GetName(const Node node, char * buffer, size_t bufferSize) {
   strlcpy(buffer, NonNullTerminatedName(node), std::min(bufferSize, static_cast<size_t>(Length(node)) + 1));

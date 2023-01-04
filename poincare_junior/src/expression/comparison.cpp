@@ -5,7 +5,7 @@
 #include "polynomial.h"
 #include "symbol.h"
 
-namespace Poincare {
+namespace PoincareJ {
 
 int Comparison::Compare(const Node node0, const Node node1) {
   BlockType type0 = node0.type();

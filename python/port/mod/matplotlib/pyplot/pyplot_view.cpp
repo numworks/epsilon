@@ -58,10 +58,10 @@ void PyplotPolicy::traceSegment(const AbstractPlotView * plotView, KDContext * c
 }
 
 void PyplotPolicy::traceRect(const AbstractPlotView * plotView, KDContext * ctx, KDRect r, PlotStore::Rect rect) const {
-  KDCoordinate left =   std::round(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, rect.left()));
-  KDCoordinate right =  std::round(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, rect.right()));
-  KDCoordinate top =    std::round(plotView->floatToPixel(AbstractPlotView::Axis::Vertical, rect.top()));
-  KDCoordinate bottom = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Vertical, rect.bottom()));
+  KDCoordinate left = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, rect.left());
+  KDCoordinate right = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, rect.right());
+  KDCoordinate top = plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, rect.top());
+  KDCoordinate bottom = plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, rect.bottom());
   KDRect pixelRect(
     left,
     top,

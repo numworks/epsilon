@@ -27,7 +27,7 @@ WithCurves::Pattern::Pattern(int s, KDColor color, KDColor backgroundColor) :
 
 void WithCurves::Pattern::drawInLine(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis parallel, float position, float min, float max) const {
   AbstractPlotView::Axis perpendicular = AbstractPlotView::OtherAxis(parallel);
-  KDCoordinate posC = std::round(plotView->floatToPixel(perpendicular, position));
+  KDCoordinate posC = plotView->floatToPixelIndex(perpendicular, position);
 
   KDColor firstColor, secondColor;
   if (posC % (k_size / 2) == 0) {
@@ -49,8 +49,8 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView * plotView, KDContex
   if (max < min) {
     std::swap(max, min);
   }
-  KDCoordinate minC = std::round(plotView->floatToPixel(parallel, min));
-  KDCoordinate maxC = std::round(plotView->floatToPixel(parallel, max));
+  KDCoordinate minC = plotView->floatToPixelIndex(parallel, min);
+  KDCoordinate maxC = plotView->floatToPixelIndex(parallel, max);
   if (parallel == AbstractPlotView::Axis::Horizontal) {
     minC = std::max(minC, rect.left());
     maxC = std::min(maxC, static_cast<KDCoordinate>(rect.right() + 1));
@@ -330,7 +330,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
   float rectMaxBinNumber = std::floor((rectMax - m_start) / m_width);
   float rectMaxUpperBound = m_start + (rectMaxBinNumber + 1) * m_width;
   float step = std::max(plotView->pixelWidth(), m_width);
-  KDCoordinate axisPixel = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Vertical, 0.f));
+  KDCoordinate axisPixel = plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, 0.f);
 
   float xPrevious = NAN;
   for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += step) {
@@ -349,7 +349,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
 
     Coordinate2D<float> pxy = plotView->floatToPixel2D(Coordinate2D<float>(x, y));
     KDCoordinate pxLeft = std::round(pxy.x1());
-    KDCoordinate pxRight = std::round(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, x + m_width));
+    KDCoordinate pxRight = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x + m_width);
     if (pxRight + m_borderWidth < rect.left()) {
       continue;
     }

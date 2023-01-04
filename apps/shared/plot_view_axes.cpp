@@ -81,8 +81,8 @@ void WithPolarGrid::drawGrid(const AbstractPlotView * plotView, KDContext * ctx,
     float cos = std::cos(angleRadian);
     float sin = std::sin(angleRadian);
     bool shouldHaveGraduation = angle % (2 * k_angleStepInDegree) == 0;
-    KDPoint from = KDPoint(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, 0.f), plotView->floatToPixel(AbstractPlotView::Axis::Vertical, 0.f));
-    KDPoint to = KDPoint(plotView->floatToPixel(AbstractPlotView::Axis::Horizontal, length * cos), plotView->floatToPixel(AbstractPlotView::Axis::Vertical, length * sin));
+    KDPoint from = KDPoint(plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, 0.f), plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, 0.f));
+    KDPoint to = KDPoint(plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, length * cos), plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, length * sin));
     // Don't draw under the axes.
     if (angle % 90) {
       // TODO: this call is the only slow part when we are far from the origin

@@ -1,5 +1,6 @@
 #include "go_to_parameter_controller.h"
 #include "graph_controller.h"
+#include "../app.h"
 #include <apps/apps_container_helper.h>
 #include <assert.h>
 #include <float.h>
@@ -11,8 +12,8 @@ using namespace Escher;
 
 namespace Regression {
 
-GoToParameterController::GoToParameterController(Responder * parentResponder, InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
-  Shared::GoToParameterController(parentResponder, inputEventHandlerDelegate, store, cursor),
+GoToParameterController::GoToParameterController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * range, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
+  Shared::GoToParameterController(parentResponder, inputEventHandlerDelegate, range, cursor),
   m_store(store),
   m_xPrediction(true),
   m_graphController(graphController)

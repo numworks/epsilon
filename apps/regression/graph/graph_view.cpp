@@ -38,7 +38,7 @@ void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, K
     KDColor color = Palette::DataColor[series];
     // - Draw regression curve
     Model * seriesModel = m_store->modelForSeries(series);
-    CurveDrawing plot(Curve2D(evaluateRegression, seriesModel), m_store->coefficientsForSeries(series, globalContext), m_store->xMin(), m_store->xMax(), plotView->pixelWidth(), color);
+    CurveDrawing plot(Curve2D(evaluateRegression, seriesModel), m_store->coefficientsForSeries(series, globalContext), plotView->range()->xMin(), plotView->range()->xMax(), plotView->pixelWidth(), color);
     plot.draw(plotView, ctx, rect);
     // - Draw data points
     int numberOfPairs = m_store->numberOfPairsOfSeries(series);
@@ -56,8 +56,8 @@ void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, K
 
 // GraphView
 
-GraphView::GraphView(Store * store, CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView) :
-  PlotView(store)
+GraphView::GraphView(InteractiveCurveViewRange * range, Store * store, CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView) :
+  PlotView(range)
 {
   // RegressionPlotPolicy
   m_store = store;

@@ -116,9 +116,7 @@ protected:
 
   class HistogramDrawing {
   public:
-    HistogramDrawing(Curve1D curve, void * model, void * context, float start, float barsWidth, bool fillBars, KDColor color);
-    void setBorderOptions(bool displayBorder, KDColor color);
-    void setHighlightOptions(HighlightTest highlighted, KDColor color);
+    HistogramDrawing(Curve1D curve, void * model, void * context, HighlightTest highlightTest, float start, float barsWidth, bool displayBorder, bool fillBars, KDColor color, KDColor highlightColor, KDColor borderColor = KDColorWhite);
     void draw(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
 
   private:

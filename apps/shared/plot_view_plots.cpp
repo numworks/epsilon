@@ -333,23 +333,21 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
     }
     xPrevious = x;
 
+    // Step 1: Compute values
     float xCenter = m_fillBars ? x + 0.5f * m_width : x;
     float y = m_curve(xCenter, m_model, m_context);
     if (std::isnan(y) || y == 0.f) {
       continue;
     }
-    /* TODO This method is not ready to display histogram with negative values. */
-    assert(y > 0.f);
+    assert(y > 0.f); /* TODO This method is not ready to display histogram with negative values. */
 
-    Coordinate2D<float> pxy = plotView->floatToPixel2D(Coordinate2D<float>(x, y));
-    KDCoordinate pxLeft = std::round(pxy.x1());
+    // Step 2: Compute pixels
+    // Step 2.1: Bar width
+    KDCoordinate pxLeft = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x);
     KDCoordinate pxRight = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x + m_width);
     if (pxRight + m_borderWidth < rect.left()) {
       continue;
     }
-    KDCoordinate py = std::round(pxy.x2());
-    KDCoordinate barHeight = plotViewHeight - py;
-    assert(barHeight >= 0);
     KDCoordinate barWidth;
     /* If m_fillBar is true, we fill the space between one bar and the next
      * (e.g. histograms in the Statistics app). Otherwise, we only draw a thin
@@ -360,11 +358,17 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
       assert(m_borderWidth == 0);
       barWidth = k_hollowBarWidth;
     }
-    KDRect barRect(pxLeft + m_borderWidth, py, barWidth, barHeight);
-    KDColor color = m_highlighted && m_highlighted(xCenter, m_model, m_context) ? m_highlightColor : m_color;
-    // - Fill the body of the bar
-    ctx->fillRect(barRect, color);
 
+    // Step 2.2: Bar height
+    KDCoordinate py = plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, y);
+    KDCoordinate barHeight = plotViewHeight - py;
+    assert(barHeight >= 0);
+
+    // Step 3: Draw
+    KDColor color = m_highlighted && m_highlighted(xCenter, m_model, m_context) ? m_highlightColor : m_color;
+    // Body of the bar
+    KDRect barRect(pxLeft + m_borderWidth, py, barWidth, barHeight);
+    ctx->fillRect(barRect, color);
     if (m_borderWidth > 0 && barRect.width() > 0 && barRect.height() > 0) {
       // Left border
       ctx->fillRect(KDRect(pxLeft, py, m_borderWidth, barHeight), m_borderColor);

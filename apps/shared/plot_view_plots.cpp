@@ -336,9 +336,9 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
 
     // Step 2: Compute pixels
     // Step 2.1: Bar width
-    KDCoordinate pxLeft = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x);
-    KDCoordinate pxRight = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x + m_barsWidth);
-    if (pxRight <= rect.left()) {
+    KDCoordinate left = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x);
+    KDCoordinate right = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x + m_barsWidth);
+    if (right <= rect.left()) {
       continue;
     }
     KDCoordinate barWidth;
@@ -346,29 +346,29 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
      * (e.g. histograms in the Statistics app). Otherwise, we only draw a thin
      * bar on lefmost pixels (e.g. histograms for discrete distributions). */
     if (m_fillBars) {
-      barWidth = pxRight - pxLeft;
+      barWidth = right - left;
     } else {
       assert(borderWidth == 0);
       barWidth = k_hollowBarWidth;
     }
 
     // Step 2.2: Bar height
-    KDCoordinate py = plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, y);
-    KDCoordinate barHeight = plotViewHeight - py;
+    KDCoordinate top = plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, y);
+    KDCoordinate barHeight = plotViewHeight - top;
     assert(barHeight >= 0);
 
     // Step 3: Draw
     KDColor color = m_highlightTest && m_highlightTest(xCenter, m_model, m_context) ? m_highlightColor : m_color;
     // Body of the bar
-    KDRect barRect(pxLeft + borderWidth, py, barWidth, barHeight);
+    KDRect barRect(left + borderWidth, top, barWidth, barHeight);
     ctx->fillRect(barRect, color);
     if (borderWidth > 0 && barRect.width() > 0 && barRect.height() > 0) {
       // Left border
-      ctx->fillRect(KDRect(pxLeft, py, borderWidth, barHeight), m_borderColor);
+      ctx->fillRect(KDRect(left, top, borderWidth, barHeight), m_borderColor);
       // Top border
-      ctx->fillRect(KDRect(pxLeft, py - borderWidth, barWidth + borderWidth, borderWidth), m_borderColor);
+      ctx->fillRect(KDRect(left, top - borderWidth, barWidth + borderWidth, borderWidth), m_borderColor);
       // Right border
-      ctx->fillRect(KDRect(pxRight, py, borderWidth, barHeight), m_borderColor);
+      ctx->fillRect(KDRect(right, top, borderWidth, barHeight), m_borderColor);
     }
   }
 }

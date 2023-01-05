@@ -114,8 +114,8 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record, bool
      * find an x where the cursor is visible.
      * currentX values will alternate over and under the middle value.
      * Example: If the middle is 20 and grid unit is 5, cursorX values
-     * will be 20/15/25/10/30/05/35/00/40 etc. */
-    currentX = middle + (iterations % 2 == 0 ? 1 : -1) * ((iterations + 1)/ 2) * gridUnit;
+     * will be 20/25/15/30/10/35/05/40/00 etc. */
+    currentX = middle + (iterations % 2 == 0 ? -1 : 1) * ((iterations + 1)/ 2) * gridUnit;
     // Using first subCurve for default cursor.
     currentY = function->evaluateXYAtParameter(currentX, context, 0).x2();
     iterations++;
@@ -149,7 +149,7 @@ void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
 
   do {
     computeDefaultPositionForFunctionAtIndex(functionIndex, &t, &xy, ignoreMargins);
-  } while ((std::isnan(xy.x2()) || std::isinf(xy.x2()) || !isCursorVisibleAtPosition(xy, ignoreMargins)) && ++functionIndex < activeFunctionsCount);
+  } while (!isCursorVisibleAtPosition(xy, ignoreMargins) && ++functionIndex < activeFunctionsCount);
 
   if (functionIndex == activeFunctionsCount) {
     functionIndex = 0;

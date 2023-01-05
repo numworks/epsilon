@@ -53,9 +53,9 @@ protected:
 
   virtual void initCursorParameters(bool ignoreMargins) = 0;
   virtual bool moveCursorVertically(int direction) = 0;
-  bool isCursorVisibleAtPosition(Poincare::Coordinate2D<float> position, bool ignoreMargins = false);
-  bool isCursorCurrentlyVisible(bool ignoreMargins = false) {
-    return isCursorVisibleAtPosition(Poincare::Coordinate2D<float>(m_cursor->x(), m_cursor->y()), ignoreMargins);
+  bool isCursorVisibleAtPosition(Poincare::Coordinate2D<float> position, bool ignoreMargins = false, bool acceptNanOrInfiniteY = false);
+  bool isCursorCurrentlyVisible(bool ignoreMargins = false, bool acceptNanOrInfiniteY = false) {
+    return isCursorVisibleAtPosition(Poincare::Coordinate2D<float>(m_cursor->x(), m_cursor->y()), ignoreMargins, acceptNanOrInfiniteY);
   }
 
   virtual bool selectedModelIsValid() const = 0;
@@ -82,12 +82,12 @@ protected:
   int m_selectedSubCurveIndex;
 private:
   constexpr static float k_viewHeight = Escher::Metric::DisplayHeightWithoutTitleBar - Escher::Metric::TabHeight - Escher::Metric::ButtonRowPlainStyleHeight - 1;
-  void refreshCursor(bool ignoreMargins = false);
+  void refreshCursor(bool ignoreMargins = false, bool forceFiniteY = false);
 
   // InteractiveCurveViewRangeDelegate
   float addMargin(float x, float range, bool isVertical, bool isMin) const override;
   void updateZoomButtons() override;
-  void marginsWillBeComputed() override { refreshCursor(true); }
+  void refreshCursorAfterComputingRange() override { refreshCursor(true, true); }
 
   void setCurveViewAsMainView(bool resetInterrupted, bool forceReload);
 

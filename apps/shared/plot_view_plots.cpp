@@ -346,7 +346,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
     // Step 2.1: Bar width
     KDCoordinate pxLeft = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x);
     KDCoordinate pxRight = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x + m_width);
-    if (pxRight + borderWidth < rect.left()) {
+    if (pxRight <= rect.left()) {
       continue;
     }
     KDCoordinate barWidth;

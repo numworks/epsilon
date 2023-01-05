@@ -294,7 +294,7 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView * plotView, KDContext *
 
 // WithHistogram::HistogramDrawing
 
-WithHistogram::HistogramDrawing::HistogramDrawing(Curve1D curve, void * model, void * context, HighlightTest highlightTest, float start, float barsWidth, bool displayBorder, bool fillBars, KDColor color, KDColor highlightColor, KDColor borderColor) :
+WithHistogram::HistogramDrawing::HistogramDrawing(Curve1D curve, void * model, void * context, HighlightTest highlightTest, double start, double barsWidth, bool displayBorder, bool fillBars, KDColor color, KDColor highlightColor, KDColor borderColor) :
   m_curve(curve),
   m_model(model),
   m_context(context),
@@ -323,26 +323,26 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
    *  - left border is drawn at A
    *  - right border is drawn at B
    */
-  float rectMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.left());
-  float rectMinBarIndex = std::floor((rectMin - m_start) / m_barsWidth);
-  float rectMinBarStart = m_start + rectMinBarIndex * m_barsWidth;
-  float rectMax = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.right());
-  float rectMaxBarIndex = std::floor((rectMax - m_start) / m_barsWidth);
-  float rectMaxBarEnd = m_start + (rectMaxBarIndex + 1) * m_barsWidth;
-  float step = std::max(plotView->pixelWidth(), m_barsWidth);
+  double rectMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.left());
+  double rectMinBarIndex = std::floor((rectMin - m_start) / m_barsWidth);
+  double rectMinBarStart = m_start + rectMinBarIndex * m_barsWidth;
+  double rectMax = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.right());
+  double rectMaxBarIndex = std::floor((rectMax - m_start) / m_barsWidth);
+  double rectMaxBarEnd = m_start + (rectMaxBarIndex + 1) * m_barsWidth;
+  double step = std::max(plotView->pixelWidth(), static_cast<float>(m_barsWidth));
   KDCoordinate plotViewHeight = plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, 0.f);
   KDCoordinate borderWidth = m_displayBorder ? k_borderWidth : 0;
 
-  float xPrevious = NAN;
-  for (float x = rectMinBarStart; x < rectMaxBarEnd; x += step) {
+  double xPrevious = NAN;
+  for (double x = rectMinBarStart; x < rectMaxBarEnd; x += step) {
     if (x == xPrevious) {
       return;
     }
     xPrevious = x;
 
     // Step 1: Compute values
-    float xCenter = m_fillBars ? x + 0.5f * m_barsWidth : x;
-    float y = m_curve(xCenter, m_model, m_context);
+    double xCenter = m_fillBars ? x + 0.5f * m_barsWidth : x;
+    double y = m_curve(xCenter, m_model, m_context);
     if (std::isnan(y) || y == 0.f) {
       continue;
     }

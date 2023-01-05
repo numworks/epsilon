@@ -300,7 +300,7 @@ WithHistogram::HistogramDrawing::HistogramDrawing(Curve1D curve, void * model, v
   m_context(context),
   m_highlighted(nullptr),
   m_start(start),
-  m_width(barsWidth),
+  m_barsWidth(barsWidth),
   m_displayBorder(false),
   m_color(color),
   m_fillBars(fillBars)
@@ -318,12 +318,12 @@ void WithHistogram::HistogramDrawing::setHighlightOptions(HighlightTest highligh
 
 void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   float rectMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.left());
-  float rectMinBarIndex = std::floor((rectMin - m_start) / m_width);
-  float rectMinBarStart = m_start + rectMinBarIndex * m_width;
+  float rectMinBarIndex = std::floor((rectMin - m_start) / m_barsWidth);
+  float rectMinBarStart = m_start + rectMinBarIndex * m_barsWidth;
   float rectMax = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.right());
-  float rectMaxBarIndex = std::floor((rectMax - m_start) / m_width);
-  float rectMaxBarEnd = m_start + (rectMaxBarIndex + 1) * m_width;
-  float step = std::max(plotView->pixelWidth(), m_width);
+  float rectMaxBarIndex = std::floor((rectMax - m_start) / m_barsWidth);
+  float rectMaxBarEnd = m_start + (rectMaxBarIndex + 1) * m_barsWidth;
+  float step = std::max(plotView->pixelWidth(), m_barsWidth);
   KDCoordinate plotViewHeight = plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, 0.f);
   KDCoordinate borderWidth = m_displayBorder ? k_borderWidth : 0;
 
@@ -335,7 +335,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
     xPrevious = x;
 
     // Step 1: Compute values
-    float xCenter = m_fillBars ? x + 0.5f * m_width : x;
+    float xCenter = m_fillBars ? x + 0.5f * m_barsWidth : x;
     float y = m_curve(xCenter, m_model, m_context);
     if (std::isnan(y) || y == 0.f) {
       continue;
@@ -345,7 +345,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
     // Step 2: Compute pixels
     // Step 2.1: Bar width
     KDCoordinate pxLeft = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x);
-    KDCoordinate pxRight = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x + m_width);
+    KDCoordinate pxRight = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x + m_barsWidth);
     if (pxRight <= rect.left()) {
       continue;
     }

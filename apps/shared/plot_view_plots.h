@@ -129,7 +129,7 @@ protected:
     void * m_context;
     HighlightTest m_highlighted;
     float m_start;
-    float m_width;
+    float m_barsWidth;
     bool m_displayBorder;
     KDColor m_color;
     KDColor m_highlightColor;

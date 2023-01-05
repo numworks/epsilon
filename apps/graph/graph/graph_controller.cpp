@@ -295,24 +295,25 @@ double GraphController::defaultCursorT(Ion::Storage::Record record, bool ignoreM
   Poincare::Context * context = textFieldDelegateApp()->localContext();
   float tMin = function->tMin(), tMax = function->tMax();
   float tRange = tMax - tMin;
-  static int numberOfIterations = 5;
-  int currentIteration = 0;
+  constexpr int numberOfRangeSubdivisions = 4;
+
   float currentT;
   Coordinate2D<float> currentXY;
-
-  do {
+  for (int i = 0; i <= numberOfRangeSubdivisions; i++) {
     /* Start from tMin and place the cursor on each fourth of the interval
-      * until a t where the cursor is visible is found.
-      * currentT values will be tMin / tMin+0.25*tRange / tMin+0.5*tRange /
-      * tMin+0.75*tRange / tMax*/
-    currentT = tMin + ((float)currentIteration / (float)(numberOfIterations - 1)) * tRange;
+     * until a t where the cursor is visible is found.
+     * currentT values will be tMin / tMin+0.25*tRange / tMin+0.5*tRange /
+     * tMin+0.75*tRange / tMax */
+    currentT = tMin + i * (tRange / numberOfRangeSubdivisions);
     // Using first subCurve for default cursor.
     currentXY = function->evaluateXYAtParameter(currentT, context, 0);
-  } while (++currentIteration < numberOfIterations &&
-            !isCursorVisibleAtPosition(currentXY, ignoreMargins));
+    if (isCursorVisibleAtPosition(currentXY, ignoreMargins)) {
+      break;
+    }
+  }
 
   if (!isCursorVisibleAtPosition(currentXY, ignoreMargins)) {
-    // If no positions make the cursor visible, return the middle value
+    // If no positions make the cursor visible, return the min value
     currentT = tMin;
   }
 

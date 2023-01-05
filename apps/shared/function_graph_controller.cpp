@@ -92,6 +92,17 @@ void FunctionGraphController::FunctionSelectionController::willDisplayCellForInd
   static_cast<CurveSelectionCellWithChevron *>(cell)->setLayout(function->layout().clone());
 }
 
+void FunctionGraphController::FunctionSelectionController::didBecomeFirstResponder() {
+  if (numberOfRows() <= 1) {
+    /* This can happen if all functions were deactivated within the calculate
+     * menu. The function selection menu is still on the stack but it's now
+     * empty (or has only 1 function, in which case it should not appear.) */
+    static_cast<StackViewController *>(parentResponder())->pop();
+    return;
+  }
+  CurveSelectionController::didBecomeFirstResponder();
+}
+
 void FunctionGraphController::reloadBannerView() {
   assert(numberOfCurves() > 0);
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());

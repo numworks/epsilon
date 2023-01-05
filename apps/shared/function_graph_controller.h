@@ -26,10 +26,13 @@ protected:
     const char * title() override { return I18n::translate(I18n::Message::GraphCalculus); }
     int numberOfRows() const override { return graphController()->functionStore()->numberOfActiveFunctions(); }
     void willDisplayCellForIndex(Escher::HighlightCell * cell, int index) override;
+    void didBecomeFirstResponder() override;
+
   protected:
     KDCoordinate nonMemoizedRowHeight(int j) override;
     FunctionGraphController * graphController() const { return static_cast<FunctionGraphController *>(const_cast<InteractiveCurveViewController *>(m_graphController)); }
     virtual Poincare::Layout nameLayoutAtIndex(int j) const = 0;
+
   private:
     constexpr static KDFont::Size k_font = KDFont::Size::Large;
   };

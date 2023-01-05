@@ -39,7 +39,7 @@ void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView, KD
     borderColor = k_notSelectedHistogramBorderColor;
   }
 
-  HistogramDrawing histogram(histogramLevels, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), color, true);
+  HistogramDrawing histogram(histogramLevels, m_store, context, m_store->firstDrawnBarAbscissa(), m_store->barWidth(), true, color);
   histogram.setBorderOptions(true, borderColor);
   histogram.setHighlightOptions(highlights, k_selectedBarColor);
   histogram.draw(plotView, ctx, rect);

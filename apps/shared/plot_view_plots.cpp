@@ -294,7 +294,7 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView * plotView, KDContext *
 
 // WithHistogram::HistogramDrawing
 
-WithHistogram::HistogramDrawing::HistogramDrawing(Curve1D curve, void * model, void * context, float start, float barsWidth, KDColor color, bool fillBars) :
+WithHistogram::HistogramDrawing::HistogramDrawing(Curve1D curve, void * model, void * context, float start, float barsWidth, bool fillBars, KDColor color) :
   m_curve(curve),
   m_model(model),
   m_context(context),
@@ -302,8 +302,8 @@ WithHistogram::HistogramDrawing::HistogramDrawing(Curve1D curve, void * model, v
   m_start(start),
   m_barsWidth(barsWidth),
   m_displayBorder(false),
-  m_color(color),
-  m_fillBars(fillBars)
+  m_fillBars(fillBars),
+  m_color(color)
 {}
 
 void WithHistogram::HistogramDrawing::setBorderOptions(bool displayBorder, KDColor color) {

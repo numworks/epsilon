@@ -268,9 +268,6 @@ Emscripten_DestroyWindow(_THIS, SDL_Window * window)
             data->egl_surface = EGL_NO_SURFACE;
         }
 #endif
-
-        /* We can't destroy the canvas, so resize it to zero instead */
-        emscripten_set_canvas_element_size(data->canvas_id, 0, 0);
         SDL_free(data->canvas_id);
 
         SDL_free(window->driverdata);

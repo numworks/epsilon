@@ -326,7 +326,7 @@ Token Tokenizer::popLongestRightMostIdentifier(const char * stringStart, const c
   /* Find the right-most identifier by trying to parse 'abcd', then 'bcd',
    * then 'cd' and then 'd' until you find a defined identifier. */
   const char * nextTokenStart = stringStart;
-  size_t tokenLength;
+  size_t tokenLength = 0;
   while (tokenType == Token::Type::Undefined && nextTokenStart < *stringEnd) {
     stringStart = nextTokenStart;
     tokenLength = *stringEnd - stringStart;

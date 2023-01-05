@@ -21,7 +21,7 @@
 
 namespace Regression {
 
-class Store : public Shared::InteractiveCurveViewRange, public Shared::LinearRegressionStore {
+class Store : public Shared::LinearRegressionStore {
 public:
   constexpr static const char * const * k_columnNames = DoublePairStore::k_regressionColumNames;
   static const char * SeriesTitle(int series);

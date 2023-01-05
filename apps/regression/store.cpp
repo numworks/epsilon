@@ -1,4 +1,5 @@
 #include "store.h"
+#include "app.h"
 #include <poincare/preferences.h>
 #include <assert.h>
 #include <float.h>
@@ -27,7 +28,6 @@ const char * Store::SeriesTitle(int series) {
 }
 
 Store::Store(Shared::GlobalContext * context, Model::Type * regressionTypes) :
-  InteractiveCurveViewRange(),
   LinearRegressionStore(context),
   m_regressionTypes(regressionTypes),
   m_exponentialAbxModel(true),
@@ -64,11 +64,13 @@ int Store::closestVerticalDot(int direction, double x, double y, int currentSeri
       continue;
     }
     int numberOfPoints = numberOfPairsOfSeries(series);
+    float xMin = App::app()->range()->xMin();
+    float xMax = App::app()->range()->xMax();
     bool displayMean = seriesRegressionType(series) != Model::Type::None;
     for (int i = 0; i < numberOfPoints + displayMean; i++) {
       double currentX = i < numberOfPoints ? get(series, 0, i) : meanOfColumn(series, 0);
       double currentY = i < numberOfPoints ? get(series, 1, i) : meanOfColumn(series, 1);
-      if (xMin() <= currentX && currentX <= xMax() // The next dot is within the window abscissa bounds
+      if (xMin <= currentX && currentX <= xMax // The next dot is within the window abscissa bounds
           && (std::fabs(currentX - x) <= std::fabs(nextX - x)) // The next dot is the closest to x in abscissa
           && ((currentY > y && direction > 0) // The next dot is above/under y
             || (currentY < y && direction < 0)
@@ -233,7 +235,7 @@ double Store::yValueForXValue(int series, double x, Poincare::Context * globalCo
 double Store::xValueForYValue(int series, double y, Poincare::Context * globalContext) {
   Model * model = regressionModel(m_regressionTypes[series]);
   double * coefficients = coefficientsForSeries(series, globalContext);
-  return model->levelSet(coefficients, xMin(), xMax(), y, globalContext);
+  return model->levelSet(coefficients, App::app()->range()->xMin(), App::app()->range()->xMax(), y, globalContext);
 }
 
 double Store::residualAtIndexForSeries(int series, int index, Poincare::Context * globalContext) {

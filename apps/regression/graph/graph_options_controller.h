@@ -20,7 +20,7 @@ class GraphController;
 
 class GraphOptionsController : public Escher::ExplicitSelectableListViewController {
 public:
-  GraphOptionsController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
+  GraphOptionsController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Shared::InteractiveCurveViewRange * range, Store * store, Shared::CurveViewCursor * cursor, GraphController * graphController);
   void removeRegression();
 
   const char * title() override;

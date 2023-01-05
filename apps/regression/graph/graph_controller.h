@@ -14,7 +14,7 @@ namespace Regression {
 class GraphController : public Shared::InteractiveCurveViewController {
 
 public:
-  GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Store * store, Shared::CurveViewCursor * cursor, int * selectedDotIndex, int * selectedSeriesIndex);
+  GraphController(Escher::Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Escher::ButtonRowController * header, Shared::InteractiveCurveViewRange * range, Store * store, Shared::CurveViewCursor * cursor, int * selectedDotIndex, int * selectedSeriesIndex);
   bool isEmpty() const override;
   I18n::Message emptyMessage() override;
   void viewWillAppear() override;
@@ -58,7 +58,8 @@ private:
   // SimpleInteractiveCurveViewController
   float cursorBottomMarginRatio() const override { return cursorBottomMarginRatioForBannerHeight(m_bannerView.minimalSizeForOptimalDisplay().height()); }
   void reloadBannerView() override;
-  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override;
+  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() override { return const_cast<const GraphController *>(this)->interactiveCurveViewRange(); }
+  Shared::InteractiveCurveViewRange * interactiveCurveViewRange() const;
   Shared::AbstractPlotView * curveView() override;
 
   // InteractiveCurveViewController

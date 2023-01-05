@@ -16,7 +16,7 @@ using namespace Escher;
 
 namespace Regression {
 
-GraphOptionsController::GraphOptionsController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
+GraphOptionsController::GraphOptionsController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, InteractiveCurveViewRange * range, Store * store, CurveViewCursor * cursor, GraphController * graphController) :
   ExplicitSelectableListViewController(parentResponder),
   m_changeRegressionCell(I18n::Message::RegressionModel),
   m_regressionEquationCell(&m_selectableTableView, I18n::Message::RegressionEquation),
@@ -29,7 +29,7 @@ GraphOptionsController::GraphOptionsController(Responder * parentResponder, Esch
       controller->removeRegression();
       return true;
     }, this)),
-  m_goToParameterController(this, inputEventHandlerDelegate, store, cursor, graphController),
+  m_goToParameterController(this, inputEventHandlerDelegate, range, store, cursor, graphController),
   m_residualPlotCellController(parentResponder, store),
   m_store(store),
   m_graphController(graphController)

@@ -29,12 +29,14 @@ public:
     App * unpack(Escher::Container * container) override;
     void reset() override;
     const Descriptor * descriptor() const override;
+    Shared::InteractiveCurveViewRange * range() { return &m_range; }
     Shared::CurveViewCursor * cursor() { return &m_cursor; }
     int * graphSelectedDotIndex() { return &m_graphSelectedDotIndex; }
     int * selectedSeriesIndex() { return &m_selectedSeriesIndex; }
     Model::Type * regressionTypes() { return m_regressionTypes; }
 
   private:
+    Shared::InteractiveCurveViewRange m_range;
     Shared::CurveViewCursor m_cursor;
     int m_graphSelectedDotIndex;
     int m_selectedSeriesIndex;
@@ -48,6 +50,8 @@ public:
   RegressionController * regressionController() { return &m_regressionController; }
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
   GraphController * graphController() { return &m_graphController; }
+  Snapshot * snapshot() const { return static_cast<Snapshot *>(Shared::ExpressionFieldDelegateApp::snapshot()); }
+  Shared::InteractiveCurveViewRange * range() const { return snapshot()->range(); }
 
 private:
   App(Snapshot * snapshot, Poincare::Context * parentContext);

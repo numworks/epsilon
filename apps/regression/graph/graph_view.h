@@ -16,7 +16,7 @@ protected:
 
 class GraphView : public Shared::PlotView<Shared::PlotPolicy::TwoLabeledAxes, RegressionPlotPolicy, Shared::PlotPolicy::WithBanner, Shared::PlotPolicy::WithCursor> {
 public:
-  GraphView(Store * store, Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView);
+  GraphView(Shared::InteractiveCurveViewRange * range, Store * store, Shared::CurveViewCursor * cursor, Shared::BannerView * bannerView, Shared::CursorView * cursorView);
 };
 
 }

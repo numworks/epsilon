@@ -17,19 +17,19 @@ using namespace Escher;
 
 namespace Regression {
 
-GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Store * store, CurveViewCursor * cursor, int * selectedDotIndex, int * selectedSeriesIndex) :
-  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, store, &m_view, cursor),
+GraphController::GraphController(Responder * parentResponder, Escher::InputEventHandlerDelegate * inputEventHandlerDelegate, ButtonRowController * header, Shared::InteractiveCurveViewRange * range, Store * store, CurveViewCursor * cursor, int * selectedDotIndex, int * selectedSeriesIndex) :
+  InteractiveCurveViewController(parentResponder, inputEventHandlerDelegate, header, range, &m_view, cursor),
   m_bannerView(this, inputEventHandlerDelegate, this),
-  m_view(store, m_cursor, &m_bannerView, &m_cursorView),
+  m_view(range, store, m_cursor, &m_bannerView, &m_cursorView),
   m_store(store),
-  m_graphOptionsController(this, inputEventHandlerDelegate, m_store, m_cursor, this),
+  m_graphOptionsController(this, inputEventHandlerDelegate, range, m_store, m_cursor, this),
   m_seriesSelectionController(this),
   m_calculusButton(this, I18n::Message::Regression, calculusButtonInvocation(), KDFont::Size::Small),
   m_selectedDotIndex(selectedDotIndex),
   m_selectedSeriesIndex(selectedSeriesIndex),
   m_selectedModelType((Model::Type)-1)
 {
-  m_store->setDelegate(this);
+  range->setDelegate(this);
 }
 
 bool GraphController::isEmpty() const {
@@ -186,7 +186,7 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
     }
     *m_selectedDotIndex = dotSelected;
   } else {
-    double step = direction * scrollSpeed * static_cast<double>(m_store->xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
+    double step = direction * scrollSpeed * static_cast<double>(interactiveCurveViewRange()->xGridUnit())/static_cast<double>(k_numberOfCursorStepsInGradUnit);
     x = m_cursor->x() + step;
     y = yValue(*m_selectedSeriesIndex, x, globalContext());
   }
@@ -194,8 +194,8 @@ bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   return true;
 }
 
-InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() {
-  return m_store;
+InteractiveCurveViewRange * GraphController::interactiveCurveViewRange() const {
+  return App::app()->range();
 }
 
 AbstractPlotView * GraphController::curveView() {
@@ -375,7 +375,7 @@ double GraphController::yValue(int curveIndex, double x, Poincare::Context * con
 }
 
 bool GraphController::suitableYValue(double y) const {
-  return m_store->yMin() <= y && y <= m_store->yMax();
+  return interactiveCurveViewRange()->yMin() <= y && y <= interactiveCurveViewRange()->yMax();
 }
 
 int GraphController::numberOfCurves() const {

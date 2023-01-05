@@ -34,7 +34,9 @@ void PreimageParameterController::buttonAction() {
     m_preimageGraphController->setRecord(m_record);
     StackViewController * stack = static_cast<StackViewController *>(parentResponder());
     stack->popUntilDepth(Shared::InteractiveCurveViewController::k_graphControllerStackDepth, true);
-    stack->push(m_preimageGraphController);
+    if (App::app()->functionStore()->modelForRecord(m_record)->isActive()) {
+      stack->push(m_preimageGraphController);
+    }
   }
 }
 

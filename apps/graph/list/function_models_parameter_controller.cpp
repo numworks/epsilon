@@ -83,15 +83,16 @@ int FunctionModelsParameterController::DefaultName(char buffer[], size_t bufferS
   size_t constantNameLength = 1; // 'f', no null-terminating char
   assert(bufferSize > constantNameLength+1);
   // Find the next available name
-  buffer[1] = 0;
   for (size_t i = 0; i < k_maxNumberOfDefaultLetterNames; i++) {
     buffer[0] = k_defaultLetterNames[i];
+    buffer[1] = 0;
     if (Shared::GlobalContext::SymbolAbstractNameIsFree(buffer)) {
       return constantNameLength;
     }
   }
   // f, g, h and p are already taken. Try f1, f2, ...
   buffer[0] = k_defaultLetterNames[0];
+  buffer[1] = 0;
   assert(bufferSize >= Shared::ContinuousFunction::k_maxDefaultNameSize);
   return Ion::Storage::FileSystem::sharedFileSystem()->firstAvailableNameFromPrefix(buffer, 1, bufferSize, Shared::GlobalContext::k_extensions, Shared::GlobalContext::k_numberOfExtensions, 99);
 }

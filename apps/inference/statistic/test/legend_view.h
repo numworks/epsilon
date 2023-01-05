@@ -1,6 +1,7 @@
 #ifndef INFERENCE_STATISTIC_TEST_LEGEND_VIEW_H
 #define INFERENCE_STATISTIC_TEST_LEGEND_VIEW_H
 
+#include "test_curve_view.h"
 #include <apps/i18n.h>
 #include <escher/message_text_view.h>
 #include <escher/view.h>
@@ -20,6 +21,7 @@ private:
   constexpr static int k_marginBetween = 5;
   constexpr static int k_offsetTop = 3;
   constexpr static int k_diameter = 8;
+  constexpr static KDColor k_backgroundColor = TestCurveView::k_backgroundColor;
 
   class DotView : public Escher::View {
   public:

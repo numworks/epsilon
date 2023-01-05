@@ -37,8 +37,7 @@ void DistributionPlotPolicy::drawPlot(const Shared::AbstractPlotView * plotView,
     plot.draw(plotView, ctx, rect);
   } else {
     float context[] = { lowerBound, upperBound };
-    HistogramDrawing plot(evaluateDistribution1D, m_distribution, context, 0.f, 1.f, false, Palette::GrayMiddle);
-    plot.setHighlightOptions(barIsHighlighted, Palette::YellowDark);
+    HistogramDrawing plot(evaluateDistribution1D, m_distribution, context, barIsHighlighted, 0.f, 1.f, false, false, Palette::GrayMiddle, Palette::YellowDark);
     plot.draw(plotView, ctx, rect);
   }
 }

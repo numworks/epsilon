@@ -294,27 +294,19 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView * plotView, KDContext *
 
 // WithHistogram::HistogramDrawing
 
-WithHistogram::HistogramDrawing::HistogramDrawing(Curve1D curve, void * model, void * context, float start, float barsWidth, bool fillBars, KDColor color) :
+WithHistogram::HistogramDrawing::HistogramDrawing(Curve1D curve, void * model, void * context, HighlightTest highlightTest, float start, float barsWidth, bool displayBorder, bool fillBars, KDColor color, KDColor highlightColor, KDColor borderColor) :
   m_curve(curve),
   m_model(model),
   m_context(context),
-  m_highlightTest(nullptr),
+  m_highlightTest(highlightTest),
   m_start(start),
   m_barsWidth(barsWidth),
-  m_displayBorder(false),
+  m_displayBorder(displayBorder),
   m_fillBars(fillBars),
-  m_color(color)
+  m_color(color),
+  m_highlightColor(highlightColor),
+  m_borderColor(borderColor)
 {}
-
-void WithHistogram::HistogramDrawing::setBorderOptions(bool displayBorder, KDColor color) {
-  m_displayBorder = displayBorder;
-  m_borderColor = color;
-}
-
-void WithHistogram::HistogramDrawing::setHighlightOptions(HighlightTest highlighted, KDColor color) {
-  m_highlightTest = highlighted;
-  m_highlightColor = color;
-}
 
 void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   float rectMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.left());

@@ -50,6 +50,7 @@ bool EditorController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::Back || event == Ion::Events::Home || event == Ion::Events::USBEnumeration) {
     /* Exit the edition on USB enumeration, because the storage needs to be in a
      * "clean" state (with all records packed at the beginning of the storage) */
+    assert(!m_editorView.isAutocompleting());
     cleanStorageEmptySpace();
     stackController()->pop();
     return event != Ion::Events::Home && event != Ion::Events::USBEnumeration;

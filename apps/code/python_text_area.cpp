@@ -440,7 +440,10 @@ bool PythonTextArea::handleEvent(Ion::Events::Event event) {
        * invalidate the ScriptNodes name pointers. */
       m_wasAutocompleting = true;
       removeAutocompletion();
-    } else if (Ion::Events::EventCanDiscardPopUp(event)) {
+    } else if (Ion::Events::EventCanDiscardPopUp(event) || event == Ion::Events::USBEnumeration) {
+      /* USBEnumeration will pop the view (see EditorController::handleEvent).
+       * Autocompletion is stopped to ensure that isAutocompleting() is false
+       * when coming back */
       removeAutocompletion();
       m_contentView.reloadRectFromPosition(m_contentView.cursorLocation(), false);
       if (event == Ion::Events::Back) {

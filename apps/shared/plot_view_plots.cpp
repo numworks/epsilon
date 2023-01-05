@@ -374,13 +374,13 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
     // Step 3: Draw
     KDColor color = m_highlightTest && m_highlightTest(xCenter, m_model, m_context) ? m_highlightColor : m_color;
     // Interior
-    KDRect barRect(left + borderWidth, top, barWidth - borderWidth, barHeight);
+    KDRect barRect(left + borderWidth, top + borderWidth, barWidth - borderWidth, barHeight - borderWidth);
     ctx->fillRect(barRect, color);
     if (borderWidth > 0 && barRect.width() > 0 && barRect.height() > 0) {
       // Left border
       ctx->fillRect(KDRect(left, top, borderWidth, barHeight), m_borderColor);
       // Top border
-      ctx->fillRect(KDRect(left, top - borderWidth, barWidth + borderWidth, borderWidth), m_borderColor);
+      ctx->fillRect(KDRect(left, top, barWidth + borderWidth, borderWidth), m_borderColor);
       // Right border
       ctx->fillRect(KDRect(leftOfNextBar, top, borderWidth, barHeight), m_borderColor);
     }

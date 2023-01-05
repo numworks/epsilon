@@ -318,16 +318,16 @@ void WithHistogram::HistogramDrawing::setHighlightOptions(HighlightTest highligh
 
 void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
   float rectMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.left());
-  float rectMinBinNumber = std::floor((rectMin - m_start) / m_width);
-  float rectMinLowerBound = m_start + rectMinBinNumber * m_width;
+  float rectMinBarIndex = std::floor((rectMin - m_start) / m_width);
+  float rectMinBarStart = m_start + rectMinBarIndex * m_width;
   float rectMax = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.right());
-  float rectMaxBinNumber = std::floor((rectMax - m_start) / m_width);
-  float rectMaxUpperBound = m_start + (rectMaxBinNumber + 1) * m_width;
+  float rectMaxBarIndex = std::floor((rectMax - m_start) / m_width);
+  float rectMaxBarEnd = m_start + (rectMaxBarIndex + 1) * m_width;
   float step = std::max(plotView->pixelWidth(), m_width);
-  KDCoordinate axisPixel = plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, 0.f);
+  KDCoordinate plotViewHeight = plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, 0.f);
 
   float xPrevious = NAN;
-  for (float x = rectMinLowerBound; x < rectMaxUpperBound; x += step) {
+  for (float x = rectMinBarStart; x < rectMaxBarEnd; x += step) {
     if (x == xPrevious) {
       return;
     }
@@ -348,7 +348,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
       continue;
     }
     KDCoordinate py = std::round(pxy.x2());
-    KDCoordinate barHeight = axisPixel - py;
+    KDCoordinate barHeight = plotViewHeight - py;
     assert(barHeight >= 0);
     KDCoordinate barWidth;
     /* If m_fillBar is true, we fill the space between one bar and the next

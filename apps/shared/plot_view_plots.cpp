@@ -309,6 +309,20 @@ WithHistogram::HistogramDrawing::HistogramDrawing(Curve1D curve, void * model, v
 {}
 
 void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const {
+  /* To values interval [a, b[ correspond a pixel
+   * interval [A, B[. Tick for a is at pixel A and
+   * tick for b is at pixel B.
+   *
+   *  ---------------------------------------
+   * | A |   |   |   |   |   |   |   |   | B |
+   *  ---------------------------------------
+   *  <--------------------------------->
+   *                bar width
+   *
+   * If we want to diplays borders:
+   *  - left border is drawn at A
+   *  - right border is drawn at B
+   */
   float rectMin = plotView->pixelToFloat(AbstractPlotView::Axis::Horizontal, rect.left());
   float rectMinBarIndex = std::floor((rectMin - m_start) / m_barsWidth);
   float rectMinBarStart = m_start + rectMinBarIndex * m_barsWidth;
@@ -337,8 +351,8 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
     // Step 2: Compute pixels
     // Step 2.1: Bar width
     KDCoordinate left = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x);
-    KDCoordinate right = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x + m_barsWidth);
-    if (right <= rect.left()) {
+    KDCoordinate leftOfNextBar = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x + m_barsWidth);
+    if (leftOfNextBar <= rect.left()) {
       continue;
     }
     KDCoordinate barWidth;
@@ -346,7 +360,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
      * (e.g. histograms in the Statistics app). Otherwise, we only draw a thin
      * bar on lefmost pixels (e.g. histograms for discrete distributions). */
     if (m_fillBars) {
-      barWidth = right - left;
+      barWidth = leftOfNextBar - left;
     } else {
       assert(borderWidth == 0);
       barWidth = k_hollowBarWidth;
@@ -359,8 +373,8 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
 
     // Step 3: Draw
     KDColor color = m_highlightTest && m_highlightTest(xCenter, m_model, m_context) ? m_highlightColor : m_color;
-    // Body of the bar
-    KDRect barRect(left + borderWidth, top, barWidth, barHeight);
+    // Interior
+    KDRect barRect(left + borderWidth, top, barWidth - borderWidth, barHeight);
     ctx->fillRect(barRect, color);
     if (borderWidth > 0 && barRect.width() > 0 && barRect.height() > 0) {
       // Left border
@@ -368,7 +382,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
       // Top border
       ctx->fillRect(KDRect(left, top - borderWidth, barWidth + borderWidth, borderWidth), m_borderColor);
       // Right border
-      ctx->fillRect(KDRect(right, top, borderWidth, barHeight), m_borderColor);
+      ctx->fillRect(KDRect(leftOfNextBar, top, borderWidth, barHeight), m_borderColor);
     }
   }
 }

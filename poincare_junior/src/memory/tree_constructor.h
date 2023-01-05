@@ -2,6 +2,7 @@
 #define POINCARE_MEMORY_TREE_CONSTRUCTOR_H
 
 #include <array>
+#include <omg/print.h>
 #include "node_constructor.h"
 #include "node.h"
 
@@ -10,10 +11,14 @@ namespace Poincare {
 #warning Ensure that we can't use it in a non-constexpr mode
 // TODO Use consteval? We should ensure one way or another that the number of specialized class is limited and used for constexpr methods only. Meaning that no code should be emited at runtime...
 
+// https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
+// https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
+
 
 template <unsigned N>
 class Tree {
 public:
+  // TODO: make all constructor consteval
   constexpr Tree() {}
   constexpr Block & operator[] (size_t n) { return m_blocks[n]; }
   constexpr operator Node() const { return Node(const_cast<TypeBlock *>(m_blocks)); }
@@ -92,7 +97,123 @@ template<unsigned ...Len> static constexpr auto Pol(std::array<uint8_t, sizeof..
   return tree;
 }
 
-// TODO make suffixe literal?
+// TODO: move in OMG::Print?
+constexpr static uint64_t Value(const char * str, size_t len) {
+  uint64_t value = 0;
+  for (int i = 0; i < len; i++) {
+    uint8_t digit = OMG::Print::DigitForCharacter(str[i]);
+    // No overflow
+    assert(value <= (UINT64_MAX - digit)/10);
+    value = 10 * value + digit;
+  }
+  return value;
+}
+
+// TODO Duplicate
+constexpr static uint8_t NumberOfDigits(uint64_t value) {
+  uint8_t numberOfDigits = 0;
+  while (value && numberOfDigits < sizeof(uint64_t)) {
+    value = value >> 8; // TODO BitHelper
+    numberOfDigits++;
+  }
+  return numberOfDigits;
+}
+
+template <char... str>
+constexpr unsigned IntegerTreeSize(std::initializer_list<char> specialChars, uint64_t maxValueInShortInteger, BlockType genericBlockType) {
+  constexpr unsigned size = sizeof...(str);
+  char chars[size] = {static_cast<char>(str)...};
+  assert(size > 0);
+  if (size == 1) {
+    for (char c : specialChars) {
+      if (c == chars[0]) {
+        return 1;
+      }
+    }
+  }
+  uint64_t value = Value(chars, size);
+  if (value <= maxValueInShortInteger) {
+    return TypeBlock::NumberOfMetaBlocks(BlockType::IntegerShort);
+  }
+  return TypeBlock::NumberOfMetaBlocks(genericBlockType) + NumberOfDigits(value);
+}
+
+
+template <char... str>
+constexpr unsigned SignedIntegerTreeSize() {
+  return IntegerTreeSize<str...>({'1'}, -INT8_MIN, BlockType::IntegerNegBig);
+}
+
+template <char... str>
+constexpr unsigned UnsignedIntegerTreeSize() {
+  return IntegerTreeSize<str...>({'0', '1', '2'}, INT8_MAX, BlockType::IntegerPosBig);
+}
+
+template <char... str>
+constexpr Tree<UnsignedIntegerTreeSize<str...>()> operator"" _ui_n()
+{
+  constexpr unsigned size = sizeof...(str);
+  char chars[size] = {static_cast<char>(str)...};
+  constexpr unsigned treeSize = UnsignedIntegerTreeSize<str...>();
+  Tree<treeSize> tree;
+  if (treeSize == 1) {
+    assert(size == 1);
+    switch (chars[0]) {
+      case '0':
+        CreateNode<BlockType::Zero>(&tree);
+        break;
+      case '1':
+        CreateNode<BlockType::One>(&tree);
+        break;
+      case '2':
+        CreateNode<BlockType::Two>(&tree);
+        break;
+      default:
+        assert(false);
+    }
+  } else {
+    uint64_t value = Value(chars, size);
+    if (treeSize == 3) {
+      assert(value != 0 && value != 1 && value != 2);
+      assert(value <= INT8_MAX);
+      CreateNode<BlockType::IntegerShort>(&tree, static_cast<int8_t>(value));
+    } else {
+      CreateNode<BlockType::IntegerPosBig>(&tree, value);
+    }
+  }
+  return tree;
+}
+
+
+template <char... str>
+constexpr Tree<SignedIntegerTreeSize<str...>()> operator"" _si_n()
+{
+  constexpr unsigned size = sizeof...(str);
+  char chars[size] = {static_cast<char>(str)...};
+  constexpr unsigned treeSize = SignedIntegerTreeSize<str...>();
+  Tree<treeSize> tree;
+  if (treeSize == 1) {
+    assert(size == 1);
+    switch (chars[0]) {
+      case '1':
+        CreateNode<BlockType::MinusOne>(&tree);
+        break;
+      default:
+        assert(false);
+    }
+  } else {
+    uint64_t value = Value(chars, size);
+    if (treeSize == 3) {
+      assert(value != 1);
+      assert(value <= -INT8_MIN);
+      CreateNode<BlockType::IntegerShort>(&tree, static_cast<int8_t>(-value));
+    } else {
+      CreateNode<BlockType::IntegerNegBig>(&tree, value);
+    }
+  }
+  return tree;
+}
+
 // Discard null-termination
 template<unsigned N> constexpr Tree<N - 1 + TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol)> Symb(const char (&name)[N]) {
   Tree<N - 1 + TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol)> tree;

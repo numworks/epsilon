@@ -53,12 +53,11 @@ private:
   }
 
   template <>
-  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::IntegerPosBig>(Block * block, size_t blockIndex, int value) {
+  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::IntegerPosBig>(Block * block, size_t blockIndex, uint64_t value) {
     return CreateIntegerBlockAtIndexForType(block, blockIndex, BlockType::IntegerPosBig, value);
   }
   template <>
-  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::IntegerNegBig>(Block * block, size_t blockIndex, int value) {
-    value = std::abs(value);
+  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::IntegerNegBig>(Block * block, size_t blockIndex, uint64_t value) {
     return CreateIntegerBlockAtIndexForType(block, blockIndex, BlockType::IntegerNegBig, value);
   }
 
@@ -73,7 +72,7 @@ private:
   }
 
   // TODO move to expression/integer.h
-  constexpr static uint8_t DigitAtIndex(unsigned int value, int index) {
+  constexpr static uint8_t DigitAtIndex(uint64_t value, int index) {
     return Bit::getByteAtIndex(value, index);
   }
 
@@ -87,17 +86,21 @@ private:
     return Bit::getByteAtIndex(f.m_int, index);
   }
 
-  constexpr static bool CreateIntegerBlockAtIndexForType(Block * block, size_t blockIndex, BlockType type, unsigned int value) {
+  constexpr static bool CreateIntegerBlockAtIndexForType(Block * block, size_t blockIndex, BlockType type, uint64_t value) {
     uint8_t numberOfDigits = NumberOfDigits(value);
-    assert(numberOfDigits > 1);
     switch (numberOfDigits) {
+      case 1:
+        return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, DigitAtIndex(value, 0), numberOfDigits);
       case 2:
         return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, DigitAtIndex(value, 0), DigitAtIndex(value, 1), numberOfDigits);
       case 3:
         return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, DigitAtIndex(value, 0), DigitAtIndex(value, 1), DigitAtIndex(value, 2), numberOfDigits);
-      default:
-        assert(numberOfDigits == 4);
+      case 4:
         return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, DigitAtIndex(value, 0), DigitAtIndex(value, 1), DigitAtIndex(value, 2), DigitAtIndex(value, 3), numberOfDigits);
+      default:
+        assert(false);
+        // TODO: handle case for numberOfDigits == 5, 6, 7, 8 when they occur
+        return false;
     }
   }
 };

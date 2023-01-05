@@ -48,7 +48,7 @@ poincare_junior_src += $(addprefix poincare_junior/test/,\
 poincare_junior_src += ion/src/simulator/shared/crc32.o
 poincare_junior_src += ion/src/shared/crc32_eat_byte.o
 
-SFLAGS += -DASSERTIONS=$(ASSERTIONS) -DPOINCARE_MEMORY_TREE_LOG=1 -Iion/include/ -Ikandinsky/include
+SFLAGS += -DASSERTIONS=$(ASSERTIONS) -DPOINCARE_MEMORY_TREE_LOG=1 -Iion/include/ -Ikandinsky/include -Iomg/include
 
 junior.elf: $(poincare_junior_src)
 	$(LD) $^ $(LDFLAGS) -o $@

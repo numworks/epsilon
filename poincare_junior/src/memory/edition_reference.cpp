@@ -112,9 +112,9 @@ template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::B
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Power>();
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Subtraction>();
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Division>();
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerShort, int>(int);
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerPosBig, int>(int);
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerNegBig, int>(int);
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerShort>(int8_t);
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerPosBig>(uint64_t);
+template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerNegBig>(uint64_t);
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Float, float>(float);
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::MinusOne>();
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Set>(int);
@@ -123,5 +123,4 @@ template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::B
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::One>();
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Two>();
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::RationalShort>(int8_t, uint8_t);
-template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::IntegerShort>(int8_t);
 template Poincare::EditionReference Poincare::EditionReference::Push<Poincare::BlockType::Polynomial, int, int>(int, int);

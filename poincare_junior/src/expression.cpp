@@ -13,10 +13,10 @@ Expression Expression::Parse(const char * textInput) {
       EditionReference::Push<BlockType::Division>();
       EditionReference::Push<BlockType::Division>();
       EditionReference::Push<BlockType::Subtraction>();
-      EditionReference::Push<BlockType::IntegerShort>(1);
-      EditionReference::Push<BlockType::IntegerShort>(2);
-      EditionReference::Push<BlockType::IntegerShort>(3);
-      EditionReference::Push<BlockType::IntegerShort>(4);
+      EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
+      EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+      EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
+      EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4));
     }, textInput);
 }
 

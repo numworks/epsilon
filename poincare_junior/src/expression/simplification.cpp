@@ -72,7 +72,7 @@ void Simplification::ProjectionReduction(EditionReference division, EditionRefer
   // Move second child
   power.insertTreeAfterNode(childrenReferences[1]);
   // Complete: a * b^-1 (or a + b * -1)
-  EditionReference::Push<BlockType::IntegerShort>(-1);
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(-1));
   // Replace single-noded division (or subtraction) by the new multiplication (or addition)
   division.replaceNodeByTree(multiplication);
 }

@@ -65,7 +65,7 @@ void testEditionReference() {
 
   // Constructors
   EditionReference::Clone(reference0);
-  EditionReference reference3 = EditionReference::Push<BlockType::IntegerShort>(8);
+  EditionReference reference3 = EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(8));
   assert_pool_contains(editionPool, {k_expression0, k_expression1, k_expression0, 8_n});
 
   // Insertions

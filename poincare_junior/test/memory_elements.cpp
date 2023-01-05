@@ -89,6 +89,19 @@ void assert_tree_equals_blocks(Tree<N> tree, std::initializer_list<Block> blocks
 }
 
 void testConstexprTreeConstructor() {
+  Node n = 12_ui_n;
+  assert_tree_equals_blocks(0_ui_n, {TypeBlock(BlockType::Zero)});
+  assert_tree_equals_blocks(1_ui_n, {TypeBlock(BlockType::One)});
+  assert_tree_equals_blocks(2_ui_n, {TypeBlock(BlockType::Two)});
+  assert_tree_equals_blocks(12_ui_n, {TypeBlock(BlockType::IntegerShort), ValueBlock(12), TypeBlock(BlockType::IntegerShort)});
+  assert_tree_equals_blocks(127_ui_n, {TypeBlock(BlockType::IntegerShort), ValueBlock(127), TypeBlock(BlockType::IntegerShort)});
+  assert_tree_equals_blocks(128_ui_n, {TypeBlock(BlockType::IntegerPosBig), ValueBlock(1), ValueBlock(128), ValueBlock(1), TypeBlock(BlockType::IntegerPosBig)});
+  assert_tree_equals_blocks(256_ui_n, {TypeBlock(BlockType::IntegerPosBig), ValueBlock(2), ValueBlock(0), ValueBlock(1), ValueBlock(2), TypeBlock(BlockType::IntegerPosBig)});
+  assert_tree_equals_blocks(1_si_n, {TypeBlock(BlockType::MinusOne)});
+  assert_tree_equals_blocks(12_si_n, {TypeBlock(BlockType::IntegerShort), ValueBlock(-12), TypeBlock(BlockType::IntegerShort)});
+  assert_tree_equals_blocks(128_si_n, {TypeBlock(BlockType::IntegerShort), ValueBlock(-128), TypeBlock(BlockType::IntegerShort)});
+  assert_tree_equals_blocks(129_si_n, {TypeBlock(BlockType::IntegerNegBig), ValueBlock(1), ValueBlock(129), ValueBlock(1), TypeBlock(BlockType::IntegerNegBig)});
+
   assert_tree_equals_blocks(u'π'_n, {TypeBlock(BlockType::Constant), ValueBlock(static_cast<uint8_t>(Constant::Type::Pi)), TypeBlock(BlockType::Constant)});
   assert_tree_equals_blocks(2.0_fn, {TypeBlock(BlockType::Float), ValueBlock(0), ValueBlock(0), ValueBlock(0), ValueBlock(64), TypeBlock(BlockType::Float)});
   assert_tree_equals_blocks(1_nsn, {MinusOneBlock});
@@ -103,9 +116,9 @@ void testConstexprTreeConstructor() {
 }
 
 void testEditionNodeConstructor() {
-  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerPosBig>(1232424242), {TypeBlock(BlockType::IntegerPosBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerPosBig)});
-  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(1232424242), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
-  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(-1232424242), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
+  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerPosBig>(static_cast<uint64_t>(1232424242)), {TypeBlock(BlockType::IntegerPosBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerPosBig)});
+  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(static_cast<uint64_t>(1232424242)), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
+  assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(static_cast<uint64_t>(1232424242)), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
 }
 
 void testNodeIterator() {
@@ -204,7 +217,7 @@ void testNode() {
 
   // operator==
   Node node0 = 42_n;
-  Node node1 = EditionReference::Push<BlockType::IntegerShort>(42);
+  Node node1 = EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(42));
   assert(node0 != node1 && *node0.block() == *node1.block());
   Node node2(editionPool->firstBlock());
   assert(node2 == node1);
@@ -234,9 +247,9 @@ void testNode() {
 }
 
 void testNodeSize() {
-  Node node = EditionReference::Push<BlockType::IntegerPosBig>(0x00FF0000);
+  Node node = EditionReference::Push<BlockType::IntegerPosBig>(static_cast<uint64_t>(0x00FF0000));
   assert(node.nodeSize() == 7);
-  node = static_cast<Node>(EditionReference::Push<BlockType::IntegerNegBig>(0x0000FF00));
+  node = static_cast<Node>(EditionReference::Push<BlockType::IntegerNegBig>(static_cast<uint64_t>(0x0000FF00)));
   assert(node.nodeSize() == 6);
 }
 

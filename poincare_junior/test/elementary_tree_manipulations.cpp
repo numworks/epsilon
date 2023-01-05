@@ -10,12 +10,12 @@ inline EditionReference createSimpleExpression() {
   std::cout << "\n---------------- Create (1 + 2) * 3 * 4 ----------------" << std::endl;
   EditionReference multiplication = EditionReference::Push<BlockType::Multiplication>(3);
   EditionReference::Push<BlockType::Addition>(2);
-  EditionReference::Push<BlockType::IntegerShort>(1);
-  EditionReference::Push<BlockType::IntegerShort>(2);
-  EditionReference::Push<BlockType::IntegerShort>(3);
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
   EditionReference::Push<BlockType::Addition>(2);
-  EditionReference::Push<BlockType::IntegerShort>(4);
-  EditionReference::Push<BlockType::IntegerShort>(5);
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(5));
   return multiplication;
 }
 
@@ -55,10 +55,10 @@ void elementaryTreeManipulation() {
 
   std::cout << "\n---------------- Create 1-2/3 ----------------" << std::endl;
   EditionReference subtraction = EditionReference::Push<BlockType::Subtraction>();
-  EditionReference::Push<BlockType::IntegerShort>(1);
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
   EditionReference::Push<BlockType::Division>();
-  EditionReference::Push<BlockType::IntegerShort>(2);
-  EditionReference::Push<BlockType::IntegerShort>(3);
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
 
   log_edition_pool();
 
@@ -70,10 +70,10 @@ void elementaryTreeManipulation() {
 
   std::cout << "\n---------------- Create 1+(2+3) ----------------" << std::endl;
   EditionReference addition = EditionReference::Push<BlockType::Addition>(2);
-  EditionReference::Push<BlockType::IntegerShort>(1);
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
   EditionReference::Push<BlockType::Addition>(2);
-  EditionReference::Push<BlockType::IntegerShort>(2);
-  EditionReference::Push<BlockType::IntegerShort>(3);
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
   log_edition_pool();
 
   std::cout << "\n---------------- Flatten 1+(2+3) ----------------" << std::endl;

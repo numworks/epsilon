@@ -99,7 +99,7 @@ void assert_check_cache_reference(CacheReference reference, std::initializer_lis
 
 void testCacheReference() {
   // Constructors
-  CacheReference reference0([] (){ EditionReference::Push<BlockType::IntegerShort>(4); });
+  CacheReference reference0([] (){ EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4)); });
   assert_check_cache_reference(reference0, {4_n});
 
   CacheReference reference1([] (Node node){ EditionReference(node).replaceNodeByNode(5_n); }, static_cast<Node>(smallTree).block());
@@ -126,7 +126,7 @@ void check_reference_invalidation_and_reconstruction(CacheReference reference, u
 }
 
 void testCacheReferenceInvalidation() {
-  CacheReference reference([] (){ EditionReference::Push<BlockType::IntegerShort>(28); });
+  CacheReference reference([] (){ EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(28)); });
   reference.send([](const Node tree, void * result) {}, nullptr);
   uint16_t identifier = reference.id();
   assert_pools_tree_sizes_are(1, 0);

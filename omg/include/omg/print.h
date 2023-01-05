@@ -26,7 +26,7 @@ inline char CharacterForDigit(Base base, uint8_t d) {
   return d + '0';
 }
 
-inline uint8_t DigitForCharacter(char c) {
+inline constexpr uint8_t DigitForCharacter(char c) {
   assert(c >= '0');
   if (c <= '9') {
     return c - '0';

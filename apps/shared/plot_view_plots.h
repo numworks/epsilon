@@ -127,7 +127,7 @@ protected:
     Curve1D m_curve;
     void * m_model;
     void * m_context;
-    HighlightTest m_highlighted;
+    HighlightTest m_highlightTest;
     float m_start;
     float m_barsWidth;
     bool m_displayBorder;

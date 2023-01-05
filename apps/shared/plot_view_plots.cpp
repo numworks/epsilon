@@ -298,7 +298,7 @@ WithHistogram::HistogramDrawing::HistogramDrawing(Curve1D curve, void * model, v
   m_curve(curve),
   m_model(model),
   m_context(context),
-  m_highlighted(nullptr),
+  m_highlightTest(nullptr),
   m_start(start),
   m_barsWidth(barsWidth),
   m_displayBorder(false),
@@ -312,7 +312,7 @@ void WithHistogram::HistogramDrawing::setBorderOptions(bool displayBorder, KDCol
 }
 
 void WithHistogram::HistogramDrawing::setHighlightOptions(HighlightTest highlighted, KDColor color) {
-  m_highlighted = highlighted;
+  m_highlightTest = highlighted;
   m_highlightColor = color;
 }
 
@@ -366,7 +366,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
     assert(barHeight >= 0);
 
     // Step 3: Draw
-    KDColor color = m_highlighted && m_highlighted(xCenter, m_model, m_context) ? m_highlightColor : m_color;
+    KDColor color = m_highlightTest && m_highlightTest(xCenter, m_model, m_context) ? m_highlightColor : m_color;
     // Body of the bar
     KDRect barRect(pxLeft + borderWidth, py, barWidth, barHeight);
     ctx->fillRect(barRect, color);

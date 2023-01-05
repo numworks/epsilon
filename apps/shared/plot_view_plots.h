@@ -110,13 +110,14 @@ protected:
  * implement a drawPlot(const AbstractPlotView *, KDContext *, KDRect) method. */
 class WithHistogram {
 protected:
+  constexpr static KDCoordinate k_borderWidth = 1;
   typedef float (*Curve1D)(float, void *, void *);
   typedef bool (*HighlightTest)(float, void *, void *);
 
   class HistogramDrawing {
   public:
     HistogramDrawing(Curve1D curve, void * model, void * context, float start, float barsWidth, KDColor color, bool fillBars);
-    void setBorderOptions(KDCoordinate width, KDColor color);
+    void setBorderOptions(bool displayBorder, KDColor color);
     void setHighlightOptions(HighlightTest highlighted, KDColor color);
     void draw(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect) const;
 
@@ -129,7 +130,7 @@ protected:
     HighlightTest m_highlighted;
     float m_start;
     float m_width;
-    KDCoordinate m_borderWidth;
+    bool m_displayBorder;
     KDColor m_color;
     KDColor m_highlightColor;
     KDColor m_borderColor;

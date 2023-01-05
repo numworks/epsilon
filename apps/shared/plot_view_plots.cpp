@@ -380,7 +380,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
       // Left border
       ctx->fillRect(KDRect(left, top, borderWidth, barHeight), m_borderColor);
       // Top border
-      ctx->fillRect(KDRect(left, top, barWidth + borderWidth, borderWidth), m_borderColor);
+      ctx->fillRect(KDRect(left + borderWidth, top, barWidth, borderWidth), m_borderColor);
       // Right border
       ctx->fillRect(KDRect(leftOfNextBar, top, borderWidth, barHeight), m_borderColor);
     }

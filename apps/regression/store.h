@@ -1,21 +1,21 @@
 #ifndef REGRESSION_STORE_H
 #define REGRESSION_STORE_H
 
-#include "model/model.h"
 #include "model/cubic_model.h"
 #include "model/exponential_model.h"
 #include "model/linear_model.h"
 #include "model/logarithmic_model.h"
 #include "model/logistic_model.h"
+#include "model/median_model.h"
+#include "model/model.h"
 #include "model/none_model.h"
 #include "model/power_model.h"
 #include "model/proportional_model.h"
 #include "model/quadratic_model.h"
 #include "model/quartic_model.h"
 #include "model/trigonometric_model.h"
-#include "model/median_model.h"
-#include "../shared/interactive_curve_view_range.h"
-#include "../shared/linear_regression_store.h"
+#include <apps/shared/interactive_curve_view_range.h>
+#include <apps/shared/linear_regression_store.h>
 #include <escher/responder.h>
 #include <float.h>
 
@@ -32,9 +32,7 @@ public:
 
   // Regression
   void setSeriesRegressionType(int series, Model::Type type);
-  Model::Type seriesRegressionType(int series) {
-    return m_regressionTypes[series];
-  }
+  Model::Type seriesRegressionType(int series) { return m_regressionTypes[series]; }
   Model * modelForSeries(int series) {
     assert(series >= 0 && series < k_numberOfSeries);
     assert((int)m_regressionTypes[series] >= 0 && (int)m_regressionTypes[series] < Model::k_numberOfModels);
@@ -48,9 +46,7 @@ public:
   /* Return the closest dot to given dot, on the right if direction > 0,
    * on the left otherwise */
   int nextDot(int series, int direction, int dot, bool displayMean);
-  Model * regressionModel(Model::Type type) {
-    return regressionModel(static_cast<int>(type));
-  }
+  Model * regressionModel(Model::Type type) { return regressionModel(static_cast<int>(type)); }
 
   // Series
   void updateSeriesValidity(int series) override;
@@ -71,10 +67,12 @@ public:
 
   // Double Pair Store
   bool updateSeries(int series, bool delayUpdate = false) override;
+
 private:
   double computeDeterminationCoefficient(int series, Poincare::Context * globalContext);
   void resetMemoization();
   Model * regressionModel(int index);
+
   Model::Type * m_regressionTypes; // This is a table of size k_numberOfSeries.
   NoneModel m_noneModel;
   LinearModel m_linearAxpbModel;

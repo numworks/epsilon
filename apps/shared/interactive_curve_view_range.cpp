@@ -323,9 +323,9 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX, bool compute
       protectedSetY(*newRange.y(), k_maxFloat);
     }
 
-    /* We notify the delegate to refresh the cursor's position and update the
-     * bottom margin (which depends on the banner height). */
-    m_delegate->marginsWillBeComputed();
+    /* We notify the delegate to refresh the cursor's position, which will
+     * update the bottom margin (which depends on the banner height). */
+    m_delegate->refreshCursorAfterComputingRange();
 
     Range2D newRangeWithMargins = m_delegate->addMargins(newRange);
     newRangeWithMargins = Range2D(

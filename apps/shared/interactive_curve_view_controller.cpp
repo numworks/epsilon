@@ -129,7 +129,7 @@ void InteractiveCurveViewController::viewWillAppear() {
   curveView()->reload(true);
 }
 
-void InteractiveCurveViewController::refreshCursor(bool ignoreMargins) {
+void InteractiveCurveViewController::refreshCursor(bool ignoreMargins, bool forceFiniteY) {
   /* Warning: init cursor parameter before reloading banner view. Indeed,
    * reloading banner view needs an updated cursor to load the right data. */
   double t = m_cursor->t();
@@ -140,7 +140,7 @@ void InteractiveCurveViewController::refreshCursor(bool ignoreMargins) {
     // Move the cursor onto the selected curve
     Poincare::Coordinate2D<double> xy = selectedModelXyValues(t);
     m_cursor->moveTo(t, xy.x1(), xy.x2());
-    cursorIsValid = isCursorCurrentlyVisible(ignoreMargins);
+    cursorIsValid = isCursorCurrentlyVisible(ignoreMargins, !forceFiniteY);
   }
 
   if (!cursorIsValid) {
@@ -185,7 +185,7 @@ void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
   Coordinate2D<double> xy = xyValues(selectedCurveIndex(false), t, textFieldDelegateApp()->localContext(), 0);
   m_cursor->moveTo(t, xy.x1(), xy.x2());
   reloadBannerView();
-  if (!isCursorCurrentlyVisible()) {
+  if (!isCursorCurrentlyVisible(false, true)) {
     interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::X, m_cursor->x());
     interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::Y, m_cursor->y());
   }
@@ -200,16 +200,17 @@ StackViewController * InteractiveCurveViewController::stackController() const{
   return (StackViewController *)(parentResponder()->parentResponder()->parentResponder());
 }
 
-bool InteractiveCurveViewController::isCursorVisibleAtPosition(Coordinate2D<float> position, bool ignoreMargins) {
+bool InteractiveCurveViewController::isCursorVisibleAtPosition(Coordinate2D<float> position, bool ignoreMargins, bool acceptNanOrInfiniteY) {
   InteractiveCurveViewRange * range = interactiveCurveViewRange();
   float xRange = range->xMax() - range->xMin();
   float yRange = range->yMax() - range->yMin();
   float x = position.x1(), y = position.x2();
-  return x >= range->xMin() + (ignoreMargins ? 0.f : cursorLeftMarginRatio() * xRange)
-      && x <= range->xMax() - (ignoreMargins ? 0.f : cursorRightMarginRatio() * xRange)
-      && (std::isnan(y)
-       || (y >= range->yMin() + (ignoreMargins ? 0.f : cursorBottomMarginRatio() * yRange)
-        && y <= range->yMax() - (ignoreMargins ? 0.f : cursorTopMarginRatio() * yRange)));
+  return x >= range->xMin() + (ignoreMargins ? 0.f : cursorLeftMarginRatio() * xRange) &&
+         x <= range->xMax() - (ignoreMargins ? 0.f : cursorRightMarginRatio() * xRange) &&
+         ((!std::isfinite(y) && acceptNanOrInfiniteY) ||
+          (std::isfinite(y) &&
+           y >= range->yMin() + (ignoreMargins ? 0.f : cursorBottomMarginRatio() * yRange) &&
+           y <= range->yMax() - (ignoreMargins ? 0.f : cursorTopMarginRatio() * yRange)));
 }
 
 int InteractiveCurveViewController::closestCurveIndexVertically(bool goingUp, int currentCurveIndex, Poincare::Context * context, int currentSubCurveIndex, int * subCurveIndex) const {
@@ -327,7 +328,6 @@ void InteractiveCurveViewController::setCurveViewAsMainView(bool resetInterrupte
 bool InteractiveCurveViewController::autoButtonAction() {
   m_interactiveRange->setZoomAuto(!m_interactiveRange->zoomAuto());
   m_interactiveRange->computeRanges();
-  refreshCursor();
   if (m_interactiveRange->zoomAuto()) {
     setCurveViewAsMainView(true, true);
   }

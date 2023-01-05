@@ -1,15 +1,15 @@
 #ifndef REGRESSION_APP_H
 #define REGRESSION_APP_H
 
-#include <escher/tab_view_controller.h>
-#include <escher/tab_view_data_source.h>
-#include "../shared/expression_field_delegate_app.h"
+#include "store.h"
 #include "data/store_controller.h"
 #include "graph/graph_controller.h"
 #include "graph/regression_controller.h"
 #include "stats/calculation_controller.h"
-#include "store.h"
-#include "../shared/shared_app.h"
+#include <apps/shared/expression_field_delegate_app.h>
+#include <apps/shared/shared_app.h>
+#include <escher/tab_view_controller.h>
+#include <escher/tab_view_data_source.h>
 
 namespace Regression {
 
@@ -21,9 +21,11 @@ public:
     I18n::Message upperName() const override;
     const Escher::Image * icon() const override;
   };
+
   class Snapshot : public Shared::SharedApp::Snapshot, public Escher::TabViewDataSource {
   public:
     Snapshot();
+
     App * unpack(Escher::Container * container) override;
     void reset() override;
     const Descriptor * descriptor() const override;
@@ -31,16 +33,18 @@ public:
     int * graphSelectedDotIndex() { return &m_graphSelectedDotIndex; }
     int * selectedSeriesIndex() { return &m_selectedSeriesIndex; }
     Model::Type * regressionTypes() { return m_regressionTypes; }
+
   private:
     Shared::CurveViewCursor m_cursor;
     int m_graphSelectedDotIndex;
     int m_selectedSeriesIndex;
     Model::Type m_regressionTypes[Store::k_numberOfSeries];
   };
-  static App * app() {
-    return static_cast<App *>(Escher::Container::activeApp());
-  }
+
+  static App * app() { return static_cast<App *>(Escher::Container::activeApp()); }
+
   TELEMETRY_ID("Regression");
+
   RegressionController * regressionController() { return &m_regressionController; }
   Escher::InputViewController * inputViewController() { return &m_inputViewController; }
   GraphController * graphController() { return &m_graphController; }

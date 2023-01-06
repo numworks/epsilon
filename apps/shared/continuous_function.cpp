@@ -651,10 +651,6 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::Model::renameRecordIfNeede
   return error;
 }
 
-bool textRepresentsPolarFunction(const char * text) {
-  return UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, ContinuousFunction::k_polarSymbol), ContinuousFunction::k_polarSymbol);
-}
-
 Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const char * c, CodePoint symbol, Poincare::Context * context) const {
   /* The symbol parameter is discarded in this implementation. Either there is a
    * valid named left expression and the symbol will be extracted, either the
@@ -686,16 +682,26 @@ Poincare::Expression ContinuousFunction::Model::buildExpressionFromText(const ch
       }
     }
   }
+
+  if (expressionToStore.isUninitialized()) {
+    return expressionToStore;
+  }
+
   if (isFunctionAssignment) {
     // Do not replace symbol in f(x)=
     ExpressionModel::ReplaceSymbolWithUnknown(expressionToStore.childAtIndex(1), symbol);
   } else {
-    if (textRepresentsPolarFunction(c)) {
+    if (expressionToStore.recursivelyMatches(
+      [](const Expression e, Context * context) {
+        return e.type() == ExpressionNode::Type::Symbol && AliasesLists::k_thetaAliases.contains(static_cast<const Symbol &>(e).name());
+      }))
+    {
       symbol = k_polarSymbol;
     }
     // Fallback on normal parsing
     expressionToStore = ExpressionModel::buildExpressionFromText(c, symbol, context);
   }
+
   return expressionToStore;
 }
 

@@ -65,7 +65,6 @@ private:
   Shared::WithRecord * curveParameterControllerWithRecord() override { return &m_curveParameterController; }
   FunctionSelectionController * curveSelectionController() const override { return const_cast<FunctionSelectionController *>(&m_functionSelectionController); }
   Shared::ContinuousFunctionStore * functionStore() const override { return static_cast<Shared::ContinuousFunctionStore *>(Shared::FunctionGraphController::functionStore()); }
-  bool moveCursorVertically(int direction) override;
   void moveCursorAndCenterIfNeeded(double t) override;
 
   bool defaultRangeIsNormalized() const { return functionStore()->displaysFunctionsToNormalize(); }

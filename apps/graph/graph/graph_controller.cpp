@@ -376,20 +376,6 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
   return;
 }
 
-bool GraphController::moveCursorVertically(int direction) {
-  bool moved = FunctionGraphController::moveCursorVertically(direction);
-  if (!moved) {
-    return false;
-  }
-  constexpr static int k_snapStep = 100;
-  double t = m_cursor->t();
-  double dt = (m_graphRange->xMax() - m_graphRange->xMin()) / k_snapStep;
-  if (moved) {
-    snapToInterestAndUpdateCursor(m_cursor, t - dt, t + dt);
-  }
-  return true;
-}
-
 void GraphController::moveCursorAndCenterIfNeeded(double t) {
   FunctionGraphController::moveCursorAndCenterIfNeeded(t);
   if (snapToInterestAndUpdateCursor(m_cursor, std::nextafter(m_cursor->t(), -static_cast<double>(INFINITY)), std::nextafter(m_cursor->t(), static_cast<double>(INFINITY)))) {

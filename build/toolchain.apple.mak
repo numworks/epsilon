@@ -31,6 +31,7 @@ CXX = $(shell xcrun --sdk $(APPLE_SDK) --find clang++)
 LD = $(shell xcrun --sdk $(APPLE_SDK) --find clang++)
 
 SYSROOT = $(shell xcrun --sdk $(APPLE_SDK) --show-sdk-path)
+export SDKROOT = $(shell xcrun --show-sdk-path)
 
 SFLAGS += -arch $(ARCH)
 SFLAGS += -isysroot $(SYSROOT)

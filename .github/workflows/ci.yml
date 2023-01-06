@@ -90,9 +90,10 @@ jobs:
   linux:
     runs-on: ${{ endswith(github.repository, '/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
     steps:
+      - uses: numworks/setup-llvm@latest
       - uses: actions/checkout@v3
       - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator ASAN=1 epsilon.bin test.bin
+      - run: make PLATFORM=simulator ASAN=1 TIDY=1 epsilon.bin test.bin
       - run: output/release/simulator/linux/test.bin --headless --limit-stack-usage
       - uses: actions/upload-artifact@v3
         if: ${{ ! endswith(github.repository, '/epsilon-internal') }}

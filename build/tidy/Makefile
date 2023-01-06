@@ -1,15 +1,19 @@
 CXXLINT = build/tidy/cxxlint.py
-TIDY_CXXFLAGS = -std=c++17 -fno-rtti
-ifdef CLANG_PATH
-TIDY_CXXFLAGS += -I$(CLANG_PATH)/include -L$(CLANG_PATH)/lib
+CLANG_TIDY = clang-tidy
+TIDY_CXXFLAGS = -std=c++17 -fno-rtti -fPIC
+ifdef LLVM_PATH
+LLVM_REAL_PATH = $(shell realpath $(LLVM_PATH))
+TIDY_CXXFLAGS += -I$(LLVM_REAL_PATH)/include -L$(LLVM_REAL_PATH)/lib
+export CLANG_TIDY = $(LLVM_REAL_PATH)/bin/clang-tidy
 endif
 
 output/host/tidy.lib: build/tidy/module.cpp build/tidy/reset_globals/check.cpp
-	mkdir -p output/host
-	SDKROOT=`xcrun --show-sdk-path` clang++ $(TIDY_CXXFLAGS) $^ -shared -o $@ -lclang -lclang-cpp -lclangTidy
+	$(Q) mkdir -p output/host
+	$(call rule_label,TIDYLIB)
+	$(Q) $(LLVM_REAL_PATH)/bin/clang++ $(TIDY_CXXFLAGS) $^ -shared -o $@ -Wl,-undefined,dynamic_lookup -lclangTidy 2>/dev/null
 
 $(all_objs): output/host/tidy.lib
 
 .PHONY: tidy_check
 tidy_check: output/host/tidy.lib
-	clang-tidy -load=output/host/tidy.lib --config-file=build/tidy/config.yml build/tidy/reset_globals/test.cpp --
+	$(CLANG_TIDY) -load=output/host/tidy.lib --config-file=build/tidy/config.yml build/tidy/reset_globals/test.cpp --

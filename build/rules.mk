@@ -20,7 +20,7 @@ $(eval $(call rule_for, \
 
 $(eval $(call rule_for, \
   CXX, %.o, %.cpp, \
-  $$(CXX) $$(CXXFLAGS) $$(SFLAGS) -c $$< -o $$@, \
+  $$(CXXLINT) $(CXX) $$(CXXFLAGS) $$(SFLAGS) -c $$< -o $$@, \
   global local \
 ))
 
@@ -85,4 +85,8 @@ $(eval $(call rule_for, \
   global \
 ))
 endif
+endif
+
+ifeq ($(TIDY),1)
+include build/tidy/Makefile
 endif

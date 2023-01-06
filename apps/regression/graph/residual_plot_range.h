@@ -12,6 +12,7 @@ public:
   void calibrate(double xMin, double xMax, double yMin, double yMax, KDCoordinate height, KDCoordinate bannerHeight);
 private:
   constexpr static double k_relativeMargin = 0.1;
+  void calibrateXorY(bool isX, double min, double max, KDCoordinate height = -1, KDCoordinate bannerHeight = -1);
 };
 
 }

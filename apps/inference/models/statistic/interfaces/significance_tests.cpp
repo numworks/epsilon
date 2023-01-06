@@ -287,7 +287,7 @@ double OneProportion::ComputeZ(double p0, double p, double n) {
 }
 
 double OneProportion::ComputeStandardError(double pEstimate, double n) {
-  return std::sqrt(pEstimate * (1 - pEstimate) / n);
+  return OMG::LaxToZero(std::sqrt(pEstimate * (1 - pEstimate) / n));
 }
 
 /* TwoMeans */
@@ -495,7 +495,7 @@ double TwoMeans::ComputeTZ(double deltaMean, double meanSample1, double n1, doub
 }
 
 double TwoMeans::ComputeStandardError(double s1, int n1, double s2, int n2) {
-  return std::sqrt((s1 * s1 / n1 + s2 * s2 / n2));
+  return OMG::LaxToZero(std::sqrt((s1 * s1 / n1 + s2 * s2 / n2)));
 }
 
 double TwoMeans::ComputeDegreesOfFreedom(double s1, double n1, double s2, double n2) {
@@ -538,7 +538,7 @@ void PooledTwoMeans::ComputeInterval(Interval * i) {
 double PooledTwoMeans::ComputeStandardError(double n1, double s1, double n2, double s2) {
   /* Pooled estimate of sigma */
   double sp = std::sqrt(((n1 - 1.) * s1 * s1 + (n2 - 1.) * s2 * s2) / (n1 + n2 - 2.));
-  return sp * std::sqrt(1. / n1 + 1. / n2);
+  return OMG::LaxToZero(sp * std::sqrt(1. / n1 + 1. / n2));
 }
 
 /* TwoProportions */
@@ -672,7 +672,7 @@ double TwoProportions::ComputeZ(double deltaP0, double x1, int n1, double x2, in
 double TwoProportions::ComputeStandardError(double x1, int n1, double x2, int n2) {
   double p1Estimate = x1 / n1;
   double p2Estimate = x2 / n2;
-  return std::sqrt(p1Estimate * (1 - p1Estimate) / n1 + p2Estimate * (1 - p2Estimate) / n2);
+  return OMG::LaxToZero(std::sqrt(p1Estimate * (1 - p1Estimate) / n1 + p2Estimate * (1 - p2Estimate) / n2));
 }
 
 }

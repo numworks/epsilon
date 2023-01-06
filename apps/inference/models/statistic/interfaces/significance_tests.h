@@ -3,6 +3,7 @@
 
 #include <inference/models/statistic/interval.h>
 #include <inference/models/statistic/test.h>
+#include <omg/round.h>
 
 namespace Inference {
 
@@ -54,7 +55,7 @@ public:
 private:
   static double ComputeDegreesOfFreedom(double n) { return n - 1.0; }
   static double ComputeTZ(double mean, double meanSample, double s, double n) { return (meanSample - mean) / (s / std::sqrt(n)); }
-  static double ComputeStandardError(double s, double n) { return s / std::sqrt(n); }
+  static double ComputeStandardError(double s, double n) { return OMG::LaxToZero(s / std::sqrt(n)); }
 };
 
 class OneProportion : public SignificanceTest {

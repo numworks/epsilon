@@ -36,6 +36,8 @@ public:
   float center() const { return 0.5f * (m_min + m_max); }
   void extend(float t, float limit);
   void zoom(float ratio, float center);
+  void stretch(float shift);
+  void stretchIfTooSmall(float shift = k_minLength);
 
 private:
   void privateSet(float t, bool isMin, float limit);

@@ -356,16 +356,28 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
   float xLengthNormalized = yLength / m_normalRatio;
   float yLengthNormalized = xLength * m_normalRatio;
   constexpr float k_minimalXCoverage = 0.3f;
+  constexpr float k_minimalXNormalizedCoverage = 0.15f;
   constexpr float k_minimalYCoverage = 0.3f;
+  constexpr float k_minimalYNormalizedCoverage = 0.15f;
 
   /* Y can be normalized if:
+   * - the Y range (interesting + magnitude) makes up for at least 30% of the
+   *   normalized Y range (i.e. the curve does not appear squeezed).
+   * - the normalized Y range makes up for at least 15% of the Y range. This is
+   *   to prevent that, by shrinking Y, the X axis becomes too long for the
+   *   remaining visible part of the curve.
    * - a normalized Y range can fit the interesting Y range. We only count the
    *   interesting Y range for this part as discarding the part that comes from
-   *   the magnitude is not an issue.
-   * - the Y range (interesting + magnitude) makes up for at least 30% of the
-   *   normalized Y range (i.e. the curve does not appear squeezed). */
-  bool xLengthCompatibleWithNormalization = xLengthNormalized * k_minimalXCoverage <= xLength && m_interestingRange.x()->length() <= xLengthNormalized;
-  bool yLengthCompatibleWithNormalization = yLengthNormalized * k_minimalYCoverage <= yLength && m_interestingRange.y()->length() <= yLengthNormalized;
+   *   the magnitude is not an issue.*/
+
+  bool xLengthCompatibleWithNormalization =
+    xLengthNormalized * k_minimalXCoverage <= xLength &&
+    xLength * k_minimalXNormalizedCoverage <= xLengthNormalized &&
+    m_interestingRange.x()->length() <= xLengthNormalized;
+  bool yLengthCompatibleWithNormalization =
+    yLengthNormalized * k_minimalYCoverage <= yLength &&
+    yLength * k_minimalYNormalizedCoverage <= yLengthNormalized &&
+    m_interestingRange.y()->length() <= yLengthNormalized;
 
   bool normalizeX = !m_forcedRange.x()->isValid() && (forceNormalization || xLengthCompatibleWithNormalization);
   bool normalizeY = !m_forcedRange.y()->isValid() && (forceNormalization || yLengthCompatibleWithNormalization);

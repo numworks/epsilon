@@ -43,7 +43,9 @@ void Preferences::updateExamModeFromPersistingBytesIfNeeded() const {
   assert(ExamPersistingBytes(0xffff).mode() == ExamMode::Unknown);
   if (m_examMode == ExamMode::Unknown) {
     ExamPersistingBytes pb(Ion::PersistingBytes::read());
+#if PLATFORM_DEVICE
     static_assert(sizeof(pb) == sizeof(uint16_t), "Exam mode encoding on persisting bytes has changed.");
+#endif
     ExamMode mode = pb.mode();
     assert(static_cast<uint8_t>(mode) >= static_cast<uint8_t>(ExamMode::Off) && static_cast<uint8_t>(mode) < static_cast<uint8_t>(ExamMode::Undefined));
 

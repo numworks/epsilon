@@ -14,6 +14,7 @@ def run(*args, **kwargs):
     print(*args)
   p = subprocess.run(*args, **kwargs)
   if p.returncode:
+    print("Error running", args)
     exit(p.returncode)
 
 # Run the compiler
@@ -26,7 +27,7 @@ if "-w" in argv:
 
 # Prepare the linter
 tidy = [
-  "clang-tidy",
+  environ["CLANG_TIDY"],
   "-quiet",
   "-load=output/host/tidy.lib",
   "--config-file=build/tidy/config.yml",

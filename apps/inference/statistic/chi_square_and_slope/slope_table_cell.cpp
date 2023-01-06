@@ -31,4 +31,10 @@ InputViewController * SlopeTableCell::inputViewController() {
   return App::app()->inputViewController();
 }
 
+void SlopeTableCell::reload() {
+  if (!recomputeDimensions()) {
+    m_selectableTableView.reloadData(false);
+  }
+}
+
 }

@@ -61,6 +61,7 @@ public:
 
   virtual Escher::InputViewController * inputViewController() = 0;
   virtual DoublePairStore * store() = 0;
+  virtual void reload() { table()->reloadData(); }
 
 protected:
   Escher::SelectableTableView * table() { return m_clearColumnHelper->table(); }

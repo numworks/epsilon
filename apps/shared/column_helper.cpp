@@ -151,7 +151,7 @@ bool StoreColumnHelper::fillColumnWithFormula(Expression formula) {
     if (!store()->setList(static_cast<List &>(formula), seriesToFill, columnToFill, false, true)) {
       return false;
     }
-    table()->reloadData();
+    reload();
     return true;
   }
   // If formula contains a random formula, evaluate it for each pairs.

@@ -7,6 +7,7 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/wasapi/SDL_wasapi.c \
   audio/wasapi/SDL_wasapi_win32.c \
   audio/winmm/SDL_winmm.c \
+  core/windows/SDL_hid.c \
   core/windows/SDL_windows.c \
   core/windows/SDL_xinput.c \
   filesystem/windows/SDL_sysfilesystem.c \
@@ -16,6 +17,7 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   hidapi/windows/hid.c \
   joystick/windows/SDL_dinputjoystick.c \
   joystick/windows/SDL_mmjoystick.c \
+  joystick/windows/SDL_rawinputjoystick.c \
   joystick/windows/SDL_windowsjoystick.c \
   joystick/windows/SDL_xinputjoystick.c \
   loadso/windows/SDL_sysloadso.c \
@@ -28,6 +30,7 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   render/direct3d11/SDL_render_d3d11.c \
   render/direct3d11/SDL_shaders_d3d11.c \
   render/SDL_d3dmath.c \
+  sensor/windows/SDL_windowssensor.c \
   thread/generic/SDL_syscond.c \
   thread/windows/SDL_sysmutex.c \
   thread/windows/SDL_syssem.c \

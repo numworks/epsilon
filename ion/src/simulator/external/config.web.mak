@@ -4,6 +4,7 @@ SDL_SFLAGS += -std=gnu99
 sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/disk/SDL_diskaudio.c \
   audio/emscripten/SDL_emscriptenaudio.c \
+  core/unix/SDL_poll.c \
   haptic/dummy/SDL_syshaptic.c \
   hidapi/SDL_hidapi.c \
   joystick/emscripten/SDL_sysjoystick.c \

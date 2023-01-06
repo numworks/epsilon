@@ -4,6 +4,7 @@ SDL_SFLAGS += -fasm-blocks -fstrict-aliasing -fobjc-arc
 
 sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/coreaudio/SDL_coreaudio.m \
+  core/unix/SDL_poll.c \
   file/cocoa/SDL_rwopsbundlesupport.m \
   filesystem/cocoa/SDL_sysfilesystem.m \
   haptic/dummy/SDL_syshaptic.c \

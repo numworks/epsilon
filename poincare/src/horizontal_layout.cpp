@@ -549,7 +549,16 @@ void HorizontalLayout::addChildAtIndex(Layout l, int index, int currentNumberOfC
     return;
   }
 
-  if (((index == 0 || childAtIndex(index-1).mustHaveRightSibling()) && l.mustHaveLeftSibling()) || (index == numberOfChildren() && l.mustHaveRightSibling())) {
+  if (index == numberOfChildren() && l.mustHaveRightSibling()) {
+    if (childAtIndex(index-1).isEmpty()) {
+      // Use the previous empty
+      index--;
+    } else {
+      // Else add one
+      addChildAtIndex(EmptyLayout::Builder(), index, numberOfChildren(), cursor, false);
+      assert(childAtIndex(index).type() == LayoutNode::Type::EmptyLayout);
+    }
+  } else if ((index == 0 || childAtIndex(index-1).mustHaveRightSibling()) && l.mustHaveLeftSibling()) {
     // If a layout must have left and right siblings, this if should be split
     assert(l.mustHaveLeftSibling() != l.mustHaveRightSibling());
     addChildAtIndex(EmptyLayout::Builder(), index, numberOfChildren(), cursor, false);

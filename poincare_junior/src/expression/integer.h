@@ -1,6 +1,8 @@
 #ifndef POINCARE_EXPRESSION_INTEGER_H
 #define POINCARE_EXPRESSION_INTEGER_H
 
+#include <omg/bit_helper.h>
+#include <utils/bit.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
 namespace Poincare {
@@ -109,8 +111,20 @@ public:
   static uint8_t Uint8(const Node expression);
   static EditionReference Addition(IntegerHandler a, IntegerHandler b);
   static std::pair<EditionReference, EditionReference> Division(IntegerHandler a, IntegerHandler b);
-};
 
+  constexpr static uint8_t NumberOfDigits(uint64_t value) {
+    uint8_t numberOfDigits = 0;
+    while (value && numberOfDigits < sizeof(uint64_t)) {
+      value = value >> OMG::BitHelper::numberOfBitsIn<uint8_t>();
+      numberOfDigits++;
+    }
+    return numberOfDigits;
+  }
+
+  constexpr static uint8_t DigitAtIndex(uint64_t value, int index) {
+    return Bit::getByteAtIndex(value, index);
+  }
+};
 
 }
 

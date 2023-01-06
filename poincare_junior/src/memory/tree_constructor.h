@@ -3,8 +3,10 @@
 
 #include <array>
 #include <omg/print.h>
+#include <omg/print.h>
 #include "node_constructor.h"
 #include "node.h"
+#include <poincare_junior/src/expression/integer.h>
 
 namespace Poincare {
 
@@ -97,7 +99,7 @@ template<unsigned ...Len> static constexpr auto Pol(std::array<uint8_t, sizeof..
   return tree;
 }
 
-// TODO: move in OMG::Print?
+// TODO: move in OMG?
 constexpr static uint64_t Value(const char * str, size_t len) {
   uint64_t value = 0;
   for (int i = 0; i < len; i++) {
@@ -107,16 +109,6 @@ constexpr static uint64_t Value(const char * str, size_t len) {
     value = 10 * value + digit;
   }
   return value;
-}
-
-// TODO Duplicate
-constexpr static uint8_t NumberOfDigits(uint64_t value) {
-  uint8_t numberOfDigits = 0;
-  while (value && numberOfDigits < sizeof(uint64_t)) {
-    value = value >> 8; // TODO BitHelper
-    numberOfDigits++;
-  }
-  return numberOfDigits;
 }
 
 template <char... str>
@@ -135,7 +127,7 @@ constexpr unsigned IntegerTreeSize(std::initializer_list<char> specialChars, uin
   if (value <= maxValueInShortInteger) {
     return TypeBlock::NumberOfMetaBlocks(BlockType::IntegerShort);
   }
-  return TypeBlock::NumberOfMetaBlocks(genericBlockType) + NumberOfDigits(value);
+  return TypeBlock::NumberOfMetaBlocks(genericBlockType) + Integer::NumberOfDigits(value);
 }
 
 

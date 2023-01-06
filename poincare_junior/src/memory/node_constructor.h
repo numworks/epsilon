@@ -2,6 +2,8 @@
 #define POINCARE_MEMORY_NODE_CONSTRUCTOR_H
 
 #include <poincare_junior/src/expression/constant.h>
+#include <poincare_junior/src/expression/float.h>
+#include <poincare_junior/src/expression/integer.h>
 #include <utils/bit.h>
 #include "value_block.h"
 
@@ -49,7 +51,7 @@ private:
 
   template <>
   constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::Float>(Block * block, size_t blockIndex, float value) {
-    return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, BlockType::Float, SubFloatAtIndex(value, 0), SubFloatAtIndex(value, 1), SubFloatAtIndex(value, 2), SubFloatAtIndex(value, 3));
+    return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, BlockType::Float, Float::SubFloatAtIndex(value, 0), Float::SubFloatAtIndex(value, 1), Float::SubFloatAtIndex(value, 2), Float::SubFloatAtIndex(value, 3));
   }
 
   template <>
@@ -61,42 +63,17 @@ private:
     return CreateIntegerBlockAtIndexForType(block, blockIndex, BlockType::IntegerNegBig, value);
   }
 
-  // TODO move to expression/integer.h
-  constexpr static uint8_t NumberOfDigits(unsigned int value) {
-    uint8_t numberOfDigits = 0;
-    while (value && numberOfDigits < 4) {
-      value = value >> 8;
-      numberOfDigits++;
-    }
-    return numberOfDigits;
-  }
-
-  // TODO move to expression/integer.h
-  constexpr static uint8_t DigitAtIndex(uint64_t value, int index) {
-    return Bit::getByteAtIndex(value, index);
-  }
-
-  // TODO move to expression/float.h
-  union FloatMemory {
-    float m_float;
-    uint32_t m_int;
-  };
-  constexpr static uint8_t SubFloatAtIndex(float value, int index) {
-    FloatMemory f = {.m_float = value};
-    return Bit::getByteAtIndex(f.m_int, index);
-  }
-
   constexpr static bool CreateIntegerBlockAtIndexForType(Block * block, size_t blockIndex, BlockType type, uint64_t value) {
-    uint8_t numberOfDigits = NumberOfDigits(value);
+    uint8_t numberOfDigits = Integer::NumberOfDigits(value);
     switch (numberOfDigits) {
       case 1:
-        return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, DigitAtIndex(value, 0), numberOfDigits);
+        return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, Integer::DigitAtIndex(value, 0), numberOfDigits);
       case 2:
-        return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, DigitAtIndex(value, 0), DigitAtIndex(value, 1), numberOfDigits);
+        return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, Integer::DigitAtIndex(value, 0), Integer::DigitAtIndex(value, 1), numberOfDigits);
       case 3:
-        return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, DigitAtIndex(value, 0), DigitAtIndex(value, 1), DigitAtIndex(value, 2), numberOfDigits);
+        return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, Integer::DigitAtIndex(value, 0), Integer::DigitAtIndex(value, 1), Integer::DigitAtIndex(value, 2), numberOfDigits);
       case 4:
-        return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, DigitAtIndex(value, 0), DigitAtIndex(value, 1), DigitAtIndex(value, 2), DigitAtIndex(value, 3), numberOfDigits);
+        return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, Integer::DigitAtIndex(value, 0), Integer::DigitAtIndex(value, 1), Integer::DigitAtIndex(value, 2), Integer::DigitAtIndex(value, 3), numberOfDigits);
       default:
         assert(false);
         // TODO: handle case for numberOfDigits == 5, 6, 7, 8 when they occur

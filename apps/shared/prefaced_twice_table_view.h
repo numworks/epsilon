@@ -21,7 +21,7 @@ private:
     ColumnPrefaceDataSource(int prefaceColumn, Escher::TableViewDataSource * mainDataSource) : IntermediaryDataSource(mainDataSource), m_prefaceColumn(prefaceColumn) {}
 
     int prefaceColumn() const { return m_prefaceColumn; }
-    void setPrefaceColumn(int column) { m_prefaceColumn = column; }
+    bool setPrefaceColumn(int column);
     bool prefaceIsAfterOffset(KDCoordinate offsetX, KDCoordinate leftMargin) const;
     int numberOfColumns() const override { return 1; }
 
@@ -48,6 +48,7 @@ private:
   int numberOfSubviews() const override { return 4; }
   Escher::View * subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
+  void privateLayoutSubviews(bool force);
 
   ColumnPrefaceDataSource m_columnPrefaceDataSource;
   Escher::TableView m_columnPrefaceView;

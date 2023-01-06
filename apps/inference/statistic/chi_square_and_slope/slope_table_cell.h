@@ -24,6 +24,7 @@ private:
   // StoreColumnHelper
   Shared::DoublePairStore * store() override { return static_cast<SlopeTStatistic *>(tableModel()); }
   Escher::InputViewController * inputViewController() override;
+  void reload() override;
 
   Shared::BufferFunctionTitleCell m_header[SlopeTStatistic::k_maxNumberOfColumns];
 };

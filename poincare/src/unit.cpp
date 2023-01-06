@@ -981,11 +981,11 @@ bool Unit::IsForbiddenTemperatureProduct(Expression e) {
     return true;
   }
   Expression p = e.parent();
-  if (p.isUninitialized() || p.type() == ExpressionNode::Type::UnitConvert) {
+  if (p.isUninitialized() || p.type() == ExpressionNode::Type::UnitConvert || p.type() == ExpressionNode::Type::Store) {
     return false;
   }
   Expression pp = p.parent();
-  return !(p.type() == ExpressionNode::Type::Opposite && (pp.isUninitialized() || pp.type() == ExpressionNode::Type::UnitConvert));
+  return !(p.type() == ExpressionNode::Type::Opposite && (pp.isUninitialized() || pp.type() == ExpressionNode::Type::UnitConvert || pp.type() == ExpressionNode::Type::Store));
 }
 
 bool Unit::AllowImplicitAddition(const UnitNode::Representative * smallestRepresentative, const UnitNode::Representative * biggestRepresentative) {
@@ -1044,10 +1044,11 @@ Expression Unit::shallowReduce(ExpressionNode::ReductionContext reductionContext
    *      UnitConversion is set to None in this case. */
   if (node()->representative()->dimensionVector() == TemperatureRepresentative::Default().dimensionVector() && node()->representative() != k_temperatureRepresentatives + k_kelvinRepresentativeIndex) {
     Expression p = parent();
-    if (p.isUninitialized()
-     || p.type() == ExpressionNode::Type::UnitConvert
-     || (p.type() == ExpressionNode::Type::Multiplication && p.numberOfChildren() == 2)
-     || p.type() == ExpressionNode::Type::Opposite)
+    if (p.isUninitialized() ||
+        p.type() == ExpressionNode::Type::UnitConvert ||
+        p.type() == ExpressionNode::Type::Store ||
+        (p.type() == ExpressionNode::Type::Multiplication && p.numberOfChildren() == 2) ||
+        p.type() == ExpressionNode::Type::Opposite)
     {
       /* If the parent is a UnitConvert, the temperature is always legal.
        * Otherwise, we need to wait until the reduction of the multiplication

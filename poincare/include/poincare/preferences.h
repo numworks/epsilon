@@ -125,7 +125,9 @@ public:
       uint16_t m_params : 12;
     };
   };
+#if PLATFORM_DEVICE
   static_assert(sizeof(ExamPersistingBytes) == sizeof(uint16_t), "ExamPersistingBytes should fit in two bytes");
+#endif
 
   Preferences();
   static Preferences * sharedPreferences();

@@ -13,7 +13,7 @@ parser.add_argument('-o', required=True, help='The file to generate')
 args = parser.parse_args()
 
 def print_declaration(f, asset, identifier):
-    f.write(str(identifier) + ' RCDATA ' + '"../assets/' + asset + '"\n')
+    f.write(str(identifier) + ' RCDATA ' + '"ion/src/simulator/assets/' + asset + '"\n')
 
 def print_mapping(f, asset, identifier):
     f.write('ResourceID("' + asset + '", ' + str(identifier) + '),\n')

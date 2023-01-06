@@ -1,3 +1,4 @@
+#include <omg/round.h>
 #include <poincare/unit.h>
 #include <poincare/addition.h>
 #include <poincare/division.h>
@@ -242,12 +243,8 @@ const UnitNode::Representative * UnitNode::Representative::RepresentativeForDime
 static bool compareMagnitudeOrders(float order, float otherOrder) {
   /* Precision can be lost (with a year conversion for instance), so the order
    * value is rounded */
-  if (std::fabs(order) < Float<float>::EpsilonLax()) {
-    order = 0.0f;
-  }
-  if (std::fabs(otherOrder) < Float<float>::EpsilonLax()) {
-    otherOrder = 0.0f;
-  }
+  order = OMG::LaxToZero(order);
+  otherOrder = OMG::LaxToZero(otherOrder);
   if (std::fabs(std::fabs(order) - std::fabs(otherOrder)) <= 3.0f + Float<float>::EpsilonLax() && order * otherOrder < 0.0f) {
     /* If the two values are close, and their sign are opposed, the positive
      * order is preferred */

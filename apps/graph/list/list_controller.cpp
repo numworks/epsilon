@@ -189,6 +189,10 @@ bool ListController::textRepresentsAnEquation(const char * text) const {
 }
 
 bool ListController::textRepresentsPolarFunction(const char * text) const {
+  /* WARNING: This is not true anymore since cos(theta) is parsed as cos(θ) so
+   * "theta" should also be detected.
+   * So currently if the user types "cos(theta)" and presses EXE, the equation
+   * won't be completed automatically as "r=cos(theta)". */
   return UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, ContinuousFunction::k_polarSymbol), ContinuousFunction::k_polarSymbol);
 }
 

@@ -1,25 +1,25 @@
 #include "continuous_function.h"
 #include <apps/apps_container_helper.h>
-#include <escher/palette.h>
+#include <poincare/derivative.h>
+#include <poincare/float.h>
+#include <poincare/function.h>
+#include <poincare/helpers.h>
+#include <poincare/integral.h>
+#include <poincare/matrix.h>
+#include <poincare/polynomial.h>
+#include <poincare/print.h>
+#include <poincare/serialization_helper.h>
+#include <poincare/string_layout.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
-#include <poincare/undefined.h>
-#include <poincare/polynomial.h>
-#include <poincare/zoom.h>
-#include <poincare/integral.h>
-#include <poincare/function.h>
-#include <poincare/float.h>
-#include <poincare/matrix.h>
 #include <poincare/symbol_abstract.h>
-#include <poincare/serialization_helper.h>
 #include <poincare/trigonometry.h>
-#include <poincare/derivative.h>
-#include <poincare/print.h>
-#include <poincare/helpers.h>
+#include <poincare/undefined.h>
+#include <poincare/zoom.h>
+#include <escher/palette.h>
 #include "poincare_helpers.h"
 #include <algorithm>
 #include "global_context.h"
-#include <poincare/string_layout.h>
 
 using namespace Poincare;
 

@@ -3,41 +3,26 @@
 namespace Regression {
 
 void ResidualPlotRange::calibrate(double xMin, double xMax, double yMin, double yMax, KDCoordinate height, KDCoordinate bannerHeight) {
-  assert(xMax >= xMin && yMax >= yMin);
-  /* Proportional model handles datasets with a single abscissa value. residuals
-   * y values could also be very close. */
-  stretchRangeIfTooClose(&xMin, &xMax);
-  stretchRangeIfTooClose(&yMin, &yMax);
-  double xOffset = (xMax - xMin) * k_relativeMargin;
-  protectedSetX(Poincare::Range1D(xMin - xOffset, xMax + xOffset));
+  Poincare::Range1D xRange(xMin, xMax);
+  Poincare::Range1D yRange(yMin, yMax);
 
-  /* Computing yRangeMax and yRangeMin so that :
-   * - yRangeMax = yMax + k_relativeMargin * range = yRangeMin + height
-   * - yMax = yMin + range
-   * - yMin = yVisibleRangeMin + k_relativeMargin * range
-   * - yVisibleRangeMin = yRangeMin + bannerHeight
-   */
-
-  double range = yMax - yMin;
-  double yRangeMax = yMax + k_relativeMargin * range;
-  double yVisibleRangeMin = yMin - k_relativeMargin * range;
-  double heightRatio = static_cast<double>(bannerHeight) / static_cast<double>(height);
-  double yRangeMin = (yVisibleRangeMin - yRangeMax * heightRatio) / (1 - heightRatio);
-
-  protectedSetY(Poincare::Range1D(yRangeMin, yRangeMax));
-}
-
-void ResidualPlotRange::stretchRangeIfTooClose(double * min, double * max) const {
-  /* Handle cases where limits are too close or equal. They are shifted by both
-   * k_minFloat (impactful on very small values) and abs(max)*k_relativeMargin
+  /* Proportional model handles datasets with a single abscissa value. Residuals
+   * y values could also be very close. They are shifted by both k_minLength
+   * (impactful on very small values) and abs(max) * k_relativeMargin
    * (impactful on large values) in order to properly display them. */
-  if (*max - *min >= Poincare::Range1D::k_minLength) {
-    return;
-  }
-  double shift = std::fabs(*max) * k_relativeMargin + Poincare::Range1D::k_minLength;
-  *max += shift;
-  *min -= shift;
-  assert(*max - *min >= Poincare::Range1D::k_minLength);
+  xRange.stretchIfTooSmall(std::fabs(xRange.max()) * k_relativeMargin + Poincare::Range1D::k_minLength);
+  yRange.stretchIfTooSmall(std::fabs(yRange.max()) * k_relativeMargin + Poincare::Range1D::k_minLength);
+
+  xRange.stretch(xRange.length() * k_relativeMargin);
+  yRange.stretch(yRange.length() * k_relativeMargin);
+
+  /* Banner hides small values of yRange, so reduce yMin */
+  double heightRatio = static_cast<double>(bannerHeight) / static_cast<double>(height);
+  double yRangeMin = (yRange.min() - yRange.max() * heightRatio) / (1 - heightRatio);
+  yRange.setMin(yRangeMin);
+
+  protectedSetX(xRange);
+  protectedSetY(yRange);
 }
 
 }

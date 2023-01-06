@@ -11,8 +11,6 @@ public:
   // Calibrate the range to respect margin and display all data
   void calibrate(double xMin, double xMax, double yMin, double yMax, KDCoordinate height, KDCoordinate bannerHeight);
 private:
-  void stretchRangeIfTooClose(double * min, double * max) const;
-
   constexpr static double k_relativeMargin = 0.1;
 };
 

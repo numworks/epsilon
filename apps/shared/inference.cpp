@@ -5,20 +5,10 @@ namespace Shared {
 Inference::Inference() : MemoizedCurveViewRange() {
 }
 
-void Inference::stretchRangeIfTooClose(float * min, float * max) const {
-  if (*max - *min >= Poincare::Range1D::k_minLength) {
-    return;
-  }
-  *max += Poincare::Range1D::k_minLength;
-  *min -= Poincare::Range1D::k_minLength;
-  assert(*max - *min >= Poincare::Range1D::k_minLength);
-}
-
 void Inference::computeCurveViewRange() {
-  float xMin = computeXMin();
-  float xMax = computeXMax();
-  stretchRangeIfTooClose(&xMin, &xMax);
-  protectedSetX(Poincare::Range1D(xMin, xMax));
+  Poincare::Range1D xRange(computeXMin(), computeXMax());
+  xRange.stretchIfTooSmall();
+  protectedSetX(xRange);
   protectedSetY(Poincare::Range1D(computeYMin(), computeYMax()));
 }
 

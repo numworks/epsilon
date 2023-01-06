@@ -56,7 +56,12 @@ void CategoricalController::scrollViewDidChangeOffset(ScrollViewDataSource * scr
     /* Prevent the table from scrolling past the screen */
     offsetToAdd = maximalOffsetY;
   }
-  categoricalTableCell()->selectableTableView()->setContentOffset(KDPoint(currentOffset.x(), currentOffset.y() + offsetToAdd));
+  /* New offset should be corrected to account for the truncation of the
+   * categorical cell. */
+  KDCoordinate displayedCategoricalCellHeight = nonMemoizedRowHeight(k_indexOfTableCell);
+  KDCoordinate trueCategoricalCellHeight = categoricalTableCell()->minimalSizeForOptimalDisplay().height() - currentOffset.y();
+  KDCoordinate newOffsetY = offsetToAdd + currentOffset.y() + trueCategoricalCellHeight - displayedCategoricalCellHeight;
+  categoricalTableCell()->selectableTableView()->setContentOffset(KDPoint(currentOffset.x(), newOffsetY));
   // Unset the ScrollViewDelegate to avoid infinite looping
   setScrollViewDelegate(nullptr);
   m_selectableTableView.setContentOffset(KDPointZero);

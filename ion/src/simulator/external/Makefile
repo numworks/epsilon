@@ -16,7 +16,6 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/SDL_mixer.c \
   audio/SDL_wave.c \
   audio/dummy/SDL_dummyaudio.c \
-  core/unix/SDL_poll.c \
   cpuinfo/SDL_cpuinfo.c \
   dynapi/SDL_dynapi.c \
   events/SDL_clipboardevents.c \

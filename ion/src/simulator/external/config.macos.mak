@@ -7,6 +7,7 @@ SDL_SFLAGS += -Iion/src/simulator/external/sdl/src/hidapi/hidapi
 sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/coreaudio/SDL_coreaudio.m \
   audio/disk/SDL_diskaudio.c \
+  core/unix/SDL_poll.c \
   file/cocoa/SDL_rwopsbundlesupport.m \
   filesystem/cocoa/SDL_sysfilesystem.m \
   haptic/darwin/SDL_syshaptic.c \

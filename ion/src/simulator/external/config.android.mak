@@ -4,6 +4,7 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   audio/android/SDL_androidaudio.c \
   audio/openslES/SDL_openslES.c \
   core/android/SDL_android.c \
+  core/unix/SDL_poll.c \
   filesystem/android/SDL_sysfilesystem.c \
   haptic/android/SDL_syshaptic.c \
   hidapi/android/hid.cpp \

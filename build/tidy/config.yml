@@ -1,0 +1,2 @@
+Checks: '-*,epsilon-reset-globals'
+#WarningsAsErrors: 'epsilon-reset-globals'

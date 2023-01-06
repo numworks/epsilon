@@ -31,7 +31,7 @@ void Range1D::zoom(float ratio, float center) {
   m_max = (m_max - center) * ratio + center;
 }
 
-void Range1D::stretch(float shift) {
+void Range1D::stretchEachBoundBy(float shift) {
   m_min -= shift;
   m_max += shift;
 }
@@ -40,7 +40,7 @@ void Range1D::stretchIfTooSmall(float shift) {
   /* Handle cases where limits are too close or equal.
    * They are shifted by both shift. */
   if (length() < k_minLength) {
-    stretch(shift);
+    stretchEachBoundBy(shift);
   }
   assert(length() >= k_minLength);
 }

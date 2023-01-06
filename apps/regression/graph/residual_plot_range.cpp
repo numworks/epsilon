@@ -17,7 +17,7 @@ void ResidualPlotRange::calibrateXorY(bool isX, double min, double max, KDCoordi
   range.stretchIfTooSmall(std::fabs(range.max()) * k_relativeMargin + Poincare::Range1D::k_minLength);
 
   // Stretch range for margins
-  range.stretch(range.length() * k_relativeMargin);
+  range.stretchEachBoundBy(range.length() * k_relativeMargin);
 
   if (!isX) {
     // Banner hides small values of yRange, so reduce yMin

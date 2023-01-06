@@ -445,6 +445,10 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("1/(-3_°C)", Undefined::Name());
   assert_parsed_expression_simplify_to("-1×100×_°C→_K", Undefined::Name());
   assert_parsed_expression_simplify_to("_K×_°C", Undefined::Name());
+  assert_parsed_expression_simplify_to("°C→x", "_°C→x");
+  assert_parsed_expression_simplify_to("123°C→x", "123×_°C→x");
+  assert_parsed_expression_simplify_to("-4.56°C→x", "-4.56×_°C→x");
+  Ion::Storage::FileSystem::sharedFileSystem()->recordNamed("x.exp").destroy();
 
   /* Rational exponents */
   assert_parsed_expression_simplify_to("√(_m)", "1×_m^\u00121/2\u0013");

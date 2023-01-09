@@ -41,7 +41,7 @@ bool SandboxController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::Back) {
     stackViewController()->pop();
   }
-  return Ion::Events::EventIsUserInput(event);
+  return Ion::Events::IsKeyPress(event);
 }
 
 void SandboxController::redrawWindow() {

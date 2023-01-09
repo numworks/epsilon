@@ -10,7 +10,7 @@ using namespace Poincare;
 namespace Calculation {
 
 bool ExpressionField::handleEvent(Ion::Events::Event event) {
-  if (event != Ion::Events::Division) {
+  if (event != Ion::Events::Division && event != Ion::Events::Idle) {
     m_divisionCycleWithAns = Poincare::TrinaryBoolean::Unknown;
   }
   if (event == Ion::Events::Back) {

@@ -63,10 +63,10 @@ void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
     assert(cursor->position() == LayoutCursor::Position::Left);
     // Case: Left
     int childrenCount = numberOfChildren();
-    LayoutNode * parentNode = parent();
     if (childrenCount == 0) {
       // If there are no children, go Right and ask the parent
       cursor->setPosition(LayoutCursor::Position::Right);
+      LayoutNode * parentNode = parent();
       if (parentNode != nullptr) {
         parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
       }

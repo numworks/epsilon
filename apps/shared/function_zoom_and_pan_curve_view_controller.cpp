@@ -32,7 +32,7 @@ void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
 }
 
 bool FunctionZoomAndPanCurveViewController::handleEvent(Ion::Events::Event event) {
-  if (!Ion::Events::EventCanDiscardPopUp(event)) {
+  if (!Ion::Events::EventIsUserInput(event)) {
     return false;
   }
   if (event == Ion::Events::Back || event == Ion::Events::Home || event == Ion::Events::OK || event == Ion::Events::EXE) {

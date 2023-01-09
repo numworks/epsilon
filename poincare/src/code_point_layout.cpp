@@ -10,6 +10,7 @@ void CodePointLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRec
     cursor->setPosition(LayoutCursor::Position::Left);
     return;
   }
+  assert(cursor->position() == LayoutCursor::Position::Left);
   LayoutNode * parentNode = parent();
   if (parentNode != nullptr) {
     parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
@@ -21,6 +22,7 @@ void CodePointLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRe
     cursor->setPosition(LayoutCursor::Position::Right);
     return;
   }
+  assert(cursor->position() == LayoutCursor::Position::Right);
   LayoutNode * parentNode = parent();
   if (parentNode != nullptr) {
     parentNode->moveCursorRight(cursor, shouldRecomputeLayout);

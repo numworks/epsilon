@@ -23,21 +23,19 @@ void EmptyLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {
 void EmptyLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   assert(cursor->layoutNode() == this);
   // Ask the parent.
+  cursor->setPosition(LayoutCursor::Position::Left);
   LayoutNode * p = parent();
-  if (p != nullptr) {
-    cursor->setPosition(LayoutCursor::Position::Left);
-    p->moveCursorLeft(cursor, shouldRecomputeLayout);
-  }
+  assert(p != nullptr);
+  p->moveCursorLeft(cursor, shouldRecomputeLayout);
 }
 
 void EmptyLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   assert(cursor->layoutNode() == this);
   // Ask the parent.
+  cursor->setPosition(LayoutCursor::Position::Right);
   LayoutNode * p = parent();
-  if (p != nullptr) {
-    cursor->setPosition(LayoutCursor::Position::Right);
-    p->moveCursorRight(cursor, shouldRecomputeLayout);
-  }
+  assert(p != nullptr);
+  p->moveCursorRight(cursor, shouldRecomputeLayout);
 }
 
 int EmptyLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

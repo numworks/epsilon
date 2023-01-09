@@ -23,10 +23,7 @@ void CodePointLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRe
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
-  LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
-    parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
-  }
+  askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
 }
 
 int CodePointLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

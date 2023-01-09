@@ -45,10 +45,7 @@ void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRe
   }
   // Case: Right. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Right);
-  LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
-    parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
-  }
+  askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
 }
 
 void ConjugateLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {

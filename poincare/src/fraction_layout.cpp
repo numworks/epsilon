@@ -50,10 +50,7 @@ void FractionLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRec
   }
   // Case: Right. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Right);
-  LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
-    parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
-  }
+  askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
 }
 
 /* Select up/down

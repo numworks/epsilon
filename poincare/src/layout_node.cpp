@@ -99,6 +99,14 @@ LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
   return (cursor->layout().node() == this) ? parent()->equivalentCursor(cursor) : LayoutCursor();
 }
 
+void LayoutNode::askParentToMoveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  assert(cursor->position() == LayoutCursor::Position::Right);
+  LayoutNode * parentNode = parent();
+  if (parentNode != nullptr) {
+    parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
+  }
+}
+
 // Tree modification
 
 void LayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {

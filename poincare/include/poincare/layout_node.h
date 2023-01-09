@@ -115,6 +115,8 @@ public:
   }
   virtual LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
+  void askParentToMoveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout);
+
   // Tree modification
   // Collapse
   virtual bool shouldCollapseSiblingsOnLeft() const { return false; }

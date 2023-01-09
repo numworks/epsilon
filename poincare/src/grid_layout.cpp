@@ -8,7 +8,8 @@ namespace Poincare {
 // LayoutNode
 
 void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == this && cursor->position() == LayoutCursor::Position::Right) {
+  if (cursor->position() == LayoutCursor::Position::Right) {
+    assert(cursor->layoutNode() == this);
     /* Case: Right of this. Add the gray squares to the grid, then move to
      * the bottom right non gray child. */
     startEditing();
@@ -17,10 +18,10 @@ void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomput
     cursor->setLayoutNode(lastChild);
     return;
   }
+  assert(cursor->position() == LayoutCursor::Position::Left);
   int childIndex = indexOfChild(cursor->layoutNode());
   if (childIndex >= 0) {
     // Case: The cursor points to a grid's child.
-    assert(cursor->position() == LayoutCursor::Position::Left);
     if (childIsLeftOfGrid(childIndex)) {
      /* Case: Left of a child on the left of the grid. Remove the gray squares of
       * the grid, then go left of the grid. */
@@ -43,18 +44,19 @@ void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomput
 }
 
 void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->layoutNode() == this
-      && cursor->position() == LayoutCursor::Position::Left) {
+  if (cursor->position() == LayoutCursor::Position::Left) {
     // Case: Left. Add gray squares to the matrix, then go to its first entry.
+    assert(cursor->layoutNode() == this);
     startEditing();
     *shouldRecomputeLayout = true;
     assert(m_numberOfColumns*m_numberOfRows >= 1);
     cursor->setLayoutNode(childAtIndex(0));
     return;
   }
+  assert(cursor->position() == LayoutCursor::Position::Right);
   LayoutNode * cursorNode = cursor->layoutNode();
   int childIndex = indexOfChild(cursorNode);
-  if (childIndex >= 0 && cursor->position() == LayoutCursor::Position::Right) {
+  if (childIndex >= 0) {
     // Case: The cursor points to a grid's child.
     if (childIsRightOfGrid(childIndex)) {
       // Case: Right of a child on the right of the grid. Go Right of the grid.

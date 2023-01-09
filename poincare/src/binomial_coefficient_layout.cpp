@@ -50,10 +50,7 @@ void BinomialCoefficientLayoutNode::moveCursorRight(LayoutCursor * cursor, bool 
   }
   // Case: Right. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Right);
-  LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
-    parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
-  }
+  askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
 }
 
 void BinomialCoefficientLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {

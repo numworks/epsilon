@@ -37,10 +37,7 @@ void BracketPairLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * should
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
   // Case: Right of the brackets. Ask the parent.
-  LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
-    parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
-  }
+  askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
 }
 
 void BracketPairLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {

@@ -70,10 +70,7 @@ void ListSequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shoul
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
-  LayoutNode * parentNode = parent();
-  if (parentNode) {
-    parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
-  }
+  askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
 }
 
 void ListSequenceLayoutNode::deleteBeforeCursor(LayoutCursor * cursor) {

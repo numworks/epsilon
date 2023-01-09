@@ -33,9 +33,7 @@ void EmptyLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomp
   assert(cursor->layoutNode() == this);
   // Ask the parent.
   cursor->setPosition(LayoutCursor::Position::Right);
-  LayoutNode * p = parent();
-  assert(p != nullptr);
-  p->moveCursorRight(cursor, shouldRecomputeLayout);
+  askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
 }
 
 int EmptyLayoutNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {

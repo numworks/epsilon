@@ -89,10 +89,7 @@ void SequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRec
   }
   assert(cursor->position() == LayoutCursor::Position::Right);
   // Case: Right. Ask the parent
-  LayoutNode * parentLayout = parent();
-  if (parentLayout != nullptr) {
-    parentLayout->moveCursorRight(cursor, shouldRecomputeLayout);
-  }
+  askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
 }
 
 void SequenceLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {

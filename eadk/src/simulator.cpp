@@ -4,6 +4,7 @@ extern "C" {
 #include <ion.h>
 #include <kandinsky/ion_context.h>
 #include <ion/src/shared/events.h>
+#include <cstdlib>
 
 static inline void preemptive_termination(Ion::Events::Event e) {
   if (e == Ion::Events::Home || e == Ion::Events::Termination) {

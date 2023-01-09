@@ -38,10 +38,7 @@ void ListSequenceLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * should
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
-  LayoutNode * parentNode = parent();
-  if (parentNode) {
-    parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
-  }
+  askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
 }
 
 void ListSequenceLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {

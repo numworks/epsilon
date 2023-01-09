@@ -23,10 +23,7 @@ void ConjugateLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRec
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
   // Case: Left. Ask the parent.
-  LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
-    parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
-  }
+  askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
 }
 
 void ConjugateLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {

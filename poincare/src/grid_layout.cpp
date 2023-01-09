@@ -37,10 +37,7 @@ void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomput
   }
   // Case: Left. Ask the parent.
   assert(cursor->layoutNode() == this);
-  LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
-    parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
-  }
+  askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
 }
 
 void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {

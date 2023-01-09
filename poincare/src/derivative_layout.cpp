@@ -39,10 +39,7 @@ void DerivativeLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
     return;
   }
   assert(cursor->position() == LayoutCursor::Position::Left);
-  LayoutNode * parentNode = parent();
-  if (parentNode) {
-    parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
-  }
+  askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
 }
 
 void FirstOrderDerivativeLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {

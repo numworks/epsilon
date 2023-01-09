@@ -67,10 +67,7 @@ void IntegralLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldReco
   }
   // Case: Left of the integral. Ask the parent.
   assert(cursor->position() == LayoutCursor::Position::Left);
-  LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
-    parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
-  }
+  askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
 }
 
 void IntegralLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {

@@ -1,4 +1,4 @@
-#include "apps_container.h"
+#include "apps_container_storage.h"
 #include "global_preferences.h"
 #include <poincare/init.h>
 
@@ -36,6 +36,7 @@ void ion_main(int argc, const char * const argv[]) {
 void ion_main(int argc, const char * const argv[]) {
   // Initialize Poincare::TreePool::sharedPool
   Poincare::Init();
+  AppsContainerStorage::sharedAppsContainerStorage.init();
 
 #if EPSILON_GETOPT
   for (int i=1; i<argc; i++) {

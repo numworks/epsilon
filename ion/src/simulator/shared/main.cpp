@@ -186,23 +186,23 @@ int main(int argc, char * argv[]) {
   }
 
 #if ION_SIMULATOR_FILES
-  const char * nws = args.pop("--nws");
-  if (nws) {
-    if (load_eadk_external_data(args.pop("--nws-external-data"))) {
+  const char * nwb = args.pop("--nwb");
+  if (nwb) {
+    if (load_eadk_external_data(args.pop("--nwb-external-data"))) {
       return -1;
     }
-    void * handle = dlopen(nws, RTLD_LAZY);
+    void * handle = dlopen(nwb, RTLD_LAZY);
     if (handle == nullptr) {
-      fprintf(stderr, "Error loading %s: %s\n", nws, dlerror());
+      fprintf(stderr, "Error loading %s: %s\n", nwb, dlerror());
       return -1;
     }
-    int (*nws_main)(int argc, const char * const argv[]);
-    *(void**)(&nws_main) = dlsym(handle, "main");
-    if (nws_main == nullptr) {
-      fprintf(stderr, "Could not locate nws_main symbol: %s\n", dlerror());
+    int (*nwb_main)(int argc, const char * const argv[]);
+    *(void**)(&nwb_main) = dlsym(handle, "main");
+    if (nwb_main == nullptr) {
+      fprintf(stderr, "Could not locate nwb_main symbol: %s\n", dlerror());
       return -1;
     }
-    nws_main(args.argc(), args.argv());
+    nwb_main(args.argc(), args.argv());
     dlclose(handle);
   } else {
 #endif

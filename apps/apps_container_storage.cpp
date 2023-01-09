@@ -14,6 +14,8 @@
 
 constexpr int k_numberOfCommonApps = 1+APPS_CONTAINER_SNAPSHOT_COUNT; // Take the Home app into account
 
+OMG::GlobalBox<AppsContainerStorage> AppsContainerStorage::sharedAppsContainerStorage;
+
 AppsContainerStorage::AppsContainerStorage() :
   AppsContainer()
   APPS_CONTAINER_SNAPSHOT_CONSTRUCTORS

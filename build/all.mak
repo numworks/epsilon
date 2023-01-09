@@ -14,16 +14,16 @@ all:
 	@ mkdir -p output/all_official
 	@ echo "BUILD_FIRMWARE    DEVICE N0110"
 	@ $(MAKE) MODEL=n0110 clean
-	@ $(MAKE) epsilon.onboarding.dfu
-	@ cp output/release/device/n0110/epsilon/epsilon.onboarding.dfu output/all_official/epsilon.device.n0110.dfu
-	@ $(MAKE) epsilon.onboarding.allow3rdparty.dfu
-	@ cp output/release/device/n0110/epsilon/epsilon.onboarding.allow3rdparty.dfu output/all_official/epsilon.device.n0110.allow3rdparty.dfu
+	@ $(MAKE) EMBED_EXTRA_DATA=0 MODEL=n0110 epsilon.onboarding.dfu
+	@ cp output/release/device/n0110/epsilon/epsilon.onboarding.dfu output/all_official/unsigned_epsilon.n0110.onboarding.dfu
+	@ $(MAKE) EMBED_EXTRA_DATA=0 MODEL=n0110 epsilon.onboarding.allow3rdparty.dfu
+	@ cp output/release/device/n0110/epsilon/epsilon.onboarding.allow3rdparty.dfu output/all_official/unsigned_epsilon.n0110.onboarding.allow3rdparty.dfu
 	@ echo "BUILD_FIRMWARE    DEVICE N0120"
 	@ $(MAKE) MODEL=n0120 clean
-	@ $(MAKE) MODEL=n0120 epsilon.onboarding.dfu
-	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.dfu output/all_official/epsilon.device.n0120.dfu
-	@ $(MAKE) MODEL=n0120 epsilon.onboarding.allow3rdparty.dfu
-	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.allow3rdparty.dfu output/all_official/epsilon.device.n0120.allow3rdparty.dfu
+	@ $(MAKE) EMBED_EXTRA_DATA=1 MODEL=n0120 epsilon.onboarding.dfu
+	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.dfu output/all_official/unsigned_epsilon.n0120.onboarding.dfu
+	@ $(MAKE) EMBED_EXTRA_DATA=1 MODEL=n0120 epsilon.onboarding.allow3rdparty.dfu
+	@ cp output/release/device/n0120/epsilon/epsilon.onboarding.allow3rdparty.dfu output/all_official/unsigned_epsilon.n0120.onboarding.allow3rdparty.dfu
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB ZIP"
 	@ $(MAKE) PLATFORM=simulator TARGET=web clean
 	@ $(MAKE) PLATFORM=simulator TARGET=web epsilon.zip
@@ -31,10 +31,6 @@ all:
 	@ echo "BUILD_FIRMWARE    SIMULATOR WEB JS"
 	@ $(MAKE) PLATFORM=simulator TARGET=web htmlpack.zip
 	@ cp output/release/simulator/web/htmlpack.zip output/all_official/htmlpack.zip
-	@ echo "BUILD_FIRMWARE    SIMULATOR WEB PYTHON JS"
-	@ $(MAKE) PLATFORM=simulator TARGET=web clean
-	@ $(MAKE) PLATFORM=simulator TARGET=web EPSILON_GETOPT=1 EPSILON_APPS=code epsilon.js
-	@ cp output/release/simulator/web/epsilon.js output/all_official/epsilon.python.js
 	@ echo "BUILD_FIRMWARE    SIMULATOR ANDROID"
 	@ $(MAKE) PLATFORM=simulator TARGET=android clean
 	@ $(MAKE) PLATFORM=simulator TARGET=android epsilon.apk

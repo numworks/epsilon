@@ -18,14 +18,17 @@ void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
       return;
     }
     assert(cursor->position() == LayoutCursor::Position::Right);
-    /* Case: Right. Go to the last child if there is one, and move Left. Else
-     * go Left and ask the parent. */
+    // Case: Right.
     int childrenCount = numberOfChildren();
-    if (childrenCount >= 1) {
-      cursor->setLayoutNode(childAtIndex(childrenCount-1));
-    } else {
+    if (childrenCount == 0) {
+      // If there are no children, go Left and ask the parent
       cursor->setPosition(LayoutCursor::Position::Left);
+      askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
+      return;
     }
+    /* If there is at least one child, set the cursor to the last child and
+     * move it Left */
+    cursor->setLayoutNode(childAtIndex(childrenCount - 1));
     return cursor->moveLeft(shouldRecomputeLayout);
   }
 
@@ -37,12 +40,12 @@ void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
     // Case: the child is the leftmost. Ask the parent.
     if (parent() != nullptr) {
       cursor->setLayoutNode(this);
-      return cursor->moveLeft(shouldRecomputeLayout);
+      askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
     }
     return;
   }
   // Case: the child is not the leftmost. Go to its left sibling and move Left.
-  cursor->setLayoutNode(childAtIndex(childIndex-1));
+  cursor->setLayoutNode(childAtIndex(childIndex - 1));
   cursor->setPosition(LayoutCursor::Position::Right);
   cursor->moveLeft(shouldRecomputeLayout);
 }
@@ -65,9 +68,8 @@ void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
     }
     /* If there is at least one child, set the cursor to the first child and
      * move it Right */
-    LayoutNode * firstChild = childAtIndex(0);
-    cursor->setLayoutNode(firstChild);
-    return firstChild->moveCursorRight(cursor, shouldRecomputeLayout);
+    cursor->setLayoutNode(childAtIndex(0));
+    return cursor->moveRight(shouldRecomputeLayout);
   }
 
   // Case: The cursor is Right of a child.
@@ -82,11 +84,10 @@ void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldR
     }
     return;
   }
-  /* Case: the child is not the rightmost. Go to its right sibling and move
-   * Right. */
-  cursor->setLayoutNode(childAtIndex(childIndex+1));
+  // Case: the child is not the rightmost. Go to its right sibling and move Right.
+  cursor->setLayoutNode(childAtIndex(childIndex + 1));
   cursor->setPosition(LayoutCursor::Position::Left);
-  return childAtIndex(childIndex+1)->moveCursorRight(cursor, shouldRecomputeLayout);
+  cursor->moveRight(shouldRecomputeLayout);
 }
 
 LayoutCursor HorizontalLayoutNode::equivalentCursor(LayoutCursor * cursor) {

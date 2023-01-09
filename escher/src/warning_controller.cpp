@@ -72,7 +72,7 @@ View * WarningController::view() {
 }
 
 bool WarningController::handleEvent(Ion::Events::Event event) {
-  if (!Ion::Events::EventIsUserInput(event) || event == Ion::Events::OnOff) {
+  if (!Ion::Events::IsKeyPress(event) || event == Ion::Events::OnOff) {
     return false;
   }
   if (m_exitOnOKBackEXEOnly && !(event == Ion::Events::OK || event == Ion::Events::EXE || event == Ion::Events::Back)) {

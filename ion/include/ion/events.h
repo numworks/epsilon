@@ -276,7 +276,7 @@ inline bool canRepeatEvent(Event e) {
     || e == Events::ShiftDown;
 }
 
-inline static bool EventIsUserInput(Event e) {
+inline static bool IsKeyPress(Event e) {
   return e.isKeyboardEvent() || e == ExternalText;
 }
 

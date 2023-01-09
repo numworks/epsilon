@@ -14,10 +14,7 @@ void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRe
   if (this == cursor->layoutNode()) {
     if (cursor->position() == LayoutCursor::Position::Left) {
       // Case: Left. Ask the parent.
-      LayoutNode * parentNode = parent();
-      if (parentNode != nullptr) {
-        parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
-      }
+      askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
       return;
     }
     assert(cursor->position() == LayoutCursor::Position::Right);

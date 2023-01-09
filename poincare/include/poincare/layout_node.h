@@ -115,6 +115,7 @@ public:
   }
   virtual LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
+  void askParentToMoveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout);
   void askParentToMoveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout);
 
   // Tree modification

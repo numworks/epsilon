@@ -24,9 +24,7 @@ void EmptyLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecompu
   assert(cursor->layoutNode() == this);
   // Ask the parent.
   cursor->setPosition(LayoutCursor::Position::Left);
-  LayoutNode * p = parent();
-  assert(p != nullptr);
-  p->moveCursorLeft(cursor, shouldRecomputeLayout);
+  askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
 }
 
 void EmptyLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {

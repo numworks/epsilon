@@ -7,7 +7,7 @@ EPSILON_TELEMETRY ?= 0
 TERMS_OF_USE ?= 0
 
 ifeq ($(DEBUG),1)
-ARCHS = $(shell uname -m)
+ARCHS ?= $(shell uname -m)
 else
 ARCHS = arm64 x86_64
 endif

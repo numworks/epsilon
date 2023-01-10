@@ -35,6 +35,9 @@ bool AbstractButtonCell::handleEvent(Ion::Events::Event event) {
     m_invocation.perform(this);
     return true;
   }
+  if (event == Ion::Events::Var || event == Ion::Events::Sto) {
+    return true;
+  }
   return false;
 }
 

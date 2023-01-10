@@ -35,7 +35,12 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
     char buffer[size];
     int index = selectedRow();
     Layout l = DataFieldForRow(index)->getLayout(App::app()->elementsViewDataSource()->selectedElement(), PrintFloat::k_numberOfStoredSignificantDigits);
-    int length = l.serializeForParsing(buffer, size);
+    int length;
+    if (l.isIdenticalTo(DataField::UnknownValueLayout())) {
+      length = strlcpy(buffer, "", size);
+    } else {
+      length = l.serializeForParsing(buffer, size);
+    }
     assert(length < static_cast<int>(size));
     (void)length;
     if (e == Ion::Events::Sto || e == Ion::Events::Var) {

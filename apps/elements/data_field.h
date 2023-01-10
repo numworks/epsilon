@@ -17,6 +17,7 @@ typedef uint8_t AtomicNumber;
 
 class DataField {
 public:
+  static Poincare::Layout UnknownValueLayout() { return Poincare::LayoutHelper::String(I18n::translate(I18n::Message::UnknownValue)); }
   class ColorPair {
   public:
     constexpr ColorPair(KDColor fg = KDColorBlack, KDColor bg = KDColorWhite) : m_fg(fg), m_bg(bg) {}

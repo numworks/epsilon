@@ -122,10 +122,13 @@ bool StoreMenuController::parseAndStore(const char * text) {
   Store store = static_cast<Store&>(reducedExp);
   close();
   app->prepareForIntrusiveStorageChange();
-  if (!store.storeValueForSymbol(context)) {
-    // TODO : The record deletion has been denied. Add a warning.
-  }
+  bool storeImpossible = !store.storeValueForSymbol(context);
   app->concludeIntrusiveStorageChange();
+  if (storeImpossible) {
+    // TODO: we could detect this before the close and open the warning over the
+    // store menu
+    app->displayWarning(I18n::Message::VariableCantBeEdited);
+  }
   return true;
 }
 

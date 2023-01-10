@@ -18,37 +18,27 @@
 
 namespace Inference {
 
-class HypothesisController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>,
-                             public Escher::TextFieldDelegate,
-                             public Escher::DropdownCallback {
+class HypothesisController : public Escher::SelectableListViewController<Escher::MemoizedListViewDataSource>, public Escher::TextFieldDelegate, public Escher::DropdownCallback {
 public:
-  HypothesisController(Escher::StackViewController * parent,
-                       InputController * inputController,
-                       InputSlopeController * inputSlopeController,
-                       Escher::InputEventHandlerDelegate * handler,
-                       Test * test);
-  ViewController::TitlesDisplay titlesDisplay() override {
-    return ViewController::TitlesDisplay::DisplayLastTitle;
-  };
+  HypothesisController(Escher::StackViewController * parent, InputController * inputController, InputSlopeController * inputSlopeController, Escher::InputEventHandlerDelegate * handler, Test * test);
+  static bool ButtonAction(HypothesisController * controller, void * s);
+
+  // SelectableListViewController
+  ViewController::TitlesDisplay titlesDisplay() override { return ViewController::TitlesDisplay::DisplayLastTitle; };
   const char * title() override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Escher::HighlightCell * reusableCell(int i, int type) override;
   int numberOfRows() const override { return 3; }
-  static bool ButtonAction(HypothesisController * controller, void * s);
 
+  // TextFieldDelegate
   bool textFieldDidReceiveEvent(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
-  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField,
-                                    Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField,
-                                 const char * text,
-                                 Ion::Events::Event event) override;
+  bool textFieldShouldFinishEditing(Escher::AbstractTextField * textField, Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(Escher::AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(Escher::AbstractTextField * textField) override;
-  bool textFieldIsEditable(Escher::AbstractTextField * textField) override {
-    return selectedRow() != 0 || m_test->significanceTestType() != SignificanceTestType::Slope;
-  }
+  bool textFieldIsEditable(Escher::AbstractTextField * textField) override { return selectedRow() != 0 || m_test->significanceTestType() != SignificanceTestType::Slope; }
 
-  // Escher::DropdownCallback
+  // DropdownCallback
   void onDropdownSelected(int selectedRow) override;
 
 private:
@@ -58,9 +48,7 @@ private:
   constexpr static int k_indexOfH0 = 0;
   constexpr static int k_indexOfHa = 1;
   constexpr static int k_indexOfNext = 2;
-  constexpr static int k_cellBufferSize = 7 /* μ1-μ2 */ + 1 /* = */ +
-                                          Constants::k_shortFloatNumberOfChars /* float */ +
-                                          1 /* \0 */;
+  constexpr static int k_cellBufferSize = 7 /* μ1-μ2 */ + 1 /* = */ + Constants::k_shortFloatNumberOfChars /* float */ + 1 /* \0 */;
   InputController * m_inputController;
   InputSlopeController * m_inputSlopeController;
 

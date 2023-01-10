@@ -86,8 +86,8 @@ bool ExpressionFieldDelegateApp::handleEvent(Ion::Events::Event event) {
   return TextFieldDelegateApp::handleEvent(event);
 }
 
-bool ExpressionFieldDelegateApp::storeValue(const char * text, bool cellTypeIsStorable) {
-  if (!cellTypeIsStorable || m_modalViewController.isDisplayingModal()) {
+bool ExpressionFieldDelegateApp::storeValue(const char * text, bool cellTypeCanOpenStoreMenu) {
+  if (!cellTypeCanOpenStoreMenu || m_modalViewController.isDisplayingModal()) {
     return false;
   }
   m_storeMenuController.setText(text);

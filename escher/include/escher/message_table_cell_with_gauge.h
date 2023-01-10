@@ -11,7 +11,7 @@ public:
   using MessageTableCell::MessageTableCell;
   const View * accessoryView() const override { return &m_accessoryView; }
   void setHighlighted(bool highlight) override;
-  bool cellTypeIsStorable() const override { return false; }
+  bool canOpenStoreMenu() const override { return false; }
 private:
   GaugeView m_accessoryView;
 };

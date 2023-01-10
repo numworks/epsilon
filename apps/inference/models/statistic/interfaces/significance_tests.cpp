@@ -38,7 +38,11 @@ double SignificanceTest::ComputePValue(Test * t) {
 }
 
 bool SignificanceTest::ValidThreshold(double p) {
-  return p >= 0.0 && p <= 1.0;
+  /* A threshold of 1.0 does not make sense mathematically speaking and can
+   * cause some results to be infinite.
+   * Since p will be converted to float later, we need to ensure that
+   * it's not too close to 1.0 */
+  return p >= 0.0 && static_cast<float>(p) < 1.0 - Poincare::Float<float>::EpsilonLax();
 }
 
 bool SignificanceTest::InitializeDistribution(Statistic * statistic, DistributionType type) {

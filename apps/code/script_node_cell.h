@@ -27,7 +27,7 @@ public:
   /* HighlightCell */
   void setHighlighted(bool highlight) override;
   void reloadCell() override;
-  bool cellTypeIsStorable() const override { return false; }
+  bool canOpenStoreMenu() const override { return false; }
 private:
   Escher::BufferTextView m_labelView;
   Escher::BufferTextView m_subLabelView;

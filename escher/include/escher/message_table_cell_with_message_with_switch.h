@@ -13,7 +13,7 @@ public:
     m_alignLabelAndAccessory(alignLabelAndAccessory) {}
   const View * accessoryView() const override { return &m_accessoryView; }
   void setState(bool state) { m_accessoryView.setState(state); }
-  bool cellTypeIsStorable() const override { return false; }
+  bool canOpenStoreMenu() const override { return false; }
 protected:
   bool state() const { return m_accessoryView.state(); }
   bool forceAlignLabelAndAccessory() const override { return m_alignLabelAndAccessory; }

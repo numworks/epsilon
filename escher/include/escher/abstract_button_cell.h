@@ -17,9 +17,7 @@ public:
   bool handleEvent(Ion::Events::Event event) override;
   void setHighlighted(bool highlight) override;
   virtual KDColor highlightedBackgroundColor() const { return Palette::Select; }
-  Responder * responder() override {
-    return this;
-  }
+  Responder * responder() override { return this; }
   KDSize minimalSizeForOptimalDisplay() const override;
 protected:
   MessageTextView m_messageTextView;

@@ -31,7 +31,7 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   Preferences::PrintFloatMode floatDisplayMode = Preferences::sharedPreferences()->displayMode();
   double v = getDouble(z);
   if (!std::isfinite(v)) {
-    return LayoutHelper::String(I18n::translate(I18n::Message::UnknownValue));
+    return DataField::UnknownValueLayout();
   }
 
   Expression value = Float<double>::Builder(v);
@@ -92,7 +92,7 @@ Layout DoubleDataFieldWithSubscriptSymbol::fieldSymbolLayout() const {
 Layout ADataField::getLayout(AtomicNumber z, int) const {
   uint16_t a = ElementsDataBase::NumberOfMass(z);
   if (a == ElementData::k_AUnknown) {
-    return LayoutHelper::String(I18n::translate(I18n::Message::UnknownValue));
+    return DataField::UnknownValueLayout();
   }
   return Integer(ElementsDataBase::NumberOfMass(z)).createLayout();
 }

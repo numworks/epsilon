@@ -12,4 +12,4 @@ Steps to upgrade MicroPython:
         "make" the bare-arm port of MicroPython (don't worry if it doesn't finish)
         Copy the wanted build/genhdr files to epsilon/python/port/genhdr/
 - Put back the patches from the first step if needed
-
+- Check that the rule to build apps/code/variable_box_controller.cpp:pn_kind_t enum is the same as python/src/py/compile.c:pn_kind_t

@@ -22,22 +22,45 @@ using namespace Escher;
 
 namespace Code {
 
-// Got these in python/py/src/compile.cpp compiled file
-constexpr static uint PN_file_input_2 = 1;
-constexpr static uint PN_funcdef = 3;
-constexpr static uint PN_expr_stmt = 5;
-constexpr static uint PN_import_name = 14; // import math // import math as m // import math, cmath // import math as m, cmath as cm
-constexpr static uint PN_import_from = 15; // from math import * // from math import sin // from math import sin as stew // from math import sin, cos // from math import sin as stew, cos as cabbage // from a.b import *
-constexpr static uint PN_import_as_name = 99; // sin as stew
-constexpr static uint PN_import_as_names = 102; // ... import sin as stew, cos as cabbage
-constexpr static uint PN_dotted_name = 104;
-/* These are not used for now but might be relevant at some point?
-constexpr static uint PN_import_stmt = 92;
-constexpr static uint PN_import_from_2 = 93;
-constexpr static uint PN_import_from_2b = 94; // "from .foo import"
-constexpr static uint PN_import_from_3 = 95;
-constexpr static uint PN_import_as_names_paren = 96;
-*/
+/* WARNING:
+ * This code is copy pasted from python/src/py/compile.c
+ * We need the PN_variables here but they are inaccessible outside
+ * of micropython, so we rebuilt them with the same rules.
+ * */
+extern "C" {
+typedef enum {
+// define rules with a compile function
+#define DEF_RULE(rule, comp, kind, ...) PN_##rule,
+#define DEF_RULE_NC(rule, kind, ...)
+    #include "py/grammar.h"
+#undef DEF_RULE
+#undef DEF_RULE_NC
+    PN_const_object, // special node for a constant, generic Python object
+// define rules without a compile function
+#define DEF_RULE(rule, comp, kind, ...)
+#define DEF_RULE_NC(rule, kind, ...) PN_##rule,
+    #include "py/grammar.h"
+#undef DEF_RULE
+#undef DEF_RULE_NC
+} pn_kind_t;
+}
+/* List of PN_variables that we use:
+ * - PN_file_input_2;
+ * - PN_funcdef;
+ * - PN_expr_stmt;
+ * - PN_import_name; // import math // import math as m // import math, cmath // import math as m, cmath as cm
+ * - PN_import_from; // from math import * // from math import sin // from math import sin as stew // from math import sin, cos // from math import sin as stew, cos as cabbage // from a.b import *
+ * - PN_import_as_name; // sin as stew
+ * - PN_import_as_names; // ... import sin as stew, cos as cabbage
+ * - PN_dotted_name; // import a.b
+ *
+ * These are not used for now but might be relevant at some point?
+ * - PN_import_stmt;
+ * - PN_import_from_2;
+ * - PN_import_from_2b; // "from .foo import"
+ * - PN_import_from_3;
+ * - PN_import_as_names_paren;
+ * */
 
 VariableBoxController::VariableBoxController(ScriptStore * scriptStore) :
   AlternateEmptyNestedMenuController(I18n::Message::FunctionsAndVariables),

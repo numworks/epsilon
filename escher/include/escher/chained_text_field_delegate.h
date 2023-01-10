@@ -14,13 +14,9 @@ public:
 
   bool textFieldShouldFinishEditing(AbstractTextField * textField, Ion::Events::Event event) override;
   bool textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) override;
-  bool textFieldDidFinishEditing(AbstractTextField * textField,
-                                 const char * text,
-                                 Ion::Events::Event event) override;
+  bool textFieldDidFinishEditing(AbstractTextField * textField, const char * text, Ion::Events::Event event) override;
   bool textFieldDidAbortEditing(AbstractTextField * textField) override;
-  bool textFieldDidHandleEvent(AbstractTextField * textField,
-                               bool returnValue,
-                               bool textDidChange) override;
+  bool textFieldDidHandleEvent(AbstractTextField * textField, bool returnValue, bool textDidChange) override;
   void textFieldDidStartEditing(AbstractTextField * textField) override;
   bool textFieldIsEditable(AbstractTextField * textField) override;
 
@@ -28,6 +24,6 @@ private:
   TextFieldDelegate * m_parentDelegate;
 };
 
-}  // namespace Escher
+}
 
-#endif /* ESCHER_CHAINED_TEXT_FIELD_DELEGATE_H */
+#endif

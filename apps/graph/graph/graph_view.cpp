@@ -360,6 +360,8 @@ void GraphView::drawPointsOfInterest(KDContext * ctx, KDRect rect) {
   }
 
   PointsOfInterestCache * pointsOfInterestCache = App::app()->graphController()->pointsOfInterestForRecord(selectedRec);
+
+  bool InterestPointsAreHidden = pointsOfInterestCache->hasTooManyPoints();
   PointOfInterest p;
   int i = 0;
   do {
@@ -384,12 +386,24 @@ void GraphView::drawPointsOfInterest(KDContext * ctx, KDRect rect) {
       continue;
     }
 
+    if (pointsOfInterestCache->hasTooManyPoints()) {
+      if (!InterestPointsAreHidden) {
+        InterestPointsAreHidden = true;
+        // Hide the interest points by redrawing everything but them.
+        assert(cursorView());
+        cursorView()->setCursorFrame(cursorFrame(), true);
+        // Redraw curve and cursor without any interest point
+        drawRect(ctx, rect);
+      }
+      continue;
+    }
+
     // Draw the dot
     Coordinate2D<float> dotCoordinates = static_cast<Coordinate2D<float>>(p.xy());
 
     constexpr static Shared::Dots::Size k_dotSize = Shared::Dots::Size::Tiny;
     KDRect rectForDot = dotRect(k_dotSize, dotCoordinates);
-    // If the dot interescts the dirty rect, force the redraw
+    // If the dot intersects the dirty rect, force the redraw
     if (!rectForDot.intersects(dirtyRect()) && wasAlreadyDrawn) {
       continue;
     }

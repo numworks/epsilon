@@ -112,6 +112,7 @@ public:
   }
   virtual LayoutCursor equivalentCursor(LayoutCursor * cursor);
 
+  void askParentToMoveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
   void askParentToMoveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout);
   void askParentToMoveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout);
 

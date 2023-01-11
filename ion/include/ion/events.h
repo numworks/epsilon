@@ -34,6 +34,8 @@ public:
   bool operator!=(const Event & other) const { return (m_id != other.m_id); }
   bool isKeyboardEvent() const { return m_id < k_specialEventsOffset; }
   bool isSpecialEvent() const { return m_id >= k_specialEventsOffset; }
+  bool isKeyPress() const;
+
   // Return the length of the copied text (and not the size)
   const char * text() const;
 #ifndef NDEBUG
@@ -276,8 +278,8 @@ inline bool canRepeatEvent(Event e) {
     || e == Events::ShiftDown;
 }
 
-inline static bool IsKeyPress(Event e) {
-  return e.isKeyboardEvent() || e == ExternalText;
+inline bool Event::isKeyPress() const {
+  return isKeyboardEvent() || *this == ExternalText;
 }
 
 }

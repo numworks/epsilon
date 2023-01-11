@@ -111,7 +111,7 @@ bool AppsContainer::dispatchEvent(Ion::Events::Event event) {
   if (!didProcessEvent) {
     didProcessEvent = processEvent(event);
   }
-  if (Ion::Events::IsKeyPress(event)) {
+  if (event.isKeyPress()) {
     m_backlightDimmingTimer.reset();
     m_suspendTimer.reset();
     Ion::Backlight::setBrightness(GlobalPreferences::sharedGlobalPreferences()->brightnessLevel());

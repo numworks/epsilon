@@ -282,7 +282,7 @@ int Layout::removeChildAtIndex(int index, LayoutCursor * cursor, bool force) {
   return removeChild(childAtIndex(index), cursor, force);
 }
 
-bool Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor) {
+bool Layout::collapseOnDirection(OMG::HorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor) {
   Layout p = parent();
   if (p.isUninitialized() || p.type() != LayoutNode::Type::HorizontalLayout) {
     return false;
@@ -302,34 +302,34 @@ bool Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChi
     absorbingChild = horizontal;
   }
   HorizontalLayout horizontalAbsorbingChild = HorizontalLayout(static_cast<HorizontalLayoutNode *>(absorbingChild.node()));
-  if (direction == HorizontalDirection::Right && idxInParent < numberOfSiblings - 1) {
+  if (direction == OMG::HorizontalDirection::Right && idxInParent < numberOfSiblings - 1) {
     canCollapse = !(p.childAtIndex(idxInParent+1).mustHaveLeftSibling());
-  } else if (direction == HorizontalDirection::Left && idxInParent > 0) {
+  } else if (direction == OMG::HorizontalDirection::Left && idxInParent > 0) {
     canCollapse = !(p.childAtIndex(idxInParent - 1).mustHaveRightSibling());
   }
   Layout sibling;
   bool forceCollapse = false;
   while (canCollapse) {
-    if (direction == HorizontalDirection::Right && idxInParent == numberOfSiblings - 1) {
+    if (direction == OMG::HorizontalDirection::Right && idxInParent == numberOfSiblings - 1) {
       break;
     }
-    if (direction == HorizontalDirection::Left && idxInParent == 0) {
+    if (direction == OMG::HorizontalDirection::Left && idxInParent == 0) {
       break;
     }
-    int siblingIndex = direction == HorizontalDirection::Right ? idxInParent+1 : idxInParent-1;
+    int siblingIndex = direction == OMG::HorizontalDirection::Right ? idxInParent+1 : idxInParent-1;
     sibling = p.childAtIndex(siblingIndex);
     /* Even if forceCollapse is true, isCollapsable should be called to update
      * the number of open parentheses. */
-    bool shouldCollapse = sibling.isCollapsable(&numberOfOpenParenthesis, direction == HorizontalDirection::Left);
+    bool shouldCollapse = sibling.isCollapsable(&numberOfOpenParenthesis, direction == OMG::HorizontalDirection::Left);
     if (shouldCollapse || forceCollapse) {
       /* If the collapse direction is Left and the next sibling to be collapsed
        * must have a left sibling, force the collapsing of this needed left
        * sibling. */
-      forceCollapse = (direction == HorizontalDirection::Left && sibling.mustHaveLeftSibling()) ||(direction == HorizontalDirection::Right && sibling.mustHaveRightSibling());
+      forceCollapse = (direction == OMG::HorizontalDirection::Left && sibling.mustHaveLeftSibling()) ||(direction == OMG::HorizontalDirection::Right && sibling.mustHaveRightSibling());
       siblingIndex -= p.removeChild(sibling, nullptr);
       // siblingIndex is decremented in case it is used later.
       (void)siblingIndex;
-      int newIndex = direction == HorizontalDirection::Right ? absorbingChild.numberOfChildren() : 0;
+      int newIndex = direction == OMG::HorizontalDirection::Right ? absorbingChild.numberOfChildren() : 0;
       horizontalAbsorbingChild.addOrMergeChildAtIndex(sibling, newIndex, true);
       // removeChildAtIndex may have removed more than one child.
       numberOfSiblings = p.numberOfChildren();
@@ -344,10 +344,10 @@ bool Layout::collapseOnDirection(HorizontalDirection direction, int absorbingChi
 void Layout::collapseSiblings(LayoutCursor * cursor) {
   bool collapsed = false;
   if (node()->shouldCollapseSiblingsOnRight()) {
-    collapsed |= collapseOnDirection(HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex(), cursor);
+    collapsed |= collapseOnDirection(OMG::HorizontalDirection::Right, rightCollapsingAbsorbingChildIndex(), cursor);
   }
   if (node()->shouldCollapseSiblingsOnLeft()) {
-    collapsed |= collapseOnDirection(HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex(), cursor);
+    collapsed |= collapseOnDirection(OMG::HorizontalDirection::Left, leftCollapsingAbsorbingChildIndex(), cursor);
   }
   if (collapsed) {
     node()->didCollapseSiblings(cursor);

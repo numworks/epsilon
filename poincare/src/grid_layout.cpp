@@ -102,11 +102,11 @@ void GridLayoutNode::moveCursorDown(LayoutCursor * cursor, bool * shouldRecomput
   LayoutNode::moveCursorDown(cursor, shouldRecomputeLayout, equivalentPositionVisited);
 }
 
-void GridLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+void GridLayoutNode::moveCursorVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   GridLayout thisRef = GridLayout(this);
   bool shouldRemoveGraySquares = false;
-  int firstIndex = direction == VerticalDirection::Up ? 0 : numberOfChildren() - m_numberOfColumns;
-  int lastIndex = direction == VerticalDirection::Up ? m_numberOfColumns : numberOfChildren();
+  int firstIndex = direction == OMG::VerticalDirection::Up ? 0 : numberOfChildren() - m_numberOfColumns;
+  int lastIndex = direction == OMG::VerticalDirection::Up ? m_numberOfColumns : numberOfChildren();
   int i = firstIndex;
   for (LayoutNode * l : childrenFromIndex(firstIndex)) {
     if (i >= lastIndex) {

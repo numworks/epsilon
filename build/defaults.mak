@@ -17,10 +17,7 @@ ifeq ($(DEBUG),1)
 SFLAGS += -O0 -g
 else
 SFLAGS += -Os
-SFLAGS += -DNDEBUG
 endif
-
-SFLAGS += -DASSERTIONS=$(ASSERTIONS)
 
 ifeq ($(ASAN),1)
 SFLAGS += -fsanitize=address

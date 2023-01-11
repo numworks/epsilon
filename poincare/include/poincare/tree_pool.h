@@ -69,7 +69,7 @@ private:
   constexpr static int k_maxNodeOffset = BufferSize/ByteAlignment;
 
   static TreePool * SharedStaticPool;
-#ifdef ASSERTIONS
+#if ASSERTIONS
   static bool s_treePoolLocked;
 #endif
 

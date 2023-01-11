@@ -97,6 +97,11 @@ include quiz/Makefile # Quiz needs to be included at the end
 # Define main and shortcut targets
 include build/targets.mak
 
+# Define the DEBUG and ASSERTIONS flags. This can't be done in defaults.mak
+# since ASSERTIONS could have been altered by targets.mak or toolchain.mak,
+# after defaults.mak was applied.
+include build/debug_flags.mak
+
 all_src = $(apps_src) $(escher_src) $(ion_src) $(kandinsky_src) $(liba_src) $(libaxx_src) $(poincare_src) $(python_src) $(runner_src) $(ion_device_flasher_src) $(ion_device_bench_src) $(tests_src) $(omg_src)
 
 # Ensure kandinsky fonts are generated first
@@ -136,4 +141,3 @@ cowsay_%:
 
 .PHONY: clena
 clena: cowsay_CLENA clean
-

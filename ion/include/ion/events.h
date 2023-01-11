@@ -38,7 +38,7 @@ public:
 
   // Return the length of the copied text (and not the size)
   const char * text() const;
-#ifndef NDEBUG
+#if DEBUG
   const char * name() const;
 #endif
 

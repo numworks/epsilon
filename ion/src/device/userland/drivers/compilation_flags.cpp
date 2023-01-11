@@ -3,8 +3,8 @@
 #include <ion.h>
 #include <omg/print.h>
 
-#if !defined(ASSERTIONS) || !defined(EXTERNAL_APPS_API_LEVEL)
-#error This file expects ASSERTIONS & EXTERNAL_APPS_API_LEVEL to be defined
+#if !defined(DEBUG) || !defined(ASSERTIONS) || !defined(EXTERNAL_APPS_API_LEVEL)
+#error This file expects DEBUG, ASSERTIONS & EXTERNAL_APPS_API_LEVEL to be defined
 #endif
 
 namespace Ion {
@@ -19,7 +19,7 @@ namespace Ion {
  * bits 4 to 7: least significant bits of EXTERNAL_APPS_API_LEVEL
  * bits 8 to 11: least significant bits of SECURITY_LEVEL
  * bits 12 to 15: _
- * bit 16: kernel NDEBUG
+ * bit 16: kernel DEBUG
  * bit 17: kernel ASSERTIONS
  * bit 18: kernel IN_FACTORY
  * bit 19: kernel EMBED_EXTRA_DATA
@@ -36,17 +36,12 @@ uint32_t SVC_ATTRIBUTES bootloaderCRC32() {
 }
 
 uint16_t userlandCompilationFlags() {
-#ifdef NDEBUG
-  bool debug = false;
-#else
-  bool debug = true;
-#endif
   assert(EXTERNAL_APPS_API_LEVEL < 0xFF); // Should the EXTERNAL_APPS_API_LEVEL exceed 0xFF, we'll find another way to represent it
   uint8_t externalAppsAPILevel = 0xFF & EXTERNAL_APPS_API_LEVEL;
   assert(Device::Board::securityLevel() < 0xFF); // Should the SECURITY_LEVEL exceed 0xFF, , we'll find another way to represent it
   uint8_t securityLevel = 0xFF & Device::Board::securityLevel();
 
-  return debug |
+  return DEBUG |
          (ASSERTIONS << 1) |
          (ExternalApps::allowThirdParty() << 2) |
          (Device::Board::isRunningSlotA() << 3) |

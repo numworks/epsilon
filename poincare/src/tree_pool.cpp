@@ -73,7 +73,7 @@ void TreePool::moveNodes(TreeNode * destination, TreeNode * source, size_t moveS
   assert((((uintptr_t)source) % 4) == 0);
   assert((((uintptr_t)destination) % 4) == 0);
 
-#ifdef ASSERTIONS
+#if ASSERTIONS
   assert(!s_treePoolLocked);
 #endif
 
@@ -122,7 +122,7 @@ int TreePool::numberOfNodes() const {
 
 void * TreePool::alloc(size_t size) {
   assert(IsAfterTopmostCheckpoint(last()));
-#ifdef ASSERTIONS
+#if ASSERTIONS
   assert(!s_treePoolLocked);
 #endif
 
@@ -137,7 +137,7 @@ void * TreePool::alloc(size_t size) {
 
 void TreePool::dealloc(TreeNode * node, size_t size) {
   assert(IsAfterTopmostCheckpoint(node));
-#ifdef ASSERTIONS
+#if ASSERTIONS
   assert(!s_treePoolLocked);
 #endif
 

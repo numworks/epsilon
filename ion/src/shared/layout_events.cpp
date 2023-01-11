@@ -52,7 +52,7 @@ const EventData s_dataForEvent[Event::k_specialEventsOffset] = {
   U(), U(), U(), U(), U(), U(),
 };
 
-#ifndef NDEBUG
+#if DEBUG
 
 const char * const s_nameForEvent[255] = {
  // Plain

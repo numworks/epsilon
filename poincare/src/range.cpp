@@ -37,8 +37,11 @@ void Range1D::stretchEachBoundBy(float shift) {
 }
 
 void Range1D::stretchIfTooSmall(float shift) {
+  if (shift < 0) {
+    shift = std::max(DefaultLengthAt(m_min), k_minLength);
+  }
   /* Handle cases where limits are too close or equal.
-   * They are shifted by both shift. */
+   * They are both shifted by shift. */
   if (length() < k_minLength) {
     stretchEachBoundBy(shift);
   }

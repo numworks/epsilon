@@ -37,7 +37,7 @@ public:
   void extend(float t, float limit);
   void zoom(float ratio, float center);
   void stretchEachBoundBy(float shift);
-  void stretchIfTooSmall(float shift = k_minLength);
+  void stretchIfTooSmall(float shift = -1);
 
 private:
   void privateSet(float t, bool isMin, float limit);

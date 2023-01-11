@@ -99,20 +99,23 @@ LayoutCursor LayoutNode::equivalentCursor(LayoutCursor * cursor) {
   return (cursor->layout().node() == this) ? parent()->equivalentCursor(cursor) : LayoutCursor();
 }
 
-void LayoutNode::askParentToMoveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
-  assert(cursor->position() == LayoutCursor::Position::Left);
+void LayoutNode::askParentToMoveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  assert((direction == OMG::HorizontalDirection::Left  && cursor->position() == LayoutCursor::Position::Left)
+      || (direction == OMG::HorizontalDirection::Right && cursor->position() == LayoutCursor::Position::Right));
   LayoutNode * parentNode = parent();
   if (parentNode != nullptr) {
-    parentNode->moveCursorLeft(cursor, shouldRecomputeLayout);
+    return direction == OMG::HorizontalDirection::Left ? parentNode->moveCursorLeft(cursor, shouldRecomputeLayout) : parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
   }
+}
+
+void LayoutNode::askParentToMoveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  assert(cursor->position() == LayoutCursor::Position::Left);
+  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Left, cursor, shouldRecomputeLayout);
 }
 
 void LayoutNode::askParentToMoveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout) {
   assert(cursor->position() == LayoutCursor::Position::Right);
-  LayoutNode * parentNode = parent();
-  if (parentNode != nullptr) {
-    parentNode->moveCursorRight(cursor, shouldRecomputeLayout);
-  }
+  askParentToMoveCursorHorizontally(OMG::HorizontalDirection::Right, cursor, shouldRecomputeLayout);
 }
 
 // Tree modification

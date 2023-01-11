@@ -10,84 +10,60 @@ namespace Poincare {
 
 // LayoutNode
 
-void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
+void HorizontalLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  LayoutCursor::Position dir = direction == OMG::HorizontalDirection::Left ? LayoutCursor::Position::Left : LayoutCursor::Position::Right;
+  LayoutCursor::Position oppositeDir = direction == OMG::HorizontalDirection::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left;
+
   if (this == cursor->layoutNode()) {
-    if (cursor->position() == LayoutCursor::Position::Left) {
-      // Case: Left. Ask the parent.
-      askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
+    // Case 1: cursor it at this
+    if (cursor->position() == dir) {
+      // Case 1.1: position = direction. Ask the parent.
+      askParentToMoveCursorHorizontally(direction, cursor, shouldRecomputeLayout);
       return;
     }
-    assert(cursor->position() == LayoutCursor::Position::Right);
-    // Case: Right.
+    assert(cursor->position() == oppositeDir);
+    // Case 1.2: position = opposite direction.
     int childrenCount = numberOfChildren();
     if (childrenCount == 0) {
-      // If there are no children, go Left and ask the parent
-      cursor->setPosition(LayoutCursor::Position::Left);
-      askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
+      // Case 1.2.1: If there are no children, set position to direction and ask the parent
+      cursor->setPosition(dir);
+      askParentToMoveCursorHorizontally(direction, cursor, shouldRecomputeLayout);
       return;
     }
-    /* If there is at least one child, set the cursor to the last child and
-     * move it Left */
-    cursor->setLayoutNode(childAtIndex(childrenCount - 1));
-    return cursor->moveLeft(shouldRecomputeLayout);
+    // Case 1.2.2: If there is at least one child, set the cursor to the closest child and move in direction
+    int closestChildToCursor = direction == OMG::HorizontalDirection::Left ? childrenCount - 1 : 0;
+    cursor->setLayoutNode(childAtIndex(closestChildToCursor));
+    return cursor->moveHorizontally(direction, shouldRecomputeLayout);
   }
 
-  // Case: The cursor is Left of a child.
-  assert(cursor->position() == LayoutCursor::Position::Left);
+  // Case 2: cursor is at a child
+  assert(cursor->position() == dir);
   int childIndex = indexOfChild(cursor->layoutNode());
   assert(childIndex >= 0);
-  if (childIndex == 0) {
-    // Case: the child is the leftmost. Ask the parent.
+  int furthestChildInDirection = direction == OMG::HorizontalDirection::Left ? 0 : numberOfChildren() - 1;
+
+  if (childIndex == furthestChildInDirection) {
+    // Case 2.1: the child is the last in direction. Ask the parent.
     if (parent() != nullptr) {
       cursor->setLayoutNode(this);
-      askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
+      askParentToMoveCursorHorizontally(direction, cursor, shouldRecomputeLayout);
     }
     return;
   }
-  // Case: the child is not the leftmost. Go to its left sibling and move Left.
-  cursor->setLayoutNode(childAtIndex(childIndex - 1));
-  cursor->setPosition(LayoutCursor::Position::Right);
-  cursor->moveLeft(shouldRecomputeLayout);
+
+  // Case 2.2: the child is not the last in direction. Go to its next sibling in direction and move in direction.
+  int step = direction == OMG::HorizontalDirection::Left ? -1 : 1;
+  cursor->setLayoutNode(childAtIndex(childIndex + step));
+  cursor->setPosition(oppositeDir);
+  cursor->moveHorizontally(direction, shouldRecomputeLayout);
+}
+
+void HorizontalLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
+  moveCursorHorizontally(OMG::HorizontalDirection::Left, cursor, shouldRecomputeLayout);
 }
 
 void HorizontalLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (this == cursor->layoutNode()) {
-    if (cursor->position() == LayoutCursor::Position::Right) {
-      // Case: Right. Ask the parent.
-      askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
-      return;
-    }
-    assert(cursor->position() == LayoutCursor::Position::Left);
-    // Case: Left
-    int childrenCount = numberOfChildren();
-    if (childrenCount == 0) {
-      // If there are no children, go Right and ask the parent
-      cursor->setPosition(LayoutCursor::Position::Right);
-      askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
-      return;
-    }
-    /* If there is at least one child, set the cursor to the first child and
-     * move it Right */
-    cursor->setLayoutNode(childAtIndex(0));
-    return cursor->moveRight(shouldRecomputeLayout);
-  }
-
-  // Case: The cursor is Right of a child.
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  int childIndex = indexOfChild(cursor->layoutNode());
-  assert(childIndex >= 0);
-  if (childIndex == numberOfChildren() - 1) {
-    // Case: the child is the rightmost. Ask the parent.
-    if (parent() != nullptr) {
-      cursor->setLayoutNode(this);
-      askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
-    }
-    return;
-  }
-  // Case: the child is not the rightmost. Go to its right sibling and move Right.
-  cursor->setLayoutNode(childAtIndex(childIndex + 1));
-  cursor->setPosition(LayoutCursor::Position::Left);
-  cursor->moveRight(shouldRecomputeLayout);
+  moveCursorHorizontally(OMG::HorizontalDirection::Right, cursor, shouldRecomputeLayout);
 }
 
 LayoutCursor HorizontalLayoutNode::equivalentCursor(LayoutCursor * cursor) {

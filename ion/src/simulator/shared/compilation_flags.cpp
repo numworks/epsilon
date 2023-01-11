@@ -1,7 +1,7 @@
 #include <ion.h>
 #include <omg/print.h>
 
-#if !defined(ASSERTIONS) || !defined(EXTERNAL_APPS_API_LEVEL)
+#if !defined(DEBUG) || !defined(ASSERTIONS) || !defined(EXTERNAL_APPS_API_LEVEL)
 #error This file expects ASSERTIONS & EXTERNAL_APPS_API_LEVEL to be defined
 #endif
 
@@ -10,7 +10,7 @@ namespace Ion {
 /*
  * We use an uint32_t as a bit array representing the compilation flags.
  *
- * bit 0: NDEBUG
+ * bit 0: DEBUG
  * bit 1: ASSERTIONS
  * bit 2: allow third-party
  * bit 3: _
@@ -20,15 +20,10 @@ namespace Ion {
  * */
 
 uint16_t userlandCompilationFlags() {
-#ifdef NDEBUG
-  uint8_t debug = 0;
-#else
-  uint8_t debug = 1;
-#endif
   assert(EXTERNAL_APPS_API_LEVEL < 0xFF); // Should the EXTERNAL_APPS_API_LEVEL exceed 0xFF, we'll find another way to represent it
   uint8_t externalAppsAPILevel = 0xFF & EXTERNAL_APPS_API_LEVEL;
 
-  return debug |
+  return DEBUG |
          (ASSERTIONS << 1) |
          (ExternalApps::allowThirdParty() << 2) |
          (externalAppsAPILevel << 4);

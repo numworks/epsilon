@@ -8,10 +8,10 @@ namespace Config {
 
 /* When sleeping, we set the D1 prescaler to cut the frequency 512. */
 #warning experimental values
-#if NDEBUG
-constexpr static int LoopsPerMillisecondLowFrequency = 146;
-#else
+#if DEBUG
 constexpr static int LoopsPerMillisecondLowFrequency = 35;
+#else
+constexpr static int LoopsPerMillisecondLowFrequency = 146;
 #endif
 constexpr static int LoopsPerMicrosecond = 86;
 

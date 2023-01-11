@@ -15,11 +15,13 @@ namespace Simulator {
 
 // Constexpr for event name drawing
 constexpr static KDFont::Size k_fontSize = KDFont::Size::Large;
-constexpr static int k_glyphWidth = KDFont::GlyphWidth(k_fontSize);
 constexpr static int k_glyphHeight = KDFont::GlyphHeight(k_fontSize);
 constexpr static int k_margin = 6;
+#if DEBUG
+constexpr static int k_glyphWidth = KDFont::GlyphWidth(k_fontSize);
 constexpr static KDColor k_backgroundColor = KDColorBlack;
 constexpr static KDColor k_glyphColor = KDColorWhite;
+#endif
 
 Screenshot::Screenshot(const char * path) { init(path); }
 
@@ -40,7 +42,7 @@ void Screenshot::captureStep(Events::Event nextEvent) {
   }
 }
 
-#ifndef NDEBUG
+#if DEBUG
 static void drawEventNameInBuffer(Events::Event e, KDColor * pixelsBuffer, int width, int height, int abscissaOfDraw, int ordinateOfDraw) {
   if (!e.name()) {
     return;
@@ -74,7 +76,7 @@ void Screenshot::capture(Events::Event nextEvent) {
     pixelsBuffer[i] = Simulator::Framebuffer::address()[i];
   }
 
-#ifndef NDEBUG
+#if DEBUG
   if (nextEvent != Events::None) {
     height = k_maxHeight;
     for (int i = Display::Height * k_width; i < height * k_width; i++) {

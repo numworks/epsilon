@@ -9,11 +9,11 @@ extern "C" {
 }
 
 void abort() {
-#ifdef NDEBUG
-  Ion::Reset::core();
-#else
+#if DEBUG
   while (1) {
   }
+#else
+  Ion::Reset::core();
 #endif
 }
 

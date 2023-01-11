@@ -10,7 +10,7 @@ namespace Events {
 
 extern const EventData s_dataForEvent[Event::k_specialEventsOffset];
 
-#ifndef NDEBUG
+#if DEBUG
 extern const char * const s_nameForEvent[255];
 
 inline const char * Event::name() const {

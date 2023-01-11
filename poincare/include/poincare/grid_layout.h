@@ -31,6 +31,7 @@ public:
   virtual void stopEditing() = 0;
 
   // LayoutNode
+  void moveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout);
   void moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
   void moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) override;
   void moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited = false, bool forSelection = false) override;

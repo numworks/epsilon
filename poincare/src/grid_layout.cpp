@@ -6,70 +6,55 @@
 namespace Poincare {
 
 // LayoutNode
+void GridLayoutNode::moveCursorHorizontally(OMG::HorizontalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout) {
+  LayoutCursor::Position dir = direction == OMG::HorizontalDirection::Left ? LayoutCursor::Position::Left : LayoutCursor::Position::Right;
+  LayoutCursor::Position oppositeDir = direction == OMG::HorizontalDirection::Left ? LayoutCursor::Position::Right : LayoutCursor::Position::Left;
 
-void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->position() == LayoutCursor::Position::Right) {
-    assert(cursor->layoutNode() == this);
-    /* Case: Right of this. Add the gray squares to the grid, then move to
-     * the bottom right non gray child. */
+  LayoutNode * cursorNode = cursor->layoutNode();
+  if (cursor->position() == oppositeDir) {
+    // Case 1: position = opposite direction
+    assert(cursorNode == this);
+    // Cursor it at this. Add the gray squares to the grid, then move to first or last entry
     startEditing();
     *shouldRecomputeLayout = true;
-    LayoutNode * lastChild = childAtIndex(indexOfLastNonGrayChildWhenIsEditing());
-    cursor->setLayoutNode(lastChild);
+    assert(m_numberOfColumns * m_numberOfRows >= 1);
+    int entryIndex = direction == OMG::HorizontalDirection::Left ? indexOfLastNonGrayChildWhenIsEditing() : 0;
+    cursor->setLayoutNode(childAtIndex(entryIndex));
     return;
   }
-  assert(cursor->position() == LayoutCursor::Position::Left);
-  int childIndex = indexOfChild(cursor->layoutNode());
+  // Case 2: position = direction
+  assert(cursor->position() == dir);
+  int childIndex = indexOfChild(cursorNode);
   if (childIndex >= 0) {
-    // Case: The cursor points to a grid's child.
-    if (childIsLeftOfGrid(childIndex)) {
-     /* Case: Left of a child on the left of the grid. Remove the gray squares of
-      * the grid, then go left of the grid. */
+    // Case 2.1: Cursor is at a child.
+    if ((direction == OMG::HorizontalDirection::Left && childIsLeftOfGrid(childIndex))
+     || (direction == OMG::HorizontalDirection::Right && childIsRightOfGrid(childIndex))) {
+      /* Case 2.1: The child is the last in direction.
+       * Remove the gray squares of the grid, then move out of the grid. */
       stopEditing();
       *shouldRecomputeLayout = true;
       cursor->setLayoutNode(this);
       return;
     }
-    // Case: Left of another child. Go Right of its sibling on the left.
-    cursor->setLayoutNode(childAtIndex(childIndex - 1));
-    cursor->setPosition(LayoutCursor::Position::Right);
+    /* Case 2.2: The child is not the last in direction.
+     * Go to its next sibling in direction and move in that direction. */
+    int step = direction == OMG::HorizontalDirection::Left ? -1 : 1;
+    cursor->setLayoutNode(childAtIndex(childIndex + step));
+    cursor->setPosition(oppositeDir);
     return;
   }
-  // Case: Left. Ask the parent.
-  assert(cursor->layoutNode() == this);
-  askParentToMoveCursorLeft(cursor, shouldRecomputeLayout);
+  // Case 2.2: Cursor is at this. Ask the parent.
+  assert(cursorNode == this);
+  askParentToMoveCursorHorizontally(direction, cursor, shouldRecomputeLayout);
+}
+
+
+void GridLayoutNode::moveCursorLeft(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
+  moveCursorHorizontally(OMG::HorizontalDirection::Left, cursor, shouldRecomputeLayout);
 }
 
 void GridLayoutNode::moveCursorRight(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
-  if (cursor->position() == LayoutCursor::Position::Left) {
-    // Case: Left. Add gray squares to the matrix, then go to its first entry.
-    assert(cursor->layoutNode() == this);
-    startEditing();
-    *shouldRecomputeLayout = true;
-    assert(m_numberOfColumns*m_numberOfRows >= 1);
-    cursor->setLayoutNode(childAtIndex(0));
-    return;
-  }
-  assert(cursor->position() == LayoutCursor::Position::Right);
-  LayoutNode * cursorNode = cursor->layoutNode();
-  int childIndex = indexOfChild(cursorNode);
-  if (childIndex >= 0) {
-    // Case: The cursor points to a grid's child.
-    if (childIsRightOfGrid(childIndex)) {
-      // Case: Right of a child on the right of the grid. Go Right of the grid.
-      stopEditing();
-      *shouldRecomputeLayout = true;
-      cursor->setLayoutNode(this);
-      return;
-    }
-    // Case: Right of another child. Go Left of its sibling on the right.
-    cursor->setLayoutNode(static_cast<LayoutNode *>(cursorNode->nextSibling()));
-    cursor->setPosition(LayoutCursor::Position::Left);
-    return;
-  }
-  // Case: Right. Ask the parent.
-  assert(cursor->layoutNode() == this);
-  askParentToMoveCursorRight(cursor, shouldRecomputeLayout);
+  moveCursorHorizontally(OMG::HorizontalDirection::Right, cursor, shouldRecomputeLayout);
 }
 
 void GridLayoutNode::moveCursorUp(LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {

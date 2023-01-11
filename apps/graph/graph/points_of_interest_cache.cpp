@@ -2,6 +2,7 @@
 #include "../app.h"
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <apps/shared/poincare_helpers.h>
+#include <algorithm>
 
 using namespace Poincare;
 using namespace Shared;
@@ -25,6 +26,7 @@ void PointsOfInterestCache::setBounds(float start, float end) {
     /* Discard the old results if anything in the storage has changed. */
     m_computedStart = m_computedEnd = start;
     m_list.init();
+    m_tooManyPoints = false;
   }
 
   m_start = start;
@@ -34,6 +36,7 @@ void PointsOfInterestCache::setBounds(float start, float end) {
 
   if (m_list.isUninitialized()) {
     m_list.init();
+    m_tooManyPoints = false;
   } else {
     stripOutOfBounds();
   }
@@ -101,6 +104,10 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, doubl
 }
 
 bool PointsOfInterestCache::hasInterestAtCoordinates(double x, double y, Solver<double>::Interest interest) {
+  if (m_tooManyPoints) {
+    // Ignore interest point if there are too many to be displayed.
+    return false;
+  }
   int n = numberOfPoints();
   for (int i = 0; i < n; i++) {
     PointOfInterest p = pointAtIndex(i);
@@ -115,11 +122,15 @@ bool PointsOfInterestCache::hasInterestAtCoordinates(double x, double y, Solver<
 void PointsOfInterestCache::stripOutOfBounds() {
   assert(!m_list.isUninitialized());
 
-  for (int i = numberOfPoints() - 1; i >= 0; i--) {
+  int initialNumberOfPoints = numberOfPoints();
+  for (int i = initialNumberOfPoints - 1; i >= 0; i--) {
     float x = static_cast<float>(pointAtIndex(i).abscissa());
     if (x < m_start || m_end < x) {
       m_list.list().removeChildAtIndexInPlace(i);
     }
+  }
+  if (m_tooManyPoints && numberOfPoints() <= k_maxNumberOfPoints) {
+    m_tooManyPoints = false;
   }
 }
 
@@ -219,6 +230,9 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
 
 void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest, uint32_t data) {
   assert(std::isfinite(x) && std::isfinite(y));
+  if (!m_tooManyPoints && m_list.numberOfPoints() >= k_maxNumberOfPoints) {
+    m_tooManyPoints = true;
+  }
   ExpiringPointer<ContinuousFunction> f = App::app()->functionStore()->modelForRecord(m_record);
   m_list.append(x, y, data, interest, f->isAlongY());
 }

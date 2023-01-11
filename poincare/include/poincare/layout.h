@@ -1,6 +1,7 @@
 #ifndef POINCARE_LAYOUT_REFERENCE_H
 #define POINCARE_LAYOUT_REFERENCE_H
 
+#include <omg/enums.h>
 #include <poincare/context.h>
 #include <poincare/layout_node.h>
 #include <poincare/tree_handle.h>
@@ -122,11 +123,7 @@ protected:
   int removeChildAtIndex(int index, LayoutCursor * cursor, bool force = false);
 private:
   // Tree modification
-  enum class HorizontalDirection {
-    Left,
-    Right
-  };
-  bool collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor);
+  bool collapseOnDirection(OMG::HorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor);
   bool privateHasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const;
 };
 

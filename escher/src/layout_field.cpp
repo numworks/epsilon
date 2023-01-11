@@ -644,17 +644,17 @@ bool LayoutField::handleStoreEvent() {
 }
 
 static_assert_sequential(
-  LayoutCursor::Direction::Left,
-  LayoutCursor::Direction::Up,
-  LayoutCursor::Direction::Down,
-  LayoutCursor::Direction::Right
+  OMG::Direction::Left,
+  OMG::Direction::Up,
+  OMG::Direction::Down,
+  OMG::Direction::Right
 );
 
 
-static inline LayoutCursor::Direction DirectionForMoveEvent(Ion::Events::Event event) {
+static inline OMG::Direction DirectionForMoveEvent(Ion::Events::Event event) {
   assert(IsMoveEvent(event));
-  return static_cast<LayoutCursor::Direction>(
-    static_cast<uint8_t>(LayoutCursor::Direction::Left) +
+  return static_cast<OMG::Direction>(
+    static_cast<uint8_t>(OMG::Direction::Left) +
     static_cast<uint8_t>(event) - static_cast<uint8_t>(Ion::Events::Left)
   );
 }
@@ -693,10 +693,10 @@ static inline bool IsSelectionEvent(Ion::Events::Event event) {
     static_cast<uint8_t>(event) <= static_cast<uint8_t>(Ion::Events::ShiftRight);
 }
 
-static inline LayoutCursor::Direction DirectionForSelectionEvent(Ion::Events::Event event) {
+static inline OMG::Direction DirectionForSelectionEvent(Ion::Events::Event event) {
   assert(IsSelectionEvent(event));
-  return static_cast<LayoutCursor::Direction>(
-    static_cast<uint8_t>(LayoutCursor::Direction::Left) +
+  return static_cast<OMG::Direction>(
+    static_cast<uint8_t>(OMG::Direction::Left) +
     static_cast<uint8_t>(event) - static_cast<uint8_t>(Ion::Events::ShiftLeft)
   );
 }

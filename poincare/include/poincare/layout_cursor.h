@@ -1,6 +1,7 @@
 #ifndef POINCARE_LAYOUT_CURSOR_H
 #define POINCARE_LAYOUT_CURSOR_H
 
+#include <omg/enums.h>
 #include <poincare/layout.h>
 
 namespace Poincare {
@@ -34,13 +35,6 @@ class LayoutCursor final {
   friend class VerticalOffsetLayoutNode;
 public:
   constexpr static KDCoordinate k_cursorWidth = 1;
-
-  enum class Direction {
-    Left,
-    Up,
-    Down,
-    Right
-  };
 
   enum class Position {
     Left,
@@ -86,7 +80,7 @@ public:
   KDPoint middleLeftPoint();
 
   /* Move */
-  void move(Direction direction, bool * shouldRecomputeLayout, bool forSelection = false);
+  void move(OMG::Direction direction, bool * shouldRecomputeLayout, bool forSelection = false);
   void moveLeft(bool * shouldRecomputeLayout, bool forSelection = false) {
     layoutNode()->moveCursorLeft(this, shouldRecomputeLayout, forSelection);
   }
@@ -99,11 +93,11 @@ public:
   void moveUnder(bool * shouldRecomputeLayout, bool forSelection = false) {
     layoutNode()->moveCursorDown(this, shouldRecomputeLayout, false, forSelection);
   }
-  LayoutCursor cursorAtDirection(Direction direction, bool * shouldRecomputeLayout, bool forSelection = false, int step = 1);
+  LayoutCursor cursorAtDirection(OMG::Direction direction, bool * shouldRecomputeLayout, bool forSelection = false, int step = 1);
 
   /* Select */
-  void select(Direction direction, bool * shouldRecomputeLayout, Layout * selection);
-  LayoutCursor selectAtDirection(Direction direction, bool * shouldRecomputeLayout, Layout * selection);
+  void select(OMG::Direction direction, bool * shouldRecomputeLayout, Layout * selection);
+  LayoutCursor selectAtDirection(OMG::Direction direction, bool * shouldRecomputeLayout, Layout * selection);
 
   /* Layout modification */
   void addEmptyExponentialLayout(Context * context);

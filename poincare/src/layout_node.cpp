@@ -248,13 +248,13 @@ bool LayoutNode::protectedIsIdenticalTo(Layout l) {
   return true;
 }
 
-void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+void LayoutNode::moveCursorVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   if (!equivalentPositionVisited) {
     LayoutCursor cursorEquivalent = equivalentCursor(cursor);
     if (cursorEquivalent.isDefined()) {
       cursor->setLayout(cursorEquivalent.layout());
       cursor->setPosition(cursorEquivalent.position());
-      if (direction == VerticalDirection::Up) {
+      if (direction == OMG::VerticalDirection::Up) {
         cursor->layoutNode()->moveCursorUp(cursor, shouldRecomputeLayout, true, forSelection);
       } else {
         cursor->layoutNode()->moveCursorDown(cursor, shouldRecomputeLayout, true, forSelection);
@@ -267,14 +267,14 @@ void LayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor 
     cursor->setLayout(Layout());
     return;
   }
-  if (direction == VerticalDirection::Up) {
+  if (direction == OMG::VerticalDirection::Up) {
     p->moveCursorUp(cursor, shouldRecomputeLayout, true, forSelection);
   } else {
     p->moveCursorDown(cursor, shouldRecomputeLayout, true, forSelection);
   }
 }
 
-void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
+void LayoutNode::moveCursorInDescendantsVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool forSelection) {
   LayoutNode * childResult = nullptr;
   LayoutNode ** childResultPtr = &childResult;
   LayoutCursor::Position resultPosition = LayoutCursor::Position::Left;
@@ -295,7 +295,7 @@ void LayoutNode::moveCursorInDescendantsVertically(VerticalDirection direction, 
 }
 
 void LayoutNode::scoreCursorInDescendantsVertically (
-    VerticalDirection direction,
+    OMG::VerticalDirection direction,
     LayoutCursor * cursor,
     bool * shouldRecomputeLayout,
     LayoutNode ** childResult,
@@ -305,7 +305,7 @@ void LayoutNode::scoreCursorInDescendantsVertically (
 {
   LayoutCursor::Position * castedResultPosition = static_cast<LayoutCursor::Position *>(resultPosition);
   KDPoint cursorMiddleLeft = cursor->middleLeftPoint();
-  bool layoutIsUnderOrAbove = direction == VerticalDirection::Up ? m_frame.isAbove(cursorMiddleLeft) : m_frame.isUnder(cursorMiddleLeft);
+  bool layoutIsUnderOrAbove = direction == OMG::VerticalDirection::Up ? m_frame.isAbove(cursorMiddleLeft) : m_frame.isUnder(cursorMiddleLeft);
   bool layoutContains = m_frame.contains(cursorMiddleLeft);
 
   if (layoutIsUnderOrAbove) {

@@ -51,7 +51,7 @@ KDCoordinate EmptyLayoutNode::computeBaseline(KDFont::Size font) {
   return (m_margins ? k_marginHeight : 0) + height(font)/2;
 }
 
-void EmptyLayoutNode::moveCursorVertically(VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
+void EmptyLayoutNode::moveCursorVertically(OMG::VerticalDirection direction, LayoutCursor * cursor, bool * shouldRecomputeLayout, bool equivalentPositionVisited, bool forSelection) {
   /* The two cursor positions around an EmptyLayoutNode are equivalent, so both
    * should be checked. */
   assert(cursor->layoutNode() == this);

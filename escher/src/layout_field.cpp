@@ -241,7 +241,6 @@ void LayoutField::ContentView::deleteSelection() {
       while (i >= firstIndex) {
         i -= 1 + static_cast<HorizontalLayout&>(selectionParent).removeChildAtIndex(i, &m_cursor, false);
       }
-      assert(i == firstIndex - 1);
     } else {
       // Only one child can be selected
       assert(m_selectionStart == m_selectionEnd);

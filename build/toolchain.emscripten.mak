@@ -126,10 +126,10 @@ __ZN6Escher15ExpressionField11handleEventEN3Ion6Events5EventE \
 __ZN3Ion14CircuitBreaker14loadCheckpointENS0_14CheckpointTypeE \
 _msleep \
 _SDL_Delay \
-_Emscripten_GLES_SwapWindow \
-_SDL_GL_SwapWindow \
-_GLES2_RenderPresent \
 _SDL_RenderPresent \
+_SDL_UpdateWindowSurface \
+_SDL_UpdateWindowSurfaceRects \
+_Emscripten_UpdateWindowFramebuffer \
 __ZN3Ion9Simulator6Window7refreshEv
 
 EMTERPRETIFY_WHITELIST = $(foreach sym,$(EMSCRIPTEN_ASYNC_SYMBOLS),"$(sym)",)END

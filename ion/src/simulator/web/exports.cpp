@@ -13,13 +13,6 @@ const char * IonPatchLevel() {
   return Ion::patchLevel();
 }
 
-void IonDisplayForceRefresh() {
-  // Also prepare for a screenshot (force the blinking cursor to be visible)
-  Ion::Simulator::Display::prepareForScreenshot();
-  Ion::Simulator::Window::setNeedsRefresh();
-  Ion::Simulator::Window::refresh();
-}
-
 void IonSimulatorKeyboardKeyDown(int keyNumber) {
   Ion::Keyboard::Key key = static_cast<Ion::Keyboard::Key>(keyNumber);
   Ion::Simulator::Keyboard::keyDown(key);

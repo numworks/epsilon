@@ -9,7 +9,7 @@ namespace Graph {
 
 class PointsOfInterestCache {
 public:
-  PointsOfInterestCache(Ion::Storage::Record record) : m_record(record), m_checksum(0), m_start(NAN), m_end(NAN), m_computedStart(NAN), m_computedEnd(NAN) {}
+  PointsOfInterestCache(Ion::Storage::Record record) : m_record(record), m_checksum(0), m_start(NAN), m_end(NAN), m_computedStart(NAN), m_computedEnd(NAN), m_interestingPointsOverflowPool(false) {}
   PointsOfInterestCache() : PointsOfInterestCache(Ion::Storage::Record()) {}
 
   Poincare::List list() { return m_list.list(); }
@@ -17,7 +17,7 @@ public:
   PointsOfInterestCache clone() const;
 
   void setBounds(float start, float end);
-  bool isFullyComputed() const { return m_start == m_computedStart && m_end == m_computedEnd; }
+  bool isFullyComputed() const { return m_interestingPointsOverflowPool || (m_start == m_computedStart && m_end == m_computedEnd); }
 
   int numberOfPoints() const { return m_list.numberOfPoints(); }
   int numberOfPoints(Poincare::Solver<double>::Interest interest) const;
@@ -31,7 +31,7 @@ public:
   bool hasInterestAtCoordinates(double x, double y, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);
 
   // TODO : Filter to be able to display a few maximums out of too many others.
-  bool canDisplayPoints() const { return numberOfPoints() <= k_maxNumberOfDisplayablePoints; }
+  bool canDisplayPoints() const { return !m_interestingPointsOverflowPool && (numberOfPoints() <= k_maxNumberOfDisplayablePoints); }
 
 private:
   constexpr static int k_maxNumberOfDisplayablePoints = 32;
@@ -50,6 +50,7 @@ private:
   float m_computedStart;
   float m_computedEnd;
   Poincare::PointsOfInterestList m_list;
+  bool m_interestingPointsOverflowPool;
 };
 
 }

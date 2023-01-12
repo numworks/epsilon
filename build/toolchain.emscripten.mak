@@ -130,11 +130,7 @@ _Emscripten_GLES_SwapWindow \
 _SDL_GL_SwapWindow \
 _GLES2_RenderPresent \
 _SDL_RenderPresent \
-__ZN3Ion9Simulator6Window7refreshEv \
-dynCall_vi \
-invoke_vi \
-Epsilon/asm.emterpret \
-resume
+__ZN3Ion9Simulator6Window7refreshEv
 
 EMTERPRETIFY_WHITELIST = $(foreach sym,$(EMSCRIPTEN_ASYNC_SYMBOLS),"$(sym)",)END
 EMFLAGS = -s PRECISE_F32=1 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EMTERPRETIFY_WHITELIST='[$(EMTERPRETIFY_WHITELIST:,END=)]'

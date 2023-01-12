@@ -361,7 +361,7 @@ void GraphView::drawPointsOfInterest(KDContext * ctx, KDRect rect) {
 
   PointsOfInterestCache * pointsOfInterestCache = App::app()->graphController()->pointsOfInterestForRecord(selectedRec);
 
-  bool canDisplayPoints = pointsOfInterestCache->canDisplayPoints();
+  bool canDisplayPoints = pointsOfInterestCache->canDisplayPoints(m_interest);
   PointOfInterest p;
   int i = 0;
   do {
@@ -386,10 +386,12 @@ void GraphView::drawPointsOfInterest(KDContext * ctx, KDRect rect) {
       continue;
     }
 
-    if (canDisplayPoints && !pointsOfInterestCache->canDisplayPoints()) {
+    if (canDisplayPoints && !pointsOfInterestCache->canDisplayPoints(m_interest)) {
       canDisplayPoints = false;
       // Hide the interest points by redrawing everything but them.
       assert(cursorView());
+      /* TODO : When zooming out of a maximum graph view, a drawn interest point
+       * could be redrawn on cursor movement. */
       cursorView()->setCursorFrame(cursorFrame(), true);
       // Redraw curve and cursor without any interest point
       drawRect(ctx, rect);

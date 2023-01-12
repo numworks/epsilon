@@ -48,6 +48,7 @@ void TrigonometryListController::setExpression(Expression e) {
     e = angleApproximate;
     m_anglesAreEqual = false;
   } else {
+    e = angleReduced;
     m_anglesAreEqual = true;
   }
   m_layouts[index] = LayoutHelper::String("θ");

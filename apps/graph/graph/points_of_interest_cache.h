@@ -9,7 +9,7 @@ namespace Graph {
 
 class PointsOfInterestCache {
 public:
-  PointsOfInterestCache(Ion::Storage::Record record) : m_record(record), m_checksum(0), m_start(NAN), m_end(NAN), m_computedStart(NAN), m_computedEnd(NAN), m_tooManyPoints(false) {}
+  PointsOfInterestCache(Ion::Storage::Record record) : m_record(record), m_checksum(0), m_start(NAN), m_end(NAN), m_computedStart(NAN), m_computedEnd(NAN) {}
   PointsOfInterestCache() : PointsOfInterestCache(Ion::Storage::Record()) {}
 
   Poincare::List list() { return m_list.list(); }
@@ -31,10 +31,10 @@ public:
   bool hasInterestAtCoordinates(double x, double y, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);
 
   // TODO : Filter to be able to display a few maximums out of too many others.
-  bool hasTooManyPoints() const { return m_tooManyPoints; }
+  bool canDisplayPoints() const { return numberOfPoints() <= k_maxNumberOfDisplayablePoints; }
 
 private:
-  constexpr static int k_maxNumberOfPoints = 32;
+  constexpr static int k_maxNumberOfDisplayablePoints = 32;
   constexpr static float k_numberOfSteps = 25.0;
 
   float step() const { return (m_end - m_start) / k_numberOfSteps; }
@@ -49,7 +49,6 @@ private:
   float m_end;
   float m_computedStart;
   float m_computedEnd;
-  bool m_tooManyPoints;
   Poincare::PointsOfInterestList m_list;
 };
 

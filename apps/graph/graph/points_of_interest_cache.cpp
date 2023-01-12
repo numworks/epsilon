@@ -95,9 +95,9 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, doubl
   return PointOfInterest();
 }
 
-bool PointsOfInterestCache::hasInterestAtCoordinates(double x, double y, Solver<double>::Interest interest) {
-  if (!canDisplayPoints(interest)) {
-    // Ignore interest point if there are too many to be displayed.
+bool PointsOfInterestCache::hasInterestAtCoordinates(double x, double y, Solver<double>::Interest interest, bool interestIsDisplayed, bool allInterestsAreDisplayed) {
+  if (interestIsDisplayed && !canDisplayPoints(allInterestsAreDisplayed ? Poincare::Solver<double>::Interest::None : interest)) {
+    // Ignore interest point if it is not displayed.
     return false;
   }
   int n = numberOfPoints();

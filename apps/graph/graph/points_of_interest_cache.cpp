@@ -96,7 +96,7 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, doubl
 }
 
 bool PointsOfInterestCache::hasInterestAtCoordinates(double x, double y, Solver<double>::Interest interest) {
-  if (!canDisplayPoints()) {
+  if (!canDisplayPoints(interest)) {
     // Ignore interest point if there are too many to be displayed.
     return false;
   }

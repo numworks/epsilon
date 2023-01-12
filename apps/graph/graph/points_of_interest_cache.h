@@ -30,8 +30,9 @@ public:
   Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);
   bool hasInterestAtCoordinates(double x, double y, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);
 
-  // TODO : Filter to be able to display a few maximums out of too many others.
-  bool canDisplayPoints() const { return !m_interestingPointsOverflowPool && (numberOfPoints() <= k_maxNumberOfDisplayablePoints); }
+  bool canDisplayPoints(Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None) const {
+    return !m_interestingPointsOverflowPool && (numberOfPoints(interest) <= k_maxNumberOfDisplayablePoints);
+  }
 
 private:
   constexpr static int k_maxNumberOfDisplayablePoints = 32;

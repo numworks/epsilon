@@ -176,7 +176,7 @@ Expression ComplexCartesian::argument(const ReductionContext& reductionContext) 
     }
     // Then, compute sign(b) * π/2 - atan(a/b)
     Expression signb = SignFunction::Builder(b);
-    Expression signbPi2 = Multiplication::Builder(Rational::Builder(1,2), signb, Constant::Builder("π"));
+    Expression signbPi2 = Multiplication::Builder(Rational::Builder(1,2), signb, Constant::PiBuilder());
     signb.shallowReduce(reductionContext);
     Expression sub = Subtraction::Builder(signbPi2, arcTangent);
     signbPi2.shallowReduce(reductionContext);
@@ -187,7 +187,7 @@ Expression ComplexCartesian::argument(const ReductionContext& reductionContext) 
     Expression signa = SignFunction::Builder(a).shallowReduce(reductionContext);
     Subtraction sub = Subtraction::Builder(Rational::Builder(1), signa);
     signa.shallowReduce(reductionContext);
-    Multiplication mul = Multiplication::Builder(Rational::Builder(1,2), Constant::Builder("π"), sub);
+    Multiplication mul = Multiplication::Builder(Rational::Builder(1,2), Constant::PiBuilder(), sub);
     sub.shallowReduce(reductionContext);
     return std::move(mul);
   }
@@ -354,7 +354,7 @@ ComplexCartesian ComplexCartesian::power(ComplexCartesian & other, const Reducti
   rclone.shallowReduce(reductionContext);
   Expression thmuld = Multiplication::Builder(Rational::Builder(-1), thclone, d.clone());
   thclone.shallowReduce(reductionContext);
-  Expression exp = Power::Builder(Constant::Builder("e"), thmuld);
+  Expression exp = Power::Builder(Constant::ExponentialEBuilder(), thmuld);
   thmuld.shallowReduce(reductionContext);
   Multiplication norm = Multiplication::Builder(rpowc, exp);
   rpowc.shallowReduce(reductionContext);

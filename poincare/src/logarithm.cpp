@@ -111,7 +111,7 @@ Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
   }
   Expression base = childAtIndex(1);
   if (Poincare::Preferences::sharedPreferences()->basedLogarithmIsForbidden()) {
-    if (!((base.type() == ExpressionNode::Type::ConstantMaths && static_cast<Constant&>(base).isConstant("e")) ||
+    if (!((base.type() == ExpressionNode::Type::ConstantMaths && static_cast<Constant&>(base).isExponentialE()) ||
           (base.type() == ExpressionNode::Type::Rational && static_cast<Rational&>(base).isTen()))) {
       return replaceWithUndefinedInPlace();
     }
@@ -154,7 +154,7 @@ Expression Logarithm::shallowReduce(ReductionContext reductionContext) {
       }
       replaceWithInPlace(c);
       return c;
-    } else if (base.type() == ExpressionNode::Type::ConstantMaths && (static_cast<Constant &>(base).isConstant("e") || static_cast<Constant &>(base).isConstant("π"))) {
+    } else if (base.type() == ExpressionNode::Type::ConstantMaths && (static_cast<Constant &>(base).isExponentialE() || static_cast<Constant &>(base).isPi())) {
       replaceWithInPlace(c);
       return c;
     }
@@ -356,7 +356,7 @@ Expression Logarithm::shallowBeautify() {
   if (numberOfChildren() == 1) {
     return *this;
   }
-  Constant e = Constant::Builder("e");
+  Constant e = Constant::ExponentialEBuilder();
   if (childAtIndex(1).isIdenticalTo(e)) {
     NaperianLogarithm np = NaperianLogarithm::Builder(childAtIndex(0));
     replaceWithInPlace(np);

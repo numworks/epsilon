@@ -29,7 +29,7 @@ void TrigonometryListController::setExpression(Expression e) {
   preferencesRadian.setAngleUnit(Preferences::AngleUnit::Radian);
 
   // Compute angle modulus 2π
-  Expression twoPi = Multiplication::Builder(Rational::Builder(2), Poincare::Constant::Builder("π"));
+  Expression twoPi = Multiplication::Builder(Rational::Builder(2), Poincare::Constant::PiBuilder());
   // Use the reduction of frac part to compute mod 1 on rationals
   Expression angleReduced = Multiplication::Builder(FracPart::Builder(Division::Builder(e, twoPi.clone())), twoPi.clone());
   Shared::PoincareHelpers::CloneAndReduce(&angleReduced, context, ReductionTarget::User);

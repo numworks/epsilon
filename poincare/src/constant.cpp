@@ -23,16 +23,11 @@ ConstantNode::ConstantNode(const char * newName, int length) : SymbolAbstractNod
 }
 
 TrinaryBoolean ConstantNode::isPositive(Context * context) const {
-  ConstantInfo info = constantInfo();
-  if (isConstant("π", info) || isConstant("e", info)) {
-    return TrinaryBoolean::True;
-  }
-  return TrinaryBoolean::Unknown;
+  return isPi() || isExponentialE() ? TrinaryBoolean::True : TrinaryBoolean::Unknown;
 }
 
 bool ConstantNode::isReal() const {
-  ConstantInfo info = constantInfo();
-  return isConstant("π", info) || isConstant("e", info);
+  return isPi() || isExponentialE();
 }
 
 int ConstantNode::simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const {
@@ -56,10 +51,10 @@ Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, 
 
 template<typename T>
 Evaluation<T> ConstantNode::templatedApproximate() const {
-  ConstantInfo info = constantInfo();
-  if (isConstant("i", info)) {
+  if (isComplexI()) {
     return Complex<T>::Builder(0.0, 1.0);
   }
+  ConstantInfo info = constantInfo();
   if (info.unit() == nullptr) {
     return Complex<T>::Builder(info.value());
   }
@@ -105,12 +100,12 @@ ConstantNode::ConstantInfo Constant::ConstantInfoFromName(const char * name, int
 }
 
 Expression Constant::shallowReduce(ReductionContext reductionContext) {
-  ConstantNode::ConstantInfo info = constantInfo();
-  if (isConstant("e", info) || isConstant("π", info)) {
+  if (isExponentialE() || isPi()) {
     return *this;
   }
+  ConstantNode::ConstantInfo info = constantInfo();
   Expression result;
-  if (isConstant("i", info)) {
+  if (isComplexI()) {
     if (reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
       result = Nonreal::Builder();
     } else if (reductionContext.target() == ReductionTarget::User) {

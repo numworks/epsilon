@@ -151,25 +151,25 @@ QUIZ_CASE(poincare_serialization_float) {
 }
 
 QUIZ_CASE(poincare_serialization_division) {
-  assert_expression_serialize_to(Division::Builder(Rational::Builder(-2), Constant::Builder("π")), "\u0012-2\u0013/π");
-  assert_expression_serialize_to(Division::Builder(Constant::Builder("π"), Rational::Builder(-2)), "π/\u0012-2\u0013");
-  assert_expression_serialize_to(Division::Builder(Rational::Builder(2,3), Constant::Builder("π")), "\u00122/3\u0013/π");
-  assert_expression_serialize_to(Division::Builder(Addition::Builder(Rational::Builder(2),Rational::Builder(1)), Constant::Builder("π")), "\u00122+1\u0013/π");
-  assert_expression_serialize_to(Division::Builder(Subtraction::Builder(Rational::Builder(2),Rational::Builder(1)), Constant::Builder("π")), "\u00122-1\u0013/π");
-  assert_expression_serialize_to(Division::Builder(Multiplication::Builder(Rational::Builder(2),Rational::Builder(1)), Constant::Builder("π")), "\u00122×1\u0013/π");
-  assert_expression_serialize_to(Division::Builder(Division::Builder(Rational::Builder(2),Rational::Builder(1)), Constant::Builder("π")), "\u00122/1\u0013/π");
-  assert_expression_serialize_to(Division::Builder(Opposite::Builder(Rational::Builder(2)), Constant::Builder("π")), "\u0012-2\u0013/π");
+  assert_expression_serialize_to(Division::Builder(Rational::Builder(-2), Constant::PiBuilder()), "\u0012-2\u0013/π");
+  assert_expression_serialize_to(Division::Builder(Constant::PiBuilder(), Rational::Builder(-2)), "π/\u0012-2\u0013");
+  assert_expression_serialize_to(Division::Builder(Rational::Builder(2,3), Constant::PiBuilder()), "\u00122/3\u0013/π");
+  assert_expression_serialize_to(Division::Builder(Addition::Builder(Rational::Builder(2),Rational::Builder(1)), Constant::PiBuilder()), "\u00122+1\u0013/π");
+  assert_expression_serialize_to(Division::Builder(Subtraction::Builder(Rational::Builder(2),Rational::Builder(1)), Constant::PiBuilder()), "\u00122-1\u0013/π");
+  assert_expression_serialize_to(Division::Builder(Multiplication::Builder(Rational::Builder(2),Rational::Builder(1)), Constant::PiBuilder()), "\u00122×1\u0013/π");
+  assert_expression_serialize_to(Division::Builder(Division::Builder(Rational::Builder(2),Rational::Builder(1)), Constant::PiBuilder()), "\u00122/1\u0013/π");
+  assert_expression_serialize_to(Division::Builder(Opposite::Builder(Rational::Builder(2)), Constant::PiBuilder()), "\u0012-2\u0013/π");
 }
 
 QUIZ_CASE(poincare_serialization_factorial) {
   assert_expression_serialize_to(Factorial::Builder(Rational::Builder(2,3)), "\u00122/3\u0013!");
-  assert_expression_serialize_to(Factorial::Builder(Division::Builder(Constant::Builder("π"),Rational::Builder(3))), "\u0012π/3\u0013!");
-  assert_expression_serialize_to(Factorial::Builder(Power::Builder(Constant::Builder("π"),Rational::Builder(3))), "\u0012π^3\u0013!");
+  assert_expression_serialize_to(Factorial::Builder(Division::Builder(Constant::PiBuilder(),Rational::Builder(3))), "\u0012π/3\u0013!");
+  assert_expression_serialize_to(Factorial::Builder(Power::Builder(Constant::PiBuilder(),Rational::Builder(3))), "\u0012π^3\u0013!");
 }
 
 QUIZ_CASE(poincare_serialization_percent) {
   assert_expression_serialize_to(PercentSimple::Builder(Rational::Builder(2,3)), "\u00122/3\u0013%");
-  assert_expression_serialize_to(PercentSimple::Builder(Division::Builder(Constant::Builder("π"),Rational::Builder(3))), "\u0012π/3\u0013%");
-  assert_expression_serialize_to(PercentSimple::Builder(Power::Builder(Constant::Builder("π"),Rational::Builder(3))), "\u0012π^3\u0013%");
+  assert_expression_serialize_to(PercentSimple::Builder(Division::Builder(Constant::PiBuilder(),Rational::Builder(3))), "\u0012π/3\u0013%");
+  assert_expression_serialize_to(PercentSimple::Builder(Power::Builder(Constant::PiBuilder(),Rational::Builder(3))), "\u0012π^3\u0013%");
   assert_expression_serialize_to(PercentAddition::Builder(PercentAddition::Builder(Rational::Builder(100), Rational::Builder(20)), Opposite::Builder(Rational::Builder(30))), "100↗20%↘30%");
 }

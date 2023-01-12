@@ -69,7 +69,7 @@ void VectorListController::setExpression(Poincare::Expression e) {
       y = static_cast<Matrix &>(normalized).matrixChild(isColumn ? 1 : 0, isColumn ? 0 : 1);
       Expression angle = ArcCosine::Builder(x);
       if (y.isPositive(context) == TrinaryBoolean::False) {
-        angle = Subtraction::Builder(Multiplication::Builder(Rational::Builder(2), Poincare::Constant::Builder("π")), angle);
+        angle = Subtraction::Builder(Multiplication::Builder(Rational::Builder(2), Poincare::Constant::PiBuilder()), angle);
       }
       m_indexMessageMap[index] = messageIndex++;
       setLineAtIndex(index++, Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta), angle, context, &preferencesCopy);

@@ -247,7 +247,7 @@ QUIZ_CASE(poincare_properties_expression_sign) {
   quiz_assert(VectorNorm::Builder(BasedInteger::Builder(1)).isPositive(&context) == TrinaryBoolean::True);
   quiz_assert(Division::Builder(Rational::Builder(7,3), Rational::Builder(-1)).isPositive(&context) == TrinaryBoolean::False);
   quiz_assert(DivisionQuotient::Builder(Rational::Builder(-7), Rational::Builder(-1)).isPositive(&context) == TrinaryBoolean::True);
-  quiz_assert(ArcSine::Builder(ArcTangent::Builder(Opposite::Builder(RealPart::Builder(ArcCosine::Builder(Constant::Builder("π")))))).isPositive(&context) == TrinaryBoolean::False);
+  quiz_assert(ArcSine::Builder(ArcTangent::Builder(Opposite::Builder(RealPart::Builder(ArcCosine::Builder(Constant::PiBuilder()))))).isPositive(&context) == TrinaryBoolean::False);
 }
 
 constexpr Poincare::TrinaryBoolean Positive = Poincare::TrinaryBoolean::True;
@@ -306,7 +306,7 @@ QUIZ_CASE(poincare_properties_set_sign_positive) {
   assert_sign_sets_to(Float<double>::Builder(-2.468), TrinaryBoolean::True);
   assert_sign_sets_to(Rational::Builder(2, 7), TrinaryBoolean::True);
   assert_sign_sets_to(RealPart::Builder(ComplexCartesian::Builder(Rational::Builder(3, 2), Rational::Builder(0))), TrinaryBoolean::True);
-  assert_sign_sets_to(Constant::Builder("π"), TrinaryBoolean::True);
+  assert_sign_sets_to(Constant::PiBuilder(), TrinaryBoolean::True);
   assert_sign_sets_to(FracPart::Builder(Rational::Builder(-34, 5)), TrinaryBoolean::True);
   assert_sign_sets_to(Round::Builder(Rational::Builder(67, 34), Rational::Builder(1)), TrinaryBoolean::True);
   assert_sign_sets_to(DivisionQuotient::Builder(Rational::Builder(-23), Rational::Builder(12)), TrinaryBoolean::True);
@@ -316,7 +316,7 @@ QUIZ_CASE(poincare_properties_set_sign_positive) {
   assert_sign_sets_to(Factor::Builder(Rational::Builder(120)), TrinaryBoolean::True);
   assert_sign_sets_to(ArcCosine::Builder(Rational::Builder(1, 4)), TrinaryBoolean::True);
   assert_sign_sets_to(AbsoluteValue::Builder(Symbol::Builder("p", 1)), TrinaryBoolean::True);
-  assert_sign_sets_to(SignFunction::Builder(Constant::Builder("π")), TrinaryBoolean::True);
+  assert_sign_sets_to(SignFunction::Builder(Constant::PiBuilder()), TrinaryBoolean::True);
   assert_sign_sets_to(Infinity::Builder(true), TrinaryBoolean::True);
   assert_sign_sets_to(Random::Builder(), TrinaryBoolean::True);
 }

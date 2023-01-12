@@ -233,19 +233,19 @@ QUIZ_CASE(poincare_approximation_subtraction) {
 QUIZ_CASE(poincare_approximation_constant) {
   assert_expression_approximates_to<double>("π", "3.1415926535898");
   assert_expression_approximates_to<float>("e", "2.718282");
-  for (ConstantNode::ConstantInfo info : Constant::k_constants) {
-    for (const char * constantNameAlias : info.aliasesList()) {
+  for (ConstantNode::ConstantInfo info : ConstantNode::k_constants) {
+    for (const char * constantNameAlias : info.m_aliasesList) {
       if (strcmp(constantNameAlias, "i") == 0) {
         assert_expression_approximates_to<float>("i", "i");
         assert_expression_approximates_to<double>("i", "i");
         assert_expression_approximates_to_scalar<float>("i", NAN);
         assert_expression_approximates_to_scalar<double>("i", NAN);
-      } else if (info.unit() == nullptr) {
+      } else if (info.m_unit == nullptr) {
         constexpr int k_bufferSize = PrintFloat::charSizeForFloatsWithPrecision(PrintFloat::SignificantDecimalDigits<double>());
         char buffer[k_bufferSize];
-        PrintFloat::ConvertFloatToText<double>(info.value(), buffer, k_bufferSize, PrintFloat::k_maxFloatGlyphLength, PrintFloat::SignificantDecimalDigits<double>(), DecimalMode);
+        PrintFloat::ConvertFloatToText<double>(info.m_value, buffer, k_bufferSize, PrintFloat::k_maxFloatGlyphLength, PrintFloat::SignificantDecimalDigits<double>(), DecimalMode);
         assert_expression_approximates_to<double>(constantNameAlias, buffer);
-        assert_expression_approximates_to_scalar<float>(constantNameAlias, info.value());
+        assert_expression_approximates_to_scalar<float>(constantNameAlias, info.m_value);
       } else {
         assert_expression_approximates_to<double>(constantNameAlias, Undefined::Name());
         assert_expression_approximates_to_scalar<float>(constantNameAlias, NAN);

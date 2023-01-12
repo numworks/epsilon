@@ -125,7 +125,6 @@ void PointsOfInterestCache::stripOutOfBounds() {
 }
 
 bool PointsOfInterestCache::computeNextStep() {
-  // TODO : Add emscripten exceptions
   // Clone the cache to prevent modifying the pool before the checkpoint
   PointsOfInterestCache cacheClone;
   {
@@ -243,6 +242,13 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
 
 void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest, uint32_t data) {
   assert(std::isfinite(x) && std::isfinite(y));
+#if __EMSCRIPTEN__
+  // Cap the total number of points
+  if (m_interestingPointsOverflowPool || (numberOfPoints() > k_maxNumberOfPoints)) {
+    m_interestingPointsOverflowPool = true;
+    return;
+  }
+#endif
   ExpiringPointer<ContinuousFunction> f = App::app()->functionStore()->modelForRecord(m_record);
   m_list.append(x, y, data, interest, f->isAlongY());
 }

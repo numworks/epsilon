@@ -27,6 +27,7 @@ void PointsOfInterestCache::setBounds(float start, float end) {
     /* Discard the old results if anything in the storage has changed. */
     m_computedStart = m_computedEnd = start;
     m_list.init();
+    m_interestingPointsOverflowPool = false;
   }
 
   m_start = start;
@@ -36,6 +37,7 @@ void PointsOfInterestCache::setBounds(float start, float end) {
 
   if (m_list.isUninitialized()) {
     m_list.init();
+    m_interestingPointsOverflowPool = false;
   } else {
     stripOutOfBounds();
   }
@@ -117,11 +119,13 @@ void PointsOfInterestCache::stripOutOfBounds() {
     float x = static_cast<float>(pointAtIndex(i).abscissa());
     if (x < m_start || m_end < x) {
       m_list.list().removeChildAtIndexInPlace(i);
+      m_interestingPointsOverflowPool = false;
     }
   }
 }
 
 bool PointsOfInterestCache::computeNextStep() {
+  // TODO : Add emscripten exceptions
   // Clone the cache to prevent modifying the pool before the checkpoint
   PointsOfInterestCache cacheClone;
   {
@@ -143,9 +147,7 @@ bool PointsOfInterestCache::computeNextStep() {
         return false;
       }
     } else {
-      /* TODO : Also prevent further calls to computeNextStep as long as ranges
-       * did not change. Also, handle points of interests as if there were too
-       * many to display */
+      m_interestingPointsOverflowPool = true;
       return false;
     }
   }

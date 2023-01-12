@@ -125,9 +125,10 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
       assert(f->properties().isCartesian());
       bool alongY = f->isAlongY();
       Range1D * bounds = alongY ? &yBounds : &xBounds;
+      // Use the intersection between the definition domain of f and the bounds
       zoom.setBounds(
-        std::max(bounds->min(), f->tMin()),
-        std::min(bounds->max(), f->tMax())
+        std::clamp(f->tMin(), bounds->min(), bounds->max()),
+        std::clamp(f->tMax(), bounds->min(), bounds->max())
       );
       zoom.fitPointsOfInterest(evaluator<float>, f.operator->(), alongY, evaluator<double>);
       zoom.fitBounds(evaluator<float>, f.operator->(), alongY);

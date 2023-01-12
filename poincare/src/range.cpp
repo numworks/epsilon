@@ -42,7 +42,7 @@ void Range1D::stretchIfTooSmall(float shift) {
   if (length() < k_minLength) {
     stretchEachBoundBy(shift);
   }
-  assert(length() >= k_minLength);
+  assert(length() >= k_minLength || std::isnan(length()));
 }
 
 void Range1D::privateSet(float t, bool isMin, float limit) {

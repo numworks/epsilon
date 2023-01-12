@@ -143,7 +143,7 @@ double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Sh
 
   // Force derivative to 0 if cursor is at an extremum
   PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterestForRecord(record);
-  if (!pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::LocalMaximum) && !pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::LocalMinimum)) {
+  if (!pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::LocalMaximum, false, false) && !pointsOfInterest->hasInterestAtCoordinates(cursor->x(), cursor->y(), Solver<double>::Interest::LocalMinimum, false, false)) {
     derivative = function->approximateDerivative(cursor->x(), App::app()->localContext());
   }
 

@@ -1,6 +1,7 @@
 #include "points_of_interest_cache.h"
 #include "../app.h"
 #include <poincare/circuit_breaker_checkpoint.h>
+#include <poincare/exception_checkpoint.h>
 #include <apps/shared/poincare_helpers.h>
 #include <algorithm>
 
@@ -46,18 +47,9 @@ void PointsOfInterestCache::setBounds(float start, float end) {
 
 bool PointsOfInterestCache::computeUntilNthPoint(int n) {
   while (n >= numberOfPoints() && !isFullyComputed()) {
-    /* Use a checkpoint each time a step is computed so that plot can be
-     * navigated in parallel of computation. */
-    CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::AnyKey);
-    // Clone the cache to prevent modifying the pool before the checkpoint
-    PointsOfInterestCache cacheClone = clone();
-    if (CircuitBreakerRun(checkpoint)) {
-      cacheClone.computeNextStep();
-    } else {
+    if (!computeNextStep()) {
       return false;
     }
-    checkpoint.discard();
-    *this = cacheClone;
   }
   return true;
 }
@@ -134,12 +126,37 @@ void PointsOfInterestCache::stripOutOfBounds() {
   }
 }
 
-void PointsOfInterestCache::computeNextStep() {
-  if (m_computedEnd < m_end) {
-    computeBetween(m_computedEnd, std::clamp(m_computedEnd + step(), m_start, m_end));
-  } else if (m_computedStart > m_start) {
-    computeBetween(std::clamp(m_computedStart - step(), m_start, m_end), m_computedStart);
+bool PointsOfInterestCache::computeNextStep() {
+  // Clone the cache to prevent modifying the pool before the checkpoint
+  PointsOfInterestCache cacheClone;
+  {
+    /* Use an ExceptionCheckpoint in case cloning or computing interest points
+     * overflows the pool. */
+    ExceptionCheckpoint ecp;
+    if (ExceptionRun(ecp)) {
+      /* Also use a CircuitBreakerCheckpoint so that computation can be
+       * interrupted so plot can be navigated in parallel of computation. */
+      CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::AnyKey);
+      if (CircuitBreakerRun(checkpoint)) {
+        cacheClone = clone();
+        if (m_computedEnd < m_end) {
+          cacheClone.computeBetween(m_computedEnd, std::clamp(m_computedEnd + step(), m_start, m_end));
+        } else if (m_computedStart > m_start) {
+          cacheClone.computeBetween(std::clamp(m_computedStart - step(), m_start, m_end), m_computedStart);
+        }
+      } else {
+        return false;
+      }
+    } else {
+      // Handle points of interests as if there were too many to display
+      m_tooManyPoints = true;
+      /* TODO : Also prevent further calls to computeNextStep as long as ranges
+       * did not change. */
+      return false;
+    }
   }
+  *this = cacheClone;
+  return true;
 }
 
 void PointsOfInterestCache::computeBetween(float start, float end) {

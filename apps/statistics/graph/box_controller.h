@@ -27,6 +27,9 @@ public:
   // MultipleDataViewController
   MultipleDataView * multipleDataView() override { return &m_view; }
   bool moveSelectionHorizontally(int deltaIndex) override;
+  /* Reset the selected calculation index in case modifying the series made
+   * this calculation disappear. */
+  void viewWillAppearBeforeReload() override { m_selectedIndex = 0; }
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

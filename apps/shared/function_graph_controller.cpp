@@ -33,7 +33,9 @@ void FunctionGraphController::didBecomeFirstResponder() {
   if (curveView()->hasFocus()) {
     bannerView()->abscissaValue()->setParentResponder(this);
     bannerView()->abscissaValue()->setDelegates(textFieldDelegateApp(), this);
-    Container::activeApp()->setFirstResponder(bannerView()->abscissaValue());
+    if (!isAlongY(indexFunctionSelectedByCursor())) {
+      Container::activeApp()->setFirstResponder(bannerView()->abscissaValue());
+    }
   } else {
     InteractiveCurveViewController::didBecomeFirstResponder();
   }
@@ -189,6 +191,11 @@ bool FunctionGraphController::moveCursorVertically(int direction) {
   Poincare::Coordinate2D<double> cursorPosition = f->evaluateXYAtParameter(clippedT, context, nextSubCurve);
   m_cursor->moveTo(clippedT, cursorPosition.x1(), cursorPosition.x2());
   selectFunctionWithCursor(nextActiveFunctionIndex, true);
+  // Prevent the abscissaValue from edition if the function is along y
+  Escher::Responder * responder = isAlongY(indexFunctionSelectedByCursor()) ? static_cast<Responder*>(this) : bannerView()->abscissaValue();
+  if (Container::activeApp()->firstResponder() != responder) {
+    Container::activeApp()->setFirstResponder(responder);
+  }
   m_selectedSubCurveIndex = nextSubCurve;
   return true;
 }

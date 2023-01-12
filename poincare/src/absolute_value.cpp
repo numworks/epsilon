@@ -116,7 +116,7 @@ Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
     return m.shallowReduce(reductionContext);
   }
  // |i| = 1
-  if (c.type() == ExpressionNode::Type::ConstantMaths && static_cast<const Constant &>(c).isConstant("i")) {
+  if (c.type() == ExpressionNode::Type::ConstantMaths && static_cast<const Constant &>(c).isComplexI()) {
     Expression e = Rational::Builder(1);
     replaceWithInPlace(e);
     return e;

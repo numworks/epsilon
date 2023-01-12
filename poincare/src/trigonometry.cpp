@@ -55,7 +55,7 @@ static int PiDivisor(Preferences::AngleUnit angleUnit) {
 Expression Trigonometry::PiExpressionInAngleUnit(Preferences::AngleUnit angleUnit) {
   switch (angleUnit) {
   case Preferences::AngleUnit::Radian:
-    return Constant::Builder("π");;
+    return Constant::PiBuilder();;
   case Preferences::AngleUnit::Degree:
     return Rational::Builder(180);
   default:
@@ -298,7 +298,7 @@ Expression Trigonometry::shallowReduceDirectFunction(Expression & e, ReductionCo
         && e.childAtIndex(0).type() == ExpressionNode::Type::Multiplication
         && e.childAtIndex(0).numberOfChildren() == 2
         && e.childAtIndex(0).childAtIndex(1).type() == ExpressionNode::Type::ConstantMaths
-        && e.childAtIndex(0).childAtIndex(1).convert<Constant>().isConstant("π")
+        && e.childAtIndex(0).childAtIndex(1).convert<Constant>().isPi()
         && e.childAtIndex(0).childAtIndex(0).type() == ExpressionNode::Type::Rational)
       || ((angleUnit == Preferences::AngleUnit::Degree || angleUnit == Preferences::AngleUnit::Gradian)
         && e.childAtIndex(0).type() == ExpressionNode::Type::Rational))

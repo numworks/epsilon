@@ -218,7 +218,7 @@ QUIZ_CASE(poincare_parsing_parse) {
   assert_parsed_expression_is("2--2+-1", Addition::Builder(Subtraction::Builder(BasedInteger::Builder(2),Opposite::Builder(BasedInteger::Builder(2))),Opposite::Builder(BasedInteger::Builder(1))));
   assert_parsed_expression_is("2--2×-1", Subtraction::Builder(BasedInteger::Builder(2),Opposite::Builder(Multiplication::Builder(BasedInteger::Builder(2),Opposite::Builder(BasedInteger::Builder(1))))));
   assert_parsed_expression_is("-1^2", Opposite::Builder(Power::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2))));
-  assert_parsed_expression_is("2e^(3)", Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder("e"),Parenthesis::Builder(BasedInteger::Builder(3)))));
+  assert_parsed_expression_is("2e^(3)", Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::ExponentialEBuilder(),Parenthesis::Builder(BasedInteger::Builder(3)))));
   assert_parsed_expression_is("2/-3/-4", Division::Builder(Division::Builder(BasedInteger::Builder(2),Opposite::Builder(BasedInteger::Builder(3))),Opposite::Builder(BasedInteger::Builder(4))));
   assert_parsed_expression_is("1×2-3×4", Subtraction::Builder(Multiplication::Builder(BasedInteger::Builder(1),BasedInteger::Builder(2)),Multiplication::Builder(BasedInteger::Builder(3),BasedInteger::Builder(4))));
   assert_parsed_expression_is("-1×2", Opposite::Builder(Multiplication::Builder(BasedInteger::Builder(1), BasedInteger::Builder(2))));
@@ -391,8 +391,8 @@ QUIZ_CASE(poincare_parsing_units) {
   // Can parse implicit multiplication with units
   Expression kilometer = Expression::Parse("_km", nullptr);
   Expression second = Expression::Parse("_s", nullptr);
-  assert_parsed_expression_is("_kmπ", Multiplication::Builder(kilometer, Constant::Builder("π")));
-  assert_parsed_expression_is("π_km", Multiplication::Builder(Constant::Builder("π"), kilometer));
+  assert_parsed_expression_is("_kmπ", Multiplication::Builder(kilometer, Constant::PiBuilder()));
+  assert_parsed_expression_is("π_km", Multiplication::Builder(Constant::PiBuilder(), kilometer));
   assert_parsed_expression_is("_s_km", Multiplication::Builder(second, kilometer));
   assert_parsed_expression_is("3_s", Multiplication::Builder(BasedInteger::Builder(3), second));
 
@@ -401,8 +401,8 @@ QUIZ_CASE(poincare_parsing_units) {
   assert_parsed_expression_is("l", liter);
   assert_parsed_expression_is("_l", liter);
 
-  assert_parsed_expression_is("kmπ", Multiplication::Builder(kilometer, Constant::Builder("π")));
-  assert_parsed_expression_is("πkm", Multiplication::Builder(Constant::Builder("π"), kilometer));
+  assert_parsed_expression_is("kmπ", Multiplication::Builder(kilometer, Constant::PiBuilder()));
+  assert_parsed_expression_is("πkm", Multiplication::Builder(Constant::PiBuilder(), kilometer));
   assert_parsed_expression_is("skm", Multiplication::Builder(second, kilometer));
   assert_parsed_expression_is("3s", Multiplication::Builder(BasedInteger::Builder(3), second));
 
@@ -429,7 +429,7 @@ QUIZ_CASE(poincare_parsing_units) {
   assert_parsed_expression_is("2×3h5s", Multiplication::Builder(BasedInteger::Builder(2), Addition::Builder({Multiplication::Builder(BasedInteger::Builder(3), hour), Multiplication::Builder(BasedInteger::Builder(5), second)})));
   assert_parsed_expression_is("4h-3h5s", Subtraction::Builder(Multiplication::Builder(BasedInteger::Builder(4), hour.clone()), Addition::Builder({Multiplication::Builder(BasedInteger::Builder(3), hour), Multiplication::Builder(BasedInteger::Builder(5), second)})));
   // Does not work with fractions or other numbers
-  assert_parsed_expression_is("(3/5)hπs", Multiplication::Builder({Parenthesis::Builder(Division::Builder(BasedInteger::Builder(3), BasedInteger::Builder(5))), hour, Constant::Builder("π"), second}));
+  assert_parsed_expression_is("(3/5)hπs", Multiplication::Builder({Parenthesis::Builder(Division::Builder(BasedInteger::Builder(3), BasedInteger::Builder(5))), hour, Constant::PiBuilder(), second}));
   // Does not work with any unit
   assert_parsed_expression_is("3km4m", Multiplication::Builder({BasedInteger::Builder(3), Symbol::Builder("k",1), Symbol::Builder("m4", 2), Expression::Parse("_m", nullptr)})); // 3*k*m4*m
   // Does not work in any order
@@ -457,10 +457,10 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   // Reserved symbols
   assert_parsed_expression_is("Ans", Symbol::Builder("Ans", 3));
   assert_parsed_expression_is("ans", Symbol::Builder("Ans", 3));
-  assert_parsed_expression_is("i", Constant::Builder("i"));
-  assert_parsed_expression_is("π", Constant::Builder("π"));
-  assert_parsed_expression_is("pi", Constant::Builder("π"));
-  assert_parsed_expression_is("e", Constant::Builder("e"));
+  assert_parsed_expression_is("i", Constant::ComplexIBuilder());
+  assert_parsed_expression_is("π", Constant::PiBuilder());
+  assert_parsed_expression_is("pi", Constant::PiBuilder());
+  assert_parsed_expression_is("e", Constant::ExponentialEBuilder());
   assert_parsed_expression_is("∞", Infinity::Builder(false));
   assert_parsed_expression_is("+∞", Infinity::Builder(false));
   assert_parsed_expression_is("inf", Infinity::Builder(false));
@@ -677,7 +677,7 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is("0b2", Multiplication::Builder(BasedInteger::Builder(0),Symbol::Builder("b2", 2)));
   assert_parsed_expression_is("0xG", Multiplication::Builder(BasedInteger::Builder(0), Symbol::Builder("x", 1),Symbol::Builder("G", 1)));
   assert_parsed_expression_is("1x+2", Addition::Builder(Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)),BasedInteger::Builder(2)));
-  assert_parsed_expression_is("1π", Multiplication::Builder(BasedInteger::Builder(1),Constant::Builder("π")));
+  assert_parsed_expression_is("1π", Multiplication::Builder(BasedInteger::Builder(1),Constant::PiBuilder()));
   assert_parsed_expression_is("1x-2", Subtraction::Builder(Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1)),BasedInteger::Builder(2)));
   assert_parsed_expression_is("-1x", Opposite::Builder(Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1))));
   assert_parsed_expression_is("2×1x", Multiplication::Builder(BasedInteger::Builder(2),Multiplication::Builder(BasedInteger::Builder(1),Symbol::Builder("x", 1))));
@@ -690,7 +690,7 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is("sin(1)2", Multiplication::Builder(Sine::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(2)));
   assert_parsed_expression_is("1cos(2)", Multiplication::Builder(BasedInteger::Builder(1),Cosine::Builder(BasedInteger::Builder(2))));
   assert_parsed_expression_is("1!2", Multiplication::Builder(Factorial::Builder(BasedInteger::Builder(1)),BasedInteger::Builder(2)));
-  assert_parsed_expression_is("2e^(3)", Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::Builder("e"),Parenthesis::Builder(BasedInteger::Builder(3)))));
+  assert_parsed_expression_is("2e^(3)", Multiplication::Builder(BasedInteger::Builder(2),Power::Builder(Constant::ExponentialEBuilder(),Parenthesis::Builder(BasedInteger::Builder(3)))));
   assert_parsed_expression_is("\u00122^3\u00133", Multiplication::Builder(Power::Builder(BasedInteger::Builder(2),BasedInteger::Builder(3)), BasedInteger::Builder(3)));
   Expression m1[] = {BasedInteger::Builder(1)}; Matrix M1 = BuildMatrix(1,1,m1);
   Expression m2[] = {BasedInteger::Builder(2)}; Matrix M2 = BuildMatrix(1,1,m2);
@@ -707,7 +707,7 @@ QUIZ_CASE(poincare_parsing_adding_missing_parentheses) {
   assert_parsed_expression_with_user_parentheses_is("1--2", Subtraction::Builder(BasedInteger::Builder(1),Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(2)))));
   assert_parsed_expression_with_user_parentheses_is("1+conj(-2)", Addition::Builder(BasedInteger::Builder(1),Parenthesis::Builder(Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(2))))));
   assert_parsed_expression_with_user_parentheses_is("1-conj(-2)", Subtraction::Builder(BasedInteger::Builder(1),Parenthesis::Builder(Conjugate::Builder(Opposite::Builder(BasedInteger::Builder(2))))));
-  assert_parsed_expression_with_user_parentheses_is("3conj(1+i)", Multiplication::Builder(BasedInteger::Builder(3), Parenthesis::Builder(Conjugate::Builder(Addition::Builder(BasedInteger::Builder(1), Constant::Builder("i"))))));
+  assert_parsed_expression_with_user_parentheses_is("3conj(1+i)", Multiplication::Builder(BasedInteger::Builder(3), Parenthesis::Builder(Conjugate::Builder(Addition::Builder(BasedInteger::Builder(1), Constant::ComplexIBuilder())))));
   assert_parsed_expression_with_user_parentheses_is("2×-3", Multiplication::Builder(BasedInteger::Builder(2), Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(3)))));
   assert_parsed_expression_with_user_parentheses_is("2×-3", Multiplication::Builder(BasedInteger::Builder(2), Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(3)))));
   assert_parsed_expression_with_user_parentheses_is("--2", Opposite::Builder(Parenthesis::Builder(Opposite::Builder(BasedInteger::Builder(2)))));
@@ -731,7 +731,7 @@ QUIZ_CASE(poincare_parse_mixed_fraction) {
  assert_parsed_expression_is("1\u0012\u00122\u0013/\u00123\u0013\u0013", MixedFraction::Builder(BasedInteger::Builder(1), Division::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))));
  assert_parsed_expression_is("1\u00122/3\u00132", Multiplication::Builder(MixedFraction::Builder(BasedInteger::Builder(1), Division::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))), BasedInteger::Builder(2)));
  assert_parsed_expression_is("1\u00122/3\u0013\u00122/3\u0013", Multiplication::Builder(MixedFraction::Builder(BasedInteger::Builder(1), Division::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))), Division::Builder(BasedInteger::Builder(2), BasedInteger::Builder(3))));
- assert_parsed_expression_is("1\u0012e/3\u0013", Multiplication::Builder(BasedInteger::Builder(1),Division::Builder(Constant::Builder("e"), BasedInteger::Builder(3))));
+ assert_parsed_expression_is("1\u0012e/3\u0013", Multiplication::Builder(BasedInteger::Builder(1),Division::Builder(Constant::ExponentialEBuilder(), BasedInteger::Builder(3))));
  assert_parsed_expression_is("1\u00122.5/3\u0013", Multiplication::Builder(BasedInteger::Builder(1),Division::Builder(Decimal::Builder(2.5), BasedInteger::Builder(3))));
 }
 

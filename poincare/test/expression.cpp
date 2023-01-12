@@ -77,7 +77,7 @@ QUIZ_CASE(poincare_expression_rational_constructor) {
 }
 
 QUIZ_CASE(poincare_expression_constant_constructor) {
-  Constant c = Constant::Builder("π");
+  Constant c = Constant::PiBuilder();
   c = Constant::Builder("_ke");
 }
 

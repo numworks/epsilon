@@ -25,11 +25,11 @@ void assert_greater(Expression e1, Expression e2) {
 }
 
 QUIZ_CASE(poincare_expression_order_constant) {
-  assert_greater(Constant::Builder("_c"), Constant::Builder("e"));
-  assert_greater(Constant::Builder("_G"), Constant::Builder("π"));
-  assert_greater(Constant::Builder("π"), Constant::Builder("i"));
-  assert_greater(Constant::Builder("e"), Constant::Builder("π"));
-  assert_greater(Constant::Builder("e"), Constant::Builder("i"));
+  assert_greater(Constant::Builder("_c"), Constant::ExponentialEBuilder());
+  assert_greater(Constant::Builder("_G"), Constant::PiBuilder());
+  assert_greater(Constant::PiBuilder(), Constant::ComplexIBuilder());
+  assert_greater(Constant::ExponentialEBuilder(), Constant::PiBuilder());
+  assert_greater(Constant::ExponentialEBuilder(), Constant::ComplexIBuilder());
 }
 
 QUIZ_CASE(poincare_expression_order_decimal) {
@@ -119,9 +119,9 @@ QUIZ_CASE(poincare_expression_order_addition_multiplication) {
   }
   {
     // pi + i + e -> e + pi + i
-    Expression pi = Constant::Builder("π");
-    Expression i = Constant::Builder("i");
-    Expression e = Constant::Builder("e");
+    Expression pi = Constant::PiBuilder();
+    Expression i = Constant::ComplexIBuilder();
+    Expression e = Constant::ExponentialEBuilder();
     Expression e1 = Addition::Builder({pi.clone(), i.clone(), e.clone()});
     Expression e2 = Addition::Builder({e, pi, i});
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
@@ -166,16 +166,16 @@ QUIZ_CASE(poincare_expression_order_addition_multiplication) {
   }
   {
     // pi^b * pi^a -> pi^a * pi^b
-    Expression child1 = Power::Builder(Constant::Builder("π"), Symbol::Builder('a'));
-    Expression child2 = Power::Builder(Constant::Builder("π"), Symbol::Builder('b'));
+    Expression child1 = Power::Builder(Constant::PiBuilder(), Symbol::Builder('a'));
+    Expression child2 = Power::Builder(Constant::PiBuilder(), Symbol::Builder('b'));
     Expression e1 = Multiplication::Builder(child2.clone(), child1.clone());
     Expression e2 = Multiplication::Builder(child1, child2);
     assert_multiplication_or_addition_is_ordered_as(e1, e2);
   }
   {
     // pi^3 * pi^2 -> pi^2 * pi^3
-    Expression child1 = Power::Builder(Constant::Builder("π"), Rational::Builder(2));
-    Expression child2 = Power::Builder(Constant::Builder("π"), Rational::Builder(3));
+    Expression child1 = Power::Builder(Constant::PiBuilder(), Rational::Builder(2));
+    Expression child2 = Power::Builder(Constant::PiBuilder(), Rational::Builder(3));
     Expression e1 = Multiplication::Builder(child2.clone(), child1.clone());
     Expression e2 = Multiplication::Builder(child1, child2);
     assert_multiplication_or_addition_is_ordered_as(e1, e2);

@@ -11,6 +11,9 @@ namespace Poincare {
 
 class ConstantNode final : public SymbolAbstractNode {
 public:
+  constexpr static const char * k_exponentialEName = "e";
+  constexpr static const char * k_complexIName = "i";
+
   ConstantNode(const char * newName, int length);
 
   const char * name() const override { return m_name; }
@@ -56,6 +59,9 @@ public:
   };
   ConstantInfo constantInfo() const;
   bool isConstant(const char * constant, ConstantInfo info = ConstantInfo()) const;
+  bool isPi() const { return isConstant(AliasesLists::k_piAliases.mainAlias()); }
+  bool isComplexI() const { return isConstant(k_complexIName); }
+  bool isExponentialE() const { return isConstant(k_exponentialEName); }
 
   // Comparison
   int simplificationOrderSameType(const ExpressionNode * e, bool ascending, bool ignoreParentheses) const override;
@@ -78,6 +84,7 @@ class Constant final : public SymbolAbstract {
 friend class ConstantNode;
 public:
   Constant(const ConstantNode * node) : SymbolAbstract(node) {}
+
   static Constant Builder(const char * name, int length) {
     assert(Constant::IsConstant(name, length));
     const char * mainAlias = ConstantInfoFromName(name, length).aliasesList().mainAlias();
@@ -88,11 +95,18 @@ public:
     return Builder(name, strlen(name));
   }
 
+  static Constant ExponentialEBuilder() { return Builder(ConstantNode::k_exponentialEName); }
+  static Constant ComplexIBuilder() { return Builder(ConstantNode::k_complexIName); }
+  static Constant PiBuilder() { return Builder(AliasesLists::k_piAliases.mainAlias()); }
+
   // Constant properties
   bool isConstant(const char * constantName, ConstantNode::ConstantInfo info = ConstantNode::ConstantInfo()) const { return node()->isConstant(constantName, info); }
   static bool IsConstant(const char * name, size_t length);
-  bool isComplexI() const { return isConstant("i"); }
-  bool isExponentialE() const { return isConstant("e"); }
+
+  bool isPi() const { return node()->isPi(); }
+  bool isComplexI() const { return node()->isComplexI(); }
+  bool isExponentialE() const { return node()->isExponentialE(); }
+
   ConstantNode::ConstantInfo constantInfo() const { return node()->constantInfo(); }
 
   // Simplification

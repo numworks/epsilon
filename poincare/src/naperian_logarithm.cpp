@@ -37,7 +37,7 @@ Expression NaperianLogarithm::shallowReduce(ReductionContext reductionContext) {
       return e;
     }
   }
-  Logarithm l = Logarithm::Builder(childAtIndex(0), Constant::Builder("e"));
+  Logarithm l = Logarithm::Builder(childAtIndex(0), Constant::ExponentialEBuilder());
   replaceWithInPlace(l);
   return l.shallowReduce(reductionContext);
 }

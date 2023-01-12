@@ -60,11 +60,11 @@ Expression ComplexArgument::shallowReduce(ReductionContext reductionContext) {
   } else if (c.isPositive(context) == TrinaryBoolean::True) {
     res = Rational::Builder(0);
   } else if (c.isPositive(context) == TrinaryBoolean::False) {
-    res = Constant::Builder("π");
+    res = Constant::PiBuilder();
   } else {
     double approximation = c.approximateToScalar<double>(context, reductionContext.complexFormat(), reductionContext.angleUnit(), true);
     if (approximation < 0.0) {
-      res = Constant::Builder("π");
+      res = Constant::PiBuilder();
     } else if (approximation > 0.0) {
       res = Rational::Builder(0);
     } else if (approximation == 0.0) {

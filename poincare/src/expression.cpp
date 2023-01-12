@@ -716,7 +716,7 @@ bool Expression::hasComplexI(Context * context, SymbolicComputation replaceSymbo
   return !isUninitialized() && recursivelyMatches(
       [](const Expression e, Context * context) {
         return (e.type() == ExpressionNode::Type::ConstantMaths &&
-                static_cast<const Constant &>(e).isConstant("i")) ||
+                static_cast<const Constant &>(e).isComplexI()) ||
                (e.type() == ExpressionNode::Type::ComplexCartesian &&
                 static_cast<const ComplexCartesian&>(e).imag().isNull(context) != TrinaryBoolean::True);
       },
@@ -1064,11 +1064,11 @@ Expression Expression::ExpressionWithoutSymbols(Expression e, Context * context,
 Expression Expression::radianToAngleUnit(Preferences::AngleUnit angleUnit) {
   if (angleUnit == Preferences::AngleUnit::Degree) {
     // e*180/Pi
-    return Multiplication::Builder(*this, Rational::Builder(180), Power::Builder(Constant::Builder("π"), Rational::Builder(-1)));
+    return Multiplication::Builder(*this, Rational::Builder(180), Power::Builder(Constant::PiBuilder(), Rational::Builder(-1)));
   }
   else if (angleUnit == Preferences::AngleUnit::Gradian) {
     // e*200/Pi
-    return Multiplication::Builder(*this, Rational::Builder(200), Power::Builder(Constant::Builder("π"), Rational::Builder(-1)));
+    return Multiplication::Builder(*this, Rational::Builder(200), Power::Builder(Constant::PiBuilder(), Rational::Builder(-1)));
   }
   return *this;
 }
@@ -1076,11 +1076,11 @@ Expression Expression::radianToAngleUnit(Preferences::AngleUnit angleUnit) {
 Expression Expression::angleUnitToRadian(Preferences::AngleUnit angleUnit) {
   if (angleUnit == Preferences::AngleUnit::Degree) {
     // e*Pi/180
-    return Multiplication::Builder(*this, Rational::Builder(1, 180), Constant::Builder("π"));
+    return Multiplication::Builder(*this, Rational::Builder(1, 180), Constant::PiBuilder());
   }
   else if (angleUnit == Preferences::AngleUnit::Gradian) {
     // e*Pi/200
-    return Multiplication::Builder(*this, Rational::Builder(1, 200), Constant::Builder("π"));
+    return Multiplication::Builder(*this, Rational::Builder(1, 200), Constant::PiBuilder());
   }
   return *this;
 }
@@ -1302,9 +1302,9 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       }
       if (!isZeroTb) {
         if (isOneTb) {
-          imag = Constant::Builder("i");
+          imag = Constant::ComplexIBuilder();
         } else {
-          imag = Multiplication::Builder(tb, Constant::Builder("i"));
+          imag = Multiplication::Builder(tb, Constant::ComplexIBuilder());
           imag.shallowAddMissingParenthesis();
         }
       }
@@ -1343,15 +1343,15 @@ Expression Expression::CreateComplexExpression(Expression ra, Expression tb, Pre
       if (!isZeroRa && !isZeroTb) {
         Expression arg;
         if (isOneTb) {
-          arg = Constant::Builder("i");
+          arg = Constant::ComplexIBuilder();
         } else {
-          arg = Multiplication::Builder(tb, Constant::Builder("i"));
+          arg = Multiplication::Builder(tb, Constant::ComplexIBuilder());
         }
         if (isNegativeTb) {
           arg = Opposite::Builder(arg);
         }
         arg.shallowAddMissingParenthesis();
-        exp = Power::Builder(Constant::Builder("e"), arg);
+        exp = Power::Builder(Constant::ExponentialEBuilder(), arg);
         exp.shallowAddMissingParenthesis();
       }
       if (exp.isUninitialized()) {
@@ -1410,7 +1410,7 @@ int ExpressionNode::numberOfNumericalValues() const {
   if (type() == ExpressionNode::Type::ConstantMaths) {
     const ConstantNode * constant = static_cast<const ConstantNode*>(this);
     // We decide that e is not a constant for e^2 to generalize as e^x
-    return !constant->isConstant("e") && !constant->isConstant("i") ;
+    return !constant->isExponentialE() && !constant->isComplexI() ;
   }
   int n = 0;
   for (ExpressionNode * child : children()) {
@@ -1427,7 +1427,7 @@ void Expression::replaceNumericalValuesWithSymbol(Symbol x) {
   if (isNumber()) {
     return replaceWithInPlace(x);
   }
-  if (type() == ExpressionNode::Type::ConstantMaths && !convert<Constant>().isConstant("e") && !convert<Constant>().isConstant("i")) {
+  if (type() == ExpressionNode::Type::ConstantMaths && !convert<Constant>().isExponentialE() && !convert<Constant>().isComplexI()) {
     return replaceWithInPlace(x);
   }
   if (type() == ExpressionNode::Type::Power) {
@@ -1450,7 +1450,7 @@ float Expression::getNumericalValue() {
   if (isNumber()) {
     return convert<Number>().doubleApproximation();
   }
-  if (type() == ExpressionNode::Type::ConstantMaths && !convert<Constant>().isConstant("e") && !convert<Constant>().isConstant("i")) {
+  if (type() == ExpressionNode::Type::ConstantMaths && !convert<Constant>().isExponentialE() && !convert<Constant>().isComplexI()) {
     return convert<Constant>().constantInfo().value();
   }
   Expression result = clone();

@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#include <initializer_list>
+
 namespace std {
 
 template <class T, size_t N>
@@ -10,6 +12,37 @@ constexpr size_t size(const T (&array)[N]) noexcept {
   return N;
 }
 
+// template <typename U, unsigned int N> class array;
+
+// template <unsigned int K, typename U, unsigned int N> U get(array<U, N>
+// array);
+
+template <typename U, unsigned int N>
+class array {
+  // friend U get(array);
+ public:
+  array() {}
+  array(initializer_list<U> init) {
+    int index = 0;
+    for (const U &u : init) {
+      m_array[index++] = u;
+    }
+  }
+  U operator[](unsigned int n) {
+    // assert(n < N);
+    return m_array[n];
+  }
+
+ private:
+  U m_array[N];
+};
+/*
+template <unsigned int K, typename U, unsigned int N>
+U get(array<U, N> array) {
+  static_assert(K<N, "out-of-bound access");
+  return array.m_array[K];
+}
+*/
 }  // namespace std
 
 #endif

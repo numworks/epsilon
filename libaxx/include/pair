@@ -1,0 +1,46 @@
+#ifndef LIBAXX_PAIR
+#define LIBAXX_PAIR
+
+#include <stddef.h>
+namespace std {
+
+template <typename U, typename V>
+struct pair {
+  pair(U u, V v) : first(u), second(v) {}
+
+  U first;
+  V second;
+};
+
+template <typename U, typename V> pair<U,V> make_pair(U u, V v) {
+  return pair<U,V>(u,v);
+}
+
+/*
+template <int K, typename U, typename V>
+U get(pair<U, V> pair) {
+  if (K == 0) {
+    return pair.first;
+  } else {
+    // TODO specialisations for 0 and 1
+    // assert(K == 1);
+    return pair.second;
+  }
+}
+
+template <typename K, typename U, typename V>
+K get(pair<U, V> pair);
+
+template <typename U, typename V>
+U get(pair<U, V> pair) {
+  return pair.first;
+}
+
+template <typename U, typename V>
+V get(pair<U, V> pair) {
+  return pair.second;
+  }*/
+
+}
+
+#endif

@@ -87,9 +87,7 @@ Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAb
 Poincare::Coordinate2D<double> CalculationGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context) {
   // Compute at least 1 point of interest before displaying the view
   PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterestForSelectedRecord();
-  while (pointsOfInterest->numberOfPoints(specialInterest()) == 0 && !pointsOfInterest->isFullyComputed()) {
-    pointsOfInterest->computeNextStep();
-  }
+  while (pointsOfInterest->numberOfPoints(specialInterest()) == 0 && !pointsOfInterest->isFullyComputed() && pointsOfInterest->computeNextStep()) {}
   return App::app()->graphController()->pointsOfInterestForSelectedRecord()->firstPointInDirection(start, max, specialInterest()).xy();
 }
 

@@ -151,9 +151,9 @@ const Node Node::childAtIndex(int i) const {
 
 int Node::indexOfChild(const Node child) const {
   assert(child.m_block != nullptr);
-  for (const std::pair<Node, int> indexedChild : NodeIterator::Children<Forward, NoEditable>(*this)) {
-    if (child == std::get<Node>(indexedChild)) {
-      return std::get<int>(indexedChild);
+  for (const auto [c, index] : NodeIterator::Children<Forward, NoEditable>(*this)) {
+    if (child == c) {
+      return index;
     }
   }
   return -1;

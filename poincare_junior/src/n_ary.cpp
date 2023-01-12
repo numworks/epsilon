@@ -28,7 +28,7 @@ void NAry::SetNumberOfChildren(EditionReference reference, size_t numberOfChildr
 EditionReference NAry::Flatten(EditionReference reference) {
   size_t numberOfChildren = 0;
   for (auto [child, index] : NodeIterator::Children<Forward, Editable>(reference)) {
-    if (reference.node().type() == child.node().type()) {
+    if (reference.type() == child.type()) {
       child.removeNode();
     }
     numberOfChildren++;

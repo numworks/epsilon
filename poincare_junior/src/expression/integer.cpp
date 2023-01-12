@@ -96,7 +96,6 @@ template <typename T>
 T IntegerHandler::to() {
   T approximation = 0.0f;
   for (uint8_t i = numberOfDigits() - 1; i > 0; i--) {
-  for (uint8_t i = 0; i < numberOfDigits(); i++) {
     approximation += static_cast<T>(digit(i));
     approximation *= k_digitBase;
   }

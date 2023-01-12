@@ -107,27 +107,23 @@ void ListController::didEnterResponderChain(Responder * previousFirstResponder) 
   reloadBrace();
 }
 
-bool textRepresentsAnEquality(const char * text) {
-  char equal = '=';
-  return UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, equal), equal);
-}
-
 bool layoutRepresentsAnEquality(Poincare::Layout l) {
-  Poincare::Layout match = l.recursivelyMatches(
-      [](Poincare::Layout layout) {
-        if (layout.type() == Poincare::LayoutNode::Type::PiecewiseOperatorLayout) {
-          return Poincare::TrinaryBoolean::False;
-        }
-        return layout.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(layout).codePoint() == '=' ? Poincare::TrinaryBoolean::True : Poincare::TrinaryBoolean::Unknown;
-      });
-  return !match.isUninitialized();
+  const int childrenCount = l.numberOfChildren();
+  for (int i = 0; i < childrenCount; i++) {
+    Poincare::Layout child = l.childAtIndex(i);
+    if (child.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(child).codePoint() == '=') {
+      return true;
+    }
+  }
+  return false;
 }
 
 // TODO factorize with Graph?
 bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     const char * text = textField->text();
-    if (!textRepresentsAnEquality(text)) {
+    Poincare::Expression e = Poincare::Expression::Parse(text, App::app()->localContext());
+    if (e.type() != Poincare::ExpressionNode::Type::Comparison) {
       textField->setCursorLocation(text + strlen(text));
       if (!textField->handleEventWithText("=0")) {
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);
@@ -141,7 +137,7 @@ bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion
 // TODO factorize with Graph?
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    if (!layoutRepresentsAnEquality(layoutField->layout())) {
+    if (!layoutRepresentsAnEquality(layoutField->layout())) { // TODO: do like for textField: parse and and check is type is comparison
       layoutField->putCursorOnOneSide(Poincare::LayoutCursor::Position::Right);
       if (!layoutField->handleEventWithText("=0")) {
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);

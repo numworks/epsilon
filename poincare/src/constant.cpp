@@ -16,10 +16,11 @@
 
 namespace Poincare {
 
-constexpr ConstantNode::ConstantInfo Constant::k_constants[];
-
-ConstantNode::ConstantNode(const char * newName, int length) : SymbolAbstractNode() {
-  strlcpy(const_cast<char*>(name()), newName, length+1);
+ConstantNode::ConstantNode(const char * name, int length) :
+  ExpressionNode(),
+  m_constantInfo(&k_constants[Constant::ConstantInfoIndexFromName(name, length)])
+{
+  assert(Constant::IsConstant(name, length));
 }
 
 TrinaryBoolean ConstantNode::isPositive(Context * context) const {
@@ -40,11 +41,11 @@ int ConstantNode::simplificationOrderSameType(const ExpressionNode * e, bool asc
 
 int ConstantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits) const {
   assert(bufferSize >= 0);
-  return SymbolAbstractNode::serialize(buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
+  return std::min<int>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
 }
 
 Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
-  constexpr static size_t bufferSize = 10; // TODO: optimize buffer size
+  constexpr static size_t bufferSize = Helpers::StringLength("_hplanck") + 1;
   char buffer[bufferSize];
   return LayoutHelper::StringLayoutOfSerialization(Constant(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }
@@ -55,10 +56,7 @@ Evaluation<T> ConstantNode::templatedApproximate() const {
     return Complex<T>::Builder(0.0, 1.0);
   }
   ConstantInfo info = constantInfo();
-  if (info.unit() == nullptr) {
-    return Complex<T>::Builder(info.value());
-  }
-  return Complex<T>::Undefined();
+  return info.m_unit ? Complex<T>::Undefined() : Complex<T>::Builder(info.m_value);
 }
 
 Expression ConstantNode::shallowReduce(const ReductionContext& reductionContext) {
@@ -69,34 +67,15 @@ bool ConstantNode::derivate(const ReductionContext& reductionContext, Symbol sym
   return Constant(this).derivate(reductionContext, symbol, symbolValue);
 }
 
-ConstantNode::ConstantInfo ConstantNode::constantInfo() const {
-  return Constant::ConstantInfoFromName(m_name, strlen(m_name));
+bool ConstantNode::isConstant(const char * constantName) const {
+  return constantInfo().m_aliasesList.contains(constantName, strlen(constantName));
 }
 
-bool ConstantNode::isConstant(const char * constantName, ConstantInfo info) const {
-  if (info.aliasesList() == nullptr) {
-    info = constantInfo();
-  }
-  return info.aliasesList().contains(constantName, strlen(constantName));
-}
-
-bool Constant::IsConstant(const char * name, size_t length) {
-  for (ConstantNode::ConstantInfo info : Constant::k_constants) {
-    if (info.aliasesList().contains(name, length)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-ConstantNode::ConstantInfo Constant::ConstantInfoFromName(const char * name, int length) {
-  assert(IsConstant(name, length));
-  for (ConstantNode::ConstantInfo info : Constant::k_constants) {
-    if (info.aliasesList().contains(name, length)) {
-      return info;
-    }
-  }
-  return ConstantNode::ConstantInfo("", -1);
+Constant Constant::Builder(const char * name, int length) {
+  void * bufferNode = TreePool::sharedPool()->alloc(sizeof(ConstantNode));
+  ConstantNode * node = new (bufferNode) ConstantNode(name, length);
+  TreeHandle h = TreeHandle::BuildWithGhostChildren(node);
+  return static_cast<Constant &>(h);
 }
 
 Expression Constant::shallowReduce(ReductionContext reductionContext) {
@@ -114,10 +93,10 @@ Expression Constant::shallowReduce(ReductionContext reductionContext) {
       return *this;
     }
   } else {
-    assert(info.unit() != nullptr);
+    assert(info.m_unit != nullptr);
     result = Multiplication::Builder(
-        Float<double>::Builder(info.value()),
-        Expression::Parse(info.unit(), nullptr));
+        Float<double>::Builder(info.m_value),
+        Expression::Parse(info.m_unit, nullptr));
     result.childAtIndex(1).deepReduce(reductionContext);
   }
   replaceWithInPlace(result);
@@ -126,11 +105,20 @@ Expression Constant::shallowReduce(ReductionContext reductionContext) {
 
 bool Constant::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {
   ConstantNode::ConstantInfo info = constantInfo();
-  if (info.unit() == nullptr && !std::isnan(info.value())) {
+  if (info.m_unit == nullptr && !std::isnan(info.m_value)) {
     replaceWithInPlace(Rational::Builder(0));
     return true;
   }
   return false;
+}
+
+int Constant::ConstantInfoIndexFromName(const char * name, int length) {
+  for (int i = 0; i < ConstantNode::k_numberOfConstants; i++) {
+    if (ConstantNode::k_constants[i].m_aliasesList.contains(name, length)) {
+      return i;
+    }
+  }
+  return -1;
 }
 
 }

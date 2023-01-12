@@ -1451,7 +1451,7 @@ float Expression::getNumericalValue() {
     return convert<Number>().doubleApproximation();
   }
   if (type() == ExpressionNode::Type::ConstantMaths && !convert<Constant>().isExponentialE() && !convert<Constant>().isComplexI()) {
-    return convert<Constant>().constantInfo().value();
+    return convert<Constant>().constantInfo().m_value;
   }
   Expression result = clone();
   for (int i = 0; i < numberOfChildren(); i++) {

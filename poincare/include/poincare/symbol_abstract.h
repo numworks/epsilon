@@ -58,7 +58,6 @@ private:
  * due to the virtual table. */
 
 class SymbolAbstract : public Expression {
-  friend class Constant;
   friend class Function;
   friend class FunctionNode;
   friend class Sequence;

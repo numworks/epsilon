@@ -344,8 +344,8 @@ QUIZ_CASE(poincare_parse_lists_access) {
 }
 
 QUIZ_CASE(poincare_parsing_constants) {
-  for (ConstantNode::ConstantInfo info : Constant::k_constants) {
-    for (const char * constantNameAlias : info.aliasesList()) {
+  for (ConstantNode::ConstantInfo info : ConstantNode::k_constants) {
+    for (const char * constantNameAlias : info.m_aliasesList) {
       assert_tokenizes_as_constant(constantNameAlias);
     }
   }

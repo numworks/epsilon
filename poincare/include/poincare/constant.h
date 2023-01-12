@@ -1,28 +1,27 @@
 #ifndef POINCARE_CONSTANT_H
 #define POINCARE_CONSTANT_H
 
-#include <poincare/symbol_abstract.h>
+#include <poincare/expression_node.h>
+#include <poincare/expression.h>
 #include <poincare/aliases_list.h>
 
 namespace Poincare {
 
-/* TODO: Also keep a m_codePoint ? Redundant with m_name, but faster constants
- * comparison */
-
-class ConstantNode final : public SymbolAbstractNode {
+class ConstantNode final : public ExpressionNode {
 public:
-  constexpr static const char * k_exponentialEName = "e";
-  constexpr static const char * k_complexIName = "i";
+  ConstantNode(const char * name, int length);
 
-  ConstantNode(const char * newName, int length);
-
-  const char * name() const override { return m_name; }
+  const char * name() const { return constantInfo().m_aliasesList.mainAlias(); }
 
   // TreeNode
+  size_t size() const override { return sizeof(ConstantNode); }
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream & stream) const override {
     stream << "Constant";
+  }
+  void logAttributes(std::ostream & stream) const override {
+    stream << " name=\"" << name() << "\"";
   }
 #endif
 
@@ -30,7 +29,7 @@ public:
   bool isReal() const;
 
   // Expression Properties
-  Type type() const override { return constantInfo().unit() == nullptr ? Type::ConstantMaths : Type::ConstantPhysics; }
+  Type type() const override { return constantInfo().m_unit == nullptr ? Type::ConstantMaths : Type::ConstantPhysics; }
   TrinaryBoolean isPositive(Context * context) const override;
   TrinaryBoolean isNull(Context * context) const override { return TrinaryBoolean::False; }
 
@@ -42,23 +41,49 @@ public:
   Evaluation<float> approximate(SinglePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<float>(); }
   Evaluation<double> approximate(DoublePrecision p, const ApproximationContext& approximationContext) const override { return templatedApproximate<double>(); }
 
+  constexpr static const char * k_exponentialEName = "e";
+  constexpr static const char * k_complexIName = "i";
+
   /* Constant properties */
-  class ConstantInfo {
-  public:
-    constexpr ConstantInfo() : m_aliasesList(nullptr), m_unit(nullptr), m_value(NAN), m_comparisonRank(0) {}
-    constexpr ConstantInfo(AliasesList aliasesList, int comparisonRank, double value = NAN, const char * unit = nullptr) : m_aliasesList(aliasesList), m_unit(unit), m_value(value), m_comparisonRank(comparisonRank) {}
-    const AliasesList aliasesList() const { return m_aliasesList; }
-    const char * unit() const { return m_unit; }
-    double value() const { return m_value; }
-    int comparisonRank() const { return m_comparisonRank; }
-  private:
+  struct ConstantInfo {
     AliasesList m_aliasesList;
-    const char * m_unit;
-    double m_value;
     int m_comparisonRank;
+    double m_value;
+    const char * m_unit;
   };
-  ConstantInfo constantInfo() const;
-  bool isConstant(const char * constant, ConstantInfo info = ConstantInfo()) const;
+
+  /* Some of these are currently not tested in simplification.cpp because
+   * their units are weirdly simplified. These tests whould be updated when
+   * the output units are updated. */
+  constexpr static const ConstantInfo k_constants[] = {
+    ConstantInfo{k_complexIName, 0, NAN, nullptr},
+    ConstantInfo{AliasesLists::k_piAliases, 1, M_PI, nullptr},
+    ConstantInfo{k_exponentialEName, 2, M_E, nullptr},
+    ConstantInfo{"_c", 3, 299792458.0, "_m/_s"},
+    ConstantInfo{"_e", 3, 1.602176634e-19, "_C"},
+    ConstantInfo{"_G", 3, 6.67430e-11, "_m^3*_kg^-1*_s^-2"},
+    ConstantInfo{"_g0", 3, 9.80665, "_m/_s^2"},
+    ConstantInfo{"_k", 3, 1.380649e-23, "_J/_K"},
+    ConstantInfo{"_ke", 3, 8.9875517923e9, "_N*_m^2/_C^2"},
+    ConstantInfo{"_me", 3, 9.1093837015e-31, "_kg"},
+    ConstantInfo{"_mn", 3, 1.67492749804e-27, "_kg"},
+    ConstantInfo{"_mp", 3, 1.67262192369e-27, "_kg"},
+    ConstantInfo{"_Na", 3, 6.02214076e23, "_mol^-1"},
+    ConstantInfo{"_R", 3, 8.31446261815324, "_J*_mol^-1*_K^-1"},
+    ConstantInfo{"_ε0", 3, 8.8541878128e-12, "_F/_m"},
+    ConstantInfo{"_μ0", 3, 1.25663706212e-6, "_N*_A^-2"},
+    /* "_hplanck" has the longest name. Modify the constexpr in
+     * ConstantNode::createLayout if that's not the case anymore. */
+    ConstantInfo{"_hplanck", 3, 6.62607015e-34, "_J*_s"}
+  };
+  constexpr static int k_numberOfConstants = sizeof(k_constants) / sizeof(ConstantInfo);
+
+  const ConstantInfo constantInfo() const {
+    assert(m_constantInfo);
+    return *m_constantInfo;
+  }
+
+  bool isConstant(const char * constant) const;
   bool isPi() const { return isConstant(AliasesLists::k_piAliases.mainAlias()); }
   bool isComplexI() const { return isConstant(k_complexIName); }
   bool isExponentialE() const { return isConstant(k_exponentialEName); }
@@ -73,25 +98,19 @@ public:
   /* Derivation */
   bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) override;
 private:
-  int rankOfConstant() const { return constantInfo().comparisonRank(); }
-  size_t nodeSize() const override { return sizeof(ConstantNode); }
+  int rankOfConstant() const { return constantInfo().m_comparisonRank; }
   template<typename T> Evaluation<T> templatedApproximate() const;
 
-  char m_name[0]; // MUST be the last member variable
+  const ConstantInfo * m_constantInfo;
 };
 
-class Constant final : public SymbolAbstract {
+class Constant final : public Expression {
 friend class ConstantNode;
 public:
-  Constant(const ConstantNode * node) : SymbolAbstract(node) {}
+  Constant(const ConstantNode * node) : Expression(node) {}
 
-  static Constant Builder(const char * name, int length) {
-    assert(Constant::IsConstant(name, length));
-    const char * mainAlias = ConstantInfoFromName(name, length).aliasesList().mainAlias();
-    return SymbolAbstract::Builder<Constant, ConstantNode>(mainAlias, strlen(mainAlias));
-  }
+  static Constant Builder(const char * name, int length);
   static Constant Builder(const char * name) {
-    assert(Constant::IsConstant(name, strlen(name)));
     return Builder(name, strlen(name));
   }
 
@@ -100,8 +119,7 @@ public:
   static Constant PiBuilder() { return Builder(AliasesLists::k_piAliases.mainAlias()); }
 
   // Constant properties
-  bool isConstant(const char * constantName, ConstantNode::ConstantInfo info = ConstantNode::ConstantInfo()) const { return node()->isConstant(constantName, info); }
-  static bool IsConstant(const char * name, size_t length);
+  static bool IsConstant(const char * name, size_t length) { return ConstantInfoIndexFromName(name, length) >= 0; }
 
   bool isPi() const { return node()->isPi(); }
   bool isComplexI() const { return node()->isComplexI(); }
@@ -113,32 +131,9 @@ public:
   Expression shallowReduce(ReductionContext reductionContext);
   bool derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue);
 
-  /* Some of these are currently not tested in simplification.cpp because
-   * their units are weirdly simplified. These tests whould be updated when
-   * the output units are updated. */
-  constexpr static ConstantNode::ConstantInfo k_constants[] = {
-    ConstantNode::ConstantInfo("i", 0),
-    ConstantNode::ConstantInfo(AliasesLists::k_piAliases, 1, M_PI),
-    ConstantNode::ConstantInfo("e", 2, M_E),
-    ConstantNode::ConstantInfo("_c", 3, 299792458.0, "_m/_s"),
-    ConstantNode::ConstantInfo("_e", 3, 1.602176634e-19, "_C"),
-    ConstantNode::ConstantInfo("_G", 3, 6.67430e-11, "_m^3*_kg^-1*_s^-2"),
-    ConstantNode::ConstantInfo("_g0", 3, 9.80665, "_m/_s^2"),
-    ConstantNode::ConstantInfo("_k", 3, 1.380649e-23, "_J/_K"),
-    ConstantNode::ConstantInfo("_ke", 3, 8.9875517923e9, "_N*_m^2/_C^2"),
-    ConstantNode::ConstantInfo("_me", 3, 9.1093837015e-31, "_kg"),
-    ConstantNode::ConstantInfo("_mn", 3, 1.67492749804e-27, "_kg"),
-    ConstantNode::ConstantInfo("_mp", 3, 1.67262192369e-27, "_kg"),
-    ConstantNode::ConstantInfo("_Na", 3, 6.02214076e23, "_mol^-1"),
-    ConstantNode::ConstantInfo("_R", 3, 8.31446261815324, "_J*_mol^-1*_K^-1"),
-    ConstantNode::ConstantInfo("_ε0", 3, 8.8541878128e-12, "_F/_m"),
-    ConstantNode::ConstantInfo("_μ0", 3, 1.25663706212e-6, "_N*_A^-2"),
-    ConstantNode::ConstantInfo("_hplanck", 3, 6.62607015e-34, "_J*_s")
-  };
-
 private:
-  static ConstantNode::ConstantInfo ConstantInfoFromName(const char * name, int length);
-
+  // Return -1 if the name does design a constant
+  static int ConstantInfoIndexFromName(const char * name, int length);
   ConstantNode * node() const { return static_cast<ConstantNode *>(Expression::node()); }
 };
 

@@ -48,6 +48,9 @@ protected:
   virtual float computeYMax() const = 0;
   virtual ParameterRepresentation paramRepresentationAtIndex(int i) const = 0;
   virtual double * parametersArray() = 0;
+
+private:
+  static const Poincare::Range1D DefaultYRange() { return Poincare::Range1D(-k_displayBottomMarginRatio, 1); }
 };
 
 }

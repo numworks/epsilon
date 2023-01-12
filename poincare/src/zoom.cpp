@@ -216,7 +216,7 @@ void Zoom::fitMagnitude(Function2DWithContext<float> f, const void * model, bool
 
 void Zoom::fitBounds(Function2DWithContext<float> f, const void * model, bool vertical) {
   float tMin = m_bounds.min(), tMax = m_bounds.max();
-  if (tMin >= m_maxFloat || tMax >= m_maxFloat) {
+  if (std::fabs(tMin) >= m_maxFloat || std::fabs(tMax) >= m_maxFloat) {
     return;
   }
   // Fit the middle of the interval if it's finite

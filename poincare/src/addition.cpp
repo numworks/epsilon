@@ -333,7 +333,9 @@ Expression Addition::shallowReduce(ExpressionNode::ReductionContext reductionCon
        * Recurse to run the reduction, then create the result
        * result = MUL( addition, unit1, unit2...) */
       Expression addition = shallowReduce(reductionContext);
-      assert((addition.type() != ExpressionNode::Type::Nonreal && addition.type() != ExpressionNode::Type::Undefined));
+      if (addition.type() == ExpressionNode::Type::Nonreal || addition.type() == ExpressionNode::Type::Undefined) {
+        return replaceWithUndefinedInPlace();
+      }
       Multiplication result = Multiplication::Builder(unit);
       // In case `unit` was a multiplication of units, flatten
       result.mergeSameTypeChildrenInPlace();

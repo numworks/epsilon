@@ -1,9 +1,10 @@
 #ifndef POINCARE_EXPRESSION_INTEGER_H
 #define POINCARE_EXPRESSION_INTEGER_H
 
-#include <omg/bit_helper.h>
-#include <omg/enums.h>
+#include <omgpj/bit_helper.h>
+#include <omgpj/enums.h>
 #include <utils/bit.h>
+#include <stdlib.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 
 namespace PoincareJ {
@@ -41,7 +42,7 @@ class IntegerHandler final {
 friend class WorkingBuffer;
 public:
   IntegerHandler(const uint8_t * digits = nullptr, uint8_t numberOfDigits = 0, NonStrictSign sign = NonStrictSign::Positive) : m_sign(sign), m_digitAccessor({.m_digits = digits}), m_numberOfDigits(numberOfDigits) {}
-  IntegerHandler(int8_t value) : IntegerHandler(std::abs(value), value >= 0 ? NonStrictSign::Positive : NonStrictSign::Negative) {}
+  IntegerHandler(int8_t value) : IntegerHandler(abs(value), value >= 0 ? NonStrictSign::Positive : NonStrictSign::Negative) {}
   IntegerHandler(uint8_t value, NonStrictSign sign) : m_sign(sign), m_digitAccessor({.m_digit = value}), m_numberOfDigits(value != 0 ? 1 : 0) {}
 
   uint8_t numberOfDigits() const { return m_numberOfDigits; }

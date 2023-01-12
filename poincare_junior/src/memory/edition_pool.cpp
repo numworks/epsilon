@@ -2,7 +2,7 @@
 #include "cache_pool.h"
 #include "edition_pool.h"
 #include "exception_checkpoint.h"
-#include <omg.h>
+#include <omgpj.h>
 
 namespace PoincareJ {
 

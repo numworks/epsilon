@@ -7,7 +7,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <omg.h>
+#include <omgpj.h>
 #include <assert.h>
 #include <initializer_list>
 

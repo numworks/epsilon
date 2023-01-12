@@ -4,9 +4,9 @@ DEVELOPMENT ?= 1
 ARCH = arm64
 ASSERTIONS = 1
 
-include poincare_junior/omg/Makefile
+include poincare_junior/omgpj/Makefile
 
-poincare_junior_src += $(omg_src)
+poincare_junior_src += $(omgpj_src)
 
 poincare_junior_src += $(addprefix poincare_junior/src/,\
   expression/algebraic.o \
@@ -64,7 +64,7 @@ tests_src += $(addprefix poincare_junior/test/,\
   junior.cpp \
 )
 
-tests_src += $(addprefix poincare_junior/omg/src/,\
+tests_src += $(addprefix poincare_junior/omgpj/src/,\
   arithmetic.cpp \
   float.cpp \
   memory.cpp \

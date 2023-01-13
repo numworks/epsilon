@@ -65,6 +65,9 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketT
 template<typename T>
 Coordinate2D<T> Solver<T>::next(const Expression & e, BracketTest test, HoneResult hone) {
   assert(m_unknown && m_unknown[0] != '\0');
+  if (e.recursivelyMatches(Expression::IsRandom, m_context)) {
+    return Coordinate2D<T>(NAN, NAN);
+  }
   FunctionEvaluationParameters parameters = { .context = m_context, .unknown = m_unknown, .expression = e, .complexFormat = m_complexFormat, .angleUnit = m_angleUnit };
   FunctionEvaluation f = [](T x, const void * aux) {
     const FunctionEvaluationParameters * p = reinterpret_cast<const FunctionEvaluationParameters *>(aux);
@@ -76,6 +79,9 @@ Coordinate2D<T> Solver<T>::next(const Expression & e, BracketTest test, HoneResu
 
 template<typename T>
 Coordinate2D<T> Solver<T>::nextRoot(const Expression & e) {
+  if (e.recursivelyMatches(Expression::IsRandom, m_context)) {
+    return Coordinate2D<T>(NAN, NAN);
+  }
   ExpressionNode::Type type = e.type();
 
   switch (type) {

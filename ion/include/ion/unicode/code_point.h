@@ -37,6 +37,11 @@ public:
   bool isGreekSmallLetter() const {
     return 0x3b1 <= m_code && m_code <= 0x3c9;
   }
+  bool isEquationOperator() const {
+    return (0x3c <= m_code && m_code <= 0x3e) // <, =, >
+        || m_code == 0x2264  // ≤
+        || m_code == 0x2265; // ≥
+  }
 private:
   uint32_t m_code;
 };

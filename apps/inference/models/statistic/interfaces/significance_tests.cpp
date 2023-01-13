@@ -498,7 +498,7 @@ double TwoMeans::ComputeTZ(double deltaMean, double meanSample1, double n1, doub
   return ((meanSample1 - meanSample2) - (deltaMean)) / ComputeStandardError(sigma1, n1, sigma2, n2);
 }
 
-double TwoMeans::ComputeStandardError(double s1, int n1, double s2, int n2) {
+double TwoMeans::ComputeStandardError(double s1, double n1, double s2, double n2) {
   return OMG::LaxToZero(std::sqrt((s1 * s1 / n1 + s2 * s2 / n2)));
 }
 
@@ -667,13 +667,13 @@ void TwoProportions::ComputeInterval(Interval * i) {
   i->m_marginOfError = i->m_zCritical * i->m_SE;
 }
 
-double TwoProportions::ComputeZ(double deltaP0, double x1, int n1, double x2, int n2) {
+double TwoProportions::ComputeZ(double deltaP0, double x1, double n1, double x2, double n2) {
   double p1 = x1 / n1;
   double p2 = x2 / n2;
   double p = (x1 + x2) / (n1 + n2);
   return (p1 - p2 - deltaP0) / std::sqrt(p * (1 - p) * (1. / n1 + 1. / n2));
 }
-double TwoProportions::ComputeStandardError(double x1, int n1, double x2, int n2) {
+double TwoProportions::ComputeStandardError(double x1, double n1, double x2, double n2) {
   double p1Estimate = x1 / n1;
   double p2Estimate = x2 / n2;
   return OMG::LaxToZero(std::sqrt(p1Estimate * (1 - p1Estimate) / n1 + p2Estimate * (1 - p2Estimate) / n2));

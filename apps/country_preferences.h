@@ -10,6 +10,7 @@ public:
     StandardAndDutch,
     PressToTestOnly,
     PortugueseOnly,
+    EnglishOnly,
     All
   };
 

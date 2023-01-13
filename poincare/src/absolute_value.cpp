@@ -4,11 +4,13 @@
 #include <poincare/layout_helper.h>
 #include <poincare/serialization_helper.h>
 #include <poincare/absolute_value_layout.h>
+#include <poincare/complex_argument.h>
 #include <poincare/complex_cartesian.h>
 #include <poincare/float.h>
 #include <poincare/multiplication.h>
 #include <poincare/power.h>
 #include <poincare/derivative.h>
+#include <poincare/sign_function.h>
 #include <poincare/simplification_helper.h>
 #include <assert.h>
 #include <cmath>
@@ -50,7 +52,8 @@ Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
   Expression c = childAtIndex(0);
 
   // |x| = ±x if x is real
-  if (c.isReal(reductionContext.context(), reductionContext.shouldCheckMatrices())) {
+  if (c.isReal(reductionContext.context(), reductionContext.shouldCheckMatrices()) ||
+      reductionContext.complexFormat() == Preferences::ComplexFormat::Real) {
     double app = c.node()->approximate(double(), ApproximationContext(reductionContext, true)).toScalar();
     if (!std::isnan(app)) {
       if ((c.isNumber() && app >= 0) || app >= Float<double>::EpsilonLax()) {
@@ -66,8 +69,16 @@ Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
         replaceWithInPlace(m);
         return m.shallowReduce(reductionContext);
       }
+    } else if (reductionContext.target() != ReductionTarget::User) {
+      // Do not display sign(x)*x to the user
+      Expression sign = SignFunction::Builder(c.clone());
+      Expression result = Multiplication::Builder(sign, c);
+      sign.shallowReduce(reductionContext);
+      replaceWithInPlace(result);
+      return result.shallowReduce(reductionContext);
     }
   }
+
   // |a+ib| = sqrt(a^2+b^2)
   if (c.type() == ExpressionNode::Type::ComplexCartesian) {
     ComplexCartesian complexChild = static_cast<ComplexCartesian &>(c);
@@ -75,6 +86,7 @@ Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
     replaceWithInPlace(childNorm);
     return childNorm.shallowReduce(reductionContext);
   }
+
   // |z^y| = |z|^y if y is real
   /* Proof:
    * Let's write z = r*e^(i*θ) and y = a+ib
@@ -103,6 +115,7 @@ Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
     replaceWithInPlace(c);
     return c.shallowReduce(reductionContext);
   }
+
   // |x*y| = |x|*|y|
   if (c.type() == ExpressionNode::Type::Multiplication) {
     Multiplication m = Multiplication::Builder();
@@ -115,12 +128,14 @@ Expression AbsoluteValue::shallowReduce(ReductionContext reductionContext) {
     replaceWithInPlace(m);
     return m.shallowReduce(reductionContext);
   }
- // |i| = 1
+
+  // |i| = 1
   if (c.type() == ExpressionNode::Type::ConstantMaths && static_cast<const Constant &>(c).isComplexI()) {
     Expression e = Rational::Builder(1);
     replaceWithInPlace(e);
     return e;
   }
+
   // abs(-x) = abs(x)
   c.makePositiveAnyNegativeNumeralFactor(reductionContext);
   return *this;

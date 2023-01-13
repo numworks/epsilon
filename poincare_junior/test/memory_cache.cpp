@@ -2,7 +2,7 @@
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/tree_constructor.h>
 
-using namespace Poincare;
+using namespace PoincareJ;
 
 static CachePool * cachePool = CachePool::sharedCachePool();
 static EditionPool * editionPool = cachePool->editionPool();
@@ -57,6 +57,7 @@ void testCachePool() {
   assert_pool_contains(cachePool, {Mult("3"_n, "4"_n)});
   assert_pools_tree_sizes_are(1, 0);
 }
+QUIZ_CASE(pcj_cache_pool) { testCachePool(); }
 
 void testCachePoolLimits() {
   /* test overflowing the edition pool */
@@ -87,6 +88,8 @@ void testCachePoolLimits() {
   execute_push_tree_and_modify();
   assert_pools_tree_sizes_are(CachePool::k_maxNumberOfReferences, 0);
 }
+QUIZ_CASE(pcj_cache_pool_limits) { testCachePoolLimits(); }
+
 
 void assert_check_cache_reference(CacheReference reference, std::initializer_list<const Node> cacheTrees) {
   cachePool->reset();
@@ -116,6 +119,7 @@ void testCacheReference() {
   CacheReference reference3([] (const char * string){ EditionReference::Push<BlockType::Addition>(string[0] - '0'); }, "0");
   assert_check_cache_reference(reference3, {Add()});
 }
+QUIZ_CASE(pcj_cache_references) { testCacheReference(); }
 
 void check_reference_invalidation_and_reconstruction(CacheReference reference, uint16_t identifier, Node node) {
   // reference has been invalidated
@@ -155,3 +159,4 @@ void testCacheReferenceInvalidation() {
   assert_pools_tree_sizes_are(CachePool::k_maxNumberOfReferences, 0);
   check_reference_invalidation_and_reconstruction(reference, identifier, "28"_n);
 }
+QUIZ_CASE(pcj_cache_reference_invalidation) { testCacheReferenceInvalidation(); }

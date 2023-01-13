@@ -2,7 +2,7 @@
 #include <poincare_junior/src/expression/polynomial.h>
 #include <poincare_junior/src/memory/tree_constructor.h>
 
-using namespace Poincare;
+using namespace PoincareJ;
 
 void assert_polynomial_is_parsed(const Node node, const Node expectedVariables, const Node expectedPolynomial) {
   CachePool::sharedCachePool()->editionPool()->flush();
@@ -35,6 +35,7 @@ void testPolynomialParsing() {
 
   // TODO: parse polynomial with float coefficients?
 }
+QUIZ_CASE(pcj_polynomial_parsing) { testPolynomialParsing(); }
 
 void testPolynomialOperations() {
   /* A = x^2 + 3*x*y + y + 1 */
@@ -66,3 +67,4 @@ void testPolynomialOperations() {
   //assert_trees_are_equal(quotient, Pol({1, 0}, "x"_n, Pol({1}, "y"_n, "1"_n), Sub("0"_n, "1"_n)));
   //assert_trees_are_equal(remainder, Pol({1, 0}, "x"_n, "1"_n, "1"_n));
 }
+QUIZ_CASE(pcj_polynomial_operations) { testPolynomialOperations(); }

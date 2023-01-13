@@ -2,7 +2,7 @@
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/tree_constructor.h>
 
-using namespace Poincare;
+using namespace PoincareJ;
 
 void testBlock() {
   CachePool * cachePool = CachePool::sharedCachePool();
@@ -26,6 +26,7 @@ void testBlock() {
   assert(*lastBlock->previous() == ValueBlock(-4));
   assert(*lastBlock->previousNth(2) == ValueBlock(4));
 }
+QUIZ_CASE(pcj_block) { testBlock(); }
 
 void testTypeBlock() {
   typedef union {
@@ -81,6 +82,7 @@ void testTypeBlock() {
     assert(block.isUserNamed() == properties.userNamed);
   }
 }
+QUIZ_CASE(pcj_type_block) { testTypeBlock(); }
 
 template <unsigned N>
 void assert_tree_equals_blocks(Tree<N> tree, std::initializer_list<Block> blocks) {
@@ -114,12 +116,14 @@ void testConstexprTreeConstructor() {
   assert_tree_equals_blocks(Sub("1"_n, "2"_n), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
   assert_tree_equals_blocks("var"_n, {TypeBlock(BlockType::UserSymbol), ValueBlock(3), ValueBlock('v'), ValueBlock('a'), ValueBlock('r'), ValueBlock(3), TypeBlock(BlockType::UserSymbol)});
 }
+QUIZ_CASE(pcj_constexpr_tree_constructor) { testConstexprTreeConstructor(); }
 
 void testEditionNodeConstructor() {
   assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerPosBig>(static_cast<uint64_t>(1232424242)), {TypeBlock(BlockType::IntegerPosBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerPosBig)});
   assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(static_cast<uint64_t>(1232424242)), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
   assert_node_equals_blocks(EditionReference::Push<BlockType::IntegerNegBig>(static_cast<uint64_t>(1232424242)), {TypeBlock(BlockType::IntegerNegBig), ValueBlock(4), ValueBlock(0x32), ValueBlock(0x4d), ValueBlock(0x75), ValueBlock(0x49), ValueBlock(4), TypeBlock(BlockType::IntegerNegBig)});
 }
+QUIZ_CASE(pcj_edition_node_constructor) { testEditionNodeConstructor(); }
 
 void testNodeIterator() {
   constexpr Tree k_simpleExpression = Mult(Add("1"_n, "2"_n), "3"_n, "4"_n);
@@ -210,6 +214,7 @@ void testNodeIterator() {
     assert_trees_are_equal(std::get<Node>(indexedNode), newChildren2[numberOfChildren2 - 1 - std::get<int>(indexedNode)]);
   }
 }
+QUIZ_CASE(pcj_node_iterator) { testNodeIterator(); }
 
 void testNode() {
   CachePool * cachePool = CachePool::sharedCachePool();
@@ -245,6 +250,7 @@ void testNode() {
   assert(!n1.hasSibling(n1.childAtIndex(2)));
   assert(n1.nextNode().hasSibling(n1.childAtIndex(2)));
 }
+QUIZ_CASE(pcj_node) { testNode(); }
 
 void testNodeSize() {
   Node node = EditionReference::Push<BlockType::IntegerPosBig>(static_cast<uint64_t>(0x00FF0000));
@@ -252,4 +258,5 @@ void testNodeSize() {
   node = static_cast<Node>(EditionReference::Push<BlockType::IntegerNegBig>(static_cast<uint64_t>(0x0000FF00)));
   assert(node.nodeSize() == 6);
 }
+QUIZ_CASE(pcj_node_size) { testNodeSize(); }
 

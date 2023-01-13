@@ -45,10 +45,15 @@ poincare_junior_src += ion/src/simulator/shared/crc32.o
 poincare_junior_src += ion/src/shared/crc32_eat_byte.o
 
 tests_src += $(addprefix poincare_junior/src/,\
+  expression/algebraic.cpp \
   expression/approximation.cpp \
+  expression/comparison.cpp \
   expression/integer.cpp \
+  expression/polynomial.cpp \
   expression/rational.cpp \
   expression/simplification.cpp \
+  expression/set.cpp \
+  expression/symbol.cpp \
   expression.cpp \
   memory/cache_pool.cpp \
   memory/cache_reference.cpp \
@@ -61,8 +66,17 @@ tests_src += $(addprefix poincare_junior/src/,\
 )
 
 tests_src += $(addprefix poincare_junior/test/,\
+  calculation.cpp \
   create.cpp \
+  elementary_tree_manipulations.cpp \
+  expression_comparison.cpp \
+  graph.cpp \
+  memory_elements.cpp \
+  memory_edition.cpp \
+  memory_cache.cpp \
+  set.cpp \
 )
+# polynomial.cpp \
 
 tests_src += $(addprefix poincare_junior/omgpj/src/,\
   arithmetic.cpp \
@@ -70,14 +84,5 @@ tests_src += $(addprefix poincare_junior/omgpj/src/,\
   memory.cpp \
   list.cpp \
 )
-# tests_src += $(addprefix poincare_junior/test/,\
-  # calculation.cpp \
-  # constexpr.cpp \
-  # edition_pool_overflow.cpp \
-  # elementary_tree_manipulations.cpp \
-  # expression_simplification.cpp \
-  # graph.cpp \
-# )
 
-#SFLAGS += -DASSERTIONS=$(ASSERTIONS) -DPOINCARE_MEMORY_TREE_LOG=1 -Iion/include/ -Ikandinsky/include
-
+SFLAGS += -DPOINCARE_MEMORY_TREE_LOG=1

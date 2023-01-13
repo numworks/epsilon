@@ -30,3 +30,4 @@ void testGraph() {
   float valueAt0 = graph.approximateAtAbscissa(0);
   std::cout << "Approximation = " << valueAt0 << std::endl;
 }
+QUIZ_CASE(pcj_graph) { testGraph(); }

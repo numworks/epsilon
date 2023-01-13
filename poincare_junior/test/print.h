@@ -3,8 +3,22 @@
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
+#include <quiz.h>
 
 using namespace PoincareJ;
+
+inline EditionReference createSimpleExpression() {
+  std::cout << "\n---------------- Create (1 + 2) * 3 * 4 ----------------" << std::endl;
+  EditionReference multiplication = EditionReference::Push<BlockType::Multiplication>(3);
+  EditionReference::Push<BlockType::Addition>(2);
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
+  EditionReference::Push<BlockType::Addition>(2);
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4));
+  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(5));
+  return multiplication;
+}
 
 #if POINCARE_MEMORY_TREE_LOG
 __attribute__((__used__)) inline void log_edition_pool(bool corruptedEditionPool = false) {
@@ -23,7 +37,11 @@ __attribute__((__used__)) inline void log_edition_references() {
  __attribute__((__used__)) inline void log_cache_references() {
   CachePool::sharedCachePool()->logReferences(std::cout, Pool::LogFormat::Tree);
 }
-
+#else
+inline void log_edition_pool(bool corruptedEditionPool = false) {}
+inline void log_edition_references() {}
+inline void log_cache_pool() {}
+inline void log_cache_references() {}
 #endif
 
 inline void assert_node_equals_blocks(const Node node, std::initializer_list<Block> blocks) {

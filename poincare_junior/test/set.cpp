@@ -2,7 +2,7 @@
 #include <poincare_junior/src/expression/set.h>
 #include <poincare_junior/src/memory/tree_constructor.h>
 
-using namespace Poincare;
+using namespace PoincareJ;
 
 void testSet() {
   // Set::Add
@@ -36,3 +36,4 @@ void testSet() {
   EditionReference differenceSet = Set::Difference(set0, set1);
   assert_trees_are_equal(differenceSet, Set("3"_n));
 }
+QUIZ_CASE(pcj_set) { testSet(); }

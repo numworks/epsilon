@@ -2,7 +2,7 @@
 #include <poincare_junior/src/memory/node_iterator.h>
 #include <poincare_junior/src/memory/tree_constructor.h>
 
-using namespace Poincare;
+using namespace PoincareJ;
 
 void testEditionPool() {
   CachePool * cachePool = CachePool::sharedCachePool();
@@ -42,6 +42,7 @@ void testEditionPool() {
   assert(pool->contains(pool->blockAtIndex(2)));
   assert(!pool->contains(pool->blockAtIndex(5)));
 }
+QUIZ_CASE(pcj_edition_pool) { testEditionPool(); }
 
 void testEditionReference() {
   CachePool * cachePool = CachePool::sharedCachePool();
@@ -106,6 +107,7 @@ void testEditionReference() {
   reference3.insertTreeAfterNode("14"_n);
   assert_pool_contains(editionPool, {k_expression0, "10"_n, Pow("14"_n, "13"_n), "10"_n, "9"_n, Sub("5"_n, "6"_n), "7"_n});
 }
+QUIZ_CASE(pcj_edition_reference) { testEditionReference(); }
 
 void testEditionReferenceReallocation() {
   constexpr Tree k_expression = "1"_n;
@@ -119,3 +121,4 @@ void testEditionReferenceReallocation() {
   reference0.removeTree();
   EditionReference reference2("2"_n);
 }
+QUIZ_CASE(pcj_edition_reference_reallocation) { testEditionReferenceReallocation(); }

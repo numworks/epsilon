@@ -70,7 +70,7 @@ template<unsigned L1, unsigned L2> static consteval Tree<L1+L2+1> Div(const Tree
 
 template<unsigned ...Len> static consteval auto Mult(const Tree<Len> (&...children)) { return MakeTree<BlockType::Multiplication>(children...); }
 
-template<unsigned ...Len> static constexpr auto Set(const Tree<Len> (&...children)) { return MakeTree<BlockType::Set>(children...); }
+template<unsigned ...Len> static consteval auto Set(const Tree<Len> (&...children)) { return MakeTree<BlockType::Set>(children...); }
 
 template<unsigned L1, unsigned L2> static consteval Tree<L1+L2+1> Pow(const Tree<L1> child1, const Tree<L2> child2) { return MakeTree<BlockType::Power>(child1, child2); }
 

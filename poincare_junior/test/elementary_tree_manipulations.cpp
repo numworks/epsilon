@@ -3,23 +3,11 @@
 #include <poincare_junior/src/n_ary.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <poincare_junior/src/memory/node_iterator.h>
+#include <quiz.h>
 
 using namespace PoincareJ;
 
-inline EditionReference createSimpleExpression() {
-  std::cout << "\n---------------- Create (1 + 2) * 3 * 4 ----------------" << std::endl;
-  EditionReference multiplication = EditionReference::Push<BlockType::Multiplication>(3);
-  EditionReference::Push<BlockType::Addition>(2);
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(1));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(2));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(3));
-  EditionReference::Push<BlockType::Addition>(2);
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(4));
-  EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(5));
-  return multiplication;
-}
-
-void elementaryTreeManipulation() {
+QUIZ_CASE(pcj_elementary_tree_manipulation) {
   CachePool * cache = CachePool::sharedCachePool();
   EditionPool * editionPool = cache->editionPool();
 

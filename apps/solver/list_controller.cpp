@@ -108,6 +108,9 @@ void ListController::didEnterResponderChain(Responder * previousFirstResponder) 
 }
 
 bool layoutRepresentsAnEquality(Poincare::Layout l) {
+  if (l.type() != Poincare::LayoutNode::Type::HorizontalLayout) {
+    return false;
+  }
   const int childrenCount = l.numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     Poincare::Layout child = l.childAtIndex(i);

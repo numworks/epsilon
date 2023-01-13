@@ -67,7 +67,8 @@ public:
     IBTest = 3,
     PressToTest = 4,
     Portuguese = 5,
-    Undefined = 6, // Undefined must be the last ExamMode.
+    English = 6,
+    Undefined = 7, // Undefined must be the last ExamMode.
     Unknown = 0b1111,
   };
   enum class LogarithmBasePosition : uint8_t {
@@ -79,7 +80,7 @@ public:
     FocalLength
   };
 
-  constexpr static int k_numberOfExamModes = 6;
+  constexpr static int k_numberOfExamModes = 7;
   static_assert(static_cast<int>(ExamMode::IBTest) == 3, "Preferences::ExamMode::IBTest != 3 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
   static_assert(static_cast<int>(ExamMode::PressToTest) == 4, "Preferences::ExamMode::PressToTest != 4 but this value is used in ion/src/device/kernel/drivers/led_update.cpp");
   static_assert(k_numberOfExamModes == static_cast<int>(ExamMode::Undefined), "Preferences::ExamMode::Undefined should be last but the number of exam modes does not match.");

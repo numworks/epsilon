@@ -4,7 +4,7 @@ CA,StandardOnly,MedianOfSublist,Hidden,Metric,Default,Delta,None,YHat,Default,De
 DE,StandardOnly,MedianOfSublist,Hidden,Metric,Default,D,None,YHat,Default,Default,Default,Zero,Disabled,Default,Default,BottomRight,Default
 ES,StandardOnly,MedianOfSublist,Hidden,Metric,Default,Delta,None,YHat,Default,Default,Default,Zero,Disabled,Default,Default,BottomRight,Default
 FR,StandardOnly,CumulatedFrequency,Hidden,Metric,Default,Delta,None,YHat,Default,Default,Default,Zero,Disabled,Default,Default,BottomRight,Default
-GB,StandardOnly,MedianOfSublist,Hidden,Metric,Default,Delta,None,YHat,Default,Default,Default,Zero,Enabled,Default,Default,BottomRight,Default
+GB,EnglishOnly,MedianOfSublist,Hidden,Metric,Default,Delta,None,YHat,Default,Default,Default,Zero,Enabled,Default,Default,BottomRight,Default
 IT,StandardOnly,CumulatedFrequency,Hidden,Metric,Variant2,Delta,None,YHat,Default,Default,Default,Zero,Disabled,Default,Default,BottomRight,Default
 NL,StandardAndDutch,MedianOfSublist,Hidden,Metric,Variant3,D,OnIntegerValues,YHat,Default,Default,Default,Zero,Enabled,Default,Default,TopLeft,Default
 PT,PortugueseOnly,MedianOfSublist,Hidden,Metric,Variant1,Delta,None,Y,Default,LetterWithSubAndSuperscript,Default,One,Disabled,Default,Variant2,BottomRight,Default

@@ -35,11 +35,7 @@ bool CodePointLayoutNode::isCollapsable(int * numberOfOpenParenthesis, bool goin
   if (*numberOfOpenParenthesis <= 0) {
     if (m_codePoint == '+'
         || m_codePoint == UCodePointRightwardsArrow
-        || m_codePoint == '='
-        || m_codePoint == '<'
-        || m_codePoint == '>'
-        || m_codePoint == UCodePointInferiorEqual
-        || m_codePoint == UCodePointSuperiorEqual
+        || m_codePoint.isEquationOperator()
         || m_codePoint == ',')
     {
       return false;

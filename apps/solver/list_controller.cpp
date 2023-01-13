@@ -107,14 +107,14 @@ void ListController::didEnterResponderChain(Responder * previousFirstResponder) 
   reloadBrace();
 }
 
-bool layoutRepresentsAnEquality(Poincare::Layout l) {
+bool layoutRepresentsAnEquation(Poincare::Layout l) {
   if (l.type() != Poincare::LayoutNode::Type::HorizontalLayout) {
     return false;
   }
   const int childrenCount = l.numberOfChildren();
   for (int i = 0; i < childrenCount; i++) {
     Poincare::Layout child = l.childAtIndex(i);
-    if (child.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(child).codePoint() == '=') {
+    if (child.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(child).codePoint().isEquationOperator()) {
       return true;
     }
   }
@@ -140,7 +140,7 @@ bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion
 // TODO factorize with Graph?
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    if (!layoutRepresentsAnEquality(layoutField->layout())) { // TODO: do like for textField: parse and and check is type is comparison
+    if (!layoutRepresentsAnEquation(layoutField->layout())) { // TODO: do like for textField: parse and and check is type is comparison
       layoutField->putCursorOnOneSide(Poincare::LayoutCursor::Position::Right);
       if (!layoutField->handleEventWithText("=0")) {
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);

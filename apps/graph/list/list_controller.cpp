@@ -13,8 +13,6 @@ using namespace Escher;
 
 namespace Graph {
 
-constexpr CodePoint ListController::k_equationSymbols[];
-
 ListController::ListController(Responder * parentResponder, ButtonRowController * header, ButtonRowController * footer, GraphController * graphController, FunctionParameterController * functionParameterController) :
   Shared::FunctionListController(parentResponder, header, footer, I18n::Message::AddFunction),
   m_selectableTableView(this, this, this, this),
@@ -84,26 +82,6 @@ void ListController::fillWithDefaultFunctionEquation(char * buffer, size_t buffe
   buffer[length++] = 0;
 }
 
-// Return true if given layout contains a comparison operator
-bool ListController::layoutRepresentsAnEquation(Poincare::Layout l) const {
-  Poincare::Layout match = l.recursivelyMatches(
-      [](Poincare::Layout layout) {
-      constexpr size_t k_numberOfSymbols = sizeof(k_equationSymbols)/sizeof(CodePoint);
-      if (layout.type() == Poincare::LayoutNode::Type::PiecewiseOperatorLayout) {
-        return Poincare::TrinaryBoolean::False;
-      }
-      if (layout.type() == Poincare::LayoutNode::Type::CodePointLayout) {
-        for (size_t i = 0; i < k_numberOfSymbols; i++) {
-          if (static_cast<Poincare::CodePointLayout &>(layout).codePoint() == k_equationSymbols[i]) {
-            return Poincare::TrinaryBoolean::True;
-          }
-        }
-      }
-      return Poincare::TrinaryBoolean::Unknown;
-    });
-  return !match.isUninitialized();
-}
-
 // Return true if given layout contains θ
 bool ListController::layoutRepresentsPolarFunction(Poincare::Layout l) const {
   Poincare::Layout match = l.recursivelyMatches(
@@ -155,7 +133,7 @@ bool ListController::completeEquation(InputEventHandler * equationField, CodePoi
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   m_parameterColumnSelected = false;
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    if (!layoutRepresentsAnEquation(layoutField->layout())) {
+    if (!layoutField->layout().representsAnEquation()) {
       layoutField->putCursorOnOneSide(Poincare::LayoutCursor::Position::Left);
       CodePoint symbol = layoutRepresentsPolarFunction(layoutField->layout())
                              ? ContinuousFunction::k_polarSymbol
@@ -176,16 +154,6 @@ bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::
 
 /* TextFieldDelegate */
 
-bool ListController::textRepresentsAnEquation(const char * text) const {
-  constexpr size_t k_numberOfSymbols = sizeof(k_equationSymbols)/sizeof(CodePoint);
-  for (size_t i = 0; i < k_numberOfSymbols; i++) {
-    if (UTF8Helper::CodePointIs(UTF8Helper::CodePointSearch(text, k_equationSymbols[i]), k_equationSymbols[i])) {
-      return true;
-    }
-  }
-  return false;
-}
-
 bool ListController::textRepresentsPolarFunction(const char * text) const {
   /* WARNING: This is not true anymore since cos(theta) is parsed as cos(θ) so
    * "theta" should also be detected.
@@ -204,7 +172,8 @@ bool ListController::textRepresentsParametricFunction(const char * text) const {
 bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion::Events::Event event) {
   if (textField->isEditing() && textField->shouldFinishEditing(event)) {
     const char * text = textField->text();
-    if (!textRepresentsAnEquation(text)) {
+    Poincare::Expression e = Poincare::Expression::Parse(text, App::app()->localContext());
+    if (e.type() != Poincare::ExpressionNode::Type::Comparison) {
       // Inserted text must be an equation
       textField->setCursorLocation(text);
       CodePoint symbol = textRepresentsPolarFunction(text)

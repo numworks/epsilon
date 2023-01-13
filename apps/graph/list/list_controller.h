@@ -39,7 +39,6 @@ private:
   constexpr static int k_addNewModelType = 1;
   // 6 rows of undefined empty functions
   constexpr static int k_maxNumberOfDisplayableRows = 6;
-  constexpr static CodePoint k_equationSymbols[] = { '=', '>', '<', UCodePointSuperiorEqual, UCodePointInferiorEqual};
 
   // Responder
   int initialColumnToSelect() const override { return 0; }
@@ -50,10 +49,8 @@ private:
   KDCoordinate nonMemoizedRowHeight(int j) override { return expressionRowHeight(j); }
 
   void fillWithDefaultFunctionEquation(char * buffer, size_t bufferSize, FunctionModelsParameterController * modelsParameterController, CodePoint Symbol) const;
-  bool layoutRepresentsAnEquation(Poincare::Layout l) const;
   bool layoutRepresentsPolarFunction(Poincare::Layout l) const;
   bool layoutRepresentsParametricFunction(Poincare::Layout l) const;
-  bool textRepresentsAnEquation(const char * text) const;
   bool textRepresentsPolarFunction(const char * text) const;
   bool textRepresentsParametricFunction(const char * text) const;
   // Complete the equationField with a valid left equation side

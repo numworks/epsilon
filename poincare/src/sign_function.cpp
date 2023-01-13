@@ -67,38 +67,35 @@ Expression SignFunction::shallowReduce(ReductionContext reductionContext) {
     childAtIndex(0).removeUnit(&unit);
   }
   Expression child = childAtIndex(0);
-  Rational resultSign = Rational::Builder(1);
-  TrinaryBoolean s = child.isPositive(reductionContext.context());
-  if (s == TrinaryBoolean::False) {
-    resultSign = Rational::Builder(-1);
+  Expression resultSign;
+  TrinaryBoolean childIsPositive = child.isPositive(reductionContext.context());
+  TrinaryBoolean childIsNull = child.isNull(reductionContext.context());
+  if (childIsPositive != TrinaryBoolean::Unknown &&
+      (childIsNull != TrinaryBoolean::Unknown ||
+       reductionContext.target() == ReductionTarget::User)) {
+    // If target == User, we want sign(abs(x)) = 1, even if x can be null.
+    resultSign = Rational::Builder(childIsNull == TrinaryBoolean::True ? 0 : (childIsPositive == TrinaryBoolean::True ? 1 : -1));
   } else {
     Evaluation<float> childApproximated = child.node()->approximate(1.0f, ApproximationContext(reductionContext, true));
     assert(childApproximated.type() == EvaluationNode<float>::Type::Complex);
     Complex<float> c = static_cast<Complex<float>&>(childApproximated);
     if (std::isnan(c.imag()) || std::isnan(c.real()) || c.imag() != 0) {
       // c's approximation has no sign (c is complex or NAN)
-      if (reductionContext.target() == ReductionTarget::User && s == TrinaryBoolean::True) {
-        // For the user, we want sign(abs(x)) = 1
-      } else {
-        // sign(-x) = -sign(x)
-        Expression oppChild = child.makePositiveAnyNegativeNumeralFactor(reductionContext);
-        if (oppChild.isUninitialized()) {
-          return *this;
-        }
-        Expression sign = *this;
-        Multiplication m = Multiplication::Builder(Rational::Builder(-1));
-        replaceWithInPlace(m);
-        m.addChildAtIndexInPlace(sign, 1, 1); // sign does not need to be shallowReduced because -x = NAN --> x = NAN
-        return std::move(m); // m does not need to be shallowReduced, -1*sign cannot be reduced
+      // sign(-x) = -sign(x)
+      Expression oppChild = child.makePositiveAnyNegativeNumeralFactor(reductionContext);
+      if (oppChild.isUninitialized()) {
+        return *this;
       }
-    } else if (c.real() < 0) {
-      resultSign = Rational::Builder(-1);
-    } else if (c.real() == 0) {
-      resultSign = Rational::Builder(0);
+      Expression sign = *this;
+      Multiplication m = Multiplication::Builder(Rational::Builder(-1));
+      replaceWithInPlace(m);
+      m.addChildAtIndexInPlace(sign, 1, 1); // sign does not need to be shallowReduced because x = NAN --> x = NAN
+      return std::move(m); // m does not need to be shallowReduced, -1*sign cannot be reduced
     }
+    resultSign = Rational::Builder(c.real() > 0 ? 1 : (c.real() < 0 ? -1 : 0));
   }
   replaceWithInPlace(resultSign);
-  return std::move(resultSign);
+  return resultSign;
 }
 
 bool SignFunction::derivate(const ReductionContext& reductionContext, Symbol symbol, Expression symbolValue) {

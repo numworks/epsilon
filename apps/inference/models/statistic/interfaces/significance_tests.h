@@ -140,7 +140,7 @@ public:
   constexpr static int k_numberOfParams = 6;
 private:
   static double ComputeTZ(double deltaMean, double meanSample1, double n1, double sigma1, double meanSample2, double n2, double sigma2);
-  static double ComputeStandardError(double sigma1, int n1, double sigma2, int n2);
+  static double ComputeStandardError(double sigma1, double n1, double sigma2, double n2);
   static double ComputeDegreesOfFreedom(double s1, double n1, double s2, double n2);
 };
 
@@ -192,8 +192,8 @@ public:
   constexpr static int k_numberOfParams = 4;
 private:
   static double ComputeEstimate(double x1, double n1, double x2, double n2) { return x1 / n1 - x2 / n2; }
-  static double ComputeZ(double deltaP0, double x1, int n1, double x2, int n2);
-  static double ComputeStandardError(double p1Estimate, int n1, double p2Estimate, int n2);
+  static double ComputeZ(double deltaP0, double x1, double n1, double x2, double n2);
+  static double ComputeStandardError(double p1Estimate, double n1, double p2Estimate, double n2);
 };
 
 }

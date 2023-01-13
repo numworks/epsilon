@@ -32,6 +32,7 @@ ConsoleLineCell::ScrollableConsoleLineView::ScrollableConsoleLineView(Responder 
   ScrollableView(parentResponder, &m_consoleLineView, this)
 {
   setDecoratorType(Escher::ScrollView::Decorator::Type::Arrows);
+  setDecoratorFont(GlobalPreferences::sharedGlobalPreferences()->font());
   setBackgroundColor(KDColorWhite);
 }
 

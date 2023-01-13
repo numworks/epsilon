@@ -81,20 +81,18 @@ private:
 
   constexpr static bool CreateIntegerBlockAtIndexForType(Block * block, size_t blockIndex, BlockType type, uint64_t value) {
     uint8_t numberOfDigits = Integer::NumberOfDigits(value);
-    switch (numberOfDigits) {
-      case 1:
-        return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, Integer::DigitAtIndex(value, 0), numberOfDigits);
-      case 2:
-        return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, Integer::DigitAtIndex(value, 0), Integer::DigitAtIndex(value, 1), numberOfDigits);
-      case 3:
-        return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, Integer::DigitAtIndex(value, 0), Integer::DigitAtIndex(value, 1), Integer::DigitAtIndex(value, 2), numberOfDigits);
-      case 4:
-        return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, type, numberOfDigits, Integer::DigitAtIndex(value, 0), Integer::DigitAtIndex(value, 1), Integer::DigitAtIndex(value, 2), Integer::DigitAtIndex(value, 3), numberOfDigits);
-      default:
-        assert(false);
-        // TODO: handle case for numberOfDigits == 5, 6, 7, 8 when they occur
-        return false;
+    assert(TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) == TypeBlock::NumberOfMetaBlocks(BlockType::IntegerNegBig));
+    uint8_t numberOfBlocks = TypeBlock::NumberOfMetaBlocks(BlockType::IntegerPosBig) + numberOfDigits;
+    if (blockIndex == numberOfBlocks - 1) {
+      *block = TypeBlock(type);
+      return true;
     }
+    if (blockIndex == 1 || blockIndex == numberOfBlocks - 2) {
+      *block = ValueBlock(numberOfDigits);
+      return false;
+    }
+    *block = ValueBlock(Integer::DigitAtIndex(value, blockIndex - 2));
+    return false;
   }
 };
 

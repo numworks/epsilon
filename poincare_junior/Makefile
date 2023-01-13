@@ -61,7 +61,7 @@ tests_src += $(addprefix poincare_junior/src/,\
 )
 
 tests_src += $(addprefix poincare_junior/test/,\
-  junior.cpp \
+  create.cpp \
 )
 
 tests_src += $(addprefix poincare_junior/omgpj/src/,\

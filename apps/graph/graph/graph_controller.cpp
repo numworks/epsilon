@@ -103,7 +103,8 @@ Range2D GraphController::optimalRange(bool computeX, bool computeY, Range2D orig
         parametricExpression.setDimensions(2, 1);
         e = parametricExpression;
       }
-      assert(e.type() == ExpressionNode::Type::Matrix && e.numberOfChildren() == 2);
+      assert((e.type() == ExpressionNode::Type::Matrix && e.numberOfChildren() == 2)
+          || (e.type() == ExpressionNode::Type::Dependency && e.childAtIndex(0).type() == ExpressionNode::Type::Matrix && e.childAtIndex(0).numberOfChildren() == 2));
 
       // Compute the ordinate range of x(t) and y(t)
       Range1D ranges[2];

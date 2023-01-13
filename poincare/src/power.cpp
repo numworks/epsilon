@@ -41,19 +41,14 @@ namespace Poincare {
 
 // Properties
 TrinaryBoolean PowerNode::isPositive(Context * context) const {
-  if (childAtIndex(0)->isPositive(context) == TrinaryBoolean::True && childAtIndex(1)->isPositive(context) != TrinaryBoolean::Unknown) {
+  TrinaryBoolean baseIsPositive = childAtIndex(0)->isPositive(context);
+  if (baseIsPositive == TrinaryBoolean::True && childAtIndex(1)->isPositive(context) != TrinaryBoolean::Unknown) {
     return TrinaryBoolean::True;
   }
-  if (childAtIndex(0)->isPositive(context) == TrinaryBoolean::False && childAtIndex(1)->type() == ExpressionNode::Type::Rational) {
+  if (childAtIndex(1)->type() == ExpressionNode::Type::Rational && static_cast<RationalNode *>(childAtIndex(1))->isInteger() && Expression(childAtIndex(0)).isReal(context)) {
     RationalNode * r = static_cast<RationalNode *>(childAtIndex(1));
-    if (r->isInteger()) {
-      assert(!Integer::Division(r->signedNumerator(), Integer(2)).remainder.isOverflow());
-      if (Integer::Division(r->signedNumerator(), Integer(2)).remainder.isZero()) {
-        return TrinaryBoolean::True;
-      } else {
-        return TrinaryBoolean::False;
-      }
-    }
+    assert(!Integer::Division(r->signedNumerator(), Integer(2)).remainder.isOverflow());
+    return Integer::Division(r->signedNumerator(), Integer(2)).remainder.isZero() ? TrinaryBoolean::True : baseIsPositive;
   }
   return TrinaryBoolean::Unknown;
 }

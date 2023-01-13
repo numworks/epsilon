@@ -40,7 +40,7 @@ namespace Poincare {
  * | P TAG |
  *
  * - UserSymbol US (same for UserFunction, UserSequence)
- * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | US TAG |
+ * | US TAG | NUMBER CHARS | CHAR0 | ... | CHARN | NUMBER CHARS | US TAG |
  *
  * - Polynomial P = a0*x^e0 + ... + a1*x^e1 + ... +
  *   n = number of terms

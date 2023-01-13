@@ -37,6 +37,7 @@ private:
   constexpr static bool SpecializedCreateBlockAtIndexForType(Block * block, size_t blockIndex, Types... args) {
     static_assert(blockType != BlockType::Constant &&
                   blockType != BlockType::Float &&
+                  blockType != BlockType::UserSymbol &&
                   blockType != BlockType::IntegerPosBig &&
                   blockType != BlockType::IntegerNegBig,
                   "BlockType associated with specific specialized creators shouldn't end up in the default SpecializedCreateBlockAtIndexForType");
@@ -47,6 +48,21 @@ private:
   constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::Constant>(Block * block, size_t blockIndex, char16_t name) {
     assert(Constant::Type(name) != Constant::Type::Undefined);
     return CreateBlockAtIndexForNthBlocksNode(block, blockIndex, BlockType::Constant, Constant::Type(name));
+  }
+
+  template <>
+  constexpr bool SpecializedCreateBlockAtIndexForType<BlockType::UserSymbol>(Block * block, size_t blockIndex, const char * name, size_t nameLength) {
+    size_t numberOfBlocks = TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol) + nameLength;
+    if (blockIndex == numberOfBlocks - 1) {
+      *block = TypeBlock(BlockType::UserSymbol);
+      return true;
+    }
+    if (blockIndex == 1 || blockIndex == numberOfBlocks - 2) {
+      *block = ValueBlock(nameLength);
+      return false;
+    }
+    *block = ValueBlock(name[blockIndex - 2]);
+    return false;
   }
 
   template <>

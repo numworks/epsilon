@@ -112,7 +112,7 @@ void testConstexprTreeConstructor() {
   assert_tree_equals_blocks(Pow(1_sn, 2_sn), {TypeBlock(BlockType::Power), OneBlock, TwoBlock});
   assert_tree_equals_blocks(Sub(1_sn, 2_sn), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
   assert_tree_equals_blocks(Sub(1_sn, 2_sn), {TypeBlock(BlockType::Subtraction), OneBlock, TwoBlock});
-  assert_tree_equals_blocks(Symb("var"), {TypeBlock(BlockType::UserSymbol), ValueBlock(3), ValueBlock('v'), ValueBlock('a'), ValueBlock('r'), ValueBlock(3), TypeBlock(BlockType::UserSymbol)});
+  assert_tree_equals_blocks("var"_uds_n, {TypeBlock(BlockType::UserSymbol), ValueBlock(3), ValueBlock('v'), ValueBlock('a'), ValueBlock('r'), ValueBlock(3), TypeBlock(BlockType::UserSymbol)});
 }
 
 void testEditionNodeConstructor() {

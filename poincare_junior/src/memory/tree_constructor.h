@@ -206,17 +206,24 @@ constexpr Tree<SignedIntegerTreeSize<str...>()> operator"" _si_n()
   return tree;
 }
 
-// Discard null-termination
-template<unsigned N> constexpr Tree<N - 1 + TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol)> Symb(const char (&name)[N]) {
-  Tree<N - 1 + TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol)> tree;
-  tree[0] = TypeBlock(BlockType::UserSymbol);
-  tree[1] = N - 1;
-  for (size_t i = 0; i < N - 1; i++) {
-    tree[2 + i] = name[i];
-  }
-  tree[1 + N] = N - 1;
-  tree[2  + N] = TypeBlock(BlockType::UserSymbol);
+template<size_t N>
+struct String {
+  char m_data[N];
+  constexpr size_t size() const { return N; }
+  template <std::size_t... Is>
+  constexpr String(const char (&arr)[N], std::integer_sequence<std::size_t, Is...>) : m_data{arr[Is]...} {}
+  constexpr String(char const(&arr)[N]) : String(arr, std::make_integer_sequence<std::size_t, N>()) {}
+
+};
+
+template<String S>
+constexpr Tree<S.size() + TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol)> operator"" _uds_n() {
+  constexpr size_t size = S.size();
+  constexpr size_t treeSize = size + TypeBlock::NumberOfMetaBlocks(BlockType::UserSymbol);
+  Tree<treeSize> tree;
+  CreateNode<BlockType::UserSymbol>(&tree, S.m_data, size);
   return tree;
+
 }
 
 constexpr Tree<TypeBlock::NumberOfMetaBlocks(BlockType::Constant)> operator "" _n(char16_t name) {

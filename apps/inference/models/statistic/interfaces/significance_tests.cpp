@@ -119,20 +119,20 @@ void OneMean::InitZIntervalParameters(Interval * i) {
 }
 
 
-bool OneMean::ZAuthorizedParameterAtIndex(int i, double p) {
-  switch (i) {
+bool OneMean::ZAuthorizedParameterAtIndex(int index, double p) {
+  switch (index) {
     case ParamsOrder::n:
       return p >= 1.0;
     default:
-      return TAuthorizedParameterAtIndex(i, p);
+      return TAuthorizedParameterAtIndex(index, p);
   }
 }
 
-bool OneMean::TAuthorizedParameterAtIndex(int i, double p) {
-  if (i == NumberOfParameters()) {
+bool OneMean::TAuthorizedParameterAtIndex(int index, double p) {
+  if (index == NumberOfParameters()) {
     return ValidThreshold(p);
   }
-  switch (i) {
+  switch (index) {
     case ParamsOrder::n:
       return p >= 2.0;
     case ParamsOrder::x:
@@ -153,8 +153,8 @@ double OneMean::ProcessParamaterForIndex(double p, int index) {
   return p;
 }
 
-ParameterRepresentation OneMean::ZParameterRepresentationAtIndex(int i) {
-  switch (i) {
+ParameterRepresentation OneMean::ZParameterRepresentationAtIndex(int index) {
+  switch (index) {
     case ParamsOrder::x:
     {
       Poincare::Layout x = CombinedCodePointsLayout::Builder('x', UCodePointCombiningOverline);
@@ -175,14 +175,14 @@ ParameterRepresentation OneMean::ZParameterRepresentationAtIndex(int i) {
   return ParameterRepresentation{};
 }
 
-ParameterRepresentation OneMean::TParameterRepresentationAtIndex(int i) {
-  switch (i) {
+ParameterRepresentation OneMean::TParameterRepresentationAtIndex(int index) {
+  switch (index) {
     case ParamsOrder::s: {
       Poincare::Layout s = CodePointLayout::Builder('s');
       return ParameterRepresentation{s, I18n::Message::SampleSTD};
     }
     default:
-      return OneMean::ZParameterRepresentationAtIndex(i);
+      return OneMean::ZParameterRepresentationAtIndex(index);
   }
 }
 
@@ -233,11 +233,11 @@ void OneProportion::InitIntervalParameters(Interval * i) {
   i->parametersArray()[ParamsOrder::n] = 251;
 }
 
-bool OneProportion::AuthorizedParameterAtIndex(int i, double p) {
-  if (i == NumberOfParameters()) {
+bool OneProportion::AuthorizedParameterAtIndex(int index, double p) {
+  if (index == NumberOfParameters()) {
     return ValidThreshold(p);
   }
-  switch (i) {
+  switch (index) {
     case ParamsOrder::x:
       return p >= 0.0;
     case ParamsOrder::n:
@@ -255,8 +255,8 @@ double OneProportion::ProcessParamaterForIndex(double p, int index) {
   return p;
 }
 
-ParameterRepresentation OneProportion::ParameterRepresentationAtIndex(int i) {
-  switch (i) {
+ParameterRepresentation OneProportion::ParameterRepresentationAtIndex(int index) {
+  switch (index) {
     case ParamsOrder::x: {
       Layout x = CodePointLayout::Builder('x');
       return ParameterRepresentation{x, I18n::Message::NumberOfSuccesses};
@@ -371,21 +371,21 @@ void TwoMeans::InitIntervalParameters(Interval * i) {
   i->parametersArray()[ParamsOrder::s2] = 14.26;
 }
 
-bool TwoMeans::ZAuthorizedParameterAtIndex(int i, double p) {
-  switch (i) {
+bool TwoMeans::ZAuthorizedParameterAtIndex(int index, double p) {
+  switch (index) {
     case ParamsOrder::n1:
     case ParamsOrder::n2:
       return p >= 1.0;
     default:
-      return TAuthorizedParameterAtIndex(i, p);
+      return TAuthorizedParameterAtIndex(index, p);
   }
 }
 
-bool TwoMeans::TAuthorizedParameterAtIndex(int i, double p) {
-  if (i == NumberOfParameters()) {
+bool TwoMeans::TAuthorizedParameterAtIndex(int index, double p) {
+  if (index == NumberOfParameters()) {
     return ValidThreshold(p);
   }
-  switch (i) {
+  switch (index) {
     case ParamsOrder::n1:
     case ParamsOrder::n2:
       return p >= 2.0;
@@ -414,8 +414,8 @@ bool TwoMeans::TValidateInputs(double * params) {
   return (ComputeDegreesOfFreedom(S1(params), N1(params), S2(params), N2(params)) > 0) && ZValidateInputs(params);
 }
 
-ParameterRepresentation TwoMeans::ZParameterRepresentationAtIndex(int i) {
-  switch (i) {
+ParameterRepresentation TwoMeans::ZParameterRepresentationAtIndex(int index) {
+  switch (index) {
     case ParamsOrder::x1: {
       Poincare::HorizontalLayout x1 = Poincare::HorizontalLayout::Builder(
           CombinedCodePointsLayout::Builder('x', UCodePointCombiningOverline),
@@ -456,8 +456,8 @@ ParameterRepresentation TwoMeans::ZParameterRepresentationAtIndex(int i) {
   return ParameterRepresentation{};
 }
 
-ParameterRepresentation TwoMeans::TParameterRepresentationAtIndex(int i) {
-  switch (i) {
+ParameterRepresentation TwoMeans::TParameterRepresentationAtIndex(int index) {
+  switch (index) {
     case ParamsOrder::s1: {
       Poincare::HorizontalLayout s1 = LayoutHelper::CodePointSubscriptCodePointLayout('s', '1');
       return ParameterRepresentation{s1, I18n::Message::Sample1Std};
@@ -467,7 +467,7 @@ ParameterRepresentation TwoMeans::TParameterRepresentationAtIndex(int i) {
       return ParameterRepresentation{s2, I18n::Message::Sample2Std};
     }
     default:
-      return ZParameterRepresentationAtIndex(i);
+      return ZParameterRepresentationAtIndex(index);
   }
 }
 
@@ -586,11 +586,11 @@ void TwoProportions::InitIntervalParameters(Interval * i) {
   i->parametersArray()[ParamsOrder::n2] = 2253;
 }
 
-bool TwoProportions::AuthorizedParameterAtIndex(int i, double p) {
-  if (i == NumberOfParameters()) {
+bool TwoProportions::AuthorizedParameterAtIndex(int index, double p) {
+  if (index == NumberOfParameters()) {
     return ValidThreshold(p);
   }
-  switch (i) {
+  switch (index) {
     case ParamsOrder::x1:
     case ParamsOrder::x2:
     case ParamsOrder::n1:
@@ -619,8 +619,8 @@ bool TwoProportions::ValidateInputs(double * params) {
   return (X1(params) < N1(params)) && (X2(params) < N2(params));
 }
 
-ParameterRepresentation TwoProportions::ParameterRepresentationAtIndex(int i) {
-  switch (i) {
+ParameterRepresentation TwoProportions::ParameterRepresentationAtIndex(int index) {
+  switch (index) {
     case ParamsOrder::x1: {
       Poincare::HorizontalLayout x1 = Poincare::HorizontalLayout::Builder(
           CodePointLayout::Builder('x'),

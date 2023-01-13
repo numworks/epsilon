@@ -35,12 +35,12 @@ public:
   static void InitTestParameters(Test * test);
   static void InitTIntervalParameters(Interval * interval);
   static void InitZIntervalParameters(Interval * interval);
-  static bool ZAuthorizedParameterAtIndex(int i, double p);
-  static bool TAuthorizedParameterAtIndex(int i, double p);
+  static bool ZAuthorizedParameterAtIndex(int index, double p);
+  static bool TAuthorizedParameterAtIndex(int index, double p);
   static double ProcessParamaterForIndex(double p, int index);
   static int NumberOfParameters() { return k_numberOfParams; }
-  static Shared::ParameterRepresentation ZParameterRepresentationAtIndex(int i);
-  static Shared::ParameterRepresentation TParameterRepresentationAtIndex(int i);
+  static Shared::ParameterRepresentation ZParameterRepresentationAtIndex(int index);
+  static Shared::ParameterRepresentation TParameterRepresentationAtIndex(int index);
   static double X(double * params) { return params[ParamsOrder::x]; }
   static double S(double * params) { return params[ParamsOrder::s]; }
   static double N(double * params) { return params[ParamsOrder::n]; }
@@ -73,13 +73,13 @@ public:
   // Parameters
   static void InitTestParameters(Test * test);
   static void InitIntervalParameters(Interval * interval);
-  static bool AuthorizedParameterAtIndex(int i, double p);
+  static bool AuthorizedParameterAtIndex(int index, double p);
   static double ProcessParamaterForIndex(double p, int index);
   static bool ValidH0(double h0) { return h0 > 0 && h0 < 1; }
   static bool ValidateInputs(double * params) { return X(params) <= N(params); }
 
   static int NumberOfParameters() { return k_numberOfParams; }
-  static Shared::ParameterRepresentation ParameterRepresentationAtIndex(int i);
+  static Shared::ParameterRepresentation ParameterRepresentationAtIndex(int index);
   static double X(double * params) { return params[ParamsOrder::x]; }
   static double N(double * params) { return params[ParamsOrder::n]; }
 
@@ -115,15 +115,15 @@ public:
   // Parameters
   static void InitTestParameters(Test * test);
   static void InitIntervalParameters(Interval * interval);
-  static bool ZAuthorizedParameterAtIndex(int i, double p);
-  static bool TAuthorizedParameterAtIndex(int i, double p);
+  static bool ZAuthorizedParameterAtIndex(int index, double p);
+  static bool TAuthorizedParameterAtIndex(int index, double p);
   static double ProcessParamaterForIndex(double p, int index);
   static bool ZValidateInputs(double * params);
   static bool TValidateInputs(double * params);
 
   static int NumberOfParameters() { return k_numberOfParams; }
-  static Shared::ParameterRepresentation ZParameterRepresentationAtIndex(int i);
-  static Shared::ParameterRepresentation TParameterRepresentationAtIndex(int i);
+  static Shared::ParameterRepresentation ZParameterRepresentationAtIndex(int index);
+  static Shared::ParameterRepresentation TParameterRepresentationAtIndex(int index);
   static double X1(double * params) { return params[ParamsOrder::x1]; }
   static double N1(double * params) { return params[ParamsOrder::n1]; }
   static double S1(double * params) { return params[ParamsOrder::s1]; }
@@ -173,13 +173,13 @@ public:
   // Parameters
   static void InitTestParameters(Test * test);
   static void InitIntervalParameters(Interval * interval);
-  static bool AuthorizedParameterAtIndex(int i, double p);
+  static bool AuthorizedParameterAtIndex(int index, double p);
   static double ProcessParamaterForIndex(double p, int index);
   static bool ValidH0(double h0) { return h0 <= 1 && h0 >= -1; }
   static bool ValidateInputs(double * params);
 
   static int NumberOfParameters() { return k_numberOfParams; }
-  static Shared::ParameterRepresentation ParameterRepresentationAtIndex(int i);
+  static Shared::ParameterRepresentation ParameterRepresentationAtIndex(int index);
   static double X1(double * params) { return params[ParamsOrder::x1]; }
   static double N1(double * params) { return params[ParamsOrder::n1]; }
   static double X2(double * params) { return params[ParamsOrder::x2]; }

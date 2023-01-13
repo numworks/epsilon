@@ -13,7 +13,8 @@ static float histogramLevels(float x, void * model, void * context) {
   float * parameters = reinterpret_cast<float *>(context);
   float maxSize = parameters[0];
   float series = parameters[1];
-  return store->heightOfBarAtValue(series, x) / maxSize;
+  assert(maxSize >= 0);
+  return maxSize == 0 ? 0 : store->heightOfBarAtValue(series, x) / maxSize;
 }
 
 static bool barIsHighlighted(float x, void * model, void * context) {

@@ -255,7 +255,7 @@ constexpr Poincare::TrinaryBoolean Negative = Poincare::TrinaryBoolean::False;
 constexpr Poincare::TrinaryBoolean Unknown = Poincare::TrinaryBoolean::Unknown;
 
 QUIZ_CASE(poincare_properties_sign) {
-  assert_reduced_expression_sign("abs(-cos(2)+I)", Positive);
+  assert_reduced_expression_sign("abs(-cos(2)+i)", Positive);
   assert_reduced_expression_sign("2.345ᴇ-23", Positive);
   assert_reduced_expression_sign("-2.345ᴇ-23", Negative);
   assert_reduced_expression_sign("2×(-3)×abs(-32)", Negative);

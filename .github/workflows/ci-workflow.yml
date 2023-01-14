@@ -228,7 +228,7 @@ jobs:
     steps:
       - uses: numworks/setup-emscripten@master
         with:
-          sdk: 1.40.1
+          sdk: latest
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'

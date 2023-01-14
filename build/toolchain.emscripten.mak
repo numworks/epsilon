@@ -12,6 +12,8 @@ EMFLAGS += -s SAFE_HEAP=1
 EMFLAGS += -s STACK_OVERFLOW_CHECK=1
 EMFLAGS += -s DEMANGLE_SUPPORT=1
 EMFLAGS += -s MAIN_MODULE=1
+EMFLAGS += -g
+EMFLAGS += -O3
 else
 EMFLAGS += -s MAIN_MODULE=2
 endif
@@ -26,4 +28,4 @@ EMSCRIPTEN_MODULARIZE ?= 1
 LDFLAGS += -s MODULARIZE=$(EMSCRIPTEN_MODULARIZE) -s 'EXPORT_NAME="Epsilon"' --memory-init-file 0
 
 SFLAGS += $(EMFLAGS)
-LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_FUNCTIONS='["_main", "_IonSimulatorKeyboardKeyDown", "_IonSimulatorKeyboardKeyUp", "_IonSimulatorEventsPushEvent", "_IonSoftwareVersion", "_IonPatchLevel", "_IonDisplayForceRefresh"]' -s EXPORTED_RUNTIME_METHODS='["UTF8ToString"]'
+LDFLAGS += $(EMFLAGS) -Oz -s EXPORTED_RUNTIME_METHODS='["UTF8ToString"]'

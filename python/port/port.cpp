@@ -10,6 +10,7 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 
+__attribute__((noinline))
 void python_error_start(const char* type) {
   EM_ASM({
     Module.___temp_python_error = new Object();
@@ -18,6 +19,7 @@ void python_error_start(const char* type) {
   }, type);
 }
 
+__attribute__((noinline))
 void python_error_add_trace(const char* file, int line, const char* block) {
   EM_ASM({
     var temp_obj = new Object();
@@ -28,10 +30,11 @@ void python_error_add_trace(const char* file, int line, const char* block) {
   }, file, line, block);
 }
 
+__attribute__((noinline))
 void python_error_end() {
   EM_ASM({
     if (typeof Module.onPythonError === "function") {
-      Module.onPythonError(Module.___temp_python_error); 
+      Module.onPythonError(Module.___temp_python_error);
     }
     delete Module.___temp_python_error;
   });
@@ -55,6 +58,7 @@ extern "C" {
 #include "py/mphal.h"
 #include "py/nlr.h"
 #include "py/parsenum.h"
+#include "py/pystack.h"
 #include "py/repl.h"
 #include "py/runtime.h"
 #include "py/stackctrl.h"
@@ -163,6 +167,10 @@ extern "C" {
 }
 
 void MicroPython::init(void * heapStart, void * heapEnd) {
+#if __EMSCRIPTEN__
+  static mp_obj_t pystack[1024];
+  mp_pystack_init(pystack, &pystack[MP_ARRAY_SIZE(pystack)]);
+#endif
   /* We delimit the stack part that will be used by Python. The stackTop is the
    * address of the first object that can be allocated on Python stack. This
    * boundaries are used:

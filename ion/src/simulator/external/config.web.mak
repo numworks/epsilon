@@ -36,3 +36,6 @@ sdl_src += $(addprefix ion/src/simulator/external/sdl/src/, \
   video/emscripten/SDL_emscriptenopengles.c \
   video/emscripten/SDL_emscriptenvideo.c \
 )
+
+# Add SDL_JOYSTICK_EMSCRIPTEN flag
+SDL_SFLAGS += -DSDL_JOYSTICK_EMSCRIPTEN

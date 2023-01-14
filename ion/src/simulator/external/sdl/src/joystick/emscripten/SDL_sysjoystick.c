@@ -415,6 +415,23 @@ SDL_JoystickDriver SDL_EMSCRIPTEN_JoystickDriver =
     EMSCRIPTEN_JoystickQuit,
 };
 
+// Alias SDL_DUMMY_JoystickDriver to SDL_EMSCRIPTEN_JoystickDriver
+SDL_JoystickDriver SDL_DUMMY_JoystickDriver =
+{
+    EMSCRIPTEN_JoystickInit,
+    EMSCRIPTEN_JoystickGetCount,
+    EMSCRIPTEN_JoystickDetect,
+    EMSCRIPTEN_JoystickGetDeviceName,
+    EMSCRIPTEN_JoystickGetDevicePlayerIndex,
+    EMSCRIPTEN_JoystickGetDeviceGUID,
+    EMSCRIPTEN_JoystickGetDeviceInstanceID,
+    EMSCRIPTEN_JoystickOpen,
+    EMSCRIPTEN_JoystickRumble,
+    EMSCRIPTEN_JoystickUpdate,
+    EMSCRIPTEN_JoystickClose,
+    EMSCRIPTEN_JoystickQuit,
+};
+
 #endif /* SDL_JOYSTICK_EMSCRIPTEN */
 
 /* vi: set ts=4 sw=4 expandtab: */

@@ -8,6 +8,7 @@
 /* MicroPython configuration options
  * We're not listing the default options as defined in mpconfig.h */
 
+#if __EMSCRIPTEN__
 // Enable a PyStack where most objects are allocated instead of always using the heap
 /* This enables to allocate and free memory in a scope (thus, Python can call
  * Python) but also has the collateral effect of removing bugs regarding
@@ -17,7 +18,10 @@
  * collecting roots the transpiled C code is denied access to Javascript
  * variables that can store pointers to the Python heap. The pointed objects
  * are therefore erased prematurely. */
+#define MICROPY_ENABLE_PYSTACK (1)
+#else
 #define MICROPY_ENABLE_PYSTACK (0)
+#endif
 
 // Whether to encode None/False/True as immediate objects instead of pointers to
 // real objects.  Reduces code size by a decent amount without hurting

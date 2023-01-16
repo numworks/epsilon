@@ -249,6 +249,7 @@ bool GraphController::displayDerivativeInBanner() const {
 
 bool GraphController::moveCursorHorizontally(int direction, int scrollSpeed) {
   Ion::Storage::Record record = functionStore()->activeRecordAtIndex(indexFunctionSelectedByCursor());
+  assert(m_selectedSubCurveIndex < App::app()->functionStore()->modelForRecord(record)->numberOfSubCurves());
   return privateMoveCursorHorizontally(m_cursor, direction, m_graphRange, k_numberOfCursorStepsInGradUnit, record, m_view.pixelWidth(), scrollSpeed, &m_selectedSubCurveIndex);
 }
 

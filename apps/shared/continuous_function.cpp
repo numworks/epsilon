@@ -223,6 +223,7 @@ int ContinuousFunction::derivativeNameWithArgument(char * buffer, size_t bufferS
 
 double ContinuousFunction::approximateDerivative(double x, Context * context, int subCurveIndex, bool useDomain) const {
   assert(canDisplayDerivative());
+  assert(subCurveIndex < numberOfSubCurves());
   if ((useDomain && (x < tMin() || x > tMax())) || isAlongY() || numberOfSubCurves() > 1) {
     return NAN;
   }

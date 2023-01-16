@@ -39,7 +39,7 @@ protected:
     ReferenceTable(Pool * pool) : m_length(0), m_pool(pool) {}
     bool isFull() { return numberOfStoredNodes() == maxNumberOfReferences(); }
     bool isEmpty() const { return numberOfStoredNodes() == 0; }
-    int numberOfStoredNodes() const { return m_length; }
+    size_t numberOfStoredNodes() const { return m_length; }
     virtual uint16_t storeNode(Node node) = 0;
     virtual Node nodeForIdentifier(uint16_t id) const;
     virtual bool reset();

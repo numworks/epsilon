@@ -12,9 +12,15 @@ body {
   height: 100vh;
 }
 
+.col-fullscreen canvas, .calculator-container {
+  margin-top: 2vh;
+}
+
 .col-fullscreen canvas {
-  margin-top: 7%;
-  width: 100%;
+  max-height: 96vh;
+  max-width: 64vw;
+  height: 49.995vw;
+  width: auto;
 }
 
 body.fullscreen .col-fullscreen {
@@ -31,7 +37,6 @@ body.fullscreen .col-calculator {
   position: relative;
   display: inline-block;
   text-align: left;
-  margin-top: 2vh;
 }
 
 .calculator-container img {

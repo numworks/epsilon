@@ -4,16 +4,12 @@
 
 using namespace PoincareJ;
 
-static CachePool * cachePool = CachePool::sharedCachePool();
-static EditionPool * editionPool = cachePool->editionPool();
-
 static constexpr Tree tree = Add("3"_n, "4"_n);
-static size_t treeSize = static_cast<Node>(tree).treeSize();
 static constexpr Tree smallTree = "4"_n;
 
 void execute_push_tree_and_modify() {
   PoincareJ::CacheReference::InitializerFromTree treeModifier = [](Node tree) { EditionReference(tree).replaceNodeByNode(EditionReference::Push<BlockType::Multiplication>(2)); };
-  cachePool->execute(
+  CachePool::sharedCachePool()->execute(
       [](void * subAction, const void * data) {
         Node editedTree = EditionPool::sharedEditionPool()->initFromAddress(data);
         return (reinterpret_cast<PoincareJ::CacheReference::InitializerFromTree>(subAction))(editedTree);
@@ -24,7 +20,10 @@ void execute_push_tree_and_modify() {
 }
 
 void testCachePool() {
-  CachePool::sharedCachePool()->reset();
+  CachePool * cachePool = CachePool::sharedCachePool();
+  EditionPool * editionPool = cachePool->editionPool();
+  size_t treeSize = static_cast<Node>(tree).treeSize();
+  cachePool->reset();
 
   // storeEditedTree
   editionPool->initFromTree(tree);
@@ -62,7 +61,10 @@ void testCachePool() {
 QUIZ_CASE(pcj_cache_pool) { testCachePool(); }
 
 void testCachePoolLimits() {
-  CachePool::sharedCachePool()->reset();
+  CachePool * cachePool = CachePool::sharedCachePool();
+  EditionPool * editionPool = cachePool->editionPool();
+  cachePool->reset();
+  size_t treeSize = static_cast<Node>(tree).treeSize();
 
   /* test overflowing the edition pool */
   // 1. Almost fill the whole cache
@@ -96,6 +98,7 @@ QUIZ_CASE(pcj_cache_pool_limits) { testCachePoolLimits(); }
 
 
 void assert_check_cache_reference(CacheReference reference, std::initializer_list<const Node> cacheTrees) {
+  CachePool * cachePool = CachePool::sharedCachePool();
   cachePool->reset();
   assert_pools_tree_sizes_are(0, 0);
   reference.send([](const Node tree, void * result) {}, nullptr);
@@ -126,6 +129,7 @@ void testCacheReference() {
 QUIZ_CASE(pcj_cache_references) { testCacheReference(); }
 
 void check_reference_invalidation_and_reconstruction(CacheReference reference, uint16_t identifier, Node node) {
+  CachePool * cachePool = CachePool::sharedCachePool();
   // reference has been invalidated
   assert(cachePool->nodeForIdentifier(identifier).isUninitialized());
   // reference is regenerated on demand
@@ -134,6 +138,8 @@ void check_reference_invalidation_and_reconstruction(CacheReference reference, u
 }
 
 void testCacheReferenceInvalidation() {
+  CachePool * cachePool = CachePool::sharedCachePool();
+  size_t treeSize = static_cast<Node>(tree).treeSize();
   CacheReference reference([] (){ EditionReference::Push<BlockType::IntegerShort>(static_cast<int8_t>(28)); });
   reference.send([](const Node tree, void * result) {}, nullptr);
   uint16_t identifier = reference.id();

@@ -95,11 +95,7 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, doubl
   return PointOfInterest();
 }
 
-bool PointsOfInterestCache::hasInterestAtCoordinates(double x, double y, Solver<double>::Interest interest, bool interestIsDisplayed, bool allInterestsAreDisplayed) {
-  if (interestIsDisplayed && !canDisplayPoints(allInterestsAreDisplayed ? Poincare::Solver<double>::Interest::None : interest)) {
-    // Ignore interest point if it is not displayed.
-    return false;
-  }
+bool PointsOfInterestCache::hasInterestAtCoordinates(double x, double y, Solver<double>::Interest interest) const {
   int n = numberOfPoints();
   for (int i = 0; i < n; i++) {
     PointOfInterest p = pointAtIndex(i);
@@ -110,6 +106,13 @@ bool PointsOfInterestCache::hasInterestAtCoordinates(double x, double y, Solver<
   return false;
 }
 
+bool PointsOfInterestCache::hasDisplayableInterestAtCoordinates(double x, double y, Poincare::Solver<double>::Interest interest, bool allInterestsAreDisplayed) const {
+  if (!canDisplayPoints(allInterestsAreDisplayed ? Poincare::Solver<double>::Interest::None : interest)) {
+    // Ignore interest point if it is not displayed.
+    return false;
+  }
+  return PointsOfInterestCache::hasInterestAtCoordinates(x, y, interest);
+}
 
 void PointsOfInterestCache::stripOutOfBounds() {
   assert(!m_list.isUninitialized());

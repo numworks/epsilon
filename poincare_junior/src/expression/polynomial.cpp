@@ -110,7 +110,7 @@ EditionReference Polynomial::Operation(EditionReference polA, EditionReference p
     return Operation(polB, polA, blockType, operationMonomial, operationMonomialAndReduce);
   }
   if (polB.type() != BlockType::Polynomial || !Comparison::AreEqual(x, Variable(polB))) {
-    operationMonomial(polA, std::make_pair(polB, 0));
+    operationMonomial(polA, std::make_pair(polB, static_cast<uint8_t>(0)));
   } else {
     // Both polA and polB are polynom(x)
     EditionReference variableB = polB.nextNode();
@@ -318,7 +318,7 @@ EditionReference PolynomialParser::Parse(EditionReference expression, EditionRef
 std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(EditionReference expression, EditionReference variable) {
   if (Comparison::AreEqual(expression, variable)) {
     expression.replaceTreeByTree(Node(&OneBlock));
-    return std::make_pair(expression, 1);
+    return std::make_pair(expression, static_cast<uint8_t>(1));
   }
   BlockType type = expression.type();
   if (type == BlockType::Power) {
@@ -348,7 +348,7 @@ std::pair<EditionReference, uint8_t> PolynomialParser::ParseMonomial(EditionRefe
   }
   // Assertion results from IsPolynomial = true
   assert(!Comparison::ContainsSubtree(expression, variable));
-  return std::make_pair(expression, 0);
+  return std::make_pair(expression, static_cast<uint8_t>(0));
 }
 
 #if 0

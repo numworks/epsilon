@@ -167,7 +167,7 @@ void testNodeIterator() {
   Node children2[] = {Add("1"_n, "2"_n), "3"_n};
   // Scan two nodes children forward
   for (std::pair<std::array<Node, 2>, int> indexedArray : MultipleNodesIterator::Children<Forward, NoEditable, 2>(std::array<Node, 2>({mult, mult2}))) {
-    std::array<Node, 2> childrenPair = std::get<0>(indexedArray);
+    std::array<Node, 2> childrenPair = std::get<std::array<Node, 2>>(indexedArray);
     int pairIndex = std::get<int>(indexedArray);
     assert_trees_are_equal(childrenPair[0], newChildren[numberOfChildren - 1 - pairIndex]);
     assert_trees_are_equal(childrenPair[1], children2[pairIndex]);
@@ -175,7 +175,7 @@ void testNodeIterator() {
 
   // Scan two nodes children backward
   for (std::pair<std::array<Node, 2>, int> indexedArray : MultipleNodesIterator::Children<Backward, NoEditable, 2>(std::array<Node, 2>({mult, mult2}))) {
-    std::array<Node, 2> childrenPair = std::get<0>(indexedArray);
+    std::array<Node, 2> childrenPair = std::get<std::array<Node, 2>>(indexedArray);
     int pairIndex = std::get<int>(indexedArray);
     assert_trees_are_equal(childrenPair[0], newChildren[pairIndex]);
     assert_trees_are_equal(childrenPair[1], children2[numberOfChildren2 - 1 - pairIndex]);
@@ -185,7 +185,7 @@ void testNodeIterator() {
   Node newChildren2[] = {"13"_n, "14"_n};
   // Edit two nodes children forward
   for (std::pair<std::array<EditionReference, 2>, int> indexedRefs : MultipleNodesIterator::Children<Forward, Editable, 2>(std::array<EditionReference, 2>({mult, mult2}))) {
-    std::array<EditionReference, 2> childrenPair = std::get<0>(indexedRefs);
+    std::array<EditionReference, 2> childrenPair = std::get<std::array<EditionReference, 2>>(indexedRefs);
     int pairIndex = std::get<int>(indexedRefs);
     childrenPair[0].replaceTreeByTree(newChildren1[pairIndex]);
     childrenPair[1].replaceTreeByTree(newChildren2[pairIndex]);
@@ -201,7 +201,7 @@ void testNodeIterator() {
 
   // Edit two nodes children backward
   for (std::pair<std::array<EditionReference, 2>, int> indexedRefs : MultipleNodesIterator::Children<Backward, Editable, 2>(std::array<EditionReference, 2>({mult, mult2}))) {
-    std::array<EditionReference, 2> childrenPair = std::get<0>(indexedRefs);
+    std::array<EditionReference, 2> childrenPair = std::get<std::array<EditionReference, 2>>(indexedRefs);
     int pairIndex = std::get<int>(indexedRefs);
     childrenPair[0].replaceTreeByTree(newChildren1[pairIndex]);
     childrenPair[1].replaceTreeByTree(newChildren2[pairIndex]);

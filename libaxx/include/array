@@ -22,13 +22,13 @@ class array {
   // friend U get(array);
  public:
   array() {}
-  array(initializer_list<U> init) {
+  constexpr array(initializer_list<U> init) {
     int index = 0;
     for (const U &u : init) {
       m_array[index++] = u;
     }
   }
-  U operator[](unsigned int n) {
+  constexpr U operator[](unsigned int n) {
     // assert(n < N);
     return m_array[n];
   }

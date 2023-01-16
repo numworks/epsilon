@@ -115,8 +115,8 @@ int Comparison::ComparePolynomial(const Node node0, const Node node1) {
 template<typename ScanDirection>
 int PrivateCompareChildren(const Node node0, const Node node1) {
   for (std::pair<std::array<Node, 2>, int> indexedNodes : MultipleNodesIterator::Children<ScanDirection, NoEditable, 2>({node0, node1})) {
-    Node child0 = std::get<0>(indexedNodes)[0];
-    Node child1 = std::get<0>(indexedNodes)[1];
+    Node child0 = std::get<std::array<Node, 2>>(indexedNodes)[0];
+    Node child1 = std::get<std::array<Node, 2>>(indexedNodes)[1];
     int order = Comparison::Compare(child0, child1);
     if (order != 0) {
       return order;

@@ -67,7 +67,7 @@ void testCachePoolLimits() {
   /* test overflowing the edition pool */
   // 1. Almost fill the whole cache
     // Fill the cache
-  int maxNumberOfTreesInCache = CachePool::k_maxNumberOfBlocks/treeSize;
+  size_t maxNumberOfTreesInCache = CachePool::k_maxNumberOfBlocks/treeSize;
   for (int i = 0; i < maxNumberOfTreesInCache; i++) {
     editionPool->initFromTree(tree);
     cachePool->storeEditedTree();

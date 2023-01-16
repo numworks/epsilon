@@ -16,30 +16,13 @@ template <typename U, typename V> pair<U,V> make_pair(U u, V v) {
   return pair<U,V>(u,v);
 }
 
-/*
-template <int K, typename U, typename V>
-U get(pair<U, V> pair) {
-  if (K == 0) {
-    return pair.first;
-  } else {
-    // TODO specialisations for 0 and 1
-    // assert(K == 1);
-    return pair.second;
-  }
-}
+// The important trick is to change U and V only in the argument type
+/* https://github.com/llvm/llvm-project/blob/main/libcxx/include/__utility/pair.h */
 
-template <typename K, typename U, typename V>
-K get(pair<U, V> pair);
-
-template <typename U, typename V>
-U get(pair<U, V> pair) {
-  return pair.first;
-}
-
-template <typename U, typename V>
-V get(pair<U, V> pair) {
-  return pair.second;
-  }*/
+template <class U, class V> constexpr U& get(pair<U, V> &pair) { return pair.first; }
+template <class U, class V> constexpr U& get(pair<V, U> &pair) { return pair.second; }
+template <class U, class V> constexpr const U& get(const pair<U, V> &pair) { return pair.first; }
+template <class U, class V> constexpr const U& get(const pair<V, U> &pair) { return pair.second; }
 
 }
 

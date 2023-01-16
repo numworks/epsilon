@@ -37,7 +37,7 @@ constexpr static void CreateNode(Tree<N> * tree, Types... args) {
 template<unsigned N, unsigned ...Len>
 constexpr static auto MakeChildren(Tree<N> * tree, size_t blockIndex, const Tree<Len> (&...nodes)) {
   size_t childIndex = 0;
-  int childrenSizes[] = {Len...};
+  size_t childrenSizes[] = {Len...};
   std::initializer_list<Node> childrenNodes{static_cast<Node>(nodes)...};
   for (Node node : childrenNodes) {
     // We can't use node.copyTreeTo(tree.blockAtIndex(blockIndex++)) because memcpy isn't constexpr

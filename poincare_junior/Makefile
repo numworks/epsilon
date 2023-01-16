@@ -67,16 +67,15 @@ tests_src += $(addprefix poincare_junior/src/,\
 
 tests_src += $(addprefix poincare_junior/test/,\
   calculation.cpp \
-  create.cpp \
   elementary_tree_manipulations.cpp \
   expression_comparison.cpp \
   graph.cpp \
   memory_elements.cpp \
   memory_edition.cpp \
   memory_cache.cpp \
+  polynomial.cpp \
   set.cpp \
 )
-# polynomial.cpp \
 
 tests_src += $(addprefix poincare_junior/omgpj/src/,\
   arithmetic.cpp \

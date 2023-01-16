@@ -50,6 +50,10 @@ function Calculator(emModule) {
       });
     },
     screenshot: function(callback) {
+      if (typeof(this._IonDisplayForceRefresh) === "function") {
+        // Some versions of Epsilon (before 20.1.1) need this call
+        this._IonDisplayForceRefresh();
+      }
       return mainCanvas.toBlob(callback);
     }
   };

@@ -4,9 +4,9 @@ namespace Poincare {
 
 // PointOfInterest
 
-PointOfInterest PointOfInterest::Builder(double x, double y, typename Solver<double>::Interest interest, uint32_t data) {
+PointOfInterest PointOfInterest::Builder(double abscissa, double ordinate, typename Solver<double>::Interest interest, uint32_t data, bool inverted) {
   void * bufferNode = TreePool::sharedPool()->alloc(sizeof(PointOfInterestNode));
-  PointOfInterestNode * node = new (bufferNode) PointOfInterestNode(x, y ,interest, data);
+  PointOfInterestNode * node = new (bufferNode) PointOfInterestNode(abscissa, ordinate ,interest, data, inverted);
   TreeHandle handle = TreeHandle::BuildWithGhostChildren(node);
   return static_cast<PointOfInterest &>(handle);
 }
@@ -23,14 +23,14 @@ PointOfInterest PointsOfInterestList::pointAtIndex(int i) const {
   return static_cast<PointOfInterest &>(h);
 }
 
-void PointsOfInterestList::append(double x, double y, uint32_t data, typename Solver<double>::Interest interest) {
+void PointsOfInterestList::append(double abscissa, double ordinate, uint32_t data, typename Solver<double>::Interest interest, bool inverted) {
   assert(!m_list.isUninitialized());
   int n = m_list.numberOfChildren();
   if (interest == Solver<double>::Interest::Root) {
     // Sometimes the root is close to zero but not exactly zero
-    y = 0.0;
+    ordinate = 0.0;
   }
-  m_list.addChildAtIndexInPlace(PointOfInterest::Builder(x, y, interest, data), n, n);
+  m_list.addChildAtIndexInPlace(PointOfInterest::Builder(abscissa, ordinate, interest, data, inverted), n, n);
 }
 
 void PointsOfInterestList::sort() {
@@ -41,7 +41,7 @@ void PointsOfInterestList::sort() {
     },
     [](int i, int j, void * context, int numberOfElements) {
       PointsOfInterestList * pointsList = static_cast<PointsOfInterestList *>(context);
-      return pointsList->pointAtIndex(i).x() > pointsList->pointAtIndex(j).x();
+      return pointsList->pointAtIndex(i).abscissa() > pointsList->pointAtIndex(j).abscissa();
     },
     (void *)this,
     numberOfPoints()

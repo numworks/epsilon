@@ -359,7 +359,6 @@ void GraphView::drawPointsOfInterest(KDContext * ctx, KDRect rect) {
     return;
   }
 
-  AbstractPlotView::Axis axis = f->isAlongY() ? AbstractPlotView::Axis::Vertical : AbstractPlotView::Axis::Horizontal;
   PointsOfInterestCache * pointsOfInterestCache = App::app()->graphController()->pointsOfInterestForRecord(selectedRec);
   PointOfInterest p;
   int i = 0;
@@ -386,7 +385,7 @@ void GraphView::drawPointsOfInterest(KDContext * ctx, KDRect rect) {
     }
 
     // Draw the dot
-    Coordinate2D<float> dotCoordinates = axis == AbstractPlotView::Axis::Horizontal ? static_cast<Coordinate2D<float>>(p.xy()) : Coordinate2D<float>(p.y(), p.x());
+    Coordinate2D<float> dotCoordinates = static_cast<Coordinate2D<float>>(p.xy());
 
     constexpr static Shared::Dots::Size k_dotSize = Shared::Dots::Size::Tiny;
     KDRect rectForDot = dotRect(k_dotSize, dotCoordinates);

@@ -164,7 +164,7 @@ bool GraphControllerHelper::snapToInterestAndUpdateCursor(Shared::CurveViewCurso
   if (!std::isfinite(nextPointOfInterestXY.x1())) {
     return false;
   }
-  cursor->moveTo(nextPointOfInterestXY.x1(), nextPointOfInterestXY.x1(), nextPointOfInterestXY.x2());
+  cursor->moveTo(nextPointOfInterest.abscissa(), nextPointOfInterestXY.x1(), nextPointOfInterestXY.x2());
   return true;
 }
 

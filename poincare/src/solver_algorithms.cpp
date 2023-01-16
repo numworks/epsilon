@@ -188,6 +188,12 @@ Coordinate2D<double> SolverAlgorithms::BrentMinimum(Solver<double>::FunctionEval
   }
   assert(xMin < xMax);
 
+  if (DetectApproximationErrorsForMinimum(f, aux, xMin, xMax)) {
+    /* Some fake minimums can be detected due to approximations errors like in
+     * f(x) = x/abs(x) (in complex mode). */
+    return Coordinate2D<double>(NAN, NAN);
+  }
+
   double a = xMin;
   double b = xMax;
   double e = 0.;
@@ -289,6 +295,58 @@ Coordinate2D<double> SolverAlgorithms::BrentMinimum(Solver<double>::FunctionEval
   }
 
   return Coordinate2D<double>(NAN, NAN);
+}
+
+bool SolverAlgorithms::DetectApproximationErrorsForMinimum(Solver<double>::FunctionEvaluation f, const void * aux, double xMin, double xMax) {
+  assert(xMin < xMax);
+  constexpr int k_numberOfValuesToBeSignificant = 6;
+  constexpr int k_numberOfSteps = 10;
+  double previousValue = f(xMin, aux);
+  bool changedDirection = false;
+  double values[k_numberOfSteps + 1];
+  double valuesCount[k_numberOfSteps + 1];
+  values[0] = previousValue;
+  valuesCount[0] = 1;
+  int currentNumberOfValues = 1;
+  /* This loop checks two things:
+   *  - If a value is too often taken by f on the interval, it might mean that
+   *    f is a constant function equal to this value but approximation erros
+   *    led to thinking there was a minimum in the interval.
+   *  - If f changes twice of direction (it should go down at first and then up
+   *    and not go down again), it is also an indication of an approximation
+   *    error and not a normal behaviour. */
+  for (int i = 1; i <= k_numberOfSteps; i++) {
+    double currentValue = f(xMin + (static_cast<double>(i) / k_numberOfSteps) * (xMax - xMin), aux);
+    if (currentValue > previousValue) {
+      changedDirection = true;
+    } else if (currentValue < previousValue && changedDirection) {
+      // The function changed twice direction on the interval
+      return true;
+    }
+    previousValue = currentValue;
+    bool addValueToArray = true;
+    for (int k = 0; k < currentNumberOfValues; k++) {
+      if (values[k] == currentValue) {
+        addValueToArray = false;
+        valuesCount[k]++;
+        break;
+      }
+    }
+    if (addValueToArray) {
+      values[currentNumberOfValues] = currentValue;
+      valuesCount[currentNumberOfValues]++;
+      currentNumberOfValues++;
+    }
+  }
+
+  for (int k = 0; k < currentNumberOfValues; k++) {
+    if (valuesCount[k] >= k_numberOfValuesToBeSignificant) {
+      // More than 6 values are equal on [xMin, xMax]
+      return true;
+    }
+  }
+
+  return false;
 }
 
 // Explicit template instantiations

@@ -28,7 +28,8 @@ public:
   bool computeNextStep();
 
   Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);
-  bool hasInterestAtCoordinates(double x, double y, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None, bool interestIsDisplayed = true, bool allInterestsAreDisplayed = true);
+  bool hasInterestAtCoordinates(double x, double y, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None) const;
+  bool hasDisplayableInterestAtCoordinates(double x, double y, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None, bool allInterestsAreDisplayed = true) const;
 
   bool canDisplayPoints(Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None) const {
     return !m_interestingPointsOverflowPool && (numberOfPoints(interest) <= k_maxNumberOfDisplayablePoints);

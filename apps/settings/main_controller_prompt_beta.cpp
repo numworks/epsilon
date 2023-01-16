@@ -17,7 +17,6 @@ constexpr SettingsMessageTree s_modelMenu[] =
     SettingsMessageTree(I18n::Message::CodeApp, s_codeChildren),
 #endif
     SettingsMessageTree(I18n::Message::BetaPopUp),
-    //SettingsMessageTree(I18n::Message::UsbSetting, s_usbProtectionChildren),
     SettingsMessageTree(I18n::Message::ExternalApps, s_externalChildren),
     SettingsMessageTree(I18n::Message::Accessibility, s_accessibilityChildren),
     SettingsMessageTree(I18n::Message::About, s_modelAboutChildren)};

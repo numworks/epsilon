@@ -327,7 +327,9 @@ uint32_t DoublePairStore::storeChecksumForSeries(int series) const {
    * the CRC32 of the expressionNode in the pool.
    * So we have to build it from the values of the columns. */
   uint32_t crc = 0;
-  if (numberOfPairsOfSeries(series) == 0) {
+  /* If serie is not valid, it can mean it has been hidden
+   * thus checksum must change. */
+  if (numberOfPairsOfSeries(series) == 0 || !seriesIsValid(series)) {
     return crc;
   }
   for (int j = 0; j < numberOfPairsOfSeries(series); j++) {

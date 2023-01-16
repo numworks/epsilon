@@ -19,32 +19,36 @@ Solver<T>::Solver(T xStart, T xEnd, const char * unknown, Context * context, Pre
 
 template<typename T>
 Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketTest test, HoneResult hone) {
-  Coordinate2D<T> p1, p2(start(), f(start(), aux)), p3(nextX(p2.x1(), end()), k_NAN);
+  Coordinate2D<T> p1, p2(start(), f(start(), aux)), p3(nextX(p2.x1(), end(), static_cast<T>(1.)), k_NAN);
   p3.setX2(f(p3.x1(), aux));
   Coordinate2D<T> finalSolution;
   Interest finalInterest = Interest::None;
 
-  /* If the solver is in float, we want it to be fast so the fine search
-   * of interest around discontinuities is skipped. */
-  constexpr bool searchMorePreciselyIfDiscontinuities = sizeof(T) == sizeof(double);
+
+  constexpr bool isDouble = sizeof(T) == sizeof(double);
 
   while ((start() < p3.x1()) == (p3.x1() < end())) {
     p1 = p2;
     p2 = p3;
-    p3.setX1(nextX(p2.x1(), end()));
+    /* If the solver is in float, the slope is not used by minimalStep
+     * so its computation is skipped here. */
+    T slope = isDouble ? (p2.x2() - p1.x2()) / (p2.x1() - p1.x1()) : static_cast<T>(1.);
+    p3.setX1(nextX(p2.x1(), end(), slope));
     p3.setX2(f(p3.x1(), aux));
 
     Coordinate2D<T> start = p1;
     Coordinate2D<T> middle = p2;
     Coordinate2D<T> end = p3;
     Interest interest = Interest::None;
+    /* If the solver is in float, we want it to be fast so the fine search
+     * of interest around discontinuities is skipped. */
     if ((interest = test(start, middle, end, aux)) == Interest::None && // assignment in condition
-        searchMorePreciselyIfDiscontinuities &&
+        isDouble &&
         DiscontinuityInBracket(start, middle, end, aux) == Interest::Discontinuity) {
       /* If no interest was found and there is a discontinuity in the interval,
        * search for the largest interval without discontinuity and
        * then recompute the interest in this interval. */
-      ExcludeDiscontinuityFromBracket(&start, &middle, &end, f, aux, minimalStep(middle.x1()));
+      ExcludeDiscontinuityFromBracket(&start, &middle, &end, f, aux, minimalStep(middle.x1(), slope));
       interest = test(start, middle, end, aux);
     }
 
@@ -252,8 +256,23 @@ T Solver<T>::MaximalStep(T intervalAmplitude) {
 }
 
 template<typename T>
-T Solver<T>::minimalStep(T x) const {
-  return std::max(k_minimalPracticalStep, std::fabs(x) * k_relativePrecision);
+T Solver<T>::minimalStep(T x, T slope) const {
+  T minimalStep = k_minimalPracticalStep;
+  constexpr bool preventTooSmallStep = sizeof(T) == sizeof(double);
+  if (preventTooSmallStep) {
+    /* We make the minimal step dependent on the slope because if a function is
+     * too flat, taking a step too small could lead to not detecting minimums
+     * and maximums. Indeed, the function SolverAlgorithms::DetectApproxima-
+     * -tionErrorsForMinimum filters out mins and maxs when the function
+     * seems constant on the interval.
+     * We use e^7 because e^7 ≈ 1000, so that if slope = 0,
+     * minStep = 10e-6 * 10e3 = 0.001.
+     * This is not applied to floats since the minStep is already big enough.
+     * */
+    slope = std::fabs(slope);
+    minimalStep = minimalStep * std::exp(static_cast<T>(7.) * std::max(k_zero, static_cast<T>(1.) - slope));
+  }
+  return std::max(minimalStep, std::fabs(x) * k_relativePrecision);
 }
 
 template<typename T>
@@ -264,7 +283,7 @@ bool Solver<T>::validSolution(T x) const {
 }
 
 template<typename T>
-T Solver<T>::nextX(T x, T direction) const {
+T Solver<T>::nextX(T x, T direction, T slope) const {
   /* Compute the next step for the bracketing algorithm. The formula is derived
    * from the following criteria:
    * - using a fixed step would either lead to poor precision close to zero or
@@ -294,7 +313,7 @@ T Solver<T>::nextX(T x, T direction) const {
   constexpr T upperTypicalMagnitude = static_cast<T>(3.);
 
   T maxStep = maximalStep();
-  T minStep = minimalStep(x);
+  T minStep = minimalStep(x, slope);
   T stepSign = x < direction ? static_cast<T>(1.) : static_cast<T>(-1.);
 
   T magnitude = std::log10(std::fabs(x));

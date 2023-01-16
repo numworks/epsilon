@@ -87,10 +87,10 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, doubl
   }
   for (int i = firstIndex; direction * i <= direction * lastIndex; i += direction) {
     PointOfInterest p = pointAtIndex(i);
-    if (direction * p.x() <= direction * start) {
+    if (direction * p.abscissa() <= direction * start) {
       continue;
     }
-    if (direction * p.x() >= direction * end) {
+    if (direction * p.abscissa() >= direction * end) {
       break;
     }
     if (interest == Solver<double>::Interest::None || interest == p.interest()) {
@@ -116,7 +116,7 @@ void PointsOfInterestCache::stripOutOfBounds() {
   assert(!m_list.isUninitialized());
 
   for (int i = numberOfPoints() - 1; i >= 0; i--) {
-    float x = static_cast<float>(pointAtIndex(i).x());
+    float x = static_cast<float>(pointAtIndex(i).abscissa());
     if (x < m_start || m_end < x) {
       m_list.list().removeChildAtIndexInPlace(i);
     }
@@ -210,9 +210,10 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
   }
 }
 
-void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest,uint32_t data) {
+void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest, uint32_t data) {
   assert(std::isfinite(x) && std::isfinite(y));
-  m_list.append(x, y, data, interest);
+  ExpiringPointer<ContinuousFunction> f = App::app()->functionStore()->modelForRecord(m_record);
+  m_list.append(x, y, data, interest, f->isAlongY());
 }
 
 }

@@ -6,6 +6,7 @@ using namespace PoincareJ;
 
 void testEditionPool() {
   CachePool * cachePool = CachePool::sharedCachePool();
+  cachePool->reset();
   EditionPool * pool = cachePool->editionPool();
 
   constexpr Tree k_expression = Mult(Add("1"_n, "2"_n), "3"_n, "4"_n);
@@ -46,6 +47,7 @@ QUIZ_CASE(pcj_edition_pool) { testEditionPool(); }
 
 void testEditionReference() {
   CachePool * cachePool = CachePool::sharedCachePool();
+  cachePool->reset();
   EditionPool * editionPool = cachePool->editionPool();
 
   constexpr Tree k_expression0 = Mult(Add("1"_n, "2"_n), "3"_n, "4"_n);
@@ -110,6 +112,7 @@ void testEditionReference() {
 QUIZ_CASE(pcj_edition_reference) { testEditionReference(); }
 
 void testEditionReferenceReallocation() {
+  CachePool::sharedCachePool()->reset();
   constexpr Tree k_expression = "1"_n;
 
   EditionReference reference0("0"_n);

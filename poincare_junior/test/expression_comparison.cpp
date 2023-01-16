@@ -14,6 +14,7 @@ void testExpressionComparison() {
   assert_comparison_equals(1.0_n, 2.0_n, -1);
   assert_comparison_equals(Add("2"_n,u'π'_n), u'π'_n, 1);
   // TODO: complete
+  CachePool::sharedCachePool()->editionPool()->flush();
 }
 QUIZ_CASE(pcj_expression_comparison) { testExpressionComparison(); }
 
@@ -33,5 +34,6 @@ void testSubtree() {
   assert_not_contain_subtree(Add("2"_n, Mult("1"_n, "3"_n)), "4"_n);
   assert_not_contain_subtree(Add("2"_n, Mult("1"_n, "3"_n)), Mult("1"_n, "4"_n));
   assert_not_contain_subtree(Add("2"_n, Mult("1"_n, "3"_n)), Add("2"_n, Mult("1"_n, "4"_n)));
+  CachePool::sharedCachePool()->editionPool()->flush();
 }
 QUIZ_CASE(pcj_subtree) { testSubtree(); }

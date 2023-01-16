@@ -17,4 +17,5 @@ inline Node createSimpleExpression() {
 
 QUIZ_CASE(pcj_create) {
   createSimpleExpression();
+  CachePool::sharedCachePool()->editionPool()->flush();
 }

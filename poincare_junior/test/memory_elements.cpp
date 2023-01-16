@@ -6,6 +6,7 @@ using namespace PoincareJ;
 
 void testBlock() {
   CachePool * cachePool = CachePool::sharedCachePool();
+  cachePool->reset();
   EditionPool * editionPool = cachePool->editionPool();
 
   // Create pool: [ "0" | "1" | "2" | 4 | -4 | "0" ]
@@ -218,6 +219,7 @@ QUIZ_CASE(pcj_node_iterator) { testNodeIterator(); }
 
 void testNode() {
   CachePool * cachePool = CachePool::sharedCachePool();
+  cachePool->reset();
   EditionPool * editionPool = cachePool->editionPool();
 
   // operator==

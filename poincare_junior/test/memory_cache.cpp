@@ -24,6 +24,8 @@ void execute_push_tree_and_modify() {
 }
 
 void testCachePool() {
+  CachePool::sharedCachePool()->reset();
+
   // storeEditedTree
   editionPool->initFromTree(tree);
   assert_pools_tree_sizes_are(0, 1);
@@ -60,6 +62,8 @@ void testCachePool() {
 QUIZ_CASE(pcj_cache_pool) { testCachePool(); }
 
 void testCachePoolLimits() {
+  CachePool::sharedCachePool()->reset();
+
   /* test overflowing the edition pool */
   // 1. Almost fill the whole cache
     // Fill the cache

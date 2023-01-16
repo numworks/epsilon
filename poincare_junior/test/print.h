@@ -1,9 +1,25 @@
-#include <iostream>
 #include <poincare_junior/src/expression/comparison.h>
 #include <poincare_junior/src/memory/cache_pool.h>
 #include <poincare_junior/src/memory/edition_pool.h>
 #include <poincare_junior/src/memory/edition_reference.h>
 #include <quiz.h>
+
+#if POINCARE_MEMORY_TREE_LOG
+#include <iostream>
+#else
+
+class DummyStream {
+public:
+  template <typename T>
+  DummyStream & operator<<(const T& any) { return *this; }
+};
+
+namespace std {
+static DummyStream cout;
+static char endl = '\n';
+}
+
+#endif
 
 using namespace PoincareJ;
 

@@ -54,6 +54,8 @@ public:
   size_t treeSize() const;
 #if POINCARE_MEMORY_TREE_LOG
   void log();
+#else
+  void log() {}
 #endif
 
   int id() const; // TODO: make private (public for tests)

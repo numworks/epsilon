@@ -95,6 +95,9 @@ void IntegerHandler::pushDigitsOnEditionPool() {
 template <typename T>
 T IntegerHandler::to() {
   T approximation = 0.0f;
+  if (numberOfDigits() == 0) {
+    return approximation;
+  }
   for (uint8_t i = numberOfDigits() - 1; i > 0; i--) {
     approximation += static_cast<T>(digit(i));
     approximation *= k_digitBase;

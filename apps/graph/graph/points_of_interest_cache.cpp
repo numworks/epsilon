@@ -244,7 +244,7 @@ void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest 
   assert(std::isfinite(x) && std::isfinite(y));
 #if __EMSCRIPTEN__
   // Cap the total number of points
-  if (m_interestingPointsOverflowPool || (numberOfPoints() > k_maxNumberOfPoints)) {
+  if (m_interestingPointsOverflowPool || (numberOfPoints() > k_numberOfPointsToOverflowEmscripten)) {
     m_interestingPointsOverflowPool = true;
     return;
   }

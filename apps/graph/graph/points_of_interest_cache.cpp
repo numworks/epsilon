@@ -47,7 +47,7 @@ void PointsOfInterestCache::setBounds(float start, float end) {
 
 bool PointsOfInterestCache::computeUntilNthPoint(int n) {
   while (n >= numberOfPoints() && !isFullyComputed()) {
-    if (!computeNextStep()) {
+    if (!computeNextStep(true)) {
       return false;
     }
   }
@@ -127,18 +127,18 @@ void PointsOfInterestCache::stripOutOfBounds() {
   }
 }
 
-bool PointsOfInterestCache::computeNextStep() {
+bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
   // Clone the cache to prevent modifying the pool before the checkpoint
   PointsOfInterestCache cacheClone;
   {
-    /* Use an ExceptionCheckpoint in case cloning or computing interest points
-     * overflows the pool. */
+    /* Always use an ExceptionCheckpoint in case cloning or computing interest
+     * points overflows the pool. */
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
-      /* Also use a CircuitBreakerCheckpoint so that computation can be
-       * interrupted so plot can be navigated in parallel of computation. */
+      /* If allowed, use a CircuitBreakerCheckpoint so that computation can be
+       * interrupted to allow plot navigation in parallel of computation. */
       CircuitBreakerCheckpoint checkpoint(Ion::CircuitBreaker::CheckpointType::AnyKey);
-      if (CircuitBreakerRun(checkpoint)) {
+      if (!allowUserInterruptions || CircuitBreakerRun(checkpoint)) {
         cacheClone = clone();
         if (m_computedEnd < m_end) {
           cacheClone.computeBetween(m_computedEnd, std::clamp(m_computedEnd + step(), m_start, m_end));
@@ -149,6 +149,7 @@ bool PointsOfInterestCache::computeNextStep() {
         return false;
       }
     } else {
+      // TODO : Notify the user that the pool is full
       m_interestingPointsOverflowPool = true;
       return false;
     }

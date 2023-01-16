@@ -87,8 +87,15 @@ Coordinate2D<double> CalculationGraphController::computeNewPointOfInterestFromAb
 Poincare::Coordinate2D<double> CalculationGraphController::computeNewPointOfInterest(double start, double max, Poincare::Context * context) {
   // Compute at least 1 point of interest before displaying the view
   PointsOfInterestCache * pointsOfInterest = App::app()->graphController()->pointsOfInterestForSelectedRecord();
-  while (pointsOfInterest->numberOfPoints(specialInterest()) == 0 && !pointsOfInterest->isFullyComputed() && pointsOfInterest->computeNextStep()) {}
-  return App::app()->graphController()->pointsOfInterestForSelectedRecord()->firstPointInDirection(start, max, specialInterest()).xy();
+  while (pointsOfInterest->numberOfPoints(specialInterest()) == 0 && !pointsOfInterest->isFullyComputed()) {
+    if (!pointsOfInterest->computeNextStep(false)) {
+      /* Next step computation overflowed the pool. Returning an empty point of
+       * interest will wrongfully display that nothing has been found in the
+       * window. TODO : Fix this behavior. */
+      break;
+    }
+  }
+  return pointsOfInterest->firstPointInDirection(start, max, specialInterest()).xy();
 }
 
 ContinuousFunctionStore * CalculationGraphController::functionStore() const {

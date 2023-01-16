@@ -14,6 +14,7 @@ namespace Graph {
 
 bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCursor * cursor, int direction, Shared::InteractiveCurveViewRange * range, int numberOfStepsInGradUnit, Ion::Storage::Record record, float pixelWidth, int scrollSpeed, int * subCurveIndex) {
   ExpiringPointer<ContinuousFunction> function = App::app()->functionStore()->modelForRecord(record);
+  assert(!subCurveIndex || *subCurveIndex < function->numberOfSubCurves());
   double tCursorPosition = cursor->t();
   double t = tCursorPosition;
   double tMin = function->tMin();

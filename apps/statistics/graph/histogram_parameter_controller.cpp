@@ -66,17 +66,6 @@ double HistogramParameterController::parameterAtIndex(int index) {
   return index == 0 ? m_tempBarWidth : m_tempFirstDrawnBarAbscissa;
 }
 
-bool HistogramParameterController::confirmParameterAtIndex(int parameterIndex, double value) {
-  assert(parameterIndex == 0 || parameterIndex == 1);
-  if (parameterIndex == 0) {
-    // Set the bar width
-    m_store->setBarWidth(value);
-  } else {
-    m_store->setFirstDrawnBarAbscissa(value);
-  }
-  return true;
-}
-
 bool HistogramParameterController::setParameterAtIndex(int parameterIndex, double value) {
   assert(parameterIndex == 0 || parameterIndex == 1);
   const double nextBarWidth = parameterIndex == 0 ? value : m_tempBarWidth;
@@ -100,9 +89,10 @@ HighlightCell * HistogramParameterController::reusableParameterCell(int index, i
 
 void HistogramParameterController::buttonAction() {
   // Update parameters values and proceed.
-  if (confirmParameterAtIndex(0, m_tempBarWidth) && confirmParameterAtIndex(1, m_tempFirstDrawnBarAbscissa)) {
-    FloatParameterController::buttonAction();
-  }
+  assert(authorizedParameters(m_tempBarWidth, m_tempFirstDrawnBarAbscissa));
+  m_store->setBarWidth(m_tempBarWidth);
+  m_store->setFirstDrawnBarAbscissa(m_tempFirstDrawnBarAbscissa);
+  FloatParameterController::buttonAction();
 }
 
 bool HistogramParameterController::authorizedParameters(double barWidth, double firstDrawnBarAbscissa) {

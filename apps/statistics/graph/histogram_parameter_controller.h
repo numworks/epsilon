@@ -20,7 +20,6 @@ private:
   double extractParameterAtIndex(int index);
   bool handleEvent(Ion::Events::Event event) override;
   double parameterAtIndex(int index) override;
-  bool confirmParameterAtIndex(int parameterIndex, double f);
   bool setParameterAtIndex(int parameterIndex, double f) override;
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override { return k_numberOfCells; }

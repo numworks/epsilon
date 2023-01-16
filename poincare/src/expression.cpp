@@ -1,6 +1,3 @@
-#include <poincare/expression.h>
-#include <poincare/exception_checkpoint.h>
-#include <poincare/expression_node.h>
 #include <poincare/addition.h>
 #include <poincare/based_integer.h>
 #include <poincare/code_point_layout.h>
@@ -9,6 +6,9 @@
 #include <poincare/decimal.h>
 #include <poincare/dependency.h>
 #include <poincare/derivative.h>
+#include <poincare/exception_checkpoint.h>
+#include <poincare/expression.h>
+#include <poincare/expression_node.h>
 #include <poincare/float.h>
 #include <poincare/ghost.h>
 #include <poincare/imaginary_part.h>
@@ -24,23 +24,22 @@
 #include <poincare/solver.h>
 #include <poincare/store.h>
 #include <poincare/string_layout.h>
+#include <poincare/string_layout.h>
 #include <poincare/subtraction.h>
 #include <poincare/symbol.h>
 #include <poincare/undefined.h>
-#include <poincare/string_layout.h>
+#include <poincare/unit.h>
 #include <poincare/variable_context.h>
+#include "parsing/parser.h"
 #include <ion.h>
 #include <ion/unicode/utf8_helper.h>
 #include <cmath>
 #include <float.h>
 #include <utility>
 
-#include "parsing/parser.h"
-#include "poincare/unit.h"
-
 namespace Poincare {
 
-static bool sApproximationEncounteredComplex = false;
+static bool s_approximationEncounteredComplex = false;
 
 /* Constructor & Destructor */
 
@@ -643,9 +642,9 @@ Expression Expression::makePositiveAnyNegativeNumeralFactor(const ExpressionNode
 
 template<typename U>
 Evaluation<U> Expression::approximateToEvaluation(Context * context, Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit, bool withinReduce) const {
-  sApproximationEncounteredComplex = false;
+  s_approximationEncounteredComplex = false;
   Evaluation<U> e = node()->approximate(U(), ExpressionNode::ApproximationContext(context, complexFormat, angleUnit, withinReduce));
-  if (complexFormat == Preferences::ComplexFormat::Real && sApproximationEncounteredComplex) {
+  if (complexFormat == Preferences::ComplexFormat::Real && s_approximationEncounteredComplex) {
     e = Complex<U>::Undefined();
   }
   return e;
@@ -705,11 +704,11 @@ bool Expression::isPureAngleUnit() const {
 /* Complex */
 
 bool Expression::EncounteredComplex() {
-  return sApproximationEncounteredComplex;
+  return s_approximationEncounteredComplex;
 }
 
 void Expression::SetEncounteredComplex(bool encounterComplex) {
-  sApproximationEncounteredComplex = encounterComplex;
+  s_approximationEncounteredComplex = encounterComplex;
 }
 
 bool Expression::hasComplexI(Context * context, ExpressionNode::SymbolicComputation replaceSymbols) const {

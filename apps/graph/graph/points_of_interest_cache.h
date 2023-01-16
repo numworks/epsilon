@@ -24,8 +24,8 @@ public:
   Poincare::PointOfInterest pointAtIndex(int i) const { return m_list.pointAtIndex(i); }
 
   bool computeUntilNthPoint(int n);
-  // Return false it has been interrupted
-  bool computeNextStep();
+  // Return false it has been interrupted by the pool or the user (if allowed)
+  bool computeNextStep(bool allowUserInterruptions);
 
   Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);
   bool hasInterestAtCoordinates(double x, double y, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None) const;

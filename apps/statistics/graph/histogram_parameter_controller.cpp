@@ -27,6 +27,7 @@ void HistogramParameterController::viewWillAppear() {
   // Initialize temporary parameters to the extracted value.
   m_tempBarWidth = extractParameterAtIndex(0);
   m_tempFirstDrawnBarAbscissa = extractParameterAtIndex(1);
+  assert(authorizedParameters(m_tempBarWidth, m_tempFirstDrawnBarAbscissa));
   FloatParameterController::viewWillAppear();
 }
 
@@ -78,46 +79,13 @@ bool HistogramParameterController::confirmParameterAtIndex(int parameterIndex, d
 
 bool HistogramParameterController::setParameterAtIndex(int parameterIndex, double value) {
   assert(parameterIndex == 0 || parameterIndex == 1);
-  const bool setBarWidth = parameterIndex == 0;
-
-  if (setBarWidth && value <= 0.0) {
-    // The bar width cannot be negative
-    assert(m_tempBarWidth > 0.0);
+  const double nextBarWidth = parameterIndex == 0 ? value : m_tempBarWidth;
+  const double nextFirstDrawnBarAbscissa = parameterIndex == 0 ? m_tempFirstDrawnBarAbscissa : value;
+  if (!authorizedParameters(nextBarWidth, nextFirstDrawnBarAbscissa)) {
     Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-
-  const double nextFirstDrawnBarAbscissa = setBarWidth ? m_tempFirstDrawnBarAbscissa : value;
-  const double nextBarWidth = setBarWidth ? value : m_tempBarWidth;
-
-  // The number of bars cannot be above the max
-  assert(DoublePairStore::k_numberOfSeries > 0);
-  for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
-    if (!Shared::DoublePairStore::DefaultValidSeries(m_store, i)) {
-      continue;
-    }
-    const double min = std::min(m_store->minValue(i), nextFirstDrawnBarAbscissa);
-    const double max = m_store->maxValue(i);
-    double numberOfBars = std::ceil((max - min)/nextBarWidth);
-    // First escape case: if the bars are too thin or there is too much bars
-    if (numberOfBars > HistogramRange::k_maxNumberOfBars
-    // Second escape case : X-start > max
-        || max < nextFirstDrawnBarAbscissa
-    /* Third escape case: Since interval width is computed in float, we
-     * need to check if the values are not too close.
-     * If max == min then the interval goes from min to min + barWidth.
-     * But if min == min + barWidth, the display is bugged.
-     * */
-        || (static_cast<float>(min) == static_cast<float>(max) && static_cast<float>(min + nextBarWidth) == static_cast<float>(min))) {
-      // Assert the current temporary values were valid in the first place
-      assert(nextBarWidth != m_tempBarWidth || nextFirstDrawnBarAbscissa != m_tempFirstDrawnBarAbscissa);
-      Container::activeApp()->displayWarning(I18n::Message::ForbiddenValue);
-      return false;
-    }
-  }
-
-  if (setBarWidth) {
-    // Set the bar width
+  if (parameterIndex == 0) {
     m_tempBarWidth = value;
   } else {
     m_tempFirstDrawnBarAbscissa = value;
@@ -135,6 +103,35 @@ void HistogramParameterController::buttonAction() {
   if (confirmParameterAtIndex(0, m_tempBarWidth) && confirmParameterAtIndex(1, m_tempFirstDrawnBarAbscissa)) {
     FloatParameterController::buttonAction();
   }
+}
+
+bool HistogramParameterController::authorizedParameters(double barWidth, double firstDrawnBarAbscissa) {
+  if (barWidth < 0.0) {
+    // The bar width cannot be negative
+    return false;
+  }
+  assert(DoublePairStore::k_numberOfSeries > 0);
+  for (int i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
+    if (!Shared::DoublePairStore::DefaultValidSeries(m_store, i)) {
+      continue;
+    }
+    const double min = std::min(m_store->minValue(i), firstDrawnBarAbscissa);
+    const double max = m_store->maxValue(i);
+    double numberOfBars = std::ceil((max - min) / barWidth);
+    // First escape case: if the bars are too thin or there is too much bars
+    if (numberOfBars > HistogramRange::k_maxNumberOfBars
+    // Second escape case : max < X-start
+        || max < firstDrawnBarAbscissa
+    /* Third escape case: Since interval width is computed in float, we
+     * need to check if the values are not too close.
+     * If max == min then the interval goes from min to min + barWidth.
+     * But if min == min + barWidth, the display is bugged. */
+        || (static_cast<float>(min) == static_cast<float>(max) && static_cast<float>(min + barWidth) == static_cast<float>(min)))
+    {
+      return false;
+    }
+  }
+  return true;
 }
 
 }

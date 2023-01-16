@@ -25,6 +25,7 @@ private:
   Escher::HighlightCell * reusableParameterCell(int index, int type) override;
   int reusableParameterCellCount(int type) override { return k_numberOfCells; }
   void buttonAction() override;
+  bool authorizedParameters(double tempBarWidth, double tempFirstDrawnBarAbscissa);
   Escher::MessageTableCellWithEditableTextWithMessage m_cells[k_numberOfCells];
   Store * m_store;
   Shared::MessagePopUpController m_confirmPopUpController;

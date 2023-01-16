@@ -143,9 +143,7 @@ bool ListController::completeEquation(InputEventHandler * equationField, CodePoi
   }
   // Insert the name, symbol and equation symbol of the existing function
   constexpr size_t k_bufferSize = Poincare::SymbolAbstract::k_maxNameSize + sizeof("(x)≥") - 1;
-  static_assert(sizeof("(x)≥") >= sizeof("(θ)="), "k_bufferSize should fit both situations.");
-  // (θ)≥ would not fit, but inequations on polar are not handled.
-  assert(!f->properties().isPolar() || f->properties().isEquality());
+  static_assert(k_bufferSize >= sizeof("r="), "k_bufferSize should fit both situations.");
   char buffer[k_bufferSize];
   size_t nameLength = f->nameWithArgument(buffer, k_bufferSize);
   nameLength += strlcpy(buffer + nameLength, f->properties().equationSymbol(), k_bufferSize - nameLength);

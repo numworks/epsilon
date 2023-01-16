@@ -1,27 +1,24 @@
 #ifndef POINCARE_EXPRESSION_REFERENCE_H
 #define POINCARE_EXPRESSION_REFERENCE_H
 
-#include <poincare/coordinate_2D.h>
-#include <poincare/tree_handle.h>
 #include <poincare/aliases_list.h>
+#include <poincare/complex.h>
+#include <poincare/coordinate_2D.h>
+#include <poincare/expression_node.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
-#include <poincare/expression_node.h>
-#include <poincare/complex.h>
+#include <poincare/tree_handle.h>
 #include <ion/storage/file_system.h>
 #include <utility>
 
 namespace Poincare {
 
 class Context;
-class List;
-class Matrix;
-class SymbolAbstract;
-class Symbol;
 
 class Expression : public TreeHandle {
   friend class AbsoluteValue;
   friend class Addition;
+  friend class AdditionNode;
   friend class ArcCosecant;
   friend class ArcCosine;
   friend class ArcCotangent;
@@ -33,11 +30,11 @@ class Expression : public TreeHandle {
   friend class BinomialCoefficient;
   friend class Ceiling;
   friend class Comparison;
-  template<typename T>
-  friend class ComplexNode;
   friend class ComplexArgument;
   friend class ComplexCartesian;
   friend class ComplexHelper;
+  template<typename T>
+  friend class ComplexNode;
   friend class Conjugate;
   friend class Constant;
   friend class Cosecant;
@@ -47,12 +44,17 @@ class Expression : public TreeHandle {
   friend class Dependency;
   friend class DependencyNode;
   friend class Derivative;
+  friend class DerivativeNode;
   friend class Determinant;
   friend class Dimension;
   friend class DistributionDispatcher;
   friend class Division;
   friend class DivisionQuotient;
   friend class DivisionRemainder;
+  friend class EqualNode;
+  template<typename T>
+  friend class ExceptionExpressionNode;
+  friend class ExpressionNode;
   friend class Factor;
   friend class Factorial;
   template<typename T>
@@ -60,36 +62,43 @@ class Expression : public TreeHandle {
   friend class Floor;
   friend class FracPart;
   friend class Function;
+  friend class FunctionNode;
   friend class GlobalContext;
   friend class GreatCommonDivisor;
   friend class HyperbolicTrigonometricFunction;
   friend class ImaginaryPart;
   friend class Integer;
   friend class Integral;
+  friend class IntegralNode;
   friend class InverseMethod;
   friend class LeastCommonMultiple;
   friend class List;
+  friend class ListFunctionWithOneOrTwoParametersNode;
   friend class ListMean;
   friend class ListMedian;
   friend class ListSampleStandardDeviation;
   friend class ListSequence;
   friend class ListStandardDeviation;
-  friend class ListFunctionWithOneOrTwoParametersNode;
   friend class ListVariance;
   friend class Logarithm;
+  friend class LogarithmNode;
   friend class LogicalOperatorNode;
   friend class Matrix;
+  friend class MatrixEchelonForm;
   friend class MatrixIdentity;
   friend class MatrixInverse;
+  friend class MatrixNode;
+  friend class MatrixReducedRowEchelonForm;
+  friend class MatrixRowEchelonForm;
   friend class MatrixTrace;
   friend class MatrixTranspose;
-  friend class MatrixEchelonForm;
-  friend class MatrixRowEchelonForm;
-  friend class MatrixReducedRowEchelonForm;
   friend class MixedFraction;
   friend class Multiplication;
   friend class MultiplicationNode;
+  friend class NAryExpressionNode;
+  friend class NAryInfixExpressionNode;
   friend class NaperianLogarithm;
+  friend class NaperianLogarithmNode;
   friend class NthRoot;
   friend class Number;
   friend class Opposite;
@@ -100,6 +109,7 @@ class Expression : public TreeHandle {
   friend class PercentSimple;
   friend class PermuteCoefficient;
   friend class PiecewiseOperator;
+  friend class PolarConic;
   friend class Power;
   friend class PowerNode;
   friend class Product;
@@ -111,10 +121,12 @@ class Expression : public TreeHandle {
   friend class Sequence;
   friend class SequenceNode;
   friend class SignFunction;
+  friend class SimplificationHelper;
   friend class Sine;
   friend class SquareRoot;
   friend class SquareRootNode;
   friend class Store;
+  friend class StoreNode;
   friend class Subtraction;
   friend class SubtractionNode;
   friend class Sum;
@@ -122,34 +134,16 @@ class Expression : public TreeHandle {
   friend class SumAndProductNode;
   friend class Symbol;
   friend class SymbolAbstractNode;
+  friend class SymbolNode;
   friend class Tangent;
   friend class Trigonometry;
   friend class TrigonometryCheatTable;
   friend class Unit;
   friend class UnitConvert;
+  friend class UnitNode;
   friend class VectorCross;
   friend class VectorDot;
   friend class VectorNorm;
-
-  friend class AdditionNode;
-  friend class DerivativeNode;
-  friend class EqualNode;
-  template<typename T>
-  friend class ExceptionExpressionNode;
-  friend class ExpressionNode;
-  friend class FunctionNode;
-  friend class IntegralNode;
-  friend class LogarithmNode;
-  friend class MatrixNode;
-  friend class NaperianLogarithmNode;
-  friend class NAryExpressionNode;
-  friend class NAryInfixExpressionNode;
-  friend class StoreNode;
-  friend class SymbolNode;
-  friend class UnitNode;
-
-  friend class PolarConic;
-  friend class SimplificationHelper;
 
 public:
   static bool IsExpression() { return true; }

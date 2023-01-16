@@ -93,9 +93,9 @@ private:
   static void ExcludeDiscontinuityFromBracket(Coordinate2D<T> * p1, Coordinate2D<T> * p2, Coordinate2D<T> * p3, FunctionEvaluation f, const void * aux, T minimalSizeOfInterval);
 
   T maximalStep() const { return m_maximalXStep; }
-  T minimalStep(T x) const;
+  T minimalStep(T x, T slope = static_cast<T>(1.)) const;
   bool validSolution(T x) const;
-  T nextX(T x, T direction) const;
+  T nextX(T x, T direction, T slope) const;
   Coordinate2D<T> nextPossibleRootInChild(const Expression & e, int childIndex) const;
   Coordinate2D<T> nextRootInChildren(const Expression & e, Expression::ExpressionTestAuxiliary test, void * aux) const;
   Coordinate2D<T> nextRootInMultiplication(const Expression & m) const;

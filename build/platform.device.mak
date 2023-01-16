@@ -15,11 +15,11 @@ FIRMWARE_COMPONENT ?= $(firstword $(subst ., ,$(subst _, ,$(MAKECMDGOALS))))
 ifeq ($(DEVELOPMENT),1)
 EMBED_EXTRA_DATA ?= 0
 else
+ifndef EMBED_EXTRA_DATA
 ifneq ($(filter $(FIRMWARE_COMPONENT),epsilon test bootloader kernel userland),)
 # Force EMBED_EXTRA_DATA when actually building for device
 $(error EMBED_EXTRA_DATA must be defined in DEVELOPMENT=0)
 else
-ifndef EMBED_EXTRA_DATA
 # Only display warning. This happens whith "make clean" for example.
 $(warning "EMBED_EXTRA_DATA should be defined in DEVELOPMENT=0, setting it to 0.")
 EMBED_EXTRA_DATA ?= 0

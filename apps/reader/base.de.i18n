@@ -1,5 +1,3 @@
 ReaderApp = "Leser"
 ReaderAppCapital = "LESER"
 NoFileToDisplay = "Keine Dateien zum Anzeigen"
-FileError1 = "Fehler beim Lesen der Datei"
-FileError2 = "Bitte überprüfen Sie die Syntax"

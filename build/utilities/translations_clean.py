@@ -32,7 +32,7 @@ IGNORE_PATHS = [
 ]
 IGNORE_PATHS_CONTENTS = [
     "__pycache__", ".png", ".esc", ".ttf", ".ico", ".jpg", ".jar", ".icn",
-    ".bnr", ".i18n"
+    ".bnr", ".i18n", ".cache"
 ]
 
 # If the key contain something that's in this list, keep it to prevent code breaking

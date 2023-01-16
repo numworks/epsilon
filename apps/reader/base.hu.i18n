@@ -1,5 +1,3 @@
 ReaderApp = "Olvasó"
 ReaderAppCapital = "OLVASÓ"
 NoFileToDisplay = "Nincs megjeleníthető fájl"
-FileError1 = "Hiba a fájl olvasása közben"
-FileError2 = "Kérjük, ellenőrizze a szintaxisát"

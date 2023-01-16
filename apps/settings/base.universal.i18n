@@ -1,4 +1,1 @@
 UsbSetting = "USB"
-USBDefaultLevelDesc = "L0"
-USBLowLevelDesc = "L1"
-USBParanoidLevelDesc = "L2"

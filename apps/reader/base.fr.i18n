@@ -1,5 +1,3 @@
 ReaderApp = "Liseuse"
 ReaderAppCapital = "LISEUSE"
 NoFileToDisplay = "Aucun fichier à afficher"
-FileError1 = "Erreur durant la lecture du fichier"
-FileError2 = "Veuillez vérifier sa syntaxe"

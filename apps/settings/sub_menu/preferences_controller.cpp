@@ -170,15 +170,6 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
       return LayoutHelper::String(text, strlen(text), font);
     }
 
-    // DFU Protection level
-    case I18n::Message::USBDefaultLevel:
-    case I18n::Message::USBLowLevel:
-    case I18n::Message::USBParanoidLevel:
-    {
-      const char * text = " ";
-      return LayoutHelper::String(text, strlen(text), k_layoutFont);
-    }
-
     default:
       assert(false);
       return Layout();

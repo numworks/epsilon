@@ -1,5 +1,3 @@
 ReaderApp = "Lezer"
 ReaderAppCapital = "LEZER"
 NoFileToDisplay = "Geen bestanden om weer te geven"
-FileError1 = "Fout tijdens het lezen van bestand"
-FileError2 = "Controleer de syntaxis ervan"

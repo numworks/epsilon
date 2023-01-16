@@ -151,9 +151,12 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
   ExpiringPointer<ContinuousFunction> f = store->modelForRecord(m_record);
   Expression e = f->expressionReduced(context);
 
-  if (!f->isAlongY() && start < 0.f && 0.f < end) {
+  if (start < 0.f && 0.f < end) {
     Coordinate2D<double> xy = f->evaluateXYAtParameter(0., context);
     if (std::isfinite(xy.x1()) && std::isfinite(xy.x2())) {
+      if (f->isAlongY()) {
+        xy = Coordinate2D<double>(xy.x2(), xy.x1());
+      }
       append(xy.x1(), xy.x2(), Solver<double>::Interest::YIntercept);
     }
   }
@@ -161,6 +164,10 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
   typedef Coordinate2D<double> (Solver<double>::*NextSolution)(const Expression & e);
   NextSolution methodsNext[] = { &Solver<double>::nextRoot, &Solver<double>::nextMinimum, &Solver<double>::nextMaximum };
   for (NextSolution next : methodsNext) {
+    if (next != static_cast<NextSolution>(&Solver<double>::nextRoot) && f->isAlongY()) {
+      // Do not compute min and max since they would appear left/rightmost
+      continue;
+    }
     Solver<double> solver = PoincareHelpers::Solver<double>(start, end, ContinuousFunction::k_unknownName, context);
     solver.setSearchStep(searchStep);
     solver.stretch();

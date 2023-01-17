@@ -13,7 +13,6 @@ public:
   SubtitleCell();
   const Escher::View * labelView() const override { return &m_labelView; }
   void setHighlighted(bool highlight) override { assert(!highlight); }
-  bool canOpenStoreMenu() const override { return false; }
   // Overriding TableCell row Height
   void layoutSubviews(bool force = false) override;
   KDSize minimalSizeForOptimalDisplay() const override {

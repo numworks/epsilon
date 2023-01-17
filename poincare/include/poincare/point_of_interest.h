@@ -27,6 +27,7 @@ private:
   bool m_inverted;
   uint8_t m_subCurveIndex;
 };
+static_assert(sizeof(PointOfInterestNode) == 40, "merge m_subCurveIndex and m_data if you need more than one byte");
 
 class PointOfInterest : public TreeHandle {
 public:

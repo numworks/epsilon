@@ -32,7 +32,6 @@ public:
   KDSize minimalSizeForOptimalDisplay() const override;
   // Responder
   void didBecomeFirstResponder() override;
-  bool canOpenStoreMenu() const override { return false; }
 
 private:
   constexpr static size_t k_extensionLength = 1+ScriptStore::k_scriptExtensionLength; // '.' + "py"

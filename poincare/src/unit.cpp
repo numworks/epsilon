@@ -261,32 +261,32 @@ int UnitNode::Prefix::serialize(char * buffer, int bufferSize) const {
 
 const UnitNode::Representative * UnitNode::Representative::DefaultFindBestRepresentative(double value, double exponent, const UnitNode::Representative * representatives, int length, const Prefix * * prefix) {
   assert(length >= 1);
-  const Representative * res = representatives;
-  double acc = value / std::pow(res->ratio(), exponent);
+  const Representative * result = representatives;
+  double accuracy = value / std::pow(result->ratio(), exponent);
   if (*prefix) {
-    *prefix = res->findBestPrefix(acc, exponent);
+    *prefix = result->findBestPrefix(accuracy, exponent);
   }
   if (length == 1) {
-    return res;
+    return result;
   }
-  const Prefix * pre = Prefix::EmptyPrefix();
-  const Representative * iter = res + 1;
-  while (iter < representatives + length) {
-    double temp = value / std::pow(iter->ratio(), exponent);
+  const Prefix * currentPrefix = Prefix::EmptyPrefix();
+  const Representative * currentRepresentative = result + 1;
+  while (currentRepresentative < representatives + length) {
+    double currentAccuracy = value / std::pow(currentRepresentative->ratio(), exponent);
     if (*prefix) {
-      pre = iter->findBestPrefix(temp, exponent);
+      currentPrefix = currentRepresentative->findBestPrefix(currentAccuracy, exponent);
     }
-    if (compareMagnitudeOrders(std::log10(temp) - pre->exponent() * exponent, std::log10(acc) - ((!*prefix) ? 0 : (*prefix)->exponent() * exponent))) {
-      acc = temp;
-      res = iter;
-      *prefix = pre;
+    if (compareMagnitudeOrders(std::log10(currentAccuracy) - currentPrefix->exponent() * exponent, std::log10(accuracy) - ((!*prefix) ? 0 : (*prefix)->exponent() * exponent))) {
+      accuracy = currentAccuracy;
+      result = currentRepresentative;
+      *prefix = currentPrefix;
     }
-    iter++;
+    currentRepresentative++;
   }
   if (!*prefix) {
-    *prefix = res->basePrefix();
+    *prefix = result->basePrefix();
   }
-  return res;
+  return result;
 }
 
 int UnitNode::Representative::serialize(char * buffer, int bufferSize, const Prefix * prefix) const {

@@ -252,3 +252,10 @@ bool ExamModeConfiguration::unitsAreForbidden() {
   Preferences::ExamMode mode = Preferences::sharedPreferences()->examMode();
   return mode == Preferences::ExamMode::Dutch || mode == Preferences::ExamMode::IBTest;
 }
+
+I18n::Message ExamModeConfiguration::examModeTitleBarMessage(Poincare::Preferences::ExamMode mode) {
+  if (mode == Preferences::ExamMode::English) {
+    return I18n::Message::ExamModeTitleBarUK;
+  }
+  return I18n::Message::Default;
+}

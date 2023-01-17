@@ -41,7 +41,7 @@ void Range1D::stretchIfTooSmall(float shift) {
    * They are both shifted by shift. */
   if (length() < k_minLength) {
     if (shift < 0) {
-      shift = std::max(DefaultLengthAt(m_min), k_minLength);
+      shift = DefaultLengthAt(m_min);
     }
     stretchEachBoundBy(shift);
   }
@@ -61,7 +61,7 @@ void Range1D::privateSet(float t, bool isMin, float limit) {
     (isMin ? m_max : m_min) = *bound;
   }
   if (length() < k_minLength) {
-    float l = std::max(DefaultLengthAt(m_min), k_minLength);
+    float l = DefaultLengthAt(m_min);
     if (m_min != limit && (isMin || m_max == -limit)) {
       m_max += l;
     } else {

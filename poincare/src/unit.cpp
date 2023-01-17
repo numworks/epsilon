@@ -262,7 +262,7 @@ int UnitNode::Prefix::serialize(char * buffer, int bufferSize) const {
 const UnitNode::Representative * UnitNode::Representative::DefaultFindBestRepresentative(double value, double exponent, const UnitNode::Representative * representatives, int length, const Prefix * * prefix) {
   assert(length >= 1);
   const Representative * result = representatives;
-  double accuracy = value / std::pow(result->ratio(), exponent);
+  double accuracy = std::fabs(value / std::pow(result->ratio(), exponent));
   if (*prefix) {
     *prefix = result->findBestPrefix(accuracy, exponent);
   }
@@ -272,7 +272,7 @@ const UnitNode::Representative * UnitNode::Representative::DefaultFindBestRepres
   const Prefix * currentPrefix = Prefix::EmptyPrefix();
   const Representative * currentRepresentative = result + 1;
   while (currentRepresentative < representatives + length) {
-    double currentAccuracy = value / std::pow(currentRepresentative->ratio(), exponent);
+    double currentAccuracy = std::fabs(value / std::pow(currentRepresentative->ratio(), exponent));
     if (*prefix) {
       currentPrefix = currentRepresentative->findBestPrefix(currentAccuracy, exponent);
     }

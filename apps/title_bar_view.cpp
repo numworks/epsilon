@@ -54,6 +54,7 @@ int TitleBarView::numberOfSubviews() const {
 
 View * TitleBarView::subviewAtIndex(int index) {
   View * views[] = {&m_titleView, &m_preferenceView, &m_examModeIconView, &m_examModeTextView, &m_shiftAlphaLockView, &m_batteryView};
+  assert(0 <= index && index < sizeof(views) / sizeof(View*));
   return views[index];
 }
 
@@ -63,13 +64,14 @@ void TitleBarView::layoutSubviews(bool force) {
    * letters, they seem to be slightly above when they are perferctly centered
    * (because their glyph never cross the baseline). To avoid this effect, we
    * translate the frame of the title downwards.*/
-  m_titleView.setFrame(KDRect(0, 2, bounds().width(), bounds().height()-2), force);
+  constexpr int k_verticalShift = 2;
+  m_titleView.setFrame(KDRect(0, k_verticalShift, bounds().width(), bounds().height() - k_verticalShift), force);
   m_preferenceView.setFrame(KDRect(Metric::TitleBarExternHorizontalMargin, 0, m_preferenceView.minimalSizeForOptimalDisplay().width(), bounds().height()), force);
   KDSize batterySize = m_batteryView.minimalSizeForOptimalDisplay();
   m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- batterySize.height())/2, batterySize), force);
   if (Preferences::sharedPreferences()->isInExamMode()) {
     m_examModeIconView.setFrame(KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight), force);
-    m_examModeTextView.setFrame(KDRect(k_examIconMargin - k_examTextWidth, 2, k_examTextWidth, bounds().height()-2), force);
+    m_examModeTextView.setFrame(KDRect(k_examIconMargin - k_examTextWidth, k_verticalShift, k_examTextWidth, bounds().height() - k_verticalShift), force);
     m_examModeTextView.setMessage(ExamModeConfiguration::examModeTitleBarMessage(Preferences::sharedPreferences()->examMode()));
   } else {
     m_examModeIconView.setFrame(KDRectZero, force);

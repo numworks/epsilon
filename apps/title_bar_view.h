@@ -23,6 +23,7 @@ private:
   constexpr static KDCoordinate k_examIconWidth = 18;
   constexpr static KDCoordinate k_examIconHeight = 9;
   constexpr static KDCoordinate k_examIconMargin = 93;
+  constexpr static KDCoordinate k_examTextWidth = 20;
   int numberOfSubviews() const override;
   void layoutSubviews(bool force = false) override;
   Escher::View * subviewAtIndex(int index) override;
@@ -31,6 +32,7 @@ private:
   ShiftAlphaLockView m_shiftAlphaLockView;
   Escher::BufferTextView m_preferenceView;
   Escher::ImageView m_examModeIconView;
+  Escher::MessageTextView m_examModeTextView;
 };
 
 #endif

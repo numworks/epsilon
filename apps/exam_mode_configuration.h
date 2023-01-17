@@ -33,6 +33,9 @@ bool basedLogarithmIsForbidden();
 bool sumIsForbidden();
 bool unitsAreForbidden();
 
+// Title bar
+I18n::Message examModeTitleBarMessage(Poincare::Preferences::ExamMode mode);
+
 }
 
 #endif

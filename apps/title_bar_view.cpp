@@ -3,6 +3,7 @@
 #include <escher/palette.h>
 #include <poincare/print.h>
 #include <poincare/preferences.h>
+#include "exam_mode_configuration.h"
 extern "C" {
 #include <assert.h>
 }
@@ -14,7 +15,9 @@ TitleBarView::TitleBarView() :
   View(),
   m_titleView(KDFont::Size::Small, I18n::Message::Default, KDContext::k_alignCenter,
               KDContext::k_alignCenter, KDColorWhite, Palette::YellowDark),
-  m_preferenceView(KDFont::Size::Small, KDContext::k_alignRight, KDContext::k_alignCenter, KDColorWhite, Palette::YellowDark)
+  m_preferenceView(KDFont::Size::Small, KDContext::k_alignRight, KDContext::k_alignCenter, KDColorWhite, Palette::YellowDark),
+  m_examModeTextView(KDFont::Size::Small, I18n::Message::Default, KDContext::k_alignCenter,
+                     KDContext::k_alignCenter, KDColorWhite, Palette::YellowDark)
 {
   m_examModeIconView.setImage(ImageStore::ExamIcon);
 }
@@ -46,23 +49,12 @@ bool TitleBarView::setShiftAlphaLockStatus(Ion::Events::ShiftAlphaStatus status)
 }
 
 int TitleBarView::numberOfSubviews() const {
-  return 5;
+  return 6;
 }
 
 View * TitleBarView::subviewAtIndex(int index) {
-  if (index == 0) {
-    return &m_titleView;
-  }
-  if (index == 1) {
-    return &m_preferenceView;
-  }
-  if (index == 2) {
-    return &m_examModeIconView;
-  }
-  if (index == 3) {
-    return &m_shiftAlphaLockView;
-  }
-  return &m_batteryView;
+  View * views[] = {&m_titleView, &m_preferenceView, &m_examModeIconView, &m_examModeTextView, &m_shiftAlphaLockView, &m_batteryView};
+  return views[index];
 }
 
 void TitleBarView::layoutSubviews(bool force) {
@@ -77,8 +69,11 @@ void TitleBarView::layoutSubviews(bool force) {
   m_batteryView.setFrame(KDRect(bounds().width() - batterySize.width() - Metric::TitleBarExternHorizontalMargin, (bounds().height()- batterySize.height())/2, batterySize), force);
   if (Preferences::sharedPreferences()->isInExamMode()) {
     m_examModeIconView.setFrame(KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight)/2, k_examIconWidth, k_examIconHeight), force);
+    m_examModeTextView.setFrame(KDRect(k_examIconMargin - k_examTextWidth, 2, k_examTextWidth, bounds().height()-2), force);
+    m_examModeTextView.setMessage(ExamModeConfiguration::examModeTitleBarMessage(Preferences::sharedPreferences()->examMode()));
   } else {
     m_examModeIconView.setFrame(KDRectZero, force);
+    m_examModeTextView.setMessage(I18n::Message::Default);
   }
   KDSize shiftAlphaLockSize = m_shiftAlphaLockView.minimalSizeForOptimalDisplay();
   m_shiftAlphaLockView.setFrame(KDRect(bounds().width()-batterySize.width()-Metric::TitleBarExternHorizontalMargin-k_alphaRightMargin-shiftAlphaLockSize.width(), (bounds().height()- shiftAlphaLockSize.height())/2, shiftAlphaLockSize), force);

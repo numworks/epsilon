@@ -62,7 +62,7 @@ bool MemoizedCursorView::eraseCursorIfPossible() {
   }
   // Erase the cursor
   KDColor cursorWorkingBuffer[size() * size()];
-  KDContext * ctx = KDIonContext::SharedContext();
+  KDContext * ctx = KDIonContext::SharedContext;
   KDPoint previousOrigin = ctx->origin();
   KDRect previousClippingRect = ctx->clippingRect();
   ctx->setOrigin(absoluteOrigin());
@@ -75,7 +75,7 @@ bool MemoizedCursorView::eraseCursorIfPossible() {
 }
 
 void MemoizedCursorView::redrawCursor(KDRect rect) {
-  KDContext * ctx = KDIonContext::SharedContext();
+  KDContext * ctx = KDIonContext::SharedContext;
   KDPoint previousOrigin = ctx->origin();
   KDRect previousClippingRect = ctx->clippingRect();
   redraw(rect);

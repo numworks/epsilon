@@ -79,7 +79,7 @@ bool eadk_display_wait_for_vblank() {
 
 void eadk_display_draw_string(const char * text, eadk_point_t point, bool large_font, eadk_color_t text_color, eadk_color_t background_color) {
   // TODO: Duplicated from ion/src/device/userland/drivers/display.cpp
-  KDContext * ctx = KDIonContext::SharedContext();
+  KDContext * ctx = KDIonContext::SharedContext;
   ctx->setOrigin(KDPointZero);
   ctx->setClippingRect(KDRectScreen);
   ctx->drawString(text, p(point), large_font ? KDFont::Size::Large : KDFont::Size::Small, c(text_color), c(background_color), 255);

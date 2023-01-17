@@ -42,7 +42,7 @@ mp_obj_t modkandinsky_color(size_t n_args, const mp_obj_t *args) {
 mp_obj_t modkandinsky_get_pixel(mp_obj_t x, mp_obj_t y) {
   KDPoint point(mp_obj_get_int(x), mp_obj_get_int(y));
   KDColor c;
-  KDIonContext::SharedContext()->getPixel(point, &c);
+  KDIonContext::SharedContext->getPixel(point, &c);
   return TupleForKDColor(c);
 }
 
@@ -50,7 +50,7 @@ mp_obj_t modkandinsky_set_pixel(mp_obj_t x, mp_obj_t y, mp_obj_t input) {
   KDPoint point(mp_obj_get_int(x), mp_obj_get_int(y));
   KDColor kdColor = MicroPython::Color::Parse(input);
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
-  KDIonContext::SharedContext()->setPixel(point, kdColor);
+  KDIonContext::SharedContext->setPixel(point, kdColor);
   return mp_const_none;
 }
 
@@ -61,7 +61,7 @@ mp_obj_t modkandinsky_draw_string(size_t n_args, const mp_obj_t * args) {
   KDColor textColor = (n_args >= 4) ? MicroPython::Color::Parse(args[3]) : KDColorBlack;
   KDColor backgroundColor = (n_args >= 5) ? MicroPython::Color::Parse(args[4]) : KDColorWhite;
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
-  KDIonContext::SharedContext()->drawString(text, point, KDFont::Size::Large, textColor, backgroundColor);
+  KDIonContext::SharedContext->drawString(text, point, KDFont::Size::Large, textColor, backgroundColor);
   return mp_const_none;
 }
 
@@ -81,6 +81,6 @@ mp_obj_t modkandinsky_fill_rect(size_t n_args, const mp_obj_t * args) {
   KDRect rect(x, y, width, height);
   KDColor color = MicroPython::Color::Parse(args[4]);
   MicroPython::ExecutionEnvironment::currentExecutionEnvironment()->displaySandbox();
-  KDIonContext::SharedContext()->fillRect(rect, color);
+  KDIonContext::SharedContext->fillRect(rect, color);
   return mp_const_none;
 }

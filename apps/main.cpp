@@ -1,5 +1,6 @@
 #include "apps_container_storage.h"
 #include "global_preferences.h"
+#include <escher/init.h>
 #include <poincare/init.h>
 
 #define DUMMY_MAIN 0
@@ -36,6 +37,7 @@ void ion_main(int argc, const char * const argv[]) {
 void ion_main(int argc, const char * const argv[]) {
   // Initialize Poincare::TreePool::sharedPool
   Poincare::Init();
+  Escher::Init();
   GlobalPreferences::sharedGlobalPreferences.init();
   AppsContainerStorage::sharedAppsContainerStorage.init();
 

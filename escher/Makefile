@@ -45,6 +45,7 @@ escher_src += $(addprefix escher/src/,\
   horizontal_or_vertical_layout.cpp \
   gauge_view.cpp \
   image_view.cpp \
+  init.cpp \
   input_event_handler.cpp \
   invocation.cpp \
   input_view_controller.cpp \

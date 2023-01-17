@@ -70,7 +70,7 @@ Event getEvent(int * timeout) {
   if (scenarioIndex >= numberOfScenari) {
     // Display results
     int line_y = 1;
-    KDContext * ctx = KDIonContext::SharedContext();
+    KDContext * ctx = KDIonContext::SharedContext;
     ctx->setOrigin(KDPointZero);
     ctx->setClippingRect(KDRect(0,0,Ion::Display::Width,Ion::Display::Height));
     ctx->fillRect(KDRect(0,0,Ion::Display::Width,Ion::Display::Height), KDColorWhite);

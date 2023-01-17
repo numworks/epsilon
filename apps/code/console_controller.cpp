@@ -19,7 +19,7 @@ using namespace Escher;
 
 namespace Code {
 
-static const char * sStandardPromptText = ">>> ";
+constexpr static const char * sStandardPromptText = ">>> ";
 
 ConsoleController::ConsoleController(Responder * parentResponder, App * pythonDelegate, ScriptStore * scriptStore
 #if EPSILON_GETOPT

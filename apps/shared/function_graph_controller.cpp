@@ -157,6 +157,7 @@ void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
   const int activeFunctionsCount = numberOfCurves();
   assert(activeFunctionsCount > 0);
   int functionIndex = 0;
+  m_selectedSubCurveIndex = 0;
   Coordinate2D<double> xy;
   double t;
 

@@ -18,6 +18,7 @@ protected:
 private:
   bool step();
   int m_time;
+  bool m_breakAllLoops;
 };
 
 }

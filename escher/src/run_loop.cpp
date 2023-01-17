@@ -9,7 +9,8 @@
 namespace Escher {
 
 RunLoop::RunLoop() :
-  m_time(0) {
+  m_time(0),
+  m_breakAllLoops(false) {
 }
 
 int RunLoop::numberOfTimers() {
@@ -26,7 +27,12 @@ void RunLoop::run() {
 }
 
 void RunLoop::runWhile(bool (*callback)(void * ctx), void * ctx) {
-  while ((callback == nullptr || callback(ctx)) && step()) {
+  bool noTerminationEventFired = true;
+  while (!m_breakAllLoops && (callback == nullptr || callback(ctx)) && (noTerminationEventFired = step())) {
+  }
+
+  if (!noTerminationEventFired) {
+    m_breakAllLoops = true;
   }
 }
 

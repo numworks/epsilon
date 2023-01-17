@@ -27,7 +27,7 @@ enum class TrinaryBoolean : int8_t {
  *        | T | U | F |
  *        -------------
  *   | T || T | U | F |
- * B | U || U | U | F |
+ * B | U || U | U | F |
  *   | F || F | F | F |
  *
  *       A OR B
@@ -35,7 +35,7 @@ enum class TrinaryBoolean : int8_t {
  *        | T | U | F |
  *        -------------
  *   | T || T | T | T |
- * B | U || T | U | U |
+ * B | U || T | U | U |
  *   | F || T | U | F |
  * */
 

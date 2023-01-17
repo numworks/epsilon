@@ -137,14 +137,14 @@ const char * ConsoleController::inputText(const char * prompt) {
    * can be shifted afterwards, even if it has maxSize.
    *
    * Illustration of a input sequence:
-   * | | | | | | | | |  <- the edit cell buffer
-   * |0| | | | | | |X|  <- clear and reduce the size
-   * |a|0| | | | | |X|  <- user input
-   * |a|b|0| | | | |X|  <- user input
-   * |a|b|c|0| | | |X|  <- user input
-   * |a|b|c|d|0| | |X|  <- last user input
-   * | |a|b|c|d|0| | |  <- increase the buffer size and shift the user input by one
-   * |0|a|b|c|d|0| | |  <- put a zero in first position: the edit cell seems empty
+   * | | | | | | | | |  <- the edit cell buffer
+   * |0| | | | | | |X|  <- clear and reduce the size
+   * |a|0| | | | | |X|  <- user input
+   * |a|b|0| | | | |X|  <- user input
+   * |a|b|c|0| | | |X|  <- user input
+   * |a|b|c|d|0| | |X|  <- last user input
+   * | |a|b|c|d|0| | |  <- increase the buffer size and shift the user input by one
+   * |0|a|b|c|d|0| | |  <- put a zero in first position: the edit cell seems empty
    */
 
    m_editCell.clearAndReduceSize();

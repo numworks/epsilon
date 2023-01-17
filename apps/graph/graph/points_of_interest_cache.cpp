@@ -68,7 +68,7 @@ int PointsOfInterestCache::numberOfPoints(Poincare::Solver<double>::Interest int
   return result;
 }
 
-PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, double end, Solver<double>::Interest interest) {
+PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, double end, Solver<double>::Interest interest, int subCurveIndex) {
   if (start == end) {
     return PointOfInterest();
   }
@@ -88,7 +88,7 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(double start, doubl
     if (direction * p.abscissa() >= direction * end) {
       break;
     }
-    if (interest == Solver<double>::Interest::None || interest == p.interest()) {
+    if ((interest == Solver<double>::Interest::None || interest == p.interest()) && p.subCurveIndex() == subCurveIndex) {
       return p;
     }
   }
@@ -179,12 +179,14 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
   Expression e = f->expressionReduced(context);
 
   if (start < 0.f && 0.f < end) {
-    Coordinate2D<double> xy = f->evaluateXYAtParameter(0., context);
-    if (std::isfinite(xy.x1()) && std::isfinite(xy.x2())) {
-      if (f->isAlongY()) {
-        xy = Coordinate2D<double>(xy.x2(), xy.x1());
+    for (int curveIndex = 0; curveIndex < f->numberOfSubCurves(); curveIndex++) {
+      Coordinate2D<double> xy = f->evaluateXYAtParameter(0., context, curveIndex);
+      if (std::isfinite(xy.x1()) && std::isfinite(xy.x2())) {
+        if (f->isAlongY()) {
+          xy = Coordinate2D<double>(xy.x2(), xy.x1());
+        }
+        append(xy.x1(), xy.x2(), Solver<double>::Interest::YIntercept, 0, curveIndex);
       }
-      append(xy.x1(), xy.x2(), Solver<double>::Interest::YIntercept);
     }
   }
 
@@ -244,7 +246,7 @@ void PointsOfInterestCache::computeBetween(float start, float end) {
   }
 }
 
-void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest, uint32_t data) {
+void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest interest, uint32_t data, int subCurveIndex) {
   assert(std::isfinite(x) && std::isfinite(y));
 #if __EMSCRIPTEN__
   // Cap the total number of points
@@ -254,7 +256,7 @@ void PointsOfInterestCache::append(double x, double y, Solver<double>::Interest 
   }
 #endif
   ExpiringPointer<ContinuousFunction> f = App::app()->functionStore()->modelForRecord(m_record);
-  m_list.append(x, y, data, interest, f->isAlongY());
+  m_list.append(x, y, data, interest, f->isAlongY(), subCurveIndex);
 }
 
 }

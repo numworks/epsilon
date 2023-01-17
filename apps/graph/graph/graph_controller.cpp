@@ -381,7 +381,7 @@ void GraphController::jumpToLeftRightCurve(double t, int direction, int function
 
 void GraphController::moveCursorAndCenterIfNeeded(double t) {
   FunctionGraphController::moveCursorAndCenterIfNeeded(t);
-  if (snapToInterestAndUpdateCursor(m_cursor, std::nextafter(m_cursor->t(), -static_cast<double>(INFINITY)), std::nextafter(m_cursor->t(), static_cast<double>(INFINITY)))) {
+  if (snapToInterestAndUpdateCursor(m_cursor, std::nextafter(m_cursor->t(), -static_cast<double>(INFINITY)), std::nextafter(m_cursor->t(), static_cast<double>(INFINITY)), m_selectedSubCurveIndex)) {
     reloadBannerView();
   }
 }

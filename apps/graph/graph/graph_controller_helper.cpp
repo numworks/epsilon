@@ -69,7 +69,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(Shared::CurveViewCurso
     }
 
     float tStep = dir * step * slopeMultiplicator * static_cast<double>(scrollSpeed);
-    if (snapToInterestAndUpdateCursor(cursor, t, t + tStep * k_snapFactor)) {
+    if (snapToInterestAndUpdateCursor(cursor, t, t + tStep * k_snapFactor, subCurveIndex ? *subCurveIndex : 0)) {
         // Cursor should have been updated by snapToInterest
         assert(tCursorPosition != cursor->t());
         return true;
@@ -159,8 +159,8 @@ double GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(Sh
   return derivative;
 }
 
-bool GraphControllerHelper::snapToInterestAndUpdateCursor(Shared::CurveViewCursor * cursor, double start, double end) {
-  PointOfInterest nextPointOfInterest = App::app()->graphController()->pointsOfInterestForSelectedRecord()->firstPointInDirection(start, end);
+bool GraphControllerHelper::snapToInterestAndUpdateCursor(Shared::CurveViewCursor * cursor, double start, double end, int subCurveIndex) {
+  PointOfInterest nextPointOfInterest = App::app()->graphController()->pointsOfInterestForSelectedRecord()->firstPointInDirection(start, end, Poincare::Solver<double>::Interest::None, subCurveIndex);
   Coordinate2D<double> nextPointOfInterestXY = nextPointOfInterest.xy();
   if (!std::isfinite(nextPointOfInterestXY.x1())) {
     return false;

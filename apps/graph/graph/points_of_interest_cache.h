@@ -27,7 +27,7 @@ public:
   // Return false it has been interrupted by the pool or the user (if allowed)
   bool computeNextStep(bool allowUserInterruptions);
 
-  Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None);
+  Poincare::PointOfInterest firstPointInDirection(double start, double end, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None, int subCurveIndex = 0);
   bool hasInterestAtCoordinates(double x, double y, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None) const;
   bool hasDisplayableInterestAtCoordinates(double x, double y, Poincare::Solver<double>::Interest interest = Poincare::Solver<double>::Interest::None, bool allInterestsAreDisplayed = true) const;
 
@@ -49,7 +49,7 @@ private:
 
   void stripOutOfBounds();
   void computeBetween(float start, float end);
-  void append(double x, double y, Poincare::Solver<double>::Interest, uint32_t data = 0);
+  void append(double x, double y, Poincare::Solver<double>::Interest, uint32_t data = 0, int subCurveIndex = 0);
 
   Ion::Storage::Record m_record; // This is not const because of the copy constructor
   uint32_t m_checksum;

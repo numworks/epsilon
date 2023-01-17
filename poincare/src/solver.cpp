@@ -42,7 +42,7 @@ Coordinate2D<T> Solver<T>::next(FunctionEvaluation f, const void * aux, BracketT
         searchMorePreciselyIfDiscontinuities &&
         DiscontinuityInBracket(start, middle, end, aux) == Interest::Discontinuity) {
       /* If no interest was found and there is a discontinuity in the interval,
-       * search for the largest interval that without discontinuity and
+       * search for the largest interval without discontinuity and
        * then recompute the interest in this interval. */
       ExcludeDiscontinuityFromBracket(&start, &middle, &end, f, aux, minimalStep(middle.x1()));
       interest = test(start, middle, end, aux);
@@ -220,11 +220,15 @@ void Solver<T>::ExcludeDiscontinuityFromBracket(Coordinate2D<T> * p1, Coordinate
       upperBoundOfDiscontinuity = middleOfDiscontinuity;
       middleOfDiscontinuity.setX1((lowerBoundOfDiscontinuity.x1() + middleOfDiscontinuity.x1()) / 2.0);
       middleOfDiscontinuity.setX2(f(middleOfDiscontinuity.x1(), aux));
-    } else {
-      assert(DiscontinuityInBracket(middleOfDiscontinuity, dummy, upperBoundOfDiscontinuity, aux) == Interest::Discontinuity);
+    } else if (DiscontinuityInBracket(middleOfDiscontinuity, dummy, upperBoundOfDiscontinuity, aux) == Interest::Discontinuity) {
       lowerBoundOfDiscontinuity = middleOfDiscontinuity;
       middleOfDiscontinuity.setX1((middleOfDiscontinuity.x1() + upperBoundOfDiscontinuity.x1()) / 2.0);
       middleOfDiscontinuity.setX2(f(middleOfDiscontinuity.x1(), aux));
+    } else {
+      /* This can happen if std::isinf(middleOfDiscontinuity), in which case no
+       * smaller interval with the discontinuity can be found. */
+      assert(std::isinf(middleOfDiscontinuity.x2()));
+      break;
     }
     // assert that dummy has no impact
     assert(DiscontinuityInBracket(lowerBoundOfDiscontinuity, middleOfDiscontinuity, upperBoundOfDiscontinuity, aux) == Interest::Discontinuity);

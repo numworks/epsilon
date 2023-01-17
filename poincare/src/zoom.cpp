@@ -409,14 +409,15 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
     interestingRange = m_interestingRange.y();
     normalLength = yLengthNormalized;
   }
-  float interestingCenter = interestingRange->center();
+
+  float interestingCenter = interestingRange->isValid() ? interestingRange->center() : rangeToEdit->center();
   assert(std::isfinite(interestingCenter));
   float portionOverInterestingCenter = (rangeToEdit->max() - interestingCenter) / rangeToEdit->length();
   float lengthOverCenter = portionOverInterestingCenter * normalLength;
   float lengthUnderCenter = (1.f - portionOverInterestingCenter) * normalLength;
-  if (interestingCenter - lengthUnderCenter > interestingRange->min()) {
+  if (interestingRange->isValid() && interestingCenter - lengthUnderCenter > interestingRange->min()) {
     *rangeToEdit = Range1D(interestingRange->min(), interestingRange->min() + normalLength);
-  } else if (interestingCenter + lengthOverCenter < interestingRange->max()) {
+  } else if (interestingRange->isValid() && interestingCenter + lengthOverCenter < interestingRange->max()) {
     *rangeToEdit = Range1D(interestingRange->max() - normalLength, interestingRange->max());
   } else {
     *rangeToEdit = Range1D(interestingCenter - lengthUnderCenter, interestingCenter + lengthOverCenter);

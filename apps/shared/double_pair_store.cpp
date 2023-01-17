@@ -253,29 +253,32 @@ int DoublePairStore::indexOfKthActiveSeries(int k, ActiveSeriesTest activeSeries
   return 0;
 }
 
+static void swapRows(int a, int b, void * ctx, int numberOfElements) {
+  // Swap X and Y values
+  void ** pack = reinterpret_cast<void **>(ctx);
+  DoublePairStore * store = reinterpret_cast<DoublePairStore *>(pack[0]);
+  int * series = reinterpret_cast<int *>(pack[1]);
+  double dataAx = store->get(*series, 0, a);
+  double dataAy = store->get(*series, 1, a);
+  store->set(store->get(*series, 0, b), *series, 0, a, true);
+  store->set(store->get(*series, 1, b), *series, 1, a, true);
+  store->set(dataAx, *series, 0, b, true);
+  store->set(dataAy, *series, 1, b, true);
+};
+
+static bool compare(int a, int b, void * ctx, int numberOfElements) {
+  void ** pack = reinterpret_cast<void **>(ctx);
+  const DoublePairStore * store = reinterpret_cast<const DoublePairStore *>(pack[0]);
+  int * series = reinterpret_cast<int *>(pack[1]);
+  int * column = reinterpret_cast<int *>(pack[2]);
+  double dataA = store->get(*series, *column, a);
+  double dataB = store->get(*series, *column, b);
+  return dataA >= dataB || std::isnan(dataA);
+};
+
 void DoublePairStore::sortColumn(int series, int column, bool delayUpdate) {
   assert(column == 0 || column == 1);
-  static Poincare::Helpers::Swap swapRows = [](int a, int b, void * ctx, int numberOfElements) {
-    // Swap X and Y values
-    void ** pack = reinterpret_cast<void **>(ctx);
-    DoublePairStore * store = reinterpret_cast<DoublePairStore *>(pack[0]);
-    int * series = reinterpret_cast<int *>(pack[1]);
-    double dataAx = store->get(*series, 0, a);
-    double dataAy = store->get(*series, 1, a);
-    store->set(store->get(*series, 0, b), *series, 0, a, true);
-    store->set(store->get(*series, 1, b), *series, 1, a, true);
-    store->set(dataAx, *series, 0, b, true);
-    store->set(dataAy, *series, 1, b, true);
-  };
-  static Poincare::Helpers::Compare compare = [](int a, int b, void * ctx, int numberOfElements)->bool{
-    void ** pack = reinterpret_cast<void **>(ctx);
-    const DoublePairStore * store = reinterpret_cast<const DoublePairStore *>(pack[0]);
-    int * series = reinterpret_cast<int *>(pack[1]);
-    int * column = reinterpret_cast<int *>(pack[2]);
-    double dataA = store->get(*series, *column, a);
-    double dataB = store->get(*series, *column, b);
-    return dataA >= dataB || std::isnan(dataA);
-  };
+
   void * context[] = { const_cast<DoublePairStore *>(this), &series, &column };
   Poincare::Helpers::Sort(swapRows, compare, context, numberOfPairsOfSeries(series));
   updateSeries(series, delayUpdate);

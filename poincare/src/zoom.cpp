@@ -44,15 +44,15 @@ Range2D Zoom::range(bool beautify, bool forceNormalization) const {
   assert(!m_forcedRange.x()->isValid() ||
          (result.xMin() == m_forcedRange.xMin() && result.xMax() == m_forcedRange.xMax()));
   assert(!m_interestingRange.x()->isValid() ||
-         ((result.xMin() <= m_interestingRange.xMin() || !std::isfinite(m_interestingRange.xMin())) &&
-          (m_interestingRange.xMax() <= result.xMax() || !std::isfinite(m_interestingRange.xMax()))) ||
+         ((result.xMin() <= m_interestingRange.xMin() + Float<float>::Epsilon() * std::fabs(m_interestingRange.xMin()) || !std::isfinite(m_interestingRange.xMin())) &&
+          (m_interestingRange.xMax() - Float<float>::Epsilon() * std::fabs(m_interestingRange.xMax()) <= result.xMax()|| !std::isfinite(m_interestingRange.xMax()))) ||
          m_forcedRange.x()->isValid());
 
   assert(!m_forcedRange.y()->isValid() ||
          (result.yMin() == m_forcedRange.yMin() && result.yMax() == m_forcedRange.yMax()));
   assert(!m_interestingRange.y()->isValid() ||
-         ((result.yMin() <= m_interestingRange.yMin() || !std::isfinite(m_interestingRange.yMin())) &&
-          (m_interestingRange.yMax() <= result.yMax() || !std::isfinite(m_interestingRange.yMax()))) ||
+         ((result.yMin() <= m_interestingRange.yMin() + Float<float>::Epsilon() * std::fabs(m_interestingRange.yMin()) || !std::isfinite(m_interestingRange.yMin())) &&
+          (m_interestingRange.yMax() - Float<float>::Epsilon() * std::fabs(m_interestingRange.yMax()) <= result.yMax() || !std::isfinite(m_interestingRange.yMax()))) ||
          m_forcedRange.y()->isValid());
 
   assert(result.x()->isValid() && result.y()->isValid() && !result.x()->isEmpty() && !result.y()->isEmpty());
@@ -414,7 +414,7 @@ Range2D Zoom::prettyRange(bool forceNormalization) const {
   assert(std::isfinite(interestingCenter));
   float portionOverInterestingCenter = (rangeToEdit->max() - interestingCenter) / rangeToEdit->length();
   float lengthOverCenter = portionOverInterestingCenter * normalLength;
-  float lengthUnderCenter = (1.f - portionOverInterestingCenter) * normalLength;
+  float lengthUnderCenter = normalLength - lengthOverCenter;
   if (interestingRange->isValid() && interestingCenter - lengthUnderCenter > interestingRange->min()) {
     *rangeToEdit = Range1D(interestingRange->min(), interestingRange->min() + normalLength);
   } else if (interestingRange->isValid() && interestingCenter + lengthOverCenter < interestingRange->max()) {

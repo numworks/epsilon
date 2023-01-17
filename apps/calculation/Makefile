@@ -4,35 +4,35 @@ app_headers += apps/calculation/app.h
 app_calculation_test_src += $(addprefix apps/calculation/,\
   calculation.cpp \
   calculation_store.cpp \
-  additional_outputs/unit_comparison_helper.cpp \
-  additional_outputs/scientific_notation_helper.cpp \
+  additional_outputs/unit_comparison_helper.cpp \
+  additional_outputs/scientific_notation_helper.cpp \
 )
 
 app_calculation_src = $(addprefix apps/calculation/,\
-  additional_outputs/chained_expressions_list_controller.cpp \
-  additional_outputs/complex_graph_cell.cpp \
-  additional_outputs/complex_model.cpp \
-  additional_outputs/complex_list_controller.cpp \
-  additional_outputs/expression_with_equal_sign_view.cpp \
-  additional_outputs/expressions_list_controller.cpp \
-  additional_outputs/function_graph_cell.cpp \
-  additional_outputs/function_list_controller.cpp \
-  additional_outputs/function_model.cpp \
-  additional_outputs/illustrated_expressions_list_controller.cpp \
-  additional_outputs/illustration_cell.cpp \
-  additional_outputs/integer_list_controller.cpp \
-  additional_outputs/scrollable_three_expressions_cell.cpp \
-  additional_outputs/list_controller.cpp \
-  additional_outputs/matrix_list_controller.cpp \
-  additional_outputs/rational_list_controller.cpp \
-  additional_outputs/scientific_notation_list_controller.cpp \
-  additional_outputs/trigonometry_graph_cell.cpp \
-  additional_outputs/trigonometry_list_controller.cpp \
-  additional_outputs/trigonometry_model.cpp \
-  additional_outputs/unit_list_controller.cpp \
-  additional_outputs/vector_graph_cell.cpp \
-  additional_outputs/vector_list_controller.cpp \
-  additional_outputs/vector_model.cpp \
+  additional_outputs/chained_expressions_list_controller.cpp \
+  additional_outputs/complex_graph_cell.cpp \
+  additional_outputs/complex_model.cpp \
+  additional_outputs/complex_list_controller.cpp \
+  additional_outputs/expression_with_equal_sign_view.cpp \
+  additional_outputs/expressions_list_controller.cpp \
+  additional_outputs/function_graph_cell.cpp \
+  additional_outputs/function_list_controller.cpp \
+  additional_outputs/function_model.cpp \
+  additional_outputs/illustrated_expressions_list_controller.cpp \
+  additional_outputs/illustration_cell.cpp \
+  additional_outputs/integer_list_controller.cpp \
+  additional_outputs/scrollable_three_expressions_cell.cpp \
+  additional_outputs/list_controller.cpp \
+  additional_outputs/matrix_list_controller.cpp \
+  additional_outputs/rational_list_controller.cpp \
+  additional_outputs/scientific_notation_list_controller.cpp \
+  additional_outputs/trigonometry_graph_cell.cpp \
+  additional_outputs/trigonometry_list_controller.cpp \
+  additional_outputs/trigonometry_model.cpp \
+  additional_outputs/unit_list_controller.cpp \
+  additional_outputs/vector_graph_cell.cpp \
+  additional_outputs/vector_list_controller.cpp \
+  additional_outputs/vector_model.cpp \
   app.cpp \
   edit_expression_controller.cpp \
   expression_field.cpp \

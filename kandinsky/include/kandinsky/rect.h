@@ -7,11 +7,11 @@
 #include <kandinsky/size.h>
 
 /*   +-+-+-+-+-+
- *   |x| | | | |
+ *   |x| | | | |
  *   +-+-+-+-+-+
- *   | | | | | |
+ *   | | | | | |
  *   +-+-+-+-+-+
- *   | | | | |o|
+ *   | | | | |o|
  *   +-+-+-+-+-+
  *
  *  Kandinsky rectangles are rectangles made of pixels. We defined them by the

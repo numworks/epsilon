@@ -346,7 +346,7 @@ EquationStore::Error EquationStore::resolveLinearSystem(Expression exactSolution
     }
   }
   if (m_numberOfSolutions > 0) {
-    // if rank(A | b) < n, the system has an infinite number of solutions
+    // if rank(A | b) < n, the system has an infinite number of solutions
     if (rankAb == n && n > 0) {
       // Otherwise, the system has n solutions which correspond to the last column
       m_numberOfSolutions = n;

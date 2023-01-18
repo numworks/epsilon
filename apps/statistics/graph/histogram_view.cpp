@@ -69,8 +69,8 @@ void HistogramView::setHighlight(float start, float end) {
 
 void HistogramView::reloadSelectedBar() {
   AbstractPlotView::reload();
-  KDCoordinate barInteriorStartPixelIndex = floatToPixelIndex(Axis::Horizontal, m_highlightedBarStart) + PlotPolicy::WithHistogram::k_borderWidth;
-  KDCoordinate barInteriorEndPixelIndex = floatToPixelIndex(Axis::Horizontal, m_highlightedBarEnd) - PlotPolicy::WithHistogram::k_borderWidth;
+  KDCoordinate barInteriorStartPixelIndex = floatToKDCoordinatePixel(Axis::Horizontal, m_highlightedBarStart) + PlotPolicy::WithHistogram::k_borderWidth;
+  KDCoordinate barInteriorEndPixelIndex = floatToKDCoordinatePixel(Axis::Horizontal, m_highlightedBarEnd) - PlotPolicy::WithHistogram::k_borderWidth;
   /* We deliberately do not mark as dirty the frame of the banner view to avoid
    * unpleasant blinking of the drawing of the banner view. */
   markRectAsDirty(KDRect(barInteriorStartPixelIndex, 0, barInteriorEndPixelIndex - barInteriorStartPixelIndex + 1, bounds().height()));

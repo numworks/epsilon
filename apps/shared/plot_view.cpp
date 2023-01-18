@@ -46,7 +46,7 @@ float AbstractPlotView::floatToFloatPixel(Axis axis, float f) const {
   return std::clamp(res, static_cast<float>(KDCOORDINATE_MIN), static_cast<float>(KDCOORDINATE_MAX));
 }
 
-KDCoordinate AbstractPlotView::floatToPixelIndex(Axis axis, float f) const {
+KDCoordinate AbstractPlotView::floatToKDCoordinatePixel(Axis axis, float f) const {
   return std::round(floatToFloatPixel(axis, f));
 }
 
@@ -60,9 +60,9 @@ void AbstractPlotView::drawStraightSegment(KDContext * ctx, KDRect rect, Axis pa
   min = std::clamp(min, fmin, fmax);
   max = std::clamp(max, fmin, fmax);
 
-  KDCoordinate p = floatToPixelIndex(OtherAxis(parallel), position);
-  KDCoordinate a = floatToPixelIndex(parallel, min);
-  KDCoordinate b = floatToPixelIndex(parallel, max);
+  KDCoordinate p = floatToKDCoordinatePixel(OtherAxis(parallel), position);
+  KDCoordinate a = floatToKDCoordinatePixel(parallel, min);
+  KDCoordinate b = floatToKDCoordinatePixel(parallel, max);
   if (a > b) {
     std::swap(a, b);
   }
@@ -217,7 +217,7 @@ void AbstractPlotView::drawArc(KDContext * ctx, KDRect rect, Poincare::Coordinat
   bool isLastSegment = false;
   double tMin = 0;
   double tMax = 2 * M_PI;
-  if (!rect.contains(KDPoint(floatToPixelIndex(Axis::Horizontal, 0.f),floatToPixelIndex(Axis::Vertical, 0.f)))) {
+  if (!rect.contains(KDPoint(floatToKDCoordinatePixel(Axis::Horizontal, 0.f),floatToKDCoordinatePixel(Axis::Vertical, 0.f)))) {
     // TODO: factorise with Graph::GraphView::drawPolar
     double t1 = angleFromPoint(rect.bottomRight());
     double t2 = angleFromPoint(rect.topRight());
@@ -293,8 +293,8 @@ void AbstractPlotView::drawArc(KDContext * ctx, KDRect rect, Poincare::Coordinat
 
 void AbstractPlotView::drawTick(KDContext * ctx, KDRect rect, Axis perpendicular, float position, KDColor color) const {
   Axis parallel = OtherAxis(perpendicular);
-  KDCoordinate p = floatToPixelIndex(perpendicular, position);
-  KDCoordinate tickStart = floatToPixelIndex(parallel, 0.f) - k_tickHalfLength;
+  KDCoordinate p = floatToKDCoordinatePixel(perpendicular, position);
+  KDCoordinate tickStart = floatToKDCoordinatePixel(parallel, 0.f) - k_tickHalfLength;
   KDCoordinate tickLength = 2 * k_tickHalfLength + 1;
   KDRect tickRect = perpendicular == Axis::Horizontal ? KDRect(p, tickStart, 1, tickLength) : KDRect(tickStart, p, tickLength, 1);
   ctx->fillRect(tickRect, color);

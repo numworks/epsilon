@@ -76,13 +76,13 @@ void WithPolarGrid::drawGrid(const AbstractPlotView * plotView, KDContext * ctx,
   float yMin = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, bounds.bottom() - graduationVerticalMargin);
   float yMax = plotView->pixelToFloat(AbstractPlotView::Axis::Vertical, bounds.top() + graduationVerticalMargin);
   float length = 2.f * std::max({-xMin, xMax, -yMin, yMax});
-  KDPoint from = KDPoint(plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, 0.f), plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, 0.f));
+  KDPoint from = KDPoint(plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal, 0.f), plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical, 0.f));
   for (int angle = 0; angle <= 360; angle += k_angleStepInDegree) {
     float angleRadian = angle *  M_PI / 180.f;
     float cos = std::cos(angleRadian);
     float sin = std::sin(angleRadian);
     bool shouldHaveGraduation = angle % (2 * k_angleStepInDegree) == 0;
-    KDPoint to = KDPoint(plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, length * cos), plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, length * sin));
+    KDPoint to = KDPoint(plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal, length * cos), plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical, length * sin));
     // Don't draw under the axes.
     if (angle % 90) {
       // TODO: this call is the only slow part when we are far from the origin

@@ -27,7 +27,7 @@ WithCurves::Pattern::Pattern(int s, KDColor color, KDColor backgroundColor) :
 
 void WithCurves::Pattern::drawInLine(const AbstractPlotView * plotView, KDContext * ctx, KDRect rect, AbstractPlotView::Axis parallel, float position, float min, float max) const {
   AbstractPlotView::Axis perpendicular = AbstractPlotView::OtherAxis(parallel);
-  KDCoordinate posC = plotView->floatToPixelIndex(perpendicular, position);
+  KDCoordinate posC = plotView->floatToKDCoordinatePixel(perpendicular, position);
 
   KDColor firstColor, secondColor;
   if (posC % (k_size / 2) == 0) {
@@ -49,8 +49,8 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView * plotView, KDContex
   if (max < min) {
     std::swap(max, min);
   }
-  KDCoordinate minC = plotView->floatToPixelIndex(parallel, min);
-  KDCoordinate maxC = plotView->floatToPixelIndex(parallel, max);
+  KDCoordinate minC = plotView->floatToKDCoordinatePixel(parallel, min);
+  KDCoordinate maxC = plotView->floatToKDCoordinatePixel(parallel, max);
   if (parallel == AbstractPlotView::Axis::Horizontal) {
     minC = std::max(minC, rect.left());
     maxC = std::min(maxC, static_cast<KDCoordinate>(rect.right() + 1));
@@ -330,7 +330,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
   double rectMaxBarIndex = std::floor((rectMax - m_start) / m_barsWidth);
   double rectMaxBarEnd = m_start + (rectMaxBarIndex + 1) * m_barsWidth;
   double step = std::max(plotView->pixelWidth(), static_cast<float>(m_barsWidth));
-  KDCoordinate plotViewHeight = plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, 0.f);
+  KDCoordinate plotViewHeight = plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical, 0.f);
   KDCoordinate borderWidth = m_displayBorder ? k_borderWidth : 0;
 
   double xPrevious = NAN;
@@ -350,8 +350,8 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
 
     // Step 2: Compute pixels
     // Step 2.1: Bar width
-    KDCoordinate left = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x);
-    KDCoordinate leftOfNextBar = plotView->floatToPixelIndex(AbstractPlotView::Axis::Horizontal, x + m_barsWidth);
+    KDCoordinate left = plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal, x);
+    KDCoordinate leftOfNextBar = plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Horizontal, x + m_barsWidth);
     if (leftOfNextBar <= rect.left()) {
       continue;
     }
@@ -367,7 +367,7 @@ void WithHistogram::HistogramDrawing::draw(const AbstractPlotView * plotView, KD
     }
 
     // Step 2.2: Bar height
-    KDCoordinate top = plotView->floatToPixelIndex(AbstractPlotView::Axis::Vertical, y);
+    KDCoordinate top = plotView->floatToKDCoordinatePixel(AbstractPlotView::Axis::Vertical, y);
     KDCoordinate barHeight = plotViewHeight - top;
     assert(barHeight >= 0);
 

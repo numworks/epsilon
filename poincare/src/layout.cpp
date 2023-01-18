@@ -354,7 +354,7 @@ void Layout::collapseSiblings(LayoutCursor * cursor) {
   }
 }
 
-bool Layout::privatehasTopLevelComparisonSymbol(bool includingNotEqual) const {
+bool Layout::privatehasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const {
   if (type() != Poincare::LayoutNode::Type::HorizontalLayout) {
     return false;
   }
@@ -362,7 +362,7 @@ bool Layout::privatehasTopLevelComparisonSymbol(bool includingNotEqual) const {
   for (int i = 0; i < childrenCount; i++) {
     Poincare::Layout child = childAtIndex(i);
     if ((child.type() == Poincare::LayoutNode::Type::CodePointLayout && static_cast<Poincare::CodePointLayout &>(child).codePoint().isEquationOperator())
-     || (includingNotEqual && child.type() == Poincare::LayoutNode::Type::CombinedCodePointsLayout && static_cast<Poincare::CombinedCodePointsLayout &>(child).node()->isNotEqualOperator())) {
+     || (includingNotEqualSymbol && child.type() == Poincare::LayoutNode::Type::CombinedCodePointsLayout && static_cast<Poincare::CombinedCodePointsLayout &>(child).node()->isNotEqualOperator())) {
       return true;
     }
   }

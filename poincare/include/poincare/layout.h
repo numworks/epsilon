@@ -127,7 +127,7 @@ private:
     Right
   };
   bool collapseOnDirection(HorizontalDirection direction, int absorbingChildIndex, LayoutCursor * cursor);
-  bool privatehasTopLevelComparisonSymbol(bool includingNotEqual) const;
+  bool privatehasTopLevelComparisonSymbol(bool includingNotEqualSymbol) const;
 };
 
 template<typename T, typename U, int N, typename Parent>

@@ -36,6 +36,7 @@ public:
   Escher::View * view() override { return &m_selectableTableView; }
   /* SelectableTableViewDelegate*/
   void tableViewDidChangeSelection(Escher::SelectableTableView * t, int previousSelectedCellX, int previousSelectedCellY, bool withinTemporarySelection) override;
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override { return false; }
   /* ExpressionModelListController */
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   void showLastSequence();

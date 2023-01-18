@@ -34,6 +34,8 @@ public:
   Escher::SelectableTableView * selectableTableView() override { return &m_selectableTableView; }
   FunctionToolbox * toolbox() override;
   Shared::ListParameterController * parameterController() override;
+  // SelectableTableViewDelegate
+  bool canStoreContentOfCellAtLocation(Escher::SelectableTableView * t, int col, int row) const override { return false; }
 private:
   constexpr static int k_functionCellType = 0;
   constexpr static int k_addNewModelType = 1;

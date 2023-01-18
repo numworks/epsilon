@@ -162,20 +162,13 @@ I18n::Message ExamModeConfiguration::forbiddenAppMessage(Preferences::ExamMode m
 }
 
 KDColor ExamModeConfiguration::examModeColor(Preferences::ExamMode mode) {
-  /* The Dutch exam mode LED is supposed to be orange but we can only make
-   * blink "pure" colors: with RGB leds on or off (as the PWM is used for
-   * blinking). The closest "pure" color is Yellow. Moreover, Orange LED is
-   * already used when the battery is charging. Using yellow, we can assert
-   * that the yellow LED only means that Dutch exam mode is on and avoid
-   * confusing states when the battery is charging and states when the Dutch
-   * exam mode is on. */
   switch (mode) {
   case Preferences::ExamMode::Standard:
-    return KDColorRed;
+    return k_standardLEDColor;
   case Preferences::ExamMode::Dutch:
-    return KDColorYellow;
+    return k_dutchLEDColor;
   case Preferences::ExamMode::Portuguese:
-    return KDColorGreen;
+    return k_portugueseLEDColor;
   default:
     return KDColorBlack;
   }

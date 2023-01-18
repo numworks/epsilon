@@ -31,7 +31,7 @@ private:
   constexpr static int k_numberOfIterationsProbability = 1000000;
   constexpr static double k_maxProbability = 0.9999995;
 
-  static bool DetectApproximationErrorsForMinimum(Solver<double>::FunctionEvaluation f, const void * aux, double xMin, double xMax);
+  static bool FunctionSeemsConstantOnTheInterval(Solver<double>::FunctionEvaluation f, const void * aux, double xMin, double xMax);
 };
 
 }

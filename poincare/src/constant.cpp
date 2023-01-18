@@ -46,6 +46,7 @@ int ConstantNode::serialize(char * buffer, int bufferSize, Preferences::PrintFlo
 
 Layout ConstantNode::createLayout(Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits, Context * context) const {
   constexpr static size_t bufferSize = Helpers::StringLength("_hplanck") + 1;
+  assert(strlen(name()) < bufferSize);
   char buffer[bufferSize];
   return LayoutHelper::StringLayoutOfSerialization(Constant(this), buffer, bufferSize, floatDisplayMode, numberOfSignificantDigits);
 }

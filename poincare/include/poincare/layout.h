@@ -34,6 +34,7 @@ public:
   LayoutNode::Type type() const { return node()->type(); }
   bool isIdenticalTo(Layout l, bool makeEditable = false) { return isUninitialized() ? l.isUninitialized() : node()->isIdenticalTo(l, makeEditable); }
   bool representsAnEquation() const;
+  bool representsAComparison() const;
 
   // Rendering
   void draw(KDContext * ctx, KDPoint p, KDFont::Size font, KDColor expressionColor = KDColorBlack, KDColor backgroundColor = KDColorWhite, Layout * selectionStart = nullptr, Layout * selectionEnd = nullptr, KDColor selectionColor = Escher::Palette::Select) {

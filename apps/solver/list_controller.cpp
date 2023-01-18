@@ -126,7 +126,7 @@ bool ListController::textFieldDidReceiveEvent(AbstractTextField * textField, Ion
 // TODO factorize with Graph?
 bool ListController::layoutFieldDidReceiveEvent(LayoutField * layoutField, Ion::Events::Event event) {
   if (layoutField->isEditing() && layoutField->shouldFinishEditing(event)) {
-    if (!layoutField->layout().representsAnEquation()) { // TODO: do like for textField: parse and and check is type is comparison
+    if (!layoutField->layout().representsAComparison()) { // TODO: do like for textField: parse and and check is type is comparison
       layoutField->putCursorOnOneSide(Poincare::LayoutCursor::Position::Right);
       if (!layoutField->handleEventWithText("=0")) {
         Container::activeApp()->displayWarning(I18n::Message::RequireEquation);

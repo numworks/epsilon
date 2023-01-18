@@ -35,6 +35,7 @@ public:
   static bool IsBinaryComparison(Expression e, OperatorType * returnType = nullptr);
   static bool IsBinaryComparisonWithOperator(Expression e, OperatorType operatorType);
   static bool IsBinaryEquality(Expression e) { return IsBinaryComparisonWithOperator(e, OperatorType::Equal); }
+  static bool IsEquation(Expression e); // Return false if one of the operator is NotEqual
 
   static TrinaryBoolean TruthValueOfOperator(OperatorType type, TrinaryBoolean chidlrenAreEqual, TrinaryBoolean leftChildIsGreater);
 
@@ -105,6 +106,7 @@ public:
 
   Expression shallowReduce(ReductionContext ReductionContext);
   ComparisonNode::OperatorType operatorAtIndex(int i) const { return node()->operatorAtIndex(i); }
+  int numberOfOperators() const { return node()->numberOfOperators(); }
 private:
   ComparisonNode * node() const { return static_cast<ComparisonNode *>(Expression::node()); }
 };

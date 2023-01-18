@@ -192,24 +192,30 @@ void WithCurves::CurveDrawing::joinDots(const AbstractPlotView * plotView, KDCon
 
   bool isFirstDot = std::isnan(t1);
   bool isLeftDotValid = std::isfinite(xy1.x1()) && std::isfinite(xy1.x2());
-  bool isRightDotValid = std::isfinite(xy2.x1()) && std::isfinite(xy2.x2());
+
+  Coordinate2D<float> p1 = plotView->floatToPixel2D(xy1);
+  Coordinate2D<float> p2 = plotView->floatToPixel2D(xy2);
+
+  /* We need to be sure that the point is not an artifact caused by error
+   * in float approximation. The value of pixelTolerance matters little,
+   * as wrong points will be off by a large margin. */
+  constexpr float pixelTolerance = 1.f;
+  bool isRightDotValid =
+    std::isfinite(xy2.x1()) &&
+    std::isfinite(xy2.x2()) &&
+    (!m_curveDouble ||
+     (std::fabs(p2.x2() - (plotView->floatToPixel2D(m_curveDouble(t2, m_curve.model(), m_context))).x2()) < pixelTolerance));
+
   if (!(isLeftDotValid || isRightDotValid)) {
     return;
   }
 
-  Coordinate2D<float> p1 = plotView->floatToPixel2D(xy1);
-  Coordinate2D<float> p2 = plotView->floatToPixel2D(xy2);
-  if (isRightDotValid) {
-    if (isFirstDot || (!isLeftDotValid && remainingIterations <= 0) || (isLeftDotValid && plotView->pointsInSameStamp(p1, p2, m_thick))) {
-      /* We need to be sure that the point is not an artifact caused by error
-       * in float approximation. */
-      Coordinate2D<float> p2Double = m_curveDouble ? plotView->floatToPixel2D(m_curveDouble(t2, m_curve.model(), m_context)) : p2;
-      if (std::isnan(p2Double.x1()) || std::isnan(p2Double.x2())) {
-        p2Double = p2;
-      }
+  if (isRightDotValid &&
+      (isFirstDot || (!isLeftDotValid && remainingIterations <= 0) ||
+                     (isLeftDotValid && plotView->pointsInSameStamp(p1, p2, m_thick))))
+  {
       plotView->stamp(ctx, rect, p2, m_color, m_thick);
       return;
-    }
   }
 
   float t12 = 0.5f * (t1 + t2);

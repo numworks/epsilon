@@ -30,8 +30,6 @@ private:
   static_assert(k_sqrtEps == 1.4901161193847656E-8, "Wrong value for sqrt(DBL_EPSILON");
   constexpr static int k_numberOfIterationsProbability = 1000000;
   constexpr static double k_maxProbability = 0.9999995;
-
-  static bool FunctionSeemsConstantOnTheInterval(Solver<double>::FunctionEvaluation f, const void * aux, double xMin, double xMax);
 };
 
 }

@@ -134,7 +134,7 @@ Coordinate2D<T> Solver<T>::nextMinimum(const Expression & e) {
    *   it every time)
    * - since d(f°g) = dg×df°g, if f is known to be monotonous (i.e. df≠0), look
    *   for the extrema of g. */
-  return next(e, MinimumInBracket, SolverAlgorithms::BrentMinimum);
+  return next(e, MinimumInBracket, SafeBrentMinimum);
 }
 
 template<typename T>
@@ -177,14 +177,30 @@ typename Solver<T>::Interest Solver<T>::EvenOrOddRootInBracket(Coordinate2D<T> a
 }
 
 template<typename T>
-Coordinate2D<T> Solver<T>::BrentMaximum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision) {
+Coordinate2D<T> Solver<T>::SafeBrentMinimum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision) {
+  if (xMax < xMin) {
+    return SafeBrentMinimum(f, aux, xMax, xMin, interest, precision);
+  }
+  assert(xMin < xMax);
+
+  if (FunctionSeemsConstantOnTheInterval(f, aux, xMin, xMax)) {
+    /* Some fake minimums can be detected due to approximations errors like in
+     * f(x) = x/abs(x) in complex mode. */
+    return Coordinate2D<T>(NAN, NAN);
+  }
+
+  return SolverAlgorithms::BrentMinimum(f, aux, xMin, xMax, interest, precision);
+}
+
+template<typename T>
+Coordinate2D<T> Solver<T>::SafeBrentMaximum(FunctionEvaluation f, const void * aux, T xMin, T xMax, Interest interest, T precision) {
   const void * pack[] = {&f, aux};
   FunctionEvaluation minusF = [](T x, const void * aux) {
     const void * const * param = reinterpret_cast<const void * const *>(aux);
     const FunctionEvaluation * f = reinterpret_cast<const FunctionEvaluation *>(param[0]);
     return -(*f)(x, param[1]);
   };
-  Coordinate2D<T> res = SolverAlgorithms::BrentMinimum(minusF, pack, xMin, xMax, interest, precision);
+  Coordinate2D<T> res = SafeBrentMinimum(minusF, pack, xMin, xMax, interest, precision);
   return Coordinate2D<T>(res.x1(), -res.x2());
 }
 
@@ -198,10 +214,10 @@ Coordinate2D<T> Solver<T>::CompositeBrentForRoot(FunctionEvaluation f, const voi
   }
   Coordinate2D<T> res;
   if (interest == Interest::LocalMinimum) {
-    res = SolverAlgorithms::BrentMinimum(f, aux, xMin, xMax, interest, precision);
+    res = SafeBrentMinimum(f, aux, xMin, xMax, interest, precision);
   } else {
     assert(interest == Interest::LocalMaximum);
-    res = BrentMaximum(f, aux, xMin, xMax, interest, precision);
+    res = SafeBrentMaximum(f, aux, xMin, xMax, interest, precision);
   }
   if (std::isfinite(res.x1()) && std::fabs(res.x2()) < NullTolerance(res.x1())) {
     return res;
@@ -247,6 +263,57 @@ void Solver<T>::ExcludeDiscontinuityFromBracket(Coordinate2D<T> * p1, Coordinate
   }
   p2->setX1((p1->x1() + p3->x1()) / 2.0);
   p2->setX2(f(p2->x1(), aux));
+}
+
+template<typename T>
+bool Solver<T>::FunctionSeemsConstantOnTheInterval(Solver<T>::FunctionEvaluation f, const void * aux, T xMin, T xMax) {
+  assert(xMin < xMax);
+  constexpr int k_numberOfSteps = 20;
+  T values[k_numberOfSteps];
+  int valuesCount[k_numberOfSteps];
+  int currentNumberOfValues = 0;
+  /* This loop computes 20 values of f on the interval and then checks the
+   * repartition of these values. If the function takes a few number of
+   * different values, it might mean that f is a constant function but
+   * approximation errors led to thinking there was a minimum in the interval.
+   * To mesure this "repartition" of values, the entropy of the data is
+   * then calculated.
+   * */
+  for (int i = 0; i < k_numberOfSteps; i++) {
+    T currentValue = f(xMin + (static_cast<T>(i) / k_numberOfSteps) * (xMax - xMin), aux);
+    bool addValueToArray = true;
+    for (int k = 0; k < currentNumberOfValues; k++) {
+      if (values[k] == currentValue) {
+        addValueToArray = false;
+        valuesCount[k]++;
+        break;
+      }
+    }
+    if (addValueToArray) {
+      values[currentNumberOfValues] = currentValue;
+      valuesCount[currentNumberOfValues] = 1;
+      currentNumberOfValues++;
+    }
+  }
+
+  /* Entropy = -sum(log(pk)*pk) where pk is the probability of taking the
+   * k-th value. */
+  T entropy = 0.;
+  for (int k = 0; k < currentNumberOfValues; k++) {
+    T probabilityOfValue = static_cast<T>(valuesCount[k]) / (k_numberOfSteps + 1);
+    entropy += - std::log(probabilityOfValue) * probabilityOfValue;
+  }
+
+  // Unfortunately, std::log is not constexpr
+  double maxEntropy = std::log(static_cast<T>(k_numberOfSteps));
+  assert(entropy >= 0 && entropy <= maxEntropy);
+  /* If the entropy of the data is lower than 0.5 * maxEntropy, it is assumed
+   * that the function is constant on [xMin, xMax].
+   * The value of 0.5 has be chosen because of good experimental results but
+   * could be tweaked.
+   * */
+  constexpr T k_entropyThreshold = static_cast<T>(0.5);
+  return entropy < maxEntropy * k_entropyThreshold;
 }
 
 template<typename T>
@@ -467,9 +534,10 @@ template Coordinate2D<double> Solver<double>::nextRoot(const Expression &);
 template Coordinate2D<double> Solver<double>::nextMinimum(const Expression &);
 template Coordinate2D<double> Solver<double>::nextIntersection(const Expression &, const Expression &, Expression *);
 template void Solver<double>::stretch();
-template Coordinate2D<double> Solver<double>::BrentMaximum(FunctionEvaluation, const void *, double, double, Interest, double);
+template Coordinate2D<double> Solver<double>::SafeBrentMaximum(FunctionEvaluation, const void *, double, double, Interest, double);
 template double Solver<double>::MaximalStep(double);
 template void Solver<double>::ExcludeDiscontinuityFromBracket(Coordinate2D<double> * p1, Coordinate2D<double> * p2, Coordinate2D<double> * p3, FunctionEvaluation f, const void * aux, double minimalSizeOfInterval);
+template bool Solver<double>::FunctionSeemsConstantOnTheInterval(Solver<double>::FunctionEvaluation f, const void * aux, double xMin, double xMax);
 
 template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>, const void *);
 template Solver<float>::Solver(float, float, const char *, Context *, Preferences::ComplexFormat, Preferences::AngleUnit);
